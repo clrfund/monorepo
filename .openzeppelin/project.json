@@ -1,0 +1,20 @@
+{
+  "manifestVersion": "2.2",
+  "contracts": {
+    "Counter": "Counter"
+  },
+  "dependencies": {},
+  "name": "@proofoftom/hackathon-helper",
+  "version": "0.0.1",
+  "telemetryOptIn": true,
+  "compiler": {
+    "manager": "openzeppelin",
+    "solcVersion": "0.6.2",
+    "compilerSettings": {
+      "optimizer": {
+        "enabled": false,
+        "runs": "200"
+      }
+    }
+  }
+}

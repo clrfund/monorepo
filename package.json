@@ -1,0 +1,70 @@
+{
+  "name": "@proofoftom/hackathon-helper",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Quasar + Buidler + Ethers + Waffle + TypeChain + OpenZeppelin",
+  "author": "Tommy Cox <tommy.cox@protonmail.com>",
+  "scripts": {
+    "build": "yarn compile && quasar build",
+    "compile": "rm -rf build && oz compile && buidler typechain",
+    "dev": "rm -rf build && oz create && buidler typechain && quasar dev",
+    "ganache": "ganache-cli -d",
+    "lint": "eslint --ext .js,.ts,.vue --ignore-path .gitignore ./",
+    "test": "yarn compile && buidler test",
+    "web": "quasar dev"
+  },
+  "dependencies": {
+    "@nomiclabs/buidler": "^1.1.2",
+    "@nomiclabs/buidler-ethers": "^1.1.2",
+    "@nomiclabs/buidler-waffle": "^1.1.2",
+    "@openzeppelin/cli": "^2.6.0",
+    "@quasar/extras": "^1.0.0",
+    "@resolver-engine/core": "^0.3.3",
+    "@types/chai": "^4.2.8",
+    "@types/mocha": "^7.0.1",
+    "@types/sinon-chai": "^3.2.3",
+    "axios": "^0.18.1",
+    "buidler-typechain": "^0.0.5",
+    "chai": "^4.2.0",
+    "es6-promisify": "^6.0.0",
+    "ethereum-waffle": "^2.3.2",
+    "ethers": "^4.0.44",
+    "ganache-cli": "^6.9.0",
+    "p-timeout": "^2.0.1",
+    "quasar": "^1.0.0",
+    "sass-loader": "^8.0.2",
+    "ts-generator": "^0.0.8",
+    "ts-node": "^8.6.2",
+    "typechain": "^1.0.5",
+    "typechain-target-ethers": "^1.0.3",
+    "typechain-target-truffle": "^1.0.2",
+    "typechain-target-web3-v1": "^1.0.4",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "@quasar/app": "^1.0.0",
+    "@quasar/quasar-app-extension-typescript": "^1.0.0-beta.2",
+    "@types/node": "^13.7.0",
+    "@typescript-eslint/eslint-plugin": "^1.12.0",
+    "@typescript-eslint/parser": "^1.12.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.10.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-vue": "^5.0.0",
+    "typescript": "^3.7.5",
+    "vue-cli-plugin-ethers": "~0.1.4"
+  },
+  "browserslist": [
+    "last 1 version, not dead, ie >= 11"
+  ],
+  "capacitorId": "",
+  "cordovaId": "org.cordova.quasar.app",
+  "engines": {
+    "node": ">= 10.18.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  },
+  "productName": "Quasar Buidler TypeChain"
+}

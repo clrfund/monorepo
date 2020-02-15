@@ -1,0 +1,13 @@
+{
+  "vetur.experimental.templateInterpolationService": true,
+  "vetur.validation.template": false,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    {
+      "language": "vue",
+      "autoFix": true
+    }
+  ]
+}

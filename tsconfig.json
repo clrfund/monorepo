@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "sourceMap": true,
+    "target": "es6",
+    "strict": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "outDir": "dist/spa",
+    "resolveJsonModule": true,
+    "types": [
+      "quasar",
+      "node"
+    ]
+  },
+  "include": ["./scripts", "./test", "./src"],
+  "files": [
+    "./buidler.config.ts",
+    "node_modules/buidler-typechain/src/type-extensions.d.ts",
+    "node_modules/@nomiclabs/buidler-ethers/src/type-extensions.d.ts",
+    "node_modules/@nomiclabs/buidler-waffle/src/type-extensions.d.ts"
+  ],
+  "exclude": ["node_modules"]
+}
