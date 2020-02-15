@@ -1,10 +1,12 @@
 {
   "manifestVersion": "2.2",
   "contracts": {
-    "Counter": "Counter"
+    "Counter": "Counter",
+    "FundingRoundFactory": "FundingRoundFactory",
+    "FundingRound": "FundingRound"
   },
   "dependencies": {},
-  "name": "@proofoftom/hackathon-helper",
+  "name": "clr-fund",
   "version": "0.0.1",
   "telemetryOptIn": true,
   "compiler": {

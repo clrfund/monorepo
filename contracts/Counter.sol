@@ -1,13 +1,14 @@
 pragma solidity ^0.6.2;
 
+
 contract Counter {
-  uint256 count = 0;
+  uint256 private count = 0;
 
   event CountedTo(uint256 number);
 
   function countUp() public returns (uint256) {
     uint256 newCount = count + 1;
-    require(newCount > count, "Uint256 overflow");
+    require(newCount > count, 'Uint256 overflow');
 
     count = newCount;
 
@@ -17,7 +18,7 @@ contract Counter {
 
   function countDown() public returns (uint256) {
     uint256 newCount = count - 1;
-    require(newCount < count, "Uint256 underflow");
+    require(newCount < count, 'Uint256 underflow');
 
     count = newCount;
 

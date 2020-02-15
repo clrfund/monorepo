@@ -1,6 +1,7 @@
 import { BuidlerConfig, usePlugin } from '@nomiclabs/buidler/config';
 
 usePlugin('@nomiclabs/buidler-waffle');
+usePlugin('@nomiclabs/buidler-solhint');
 usePlugin('buidler-typechain');
 
 const config: BuidlerConfig = {
@@ -15,6 +16,6 @@ const config: BuidlerConfig = {
     outDir: 'build/types',
     target: 'ethers'
   }
-}
+};
 
 export default config;
