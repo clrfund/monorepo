@@ -3,7 +3,6 @@ import chai from 'chai';
 import { deployContract, solidity } from 'ethereum-waffle';
 
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
-import { FundingRoundFactory } from '../build/types/FundingRoundFactory';
 
 chai.use(solidity);
 const { expect } = chai;
@@ -13,12 +12,10 @@ describe('Funding Round Factory', () => {
 
   const [wallet] = provider.getWallets();
 
-  let factory: FundingRoundFactory;
-
   beforeEach(async () => {
-    factory = await deployContract(wallet, FactoryArtifact) as FundingRoundFactory;
+    const factory = await deployContract(wallet, FactoryArtifact);
 
-    expect(factory).to.properAddress;
+    expect(factory.address).to.properAddress;
   });
 
   it('has new round running', async () => {

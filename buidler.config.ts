@@ -2,7 +2,6 @@ import { BuidlerConfig, usePlugin } from '@nomiclabs/buidler/config';
 
 usePlugin('@nomiclabs/buidler-waffle');
 usePlugin('@nomiclabs/buidler-solhint');
-usePlugin('buidler-typechain');
 
 const config: BuidlerConfig = {
   solc: {
@@ -11,10 +10,6 @@ const config: BuidlerConfig = {
   defaultNetwork: 'buidlerevm',
   paths: {
     artifacts: 'build/contracts'
-  },
-  typechain: {
-    outDir: 'build/types',
-    target: 'ethers'
   }
 };
 
