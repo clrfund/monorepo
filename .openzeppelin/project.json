@@ -11,12 +11,15 @@
   "telemetryOptIn": true,
   "compiler": {
     "manager": "openzeppelin",
-    "solcVersion": "0.6.2",
+    "solcVersion": "0.6.1",
     "compilerSettings": {
       "optimizer": {
         "enabled": false,
         "runs": "200"
       }
+    },
+    "typechain": {
+      "enabled": true
     }
   }
 }

@@ -4,85 +4,118 @@ import '@nomiclabs/buidler/console.sol';
 
 import '@openzeppelin/contracts/ownership/Ownable.sol';
 
+// TODO: Import SafeMath
 
 contract FundingRoundFactory is Ownable {
-  address private coordinator;
-  address private maci;
-  address private witness;
-  bool private newMaci;
-  uint256 private duration;
+    address private coordinator;
+    address private maci;
+    address private witness;
 
-  // Constructor should start a new round
+    address private currentRound;
+    address private previousRound;
 
-  function endRound() public {
-    // if (currentBlock >= roundEnd) || (newCoordinator = TRUE || coordinator = null) {
-    // Deploy nextRound contract
-    // Address previousRound = currentRound
-    // address currentRound = newly deployed round contract
-    // }
-    // else {
-    // revert
-    // }
-  }
+    bool private newMaci;
+    bool private previousRoundValid;
+    bool private newCoordinatorSet;
 
-  // Called every round
-  function setMACI(address _maci) public {
-    // callable by witness
-    address maci = _maci;
-    bool newMaci = TRUE;
-  }
+    uint256 private duration;
+    uint256 private roundEndBlockNumber;
 
-  function nextRound() public onlyOwner {
-    // callable by contract owner, who should verify both the MACI and the Coordinators results prior to calling.
-    // if coordinator = null revert
-    // if newCoordinator = TRUE
-    // Send DAI balance of previousRound to currentRound
-    // newCoordinator = FALSE
-    // newMaci = FALSE
-    // return
-    // if newMaci = TRUE
-    // Send DAI balance of this to previousRound
-    // newMaci = FALSE
-    // emit everything
-    // else
-    // revert
-  }
+    mapping(address => address) private maciByRound;
 
-  function setOwner(address _owner) {
-    require(msg.sender == owner, 'Only owner can set owner');
-    // If msg.send = owner
-    // owner = _owner
-    // Else
-    // revert
-  }
+    function getMaci(address round) public view returns (address maci) {
+        return maciByRound[round];
+    }
 
-  function setCoordinator(address _coodinator) onlyOwner {
-    coordinator = _coordinator;
-    newCoordinator = true;
-    endRound();
-  }
+    // Constructor should start a new round
 
-  function setWitness(address _witness) public onlyOwner {
-    witness = _witness;
-  }
+    function endRound() public {
+        if (
+            block.number >= roundEndBlockNumber ||
+            newCoordinatorSet == true ||
+            coordinator == address(0)
+        ) {
+            // address memory nextRound = Deploy nextRound contract()
+            previousRound = currentRound;
+            // currentRound = nextRound;
+            roundEndBlockNumber = block.number + duration; // TODO: Use SafeMath
+        } else {
+            revert();
+        }
+    }
 
-  function setRoundDuration(uint256 _duration) public onlyOwner {
-    duration = _duration;
-  }
+    // Called every round
+    function setMACI(address _maci) public onlyWitness {
+        address maci = _maci;
+        bool newMaci = true;
+    }
 
-  function coordinatorQuit() public {
-    // Enhancement: Get fancy to handle meta-tx
-    // like how OpenZeppelin Ownable does via GSN/Context
-    require(msg.sender == coordinator, 'Sender is not the coordinator');
-    coordinator = address(0);
-    endRound();
-  }
+    function transferMatchingFunds() public onlyOwner returns (bool allDone) {
+        // owner should verify both the MACI and the Coordinators results
+        // prior to calling.
+        require(coordinator != address(0), 'No coordinator');
 
-  function witnessQuit() {
-    require(msg.sender == witness, 'Sender is not the coordinator');
-    witness = address(0);
-    // newMaci = FALSE
-    // Else
-    // revert
-  }
+        // TODO: Check whther newMaci is true or not
+
+        if (newCoordinatorSet == true) {
+            console.log('new coordinator');
+            // Set things up for a "redo"
+            // Get money out of here and make it a no-op
+            // Send DAI balance of previousRound to currentRound
+            newCoordinatorSet = false;
+            newMaci = false;
+            previousRoundValid = false;
+            // emit NewMaciRequired();
+            return false; // returning early
+        }
+        if (newMaci && previousRoundValid) {
+            // Send DAI balance of this to previousRound
+            newMaci = false;
+            console.log('new maci with valid round');
+            return true;
+            // emit everything
+        } else {
+            console.log('else case');
+            revert();
+        }
+    }
+
+    // Use `transferOwnership` from Ownable for what you might have expected
+    // to be called setOwner based on the other names here
+
+    function setCoordinator(address _coordinator) public onlyOwner {
+        coordinator = _coordinator;
+        newCoordinatorSet = true;
+        endRound();
+    }
+
+    function setWitness(address _witness) public onlyOwner {
+        witness = _witness;
+    }
+
+    function setRoundDuration(uint256 _duration) public onlyOwner {
+        duration = _duration;
+    }
+
+    function coordinatorQuit() public onlyCoordinator {
+        coordinator = address(0);
+        endRound();
+    }
+
+    modifier onlyCoordinator() {
+        // Enhancement: Get fancy to handle meta-tx
+        // like how OpenZeppelin Ownable does via GSN/Context
+        require(msg.sender == coordinator, 'Sender is not the coordinator');
+        _;
+    }
+
+    modifier onlyWitness() {
+        require(msg.sender == witness, 'Sender is not the witness');
+        _;
+    }
+
+    function witnessQuit() public onlyWitness {
+        witness = address(0);
+        newMaci = false;
+    }
 }
