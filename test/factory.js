@@ -1,16 +1,16 @@
-import {waffle} from '@nomiclabs/buidler';
+import { waffle } from '@nomiclabs/buidler';
 import chai from 'chai';
-import {deployContract, solidity} from 'ethereum-waffle';
-import {ethers} from 'ethers';
+import { deployContract, solidity } from 'ethereum-waffle';
+import { ethers } from 'ethers';
 
 import RoundArtifact from '../build/contracts/FundingRound.json';
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
 import TokenArtifact from '../build/contracts/AnyOldERC20Token.json';
 
-import {Keypair, Command, PubKey, PrivKey} from 'maci/domainobjs/js/index.js';
+import { Keypair, Command, PubKey, PrivKey } from 'maci/domainobjs/js/index.js';
 
 chai.use(solidity);
-const {expect} = chai;
+const { expect } = chai;
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
@@ -61,7 +61,7 @@ describe('Funding Round Factory', () => {
   it('allows user to contribute to current round', async () => {
     const contractAddress = await factory.currentRound();
     console.log('About to build contract');
-    console.log({contractAddress});
+    console.log({ contractAddress });
 
     const round = new ethers.Contract(
       contractAddress,
@@ -78,14 +78,15 @@ describe('Funding Round Factory', () => {
 
     const keypair = new Keypair();
 
-    const {pubKey: rawPubKey, privKey: rawPrivKey} = keypair;
+    const { pubKey: rawPubKey, privKey: rawPrivKey } = keypair;
     const pubKey = new PubKey(rawPubKey);
     const privKey = new PrivKey(rawPrivKey);
-    console.log({privKey});
-    console.log({pubKey});
+    console.log({ privKey });
+    console.log({ pubKey });
 
-    const ecdhSharedKey = Keypair.genEcdhSharedKey(privKey, pubKey);
-    console.log({ecdhSharedKey});
+    const ecdhSharedKey = Keypair.genEcdhSharedKey(rawPrivKey, rawPubKey);
+    // const ecdhSharedKey = Keypair.genEcdhSharedKey(privKey, pubKey);
+    console.log({ ecdhSharedKey });
 
     //
     // Command params:
@@ -108,15 +109,15 @@ describe('Funding Round Factory', () => {
       newVoteWeight: 1,
       nonce: 1
     });
-    // console.log({ command });
+    console.log({ command });
 
     // Encrypt takes args
     // signature: Signature,
     // sharedKey: EcdhSharedKey,
     const signature = command.sign(privKey);
-    console.log({signature});
+    console.log({ signature });
     const message = command.encrypt(signature, ecdhSharedKey);
-    console.log({message});
+    console.log({ message });
 
     // contribute args:
     // - uint256[] memory message,
