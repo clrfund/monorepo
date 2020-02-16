@@ -15,7 +15,9 @@ describe('Funding Round Factory', () => {
   let factory;
 
   beforeEach(async () => {
-    factory = await deployContract(deployer, FactoryArtifact, [coordinator.address]);
+    factory = await deployContract(deployer, FactoryArtifact, [
+      coordinator.address
+    ]);
 
     expect(factory.address).to.properAddress;
   });
@@ -43,7 +45,6 @@ describe('Funding Round Factory', () => {
   // it('reverts if nextRound is called and newMaci != true', async () => {});
 
   // it('reverts if nextRound is called and coordinator == null', async () => {});
-
 
   // TODO: sendFundsToCurrentRound deprecated for `contribute`
   // it('moves funds to current funding round when calling sendFundsToCurrentRound in previous round', async () => {});

@@ -11,6 +11,7 @@ import './FundingRound.sol';
 contract FundingRoundFactory is Ownable {
   address public coordinator;
   address public maci;
+  address public token;
   address public witness;
 
   // address private currentRound;
@@ -26,6 +27,16 @@ contract FundingRoundFactory is Ownable {
   uint256 private roundEndBlockNumber;
 
   mapping(address => address) private maciByRound;
+
+  event NewToken(address _token);
+  event NewRound(address _round);
+  event RoundFinalized();
+  event CoordinatorTransferred(address _newCoordinator);
+  event WitnessTransferred(address _newWitness);
+  event NewRoundDuration(uint256 _duration);
+  event MaciSet(address _maci);
+  event NewMaciRequired();
+  event RoundFinalized(address _round);
 
   constructor(address _firstCoordinator) public {
     setCoordinator(_firstCoordinator);
@@ -51,7 +62,7 @@ contract FundingRoundFactory is Ownable {
   // deploy a new contract
 
   function deployNewRound() internal returns (FundingRound newContract) {
-    FundingRound fr = new FundingRound(this);
+    FundingRound fr = new FundingRound(this, token);
     // console.log("deployed");
     return fr;
   }
@@ -66,6 +77,7 @@ contract FundingRoundFactory is Ownable {
       FundingRound nextRound = deployNewRound();
       previousRound = currentRound;
       currentRound = nextRound;
+      emit NewRound(address(currentRound));
       roundEndBlockNumber = block.number + duration; // TODO: Use SafeMath
     } else {
       console.log('Conditional failed');
@@ -77,6 +89,7 @@ contract FundingRoundFactory is Ownable {
   function setMACI(address _maci) public onlyWitness {
     maci = _maci;
     newMaci = true;
+    emit MaciSet(_maci);
   }
 
   function transferMatchingFunds() public onlyOwner returns (bool allDone) {
@@ -94,12 +107,13 @@ contract FundingRoundFactory is Ownable {
       newCoordinatorSet = false;
       newMaci = false;
       previousRoundValid = false;
-      // emit NewMaciRequired();
+      emit NewMaciRequired();
       return false; // returning early
     }
     // In a normal scenario, there is a newMaci
     if (newMaci && previousRoundValid) {
       // TODO: Send DAI balance of this to previousRound
+      emit RoundFinalized(address(previousRound));
       newMaci = false;
       console.log('new maci with valid round');
       return true;
@@ -114,25 +128,37 @@ contract FundingRoundFactory is Ownable {
   // to be called setOwner based on the other names here
 
   // DONE:
+  function setToken(address _token) public onlyOwner {
+    token = _token;
+    emit NewToken(_coordinator);
+  }
+
+  // DONE:
   function setCoordinator(address _coordinator) public onlyOwner {
     coordinator = _coordinator;
     newCoordinatorSet = true;
+    emit CoordinatorTransferred(_coordinator);
     endRound();
   }
 
   // DONE:
   function setWitness(address _witness) public onlyOwner {
     witness = _witness;
+    emit WitnessTransferred(_witness);
   }
 
   // DONE:
   function setRoundDuration(uint256 _duration) public onlyOwner {
     duration = _duration;
+    emit NewRoundDuration(_duration);
   }
 
   // DONE:
   function coordinatorQuit() public onlyCoordinator {
     coordinator = address(0);
+    // The fact that they quit is obvious from
+    // the address being 0x0
+    emit CoordinatorTransferred(coordinator);
     endRound();
   }
 
@@ -153,6 +179,9 @@ contract FundingRoundFactory is Ownable {
   // DONE:
   function witnessQuit() public onlyWitness {
     witness = address(0);
+    // The fact that they quit is obvious from
+    // the address being 0x0
+    emit WitnessTransferred(witness);
     newMaci = false;
   }
 }
