@@ -16,7 +16,7 @@
     "lint:frontend": "yarn lint:frontend:prettier && yarn lint:frontend:eslint",
     "lint:frontend:prettier": "prettier --write 'src/**/*.{js,ts}'",
     "lint:frontend:eslint": "eslint --ext .js,.ts,.vue --ignore-path .gitignore ./",
-    "test": "yarn compile && buidler test",
+    "test": "buidler test",
     "web": "quasar dev"
   },
   "dependencies": {

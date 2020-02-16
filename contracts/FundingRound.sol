@@ -18,7 +18,7 @@ contract FundingRound {
         // Send relative percentage of DAI balance to recipient
     }
 
-    function contribute(uint256[] memory message, encPubKey, uint256 amount)
+    function contribute(uint256[] memory message, uint256[] memory encPubKey, uint256 amount)
         public
     {
         // message: encrypted message to be sent to MACI. This is generated using the Command class and Command.encrypt .  More information on using Command here.
@@ -49,7 +49,7 @@ contract FundingRound {
         returns (uint256[] memory _message)
     {
         // TODO: Get the message from storage
-        uint256[] message;
+        uint256[] memory message;
         return message; // returns encrypted message for participant
     }
 
