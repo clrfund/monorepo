@@ -78,7 +78,7 @@ contract FundingRoundFactory is Ownable {
       newCoordinatorSet == true ||
       coordinator == address(0)
     ) {
-      console.log('Conditional passed');
+      // console.log('Conditional passed');
       FundingRound nextRound = deployNewRound();
       previousRound = currentRound;
       currentRound = nextRound;

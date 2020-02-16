@@ -1,18 +1,19 @@
-import { waffle } from '@nomiclabs/buidler';
+import {waffle} from '@nomiclabs/buidler';
 import chai from 'chai';
-import { deployContract, solidity } from 'ethereum-waffle';
-import Web3 from 'web3';
+import {deployContract, solidity} from 'ethereum-waffle';
+import {ethers} from 'ethers';
 
 import RoundArtifact from '../build/contracts/FundingRound.json';
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
 import TokenArtifact from '../build/contracts/AnyOldERC20Token.json';
 
+import {Keypair, Command, PubKey, PrivKey} from 'maci/domainobjs/js/index.js';
+
 chai.use(solidity);
-const { expect } = chai;
+const {expect} = chai;
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
-  const web3 = new Web3(provider);
 
   const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();
 
@@ -38,7 +39,7 @@ describe('Funding Round Factory', () => {
     tokenContractAsContributor = token.connect(contributor);
 
     const contractImApproving = await factory.currentRound();
-    console.log({ contractImApproving });
+    // console.log({ contractImApproving });
     const amountToApprove = '100000';
 
     // Send this tx as the contributor
@@ -46,7 +47,7 @@ describe('Funding Round Factory', () => {
       contractImApproving,
       amountToApprove
     );
-    console.log('Approved');
+    // console.log('Approved');
   });
 
   it('has new round running', async () => {
@@ -58,10 +59,69 @@ describe('Funding Round Factory', () => {
   });
 
   it('allows user to contribute to current round', async () => {
-    const round = await new web3.eth.Contract(
+    const contractAddress = await factory.currentRound();
+    console.log('About to build contract');
+    console.log({contractAddress});
+
+    const round = new ethers.Contract(
+      contractAddress,
       RoundArtifact.abi,
-      await factory.currentRound()
+      provider
     );
+
+    // const round = ethers.getContract(
+    //   contractAddress,
+    //   RoundArtifact.abi,
+    //   provider
+    // );
+    // console.log({ round });
+
+    const keypair = new Keypair();
+
+    const {pubKey: rawPubKey, privKey: rawPrivKey} = keypair;
+    const pubKey = new PubKey(rawPubKey);
+    const privKey = new PrivKey(rawPrivKey);
+    console.log({privKey});
+    console.log({pubKey});
+
+    const ecdhSharedKey = Keypair.genEcdhSharedKey(privKey, pubKey);
+    console.log({ecdhSharedKey});
+
+    //
+    // Command params:
+    //
+    // stateIndex: The unique number starting with 1
+    //  = 1
+    // newPubKey is your new public key if you changed your keypair.
+    //  = Public key from having instantiated keypair thing
+    // voteOptionIndex is the user’s vote for a proposal. Proposals are represented by integers starting with 1.  (1-16 for now)
+    //  = 1
+    // newVoteWeight The **square root** of the amount assigned
+    //  = 1
+    // Nonce can just be 0 and 1. (old keypair is 0, new keypair is 1).
+    //  = 1
+
+    const command = new Command({
+      stateIndex: 1,
+      newPubKey: pubKey,
+      voteOptionIndex: 1,
+      newVoteWeight: 1,
+      nonce: 1
+    });
+    // console.log({ command });
+
+    // Encrypt takes args
+    // signature: Signature,
+    // sharedKey: EcdhSharedKey,
+    const signature = command.sign(privKey);
+    console.log({signature});
+    const message = command.encrypt(signature, ecdhSharedKey);
+    console.log({message});
+
+    // contribute args:
+    // - uint256[] memory message,
+    // - PubKey memory pubKey,
+    // - uint256 amount
     // await round.contribute();
   });
 

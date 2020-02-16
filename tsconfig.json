@@ -11,12 +11,9 @@
     "baseUrl": ".",
     "outDir": "dist/spa",
     "resolveJsonModule": true,
-    "types": [
-      "quasar",
-      "node"
-    ]
+    "types": ["quasar", "node"]
   },
-  "include": ["./scripts", "./test", "./src"],
+  "include": ["./scripts", "./src"],
   "files": [
     "./buidler.config.ts",
     "node_modules/@nomiclabs/buidler-ethers/src/type-extensions.d.ts",

@@ -1,4 +1,5 @@
 pragma solidity ^0.6.2;
+pragma experimental ABIEncoderV2;
 
 import '@nomiclabs/buidler/console.sol';
 
@@ -7,6 +8,8 @@ import './FundingRoundFactory.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
+
+// import 'maci/contracts/sol/DomainObjs.sol';
 
 contract FundingRound {
   using SafeERC20 for IERC20;
@@ -21,26 +24,44 @@ contract FundingRound {
   event FundsClaimed(address _recipient);
   event NewContribution(address indexed _sender, uint256 amount);
 
+  uint256 public counter;
+
+  struct PubKey {
+    uint256 x;
+    uint256 y;
+  }
+
   constructor(FundingRoundFactory _parent, address _nativeToken) public {
+    counter = 1;
     parent = _parent;
     nativeToken = IERC20(_nativeToken);
   }
 
   function claimFunds(address recipient) public {
     emit FundsClaimed(recipient);
-    // TODO: Implement me
+    // Know the maci address so I can call function to
+    // getTotalByVoteOptionId which uses my internal
+    // mapping to address
     // Send relative percentage of DAI balance to recipient
   }
 
+  function setProject() public {}
+
+  // Using DomainObjs.sol as a reference for the data structure for pubKey
   function contribute(
     uint256[] memory message,
-    uint256[] memory encPubKey,
+    PubKey memory pubKey,
     uint256 amount
   ) public {
-    // message: encrypted message to be sent to MACI. This is generated using the Command class and Command.encrypt .  More information on using Command here.
-    // encPubKey: encrypted public key. Use Keypair to create a keypair, then use Keypair.genEcdhSharedKey and supply the private key from the current keypair
+    // message: encrypted message to be sent to MACI.
+    // This is generated using the Command class and Command.encrypt.
+    // More information on using Command here.
+    // pubKey: encrypted public key.
+    // Use Keypair to create a keypair, then use Keypair.genEcdhSharedKey
+    // and supply the private key from the current keypair
 
-    // Both parameters are created using functions from this maci javascript library.
+    // Both parameters are created using functions from this maci
+    // javascript library.
 
     // FundingRound thisContract = FundingRound(this);
     address thisContract = address(this);

@@ -55,6 +55,7 @@
     "eslint-plugin-vue": "^5.0.0",
     "ethereum-waffle": "^2.3.2",
     "ganache-cli": "^6.9.0",
+    "maci": "^0.0.1",
     "npm-check-updates": "^4.0.1",
     "prettier-plugin-solidity": "^1.0.0-alpha.38",
     "solhint-plugin-prettier": "^0.0.4",
