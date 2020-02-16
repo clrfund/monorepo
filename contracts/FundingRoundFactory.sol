@@ -5,13 +5,18 @@ import '@nomiclabs/buidler/console.sol';
 import '@openzeppelin/contracts/ownership/Ownable.sol';
 import './FundingRound.sol';
 
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
+
 
 // TODO: Import SafeMath
 
 contract FundingRoundFactory is Ownable {
+  using SafeERC20 for IERC20;
+
   address public coordinator;
   address public maci;
-  address public token;
+  IERC20 public token;
   address public witness;
 
   // address private currentRound;
@@ -62,7 +67,7 @@ contract FundingRoundFactory is Ownable {
   // deploy a new contract
 
   function deployNewRound() internal returns (FundingRound newContract) {
-    FundingRound fr = new FundingRound(this, token);
+    FundingRound fr = new FundingRound(this, address(token));
     // console.log("deployed");
     return fr;
   }
@@ -103,7 +108,10 @@ contract FundingRoundFactory is Ownable {
       console.log('new coordinator');
       // Set things up for a "redo"
       // Get money out of here and make it a no-op
-      // TODO: Send DAI balance of previousRound to currentRound
+
+      uint256 amount = token.balanceOf(address(previousRound));
+      _deliverTokens(address(previousRound), address(currentRound), amount);
+
       newCoordinatorSet = false;
       newMaci = false;
       previousRoundValid = false;
@@ -112,7 +120,9 @@ contract FundingRoundFactory is Ownable {
     }
     // In a normal scenario, there is a newMaci
     if (newMaci && previousRoundValid) {
-      // TODO: Send DAI balance of this to previousRound
+      uint256 amount = token.balanceOf(address(this));
+      _deliverTokens(address(this), address(previousRound), amount);
+
       emit RoundFinalized(address(previousRound));
       newMaci = false;
       console.log('new maci with valid round');
@@ -129,8 +139,8 @@ contract FundingRoundFactory is Ownable {
 
   // DONE:
   function setToken(address _token) public onlyOwner {
-    token = _token;
-    emit NewToken(_coordinator);
+    token = IERC20(_token);
+    emit NewToken(_token);
   }
 
   // DONE:
@@ -183,5 +193,11 @@ contract FundingRoundFactory is Ownable {
     // the address being 0x0
     emit WitnessTransferred(witness);
     newMaci = false;
+  }
+
+  function _deliverTokens(address from, address to, uint256 tokenAmount)
+    internal
+  {
+    token.transferFrom(from, to, tokenAmount);
   }
 }
