@@ -16,8 +16,8 @@ contract FundingRoundFactory is Ownable {
 
   // address private currentRound;
   // address private previousRound;
-  FundingRound private currentRound;
-  FundingRound private previousRound;
+  FundingRound public currentRound;
+  FundingRound public previousRound;
 
   bool private newMaci;
   bool private previousRoundValid;
