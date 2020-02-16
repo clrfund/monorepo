@@ -27,17 +27,31 @@ contract FundingRoundFactory is Ownable {
 
   mapping(address => address) private maciByRound;
 
-  // TODO: Add constructor
-  // Constructor should start a new round
+  constructor(address _firstCoordinator) public {
+    setCoordinator(_firstCoordinator);
+    endRound();
+  }
 
-  function getMaci(address round) public view returns (address maci) {
+  function getCurrentRound() public view returns (FundingRound _currentRound) {
+    return currentRound;
+  }
+
+  function getPreviousRound()
+    public
+    view
+    returns (FundingRound _previousRound)
+  {
+    return previousRound;
+  }
+
+  function getMaci(address round) public view returns (address _maci) {
     return maciByRound[round];
   }
 
   // deploy a new contract
 
   function deployNewRound() internal returns (FundingRound newContract) {
-    FundingRound fr = new FundingRound();
+    FundingRound fr = new FundingRound(this);
     // console.log("deployed");
     return fr;
   }
@@ -48,11 +62,13 @@ contract FundingRoundFactory is Ownable {
       newCoordinatorSet == true ||
       coordinator == address(0)
     ) {
+      console.log('Conditional passed');
       FundingRound nextRound = deployNewRound();
       previousRound = currentRound;
       currentRound = nextRound;
       roundEndBlockNumber = block.number + duration; // TODO: Use SafeMath
     } else {
+      console.log('Conditional failed');
       revert('Invalid end round conditions');
     }
   }
@@ -74,15 +90,16 @@ contract FundingRoundFactory is Ownable {
       console.log('new coordinator');
       // Set things up for a "redo"
       // Get money out of here and make it a no-op
-      // Send DAI balance of previousRound to currentRound
+      // TODO: Send DAI balance of previousRound to currentRound
       newCoordinatorSet = false;
       newMaci = false;
       previousRoundValid = false;
       // emit NewMaciRequired();
       return false; // returning early
     }
+    // In a normal scenario, there is a newMaci
     if (newMaci && previousRoundValid) {
-      // Send DAI balance of this to previousRound
+      // TODO: Send DAI balance of this to previousRound
       newMaci = false;
       console.log('new maci with valid round');
       return true;
@@ -96,25 +113,30 @@ contract FundingRoundFactory is Ownable {
   // Use `transferOwnership` from Ownable for what you might have expected
   // to be called setOwner based on the other names here
 
+  // DONE:
   function setCoordinator(address _coordinator) public onlyOwner {
     coordinator = _coordinator;
     newCoordinatorSet = true;
     endRound();
   }
 
+  // DONE:
   function setWitness(address _witness) public onlyOwner {
     witness = _witness;
   }
 
+  // DONE:
   function setRoundDuration(uint256 _duration) public onlyOwner {
     duration = _duration;
   }
 
+  // DONE:
   function coordinatorQuit() public onlyCoordinator {
     coordinator = address(0);
     endRound();
   }
 
+  // DONE:
   modifier onlyCoordinator() {
     // Enhancement: Get fancy to handle meta-tx
     // like how OpenZeppelin Ownable does via GSN/Context
@@ -122,11 +144,13 @@ contract FundingRoundFactory is Ownable {
     _;
   }
 
+  // DONE:
   modifier onlyWitness() {
     require(msg.sender == witness, 'Sender is not the witness');
     _;
   }
 
+  // DONE:
   function witnessQuit() public onlyWitness {
     witness = address(0);
     newMaci = false;
