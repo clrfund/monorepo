@@ -6,7 +6,9 @@
   "author": "Tommy Cox <tommy.cox@protonmail.com>",
   "scripts": {
     "build": "yarn compile && quasar build",
-    "compile": "rm -rf build && oz compile && buidler typechain",
+    "compile": "yarn compile:buidler",
+    "compile:buidler": "buidler compile && buidler typechain",
+    "compile:oz": "rm -rf build && oz compile && buidler typechain",
     "dev": "rm -rf build && oz create && buidler typechain && quasar dev",
     "ganache": "ganache-cli -d",
     "lint:contracts:prettier": "prettier --write 'test/**/*.{js,ts}' 'contracts/**/*.sol'",
