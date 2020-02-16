@@ -17,6 +17,9 @@
         "enabled": false,
         "runs": "200"
       }
+    },
+    "typechain": {
+      "enabled": true
     }
   }
 }
