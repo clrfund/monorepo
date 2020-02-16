@@ -9,9 +9,9 @@ import './FundingRound.sol';
 // TODO: Import SafeMath
 
 contract FundingRoundFactory is Ownable {
-  address private coordinator;
-  address private maci;
-  address private witness;
+  address public coordinator;
+  address public maci;
+  address public witness;
 
   // address private currentRound;
   // address private previousRound;

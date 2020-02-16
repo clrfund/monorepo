@@ -10,12 +10,13 @@ const {expect} = chai;
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
 
-  const [wallet] = provider.getWallets();
+  const [deployer, coordinator] = provider.getWallets();
 
   beforeEach(async () => {
-    const factory = await deployContract(wallet, FactoryArtifact);
+    const factory = await deployContract(deployer, FactoryArtifact, [coordinator.address]);
 
     expect(factory.address).to.properAddress;
+    expect(factory.coordinator()).to.eq(coordinator.address);
   });
 
   it('has new round running', async () => {});
