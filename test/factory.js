@@ -1,7 +1,9 @@
 import {waffle} from '@nomiclabs/buidler';
 import chai from 'chai';
 import {deployContract, solidity} from 'ethereum-waffle';
+import Web3 from 'web3'
 
+import RoundArtifact from '../build/contracts/FundingRound.json';
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
 
 chai.use(solidity);
@@ -9,8 +11,9 @@ const {expect} = chai;
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
+  const web3 = new Web3(provider);
 
-  const [deployer, coordinator] = provider.getWallets();
+  const [user, deployer, coordinator] = provider.getWallets();
 
   let factory;
 
@@ -22,13 +25,18 @@ describe('Funding Round Factory', () => {
     expect(factory.address).to.properAddress;
   });
 
-  it('has new round running', async () => {});
+  it('has new round running', async () => {
+    expect(await factory.currentRound()).to.properAddress;
+  });
 
   it('set contract owner/witness/coordinator/round duration correctly', async () => {
     expect(await factory.coordinator()).to.eq(coordinator.address);
   });
 
-  it('allows user to contribute to current round', async () => {});
+  it('allows user to contribute to current round', async () => {
+    const round = await new web3.eth.Contract(RoundArtifact.abi, await factory.currentRound());
+    // await round.contribute();
+  });
 
   it('allows endRound to be called after round duration', async () => {});
 
