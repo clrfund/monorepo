@@ -4,13 +4,22 @@ import '@nomiclabs/buidler/console.sol';
 
 import './FundingRoundFactory.sol';
 
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
+
 contract FundingRound {
+    using SafeERC20 for IERC20;
+
+    // ERC20 token being used
+    IERC20 public token;
+
     mapping(address => uint256[]) private encryptedVote;
     mapping(address => uint256) private totalAmountOfDAI;
     FundingRoundFactory private parent;
 
-    constructor(FundingRoundFactory _parent) public {
+    constructor(FundingRoundFactory _parent, address _token) public {
         parent = _parent;
+        token = IERC20(_token);
     }
 
     function claimFunds(address recipient) public {
@@ -18,9 +27,11 @@ contract FundingRound {
         // Send relative percentage of DAI balance to recipient
     }
 
-    function contribute(uint256[] memory message, uint256[] memory encPubKey, uint256 amount)
-        public
-    {
+    function contribute(
+        uint256[] memory message,
+        uint256[] memory encPubKey,
+        uint256 amount
+    ) public {
         // message: encrypted message to be sent to MACI. This is generated using the Command class and Command.encrypt .  More information on using Command here.
         // encPubKey: encrypted public key. Use Keypair to create a keypair, then use Keypair.genEcdhSharedKey and supply the private key from the current keypair
 
@@ -40,6 +51,8 @@ contract FundingRound {
         }
 
         // DAI is transferred here
+        // Transfer the token as an internal tx if ERC20 approved
+        _deliverTokens(msg.sender, address(this), amount);
 
     }
 
@@ -51,6 +64,12 @@ contract FundingRound {
         // TODO: Get the message from storage
         uint256[] memory message;
         return message; // returns encrypted message for participant
+    }
+
+    function _deliverTokens(address from, address to, uint256 tokenAmount)
+        internal
+    {
+        token.transferFrom(from, to, tokenAmount);
     }
 
 }

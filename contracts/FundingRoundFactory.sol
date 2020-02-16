@@ -11,6 +11,7 @@ import './FundingRound.sol';
 contract FundingRoundFactory is Ownable {
   address public coordinator;
   address public maci;
+  address public token;
   address public witness;
 
   // address private currentRound;
@@ -51,7 +52,7 @@ contract FundingRoundFactory is Ownable {
   // deploy a new contract
 
   function deployNewRound() internal returns (FundingRound newContract) {
-    FundingRound fr = new FundingRound(this);
+    FundingRound fr = new FundingRound(this, );
     // console.log("deployed");
     return fr;
   }
@@ -112,6 +113,11 @@ contract FundingRoundFactory is Ownable {
 
   // Use `transferOwnership` from Ownable for what you might have expected
   // to be called setOwner based on the other names here
+
+  // DONE:
+  function setToken(address _token) public onlyOwner {
+    token = _token;
+  }
 
   // DONE:
   function setCoordinator(address _coordinator) public onlyOwner {
