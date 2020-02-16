@@ -1,27 +1,21 @@
-import {waffle} from '@nomiclabs/buidler';
+import { waffle } from '@nomiclabs/buidler';
 import chai from 'chai';
-import {deployContract, solidity} from 'ethereum-waffle';
+import { deployContract, solidity } from 'ethereum-waffle';
 
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
-import {FundingRoundFactory} from '../build/types/FundingRoundFactory';
 
 chai.use(solidity);
-const {expect} = chai;
+const { expect } = chai;
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
 
   const [wallet] = provider.getWallets();
 
-  let factory: FundingRoundFactory;
-
   beforeEach(async () => {
-    factory = (await deployContract(
-      wallet,
-      FactoryArtifact
-    )) as FundingRoundFactory;
+    const factory = await deployContract(wallet, FactoryArtifact);
 
-    expect(factory).to.properAddress;
+    expect(factory.address).to.properAddress;
   });
 
   it('has new round running', async () => {});
