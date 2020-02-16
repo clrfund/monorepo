@@ -1,11 +1,11 @@
-import { waffle } from '@nomiclabs/buidler';
+import {waffle} from '@nomiclabs/buidler';
 import chai from 'chai';
-import { deployContract, solidity } from 'ethereum-waffle';
+import {deployContract, solidity} from 'ethereum-waffle';
 
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
 
 chai.use(solidity);
-const { expect } = chai;
+const {expect} = chai;
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
