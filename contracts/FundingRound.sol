@@ -12,7 +12,7 @@ contract FundingRound {
   using SafeERC20 for IERC20;
 
   // ERC20 token being used
-  IERC20 public token;
+  IERC20 public nativeToken;
 
   mapping(address => uint256[]) private encryptedVote;
   mapping(address => uint256) private totalAmountOfDAI;
@@ -21,9 +21,9 @@ contract FundingRound {
   event FundsClaimed(address _recipient);
   event NewContribution(address indexed _sender, uint256 amount);
 
-  constructor(FundingRoundFactory _parent, address _token) public {
+  constructor(FundingRoundFactory _parent, address _nativeToken) public {
     parent = _parent;
-    token = IERC20(_token);
+    nativeToken = IERC20(_nativeToken);
   }
 
   function claimFunds(address recipient) public {
@@ -56,7 +56,7 @@ contract FundingRound {
     }
 
     // DAI is transferred here
-    // Transfer the token as an internal tx if ERC20 approved
+    // Transfer the nativeToken as an internal tx if ERC20 approved
     _deliverTokens(msg.sender, address(this), amount);
     emit NewContribution(msg.sender, amount);
   }
@@ -74,6 +74,6 @@ contract FundingRound {
   function _deliverTokens(address from, address to, uint256 tokenAmount)
     internal
   {
-    token.transferFrom(from, to, tokenAmount);
+    nativeToken.transferFrom(from, to, tokenAmount);
   }
 }

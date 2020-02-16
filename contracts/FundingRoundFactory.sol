@@ -16,7 +16,7 @@ contract FundingRoundFactory is Ownable {
 
   address public coordinator;
   address public maci;
-  IERC20 public token;
+  IERC20 public nativeToken;
   address public witness;
 
   // address private currentRound;
@@ -67,7 +67,7 @@ contract FundingRoundFactory is Ownable {
   // deploy a new contract
 
   function deployNewRound() internal returns (FundingRound newContract) {
-    FundingRound fr = new FundingRound(this, address(token));
+    FundingRound fr = new FundingRound(this, address(nativeToken));
     // console.log("deployed");
     return fr;
   }
@@ -109,7 +109,7 @@ contract FundingRoundFactory is Ownable {
       // Set things up for a "redo"
       // Get money out of here and make it a no-op
 
-      uint256 amount = token.balanceOf(address(previousRound));
+      uint256 amount = nativeToken.balanceOf(address(previousRound));
       _deliverTokens(address(previousRound), address(currentRound), amount);
 
       newCoordinatorSet = false;
@@ -120,7 +120,7 @@ contract FundingRoundFactory is Ownable {
     }
     // In a normal scenario, there is a newMaci
     if (newMaci && previousRoundValid) {
-      uint256 amount = token.balanceOf(address(this));
+      uint256 amount = nativeToken.balanceOf(address(this));
       _deliverTokens(address(this), address(previousRound), amount);
 
       emit RoundFinalized(address(previousRound));
@@ -139,7 +139,7 @@ contract FundingRoundFactory is Ownable {
 
   // DONE:
   function setToken(address _token) public onlyOwner {
-    token = IERC20(_token);
+    nativeToken = IERC20(_token);
     emit NewToken(_token);
   }
 
@@ -198,6 +198,6 @@ contract FundingRoundFactory is Ownable {
   function _deliverTokens(address from, address to, uint256 tokenAmount)
     internal
   {
-    token.transferFrom(from, to, tokenAmount);
+    nativeToken.transferFrom(from, to, tokenAmount);
   }
 }

@@ -1,21 +1,24 @@
-import {waffle} from '@nomiclabs/buidler';
+import { waffle } from '@nomiclabs/buidler';
 import chai from 'chai';
-import {deployContract, solidity} from 'ethereum-waffle';
-import Web3 from 'web3'
+import { deployContract, solidity } from 'ethereum-waffle';
+import Web3 from 'web3';
 
 import RoundArtifact from '../build/contracts/FundingRound.json';
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
+import TokenArtifact from '../build/contracts/AnyOldERC20Token.json';
 
 chai.use(solidity);
-const {expect} = chai;
+const { expect } = chai;
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
   const web3 = new Web3(provider);
 
-  const [user, deployer, coordinator] = provider.getWallets();
+  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();
 
   let factory;
+  let token;
+  let tokenContractAsContributor;
 
   beforeEach(async () => {
     factory = await deployContract(deployer, FactoryArtifact, [
@@ -23,6 +26,27 @@ describe('Funding Round Factory', () => {
     ]);
 
     expect(factory.address).to.properAddress;
+
+    const initialSupply = '10000000000';
+
+    token = await deployContract(deployer, TokenArtifact, [initialSupply]);
+
+    expect(token.address).to.properAddress;
+
+    // Get a reference to the token contract where msg.sender
+    // is the contributor when it interacts with that contract
+    tokenContractAsContributor = token.connect(contributor);
+
+    const contractImApproving = await factory.currentRound();
+    console.log({ contractImApproving });
+    const amountToApprove = '100000';
+
+    // Send this tx as the contributor
+    await tokenContractAsContributor.approve(
+      contractImApproving,
+      amountToApprove
+    );
+    console.log('Approved');
   });
 
   it('has new round running', async () => {
@@ -34,7 +58,10 @@ describe('Funding Round Factory', () => {
   });
 
   it('allows user to contribute to current round', async () => {
-    const round = await new web3.eth.Contract(RoundArtifact.abi, await factory.currentRound());
+    const round = await new web3.eth.Contract(
+      RoundArtifact.abi,
+      await factory.currentRound()
+    );
     // await round.contribute();
   });
 
