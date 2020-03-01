@@ -12,8 +12,8 @@ contract Counter {
   }
 
   function countUp() public returns (uint256) {
-    console.log("countUp: count =", count);
     uint256 newCount = count + 1;
+    console.log("countUp: newCount =", newCount);
     require(newCount > count, "Uint256 overflow");
 
     count = newCount;
@@ -23,8 +23,8 @@ contract Counter {
   }
 
   function countDown() public returns (uint256) {
-    console.log("countDown: count =", count);
     uint256 newCount = count - 1;
+    console.log("countDown: newCount =", newCount);
     require(newCount < count, "Uint256 underflow");
 
     count = newCount;

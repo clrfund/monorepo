@@ -34,6 +34,7 @@
     </v-app-bar>
 
     <v-content>
+      <Counter />
       <HelloWorld />
     </v-content>
   </v-app>
@@ -41,17 +42,15 @@
 
 <script lang="ts">
 import Vue from "vue";
-import HelloWorld from "./components/HelloWorld.vue";
+import Counter from "@/components/Counter.vue";
+import HelloWorld from "@/components/HelloWorld.vue";
 
 export default Vue.extend({
   name: "App",
 
   components: {
+    Counter,
     HelloWorld
-  },
-
-  data: () => ({
-    //
-  })
+  }
 });
 </script>
