@@ -3,7 +3,7 @@ pragma solidity ^0.6.3;
 import "@nomiclabs/buidler/console.sol";
 
 contract Counter {
-  uint256 count = 0;
+  uint256 public count;
 
   event CountedTo(uint256 number);
 
