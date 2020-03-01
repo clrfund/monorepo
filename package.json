@@ -6,8 +6,10 @@
     "build:contracts": "yarn clean && buidler compile && buidler typechain",
     "build:web": "vue-cli-service build",
     "clean": "rm -rf cache && rm -rf build",
+    "deploy:local": "yarn build:contracts && buidler run --network localhost scripts/deploy.ts",
     "lint": "vue-cli-service lint",
-    "serve:web": "vue-cli-service serve",
+    "start:node": "buidler node",
+    "start:web": "yarn deploy:local && vue-cli-service serve",
     "test:contracts": "yarn build:contracts && buidler test",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit"
