@@ -22,3 +22,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Build specific files
+build
+cache
