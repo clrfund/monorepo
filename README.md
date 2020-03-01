@@ -1,6 +1,4 @@
-# Curve.Press (curvepress-web)
-
-Vue + ethers.js UI for easily creating bonding curve personal tokens that function to both fundraise and valuate participants.
+# Buidler + ethers.js + TypeChain + Vue (TypeScript)
 
 ## Project setup
 ```
