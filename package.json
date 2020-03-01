@@ -23,6 +23,8 @@
   },
   "devDependencies": {
     "@nomiclabs/buidler": "^1.2.0",
+    "@nomiclabs/buidler-ethers": "^1.2.0",
+    "@nomiclabs/buidler-waffle": "^1.2.0",
     "@types/chai": "^4.2.8",
     "@types/mocha": "^5.2.4",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
@@ -43,6 +45,8 @@
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-vue": "^6.1.2",
+    "ethereum-waffle": "^2.3.2",
+    "ethers": "^4.0.45",
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
     "sass": "^1.25.0",
