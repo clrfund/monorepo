@@ -4,7 +4,7 @@
     "Counter": "Counter"
   },
   "dependencies": {},
-  "name": "buidler-ethers-typechain-vue",
+  "name": "buidler-waffle-typechain-vue",
   "version": "0.1.0",
   "compiler": {
     "compilerSettings": {

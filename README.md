@@ -12,11 +12,11 @@ Finally, there's lots of under the hood goodies that come pre-configured to buil
 
 Next on deck: gasless transactions ⛽🔥
 
-Ready to develop like the pros? [Use this template to get started!](https://github.com/proofoftom/buidler-ethers-typechain-vue/generate) 🚀
+Ready to develop like the pros? [Use this template to get started!](https://github.com/proofoftom/buidler-waffle-typechain-vue/generate) 🚀
 
 ## Using the template
 
-Once you've [generated a project](https://github.com/proofoftom/buidler-ethers-typechain-vue/generate) and cloned it locally:
+Once you've [generated a project](https://github.com/proofoftom/buidler-waffle-typechain-vue/generate) and cloned it locally:
 
 ### Install the dependencies
 ```
