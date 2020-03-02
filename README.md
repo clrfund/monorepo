@@ -1,14 +1,18 @@
-# Buidler + ethers.js + TypeChain + Vue (TypeScript)
+# Buidler + Waffle + TypeChain + Vue (TypeScript)
 
-Inspired by [The New Solidity Dev Stack: Buidler + Ethers + Waffle + Typescript [Tutorial]](https://hackernoon.com/the-new-solidity-dev-stack-buidler-ethers-waffle-typescript-706830w0), this is a pre-configured starter kit that uses the latest and greatest tool set to go from zero to proof of concept in a quarter of the time 🚀, with 10x the type safety 🛡️ and debugging capabilities 🐞.
+Inspired by [The New Solidity Dev Stack: Buidler + Ethers + Waffle + Typescript](https://hackernoon.com/the-new-solidity-dev-stack-buidler-ethers-waffle-typescript-706830w0), this is a pre-configured starter kit that uses the latest and greatest tool set to go from zero to hero 💪 in a quarter of the time, with 10x the type safety 🛡️ and debugging 🐞 capabilities.
 
-Leverage best practice tools such as Buidler 🔨 for stack traces and `console.log` in contracts, TypeChain 🔗 for contract and front end type safety, Waffle 🥞 for type safe ethers.js native testing, and Vue with TypeScript/TypeChain support 🎀 to round out the stack.
+Leverage best practice tools such as: Buidler 🔨 for stack traces and `console.log` in contracts, TypeChain 🔗 for contract and front end type definitions, Waffle 🥞 for type safe ethers.js contract testing, and Vue with TypeScript/TypeChain support 🎀 to round out the stack.
 
-As an added bonus: easily deploy upgradeable contracts (update logic while maintaining state 📬) using the built-in OpenZeppelin CLI. Never worry about migrating again!
+If that's not enough: hit the ground running with test driven development 🧪 following the examples provided for contract, unit, and end to end testing. Objectively know when functionality is complete ✅ while catching bugs in updates before releasing.
 
-Finally, there's lots of under the hood goodies that come pre-configured to build beautiful Progressive Web Apps 🦋 with state management and routing; with more features being released rapidly! Next on deck: gasless transactions ⛽🔥
+As an added bonus: easily deploy upgradeable contracts - where one can update their contract logic 📝 while maintaining its state 🔒 - using the built-in OpenZeppelin CLI. Never worry about migrating again!
 
-Ready to develop like the pros? [Use this template to get started!](https://github.com/proofoftom/buidler-ethers-typechain-vue/generate)
+Finally, there's lots of under the hood goodies that come pre-configured to build beautiful Progressive Web Apps 🦋 that include state management and routing; with more features being released rapidly!
+
+Next on deck: gasless transactions ⛽🔥
+
+Ready to develop like the pros? [Use this template to get started!](https://github.com/proofoftom/buidler-ethers-typechain-vue/generate) 🚀
 
 ## Using the template
 
@@ -49,6 +53,11 @@ yarn upgrade:local
 yarn start:web
 ```
 
+#### Lint and fix files
+```
+yarn lint
+```
+
 #### Build the dApp for production
 ```
 yarn build
@@ -64,9 +73,9 @@ yarn test:unit
 yarn test:e2e
 ```
 
-#### Lint and fix files
+#### Run ALL the tests!
 ```
-yarn lint
+yarn test
 ```
 
 #### Customize Vue configuration

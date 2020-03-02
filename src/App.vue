@@ -1,7 +1,11 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
+      <div
+        class="d-flex align-center"
+        style="cursor: pointer;"
+        @click="$router.push('/')"
+      >
         <v-img
           alt="Vuetify Logo"
           class="shrink mr-2"
@@ -23,34 +27,22 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>fas fa-external-link-alt</v-icon>
+      <v-btn to="counter" text>
+        <span class="mr-2">Counter</span>
+        <v-icon>fas fa-calculator</v-icon>
       </v-btn>
     </v-app-bar>
 
     <v-content>
-      <Counter />
-      <HelloWorld />
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import Counter from "@/components/Counter.vue";
-import HelloWorld from "@/components/HelloWorld.vue";
 
 export default Vue.extend({
-  name: "App",
-
-  components: {
-    Counter,
-    HelloWorld
-  }
+  name: "App"
 });
 </script>

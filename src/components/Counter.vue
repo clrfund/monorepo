@@ -1,15 +1,11 @@
 <template>
   <v-container>
     <v-row class="justify-center">
-      <v-col cols="4">
-        <v-row class="justify-center">
-          Count: {{ $store.state.counter.count.toString() }}
-        </v-row>
-        <v-row class="justify-center">
-          <v-btn class="ma-2" @click="decrement">Decrement</v-btn>
-          <v-btn class="ma-2" @click="increment">Increment</v-btn>
-        </v-row>
-      </v-col>
+      Count: {{ $store.state.counter.count.toString() }}
+    </v-row>
+    <v-row class="justify-center">
+      <v-btn class="ma-2" @click="decrement">Decrement</v-btn>
+      <v-btn class="ma-2" @click="increment">Increment</v-btn>
     </v-row>
     <v-snackbar v-model="snackbar">
       {{ error }}
