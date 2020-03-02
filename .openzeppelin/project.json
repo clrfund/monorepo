@@ -14,7 +14,7 @@
       }
     },
     "typechain": {
-      "enabled": true,
+      "enabled": false,
       "outDir": "./build/types",
       "target": "ethers"
     },

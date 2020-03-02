@@ -3,16 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build:contracts": "yarn clean && buidler compile && oz compile",
+    "build:contracts": "yarn clean && oz compile && yarn typechain",
     "build:web": "vue-cli-service build",
     "clean": "rm -rf cache && rm -rf build && rm -f .openzeppelin/.session && rm -f .openzeppelin/dev-*.json",
-    "deploy:local": "yarn build:contracts && oz create",
+    "deploy:local": "yarn build:contracts && oz create Counter --skip-compile -n development --init countUp",
     "lint": "vue-cli-service lint",
     "start:node": "buidler node",
     "start:web": "yarn deploy:local && vue-cli-service serve",
     "test:contracts": "buidler test",
     "test:e2e": "vue-cli-service test:e2e",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "typechain": "buidler compile && buidler typechain",
+    "upgrade:local": "oz compile && oz upgrade Counter --skip-compile -n development --init countUp && yarn typechain"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.8.2",

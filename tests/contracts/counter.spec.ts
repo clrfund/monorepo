@@ -20,7 +20,7 @@ describe("Counter", () => {
     counter = (await deployContract(wallet, CounterArtifact)) as Counter;
 
     // function name is available as part of types
-    const initialCount = await counter.getCount();
+    const initialCount = await counter.count();
 
     expect(initialCount).to.eq(0);
     expect(counter.address).to.properAddress;
@@ -28,21 +28,21 @@ describe("Counter", () => {
 
   it("should count up", async () => {
     await counter.countUp();
-    let count = await counter.getCount();
+    let count = await counter.count();
     expect(count).to.eq(1);
 
     await counter.countUp();
-    count = await counter.getCount();
+    count = await counter.count();
     expect(count).to.eq(2);
   });
 
   it("should count down", async () => {
     await counter.countUp();
-    let count = await counter.getCount();
+    let count = await counter.count();
     expect(count).to.eq(1);
 
     await counter.countDown();
-    count = await counter.getCount();
+    count = await counter.count();
     expect(count).to.eq(0);
   });
 });
