@@ -1,4 +1,4 @@
-# Buidler + Waffle + TypeChain + Vue (TypeScript)
+# Buidler + Waffle + TypeChain + OpenZeppelin CLI + Vue (TypeScript)
 
 Inspired by [The New Solidity Dev Stack: Buidler + Ethers + Waffle + Typescript](https://hackernoon.com/the-new-solidity-dev-stack-buidler-ethers-waffle-typescript-706830w0), this is a pre-configured starter kit that uses the latest and greatest tool set to go from zero to hero 💪 in a quarter of the time, with 10x the type safety 🛡️ and debugging 🐞 capabilities.
 
