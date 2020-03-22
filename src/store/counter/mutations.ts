@@ -1,5 +1,7 @@
 import { counter } from "./loadCounter";
 
-export async function updateCount(state: any) {
-  state.count = await counter.count();
+export function updateCount(state: any) {
+  counter.count().then(count => {
+    state.count = count;
+  });
 }
