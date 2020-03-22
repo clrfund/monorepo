@@ -12,6 +12,6 @@
     "typescript",
     "typescriptreact"
   ],
-  "solidity.compileUsingRemoteVersion": "0.6.3+commit.8dda9521",
+  "solidity.compileUsingRemoteVersion": "0.6.4+commit.1dca32f3",
   "solidity.packageDefaultDependenciesContractsDirectory": ""
 }
