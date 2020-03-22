@@ -1,0 +1,27 @@
+{
+  "manifestVersion": "2.2",
+  "contracts": {
+    "Counter": "Counter"
+  },
+  "dependencies": {},
+  "name": "@my-app/contracts",
+  "version": "0.1.0",
+  "compiler": {
+    "compilerSettings": {
+      "optimizer": {
+        "enabled": false,
+        "runs": "200"
+      }
+    },
+    "typechain": {
+      "enabled": true,
+      "outDir": "build/types",
+      "target": "ethers"
+    },
+    "manager": "openzeppelin",
+    "solcVersion": "0.6.4",
+    "artifactsDir": "build/contracts",
+    "contractsDir": "contracts"
+  },
+  "telemetryOptIn": true
+}
