@@ -8,7 +8,7 @@
       "**/typescript",
       "**/ts-node",
       "**/@vue/**",
-      "**/@openzeppelin/cli"
+      "**/@openzeppelin/contracts"
     ]
   },
   "scripts": {

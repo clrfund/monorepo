@@ -1,10 +1,17 @@
 import { ethers } from "@nomiclabs/buidler";
 
 async function main() {
-  const factory = await ethers.getContract("Counter");
+  const factory = await ethers.getContract("FundingRoundFactory");
 
   // If we had constructor arguments, they would be passed into deploy()
-  const contract = await factory.deploy();
+  let firstCoordinator;
+  try {
+    firstCoordinator = await ethers.provider.resolveName('vitalik.eth')
+  }
+  catch {
+    firstCoordinator = "0x81aaA9a7a8358cC2971B9b8dE72aCCe6d7862BC8"; 
+  }
+  const contract = await factory.deploy(firstCoordinator);
 
   // The address that the Contract WILL have once mined
   console.log(contract.address);

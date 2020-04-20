@@ -4,14 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "oz compile",
-    "node": "npx buidler node",
-    "deploy:local": "yarn clean && yarn build && oz create Counter --skip-compile -n development --init",
-    "upgrade:local": "yarn build && oz upgrade Counter --skip-compile -n development --init",
-    "deploy:goerli": "yarn clean && yarn build && oz create Counter --skip-compile -n goerli --init",
-    "upgrade:goerli": "yarn build && oz upgrade Counter --skip-compile -n goerli --init",
+    "build": "buidler compile",
+    "node": "buidler node",
+    "deploy:local": "yarn clean && yarn build && buidler run scripts/deploy.ts",
+    "deploy:goerli": "yarn clean && yarn build && buidler run scripts/goerli.ts",
     "test": "buidler typechain && buidler test",
-    "clean": "rm -rf cache && rm -rf build && rm -f .openzeppelin/.session && rm -f .openzeppelin/dev-*.json"
+    "clean": "rm -rf cache && rm -rf build"
   },
   "devDependencies": {
     "@nomiclabs/buidler": "^1.2.0",
@@ -19,7 +17,7 @@
     "@nomiclabs/buidler-truffle5": "^1.2.0",
     "@nomiclabs/buidler-waffle": "^1.2.0",
     "@nomiclabs/buidler-web3": "^1.2.0",
-    "@openzeppelin/cli": "^2.7.2",
+    "@openzeppelin/contracts": "^3.0.0-rc.1",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.9.2",
