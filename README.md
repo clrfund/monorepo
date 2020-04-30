@@ -1,7 +1,7 @@
 # Cl(ea)r.fund
 **All matching, all the time!**
 
-Cl(ea)r.fund is an open and less-trustful Quadratic Funding application for Ethereum Public Goods. It uses [BrightID](https://brightID.org) for Sybil resistance and Minimal Anti-Collusion Infrastructure ([MASI](https://ethresear.ch/t/minimal-anti-collusion-infrastructure/5413)) to protect against various forms of bribery and collusion with the use of zk-Snarks.
+Cl(ea)r.fund is an open and less-trustful Quadratic Funding application for Ethereum Public Goods. It uses [BrightID](https://brightID.org) for Sybil resistance and Minimal Anti-Collusion Infrastructure ([MACI](https://ethresear.ch/t/minimal-anti-collusion-infrastructure/5413)) to protect against various forms of bribery and collusion with the use of zk-Snarks.
 
 Cl(ea)r.fund runs a continuous cycle of Quadratic Funding rounds, where anyone is able to add funding recipients, contribute matching funds, and contribute funds to a recipient; influencing their quadratic match.
 
