@@ -23,6 +23,7 @@
     "test:web": "yarn workspace @my-app/vue-app run test",
     "deploy:local": "yarn workspace @my-app/contracts run deploy:local",
     "upgrade:local": "yarn workspace @my-app/contracts run upgrade:local",
+    "lint": "yarn lint:web",
     "lint:web": "yarn workspace @my-app/vue-app run lint"
   }
 }

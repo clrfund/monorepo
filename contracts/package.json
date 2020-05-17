@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "buidler compile",
-    "node": "buidler node",
-    "deploy:local": "yarn clean && yarn build && buidler run scripts/deploy.ts",
+    "node": "buidler node --port 18545",
+    "deploy:local": "yarn clean && yarn build && buidler run --network localhost scripts/deploy.ts",
     "deploy:goerli": "yarn clean && yarn build && buidler run scripts/goerli.ts",
     "test": "buidler typechain && buidler test",
     "clean": "rm -rf cache && rm -rf build"
