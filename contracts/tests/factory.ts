@@ -52,6 +52,62 @@ describe('Funding Round Factory', () => {
     // console.log('Approved');
   });
 
+  describe('adding recipients', () => {
+    let fundingAddress: string;
+    let recipientName: string;
+    beforeEach(() => {
+      fundingAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+      recipientName = 'test';
+    });
+
+    it('allows owner to add recipient', async () => {
+      await expect(factory.addRecipient(fundingAddress, recipientName))
+        .to.emit(factory, 'RecipientAdded')
+        .withArgs(fundingAddress, recipientName);
+      expect(await factory.recipients(fundingAddress))
+        .to.equal(recipientName);
+    });
+
+    it('rejects calls from anyone except owner', async () => {
+      const contributorFactory = factory.connect(contributor);
+      await expect(contributorFactory.addRecipient(fundingAddress, recipientName))
+        .to.be.revertedWith('Ownable: caller is not the owner');
+    });
+
+    it('should not accept zero-address', async () => {
+      fundingAddress = '0x0000000000000000000000000000000000000000';
+      await expect(factory.addRecipient(fundingAddress, recipientName))
+        .to.be.revertedWith('Factory: Recipient address is zero');
+    });
+
+    it('should not accept empty string as name', async () => {
+      recipientName = ''
+      await expect(factory.addRecipient(fundingAddress, recipientName))
+        .to.be.revertedWith('Factory: Recipient name is empty string');
+    });
+
+    it('should not accept already registered address', async () => {
+      await factory.addRecipient(fundingAddress, recipientName);
+      recipientName = 'test-2';
+      await expect(factory.addRecipient(fundingAddress, recipientName))
+        .to.be.revertedWith('Factory: Recipient already registered');
+    });
+
+    it('should limit the number of recipients', async () => {
+      const maxRecipientCount = 16;
+      for (var i = 0; i < maxRecipientCount + 1; i++) {
+        recipientName = String(i + 1).padStart(4, '0');
+        fundingAddress = `0x000000000000000000000000000000000000${recipientName}`;
+        if (i < maxRecipientCount) {
+          await factory.addRecipient(fundingAddress, recipientName);
+        } else {
+          await expect(factory.addRecipient(fundingAddress, recipientName))
+            .to.be.revertedWith('Factory: Recipient limit reached');
+        }
+      }
+    });
+  });
+
   it('has new round running', async () => {
     expect(await factory.currentRound()).to.properAddress;
   });

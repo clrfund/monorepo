@@ -14,6 +14,13 @@ import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 contract FundingRoundFactory is Ownable {
   using SafeERC20 for IERC20;
 
+  // Constants
+  uint256 private constant MACI_MAX_VOTE_OPTIONS = 16;
+
+  // State
+  mapping(address => string) public recipients;
+  uint256 private recipientCount = 0;
+
   address public coordinator;
   address public maci;
   IERC20 public nativeToken;
@@ -33,6 +40,8 @@ contract FundingRoundFactory is Ownable {
 
   mapping(address => address) private maciByRound;
 
+  // Events
+  event RecipientAdded(address indexed _fundingAddress, string _name);
   event NewToken(address _token);
   event NewRound(address _round);
   event RoundFinalized();
@@ -46,6 +55,19 @@ contract FundingRoundFactory is Ownable {
   constructor(address _firstCoordinator) public {
     setCoordinator(_firstCoordinator);
     endRound();
+  }
+
+  function addRecipient(address _fundingAddress, string memory _name)
+    public
+    onlyOwner
+  {
+    require(_fundingAddress != address(0), 'Factory: Recipient address is zero');
+    require(bytes(_name).length != 0, 'Factory: Recipient name is empty string');
+    require(bytes(recipients[_fundingAddress]).length == 0, 'Factory: Recipient already registered');
+    require(recipientCount < MACI_MAX_VOTE_OPTIONS, 'Factory: Recipient limit reached');
+    recipients[_fundingAddress] = _name;
+    recipientCount += 1;
+    emit RecipientAdded(_fundingAddress, _name);
   }
 
   function getCurrentRound() public view returns (FundingRound _currentRound) {
