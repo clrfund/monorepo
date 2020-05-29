@@ -1,7 +1,10 @@
 import { waffle } from '@nomiclabs/buidler';
-import chai from 'chai';
-import { deployContract, solidity, getWallets } from 'ethereum-waffle';
+import { use, expect } from 'chai';
+import { deployContract, solidity } from 'ethereum-waffle';
 import { ethers } from 'ethers';
+
+import { deployMaciFactory } from '../scripts/helpers';
+import { getGasUsage } from './utils';
 
 import RoundArtifact from '../build/contracts/FundingRound.json';
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
@@ -11,24 +14,28 @@ import TokenArtifact from '../build/contracts/AnyOldERC20Token.json';
 
 // import { Keypair, Command, PubKey, PrivKey } from 'maci/domainobjs/js/index.js';
 
-chai.use(solidity);
-const { expect } = chai;
+use(solidity);
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
 
-  const [dontUseMe, deployer, coordinator, contributor] = getWallets(provider);
+  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();
 
-  let factory: any;
+  let factory: ethers.Contract;
   let token;
   let tokenContractAsContributor;
 
   beforeEach(async () => {
+    const maciFactory = await deployMaciFactory(deployer);
+
     factory = await deployContract(deployer, FactoryArtifact, [
-      coordinator.address
+      maciFactory.address,
+      coordinator.address,
     ]);
 
     expect(factory.address).to.properAddress;
+    expect(await getGasUsage(factory.deployTransaction)).lessThan(4000000);
+    await maciFactory.transferOwnership(factory.address);
 
     const initialSupply = '10000000000';
 
@@ -106,6 +113,19 @@ describe('Funding Round Factory', () => {
         }
       }
     });
+  });
+
+  it('deploys MACI', async () => {
+    const signUpDuration = 86400;
+    const votingDuration = 86400;
+    const coordinatorPubKey = { x: 0, y: 1 };
+
+    const deployTx = await factory.deployMaci(
+      signUpDuration,
+      votingDuration,
+      coordinatorPubKey,
+    );
+    expect(await getGasUsage(deployTx)).lessThan(6000000);
   });
 
   it('has new round running', async () => {
