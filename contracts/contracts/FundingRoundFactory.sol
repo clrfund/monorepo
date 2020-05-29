@@ -1,8 +1,9 @@
-pragma solidity ^0.6.2;
+pragma solidity ^0.5.0;
+pragma experimental ABIEncoderV2;
 
 import '@nomiclabs/buidler/console.sol';
 
-import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/ownership/Ownable.sol';
 import './FundingRound.sol';
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';

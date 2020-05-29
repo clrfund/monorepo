@@ -5,6 +5,10 @@ usePlugin("buidler-typechain");
 
 const config: BuidlerConfig = {
   networks: {
+    buidlerevm: {
+      gas: 10000000,
+      blockGasLimit: 10000000,
+    },
     localhost: {
       url: "http://127.0.0.1:18545"
     }
@@ -14,7 +18,7 @@ const config: BuidlerConfig = {
     tests: "tests"
   },
   solc: {
-    version: "0.6.4",
+    version: "0.5.17",
     optimizer: {
       enabled: true,
       runs: 10000
