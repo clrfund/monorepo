@@ -1,7 +1,15 @@
 import { ethers } from "@nomiclabs/buidler";
 
+import { deployMaciFactory } from './helpers';
+
 async function main() {
-  const factory = await ethers.getContract("FundingRoundFactory");
+  const [deployer] = await ethers.getSigners();
+  const maciFactory = await deployMaciFactory(deployer);
+
+  const FundingRoundFactory = await ethers.getContractFactory(
+    'FundingRoundFactory',
+    deployer,
+  );
 
   // If we had constructor arguments, they would be passed into deploy()
   let firstCoordinator;
@@ -11,16 +19,21 @@ async function main() {
   catch {
     firstCoordinator = "0x81aaA9a7a8358cC2971B9b8dE72aCCe6d7862BC8"; 
   }
-  const contract = await factory.deploy(firstCoordinator);
+  const fundingRoundFactory = await FundingRoundFactory.deploy(
+    maciFactory.address,
+    firstCoordinator,
+  );
 
   // The address that the Contract WILL have once mined
-  console.log(contract.address);
+  console.log(fundingRoundFactory.address);
 
   // The transaction that was sent to the network to deploy the Contract
-  console.log(contract.deployTransaction.hash);
+  console.log(fundingRoundFactory.deployTransaction.hash);
 
   // The contract is NOT deployed yet; we must wait until it is mined
-  await contract.deployed();
+  await fundingRoundFactory.deployed();
+
+  await maciFactory.transferOwnership(fundingRoundFactory.address);
 }
 
 main()
