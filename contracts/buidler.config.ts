@@ -1,4 +1,7 @@
-import { BuidlerConfig, usePlugin } from "@nomiclabs/buidler/config";
+import fs from 'fs';
+import path from 'path';
+
+import { BuidlerConfig, usePlugin, task } from '@nomiclabs/buidler/config';
 
 usePlugin("@nomiclabs/buidler-waffle");
 usePlugin("buidler-typechain");
@@ -29,5 +32,12 @@ const config: BuidlerConfig = {
     target: "ethers"
   }
 };
+
+task('compile', 'Compiles the entire project, building all artifacts', async (_, { config }, runSuper) => {
+  await runSuper();
+  // Copy Poseidon artifacts to target directory
+  fs.copyFileSync('poseidon/PoseidonT3.json', path.join(config.paths.artifacts, 'PoseidonT3.json'));
+  fs.copyFileSync('poseidon/PoseidonT6.json', path.join(config.paths.artifacts, 'PoseidonT6.json'));
+});
 
 export default config;
