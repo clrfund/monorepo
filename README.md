@@ -66,8 +66,11 @@ yarn test
 ```
 yarn start:node
 ```
+
 and in a new terminal
+
 ```
+cp vue-app/.env.example vue-app/.env    # adjust if necessary
 yarn start:dev
 ```
 
