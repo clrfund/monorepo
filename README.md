@@ -64,16 +64,19 @@ yarn test
 
 #### Start the frontend app in development mode (hot-code reloading, error reporting, etc.)
 ```
-yarn ganache
+yarn start:node
 ```
+
 and in a new terminal
+
 ```
-yarn dev
+cp vue-app/.env.example vue-app/.env    # adjust if necessary
+yarn start:dev
 ```
 
 #### Start the frontend sans a local blockchain
 ```
-yarn web
+yarn start:web
 ```
 
 #### Lint the files
