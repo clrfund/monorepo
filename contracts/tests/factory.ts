@@ -125,7 +125,7 @@ describe('Funding Round Factory', () => {
       votingDuration,
       coordinatorPubKey,
     );
-    expect(await getGasUsage(deployTx)).lessThan(6000000);
+    expect(await getGasUsage(deployTx)).lessThan(7000000);
   });
 
   it('has new round running', async () => {
