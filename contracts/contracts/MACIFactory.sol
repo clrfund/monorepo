@@ -11,14 +11,18 @@ import { QuadVoteTallyVerifier } from 'maci/contracts/sol/QuadVoteTallyVerifier.
 
 contract MACIFactory is Ownable, MACIParameters {
   // Constants
+  uint256 private constant MACI_STATE_TREE_BASE = 2;
+  uint256 private constant MACI_MESSAGE_TREE_BASE = 2;
+  uint256 private constant MACI_VOTE_OPTION_TREE_BASE = 5;
+
   uint8 private constant MACI_STATE_TREE_DEPTH = 10;
   uint8 private constant MACI_MESSAGE_TREE_DEPTH = 10;
   uint8 private constant MACI_VOTE_OPTION_TREE_DEPTH = 4;
   uint8 private constant MACI_TALLY_BATCH_SIZE = 4;
   uint8 private constant MACI_MESSAGE_BATCH_SIZE = 4;
-  uint256 private constant MACI_MAX_USERS = uint256(2) ** MACI_STATE_TREE_DEPTH - 1;
-  uint256 private constant MACI_MAX_MESSAGES = uint256(2) ** MACI_MESSAGE_TREE_DEPTH - 1;
-  uint256 private constant MACI_MAX_VOTE_OPTIONS = uint256(5) ** MACI_VOTE_OPTION_TREE_DEPTH - 1;
+  uint256 private constant MACI_MAX_USERS = MACI_STATE_TREE_BASE ** MACI_STATE_TREE_DEPTH - 1;
+  uint256 private constant MACI_MAX_MESSAGES = MACI_MESSAGE_TREE_BASE ** MACI_MESSAGE_TREE_DEPTH - 1;
+  uint256 private constant MACI_MAX_VOTE_OPTIONS = MACI_VOTE_OPTION_TREE_BASE ** MACI_VOTE_OPTION_TREE_DEPTH - 1;
 
   // State
   FreeForAllGatekeeper private signUpGatekeeper;

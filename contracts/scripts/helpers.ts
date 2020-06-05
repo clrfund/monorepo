@@ -22,8 +22,9 @@ async function deployContract(
 function doEIP170check(bytecode: string): void {
   // Check contract code size
   // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md
-  if (bytecode.length / 2 > 0x6000) {
-    throw new Error('EIP170 limit exceeded.');
+  const size = bytecode.length / 2;
+  if (size > 0x6000) {
+    throw new Error(`Contract size exceeded EIP170 limit (${size}).`);
   }
 }
 

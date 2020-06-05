@@ -19,7 +19,7 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
   using SafeERC20 for IERC20;
 
   // Constants
-  uint256 private constant MACI_MAX_VOTE_OPTIONS = 16;
+  uint256 private constant MACI_MAX_VOTE_OPTIONS = 625;
 
   // State
   mapping(address => string) public recipients;

@@ -101,7 +101,7 @@ describe('Funding Round Factory', () => {
     });
 
     it('should limit the number of recipients', async () => {
-      const maxRecipientCount = 16;
+      const maxRecipientCount = 625;
       for (var i = 0; i < maxRecipientCount + 1; i++) {
         recipientName = String(i + 1).padStart(4, '0');
         fundingAddress = `0x000000000000000000000000000000000000${recipientName}`;
