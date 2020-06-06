@@ -1,26 +1,31 @@
-pragma solidity ^0.6.2;
+pragma solidity ^0.5.0;
+pragma experimental ABIEncoderV2;
 
 import '@nomiclabs/buidler/console.sol';
 
-import '@openzeppelin/contracts/access/Ownable.sol';
-import './FundingRound.sol';
-
+import '@openzeppelin/contracts/ownership/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
+import 'maci/contracts/sol/MACI.sol';
+import 'maci/contracts/sol/MACIPubKey.sol';
+
+import './MACIFactory.sol';
+import './FundingRound.sol';
 
 // TODO: Import SafeMath
 
-contract FundingRoundFactory is Ownable {
+contract FundingRoundFactory is Ownable, MACIPubKey {
   using SafeERC20 for IERC20;
 
   // Constants
-  uint256 private constant MACI_MAX_VOTE_OPTIONS = 16;
+  uint256 private constant MACI_MAX_VOTE_OPTIONS = 625;
 
   // State
   mapping(address => string) public recipients;
   uint256 private recipientCount = 0;
 
+  MACIFactory public maciFactory;
   address public coordinator;
   address public maci;
   IERC20 public nativeToken;
@@ -52,7 +57,13 @@ contract FundingRoundFactory is Ownable {
   event NewMaciRequired();
   event RoundFinalized(address _round);
 
-  constructor(address _firstCoordinator) public {
+  constructor(
+    MACIFactory _maciFactory,
+    address _firstCoordinator
+  )
+    public
+  {
+    maciFactory = _maciFactory;
     setCoordinator(_firstCoordinator);
     endRound();
   }
@@ -80,6 +91,21 @@ contract FundingRoundFactory is Ownable {
     returns (FundingRound _previousRound)
   {
     return previousRound;
+  }
+
+  function deployMaci(
+    uint256 _signUpDuration,
+    uint256 _votingDuration,
+    PubKey memory _coordinatorPubKey
+  )
+    public
+    onlyOwner
+  {
+    maciFactory.deployMaci(
+      _signUpDuration,
+      _votingDuration,
+      _coordinatorPubKey
+    );
   }
 
   function getMaci(address round) public view returns (address _maci) {
