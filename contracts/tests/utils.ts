@@ -9,3 +9,34 @@ export async function getGasUsage(transaction: TransactionResponse): Promise<Num
     return null;
   }
 }
+
+export class MaciParameters {
+
+  // Defaults for tests
+  stateTreeDepth = 4;
+  messageTreeDepth = 4;
+  voteOptionTreeDepth = 2;
+  tallyBatchSize = 2;
+  messageBatchSize = 2;
+  signUpDuration = 3600;
+  votingDuration = 3600;
+
+  constructor(parameters: {[name: string]: number} = {}) {
+    for (const [name, value] of Object.entries(parameters)) {
+      (this as any)[name] = value;
+    }
+  }
+
+  values(): number[] {
+    // To be passed to setMaciParameters()
+    return [
+      this.stateTreeDepth,
+      this.messageTreeDepth,
+      this.voteOptionTreeDepth,
+      this.tallyBatchSize,
+      this.messageBatchSize,
+      this.signUpDuration,
+      this.votingDuration,
+    ];
+  }
+}

@@ -4,7 +4,7 @@ import { deployContract, solidity } from 'ethereum-waffle';
 import { ethers } from 'ethers';
 
 import { deployMaciFactory } from '../scripts/helpers';
-import { getGasUsage } from './utils';
+import { getGasUsage, MaciParameters } from './utils';
 
 import RoundArtifact from '../build/contracts/FundingRound.json';
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
@@ -21,12 +21,15 @@ describe('Funding Round Factory', () => {
 
   const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();
 
+  let maciFactory: ethers.Contract;
   let factory: ethers.Contract;
   let token;
   let tokenContractAsContributor;
 
+  let maciParameters = new MaciParameters();
+
   beforeEach(async () => {
-    const maciFactory = await deployMaciFactory(deployer);
+    maciFactory = await deployMaciFactory(deployer);
 
     factory = await deployContract(deployer, FactoryArtifact, [
       maciFactory.address,
@@ -101,7 +104,11 @@ describe('Funding Round Factory', () => {
     });
 
     it('should limit the number of recipients', async () => {
-      const maxRecipientCount = 625;
+      // Reduce number of vote options to speed up the test
+      maciParameters = new MaciParameters({ voteOptionTreeDepth: 1 });
+      await factory.setMaciParameters(...maciParameters.values());
+
+      const maxRecipientCount = 4;
       for (var i = 0; i < maxRecipientCount + 1; i++) {
         recipientName = String(i + 1).padStart(4, '0');
         fundingAddress = `0x000000000000000000000000000000000000${recipientName}`;
@@ -115,14 +122,21 @@ describe('Funding Round Factory', () => {
     });
   });
 
+  it('sets MACI parameters', async () => {
+    await expect(factory.setMaciParameters(...maciParameters.values()))
+      .to.emit(maciFactory, 'MaciParametersChanged');
+  });
+
+  it('allows only owner to set MACI parameters', async () => {
+    const coordinatorFactory = factory.connect(coordinator);
+    await expect(coordinatorFactory.setMaciParameters(...maciParameters.values()))
+      .to.be.revertedWith('Ownable: caller is not the owner');
+  });
+
   it('deploys MACI', async () => {
-    const signUpDuration = 86400;
-    const votingDuration = 86400;
     const coordinatorPubKey = { x: 0, y: 1 };
 
     const deployTx = await factory.deployMaci(
-      signUpDuration,
-      votingDuration,
       coordinatorPubKey,
     );
     expect(await getGasUsage(deployTx)).lessThan(7000000);
