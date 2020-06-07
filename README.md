@@ -45,7 +45,7 @@ yarn
 
 #### Compile and type safe the contracts
 ```
-yarn compile
+yarn build:contracts
 ```
 
 #### Run Waffle tests with stack traces
