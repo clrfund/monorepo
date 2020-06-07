@@ -4,13 +4,13 @@ Cl(ea)r.fund is an open and less-trustful Quadratic Funding application for Ethe
 
 Cl(ea)r.fund runs a continuous cycle of Quadratic Funding rounds, where anyone is able to add funding recipients, contribute matching funds, and contribute funds to a recipient; influencing their quadratic match.
 
-While Cl(ea)r.fund aims to be agnostic to the source of matching funds, it specifically aims to enable contributions form the following sources:
+While Cl(ea)r.fund aims to be agnostic to the source of matching funds, it specifically aims to enable contributions from the following sources:
 
 1. Ethereum protocol rewards (Block rewards, transaction taxes, etc)
 2. Known and anonymous benefactors
 3. Benevolent protocols (MakerDAO, Burn Signal, etc)
 
-In order for their contributions to count towards matching, contributors must verify their uniqueness using [BrightID](https://ethresear.ch/t/minimal-anti-collusion-infrastructure/5413). Contributions form unverified accounts do not count towards the quadratic matching for their project.
+In order for their contributions to count towards matching, contributors must verify their uniqueness using [BrightID](https://brightid.org/). Contributions form unverified accounts do not count towards the quadratic matching for their project.
 
 The Cl(ear)r.fund smart contracts consist of a factory contract, that deploys a new contract for each round. All matching funds are sent to the factory contract, while contribution funds are sent to the current round's contract. There are three roles in factory contract:
 
@@ -18,7 +18,7 @@ The Cl(ear)r.fund smart contracts consist of a factory contract, that deploys a 
 2. **Coordinator:** This address is responsible for running the zk-Snark computation on contributions to produce the relative percentages of matching funds that each recipient should receive. The coordinator can quit at any time, which invalidates the current round forcing the owner to start a new round and users to submit new messages for their contributions. Without some advancement in oblivious computation, this Coordinator is necessarily a trusted party in this system (this is discussed more in the Limitations section).
 3. **Contributor:** Any address that sends DAI to the funding contract address.
 
-The Cl(ea)r.fund application uses [Vue.js](https://vuejs.org/) for the frontend and [Ethereum](https://ethereum.org/), [TheGraph](https://thegraph.com), and [3Box](https://3box.io/)/[Ceramic](https://www.ceramic.network/) as a backend. The application will be hosted on GitHub pages, but can easily be hosted on [IPFS](https://www.ipfs.com/) or run locally.
+The Cl(ea)r.fund application uses [Vue.js](https://vuejs.org/) for the frontend and [Ethereum](https://ethereum.org/), [TheGraph](https://thegraph.com), and [3Box](https://3box.io/)/[Ceramic](https://www.ceramic.network/) as a backend. The application will be hosted on GitHub pages, but can easily be hosted on [IPFS](https://ipfs.io/) or run locally.
 
 ### Limitations
 There are various limitations in our current design, we discuss some of them here.
