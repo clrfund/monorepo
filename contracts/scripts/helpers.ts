@@ -32,7 +32,7 @@ export async function deployMaciFactory(account: Signer): Promise<Contract> {
   const signUpGatekeeper = await deployContract(account, 'FreeForAllGatekeeper');
   const batchTreeVerifier = await deployContract(account, 'BatchUpdateStateTreeVerifier');
   const voteTallyVerifier = await deployContract(account, 'QuadVoteTallyVerifier');
-  const initialVoiceCreditProxy = await deployContract(account, 'ConstantInitialVoiceCreditProxy', [0]);
+  const initialVoiceCreditProxy = await deployContract(account, 'FundingRoundVoiceCreditProxy');
   const poseidonT3 = await deployContract(account, 'PoseidonT3');
   const poseidonT6 = await deployContract(account, 'PoseidonT6');
 

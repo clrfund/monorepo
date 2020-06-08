@@ -21,7 +21,6 @@ async function main() {
   }
   const fundingRoundFactory = await FundingRoundFactory.deploy(
     maciFactory.address,
-    firstCoordinator,
   );
 
   // The address that the Contract WILL have once mined

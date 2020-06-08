@@ -3,98 +3,115 @@ pragma experimental ABIEncoderV2;
 
 import '@nomiclabs/buidler/console.sol';
 
-import './FundingRoundFactory.sol';
-
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
+import 'maci/contracts/sol/MACI.sol';
+import 'maci/contracts/sol/MACIPubKey.sol';
 
-// import 'maci/contracts/sol/DomainObjs.sol';
+import './FundingRoundFactory.sol';
 
-contract FundingRound {
+contract FundingRound is MACIPubKey {
   using SafeERC20 for IERC20;
 
   // ERC20 token being used
   IERC20 public nativeToken;
+  uint256 public contributionDeadline;
+  PubKey public coordinatorPubKey;
+  MACI public maci;
+  bool public isFinalized = false;
+  uint256 public poolSize;
 
-  mapping(address => uint256[]) private encryptedVote;
-  mapping(address => uint256) private totalAmountOfDAI;
   FundingRoundFactory private parent;
 
   event FundsClaimed(address _recipient);
   event NewContribution(address indexed _sender, uint256 amount);
 
-  uint256 public counter;
-
-  struct PubKey {
-    uint256 x;
-    uint256 y;
-  }
-
-  constructor(FundingRoundFactory _parent, address _nativeToken) public {
-    counter = 1;
+  constructor(
+    FundingRoundFactory _parent,
+    IERC20 _nativeToken,
+    uint256 _duration,
+    PubKey memory _coordinatorPubKey
+  )
+    public
+  {
     parent = _parent;
-    nativeToken = IERC20(_nativeToken);
+    nativeToken = _nativeToken;
+    contributionDeadline = now + _duration;
+    coordinatorPubKey = _coordinatorPubKey;
   }
 
-  function claimFunds(address recipient) public {
-    emit FundsClaimed(recipient);
-    // Know the maci address so I can call function to
-    // getTotalByVoteOptionId which uses my internal
-    // mapping to address
-    // Send relative percentage of DAI balance to recipient
+  modifier onlyFactory() {
+    require(msg.sender == address(parent), 'Funding Round: Sender is not the factory');
+    _;
   }
 
-  function setProject() public {}
+  /**
+    * @dev Link MACI instance to this funding round.
+    */
+  function setMaci(
+    MACI _maci
+  )
+    public
+    onlyFactory
+  {
+    assert(address(maci) == address(0));
+    // Ensure that signup is not going to be blocked
+    assert(_maci.calcSignUpDeadline() >= contributionDeadline);
+    maci = _maci;
+  }
 
-  // Using DomainObjs.sol as a reference for the data structure for pubKey
+  /**
+    * @dev Claim allocated tokens.
+    * @param _poolShare Share of votes, provided by coordinator.
+    * @param _proof Proof of correctness.
+    */
+  function claimFunds(
+    uint256 _poolShare,
+    uint256[][] memory _proof,
+  )
+    public
+  {
+    require(isFinalized, 'Funding Round: Round not finalized');
+    // TODO: https://github.com/appliedzkp/maci/issues/108
+    // bool verified = maci.verifyTallyResult(...);
+    // TODO: do calculation properly; rounding
+    uint256 finalAmount = _poolShare * poolSize / 100;
+    nativeToken.transferFrom(address(this), msg.sender, finalAmount);
+    emit FundsClaimed(msg.sender);
+  }
+
+  /**
+    * @dev Contribute tokens to this funding round.
+    * @param pubKey Contributor's public key.
+    * @param amount Contribution amount.
+    */
   function contribute(
-    uint256[] memory message,
     PubKey memory pubKey,
     uint256 amount
   ) public {
-    // message: encrypted message to be sent to MACI.
-    // This is generated using the Command class and Command.encrypt.
-    // More information on using Command here.
-    // pubKey: encrypted public key.
-    // Use Keypair to create a keypair, then use Keypair.genEcdhSharedKey
-    // and supply the private key from the current keypair
-
-    // Both parameters are created using functions from this maci
-    // javascript library.
-
-    // FundingRound thisContract = FundingRound(this);
-    address thisContract = address(this);
-    // FundingRound currentRound = parent.getCurrentRound();
-    address currentRound = address(parent.getCurrentRound());
-    // console.log(thisContract);
-
-    // TODO: Also revert if msg.sender isn't BrightID verified
-    if (thisContract != currentRound) {
-      // revert if it's the previous round
-      // if this is not the current round
-      revert("This round isn't the current round");
-    }
-
-    // DAI is transferred here
-    // Transfer the nativeToken as an internal tx if ERC20 approved
-    _deliverTokens(msg.sender, address(this), amount);
+    require(now < contributionDeadline, 'FundingRound: Contribution period ended');
+    require(isFinalized == false, 'FundingRound: Round finalized');
+    // TODO: check BrightID verification
+    bytes memory signUpGatekeeperData = '';
+    bytes memory initialVoiceCreditProxyData = abi.encode(amount);
+    nativeToken.transferFrom(msg.sender, address(this), amount);
+    maci.signUp(
+      pubKey,
+      signUpGatekeeperData,
+      initialVoiceCreditProxyData
+    );
     emit NewContribution(msg.sender, amount);
   }
 
-  // Question: This should be public, right?
-  function getMessage(address _participant)
+  /**
+    * @dev Allow recipients to claim funds.
+    */
+  function finalize()
     public
-    returns (uint256[] memory _message)
+    onlyFactory
   {
-    // TODO: Get the message from storage
-    uint256[] memory message;
-    return message; // returns encrypted message for participant
-  }
-
-  function _deliverTokens(address from, address to, uint256 tokenAmount)
-    internal
-  {
-    nativeToken.transferFrom(from, to, tokenAmount);
+    isFinalized = true;
+    poolSize = nativeToken.balanceOf(address(this));
   }
 }

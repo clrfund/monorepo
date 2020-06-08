@@ -5,9 +5,10 @@ import '@openzeppelin/contracts/ownership/Ownable.sol';
 import 'maci/contracts/sol/MACI.sol';
 import 'maci/contracts/sol/MACIParameters.sol';
 import 'maci/contracts/sol/gatekeepers/FreeForAllSignUpGatekeeper.sol';
-import 'maci/contracts/sol/initialVoiceCreditProxy/ConstantInitialVoiceCreditProxy.sol';
 import { BatchUpdateStateTreeVerifier } from 'maci/contracts/sol/BatchUpdateStateTreeVerifier.sol';
 import { QuadVoteTallyVerifier } from 'maci/contracts/sol/QuadVoteTallyVerifier.sol';
+
+import './InitialVoiceCreditProxy.sol';
 
 contract MACIFactory is Ownable, MACIParameters {
   // Constants
@@ -30,7 +31,7 @@ contract MACIFactory is Ownable, MACIParameters {
   FreeForAllGatekeeper private signUpGatekeeper;
   BatchUpdateStateTreeVerifier private batchUstVerifier;
   QuadVoteTallyVerifier private qvtVerifier;
-  ConstantInitialVoiceCreditProxy private initialVoiceCreditProxy;
+  FundingRoundVoiceCreditProxy private initialVoiceCreditProxy;
 
   // Events
   event MaciParametersChanged();
@@ -40,7 +41,7 @@ contract MACIFactory is Ownable, MACIParameters {
     FreeForAllGatekeeper _signUpGatekeeper,
     BatchUpdateStateTreeVerifier _batchUstVerifier,
     QuadVoteTallyVerifier _qvtVerifier,
-    ConstantInitialVoiceCreditProxy _initialVoiceCreditProxy
+    FundingRoundVoiceCreditProxy _initialVoiceCreditProxy
   )
     public
   {
