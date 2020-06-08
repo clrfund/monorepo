@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^2.5.1",
-    "maci": "github:xuhcc/maci#dab2e8facd3d30c5a49d36bbfe1c54c054a4dedb"
+    "maci": "github:appliedzkp/maci#d5d5817d5f75294facf88d3163fcd3c5f9cf7509"
   },
   "devDependencies": {
     "@nomiclabs/buidler": "^1.3.5",
