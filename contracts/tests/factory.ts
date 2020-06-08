@@ -33,7 +33,6 @@ describe('Funding Round Factory', () => {
 
     factory = await deployContract(deployer, FactoryArtifact, [
       maciFactory.address,
-      coordinator.address,
     ]);
 
     expect(factory.address).to.properAddress;
@@ -135,23 +134,31 @@ describe('Funding Round Factory', () => {
 
   it('deploys MACI', async () => {
     const coordinatorPubKey = { x: 0, y: 1 };
-
-    const deployTx = await factory.deployMaci(
+    await factory.setCoordinator(
+      coordinator.address,
       coordinatorPubKey,
     );
+    await factory.deployNewRound();
+
+    const deployTx = await factory.deployMaci();
     expect(await getGasUsage(deployTx)).lessThan(7000000);
   });
 
   it('has new round running', async () => {
-    expect(await factory.currentRound()).to.properAddress;
+    expect(await factory.getCurrentRound()).to.properAddress;
   });
 
   it('set contract owner/witness/coordinator/round duration correctly', async () => {
+    const coordinatorPubKey = { x: 0, y: 1 };
+    await factory.setCoordinator(
+      coordinator.address,
+      coordinatorPubKey,
+    );
     expect(await factory.coordinator()).to.eq(coordinator.address);
   });
 
   it('allows user to contribute to current round', async () => {
-    const contractAddress = await factory.currentRound();
+    const contractAddress = await factory.getCurrentRound();
     console.log('About to build contract');
     console.log({ contractAddress });
 
