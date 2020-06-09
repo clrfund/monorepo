@@ -1,8 +1,7 @@
 {
-  "name": "@my-app/contracts",
+  "name": "@clrfund/contracts",
   "version": "0.1.0",
   "main": "index.js",
-  "license": "MIT",
   "scripts": {
     "build": "buidler compile",
     "node": "buidler node --port 18545",
