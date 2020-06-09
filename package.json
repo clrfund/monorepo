@@ -1,5 +1,7 @@
 {
-  "name": "@my-app/monorepo",
+  "name": "@clrfund/monorepo",
+  "repository": "https://github.com/clrfund/monorepo",
+  "license": "GPL-3.0",
   "private": true,
   "workspaces": { 
     "packages": ["contracts", "vue-app"],
