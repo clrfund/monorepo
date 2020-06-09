@@ -91,6 +91,11 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
     public
     onlyOwner
   {
+    FundingRound currentRound = getCurrentRound();
+    require(
+      address(currentRound) == address(0) || address(currentRound.maci()) != address(0),
+      'Factory: Waiting for MACI deployment'
+    );
     maciFactory.setMaciParameters(
       _stateTreeDepth,
       _messageTreeDepth,
