@@ -27,6 +27,8 @@ contract FundingRound is MACIPubKey {
   event FundsClaimed(address _recipient);
   event NewContribution(address indexed _sender, uint256 amount);
 
+  uint256 public counter;
+
   constructor(
     FundingRoundFactory _parent,
     IERC20 _nativeToken,
@@ -68,7 +70,7 @@ contract FundingRound is MACIPubKey {
     */
   function claimFunds(
     uint256 _poolShare,
-    uint256[][] memory _proof,
+    uint256[][] memory _proof
   )
     public
   {
@@ -90,6 +92,8 @@ contract FundingRound is MACIPubKey {
     PubKey memory pubKey,
     uint256 amount
   ) public {
+    require(address(maci) != address(0), 'FundingRound: MACI not deployed');
+    require(counter < maci.maxUsers(), 'FundingRound: Contributor limit reached');
     require(now < contributionDeadline, 'FundingRound: Contribution period ended');
     require(isFinalized == false, 'FundingRound: Round finalized');
     // TODO: check BrightID verification
@@ -101,6 +105,7 @@ contract FundingRound is MACIPubKey {
       signUpGatekeeperData,
       initialVoiceCreditProxyData
     );
+    counter += 1;
     emit NewContribution(msg.sender, amount);
   }
 
