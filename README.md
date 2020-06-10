@@ -18,7 +18,7 @@ The Cl(ear)r.fund smart contracts consist of a factory contract that deploys a n
 2. **Coordinator:** This address is responsible for running the zk-Snark computation on contributions to produce the relative percentages of matching funds that each recipient should receive. The coordinator can quit at any time, which invalidates the current round forcing the owner to start a new round and users to submit new MACI messages for their contributions. Without some advancement in oblivious computation, this Coordinator is necessarily a trusted party in this system (this is discussed more in the Limitations section).
 3. **Contributor:** Any address that sends DAI to the funding contract address.
 
-The Cl(ea)r.fund application uses [Ethereum](https://ethereum.org/), [TheGraph](https://thegraph.com), and [3Box](https://3box.io/)/[Ceramic](https://www.ceramic.network/) as a backend. The application will be hosted on GitHub pages, but can also easily be hosted on [IPFS](https://www.ipfs.com/) or run locally.
+The Cl(ea)r.fund application uses [Ethereum](https://ethereum.org/), [TheGraph](https://thegraph.com), and [3Box](https://3box.io/)/[Ceramic](https://www.ceramic.network/) as a backend. The application will be hosted on GitHub pages, but can also easily be hosted on [IPFS](https://ipfs.io/) or run locally.
 
 ### Limitations
 There are various limitations in our current design; we discuss some of them here.
