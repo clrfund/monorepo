@@ -1,0 +1,63 @@
+%% To render this diagram, paste the code into the live editor https://mermaid-js.github.io/mermaid-live-editor/ or use Mermaid CLI
+
+sequenceDiagram
+    participant Owner
+    participant PoolContributor
+    participant Recipient
+    participant Factory
+    participant MACIFactory
+    participant Contributor
+    participant FundingRound
+    participant MACI
+    participant Coordinator
+    
+    Owner ->> MACIFactory: deploy MACI factory
+    Owner ->> Factory: deploy factory
+    Owner ->> MACIFactory: transfer ownership to Factory ( call transferOwnership() )
+    Owner ->> Factory: set MACI parameters if necessary ( call setMaciParameters() )
+    Coordinator -->> Owner: provide public key
+    Owner ->> Factory: set coordinator ( call setCoordinator() )
+    PoolContributor ->> Factory: donate to the matching pool ( call contribute() )
+
+    loop Adding recipients
+        Recipient -->> Owner: ask for registration
+        Owner ->> Factory: call addRecipient()
+    end
+    
+    loop Every round
+        Owner ->> Factory: call deployNewRound()
+        Factory ->> FundingRound: deploy FundingRound contract, transfer funds from matching pool
+        Owner ->> Factory: call deployMaci()
+        Factory ->> MACIFactory: call deployMaci()
+        MACIFactory ->> MACI: create new MACI instance
+        Factory ->> FundingRound: call setMaci()
+        
+        loop Funding
+            Note over Contributor, FundingRound: contributor registers with their BrightID
+            Contributor ->> FundingRound: donate to the pool ( call contribute() )
+            FundingRound ->> MACI: call signUp()
+        end
+        
+        Note over FundingRound, MACI: contribution / signup deadline
+        
+        loop Voting
+            Note right of Contributor: contributor creates message
+            Contributor ->> MACI: vote ( call publishMessage() )
+        end
+        
+        Note over MACI: voting deadline
+        
+        Note left of Coordinator: coordinator generates proofs
+        Coordinator ->> MACI: process messages ( call batchProcessMessage() )
+        Coordinator ->> MACI: tally votes ( call proveVoteTallyBatch() )
+        Coordinator -->> Recipient: provide vote tally
+        
+        Owner ->> Factory: call transferMatchingFunds()
+        Factory ->> FundingRound: transfer matching funds and finalize the round
+    end
+
+    loop Distribution
+        Recipient ->> FundingRound: submit vote tally and a proof ( call claimFunds() )
+        FundingRound ->> MACI: verify the proof
+        FundingRound ->> Recipient: transfer funds
+    end
