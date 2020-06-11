@@ -20,6 +20,8 @@ The clr.fund smart contracts consist of a factory contract that deploys a new co
 
 The clr.fund application uses [Ethereum](https://ethereum.org/), [TheGraph](https://thegraph.com), and [3Box](https://3box.io/)/[Ceramic](https://www.ceramic.network/) as a backend. The application will be hosted on GitHub pages, but can also easily be hosted on [IPFS](https://ipfs.io/) or run locally.
 
+For more details, see the [sequence diagram](docs/clrfund.svg).
+
 ### Limitations
 There are various limitations in our current design; we discuss some of them here.
 
