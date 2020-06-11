@@ -1,10 +1,10 @@
-# cl(ea)r.fund
+# clr.fund
 
-Cl(ea)r.fund is a permissionless and trust-minimized Quadratic Funding application for Ethereum Public Goods. It uses [BrightID](https://brightID.org) for Sybil resistance and Minimal Anti-Collusion Infrastructure ([MACI](https://ethresear.ch/t/minimal-anti-collusion-infrastructure/5413)) to protect against various forms of bribery and collusion with the use of zk-Snarks.
+clr.fund is a permissionless and trust-minimized Quadratic Funding application for Ethereum Public Goods. It uses [BrightID](https://brightID.org) for Sybil resistance and Minimal Anti-Collusion Infrastructure ([MACI](https://ethresear.ch/t/minimal-anti-collusion-infrastructure/5413)) to protect against various forms of bribery and collusion with the use of zk-Snarks.
 
-Cl(ea)r.fund runs a continuous sequence of Quadratic Funding rounds, where anyone is able to add public goods projects as funding "recipients", contribute funds to the matching pool ("matching funds"), and contribute funds to individual recipients.
+clr.fund runs a continuous sequence of Quadratic Funding rounds, where anyone is able to add public goods projects as funding "recipients", contribute funds to the matching pool ("matching funds"), and contribute funds to individual recipients.
 
-While Cl(ea)r.fund aims to be agnostic to the source of matching funds, it specifically aims to enable contributions from the following sources:
+While clr.fund aims to be agnostic to the source of matching funds, it specifically aims to enable contributions from the following sources:
 
 1. Ethereum protocol rewards (Block rewards, transaction taxes, etc)
 2. Known and anonymous benefactors
@@ -12,13 +12,13 @@ While Cl(ea)r.fund aims to be agnostic to the source of matching funds, it speci
 
 In order for their contributions to count towards matching, contributors must verify their uniqueness using [BrightID](https://brightID.org). Contributions form unverified accounts do not count towards the quadratic matching for their project.
 
-The Cl(ear)r.fund smart contracts consist of a factory contract that deploys a new contract for each round. All matching funds are sent to the factory contract, while contribution funds are sent to the current round's contract. There are three roles in factory contract:
+The clr.fund smart contracts consist of a factory contract that deploys a new contract for each round. All matching funds are sent to the factory contract, while contribution funds are sent to the current round's contract. There are three roles in factory contract:
 
 1. **Owner:** This address (initially set as msg.sender) can set the address of all three roles, finalize a round by transferring matching funds to the previous round contract, and set the token and round duration.
 2. **Coordinator:** This address is responsible for running the zk-Snark computation on contributions to produce the relative percentages of matching funds that each recipient should receive. The coordinator can quit at any time, which invalidates the current round forcing the owner to start a new round and users to submit new MACI messages for their contributions. Without some advancement in oblivious computation, this Coordinator is necessarily a trusted party in this system (this is discussed more in the Limitations section).
 3. **Contributor:** Any address that sends DAI to the funding contract address.
 
-The Cl(ea)r.fund application uses [Ethereum](https://ethereum.org/), [TheGraph](https://thegraph.com), and [3Box](https://3box.io/)/[Ceramic](https://www.ceramic.network/) as a backend. The application will be hosted on GitHub pages, but can also easily be hosted on [IPFS](https://ipfs.io/) or run locally.
+The clr.fund application uses [Ethereum](https://ethereum.org/), [TheGraph](https://thegraph.com), and [3Box](https://3box.io/)/[Ceramic](https://www.ceramic.network/) as a backend. The application will be hosted on GitHub pages, but can also easily be hosted on [IPFS](https://ipfs.io/) or run locally.
 
 ### Limitations
 There are various limitations in our current design; we discuss some of them here.
@@ -37,7 +37,7 @@ For example, block reward funding would be in ETH, while many users may want to 
 
 In a future version, we plan to address this by routing ETH and token contributions in anything other than the current native token through a DEX such as [UniSwap](https://uniswap.io/).
 
-## Run Cl(ea)r.fund locally
+## Run clr.fund locally
 ### Install the dependencies
 ```
 yarn
