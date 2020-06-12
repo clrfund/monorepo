@@ -114,12 +114,15 @@ contract FundingRound is MACIPubKey {
   }
 
   /**
-    * @dev Allow recipients to claim funds.
+    * @dev Allow recipients to claim funds after vote tally was done.
     */
   function finalize()
     public
     onlyFactory
   {
+    require(!isFinalized, 'FundingRound: Already finalized');
+    require(maci.calcVotingDeadline() < now, 'FundingRound: Voting has not been finished');
+    require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes has not been tallied');
     isFinalized = true;
     poolSize = nativeToken.balanceOf(address(this));
   }
