@@ -27,6 +27,7 @@ contract FundingRound is MACIPubKey {
   event FundsClaimed(address _recipient);
   event NewContribution(address indexed _sender, uint256 amount);
 
+  mapping(address => uint256) public contributors;
   uint256 public counter;
 
   constructor(
@@ -95,7 +96,9 @@ contract FundingRound is MACIPubKey {
     require(address(maci) != address(0), 'FundingRound: MACI not deployed');
     require(counter < maci.maxUsers(), 'FundingRound: Contributor limit reached');
     require(now < contributionDeadline, 'FundingRound: Contribution period ended');
-    require(isFinalized == false, 'FundingRound: Round finalized');
+    require(!isFinalized, 'FundingRound: Round finalized');
+    require(amount > 0, 'FundingRound: Contribution amount must be greater than zero');
+    require(contributors[msg.sender] == 0, 'FundingRound: Already contributed');
     // TODO: check BrightID verification
     bytes memory signUpGatekeeperData = '';
     bytes memory initialVoiceCreditProxyData = abi.encode(amount);
@@ -105,6 +108,7 @@ contract FundingRound is MACIPubKey {
       signUpGatekeeperData,
       initialVoiceCreditProxyData
     );
+    contributors[msg.sender] = amount;
     counter += 1;
     emit NewContribution(msg.sender, amount);
   }
