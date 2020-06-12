@@ -192,7 +192,21 @@ describe('Funding Round Factory', () => {
     });
 
     it('reverts if current round is not finalized', async () => {
-      // TODO: write test when cancel() will be implemented
+      await factory.setToken(token.address);
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await factory.deployNewRound();
+      await expect(factory.deployNewRound())
+        .to.be.revertedWith('Factory: Current round is not finalized');
+    });
+
+    it('deploys new funding round after previous round has been finalized', async () => {
+      await factory.setToken(token.address);
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await factory.deployNewRound();
+      // Re-set coordinator and cancel current round
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await expect(factory.deployNewRound())
+        .to.emit(factory, 'NewRound');
     });
 
     it('only owner can deploy funding round', async () => {
@@ -260,8 +274,50 @@ describe('Funding Round Factory', () => {
   });
 
   describe('transferring matching funds', () => {
+    const roundDuration = 86400 * 7;  // Default duration in MACI factory
+    const votingDuration = 86400 * 7;  // Default duration in MACI factory
+    const contributionAmount = 1000;
+
     it('moves matching funds to the current round after its finalization', async () => {
-      // TODO: add tests later; needs time travel
+      await factory.setToken(token.address);
+      const tokenAsContributor = token.connect(contributor);
+      await tokenAsContributor.approve(
+        factory.address,
+        contributionAmount,
+      );
+      const factoryAsContributor = factory.connect(contributor);
+      await expect(factoryAsContributor.contribute(contributionAmount))
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await factory.deployNewRound();
+      const fundingRoundAddress = await factory.getCurrentRound();
+      const fundingRound = await ethers.getContractAt(
+        'FundingRound',
+        fundingRoundAddress,
+      );
+      await factory.deployMaci();
+      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await expect(factory.transferMatchingFunds())
+        .to.emit(factory, 'RoundFinalized')
+        .withArgs(fundingRoundAddress);
+      expect(await fundingRound.isFinalized()).to.equal(true);
+      expect(await token.balanceOf(fundingRoundAddress)).to.equal(contributionAmount);
+    });
+
+    it('reverts if round has not been deployed', async () => {
+      await factory.setToken(token.address);
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await expect(factory.transferMatchingFunds())
+        .to.be.revertedWith('Factory: Funding round has not been deployed');
+    });
+
+    it('finalizes current round even if matching pool is empty', async () => {
+      await factory.setToken(token.address);
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await factory.deployNewRound();
+      await factory.deployMaci();
+      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await expect(factory.transferMatchingFunds())
+        .to.emit(factory, 'RoundFinalized');
     });
 
     it('reverts if round has not been deployed', async () => {
@@ -321,5 +377,22 @@ describe('Funding Round Factory', () => {
     await factory.setCoordinator(coordinator.address, coordinatorPubKey);
     await expect(factory.coordinatorQuit())
       .to.be.revertedWith('Sender is not the coordinator');
+  });
+
+  it('should cancel current round when coordinator is changed', async () => {
+    await factory.setToken(token.address);
+    await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+    await factory.deployNewRound();
+    const fundingRoundAddress = await factory.getCurrentRound();
+    const fundingRound = await ethers.getContractAt(
+      'FundingRound',
+      fundingRoundAddress,
+    );
+
+    const factoryAsCoordinator = factory.connect(coordinator);
+    await expect(factoryAsCoordinator.coordinatorQuit())
+      .to.emit(factory, 'RoundFinalized')
+      .withArgs(fundingRoundAddress);
+    expect(await fundingRound.isCancelled()).to.equal(true);
   });
 });

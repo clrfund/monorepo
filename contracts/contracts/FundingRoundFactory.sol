@@ -179,6 +179,22 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
     * @param _coordinator Coordinator's address.
     * @param _coordinatorPubKey Coordinator's public key.
     */
+  function _setCoordinator(
+    address _coordinator,
+    PubKey memory _coordinatorPubKey
+  )
+    internal
+  {
+    coordinator = _coordinator;
+    coordinatorPubKey = _coordinatorPubKey;
+    FundingRound currentRound = getCurrentRound();
+    if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
+      currentRound.cancel();
+      emit RoundFinalized(address(currentRound));
+    }
+    emit CoordinatorTransferred(_coordinator);
+  }
+
   function setCoordinator(
     address _coordinator,
     PubKey memory _coordinatorPubKey
@@ -186,17 +202,13 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
     public
     onlyOwner
   {
-    coordinator = _coordinator;
-    coordinatorPubKey = _coordinatorPubKey;
-    emit CoordinatorTransferred(_coordinator);
-    // TODO: cancel current funding round
+    _setCoordinator(_coordinator, _coordinatorPubKey);
   }
 
   function coordinatorQuit() public onlyCoordinator {
-    coordinator = address(0);
     // The fact that they quit is obvious from
     // the address being 0x0
-    emit CoordinatorTransferred(coordinator);
+    _setCoordinator(address(0), PubKey(0, 0));
   }
 
   modifier onlyCoordinator() {
