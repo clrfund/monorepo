@@ -11,26 +11,29 @@ import { QuadVoteTallyVerifier } from 'maci/contracts/sol/QuadVoteTallyVerifier.
 
 contract MACIFactory is Ownable, MACIParameters {
   // Constants
-  uint256 private constant MACI_STATE_TREE_BASE = 2;
-  uint256 private constant MACI_MESSAGE_TREE_BASE = 2;
-  uint256 private constant MACI_VOTE_OPTION_TREE_BASE = 5;
-
-  uint8 private constant MACI_STATE_TREE_DEPTH = 10;
-  uint8 private constant MACI_MESSAGE_TREE_DEPTH = 10;
-  uint8 private constant MACI_VOTE_OPTION_TREE_DEPTH = 4;
-  uint8 private constant MACI_TALLY_BATCH_SIZE = 4;
-  uint8 private constant MACI_MESSAGE_BATCH_SIZE = 4;
-  uint256 private constant MACI_MAX_USERS = MACI_STATE_TREE_BASE ** MACI_STATE_TREE_DEPTH - 1;
-  uint256 private constant MACI_MAX_MESSAGES = MACI_MESSAGE_TREE_BASE ** MACI_MESSAGE_TREE_DEPTH - 1;
-  uint256 private constant MACI_MAX_VOTE_OPTIONS = MACI_VOTE_OPTION_TREE_BASE ** MACI_VOTE_OPTION_TREE_DEPTH - 1;
+  uint256 private constant STATE_TREE_BASE = 2;
+  uint256 private constant MESSAGE_TREE_BASE = 2;
+  uint256 private constant VOTE_OPTION_TREE_BASE = 5;
 
   // State
+  uint8 private stateTreeDepth = 10;
+  uint8 private messageTreeDepth = 10;
+  uint8 private voteOptionTreeDepth = 4;
+  uint8 private tallyBatchSize = 4;
+  uint8 private messageBatchSize = 4;
+  uint256 public maxUsers = STATE_TREE_BASE ** 10 - 1;
+  uint256 public maxMessages = MESSAGE_TREE_BASE ** 10 - 1;
+  uint256 public maxVoteOptions = VOTE_OPTION_TREE_BASE ** 4 - 1;
+  uint256 public signUpDuration = 7 * 86400;
+  uint256 public votingDuration = 7 * 86400;
+
   FreeForAllGatekeeper private signUpGatekeeper;
   BatchUpdateStateTreeVerifier private batchUstVerifier;
   QuadVoteTallyVerifier private qvtVerifier;
   ConstantInitialVoiceCreditProxy private initialVoiceCreditProxy;
 
   // Events
+  event MaciParametersChanged();
   event MaciDeployed(address _maci);
 
   constructor(
@@ -47,9 +50,32 @@ contract MACIFactory is Ownable, MACIParameters {
     initialVoiceCreditProxy = _initialVoiceCreditProxy;
   }
 
-  function deployMaci(
+  function setMaciParameters(
+    uint8 _stateTreeDepth,
+    uint8 _messageTreeDepth,
+    uint8 _voteOptionTreeDepth,
+    uint8 _tallyBatchSize,
+    uint8 _messageBatchSize,
     uint256 _signUpDuration,
-    uint256 _votingDuration,
+    uint256 _votingDuration
+  )
+    public
+    onlyOwner
+  {
+    stateTreeDepth = _stateTreeDepth;
+    messageTreeDepth = _messageTreeDepth;
+    voteOptionTreeDepth = _voteOptionTreeDepth;
+    tallyBatchSize = _tallyBatchSize;
+    messageBatchSize = _messageBatchSize;
+    maxUsers = STATE_TREE_BASE ** stateTreeDepth - 1;
+    maxMessages = MESSAGE_TREE_BASE ** messageTreeDepth - 1;
+    maxVoteOptions = VOTE_OPTION_TREE_BASE ** voteOptionTreeDepth - 1;
+    signUpDuration = _signUpDuration;
+    votingDuration = _votingDuration;
+    emit MaciParametersChanged();
+  }
+
+  function deployMaci(
     PubKey memory _coordinatorPubKey
   )
     public
@@ -57,18 +83,18 @@ contract MACIFactory is Ownable, MACIParameters {
     returns (MACI _maci)
   {
     TreeDepths memory treeDepths = TreeDepths(
-      MACI_STATE_TREE_DEPTH,
-      MACI_MESSAGE_TREE_DEPTH,
-      MACI_VOTE_OPTION_TREE_DEPTH
+      stateTreeDepth,
+      messageTreeDepth,
+      voteOptionTreeDepth
     );
     BatchSizes memory batchSizes = BatchSizes(
-      MACI_TALLY_BATCH_SIZE,
-      MACI_MESSAGE_BATCH_SIZE
+      tallyBatchSize,
+      messageBatchSize
     );
     MaxValues memory maxValues = MaxValues(
-      MACI_MAX_USERS,
-      MACI_MAX_MESSAGES,
-      MACI_MAX_VOTE_OPTIONS
+      maxUsers,
+      maxMessages,
+      maxVoteOptions
     );
     _maci = new MACI(
       treeDepths,
@@ -77,8 +103,8 @@ contract MACIFactory is Ownable, MACIParameters {
       signUpGatekeeper,
       batchUstVerifier,
       qvtVerifier,
-      _signUpDuration,
-      _votingDuration,
+      signUpDuration,
+      votingDuration,
       initialVoiceCreditProxy,
       _coordinatorPubKey
     );
