@@ -46,18 +46,27 @@ sequenceDiagram
         end
         
         Note over MACI: voting deadline
-        
-        Note left of Coordinator: coordinator generates proofs
-        Coordinator ->> MACI: process messages ( call batchProcessMessage() )
-        Coordinator ->> MACI: tally votes ( call proveVoteTallyBatch() )
-        Coordinator -->> Recipient: provide vote tally
-        
-        Owner ->> Factory: call transferMatchingFunds()
-        Factory ->> FundingRound: transfer matching funds and finalize the round
-    end
 
-    loop Distribution
-        Recipient ->> FundingRound: submit vote tally and a proof ( call claimFunds() )
-        FundingRound ->> MACI: verify the proof
-        FundingRound ->> Recipient: transfer funds
+        alt Tally votes
+            Note left of Coordinator: coordinator generates proofs
+            Coordinator ->> MACI: process messages ( call batchProcessMessage() )
+            Coordinator ->> MACI: tally votes ( call proveVoteTallyBatch() )
+            Coordinator -->> Recipient: provide vote tally
+            Owner ->> Factory: call transferMatchingFunds()
+            Factory ->> FundingRound: transfer matching funds and finalize the round
+
+            loop Distribution
+                Recipient ->> FundingRound: submit vote tally and a proof ( call claimFunds() )
+                FundingRound ->> MACI: verify the proof
+                FundingRound ->> Recipient: transfer funds
+            end
+        else Cancel round
+            Owner ->> Factory: call cancel()
+            Factory ->> FundingRound: call cancel()
+
+            loop Withdrawal
+                Contributor ->> FundingRound: call withdraw()
+                FundingRound ->> Contributor: transfer funds
+            end
+        end
     end
