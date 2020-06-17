@@ -25,6 +25,15 @@ async function getCurrentRound() {
     provider
   );
   const fundingRoundAddress = await factory.getCurrentRound();
+
+  if (fundingRoundAddress === "0x0000000000000000000000000000000000000000") {
+    return {
+      fundingRoundAddress: "N/A",
+      nativeTokenAddress: "N/A",
+      contributions: []
+    };
+  }
+
   const fundingRound = new ethers.Contract(
     fundingRoundAddress,
     FundingRound.abi,
