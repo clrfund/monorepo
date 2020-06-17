@@ -11,7 +11,7 @@ import 'maci/contracts/sol/MACIPubKey.sol';
 
 import './FundingRoundFactory.sol';
 
-contract FundingRound is MACIPubKey {
+contract FundingRound is Ownable, MACIPubKey {
   using SafeERC20 for IERC20;
 
   // ERC20 token being used
@@ -22,8 +22,6 @@ contract FundingRound is MACIPubKey {
   bool public isFinalized = false;
   uint256 public poolSize;
 
-  FundingRoundFactory private parent;
-
   event FundsClaimed(address _recipient);
   event NewContribution(address indexed _sender, uint256 amount);
 
@@ -31,22 +29,15 @@ contract FundingRound is MACIPubKey {
   uint256 public counter;
 
   constructor(
-    FundingRoundFactory _parent,
     IERC20 _nativeToken,
     uint256 _duration,
     PubKey memory _coordinatorPubKey
   )
     public
   {
-    parent = _parent;
     nativeToken = _nativeToken;
     contributionDeadline = now + _duration;
     coordinatorPubKey = _coordinatorPubKey;
-  }
-
-  modifier onlyFactory() {
-    require(msg.sender == address(parent), 'Funding Round: Sender is not the factory');
-    _;
   }
 
   /**
@@ -56,11 +47,13 @@ contract FundingRound is MACIPubKey {
     MACI _maci
   )
     public
-    onlyFactory
+    onlyOwner
   {
-    assert(address(maci) == address(0));
-    // Ensure that signup is not going to be blocked
-    assert(_maci.calcSignUpDeadline() >= contributionDeadline);
+    require(address(maci) == address(0), 'FundingRound: Already linked to MACI instance');
+    require(
+      _maci.calcSignUpDeadline() >= contributionDeadline,
+      'FundingRound: MACI signup deadline must be greater than contribution deadline'
+    );
     maci = _maci;
   }
 
@@ -75,7 +68,7 @@ contract FundingRound is MACIPubKey {
   )
     public
   {
-    require(isFinalized, 'Funding Round: Round not finalized');
+    require(isFinalized, 'FundingRound: Round not finalized');
     // TODO: https://github.com/appliedzkp/maci/issues/108
     // bool verified = maci.verifyTallyResult(...);
     // TODO: do calculation properly; rounding
@@ -118,7 +111,7 @@ contract FundingRound is MACIPubKey {
     */
   function finalize()
     public
-    onlyFactory
+    onlyOwner
   {
     require(!isFinalized, 'FundingRound: Already finalized');
     require(maci.calcVotingDeadline() < now, 'FundingRound: Voting has not been finished');
