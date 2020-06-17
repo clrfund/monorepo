@@ -48,11 +48,12 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
   /**
     * @dev Contribute tokens to the matching pool.
     */
-  function contribute(uint256 amount)
+  function contribute(uint256 _amount)
     public
   {
-    nativeToken.transferFrom(msg.sender, address(this), amount);
-    emit NewContribution(msg.sender, amount);
+    require(address(nativeToken) != address(0), 'Factory: Native token is not set');
+    nativeToken.transferFrom(msg.sender, address(this), _amount);
+    emit NewContribution(msg.sender, _amount);
   }
 
   function addRecipient(address _fundingAddress, string memory _name)
@@ -116,6 +117,7 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
     returns (FundingRound _newRound)
   {
     require(maciFactory.owner() == address(this), 'Factory: MACI factory is not owned by FR factory');
+    require(address(nativeToken) != address(0), 'Factory: Native token is not set');
     require(coordinator != address(0), 'Factory: No coordinator');
     FundingRound currentRound = getCurrentRound();
     require(
@@ -142,6 +144,7 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
     onlyOwner
   {
     FundingRound currentRound = getCurrentRound();
+    require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
     require(address(currentRound.maci()) == address(0), 'Factory: MACI already deployed');
     (uint256 x, uint256 y) = currentRound.coordinatorPubKey();
     PubKey memory roundCoordinatorPubKey = PubKey(x, y);
@@ -156,8 +159,8 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
     public
     onlyOwner
   {
-    uint256 amount = nativeToken.balanceOf(address(this));
     FundingRound currentRound = getCurrentRound();
+    uint256 amount = currentRound.nativeToken().balanceOf(address(this));
     nativeToken.transferFrom(address(this), address(currentRound), amount);
     currentRound.finalize();
     emit RoundFinalized(address(currentRound));

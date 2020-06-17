@@ -1,18 +1,14 @@
-import { waffle } from '@nomiclabs/buidler';
+import { ethers, waffle } from '@nomiclabs/buidler';
 import { use, expect } from 'chai';
 import { deployContract, solidity } from 'ethereum-waffle';
-import { ethers } from 'ethers';
+import { Contract } from 'ethers';
 
 import { deployMaciFactory } from '../scripts/helpers';
-import { getGasUsage, MaciParameters } from './utils';
+import { ZERO_ADDRESS, getGasUsage, getEventArg, MaciParameters } from './utils';
 
 import RoundArtifact from '../build/contracts/FundingRound.json';
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
 import TokenArtifact from '../build/contracts/AnyOldERC20Token.json';
-
-// import { FundingRoundFactory } from "../build/types/FundingRoundFactory"
-
-// import { Keypair, Command, PubKey, PrivKey } from 'maci/domainobjs/js/index.js';
 
 use(solidity);
 
@@ -21,12 +17,12 @@ describe('Funding Round Factory', () => {
 
   const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();
 
-  let maciFactory: ethers.Contract;
-  let factory: ethers.Contract;
-  let token;
-  let tokenContractAsContributor;
+  let maciFactory: Contract;
+  let factory: Contract;
+  let token: Contract;
 
   let maciParameters = new MaciParameters();
+  let coordinatorPubKey = { x: 0, y: 1 };
 
   beforeEach(async () => {
     maciFactory = await deployMaciFactory(deployer);
@@ -39,26 +35,47 @@ describe('Funding Round Factory', () => {
     expect(await getGasUsage(factory.deployTransaction)).lessThan(4000000);
     await maciFactory.transferOwnership(factory.address);
 
-    const initialSupply = '10000000000';
-
-    token = await deployContract(deployer, TokenArtifact, [initialSupply]);
-
+    // Deploy token contract and transfer tokens to contributor
+    const tokenInitialSupply = 10000000000;
+    token = await deployContract(deployer, TokenArtifact, [tokenInitialSupply]);
     expect(token.address).to.properAddress;
+    await token.transfer(contributor.address, tokenInitialSupply);
+  });
 
-    // Get a reference to the token contract where msg.sender
-    // is the contributor when it interacts with that contract
-    tokenContractAsContributor = token.connect(contributor);
+  describe('contributing to matching pool', () => {
+    const contributionAmount = 1000;
 
-    // const contractImApproving = await factory.currentRound();
-    // console.log({ contractImApproving });
-    // const amountToApprove = '100000';
+    it('allows user to contribute to matching pool', async () => {
+      await factory.setToken(token.address);
+      const tokenAsContributor = token.connect(contributor);
+      await tokenAsContributor.approve(
+        factory.address,
+        contributionAmount,
+      );
+      const factoryAsContributor = factory.connect(contributor);
+      await expect(factoryAsContributor.contribute(contributionAmount))
+        .to.emit(factory, 'NewContribution')
+        .withArgs(contributor.address, contributionAmount);
+      expect(await token.balanceOf(factory.address)).to.equal(contributionAmount);
+    });
 
-    // Send this tx as the contributor
-    // await tokenContractAsContributor.approve(
-    //   contractImApproving,
-    //   amountToApprove
-    // );
-    // console.log('Approved');
+    it('rejects contribution if token address is not set', async () => {
+      const tokenAsContributor = token.connect(contributor);
+      await tokenAsContributor.approve(
+        factory.address,
+        contributionAmount,
+      );
+      const factoryAsContributor = factory.connect(contributor);
+      await expect(factoryAsContributor.contribute(contributionAmount))
+        .to.be.revertedWith('Factory: Native token is not set');
+    });
+
+    it('requires approval', async () => {
+      await factory.setToken(token.address);
+      const factoryAsContributor = factory.connect(contributor);
+      await expect(factoryAsContributor.contribute(contributionAmount))
+        .to.be.revertedWith('revert ERC20: transfer amount exceeds allowance');
+    });
   });
 
   describe('adding recipients', () => {
@@ -84,7 +101,7 @@ describe('Funding Round Factory', () => {
     });
 
     it('should not accept zero-address', async () => {
-      fundingAddress = '0x0000000000000000000000000000000000000000';
+      fundingAddress = ZERO_ADDRESS;
       await expect(factory.addRecipient(fundingAddress, recipientName))
         .to.be.revertedWith('Factory: Recipient address is zero');
     });
@@ -132,144 +149,166 @@ describe('Funding Round Factory', () => {
       .to.be.revertedWith('Ownable: caller is not the owner');
   });
 
-  it('deploys MACI', async () => {
-    const coordinatorPubKey = { x: 0, y: 1 };
-    await factory.setCoordinator(
-      coordinator.address,
-      coordinatorPubKey,
-    );
+  it('prevents from changing MACI parameters when waiting for MACI deployment', async () => {
+    await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+    await factory.setToken(token.address);
     await factory.deployNewRound();
-
-    const deployTx = await factory.deployMaci();
-    expect(await getGasUsage(deployTx)).lessThan(7000000);
+    await expect(factory.setMaciParameters(...maciParameters.values()))
+      .to.be.revertedWith('Factory: Waiting for MACI deployment');
   });
 
-  it('has new round running', async () => {
-    expect(await factory.getCurrentRound()).to.properAddress;
+  describe('deploying funding round', () => {
+    it('deploys funding round', async () => {
+      await factory.setToken(token.address);
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await expect(factory.deployNewRound())
+        .to.emit(factory, 'NewRound');
+      const fundingRoundAddress = await factory.getCurrentRound();
+      expect(fundingRoundAddress).to.properAddress;
+      expect(fundingRoundAddress).to.not.equal(ZERO_ADDRESS);
+
+      const fundingRound = await ethers.getContractAt(
+        'FundingRound',
+        fundingRoundAddress,
+      );
+      expect(await fundingRound.nativeToken()).to.equal(token.address);
+      const roundCoordinatorPubKey = await fundingRound.coordinatorPubKey();
+      expect(parseInt(roundCoordinatorPubKey[0])).to.equal(coordinatorPubKey.x);
+      expect(parseInt(roundCoordinatorPubKey[1])).to.equal(coordinatorPubKey.y);
+      const contributionDeadline = await fundingRound.contributionDeadline();
+      expect(parseInt(contributionDeadline)).to.be.greaterThan(0);
+    });
+
+    it('reverts if native token is not set', async () => {
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await expect(factory.deployNewRound())
+        .to.be.revertedWith('Factory: Native token is not set');
+    });
+
+    it('reverts if coordinator is not set', async () => {
+      await factory.setToken(token.address);
+      await expect(factory.deployNewRound())
+        .to.be.revertedWith('Factory: No coordinator');
+    });
+
+    it('reverts if current round is not finalized', async () => {
+      // TODO: write test when cancel() will be implemented
+    });
+
+    it('only owner can deploy funding round', async () => {
+      await factory.setToken(token.address);
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      const factoryAsContributor = factory.connect(contributor);
+      await expect(factoryAsContributor.deployNewRound())
+        .to.be.revertedWith('Ownable: caller is not the owner');
+    });
   });
 
-  it('set contract owner/witness/coordinator/round duration correctly', async () => {
-    const coordinatorPubKey = { x: 0, y: 1 };
-    await factory.setCoordinator(
-      coordinator.address,
-      coordinatorPubKey,
-    );
+  describe('deploying MACI', () => {
+    it('deploys MACI', async () => {
+      await factory.setCoordinator(
+        coordinator.address,
+        coordinatorPubKey,
+      );
+      await factory.setToken(token.address);
+      await factory.deployNewRound();
+
+      const deployTx = await factory.deployMaci();
+      expect(await getGasUsage(deployTx)).lessThan(7000000);
+      const maciAddress = await getEventArg(
+        deployTx,
+        maciFactory,
+        'MaciDeployed',
+        '_maci',
+      );
+
+      const fundingRoundAddress = await factory.getCurrentRound();
+      const fundingRound = await ethers.getContractAt(
+        'FundingRound',
+        fundingRoundAddress,
+      );
+      expect(await fundingRound.maci()).to.equal(maciAddress);
+    });
+
+    it('reverts if round has not been deployed', async () => {
+      await expect(factory.deployMaci())
+        .to.be.revertedWith('Factory: Funding round has not been deployed');
+    });
+
+    it('reverts if MACI is already deployed', async () => {
+      await factory.setCoordinator(
+        coordinator.address,
+        coordinatorPubKey,
+      );
+      await factory.setToken(token.address);
+      await factory.deployNewRound();
+      await factory.deployMaci();
+      await expect(factory.deployMaci())
+        .to.be.revertedWith('Factory: MACI already deployed');
+    });
+
+    it('only owner can deploy MACI', async () => {
+      await factory.setCoordinator(
+        coordinator.address,
+        coordinatorPubKey,
+      );
+      await factory.setToken(token.address);
+      const factoryAsContributor = factory.connect(contributor);
+      await expect(factoryAsContributor.deployMaci())
+        .to.be.revertedWith('Ownable: caller is not the owner');
+    });
+  });
+
+  describe('transferring matching funds', () => {
+    it('moves matching funds to the current round after its finalization', async () => {
+      // TODO: time travel
+    });
+  });
+
+  it('allows owner to set native token', async () => {
+    await expect(factory.setToken(token.address))
+      .to.emit(factory, 'NewToken')
+      .withArgs(token.address);
+    expect(await factory.nativeToken()).to.equal(token.address);
+  });
+
+  it('only owner can set native token', async () => {
+    const factoryAsContributor = factory.connect(contributor);
+    await expect(factoryAsContributor.setToken(token.address))
+      .to.be.revertedWith('Ownable: caller is not the owner');
+  });
+
+  it('allows owner to change coordinator', async () => {
+    await expect(factory.setCoordinator(
+        coordinator.address,
+        coordinatorPubKey,
+      ))
+      .to.emit(factory, 'CoordinatorTransferred')
+      .withArgs(coordinator.address);
     expect(await factory.coordinator()).to.eq(coordinator.address);
   });
 
-  it('allows user to contribute to current round', async () => {
-    const contractAddress = await factory.getCurrentRound();
-    console.log('About to build contract');
-    console.log({ contractAddress });
-
-    const round = new ethers.Contract(
-      contractAddress,
-      RoundArtifact.abi,
-      provider
-    );
-
-    // const round = ethers.getContract(
-    //   contractAddress,
-    //   RoundArtifact.abi,
-    //   provider
-    // );
-    // console.log({ round });
-
-    // const keypair = new Keypair();
-
-    // const { pubKey: rawPubKey, privKey: rawPrivKey } = keypair;
-    // const pubKey = new PubKey(rawPubKey);
-    // const privKey = new PrivKey(rawPrivKey);
-    // console.log({ privKey });
-    // console.log({ pubKey });
-
-    // const ecdhSharedKey = Keypair.genEcdhSharedKey(rawPrivKey, rawPubKey);
-    // const ecdhSharedKey = Keypair.genEcdhSharedKey(privKey, pubKey);
-    // console.log({ ecdhSharedKey });
-
-    //
-    // Command params:
-    //
-    // stateIndex: The unique number starting with 1
-    //  = 1
-    // newPubKey is your new public key if you changed your keypair.
-    //  = Public key from having instantiated keypair thing
-    // voteOptionIndex is the user’s vote for a proposal. Proposals are represented by integers starting with 1.  (1-16 for now)
-    //  = 1
-    // newVoteWeight The **square root** of the amount assigned
-    //  = 1
-    // Nonce can just be 0 and 1. (old keypair is 0, new keypair is 1).
-    //  = 1
-
-    // const command = new Command({
-    //   stateIndex: 1,
-    //   newPubKey: pubKey,
-    //   voteOptionIndex: 1,
-    //   newVoteWeight: 1,
-    //   nonce: 1
-    // });
-    // console.log({ command });
-
-    // Encrypt takes args
-    // signature: Signature,
-    // sharedKey: EcdhSharedKey,
-    // const signature = command.sign(privKey);
-    // console.log({ signature });
-    // const message = command.encrypt(signature, ecdhSharedKey);
-    // console.log({ message });
-
-    // contribute args:
-    // - uint256[] memory message,
-    // - PubKey memory pubKey,
-    // - uint256 amount
-    // await round.contribute();
+  it('allows only the owner to set a new coordinator', async () => {
+    const factoryAsContributor = factory.connect(contributor);
+    await expect(factoryAsContributor.setCoordinator(
+        coordinator.address,
+        coordinatorPubKey,
+      ))
+      .to.be.revertedWith('Ownable: caller is not the owner');
   });
 
-  it('allows endRound to be called after round duration', async () => {});
-
-  // it('allows endRound to be called if new coordinator is set', async () => {});
-
-  // it('reverts if endRound is called and round not over or not newCoordinator', async () => {});
-
-  it('deploys new round and sets newRound to updated address when endRound is called', async () => {});
-
-  it('allows only witnesses to call setMaci', async () => {});
-
-  it('set MACI address correctly, and newMaci == true', async () => {});
-
-  // it('reverts if nextRound is called and newMaci != true', async () => {});
-
-  // it('reverts if nextRound is called and coordinator == null', async () => {});
-
-  // TODO: sendFundsToCurrentRound deprecated for `contribute`
-  // it('moves funds to current funding round when calling sendFundsToCurrentRound in previous round', async () => {});
-
-  // it('moves funds to current funding round when calling sendFundsToCurrentRound in current round', async () => {});
-
-  it('moves DAI balance of factory to current funding round when calling nextRound', async () => {});
-
-  it('sets currentRound and newMaci correctly when nextRound is called', async () => {});
-
-  // it('allows only the owner to call nextRound', async () => {});
-
-  // it('allows only the owner to set a new coordinator', async () => {});
-
-  // it('ends the round when setCoordinator is called', async () => {});
-
-  // it('allows only the coordinator to call coordinatorQuit and sets coordinator to null', async () => {});
-
-  // it('allows only the witness to call witnessQuit and sets witness to null and newMaci to false', async () => {});
-
-  // it('allows only the owner to call setOwner and sets new owner', async () => {});
-
-  // it('allows only the owner to call setWitness and sets new witness', async () => {});
-
-  // it('allows only the owner to call setRoundDuration and sets new round duration', async () => {});
-
-  it('allows any user to trigger a claim for themselves or others after a round is completed', async () => {
-    // recipient receives contributions
-    // recipient receives expected contribution amount
+  it('allows coordinator to call coordinatorQuit and sets coordinator to null', async () => {
+    await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+    const factoryAsCoordinator = factory.connect(coordinator);
+    await expect(factoryAsCoordinator.coordinatorQuit())
+      .to.emit(factory, 'CoordinatorTransferred')
+      .withArgs(ZERO_ADDRESS);
+    expect(await factory.coordinator()).to.equal(ZERO_ADDRESS);
   });
 
-  // it('checks that a MACI is valid when donations occur after round duration', async () => {});
+  it('only coordinator can call coordinatorQuit', async () => {
+    await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+    await expect(factory.coordinatorQuit())
+      .to.be.revertedWith('Sender is not the coordinator');
+  });
 });

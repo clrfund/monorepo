@@ -1,5 +1,8 @@
+import { Contract, Event } from 'ethers';
 import { TransactionResponse } from 'ethers/providers';
 import { BigNumber } from 'ethers/utils/bignumber';
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export async function getGasUsage(transaction: TransactionResponse): Promise<Number | null> {
   const receipt = await transaction.wait();
@@ -8,6 +11,22 @@ export async function getGasUsage(transaction: TransactionResponse): Promise<Num
   } else {
     return null;
   }
+}
+
+export async function getEventArg(
+  transaction: TransactionResponse,
+  contract: Contract,
+  eventName: string,
+  argumentName: string,
+): Promise<any> {
+  const receipt = await transaction.wait();
+  for (const log of receipt.logs || []) {
+    const event = contract.interface.parseLog(log);
+    if (event && event.name === eventName) {
+      return event.values[argumentName];
+    }
+  }
+  throw new Error('Event not found');
 }
 
 export class MaciParameters {
