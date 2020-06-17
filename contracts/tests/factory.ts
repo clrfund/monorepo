@@ -171,6 +171,7 @@ describe('Funding Round Factory', () => {
         'FundingRound',
         fundingRoundAddress,
       );
+      expect(await fundingRound.owner()).to.equal(factory.address);
       expect(await fundingRound.nativeToken()).to.equal(token.address);
       const roundCoordinatorPubKey = await fundingRound.coordinatorPubKey();
       expect(parseInt(roundCoordinatorPubKey[0])).to.equal(coordinatorPubKey.x);
@@ -261,7 +262,7 @@ describe('Funding Round Factory', () => {
 
   describe('transferring matching funds', () => {
     it('moves matching funds to the current round after its finalization', async () => {
-      // TODO: time travel
+      // TODO: add tests later; needs time travel
     });
   });
 

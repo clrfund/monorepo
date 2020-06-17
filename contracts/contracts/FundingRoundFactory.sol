@@ -126,7 +126,6 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
     );
     uint256 signUpDuration = maciFactory.signUpDuration();
     FundingRound newRound = new FundingRound(
-      this,
       nativeToken,
       signUpDuration,
       coordinatorPubKey
