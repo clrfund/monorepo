@@ -15,17 +15,17 @@
   },
   "scripts": {
     "build": "yarn workspaces run build",
-    "build:contracts": "yarn workspace @my-app/contracts run build",
-    "build:web": "yarn workspace @my-app/vue-app run build",
+    "build:contracts": "yarn workspace @clrfund/contracts run build",
+    "build:web": "yarn workspace @clrfund/vue-app run build",
     "start:dev": "yarn deploy:local && yarn start:web",
-    "start:node": "yarn workspace @my-app/contracts run node",
-    "start:web": "yarn workspace @my-app/vue-app run serve",
+    "start:node": "yarn workspace @clrfund/contracts run node",
+    "start:web": "yarn workspace @clrfund/vue-app run serve",
     "test": "yarn workspaces run test",
-    "test:contracts": "yarn workspace @my-app/contracts run test",
-    "test:web": "yarn workspace @my-app/vue-app run test",
-    "deploy:local": "yarn workspace @my-app/contracts run deploy:local",
-    "upgrade:local": "yarn workspace @my-app/contracts run upgrade:local",
+    "test:contracts": "yarn workspace @clrfund/contracts run test",
+    "test:web": "yarn workspace @clrfund/vue-app run test",
+    "deploy:local": "yarn workspace @clrfund/contracts run deploy:local",
+    "upgrade:local": "yarn workspace @clrfund/contracts run upgrade:local",
     "lint": "yarn lint:web",
-    "lint:web": "yarn workspace @my-app/vue-app run lint"
+    "lint:web": "yarn workspace @clrfund/vue-app run lint"
   }
 }
