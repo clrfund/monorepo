@@ -23,7 +23,7 @@
     <v-navigation-drawer v-model="left" fixed temporary></v-navigation-drawer>
 
     <v-main>
-      <nuxt @selectRecipient="onSelectRecipientChild" />
+      <nuxt />
       <v-btn color="pink" dark large absolute bottom right fab>
         <v-icon>mdi-check</v-icon>
       </v-btn>
@@ -64,14 +64,14 @@ export default {
     left: false,
     selectedRecpient: {},
   }),
-  methods: {
-    onSelectRecipientChild(recipient) {
-      // console.log("on recipient", recipient);
-      this.selectedRecpient = recipient;
-    },
-  },
   created() {
     this.$vuetify.theme.dark = true;
+
+   this.$nuxt.$on('selectRecipient', (recipient) => {
+     console.log("on recipient", recipient);
+      this.selectedRecpient = recipient;
+   })
+
   },
 };
 </script>
