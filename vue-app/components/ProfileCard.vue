@@ -24,25 +24,23 @@ import { getProfile } from "3box/lib/api";
 import mixins from "../mixins";
 export default {
   props: {
-    address: String,
+    address: String
   },
   mixins: [mixins],
   data: () => ({
-    profile: {},
+    profile: {}
   }),
   watch: {
     address: {
-      handler: function(newVal) {
-        getProfile(newVal)
-          .then((data) => {
-            this.profile = data;
-          })
-          .catch(() => {
-            this.profile = {};
-          });
+      handler: async function(newVal) {
+        try {
+          this.profile = await getProfile(newVal);
+        } catch {
+          this.profile = {};
+        }
       },
-      immediate: true,
-    },
-  },
+      immediate: true
+    }
+  }
 };
 </script>

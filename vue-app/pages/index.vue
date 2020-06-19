@@ -31,7 +31,7 @@
         :key="item.title"
         @click="selectRecipient(item)"
       >
-        <RecipientItem :item="item"></RecipientItem>
+        <RecipientItem  :item="item"></RecipientItem>
       </v-list-item>
     </v-list>
   </v-container>
@@ -75,8 +75,8 @@ export default {
   }),
   methods: {
     selectRecipient(recipient) {
-      // console.log("recipient", recipient);
-      this.$emit("selectRecipient", recipient);
+      console.log("recipient", recipient);
+      this.$nuxt.$emit("selectRecipient", recipient);
     },
     async signIn() {
       try {
