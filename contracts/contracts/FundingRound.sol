@@ -73,7 +73,7 @@ contract FundingRound is Ownable, MACIPubKey {
     // bool verified = maci.verifyTallyResult(...);
     // TODO: do calculation properly; rounding
     uint256 finalAmount = _poolShare * poolSize / 100;
-    nativeToken.transferFrom(address(this), msg.sender, finalAmount);
+    nativeToken.transfer(msg.sender, finalAmount);
     emit FundsClaimed(msg.sender);
   }
 
@@ -114,8 +114,9 @@ contract FundingRound is Ownable, MACIPubKey {
     onlyOwner
   {
     require(!isFinalized, 'FundingRound: Already finalized');
+    require(address(maci) != address(0), 'FundingRound: MACI not deployed');
     require(maci.calcVotingDeadline() < now, 'FundingRound: Voting has not been finished');
-    require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes has not been tallied');
+    require(maci.numSignUps() == 0 || !maci.hasUntalliedStateLeaves(), 'FundingRound: Votes has not been tallied');
     isFinalized = true;
     poolSize = nativeToken.balanceOf(address(this));
   }
