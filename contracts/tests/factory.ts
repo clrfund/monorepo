@@ -264,6 +264,17 @@ describe('Funding Round Factory', () => {
     it('moves matching funds to the current round after its finalization', async () => {
       // TODO: add tests later; needs time travel
     });
+
+    it('reverts if round has not been deployed', async () => {
+      await factory.setToken(token.address);
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await expect(factory.transferMatchingFunds())
+        .to.be.revertedWith('Factory: Funding round has not been deployed');
+    });
+
+    it('finalizes current round even if matching pool is empty', async () => {
+      // TODO: add tests later
+    });
   });
 
   it('allows owner to set native token', async () => {

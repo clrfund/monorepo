@@ -152,15 +152,18 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
   }
 
   /**
-    * @dev Transfer funds from matching pool to funding round and finalize it.
+    * @dev Transfer funds from matching pool to current funding round and finalize it.
     */
   function transferMatchingFunds()
     public
     onlyOwner
   {
     FundingRound currentRound = getCurrentRound();
+    require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
     uint256 amount = currentRound.nativeToken().balanceOf(address(this));
-    nativeToken.transferFrom(address(this), address(currentRound), amount);
+    if (amount > 0) {
+      nativeToken.transfer(address(currentRound), amount);
+    }
     currentRound.finalize();
     emit RoundFinalized(address(currentRound));
   }
