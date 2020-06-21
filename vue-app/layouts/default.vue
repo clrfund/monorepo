@@ -1,77 +1,39 @@
 <template>
-  <v-app id="inspire">
-    <v-navigation-drawer v-model="drawerRight" app clipped right>
-      <ProfileCard :address="selectedRecpient.address" />
-    </v-navigation-drawer>
+  <v-app class="grey darken-4">
+    <core-app-bar />
 
-    <v-navigation-drawer v-model="drawer" app>
-      <v-list dense>
-        <v-list-item link @click="$router.push('/')">
-          <v-list-item-action>
-            <v-avatar size="100">
-              <v-img src="https://i.imgur.com/h7mX6I0.png"></v-img>
-            </v-avatar>
-          </v-list-item-action>
-        </v-list-item>
-        <v-list-item>
-          Cl(ea)r.Fund
-        </v-list-item>
-        <RoundList />
-      </v-list>
-    </v-navigation-drawer>
+    <core-downloads />
 
-    <v-navigation-drawer v-model="left" fixed temporary></v-navigation-drawer>
+    <core-drawer />
 
-    <v-main>
+    <v-content>
+      <nuxt-link to="/library">CLR</nuxt-link>
       <nuxt />
-      <v-btn color="pink" dark large absolute bottom right fab>
-        <v-icon>mdi-check</v-icon>
-      </v-btn>
-    </v-main>
+    </v-content>
 
-    <v-navigation-drawer
-      v-model="right"
-      fixed
-      right
-      temporary
-    ></v-navigation-drawer>
+    <core-friends />
 
-    <v-footer app color="white" class="white--text">
-      <span>Cl(ea)r.Fund</span>
-      <v-spacer></v-spacer>
-      <span>&copy; 2019</span>
-    </v-footer>
+    <core-snackbar />
   </v-app>
 </template>
 
 <script>
-import RoundList from "../components/RoundList";
-import ProfileCard from "../components/ProfileCard";
-
 export default {
   components: {
-    RoundList,
-    ProfileCard,
-  },
-  props: {
-    source: String,
-  },
-
-  data: () => ({
-    drawer: null,
-    drawerRight: null,
-    right: false,
-    left: false,
-    selectedRecpient: {},
-  }),
-  created() {
-    this.$vuetify.theme.dark = true;
-
-   this.$nuxt.$on('selectRecipient', (recipient) => {
-     console.log("on recipient", recipient);
-      this.selectedRecpient = recipient;
-   })
-
-  },
+    CoreAppBar: () => import("@/components/core/AppBar"),
+    CoreDownloads: () => import("@/components/core/Downloads"),
+    CoreDrawer: () => import("@/components/core/Drawer"),
+    CoreFriends: () => import("@/components/core/Friends"),
+    CoreSnackbar: () => import("@/components/core/Snackbar")
+  }
 };
 </script>
+
+<style>
+.v-card {
+  border-radius: 6px;
+}
+a {
+  text-decoration: none;
+}
+</style>
