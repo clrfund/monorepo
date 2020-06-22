@@ -7,7 +7,6 @@
     <core-drawer />
 
     <v-content>
-      <nuxt-link to="/library">CLR</nuxt-link>
       <nuxt />
     </v-content>
 
