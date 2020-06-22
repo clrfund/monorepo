@@ -9,7 +9,7 @@ contract FundingRoundVoiceCreditProxy is InitialVoiceCreditProxy {
 
   /**
     * @dev Get the amount of voice credits for a given contributor.
-    * @param _contributor Contributor's address.
+    * @param _contributor Contributor's address (or the address of the funding round contract).
     * @param _data Encoded amount.
     */
   function getVoiceCredits(
