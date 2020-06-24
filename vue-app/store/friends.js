@@ -31,6 +31,16 @@ export const state = () => ({
   ]
 });
 
+
+export const getters = {
+  online: state => {
+    const total = state.friends.length
+    const online = state.friends.filter(friend => friend.online).length
+
+    return `(${online}/${total})`
+  },
+}
+
 export const mutations = {
   setDrawer: set("drawer"),
   toggleDrawer: toggle("drawer")
