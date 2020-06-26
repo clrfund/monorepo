@@ -23,11 +23,17 @@ contract FundingRound is Ownable, MACIPubKey {
   uint256 public poolSize;
 
   event FundsClaimed(address _recipient);
-  event NewContribution(address indexed _sender, uint256 amount);
+  event NewContribution(address indexed _sender, uint256 _amount);
 
   mapping(address => uint256) public contributors;
   uint256 public counter;
 
+  /**
+    * @dev Sets round parameters (they can only be set once during construction).
+    * @param _nativeToken Address of a token which will be accepted for contributions.
+    * @param _duration Duration of the contribution period in seconds.
+    * @param _coordinatorPubKey Coordinator's public key.
+    */
   constructor(
     IERC20 _nativeToken,
     uint256 _duration,
