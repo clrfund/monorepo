@@ -19,15 +19,6 @@ async function deployContract(
   return contract;
 }
 
-function doEIP170check(bytecode: string): void {
-  // Check contract code size
-  // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-170.md
-  const size = bytecode.length / 2;
-  if (size > 0x6000) {
-    throw new Error(`Contract size exceeded EIP170 limit (${size}).`);
-  }
-}
-
 export async function deployMaciFactory(account: Signer): Promise<Contract> {
   const signUpGatekeeper = await deployContract(account, 'FreeForAllGatekeeper');
   const batchTreeVerifier = await deployContract(account, 'BatchUpdateStateTreeVerifier');
@@ -48,7 +39,6 @@ export async function deployMaciFactory(account: Signer): Promise<Contract> {
     account,
   );
 
-  doEIP170check(MACIFactory.bytecode);
   const maciFactory = await MACIFactory.deploy(
     signUpGatekeeper.address,
     batchTreeVerifier.address,

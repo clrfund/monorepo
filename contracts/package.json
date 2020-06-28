@@ -15,9 +15,9 @@
     "maci": "github:appliedzkp/maci#d5d5817d5f75294facf88d3163fcd3c5f9cf7509"
   },
   "devDependencies": {
-    "@nomiclabs/buidler": "^1.3.5",
-    "@nomiclabs/buidler-ethers": "^1.3.3",
-    "@nomiclabs/buidler-waffle": "^1.3.4",
+    "@nomiclabs/buidler": "^1.3.8",
+    "@nomiclabs/buidler-ethers": "^1.3.4",
+    "@nomiclabs/buidler-waffle": "^1.3.5",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.9.2",
@@ -26,7 +26,7 @@
     "buidler-typechain": "^0.0.5",
     "chai": "^4.2.0",
     "ethereum-waffle": "^2.4.0",
-    "ethers": "^4.0.46",
+    "ethers": "^4.0.47",
     "ts-generator": "^0.0.8",
     "ts-node": "^8.8.1",
     "typechain": "^1.0.5",
