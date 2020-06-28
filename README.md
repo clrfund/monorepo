@@ -41,6 +41,14 @@ For example, block reward funding would be in ETH, while many users may want to 
 In a future version, we plan to address this by routing ETH and token contributions in anything other than the current native token through a DEX such as [UniSwap](https://uniswap.io/).
 
 ## Run clr.fund locally
+
+### Install Node v11 with nvm
+
+```
+nvm install 11
+nvm use 11
+```
+
 ### Install the dependencies
 ```
 yarn
