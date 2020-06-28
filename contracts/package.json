@@ -8,6 +8,7 @@
     "deploy:local": "yarn clean && yarn build && buidler run --network localhost scripts/deploy.ts",
     "deploy:goerli": "yarn clean && yarn build && buidler run scripts/goerli.ts",
     "test": "buidler typechain && buidler test",
+    "lint": "eslint 'tests/*.ts'",
     "clean": "rm -rf cache && rm -rf build"
   },
   "dependencies": {
@@ -21,10 +22,11 @@
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.9.2",
-    "@typescript-eslint/eslint-plugin": "^2.24.0",
-    "@typescript-eslint/parser": "^2.24.0",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
     "buidler-typechain": "^0.0.5",
     "chai": "^4.2.0",
+    "eslint": "^6.8.0",
     "ethereum-waffle": "^2.4.0",
     "ethers": "^4.0.47",
     "ts-generator": "^0.0.8",
