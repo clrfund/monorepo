@@ -1,36 +1,20 @@
 <template>
-  <v-container class="py-0">
+  <v-container
+    v-if="article"
+    class="article pt-0 px-0"
+  >
     <v-img
-      :src="require(`@/assets/${game.bg}`)"
-      min-height="50vh"
+      :src="require(`@/assets/${article.img}`)"
+      gradient="to bottom, rgba(0,0,0,.4), rgba(0,0,0,0)"
+      height="50vh"
     >
-      <nuxt-link to="/store">
+      <nuxt-link to="/">
         <v-subheader>
-          Back to Store
+          Back to Home
         </v-subheader>
       </nuxt-link>
-      <v-row
-        class="fill-height"
-        justify="center"
-        align="center"
-      >
-        <v-col class="text-center">
-          <v-img
-            :src="require(`@/assets/${game.logo}`)"
-            contain
-            class="mx-auto mb-5"
-            width="200"
-          />
-
-          <v-btn
-            :color="game.buyColor || 'blue'"
-            style="min-width: 225px; height: 52px;"
-          >
-            Install
-          </v-btn>
-        </v-col>
-      </v-row>
     </v-img>
+
     <v-sheet
       class="py-5 px-3"
       color="grey lighten-2"
@@ -38,15 +22,14 @@
     >
       <h1
         class="display-3 font-weight-bold mb-4"
-        v-text="game.name"
+        v-text="article.title"
       />
-      <v-row
-        align="center"
-      >
+
+      <v-row>
         <v-col
-          class="grey--text text--darken-2"
           cols="12"
           md="6"
+          class="grey--text text--darken-2 title font-weight-light"
         >
           <p>
             Nunc nec neque. Vestibulum fringilla pede sit amet augue. Curabitur at lacus ac velit ornare lobortis. Pellentesque commodo eros a enim. Donec orci lectus, aliquam ut, faucibus non, euismod id, nulla.
@@ -55,11 +38,13 @@
 
             Maecenas nec odio et ante tincidunt tempus. Pellentesque commodo eros a enim. Suspendisse feugiat. Nulla facilisi. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus.
           </p>
+
           <p>
             Nunc nec neque. Vestibulum fringilla pede sit amet augue. Curabitur at lacus ac velit ornare lobortis. Pellentesque commodo eros a enim. Donec orci lectus, aliquam ut, faucibus non, euismod id, nulla.
 
             Vivamus in erat ut urna cursus vestibulum. Quisque ut nisi. Curabitur nisi. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Donec vitae sapien ut libero venenatis faucibus.
           </p>
+
           <p>
             Nunc nec neque. Vestibulum fringilla pede sit amet augue. Curabitur at lacus ac velit ornare lobortis. Pellentesque commodo eros a enim. Donec orci lectus, aliquam ut, faucibus non, euismod id, nulla.
 
@@ -67,67 +52,79 @@
 
             Maecenas nec odio et ante tincidunt tempus. Pellentesque commodo eros a enim. Suspendisse feugiat. Nulla facilisi. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus.
           </p>
+
+          <v-row
+            align="center"
+            justify="space-between"
+            class="pt-4 white mx-0"
+            tag="p"
+          >
+            <span class="pl-3 subheading">
+              Share this on social media
+            </span>
+
+            <div class="d-flex">
+              <v-btn icon>
+                <v-icon>mdi-discord</v-icon>
+              </v-btn>
+
+              <v-btn icon>
+                <v-icon>mdi-reddit</v-icon>
+              </v-btn>
+
+              <v-btn icon>
+                <v-icon>mdi-twitter</v-icon>
+              </v-btn>
+
+              <v-btn icon>
+                <v-icon>mdi-facebook</v-icon>
+              </v-btn>
+            </div>
+          </v-row>
         </v-col>
+
         <v-col
           cols="12"
           md="6"
+          class="mt-5"
         >
           <v-card
             class="mx-auto"
             elevation="24"
             max-width="400"
           >
-            <v-img
-              max-height="250"
-              :src="require(`@/assets/${game.bg2}`)"
-            />
+            <v-img :src="require(`@/assets/${article.altImg}`)" />
           </v-card>
-        </v-col>
-
-        <v-col
-          class="text-center my-5"
-          cols="12"
-        >
-          <iframe
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            frameborder="0"
-            height="315"
-            src="https://www.youtube.com/embed/7X8II6J-6mU"
-            width="100%"
-          />
         </v-col>
       </v-row>
     </v-sheet>
-    <v-sheet
-      height="400"
-      color="grey darken-2"
-      tile
-    />
-    <v-sheet
-      height="200"
-      color="grey darken-3"
-      tile
-    />
   </v-container>
 </template>
 
 <script>
   // Utilities
   import {
-    mapGetters,
     mapState,
   } from 'vuex'
 
   export default {
-    name: 'StorePage',
+    name: 'Article',
 
     computed: {
-      ...mapGetters('games', ['parsedGames']),
+      ...mapState('home', ['articles']),
       ...mapState('route', ['params']),
-      game () {
-        return this.parsedGames.find(game => Number(game.id) === Number(this.params.id))
+      article () {
+        return this.articles.find(article => article.slug === this.$route.params.slug)
       },
     },
   }
 </script>
+
+<style lang="scss">
+.article {
+  p {
+    line-height: 2;
+    padding: 0 12px 20px;
+  }
+}
+</style>
