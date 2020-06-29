@@ -7,7 +7,7 @@
         cols="12"
         md="4"
       >
-        <game
+        <project
           :value="feature"
           dense
         />
@@ -24,11 +24,11 @@
 
   export default {
     components: {
-      Game: () => import('@/components//Game'),
+      Project: () => import('@/components//Project'),
     },
 
     computed: {
-      ...mapGetters('games', ['featured']),
+      ...mapGetters('projects', ['featured']),
     },
   }
 </script>

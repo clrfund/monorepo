@@ -8,7 +8,7 @@
     style="z-index: 9"
     @click="toggleDrawer"
   >
-    <v-icon>mdi-account-multiple</v-icon>
+    <v-icon>mdi-cart</v-icon>
   </v-btn>
 </template>
 

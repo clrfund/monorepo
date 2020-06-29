@@ -2,7 +2,7 @@
   <div>
     <featured />
 
-    <games />
+    <projects />
   </div>
 </template>
 
@@ -10,7 +10,7 @@
   export default {
     components: {
       Featured: () => import('./Featured'),
-      Games: () => import('./Games'),
+      Projects: () => import('./Projects'),
     },
 
     metaInfo () {

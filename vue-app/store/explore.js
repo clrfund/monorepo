@@ -1,3 +1,3 @@
 export const state = () => ({
-  gameIds: [6]
+  projectIds: [6]
 });

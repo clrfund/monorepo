@@ -1,12 +1,12 @@
 <template>
   <v-row>
     <v-col
-      v-for="(game, i) in value"
+      v-for="(project, i) in value"
       :key="i"
       cols="12"
       md="6"
     >
-      <game :value="game" />
+      <project :value="project" />
     </v-col>
   </v-row>
 </template>
@@ -14,7 +14,7 @@
 <script>
   export default {
     components: {
-      Game: () => import('@/components//Game'),
+      Project: () => import('@/components//Project'),
     },
 
     props: {

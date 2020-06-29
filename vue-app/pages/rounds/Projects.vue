@@ -2,15 +2,15 @@
   <v-container>
     <v-row>
       <v-col
-        v-for="game in games"
-        :key="game.id"
+        v-for="project in projects"
+        :key="project.id"
         cols="12"
         sm="6"
         md="4"
       >
-        <game
-          :value="game"
-          :understate="!game.installed"
+        <project
+          :value="project"
+          :understate="false"
           dense
           static
           show-action
@@ -27,14 +27,14 @@
   } from 'vuex'
 
   export default {
-    name: 'LibraryGames',
+    name: 'RoundsProjects',
 
     components: {
-      Game: () => import('@/components/Game'),
+      Project: () => import('@/components/Project'),
     },
 
     computed: {
-      ...mapGetters('library', ['games']),
+      ...mapGetters('rounds', ['projects']),
     },
   }
 </script>

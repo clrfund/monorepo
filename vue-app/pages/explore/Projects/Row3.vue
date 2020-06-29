@@ -6,10 +6,10 @@
     >
       <v-row>
         <v-col cols="12">
-          <game :value="leftTop" />
+          <project :value="leftTop" />
         </v-col>
         <v-col cols="12">
-          <game :value="leftBottom" />
+          <project :value="leftBottom" />
         </v-col>
       </v-row>
     </v-col>
@@ -17,7 +17,7 @@
       cols="12"
       md="6"
     >
-      <game
+      <project
         :value="right"
         tall
         prominent
@@ -29,7 +29,7 @@
 <script>
   export default {
     components: {
-      Game: () => import('@/components//Game'),
+      Project: () => import('@/components//Project'),
     },
 
     props: {

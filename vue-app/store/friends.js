@@ -7,9 +7,9 @@ export const state = () => ({
       id: 1,
       name: "John Smith",
       online: true,
-      game: {
+      project: {
         id: 10,
-        logo: "games/storm-peak/avatar.png",
+        logo: "projects/storm-peak/avatar.png",
         name: "Battle of StormPeak"
       }
     },

@@ -11,7 +11,7 @@ export const state = () => ({
     {
       img: "articles/article2a.png",
       altImg: "articles/article2b.png",
-      title: "10 Indie Games to Watch in 2019",
+      title: "10 Indie Projects to Watch in 2019",
       slug: "alienware-area-52",
       author: "John Smith",
       ago: "12h ago"

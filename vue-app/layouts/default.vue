@@ -2,8 +2,6 @@
   <v-app class="grey darken-4">
     <core-app-bar />
 
-    <core-downloads />
-
     <core-drawer />
 
     <v-content>
@@ -20,7 +18,6 @@
 export default {
   components: {
     CoreAppBar: () => import("@/components/core/AppBar"),
-    CoreDownloads: () => import("@/components/core/Downloads"),
     CoreDrawer: () => import("@/components/core/Drawer"),
     CoreFriends: () => import("@/components/core/Friends"),
     CoreSnackbar: () => import("@/components/core/Snackbar")
