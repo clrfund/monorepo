@@ -103,7 +103,7 @@
             size="128"
           >
             <v-icon
-              color="grey darken-2"
+              color="primary"
               size="96"
             >
               mdi-cart

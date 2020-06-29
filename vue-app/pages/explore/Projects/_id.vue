@@ -4,8 +4,8 @@
       :src="require(`@/assets/${project.bg}`)"
       min-height="50vh"
     >
-      <nuxt-link to="/store">
-        <v-subheader>
+      <nuxt-link to="/explore">
+        <v-subheader :style="{ color: $vuetify.theme.themes.dark.accent }">
           Back to Explore Page
         </v-subheader>
       </nuxt-link>
@@ -23,7 +23,7 @@
           />
 
           <v-btn
-            :color="project.buyColor || 'blue'"
+            color="accent"
             style="min-width: 225px; height: 52px;"
           >
             Fund/Add

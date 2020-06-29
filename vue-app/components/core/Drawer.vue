@@ -2,20 +2,17 @@
   <v-navigation-drawer
     v-model="drawer"
     app
-    class="grey darken-4"
     floating
     width="200"
+    :style="{background: '#211E2B'}"
   >
     <v-list color="transparent">
-      <v-list-item class="mb-4">
-        <v-list-item-avatar tile>
+      <v-list-item class="mb-4" >
+
           <v-img
-            src="https://cdn.vuetifyjs.com/images/logos/v-alt.svg"
+            :src="require(`@/assets/clr.png`)"
             contain
           />
-        </v-list-item-avatar>
-
-        <v-list-item-title>Vuetify</v-list-item-title>
       </v-list-item>
 
       <template v-for="(item, i) in items">
@@ -24,7 +21,6 @@
           :key="`tile-${i}`"
           :to="item.to"
           :value="item.value"
-          color="grey"
           exact
           v-on="item.click && {
             'click': item.click
