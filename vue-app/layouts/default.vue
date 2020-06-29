@@ -1,5 +1,5 @@
 <template>
-  <v-app class="grey darken-4">
+  <v-app :style="{ background: $vuetify.theme.themes.dark.background }">
     <core-app-bar />
 
     <core-drawer />

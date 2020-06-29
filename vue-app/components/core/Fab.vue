@@ -1,7 +1,7 @@
 <template>
   <v-btn
     bottom
-    color="secondary"
+    color="accent"
     fab
     fixed
     right

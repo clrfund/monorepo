@@ -9,7 +9,7 @@
       height="50vh"
     >
       <nuxt-link to="/">
-        <v-subheader>
+        <v-subheader :style="{ color: $vuetify.theme.themes.dark.accent }">
           Back to Home
         </v-subheader>
       </nuxt-link>

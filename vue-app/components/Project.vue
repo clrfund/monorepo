@@ -3,6 +3,7 @@
     <v-card
       class="v-card--project"
       elevation="6"
+      outlined
     >
       <nuxt-link :to="`/explore/projects/${value.id}`">
         <v-img
