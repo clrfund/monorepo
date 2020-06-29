@@ -1,3 +1,13 @@
 <template>
-  <nuxt-link to="/">CLR</nuxt-link>
+  <news />
 </template>
+
+<script>
+  export default {
+    name: 'Home',
+
+    components: {
+      News: () => import('./News'),
+    },
+  }
+</script>
