@@ -19,15 +19,16 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
   using SafeERC20 for IERC20;
 
   // State
-  mapping(address => string) public recipients;
   uint256 private recipientCount = 0;
-
-  MACIFactory public maciFactory;
   address public coordinator;
-  PubKey public coordinatorPubKey;
+
   IERC20 public nativeToken;
+  MACIFactory public maciFactory;
+  PubKey public coordinatorPubKey;
 
   FundingRound[] private rounds;
+
+  mapping(address => string) public recipients;
 
   // Events
   event NewContribution(address indexed _sender, uint256 _amount);

@@ -14,19 +14,21 @@ import './FundingRoundFactory.sol';
 contract FundingRound is Ownable, MACIPubKey {
   using SafeERC20 for IERC20;
 
-  // ERC20 token being used
-  IERC20 public nativeToken;
+  uint256 public counter;
   uint256 public contributionDeadline;
+  uint256 public poolSize;
+  bool public isFinalized = false;
+
   PubKey public coordinatorPubKey;
   MACI public maci;
-  bool public isFinalized = false;
-  uint256 public poolSize;
+  // ERC20 token being used
+  IERC20 public nativeToken;
 
+  mapping(address => uint256) public contributors;
+  
   event FundsClaimed(address _recipient);
   event NewContribution(address indexed _sender, uint256 _amount);
 
-  mapping(address => uint256) public contributors;
-  uint256 public counter;
 
   /**
     * @dev Sets round parameters (they can only be set once during construction).
