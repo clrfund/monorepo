@@ -14,7 +14,7 @@ import './FundingRoundFactory.sol';
 contract FundingRound is Ownable, MACIPubKey {
   using SafeERC20 for IERC20;
 
-  uint256 public counter;
+  uint256 public contributorCounter;
   uint256 public contributionDeadline;
   uint256 public poolSize;
   bool public isFinalized = false;
