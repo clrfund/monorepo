@@ -1,12 +1,12 @@
 <template>
   <v-container class="py-0">
     <v-img
-      :src="require(`@/assets/${game.bg}`)"
+      :src="require(`@/assets/${project.bg}`)"
       min-height="50vh"
     >
       <nuxt-link to="/store">
         <v-subheader>
-          Back to Store
+          Back to Explore Page
         </v-subheader>
       </nuxt-link>
       <v-row
@@ -16,17 +16,17 @@
       >
         <v-col class="text-center">
           <v-img
-            :src="require(`@/assets/${game.logo}`)"
+            :src="require(`@/assets/${project.logo}`)"
             contain
             class="mx-auto mb-5"
             width="200"
           />
 
           <v-btn
-            :color="game.buyColor || 'blue'"
+            :color="project.buyColor || 'blue'"
             style="min-width: 225px; height: 52px;"
           >
-            Install
+            Fund/Add
           </v-btn>
         </v-col>
       </v-row>
@@ -38,7 +38,7 @@
     >
       <h1
         class="display-3 font-weight-bold mb-4"
-        v-text="game.name"
+        v-text="project.name"
       />
       <v-row
         align="center"
@@ -79,7 +79,7 @@
           >
             <v-img
               max-height="250"
-              :src="require(`@/assets/${game.bg2}`)"
+              :src="require(`@/assets/${project.bg2}`)"
             />
           </v-card>
         </v-col>
@@ -120,15 +120,13 @@
   } from 'vuex'
 
   export default {
-    name: 'StorePage',
+    name: 'ExplorePage',
 
     computed: {
-      ...mapGetters('games', ['parsedGames']),
-      ...mapState('route', ['params']),
-      game () {
-        console.log(this.params);
-        
-        return this.parsedGames.find(game => Number(game.id) === Number(this.$route.params.id))
+      ...mapGetters('projects', ['parsedProjects']),
+      // ...mapState('route', ['params']),
+      project () {        
+        return this.parsedProjects.find(project => Number(project.id) === Number(this.$route.params.id))
       },
     },
   }

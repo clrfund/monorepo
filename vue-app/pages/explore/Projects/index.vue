@@ -1,6 +1,6 @@
 <template>
   <v-container class="pt-0">
-    <game-group
+    <project-group
       v-for="(group, i) in groups"
       :key="i"
       :value="group"
@@ -16,7 +16,7 @@
 
   export default {
     components: {
-      GameGroup: () => import('./GameGroup.vue'),
+      ProjectGroup: () => import('./ProjectGroup.vue'),
     },
 
     data: () => ({
@@ -31,20 +31,20 @@
     }),
 
     computed: {
-      ...mapGetters('games', ['parsedGames']),
+      ...mapGetters('projects', ['parsedProjects']),
       groups () {
-        const games = this.parsedGames.slice(3)
+        const projects = this.parsedProjects.slice(3)
         const groups = []
 
         for (const order of this.order) {
           if (
-            groups.length === games.length ||
-            !games.length
+            groups.length === projects.length ||
+            !projects.length
           ) {
             break
           }
 
-          const group = games.splice(0, order.count)
+          const group = projects.splice(0, order.count)
 
           groups.push({
             ...order,

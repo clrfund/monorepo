@@ -1,6 +1,6 @@
 export const state = () => ({
   featured: [],
-  games: [
+  projects: [
     {
       id: 1,
       name: "Elder Earth",
@@ -63,7 +63,7 @@ export const state = () => ({
       src: "astras",
       price: 6.99,
       compareAt: 6.99,
-      publisher: "Giant Games",
+      publisher: "Giant Projects",
       updated: 1545864353030
     },
     {
@@ -72,7 +72,7 @@ export const state = () => ({
       src: "storm-peak",
       price: 6.99,
       compareAt: 6.99,
-      publisher: "Giant Games",
+      publisher: "Giant Projects",
       updated: 1545864353031
     },
     {
@@ -98,7 +98,7 @@ export const state = () => ({
 
 export const getters = {
   featured: (state, getters) => {
-    return getters.parsedGames
+    return getters.parsedProjects
       .sort((a, b) => {
         if (a.updated < b.updated) return -1;
         if (a.updated > b.updated) return 1;
@@ -106,13 +106,13 @@ export const getters = {
       })
       .slice(0, 3);
   },
-  parsedGames: state => {
-    return state.games.map(game => ({
-      ...game,
-      bg: `games/${game.src}/bg.png`,
-      bg2: `games/${game.src}/bg2.png`,
-      logo: `games/${game.src}/logo.png`,
-      avatar: `games/${game.src}/avatar.png`
+  parsedProjects: state => {
+    return state.projects.map(project => ({
+      ...project,
+      bg: `projects/${project.src}/bg.png`,
+      bg2: `projects/${project.src}/bg2.png`,
+      logo: `projects/${project.src}/logo.png`,
+      avatar: `projects/${project.src}/avatar.png`
     }));
   }
 };

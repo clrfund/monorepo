@@ -26,7 +26,7 @@
 
       <v-btn
         :color="computedColor"
-        :text="snackbar.color !== 'store'"
+        :text="snackbar.color !== 'explore'"
         :ripple="false"
         v-bind="bind"
         dark
@@ -72,7 +72,7 @@
         return {}
       },
       computedColor () {
-        if (this.snackbar.color !== 'store') {
+        if (this.snackbar.color !== 'explore') {
           return !this.computedIcon ? 'primary lighten-3' : null
         }
 
@@ -80,7 +80,7 @@
       },
       computedIcon () {
         switch (this.snackbar.color) {
-          case 'store': return 'mdi-cart'
+          case 'explore': return 'mdi-cart'
           case 'success': return 'mdi-check'
           case 'info': return 'mdi-info'
           case 'warning': return 'mdi-warning'

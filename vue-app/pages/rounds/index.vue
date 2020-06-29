@@ -1,15 +1,15 @@
 <template>
   <div>
-    <games />
+    <projects />
   </div>
 </template>
 
 <script>
   export default {
-    name: 'Library',
+    name: 'Rounds',
 
     components: {
-      Games: () => import('./Games'),
+      Projects: () => import('./Projects'),
     },
   }
 </script>

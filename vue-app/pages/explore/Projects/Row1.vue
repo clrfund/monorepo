@@ -1,8 +1,8 @@
 <template>
   <v-row>
     <v-col>
-      <game
-        :value="game"
+      <project
+        :value="project"
         prominent
       />
     </v-col>
@@ -12,7 +12,7 @@
 <script>
   export default {
     components: {
-      Game: () => import('@/components//Game'),
+      Project: () => import('@/components//Project'),
     },
 
     props: {
@@ -23,7 +23,7 @@
     },
 
     computed: {
-      game () {
+      project () {
         return this.value[0]
       },
     },

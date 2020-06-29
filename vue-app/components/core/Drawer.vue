@@ -63,9 +63,6 @@
     name: 'CoreDrawer',
 
     computed: {
-      ...mapState('downloads', {
-        downloadDrawer: 'drawer',
-      }),
       drawer: {
         get () {
           return this.$store.state.app.drawer
@@ -83,38 +80,29 @@
           },
           {
             icon: 'mdi-fire',
-            text: 'Store',
-            to: '/store',
+            text: 'Projects',
+            to: '/explore',
           },
           {
             icon: 'mdi-view-grid',
-            text: 'Library',
-            to: '/library',
+            text: 'Past Rounds',
+            to: '/rounds',
           },
           { spacer: true },
           {
-            icon: 'mdi-download',
-            text: 'Downloads',
-            value: this.downloadDrawer,
+            icon: 'mdi-account',
+            text: 'Profile',
+            //value: this.downloadDrawer,
             click: () => {
-              this.$vuetify.breakpoint.smAndDown && this.setDrawer(false)
-              this.toggleDownloadDrawer()
+              'pass';
             },
-          },
-          {
-            icon: 'mdi-settings',
-            text: 'Settings',
-            to: '/settings',
-          },
+          }
         ]
       },
     },
 
     methods: {
       ...mapMutations('app', ['setDrawer']),
-      ...mapMutations('downloads', {
-        toggleDownloadDrawer: 'toggleDrawer',
-      }),
     },
   }
 </script>

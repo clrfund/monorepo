@@ -1,10 +1,10 @@
 <template>
   <v-hover v-model="hover">
     <v-card
-      class="v-card--game"
+      class="v-card--project"
       elevation="6"
     >
-      <nuxt-link :to="`/store/games/${value.id}`">
+      <nuxt-link :to="`/explore/projects/${value.id}`">
         <v-img
           v-bind="$attrs"
           :height="height"
@@ -28,12 +28,7 @@
       </nuxt-link>
 
       <v-fade-transition mode="out-in">
-        <component
-          :is="getAction(value)"
-          v-if="showAction"
-          :key="getAction(value)"
-          :value="value"
-        />
+        
       </v-fade-transition>
     </v-card>
   </v-hover>
@@ -46,12 +41,12 @@
   } from 'vuex'
 
   export default {
-    name: 'Game',
+    name: 'Project',
 
     components: {
-      InstallAction: () => import('@/pages/library/InstallAction'),
-      LaunchAction: () => import('@/pages/library/LaunchAction'),
-      VerifyAction: () => import('@/pages/library/VerifyAction'),
+      // InstallAction: () => import('@/pages/rounds/InstallAction'),
+      // LaunchAction: () => import('@/pages/rounds/LaunchAction'),
+      // VerifyAction: () => import('@/pages/rounds/VerifyAction'),
     },
 
     inheritAttrs: false,
@@ -92,7 +87,6 @@
     }),
 
     computed: {
-      ...mapState('verify', ['verifying']),
       height () {
         if (this.tall) return 524
         if (this.dense) return 150
@@ -115,14 +109,14 @@
     },
 
     methods: {
-      getAction (game) {
-        let action = 'Launch'
+      // getAction (project) {
+      //   let action = 'Launch'
 
-        if (this.verifying === game.id) action = 'Verify'
-        if (!game.installed) action = 'Install'
+      //   if (this.verifying === project.id) action = 'Verify'
+      //   if (!project.installed) action = 'Install'
 
-        return `${action}Action`
-      },
+      //   return `${action}Action`
+      // },
     },
   }
 </script>

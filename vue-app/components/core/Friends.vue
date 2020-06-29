@@ -60,8 +60,8 @@
                     <v-list-item-content>
                       <v-list-item-title v-text="friend.name" />
 
-                      <v-list-item-subtitle v-if="friend.game">
-                        Playing {{ friend.game.name }}
+                      <v-list-item-subtitle v-if="friend.project">
+                        Playing {{ friend.project.name }}
                       </v-list-item-subtitle>
 
                       <v-list-item-subtitle v-else>
@@ -69,8 +69,8 @@
                       </v-list-item-subtitle>
                     </v-list-item-content>
 
-                    <v-list-item-avatar v-if="friend.game">
-                      <v-img :src="require(`@/assets/${friend.game.logo}`)" />
+                    <v-list-item-avatar v-if="friend.project">
+                      <v-img :src="require(`@/assets/${friend.project.logo}`)" />
                     </v-list-item-avatar>
                   </v-list-item>
                 </template>
@@ -106,7 +106,7 @@
               color="grey darken-2"
               size="96"
             >
-              mdi-account
+              mdi-cart
             </v-icon>
           </v-avatar>
         </v-col>

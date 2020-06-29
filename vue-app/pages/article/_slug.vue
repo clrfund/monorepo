@@ -112,7 +112,7 @@
 
     computed: {
       ...mapState('home', ['articles']),
-      ...mapState('route', ['params']),
+      // ...mapState('route', ['params']),
       article () {
         return this.articles.find(article => article.slug === this.$route.params.slug)
       },
