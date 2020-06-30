@@ -12,6 +12,7 @@
   // Utilities
   import {
     mapGetters,
+    mapActions,
   } from 'vuex'
 
   export default {
@@ -32,6 +33,7 @@
 
     computed: {
       ...mapGetters('projects', ['parsedProjects']),
+
       groups () {
         const projects = this.parsedProjects.slice(3)
         const groups = []
@@ -55,5 +57,8 @@
         return groups
       },
     },
+    async fetch () {
+      await this.$store.dispatch('projects/getProjects');
+    }
   }
 </script>

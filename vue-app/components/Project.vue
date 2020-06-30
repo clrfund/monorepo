@@ -9,7 +9,7 @@
         <v-img
           v-bind="$attrs"
           :height="height"
-          :src="require(`@/assets/${value.bg}`)"
+          :src="value.bg"
           style="border-radius: inherit;"
         >
           <v-row
@@ -19,12 +19,12 @@
             justify="center"
           >
             <v-img
-              :src="require(`@/assets/${value.logo}`)"
+              :src="value.logo"
               contain
               max-width="180"
               style="z-index: -1;"
             />
-          </v-row>
+          </v-row> 
         </v-img>
       </nuxt-link>
 

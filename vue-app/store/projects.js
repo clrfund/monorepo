@@ -1,3 +1,5 @@
+import { GET_BY_CATEGORY } from "../utils/queries";
+
 export const state = () => ({
   featured: [],
   projects: [
@@ -109,10 +111,50 @@ export const getters = {
   parsedProjects: state => {
     return state.projects.map(project => ({
       ...project,
-      bg: `projects/${project.src}/bg.png`,
-      bg2: `projects/${project.src}/bg2.png`,
-      logo: `projects/${project.src}/logo.png`,
-      avatar: `projects/${project.src}/avatar.png`
+      bg: `https://api.thegraph.com/ipfs/api/v0/cat?arg=${project.src}/`,
+      bg2: `https://api.thegraph.com/ipfs/api/v0/cat?arg=${project.src}/`,
+      logo: `https://api.thegraph.com/ipfs/api/v0/cat?arg=${project.avatar}/`,
+      avatar: `https://api.thegraph.com/ipfs/api/v0/cat?arg=${project.avatar}/`,
+      description: project.description,
+      website: project.publisher,
+      owner: project.owner
     }));
+  }
+};
+
+export const mutations = {
+  setProjects: (state, cat) => {
+    console.log("cat", cat);
+
+    state.projects = cat.projects.map((project, idx) => {
+      return {
+        id: idx,
+        name: project.name,
+        src: project.image,
+        avatar: project.avatar,
+        description: project.description,
+        price: 6.99,
+        compareAt: 6.99,
+        publisher: project.website,
+        owner: project.owner.id,
+        updated: project.updatedAt
+      };
+    });
+  }
+};
+
+export const actions = {
+  async getProjects({ commit }) {
+    console.time("getProjects");
+    console.log(this.app.apolloProvider.defaultClient);
+    const response = await this.app.apolloProvider.defaultClient.query(GET_BY_CATEGORY);
+
+    console.log("response", response);
+
+    const { projects } = response.data.categories[0];
+
+    commit("setProjects", { projects });
+
+    console.timeEnd("getProjects");
   }
 };

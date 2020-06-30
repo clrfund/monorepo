@@ -43,6 +43,7 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/apollo',
   ],
   /*
   ** vuetify module configuration
@@ -63,6 +64,14 @@ export default {
           error: colors.deepOrange.accent4,
           success: colors.green.accent3
         }
+      }
+    }
+  },
+
+  apollo: {
+    clientConfigs: {
+      default: {
+        httpEndpoint: 'https://api.thegraph.com/subgraphs/name/graphprotocol/everest',
       }
     }
   },

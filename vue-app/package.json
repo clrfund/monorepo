@@ -10,10 +10,13 @@
     "test": "jest"
   },
   "dependencies": {
-    "nuxt": "^2.13.0",
     "3box": "^1.20.0",
+    "@nuxtjs/apollo": "^4.0.1-rc.1",
     "@walletconnect/web3-provider": "^1.0.1",
     "ethereum-blockies-base64": "^1.0.2",
+    "fs": "^0.0.1-security",
+    "graphql-tag": "^2.10.3",
+    "nuxt": "^2.13.0",
     "web3": "^1.2.9",
     "web3modal": "^1.7.0"
   },
