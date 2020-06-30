@@ -1,10 +1,10 @@
-import { Contract, Event } from 'ethers';
+import { Contract } from 'ethers';
 import { TransactionResponse } from 'ethers/providers';
 import { BigNumber } from 'ethers/utils/bignumber';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
-export async function getGasUsage(transaction: TransactionResponse): Promise<Number | null> {
+export async function getGasUsage(transaction: TransactionResponse): Promise<number | null> {
   const receipt = await transaction.wait();
   if (receipt.status === 1) {
     return (receipt.gasUsed as BigNumber).toNumber();
@@ -18,7 +18,7 @@ export async function getEventArg(
   contract: Contract,
   eventName: string,
   argumentName: string,
-): Promise<any> {
+): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
   const receipt = await transaction.wait();
   for (const log of receipt.logs || []) {
     const event = contract.interface.parseLog(log);
@@ -42,7 +42,7 @@ export class MaciParameters {
 
   constructor(parameters: {[name: string]: number} = {}) {
     for (const [name, value] of Object.entries(parameters)) {
-      (this as any)[name] = value;
+      (this as any)[name] = value; // eslint-disable-line @typescript-eslint/no-explicit-any
     }
   }
 

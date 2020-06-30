@@ -4,14 +4,15 @@ import { solidity } from 'ethereum-waffle';
 
 import { deployMaciFactory } from '../scripts/helpers';
 import { getGasUsage, MaciParameters } from './utils';
+import { Contract } from 'ethers';
 
 use(solidity);
 
 describe('MACI factory', () => {
   const provider = waffle.provider;
-  const [dontUseMe, deployer, coordinator] = provider.getWallets();
+  const [dontUseMe, deployer, coordinator] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
-  let maciFactory: any;
+  let maciFactory: Contract;
 
   const maciParameters = new MaciParameters();
   const coordinatorPubKey = { x: 0, y: 1 };

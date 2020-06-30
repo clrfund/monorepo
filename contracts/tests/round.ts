@@ -4,14 +4,14 @@ import { solidity } from 'ethereum-waffle';
 import { Contract } from 'ethers';
 
 import { deployMaciFactory } from '../scripts/helpers';
-import { ZERO_ADDRESS, getGasUsage, getEventArg, MaciParameters } from './utils';
+import { ZERO_ADDRESS, getEventArg } from './utils';
 import MACIArtifact from '../build/contracts/MACI.json';
 
 use(solidity);
 
 describe('Funding Round', () => {
   const provider = waffle.provider;
-  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();
+  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   const coordinatorPubKey = { x: 0, y: 1 };
   const roundDuration = 86400 * 7;

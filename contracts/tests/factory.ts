@@ -6,7 +6,6 @@ import { Contract } from 'ethers';
 import { deployMaciFactory } from '../scripts/helpers';
 import { ZERO_ADDRESS, getGasUsage, getEventArg, MaciParameters } from './utils';
 
-import RoundArtifact from '../build/contracts/FundingRound.json';
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
 import TokenArtifact from '../build/contracts/AnyOldERC20Token.json';
 
@@ -14,15 +13,15 @@ use(solidity);
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
-
-  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();
+  
+  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   let maciFactory: Contract;
   let factory: Contract;
   let token: Contract;
 
   let maciParameters = new MaciParameters();
-  let coordinatorPubKey = { x: 0, y: 1 };
+  const coordinatorPubKey = { x: 0, y: 1 };
 
   beforeEach(async () => {
     maciFactory = await deployMaciFactory(deployer);
@@ -125,7 +124,7 @@ describe('Funding Round Factory', () => {
       await factory.setMaciParameters(...maciParameters.values());
 
       const maxRecipientCount = 4;
-      for (var i = 0; i < maxRecipientCount + 1; i++) {
+      for (let i = 0; i < maxRecipientCount + 1; i++) {
         recipientName = String(i + 1).padStart(4, '0');
         fundingAddress = `0x000000000000000000000000000000000000${recipientName}`;
         if (i < maxRecipientCount) {

@@ -10,7 +10,7 @@ use(solidity);
 
 describe('Initial voice credit proxy', () => {
   const provider = waffle.provider;
-  const [dontUseMe, deployer] = provider.getWallets();
+  const [dontUseMe, deployer] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   let initialVoiceCreditProxy: Contract;
 
