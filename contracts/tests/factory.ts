@@ -6,6 +6,7 @@ import { Contract } from 'ethers';
 import { deployMaciFactory } from '../scripts/helpers';
 import { ZERO_ADDRESS, getGasUsage, getEventArg, MaciParameters } from './utils';
 
+// import { RoundArtifact } from '../build/contracts/FundingRound.json';
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
 import TokenArtifact from '../build/contracts/AnyOldERC20Token.json';
 

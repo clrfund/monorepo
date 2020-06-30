@@ -4,12 +4,27 @@ module.exports = {
   plugins: [
     '@typescript-eslint',
   ],
+
+
+
+
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
-  env: {
-    mocha: true,
-    node: true,
-  },
+  overrides: [
+    {
+      files: [
+        '**/__tests__/*.{j,t}s?(x)',
+        '**/tests/unit/**/*.spec.{j,t}s?(x)',
+      ],
+      env: {
+        mocha: true,
+      },
+    },
+  ],
 };
+
+
+
