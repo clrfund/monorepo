@@ -14,7 +14,7 @@ import './FundingRoundFactory.sol';
 contract FundingRound is Ownable, MACIPubKey {
   using SafeERC20 for IERC20;
 
-  uint256 public contributorCounter;
+  uint256 public contributorCount;
   uint256 public contributionDeadline;
   uint256 public poolSize;
   bool public isFinalized = false;
@@ -95,7 +95,7 @@ contract FundingRound is Ownable, MACIPubKey {
     uint256 amount
   ) public {
     require(address(maci) != address(0), 'FundingRound: MACI not deployed');
-    require(counter < maci.maxUsers(), 'FundingRound: Contributor limit reached');
+    require(contributorCount < maci.maxUsers(), 'FundingRound: Contributor limit reached');
     require(now < contributionDeadline, 'FundingRound: Contribution period ended');
     require(!isFinalized, 'FundingRound: Round finalized');
     require(amount > 0, 'FundingRound: Contribution amount must be greater than zero');
@@ -110,7 +110,7 @@ contract FundingRound is Ownable, MACIPubKey {
       initialVoiceCreditProxyData
     );
     contributors[msg.sender] = amount;
-    counter += 1;
+    contributorCount += 1;
     emit NewContribution(msg.sender, amount);
   }
 
