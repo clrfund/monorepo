@@ -13,8 +13,8 @@ use(solidity);
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
-
-  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();
+  
+  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   let maciFactory: Contract;
   let factory: Contract;

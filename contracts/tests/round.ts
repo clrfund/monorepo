@@ -11,7 +11,7 @@ use(solidity);
 
 describe('Funding Round', () => {
   const provider = waffle.provider;
-  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();
+  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   const coordinatorPubKey = { x: 0, y: 1 };
   const roundDuration = 86400 * 7;

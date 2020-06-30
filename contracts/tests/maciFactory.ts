@@ -10,7 +10,7 @@ use(solidity);
 
 describe('MACI factory', () => {
   const provider = waffle.provider;
-  const [dontUseMe, deployer, coordinator] = provider.getWallets();
+  const [dontUseMe, deployer, coordinator] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   let maciFactory: Contract;
 

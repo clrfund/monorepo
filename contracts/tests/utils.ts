@@ -18,7 +18,7 @@ export async function getEventArg(
   contract: Contract,
   eventName: string,
   argumentName: string,
-): Promise<any> {
+): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
   const receipt = await transaction.wait();
   for (const log of receipt.logs || []) {
     const event = contract.interface.parseLog(log);
@@ -42,7 +42,7 @@ export class MaciParameters {
 
   constructor(parameters: {[name: string]: number} = {}) {
     for (const [name, value] of Object.entries(parameters)) {
-      (this as any)[name] = value;
+      (this as any)[name] = value; // eslint-disable-line @typescript-eslint/no-explicit-any
     }
   }
 
