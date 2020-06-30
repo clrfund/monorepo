@@ -1,10 +1,10 @@
-import { Contract } from 'ethers';
+import { Contract, Event } from 'ethers';
 import { TransactionResponse } from 'ethers/providers';
 import { BigNumber } from 'ethers/utils/bignumber';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
-export async function getGasUsage(transaction: TransactionResponse): Promise<number | null> {
+export async function getGasUsage(transaction: TransactionResponse): Promise<Number | null> {
   const receipt = await transaction.wait();
   if (receipt.status === 1) {
     return (receipt.gasUsed as BigNumber).toNumber();

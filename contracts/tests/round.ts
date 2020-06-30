@@ -4,7 +4,7 @@ import { solidity } from 'ethereum-waffle';
 import { Contract } from 'ethers';
 
 import { deployMaciFactory } from '../scripts/helpers';
-import { ZERO_ADDRESS, getEventArg } from './utils';
+import { ZERO_ADDRESS, getGasUsage, getEventArg, MaciParameters } from './utils';
 import MACIArtifact from '../build/contracts/MACI.json';
 
 use(solidity);

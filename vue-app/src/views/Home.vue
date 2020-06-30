@@ -9,61 +9,61 @@
 </template>
 
 <script>
-import { ethers } from 'ethers'
+import { ethers } from "ethers";
 
-import { default as FundingRoundFactory } from '@/../../contracts/build/contracts/FundingRoundFactory'
-import { default as FundingRound } from '@/../../contracts/build/contracts/FundingRound'
+import { default as FundingRoundFactory } from "@/../../contracts/build/contracts/FundingRoundFactory";
+import { default as FundingRound } from "@/../../contracts/build/contracts/FundingRound";
 
 async function getCurrentRound() {
   const provider = new ethers.providers.JsonRpcProvider(
     process.env.VUE_APP_ETHEREUM_API_URL
-  )
-  const factoryAddress = process.env.VUE_APP_CLRFUND_FACTORY_ADDRESS
+  );
+  const factoryAddress = process.env.VUE_APP_CLRFUND_FACTORY_ADDRESS;
   const factory = new ethers.Contract(
     factoryAddress,
     FundingRoundFactory.abi,
     provider
-  )
-  const fundingRoundAddress = await factory.getCurrentRound()
+  );
+  const fundingRoundAddress = await factory.getCurrentRound();
 
-  if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
+  if (fundingRoundAddress === "0x0000000000000000000000000000000000000000") {
     return {
-      fundingRoundAddress: 'N/A',
-      nativeTokenAddress: 'N/A',
-      contributions: [],
-    }
+      fundingRoundAddress: "N/A",
+      nativeTokenAddress: "N/A",
+      contributions: []
+    };
   }
 
   const fundingRound = new ethers.Contract(
     fundingRoundAddress,
     FundingRound.abi,
     provider
-  )
-  const nativeTokenAddress = await fundingRound.nativeToken()
+  );
+  const nativeTokenAddress = await fundingRound.nativeToken();
 
-  const contributionsFilter = fundingRound.filters.NewContribution()
-  const contributions = (await provider.getLogs(contributionsFilter)).length
+  const contributionsFilter = fundingRound.filters.NewContribution();
+  const contributions = (await provider.getLogs(contributionsFilter)).length;
 
   return {
     fundingRoundAddress,
     nativeTokenAddress,
-    contributions,
-  }
+    contributions
+  };
 }
 
 export default {
-  name: 'Home',
+  name: "Home",
   data() {
     return {
       currentRound: {
-        fundingRoundAddress: '',
-        nativeTokenAddress: '',
-        contributions: '',
-      },
-    }
+        fundingRoundAddress: "",
+        nativeTokenAddress: "",
+        contributions: ""
+      }
+    };
   },
   async mounted() {
-    this.currentRound = await getCurrentRound()
-  },
-}
+    this.currentRound = await getCurrentRound();
+  }
+};
 </script>

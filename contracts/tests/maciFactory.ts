@@ -11,7 +11,7 @@ describe('MACI factory', () => {
   const provider = waffle.provider;
   const [dontUseMe, deployer, coordinator] = provider.getWallets();
 
-  let maciFactory: Contract;
+  let maciFactory: any;
 
   const maciParameters = new MaciParameters();
   const coordinatorPubKey = { x: 0, y: 1 };
