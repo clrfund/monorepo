@@ -117,6 +117,21 @@ contract FundingRound is Ownable, MACISharedObjs {
   }
 
   /**
+    * @dev Submit a batch of messages along with corresponding ephemeral public keys.
+    */
+  function submitMessageBatch(
+    Message[] memory _messages,
+    PubKey[] memory _encPubKeys
+  )
+    public
+  {
+    uint256 batchSize = _messages.length;
+    for (uint8 i = 0; i < batchSize; i++) {
+      maci.publishMessage(_messages[i], _encPubKeys[i]);
+    }
+  }
+
+  /**
     * @dev Withdraw contributed funds from the pool.
     */
   function withdraw()

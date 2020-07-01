@@ -25,7 +25,8 @@
     "test:web": "yarn workspace @clrfund/vue-app run test",
     "deploy:local": "yarn workspace @clrfund/contracts run deploy:local && yarn workspace @clrfund/contracts run deployTestRound:local",
     "upgrade:local": "yarn workspace @clrfund/contracts run upgrade:local",
-    "lint": "yarn lint:web",
+    "lint": "yarn workspaces run lint",
+    "lint:contracts": "yarn workspace @clrfund/contracts run lint",
     "lint:web": "yarn workspace @clrfund/vue-app run lint"
   }
 }

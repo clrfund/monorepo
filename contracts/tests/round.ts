@@ -3,9 +3,10 @@ import { use, expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { deployMockContract } from '@ethereum-waffle/mock-contract';
 import { Contract } from 'ethers';
+import { Keypair } from 'maci-domainobjs';
 
 import { deployMaciFactory } from '../scripts/helpers';
-import { ZERO_ADDRESS, getEventArg } from './utils';
+import { ZERO_ADDRESS, getEventArg, getGasUsage, createMessage } from './utils';
 import IRecipientRegistryArtifact from '../build/contracts/IRecipientRegistry.json';
 import MACIArtifact from '../build/contracts/MACI.json';
 
@@ -15,7 +16,7 @@ describe('Funding Round', () => {
   const provider = waffle.provider;
   const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
-  const coordinatorPubKey = { x: 0, y: 1 };
+  const coordinatorPubKey = (new Keypair()).pubKey;
   const roundDuration = 86400 * 7;  // Default duration in MACI factory
   const votingDuration = 86400 * 7;  // Default duration in MACI factory
 
@@ -28,7 +29,8 @@ describe('Funding Round', () => {
     const tokenInitialSupply = 10000000000;
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer);
     token = await Token.deploy(tokenInitialSupply);
-    await token.transfer(contributor.address, tokenInitialSupply);
+    await token.transfer(contributor.address, tokenInitialSupply / 2);
+    await token.transfer(coordinator.address, tokenInitialSupply / 2);
 
     recipientRegistry = await deployMockContract(deployer, IRecipientRegistryArtifact.abi);
     await recipientRegistry.mock.getRecipientIndex.returns(3);
@@ -39,11 +41,11 @@ describe('Funding Round', () => {
       token.address,
       recipientRegistry.address,
       roundDuration,
-      coordinatorPubKey,
+      coordinatorPubKey.asContractParam(),
     );
 
     const maciFactory = await deployMaciFactory(deployer);
-    const maciDeployed = await maciFactory.deployMaci(coordinatorPubKey);
+    const maciDeployed = await maciFactory.deployMaci(coordinatorPubKey.asContractParam());
     const maciAddress = await getEventArg(maciDeployed, maciFactory, 'MaciDeployed', '_maci');
     maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress);
   });
@@ -152,6 +154,65 @@ describe('Funding Round', () => {
       await expect(fundingRoundAsContributor.contribute(userPubKey, contributionAmount))
         .to.be.revertedWith('revert ERC20: transfer amount exceeds allowance');
     });
+  });
+
+  describe('voting', () => {
+    const contributionAmount = 1000;
+    const singleVoteWeight = 100;
+    let fundingRoundAsContributor: Contract;
+    let userKeypair: Keypair;
+    let userStateIndex: number;
+
+    beforeEach(async () => {
+      await fundingRound.setMaci(maci.address);
+      const tokenAsContributor = token.connect(contributor);
+      await tokenAsContributor.approve(
+        fundingRound.address,
+        contributionAmount,
+      );
+      fundingRoundAsContributor = fundingRound.connect(contributor);
+      userKeypair = new Keypair();
+      const contributionTx = await fundingRoundAsContributor.contribute(
+        userKeypair.pubKey.asContractParam(),
+        contributionAmount,
+      );
+      userStateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex');
+      await provider.send('evm_increaseTime', [roundDuration]);
+    });
+
+    it('publishes a single message', async () => {
+      const [message, encPubKey] = createMessage(
+        userStateIndex,
+        userKeypair,
+        coordinatorPubKey,
+        1, singleVoteWeight, 1,
+      );
+      const messagePublished = maci.publishMessage(
+        message.asContractParam(),
+        encPubKey.asContractParam(),
+      );
+      await expect(messagePublished).to.emit(maci, 'PublishMessage');
+      const publishTx = await messagePublished;
+      expect(await getGasUsage(publishTx)).lessThan(800000);
+    });
+
+    it('submits a batch of messages', async () => {
+      const messages = [];
+      const encPubKeys = [];
+      const numMessages = 3;
+      for (let voteIdx = 1; voteIdx < numMessages + 1; voteIdx++) {
+        const [message, encPubKey] = createMessage(
+          userStateIndex,
+          userKeypair,
+          coordinatorPubKey,
+          voteIdx, singleVoteWeight, voteIdx,
+        );
+        messages.push(message.asContractParam());
+        encPubKeys.push(encPubKey.asContractParam());
+      }
+      const messageBatchSubmitted = await fundingRound.submitMessageBatch(messages, encPubKeys);
+      expect(await getGasUsage(messageBatchSubmitted)).lessThan(2000000);
+    }).timeout(100000);
   });
 
   describe('finalizing round', () => {

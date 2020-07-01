@@ -1,6 +1,8 @@
 import { Contract } from 'ethers';
 import { TransactionResponse } from 'ethers/providers';
 import { BigNumber } from 'ethers/utils/bignumber';
+import { bigInt, genRandomSalt } from 'maci-crypto';
+import { Keypair, PubKey, Command, Message } from 'maci-domainobjs';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
@@ -58,4 +60,33 @@ export class MaciParameters {
       this.votingDuration,
     ];
   }
+}
+
+export function createMessage(
+  userStateIndex: number,
+  userKeypair: Keypair,
+  coordinatorPubKey: PubKey,
+  voteOptionIndex: number,
+  voteWeight: number,
+  nonce: number,
+  salt?: number,
+): [Message, PubKey] {
+  const encKeypair = new Keypair();
+  if (!salt) {
+    salt = genRandomSalt();
+  }
+  const command = new Command(
+    bigInt(userStateIndex),
+    userKeypair.pubKey,
+    bigInt(voteOptionIndex),
+    bigInt(voteWeight),
+    bigInt(nonce),
+    bigInt(salt),
+  );
+  const signature = command.sign(userKeypair.privKey);
+  const message = command.encrypt(
+    signature,
+    Keypair.genEcdhSharedKey(encKeypair.privKey, coordinatorPubKey),
+  );
+  return [message, encKeypair.pubKey];
 }
