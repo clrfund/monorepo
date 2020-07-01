@@ -2,15 +2,16 @@ pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
 import '@openzeppelin/contracts/ownership/Ownable.sol';
-import 'maci/contracts/sol/MACI.sol';
-import 'maci/contracts/sol/MACIParameters.sol';
-import 'maci/contracts/sol/gatekeepers/FreeForAllSignUpGatekeeper.sol';
-import { BatchUpdateStateTreeVerifier } from 'maci/contracts/sol/BatchUpdateStateTreeVerifier.sol';
-import { QuadVoteTallyVerifier } from 'maci/contracts/sol/QuadVoteTallyVerifier.sol';
+import 'maci-contracts/sol/MACI.sol';
+import 'maci-contracts/sol/MACIParameters.sol';
+import 'maci-contracts/sol/MACISharedObjs.sol';
+import 'maci-contracts/sol/gatekeepers/FreeForAllSignUpGatekeeper.sol';
+import { BatchUpdateStateTreeVerifier } from 'maci-contracts/sol/BatchUpdateStateTreeVerifier.sol';
+import { QuadVoteTallyVerifier } from 'maci-contracts/sol/QuadVoteTallyVerifier.sol';
 
 import './InitialVoiceCreditProxy.sol';
 
-contract MACIFactory is Ownable, MACIParameters {
+contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   // Constants
   uint256 private constant STATE_TREE_BASE = 2;
   uint256 private constant MESSAGE_TREE_BASE = 2;

@@ -24,7 +24,7 @@ const config: BuidlerConfig = {
     version: "0.5.17",
     optimizer: {
       enabled: true,
-      runs: 1000
+      runs: 100
     }
   },
   typechain: {
@@ -36,8 +36,8 @@ const config: BuidlerConfig = {
 task('compile', 'Compiles the entire project, building all artifacts', async (_, { config }, runSuper) => {
   await runSuper();
   // Copy Poseidon artifacts to target directory
-  fs.copyFileSync('poseidon/PoseidonT3.json', path.join(config.paths.artifacts, 'PoseidonT3.json'));
-  fs.copyFileSync('poseidon/PoseidonT6.json', path.join(config.paths.artifacts, 'PoseidonT6.json'));
+  fs.copyFileSync('../node_modules/maci-contracts/compiled/PoseidonT3.json', path.join(config.paths.artifacts, 'PoseidonT3.json'));
+  fs.copyFileSync('../node_modules/maci-contracts/compiled/PoseidonT6.json', path.join(config.paths.artifacts, 'PoseidonT6.json'));
 });
 
 export default config;

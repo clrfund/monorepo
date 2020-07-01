@@ -14,7 +14,9 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^2.5.1",
-    "maci": "github:appliedzkp/maci#d5d5817d5f75294facf88d3163fcd3c5f9cf7509"
+    "maci-contracts": "file:maci-contracts-1.0.0.tgz",
+    "maci-crypto": "file:maci-crypto-1.0.0.tgz",
+    "maci-domainobjs": "file:maci-domainobjs-1.0.0.tgz"
   },
   "devDependencies": {
     "@nomiclabs/buidler": "^1.3.8",
@@ -37,5 +39,9 @@
     "typechain-target-truffle": "^1.0.2",
     "typechain-target-web3-v1": "^1.0.4",
     "typescript": "^3.8.3"
+  },
+  "resolutions": {
+    "maci-contracts/maci-config": "maci-config@file:contracts/maci-config-1.0.0.tgz",
+    "maci-crypto/circomlib/snarkjs": "https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91"
   }
 }

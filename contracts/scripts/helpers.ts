@@ -30,8 +30,8 @@ export async function deployMaciFactory(account: Signer): Promise<Contract> {
   // Workarounds for https://github.com/nomiclabs/buidler/issues/611
   const MACIFactoryArtifactCopy = {...MACIFactoryArtifact};
   const linkable = { evm: { bytecode: { object: MACIFactoryArtifactCopy.bytecode } } };
-  link(linkable, 'maci/contracts/sol/Poseidon.sol:PoseidonT3', poseidonT3.address);
-  link(linkable, 'maci/contracts/sol/Poseidon.sol:PoseidonT6', poseidonT6.address);
+  link(linkable, 'maci-contracts/sol/Poseidon.sol:PoseidonT3', poseidonT3.address);
+  link(linkable, 'maci-contracts/sol/Poseidon.sol:PoseidonT6', poseidonT6.address);
   MACIFactoryArtifactCopy.bytecode = linkable.evm.bytecode.object;
   const MACIFactory = await ethers.getContractFactory(
     MACIFactoryArtifactCopy.abi,

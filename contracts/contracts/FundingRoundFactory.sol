@@ -5,14 +5,14 @@ import '@openzeppelin/contracts/ownership/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
-import 'maci/contracts/sol/MACI.sol';
-import 'maci/contracts/sol/MACIPubKey.sol';
+import 'maci-contracts/sol/MACI.sol';
+import 'maci-contracts/sol/MACISharedObjs.sol';
 
 import './IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
 
-contract FundingRoundFactory is Ownable, MACIPubKey, IRecipientRegistry {
+contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
   using SafeERC20 for IERC20;
 
   // State

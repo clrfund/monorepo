@@ -4,12 +4,12 @@ pragma experimental ABIEncoderV2;
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
-import 'maci/contracts/sol/MACI.sol';
-import 'maci/contracts/sol/MACIPubKey.sol';
+import 'maci-contracts/sol/MACI.sol';
+import 'maci-contracts/sol/MACISharedObjs.sol';
 
 import './IRecipientRegistry.sol';
 
-contract FundingRound is Ownable, MACIPubKey {
+contract FundingRound is Ownable, MACISharedObjs {
   using SafeERC20 for IERC20;
 
   uint256 public contributorCount;
