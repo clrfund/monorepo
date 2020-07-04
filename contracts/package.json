@@ -39,9 +39,5 @@
     "typechain-target-truffle": "^1.0.2",
     "typechain-target-web3-v1": "^1.0.4",
     "typescript": "^3.8.3"
-  },
-  "resolutions": {
-    "maci-contracts/maci-config": "maci-config@file:contracts/maci-config-1.0.0.tgz",
-    "maci-crypto/circomlib/snarkjs": "https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91"
   }
 }

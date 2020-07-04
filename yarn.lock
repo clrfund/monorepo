@@ -3129,7 +3129,7 @@ bfj@^6.1.1:
     hoopy "^0.1.4"
     tryer "^1.0.1"
 
-big-integer@^1.6.32, big-integer@^1.6.43, big-integer@^1.6.48:
+big-integer@^1.6.32, big-integer@^1.6.43:
   version "1.6.48"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.48.tgz#8fd88bd1632cba4a1c8c3e3d7159f08bb95b4b9e"
   integrity sha512-j51egjPa7/i+RdiRuJbPdJ2FIUYYPhvYLjzoYbcMMm62ooO6F94fETG4MTs46zPAF9Brs04OajboA/qTGuz78w==
@@ -3913,14 +3913,6 @@ circom@0.0.34:
     big-integer "^1.6.32"
     optimist "^0.6.1"
     yargs "^12.0.2"
-
-circom_runtime@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/circom_runtime/-/circom_runtime-0.0.3.tgz#079d698bf8b95b0661f78bfccaf88784218bf2ad"
-  integrity sha512-z4ypbs9cTQn7+2FHZNTnccMj6kQCcKT2agYqCrm2kdLBJh9LDoxU1JVu5mSnVuOtgc7BclQ7r0xclG0zP2rxhw==
-  dependencies:
-    big-integer "^1.6.48"
-    fnv-plus "^1.3.1"
 
 circomlib@0.0.19:
   version "0.0.19"
@@ -6887,11 +6879,6 @@ flush-write-stream@^1.0.0, flush-write-stream@^1.0.2:
   dependencies:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
-
-fnv-plus@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/fnv-plus/-/fnv-plus-1.3.1.tgz#c34cb4572565434acb08ba257e4044ce2b006d67"
-  integrity sha512-Gz1EvfOneuFfk4yG458dJ3TLJ7gV19q3OM/vVvvHf7eT02Hm1DleB4edsia6ahbKgAYxO9gvyQ1ioWZR+a00Yw==
 
 follow-redirects@^1.0.0:
   version "1.10.0"
@@ -11837,13 +11824,6 @@ querystringify@^2.1.1:
   resolved "https://registry.yarnpkg.com/querystringify/-/querystringify-2.1.1.tgz#60e5a5fd64a7f8bfa4d2ab2ed6fdf4c85bad154e"
   integrity sha512-w7fLxIRCRT7U8Qu53jQnJyPkYZIaR4n5151KMfcJlO/A9397Wxb1amJvROTK6TOnp7PfoAmg/qXiNHI+08jRfA==
 
-r1csfile@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/r1csfile/-/r1csfile-0.0.3.tgz#61cef5a842a607800dc7a341d72eb31040ffacfa"
-  integrity sha512-TNrodnbHw5yAMv2gj0Ezf22XS3q8zGEjdPHZLBmJauIPFxm6QmyzxlB92yZ5WNkjEtJiS7p1hvkO9/RsJXRDjw==
-  dependencies:
-    big-integer "^1.6.48"
-
 ramda@0.24.1:
   version "0.24.1"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.24.1.tgz#c3b7755197f35b8dc3502228262c4c91ddb6b857"
@@ -12900,20 +12880,7 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-"snarkjs@>=0.1.20 <=0.1.24":
-  version "0.1.24"
-  resolved "https://registry.yarnpkg.com/snarkjs/-/snarkjs-0.1.24.tgz#1e20c0945eb8a27332a73936bbb05fef00f6a386"
-  integrity sha512-J5LWEf1HK6qe984k4OkUHhm3MUwPRLXkKjrTgR5dHxFpU1rrKYqbpFJSvcLbqYvlOggOZiN1aUHFSiR+0DqQBQ==
-  dependencies:
-    big-integer "^1.6.43"
-    chai "^4.2.0"
-    circom_runtime "0.0.3"
-    escape-string-regexp "^1.0.5"
-    keccak "^3.0.0"
-    r1csfile "0.0.3"
-    yargs "^12.0.5"
-
-"snarkjs@https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91":
+"snarkjs@>=0.1.20 <=0.1.24", snarkjs@^0.1.20, "snarkjs@https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91":
   version "0.1.20"
   resolved "https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91"
   dependencies:
