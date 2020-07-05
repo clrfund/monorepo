@@ -67,7 +67,7 @@ export function createMessage(
   userKeypair: Keypair,
   coordinatorPubKey: PubKey,
   voteOptionIndex: number,
-  voteWeight: number,
+  voiceCredits: number,
   nonce: number,
   salt?: number,
 ): [Message, PubKey] {
@@ -75,11 +75,12 @@ export function createMessage(
   if (!salt) {
     salt = genRandomSalt();
   }
+  const quadraticVoteWeight = Math.floor(Math.sqrt(voiceCredits));
   const command = new Command(
     bigInt(userStateIndex),
     userKeypair.pubKey,
     bigInt(voteOptionIndex),
-    bigInt(voteWeight),
+    bigInt(quadraticVoteWeight),
     bigInt(nonce),
     bigInt(salt),
   );

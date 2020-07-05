@@ -158,7 +158,7 @@ describe('Funding Round', () => {
 
   describe('voting', () => {
     const contributionAmount = 1000;
-    const singleVoteWeight = 100;
+    const singleVote = 100;
     let fundingRoundAsContributor: Contract;
     let userKeypair: Keypair;
     let userStateIndex: number;
@@ -181,11 +181,13 @@ describe('Funding Round', () => {
     });
 
     it('publishes a single message', async () => {
+      const recipientIndex = 1;
+      const nonce = 1;
       const [message, encPubKey] = createMessage(
         userStateIndex,
         userKeypair,
         coordinatorPubKey,
-        1, singleVoteWeight, 1,
+        recipientIndex, singleVote, nonce,
       );
       const messagePublished = maci.publishMessage(
         message.asContractParam(),
@@ -200,12 +202,13 @@ describe('Funding Round', () => {
       const messages = [];
       const encPubKeys = [];
       const numMessages = 3;
-      for (let voteIdx = 1; voteIdx < numMessages + 1; voteIdx++) {
+      for (let recipientIndex = 1; recipientIndex < numMessages + 1; recipientIndex++) {
+        const nonce = recipientIndex;
         const [message, encPubKey] = createMessage(
           userStateIndex,
           userKeypair,
           coordinatorPubKey,
-          voteIdx, singleVoteWeight, voteIdx,
+          recipientIndex, singleVote, nonce,
         );
         messages.push(message.asContractParam());
         encPubKeys.push(encPubKey.asContractParam());
