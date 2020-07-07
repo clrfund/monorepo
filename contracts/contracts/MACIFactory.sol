@@ -19,12 +19,12 @@ contract MACIFactory is Ownable, MACIParameters {
   // State
   uint8 private stateTreeDepth = 10;
   uint8 private messageTreeDepth = 10;
-  uint8 private voteOptionTreeDepth = 4;
+  uint8 private voteOptionTreeDepth = 2;
   uint8 private tallyBatchSize = 4;
   uint8 private messageBatchSize = 4;
   uint256 public maxUsers = STATE_TREE_BASE ** 10 - 1;
   uint256 public maxMessages = MESSAGE_TREE_BASE ** 10 - 1;
-  uint256 public maxVoteOptions = VOTE_OPTION_TREE_BASE ** 4 - 1;
+  uint256 public maxVoteOptions = VOTE_OPTION_TREE_BASE ** 2 - 1;
   uint256 public signUpDuration = 7 * 86400;
   uint256 public votingDuration = 7 * 86400;
 
@@ -63,6 +63,10 @@ contract MACIFactory is Ownable, MACIParameters {
     public
     onlyOwner
   {
+    require(
+      _voteOptionTreeDepth >= voteOptionTreeDepth,
+      'MACIFactory: Vote option tree depth can not be decreased'
+    );
     stateTreeDepth = _stateTreeDepth;
     messageTreeDepth = _messageTreeDepth;
     voteOptionTreeDepth = _voteOptionTreeDepth;

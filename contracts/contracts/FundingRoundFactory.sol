@@ -29,10 +29,11 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
   FundingRound[] private rounds;
 
   mapping(address => string) public recipients;
+  mapping(address => uint256) public recipientIndex;
 
   // Events
   event NewContribution(address indexed _sender, uint256 _amount);
-  event RecipientAdded(address indexed _fundingAddress, string _name);
+  event RecipientAdded(address indexed _fundingAddress, string _name, uint256 _index);
   event NewToken(address _token);
   event NewRound(address _round);
   event CoordinatorTransferred(address _newCoordinator);
@@ -57,17 +58,25 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
     emit NewContribution(msg.sender, _amount);
   }
 
+  /**
+    * @dev Register recipient as eligible for funding allocation.
+    * @param _fundingAddress The address that receives funds.
+    * @param _name The display name of the recipient.
+    */
   function addRecipient(address _fundingAddress, string memory _name)
     public
     onlyOwner
   {
+    // TODO: verify address and get recipient info from the recipient registry
     require(_fundingAddress != address(0), 'Factory: Recipient address is zero');
     require(bytes(_name).length != 0, 'Factory: Recipient name is empty string');
     require(bytes(recipients[_fundingAddress]).length == 0, 'Factory: Recipient already registered');
+    // TODO: implement mechanism for replacing registrants
     require(recipientCount < maciFactory.maxVoteOptions(), 'Factory: Recipient limit reached');
-    recipients[_fundingAddress] = _name;
     recipientCount += 1;
-    emit RecipientAdded(_fundingAddress, _name);
+    recipients[_fundingAddress] = _name;
+    recipientIndex[_fundingAddress] = recipientCount;  // Starts with 1
+    emit RecipientAdded(_fundingAddress, _name, recipientCount);
   }
 
   function getCurrentRound()

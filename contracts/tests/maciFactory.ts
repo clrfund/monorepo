@@ -13,8 +13,7 @@ describe('MACI factory', () => {
   const [dontUseMe, deployer, coordinator] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   let maciFactory: Contract;
-
-  const maciParameters = new MaciParameters();
+  let maciParameters = new MaciParameters();
   const coordinatorPubKey = { x: 0, y: 1 };
 
   beforeEach(async () => {
@@ -25,12 +24,19 @@ describe('MACI factory', () => {
   it('sets default MACI parameters', async () => {
     expect(await maciFactory.maxUsers()).to.equal(1023);
     expect(await maciFactory.maxMessages()).to.equal(1023);
-    expect(await maciFactory.maxVoteOptions()).to.equal(624);
+    expect(await maciFactory.maxVoteOptions()).to.equal(24);
     expect(await maciFactory.signUpDuration()).to.equal(604800);
     expect(await maciFactory.votingDuration()).to.equal(604800);
   });
 
   it('sets MACI parameters', async () => {
+    maciParameters = new MaciParameters({
+      stateTreeDepth: 8,
+      messageTreeDepth: 12,
+      voteOptionTreeDepth: 4,
+      signUpDuration: 86400,
+      votingDuration: 86400,
+    });
     await expect(maciFactory.setMaciParameters(...maciParameters.values()))
       .to.emit(maciFactory, 'MaciParametersChanged');
 
@@ -44,6 +50,12 @@ describe('MACI factory', () => {
       .to.equal(maciParameters.signUpDuration);
     expect(await maciFactory.votingDuration())
       .to.equal(maciParameters.votingDuration);
+  });
+
+  it('does not allow to decrease the vote option tree depth', async () => {
+    maciParameters = new MaciParameters({ voteOptionTreeDepth: 1 });
+    await expect(maciFactory.setMaciParameters(...maciParameters.values()))
+      .to.be.revertedWith('MACIFactory: Vote option tree depth can not be decreased');
   });
 
   it('allows only owner to set MACI parameters', async () => {
