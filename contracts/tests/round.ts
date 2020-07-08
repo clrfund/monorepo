@@ -17,7 +17,7 @@ use(solidity);
 
 describe('Funding Round', () => {
   const provider = waffle.provider;
-  const [dontUseMe, deployer, coordinator, contributor, recipient] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
+  const [, deployer, coordinator, contributor, recipient] = provider.getWallets()
 
   const coordinatorPubKey = (new Keypair()).pubKey;
   const signUpDuration = 86400 * 7;  // Default duration in MACI factory
@@ -49,7 +49,6 @@ describe('Funding Round', () => {
       signUpDuration,
       coordinatorPubKey.asContractParam(),
     );
-
     const maciFactory = await deployMaciFactory(deployer);
     const maciDeployed = await maciFactory.deployMaci(
       fundingRound.address,
@@ -89,7 +88,7 @@ describe('Funding Round', () => {
   });
 
   describe('accepting contributions', () => {
-    const userPubKey = { x: 1, y: 0 };
+    const userPubKey = (new Keypair()).pubKey.asContractParam();
     const contributionAmount = 1000;
     const encodedContributorAddress = defaultAbiCoder.encode(['address'], [contributor.address]);
     let tokenAsContributor: Contract;
@@ -275,7 +274,7 @@ describe('Funding Round', () => {
         encPubKeys.push(encPubKey.asContractParam());
       }
       const messageBatchSubmitted = await fundingRound.submitMessageBatch(messages, encPubKeys);
-      expect(await getGasUsage(messageBatchSubmitted)).lessThan(2000000);
+      expect(await getGasUsage(messageBatchSubmitted)).lessThan(2100000);
     }).timeout(100000);
   });
 
@@ -347,7 +346,7 @@ describe('Funding Round', () => {
   });
 
   describe('withdrawing funds', () => {
-    const userPubKey = { x: 1, y: 0 };
+    const userPubKey = (new Keypair()).pubKey.asContractParam();
     const contributionAmount = 1000;
     let tokenAsContributor: Contract;
     let fundingRoundAsContributor: Contract;

@@ -21,3 +21,38 @@ This includes:
 ```
 yarn deployTestRound:local
 ```
+
+### Run test round
+
+Install [zkutil](https://github.com/poma/zkutil) (see instructions in [MACI readme](https://github.com/appliedzkp/maci#get-started)).
+
+Set the path to zkutil binary if needed:
+
+```
+export NODE_CONFIG='{"zkutil_bin": "/usr/bin/zkutil"}'
+```
+
+Set coordinator's private key (Account #1 on Ganache instance):
+
+```
+export COORDINATOR_ETH_PK='0x...'
+```
+
+Contribute funds, wait until sign-up period ends (10 minutes) and vote:
+
+```
+yarn contribute:local
+sleep 300s && yarn vote:local
+```
+
+Wait until voting period ends, process messages, tally votes and verify the results:
+
+```
+sleep 300s && yarn tally:local
+```
+
+Claim funds:
+
+```
+yarn claim:local
+```
