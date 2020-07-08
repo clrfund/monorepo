@@ -3,8 +3,11 @@
   "repository": "https://github.com/clrfund/monorepo",
   "license": "GPL-3.0",
   "private": true,
-  "workspaces": { 
-    "packages": ["contracts", "vue-app"],
+  "workspaces": {
+    "packages": [
+      "contracts",
+      "vue-app"
+    ],
     "nohoist": [
       "**/@nomiclabs/**",
       "**/typescript",
@@ -27,5 +30,6 @@
     "upgrade:local": "yarn workspace @clrfund/contracts run upgrade:local",
     "lint": "yarn lint:web",
     "lint:web": "yarn workspace @clrfund/vue-app run lint"
-  }
+  },
+  "dependencies": {}
 }

@@ -7,7 +7,7 @@
     <v-list-item-content>
       <v-list-item-title>John Leider</v-list-item-title>
 
-      <v-list-item-subtitle>zeroskillz</v-list-item-subtitle>
+      <v-list-item-subtitle>{{user.account}}</v-list-item-subtitle>
     </v-list-item-content>
 
     <v-list-item-action>
@@ -25,11 +25,14 @@
   // Utilities
   import {
     mapActions,
+    mapState,
   } from 'vuex'
 
   export default {
-    name: 'FriendsLoggedIn',
-
+    name: 'Web3LoggedIn',
+    computed: {
+      ...mapState('auth', ['user']),
+    },
     methods: {
       ...mapActions('auth', ['logout']),
     },

@@ -13,7 +13,6 @@
     "3box": "^1.20.0",
     "@walletconnect/web3-provider": "^1.0.1",
     "ethereum-blockies-base64": "^1.0.2",
-    "ethers": "^5.0.5",
     "nuxt": "^2.13.0",
     "web3modal": "^1.7.0"
   },
