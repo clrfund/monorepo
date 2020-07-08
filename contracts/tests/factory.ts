@@ -30,7 +30,7 @@ describe('Funding Round Factory', () => {
     ], { gasLimit: 5000000 });
 
     expect(factory.address).to.properAddress;
-    expect(await getGasUsage(factory.deployTransaction)).lessThan(4200000);
+    expect(await getGasUsage(factory.deployTransaction)).lessThan(4700000);
     await maciFactory.transferOwnership(factory.address);
 
     // Deploy token contract and transfer tokens to contributor
@@ -370,10 +370,6 @@ describe('Funding Round Factory', () => {
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await expect(factory.transferMatchingFunds())
         .to.be.revertedWith('Factory: Funding round has not been deployed');
-    });
-
-    it('finalizes current round even if matching pool is empty', async () => {
-      // TODO: add tests later
     });
   });
 

@@ -9513,10 +9513,10 @@ ltgt@~2.1.1:
   resolved "https://registry.yarnpkg.com/ltgt/-/ltgt-2.1.3.tgz#10851a06d9964b971178441c23c9e52698eece34"
   integrity sha1-EIUaBtmWS5cReEQcI8nlJpjuzjQ=
 
-maci-contracts@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.1.0.tgz#d760b840104aeb9d0775fbdc20474b762183de67"
-  integrity sha512-wD1kJEsc5OmlFQCo2yutv/3B+7RHGxcnhUMVXmVr7/tHFxHDV5X1T9BY7hiy/8q3FZcoo4kkRV4Fs2azkzdhPQ==
+maci-contracts@0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.1.1.tgz#2d8dfcc54fcf81a9c6c522b825242fb37166b75e"
+  integrity sha512-ocsj4z1Tbw1evzWp2FlxLUM9WgT/T01Q7YwSLNhFLFhKxDpoQeHwLYDqKVzGD9eoXZLnKCjHWoWEdjzZGuEm+A==
   dependencies:
     "@openzeppelin/contracts" "^2.4.0"
     argparse "^1.0.10"

@@ -24,9 +24,11 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   // State
   uint256 public contributorCount;
   uint256 public contributionDeadline;
-  uint256 public poolSize;
+  uint256 public matchingPoolSize;
+  uint256 public totalVotes;
   bool public isFinalized = false;
   bool public isCancelled = false;
+  bool public totalsVerified = false;
 
   PubKey public coordinatorPubKey;
   MACI public maci;
@@ -34,12 +36,13 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   IVerifiedUserRegistry public verifiedUserRegistry;
   IRecipientRegistry public recipientRegistry;
 
+  mapping(uint256 => bool) private recipients;
   mapping(address => ContributorStatus) public contributors;
 
   // Events
-  event FundsClaimed(address _recipient);
   event NewContribution(address indexed _sender, uint256 _amount);
   event FundsWithdrawn(address indexed _contributor);
+  event FundsClaimed(address _recipient, uint256 _amount);
 
   /**
     * @dev Sets round parameters (they can only be set once during construction).
@@ -80,26 +83,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
       'FundingRound: MACI signup deadline must be greater than contribution deadline'
     );
     maci = _maci;
-  }
-
-  /**
-    * @dev Claim allocated tokens.
-    * @param _poolShare Share of votes, provided by coordinator.
-    * @param _proof Proof of correctness.
-    */
-  function claimFunds(
-    uint256 _poolShare,
-    uint256[][] memory _proof
-  )
-    public
-  {
-    require(isFinalized, 'FundingRound: Round not finalized');
-    // TODO: https://github.com/appliedzkp/maci/issues/108
-    // bool verified = maci.verifyTallyResult(...);
-    // TODO: do calculation properly; rounding
-    uint256 finalAmount = _poolShare * poolSize / 100;
-    nativeToken.transfer(msg.sender, finalAmount);
-    emit FundsClaimed(msg.sender);
   }
 
   /**
@@ -209,7 +192,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(maci.calcVotingDeadline() < now, 'FundingRound: Voting has not been finished');
     require(maci.numSignUps() == 0 || !maci.hasUntalliedStateLeaves(), 'FundingRound: Votes has not been tallied');
     isFinalized = true;
-    poolSize = nativeToken.balanceOf(address(this));
   }
 
   /**
@@ -222,5 +204,76 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(!isFinalized, 'FundingRound: Already finalized');
     isFinalized = true;
     isCancelled = true;
+  }
+
+  /**
+    * @dev Verify the total amount of spent voice credits across all recipients
+    * and get the total amount of votes from MACI.
+    * @param _totalSpent Total amount of spent voice credits.
+    * @param _totalSpentSalt The salt.
+    */
+  function verifyTotals(
+    uint256 _totalSpent,
+    uint256 _totalSpentSalt
+  )
+    public
+  {
+    // TODO: verify during finalization
+    require(isFinalized, 'FundingRound: Round not finalized');
+    require(!isCancelled, 'FundingRound: Round has been cancelled');
+    require(!totalsVerified, 'FundingRound: Totals has been already verified');
+    bool verified = maci.verifySpentVoiceCredits(_totalSpent, _totalSpentSalt);
+    require(verified, 'FundingRound: Incorrect total amount of spent voice credits');
+    // Total amount of spent voice credits is the size of the pool of direct rewards.
+    // Everything else, including unspent voice credits, is considered a part of the matching pool
+    matchingPoolSize = nativeToken.balanceOf(address(this)) - _totalSpent;
+    totalVotes = maci.totalVotes();
+    totalsVerified = true;
+  }
+
+  /**
+    * @dev Claim allocated tokens.
+    * @param _tallyResult The result of vote tally for the recipient.
+    * @param _tallyResultProof Proof of correctness of the vote tally.
+    * @param _tallyResultSalt Salt.
+    * @param _spent The amount of voice credits spent on the recipient.
+    * @param _spentProof Proof of correctness for the amount of spent credits.
+    * @param _spentSalt Salt.
+    */
+  function claimFunds(
+    uint256 _tallyResult,
+    uint256[][] memory _tallyResultProof,
+    uint256 _tallyResultSalt,
+    uint256 _spent,
+    uint256[][] memory _spentProof,
+    uint256 _spentSalt
+  )
+    public
+  {
+    require(totalsVerified, 'FundingRound: Totals has not been verified');
+    uint256 voteOptionIndex = recipientRegistry.getRecipientIndex(msg.sender);
+    require(voteOptionIndex > 0, 'FundingRound: Invalid recipient address');
+    require(!recipients[voteOptionIndex], 'FundingRound: Funds already claimed');
+    (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
+    bool resultVerified = maci.verifyTallyResult(
+      voteOptionTreeDepth,
+      voteOptionIndex,
+      _tallyResult,
+      _tallyResultProof,
+      _tallyResultSalt
+    );
+    require(resultVerified, 'FundingRound: Incorrect tally result');
+    bool spentVerified = maci.verifyTallyResult(
+      voteOptionTreeDepth,
+      voteOptionIndex,
+      _spent,
+      _spentProof,
+      _spentSalt
+    );
+    require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
+    recipients[voteOptionIndex] = true;
+    uint256 claimableAmount = matchingPoolSize * _tallyResult / totalVotes + _spent;
+    nativeToken.transfer(msg.sender, claimableAmount);
+    emit FundsClaimed(msg.sender, claimableAmount);
   }
 }
