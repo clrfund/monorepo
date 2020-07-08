@@ -1,15 +1,13 @@
 pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
-import '@nomiclabs/buidler/console.sol';
-
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
 import 'maci/contracts/sol/MACI.sol';
 import 'maci/contracts/sol/MACIPubKey.sol';
 
-import './FundingRoundFactory.sol';
+import './IRecipientRegistry.sol';
 
 contract FundingRound is Ownable, MACIPubKey {
   using SafeERC20 for IERC20;
@@ -21,29 +19,31 @@ contract FundingRound is Ownable, MACIPubKey {
 
   PubKey public coordinatorPubKey;
   MACI public maci;
-  // ERC20 token being used
   IERC20 public nativeToken;
+  IRecipientRegistry public recipientRegistry;
 
   mapping(address => uint256) public contributors;
   
   event FundsClaimed(address _recipient);
   event NewContribution(address indexed _sender, uint256 _amount);
 
-
   /**
     * @dev Sets round parameters (they can only be set once during construction).
     * @param _nativeToken Address of a token which will be accepted for contributions.
+    * @param _recipientRegistry Address of the recipient registry.
     * @param _duration Duration of the contribution period in seconds.
     * @param _coordinatorPubKey Coordinator's public key.
     */
   constructor(
     IERC20 _nativeToken,
+    IRecipientRegistry _recipientRegistry,
     uint256 _duration,
     PubKey memory _coordinatorPubKey
   )
     public
   {
     nativeToken = _nativeToken;
+    recipientRegistry = _recipientRegistry;
     contributionDeadline = now + _duration;
     coordinatorPubKey = _coordinatorPubKey;
   }

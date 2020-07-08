@@ -91,7 +91,7 @@ describe('Funding Round Factory', () => {
         .withArgs(fundingAddress, recipientName, expectedIndex);
       expect(await factory.recipients(fundingAddress))
         .to.equal(recipientName);
-      expect(await factory.recipientIndex(fundingAddress))
+      expect(await factory.getRecipientIndex(fundingAddress))
         .to.equal(expectedIndex);
     });
 

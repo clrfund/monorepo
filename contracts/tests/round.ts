@@ -1,10 +1,12 @@
 import { ethers, waffle } from '@nomiclabs/buidler';
 import { use, expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
+import { deployMockContract } from '@ethereum-waffle/mock-contract';
 import { Contract } from 'ethers';
 
 import { deployMaciFactory } from '../scripts/helpers';
 import { ZERO_ADDRESS, getEventArg } from './utils';
+import IRecipientRegistryArtifact from '../build/contracts/IRecipientRegistry.json';
 import MACIArtifact from '../build/contracts/MACI.json';
 
 use(solidity);
@@ -17,6 +19,7 @@ describe('Funding Round', () => {
   const roundDuration = 86400 * 7;
 
   let token: Contract;
+  let recipientRegistry: Contract;
   let fundingRound: Contract;
   let maci: Contract;
 
@@ -26,9 +29,14 @@ describe('Funding Round', () => {
     token = await Token.deploy(tokenInitialSupply);
     await token.transfer(contributor.address, tokenInitialSupply);
 
+    recipientRegistry = await deployMockContract(deployer, IRecipientRegistryArtifact.abi);
+    await recipientRegistry.mock.getRecipientIndex.returns(3);
+    expect(await recipientRegistry.getRecipientIndex(ZERO_ADDRESS)).to.equal(3);
+
     const FundingRound = await ethers.getContractFactory('FundingRound', deployer);
     fundingRound = await FundingRound.deploy(
       token.address,
+      recipientRegistry.address,
       roundDuration,
       coordinatorPubKey,
     );
@@ -42,6 +50,7 @@ describe('Funding Round', () => {
   it('initializes funding round correctly', async () => {
     expect(await fundingRound.owner()).to.equal(deployer.address);
     expect(await fundingRound.nativeToken()).to.equal(token.address);
+    expect(await fundingRound.recipientRegistry()).to.equal(recipientRegistry.address);
     expect(await fundingRound.isFinalized()).to.equal(false);
     expect(await fundingRound.maci()).to.equal(ZERO_ADDRESS);
   });
