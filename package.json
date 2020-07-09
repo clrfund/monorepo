@@ -31,5 +31,9 @@
     "lint": "yarn lint:web",
     "lint:web": "yarn workspace @clrfund/vue-app run lint"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "resolutions": {
+    "@nuxt/telemetry": "npm:nuxt-optout",
+    "nanoid": "<=3.1.3"
+  }
 }
