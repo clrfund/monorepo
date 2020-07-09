@@ -2,7 +2,13 @@
   "name": "@clrfund/vue-app",
   "version": "1.0.0",
   "private": true,
+  "resolutions": {
+    "@nuxt/telemetry": "npm:nuxt-optout"
+  },
   "scripts": {
+    "predev": "nuxt-optout",
+    "prebuild": "nuxt-optout",
+    "prestart": "nuxt-optout",
     "serve": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
@@ -14,6 +20,7 @@
     "@walletconnect/web3-provider": "^1.0.1",
     "ethereum-blockies-base64": "^1.0.2",
     "nuxt": "^2.13.0",
+    "nuxt-optout": "^0.0.3",
     "web3modal": "^1.7.0"
   },
   "devDependencies": {
