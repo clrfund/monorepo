@@ -18,7 +18,7 @@ describe('MACI factory', () => {
 
   beforeEach(async () => {
     maciFactory = await deployMaciFactory(deployer);
-    expect(await getGasUsage(maciFactory.deployTransaction)).lessThan(5500000);
+    expect(await getGasUsage(maciFactory.deployTransaction)).lessThan(5600000);
   });
 
   it('sets default MACI parameters', async () => {
@@ -71,7 +71,7 @@ describe('MACI factory', () => {
     await expect(maciDeployed).to.emit(maciFactory, 'MaciDeployed');
 
     const deployTx = await maciDeployed;
-    expect(await getGasUsage(deployTx)).lessThan(7000000);
+    expect(await getGasUsage(deployTx)).lessThan(7200000);
   });
 
   it('allows only owner to deploy MACI', async () => {

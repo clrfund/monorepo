@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^2.5.1",
-    "maci-contracts": "file:maci-contracts-1.0.0.tgz",
-    "maci-crypto": "file:maci-crypto-1.0.0.tgz",
-    "maci-domainobjs": "file:maci-domainobjs-1.0.0.tgz"
+    "maci-contracts": "0.1.0",
+    "maci-crypto": "0.1.0",
+    "maci-domainobjs": "0.1.0"
   },
   "devDependencies": {
     "@nomiclabs/buidler": "^1.3.8",

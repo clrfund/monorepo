@@ -226,7 +226,7 @@ describe('Funding Round Factory', () => {
       await factory.deployNewRound();
 
       const deployTx = await factory.deployMaci();
-      expect(await getGasUsage(deployTx)).lessThan(7000000);
+      expect(await getGasUsage(deployTx)).lessThan(7200000);
       const maciAddress = await getEventArg(
         deployTx,
         maciFactory,

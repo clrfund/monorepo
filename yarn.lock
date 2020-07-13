@@ -9513,9 +9513,10 @@ ltgt@~2.1.1:
   resolved "https://registry.yarnpkg.com/ltgt/-/ltgt-2.1.3.tgz#10851a06d9964b971178441c23c9e52698eece34"
   integrity sha1-EIUaBtmWS5cReEQcI8nlJpjuzjQ=
 
-"maci-contracts@file:contracts/maci-contracts-1.0.0.tgz":
-  version "1.0.0"
-  resolved "file:contracts/maci-contracts-1.0.0.tgz#8d019071896acec7e50fc9d89ff827b2b07e42451d1eb011c150d4e6b8e1e481f16f13816ee012b9cb395230789d13584b6921fa2eb07ed2df20367534261128"
+maci-contracts@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.1.0.tgz#d760b840104aeb9d0775fbdc20474b762183de67"
+  integrity sha512-wD1kJEsc5OmlFQCo2yutv/3B+7RHGxcnhUMVXmVr7/tHFxHDV5X1T9BY7hiy/8q3FZcoo4kkRV4Fs2azkzdhPQ==
   dependencies:
     "@openzeppelin/contracts" "^2.4.0"
     argparse "^1.0.10"
@@ -9524,17 +9525,19 @@ ltgt@~2.1.1:
     module-alias "^2.2.2"
     openzeppelin-solidity "^2.4.0"
 
-"maci-crypto@file:contracts/maci-crypto-1.0.0.tgz":
-  version "1.0.0"
-  resolved "file:contracts/maci-crypto-1.0.0.tgz#31fe8a2647563ca6a91b646768a8310f1242ca3a"
+maci-crypto@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/maci-crypto/-/maci-crypto-0.1.0.tgz#8aa7af7cf1525600cf618197cdfc40d8e9ff1773"
+  integrity sha512-LkAIHIOqcYbvojwUpXUeWmPWQC2Ci6PMluXbpDyqLvUDGbhd5ulriGS6SBjk9Wi6QyinkMIwC0eVBkMn8ajszA==
   dependencies:
     circom "0.0.34"
     circomlib "0.0.19"
     snarkjs "https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91"
 
-"maci-domainobjs@file:contracts/maci-domainobjs-1.0.0.tgz":
-  version "1.0.0"
-  resolved "file:contracts/maci-domainobjs-1.0.0.tgz#f6c9b55f430c363f80ad8229f0d0c5e0567f4b98"
+maci-domainobjs@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/maci-domainobjs/-/maci-domainobjs-0.1.0.tgz#1f4e034a12acae15fed97a2e18d45042ef7c39fc"
+  integrity sha512-Hm6RqiqehAn+Jf/z+blrM7WHexLrxiz6X9cvworqsC0SjTqQo1E7I0r/OVH26xSxEm1T1GpZnJ0TdlvGb44Qtw==
 
 make-dir@^1.0.0, make-dir@^1.2.0:
   version "1.3.0"
