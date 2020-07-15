@@ -7,13 +7,15 @@ import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
 import 'maci-contracts/sol/MACI.sol';
 import 'maci-contracts/sol/MACISharedObjs.sol';
+import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
 import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
+import './IVerifiedUserRegistry.sol';
 import './IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
 
-contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
+contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, IRecipientRegistry {
   using SafeERC20 for IERC20;
 
   // State
@@ -26,11 +28,14 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
 
   FundingRound[] private rounds;
 
+  mapping(address => bool) private users;
   mapping(address => string) public recipients;
   mapping(address => uint256) private recipientIndex;
 
   // Events
   event NewContribution(address indexed _sender, uint256 _amount);
+  event UserAdded(address indexed _user);
+  event UserRemoved(address indexed _user);
   event RecipientAdded(address indexed _fundingAddress, string _name, uint256 _index);
   event NewToken(address _token);
   event NewRound(address _round);
@@ -54,6 +59,42 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
     require(address(nativeToken) != address(0), 'Factory: Native token is not set');
     nativeToken.transferFrom(msg.sender, address(this), _amount);
     emit NewContribution(msg.sender, _amount);
+  }
+
+  /**
+    * @dev Add verified unique user to the registry.
+    */
+  function addUser(address _user)
+    external
+    onlyOwner
+  {
+    require(_user != address(0), 'Factory: User address is zero');
+    require(!users[_user], 'Factory: User already verified');
+    users[_user] = true;
+    emit UserAdded(_user);
+  }
+
+  /**
+    * @dev Remove user from the registry.
+    */
+  function removeUser(address _user)
+    external
+    onlyOwner
+  {
+    require(users[_user], 'Factory: User is not in the registry');
+    delete users[_user];
+    emit UserRemoved(_user);
+  }
+
+  /**
+    * @dev Check if the user is verified.
+    */
+  function isVerifiedUser(address _user)
+    external
+    view
+    returns (bool)
+  {
+    return users[_user];
   }
 
   /**
@@ -146,6 +187,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
     FundingRound newRound = new FundingRound(
       nativeToken,
       this,
+      this,
       signUpDuration,
       coordinatorPubKey
     );
@@ -167,6 +209,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
     (uint256 x, uint256 y) = currentRound.coordinatorPubKey();
     PubKey memory roundCoordinatorPubKey = PubKey(x, y);
     MACI maci = maciFactory.deployMaci(
+      SignUpGatekeeper(currentRound),
       InitialVoiceCreditProxy(currentRound),
       roundCoordinatorPubKey
     );

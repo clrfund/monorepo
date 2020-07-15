@@ -5,7 +5,7 @@ import '@openzeppelin/contracts/ownership/Ownable.sol';
 import 'maci-contracts/sol/MACI.sol';
 import 'maci-contracts/sol/MACIParameters.sol';
 import 'maci-contracts/sol/MACISharedObjs.sol';
-import 'maci-contracts/sol/gatekeepers/FreeForAllSignUpGatekeeper.sol';
+import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
 import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 import { BatchUpdateStateTreeVerifier } from 'maci-contracts/sol/BatchUpdateStateTreeVerifier.sol';
 import { QuadVoteTallyVerifier } from 'maci-contracts/sol/QuadVoteTallyVerifier.sol';
@@ -28,7 +28,6 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   uint256 public signUpDuration = 7 * 86400;
   uint256 public votingDuration = 7 * 86400;
 
-  FreeForAllGatekeeper private signUpGatekeeper;
   BatchUpdateStateTreeVerifier private batchUstVerifier;
   QuadVoteTallyVerifier private qvtVerifier;
 
@@ -37,13 +36,11 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   event MaciDeployed(address _maci);
 
   constructor(
-    FreeForAllGatekeeper _signUpGatekeeper,
     BatchUpdateStateTreeVerifier _batchUstVerifier,
     QuadVoteTallyVerifier _qvtVerifier
   )
     public
   {
-    signUpGatekeeper = _signUpGatekeeper;
     batchUstVerifier = _batchUstVerifier;
     qvtVerifier = _qvtVerifier;
   }
@@ -78,6 +75,7 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   }
 
   function deployMaci(
+    SignUpGatekeeper _signUpGatekeeper,
     InitialVoiceCreditProxy _initialVoiceCreditProxy,
     PubKey memory _coordinatorPubKey
   )
@@ -103,7 +101,7 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
       treeDepths,
       batchSizes,
       maxValues,
-      signUpGatekeeper,
+      _signUpGatekeeper,
       batchUstVerifier,
       qvtVerifier,
       signUpDuration,

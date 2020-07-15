@@ -8,6 +8,7 @@ import { Keypair } from 'maci-domainobjs';
 
 import { deployMaciFactory } from '../scripts/helpers';
 import { ZERO_ADDRESS, getEventArg, getGasUsage, createMessage } from './utils';
+import IVerifiedUserRegistryArtifact from '../build/contracts/IVerifiedUserRegistry.json';
 import IRecipientRegistryArtifact from '../build/contracts/IRecipientRegistry.json';
 import MACIArtifact from '../build/contracts/MACI.json';
 
@@ -22,6 +23,7 @@ describe('Funding Round', () => {
   const votingDuration = 86400 * 7;  // Default duration in MACI factory
 
   let token: Contract;
+  let verifiedUserRegistry: Contract;
   let recipientRegistry: Contract;
   let fundingRound: Contract;
   let maci: Contract;
@@ -33,6 +35,9 @@ describe('Funding Round', () => {
     await token.transfer(contributor.address, tokenInitialSupply / 2);
     await token.transfer(coordinator.address, tokenInitialSupply / 2);
 
+    verifiedUserRegistry = await deployMockContract(deployer, IVerifiedUserRegistryArtifact.abi);
+    await verifiedUserRegistry.mock.isVerifiedUser.returns(true);
+
     recipientRegistry = await deployMockContract(deployer, IRecipientRegistryArtifact.abi);
     await recipientRegistry.mock.getRecipientIndex.returns(3);
     expect(await recipientRegistry.getRecipientIndex(ZERO_ADDRESS)).to.equal(3);
@@ -40,6 +45,7 @@ describe('Funding Round', () => {
     const FundingRound = await ethers.getContractFactory('FundingRound', deployer);
     fundingRound = await FundingRound.deploy(
       token.address,
+      verifiedUserRegistry.address,
       recipientRegistry.address,
       roundDuration,
       coordinatorPubKey.asContractParam(),
@@ -47,6 +53,7 @@ describe('Funding Round', () => {
 
     const maciFactory = await deployMaciFactory(deployer);
     const maciDeployed = await maciFactory.deployMaci(
+      fundingRound.address,
       fundingRound.address,
       coordinatorPubKey.asContractParam(),
     );
@@ -57,6 +64,7 @@ describe('Funding Round', () => {
   it('initializes funding round correctly', async () => {
     expect(await fundingRound.owner()).to.equal(deployer.address);
     expect(await fundingRound.nativeToken()).to.equal(token.address);
+    expect(await fundingRound.verifiedUserRegistry()).to.equal(verifiedUserRegistry.address);
     expect(await fundingRound.recipientRegistry()).to.equal(recipientRegistry.address);
     expect(await fundingRound.isFinalized()).to.equal(false);
     expect(await fundingRound.isCancelled()).to.equal(false);
@@ -165,9 +173,47 @@ describe('Funding Round', () => {
         .to.be.revertedWith('revert ERC20: transfer amount exceeds allowance');
     });
 
-    it('should not sign up users who have not contributed', async () => {
-      await expect(maci.signUp(userPubKey, '0x0', encodedContributorAddress))
-        .to.be.revertedWith('FundingRound: User does not have any voice credits');
+    it('rejects contributions from unverified users', async () => {
+      await fundingRound.setMaci(maci.address);
+      await tokenAsContributor.approve(
+        fundingRound.address,
+        contributionAmount,
+      );
+      await verifiedUserRegistry.mock.isVerifiedUser.returns(false);
+      await expect(fundingRoundAsContributor.contribute(userPubKey, contributionAmount))
+        .to.be.revertedWith('FundingRound: User has not been verified');
+    });
+
+    it('should not allow users who have not contributed to sign up directly in MACI', async () => {
+      await fundingRound.setMaci(maci.address);
+      const signUpData = defaultAbiCoder.encode(
+        ['address'],
+        [contributor.address],
+      );
+      await expect(maci.signUp(userPubKey, signUpData, encodedContributorAddress))
+        .to.be.revertedWith('FundingRound: User has not contributed');
+    });
+
+    it('should not allow users who have already signed up to sign up directly in MACI', async () => {
+      await fundingRound.setMaci(maci.address);
+      await tokenAsContributor.approve(
+        fundingRound.address,
+        contributionAmount,
+      );
+      await fundingRoundAsContributor.contribute(userPubKey, contributionAmount);
+      const signUpData = defaultAbiCoder.encode(
+        ['address'],
+        [contributor.address],
+      );
+      await expect(maci.signUp(userPubKey, signUpData, encodedContributorAddress))
+        .to.be.revertedWith('FundingRound: User already registered');
+    });
+
+    it('should not return the amount of voice credits for user who has not contributed', async () => {
+      await expect(fundingRound.getVoiceCredits(
+        fundingRound.address,
+        encodedContributorAddress,
+      )).to.be.revertedWith('FundingRound: User does not have any voice credits');
     });
   });
 

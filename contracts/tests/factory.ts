@@ -27,10 +27,10 @@ describe('Funding Round Factory', () => {
 
     factory = await deployContract(deployer, FactoryArtifact, [
       maciFactory.address,
-    ]);
+    ], { gasLimit: 5000000 });
 
     expect(factory.address).to.properAddress;
-    expect(await getGasUsage(factory.deployTransaction)).lessThan(4000000);
+    expect(await getGasUsage(factory.deployTransaction)).lessThan(4200000);
     await maciFactory.transferOwnership(factory.address);
 
     // Deploy token contract and transfer tokens to contributor
@@ -73,6 +73,53 @@ describe('Funding Round Factory', () => {
       const factoryAsContributor = factory.connect(contributor);
       await expect(factoryAsContributor.contribute(contributionAmount))
         .to.be.revertedWith('revert ERC20: transfer amount exceeds allowance');
+    });
+  });
+
+  describe('managing verified users', () => {
+    it('allows owner to add user to the registry', async () => {
+      expect(await factory.isVerifiedUser(contributor.address)).to.equal(false);
+      await expect(factory.addUser(contributor.address))
+        .to.emit(factory, 'UserAdded')
+        .withArgs(contributor.address);
+      expect(await factory.isVerifiedUser(contributor.address)).to.equal(true);
+    });
+
+    it('rejects zero-address', async () => {
+      await expect(factory.addUser(ZERO_ADDRESS))
+        .to.be.revertedWith('Factory: User address is zero');
+    });
+
+    it('rejects user who is already in the registry', async () => {
+      await factory.addUser(contributor.address);
+      await expect(factory.addUser(contributor.address))
+        .to.be.revertedWith('Factory: User already verified');
+    });
+
+    it('allows only owner to add users', async () => {
+      const contributorFactory = factory.connect(contributor);
+      await expect(contributorFactory.addUser(contributor.address))
+        .to.be.revertedWith('Ownable: caller is not the owner');
+    });
+
+    it('allows owner to remove user', async () => {
+      await factory.addUser(contributor.address);
+      await expect(factory.removeUser(contributor.address))
+        .to.emit(factory, 'UserRemoved')
+        .withArgs(contributor.address);
+      expect(await factory.isVerifiedUser(contributor.address)).to.equal(false);
+    });
+
+    it('reverts when trying to remove user who is not in the registry', async () => {
+      await expect(factory.removeUser(contributor.address))
+        .to.be.revertedWith('Factory: User is not in the registry');
+    });
+
+    it('allows only owner to remove users', async () => {
+      await factory.addUser(contributor.address);
+      const contributorFactory = factory.connect(contributor);
+      await expect(contributorFactory.removeUser(contributor.address))
+        .to.be.revertedWith('Ownable: caller is not the owner');
     });
   });
 
