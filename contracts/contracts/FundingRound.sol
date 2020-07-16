@@ -4,12 +4,12 @@ pragma experimental ABIEncoderV2;
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
-import 'maci/contracts/sol/MACI.sol';
-import 'maci/contracts/sol/MACIPubKey.sol';
+import 'maci-contracts/sol/MACI.sol';
+import 'maci-contracts/sol/MACISharedObjs.sol';
 
 import './IRecipientRegistry.sol';
 
-contract FundingRound is Ownable, MACIPubKey {
+contract FundingRound is Ownable, MACISharedObjs {
   using SafeERC20 for IERC20;
 
   uint256 public contributorCount;
@@ -114,6 +114,21 @@ contract FundingRound is Ownable, MACIPubKey {
     contributors[msg.sender] = amount;
     contributorCount += 1;
     emit NewContribution(msg.sender, amount);
+  }
+
+  /**
+    * @dev Submit a batch of messages along with corresponding ephemeral public keys.
+    */
+  function submitMessageBatch(
+    Message[] memory _messages,
+    PubKey[] memory _encPubKeys
+  )
+    public
+  {
+    uint256 batchSize = _messages.length;
+    for (uint8 i = 0; i < batchSize; i++) {
+      maci.publishMessage(_messages[i], _encPubKeys[i]);
+    }
   }
 
   /**

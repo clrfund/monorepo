@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import 'maci/contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
+import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
 /**
  * @dev Implementation of the InitialVoiceCreditProxy interface.
