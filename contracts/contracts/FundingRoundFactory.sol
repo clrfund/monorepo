@@ -1,8 +1,6 @@
 pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
-import '@nomiclabs/buidler/console.sol';
-
 import '@openzeppelin/contracts/ownership/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
@@ -10,12 +8,11 @@ import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 import 'maci/contracts/sol/MACI.sol';
 import 'maci/contracts/sol/MACIPubKey.sol';
 
+import './IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
 
-// TODO: Import SafeMath
-
-contract FundingRoundFactory is Ownable, MACIPubKey {
+contract FundingRoundFactory is Ownable, MACIPubKey, IRecipientRegistry {
   using SafeERC20 for IERC20;
 
   // State
@@ -29,10 +26,11 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
   FundingRound[] private rounds;
 
   mapping(address => string) public recipients;
+  mapping(address => uint256) private recipientIndex;
 
   // Events
   event NewContribution(address indexed _sender, uint256 _amount);
-  event RecipientAdded(address indexed _fundingAddress, string _name);
+  event RecipientAdded(address indexed _fundingAddress, string _name, uint256 _index);
   event NewToken(address _token);
   event NewRound(address _round);
   event CoordinatorTransferred(address _newCoordinator);
@@ -57,17 +55,35 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
     emit NewContribution(msg.sender, _amount);
   }
 
-  function addRecipient(address _fundingAddress, string memory _name)
-    public
+  /**
+    * @dev Register recipient as eligible for funding allocation.
+    * @param _fundingAddress The address that receives funds.
+    * @param _name The display name of the recipient.
+    */
+  function addRecipient(address _fundingAddress, string calldata _name)
+    external
     onlyOwner
   {
+    // TODO: verify address and get recipient info from the recipient registry
     require(_fundingAddress != address(0), 'Factory: Recipient address is zero');
     require(bytes(_name).length != 0, 'Factory: Recipient name is empty string');
     require(bytes(recipients[_fundingAddress]).length == 0, 'Factory: Recipient already registered');
+    // TODO: implement mechanism for replacing registrants
     require(recipientCount < maciFactory.maxVoteOptions(), 'Factory: Recipient limit reached');
-    recipients[_fundingAddress] = _name;
     recipientCount += 1;
-    emit RecipientAdded(_fundingAddress, _name);
+    recipients[_fundingAddress] = _name;
+    recipientIndex[_fundingAddress] = recipientCount;  // Starts with 1
+    emit RecipientAdded(_fundingAddress, _name, recipientCount);
+  }
+
+  function getRecipientIndex(
+    address _recipient
+  )
+    external
+    view
+    returns (uint256)
+  {
+    return recipientIndex[_recipient];
   }
 
   function getCurrentRound()
@@ -128,6 +144,7 @@ contract FundingRoundFactory is Ownable, MACIPubKey {
     uint256 signUpDuration = maciFactory.signUpDuration();
     FundingRound newRound = new FundingRound(
       nativeToken,
+      this,
       signUpDuration,
       coordinatorPubKey
     );

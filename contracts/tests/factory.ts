@@ -13,14 +13,13 @@ use(solidity);
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
-  
   const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   let maciFactory: Contract;
   let factory: Contract;
   let token: Contract;
 
-  let maciParameters = new MaciParameters();
+  const maciParameters = new MaciParameters();
   const coordinatorPubKey = { x: 0, y: 1 };
 
   beforeEach(async () => {
@@ -86,11 +85,14 @@ describe('Funding Round Factory', () => {
     });
 
     it('allows owner to add recipient', async () => {
+      const expectedIndex = 1;
       await expect(factory.addRecipient(fundingAddress, recipientName))
         .to.emit(factory, 'RecipientAdded')
-        .withArgs(fundingAddress, recipientName);
+        .withArgs(fundingAddress, recipientName, expectedIndex);
       expect(await factory.recipients(fundingAddress))
         .to.equal(recipientName);
+      expect(await factory.getRecipientIndex(fundingAddress))
+        .to.equal(expectedIndex);
     });
 
     it('rejects calls from anyone except owner', async () => {
@@ -119,11 +121,7 @@ describe('Funding Round Factory', () => {
     });
 
     it('should limit the number of recipients', async () => {
-      // Reduce number of vote options to speed up the test
-      maciParameters = new MaciParameters({ voteOptionTreeDepth: 1 });
-      await factory.setMaciParameters(...maciParameters.values());
-
-      const maxRecipientCount = 4;
+      const maxRecipientCount = 5 ** maciParameters.voteOptionTreeDepth - 1;
       for (let i = 0; i < maxRecipientCount + 1; i++) {
         recipientName = String(i + 1).padStart(4, '0');
         fundingAddress = `0x000000000000000000000000000000000000${recipientName}`;
