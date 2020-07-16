@@ -18,16 +18,17 @@ contract FundingRound is Ownable, MACIPubKey {
   uint256 public contributionDeadline;
   uint256 public poolSize;
   bool public isFinalized = false;
+  bool public isCancelled = false;
 
   PubKey public coordinatorPubKey;
   MACI public maci;
-  // ERC20 token being used
   IERC20 public nativeToken;
 
   mapping(address => uint256) public contributors;
   
   event FundsClaimed(address _recipient);
   event NewContribution(address indexed _sender, uint256 _amount);
+  event FundsWithdrawn(address indexed _contributor);
 
 
   /**
@@ -115,6 +116,19 @@ contract FundingRound is Ownable, MACIPubKey {
   }
 
   /**
+    * @dev Withdraw contributed funds from the pool.
+    */
+  function withdraw()
+    public
+  {
+    require(isCancelled, 'FundingRound: Round not cancelled');
+    uint256 amount = contributors[msg.sender];
+    require(amount > 0, 'FundingRound: Nothing to withdraw');
+    nativeToken.transfer(msg.sender, amount);
+    emit FundsWithdrawn(msg.sender);
+  }
+
+  /**
     * @dev Allow recipients to claim funds after vote tally was done.
     */
   function finalize()
@@ -127,5 +141,17 @@ contract FundingRound is Ownable, MACIPubKey {
     require(maci.numSignUps() == 0 || !maci.hasUntalliedStateLeaves(), 'FundingRound: Votes has not been tallied');
     isFinalized = true;
     poolSize = nativeToken.balanceOf(address(this));
+  }
+
+  /**
+    * @dev Cancel funding round.
+    */
+  function cancel()
+    public
+    onlyOwner
+  {
+    require(!isFinalized, 'FundingRound: Already finalized');
+    isFinalized = true;
+    isCancelled = true;
   }
 }

@@ -14,7 +14,8 @@ describe('Funding Round', () => {
   const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   const coordinatorPubKey = { x: 0, y: 1 };
-  const roundDuration = 86400 * 7;
+  const roundDuration = 86400 * 7;  // Default duration in MACI factory
+  const votingDuration = 86400 * 7;  // Default duration in MACI factory
 
   let token: Contract;
   let fundingRound: Contract;
@@ -43,6 +44,7 @@ describe('Funding Round', () => {
     expect(await fundingRound.owner()).to.equal(deployer.address);
     expect(await fundingRound.nativeToken()).to.equal(token.address);
     expect(await fundingRound.isFinalized()).to.equal(false);
+    expect(await fundingRound.isCancelled()).to.equal(false);
     expect(await fundingRound.maci()).to.equal(ZERO_ADDRESS);
   });
 
@@ -105,7 +107,14 @@ describe('Funding Round', () => {
     });
 
     it('rejects contributions if funding round has been finalized', async () => {
-      // TODO: add test later
+      await fundingRound.setMaci(maci.address);
+      await fundingRound.cancel();
+      await tokenAsContributor.approve(
+        fundingRound.address,
+        contributionAmount,
+      );
+      await expect(fundingRoundAsContributor.contribute(userPubKey, contributionAmount))
+        .to.be.revertedWith('FundingRound: Round finalized');
     });
 
     it('rejects contributions with zero amount', async () => {
@@ -136,8 +145,110 @@ describe('Funding Round', () => {
     });
   });
 
-  it('allows owner to finalize round', async () => {
-    // TODO: add tests later
+  describe('finalizing round', () => {
+    it('allows owner to finalize round', async () => {
+      await fundingRound.setMaci(maci.address);
+      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await fundingRound.finalize();
+      expect(await fundingRound.isFinalized()).to.equal(true);
+      expect(await fundingRound.isCancelled()).to.equal(false);
+    });
+
+    it('reverts if round has been finalized already', async () => {
+      await fundingRound.setMaci(maci.address);
+      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await fundingRound.finalize();
+      await expect(fundingRound.finalize())
+        .to.be.revertedWith('FundingRound: Already finalized');
+    });
+
+    it('reverts MACI has not been deployed', async () => {
+      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await expect(fundingRound.finalize())
+        .to.be.revertedWith('FundingRound: MACI not deployed');
+    });
+
+    it('reverts if voting is still in progress', async () => {
+      await fundingRound.setMaci(maci.address);
+      await provider.send('evm_increaseTime', [roundDuration]);
+      await expect(fundingRound.finalize())
+        .to.be.revertedWith('FundingRound: Voting has not been finished');
+    });
+
+    it('allows only owner to finalize round', async () => {
+      await fundingRound.setMaci(maci.address);
+      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      const fundingRoundAsCoordinator = fundingRound.connect(coordinator);
+      await expect(fundingRoundAsCoordinator.finalize())
+        .to.be.revertedWith('Ownable: caller is not the owner');
+    });
+  });
+
+  describe('cancelling round', () => {
+    it('allows owner to cancel round', async () => {
+      await fundingRound.cancel();
+      expect(await fundingRound.isFinalized()).to.equal(true);
+      expect(await fundingRound.isCancelled()).to.equal(true);
+    });
+
+    it('reverts if round has been finalized already', async () => {
+      await fundingRound.setMaci(maci.address);
+      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await fundingRound.finalize();
+      await expect(fundingRound.cancel())
+        .to.be.revertedWith('FundingRound: Already finalized');
+    });
+
+    it('reverts if round has been cancelled already', async () => {
+      await fundingRound.cancel();
+      await expect(fundingRound.cancel())
+        .to.be.revertedWith('FundingRound: Already finalized');
+    });
+
+    it('allows only owner to cancel round', async () => {
+      const fundingRoundAsCoordinator = fundingRound.connect(coordinator);
+      await expect(fundingRoundAsCoordinator.cancel())
+        .to.be.revertedWith('Ownable: caller is not the owner');
+    });
+  });
+
+  describe('withdrawing funds', () => {
+    const userPubKey = { x: 1, y: 0 };
+    const contributionAmount = 1000;
+    let tokenAsContributor: Contract;
+    let fundingRoundAsContributor: Contract;
+
+    beforeEach(async () => {
+      tokenAsContributor = token.connect(contributor);
+      fundingRoundAsContributor = fundingRound.connect(contributor);
+      await fundingRound.setMaci(maci.address);
+      await tokenAsContributor.approve(
+        fundingRound.address,
+        contributionAmount,
+      );
+    });
+
+    it('allows contributor to withdraw funds', async () => {
+      await fundingRoundAsContributor.contribute(userPubKey, contributionAmount);
+      await fundingRound.cancel();
+      await expect(fundingRoundAsContributor.withdraw())
+        .to.emit(fundingRound, 'FundsWithdrawn')
+        .withArgs(contributor.address);
+      expect(await token.balanceOf(fundingRound.address))
+        .to.equal(0);
+    });
+
+    it('disallows withdrawal if round is not cancelled', async () => {
+      await fundingRoundAsContributor.contribute(userPubKey, contributionAmount);
+      await expect(fundingRoundAsContributor.withdraw())
+        .to.be.revertedWith('FundingRound: Round not cancelled');
+    });
+
+    it('reverts if user did not contribute to the round', async () => {
+      await fundingRound.cancel();
+      await expect(fundingRoundAsContributor.withdraw())
+        .to.be.revertedWith('FundingRound: Nothing to withdraw');
+    });
   });
 
   it('allows recipient to claim funds', async () => {
