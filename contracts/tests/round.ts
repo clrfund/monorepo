@@ -3,6 +3,7 @@ import { use, expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { deployMockContract } from '@ethereum-waffle/mock-contract';
 import { Contract } from 'ethers';
+import { defaultAbiCoder } from 'ethers/utils/abi-coder';
 import { Keypair } from 'maci-domainobjs';
 
 import { deployMaciFactory } from '../scripts/helpers';
@@ -45,7 +46,10 @@ describe('Funding Round', () => {
     );
 
     const maciFactory = await deployMaciFactory(deployer);
-    const maciDeployed = await maciFactory.deployMaci(coordinatorPubKey.asContractParam());
+    const maciDeployed = await maciFactory.deployMaci(
+      fundingRound.address,
+      coordinatorPubKey.asContractParam(),
+    );
     const maciAddress = await getEventArg(maciDeployed, maciFactory, 'MaciDeployed', '_maci');
     maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress);
   });
@@ -79,6 +83,7 @@ describe('Funding Round', () => {
   describe('accepting contributions', () => {
     const userPubKey = { x: 1, y: 0 };
     const contributionAmount = 1000;
+    const encodedContributorAddress = defaultAbiCoder.encode(['address'], [contributor.address]);
     let tokenAsContributor: Contract;
     let fundingRoundAsContributor: Contract;
 
@@ -102,6 +107,11 @@ describe('Funding Round', () => {
         .withArgs([], 1, contributionAmount);
       expect(await token.balanceOf(fundingRound.address))
         .to.equal(contributionAmount);
+
+      expect(await fundingRound.getVoiceCredits(
+        fundingRound.address,
+        encodedContributorAddress,
+      )).to.equal(contributionAmount);
     });
 
     it('rejects contributions if MACI has not been linked to a round', async () => {
@@ -153,6 +163,11 @@ describe('Funding Round', () => {
       await fundingRound.setMaci(maci.address);
       await expect(fundingRoundAsContributor.contribute(userPubKey, contributionAmount))
         .to.be.revertedWith('revert ERC20: transfer amount exceeds allowance');
+    });
+
+    it('should not sign up users who have not contributed', async () => {
+      await expect(maci.signUp(userPubKey, '0x0', encodedContributorAddress))
+        .to.be.revertedWith('FundingRound: User does not have any voice credits');
     });
   });
 

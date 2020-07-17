@@ -7,6 +7,7 @@ import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
 import 'maci-contracts/sol/MACI.sol';
 import 'maci-contracts/sol/MACISharedObjs.sol';
+import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
 import './IRecipientRegistry.sol';
 import './MACIFactory.sol';
@@ -165,7 +166,10 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
     require(address(currentRound.maci()) == address(0), 'Factory: MACI already deployed');
     (uint256 x, uint256 y) = currentRound.coordinatorPubKey();
     PubKey memory roundCoordinatorPubKey = PubKey(x, y);
-    MACI maci = maciFactory.deployMaci(roundCoordinatorPubKey);
+    MACI maci = maciFactory.deployMaci(
+      InitialVoiceCreditProxy(currentRound),
+      roundCoordinatorPubKey
+    );
     currentRound.setMaci(maci);
   }
 

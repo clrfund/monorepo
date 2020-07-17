@@ -6,10 +6,9 @@ import 'maci-contracts/sol/MACI.sol';
 import 'maci-contracts/sol/MACIParameters.sol';
 import 'maci-contracts/sol/MACISharedObjs.sol';
 import 'maci-contracts/sol/gatekeepers/FreeForAllSignUpGatekeeper.sol';
+import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 import { BatchUpdateStateTreeVerifier } from 'maci-contracts/sol/BatchUpdateStateTreeVerifier.sol';
 import { QuadVoteTallyVerifier } from 'maci-contracts/sol/QuadVoteTallyVerifier.sol';
-
-import './InitialVoiceCreditProxy.sol';
 
 contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   // Constants
@@ -32,7 +31,6 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   FreeForAllGatekeeper private signUpGatekeeper;
   BatchUpdateStateTreeVerifier private batchUstVerifier;
   QuadVoteTallyVerifier private qvtVerifier;
-  FundingRoundVoiceCreditProxy private initialVoiceCreditProxy;
 
   // Events
   event MaciParametersChanged();
@@ -41,15 +39,13 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   constructor(
     FreeForAllGatekeeper _signUpGatekeeper,
     BatchUpdateStateTreeVerifier _batchUstVerifier,
-    QuadVoteTallyVerifier _qvtVerifier,
-    FundingRoundVoiceCreditProxy _initialVoiceCreditProxy
+    QuadVoteTallyVerifier _qvtVerifier
   )
     public
   {
     signUpGatekeeper = _signUpGatekeeper;
     batchUstVerifier = _batchUstVerifier;
     qvtVerifier = _qvtVerifier;
-    initialVoiceCreditProxy = _initialVoiceCreditProxy;
   }
 
   function setMaciParameters(
@@ -82,6 +78,7 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   }
 
   function deployMaci(
+    InitialVoiceCreditProxy _initialVoiceCreditProxy,
     PubKey memory _coordinatorPubKey
   )
     public
@@ -111,7 +108,7 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
       qvtVerifier,
       signUpDuration,
       votingDuration,
-      initialVoiceCreditProxy,
+      _initialVoiceCreditProxy,
       _coordinatorPubKey
     );
     emit MaciDeployed(address(_maci));

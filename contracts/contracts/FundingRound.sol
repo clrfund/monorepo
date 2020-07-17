@@ -6,10 +6,11 @@ import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
 import 'maci-contracts/sol/MACI.sol';
 import 'maci-contracts/sol/MACISharedObjs.sol';
+import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
 import './IRecipientRegistry.sol';
 
-contract FundingRound is Ownable, MACISharedObjs {
+contract FundingRound is Ownable, MACISharedObjs, InitialVoiceCreditProxy {
   using SafeERC20 for IERC20;
 
   uint256 public contributorCount;
@@ -102,18 +103,37 @@ contract FundingRound is Ownable, MACISharedObjs {
     require(!isFinalized, 'FundingRound: Round finalized');
     require(amount > 0, 'FundingRound: Contribution amount must be greater than zero');
     require(contributors[msg.sender] == 0, 'FundingRound: Already contributed');
+    contributors[msg.sender] = amount;
+    contributorCount += 1;
     // TODO: check BrightID verification
     bytes memory signUpGatekeeperData = '';
-    bytes memory initialVoiceCreditProxyData = abi.encode(amount);
+    bytes memory initialVoiceCreditProxyData = abi.encode(msg.sender);
     nativeToken.transferFrom(msg.sender, address(this), amount);
     maci.signUp(
       pubKey,
       signUpGatekeeperData,
       initialVoiceCreditProxyData
     );
-    contributors[msg.sender] = amount;
-    contributorCount += 1;
     emit NewContribution(msg.sender, amount);
+  }
+
+  /**
+    * @dev Get the amount of voice credits for a given address.
+    * This function is a part of the InitialVoiceCreditProxy interface.
+    * @param _data Encoded address of a user.
+    */
+  function getVoiceCredits(
+    address /* msg.sender */,
+    bytes memory _data
+  )
+    public
+    view
+    returns (uint256)
+  {
+    address user = abi.decode(_data, (address));
+    uint256 initialVoiceCredits = contributors[user];
+    require(initialVoiceCredits > 0, 'FundingRound: User does not have any voice credits');
+    return initialVoiceCredits;
   }
 
   /**
