@@ -12,6 +12,22 @@ module.exports = {
     ecmaVersion: 2020,
   },
   rules: {
+    'indent': [
+      'error',
+      2,
+    ],
+    'comma-dangle': [
+      'error',
+      'always-multiline',
+    ],
+    'quotes': [
+      'error',
+      'single',
+    ],
+    'semi': [
+      'error',
+      'never',
+    ],
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },
@@ -26,4 +42,4 @@ module.exports = {
       },
     },
   ],
-};
+}
