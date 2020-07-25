@@ -38,7 +38,7 @@ export default class ProjectItem extends Vue {
 }
 
 .project-name {
-  font-size: 20px;
+  font-size: 18px;
   height: 50px;
 }
 

@@ -1394,6 +1394,11 @@
     safe-buffer "^5.1.1"
     util.promisify "^1.0.0"
 
+"@openfonts/inter_all@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@openfonts/inter_all/-/inter_all-1.0.2.tgz#87fc59c58926d2e5e63022a0960f12be82915d00"
+  integrity sha512-hdB3gPFLztuDbEDLImVRTQyH4EHHrX9iEsw6wZW+VuwUoTwMJEhOV9dWliM6WZtJYF/cqYuiMK+Bqdd2XztnDg==
+
 "@openzeppelin/contracts@^2.4.0", "@openzeppelin/contracts@^2.5.1":
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-2.5.1.tgz#c76e3fc57aa224da3718ec351812a4251289db31"

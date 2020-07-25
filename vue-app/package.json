@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@openfonts/inter_all": "^1.0.2",
     "core-js": "^3.6.4",
     "ethers": "^5.0.1",
     "vue": "^2.6.11",

@@ -16,6 +16,7 @@
 
 <style lang="scss">
 @import 'styles/vars';
+@import 'styles/fonts';
 
 html,
 body {
@@ -30,7 +31,7 @@ html {
 
 #app {
   display: flex;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Inter, sans-serif;
   font-size: 14px;
   height: 100%;
 }
@@ -53,9 +54,9 @@ html {
   padding: 50px 5% 0;
 
   a {
-    font-weight: bold;
     color: $text-color;
     display: block;
+    font-size: 16px;
     margin-bottom: $content-space;
     text-decoration: none;
 
@@ -65,6 +66,7 @@ html {
 
     &.router-link-exact-active {
       color: $highlight-color;
+      font-weight: bold;
       position: relative;
 
       &::before {
@@ -77,7 +79,7 @@ html {
         height: 0.75em;
         left: -25px;
         position: absolute;
-        top: 0.05em;
+        top: 0.2em;
         width: 0.75em;
       }
     }
@@ -91,9 +93,10 @@ html {
 
   h1 {
     border-bottom: $border;
+    font-family: 'Glacial Indifference', sans-serif;
     font-size: 14px;
-    font-weight: lighter;
-    letter-spacing: 0.5em;
+    font-weight: normal;
+    letter-spacing: 6px;
     margin: 0 0 $content-space;
     padding-bottom: $content-space;
     text-transform: uppercase;
