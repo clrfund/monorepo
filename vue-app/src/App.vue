@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <img class="logo" alt="clr.fund" src="./assets/clr.png" />
+      <img class="logo" alt="clr.fund" src="./assets/clr.svg" />
       <div id="menu">
         <router-link to="/">Home</router-link>
         <router-link to="/about">About</router-link>
@@ -39,6 +39,7 @@ html {
   background-color: $bg-secondary-color;
   border-right: $border;
   min-width: 20%;
+  padding: $content-space;
   width: 20%;
 
   .logo {
