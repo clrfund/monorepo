@@ -60,10 +60,9 @@ sequenceDiagram
             Coordinator -->> Recipient: provide vote tally
             Owner ->> Factory: call transferMatchingFunds()
             Factory ->> FundingRound: transfer matching funds and finalize the round
-            Owner ->> FundingRound: verify the total amount of spent voice credits ( call verifyTotalSpent() )
+            Owner ->> FundingRound: verify the total amount of spent voice credits ( call verifyTotals() )
             FundingRound ->> MACI: call verifySpentVoiceCredits()
-            Owner ->> FundingRound: verify the total amount of votes ( call verifyTotalVotes() )
-            FundingRound ->> MACI: call verifyTotalVotes()
+            FundingRound ->> MACI: call totalVotes()
 
             loop Distribution
                 Recipient ->> FundingRound: submit vote tally, amount of spent voice credits and proofs ( call claimFunds() )
