@@ -2,6 +2,7 @@ import { ethers, waffle } from '@nomiclabs/buidler';
 import { use, expect } from 'chai';
 import { deployContract, solidity } from 'ethereum-waffle';
 import { Contract } from 'ethers';
+import { Keypair } from 'maci-domainobjs';
 
 import { deployMaciFactory } from '../scripts/helpers';
 import { ZERO_ADDRESS, getGasUsage, getEventArg, MaciParameters } from './utils';
@@ -20,7 +21,7 @@ describe('Funding Round Factory', () => {
   let token: Contract;
 
   const maciParameters = new MaciParameters();
-  const coordinatorPubKey = { x: 0, y: 1 };
+  const coordinatorPubKey = (new Keypair()).pubKey.asContractParam()
 
   beforeEach(async () => {
     maciFactory = await deployMaciFactory(deployer);
@@ -218,8 +219,8 @@ describe('Funding Round Factory', () => {
       expect(await fundingRound.owner()).to.equal(factory.address);
       expect(await fundingRound.nativeToken()).to.equal(token.address);
       const roundCoordinatorPubKey = await fundingRound.coordinatorPubKey();
-      expect(parseInt(roundCoordinatorPubKey[0])).to.equal(coordinatorPubKey.x);
-      expect(parseInt(roundCoordinatorPubKey[1])).to.equal(coordinatorPubKey.y);
+      expect(roundCoordinatorPubKey.x).to.equal(coordinatorPubKey.x);
+      expect(roundCoordinatorPubKey.y).to.equal(coordinatorPubKey.y);
       const contributionDeadline = await fundingRound.contributionDeadline();
       expect(parseInt(contributionDeadline)).to.be.greaterThan(0);
     });

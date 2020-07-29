@@ -34,8 +34,8 @@ export async function getEventArg(
 export class MaciParameters {
 
   // Defaults
-  stateTreeDepth = 10;
-  messageTreeDepth = 10;
+  stateTreeDepth = 4;
+  messageTreeDepth = 4;
   voteOptionTreeDepth = 2;
   tallyBatchSize = 4;
   messageBatchSize = 4;

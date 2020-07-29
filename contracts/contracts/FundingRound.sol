@@ -1,6 +1,7 @@
 pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
+import '@openzeppelin/contracts/ownership/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
@@ -263,7 +264,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
       _tallyResultSalt
     );
     require(resultVerified, 'FundingRound: Incorrect tally result');
-    bool spentVerified = maci.verifyTallyResult(
+    bool spentVerified = maci.verifyPerVOSpentVoiceCredits(
       voteOptionTreeDepth,
       voteOptionIndex,
       _spent,

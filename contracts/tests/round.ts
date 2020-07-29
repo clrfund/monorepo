@@ -417,6 +417,7 @@ describe('Funding Round', () => {
       await maci.mock.verifySpentVoiceCredits.returns(true);
       await maci.mock.treeDepths.returns(10, 10, 2);
       await maci.mock.verifyTallyResult.returns(true);
+      await maci.mock.verifyPerVOSpentVoiceCredits.returns(true);
 
       await recipientRegistry.mock.getRecipientIndex.returns(recipientIndex);
 
@@ -515,9 +516,7 @@ describe('Funding Round', () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
       await fundingRound.finalize();
       await fundingRound.verifyTotals(totalSpent, totalSpentSalt);
-      await maci.mock.verifyTallyResult
-        .withArgs(2, recipientIndex, ...recipientClaimData.slice(0, 3))
-        .returns(false);
+      await maci.mock.verifyTallyResult.returns(false)
 
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
         .to.be.revertedWith('FundingRound: Incorrect tally result');
@@ -527,9 +526,7 @@ describe('Funding Round', () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
       await fundingRound.finalize();
       await fundingRound.verifyTotals(totalSpent, totalSpentSalt);
-      await maci.mock.verifyTallyResult
-        .withArgs(2, recipientIndex, ...recipientClaimData.slice(3))
-        .returns(false);
+      await maci.mock.verifyPerVOSpentVoiceCredits.returns(false)
 
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
         .to.be.revertedWith('FundingRound: Incorrect amount of spent voice credits');

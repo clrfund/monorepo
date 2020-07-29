@@ -9513,10 +9513,10 @@ ltgt@~2.1.1:
   resolved "https://registry.yarnpkg.com/ltgt/-/ltgt-2.1.3.tgz#10851a06d9964b971178441c23c9e52698eece34"
   integrity sha1-EIUaBtmWS5cReEQcI8nlJpjuzjQ=
 
-maci-contracts@0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.1.2.tgz#77b60718f9f7c941cfd609035b8f40799e780a47"
-  integrity sha512-1zoLwacfAzgsMGVpn5z6TTXLmrfSxshlGtfkc6llns8QitJWZrs+uRgOheJHEEZQUu8BP/R7my2GO6xXzPkpwQ==
+maci-contracts@0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.1.8.tgz#a64d1e545a822b4ad25fc7bef50ac9882b50e5c5"
+  integrity sha512-PmVc1PGvM6dpXwSnOfaq3+7Tmqg0RTFVlqfgsn1sMO9IDrH5BZ5xMhrJXH0cgW1LAQW9fuZaaRpSejPBJWfmkQ==
   dependencies:
     "@openzeppelin/contracts" "^2.4.0"
     argparse "^1.0.10"
@@ -9525,19 +9525,19 @@ maci-contracts@0.1.2:
     module-alias "^2.2.2"
     openzeppelin-solidity "^2.4.0"
 
-maci-crypto@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/maci-crypto/-/maci-crypto-0.1.0.tgz#8aa7af7cf1525600cf618197cdfc40d8e9ff1773"
-  integrity sha512-LkAIHIOqcYbvojwUpXUeWmPWQC2Ci6PMluXbpDyqLvUDGbhd5ulriGS6SBjk9Wi6QyinkMIwC0eVBkMn8ajszA==
+maci-crypto@0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/maci-crypto/-/maci-crypto-0.1.8.tgz#65c7912017fd67c4a18028f1e5c2c6f98bbcb67d"
+  integrity sha512-82FmIXSaO77efD5F1siW8j87xLCHb4MxSabHELlhWTC6YgWE1WiM9AcJ8geOD7f/sb5EhKA7Z7cSoKpHbNa+bQ==
   dependencies:
     circom "0.0.34"
     circomlib "0.0.19"
     snarkjs "https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91"
 
-maci-domainobjs@0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/maci-domainobjs/-/maci-domainobjs-0.1.0.tgz#1f4e034a12acae15fed97a2e18d45042ef7c39fc"
-  integrity sha512-Hm6RqiqehAn+Jf/z+blrM7WHexLrxiz6X9cvworqsC0SjTqQo1E7I0r/OVH26xSxEm1T1GpZnJ0TdlvGb44Qtw==
+maci-domainobjs@0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/maci-domainobjs/-/maci-domainobjs-0.1.8.tgz#db76b258195c32640f42c68a11758700a843c61e"
+  integrity sha512-2eZjNN9TdTlN0/kh43Gir9SYsurJaY7CEpa7++QHMNnJcbSJciyI+PJe1vIeQm9hzqrvZmOwRZtmupbm2SAfeg==
 
 make-dir@^1.0.0, make-dir@^1.2.0:
   version "1.3.0"

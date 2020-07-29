@@ -3,6 +3,7 @@ import { Contract } from 'ethers';
 import { use, expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { deployMockContract } from '@ethereum-waffle/mock-contract';
+import { Keypair } from 'maci-domainobjs';
 
 import SignUpGatekeeper from '../build/contracts/SignUpGatekeeper.json';
 import InitialVoiceCreditProxy from '../build/contracts/InitialVoiceCreditProxy.json';
@@ -19,7 +20,7 @@ describe('MACI factory', () => {
   let signUpGatekeeper: Contract;
   let initialVoiceCreditProxy: Contract;
   let maciParameters = new MaciParameters();
-  const coordinatorPubKey = { x: 0, y: 1 };
+  const coordinatorPubKey = (new Keypair()).pubKey.asContractParam();
 
   beforeEach(async () => {
     maciFactory = await deployMaciFactory(deployer);
@@ -30,8 +31,8 @@ describe('MACI factory', () => {
   });
 
   it('sets default MACI parameters', async () => {
-    expect(await maciFactory.maxUsers()).to.equal(1023);
-    expect(await maciFactory.maxMessages()).to.equal(1023);
+    expect(await maciFactory.maxUsers()).to.equal(15);
+    expect(await maciFactory.maxMessages()).to.equal(15);
     expect(await maciFactory.maxVoteOptions()).to.equal(24);
     expect(await maciFactory.signUpDuration()).to.equal(604800);
     expect(await maciFactory.votingDuration()).to.equal(604800);
