@@ -320,8 +320,9 @@ describe('Funding Round Factory', () => {
   });
 
   describe('transferring matching funds', () => {
-    const roundDuration = 86400 * 7;  // Default duration in MACI factory
-    const votingDuration = 86400 * 7;  // Default duration in MACI factory
+    const signUpDuration = maciParameters.signUpDuration
+    const votingDuration = maciParameters.votingDuration
+    const roundDuration = signUpDuration + votingDuration + 10
     const contributionAmount = 1000;
 
     it('moves matching funds to the current round after its finalization', async () => {
@@ -341,7 +342,7 @@ describe('Funding Round Factory', () => {
         fundingRoundAddress,
       );
       await factory.deployMaci();
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds())
         .to.emit(factory, 'RoundFinalized')
         .withArgs(fundingRoundAddress);
@@ -361,7 +362,7 @@ describe('Funding Round Factory', () => {
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await factory.deployNewRound();
       await factory.deployMaci();
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds())
         .to.emit(factory, 'RoundFinalized');
     });

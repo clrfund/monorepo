@@ -20,7 +20,7 @@ describe('Funding Round', () => {
   const [dontUseMe, deployer, coordinator, contributor, recipient] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   const coordinatorPubKey = (new Keypair()).pubKey;
-  const roundDuration = 86400 * 7;  // Default duration in MACI factory
+  const signUpDuration = 86400 * 7;  // Default duration in MACI factory
   const votingDuration = 86400 * 7;  // Default duration in MACI factory
 
   let token: Contract;
@@ -46,7 +46,7 @@ describe('Funding Round', () => {
       token.address,
       verifiedUserRegistry.address,
       recipientRegistry.address,
-      roundDuration,
+      signUpDuration,
       coordinatorPubKey.asContractParam(),
     );
 
@@ -238,7 +238,7 @@ describe('Funding Round', () => {
         contributionAmount,
       );
       userStateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex');
-      await provider.send('evm_increaseTime', [roundDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration]);
     });
 
     it('publishes a single message', async () => {
@@ -282,7 +282,7 @@ describe('Funding Round', () => {
   describe('finalizing round', () => {
     it('allows owner to finalize round', async () => {
       await fundingRound.setMaci(maci.address);
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await fundingRound.finalize();
       expect(await fundingRound.isFinalized()).to.equal(true);
       expect(await fundingRound.isCancelled()).to.equal(false);
@@ -290,28 +290,28 @@ describe('Funding Round', () => {
 
     it('reverts if round has been finalized already', async () => {
       await fundingRound.setMaci(maci.address);
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await fundingRound.finalize();
       await expect(fundingRound.finalize())
         .to.be.revertedWith('FundingRound: Already finalized');
     });
 
     it('reverts MACI has not been deployed', async () => {
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await expect(fundingRound.finalize())
         .to.be.revertedWith('FundingRound: MACI not deployed');
     });
 
     it('reverts if voting is still in progress', async () => {
       await fundingRound.setMaci(maci.address);
-      await provider.send('evm_increaseTime', [roundDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration]);
       await expect(fundingRound.finalize())
         .to.be.revertedWith('FundingRound: Voting has not been finished');
     });
 
     it('allows only owner to finalize round', async () => {
       await fundingRound.setMaci(maci.address);
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       const fundingRoundAsCoordinator = fundingRound.connect(coordinator);
       await expect(fundingRoundAsCoordinator.finalize())
         .to.be.revertedWith('Ownable: caller is not the owner');
@@ -327,7 +327,7 @@ describe('Funding Round', () => {
 
     it('reverts if round has been finalized already', async () => {
       await fundingRound.setMaci(maci.address);
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await fundingRound.finalize();
       await expect(fundingRound.cancel())
         .to.be.revertedWith('FundingRound: Already finalized');
@@ -403,7 +403,7 @@ describe('Funding Round', () => {
     let fundingRoundAsRecipient: Contract;
 
     beforeEach(async () => {
-      const signUpDeadline = (await provider.getBlock('latest')).timestamp + roundDuration;
+      const signUpDeadline = (await provider.getBlock('latest')).timestamp + signUpDuration;
       const votingDeadline = signUpDeadline + votingDuration;
 
       maci = await deployMockContract(deployer, MACIArtifact.abi);
@@ -432,7 +432,7 @@ describe('Funding Round', () => {
         (new Keypair()).pubKey.asContractParam(),
         totalSpent,
       );
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       fundingRoundAsRecipient = fundingRound.connect(recipient);
     });
 
