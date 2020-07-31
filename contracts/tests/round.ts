@@ -4,6 +4,7 @@ import { solidity } from 'ethereum-waffle';
 import { deployMockContract } from '@ethereum-waffle/mock-contract';
 import { Contract } from 'ethers';
 import { defaultAbiCoder } from 'ethers/utils/abi-coder';
+import { genRandomSalt } from 'maci-crypto';
 import { Keypair } from 'maci-domainobjs';
 
 import { deployMaciFactory } from '../scripts/helpers';
@@ -16,10 +17,10 @@ use(solidity);
 
 describe('Funding Round', () => {
   const provider = waffle.provider;
-  const [dontUseMe, deployer, coordinator, contributor] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
+  const [dontUseMe, deployer, coordinator, contributor, recipient] = provider.getWallets();// eslint-disable-line @typescript-eslint/no-unused-vars
 
   const coordinatorPubKey = (new Keypair()).pubKey;
-  const roundDuration = 86400 * 7;  // Default duration in MACI factory
+  const signUpDuration = 86400 * 7;  // Default duration in MACI factory
   const votingDuration = 86400 * 7;  // Default duration in MACI factory
 
   let token: Contract;
@@ -32,22 +33,20 @@ describe('Funding Round', () => {
     const tokenInitialSupply = 10000000000;
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer);
     token = await Token.deploy(tokenInitialSupply);
-    await token.transfer(contributor.address, tokenInitialSupply / 2);
-    await token.transfer(coordinator.address, tokenInitialSupply / 2);
+    await token.transfer(contributor.address, tokenInitialSupply / 4);
+    await token.transfer(coordinator.address, tokenInitialSupply / 4);
 
     verifiedUserRegistry = await deployMockContract(deployer, IVerifiedUserRegistryArtifact.abi);
     await verifiedUserRegistry.mock.isVerifiedUser.returns(true);
 
     recipientRegistry = await deployMockContract(deployer, IRecipientRegistryArtifact.abi);
-    await recipientRegistry.mock.getRecipientIndex.returns(3);
-    expect(await recipientRegistry.getRecipientIndex(ZERO_ADDRESS)).to.equal(3);
 
     const FundingRound = await ethers.getContractFactory('FundingRound', deployer);
     fundingRound = await FundingRound.deploy(
       token.address,
       verifiedUserRegistry.address,
       recipientRegistry.address,
-      roundDuration,
+      signUpDuration,
       coordinatorPubKey.asContractParam(),
     );
 
@@ -68,6 +67,7 @@ describe('Funding Round', () => {
     expect(await fundingRound.recipientRegistry()).to.equal(recipientRegistry.address);
     expect(await fundingRound.isFinalized()).to.equal(false);
     expect(await fundingRound.isCancelled()).to.equal(false);
+    expect(await fundingRound.totalsVerified()).to.equal(false);
     expect(await fundingRound.maci()).to.equal(ZERO_ADDRESS);
   });
 
@@ -238,7 +238,7 @@ describe('Funding Round', () => {
         contributionAmount,
       );
       userStateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex');
-      await provider.send('evm_increaseTime', [roundDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration]);
     });
 
     it('publishes a single message', async () => {
@@ -282,7 +282,7 @@ describe('Funding Round', () => {
   describe('finalizing round', () => {
     it('allows owner to finalize round', async () => {
       await fundingRound.setMaci(maci.address);
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await fundingRound.finalize();
       expect(await fundingRound.isFinalized()).to.equal(true);
       expect(await fundingRound.isCancelled()).to.equal(false);
@@ -290,28 +290,28 @@ describe('Funding Round', () => {
 
     it('reverts if round has been finalized already', async () => {
       await fundingRound.setMaci(maci.address);
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await fundingRound.finalize();
       await expect(fundingRound.finalize())
         .to.be.revertedWith('FundingRound: Already finalized');
     });
 
     it('reverts MACI has not been deployed', async () => {
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await expect(fundingRound.finalize())
         .to.be.revertedWith('FundingRound: MACI not deployed');
     });
 
     it('reverts if voting is still in progress', async () => {
       await fundingRound.setMaci(maci.address);
-      await provider.send('evm_increaseTime', [roundDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration]);
       await expect(fundingRound.finalize())
         .to.be.revertedWith('FundingRound: Voting has not been finished');
     });
 
     it('allows only owner to finalize round', async () => {
       await fundingRound.setMaci(maci.address);
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       const fundingRoundAsCoordinator = fundingRound.connect(coordinator);
       await expect(fundingRoundAsCoordinator.finalize())
         .to.be.revertedWith('Ownable: caller is not the owner');
@@ -327,7 +327,7 @@ describe('Funding Round', () => {
 
     it('reverts if round has been finalized already', async () => {
       await fundingRound.setMaci(maci.address);
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await fundingRound.finalize();
       await expect(fundingRound.cancel())
         .to.be.revertedWith('FundingRound: Already finalized');
@@ -385,7 +385,151 @@ describe('Funding Round', () => {
     });
   });
 
-  it('allows recipient to claim funds', async () => {
-    // TODO: add tests later
+  describe('claiming funds', () => {
+    const matchingPoolSize = 100000;
+    const totalSpent = 10000;
+    const totalSpentSalt = genRandomSalt().toString();
+    const totalVotes = 100; // Math.sqrt(totalSpent)
+    const recipientIndex = 3;
+    const recipientClaimData = [
+      totalVotes / 2, // Tally result
+      [[0]], // Proof
+      genRandomSalt().toString(),
+      totalSpent / 2, // Total spent
+      [[0]],
+      genRandomSalt().toString(),
+    ];
+    const expectedClaimableAmount = matchingPoolSize / 2 + totalSpent / 2;
+    let fundingRoundAsRecipient: Contract;
+
+    beforeEach(async () => {
+      const signUpDeadline = (await provider.getBlock('latest')).timestamp + signUpDuration;
+      const votingDeadline = signUpDeadline + votingDuration;
+
+      maci = await deployMockContract(deployer, MACIArtifact.abi);
+      await maci.mock.calcSignUpDeadline.returns(signUpDeadline);
+      await maci.mock.calcVotingDeadline.returns(votingDeadline);
+      await maci.mock.maxUsers.returns(100);
+      await maci.mock.signUp.returns();
+      await maci.mock.numSignUps.returns(1);
+      await maci.mock.hasUntalliedStateLeaves.returns(false);
+      await maci.mock.totalVotes.returns(totalVotes);
+      await maci.mock.verifySpentVoiceCredits.returns(true);
+      await maci.mock.treeDepths.returns(10, 10, 2);
+      await maci.mock.verifyTallyResult.returns(true);
+      await maci.mock.verifyPerVOSpentVoiceCredits.returns(true);
+
+      await recipientRegistry.mock.getRecipientIndex.returns(recipientIndex);
+
+      await fundingRound.setMaci(maci.address);
+      const tokenAsContributor = token.connect(contributor);
+      await tokenAsContributor.approve(
+        fundingRound.address,
+        totalSpent,
+      );
+      const fundingRoundAsContributor = fundingRound.connect(contributor);
+      await fundingRoundAsContributor.contribute(
+        (new Keypair()).pubKey.asContractParam(),
+        totalSpent,
+      );
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
+      fundingRoundAsRecipient = fundingRound.connect(recipient);
+    });
+
+    it('allows anyone to verify the totals', async () => {
+      await token.transfer(fundingRound.address, matchingPoolSize);
+      await fundingRound.finalize();
+      await fundingRound.verifyTotals(totalSpent, totalSpentSalt);
+      expect(await fundingRound.matchingPoolSize()).to.equal(matchingPoolSize);
+      expect(await fundingRound.totalVotes()).to.equal(totalVotes);
+      expect(await fundingRound.totalsVerified()).to.equal(true);
+    });
+
+    it('rejects verification if round has not been finalized', async () => {
+      await expect(fundingRound.verifyTotals(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('FundingRound: Round not finalized');
+    });
+
+    it('rejects verification if round has been cancelled', async () => {
+      await fundingRound.cancel();
+      await expect(fundingRound.verifyTotals(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('FundingRound: Round has been cancelled');
+    });
+
+    it('reverts if totals has been already verified', async () => {
+      await token.transfer(fundingRound.address, matchingPoolSize);
+      await fundingRound.finalize();
+      await fundingRound.verifyTotals(totalSpent, totalSpentSalt);
+      await expect(fundingRound.verifyTotals(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('FundingRound: Totals has been already verified');
+    });
+
+    it('reverts if total amount of spent voice credits is incorrect', async () => {
+      await maci.mock.verifySpentVoiceCredits.returns(false);
+      await token.transfer(fundingRound.address, matchingPoolSize);
+      await fundingRound.finalize();
+      await expect(fundingRound.verifyTotals(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('FundingRound: Incorrect total amount of spent voice credits');
+    });
+
+    it('allows recipient to claim allocated funds', async () => {
+      await token.transfer(fundingRound.address, matchingPoolSize);
+      await fundingRound.finalize();
+      await fundingRound.verifyTotals(totalSpent, totalSpentSalt);
+
+      await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
+        .to.emit(fundingRound, 'FundsClaimed')
+        .withArgs(recipient.address, expectedClaimableAmount);
+      expect(await token.balanceOf(recipient.address))
+        .to.equal(expectedClaimableAmount);
+    });
+
+    it('should not allow recipient to claim funds if totals has not been verified', async () => {
+      await token.transfer(fundingRound.address, matchingPoolSize);
+      await fundingRound.finalize();
+
+      await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
+        .to.be.revertedWith('FundingRound: Totals has not been verified');
+    });
+
+    it('allows only verified recipients to claim funds', async () => {
+      await token.transfer(fundingRound.address, matchingPoolSize);
+      await fundingRound.finalize();
+      await fundingRound.verifyTotals(totalSpent, totalSpentSalt);
+      await recipientRegistry.mock.getRecipientIndex.returns(0);
+
+      await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
+        .to.be.revertedWith('FundingRound: Invalid recipient address');
+    });
+
+    it('allows recipient to claim allocated funds only once', async () => {
+      await token.transfer(fundingRound.address, matchingPoolSize);
+      await fundingRound.finalize();
+      await fundingRound.verifyTotals(totalSpent, totalSpentSalt);
+
+      await fundingRoundAsRecipient.claimFunds(...recipientClaimData);
+      await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
+        .to.be.revertedWith('FundingRound: Funds already claimed');
+    });
+
+    it('should verify that tally result is correct', async () => {
+      await token.transfer(fundingRound.address, matchingPoolSize);
+      await fundingRound.finalize();
+      await fundingRound.verifyTotals(totalSpent, totalSpentSalt);
+      await maci.mock.verifyTallyResult.returns(false)
+
+      await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
+        .to.be.revertedWith('FundingRound: Incorrect tally result');
+    });
+
+    it('should verify that amount of spent voice credits is correct', async () => {
+      await token.transfer(fundingRound.address, matchingPoolSize);
+      await fundingRound.finalize();
+      await fundingRound.verifyTotals(totalSpent, totalSpentSalt);
+      await maci.mock.verifyPerVOSpentVoiceCredits.returns(false)
+
+      await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
+        .to.be.revertedWith('FundingRound: Incorrect amount of spent voice credits');
+    });
   });
 });

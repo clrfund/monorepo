@@ -2,6 +2,7 @@ import { ethers, waffle } from '@nomiclabs/buidler';
 import { use, expect } from 'chai';
 import { deployContract, solidity } from 'ethereum-waffle';
 import { Contract } from 'ethers';
+import { Keypair } from 'maci-domainobjs';
 
 import { deployMaciFactory } from '../scripts/helpers';
 import { ZERO_ADDRESS, getGasUsage, getEventArg, MaciParameters } from './utils';
@@ -20,7 +21,7 @@ describe('Funding Round Factory', () => {
   let token: Contract;
 
   const maciParameters = new MaciParameters();
-  const coordinatorPubKey = { x: 0, y: 1 };
+  const coordinatorPubKey = (new Keypair()).pubKey.asContractParam()
 
   beforeEach(async () => {
     maciFactory = await deployMaciFactory(deployer);
@@ -30,7 +31,7 @@ describe('Funding Round Factory', () => {
     ], { gasLimit: 5000000 });
 
     expect(factory.address).to.properAddress;
-    expect(await getGasUsage(factory.deployTransaction)).lessThan(4200000);
+    expect(await getGasUsage(factory.deployTransaction)).lessThan(4700000);
     await maciFactory.transferOwnership(factory.address);
 
     // Deploy token contract and transfer tokens to contributor
@@ -218,8 +219,8 @@ describe('Funding Round Factory', () => {
       expect(await fundingRound.owner()).to.equal(factory.address);
       expect(await fundingRound.nativeToken()).to.equal(token.address);
       const roundCoordinatorPubKey = await fundingRound.coordinatorPubKey();
-      expect(parseInt(roundCoordinatorPubKey[0])).to.equal(coordinatorPubKey.x);
-      expect(parseInt(roundCoordinatorPubKey[1])).to.equal(coordinatorPubKey.y);
+      expect(roundCoordinatorPubKey.x).to.equal(coordinatorPubKey.x);
+      expect(roundCoordinatorPubKey.y).to.equal(coordinatorPubKey.y);
       const contributionDeadline = await fundingRound.contributionDeadline();
       expect(parseInt(contributionDeadline)).to.be.greaterThan(0);
     });
@@ -319,8 +320,9 @@ describe('Funding Round Factory', () => {
   });
 
   describe('transferring matching funds', () => {
-    const roundDuration = 86400 * 7;  // Default duration in MACI factory
-    const votingDuration = 86400 * 7;  // Default duration in MACI factory
+    const signUpDuration = maciParameters.signUpDuration
+    const votingDuration = maciParameters.votingDuration
+    const roundDuration = signUpDuration + votingDuration + 10
     const contributionAmount = 1000;
 
     it('moves matching funds to the current round after its finalization', async () => {
@@ -340,7 +342,7 @@ describe('Funding Round Factory', () => {
         fundingRoundAddress,
       );
       await factory.deployMaci();
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds())
         .to.emit(factory, 'RoundFinalized')
         .withArgs(fundingRoundAddress);
@@ -360,7 +362,7 @@ describe('Funding Round Factory', () => {
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await factory.deployNewRound();
       await factory.deployMaci();
-      await provider.send('evm_increaseTime', [roundDuration + votingDuration]);
+      await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds())
         .to.emit(factory, 'RoundFinalized');
     });
@@ -370,10 +372,6 @@ describe('Funding Round Factory', () => {
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await expect(factory.transferMatchingFunds())
         .to.be.revertedWith('Factory: Funding round has not been deployed');
-    });
-
-    it('finalizes current round even if matching pool is empty', async () => {
-      // TODO: add tests later
     });
   });
 
