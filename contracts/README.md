@@ -5,7 +5,7 @@
 ### Deploy factory contract
 
 ```
-yarn buidler run --network localhost scripts/deploy.ts
+yarn deploy:local
 ```
 
 ### Deploy test round
@@ -19,5 +19,5 @@ This includes:
 - Deploying MACI instance.
 
 ```
-yarn buidler run --network localhost scripts/deployTestRound.ts
+yarn deployTestRound:local
 ```

@@ -20,7 +20,6 @@ async function deployContract(
 }
 
 export async function deployMaciFactory(account: Signer): Promise<Contract> {
-  const signUpGatekeeper = await deployContract(account, 'FreeForAllGatekeeper');
   const batchTreeVerifier = await deployContract(account, 'BatchUpdateStateTreeVerifier');
   const voteTallyVerifier = await deployContract(account, 'QuadVoteTallyVerifier');
   const poseidonT3 = await deployContract(account, 'PoseidonT3');
@@ -39,7 +38,6 @@ export async function deployMaciFactory(account: Signer): Promise<Contract> {
   );
 
   const maciFactory = await MACIFactory.deploy(
-    signUpGatekeeper.address,
     batchTreeVerifier.address,
     voteTallyVerifier.address,
   );
