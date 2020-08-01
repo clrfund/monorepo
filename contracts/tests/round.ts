@@ -3,7 +3,7 @@ import { use, expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { deployMockContract } from '@ethereum-waffle/mock-contract';
 import { Contract } from 'ethers';
-import { defaultAbiCoder } from 'ethers/utils/abi-coder';
+import { defaultAbiCoder } from '@ethersproject/abi';
 import { genRandomSalt } from 'maci-crypto';
 import { Keypair } from 'maci-domainobjs';
 

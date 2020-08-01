@@ -1,6 +1,6 @@
 import { Contract } from 'ethers';
-import { TransactionResponse } from 'ethers/providers';
-import { BigNumber } from 'ethers/utils/bignumber';
+import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { BigNumber } from 'ethers';
 import { bigInt, genRandomSalt } from 'maci-crypto';
 import { Keypair, PubKey, Command, Message } from 'maci-domainobjs';
 
@@ -23,9 +23,15 @@ export async function getEventArg(
 ): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
   const receipt = await transaction.wait();
   for (const log of receipt.logs || []) {
-    const event = contract.interface.parseLog(log);
+    let event;
+    try {
+      event = contract.interface.parseLog(log);
+
+    } catch (e) {
+      console.log("event not from this contract");
+    }
     if (event && event.name === eventName) {
-      return event.values[argumentName];
+      return event.args[argumentName];
     }
   }
   throw new Error('Event not found');
