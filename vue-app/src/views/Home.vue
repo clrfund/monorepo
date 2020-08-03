@@ -42,8 +42,8 @@ async function getData() {
   const recipients = (await provider.getLogs(recipientFilter)).map(log => {
     const event = factory.interface.parseLog(log);
     return {
-      address: event.values["0"],
-      name: event.values["1"]
+      address: event.args["0"],
+      name: event.args["1"]
     };
   });
 
