@@ -5,8 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "test": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "vue-cli-service test:unit"
   },
   "dependencies": {
     "@openfonts/inter_all": "^1.0.2",
@@ -23,14 +23,14 @@
     "@types/mocha": "^5.2.4",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
-    "@vue/cli-plugin-babel": "~4.2.0",
-    "@vue/cli-plugin-eslint": "~4.2.0",
-    "@vue/cli-plugin-pwa": "~4.2.0",
-    "@vue/cli-plugin-router": "~4.2.0",
-    "@vue/cli-plugin-typescript": "~4.2.0",
-    "@vue/cli-plugin-unit-mocha": "~4.2.0",
-    "@vue/cli-plugin-vuex": "~4.2.0",
-    "@vue/cli-service": "~4.2.0",
+    "@vue/cli-plugin-babel": "~4.4.6",
+    "@vue/cli-plugin-eslint": "~4.4.6",
+    "@vue/cli-plugin-pwa": "~4.4.6",
+    "@vue/cli-plugin-router": "~4.4.6",
+    "@vue/cli-plugin-typescript": "~4.4.6",
+    "@vue/cli-plugin-unit-mocha": "~4.4.6",
+    "@vue/cli-plugin-vuex": "~4.4.6",
+    "@vue/cli-service": "~4.4.6",
     "@vue/eslint-config-typescript": "^5.0.1",
     "@vue/test-utils": "1.0.0-beta.31",
     "chai": "^4.1.2",
@@ -38,7 +38,7 @@
     "eslint-plugin-vue": "^6.1.2",
     "sass": "^1.25.0",
     "sass-loader": "^8.0.2",
-    "typescript": "~3.7.5",
+    "typescript": "~3.9.3",
     "vue-template-compiler": "^2.6.11"
   }
 }
