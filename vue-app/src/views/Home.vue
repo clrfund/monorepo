@@ -18,53 +18,79 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue'
 import { ethers } from 'ethers'
 
-import { default as FundingRoundFactory } from '@/../../contracts/build/contracts/FundingRoundFactory'
-import { default as FundingRound } from '@/../../contracts/build/contracts/FundingRound'
+import { abi as FundingRoundFactory } from '../../../contracts/build/contracts/FundingRoundFactory.json'
+import { abi as FundingRound } from '../../../contracts/build/contracts/FundingRound.json'
 
 import ProjectItem from '@/components/ProjectItem.vue'
 
-async function getData() {
+interface Recipient {
+  address: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  index: number;
+}
+
+interface RoundInfo {
+  recipients: Recipient[];
+  currentRound: {
+    fundingRoundAddress: string;
+    nativeTokenAddress: string;
+    contributionDeadline: Date | null;
+    contributions: number;
+  };
+}
+
+async function getData(): Promise<RoundInfo> {
   const provider = new ethers.providers.JsonRpcProvider(
     process.env.VUE_APP_ETHEREUM_API_URL,
   )
   const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
-  const factoryAddress = process.env.VUE_APP_CLRFUND_FACTORY_ADDRESS
+  const factoryAddress = process.env.VUE_APP_CLRFUND_FACTORY_ADDRESS as string
   const factory = new ethers.Contract(
     factoryAddress,
-    FundingRoundFactory.abi,
+    FundingRoundFactory,
     provider,
   )
 
   const recipientFilter = factory.filters.RecipientAdded()
-  recipientFilter.fromBlock = 0
-  const recipients = (await provider.getLogs(recipientFilter)).map(log => {
-    const event = factory.interface.parseLog(log)
+  const recipientEvents = await factory.queryFilter(recipientFilter, 0)
+  const recipients: Recipient[] = []
+  recipientEvents.forEach(event => {
+    if (!event.args) {
+      return
+    }
     const metadata = JSON.parse(event.args._metadata)
-    return {
+    recipients.push({
       address: event.args._fundingAddress,
       name: metadata.name,
       description: metadata.description,
       imageUrl: `${ipfsGatewayUrl}${metadata.imageHash}`,
       index: event.args._index,
-    }
+    })
   })
 
   const fundingRoundAddress = await factory.getCurrentRound()
 
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
     return {
-      fundingRoundAddress: 'N/A',
-      nativeTokenAddress: 'N/A',
-      contributions: [],
+      recipients,
+      currentRound: {
+        fundingRoundAddress: 'N/A',
+        nativeTokenAddress: 'N/A',
+        contributionDeadline: null,
+        contributions: 0,
+      },
     }
   }
 
   const fundingRound = new ethers.Contract(
     fundingRoundAddress,
-    FundingRound.abi,
+    FundingRound,
     provider,
   )
   const nativeTokenAddress = await fundingRound.nativeToken()
@@ -73,7 +99,7 @@ async function getData() {
   )
 
   const contributionsFilter = fundingRound.filters.NewContribution()
-  const contributions = (await provider.getLogs(contributionsFilter)).length
+  const contributions = (await fundingRound.queryFilter(contributionsFilter, 0)).length
 
   return {
     recipients,
@@ -86,19 +112,19 @@ async function getData() {
   }
 }
 
-export default {
+export default Vue.extend({
   name: 'Home',
   components: {
     ProjectItem,
   },
-  data() {
+  data(): RoundInfo {
     return {
       recipients: [],
       currentRound: {
         fundingRoundAddress: '',
         nativeTokenAddress: '',
-        contributionDeadline: new Date(),
-        contributions: '',
+        contributionDeadline: null,
+        contributions: 0,
       },
     }
   },
@@ -107,7 +133,7 @@ export default {
     this.recipients = recipients
     this.currentRound = currentRound
   },
-}
+})
 </script>
 
 <style scoped lang="scss">
