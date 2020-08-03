@@ -13,7 +13,9 @@
     "tally:local": "buidler run --network localhost scripts/tally.ts",
     "claim:local": "buidler run --network localhost scripts/claim.ts",
     "test": "buidler typechain && buidler test",
-    "lint": "eslint 'tests/*.ts' 'scripts/*.ts'",
+    "lint:js": "eslint 'tests/*.ts' 'scripts/*.ts'",
+    "lint:solidity": "solhint 'contracts/**/*.sol'",
+    "lint": "yarn lint:solidity && yarn lint:js",
     "clean": "rm -rf cache && rm -rf build"
   },
   "dependencies": {
@@ -37,6 +39,7 @@
     "maci-crypto": "0.1.8",
     "maci-domainobjs": "0.1.8",
     "maci-cli": "0.1.8",
+    "solhint": "^3.1.0",
     "ts-generator": "^0.0.8",
     "ts-node": "^8.8.1",
     "typechain": "^1.0.5",
