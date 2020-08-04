@@ -5,7 +5,7 @@ import ProjectItem from '@/components/ProjectItem.vue'
 describe('ProjectItem.vue', () => {
   it('renders props.msg when passed', () => {
     const wrapper = shallowMount(ProjectItem, {
-      propsData: { },
+      propsData: { project: {} },
     })
     expect(wrapper.text()).to.include('')
   })

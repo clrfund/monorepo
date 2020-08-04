@@ -1,11 +1,39 @@
 <template>
   <div class="home">
     <h1>Home</h1>
-    <div class="current-round">
-      <div>Current round: {{ currentRound.fundingRoundAddress }}</div>
-      <div>Native token address: {{ currentRound.nativeTokenAddress }}</div>
-      <div>Contribution deadline: {{ currentRound.contributionDeadline }}</div>
-      <div>Contributions: {{ currentRound.contributions }}</div>
+    <div v-if="currentRound" class="round-info">
+      <div class="round-info-item">
+        <div class="round-info-title">Current Round:</div>
+        <div class="round-info-value">{{ currentRound.fundingRoundAddress }}</div>
+      </div>
+      <div class="round-info-item">
+        <div class="round-info-title">Status:</div>
+        <div class="round-info-value">{{ currentRound.status }}</div>
+      </div>
+      <div class="round-info-item">
+        <div class="round-info-title">Contribution Deadline:</div>
+        <div class="round-info-value">{{ currentRound.contributionDeadline | formatDate }}</div>
+      </div>
+      <div class="round-info-item">
+        <div class="round-info-title">Voting Deadline:</div>
+        <div class="round-info-value">{{ currentRound.votingDeadline | formatDate }}</div>
+      </div>
+      <div class="round-info-item">
+        <div class="round-info-title">Total Funds:</div>
+        <div class="round-info-value">{{ currentRound.totalFunds | formatAmount }} {{ currentRound.nativeToken }}</div>
+      </div>
+      <div class="round-info-item">
+        <div class="round-info-title">Matching Pool:</div>
+        <div class="round-info-value">{{ currentRound.matchingPool | formatAmount }} {{ currentRound.nativeToken }}</div>
+      </div>
+      <div class="round-info-item">
+        <div class="round-info-title">Contributions:</div>
+        <div class="round-info-value">{{ currentRound.contributions | formatAmount }} {{ currentRound.nativeToken }}</div>
+      </div>
+      <div class="round-info-item">
+        <div class="round-info-title">Your Contribution:</div>
+        <div class="round-info-value">{{ currentRound.contribution | formatAmount }} {{ currentRound.nativeToken }}</div>
+      </div>
     </div>
     <div class="project-list">
       <ProjectItem
@@ -20,10 +48,12 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { ethers } from 'ethers'
+import { ethers, BigNumber, FixedNumber } from 'ethers'
+import { DateTime } from 'luxon'
 
 import { abi as FundingRoundFactory } from '../../../contracts/build/contracts/FundingRoundFactory.json'
 import { abi as FundingRound } from '../../../contracts/build/contracts/FundingRound.json'
+import { abi as ERC20 } from '../../../contracts/build/contracts/ERC20Detailed.json'
 
 import ProjectItem from '@/components/ProjectItem.vue'
 
@@ -39,10 +69,15 @@ interface RoundInfo {
   recipients: Recipient[];
   currentRound: {
     fundingRoundAddress: string;
-    nativeTokenAddress: string;
-    contributionDeadline: Date | null;
-    contributions: number;
-  };
+    nativeToken: string;
+    status: string;
+    contributionDeadline: DateTime;
+    votingDeadline: DateTime;
+    totalFunds: FixedNumber;
+    matchingPool: FixedNumber;
+    contributions: FixedNumber;
+    contribution: FixedNumber;
+  } | null;
 }
 
 async function getData(): Promise<RoundInfo> {
@@ -75,16 +110,10 @@ async function getData(): Promise<RoundInfo> {
   })
 
   const fundingRoundAddress = await factory.getCurrentRound()
-
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
     return {
       recipients,
-      currentRound: {
-        fundingRoundAddress: 'N/A',
-        nativeTokenAddress: 'N/A',
-        contributionDeadline: null,
-        contributions: 0,
-      },
+      currentRound: null,
     }
   }
 
@@ -93,21 +122,59 @@ async function getData(): Promise<RoundInfo> {
     FundingRound,
     provider,
   )
-  const nativeTokenAddress = await fundingRound.nativeToken()
-  const contributionDeadline = new Date(
-    (await fundingRound.contributionDeadline()) * 1000,
+  const nativeToken = new ethers.Contract(
+    await fundingRound.nativeToken(),
+    ERC20,
+    provider,
+  )
+  const nativeTokenSymbol = await nativeToken.symbol()
+  const nativeTokenDecs = await nativeToken.decimals()
+  const contributionDeadline = DateTime.fromSeconds(
+    parseInt(await fundingRound.contributionDeadline()),
+  )
+  const votingDeadline = DateTime.fromSeconds(
+    parseInt(await fundingRound.votingDeadline()),
   )
 
-  const contributionsFilter = fundingRound.filters.NewContribution()
-  const contributions = (await fundingRound.queryFilter(contributionsFilter, 0)).length
+  const isFinalized = await fundingRound.isFinalized()
+  const isCancelled = await fundingRound.isCancelled()
+  let status: string
+  let matchingPool: BigNumber
+  if (isCancelled) {
+    status = 'Cancelled'
+    matchingPool = BigNumber.from(0)
+  } else if (isFinalized) {
+    status = 'Finalized'
+    matchingPool = await fundingRound.matchingPoolSize()
+  } else {
+    status = 'Running'
+    matchingPool = await nativeToken.balanceOf(factoryAddress)
+  }
+
+  const contributionFilter = fundingRound.filters.NewContribution()
+  const contributionEvents = await fundingRound.queryFilter(contributionFilter, 0)
+  let contributions = BigNumber.from(0)
+  contributionEvents.forEach(event => {
+    if (!event.args) {
+      return
+    }
+    contributions += event.args._amount
+  })
+  const contribution = BigNumber.from(0)
+  const totalFunds = matchingPool.add(contributions)
 
   return {
     recipients,
     currentRound: {
       fundingRoundAddress,
-      nativeTokenAddress,
+      nativeToken: nativeTokenSymbol,
+      status,
       contributionDeadline,
-      contributions,
+      votingDeadline,
+      totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecs),
+      matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecs),
+      contributions: FixedNumber.fromValue(contributions, nativeTokenDecs),
+      contribution: FixedNumber.fromValue(contribution, nativeTokenDecs),
     },
   }
 }
@@ -120,13 +187,16 @@ export default Vue.extend({
   data(): RoundInfo {
     return {
       recipients: [],
-      currentRound: {
-        fundingRoundAddress: '',
-        nativeTokenAddress: '',
-        contributionDeadline: null,
-        contributions: 0,
-      },
+      currentRound: null,
     }
+  },
+  filters: {
+    formatDate: (value: DateTime): string | null => {
+      return value ? value.toLocaleString(DateTime.DATETIME_SHORT) : null
+    },
+    formatAmount: (value: FixedNumber): string | null => {
+      return value ? (value._value === '0.0' ? '0' : value.toString()) : null
+    },
   },
   async mounted() {
     const { recipients, currentRound } = await getData()
@@ -138,6 +208,43 @@ export default Vue.extend({
 
 <style scoped lang="scss">
 @import '../styles/vars';
+
+#content h1 {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.round-info {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+
+  .round-info-item {
+    border-right: $border;
+    border-top: $border;
+    box-sizing: border-box;
+    flex: 0 0 25%;
+    overflow: hidden;
+    padding: 10px $content-space;
+
+    &:nth-child(4n + 1) {
+      padding-left: 0;
+    }
+
+    &:nth-child(4n + 0) {
+      border-right: none;
+    }
+  }
+
+  .round-info-title {
+    margin-bottom: 5px;
+  }
+
+  .round-info-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
 
 .project-list {
   display: flex;
