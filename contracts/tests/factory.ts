@@ -325,16 +325,19 @@ describe('Funding Round Factory', () => {
     const roundDuration = signUpDuration + votingDuration + 10
     const contributionAmount = 1000;
 
-    it('moves matching funds to the current round after its finalization', async () => {
-      await factory.setToken(token.address);
-      const tokenAsContributor = token.connect(contributor);
+    beforeEach(async () => {
+      await factory.setToken(token.address)
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey)
+      const tokenAsContributor = token.connect(contributor)
       await tokenAsContributor.approve(
         factory.address,
         contributionAmount,
-      );
+      )
+    })
+
+    it('moves matching funds to the current round after its finalization', async () => {
       const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contribute(contributionAmount))
-      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await factoryAsContributor.contribute(contributionAmount)
       await factory.deployNewRound();
       const fundingRoundAddress = await factory.getCurrentRound();
       const fundingRound = await ethers.getContractAt(
@@ -351,27 +354,16 @@ describe('Funding Round Factory', () => {
     });
 
     it('reverts if round has not been deployed', async () => {
-      await factory.setToken(token.address);
-      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await expect(factory.transferMatchingFunds())
         .to.be.revertedWith('Factory: Funding round has not been deployed');
     });
 
     it('finalizes current round even if matching pool is empty', async () => {
-      await factory.setToken(token.address);
-      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await factory.deployNewRound();
       await factory.deployMaci();
       await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds())
         .to.emit(factory, 'RoundFinalized');
-    });
-
-    it('reverts if round has not been deployed', async () => {
-      await factory.setToken(token.address);
-      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
-      await expect(factory.transferMatchingFunds())
-        .to.be.revertedWith('Factory: Funding round has not been deployed');
     });
   });
 
