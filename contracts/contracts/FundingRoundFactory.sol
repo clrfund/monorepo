@@ -118,16 +118,6 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     emit RecipientAdded(_fundingAddress, _metadata, recipientCount);
   }
 
-  function getRecipients(
-    address _recipient
-  )
-    external
-    view
-    returns (bool)
-  {
-    return recipients[_recipient];
-  }
-
   function getRecipientIndex(
     address _recipient
   )
