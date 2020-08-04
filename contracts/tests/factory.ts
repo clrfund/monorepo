@@ -126,57 +126,59 @@ describe('Funding Round Factory', () => {
 
   describe('adding recipients', () => {
     let fundingAddress: string;
-    let recipientName: string;
+    let metadata: string;
     beforeEach(() => {
       fundingAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
-      recipientName = 'test';
+      metadata = JSON.stringify({ name: "Recipient 1", description: "Description 1", ipfsHash: "Ipfs Hash 1" });
     });
 
     it('allows owner to add recipient', async () => {
       const expectedIndex = 1;
-      await expect(factory.addRecipient(fundingAddress, recipientName))
+      await expect(factory.addRecipient(fundingAddress, metadata))
         .to.emit(factory, 'RecipientAdded')
-        .withArgs(fundingAddress, recipientName, expectedIndex);
-      expect(await factory.recipients(fundingAddress))
-        .to.equal(recipientName);
+        .withArgs(fundingAddress, metadata, expectedIndex);
+      expect(await factory.getRecipients(fundingAddress))
+        .to.equal(true);
       expect(await factory.getRecipientIndex(fundingAddress))
         .to.equal(expectedIndex);
     });
 
     it('rejects calls from anyone except owner', async () => {
       const contributorFactory = factory.connect(contributor);
-      await expect(contributorFactory.addRecipient(fundingAddress, recipientName))
+      await expect(contributorFactory.addRecipient(fundingAddress, metadata))
         .to.be.revertedWith('Ownable: caller is not the owner');
     });
 
     it('should not accept zero-address', async () => {
       fundingAddress = ZERO_ADDRESS;
-      await expect(factory.addRecipient(fundingAddress, recipientName))
+      await expect(factory.addRecipient(fundingAddress, metadata))
         .to.be.revertedWith('Factory: Recipient address is zero');
     });
 
-    it('should not accept empty string as name', async () => {
-      recipientName = ''
-      await expect(factory.addRecipient(fundingAddress, recipientName))
-        .to.be.revertedWith('Factory: Recipient name is empty string');
+    it('should not accept empty string as metadata', async () => {
+      metadata = ''
+      await expect(factory.addRecipient(fundingAddress, metadata))
+        .to.be.revertedWith('Factory: Metadata info is empty string');
     });
 
     it('should not accept already registered address', async () => {
-      await factory.addRecipient(fundingAddress, recipientName);
-      recipientName = 'test-2';
-      await expect(factory.addRecipient(fundingAddress, recipientName))
+      await factory.addRecipient(fundingAddress, metadata);
+      metadata = JSON.stringify({ name: "Recipient 2", description: "Description 2", ipfsHash: "Ipfs Hash 2" })
+      await expect(factory.addRecipient(fundingAddress, metadata))
         .to.be.revertedWith('Factory: Recipient already registered');
     });
 
     it('should limit the number of recipients', async () => {
       const maxRecipientCount = 5 ** maciParameters.voteOptionTreeDepth - 1;
+      let recipientName;
       for (let i = 0; i < maxRecipientCount + 1; i++) {
-        recipientName = String(i + 1).padStart(4, '0');
+        recipientName = String(i + 1).padStart(4, '0')
+        metadata = JSON.stringify({ name: recipientName, description: "Description", ipfsHash: "Ipfs Hash" })
         fundingAddress = `0x000000000000000000000000000000000000${recipientName}`;
         if (i < maxRecipientCount) {
-          await factory.addRecipient(fundingAddress, recipientName);
+          await factory.addRecipient(fundingAddress, metadata);
         } else {
-          await expect(factory.addRecipient(fundingAddress, recipientName))
+          await expect(factory.addRecipient(fundingAddress, metadata))
             .to.be.revertedWith('Factory: Recipient limit reached');
         }
       }

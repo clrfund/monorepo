@@ -29,14 +29,14 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   FundingRound[] private rounds;
 
   mapping(address => bool) private users;
-  mapping(address => string) public recipients;
+  mapping(address => bool) private recipients;
   mapping(address => uint256) private recipientIndex;
 
   // Events
   event NewContribution(address indexed _sender, uint256 _amount);
   event UserAdded(address indexed _user);
   event UserRemoved(address indexed _user);
-  event RecipientAdded(address indexed _fundingAddress, string _name, uint256 _index);
+  event RecipientAdded(address indexed _fundingAddress, string _metadata, uint256 _index);
   event NewToken(address _token);
   event NewRound(address _round);
   event CoordinatorTransferred(address _newCoordinator);
@@ -100,22 +100,32 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   /**
     * @dev Register recipient as eligible for funding allocation.
     * @param _fundingAddress The address that receives funds.
-    * @param _name The display name of the recipient.
+    * @param _metadata The metadata info of the recipient.
     */
-  function addRecipient(address _fundingAddress, string calldata _name)
+  function addRecipient(address _fundingAddress, string calldata _metadata)
     external
     onlyOwner
   {
     // TODO: verify address and get recipient info from the recipient registry
     require(_fundingAddress != address(0), 'Factory: Recipient address is zero');
-    require(bytes(_name).length != 0, 'Factory: Recipient name is empty string');
-    require(bytes(recipients[_fundingAddress]).length == 0, 'Factory: Recipient already registered');
+    require(bytes(_metadata).length != 0, 'Factory: Metadata info is empty string');
+    require(recipients[_fundingAddress] == false, 'Factory: Recipient already registered');
     // TODO: implement mechanism for replacing registrants
     require(recipientCount < maciFactory.maxVoteOptions(), 'Factory: Recipient limit reached');
     recipientCount += 1;
-    recipients[_fundingAddress] = _name;
+    recipients[_fundingAddress] = true;
     recipientIndex[_fundingAddress] = recipientCount;  // Starts with 1
-    emit RecipientAdded(_fundingAddress, _name, recipientCount);
+    emit RecipientAdded(_fundingAddress, _metadata, recipientCount);
+  }
+
+  function getRecipients(
+    address _recipient
+  )
+    external
+    view
+    returns (bool)
+  {
+    return recipients[_recipient];
   }
 
   function getRecipientIndex(
