@@ -22,12 +22,26 @@ describe('Funding Round', () => {
   const coordinatorPubKey = (new Keypair()).pubKey;
   const signUpDuration = 86400 * 7;  // Default duration in MACI factory
   const votingDuration = 86400 * 7;  // Default duration in MACI factory
+  const userKeypair = new Keypair()
+  const contributionAmount = 1000
 
   let token: Contract;
   let verifiedUserRegistry: Contract;
   let recipientRegistry: Contract;
   let fundingRound: Contract;
   let maci: Contract;
+
+  async function deployMaciMock(): Promise<Contract> {
+    const maci = await deployMockContract(deployer, MACIArtifact.abi)
+    const signUpDeadline = (await provider.getBlock('latest')).timestamp + signUpDuration
+    const votingDeadline = signUpDeadline + votingDuration
+    await maci.mock.calcSignUpDeadline.returns(signUpDeadline)
+    await maci.mock.calcVotingDeadline.returns(votingDeadline)
+    await maci.mock.maxUsers.returns(100)
+    await maci.mock.treeDepths.returns(10, 10, 2)
+    await maci.mock.signUp.returns()
+    return maci
+  }
 
   beforeEach(async () => {
     const tokenInitialSupply = 10000000000;
@@ -88,7 +102,7 @@ describe('Funding Round', () => {
   });
 
   describe('accepting contributions', () => {
-    const userPubKey = (new Keypair()).pubKey.asContractParam();
+    const userPubKey = userKeypair.pubKey.asContractParam()
     const contributionAmount = 1000;
     const encodedContributorAddress = defaultAbiCoder.encode(['address'], [contributor.address]);
     let tokenAsContributor: Contract;
@@ -217,10 +231,8 @@ describe('Funding Round', () => {
   });
 
   describe('voting', () => {
-    const contributionAmount = 1000;
     const singleVote = 100;
     let fundingRoundAsContributor: Contract;
-    let userKeypair: Keypair;
     let userStateIndex: number;
 
     beforeEach(async () => {
@@ -231,7 +243,6 @@ describe('Funding Round', () => {
         contributionAmount,
       );
       fundingRoundAsContributor = fundingRound.connect(contributor);
-      userKeypair = new Keypair();
       const contributionTx = await fundingRoundAsContributor.contribute(
         userKeypair.pubKey.asContractParam(),
         contributionAmount,
@@ -279,6 +290,11 @@ describe('Funding Round', () => {
   });
 
   describe('finalizing round', () => {
+    beforeEach(async () => {
+      maci = await deployMaciMock()
+      await maci.mock.hasUntalliedStateLeaves.returns(false)
+    })
+
     it('allows owner to finalize round', async () => {
       await fundingRound.setMaci(maci.address);
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
@@ -308,6 +324,14 @@ describe('Funding Round', () => {
         .to.be.revertedWith('FundingRound: Voting has not been finished');
     });
 
+    it('reverts if votes has not been tallied', async () => {
+      await fundingRound.setMaci(maci.address)
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await maci.mock.hasUntalliedStateLeaves.returns(true)
+      await expect(fundingRound.finalize())
+        .to.be.revertedWith('FundingRound: Votes has not been tallied')
+    })
+
     it('allows only owner to finalize round', async () => {
       await fundingRound.setMaci(maci.address);
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
@@ -325,8 +349,10 @@ describe('Funding Round', () => {
     });
 
     it('reverts if round has been finalized already', async () => {
+      maci = await deployMaciMock()
       await fundingRound.setMaci(maci.address);
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
+      await maci.mock.hasUntalliedStateLeaves.returns(false)
       await fundingRound.finalize();
       await expect(fundingRound.cancel())
         .to.be.revertedWith('FundingRound: Already finalized');
@@ -346,7 +372,7 @@ describe('Funding Round', () => {
   });
 
   describe('withdrawing funds', () => {
-    const userPubKey = (new Keypair()).pubKey.asContractParam();
+    const userPubKey = userKeypair.pubKey.asContractParam()
     const contributionAmount = 1000;
     let tokenAsContributor: Contract;
     let fundingRoundAsContributor: Contract;
@@ -402,19 +428,10 @@ describe('Funding Round', () => {
     let fundingRoundAsRecipient: Contract;
 
     beforeEach(async () => {
-      const signUpDeadline = (await provider.getBlock('latest')).timestamp + signUpDuration;
-      const votingDeadline = signUpDeadline + votingDuration;
-
-      maci = await deployMockContract(deployer, MACIArtifact.abi);
-      await maci.mock.calcSignUpDeadline.returns(signUpDeadline);
-      await maci.mock.calcVotingDeadline.returns(votingDeadline);
-      await maci.mock.maxUsers.returns(100);
-      await maci.mock.signUp.returns();
-      await maci.mock.numSignUps.returns(1);
+      maci = await deployMaciMock()
       await maci.mock.hasUntalliedStateLeaves.returns(false);
       await maci.mock.totalVotes.returns(totalVotes);
       await maci.mock.verifySpentVoiceCredits.returns(true);
-      await maci.mock.treeDepths.returns(10, 10, 2);
       await maci.mock.verifyTallyResult.returns(true);
       await maci.mock.verifyPerVOSpentVoiceCredits.returns(true);
 
@@ -428,7 +445,7 @@ describe('Funding Round', () => {
       );
       const fundingRoundAsContributor = fundingRound.connect(contributor);
       await fundingRoundAsContributor.contribute(
-        (new Keypair()).pubKey.asContractParam(),
+        userKeypair.pubKey.asContractParam(),
         totalSpent,
       );
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);

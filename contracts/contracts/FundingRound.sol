@@ -169,7 +169,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   }
 
   /**
-    * @dev Withdraw contributed funds from the pool.
+    * @dev Withdraw contributed funds from the pool if the round has been cancelled.
     */
   function withdraw()
     public
@@ -191,7 +191,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(!isFinalized, 'FundingRound: Already finalized');
     require(address(maci) != address(0), 'FundingRound: MACI not deployed');
     require(maci.calcVotingDeadline() < now, 'FundingRound: Voting has not been finished');
-    require(maci.numSignUps() == 0 || !maci.hasUntalliedStateLeaves(), 'FundingRound: Votes has not been tallied');
+    require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes has not been tallied');
     isFinalized = true;
   }
 

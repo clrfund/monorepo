@@ -335,35 +335,19 @@ describe('Funding Round Factory', () => {
       )
     })
 
-    it('moves matching funds to the current round after its finalization', async () => {
+    it('reverts if votes has not been tallied', async () => {
       const factoryAsContributor = factory.connect(contributor);
       await factoryAsContributor.contribute(contributionAmount)
       await factory.deployNewRound();
-      const fundingRoundAddress = await factory.getCurrentRound();
-      const fundingRound = await ethers.getContractAt(
-        'FundingRound',
-        fundingRoundAddress,
-      );
       await factory.deployMaci();
       await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds())
-        .to.emit(factory, 'RoundFinalized')
-        .withArgs(fundingRoundAddress);
-      expect(await fundingRound.isFinalized()).to.equal(true);
-      expect(await token.balanceOf(fundingRoundAddress)).to.equal(contributionAmount);
+        .to.be.revertedWith('FundingRound: Votes has not been tallied')
     });
 
     it('reverts if round has not been deployed', async () => {
       await expect(factory.transferMatchingFunds())
         .to.be.revertedWith('Factory: Funding round has not been deployed');
-    });
-
-    it('finalizes current round even if matching pool is empty', async () => {
-      await factory.deployNewRound();
-      await factory.deployMaci();
-      await provider.send('evm_increaseTime', [roundDuration]);
-      await expect(factory.transferMatchingFunds())
-        .to.emit(factory, 'RoundFinalized');
     });
   });
 
