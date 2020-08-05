@@ -10,8 +10,7 @@
     <div class="project-list">
       <ProjectItem
         v-for="item in recipients"
-        v-bind:address="item.address"
-        v-bind:name="item.name"
+        v-bind:project="item"
         v-bind:key="item.address"
       >
       </ProjectItem>
@@ -31,6 +30,7 @@ async function getData() {
   const provider = new ethers.providers.JsonRpcProvider(
     process.env.VUE_APP_ETHEREUM_API_URL,
   )
+  const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
   const factoryAddress = process.env.VUE_APP_CLRFUND_FACTORY_ADDRESS
   const factory = new ethers.Contract(
     factoryAddress,
@@ -42,11 +42,12 @@ async function getData() {
   recipientFilter.fromBlock = 0
   const recipients = (await provider.getLogs(recipientFilter)).map(log => {
     const event = factory.interface.parseLog(log)
-    const _metadata = JSON.parse(event.args._metadata)
-    const _name = _metadata['name']
+    const metadata = JSON.parse(event.args._metadata)
     return {
       address: event.args._fundingAddress,
-      name: _name,
+      name: metadata.name,
+      description: metadata.description,
+      imageUrl: `${ipfsGatewayUrl}${metadata.imageHash}`,
       index: event.args._index,
     }
   })
