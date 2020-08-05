@@ -2,6 +2,7 @@ import { ethers, waffle } from '@nomiclabs/buidler';
 import { use, expect } from 'chai';
 import { deployContract, solidity } from 'ethereum-waffle';
 import { Contract } from 'ethers';
+import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from 'maci-domainobjs';
 
 import { deployMaciFactory } from '../scripts/helpers';
@@ -324,6 +325,8 @@ describe('Funding Round Factory', () => {
     const votingDuration = maciParameters.votingDuration
     const roundDuration = signUpDuration + votingDuration + 10
     const contributionAmount = 1000;
+    const totalSpent = 10000
+    const totalSpentSalt = genRandomSalt().toString()
 
     beforeEach(async () => {
       await factory.setToken(token.address)
@@ -341,12 +344,12 @@ describe('Funding Round Factory', () => {
       await factory.deployNewRound();
       await factory.deployMaci();
       await provider.send('evm_increaseTime', [roundDuration]);
-      await expect(factory.transferMatchingFunds())
+      await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
         .to.be.revertedWith('FundingRound: Votes has not been tallied')
     });
 
     it('reverts if round has not been deployed', async () => {
-      await expect(factory.transferMatchingFunds())
+      await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
         .to.be.revertedWith('Factory: Funding round has not been deployed');
     });
   });

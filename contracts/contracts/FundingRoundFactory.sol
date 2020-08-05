@@ -218,8 +218,13 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
 
   /**
     * @dev Transfer funds from matching pool to current funding round and finalize it.
+    * @param _totalSpent Total amount of spent voice credits.
+    * @param _totalSpentSalt The salt.
     */
-  function transferMatchingFunds()
+  function transferMatchingFunds(
+    uint256 _totalSpent,
+    uint256 _totalSpentSalt
+  )
     public
     onlyOwner
   {
@@ -229,7 +234,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     if (amount > 0) {
       nativeToken.transfer(address(currentRound), amount);
     }
-    currentRound.finalize();
+    currentRound.finalize(_totalSpent, _totalSpentSalt);
     emit RoundFinalized(address(currentRound));
   }
 

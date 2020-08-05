@@ -29,7 +29,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   uint256 public totalVotes;
   bool public isFinalized = false;
   bool public isCancelled = false;
-  bool public totalsVerified = false;
 
   PubKey public coordinatorPubKey;
   MACI public maci;
@@ -182,9 +181,16 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   }
 
   /**
-    * @dev Allow recipients to claim funds after vote tally was done.
+    * @dev Get the total amount of votes from MACI,
+    * verify the total amount of spent voice credits across all recipients,
+    * and allow recipients to claim funds.
+    * @param _totalSpent Total amount of spent voice credits.
+    * @param _totalSpentSalt The salt.
     */
-  function finalize()
+  function finalize(
+    uint256 _totalSpent,
+    uint256 _totalSpentSalt
+  )
     public
     onlyOwner
   {
@@ -192,6 +198,14 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(address(maci) != address(0), 'FundingRound: MACI not deployed');
     require(maci.calcVotingDeadline() < now, 'FundingRound: Voting has not been finished');
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes has not been tallied');
+    totalVotes = maci.totalVotes();
+    // If nobody voted, the round should be cancelled to avoid locking of matching funds
+    require(totalVotes > 0, 'FundingRound: No votes');
+    bool verified = maci.verifySpentVoiceCredits(_totalSpent, _totalSpentSalt);
+    require(verified, 'FundingRound: Incorrect total amount of spent voice credits');
+    // Total amount of spent voice credits is the size of the pool of direct rewards.
+    // Everything else, including unspent voice credits, is considered a part of the matching pool
+    matchingPoolSize = nativeToken.balanceOf(address(this)) - _totalSpent;
     isFinalized = true;
   }
 
@@ -205,31 +219,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(!isFinalized, 'FundingRound: Already finalized');
     isFinalized = true;
     isCancelled = true;
-  }
-
-  /**
-    * @dev Verify the total amount of spent voice credits across all recipients
-    * and get the total amount of votes from MACI.
-    * @param _totalSpent Total amount of spent voice credits.
-    * @param _totalSpentSalt The salt.
-    */
-  function verifyTotals(
-    uint256 _totalSpent,
-    uint256 _totalSpentSalt
-  )
-    public
-  {
-    // TODO: verify during finalization
-    require(isFinalized, 'FundingRound: Round not finalized');
-    require(!isCancelled, 'FundingRound: Round has been cancelled');
-    require(!totalsVerified, 'FundingRound: Totals has been already verified');
-    bool verified = maci.verifySpentVoiceCredits(_totalSpent, _totalSpentSalt);
-    require(verified, 'FundingRound: Incorrect total amount of spent voice credits');
-    // Total amount of spent voice credits is the size of the pool of direct rewards.
-    // Everything else, including unspent voice credits, is considered a part of the matching pool
-    matchingPoolSize = nativeToken.balanceOf(address(this)) - _totalSpent;
-    totalVotes = maci.totalVotes();
-    totalsVerified = true;
   }
 
   /**
@@ -251,7 +240,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   )
     public
   {
-    require(totalsVerified, 'FundingRound: Totals has not been verified');
+    require(isFinalized, 'FundingRound: Round not finalized');
+    require(!isCancelled, 'FundingRound: Round has been cancelled');
     uint256 voteOptionIndex = recipientRegistry.getRecipientIndex(msg.sender);
     require(voteOptionIndex > 0, 'FundingRound: Invalid recipient address');
     require(!recipients[voteOptionIndex], 'FundingRound: Funds already claimed');
