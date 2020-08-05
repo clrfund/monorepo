@@ -42,9 +42,11 @@ async function getData() {
   recipientFilter.fromBlock = 0
   const recipients = (await provider.getLogs(recipientFilter)).map(log => {
     const event = factory.interface.parseLog(log)
+    const _metadata = JSON.parse(event.args._metadata)
+    const _name = _metadata['name']
     return {
       address: event.args._fundingAddress,
-      name: event.args._name,
+      name: _name,
       index: event.args._index,
     }
   })
