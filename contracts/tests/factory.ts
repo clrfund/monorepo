@@ -129,7 +129,7 @@ describe('Funding Round Factory', () => {
     let metadata: string;
     beforeEach(() => {
       fundingAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
-      metadata = JSON.stringify({ name: "Recipient 1", description: "Description 1", ipfsHash: "Ipfs Hash 1" });
+      metadata = JSON.stringify({ name: "Recipient 1", description: "Description 1", imageHash: "Ipfs imageHash 1" });
     });
 
     it('allows owner to add recipient', async () => {
@@ -161,7 +161,7 @@ describe('Funding Round Factory', () => {
 
     it('should not accept already registered address', async () => {
       await factory.addRecipient(fundingAddress, metadata);
-      metadata = JSON.stringify({ name: "Recipient 2", description: "Description 2", ipfsHash: "Ipfs Hash 2" })
+      metadata = JSON.stringify({ name: "Recipient 2", description: "Description 2", imageHash: "Ipfs imageHash 2" })
       await expect(factory.addRecipient(fundingAddress, metadata))
         .to.be.revertedWith('Factory: Recipient already registered');
     });
@@ -171,7 +171,7 @@ describe('Funding Round Factory', () => {
       let recipientName;
       for (let i = 0; i < maxRecipientCount + 1; i++) {
         recipientName = String(i + 1).padStart(4, '0')
-        metadata = JSON.stringify({ name: recipientName, description: "Description", ipfsHash: "Ipfs Hash" })
+        metadata = JSON.stringify({ name: recipientName, description: "Description", imageHash: "Ipfs imageHash" })
         fundingAddress = `0x000000000000000000000000000000000000${recipientName}`;
         if (i < maxRecipientCount) {
           await factory.addRecipient(fundingAddress, metadata);

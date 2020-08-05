@@ -31,8 +31,8 @@ async function main() {
   await poolContributorFactory.contribute(poolContributionAmount);
 
   // Add dummy recipients
-  const metadataRecipient1 = { name: "Recipient 1", description: "Description 1", ipfsHash: "Ipfs Hash 1" };
-  const metadataRecipient2 = { name: "Recipient 2", description: "Description 2", ipfsHash: "Ipfs Hash 2" };
+  const metadataRecipient1 = { name: "Recipient 1", description: "Description 1", imageHash: "Ipfs imageHash 1" };
+  const metadataRecipient2 = { name: "Recipient 2", description: "Description 2", imageHash: "Ipfs imageHash 2" };
   await factory.addRecipient(recipient1.getAddress(), JSON.stringify(metadataRecipient1));
   await factory.addRecipient(recipient2.getAddress(), JSON.stringify(metadataRecipient2));
 
