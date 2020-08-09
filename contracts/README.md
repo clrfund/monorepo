@@ -32,7 +32,7 @@ Set the path to zkutil binary if needed:
 export NODE_CONFIG='{"zkutil_bin": "/usr/bin/zkutil"}'
 ```
 
-Set coordinator's private key (Account #1 on Ganache instance):
+Set coordinator's private key (optional, by default the Ganache account #1 will be used):
 
 ```
 export COORDINATOR_ETH_PK='0x...'

@@ -20,7 +20,7 @@ async function main() {
   const fundingRound = await ethers.getContractAt('FundingRound', state.fundingRound)
   const maciAddress = await fundingRound.maci()
   const providerUrl = (network.config as any).url
-  const coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK
+  const coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || '0xd49743deccbccc5dc7baa8e69e5be03298da8688a15dd202e20f15d5e0e9a9fb'
 
   // Process messages
   const processCmdOutput = await execAsync(`
