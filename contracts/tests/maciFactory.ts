@@ -88,10 +88,10 @@ describe('MACI factory', () => {
   it('allows only owner to deploy MACI', async () => {
     const coordinatorMaciFactory = maciFactory.connect(coordinator);
     await expect(coordinatorMaciFactory.deployMaci(
-        signUpGatekeeper.address,
-        initialVoiceCreditProxy.address,
-        coordinatorPubKey,
-      ))
+      signUpGatekeeper.address,
+      initialVoiceCreditProxy.address,
+      coordinatorPubKey,
+    ))
       .to.be.revertedWith('Ownable: caller is not the owner');
-    });
+  })
 });

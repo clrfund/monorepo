@@ -14,7 +14,19 @@ module.exports = {
     node: true,
   },
   rules: {
+    'indent': [
+      'error',
+      2,
+    ],
+    'comma-dangle': [
+      'error',
+      'always-multiline',
+    ],
+    'quotes': [
+      'error',
+      'single',
+    ],
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
   },
-};
+}

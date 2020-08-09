@@ -1,4 +1,4 @@
-import { ethers } from "@nomiclabs/buidler";
+import { ethers } from '@nomiclabs/buidler'
 
 import { deployMaciFactory } from './helpers';
 
