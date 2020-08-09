@@ -1,6 +1,6 @@
-# Build specific files
-.openzeppelin/.session
-.openzeppelin/dev-*.json
 build
 cache
 node_modules
+.etherlime-store
+state.json
+tally.json

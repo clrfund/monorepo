@@ -8,15 +8,17 @@
     "deploy:local": "yarn clean && yarn build && buidler run --network localhost scripts/deploy.ts",
     "deploy:goerli": "yarn clean && yarn build && buidler run scripts/goerli.ts",
     "deployTestRound:local": "buidler run --network localhost scripts/deployTestRound.ts",
+    "contribute:local": "buidler run --network localhost scripts/contribute.ts",
+    "vote:local": "buidler run --network localhost scripts/vote.ts",
+    "tally:local": "buidler run --network localhost scripts/tally.ts",
+    "claim:local": "buidler run --network localhost scripts/claim.ts",
     "test": "buidler typechain && buidler test",
-    "lint": "eslint 'tests/*.ts'",
+    "lint": "eslint 'tests/*.ts' 'scripts/*.ts'",
     "clean": "rm -rf cache && rm -rf build"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^2.5.1",
-    "maci-contracts": "0.1.8",
-    "maci-crypto": "0.1.8",
-    "maci-domainobjs": "0.1.8"
+    "maci-contracts": "0.1.8"
   },
   "devDependencies": {
     "@nomiclabs/buidler": "^1.3.8",
@@ -32,6 +34,9 @@
     "eslint": "^6.8.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.1",
+    "maci-crypto": "0.1.8",
+    "maci-domainobjs": "0.1.8",
+    "maci-cli": "0.1.8",
     "ts-generator": "^0.0.8",
     "ts-node": "^8.8.1",
     "typechain": "^1.0.5",
