@@ -2,6 +2,7 @@ import { ethers, waffle } from '@nomiclabs/buidler';
 import { use, expect } from 'chai';
 import { deployContract, solidity } from 'ethereum-waffle';
 import { Contract } from 'ethers';
+import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from 'maci-domainobjs';
 
 import { deployMaciFactory } from '../scripts/helpers';
@@ -324,53 +325,31 @@ describe('Funding Round Factory', () => {
     const votingDuration = maciParameters.votingDuration
     const roundDuration = signUpDuration + votingDuration + 10
     const contributionAmount = 1000;
+    const totalSpent = 10000
+    const totalSpentSalt = genRandomSalt().toString()
 
-    it('moves matching funds to the current round after its finalization', async () => {
-      await factory.setToken(token.address);
-      const tokenAsContributor = token.connect(contributor);
+    beforeEach(async () => {
+      await factory.setToken(token.address)
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey)
+      const tokenAsContributor = token.connect(contributor)
       await tokenAsContributor.approve(
         factory.address,
         contributionAmount,
-      );
+      )
+    })
+
+    it('reverts if votes has not been tallied', async () => {
       const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contribute(contributionAmount))
-      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
-      await factory.deployNewRound();
-      const fundingRoundAddress = await factory.getCurrentRound();
-      const fundingRound = await ethers.getContractAt(
-        'FundingRound',
-        fundingRoundAddress,
-      );
-      await factory.deployMaci();
-      await provider.send('evm_increaseTime', [roundDuration]);
-      await expect(factory.transferMatchingFunds())
-        .to.emit(factory, 'RoundFinalized')
-        .withArgs(fundingRoundAddress);
-      expect(await fundingRound.isFinalized()).to.equal(true);
-      expect(await token.balanceOf(fundingRoundAddress)).to.equal(contributionAmount);
-    });
-
-    it('reverts if round has not been deployed', async () => {
-      await factory.setToken(token.address);
-      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
-      await expect(factory.transferMatchingFunds())
-        .to.be.revertedWith('Factory: Funding round has not been deployed');
-    });
-
-    it('finalizes current round even if matching pool is empty', async () => {
-      await factory.setToken(token.address);
-      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await factoryAsContributor.contribute(contributionAmount)
       await factory.deployNewRound();
       await factory.deployMaci();
       await provider.send('evm_increaseTime', [roundDuration]);
-      await expect(factory.transferMatchingFunds())
-        .to.emit(factory, 'RoundFinalized');
+      await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('FundingRound: Votes has not been tallied')
     });
 
     it('reverts if round has not been deployed', async () => {
-      await factory.setToken(token.address);
-      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
-      await expect(factory.transferMatchingFunds())
+      await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
         .to.be.revertedWith('Factory: Funding round has not been deployed');
     });
   });
