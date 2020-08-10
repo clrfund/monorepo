@@ -1,0 +1,8 @@
+{
+  "extends": "solhint:recommended",
+  "rules": {
+    "not-rely-on-time": "off",
+    "quotes": ["error", "single"],
+    "reason-string": ["warn", {"maxLength": 64}]
+  }
+}

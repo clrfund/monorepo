@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.8;
 pragma experimental ABIEncoderV2;
 
 import '@openzeppelin/contracts/ownership/Ownable.sol';
@@ -81,7 +81,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(address(maci) == address(0), 'FundingRound: Already linked to MACI instance');
     require(
       _maci.calcSignUpDeadline() >= contributionDeadline,
-      'FundingRound: MACI signup deadline must be greater than contribution deadline'
+      'FundingRound: Signup stops earlier than contribution deadline'
     );
     maci = _maci;
   }
