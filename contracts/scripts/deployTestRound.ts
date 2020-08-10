@@ -59,8 +59,16 @@ async function main() {
   await factory.addUser(contributor2.getAddress())
 
   // Add dummy recipients
-  const metadataRecipient1 = { name: "Recipient 1", description: "Description 1", imageHash: "Ipfs imageHash 1" };
-  const metadataRecipient2 = { name: "Recipient 2", description: "Description 2", imageHash: "Ipfs imageHash 2" };
+  const metadataRecipient1 = {
+    name: 'Commons Simulator: Modeling Sustainable Funding for Public Good',
+    description: 'Funding open-source projects & other public goods is the killer app of blockchain tech. Giveth & BlockScience are joining forces to build the Commons Stack: a modular library of well engineered components that can be used to create economic models for projects that are creating value, yet have trouble finding sustainable business models.',
+    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+  }
+  const metadataRecipient2 = {
+    name: 'Synthereum: synthetic assets with liquidity pools to bridge traditional and digital finance',
+    description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
+    imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+  }
   await factory.addRecipient(recipient1.getAddress(), JSON.stringify(metadataRecipient1));
   await factory.addRecipient(recipient2.getAddress(), JSON.stringify(metadataRecipient2));
 
