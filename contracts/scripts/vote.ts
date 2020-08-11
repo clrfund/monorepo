@@ -16,18 +16,32 @@ async function main() {
     const contributorKeyPair = new Keypair(PrivKey.unserialize(contributorData.privKey))
     const messages = []
     const encPubKeys = []
+    let nonce = 1
+    // Change key
+    const newContributorKeypair = new Keypair()
+    const [message, encPubKey] = createMessage(
+      contributorData.stateIndex,
+      contributorKeyPair, newContributorKeypair,
+      coordinatorPubKey,
+      null, null, nonce,
+    )
+    messages.push(message.asContractParam())
+    encPubKeys.push(encPubKey.asContractParam())
+    nonce += 1
+    // Vote
     for (const recipientIndex of [1, 2]) {
-      const nonce = recipientIndex
       const votes = BigNumber.from(contributorData.voiceCredits).div(4)
       const [message, encPubKey] = createMessage(
         contributorData.stateIndex,
-        contributorKeyPair,
+        newContributorKeypair, null,
         coordinatorPubKey,
         recipientIndex, votes, nonce,
       )
       messages.push(message.asContractParam())
       encPubKeys.push(encPubKey.asContractParam())
+      nonce += 1
     }
+
     const fundingRoundAsContributor = await ethers.getContractAt(
       'FundingRound',
       state.fundingRound,

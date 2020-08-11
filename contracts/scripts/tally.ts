@@ -32,11 +32,13 @@ async function main() {
       --repeat
   `)
   console.log(processCmdOutput)
-  const randomStateLeafMatch = processCmdOutput.match(/^Random state leaf: (.+)$/m)
+  const randomStateLeafRegexp = /^Random state leaf: (.+)$/gm
+  let randomStateLeafMatch
   let randomStateLeaf
-  if (randomStateLeafMatch) {
+  while ((randomStateLeafMatch = randomStateLeafRegexp.exec(processCmdOutput)) !== null) {
     randomStateLeaf = randomStateLeafMatch[1]
-  } else {
+  }
+  if (!randomStateLeaf) {
     throw new Error('Invalid output')
   }
 
