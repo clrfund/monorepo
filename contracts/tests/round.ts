@@ -8,7 +8,7 @@ import { genRandomSalt } from 'maci-crypto';
 import { Keypair } from 'maci-domainobjs';
 
 import { deployMaciFactory } from '../scripts/helpers';
-import { ZERO_ADDRESS, getEventArg, getGasUsage, createMessage } from './utils';
+import { ZERO_ADDRESS, UNIT, bnSqrt, getEventArg, getGasUsage, createMessage } from './utils'
 import IVerifiedUserRegistryArtifact from '../build/contracts/IVerifiedUserRegistry.json';
 import IRecipientRegistryArtifact from '../build/contracts/IRecipientRegistry.json';
 import MACIArtifact from '../build/contracts/MACI.json';
@@ -23,7 +23,7 @@ describe('Funding Round', () => {
   const signUpDuration = 86400 * 7;  // Default duration in MACI factory
   const votingDuration = 86400 * 7;  // Default duration in MACI factory
   const userKeypair = new Keypair()
-  const contributionAmount = 1000
+  const contributionAmount = UNIT.mul(10)
 
   let token: Contract;
   let verifiedUserRegistry: Contract;
@@ -44,11 +44,11 @@ describe('Funding Round', () => {
   }
 
   beforeEach(async () => {
-    const tokenInitialSupply = 10000000000;
+    const tokenInitialSupply = UNIT.mul(10000)
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer);
     token = await Token.deploy(tokenInitialSupply);
-    await token.transfer(contributor.address, tokenInitialSupply / 4);
-    await token.transfer(coordinator.address, tokenInitialSupply / 4);
+    await token.transfer(contributor.address, tokenInitialSupply.div(4))
+    await token.transfer(coordinator.address, tokenInitialSupply.div(4))
 
     verifiedUserRegistry = await deployMockContract(deployer, IVerifiedUserRegistryArtifact.abi);
     await verifiedUserRegistry.mock.isVerifiedUser.returns(true);
@@ -102,7 +102,6 @@ describe('Funding Round', () => {
 
   describe('accepting contributions', () => {
     const userPubKey = userKeypair.pubKey.asContractParam()
-    const contributionAmount = 1000;
     const encodedContributorAddress = defaultAbiCoder.encode(['address'], [contributor.address]);
     let tokenAsContributor: Contract;
     let fundingRoundAsContributor: Contract;
@@ -172,7 +171,7 @@ describe('Funding Round', () => {
       await fundingRound.setMaci(maci.address);
       await tokenAsContributor.approve(
         fundingRound.address,
-        contributionAmount * 2,
+        contributionAmount.mul(2),
       );
       await fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
       await expect(fundingRoundAsContributor.contribute(userPubKey, contributionAmount))
@@ -230,7 +229,7 @@ describe('Funding Round', () => {
   });
 
   describe('voting', () => {
-    const singleVote = 100;
+    const singleVote = UNIT.mul(4)
     let fundingRoundAsContributor: Contract;
     let userStateIndex: number;
 
@@ -289,10 +288,11 @@ describe('Funding Round', () => {
   });
 
   describe('finalizing round', () => {
-    const matchingPoolSize = 100000
-    const totalSpent = 10000
+    const matchingPoolSize = UNIT.mul(1000)
+    const totalSpent = UNIT.mul(100)
     const totalSpentSalt = genRandomSalt().toString()
-    const totalVotes = 100; // Math.sqrt(totalSpent)
+    const totalVotes = bnSqrt(totalSpent)
+    expect(totalVotes.toNumber()).to.equal(10 * 10 ** 9)
 
     beforeEach(async () => {
       maci = await deployMaciMock()
@@ -430,13 +430,13 @@ describe('Funding Round', () => {
     });
 
     it('reverts if round has been finalized already', async () => {
-      const totalSpent = 10000
+      const totalSpent = UNIT.mul(100)
       const totalSpentSalt = genRandomSalt().toString()
       maci = await deployMaciMock()
       await fundingRound.setMaci(maci.address);
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await maci.mock.hasUntalliedStateLeaves.returns(false)
-      await maci.mock.totalVotes.returns(Math.sqrt(totalSpent))
+      await maci.mock.totalVotes.returns(bnSqrt(totalSpent))
       await maci.mock.verifySpentVoiceCredits.returns(true)
       await fundingRound.finalize(totalSpent, totalSpentSalt)
 
@@ -459,7 +459,7 @@ describe('Funding Round', () => {
 
   describe('withdrawing funds', () => {
     const userPubKey = userKeypair.pubKey.asContractParam()
-    const contributionAmount = 1000;
+    const contributionAmount = UNIT.mul(10)
     let tokenAsContributor: Contract;
     let fundingRoundAsContributor: Contract;
 
@@ -497,21 +497,21 @@ describe('Funding Round', () => {
   });
 
   describe('claiming funds', () => {
-    const matchingPoolSize = 100000;
-    const totalSpent = 10000;
+    const matchingPoolSize = UNIT.mul(1000)
+    const totalSpent = UNIT.mul(100)
     const totalSpentSalt = genRandomSalt().toString();
-    const totalVotes = 100; // Math.sqrt(totalSpent)
+    const totalVotes = bnSqrt(totalSpent)
     const recipientIndex = 3;
     const recipientClaimData = [
       recipient.address, // recipient
-      totalVotes / 2, // Tally result
+      totalVotes.div(2), // Tally result
       [[0]], // Proof
       genRandomSalt().toString(),
-      totalSpent / 2, // Total spent
+      totalSpent.div(2), // Total spent
       [[0]],
       genRandomSalt().toString(),
     ];
-    const expectedClaimableAmount = matchingPoolSize / 2 + totalSpent / 2;
+    const expectedClaimableAmount = matchingPoolSize.div(2).add(totalSpent.div(2))
     let fundingRoundAsRecipient: Contract;
     let fundingRoundAsContributor: Contract;
 

@@ -3,7 +3,7 @@ import { ethers } from '@nomiclabs/buidler'
 import { Keypair } from 'maci-domainobjs'
 
 import MACIArtifact from '../build/contracts/MACI.json'
-import { getEventArg } from '../tests/utils'
+import { UNIT, getEventArg } from '../tests/utils'
 
 async function main() {
   const [,,,,, contributor1, contributor2] = await ethers.getSigners()
@@ -14,8 +14,9 @@ async function main() {
   const maciAddress = await fundingRound.maci()
   const maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress)
 
-  const contributionAmount = 10000
-  const voiceCredits = Math.sqrt(contributionAmount)
+  // https://github.com/appliedzkp/maci/issues/155
+  // TODO: Use 16 UNIT
+  const contributionAmount = UNIT.mul(16).div(10 ** 10)
   state.contributors = {}
 
   for (const contributor of [contributor1, contributor2]) {
@@ -36,9 +37,9 @@ async function main() {
       privKey: contributorKeypair.privKey.serialize(),
       pubKey: contributorKeypair.pubKey.serialize(),
       stateIndex: parseInt(stateIndex),
-      voiceCredits: voiceCredits,
+      voiceCredits: contributionAmount.toString(),
     }
-    console.log(`Contributor ${contributorAddress} registered. State index: ${stateIndex}. Voice credits: ${voiceCredits}.`)
+    console.log(`Contributor ${contributorAddress} registered. State index: ${stateIndex}. Voice credits: ${contributionAmount.toString()}.`)
   }
 
   // Update state file

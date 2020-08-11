@@ -158,7 +158,7 @@ async function getData(): Promise<RoundInfo> {
     if (!event.args) {
       return
     }
-    contributions += event.args._amount
+    contributions = contributions.add(event.args._amount)
   })
   const contribution = BigNumber.from(0)
   const totalFunds = matchingPool.add(contributions)

@@ -6,7 +6,7 @@ import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from 'maci-domainobjs';
 
 import { deployMaciFactory } from '../scripts/helpers';
-import { ZERO_ADDRESS, getGasUsage, getEventArg, MaciParameters } from './utils';
+import { ZERO_ADDRESS, UNIT, getGasUsage, getEventArg, MaciParameters } from './utils';
 
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
 import TokenArtifact from '../build/contracts/AnyOldERC20Token.json';
@@ -36,14 +36,14 @@ describe('Funding Round Factory', () => {
     await maciFactory.transferOwnership(factory.address);
 
     // Deploy token contract and transfer tokens to contributor
-    const tokenInitialSupply = 10000000000;
+    const tokenInitialSupply = UNIT.mul(1000)
     token = await deployContract(deployer, TokenArtifact, [tokenInitialSupply]);
     expect(token.address).to.properAddress;
     await token.transfer(contributor.address, tokenInitialSupply);
   });
 
   describe('contributing to matching pool', () => {
-    const contributionAmount = 1000;
+    const contributionAmount = UNIT.mul(10)
 
     it('allows user to contribute to matching pool', async () => {
       await factory.setToken(token.address);
@@ -324,8 +324,8 @@ describe('Funding Round Factory', () => {
     const signUpDuration = maciParameters.signUpDuration
     const votingDuration = maciParameters.votingDuration
     const roundDuration = signUpDuration + votingDuration + 10
-    const contributionAmount = 1000;
-    const totalSpent = 10000
+    const contributionAmount = UNIT.mul(10)
+    const totalSpent = UNIT.mul(100)
     const totalSpentSalt = genRandomSalt().toString()
 
     beforeEach(async () => {
