@@ -503,6 +503,7 @@ describe('Funding Round', () => {
     const totalVotes = 100; // Math.sqrt(totalSpent)
     const recipientIndex = 3;
     const recipientClaimData = [
+      recipient.address, // recipient
       totalVotes / 2, // Tally result
       [[0]], // Proof
       genRandomSalt().toString(),
