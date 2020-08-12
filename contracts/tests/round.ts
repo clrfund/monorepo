@@ -513,6 +513,7 @@ describe('Funding Round', () => {
     ];
     const expectedClaimableAmount = matchingPoolSize / 2 + totalSpent / 2;
     let fundingRoundAsRecipient: Contract;
+    let fundingRoundAsContributor: Contract;
 
     beforeEach(async () => {
       maci = await deployMaciMock()
@@ -530,7 +531,7 @@ describe('Funding Round', () => {
         fundingRound.address,
         totalSpent,
       );
-      const fundingRoundAsContributor = fundingRound.connect(contributor);
+      fundingRoundAsContributor = fundingRound.connect(contributor);
       await fundingRoundAsContributor.contribute(
         userKeypair.pubKey.asContractParam(),
         totalSpent,
@@ -546,6 +547,17 @@ describe('Funding Round', () => {
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
         .withArgs(recipient.address, expectedClaimableAmount);
+      expect(await token.balanceOf(recipient.address))
+        .to.equal(expectedClaimableAmount);
+    });
+
+    it('allows address different than recipient to claim allocated funds', async () => {
+      await token.transfer(fundingRound.address, matchingPoolSize);
+      await fundingRound.finalize(totalSpent, totalSpentSalt)
+
+      await expect(fundingRoundAsContributor.claimFunds(...recipientClaimData))
+        .to.emit(fundingRound, 'FundsClaimed')
+        .withArgs(contributor.address, expectedClaimableAmount);
       expect(await token.balanceOf(recipient.address))
         .to.equal(expectedClaimableAmount);
     });
