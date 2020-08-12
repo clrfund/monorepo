@@ -557,7 +557,7 @@ describe('Funding Round', () => {
 
       await expect(fundingRoundAsContributor.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
-        .withArgs(contributor.address, expectedClaimableAmount);
+        .withArgs(recipient.address, expectedClaimableAmount);
       expect(await token.balanceOf(recipient.address))
         .to.equal(expectedClaimableAmount);
     });

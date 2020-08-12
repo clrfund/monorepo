@@ -266,6 +266,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     recipients[voteOptionIndex] = true;
     uint256 claimableAmount = matchingPoolSize * _tallyResult / totalVotes + _spent;
     nativeToken.transfer(_recipient, claimableAmount);
-    emit FundsClaimed(msg.sender, claimableAmount);
+    emit FundsClaimed(_recipient, claimableAmount);
   }
 }
