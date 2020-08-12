@@ -36,6 +36,7 @@ async function main() {
     }
     const spentProof = spentTree.genMerklePath(recipientIndex)
     const recipientClaimData = [
+      recipient.getAddress(),
       result,
       resultProof.pathElements.map((x) => x.map((y: SnarkBigInt) => y.toString())),
       resultSalt,

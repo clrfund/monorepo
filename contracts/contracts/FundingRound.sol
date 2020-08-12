@@ -231,6 +231,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @param _spentSalt Salt.
     */
   function claimFunds(
+    address _recipient,
     uint256 _tallyResult,
     uint256[][] memory _tallyResultProof,
     uint256 _tallyResultSalt,
@@ -242,7 +243,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   {
     require(isFinalized, 'FundingRound: Round not finalized');
     require(!isCancelled, 'FundingRound: Round has been cancelled');
-    uint256 voteOptionIndex = recipientRegistry.getRecipientIndex(msg.sender);
+    uint256 voteOptionIndex = recipientRegistry.getRecipientIndex(_recipient);
     require(voteOptionIndex > 0, 'FundingRound: Invalid recipient address');
     require(!recipients[voteOptionIndex], 'FundingRound: Funds already claimed');
     (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
@@ -264,7 +265,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
     recipients[voteOptionIndex] = true;
     uint256 claimableAmount = matchingPoolSize * _tallyResult / totalVotes + _spent;
-    nativeToken.transfer(msg.sender, claimableAmount);
-    emit FundsClaimed(msg.sender, claimableAmount);
+    nativeToken.transfer(_recipient, claimableAmount);
+    emit FundsClaimed(_recipient, claimableAmount);
   }
 }
