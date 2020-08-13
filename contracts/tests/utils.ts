@@ -4,6 +4,19 @@ import { bigInt, genRandomSalt } from 'maci-crypto';
 import { Keypair, PubKey, Command, Message } from 'maci-domainobjs';
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+export const UNIT = BigNumber.from(10).pow(BigNumber.from(18))
+
+export function bnSqrt(a: BigNumber): BigNumber {
+  // Take square root from a big number
+  // https://stackoverflow.com/a/52468569/1868395
+  let x
+  let x1 = a.div(2)
+  do {
+    x = x1
+    x1 = (x.add(a.div(x))).div(2)
+  } while (!x.eq(x1))
+  return x
+}
 
 export async function getGasUsage(transaction: TransactionResponse): Promise<number | null> {
   const receipt = await transaction.wait();
@@ -69,7 +82,7 @@ export function createMessage(
   userKeypair: Keypair,
   coordinatorPubKey: PubKey,
   voteOptionIndex: number,
-  voiceCredits: number,
+  voiceCredits: BigNumber,
   nonce: number,
   salt?: number,
 ): [Message, PubKey] {
@@ -77,7 +90,7 @@ export function createMessage(
   if (!salt) {
     salt = genRandomSalt();
   }
-  const quadraticVoteWeight = Math.floor(Math.sqrt(voiceCredits));
+  const quadraticVoteWeight = bnSqrt(voiceCredits)
   const command = new Command(
     bigInt(userStateIndex),
     userKeypair.pubKey,

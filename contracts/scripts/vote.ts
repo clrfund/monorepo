@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { ethers } from '@nomiclabs/buidler';
+import { BigNumber } from 'ethers'
 import { PrivKey, PubKey, Keypair } from 'maci-domainobjs'
 
 import { createMessage } from '../tests/utils'
@@ -11,15 +12,15 @@ async function main() {
 
   for (const contributor of [contributor1, contributor2]) {
     const contributorAddress = await contributor.getAddress()
-    const { privKey, stateIndex } = state.contributors[contributorAddress]
-    const contributorKeyPair = new Keypair(PrivKey.unserialize(privKey))
+    const contributorData = state.contributors[contributorAddress]
+    const contributorKeyPair = new Keypair(PrivKey.unserialize(contributorData.privKey))
     const messages = []
     const encPubKeys = []
     for (const recipientIndex of [1, 2]) {
       const nonce = recipientIndex
-      const votes = 50
+      const votes = BigNumber.from(contributorData.voiceCredits).div(4)
       const [message, encPubKey] = createMessage(
-        stateIndex,
+        contributorData.stateIndex,
         contributorKeyPair,
         coordinatorPubKey,
         recipientIndex, votes, nonce,

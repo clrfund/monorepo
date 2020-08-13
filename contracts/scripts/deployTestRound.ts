@@ -2,7 +2,7 @@ import fs from 'fs'
 import { ethers } from '@nomiclabs/buidler';
 import { Keypair } from 'maci-domainobjs'
 
-import { MaciParameters } from '../tests/utils'
+import { UNIT, MaciParameters } from '../tests/utils'
 
 async function main() {
   // We're hardcoding factory address due to a buidler limitation:
@@ -23,12 +23,12 @@ async function main() {
     'AnyOldERC20Token',
     deployer,
   );
-  const tokenInitialSupply = 1000000
+  const tokenInitialSupply = UNIT.mul(1000)
   const token = await Token.deploy(tokenInitialSupply)
   console.log(`Token deployed: ${token.address}`)
-  await token.transfer(poolContributor.getAddress(), 100000)
-  await token.transfer(contributor1.getAddress(), 100000)
-  await token.transfer(contributor2.getAddress(), 100000)
+  await token.transfer(poolContributor.getAddress(), UNIT.mul(100))
+  await token.transfer(contributor1.getAddress(), UNIT.mul(100))
+  await token.transfer(contributor2.getAddress(), UNIT.mul(100))
 
   // Configure factory
   const factory = await ethers.getContractAt(
@@ -48,7 +48,7 @@ async function main() {
   await factory.setMaciParameters(...maciParameters.values())
 
   // Add to matching pool
-  const poolContributionAmount = 10000
+  const poolContributionAmount = UNIT.mul(10)
   const poolContributorToken = token.connect(poolContributor);
   await poolContributorToken.approve(factory.address, poolContributionAmount);
   const poolContributorFactory = factory.connect(poolContributor);
