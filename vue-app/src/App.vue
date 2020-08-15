@@ -29,6 +29,22 @@ html {
   color: $text-color;
 }
 
+.btn {
+  background-color: $button-color;
+  border: none;
+  border-radius: 20px;
+  color: $text-color;
+  cursor: pointer;
+  font-weight: bold;
+  line-height: 150%;
+  padding: 7px 20px;
+
+  &:hover {
+    background-color: $highlight-color;
+    color: $bg-secondary-color;
+  }
+}
+
 #app {
   display: flex;
   font-family: Inter, sans-serif;

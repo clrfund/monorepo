@@ -4,7 +4,7 @@
     <div class="project-info">
       <div class="project-name">{{ project.name }}</div>
       <div class="project-description">{{ project.description }}</div>
-      <button class="contribute-btn">Contribute</button>
+      <button class="btn contribute-btn">Contribute</button>
     </div>
   </div>
 </template>
@@ -88,14 +88,6 @@ export default class ProjectItem extends Vue {
 }
 
 .contribute-btn {
-  background-color: $button-color;
-  border: none;
-  border-radius: 20px;
-  color: $text-color;
-  cursor: pointer;
-  font-weight: bold;
-  line-height: 150%;
   margin-top: 20px;
-  padding: 7px 20px;
 }
 </style>
