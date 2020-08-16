@@ -48,6 +48,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import Component from 'vue-class-component'
 import { ethers, BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
@@ -65,19 +66,21 @@ interface Recipient {
   index: number;
 }
 
+interface RoundStats {
+  fundingRoundAddress: string;
+  nativeToken: string;
+  status: string;
+  contributionDeadline: DateTime;
+  votingDeadline: DateTime;
+  totalFunds: FixedNumber;
+  matchingPool: FixedNumber;
+  contributions: FixedNumber;
+  contribution: FixedNumber;
+}
+
 interface RoundInfo {
   recipients: Recipient[];
-  currentRound: {
-    fundingRoundAddress: string;
-    nativeToken: string;
-    status: string;
-    contributionDeadline: DateTime;
-    votingDeadline: DateTime;
-    totalFunds: FixedNumber;
-    matchingPool: FixedNumber;
-    contributions: FixedNumber;
-    contribution: FixedNumber;
-  } | null;
+  currentRound: RoundStats | null;
 }
 
 async function getData(): Promise<RoundInfo> {
@@ -179,16 +182,10 @@ async function getData(): Promise<RoundInfo> {
   }
 }
 
-export default Vue.extend({
+@Component({
   name: 'Home',
   components: {
     ProjectItem,
-  },
-  data(): RoundInfo {
-    return {
-      recipients: [],
-      currentRound: null,
-    }
   },
   filters: {
     formatDate: (value: DateTime): string | null => {
@@ -198,12 +195,18 @@ export default Vue.extend({
       return value ? (value._value === '0.0' ? '0' : value.toString()) : null
     },
   },
+})
+export default class Home extends Vue {
+
+  recipients: Recipient[] = []
+  currentRound: RoundStats = null
+
   async mounted() {
     const { recipients, currentRound } = await getData()
     this.recipients = recipients
     this.currentRound = currentRound
-  },
-})
+  }
+}
 </script>
 
 <style scoped lang="scss">
