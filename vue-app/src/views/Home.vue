@@ -66,7 +66,7 @@ interface Recipient {
   index: number;
 }
 
-interface RoundStats {
+interface RoundInfo {
   fundingRoundAddress: string;
   nativeToken: string;
   status: string;
@@ -78,23 +78,18 @@ interface RoundStats {
   contribution: FixedNumber;
 }
 
-interface RoundInfo {
-  recipients: Recipient[];
-  currentRound: RoundStats | null;
-}
+const provider = new ethers.providers.JsonRpcProvider(
+  process.env.VUE_APP_ETHEREUM_API_URL,
+)
+const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
+const factoryAddress = process.env.VUE_APP_CLRFUND_FACTORY_ADDRESS as string
+const factory = new ethers.Contract(
+  factoryAddress,
+  FundingRoundFactory,
+  provider,
+)
 
-async function getData(): Promise<RoundInfo> {
-  const provider = new ethers.providers.JsonRpcProvider(
-    process.env.VUE_APP_ETHEREUM_API_URL,
-  )
-  const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
-  const factoryAddress = process.env.VUE_APP_CLRFUND_FACTORY_ADDRESS as string
-  const factory = new ethers.Contract(
-    factoryAddress,
-    FundingRoundFactory,
-    provider,
-  )
-
+async function getRecipients(): Promise<Recipient[]> {
   const recipientFilter = factory.filters.RecipientAdded()
   const recipientEvents = await factory.queryFilter(recipientFilter, 0)
   const recipients: Recipient[] = []
@@ -111,15 +106,14 @@ async function getData(): Promise<RoundInfo> {
       index: event.args._index,
     })
   })
+  return recipients
+}
 
+async function getRoundInfo(account: string): Promise<RoundInfo | null> {
   const fundingRoundAddress = await factory.getCurrentRound()
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
-    return {
-      recipients,
-      currentRound: null,
-    }
+    return null
   }
-
   const fundingRound = new ethers.Contract(
     fundingRoundAddress,
     FundingRound,
@@ -157,28 +151,28 @@ async function getData(): Promise<RoundInfo> {
   const contributionFilter = fundingRound.filters.NewContribution()
   const contributionEvents = await fundingRound.queryFilter(contributionFilter, 0)
   let contributions = BigNumber.from(0)
+  let contribution = BigNumber.from(0)
   contributionEvents.forEach(event => {
     if (!event.args) {
       return
     }
     contributions = contributions.add(event.args._amount)
+    if (event.args._sender.toLowerCase() === account) {
+      contribution = event.args._amount
+    }
   })
-  const contribution = BigNumber.from(0)
   const totalFunds = matchingPool.add(contributions)
 
   return {
-    recipients,
-    currentRound: {
-      fundingRoundAddress,
-      nativeToken: nativeTokenSymbol,
-      status,
-      contributionDeadline,
-      votingDeadline,
-      totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecs),
-      matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecs),
-      contributions: FixedNumber.fromValue(contributions, nativeTokenDecs),
-      contribution: FixedNumber.fromValue(contribution, nativeTokenDecs),
-    },
+    fundingRoundAddress,
+    nativeToken: nativeTokenSymbol,
+    status,
+    contributionDeadline,
+    votingDeadline,
+    totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecs),
+    matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecs),
+    contributions: FixedNumber.fromValue(contributions, nativeTokenDecs),
+    contribution: FixedNumber.fromValue(contribution, nativeTokenDecs),
   }
 }
 
@@ -199,12 +193,19 @@ async function getData(): Promise<RoundInfo> {
 export default class Home extends Vue {
 
   recipients: Recipient[] = []
-  currentRound: RoundStats = null
+  currentRound: RoundInfo | null = null
 
   async mounted() {
-    const { recipients, currentRound } = await getData()
-    this.recipients = recipients
-    this.currentRound = currentRound
+    this.recipients = await getRecipients()
+    this.currentRound = await getRoundInfo(this.$store.state.account)
+    this.$store.watch(
+      (state) => state.account,
+      async (account: string) => {
+        if (this.currentRound && account) {
+          this.currentRound = await getRoundInfo(this.$store.state.account)
+        }
+      },
+    )
   }
 }
 </script>
