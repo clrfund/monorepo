@@ -10,9 +10,23 @@
     <div id="content">
       <router-view />
     </div>
-    <div id="cart">cart</div>
+    <div id="cart">
+      <Profile />
+      <div>cart</div>
+    </div>
   </div>
 </template>
+
+<script lang="ts">
+import Profile from '@/components/Profile.vue'
+
+export default {
+  name: 'clr.fund',
+  components: {
+    Profile,
+  },
+}
+</script>
 
 <style lang="scss">
 @import 'styles/vars';
@@ -120,9 +134,8 @@ html {
 }
 
 #cart {
-  background-color: $bg-secondary-color;
+  background-color: #2c2938;
   min-width: 20%;
-  padding: $content-space;
   text-align: center;
   width: 20%;
 }
