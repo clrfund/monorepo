@@ -4,7 +4,12 @@
     <div class="project-info">
       <div class="project-name">{{ project.name }}</div>
       <div class="project-description">{{ project.description }}</div>
-      <button class="btn contribute-btn">Contribute</button>
+      <button
+        class="btn contribute-btn"
+        @click="contribute(project)"
+      >
+        Contribute
+      </button>
     </div>
   </div>
 </template>
@@ -14,11 +19,16 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 
 import { Project } from '@/api/projects'
+import { ADD_CART_ITEM } from '@/store/mutation-types'
 
 @Component
 export default class ProjectItem extends Vue {
   @Prop()
   project!: Project;
+
+  contribute(project: Project) {
+    this.$store.commit(ADD_CART_ITEM, { ...project, amount: 0 })
+  }
 }
 </script>
 
