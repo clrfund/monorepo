@@ -10,9 +10,23 @@
     <div id="content">
       <router-view />
     </div>
-    <div id="cart">cart</div>
+    <div id="cart">
+      <Profile />
+      <div>cart</div>
+    </div>
   </div>
 </template>
+
+<script lang="ts">
+import Profile from '@/components/Profile.vue'
+
+export default {
+  name: 'clr.fund',
+  components: {
+    Profile,
+  },
+}
+</script>
 
 <style lang="scss">
 @import 'styles/vars';
@@ -27,6 +41,22 @@ body {
 html {
   background-color: $bg-primary-color;
   color: $text-color;
+}
+
+.btn {
+  background-color: $button-color;
+  border: none;
+  border-radius: 20px;
+  color: $text-color;
+  cursor: pointer;
+  font-weight: bold;
+  line-height: 150%;
+  padding: 7px 20px;
+
+  &:hover {
+    background-color: $highlight-color;
+    color: $bg-secondary-color;
+  }
 }
 
 #app {
@@ -104,9 +134,8 @@ html {
 }
 
 #cart {
-  background-color: $bg-secondary-color;
+  background-color: #2c2938;
   min-width: 20%;
-  padding: $content-space;
   text-align: center;
   width: 20%;
 }
