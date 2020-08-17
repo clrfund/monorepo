@@ -4572,6 +4572,16 @@ circomlib@0.0.21:
     typedarray-to-buffer "^3.1.5"
     web3 "^1.0.0-beta.55"
 
+"circomlib@git+https://github.com/ChihChengLiang/circomlib.git#e39ff9c27a5bc4eca5c00908ccb26496c37fce63":
+  version "0.0.20"
+  resolved "git+https://github.com/ChihChengLiang/circomlib.git#e39ff9c27a5bc4eca5c00908ccb26496c37fce63"
+  dependencies:
+    blake-hash "^1.1.0"
+    blake2b "^2.1.3"
+    snarkjs ">=0.1.20 <=0.1.24"
+    typedarray-to-buffer "^3.1.5"
+    web3 "^1.0.0-beta.55"
+
 "circomlib@git+https://github.com/kobigurk/circomlib.git#4284dc1ef984a204db08864f5da530c97f9376ef":
   version "0.0.20"
   resolved "git+https://github.com/kobigurk/circomlib.git#4284dc1ef984a204db08864f5da530c97f9376ef"
@@ -4579,16 +4589,6 @@ circomlib@0.0.21:
     blake-hash "^1.1.0"
     blake2b "^2.1.3"
     snarkjs "^0.1.20"
-    typedarray-to-buffer "^3.1.5"
-    web3 "^1.0.0-beta.55"
-
-"circomlib@https://github.com/ChihChengLiang/circomlib.git#e39ff9c27a5bc4eca5c00908ccb26496c37fce63":
-  version "0.0.20"
-  resolved "https://github.com/ChihChengLiang/circomlib.git#e39ff9c27a5bc4eca5c00908ccb26496c37fce63"
-  dependencies:
-    blake-hash "^1.1.0"
-    blake2b "^2.1.3"
-    snarkjs ">=0.1.20 <=0.1.24"
     typedarray-to-buffer "^3.1.5"
     web3 "^1.0.0-beta.55"
 
@@ -9965,10 +9965,10 @@ luxon@^1.24.1:
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.24.1.tgz#a8383266131ed4eaed4b5f430f96f3695403a52a"
   integrity sha512-CgnIMKAWT0ghcuWFfCWBnWGOddM0zu6c4wZAWmD0NN7MZTnro0+833DF6tJep+xlxRPg4KtsYEHYLfTMBQKwYg==
 
-maci-circuits@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-0.1.8.tgz#9254de41b9e41cf1664604ead307c25e119d89e9"
-  integrity sha512-xr2ALVrLEWzzsIQC1f7GywZ19zrtH0w3OkDzQzhcINogMUqcwtIxfvyTH1A6EvkxJ9WDOInowirjWtniH5Jl5Q==
+maci-circuits@^0.1.11:
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-0.1.11.tgz#693fffb01b3cd7b053eadbd3d8d5525525622b75"
+  integrity sha512-RnAFuFQWrq3dBneokYnU3Uf0tipzHza865s/Anonk6dkmqXYW/PcwHwUKZASpJtuzQODIMK/4QVLVRBIWaADxw==
   dependencies:
     argparse "^1.0.10"
     circom "0.0.34"
@@ -9978,17 +9978,17 @@ maci-circuits@^0.1.8:
     snarkjs "https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91"
     websnark "0.0.5"
 
-maci-cli@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.1.8.tgz#4bc9b2a097b4d1a65c56e1182877840095e78587"
-  integrity sha512-Hj3zzCjrQwCUwAqUULmXeE4K+72a08tCScua0YKxjM019QA8rbdNz5d2Dm4iYDPRTe3Nvw0QWZW7Nzli5P6Hfw==
+maci-cli@0.1.11:
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.1.11.tgz#ec72fea890aa95612d4542f3be1fd86140e41ef2"
+  integrity sha512-q+XXloXIBuzdDpDvBjrRNr3nBjIK/5h2SQGNQM6LVe0JNf1rPYPvDZF8kiwV2JpDZbSXEI/7hqnIJS+282+3oA==
   dependencies:
     argparse "^1.0.10"
     ethers "^4.0.45"
     libsemaphore "^1.0.5"
-    maci-circuits "^0.1.8"
+    maci-circuits "^0.1.11"
     maci-config "^0.1.8"
-    maci-contracts "^0.1.8"
+    maci-contracts "^0.1.11"
     maci-core "^0.1.8"
     maci-crypto "^0.1.8"
     maci-domainobjs "^0.1.8"
@@ -10003,10 +10003,10 @@ maci-config@^0.1.8:
     js-yaml "^3.13.1"
     path "^0.12.7"
 
-maci-contracts@0.1.8, maci-contracts@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.1.8.tgz#a64d1e545a822b4ad25fc7bef50ac9882b50e5c5"
-  integrity sha512-PmVc1PGvM6dpXwSnOfaq3+7Tmqg0RTFVlqfgsn1sMO9IDrH5BZ5xMhrJXH0cgW1LAQW9fuZaaRpSejPBJWfmkQ==
+maci-contracts@0.1.11, maci-contracts@^0.1.11:
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.1.11.tgz#2b22a9ee11eecfed7d0b33cb9ab2886f91823e33"
+  integrity sha512-u+DFhvvUkQkBH4SeU27rX2KgKTkwbQwdZllofgHxdw579XoXdsexsDdK9LjftWWmt0oe/F7S+m5KMxXN/eze4g==
   dependencies:
     "@openzeppelin/contracts" "^2.4.0"
     argparse "^1.0.10"
@@ -13407,7 +13407,7 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-snarkjs@0.1.20, "snarkjs@>=0.1.20 <=0.1.24", snarkjs@^0.1.20, "snarkjs@https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91":
+snarkjs@0.1.20, "snarkjs@>=0.1.20 <=0.1.24", snarkjs@^0.1.20, "snarkjs@git+https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91", "snarkjs@https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91":
   version "0.1.20"
   resolved "https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91"
   dependencies:
