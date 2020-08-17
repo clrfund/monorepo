@@ -81,9 +81,10 @@ export class MaciParameters {
 export function createMessage(
   userStateIndex: number,
   userKeypair: Keypair,
+  newUserKeypair: Keypair | null,
   coordinatorPubKey: PubKey,
-  voteOptionIndex: number,
-  voiceCredits: BigNumber,
+  voteOptionIndex: number | null,
+  voiceCredits: BigNumber | null,
   nonce: number,
   salt?: number,
 ): [Message, PubKey] {
@@ -91,11 +92,11 @@ export function createMessage(
   if (!salt) {
     salt = genRandomSalt();
   }
-  const quadraticVoteWeight = bnSqrt(voiceCredits)
+  const quadraticVoteWeight = voiceCredits ? bnSqrt(voiceCredits) : 0
   const command = new Command(
     bigInt(userStateIndex),
-    userKeypair.pubKey,
-    bigInt(voteOptionIndex),
+    newUserKeypair ? newUserKeypair.pubKey : userKeypair.pubKey,
+    bigInt(voteOptionIndex || 0),
     bigInt(quadraticVoteWeight),
     bigInt(nonce),
     bigInt(salt),

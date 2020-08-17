@@ -244,6 +244,8 @@ describe('Funding Round', () => {
     const singleVote = UNIT.mul(4)
     let fundingRoundAsContributor: Contract;
     let userStateIndex: number;
+    let recipientIndex = 1
+    let nonce = 1
 
     beforeEach(async () => {
       await fundingRound.setMaci(maci.address);
@@ -261,12 +263,10 @@ describe('Funding Round', () => {
       await provider.send('evm_increaseTime', [signUpDuration]);
     });
 
-    it('publishes a single message', async () => {
-      const recipientIndex = 1;
-      const nonce = 1;
+    it('submits a vote', async () => {
       const [message, encPubKey] = createMessage(
         userStateIndex,
-        userKeypair,
+        userKeypair, null,
         coordinatorPubKey,
         recipientIndex, singleVote, nonce,
       );
@@ -279,15 +279,67 @@ describe('Funding Round', () => {
       expect(await getGasUsage(publishTx)).lessThan(800000);
     });
 
+    it('submits a key-changing message', async () => {
+      const newUserKeypair = new Keypair()
+      const [message, encPubKey] = createMessage(
+        userStateIndex,
+        userKeypair, newUserKeypair,
+        coordinatorPubKey,
+        null, null, nonce,
+      )
+      await maci.publishMessage(
+        message.asContractParam(),
+        encPubKey.asContractParam(),
+      )
+    })
+
+    it('submits an invalid vote', async () => {
+      const newUserKeypair = new Keypair()
+      const [message1, encPubKey1] = createMessage(
+        userStateIndex,
+        userKeypair, newUserKeypair,
+        coordinatorPubKey,
+        null, null, nonce,
+      )
+      await maci.publishMessage(
+        message1.asContractParam(),
+        encPubKey1.asContractParam(),
+      )
+      const [message2, encPubKey2] = createMessage(
+        userStateIndex,
+        userKeypair, null,
+        coordinatorPubKey,
+        recipientIndex, singleVote, nonce + 1,
+      )
+      await maci.publishMessage(
+        message2.asContractParam(),
+        encPubKey2.asContractParam(),
+      )
+    })
+
+    it('submits a vote for invalid vote option', async () => {
+      recipientIndex = 999
+      const [message, encPubKey] = createMessage(
+        userStateIndex,
+        userKeypair, null,
+        coordinatorPubKey,
+        recipientIndex, singleVote, nonce,
+      )
+      await maci.publishMessage(
+        message.asContractParam(),
+        encPubKey.asContractParam(),
+      )
+    })
+
     it('submits a batch of messages', async () => {
       const messages = [];
       const encPubKeys = [];
       const numMessages = 3;
       for (let recipientIndex = 1; recipientIndex < numMessages + 1; recipientIndex++) {
-        const nonce = recipientIndex;
+        nonce = recipientIndex
         const [message, encPubKey] = createMessage(
           userStateIndex,
-          userKeypair,
+          userKeypair, null,
           coordinatorPubKey,
           recipientIndex, singleVote, nonce,
         );
@@ -525,7 +577,7 @@ describe('Funding Round', () => {
       [[0]],
       genRandomSalt().toString(),
     ];
-    const expectedClaimableAmount = matchingPoolSize.div(2).add(totalContributions.div(2))
+    let expectedClaimableAmount = matchingPoolSize.div(2).add(totalContributions.div(2))
     let fundingRoundAsRecipient: Contract;
     let fundingRoundAsContributor: Contract;
 
@@ -575,6 +627,27 @@ describe('Funding Round', () => {
       expect(await token.balanceOf(recipient.address))
         .to.equal(expectedClaimableAmount);
     });
+
+    it('allows recipient to claim zero amount', async () => {
+      await token.transfer(fundingRound.address, matchingPoolSize)
+      await fundingRound.finalize(totalSpent, totalSpentSalt)
+
+      const recipientClaimZeroData = recipientClaimData.slice()  // Make a copy
+      recipientClaimZeroData[1] = 0
+      recipientClaimZeroData[4] = 0
+      await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimZeroData))
+        .to.emit(fundingRound, 'FundsClaimed')
+        .withArgs(recipient.address, 0)
+    })
+
+    it('allows recipient to claim if the matching pool is empty', async () => {
+      await fundingRound.finalize(totalSpent, totalSpentSalt)
+
+      expectedClaimableAmount = totalContributions.div(2)
+      await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
+        .to.emit(fundingRound, 'FundsClaimed')
+        .withArgs(recipient.address, expectedClaimableAmount)
+    })
 
     it('should not allow recipient to claim funds if round has not been finalized', async () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
