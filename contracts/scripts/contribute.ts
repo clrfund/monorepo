@@ -3,7 +3,7 @@ import { ethers } from '@nomiclabs/buidler'
 import { Keypair } from 'maci-domainobjs'
 
 import MACIArtifact from '../build/contracts/MACI.json'
-import { UNIT, VOICE_CREDIT_FACTOR, getEventArg } from '../tests/utils'
+import { UNIT, getEventArg } from '../tests/utils'
 
 async function main() {
   const [,,,,, contributor1, contributor2] = await ethers.getSigners()
