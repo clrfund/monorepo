@@ -13,12 +13,7 @@
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 
-interface Project {
-  name: string;
-  address: string;
-  description: string;
-  imageUrl: string;
-}
+import { Project } from '@/api/projects'
 
 @Component
 export default class ProjectItem extends Vue {

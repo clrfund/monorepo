@@ -37,9 +37,9 @@
     </div>
     <div class="project-list">
       <ProjectItem
-        v-for="item in recipients"
-        v-bind:project="item"
-        v-bind:key="item.address"
+        v-for="project in projects"
+        v-bind:project="project"
+        v-bind:key="project.address"
       >
       </ProjectItem>
     </div>
@@ -52,38 +52,11 @@ import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { factory, ipfsGatewayUrl } from '@/api/core'
 import { RoundInfo, getRoundInfo } from '@/api/round'
+import { Project, getProjects } from '@/api/projects'
+
 import ProjectItem from '@/components/ProjectItem.vue'
 import { SET_CURRENT_ROUND } from '@/store/mutation-types'
-
-interface Recipient {
-  address: string;
-  name: string;
-  description: string;
-  imageUrl: string;
-  index: number;
-}
-
-async function getRecipients(): Promise<Recipient[]> {
-  const recipientFilter = factory.filters.RecipientAdded()
-  const recipientEvents = await factory.queryFilter(recipientFilter, 0)
-  const recipients: Recipient[] = []
-  recipientEvents.forEach(event => {
-    if (!event.args) {
-      return
-    }
-    const metadata = JSON.parse(event.args._metadata)
-    recipients.push({
-      address: event.args._fundingAddress,
-      name: metadata.name,
-      description: metadata.description,
-      imageUrl: `${ipfsGatewayUrl}${metadata.imageHash}`,
-      index: event.args._index,
-    })
-  })
-  return recipients
-}
 
 @Component({
   name: 'Home',
@@ -101,7 +74,7 @@ async function getRecipients(): Promise<Recipient[]> {
 })
 export default class Home extends Vue {
 
-  recipients: Recipient[] = []
+  projects: Project[] = []
 
   get currentRound(): RoundInfo | null {
     return this.$store.state.currentRound
@@ -115,7 +88,7 @@ export default class Home extends Vue {
   }
 
   async mounted() {
-    this.recipients = await getRecipients()
+    this.projects = await getProjects()
     this.updateCurrentRound()
     this.$store.watch(
       (state) => state.account,
