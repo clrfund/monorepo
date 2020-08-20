@@ -49,13 +49,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { ethers, BigNumber, FixedNumber } from 'ethers'
+import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { abi as FundingRoundFactory } from '../../../contracts/build/contracts/FundingRoundFactory.json'
-import { abi as FundingRound } from '../../../contracts/build/contracts/FundingRound.json'
-import { abi as ERC20 } from '../../../contracts/build/contracts/ERC20Detailed.json'
-
+import { factory, ipfsGatewayUrl } from '@/api/core'
+import { RoundInfo, getRoundInfo } from '@/api/round'
 import ProjectItem from '@/components/ProjectItem.vue'
 
 interface Recipient {
@@ -65,29 +63,6 @@ interface Recipient {
   imageUrl: string;
   index: number;
 }
-
-interface RoundInfo {
-  fundingRoundAddress: string;
-  nativeToken: string;
-  status: string;
-  contributionDeadline: DateTime;
-  votingDeadline: DateTime;
-  totalFunds: FixedNumber;
-  matchingPool: FixedNumber;
-  contributions: FixedNumber;
-  contribution: FixedNumber;
-}
-
-const provider = new ethers.providers.JsonRpcProvider(
-  process.env.VUE_APP_ETHEREUM_API_URL,
-)
-const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
-const factoryAddress = process.env.VUE_APP_CLRFUND_FACTORY_ADDRESS as string
-const factory = new ethers.Contract(
-  factoryAddress,
-  FundingRoundFactory,
-  provider,
-)
 
 async function getRecipients(): Promise<Recipient[]> {
   const recipientFilter = factory.filters.RecipientAdded()
@@ -107,73 +82,6 @@ async function getRecipients(): Promise<Recipient[]> {
     })
   })
   return recipients
-}
-
-async function getRoundInfo(account: string): Promise<RoundInfo | null> {
-  const fundingRoundAddress = await factory.getCurrentRound()
-  if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
-    return null
-  }
-  const fundingRound = new ethers.Contract(
-    fundingRoundAddress,
-    FundingRound,
-    provider,
-  )
-  const nativeToken = new ethers.Contract(
-    await fundingRound.nativeToken(),
-    ERC20,
-    provider,
-  )
-  const nativeTokenSymbol = await nativeToken.symbol()
-  const nativeTokenDecs = await nativeToken.decimals()
-  const contributionDeadline = DateTime.fromSeconds(
-    parseInt(await fundingRound.contributionDeadline()),
-  )
-  const votingDeadline = DateTime.fromSeconds(
-    parseInt(await fundingRound.votingDeadline()),
-  )
-
-  const isFinalized = await fundingRound.isFinalized()
-  const isCancelled = await fundingRound.isCancelled()
-  let status: string
-  let matchingPool: BigNumber
-  if (isCancelled) {
-    status = 'Cancelled'
-    matchingPool = BigNumber.from(0)
-  } else if (isFinalized) {
-    status = 'Finalized'
-    matchingPool = await fundingRound.matchingPoolSize()
-  } else {
-    status = 'Running'
-    matchingPool = await nativeToken.balanceOf(factoryAddress)
-  }
-
-  const contributionFilter = fundingRound.filters.NewContribution()
-  const contributionEvents = await fundingRound.queryFilter(contributionFilter, 0)
-  let contributions = BigNumber.from(0)
-  let contribution = BigNumber.from(0)
-  contributionEvents.forEach(event => {
-    if (!event.args) {
-      return
-    }
-    contributions = contributions.add(event.args._amount)
-    if (event.args._sender.toLowerCase() === account) {
-      contribution = event.args._amount
-    }
-  })
-  const totalFunds = matchingPool.add(contributions)
-
-  return {
-    fundingRoundAddress,
-    nativeToken: nativeTokenSymbol,
-    status,
-    contributionDeadline,
-    votingDeadline,
-    totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecs),
-    matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecs),
-    contributions: FixedNumber.fromValue(contributions, nativeTokenDecs),
-    contribution: FixedNumber.fromValue(contribution, nativeTokenDecs),
-  }
 }
 
 @Component({
