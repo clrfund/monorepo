@@ -55,6 +55,7 @@ import { DateTime } from 'luxon'
 import { factory, ipfsGatewayUrl } from '@/api/core'
 import { RoundInfo, getRoundInfo } from '@/api/round'
 import ProjectItem from '@/components/ProjectItem.vue'
+import { SET_CURRENT_ROUND } from '@/store/mutation-types'
 
 interface Recipient {
   address: string;
@@ -101,16 +102,26 @@ async function getRecipients(): Promise<Recipient[]> {
 export default class Home extends Vue {
 
   recipients: Recipient[] = []
-  currentRound: RoundInfo | null = null
+
+  get currentRound(): RoundInfo | null {
+    return this.$store.state.currentRound
+  }
+
+  async updateCurrentRound() {
+    this.$store.commit(
+      SET_CURRENT_ROUND,
+      await getRoundInfo(this.$store.state.account),
+    )
+  }
 
   async mounted() {
     this.recipients = await getRecipients()
-    this.currentRound = await getRoundInfo(this.$store.state.account)
+    this.updateCurrentRound()
     this.$store.watch(
       (state) => state.account,
       async (account: string) => {
         if (this.currentRound && account) {
-          this.currentRound = await getRoundInfo(this.$store.state.account)
+          this.updateCurrentRound()
         }
       },
     )

@@ -1,1 +1,2 @@
 export const SET_ACCOUNT = 'SET_ACCOUNT'
+export const SET_CURRENT_ROUND = 'SET_CURRENT_ROUND'
