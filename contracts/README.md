@@ -20,8 +20,16 @@ yarn e2e
 
 ### Deploy factory contract
 
+Deploy to local network:
+
 ```
 yarn deploy:local
+```
+
+Deploy to Rinkeby:
+
+```
+ETHEREUM_JSONRPC_HTTP_URL=https://mainnet.infura.io/v3/<project-id> yarn deploy:rinkeby
 ```
 
 ### Deploy test round

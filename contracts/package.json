@@ -6,7 +6,7 @@
     "build": "buidler compile",
     "node": "buidler node --port 18545",
     "deploy:local": "yarn clean && yarn build && buidler run --network localhost scripts/deploy.ts",
-    "deploy:goerli": "yarn clean && yarn build && buidler run scripts/goerli.ts",
+    "deploy:rinkeby": "yarn clean && yarn build && buidler run --network rinkeby scripts/deploy.ts",
     "deployTestRound:local": "buidler run --network localhost scripts/deployTestRound.ts",
     "contribute:local": "buidler run --network localhost scripts/contribute.ts",
     "vote:local": "buidler run --network localhost scripts/vote.ts",
