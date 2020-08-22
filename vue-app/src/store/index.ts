@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
+import { Web3Provider } from '@ethersproject/providers'
 
 import { CartItem } from '@/api/contributions'
 import { RoundInfo } from '@/api/round'
 import {
+  SET_WALLET_PROVIDER,
   SET_ACCOUNT,
   SET_CURRENT_ROUND,
   ADD_CART_ITEM,
@@ -14,6 +16,7 @@ import {
 Vue.use(Vuex)
 
 interface RootState {
+  walletProvider: Web3Provider | null;
   account: string;
   currentRound: RoundInfo | null;
   cart: CartItem[];
@@ -21,11 +24,15 @@ interface RootState {
 
 const store: StoreOptions<RootState> = {
   state: {
+    walletProvider: null,
     account: '',
     currentRound: null,
     cart: new Array<CartItem>(),
   },
   mutations: {
+    [SET_WALLET_PROVIDER](state, provider: Web3Provider) {
+      state.walletProvider = provider
+    },
     [SET_ACCOUNT](state, account: string) {
       state.account = account
     },
