@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
+import { FixedNumber } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 
 import { CartItem } from '@/api/contributions'
@@ -8,6 +9,7 @@ import {
   SET_WALLET_PROVIDER,
   SET_ACCOUNT,
   SET_CURRENT_ROUND,
+  SET_CONTRIBUTION,
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
@@ -20,6 +22,7 @@ interface RootState {
   account: string;
   currentRound: RoundInfo | null;
   cart: CartItem[];
+  contribution: FixedNumber;
 }
 
 const store: StoreOptions<RootState> = {
@@ -28,6 +31,7 @@ const store: StoreOptions<RootState> = {
     account: '',
     currentRound: null,
     cart: new Array<CartItem>(),
+    contribution: FixedNumber.from(0),
   },
   mutations: {
     [SET_WALLET_PROVIDER](state, provider: Web3Provider) {
@@ -38,6 +42,9 @@ const store: StoreOptions<RootState> = {
     },
     [SET_CURRENT_ROUND](state, round: RoundInfo) {
       state.currentRound = round
+    },
+    [SET_CONTRIBUTION](state, contribution: FixedNumber) {
+      state.contribution = contribution
     },
     [ADD_CART_ITEM](state, addedItem: CartItem) {
       const exists = state.cart.find((item) => {

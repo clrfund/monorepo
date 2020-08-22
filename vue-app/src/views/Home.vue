@@ -20,19 +20,19 @@
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Total Funds:</div>
-        <div class="round-info-value">{{ currentRound.totalFunds | formatAmount }} {{ currentRound.nativeToken }}</div>
+        <div class="round-info-value">{{ currentRound.totalFunds | formatAmount }} {{ currentRound.nativeTokenSymbol }}</div>
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Matching Pool:</div>
-        <div class="round-info-value">{{ currentRound.matchingPool | formatAmount }} {{ currentRound.nativeToken }}</div>
+        <div class="round-info-value">{{ currentRound.matchingPool | formatAmount }} {{ currentRound.nativeTokenSymbol }}</div>
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Contributions:</div>
-        <div class="round-info-value">{{ currentRound.contributions | formatAmount }} {{ currentRound.nativeToken }}</div>
+        <div class="round-info-value">{{ currentRound.contributions | formatAmount }} {{ currentRound.nativeTokenSymbol }}</div>
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Your Contribution:</div>
-        <div class="round-info-value">{{ currentRound.contribution | formatAmount }} {{ currentRound.nativeToken }}</div>
+        <div class="round-info-value">{{ contribution | formatAmount }} {{ currentRound.nativeTokenSymbol }}</div>
       </div>
     </div>
     <div class="project-list">
@@ -52,11 +52,12 @@ import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
+import { getContributionAmount } from '@/api/contributions'
 import { RoundInfo, getRoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 
 import ProjectItem from '@/components/ProjectItem.vue'
-import { SET_CURRENT_ROUND } from '@/store/mutation-types'
+import { SET_CURRENT_ROUND, SET_CONTRIBUTION } from '@/store/mutation-types'
 
 @Component({
   name: 'Home',
@@ -80,11 +81,18 @@ export default class Home extends Vue {
     return this.$store.state.currentRound
   }
 
-  async updateCurrentRound() {
-    this.$store.commit(
-      SET_CURRENT_ROUND,
-      await getRoundInfo(this.$store.state.account),
-    )
+  private async updateCurrentRound() {
+    const currentRound = await getRoundInfo()
+    this.$store.commit(SET_CURRENT_ROUND, currentRound)
+    const walletAddress = this.$store.state.account
+    if (currentRound && walletAddress) {
+      const contribution = await getContributionAmount(
+        walletAddress,
+        currentRound.fundingRoundAddress,
+        currentRound.nativeTokenDecimals,
+      )
+      this.$store.commit(SET_CONTRIBUTION, contribution)
+    }
   }
 
   async mounted() {
@@ -98,6 +106,10 @@ export default class Home extends Vue {
         }
       },
     )
+  }
+
+  get contribution(): FixedNumber {
+    return this.$store.state.contribution
   }
 }
 </script>

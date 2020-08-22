@@ -19,13 +19,13 @@
         </div>
       </form>
     </div>
-    <div class="fund-btn-wrapper">
+    <div class="contribute-btn-wrapper">
       <button
-        v-if="cart.length > 0"
-        class="btn fund-btn"
-        @click="fund()"
+        v-if="canContribute()"
+        class="btn contribute-btn"
+        @click="contribute()"
       >
-        Fund {{ cart.length }} projects
+        Contribute {{ total }} {{ nativeToken }} to {{ cart.length }} projects
       </button>
     </div>
   </div>
@@ -34,6 +34,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { DateTime } from 'luxon'
 
 import { CartItem } from '@/api/contributions'
 import {
@@ -68,7 +69,7 @@ export default class Cart extends Vue {
 
   get nativeToken(): string {
     const currentRound = this.$store.state.currentRound
-    return currentRound ? currentRound.nativeToken : ''
+    return currentRound ? currentRound.nativeTokenSymbol : ''
   }
 
   get cart(): CartItem[] {
@@ -86,11 +87,27 @@ export default class Cart extends Vue {
     this.$store.commit(REMOVE_CART_ITEM, item)
   }
 
-  fund() {
-    const total = this.cart.reduce((acc: number, val: CartItem) => {
-      return acc + val.amount
+  canContribute(): boolean {
+    const currentRound = this.$store.state.currentRound
+    if (!currentRound) {
+      return false
+    }
+    return (
+      DateTime.local() < currentRound.contributionDeadline &&
+      this.$store.state.account &&
+      this.$store.state.contribution.isZero() &&
+      this.cart.length > 0
+    )
+  }
+
+  get total(): number {
+    return this.cart.reduce((acc: number, item: CartItem) => {
+      return acc + item.amount
     }, 0)
-    console.info(total)
+  }
+
+  contribute() {
+    console.info(this.total)
   }
 }
 </script>
@@ -172,14 +189,14 @@ $project-image-size: 50px;
   }
 }
 
-.fund-btn-wrapper {
+.contribute-btn-wrapper {
   align-self: flex-end;
   box-sizing: border-box;
   margin-top: auto;
   padding: $content-space;
   width: 100%;
 
-  .fund-btn {
+  .contribute-btn {
     width: 100%;
   }
 }
