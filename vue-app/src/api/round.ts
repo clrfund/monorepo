@@ -6,6 +6,8 @@ import { provider, factory } from './core'
 
 export interface RoundInfo {
   fundingRoundAddress: string;
+  maciAddress: string;
+  nativeTokenAddress: string;
   nativeTokenSymbol: string;
   nativeTokenDecimals: number;
   status: string;
@@ -34,8 +36,10 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     FundingRound,
     provider,
   )
+  const maciAddress = await fundingRound.maci()
+  const nativeTokenAddress = await fundingRound.nativeToken()
   const nativeToken = new ethers.Contract(
-    await fundingRound.nativeToken(),
+    nativeTokenAddress,
     ERC20,
     provider,
   )
@@ -83,6 +87,8 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
 
   return {
     fundingRoundAddress,
+    maciAddress,
+    nativeTokenAddress,
     nativeTokenSymbol,
     nativeTokenDecimals,
     status,
