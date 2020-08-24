@@ -28,14 +28,19 @@ export default class Profile extends Vue {
 
   mounted() {
     this.provider = (window as any).ethereum // eslint-disable-line @typescript-eslint/no-explicit-any
-    this.provider.on('chainChanged', () => {
-      window.location.reload()
-    })
-    this.provider.on('accountsChanged', (accounts: string[]) => {
-      if (accounts.length === 0) {
-        // Reload when disconnected
+    let chainId: string
+    let accounts: string[]
+    this.provider.on('chainChanged', (_chainId: string) => {
+      if (chainId && _chainId !== chainId) {
         window.location.reload()
       }
+      chainId = _chainId
+    })
+    this.provider.on('accountsChanged', (_accounts: string[]) => {
+      if (accounts && _accounts !== accounts) {
+        window.location.reload()
+      }
+      accounts = _accounts
     })
   }
 
