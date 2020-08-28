@@ -35,65 +35,17 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
-import { Contract, FixedNumber } from 'ethers'
-import { Web3Provider } from '@ethersproject/providers'
-import { parseFixed } from '@ethersproject/bignumber'
-import { Keypair } from 'maci-domainobjs'
+
+import ContributionModal from '@/components/ContributionModal.vue'
 
 import { CartItem } from '@/api/contributions'
 import {
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
-  SET_CONTRIBUTION,
 } from '@/store/mutation-types'
-import { getEventArg } from '@/utils/contracts'
-
-import { FundingRound, ERC20, MACI } from '@/api/abi'
 
 const CART_STORAGE_KEY = 'clrfund-cart'
-
-interface ContributorData {
-  privateKey: string;
-  stateIndex: number;
-  contribution: FixedNumber;
-  voiceCredits: number;
-}
-
-async function contribute(
-  provider: Web3Provider,
-  tokenAddress: string,
-  tokenDecimals: number,
-  fundingRoundAddress: string,
-  maciAddress: string,
-  amount: number,
-): Promise<ContributorData> {
-  const signer = provider.getSigner()
-  const token = new Contract(tokenAddress, ERC20, signer)
-  const amountRaw = parseFixed(amount.toString(), tokenDecimals)
-  // Approve transfer
-  const allowance = await token.allowance(signer.getAddress(), fundingRoundAddress)
-  if (allowance < amountRaw) {
-    await token.approve(fundingRoundAddress, amountRaw)
-  }
-  // Contribute
-  const contributorKeypair = new Keypair()
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
-  const contributionTx = await fundingRound.contribute(
-    contributorKeypair.pubKey.asContractParam(),
-    amountRaw,
-  )
-  // Get state index and amount of voice credits
-  const maci = new Contract(maciAddress, MACI, signer)
-  const stateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex')
-  const voiceCredits = await getEventArg(contributionTx, maci, 'SignUp', '_voiceCreditBalance')
-  return {
-    privateKey: contributorKeypair.privKey.serialize(),
-    stateIndex,
-    contribution: FixedNumber.fromValue(amountRaw, tokenDecimals),
-    voiceCredits,
-  }
-}
 
 @Component({
   watch: {
@@ -157,24 +109,15 @@ export default class Cart extends Vue {
   }
 
   async contribute() {
-    const walletProvider = this.$store.state.walletProvider
-    const currentRound = this.$store.state.currentRound
-    if (!walletProvider || !currentRound) {
-      return
-    }
-    const contributorData = await contribute(
-      walletProvider,
-      currentRound.nativeTokenAddress,
-      currentRound.nativeTokenDecimals,
-      currentRound.fundingRoundAddress,
-      currentRound.maciAddress,
-      this.total,
+    this.$modal.show(
+      ContributionModal,
+      { },
+      {
+        clickToClose: false,
+        height: 'auto',
+        width: 450,
+      },
     )
-    this.$store.commit(SET_CONTRIBUTION, contributorData.contribution)
-    this.cart.slice().forEach((item) => {
-      this.$store.commit(REMOVE_CART_ITEM, item)
-    })
-    console.info(contributorData) // eslint-disable-line no-console
   }
 }
 </script>
