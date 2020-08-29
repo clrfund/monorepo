@@ -8699,10 +8699,10 @@ maci-circuits@^0.1.11:
     snarkjs "https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91"
     websnark "0.0.5"
 
-maci-cli@0.1.11:
-  version "0.1.11"
-  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.1.11.tgz#ec72fea890aa95612d4542f3be1fd86140e41ef2"
-  integrity sha512-q+XXloXIBuzdDpDvBjrRNr3nBjIK/5h2SQGNQM6LVe0JNf1rPYPvDZF8kiwV2JpDZbSXEI/7hqnIJS+282+3oA==
+maci-cli@0.1.12:
+  version "0.1.12"
+  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.1.12.tgz#aadd351d9a8dec0cc873d8b3061e70e7674b0718"
+  integrity sha512-Jj19gZ1lmmERJDKqn1hegdigrM7/M6V2a214565NPszZZqMuDcZa2OXbqtrE1HB3i9CE0T1QRAeMSYYtdvSF4A==
   dependencies:
     argparse "^1.0.10"
     ethers "^4.0.45"

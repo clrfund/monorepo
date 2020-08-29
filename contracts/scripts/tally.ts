@@ -24,7 +24,7 @@ async function main() {
 
   // Process messages
   const processCmdOutput = await execAsync(`
-    node ../node_modules/maci-cli/build/index.js process \
+    yarn maci-cli process \
       --eth-provider ${providerUrl} \
       --contract ${maciAddress} \
       --privkey ${state.coordinator.privKey} \
@@ -44,7 +44,7 @@ async function main() {
 
   // Tally votes
   const tallyCmdOutput = await execAsync(`
-    node ../node_modules/maci-cli/build/index.js tally \
+    yarn maci-cli tally \
       --eth-provider ${providerUrl} \
       --contract ${maciAddress} \
       --privkey ${state.coordinator.privKey} \
@@ -60,7 +60,7 @@ async function main() {
 
   // Verify results
   const verifyCmdOutput = await execAsync(`
-    node ../node_modules/maci-cli/build/index.js verify --tally-file tally.json
+    yarn maci-cli verify --tally-file tally.json
   `)
   console.log(verifyCmdOutput)
 }

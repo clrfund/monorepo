@@ -38,7 +38,7 @@
     "ethers": "^5.0.1",
     "maci-crypto": "0.1.8",
     "maci-domainobjs": "0.1.8",
-    "maci-cli": "0.1.11",
+    "maci-cli": "0.1.12",
     "solhint": "^3.1.0",
     "ts-generator": "^0.0.8",
     "ts-node": "^8.8.1",

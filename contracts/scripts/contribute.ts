@@ -14,7 +14,7 @@ async function main() {
   const maciAddress = await fundingRound.maci()
   const maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress)
 
-  const contributionAmount = UNIT.mul(16)
+  const contributionAmount = UNIT.mul(16).div(10)
   state.contributors = {}
 
   for (const contributor of [contributor1, contributor2]) {
