@@ -3,7 +3,7 @@ import { ethers } from '@nomiclabs/buidler';
 import { BigNumber } from 'ethers'
 import { PrivKey, PubKey, Keypair } from 'maci-domainobjs'
 
-import { createMessage } from '../tests/utils'
+import { createMessage } from '../utils/maci'
 
 async function main() {
   const [,,,,, contributor1, contributor2] = await ethers.getSigners()

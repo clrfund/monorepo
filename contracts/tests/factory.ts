@@ -5,8 +5,10 @@ import { Contract } from 'ethers';
 import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from 'maci-domainobjs';
 
-import { deployMaciFactory } from '../scripts/helpers';
-import { ZERO_ADDRESS, UNIT, getGasUsage, getEventArg, MaciParameters } from './utils';
+import { ZERO_ADDRESS, UNIT } from '../utils/constants'
+import { getGasUsage, getEventArg } from '../utils/contracts'
+import { deployMaciFactory } from '../utils/deployment'
+import { MaciParameters } from '../utils/maci'
 
 import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
 import TokenArtifact from '../build/contracts/AnyOldERC20Token.json';

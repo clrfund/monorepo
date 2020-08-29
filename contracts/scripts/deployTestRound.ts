@@ -2,7 +2,8 @@ import fs from 'fs'
 import { ethers } from '@nomiclabs/buidler';
 import { Keypair } from 'maci-domainobjs'
 
-import { UNIT, MaciParameters } from '../tests/utils'
+import { UNIT } from '../utils/constants'
+import { MaciParameters } from '../utils/maci'
 
 async function main() {
   // We're hardcoding factory address due to a buidler limitation:

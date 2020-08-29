@@ -7,11 +7,13 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { genRandomSalt } from 'maci-crypto';
 import { Keypair } from 'maci-domainobjs';
 
-import { deployMaciFactory } from '../scripts/helpers';
-import { ZERO_ADDRESS, UNIT, VOICE_CREDIT_FACTOR, bnSqrt, getEventArg, getGasUsage, createMessage } from './utils'
 import IVerifiedUserRegistryArtifact from '../build/contracts/IVerifiedUserRegistry.json';
 import IRecipientRegistryArtifact from '../build/contracts/IRecipientRegistry.json';
 import MACIArtifact from '../build/contracts/MACI.json';
+import { ZERO_ADDRESS, UNIT, VOICE_CREDIT_FACTOR } from '../utils/constants'
+import { getEventArg, getGasUsage } from '../utils/contracts'
+import { deployMaciFactory } from '../utils/deployment'
+import { bnSqrt, createMessage } from '../utils/maci'
 
 use(solidity);
 

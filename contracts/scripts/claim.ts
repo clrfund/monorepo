@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { ethers } from '@nomiclabs/buidler'
 
-import { getEventArg } from '../tests/utils'
+import { getEventArg } from '../utils/contracts'
 import { getRecipientClaimData } from '../utils/maci'
 
 async function main() {
