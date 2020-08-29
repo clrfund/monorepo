@@ -25,6 +25,7 @@
   "devDependencies": {
     "@nomiclabs/buidler": "^1.3.8",
     "@nomiclabs/buidler-ethers": "^2.0.0",
+    "@nomiclabs/buidler-ganache": "^1.3.3",
     "@nomiclabs/buidler-waffle": "^2.0.0",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
