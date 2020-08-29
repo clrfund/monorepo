@@ -13,7 +13,8 @@
     "tally:local": "buidler run --network localhost scripts/tally.ts",
     "claim:local": "buidler run --network localhost scripts/claim.ts",
     "test": "buidler typechain && buidler test",
-    "lint:js": "eslint 'tests/*.ts' 'scripts/*.ts'",
+    "e2e": "buidler test --network ganache e2e/index.ts",
+    "lint:js": "eslint '{tests,e2e,scripts}/**/*.ts'",
     "lint:solidity": "solhint 'contracts/**/*.sol'",
     "lint": "yarn lint:solidity && yarn lint:js",
     "clean": "rm -rf cache && rm -rf build"

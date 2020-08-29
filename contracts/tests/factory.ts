@@ -1,6 +1,6 @@
 import { ethers, waffle } from '@nomiclabs/buidler';
 import { use, expect } from 'chai';
-import { deployContract, solidity } from 'ethereum-waffle';
+import { solidity } from 'ethereum-waffle'
 import { Contract } from 'ethers';
 import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from 'maci-domainobjs';
@@ -9,9 +9,6 @@ import { ZERO_ADDRESS, UNIT } from '../utils/constants'
 import { getGasUsage, getEventArg } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
 import { MaciParameters } from '../utils/maci'
-
-import FactoryArtifact from '../build/contracts/FundingRoundFactory.json';
-import TokenArtifact from '../build/contracts/AnyOldERC20Token.json';
 
 use(solidity);
 
@@ -29,9 +26,8 @@ describe('Funding Round Factory', () => {
   beforeEach(async () => {
     maciFactory = await deployMaciFactory(deployer);
 
-    factory = await deployContract(deployer, FactoryArtifact, [
-      maciFactory.address,
-    ], { gasLimit: 5000000 });
+    const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
+    factory = await FundingRoundFactory.deploy(maciFactory.address)
 
     expect(factory.address).to.properAddress;
     expect(await getGasUsage(factory.deployTransaction)).lessThan(4700000);
@@ -39,7 +35,8 @@ describe('Funding Round Factory', () => {
 
     // Deploy token contract and transfer tokens to contributor
     const tokenInitialSupply = UNIT.mul(1000)
-    token = await deployContract(deployer, TokenArtifact, [tokenInitialSupply]);
+    const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer)
+    token = await Token.deploy(tokenInitialSupply)
     expect(token.address).to.properAddress;
     await token.transfer(contributor.address, tokenInitialSupply);
   });

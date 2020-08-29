@@ -36,6 +36,9 @@ export class MaciParameters {
 export function bnSqrt(a: BigNumber): BigNumber {
   // Take square root from a big number
   // https://stackoverflow.com/a/52468569/1868395
+  if (a.isZero()) {
+    return a
+  }
   let x
   let x1 = a.div(2)
   do {

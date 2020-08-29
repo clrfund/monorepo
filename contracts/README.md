@@ -1,5 +1,21 @@
 # clr.fund contracts
 
+## End-to-end tests
+
+Install [zkutil](https://github.com/poma/zkutil) (see instructions in [MACI readme](https://github.com/appliedzkp/maci#get-started)).
+
+Set the path to zkutil binary if needed:
+
+```
+export NODE_CONFIG='{"zkutil_bin": "/usr/bin/zkutil"}'
+```
+
+Run the tests:
+
+```
+yarn e2e
+```
+
 ## Scripts
 
 ### Deploy factory contract
