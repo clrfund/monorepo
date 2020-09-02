@@ -52,11 +52,12 @@ import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 
 import { getContributionAmount } from '@/api/contributions'
-import { RoundInfo, getRoundInfo } from '@/api/round'
+import { RoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 
 import ProjectItem from '@/components/ProjectItem.vue'
-import { SET_CURRENT_ROUND, SET_CONTRIBUTION } from '@/store/mutation-types'
+import { LOAD_ROUND_INFO } from '@/store/action-types'
+import { SET_CONTRIBUTION } from '@/store/mutation-types'
 
 @Component({
   name: 'Home',
@@ -73,14 +74,13 @@ export default class Home extends Vue {
   }
 
   private async updateCurrentRound() {
-    const currentRound = await getRoundInfo()
-    this.$store.commit(SET_CURRENT_ROUND, currentRound)
+    await this.$store.dispatch(LOAD_ROUND_INFO)
     const walletAddress = this.$store.state.account
-    if (currentRound && walletAddress) {
+    if (this.currentRound && walletAddress) {
       const contribution = await getContributionAmount(
         walletAddress,
-        currentRound.fundingRoundAddress,
-        currentRound.nativeTokenDecimals,
+        this.currentRound.fundingRoundAddress,
+        this.currentRound.nativeTokenDecimals,
       )
       this.$store.commit(SET_CONTRIBUTION, contribution)
     }

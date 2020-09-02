@@ -1,0 +1,1 @@
+export const LOAD_ROUND_INFO = 'LOAD_ROUND_INFO'

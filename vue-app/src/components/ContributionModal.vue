@@ -32,6 +32,7 @@ import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
 import { CartItem } from '@/api/contributions'
 import { RoundInfo } from '@/api/round'
+import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { REMOVE_CART_ITEM, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
@@ -115,6 +116,7 @@ export default class ContributionModal extends Vue {
     this.$store.state.cart.slice().forEach((item) => {
       this.$store.commit(REMOVE_CART_ITEM, item)
     })
+    this.$store.dispatch(LOAD_ROUND_INFO)
   }
 
   vote() {
