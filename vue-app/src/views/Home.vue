@@ -50,7 +50,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
-import { DateTime } from 'luxon'
 
 import { getContributionAmount } from '@/api/contributions'
 import { RoundInfo, getRoundInfo } from '@/api/round'
@@ -63,14 +62,6 @@ import { SET_CURRENT_ROUND, SET_CONTRIBUTION } from '@/store/mutation-types'
   name: 'Home',
   components: {
     ProjectItem,
-  },
-  filters: {
-    formatDate: (value: DateTime): string | null => {
-      return value ? value.toLocaleString(DateTime.DATETIME_SHORT) : null
-    },
-    formatAmount: (value: FixedNumber): string | null => {
-      return value ? (value._value === '0.0' ? '0' : value.toString()) : null
-    },
   },
 })
 export default class Home extends Vue {

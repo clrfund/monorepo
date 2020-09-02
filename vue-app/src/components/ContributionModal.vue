@@ -16,7 +16,7 @@
     </div>
     <div v-if="contributionStep === 4">
       <h3>Step 4 of 4: Vote</h3>
-      <div>Please send this transaction to {{ currentRound.fundingRoundAddress }} after {{ currentRound.contributionDeadline.toFormat('yyyy LLL dd HH:MM') }}:</div>
+      <div>Please send this transaction to {{ currentRound.fundingRoundAddress }} after {{ currentRound.contributionDeadline | formatDate }}:</div>
       <div class="hex">{{ voteTxData }}</div>
       <button class="btn" @click="$emit('close')">Done</button>
     </div>
