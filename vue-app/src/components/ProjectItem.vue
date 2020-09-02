@@ -6,6 +6,7 @@
       <div class="project-description">{{ project.description }}</div>
       <button
         class="btn contribute-btn"
+        :disabled="!canContribute()"
         @click="contribute(project)"
       >
         Contribute
@@ -21,10 +22,17 @@ import { Component, Prop } from 'vue-property-decorator'
 import { Project } from '@/api/projects'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 
+// A size of message batch
+const CART_MAX_SIZE = 10
+
 @Component
 export default class ProjectItem extends Vue {
   @Prop()
   project!: Project;
+
+  canContribute() {
+    return this.$store.state.cart.length < CART_MAX_SIZE
+  }
 
   contribute(project: Project) {
     this.$store.commit(ADD_CART_ITEM, { ...project, amount: 0 })

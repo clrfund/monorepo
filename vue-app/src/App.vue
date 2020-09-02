@@ -59,6 +59,12 @@ html {
     background-color: $highlight-color;
     color: $bg-secondary-color;
   }
+
+  &[disabled],
+  &[disabled]:hover {
+    background-color: $button-disabled-color !important;
+    color: $text-color !important;
+  }
 }
 
 #app {
