@@ -1,0 +1,270 @@
+<template>
+  <div class="cart">
+    <div v-for="item in cart" class="cart-item" :key="item.address">
+      <div class="project">
+        <img class="project-image" :src="item.imageUrl" :alt="item.name">
+        <div class="project-name">{{ item.name }}</div>
+      </div>
+      <form class="contribution-form">
+        <input
+          :value="item.amount"
+          @input="updateAmount(item, $event.target.value)"
+          class="contribution-amount"
+          name="amount"
+          placeholder="Amount"
+        >
+        <div class="contribution-currency">{{ nativeToken }}</div>
+        <div class="remove-cart-item" @click="removeItem(item)">
+          <img src="@/assets/remove.svg" />
+        </div>
+      </form>
+    </div>
+    <div class="contribute-btn-wrapper">
+      <button
+        v-if="canContribute()"
+        class="btn contribute-btn"
+        @click="contribute()"
+      >
+        Contribute {{ total }} {{ nativeToken }} to {{ cart.length }} projects
+      </button>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { DateTime } from 'luxon'
+import { Contract, FixedNumber } from 'ethers'
+import { Web3Provider } from '@ethersproject/providers'
+import { parseFixed } from '@ethersproject/bignumber'
+import { Keypair } from 'maci-domainobjs'
+
+import { CartItem } from '@/api/contributions'
+import {
+  ADD_CART_ITEM,
+  UPDATE_CART_ITEM,
+  REMOVE_CART_ITEM,
+  SET_CONTRIBUTION,
+} from '@/store/mutation-types'
+import { getEventArg } from '@/utils/contracts'
+
+import { FundingRound, ERC20, MACI } from '@/api/abi'
+
+const CART_STORAGE_KEY = 'clrfund-cart'
+
+interface ContributorData {
+  privateKey: string;
+  stateIndex: number;
+  contribution: FixedNumber;
+  voiceCredits: number;
+}
+
+async function contribute(
+  provider: Web3Provider,
+  tokenAddress: string,
+  tokenDecimals: number,
+  fundingRoundAddress: string,
+  maciAddress: string,
+  amount: number,
+): Promise<ContributorData> {
+  const signer = provider.getSigner()
+  const token = new Contract(tokenAddress, ERC20, signer)
+  const amountRaw = parseFixed(amount.toString(), tokenDecimals)
+  // Approve transfer
+  const allowance = await token.allowance(signer.getAddress(), fundingRoundAddress)
+  if (allowance < amountRaw) {
+    await token.approve(fundingRoundAddress, amountRaw)
+  }
+  // Contribute
+  const contributorKeypair = new Keypair()
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
+  const contributionTx = await fundingRound.contribute(
+    contributorKeypair.pubKey.asContractParam(),
+    amountRaw,
+  )
+  // Get state index and amount of voice credits
+  const maci = new Contract(maciAddress, MACI, signer)
+  const stateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex')
+  const voiceCredits = await getEventArg(contributionTx, maci, 'SignUp', '_voiceCreditBalance')
+  return {
+    privateKey: contributorKeypair.privKey.serialize(),
+    stateIndex,
+    contribution: FixedNumber.fromValue(amountRaw, tokenDecimals),
+    voiceCredits,
+  }
+}
+
+@Component({
+  watch: {
+    cart(items: CartItem[]) {
+      // Save cart to local storage on changes
+      const storage = window.localStorage
+      storage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
+    },
+  },
+})
+export default class Cart extends Vue {
+
+  mounted() {
+    // Restore cart from local storage
+    const storage = window.localStorage
+    const serializedCart = storage.getItem(CART_STORAGE_KEY)
+    if (serializedCart) {
+      for (const item of JSON.parse(serializedCart)) {
+        this.$store.commit(ADD_CART_ITEM, item)
+      }
+    }
+  }
+
+  get nativeToken(): string {
+    const currentRound = this.$store.state.currentRound
+    return currentRound ? currentRound.nativeTokenSymbol : ''
+  }
+
+  get cart(): CartItem[] {
+    return this.$store.state.cart
+  }
+
+  updateAmount(item: CartItem, value: string) {
+    if (value) {
+      const amount = parseFloat(value)
+      this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
+    }
+  }
+
+  removeItem(item: CartItem) {
+    this.$store.commit(REMOVE_CART_ITEM, item)
+  }
+
+  canContribute(): boolean {
+    const currentRound = this.$store.state.currentRound
+    if (!currentRound) {
+      return false
+    }
+    return (
+      DateTime.local() < currentRound.contributionDeadline &&
+      this.$store.state.account &&
+      this.$store.state.contribution.isZero() &&
+      this.cart.length > 0
+    )
+  }
+
+  get total(): number {
+    return this.cart.reduce((acc: number, item: CartItem) => {
+      return acc + item.amount
+    }, 0)
+  }
+
+  async contribute() {
+    const walletProvider = this.$store.state.walletProvider
+    const currentRound = this.$store.state.currentRound
+    if (!walletProvider || !currentRound) {
+      return
+    }
+    const contributorData = await contribute(
+      walletProvider,
+      currentRound.nativeTokenAddress,
+      currentRound.nativeTokenDecimals,
+      currentRound.fundingRoundAddress,
+      currentRound.maciAddress,
+      this.total,
+    )
+    this.$store.commit(SET_CONTRIBUTION, contributorData.contribution)
+    this.cart.slice().forEach((item) => {
+      this.$store.commit(REMOVE_CART_ITEM, item)
+    })
+    console.info(contributorData) // eslint-disable-line no-console
+  }
+}
+</script>
+
+
+<style scoped lang="scss">
+@import '../styles/vars';
+
+.cart {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.cart-item {
+  border-bottom: $border;
+  padding: $content-space;
+}
+
+$project-image-size: 50px;
+
+.project {
+  display: flex;
+  flex-direction: row;
+
+  .project-image {
+    border-radius: 10px;
+    box-sizing: border-box;
+    display: block;
+    height: $project-image-size;
+    margin-right: 15px;
+    min-width: $project-image-size;
+    object-fit: cover;
+    width: $project-image-size;
+  }
+
+  .project-name {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    flex-grow: 1;
+    height: $project-image-size;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.contribution-form {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+  margin-top: 15px;
+  padding-left: $project-image-size + 15px;
+
+  .contribution-amount {
+    background-color: $bg-light-color;
+    border: 2px solid $button-color;
+    border-radius: 2px;
+    box-sizing: border-box;
+    color: white;
+    font-size: 12px;
+    padding: 7px;
+    width: 60%;
+  }
+
+  .contribution-currency {
+    flex-grow: 1;
+    margin-left: 7px;
+  }
+
+  .remove-cart-item {
+    cursor: pointer;
+    width: 20px;
+
+    &:hover {
+      filter: saturate(0%);
+    }
+  }
+}
+
+.contribute-btn-wrapper {
+  align-self: flex-end;
+  box-sizing: border-box;
+  margin-top: auto;
+  padding: $content-space;
+  width: 100%;
+
+  .contribute-btn {
+    width: 100%;
+  }
+}
+</style>

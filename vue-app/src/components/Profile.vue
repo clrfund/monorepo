@@ -18,39 +18,47 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Web3Provider } from '@ethersproject/providers'
 
-import { SET_ACCOUNT } from '@/store/mutation-types'
+import { SET_WALLET_PROVIDER, SET_ACCOUNT } from '@/store/mutation-types'
 
 @Component
 export default class Profile extends Vue {
 
-  provider: any = null // eslint-disable-line @typescript-eslint/no-explicit-any
-
   mounted() {
-    this.provider = (window as any).ethereum // eslint-disable-line @typescript-eslint/no-explicit-any
+    const provider = (window as any).ethereum // eslint-disable-line @typescript-eslint/no-explicit-any
+    if (!provider) {
+      return
+    }
     let chainId: string
     let accounts: string[]
-    this.provider.on('chainChanged', (_chainId: string) => {
+    provider.on('chainChanged', (_chainId: string) => {
       if (chainId && _chainId !== chainId) {
         window.location.reload()
       }
       chainId = _chainId
     })
-    this.provider.on('accountsChanged', (_accounts: string[]) => {
+    provider.on('accountsChanged', (_accounts: string[]) => {
       if (accounts && _accounts !== accounts) {
         window.location.reload()
       }
       accounts = _accounts
     })
+    this.$store.commit(SET_WALLET_PROVIDER, new Web3Provider(provider))
+  }
+
+  get provider(): Web3Provider | null {
+    return this.$store.state.walletProvider
   }
 
   async connect(): Promise<void> {
-    if (!this.provider) {
+    const provider = this.provider ? this.provider.provider : null
+    if (!provider || !provider.request) {
       return
     }
     let accounts
     try {
-      accounts = await this.provider.request({ method: 'eth_requestAccounts' })
+      accounts = await provider.request({ method: 'eth_requestAccounts' })
     } catch (error) {
       return
     }
