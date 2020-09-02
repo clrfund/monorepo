@@ -7,8 +7,9 @@ import { Keypair } from 'maci-domainobjs';
 
 import SignUpGatekeeper from '../build/contracts/SignUpGatekeeper.json';
 import InitialVoiceCreditProxy from '../build/contracts/InitialVoiceCreditProxy.json';
-import { deployMaciFactory } from '../scripts/helpers';
-import { getGasUsage, MaciParameters } from './utils';
+import { getGasUsage } from '../utils/contracts'
+import { deployMaciFactory } from '../utils/deployment'
+import { MaciParameters } from '../utils/maci'
 
 use(solidity);
 

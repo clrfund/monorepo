@@ -1,6 +1,6 @@
 import { ethers } from '@nomiclabs/buidler'
 
-import { deployMaciFactory } from './helpers';
+import { deployMaciFactory } from '../utils/deployment'
 
 async function main() {
   const [deployer] = await ethers.getSigners();

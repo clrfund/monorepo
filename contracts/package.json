@@ -13,7 +13,8 @@
     "tally:local": "buidler run --network localhost scripts/tally.ts",
     "claim:local": "buidler run --network localhost scripts/claim.ts",
     "test": "buidler typechain && buidler test",
-    "lint:js": "eslint 'tests/*.ts' 'scripts/*.ts'",
+    "e2e": "buidler test --network ganache e2e/index.ts",
+    "lint:js": "eslint '{tests,e2e,scripts}/**/*.ts'",
     "lint:solidity": "solhint 'contracts/**/*.sol'",
     "lint": "yarn lint:solidity && yarn lint:js",
     "clean": "rm -rf cache && rm -rf build"
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@nomiclabs/buidler": "^1.3.8",
     "@nomiclabs/buidler-ethers": "^2.0.0",
+    "@nomiclabs/buidler-ganache": "^1.3.3",
     "@nomiclabs/buidler-waffle": "^2.0.0",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
@@ -38,7 +40,7 @@
     "ethers": "^5.0.1",
     "maci-crypto": "0.1.8",
     "maci-domainobjs": "0.1.8",
-    "maci-cli": "0.1.11",
+    "maci-cli": "0.1.12",
     "solhint": "^3.1.0",
     "ts-generator": "^0.0.8",
     "ts-node": "^8.8.1",

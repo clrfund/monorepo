@@ -3,7 +3,8 @@ import { ethers } from '@nomiclabs/buidler'
 import { Keypair } from 'maci-domainobjs'
 
 import MACIArtifact from '../build/contracts/MACI.json'
-import { UNIT, getEventArg } from '../tests/utils'
+import { UNIT } from '../utils/constants'
+import { getEventArg } from '../utils/contracts'
 
 async function main() {
   const [,,,,, contributor1, contributor2] = await ethers.getSigners()
@@ -14,7 +15,7 @@ async function main() {
   const maciAddress = await fundingRound.maci()
   const maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress)
 
-  const contributionAmount = UNIT.mul(16)
+  const contributionAmount = UNIT.mul(16).div(10)
   state.contributors = {}
 
   for (const contributor of [contributor1, contributor2]) {
