@@ -4,6 +4,9 @@ import { FundingRound } from './abi'
 import { provider } from './core'
 import { Project } from './projects'
 
+// A size of message batch
+export const CART_MAX_SIZE = 10
+
 export interface CartItem extends Project {
   amount: number;
 }

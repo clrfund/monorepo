@@ -24,11 +24,9 @@
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 
+import { CART_MAX_SIZE } from '@/api/contributions'
 import { Project } from '@/api/projects'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
-
-// A size of message batch
-const CART_MAX_SIZE = 10
 
 @Component
 export default class ProjectListItem extends Vue {
