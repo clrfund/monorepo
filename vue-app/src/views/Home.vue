@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h1>Home</h1>
+    <h1 class="content-heading">Home</h1>
     <div v-if="currentRound" class="round-info">
       <div class="round-info-item">
         <div class="round-info-title">Current Round:</div>
@@ -107,11 +107,6 @@ export default class Home extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
-
-#content h1 {
-  border-bottom: none;
-  margin-bottom: 0;
-}
 
 .round-info {
   display: flex;

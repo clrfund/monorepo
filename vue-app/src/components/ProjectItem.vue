@@ -2,7 +2,12 @@
   <div class="project-item">
     <img class="project-image" v-bind:src="project.imageUrl" v-bind:alt="project.name">
     <div class="project-info">
-      <div class="project-name">{{ project.name }}</div>
+      <router-link
+        class="project-name"
+        :to="{ name: 'project', params: { address: project.address }}"
+      >
+        {{ project.name }}
+      </router-link>
       <div class="project-description">{{ project.description }}</div>
       <button
         class="btn contribute-btn"

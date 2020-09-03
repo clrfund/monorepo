@@ -45,6 +45,11 @@ html {
   color: $text-color;
 }
 
+a {
+  color: $text-color;
+  text-decoration: none;
+}
+
 .btn {
   background-color: $button-color;
   border: none;
@@ -130,13 +135,13 @@ html {
   flex-grow: 1;
   padding: $content-space;
 
-  h1 {
-    border-bottom: $border;
+  .content-heading {
+    display: block;
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 14px;
     font-weight: normal;
     letter-spacing: 6px;
-    margin: 0 0 $content-space;
+    margin: 0;
     padding-bottom: $content-space;
     text-transform: uppercase;
   }
