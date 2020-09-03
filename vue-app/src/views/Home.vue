@@ -36,12 +36,12 @@
       </div>
     </div>
     <div class="project-list">
-      <ProjectItem
+      <project-list-item
         v-for="project in projects"
         v-bind:project="project"
         v-bind:key="project.address"
       >
-      </ProjectItem>
+      </project-list-item>
     </div>
   </div>
 </template>
@@ -55,14 +55,14 @@ import { getContributionAmount } from '@/api/contributions'
 import { RoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 
-import ProjectItem from '@/components/ProjectItem.vue'
+import ProjectListItem from '@/components/ProjectListItem.vue'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { SET_CONTRIBUTION } from '@/store/mutation-types'
 
 @Component({
   name: 'Home',
   components: {
-    ProjectItem,
+    ProjectListItem,
   },
 })
 export default class Home extends Vue {

@@ -31,7 +31,7 @@ import { ADD_CART_ITEM } from '@/store/mutation-types'
 const CART_MAX_SIZE = 10
 
 @Component
-export default class ProjectItem extends Vue {
+export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
 
