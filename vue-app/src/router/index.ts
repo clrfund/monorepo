@@ -8,18 +8,17 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     component: Home,
   },
   {
     path: '/about',
-    name: 'About',
+    name: 'about',
     component: About,
   },
 ]
 
 const router = new VueRouter({
-  mode: 'history',
   base: window.location.pathname,
   routes,
 })
