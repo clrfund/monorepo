@@ -80,6 +80,4 @@ export default class ProjectView extends Vue {
 .project-description {
   font-size: 20px;
 }
-
-
 </style>

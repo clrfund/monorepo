@@ -73,27 +73,20 @@ export default class Home extends Vue {
     return this.$store.state.currentRound
   }
 
-  private async updateCurrentRound() {
-    await this.$store.dispatch(LOAD_ROUND_INFO)
-    const walletAddress = this.$store.state.account
-    if (this.currentRound && walletAddress) {
-      const contribution = await getContributionAmount(
-        walletAddress,
-        this.currentRound.fundingRoundAddress,
-        this.currentRound.nativeTokenDecimals,
-      )
-      this.$store.commit(SET_CONTRIBUTION, contribution)
-    }
-  }
-
   async mounted() {
     this.projects = await getProjects()
-    this.updateCurrentRound()
     this.$store.watch(
       (state) => state.account,
-      async (account: string) => {
-        if (this.currentRound && account) {
-          this.updateCurrentRound()
+      async (walletAddress: string) => {
+        // Reload round info when user changes wallet account
+        await this.$store.dispatch(LOAD_ROUND_INFO)
+        if (this.currentRound && walletAddress) {
+          const contribution = await getContributionAmount(
+            walletAddress,
+            this.currentRound.fundingRoundAddress,
+            this.currentRound.nativeTokenDecimals,
+          )
+          this.$store.commit(SET_CONTRIBUTION, contribution)
         }
       },
     )

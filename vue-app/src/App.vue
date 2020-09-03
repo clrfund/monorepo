@@ -18,15 +18,26 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
+import { LOAD_ROUND_INFO } from '@/store/action-types'
 
-export default {
+@Component({
   name: 'clr.fund',
   components: {
     Cart,
     Profile,
   },
+})
+export default class App extends Vue {
+
+  created() {
+    this.$store.dispatch(LOAD_ROUND_INFO)
+  }
+
 }
 </script>
 

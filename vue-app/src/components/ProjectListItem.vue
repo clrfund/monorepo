@@ -33,7 +33,7 @@ export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
 
-  canContribute() {
+  canContribute(): boolean {
     return this.$store.state.cart.length < CART_MAX_SIZE
   }
 

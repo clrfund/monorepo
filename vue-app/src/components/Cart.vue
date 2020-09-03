@@ -108,7 +108,7 @@ export default class Cart extends Vue {
     }, 0)
   }
 
-  async contribute() {
+  contribute() {
     this.$modal.show(
       ContributionModal,
       { },
@@ -121,7 +121,6 @@ export default class Cart extends Vue {
   }
 }
 </script>
-
 
 <style scoped lang="scss">
 @import '../styles/vars';
