@@ -6,14 +6,8 @@ import { getRecipientClaimData } from '../utils/maci'
 
 async function main() {
   const [,,, recipient1, recipient2] = await ethers.getSigners()
-  // Finalize the round
   const state = JSON.parse(fs.readFileSync('state.json').toString())
-  const factory = await ethers.getContractAt('FundingRoundFactory', state.factory)
   const tally = JSON.parse(fs.readFileSync('tally.json').toString())
-  const totalSpent = parseInt(tally.totalVoiceCredits.spent)
-  const totalSpentSalt = tally.totalVoiceCredits.salt
-  await factory.transferMatchingFunds(totalSpent, totalSpentSalt)
-  console.log('Round finalized, totals verified.')
 
   const fundingRound = await ethers.getContractAt('FundingRound', state.fundingRound)
   // Claim funds

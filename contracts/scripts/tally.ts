@@ -63,6 +63,14 @@ async function main() {
     yarn maci-cli verify --tally-file tally.json
   `)
   console.log(verifyCmdOutput)
+
+  // Finalize the round
+  const factory = await ethers.getContractAt('FundingRoundFactory', state.factory)
+  const tally = JSON.parse(fs.readFileSync('tally.json').toString())
+  const totalSpent = parseInt(tally.totalVoiceCredits.spent)
+  const totalSpentSalt = tally.totalVoiceCredits.salt
+  await factory.transferMatchingFunds(totalSpent, totalSpentSalt)
+  console.log('Round finalized, totals verified.')
 }
 
 main()
