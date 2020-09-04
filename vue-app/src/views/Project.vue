@@ -27,9 +27,11 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
+
+import { getClaimedAmount } from '@/api/claims'
 import { CART_MAX_SIZE } from '@/api/contributions'
 import { Project, getProject } from '@/api/projects'
-import { RoundStatus } from '@/api/round'
+import { RoundInfo, RoundStatus } from '@/api/round'
 import ClaimModal from '@/components/ClaimModal.vue'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 
@@ -39,15 +41,34 @@ import { ADD_CART_ITEM } from '@/store/mutation-types'
 export default class ProjectView extends Vue {
 
   project: Project | null = null
+  claimedFunds: boolean | null = null
+
+  private async checkClaim(round: RoundInfo) {
+    if (!this.project || !round) {
+      return
+    }
+    const claimedAmount = await getClaimedAmount(
+      round.fundingRoundAddress,
+      this.project.address,
+    )
+    this.claimedFunds = claimedAmount !== null
+  }
 
   async created() {
     const project = await getProject(this.$route.params.address)
     if (project !== null) {
       this.project = project
     } else {
-      // Not found
+      // Project not found
       this.$router.push({ name: 'home' })
+      return
     }
+    // Wait for round info to load and get claim status
+    this.$store.watch(
+      (state) => state.currentRound,
+      this.checkClaim,
+    )
+    this.checkClaim(this.$store.state.currentRound)
   }
 
   canContribute() {
@@ -60,10 +81,12 @@ export default class ProjectView extends Vue {
 
   canClaim(): boolean {
     const currentRound = this.$store.state.currentRound
-    if (currentRound) {
-      return currentRound.status === RoundStatus.Finalized
-    }
-    return false
+    return (
+      currentRound &&
+      currentRound.status === RoundStatus.Finalized &&
+      this.$store.state.account &&
+      this.claimedFunds === false
+    )
   }
 
   claim() {
@@ -74,6 +97,11 @@ export default class ProjectView extends Vue {
         clickToClose: false,
         height: 'auto',
         width: 450,
+      },
+      {
+        closed: () => {
+          this.checkClaim(this.$store.state.currentRound)
+        },
       },
     )
   }
