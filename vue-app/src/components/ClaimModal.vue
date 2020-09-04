@@ -23,7 +23,7 @@
     </div>
     <div v-if="step === 3">
       <h3>Step 3 of 3: Success</h3>
-      <div>Funds has been sent to {{ project.address }}</div>
+      <div>{{ amount | formatAmount }} {{ currentRound.nativeTokenSymbol }} has been sent to {{ project.address }}</div>
       <button class="btn" @click="$emit('close')">OK</button>
     </div>
   </div>
@@ -33,10 +33,12 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { Contract, Signer } from 'ethers'
+import { Contract, FixedNumber, Signer } from 'ethers'
 
 import { FundingRound } from '@/api/abi'
 import { Project } from '@/api/projects'
+import { RoundInfo } from '@/api/round'
+import { getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
 
 @Component
@@ -49,6 +51,11 @@ export default class ClaimModal extends Vue {
 
   tallyUrl = ''
   tally: any
+  amount = FixedNumber.from(0)
+
+  get currentRound(): RoundInfo {
+    return this.$store.state.currentRound
+  }
 
   private getSigner(): Signer {
     const provider = this.$store.state.walletProvider
@@ -60,14 +67,18 @@ export default class ClaimModal extends Vue {
     this.tally = await response.json()
     this.step += 1
     const signer = this.getSigner()
-    const { fundingRoundAddress } = this.$store.state.currentRound
+    const { fundingRoundAddress, nativeTokenDecimals } = this.currentRound
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
     const recipientClaimData = getRecipientClaimData(
       this.project.address,
       this.project.index,
       this.tally,
     )
-    await fundingRound.claimFunds(...recipientClaimData)
+    const claimTx = await fundingRound.claimFunds(...recipientClaimData)
+    this.amount = FixedNumber.fromValue(
+      await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_amount'),
+      nativeTokenDecimals,
+    )
     this.step += 1
   }
 }
