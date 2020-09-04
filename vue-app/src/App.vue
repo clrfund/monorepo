@@ -54,6 +54,8 @@ body {
 html {
   background-color: $bg-primary-color;
   color: $text-color;
+  font-family: Inter, sans-serif;
+  font-size: 14px;
 }
 
 a {
@@ -85,8 +87,6 @@ a {
 
 #app {
   display: flex;
-  font-family: Inter, sans-serif;
-  font-size: 14px;
   height: 100%;
 }
 
@@ -165,5 +165,33 @@ a {
   flex-shrink: 0;
   min-width: 300px;
   width: 20%;
+}
+
+.loader {
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 20px auto;
+}
+
+.loader:after {
+  content: " ";
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 4px;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: loader 1.2s linear infinite;
+}
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

@@ -154,38 +154,8 @@ export default class ContributionModal extends Vue {
 
 .modal-body {
   background-color: $bg-light-color;
-  font-family: Inter, sans-serif;
-  font-size: 14px;
-  padding: 10px 20px 20px;
+  padding: 20px;
   text-align: center;
-}
-
-.loader {
-  display: block;
-  width: 40px;
-  height: 40px;
-  margin: 20px auto;
-}
-
-.loader:after {
-  content: " ";
-  display: block;
-  width: 32px;
-  height: 32px;
-  margin: 4px;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: loader 1.2s linear infinite;
-}
-
-@keyframes loader {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .hex {
