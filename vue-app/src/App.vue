@@ -63,6 +63,15 @@ a {
   text-decoration: none;
 }
 
+.input {
+  background-color: $bg-light-color;
+  border: 2px solid $button-color;
+  border-radius: 2px;
+  box-sizing: border-box;
+  color: $text-color;
+  padding: 7px;
+}
+
 .btn {
   background-color: $button-color;
   border: none;

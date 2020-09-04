@@ -11,6 +11,13 @@
       >
         Contribute
       </button>
+      <button
+        class="btn claim-btn"
+        :disabled="!canClaim()"
+        @click="claim()"
+      >
+        Claim
+      </button>
       <div class="project-description">{{ project.description }}</div>
     </div>
   </div>
@@ -22,6 +29,8 @@ import Component from 'vue-class-component'
 
 import { CART_MAX_SIZE } from '@/api/contributions'
 import { Project, getProject } from '@/api/projects'
+import { RoundStatus } from '@/api/round'
+import ClaimModal from '@/components/ClaimModal.vue'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 
 @Component({
@@ -48,6 +57,26 @@ export default class ProjectView extends Vue {
   contribute() {
     this.$store.commit(ADD_CART_ITEM, { ...this.project, amount: 0 })
   }
+
+  canClaim(): boolean {
+    const currentRound = this.$store.state.currentRound
+    if (currentRound) {
+      return currentRound.status === RoundStatus.Finalized
+    }
+    return false
+  }
+
+  claim() {
+    this.$modal.show(
+      ClaimModal,
+      { project: this.project },
+      {
+        clickToClose: false,
+        height: 'auto',
+        width: 450,
+      },
+    )
+  }
 }
 </script>
 
@@ -72,8 +101,9 @@ export default class ProjectView extends Vue {
   margin: $content-space 0;
 }
 
-.contribute-btn {
-  margin: 0 0 $content-space;
+.contribute-btn,
+.claim-btn {
+  margin: 0 $content-space $content-space 0;
   width: 300px;
 }
 

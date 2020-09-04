@@ -1,20 +1,20 @@
 <template>
   <div class="modal-body">
-    <div v-if="contributionStep === 1">
+    <div v-if="step === 1">
       <h3>Step 1 of 4: Approve</h3>
       <div>Please confirm transaction in your wallet</div>
       <div class="loader"></div>
     </div>
-    <div v-if="contributionStep === 2">
+    <div v-if="step === 2">
       <h3>Step 2 of 4: Contribute</h3>
       <div>Please confirm transaction in your wallet</div>
       <div class="loader"></div>
     </div>
-    <div v-if="contributionStep === 3">
+    <div v-if="step === 3">
       <h3>Step 3 of 4: Are you being bribed?</h3>
       <button class="btn" @click="vote()">No</button>
     </div>
-    <div v-if="contributionStep === 4">
+    <div v-if="step === 4">
       <h3>Step 4 of 4: Vote</h3>
       <div>Please send this transaction to {{ currentRound.fundingRoundAddress }} after {{ currentRound.contributionDeadline | formatDate }}:</div>
       <div class="hex">{{ voteTxData }}</div>
@@ -51,7 +51,7 @@ interface Contributor {
 @Component
 export default class ContributionModal extends Vue {
 
-  contributionStep = 1
+  step = 1
 
   private amount: BigNumber = BigNumber.from(0)
   private votes: [number, BigNumber][] = []
@@ -92,7 +92,7 @@ export default class ContributionModal extends Vue {
     if (allowance < this.amount) {
       await token.approve(fundingRoundAddress, this.amount)
     }
-    this.contributionStep += 1
+    this.step += 1
     // Contribute
     const contributorKeypair = new Keypair()
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
@@ -104,7 +104,7 @@ export default class ContributionModal extends Vue {
     const maci = new Contract(maciAddress, MACI, signer)
     const stateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex')
     const voiceCredits = await getEventArg(contributionTx, maci, 'SignUp', '_voiceCreditBalance')
-    this.contributionStep += 1
+    this.step += 1
     this.contributor = {
       keypair: contributorKeypair,
       stateIndex,
@@ -123,7 +123,7 @@ export default class ContributionModal extends Vue {
     if (!this.contributor) {
       return
     }
-    this.contributionStep += 1
+    this.step += 1
     const { coordinatorPubKey, fundingRoundAddress } = this.currentRound
     const messages: Message[] = []
     const encPubKeys: PubKey[] = []

@@ -9,7 +9,7 @@
         <input
           :value="item.amount"
           @input="updateAmount(item, $event.target.value)"
-          class="contribution-amount"
+          class="input contribution-amount"
           name="amount"
           placeholder="Amount"
         >
@@ -173,13 +173,7 @@ $project-image-size: 50px;
   padding-left: $project-image-size + 15px;
 
   .contribution-amount {
-    background-color: $bg-light-color;
-    border: 2px solid $button-color;
-    border-radius: 2px;
-    box-sizing: border-box;
-    color: white;
     font-size: 12px;
-    padding: 7px;
     width: 60%;
   }
 
