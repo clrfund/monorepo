@@ -14,6 +14,7 @@ export interface RoundInfo {
   nativeTokenAddress: string;
   nativeTokenSymbol: string;
   nativeTokenDecimals: number;
+  voiceCreditFactor: BigNumber;
   status: string;
   contributionDeadline: DateTime;
   votingDeadline: DateTime;
@@ -56,6 +57,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   )
   const nativeTokenSymbol = await nativeToken.symbol()
   const nativeTokenDecimals = await nativeToken.decimals()
+  const voiceCreditFactor = await fundingRound.voiceCreditFactor()
 
   const now = DateTime.local()
   const contributionDeadline = DateTime.fromSeconds(
@@ -104,6 +106,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     nativeTokenAddress,
     nativeTokenSymbol,
     nativeTokenDecimals,
+    voiceCreditFactor,
     status,
     contributionDeadline,
     votingDeadline,

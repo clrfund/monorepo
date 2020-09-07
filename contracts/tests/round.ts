@@ -78,6 +78,7 @@ describe('Funding Round', () => {
   it('initializes funding round correctly', async () => {
     expect(await fundingRound.owner()).to.equal(deployer.address);
     expect(await fundingRound.nativeToken()).to.equal(token.address);
+    expect(await fundingRound.voiceCreditFactor()).to.equal(VOICE_CREDIT_FACTOR)
     expect(await fundingRound.verifiedUserRegistry()).to.equal(verifiedUserRegistry.address);
     expect(await fundingRound.recipientRegistry()).to.equal(recipientRegistry.address);
     expect(await fundingRound.isFinalized()).to.equal(false);

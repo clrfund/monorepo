@@ -27,7 +27,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   }
 
   // State
-  uint256 private voiceCreditFactor;
+  uint256 public voiceCreditFactor;
   uint256 public contributorCount;
   uint256 public contributionDeadline;
   uint256 public matchingPoolSize;
