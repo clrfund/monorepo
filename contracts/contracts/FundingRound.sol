@@ -48,7 +48,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   // Events
   event NewContribution(address indexed _sender, uint256 _amount);
   event FundsWithdrawn(address indexed _contributor);
-  event FundsClaimed(address _recipient, uint256 _amount);
+  event FundsClaimed(address indexed _recipient, uint256 _amount);
 
   /**
     * @dev Sets round parameters (they can only be set once during construction).
