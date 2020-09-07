@@ -73,7 +73,7 @@ describe('End-to-end Tests', function () {
       poolContributionAmount,
     )
     await fundingRoundFactory.connect(poolContributor)
-      .contribute(poolContributionAmount)
+      .contributeMatchingFunds(poolContributionAmount)
 
     // Add recipients
     await fundingRoundFactory.addRecipient(

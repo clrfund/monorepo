@@ -17,7 +17,7 @@ sequenceDiagram
     Owner ->> Factory: set MACI parameters if necessary ( call setMaciParameters() )
     Coordinator -->> Owner: provide public key
     Owner ->> Factory: set coordinator ( call setCoordinator() )
-    PoolContributor ->> Factory: donate to the matching pool ( call contribute() )
+    PoolContributor ->> Factory: donate to the matching pool ( call contributeMatchingFunds() )
 
     loop Adding recipients
         Recipient -->> Owner: ask for registration

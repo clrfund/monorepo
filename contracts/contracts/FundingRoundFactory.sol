@@ -33,7 +33,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   mapping(address => uint256) private recipientIndex;
 
   // Events
-  event NewContribution(address indexed _sender, uint256 _amount);
+  event MatchingPoolContribution(address indexed _sender, uint256 _amount);
   event UserAdded(address indexed _user);
   event UserRemoved(address indexed _user);
   event RecipientAdded(address indexed _fundingAddress, string _metadata, uint256 _index);
@@ -53,12 +53,12 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   /**
     * @dev Contribute tokens to the matching pool.
     */
-  function contribute(uint256 _amount)
+  function contributeMatchingFunds(uint256 _amount)
     public
   {
     require(address(nativeToken) != address(0), 'Factory: Native token is not set');
     nativeToken.transferFrom(msg.sender, address(this), _amount);
-    emit NewContribution(msg.sender, _amount);
+    emit MatchingPoolContribution(msg.sender, _amount);
   }
 
   /**

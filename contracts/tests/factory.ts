@@ -52,8 +52,8 @@ describe('Funding Round Factory', () => {
         contributionAmount,
       );
       const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contribute(contributionAmount))
-        .to.emit(factory, 'NewContribution')
+      await expect(factoryAsContributor.contributeMatchingFunds(contributionAmount))
+        .to.emit(factory, 'MatchingPoolContribution')
         .withArgs(contributor.address, contributionAmount);
       expect(await token.balanceOf(factory.address)).to.equal(contributionAmount);
     });
@@ -65,14 +65,14 @@ describe('Funding Round Factory', () => {
         contributionAmount,
       );
       const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contribute(contributionAmount))
+      await expect(factoryAsContributor.contributeMatchingFunds(contributionAmount))
         .to.be.revertedWith('Factory: Native token is not set');
     });
 
     it('requires approval', async () => {
       await factory.setToken(token.address);
       const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contribute(contributionAmount))
+      await expect(factoryAsContributor.contributeMatchingFunds(contributionAmount))
         .to.be.revertedWith('revert ERC20: transfer amount exceeds allowance');
     });
   });
@@ -339,7 +339,7 @@ describe('Funding Round Factory', () => {
 
     it('reverts if votes has not been tallied', async () => {
       const factoryAsContributor = factory.connect(contributor);
-      await factoryAsContributor.contribute(contributionAmount)
+      await factoryAsContributor.contributeMatchingFunds(contributionAmount)
       await factory.deployNewRound();
       await factory.deployMaci();
       await provider.send('evm_increaseTime', [roundDuration]);
