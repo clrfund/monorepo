@@ -382,7 +382,7 @@ describe('Funding Round', () => {
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await token.transfer(fundingRound.address, matchingPoolSize)
 
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
       expect(await fundingRound.isFinalized()).to.equal(true);
       expect(await fundingRound.isCancelled()).to.equal(false);
       expect(await fundingRound.totalVotes()).to.equal(totalVotes)
@@ -397,7 +397,7 @@ describe('Funding Round', () => {
       )
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
 
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(0, totalSpent, totalSpentSalt)
       expect(await fundingRound.totalVotes()).to.equal(totalVotes)
       expect(await fundingRound.matchingPoolSize()).to.equal(0)
     })
@@ -410,15 +410,15 @@ describe('Funding Round', () => {
       )
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await token.transfer(fundingRound.address, matchingPoolSize)
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
 
-      await expect(fundingRound.finalize(totalSpent, totalSpentSalt))
+      await expect(fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt))
         .to.be.revertedWith('FundingRound: Already finalized');
     });
 
     it('reverts MACI has not been deployed', async () => {
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
-      await expect(fundingRound.finalize(totalSpent, totalSpentSalt))
+      await expect(fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt))
         .to.be.revertedWith('FundingRound: MACI not deployed');
     });
 
@@ -430,7 +430,7 @@ describe('Funding Round', () => {
       )
       await provider.send('evm_increaseTime', [signUpDuration]);
 
-      await expect(fundingRound.finalize(totalSpent, totalSpentSalt))
+      await expect(fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt))
         .to.be.revertedWith('FundingRound: Voting has not been finished');
     });
 
@@ -443,7 +443,7 @@ describe('Funding Round', () => {
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
       await maci.mock.hasUntalliedStateLeaves.returns(true)
 
-      await expect(fundingRound.finalize(totalSpent, totalSpentSalt))
+      await expect(fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt))
         .to.be.revertedWith('FundingRound: Votes has not been tallied')
     })
 
@@ -457,7 +457,7 @@ describe('Funding Round', () => {
       await token.transfer(fundingRound.address, matchingPoolSize)
       await maci.mock.totalVotes.returns(0)
 
-      await expect(fundingRound.finalize(totalSpent, totalSpentSalt))
+      await expect(fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt))
         .to.be.revertedWith('FundingRound: No votes')
     });
 
@@ -471,7 +471,7 @@ describe('Funding Round', () => {
       await token.transfer(fundingRound.address, matchingPoolSize)
       await maci.mock.verifySpentVoiceCredits.returns(false)
 
-      await expect(fundingRound.finalize(totalSpent, totalSpentSalt))
+      await expect(fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt))
         .to.be.revertedWith('FundingRound: Incorrect total amount of spent voice credits')
     })
 
@@ -482,9 +482,10 @@ describe('Funding Round', () => {
         totalContributions,
       )
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
+      await token.transfer(fundingRound.address, matchingPoolSize)
 
       const fundingRoundAsCoordinator = fundingRound.connect(coordinator);
-      await expect(fundingRoundAsCoordinator.finalize(totalSpent, totalSpentSalt))
+      await expect(fundingRoundAsCoordinator.finalize(matchingPoolSize, totalSpent, totalSpentSalt))
         .to.be.revertedWith('Ownable: caller is not the owner');
     });
   });
@@ -497,15 +498,26 @@ describe('Funding Round', () => {
     });
 
     it('reverts if round has been finalized already', async () => {
-      const totalSpent = UNIT.mul(1000).div(VOICE_CREDIT_FACTOR)
+      const matchingPoolSize = UNIT.mul(10000)
+      const totalContributions = UNIT.mul(1000)
+      const totalSpent = totalContributions.div(VOICE_CREDIT_FACTOR)
       const totalSpentSalt = genRandomSalt().toString()
       maci = await deployMaciMock()
       await fundingRound.setMaci(maci.address);
+      await token.connect(contributor).approve(
+        fundingRound.address,
+        totalContributions,
+      )
+      await fundingRound.connect(contributor).contribute(
+        userKeypair.pubKey.asContractParam(),
+        totalContributions,
+      )
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
       await maci.mock.hasUntalliedStateLeaves.returns(false)
       await maci.mock.totalVotes.returns(bnSqrt(totalSpent))
       await maci.mock.verifySpentVoiceCredits.returns(true)
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await token.transfer(fundingRound.address, matchingPoolSize)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
 
       await expect(fundingRound.cancel())
         .to.be.revertedWith('FundingRound: Already finalized');
@@ -610,7 +622,7 @@ describe('Funding Round', () => {
 
     it('allows recipient to claim allocated funds', async () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
 
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
@@ -621,7 +633,7 @@ describe('Funding Round', () => {
 
     it('allows address different than recipient to claim allocated funds', async () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
 
       await expect(fundingRoundAsContributor.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
@@ -632,7 +644,7 @@ describe('Funding Round', () => {
 
     it('allows recipient to claim zero amount', async () => {
       await token.transfer(fundingRound.address, matchingPoolSize)
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
 
       const recipientClaimZeroData = recipientClaimData.slice()  // Make a copy
       recipientClaimZeroData[1] = 0
@@ -643,7 +655,7 @@ describe('Funding Round', () => {
     })
 
     it('allows recipient to claim if the matching pool is empty', async () => {
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(0, totalSpent, totalSpentSalt)
 
       expectedClaimableAmount = totalContributions.div(2)
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
@@ -668,7 +680,7 @@ describe('Funding Round', () => {
 
     it('allows only verified recipients to claim funds', async () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
       await recipientRegistry.mock.getRecipientIndex.returns(0);
 
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
@@ -677,7 +689,7 @@ describe('Funding Round', () => {
 
     it('allows recipient to claim allocated funds only once', async () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
 
       await fundingRoundAsRecipient.claimFunds(...recipientClaimData);
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
@@ -686,7 +698,7 @@ describe('Funding Round', () => {
 
     it('should verify that tally result is correct', async () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
       await maci.mock.verifyTallyResult.returns(false)
 
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
@@ -695,7 +707,7 @@ describe('Funding Round', () => {
 
     it('should verify that amount of spent voice credits is correct', async () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
-      await fundingRound.finalize(totalSpent, totalSpentSalt)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
       await maci.mock.verifyPerVOSpentVoiceCredits.returns(false)
 
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))

@@ -230,11 +230,11 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   {
     FundingRound currentRound = getCurrentRound();
     require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
-    uint256 amount = currentRound.nativeToken().balanceOf(address(this));
-    if (amount > 0) {
-      nativeToken.transfer(address(currentRound), amount);
+    uint256 matchingPoolSize = currentRound.nativeToken().balanceOf(address(this));
+    if (matchingPoolSize > 0) {
+      nativeToken.transfer(address(currentRound), matchingPoolSize);
     }
-    currentRound.finalize(_totalSpent, _totalSpentSalt);
+    currentRound.finalize(matchingPoolSize, _totalSpent, _totalSpentSalt);
     emit RoundFinalized(address(currentRound));
   }
 

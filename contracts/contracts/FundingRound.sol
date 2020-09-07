@@ -31,6 +31,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   uint256 public contributorCount;
   uint256 public contributionDeadline;
   uint256 public matchingPoolSize;
+  uint256 private adjustedMatchingPoolSize;
   uint256 public totalVotes;
   bool public isFinalized = false;
   bool public isCancelled = false;
@@ -206,10 +207,12 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @dev Get the total amount of votes from MACI,
     * verify the total amount of spent voice credits across all recipients,
     * and allow recipients to claim funds.
+    * @param _matchingPoolSize Total amount of matching funds transferred.
     * @param _totalSpent Total amount of spent voice credits.
     * @param _totalSpentSalt The salt.
     */
   function finalize(
+    uint256 _matchingPoolSize,
     uint256 _totalSpent,
     uint256 _totalSpentSalt
   )
@@ -225,10 +228,13 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(totalVotes > 0, 'FundingRound: No votes');
     bool verified = maci.verifySpentVoiceCredits(_totalSpent, _totalSpentSalt);
     require(verified, 'FundingRound: Incorrect total amount of spent voice credits');
+    // Initial size of the matching pool
+    matchingPoolSize = _matchingPoolSize;
     // Total amount of spent voice credits is the size of the pool of direct rewards.
     // Everything else, including unspent voice credits and downscaling error,
     // is considered a part of the matching pool
-    matchingPoolSize = nativeToken.balanceOf(address(this)) - _totalSpent * voiceCreditFactor;
+    adjustedMatchingPoolSize = nativeToken.balanceOf(address(this)) - _totalSpent * voiceCreditFactor;
+    assert(adjustedMatchingPoolSize >= matchingPoolSize);
     isFinalized = true;
   }
 
@@ -287,7 +293,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     );
     require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
     recipients[voteOptionIndex] = true;
-    uint256 claimableAmount = matchingPoolSize * _tallyResult / totalVotes + _spent * voiceCreditFactor;
+    uint256 claimableAmount = adjustedMatchingPoolSize * _tallyResult / totalVotes + _spent * voiceCreditFactor;
     nativeToken.transfer(_recipient, claimableAmount);
     emit FundsClaimed(_recipient, claimableAmount);
   }
