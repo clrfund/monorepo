@@ -82,13 +82,13 @@ export function createMessage(
 export function getRecipientClaimData(
   recipientAddress: string,
   recipientIndex: number,
+  recipientTreeDepth: number,
   tally: any,
 ): any[] {
-  const TREE_DEPTH = 2
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
   const resultSalt = tally.results.salt
-  const resultTree = new IncrementalQuinTree(TREE_DEPTH, bigInt(0))
+  const resultTree = new IncrementalQuinTree(recipientTreeDepth, bigInt(0))
   for (const leaf of tally.results.tally) {
     resultTree.insert(leaf)
   }
@@ -96,7 +96,7 @@ export function getRecipientClaimData(
   // Create proof for total amount of spent voice credits
   const spent = tally.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
   const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
-  const spentTree = new IncrementalQuinTree(TREE_DEPTH, bigInt(0))
+  const spentTree = new IncrementalQuinTree(recipientTreeDepth, bigInt(0))
   for (const leaf of tally.totalVoiceCreditsPerVoteOption.tally) {
     spentTree.insert(leaf)
   }
