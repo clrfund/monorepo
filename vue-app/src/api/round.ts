@@ -1,6 +1,5 @@
 import { BigNumber, Contract, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
-import { bigInt } from 'maci-crypto'
 import { PubKey } from 'maci-domainobjs'
 
 import { FundingRound, MACI, ERC20 } from './abi'
@@ -46,8 +45,8 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
   const coordinatorPubKeyRaw = await fundingRound.coordinatorPubKey()
   const coordinatorPubKey = new PubKey([
-    bigInt(coordinatorPubKeyRaw.x),
-    bigInt(coordinatorPubKeyRaw.y),
+    BigInt(coordinatorPubKeyRaw.x),
+    BigInt(coordinatorPubKeyRaw.y),
   ])
   const nativeTokenAddress = await fundingRound.nativeToken()
   const nativeToken = new Contract(

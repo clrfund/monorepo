@@ -24,8 +24,5 @@
     "lint": "yarn workspaces run lint",
     "lint:contracts": "yarn workspace @clrfund/contracts run lint",
     "lint:web": "yarn workspace @clrfund/vue-app run lint"
-  },
-  "resolutions": {
-    "snarkjs": "https://github.com/weijiekoh/snarkjs.git#52e0ceba0256bc9bf94cbc9500139dfc37018f91"
   }
 }
