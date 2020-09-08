@@ -1,5 +1,7 @@
 import { ethers, BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
+import { bigInt } from 'maci-crypto'
+import { PubKey } from 'maci-domainobjs'
 
 import { FundingRound, ERC20 } from './abi'
 import { provider, factory } from './core'
@@ -7,6 +9,7 @@ import { provider, factory } from './core'
 export interface RoundInfo {
   fundingRoundAddress: string;
   maciAddress: string;
+  coordinatorPubKey: PubKey;
   nativeTokenAddress: string;
   nativeTokenSymbol: string;
   nativeTokenDecimals: number;
@@ -37,6 +40,11 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     provider,
   )
   const maciAddress = await fundingRound.maci()
+  const coordinatorPubKeyRaw = await fundingRound.coordinatorPubKey()
+  const coordinatorPubKey = new PubKey([
+    bigInt(coordinatorPubKeyRaw.x),
+    bigInt(coordinatorPubKeyRaw.y),
+  ])
   const nativeTokenAddress = await fundingRound.nativeToken()
   const nativeToken = new ethers.Contract(
     nativeTokenAddress,
@@ -88,6 +96,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   return {
     fundingRoundAddress,
     maciAddress,
+    coordinatorPubKey,
     nativeTokenAddress,
     nativeTokenSymbol,
     nativeTokenDecimals,

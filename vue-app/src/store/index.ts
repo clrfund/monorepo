@@ -4,7 +4,8 @@ import { FixedNumber } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 
 import { CartItem } from '@/api/contributions'
-import { RoundInfo } from '@/api/round'
+import { RoundInfo, getRoundInfo } from '@/api/round'
+import { LOAD_ROUND_INFO } from './action-types'
 import {
   SET_WALLET_PROVIDER,
   SET_ACCOUNT,
@@ -71,7 +72,12 @@ const store: StoreOptions<RootState> = {
       }
     },
   },
-  actions: {},
+  actions: {
+    async [LOAD_ROUND_INFO]({ commit }) {
+      const currentRound = await getRoundInfo()
+      commit(SET_CURRENT_ROUND, currentRound)
+    },
+  },
   modules: {},
 }
 

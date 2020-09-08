@@ -22,7 +22,7 @@ export async function getProjects(): Promise<Project[]> {
       name: metadata.name,
       description: metadata.description,
       imageUrl: `${ipfsGatewayUrl}${metadata.imageHash}`,
-      index: event.args._index,
+      index: event.args._index.toNumber(),
     })
   })
   return projects
