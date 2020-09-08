@@ -37,11 +37,13 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   bool public isFinalized = false;
   bool public isCancelled = false;
 
+  address public coordinator;
   PubKey public coordinatorPubKey;
   MACI public maci;
   ERC20Detailed public nativeToken;
   IVerifiedUserRegistry public verifiedUserRegistry;
   IRecipientRegistry public recipientRegistry;
+  string public tallyHash;
 
   mapping(uint256 => bool) private recipients;
   mapping(address => ContributorStatus) public contributors;
@@ -50,6 +52,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   event Contribution(address indexed _sender, uint256 _amount);
   event ContributionWithdrawn(address indexed _contributor);
   event FundsClaimed(address indexed _recipient, uint256 _amount);
+  event TallyPublished(string _tallyHash);
 
   /**
     * @dev Sets round parameters (they can only be set once during construction).
@@ -64,6 +67,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     IVerifiedUserRegistry _verifiedUserRegistry,
     IRecipientRegistry _recipientRegistry,
     uint256 _duration,
+    address _coordinator,
     PubKey memory _coordinatorPubKey
   )
     public
@@ -75,6 +79,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     recipientRegistry = _recipientRegistry;
     startTimestamp = now;
     contributionDeadline = now + _duration;
+    coordinator = _coordinator;
     coordinatorPubKey = _coordinatorPubKey;
   }
 
@@ -208,6 +213,20 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   }
 
   /**
+    * @dev Publish the IPFS hash of the vote tally. Only coordinator can publish.
+    * @param _tallyHash IPFS hash of the vote tally.
+    */
+  function publishTallyHash(string calldata _tallyHash)
+    external
+  {
+    require(msg.sender == coordinator, 'FundingRound: Sender is not the coordinator');
+    require(!isFinalized, 'FundingRound: Round finalized');
+    require(bytes(_tallyHash).length != 0, 'FundingRound: Tally hash is empty string');
+    tallyHash = _tallyHash;
+    emit TallyPublished(_tallyHash);
+  }
+
+  /**
     * @dev Get the total amount of votes from MACI,
     * verify the total amount of spent voice credits across all recipients,
     * and allow recipients to claim funds.
@@ -227,6 +246,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(address(maci) != address(0), 'FundingRound: MACI not deployed');
     require(maci.calcVotingDeadline() < now, 'FundingRound: Voting has not been finished');
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes has not been tallied');
+    require(bytes(tallyHash).length != 0, 'FundingRound: Tally hash has not been published');
     totalVotes = maci.totalVotes();
     // If nobody voted, the round should be cancelled to avoid locking of matching funds
     require(totalVotes > 0, 'FundingRound: No votes');

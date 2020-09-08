@@ -26,6 +26,7 @@ describe('Funding Round', () => {
   const votingDuration = 86400 * 7;  // Default duration in MACI factory
   const userKeypair = new Keypair()
   const contributionAmount = UNIT.mul(10)
+  const tallyHash = 'test'
 
   let token: Contract;
   let verifiedUserRegistry: Contract;
@@ -63,6 +64,7 @@ describe('Funding Round', () => {
       verifiedUserRegistry.address,
       recipientRegistry.address,
       signUpDuration,
+      coordinator.address,
       coordinatorPubKey.asContractParam(),
     );
     const maciFactory = await deployMaciFactory(deployer);
@@ -354,6 +356,35 @@ describe('Funding Round', () => {
     }).timeout(100000);
   });
 
+  describe('publishing tally hash', () => {
+    it('allows coordinator to publish vote tally hash', async () => {
+      await expect(fundingRound.connect(coordinator).publishTallyHash(tallyHash))
+        .to.emit(fundingRound, 'TallyPublished')
+        .withArgs(tallyHash)
+      expect(await fundingRound.tallyHash()).to.equal(tallyHash)
+
+      // Should be possible to re-publish
+      await expect(fundingRound.connect(coordinator).publishTallyHash('fixed'))
+        .to.emit(fundingRound, 'TallyPublished')
+    })
+
+    it('allows only coordinator to publish tally hash', async () => {
+      await expect(fundingRound.publishTallyHash(tallyHash))
+        .to.be.revertedWith('FundingRound: Sender is not the coordinator')
+    })
+
+    it('reverts if round has been finalized', async () => {
+      await fundingRound.cancel()
+      await expect(fundingRound.connect(coordinator).publishTallyHash(tallyHash))
+        .to.be.revertedWith('FundingRound: Round finalized')
+    })
+
+    it('rejects empty string', async () => {
+      await expect(fundingRound.connect(coordinator).publishTallyHash(''))
+        .to.be.revertedWith('FundingRound: Tally hash is empty string')
+    })
+  })
+
   describe('finalizing round', () => {
     const matchingPoolSize = UNIT.mul(10000)
     const totalContributions = UNIT.mul(1000)
@@ -381,6 +412,7 @@ describe('Funding Round', () => {
         totalContributions,
       )
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
+      await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
 
       await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
@@ -397,6 +429,7 @@ describe('Funding Round', () => {
         totalContributions,
       )
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
 
       await fundingRound.finalize(0, totalSpent, totalSpentSalt)
       expect(await fundingRound.totalVotes()).to.equal(totalVotes)
@@ -410,6 +443,7 @@ describe('Funding Round', () => {
         totalContributions,
       )
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
+      await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
       await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
 
@@ -448,6 +482,18 @@ describe('Funding Round', () => {
         .to.be.revertedWith('FundingRound: Votes has not been tallied')
     })
 
+    it('reverts if tally hash has not been published', async () => {
+      await fundingRound.setMaci(maci.address)
+      await fundingRound.connect(contributor).contribute(
+        userKeypair.pubKey.asContractParam(),
+        totalContributions,
+      )
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+
+      await expect(fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt))
+        .to.be.revertedWith('FundingRound: Tally hash has not been published')
+    })
+
     it('reverts if total votes is zero', async () => {
       await fundingRound.setMaci(maci.address)
       await fundingRound.connect(contributor).contribute(
@@ -455,6 +501,7 @@ describe('Funding Round', () => {
         totalContributions,
       )
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
       await maci.mock.totalVotes.returns(0)
 
@@ -469,6 +516,7 @@ describe('Funding Round', () => {
         totalContributions,
       )
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
       await maci.mock.verifySpentVoiceCredits.returns(false)
 
@@ -483,6 +531,7 @@ describe('Funding Round', () => {
         totalContributions,
       )
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
+      await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
 
       const fundingRoundAsCoordinator = fundingRound.connect(coordinator);
@@ -517,6 +566,7 @@ describe('Funding Round', () => {
       await maci.mock.hasUntalliedStateLeaves.returns(false)
       await maci.mock.totalVotes.returns(bnSqrt(totalSpent))
       await maci.mock.verifySpentVoiceCredits.returns(true)
+      await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
       await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
 
@@ -618,6 +668,7 @@ describe('Funding Round', () => {
         totalContributions,
       );
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration]);
+      await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       fundingRoundAsRecipient = fundingRound.connect(recipient);
     });
 

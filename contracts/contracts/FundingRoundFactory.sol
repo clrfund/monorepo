@@ -233,6 +233,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
       this,
       this,
       signUpDuration,
+      coordinator,
       coordinatorPubKey
     );
     rounds.push(newRound);

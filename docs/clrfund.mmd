@@ -56,8 +56,8 @@ sequenceDiagram
             Coordinator ->> MACI: process messages ( call batchProcessMessage() )
             Note left of Coordinator: coordinator tallies the votes and generates proofs
             Coordinator ->> MACI: prove the correctness of vote tally ( call proveVoteTallyBatch() )
-            Coordinator -->> Owner: provide vote tally
-            Coordinator -->> Recipient: provide vote tally
+            Note left of Coordinator: coordinator uploads the tally to IPFS
+            Coordinator ->> FundingRound: call publishTallyHash()
             Note right of Owner: owner verifies the tally
             Owner ->> Factory: call transferMatchingFunds()
             Factory ->> FundingRound: transfer matching funds and finalize the round

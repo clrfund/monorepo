@@ -3,7 +3,10 @@ import fs from 'fs'
 import { network, ethers } from '@nomiclabs/buidler'
 import { processMessages as processCmd, tally as tallyCmd } from 'maci-cli'
 
+import { getIpfsHash } from '../utils/ipfs'
+
 async function main() {
+  const [, coordinator] = await ethers.getSigners()
   const state = JSON.parse(fs.readFileSync('state.json').toString())
   const fundingRound = await ethers.getContractAt('FundingRound', state.fundingRound)
   const maciAddress = await fundingRound.maci()
@@ -32,6 +35,11 @@ async function main() {
     leaf_zero: randomStateLeaf,
     tally_file: 'tally.json',
   })
+
+  // Publish tally hash
+  const tallyHash = await getIpfsHash(tally)
+  await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
+  console.log(`Tally hash is ${tallyHash}`)
 
   // Finalize the round
   const factory = await ethers.getContractAt('FundingRoundFactory', state.factory)
