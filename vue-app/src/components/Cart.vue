@@ -128,7 +128,7 @@ export default class Cart extends Vue {
 .cart {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  height: calc(100vh - 110px);
 }
 
 .cart-item {
@@ -184,6 +184,8 @@ $project-image-size: 50px;
 
   .remove-cart-item {
     cursor: pointer;
+    margin-left: 7px;
+    min-width: 20px;
     width: 20px;
 
     &:hover {

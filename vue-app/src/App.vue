@@ -96,7 +96,7 @@ a {
 
 #app {
   display: flex;
-  height: 100%;
+  min-height: 100%;
 }
 
 #nav-bar {
@@ -169,8 +169,6 @@ a {
 
 #user-bar {
   background-color: $bg-light-color;
-  display: flex;
-  flex-direction: column;
   flex-shrink: 0;
   min-width: 300px;
   width: 20%;
