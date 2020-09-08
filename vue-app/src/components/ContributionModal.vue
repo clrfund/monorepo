@@ -2,12 +2,14 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>Step 1 of 4: Approve</h3>
-      <div>Please confirm transaction in your wallet</div>
+      <div v-if="!approvalTx">Please approve transaction in your wallet</div>
+      <div v-if="approvalTx">Waiting for confirmation...</div>
       <div class="loader"></div>
     </div>
     <div v-if="step === 2">
       <h3>Step 2 of 4: Contribute</h3>
-      <div>Please confirm transaction in your wallet</div>
+      <div v-if="!contributionTx">Please approve transaction in your wallet</div>
+      <div v-if="contributionTx">Waiting for confirmation...</div>
       <div class="loader"></div>
     </div>
     <div v-if="step === 3">
@@ -27,6 +29,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber, Contract, FixedNumber, Signer } from 'ethers'
+import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { parseFixed } from '@ethersproject/bignumber'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
@@ -56,6 +59,9 @@ export default class ContributionModal extends Vue {
   private amount: BigNumber = BigNumber.from(0)
   private votes: [number, BigNumber][] = []
   private contributor?: Contributor
+
+  approvalTx: TransactionResponse | null = null
+  contributionTx: TransactionResponse | null = null
   voteTxData = ''
 
   mounted() {
@@ -90,7 +96,9 @@ export default class ContributionModal extends Vue {
     // Approve transfer
     const allowance = await token.allowance(signer.getAddress(), fundingRoundAddress)
     if (allowance < this.amount) {
-      await token.approve(fundingRoundAddress, this.amount)
+      const approvalTx = await token.approve(fundingRoundAddress, this.amount)
+      this.approvalTx = approvalTx
+      await approvalTx.wait()
     }
     this.step += 1
     // Contribute
@@ -100,6 +108,7 @@ export default class ContributionModal extends Vue {
       contributorKeypair.pubKey.asContractParam(),
       this.amount,
     )
+    this.contributionTx = contributionTx
     // Get state index and amount of voice credits
     const maci = new Contract(maciAddress, MACI, signer)
     const stateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex')
