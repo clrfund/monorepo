@@ -15,7 +15,7 @@ function decodeRecipientAdded(event: Event): Project {
   const args = event.args as any // eslint-disable-line @typescript-eslint/no-explicit-any
   const metadata = JSON.parse(args._metadata)
   return {
-    address: args._fundingAddress,
+    address: args._recipient,
     name: metadata.name,
     description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}${metadata.imageHash}`,

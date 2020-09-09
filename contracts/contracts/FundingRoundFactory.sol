@@ -18,6 +18,13 @@ import './FundingRound.sol';
 contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, IRecipientRegistry {
   using SafeERC20 for ERC20Detailed;
 
+  // Structs
+  struct Recipient {
+    uint256 index;
+    uint256 addedAt;
+    uint256 removedAt;
+  }
+
   // State
   uint256 private recipientCount = 0;
   address public coordinator;
@@ -29,14 +36,14 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   FundingRound[] private rounds;
 
   mapping(address => bool) private users;
-  mapping(address => bool) private recipients;
-  mapping(address => uint256) private recipientIndex;
+  mapping(address => Recipient) private recipients;
 
   // Events
   event MatchingPoolContribution(address indexed _sender, uint256 _amount);
   event UserAdded(address indexed _user);
   event UserRemoved(address indexed _user);
   event RecipientAdded(address indexed _fundingAddress, string _metadata, uint256 _index);
+  event RecipientRemoved(address indexed _recipient);
   event RoundStarted(address _round);
   event RoundFinalized(address _round);
   event TokenChanged(address _token);
@@ -99,34 +106,56 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
 
   /**
     * @dev Register recipient as eligible for funding allocation.
-    * @param _fundingAddress The address that receives funds.
+    * @param _recipient The address that receives funds.
     * @param _metadata The metadata info of the recipient.
     */
-  function addRecipient(address _fundingAddress, string calldata _metadata)
+  function addRecipient(address _recipient, string calldata _metadata)
     external
     onlyOwner
   {
     // TODO: verify address and get recipient info from the recipient registry
-    require(_fundingAddress != address(0), 'Factory: Recipient address is zero');
+    require(_recipient != address(0), 'Factory: Recipient address is zero');
     require(bytes(_metadata).length != 0, 'Factory: Metadata info is empty string');
-    require(recipients[_fundingAddress] == false, 'Factory: Recipient already registered');
+    require(recipients[_recipient].index == 0, 'Factory: Recipient already registered');
     // TODO: implement mechanism for replacing registrants
     (,, uint256 maxVoteOptions) = maciFactory.maxValues();
     require(recipientCount < maxVoteOptions, 'Factory: Recipient limit reached');
     recipientCount += 1;
-    recipients[_fundingAddress] = true;
-    recipientIndex[_fundingAddress] = recipientCount;  // Starts with 1
-    emit RecipientAdded(_fundingAddress, _metadata, recipientCount);
+    recipients[_recipient] = Recipient(recipientCount, now, 0);  // Starts with index 1
+    emit RecipientAdded(_recipient, _metadata, recipientCount);
+  }
+
+  /**
+    * @dev Remove recipient from the registry.
+    * @param _recipient The address that receives funds.
+    */
+  function removeRecipient(address _recipient)
+    external
+    onlyOwner
+  {
+    require(recipients[_recipient].index != 0, 'Factory: Recipient is not in the registry');
+    require(recipients[_recipient].removedAt == 0, 'Factory: Recipient already removed');
+    recipients[_recipient].removedAt = now;
+    emit RecipientRemoved(_recipient);
   }
 
   function getRecipientIndex(
-    address _recipient
+    address _recipient,
+    uint256 _timestamp
   )
     external
     view
     returns (uint256)
   {
-    return recipientIndex[_recipient];
+    Recipient memory recipient = recipients[_recipient];
+    if (recipient.index == 0 || recipient.addedAt > _timestamp || (recipient.removedAt != 0 && recipient.removedAt <= _timestamp)) {
+      // Return 0 if recipient is not in the registry
+      // or added after a given time
+      // or had been already removed by a given time
+      return 0;
+    } else {
+      return recipient.index;
+    }
   }
 
   function getCurrentRound()

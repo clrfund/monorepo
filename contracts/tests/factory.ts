@@ -14,7 +14,7 @@ use(solidity);
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
-  const [, deployer, coordinator, contributor] = provider.getWallets()
+  const [, deployer, coordinator, contributor, recipient] = provider.getWallets()
 
   let maciFactory: Contract;
   let factory: Contract;
@@ -30,7 +30,7 @@ describe('Funding Round Factory', () => {
     factory = await FundingRoundFactory.deploy(maciFactory.address)
 
     expect(factory.address).to.properAddress;
-    expect(await getGasUsage(factory.deployTransaction)).lessThan(4700000);
+    expect(await getGasUsage(factory.deployTransaction)).lessThan(5000000)
     await maciFactory.transferOwnership(factory.address);
 
     // Deploy token contract and transfer tokens to contributor
@@ -124,45 +124,50 @@ describe('Funding Round Factory', () => {
     });
   });
 
-  describe('adding recipients', () => {
-    let fundingAddress: string;
+  describe('managing recipients', () => {
+    let recipientAddress: string
     let metadata: string;
     beforeEach(() => {
-      fundingAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
-      metadata = JSON.stringify({ name: 'Recipient 1', description: 'Description 1', imageHash: 'Ipfs imageHash 1' })
+      recipientAddress = recipient.address
+      metadata = JSON.stringify({ name: 'Recipient', description: 'Description', imageHash: 'Ipfs imageHash' })
     });
+
+    async function getCurrentTime(): Promise<number> {
+      return (await provider.getBlock('latest')).timestamp
+    }
 
     it('allows owner to add recipient', async () => {
       const expectedIndex = 1;
-      await expect(factory.addRecipient(fundingAddress, metadata))
+      await expect(factory.addRecipient(recipientAddress, metadata))
         .to.emit(factory, 'RecipientAdded')
-        .withArgs(fundingAddress, metadata, expectedIndex);
-      expect(await factory.getRecipientIndex(fundingAddress))
+        .withArgs(recipientAddress, metadata, expectedIndex);
+      const now = await getCurrentTime()
+      expect(await factory.getRecipientIndex(recipientAddress, now))
         .to.equal(expectedIndex);
     });
 
-    it('rejects calls from anyone except owner', async () => {
-      const contributorFactory = factory.connect(contributor);
-      await expect(contributorFactory.addRecipient(fundingAddress, metadata))
+    it('rejects attempts to add recipient from anyone except owner', async () => {
+      const factoryAsContributor = factory.connect(contributor)
+      await expect(factoryAsContributor.addRecipient(recipientAddress, metadata))
         .to.be.revertedWith('Ownable: caller is not the owner');
     });
 
-    it('should not accept zero-address', async () => {
-      fundingAddress = ZERO_ADDRESS;
-      await expect(factory.addRecipient(fundingAddress, metadata))
+    it('should not accept zero-address as recipient address', async () => {
+      recipientAddress = ZERO_ADDRESS
+      await expect(factory.addRecipient(recipientAddress, metadata))
         .to.be.revertedWith('Factory: Recipient address is zero');
     });
 
-    it('should not accept empty string as metadata', async () => {
+    it('should not accept empty string as recipient metadata', async () => {
       metadata = ''
-      await expect(factory.addRecipient(fundingAddress, metadata))
+      await expect(factory.addRecipient(recipientAddress, metadata))
         .to.be.revertedWith('Factory: Metadata info is empty string');
     });
 
-    it('should not accept already registered address', async () => {
-      await factory.addRecipient(fundingAddress, metadata);
+    it('should not add already registered recipient', async () => {
+      await factory.addRecipient(recipientAddress, metadata)
       metadata = JSON.stringify({ name: 'Recipient 2', description: 'Description 2', imageHash: 'Ipfs imageHash 2' })
-      await expect(factory.addRecipient(fundingAddress, metadata))
+      await expect(factory.addRecipient(recipientAddress, metadata))
         .to.be.revertedWith('Factory: Recipient already registered');
     });
 
@@ -172,15 +177,58 @@ describe('Funding Round Factory', () => {
       for (let i = 0; i < maxRecipientCount + 1; i++) {
         recipientName = String(i + 1).padStart(4, '0')
         metadata = JSON.stringify({ name: recipientName, description: 'Description', imageHash: 'Ipfs imageHash' })
-        fundingAddress = `0x000000000000000000000000000000000000${recipientName}`;
+        recipientAddress = `0x000000000000000000000000000000000000${recipientName}`
         if (i < maxRecipientCount) {
-          await factory.addRecipient(fundingAddress, metadata);
+          await factory.addRecipient(recipientAddress, metadata)
         } else {
-          await expect(factory.addRecipient(fundingAddress, metadata))
+          await expect(factory.addRecipient(recipientAddress, metadata))
             .to.be.revertedWith('Factory: Recipient limit reached');
         }
       }
     });
+
+    it('allows owner to remove recipient', async () => {
+      await factory.addRecipient(recipientAddress, metadata)
+      await expect(factory.removeRecipient(recipientAddress))
+        .to.emit(factory, 'RecipientRemoved')
+        .withArgs(recipientAddress)
+      const now = await getCurrentTime()
+      expect(await factory.getRecipientIndex(recipientAddress, now)).to.equal(0)
+    })
+
+    it('rejects attempts to remove recipient from anyone except owner', async () => {
+      const factoryAsContributor = factory.connect(contributor)
+      await expect(factoryAsContributor.removeRecipient(recipientAddress))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('should not remove already removed recipient', async () => {
+      await factory.addRecipient(recipientAddress, metadata)
+      await factory.removeRecipient(recipientAddress)
+      await expect(factory.removeRecipient(recipientAddress))
+        .to.be.revertedWith('Factory: Recipient already removed')
+    })
+
+    it('should not return recipient index for unregistered recipient', async () => {
+      recipientAddress = ZERO_ADDRESS
+      const now = await getCurrentTime()
+      expect(await factory.getRecipientIndex(recipientAddress, now)).to.equal(0)
+    })
+
+    it('should not return recipient index for recipient that has been added after given timestamp', async () => {
+      const timestamp = await getCurrentTime()
+      await provider.send('evm_increaseTime', [1000])
+      await factory.addRecipient(recipientAddress, metadata)
+      expect(await factory.getRecipientIndex(recipientAddress, timestamp)).to.equal(0)
+    })
+
+    it('should return recipient index for recipient that has been removed after given timestamp', async () => {
+      await factory.addRecipient(recipientAddress, metadata)
+      const addedAt = await getCurrentTime()
+      await provider.send('evm_increaseTime', [1000])
+      await factory.removeRecipient(recipientAddress)
+      expect(await factory.getRecipientIndex(recipientAddress, addedAt)).to.equal(1)
+    })
   });
 
   it('sets MACI parameters', async () => {

@@ -3,6 +3,7 @@
   "rules": {
     "not-rely-on-time": "off",
     "quotes": ["error", "single"],
-    "reason-string": ["warn", {"maxLength": 64}]
+    "reason-string": ["warn", {"maxLength": 64}],
+    "max-states-count": ["warn", 16]
   }
 }
