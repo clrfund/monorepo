@@ -26,7 +26,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   }
 
   // State
-  uint256 private recipientCount = 0;
+  uint256 private nextRecipientIndex = 1;
   address public coordinator;
 
   ERC20Detailed public nativeToken;
@@ -37,6 +37,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
 
   mapping(address => bool) private users;
   mapping(address => Recipient) private recipients;
+  uint256[] private vacantRecipientIndexes;
 
   // Events
   event MatchingPoolContribution(address indexed _sender, uint256 _amount);
@@ -117,12 +118,20 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     require(_recipient != address(0), 'Factory: Recipient address is zero');
     require(bytes(_metadata).length != 0, 'Factory: Metadata info is empty string');
     require(recipients[_recipient].index == 0, 'Factory: Recipient already registered');
-    // TODO: implement mechanism for replacing registrants
-    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
-    require(recipientCount < maxVoteOptions, 'Factory: Recipient limit reached');
-    recipientCount += 1;
-    recipients[_recipient] = Recipient(recipientCount, now, 0);  // Starts with index 1
-    emit RecipientAdded(_recipient, _metadata, recipientCount);
+    uint256 recipientIndex;
+    if (vacantRecipientIndexes.length == 0) {
+      // Assign next index in sequence
+      (,, uint256 maxVoteOptions) = maciFactory.maxValues();
+      require(nextRecipientIndex <= maxVoteOptions, 'Factory: Recipient limit reached');
+      recipientIndex = nextRecipientIndex;
+      nextRecipientIndex += 1;
+    } else {
+      // Assign one of the vacant recipient indexes
+      recipientIndex = vacantRecipientIndexes[vacantRecipientIndexes.length - 1];
+      vacantRecipientIndexes.pop();
+    }
+    recipients[_recipient] = Recipient(recipientIndex, now, 0);
+    emit RecipientAdded(_recipient, _metadata, recipientIndex);
   }
 
   /**
@@ -136,6 +145,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     require(recipients[_recipient].index != 0, 'Factory: Recipient is not in the registry');
     require(recipients[_recipient].removedAt == 0, 'Factory: Recipient already removed');
     recipients[_recipient].removedAt = now;
+    vacantRecipientIndexes.push(recipients[_recipient].index);
     emit RecipientRemoved(_recipient);
   }
 
