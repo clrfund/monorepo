@@ -44,15 +44,18 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   const maciAddress = await fundingRound.maci()
   const maci = new Contract(maciAddress, MACI, provider)
   const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
+  const contributionDeadline = DateTime.fromSeconds(
+    parseInt(await maci.calcSignUpDeadline()),
+  )
   const votingDeadline = DateTime.fromSeconds(
     parseInt(await maci.calcVotingDeadline()),
   )
-  const startBlock = (await fundingRound.startBlock()).toNumber()
-  const coordinatorPubKeyRaw = await fundingRound.coordinatorPubKey()
+  const coordinatorPubKeyRaw = await maci.coordinatorPubKey()
   const coordinatorPubKey = new PubKey([
     BigInt(coordinatorPubKeyRaw.x),
     BigInt(coordinatorPubKeyRaw.y),
   ])
+  const startBlock = (await fundingRound.startBlock()).toNumber()
   const nativeTokenAddress = await fundingRound.nativeToken()
   const nativeToken = new Contract(
     nativeTokenAddress,
@@ -64,9 +67,6 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   const voiceCreditFactor = await fundingRound.voiceCreditFactor()
 
   const now = DateTime.local()
-  const contributionDeadline = DateTime.fromSeconds(
-    parseInt(await fundingRound.contributionDeadline()),
-  )
   const isFinalized = await fundingRound.isFinalized()
   const isCancelled = await fundingRound.isCancelled()
   let status: string

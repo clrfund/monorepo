@@ -63,9 +63,7 @@ describe('Funding Round', () => {
       token.address,
       verifiedUserRegistry.address,
       recipientRegistry.address,
-      signUpDuration,
       coordinator.address,
-      coordinatorPubKey.asContractParam(),
     );
     const maciFactory = await deployMaciFactory(deployer);
     const maciDeployed = await maciFactory.deployMaci(

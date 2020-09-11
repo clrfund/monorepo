@@ -30,7 +30,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   uint256 public startBlock;
   uint256 public voiceCreditFactor;
   uint256 public contributorCount;
-  uint256 public contributionDeadline;
   uint256 public matchingPoolSize;
   uint256 public adjustedMatchingPoolSize;
   uint256 public totalVotes;
@@ -38,7 +37,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   bool public isCancelled = false;
 
   address public coordinator;
-  PubKey public coordinatorPubKey;
   MACI public maci;
   ERC20Detailed public nativeToken;
   IVerifiedUserRegistry public verifiedUserRegistry;
@@ -55,20 +53,17 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   event TallyPublished(string _tallyHash);
 
   /**
-    * @dev Sets round parameters (they can only be set once during construction).
+    * @dev Set round parameters.
     * @param _nativeToken Address of a token which will be accepted for contributions.
     * @param _verifiedUserRegistry Address of the verified user registry.
     * @param _recipientRegistry Address of the recipient registry.
-    * @param _duration Duration of the contribution period in seconds.
-    * @param _coordinatorPubKey Coordinator's public key.
+    * @param _coordinator Address of the coordinator.
     */
   constructor(
     ERC20Detailed _nativeToken,
     IVerifiedUserRegistry _verifiedUserRegistry,
     IRecipientRegistry _recipientRegistry,
-    uint256 _duration,
-    address _coordinator,
-    PubKey memory _coordinatorPubKey
+    address _coordinator
   )
     public
   {
@@ -77,10 +72,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     voiceCreditFactor = voiceCreditFactor > 0 ? voiceCreditFactor : 1;
     verifiedUserRegistry = _verifiedUserRegistry;
     recipientRegistry = _recipientRegistry;
-    startBlock = block.number;
-    contributionDeadline = block.timestamp + _duration;
     coordinator = _coordinator;
-    coordinatorPubKey = _coordinatorPubKey;
+    startBlock = block.number;
   }
 
   /**
@@ -94,8 +87,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   {
     require(address(maci) == address(0), 'FundingRound: Already linked to MACI instance');
     require(
-      _maci.calcSignUpDeadline() >= contributionDeadline,
-      'FundingRound: Signup stops earlier than contribution deadline'
+      _maci.calcSignUpDeadline() > block.timestamp,
+      'FundingRound: Signup deadline must be in the future'
     );
     maci = _maci;
   }
@@ -113,7 +106,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   {
     require(address(maci) != address(0), 'FundingRound: MACI not deployed');
     require(contributorCount < maci.maxUsers(), 'FundingRound: Contributor limit reached');
-    require(block.timestamp < contributionDeadline, 'FundingRound: Contribution period ended');
+    require(block.timestamp < maci.calcSignUpDeadline(), 'FundingRound: Contribution period ended');
     require(!isFinalized, 'FundingRound: Round finalized');
     require(amount > 0, 'FundingRound: Contribution amount must be greater than zero');
     require(amount <= MAX_VOICE_CREDITS * voiceCreditFactor, 'FundingRound: Contribution amount is too large');

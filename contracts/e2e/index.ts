@@ -101,7 +101,6 @@ describe('End-to-end Tests', function () {
       'FundingRound',
       fundingRoundAddress,
     )
-    await fundingRoundFactory.deployMaci()
     const maciAddress = await fundingRound.maci()
     maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress)
   })
