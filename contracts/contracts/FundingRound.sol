@@ -82,7 +82,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   function setMaci(
     MACI _maci
   )
-    public
+    external
     onlyOwner
   {
     require(address(maci) == address(0), 'FundingRound: Already linked to MACI instance');
@@ -111,9 +111,11 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @param amount Contribution amount.
     */
   function contribute(
-    PubKey memory pubKey,
+    PubKey calldata pubKey,
     uint256 amount
-  ) public {
+  )
+    external
+  {
     require(address(maci) != address(0), 'FundingRound: MACI not deployed');
     require(contributorCount < maci.maxUsers(), 'FundingRound: Contributor limit reached');
     require(now < contributionDeadline, 'FundingRound: Contribution period ended');
@@ -178,10 +180,10 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @dev Submit a batch of messages along with corresponding ephemeral public keys.
     */
   function submitMessageBatch(
-    Message[] memory _messages,
-    PubKey[] memory _encPubKeys
+    Message[] calldata _messages,
+    PubKey[] calldata _encPubKeys
   )
-    public
+    external
   {
     uint256 batchSize = _messages.length;
     for (uint8 i = 0; i < batchSize; i++) {
@@ -193,7 +195,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @dev Withdraw contributed funds from the pool if the round has been cancelled.
     */
   function withdrawContribution()
-    public
+    external
   {
     require(isCancelled, 'FundingRound: Round not cancelled');
     // Reconstruction of exact contribution amount from VCs may not be possible due to a loss of precision
@@ -216,7 +218,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     uint256 _totalSpent,
     uint256 _totalSpentSalt
   )
-    public
+    external
     onlyOwner
   {
     require(!isFinalized, 'FundingRound: Already finalized');
@@ -242,7 +244,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @dev Cancel funding round.
     */
   function cancel()
-    public
+    external
     onlyOwner
   {
     require(!isFinalized, 'FundingRound: Already finalized');
@@ -262,13 +264,13 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   function claimFunds(
     address _recipient,
     uint256 _tallyResult,
-    uint256[][] memory _tallyResultProof,
+    uint256[][] calldata _tallyResultProof,
     uint256 _tallyResultSalt,
     uint256 _spent,
-    uint256[][] memory _spentProof,
+    uint256[][] calldata _spentProof,
     uint256 _spentSalt
   )
-    public
+    external
   {
     require(isFinalized, 'FundingRound: Round not finalized');
     require(!isCancelled, 'FundingRound: Round has been cancelled');

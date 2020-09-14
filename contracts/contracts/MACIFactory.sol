@@ -54,7 +54,7 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
     uint256 _signUpDuration,
     uint256 _votingDuration
   )
-    public
+    external
     onlyOwner
   {
     require(
@@ -77,9 +77,9 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   function deployMaci(
     SignUpGatekeeper _signUpGatekeeper,
     InitialVoiceCreditProxy _initialVoiceCreditProxy,
-    PubKey memory _coordinatorPubKey
+    PubKey calldata _coordinatorPubKey
   )
-    public
+    external
     onlyOwner
     returns (MACI _maci)
   {
