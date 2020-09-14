@@ -207,7 +207,7 @@ describe('Funding Round Factory', () => {
       await factory.setToken(token.address);
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await expect(factory.deployNewRound())
-        .to.emit(factory, 'NewRound');
+        .to.emit(factory, 'RoundStarted')
       const fundingRoundAddress = await factory.getCurrentRound();
       expect(fundingRoundAddress).to.properAddress;
       expect(fundingRoundAddress).to.not.equal(ZERO_ADDRESS);
@@ -252,7 +252,7 @@ describe('Funding Round Factory', () => {
       // Re-set coordinator and cancel current round
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await expect(factory.deployNewRound())
-        .to.emit(factory, 'NewRound');
+        .to.emit(factory, 'RoundStarted')
     });
 
     it('only owner can deploy funding round', async () => {
@@ -355,7 +355,7 @@ describe('Funding Round Factory', () => {
 
   it('allows owner to set native token', async () => {
     await expect(factory.setToken(token.address))
-      .to.emit(factory, 'NewToken')
+      .to.emit(factory, 'TokenChanged')
       .withArgs(token.address);
     expect(await factory.nativeToken()).to.equal(token.address);
   });
@@ -371,7 +371,7 @@ describe('Funding Round Factory', () => {
       coordinator.address,
       coordinatorPubKey,
     ))
-      .to.emit(factory, 'CoordinatorTransferred')
+      .to.emit(factory, 'CoordinatorChanged')
       .withArgs(coordinator.address);
     expect(await factory.coordinator()).to.eq(coordinator.address);
   });
@@ -389,7 +389,7 @@ describe('Funding Round Factory', () => {
     await factory.setCoordinator(coordinator.address, coordinatorPubKey);
     const factoryAsCoordinator = factory.connect(coordinator);
     await expect(factoryAsCoordinator.coordinatorQuit())
-      .to.emit(factory, 'CoordinatorTransferred')
+      .to.emit(factory, 'CoordinatorChanged')
       .withArgs(ZERO_ADDRESS);
     expect(await factory.coordinator()).to.equal(ZERO_ADDRESS);
   });

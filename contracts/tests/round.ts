@@ -122,7 +122,7 @@ describe('Funding Round', () => {
       );
       const expectedVoiceCredits = contributionAmount.div(VOICE_CREDIT_FACTOR)
       await expect(fundingRoundAsContributor.contribute(userPubKey, contributionAmount))
-        .to.emit(fundingRound, 'NewContribution')
+        .to.emit(fundingRound, 'Contribution')
         .withArgs(contributor.address, contributionAmount)
         .to.emit(maci, 'SignUp')
         // We use [] to skip argument matching, otherwise it will fail
@@ -556,8 +556,8 @@ describe('Funding Round', () => {
     it('allows contributor to withdraw funds', async () => {
       await fundingRoundAsContributor.contribute(userPubKey, contributionAmount);
       await fundingRound.cancel();
-      await expect(fundingRoundAsContributor.withdraw())
-        .to.emit(fundingRound, 'FundsWithdrawn')
+      await expect(fundingRoundAsContributor.withdrawContribution())
+        .to.emit(fundingRound, 'ContributionWithdrawn')
         .withArgs(contributor.address);
       expect(await token.balanceOf(fundingRound.address))
         .to.equal(0);
@@ -565,13 +565,13 @@ describe('Funding Round', () => {
 
     it('disallows withdrawal if round is not cancelled', async () => {
       await fundingRoundAsContributor.contribute(userPubKey, contributionAmount);
-      await expect(fundingRoundAsContributor.withdraw())
+      await expect(fundingRoundAsContributor.withdrawContribution())
         .to.be.revertedWith('FundingRound: Round not cancelled');
     });
 
     it('reverts if user did not contribute to the round', async () => {
       await fundingRound.cancel();
-      await expect(fundingRoundAsContributor.withdraw())
+      await expect(fundingRoundAsContributor.withdrawContribution())
         .to.be.revertedWith('FundingRound: Nothing to withdraw');
     });
   });

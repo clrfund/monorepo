@@ -76,7 +76,7 @@ sequenceDiagram
             Factory ->> FundingRound: call cancel()
 
             loop Withdrawal
-                Contributor ->> FundingRound: call withdraw()
+                Contributor ->> FundingRound: call withdrawContribution()
                 FundingRound ->> Contributor: transfer funds
             end
         end

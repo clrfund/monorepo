@@ -87,7 +87,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     matchingPool = await nativeToken.balanceOf(factory.address)
   }
 
-  const contributionFilter = fundingRound.filters.NewContribution()
+  const contributionFilter = fundingRound.filters.Contribution()
   const contributionEvents = await fundingRound.queryFilter(contributionFilter, 0)
   let contributions = BigNumber.from(0)
   contributionEvents.forEach(event => {

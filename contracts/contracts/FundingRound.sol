@@ -46,8 +46,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   mapping(address => ContributorStatus) public contributors;
 
   // Events
-  event NewContribution(address indexed _sender, uint256 _amount);
-  event FundsWithdrawn(address indexed _contributor);
+  event Contribution(address indexed _sender, uint256 _amount);
+  event ContributionWithdrawn(address indexed _contributor);
   event FundsClaimed(address indexed _recipient, uint256 _amount);
 
   /**
@@ -132,7 +132,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
       signUpGatekeeperData,
       initialVoiceCreditProxyData
     );
-    emit NewContribution(msg.sender, amount);
+    emit Contribution(msg.sender, amount);
   }
 
   /**
@@ -192,7 +192,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   /**
     * @dev Withdraw contributed funds from the pool if the round has been cancelled.
     */
-  function withdraw()
+  function withdrawContribution()
     public
   {
     require(isCancelled, 'FundingRound: Round not cancelled');
@@ -200,7 +200,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     uint256 amount = contributors[msg.sender].voiceCredits * voiceCreditFactor;
     require(amount > 0, 'FundingRound: Nothing to withdraw');
     nativeToken.transfer(msg.sender, amount);
-    emit FundsWithdrawn(msg.sender);
+    emit ContributionWithdrawn(msg.sender);
   }
 
   /**
