@@ -18,15 +18,26 @@
 </template>
 
 <script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
+import { LOAD_ROUND_INFO } from '@/store/action-types'
 
-export default {
+@Component({
   name: 'clr.fund',
   components: {
     Cart,
     Profile,
   },
+})
+export default class App extends Vue {
+
+  created() {
+    this.$store.dispatch(LOAD_ROUND_INFO)
+  }
+
 }
 </script>
 
@@ -43,6 +54,22 @@ body {
 html {
   background-color: $bg-primary-color;
   color: $text-color;
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+}
+
+a {
+  color: $text-color;
+  text-decoration: none;
+}
+
+.input {
+  background-color: $bg-light-color;
+  border: 2px solid $button-color;
+  border-radius: 2px;
+  box-sizing: border-box;
+  color: $text-color;
+  padding: 7px;
 }
 
 .btn {
@@ -69,9 +96,7 @@ html {
 
 #app {
   display: flex;
-  font-family: Inter, sans-serif;
-  font-size: 14px;
-  height: 100%;
+  min-height: 100%;
 }
 
 #nav-bar {
@@ -130,13 +155,13 @@ html {
   flex-grow: 1;
   padding: $content-space;
 
-  h1 {
-    border-bottom: $border;
+  .content-heading {
+    display: block;
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 14px;
     font-weight: normal;
     letter-spacing: 6px;
-    margin: 0 0 $content-space;
+    margin: 0;
     padding-bottom: $content-space;
     text-transform: uppercase;
   }
@@ -144,10 +169,36 @@ html {
 
 #user-bar {
   background-color: $bg-light-color;
-  display: flex;
-  flex-direction: column;
   flex-shrink: 0;
   min-width: 300px;
   width: 20%;
+}
+
+.loader {
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 20px auto;
+}
+
+.loader:after {
+  content: " ";
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 4px;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: loader 1.2s linear infinite;
+}
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

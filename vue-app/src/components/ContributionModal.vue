@@ -1,20 +1,22 @@
 <template>
   <div class="modal-body">
-    <div v-if="contributionStep === 1">
+    <div v-if="step === 1">
       <h3>Step 1 of 4: Approve</h3>
-      <div>Please confirm transaction in your wallet</div>
+      <div v-if="!approvalTx">Please approve transaction in your wallet</div>
+      <div v-if="approvalTx">Waiting for confirmation...</div>
       <div class="loader"></div>
     </div>
-    <div v-if="contributionStep === 2">
+    <div v-if="step === 2">
       <h3>Step 2 of 4: Contribute</h3>
-      <div>Please confirm transaction in your wallet</div>
+      <div v-if="!contributionTx">Please approve transaction in your wallet</div>
+      <div v-if="contributionTx">Waiting for confirmation...</div>
       <div class="loader"></div>
     </div>
-    <div v-if="contributionStep === 3">
+    <div v-if="step === 3">
       <h3>Step 3 of 4: Are you being bribed?</h3>
       <button class="btn" @click="vote()">No</button>
     </div>
-    <div v-if="contributionStep === 4">
+    <div v-if="step === 4">
       <h3>Step 4 of 4: Vote</h3>
       <div>Please send this transaction to {{ currentRound.fundingRoundAddress }} after {{ currentRound.contributionDeadline | formatDate }}:</div>
       <div class="hex">{{ voteTxData }}</div>
@@ -27,6 +29,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber, Contract, FixedNumber, Signer } from 'ethers'
+import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { parseFixed } from '@ethersproject/bignumber'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
@@ -51,11 +54,14 @@ interface Contributor {
 @Component
 export default class ContributionModal extends Vue {
 
-  contributionStep = 1
+  step = 1
 
   private amount: BigNumber = BigNumber.from(0)
   private votes: [number, BigNumber][] = []
   private contributor?: Contributor
+
+  approvalTx: TransactionResponse | null = null
+  contributionTx: TransactionResponse | null = null
   voteTxData = ''
 
   mounted() {
@@ -90,9 +96,11 @@ export default class ContributionModal extends Vue {
     // Approve transfer
     const allowance = await token.allowance(signer.getAddress(), fundingRoundAddress)
     if (allowance < this.amount) {
-      await token.approve(fundingRoundAddress, this.amount)
+      const approvalTx = await token.approve(fundingRoundAddress, this.amount)
+      this.approvalTx = approvalTx
+      await approvalTx.wait()
     }
-    this.contributionStep += 1
+    this.step += 1
     // Contribute
     const contributorKeypair = new Keypair()
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
@@ -100,11 +108,12 @@ export default class ContributionModal extends Vue {
       contributorKeypair.pubKey.asContractParam(),
       this.amount,
     )
+    this.contributionTx = contributionTx
     // Get state index and amount of voice credits
     const maci = new Contract(maciAddress, MACI, signer)
     const stateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex')
     const voiceCredits = await getEventArg(contributionTx, maci, 'SignUp', '_voiceCreditBalance')
-    this.contributionStep += 1
+    this.step += 1
     this.contributor = {
       keypair: contributorKeypair,
       stateIndex,
@@ -123,7 +132,7 @@ export default class ContributionModal extends Vue {
     if (!this.contributor) {
       return
     }
-    this.contributionStep += 1
+    this.step += 1
     const { coordinatorPubKey, fundingRoundAddress } = this.currentRound
     const messages: Message[] = []
     const encPubKeys: PubKey[] = []
@@ -154,38 +163,8 @@ export default class ContributionModal extends Vue {
 
 .modal-body {
   background-color: $bg-light-color;
-  font-family: Inter, sans-serif;
-  font-size: 14px;
-  padding: 10px 20px 20px;
+  padding: 20px;
   text-align: center;
-}
-
-.loader {
-  display: block;
-  width: 40px;
-  height: 40px;
-  margin: 20px auto;
-}
-
-.loader:after {
-  content: " ";
-  display: block;
-  width: 32px;
-  height: 32px;
-  margin: 4px;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: loader 1.2s linear infinite;
-}
-
-@keyframes loader {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .hex {

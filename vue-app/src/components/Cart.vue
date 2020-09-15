@@ -9,7 +9,7 @@
         <input
           :value="item.amount"
           @input="updateAmount(item, $event.target.value)"
-          class="contribution-amount"
+          class="input contribution-amount"
           name="amount"
           placeholder="Amount"
         >
@@ -108,7 +108,7 @@ export default class Cart extends Vue {
     }, 0)
   }
 
-  async contribute() {
+  contribute() {
     this.$modal.show(
       ContributionModal,
       { },
@@ -122,14 +122,13 @@ export default class Cart extends Vue {
 }
 </script>
 
-
 <style scoped lang="scss">
 @import '../styles/vars';
 
 .cart {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  height: calc(100vh - 110px);
 }
 
 .cart-item {
@@ -174,13 +173,7 @@ $project-image-size: 50px;
   padding-left: $project-image-size + 15px;
 
   .contribution-amount {
-    background-color: $bg-light-color;
-    border: 2px solid $button-color;
-    border-radius: 2px;
-    box-sizing: border-box;
-    color: white;
     font-size: 12px;
-    padding: 7px;
     width: 60%;
   }
 
@@ -191,6 +184,8 @@ $project-image-size: 50px;
 
   .remove-cart-item {
     cursor: pointer;
+    margin-left: 7px;
+    min-width: 20px;
     width: 20px;
 
     &:hover {

@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h1>Home</h1>
+    <h1 class="content-heading">Home</h1>
     <div v-if="currentRound" class="round-info">
       <div class="round-info-item">
         <div class="round-info-title">Current Round:</div>
@@ -36,12 +36,12 @@
       </div>
     </div>
     <div class="project-list">
-      <ProjectItem
+      <project-list-item
         v-for="project in projects"
         v-bind:project="project"
         v-bind:key="project.address"
       >
-      </ProjectItem>
+      </project-list-item>
     </div>
   </div>
 </template>
@@ -55,14 +55,14 @@ import { getContributionAmount } from '@/api/contributions'
 import { RoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 
-import ProjectItem from '@/components/ProjectItem.vue'
+import ProjectListItem from '@/components/ProjectListItem.vue'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { SET_CONTRIBUTION } from '@/store/mutation-types'
 
 @Component({
   name: 'Home',
   components: {
-    ProjectItem,
+    ProjectListItem,
   },
 })
 export default class Home extends Vue {
@@ -73,27 +73,20 @@ export default class Home extends Vue {
     return this.$store.state.currentRound
   }
 
-  private async updateCurrentRound() {
-    await this.$store.dispatch(LOAD_ROUND_INFO)
-    const walletAddress = this.$store.state.account
-    if (this.currentRound && walletAddress) {
-      const contribution = await getContributionAmount(
-        walletAddress,
-        this.currentRound.fundingRoundAddress,
-        this.currentRound.nativeTokenDecimals,
-      )
-      this.$store.commit(SET_CONTRIBUTION, contribution)
-    }
-  }
-
   async mounted() {
     this.projects = await getProjects()
-    this.updateCurrentRound()
     this.$store.watch(
       (state) => state.account,
-      async (account: string) => {
-        if (this.currentRound && account) {
-          this.updateCurrentRound()
+      async (walletAddress: string) => {
+        // Reload round info when user changes wallet account
+        await this.$store.dispatch(LOAD_ROUND_INFO)
+        if (this.currentRound && walletAddress) {
+          const contribution = await getContributionAmount(
+            walletAddress,
+            this.currentRound.fundingRoundAddress,
+            this.currentRound.nativeTokenDecimals,
+          )
+          this.$store.commit(SET_CONTRIBUTION, contribution)
         }
       },
     )
@@ -107,11 +100,6 @@ export default class Home extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
-
-#content h1 {
-  border-bottom: none;
-  margin-bottom: 0;
-}
 
 .round-info {
   display: flex;

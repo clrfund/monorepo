@@ -1,27 +1,27 @@
 import fs from 'fs'
 import { ethers } from '@nomiclabs/buidler'
 
+import MACIArtifact from '../build/contracts/MACI.json'
 import { getEventArg } from '../utils/contracts'
 import { getRecipientClaimData } from '../utils/maci'
 
 async function main() {
   const [,,, recipient1, recipient2] = await ethers.getSigners()
-  // Finalize the round
   const state = JSON.parse(fs.readFileSync('state.json').toString())
-  const factory = await ethers.getContractAt('FundingRoundFactory', state.factory)
   const tally = JSON.parse(fs.readFileSync('tally.json').toString())
-  const totalSpent = parseInt(tally.totalVoiceCredits.spent)
-  const totalSpentSalt = tally.totalVoiceCredits.salt
-  await factory.transferMatchingFunds(totalSpent, totalSpentSalt)
-  console.log('Round finalized, totals verified.')
 
   const fundingRound = await ethers.getContractAt('FundingRound', state.fundingRound)
+  const maciAddress = await fundingRound.maci()
+  const maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress)
+  const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
+
   // Claim funds
   for (const recipientIndex of [1, 2]) {
     const recipient = recipientIndex === 1 ? recipient1 : recipient2
     const recipientClaimData = getRecipientClaimData(
       await recipient.getAddress(),
       recipientIndex,
+      recipientTreeDepth,
       tally,
     )
     const fundingRoundAsRecipient = fundingRound.connect(recipient)

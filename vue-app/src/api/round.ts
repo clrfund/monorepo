@@ -1,14 +1,15 @@
-import { ethers, BigNumber, FixedNumber } from 'ethers'
+import { BigNumber, Contract, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 import { bigInt } from 'maci-crypto'
 import { PubKey } from 'maci-domainobjs'
 
-import { FundingRound, ERC20 } from './abi'
+import { FundingRound, MACI, ERC20 } from './abi'
 import { provider, factory } from './core'
 
 export interface RoundInfo {
   fundingRoundAddress: string;
   maciAddress: string;
+  recipientTreeDepth: number;
   coordinatorPubKey: PubKey;
   nativeTokenAddress: string;
   nativeTokenSymbol: string;
@@ -34,19 +35,21 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
     return null
   }
-  const fundingRound = new ethers.Contract(
+  const fundingRound = new Contract(
     fundingRoundAddress,
     FundingRound,
     provider,
   )
   const maciAddress = await fundingRound.maci()
+  const maci = new Contract(maciAddress, MACI, provider)
+  const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
   const coordinatorPubKeyRaw = await fundingRound.coordinatorPubKey()
   const coordinatorPubKey = new PubKey([
     bigInt(coordinatorPubKeyRaw.x),
     bigInt(coordinatorPubKeyRaw.y),
   ])
   const nativeTokenAddress = await fundingRound.nativeToken()
-  const nativeToken = new ethers.Contract(
+  const nativeToken = new Contract(
     nativeTokenAddress,
     ERC20,
     provider,
@@ -96,6 +99,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   return {
     fundingRoundAddress,
     maciAddress,
+    recipientTreeDepth,
     coordinatorPubKey,
     nativeTokenAddress,
     nativeTokenSymbol,

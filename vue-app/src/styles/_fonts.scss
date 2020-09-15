@@ -2,7 +2,15 @@
 
 @font-face {
   font-family: 'Glacial Indifference';
-  src: url('assets/fonts/GlacialIndifference-Regular.otf') format('otf');
-  font-weight: medium;
   font-style: normal;
+  font-weight: normal;
+  src: url('~@/assets/fonts/GlacialIndifference-Regular.otf') format('opentype');
 }
+
+@font-face {
+  font-family: 'Glacial Indifference';
+  font-style: normal;
+  font-weight: bold;
+  src: url('~@/assets/fonts/GlacialIndifference-Bold.otf') format('opentype');
+}
+

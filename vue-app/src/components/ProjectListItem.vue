@@ -2,7 +2,12 @@
   <div class="project-item">
     <img class="project-image" v-bind:src="project.imageUrl" v-bind:alt="project.name">
     <div class="project-info">
-      <div class="project-name">{{ project.name }}</div>
+      <router-link
+        class="project-name"
+        :to="{ name: 'project', params: { address: project.address }}"
+      >
+        {{ project.name }}
+      </router-link>
       <div class="project-description">{{ project.description }}</div>
       <button
         class="btn contribute-btn"
@@ -19,18 +24,16 @@
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 
+import { CART_MAX_SIZE } from '@/api/contributions'
 import { Project } from '@/api/projects'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 
-// A size of message batch
-const CART_MAX_SIZE = 10
-
 @Component
-export default class ProjectItem extends Vue {
+export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
 
-  canContribute() {
+  canContribute(): boolean {
     return this.$store.state.cart.length < CART_MAX_SIZE
   }
 
