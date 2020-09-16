@@ -13,7 +13,7 @@
     "tally:local": "buidler run --network localhost scripts/tally.ts",
     "claim:local": "buidler run --network localhost scripts/claim.ts",
     "test": "buidler typechain && buidler test",
-    "e2e": "buidler test --network ganache e2e/index.ts",
+    "e2e": "NODE_OPTIONS=--max-old-space-size=4096 buidler test --network ganache e2e/index.ts",
     "lint:js": "eslint '{tests,e2e,scripts}/**/*.ts'",
     "lint:solidity": "solhint 'contracts/**/*.sol'",
     "lint": "yarn lint:solidity && yarn lint:js",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^2.5.1",
-    "maci-contracts": "0.2.2"
+    "maci-contracts": "0.2.6"
   },
   "devDependencies": {
     "@nomiclabs/buidler": "^1.3.8",
@@ -38,9 +38,9 @@
     "eslint": "^6.8.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.1",
-    "maci-cli": "0.2.2",
-    "maci-crypto": "0.2.1",
-    "maci-domainobjs": "0.2.1",
+    "maci-cli": "0.2.6",
+    "maci-crypto": "0.2.6",
+    "maci-domainobjs": "0.2.6",
     "solhint": "^3.1.0",
     "ts-generator": "^0.0.8",
     "ts-node": "^8.8.1",

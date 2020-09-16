@@ -17,9 +17,9 @@ use(solidity)
 
 describe('End-to-end Tests', function () {
   this.timeout(10 * 60 * 1000)
+  this.bail(true)
 
   const provider = waffle.provider
-  const maciParameters = new MaciParameters()
 
   let deployer: Signer
   let coordinator: Wallet
@@ -33,6 +33,7 @@ describe('End-to-end Tests', function () {
   let fundingRound: Contract
   let maci: Contract
 
+  let maciParameters: MaciParameters
   let coordinatorKeypair: Keypair
 
   beforeEach(async () => {
@@ -47,6 +48,7 @@ describe('End-to-end Tests', function () {
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
     fundingRoundFactory = await FundingRoundFactory.deploy(maciFactory.address)
     await maciFactory.transferOwnership(fundingRoundFactory.address)
+    maciParameters = await MaciParameters.read(maciFactory)
 
     // Deploy ERC20 token contract
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer)

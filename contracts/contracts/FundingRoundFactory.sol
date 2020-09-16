@@ -111,7 +111,8 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     require(bytes(_metadata).length != 0, 'Factory: Metadata info is empty string');
     require(recipients[_fundingAddress] == false, 'Factory: Recipient already registered');
     // TODO: implement mechanism for replacing registrants
-    require(recipientCount < maciFactory.maxVoteOptions(), 'Factory: Recipient limit reached');
+    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
+    require(recipientCount < maxVoteOptions, 'Factory: Recipient limit reached');
     recipientCount += 1;
     recipients[_fundingAddress] = true;
     recipientIndex[_fundingAddress] = recipientCount;  // Starts with 1
@@ -145,6 +146,8 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     uint8 _voteOptionTreeDepth,
     uint8 _tallyBatchSize,
     uint8 _messageBatchSize,
+    SnarkVerifier _batchUstVerifier,
+    SnarkVerifier _qvtVerifier,
     uint256 _signUpDuration,
     uint256 _votingDuration
   )
@@ -162,6 +165,8 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
       _voteOptionTreeDepth,
       _tallyBatchSize,
       _messageBatchSize,
+      _batchUstVerifier,
+      _qvtVerifier,
       _signUpDuration,
       _votingDuration
     );

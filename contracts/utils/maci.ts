@@ -1,25 +1,30 @@
-import { BigNumber } from 'ethers'
+import { Contract, BigNumber } from 'ethers'
 import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
 import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
 
 export class MaciParameters {
 
-  // Defaults
-  stateTreeDepth = 4
-  messageTreeDepth = 4
-  voteOptionTreeDepth = 2
-  tallyBatchSize = 4
-  messageBatchSize = 4
-  signUpDuration = 7 * 86400
-  votingDuration = 7 * 86400
+  stateTreeDepth!: number
+  messageTreeDepth!: number
+  voteOptionTreeDepth!: number
+  tallyBatchSize!: number
+  messageBatchSize!: number
+  batchUstVerifier!: string
+  qvtVerifier!: string
+  signUpDuration!: number
+  votingDuration!: number
 
-  constructor(parameters: {[name: string]: number} = {}) {
+  constructor(parameters: {[name: string]: any} = {}) {
+    this.update(parameters)
+  }
+
+  update(parameters: {[name: string]: any}) {
     for (const [name, value] of Object.entries(parameters)) {
-      (this as any)[name] = value // eslint-disable-line @typescript-eslint/no-explicit-any
+      (this as any)[name] = value
     }
   }
 
-  values(): number[] {
+  values(): any[] {
     // To be passed to setMaciParameters()
     return [
       this.stateTreeDepth,
@@ -27,9 +32,31 @@ export class MaciParameters {
       this.voteOptionTreeDepth,
       this.tallyBatchSize,
       this.messageBatchSize,
+      this.batchUstVerifier,
+      this.qvtVerifier,
       this.signUpDuration,
       this.votingDuration,
     ]
+  }
+
+  static async read(maciFactory: Contract): Promise<MaciParameters> {
+    const { stateTreeDepth, messageTreeDepth, voteOptionTreeDepth } = await maciFactory.treeDepths()
+    const { tallyBatchSize, messageBatchSize } = await maciFactory.batchSizes()
+    const batchUstVerifier = await maciFactory.batchUstVerifier()
+    const qvtVerifier = await maciFactory.qvtVerifier()
+    const signUpDuration = (await maciFactory.signUpDuration()).toNumber()
+    const votingDuration = (await maciFactory.votingDuration()).toNumber()
+    return new MaciParameters({
+      stateTreeDepth,
+      messageTreeDepth,
+      voteOptionTreeDepth,
+      tallyBatchSize,
+      messageBatchSize,
+      batchUstVerifier,
+      qvtVerifier,
+      signUpDuration,
+      votingDuration,
+    })
   }
 }
 
