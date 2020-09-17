@@ -1,28 +1,12 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h3>Step 1 of 3: Provide URL of vote tally</h3>
-      <input
-        :value="tallyUrl"
-        @input="tallyUrl = $event.target.value"
-        class="input"
-        name="tally-url"
-      >
-      <button
-        class="btn"
-        :disabled="!tallyUrl"
-        @click="claim()"
-      >
-        Continue
-      </button>
-    </div>
-    <div v-if="step === 2">
-      <h3>Step 2 of 3: Claim funds</h3>
+      <h3>Step 1 of 2: Claim funds</h3>
       <div>Please confirm transaction in your wallet</div>
       <div class="loader"></div>
     </div>
-    <div v-if="step === 3">
-      <h3>Step 3 of 3: Success</h3>
+    <div v-if="step === 2">
+      <h3>Step 2 of 2: Success</h3>
       <div>{{ amount | formatAmount }} {{ currentRound.nativeTokenSymbol }} has been sent to {{ project.address }}</div>
       <button class="btn" @click="$emit('close')">OK</button>
     </div>
@@ -38,6 +22,7 @@ import { Contract, FixedNumber, Signer } from 'ethers'
 import { FundingRound } from '@/api/abi'
 import { Project } from '@/api/projects'
 import { RoundInfo } from '@/api/round'
+import { getTally } from '@/api/tally'
 import { getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
 
@@ -49,7 +34,6 @@ export default class ClaimModal extends Vue {
 
   step = 1
 
-  tallyUrl = ''
   tally: any
   amount = FixedNumber.from(0)
 
@@ -62,10 +46,12 @@ export default class ClaimModal extends Vue {
     return provider.getSigner()
   }
 
+  mounted() {
+    this.claim()
+  }
+
   async claim() {
-    const response = await fetch(this.tallyUrl)
-    this.tally = await response.json()
-    this.step += 1
+    this.tally = await getTally(this.currentRound.fundingRoundAddress)
     const signer = this.getSigner()
     const { fundingRoundAddress, recipientTreeDepth, nativeTokenDecimals } = this.currentRound
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
