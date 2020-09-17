@@ -53,7 +53,7 @@ async function main() {
   const poolContributorToken = token.connect(poolContributor);
   await poolContributorToken.approve(factory.address, poolContributionAmount);
   const poolContributorFactory = factory.connect(poolContributor);
-  await poolContributorFactory.contribute(poolContributionAmount);
+  await poolContributorFactory.contributeMatchingFunds(poolContributionAmount)
 
   // Add contributors
   await factory.addUser(contributor1.getAddress())

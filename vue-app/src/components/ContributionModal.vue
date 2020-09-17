@@ -42,8 +42,6 @@ import { createMessage } from '@/utils/maci'
 
 import { FundingRound, ERC20, MACI } from '@/api/abi'
 
-const VOICE_CREDIT_FACTOR = BigNumber.from(10).pow(4 + 18 - 9)
-
 interface Contributor {
   keypair: Keypair;
   stateIndex: number;
@@ -65,12 +63,12 @@ export default class ContributionModal extends Vue {
   voteTxData = ''
 
   mounted() {
-    const { nativeTokenDecimals } = this.currentRound
+    const { nativeTokenDecimals, voiceCreditFactor } = this.currentRound
     this.$store.state.cart.forEach((item: CartItem) => {
       const amountRaw = parseFixed(item.amount.toString(), nativeTokenDecimals)
-      const voiceCredits = amountRaw.div(VOICE_CREDIT_FACTOR)
+      const voiceCredits = amountRaw.div(voiceCreditFactor)
       this.votes.push([item.index, voiceCredits])
-      this.amount = this.amount.add(voiceCredits.mul(VOICE_CREDIT_FACTOR))
+      this.amount = this.amount.add(voiceCredits.mul(voiceCreditFactor))
     })
     this.contribute()
   }

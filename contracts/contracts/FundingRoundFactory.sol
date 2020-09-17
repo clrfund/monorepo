@@ -33,14 +33,14 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   mapping(address => uint256) private recipientIndex;
 
   // Events
-  event NewContribution(address indexed _sender, uint256 _amount);
+  event MatchingPoolContribution(address indexed _sender, uint256 _amount);
   event UserAdded(address indexed _user);
   event UserRemoved(address indexed _user);
   event RecipientAdded(address indexed _fundingAddress, string _metadata, uint256 _index);
-  event NewToken(address _token);
-  event NewRound(address _round);
-  event CoordinatorTransferred(address _newCoordinator);
+  event RoundStarted(address _round);
   event RoundFinalized(address _round);
+  event TokenChanged(address _token);
+  event CoordinatorChanged(address _coordinator);
 
   constructor(
     MACIFactory _maciFactory
@@ -53,12 +53,12 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   /**
     * @dev Contribute tokens to the matching pool.
     */
-  function contribute(uint256 _amount)
-    public
+  function contributeMatchingFunds(uint256 _amount)
+    external
   {
     require(address(nativeToken) != address(0), 'Factory: Native token is not set');
     nativeToken.transferFrom(msg.sender, address(this), _amount);
-    emit NewContribution(msg.sender, _amount);
+    emit MatchingPoolContribution(msg.sender, _amount);
   }
 
   /**
@@ -148,7 +148,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     uint256 _signUpDuration,
     uint256 _votingDuration
   )
-    public
+    external
     onlyOwner
   {
     FundingRound currentRound = getCurrentRound();
@@ -171,7 +171,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     * @dev Deploy new funding round.
     */
   function deployNewRound()
-    public
+    external
     onlyOwner
     returns (FundingRound _newRound)
   {
@@ -192,7 +192,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
       coordinatorPubKey
     );
     rounds.push(newRound);
-    emit NewRound(address(newRound));
+    emit RoundStarted(address(newRound));
     return newRound;
   }
 
@@ -200,7 +200,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     * @dev Deploy MACI instance and link it to the current round.
     */
   function deployMaci()
-    public
+    external
     onlyOwner
   {
     FundingRound currentRound = getCurrentRound();
@@ -225,22 +225,29 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     uint256 _totalSpent,
     uint256 _totalSpentSalt
   )
-    public
+    external
     onlyOwner
   {
     FundingRound currentRound = getCurrentRound();
     require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
-    uint256 amount = currentRound.nativeToken().balanceOf(address(this));
-    if (amount > 0) {
-      nativeToken.transfer(address(currentRound), amount);
+    uint256 matchingPoolSize = currentRound.nativeToken().balanceOf(address(this));
+    if (matchingPoolSize > 0) {
+      nativeToken.transfer(address(currentRound), matchingPoolSize);
     }
-    currentRound.finalize(_totalSpent, _totalSpentSalt);
+    currentRound.finalize(matchingPoolSize, _totalSpent, _totalSpentSalt);
     emit RoundFinalized(address(currentRound));
   }
 
-  function setToken(address _token) public onlyOwner {
+  /**
+    * @dev Set token in which contributions are accepted.
+    * @param _token Address of the token contract.
+    */
+  function setToken(address _token)
+    external
+    onlyOwner
+  {
     nativeToken = ERC20Detailed(_token);
-    emit NewToken(_token);
+    emit TokenChanged(_token);
   }
 
   /**
@@ -261,28 +268,29 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
       currentRound.cancel();
       emit RoundFinalized(address(currentRound));
     }
-    emit CoordinatorTransferred(_coordinator);
+    emit CoordinatorChanged(_coordinator);
   }
 
   function setCoordinator(
     address _coordinator,
-    PubKey memory _coordinatorPubKey
+    PubKey calldata _coordinatorPubKey
   )
-    public
+    external
     onlyOwner
   {
     _setCoordinator(_coordinator, _coordinatorPubKey);
   }
 
-  function coordinatorQuit() public onlyCoordinator {
+  function coordinatorQuit()
+    external
+    onlyCoordinator
+  {
     // The fact that they quit is obvious from
     // the address being 0x0
     _setCoordinator(address(0), PubKey(0, 0));
   }
 
   modifier onlyCoordinator() {
-    // Enhancement: Get fancy to handle meta-tx
-    // like how OpenZeppelin Ownable does via GSN/Context
     require(msg.sender == coordinator, 'Sender is not the coordinator');
     _;
   }

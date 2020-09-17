@@ -21,7 +21,7 @@ export async function getContributionAmount(
     FundingRound,
     provider,
   )
-  const filter = fundingRound.filters.NewContribution(contributorAddress)
+  const filter = fundingRound.filters.Contribution(contributorAddress)
   const events = await fundingRound.queryFilter(filter, 0)
   const event = events[0]
   if (!event || !event.args) {

@@ -8,16 +8,10 @@ export async function getClaimedAmount(
   recipientAddress: string,
 ): Promise<BigNumber | null> {
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
-  // TODO: filter by recipient
-  const eventFilter = fundingRound.filters.FundsClaimed()
+  const eventFilter = fundingRound.filters.FundsClaimed(recipientAddress)
   const events = await fundingRound.queryFilter(eventFilter, 0)
-  for (const event of events) {
-    if (!event.args) {
-      continue
-    }
-    if (event.args._recipient.toLowerCase() === recipientAddress.toLowerCase()) {
-      return event.args._amount
-    }
+  if (events.length === 1) {
+    return (events[0].args as any)._amount
   }
   return null
 }

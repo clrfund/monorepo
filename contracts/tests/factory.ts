@@ -52,8 +52,8 @@ describe('Funding Round Factory', () => {
         contributionAmount,
       );
       const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contribute(contributionAmount))
-        .to.emit(factory, 'NewContribution')
+      await expect(factoryAsContributor.contributeMatchingFunds(contributionAmount))
+        .to.emit(factory, 'MatchingPoolContribution')
         .withArgs(contributor.address, contributionAmount);
       expect(await token.balanceOf(factory.address)).to.equal(contributionAmount);
     });
@@ -65,14 +65,14 @@ describe('Funding Round Factory', () => {
         contributionAmount,
       );
       const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contribute(contributionAmount))
+      await expect(factoryAsContributor.contributeMatchingFunds(contributionAmount))
         .to.be.revertedWith('Factory: Native token is not set');
     });
 
     it('requires approval', async () => {
       await factory.setToken(token.address);
       const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contribute(contributionAmount))
+      await expect(factoryAsContributor.contributeMatchingFunds(contributionAmount))
         .to.be.revertedWith('revert ERC20: transfer amount exceeds allowance');
     });
   });
@@ -207,7 +207,7 @@ describe('Funding Round Factory', () => {
       await factory.setToken(token.address);
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await expect(factory.deployNewRound())
-        .to.emit(factory, 'NewRound');
+        .to.emit(factory, 'RoundStarted')
       const fundingRoundAddress = await factory.getCurrentRound();
       expect(fundingRoundAddress).to.properAddress;
       expect(fundingRoundAddress).to.not.equal(ZERO_ADDRESS);
@@ -252,7 +252,7 @@ describe('Funding Round Factory', () => {
       // Re-set coordinator and cancel current round
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await expect(factory.deployNewRound())
-        .to.emit(factory, 'NewRound');
+        .to.emit(factory, 'RoundStarted')
     });
 
     it('only owner can deploy funding round', async () => {
@@ -339,7 +339,7 @@ describe('Funding Round Factory', () => {
 
     it('reverts if votes has not been tallied', async () => {
       const factoryAsContributor = factory.connect(contributor);
-      await factoryAsContributor.contribute(contributionAmount)
+      await factoryAsContributor.contributeMatchingFunds(contributionAmount)
       await factory.deployNewRound();
       await factory.deployMaci();
       await provider.send('evm_increaseTime', [roundDuration]);
@@ -355,7 +355,7 @@ describe('Funding Round Factory', () => {
 
   it('allows owner to set native token', async () => {
     await expect(factory.setToken(token.address))
-      .to.emit(factory, 'NewToken')
+      .to.emit(factory, 'TokenChanged')
       .withArgs(token.address);
     expect(await factory.nativeToken()).to.equal(token.address);
   });
@@ -371,7 +371,7 @@ describe('Funding Round Factory', () => {
       coordinator.address,
       coordinatorPubKey,
     ))
-      .to.emit(factory, 'CoordinatorTransferred')
+      .to.emit(factory, 'CoordinatorChanged')
       .withArgs(coordinator.address);
     expect(await factory.coordinator()).to.eq(coordinator.address);
   });
@@ -389,7 +389,7 @@ describe('Funding Round Factory', () => {
     await factory.setCoordinator(coordinator.address, coordinatorPubKey);
     const factoryAsCoordinator = factory.connect(coordinator);
     await expect(factoryAsCoordinator.coordinatorQuit())
-      .to.emit(factory, 'CoordinatorTransferred')
+      .to.emit(factory, 'CoordinatorChanged')
       .withArgs(ZERO_ADDRESS);
     expect(await factory.coordinator()).to.equal(ZERO_ADDRESS);
   });
