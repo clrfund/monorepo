@@ -13,7 +13,7 @@
     "core-js": "^3.6.4",
     "ethers": "^5.0.1",
     "luxon": "^1.24.1",
-    "maci-domainobjs": "^0.2.6",
+    "maci-domainobjs": "~0.2.6",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.2",
     "vue-js-modal": "^2.0.0-rc.6",

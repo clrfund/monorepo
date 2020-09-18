@@ -16,7 +16,7 @@ import MACIArtifact from '../build/contracts/MACI.json'
 use(solidity)
 
 describe('End-to-end Tests', function () {
-  this.timeout(10 * 60 * 1000)
+  this.timeout(60 * 60 * 1000)
   this.bail(true)
 
   const provider = waffle.provider
