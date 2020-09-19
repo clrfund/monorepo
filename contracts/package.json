@@ -38,6 +38,7 @@
     "eslint": "^6.8.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.1",
+    "ipfs-only-hash": "1.0.2",
     "maci-cli": "0.2.7",
     "maci-crypto": "~0.2.6",
     "maci-domainobjs": "~0.2.6",

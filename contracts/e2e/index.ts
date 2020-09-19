@@ -9,6 +9,7 @@ import { Keypair } from 'maci-domainobjs'
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
+import { getIpfsHash } from '../utils/ipfs'
 import { MaciParameters, createMessage, getRecipientClaimData } from '../utils/maci'
 
 import MACIArtifact from '../build/contracts/MACI.json'
@@ -40,7 +41,7 @@ describe('End-to-end Tests', function () {
     [deployer, poolContributor, recipient1, recipient2, ...contributors] = await ethers.getSigners()
 
     // Workaround for https://github.com/nomiclabs/buidler/issues/759
-    coordinator = Wallet.createRandom()
+    coordinator = Wallet.createRandom().connect(provider)
     await deployer.sendTransaction({ to: coordinator.address, value: UNIT.mul(10) })
 
     // Deploy funding round factory
@@ -160,6 +161,8 @@ describe('End-to-end Tests', function () {
       current_per_vo_vc_salt: '0x0',
       leaf_zero: randomStateLeaf,
     })
+    const tallyHash = await getIpfsHash(tally)
+    await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
 
     // Finalize round
     await fundingRoundFactory.transferMatchingFunds(

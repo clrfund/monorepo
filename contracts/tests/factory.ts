@@ -30,7 +30,7 @@ describe('Funding Round Factory', () => {
     factory = await FundingRoundFactory.deploy(maciFactory.address)
 
     expect(factory.address).to.properAddress;
-    expect(await getGasUsage(factory.deployTransaction)).lessThan(5000000)
+    expect(await getGasUsage(factory.deployTransaction)).lessThan(5100000)
     await maciFactory.transferOwnership(factory.address);
 
     // Deploy token contract and transfer tokens to contributor
