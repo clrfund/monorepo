@@ -1,25 +1,30 @@
-import { BigNumber } from 'ethers'
-import { bigInt, SnarkBigInt, genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
+import { Contract, BigNumber } from 'ethers'
+import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
 import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
 
 export class MaciParameters {
 
-  // Defaults
-  stateTreeDepth = 4
-  messageTreeDepth = 4
-  voteOptionTreeDepth = 2
-  tallyBatchSize = 4
-  messageBatchSize = 4
-  signUpDuration = 7 * 86400
-  votingDuration = 7 * 86400
+  stateTreeDepth!: number
+  messageTreeDepth!: number
+  voteOptionTreeDepth!: number
+  tallyBatchSize!: number
+  messageBatchSize!: number
+  batchUstVerifier!: string
+  qvtVerifier!: string
+  signUpDuration!: number
+  votingDuration!: number
 
-  constructor(parameters: {[name: string]: number} = {}) {
+  constructor(parameters: {[name: string]: any} = {}) {
+    this.update(parameters)
+  }
+
+  update(parameters: {[name: string]: any}) {
     for (const [name, value] of Object.entries(parameters)) {
-      (this as any)[name] = value // eslint-disable-line @typescript-eslint/no-explicit-any
+      (this as any)[name] = value
     }
   }
 
-  values(): number[] {
+  values(): any[] {
     // To be passed to setMaciParameters()
     return [
       this.stateTreeDepth,
@@ -27,9 +32,31 @@ export class MaciParameters {
       this.voteOptionTreeDepth,
       this.tallyBatchSize,
       this.messageBatchSize,
+      this.batchUstVerifier,
+      this.qvtVerifier,
       this.signUpDuration,
       this.votingDuration,
     ]
+  }
+
+  static async read(maciFactory: Contract): Promise<MaciParameters> {
+    const { stateTreeDepth, messageTreeDepth, voteOptionTreeDepth } = await maciFactory.treeDepths()
+    const { tallyBatchSize, messageBatchSize } = await maciFactory.batchSizes()
+    const batchUstVerifier = await maciFactory.batchUstVerifier()
+    const qvtVerifier = await maciFactory.qvtVerifier()
+    const signUpDuration = (await maciFactory.signUpDuration()).toNumber()
+    const votingDuration = (await maciFactory.votingDuration()).toNumber()
+    return new MaciParameters({
+      stateTreeDepth,
+      messageTreeDepth,
+      voteOptionTreeDepth,
+      tallyBatchSize,
+      messageBatchSize,
+      batchUstVerifier,
+      qvtVerifier,
+      signUpDuration,
+      votingDuration,
+    })
   }
 }
 
@@ -56,7 +83,7 @@ export function createMessage(
   voteOptionIndex: number | null,
   voiceCredits: BigNumber | null,
   nonce: number,
-  salt?: number,
+  salt?: BigInt,
 ): [Message, PubKey] {
   const encKeypair = new Keypair()
   if (!salt) {
@@ -64,12 +91,12 @@ export function createMessage(
   }
   const quadraticVoteWeight = voiceCredits ? bnSqrt(voiceCredits) : 0
   const command = new Command(
-    bigInt(userStateIndex),
+    BigInt(userStateIndex),
     newUserKeypair ? newUserKeypair.pubKey : userKeypair.pubKey,
-    bigInt(voteOptionIndex || 0),
-    bigInt(quadraticVoteWeight),
-    bigInt(nonce),
-    bigInt(salt),
+    BigInt(voteOptionIndex || 0),
+    BigInt(quadraticVoteWeight),
+    BigInt(nonce),
+    BigInt(salt),
   )
   const signature = command.sign(userKeypair.privKey)
   const message = command.encrypt(
@@ -88,7 +115,7 @@ export function getRecipientClaimData(
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
   const resultSalt = tally.results.salt
-  const resultTree = new IncrementalQuinTree(recipientTreeDepth, bigInt(0))
+  const resultTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
   for (const leaf of tally.results.tally) {
     resultTree.insert(leaf)
   }
@@ -96,7 +123,7 @@ export function getRecipientClaimData(
   // Create proof for total amount of spent voice credits
   const spent = tally.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
   const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
-  const spentTree = new IncrementalQuinTree(recipientTreeDepth, bigInt(0))
+  const spentTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
   for (const leaf of tally.totalVoiceCreditsPerVoteOption.tally) {
     spentTree.insert(leaf)
   }
@@ -105,10 +132,10 @@ export function getRecipientClaimData(
   return [
     recipientAddress,
     result,
-    resultProof.pathElements.map((x) => x.map((y: SnarkBigInt) => y.toString())),
+    resultProof.pathElements.map((x) => x.map((y) => y.toString())),
     resultSalt,
     spent,
-    spentProof.pathElements.map((x) => x.map((y: SnarkBigInt) => y.toString())),
+    spentProof.pathElements.map((x) => x.map((y) => y.toString())),
     spentSalt,
   ]
 }

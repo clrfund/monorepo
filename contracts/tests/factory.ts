@@ -19,12 +19,12 @@ describe('Funding Round Factory', () => {
   let maciFactory: Contract;
   let factory: Contract;
   let token: Contract;
-
-  const maciParameters = new MaciParameters();
+  let maciParameters: MaciParameters
   const coordinatorPubKey = (new Keypair()).pubKey.asContractParam()
 
   beforeEach(async () => {
     maciFactory = await deployMaciFactory(deployer);
+    maciParameters = await MaciParameters.read(maciFactory)
 
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
     factory = await FundingRoundFactory.deploy(maciFactory.address)
@@ -320,9 +320,6 @@ describe('Funding Round Factory', () => {
   });
 
   describe('transferring matching funds', () => {
-    const signUpDuration = maciParameters.signUpDuration
-    const votingDuration = maciParameters.votingDuration
-    const roundDuration = signUpDuration + votingDuration + 10
     const contributionAmount = UNIT.mul(10)
     const totalSpent = UNIT.mul(100)
     const totalSpentSalt = genRandomSalt().toString()
@@ -342,6 +339,7 @@ describe('Funding Round Factory', () => {
       await factoryAsContributor.contributeMatchingFunds(contributionAmount)
       await factory.deployNewRound();
       await factory.deployMaci();
+      const roundDuration = maciParameters.signUpDuration + maciParameters.votingDuration + 10
       await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
         .to.be.revertedWith('FundingRound: Votes has not been tallied')

@@ -20,27 +20,29 @@ describe('MACI factory', () => {
   let maciFactory: Contract;
   let signUpGatekeeper: Contract;
   let initialVoiceCreditProxy: Contract;
-  let maciParameters = new MaciParameters();
+  let maciParameters: MaciParameters
   const coordinatorPubKey = (new Keypair()).pubKey.asContractParam();
 
   beforeEach(async () => {
     maciFactory = await deployMaciFactory(deployer);
     expect(await getGasUsage(maciFactory.deployTransaction)).lessThan(5600000);
+    maciParameters = await MaciParameters.read(maciFactory)
 
     signUpGatekeeper = await deployMockContract(deployer, SignUpGatekeeper.abi);
     initialVoiceCreditProxy = await deployMockContract(deployer, InitialVoiceCreditProxy.abi);
   });
 
   it('sets default MACI parameters', async () => {
-    expect(await maciFactory.maxUsers()).to.equal(15);
-    expect(await maciFactory.maxMessages()).to.equal(15);
-    expect(await maciFactory.maxVoteOptions()).to.equal(24);
+    const { maxUsers, maxMessages, maxVoteOptions } = await maciFactory.maxValues()
+    expect(maxUsers).to.equal(15)
+    expect(maxMessages).to.equal(15)
+    expect(maxVoteOptions).to.equal(24)
     expect(await maciFactory.signUpDuration()).to.equal(604800);
     expect(await maciFactory.votingDuration()).to.equal(604800);
   });
 
   it('sets MACI parameters', async () => {
-    maciParameters = new MaciParameters({
+    maciParameters.update({
       stateTreeDepth: 8,
       messageTreeDepth: 12,
       voteOptionTreeDepth: 4,
@@ -50,20 +52,16 @@ describe('MACI factory', () => {
     await expect(maciFactory.setMaciParameters(...maciParameters.values()))
       .to.emit(maciFactory, 'MaciParametersChanged');
 
-    expect(await maciFactory.maxUsers())
-      .to.equal(2 ** maciParameters.stateTreeDepth - 1);
-    expect(await maciFactory.maxMessages())
-      .to.equal(2 ** maciParameters.messageTreeDepth - 1);
-    expect(await maciFactory.maxVoteOptions())
-      .to.equal(5 ** maciParameters.voteOptionTreeDepth - 1);
-    expect(await maciFactory.signUpDuration())
-      .to.equal(maciParameters.signUpDuration);
-    expect(await maciFactory.votingDuration())
-      .to.equal(maciParameters.votingDuration);
+    const { maxUsers, maxMessages, maxVoteOptions } = await maciFactory.maxValues()
+    expect(maxUsers).to.equal(2 ** maciParameters.stateTreeDepth - 1)
+    expect(maxMessages).to.equal(2 ** maciParameters.messageTreeDepth - 1)
+    expect(maxVoteOptions).to.equal(5 ** maciParameters.voteOptionTreeDepth - 1)
+    expect(await maciFactory.signUpDuration()).to.equal(maciParameters.signUpDuration)
+    expect(await maciFactory.votingDuration()).to.equal(maciParameters.votingDuration)
   });
 
   it('does not allow to decrease the vote option tree depth', async () => {
-    maciParameters = new MaciParameters({ voteOptionTreeDepth: 1 });
+    maciParameters.voteOptionTreeDepth = 1
     await expect(maciFactory.setMaciParameters(...maciParameters.values()))
       .to.be.revertedWith('MACIFactory: Vote option tree depth can not be decreased');
   });

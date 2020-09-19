@@ -648,8 +648,8 @@ describe('Funding Round', () => {
       await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
 
       const recipientClaimZeroData = recipientClaimData.slice()  // Make a copy
-      recipientClaimZeroData[1] = 0
-      recipientClaimZeroData[4] = 0
+      recipientClaimZeroData[1] = '0'
+      recipientClaimZeroData[4] = '0'
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimZeroData))
         .to.emit(fundingRound, 'FundsClaimed')
         .withArgs(recipient.address, 0)

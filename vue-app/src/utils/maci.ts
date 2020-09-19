@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers'
-import { bigInt, SnarkBigInt, genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
+import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
 import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
 
 function bnSqrt(a: BigNumber): BigNumber {
@@ -25,7 +25,7 @@ export function createMessage(
   voteOptionIndex: number | null,
   voiceCredits: BigNumber | null,
   nonce: number,
-  salt?: number,
+  salt?: BigInt,
 ): [Message, PubKey] {
   const encKeypair = new Keypair()
   if (!salt) {
@@ -33,12 +33,12 @@ export function createMessage(
   }
   const quadraticVoteWeight = voiceCredits ? bnSqrt(voiceCredits) : 0
   const command = new Command(
-    bigInt(userStateIndex),
+    BigInt(userStateIndex),
     newUserKeypair ? newUserKeypair.pubKey : userKeypair.pubKey,
-    bigInt(voteOptionIndex || 0),
-    bigInt(quadraticVoteWeight),
-    bigInt(nonce),
-    bigInt(salt),
+    BigInt(voteOptionIndex || 0),
+    BigInt(quadraticVoteWeight),
+    BigInt(nonce),
+    BigInt(salt),
   )
   const signature = command.sign(userKeypair.privKey)
   const message = command.encrypt(
@@ -57,7 +57,7 @@ export function getRecipientClaimData(
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
   const resultSalt = tally.results.salt
-  const resultTree = new IncrementalQuinTree(recipientTreeDepth, bigInt(0))
+  const resultTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
   for (const leaf of tally.results.tally) {
     resultTree.insert(leaf)
   }
@@ -65,7 +65,7 @@ export function getRecipientClaimData(
   // Create proof for total amount of spent voice credits
   const spent = tally.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
   const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
-  const spentTree = new IncrementalQuinTree(recipientTreeDepth, bigInt(0))
+  const spentTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
   for (const leaf of tally.totalVoiceCreditsPerVoteOption.tally) {
     spentTree.insert(leaf)
   }
@@ -74,10 +74,10 @@ export function getRecipientClaimData(
   return [
     recipientAddress,
     result,
-    resultProof.pathElements.map((x) => x.map((y: SnarkBigInt) => y.toString())),
+    resultProof.pathElements.map((x) => x.map((y) => y.toString())),
     resultSalt,
     spent,
-    spentProof.pathElements.map((x) => x.map((y: SnarkBigInt) => y.toString())),
+    spentProof.pathElements.map((x) => x.map((y) => y.toString())),
     spentSalt,
   ]
 }
