@@ -4,12 +4,14 @@ import { FixedNumber } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 
 import { CartItem } from '@/api/contributions'
-import { RoundInfo, getRoundInfo } from '@/api/round'
+import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
+import { Tally, getTally } from '@/api/tally'
 import { LOAD_ROUND_INFO } from './action-types'
 import {
   SET_WALLET_PROVIDER,
   SET_ACCOUNT,
   SET_CURRENT_ROUND,
+  SET_TALLY,
   SET_CONTRIBUTION,
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
@@ -22,6 +24,7 @@ interface RootState {
   walletProvider: Web3Provider | null;
   account: string;
   currentRound: RoundInfo | null;
+  tally: Tally | null;
   cart: CartItem[];
   contribution: FixedNumber;
 }
@@ -31,6 +34,7 @@ const store: StoreOptions<RootState> = {
     walletProvider: null,
     account: '',
     currentRound: null,
+    tally: null,
     cart: new Array<CartItem>(),
     contribution: FixedNumber.from(0),
   },
@@ -43,6 +47,9 @@ const store: StoreOptions<RootState> = {
     },
     [SET_CURRENT_ROUND](state, round: RoundInfo) {
       state.currentRound = round
+    },
+    [SET_TALLY](state, tally: Tally) {
+      state.tally = tally
     },
     [SET_CONTRIBUTION](state, contribution: FixedNumber) {
       state.contribution = contribution
@@ -76,6 +83,10 @@ const store: StoreOptions<RootState> = {
     async [LOAD_ROUND_INFO]({ commit }) {
       const currentRound = await getRoundInfo()
       commit(SET_CURRENT_ROUND, currentRound)
+      if (currentRound && currentRound.status === RoundStatus.Finalized) {
+        const tally = await getTally(currentRound.fundingRoundAddress)
+        commit(SET_TALLY, tally)
+      }
     },
   },
   modules: {},
