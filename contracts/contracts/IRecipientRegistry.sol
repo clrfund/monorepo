@@ -11,13 +11,15 @@ pragma experimental ABIEncoderV2;
  * - Assign an unique index to each recipient.
  * - Find the recipient's index by their address.
  * - Limit the maximum number of entries according to MACI's maxVoteOptions.
- * - (TODO) Remove invalid entries.
- * - (TODO) Prevent indices from changing during the funding round.
+ * - Remove invalid entries.
+ * - Prevent indices from changing during the funding round.
  */
 interface IRecipientRegistry {
 
-  function addRecipient(address _fundingAddress, string calldata _name) external;
+  function addRecipient(address _recipient, string calldata _name) external;
 
-  function getRecipientIndex(address _recipient) external view returns (uint256);
+  function removeRecipient(address _recipient) external;
+
+  function getRecipientIndex(address _recipient, uint256 _timestamp) external view returns (uint256);
 
 }
