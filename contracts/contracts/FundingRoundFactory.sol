@@ -43,7 +43,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   event MatchingPoolContribution(address indexed _sender, uint256 _amount);
   event UserAdded(address indexed _user);
   event UserRemoved(address indexed _user);
-  event RecipientAdded(address indexed _fundingAddress, string _metadata, uint256 _index);
+  event RecipientAdded(address indexed _recipient, string _metadata, uint256 _index);
   event RecipientRemoved(address indexed _recipient);
   event RoundStarted(address _round);
   event RoundFinalized(address _round);
