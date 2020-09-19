@@ -642,7 +642,7 @@ describe('Funding Round', () => {
       [[0]],
       genRandomSalt().toString(),
     ];
-    let expectedClaimableAmount = matchingPoolSize.div(2).add(totalContributions.div(2))
+    let expectedAllocatedAmount = matchingPoolSize.div(2).add(totalContributions.div(2))
     let fundingRoundAsRecipient: Contract;
     let fundingRoundAsContributor: Contract;
 
@@ -676,11 +676,16 @@ describe('Funding Round', () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
       await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
 
+      expect(await fundingRound.getAllocatedAmount(
+        recipientClaimData[1],
+        recipientClaimData[4],
+      )).to.equal(expectedAllocatedAmount)
+
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
-        .withArgs(recipient.address, expectedClaimableAmount);
+        .withArgs(recipient.address, expectedAllocatedAmount);
       expect(await token.balanceOf(recipient.address))
-        .to.equal(expectedClaimableAmount);
+        .to.equal(expectedAllocatedAmount);
     });
 
     it('allows address different than recipient to claim allocated funds', async () => {
@@ -689,9 +694,9 @@ describe('Funding Round', () => {
 
       await expect(fundingRoundAsContributor.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
-        .withArgs(recipient.address, expectedClaimableAmount);
+        .withArgs(recipient.address, expectedAllocatedAmount);
       expect(await token.balanceOf(recipient.address))
-        .to.equal(expectedClaimableAmount);
+        .to.equal(expectedAllocatedAmount);
     });
 
     it('allows recipient to claim zero amount', async () => {
@@ -709,10 +714,10 @@ describe('Funding Round', () => {
     it('allows recipient to claim if the matching pool is empty', async () => {
       await fundingRound.finalize(0, totalSpent, totalSpentSalt)
 
-      expectedClaimableAmount = totalContributions.div(2)
+      expectedAllocatedAmount = totalContributions.div(2)
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
-        .withArgs(recipient.address, expectedClaimableAmount)
+        .withArgs(recipient.address, expectedAllocatedAmount)
     })
 
     it('should not allow recipient to claim funds if round has not been finalized', async () => {
