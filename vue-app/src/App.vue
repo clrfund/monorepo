@@ -36,6 +36,9 @@ export default class App extends Vue {
 
   created() {
     this.$store.dispatch(LOAD_ROUND_INFO)
+    setInterval(() => {
+      this.$store.dispatch(LOAD_ROUND_INFO)
+    }, 60 * 1000)
   }
 
 }
