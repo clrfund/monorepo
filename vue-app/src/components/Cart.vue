@@ -21,8 +21,9 @@
     </div>
     <div class="contribute-btn-wrapper">
       <button
-        v-if="canContribute()"
+        v-if="this.cart.length > 0"
         class="btn contribute-btn"
+        :disabled="!canContribute()"
         @click="contribute()"
       >
         Contribute {{ total }} {{ tokenSymbol }} to {{ cart.length }} projects
@@ -91,10 +92,8 @@ export default class Cart extends Vue {
 
   canContribute(): boolean {
     const currentRound = this.$store.state.currentRound
-    if (!currentRound) {
-      return false
-    }
     return (
+      currentRound &&
       DateTime.local() < currentRound.contributionDeadline &&
       this.$store.state.account &&
       this.$store.state.contribution.isZero() &&

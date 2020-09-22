@@ -89,7 +89,7 @@ export default class ProjectView extends Vue {
     return currentRound ? currentRound.nativeTokenSymbol : ''
   }
 
-  canContribute() {
+  canContribute(): boolean {
     return this.$store.state.cart.length < CART_MAX_SIZE
   }
 
