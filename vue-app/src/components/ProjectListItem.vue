@@ -24,7 +24,7 @@
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 
-import { CART_MAX_SIZE } from '@/api/contributions'
+import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE } from '@/api/contributions'
 import { Project } from '@/api/projects'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 
@@ -38,7 +38,7 @@ export default class ProjectListItem extends Vue {
   }
 
   contribute(project: Project) {
-    this.$store.commit(ADD_CART_ITEM, { ...project, amount: 0 })
+    this.$store.commit(ADD_CART_ITEM, { ...project, amount: DEFAULT_CONTRIBUTION_AMOUNT })
   }
 }
 </script>

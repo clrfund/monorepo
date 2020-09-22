@@ -34,7 +34,7 @@ import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
-import { CART_MAX_SIZE } from '@/api/contributions'
+import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE } from '@/api/contributions'
 import { Project, getProject } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
@@ -94,7 +94,7 @@ export default class ProjectView extends Vue {
   }
 
   contribute() {
-    this.$store.commit(ADD_CART_ITEM, { ...this.project, amount: 0 })
+    this.$store.commit(ADD_CART_ITEM, { ...this.project, amount: DEFAULT_CONTRIBUTION_AMOUNT })
   }
 
   canClaim(): boolean {
