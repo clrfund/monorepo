@@ -10,11 +10,19 @@
       </router-link>
       <div class="project-description">{{ project.description }}</div>
       <button
+        v-if="!inCart"
         class="btn contribute-btn"
         :disabled="!canContribute()"
         @click="contribute(project)"
       >
         Contribute
+      </button>
+      <button
+        v-else
+        class="btn btn-inactive in-cart"
+      >
+        <img src="@/assets/checkmark.svg" />
+        <span>In cart</span>
       </button>
     </div>
   </div>
@@ -24,7 +32,7 @@
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 
-import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE } from '@/api/contributions'
+import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE, CartItem } from '@/api/contributions'
 import { Project } from '@/api/projects'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 
@@ -32,6 +40,13 @@ import { ADD_CART_ITEM } from '@/store/mutation-types'
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
+
+  get inCart(): boolean {
+    const index = this.$store.state.cart.findIndex((item: CartItem) => {
+      return item.address === this.project.address
+    })
+    return index !== -1
+  }
 
   canContribute(): boolean {
     return this.$store.state.cart.length < CART_MAX_SIZE
@@ -107,7 +122,8 @@ export default class ProjectListItem extends Vue {
   overflow: hidden;
 }
 
-.contribute-btn {
+.contribute-btn,
+.in-cart {
   margin-top: 20px;
 }
 </style>

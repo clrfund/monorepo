@@ -5,11 +5,19 @@
       <img class="project-image" :src="project.imageUrl" :alt="project.name">
       <h2 class="project-name">{{ project.name }}</h2>
       <button
+        v-if="!inCart"
         class="btn contribute-btn"
         :disabled="!canContribute()"
         @click="contribute()"
       >
         Contribute
+      </button>
+      <button
+        v-else
+        class="btn btn-inactive in-cart"
+      >
+        <img src="@/assets/checkmark.svg" />
+        <span>In cart</span>
       </button>
       <button
         class="btn claim-btn"
@@ -34,7 +42,7 @@ import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
-import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE } from '@/api/contributions'
+import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE, CartItem } from '@/api/contributions'
 import { Project, getProject } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
@@ -87,6 +95,17 @@ export default class ProjectView extends Vue {
   get tokenSymbol(): string {
     const currentRound = this.$store.state.currentRound
     return currentRound ? currentRound.nativeTokenSymbol : ''
+  }
+
+  get inCart(): boolean {
+    const project = this.project
+    if (project === null) {
+      return false
+    }
+    const index = this.$store.state.cart.findIndex((item: CartItem) => {
+      return item.address === project.address
+    })
+    return index !== -1
   }
 
   canContribute(): boolean {
@@ -148,6 +167,7 @@ export default class ProjectView extends Vue {
 }
 
 .contribute-btn,
+.in-cart,
 .claim-btn {
   margin: 0 $content-space $content-space 0;
   width: 300px;
