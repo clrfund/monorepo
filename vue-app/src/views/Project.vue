@@ -17,7 +17,7 @@
         @click="claim()"
       >
         <template v-if="allocatedAmount">
-          Claim {{ allocatedAmount | formatAmount }} {{ currentRound.nativeTokenSymbol }}
+          Claim {{ allocatedAmount | formatAmount }} {{ tokenSymbol }}
         </template>
         <template v-else>
           Claim
@@ -36,7 +36,7 @@ import { FixedNumber } from 'ethers'
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { CART_MAX_SIZE } from '@/api/contributions'
 import { Project, getProject } from '@/api/projects'
-import { RoundInfo, RoundStatus } from '@/api/round'
+import { RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
@@ -50,12 +50,8 @@ export default class ProjectView extends Vue {
   allocatedAmount: FixedNumber | null = null
   claimed: boolean | null = null
 
-  get currentRound(): RoundInfo {
-    return this.$store.state.currentRound
-  }
-
-  private async checkAllocation(tally: Tally) {
-    const currentRound = this.currentRound
+  private async checkAllocation(tally: Tally | null) {
+    const currentRound = this.$store.state.currentRound
     if (!this.project || !currentRound || currentRound.status !== RoundStatus.Finalized || !tally) {
       return
     }
@@ -88,6 +84,11 @@ export default class ProjectView extends Vue {
     this.checkAllocation(this.$store.state.tally)
   }
 
+  get tokenSymbol(): string {
+    const currentRound = this.$store.state.currentRound
+    return currentRound ? currentRound.nativeTokenSymbol : ''
+  }
+
   canContribute() {
     return this.$store.state.cart.length < CART_MAX_SIZE
   }
@@ -97,7 +98,7 @@ export default class ProjectView extends Vue {
   }
 
   canClaim(): boolean {
-    const currentRound = this.currentRound
+    const currentRound = this.$store.state.currentRound
     return (
       currentRound &&
       currentRound.status === RoundStatus.Finalized &&
