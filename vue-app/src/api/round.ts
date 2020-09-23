@@ -9,6 +9,7 @@ export interface RoundInfo {
   fundingRoundAddress: string;
   maciAddress: string;
   recipientTreeDepth: number;
+  startBlock: number;
   coordinatorPubKey: PubKey;
   nativeTokenAddress: string;
   nativeTokenSymbol: string;
@@ -43,6 +44,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   const maciAddress = await fundingRound.maci()
   const maci = new Contract(maciAddress, MACI, provider)
   const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
+  const startBlock = (await fundingRound.startBlock()).toNumber()
   const coordinatorPubKeyRaw = await fundingRound.coordinatorPubKey()
   const coordinatorPubKey = new PubKey([
     BigInt(coordinatorPubKeyRaw.x),
@@ -101,6 +103,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     fundingRoundAddress,
     maciAddress,
     recipientTreeDepth,
+    startBlock,
     coordinatorPubKey,
     nativeTokenAddress,
     nativeTokenSymbol,
