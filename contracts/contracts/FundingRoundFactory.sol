@@ -130,7 +130,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
       recipientIndex = vacantRecipientIndexes[vacantRecipientIndexes.length - 1];
       vacantRecipientIndexes.pop();
     }
-    recipients[_recipient] = Recipient(recipientIndex, now, 0);
+    recipients[_recipient] = Recipient(recipientIndex, block.number, 0);
     emit RecipientAdded(_recipient, _metadata, recipientIndex);
   }
 
@@ -144,7 +144,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   {
     require(recipients[_recipient].index != 0, 'Factory: Recipient is not in the registry');
     require(recipients[_recipient].removedAt == 0, 'Factory: Recipient already removed');
-    recipients[_recipient].removedAt = now;
+    recipients[_recipient].removedAt = block.number;
     vacantRecipientIndexes.push(recipients[_recipient].index);
     emit RecipientRemoved(_recipient);
   }
