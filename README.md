@@ -42,11 +42,11 @@ In a future version, we plan to address this by routing ETH and token contributi
 
 ## Run clr.fund locally
 
-### Install Node v11 with nvm
+### Install Node v12 with nvm
 
 ```
-nvm install 11
-nvm use 11
+nvm install 12
+nvm use 12
 ```
 
 ### Install the dependencies

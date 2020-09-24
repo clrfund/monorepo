@@ -6,7 +6,8 @@
   "workspaces": { 
     "packages": ["contracts", "vue-app"],
     "nohoist": [
-      "**/@nomiclabs/**"
+      "**/@nomiclabs/**",
+      "**/maci-cli/**"
     ]
   },
   "scripts": {
@@ -24,5 +25,8 @@
     "lint": "yarn workspaces run lint",
     "lint:contracts": "yarn workspace @clrfund/contracts run lint",
     "lint:web": "yarn workspace @clrfund/vue-app run lint"
+  },
+  "resolutions": {
+    "ganache-core": "2.12.0-beta.0"
   }
 }
