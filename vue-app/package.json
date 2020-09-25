@@ -12,6 +12,7 @@
     "3box": "^1.22.1",
     "@openfonts/inter_all": "^1.0.2",
     "core-js": "^3.6.4",
+    "ethereum-blockies-base64": "^1.0.2",
     "ethers": "^5.0.1",
     "luxon": "^1.24.1",
     "maci-domainobjs": "~0.2.6",
