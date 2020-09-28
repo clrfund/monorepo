@@ -48,18 +48,38 @@ export function createMessage(
   return [message, encKeypair.pubKey]
 }
 
+export interface Tally {
+  provider: string;
+  maci: string;
+  results: {
+    commitment: string;
+    tally: string[];
+    salt: string;
+  };
+  totalVoiceCredits: {
+    spent: string;
+    commitment: string;
+    salt: string;
+  };
+  totalVoiceCreditsPerVoteOption: {
+    commitment: string;
+    tally: string[];
+    salt: string;
+  };
+}
+
 export function getRecipientClaimData(
   recipientAddress: string,
   recipientIndex: number,
   recipientTreeDepth: number,
-  tally: any,
+  tally: Tally,
 ): any[] {
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
   const resultSalt = tally.results.salt
   const resultTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
   for (const leaf of tally.results.tally) {
-    resultTree.insert(leaf)
+    resultTree.insert(BigInt(leaf))
   }
   const resultProof = resultTree.genMerklePath(recipientIndex)
   // Create proof for total amount of spent voice credits
@@ -67,7 +87,7 @@ export function getRecipientClaimData(
   const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
   const spentTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
   for (const leaf of tally.totalVoiceCreditsPerVoteOption.tally) {
-    spentTree.insert(leaf)
+    spentTree.insert(BigInt(leaf))
   }
   const spentProof = spentTree.genMerklePath(recipientIndex)
 

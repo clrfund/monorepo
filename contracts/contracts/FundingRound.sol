@@ -275,6 +275,24 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   }
 
   /**
+    * @dev Get allocated token amount (without verification).
+    * @param _tallyResult The result of vote tally for the recipient.
+    * @param _spent The amount of voice credits spent on the recipient.
+    */
+  function getAllocatedAmount(
+    uint256 _tallyResult,
+    uint256 _spent
+  )
+    public
+    view
+    returns (uint256)
+  {
+    require(isFinalized, 'FundingRound: Round not finalized');
+    require(!isCancelled, 'FundingRound: Round has been cancelled');
+    return adjustedMatchingPoolSize * _tallyResult / totalVotes + _spent * voiceCreditFactor;
+  }
+
+  /**
     * @dev Claim allocated tokens.
     * @param _tallyResult The result of vote tally for the recipient.
     * @param _tallyResultProof Proof of correctness of the vote tally.
@@ -317,8 +335,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     );
     require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
     recipients[voteOptionIndex] = true;
-    uint256 claimableAmount = adjustedMatchingPoolSize * _tallyResult / totalVotes + _spent * voiceCreditFactor;
-    nativeToken.transfer(_recipient, claimableAmount);
-    emit FundsClaimed(_recipient, claimableAmount);
+    uint256 allocatedAmount = getAllocatedAmount(_tallyResult, _spent);
+    nativeToken.transfer(_recipient, allocatedAmount);
+    emit FundsClaimed(_recipient, allocatedAmount);
   }
 }

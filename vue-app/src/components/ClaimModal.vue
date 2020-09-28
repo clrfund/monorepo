@@ -22,7 +22,6 @@ import { Contract, FixedNumber, Signer } from 'ethers'
 import { FundingRound } from '@/api/abi'
 import { Project } from '@/api/projects'
 import { RoundInfo } from '@/api/round'
-import { getTally } from '@/api/tally'
 import { getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
 
@@ -34,7 +33,6 @@ export default class ClaimModal extends Vue {
 
   step = 1
 
-  tally: any
   amount = FixedNumber.from(0)
 
   get currentRound(): RoundInfo {
@@ -51,7 +49,6 @@ export default class ClaimModal extends Vue {
   }
 
   async claim() {
-    this.tally = await getTally(this.currentRound.fundingRoundAddress)
     const signer = this.getSigner()
     const { fundingRoundAddress, recipientTreeDepth, nativeTokenDecimals } = this.currentRound
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
@@ -59,7 +56,7 @@ export default class ClaimModal extends Vue {
       this.project.address,
       this.project.index,
       recipientTreeDepth,
-      this.tally,
+      this.$store.state.tally,
     )
     const claimTx = await fundingRound.claimFunds(...recipientClaimData)
     this.amount = FixedNumber.fromValue(
@@ -78,12 +75,6 @@ export default class ClaimModal extends Vue {
   background-color: $bg-light-color;
   padding: 20px;
   text-align: center;
-}
-
-.input[name="tally-url"] {
-  display: block;
-  margin: 20px auto;
-  width: 100%;
 }
 
 .btn {
