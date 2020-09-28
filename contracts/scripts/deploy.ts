@@ -5,6 +5,11 @@ import { deployMaciFactory } from '../utils/deployment'
 async function main() {
   const [deployer] = await ethers.getSigners();
   const maciFactory = await deployMaciFactory(deployer);
+  const SimpleUserRegistry = await ethers.getContractFactory(
+    'SimpleUserRegistry',
+    deployer,
+  )
+  const verifiedUserRegistry = await SimpleUserRegistry.deploy()
 
   const FundingRoundFactory = await ethers.getContractFactory(
     'FundingRoundFactory',
@@ -12,6 +17,7 @@ async function main() {
   );
   const fundingRoundFactory = await FundingRoundFactory.deploy(
     maciFactory.address,
+    verifiedUserRegistry.address,
   );
   await fundingRoundFactory.deployed();
   await maciFactory.transferOwnership(fundingRoundFactory.address);

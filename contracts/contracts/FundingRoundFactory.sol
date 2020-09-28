@@ -10,12 +10,12 @@ import 'maci-contracts/sol/MACISharedObjs.sol';
 import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
 import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
-import './IVerifiedUserRegistry.sol';
+import './verifiedUserRegistry/IVerifiedUserRegistry.sol';
 import './IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
 
-contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, IRecipientRegistry {
+contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
   using SafeERC20 for ERC20Detailed;
 
   // Structs
@@ -31,18 +31,16 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
 
   ERC20Detailed public nativeToken;
   MACIFactory public maciFactory;
+  IVerifiedUserRegistry public verifiedUserRegistry;
   PubKey public coordinatorPubKey;
 
   FundingRound[] private rounds;
 
-  mapping(address => bool) private users;
   mapping(address => Recipient) private recipients;
   uint256[] private vacantRecipientIndexes;
 
   // Events
   event MatchingPoolContribution(address indexed _sender, uint256 _amount);
-  event UserAdded(address indexed _user);
-  event UserRemoved(address indexed _user);
   event RecipientAdded(address indexed _recipient, string _metadata, uint256 _index);
   event RecipientRemoved(address indexed _recipient);
   event RoundStarted(address _round);
@@ -51,11 +49,13 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
   event CoordinatorChanged(address _coordinator);
 
   constructor(
-    MACIFactory _maciFactory
+    MACIFactory _maciFactory,
+    IVerifiedUserRegistry _verifiedUserRegistry
   )
     public
   {
     maciFactory = _maciFactory;
+    verifiedUserRegistry = _verifiedUserRegistry;
   }
 
   /**
@@ -67,42 +67,6 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     require(address(nativeToken) != address(0), 'Factory: Native token is not set');
     nativeToken.transferFrom(msg.sender, address(this), _amount);
     emit MatchingPoolContribution(msg.sender, _amount);
-  }
-
-  /**
-    * @dev Add verified unique user to the registry.
-    */
-  function addUser(address _user)
-    external
-    onlyOwner
-  {
-    require(_user != address(0), 'Factory: User address is zero');
-    require(!users[_user], 'Factory: User already verified');
-    users[_user] = true;
-    emit UserAdded(_user);
-  }
-
-  /**
-    * @dev Remove user from the registry.
-    */
-  function removeUser(address _user)
-    external
-    onlyOwner
-  {
-    require(users[_user], 'Factory: User is not in the registry');
-    delete users[_user];
-    emit UserRemoved(_user);
-  }
-
-  /**
-    * @dev Check if the user is verified.
-    */
-  function isVerifiedUser(address _user)
-    external
-    view
-    returns (bool)
-  {
-    return users[_user];
   }
 
   /**
@@ -230,7 +194,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IVerifiedUserRegistry, 
     uint256 signUpDuration = maciFactory.signUpDuration();
     FundingRound newRound = new FundingRound(
       nativeToken,
-      this,
+      verifiedUserRegistry,
       this,
       signUpDuration,
       coordinator,
