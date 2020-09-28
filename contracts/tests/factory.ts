@@ -132,16 +132,16 @@ describe('Funding Round Factory', () => {
       metadata = JSON.stringify({ name: 'Recipient', description: 'Description', imageHash: 'Ipfs imageHash' })
     });
 
-    async function getCurrentTime(): Promise<number> {
-      return (await provider.getBlock('latest')).timestamp
+    async function getCurrentBlockNumber(): Promise<number> {
+      return (await provider.getBlock('latest')).number
     }
 
     it('allows owner to add recipient', async () => {
       await expect(factory.addRecipient(recipientAddress, metadata))
         .to.emit(factory, 'RecipientAdded')
         .withArgs(recipientAddress, metadata, 1)
-      const now = await getCurrentTime()
-      expect(await factory.getRecipientIndex(recipientAddress, now)).to.equal(1)
+      const blockNumber = await getCurrentBlockNumber()
+      expect(await factory.getRecipientIndex(recipientAddress, blockNumber)).to.equal(1)
 
       const anotherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
       // Should increase recipient index for every new recipient
@@ -196,8 +196,8 @@ describe('Funding Round Factory', () => {
       await expect(factory.removeRecipient(recipientAddress))
         .to.emit(factory, 'RecipientRemoved')
         .withArgs(recipientAddress)
-      const now = await getCurrentTime()
-      expect(await factory.getRecipientIndex(recipientAddress, now)).to.equal(0)
+      const blockNumber = await getCurrentBlockNumber()
+      expect(await factory.getRecipientIndex(recipientAddress, blockNumber)).to.equal(0)
     })
 
     it('rejects attempts to remove recipient from anyone except owner', async () => {
@@ -215,12 +215,12 @@ describe('Funding Round Factory', () => {
 
     it('should not return recipient index for unregistered recipient', async () => {
       recipientAddress = ZERO_ADDRESS
-      const now = await getCurrentTime()
-      expect(await factory.getRecipientIndex(recipientAddress, now)).to.equal(0)
+      const blockNumber = await getCurrentBlockNumber()
+      expect(await factory.getRecipientIndex(recipientAddress, blockNumber)).to.equal(0)
     })
 
     it('should not return recipient index for recipient that has been added after given timestamp', async () => {
-      const timestamp = await getCurrentTime()
+      const timestamp = await getCurrentBlockNumber()
       await provider.send('evm_increaseTime', [1000])
       await factory.addRecipient(recipientAddress, metadata)
       expect(await factory.getRecipientIndex(recipientAddress, timestamp)).to.equal(0)
@@ -228,7 +228,7 @@ describe('Funding Round Factory', () => {
 
     it('should return recipient index for recipient that has been removed after given timestamp', async () => {
       await factory.addRecipient(recipientAddress, metadata)
-      const addedAt = await getCurrentTime()
+      const addedAt = await getCurrentBlockNumber()
       await provider.send('evm_increaseTime', [1000])
       await factory.removeRecipient(recipientAddress)
       expect(await factory.getRecipientIndex(recipientAddress, addedAt)).to.equal(1)
@@ -236,20 +236,20 @@ describe('Funding Round Factory', () => {
 
     it('allows to re-use index of removed recipient', async () => {
       await factory.addRecipient(recipientAddress, metadata)
-      const timestamp1 = await getCurrentTime()
+      const blockNumber1 = await getCurrentBlockNumber()
       await factory.removeRecipient(recipientAddress)
       const otherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
       await factory.addRecipient(otherRecipientAddress, metadata)
       const anotherRecipientAddress = '0xef9e07C93b40681F6a63085Cf276aBA3D868Ac6E'
       await factory.addRecipient(anotherRecipientAddress, metadata)
-      const timestamp2 = await getCurrentTime()
+      const blockNumber2 = await getCurrentBlockNumber()
 
-      expect(await factory.getRecipientIndex(recipientAddress, timestamp1)).to.equal(1)
-      expect(await factory.getRecipientIndex(recipientAddress, timestamp2)).to.equal(0)
-      expect(await factory.getRecipientIndex(otherRecipientAddress, timestamp1)).to.equal(0)
-      expect(await factory.getRecipientIndex(otherRecipientAddress, timestamp2)).to.equal(1)
-      expect(await factory.getRecipientIndex(anotherRecipientAddress, timestamp1)).to.equal(0)
-      expect(await factory.getRecipientIndex(anotherRecipientAddress, timestamp2)).to.equal(2)
+      expect(await factory.getRecipientIndex(recipientAddress, blockNumber1)).to.equal(1)
+      expect(await factory.getRecipientIndex(recipientAddress, blockNumber2)).to.equal(0)
+      expect(await factory.getRecipientIndex(otherRecipientAddress, blockNumber1)).to.equal(0)
+      expect(await factory.getRecipientIndex(otherRecipientAddress, blockNumber2)).to.equal(1)
+      expect(await factory.getRecipientIndex(anotherRecipientAddress, blockNumber1)).to.equal(0)
+      expect(await factory.getRecipientIndex(anotherRecipientAddress, blockNumber2)).to.equal(2)
     })
   });
 

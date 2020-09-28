@@ -74,7 +74,13 @@ export default class Home extends Vue {
   }
 
   async mounted() {
-    this.projects = await getProjects()
+    // Wait for round info to load and get project list
+    this.$store.watch(
+      (state) => state.currentRound,
+      this.loadProjects,
+    )
+    this.loadProjects()
+
     this.$store.watch(
       (state) => state.account,
       async (walletAddress: string) => {
@@ -90,6 +96,14 @@ export default class Home extends Vue {
         }
       },
     )
+  }
+
+  private async loadProjects() {
+    const currentRound = this.currentRound
+    if (!currentRound) {
+      return
+    }
+    this.projects = await getProjects(currentRound.startBlock)
   }
 
   get contribution(): FixedNumber {
