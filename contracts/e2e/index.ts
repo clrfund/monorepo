@@ -234,8 +234,8 @@ describe('End-to-end Tests', function () {
       }
 
       await fundingRound.connect(contributor).submitMessageBatch(
-        messages.map((msg) => msg.asContractParam()),
-        encPubKeys.map((key) => key.asContractParam()),
+        messages.reverse().map((msg) => msg.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam()),
       )
     }
 
@@ -296,8 +296,8 @@ describe('End-to-end Tests', function () {
       encPubKeys.push(encPubKey)
     }
     await fundingRound.connect(contributor).submitMessageBatch(
-      messages.map((msg) => msg.asContractParam()),
-      encPubKeys.map((key) => key.asContractParam()),
+      messages.reverse().map((msg) => msg.asContractParam()),
+      encPubKeys.reverse().map((key) => key.asContractParam()),
     )
 
     const tally = await finalizeRound()
@@ -333,8 +333,8 @@ describe('End-to-end Tests', function () {
       encPubKeys.push(encPubKey)
     }
     await fundingRound.connect(contributor).submitMessageBatch(
-      messages.map((msg) => msg.asContractParam()),
-      encPubKeys.map((key) => key.asContractParam()),
+      messages.reverse().map((msg) => msg.asContractParam()),
+      encPubKeys.reverse().map((key) => key.asContractParam()),
     )
 
     const tally = await finalizeRound()

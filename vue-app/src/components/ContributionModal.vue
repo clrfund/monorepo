@@ -148,8 +148,8 @@ export default class ContributionModal extends Vue {
     }
     const fundingRound = new Contract(fundingRoundAddress, FundingRound)
     this.voteTxData = fundingRound.interface.encodeFunctionData('submitMessageBatch', [
-      messages.map((msg) => msg.asContractParam()),
-      encPubKeys.map((key) => key.asContractParam()),
+      messages.reverse().map((msg) => msg.asContractParam()),
+      encPubKeys.reverse().map((key) => key.asContractParam()),
     ])
   }
 }
