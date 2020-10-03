@@ -6,10 +6,6 @@ pragma experimental ABIEncoderV2;
  */
 interface IVerifiedUserRegistry {
 
-  function addUser(address _user) external;
-
-  function removeUser(address _user) external;
-
   function isVerifiedUser(address _user) external view returns (bool);
 
 }

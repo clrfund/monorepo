@@ -29,6 +29,7 @@ describe('End-to-end Tests', function () {
   let recipient2: Signer
   let contributors: Signer[]
 
+  let verifiedUserRegistry: Contract
   let fundingRoundFactory: Contract
   let token: Contract
   let fundingRound: Contract
@@ -46,8 +47,13 @@ describe('End-to-end Tests', function () {
 
     // Deploy funding round factory
     const maciFactory = await deployMaciFactory(deployer)
+    const SimpleUserRegistry = await ethers.getContractFactory('SimpleUserRegistry', deployer)
+    verifiedUserRegistry = await SimpleUserRegistry.deploy()
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
-    fundingRoundFactory = await FundingRoundFactory.deploy(maciFactory.address)
+    fundingRoundFactory = await FundingRoundFactory.deploy(
+      maciFactory.address,
+      verifiedUserRegistry.address,
+    )
     await maciFactory.transferOwnership(fundingRoundFactory.address)
     maciParameters = await MaciParameters.read(maciFactory)
 
@@ -110,7 +116,7 @@ describe('End-to-end Tests', function () {
       // Register contributor
       const contributor = contributors[index]
       const contributorAddress = await contributor.getAddress()
-      await fundingRoundFactory.addUser(contributorAddress)
+      await verifiedUserRegistry.addUser(contributorAddress)
       // Approve transfer
       await token.connect(contributor).approve(
         fundingRound.address,

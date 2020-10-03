@@ -10,7 +10,7 @@ import 'maci-contracts/sol/MACISharedObjs.sol';
 import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
 import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
-import './IVerifiedUserRegistry.sol';
+import './verifiedUserRegistry/IVerifiedUserRegistry.sol';
 import './IRecipientRegistry.sol';
 
 contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoiceCreditProxy {
