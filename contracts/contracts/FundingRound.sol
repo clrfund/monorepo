@@ -101,18 +101,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   }
 
   /**
-    * @dev Get voting deadline.
-    */
-  function votingDeadline()
-    public
-    view
-    returns (uint256)
-  {
-    require(address(maci) != address(0), 'FundingRound: MACI not deployed');
-    return maci.calcVotingDeadline();
-  }
-
-  /**
     * @dev Contribute tokens to this funding round.
     * @param pubKey Contributor's public key.
     * @param amount Contribution amount.

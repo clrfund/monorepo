@@ -44,6 +44,9 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   const maciAddress = await fundingRound.maci()
   const maci = new Contract(maciAddress, MACI, provider)
   const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
+  const votingDeadline = DateTime.fromSeconds(
+    parseInt(await maci.calcVotingDeadline()),
+  )
   const startBlock = (await fundingRound.startBlock()).toNumber()
   const coordinatorPubKeyRaw = await fundingRound.coordinatorPubKey()
   const coordinatorPubKey = new PubKey([
@@ -63,9 +66,6 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   const now = DateTime.local()
   const contributionDeadline = DateTime.fromSeconds(
     parseInt(await fundingRound.contributionDeadline()),
-  )
-  const votingDeadline = DateTime.fromSeconds(
-    parseInt(await fundingRound.votingDeadline()),
   )
   const isFinalized = await fundingRound.isFinalized()
   const isCancelled = await fundingRound.isCancelled()
