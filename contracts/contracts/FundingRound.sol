@@ -32,7 +32,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   uint256 public contributorCount;
   uint256 public contributionDeadline;
   uint256 public matchingPoolSize;
-  uint256 private adjustedMatchingPoolSize;
+  uint256 public adjustedMatchingPoolSize;
   uint256 public totalVotes;
   bool public isFinalized = false;
   bool public isCancelled = false;
@@ -46,7 +46,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   string public tallyHash;
 
   mapping(uint256 => bool) private recipients;
-  mapping(address => ContributorStatus) public contributors;
+  mapping(address => ContributorStatus) private contributors;
 
   // Events
   event Contribution(address indexed _sender, uint256 _amount);
@@ -275,8 +275,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     view
     returns (uint256)
   {
-    require(isFinalized, 'FundingRound: Round not finalized');
-    require(!isCancelled, 'FundingRound: Round has been cancelled');
     return adjustedMatchingPoolSize * _tallyResult / totalVotes + _spent * voiceCreditFactor;
   }
 
