@@ -48,6 +48,12 @@ describe('Funding Round Factory', () => {
     await token.transfer(contributor.address, tokenInitialSupply);
   });
 
+  it('transfers ownership to another address', async () => {
+    await expect(factory.transferOwnership(coordinator.address))
+      .to.emit(factory, 'OwnershipTransferred')
+      .withArgs(deployer.address, coordinator.address)
+  })
+
   describe('contributing to matching pool', () => {
     const contributionAmount = UNIT.mul(10)
 
