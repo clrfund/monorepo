@@ -94,11 +94,7 @@ export default class Home extends Vue {
   }
 
   private async loadProjects() {
-    const currentRound = this.currentRound
-    if (!currentRound) {
-      return
-    }
-    this.projects = await getProjects(currentRound.startBlock)
+    this.projects = await getProjects(this.currentRound?.startBlock)
   }
 
   private async loadContribution() {

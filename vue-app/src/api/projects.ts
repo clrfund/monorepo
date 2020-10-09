@@ -23,7 +23,7 @@ function decodeRecipientAdded(event: Event): Project {
   }
 }
 
-export async function getProjects(atBlock: number): Promise<Project[]> {
+export async function getProjects(atBlock?: number): Promise<Project[]> {
   const recipientAddedFilter = factory.filters.RecipientAdded()
   const recipientAddedEvents = await factory.queryFilter(recipientAddedFilter, 0, atBlock)
   const projects: Project[] = []
