@@ -49,7 +49,11 @@ export default class ProjectListItem extends Vue {
   }
 
   canContribute(): boolean {
-    return !this.project.isRemoved && this.$store.state.cart.length < CART_MAX_SIZE
+    return (
+      this.$store.state.currentRound &&
+      !this.project.isRemoved &&
+      this.$store.state.cart.length < CART_MAX_SIZE
+    )
   }
 
   contribute(project: Project) {

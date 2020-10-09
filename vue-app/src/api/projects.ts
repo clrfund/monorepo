@@ -37,8 +37,9 @@ export async function getProjects(atBlock?: number): Promise<Project[]> {
       return (event.args as any)._recipient === project.address
     })
     if (removed) {
-      if (atBlock && removed.blockNumber <= atBlock) {
-        // Recipient had been removed before the atBlock
+      if (!atBlock || atBlock && removed.blockNumber <= atBlock) {
+        // Start block not specified
+        // or recipient had been removed before start block
         continue
       } else {
         project.isRemoved = true
