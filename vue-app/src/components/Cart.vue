@@ -45,6 +45,7 @@ import { DateTime } from 'luxon'
 import ContributionModal from '@/components/ContributionModal.vue'
 
 import { MAX_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
+import { CHECK_VERIFICATION } from '@/store/action-types'
 import {
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
@@ -73,6 +74,11 @@ export default class Cart extends Vue {
         this.$store.commit(ADD_CART_ITEM, item)
       }
     }
+
+    // Check verification every minute
+    setInterval(async () => {
+      this.$store.dispatch(CHECK_VERIFICATION)
+    }, 60 * 1000)
   }
 
   get tokenSymbol(): string {
@@ -100,14 +106,17 @@ export default class Cart extends Vue {
   }
 
   get errorMessage(): string | null {
+    const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
-    if (!this.$store.state.currentUser) {
+    if (!currentUser) {
       return 'Please connect your wallet'
+    } else if (!currentUser.isVerified) {
+      return 'Your account is not verified'
     } else if (!this.$store.state.contribution.isZero()) {
       return 'You already contributed in this round'
     } else if (DateTime.local() >= currentRound.contributionDeadline) {
       return 'The contribution period has ended'
-    } else if (this.total > MAX_CONTRIBUTION_AMOUNT) {
+    } else if (this.total >= MAX_CONTRIBUTION_AMOUNT) {
       return 'Contribution amount is too large'
     } else {
       return null

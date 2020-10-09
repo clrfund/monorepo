@@ -23,6 +23,7 @@ import Component from 'vue-class-component'
 import { Web3Provider } from '@ethersproject/providers'
 
 import { User, getProfileImageUrl } from '@/api/user'
+import { CHECK_VERIFICATION } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 
 @Component
@@ -64,12 +65,14 @@ export default class Profile extends Vue {
     } catch (error) {
       return
     }
-    const walletAddress = accounts[0]
-    this.$store.commit(SET_CURRENT_USER, {
+    const user = {
       walletProvider: this.provider,
-      walletAddress,
-    })
-    this.profileImageUrl = await getProfileImageUrl(walletAddress)
+      walletAddress: accounts[0],
+      isVerified: false,
+    }
+    this.$store.commit(SET_CURRENT_USER, user)
+    this.$store.dispatch(CHECK_VERIFICATION)
+    this.profileImageUrl = await getProfileImageUrl(user.walletAddress)
   }
 
   get currentUser(): User | null {

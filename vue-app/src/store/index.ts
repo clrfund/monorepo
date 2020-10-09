@@ -5,8 +5,11 @@ import { FixedNumber } from 'ethers'
 import { CartItem } from '@/api/contributions'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { Tally, getTally } from '@/api/tally'
-import { User } from '@/api/user'
-import { LOAD_ROUND_INFO } from './action-types'
+import { User, isVerifiedUser } from '@/api/user'
+import {
+  LOAD_ROUND_INFO,
+  CHECK_VERIFICATION,
+} from './action-types'
 import {
   SET_CURRENT_USER,
   SET_CURRENT_ROUND,
@@ -80,6 +83,15 @@ const store: StoreOptions<RootState> = {
       if (currentRound && currentRound.status === RoundStatus.Finalized) {
         const tally = await getTally(currentRound.fundingRoundAddress)
         commit(SET_TALLY, tally)
+      }
+    },
+    async [CHECK_VERIFICATION]({ commit, state }) {
+      if (state.currentRound && state.currentUser) {
+        const isVerified = await isVerifiedUser(
+          state.currentRound.fundingRoundAddress,
+          state.currentUser.walletAddress,
+        )
+        commit(SET_CURRENT_USER, { ...state.currentUser, isVerified })
       }
     },
   },
