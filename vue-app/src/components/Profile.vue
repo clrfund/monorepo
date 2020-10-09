@@ -2,14 +2,14 @@
   <div class="profile">
     <div v-if="!provider" class="provider-error">Wallet not found</div>
     <button
-      v-if="provider && !account"
+      v-if="provider && !currentUser"
       class="btn connect-btn"
       @click="connect"
     >
       Connect
     </button>
-    <div v-if="account" class="profile-info">
-      <div class="profile-name">{{ account }}</div>
+    <div v-if="currentUser" class="profile-info">
+      <div class="profile-name">{{ currentUser.walletAddress }}</div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl">
       </div>
@@ -22,12 +22,13 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Web3Provider } from '@ethersproject/providers'
 
-import { getProfileImageUrl } from '@/api/profile'
-import { SET_WALLET_PROVIDER, SET_ACCOUNT } from '@/store/mutation-types'
+import { User, getProfileImageUrl } from '@/api/user'
+import { SET_CURRENT_USER } from '@/store/mutation-types'
 
 @Component
 export default class Profile extends Vue {
 
+  provider: Web3Provider | null = null
   profileImageUrl: string | null = null
 
   mounted() {
@@ -49,11 +50,7 @@ export default class Profile extends Vue {
       }
       accounts = _accounts
     })
-    this.$store.commit(SET_WALLET_PROVIDER, new Web3Provider(provider))
-  }
-
-  get provider(): Web3Provider | null {
-    return this.$store.state.walletProvider
+    this.provider = new Web3Provider(provider)
   }
 
   async connect(): Promise<void> {
@@ -68,12 +65,15 @@ export default class Profile extends Vue {
       return
     }
     const walletAddress = accounts[0]
-    this.$store.commit(SET_ACCOUNT, walletAddress)
+    this.$store.commit(SET_CURRENT_USER, {
+      walletProvider: this.provider,
+      walletAddress,
+    })
     this.profileImageUrl = await getProfileImageUrl(walletAddress)
   }
 
-  get account(): string {
-    return this.$store.state.account
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
   }
 }
 </script>

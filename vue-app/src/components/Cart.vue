@@ -101,7 +101,7 @@ export default class Cart extends Vue {
 
   get errorMessage(): string | null {
     const currentRound = this.$store.state.currentRound
-    if (!this.$store.state.account) {
+    if (!this.$store.state.currentUser) {
       return 'Please connect your wallet'
     } else if (!this.$store.state.contribution.isZero()) {
       return 'You already contributed in this round'

@@ -121,7 +121,7 @@ export default class ProjectView extends Vue {
     return (
       currentRound &&
       currentRound.status === RoundStatus.Finalized &&
-      this.$store.state.account &&
+      this.$store.state.currentUser &&
       this.claimed === false
     )
   }

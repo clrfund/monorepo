@@ -40,7 +40,7 @@ export default class ClaimModal extends Vue {
   }
 
   private getSigner(): Signer {
-    const provider = this.$store.state.walletProvider
+    const provider = this.$store.state.currentUser.walletProvider
     return provider.getSigner()
   }
 

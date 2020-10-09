@@ -82,7 +82,7 @@ export default class Home extends Vue {
     this.loadProjects()
 
     this.$store.watch(
-      (state) => state.account,
+      (state) => state.currentUser ? state.currentUser.walletAddress : '',
       async (walletAddress: string) => {
         // Reload round info when user changes wallet account
         await this.$store.dispatch(LOAD_ROUND_INFO)
