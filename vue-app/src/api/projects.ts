@@ -9,6 +9,7 @@ export interface Project {
   description: string;
   imageUrl: string;
   index: number;
+  isRemoved: boolean;
 }
 
 function decodeRecipientAdded(event: Event): Project {
@@ -20,34 +21,48 @@ function decodeRecipientAdded(event: Event): Project {
     description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}${metadata.imageHash}`,
     index: args._index.toNumber(),
+    isRemoved: false,
   }
 }
 
 export async function getProjects(atBlock?: number): Promise<Project[]> {
   const recipientAddedFilter = factory.filters.RecipientAdded()
   const recipientAddedEvents = await factory.queryFilter(recipientAddedFilter, 0, atBlock)
+  const recipientRemovedFilter = factory.filters.RecipientRemoved()
+  const recipientRemovedEvents = await factory.queryFilter(recipientRemovedFilter, 0)
   const projects: Project[] = []
   for (const event of recipientAddedEvents) {
-    projects.push(decodeRecipientAdded(event))
+    const project = decodeRecipientAdded(event)
+    const removed = recipientRemovedEvents.find((event) => {
+      return (event.args as any)._recipient === project.address
+    })
+    if (removed) {
+      if (atBlock && removed.blockNumber <= atBlock) {
+        // Recipient had been removed before the atBlock
+        continue
+      } else {
+        project.isRemoved = true
+      }
+    }
+    projects.push(project)
   }
-  const recipientRemovedFilter = factory.filters.RecipientRemoved()
-  const recipientRemovedEvents = await factory.queryFilter(recipientRemovedFilter, 0, atBlock)
-  const removedRecipients = recipientRemovedEvents.map((event) => {
-    return (event.args as any)._recipient
-  })
-  return projects.filter((project) => {
-    return removedRecipients.indexOf(project.address) === -1
-  })
+  return projects
 }
 
 export async function getProject(address: string): Promise<Project | null> {
   if (!isAddress(address)) {
     return null
   }
-  const recipientFilter = factory.filters.RecipientAdded(address)
-  const events = await factory.queryFilter(recipientFilter, 0)
-  if (events.length === 1) {
-    return decodeRecipientAdded(events[0])
+  const recipientAddedFilter = factory.filters.RecipientAdded(address)
+  const recipientAddedEvents = await factory.queryFilter(recipientAddedFilter, 0)
+  if (recipientAddedEvents.length !== 1) {
+    return null
   }
-  return null
+  const project = decodeRecipientAdded(recipientAddedEvents[0])
+  const recipientRemovedFilter = factory.filters.RecipientRemoved(address)
+  const recipientRemovedEvents = await factory.queryFilter(recipientRemovedFilter, 0)
+  if (recipientRemovedEvents.length !== 0) {
+    project.isRemoved = true
+  }
+  return project
 }

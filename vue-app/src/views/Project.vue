@@ -109,7 +109,11 @@ export default class ProjectView extends Vue {
   }
 
   canContribute(): boolean {
-    return this.$store.state.cart.length < CART_MAX_SIZE
+    return (
+      this.project !== null &&
+      !this.project.isRemoved &&
+      this.$store.state.cart.length < CART_MAX_SIZE
+    )
   }
 
   contribute() {
