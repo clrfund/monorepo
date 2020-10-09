@@ -56,7 +56,6 @@ import { RoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
-import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { SET_CONTRIBUTION } from '@/store/mutation-types'
 
 @Component({
@@ -81,21 +80,17 @@ export default class Home extends Vue {
     )
     this.loadProjects()
 
+    // Wait for user to connect and get contribution amount
     this.$store.watch(
-      (state) => state.currentUser ? state.currentUser.walletAddress : '',
-      async (walletAddress: string) => {
-        // Reload round info when user changes wallet account
-        await this.$store.dispatch(LOAD_ROUND_INFO)
-        if (this.currentRound && walletAddress) {
-          const contribution = await getContributionAmount(
-            walletAddress,
-            this.currentRound.fundingRoundAddress,
-            this.currentRound.nativeTokenDecimals,
-          )
-          this.$store.commit(SET_CONTRIBUTION, contribution)
-        }
+      (state) => {
+        return (
+          state.currentRound?.fundingRoundAddress +
+          state.currentUser?.walletAddress
+        )
       },
+      this.loadContribution,
     )
+    this.loadContribution()
   }
 
   private async loadProjects() {
@@ -104,6 +99,19 @@ export default class Home extends Vue {
       return
     }
     this.projects = await getProjects(currentRound.startBlock)
+  }
+
+  private async loadContribution() {
+    const currentUser = this.$store.state.currentUser
+    if (!this.currentRound || !currentUser) {
+      return
+    }
+    const contribution = await getContributionAmount(
+      currentUser.walletAddress,
+      this.currentRound.fundingRoundAddress,
+      this.currentRound.nativeTokenDecimals,
+    )
+    this.$store.commit(SET_CONTRIBUTION, contribution)
   }
 
   get contribution(): FixedNumber {
