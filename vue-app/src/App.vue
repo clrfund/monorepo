@@ -99,7 +99,8 @@ a {
   &[disabled],
   &[disabled]:hover {
     background-color: $button-disabled-color !important;
-    color: $text-color !important;
+    color: $button-disabled-text-color !important;
+    cursor: not-allowed;
   }
 }
 

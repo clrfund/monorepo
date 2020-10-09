@@ -19,11 +19,16 @@
         </div>
       </form>
     </div>
-    <div class="contribute-btn-wrapper">
+    <div
+      v-if="canContribute()"
+      class="contribute-btn-wrapper"
+    >
+      <div v-if="errorMessage" class="contribute-error">
+        {{ errorMessage }}
+      </div>
       <button
-        v-if="this.cart.length > 0"
         class="btn contribute-btn"
-        :disabled="!canContribute()"
+        :disabled="errorMessage !== null"
         @click="contribute()"
       >
         Contribute {{ total }} {{ tokenSymbol }} to {{ cart.length }} projects
@@ -91,14 +96,20 @@ export default class Cart extends Vue {
   }
 
   canContribute(): boolean {
+    return this.$store.state.currentRound && this.cart.length > 0
+  }
+
+  get errorMessage(): string | null {
     const currentRound = this.$store.state.currentRound
-    return (
-      currentRound &&
-      DateTime.local() < currentRound.contributionDeadline &&
-      this.$store.state.account &&
-      this.$store.state.contribution.isZero() &&
-      this.cart.length > 0
-    )
+    if (!this.$store.state.account) {
+      return 'Please connect your wallet'
+    } else if (!this.$store.state.contribution.isZero()) {
+      return 'You already contributed in this round'
+    } else if (DateTime.local() >= currentRound.contributionDeadline) {
+      return 'The contribution period has ended'
+    } else {
+      return null
+    }
   }
 
   get total(): number {
@@ -199,6 +210,11 @@ $project-image-size: 50px;
   margin-top: auto;
   padding: $content-space;
   width: 100%;
+
+  .contribute-error {
+    padding: 15px 0;
+    text-align: center;
+  }
 
   .contribute-btn {
     width: 100%;
