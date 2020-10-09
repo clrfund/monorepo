@@ -61,11 +61,11 @@ export default class ContributionModal extends Vue {
 
   private amount: BigNumber = BigNumber.from(0)
   private votes: [number, BigNumber][] = []
-  contributor?: Contributor
+  contributor: Contributor | null = null
 
-  approvalTx?: TransactionResponse
-  contributionTx?: TransactionResponse
-  voteTx?: TransactionResponse
+  approvalTx: TransactionResponse | null = null
+  contributionTx: TransactionResponse | null = null
+  voteTx: TransactionResponse | null = null
 
   mounted() {
     const { nativeTokenDecimals, voiceCreditFactor } = this.currentRound
