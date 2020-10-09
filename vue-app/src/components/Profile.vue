@@ -68,7 +68,7 @@ export default class Profile extends Vue {
     const user = {
       walletProvider: this.provider,
       walletAddress: accounts[0],
-      isVerified: false,
+      isVerified: null,
     }
     this.$store.commit(SET_CURRENT_USER, user)
     this.$store.dispatch(CHECK_VERIFICATION)

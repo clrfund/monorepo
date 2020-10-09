@@ -110,6 +110,8 @@ export default class Cart extends Vue {
     const currentRound = this.$store.state.currentRound
     if (!currentUser) {
       return 'Please connect your wallet'
+    } else if (currentUser.isVerified === null) {
+      return '' // No error: waiting for verification check
     } else if (!currentUser.isVerified) {
       return 'Your account is not verified'
     } else if (!this.$store.state.contribution.isZero()) {

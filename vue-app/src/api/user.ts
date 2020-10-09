@@ -9,7 +9,7 @@ import { ipfsGatewayUrl, provider } from './core'
 export interface User {
   walletAddress: string;
   walletProvider: Web3Provider;
-  isVerified: boolean;
+  isVerified: boolean | null;
 }
 
 export async function getProfileImageUrl(walletAddress: string): Promise<string | null> {
