@@ -44,7 +44,7 @@ import { DateTime } from 'luxon'
 
 import ContributionModal from '@/components/ContributionModal.vue'
 
-import { CartItem } from '@/api/contributions'
+import { MAX_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import {
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
@@ -107,6 +107,8 @@ export default class Cart extends Vue {
       return 'You already contributed in this round'
     } else if (DateTime.local() >= currentRound.contributionDeadline) {
       return 'The contribution period has ended'
+    } else if (this.total > MAX_CONTRIBUTION_AMOUNT) {
+      return 'Contribution amount is too large'
     } else {
       return null
     }
