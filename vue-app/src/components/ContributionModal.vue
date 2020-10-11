@@ -40,6 +40,7 @@ import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
 import { CartItem } from '@/api/contributions'
 import { RoundInfo } from '@/api/round'
+import { storage } from '@/api/storage'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { REMOVE_CART_ITEM, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { getEventArg } from '@/utils/contracts'
@@ -52,6 +53,15 @@ interface Contributor {
   stateIndex: number;
   contribution: FixedNumber;
   voiceCredits: BigNumber;
+}
+
+const CONTRIBUTOR_KEY_STORAGE_KEY = 'contributor-key'
+
+function saveContributorKey(contributor: Contributor) {
+  storage.setItem(CONTRIBUTOR_KEY_STORAGE_KEY, JSON.stringify({
+    privateKey: contributor.keypair.privKey.serialize(),
+    stateIndex: contributor.stateIndex,
+  }))
 }
 
 @Component
@@ -119,10 +129,12 @@ export default class ContributionModal extends Vue {
     const voiceCredits = await getEventArg(contributionTx, maci, 'SignUp', '_voiceCreditBalance')
     this.contributor = {
       keypair: contributorKeypair,
-      stateIndex,
+      stateIndex: stateIndex.toNumber(),
       contribution: FixedNumber.fromValue(this.amount, nativeTokenDecimals),
       voiceCredits,
     }
+    // Save contributor info to storage
+    saveContributorKey(this.contributor)
     // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTION, this.contributor.contribution)
     this.$store.dispatch(LOAD_ROUND_INFO)
