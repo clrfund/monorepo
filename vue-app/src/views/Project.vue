@@ -110,6 +110,7 @@ export default class ProjectView extends Vue {
 
   canContribute(): boolean {
     return (
+      this.$store.state.currentUser &&
       this.$store.state.currentRound &&
       this.project !== null &&
       !this.project.isRemoved &&

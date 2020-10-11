@@ -67,17 +67,30 @@ export default class Cart extends Vue {
 
   mounted() {
     // Restore cart from local storage
+    this.$store.watch(
+      (state) => state.currentUser?.walletAddress,
+      this.restoreCart,
+    )
+    this.restoreCart()
+
+    // Check verification every minute
+    setInterval(async () => {
+      this.$store.dispatch(CHECK_VERIFICATION)
+    }, 60 * 1000)
+  }
+
+  private restoreCart() {
+    const currentUser = this.$store.state.currentUser
+    if (!currentUser) {
+      // Restore cart only if user has logged in
+      return
+    }
     const serializedCart = storage.getItem(CART_STORAGE_KEY)
     if (serializedCart) {
       for (const item of JSON.parse(serializedCart)) {
         this.$store.commit(ADD_CART_ITEM, item)
       }
     }
-
-    // Check verification every minute
-    setInterval(async () => {
-      this.$store.dispatch(CHECK_VERIFICATION)
-    }, 60 * 1000)
   }
 
   get tokenSymbol(): string {
