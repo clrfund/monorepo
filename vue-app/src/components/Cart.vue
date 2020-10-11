@@ -45,6 +45,7 @@ import { DateTime } from 'luxon'
 import ContributionModal from '@/components/ContributionModal.vue'
 
 import { MAX_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
+import { storage } from '@/api/storage'
 import { CHECK_VERIFICATION } from '@/store/action-types'
 import {
   ADD_CART_ITEM,
@@ -52,13 +53,12 @@ import {
   REMOVE_CART_ITEM,
 } from '@/store/mutation-types'
 
-const CART_STORAGE_KEY = 'clrfund-cart'
+const CART_STORAGE_KEY = 'cart'
 
 @Component({
   watch: {
     cart(items: CartItem[]) {
       // Save cart to local storage on changes
-      const storage = window.localStorage
       storage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
     },
   },
@@ -67,7 +67,6 @@ export default class Cart extends Vue {
 
   mounted() {
     // Restore cart from local storage
-    const storage = window.localStorage
     const serializedCart = storage.getItem(CART_STORAGE_KEY)
     if (serializedCart) {
       for (const item of JSON.parse(serializedCart)) {
