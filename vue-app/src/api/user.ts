@@ -10,6 +10,7 @@ export interface User {
   walletAddress: string;
   walletProvider: Web3Provider;
   isVerified: boolean | null;
+  encryptionKey: string;
 }
 
 export async function getProfileImageUrl(walletAddress: string): Promise<string | null> {

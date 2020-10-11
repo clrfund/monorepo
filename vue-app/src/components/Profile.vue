@@ -25,6 +25,9 @@ import { Web3Provider } from '@ethersproject/providers'
 import { User, getProfileImageUrl } from '@/api/user'
 import { CHECK_VERIFICATION } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
+import { sha256 } from '@/utils/crypto'
+
+const LOGIN_MESSAGE = 'Sign this message to access clr.fund'
 
 @Component
 export default class Profile extends Vue {
@@ -59,16 +62,28 @@ export default class Profile extends Vue {
     if (!provider || !provider.request) {
       return
     }
-    let accounts
+    let walletAddress
     try {
-      accounts = await provider.request({ method: 'eth_requestAccounts' })
+      [walletAddress] = await provider.request({ method: 'eth_requestAccounts' })
     } catch (error) {
+      // Access denied
+      return
+    }
+    let signature
+    try {
+      signature = await provider.request({
+        method: 'personal_sign',
+        params: [LOGIN_MESSAGE, walletAddress],
+      })
+    } catch (error) {
+      // Signature request rejected
       return
     }
     const user = {
       walletProvider: this.provider,
-      walletAddress: accounts[0],
+      walletAddress,
       isVerified: null,
+      encryptionKey: sha256(signature),
     }
     this.$store.commit(SET_CURRENT_USER, user)
     this.$store.dispatch(CHECK_VERIFICATION)

@@ -57,8 +57,11 @@ interface Contributor {
 
 const CONTRIBUTOR_KEY_STORAGE_KEY = 'contributor-key'
 
-function saveContributorKey(contributor: Contributor) {
-  storage.setItem(CONTRIBUTOR_KEY_STORAGE_KEY, JSON.stringify({
+function saveContributorKey(
+  contributor: Contributor,
+  encryptionKey: string,
+) {
+  storage.setItem(CONTRIBUTOR_KEY_STORAGE_KEY, encryptionKey, JSON.stringify({
     privateKey: contributor.keypair.privKey.serialize(),
     stateIndex: contributor.stateIndex,
   }))
@@ -134,7 +137,7 @@ export default class ContributionModal extends Vue {
       voiceCredits,
     }
     // Save contributor info to storage
-    saveContributorKey(this.contributor)
+    saveContributorKey(this.contributor, this.$store.state.currentUser.encryptionKey)
     // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTION, this.contributor.contribution)
     this.$store.dispatch(LOAD_ROUND_INFO)

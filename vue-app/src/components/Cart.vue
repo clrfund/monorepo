@@ -59,7 +59,11 @@ const CART_STORAGE_KEY = 'cart'
   watch: {
     cart(items: CartItem[]) {
       // Save cart to local storage on changes
-      storage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
+      storage.setItem(
+        CART_STORAGE_KEY,
+        this.$store.state.currentUser.encryptionKey,
+        JSON.stringify(items),
+      )
     },
   },
 })
@@ -85,7 +89,10 @@ export default class Cart extends Vue {
       // Restore cart only if user has logged in
       return
     }
-    const serializedCart = storage.getItem(CART_STORAGE_KEY)
+    const serializedCart = storage.getItem(
+      CART_STORAGE_KEY,
+      currentUser.encryptionKey,
+    )
     if (serializedCart) {
       for (const item of JSON.parse(serializedCart)) {
         this.$store.commit(ADD_CART_ITEM, item)
