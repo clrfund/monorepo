@@ -1,22 +1,36 @@
-import { encrypt, decrypt } from '@/utils/crypto'
+import { sha256, encrypt, decrypt } from '@/utils/crypto'
 import { factory } from './core'
 
-const storageKeyPrefix = `clrfund-${factory.address.toLowerCase().slice(2, 6)}-`
+function getFullStorageKey(
+  accountId: string,
+  storageKey: string,
+): string {
+  const factoryAddress = factory.address.toLowerCase()
+  accountId = accountId.toLowerCase()
+  return sha256(`clrfund-${factoryAddress}-${accountId}-${storageKey}`)
+}
 
 function setItem(
-  storageKey: string,
+  accountId: string,
   encryptionKey: string,
+  storageKey: string,
   value: string,
 ): void {
   const encryptedValue = encrypt(value, encryptionKey)
-  window.localStorage.setItem(`${storageKeyPrefix}${storageKey}`, encryptedValue)
+  window.localStorage.setItem(
+    getFullStorageKey(accountId, storageKey),
+    encryptedValue,
+  )
 }
 
 function getItem(
-  storageKey: string,
+  accountId: string,
   encryptionKey: string,
+  storageKey: string,
 ): string | null {
-  const encryptedValue = window.localStorage.getItem(`${storageKeyPrefix}${storageKey}`)
+  const encryptedValue = window.localStorage.getItem(
+    getFullStorageKey(accountId, storageKey),
+  )
   const value = encryptedValue ? decrypt(encryptedValue, encryptionKey) : null
   return value
 }

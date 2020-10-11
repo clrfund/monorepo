@@ -41,6 +41,7 @@ import { Keypair, PubKey, Message } from 'maci-domainobjs'
 import { CartItem } from '@/api/contributions'
 import { RoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
+import { User } from '@/api/user'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { REMOVE_CART_ITEM, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { getEventArg } from '@/utils/contracts'
@@ -59,12 +60,18 @@ const CONTRIBUTOR_KEY_STORAGE_KEY = 'contributor-key'
 
 function saveContributorKey(
   contributor: Contributor,
-  encryptionKey: string,
+  user: User,
 ) {
-  storage.setItem(CONTRIBUTOR_KEY_STORAGE_KEY, encryptionKey, JSON.stringify({
+  const serializedData = JSON.stringify({
     privateKey: contributor.keypair.privKey.serialize(),
     stateIndex: contributor.stateIndex,
-  }))
+  })
+  storage.setItem(
+    user.walletAddress,
+    user.encryptionKey,
+    CONTRIBUTOR_KEY_STORAGE_KEY,
+    serializedData,
+  )
 }
 
 @Component
@@ -137,7 +144,7 @@ export default class ContributionModal extends Vue {
       voiceCredits,
     }
     // Save contributor info to storage
-    saveContributorKey(this.contributor, this.$store.state.currentUser.encryptionKey)
+    saveContributorKey(this.contributor, this.$store.state.currentUser)
     // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTION, this.contributor.contribution)
     this.$store.dispatch(LOAD_ROUND_INFO)
