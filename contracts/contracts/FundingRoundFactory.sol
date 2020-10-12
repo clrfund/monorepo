@@ -115,14 +115,14 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
 
   function getRecipientIndex(
     address _recipient,
-    uint256 _timestamp
+    uint256 _atBlock
   )
     external
     view
     returns (uint256)
   {
     Recipient memory recipient = recipients[_recipient];
-    if (recipient.index == 0 || recipient.addedAt > _timestamp || (recipient.removedAt != 0 && recipient.removedAt <= _timestamp)) {
+    if (recipient.index == 0 || recipient.addedAt > _atBlock || (recipient.removedAt != 0 && recipient.removedAt <= _atBlock)) {
       // Return 0 if recipient is not in the registry
       // or added after a given time
       // or had been already removed by a given time
