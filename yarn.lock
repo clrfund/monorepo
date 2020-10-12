@@ -11942,17 +11942,17 @@ maci-circuits@^0.3.2:
     shelljs "^0.8.3"
     snarkjs "0.3.23"
 
-maci-cli@0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.3.3.tgz#baaae082bbeecf9a326a3bc6e6faa0719236bfa7"
-  integrity sha512-WXqMacKKP95rcYJyREA9GUVwUKxlCIg5odtXB3aII8O3te0I2ricvjf4OlfQGGbJ4iewIVYA5AuX0jllW+wn7g==
+maci-cli@0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.3.4.tgz#f924426c4fe482b8b125a8820f3022029edba9b2"
+  integrity sha512-HO7WCnaBVc1REf3ZYRymuK+QAO0rh0YimxZuEpt0WIE22daMayFzOUttOHCdScXzUnnQyiJ/w7BMtICwNiQfsA==
   dependencies:
     argparse "^1.0.10"
     ethers "^4.0.45"
     libsemaphore "^1.0.5"
     maci-circuits "^0.3.2"
     maci-config "^0.3.2"
-    maci-contracts "^0.3.3"
+    maci-contracts "^0.3.4"
     maci-core "^0.3.2"
     maci-crypto "^0.3.2"
     maci-domainobjs "^0.3.2"
@@ -11967,10 +11967,10 @@ maci-config@^0.3.2:
     js-yaml "^3.13.1"
     path "^0.12.7"
 
-maci-contracts@0.3.3, maci-contracts@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.3.3.tgz#78850dda3a3e268ac998eb503fcb92378905f622"
-  integrity sha512-JMg/MBMYYQV/oZIoeRhJ3yVeVIT2bCsv5X/AKC1R03AN4xDVa0kuAFv54ZJV4dZ8lBXtByrkDml/1iCXLSAIUA==
+maci-contracts@0.3.4, maci-contracts@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.3.4.tgz#3772d9c1f70c23becbe2140b024ca16e13293a3c"
+  integrity sha512-OSegv3gAc4GK76Fryp7dq4JVqrd2BZr5tDHc/OfJhVBgLV98LLfqizu+zrAc2iRkdmuSTXHzG8L9Ex1nbJsQww==
   dependencies:
     "@openzeppelin/contracts" "^2.4.0"
     argparse "^1.0.10"
