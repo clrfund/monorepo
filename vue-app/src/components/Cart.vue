@@ -10,6 +10,7 @@
           :value="item.amount"
           @input="updateAmount(item, $event.target.value)"
           class="input contribution-amount"
+          :class="{ invalid: !isAmountValid(item.amount) }"
           name="amount"
           placeholder="Amount"
         >
@@ -54,6 +55,14 @@ import {
 } from '@/store/mutation-types'
 
 const CART_STORAGE_KEY = 'cart'
+
+function parseAmount(value: string): number {
+  const amount = parseFloat(value)
+  if (isNaN(amount)) {
+    return 0
+  }
+  return amount
+}
 
 @Component({
   watch: {
@@ -112,11 +121,12 @@ export default class Cart extends Vue {
     return this.$store.state.cart
   }
 
-  updateAmount(item: CartItem, value: string) {
-    if (value) {
-      const amount = parseFloat(value)
-      this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
-    }
+  isAmountValid(value: string): boolean {
+    return parseAmount(value).toString() === value
+  }
+
+  updateAmount(item: CartItem, amount: string) {
+    this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
   }
 
   removeItem(item: CartItem) {
@@ -125,6 +135,13 @@ export default class Cart extends Vue {
 
   canContribute(): boolean {
     return this.$store.state.currentRound && this.cart.length > 0
+  }
+
+  private isFormValid(): boolean {
+    const invalidCount = this.cart.filter((item) => {
+      return this.isAmountValid(item.amount) === false
+    }).length
+    return invalidCount === 0
   }
 
   get errorMessage(): string | null {
@@ -140,6 +157,8 @@ export default class Cart extends Vue {
       return 'You already contributed in this round'
     } else if (DateTime.local() >= currentRound.signUpDeadline) {
       return 'The contribution period has ended'
+    } else if (!this.isFormValid()) {
+      return 'Please enter correct amounts'
     } else if (this.total >= MAX_CONTRIBUTION_AMOUNT) {
       return 'Contribution amount is too large'
     } else {
@@ -149,7 +168,7 @@ export default class Cart extends Vue {
 
   get total(): number {
     return this.cart.reduce((acc: number, item: CartItem) => {
-      return acc + item.amount
+      return acc + parseAmount(item.amount)
     }, 0)
   }
 

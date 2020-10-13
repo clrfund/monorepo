@@ -119,7 +119,10 @@ export default class ProjectView extends Vue {
   }
 
   contribute() {
-    this.$store.commit(ADD_CART_ITEM, { ...this.project, amount: DEFAULT_CONTRIBUTION_AMOUNT })
+    this.$store.commit(ADD_CART_ITEM, {
+      ...this.project,
+      amount: DEFAULT_CONTRIBUTION_AMOUNT.toString(),
+    })
   }
 
   canClaim(): boolean {

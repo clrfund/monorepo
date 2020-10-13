@@ -90,7 +90,7 @@ export default class ContributionModal extends Vue {
   mounted() {
     const { nativeTokenDecimals, voiceCreditFactor } = this.currentRound
     this.$store.state.cart.forEach((item: CartItem) => {
-      const amountRaw = parseFixed(item.amount.toString(), nativeTokenDecimals)
+      const amountRaw = parseFixed(item.amount, nativeTokenDecimals)
       const voiceCredits = amountRaw.div(voiceCreditFactor)
       this.votes.push([item.index, voiceCredits])
       this.amount = this.amount.add(voiceCredits.mul(voiceCreditFactor))

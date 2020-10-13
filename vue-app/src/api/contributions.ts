@@ -9,7 +9,7 @@ export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
 export const CART_MAX_SIZE = 10 // A size of message batch
 
 export interface CartItem extends Project {
-  amount: number;
+  amount: string;
 }
 
 export async function getContributionAmount(

@@ -73,6 +73,10 @@ a {
   box-sizing: border-box;
   color: $text-color;
   padding: 7px;
+
+  &.invalid {
+    border-color: $error-color;
+  }
 }
 
 .btn {
