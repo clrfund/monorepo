@@ -12,10 +12,10 @@
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Contribution Deadline:</div>
-        <div class="round-info-value">{{ currentRound.contributionDeadline | formatDate }}</div>
+        <div class="round-info-value">{{ currentRound.signUpDeadline | formatDate }}</div>
       </div>
       <div class="round-info-item">
-        <div class="round-info-title">Voting Deadline:</div>
+        <div class="round-info-title">Reallocation Deadline:</div>
         <div class="round-info-value">{{ currentRound.votingDeadline | formatDate }}</div>
       </div>
       <div class="round-info-item">

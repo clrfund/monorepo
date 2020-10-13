@@ -16,7 +16,7 @@ export interface RoundInfo {
   nativeTokenDecimals: number;
   voiceCreditFactor: BigNumber;
   status: string;
-  contributionDeadline: DateTime;
+  signUpDeadline: DateTime;
   votingDeadline: DateTime;
   totalFunds: FixedNumber;
   matchingPool: FixedNumber;
@@ -25,7 +25,7 @@ export interface RoundInfo {
 
 export enum RoundStatus {
   Contributing = 'Contributing',
-  Voting = 'Voting',
+  Reallocating = 'Reallocating',
   Tallying = 'Tallying',
   Finalized = 'Finalized',
   Cancelled = 'Cancelled',
@@ -44,7 +44,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   const maciAddress = await fundingRound.maci()
   const maci = new Contract(maciAddress, MACI, provider)
   const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
-  const contributionDeadline = DateTime.fromSeconds(
+  const signUpDeadline = DateTime.fromSeconds(
     parseInt(await maci.calcSignUpDeadline()),
   )
   const votingDeadline = DateTime.fromSeconds(
@@ -78,10 +78,10 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     status = RoundStatus.Finalized
     matchingPool = await fundingRound.matchingPoolSize()
   } else {
-    if (now < contributionDeadline) {
+    if (now < signUpDeadline) {
       status = RoundStatus.Contributing
     } else if (now < votingDeadline) {
-      status = RoundStatus.Voting
+      status = RoundStatus.Reallocating
     } else {
       status = RoundStatus.Tallying
     }
@@ -110,7 +110,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     nativeTokenDecimals,
     voiceCreditFactor,
     status,
-    contributionDeadline,
+    signUpDeadline,
     votingDeadline,
     totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),
     matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),

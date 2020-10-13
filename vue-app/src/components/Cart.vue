@@ -138,7 +138,7 @@ export default class Cart extends Vue {
       return 'Your account is not verified'
     } else if (!this.$store.state.contribution.isZero()) {
       return 'You already contributed in this round'
-    } else if (DateTime.local() >= currentRound.contributionDeadline) {
+    } else if (DateTime.local() >= currentRound.signUpDeadline) {
       return 'The contribution period has ended'
     } else if (this.total >= MAX_CONTRIBUTION_AMOUNT) {
       return 'Contribution amount is too large'
