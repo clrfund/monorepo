@@ -41,6 +41,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { BigNumber, FixedNumber } from 'ethers'
+import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
 
 import ContributionModal from '@/components/ContributionModal.vue'
@@ -55,14 +57,6 @@ import {
 } from '@/store/mutation-types'
 
 const CART_STORAGE_KEY = 'cart'
-
-function parseAmount(value: string): number {
-  const amount = parseFloat(value)
-  if (isNaN(amount)) {
-    return 0
-  }
-  return amount
-}
 
 @Component({
   watch: {
@@ -122,7 +116,28 @@ export default class Cart extends Vue {
   }
 
   isAmountValid(value: string): boolean {
-    return parseAmount(value).toString() === value
+    const currentRound = this.$store.state.currentRound
+    if (!currentRound) {
+      // Skip validation
+      return true
+    }
+    const { nativeTokenDecimals, voiceCreditFactor } = currentRound
+    let amount
+    try {
+      amount = parseFixed(value, nativeTokenDecimals)
+    } catch {
+      return false
+    }
+    if (amount.lt(BigNumber.from(0))) {
+      return false
+    }
+    const normalizedValue = FixedNumber
+      .fromValue(
+        amount.div(voiceCreditFactor).mul(voiceCreditFactor),
+        nativeTokenDecimals,
+      )
+      .toUnsafeFloat().toString()
+    return normalizedValue === value
   }
 
   updateAmount(item: CartItem, amount: string) {
@@ -144,6 +159,27 @@ export default class Cart extends Vue {
     return invalidCount === 0
   }
 
+  private getTotal(): BigNumber {
+    const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
+    return this.cart.reduce((total: BigNumber, item: CartItem) => {
+      let amount
+      try {
+        amount = parseFixed(item.amount, nativeTokenDecimals)
+      } catch {
+        return total
+      }
+      return total.add(amount.div(voiceCreditFactor).mul(voiceCreditFactor))
+    }, BigNumber.from(0))
+  }
+
+  private isGreaterThanMax(): boolean {
+    const decimals = this.$store.state.currentRound.nativeTokenDecimals
+    const maxContributionAmount = BigNumber.from(10)
+      .pow(BigNumber.from(decimals))
+      .mul(MAX_CONTRIBUTION_AMOUNT)
+    return this.getTotal().gt(maxContributionAmount)
+  }
+
   get errorMessage(): string | null {
     const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
@@ -159,7 +195,7 @@ export default class Cart extends Vue {
       return 'The contribution period has ended'
     } else if (!this.isFormValid()) {
       return 'Please enter correct amounts'
-    } else if (this.total >= MAX_CONTRIBUTION_AMOUNT) {
+    } else if (this.isGreaterThanMax()) {
       return 'Contribution amount is too large'
     } else {
       return null
@@ -167,9 +203,8 @@ export default class Cart extends Vue {
   }
 
   get total(): number {
-    return this.cart.reduce((acc: number, item: CartItem) => {
-      return acc + parseAmount(item.amount)
-    }, 0)
+    const decimals = this.$store.state.currentRound.nativeTokenDecimals
+    return FixedNumber.fromValue(this.getTotal(), decimals).toUnsafeFloat()
   }
 
   contribute() {
