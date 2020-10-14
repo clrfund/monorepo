@@ -43,7 +43,7 @@ import { RoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { User } from '@/api/user'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
-import { REMOVE_CART_ITEM, SET_CONTRIBUTION } from '@/store/mutation-types'
+import { REMOVE_CART_ITEM, SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
@@ -127,6 +127,7 @@ export default class ContributionModal extends Vue {
     // Save contributor info to storage
     saveContributorInfo(this.$store.state.currentUser, contributor)
     // Set contribution and update round info
+    this.$store.commit(SET_CONTRIBUTOR, contributor)
     this.$store.commit(SET_CONTRIBUTION, total)
     this.$store.dispatch(LOAD_ROUND_INFO)
     // Vote (step 3)

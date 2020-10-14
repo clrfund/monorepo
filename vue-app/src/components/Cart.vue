@@ -44,19 +44,38 @@ import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
+import { Keypair, PrivKey } from 'maci-domainobjs'
 
 import ContributionModal from '@/components/ContributionModal.vue'
 
-import { MAX_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
+import { MAX_CONTRIBUTION_AMOUNT, CartItem, Contributor } from '@/api/contributions'
 import { storage } from '@/api/storage'
+import { User } from '@/api/user'
 import { CHECK_VERIFICATION } from '@/store/action-types'
 import {
+  SET_CONTRIBUTOR,
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
 } from '@/store/mutation-types'
 
 const CART_STORAGE_KEY = 'cart'
+const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
+
+function loadContributorInfo(user: User): Contributor | null {
+  const serializedData = storage.getItem(
+    user.walletAddress,
+    user.encryptionKey,
+    CONTRIBUTOR_INFO_STORAGE_KEY,
+  )
+  if (serializedData) {
+    const data = JSON.parse(serializedData)
+    const keypair = new Keypair(PrivKey.unserialize(data.privateKey))
+    return { keypair, stateIndex: data.stateIndex }
+  } else {
+    return null
+  }
+}
 
 @Component({
   watch: {
@@ -82,6 +101,13 @@ export default class Cart extends Vue {
     )
     this.restoreCart()
 
+    // Restore contributor info from local storage
+    this.$store.watch(
+      (state) => state.currentUser?.walletAddress,
+      this.restoreContributor,
+    )
+    this.restoreContributor()
+
     // Check verification every minute
     setInterval(async () => {
       this.$store.dispatch(CHECK_VERIFICATION)
@@ -103,6 +129,18 @@ export default class Cart extends Vue {
       for (const item of JSON.parse(serializedCart)) {
         this.$store.commit(ADD_CART_ITEM, item)
       }
+    }
+  }
+
+  private restoreContributor() {
+    const currentUser = this.$store.state.currentUser
+    if (!currentUser) {
+      // Restore contributor info only if user has logged in
+      return
+    }
+    const contributor = loadContributorInfo(currentUser)
+    if (contributor) {
+      this.$store.commit(SET_CONTRIBUTOR, contributor)
     }
   }
 
