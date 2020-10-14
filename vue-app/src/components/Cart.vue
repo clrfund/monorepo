@@ -286,7 +286,7 @@ export default class Cart extends Vue {
       {
         clickToClose: false,
         height: 'auto',
-        width: 450,
+        width: 500,
       },
     )
   }

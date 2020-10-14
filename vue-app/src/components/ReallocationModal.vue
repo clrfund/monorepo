@@ -8,9 +8,7 @@
     </div>
     <div v-if="step === 2">
       <h3>Step 2 of 2: Success</h3>
-      <div>
-        Your votes has been submitted.
-      </div>
+      <div>Contributed funds have been successfully reallocated.</div>
       <button class="btn" @click="$emit('close')">OK</button>
     </div>
   </div>

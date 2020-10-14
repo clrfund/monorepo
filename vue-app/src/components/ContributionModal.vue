@@ -21,9 +21,9 @@
     <div v-if="step === 4">
       <h3>Step 4 of 4: Success</h3>
       <div>
-        Successfully contributed {{ contribution | formatAmount }} {{ currentRound.nativeTokenSymbol }} to the funding round.
+        Successfully contributed {{ contribution | formatAmount }} {{ currentRound.nativeTokenSymbol }} to the funding round. Only the coordinator can know which projects you have supported.
         <br>
-        If you are being bribed, please override your vote before {{ currentRound.votingDeadline | formatDate }}.
+        You can reallocate contributed funds until {{ currentRound.votingDeadline | formatDate }}.
       </div>
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
