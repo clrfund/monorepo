@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
-import { FixedNumber } from 'ethers'
+import { BigNumber } from 'ethers'
 
 import { CartItem } from '@/api/contributions'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
@@ -27,7 +27,7 @@ interface RootState {
   currentRound: RoundInfo | null;
   tally: Tally | null;
   cart: CartItem[];
-  contribution: FixedNumber;
+  contribution: BigNumber;
 }
 
 const store: StoreOptions<RootState> = {
@@ -36,7 +36,7 @@ const store: StoreOptions<RootState> = {
     currentRound: null,
     tally: null,
     cart: new Array<CartItem>(),
-    contribution: FixedNumber.from(0),
+    contribution: BigNumber.from(0),
   },
   mutations: {
     [SET_CURRENT_USER](state, user: User) {
@@ -48,7 +48,7 @@ const store: StoreOptions<RootState> = {
     [SET_TALLY](state, tally: Tally) {
       state.tally = tally
     },
-    [SET_CONTRIBUTION](state, contribution: FixedNumber) {
+    [SET_CONTRIBUTION](state, contribution: BigNumber) {
       state.contribution = contribution
     },
     [ADD_CART_ITEM](state, addedItem: CartItem) {

@@ -103,15 +103,18 @@ export default class Home extends Vue {
       return
     }
     const contribution = await getContributionAmount(
-      currentUser.walletAddress,
       this.currentRound.fundingRoundAddress,
-      this.currentRound.nativeTokenDecimals,
+      currentUser.walletAddress,
     )
     this.$store.commit(SET_CONTRIBUTION, contribution)
   }
 
   get contribution(): FixedNumber {
-    return this.$store.state.contribution
+    const decimals = this.currentRound?.nativeTokenDecimals
+    if (!decimals) {
+      return FixedNumber.from(0)
+    }
+    return FixedNumber.fromValue(this.$store.state.contribution, decimals)
   }
 }
 </script>

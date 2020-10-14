@@ -1,4 +1,4 @@
-import { Contract, FixedNumber } from 'ethers'
+import { Contract, BigNumber } from 'ethers'
 
 import { FundingRound } from './abi'
 import { provider } from './core'
@@ -13,10 +13,9 @@ export interface CartItem extends Project {
 }
 
 export async function getContributionAmount(
-  contributorAddress: string,
   fundingRoundAddress: string,
-  tokenDecimals: number,
-): Promise<FixedNumber> {
+  contributorAddress: string,
+): Promise<BigNumber> {
   const fundingRound = new Contract(
     fundingRoundAddress,
     FundingRound,
@@ -26,7 +25,7 @@ export async function getContributionAmount(
   const events = await fundingRound.queryFilter(filter, 0)
   const event = events[0]
   if (!event || !event.args) {
-    return FixedNumber.from(0)
+    return BigNumber.from(0)
   }
-  return FixedNumber.fromValue(event.args._amount, tokenDecimals)
+  return event.args._amount
 }

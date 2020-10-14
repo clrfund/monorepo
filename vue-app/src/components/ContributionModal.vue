@@ -146,7 +146,7 @@ export default class ContributionModal extends Vue {
     // Save contributor info to storage
     saveContributorKey(this.contributor, this.$store.state.currentUser)
     // Set contribution and update round info
-    this.$store.commit(SET_CONTRIBUTION, this.contributor.contribution)
+    this.$store.commit(SET_CONTRIBUTION, this.amount)
     this.$store.dispatch(LOAD_ROUND_INFO)
     // Vote (step 3)
     const messages: Message[] = []
