@@ -23,6 +23,10 @@ const config: BuidlerConfig = {
       url: 'http://127.0.0.1:8555',
       gasLimit: GAS_LIMIT,
     } as any,
+    rinkeby: {
+      url: process.env.ETHEREUM_JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
+      accounts: { mnemonic: '' },
+    },
   },
   paths: {
     artifacts: "build/contracts",

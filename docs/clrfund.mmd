@@ -27,20 +27,14 @@ sequenceDiagram
     loop Every round
         Owner ->> Factory: call deployNewRound()
         Factory ->> FundingRound: deploy FundingRound contract
-        Owner ->> Factory: call deployMaci()
         Factory ->> MACIFactory: call deployMaci()
         MACIFactory ->> MACI: create new MACI instance
         Factory ->> FundingRound: call setMaci()
         
         loop Funding
-            Note over Contributor, FundingRound: contributor registers with their verified address (using BrightID)
+            Note over Contributor, FundingRound: contributor registers with their verified address
             Contributor ->> FundingRound: donate to the pool ( call contribute() )
             FundingRound ->> MACI: call signUp()
-        end
-        
-        Note over FundingRound, MACI: contribution / signup deadline
-        
-        loop Voting
             Note right of Contributor: contributor creates encrypted message(s)
             alt Single message submission
                 Contributor ->> MACI: vote ( call publishMessage() )
@@ -50,6 +44,7 @@ sequenceDiagram
             end
         end
         
+        Note over FundingRound, MACI: contribution / signup deadline
         Note over MACI: voting deadline
 
         alt Allocation of funds

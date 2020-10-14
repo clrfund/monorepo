@@ -5,6 +5,7 @@ import { Contract } from 'ethers';
 import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from 'maci-domainobjs';
 
+import MACIArtifact from '../build/contracts/MACI.json'
 import { ZERO_ADDRESS, UNIT } from '../utils/constants'
 import { getGasUsage, getEventArg } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
@@ -46,6 +47,12 @@ describe('Funding Round Factory', () => {
     expect(token.address).to.properAddress;
     await token.transfer(contributor.address, tokenInitialSupply);
   });
+
+  it('transfers ownership to another address', async () => {
+    await expect(factory.transferOwnership(coordinator.address))
+      .to.emit(factory, 'OwnershipTransferred')
+      .withArgs(deployer.address, coordinator.address)
+  })
 
   describe('contributing to matching pool', () => {
     const contributionAmount = UNIT.mul(10)
@@ -223,20 +230,15 @@ describe('Funding Round Factory', () => {
       .to.be.revertedWith('Ownable: caller is not the owner');
   });
 
-  it('prevents from changing MACI parameters when waiting for MACI deployment', async () => {
-    await factory.setCoordinator(coordinator.address, coordinatorPubKey);
-    await factory.setToken(token.address);
-    await factory.deployNewRound();
-    await expect(factory.setMaciParameters(...maciParameters.values()))
-      .to.be.revertedWith('Factory: Waiting for MACI deployment');
-  });
-
   describe('deploying funding round', () => {
     it('deploys funding round', async () => {
       await factory.setToken(token.address);
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
-      await expect(factory.deployNewRound())
-        .to.emit(factory, 'RoundStarted')
+      const deployed = factory.deployNewRound()
+      await expect(deployed).to.emit(factory, 'RoundStarted')
+      const deployTx = await deployed
+      expect(await getGasUsage(deployTx)).lessThan(9000000)
+
       const fundingRoundAddress = await factory.getCurrentRound();
       expect(fundingRoundAddress).to.properAddress;
       expect(fundingRoundAddress).to.not.equal(ZERO_ADDRESS);
@@ -247,11 +249,18 @@ describe('Funding Round Factory', () => {
       );
       expect(await fundingRound.owner()).to.equal(factory.address);
       expect(await fundingRound.nativeToken()).to.equal(token.address);
-      const roundCoordinatorPubKey = await fundingRound.coordinatorPubKey();
-      expect(roundCoordinatorPubKey.x).to.equal(coordinatorPubKey.x);
-      expect(roundCoordinatorPubKey.y).to.equal(coordinatorPubKey.y);
-      const contributionDeadline = await fundingRound.contributionDeadline();
-      expect(parseInt(contributionDeadline)).to.be.greaterThan(0);
+
+      const maciAddress = await getEventArg(
+        deployTx,
+        maciFactory,
+        'MaciDeployed',
+        '_maci',
+      )
+      expect(await fundingRound.maci()).to.equal(maciAddress)
+      const maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress)
+      const roundCoordinatorPubKey = await maci.coordinatorPubKey()
+      expect(roundCoordinatorPubKey.x).to.equal(coordinatorPubKey.x)
+      expect(roundCoordinatorPubKey.y).to.equal(coordinatorPubKey.y)
     });
 
     it('reverts if native token is not set', async () => {
@@ -293,61 +302,6 @@ describe('Funding Round Factory', () => {
     });
   });
 
-  describe('deploying MACI', () => {
-    it('deploys MACI', async () => {
-      await factory.setCoordinator(
-        coordinator.address,
-        coordinatorPubKey,
-      );
-      await factory.setToken(token.address);
-      await factory.deployNewRound();
-
-      const deployTx = await factory.deployMaci();
-      expect(await getGasUsage(deployTx)).lessThan(7200000);
-      const maciAddress = await getEventArg(
-        deployTx,
-        maciFactory,
-        'MaciDeployed',
-        '_maci',
-      );
-
-      const fundingRoundAddress = await factory.getCurrentRound();
-      const fundingRound = await ethers.getContractAt(
-        'FundingRound',
-        fundingRoundAddress,
-      );
-      expect(await fundingRound.maci()).to.equal(maciAddress);
-    });
-
-    it('reverts if round has not been deployed', async () => {
-      await expect(factory.deployMaci())
-        .to.be.revertedWith('Factory: Funding round has not been deployed');
-    });
-
-    it('reverts if MACI is already deployed', async () => {
-      await factory.setCoordinator(
-        coordinator.address,
-        coordinatorPubKey,
-      );
-      await factory.setToken(token.address);
-      await factory.deployNewRound();
-      await factory.deployMaci();
-      await expect(factory.deployMaci())
-        .to.be.revertedWith('Factory: MACI already deployed');
-    });
-
-    it('only owner can deploy MACI', async () => {
-      await factory.setCoordinator(
-        coordinator.address,
-        coordinatorPubKey,
-      );
-      await factory.setToken(token.address);
-      const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.deployMaci())
-        .to.be.revertedWith('Ownable: caller is not the owner');
-    });
-  });
-
   describe('transferring matching funds', () => {
     const contributionAmount = UNIT.mul(10)
     const totalSpent = UNIT.mul(100)
@@ -367,7 +321,6 @@ describe('Funding Round Factory', () => {
       const factoryAsContributor = factory.connect(contributor);
       await factoryAsContributor.contributeMatchingFunds(contributionAmount)
       await factory.deployNewRound();
-      await factory.deployMaci();
       const roundDuration = maciParameters.signUpDuration + maciParameters.votingDuration + 10
       await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
