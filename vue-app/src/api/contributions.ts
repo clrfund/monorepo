@@ -1,4 +1,5 @@
 import { Contract, BigNumber } from 'ethers'
+import { Keypair } from 'maci-domainobjs'
 
 import { FundingRound } from './abi'
 import { provider } from './core'
@@ -10,6 +11,11 @@ export const CART_MAX_SIZE = 10 // A size of message batch
 
 export interface CartItem extends Project {
   amount: string;
+}
+
+export interface Contributor {
+  keypair: Keypair;
+  stateIndex: number;
 }
 
 export async function getContributionAmount(

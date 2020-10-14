@@ -208,9 +208,15 @@ export default class Cart extends Vue {
   }
 
   contribute() {
+    const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
+    const votes = this.cart.map((item: CartItem) => {
+      const amount = parseFixed(item.amount, nativeTokenDecimals)
+      const voiceCredits = amount.div(voiceCreditFactor)
+      return [item.index, voiceCredits]
+    })
     this.$modal.show(
       ContributionModal,
-      { },
+      { votes },
       {
         clickToClose: false,
         height: 'auto',

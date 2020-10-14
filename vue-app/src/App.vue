@@ -200,6 +200,12 @@ a {
   width: 20%;
 }
 
+.modal-body {
+  background-color: $bg-light-color;
+  padding: 20px;
+  text-align: center;
+}
+
 .loader {
   display: block;
   width: 40px;
