@@ -21,18 +21,23 @@
       </form>
     </div>
     <div
-      v-if="canContribute()"
-      class="contribute-btn-wrapper"
+      v-if="canSubmit()"
+      class="submit-btn-wrapper"
     >
-      <div v-if="errorMessage" class="contribute-error">
+      <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
       <button
-        class="btn contribute-btn"
+        class="btn submit-btn"
         :disabled="errorMessage !== null"
-        @click="contribute()"
+        @click="submit()"
       >
-        Contribute {{ total }} {{ tokenSymbol }} to {{ cart.length }} projects
+        <template v-if="contribution.isZero()">
+          Contribute {{ total }} {{ tokenSymbol }} to {{ cart.length }} projects
+        </template>
+        <template v-else>
+          Reallocate funds
+        </template>
       </button>
     </div>
   </div>
@@ -47,6 +52,7 @@ import { DateTime } from 'luxon'
 import { Keypair, PrivKey } from 'maci-domainobjs'
 
 import ContributionModal from '@/components/ContributionModal.vue'
+import ReallocationModal from '@/components/ReallocationModal.vue'
 
 import { MAX_CONTRIBUTION_AMOUNT, CartItem, Contributor } from '@/api/contributions'
 import { storage } from '@/api/storage'
@@ -149,6 +155,10 @@ export default class Cart extends Vue {
     return currentRound ? currentRound.nativeTokenSymbol : ''
   }
 
+  get contribution(): BigNumber {
+    return this.$store.state.contribution
+  }
+
   get cart(): CartItem[] {
     return this.$store.state.cart
   }
@@ -186,7 +196,7 @@ export default class Cart extends Vue {
     this.$store.commit(REMOVE_CART_ITEM, item)
   }
 
-  canContribute(): boolean {
+  canSubmit(): boolean {
     return this.$store.state.currentRound && this.cart.length > 0
   }
 
@@ -218,6 +228,10 @@ export default class Cart extends Vue {
     return this.getTotal().gt(maxContributionAmount)
   }
 
+  private isGreaterThanInitialContribution(): boolean {
+    return this.getTotal().gt(this.contribution)
+  }
+
   get errorMessage(): string | null {
     const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
@@ -227,16 +241,30 @@ export default class Cart extends Vue {
       return '' // No error: waiting for verification check
     } else if (!currentUser.isVerified) {
       return 'Your account is not verified'
-    } else if (!this.$store.state.contribution.isZero()) {
-      return 'You already contributed in this round'
-    } else if (DateTime.local() >= currentRound.signUpDeadline) {
-      return 'The contribution period has ended'
     } else if (!this.isFormValid()) {
       return 'Please enter correct amounts'
-    } else if (this.isGreaterThanMax()) {
-      return 'Contribution amount is too large'
     } else {
-      return null
+      if (this.contribution.isZero()) {
+        // Contributing
+        if (DateTime.local() >= currentRound.signUpDeadline) {
+          return 'The contribution period has ended'
+        } else if (this.isGreaterThanMax()) {
+          return 'Contribution amount is too large'
+        } else {
+          return null
+        }
+      } else {
+        // Reallocating funds
+        if (DateTime.local() >= currentRound.votingDeadline) {
+          return 'The funding round has ended'
+        } else if (!this.$store.state.contributor) {
+          return 'Contributor key is not found'
+        } else if (this.isGreaterThanInitialContribution()) {
+          return 'The total can not exceed the initial contribution'
+        } else {
+          return null
+        }
+      }
     }
   }
 
@@ -245,7 +273,7 @@ export default class Cart extends Vue {
     return FixedNumber.fromValue(this.getTotal(), decimals).toUnsafeFloat()
   }
 
-  contribute() {
+  submit() {
     const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
     const votes = this.cart.map((item: CartItem) => {
       const amount = parseFixed(item.amount, nativeTokenDecimals)
@@ -253,7 +281,7 @@ export default class Cart extends Vue {
       return [item.index, voiceCredits]
     })
     this.$modal.show(
-      ContributionModal,
+      this.contribution.isZero() ? ContributionModal : ReallocationModal,
       { votes },
       {
         clickToClose: false,
@@ -337,19 +365,19 @@ $project-image-size: 50px;
   }
 }
 
-.contribute-btn-wrapper {
+.submit-btn-wrapper {
   align-self: flex-end;
   box-sizing: border-box;
   margin-top: auto;
   padding: $content-space;
   width: 100%;
 
-  .contribute-error {
+  .submit-error {
     padding: 15px 0;
     text-align: center;
   }
 
-  .contribute-btn {
+  .submit-btn {
     width: 100%;
   }
 }

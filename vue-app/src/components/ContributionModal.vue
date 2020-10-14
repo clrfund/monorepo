@@ -43,7 +43,7 @@ import { RoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { User } from '@/api/user'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
-import { REMOVE_CART_ITEM, SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
+import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
@@ -153,10 +153,6 @@ export default class ContributionModal extends Vue {
     this.voteTx = voteTx
     await voteTx.wait()
     this.step += 1
-    // Clear the cart
-    this.$store.state.cart.slice().forEach((item) => {
-      this.$store.commit(REMOVE_CART_ITEM, item)
-    })
   }
 
   get contribution(): FixedNumber {
