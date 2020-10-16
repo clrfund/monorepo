@@ -54,12 +54,17 @@ export default class Profile extends Vue {
     provider.on('chainChanged', (_chainId: string) => {
       if (_chainId !== this.walletChainId) {
         this.walletChainId = _chainId
+        if (this.currentUser) {
+          // Log out user to prevent interactions with incorrect network
+          this.$store.commit(SET_CURRENT_USER, null)
+        }
       }
     })
     let accounts: string[]
     provider.on('accountsChanged', (_accounts: string[]) => {
-      if (accounts && _accounts !== accounts) {
-        window.location.reload()
+      if (_accounts !== accounts) {
+        // Log out user if wallet account changes
+        this.$store.commit(SET_CURRENT_USER, null)
       }
       accounts = _accounts
     })

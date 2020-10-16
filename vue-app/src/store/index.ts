@@ -42,7 +42,7 @@ const store: StoreOptions<RootState> = {
     contribution: BigNumber.from(0),
   },
   mutations: {
-    [SET_CURRENT_USER](state, user: User) {
+    [SET_CURRENT_USER](state, user: User | null) {
       state.currentUser = user
     },
     [SET_CURRENT_ROUND](state, round: RoundInfo) {

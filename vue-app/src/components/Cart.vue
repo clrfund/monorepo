@@ -92,6 +92,9 @@ function loadContributorInfo(user: User): Contributor | null {
     cart(items: CartItem[]) {
       // Save cart to local storage on changes
       const currentUser = this.$store.state.currentUser
+      if (!currentUser) {
+        return
+      }
       storage.setItem(
         currentUser.walletAddress,
         currentUser.encryptionKey,
