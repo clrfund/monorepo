@@ -1,14 +1,14 @@
 <template>
   <div class="profile">
-    <div v-if="!provider" class="provider-error">Wallet not found</div>
+    <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
     <div
-      v-else-if="provider && !isCorrectNetwork()"
+      v-else-if="walletProvider && !isCorrectNetwork()"
       class="provider-error"
     >
       Please change network to {{ jsonRpcNetwork.name }}
     </div>
     <button
-      v-else-if="provider && !currentUser"
+      v-else-if="walletProvider && !currentUser"
       class="btn connect-btn"
       @click="connect"
     >
@@ -42,16 +42,22 @@ export default class Profile extends Vue {
 
   jsonRpcNetwork: Network | null = null
   private walletChainId = '0xNaN'
-  provider: Web3Provider | null = null
   profileImageUrl: string | null = null
 
+  get walletProvider(): any {
+    return (window as any).ethereum
+  }
+
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
+  }
+
   mounted() {
-    const provider = (window as any).ethereum
-    if (!provider) {
+    if (!this.walletProvider) {
       return
     }
-    this.walletChainId = provider.chainId
-    provider.on('chainChanged', (_chainId: string) => {
+    this.walletChainId = this.walletProvider.chainId
+    this.walletProvider.on('chainChanged', (_chainId: string) => {
       if (_chainId !== this.walletChainId) {
         this.walletChainId = _chainId
         if (this.currentUser) {
@@ -61,14 +67,13 @@ export default class Profile extends Vue {
       }
     })
     let accounts: string[]
-    provider.on('accountsChanged', (_accounts: string[]) => {
+    this.walletProvider.on('accountsChanged', (_accounts: string[]) => {
       if (_accounts !== accounts) {
         // Log out user if wallet account changes
         this.$store.commit(SET_CURRENT_USER, null)
       }
       accounts = _accounts
     })
-    this.provider = new Web3Provider(provider)
     this.getJsonRpcNetwork()
   }
 
@@ -85,20 +90,19 @@ export default class Profile extends Vue {
   }
 
   async connect(): Promise<void> {
-    const provider = this.provider ? this.provider.provider : null
-    if (!provider || !provider.request) {
+    if (!this.walletProvider || !this.walletProvider.request) {
       return
     }
     let walletAddress
     try {
-      [walletAddress] = await provider.request({ method: 'eth_requestAccounts' })
+      [walletAddress] = await this.walletProvider.request({ method: 'eth_requestAccounts' })
     } catch (error) {
       // Access denied
       return
     }
     let signature
     try {
-      signature = await provider.request({
+      signature = await this.walletProvider.request({
         method: 'personal_sign',
         params: [LOGIN_MESSAGE, walletAddress],
       })
@@ -107,7 +111,7 @@ export default class Profile extends Vue {
       return
     }
     const user = {
-      walletProvider: this.provider,
+      walletProvider: new Web3Provider(this.walletProvider),
       walletAddress,
       isVerified: null,
       encryptionKey: sha256(signature),
@@ -115,10 +119,6 @@ export default class Profile extends Vue {
     this.$store.commit(SET_CURRENT_USER, user)
     this.$store.dispatch(CHECK_VERIFICATION)
     this.profileImageUrl = await getProfileImageUrl(user.walletAddress)
-  }
-
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
   }
 }
 </script>
