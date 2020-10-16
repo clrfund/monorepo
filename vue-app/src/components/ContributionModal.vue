@@ -40,6 +40,8 @@ import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
 import { CartItem } from '@/api/contributions'
 import { RoundInfo } from '@/api/round'
+import { storage } from '@/api/storage'
+import { User } from '@/api/user'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { REMOVE_CART_ITEM, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { getEventArg } from '@/utils/contracts'
@@ -54,6 +56,24 @@ interface Contributor {
   voiceCredits: BigNumber;
 }
 
+const CONTRIBUTOR_KEY_STORAGE_KEY = 'contributor-key'
+
+function saveContributorKey(
+  contributor: Contributor,
+  user: User,
+) {
+  const serializedData = JSON.stringify({
+    privateKey: contributor.keypair.privKey.serialize(),
+    stateIndex: contributor.stateIndex,
+  })
+  storage.setItem(
+    user.walletAddress,
+    user.encryptionKey,
+    CONTRIBUTOR_KEY_STORAGE_KEY,
+    serializedData,
+  )
+}
+
 @Component
 export default class ContributionModal extends Vue {
 
@@ -61,11 +81,11 @@ export default class ContributionModal extends Vue {
 
   private amount: BigNumber = BigNumber.from(0)
   private votes: [number, BigNumber][] = []
-  contributor?: Contributor
+  contributor: Contributor | null = null
 
-  approvalTx?: TransactionResponse
-  contributionTx?: TransactionResponse
-  voteTx?: TransactionResponse
+  approvalTx: TransactionResponse | null = null
+  contributionTx: TransactionResponse | null = null
+  voteTx: TransactionResponse | null = null
 
   mounted() {
     const { nativeTokenDecimals, voiceCreditFactor } = this.currentRound
@@ -83,7 +103,7 @@ export default class ContributionModal extends Vue {
   }
 
   private getSigner(): Signer {
-    const provider = this.$store.state.walletProvider
+    const provider = this.$store.state.currentUser.walletProvider
     return provider.getSigner()
   }
 
@@ -119,10 +139,12 @@ export default class ContributionModal extends Vue {
     const voiceCredits = await getEventArg(contributionTx, maci, 'SignUp', '_voiceCreditBalance')
     this.contributor = {
       keypair: contributorKeypair,
-      stateIndex,
+      stateIndex: stateIndex.toNumber(),
       contribution: FixedNumber.fromValue(this.amount, nativeTokenDecimals),
       voiceCredits,
     }
+    // Save contributor info to storage
+    saveContributorKey(this.contributor, this.$store.state.currentUser)
     // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTION, this.contributor.contribution)
     this.$store.dispatch(LOAD_ROUND_INFO)

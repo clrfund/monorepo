@@ -109,7 +109,13 @@ export default class ProjectView extends Vue {
   }
 
   canContribute(): boolean {
-    return this.$store.state.cart.length < CART_MAX_SIZE
+    return (
+      this.$store.state.currentUser &&
+      this.$store.state.currentRound &&
+      this.project !== null &&
+      !this.project.isRemoved &&
+      this.$store.state.cart.length < CART_MAX_SIZE
+    )
   }
 
   contribute() {
@@ -121,7 +127,7 @@ export default class ProjectView extends Vue {
     return (
       currentRound &&
       currentRound.status === RoundStatus.Finalized &&
-      this.$store.state.account &&
+      this.$store.state.currentUser &&
       this.claimed === false
     )
   }

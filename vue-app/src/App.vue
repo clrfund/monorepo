@@ -83,7 +83,7 @@ a {
   cursor: pointer;
   font-weight: bold;
   line-height: 22px;
-  padding: 7px 20px;
+  padding: 6px 20px 8px;
 
   img {
     height: 1em;
@@ -99,7 +99,8 @@ a {
   &[disabled],
   &[disabled]:hover {
     background-color: $button-disabled-color !important;
-    color: $text-color !important;
+    color: $button-disabled-text-color !important;
+    cursor: not-allowed;
   }
 }
 
@@ -107,7 +108,7 @@ a {
   background-color: transparent;
   border: 2px solid $button-color;
   color: $button-color;
-  padding: 5px 18px;
+  padding: (6px - 2px) (20px - 2px) (8px - 2px);
 
   &:hover {
     background-color: transparent;

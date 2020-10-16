@@ -1,15 +1,17 @@
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
 import { FixedNumber } from 'ethers'
-import { Web3Provider } from '@ethersproject/providers'
 
 import { CartItem } from '@/api/contributions'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { Tally, getTally } from '@/api/tally'
-import { LOAD_ROUND_INFO } from './action-types'
+import { User, isVerifiedUser } from '@/api/user'
 import {
-  SET_WALLET_PROVIDER,
-  SET_ACCOUNT,
+  LOAD_ROUND_INFO,
+  CHECK_VERIFICATION,
+} from './action-types'
+import {
+  SET_CURRENT_USER,
   SET_CURRENT_ROUND,
   SET_TALLY,
   SET_CONTRIBUTION,
@@ -21,8 +23,7 @@ import {
 Vue.use(Vuex)
 
 interface RootState {
-  walletProvider: Web3Provider | null;
-  account: string;
+  currentUser: User | null;
   currentRound: RoundInfo | null;
   tally: Tally | null;
   cart: CartItem[];
@@ -31,19 +32,15 @@ interface RootState {
 
 const store: StoreOptions<RootState> = {
   state: {
-    walletProvider: null,
-    account: '',
+    currentUser: null,
     currentRound: null,
     tally: null,
     cart: new Array<CartItem>(),
     contribution: FixedNumber.from(0),
   },
   mutations: {
-    [SET_WALLET_PROVIDER](state, provider: Web3Provider) {
-      state.walletProvider = provider
-    },
-    [SET_ACCOUNT](state, account: string) {
-      state.account = account
+    [SET_CURRENT_USER](state, user: User) {
+      state.currentUser = user
     },
     [SET_CURRENT_ROUND](state, round: RoundInfo) {
       state.currentRound = round
@@ -86,6 +83,15 @@ const store: StoreOptions<RootState> = {
       if (currentRound && currentRound.status === RoundStatus.Finalized) {
         const tally = await getTally(currentRound.fundingRoundAddress)
         commit(SET_TALLY, tally)
+      }
+    },
+    async [CHECK_VERIFICATION]({ commit, state }) {
+      if (state.currentRound && state.currentUser) {
+        const isVerified = await isVerifiedUser(
+          state.currentRound.fundingRoundAddress,
+          state.currentUser.walletAddress,
+        )
+        commit(SET_CURRENT_USER, { ...state.currentUser, isVerified })
       }
     },
   },

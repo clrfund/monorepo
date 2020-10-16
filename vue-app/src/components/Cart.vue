@@ -19,11 +19,16 @@
         </div>
       </form>
     </div>
-    <div class="contribute-btn-wrapper">
+    <div
+      v-if="canContribute()"
+      class="contribute-btn-wrapper"
+    >
+      <div v-if="errorMessage" class="contribute-error">
+        {{ errorMessage }}
+      </div>
       <button
-        v-if="this.cart.length > 0"
         class="btn contribute-btn"
-        :disabled="!canContribute()"
+        :disabled="errorMessage !== null"
         @click="contribute()"
       >
         Contribute {{ total }} {{ tokenSymbol }} to {{ cart.length }} projects
@@ -39,21 +44,28 @@ import { DateTime } from 'luxon'
 
 import ContributionModal from '@/components/ContributionModal.vue'
 
-import { CartItem } from '@/api/contributions'
+import { MAX_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
+import { storage } from '@/api/storage'
+import { CHECK_VERIFICATION } from '@/store/action-types'
 import {
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
 } from '@/store/mutation-types'
 
-const CART_STORAGE_KEY = 'clrfund-cart'
+const CART_STORAGE_KEY = 'cart'
 
 @Component({
   watch: {
     cart(items: CartItem[]) {
       // Save cart to local storage on changes
-      const storage = window.localStorage
-      storage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
+      const currentUser = this.$store.state.currentUser
+      storage.setItem(
+        currentUser.walletAddress,
+        currentUser.encryptionKey,
+        CART_STORAGE_KEY,
+        JSON.stringify(items),
+      )
     },
   },
 })
@@ -61,8 +73,29 @@ export default class Cart extends Vue {
 
   mounted() {
     // Restore cart from local storage
-    const storage = window.localStorage
-    const serializedCart = storage.getItem(CART_STORAGE_KEY)
+    this.$store.watch(
+      (state) => state.currentUser?.walletAddress,
+      this.restoreCart,
+    )
+    this.restoreCart()
+
+    // Check verification every minute
+    setInterval(async () => {
+      this.$store.dispatch(CHECK_VERIFICATION)
+    }, 60 * 1000)
+  }
+
+  private restoreCart() {
+    const currentUser = this.$store.state.currentUser
+    if (!currentUser) {
+      // Restore cart only if user has logged in
+      return
+    }
+    const serializedCart = storage.getItem(
+      currentUser.walletAddress,
+      currentUser.encryptionKey,
+      CART_STORAGE_KEY,
+    )
     if (serializedCart) {
       for (const item of JSON.parse(serializedCart)) {
         this.$store.commit(ADD_CART_ITEM, item)
@@ -91,14 +124,27 @@ export default class Cart extends Vue {
   }
 
   canContribute(): boolean {
+    return this.$store.state.currentRound && this.cart.length > 0
+  }
+
+  get errorMessage(): string | null {
+    const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
-    return (
-      currentRound &&
-      DateTime.local() < currentRound.contributionDeadline &&
-      this.$store.state.account &&
-      this.$store.state.contribution.isZero() &&
-      this.cart.length > 0
-    )
+    if (!currentUser) {
+      return 'Please connect your wallet'
+    } else if (currentUser.isVerified === null) {
+      return '' // No error: waiting for verification check
+    } else if (!currentUser.isVerified) {
+      return 'Your account is not verified'
+    } else if (!this.$store.state.contribution.isZero()) {
+      return 'You already contributed in this round'
+    } else if (DateTime.local() >= currentRound.contributionDeadline) {
+      return 'The contribution period has ended'
+    } else if (this.total >= MAX_CONTRIBUTION_AMOUNT) {
+      return 'Contribution amount is too large'
+    } else {
+      return null
+    }
   }
 
   get total(): number {
@@ -199,6 +245,11 @@ $project-image-size: 50px;
   margin-top: auto;
   padding: $content-space;
   width: 100%;
+
+  .contribute-error {
+    padding: 15px 0;
+    text-align: center;
+  }
 
   .contribute-btn {
     width: 100%;

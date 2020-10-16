@@ -2,14 +2,14 @@
   <div class="profile">
     <div v-if="!provider" class="provider-error">Wallet not found</div>
     <button
-      v-if="provider && !account"
+      v-if="provider && !currentUser"
       class="btn connect-btn"
       @click="connect"
     >
       Connect
     </button>
-    <div v-if="account" class="profile-info">
-      <div class="profile-name">{{ account }}</div>
+    <div v-if="currentUser" class="profile-info">
+      <div class="profile-name">{{ currentUser.walletAddress }}</div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl">
       </div>
@@ -22,12 +22,17 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Web3Provider } from '@ethersproject/providers'
 
-import { getProfileImageUrl } from '@/api/profile'
-import { SET_WALLET_PROVIDER, SET_ACCOUNT } from '@/store/mutation-types'
+import { User, getProfileImageUrl } from '@/api/user'
+import { CHECK_VERIFICATION } from '@/store/action-types'
+import { SET_CURRENT_USER } from '@/store/mutation-types'
+import { sha256 } from '@/utils/crypto'
+
+const LOGIN_MESSAGE = 'Sign this message to access clr.fund'
 
 @Component
 export default class Profile extends Vue {
 
+  provider: Web3Provider | null = null
   profileImageUrl: string | null = null
 
   mounted() {
@@ -49,11 +54,7 @@ export default class Profile extends Vue {
       }
       accounts = _accounts
     })
-    this.$store.commit(SET_WALLET_PROVIDER, new Web3Provider(provider))
-  }
-
-  get provider(): Web3Provider | null {
-    return this.$store.state.walletProvider
+    this.provider = new Web3Provider(provider)
   }
 
   async connect(): Promise<void> {
@@ -61,19 +62,36 @@ export default class Profile extends Vue {
     if (!provider || !provider.request) {
       return
     }
-    let accounts
+    let walletAddress
     try {
-      accounts = await provider.request({ method: 'eth_requestAccounts' })
+      [walletAddress] = await provider.request({ method: 'eth_requestAccounts' })
     } catch (error) {
+      // Access denied
       return
     }
-    const walletAddress = accounts[0]
-    this.$store.commit(SET_ACCOUNT, walletAddress)
-    this.profileImageUrl = await getProfileImageUrl(walletAddress)
+    let signature
+    try {
+      signature = await provider.request({
+        method: 'personal_sign',
+        params: [LOGIN_MESSAGE, walletAddress],
+      })
+    } catch (error) {
+      // Signature request rejected
+      return
+    }
+    const user = {
+      walletProvider: this.provider,
+      walletAddress,
+      isVerified: null,
+      encryptionKey: sha256(signature),
+    }
+    this.$store.commit(SET_CURRENT_USER, user)
+    this.$store.dispatch(CHECK_VERIFICATION)
+    this.profileImageUrl = await getProfileImageUrl(user.walletAddress)
   }
 
-  get account(): string {
-    return this.$store.state.account
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
   }
 }
 </script>
