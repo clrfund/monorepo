@@ -1,14 +1,20 @@
 <template>
   <div class="profile">
     <div v-if="!provider" class="provider-error">Wallet not found</div>
+    <div
+      v-else-if="provider && !isCorrectNetwork()"
+      class="provider-error"
+    >
+      Please change network to {{ jsonRpcNetwork.name }}
+    </div>
     <button
-      v-if="provider && !currentUser"
+      v-else-if="provider && !currentUser"
       class="btn connect-btn"
       @click="connect"
     >
       Connect
     </button>
-    <div v-if="currentUser" class="profile-info">
+    <div v-else-if="currentUser" class="profile-info">
       <div class="profile-name">{{ currentUser.walletAddress }}</div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl">
@@ -20,8 +26,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 
+import { provider as jsonRpcProvider } from '@/api/core'
 import { User, getProfileImageUrl } from '@/api/user'
 import { CHECK_VERIFICATION } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
@@ -32,6 +40,8 @@ const LOGIN_MESSAGE = 'Sign this message to access clr.fund'
 @Component
 export default class Profile extends Vue {
 
+  jsonRpcNetwork: Network | null = null
+  private walletChainId = '0xNaN'
   provider: Web3Provider | null = null
   profileImageUrl: string | null = null
 
@@ -40,14 +50,13 @@ export default class Profile extends Vue {
     if (!provider) {
       return
     }
-    let chainId: string
-    let accounts: string[]
+    this.walletChainId = provider.chainId
     provider.on('chainChanged', (_chainId: string) => {
-      if (chainId && _chainId !== chainId) {
-        window.location.reload()
+      if (_chainId !== this.walletChainId) {
+        this.walletChainId = _chainId
       }
-      chainId = _chainId
     })
+    let accounts: string[]
     provider.on('accountsChanged', (_accounts: string[]) => {
       if (accounts && _accounts !== accounts) {
         window.location.reload()
@@ -55,6 +64,19 @@ export default class Profile extends Vue {
       accounts = _accounts
     })
     this.provider = new Web3Provider(provider)
+    this.getJsonRpcNetwork()
+  }
+
+  async getJsonRpcNetwork() {
+    this.jsonRpcNetwork = await jsonRpcProvider.getNetwork()
+  }
+
+  isCorrectNetwork(): boolean {
+    if (this.jsonRpcNetwork === null || this.walletChainId === '0xNaN') {
+      // Skip check if loading or if on devnet
+      return true
+    }
+    return this.jsonRpcNetwork.chainId === parseInt(this.walletChainId, 16)
   }
 
   async connect(): Promise<void> {
