@@ -51,7 +51,7 @@ const store: StoreOptions<RootState> = {
     [SET_TALLY](state, tally: Tally) {
       state.tally = tally
     },
-    [SET_CONTRIBUTOR](state, contributor: Contributor) {
+    [SET_CONTRIBUTOR](state, contributor: Contributor | null) {
       state.contributor = contributor
     },
     [SET_CONTRIBUTION](state, contribution: BigNumber) {

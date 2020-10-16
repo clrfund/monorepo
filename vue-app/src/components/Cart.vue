@@ -110,16 +110,16 @@ export default class Cart extends Vue {
     // Restore cart from local storage
     this.$store.watch(
       (state) => state.currentUser?.walletAddress,
-      this.restoreCart,
+      this.refreshCart,
     )
-    this.restoreCart()
+    this.refreshCart()
 
     // Restore contributor info from local storage
     this.$store.watch(
       (state) => state.currentUser?.walletAddress,
-      this.restoreContributor,
+      this.refreshContributor,
     )
-    this.restoreContributor()
+    this.refreshContributor()
 
     // Check verification every minute
     setInterval(async () => {
@@ -127,12 +127,16 @@ export default class Cart extends Vue {
     }, 60 * 1000)
   }
 
-  private restoreCart() {
+  private refreshCart() {
     const currentUser = this.$store.state.currentUser
     if (!currentUser) {
-      // Restore cart only if user has logged in
+      // Clear the cart on log out / when not logged in
+      this.cart.slice().forEach((item) => {
+        this.$store.commit(REMOVE_CART_ITEM, item)
+      })
       return
     }
+    // Load cart from local storage
     const serializedCart = storage.getItem(
       currentUser.walletAddress,
       currentUser.encryptionKey,
@@ -145,12 +149,14 @@ export default class Cart extends Vue {
     }
   }
 
-  private restoreContributor() {
+  private refreshContributor() {
     const currentUser = this.$store.state.currentUser
     if (!currentUser) {
-      // Restore contributor info only if user has logged in
+      // Reset contributor no log out / when not logged in
+      this.$store.commit(SET_CONTRIBUTOR, null)
       return
     }
+    // Load contributor info from local storage
     const contributor = loadContributorInfo(currentUser)
     if (contributor) {
       this.$store.commit(SET_CONTRIBUTOR, contributor)
