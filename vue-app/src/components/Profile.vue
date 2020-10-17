@@ -115,6 +115,7 @@ export default class Profile extends Vue {
       walletAddress,
       encryptionKey: sha256(signature),
       isVerified: null,
+      balance: null,
       contribution: null,
     }
     this.$store.commit(SET_CURRENT_USER, user)

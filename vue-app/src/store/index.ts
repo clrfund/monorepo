@@ -4,7 +4,7 @@ import Vuex, { StoreOptions } from 'vuex'
 import { CartItem, Contributor, getContributionAmount } from '@/api/contributions'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { Tally, getTally } from '@/api/tally'
-import { User, isVerifiedUser } from '@/api/user'
+import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
 import {
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
@@ -87,11 +87,16 @@ const store: StoreOptions<RootState> = {
     async [LOAD_USER_INFO]({ commit, state }) {
       if (state.currentRound && state.currentUser) {
         let isVerified = state.currentUser.isVerified
-        if (!isVerified)
+        if (!isVerified) {
           isVerified = await isVerifiedUser(
             state.currentRound.fundingRoundAddress,
             state.currentUser.walletAddress,
           )
+        }
+        const balance = await getTokenBalance(
+          state.currentRound.nativeTokenAddress,
+          state.currentUser.walletAddress,
+        )
         let contribution = state.currentUser.contribution
         if (!contribution || contribution.isZero()) {
           contribution = await getContributionAmount(
@@ -102,6 +107,7 @@ const store: StoreOptions<RootState> = {
         commit(SET_CURRENT_USER, {
           ...state.currentUser,
           isVerified,
+          balance,
           contribution,
         })
       }

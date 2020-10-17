@@ -121,8 +121,8 @@ export default class Cart extends Vue {
     )
     this.refreshContributor()
 
-    // Check verification every minute
-    setInterval(async () => {
+    // Check verification and token balance every minute
+    setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)
   }
@@ -262,10 +262,17 @@ export default class Cart extends Vue {
     } else if (!this.isFormValid()) {
       return 'Please enter correct amounts'
     } else {
+      const total = this.getTotal()
       if (this.contribution.isZero()) {
         // Contributing
         if (DateTime.local() >= currentRound.signUpDeadline) {
           return 'The contribution period has ended'
+        } else if (total.eq(BigNumber.from(0))) {
+          return 'Contribution amount must be greater then zero'
+        } else if (currentUser.balance === null) {
+          return '' // No error: waiting for balance
+        } else if (total.gt(currentUser.balance)) {
+          return `Insufficient ${currentRound.nativeTokenSymbol} balance`
         } else if (this.isGreaterThanMax()) {
           return 'Contribution amount is too large'
         } else {
