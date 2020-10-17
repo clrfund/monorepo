@@ -15,7 +15,11 @@
           placeholder="Amount"
         >
         <div class="contribution-currency">{{ tokenSymbol }}</div>
-        <div class="remove-cart-item" @click="removeItem(item)">
+        <div
+          v-if="canRemoveItem()"
+          class="remove-cart-item"
+          @click="removeItem(item)"
+        >
           <img src="@/assets/remove.svg" />
         </div>
       </form>
@@ -190,6 +194,11 @@ export default class Cart extends Vue {
 
   updateAmount(item: CartItem, amount: string) {
     this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
+  }
+
+  canRemoveItem(): boolean {
+    // The number of MACI messages can't go down after initial submission
+    return !this.$store.state.contributor
   }
 
   removeItem(item: CartItem) {
