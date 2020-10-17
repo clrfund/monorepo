@@ -940,10 +940,10 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
-"@nomiclabs/buidler-ethers@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@nomiclabs/buidler-ethers/-/buidler-ethers-2.0.0.tgz#f972df98a5d9f32fce974749f3ba9d964f057f2a"
-  integrity sha512-Lf5XLClEeWYo6jVrGAqGBAcKTOP6IAChAR4qcDS36BkQnWakoRKcoSbwhr2YmTNTRAvgDWTmjQYbV17udJ+Alw==
+"@nomiclabs/buidler-ethers@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@nomiclabs/buidler-ethers/-/buidler-ethers-2.0.2.tgz#56c7f3d6f2d1bbf701e97a0003abb30f1071b2c4"
+  integrity sha512-lFcM7HVi44JB5xl7MKD8qChPQ5tfeO02ZYlrI6uef7J1SJCgE+wiokrl7HQ/jb7DgTHS5agfZxVO9yUbkrMIrQ==
 
 "@nomiclabs/buidler-ganache@^1.3.3":
   version "1.3.3"
