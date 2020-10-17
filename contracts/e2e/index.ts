@@ -16,6 +16,8 @@ import MACIArtifact from '../build/contracts/MACI.json'
 
 use(solidity)
 
+const ZERO = BigNumber.from(0)
+
 describe('End-to-end Tests', function () {
   this.timeout(60 * 60 * 1000)
   this.bail(true)
@@ -27,6 +29,7 @@ describe('End-to-end Tests', function () {
   let poolContributor: Signer
   let recipient1: Signer
   let recipient2: Signer
+  let recipient3: Signer
   let contributors: Signer[]
 
   let verifiedUserRegistry: Contract
@@ -39,7 +42,7 @@ describe('End-to-end Tests', function () {
   let coordinatorKeypair: Keypair
 
   beforeEach(async () => {
-    [deployer, poolContributor, recipient1, recipient2, ...contributors] = await ethers.getSigners()
+    [deployer, poolContributor, recipient1, recipient2, recipient3, ...contributors] = await ethers.getSigners()
 
     // Workaround for https://github.com/nomiclabs/buidler/issues/759
     coordinator = Wallet.createRandom().connect(provider)
@@ -92,6 +95,10 @@ describe('End-to-end Tests', function () {
     await fundingRoundFactory.addRecipient(
       await recipient2.getAddress(),
       JSON.stringify({ name: 'Project 2', description: 'Project 2', imageHash: '' }),
+    )
+    await fundingRoundFactory.addRecipient(
+      await recipient3.getAddress(),
+      JSON.stringify({ name: 'Project 3', description: 'Project 3', imageHash: '' }),
     )
 
     // Deploy new funding round and MACI
@@ -316,7 +323,6 @@ describe('End-to-end Tests', function () {
   it('should overwrite votes 2', async () => {
     const [contribution] = await makeContributions([UNIT.mul(16).div(10)])
     const contributor = contribution.signer
-    const ZERO = BigNumber.from(0)
     const votes = [
       [1, contribution.voiceCredits.div(2)],
       [2, contribution.voiceCredits.div(2)],
@@ -350,6 +356,48 @@ describe('End-to-end Tests', function () {
     expect(tally.results.tally[2]).to.equal('400')
     expect(tally.claims[1]).to.equal(ZERO)
     expect(tally.claims[2]).to.equal(UNIT.mul(116).div(10))
+  })
+
+  it('should overwrite previous batch of votes', async () => {
+    const [contribution] = await makeContributions([UNIT.mul(8).div(10)])
+    const contributor = contribution.signer
+    const votes = [[
+      [1, contribution.voiceCredits.div(3)],
+      [2, contribution.voiceCredits.div(3)],
+      [3, contribution.voiceCredits.div(3)],
+    ], [
+      [1, contribution.voiceCredits.div(2)],
+      [2, contribution.voiceCredits.div(2)],
+      [3, ZERO],
+    ]]
+    for (const batch of votes) {
+      const messages = []
+      const encPubKeys = []
+      let nonce = 1
+      for (const [recipientIndex, voiceCredits] of batch) {
+        const [message, encPubKey] = createMessage(
+          contribution.stateIndex,
+          contribution.keypair, null,
+          coordinatorKeypair.pubKey,
+          recipientIndex, voiceCredits, nonce,
+        )
+        nonce += 1
+        messages.push(message)
+        encPubKeys.push(encPubKey)
+      }
+      await fundingRound.connect(contributor).submitMessageBatch(
+        messages.reverse().map((msg) => msg.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam()),
+      )
+    }
+
+    await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
+    await provider.send('evm_increaseTime', [maciParameters.votingDuration])
+    const tally = await finalizeRound()
+    expect(tally.totalVoiceCredits.spent).to.equal('80000')
+    expect(tally.results.tally[1]).to.equal('200')
+    expect(tally.results.tally[2]).to.equal('200')
+    expect(tally.results.tally[3]).to.equal('0')
   })
 
   it('should invalidate votes in case of bribe', async () => {
