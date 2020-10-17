@@ -61,7 +61,7 @@ import ReallocationModal from '@/components/ReallocationModal.vue'
 import { MAX_CONTRIBUTION_AMOUNT, CartItem, Contributor } from '@/api/contributions'
 import { storage } from '@/api/storage'
 import { User } from '@/api/user'
-import { CHECK_VERIFICATION } from '@/store/action-types'
+import { LOAD_USER_INFO } from '@/store/action-types'
 import {
   SET_CONTRIBUTOR,
   ADD_CART_ITEM,
@@ -123,7 +123,7 @@ export default class Cart extends Vue {
 
     // Check verification every minute
     setInterval(async () => {
-      this.$store.dispatch(CHECK_VERIFICATION)
+      this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)
   }
 
@@ -169,7 +169,7 @@ export default class Cart extends Vue {
   }
 
   get contribution(): BigNumber {
-    return this.$store.state.contribution
+    return this.$store.state.currentUser?.contribution || BigNumber.from(0)
   }
 
   get cart(): CartItem[] {

@@ -1,21 +1,19 @@
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
-import { BigNumber } from 'ethers'
 
-import { CartItem, Contributor } from '@/api/contributions'
+import { CartItem, Contributor, getContributionAmount } from '@/api/contributions'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser } from '@/api/user'
 import {
   LOAD_ROUND_INFO,
-  CHECK_VERIFICATION,
+  LOAD_USER_INFO,
 } from './action-types'
 import {
   SET_CURRENT_USER,
   SET_CURRENT_ROUND,
   SET_TALLY,
   SET_CONTRIBUTOR,
-  SET_CONTRIBUTION,
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
@@ -29,7 +27,6 @@ interface RootState {
   tally: Tally | null;
   cart: CartItem[];
   contributor: Contributor | null;
-  contribution: BigNumber;
 }
 
 const store: StoreOptions<RootState> = {
@@ -39,7 +36,6 @@ const store: StoreOptions<RootState> = {
     tally: null,
     cart: new Array<CartItem>(),
     contributor: null,
-    contribution: BigNumber.from(0),
   },
   mutations: {
     [SET_CURRENT_USER](state, user: User | null) {
@@ -53,9 +49,6 @@ const store: StoreOptions<RootState> = {
     },
     [SET_CONTRIBUTOR](state, contributor: Contributor | null) {
       state.contributor = contributor
-    },
-    [SET_CONTRIBUTION](state, contribution: BigNumber) {
-      state.contribution = contribution
     },
     [ADD_CART_ITEM](state, addedItem: CartItem) {
       const exists = state.cart.find((item) => {
@@ -91,13 +84,26 @@ const store: StoreOptions<RootState> = {
         commit(SET_TALLY, tally)
       }
     },
-    async [CHECK_VERIFICATION]({ commit, state }) {
+    async [LOAD_USER_INFO]({ commit, state }) {
       if (state.currentRound && state.currentUser) {
-        const isVerified = await isVerifiedUser(
-          state.currentRound.fundingRoundAddress,
-          state.currentUser.walletAddress,
-        )
-        commit(SET_CURRENT_USER, { ...state.currentUser, isVerified })
+        let isVerified = state.currentUser.isVerified
+        if (!isVerified)
+          isVerified = await isVerifiedUser(
+            state.currentRound.fundingRoundAddress,
+            state.currentUser.walletAddress,
+          )
+        let contribution = state.currentUser.contribution
+        if (!contribution || contribution.isZero()) {
+          contribution = await getContributionAmount(
+            state.currentRound.fundingRoundAddress,
+            state.currentUser.walletAddress,
+          )
+        }
+        commit(SET_CURRENT_USER, {
+          ...state.currentUser,
+          isVerified,
+          contribution,
+        })
       }
     },
   },

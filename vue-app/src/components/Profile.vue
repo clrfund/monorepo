@@ -31,7 +31,7 @@ import { Web3Provider } from '@ethersproject/providers'
 
 import { provider as jsonRpcProvider } from '@/api/core'
 import { User, getProfileImageUrl } from '@/api/user'
-import { CHECK_VERIFICATION } from '@/store/action-types'
+import { LOAD_USER_INFO } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 
@@ -113,11 +113,12 @@ export default class Profile extends Vue {
     const user = {
       walletProvider: new Web3Provider(this.walletProvider),
       walletAddress,
-      isVerified: null,
       encryptionKey: sha256(signature),
+      isVerified: null,
+      contribution: null,
     }
     this.$store.commit(SET_CURRENT_USER, user)
-    this.$store.dispatch(CHECK_VERIFICATION)
+    this.$store.dispatch(LOAD_USER_INFO)
     this.profileImageUrl = await getProfileImageUrl(user.walletAddress)
   }
 }
