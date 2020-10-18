@@ -73,10 +73,14 @@ import {
 const CART_STORAGE_KEY = 'cart'
 const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
 
-function loadContributorInfo(user: User): Contributor | null {
+function loadContributorInfo(
+  fundingRoundAddress: string,
+  user: User,
+): Contributor | null {
   const serializedData = storage.getItem(
     user.walletAddress,
     user.encryptionKey,
+    fundingRoundAddress,
     CONTRIBUTOR_INFO_STORAGE_KEY,
   )
   if (serializedData) {
@@ -91,14 +95,16 @@ function loadContributorInfo(user: User): Contributor | null {
 @Component({
   watch: {
     cart(items: CartItem[]) {
-      // Save cart to local storage on changes
       const currentUser = this.$store.state.currentUser
-      if (!currentUser) {
+      const currentRound = this.$store.state.currentRound
+      if (!currentUser || !currentRound) {
         return
       }
+      // Save cart to local storage on changes
       storage.setItem(
         currentUser.walletAddress,
         currentUser.encryptionKey,
+        currentRound.fundingRoundAddress,
         CART_STORAGE_KEY,
         JSON.stringify(items),
       )
@@ -108,16 +114,26 @@ function loadContributorInfo(user: User): Contributor | null {
 export default class Cart extends Vue {
 
   mounted() {
-    // Restore cart from local storage
+    // Reload cart when wallet account or round changes
     this.$store.watch(
-      (state) => state.currentUser?.walletAddress,
+      (state) => {
+        return (
+          state.currentUser?.walletAddress +
+          state.currentRound?.fundingRoundAddress
+        )
+      },
       this.refreshCart,
     )
     this.refreshCart()
 
-    // Restore contributor info from local storage
+    // Reload contributor info if wallet account of round changes
     this.$store.watch(
-      (state) => state.currentUser?.walletAddress,
+      (state) => {
+        return (
+          state.currentUser?.walletAddress +
+          state.currentRound?.fundingRoundAddress
+        )
+      },
       this.refreshContributor,
     )
     this.refreshContributor()
@@ -137,10 +153,15 @@ export default class Cart extends Vue {
       })
       return
     }
+    const currentRound = this.$store.state.currentRound
+    if (!currentRound) {
+      return
+    }
     // Load cart from local storage
     const serializedCart = storage.getItem(
       currentUser.walletAddress,
       currentUser.encryptionKey,
+      currentRound.fundingRoundAddress,
       CART_STORAGE_KEY,
     )
     if (serializedCart) {
@@ -157,8 +178,15 @@ export default class Cart extends Vue {
       this.$store.commit(SET_CONTRIBUTOR, null)
       return
     }
+    const currentRound = this.$store.state.currentRound
+    if (!currentRound) {
+      return
+    }
     // Load contributor info from local storage
-    const contributor = loadContributorInfo(currentUser)
+    const contributor = loadContributorInfo(
+      currentRound.fundingRoundAddress,
+      currentUser,
+    )
     if (contributor) {
       this.$store.commit(SET_CONTRIBUTOR, contributor)
     }

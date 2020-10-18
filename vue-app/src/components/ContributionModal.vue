@@ -51,7 +51,11 @@ import { FundingRound, ERC20, MACI } from '@/api/abi'
 
 const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
 
-function saveContributorInfo(user: User, contributor: Contributor) {
+function saveContributorInfo(
+  fundingRoundAddress: string,
+  user: User,
+  contributor: Contributor,
+) {
   const serializedData = JSON.stringify({
     privateKey: contributor.keypair.privKey.serialize(),
     stateIndex: contributor.stateIndex,
@@ -59,6 +63,7 @@ function saveContributorInfo(user: User, contributor: Contributor) {
   storage.setItem(
     user.walletAddress,
     user.encryptionKey,
+    fundingRoundAddress,
     CONTRIBUTOR_INFO_STORAGE_KEY,
     serializedData,
   )
@@ -125,7 +130,11 @@ export default class ContributionModal extends Vue {
       stateIndex: stateIndex.toNumber(),
     }
     // Save contributor info to storage
-    saveContributorInfo(this.$store.state.currentUser, contributor)
+    saveContributorInfo(
+      fundingRoundAddress,
+      this.$store.state.currentUser,
+      contributor,
+    )
     // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTOR, contributor)
     this.$store.commit(SET_CURRENT_USER, {
