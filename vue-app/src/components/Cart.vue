@@ -59,6 +59,7 @@ import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 
 import { MAX_CONTRIBUTION_AMOUNT, CartItem, Contributor } from '@/api/contributions'
+import { RoundStatus } from '@/api/round'
 import { storage } from '@/api/storage'
 import { User } from '@/api/user'
 import { LOAD_USER_INFO } from '@/store/action-types'
@@ -261,6 +262,8 @@ export default class Cart extends Vue {
       return 'Your account is not verified'
     } else if (!this.isFormValid()) {
       return 'Please enter correct amounts'
+    } else if (currentRound.status === RoundStatus.Cancelled) {
+      return 'Funding round has been cancelled'
     } else {
       const total = this.getTotal()
       if (this.contribution.isZero()) {
