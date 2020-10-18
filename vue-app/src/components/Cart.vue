@@ -10,28 +10,38 @@
           :value="item.amount"
           @input="updateAmount(item, $event.target.value)"
           class="input contribution-amount"
+          :class="{ invalid: !isAmountValid(item.amount) }"
           name="amount"
           placeholder="Amount"
         >
         <div class="contribution-currency">{{ tokenSymbol }}</div>
-        <div class="remove-cart-item" @click="removeItem(item)">
+        <div
+          v-if="canRemoveItem()"
+          class="remove-cart-item"
+          @click="removeItem(item)"
+        >
           <img src="@/assets/remove.svg" />
         </div>
       </form>
     </div>
     <div
-      v-if="canContribute()"
-      class="contribute-btn-wrapper"
+      v-if="canSubmit()"
+      class="submit-btn-wrapper"
     >
-      <div v-if="errorMessage" class="contribute-error">
+      <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
       <button
-        class="btn contribute-btn"
+        class="btn submit-btn"
         :disabled="errorMessage !== null"
-        @click="contribute()"
+        @click="submit()"
       >
-        Contribute {{ total }} {{ tokenSymbol }} to {{ cart.length }} projects
+        <template v-if="contribution.isZero()">
+          Contribute {{ total }} {{ tokenSymbol }} to {{ cart.length }} projects
+        </template>
+        <template v-else>
+          Reallocate funds
+        </template>
       </button>
     </div>
   </div>
@@ -40,20 +50,42 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { BigNumber, FixedNumber } from 'ethers'
+import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
+import { Keypair, PrivKey } from 'maci-domainobjs'
 
 import ContributionModal from '@/components/ContributionModal.vue'
+import ReallocationModal from '@/components/ReallocationModal.vue'
 
-import { MAX_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
+import { MAX_CONTRIBUTION_AMOUNT, CartItem, Contributor } from '@/api/contributions'
 import { storage } from '@/api/storage'
+import { User } from '@/api/user'
 import { CHECK_VERIFICATION } from '@/store/action-types'
 import {
+  SET_CONTRIBUTOR,
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
 } from '@/store/mutation-types'
 
 const CART_STORAGE_KEY = 'cart'
+const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
+
+function loadContributorInfo(user: User): Contributor | null {
+  const serializedData = storage.getItem(
+    user.walletAddress,
+    user.encryptionKey,
+    CONTRIBUTOR_INFO_STORAGE_KEY,
+  )
+  if (serializedData) {
+    const data = JSON.parse(serializedData)
+    const keypair = new Keypair(PrivKey.unserialize(data.privateKey))
+    return { keypair, stateIndex: data.stateIndex }
+  } else {
+    return null
+  }
+}
 
 @Component({
   watch: {
@@ -79,6 +111,13 @@ export default class Cart extends Vue {
     )
     this.restoreCart()
 
+    // Restore contributor info from local storage
+    this.$store.watch(
+      (state) => state.currentUser?.walletAddress,
+      this.restoreContributor,
+    )
+    this.restoreContributor()
+
     // Check verification every minute
     setInterval(async () => {
       this.$store.dispatch(CHECK_VERIFICATION)
@@ -103,28 +142,103 @@ export default class Cart extends Vue {
     }
   }
 
+  private restoreContributor() {
+    const currentUser = this.$store.state.currentUser
+    if (!currentUser) {
+      // Restore contributor info only if user has logged in
+      return
+    }
+    const contributor = loadContributorInfo(currentUser)
+    if (contributor) {
+      this.$store.commit(SET_CONTRIBUTOR, contributor)
+    }
+  }
+
   get tokenSymbol(): string {
     const currentRound = this.$store.state.currentRound
     return currentRound ? currentRound.nativeTokenSymbol : ''
+  }
+
+  get contribution(): BigNumber {
+    return this.$store.state.contribution
   }
 
   get cart(): CartItem[] {
     return this.$store.state.cart
   }
 
-  updateAmount(item: CartItem, value: string) {
-    if (value) {
-      const amount = parseFloat(value)
-      this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
+  isAmountValid(value: string): boolean {
+    const currentRound = this.$store.state.currentRound
+    if (!currentRound) {
+      // Skip validation
+      return true
     }
+    const { nativeTokenDecimals, voiceCreditFactor } = currentRound
+    let amount
+    try {
+      amount = parseFixed(value, nativeTokenDecimals)
+    } catch {
+      return false
+    }
+    if (amount.lt(BigNumber.from(0))) {
+      return false
+    }
+    const normalizedValue = FixedNumber
+      .fromValue(
+        amount.div(voiceCreditFactor).mul(voiceCreditFactor),
+        nativeTokenDecimals,
+      )
+      .toUnsafeFloat().toString()
+    return normalizedValue === value
+  }
+
+  updateAmount(item: CartItem, amount: string) {
+    this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
+  }
+
+  canRemoveItem(): boolean {
+    // The number of MACI messages can't go down after initial submission
+    return !this.$store.state.contributor
   }
 
   removeItem(item: CartItem) {
     this.$store.commit(REMOVE_CART_ITEM, item)
   }
 
-  canContribute(): boolean {
+  canSubmit(): boolean {
     return this.$store.state.currentRound && this.cart.length > 0
+  }
+
+  private isFormValid(): boolean {
+    const invalidCount = this.cart.filter((item) => {
+      return this.isAmountValid(item.amount) === false
+    }).length
+    return invalidCount === 0
+  }
+
+  private getTotal(): BigNumber {
+    const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
+    return this.cart.reduce((total: BigNumber, item: CartItem) => {
+      let amount
+      try {
+        amount = parseFixed(item.amount, nativeTokenDecimals)
+      } catch {
+        return total
+      }
+      return total.add(amount.div(voiceCreditFactor).mul(voiceCreditFactor))
+    }, BigNumber.from(0))
+  }
+
+  private isGreaterThanMax(): boolean {
+    const decimals = this.$store.state.currentRound.nativeTokenDecimals
+    const maxContributionAmount = BigNumber.from(10)
+      .pow(BigNumber.from(decimals))
+      .mul(MAX_CONTRIBUTION_AMOUNT)
+    return this.getTotal().gt(maxContributionAmount)
+  }
+
+  private isGreaterThanInitialContribution(): boolean {
+    return this.getTotal().gt(this.contribution)
   }
 
   get errorMessage(): string | null {
@@ -136,31 +250,52 @@ export default class Cart extends Vue {
       return '' // No error: waiting for verification check
     } else if (!currentUser.isVerified) {
       return 'Your account is not verified'
-    } else if (!this.$store.state.contribution.isZero()) {
-      return 'You already contributed in this round'
-    } else if (DateTime.local() >= currentRound.contributionDeadline) {
-      return 'The contribution period has ended'
-    } else if (this.total >= MAX_CONTRIBUTION_AMOUNT) {
-      return 'Contribution amount is too large'
+    } else if (!this.isFormValid()) {
+      return 'Please enter correct amounts'
     } else {
-      return null
+      if (this.contribution.isZero()) {
+        // Contributing
+        if (DateTime.local() >= currentRound.signUpDeadline) {
+          return 'The contribution period has ended'
+        } else if (this.isGreaterThanMax()) {
+          return 'Contribution amount is too large'
+        } else {
+          return null
+        }
+      } else {
+        // Reallocating funds
+        if (DateTime.local() >= currentRound.votingDeadline) {
+          return 'The funding round has ended'
+        } else if (!this.$store.state.contributor) {
+          return 'Contributor key is not found'
+        } else if (this.isGreaterThanInitialContribution()) {
+          return 'The total can not exceed the initial contribution'
+        } else {
+          return null
+        }
+      }
     }
   }
 
   get total(): number {
-    return this.cart.reduce((acc: number, item: CartItem) => {
-      return acc + item.amount
-    }, 0)
+    const decimals = this.$store.state.currentRound.nativeTokenDecimals
+    return FixedNumber.fromValue(this.getTotal(), decimals).toUnsafeFloat()
   }
 
-  contribute() {
+  submit() {
+    const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
+    const votes = this.cart.map((item: CartItem) => {
+      const amount = parseFixed(item.amount, nativeTokenDecimals)
+      const voiceCredits = amount.div(voiceCreditFactor)
+      return [item.index, voiceCredits]
+    })
     this.$modal.show(
-      ContributionModal,
-      { },
+      this.contribution.isZero() ? ContributionModal : ReallocationModal,
+      { votes },
       {
         clickToClose: false,
         height: 'auto',
-        width: 450,
+        width: 500,
       },
     )
   }
@@ -239,19 +374,19 @@ $project-image-size: 50px;
   }
 }
 
-.contribute-btn-wrapper {
+.submit-btn-wrapper {
   align-self: flex-end;
   box-sizing: border-box;
   margin-top: auto;
   padding: $content-space;
   width: 100%;
 
-  .contribute-error {
+  .submit-error {
     padding: 15px 0;
     text-align: center;
   }
 
-  .contribute-btn {
+  .submit-btn {
     width: 100%;
   }
 }

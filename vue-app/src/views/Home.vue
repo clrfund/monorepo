@@ -12,10 +12,10 @@
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Contribution Deadline:</div>
-        <div class="round-info-value">{{ currentRound.contributionDeadline | formatDate }}</div>
+        <div class="round-info-value">{{ currentRound.signUpDeadline | formatDate }}</div>
       </div>
       <div class="round-info-item">
-        <div class="round-info-title">Voting Deadline:</div>
+        <div class="round-info-title">Reallocation Deadline:</div>
         <div class="round-info-value">{{ currentRound.votingDeadline | formatDate }}</div>
       </div>
       <div class="round-info-item">
@@ -103,15 +103,18 @@ export default class Home extends Vue {
       return
     }
     const contribution = await getContributionAmount(
-      currentUser.walletAddress,
       this.currentRound.fundingRoundAddress,
-      this.currentRound.nativeTokenDecimals,
+      currentUser.walletAddress,
     )
     this.$store.commit(SET_CONTRIBUTION, contribution)
   }
 
   get contribution(): FixedNumber {
-    return this.$store.state.contribution
+    const decimals = this.currentRound?.nativeTokenDecimals
+    if (!decimals) {
+      return FixedNumber.from(0)
+    }
+    return FixedNumber.fromValue(this.$store.state.contribution, decimals)
   }
 }
 </script>

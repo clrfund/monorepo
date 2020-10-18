@@ -14,7 +14,7 @@
     "core-js": "^3.6.4",
     "crypto-js": "^4.0.0",
     "ethereum-blockies-base64": "^1.0.2",
-    "ethers": "^5.0.1",
+    "ethers": "^5.0.17",
     "luxon": "^1.24.1",
     "maci-domainobjs": "~0.3.2",
     "vue": "^2.6.11",
