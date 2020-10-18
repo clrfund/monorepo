@@ -27,6 +27,11 @@ const config: BuidlerConfig = {
       url: process.env.ETHEREUM_JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
       accounts: { mnemonic: '' },
     },
+    xdai: {
+      url: 'https://rpc.xdaichain.com',
+      timeout: 60000,
+      accounts: { mnemonic: '' },
+    },
   },
   paths: {
     artifacts: "build/contracts",
