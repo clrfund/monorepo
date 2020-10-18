@@ -236,7 +236,7 @@ export default class Cart extends Vue {
 
   canRemoveItem(): boolean {
     // The number of MACI messages can't go down after initial submission
-    return !this.$store.state.contributor
+    return this.contribution.isZero()
   }
 
   removeItem(item: CartItem) {
