@@ -9,7 +9,11 @@ usePlugin('@nomiclabs/buidler-ganache')
 
 const GAS_LIMIT = 10000000
 
-const config: BuidlerConfig = {
+interface CustomBuidlerConfig extends BuidlerConfig {
+  typechain?: any;
+}
+
+const config: CustomBuidlerConfig = {
   networks: {
     buidlerevm: {
       gas: GAS_LIMIT,
