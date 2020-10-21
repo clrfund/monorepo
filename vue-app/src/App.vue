@@ -5,6 +5,8 @@
       <div id="nav-menu">
         <router-link to="/">Home</router-link>
         <router-link to="/about">About</router-link>
+        <a href="https://blog.clr.fund" target=_blank>Blog</a>
+        <a href="https://forum.clr.fund" target=_blank>Forum</a>
       </div>
     </div>
     <div id="content">
@@ -62,7 +64,7 @@ html {
 }
 
 a {
-  color: $text-color;
+  color: $highlight-color;
   text-decoration: none;
 }
 
