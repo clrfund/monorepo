@@ -19,6 +19,7 @@ contract VerifiedUserRegistry is Ownable, IVerifiedUserRegistry {
     mapping(address => Verification) public verifications;
 
     event SetBrightIdSettings(bytes32 context, address verifier);
+    event Sponsor(address addr);
 
     /**
      * @param _context BrightID context used for verifying users
@@ -30,6 +31,14 @@ contract VerifiedUserRegistry is Ownable, IVerifiedUserRegistry {
 
         context = _context;
         verifier = _verifier;
+    }
+
+    /**
+     * @notice Sponsor a BrightID user by context id
+     * @param addr BrightID context id
+     */
+    function sponsor(address addr) public {
+        emit Sponsor(addr);
     }
 
     /**
