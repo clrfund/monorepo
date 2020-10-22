@@ -134,6 +134,10 @@ export default class Profile extends Vue {
   padding: $content-space;
 }
 
+.provider-error {
+  text-align: center;
+}
+
 .connect-btn {
   display: block;
   margin: 0 auto;

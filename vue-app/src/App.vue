@@ -93,7 +93,7 @@ a {
 
   img {
     height: 1em;
-    margin: 0 10px;
+    margin: 0 10px 0 0;
     vertical-align: middle;
   }
 
