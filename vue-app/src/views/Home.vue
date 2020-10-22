@@ -51,12 +51,10 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 
-import { getContributionAmount } from '@/api/contributions'
 import { RoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
-import { SET_CONTRIBUTION } from '@/store/mutation-types'
 
 @Component({
   name: 'Home',
@@ -79,42 +77,19 @@ export default class Home extends Vue {
       this.loadProjects,
     )
     this.loadProjects()
-
-    // Wait for user to connect and get contribution amount
-    this.$store.watch(
-      (state) => {
-        return (
-          state.currentRound?.fundingRoundAddress +
-          state.currentUser?.walletAddress
-        )
-      },
-      this.loadContribution,
-    )
-    this.loadContribution()
   }
 
   private async loadProjects() {
     this.projects = await getProjects(this.currentRound?.startBlock)
   }
 
-  private async loadContribution() {
-    const currentUser = this.$store.state.currentUser
-    if (!this.currentRound || !currentUser) {
-      return
-    }
-    const contribution = await getContributionAmount(
-      this.currentRound.fundingRoundAddress,
-      currentUser.walletAddress,
-    )
-    this.$store.commit(SET_CONTRIBUTION, contribution)
-  }
-
   get contribution(): FixedNumber {
+    const contribution = this.$store.state.currentUser?.contribution
     const decimals = this.currentRound?.nativeTokenDecimals
-    if (!decimals) {
+    if (!contribution || !decimals) {
       return FixedNumber.from(0)
     }
-    return FixedNumber.fromValue(this.$store.state.contribution, decimals)
+    return FixedNumber.fromValue(contribution, decimals)
   }
 }
 </script>

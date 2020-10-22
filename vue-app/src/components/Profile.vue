@@ -1,14 +1,20 @@
 <template>
   <div class="profile">
-    <div v-if="!provider" class="provider-error">Wallet not found</div>
+    <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
+    <div
+      v-else-if="walletProvider && !isCorrectNetwork()"
+      class="provider-error"
+    >
+      Please change network to {{ jsonRpcNetwork.name }}
+    </div>
     <button
-      v-if="provider && !currentUser"
+      v-else-if="walletProvider && !currentUser"
       class="btn connect-btn"
       @click="connect"
     >
       Connect
     </button>
-    <div v-if="currentUser" class="profile-info">
+    <div v-else-if="currentUser" class="profile-info">
       <div class="profile-name">{{ currentUser.walletAddress }}</div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl">
@@ -20,10 +26,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 
+import { provider as jsonRpcProvider } from '@/api/core'
 import { User, getProfileImageUrl } from '@/api/user'
-import { CHECK_VERIFICATION } from '@/store/action-types'
+import { LOAD_USER_INFO } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 
@@ -32,46 +40,69 @@ const LOGIN_MESSAGE = 'Sign this message to access clr.fund'
 @Component
 export default class Profile extends Vue {
 
-  provider: Web3Provider | null = null
+  jsonRpcNetwork: Network | null = null
+  private walletChainId = '0xNaN'
   profileImageUrl: string | null = null
 
+  get walletProvider(): any {
+    return (window as any).ethereum
+  }
+
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
+  }
+
   mounted() {
-    const provider = (window as any).ethereum
-    if (!provider) {
+    if (!this.walletProvider) {
       return
     }
-    let chainId: string
-    let accounts: string[]
-    provider.on('chainChanged', (_chainId: string) => {
-      if (chainId && _chainId !== chainId) {
-        window.location.reload()
+    this.walletChainId = this.walletProvider.chainId
+    this.walletProvider.on('chainChanged', (_chainId: string) => {
+      if (_chainId !== this.walletChainId) {
+        this.walletChainId = _chainId
+        if (this.currentUser) {
+          // Log out user to prevent interactions with incorrect network
+          this.$store.commit(SET_CURRENT_USER, null)
+        }
       }
-      chainId = _chainId
     })
-    provider.on('accountsChanged', (_accounts: string[]) => {
-      if (accounts && _accounts !== accounts) {
-        window.location.reload()
+    let accounts: string[]
+    this.walletProvider.on('accountsChanged', (_accounts: string[]) => {
+      if (_accounts !== accounts) {
+        // Log out user if wallet account changes
+        this.$store.commit(SET_CURRENT_USER, null)
       }
       accounts = _accounts
     })
-    this.provider = new Web3Provider(provider)
+    this.getJsonRpcNetwork()
+  }
+
+  async getJsonRpcNetwork() {
+    this.jsonRpcNetwork = await jsonRpcProvider.getNetwork()
+  }
+
+  isCorrectNetwork(): boolean {
+    if (this.jsonRpcNetwork === null || this.walletChainId === '0xNaN') {
+      // Skip check if loading or if on devnet
+      return true
+    }
+    return this.jsonRpcNetwork.chainId === parseInt(this.walletChainId, 16)
   }
 
   async connect(): Promise<void> {
-    const provider = this.provider ? this.provider.provider : null
-    if (!provider || !provider.request) {
+    if (!this.walletProvider || !this.walletProvider.request) {
       return
     }
     let walletAddress
     try {
-      [walletAddress] = await provider.request({ method: 'eth_requestAccounts' })
+      [walletAddress] = await this.walletProvider.request({ method: 'eth_requestAccounts' })
     } catch (error) {
       // Access denied
       return
     }
     let signature
     try {
-      signature = await provider.request({
+      signature = await this.walletProvider.request({
         method: 'personal_sign',
         params: [LOGIN_MESSAGE, walletAddress],
       })
@@ -80,18 +111,16 @@ export default class Profile extends Vue {
       return
     }
     const user = {
-      walletProvider: this.provider,
+      walletProvider: new Web3Provider(this.walletProvider),
       walletAddress,
-      isVerified: null,
       encryptionKey: sha256(signature),
+      isVerified: null,
+      balance: null,
+      contribution: null,
     }
     this.$store.commit(SET_CURRENT_USER, user)
-    this.$store.dispatch(CHECK_VERIFICATION)
+    this.$store.dispatch(LOAD_USER_INFO)
     this.profileImageUrl = await getProfileImageUrl(user.walletAddress)
-  }
-
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
   }
 }
 </script>

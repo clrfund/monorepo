@@ -43,7 +43,7 @@ import { RoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { User } from '@/api/user'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
-import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
+import { SET_CURRENT_USER, SET_CONTRIBUTOR } from '@/store/mutation-types'
 import { getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
@@ -51,7 +51,11 @@ import { FundingRound, ERC20, MACI } from '@/api/abi'
 
 const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
 
-function saveContributorInfo(user: User, contributor: Contributor) {
+function saveContributorInfo(
+  fundingRoundAddress: string,
+  user: User,
+  contributor: Contributor,
+) {
   const serializedData = JSON.stringify({
     privateKey: contributor.keypair.privKey.serialize(),
     stateIndex: contributor.stateIndex,
@@ -59,6 +63,7 @@ function saveContributorInfo(user: User, contributor: Contributor) {
   storage.setItem(
     user.walletAddress,
     user.encryptionKey,
+    fundingRoundAddress,
     CONTRIBUTOR_INFO_STORAGE_KEY,
     serializedData,
   )
@@ -125,10 +130,17 @@ export default class ContributionModal extends Vue {
       stateIndex: stateIndex.toNumber(),
     }
     // Save contributor info to storage
-    saveContributorInfo(this.$store.state.currentUser, contributor)
+    saveContributorInfo(
+      fundingRoundAddress,
+      this.$store.state.currentUser,
+      contributor,
+    )
     // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTOR, contributor)
-    this.$store.commit(SET_CONTRIBUTION, total)
+    this.$store.commit(SET_CURRENT_USER, {
+      ...this.$store.state.currentUser,
+      contribution: total,
+    })
     this.$store.dispatch(LOAD_ROUND_INFO)
     // Vote (step 3)
     const messages: Message[] = []
@@ -157,7 +169,7 @@ export default class ContributionModal extends Vue {
 
   get contribution(): FixedNumber {
     return FixedNumber.fromValue(
-      this.$store.state.contribution,
+      this.$store.state.currentUser.contribution,
       this.currentRound.nativeTokenDecimals,
     )
   }
