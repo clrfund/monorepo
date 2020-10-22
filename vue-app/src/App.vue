@@ -64,7 +64,7 @@ html {
 }
 
 a {
-  color: $highlight-color;
+  color: $text-color;
   text-decoration: none;
 }
 
