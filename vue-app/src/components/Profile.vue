@@ -5,7 +5,7 @@
       v-else-if="walletProvider && !isCorrectNetwork()"
       class="provider-error"
     >
-      Please change network to {{ jsonRpcNetwork.name }}
+      Please change network to {{ networkName }}
     </div>
     <button
       v-else-if="walletProvider && !currentUser"
@@ -40,7 +40,7 @@ const LOGIN_MESSAGE = 'Sign this message to access clr.fund'
 @Component
 export default class Profile extends Vue {
 
-  jsonRpcNetwork: Network | null = null
+  private jsonRpcNetwork: Network | null = null
   private walletChainId = '0xNaN'
   profileImageUrl: string | null = null
 
@@ -87,6 +87,16 @@ export default class Profile extends Vue {
       return true
     }
     return this.jsonRpcNetwork.chainId === parseInt(this.walletChainId, 16)
+  }
+
+  get networkName(): string {
+    if (this.jsonRpcNetwork === null) {
+      return ''
+    } else if (this.jsonRpcNetwork.name === 'unknown' && this.jsonRpcNetwork.chainId === 100) {
+      return 'xdai'
+    } else {
+      return this.jsonRpcNetwork.name
+    }
   }
 
   async connect(): Promise<void> {
