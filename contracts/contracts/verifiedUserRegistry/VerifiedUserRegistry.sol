@@ -59,7 +59,7 @@ contract VerifiedUserRegistry is Ownable, IVerifiedUserRegistry {
      * @notice Check a user is verified or not
      * @param _user BrightID context id used for verifying users
      */
-    function isVerifiedUser(address _user) override external view returns (bool) {
+    function isVerifiedUser(address _user) external view returns (bool) {
         return verifications[_user].isVerified;
     }
 
