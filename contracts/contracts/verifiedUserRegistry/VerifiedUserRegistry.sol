@@ -1,7 +1,7 @@
 pragma solidity ^0.5.17;
 
 import "./IVerifiedUserRegistry.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/ownership/Ownable.sol";
 
 contract VerifiedUserRegistry is Ownable, IVerifiedUserRegistry {
     string private constant ERROR_NEWER_VERIFICATION = "NEWER VERIFICATION REGISTERED BEFORE";
