@@ -26,10 +26,10 @@
         @click="claim()"
       >
         <template v-if="claimed">
-          Received {{ allocatedAmount | formatAmount }} {{ tokenSymbol }}
+          Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
         </template>
         <template v-else>
-          Claim {{ allocatedAmount | formatAmount }} {{ tokenSymbol }}
+          Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
         </template>
       </button>
       <div class="project-description">{{ project.description }}</div>
@@ -137,6 +137,11 @@ export default class ProjectView extends Vue {
       this.$store.state.currentUser &&
       this.claimed === false
     )
+  }
+
+  formatAmount(value: FixedNumber | null): string {
+    const decimals = 6
+    return value ? value.toUnsafeFloat().toFixed(decimals) : ''
   }
 
   claim() {
