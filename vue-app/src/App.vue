@@ -29,6 +29,10 @@ import { LOAD_ROUND_INFO } from '@/store/action-types'
 
 @Component({
   name: 'clr.fund',
+  metaInfo: {
+    title: 'clr.fund',
+    titleTemplate: 'clr.fund - %s',
+  },
   components: {
     Cart,
     Profile,

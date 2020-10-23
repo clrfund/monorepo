@@ -4,8 +4,10 @@ import router from './router'
 import store from './store'
 import './filters'
 
+import Meta from 'vue-meta'
 import VModal from 'vue-js-modal'
 
+Vue.use(Meta)
 Vue.use(VModal)
 
 Vue.config.productionTip = false

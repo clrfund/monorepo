@@ -58,6 +58,7 @@ import ProjectListItem from '@/components/ProjectListItem.vue'
 
 @Component({
   name: 'project-list',
+  metaInfo: { title: 'Projects' },
   components: {
     ProjectListItem,
   },

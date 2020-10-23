@@ -52,6 +52,9 @@ import { ADD_CART_ITEM } from '@/store/mutation-types'
 
 @Component({
   name: 'ProjectView',
+  metaInfo() {
+    return { title: (this as any).project?.name || '' }
+  },
 })
 export default class ProjectView extends Vue {
 
