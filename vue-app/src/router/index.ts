@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import ProjectList from '../views/ProjectList.vue'
 import About from '../views/About.vue'
 import ProjectView from '../views/Project.vue'
 
@@ -9,8 +9,8 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: Home,
+    name: 'projects',
+    component: ProjectList,
   },
   {
     path: '/about',

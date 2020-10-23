@@ -1,6 +1,6 @@
 <template>
-  <div class="home">
-    <h1 class="content-heading">Home</h1>
+  <div class="projects">
+    <h1 class="content-heading">Projects</h1>
     <div v-if="currentRound" class="round-info">
       <div class="round-info-item">
         <div class="round-info-title">Current Round:</div>
@@ -57,12 +57,12 @@ import { Project, getProjects } from '@/api/projects'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 
 @Component({
-  name: 'Home',
+  name: 'project-list',
   components: {
     ProjectListItem,
   },
 })
-export default class Home extends Vue {
+export default class ProjectList extends Vue {
 
   projects: Project[] = []
 
