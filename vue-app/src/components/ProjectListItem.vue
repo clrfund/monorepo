@@ -1,6 +1,11 @@
 <template>
   <div class="project-item">
-    <img class="project-image" v-bind:src="project.imageUrl" v-bind:alt="project.name">
+    <router-link
+      class="project-image"
+      :to="{ name: 'project', params: { address: project.address }}"
+    >
+      <img :src="project.imageUrl" :alt="project.name">
+    </router-link>
     <div class="project-info">
       <router-link
         class="project-name"
@@ -88,14 +93,17 @@ export default class ProjectListItem extends Vue {
 }
 
 .project-image {
-  border: none;
-  border-radius: 20px 20px 0 0;
   display: block;
-  height: 150px;
-  margin: 0 auto;
-  object-fit: cover;
-  text-align: center;
-  width: 100%;
+
+  img {
+    border: none;
+    border-radius: 20px 20px 0 0;
+    display: block;
+    height: 150px;
+    object-fit: cover;
+    text-align: center;
+    width: 100%;
+  }
 }
 
 .project-info {
