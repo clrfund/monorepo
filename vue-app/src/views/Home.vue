@@ -101,6 +101,7 @@ export default class Home extends Vue {
   display: flex;
   flex-wrap: wrap;
   font-size: 12px;
+  margin-bottom: $content-space;
 
   .round-info-item {
     border-right: $border;
@@ -130,9 +131,8 @@ export default class Home extends Vue {
 }
 
 .project-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin: $content-space (-$content-space / 2) 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: $content-space;
 }
 </style>

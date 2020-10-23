@@ -74,9 +74,6 @@ export default class ProjectListItem extends Vue {
   border: $border;
   border-radius: 20px;
   box-sizing: border-box;
-  flex: 1 0 20%;
-  margin: 0 ($content-space / 2) $content-space;
-  min-width: 200px;
 
   &:hover {
     .project-image {
