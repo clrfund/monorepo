@@ -8,11 +8,6 @@ import 'maci-contracts/sol/MACISharedObjs.sol';
 import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
 import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
-import { BatchUpdateStateTreeVerifier } from 'maci-contracts/sol/BatchUpdateStateTreeVerifier.sol';
-import { QuadVoteTallyVerifier } from 'maci-contracts/sol/QuadVoteTallyVerifier.sol';
-import { BatchUpdateStateTreeVerifierSmall } from 'maci-contracts/sol/BatchUpdateStateTreeVerifierSmall.sol';
-import { QuadVoteTallyVerifierSmall } from 'maci-contracts/sol/QuadVoteTallyVerifierSmall.sol';
-
 contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   // Constants
   uint256 private constant STATE_TREE_BASE = 2;
