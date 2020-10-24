@@ -3,7 +3,7 @@
     <div id="nav-bar">
       <img class="logo" alt="clr.fund" src="@/assets/clr.svg" />
       <div id="nav-menu">
-        <router-link to="/">Home</router-link>
+        <router-link to="/">Projects</router-link>
         <router-link to="/about">About</router-link>
         <a href="https://blog.clr.fund" target=_blank>Blog</a>
         <a href="https://forum.clr.fund" target=_blank>Forum</a>
@@ -29,6 +29,10 @@ import { LOAD_ROUND_INFO } from '@/store/action-types'
 
 @Component({
   name: 'clr.fund',
+  metaInfo: {
+    title: 'clr.fund',
+    titleTemplate: 'clr.fund - %s',
+  },
   components: {
     Cart,
     Profile,
@@ -93,7 +97,7 @@ a {
 
   img {
     height: 1em;
-    margin: 0 10px;
+    margin: 0 10px 0 0;
     vertical-align: middle;
   }
 

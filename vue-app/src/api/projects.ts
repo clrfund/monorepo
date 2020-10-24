@@ -32,7 +32,13 @@ export async function getProjects(atBlock?: number): Promise<Project[]> {
   const recipientRemovedEvents = await factory.queryFilter(recipientRemovedFilter, 0)
   const projects: Project[] = []
   for (const event of recipientAddedEvents) {
-    const project = decodeRecipientAdded(event)
+    let project
+    try {
+      project = decodeRecipientAdded(event)
+    } catch {
+      // Invalid metadata
+      continue
+    }
     const removed = recipientRemovedEvents.find((event) => {
       return (event.args as any)._recipient === project.address
     })
@@ -59,7 +65,12 @@ export async function getProject(address: string): Promise<Project | null> {
   if (recipientAddedEvents.length !== 1) {
     return null
   }
-  const project = decodeRecipientAdded(recipientAddedEvents[0])
+  let project
+  try {
+    project = decodeRecipientAdded(recipientAddedEvents[0])
+  } catch {
+    return null
+  }
   const recipientRemovedFilter = factory.filters.RecipientRemoved(address)
   const recipientRemovedEvents = await factory.queryFilter(recipientRemovedFilter, 0)
   if (recipientRemovedEvents.length !== 0) {

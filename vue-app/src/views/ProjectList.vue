@@ -1,6 +1,6 @@
 <template>
-  <div class="home">
-    <h1 class="content-heading">Home</h1>
+  <div class="projects">
+    <h1 class="content-heading">Projects</h1>
     <div v-if="currentRound" class="round-info">
       <div class="round-info-item">
         <div class="round-info-title">Current Round:</div>
@@ -57,12 +57,13 @@ import { Project, getProjects } from '@/api/projects'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 
 @Component({
-  name: 'Home',
+  name: 'project-list',
+  metaInfo: { title: 'Projects' },
   components: {
     ProjectListItem,
   },
 })
-export default class Home extends Vue {
+export default class ProjectList extends Vue {
 
   projects: Project[] = []
 
@@ -101,6 +102,7 @@ export default class Home extends Vue {
   display: flex;
   flex-wrap: wrap;
   font-size: 12px;
+  margin-bottom: $content-space;
 
   .round-info-item {
     border-right: $border;
@@ -130,9 +132,8 @@ export default class Home extends Vue {
 }
 
 .project-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin: $content-space (-$content-space / 2) 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: $content-space;
 }
 </style>

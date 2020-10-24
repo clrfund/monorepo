@@ -355,7 +355,7 @@ export default class Cart extends Vue {
 .cart {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 110px);
+  min-height: calc(100vh - 110px);
 }
 
 .cart-item {
@@ -381,11 +381,12 @@ $project-image-size: 50px;
   }
 
   .project-name {
+    align-self: center;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     flex-grow: 1;
-    height: $project-image-size;
+    max-height: $project-image-size;
     overflow: hidden;
     text-overflow: ellipsis;
   }
