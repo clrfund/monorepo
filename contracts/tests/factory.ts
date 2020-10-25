@@ -88,6 +88,15 @@ describe('Funding Round Factory', () => {
       await expect(factoryAsContributor.contributeMatchingFunds(contributionAmount))
         .to.be.revertedWith('revert ERC20: transfer amount exceeds allowance');
     });
+
+    it('accepts direct token transfer', async () => {
+      await factory.setToken(token.address)
+      const tokenAsContributor = token.connect(contributor)
+      await expect(tokenAsContributor.transfer(factory.address, contributionAmount))
+        .to.emit(token, 'Transfer')
+        .withArgs(contributor.address, factory.address, contributionAmount)
+      expect(await token.balanceOf(factory.address)).to.equal(contributionAmount)
+    })
   });
 
   describe('managing recipients', () => {
