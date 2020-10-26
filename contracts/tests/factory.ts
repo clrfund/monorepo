@@ -15,9 +15,10 @@ use(solidity);
 
 describe('Funding Round Factory', () => {
   const provider = waffle.provider;
-  const [, deployer, coordinator, contributor, recipient] = provider.getWallets()
+  const [, deployer, coordinator, contributor] = provider.getWallets()
 
   let maciFactory: Contract;
+  let recipientRegistry: Contract
   let factory: Contract;
   let token: Contract;
   let maciParameters: MaciParameters
@@ -30,10 +31,14 @@ describe('Funding Round Factory', () => {
     const SimpleUserRegistry = await ethers.getContractFactory('SimpleUserRegistry', deployer)
     const verifiedUserRegistry = await SimpleUserRegistry.deploy()
 
+    const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
+    recipientRegistry = await SimpleRecipientRegistry.deploy()
+
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
     factory = await FundingRoundFactory.deploy(
       maciFactory.address,
       verifiedUserRegistry.address,
+      recipientRegistry.address,
     )
 
     expect(factory.address).to.properAddress;
@@ -47,6 +52,13 @@ describe('Funding Round Factory', () => {
     expect(token.address).to.properAddress;
     await token.transfer(contributor.address, tokenInitialSupply);
   });
+
+  it('initializes factory', async () => {
+    expect(await factory.coordinator()).to.equal(ZERO_ADDRESS)
+    expect(await factory.nativeToken()).to.equal(ZERO_ADDRESS)
+    expect(await factory.maciFactory()).to.equal(maciFactory.address)
+    expect(await factory.recipientRegistry()).to.equal(recipientRegistry.address)
+  })
 
   it('transfers ownership to another address', async () => {
     await expect(factory.transferOwnership(coordinator.address))
@@ -90,138 +102,12 @@ describe('Funding Round Factory', () => {
     });
   });
 
-  describe('managing recipients', () => {
-    let recipientAddress: string
-    let metadata: string;
-    beforeEach(() => {
-      recipientAddress = recipient.address
-      metadata = JSON.stringify({ name: 'Recipient', description: 'Description', imageHash: 'Ipfs imageHash' })
-    });
-
-    async function getCurrentBlockNumber(): Promise<number> {
-      return (await provider.getBlock('latest')).number
-    }
-
-    it('allows owner to add recipient', async () => {
-      await expect(factory.addRecipient(recipientAddress, metadata))
-        .to.emit(factory, 'RecipientAdded')
-        .withArgs(recipientAddress, metadata, 1)
-      const blockNumber = await getCurrentBlockNumber()
-      expect(await factory.getRecipientIndex(recipientAddress, blockNumber)).to.equal(1)
-
-      const anotherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
-      // Should increase recipient index for every new recipient
-      await expect(factory.addRecipient(anotherRecipientAddress, metadata))
-        .to.emit(factory, 'RecipientAdded')
-        .withArgs(anotherRecipientAddress, metadata, 2)
-    });
-
-    it('rejects attempts to add recipient from anyone except owner', async () => {
-      const factoryAsContributor = factory.connect(contributor)
-      await expect(factoryAsContributor.addRecipient(recipientAddress, metadata))
-        .to.be.revertedWith('Ownable: caller is not the owner');
-    });
-
-    it('should not accept zero-address as recipient address', async () => {
-      recipientAddress = ZERO_ADDRESS
-      await expect(factory.addRecipient(recipientAddress, metadata))
-        .to.be.revertedWith('Factory: Recipient address is zero');
-    });
-
-    it('should not accept empty string as recipient metadata', async () => {
-      metadata = ''
-      await expect(factory.addRecipient(recipientAddress, metadata))
-        .to.be.revertedWith('Factory: Metadata info is empty string');
-    });
-
-    it('should not add already registered recipient', async () => {
-      await factory.addRecipient(recipientAddress, metadata)
-      metadata = JSON.stringify({ name: 'Recipient 2', description: 'Description 2', imageHash: 'Ipfs imageHash 2' })
-      await expect(factory.addRecipient(recipientAddress, metadata))
-        .to.be.revertedWith('Factory: Recipient already registered');
-    });
-
-    it('should limit the number of recipients', async () => {
-      const maxRecipientCount = 5 ** maciParameters.voteOptionTreeDepth - 1;
-      let recipientName;
-      for (let i = 0; i < maxRecipientCount + 1; i++) {
-        recipientName = String(i + 1).padStart(4, '0')
-        metadata = JSON.stringify({ name: recipientName, description: 'Description', imageHash: 'Ipfs imageHash' })
-        recipientAddress = `0x000000000000000000000000000000000000${recipientName}`
-        if (i < maxRecipientCount) {
-          await factory.addRecipient(recipientAddress, metadata)
-        } else {
-          await expect(factory.addRecipient(recipientAddress, metadata))
-            .to.be.revertedWith('Factory: Recipient limit reached');
-        }
-      }
-    });
-
-    it('allows owner to remove recipient', async () => {
-      await factory.addRecipient(recipientAddress, metadata)
-      await expect(factory.removeRecipient(recipientAddress))
-        .to.emit(factory, 'RecipientRemoved')
-        .withArgs(recipientAddress)
-      const blockNumber = await getCurrentBlockNumber()
-      expect(await factory.getRecipientIndex(recipientAddress, blockNumber)).to.equal(0)
-    })
-
-    it('rejects attempts to remove recipient from anyone except owner', async () => {
-      const factoryAsContributor = factory.connect(contributor)
-      await expect(factoryAsContributor.removeRecipient(recipientAddress))
-        .to.be.revertedWith('Ownable: caller is not the owner')
-    })
-
-    it('should not remove already removed recipient', async () => {
-      await factory.addRecipient(recipientAddress, metadata)
-      await factory.removeRecipient(recipientAddress)
-      await expect(factory.removeRecipient(recipientAddress))
-        .to.be.revertedWith('Factory: Recipient already removed')
-    })
-
-    it('should not return recipient index for unregistered recipient', async () => {
-      recipientAddress = ZERO_ADDRESS
-      const blockNumber = await getCurrentBlockNumber()
-      expect(await factory.getRecipientIndex(recipientAddress, blockNumber)).to.equal(0)
-    })
-
-    it('should not return recipient index for recipient that has been added after given timestamp', async () => {
-      const timestamp = await getCurrentBlockNumber()
-      await provider.send('evm_increaseTime', [1000])
-      await factory.addRecipient(recipientAddress, metadata)
-      expect(await factory.getRecipientIndex(recipientAddress, timestamp)).to.equal(0)
-    })
-
-    it('should return recipient index for recipient that has been removed after given timestamp', async () => {
-      await factory.addRecipient(recipientAddress, metadata)
-      const addedAt = await getCurrentBlockNumber()
-      await provider.send('evm_increaseTime', [1000])
-      await factory.removeRecipient(recipientAddress)
-      expect(await factory.getRecipientIndex(recipientAddress, addedAt)).to.equal(1)
-    })
-
-    it('allows to re-use index of removed recipient', async () => {
-      await factory.addRecipient(recipientAddress, metadata)
-      const blockNumber1 = await getCurrentBlockNumber()
-      await factory.removeRecipient(recipientAddress)
-      const otherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
-      await factory.addRecipient(otherRecipientAddress, metadata)
-      const anotherRecipientAddress = '0xef9e07C93b40681F6a63085Cf276aBA3D868Ac6E'
-      await factory.addRecipient(anotherRecipientAddress, metadata)
-      const blockNumber2 = await getCurrentBlockNumber()
-
-      expect(await factory.getRecipientIndex(recipientAddress, blockNumber1)).to.equal(1)
-      expect(await factory.getRecipientIndex(recipientAddress, blockNumber2)).to.equal(0)
-      expect(await factory.getRecipientIndex(otherRecipientAddress, blockNumber1)).to.equal(0)
-      expect(await factory.getRecipientIndex(otherRecipientAddress, blockNumber2)).to.equal(1)
-      expect(await factory.getRecipientIndex(anotherRecipientAddress, blockNumber1)).to.equal(0)
-      expect(await factory.getRecipientIndex(anotherRecipientAddress, blockNumber2)).to.equal(2)
-    })
-  });
-
   it('sets MACI parameters', async () => {
+    maciParameters.update({ voteOptionTreeDepth: 3 })
     await expect(factory.setMaciParameters(...maciParameters.values()))
-      .to.emit(maciFactory, 'MaciParametersChanged');
+      .to.emit(maciFactory, 'MaciParametersChanged')
+    expect(await recipientRegistry.maxRecipients())
+      .to.equal(5 ** maciParameters.voteOptionTreeDepth - 1)
   });
 
   it('allows only owner to set MACI parameters', async () => {

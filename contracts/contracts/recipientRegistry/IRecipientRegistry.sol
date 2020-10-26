@@ -10,11 +10,15 @@ pragma experimental ABIEncoderV2;
  * - Allow only legitimate recipients into the registry.
  * - Assign an unique index to each recipient.
  * - Find the recipient's index by their address.
- * - Limit the maximum number of entries according to MACI's maxVoteOptions.
+ * - Limit the maximum number of entries according to a parameter set by the controller.
  * - Remove invalid entries.
  * - Prevent indices from changing during the funding round.
  */
 interface IRecipientRegistry {
+
+  function setController() external;
+
+  function setMaxRecipients(uint256 _maxRecipients) external;
 
   function addRecipient(address _recipient, string calldata _name) external;
 
