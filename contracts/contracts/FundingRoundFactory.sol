@@ -11,7 +11,7 @@ import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
 import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
 import './verifiedUserRegistry/IVerifiedUserRegistry.sol';
-import './IRecipientRegistry.sol';
+import './recipientRegistry/IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
 
