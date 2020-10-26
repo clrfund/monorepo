@@ -16,6 +16,9 @@ pragma experimental ABIEncoderV2;
  */
 interface IRecipientRegistry {
 
+  event RecipientAdded(address indexed _recipient, string _metadata, uint256 _index);
+  event RecipientRemoved(address indexed _recipient);
+
   function setController() external;
 
   function setMaxRecipients(uint256 _maxRecipients) external;
