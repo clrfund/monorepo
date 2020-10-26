@@ -58,6 +58,9 @@ describe('Funding Round Factory', () => {
     expect(await factory.nativeToken()).to.equal(ZERO_ADDRESS)
     expect(await factory.maciFactory()).to.equal(maciFactory.address)
     expect(await factory.recipientRegistry()).to.equal(recipientRegistry.address)
+    expect(await recipientRegistry.controller()).to.equal(factory.address)
+    expect(await recipientRegistry.maxRecipients())
+      .to.equal(5 ** maciParameters.voteOptionTreeDepth - 1)
   })
 
   it('transfers ownership to another address', async () => {
