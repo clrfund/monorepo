@@ -8,7 +8,9 @@
       </template>
       <template v-else>
         <div v-if="!voteTxHash">Please approve transaction in your wallet</div>
-        <div v-if="voteTxHash">Waiting for confirmation...</div>
+        <div v-if="voteTxHash">
+           Waiting for <a :href="getBlockExplorerUrl(voteTxHash)" target="_blank">transaction</a> to confirm...
+          </div>
         <div class="loader"></div>
       </template>
     </div>
@@ -27,6 +29,7 @@ import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract } from 'ethers'
 import { PubKey, Message } from 'maci-domainobjs'
 
+import { blockExplorer } from '@/api/core'
 import { waitForTransaction } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
@@ -45,6 +48,10 @@ export default class ReallocationModal extends Vue {
 
   mounted() {
     this.vote()
+  }
+
+  getBlockExplorerUrl(transactionHash: string): string {
+    return `${blockExplorer}${transactionHash}`
   }
 
   private async vote() {
@@ -85,6 +92,10 @@ export default class ReallocationModal extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+
+a {
+  color: $highlight-color;
+}
 
 .error {
   color: $error-color;

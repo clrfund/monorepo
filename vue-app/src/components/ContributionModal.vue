@@ -8,7 +8,9 @@
       </template>
       <template v-else>
         <div v-if="!approvalTxHash">Please approve transaction in your wallet</div>
-        <div v-if="approvalTxHash">Waiting for confirmation...</div>
+        <div v-if="approvalTxHash">
+          Waiting for <a :href="getBlockExplorerUrl(approvalTxHash)" target="_blank">transaction</a> to confirm...
+        </div>
         <div class="loader"></div>
       </template>
     </div>
@@ -20,7 +22,9 @@
       </template>
       <template v-else>
         <div v-if="!contributionTxHash">Please approve transaction in your wallet</div>
-        <div v-if="contributionTxHash">Waiting for confirmation...</div>
+        <div v-if="contributionTxHash">
+          Waiting for <a :href="getBlockExplorerUrl(contributionTxHash)" target="_blank">transaction</a> to confirm...
+        </div>
         <div class="loader"></div>
       </template>
     </div>
@@ -32,7 +36,9 @@
       </template>
       <template v-else>
         <div v-if="!voteTxHash">Please approve transaction in your wallet</div>
-        <div v-if="voteTxHash">Waiting for confirmation...</div>
+        <div v-if="voteTxHash">
+          Waiting for <a :href="getBlockExplorerUrl(voteTxHash)" target="_blank">transaction</a> to confirm...
+        </div>
         <div class="loader"></div>
       </template>
     </div>
@@ -56,6 +62,7 @@ import { BigNumber, Contract, FixedNumber, Signer } from 'ethers'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
 import { Contributor } from '@/api/contributions'
+import { blockExplorer } from '@/api/core'
 import { RoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { User } from '@/api/user'
@@ -107,6 +114,10 @@ export default class ContributionModal extends Vue {
 
   get currentRound(): RoundInfo {
     return this.$store.state.currentRound
+  }
+
+  getBlockExplorerUrl(transactionHash: string): string {
+    return `${blockExplorer}${transactionHash}`
   }
 
   private async contribute() {
@@ -218,6 +229,10 @@ export default class ContributionModal extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+
+a {
+  color: $highlight-color;
+}
 
 .error {
   color: $error-color;
