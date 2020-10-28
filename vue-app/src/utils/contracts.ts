@@ -14,7 +14,7 @@ export async function waitForTransaction(
   onTransactionHash(transaction.hash)
   const transactionReceipt = await transaction.wait()
   if (transactionReceipt.status !== 1) {
-    throw new Error('failed')
+    throw new Error('Transaction failed')
   }
   return transactionReceipt
 }

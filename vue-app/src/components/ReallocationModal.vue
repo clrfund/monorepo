@@ -2,14 +2,20 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>Step 1 of 2: Vote</h3>
-      <div v-if="!voteTxHash">Please approve transaction in your wallet</div>
-      <div v-if="voteTxHash">Waiting for confirmation...</div>
-      <div class="loader"></div>
+      <template v-if="voteTxError">
+        <div class="error">{{ voteTxError }}</div>
+        <button class="btn close-btn" @click="$emit('close')">OK</button>
+      </template>
+      <template v-else>
+        <div v-if="!voteTxHash">Please approve transaction in your wallet</div>
+        <div v-if="voteTxHash">Waiting for confirmation...</div>
+        <div class="loader"></div>
+      </template>
     </div>
     <div v-if="step === 2">
       <h3>Step 2 of 2: Success</h3>
       <div>Contributed funds have been successfully reallocated.</div>
-      <button class="btn" @click="$emit('close')">OK</button>
+      <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
   </div>
 </template>
@@ -34,7 +40,8 @@ export default class ReallocationModal extends Vue {
 
   step = 1
 
-  voteTxHash: string | null = null
+  voteTxHash = ''
+  voteTxError = ''
 
   mounted() {
     this.vote()
@@ -59,21 +66,33 @@ export default class ReallocationModal extends Vue {
       encPubKeys.push(encPubKey)
       nonce += 1
     }
-    await waitForTransaction(
-      fundingRound.submitMessageBatch(
-        messages.reverse().map((msg) => msg.asContractParam()),
-        encPubKeys.reverse().map((key) => key.asContractParam()),
-      ),
-      (hash) => this.voteTxHash = hash,
-    )
+    try {
+      await waitForTransaction(
+        fundingRound.submitMessageBatch(
+          messages.reverse().map((msg) => msg.asContractParam()),
+          encPubKeys.reverse().map((key) => key.asContractParam()),
+        ),
+        (hash) => this.voteTxHash = hash,
+      )
+    } catch (error) {
+      this.voteTxError = error.message
+      return
+    }
     this.step += 1
   }
 }
 </script>
 
 <style scoped lang="scss">
+@import '../styles/vars';
 
-.btn {
+.error {
+  color: $error-color;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.close-btn {
   margin-top: 20px;
 }
 </style>

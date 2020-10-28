@@ -2,21 +2,39 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>Step 1 of 4: Approve</h3>
-      <div v-if="!approvalTxHash">Please approve transaction in your wallet</div>
-      <div v-if="approvalTxHash">Waiting for confirmation...</div>
-      <div class="loader"></div>
+      <template v-if="approvalTxError">
+        <div class="error">{{ approvalTxError }}</div>
+        <button class="btn close-btn" @click="$emit('close')">OK</button>
+      </template>
+      <template v-else>
+        <div v-if="!approvalTxHash">Please approve transaction in your wallet</div>
+        <div v-if="approvalTxHash">Waiting for confirmation...</div>
+        <div class="loader"></div>
+      </template>
     </div>
     <div v-if="step === 2">
       <h3>Step 2 of 4: Contribute</h3>
-      <div v-if="!contributionTxHash">Please approve transaction in your wallet</div>
-      <div v-if="contributionTxHash">Waiting for confirmation...</div>
-      <div class="loader"></div>
+      <template v-if="contributionTxError">
+        <div class="error">{{ contributionTxError }}</div>
+        <button class="btn close-btn" @click="$emit('close')">OK</button>
+      </template>
+      <template v-else>
+        <div v-if="!contributionTxHash">Please approve transaction in your wallet</div>
+        <div v-if="contributionTxHash">Waiting for confirmation...</div>
+        <div class="loader"></div>
+      </template>
     </div>
     <div v-if="step === 3">
       <h3>Step 3 of 4: Vote</h3>
-      <div v-if="!voteTxHash">Please approve transaction in your wallet</div>
-      <div v-if="voteTxHash">Waiting for confirmation...</div>
-      <div class="loader"></div>
+      <template v-if="voteTxError">
+        <div class="error">{{ voteTxError }}</div>
+        <button class="btn close-btn" @click="$emit('close')">OK</button>
+      </template>
+      <template v-else>
+        <div v-if="!voteTxHash">Please approve transaction in your wallet</div>
+        <div v-if="voteTxHash">Waiting for confirmation...</div>
+        <div class="loader"></div>
+      </template>
     </div>
     <div v-if="step === 4">
       <h3>Step 4 of 4: Success</h3>
@@ -76,9 +94,12 @@ export default class ContributionModal extends Vue {
 
   step = 1
 
-  approvalTxHash: string | null = null
-  contributionTxHash: string | null = null
-  voteTxHash: string | null = null
+  approvalTxHash = ''
+  approvalTxError = ''
+  contributionTxHash = ''
+  contributionTxError = ''
+  voteTxHash = ''
+  voteTxError = ''
 
   mounted() {
     this.contribute()
@@ -104,22 +125,33 @@ export default class ContributionModal extends Vue {
     // Approve transfer (step 1)
     const allowance = await token.allowance(signer.getAddress(), fundingRoundAddress)
     if (allowance < total) {
-      await waitForTransaction(
-        token.approve(fundingRoundAddress, total),
-        (hash) => this.approvalTxHash = hash,
-      )
+      try {
+        await waitForTransaction(
+          token.approve(fundingRoundAddress, total),
+          (hash) => this.approvalTxHash = hash,
+        )
+      } catch (error) {
+        this.approvalTxError = error.message
+        return
+      }
     }
     this.step += 1
     // Contribute (step 2)
     const contributorKeypair = new Keypair()
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
-    const contributionTxReceipt = await waitForTransaction(
-      fundingRound.contribute(
-        contributorKeypair.pubKey.asContractParam(),
-        total,
-      ),
-      (hash) => this.contributionTxHash = hash,
-    )
+    let contributionTxReceipt
+    try {
+      contributionTxReceipt = await waitForTransaction(
+        fundingRound.contribute(
+          contributorKeypair.pubKey.asContractParam(),
+          total,
+        ),
+        (hash) => this.contributionTxHash = hash,
+      )
+    } catch (error) {
+      this.contributionTxError = error.message
+      return
+    }
     // Get state index and amount of voice credits
     const maci = new Contract(maciAddress, MACI, signer)
     const stateIndex = getEventArg(contributionTxReceipt, maci, 'SignUp', '_stateIndex')
@@ -160,13 +192,18 @@ export default class ContributionModal extends Vue {
       nonce += 1
     }
     this.step += 1
-    await waitForTransaction(
-      fundingRound.submitMessageBatch(
-        messages.reverse().map((msg) => msg.asContractParam()),
-        encPubKeys.reverse().map((key) => key.asContractParam()),
-      ),
-      (hash) => this.voteTxHash = hash,
-    )
+    try {
+      await waitForTransaction(
+        fundingRound.submitMessageBatch(
+          messages.reverse().map((msg) => msg.asContractParam()),
+          encPubKeys.reverse().map((key) => key.asContractParam()),
+        ),
+        (hash) => this.voteTxHash = hash,
+      )
+    } catch (error) {
+      this.voteTxError = error.message
+      return
+    }
     this.step += 1
   }
 
@@ -180,6 +217,14 @@ export default class ContributionModal extends Vue {
 </script>
 
 <style scoped lang="scss">
+@import '../styles/vars';
+
+.error {
+  color: $error-color;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .close-btn {
   margin-top: 20px;
 }

@@ -2,9 +2,15 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>Step 1 of 2: Claim funds</h3>
-      <div v-if="!claimTxHash">Please confirm transaction in your wallet</div>
-      <div v-if="claimTxHash">Waiting for confirmation...</div>
-      <div class="loader"></div>
+      <template v-if="claimTxError">
+        <div class="error">{{ claimTxError }}</div>
+        <button class="btn close-btn" @click="$emit('close')">OK</button>
+      </template>
+      <template v-else>
+        <div v-if="!claimTxHash">Please approve transaction in your wallet</div>
+        <div v-if="claimTxHash">Waiting for confirmation...</div>
+        <div class="loader"></div>
+      </template>
     </div>
     <div v-if="step === 2">
       <h3>Step 2 of 2: Success</h3>
@@ -34,7 +40,8 @@ export default class ClaimModal extends Vue {
 
   step = 1
   amount = FixedNumber.from(0)
-  claimTxHash: string | null = null
+  claimTxHash = ''
+  claimTxError = ''
 
   get currentRound(): RoundInfo {
     return this.$store.state.currentRound
@@ -54,10 +61,16 @@ export default class ClaimModal extends Vue {
       recipientTreeDepth,
       this.$store.state.tally,
     )
-    const claimTxReceipt = await waitForTransaction(
-      fundingRound.claimFunds(...recipientClaimData),
-      (hash) => this.claimTxHash = hash,
-    )
+    let claimTxReceipt
+    try {
+      claimTxReceipt = await waitForTransaction(
+        fundingRound.claimFunds(...recipientClaimData),
+        (hash) => this.claimTxHash = hash,
+      )
+    } catch (error) {
+      this.claimTxError = error.message
+      return
+    }
     this.amount = FixedNumber.fromValue(
       getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount'),
       nativeTokenDecimals,
@@ -68,6 +81,14 @@ export default class ClaimModal extends Vue {
 </script>
 
 <style scoped lang="scss">
+@import '../styles/vars';
+
+.error {
+  color: $error-color;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .close-btn {
   margin-top: 20px;
 }
