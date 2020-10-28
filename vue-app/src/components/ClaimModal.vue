@@ -2,15 +2,11 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>Step 1 of 2: Claim funds</h3>
-      <template v-if="claimTxError">
-        <div class="error">{{ claimTxError }}</div>
-        <button class="btn close-btn" @click="$emit('close')">OK</button>
-      </template>
-      <template v-else>
-        <div v-if="!claimTxHash">Please approve transaction in your wallet</div>
-        <div v-if="claimTxHash">Waiting for confirmation...</div>
-        <div class="loader"></div>
-      </template>
+      <transaction
+        :hash="claimTxHash"
+        :error="claimTxError"
+        @close="$emit('close')"
+      ></transaction>
     </div>
     <div v-if="step === 2">
       <h3>Step 2 of 2: Success</h3>
@@ -29,10 +25,15 @@ import { Contract, FixedNumber, Signer } from 'ethers'
 import { FundingRound } from '@/api/abi'
 import { Project } from '@/api/projects'
 import { RoundInfo } from '@/api/round'
+import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
 
-@Component
+@Component({
+  components: {
+    Transaction,
+  },
+})
 export default class ClaimModal extends Vue {
 
   @Prop()
@@ -82,12 +83,6 @@ export default class ClaimModal extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
-
-.error {
-  color: $error-color;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .close-btn {
   margin-top: 20px;

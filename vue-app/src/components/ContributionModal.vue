@@ -2,45 +2,27 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>Step 1 of 4: Approve</h3>
-      <template v-if="approvalTxError">
-        <div class="error">{{ approvalTxError }}</div>
-        <button class="btn close-btn" @click="$emit('close')">OK</button>
-      </template>
-      <template v-else>
-        <div v-if="!approvalTxHash">Please approve transaction in your wallet</div>
-        <div v-if="approvalTxHash">
-          Waiting for <a :href="getBlockExplorerUrl(approvalTxHash)" target="_blank">transaction</a> to confirm...
-        </div>
-        <div class="loader"></div>
-      </template>
+      <transaction
+        :hash="approvalTxHash"
+        :error="approvalTxError"
+        @close="$emit('close')"
+      ></transaction>
     </div>
     <div v-if="step === 2">
       <h3>Step 2 of 4: Contribute</h3>
-      <template v-if="contributionTxError">
-        <div class="error">{{ contributionTxError }}</div>
-        <button class="btn close-btn" @click="$emit('close')">OK</button>
-      </template>
-      <template v-else>
-        <div v-if="!contributionTxHash">Please approve transaction in your wallet</div>
-        <div v-if="contributionTxHash">
-          Waiting for <a :href="getBlockExplorerUrl(contributionTxHash)" target="_blank">transaction</a> to confirm...
-        </div>
-        <div class="loader"></div>
-      </template>
+      <transaction
+        :hash="contributionTxHash"
+        :error="contributionTxError"
+        @close="$emit('close')"
+      ></transaction>
     </div>
     <div v-if="step === 3">
       <h3>Step 3 of 4: Vote</h3>
-      <template v-if="voteTxError">
-        <div class="error">{{ voteTxError }}</div>
-        <button class="btn close-btn" @click="$emit('close')">OK</button>
-      </template>
-      <template v-else>
-        <div v-if="!voteTxHash">Please approve transaction in your wallet</div>
-        <div v-if="voteTxHash">
-          Waiting for <a :href="getBlockExplorerUrl(voteTxHash)" target="_blank">transaction</a> to confirm...
-        </div>
-        <div class="loader"></div>
-      </template>
+      <transaction
+        :hash="voteTxHash"
+        :error="voteTxError"
+        @close="$emit('close')"
+      ></transaction>
     </div>
     <div v-if="step === 4">
       <h3>Step 4 of 4: Success</h3>
@@ -62,10 +44,10 @@ import { BigNumber, Contract, FixedNumber, Signer } from 'ethers'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
 import { Contributor } from '@/api/contributions'
-import { blockExplorer } from '@/api/core'
 import { RoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { User } from '@/api/user'
+import Transaction from '@/components/Transaction.vue'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { SET_CURRENT_USER, SET_CONTRIBUTOR } from '@/store/mutation-types'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
@@ -93,7 +75,11 @@ function saveContributorInfo(
   )
 }
 
-@Component
+@Component({
+  components: {
+    Transaction,
+  },
+})
 export default class ContributionModal extends Vue {
 
   @Prop()
@@ -114,10 +100,6 @@ export default class ContributionModal extends Vue {
 
   get currentRound(): RoundInfo {
     return this.$store.state.currentRound
-  }
-
-  getBlockExplorerUrl(transactionHash: string): string {
-    return `${blockExplorer}${transactionHash}`
   }
 
   private async contribute() {
@@ -229,16 +211,6 @@ export default class ContributionModal extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
-
-a {
-  color: $highlight-color;
-}
-
-.error {
-  color: $error-color;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .close-btn {
   margin-top: 20px;

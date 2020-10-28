@@ -2,17 +2,11 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>Step 1 of 2: Vote</h3>
-      <template v-if="voteTxError">
-        <div class="error">{{ voteTxError }}</div>
-        <button class="btn close-btn" @click="$emit('close')">OK</button>
-      </template>
-      <template v-else>
-        <div v-if="!voteTxHash">Please approve transaction in your wallet</div>
-        <div v-if="voteTxHash">
-           Waiting for <a :href="getBlockExplorerUrl(voteTxHash)" target="_blank">transaction</a> to confirm...
-          </div>
-        <div class="loader"></div>
-      </template>
+      <transaction
+        :hash="voteTxHash"
+        :error="voteTxError"
+        @close="$emit('close')"
+      ></transaction>
     </div>
     <div v-if="step === 2">
       <h3>Step 2 of 2: Success</h3>
@@ -29,13 +23,17 @@ import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract } from 'ethers'
 import { PubKey, Message } from 'maci-domainobjs'
 
-import { blockExplorer } from '@/api/core'
+import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
 import { FundingRound } from '@/api/abi'
 
-@Component
+@Component({
+  components: {
+    Transaction,
+  },
+})
 export default class ReallocationModal extends Vue {
 
   @Prop()
@@ -48,10 +46,6 @@ export default class ReallocationModal extends Vue {
 
   mounted() {
     this.vote()
-  }
-
-  getBlockExplorerUrl(transactionHash: string): string {
-    return `${blockExplorer}${transactionHash}`
   }
 
   private async vote() {
@@ -92,16 +86,6 @@ export default class ReallocationModal extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
-
-a {
-  color: $highlight-color;
-}
-
-.error {
-  color: $error-color;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .close-btn {
   margin-top: 20px;
