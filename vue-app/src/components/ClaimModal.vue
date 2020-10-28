@@ -2,8 +2,8 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>Step 1 of 2: Claim funds</h3>
-      <div v-if="!claimTx">Please confirm transaction in your wallet</div>
-      <div v-if="claimTx">Waiting for confirmation...</div>
+      <div v-if="!claimTxHash">Please confirm transaction in your wallet</div>
+      <div v-if="claimTxHash">Waiting for confirmation...</div>
       <div class="loader"></div>
     </div>
     <div v-if="step === 2">
@@ -19,12 +19,11 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { Contract, FixedNumber, Signer } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
 
 import { FundingRound } from '@/api/abi'
 import { Project } from '@/api/projects'
 import { RoundInfo } from '@/api/round'
-import { getEventArg } from '@/utils/contracts'
+import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
 
 @Component
@@ -35,7 +34,7 @@ export default class ClaimModal extends Vue {
 
   step = 1
   amount = FixedNumber.from(0)
-  claimTx: TransactionResponse | null = null
+  claimTxHash: string | null = null
 
   get currentRound(): RoundInfo {
     return this.$store.state.currentRound
@@ -55,10 +54,12 @@ export default class ClaimModal extends Vue {
       recipientTreeDepth,
       this.$store.state.tally,
     )
-    const claimTx = await fundingRound.claimFunds(...recipientClaimData)
-    this.claimTx = claimTx
+    const claimTxReceipt = await waitForTransaction(
+      fundingRound.claimFunds(...recipientClaimData),
+      (hash) => this.claimTxHash = hash,
+    )
     this.amount = FixedNumber.fromValue(
-      await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_amount'),
+      getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount'),
       nativeTokenDecimals,
     )
     this.step += 1

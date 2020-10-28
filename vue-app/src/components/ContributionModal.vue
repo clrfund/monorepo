@@ -2,20 +2,20 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>Step 1 of 4: Approve</h3>
-      <div v-if="!approvalTx">Please approve transaction in your wallet</div>
-      <div v-if="approvalTx">Waiting for confirmation...</div>
+      <div v-if="!approvalTxHash">Please approve transaction in your wallet</div>
+      <div v-if="approvalTxHash">Waiting for confirmation...</div>
       <div class="loader"></div>
     </div>
     <div v-if="step === 2">
       <h3>Step 2 of 4: Contribute</h3>
-      <div v-if="!contributionTx">Please approve transaction in your wallet</div>
-      <div v-if="contributionTx">Waiting for confirmation...</div>
+      <div v-if="!contributionTxHash">Please approve transaction in your wallet</div>
+      <div v-if="contributionTxHash">Waiting for confirmation...</div>
       <div class="loader"></div>
     </div>
     <div v-if="step === 3">
       <h3>Step 3 of 4: Vote</h3>
-      <div v-if="!voteTx">Please approve transaction in your wallet</div>
-      <div v-if="voteTx">Waiting for confirmation...</div>
+      <div v-if="!voteTxHash">Please approve transaction in your wallet</div>
+      <div v-if="voteTxHash">Waiting for confirmation...</div>
       <div class="loader"></div>
     </div>
     <div v-if="step === 4">
@@ -35,7 +35,6 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract, FixedNumber, Signer } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
 import { Contributor } from '@/api/contributions'
@@ -44,7 +43,7 @@ import { storage } from '@/api/storage'
 import { User } from '@/api/user'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { SET_CURRENT_USER, SET_CONTRIBUTOR } from '@/store/mutation-types'
-import { getEventArg } from '@/utils/contracts'
+import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
 import { FundingRound, ERC20, MACI } from '@/api/abi'
@@ -77,9 +76,9 @@ export default class ContributionModal extends Vue {
 
   step = 1
 
-  approvalTx: TransactionResponse | null = null
-  contributionTx: TransactionResponse | null = null
-  voteTx: TransactionResponse | null = null
+  approvalTxHash: string | null = null
+  contributionTxHash: string | null = null
+  voteTxHash: string | null = null
 
   mounted() {
     this.contribute()
@@ -105,23 +104,26 @@ export default class ContributionModal extends Vue {
     // Approve transfer (step 1)
     const allowance = await token.allowance(signer.getAddress(), fundingRoundAddress)
     if (allowance < total) {
-      const approvalTx = await token.approve(fundingRoundAddress, total)
-      this.approvalTx = approvalTx
-      await approvalTx.wait()
+      await waitForTransaction(
+        token.approve(fundingRoundAddress, total),
+        (hash) => this.approvalTxHash = hash,
+      )
     }
     this.step += 1
     // Contribute (step 2)
     const contributorKeypair = new Keypair()
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
-    const contributionTx = await fundingRound.contribute(
-      contributorKeypair.pubKey.asContractParam(),
-      total,
+    const contributionTxReceipt = await waitForTransaction(
+      fundingRound.contribute(
+        contributorKeypair.pubKey.asContractParam(),
+        total,
+      ),
+      (hash) => this.contributionTxHash = hash,
     )
-    this.contributionTx = contributionTx
     // Get state index and amount of voice credits
     const maci = new Contract(maciAddress, MACI, signer)
-    const stateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex')
-    const voiceCredits = await getEventArg(contributionTx, maci, 'SignUp', '_voiceCreditBalance')
+    const stateIndex = getEventArg(contributionTxReceipt, maci, 'SignUp', '_stateIndex')
+    const voiceCredits = getEventArg(contributionTxReceipt, maci, 'SignUp', '_voiceCreditBalance')
     if (!voiceCredits.mul(voiceCreditFactor).eq(total)) {
       throw new Error('Incorrect amount of voice credits')
     }
@@ -158,12 +160,13 @@ export default class ContributionModal extends Vue {
       nonce += 1
     }
     this.step += 1
-    const voteTx = await fundingRound.submitMessageBatch(
-      messages.reverse().map((msg) => msg.asContractParam()),
-      encPubKeys.reverse().map((key) => key.asContractParam()),
+    await waitForTransaction(
+      fundingRound.submitMessageBatch(
+        messages.reverse().map((msg) => msg.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam()),
+      ),
+      (hash) => this.voteTxHash = hash,
     )
-    this.voteTx = voteTx
-    await voteTx.wait()
     this.step += 1
   }
 

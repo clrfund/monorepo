@@ -2,8 +2,8 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>Step 1 of 2: Vote</h3>
-      <div v-if="!voteTx">Please approve transaction in your wallet</div>
-      <div v-if="voteTx">Waiting for confirmation...</div>
+      <div v-if="!voteTxHash">Please approve transaction in your wallet</div>
+      <div v-if="voteTxHash">Waiting for confirmation...</div>
       <div class="loader"></div>
     </div>
     <div v-if="step === 2">
@@ -19,9 +19,9 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { PubKey, Message } from 'maci-domainobjs'
 
+import { waitForTransaction } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
 import { FundingRound } from '@/api/abi'
@@ -34,7 +34,7 @@ export default class ReallocationModal extends Vue {
 
   step = 1
 
-  voteTx: TransactionResponse | null = null
+  voteTxHash: string | null = null
 
   mounted() {
     this.vote()
@@ -59,12 +59,13 @@ export default class ReallocationModal extends Vue {
       encPubKeys.push(encPubKey)
       nonce += 1
     }
-    const voteTx = await fundingRound.submitMessageBatch(
-      messages.reverse().map((msg) => msg.asContractParam()),
-      encPubKeys.reverse().map((key) => key.asContractParam()),
+    await waitForTransaction(
+      fundingRound.submitMessageBatch(
+        messages.reverse().map((msg) => msg.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam()),
+      ),
+      (hash) => this.voteTxHash = hash,
     )
-    this.voteTx = voteTx
-    await voteTx.wait()
     this.step += 1
   }
 }
