@@ -14,6 +14,7 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
     uint256 index;
     uint256 addedAt;
     uint256 removedAt;
+    uint256 prevRemovedAt;
   }
 
   // State
@@ -21,7 +22,7 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
   uint256 public maxRecipients;
   uint256 private nextRecipientIndex = 1;
   mapping(address => Recipient) private recipients;
-  uint256[] private vacantRecipientIndexes;
+  address[] private removed;
 
   // Events
   event RecipientAdded(address indexed _recipient, string _metadata, uint256 _index);
@@ -61,18 +62,21 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
     require(_recipient != address(0), 'RecipientRegistry: Recipient address is zero');
     require(bytes(_metadata).length != 0, 'RecipientRegistry: Metadata info is empty string');
     require(recipients[_recipient].index == 0, 'RecipientRegistry: Recipient already registered');
-    uint256 recipientIndex;
-    if (vacantRecipientIndexes.length == 0) {
+    uint256 recipientIndex = 0;
+    uint256 prevRemovedAt = 0;
+    if (nextRecipientIndex <= maxRecipients) {
       // Assign next index in sequence
-      require(nextRecipientIndex <= maxRecipients, 'RecipientRegistry: Recipient limit reached');
       recipientIndex = nextRecipientIndex;
       nextRecipientIndex += 1;
     } else {
       // Assign one of the vacant recipient indexes
-      recipientIndex = vacantRecipientIndexes[vacantRecipientIndexes.length - 1];
-      vacantRecipientIndexes.pop();
+      require(removed.length > 0, 'RecipientRegistry: Recipient limit reached');
+      Recipient memory removedRecipient = recipients[removed[removed.length - 1]];
+      removed.pop();
+      recipientIndex = removedRecipient.index;
+      prevRemovedAt = removedRecipient.removedAt;
     }
-    recipients[_recipient] = Recipient(recipientIndex, block.number, 0);
+    recipients[_recipient] = Recipient(recipientIndex, block.number, 0, prevRemovedAt);
     emit RecipientAdded(_recipient, _metadata, recipientIndex);
   }
 
@@ -87,28 +91,36 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
     require(recipients[_recipient].index != 0, 'RecipientRegistry: Recipient is not in the registry');
     require(recipients[_recipient].removedAt == 0, 'RecipientRegistry: Recipient already removed');
     recipients[_recipient].removedAt = block.number;
-    vacantRecipientIndexes.push(recipients[_recipient].index);
+    removed.push(_recipient);
     emit RecipientRemoved(_recipient);
   }
 
   /**
     * @dev Get recipient index by address.
     * @param _recipient Recipient address.
-    * @param _atBlock Block number.
+    * @param _startBlock Starting block of the funding round.
+    * @param _endBlock Ending block of the funding round.
     */
   function getRecipientIndex(
     address _recipient,
-    uint256 _atBlock
+    uint256 _startBlock,
+    uint256 _endBlock
   )
     external
     view
     returns (uint256)
   {
     Recipient memory recipient = recipients[_recipient];
-    if (recipient.index == 0 || recipient.addedAt > _atBlock || (recipient.removedAt != 0 && recipient.removedAt <= _atBlock)) {
+    if (
+      recipient.index == 0 ||
+      recipient.addedAt > _endBlock ||
+      recipient.removedAt != 0 && recipient.removedAt <= _startBlock ||
+      recipient.prevRemovedAt > _startBlock
+    ) {
       // Return 0 if recipient is not in the registry
-      // or added after a given time
-      // or had been already removed by a given time
+      // or added after the end of the funding round
+      // or had been already removed when the round started
+      // or inherits index from removed recipient who participates in the round
       return 0;
     } else {
       return recipient.index;

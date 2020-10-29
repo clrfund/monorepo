@@ -293,7 +293,12 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   {
     require(isFinalized, 'FundingRound: Round not finalized');
     require(!isCancelled, 'FundingRound: Round has been cancelled');
-    uint256 voteOptionIndex = recipientRegistry.getRecipientIndex(_recipient, startBlock);
+    uint256 voteOptionIndex = recipientRegistry.getRecipientIndex(
+      _recipient,
+      startBlock,
+      // TODO: use block numbers in MACI
+      startBlock + (maci.signUpDurationSeconds() + maci.votingDurationSeconds()) / 15
+    );
     require(voteOptionIndex > 0, 'FundingRound: Invalid recipient address');
     require(!recipients[voteOptionIndex], 'FundingRound: Funds already claimed');
     (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
