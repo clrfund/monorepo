@@ -1,13 +1,13 @@
 pragma solidity ^0.5.17;
 
-import "./IVerifiedUserRegistry.sol";
-import "@openzeppelin/contracts/ownership/Ownable.sol";
+import './IVerifiedUserRegistry.sol';
+import '@openzeppelin/contracts/ownership/Ownable.sol';
 
-contract VerifiedUserRegistry is Ownable, IVerifiedUserRegistry {
-    string private constant ERROR_NEWER_VERIFICATION = "NEWER VERIFICATION REGISTERED BEFORE";
-    string private constant ERROR_NOT_AUTHORIZED = "NOT AUTHORIZED";
-    string private constant ERROR_INVALID_VERIFIER = "INVALID VERIFIER";
-    string private constant ERROR_INVALID_CONTEXT = "INVALID CONTEXT";
+contract BrightIDUserRegistry is Ownable, IVerifiedUserRegistry {
+    string private constant ERROR_NEWER_VERIFICATION = 'NEWER VERIFICATION REGISTERED BEFORE';
+    string private constant ERROR_NOT_AUTHORIZED = 'NOT AUTHORIZED';
+    string private constant ERROR_INVALID_VERIFIER = 'INVALID VERIFIER';
+    string private constant ERROR_INVALID_CONTEXT = 'INVALID CONTEXT';
 
     bytes32 public context;
     address public verifier;
