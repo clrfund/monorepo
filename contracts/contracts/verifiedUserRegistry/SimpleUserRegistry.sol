@@ -23,8 +23,8 @@ contract SimpleUserRegistry is Ownable, IVerifiedUserRegistry {
     external
     onlyOwner
   {
-    require(_user != address(0), 'Factory: User address is zero');
-    require(!users[_user], 'Factory: User already verified');
+    require(_user != address(0), 'UserRegistry: User address is zero');
+    require(!users[_user], 'UserRegistry: User already verified');
     users[_user] = true;
     emit UserAdded(_user);
   }
@@ -36,7 +36,7 @@ contract SimpleUserRegistry is Ownable, IVerifiedUserRegistry {
     external
     onlyOwner
   {
-    require(users[_user], 'Factory: User is not in the registry');
+    require(users[_user], 'UserRegistry: User is not in the registry');
     delete users[_user];
     emit UserRemoved(_user);
   }

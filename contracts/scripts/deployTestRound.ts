@@ -10,7 +10,7 @@ import MACIFactoryArtifact from '../build/contracts/MACIFactory.json'
 async function main() {
   // We're hardcoding factory address due to a buidler limitation:
   // https://github.com/nomiclabs/buidler/issues/651
-  const factoryAddress = '0x038B86d9d8FAFdd0a02ebd1A476432877b0107C8'
+  const factoryAddress = '0x1A1FEe7EeD918BD762173e4dc5EfDB8a78C924A8'
   const [
     deployer,
     coordinator,
@@ -85,8 +85,13 @@ async function main() {
     description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
     imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
   }
-  await factory.addRecipient(recipient1.getAddress(), JSON.stringify(metadataRecipient1));
-  await factory.addRecipient(recipient2.getAddress(), JSON.stringify(metadataRecipient2));
+  const recipientRegistryAddress = await factory.recipientRegistry()
+  const recipientRegistry = await ethers.getContractAt(
+    'SimpleRecipientRegistry',
+    recipientRegistryAddress,
+  )
+  await recipientRegistry.addRecipient(recipient1.getAddress(), JSON.stringify(metadataRecipient1))
+  await recipientRegistry.addRecipient(recipient2.getAddress(), JSON.stringify(metadataRecipient2))
 
   // Deploy new funding round and MACI
   await factory.deployNewRound();

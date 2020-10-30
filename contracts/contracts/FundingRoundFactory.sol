@@ -11,38 +11,26 @@ import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
 import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
 import './verifiedUserRegistry/IVerifiedUserRegistry.sol';
-import './IRecipientRegistry.sol';
+import './recipientRegistry/IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
 
-contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
+contract FundingRoundFactory is Ownable, MACISharedObjs {
   using SafeERC20 for ERC20Detailed;
 
-  // Structs
-  struct Recipient {
-    uint256 index;
-    uint256 addedAt;
-    uint256 removedAt;
-  }
-
   // State
-  uint256 private nextRecipientIndex = 1;
   address public coordinator;
 
   ERC20Detailed public nativeToken;
   MACIFactory public maciFactory;
   IVerifiedUserRegistry public verifiedUserRegistry;
+  IRecipientRegistry public recipientRegistry;
   PubKey public coordinatorPubKey;
 
   FundingRound[] private rounds;
 
-  mapping(address => Recipient) private recipients;
-  uint256[] private vacantRecipientIndexes;
-
   // Events
   event MatchingPoolContribution(address indexed _sender, uint256 _amount);
-  event RecipientAdded(address indexed _recipient, string _metadata, uint256 _index);
-  event RecipientRemoved(address indexed _recipient);
   event RoundStarted(address _round);
   event RoundFinalized(address _round);
   event TokenChanged(address _token);
@@ -50,12 +38,17 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
 
   constructor(
     MACIFactory _maciFactory,
-    IVerifiedUserRegistry _verifiedUserRegistry
+    IVerifiedUserRegistry _verifiedUserRegistry,
+    IRecipientRegistry _recipientRegistry
   )
     public
   {
     maciFactory = _maciFactory;
     verifiedUserRegistry = _verifiedUserRegistry;
+    recipientRegistry = _recipientRegistry;
+    recipientRegistry.setController();
+    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
+    recipientRegistry.setMaxRecipients(maxVoteOptions);
   }
 
   /**
@@ -67,69 +60,6 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
     require(address(nativeToken) != address(0), 'Factory: Native token is not set');
     nativeToken.transferFrom(msg.sender, address(this), _amount);
     emit MatchingPoolContribution(msg.sender, _amount);
-  }
-
-  /**
-    * @dev Register recipient as eligible for funding allocation.
-    * @param _recipient The address that receives funds.
-    * @param _metadata The metadata info of the recipient.
-    */
-  function addRecipient(address _recipient, string calldata _metadata)
-    external
-    onlyOwner
-  {
-    // TODO: verify address and get recipient info from the recipient registry
-    require(_recipient != address(0), 'Factory: Recipient address is zero');
-    require(bytes(_metadata).length != 0, 'Factory: Metadata info is empty string');
-    require(recipients[_recipient].index == 0, 'Factory: Recipient already registered');
-    uint256 recipientIndex;
-    if (vacantRecipientIndexes.length == 0) {
-      // Assign next index in sequence
-      (,, uint256 maxVoteOptions) = maciFactory.maxValues();
-      require(nextRecipientIndex <= maxVoteOptions, 'Factory: Recipient limit reached');
-      recipientIndex = nextRecipientIndex;
-      nextRecipientIndex += 1;
-    } else {
-      // Assign one of the vacant recipient indexes
-      recipientIndex = vacantRecipientIndexes[vacantRecipientIndexes.length - 1];
-      vacantRecipientIndexes.pop();
-    }
-    recipients[_recipient] = Recipient(recipientIndex, block.number, 0);
-    emit RecipientAdded(_recipient, _metadata, recipientIndex);
-  }
-
-  /**
-    * @dev Remove recipient from the registry.
-    * @param _recipient The address that receives funds.
-    */
-  function removeRecipient(address _recipient)
-    external
-    onlyOwner
-  {
-    require(recipients[_recipient].index != 0, 'Factory: Recipient is not in the registry');
-    require(recipients[_recipient].removedAt == 0, 'Factory: Recipient already removed');
-    recipients[_recipient].removedAt = block.number;
-    vacantRecipientIndexes.push(recipients[_recipient].index);
-    emit RecipientRemoved(_recipient);
-  }
-
-  function getRecipientIndex(
-    address _recipient,
-    uint256 _atBlock
-  )
-    external
-    view
-    returns (uint256)
-  {
-    Recipient memory recipient = recipients[_recipient];
-    if (recipient.index == 0 || recipient.addedAt > _atBlock || (recipient.removedAt != 0 && recipient.removedAt <= _atBlock)) {
-      // Return 0 if recipient is not in the registry
-      // or added after a given time
-      // or had been already removed by a given time
-      return 0;
-    } else {
-      return recipient.index;
-    }
   }
 
   function getCurrentRound()
@@ -168,6 +98,8 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
       _signUpDuration,
       _votingDuration
     );
+    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
+    recipientRegistry.setMaxRecipients(maxVoteOptions);
   }
 
   /**
@@ -188,7 +120,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs, IRecipientRegistry {
     FundingRound newRound = new FundingRound(
       nativeToken,
       verifiedUserRegistry,
-      this,
+      recipientRegistry,
       coordinator
     );
     rounds.push(newRound);

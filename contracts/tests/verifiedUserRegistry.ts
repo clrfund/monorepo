@@ -29,13 +29,13 @@ describe('Simple User Registry', () => {
 
     it('rejects zero-address', async () => {
       await expect(registry.addUser(ZERO_ADDRESS))
-        .to.be.revertedWith('Factory: User address is zero')
+        .to.be.revertedWith('UserRegistry: User address is zero')
     })
 
     it('rejects user who is already in the registry', async () => {
       await registry.addUser(user.address)
       await expect(registry.addUser(user.address))
-        .to.be.revertedWith('Factory: User already verified')
+        .to.be.revertedWith('UserRegistry: User already verified')
     })
 
     it('allows only owner to add users', async () => {
@@ -54,7 +54,7 @@ describe('Simple User Registry', () => {
 
     it('reverts when trying to remove user who is not in the registry', async () => {
       await expect(registry.removeUser(user.address))
-        .to.be.revertedWith('Factory: User is not in the registry')
+        .to.be.revertedWith('UserRegistry: User is not in the registry')
     })
 
     it('allows only owner to remove users', async () => {
