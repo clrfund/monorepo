@@ -79,10 +79,13 @@ describe('Funding Round', () => {
     expect(await fundingRound.owner()).to.equal(deployer.address);
     expect(await fundingRound.nativeToken()).to.equal(token.address);
     expect(await fundingRound.voiceCreditFactor()).to.equal(VOICE_CREDIT_FACTOR)
+    expect(await fundingRound.matchingPoolSize()).to.equal(0)
+    expect(await fundingRound.adjustedMatchingPoolSize()).to.equal(0)
     expect(await fundingRound.verifiedUserRegistry()).to.equal(verifiedUserRegistry.address);
     expect(await fundingRound.recipientRegistry()).to.equal(recipientRegistry.address);
     expect(await fundingRound.isFinalized()).to.equal(false);
     expect(await fundingRound.isCancelled()).to.equal(false);
+    expect(await fundingRound.coordinator()).to.equal(coordinator.address)
     expect(await fundingRound.maci()).to.equal(ZERO_ADDRESS);
   });
 
@@ -131,6 +134,7 @@ describe('Funding Round', () => {
       expect(await token.balanceOf(fundingRound.address))
         .to.equal(contributionAmount);
 
+      expect(await fundingRound.contributorCount()).to.equal(1)
       expect(await fundingRound.getVoiceCredits(
         fundingRound.address,
         encodedContributorAddress,
@@ -418,6 +422,7 @@ describe('Funding Round', () => {
       expect(await fundingRound.isCancelled()).to.equal(false);
       expect(await fundingRound.totalVotes()).to.equal(totalVotes)
       expect(await fundingRound.matchingPoolSize()).to.equal(matchingPoolSize)
+      expect(await fundingRound.adjustedMatchingPoolSize()).to.equal(matchingPoolSize)
     });
 
     it('allows owner to finalize round when matching pool is empty', async () => {
@@ -432,6 +437,23 @@ describe('Funding Round', () => {
       await fundingRound.finalize(0, totalSpent, totalSpentSalt)
       expect(await fundingRound.totalVotes()).to.equal(totalVotes)
       expect(await fundingRound.matchingPoolSize()).to.equal(0)
+    })
+
+    it('counts direct token transfers to funding round as matching pool contributions', async () => {
+      await fundingRound.setMaci(maci.address)
+      await fundingRound.connect(contributor).contribute(
+        userKeypair.pubKey.asContractParam(),
+        totalContributions,
+      )
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+      await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
+      await token.transfer(fundingRound.address, matchingPoolSize)
+      await token.connect(contributor).transfer(fundingRound.address, contributionAmount)
+
+      const adjustedMatchingPoolSize = matchingPoolSize.add(contributionAmount)
+      await fundingRound.finalize(matchingPoolSize, totalSpent, totalSpentSalt)
+      expect(await fundingRound.matchingPoolSize()).to.equal(matchingPoolSize)
+      expect(await fundingRound.adjustedMatchingPoolSize()).to.equal(adjustedMatchingPoolSize)
     })
 
     it('reverts if round has been finalized already', async () => {
