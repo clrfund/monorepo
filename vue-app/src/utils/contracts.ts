@@ -1,14 +1,31 @@
 import { Contract } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
 
-export async function getEventArg(
-  transaction: TransactionResponse,
+export async function waitForTransaction(
+  pendingTransaction: Promise<TransactionResponse>,
+  onTransactionHash: (hash: string) => void,
+): Promise<TransactionReceipt> {
+  let transaction
+  try {
+    transaction = await pendingTransaction
+  } catch (error) {
+    throw new Error(error.message)
+  }
+  onTransactionHash(transaction.hash)
+  const transactionReceipt = await transaction.wait()
+  if (transactionReceipt.status !== 1) {
+    throw new Error('Transaction failed')
+  }
+  return transactionReceipt
+}
+
+export function getEventArg(
+  transactionReceipt: TransactionReceipt,
   contract: Contract,
   eventName: string,
   argumentName: string,
-): Promise<any> { // eslint-disable-line @typescript-eslint/no-explicit-any
-  const receipt = await transaction.wait()
-  for (const log of receipt.logs || []) {
+): any {
+  for (const log of transactionReceipt.logs || []) {
     if (log.address != contract.address) {
       continue
     }
