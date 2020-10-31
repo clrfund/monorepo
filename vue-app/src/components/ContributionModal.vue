@@ -12,7 +12,7 @@
       </div>
     </div>
     <div v-if="step === 1">
-      <h3>Step 1 of 4: Approve</h3>
+      <h3>Step 1 of 3: Approve</h3>
       <transaction
         :hash="approvalTxHash"
         :error="approvalTxError"
@@ -20,7 +20,7 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <h3>Step 2 of 4: Contribute</h3>
+      <h3>Step 2 of 3: Contribute</h3>
       <transaction
         :hash="contributionTxHash"
         :error="contributionTxError"
@@ -28,7 +28,7 @@
       ></transaction>
     </div>
     <div v-if="step === 3">
-      <h3>Step 3 of 4: Vote</h3>
+      <h3>Step 3 of 3: Vote</h3>
       <transaction
         :hash="voteTxHash"
         :error="voteTxError"
@@ -36,7 +36,7 @@
       ></transaction>
     </div>
     <div v-if="step === 4">
-      <h3>Step 4 of 4: Success</h3>
+      <h3>Success!</h3>
       <div>
         Successfully contributed {{ contribution | formatAmount }} {{ currentRound.nativeTokenSymbol }} to the funding round. Only the coordinator can know which projects you have supported.
         <br>
