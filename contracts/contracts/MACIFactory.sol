@@ -15,32 +15,73 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
   uint256 private constant VOTE_OPTION_TREE_BASE = 5;
 
   // State
-  TreeDepths public treeDepths = TreeDepths(4, 4, 2);
-  BatchSizes public batchSizes = BatchSizes(4, 4);
-  MaxValues public maxValues = MaxValues(
-    STATE_TREE_BASE ** 4 - 1,
-    MESSAGE_TREE_BASE ** 4 - 1,
-    VOTE_OPTION_TREE_BASE ** 2 - 1
-  );
-  uint256 public signUpDuration = 7 * 86400;
-  uint256 public votingDuration = 7 * 86400;
+  TreeDepths public treeDepths;
+  BatchSizes public batchSizes;
+  MaxValues public maxValues;
   SnarkVerifier public batchUstVerifier;
   SnarkVerifier public qvtVerifier;
+  uint256 public signUpDuration;
+  uint256 public votingDuration;
 
   // Events
   event MaciParametersChanged();
   event MaciDeployed(address _maci);
 
   constructor(
+    uint8 _stateTreeDepth,
+    uint8 _messageTreeDepth,
+    uint8 _voteOptionTreeDepth,
+    uint8 _tallyBatchSize,
+    uint8 _messageBatchSize,
     SnarkVerifier _batchUstVerifier,
-    SnarkVerifier _qvtVerifier
+    SnarkVerifier _qvtVerifier,
+    uint256 _signUpDuration,
+    uint256 _votingDuration
   )
     public
   {
-    batchUstVerifier = _batchUstVerifier;
-    qvtVerifier = _qvtVerifier;
+    _setMaciParameters(
+      _stateTreeDepth,
+      _messageTreeDepth,
+      _voteOptionTreeDepth,
+      _tallyBatchSize,
+      _messageBatchSize,
+      _batchUstVerifier,
+      _qvtVerifier,
+      _signUpDuration,
+      _votingDuration
+    );
   }
 
+  function _setMaciParameters(
+    uint8 _stateTreeDepth,
+    uint8 _messageTreeDepth,
+    uint8 _voteOptionTreeDepth,
+    uint8 _tallyBatchSize,
+    uint8 _messageBatchSize,
+    SnarkVerifier _batchUstVerifier,
+    SnarkVerifier _qvtVerifier,
+    uint256 _signUpDuration,
+    uint256 _votingDuration
+  )
+    internal
+  {
+    treeDepths = TreeDepths(_stateTreeDepth, _messageTreeDepth, _voteOptionTreeDepth);
+    batchSizes = BatchSizes(_tallyBatchSize, _messageBatchSize);
+    maxValues = MaxValues(
+      STATE_TREE_BASE ** treeDepths.stateTreeDepth - 1,
+      MESSAGE_TREE_BASE ** treeDepths.messageTreeDepth - 1,
+      VOTE_OPTION_TREE_BASE ** treeDepths.voteOptionTreeDepth - 1
+    );
+    batchUstVerifier = _batchUstVerifier;
+    qvtVerifier = _qvtVerifier;
+    signUpDuration = _signUpDuration;
+    votingDuration = _votingDuration;
+  }
+
+  /**
+    * @dev Set MACI parameters.
+    */
   function setMaciParameters(
     uint8 _stateTreeDepth,
     uint8 _messageTreeDepth,
@@ -59,17 +100,17 @@ contract MACIFactory is Ownable, MACIParameters, MACISharedObjs {
       _voteOptionTreeDepth >= treeDepths.voteOptionTreeDepth,
       'MACIFactory: Vote option tree depth can not be decreased'
     );
-    treeDepths = TreeDepths(_stateTreeDepth, _messageTreeDepth, _voteOptionTreeDepth);
-    batchSizes = BatchSizes(_tallyBatchSize, _messageBatchSize);
-    maxValues = MaxValues(
-      STATE_TREE_BASE ** treeDepths.stateTreeDepth - 1,
-      MESSAGE_TREE_BASE ** treeDepths.messageTreeDepth - 1,
-      VOTE_OPTION_TREE_BASE ** treeDepths.voteOptionTreeDepth - 1
+    _setMaciParameters(
+      _stateTreeDepth,
+      _messageTreeDepth,
+      _voteOptionTreeDepth,
+      _tallyBatchSize,
+      _messageBatchSize,
+      _batchUstVerifier,
+      _qvtVerifier,
+      _signUpDuration,
+      _votingDuration
     );
-    batchUstVerifier = _batchUstVerifier;
-    qvtVerifier = _qvtVerifier;
-    signUpDuration = _signUpDuration;
-    votingDuration = _votingDuration;
     emit MaciParametersChanged();
   }
 
