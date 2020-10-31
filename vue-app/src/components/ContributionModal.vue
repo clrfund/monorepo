@@ -1,5 +1,16 @@
 <template>
   <div class="modal-body">
+    <div v-if="step === 0">
+      <h3>Contributing</h3>
+      <div>
+        You are about to contribute {{ contribution | formatAmount }} {{ currentRound.nativeTokenSymbol }} to {{ votes.length }} projects.
+        You can re-allocate contributed funds later to different projects but it is not possible to increase the total contribution amount.
+      </div>
+      <div class="btn-row">
+        <button class="btn" @click="$emit('close')">Go back</button>
+        <button class="btn" @click="contribute()">Continue</button>
+      </div>
+    </div>
     <div v-if="step === 1">
       <h3>Step 1 of 4: Approve</h3>
       <transaction
@@ -85,7 +96,7 @@ export default class ContributionModal extends Vue {
   @Prop()
   votes!: [number, BigNumber][]
 
-  step = 1
+  step = 0
 
   approvalTxHash = ''
   approvalTxError = ''
@@ -94,15 +105,26 @@ export default class ContributionModal extends Vue {
   voteTxHash = ''
   voteTxError = ''
 
-  mounted() {
-    this.contribute()
-  }
-
   get currentRound(): RoundInfo {
     return this.$store.state.currentRound
   }
 
-  private async contribute() {
+  getTotal(): BigNumber {
+    const { voiceCreditFactor } = this.currentRound
+    return this.votes.reduce((total: BigNumber, [, voiceCredits]) => {
+      return total.add(voiceCredits.mul(voiceCreditFactor))
+    }, BigNumber.from(0))
+  }
+
+  get contribution(): FixedNumber {
+    return FixedNumber.fromValue(
+      this.getTotal(),
+      this.currentRound.nativeTokenDecimals,
+    )
+  }
+
+  async contribute() {
+    this.step += 1
     const signer: Signer = this.$store.state.currentUser.walletProvider.getSigner()
     const {
       coordinatorPubKey,
@@ -111,9 +133,7 @@ export default class ContributionModal extends Vue {
       maciAddress,
       fundingRoundAddress,
     } = this.currentRound
-    const total = this.votes.reduce((total: BigNumber, [, voiceCredits]) => {
-      return total.add(voiceCredits.mul(voiceCreditFactor))
-    }, BigNumber.from(0))
+    const total = this.getTotal()
     const token = new Contract(nativeTokenAddress, ERC20, signer)
     // Approve transfer (step 1)
     const allowance = await token.allowance(signer.getAddress(), fundingRoundAddress)
@@ -199,20 +219,23 @@ export default class ContributionModal extends Vue {
     }
     this.step += 1
   }
-
-  get contribution(): FixedNumber {
-    return FixedNumber.fromValue(
-      this.$store.state.currentUser.contribution,
-      this.currentRound.nativeTokenDecimals,
-    )
-  }
 }
 </script>
 
 <style scoped lang="scss">
 @import '../styles/vars';
 
+$button-space: 20px;
+
+.btn-row {
+  margin: $button-space auto 0;
+
+  .btn {
+    margin: 0 $button-space;
+  }
+}
+
 .close-btn {
-  margin-top: 20px;
+  margin-top: $button-space;
 }
 </style>
