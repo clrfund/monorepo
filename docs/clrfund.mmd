@@ -6,13 +6,17 @@ sequenceDiagram
     participant Recipient
     participant Factory
     participant MACIFactory
+    participant UserRegistry
+    participant RecipientRegistry
     participant Contributor
     participant FundingRound
     participant MACI
     participant Coordinator
     
     Owner ->> MACIFactory: deploy MACI factory
-    Owner ->> Factory: deploy factory
+    Owner ->> UserRegistry: deploy user registry
+    Owner ->> RecipientRegistry: deploy recipient registry
+    Owner ->> Factory: deploy funding round factory
     Owner ->> MACIFactory: transfer ownership to Factory ( call transferOwnership() )
     Owner ->> Factory: set MACI parameters if necessary ( call setMaciParameters() )
     Coordinator -->> Owner: provide public key
@@ -21,7 +25,7 @@ sequenceDiagram
 
     loop Adding recipients
         Recipient -->> Owner: ask for registration
-        Owner ->> Factory: call addRecipient()
+        Owner ->> RecipientRegistry: call addRecipient()
     end
     
     loop Every round
@@ -34,6 +38,7 @@ sequenceDiagram
         loop Funding
             Note over Contributor, FundingRound: contributor registers with their verified address
             Contributor ->> FundingRound: donate to the pool ( call contribute() )
+            FundingRound ->> UserRegistry: check that user is verified ( call isVerifiedUser() )
             FundingRound ->> MACI: call signUp()
             Note right of Contributor: contributor creates encrypted message(s)
             alt Single message submission
@@ -62,7 +67,7 @@ sequenceDiagram
 
             loop Distribution
                 Recipient ->> FundingRound: submit vote tally, amount of spent voice credits and proofs ( call claimFunds() )
-                FundingRound ->> Factory: find the corresponding vote option index
+                FundingRound ->> RecipientRegistry: find the corresponding vote option index
                 FundingRound ->> MACI: verify the proofs
                 FundingRound ->> Recipient: transfer funds
             end
