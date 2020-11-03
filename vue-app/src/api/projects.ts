@@ -26,11 +26,14 @@ function decodeRecipientAdded(event: Event): Project {
   }
 }
 
-export async function getProjects(atBlock?: number): Promise<Project[]> {
+export async function getProjects(
+  startBlock?: number,
+  endBlock?: number,
+): Promise<Project[]> {
   const registryAddress = await factory.recipientRegistry()
   const registry = new Contract(registryAddress, RecipientRegistry, provider)
   const recipientAddedFilter = registry.filters.RecipientAdded()
-  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0, atBlock)
+  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0, endBlock)
   const recipientRemovedFilter = registry.filters.RecipientRemoved()
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   const projects: Project[] = []
@@ -46,7 +49,7 @@ export async function getProjects(atBlock?: number): Promise<Project[]> {
       return (event.args as any)._recipient === project.address
     })
     if (removed) {
-      if (!atBlock || atBlock && removed.blockNumber <= atBlock) {
+      if (!startBlock || startBlock && removed.blockNumber <= startBlock) {
         // Start block not specified
         // or recipient had been removed before start block
         continue

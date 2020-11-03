@@ -23,6 +23,6 @@ interface IRecipientRegistry {
 
   function setMaxRecipients(uint256 _maxRecipients) external;
 
-  function getRecipientIndex(address _recipient, uint256 _atBlock) external view returns (uint256);
+  function getRecipientIndex(address _recipient, uint256 _startBlock, uint256 _endBlock) external view returns (uint256);
 
 }

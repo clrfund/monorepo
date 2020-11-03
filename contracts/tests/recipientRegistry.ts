@@ -70,8 +70,10 @@ describe('Simple Recipient Registry', () => {
       await expect(registry.addRecipient(recipientAddress, metadata))
         .to.emit(registry, 'RecipientAdded')
         .withArgs(recipientAddress, metadata, 1)
-      const blockNumber = await getCurrentBlockNumber()
-      expect(await registry.getRecipientIndex(recipientAddress, blockNumber)).to.equal(1)
+      const currentBlock = await getCurrentBlockNumber()
+      expect(await registry.getRecipientIndex(
+        recipientAddress, currentBlock, currentBlock,
+      )).to.equal(1)
 
       const anotherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
       // Should increase recipient index for every new recipient
@@ -131,8 +133,10 @@ describe('Simple Recipient Registry', () => {
       await expect(registry.removeRecipient(recipientAddress))
         .to.emit(registry, 'RecipientRemoved')
         .withArgs(recipientAddress)
-      const blockNumber = await getCurrentBlockNumber()
-      expect(await registry.getRecipientIndex(recipientAddress, blockNumber)).to.equal(0)
+      const currentBlock = await getCurrentBlockNumber()
+      expect(await registry.getRecipientIndex(
+        recipientAddress, currentBlock, currentBlock,
+      )).to.equal(0)
     })
 
     it('rejects attempts to remove recipient from anyone except owner', async () => {
@@ -150,41 +154,85 @@ describe('Simple Recipient Registry', () => {
 
     it('should not return recipient index for unregistered recipient', async () => {
       recipientAddress = ZERO_ADDRESS
-      const blockNumber = await getCurrentBlockNumber()
-      expect(await registry.getRecipientIndex(recipientAddress, blockNumber)).to.equal(0)
+      const currentBlock = await getCurrentBlockNumber()
+      expect(await registry.getRecipientIndex(
+        recipientAddress, currentBlock, currentBlock,
+      )).to.equal(0)
     })
 
-    it('should not return recipient index for recipient that has been added after given timestamp', async () => {
-      const timestamp = await getCurrentBlockNumber()
+    it('should not return recipient index for recipient that has been added after the end of round', async () => {
+      const startBlock = await getCurrentBlockNumber()
       await provider.send('evm_increaseTime', [1000])
+      const endBlock = await getCurrentBlockNumber()
       await registry.addRecipient(recipientAddress, metadata)
-      expect(await registry.getRecipientIndex(recipientAddress, timestamp)).to.equal(0)
+      expect(await registry.getRecipientIndex(
+        recipientAddress, startBlock, endBlock,
+      )).to.equal(0)
     })
 
-    it('should return recipient index for recipient that has been removed after given timestamp', async () => {
+    it('should return recipient index for recipient that has been removed after the beginning of round', async () => {
       await registry.addRecipient(recipientAddress, metadata)
-      const addedAt = await getCurrentBlockNumber()
-      await provider.send('evm_increaseTime', [1000])
+      const startBlock = await getCurrentBlockNumber()
       await registry.removeRecipient(recipientAddress)
-      expect(await registry.getRecipientIndex(recipientAddress, addedAt)).to.equal(1)
+      await provider.send('evm_increaseTime', [1000])
+      const endBlock = await getCurrentBlockNumber()
+      expect(await registry.getRecipientIndex(
+        recipientAddress, startBlock, endBlock,
+      )).to.equal(1)
     })
 
     it('allows to re-use index of removed recipient', async () => {
-      await registry.addRecipient(recipientAddress, metadata)
+      // Add recipients up to a limit
+      for (let i = 0; i < MAX_RECIPIENTS; i++) {
+        const recipientName = String(i + 1).padStart(4, '0')
+        recipientAddress = `0x000000000000000000000000000000000000${recipientName}`
+        await registry.addRecipient(recipientAddress, metadata)
+      }
       const blockNumber1 = await getCurrentBlockNumber()
-      await registry.removeRecipient(recipientAddress)
-      const otherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
-      await registry.addRecipient(otherRecipientAddress, metadata)
-      const anotherRecipientAddress = '0xef9e07C93b40681F6a63085Cf276aBA3D868Ac6E'
-      await registry.addRecipient(anotherRecipientAddress, metadata)
+
+      // Replace recipients
+      const removedRecipient1 = '0x0000000000000000000000000000000000000001'
+      const removedRecipient2 = '0x0000000000000000000000000000000000000002'
+      await registry.removeRecipient(removedRecipient1)
+      await registry.removeRecipient(removedRecipient2)
+      const addedRecipient1 = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+      const addedRecipient2 = '0xef9e07C93b40681F6a63085Cf276aBA3D868Ac6E'
+      const addedRecipient3 = '0x927be3E75380CC412148AfE80d9e9D02fF488738'
+      await registry.addRecipient(addedRecipient1, metadata)
+      await registry.addRecipient(addedRecipient2, metadata)
+      await expect(registry.addRecipient(addedRecipient3, metadata))
+        .to.be.revertedWith('RecipientRegistry: Recipient limit reached')
       const blockNumber2 = await getCurrentBlockNumber()
 
-      expect(await registry.getRecipientIndex(recipientAddress, blockNumber1)).to.equal(1)
-      expect(await registry.getRecipientIndex(recipientAddress, blockNumber2)).to.equal(0)
-      expect(await registry.getRecipientIndex(otherRecipientAddress, blockNumber1)).to.equal(0)
-      expect(await registry.getRecipientIndex(otherRecipientAddress, blockNumber2)).to.equal(1)
-      expect(await registry.getRecipientIndex(anotherRecipientAddress, blockNumber1)).to.equal(0)
-      expect(await registry.getRecipientIndex(anotherRecipientAddress, blockNumber2)).to.equal(2)
+      // Recipients removed during the round should still be valid
+      expect(await registry.getRecipientIndex(
+        removedRecipient1, blockNumber1, blockNumber2,
+      )).to.equal(1)
+      expect(await registry.getRecipientIndex(
+        removedRecipient2, blockNumber1, blockNumber2,
+      )).to.equal(2)
+      expect(await registry.getRecipientIndex(
+        addedRecipient1, blockNumber1, blockNumber2,
+      )).to.equal(0)
+      expect(await registry.getRecipientIndex(
+        addedRecipient2, blockNumber1, blockNumber2,
+      )).to.equal(0)
+
+      await provider.send('evm_increaseTime', [1000])
+      const blockNumber3 = await getCurrentBlockNumber()
+      // Recipients removed before the beginning of the round should be replaced
+      expect(await registry.getRecipientIndex(
+        removedRecipient1, blockNumber2, blockNumber3,
+      )).to.equal(0)
+      expect(await registry.getRecipientIndex(
+        removedRecipient2, blockNumber2, blockNumber3,
+      )).to.equal(0)
+      expect(await registry.getRecipientIndex(
+        addedRecipient1, blockNumber2, blockNumber3,
+      )).to.equal(2)
+      expect(await registry.getRecipientIndex(
+        addedRecipient2, blockNumber2, blockNumber3,
+      )).to.equal(1)
     })
   })
 })
