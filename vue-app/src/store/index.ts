@@ -89,7 +89,7 @@ const store: StoreOptions<RootState> = {
         let isVerified = state.currentUser.isVerified
         if (!isVerified) {
           isVerified = await isVerifiedUser(
-            state.currentRound.fundingRoundAddress,
+            state.currentRound.userRegistryAddress,
             state.currentUser.walletAddress,
           )
         }
