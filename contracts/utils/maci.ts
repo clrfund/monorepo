@@ -4,15 +4,15 @@ import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
 
 export class MaciParameters {
 
-  stateTreeDepth!: number
-  messageTreeDepth!: number
-  voteOptionTreeDepth!: number
-  tallyBatchSize!: number
-  messageBatchSize!: number
+  stateTreeDepth = 4
+  messageTreeDepth = 4
+  voteOptionTreeDepth = 2
+  tallyBatchSize = 4
+  messageBatchSize = 4
   batchUstVerifier!: string
   qvtVerifier!: string
-  signUpDuration!: number
-  votingDuration!: number
+  signUpDuration = 7 * 86400
+  votingDuration = 7 * 86400
 
   constructor(parameters: {[name: string]: any} = {}) {
     this.update(parameters)

@@ -2,6 +2,7 @@ import bre from '@nomiclabs/buidler'
 import { Signer, Contract } from 'ethers'
 import { link } from 'ethereum-waffle'
 
+import { MaciParameters } from './maci'
 import MACIFactoryArtifact from '../build/contracts/MACIFactory.json'
 
 const ethers = (bre as any).ethers
@@ -48,11 +49,12 @@ export async function deployMaciFactory(account: Signer): Promise<Contract> {
     linkedBytecode,
     account,
   )
+  const maciParameters = new MaciParameters({
+    batchUstVerifier: batchTreeVerifier.address,
+    qvtVerifier: voteTallyVerifier.address,
+  })
 
-  const maciFactory = await MACIFactory.deploy(
-    batchTreeVerifier.address,
-    voteTallyVerifier.address,
-  )
+  const maciFactory = await MACIFactory.deploy(...maciParameters.values())
   await maciFactory.deployed()
   return maciFactory
 }
