@@ -1,7 +1,7 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h3>Step 1 of 2: Vote</h3>
+      <h3>Reallocate funds</h3>
       <transaction
         :hash="voteTxHash"
         :error="voteTxError"
@@ -9,7 +9,7 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <h3>Step 2 of 2: Success</h3>
+      <h3>Success!</h3>
       <div>Contributed funds have been successfully reallocated.</div>
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h3>Step 1 of 2: Claim funds</h3>
+      <h3>Claim funds</h3>
       <transaction
         :hash="claimTxHash"
         :error="claimTxError"
@@ -9,7 +9,7 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <h3>Step 2 of 2: Success</h3>
+      <h3>Success!</h3>
       <div>{{ amount | formatAmount }} {{ currentRound.nativeTokenSymbol }} has been sent to <code>{{ project.address }}</code></div>
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
