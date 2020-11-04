@@ -207,6 +207,10 @@ a {
   width: 20%;
 }
 
+.vm--modal {
+  background-color: transparent;
+}
+
 .modal-body {
   background-color: $bg-light-color;
   padding: 20px;
