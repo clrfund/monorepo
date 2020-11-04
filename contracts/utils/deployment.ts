@@ -34,9 +34,20 @@ export function linkBytecode(
   return linkable.evm.bytecode.object
 }
 
-export async function deployMaciFactory(account: Signer): Promise<Contract> {
-  const batchTreeVerifier = await deployContract(account, 'BatchUpdateStateTreeVerifier')
-  const voteTallyVerifier = await deployContract(account, 'QuadVoteTallyVerifier')
+const CIRCUITS: {[name: string]: any} = {
+  test: {
+    batchUstVerifier: 'BatchUpdateStateTreeVerifier',
+    qvtVerifier: 'QuadVoteTallyVerifier',
+    treeDepths: { stateTreeDepth: 4, messageTreeDepth: 4, voteOptionTreeDepth: 2 },
+  },
+  small: {
+    batchUstVerifier: 'BatchUpdateStateTreeVerifierSmall',
+    qvtVerifier: 'QuadVoteTallyVerifierSmall',
+    treeDepths: { stateTreeDepth: 8, messageTreeDepth: 11, voteOptionTreeDepth: 3 },
+  },
+}
+
+export async function deployMaciFactory(account: Signer, circuit = 'test'): Promise<Contract> {
   const poseidonT3 = await deployContract(account, 'PoseidonT3')
   const poseidonT6 = await deployContract(account, 'PoseidonT6')
 
@@ -49,9 +60,13 @@ export async function deployMaciFactory(account: Signer): Promise<Contract> {
     linkedBytecode,
     account,
   )
+
+  const batchUstVerifier = await deployContract(account, CIRCUITS[circuit].batchUstVerifier)
+  const qvtVerifier = await deployContract(account, CIRCUITS[circuit].qvtVerifier)
   const maciParameters = new MaciParameters({
-    batchUstVerifier: batchTreeVerifier.address,
-    qvtVerifier: voteTallyVerifier.address,
+    batchUstVerifier: batchUstVerifier.address,
+    qvtVerifier: qvtVerifier.address,
+    ...CIRCUITS[circuit].treeDepths,
   })
 
   const maciFactory = await MACIFactory.deploy(...maciParameters.values())
