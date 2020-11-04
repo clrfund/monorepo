@@ -53,9 +53,5 @@ h2 {
 p {
   font-size: 16px;
   line-height: 30px;
-
-  a {
-    color: $highlight-color;
-  }
 }
 </style>

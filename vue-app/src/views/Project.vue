@@ -166,6 +166,10 @@ export default class ProjectView extends Vue {
 <style scoped lang="scss">
 @import '../styles/vars';
 
+.content-heading {
+  color: $text-color;
+}
+
 .project-image {
   border: $border;
   border-radius: 20px;

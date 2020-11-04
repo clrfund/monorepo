@@ -41,10 +41,6 @@ export default class Transaction extends Vue {
 <style scoped lang="scss">
 @import '../styles/vars';
 
-a {
-  color: $highlight-color;
-}
-
 .error {
   color: $error-color;
   overflow: hidden;

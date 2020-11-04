@@ -68,7 +68,8 @@ html {
 }
 
 a {
-  color: $text-color;
+  color: $highlight-color;
+  cursor: pointer;
   text-decoration: none;
 }
 
