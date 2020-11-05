@@ -9,9 +9,16 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <h3>Step 2 of 3: Link</h3>
-      <div>Please scan the QR code with your BrightID app:</div>
-      <img :src="qrCode" class="qr-code">
+      <h3>Step 2 of 3: Verification</h3>
+      <div>
+        Please scan the QR code or open the link with your BrightID app.
+        <br>
+        Verification of your account may take a few minutes.
+      </div>
+      <img :src="appLinkQrCode" class="qr-code">
+      <div>
+        <a :href="appLink" target="_blank">{{ appLink }}</a>
+      </div>
     </div>
     <div v-if="step === 3">
       <h3>Step 3 of 3: Register</h3>
@@ -32,11 +39,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import QRCode from 'qrcode'
 
 import {
   isSponsoredUser,
   selfSponsor,
-  getBrightIdQrCode,
+  getBrightIdLink,
   getVerification,
   registerUser,
 } from '@/api/bright-id'
@@ -53,7 +61,8 @@ export default class BrightIdModal extends Vue {
 
   step = 1
 
-  qrCode = ''
+  appLink = ''
+  appLinkQrCode = ''
 
   sponsorTxHash = ''
   sponsorTxError = ''
@@ -83,7 +92,8 @@ export default class BrightIdModal extends Vue {
     }
     this.step += 1
     // Verification
-    this.qrCode = await getBrightIdQrCode(currentUser.walletAddress)
+    this.appLink = getBrightIdLink(currentUser.walletAddress)
+    this.appLinkQrCode = await QRCode.toDataURL(this.appLink)
     const verification = await getVerification(currentUser.walletAddress)
     this.step += 1
     // Registration
@@ -106,7 +116,8 @@ export default class BrightIdModal extends Vue {
 @import '../styles/vars';
 
 .qr-code {
-  margin-top: 20px;
+  margin: 15px 0;
+  max-height: 150px;
 }
 
 .close-btn {

@@ -208,7 +208,7 @@ a {
 }
 
 .vm--modal {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 .modal-body {

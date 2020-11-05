@@ -1,7 +1,6 @@
 import { Contract, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { formatBytes32String } from '@ethersproject/strings'
-import QRCode from 'qrcode'
 
 import { BrightIdUserRegistry } from './abi'
 import { provider } from './core'
@@ -29,10 +28,10 @@ export async function selfSponsor(
   return transaction
 }
 
-export async function getBrightIdQrCode(userAddress: string): Promise<string> {
+export function getBrightIdLink(userAddress: string): string {
   const nodeUrl = 'http:%2f%2fnode.brightid.org'
   const deepLink = `brightid://link-verification/${nodeUrl}/${CONTEXT}/${userAddress}`
-  return await QRCode.toDataURL(deepLink)
+  return deepLink
 }
 
 interface Verification {
