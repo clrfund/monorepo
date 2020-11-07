@@ -140,11 +140,15 @@ a {
   border-right: $border;
   box-sizing: border-box;
   flex-shrink: 0;
+  min-width: 150px;
+  max-width: 350px;
   padding: $content-space;
-  width: 300px;
+  width: 25%;
 
   .logo {
+    display: block;
     margin-left: 15%;
+    min-width: 150px - 2 * $content-space;
     max-width: 50%;
   }
 }
@@ -206,8 +210,9 @@ a {
 #user-bar {
   background-color: $bg-light-color;
   flex-shrink: 0;
-  min-width: 300px;
-  width: 20%;
+  min-width: 250px;
+  max-width: 350px;
+  width: 25%;
 }
 
 .vm--modal {
