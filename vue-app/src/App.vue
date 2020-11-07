@@ -25,7 +25,7 @@ import Component from 'vue-class-component'
 
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
-import { LOAD_ROUND_INFO } from '@/store/action-types'
+import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 
 @Component({
   name: 'clr.fund',
@@ -44,6 +44,9 @@ export default class App extends Vue {
     this.$store.dispatch(LOAD_ROUND_INFO)
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
+    }, 60 * 1000)
+    setInterval(() => {
+      this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)
   }
 

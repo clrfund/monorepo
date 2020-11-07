@@ -143,10 +143,13 @@ export default class Cart extends Vue {
     )
     this.refreshContributor()
 
-    // Check verification and token balance every minute
-    setInterval(() => {
-      this.$store.dispatch(LOAD_USER_INFO)
-    }, 60 * 1000)
+    // Reload user info when round info loads or changes
+    this.$store.watch(
+      (state) => state.currentRound?.fundingRoundAddress,
+      () => {
+        this.$store.dispatch(LOAD_USER_INFO)
+      },
+    )
   }
 
   private refreshCart() {
