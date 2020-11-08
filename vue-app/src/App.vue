@@ -1,7 +1,21 @@
 <template>
   <div id="app">
-    <div id="nav-bar">
-      <img class="logo" alt="clr.fund" src="@/assets/clr.svg" />
+    <div id="nav-bar" :class="{'collapsed': navBarCollapsed}">
+      <div id="nav-header">
+        <img
+          class="menu-btn"
+          alt="nav"
+          src="@/assets/menu.svg"
+          @click="toggleNavBar()"
+        >
+        <img class="logo" alt="clr.fund" src="@/assets/clr.svg" />
+        <img
+          class="cart-btn"
+          alt="cart"
+          src="@/assets/cart.svg"
+          @click="toggleUserBar()"
+        >
+      </div>
       <div id="nav-menu">
         <router-link to="/">Projects</router-link>
         <router-link to="/about">About</router-link>
@@ -12,7 +26,7 @@
     <div id="content">
       <router-view />
     </div>
-    <div id="user-bar">
+    <div id="user-bar" :class="{'collapsed': userBarCollapsed}">
       <Profile />
       <Cart />
     </div>
@@ -22,6 +36,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Watch } from 'vue-property-decorator'
 
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
@@ -40,6 +55,10 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 })
 export default class App extends Vue {
 
+  // Only for small screens
+  navBarCollapsed = true
+  userBarCollapsed = true
+
   created() {
     this.$store.dispatch(LOAD_ROUND_INFO)
     setInterval(() => {
@@ -50,6 +69,21 @@ export default class App extends Vue {
     }, 60 * 1000)
   }
 
+  toggleNavBar() {
+    this.userBarCollapsed = true
+    this.navBarCollapsed = !this.navBarCollapsed
+  }
+
+  toggleUserBar() {
+    this.navBarCollapsed = true
+    this.userBarCollapsed = !this.userBarCollapsed
+  }
+
+  @Watch('$route', { immediate: true, deep: true })
+  onNavigation() {
+    this.navBarCollapsed = true
+    this.userBarCollapsed = true
+  }
 }
 </script>
 
@@ -151,6 +185,11 @@ a {
     min-width: 150px - 2 * $content-space;
     max-width: 50%;
   }
+
+  .menu-btn,
+  .cart-btn {
+    display: none;
+  }
 }
 
 #nav-menu {
@@ -250,6 +289,85 @@ a {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+$nav-header-height-sm: 40px;
+$profile-height-sm: 50px;
+
+@media (max-width: 900px) {
+  #app {
+    flex-direction: column;
+  }
+
+  #nav-bar {
+    bottom: $profile-height-sm + $content-space * 2;
+    border-right: none;
+    max-width: 100%;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+
+    .logo {
+      height: $nav-header-height-sm;
+      margin: 0 auto;
+    }
+
+    .menu-btn,
+    .cart-btn {
+      display: block;
+      min-width: 25px;
+      max-width: 20%;
+      width: 25px;
+    }
+
+    .menu-btn {
+      margin-right: 5%;
+    }
+
+    .cart-btn {
+      margin-left: 5%;
+    }
+
+    &.collapsed {
+      bottom: auto;
+
+      #nav-menu {
+        display: none;
+      }
+    }
+  }
+
+  #nav-header {
+    display: flex;
+  }
+
+  #content {
+    margin-bottom: $profile-height-sm + $content-space * 2;
+    margin-top: $nav-header-height-sm + $content-space * 2;
+  }
+
+  #user-bar {
+    bottom: 0;
+    max-width: none;
+    overflow-y: scroll;
+    position: fixed;
+    top: $nav-header-height-sm + $content-space * 2;
+    width: 100%;
+    z-index: 1;
+
+    .cart {
+      min-height: auto;
+    }
+
+    &.collapsed {
+      top: auto;
+
+      .cart {
+        display: none;
+      }
+    }
   }
 }
 </style>
