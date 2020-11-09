@@ -292,16 +292,13 @@ a {
   }
 }
 
-$nav-header-height-sm: 40px;
-$profile-height-sm: 50px;
-
 @media (max-width: 900px) {
   #app {
     flex-direction: column;
   }
 
   #nav-bar {
-    bottom: $profile-height-sm + $content-space * 2;
+    bottom: $profile-image-size + $content-space * 2; /* offset for profile block */
     border-right: none;
     max-width: 100%;
     position: fixed;
@@ -344,8 +341,8 @@ $profile-height-sm: 50px;
   }
 
   #content {
-    margin-bottom: $profile-height-sm + $content-space * 2;
-    margin-top: $nav-header-height-sm + $content-space * 2;
+    margin-bottom: $profile-image-size + $content-space * 2; /* offset for profile block */
+    margin-top: $nav-header-height-sm + $content-space * 2; /* offset for nav header */
   }
 
   #user-bar {
@@ -353,7 +350,7 @@ $profile-height-sm: 50px;
     max-width: none;
     overflow-y: scroll;
     position: fixed;
-    top: $nav-header-height-sm + $content-space * 2;
+    top: $nav-header-height-sm + $content-space * 2; /* offset for nav header */
     width: 100%;
     z-index: 1;
 

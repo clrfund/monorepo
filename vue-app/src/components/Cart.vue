@@ -379,7 +379,7 @@ export default class Cart extends Vue {
 .cart {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 110px);
+  min-height: calc(100vh - #{$profile-image-size + 2 * $content-space});
 }
 
 .cart-item {
