@@ -68,7 +68,8 @@ html {
 }
 
 a {
-  color: $text-color;
+  color: $highlight-color;
+  cursor: pointer;
   text-decoration: none;
 }
 
@@ -204,6 +205,10 @@ a {
   flex-shrink: 0;
   min-width: 300px;
   width: 20%;
+}
+
+.vm--modal {
+  background-color: transparent !important;
 }
 
 .modal-body {

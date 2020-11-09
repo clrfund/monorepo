@@ -7,6 +7,7 @@ import { provider, factory } from './core'
 
 export interface RoundInfo {
   fundingRoundAddress: string;
+  userRegistryAddress: string;
   maciAddress: string;
   recipientTreeDepth: number;
   startBlock: number;
@@ -41,7 +42,24 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     FundingRound,
     provider,
   )
-  const maciAddress = await fundingRound.maci()
+  const [
+    maciAddress,
+    nativeTokenAddress,
+    userRegistryAddress,
+    startBlock,
+    voiceCreditFactor,
+    isFinalized,
+    isCancelled,
+  ] = await Promise.all([
+    fundingRound.maci(),
+    fundingRound.nativeToken(),
+    fundingRound.verifiedUserRegistry(),
+    fundingRound.startBlock(),
+    fundingRound.voiceCreditFactor(),
+    fundingRound.isFinalized(),
+    fundingRound.isCancelled(),
+  ])
+
   const maci = new Contract(maciAddress, MACI, provider)
   const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
   const signUpDeadline = DateTime.fromSeconds(
@@ -55,8 +73,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     BigInt(coordinatorPubKeyRaw.x),
     BigInt(coordinatorPubKeyRaw.y),
   ])
-  const startBlock = (await fundingRound.startBlock()).toNumber()
-  const nativeTokenAddress = await fundingRound.nativeToken()
+
   const nativeToken = new Contract(
     nativeTokenAddress,
     ERC20,
@@ -64,11 +81,8 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   )
   const nativeTokenSymbol = await nativeToken.symbol()
   const nativeTokenDecimals = await nativeToken.decimals()
-  const voiceCreditFactor = await fundingRound.voiceCreditFactor()
 
   const now = DateTime.local()
-  const isFinalized = await fundingRound.isFinalized()
-  const isCancelled = await fundingRound.isCancelled()
   let status: string
   let matchingPool: BigNumber
   if (isCancelled) {
@@ -101,9 +115,10 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
 
   return {
     fundingRoundAddress,
+    userRegistryAddress,
     maciAddress,
     recipientTreeDepth,
-    startBlock,
+    startBlock: startBlock.toNumber(),
     coordinatorPubKey,
     nativeTokenAddress,
     nativeTokenSymbol,

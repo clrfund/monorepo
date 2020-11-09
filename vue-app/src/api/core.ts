@@ -12,3 +12,7 @@ export const factory = new ethers.Contract(
   FundingRoundFactory,
   provider,
 )
+export const userRegistryType = process.env.VUE_APP_USER_REGISTRY_TYPE
+if (!['simple', 'brightid'].includes(userRegistryType as string)) {
+  throw new Error('invalid user registry type')
+}

@@ -31,6 +31,9 @@
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
+      <div v-if="canRegisterWithBrightId()" class="brightid-register">
+        <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
+      </div>
       <button
         class="btn submit-btn"
         :disabled="errorMessage !== null"
@@ -55,10 +58,12 @@ import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
 import { Keypair, PrivKey } from 'maci-domainobjs'
 
+import BrightIdModal from '@/components/BrightIdModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 
 import { MAX_CONTRIBUTION_AMOUNT, CartItem, Contributor } from '@/api/contributions'
+import { userRegistryType } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { storage } from '@/api/storage'
 import { User } from '@/api/user'
@@ -324,6 +329,22 @@ export default class Cart extends Vue {
     }
   }
 
+  canRegisterWithBrightId(): boolean {
+    return userRegistryType === 'brightid' && this.$store.state.currentUser?.isVerified === false
+  }
+
+  registerWithBrightId(): void {
+    this.$modal.show(
+      BrightIdModal,
+      { },
+      {
+        clickToClose: false,
+        height: 'auto',
+        width: 500,
+      },
+    )
+  }
+
   get total(): number {
     const decimals = this.$store.state.currentRound.nativeTokenDecimals
     return FixedNumber.fromValue(this.getTotal(), decimals).toUnsafeFloat()
@@ -427,14 +448,19 @@ $project-image-size: 50px;
   box-sizing: border-box;
   margin-top: auto;
   padding: $content-space;
+  text-align: center;
   width: 100%;
 
   .submit-error {
-    padding: 15px 0;
-    text-align: center;
+    padding: 15px 0 0;
+  }
+
+  .brightid-register {
+    padding-top: 5px;
   }
 
   .submit-btn {
+    margin-top: 15px;
     width: 100%;
   }
 }

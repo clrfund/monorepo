@@ -114,6 +114,7 @@ export default class ProjectListItem extends Vue {
 }
 
 .project-name {
+  color: $text-color;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

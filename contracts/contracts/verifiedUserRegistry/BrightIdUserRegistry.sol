@@ -3,7 +3,7 @@ pragma solidity ^0.5.17;
 import './IVerifiedUserRegistry.sol';
 import '@openzeppelin/contracts/ownership/Ownable.sol';
 
-contract BrightIDUserRegistry is Ownable, IVerifiedUserRegistry {
+contract BrightIdUserRegistry is Ownable, IVerifiedUserRegistry {
     string private constant ERROR_NEWER_VERIFICATION = 'NEWER VERIFICATION REGISTERED BEFORE';
     string private constant ERROR_NOT_AUTHORIZED = 'NOT AUTHORIZED';
     string private constant ERROR_INVALID_VERIFIER = 'INVALID VERIFIER';
@@ -19,7 +19,7 @@ contract BrightIDUserRegistry is Ownable, IVerifiedUserRegistry {
     mapping(address => Verification) public verifications;
 
     event SetBrightIdSettings(bytes32 context, address verifier);
-    event Sponsor(address addr);
+    event Sponsor(address indexed addr);
 
     /**
      * @param _context BrightID context used for verifying users

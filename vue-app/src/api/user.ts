@@ -3,7 +3,7 @@ import makeBlockie from 'ethereum-blockies-base64'
 import { BigNumber, Contract } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 
-import { FundingRound, VerifiedUserRegistry, ERC20 } from './abi'
+import { VerifiedUserRegistry, ERC20 } from './abi'
 import { ipfsGatewayUrl, provider } from './core'
 
 export interface User {
@@ -27,16 +27,10 @@ export async function getProfileImageUrl(walletAddress: string): Promise<string 
 }
 
 export async function isVerifiedUser(
-  fundingRoundAddress: string,
+  userRegistryAddress: string,
   walletAddress: string,
 ): Promise<boolean> {
-  const fundingRound = new Contract(
-    fundingRoundAddress,
-    FundingRound,
-    provider,
-  )
-  const registryAddress = await fundingRound.verifiedUserRegistry()
-  const registry = new Contract(registryAddress, VerifiedUserRegistry, provider)
+  const registry = new Contract(userRegistryAddress, VerifiedUserRegistry, provider)
   return await registry.isVerifiedUser(walletAddress)
 }
 
