@@ -103,37 +103,51 @@ export default class ProjectList extends Vue {
   flex-wrap: wrap;
   font-size: 12px;
   margin-bottom: $content-space;
+}
 
-  .round-info-item {
-    border-right: $border;
-    border-top: $border;
-    box-sizing: border-box;
-    flex: 0 0 25%;
-    overflow: hidden;
-    padding: 10px $content-space;
+.round-info-item {
+  border-right: $border;
+  border-top: $border;
+  box-sizing: border-box;
+  flex: 0 0 25%;
+  overflow: hidden;
+  padding: 10px $content-space;
 
-    &:nth-child(4n + 1) {
-      padding-left: 0;
-    }
-
-    &:nth-child(4n + 0) {
-      border-right: none;
-    }
+  &:nth-child(4n + 1) {
+    padding-left: 0;
   }
 
-  .round-info-title {
-    margin-bottom: 5px;
+  &:nth-child(4n + 0) {
+    border-right: none;
   }
+}
 
-  .round-info-value {
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.round-info-title {
+  margin-bottom: 5px;
+}
+
+.round-info-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .project-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: $content-space;
+}
+
+@media (max-width: 1150px) {
+  .round-info-item {
+    flex: 0 0 50%;
+
+    &:nth-child(2n+1) {
+      padding-left: 0;
+    }
+
+    &:nth-child(2n) {
+      border-right: none;
+    }
+  }
 }
 </style>
