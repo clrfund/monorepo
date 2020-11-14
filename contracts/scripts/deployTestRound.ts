@@ -61,9 +61,7 @@ async function main() {
   // Add to matching pool
   const poolContributionAmount = UNIT.mul(10)
   const poolContributorToken = token.connect(poolContributor);
-  await poolContributorToken.approve(factory.address, poolContributionAmount);
-  const poolContributorFactory = factory.connect(poolContributor);
-  await poolContributorFactory.contributeMatchingFunds(poolContributionAmount)
+  await poolContributorToken.transfer(factory.address, poolContributionAmount)
 
   // Add contributors
   const verifiedUserRegistryAddress = await factory.verifiedUserRegistry()

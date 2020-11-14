@@ -6,6 +6,7 @@ pragma experimental ABIEncoderV2;
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
+import '@openzeppelin/contracts/utils/EnumerableSet.sol';
 
 import 'maci-contracts/sol/MACI.sol';
 import 'maci-contracts/sol/MACISharedObjs.sol';
@@ -18,6 +19,7 @@ import './MACIFactory.sol';
 import './FundingRound.sol';
 
 contract FundingRoundFactory is Ownable, MACISharedObjs {
+  using EnumerableSet for EnumerableSet.AddressSet;
   using SafeERC20 for ERC20;
 
   // State
@@ -29,10 +31,12 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   IRecipientRegistry public recipientRegistry;
   PubKey public coordinatorPubKey;
 
+  EnumerableSet.AddressSet private fundingSources;
   FundingRound[] private rounds;
 
   // Events
-  event MatchingPoolContribution(address indexed _sender, uint256 _amount);
+  event FundingSourceAdded(address _source);
+  event FundingSourceRemoved(address _source);
   event RoundStarted(address _round);
   event RoundFinalized(address _round);
   event TokenChanged(address _token);
@@ -51,14 +55,29 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   }
 
   /**
-    * @dev Contribute tokens to the matching pool.
+    * @dev Add matching funds source.
+    * @param _source Address of the funding source.
     */
-  function contributeMatchingFunds(uint256 _amount)
+  function addFundingSource(address _source)
     external
+    onlyOwner
   {
-    require(address(nativeToken) != address(0), 'Factory: Native token is not set');
-    nativeToken.safeTransferFrom(msg.sender, address(this), _amount);
-    emit MatchingPoolContribution(msg.sender, _amount);
+    bool result = fundingSources.add(_source);
+    require(result, 'Factory: Funding source already added');
+    emit FundingSourceAdded(_source);
+  }
+
+  /**
+    * @dev Remove matching funds source.
+    * @param _source Address of the funding source.
+    */
+  function removeFundingSource(address _source)
+    external
+    onlyOwner
+  {
+    bool result = fundingSources.remove(_source);
+    require(result, 'Factory: Funding source not found');
+    emit FundingSourceRemoved(_source);
   }
 
   function getCurrentRound()
@@ -148,9 +167,19 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   {
     FundingRound currentRound = getCurrentRound();
     require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
-    uint256 matchingPoolSize = currentRound.nativeToken().balanceOf(address(this));
+    ERC20 roundToken = currentRound.nativeToken();
+    // Factory contract is the default funding source
+    uint256 matchingPoolSize = roundToken.balanceOf(address(this));
     if (matchingPoolSize > 0) {
-      nativeToken.safeTransfer(address(currentRound), matchingPoolSize);
+      roundToken.safeTransfer(address(currentRound), matchingPoolSize);
+    }
+    // Pull funds from other funding sources
+    for (uint256 index = 0; index < fundingSources.length(); index++) {
+      address fundingSource = fundingSources.at(index);
+      uint256 contribution = roundToken.allowance(fundingSource, address(this));
+      if (contribution > 0) {
+        roundToken.safeTransferFrom(fundingSource, address(currentRound), contribution);
+      }
     }
     currentRound.finalize(_totalSpent, _totalSpentSalt);
     emit RoundFinalized(address(currentRound));

@@ -72,50 +72,53 @@ describe('Funding Round Factory', () => {
       .withArgs(deployer.address, coordinator.address)
   })
 
-  describe('contributing to matching pool', () => {
-    const contributionAmount = UNIT.mul(10)
-
-    it('allows user to contribute to matching pool', async () => {
-      await factory.setToken(token.address);
-      const tokenAsContributor = token.connect(contributor);
-      await tokenAsContributor.approve(
-        factory.address,
-        contributionAmount,
-      );
-      const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contributeMatchingFunds(contributionAmount))
-        .to.emit(factory, 'MatchingPoolContribution')
-        .withArgs(contributor.address, contributionAmount);
-      expect(await token.balanceOf(factory.address)).to.equal(contributionAmount);
-    });
-
-    it('rejects contribution if token address is not set', async () => {
-      const tokenAsContributor = token.connect(contributor);
-      await tokenAsContributor.approve(
-        factory.address,
-        contributionAmount,
-      );
-      const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contributeMatchingFunds(contributionAmount))
-        .to.be.revertedWith('Factory: Native token is not set');
-    });
-
-    it('requires approval', async () => {
-      await factory.setToken(token.address);
-      const factoryAsContributor = factory.connect(contributor);
-      await expect(factoryAsContributor.contributeMatchingFunds(contributionAmount))
-        .to.be.revertedWith('revert ERC20: transfer amount exceeds allowance');
-    });
-
-    it('accepts direct token transfer', async () => {
-      await factory.setToken(token.address)
-      const tokenAsContributor = token.connect(contributor)
-      await expect(tokenAsContributor.transfer(factory.address, contributionAmount))
-        .to.emit(token, 'Transfer')
-        .withArgs(contributor.address, factory.address, contributionAmount)
-      expect(await token.balanceOf(factory.address)).to.equal(contributionAmount)
+  describe('managing funding sources', () => {
+    it('allows owner to add funding source', async () => {
+      await expect(factory.addFundingSource(contributor.address))
+        .to.emit(factory, 'FundingSourceAdded')
+        .withArgs(contributor.address)
     })
-  });
+
+    it('allows only owner to add funding source', async () => {
+      await expect(factory.connect(contributor).addFundingSource(contributor.address))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('reverts if funding source is already added', async () => {
+      await factory.addFundingSource(contributor.address)
+      await expect(factory.addFundingSource(contributor.address))
+        .to.be.revertedWith('Factory: Funding source already added')
+    })
+
+    it('allows owner to remove funding source', async () => {
+      await factory.addFundingSource(contributor.address)
+      await expect(factory.removeFundingSource(contributor.address))
+        .to.emit(factory, 'FundingSourceRemoved')
+        .withArgs(contributor.address)
+    })
+
+    it('allows only owner to remove funding source', async () => {
+      await factory.addFundingSource(contributor.address)
+      await expect(factory.connect(contributor).removeFundingSource(contributor.address))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('reverts if funding source is already removed', async () => {
+      await factory.addFundingSource(contributor.address)
+      await factory.removeFundingSource(contributor.address)
+      await expect(factory.removeFundingSource(contributor.address))
+        .to.be.revertedWith('Factory: Funding source not found')
+    })
+  })
+
+  it('allows direct contributions to the matching pool', async () => {
+    const contributionAmount = UNIT.mul(10)
+    await factory.setToken(token.address)
+    await expect(token.connect(contributor).transfer(factory.address, contributionAmount))
+      .to.emit(token, 'Transfer')
+      .withArgs(contributor.address, factory.address, contributionAmount)
+    expect(await token.balanceOf(factory.address)).to.equal(contributionAmount)
+  })
 
   it('sets MACI parameters', async () => {
     maciParameters.update({ voteOptionTreeDepth: 3 })
@@ -211,17 +214,11 @@ describe('Funding Round Factory', () => {
     beforeEach(async () => {
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
-      const tokenAsContributor = token.connect(contributor)
-      await tokenAsContributor.approve(
-        factory.address,
-        contributionAmount,
-      )
       roundDuration = maciParameters.signUpDuration + maciParameters.votingDuration + 10
     })
 
     it('allows owner to finalize round', async () => {
-      const factoryAsContributor = factory.connect(contributor);
-      await factoryAsContributor.contributeMatchingFunds(contributionAmount)
+      await token.connect(contributor).transfer(factory.address, contributionAmount)
       await factory.deployNewRound();
       await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
@@ -229,6 +226,16 @@ describe('Funding Round Factory', () => {
     })
 
     it('allows owner to finalize round even without matching funds', async () => {
+      await factory.deployNewRound()
+      await provider.send('evm_increaseTime', [roundDuration])
+      await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('FundingRound: Votes has not been tallied')
+    })
+
+    it('pulls funds from funding sources', async () => {
+      await factory.addFundingSource(contributor.address)
+      token.connect(contributor).approve(factory.address, contributionAmount)
+      await factory.addFundingSource(deployer.address) // Not a funding source
       await factory.deployNewRound()
       await provider.send('evm_increaseTime', [roundDuration])
       await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
