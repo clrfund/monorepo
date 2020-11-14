@@ -1,7 +1,8 @@
-pragma solidity ^0.5.8;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: GPL-3.0
 
-import '@openzeppelin/contracts/ownership/Ownable.sol';
+pragma solidity ^0.6.12;
+
+import '@openzeppelin/contracts/access/Ownable.sol';
 
 import './IVerifiedUserRegistry.sol';
 
@@ -45,6 +46,7 @@ contract SimpleUserRegistry is Ownable, IVerifiedUserRegistry {
     * @dev Check if the user is verified.
     */
   function isVerifiedUser(address _user)
+    override
     external
     view
     returns (bool)

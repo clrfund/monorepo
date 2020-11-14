@@ -1,7 +1,9 @@
-pragma solidity ^0.5.8;
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
-import '@openzeppelin/contracts/ownership/Ownable.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 import 'maci-contracts/sol/MACI.sol';
 import 'maci-contracts/sol/MACIParameters.sol';
 import 'maci-contracts/sol/MACISharedObjs.sol';

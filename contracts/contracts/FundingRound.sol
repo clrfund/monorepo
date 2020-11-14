@@ -1,8 +1,10 @@
-pragma solidity ^0.5.8;
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
-import '@openzeppelin/contracts/ownership/Ownable.sol';
-import '@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
 import 'maci-contracts/sol/MACI.sol';
@@ -14,7 +16,7 @@ import './verifiedUserRegistry/IVerifiedUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 
 contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoiceCreditProxy {
-  using SafeERC20 for ERC20Detailed;
+  using SafeERC20 for ERC20;
 
   // Constants
   uint256 private constant MAX_VOICE_CREDITS = 10 ** 9;  // MACI allows 2 ** 32 voice credits max
@@ -38,7 +40,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
 
   address public coordinator;
   MACI public maci;
-  ERC20Detailed public nativeToken;
+  ERC20 public nativeToken;
   IVerifiedUserRegistry public verifiedUserRegistry;
   IRecipientRegistry public recipientRegistry;
   string public tallyHash;
@@ -60,7 +62,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @param _coordinator Address of the coordinator.
     */
   constructor(
-    ERC20Detailed _nativeToken,
+    ERC20 _nativeToken,
     IVerifiedUserRegistry _verifiedUserRegistry,
     IRecipientRegistry _recipientRegistry,
     address _coordinator
@@ -134,6 +136,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     address /* _caller */,
     bytes memory _data
   )
+    override
     public
   {
     require(msg.sender == address(maci), 'FundingRound: Only MACI contract can register voters');
@@ -154,6 +157,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     address /* _caller */,
     bytes memory _data
   )
+    override
     public
     view
     returns (uint256)

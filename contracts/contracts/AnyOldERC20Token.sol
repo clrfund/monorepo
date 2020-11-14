@@ -1,15 +1,13 @@
-pragma solidity ^0.5.8;
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.6.12;
 
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol';
 
-
-// Note: Probably won't need to create this token
-// as long as the funds from EF arrive in time
-contract AnyOldERC20Token is ERC20, ERC20Detailed {
+contract AnyOldERC20Token is ERC20 {
   constructor(uint256 initialSupply)
     public
-    ERC20Detailed('Any old ERC20 token', 'AOE', 18)
+    ERC20('Any old ERC20 token', 'AOE')
   {
     _mint(msg.sender, initialSupply);
   }
