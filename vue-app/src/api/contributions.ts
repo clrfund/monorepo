@@ -35,3 +35,23 @@ export async function getContributionAmount(
   }
   return event.args._amount
 }
+
+export async function getTotalContributed(
+  fundingRoundAddress: string,
+): Promise<BigNumber> {
+  const fundingRound = new Contract(
+    fundingRoundAddress,
+    FundingRound,
+    provider,
+  )
+  const filter = fundingRound.filters.Contribution()
+  const events = await fundingRound.queryFilter(filter, 0)
+  let result = BigNumber.from(0)
+  events.forEach(event => {
+    if (!event.args) {
+      return
+    }
+    result = result.add(event.args._amount)
+  })
+  return result
+}

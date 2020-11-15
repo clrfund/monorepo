@@ -148,7 +148,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     if (matchingPoolSize > 0) {
       nativeToken.transfer(address(currentRound), matchingPoolSize);
     }
-    currentRound.finalize(matchingPoolSize, _totalSpent, _totalSpentSalt);
+    currentRound.finalize(_totalSpent, _totalSpentSalt);
     emit RoundFinalized(address(currentRound));
   }
 

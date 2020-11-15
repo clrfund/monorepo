@@ -4,6 +4,7 @@ import { PubKey } from 'maci-domainobjs'
 
 import { FundingRound, MACI, ERC20 } from './abi'
 import { provider, factory } from './core'
+import { getTotalContributed } from './contributions'
 
 export interface RoundInfo {
   fundingRoundAddress: string;
@@ -84,12 +85,15 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
 
   const now = DateTime.local()
   let status: string
+  let contributions: BigNumber
   let matchingPool: BigNumber
   if (isCancelled) {
     status = RoundStatus.Cancelled
+    contributions = BigNumber.from(0)
     matchingPool = BigNumber.from(0)
   } else if (isFinalized) {
     status = RoundStatus.Finalized
+    contributions = (await fundingRound.totalSpent()).mul(voiceCreditFactor)
     matchingPool = await fundingRound.matchingPoolSize()
   } else {
     if (now < signUpDeadline) {
@@ -99,18 +103,10 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     } else {
       status = RoundStatus.Tallying
     }
+    contributions = await getTotalContributed(fundingRoundAddress)
     matchingPool = await nativeToken.balanceOf(factory.address)
   }
 
-  const contributionFilter = fundingRound.filters.Contribution()
-  const contributionEvents = await fundingRound.queryFilter(contributionFilter, 0)
-  let contributions = BigNumber.from(0)
-  contributionEvents.forEach(event => {
-    if (!event.args) {
-      return
-    }
-    contributions = contributions.add(event.args._amount)
-  })
   const totalFunds = matchingPool.add(contributions)
 
   return {
