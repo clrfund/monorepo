@@ -15,6 +15,8 @@ async function main() {
     deployer,
   )
   const recipientRegistry = await SimpleRecipientRegistry.deploy()
+  await recipientRegistry.setController()
+  await recipientRegistry.setMaxRecipients(24)
 
   const FundingRoundFactory = await ethers.getContractFactory(
     'FundingRoundFactory',

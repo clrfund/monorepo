@@ -33,6 +33,8 @@ describe('Funding Round Factory', () => {
 
     const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
     recipientRegistry = await SimpleRecipientRegistry.deploy()
+    await recipientRegistry.setController()
+    await recipientRegistry.setMaxRecipients(24)
 
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
     factory = await FundingRoundFactory.deploy(
@@ -58,7 +60,7 @@ describe('Funding Round Factory', () => {
     expect(await factory.nativeToken()).to.equal(ZERO_ADDRESS)
     expect(await factory.maciFactory()).to.equal(maciFactory.address)
     expect(await factory.recipientRegistry()).to.equal(recipientRegistry.address)
-    expect(await recipientRegistry.controller()).to.equal(factory.address)
+    expect(await recipientRegistry.controller()).to.equal(deployer.address)
     expect(await recipientRegistry.maxRecipients())
       .to.equal(5 ** maciParameters.voteOptionTreeDepth - 1)
   })
@@ -118,8 +120,8 @@ describe('Funding Round Factory', () => {
     maciParameters.update({ voteOptionTreeDepth: 3 })
     await expect(factory.setMaciParameters(...maciParameters.values()))
       .to.emit(maciFactory, 'MaciParametersChanged')
-    expect(await recipientRegistry.maxRecipients())
-      .to.equal(5 ** maciParameters.voteOptionTreeDepth - 1)
+    const treeDepths = await maciFactory.treeDepths()
+    expect(treeDepths.voteOptionTreeDepth).to.equal(3)
   });
 
   it('allows only owner to set MACI parameters', async () => {
