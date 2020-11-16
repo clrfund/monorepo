@@ -19,7 +19,7 @@ use(solidity);
 
 describe('Funding Round', () => {
   const provider = waffle.provider;
-  const [, deployer, coordinator, contributor, recipient] = provider.getWallets()
+  const [, deployer, coordinator, contributor, anotherContributor, recipient] = provider.getWallets()
 
   const coordinatorPubKey = (new Keypair()).pubKey;
   const signUpDuration = 86400 * 7;  // Default duration in MACI factory
@@ -53,6 +53,7 @@ describe('Funding Round', () => {
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer);
     token = await Token.deploy(tokenInitialSupply);
     await token.transfer(contributor.address, tokenInitialSupply.div(4))
+    await token.transfer(anotherContributor.address, tokenInitialSupply.div(4))
     await token.transfer(coordinator.address, tokenInitialSupply.div(4))
 
     verifiedUserRegistry = await deployMockContract(deployer, IVerifiedUserRegistryArtifact.abi);
@@ -611,26 +612,33 @@ describe('Funding Round', () => {
 
   describe('withdrawing funds', () => {
     const userPubKey = userKeypair.pubKey.asContractParam()
+    const anotherUserPubKey = userKeypair.pubKey.asContractParam()
     const contributionAmount = UNIT.mul(10)
-    let tokenAsContributor: Contract;
     let fundingRoundAsContributor: Contract;
 
     beforeEach(async () => {
-      tokenAsContributor = token.connect(contributor);
       fundingRoundAsContributor = fundingRound.connect(contributor);
       await fundingRound.setMaci(maci.address);
-      await tokenAsContributor.approve(
+      await token.connect(contributor).approve(
         fundingRound.address,
         contributionAmount,
-      );
+      )
+      await token.connect(anotherContributor).approve(
+        fundingRound.address,
+        contributionAmount,
+      )
     });
 
-    it('allows contributor to withdraw funds', async () => {
+    it('allows contributors to withdraw funds', async () => {
       await fundingRoundAsContributor.contribute(userPubKey, contributionAmount);
+      await fundingRound.connect(anotherContributor)
+        .contribute(anotherUserPubKey, contributionAmount)
       await fundingRound.cancel();
+
       await expect(fundingRoundAsContributor.withdrawContribution())
         .to.emit(fundingRound, 'ContributionWithdrawn')
         .withArgs(contributor.address);
+      await fundingRound.connect(anotherContributor).withdrawContribution()
       expect(await token.balanceOf(fundingRound.address))
         .to.equal(0);
     });
@@ -646,6 +654,18 @@ describe('Funding Round', () => {
       await expect(fundingRoundAsContributor.withdrawContribution())
         .to.be.revertedWith('FundingRound: Nothing to withdraw');
     });
+
+    it('reverts if funds are already withdrawn', async () => {
+      await fundingRound.connect(contributor)
+        .contribute(userPubKey, contributionAmount)
+      await fundingRound.connect(anotherContributor)
+        .contribute(anotherUserPubKey, contributionAmount)
+      await fundingRound.cancel()
+
+      await fundingRound.connect(contributor).withdrawContribution()
+      await expect(fundingRound.connect(contributor).withdrawContribution())
+        .to.be.revertedWith('FundingRound: Nothing to withdraw')
+    })
   });
 
   describe('claiming funds', () => {

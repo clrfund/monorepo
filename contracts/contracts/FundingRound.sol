@@ -189,6 +189,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     // Reconstruction of exact contribution amount from VCs may not be possible due to a loss of precision
     uint256 amount = contributors[msg.sender].voiceCredits * voiceCreditFactor;
     require(amount > 0, 'FundingRound: Nothing to withdraw');
+    contributors[msg.sender].voiceCredits = 0;
     nativeToken.transfer(msg.sender, amount);
     emit ContributionWithdrawn(msg.sender);
   }
