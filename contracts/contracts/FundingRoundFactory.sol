@@ -46,9 +46,6 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     maciFactory = _maciFactory;
     verifiedUserRegistry = _verifiedUserRegistry;
     recipientRegistry = _recipientRegistry;
-    recipientRegistry.setController();
-    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
-    recipientRegistry.setMaxRecipients(maxVoteOptions);
   }
 
   /**
@@ -98,8 +95,6 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
       _signUpDuration,
       _votingDuration
     );
-    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
-    recipientRegistry.setMaxRecipients(maxVoteOptions);
   }
 
   /**

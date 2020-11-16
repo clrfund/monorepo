@@ -55,6 +55,8 @@ describe('End-to-end Tests', function () {
     verifiedUserRegistry = await SimpleUserRegistry.deploy()
     const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
     recipientRegistry = await SimpleRecipientRegistry.deploy()
+    await recipientRegistry.setController()
+    await recipientRegistry.setMaxRecipients(24)
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
     fundingRoundFactory = await FundingRoundFactory.deploy(
       maciFactory.address,
