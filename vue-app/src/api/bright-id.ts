@@ -34,40 +34,33 @@ export function getBrightIdLink(userAddress: string): string {
   return deepLink
 }
 
-interface Verification {
+export interface Verification {
   unique: boolean;
   contextIds: string[];
   sig: { r: string; s: string; v: number };
   timestamp: number;
 }
 
-async function checkVerification(userAddress: string): Promise<Verification | null> {
-  const apiUrl = `${NODE_URL}/verifications/clr.fund/${userAddress}?signed=eth&timestamp=seconds`
-  const response = await fetch(apiUrl)
-  if (response.status === 200) {
-    const data = await response.json()
-    return data['data']['unique'] ? data['data'] : null
-  } else if (response.status === 400 || response.status === 404) {
-    return null
-  } else {
-    throw new Error('BrightID node is not available')
+export class BrightIdError extends Error {
+
+  code?: number
+
+  constructor(code?: number) {
+    const message = code ? `BrightID error ${code}` : 'Unexpected error'
+    super(message)
+    this.code = code
   }
 }
 
-export async function getVerification(userAddress: string): Promise<Verification> {
-  const verification = await checkVerification(userAddress)
-  if (verification !== null) {
-    return verification
+export async function getVerification(userAddress: string): Promise<Verification | null> {
+  const apiUrl = `${NODE_URL}/verifications/clr.fund/${userAddress}?signed=eth&timestamp=seconds`
+  const response = await fetch(apiUrl)
+  const data = await response.json()
+  if (data['error']) {
+    throw new BrightIdError(data['errorNum'])
+  } else {
+    return data['data']['unique'] ? data['data'] : null
   }
-  return await new Promise((resolve) => {
-    const intervalId = setInterval(async () => {
-      const verification = await checkVerification(userAddress)
-      if (verification) {
-        clearInterval(intervalId)
-        resolve(verification)
-      }
-    }, 10000)
-  })
 }
 
 export async function registerUser(
