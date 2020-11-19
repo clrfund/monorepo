@@ -74,6 +74,7 @@ import {
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
 } from '@/store/mutation-types'
+import { formatAmount } from '@/utils/amounts'
 
 const CART_STORAGE_KEY = 'cart'
 const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
@@ -311,7 +312,11 @@ export default class Cart extends Vue {
         } else if (currentUser.balance === null) {
           return '' // No error: waiting for balance
         } else if (total.gt(currentUser.balance)) {
-          return `Insufficient ${currentRound.nativeTokenSymbol} balance`
+          const balanceDisplay = formatAmount(
+            currentUser.balance,
+            currentRound.nativeTokenDecimals,
+          )
+          return `Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}`
         } else if (this.isGreaterThanMax()) {
           return 'Contribution amount is too large'
         } else {
