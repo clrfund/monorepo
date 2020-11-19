@@ -11,6 +11,7 @@ contract BrightIdUserRegistry is Ownable, IVerifiedUserRegistry {
 
     bytes32 public context;
     address public verifier;
+    bytes32 public verificationHash;
 
     struct Verification {
         uint256 time;
@@ -18,19 +19,21 @@ contract BrightIdUserRegistry is Ownable, IVerifiedUserRegistry {
     }
     mapping(address => Verification) public verifications;
 
-    event SetBrightIdSettings(bytes32 context, address verifier);
+    event SetBrightIdSettings(bytes32 context, address verifier, bytes32 verificationHash);
     event Sponsor(address indexed addr);
 
     /**
      * @param _context BrightID context used for verifying users
      * @param _verifier BrightID verifier address that signs BrightID verifications
+     * @param _verificationHash sha256 of the verification expression
      */
-    constructor(bytes32 _context, address _verifier) public {
+    constructor(bytes32 _context, address _verifier, bytes32 _verificationHash) public {
         // ecrecover returns zero on error
         require(_verifier != address(0), ERROR_INVALID_VERIFIER);
 
         context = _context;
         verifier = _verifier;
+        verificationHash = _verificationHash;
     }
 
     /**
@@ -45,14 +48,16 @@ contract BrightIdUserRegistry is Ownable, IVerifiedUserRegistry {
      * @notice Set BrightID settings
      * @param _context BrightID context used for verifying users
      * @param _verifier BrightID verifier address that signs BrightID verifications
+     * @param _verificationHash sha256 of the verification expression
      */
-    function setSettings(bytes32 _context, address _verifier) external onlyOwner {
+    function setSettings(bytes32 _context, address _verifier, bytes32 _verificationHash) external onlyOwner {
         // ecrecover returns zero on error
         require(_verifier != address(0), ERROR_INVALID_VERIFIER);
 
         context = _context;
         verifier = _verifier;
-        emit SetBrightIdSettings(_context, _verifier);
+        verificationHash = _verificationHash;
+        emit SetBrightIdSettings(_context, _verifier, _verificationHash);
     }
 
     /**
@@ -84,7 +89,7 @@ contract BrightIdUserRegistry is Ownable, IVerifiedUserRegistry {
         require(context == _context, ERROR_INVALID_CONTEXT);
         require(verifications[_addrs[0]].time < _timestamp, ERROR_NEWER_VERIFICATION);
 
-        bytes32 message = keccak256(abi.encodePacked(_context, _addrs, _timestamp));
+        bytes32 message = keccak256(abi.encodePacked(_context, _addrs, verificationHash, _timestamp));
         address signer = ecrecover(message, _v, _r, _s);
         require(verifier == signer, ERROR_NOT_AUTHORIZED);
 
