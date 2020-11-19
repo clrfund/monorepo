@@ -31,8 +31,13 @@
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
-      <div v-if="canRegisterWithBrightId()" class="brightid-register">
+      <div v-if="canRegisterWithBrightId()" class="submit-suggestion">
         <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
+      </div>
+      <div v-if="canBuyWxdai()" class="submit-suggestion">
+        <a href="https://wrapeth.com/" target="_blank" rel="noopener">
+          Click here to wrap XDAI
+        </a>
       </div>
       <button
         class="btn submit-btn"
@@ -341,6 +346,14 @@ export default class Cart extends Vue {
     return userRegistryType === 'brightid' && this.$store.state.currentUser?.isVerified === false
   }
 
+  canBuyWxdai(): boolean {
+    return (
+      this.$store.state.currentRound?.nativeTokenSymbol === 'WXDAI' &&
+      this.errorMessage !== null &&
+      this.errorMessage.startsWith('Your balance is')
+    )
+  }
+
   registerWithBrightId(): void {
     this.$modal.show(
       BrightIdModal,
@@ -463,7 +476,7 @@ $project-image-size: 50px;
     padding: 15px 0 0;
   }
 
-  .brightid-register {
+  .submit-suggestion {
     padding-top: 5px;
   }
 
