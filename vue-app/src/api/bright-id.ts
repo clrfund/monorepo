@@ -48,6 +48,8 @@ export class BrightIdError extends Error {
   constructor(code?: number) {
     const message = code ? `BrightID error ${code}` : 'Unexpected error'
     super(message)
+    // https://github.com/Microsoft/TypeScript/issues/13965#issuecomment-388605613
+    Object.setPrototypeOf(this, BrightIdError.prototype)
     this.code = code
   }
 }

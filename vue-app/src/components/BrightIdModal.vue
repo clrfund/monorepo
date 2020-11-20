@@ -95,7 +95,7 @@ export default class BrightIdModal extends Vue {
       } catch (error) {
         if (
           error instanceof BrightIdError &&
-          error.code == 4 &&
+          error.code === 4 &&
           this.step === 1
         ) {
           this.sponsor()
