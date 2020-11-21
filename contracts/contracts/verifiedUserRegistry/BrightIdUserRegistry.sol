@@ -1,7 +1,9 @@
-pragma solidity ^0.5.17;
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.6.12;
 
 import './IVerifiedUserRegistry.sol';
-import '@openzeppelin/contracts/ownership/Ownable.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
 
 contract BrightIdUserRegistry is Ownable, IVerifiedUserRegistry {
     string private constant ERROR_NEWER_VERIFICATION = 'NEWER VERIFICATION REGISTERED BEFORE';
@@ -59,7 +61,12 @@ contract BrightIdUserRegistry is Ownable, IVerifiedUserRegistry {
      * @notice Check a user is verified or not
      * @param _user BrightID context id used for verifying users
      */
-    function isVerifiedUser(address _user) external view returns (bool) {
+    function isVerifiedUser(address _user)
+      override
+      external
+      view
+      returns (bool)
+    {
         return verifications[_user].isVerified;
     }
 

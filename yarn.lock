@@ -1035,10 +1035,10 @@
   resolved "https://registry.yarnpkg.com/@openfonts/inter_all/-/inter_all-1.0.2.tgz#87fc59c58926d2e5e63022a0960f12be82915d00"
   integrity sha512-hdB3gPFLztuDbEDLImVRTQyH4EHHrX9iEsw6wZW+VuwUoTwMJEhOV9dWliM6WZtJYF/cqYuiMK+Bqdd2XztnDg==
 
-"@openzeppelin/contracts@^2.4.0", "@openzeppelin/contracts@^2.5.1":
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-2.5.1.tgz#c76e3fc57aa224da3718ec351812a4251289db31"
-  integrity sha512-qIy6tLx8rtybEsIOAlrM4J/85s2q2nPkDqj/Rx46VakBZ0LwtFhXIVub96LXHczQX0vaqmAueDqNPXtbSXSaYQ==
+"@openzeppelin/contracts@^3.2.0", "@openzeppelin/contracts@~3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-3.2.0.tgz#3e6b3a7662d8ed64271ade96ef42655db983fd9d"
+  integrity sha512-bUOmkSoPkjnUyMiKo6RYnb0VHBk5D9KKDAgNLzF41aqAM3TeE0yGdFF5dVRcV60pZdJLlyFT/jjXIZCWyyEzAQ==
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
@@ -1195,10 +1195,10 @@
   resolved "https://registry.yarnpkg.com/@solidity-parser/parser/-/parser-0.5.2.tgz#4d74670ead39e4f4fdab605a393ba8ea2390a2c4"
   integrity sha512-uRyvnvVYmgNmTBpWDbBsH/0kPESQhQpEc4KsvMRLVzFJ1o1s0uIv0Y6Y9IB5vI1Dwz2CbS4X/y4Wyw/75cTFnQ==
 
-"@solidity-parser/parser@^0.6.0":
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@solidity-parser/parser/-/parser-0.6.2.tgz#49707fc4e06649d39d6b25bdab2e9093d372ce50"
-  integrity sha512-kUVUvrqttndeprLoXjI5arWHeiP3uh4XODAKbG+ZaWHCVQeelxCbnXBeWxZ2BPHdXgH0xR9dU1b916JhDhbgAA==
+"@solidity-parser/parser@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@solidity-parser/parser/-/parser-0.8.2.tgz#a6a5e93ac8dca6884a99a532f133beba59b87b69"
+  integrity sha512-8LySx3qrNXPgB5JiULfG10O3V7QTxI/TLzSw5hFQhXWSkVxZBAv4rZQ0sYgLEbc8g3L2lmnujj1hKul38Eu5NQ==
 
 "@stablelib/binary@^1.0.0":
   version "1.0.0"
@@ -11599,10 +11599,10 @@ luxon@^1.24.1:
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.24.1.tgz#a8383266131ed4eaed4b5f430f96f3695403a52a"
   integrity sha512-CgnIMKAWT0ghcuWFfCWBnWGOddM0zu6c4wZAWmD0NN7MZTnro0+833DF6tJep+xlxRPg4KtsYEHYLfTMBQKwYg==
 
-maci-circuits@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-0.3.2.tgz#a5547d264f2355c6b0019449538e81b82d2423c0"
-  integrity sha512-0bjoMT9pUnd0Cy5nV4c19nlJAk3vJ3HTiDU7J0dxoJ8Cr682MBGhsdBGXFOr4RXBIZ635lk+P7WK0TN7pnkEDw==
+maci-circuits@^0.4.11:
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-0.4.11.tgz#b95dc9a06b100d7d92cb9a680219df3b25a91506"
+  integrity sha512-IYdsnOicnRL3DuUA/w1hchuerfmAvLQU15bOJWOU90RvQWJ1DVwh/iNLYybg8zbUZtLuS5jVWG6MVXV763zamQ==
   dependencies:
     argparse "^1.0.10"
     circom "0.5.27"
@@ -11611,66 +11611,66 @@ maci-circuits@^0.3.2:
     shelljs "^0.8.3"
     snarkjs "0.3.23"
 
-maci-cli@0.3.4:
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.3.4.tgz#f924426c4fe482b8b125a8820f3022029edba9b2"
-  integrity sha512-HO7WCnaBVc1REf3ZYRymuK+QAO0rh0YimxZuEpt0WIE22daMayFzOUttOHCdScXzUnnQyiJ/w7BMtICwNiQfsA==
+maci-cli@0.4.11:
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.4.11.tgz#834a8c5537e3e6e7d5a6c0b448a548e6bc404982"
+  integrity sha512-45tO41hicUW+wyWmys8jUq1OvNU7/olo/0RI7tHRfnnX4sGnYRGlW8egHEbDcE5yeaGxfoiMB/7mectIlr2YoQ==
   dependencies:
     argparse "^1.0.10"
     ethers "^4.0.45"
     libsemaphore "^1.0.5"
-    maci-circuits "^0.3.2"
-    maci-config "^0.3.2"
-    maci-contracts "^0.3.4"
-    maci-core "^0.3.2"
-    maci-crypto "^0.3.2"
-    maci-domainobjs "^0.3.2"
+    maci-circuits "^0.4.11"
+    maci-config "^0.4.11"
+    maci-contracts "^0.4.11"
+    maci-core "^0.4.11"
+    maci-crypto "^0.4.11"
+    maci-domainobjs "^0.4.11"
     prompt-async "^0.9.9"
 
-maci-config@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/maci-config/-/maci-config-0.3.2.tgz#0baf4f536dc271ef4da4b8db38a3908294cd31fa"
-  integrity sha512-/WWw0GU29R9LNvv3EGfNBD1Qn0KXk1qdF6O0jOb/HtosPDfjyQdTESOWQrVb4W314vQQwcs/gDNpaFG86ByQEg==
+maci-config@^0.4.11:
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/maci-config/-/maci-config-0.4.11.tgz#fb7799e0871c99f4855accf4e77e09a278915411"
+  integrity sha512-Ff8/Oi8JOQHkRulZBK5iFKMwbhyIOUeqPdX2ERqzLWxYAEG0VYsA9XTuzyCFP7SDBfoKlh4NM/8xjSxmxhMZ3g==
   dependencies:
     config "^3.2.4"
     js-yaml "^3.13.1"
     path "^0.12.7"
 
-maci-contracts@0.3.4, maci-contracts@^0.3.4:
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.3.4.tgz#3772d9c1f70c23becbe2140b024ca16e13293a3c"
-  integrity sha512-OSegv3gAc4GK76Fryp7dq4JVqrd2BZr5tDHc/OfJhVBgLV98LLfqizu+zrAc2iRkdmuSTXHzG8L9Ex1nbJsQww==
+maci-contracts@0.4.11, maci-contracts@^0.4.11:
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.4.11.tgz#8ceaecb7a7708562b3aec7f58f01280354f93545"
+  integrity sha512-67QKRYcQ5THCaseMNzHx6JNXEpI/rVzWb0URTjlyO0nsZNdBItVfrk3glD3W6HaP880Hg4xwmi3EGommev2sgg==
   dependencies:
-    "@openzeppelin/contracts" "^2.4.0"
+    "@openzeppelin/contracts" "~3.2.0"
     argparse "^1.0.10"
     circomlib "0.2.4"
     ethers "^4.0.45"
     module-alias "^2.2.2"
 
-maci-core@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/maci-core/-/maci-core-0.3.2.tgz#6a6b934164956fb740abacc227b85d6e6e1f1969"
-  integrity sha512-kZYfs7LL+JxP0//gPgv4RVsFah0vAndXE+1N0PTzuSeqzO9ZoGulqIoMVGN3Iu0wz9xn2qAvDezRCek5GzuPMw==
+maci-core@^0.4.11:
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/maci-core/-/maci-core-0.4.11.tgz#8d7a40b417397f4759af15e1b9ce4448f0501918"
+  integrity sha512-7Hl5YW5EBIQ5MLQwftN3q7lUwPTqGVVYyvBETXoBnccpypyi3MqMTbJEEgGDfKtWPQBQsGBQE6NB/p6sCrBF3g==
   dependencies:
     ethers "^4.0.45"
-    maci-config "^0.3.2"
-    maci-crypto "^0.3.2"
-    maci-domainobjs "^0.3.2"
+    maci-config "^0.4.11"
+    maci-crypto "^0.4.11"
+    maci-domainobjs "^0.4.11"
     module-alias "^2.2.2"
 
-maci-crypto@^0.3.2, maci-crypto@~0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/maci-crypto/-/maci-crypto-0.3.2.tgz#1abba2e1f64430e755c4637f28152058a54ccbae"
-  integrity sha512-kwqEHZaiHTCAufQElYbIsjDfUlXwevd7Pdvv+EdLaPM5O98m9EcmHAj+dLGsdcgiAxWS5X0jiIkP8v5Ju3hawA==
+maci-crypto@^0.4.11, maci-crypto@~0.4.11:
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/maci-crypto/-/maci-crypto-0.4.11.tgz#4556e0ae66ba46876a75ca998acbe6aaefafbff6"
+  integrity sha512-clmUu4OJJgm/5owZjRUqymtl3xv1hE0wCjxFSALCHw9U+BE+dBP/JZhG6M0uoyNNBV+ixY6Wfkysep0LQw8FcQ==
   dependencies:
     circomlib "https://github.com/iden3/circomlib.git#01da5f90dbbefeed5d78cec3b87303244338b920"
     ethers "^4.0.45"
     ffjavascript "0.1.0"
 
-maci-domainobjs@^0.3.2, maci-domainobjs@~0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/maci-domainobjs/-/maci-domainobjs-0.3.2.tgz#89cbdd4d178a70c2f81bc8a8e673202f90c67732"
-  integrity sha512-prFtEFOT9yLA0GPJY6w7cRerpDwK7mwQlul5bVDDCmdAJWrFz3BAl+6p4pkj137xGS4Bh5GHTZl43M0MwkcZDA==
+maci-domainobjs@^0.4.11, maci-domainobjs@~0.4.11:
+  version "0.4.11"
+  resolved "https://registry.yarnpkg.com/maci-domainobjs/-/maci-domainobjs-0.4.11.tgz#0d9a2e477ccb9c06569e426cc98ddc69e6b5542e"
+  integrity sha512-INlm1FaI/CuiQ4e9XuweRnb3Du/oLLtG+3+RcP7CO0U8Ij5KK9lx1lC5uuUoEBo/AWDPDpILyXcEunMJrgejRQ==
 
 mafmt@^7.0.0, mafmt@^7.0.1, mafmt@^7.1.0:
   version "7.1.0"
@@ -16137,12 +16137,12 @@ solc@^0.6.3:
     semver "^5.5.0"
     tmp "0.0.33"
 
-solhint@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/solhint/-/solhint-3.1.0.tgz#50d58c9af921a01350164350144a9809d5ec2975"
-  integrity sha512-Cc0wqKzg0NviDF7H5zsrGJ/hVwwkGqi0Hkc3YtedTev4alkJv4YADdJg4y586MpfEvMX4QPp7LugsmJzoeChkQ==
+solhint@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/solhint/-/solhint-3.3.2.tgz#ebd7270bb50fd378b427d7a6fc9f2a7fd00216c0"
+  integrity sha512-8tHCkIAk1axLLG6Qu2WIH3GgNABonj9eAWejJbov3o3ujkZQRNHeHU1cC4/Dmjsh3Om7UzFFeADUHu2i7ZJeiw==
   dependencies:
-    "@solidity-parser/parser" "^0.6.0"
+    "@solidity-parser/parser" "^0.8.2"
     ajv "^6.6.1"
     antlr4 "4.7.1"
     ast-parents "0.0.1"

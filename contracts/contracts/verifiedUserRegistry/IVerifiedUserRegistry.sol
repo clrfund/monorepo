@@ -1,5 +1,6 @@
-pragma solidity ^0.5.17;
-pragma experimental ABIEncoderV2;
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.6.12;
 
 /**
  * @dev Interface of the registry of verified users.

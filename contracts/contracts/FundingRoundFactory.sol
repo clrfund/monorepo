@@ -1,8 +1,10 @@
-pragma solidity ^0.5.8;
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.6.12;
 pragma experimental ABIEncoderV2;
 
-import '@openzeppelin/contracts/ownership/Ownable.sol';
-import '@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol';
+import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 
 import 'maci-contracts/sol/MACI.sol';
@@ -16,12 +18,12 @@ import './MACIFactory.sol';
 import './FundingRound.sol';
 
 contract FundingRoundFactory is Ownable, MACISharedObjs {
-  using SafeERC20 for ERC20Detailed;
+  using SafeERC20 for ERC20;
 
   // State
   address public coordinator;
 
-  ERC20Detailed public nativeToken;
+  ERC20 public nativeToken;
   MACIFactory public maciFactory;
   IVerifiedUserRegistry public verifiedUserRegistry;
   IRecipientRegistry public recipientRegistry;
@@ -158,7 +160,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     external
     onlyOwner
   {
-    nativeToken = ERC20Detailed(_token);
+    nativeToken = ERC20(_token);
     emit TokenChanged(_token);
   }
 
