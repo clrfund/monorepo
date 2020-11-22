@@ -4,16 +4,11 @@ import path from 'path';
 import { BuidlerConfig, usePlugin, task } from '@nomiclabs/buidler/config';
 
 usePlugin("@nomiclabs/buidler-waffle");
-usePlugin("buidler-typechain");
 usePlugin('@nomiclabs/buidler-ganache')
 
 const GAS_LIMIT = 10000000
 
-interface CustomBuidlerConfig extends BuidlerConfig {
-  typechain?: any;
-}
-
-const config: CustomBuidlerConfig = {
+const config: BuidlerConfig = {
   networks: {
     buidlerevm: {
       gas: GAS_LIMIT,
@@ -48,10 +43,6 @@ const config: CustomBuidlerConfig = {
       runs: 20
     }
   },
-  typechain: {
-    outDir: "build/types",
-    target: "ethers"
-  }
 };
 
 task('compile', 'Compiles the entire project, building all artifacts', async (_, { config }, runSuper) => {
