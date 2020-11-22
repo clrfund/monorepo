@@ -1,4 +1,4 @@
-import { ethers, waffle } from '@nomiclabs/buidler';
+import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { deployMockContract } from '@ethereum-waffle/mock-contract';
@@ -7,9 +7,9 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { genRandomSalt } from 'maci-crypto';
 import { Keypair } from 'maci-domainobjs';
 
-import IUserRegistryArtifact from '../build/contracts/IUserRegistry.json'
-import IRecipientRegistryArtifact from '../build/contracts/IRecipientRegistry.json';
-import MACIArtifact from '../build/contracts/MACI.json';
+import IUserRegistryArtifact from '../build/contracts/contracts/userRegistry/IUserRegistry.sol/IUserRegistry.json'
+import IRecipientRegistryArtifact from '../build/contracts/contracts/recipientRegistry/IRecipientRegistry.sol/IRecipientRegistry.json'
+import MACIArtifact from '../build/contracts/maci-contracts/sol/MACI.sol/MACI.json'
 import { ZERO_ADDRESS, UNIT, VOICE_CREDIT_FACTOR } from '../utils/constants'
 import { getEventArg, getGasUsage } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'

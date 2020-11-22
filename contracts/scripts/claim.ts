@@ -1,7 +1,7 @@
 import fs from 'fs'
-import { ethers } from '@nomiclabs/buidler'
+import { ethers } from 'hardhat'
 
-import MACIArtifact from '../build/contracts/MACI.json'
+import MACIArtifact from '../build/contracts/maci-contracts/sol/MACI.sol/MACI.json'
 import { getEventArg } from '../utils/contracts'
 import { getRecipientClaimData } from '../utils/maci'
 

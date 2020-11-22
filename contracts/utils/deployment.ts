@@ -1,11 +1,9 @@
-import bre from '@nomiclabs/buidler'
+import { ethers } from 'hardhat'
 import { Signer, Contract } from 'ethers'
 import { link } from 'ethereum-waffle'
 
 import { MaciParameters } from './maci'
-import MACIFactoryArtifact from '../build/contracts/MACIFactory.json'
-
-const ethers = (bre as any).ethers
+import MACIFactoryArtifact from '../build/contracts/contracts/MACIFactory.sol/MACIFactory.json'
 
 export function linkBytecode(
   bytecode: string,
@@ -33,9 +31,9 @@ const CIRCUITS: {[name: string]: any} = {
 }
 
 export async function deployMaciFactory(account: Signer, circuit = 'test'): Promise<Contract> {
-  const PoseidonT3 = await ethers.getContractFactory('PoseidonT3', account)
+  const PoseidonT3 = await ethers.getContractFactory(':PoseidonT3', account)
   const poseidonT3 = await PoseidonT3.deploy()
-  const PoseidonT6 = await ethers.getContractFactory('PoseidonT6', account)
+  const PoseidonT6 = await ethers.getContractFactory(':PoseidonT6', account)
   const poseidonT6 = await PoseidonT6.deploy()
 
   const linkedBytecode = linkBytecode(MACIFactoryArtifact.bytecode, {

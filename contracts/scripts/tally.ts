@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import fs from 'fs'
-import { network, ethers } from '@nomiclabs/buidler'
+import { network, ethers } from 'hardhat'
 import { processMessages as processCmd, tally as tallyCmd } from 'maci-cli'
 
 import { getIpfsHash } from '../utils/ipfs'
@@ -11,7 +11,8 @@ async function main() {
   const fundingRound = await ethers.getContractAt('FundingRound', state.fundingRound)
   const maciAddress = await fundingRound.maci()
   const providerUrl = (network.config as any).url
-  const coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || '0xd49743deccbccc5dc7baa8e69e5be03298da8688a15dd202e20f15d5e0e9a9fb'
+  // Account #1
+  const coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
 
   // Process messages
   const randomStateLeaf = await processCmd({

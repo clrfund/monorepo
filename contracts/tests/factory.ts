@@ -1,11 +1,11 @@
-import { ethers, waffle } from '@nomiclabs/buidler';
+import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai';
 import { solidity } from 'ethereum-waffle'
 import { Contract } from 'ethers';
 import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from 'maci-domainobjs';
 
-import MACIArtifact from '../build/contracts/MACI.json'
+import MACIArtifact from '../build/contracts/maci-contracts/sol/MACI.sol/MACI.json'
 import { ZERO_ADDRESS, UNIT } from '../utils/constants'
 import { getGasUsage, getEventArg } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
