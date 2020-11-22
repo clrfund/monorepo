@@ -7,21 +7,6 @@ import MACIFactoryArtifact from '../build/contracts/MACIFactory.json'
 
 const ethers = (bre as any).ethers
 
-async function deployContract(
-  account: Signer,
-  name: string,
-  args: any[] = [],
-  overrideOptions: any = {},
-): Promise<Contract> {
-  // Similar to https://github.com/EthWorks/Waffle/blob/2.5.1/waffle-cli/src/deployContract.ts
-  const ContractFactory = await ethers.getContractFactory(name, account)
-  const contract = await ContractFactory.deploy(...args, {
-    ...overrideOptions,
-  })
-  await contract.deployed()
-  return contract
-}
-
 export function linkBytecode(
   bytecode: string,
   libraries: {[name: string]: string},
@@ -48,8 +33,10 @@ const CIRCUITS: {[name: string]: any} = {
 }
 
 export async function deployMaciFactory(account: Signer, circuit = 'test'): Promise<Contract> {
-  const poseidonT3 = await deployContract(account, 'PoseidonT3')
-  const poseidonT6 = await deployContract(account, 'PoseidonT6')
+  const PoseidonT3 = await ethers.getContractFactory('PoseidonT3', account)
+  const poseidonT3 = await PoseidonT3.deploy()
+  const PoseidonT6 = await ethers.getContractFactory('PoseidonT6', account)
+  const poseidonT6 = await PoseidonT6.deploy()
 
   const linkedBytecode = linkBytecode(MACIFactoryArtifact.bytecode, {
     'maci-contracts/sol/Poseidon.sol:PoseidonT3': poseidonT3.address,
@@ -61,8 +48,10 @@ export async function deployMaciFactory(account: Signer, circuit = 'test'): Prom
     account,
   )
 
-  const batchUstVerifier = await deployContract(account, CIRCUITS[circuit].batchUstVerifier)
-  const qvtVerifier = await deployContract(account, CIRCUITS[circuit].qvtVerifier)
+  const BatchUstVerifier = await ethers.getContractFactory(CIRCUITS[circuit].batchUstVerifier, account)
+  const batchUstVerifier = await BatchUstVerifier.deploy()
+  const QvtVerifier = await ethers.getContractFactory(CIRCUITS[circuit].qvtVerifier, account)
+  const qvtVerifier = await QvtVerifier.deploy()
   const maciParameters = new MaciParameters({
     batchUstVerifier: batchUstVerifier.address,
     qvtVerifier: qvtVerifier.address,
