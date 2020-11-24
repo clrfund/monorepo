@@ -2,22 +2,24 @@ import { ethers, waffle } from '@nomiclabs/buidler'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { Contract } from 'ethers'
+import { keccak256 } from '@ethersproject/solidity'
+import { gtcrEncode } from '@kleros/gtcr-encoder'
 
 import { ZERO_ADDRESS } from '../utils/constants'
 
 use(solidity)
 
+const { provider } = waffle
 const MAX_RECIPIENTS = 15
 
+async function getCurrentBlockNumber(): Promise<number> {
+  return (await provider.getBlock('latest')).number
+}
+
 describe('Simple Recipient Registry', () => {
-  const provider = waffle.provider
   const [, deployer, controller, recipient] = provider.getWallets()
 
   let registry: Contract
-
-  async function getCurrentBlockNumber(): Promise<number> {
-    return (await provider.getBlock('latest')).number
-  }
 
   beforeEach(async () => {
     const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
@@ -250,6 +252,182 @@ describe('Simple Recipient Registry', () => {
       expect(await registry.getRecipientAddress(
         99, currentBlock, currentBlock,
       )).to.equal(ZERO_ADDRESS)
+    })
+  })
+})
+
+describe('Kleros GTCR adapter', () => {
+  const [, deployer, controller, recipient] = provider.getWallets()
+  const gtcrColumns = [{
+    label: 'Name',
+    description: 'Commonly recognizable name of the recipient.',
+    type: 'text',
+    isIdentifier: true,
+  }, {
+    label: 'Address',
+    description: 'Recipient receiving address',
+    type: 'address',
+    isIdentifier: true,
+  }]
+
+  function encodeRecipient(address: string): [string, string] {
+    const recipientData = gtcrEncode({
+      columns: gtcrColumns,
+      values: {'Name': `test-${address}`, 'Address': address},
+    })
+    const recipientId = keccak256(['bytes'], [recipientData])
+    return [recipientId, recipientData]
+  }
+
+  let tcr: Contract
+  let registry: Contract
+
+  beforeEach(async () => {
+    const KlerosGTCRMock = await ethers.getContractFactory('KlerosGTCRMock', deployer)
+    tcr = await KlerosGTCRMock.deploy()
+    const KlerosGTCRAdapter = await ethers.getContractFactory('KlerosGTCRAdapter', deployer)
+    registry = await KlerosGTCRAdapter.deploy(tcr.address)
+  })
+
+  it('initializes correctly', async () => {
+    expect(await registry.tcr()).to.equal(tcr.address)
+    expect(await registry.controller()).to.equal(ZERO_ADDRESS)
+    expect(await registry.maxRecipients()).to.equal(0)
+  })
+
+  describe('managing recipients', () => {
+    const recipientIndex = 1
+    const [recipientId, recipientData] = encodeRecipient(recipient.address)
+
+    beforeEach(async () => {
+      await registry.setController(controller.address)
+      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+    })
+
+    it('allows anyone to add recipient', async () => {
+      await tcr.addItem(recipientData)
+      await expect(registry.connect(recipient).addRecipient(recipientId))
+        .to.emit(registry, 'RecipientAdded')
+        .withArgs(recipientId, recipientData, recipientIndex)
+      const currentBlock = await getCurrentBlockNumber()
+      expect(await registry.getRecipientAddress(
+        recipientIndex, currentBlock, currentBlock,
+      )).to.equal(recipient.address)
+
+      const anotherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+      const [anotherRecipientId, anotherRecipientData] = encodeRecipient(anotherRecipientAddress)
+      await tcr.addItem(anotherRecipientData)
+      // Should increase recipient index for every new recipient
+      await expect(registry.connect(recipient).addRecipient(anotherRecipientId))
+        .to.emit(registry, 'RecipientAdded')
+        .withArgs(anotherRecipientId, anotherRecipientData, recipientIndex + 1)
+    })
+
+    it('should not accept recipient who is not registered in TCR', async () => {
+      await expect(registry.addRecipient(recipientId))
+        .to.be.revertedWith('RecipientRegistry: Item not found in TCR')
+    })
+
+    it('should not add already registered recipient', async () => {
+      await tcr.addItem(recipientData)
+      await registry.addRecipient(recipientId)
+      await expect(registry.addRecipient(recipientId))
+        .to.be.revertedWith('RecipientRegistry: Recipient already registered')
+    })
+
+    it('should not accept recipient with invalid metadata', async () => {
+      await tcr.addItem('0xdead')
+      await expect(registry.addRecipient(recipientId)).to.be.reverted
+    })
+
+    it('allows anyone to remove recipient', async () => {
+      await tcr.addItem(recipientData)
+      await registry.connect(recipient).addRecipient(recipientId)
+      await tcr.removeItem(recipientId)
+      await expect(registry.connect(recipient).removeRecipient(recipientId))
+        .to.emit(registry, 'RecipientRemoved')
+        .withArgs(recipientId)
+      const currentBlock = await getCurrentBlockNumber()
+      expect(await registry.getRecipientAddress(
+        recipientIndex, currentBlock, currentBlock,
+      )).to.equal(ZERO_ADDRESS)
+    })
+
+    it('should not remove already removed recipient', async () => {
+      await tcr.addItem(recipientData)
+      await registry.addRecipient(recipientId)
+      await tcr.removeItem(recipientId)
+      await registry.removeRecipient(recipientId)
+      await expect(registry.removeRecipient(recipientId))
+        .to.be.revertedWith('RecipientRegistry: Recipient already removed')
+    })
+
+    it('should not remove removed recipient who has not been removed from TCR', async () => {
+      await tcr.addItem(recipientData)
+      await registry.addRecipient(recipientId)
+      await expect(registry.removeRecipient(recipientId))
+        .to.be.revertedWith('RecipientRegistry: Item is not removed from TCR')
+    })
+  })
+
+  describe('get recipient address', () => {
+    async function addRecipient(address: string) {
+      const [recipientId, recipientData] = encodeRecipient(address)
+      await tcr.addItem(recipientData)
+      return await registry.addRecipient(recipientId)
+    }
+
+    async function removeRecipient(address: string) {
+      const [recipientId] = encodeRecipient(address)
+      await tcr.removeItem(recipientId)
+      return await registry.removeRecipient(recipientId)
+    }
+
+    beforeEach(async () => {
+      await registry.setController(controller.address)
+      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+    })
+
+    it('allows to re-use index of removed recipient', async () => {
+      // Add recipients up to a limit
+      for (let i = 0; i < MAX_RECIPIENTS; i++) {
+        const recipientName = String(i + 1).padStart(4, '0')
+        const recipientAddress = `0x100000000000000000000000000000000000${recipientName}`
+        await addRecipient(recipientAddress)
+      }
+      const blockNumber1 = await getCurrentBlockNumber()
+
+      // Replace recipients
+      const removedRecipient1 = '0x1000000000000000000000000000000000000001'
+      const removedRecipient2 = '0x1000000000000000000000000000000000000002'
+      await removeRecipient(removedRecipient1)
+      await removeRecipient(removedRecipient2)
+      const addedRecipient1 = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+      const addedRecipient2 = '0xef9e07C93b40681F6a63085Cf276aBA3D868Ac6E'
+      const addedRecipient3 = '0x927be3E75380CC412148AfE80d9e9D02fF488738'
+      await addRecipient(addedRecipient1)
+      await addRecipient(addedRecipient2)
+      await expect(addRecipient(addedRecipient3))
+        .to.be.revertedWith('RecipientRegistry: Recipient limit reached')
+      const blockNumber2 = await getCurrentBlockNumber()
+
+      // Recipients removed during the round should still be valid
+      expect(await registry.getRecipientAddress(
+        1, blockNumber1, blockNumber2,
+      )).to.equal(removedRecipient1)
+      expect(await registry.getRecipientAddress(
+        2, blockNumber1, blockNumber2,
+      )).to.equal(removedRecipient2)
+
+      await provider.send('evm_increaseTime', [1000])
+      const blockNumber3 = await getCurrentBlockNumber()
+      // Recipients removed before the beginning of the round should be replaced
+      expect(await registry.getRecipientAddress(
+        1, blockNumber2, blockNumber3,
+      )).to.equal(addedRecipient2)
+      expect(await registry.getRecipientAddress(
+        2, blockNumber2, blockNumber3,
+      )).to.equal(addedRecipient1)
     })
   })
 })
