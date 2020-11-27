@@ -12,8 +12,6 @@ import { deployMaciFactory } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import { MaciParameters, createMessage, getRecipientClaimData } from '../utils/maci'
 
-import MACIArtifact from '../build/contracts/maci-contracts/sol/MACI.sol/MACI.json'
-
 use(solidity)
 
 const ZERO = BigNumber.from(0)
@@ -126,7 +124,7 @@ describe('End-to-end Tests', function () {
       fundingRoundAddress,
     )
     const maciAddress = await fundingRound.maci()
-    maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress)
+    maci = await ethers.getContractAt('MACI', maciAddress)
   })
 
   async function makeContributions(amounts: BigNumber[]) {

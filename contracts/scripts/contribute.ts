@@ -2,7 +2,6 @@ import fs from 'fs'
 import { ethers } from 'hardhat'
 import { Keypair } from 'maci-domainobjs'
 
-import MACIArtifact from '../build/contracts/maci-contracts/sol/MACI.sol/MACI.json'
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
 
@@ -13,7 +12,7 @@ async function main() {
   const tokenAddress = await fundingRound.nativeToken()
   const token = await ethers.getContractAt('AnyOldERC20Token', tokenAddress)
   const maciAddress = await fundingRound.maci()
-  const maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress)
+  const maci = await ethers.getContractAt('MACI', maciAddress)
 
   const contributionAmount = UNIT.mul(16).div(10)
   state.contributors = {}

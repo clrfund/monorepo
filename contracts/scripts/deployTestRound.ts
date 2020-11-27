@@ -5,8 +5,6 @@ import { Keypair } from 'maci-domainobjs'
 import { UNIT } from '../utils/constants'
 import { MaciParameters } from '../utils/maci'
 
-import MACIFactoryArtifact from '../build/contracts/contracts/MACIFactory.sol/MACIFactory.json'
-
 async function main() {
   // We're hardcoding factory address due to a buidler limitation:
   // https://github.com/nomiclabs/buidler/issues/651
@@ -48,7 +46,7 @@ async function main() {
   // Configure MACI factory
   const maciFactoryAddress = await factory.maciFactory()
   const maciFactory = await ethers.getContractAt(
-    MACIFactoryArtifact.abi,
+    'MACIFactory',
     maciFactoryAddress,
   )
   const maciParameters = await MaciParameters.read(maciFactory)

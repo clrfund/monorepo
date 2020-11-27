@@ -75,7 +75,7 @@ describe('Funding Round', () => {
       coordinatorPubKey.asContractParam(),
     );
     const maciAddress = await getEventArg(maciDeployed, maciFactory, 'MaciDeployed', '_maci');
-    maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress);
+    maci = await ethers.getContractAt('MACI', maciAddress)
   });
 
   it('initializes funding round correctly', async () => {
