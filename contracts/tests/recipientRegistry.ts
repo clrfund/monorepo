@@ -39,15 +39,26 @@ describe('Simple Recipient Registry', () => {
 
     it('sets max number of recipients', async () => {
       await registry.connect(controller).setController()
-      const maxRecipients = 255
-      await registry.connect(controller).setMaxRecipients(maxRecipients)
-      expect(await registry.maxRecipients()).to.equal(maxRecipients)
+      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+      expect(await registry.maxRecipients()).to.equal(MAX_RECIPIENTS)
+    })
+
+    it('reverts if given number is less than current limit', async () => {
+      await registry.connect(controller).setController()
+      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+      await expect(registry.connect(controller).setMaxRecipients(1))
+        .to.be.revertedWith('RecipientRegistry: Max number of recipients can not be decreased')
     })
 
     it('rejects attempt to set max number of recipients from anyone except controller', async () => {
       await registry.connect(controller).setController()
-      await expect(registry.setMaxRecipients(255))
+      await expect(registry.setMaxRecipients(MAX_RECIPIENTS))
         .to.be.revertedWith('RecipientRegistry: Only controller can increase recipient limit')
+    })
+
+    it('should not add recipient if limit is not set', async () => {
+      await expect(registry.addRecipient(recipient.address, JSON.stringify({})))
+        .to.be.revertedWith('RecipientRegistry: Recipient limit is not set')
     })
   })
 
@@ -86,12 +97,6 @@ describe('Simple Recipient Registry', () => {
       const registryAsRecipient = registry.connect(recipient)
       await expect(registryAsRecipient.addRecipient(recipientAddress, metadata))
         .to.be.revertedWith('Ownable: caller is not the owner')
-    })
-
-    it('should not add recipient if limit is not set', async () => {
-      await registry.connect(controller).setMaxRecipients(0)
-      await expect(registry.addRecipient(recipientAddress, metadata))
-        .to.be.revertedWith('RecipientRegistry: Recipient limit is not set')
     })
 
     it('should not accept zero-address as recipient address', async () => {

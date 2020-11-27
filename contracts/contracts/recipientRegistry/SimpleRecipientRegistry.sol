@@ -49,6 +49,10 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
     override
     external
   {
+    require(
+      _maxRecipients >= maxRecipients,
+      'RecipientRegistry: Max number of recipients can not be decreased'
+    );
     require(msg.sender == controller, 'RecipientRegistry: Only controller can increase recipient limit');
     maxRecipients = _maxRecipients;
   }
