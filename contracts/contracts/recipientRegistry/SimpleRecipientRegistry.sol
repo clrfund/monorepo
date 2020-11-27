@@ -31,30 +31,41 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
   event RecipientRemoved(address indexed _recipient);
 
   /**
-    * @dev Set controller.
+    * @dev Set controller. Only controller can set the max number of recipients in the registry.
+    * @param _controller Controller address. Normally it's a funding round factory contract.
     */
-  function setController()
-    override
+  function setController(address _controller)
     external
+    onlyOwner
   {
     require(controller == address(0), 'RecipientRegistry: Controller is already set');
-    controller = msg.sender;
+    controller = _controller;
   }
 
   /**
     * @dev Set maximum number of recipients.
     * @param _maxRecipients Maximum number of recipients.
+    * @return True if operation is successful.
     */
   function setMaxRecipients(uint256 _maxRecipients)
     override
     external
+    returns (bool)
   {
     require(
       _maxRecipients >= maxRecipients,
       'RecipientRegistry: Max number of recipients can not be decreased'
     );
-    require(msg.sender == controller, 'RecipientRegistry: Only controller can increase recipient limit');
+    if (controller == address(0)) {
+      // If controller is not set, owner can act as one
+      require(msg.sender == owner(), 'RecipientRegistry: Only owner can act as a controller');
+    } else if (controller != msg.sender) {
+      // This allows other clrfund instances to use the registry
+      // but only controller can actually increase the limit.
+      return false;
+    }
     maxRecipients = _maxRecipients;
+    return true;
   }
 
   /**

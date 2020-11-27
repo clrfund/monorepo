@@ -114,6 +114,10 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
       address(currentRound) == address(0) || currentRound.isFinalized(),
       'Factory: Current round is not finalized'
     );
+    // Make sure that the max number of recipients is set correctly
+    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
+    recipientRegistry.setMaxRecipients(maxVoteOptions);
+    // Deploy funding round and MACI contracts
     FundingRound newRound = new FundingRound(
       nativeToken,
       verifiedUserRegistry,

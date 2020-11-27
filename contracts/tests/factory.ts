@@ -33,8 +33,6 @@ describe('Funding Round Factory', () => {
 
     const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
     recipientRegistry = await SimpleRecipientRegistry.deploy()
-    await recipientRegistry.setController()
-    await recipientRegistry.setMaxRecipients(24)
 
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
     factory = await FundingRoundFactory.deploy(
@@ -45,7 +43,10 @@ describe('Funding Round Factory', () => {
 
     expect(factory.address).to.properAddress;
     expect(await getGasUsage(factory.deployTransaction)).lessThan(5100000)
+
     await maciFactory.transferOwnership(factory.address);
+    await recipientRegistry.setMaxRecipients(24)
+    await recipientRegistry.setController(factory.address)
 
     // Deploy token contract and transfer tokens to contributor
     const tokenInitialSupply = UNIT.mul(1000)
@@ -60,7 +61,7 @@ describe('Funding Round Factory', () => {
     expect(await factory.nativeToken()).to.equal(ZERO_ADDRESS)
     expect(await factory.maciFactory()).to.equal(maciFactory.address)
     expect(await factory.recipientRegistry()).to.equal(recipientRegistry.address)
-    expect(await recipientRegistry.controller()).to.equal(deployer.address)
+    expect(await recipientRegistry.controller()).to.equal(factory.address)
     expect(await recipientRegistry.maxRecipients())
       .to.equal(5 ** maciParameters.voteOptionTreeDepth - 1)
   })

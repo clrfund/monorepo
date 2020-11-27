@@ -27,33 +27,48 @@ describe('Simple Recipient Registry', () => {
     })
 
     it('sets controller', async () => {
-      await registry.connect(controller).setController()
+      await registry.setController(controller.address)
       expect(await registry.controller()).to.equal(controller.address)
     })
 
     it('reverts if controller is already set', async () => {
-      await registry.connect(controller).setController()
-      await expect(registry.setController())
+      await registry.setController(controller.address)
+      await expect(registry.setController(deployer.address))
         .to.be.revertedWith('RecipientRegistry: Controller is already set')
     })
 
+    it('allows only owner to set controller', async () => {
+      await expect(registry.connect(controller).setController(controller.address))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
     it('sets max number of recipients', async () => {
-      await registry.connect(controller).setController()
+      await registry.setController(controller.address)
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
       expect(await registry.maxRecipients()).to.equal(MAX_RECIPIENTS)
     })
 
     it('reverts if given number is less than current limit', async () => {
-      await registry.connect(controller).setController()
+      await registry.setController(controller.address)
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
       await expect(registry.connect(controller).setMaxRecipients(1))
         .to.be.revertedWith('RecipientRegistry: Max number of recipients can not be decreased')
     })
 
-    it('rejects attempt to set max number of recipients from anyone except controller', async () => {
-      await registry.connect(controller).setController()
-      await expect(registry.setMaxRecipients(MAX_RECIPIENTS))
-        .to.be.revertedWith('RecipientRegistry: Only controller can increase recipient limit')
+    it('ignores attempt to set max number of recipients from anyone except controller', async () => {
+      await registry.setController(controller.address)
+      await registry.setMaxRecipients(MAX_RECIPIENTS)
+      expect(await registry.maxRecipients()).to.equal(0)
+    })
+
+    it('allows owner to set max number of recipients if controller is not set', async () => {
+      await registry.setMaxRecipients(MAX_RECIPIENTS)
+      expect(await registry.maxRecipients()).to.equal(MAX_RECIPIENTS)
+    })
+
+    it('rejects attempt to set max number of recipients from anyone except owner if controller is not set', async () => {
+      await expect(registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS))
+        .to.be.revertedWith('RecipientRegistry: Only owner can act as a controller')
     })
 
     it('should not add recipient if limit is not set', async () => {
@@ -67,7 +82,7 @@ describe('Simple Recipient Registry', () => {
     let metadata: string
 
     beforeEach(async () => {
-      await registry.connect(controller).setController()
+      await registry.setController(controller.address)
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
       recipientAddress = recipient.address
       metadata = JSON.stringify({ name: 'Recipient', description: 'Description', imageHash: 'Ipfs imageHash' })
