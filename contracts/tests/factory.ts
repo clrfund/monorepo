@@ -188,8 +188,7 @@ describe('Funding Round Factory', () => {
       await factory.setToken(token.address);
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await factory.deployNewRound();
-      // Re-set coordinator and cancel current round
-      await factory.setCoordinator(coordinator.address, coordinatorPubKey);
+      await factory.cancelCurrentRound()
       await expect(factory.deployNewRound())
         .to.emit(factory, 'RoundStarted')
     });
@@ -207,6 +206,7 @@ describe('Funding Round Factory', () => {
     const contributionAmount = UNIT.mul(10)
     const totalSpent = UNIT.mul(100)
     const totalSpentSalt = genRandomSalt().toString()
+    let roundDuration: number
 
     beforeEach(async () => {
       await factory.setToken(token.address)
@@ -216,23 +216,75 @@ describe('Funding Round Factory', () => {
         factory.address,
         contributionAmount,
       )
+      roundDuration = maciParameters.signUpDuration + maciParameters.votingDuration + 10
     })
 
-    it('reverts if votes has not been tallied', async () => {
+    it('allows owner to finalize round', async () => {
       const factoryAsContributor = factory.connect(contributor);
       await factoryAsContributor.contributeMatchingFunds(contributionAmount)
       await factory.deployNewRound();
-      const roundDuration = maciParameters.signUpDuration + maciParameters.votingDuration + 10
       await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
         .to.be.revertedWith('FundingRound: Votes has not been tallied')
-    });
+    })
+
+    it('allows owner to finalize round even without matching funds', async () => {
+      await factory.deployNewRound()
+      await provider.send('evm_increaseTime', [roundDuration])
+      await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('FundingRound: Votes has not been tallied')
+    })
+
+    it('allows only owner to finalize round', async () => {
+      await factory.deployNewRound()
+      await provider.send('evm_increaseTime', [roundDuration])
+      await expect(factory.connect(contributor).transferMatchingFunds(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
 
     it('reverts if round has not been deployed', async () => {
       await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
         .to.be.revertedWith('Factory: Funding round has not been deployed');
     });
   });
+
+  describe('cancelling round', () => {
+    beforeEach(async () => {
+      await factory.setToken(token.address)
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey)
+    })
+
+    it('allows owner to cancel round', async () => {
+      await factory.deployNewRound()
+      const fundingRoundAddress = await factory.getCurrentRound()
+      const fundingRound = await ethers.getContractAt(
+        'FundingRound',
+        fundingRoundAddress,
+      )
+      await expect(factory.cancelCurrentRound())
+        .to.emit(factory, 'RoundFinalized')
+        .withArgs(fundingRoundAddress)
+      expect(await fundingRound.isCancelled()).to.equal(true)
+    })
+
+    it('allows only owner to cancel round', async () => {
+      await factory.deployNewRound()
+      await expect(factory.connect(contributor).cancelCurrentRound())
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('reverts if round has not been deployed', async () => {
+      await expect(factory.cancelCurrentRound())
+        .to.be.revertedWith('Factory: Funding round has not been deployed')
+    })
+
+    it('reverts if round is finalized', async () => {
+      await factory.deployNewRound()
+      await factory.cancelCurrentRound()
+      await expect(factory.cancelCurrentRound())
+        .to.be.revertedWith('Factory: Current round is finalized')
+    })
+  })
 
   it('allows owner to set native token', async () => {
     await expect(factory.setToken(token.address))
@@ -278,10 +330,10 @@ describe('Funding Round Factory', () => {
   it('only coordinator can call coordinatorQuit', async () => {
     await factory.setCoordinator(coordinator.address, coordinatorPubKey);
     await expect(factory.coordinatorQuit())
-      .to.be.revertedWith('Sender is not the coordinator');
+      .to.be.revertedWith('Factory: Sender is not the coordinator');
   });
 
-  it('should cancel current round when coordinator is changed', async () => {
+  it('should cancel current round when coordinator quits', async () => {
     await factory.setToken(token.address);
     await factory.setCoordinator(coordinator.address, coordinatorPubKey);
     await factory.deployNewRound();

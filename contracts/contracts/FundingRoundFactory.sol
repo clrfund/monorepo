@@ -157,6 +157,20 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   }
 
   /**
+    * @dev Cancel current round.
+    */
+   function cancelCurrentRound()
+    external
+    onlyOwner
+  {
+    FundingRound currentRound = getCurrentRound();
+    require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
+    require(!currentRound.isFinalized(), 'Factory: Current round is finalized');
+    currentRound.cancel();
+    emit RoundFinalized(address(currentRound));
+  }
+
+  /**
     * @dev Set token in which contributions are accepted.
     * @param _token Address of the token contract.
     */
@@ -173,30 +187,16 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     * @param _coordinator Coordinator's address.
     * @param _coordinatorPubKey Coordinator's public key.
     */
-  function _setCoordinator(
-    address _coordinator,
-    PubKey memory _coordinatorPubKey
-  )
-    internal
-  {
-    coordinator = _coordinator;
-    coordinatorPubKey = _coordinatorPubKey;
-    FundingRound currentRound = getCurrentRound();
-    if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
-      currentRound.cancel();
-      emit RoundFinalized(address(currentRound));
-    }
-    emit CoordinatorChanged(_coordinator);
-  }
-
   function setCoordinator(
     address _coordinator,
-    PubKey calldata _coordinatorPubKey
+    PubKey memory _coordinatorPubKey
   )
     external
     onlyOwner
   {
-    _setCoordinator(_coordinator, _coordinatorPubKey);
+    coordinator = _coordinator;
+    coordinatorPubKey = _coordinatorPubKey;
+    emit CoordinatorChanged(_coordinator);
   }
 
   function coordinatorQuit()
@@ -205,11 +205,18 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   {
     // The fact that they quit is obvious from
     // the address being 0x0
-    _setCoordinator(address(0), PubKey(0, 0));
+    coordinator = address(0);
+    coordinatorPubKey = PubKey(0, 0);
+    FundingRound currentRound = getCurrentRound();
+    if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
+      currentRound.cancel();
+      emit RoundFinalized(address(currentRound));
+    }
+    emit CoordinatorChanged(address(0));
   }
 
   modifier onlyCoordinator() {
-    require(msg.sender == coordinator, 'Sender is not the coordinator');
+    require(msg.sender == coordinator, 'Factory: Sender is not the coordinator');
     _;
   }
 }
