@@ -55,8 +55,6 @@ describe('End-to-end Tests', function () {
     verifiedUserRegistry = await SimpleUserRegistry.deploy()
     const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
     recipientRegistry = await SimpleRecipientRegistry.deploy()
-    await recipientRegistry.setController()
-    await recipientRegistry.setMaxRecipients(24)
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
     fundingRoundFactory = await FundingRoundFactory.deploy(
       maciFactory.address,
@@ -64,6 +62,8 @@ describe('End-to-end Tests', function () {
       recipientRegistry.address,
     )
     await maciFactory.transferOwnership(fundingRoundFactory.address)
+    await recipientRegistry.setMaxRecipients(24)
+    await recipientRegistry.setController(fundingRoundFactory.address)
     maciParameters = await MaciParameters.read(maciFactory)
 
     // Deploy ERC20 token contract

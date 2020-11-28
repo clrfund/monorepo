@@ -10,7 +10,7 @@ import MACIFactoryArtifact from '../build/contracts/MACIFactory.json'
 async function main() {
   // We're hardcoding factory address due to a buidler limitation:
   // https://github.com/nomiclabs/buidler/issues/651
-  const factoryAddress = '0xc4905364b78a742ccce7B890A89514061E47068D'
+  const factoryAddress = '0x1A1FEe7EeD918BD762173e4dc5EfDB8a78C924A8'
   const [
     deployer,
     coordinator,

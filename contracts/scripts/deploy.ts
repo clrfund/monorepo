@@ -15,8 +15,6 @@ async function main() {
     deployer,
   )
   const recipientRegistry = await SimpleRecipientRegistry.deploy()
-  await recipientRegistry.setController()
-  await recipientRegistry.setMaxRecipients(24)
 
   const FundingRoundFactory = await ethers.getContractFactory(
     'FundingRoundFactory',
@@ -29,6 +27,8 @@ async function main() {
   );
   await fundingRoundFactory.deployed();
   await maciFactory.transferOwnership(fundingRoundFactory.address);
+  await recipientRegistry.setMaxRecipients(24)
+  await recipientRegistry.setController(fundingRoundFactory.address)
 
   console.log(`Factory deployed: ${fundingRoundFactory.address}`)
 }
