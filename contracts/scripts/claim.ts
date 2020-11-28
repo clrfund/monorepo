@@ -19,7 +19,6 @@ async function main() {
   for (const recipientIndex of [1, 2]) {
     const recipient = recipientIndex === 1 ? recipient1 : recipient2
     const recipientClaimData = getRecipientClaimData(
-      await recipient.getAddress(),
       recipientIndex,
       recipientTreeDepth,
       tally,

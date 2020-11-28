@@ -75,7 +75,7 @@ export default class ProjectView extends Vue {
     )
     this.claimed = await isFundsClaimed(
       currentRound.fundingRoundAddress,
-      this.project.address,
+      this.project.index,
     )
   }
 

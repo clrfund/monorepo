@@ -118,50 +118,47 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
   }
 
   /**
-    * @dev Get recipient index by address.
-    * @param _recipient Recipient address.
+    * @dev Get recipient address by index.
+    * @param _index Recipient index.
     * @param _startBlock Starting block of the funding round.
     * @param _endBlock Ending block of the funding round.
+    * @return Recipient address.
     */
-  function getRecipientIndex(
-    address _recipient,
+  function getRecipientAddress(
+    uint256 _index,
     uint256 _startBlock,
     uint256 _endBlock
   )
     override
     external
     view
-    returns (uint256)
+    returns (address)
   {
-    Recipient memory recipient = recipients[_recipient];
-    if (
-      recipient.index == 0 ||
-      recipient.addedAt > _endBlock ||
-      recipient.removedAt != 0 && recipient.removedAt <= _startBlock
-    ) {
-      // Return 0 if recipient is not in the registry
-      // or added after the end of the funding round
-      // or had been already removed when the round started
-      return 0;
-    } else {
-      address[] memory history = slots[recipient.index - 1];
-      // Check recipients who also occupied this slot
-      for (uint256 idx = history.length; idx > 0; idx--) {
-        address prevRecipient = history[idx - 1];
-        if (prevRecipient == _recipient) {
-          continue;
-        }
-        if (recipients[prevRecipient].removedAt > _startBlock) {
-          // Previous recipient still participates in the round
-          return 0;
-        } else {
-          // Stop search because subsequent items were removed
-          // before than the beginning of the round
-          break;
-        }
-      }
-      return recipient.index;
+    if (_index == 0 || _index > slots.length) {
+      return address(0);
     }
+    address[] memory history = slots[_index - 1];
+    if (history.length == 0) {
+      // Slot is not occupied
+      return address(0);
+    }
+    address prevRecipientAddress = address(0);
+    for (uint256 idx = history.length; idx > 0; idx--) {
+      address recipientAddress = history[idx - 1];
+      Recipient memory recipient = recipients[recipientAddress];
+      if (recipient.addedAt > _endBlock) {
+        // Recipient added after the end of the funding round, skip
+        continue;
+      }
+      else if (recipient.removedAt != 0 && recipient.removedAt <= _startBlock) {
+        // Recipient had been already removed when the round started
+        // Stop search because subsequent items were removed even earlier
+        return prevRecipientAddress;
+      }
+      // This recipient is valid, but the recipient who occupied
+      // this slot before also needs to be checked.
+      prevRecipientAddress = recipientAddress;
+    }
+    return prevRecipientAddress;
   }
-
 }

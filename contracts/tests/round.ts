@@ -677,7 +677,7 @@ describe('Funding Round', () => {
     const totalVotes = bnSqrt(totalSpent)
     const recipientIndex = 3;
     const recipientClaimData = [
-      recipient.address, // recipient
+      recipientIndex,
       totalVotes.div(2), // Tally result
       [[0]], // Proof
       genRandomSalt().toString(),
@@ -685,7 +685,7 @@ describe('Funding Round', () => {
       [[0]],
       genRandomSalt().toString(),
     ];
-    let expectedAllocatedAmount = matchingPoolSize.div(2).add(totalContributions.div(2))
+    const expectedAllocatedAmount = matchingPoolSize.div(2).add(totalContributions.div(2))
     let fundingRoundAsRecipient: Contract;
     let fundingRoundAsContributor: Contract;
 
@@ -697,7 +697,7 @@ describe('Funding Round', () => {
       await maci.mock.verifyTallyResult.returns(true);
       await maci.mock.verifyPerVOSpentVoiceCredits.returns(true);
 
-      await recipientRegistry.mock.getRecipientIndex.returns(recipientIndex);
+      await recipientRegistry.mock.getRecipientAddress.returns(recipient.address)
 
       await fundingRound.setMaci(maci.address);
       const tokenAsContributor = token.connect(contributor);
@@ -726,7 +726,7 @@ describe('Funding Round', () => {
 
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
-        .withArgs(recipient.address, expectedAllocatedAmount);
+        .withArgs(recipientIndex, recipient.address, expectedAllocatedAmount)
       expect(await token.balanceOf(recipient.address))
         .to.equal(expectedAllocatedAmount);
     });
@@ -737,7 +737,7 @@ describe('Funding Round', () => {
 
       await expect(fundingRoundAsContributor.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
-        .withArgs(recipient.address, expectedAllocatedAmount);
+        .withArgs(recipientIndex, recipient.address, expectedAllocatedAmount)
       expect(await token.balanceOf(recipient.address))
         .to.equal(expectedAllocatedAmount);
     });
@@ -751,16 +751,16 @@ describe('Funding Round', () => {
       recipientClaimZeroData[4] = '0'
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimZeroData))
         .to.emit(fundingRound, 'FundsClaimed')
-        .withArgs(recipient.address, 0)
+        .withArgs(recipientIndex, recipient.address, 0)
     })
 
     it('allows recipient to claim if the matching pool is empty', async () => {
       await fundingRound.finalize(totalSpent, totalSpentSalt)
 
-      expectedAllocatedAmount = totalContributions.div(2)
+      const expectedWithoutMatching = totalContributions.div(2)
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
-        .withArgs(recipient.address, expectedAllocatedAmount)
+        .withArgs(recipientIndex, recipient.address, expectedWithoutMatching)
     })
 
     it('should not allow recipient to claim funds if round has not been finalized', async () => {
@@ -781,10 +781,10 @@ describe('Funding Round', () => {
     it('allows only verified recipients to claim funds', async () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
       await fundingRound.finalize(totalSpent, totalSpentSalt)
-      await recipientRegistry.mock.getRecipientIndex.returns(0);
+      await recipientRegistry.mock.getRecipientAddress.returns(ZERO_ADDRESS)
 
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
-        .to.be.revertedWith('FundingRound: Invalid recipient address');
+        .to.be.revertedWith('FundingRound: Invalid recipient index')
     });
 
     it('allows recipient to claim allocated funds only once', async () => {

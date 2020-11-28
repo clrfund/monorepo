@@ -57,7 +57,6 @@ export default class ClaimModal extends Vue {
     const { fundingRoundAddress, recipientTreeDepth, nativeTokenDecimals } = this.currentRound
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
     const recipientClaimData = getRecipientClaimData(
-      this.project.address,
       this.project.index,
       recipientTreeDepth,
       this.$store.state.tally,
