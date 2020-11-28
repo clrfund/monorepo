@@ -278,7 +278,7 @@ describe('Funding Round Factory', () => {
   it('only coordinator can call coordinatorQuit', async () => {
     await factory.setCoordinator(coordinator.address, coordinatorPubKey);
     await expect(factory.coordinatorQuit())
-      .to.be.revertedWith('Sender is not the coordinator');
+      .to.be.revertedWith('Factory: Sender is not the coordinator');
   });
 
   it('should cancel current round when coordinator is changed', async () => {

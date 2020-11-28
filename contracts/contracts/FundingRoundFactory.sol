@@ -173,11 +173,12 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     * @param _coordinator Coordinator's address.
     * @param _coordinatorPubKey Coordinator's public key.
     */
-  function _setCoordinator(
+  function setCoordinator(
     address _coordinator,
     PubKey memory _coordinatorPubKey
   )
-    internal
+    external
+    onlyOwner
   {
     coordinator = _coordinator;
     coordinatorPubKey = _coordinatorPubKey;
@@ -189,27 +190,24 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     emit CoordinatorChanged(_coordinator);
   }
 
-  function setCoordinator(
-    address _coordinator,
-    PubKey calldata _coordinatorPubKey
-  )
-    external
-    onlyOwner
-  {
-    _setCoordinator(_coordinator, _coordinatorPubKey);
-  }
-
   function coordinatorQuit()
     external
     onlyCoordinator
   {
     // The fact that they quit is obvious from
     // the address being 0x0
-    _setCoordinator(address(0), PubKey(0, 0));
+    coordinator = address(0);
+    coordinatorPubKey = PubKey(0, 0);
+    FundingRound currentRound = getCurrentRound();
+    if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
+      currentRound.cancel();
+      emit RoundFinalized(address(currentRound));
+    }
+    emit CoordinatorChanged(address(0));
   }
 
   modifier onlyCoordinator() {
-    require(msg.sender == coordinator, 'Sender is not the coordinator');
+    require(msg.sender == coordinator, 'Factory: Sender is not the coordinator');
     _;
   }
 }
