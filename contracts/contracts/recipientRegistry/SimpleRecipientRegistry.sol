@@ -115,13 +115,13 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
   }
 
   /**
-    * @dev Get recipient index by address.
-    * @param _recipient Recipient address.
+    * @dev Get recipient index by ID.
+    * @param _recipientId Recipient ID (encoded address).
     * @param _startBlock Starting block of the funding round.
     * @param _endBlock Ending block of the funding round.
     */
   function getRecipientIndex(
-    address _recipient,
+    bytes32 _recipientId,
     uint256 _startBlock,
     uint256 _endBlock
   )
@@ -130,7 +130,8 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
     view
     returns (uint256)
   {
-    Recipient memory recipient = recipients[_recipient];
+    address recipientAddress = address(uint160(uint256(_recipientId)));
+    Recipient memory recipient = recipients[recipientAddress];
     if (
       recipient.index == 0 ||
       recipient.addedAt > _endBlock ||
@@ -147,4 +148,19 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
     }
   }
 
+  /**
+    * @dev Get recipient address by ID.
+    * @param _recipientId Recipient ID (encoded address).
+    * @return Recipient address.
+    */
+  function getRecipientAddress(
+    bytes32 _recipientId
+  )
+    override
+    external
+    view
+    returns (address)
+  {
+    return address(uint160(uint256(_recipientId)));
+  }
 }

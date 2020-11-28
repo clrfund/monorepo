@@ -28,6 +28,7 @@ import { RoundInfo } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
+import { recipientAddressToId } from '@/utils/recipients'
 
 @Component({
   components: {
@@ -56,8 +57,9 @@ export default class ClaimModal extends Vue {
     const signer: Signer = this.$store.state.currentUser.walletProvider.getSigner()
     const { fundingRoundAddress, recipientTreeDepth, nativeTokenDecimals } = this.currentRound
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
+    const recipientId = recipientAddressToId(this.project.address)
     const recipientClaimData = getRecipientClaimData(
-      this.project.address,
+      recipientId,
       this.project.index,
       recipientTreeDepth,
       this.$store.state.tally,

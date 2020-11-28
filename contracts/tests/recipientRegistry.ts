@@ -4,6 +4,7 @@ import { solidity } from 'ethereum-waffle'
 import { Contract } from 'ethers'
 
 import { ZERO_ADDRESS } from '../utils/constants'
+import { recipientAddressToId as addressToId } from '../utils/recipients'
 
 use(solidity)
 
@@ -98,7 +99,7 @@ describe('Simple Recipient Registry', () => {
         .withArgs(recipientAddress, metadata, 1)
       const currentBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientIndex(
-        recipientAddress, currentBlock, currentBlock,
+        addressToId(recipientAddress), currentBlock, currentBlock,
       )).to.equal(1)
 
       const anotherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
@@ -155,7 +156,7 @@ describe('Simple Recipient Registry', () => {
         .withArgs(recipientAddress)
       const currentBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientIndex(
-        recipientAddress, currentBlock, currentBlock,
+        addressToId(recipientAddress), currentBlock, currentBlock,
       )).to.equal(0)
     })
 
@@ -176,7 +177,7 @@ describe('Simple Recipient Registry', () => {
       recipientAddress = ZERO_ADDRESS
       const currentBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientIndex(
-        recipientAddress, currentBlock, currentBlock,
+        addressToId(recipientAddress), currentBlock, currentBlock,
       )).to.equal(0)
     })
 
@@ -186,7 +187,7 @@ describe('Simple Recipient Registry', () => {
       const endBlock = await getCurrentBlockNumber()
       await registry.addRecipient(recipientAddress, metadata)
       expect(await registry.getRecipientIndex(
-        recipientAddress, startBlock, endBlock,
+        addressToId(recipientAddress), startBlock, endBlock,
       )).to.equal(0)
     })
 
@@ -197,7 +198,7 @@ describe('Simple Recipient Registry', () => {
       await provider.send('evm_increaseTime', [1000])
       const endBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientIndex(
-        recipientAddress, startBlock, endBlock,
+        addressToId(recipientAddress), startBlock, endBlock,
       )).to.equal(1)
     })
 
@@ -226,32 +227,32 @@ describe('Simple Recipient Registry', () => {
 
       // Recipients removed during the round should still be valid
       expect(await registry.getRecipientIndex(
-        removedRecipient1, blockNumber1, blockNumber2,
+        addressToId(removedRecipient1), blockNumber1, blockNumber2,
       )).to.equal(1)
       expect(await registry.getRecipientIndex(
-        removedRecipient2, blockNumber1, blockNumber2,
+        addressToId(removedRecipient2), blockNumber1, blockNumber2,
       )).to.equal(2)
       expect(await registry.getRecipientIndex(
-        addedRecipient1, blockNumber1, blockNumber2,
+        addressToId(addedRecipient1), blockNumber1, blockNumber2,
       )).to.equal(0)
       expect(await registry.getRecipientIndex(
-        addedRecipient2, blockNumber1, blockNumber2,
+        addressToId(addedRecipient2), blockNumber1, blockNumber2,
       )).to.equal(0)
 
       await provider.send('evm_increaseTime', [1000])
       const blockNumber3 = await getCurrentBlockNumber()
       // Recipients removed before the beginning of the round should be replaced
       expect(await registry.getRecipientIndex(
-        removedRecipient1, blockNumber2, blockNumber3,
+        addressToId(removedRecipient1), blockNumber2, blockNumber3,
       )).to.equal(0)
       expect(await registry.getRecipientIndex(
-        removedRecipient2, blockNumber2, blockNumber3,
+        addressToId(removedRecipient2), blockNumber2, blockNumber3,
       )).to.equal(0)
       expect(await registry.getRecipientIndex(
-        addedRecipient1, blockNumber2, blockNumber3,
+        addressToId(addedRecipient1), blockNumber2, blockNumber3,
       )).to.equal(2)
       expect(await registry.getRecipientIndex(
-        addedRecipient2, blockNumber2, blockNumber3,
+        addressToId(addedRecipient2), blockNumber2, blockNumber3,
       )).to.equal(1)
     })
   })

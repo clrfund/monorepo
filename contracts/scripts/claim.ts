@@ -4,6 +4,7 @@ import { ethers } from '@nomiclabs/buidler'
 import MACIArtifact from '../build/contracts/MACI.json'
 import { getEventArg } from '../utils/contracts'
 import { getRecipientClaimData } from '../utils/maci'
+import { recipientAddressToId } from '../utils/recipients'
 
 async function main() {
   const [,,, recipient1, recipient2] = await ethers.getSigners()
@@ -18,8 +19,10 @@ async function main() {
   // Claim funds
   for (const recipientIndex of [1, 2]) {
     const recipient = recipientIndex === 1 ? recipient1 : recipient2
+    const recipientAddress = await recipient.getAddress()
+    const recipientId = recipientAddressToId(recipientAddress)
     const recipientClaimData = getRecipientClaimData(
-      await recipient.getAddress(),
+      recipientId,
       recipientIndex,
       recipientTreeDepth,
       tally,

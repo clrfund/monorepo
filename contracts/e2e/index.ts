@@ -11,6 +11,7 @@ import { getEventArg } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import { MaciParameters, createMessage, getRecipientClaimData } from '../utils/maci'
+import { recipientAddressToId } from '../utils/recipients'
 
 import MACIArtifact from '../build/contracts/MACI.json'
 
@@ -192,8 +193,9 @@ describe('End-to-end Tests', function () {
     for (const recipientIndex of [1, 2]) {
       const recipient = recipientIndex === 1 ? recipient1 : recipient2
       const recipientAddress = await recipient.getAddress()
+      const recipientId = recipientAddressToId(recipientAddress)
       const recipientClaimData = getRecipientClaimData(
-        recipientAddress,
+        recipientId,
         recipientIndex,
         recipientTreeDepth,
         tally,

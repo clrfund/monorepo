@@ -51,7 +51,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   // Events
   event Contribution(address indexed _sender, uint256 _amount);
   event ContributionWithdrawn(address indexed _contributor);
-  event FundsClaimed(address indexed _recipient, uint256 _amount);
+  event FundsClaimed(bytes32 indexed _recipientId, uint256 _amount);
   event TallyPublished(string _tallyHash);
 
   /**
@@ -274,6 +274,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
 
   /**
     * @dev Claim allocated tokens.
+    * @param _recipientId Recipient ID.
     * @param _tallyResult The result of vote tally for the recipient.
     * @param _tallyResultProof Proof of correctness of the vote tally.
     * @param _tallyResultSalt Salt.
@@ -282,7 +283,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @param _spentSalt Salt.
     */
   function claimFunds(
-    address _recipient,
+    bytes32 _recipientId,
     uint256 _tallyResult,
     uint256[][] calldata _tallyResultProof,
     uint256 _tallyResultSalt,
@@ -295,12 +296,12 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(isFinalized, 'FundingRound: Round not finalized');
     require(!isCancelled, 'FundingRound: Round has been cancelled');
     uint256 voteOptionIndex = recipientRegistry.getRecipientIndex(
-      _recipient,
+      _recipientId,
       startBlock,
       // TODO: use block numbers in MACI
       startBlock + (maci.signUpDurationSeconds() + maci.votingDurationSeconds()) / 15
     );
-    require(voteOptionIndex > 0, 'FundingRound: Invalid recipient address');
+    require(voteOptionIndex > 0, 'FundingRound: Invalid recipient ID');
     require(!recipients[voteOptionIndex], 'FundingRound: Funds already claimed');
     { // create scope to avoid 'stack too deep' error
       (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
@@ -323,7 +324,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     }
     recipients[voteOptionIndex] = true;
     uint256 allocatedAmount = getAllocatedAmount(_tallyResult, _spent);
-    nativeToken.transfer(_recipient, allocatedAmount);
-    emit FundsClaimed(_recipient, allocatedAmount);
+    address recipient = recipientRegistry.getRecipientAddress(_recipientId);
+    nativeToken.transfer(recipient, allocatedAmount);
+    emit FundsClaimed(_recipientId, allocatedAmount);
   }
 }

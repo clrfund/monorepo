@@ -49,6 +49,7 @@ import { RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
+import { recipientAddressToId } from '@/utils/recipients'
 
 @Component({
   name: 'ProjectView',
@@ -73,9 +74,10 @@ export default class ProjectView extends Vue {
       tally.results.tally[this.project.index],
       tally.totalVoiceCreditsPerVoteOption.tally[this.project.index],
     )
+    const recipientId = recipientAddressToId(this.project.address)
     this.claimed = await isFundsClaimed(
       currentRound.fundingRoundAddress,
-      this.project.address,
+      recipientId,
     )
   }
 
