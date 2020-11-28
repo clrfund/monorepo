@@ -206,6 +206,7 @@ describe('Funding Round Factory', () => {
     const contributionAmount = UNIT.mul(10)
     const totalSpent = UNIT.mul(100)
     const totalSpentSalt = genRandomSalt().toString()
+    let roundDuration: number
 
     beforeEach(async () => {
       await factory.setToken(token.address)
@@ -215,17 +216,31 @@ describe('Funding Round Factory', () => {
         factory.address,
         contributionAmount,
       )
+      roundDuration = maciParameters.signUpDuration + maciParameters.votingDuration + 10
     })
 
-    it('reverts if votes has not been tallied', async () => {
+    it('allows owner to finalize round', async () => {
       const factoryAsContributor = factory.connect(contributor);
       await factoryAsContributor.contributeMatchingFunds(contributionAmount)
       await factory.deployNewRound();
-      const roundDuration = maciParameters.signUpDuration + maciParameters.votingDuration + 10
       await provider.send('evm_increaseTime', [roundDuration]);
       await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
         .to.be.revertedWith('FundingRound: Votes has not been tallied')
-    });
+    })
+
+    it('allows owner to finalize round even without matching funds', async () => {
+      await factory.deployNewRound()
+      await provider.send('evm_increaseTime', [roundDuration])
+      await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('FundingRound: Votes has not been tallied')
+    })
+
+    it('allows only owner to finalize round', async () => {
+      await factory.deployNewRound()
+      await provider.send('evm_increaseTime', [roundDuration])
+      await expect(factory.connect(contributor).transferMatchingFunds(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
 
     it('reverts if round has not been deployed', async () => {
       await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
