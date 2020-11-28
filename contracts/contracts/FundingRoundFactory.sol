@@ -57,7 +57,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     external
   {
     require(address(nativeToken) != address(0), 'Factory: Native token is not set');
-    nativeToken.transferFrom(msg.sender, address(this), _amount);
+    nativeToken.safeTransferFrom(msg.sender, address(this), _amount);
     emit MatchingPoolContribution(msg.sender, _amount);
   }
 
@@ -150,7 +150,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
     uint256 matchingPoolSize = currentRound.nativeToken().balanceOf(address(this));
     if (matchingPoolSize > 0) {
-      nativeToken.transfer(address(currentRound), matchingPoolSize);
+      nativeToken.safeTransfer(address(currentRound), matchingPoolSize);
     }
     currentRound.finalize(_totalSpent, _totalSpentSalt);
     emit RoundFinalized(address(currentRound));

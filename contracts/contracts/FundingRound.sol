@@ -118,7 +118,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     contributorCount += 1;
     bytes memory signUpGatekeeperData = abi.encode(msg.sender, voiceCredits);
     bytes memory initialVoiceCreditProxyData = abi.encode(msg.sender);
-    nativeToken.transferFrom(msg.sender, address(this), amount);
+    nativeToken.safeTransferFrom(msg.sender, address(this), amount);
     maci.signUp(
       pubKey,
       signUpGatekeeperData,
@@ -194,7 +194,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     uint256 amount = contributors[msg.sender].voiceCredits * voiceCreditFactor;
     require(amount > 0, 'FundingRound: Nothing to withdraw');
     contributors[msg.sender].voiceCredits = 0;
-    nativeToken.transfer(msg.sender, amount);
+    nativeToken.safeTransfer(msg.sender, amount);
     emit ContributionWithdrawn(msg.sender);
   }
 
@@ -321,7 +321,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
     recipients[voteOptionIndex] = true;
     uint256 allocatedAmount = getAllocatedAmount(_tallyResult, _spent);
-    nativeToken.transfer(_recipient, allocatedAmount);
+    nativeToken.safeTransfer(_recipient, allocatedAmount);
     emit FundsClaimed(_recipient, allocatedAmount);
   }
 }
