@@ -16,15 +16,16 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
     uint256 index;
     uint256 addedAt;
     uint256 removedAt;
-    uint256 prevRemovedAt;
   }
 
   // State
   address public controller;
   uint256 public maxRecipients;
-  uint256 private nextRecipientIndex = 1;
   mapping(address => Recipient) private recipients;
   address[] private removed;
+  // Slot 0 corresponds to index 1
+  // Each slot contains a history of recipients who occupied it
+  address[][] private slots;
 
   // Events
   event RecipientAdded(address indexed _recipient, string _metadata, uint256 _index);
@@ -82,20 +83,22 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
     require(bytes(_metadata).length != 0, 'RecipientRegistry: Metadata info is empty string');
     require(recipients[_recipient].index == 0, 'RecipientRegistry: Recipient already registered');
     uint256 recipientIndex = 0;
-    uint256 prevRemovedAt = 0;
+    uint256 nextRecipientIndex = slots.length + 1;
     if (nextRecipientIndex <= maxRecipients) {
       // Assign next index in sequence
       recipientIndex = nextRecipientIndex;
-      nextRecipientIndex += 1;
+      address[] memory history = new address[](1);
+      history[0] = _recipient;
+      slots.push(history);
     } else {
       // Assign one of the vacant recipient indexes
       require(removed.length > 0, 'RecipientRegistry: Recipient limit reached');
-      Recipient memory removedRecipient = recipients[removed[removed.length - 1]];
+      address removedRecipient = removed[removed.length - 1];
       removed.pop();
-      recipientIndex = removedRecipient.index;
-      prevRemovedAt = removedRecipient.removedAt;
+      recipientIndex = recipients[removedRecipient].index;
+      slots[recipientIndex - 1].push(_recipient);
     }
-    recipients[_recipient] = Recipient(recipientIndex, block.number, 0, prevRemovedAt);
+    recipients[_recipient] = Recipient(recipientIndex, block.number, 0);
     emit RecipientAdded(_recipient, _metadata, recipientIndex);
   }
 
@@ -134,15 +137,29 @@ contract SimpleRecipientRegistry is Ownable, IRecipientRegistry {
     if (
       recipient.index == 0 ||
       recipient.addedAt > _endBlock ||
-      recipient.removedAt != 0 && recipient.removedAt <= _startBlock ||
-      recipient.prevRemovedAt > _startBlock
+      recipient.removedAt != 0 && recipient.removedAt <= _startBlock
     ) {
       // Return 0 if recipient is not in the registry
       // or added after the end of the funding round
       // or had been already removed when the round started
-      // or inherits index from removed recipient who participates in the round
       return 0;
     } else {
+      address[] memory history = slots[recipient.index - 1];
+      // Check recipients who also occupied this slot
+      for (uint256 idx = history.length; idx > 0; idx--) {
+        address prevRecipient = history[idx - 1];
+        if (prevRecipient == _recipient) {
+          continue;
+        }
+        if (recipients[prevRecipient].removedAt > _startBlock) {
+          // Previous recipient still participates in the round
+          return 0;
+        } else {
+          // Stop search because subsequent items were removed
+          // before than the beginning of the round
+          break;
+        }
+      }
       return recipient.index;
     }
   }
