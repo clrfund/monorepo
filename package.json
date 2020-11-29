@@ -3,8 +3,11 @@
   "repository": "https://github.com/clrfund/monorepo",
   "license": "GPL-3.0",
   "private": true,
-  "workspaces": { 
-    "packages": ["contracts", "vue-app"],
+  "workspaces": {
+    "packages": [
+      "contracts",
+      "vue-app"
+    ],
     "nohoist": [
       "**/@nomiclabs/**"
     ]

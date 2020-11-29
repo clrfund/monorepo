@@ -23,10 +23,10 @@
     "maci-contracts": "0.4.11"
   },
   "devDependencies": {
-    "@nomiclabs/buidler": "^1.3.8",
+    "@nomiclabs/buidler": "1.3.8",
     "@nomiclabs/buidler-ethers": "^2.0.2",
     "@nomiclabs/buidler-ganache": "^1.3.3",
-    "@nomiclabs/buidler-waffle": "^2.0.0",
+    "@nomiclabs/buidler-waffle": "^2.1.0",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.9.2",
@@ -34,7 +34,7 @@
     "@typescript-eslint/parser": "^2.34.0",
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
-    "ethereum-waffle": "^3.0.0",
+    "ethereum-waffle": "^3.2.1",
     "ethers": "^5.0.17",
     "ipfs-only-hash": "^2.0.1",
     "maci-cli": "0.4.11",
