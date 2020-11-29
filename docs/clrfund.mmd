@@ -18,10 +18,12 @@ sequenceDiagram
     Owner ->> RecipientRegistry: deploy recipient registry
     Owner ->> Factory: deploy funding round factory
     Owner ->> MACIFactory: transfer ownership to Factory ( call transferOwnership() )
+    Owner ->> RecipientRegistry: set max number of recipients
+    Owner ->> RecipientRegistry: transfer control to Factory ( call setController() )
     Owner ->> Factory: set MACI parameters if necessary ( call setMaciParameters() )
     Coordinator -->> Owner: provide public key
     Owner ->> Factory: set coordinator ( call setCoordinator() )
-    PoolContributor ->> Factory: donate to the matching pool ( call contributeMatchingFunds() )
+    PoolContributor ->> Factory: donate to the matching pool
 
     loop Adding recipients
         Recipient -->> Owner: ask for registration
@@ -60,6 +62,7 @@ sequenceDiagram
             Coordinator ->> FundingRound: call publishTallyHash()
             Note right of Owner: owner verifies the tally
             Owner ->> Factory: call transferMatchingFunds()
+            Factory ->> PoolContributor: pull matching funds from funding sources
             Factory ->> FundingRound: transfer matching funds and finalize the round
             FundingRound ->> MACI: verify the total amount of spent voice credits ( call verifySpentVoiceCredits() )
             FundingRound ->> MACI: call totalVotes()
