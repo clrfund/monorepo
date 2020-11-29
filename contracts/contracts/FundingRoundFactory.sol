@@ -176,7 +176,9 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     // Pull funds from other funding sources
     for (uint256 index = 0; index < fundingSources.length(); index++) {
       address fundingSource = fundingSources.at(index);
-      uint256 contribution = roundToken.allowance(fundingSource, address(this));
+      uint256 allowance = roundToken.allowance(fundingSource, address(this));
+      uint256 balance = roundToken.balanceOf(fundingSource);
+      uint256 contribution = allowance < balance ? allowance : balance;
       if (contribution > 0) {
         roundToken.safeTransferFrom(fundingSource, address(currentRound), contribution);
       }

@@ -232,10 +232,19 @@ describe('Funding Round Factory', () => {
         .to.be.revertedWith('FundingRound: Votes has not been tallied')
     })
 
-    it('pulls funds from funding sources', async () => {
+    it('pulls funds from funding source', async () => {
       await factory.addFundingSource(contributor.address)
       token.connect(contributor).approve(factory.address, contributionAmount)
       await factory.addFundingSource(deployer.address) // Not a funding source
+      await factory.deployNewRound()
+      await provider.send('evm_increaseTime', [roundDuration])
+      await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
+        .to.be.revertedWith('FundingRound: Votes has not been tallied')
+    })
+
+    it('pulls funds from funding source if allowance is greater than balance', async () => {
+      await factory.addFundingSource(contributor.address)
+      token.connect(contributor).approve(factory.address, contributionAmount.mul(2))
       await factory.deployNewRound()
       await provider.send('evm_increaseTime', [roundDuration])
       await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
