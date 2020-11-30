@@ -26,7 +26,8 @@ describe('End-to-end Tests', function () {
 
   let deployer: Signer
   let coordinator: Wallet
-  let poolContributor: Signer
+  let poolContributor1: Signer
+  let poolContributor2: Signer
   let recipient1: Signer
   let recipient2: Signer
   let recipient3: Signer
@@ -43,7 +44,15 @@ describe('End-to-end Tests', function () {
   let coordinatorKeypair: Keypair
 
   beforeEach(async () => {
-    [deployer, poolContributor, recipient1, recipient2, recipient3, ...contributors] = await ethers.getSigners()
+    [
+      deployer,
+      poolContributor1,
+      poolContributor2,
+      recipient1,
+      recipient2,
+      recipient3,
+      ...contributors
+    ] = await ethers.getSigners()
 
     // Workaround for https://github.com/nomiclabs/buidler/issues/759
     coordinator = Wallet.createRandom().connect(provider)
@@ -70,7 +79,8 @@ describe('End-to-end Tests', function () {
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer)
     const tokenInitialSupply = UNIT.mul(10000)
     token = await Token.deploy(tokenInitialSupply)
-    await token.transfer(await poolContributor.getAddress(), UNIT.mul(100))
+    await token.transfer(await poolContributor1.getAddress(), UNIT.mul(50))
+    await token.transfer(await poolContributor2.getAddress(), UNIT.mul(50))
     for (const contributor of contributors) {
       await token.transfer(await contributor.getAddress(), UNIT.mul(100))
     }
@@ -85,13 +95,18 @@ describe('End-to-end Tests', function () {
     await fundingRoundFactory.setMaciParameters(...maciParameters.values())
 
     // Add funds to matching pool
-    const poolContributionAmount = UNIT.mul(10)
-    await token.connect(poolContributor).approve(
+    const poolContributionAmount = UNIT.mul(5)
+    await token.connect(poolContributor1).transfer(
       fundingRoundFactory.address,
       poolContributionAmount,
     )
-    await fundingRoundFactory.connect(poolContributor)
-      .contributeMatchingFunds(poolContributionAmount)
+
+    // Add additional funding source
+    await fundingRoundFactory.addFundingSource(await poolContributor2.getAddress())
+    await token.connect(poolContributor2).approve(
+      fundingRoundFactory.address,
+      poolContributionAmount,
+    )
 
     // Add recipients
     await recipientRegistry.addRecipient(
