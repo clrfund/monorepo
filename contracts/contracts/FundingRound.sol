@@ -322,7 +322,10 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
       // TODO: use block numbers in MACI
       startBlock + (maci.signUpDurationSeconds() + maci.votingDurationSeconds()) / 15
     );
-    require(recipient != address(0), 'FundingRound: Invalid recipient index');
+    if (recipient == address(0)) {
+      // Send funds back to the matching pool
+      recipient = owner();
+    }
     uint256 allocatedAmount = getAllocatedAmount(_tallyResult, _spent);
     nativeToken.safeTransfer(recipient, allocatedAmount);
     emit FundsClaimed(_voteOptionIndex, recipient, allocatedAmount);

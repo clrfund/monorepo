@@ -778,13 +778,16 @@ describe('Funding Round', () => {
         .to.be.revertedWith('FundingRound: Round has been cancelled')
     });
 
-    it('allows only verified recipients to claim funds', async () => {
+    it('sends funds allocated to unverified recipients back to matching pool', async () => {
       await token.transfer(fundingRound.address, matchingPoolSize);
       await fundingRound.finalize(totalSpent, totalSpentSalt)
       await recipientRegistry.mock.getRecipientAddress.returns(ZERO_ADDRESS)
 
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
-        .to.be.revertedWith('FundingRound: Invalid recipient index')
+        .to.emit(fundingRound, 'FundsClaimed')
+        .withArgs(recipientIndex, deployer.address, expectedAllocatedAmount)
+      expect(await token.balanceOf(deployer.address))
+        .to.equal(expectedAllocatedAmount)
     });
 
     it('allows recipient to claim allocated funds only once', async () => {
