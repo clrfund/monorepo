@@ -33,11 +33,15 @@ export enum RoundStatus {
   Cancelled = 'Cancelled',
 }
 
-export async function getRoundInfo(): Promise<RoundInfo | null> {
+export async function getCurrentRound(): Promise<string | null> {
   const fundingRoundAddress = await factory.getCurrentRound()
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
     return null
   }
+  return fundingRoundAddress
+}
+
+export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundInfo> {
   const fundingRound = new Contract(
     fundingRoundAddress,
     FundingRound,

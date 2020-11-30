@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
 
 import { CartItem, Contributor, getContributionAmount } from '@/api/contributions'
-import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
+import { RoundInfo, RoundStatus, getCurrentRound, getRoundInfo } from '@/api/round'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
 import {
@@ -76,11 +76,18 @@ const store: StoreOptions<RootState> = {
     },
   },
   actions: {
-    async [LOAD_ROUND_INFO]({ commit }) {
-      const currentRound = await getRoundInfo()
-      commit(SET_CURRENT_ROUND, currentRound)
-      if (currentRound && currentRound.status === RoundStatus.Finalized) {
-        const tally = await getTally(currentRound.fundingRoundAddress)
+    async [LOAD_ROUND_INFO]({ commit }, roundAddress: string | null = null) {
+      if (roundAddress === null) {
+        roundAddress = await getCurrentRound()
+      }
+      if (roundAddress === null) {
+        commit(SET_CURRENT_ROUND, null)
+        return
+      }
+      const round = await getRoundInfo(roundAddress)
+      commit(SET_CURRENT_ROUND, round)
+      if (round && round.status === RoundStatus.Finalized) {
+        const tally = await getTally(roundAddress)
         commit(SET_TALLY, tally)
       }
     },
