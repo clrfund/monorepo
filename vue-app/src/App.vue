@@ -18,13 +18,14 @@
       </div>
       <div id="nav-menu">
         <router-link to="/">Projects</router-link>
+        <router-link to="/rounds">Rounds</router-link>
         <router-link to="/about">About</router-link>
         <a href="https://blog.clr.fund" target=_blank>Blog</a>
         <a href="https://forum.clr.fund" target=_blank>Forum</a>
       </div>
     </div>
     <div id="content">
-      <router-view />
+      <router-view :key="$route.path" />
     </div>
     <div id="user-bar" :class="{'collapsed': userBarCollapsed}">
       <Profile />
@@ -40,7 +41,7 @@ import { Watch } from 'vue-property-decorator'
 
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
-import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
+import { LOAD_USER_INFO } from '@/store/action-types'
 
 @Component({
   name: 'clr.fund',
@@ -64,10 +65,6 @@ export default class App extends Vue {
   userBarCollapsed = true
 
   created() {
-    this.$store.dispatch(LOAD_ROUND_INFO)
-    setInterval(() => {
-      this.$store.dispatch(LOAD_ROUND_INFO)
-    }, 60 * 1000)
     setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)

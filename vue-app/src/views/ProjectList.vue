@@ -55,6 +55,8 @@ import { RoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
+import { LOAD_ROUND_INFO } from '@/store/action-types'
+import { SET_CURRENT_ROUND } from '@/store/mutation-types'
 
 @Component({
   name: 'project-list',
@@ -67,17 +69,38 @@ export default class ProjectList extends Vue {
 
   projects: Project[] = []
 
+  roundLoaderInterval?: ReturnType<typeof setInterval>
+  roundWatcherStop?: Function
+
   get currentRound(): RoundInfo | null {
     return this.$store.state.currentRound
   }
 
-  async mounted() {
+  async created() {
+    const roundAddress = this.$route.params.address || null
+    // Reset current round
+    this.$store.commit(SET_CURRENT_ROUND, null)
+    // Load round info every minute
+    this.$store.dispatch(LOAD_ROUND_INFO, roundAddress)
+    this.roundLoaderInterval = setInterval(() => {
+      this.$store.dispatch(LOAD_ROUND_INFO, roundAddress)
+    }, 60 * 1000)
+
     // Wait for round info to load and get project list
-    this.$store.watch(
-      (state) => state.currentRound,
+    this.roundWatcherStop = this.$store.watch(
+      (state) => state.currentRound?.fundingRoundAddress,
       this.loadProjects,
     )
     this.loadProjects()
+  }
+
+  beforeDestroy() {
+    if (this.roundLoaderInterval) {
+      clearInterval(this.roundLoaderInterval)
+    }
+    if (this.roundWatcherStop) {
+      this.roundWatcherStop()
+    }
   }
 
   private async loadProjects() {
