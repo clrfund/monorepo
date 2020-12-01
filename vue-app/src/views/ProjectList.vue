@@ -81,7 +81,10 @@ export default class ProjectList extends Vue {
   }
 
   private async loadProjects() {
-    this.projects = await getProjects(this.currentRound?.startBlock)
+    this.projects = await getProjects(
+      this.currentRound?.startBlock,
+      this.currentRound?.endBlock,
+    )
   }
 
   get contribution(): FixedNumber {
