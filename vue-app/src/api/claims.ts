@@ -19,10 +19,10 @@ export async function getAllocatedAmount(
 
 export async function isFundsClaimed(
   fundingRoundAddress: string,
-  recipientAddress: string,
+  recipientIndex: number,
 ): Promise<boolean> {
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
-  const eventFilter = fundingRound.filters.FundsClaimed(recipientAddress)
+  const eventFilter = fundingRound.filters.FundsClaimed(recipientIndex)
   const events = await fundingRound.queryFilter(eventFilter, 0)
   return events.length > 0
 }

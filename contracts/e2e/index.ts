@@ -206,9 +206,7 @@ describe('End-to-end Tests', function () {
     const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
     for (const recipientIndex of [1, 2]) {
       const recipient = recipientIndex === 1 ? recipient1 : recipient2
-      const recipientAddress = await recipient.getAddress()
       const recipientClaimData = getRecipientClaimData(
-        recipientAddress,
         recipientIndex,
         recipientTreeDepth,
         tally,

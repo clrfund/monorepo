@@ -14,7 +14,7 @@ export interface Project {
 }
 
 function decodeRecipientAdded(event: Event): Project {
-  const args = event.args as any // eslint-disable-line @typescript-eslint/no-explicit-any
+  const args = event.args as any
   const metadata = JSON.parse(args._metadata)
   return {
     address: args._recipient,

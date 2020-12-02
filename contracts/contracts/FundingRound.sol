@@ -51,7 +51,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   // Events
   event Contribution(address indexed _sender, uint256 _amount);
   event ContributionWithdrawn(address indexed _contributor);
-  event FundsClaimed(address indexed _recipient, uint256 _amount);
+  event FundsClaimed(uint256 indexed _voteOptionIndex, address indexed _recipient, uint256 _amount);
   event TallyPublished(string _tallyHash);
 
   /**
@@ -274,6 +274,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
 
   /**
     * @dev Claim allocated tokens.
+    * @param _voteOptionIndex Vote option index.
     * @param _tallyResult The result of vote tally for the recipient.
     * @param _tallyResultProof Proof of correctness of the vote tally.
     * @param _tallyResultSalt Salt.
@@ -282,7 +283,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @param _spentSalt Salt.
     */
   function claimFunds(
-    address _recipient,
+    uint256 _voteOptionIndex,
     uint256 _tallyResult,
     uint256[][] calldata _tallyResultProof,
     uint256 _tallyResultSalt,
@@ -294,34 +295,39 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   {
     require(isFinalized, 'FundingRound: Round not finalized');
     require(!isCancelled, 'FundingRound: Round has been cancelled');
-    uint256 voteOptionIndex = recipientRegistry.getRecipientIndex(
-      _recipient,
-      startBlock,
+    require(!recipients[_voteOptionIndex], 'FundingRound: Funds already claimed');
+    { // create scope to avoid 'stack too deep' error
+      (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
+      bool resultVerified = maci.verifyTallyResult(
+        voteOptionTreeDepth,
+        _voteOptionIndex,
+        _tallyResult,
+        _tallyResultProof,
+        _tallyResultSalt
+      );
+      require(resultVerified, 'FundingRound: Incorrect tally result');
+      bool spentVerified = maci.verifyPerVOSpentVoiceCredits(
+        voteOptionTreeDepth,
+        _voteOptionIndex,
+        _spent,
+        _spentProof,
+        _spentSalt
+      );
+      require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
+    }
+    recipients[_voteOptionIndex] = true;
+    address recipient = recipientRegistry.getRecipientAddress(
+      _voteOptionIndex,
+       startBlock,
       // TODO: use block numbers in MACI
       startBlock + (maci.signUpDurationSeconds() + maci.votingDurationSeconds()) / 15
     );
-    require(voteOptionIndex > 0, 'FundingRound: Invalid recipient address');
-    require(!recipients[voteOptionIndex], 'FundingRound: Funds already claimed');
-    (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
-    bool resultVerified = maci.verifyTallyResult(
-      voteOptionTreeDepth,
-      voteOptionIndex,
-      _tallyResult,
-      _tallyResultProof,
-      _tallyResultSalt
-    );
-    require(resultVerified, 'FundingRound: Incorrect tally result');
-    bool spentVerified = maci.verifyPerVOSpentVoiceCredits(
-      voteOptionTreeDepth,
-      voteOptionIndex,
-      _spent,
-      _spentProof,
-      _spentSalt
-    );
-    require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
-    recipients[voteOptionIndex] = true;
+    if (recipient == address(0)) {
+      // Send funds back to the matching pool
+      recipient = owner();
+    }
     uint256 allocatedAmount = getAllocatedAmount(_tallyResult, _spent);
-    nativeToken.safeTransfer(_recipient, allocatedAmount);
-    emit FundsClaimed(_recipient, allocatedAmount);
+    nativeToken.safeTransfer(recipient, allocatedAmount);
+    emit FundsClaimed(_voteOptionIndex, recipient, allocatedAmount);
   }
 }

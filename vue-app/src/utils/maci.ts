@@ -69,7 +69,6 @@ export interface Tally {
 }
 
 export function getRecipientClaimData(
-  recipientAddress: string,
   recipientIndex: number,
   recipientTreeDepth: number,
   tally: Tally,
@@ -92,7 +91,7 @@ export function getRecipientClaimData(
   const spentProof = spentTree.genMerklePath(recipientIndex)
 
   return [
-    recipientAddress,
+    recipientIndex,
     result,
     resultProof.pathElements.map((x) => x.map((y) => y.toString())),
     resultSalt,
