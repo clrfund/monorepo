@@ -783,11 +783,12 @@ describe('Funding Round', () => {
       await fundingRound.finalize(totalSpent, totalSpentSalt)
       await recipientRegistry.mock.getRecipientAddress.returns(ZERO_ADDRESS)
 
+      const initialDeployerBalance = await token.balanceOf(deployer.address)
       await expect(fundingRoundAsRecipient.claimFunds(...recipientClaimData))
         .to.emit(fundingRound, 'FundsClaimed')
         .withArgs(recipientIndex, deployer.address, expectedAllocatedAmount)
       expect(await token.balanceOf(deployer.address))
-        .to.equal(expectedAllocatedAmount)
+        .to.equal(initialDeployerBalance.add(expectedAllocatedAmount))
     });
 
     it('allows recipient to claim allocated funds only once', async () => {
