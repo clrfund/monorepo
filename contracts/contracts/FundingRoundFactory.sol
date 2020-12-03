@@ -43,20 +43,38 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   event CoordinatorChanged(address _coordinator);
 
   constructor(
-    MACIFactory _maciFactory,
-    IUserRegistry _userRegistry,
-    IRecipientRegistry _recipientRegistry
+    MACIFactory _maciFactory
   )
     public
   {
     maciFactory = _maciFactory;
+  }
+
+  /**
+    * @dev Set registry of verified users.
+    * @param _userRegistry Address of a user registry.
+    */
+  function setUserRegistry(IUserRegistry _userRegistry)
+    external
+    onlyOwner
+  {
     userRegistry = _userRegistry;
+  }
+
+  /**
+    * @dev Set recipient registry.
+    * @param _recipientRegistry Address of a recipient registry.
+    */
+  function setRecipientRegistry(IRecipientRegistry _recipientRegistry)
+    external
+    onlyOwner
+  {
     recipientRegistry = _recipientRegistry;
   }
 
   /**
     * @dev Add matching funds source.
-    * @param _source Address of the funding source.
+    * @param _source Address of a funding source.
     */
   function addFundingSource(address _source)
     external

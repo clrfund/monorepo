@@ -57,7 +57,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   /**
     * @dev Set round parameters.
     * @param _nativeToken Address of a token which will be accepted for contributions.
-    * @param _userRegistry Address of the verified user registry.
+    * @param _userRegistry Address of the registry of verified users.
     * @param _recipientRegistry Address of the recipient registry.
     * @param _coordinator Address of the coordinator.
     */

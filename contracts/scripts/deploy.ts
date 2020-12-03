@@ -22,11 +22,11 @@ async function main() {
   );
   const fundingRoundFactory = await FundingRoundFactory.deploy(
     maciFactory.address,
-    userRegistry.address,
-    recipientRegistry.address,
   );
   await fundingRoundFactory.deployed();
   await maciFactory.transferOwnership(fundingRoundFactory.address);
+  await fundingRoundFactory.setUserRegistry(userRegistry.address)
+  await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
   await recipientRegistry.setMaxRecipients(24)
   await recipientRegistry.setController(fundingRoundFactory.address)
 

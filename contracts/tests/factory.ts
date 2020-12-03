@@ -35,16 +35,14 @@ describe('Funding Round Factory', () => {
     recipientRegistry = await SimpleRecipientRegistry.deploy()
 
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
-    factory = await FundingRoundFactory.deploy(
-      maciFactory.address,
-      userRegistry.address,
-      recipientRegistry.address,
-    )
+    factory = await FundingRoundFactory.deploy(maciFactory.address)
 
     expect(factory.address).to.properAddress;
     expect(await getGasUsage(factory.deployTransaction)).lessThan(5100000)
 
     await maciFactory.transferOwnership(factory.address);
+    await factory.setUserRegistry(userRegistry.address)
+    await factory.setRecipientRegistry(recipientRegistry.address)
     await recipientRegistry.setMaxRecipients(24)
     await recipientRegistry.setController(factory.address)
 

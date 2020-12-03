@@ -65,12 +65,10 @@ describe('End-to-end Tests', function () {
     const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
     recipientRegistry = await SimpleRecipientRegistry.deploy()
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
-    fundingRoundFactory = await FundingRoundFactory.deploy(
-      maciFactory.address,
-      userRegistry.address,
-      recipientRegistry.address,
-    )
+    fundingRoundFactory = await FundingRoundFactory.deploy(maciFactory.address)
     await maciFactory.transferOwnership(fundingRoundFactory.address)
+    await fundingRoundFactory.setUserRegistry(userRegistry.address)
+    await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
     await recipientRegistry.setMaxRecipients(24)
     await recipientRegistry.setController(fundingRoundFactory.address)
     maciParameters = await MaciParameters.read(maciFactory)
