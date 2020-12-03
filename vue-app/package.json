@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "3box": "^1.22.1",
+    "@kleros/gtcr-encoder": "^1.4.0",
     "@openfonts/inter_all": "^1.0.2",
     "core-js": "^3.6.4",
     "crypto-js": "^4.0.0",

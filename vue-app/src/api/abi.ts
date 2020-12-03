@@ -5,6 +5,8 @@ import { abi as MACI } from '../../../contracts/build/contracts/MACI.json'
 import { abi as UserRegistry } from '../../../contracts/build/contracts/IUserRegistry.json'
 import { abi as BrightIdUserRegistry } from '../../../contracts/build/contracts/BrightIdUserRegistry.json'
 import { abi as SimpleRecipientRegistry } from '../../../contracts/build/contracts/SimpleRecipientRegistry.json'
+import { abi as KlerosGTCR } from '../../../contracts/build/contracts/IKlerosGTCR.json'
+import { abi as KlerosGTCRAdapter } from '../../../contracts/build/contracts/KlerosGTCRAdapter.json'
 
 export {
   ERC20,
@@ -14,4 +16,6 @@ export {
   UserRegistry,
   BrightIdUserRegistry,
   SimpleRecipientRegistry,
+  KlerosGTCR,
+  KlerosGTCRAdapter,
 }

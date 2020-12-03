@@ -1,6 +1,7 @@
 import { factory, recipientRegistryType } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
+import KlerosRegistry from './recipient-registry-kleros'
 
 export interface Project {
   id: string; // Address or another ID depending on registry implementation
@@ -18,6 +19,8 @@ export async function getProjects(
   const registryAddress = await factory.recipientRegistry()
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startBlock, endBlock)
+  } else if (recipientRegistryType === 'kleros') {
+    return await KlerosRegistry.getProjects(registryAddress, startBlock, endBlock)
   } else {
     throw new Error('invalid recipient registry type')
   }
@@ -27,6 +30,8 @@ export async function getProject(id: string): Promise<Project | null> {
   const registryAddress = await factory.recipientRegistry()
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProject(registryAddress, id)
+  } else if (recipientRegistryType === 'kleros') {
+    return await KlerosRegistry.getProject(registryAddress, id)
   } else {
     throw new Error('invalid recipient registry type')
   }
