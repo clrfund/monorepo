@@ -80,7 +80,7 @@ export default class ProjectView extends Vue {
   }
 
   async created() {
-    const project = await getProject(this.$route.params.address)
+    const project = await getProject(this.$route.params.id)
     if (project !== null) {
       this.project = project
     } else {
@@ -107,7 +107,7 @@ export default class ProjectView extends Vue {
       return false
     }
     const index = this.$store.state.cart.findIndex((item: CartItem) => {
-      return item.address === project.address
+      return item.id === project.id
     })
     return index !== -1
   }

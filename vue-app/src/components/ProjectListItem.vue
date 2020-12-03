@@ -2,14 +2,14 @@
   <div class="project-item">
     <router-link
       class="project-image"
-      :to="{ name: 'project', params: { address: project.address }}"
+      :to="{ name: 'project', params: { id: project.id }}"
     >
       <img :src="project.imageUrl" :alt="project.name">
     </router-link>
     <div class="project-info">
       <router-link
         class="project-name"
-        :to="{ name: 'project', params: { address: project.address }}"
+        :to="{ name: 'project', params: { id: project.id }}"
       >
         {{ project.name }}
       </router-link>
@@ -48,7 +48,7 @@ export default class ProjectListItem extends Vue {
 
   get inCart(): boolean {
     const index = this.$store.state.cart.findIndex((item: CartItem) => {
-      return item.address === this.project.address
+      return item.id === this.project.id
     })
     return index !== -1
   }

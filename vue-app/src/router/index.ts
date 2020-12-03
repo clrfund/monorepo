@@ -18,7 +18,7 @@ const routes = [
     component: About,
   },
   {
-    path: '/project/:address',
+    path: '/project/:id',
     name: 'project',
     component: ProjectView,
   },

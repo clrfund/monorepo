@@ -10,7 +10,7 @@
     </div>
     <div v-if="step === 2">
       <h3>Success!</h3>
-      <div>{{ amount | formatAmount }} {{ currentRound.nativeTokenSymbol }} has been sent to <code>{{ project.address }}</code></div>
+      <div>{{ amount | formatAmount }} {{ currentRound.nativeTokenSymbol }} has been sent to <code>{{ recipientAddress }}</code></div>
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
   </div>
@@ -40,9 +40,10 @@ export default class ClaimModal extends Vue {
   project!: Project
 
   step = 1
-  amount = FixedNumber.from(0)
   claimTxHash = ''
   claimTxError = ''
+  amount = FixedNumber.from(0)
+  recipientAddress = ''
 
   get currentRound(): RoundInfo {
     return this.$store.state.currentRound
@@ -75,6 +76,7 @@ export default class ClaimModal extends Vue {
       getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount'),
       nativeTokenDecimals,
     )
+    this.recipientAddress = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_recipient')
     this.step += 1
   }
 }

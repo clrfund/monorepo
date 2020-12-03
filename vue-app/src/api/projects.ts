@@ -1,11 +1,11 @@
 import { Contract, Event } from 'ethers'
 import { isAddress } from '@ethersproject/address'
 
-import { RecipientRegistry } from './abi'
+import { SimpleRecipientRegistry } from './abi'
 import { factory, provider, ipfsGatewayUrl } from './core'
 
 export interface Project {
-  address: string;
+  id: string; // Address or another ID depending on registry implementation
   name: string;
   description: string;
   imageUrl: string;
@@ -17,7 +17,7 @@ function decodeRecipientAdded(event: Event): Project {
   const args = event.args as any
   const metadata = JSON.parse(args._metadata)
   return {
-    address: args._recipient,
+    id: args._recipient,
     name: metadata.name,
     description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
@@ -31,7 +31,7 @@ export async function getProjects(
   endBlock?: number,
 ): Promise<Project[]> {
   const registryAddress = await factory.recipientRegistry()
-  const registry = new Contract(registryAddress, RecipientRegistry, provider)
+  const registry = new Contract(registryAddress, SimpleRecipientRegistry, provider)
   const recipientAddedFilter = registry.filters.RecipientAdded()
   const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0, endBlock)
   const recipientRemovedFilter = registry.filters.RecipientRemoved()
@@ -46,7 +46,7 @@ export async function getProjects(
       continue
     }
     const removed = recipientRemovedEvents.find((event) => {
-      return (event.args as any)._recipient === project.address
+      return (event.args as any)._recipient === project.id
     })
     if (removed) {
       if (!startBlock || startBlock && removed.blockNumber <= startBlock) {
@@ -67,7 +67,7 @@ export async function getProject(address: string): Promise<Project | null> {
     return null
   }
   const registryAddress = await factory.recipientRegistry()
-  const registry = new Contract(registryAddress, RecipientRegistry, provider)
+  const registry = new Contract(registryAddress, SimpleRecipientRegistry, provider)
   const recipientAddedFilter = registry.filters.RecipientAdded(address)
   const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   if (recipientAddedEvents.length !== 1) {

@@ -39,7 +39,7 @@
       <project-list-item
         v-for="project in projects"
         v-bind:project="project"
-        v-bind:key="project.address"
+        v-bind:key="project.id"
       >
       </project-list-item>
     </div>

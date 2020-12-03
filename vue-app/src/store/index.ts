@@ -52,7 +52,7 @@ const store: StoreOptions<RootState> = {
     },
     [ADD_CART_ITEM](state, addedItem: CartItem) {
       const exists = state.cart.find((item) => {
-        return item.address === addedItem.address
+        return item.id === addedItem.id
       })
       if (!exists) {
         state.cart.push(addedItem)
@@ -60,7 +60,7 @@ const store: StoreOptions<RootState> = {
     },
     [UPDATE_CART_ITEM](state, updatedItem: CartItem) {
       const itemIndex = state.cart.findIndex((item) => {
-        return item.address === updatedItem.address
+        return item.id === updatedItem.id
       })
       if (itemIndex > -1) {
         Vue.set(state.cart, itemIndex, updatedItem)
@@ -68,7 +68,7 @@ const store: StoreOptions<RootState> = {
     },
     [REMOVE_CART_ITEM](state, removedItem: CartItem) {
       const itemIndex = state.cart.findIndex((item) => {
-        return item.address === removedItem.address
+        return item.id === removedItem.id
       })
       if (itemIndex > -1) {
         state.cart.splice(itemIndex, 1)
