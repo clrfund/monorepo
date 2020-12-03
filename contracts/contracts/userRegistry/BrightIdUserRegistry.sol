@@ -2,10 +2,10 @@
 
 pragma solidity ^0.6.12;
 
-import './IVerifiedUserRegistry.sol';
+import './IUserRegistry.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
-contract BrightIdUserRegistry is Ownable, IVerifiedUserRegistry {
+contract BrightIdUserRegistry is Ownable, IUserRegistry {
     string private constant ERROR_NEWER_VERIFICATION = 'NEWER VERIFICATION REGISTERED BEFORE';
     string private constant ERROR_NOT_AUTHORIZED = 'NOT AUTHORIZED';
     string private constant ERROR_INVALID_VERIFIER = 'INVALID VERIFIER';

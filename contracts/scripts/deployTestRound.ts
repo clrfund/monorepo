@@ -64,13 +64,13 @@ async function main() {
   await poolContributorToken.transfer(factory.address, poolContributionAmount)
 
   // Add contributors
-  const verifiedUserRegistryAddress = await factory.verifiedUserRegistry()
-  const verifiedUserRegistry = await ethers.getContractAt(
+  const userRegistryAddress = await factory.userRegistry()
+  const userRegistry = await ethers.getContractAt(
     'SimpleUserRegistry',
-    verifiedUserRegistryAddress,
+    userRegistryAddress,
   )
-  await verifiedUserRegistry.addUser(contributor1.getAddress())
-  await verifiedUserRegistry.addUser(contributor2.getAddress())
+  await userRegistry.addUser(contributor1.getAddress())
+  await userRegistry.addUser(contributor2.getAddress())
 
   // Add dummy recipients
   const metadataRecipient1 = {

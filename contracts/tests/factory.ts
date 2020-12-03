@@ -29,7 +29,7 @@ describe('Funding Round Factory', () => {
     maciParameters = await MaciParameters.read(maciFactory)
 
     const SimpleUserRegistry = await ethers.getContractFactory('SimpleUserRegistry', deployer)
-    const verifiedUserRegistry = await SimpleUserRegistry.deploy()
+    const userRegistry = await SimpleUserRegistry.deploy()
 
     const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
     recipientRegistry = await SimpleRecipientRegistry.deploy()
@@ -37,7 +37,7 @@ describe('Funding Round Factory', () => {
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
     factory = await FundingRoundFactory.deploy(
       maciFactory.address,
-      verifiedUserRegistry.address,
+      userRegistry.address,
       recipientRegistry.address,
     )
 

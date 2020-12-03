@@ -12,7 +12,7 @@ import 'maci-contracts/sol/MACISharedObjs.sol';
 import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
 import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
-import './verifiedUserRegistry/IVerifiedUserRegistry.sol';
+import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 
 contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoiceCreditProxy {
@@ -41,7 +41,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   address public coordinator;
   MACI public maci;
   ERC20 public nativeToken;
-  IVerifiedUserRegistry public verifiedUserRegistry;
+  IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
   string public tallyHash;
 
@@ -57,13 +57,13 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   /**
     * @dev Set round parameters.
     * @param _nativeToken Address of a token which will be accepted for contributions.
-    * @param _verifiedUserRegistry Address of the verified user registry.
+    * @param _userRegistry Address of the verified user registry.
     * @param _recipientRegistry Address of the recipient registry.
     * @param _coordinator Address of the coordinator.
     */
   constructor(
     ERC20 _nativeToken,
-    IVerifiedUserRegistry _verifiedUserRegistry,
+    IUserRegistry _userRegistry,
     IRecipientRegistry _recipientRegistry,
     address _coordinator
   )
@@ -72,7 +72,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     nativeToken = _nativeToken;
     voiceCreditFactor = (MAX_CONTRIBUTION_AMOUNT * uint256(10) ** nativeToken.decimals()) / MAX_VOICE_CREDITS;
     voiceCreditFactor = voiceCreditFactor > 0 ? voiceCreditFactor : 1;
-    verifiedUserRegistry = _verifiedUserRegistry;
+    userRegistry = _userRegistry;
     recipientRegistry = _recipientRegistry;
     coordinator = _coordinator;
     startBlock = block.number;
@@ -141,7 +141,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   {
     require(msg.sender == address(maci), 'FundingRound: Only MACI contract can register voters');
     address user = abi.decode(_data, (address));
-    bool verified = verifiedUserRegistry.isVerifiedUser(user);
+    bool verified = userRegistry.isVerifiedUser(user);
     require(verified, 'FundingRound: User has not been verified');
     require(contributors[user].voiceCredits > 0, 'FundingRound: User has not contributed');
     require(!contributors[user].isRegistered, 'FundingRound: User already registered');

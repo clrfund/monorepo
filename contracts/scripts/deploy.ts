@@ -9,7 +9,7 @@ async function main() {
     'SimpleUserRegistry',
     deployer,
   )
-  const verifiedUserRegistry = await SimpleUserRegistry.deploy()
+  const userRegistry = await SimpleUserRegistry.deploy()
   const SimpleRecipientRegistry = await ethers.getContractFactory(
     'SimpleRecipientRegistry',
     deployer,
@@ -22,7 +22,7 @@ async function main() {
   );
   const fundingRoundFactory = await FundingRoundFactory.deploy(
     maciFactory.address,
-    verifiedUserRegistry.address,
+    userRegistry.address,
     recipientRegistry.address,
   );
   await fundingRoundFactory.deployed();

@@ -13,7 +13,7 @@ import 'maci-contracts/sol/MACISharedObjs.sol';
 import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
 import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
-import './verifiedUserRegistry/IVerifiedUserRegistry.sol';
+import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
@@ -27,7 +27,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
 
   ERC20 public nativeToken;
   MACIFactory public maciFactory;
-  IVerifiedUserRegistry public verifiedUserRegistry;
+  IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
   PubKey public coordinatorPubKey;
 
@@ -44,13 +44,13 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
 
   constructor(
     MACIFactory _maciFactory,
-    IVerifiedUserRegistry _verifiedUserRegistry,
+    IUserRegistry _userRegistry,
     IRecipientRegistry _recipientRegistry
   )
     public
   {
     maciFactory = _maciFactory;
-    verifiedUserRegistry = _verifiedUserRegistry;
+    userRegistry = _userRegistry;
     recipientRegistry = _recipientRegistry;
   }
 
@@ -139,7 +139,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     // Deploy funding round and MACI contracts
     FundingRound newRound = new FundingRound(
       nativeToken,
-      verifiedUserRegistry,
+      userRegistry,
       recipientRegistry,
       coordinator
     );
