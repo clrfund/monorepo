@@ -11,7 +11,7 @@
     "vote:local": "buidler run --network localhost scripts/vote.ts",
     "tally:local": "buidler run --network localhost scripts/tally.ts",
     "claim:local": "buidler run --network localhost scripts/claim.ts",
-    "test": "buidler typechain && buidler test",
+    "test": "buidler test",
     "e2e": "NODE_OPTIONS=--max-old-space-size=4096 buidler test --network ganache e2e/index.ts",
     "lint:js": "eslint '{tests,e2e,scripts}/**/*.ts'",
     "lint:solidity": "solhint 'contracts/**/*.sol'",
@@ -23,19 +23,18 @@
     "maci-contracts": "0.4.11"
   },
   "devDependencies": {
-    "@nomiclabs/buidler": "^1.3.8",
+    "@nomiclabs/buidler": "1.3.8",
     "@nomiclabs/buidler-ethers": "^2.0.2",
     "@nomiclabs/buidler-ganache": "^1.3.3",
-    "@nomiclabs/buidler-waffle": "^2.0.0",
+    "@nomiclabs/buidler-waffle": "^2.1.0",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.9.2",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
-    "buidler-typechain": "^0.0.5",
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
-    "ethereum-waffle": "^3.0.0",
+    "ethereum-waffle": "^3.2.1",
     "ethers": "^5.0.17",
     "ipfs-only-hash": "^2.0.1",
     "maci-cli": "0.4.11",
@@ -44,10 +43,6 @@
     "solhint": "^3.3.2",
     "ts-generator": "^0.0.8",
     "ts-node": "^8.8.1",
-    "typechain": "^1.0.5",
-    "typechain-target-ethers": "^1.0.3",
-    "typechain-target-truffle": "^1.0.2",
-    "typechain-target-web3-v1": "^1.0.4",
     "typescript": "^3.8.3"
   }
 }
