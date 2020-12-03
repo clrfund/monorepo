@@ -284,7 +284,7 @@ describe('Kleros GTCR adapter', () => {
 
   beforeEach(async () => {
     const KlerosGTCRMock = await ethers.getContractFactory('KlerosGTCRMock', deployer)
-    tcr = await KlerosGTCRMock.deploy()
+    tcr = await KlerosGTCRMock.deploy('/ipfs/0', '/ipfs/1')
     const KlerosGTCRAdapter = await ethers.getContractFactory('KlerosGTCRAdapter', deployer)
     registry = await KlerosGTCRAdapter.deploy(tcr.address)
   })

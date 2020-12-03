@@ -33,6 +33,13 @@ contract KlerosGTCRMock is Ownable {
   mapping(bytes32 => uint) public itemIDtoIndex; // Maps an item's ID to its position in the list in the form itemIDtoIndex[itemID].
 
   /**
+   * @dev To be emitted when meta-evidence is submitted.
+   * @param _metaEvidenceID Unique identifier of meta-evidence.
+   * @param _evidence A link to the meta-evidence JSON.
+   */
+  event MetaEvidence(uint256 indexed _metaEvidenceID, string _evidence);
+
+  /**
    *  @dev Emitted when a party makes a request, raises a dispute or when a request is resolved.
    *  @param _itemID The ID of the affected item.
    *  @param _requestIndex The index of the request.
@@ -61,6 +68,19 @@ contract KlerosGTCRMock is Ownable {
     uint indexed _evidenceGroupID,
     bytes _data
   );
+
+  /**
+   *  @dev Deploy the arbitrable curated registry.
+   *  @param _registrationMetaEvidence The URI of the meta evidence object for registration requests.
+   *  @param _clearingMetaEvidence The URI of the meta evidence object for clearing requests.
+   */
+  constructor(
+    string memory _registrationMetaEvidence,
+    string memory _clearingMetaEvidence
+  ) public {
+    emit MetaEvidence(0, _registrationMetaEvidence);
+    emit MetaEvidence(1, _clearingMetaEvidence);
+  }
 
   /** @dev Submit a request to register an item. Accepts enough ETH to cover the deposit, reimburses the rest.
    *  @param _item The data describing the item.

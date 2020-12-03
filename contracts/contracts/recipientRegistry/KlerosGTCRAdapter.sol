@@ -6,14 +6,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import 'solidity-rlp/contracts/RLPReader.sol';
 
 import './IRecipientRegistry.sol';
-
-/**
- *  @dev Interface for Kleros Generalized TCR.
- */
-interface IKlerosGTCR {
-
-  function getItemInfo(bytes32 _itemID) external view returns (bytes memory, uint256, uint256);
-}
+import './IKlerosGTCR.sol';
 
 /**
  * @dev Recipient registry that uses Kleros GTCR to validate recipients.
