@@ -20,7 +20,7 @@ function decodeRecipientAdded(event: Event): Project {
     address: args._recipient,
     name: metadata.name,
     description: metadata.description,
-    imageUrl: `${ipfsGatewayUrl}${metadata.imageHash}`,
+    imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
     index: args._index.toNumber(),
     isRemoved: false,
   }
