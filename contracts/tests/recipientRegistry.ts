@@ -23,58 +23,29 @@ describe('Simple Recipient Registry', () => {
 
   beforeEach(async () => {
     const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
-    registry = await SimpleRecipientRegistry.deploy()
+    registry = await SimpleRecipientRegistry.deploy(controller.address)
   })
 
   describe('initializing and configuring', () => {
     it('initializes correctly', async () => {
-      expect(await registry.controller()).to.equal(ZERO_ADDRESS)
+      expect(await registry.controller()).to.equal(controller.address)
       expect(await registry.maxRecipients()).to.equal(0)
     })
 
-    it('sets controller', async () => {
-      await registry.setController(controller.address)
-      expect(await registry.controller()).to.equal(controller.address)
-    })
-
-    it('reverts if controller is already set', async () => {
-      await registry.setController(controller.address)
-      await expect(registry.setController(deployer.address))
-        .to.be.revertedWith('RecipientRegistry: Controller is already set')
-    })
-
-    it('allows only owner to set controller', async () => {
-      await expect(registry.connect(controller).setController(controller.address))
-        .to.be.revertedWith('Ownable: caller is not the owner')
-    })
-
     it('sets max number of recipients', async () => {
-      await registry.setController(controller.address)
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
       expect(await registry.maxRecipients()).to.equal(MAX_RECIPIENTS)
     })
 
     it('reverts if given number is less than current limit', async () => {
-      await registry.setController(controller.address)
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
       await expect(registry.connect(controller).setMaxRecipients(1))
         .to.be.revertedWith('RecipientRegistry: Max number of recipients can not be decreased')
     })
 
     it('ignores attempt to set max number of recipients from anyone except controller', async () => {
-      await registry.setController(controller.address)
       await registry.setMaxRecipients(MAX_RECIPIENTS)
       expect(await registry.maxRecipients()).to.equal(0)
-    })
-
-    it('allows owner to set max number of recipients if controller is not set', async () => {
-      await registry.setMaxRecipients(MAX_RECIPIENTS)
-      expect(await registry.maxRecipients()).to.equal(MAX_RECIPIENTS)
-    })
-
-    it('rejects attempt to set max number of recipients from anyone except owner if controller is not set', async () => {
-      await expect(registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS))
-        .to.be.revertedWith('RecipientRegistry: Only owner can act as a controller')
     })
 
     it('should not add recipient if limit is not set', async () => {
@@ -89,7 +60,6 @@ describe('Simple Recipient Registry', () => {
     let metadata: string
 
     beforeEach(async () => {
-      await registry.setController(controller.address)
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
       recipientAddress = recipient.address
       metadata = JSON.stringify({ name: 'Recipient', description: 'Description', imageHash: 'Ipfs imageHash' })
@@ -286,12 +256,12 @@ describe('Kleros GTCR adapter', () => {
     const KlerosGTCRMock = await ethers.getContractFactory('KlerosGTCRMock', deployer)
     tcr = await KlerosGTCRMock.deploy('/ipfs/0', '/ipfs/1')
     const KlerosGTCRAdapter = await ethers.getContractFactory('KlerosGTCRAdapter', deployer)
-    registry = await KlerosGTCRAdapter.deploy(tcr.address)
+    registry = await KlerosGTCRAdapter.deploy(tcr.address, controller.address)
   })
 
   it('initializes correctly', async () => {
     expect(await registry.tcr()).to.equal(tcr.address)
-    expect(await registry.controller()).to.equal(ZERO_ADDRESS)
+    expect(await registry.controller()).to.equal(controller.address)
     expect(await registry.maxRecipients()).to.equal(0)
   })
 
@@ -300,7 +270,6 @@ describe('Kleros GTCR adapter', () => {
     const [recipientId, recipientData] = encodeRecipient(recipient.address)
 
     beforeEach(async () => {
-      await registry.setController(controller.address)
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
     })
 
@@ -384,7 +353,6 @@ describe('Kleros GTCR adapter', () => {
     }
 
     beforeEach(async () => {
-      await registry.setController(controller.address)
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
     })
 

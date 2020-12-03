@@ -70,6 +70,8 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     onlyOwner
   {
     recipientRegistry = _recipientRegistry;
+    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
+    recipientRegistry.setMaxRecipients(maxVoteOptions);
   }
 
   /**

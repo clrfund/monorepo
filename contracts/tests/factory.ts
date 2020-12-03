@@ -28,12 +28,6 @@ describe('Funding Round Factory', () => {
     maciFactory = await deployMaciFactory(deployer);
     maciParameters = await MaciParameters.read(maciFactory)
 
-    const SimpleUserRegistry = await ethers.getContractFactory('SimpleUserRegistry', deployer)
-    const userRegistry = await SimpleUserRegistry.deploy()
-
-    const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
-    recipientRegistry = await SimpleRecipientRegistry.deploy()
-
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
     factory = await FundingRoundFactory.deploy(maciFactory.address)
 
@@ -41,10 +35,13 @@ describe('Funding Round Factory', () => {
     expect(await getGasUsage(factory.deployTransaction)).lessThan(5100000)
 
     await maciFactory.transferOwnership(factory.address);
+
+    const SimpleUserRegistry = await ethers.getContractFactory('SimpleUserRegistry', deployer)
+    const userRegistry = await SimpleUserRegistry.deploy()
     await factory.setUserRegistry(userRegistry.address)
+    const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
+    recipientRegistry = await SimpleRecipientRegistry.deploy(factory.address)
     await factory.setRecipientRegistry(recipientRegistry.address)
-    await recipientRegistry.setMaxRecipients(24)
-    await recipientRegistry.setController(factory.address)
 
     // Deploy token contract and transfer tokens to contributor
     const tokenInitialSupply = UNIT.mul(1000)
@@ -68,6 +65,55 @@ describe('Funding Round Factory', () => {
     await expect(factory.transferOwnership(coordinator.address))
       .to.emit(factory, 'OwnershipTransferred')
       .withArgs(deployer.address, coordinator.address)
+  })
+
+  describe('changing user registry', () => {
+    let anotherUserRegistry: Contract
+
+    beforeEach(async () => {
+      const SimpleUserRegistry = await ethers.getContractFactory(
+        'SimpleUserRegistry',
+        deployer,
+      )
+      anotherUserRegistry = await SimpleUserRegistry.deploy()
+    })
+
+    it('allows owner to change user registry', async () => {
+      await factory.setUserRegistry(anotherUserRegistry.address)
+      expect(await factory.userRegistry()).to.equal(anotherUserRegistry.address)
+    })
+
+    it('allows only owner to change user registry', async () => {
+      await expect(factory.connect(contributor).setUserRegistry(
+        anotherUserRegistry.address,
+      ))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+  })
+
+  describe('changing recipient registry', () => {
+    let anotherRecipientRegistry: Contract
+
+    beforeEach(async () => {
+      const SimpleRecipientRegistry = await ethers.getContractFactory(
+        'SimpleRecipientRegistry',
+        deployer,
+      )
+      anotherRecipientRegistry = await SimpleRecipientRegistry.deploy(factory.address)
+    })
+
+    it('allows owner to change recipient registry', async () => {
+      await factory.setRecipientRegistry(anotherRecipientRegistry.address)
+      expect(await factory.recipientRegistry())
+        .to.equal(anotherRecipientRegistry.address)
+    })
+
+    it('allows only owner to change recipient registry', async () => {
+      await expect(factory.connect(contributor).setRecipientRegistry(
+        anotherRecipientRegistry.address,
+      ))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
   })
 
   describe('managing funding sources', () => {
