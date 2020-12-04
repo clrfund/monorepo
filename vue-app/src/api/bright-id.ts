@@ -44,13 +44,11 @@ interface Verification {
 async function checkVerification(userAddress: string): Promise<Verification | null> {
   const apiUrl = `${NODE_URL}/verifications/clr.fund/${userAddress}?signed=eth&timestamp=seconds`
   const response = await fetch(apiUrl)
-  if (response.status === 200) {
-    const data = await response.json()
-    return data['data']['unique'] ? data['data'] : null
-  } else if (response.status === 400 || response.status === 404) {
+  const data = await response.json()
+  if (data['error']) {
     return null
   } else {
-    throw new Error('BrightID node is not available')
+    return data['data']['unique'] ? data['data'] : null
   }
 }
 

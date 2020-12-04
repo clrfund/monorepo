@@ -31,8 +31,13 @@
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
-      <div v-if="canRegisterWithBrightId()" class="brightid-register">
+      <div v-if="canRegisterWithBrightId()" class="submit-suggestion">
         <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
+      </div>
+      <div v-if="canBuyWxdai()" class="submit-suggestion">
+        <a href="https://wrapeth.com/" target="_blank" rel="noopener">
+          Click here to wrap XDAI
+        </a>
       </div>
       <button
         class="btn submit-btn"
@@ -74,6 +79,7 @@ import {
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
 } from '@/store/mutation-types'
+import { formatAmount } from '@/utils/amounts'
 
 const CART_STORAGE_KEY = 'cart'
 const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
@@ -311,7 +317,11 @@ export default class Cart extends Vue {
         } else if (currentUser.balance === null) {
           return '' // No error: waiting for balance
         } else if (total.gt(currentUser.balance)) {
-          return `Insufficient ${currentRound.nativeTokenSymbol} balance`
+          const balanceDisplay = formatAmount(
+            currentUser.balance,
+            currentRound.nativeTokenDecimals,
+          )
+          return `Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}`
         } else if (this.isGreaterThanMax()) {
           return 'Contribution amount is too large'
         } else {
@@ -334,6 +344,14 @@ export default class Cart extends Vue {
 
   canRegisterWithBrightId(): boolean {
     return userRegistryType === 'brightid' && this.$store.state.currentUser?.isVerified === false
+  }
+
+  canBuyWxdai(): boolean {
+    return (
+      this.$store.state.currentRound?.nativeTokenSymbol === 'WXDAI' &&
+      this.errorMessage !== null &&
+      this.errorMessage.startsWith('Your balance is')
+    )
   }
 
   registerWithBrightId(): void {
@@ -458,7 +476,7 @@ $project-image-size: 50px;
     padding: 15px 0 0;
   }
 
-  .brightid-register {
+  .submit-suggestion {
     padding-top: 5px;
   }
 
