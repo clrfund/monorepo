@@ -3,7 +3,7 @@ import makeBlockie from 'ethereum-blockies-base64'
 import { BigNumber, Contract } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 
-import { VerifiedUserRegistry, ERC20 } from './abi'
+import { UserRegistry, ERC20 } from './abi'
 import { ipfsGatewayUrl, provider } from './core'
 
 export interface User {
@@ -30,7 +30,7 @@ export async function isVerifiedUser(
   userRegistryAddress: string,
   walletAddress: string,
 ): Promise<boolean> {
-  const registry = new Contract(userRegistryAddress, VerifiedUserRegistry, provider)
+  const registry = new Contract(userRegistryAddress, UserRegistry, provider)
   return await registry.isVerifiedUser(walletAddress)
 }
 

@@ -7,7 +7,7 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { genRandomSalt } from 'maci-crypto';
 import { Keypair } from 'maci-domainobjs';
 
-import IVerifiedUserRegistryArtifact from '../build/contracts/IVerifiedUserRegistry.json';
+import IUserRegistryArtifact from '../build/contracts/IUserRegistry.json'
 import IRecipientRegistryArtifact from '../build/contracts/IRecipientRegistry.json';
 import MACIArtifact from '../build/contracts/MACI.json';
 import { ZERO_ADDRESS, UNIT, VOICE_CREDIT_FACTOR } from '../utils/constants'
@@ -29,7 +29,7 @@ describe('Funding Round', () => {
   const tallyHash = 'test'
 
   let token: Contract;
-  let verifiedUserRegistry: Contract;
+  let userRegistry: Contract
   let recipientRegistry: Contract;
   let fundingRound: Contract;
   let maci: Contract;
@@ -56,15 +56,15 @@ describe('Funding Round', () => {
     await token.transfer(anotherContributor.address, tokenInitialSupply.div(4))
     await token.transfer(coordinator.address, tokenInitialSupply.div(4))
 
-    verifiedUserRegistry = await deployMockContract(deployer, IVerifiedUserRegistryArtifact.abi);
-    await verifiedUserRegistry.mock.isVerifiedUser.returns(true);
+    userRegistry = await deployMockContract(deployer, IUserRegistryArtifact.abi)
+    await userRegistry.mock.isVerifiedUser.returns(true)
 
     recipientRegistry = await deployMockContract(deployer, IRecipientRegistryArtifact.abi);
 
     const FundingRound = await ethers.getContractFactory('FundingRound', deployer);
     fundingRound = await FundingRound.deploy(
       token.address,
-      verifiedUserRegistry.address,
+      userRegistry.address,
       recipientRegistry.address,
       coordinator.address,
     );
@@ -85,7 +85,7 @@ describe('Funding Round', () => {
     expect(await fundingRound.matchingPoolSize()).to.equal(0)
     expect(await fundingRound.totalSpent()).to.equal(0)
     expect(await fundingRound.totalVotes()).to.equal(0)
-    expect(await fundingRound.verifiedUserRegistry()).to.equal(verifiedUserRegistry.address);
+    expect(await fundingRound.userRegistry()).to.equal(userRegistry.address)
     expect(await fundingRound.recipientRegistry()).to.equal(recipientRegistry.address);
     expect(await fundingRound.isFinalized()).to.equal(false);
     expect(await fundingRound.isCancelled()).to.equal(false);
@@ -213,7 +213,7 @@ describe('Funding Round', () => {
         fundingRound.address,
         contributionAmount,
       );
-      await verifiedUserRegistry.mock.isVerifiedUser.returns(false);
+      await userRegistry.mock.isVerifiedUser.returns(false)
       await expect(fundingRoundAsContributor.contribute(userPubKey, contributionAmount))
         .to.be.revertedWith('FundingRound: User has not been verified');
     });

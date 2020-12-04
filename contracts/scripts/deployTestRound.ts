@@ -10,7 +10,7 @@ import MACIFactoryArtifact from '../build/contracts/MACIFactory.json'
 async function main() {
   // We're hardcoding factory address due to a buidler limitation:
   // https://github.com/nomiclabs/buidler/issues/651
-  const factoryAddress = '0x1A1FEe7EeD918BD762173e4dc5EfDB8a78C924A8'
+  const factoryAddress = '0x3619DbE27d7c1e7E91aA738697Ae7Bc5FC3eACA5'
   const [
     deployer,
     coordinator,
@@ -64,13 +64,13 @@ async function main() {
   await poolContributorToken.transfer(factory.address, poolContributionAmount)
 
   // Add contributors
-  const verifiedUserRegistryAddress = await factory.verifiedUserRegistry()
-  const verifiedUserRegistry = await ethers.getContractAt(
+  const userRegistryAddress = await factory.userRegistry()
+  const userRegistry = await ethers.getContractAt(
     'SimpleUserRegistry',
-    verifiedUserRegistryAddress,
+    userRegistryAddress,
   )
-  await verifiedUserRegistry.addUser(contributor1.getAddress())
-  await verifiedUserRegistry.addUser(contributor2.getAddress())
+  await userRegistry.addUser(contributor1.getAddress())
+  await userRegistry.addUser(contributor2.getAddress())
 
   // Add dummy recipients
   const metadataRecipient1 = {

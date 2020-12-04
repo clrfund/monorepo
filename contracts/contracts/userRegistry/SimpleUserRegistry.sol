@@ -4,12 +4,12 @@ pragma solidity ^0.6.12;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
-import './IVerifiedUserRegistry.sol';
+import './IUserRegistry.sol';
 
 /**
  * @dev A simple user registry managed by a trusted entity.
  */
-contract SimpleUserRegistry is Ownable, IVerifiedUserRegistry {
+contract SimpleUserRegistry is Ownable, IUserRegistry {
 
   mapping(address => bool) private users;
 

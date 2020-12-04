@@ -2,7 +2,6 @@
 
 pragma solidity ^0.6.12;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
 import 'solidity-rlp/contracts/RLPReader.sol';
 
 import './IRecipientRegistry.sol';
@@ -11,7 +10,7 @@ import './IKlerosGTCR.sol';
 /**
  * @dev Recipient registry that uses Kleros GTCR to validate recipients.
  */
-contract KlerosGTCRAdapter is Ownable, IRecipientRegistry {
+contract KlerosGTCRAdapter is IRecipientRegistry {
   using RLPReader for bytes;
   using RLPReader for RLPReader.RLPItem;
 
@@ -42,21 +41,18 @@ contract KlerosGTCRAdapter is Ownable, IRecipientRegistry {
   event RecipientAdded(bytes32 indexed _tcrItemId, bytes _metadata, uint256 _index);
   event RecipientRemoved(bytes32 indexed _tcrItemId);
 
-  constructor(IKlerosGTCR _tcr)
+  /**
+    * @dev Deploy the registry.
+    * @param _tcr Address of the Kleros Generalized TCR.
+    * @param _controller Controller address. Normally it's a funding round factory contract.
+    */
+  constructor(
+    IKlerosGTCR _tcr,
+    address _controller
+  )
     public
   {
     tcr = _tcr;
-  }
-
-  /**
-    * @dev Set controller. Only controller can set the max number of recipients in the registry.
-    * @param _controller Controller address. Normally it's a funding round factory contract.
-    */
-  function setController(address _controller)
-    external
-    onlyOwner
-  {
-    require(controller == address(0), 'RecipientRegistry: Controller is already set');
     controller = _controller;
   }
 
@@ -74,10 +70,7 @@ contract KlerosGTCRAdapter is Ownable, IRecipientRegistry {
       _maxRecipients >= maxRecipients,
       'RecipientRegistry: Max number of recipients can not be decreased'
     );
-    if (controller == address(0)) {
-      // If controller is not set, owner can act as one
-      require(msg.sender == owner(), 'RecipientRegistry: Only owner can act as a controller');
-    } else if (controller != msg.sender) {
+    if (controller != msg.sender) {
       // This allows other clrfund instances to use the registry
       // but only controller can actually increase the limit.
       return false;

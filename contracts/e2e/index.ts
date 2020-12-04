@@ -33,7 +33,7 @@ describe('End-to-end Tests', function () {
   let recipient3: Signer
   let contributors: Signer[]
 
-  let verifiedUserRegistry: Contract
+  let userRegistry: Contract
   let recipientRegistry: Contract
   let fundingRoundFactory: Contract
   let token: Contract
@@ -60,19 +60,15 @@ describe('End-to-end Tests', function () {
 
     // Deploy funding round factory
     const maciFactory = await deployMaciFactory(deployer)
-    const SimpleUserRegistry = await ethers.getContractFactory('SimpleUserRegistry', deployer)
-    verifiedUserRegistry = await SimpleUserRegistry.deploy()
-    const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
-    recipientRegistry = await SimpleRecipientRegistry.deploy()
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
-    fundingRoundFactory = await FundingRoundFactory.deploy(
-      maciFactory.address,
-      verifiedUserRegistry.address,
-      recipientRegistry.address,
-    )
+    fundingRoundFactory = await FundingRoundFactory.deploy(maciFactory.address)
     await maciFactory.transferOwnership(fundingRoundFactory.address)
-    await recipientRegistry.setMaxRecipients(24)
-    await recipientRegistry.setController(fundingRoundFactory.address)
+    const SimpleUserRegistry = await ethers.getContractFactory('SimpleUserRegistry', deployer)
+    userRegistry = await SimpleUserRegistry.deploy()
+    await fundingRoundFactory.setUserRegistry(userRegistry.address)
+    const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
+    recipientRegistry = await SimpleRecipientRegistry.deploy(fundingRoundFactory.address)
+    await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
     maciParameters = await MaciParameters.read(maciFactory)
 
     // Deploy ERC20 token contract
@@ -143,7 +139,7 @@ describe('End-to-end Tests', function () {
       // Register contributor
       const contributor = contributors[index]
       const contributorAddress = await contributor.getAddress()
-      await verifiedUserRegistry.addUser(contributorAddress)
+      await userRegistry.addUser(contributorAddress)
       // Approve transfer
       await token.connect(contributor).approve(
         fundingRound.address,

@@ -13,7 +13,7 @@ import 'maci-contracts/sol/MACISharedObjs.sol';
 import 'maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol';
 import 'maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
-import './verifiedUserRegistry/IVerifiedUserRegistry.sol';
+import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
@@ -27,7 +27,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
 
   ERC20 public nativeToken;
   MACIFactory public maciFactory;
-  IVerifiedUserRegistry public verifiedUserRegistry;
+  IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
   PubKey public coordinatorPubKey;
 
@@ -43,20 +43,40 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   event CoordinatorChanged(address _coordinator);
 
   constructor(
-    MACIFactory _maciFactory,
-    IVerifiedUserRegistry _verifiedUserRegistry,
-    IRecipientRegistry _recipientRegistry
+    MACIFactory _maciFactory
   )
     public
   {
     maciFactory = _maciFactory;
-    verifiedUserRegistry = _verifiedUserRegistry;
+  }
+
+  /**
+    * @dev Set registry of verified users.
+    * @param _userRegistry Address of a user registry.
+    */
+  function setUserRegistry(IUserRegistry _userRegistry)
+    external
+    onlyOwner
+  {
+    userRegistry = _userRegistry;
+  }
+
+  /**
+    * @dev Set recipient registry.
+    * @param _recipientRegistry Address of a recipient registry.
+    */
+  function setRecipientRegistry(IRecipientRegistry _recipientRegistry)
+    external
+    onlyOwner
+  {
     recipientRegistry = _recipientRegistry;
+    (,, uint256 maxVoteOptions) = maciFactory.maxValues();
+    recipientRegistry.setMaxRecipients(maxVoteOptions);
   }
 
   /**
     * @dev Add matching funds source.
-    * @param _source Address of the funding source.
+    * @param _source Address of a funding source.
     */
   function addFundingSource(address _source)
     external
@@ -126,6 +146,8 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     onlyOwner
   {
     require(maciFactory.owner() == address(this), 'Factory: MACI factory is not owned by FR factory');
+    require(address(userRegistry) != address(0), 'Factory: User registry is not set');
+    require(address(recipientRegistry) != address(0), 'Factory: Recipient registry is not set');
     require(address(nativeToken) != address(0), 'Factory: Native token is not set');
     require(coordinator != address(0), 'Factory: No coordinator');
     FundingRound currentRound = getCurrentRound();
@@ -139,7 +161,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     // Deploy funding round and MACI contracts
     FundingRound newRound = new FundingRound(
       nativeToken,
-      verifiedUserRegistry,
+      userRegistry,
       recipientRegistry,
       coordinator
     );

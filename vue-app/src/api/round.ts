@@ -54,7 +54,7 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   ] = await Promise.all([
     fundingRound.maci(),
     fundingRound.nativeToken(),
-    fundingRound.verifiedUserRegistry(),
+    fundingRound.userRegistry(),
     fundingRound.startBlock(),
     fundingRound.voiceCreditFactor(),
     fundingRound.isFinalized(),

@@ -5,16 +5,6 @@ import { deployMaciFactory } from '../utils/deployment'
 async function main() {
   const [deployer] = await ethers.getSigners();
   const maciFactory = await deployMaciFactory(deployer);
-  const SimpleUserRegistry = await ethers.getContractFactory(
-    'SimpleUserRegistry',
-    deployer,
-  )
-  const verifiedUserRegistry = await SimpleUserRegistry.deploy()
-  const SimpleRecipientRegistry = await ethers.getContractFactory(
-    'SimpleRecipientRegistry',
-    deployer,
-  )
-  const recipientRegistry = await SimpleRecipientRegistry.deploy()
 
   const FundingRoundFactory = await ethers.getContractFactory(
     'FundingRoundFactory',
@@ -22,13 +12,25 @@ async function main() {
   );
   const fundingRoundFactory = await FundingRoundFactory.deploy(
     maciFactory.address,
-    verifiedUserRegistry.address,
-    recipientRegistry.address,
   );
   await fundingRoundFactory.deployed();
   await maciFactory.transferOwnership(fundingRoundFactory.address);
-  await recipientRegistry.setMaxRecipients(24)
-  await recipientRegistry.setController(fundingRoundFactory.address)
+
+  const SimpleUserRegistry = await ethers.getContractFactory(
+    'SimpleUserRegistry',
+    deployer,
+  )
+  const userRegistry = await SimpleUserRegistry.deploy()
+  await fundingRoundFactory.setUserRegistry(userRegistry.address)
+
+  const SimpleRecipientRegistry = await ethers.getContractFactory(
+    'SimpleRecipientRegistry',
+    deployer,
+  )
+  const recipientRegistry = await SimpleRecipientRegistry.deploy(
+    fundingRoundFactory.address,
+  )
+  await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
 
   console.log(`Factory deployed: ${fundingRoundFactory.address}`)
 }
