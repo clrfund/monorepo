@@ -20,9 +20,11 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^3.2.0",
-    "maci-contracts": "0.4.11"
+    "maci-contracts": "0.4.11",
+    "solidity-rlp": "~2.0.3"
   },
   "devDependencies": {
+    "@kleros/gtcr-encoder": "^1.4.0",
     "@nomiclabs/buidler": "1.3.8",
     "@nomiclabs/buidler-ethers": "^2.0.2",
     "@nomiclabs/buidler-ganache": "^1.3.3",
