@@ -146,6 +146,8 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     onlyOwner
   {
     require(maciFactory.owner() == address(this), 'Factory: MACI factory is not owned by FR factory');
+    require(address(userRegistry) != address(0), 'Factory: User registry is not set');
+    require(address(recipientRegistry) != address(0), 'Factory: Recipient registry is not set');
     require(address(nativeToken) != address(0), 'Factory: Native token is not set');
     require(coordinator != address(0), 'Factory: No coordinator');
     FundingRound currentRound = getCurrentRound();

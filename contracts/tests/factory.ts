@@ -18,6 +18,7 @@ describe('Funding Round Factory', () => {
   const [, deployer, coordinator, contributor] = provider.getWallets()
 
   let maciFactory: Contract;
+  let userRegistry: Contract
   let recipientRegistry: Contract
   let factory: Contract;
   let token: Contract;
@@ -37,11 +38,9 @@ describe('Funding Round Factory', () => {
     await maciFactory.transferOwnership(factory.address);
 
     const SimpleUserRegistry = await ethers.getContractFactory('SimpleUserRegistry', deployer)
-    const userRegistry = await SimpleUserRegistry.deploy()
-    await factory.setUserRegistry(userRegistry.address)
+    userRegistry = await SimpleUserRegistry.deploy()
     const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
     recipientRegistry = await SimpleRecipientRegistry.deploy(factory.address)
-    await factory.setRecipientRegistry(recipientRegistry.address)
 
     // Deploy token contract and transfer tokens to contributor
     const tokenInitialSupply = UNIT.mul(1000)
@@ -55,10 +54,8 @@ describe('Funding Round Factory', () => {
     expect(await factory.coordinator()).to.equal(ZERO_ADDRESS)
     expect(await factory.nativeToken()).to.equal(ZERO_ADDRESS)
     expect(await factory.maciFactory()).to.equal(maciFactory.address)
-    expect(await factory.recipientRegistry()).to.equal(recipientRegistry.address)
-    expect(await recipientRegistry.controller()).to.equal(factory.address)
-    expect(await recipientRegistry.maxRecipients())
-      .to.equal(5 ** maciParameters.voteOptionTreeDepth - 1)
+    expect(await factory.userRegistry()).to.equal(ZERO_ADDRESS)
+    expect(await factory.recipientRegistry()).to.equal(ZERO_ADDRESS)
   })
 
   it('transfers ownership to another address', async () => {
@@ -68,51 +65,58 @@ describe('Funding Round Factory', () => {
   })
 
   describe('changing user registry', () => {
-    let anotherUserRegistry: Contract
+    it('allows owner to set user registry', async () => {
+      await factory.setUserRegistry(userRegistry.address)
+      expect(await factory.userRegistry()).to.equal(userRegistry.address)
+    })
 
-    beforeEach(async () => {
+    it('allows only owner to set user registry', async () => {
+      await expect(factory.connect(contributor).setUserRegistry(
+        userRegistry.address,
+      ))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('allows owner to change recipient registry', async () => {
+      await factory.setRecipientRegistry(recipientRegistry.address)
       const SimpleUserRegistry = await ethers.getContractFactory(
         'SimpleUserRegistry',
         deployer,
       )
-      anotherUserRegistry = await SimpleUserRegistry.deploy()
-    })
-
-    it('allows owner to change user registry', async () => {
+      const anotherUserRegistry = await SimpleUserRegistry.deploy()
       await factory.setUserRegistry(anotherUserRegistry.address)
-      expect(await factory.userRegistry()).to.equal(anotherUserRegistry.address)
-    })
-
-    it('allows only owner to change user registry', async () => {
-      await expect(factory.connect(contributor).setUserRegistry(
-        anotherUserRegistry.address,
-      ))
-        .to.be.revertedWith('Ownable: caller is not the owner')
+      expect(await factory.userRegistry())
+        .to.equal(anotherUserRegistry.address)
     })
   })
 
   describe('changing recipient registry', () => {
-    let anotherRecipientRegistry: Contract
+    it('allows owner to set recipient registry', async () => {
+      await factory.setRecipientRegistry(recipientRegistry.address)
+      expect(await factory.recipientRegistry())
+        .to.equal(recipientRegistry.address)
+      expect(await recipientRegistry.controller()).to.equal(factory.address)
+      expect(await recipientRegistry.maxRecipients())
+        .to.equal(5 ** maciParameters.voteOptionTreeDepth - 1)
+    })
 
-    beforeEach(async () => {
+    it('allows only owner to set recipient registry', async () => {
+      await expect(factory.connect(contributor).setRecipientRegistry(
+        recipientRegistry.address,
+      ))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('allows owner to change recipient registry', async () => {
+      await factory.setRecipientRegistry(recipientRegistry.address)
       const SimpleRecipientRegistry = await ethers.getContractFactory(
         'SimpleRecipientRegistry',
         deployer,
       )
-      anotherRecipientRegistry = await SimpleRecipientRegistry.deploy(factory.address)
-    })
-
-    it('allows owner to change recipient registry', async () => {
+      const anotherRecipientRegistry = await SimpleRecipientRegistry.deploy(factory.address)
       await factory.setRecipientRegistry(anotherRecipientRegistry.address)
       expect(await factory.recipientRegistry())
         .to.equal(anotherRecipientRegistry.address)
-    })
-
-    it('allows only owner to change recipient registry', async () => {
-      await expect(factory.connect(contributor).setRecipientRegistry(
-        anotherRecipientRegistry.address,
-      ))
-        .to.be.revertedWith('Ownable: caller is not the owner')
     })
   })
 
@@ -180,6 +184,8 @@ describe('Funding Round Factory', () => {
 
   describe('deploying funding round', () => {
     it('deploys funding round', async () => {
+      await factory.setUserRegistry(userRegistry.address)
+      await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address);
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       const deployed = factory.deployNewRound()
@@ -211,19 +217,41 @@ describe('Funding Round Factory', () => {
       expect(roundCoordinatorPubKey.y).to.equal(coordinatorPubKey.y)
     });
 
+    it('reverts if user registry is not set', async () => {
+      await factory.setRecipientRegistry(recipientRegistry.address)
+      await factory.setToken(token.address)
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey)
+      await expect(factory.deployNewRound())
+        .to.be.revertedWith('Factory: User registry is not set')
+    })
+
+    it('reverts if recipient registry is not set', async () => {
+      await factory.setUserRegistry(userRegistry.address)
+      await factory.setToken(token.address)
+      await factory.setCoordinator(coordinator.address, coordinatorPubKey)
+      await expect(factory.deployNewRound())
+        .to.be.revertedWith('Factory: Recipient registry is not set')
+    })
+
     it('reverts if native token is not set', async () => {
+      await factory.setUserRegistry(userRegistry.address)
+      await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await expect(factory.deployNewRound())
         .to.be.revertedWith('Factory: Native token is not set');
     });
 
     it('reverts if coordinator is not set', async () => {
+      await factory.setUserRegistry(userRegistry.address)
+      await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address);
       await expect(factory.deployNewRound())
         .to.be.revertedWith('Factory: No coordinator');
     });
 
     it('reverts if current round is not finalized', async () => {
+      await factory.setUserRegistry(userRegistry.address)
+      await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address);
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await factory.deployNewRound();
@@ -232,6 +260,8 @@ describe('Funding Round Factory', () => {
     });
 
     it('deploys new funding round after previous round has been finalized', async () => {
+      await factory.setUserRegistry(userRegistry.address)
+      await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address);
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       await factory.deployNewRound();
@@ -241,6 +271,8 @@ describe('Funding Round Factory', () => {
     });
 
     it('only owner can deploy funding round', async () => {
+      await factory.setUserRegistry(userRegistry.address)
+      await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address);
       await factory.setCoordinator(coordinator.address, coordinatorPubKey);
       const factoryAsContributor = factory.connect(contributor);
@@ -256,6 +288,8 @@ describe('Funding Round Factory', () => {
     let roundDuration: number
 
     beforeEach(async () => {
+      await factory.setUserRegistry(userRegistry.address)
+      await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
       roundDuration = maciParameters.signUpDuration + maciParameters.votingDuration + 10
@@ -310,6 +344,8 @@ describe('Funding Round Factory', () => {
 
   describe('cancelling round', () => {
     beforeEach(async () => {
+      await factory.setUserRegistry(userRegistry.address)
+      await factory.setRecipientRegistry(recipientRegistry.address)
       await factory.setToken(token.address)
       await factory.setCoordinator(coordinator.address, coordinatorPubKey)
     })
@@ -394,6 +430,8 @@ describe('Funding Round Factory', () => {
   });
 
   it('should cancel current round when coordinator quits', async () => {
+    await factory.setUserRegistry(userRegistry.address)
+    await factory.setRecipientRegistry(recipientRegistry.address)
     await factory.setToken(token.address);
     await factory.setCoordinator(coordinator.address, coordinatorPubKey);
     await factory.deployNewRound();
