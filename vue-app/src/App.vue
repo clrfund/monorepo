@@ -47,6 +47,10 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
   metaInfo: {
     title: 'clr.fund',
     titleTemplate: 'clr.fund - %s',
+    meta: [{
+      name: 'git-commit',
+      content: process.env.VUE_APP_GIT_COMMIT || '',
+    }],
   },
   components: {
     Cart,
