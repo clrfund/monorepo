@@ -10,12 +10,12 @@ interface TcrColumn {
   type: string;
 }
 
-async function getTcrColumns(address: string): Promise<TcrColumn[]> {
-  const tcr = new Contract(address, KlerosGTCR, provider)
+async function getTcrColumns(tcr: Contract): Promise<TcrColumn[]> {
   const metaEvidenceFilter = tcr.filters.MetaEvidence()
   const metaEvidenceEvents = await tcr.queryFilter(metaEvidenceFilter, 0)
-  const latestEvent = metaEvidenceEvents[metaEvidenceEvents.length - 1]
-  const ipfsPath = (latestEvent.args as any)._evidence
+  // Take last event with even index
+  const regMetaEvidenceEvent = metaEvidenceEvents[metaEvidenceEvents.length - 2]
+  const ipfsPath = (regMetaEvidenceEvent.args as any)._evidence
   const tcrDataResponse = await fetch(`${ipfsGatewayUrl}${ipfsPath}`)
   const tcrData = await tcrDataResponse.json()
   return tcrData.metadata.columns
@@ -41,7 +41,8 @@ export async function getProjects(
 ): Promise<Project[]> {
   const registry = new Contract(registryAddress, KlerosGTCRAdapter, provider)
   const tcrAddress = await registry.tcr()
-  const tcrColumns = await getTcrColumns(tcrAddress)
+  const tcr = new Contract(tcrAddress, KlerosGTCR, provider)
+  const tcrColumns = await getTcrColumns(tcr)
   const recipientAddedFilter = registry.filters.RecipientAdded()
   const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0, endBlock)
   const recipientRemovedFilter = registry.filters.RecipientRemoved()
@@ -78,7 +79,8 @@ export async function getProject(
 ): Promise<Project | null> {
   const registry = new Contract(registryAddress, KlerosGTCRAdapter, provider)
   const tcrAddress = await registry.tcr()
-  const tcrColumns = await getTcrColumns(tcrAddress)
+  const tcr = new Contract(tcrAddress, KlerosGTCR, provider)
+  const tcrColumns = await getTcrColumns(tcr)
   const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
   const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   if (recipientAddedEvents.length !== 1) {
