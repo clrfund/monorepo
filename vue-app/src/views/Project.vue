@@ -104,7 +104,7 @@ export default class ProjectView extends Vue {
       this.project = project
     } else {
       // Project not found
-      this.$router.push({ name: 'home' })
+      this.$router.push({ name: 'projects' })
       return
     }
     // Wait for tally to load and get claim status
