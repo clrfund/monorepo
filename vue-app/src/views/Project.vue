@@ -3,7 +3,15 @@
     <router-link class="content-heading" to="/">⟵ All projects</router-link>
     <div v-if="project" class="project-page">
       <img class="project-image" :src="project.imageUrl" :alt="project.name">
-      <h2 class="project-name">{{ project.name }}</h2>
+      <h2 class="project-name">
+        <a
+          v-if="klerosCurateUrl"
+          :href="klerosCurateUrl"
+          target="_blank"
+          rel="noopener"
+        >{{ project.name }}</a>
+        <span v-else>{{ project.name }}</span>
+      </h2>
       <button
         v-if="!inCart"
         class="btn contribute-btn"
@@ -44,6 +52,7 @@ import { FixedNumber } from 'ethers'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE, CartItem } from '@/api/contributions'
+import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
@@ -94,6 +103,13 @@ export default class ProjectView extends Vue {
       this.checkAllocation,
     )
     this.checkAllocation(this.$store.state.tally)
+  }
+
+  get klerosCurateUrl(): string | null {
+    if (recipientRegistryType === 'kleros') {
+      return this.project?.extra?.tcrItemUrl || null
+    }
+    return null
   }
 
   get tokenSymbol(): string {
@@ -189,6 +205,10 @@ export default class ProjectView extends Vue {
   font-size: 40px;
   letter-spacing: -0.015em;
   margin: $content-space 0;
+
+  a {
+    color: $text-color;
+  }
 }
 
 .contribute-btn,

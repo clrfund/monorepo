@@ -5,7 +5,9 @@ import { KlerosGTCR, KlerosGTCRAdapter } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
 import { Project } from './projects'
 
-export enum TcrStatus {
+const KLEROS_CURATE_URL = 'https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398'
+
+export enum TcrItemStatus {
   Absent = 0,
   Registered = 1,
   RegistrationRequested = 2,
@@ -110,7 +112,8 @@ export async function getProject(
     index: 0,
     isRemoved: false,
     extra: {
-      tcrStatus: tcrItemStatus,
+      tcrItemStatus: tcrItemStatus,
+      tcrItemUrl: `${KLEROS_CURATE_URL}/${recipientId}`,
     },
   }
   const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
