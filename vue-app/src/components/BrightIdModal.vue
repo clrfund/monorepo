@@ -1,15 +1,11 @@
 <template>
   <div class="modal-body">
-    <div v-if="step === 1">
-      <h3>Step 1 of 3: Sponsor</h3>
-      <transaction
-        :hash="sponsorTxHash"
-        :error="sponsorTxError"
-        @close="$emit('close')"
-      ></transaction>
+    <div v-if="step === 0">
+      <h3>Checking BrightID verification...</h3>
+      <div class="loader"></div>
     </div>
-    <div v-if="step === 2">
-      <h3>Step 2 of 3: Verification</h3>
+    <div v-if="step === 1">
+      <h3>Step 1 of 3: Connect</h3>
       <div>
         Please scan the QR code or open the link with your BrightID app.
         <br>
@@ -19,6 +15,14 @@
       <div>
         <a :href="appLink" target="_blank">{{ appLink }}</a>
       </div>
+    </div>
+    <div v-if="step === 2">
+      <h3>Step 2 of 3: Sponsor</h3>
+      <transaction
+        :hash="sponsorTxHash"
+        :error="sponsorTxError"
+        @close="$emit('close')"
+      ></transaction>
     </div>
     <div v-if="step === 3">
       <h3>Step 3 of 3: Register</h3>
@@ -42,12 +46,15 @@ import Component from 'vue-class-component'
 import QRCode from 'qrcode'
 
 import {
+  getBrightIdLink,
+  Verification,
+  BrightIdError,
+  getVerification,
   isSponsoredUser,
   selfSponsor,
-  getBrightIdLink,
-  getVerification,
   registerUser,
 } from '@/api/bright-id'
+import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import { LOAD_USER_INFO } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
@@ -59,7 +66,7 @@ import { waitForTransaction } from '@/utils/contracts'
 })
 export default class BrightIdModal extends Vue {
 
-  step = 1
+  step = 0
 
   appLink = ''
   appLinkQrCode = ''
@@ -69,16 +76,63 @@ export default class BrightIdModal extends Vue {
   registrationTxHash = ''
   registrationTxError = ''
 
-  mounted() {
-    this.register()
+  private get currentUser(): User {
+    return this.$store.state.currentUser
   }
 
-  private async register() {
+  mounted() {
+    // Present app link and QR code
+    this.appLink = getBrightIdLink(this.currentUser.walletAddress)
+    QRCode.toDataURL(this.appLink, (error, url: string) => {
+      if (!error) {
+        this.appLinkQrCode = url
+      }
+    })
+    this.waitForVerification()
+  }
+
+  private async waitForVerification() {
+    let verification
+    const checkVerification = async () => {
+      try {
+        verification = await getVerification(this.currentUser.walletAddress)
+      } catch (error) {
+        if (
+          error instanceof BrightIdError &&
+          error.code === 4 &&
+          this.step <= 1
+        ) {
+          // Error 4: Not sponsored
+          this.sponsor()
+        }
+      }
+      if (verification) {
+        this.register(verification)
+      }
+    }
+    await checkVerification()
+    if (this.step === 0) {
+      // First check completed
+      this.step = 1
+    }
+    if (!verification) {
+      const intervalId = setInterval(async () => {
+        await checkVerification()
+        if (verification) {
+          clearInterval(intervalId)
+        }
+      }, 5000)
+    }
+  }
+
+  private async sponsor() {
+    this.step = 2
     const { userRegistryAddress } = this.$store.state.currentRound
-    const currentUser = this.$store.state.currentUser
-    const signer = currentUser.walletProvider.getSigner()
-    // Self-sponsoring
-    const isSponsored = await isSponsoredUser(userRegistryAddress, currentUser.walletAddress)
+    const signer = this.currentUser.walletProvider.getSigner()
+    const isSponsored = await isSponsoredUser(
+      userRegistryAddress,
+      this.currentUser.walletAddress,
+    )
     if (!isSponsored) {
       try {
         await waitForTransaction(
@@ -90,13 +144,12 @@ export default class BrightIdModal extends Vue {
         return
       }
     }
-    this.step += 1
-    // Verification
-    this.appLink = getBrightIdLink(currentUser.walletAddress)
-    this.appLinkQrCode = await QRCode.toDataURL(this.appLink)
-    const verification = await getVerification(currentUser.walletAddress)
-    this.step += 1
-    // Registration
+  }
+
+  private async register(verification: Verification) {
+    this.step = 3
+    const { userRegistryAddress } = this.$store.state.currentRound
+    const signer = this.currentUser.walletProvider.getSigner()
     try {
       await waitForTransaction(
         registerUser(userRegistryAddress, verification, signer),

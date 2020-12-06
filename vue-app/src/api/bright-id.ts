@@ -34,38 +34,35 @@ export function getBrightIdLink(userAddress: string): string {
   return deepLink
 }
 
-interface Verification {
+export interface Verification {
   unique: boolean;
   contextIds: string[];
   sig: { r: string; s: string; v: number };
   timestamp: number;
 }
 
-async function checkVerification(userAddress: string): Promise<Verification | null> {
+export class BrightIdError extends Error {
+
+  code?: number
+
+  constructor(code?: number) {
+    const message = code ? `BrightID error ${code}` : 'Unexpected error'
+    super(message)
+    // https://github.com/Microsoft/TypeScript/issues/13965#issuecomment-388605613
+    Object.setPrototypeOf(this, BrightIdError.prototype)
+    this.code = code
+  }
+}
+
+export async function getVerification(userAddress: string): Promise<Verification | null> {
   const apiUrl = `${NODE_URL}/verifications/clr.fund/${userAddress}?signed=eth&timestamp=seconds`
   const response = await fetch(apiUrl)
   const data = await response.json()
   if (data['error']) {
-    return null
+    throw new BrightIdError(data['errorNum'])
   } else {
     return data['data']['unique'] ? data['data'] : null
   }
-}
-
-export async function getVerification(userAddress: string): Promise<Verification> {
-  const verification = await checkVerification(userAddress)
-  if (verification !== null) {
-    return verification
-  }
-  return await new Promise((resolve) => {
-    const intervalId = setInterval(async () => {
-      const verification = await checkVerification(userAddress)
-      if (verification) {
-        clearInterval(intervalId)
-        resolve(verification)
-      }
-    }, 10000)
-  })
 }
 
 export async function registerUser(
