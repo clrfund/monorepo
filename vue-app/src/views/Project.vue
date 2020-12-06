@@ -13,6 +13,13 @@
         <span v-else>{{ project.name }}</span>
       </h2>
       <button
+        v-if="canRegister()"
+        class="btn register-btn"
+        @click="register()"
+      >
+        Register
+      </button>
+      <button
         v-if="!inCart"
         class="btn contribute-btn"
         :disabled="!canContribute()"
@@ -54,9 +61,11 @@ import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
+import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import { RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
+import KlerosGTCRAdapterModal from '@/components/KlerosGTCRAdapterModal.vue'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 
 @Component({
@@ -126,6 +135,32 @@ export default class ProjectView extends Vue {
       return item.id === project.id
     })
     return index !== -1
+  }
+
+  canRegister(): boolean {
+    return (
+      recipientRegistryType === 'kleros' &&
+      this.$store.state.currentUser &&
+      this.project?.index === 0 &&
+      this.project?.extra.tcrItemStatus === TcrItemStatus.Registered
+    )
+  }
+
+  register() {
+    this.$modal.show(
+      KlerosGTCRAdapterModal,
+      { project: this.project },
+      {
+        clickToClose: false,
+        height: 'auto',
+        width: 450,
+      },
+      {
+        closed: async () => {
+          this.project = await getProject(this.$route.params.id)
+        },
+      },
+    )
   }
 
   canContribute(): boolean {
@@ -213,6 +248,7 @@ export default class ProjectView extends Vue {
 
 .contribute-btn,
 .in-cart,
+.register-btn,
 .claim-btn {
   margin: 0 $content-space $content-space 0;
   width: 300px;

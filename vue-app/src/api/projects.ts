@@ -13,11 +13,15 @@ export interface Project {
   extra?: any; // Registry-specific data
 }
 
+export async function getRecipientRegistryAddress(): Promise<string> {
+  return await factory.recipientRegistry()
+}
+
 export async function getProjects(
   startBlock?: number,
   endBlock?: number,
 ): Promise<Project[]> {
-  const registryAddress = await factory.recipientRegistry()
+  const registryAddress = await getRecipientRegistryAddress()
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startBlock, endBlock)
   } else if (recipientRegistryType === 'kleros') {
@@ -28,7 +32,7 @@ export async function getProjects(
 }
 
 export async function getProject(id: string): Promise<Project | null> {
-  const registryAddress = await factory.recipientRegistry()
+  const registryAddress = await getRecipientRegistryAddress()
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProject(registryAddress, id)
   } else if (recipientRegistryType === 'kleros') {

@@ -1,4 +1,5 @@
-import { Contract, Event } from 'ethers'
+import { Contract, Event, Signer } from 'ethers'
+import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { gtcrDecode } from '@kleros/gtcr-encoder'
 
 import { KlerosGTCR, KlerosGTCRAdapter } from './abi'
@@ -112,7 +113,7 @@ export async function getProject(
     index: 0,
     isRemoved: false,
     extra: {
-      tcrItemStatus: tcrItemStatus,
+      tcrItemStatus: tcrItemStatus.toNumber(),
       tcrItemUrl: `${KLEROS_CURATE_URL}/${recipientId}`,
     },
   }
@@ -128,6 +129,16 @@ export async function getProject(
     project.isRemoved = true
   }
   return project
+}
+
+export async function registerProject(
+  registryAddress: string,
+  recipientId: string,
+  signer: Signer,
+): Promise<TransactionResponse> {
+  const registry = new Contract(registryAddress, KlerosGTCRAdapter, signer)
+  const transaction = await registry.addRecipient(recipientId)
+  return transaction
 }
 
 export default { getProjects, getProject }
