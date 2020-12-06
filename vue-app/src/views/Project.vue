@@ -117,6 +117,7 @@ export default class ProjectView extends Vue {
       this.$store.state.currentUser &&
       this.$store.state.currentRound &&
       this.project !== null &&
+      this.project.index !== 0 &&
       !this.project.isRemoved &&
       this.$store.state.cart.length < CART_MAX_SIZE
     )
@@ -135,6 +136,8 @@ export default class ProjectView extends Vue {
       currentRound &&
       currentRound.status === RoundStatus.Finalized &&
       this.$store.state.currentUser &&
+      this.project !== null &&
+      this.project.index !== 0 &&
       this.claimed === false
     )
   }

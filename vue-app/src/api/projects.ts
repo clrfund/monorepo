@@ -10,6 +10,7 @@ export interface Project {
   imageUrl: string;
   index: number;
   isRemoved: boolean;
+  extra?: any; // Registry-specific data
 }
 
 export async function getProjects(
