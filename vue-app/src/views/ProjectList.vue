@@ -39,7 +39,7 @@
       <project-list-item
         v-for="project in projects"
         v-bind:project="project"
-        v-bind:key="project.address"
+        v-bind:key="project.id"
       >
       </project-list-item>
     </div>
@@ -81,7 +81,10 @@ export default class ProjectList extends Vue {
   }
 
   private async loadProjects() {
-    this.projects = await getProjects(this.currentRound?.startBlock)
+    this.projects = await getProjects(
+      this.currentRound?.startBlock,
+      this.currentRound?.endBlock,
+    )
   }
 
   get contribution(): FixedNumber {

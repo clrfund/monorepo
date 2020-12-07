@@ -12,6 +12,7 @@ export interface RoundInfo {
   maciAddress: string;
   recipientTreeDepth: number;
   startBlock: number;
+  endBlock: number;
   coordinatorPubKey: PubKey;
   nativeTokenAddress: string;
   nativeTokenSymbol: string;
@@ -33,11 +34,15 @@ export enum RoundStatus {
   Cancelled = 'Cancelled',
 }
 
-export async function getRoundInfo(): Promise<RoundInfo | null> {
+export async function getCurrentRound(): Promise<string | null> {
   const fundingRoundAddress = await factory.getCurrentRound()
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
     return null
   }
+  return fundingRoundAddress
+}
+
+export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundInfo> {
   const fundingRound = new Contract(
     fundingRoundAddress,
     FundingRound,
@@ -62,14 +67,29 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
   ])
 
   const maci = new Contract(maciAddress, MACI, provider)
-  const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
+  const [
+    maciTreeDepths,
+    signUpTimestamp,
+    signUpDurationSeconds,
+    votingDurationSeconds,
+    coordinatorPubKeyRaw,
+  ] = await Promise.all([
+    maci.treeDepths(),
+    maci.signUpTimestamp(),
+    maci.signUpDurationSeconds(),
+    maci.votingDurationSeconds(),
+    maci.coordinatorPubKey(),
+  ])
   const signUpDeadline = DateTime.fromSeconds(
-    parseInt(await maci.calcSignUpDeadline()),
+    signUpTimestamp.add(signUpDurationSeconds).toNumber(),
   )
   const votingDeadline = DateTime.fromSeconds(
-    parseInt(await maci.calcVotingDeadline()),
+    signUpTimestamp.add(signUpDurationSeconds).add(votingDurationSeconds).toNumber(),
   )
-  const coordinatorPubKeyRaw = await maci.coordinatorPubKey()
+  const endBlock = startBlock.add(
+    // Average block time is 15 seconds
+    signUpDurationSeconds.add(votingDurationSeconds).div(15),
+  )
   const coordinatorPubKey = new PubKey([
     BigInt(coordinatorPubKeyRaw.x),
     BigInt(coordinatorPubKeyRaw.y),
@@ -113,8 +133,9 @@ export async function getRoundInfo(): Promise<RoundInfo | null> {
     fundingRoundAddress,
     userRegistryAddress,
     maciAddress,
-    recipientTreeDepth,
+    recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
     startBlock: startBlock.toNumber(),
+    endBlock: endBlock.toNumber(),
     coordinatorPubKey,
     nativeTokenAddress,
     nativeTokenSymbol,

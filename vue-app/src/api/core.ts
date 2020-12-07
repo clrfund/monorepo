@@ -16,3 +16,7 @@ export const userRegistryType = process.env.VUE_APP_USER_REGISTRY_TYPE
 if (!['simple', 'brightid'].includes(userRegistryType as string)) {
   throw new Error('invalid user registry type')
 }
+export const recipientRegistryType = process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE
+if (!['simple', 'kleros'].includes(recipientRegistryType as string)) {
+  throw new Error('invalid recipient registry type')
+}

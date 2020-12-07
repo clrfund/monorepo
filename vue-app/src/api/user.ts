@@ -23,7 +23,7 @@ export async function getProfileImageUrl(walletAddress: string): Promise<string 
   } catch (error) {
     return makeBlockie(walletAddress)
   }
-  return `${ipfsGatewayUrl}${profileImageHash}`
+  return `${ipfsGatewayUrl}/ipfs/${profileImageHash}`
 }
 
 export async function isVerifiedUser(

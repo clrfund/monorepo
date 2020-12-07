@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
 
 import { CartItem, Contributor, getContributionAmount } from '@/api/contributions'
-import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
+import { RoundInfo, RoundStatus, getCurrentRound, getRoundInfo } from '@/api/round'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
 import {
@@ -52,7 +52,7 @@ const store: StoreOptions<RootState> = {
     },
     [ADD_CART_ITEM](state, addedItem: CartItem) {
       const exists = state.cart.find((item) => {
-        return item.address === addedItem.address
+        return item.id === addedItem.id
       })
       if (!exists) {
         state.cart.push(addedItem)
@@ -60,7 +60,7 @@ const store: StoreOptions<RootState> = {
     },
     [UPDATE_CART_ITEM](state, updatedItem: CartItem) {
       const itemIndex = state.cart.findIndex((item) => {
-        return item.address === updatedItem.address
+        return item.id === updatedItem.id
       })
       if (itemIndex > -1) {
         Vue.set(state.cart, itemIndex, updatedItem)
@@ -68,7 +68,7 @@ const store: StoreOptions<RootState> = {
     },
     [REMOVE_CART_ITEM](state, removedItem: CartItem) {
       const itemIndex = state.cart.findIndex((item) => {
-        return item.address === removedItem.address
+        return item.id === removedItem.id
       })
       if (itemIndex > -1) {
         state.cart.splice(itemIndex, 1)
@@ -76,11 +76,18 @@ const store: StoreOptions<RootState> = {
     },
   },
   actions: {
-    async [LOAD_ROUND_INFO]({ commit }) {
-      const currentRound = await getRoundInfo()
-      commit(SET_CURRENT_ROUND, currentRound)
-      if (currentRound && currentRound.status === RoundStatus.Finalized) {
-        const tally = await getTally(currentRound.fundingRoundAddress)
+    async [LOAD_ROUND_INFO]({ commit }, roundAddress: string | null = null) {
+      if (roundAddress === null) {
+        roundAddress = await getCurrentRound()
+      }
+      if (roundAddress === null) {
+        commit(SET_CURRENT_ROUND, null)
+        return
+      }
+      const round = await getRoundInfo(roundAddress)
+      commit(SET_CURRENT_ROUND, round)
+      if (round && round.status === RoundStatus.Finalized) {
+        const tally = await getTally(roundAddress)
         commit(SET_TALLY, tally)
       }
     },

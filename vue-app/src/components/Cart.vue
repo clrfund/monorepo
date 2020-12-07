@@ -1,6 +1,6 @@
 <template>
   <div class="cart">
-    <div v-for="item in cart" class="cart-item" :key="item.address">
+    <div v-for="item in cart" class="cart-item" :key="item.id">
       <div class="project">
         <img class="project-image" :src="item.imageUrl" :alt="item.name">
         <div class="project-name">{{ item.name }}</div>
