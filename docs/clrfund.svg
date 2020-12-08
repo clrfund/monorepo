@@ -1,1 +1,2211 @@
-<svg id="mermaid-1606610485657" width="100%" xmlns="http://www.w3.org/2000/svg" height="2925" style="max-width: 3184px;" viewBox="-50 -10 3184 2925"><style>#mermaid-1606610485657{font-family:"trebuchet ms",verdana,arial;font-size:16px;fill:#333;}#mermaid-1606610485657 .error-icon{fill:#552222;}#mermaid-1606610485657 .error-text{fill:#552222;stroke:#552222;}#mermaid-1606610485657 .edge-thickness-normal{stroke-width:2px;}#mermaid-1606610485657 .edge-thickness-thick{stroke-width:3.5px;}#mermaid-1606610485657 .edge-pattern-solid{stroke-dasharray:0;}#mermaid-1606610485657 .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-1606610485657 .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-1606610485657 .marker{fill:#333333;}#mermaid-1606610485657 .marker.cross{stroke:#333333;}#mermaid-1606610485657 svg{font-family:"trebuchet ms",verdana,arial;font-size:16px;}#mermaid-1606610485657 .actor{stroke:hsl(259.6261682243,59.7765363128%,87.9019607843%);fill:#ECECFF;}#mermaid-1606610485657 text.actor &gt; tspan{fill:black;stroke:none;}#mermaid-1606610485657 .actor-line{stroke:grey;}#mermaid-1606610485657 .messageLine0{stroke-width:1.5;stroke-dasharray:none;stroke:#333;}#mermaid-1606610485657 .messageLine1{stroke-width:1.5;stroke-dasharray:2,2;stroke:#333;}#mermaid-1606610485657 #arrowhead path{fill:#333;stroke:#333;}#mermaid-1606610485657 .sequenceNumber{fill:white;}#mermaid-1606610485657 #sequencenumber{fill:#333;}#mermaid-1606610485657 #crosshead path{fill:#333;stroke:#333;}#mermaid-1606610485657 .messageText{fill:#333;stroke:#333;}#mermaid-1606610485657 .labelBox{stroke:hsl(259.6261682243,59.7765363128%,87.9019607843%);fill:#ECECFF;}#mermaid-1606610485657 .labelText,#mermaid-1606610485657 .labelText &gt; tspan{fill:black;stroke:none;}#mermaid-1606610485657 .loopText,#mermaid-1606610485657 .loopText &gt; tspan{fill:black;stroke:none;}#mermaid-1606610485657 .loopLine{stroke-width:2px;stroke-dasharray:2,2;stroke:hsl(259.6261682243,59.7765363128%,87.9019607843%);fill:hsl(259.6261682243,59.7765363128%,87.9019607843%);}#mermaid-1606610485657 .note{stroke:#aaaa33;fill:#fff5ad;}#mermaid-1606610485657 .noteText,#mermaid-1606610485657 .noteText &gt; tspan{fill:black;stroke:none;}#mermaid-1606610485657 .activation0{fill:#f4f4f4;stroke:#666;}#mermaid-1606610485657 .activation1{fill:#f4f4f4;stroke:#666;}#mermaid-1606610485657 .activation2{fill:#f4f4f4;stroke:#666;}#mermaid-1606610485657:root{--mermaid-font-family:"trebuchet ms",verdana,arial;}#mermaid-1606610485657 sequence{fill:apa;}</style><g></g><g><line id="actor0" x1="75" y1="5" x2="75" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="0" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="75" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="75" dy="0">Owner</tspan></text></g><g><line id="actor1" x1="292" y1="5" x2="292" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="217" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="292" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="292" dy="0">PoolContributor</tspan></text></g><g><line id="actor2" x1="492" y1="5" x2="492" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="417" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="492" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="492" dy="0">Recipient</tspan></text></g><g><line id="actor3" x1="692" y1="5" x2="692" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="617" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="692" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="692" dy="0">Factory</tspan></text></g><g><line id="actor4" x1="892" y1="5" x2="892" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="817" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="892" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="892" dy="0">MACIFactory</tspan></text></g><g><line id="actor5" x1="1092" y1="5" x2="1092" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="1017" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="1092" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="1092" dy="0">UserRegistry</tspan></text></g><g><line id="actor6" x1="1292" y1="5" x2="1292" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="1217" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="1292" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="1292" dy="0">RecipientRegistry</tspan></text></g><g><line id="actor7" x1="1492" y1="5" x2="1492" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="1417" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="1492" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="1492" dy="0">Contributor</tspan></text></g><g><line id="actor8" x1="1839" y1="5" x2="1839" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="1764" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="1839" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="1839" dy="0">FundingRound</tspan></text></g><g><line id="actor9" x1="2476" y1="5" x2="2476" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="2401" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="2476" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="2476" dy="0">MACI</tspan></text></g><g><line id="actor10" x1="3009" y1="5" x2="3009" y2="2914" class="actor-line" stroke-width="0.5px" stroke="#999"></line><rect x="2934" y="0" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="3009" y="32.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="3009" dy="0">Coordinator</tspan></text></g><defs><marker id="arrowhead" refX="5" refY="2" markerWidth="6" markerHeight="4" orient="auto"><path d="M 0,0 V 4 L6,2 Z"></path></marker></defs><defs><marker id="crosshead" markerWidth="15" markerHeight="8" orient="auto" refX="16" refY="4"><path fill="black" stroke="#000000" stroke-width="1px" d="M 9,2 V 6 L16,4 Z" style="stroke-dasharray: 0, 0;"></path><path fill="none" stroke="#000000" stroke-width="1px" d="M 0,1 L 6,7 M 6,1 L 0,7" style="stroke-dasharray: 0, 0;"></path></marker></defs><defs><marker id="sequencenumber" refX="15" refY="15" markerWidth="60" markerHeight="40" orient="auto"><circle cx="15" cy="15" r="6"></circle></marker></defs><text x="484" y="80" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">deploy MACI factory</text><line x1="75" y1="113" x2="892" y2="113" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="584" y="128" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">deploy user registry</text><line x1="75" y1="161" x2="1092" y2="161" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="684" y="176" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">deploy recipient registry</text><line x1="75" y1="209" x2="1292" y2="209" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="384" y="224" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">deploy funding round factory</text><line x1="75" y1="257" x2="692" y2="257" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="484" y="272" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">transfer ownership to Factory ( call transferOwnership() )</text><line x1="75" y1="305" x2="892" y2="305" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="684" y="320" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">set max number of recipients</text><line x1="75" y1="353" x2="1292" y2="353" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="684" y="368" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">transfer control to Factory ( call setController() )</text><line x1="75" y1="401" x2="1292" y2="401" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="384" y="416" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">set MACI parameters if necessary ( call setMaciParameters() )</text><line x1="75" y1="449" x2="692" y2="449" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1542" y="464" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">provide public key</text><line x1="3009" y1="497" x2="75" y2="497" class="messageLine1" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></line><text x="384" y="512" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">set coordinator ( call setCoordinator() )</text><line x1="75" y1="545" x2="692" y2="545" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="492" y="560" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">donate to the matching pool</text><line x1="292" y1="593" x2="692" y2="593" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="284" y="653" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">ask for registration</text><line x1="492" y1="686" x2="75" y2="686" class="messageLine1" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"></line><text x="684" y="701" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call addRecipient()</text><line x1="75" y1="734" x2="1292" y2="734" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><line x1="65" y1="603" x2="1302" y2="603" class="loopLine"></line><line x1="1302" y1="603" x2="1302" y2="744" class="loopLine"></line><line x1="65" y1="744" x2="1302" y2="744" class="loopLine"></line><line x1="65" y1="603" x2="65" y2="744" class="loopLine"></line><polygon points="65,603 115,603 115,616 106.6,623 65,623" class="labelBox"></polygon><text x="90" y="616" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="labelText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">loop</text><text x="708.5" y="621" text-anchor="middle" class="loopText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;"><tspan x="708.5">[Adding recipients]</tspan></text></g><text x="384" y="804" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call deployNewRound()</text><line x1="75" y1="837" x2="692" y2="837" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1266" y="852" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">deploy FundingRound contract</text><line x1="692" y1="885" x2="1839" y2="885" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="792" y="900" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call deployMaci()</text><line x1="692" y1="933" x2="892" y2="933" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1684" y="948" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">create new MACI instance</text><line x1="892" y1="981" x2="2476" y2="981" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1266" y="996" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call setMaci()</text><line x1="692" y1="1029" x2="1839" y2="1029" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="1467" y="1084" fill="#EDF2AE" stroke="#666" width="397" height="36" rx="0" ry="0" class="note"></rect><text x="1666" y="1089" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 14px; font-weight: 400;"><tspan x="1666">contributor registers with their verified address</tspan></text></g><text x="1666" y="1135" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">donate to the pool ( call contribute() )</text><line x1="1492" y1="1168" x2="1839" y2="1168" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1466" y="1183" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">check that user is verified ( call isVerifiedUser() )</text><line x1="1839" y1="1216" x2="1092" y2="1216" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="2158" y="1231" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call signUp()</text><line x1="1839" y1="1264" x2="2476" y2="1264" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="1517" y="1274" fill="#EDF2AE" stroke="#666" width="282" height="37" rx="0" ry="0" class="note"></rect><text x="1658" y="1279" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 14px; font-weight: 400;"><tspan x="1658">contributor creates encrypted message(s)</tspan></text></g><text x="1984" y="1371" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">vote ( call publishMessage() )</text><line x1="1492" y1="1404" x2="2476" y2="1404" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1666" y="1464" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">vote ( call submitMessageBatch() )</text><line x1="1492" y1="1497" x2="1839" y2="1497" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="2158" y="1512" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call publishMessage()</text><line x1="1839" y1="1545" x2="2476" y2="1545" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><line x1="1482" y1="1321" x2="2486" y2="1321" class="loopLine"></line><line x1="2486" y1="1321" x2="2486" y2="1555" class="loopLine"></line><line x1="1482" y1="1555" x2="2486" y2="1555" class="loopLine"></line><line x1="1482" y1="1321" x2="1482" y2="1555" class="loopLine"></line><line x1="1482" y1="1419" x2="2486" y2="1419" class="loopLine" style="stroke-dasharray: 3, 3;"></line><polygon points="1482,1321 1532,1321 1532,1334 1523.6,1341 1482,1341" class="labelBox"></polygon><text x="1507" y="1334" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="labelText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">alt</text><text x="2009" y="1339" text-anchor="middle" class="loopText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;"><tspan x="2009">[Single message submission]</tspan></text><text x="1984" y="1437" text-anchor="middle" class="loopText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">[Batch submission]</text></g><g><line x1="1082" y1="1039" x2="2496" y2="1039" class="loopLine"></line><line x1="2496" y1="1039" x2="2496" y2="1565" class="loopLine"></line><line x1="1082" y1="1565" x2="2496" y2="1565" class="loopLine"></line><line x1="1082" y1="1039" x2="1082" y2="1565" class="loopLine"></line><polygon points="1082,1039 1132,1039 1132,1052 1123.6,1059 1082,1059" class="labelBox"></polygon><text x="1107" y="1052" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="labelText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">loop</text><text x="1814" y="1057" text-anchor="middle" class="loopText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;"><tspan x="1814">[Funding]</tspan></text></g><g><rect x="1814" y="1575" fill="#EDF2AE" stroke="#666" width="687" height="36" rx="0" ry="0" class="note"></rect><text x="2158" y="1580" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 14px; font-weight: 400;"><tspan x="2158">contribution / signup deadline</tspan></text></g><g><rect x="2401" y="1621" fill="#EDF2AE" stroke="#666" width="150" height="36" rx="0" ry="0" class="note"></rect><text x="2476" y="1626" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 14px; font-weight: 400;"><tspan x="2476">voting deadline</tspan></text></g><text x="2743" y="1717" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">process messages ( call batchProcessMessage() )</text><line x1="3009" y1="1750" x2="2476" y2="1750" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="2650" y="1760" fill="#EDF2AE" stroke="#666" width="334" height="36" rx="0" ry="0" class="note"></rect><text x="2817" y="1765" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 14px; font-weight: 400;"><tspan x="2817">coordinator tallies the votes and generates proofs</tspan></text></g><text x="2743" y="1811" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">prove the correctness of vote tally ( call proveVoteTallyBatch() )</text><line x1="3009" y1="1844" x2="2476" y2="1844" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="2734" y="1854" fill="#EDF2AE" stroke="#666" width="250" height="36" rx="0" ry="0" class="note"></rect><text x="2859" y="1859" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 14px; font-weight: 400;"><tspan x="2859">coordinator uploads the tally to IPFS</tspan></text></g><text x="2424" y="1905" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call publishTallyHash()</text><line x1="3009" y1="1938" x2="1839" y2="1938" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="100" y="1948" fill="#EDF2AE" stroke="#666" width="167" height="36" rx="0" ry="0" class="note"></rect><text x="184" y="1953" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 14px; font-weight: 400;"><tspan x="184">owner verifies the tally</tspan></text></g><text x="384" y="1999" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call transferMatchingFunds()</text><line x1="75" y1="2032" x2="692" y2="2032" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="492" y="2047" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">pull matching funds from funding sources</text><line x1="692" y1="2080" x2="292" y2="2080" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1266" y="2095" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">transfer matching funds and finalize the round</text><line x1="692" y1="2128" x2="1839" y2="2128" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="2158" y="2143" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">verify the total amount of spent voice credits ( call verifySpentVoiceCredits() )</text><line x1="1839" y1="2176" x2="2476" y2="2176" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="2158" y="2191" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call totalVotes()</text><line x1="1839" y1="2224" x2="2476" y2="2224" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><rect x="1714" y="2234" fill="#EDF2AE" stroke="#666" width="250" height="36" rx="0" ry="0" class="note"></rect><text x="1839" y="2239" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 14px; font-weight: 400;"><tspan x="1839">round can not be cancelled anymore</tspan></text></g><text x="1166" y="2330" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">submit vote tally, amount of spent voice credits and proofs ( call claimFunds() )</text><line x1="492" y1="2363" x2="1839" y2="2363" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1566" y="2378" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">find the corresponding vote option index</text><line x1="1839" y1="2411" x2="1292" y2="2411" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="2158" y="2426" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">verify the proofs</text><line x1="1839" y1="2459" x2="2476" y2="2459" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1166" y="2474" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">transfer funds</text><line x1="1839" y1="2507" x2="492" y2="2507" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><line x1="482" y1="2280" x2="2486" y2="2280" class="loopLine"></line><line x1="2486" y1="2280" x2="2486" y2="2517" class="loopLine"></line><line x1="482" y1="2517" x2="2486" y2="2517" class="loopLine"></line><line x1="482" y1="2280" x2="482" y2="2517" class="loopLine"></line><polygon points="482,2280 532,2280 532,2293 523.6,2300 482,2300" class="labelBox"></polygon><text x="507" y="2293" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="labelText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">loop</text><text x="1509" y="2298" text-anchor="middle" class="loopText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;"><tspan x="1509">[Distribution]</tspan></text></g><text x="384" y="2577" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call cancel()</text><line x1="75" y1="2610" x2="692" y2="2610" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1266" y="2625" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call cancel()</text><line x1="692" y1="2658" x2="1839" y2="2658" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1666" y="2718" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">call withdrawContribution()</text><line x1="1492" y1="2751" x2="1839" y2="2751" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><text x="1666" y="2766" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">transfer funds</text><line x1="1839" y1="2799" x2="1492" y2="2799" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"></line><g><line x1="1482" y1="2668" x2="1849" y2="2668" class="loopLine"></line><line x1="1849" y1="2668" x2="1849" y2="2809" class="loopLine"></line><line x1="1482" y1="2809" x2="1849" y2="2809" class="loopLine"></line><line x1="1482" y1="2668" x2="1482" y2="2809" class="loopLine"></line><polygon points="1482,2668 1532,2668 1532,2681 1523.6,2688 1482,2688" class="labelBox"></polygon><text x="1507" y="2681" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="labelText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">loop</text><text x="1690.5" y="2686" text-anchor="middle" class="loopText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;"><tspan x="1690.5">[Withdrawal]</tspan></text></g><g><line x1="65" y1="1667" x2="3019" y2="1667" class="loopLine"></line><line x1="3019" y1="1667" x2="3019" y2="2819" class="loopLine"></line><line x1="65" y1="2819" x2="3019" y2="2819" class="loopLine"></line><line x1="65" y1="1667" x2="65" y2="2819" class="loopLine"></line><line x1="65" y1="2532" x2="3019" y2="2532" class="loopLine" style="stroke-dasharray: 3, 3;"></line><polygon points="65,1667 115,1667 115,1680 106.6,1687 65,1687" class="labelBox"></polygon><text x="90" y="1680" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="labelText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">alt</text><text x="1567" y="1685" text-anchor="middle" class="loopText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;"><tspan x="1567">[Allocation of funds]</tspan></text><text x="1542" y="2550" text-anchor="middle" class="loopText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">[Cancelling round]</text></g><g><line x1="55" y1="754" x2="3029" y2="754" class="loopLine"></line><line x1="3029" y1="754" x2="3029" y2="2829" class="loopLine"></line><line x1="55" y1="2829" x2="3029" y2="2829" class="loopLine"></line><line x1="55" y1="754" x2="55" y2="2829" class="loopLine"></line><polygon points="55,754 105,754 105,767 96.6,774 55,774" class="labelBox"></polygon><text x="80" y="767" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="labelText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;">loop</text><text x="1567" y="772" text-anchor="middle" class="loopText" style="font-family: &quot;trebuchet ms&quot;, verdana, arial; font-size: 16px; font-weight: 400;"><tspan x="1567">[Every round]</tspan></text></g><g><rect x="0" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="75" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="75" dy="0">Owner</tspan></text></g><g><rect x="217" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="292" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="292" dy="0">PoolContributor</tspan></text></g><g><rect x="417" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="492" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="492" dy="0">Recipient</tspan></text></g><g><rect x="617" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="692" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="692" dy="0">Factory</tspan></text></g><g><rect x="817" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="892" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="892" dy="0">MACIFactory</tspan></text></g><g><rect x="1017" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="1092" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="1092" dy="0">UserRegistry</tspan></text></g><g><rect x="1217" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="1292" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="1292" dy="0">RecipientRegistry</tspan></text></g><g><rect x="1417" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="1492" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="1492" dy="0">Contributor</tspan></text></g><g><rect x="1764" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="1839" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="1839" dy="0">FundingRound</tspan></text></g><g><rect x="2401" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="2476" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="2476" dy="0">MACI</tspan></text></g><g><rect x="2934" y="2849" fill="#eaeaea" stroke="#666" width="150" height="65" rx="3" ry="3" class="actor"></rect><text x="3009" y="2881.5" dominant-baseline="central" alignment-baseline="central" class="actor" style="text-anchor: middle; font-size: 14px; font-weight: 400; font-family: Open-Sans, sans-serif;"><tspan x="3009" dy="0">Coordinator</tspan></text></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="mermaid-1606610485657"
+   width="3085"
+   height="2915"
+   viewBox="-50 -10 3085 2915"
+   version="1.1"
+   sodipodi:docname="clrfund.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+  <metadata
+     id="metadata571">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     id="namedview569"
+     showgrid="false"
+     inkscape:zoom="0.2069345"
+     inkscape:cx="2609.5475"
+     inkscape:cy="858.94792"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="mermaid-1606610485657"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <style
+     id="style2">#mermaid-1606610485657{font-family:&quot;trebuchet ms&quot;,verdana,arial;font-size:16px;fill:#333;}#mermaid-1606610485657 .error-icon{fill:#552222;}#mermaid-1606610485657 .error-text{fill:#552222;stroke:#552222;}#mermaid-1606610485657 .edge-thickness-normal{stroke-width:2px;}#mermaid-1606610485657 .edge-thickness-thick{stroke-width:3.5px;}#mermaid-1606610485657 .edge-pattern-solid{stroke-dasharray:0;}#mermaid-1606610485657 .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-1606610485657 .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-1606610485657 .marker{fill:#333333;}#mermaid-1606610485657 .marker.cross{stroke:#333333;}#mermaid-1606610485657 svg{font-family:&quot;trebuchet ms&quot;,verdana,arial;font-size:16px;}#mermaid-1606610485657 .actor{stroke:hsl(259.6261682243,59.7765363128%,87.9019607843%);fill:#ECECFF;}#mermaid-1606610485657 text.actor &gt; tspan{fill:black;stroke:none;}#mermaid-1606610485657 .actor-line{stroke:grey;}#mermaid-1606610485657 .messageLine0{stroke-width:1.5;stroke-dasharray:none;stroke:#333;}#mermaid-1606610485657 .messageLine1{stroke-width:1.5;stroke-dasharray:2,2;stroke:#333;}#mermaid-1606610485657 #arrowhead path{fill:#333;stroke:#333;}#mermaid-1606610485657 .sequenceNumber{fill:white;}#mermaid-1606610485657 #sequencenumber{fill:#333;}#mermaid-1606610485657 #crosshead path{fill:#333;stroke:#333;}#mermaid-1606610485657 .messageText{fill:#333;stroke:#333;}#mermaid-1606610485657 .labelBox{stroke:hsl(259.6261682243,59.7765363128%,87.9019607843%);fill:#ECECFF;}#mermaid-1606610485657 .labelText,#mermaid-1606610485657 .labelText &gt; tspan{fill:black;stroke:none;}#mermaid-1606610485657 .loopText,#mermaid-1606610485657 .loopText &gt; tspan{fill:black;stroke:none;}#mermaid-1606610485657 .loopLine{stroke-width:2px;stroke-dasharray:2,2;stroke:hsl(259.6261682243,59.7765363128%,87.9019607843%);fill:hsl(259.6261682243,59.7765363128%,87.9019607843%);}#mermaid-1606610485657 .note{stroke:#aaaa33;fill:#fff5ad;}#mermaid-1606610485657 .noteText,#mermaid-1606610485657 .noteText &gt; tspan{fill:black;stroke:none;}#mermaid-1606610485657 .activation0{fill:#f4f4f4;stroke:#666;}#mermaid-1606610485657 .activation1{fill:#f4f4f4;stroke:#666;}#mermaid-1606610485657 .activation2{fill:#f4f4f4;stroke:#666;}#mermaid-1606610485657:root{--mermaid-font-family:&quot;trebuchet ms&quot;,verdana,arial;}#mermaid-1606610485657 sequence{fill:apa;}</style>
+  <g
+     id="g4"
+     transform="translate(-49.5,-9.5)" />
+  <g
+     id="g13"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor0"
+       x1="75"
+       y1="5"
+       x2="75"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="0"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect7" />
+    <text
+       x="75"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text11"><tspan
+         x="75"
+         dy="0"
+         id="tspan9">Owner</tspan></text>
+  </g>
+  <g
+     id="g22"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor1"
+       x1="292"
+       y1="5"
+       x2="292"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="217"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect16" />
+    <text
+       x="292"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text20"><tspan
+         x="292"
+         dy="0"
+         id="tspan18">PoolContributor</tspan></text>
+  </g>
+  <g
+     id="g31"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor2"
+       x1="492"
+       y1="5"
+       x2="492"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="417"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect25" />
+    <text
+       x="492"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text29"><tspan
+         x="492"
+         dy="0"
+         id="tspan27">Recipient</tspan></text>
+  </g>
+  <g
+     id="g40"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor3"
+       x1="692"
+       y1="5"
+       x2="692"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="617"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect34" />
+    <text
+       x="692"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text38"><tspan
+         x="692"
+         dy="0"
+         id="tspan36">Factory</tspan></text>
+  </g>
+  <g
+     id="g49"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor4"
+       x1="892"
+       y1="5"
+       x2="892"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="817"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect43" />
+    <text
+       x="892"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text47"><tspan
+         x="892"
+         dy="0"
+         id="tspan45">MACIFactory</tspan></text>
+  </g>
+  <g
+     id="g58"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor5"
+       x1="1092"
+       y1="5"
+       x2="1092"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="1017"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect52" />
+    <text
+       x="1092"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text56"><tspan
+         x="1092"
+         dy="0"
+         id="tspan54">UserRegistry</tspan></text>
+  </g>
+  <g
+     id="g67"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor6"
+       x1="1292"
+       y1="5"
+       x2="1292"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="1217"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect61" />
+    <text
+       x="1292"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text65"><tspan
+         x="1292"
+         dy="0"
+         id="tspan63">RecipientRegistry</tspan></text>
+  </g>
+  <g
+     id="g76"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor7"
+       x1="1492"
+       y1="5"
+       x2="1492"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="1417"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect70" />
+    <text
+       x="1492"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text74"><tspan
+         x="1492"
+         dy="0"
+         id="tspan72">Contributor</tspan></text>
+  </g>
+  <g
+     id="g85"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor8"
+       x1="1839"
+       y1="5"
+       x2="1839"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="1764"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect79" />
+    <text
+       x="1839"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text83"><tspan
+         x="1839"
+         dy="0"
+         id="tspan81">FundingRound</tspan></text>
+  </g>
+  <g
+     id="g94"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor9"
+       x1="2476"
+       y1="5"
+       x2="2476"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="2401"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect88" />
+    <text
+       x="2476"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text92"><tspan
+         x="2476"
+         dy="0"
+         id="tspan90">MACI</tspan></text>
+  </g>
+  <g
+     id="g103"
+     transform="translate(-49.5,-9.5)">
+    <line
+       id="actor10"
+       x1="3009"
+       y1="5"
+       x2="3009"
+       y2="2914"
+       class="actor-line"
+       stroke-width="0.5px"
+       stroke="#999999" />
+    <rect
+       x="2934"
+       y="0"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect97" />
+    <text
+       x="3009"
+       y="32.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text101"><tspan
+         x="3009"
+         dy="0"
+         id="tspan99">Coordinator</tspan></text>
+  </g>
+  <defs
+     id="defs108">
+    <marker
+       id="arrowhead"
+       refX="5"
+       refY="2"
+       markerWidth="6"
+       markerHeight="4"
+       orient="auto">
+      <path
+         d="M 0,0 V 4 L 6,2 Z"
+         id="path105" />
+    </marker>
+  </defs>
+  <defs
+     id="defs115" />
+  <defs
+     id="defs120" />
+  <text
+     x="434.5"
+     y="70.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text122">deploy MACI factory</text>
+  <line
+     x1="25.5"
+     y1="103.5"
+     x2="842.5"
+     y2="103.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line124" />
+  <text
+     x="534.5"
+     y="118.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text126">deploy user registry</text>
+  <line
+     x1="25.5"
+     y1="151.5"
+     x2="1042.5"
+     y2="151.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line128" />
+  <text
+     x="634.5"
+     y="166.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text130">deploy recipient registry</text>
+  <line
+     x1="25.5"
+     y1="199.5"
+     x2="1242.5"
+     y2="199.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line132" />
+  <text
+     x="334.5"
+     y="214.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text134">deploy funding round factory</text>
+  <line
+     x1="25.5"
+     y1="247.5"
+     x2="642.5"
+     y2="247.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line136" />
+  <text
+     x="434.5"
+     y="262.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text138">transfer ownership to Factory ( call transferOwnership() )</text>
+  <line
+     x1="25.5"
+     y1="295.5"
+     x2="842.5"
+     y2="295.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line140" />
+  <text
+     x="634.5"
+     y="310.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text142">set max number of recipients</text>
+  <line
+     x1="25.5"
+     y1="343.5"
+     x2="1242.5"
+     y2="343.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line144" />
+  <text
+     x="634.5"
+     y="358.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text146">transfer control to Factory ( call setController() )</text>
+  <line
+     x1="25.5"
+     y1="391.5"
+     x2="1242.5"
+     y2="391.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line148" />
+  <text
+     x="334.5"
+     y="406.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text150">set MACI parameters if necessary ( call setMaciParameters() )</text>
+  <line
+     x1="25.5"
+     y1="439.5"
+     x2="642.5"
+     y2="439.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line152" />
+  <text
+     x="1492.5"
+     y="454.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text154">provide public key</text>
+  <line
+     x1="2959.5"
+     y1="487.5"
+     x2="25.5"
+     y2="487.5"
+     class="messageLine1"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none;stroke-dasharray:3, 3"
+     id="line156" />
+  <text
+     x="334.5"
+     y="502.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text158">set coordinator ( call setCoordinator() )</text>
+  <line
+     x1="25.5"
+     y1="535.5"
+     x2="642.5"
+     y2="535.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line160" />
+  <text
+     x="442.5"
+     y="550.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text162">donate to the matching pool</text>
+  <line
+     x1="242.5"
+     y1="583.5"
+     x2="642.5"
+     y2="583.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line164" />
+  <text
+     x="234.5"
+     y="643.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text166">ask for registration</text>
+  <line
+     x1="442.5"
+     y1="676.5"
+     x2="25.5"
+     y2="676.5"
+     class="messageLine1"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none;stroke-dasharray:3, 3"
+     id="line168" />
+  <text
+     x="634.5"
+     y="691.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text170">call addRecipient()</text>
+  <line
+     x1="25.5"
+     y1="724.5"
+     x2="1242.5"
+     y2="724.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line172" />
+  <g
+     id="g190"
+     transform="translate(-49.5,-9.5)">
+    <line
+       x1="65"
+       y1="603"
+       x2="1302"
+       y2="603"
+       class="loopLine"
+       id="line174" />
+    <line
+       x1="1302"
+       y1="603"
+       x2="1302"
+       y2="744"
+       class="loopLine"
+       id="line176" />
+    <line
+       x1="65"
+       y1="744"
+       x2="1302"
+       y2="744"
+       class="loopLine"
+       id="line178" />
+    <line
+       x1="65"
+       y1="603"
+       x2="65"
+       y2="744"
+       class="loopLine"
+       id="line180" />
+    <polygon
+       points="115,616 106.6,623 65,623 65,603 115,603 "
+       class="labelBox"
+       id="polygon182" />
+    <text
+       x="90"
+       y="616"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="labelText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text184">loop</text>
+    <text
+       x="708.5"
+       y="621"
+       text-anchor="middle"
+       class="loopText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text188"><tspan
+         x="708.5"
+         id="tspan186">[Adding recipients]</tspan></text>
+  </g>
+  <text
+     x="334.5"
+     y="794.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text192">call deployNewRound()</text>
+  <line
+     x1="25.5"
+     y1="827.5"
+     x2="642.5"
+     y2="827.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line194" />
+  <text
+     x="1216.5"
+     y="842.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text196">deploy FundingRound contract</text>
+  <line
+     x1="642.5"
+     y1="875.5"
+     x2="1789.5"
+     y2="875.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line198" />
+  <text
+     x="742.5"
+     y="890.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text200">call deployMaci()</text>
+  <line
+     x1="642.5"
+     y1="923.5"
+     x2="842.5"
+     y2="923.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line202" />
+  <text
+     x="1634.5"
+     y="938.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text204">create new MACI instance</text>
+  <line
+     x1="842.5"
+     y1="971.5"
+     x2="2426.5"
+     y2="971.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line206" />
+  <text
+     x="1216.5"
+     y="986.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text208">call setMaci()</text>
+  <line
+     x1="642.5"
+     y1="1019.5"
+     x2="1789.5"
+     y2="1019.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line210" />
+  <g
+     id="g218"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="1467"
+       y="1084"
+       fill="#edf2ae"
+       stroke="#666666"
+       width="397"
+       height="36"
+       rx="0"
+       ry="0"
+       class="note"
+       id="rect212" />
+    <text
+       x="1666"
+       y="1089"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="noteText"
+       dy="1em"
+       style="font-weight:400;font-size:14px;font-family:'trebuchet ms', verdana, arial"
+       id="text216"><tspan
+         x="1666"
+         id="tspan214">contributor registers with their verified address</tspan></text>
+  </g>
+  <text
+     x="1616.5"
+     y="1125.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text220">donate to the pool ( call contribute() )</text>
+  <line
+     x1="1442.5"
+     y1="1158.5"
+     x2="1789.5"
+     y2="1158.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line222" />
+  <text
+     x="1416.5"
+     y="1173.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text224">check that user is verified ( call isVerifiedUser() )</text>
+  <line
+     x1="1789.5"
+     y1="1206.5"
+     x2="1042.5"
+     y2="1206.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line226" />
+  <text
+     x="2108.5"
+     y="1221.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text228">call signUp()</text>
+  <line
+     x1="1789.5"
+     y1="1254.5"
+     x2="2426.5"
+     y2="1254.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line230" />
+  <g
+     id="g238"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="1517"
+       y="1274"
+       fill="#edf2ae"
+       stroke="#666666"
+       width="282"
+       height="37"
+       rx="0"
+       ry="0"
+       class="note"
+       id="rect232" />
+    <text
+       x="1658"
+       y="1279"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="noteText"
+       dy="1em"
+       style="font-weight:400;font-size:14px;font-family:'trebuchet ms', verdana, arial"
+       id="text236"><tspan
+         x="1658"
+         id="tspan234">contributor creates encrypted message(s)</tspan></text>
+  </g>
+  <text
+     x="1934.5"
+     y="1361.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text240">vote ( call publishMessage() )</text>
+  <line
+     x1="1442.5"
+     y1="1394.5"
+     x2="2426.5"
+     y2="1394.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line242" />
+  <text
+     x="1616.5"
+     y="1454.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text244">vote ( call submitMessageBatch() )</text>
+  <line
+     x1="1442.5"
+     y1="1487.5"
+     x2="1789.5"
+     y2="1487.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line246" />
+  <text
+     x="2108.5"
+     y="1502.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text248">call publishMessage()</text>
+  <line
+     x1="1789.5"
+     y1="1535.5"
+     x2="2426.5"
+     y2="1535.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line250" />
+  <g
+     id="g272"
+     transform="translate(-49.5,-9.5)">
+    <line
+       x1="1482"
+       y1="1321"
+       x2="2486"
+       y2="1321"
+       class="loopLine"
+       id="line252" />
+    <line
+       x1="2486"
+       y1="1321"
+       x2="2486"
+       y2="1555"
+       class="loopLine"
+       id="line254" />
+    <line
+       x1="1482"
+       y1="1555"
+       x2="2486"
+       y2="1555"
+       class="loopLine"
+       id="line256" />
+    <line
+       x1="1482"
+       y1="1321"
+       x2="1482"
+       y2="1555"
+       class="loopLine"
+       id="line258" />
+    <line
+       x1="1482"
+       y1="1419"
+       x2="2486"
+       y2="1419"
+       class="loopLine"
+       style="stroke-dasharray:3, 3"
+       id="line260" />
+    <polygon
+       points="1532,1334 1523.6,1341 1482,1341 1482,1321 1532,1321 "
+       class="labelBox"
+       id="polygon262" />
+    <text
+       x="1507"
+       y="1334"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="labelText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text264">alt</text>
+    <text
+       x="2009"
+       y="1339"
+       text-anchor="middle"
+       class="loopText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text268"><tspan
+         x="2009"
+         id="tspan266">[Single message submission]</tspan></text>
+    <text
+       x="1984"
+       y="1437"
+       text-anchor="middle"
+       class="loopText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text270">[Batch submission]</text>
+  </g>
+  <g
+     id="g290"
+     transform="translate(-49.5,-9.5)">
+    <line
+       x1="1082"
+       y1="1039"
+       x2="2496"
+       y2="1039"
+       class="loopLine"
+       id="line274" />
+    <line
+       x1="2496"
+       y1="1039"
+       x2="2496"
+       y2="1565"
+       class="loopLine"
+       id="line276" />
+    <line
+       x1="1082"
+       y1="1565"
+       x2="2496"
+       y2="1565"
+       class="loopLine"
+       id="line278" />
+    <line
+       x1="1082"
+       y1="1039"
+       x2="1082"
+       y2="1565"
+       class="loopLine"
+       id="line280" />
+    <polygon
+       points="1132,1052 1123.6,1059 1082,1059 1082,1039 1132,1039 "
+       class="labelBox"
+       id="polygon282" />
+    <text
+       x="1107"
+       y="1052"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="labelText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text284">loop</text>
+    <text
+       x="1814"
+       y="1057"
+       text-anchor="middle"
+       class="loopText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text288"><tspan
+         x="1814"
+         id="tspan286">[Funding]</tspan></text>
+  </g>
+  <g
+     id="g298"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="1814"
+       y="1575"
+       fill="#edf2ae"
+       stroke="#666666"
+       width="687"
+       height="36"
+       rx="0"
+       ry="0"
+       class="note"
+       id="rect292" />
+    <text
+       x="2158"
+       y="1580"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="noteText"
+       dy="1em"
+       style="font-weight:400;font-size:14px;font-family:'trebuchet ms', verdana, arial"
+       id="text296"><tspan
+         x="2158"
+         id="tspan294">contribution / signup deadline</tspan></text>
+  </g>
+  <g
+     id="g306"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="2401"
+       y="1621"
+       fill="#edf2ae"
+       stroke="#666666"
+       width="150"
+       height="36"
+       rx="0"
+       ry="0"
+       class="note"
+       id="rect300" />
+    <text
+       x="2476"
+       y="1626"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="noteText"
+       dy="1em"
+       style="font-weight:400;font-size:14px;font-family:'trebuchet ms', verdana, arial"
+       id="text304"><tspan
+         x="2476"
+         id="tspan302">voting deadline</tspan></text>
+  </g>
+  <text
+     x="2693.5"
+     y="1707.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text308">process messages ( call batchProcessMessage() )</text>
+  <line
+     x1="2959.5"
+     y1="1740.5"
+     x2="2426.5"
+     y2="1740.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line310" />
+  <g
+     id="g318"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="2650"
+       y="1760"
+       fill="#edf2ae"
+       stroke="#666666"
+       width="334"
+       height="36"
+       rx="0"
+       ry="0"
+       class="note"
+       id="rect312" />
+    <text
+       x="2817"
+       y="1765"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="noteText"
+       dy="1em"
+       style="font-weight:400;font-size:14px;font-family:'trebuchet ms', verdana, arial"
+       id="text316"><tspan
+         x="2817"
+         id="tspan314">coordinator tallies the votes and generates proofs</tspan></text>
+  </g>
+  <text
+     x="2693.5"
+     y="1801.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text320">prove the correctness of vote tally ( call proveVoteTallyBatch() )</text>
+  <line
+     x1="2959.5"
+     y1="1834.5"
+     x2="2426.5"
+     y2="1834.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line322" />
+  <g
+     id="g330"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="2734"
+       y="1854"
+       fill="#edf2ae"
+       stroke="#666666"
+       width="250"
+       height="36"
+       rx="0"
+       ry="0"
+       class="note"
+       id="rect324" />
+    <text
+       x="2859"
+       y="1859"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="noteText"
+       dy="1em"
+       style="font-weight:400;font-size:14px;font-family:'trebuchet ms', verdana, arial"
+       id="text328"><tspan
+         x="2859"
+         id="tspan326">coordinator uploads the tally to IPFS</tspan></text>
+  </g>
+  <text
+     x="2374.5"
+     y="1895.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text332">call publishTallyHash()</text>
+  <line
+     x1="2959.5"
+     y1="1928.5"
+     x2="1789.5"
+     y2="1928.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line334" />
+  <g
+     id="g342"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="100"
+       y="1948"
+       fill="#edf2ae"
+       stroke="#666666"
+       width="167"
+       height="36"
+       rx="0"
+       ry="0"
+       class="note"
+       id="rect336" />
+    <text
+       x="184"
+       y="1953"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="noteText"
+       dy="1em"
+       style="font-weight:400;font-size:14px;font-family:'trebuchet ms', verdana, arial"
+       id="text340"><tspan
+         x="184"
+         id="tspan338">owner verifies the tally</tspan></text>
+  </g>
+  <text
+     x="334.5"
+     y="1989.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text344">call transferMatchingFunds()</text>
+  <line
+     x1="25.5"
+     y1="2022.5"
+     x2="642.5"
+     y2="2022.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line346" />
+  <text
+     x="442.5"
+     y="2037.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text348">pull matching funds from funding sources</text>
+  <line
+     x1="642.5"
+     y1="2070.5"
+     x2="242.5"
+     y2="2070.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line350" />
+  <text
+     x="1216.5"
+     y="2085.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text352">transfer matching funds and finalize the round</text>
+  <line
+     x1="642.5"
+     y1="2118.5"
+     x2="1789.5"
+     y2="2118.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line354" />
+  <text
+     x="2108.5"
+     y="2133.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text356">verify the total amount of spent voice credits ( call verifySpentVoiceCredits() )</text>
+  <line
+     x1="1789.5"
+     y1="2166.5"
+     x2="2426.5"
+     y2="2166.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line358" />
+  <text
+     x="2108.5"
+     y="2181.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text360">call totalVotes()</text>
+  <line
+     x1="1789.5"
+     y1="2214.5"
+     x2="2426.5"
+     y2="2214.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line362" />
+  <g
+     id="g370"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="1714"
+       y="2234"
+       fill="#edf2ae"
+       stroke="#666666"
+       width="250"
+       height="36"
+       rx="0"
+       ry="0"
+       class="note"
+       id="rect364" />
+    <text
+       x="1839"
+       y="2239"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="noteText"
+       dy="1em"
+       style="font-weight:400;font-size:14px;font-family:'trebuchet ms', verdana, arial"
+       id="text368"><tspan
+         x="1839"
+         id="tspan366">round can not be cancelled anymore</tspan></text>
+  </g>
+  <text
+     x="1116.5"
+     y="2320.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text372">submit vote tally, amount of spent voice credits and proofs ( call claimFunds() )</text>
+  <line
+     x1="442.5"
+     y1="2353.5"
+     x2="1789.5"
+     y2="2353.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line374" />
+  <text
+     x="1516.5"
+     y="2368.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text376">find the corresponding vote option index</text>
+  <line
+     x1="1789.5"
+     y1="2401.5"
+     x2="1242.5"
+     y2="2401.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line378" />
+  <text
+     x="2108.5"
+     y="2416.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text380">verify the proofs</text>
+  <line
+     x1="1789.5"
+     y1="2449.5"
+     x2="2426.5"
+     y2="2449.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line382" />
+  <text
+     x="1116.5"
+     y="2464.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text384">transfer funds</text>
+  <line
+     x1="1789.5"
+     y1="2497.5"
+     x2="442.5"
+     y2="2497.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line386" />
+  <g
+     id="g404"
+     transform="translate(-49.5,-9.5)">
+    <line
+       x1="482"
+       y1="2280"
+       x2="2486"
+       y2="2280"
+       class="loopLine"
+       id="line388" />
+    <line
+       x1="2486"
+       y1="2280"
+       x2="2486"
+       y2="2517"
+       class="loopLine"
+       id="line390" />
+    <line
+       x1="482"
+       y1="2517"
+       x2="2486"
+       y2="2517"
+       class="loopLine"
+       id="line392" />
+    <line
+       x1="482"
+       y1="2280"
+       x2="482"
+       y2="2517"
+       class="loopLine"
+       id="line394" />
+    <polygon
+       points="532,2293 523.6,2300 482,2300 482,2280 532,2280 "
+       class="labelBox"
+       id="polygon396" />
+    <text
+       x="507"
+       y="2293"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="labelText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text398">loop</text>
+    <text
+       x="1509"
+       y="2298"
+       text-anchor="middle"
+       class="loopText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text402"><tspan
+         x="1509"
+         id="tspan400">[Distribution]</tspan></text>
+  </g>
+  <text
+     x="334.5"
+     y="2567.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text406">call cancel()</text>
+  <line
+     x1="25.5"
+     y1="2600.5"
+     x2="642.5"
+     y2="2600.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line408" />
+  <text
+     x="1216.5"
+     y="2615.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text410">call cancel()</text>
+  <line
+     x1="642.5"
+     y1="2648.5"
+     x2="1789.5"
+     y2="2648.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line412" />
+  <text
+     x="1616.5"
+     y="2708.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text414">call withdrawContribution()</text>
+  <line
+     x1="1442.5"
+     y1="2741.5"
+     x2="1789.5"
+     y2="2741.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line416" />
+  <text
+     x="1616.5"
+     y="2756.5"
+     text-anchor="middle"
+     dominant-baseline="middle"
+     alignment-baseline="middle"
+     class="messageText"
+     dy="16"
+     style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+     id="text418">transfer funds</text>
+  <line
+     x1="1789.5"
+     y1="2789.5"
+     x2="1442.5"
+     y2="2789.5"
+     class="messageLine0"
+     stroke-width="2"
+     stroke="none"
+     marker-end="url(#arrowhead)"
+     style="fill:none"
+     id="line420" />
+  <g
+     id="g438"
+     transform="translate(-49.5,-9.5)">
+    <line
+       x1="1482"
+       y1="2668"
+       x2="1849"
+       y2="2668"
+       class="loopLine"
+       id="line422" />
+    <line
+       x1="1849"
+       y1="2668"
+       x2="1849"
+       y2="2809"
+       class="loopLine"
+       id="line424" />
+    <line
+       x1="1482"
+       y1="2809"
+       x2="1849"
+       y2="2809"
+       class="loopLine"
+       id="line426" />
+    <line
+       x1="1482"
+       y1="2668"
+       x2="1482"
+       y2="2809"
+       class="loopLine"
+       id="line428" />
+    <polygon
+       points="1532,2681 1523.6,2688 1482,2688 1482,2668 1532,2668 "
+       class="labelBox"
+       id="polygon430" />
+    <text
+       x="1507"
+       y="2681"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="labelText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text432">loop</text>
+    <text
+       x="1690.5"
+       y="2686"
+       text-anchor="middle"
+       class="loopText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text436"><tspan
+         x="1690.5"
+         id="tspan434">[Withdrawal]</tspan></text>
+  </g>
+  <g
+     id="g460"
+     transform="translate(-49.5,-9.5)">
+    <line
+       x1="65"
+       y1="1667"
+       x2="3019"
+       y2="1667"
+       class="loopLine"
+       id="line440" />
+    <line
+       x1="3019"
+       y1="1667"
+       x2="3019"
+       y2="2819"
+       class="loopLine"
+       id="line442" />
+    <line
+       x1="65"
+       y1="2819"
+       x2="3019"
+       y2="2819"
+       class="loopLine"
+       id="line444" />
+    <line
+       x1="65"
+       y1="1667"
+       x2="65"
+       y2="2819"
+       class="loopLine"
+       id="line446" />
+    <line
+       x1="65"
+       y1="2532"
+       x2="3019"
+       y2="2532"
+       class="loopLine"
+       style="stroke-dasharray:3, 3"
+       id="line448" />
+    <polygon
+       points="115,1680 106.6,1687 65,1687 65,1667 115,1667 "
+       class="labelBox"
+       id="polygon450" />
+    <text
+       x="90"
+       y="1680"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="labelText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text452">alt</text>
+    <text
+       x="1567"
+       y="1685"
+       text-anchor="middle"
+       class="loopText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text456"><tspan
+         x="1567"
+         id="tspan454">[Allocation of funds]</tspan></text>
+    <text
+       x="1542"
+       y="2550"
+       text-anchor="middle"
+       class="loopText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text458">[Cancelling round]</text>
+  </g>
+  <g
+     id="g478"
+     transform="translate(-49.5,-9.5)">
+    <line
+       x1="55"
+       y1="754"
+       x2="3029"
+       y2="754"
+       class="loopLine"
+       id="line462" />
+    <line
+       x1="3029"
+       y1="754"
+       x2="3029"
+       y2="2829"
+       class="loopLine"
+       id="line464" />
+    <line
+       x1="55"
+       y1="2829"
+       x2="3029"
+       y2="2829"
+       class="loopLine"
+       id="line466" />
+    <line
+       x1="55"
+       y1="754"
+       x2="55"
+       y2="2829"
+       class="loopLine"
+       id="line468" />
+    <polygon
+       points="105,767 96.6,774 55,774 55,754 105,754 "
+       class="labelBox"
+       id="polygon470" />
+    <text
+       x="80"
+       y="767"
+       text-anchor="middle"
+       dominant-baseline="middle"
+       alignment-baseline="middle"
+       class="labelText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text472">loop</text>
+    <text
+       x="1567"
+       y="772"
+       text-anchor="middle"
+       class="loopText"
+       style="font-weight:400;font-size:16px;font-family:'trebuchet ms', verdana, arial"
+       id="text476"><tspan
+         x="1567"
+         id="tspan474">[Every round]</tspan></text>
+  </g>
+  <g
+     id="g486"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="0"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect480" />
+    <text
+       x="75"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text484"><tspan
+         x="75"
+         dy="0"
+         id="tspan482">Owner</tspan></text>
+  </g>
+  <g
+     id="g494"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="217"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect488" />
+    <text
+       x="292"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text492"><tspan
+         x="292"
+         dy="0"
+         id="tspan490">PoolContributor</tspan></text>
+  </g>
+  <g
+     id="g502"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="417"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect496" />
+    <text
+       x="492"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text500"><tspan
+         x="492"
+         dy="0"
+         id="tspan498">Recipient</tspan></text>
+  </g>
+  <g
+     id="g510"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="617"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect504" />
+    <text
+       x="692"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text508"><tspan
+         x="692"
+         dy="0"
+         id="tspan506">Factory</tspan></text>
+  </g>
+  <g
+     id="g518"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="817"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect512" />
+    <text
+       x="892"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text516"><tspan
+         x="892"
+         dy="0"
+         id="tspan514">MACIFactory</tspan></text>
+  </g>
+  <g
+     id="g526"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="1017"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect520" />
+    <text
+       x="1092"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text524"><tspan
+         x="1092"
+         dy="0"
+         id="tspan522">UserRegistry</tspan></text>
+  </g>
+  <g
+     id="g534"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="1217"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect528" />
+    <text
+       x="1292"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text532"><tspan
+         x="1292"
+         dy="0"
+         id="tspan530">RecipientRegistry</tspan></text>
+  </g>
+  <g
+     id="g542"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="1417"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect536" />
+    <text
+       x="1492"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text540"><tspan
+         x="1492"
+         dy="0"
+         id="tspan538">Contributor</tspan></text>
+  </g>
+  <g
+     id="g550"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="1764"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect544" />
+    <text
+       x="1839"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text548"><tspan
+         x="1839"
+         dy="0"
+         id="tspan546">FundingRound</tspan></text>
+  </g>
+  <g
+     id="g558"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="2401"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect552" />
+    <text
+       x="2476"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text556"><tspan
+         x="2476"
+         dy="0"
+         id="tspan554">MACI</tspan></text>
+  </g>
+  <g
+     id="g566"
+     transform="translate(-49.5,-9.5)">
+    <rect
+       x="2934"
+       y="2849"
+       fill="#eaeaea"
+       stroke="#666666"
+       width="150"
+       height="65"
+       rx="3"
+       ry="3"
+       class="actor"
+       id="rect560" />
+    <text
+       x="3009"
+       y="2881.5"
+       dominant-baseline="central"
+       alignment-baseline="central"
+       class="actor"
+       style="font-weight:400;font-size:14px;font-family:Open-Sans, sans-serif;text-anchor:middle"
+       id="text564"><tspan
+         x="3009"
+         dy="0"
+         id="tspan562">Coordinator</tspan></text>
+  </g>
+</svg>
