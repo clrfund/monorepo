@@ -56,7 +56,7 @@ import { Project, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
-import { SET_CURRENT_ROUND } from '@/store/mutation-types'
+import { SET_CURRENT_ROUND, SET_CONTRIBUTION } from '@/store/mutation-types'
 
 @Component({
   name: 'project-list',
@@ -80,6 +80,7 @@ export default class ProjectList extends Vue {
     const roundAddress = this.$route.params.address || null
     // Reset current round
     this.$store.commit(SET_CURRENT_ROUND, null)
+    this.$store.commit(SET_CONTRIBUTION, null)
     // Load round info every minute
     this.$store.dispatch(LOAD_ROUND_INFO, roundAddress)
     this.roundLoaderInterval = setInterval(() => {
@@ -111,7 +112,7 @@ export default class ProjectList extends Vue {
   }
 
   get contribution(): FixedNumber {
-    const contribution = this.$store.state.currentUser?.contribution
+    const contribution = this.$store.state.contribution
     const decimals = this.currentRound?.nativeTokenDecimals
     if (!contribution || !decimals) {
       return FixedNumber.from(0)

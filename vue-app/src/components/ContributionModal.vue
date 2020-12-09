@@ -60,7 +60,7 @@ import { storage } from '@/api/storage'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
-import { SET_CURRENT_USER, SET_CONTRIBUTOR } from '@/store/mutation-types'
+import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
@@ -184,10 +184,7 @@ export default class ContributionModal extends Vue {
     )
     // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTOR, contributor)
-    this.$store.commit(SET_CURRENT_USER, {
-      ...this.$store.state.currentUser,
-      contribution: total,
-    })
+    this.$store.commit(SET_CONTRIBUTION, total)
     this.$store.dispatch(LOAD_ROUND_INFO)
     // Vote (step 3)
     const messages: Message[] = []

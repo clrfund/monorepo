@@ -224,7 +224,7 @@ export default class Cart extends Vue {
   }
 
   get contribution(): BigNumber {
-    return this.$store.state.currentUser?.contribution || BigNumber.from(0)
+    return this.$store.state.contribution || BigNumber.from(0)
   }
 
   get cart(): CartItem[] {

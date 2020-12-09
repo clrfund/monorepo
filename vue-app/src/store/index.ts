@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
+import { BigNumber } from 'ethers'
 
 import { CartItem, Contributor, getContributionAmount } from '@/api/contributions'
 import { RoundInfo, RoundStatus, getCurrentRound, getRoundInfo } from '@/api/round'
@@ -14,6 +15,7 @@ import {
   SET_CURRENT_ROUND,
   SET_TALLY,
   SET_CONTRIBUTOR,
+  SET_CONTRIBUTION,
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
@@ -27,6 +29,7 @@ interface RootState {
   tally: Tally | null;
   cart: CartItem[];
   contributor: Contributor | null;
+  contribution: BigNumber | null;
 }
 
 const store: StoreOptions<RootState> = {
@@ -36,6 +39,7 @@ const store: StoreOptions<RootState> = {
     tally: null,
     cart: new Array<CartItem>(),
     contributor: null,
+    contribution: null,
   },
   mutations: {
     [SET_CURRENT_USER](state, user: User | null) {
@@ -49,6 +53,9 @@ const store: StoreOptions<RootState> = {
     },
     [SET_CONTRIBUTOR](state, contributor: Contributor | null) {
       state.contributor = contributor
+    },
+    [SET_CONTRIBUTION](state, contribution: BigNumber | null) {
+      state.contribution = contribution
     },
     [ADD_CART_ITEM](state, addedItem: CartItem) {
       const exists = state.cart.find((item) => {
@@ -104,18 +111,18 @@ const store: StoreOptions<RootState> = {
           state.currentRound.nativeTokenAddress,
           state.currentUser.walletAddress,
         )
-        let contribution = state.currentUser.contribution
+        let contribution = state.contribution
         if (!contribution || contribution.isZero()) {
           contribution = await getContributionAmount(
             state.currentRound.fundingRoundAddress,
             state.currentUser.walletAddress,
           )
+          commit(SET_CONTRIBUTION, contribution)
         }
         commit(SET_CURRENT_USER, {
           ...state.currentUser,
           isVerified,
           balance,
-          contribution,
         })
       }
     },
