@@ -3,7 +3,7 @@ import Vuex, { StoreOptions } from 'vuex'
 import { BigNumber } from 'ethers'
 
 import { CartItem, Contributor, getContributionAmount } from '@/api/contributions'
-import { RoundInfo, RoundStatus, getCurrentRound, getRoundInfo } from '@/api/round'
+import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
 import {
@@ -12,6 +12,7 @@ import {
 } from './action-types'
 import {
   SET_CURRENT_USER,
+  SET_CURRENT_ROUND_ADDRESS,
   SET_CURRENT_ROUND,
   SET_TALLY,
   SET_CONTRIBUTOR,
@@ -25,6 +26,7 @@ Vue.use(Vuex)
 
 interface RootState {
   currentUser: User | null;
+  currentRoundAddress: string | null;
   currentRound: RoundInfo | null;
   tally: Tally | null;
   cart: CartItem[];
@@ -35,6 +37,7 @@ interface RootState {
 const store: StoreOptions<RootState> = {
   state: {
     currentUser: null,
+    currentRoundAddress: null,
     currentRound: null,
     tally: null,
     cart: new Array<CartItem>(),
@@ -44,6 +47,12 @@ const store: StoreOptions<RootState> = {
   mutations: {
     [SET_CURRENT_USER](state, user: User | null) {
       state.currentUser = user
+    },
+    [SET_CURRENT_ROUND_ADDRESS](state, address: string) {
+      state.currentRoundAddress = address
+      // Reset round info and contribution amount
+      state.currentRound = null
+      state.contribution = null
     },
     [SET_CURRENT_ROUND](state, round: RoundInfo) {
       state.currentRound = round
@@ -83,10 +92,8 @@ const store: StoreOptions<RootState> = {
     },
   },
   actions: {
-    async [LOAD_ROUND_INFO]({ commit }, roundAddress: string | null = null) {
-      if (roundAddress === null) {
-        roundAddress = await getCurrentRound()
-      }
+    async [LOAD_ROUND_INFO]({ commit, state }) {
+      const roundAddress = state.currentRoundAddress
       if (roundAddress === null) {
         commit(SET_CURRENT_ROUND, null)
         return

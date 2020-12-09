@@ -39,9 +39,11 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
+import { getCurrentRound } from '@/api/round'
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
-import { LOAD_USER_INFO } from '@/store/action-types'
+import { SET_CURRENT_ROUND_ADDRESS } from '@/store/mutation-types'
+import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 
 @Component({
   name: 'clr.fund',
@@ -64,7 +66,17 @@ export default class App extends Vue {
   navBarCollapsed = true
   userBarCollapsed = true
 
-  created() {
+  async created() {
+    const currentRoundAddress = await getCurrentRound()
+    if (this.$store.state.currentRoundAddress === null) {
+      // Set round address on init, but only if necessary.
+      // ProjectList component could have already set it.
+      this.$store.commit(SET_CURRENT_ROUND_ADDRESS, currentRoundAddress)
+      this.$store.dispatch(LOAD_ROUND_INFO)
+    }
+    setInterval(() => {
+      this.$store.dispatch(LOAD_ROUND_INFO)
+    }, 60 * 1000)
     setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)
