@@ -179,6 +179,7 @@ export default class Cart extends Vue {
     }
     const currentRound = this.$store.state.currentRound
     if (!currentRound) {
+      this.clearCart()
       return
     }
     // Load cart from local storage
