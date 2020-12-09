@@ -16,6 +16,7 @@
           @input="updateAmount(item, $event.target.value)"
           class="input contribution-amount"
           :class="{ invalid: !isAmountValid(item.amount) }"
+          :disabled="!canUpdateAmount()"
           name="amount"
           placeholder="Amount"
         >
@@ -252,6 +253,11 @@ export default class Cart extends Vue {
       )
       .toUnsafeFloat().toString()
     return normalizedValue === value
+  }
+
+  canUpdateAmount(): boolean {
+    const currentRound = this.$store.state.currentRound
+    return currentRound && DateTime.local() < currentRound.votingDeadline
   }
 
   updateAmount(item: CartItem, amount: string) {

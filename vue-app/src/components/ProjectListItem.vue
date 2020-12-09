@@ -36,6 +36,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
+import { DateTime } from 'luxon'
 
 import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE, CartItem } from '@/api/contributions'
 import { Project } from '@/api/projects'
@@ -57,6 +58,7 @@ export default class ProjectListItem extends Vue {
     return (
       this.$store.state.currentUser &&
       this.$store.state.currentRound &&
+      DateTime.local() < this.$store.state.currentRound.votingDeadline &&
       !this.project.isRemoved &&
       this.$store.state.cart.length < CART_MAX_SIZE
     )

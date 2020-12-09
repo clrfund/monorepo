@@ -57,6 +57,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
+import { DateTime } from 'luxon'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE, CartItem } from '@/api/contributions'
@@ -179,6 +180,7 @@ export default class ProjectView extends Vue {
     return (
       this.hasContributeBtn() &&
       this.$store.state.currentUser &&
+      DateTime.local() < this.$store.state.currentRound.votingDeadline &&
       this.project !== null &&
       !this.project.isRemoved &&
       this.$store.state.cart.length < CART_MAX_SIZE
