@@ -1,6 +1,11 @@
 <template>
   <div class="project">
-    <router-link class="content-heading" to="/">⟵ All projects</router-link>
+    <a
+      class="content-heading"
+      @click="goBackToList()"
+    >
+        ⟵ All projects
+    </a>
     <div v-if="project" class="project-page">
       <img class="project-image" :src="project.imageUrl" :alt="project.name">
       <h2 class="project-name">
@@ -114,6 +119,15 @@ export default class ProjectView extends Vue {
       this.checkAllocation,
     )
     this.checkAllocation(this.$store.state.tally)
+  }
+
+  goBackToList(): void {
+    const roundAddress = this.$store.state.currentRound?.fundingRoundAddress
+    if (roundAddress) {
+      this.$router.push({ name: 'round', params: { address: roundAddress }})
+    } else {
+      this.$router.push({ name: 'projects' })
+    }
   }
 
   get klerosCurateUrl(): string | null {
