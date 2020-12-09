@@ -18,9 +18,7 @@
 
     <p>Under the hood, clr.fund uses zero-knowledge proofs (zk-snarks), courtesy of the <a href="https://github.com/appliedzkp/maci" target="_blank" rel="noopener">Minimal Anti-collusion Infrastructure (MACI)</a>, to keep individual contributions private and limit effectiveness of collusion and bribery.</p>
 
-    <p>Recipients are curated by our <a href="https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398" target="_blank" rel="noopener">Kleros TCR.</a></p>
-
-    <p>Sybil resistance is manual for the first round (handled by a multisig of clr.fund contributors), but future iterations will rely on  <a href="https://brightid.org" target="_blank" rel="noopener">BrightID</a> for more permissionless and trustless Sybil resistance.</p>
+    <p>To ensure that every contributor is a unique person clr.fund uses <a href="https://brightid.org" target="_blank" rel="noopener">BrightID</a>, and recipients are curated by our <a href="https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398" target="_blank" rel="noopener">Kleros TCR</a>.</p>
 
   </div>
 </template>
