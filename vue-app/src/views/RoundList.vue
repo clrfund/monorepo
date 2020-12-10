@@ -4,14 +4,18 @@
     <div
       class="round"
       v-for="round in rounds"
-      :key="round.address"
+      :key="round.index"
     >
       <router-link
+        v-if="round.address"
         class="round-name"
         :to="{ name: 'round', params: { address: round.address }}"
       >
         Round {{ round.index }}
       </router-link>
+      <a v-else :href="round.url">
+        Round {{ round.index }}
+      </a>
     </div>
   </div>
 </template>
