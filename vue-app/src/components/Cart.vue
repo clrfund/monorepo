@@ -16,6 +16,7 @@
           @input="updateAmount(item, $event.target.value)"
           class="input contribution-amount"
           :class="{ invalid: !isAmountValid(item.amount) }"
+          :disabled="!canUpdateAmount()"
           name="amount"
           placeholder="Amount"
         >
@@ -163,17 +164,22 @@ export default class Cart extends Vue {
     )
   }
 
+  private clearCart() {
+    this.cart.slice().forEach((item) => {
+      this.$store.commit(REMOVE_CART_ITEM, item)
+    })
+  }
+
   private refreshCart() {
     const currentUser = this.$store.state.currentUser
     if (!currentUser) {
       // Clear the cart on log out / when not logged in
-      this.cart.slice().forEach((item) => {
-        this.$store.commit(REMOVE_CART_ITEM, item)
-      })
+      this.clearCart()
       return
     }
     const currentRound = this.$store.state.currentRound
     if (!currentRound) {
+      this.clearCart()
       return
     }
     // Load cart from local storage
@@ -184,6 +190,7 @@ export default class Cart extends Vue {
       CART_STORAGE_KEY,
     )
     if (serializedCart) {
+      this.clearCart()
       for (const item of JSON.parse(serializedCart)) {
         this.$store.commit(ADD_CART_ITEM, item)
       }
@@ -217,7 +224,7 @@ export default class Cart extends Vue {
   }
 
   get contribution(): BigNumber {
-    return this.$store.state.currentUser?.contribution || BigNumber.from(0)
+    return this.$store.state.contribution || BigNumber.from(0)
   }
 
   get cart(): CartItem[] {
@@ -247,6 +254,11 @@ export default class Cart extends Vue {
       )
       .toUnsafeFloat().toString()
     return normalizedValue === value
+  }
+
+  canUpdateAmount(): boolean {
+    const currentRound = this.$store.state.currentRound
+    return currentRound && DateTime.local() < currentRound.votingDeadline
   }
 
   updateAmount(item: CartItem, amount: string) {

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import ProjectList from '../views/ProjectList.vue'
+import RoundList from '../views/RoundList.vue'
 import About from '../views/About.vue'
 import ProjectView from '../views/Project.vue'
 
@@ -10,6 +11,16 @@ const routes = [
   {
     path: '/',
     name: 'projects',
+    component: ProjectList,
+  },
+  {
+    path: '/rounds',
+    name: 'rounds',
+    component: RoundList,
+  },
+  {
+    path: '/round/:address',
+    name: 'round',
     component: ProjectList,
   },
   {

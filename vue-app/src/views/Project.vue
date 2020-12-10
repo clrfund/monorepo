@@ -1,6 +1,11 @@
 <template>
   <div class="project">
-    <router-link class="content-heading" to="/">⟵ All projects</router-link>
+    <a
+      class="content-heading"
+      @click="goBackToList()"
+    >
+        ⟵ All projects
+    </a>
     <div v-if="project" class="project-page">
       <img class="project-image" :src="project.imageUrl" :alt="project.name">
       <h2 class="project-name">
@@ -57,6 +62,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
+import { DateTime } from 'luxon'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE, CartItem } from '@/api/contributions'
@@ -113,6 +119,15 @@ export default class ProjectView extends Vue {
       this.checkAllocation,
     )
     this.checkAllocation(this.$store.state.tally)
+  }
+
+  goBackToList(): void {
+    const roundAddress = this.$store.state.currentRound?.fundingRoundAddress
+    if (roundAddress) {
+      this.$router.push({ name: 'round', params: { address: roundAddress }})
+    } else {
+      this.$router.push({ name: 'projects' })
+    }
   }
 
   get klerosCurateUrl(): string | null {
@@ -179,6 +194,7 @@ export default class ProjectView extends Vue {
     return (
       this.hasContributeBtn() &&
       this.$store.state.currentUser &&
+      DateTime.local() < this.$store.state.currentRound.votingDeadline &&
       this.project !== null &&
       !this.project.isRemoved &&
       this.$store.state.cart.length < CART_MAX_SIZE

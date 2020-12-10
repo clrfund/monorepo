@@ -55,6 +55,8 @@ import { RoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
+import { LOAD_ROUND_INFO } from '@/store/action-types'
+import { SET_CURRENT_ROUND_ADDRESS } from '@/store/mutation-types'
 
 @Component({
   name: 'project-list',
@@ -67,17 +69,32 @@ export default class ProjectList extends Vue {
 
   projects: Project[] = []
 
+  roundWatcherStop?: Function
+
   get currentRound(): RoundInfo | null {
     return this.$store.state.currentRound
   }
 
-  async mounted() {
+  created() {
+    const roundAddress = this.$route.params.address || null
+    if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
+      // Change current round and reload round info
+      this.$store.commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
+      this.$store.dispatch(LOAD_ROUND_INFO)
+    }
+
     // Wait for round info to load and get project list
-    this.$store.watch(
-      (state) => state.currentRound,
+    this.roundWatcherStop = this.$store.watch(
+      (state) => state.currentRound?.fundingRoundAddress,
       this.loadProjects,
     )
     this.loadProjects()
+  }
+
+  beforeDestroy() {
+    if (this.roundWatcherStop) {
+      this.roundWatcherStop()
+    }
   }
 
   private async loadProjects() {
@@ -88,7 +105,7 @@ export default class ProjectList extends Vue {
   }
 
   get contribution(): FixedNumber {
-    const contribution = this.$store.state.currentUser?.contribution
+    const contribution = this.$store.state.contribution
     const decimals = this.currentRound?.nativeTokenDecimals
     if (!contribution || !decimals) {
       return FixedNumber.from(0)

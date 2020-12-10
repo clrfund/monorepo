@@ -18,13 +18,14 @@
       </div>
       <div id="nav-menu">
         <router-link to="/">Projects</router-link>
+        <router-link to="/rounds">Rounds</router-link>
         <router-link to="/about">About</router-link>
         <a href="https://blog.clr.fund" target=_blank>Blog</a>
         <a href="https://forum.clr.fund" target=_blank>Forum</a>
       </div>
     </div>
     <div id="content">
-      <router-view />
+      <router-view :key="$route.path" />
     </div>
     <div id="user-bar" :class="{'collapsed': userBarCollapsed}">
       <Profile />
@@ -38,8 +39,10 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
+import { getCurrentRound } from '@/api/round'
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
+import { SET_CURRENT_ROUND_ADDRESS } from '@/store/mutation-types'
 import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 
 @Component({
@@ -63,8 +66,14 @@ export default class App extends Vue {
   navBarCollapsed = true
   userBarCollapsed = true
 
-  created() {
-    this.$store.dispatch(LOAD_ROUND_INFO)
+  async created() {
+    const currentRoundAddress = await getCurrentRound()
+    if (this.$store.state.currentRoundAddress === null) {
+      // Set round address on init, but only if necessary.
+      // ProjectList component could have already set it.
+      this.$store.commit(SET_CURRENT_ROUND_ADDRESS, currentRoundAddress)
+      this.$store.dispatch(LOAD_ROUND_INFO)
+    }
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)

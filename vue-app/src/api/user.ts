@@ -12,7 +12,6 @@ export interface User {
   encryptionKey: string;
   isVerified: boolean | null;
   balance: BigNumber | null;
-  contribution: BigNumber | null;
 }
 
 export async function getProfileImageUrl(walletAddress: string): Promise<string | null> {
