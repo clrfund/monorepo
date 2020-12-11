@@ -5,6 +5,7 @@ import KlerosRegistry from './recipient-registry-kleros'
 
 export interface Project {
   id: string; // Address or another ID depending on registry implementation
+  address: string;
   name: string;
   description: string;
   imageUrl: string;

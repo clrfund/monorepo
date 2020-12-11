@@ -10,6 +10,7 @@ function decodeRecipientAdded(event: Event): Project {
   const metadata = JSON.parse(args._metadata)
   return {
     id: args._recipient,
+    address: args._recipient,
     name: metadata.name,
     description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,

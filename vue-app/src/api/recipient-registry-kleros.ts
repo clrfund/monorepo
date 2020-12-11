@@ -38,6 +38,7 @@ async function getTcrColumns(tcr: Contract): Promise<TcrColumn[]> {
 }
 
 function decodeTcrItemData(columns: TcrColumn[], data: any[]): {
+  address: string;
   name: string;
   description: string;
   imageUrl: string;
@@ -50,6 +51,7 @@ function decodeTcrItemData(columns: TcrColumn[], data: any[]): {
   console.error = consoleError
   /* eslint-enable no-console */
   return {
+    address: decodedMetadata[1] as string,
     name: decodedMetadata[0] as string,
     description: decodedMetadata[3] as string,
     imageUrl: `${ipfsGatewayUrl}${decodedMetadata[2]}`,
