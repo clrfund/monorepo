@@ -36,7 +36,13 @@ function decodeTcrItemData(columns: TcrColumn[], data: any[]): {
   description: string;
   imageUrl: string;
 } {
+  // Disable console.error to ignore parser errors
+  /* eslint-disable no-console */
+  const consoleError = console.error
+  console.error = function () {} // eslint-disable-line @typescript-eslint/no-empty-function
   const decodedMetadata = gtcrDecode({ columns, values: data })
+  console.error = consoleError
+  /* eslint-enable no-console */
   return {
     name: decodedMetadata[0] as string,
     description: decodedMetadata[3] as string,
