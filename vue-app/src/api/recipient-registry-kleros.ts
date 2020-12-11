@@ -70,11 +70,17 @@ export async function getProjects(
   const tcr = new Contract(tcrAddress, KlerosGTCR, provider)
   const tcrColumns = await getTcrColumns(tcr)
   const recipientAddedFilter = registry.filters.RecipientAdded()
-  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0, endBlock)
+  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   const recipientRemovedFilter = registry.filters.RecipientRemoved()
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   const projects: Project[] = []
   for (const event of recipientAddedEvents) {
+    if (endBlock && event.blockNumber >= endBlock) {
+      // Skip recipients added after the end of round.
+      // We can not do this with filter because on xDai node returns
+      // "One of the blocks specified in filter ... cannot be found"
+      continue
+    }
     let project
     try {
       project = decodeRecipientAdded(event, tcrColumns)
