@@ -69,7 +69,7 @@ import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
-import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE, CartItem } from '@/api/contributions'
+import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
@@ -196,8 +196,7 @@ export default class ProjectView extends Vue {
       this.$store.state.currentUser &&
       DateTime.local() < this.$store.state.currentRound.votingDeadline &&
       this.project !== null &&
-      !this.project.isLocked &&
-      this.$store.state.cart.length < CART_MAX_SIZE
+      !this.project.isLocked
     )
   }
 

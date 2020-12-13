@@ -73,7 +73,7 @@ import BrightIdModal from '@/components/BrightIdModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 
-import { MAX_CONTRIBUTION_AMOUNT, CartItem, Contributor } from '@/api/contributions'
+import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, CartItem, Contributor } from '@/api/contributions'
 import { userRegistryType } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { storage } from '@/api/storage'
@@ -325,6 +325,8 @@ export default class Cart extends Vue {
       return 'Your account is not verified'
     } else if (!this.isFormValid()) {
       return 'Please enter correct amounts'
+    } else if (this.cart.length > MAX_CART_SIZE) {
+      return `Cart can not contain more than ${MAX_CART_SIZE} items`
     } else if (currentRound.status === RoundStatus.Cancelled) {
       return 'Funding round has been cancelled'
     } else {
