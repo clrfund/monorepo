@@ -375,11 +375,7 @@ export default class Cart extends Vue {
     this.$modal.show(
       BrightIdModal,
       { },
-      {
-        clickToClose: false,
-        height: 'auto',
-        width: 500,
-      },
+      { width: 500 },
     )
   }
 
@@ -398,11 +394,7 @@ export default class Cart extends Vue {
     this.$modal.show(
       this.contribution.isZero() ? ContributionModal : ReallocationModal,
       { votes },
-      {
-        clickToClose: false,
-        height: 'auto',
-        width: 500,
-      },
+      { width: 500 },
     )
   }
 }
