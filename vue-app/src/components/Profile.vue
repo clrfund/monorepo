@@ -32,7 +32,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { provider as jsonRpcProvider } from '@/api/core'
 import { User, getProfileImageUrl } from '@/api/user'
 import { LOAD_USER_INFO } from '@/store/action-types'
-import { SET_CURRENT_USER } from '@/store/mutation-types'
+import { SET_CURRENT_USER, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 
 const LOGIN_MESSAGE = 'Sign this message to access clr.fund'
@@ -63,6 +63,7 @@ export default class Profile extends Vue {
         if (this.currentUser) {
           // Log out user to prevent interactions with incorrect network
           this.$store.commit(SET_CURRENT_USER, null)
+          this.$store.commit(SET_CONTRIBUTION, null)
         }
       }
     })
@@ -71,6 +72,7 @@ export default class Profile extends Vue {
       if (_accounts !== accounts) {
         // Log out user if wallet account changes
         this.$store.commit(SET_CURRENT_USER, null)
+        this.$store.commit(SET_CONTRIBUTION, null)
       }
       accounts = _accounts
     })
