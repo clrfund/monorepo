@@ -35,7 +35,7 @@ export default class RoundList extends Vue {
   rounds: Round[] = []
 
   async created() {
-    this.rounds = await getRounds()
+    this.rounds = (await getRounds()).reverse()
   }
 
 }
