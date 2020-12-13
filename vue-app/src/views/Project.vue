@@ -8,7 +8,7 @@
     </a>
     <div v-if="project" class="project-page">
       <img class="project-image" :src="project.imageUrl" :alt="project.name">
-      <h2 class="project-name">
+      <h2 class="project-name" :title="project.address">
         <a
           v-if="klerosCurateUrl"
           :href="klerosCurateUrl"
