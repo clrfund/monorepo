@@ -24,7 +24,11 @@
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Matching Pool:</div>
-        <div class="round-info-value">{{ currentRound.matchingPool | formatAmount }} {{ currentRound.nativeTokenSymbol }}</div>
+        <div class="round-info-value">
+          {{ currentRound.matchingPool | formatAmount }}
+          <template v-if="!currentRound.approvedFunding.isZero()">(+{{ currentRound.approvedFunding | formatAmount }})</template>
+          {{ currentRound.nativeTokenSymbol }}
+        </div>
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Contributions:</div>

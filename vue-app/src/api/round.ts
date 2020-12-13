@@ -24,6 +24,7 @@ export interface RoundInfo {
   totalFunds: FixedNumber;
   matchingPool: FixedNumber;
   contributions: FixedNumber;
+  approvedFunding: FixedNumber;
 }
 
 export enum RoundStatus {
@@ -40,6 +41,32 @@ export async function getCurrentRound(): Promise<string | null> {
     return null
   }
   return fundingRoundAddress
+}
+
+export async function getApprovedFunding(
+  fundingRound: Contract,
+  token: Contract,
+): Promise<BigNumber> {
+  // TODO: replace with single call when necessary getter will be implemented
+  const addSourceFilter = factory.filters.FundingSourceAdded()
+  const addSourceEvents = await factory.queryFilter(addSourceFilter, 0)
+  const removeSourceFilter = factory.filters.FundingSourceRemoved()
+  const removeSourceEvents = await factory.queryFilter(removeSourceFilter, 0)
+  let total = BigNumber.from(0)
+  for (const event of addSourceEvents) {
+    const sourceAddress = (event.args as any)._source
+    const removed = removeSourceEvents.find((event) => {
+      return (event.args as any)._source === sourceAddress
+    })
+    if (removed) {
+      continue
+    }
+    const allowance = await token.allowance(sourceAddress, factory.address)
+    const balance = await token.balanceOf(sourceAddress)
+    const contribution = allowance.lt(balance) ? allowance : balance
+    total = total.add(contribution)
+  }
+  return total
 }
 
 export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundInfo> {
@@ -128,6 +155,7 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
   }
 
   const totalFunds = matchingPool.add(contributions)
+  const approvedFunding = await getApprovedFunding(fundingRound, nativeToken)
 
   return {
     fundingRoundAddress,
@@ -147,5 +175,6 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),
     matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),
     contributions: FixedNumber.fromValue(contributions, nativeTokenDecimals),
+    approvedFunding: FixedNumber.fromValue(approvedFunding, nativeTokenDecimals),
   }
 }
