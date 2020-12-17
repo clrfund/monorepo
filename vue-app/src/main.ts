@@ -9,7 +9,12 @@ import VModal from 'vue-js-modal'
 
 Vue.use(Meta)
 Vue.use(VModal, {
-  dynamicDefaults: { adaptive: true },
+  dynamicDefaults: {
+    adaptive: true,
+    clickToClose: false,
+    height: 'auto',
+    width: 450,
+  },
 })
 
 Vue.config.productionTip = false
