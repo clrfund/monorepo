@@ -64,7 +64,8 @@ function decodeRecipientAdded(event: Event, columns: TcrColumn[]): Project {
     id: args._tcrItemId,
     ...decodeTcrItemData(columns, args._metadata),
     index: args._index.toNumber(),
-    isRemoved: false,
+    isHidden: false,
+    isLocked: false,
   }
 }
 
@@ -83,32 +84,26 @@ export async function getProjects(
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   const projects: Project[] = []
   for (const event of recipientAddedEvents) {
+    const project = decodeRecipientAdded(event, tcrColumns)
+    if (INVALID_PROJECTS.includes(project.id)) {
+      continue
+    }
     if (endBlock && event.blockNumber >= endBlock) {
       // Skip recipients added after the end of round.
       // We can not do this with filter because on xDai node returns
       // "One of the blocks specified in filter ... cannot be found"
-      continue
-    }
-    let project
-    try {
-      project = decodeRecipientAdded(event, tcrColumns)
-    } catch {
-      // Invalid metadata
-      continue
-    }
-    if (INVALID_PROJECTS.includes(project.id)) {
-      continue
+      project.isHidden = true
     }
     const removed = recipientRemovedEvents.find((event) => {
-      return (event.args as any)._recipient === project.id
+      return (event.args as any)._tcrItemId === project.id
     })
     if (removed) {
       if (!startBlock || startBlock && removed.blockNumber <= startBlock) {
         // Start block not specified
         // or recipient had been removed before start block
-        continue
+        project.isHidden = true
       } else {
-        project.isRemoved = true
+        project.isLocked = true
       }
     }
     projects.push(project)
@@ -134,7 +129,8 @@ export async function getProject(
     ...decodeTcrItemData(tcrColumns, tcrItemData),
     // Only unregistered project can have invalid index 0
     index: 0,
-    isRemoved: false,
+    isHidden: false,
+    isLocked: false,
     extra: {
       tcrItemStatus: tcrItemStatus.toNumber(),
       tcrItemUrl: `${KLEROS_CURATE_URL}/${recipientId}`,
@@ -149,7 +145,7 @@ export async function getProject(
   const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientId)
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   if (recipientRemovedEvents.length !== 0) {
-    project.isRemoved = true
+    project.isLocked = true
   }
   return project
 }

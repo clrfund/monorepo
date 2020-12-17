@@ -59,7 +59,7 @@ export default class ProjectListItem extends Vue {
       this.$store.state.currentUser &&
       this.$store.state.currentRound &&
       DateTime.local() < this.$store.state.currentRound.votingDeadline &&
-      !this.project.isRemoved &&
+      !this.project.isLocked &&
       this.$store.state.cart.length < CART_MAX_SIZE
     )
   }
