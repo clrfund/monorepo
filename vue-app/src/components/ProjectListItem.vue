@@ -15,7 +15,15 @@
       </router-link>
       <div class="project-description">{{ project.description }}</div>
       <button
-        v-if="!inCart"
+        v-if="hasRegisterBtn()"
+        class="btn"
+        :disabled="!canRegister()"
+        @click="register()"
+      >
+        Register
+      </button>
+      <button
+        v-if="hasContributeBtn() && !inCart"
         class="btn contribute-btn"
         :disabled="!canContribute()"
         @click="contribute(project)"
@@ -23,7 +31,7 @@
         Contribute
       </button>
       <button
-        v-else
+        v-if="hasContributeBtn() && inCart"
         class="btn btn-inactive in-cart"
       >
         <img src="@/assets/checkmark.svg" />
@@ -39,7 +47,10 @@ import { Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
 import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE, CartItem } from '@/api/contributions'
-import { Project } from '@/api/projects'
+import { recipientRegistryType } from '@/api/core'
+import { Project, getProject } from '@/api/projects'
+import { TcrItemStatus } from '@/api/recipient-registry-kleros'
+import KlerosGTCRAdapterModal from '@/components/KlerosGTCRAdapterModal.vue'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 
 @Component
@@ -54,8 +65,41 @@ export default class ProjectListItem extends Vue {
     return index !== -1
   }
 
+  hasRegisterBtn(): boolean {
+    return (
+      recipientRegistryType === 'kleros' &&
+      this.project.index === 0 &&
+      this.project.extra.tcrItemStatus === TcrItemStatus.Registered
+    )
+  }
+
+  canRegister(): boolean  {
+    return this.hasRegisterBtn() && this.$store.state.currentUser
+  }
+
+  register() {
+    this.$modal.show(
+      KlerosGTCRAdapterModal,
+      { project: this.project },
+      { },
+      {
+        closed: async () => {
+          const project = await getProject(this.project.id)
+          if (project) {
+            this.project.index = project.index
+          }
+        },
+      },
+    )
+  }
+
+  hasContributeBtn(): boolean {
+    return this.project.index !== 0
+  }
+
   canContribute(): boolean {
     return (
+      this.hasContributeBtn() &&
       this.$store.state.currentUser &&
       this.$store.state.currentRound &&
       DateTime.local() < this.$store.state.currentRound.votingDeadline &&
@@ -64,9 +108,9 @@ export default class ProjectListItem extends Vue {
     )
   }
 
-  contribute(project: Project) {
+  contribute() {
     this.$store.commit(ADD_CART_ITEM, {
-      ...project,
+      ...this.project,
       amount: DEFAULT_CONTRIBUTION_AMOUNT.toString(),
     })
   }
@@ -138,8 +182,7 @@ export default class ProjectListItem extends Vue {
   overflow: hidden;
 }
 
-.contribute-btn,
-.in-cart {
+.btn {
   margin-top: 20px;
 }
 </style>

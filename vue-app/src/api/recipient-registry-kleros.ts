@@ -108,6 +108,37 @@ export async function getProjects(
     }
     projects.push(project)
   }
+  // Search for unregistered recipients
+  const tcrItemSubmittedFilter = tcr.filters.ItemSubmitted()
+  const tcrItemSubmittedEvents = await tcr.queryFilter(tcrItemSubmittedFilter, 0)
+  for (const event of tcrItemSubmittedEvents) {
+    const tcrItemId = (event.args as any)._itemID
+    if (INVALID_PROJECTS.includes(tcrItemId)) {
+      continue
+    }
+    const registered = projects.find((item) => item.id === tcrItemId)
+    if (registered) {
+      // Already registered (or registered and removed)
+      continue
+    }
+    const [tcrItemData, tcrItemStatus] = await tcr.getItemInfo(tcrItemId)
+    if (tcrItemStatus.toNumber() !== TcrItemStatus.Registered) {
+      continue
+    }
+    const project: Project = {
+      id: tcrItemId,
+      ...decodeTcrItemData(tcrColumns, tcrItemData),
+      // Only unregistered project can have invalid index 0
+      index: 0,
+      isHidden: false,
+      isLocked: false,
+      extra: {
+        tcrItemStatus: TcrItemStatus.Registered,
+        tcrItemUrl: `${KLEROS_CURATE_URL}/${tcrItemId}`,
+      },
+    }
+    projects.push(project)
+  }
   return projects
 }
 
