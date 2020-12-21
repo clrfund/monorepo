@@ -1,8 +1,8 @@
 # clr.fund
 
-clr.fund is a permissionless and trust-minimized [Quadratic Funding](https://wtfisqf.com/) application for Ethereum Public Goods. It uses [BrightID](https://brightID.org) for [Sybil](https://en.wikipedia.org/wiki/Sybil_attack) resistance and Minimal Anti-Collusion Infrastructure ([MACI](https://github.com/appliedzkp/maci)) to protect against various forms of bribery and collusion with the use of [zk-SNARKs](https://academy.binance.com/en/articles/zk-snarks-and-zk-starks-explained).
+clr.fund is a permissionless and trust-minimized [Quadratic Funding](https://wtfisqf.com/) protocol. It uses Minimal Anti-Collusion Infrastructure ([MACI](https://github.com/appliedzkp/maci)) to protect against various forms of bribery and collusion with the use of [zk-SNARKs](https://academy.binance.com/en/articles/zk-snarks-and-zk-starks-explained). To protect from [Sybil attacks](https://en.wikipedia.org/wiki/Sybil_attack) it can use [BrightID](https://brightID.org) or a similar identity system.
 
-clr.fund runs a continuous sequence of Quadratic Funding rounds, where anyone is able to add public goods projects as funding "recipients", contribute funds to the matching pool ("matching funds"), and contribute funds to individual recipients.
+clr.fund runs a continuous sequence of Quadratic Funding rounds, where anyone is able to add public goods projects as funding "recipients", contribute funds to the matching pool ("matching funds"), and contribute funds to individual recipients. To ensure that only public goods are added as recipients clr.fund can use curation mechanism such as [Kleros Curate](https://curate.kleros.io/).
 
 While clr.fund aims to be agnostic to the source of matching funds, it specifically aims to enable contributions from the following sources:
 
@@ -10,16 +10,16 @@ While clr.fund aims to be agnostic to the source of matching funds, it specifica
 2. Known and anonymous benefactors
 3. Benevolent protocols (MakerDAO, Burn Signal, etc)
 
-In order for their contributions to count towards matching, contributors must verify their uniqueness using [BrightID](https://brightID.org).
+In order for their contributions to count towards matching, contributors must verify their uniqueness.
 
 The clr.fund smart contracts consist of a factory contract that deploys a new contract for each round. All matching funds are sent to the factory contract, while contribution funds are sent to the current round's contract. There are four roles in factory contract:
 
-1. **Owner:** This address (initially set as msg.sender) can set the address of coordinator, finalize a round by transferring matching funds to the current round contract, and set the token and round duration.
+1. **Owner:** This address (initially set to deployer) can set the address of coordinator, finalize a round by transferring matching funds to the current round contract, and set the token and round duration.
 2. **Coordinator:** This address is responsible for running the zk-SNARK computation on contributions to produce the relative percentages of matching funds that each recipient should receive. The coordinator can quit at any time, which invalidates the current round forcing the owner to start a new round and users to submit new MACI messages for their contributions. Without some advancement in oblivious computation, this Coordinator is necessarily a trusted party in this system (this is discussed more in the Limitations section).
-3. **Contributor:** Any address that contributes DAI to the funding round.
+3. **Contributor:** Any address that contributes tokens to the funding round.
 4. **Recipient:** Any address that is registered as funding recipient.
 
-The clr.fund application uses [Ethereum](https://ethereum.org/) and [3Box](https://3box.io/) as a backend. The application will be hosted on [IPFS](https://ipfs.io/) and can also run locally.
+The clr.fund application can use any [EVM-compatible chain](https://ethereum.org/) as a backend. The application can be hosted on [IPFS](https://ipfs.io/) and can also run locally.
 
 For more details, see the [sequence diagram](docs/clrfund.svg) and [clr.fund constitution](https://github.com/clrfund/constitution).
 ![sequence diagram](docs/clrfund.svg)
@@ -35,13 +35,20 @@ However, without some breakthrough in oblivious computation, the zk-SNARK comput
 Several solutions have been suggested, such as having the operator’s private keys and computations happen inside of some trusted computing environment or wallfacer-esque isolation of the operator. But most just kick the trust-can down the road a little further.
 
 #### Single Token
-For simplicity's sake in the contract, the zk-SNARK, and the user interface, clr.fund selects an ERC20 token as it's native token (set by the contract owner), which is the only token that the funding round contracts interact with. This is an issue given our goal of being agnostic to the funding source.
+For simplicity's sake in the contract, the zk-SNARK, and the user interface, clr.fund selects an ERC20 token as it's native token (set by the contract owner), which is the only token that the funding round contract interacts with. This is an issue given our goal of being agnostic to the funding source.
 
 For example, block reward funding would be in ETH, while many users may want to contribute DAI or other ERC20 tokens.
 
 In a future version, we plan to address this by routing ETH and token contributions in anything other than the current native token through a DEX such as [UniSwap](https://uniswap.org/).
 
-## Run clr.fund locally
+## Documentation
+
+- [Running clr.fund instance](docs/admin.md)
+- [Providing matching funds](docs/funding-source.md)
+- [How to tally votes](docs/coordinator.md)
+- [How to verify results](docs/trusted-setup.md)
+
+## Development
 
 ### Install Node v12 with nvm
 
@@ -60,7 +67,7 @@ yarn
 yarn build:contracts
 ```
 
-#### Run Waffle tests with stack traces
+#### Run unit tests
 ```
 yarn test
 ```
