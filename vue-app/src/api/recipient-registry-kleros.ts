@@ -144,7 +144,7 @@ export async function getProject(
   const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   if (recipientAddedEvents.length !== 0) {
     const recipientAddedEvent = recipientAddedEvents[0]
-    project.index = (recipientAddedEvent.args as any)._index
+    project.index = (recipientAddedEvent.args as any)._index.toNumber()
   }
   const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientId)
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
