@@ -7,12 +7,6 @@ import { provider, ipfsGatewayUrl } from './core'
 import { Project } from './projects'
 
 const KLEROS_CURATE_URL = 'https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398'
-// TODO: only for xDai Round 02; we should remove them later
-const INVALID_PROJECTS = [
-  '0xd4b514b8a245c6d6aaa5fc9b97336cfa6607f92184f1ae36e0fb26b7c90faf62',
-  '0xa13b920b4e1d910ac5af4a95d61af4a1272fedb39c86cdc747bbb734e990c6b6',
-  '0xc9cc75acbd333a72719da5446fc1752406ae0922a3c8818f769d6156af04adeb',
-]
 
 export enum TcrItemStatus {
   Absent = 0,
@@ -85,9 +79,6 @@ export async function getProjects(
   const projects: Project[] = []
   for (const event of recipientAddedEvents) {
     const project = decodeRecipientAdded(event, tcrColumns)
-    if (INVALID_PROJECTS.includes(project.id)) {
-      continue
-    }
     if (endBlock && event.blockNumber >= endBlock) {
       // Skip recipients added after the end of round.
       // We can not do this with filter because on xDai node returns
@@ -113,9 +104,6 @@ export async function getProjects(
   const tcrItemSubmittedEvents = await tcr.queryFilter(tcrItemSubmittedFilter, 0)
   for (const event of tcrItemSubmittedEvents) {
     const tcrItemId = (event.args as any)._itemID
-    if (INVALID_PROJECTS.includes(tcrItemId)) {
-      continue
-    }
     const registered = projects.find((item) => item.id === tcrItemId)
     if (registered) {
       // Already registered (or registered and removed)
