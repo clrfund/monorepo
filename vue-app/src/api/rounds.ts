@@ -9,7 +9,8 @@ export interface Round {
 export async function getRounds(): Promise<Round[]> {
   const eventFilter = factory.filters.RoundStarted()
   const events = await factory.queryFilter(eventFilter, 0)
-  const extraRounds = (process.env.VUE_APP_EXTRA_ROUNDS || '').split(',')
+  const extraRounds: string[] = process.env.VUE_APP_EXTRA_ROUNDS ?
+    process.env.VUE_APP_EXTRA_ROUNDS.split(',') : []
   const rounds: Round[] = extraRounds.map((ipfsHash: string, index): Round => {
     return { index, address: '', url: `${ipfsGatewayUrl}/ipfs/${ipfsHash}` }
   })
