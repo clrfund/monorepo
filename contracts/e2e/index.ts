@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { ethers, waffle } from '@nomiclabs/buidler'
+import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { BigNumber, Contract, Signer, Wallet } from 'ethers'
@@ -11,8 +11,6 @@ import { getEventArg } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import { MaciParameters, createMessage, getRecipientClaimData } from '../utils/maci'
-
-import MACIArtifact from '../build/contracts/MACI.json'
 
 use(solidity)
 
@@ -126,7 +124,7 @@ describe('End-to-end Tests', function () {
       fundingRoundAddress,
     )
     const maciAddress = await fundingRound.maci()
-    maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress)
+    maci = await ethers.getContractAt('MACI', maciAddress)
   })
 
   async function makeContributions(amounts: BigNumber[]) {
@@ -165,7 +163,7 @@ describe('End-to-end Tests', function () {
   }
 
   async function finalizeRound(): Promise<any> {
-    const providerUrl = (provider as any)._buidlerNetwork.config.url
+    const providerUrl = (provider as any)._hardhatNetwork.config.url
 
     // Process messages
     const randomStateLeaf = await processCmd({

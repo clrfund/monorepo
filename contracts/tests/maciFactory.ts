@@ -1,12 +1,12 @@
-import { waffle } from '@nomiclabs/buidler';
+import { waffle } from 'hardhat'
 import { Contract } from 'ethers';
 import { use, expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { deployMockContract } from '@ethereum-waffle/mock-contract';
 import { Keypair } from 'maci-domainobjs';
 
-import SignUpGatekeeper from '../build/contracts/SignUpGatekeeper.json';
-import InitialVoiceCreditProxy from '../build/contracts/InitialVoiceCreditProxy.json';
+import SignUpGatekeeper from '../build/contracts/maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol/SignUpGatekeeper.json'
+import InitialVoiceCreditProxy from '../build/contracts/maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol/InitialVoiceCreditProxy.json'
 import { getGasUsage } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
 import { MaciParameters } from '../utils/maci'

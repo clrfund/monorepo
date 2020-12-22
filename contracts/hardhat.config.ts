@@ -1,16 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 
-import { BuidlerConfig, usePlugin, task } from '@nomiclabs/buidler/config';
-
-usePlugin("@nomiclabs/buidler-waffle");
-usePlugin('@nomiclabs/buidler-ganache')
+import { HardhatUserConfig, task } from 'hardhat/config'
+import '@nomiclabs/hardhat-waffle'
+import '@nomiclabs/hardhat-ganache'
 
 const GAS_LIMIT = 10000000
 
-const config: BuidlerConfig = {
+const config: HardhatUserConfig = {
   networks: {
-    buidlerevm: {
+    hardhat: {
       gas: GAS_LIMIT,
       blockGasLimit: GAS_LIMIT,
     },
@@ -18,7 +17,7 @@ const config: BuidlerConfig = {
       url: "http://127.0.0.1:18545"
     },
     ganache: {
-      // Workaround for https://github.com/nomiclabs/buidler/issues/518
+      // Workaround for https://github.com/nomiclabs/hardhat/issues/518
       url: 'http://127.0.0.1:8555',
       gasLimit: GAS_LIMIT,
     } as any,
@@ -36,26 +35,34 @@ const config: BuidlerConfig = {
     artifacts: "build/contracts",
     tests: "tests"
   },
-  solc: {
+  solidity: {
     version: "0.6.12",
-    optimizer: {
-      enabled: true,
-      runs: 20
-    }
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 20,
+      },
+    },
   },
 };
 
 task('compile', 'Compiles the entire project, building all artifacts', async (_, { config }, runSuper) => {
   await runSuper();
-  // Copy Poseidon artifacts to target directory
-  fs.copyFileSync('../node_modules/maci-contracts/compiled/PoseidonT3.json', path.join(config.paths.artifacts, 'PoseidonT3.json'));
-  fs.copyFileSync('../node_modules/maci-contracts/compiled/PoseidonT6.json', path.join(config.paths.artifacts, 'PoseidonT6.json'));
+  // Copy Poseidon artifacts
+  const poseidons = ['PoseidonT3', 'PoseidonT6']
+  for (const contractName of poseidons) {
+    const artifact = JSON.parse(fs.readFileSync(`../node_modules/maci-contracts/compiled/${contractName}.json`).toString())
+    fs.writeFileSync(
+      path.join(config.paths.artifacts, `${contractName}.json`),
+      JSON.stringify({ ...artifact, linkReferences: {} }),
+    )
+  }
   // Prepare verifier artifacts for 'test' circuits
   const verifiers = ['BatchUpdateStateTreeVerifier', 'QuadVoteTallyVerifier']
   for (const contractName of verifiers) {
     const abi = JSON.parse(fs.readFileSync(`../node_modules/maci-contracts/compiled/${contractName}.abi`).toString())
     const bytecode = fs.readFileSync(`../node_modules/maci-contracts/compiled/${contractName}.bin`).toString()
-    const artifact = { contractName, abi, bytecode }
+    const artifact = { contractName, abi, bytecode, linkReferences: {} }
     fs.writeFileSync(
       path.join(config.paths.artifacts, `${contractName}.json`),
       JSON.stringify(artifact),

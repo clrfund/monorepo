@@ -1,7 +1,6 @@
 import fs from 'fs'
-import { ethers } from '@nomiclabs/buidler'
+import { ethers } from 'hardhat'
 
-import MACIArtifact from '../build/contracts/MACI.json'
 import { getEventArg } from '../utils/contracts'
 import { getRecipientClaimData } from '../utils/maci'
 
@@ -12,7 +11,7 @@ async function main() {
 
   const fundingRound = await ethers.getContractAt('FundingRound', state.fundingRound)
   const maciAddress = await fundingRound.maci()
-  const maci = await ethers.getContractAt(MACIArtifact.abi, maciAddress)
+  const maci = await ethers.getContractAt('MACI', maciAddress)
   const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
 
   // Claim funds

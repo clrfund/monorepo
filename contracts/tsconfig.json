@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2018",
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
@@ -9,8 +9,8 @@
   },
   "include": ["./scripts", "./tests"],
   "files": [
-    "./buidler.config.ts",
-    "./node_modules/@nomiclabs/buidler-ethers/src/type-extensions.d.ts",
-    "./node_modules/@nomiclabs/buidler-waffle/src/type-extensions.d.ts"
+    "./hardhat.config.ts",
+    "./node_modules/@nomiclabs/hardhat-ethers/src/type-extensions.d.ts",
+    "./node_modules/@nomiclabs/hardhat-waffle/src/type-extensions.d.ts"
   ]
 }

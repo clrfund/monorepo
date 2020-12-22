@@ -1,16 +1,14 @@
 import fs from 'fs'
-import { ethers } from '@nomiclabs/buidler';
+import { ethers } from 'hardhat'
 import { Keypair } from 'maci-domainobjs'
 
 import { UNIT } from '../utils/constants'
 import { MaciParameters } from '../utils/maci'
 
-import MACIFactoryArtifact from '../build/contracts/MACIFactory.json'
-
 async function main() {
   // We're hardcoding factory address due to a buidler limitation:
   // https://github.com/nomiclabs/buidler/issues/651
-  const factoryAddress = '0x3619DbE27d7c1e7E91aA738697Ae7Bc5FC3eACA5'
+  const factoryAddress = '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707'
   const [
     deployer,
     coordinator,
@@ -48,7 +46,7 @@ async function main() {
   // Configure MACI factory
   const maciFactoryAddress = await factory.maciFactory()
   const maciFactory = await ethers.getContractAt(
-    MACIFactoryArtifact.abi,
+    'MACIFactory',
     maciFactoryAddress,
   )
   const maciParameters = await MaciParameters.read(maciFactory)
