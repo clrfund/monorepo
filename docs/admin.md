@@ -4,7 +4,7 @@ This document describes deployment and administration of clr.fund contracts usin
 
 ## Deployment
 
-### MACI factory and funding round factory
+### MACI factory
 
 Deploy MACI factory:
 
@@ -13,6 +13,14 @@ const [deployer] = await ethers.getSigners()
 const { deployMaciFactory } = require('./utils/deployment')
 const maciFactory = await deployMaciFactory(deployer, circuit = 'small')
 ```
+
+The `deployMaciFactory` function deploys MACI factory and other contracts required by it:
+- Poseidon T3 library
+- Poseidon T6 library
+- State tree batch update verifier contract
+- Quadratic vote tally verifier contract
+
+### Funding round factory
 
 Funding round factory is the main clr.fund contract. Its owner configures clr.fund and manages the deployment and finalization of funding rounds.
 
@@ -103,6 +111,8 @@ await factory.removeFundingSource('<address>')
 ```
 
 ## Running the funding round
+
+Administrator of clr.fund instance should set parameters before starting the funding round. Once the round has started, it is mostly autonomous and its parameters can not be changed. It can only be finalized (allowing recipients to claim allocated funding) or cancelled (allowing contributors can withdraw their funds).
 
 Start new funding round:
 
