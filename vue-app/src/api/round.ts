@@ -3,11 +3,12 @@ import { DateTime } from 'luxon'
 import { PubKey } from 'maci-domainobjs'
 
 import { FundingRound, MACI, ERC20 } from './abi'
-import { provider, factory } from './core'
+import { provider, factory, extraRounds } from './core'
 import { getTotalContributed } from './contributions'
 
 export interface RoundInfo {
   fundingRoundAddress: string;
+  roundNumber: number;
   userRegistryAddress: string;
   maciAddress: string;
   recipientTreeDepth: number;
@@ -42,7 +43,7 @@ export async function getCurrentRound(): Promise<string | null> {
   return fundingRoundAddress
 }
 
-export async function getApprovedFunding(
+async function getApprovedFunding(
   fundingRound: Contract,
   token: Contract,
 ): Promise<BigNumber> {
@@ -68,7 +69,21 @@ export async function getApprovedFunding(
   return total
 }
 
+async function getRoundNumber(roundAddress: string): Promise<number> {
+  const eventFilter = factory.filters.RoundStarted()
+  const events = await factory.queryFilter(eventFilter, 0)
+  const roundIndex = events.findIndex((event) => {
+    const args = (event.args as any)
+    return args._round.toLowerCase() === roundAddress.toLowerCase()
+  })
+  if (roundIndex === -1) {
+    throw new Error('round does not exist')
+  }
+  return roundIndex + extraRounds.length
+}
+
 export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundInfo> {
+  const roundNumber = await getRoundNumber(fundingRoundAddress)
   const fundingRound = new Contract(
     fundingRoundAddress,
     FundingRound,
@@ -159,6 +174,7 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
 
   return {
     fundingRoundAddress,
+    roundNumber,
     userRegistryAddress,
     maciAddress,
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,

@@ -4,7 +4,9 @@
     <div v-if="currentRound" class="round-info">
       <div class="round-info-item">
         <div class="round-info-title">Current Round:</div>
-        <div class="round-info-value">{{ currentRound.fundingRoundAddress }}</div>
+        <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
+          {{ currentRound.roundNumber }}
+        </div>
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Status:</div>
