@@ -94,7 +94,3 @@ yarn start:web
 yarn lint
 ```
 
-#### Build the dApp for production
-```
-yarn build
-```

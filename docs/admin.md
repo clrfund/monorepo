@@ -2,6 +2,13 @@
 
 This document describes deployment and administration of clr.fund contracts using [hardhat console](https://hardhat.org/guides/hardhat-console.html).
 
+For example, to start console configured for xDai network:
+
+```
+cd contracts/
+yarn hardhat console --network xdai
+```
+
 ## Deployment
 
 ### MACI factory
@@ -135,4 +142,20 @@ Cancel current round:
 
 ```
 await factory.cancelCurrentRound()
+```
+
+## User interface
+
+User interface can be configured using environment variables. See [.env file example](../vue-app/.env.example) for details.
+
+Build the dApp for production:
+
+```
+yarn build
+```
+
+Add static files to IPFS:
+
+```
+ipfs add -r vue-app/dist/
 ```
