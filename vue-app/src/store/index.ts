@@ -70,25 +70,28 @@ export const mutations = {
     const exists = state.cart.find((item) => {
       return item.id === addedItem.id
     })
-    if (!exists) {
-      state.cart.push(addedItem)
+    if (exists) {
+      throw new Error('item is already in the cart')
     }
+    state.cart.push(addedItem)
   },
   [UPDATE_CART_ITEM](state, updatedItem: CartItem) {
     const itemIndex = state.cart.findIndex((item) => {
       return item.id === updatedItem.id
     })
-    if (itemIndex > -1) {
-      Vue.set(state.cart, itemIndex, updatedItem)
+    if (itemIndex === -1) {
+      throw new Error('item is not in the cart')
     }
+    Vue.set(state.cart, itemIndex, updatedItem)
   },
   [REMOVE_CART_ITEM](state, removedItem: CartItem) {
     const itemIndex = state.cart.findIndex((item) => {
       return item.id === removedItem.id
     })
-    if (itemIndex > -1) {
-      state.cart.splice(itemIndex, 1)
+    if (itemIndex === -1) {
+      throw new Error('item is not in the cart')
     }
+    state.cart.splice(itemIndex, 1)
   },
 }
 

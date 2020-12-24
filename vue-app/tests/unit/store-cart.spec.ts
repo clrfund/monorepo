@@ -32,7 +32,9 @@ describe('Cart mutations', () => {
     const item = createItem({ id: '0x1' })
     const state = { cart: [item] }
     const newItem = createItem({ id: '0x1', amount: '3.5' })
-    mutations[ADD_CART_ITEM](state, newItem)
+    expect(() => {
+      mutations[ADD_CART_ITEM](state, newItem)
+    }).to.throw('item is already in the cart')
     expect(state.cart.length).to.equal(1)
     expect(state.cart[0].amount).to.equal(item.amount)
   })
@@ -50,7 +52,9 @@ describe('Cart mutations', () => {
     const item = createItem({ id: '0x1' })
     const state = { cart: [item] }
     const newItem = createItem({ id: '0x2' })
-    mutations[UPDATE_CART_ITEM](state, newItem)
+    expect(() => {
+      mutations[UPDATE_CART_ITEM](state, newItem)
+    }).to.throw('item is not in the cart')
     expect(state.cart.length).to.equal(1)
     expect(state.cart[0].amount).to.equal(item.amount)
   })
@@ -68,7 +72,9 @@ describe('Cart mutations', () => {
     const item = createItem({ id: '0x1' })
     const state = { cart: [item] }
     const newItem = createItem({ id: '0x2' })
-    mutations[REMOVE_CART_ITEM](state, newItem)
+    expect(() => {
+      mutations[REMOVE_CART_ITEM](state, newItem)
+    }).to.throw('item is not in the cart')
     expect(state.cart.length).to.equal(1)
     expect(state.cart[0].id).to.equal(item.id)
   })
