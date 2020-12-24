@@ -2,11 +2,11 @@
 
 ## How to verify the correctness of execution?
 
-Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.3.8:
+Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.4.11:
 
 ```
 git clone https://github.com/appliedzkp/maci.git
-git checkout v0.3.8
+git checkout v0.4.11
 ```
 
 Follow instructions in README.md to install necessary dependencies.
