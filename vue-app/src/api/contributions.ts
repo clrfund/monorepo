@@ -13,6 +13,7 @@ export const MAX_CART_SIZE = 13
 
 export interface CartItem extends Project {
   amount: string;
+  isCleared: boolean; // Item has been removed from cart and its amount cleared
 }
 
 export interface Contributor {

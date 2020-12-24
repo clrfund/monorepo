@@ -1,6 +1,6 @@
 <template>
   <div class="cart">
-    <div v-for="item in cart" class="cart-item" :key="item.id">
+    <div v-for="item in filteredCart" class="cart-item" :key="item.id">
       <div class="project">
         <img class="project-image" :src="item.imageUrl" :alt="item.name">
         <router-link
@@ -164,6 +164,10 @@ export default class Cart extends Vue {
     )
   }
 
+  private get cart(): CartItem[] {
+    return this.$store.state.cart
+  }
+
   private clearCart() {
     this.cart.slice().forEach((item) => {
       this.$store.commit(REMOVE_CART_ITEM, item)
@@ -231,8 +235,9 @@ export default class Cart extends Vue {
     return this.$store.state.contribution || BigNumber.from(0)
   }
 
-  get cart(): CartItem[] {
-    return this.$store.state.cart
+  get filteredCart(): CartItem[] {
+    // Hide cleared items
+    return this.cart.filter((item) => !item.isCleared)
   }
 
   isAmountValid(value: string): boolean {
@@ -270,8 +275,8 @@ export default class Cart extends Vue {
   }
 
   canRemoveItem(): boolean {
-    // The number of MACI messages can't go down after initial submission
-    return this.contribution.isZero()
+    const currentRound = this.$store.state.currentRound
+    return currentRound && DateTime.local() < currentRound.votingDeadline
   }
 
   removeItem(item: CartItem) {

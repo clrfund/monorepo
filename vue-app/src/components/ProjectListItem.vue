@@ -60,7 +60,8 @@ export default class ProjectListItem extends Vue {
 
   get inCart(): boolean {
     const index = this.$store.state.cart.findIndex((item: CartItem) => {
-      return item.id === this.project.id
+      // Ignore cleared items
+      return item.id === this.project.id && !item.isCleared
     })
     return index !== -1
   }
@@ -111,6 +112,7 @@ export default class ProjectListItem extends Vue {
     this.$store.commit(ADD_CART_ITEM, {
       ...this.project,
       amount: DEFAULT_CONTRIBUTION_AMOUNT.toString(),
+      isCleared: false,
     })
   }
 }
