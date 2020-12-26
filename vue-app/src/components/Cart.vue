@@ -1,5 +1,10 @@
 <template>
   <div class="cart">
+    <div v-if="isEmptyCart" class="empty-cart">
+      <img src="@/assets/empty.svg">
+      <h3>No projects selected</h3>
+      <div>Please select the projects that you want to contribute to</div>
+    </div>
     <div v-for="item in filteredCart" class="cart-item" :key="item.id">
       <div class="project">
         <img class="project-image" :src="item.imageUrl" :alt="item.name">
@@ -240,6 +245,10 @@ export default class Cart extends Vue {
     return this.cart.filter((item) => !item.isCleared)
   }
 
+  get isEmptyCart(): boolean {
+    return this.$store.state.currentUser && this.filteredCart.length === 0
+  }
+
   isAmountValid(value: string): boolean {
     const currentRound = this.$store.state.currentRound
     if (!currentRound) {
@@ -418,6 +427,27 @@ export default class Cart extends Vue {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - #{$profile-image-size + 2 * $content-space});
+}
+
+.empty-cart {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 50px 50px auto;
+  text-align: center;
+
+  img {
+    height: 70px;
+  }
+
+  h3 {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 25px;
+    font-weight: 700;
+  }
+
+  div {
+    color: #d5d4d7;
+  }
 }
 
 .cart-item {
