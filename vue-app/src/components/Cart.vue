@@ -192,6 +192,10 @@ export default class Cart extends Vue {
     if (serializedCart) {
       this.clearCart()
       for (const item of JSON.parse(serializedCart)) {
+        // Workaround for https://github.com/clrfund/monorepo/issues/244
+        if (typeof item.index !== 'number') {
+          item.index = 23
+        }
         this.$store.commit(ADD_CART_ITEM, item)
       }
     }
@@ -375,11 +379,7 @@ export default class Cart extends Vue {
     this.$modal.show(
       BrightIdModal,
       { },
-      {
-        clickToClose: false,
-        height: 'auto',
-        width: 500,
-      },
+      { width: 500 },
     )
   }
 
@@ -398,11 +398,7 @@ export default class Cart extends Vue {
     this.$modal.show(
       this.contribution.isZero() ? ContributionModal : ReallocationModal,
       { votes },
-      {
-        clickToClose: false,
-        height: 'auto',
-        width: 500,
-      },
+      { width: 500 },
     )
   }
 }
