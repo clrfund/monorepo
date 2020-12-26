@@ -10,7 +10,8 @@ export interface Project {
   description: string;
   imageUrl: string;
   index: number;
-  isRemoved: boolean;
+  isHidden: boolean; // Hidden from the list
+  isLocked: boolean; // Visible, but contributions are not allowed
   extra?: any; // Registry-specific data
 }
 

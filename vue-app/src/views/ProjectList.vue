@@ -119,8 +119,11 @@ export default class ProjectList extends Vue {
       this.currentRound?.startBlock,
       this.currentRound?.endBlock,
     )
-    shuffleArray(projects)
-    this.projects = projects
+    const filtered = projects.filter(project => {
+      return (!project.isHidden && !project.isLocked)
+    })
+    shuffleArray(filtered)
+    this.projects = filtered
   }
 
   get contribution(): FixedNumber {

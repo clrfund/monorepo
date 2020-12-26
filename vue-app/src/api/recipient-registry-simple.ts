@@ -15,7 +15,8 @@ function decodeRecipientAdded(event: Event): Project {
     description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
     index: args._index.toNumber(),
-    isRemoved: false,
+    isHidden: false,
+    isLocked: false,
   }
 }
 
@@ -45,9 +46,9 @@ export async function getProjects(
       if (!startBlock || startBlock && removed.blockNumber <= startBlock) {
         // Start block not specified
         // or recipient had been removed before start block
-        continue
+        project.isHidden = true
       } else {
-        project.isRemoved = true
+        project.isLocked = true
       }
     }
     projects.push(project)
@@ -72,12 +73,13 @@ export async function getProject(
   try {
     project = decodeRecipientAdded(recipientAddedEvents[0])
   } catch {
+    // Invalid metadata
     return null
   }
   const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientAddress)
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   if (recipientRemovedEvents.length !== 0) {
-    project.isRemoved = true
+    project.isLocked = true
   }
   return project
 }
