@@ -42,6 +42,9 @@
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
+      <div v-if="hasUnallocatedFunds()" class="submit-suggestion">
+        Unallocated funds will be used as matching funding
+      </div>
       <div v-if="canRegisterWithBrightId()" class="submit-suggestion">
         <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
       </div>
@@ -377,6 +380,14 @@ export default class Cart extends Vue {
         }
       }
     }
+  }
+
+  hasUnallocatedFunds(): boolean {
+    return (
+      this.contribution !== null &&
+      !this.contribution.isZero() &&
+      this.getTotal().lt(this.contribution)
+    )
   }
 
   canRegisterWithBrightId(): boolean {
