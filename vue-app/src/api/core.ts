@@ -20,3 +20,6 @@ export const recipientRegistryType = process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE
 if (!['simple', 'kleros'].includes(recipientRegistryType as string)) {
   throw new Error('invalid recipient registry type')
 }
+
+export const extraRounds: string[] = process.env.VUE_APP_EXTRA_ROUNDS ?
+  process.env.VUE_APP_EXTRA_ROUNDS.split(',') : []
