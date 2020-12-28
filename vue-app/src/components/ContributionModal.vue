@@ -222,17 +222,15 @@ export default class ContributionModal extends Vue {
 <style scoped lang="scss">
 @import '../styles/vars';
 
-$button-space: 20px;
-
 .btn-row {
-  margin: $button-space auto 0;
+  margin: $modal-space auto 0;
 
   .btn {
-    margin: 0 $button-space;
+    margin: 0 $modal-space;
   }
 }
 
 .close-btn {
-  margin-top: $button-space;
+  margin-top: $modal-space;
 }
 </style>

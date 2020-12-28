@@ -66,6 +66,6 @@ export default class KlerosGTCRAdapterModal extends Vue {
 @import '../styles/vars';
 
 .close-btn {
-  margin-top: 20px;
+  margin-top: $modal-space;
 }
 </style>
