@@ -59,10 +59,13 @@
         @click="submit()"
       >
         <template v-if="contribution.isZero()">
-          Contribute {{ total }} {{ tokenSymbol }} to {{ cart.length }} projects
+          Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
+        </template>
+        <template v-else-if="hasUnallocatedFunds()">
+          Reallocate {{ formatAmount(getTotal()) }} of {{ formatAmount(contribution) }} {{ tokenSymbol }}
         </template>
         <template v-else>
-          Reallocate funds
+          Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
         </template>
       </button>
     </div>
@@ -252,6 +255,11 @@ export default class Cart extends Vue {
     return this.$store.state.currentUser && this.filteredCart.length === 0
   }
 
+  formatAmount(value: BigNumber): string {
+    const decimals = this.$store.state.currentRound.nativeTokenDecimals
+    return formatAmount(value, decimals)
+  }
+
   isAmountValid(value: string): boolean {
     const currentRound = this.$store.state.currentRound
     if (!currentRound) {
@@ -306,7 +314,7 @@ export default class Cart extends Vue {
     return invalidCount === 0
   }
 
-  private getTotal(): BigNumber {
+  getTotal(): BigNumber {
     const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
     return this.cart.reduce((total: BigNumber, item: CartItem) => {
       let amount
@@ -408,11 +416,6 @@ export default class Cart extends Vue {
       { },
       { width: 500 },
     )
-  }
-
-  get total(): number {
-    const decimals = this.$store.state.currentRound.nativeTokenDecimals
-    return FixedNumber.fromValue(this.getTotal(), decimals).toUnsafeFloat()
   }
 
   submit() {
