@@ -1,6 +1,11 @@
 <template>
   <div class="cart">
-    <div v-for="item in cart" class="cart-item" :key="item.id">
+    <div v-if="isEmptyCart" class="empty-cart">
+      <img src="@/assets/empty.svg">
+      <h3>No projects selected</h3>
+      <div>Please select the projects that you want to contribute to</div>
+    </div>
+    <div v-for="item in filteredCart" class="cart-item" :key="item.id">
       <div class="project">
         <img class="project-image" :src="item.imageUrl" :alt="item.name">
         <router-link
@@ -37,6 +42,9 @@
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
+      <div v-if="hasUnallocatedFunds()" class="submit-suggestion">
+        Unallocated funds will be used as matching funding
+      </div>
       <div v-if="canRegisterWithBrightId()" class="submit-suggestion">
         <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
       </div>
@@ -51,10 +59,13 @@
         @click="submit()"
       >
         <template v-if="contribution.isZero()">
-          Contribute {{ total }} {{ tokenSymbol }} to {{ cart.length }} projects
+          Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
+        </template>
+        <template v-else-if="hasUnallocatedFunds()">
+          Reallocate {{ formatAmount(getTotal()) }} of {{ formatAmount(contribution) }} {{ tokenSymbol }}
         </template>
         <template v-else>
-          Reallocate funds
+          Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
         </template>
       </button>
     </div>
@@ -73,7 +84,7 @@ import BrightIdModal from '@/components/BrightIdModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 
-import { MAX_CONTRIBUTION_AMOUNT, CartItem, Contributor } from '@/api/contributions'
+import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, CartItem, Contributor } from '@/api/contributions'
 import { userRegistryType } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { storage } from '@/api/storage'
@@ -164,6 +175,10 @@ export default class Cart extends Vue {
     )
   }
 
+  private get cart(): CartItem[] {
+    return this.$store.state.cart
+  }
+
   private clearCart() {
     this.cart.slice().forEach((item) => {
       this.$store.commit(REMOVE_CART_ITEM, item)
@@ -231,8 +246,18 @@ export default class Cart extends Vue {
     return this.$store.state.contribution || BigNumber.from(0)
   }
 
-  get cart(): CartItem[] {
-    return this.$store.state.cart
+  get filteredCart(): CartItem[] {
+    // Hide cleared items
+    return this.cart.filter((item) => !item.isCleared)
+  }
+
+  get isEmptyCart(): boolean {
+    return this.$store.state.currentUser && this.filteredCart.length === 0
+  }
+
+  formatAmount(value: BigNumber): string {
+    const decimals = this.$store.state.currentRound.nativeTokenDecimals
+    return formatAmount(value, decimals)
   }
 
   isAmountValid(value: string): boolean {
@@ -270,8 +295,8 @@ export default class Cart extends Vue {
   }
 
   canRemoveItem(): boolean {
-    // The number of MACI messages can't go down after initial submission
-    return this.contribution.isZero()
+    const currentRound = this.$store.state.currentRound
+    return currentRound && DateTime.local() < currentRound.votingDeadline
   }
 
   removeItem(item: CartItem) {
@@ -289,7 +314,7 @@ export default class Cart extends Vue {
     return invalidCount === 0
   }
 
-  private getTotal(): BigNumber {
+  getTotal(): BigNumber {
     const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
     return this.cart.reduce((total: BigNumber, item: CartItem) => {
       let amount
@@ -325,6 +350,8 @@ export default class Cart extends Vue {
       return 'Your account is not verified'
     } else if (!this.isFormValid()) {
       return 'Please enter correct amounts'
+    } else if (this.cart.length > MAX_CART_SIZE) {
+      return `Cart can not contain more than ${MAX_CART_SIZE} items`
     } else if (currentRound.status === RoundStatus.Cancelled) {
       return 'Funding round has been cancelled'
     } else {
@@ -363,6 +390,14 @@ export default class Cart extends Vue {
     }
   }
 
+  hasUnallocatedFunds(): boolean {
+    return (
+      this.contribution !== null &&
+      !this.contribution.isZero() &&
+      this.getTotal().lt(this.contribution)
+    )
+  }
+
   canRegisterWithBrightId(): boolean {
     return userRegistryType === 'brightid' && this.$store.state.currentUser?.isVerified === false
   }
@@ -381,11 +416,6 @@ export default class Cart extends Vue {
       { },
       { width: 500 },
     )
-  }
-
-  get total(): number {
-    const decimals = this.$store.state.currentRound.nativeTokenDecimals
-    return FixedNumber.fromValue(this.getTotal(), decimals).toUnsafeFloat()
   }
 
   submit() {
@@ -411,6 +441,27 @@ export default class Cart extends Vue {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - #{$profile-image-size + 2 * $content-space});
+}
+
+.empty-cart {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 50px 50px auto;
+  text-align: center;
+
+  img {
+    height: 70px;
+  }
+
+  h3 {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 25px;
+    font-weight: 700;
+  }
+
+  div {
+    color: #d5d4d7;
+  }
 }
 
 .cart-item {

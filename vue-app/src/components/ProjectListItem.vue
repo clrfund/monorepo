@@ -46,7 +46,7 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
-import { DEFAULT_CONTRIBUTION_AMOUNT, CART_MAX_SIZE, CartItem } from '@/api/contributions'
+import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
@@ -60,7 +60,8 @@ export default class ProjectListItem extends Vue {
 
   get inCart(): boolean {
     const index = this.$store.state.cart.findIndex((item: CartItem) => {
-      return item.id === this.project.id
+      // Ignore cleared items
+      return item.id === this.project.id && !item.isCleared
     })
     return index !== -1
   }
@@ -103,8 +104,7 @@ export default class ProjectListItem extends Vue {
       this.$store.state.currentUser &&
       this.$store.state.currentRound &&
       DateTime.local() < this.$store.state.currentRound.votingDeadline &&
-      !this.project.isLocked &&
-      this.$store.state.cart.length < CART_MAX_SIZE
+      !this.project.isLocked
     )
   }
 
@@ -112,6 +112,7 @@ export default class ProjectListItem extends Vue {
     this.$store.commit(ADD_CART_ITEM, {
       ...this.project,
       amount: DEFAULT_CONTRIBUTION_AMOUNT.toString(),
+      isCleared: false,
     })
   }
 }

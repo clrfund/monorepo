@@ -9,10 +9,11 @@ export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
 
 // The batch of maximum size will burn 9100000 gas at 700000 gas per message
-export const CART_MAX_SIZE = 13
+export const MAX_CART_SIZE = 13
 
 export interface CartItem extends Project {
   amount: string;
+  isCleared: boolean; // Item has been removed from cart and its amount cleared
 }
 
 export interface Contributor {

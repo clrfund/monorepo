@@ -2,7 +2,12 @@ import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
 import { BigNumber } from 'ethers'
 
-import { CartItem, Contributor, getContributionAmount } from '@/api/contributions'
+import {
+  MAX_CART_SIZE,
+  CartItem,
+  Contributor,
+  getContributionAmount,
+} from '@/api/contributions'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
@@ -67,27 +72,50 @@ export const mutations = {
     state.contribution = contribution
   },
   [ADD_CART_ITEM](state, addedItem: CartItem) {
-    const exists = state.cart.find((item) => {
+    const itemIndex = state.cart.findIndex((item) => {
       return item.id === addedItem.id
     })
-    if (!exists) {
-      state.cart.push(addedItem)
+    if (itemIndex === -1) {
+      // Look for cleared item
+      const clearedItemIndex = state.cart.findIndex((item) => {
+        return item.isCleared
+      })
+      if (clearedItemIndex !== -1) {
+        // Replace
+        Vue.set(state.cart, clearedItemIndex, addedItem)
+      } else {
+        state.cart.push(addedItem)
+      }
+    } else if (state.cart[itemIndex].isCleared) {
+      // Restore cleared item
+      Vue.set(state.cart, itemIndex, addedItem)
+    } else {
+      throw new Error('item is already in the cart')
     }
   },
   [UPDATE_CART_ITEM](state, updatedItem: CartItem) {
     const itemIndex = state.cart.findIndex((item) => {
       return item.id === updatedItem.id
     })
-    if (itemIndex > -1) {
-      Vue.set(state.cart, itemIndex, updatedItem)
+    if (itemIndex === -1) {
+      throw new Error('item is not in the cart')
     }
+    Vue.set(state.cart, itemIndex, updatedItem)
   },
   [REMOVE_CART_ITEM](state, removedItem: CartItem) {
     const itemIndex = state.cart.findIndex((item) => {
       return item.id === removedItem.id
     })
-    if (itemIndex > -1) {
+    if (itemIndex === -1) {
+      throw new Error('item is not in the cart')
+    } else if (state.contribution === null) {
+      throw new Error('invalid operation')
+    } else if (state.contribution.isZero() || state.cart.length > MAX_CART_SIZE) {
       state.cart.splice(itemIndex, 1)
+    } else {
+      // The number of MACI messages can't go down after initial submission
+      // so we just clear contribution amount and mark item with a flag
+      Vue.set(state.cart, itemIndex, { ...removedItem, amount: '0', isCleared: true })
     }
   },
 }
