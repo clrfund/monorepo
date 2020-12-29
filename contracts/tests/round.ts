@@ -1,4 +1,4 @@
-import { ethers, waffle } from 'hardhat'
+import { ethers, waffle, artifacts } from 'hardhat'
 import { use, expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { deployMockContract } from '@ethereum-waffle/mock-contract';
@@ -7,9 +7,6 @@ import { defaultAbiCoder } from '@ethersproject/abi';
 import { genRandomSalt } from 'maci-crypto';
 import { Keypair } from 'maci-domainobjs';
 
-import IUserRegistryArtifact from '../build/contracts/contracts/userRegistry/IUserRegistry.sol/IUserRegistry.json'
-import IRecipientRegistryArtifact from '../build/contracts/contracts/recipientRegistry/IRecipientRegistry.sol/IRecipientRegistry.json'
-import MACIArtifact from '../build/contracts/maci-contracts/sol/MACI.sol/MACI.json'
 import { ZERO_ADDRESS, UNIT, VOICE_CREDIT_FACTOR } from '../utils/constants'
 import { getEventArg, getGasUsage } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
@@ -35,6 +32,7 @@ describe('Funding Round', () => {
   let maci: Contract;
 
   async function deployMaciMock(): Promise<Contract> {
+    const MACIArtifact = await artifacts.readArtifact('MACI')
     const maci = await deployMockContract(deployer, MACIArtifact.abi)
     const signUpDeadline = (await provider.getBlock('latest')).timestamp + signUpDuration
     const votingDeadline = signUpDeadline + votingDuration
@@ -56,9 +54,11 @@ describe('Funding Round', () => {
     await token.transfer(anotherContributor.address, tokenInitialSupply.div(4))
     await token.transfer(coordinator.address, tokenInitialSupply.div(4))
 
+    const IUserRegistryArtifact = await artifacts.readArtifact('IUserRegistry')
     userRegistry = await deployMockContract(deployer, IUserRegistryArtifact.abi)
     await userRegistry.mock.isVerifiedUser.returns(true)
 
+    const IRecipientRegistryArtifact = await artifacts.readArtifact('IRecipientRegistry')
     recipientRegistry = await deployMockContract(deployer, IRecipientRegistryArtifact.abi);
 
     const FundingRound = await ethers.getContractFactory('FundingRound', deployer);

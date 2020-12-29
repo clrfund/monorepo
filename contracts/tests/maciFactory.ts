@@ -1,12 +1,10 @@
-import { waffle } from 'hardhat'
+import { waffle, artifacts } from 'hardhat'
 import { Contract } from 'ethers';
 import { use, expect } from 'chai';
 import { solidity } from 'ethereum-waffle';
 import { deployMockContract } from '@ethereum-waffle/mock-contract';
 import { Keypair } from 'maci-domainobjs';
 
-import SignUpGatekeeper from '../build/contracts/maci-contracts/sol/gatekeepers/SignUpGatekeeper.sol/SignUpGatekeeper.json'
-import InitialVoiceCreditProxy from '../build/contracts/maci-contracts/sol/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol/InitialVoiceCreditProxy.json'
 import { getGasUsage } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
 import { MaciParameters } from '../utils/maci'
@@ -28,8 +26,10 @@ describe('MACI factory', () => {
     expect(await getGasUsage(maciFactory.deployTransaction)).lessThan(5600000);
     maciParameters = await MaciParameters.read(maciFactory)
 
-    signUpGatekeeper = await deployMockContract(deployer, SignUpGatekeeper.abi);
-    initialVoiceCreditProxy = await deployMockContract(deployer, InitialVoiceCreditProxy.abi);
+    const SignUpGatekeeperArtifact = await artifacts.readArtifact('SignUpGatekeeper')
+    signUpGatekeeper = await deployMockContract(deployer, SignUpGatekeeperArtifact.abi)
+    const InitialVoiceCreditProxyArtifact = await artifacts.readArtifact('InitialVoiceCreditProxy')
+    initialVoiceCreditProxy = await deployMockContract(deployer, InitialVoiceCreditProxyArtifact.abi)
   });
 
   it('sets default MACI parameters', async () => {
