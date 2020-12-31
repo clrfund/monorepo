@@ -26,7 +26,16 @@
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Matching Pool:</div>
-        <div class="round-info-value">{{ currentRound.matchingPool | formatAmount }} {{ currentRound.nativeTokenSymbol }}</div>
+        <div class="round-info-value">
+          {{ currentRound.matchingPool | formatAmount }} {{ currentRound.nativeTokenSymbol }}
+          <a
+            @click="addMatchingFunds()"
+            class="add-matching-funds-btn"
+            title="Add matching funds"
+          >
+            <img src="@/assets/add.svg" >
+          </a>
+        </div>
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Contributions:</div>
@@ -57,6 +66,7 @@ import { RoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
+import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { SET_CURRENT_ROUND_ADDRESS } from '@/store/mutation-types'
 
@@ -136,6 +146,22 @@ export default class ProjectList extends Vue {
     }
     return FixedNumber.fromValue(contribution, decimals)
   }
+
+  addMatchingFunds(): void {
+    if (!this.$store.state.currentUser) {
+      return
+    }
+    this.$modal.show(
+      MatchingFundsModal,
+      { },
+      { },
+      {
+        closed: () => {
+          this.$store.dispatch(LOAD_ROUND_INFO)
+        },
+      },
+    )
+  }
 }
 </script>
 
@@ -179,6 +205,17 @@ export default class ProjectList extends Vue {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: $content-space;
+}
+
+.add-matching-funds-btn {
+  display: inline-block;
+  line-height: 1;
+  margin-left: 5px;
+
+  img {
+    height: 1em;
+    vertical-align: bottom;
+  }
 }
 
 @media (max-width: 1150px) {

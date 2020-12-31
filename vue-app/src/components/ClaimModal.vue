@@ -86,6 +86,6 @@ export default class ClaimModal extends Vue {
 @import '../styles/vars';
 
 .close-btn {
-  margin-top: 20px;
+  margin-top: $modal-space;
 }
 </style>

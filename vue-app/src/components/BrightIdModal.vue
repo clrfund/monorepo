@@ -174,6 +174,6 @@ export default class BrightIdModal extends Vue {
 }
 
 .close-btn {
-  margin-top: 20px;
+  margin-top: $modal-space;
 }
 </style>
