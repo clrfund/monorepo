@@ -46,11 +46,20 @@
         <div class="round-info-value">{{ contribution | formatAmount }} {{ currentRound.nativeTokenSymbol }}</div>
       </div>
     </div>
+    <div v-if="projects.length > 0" class="project-search">
+      <input
+        v-model="search"
+        class="input"
+        name="search"
+        placeholder="Search projects..."
+        autocomplete="off"
+      >
+    </div>
     <div class="project-list">
       <project-list-item
-        v-for="project in projects"
-        v-bind:project="project"
-        v-bind:key="project.id"
+        v-for="project in filteredProjects"
+        :project="project"
+        :key="project.id"
       >
       </project-list-item>
     </div>
@@ -97,6 +106,7 @@ function shuffleArray(array: any[]) {
 export default class ProjectList extends Vue {
 
   projects: Project[] = []
+  search = ''
 
   roundWatcherStop?: Function
 
@@ -131,11 +141,11 @@ export default class ProjectList extends Vue {
       this.currentRound?.startBlock,
       this.currentRound?.endBlock,
     )
-    const filtered = projects.filter(project => {
+    const visibleProjects = projects.filter(project => {
       return (!project.isHidden && !project.isLocked)
     })
-    shuffleArray(filtered)
-    this.projects = filtered
+    shuffleArray(visibleProjects)
+    this.projects = visibleProjects
   }
 
   get contribution(): FixedNumber {
@@ -162,6 +172,15 @@ export default class ProjectList extends Vue {
       },
     )
   }
+
+  get filteredProjects(): Project[] {
+    return this.projects.filter((project: Project) => {
+      if (!this.search) {
+        return true
+      }
+      return project.name.toLowerCase().includes(this.search.toLowerCase())
+    })
+  }
 }
 </script>
 
@@ -172,7 +191,6 @@ export default class ProjectList extends Vue {
   display: flex;
   flex-wrap: wrap;
   font-size: 12px;
-  margin-bottom: $content-space;
 }
 
 .round-info-item {
@@ -201,12 +219,6 @@ export default class ProjectList extends Vue {
   text-overflow: ellipsis;
 }
 
-.project-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: $content-space;
-}
-
 .add-matching-funds-btn {
   display: inline-block;
   line-height: 1;
@@ -216,6 +228,25 @@ export default class ProjectList extends Vue {
     height: 1em;
     vertical-align: bottom;
   }
+}
+
+.project-search {
+  margin: 20px 0;
+
+  input {
+    background-color: $bg-secondary-color;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    padding: 2px 10px;
+    width: 100%;
+  }
+}
+
+.project-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: $content-space;
 }
 
 @media (max-width: 1150px) {
