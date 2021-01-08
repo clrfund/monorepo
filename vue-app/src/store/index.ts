@@ -14,6 +14,7 @@ import {
   deserializeContributorData,
   getContributionAmount,
 } from '@/api/contributions'
+import { loginUser, logoutUser } from '@/api/gun'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
@@ -26,6 +27,8 @@ import {
   LOAD_CART,
   SAVE_CONTRIBUTOR_DATA,
   LOAD_CONTRIBUTOR_DATA,
+  LOGIN_USER,
+  LOGOUT_USER,
 } from './action-types'
 import {
   SET_CURRENT_USER,
@@ -191,8 +194,8 @@ const actions = {
       commit(REMOVE_CART_ITEM, item)
     })
   },
-  [LOAD_CART]({ commit, dispatch, state }) {
-    const data = storage.getItem(
+  async [LOAD_CART]({ commit, dispatch, state }) {
+    const data = await storage.getItem(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
       getCartStorageKey(state.currentRound.fundingRoundAddress),
@@ -212,8 +215,8 @@ const actions = {
       serializedData,
     )
   },
-  [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
-    const data = storage.getItem(
+  async [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
+    const data = await storage.getItem(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
       getContributorStorageKey(state.currentRound.fundingRoundAddress),
@@ -222,6 +225,15 @@ const actions = {
     if (contributor) {
       commit(SET_CONTRIBUTOR, contributor)
     }
+  },
+  async [LOGIN_USER]({ state }) {
+    await loginUser(
+      state.currentUser.walletAddress,
+      state.currentUser.encryptionKey,
+    )
+  },
+  [LOGOUT_USER]() {
+    logoutUser()
   },
 }
 

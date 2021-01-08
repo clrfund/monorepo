@@ -37,6 +37,8 @@ import {
   CLEAR_CART,
   LOAD_CART,
   LOAD_CONTRIBUTOR_DATA,
+  LOGIN_USER,
+  LOGOUT_USER,
 } from '@/store/action-types'
 import {
   SET_CURRENT_USER,
@@ -72,6 +74,7 @@ export default class Profile extends Vue {
         this.walletChainId = _chainId
         if (this.currentUser) {
           // Log out user to prevent interactions with incorrect network
+          this.$store.dispatch(LOGOUT_USER)
           this.$store.commit(SET_CURRENT_USER, null)
           this.$store.commit(SET_CONTRIBUTION, null)
           this.$store.commit(SET_CONTRIBUTOR, null)
@@ -83,6 +86,7 @@ export default class Profile extends Vue {
     this.walletProvider.on('accountsChanged', (_accounts: string[]) => {
       if (_accounts !== accounts) {
         // Log out user if wallet account changes
+        this.$store.dispatch(LOGOUT_USER)
         this.$store.commit(SET_CURRENT_USER, null)
         this.$store.commit(SET_CONTRIBUTION, null)
         this.$store.commit(SET_CONTRIBUTOR, null)
@@ -152,6 +156,7 @@ export default class Profile extends Vue {
       .then((url) => this.profileImageUrl = url)
     this.$store.commit(SET_CURRENT_USER, user)
     await this.$store.dispatch(LOAD_USER_INFO)
+    await this.$store.dispatch(LOGIN_USER)
     if (this.$store.state.currentRound) {
       // Load cart & contributor data for current round
       this.$store.dispatch(LOAD_CART)

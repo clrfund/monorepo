@@ -19,6 +19,7 @@
     "start:dev": "yarn deploy:local && yarn start:web",
     "start:node": "yarn workspace @clrfund/contracts run node",
     "start:web": "yarn workspace @clrfund/vue-app run serve",
+    "start:gun": "yarn workspace @clrfund/vue-app run gun",
     "test": "yarn workspaces run test",
     "test:contracts": "yarn workspace @clrfund/contracts run test",
     "test:web": "yarn workspace @clrfund/vue-app run test",
