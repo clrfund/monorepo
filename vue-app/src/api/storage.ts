@@ -1,4 +1,5 @@
 import { sha256, encrypt, decrypt } from '@/utils/crypto'
+import { setValue, getValue } from './gun'
 
 function getFullStorageKey(
   accountId: string,
@@ -15,20 +16,17 @@ function setItem(
   value: string,
 ): void {
   const encryptedValue = encrypt(value, encryptionKey)
-  window.localStorage.setItem(
-    getFullStorageKey(accountId, storageKey),
-    encryptedValue,
-  )
+  const fullStorageKey = getFullStorageKey(accountId, storageKey)
+  setValue(fullStorageKey, encryptedValue)
 }
 
-function getItem(
+async function getItem(
   accountId: string,
   encryptionKey: string,
   storageKey: string,
-): string | null {
-  const encryptedValue = window.localStorage.getItem(
-    getFullStorageKey(accountId, storageKey),
-  )
+): Promise<string | null> {
+  const fullStorageKey = getFullStorageKey(accountId, storageKey)
+  const encryptedValue = await getValue(fullStorageKey)
   const value = encryptedValue ? decrypt(encryptedValue, encryptionKey) : null
   return value
 }
