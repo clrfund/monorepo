@@ -1,4 +1,5 @@
-import { Contract, BigNumber } from 'ethers'
+import { BigNumber, Contract, Signer } from 'ethers'
+import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Keypair } from 'maci-domainobjs'
 
 import { FundingRound } from './abi'
@@ -57,4 +58,13 @@ export async function getTotalContributed(
     result = result.add(event.args._amount)
   })
   return result
+}
+
+export async function withdrawContribution(
+  roundAddress: string,
+  signer: Signer,
+): Promise<TransactionResponse> {
+  const fundingRound = new Contract(roundAddress, FundingRound, signer)
+  const transaction = await fundingRound.withdrawContribution()
+  return transaction
 }
