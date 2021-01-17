@@ -1,10 +1,12 @@
 import { BigNumber, Contract, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { Keypair } from 'maci-domainobjs'
+import { Keypair, PrivKey } from 'maci-domainobjs'
 
 import { FundingRound } from './abi'
 import { provider } from './core'
 import { Project } from './projects'
+import { storage } from './storage'
+import { User } from './user'
 
 export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
@@ -20,6 +22,77 @@ export interface CartItem extends Project {
 export interface Contributor {
   keypair: Keypair;
   stateIndex: number;
+}
+
+const CART_STORAGE_KEY = 'cart'
+const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
+
+export function saveCart(
+  user: User,
+  roundAddress: string,
+  cart: CartItem[],
+) {
+  storage.setItem(
+    user.walletAddress,
+    user.encryptionKey,
+    roundAddress,
+    CART_STORAGE_KEY,
+    JSON.stringify(cart),
+  )
+}
+
+export function loadCart(
+  user: User,
+  roundAddress: string,
+): CartItem[] {
+  const serializedData = storage.getItem(
+    user.walletAddress,
+    user.encryptionKey,
+    roundAddress,
+    CART_STORAGE_KEY,
+  )
+  if (serializedData) {
+    return JSON.parse(serializedData)
+  } else {
+    return []
+  }
+}
+
+export function saveContributorData(
+  user: User,
+  roundAddress: string,
+  contributor: Contributor,
+) {
+  const serializedData = JSON.stringify({
+    privateKey: contributor.keypair.privKey.serialize(),
+    stateIndex: contributor.stateIndex,
+  })
+  storage.setItem(
+    user.walletAddress,
+    user.encryptionKey,
+    roundAddress,
+    CONTRIBUTOR_INFO_STORAGE_KEY,
+    serializedData,
+  )
+}
+
+export function loadContributorData(
+  user: User,
+  roundAddress: string,
+): Contributor | null {
+  const serializedData = storage.getItem(
+    user.walletAddress,
+    user.encryptionKey,
+    roundAddress,
+    CONTRIBUTOR_INFO_STORAGE_KEY,
+  )
+  if (serializedData) {
+    const data = JSON.parse(serializedData)
+    const keypair = new Keypair(PrivKey.unserialize(data.privateKey))
+    return { keypair, stateIndex: data.stateIndex }
+  } else {
+    return null
+  }
 }
 
 export async function getContributionAmount(

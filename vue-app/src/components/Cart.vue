@@ -86,18 +86,22 @@ import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
-import { Keypair, PrivKey } from 'maci-domainobjs'
 
 import BrightIdModal from '@/components/BrightIdModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 
-import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, CartItem, Contributor } from '@/api/contributions'
+import {
+  MAX_CONTRIBUTION_AMOUNT,
+  MAX_CART_SIZE,
+  CartItem,
+  loadCart,
+  saveCart,
+  loadContributorData,
+} from '@/api/contributions'
 import { userRegistryType } from '@/api/core'
 import { RoundStatus } from '@/api/round'
-import { storage } from '@/api/storage'
-import { User } from '@/api/user'
 import { LOAD_USER_INFO } from '@/store/action-types'
 import {
   SET_CONTRIBUTOR,
@@ -106,28 +110,6 @@ import {
   REMOVE_CART_ITEM,
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
-
-const CART_STORAGE_KEY = 'cart'
-const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
-
-function loadContributorInfo(
-  fundingRoundAddress: string,
-  user: User,
-): Contributor | null {
-  const serializedData = storage.getItem(
-    user.walletAddress,
-    user.encryptionKey,
-    fundingRoundAddress,
-    CONTRIBUTOR_INFO_STORAGE_KEY,
-  )
-  if (serializedData) {
-    const data = JSON.parse(serializedData)
-    const keypair = new Keypair(PrivKey.unserialize(data.privateKey))
-    return { keypair, stateIndex: data.stateIndex }
-  } else {
-    return null
-  }
-}
 
 @Component({
   watch: {
@@ -138,13 +120,7 @@ function loadContributorInfo(
         return
       }
       // Save cart to local storage on changes
-      storage.setItem(
-        currentUser.walletAddress,
-        currentUser.encryptionKey,
-        currentRound.fundingRoundAddress,
-        CART_STORAGE_KEY,
-        JSON.stringify(items),
-      )
+      saveCart(currentUser, currentRound.fundingRoundAddress, items)
     },
   },
 })
@@ -207,17 +183,10 @@ export default class Cart extends Vue {
       return
     }
     // Load cart from local storage
-    const serializedCart = storage.getItem(
-      currentUser.walletAddress,
-      currentUser.encryptionKey,
-      currentRound.fundingRoundAddress,
-      CART_STORAGE_KEY,
-    )
-    if (serializedCart) {
-      this.clearCart()
-      for (const item of JSON.parse(serializedCart)) {
-        this.$store.commit(ADD_CART_ITEM, item)
-      }
+    const cart = loadCart(currentUser, currentRound.fundingRoundAddress)
+    this.clearCart()
+    for (const item of cart) {
+      this.$store.commit(ADD_CART_ITEM, item)
     }
   }
 
@@ -232,10 +201,10 @@ export default class Cart extends Vue {
     if (!currentRound) {
       return
     }
-    // Load contributor info from local storage
-    const contributor = loadContributorInfo(
-      currentRound.fundingRoundAddress,
+    // Load contributor data from local storage
+    const contributor = loadContributorData(
       currentUser,
+      currentRound.fundingRoundAddress,
     )
     if (contributor) {
       this.$store.commit(SET_CONTRIBUTOR, contributor)
