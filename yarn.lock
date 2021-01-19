@@ -888,6 +888,11 @@
     "@hapi/bourne" "1.x.x"
     "@hapi/hoek" "8.x.x"
 
+"@iden3/bigarray@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@iden3/bigarray/-/bigarray-0.0.2.tgz#6fc4ba5be18daf8a26ee393f2fb62b80d98c05e9"
+  integrity sha512-Xzdyxqm1bOFF6pdIsiHLLl3HkSLjbhqJHVyqaTxXt3RqXBEnmsUmEW47H7VOi/ak7TdkRpNkxjyK5Zbkm+y52g==
+
 "@intervolga/optimize-cssnano-plugin@^1.0.5":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@intervolga/optimize-cssnano-plugin/-/optimize-cssnano-plugin-1.0.6.tgz#be7c7846128b88f6a9b1d1261a0ad06eb5c0fdf8"
@@ -4200,19 +4205,19 @@ circom@0.5.21:
     tmp-promise "^2.0.2"
     wasmbuilder "0.0.10"
 
-circom@0.5.27:
-  version "0.5.27"
-  resolved "https://registry.yarnpkg.com/circom/-/circom-0.5.27.tgz#20111db09f1f639d51babdf4145d46ede6f6d224"
-  integrity sha512-VSvzTZ5AL25GiVY02SeG4gfnPVM/fo8CUNSa03sfPj8VX0FFHAkiehPjckxC7BKbwAA5kCE04KK5vBnUJUvntA==
+circom@0.5.35:
+  version "0.5.35"
+  resolved "https://registry.yarnpkg.com/circom/-/circom-0.5.35.tgz#e59291f18996656c85e3f84a90bb653022b9f673"
+  integrity sha512-fUjYTyU75TrA54IPqHt+3VyRWVL82jdbiW68NC9CdtwVrXID+G2cED4XPlsVIKuGI8NFl1LzapELv6DRjS363w==
   dependencies:
     chai "^4.2.0"
-    circom_runtime "0.1.5"
-    fastfile "0.0.16"
+    circom_runtime "0.1.9"
+    fastfile "0.0.18"
     ffiasm "0.1.1"
-    ffjavascript "0.2.10"
+    ffjavascript "0.2.22"
     ffwasm "0.0.7"
     fnv-plus "^1.3.1"
-    r1csfile "0.0.14"
+    r1csfile "0.0.16"
     tmp-promise "^2.0.2"
     wasmbuilder "0.0.10"
 
@@ -4232,10 +4237,10 @@ circom_runtime@0.1.4:
     ffjavascript "0.2.10"
     fnv-plus "^1.3.1"
 
-circom_runtime@0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/circom_runtime/-/circom_runtime-0.1.5.tgz#15814076863e2726461a738aab3d3f266fc13b90"
-  integrity sha512-BT3d9VCrH/rBRbThDXG731JwezKyskxyE46nACO6Tt/jaorn27LDxFDORdAAjyD0RAoBt+6FpaTp3qlYSx7Pjg==
+circom_runtime@0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/circom_runtime/-/circom_runtime-0.1.9.tgz#99b8fd60d858e00174537b9d502e9913592d7b08"
+  integrity sha512-eh34quaGpeEWXthnhmC9zpoBL/5zJ0mGDbPT/plb/xVmFaKxJDcLuCr2sma5s3il8AYlEIb/nbqytojyI3TWDQ==
   dependencies:
     ffjavascript "0.2.10"
     fnv-plus "^1.3.1"
@@ -7038,10 +7043,10 @@ fastfile@0.0.13:
   resolved "https://registry.yarnpkg.com/fastfile/-/fastfile-0.0.13.tgz#0a3a3583699b70aff4ed69f54d518140a0c4ad3f"
   integrity sha512-bvtLS27bKnhl12aQ2FMehXWQIyVqP1rjk8VdivGRl5yVgLSZjdqgievlOvRDVjqEJDZ00/kUl3LgRF0vchx9eg==
 
-fastfile@0.0.16:
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/fastfile/-/fastfile-0.0.16.tgz#32a3b1312dddad8071a6b21d1e99a61d53b5ccf5"
-  integrity sha512-2sX5M4JQWAVmS2GojuRPA759aTOs5PyUEpZHjaecNtWBU9CfRFlTf2aBqFG2PJJnrcrawBBAQ1s0QSO+qQ4Zmg==
+fastfile@0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/fastfile/-/fastfile-0.0.18.tgz#2b69bbbfd2fcccc9bc8099c27de1379b89756a4b"
+  integrity sha512-q03PTKc+wptis4WmuFOwPNQx2p5myFUrl/dMgRlW9mymc1Egyc14JPHgiGnWK+sJ0+dBl2Vwtfh5GfSQltYOpw==
 
 fastfile@0.0.6:
   version "0.0.6"
@@ -7104,6 +7109,15 @@ ffjavascript@0.2.10:
   dependencies:
     big-integer "^1.6.48"
     wasmcurves "0.0.5"
+    worker-threads "^1.0.0"
+
+ffjavascript@0.2.22:
+  version "0.2.22"
+  resolved "https://registry.yarnpkg.com/ffjavascript/-/ffjavascript-0.2.22.tgz#101f33db330b0f6a0c10dec22ebf5725618a8a7d"
+  integrity sha512-EsVqap2Txm17bKW0z/jXCX3M7rQ++nQUAJY8alWDpyhjRj90xjl6GLeVSKZQ8rOFDQ/SFFXcEB8w9X8Boxid+w==
+  dependencies:
+    big-integer "^1.6.48"
+    wasmcurves "0.0.12"
     worker-threads "^1.0.0"
 
 ffjavascript@0.2.4:
@@ -11441,47 +11455,48 @@ luxon@^1.24.1:
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.24.1.tgz#a8383266131ed4eaed4b5f430f96f3695403a52a"
   integrity sha512-CgnIMKAWT0ghcuWFfCWBnWGOddM0zu6c4wZAWmD0NN7MZTnro0+833DF6tJep+xlxRPg4KtsYEHYLfTMBQKwYg==
 
-maci-circuits@^0.4.11:
-  version "0.4.11"
-  resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-0.4.11.tgz#b95dc9a06b100d7d92cb9a680219df3b25a91506"
-  integrity sha512-IYdsnOicnRL3DuUA/w1hchuerfmAvLQU15bOJWOU90RvQWJ1DVwh/iNLYybg8zbUZtLuS5jVWG6MVXV763zamQ==
+maci-circuits@^0.5.4:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-0.5.4.tgz#a2afde090dd623199b7aa3570c43f9df46aa54e6"
+  integrity sha512-b3clQgNdvH1n4j0pIhYYoIsgpQKsGoBq7/rxFL0wSo2ZeJFZRd+IaZOld1NZxYCYVUkn//1yIdwSX7YCwcJ8bw==
   dependencies:
     argparse "^1.0.10"
-    circom "0.5.27"
+    circom "0.5.35"
     circomlib "0.2.4"
     libsemaphore "^1.0.5"
+    n-readlines "^1.0.1"
     shelljs "^0.8.3"
     snarkjs "0.3.23"
 
-maci-cli@0.4.11:
-  version "0.4.11"
-  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.4.11.tgz#834a8c5537e3e6e7d5a6c0b448a548e6bc404982"
-  integrity sha512-45tO41hicUW+wyWmys8jUq1OvNU7/olo/0RI7tHRfnnX4sGnYRGlW8egHEbDcE5yeaGxfoiMB/7mectIlr2YoQ==
+maci-cli@0.5.4:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.5.4.tgz#4d5b005ed8d2ffcb32f4e6df2b226eac1a48d9f3"
+  integrity sha512-LHoAo3RRrYsy7y7IHuWw/TXKh+kieKd/TiSNGzC91qETzfIimUvLV9WmAzIrewlm0LeNr5vIvKivjkZIHOmpdw==
   dependencies:
     argparse "^1.0.10"
     ethers "^4.0.45"
     libsemaphore "^1.0.5"
-    maci-circuits "^0.4.11"
-    maci-config "^0.4.11"
-    maci-contracts "^0.4.11"
-    maci-core "^0.4.11"
-    maci-crypto "^0.4.11"
-    maci-domainobjs "^0.4.11"
+    maci-circuits "^0.5.4"
+    maci-config "^0.5.3"
+    maci-contracts "^0.5.4"
+    maci-core "^0.5.3"
+    maci-crypto "^0.5.3"
+    maci-domainobjs "^0.5.3"
     prompt-async "^0.9.9"
 
-maci-config@^0.4.11:
-  version "0.4.11"
-  resolved "https://registry.yarnpkg.com/maci-config/-/maci-config-0.4.11.tgz#fb7799e0871c99f4855accf4e77e09a278915411"
-  integrity sha512-Ff8/Oi8JOQHkRulZBK5iFKMwbhyIOUeqPdX2ERqzLWxYAEG0VYsA9XTuzyCFP7SDBfoKlh4NM/8xjSxmxhMZ3g==
+maci-config@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/maci-config/-/maci-config-0.5.3.tgz#c38641e0c62252306a0dae5cd9c18a68315cd161"
+  integrity sha512-1KcB0Hyc/g0j4JXla1R7SaM8/fZeE3LLqxp6Kn3oQ7i/N8FILM1M9vH4y8BPZNw0VPBhkQvRcR1vyGf+XqzoYw==
   dependencies:
     config "^3.2.4"
     js-yaml "^3.13.1"
     path "^0.12.7"
 
-maci-contracts@0.4.11, maci-contracts@^0.4.11:
-  version "0.4.11"
-  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.4.11.tgz#8ceaecb7a7708562b3aec7f58f01280354f93545"
-  integrity sha512-67QKRYcQ5THCaseMNzHx6JNXEpI/rVzWb0URTjlyO0nsZNdBItVfrk3glD3W6HaP880Hg4xwmi3EGommev2sgg==
+maci-contracts@0.5.4, maci-contracts@^0.5.4:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.5.4.tgz#9dcfe2c773935a8b236ea8fcff7c603582265cf5"
+  integrity sha512-nKCos5AylRpg7xfqMOciu872sabiSNXBM2fL5qGlfWzGLtQLrHbZX4w/EAvHHsOwnp5wvY83+fs4CDyoHKQMoQ==
   dependencies:
     "@openzeppelin/contracts" "~3.2.0"
     argparse "^1.0.10"
@@ -11489,30 +11504,30 @@ maci-contracts@0.4.11, maci-contracts@^0.4.11:
     ethers "^4.0.45"
     module-alias "^2.2.2"
 
-maci-core@^0.4.11:
-  version "0.4.11"
-  resolved "https://registry.yarnpkg.com/maci-core/-/maci-core-0.4.11.tgz#8d7a40b417397f4759af15e1b9ce4448f0501918"
-  integrity sha512-7Hl5YW5EBIQ5MLQwftN3q7lUwPTqGVVYyvBETXoBnccpypyi3MqMTbJEEgGDfKtWPQBQsGBQE6NB/p6sCrBF3g==
+maci-core@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/maci-core/-/maci-core-0.5.3.tgz#84718d8ab25cf4692e6acd1a9a0ca80a869c8a33"
+  integrity sha512-DvT0aIiKo3HIqyNIek0IRXFw7IYGsr4/9b3CwTi1TegCHiA7/b8/QJjKOh4UcfYXVOE+smJNIsWPJGtc1dLp1g==
   dependencies:
     ethers "^4.0.45"
-    maci-config "^0.4.11"
-    maci-crypto "^0.4.11"
-    maci-domainobjs "^0.4.11"
+    maci-config "^0.5.3"
+    maci-crypto "^0.5.3"
+    maci-domainobjs "^0.5.3"
     module-alias "^2.2.2"
 
-maci-crypto@^0.4.11, maci-crypto@~0.4.11:
-  version "0.4.11"
-  resolved "https://registry.yarnpkg.com/maci-crypto/-/maci-crypto-0.4.11.tgz#4556e0ae66ba46876a75ca998acbe6aaefafbff6"
-  integrity sha512-clmUu4OJJgm/5owZjRUqymtl3xv1hE0wCjxFSALCHw9U+BE+dBP/JZhG6M0uoyNNBV+ixY6Wfkysep0LQw8FcQ==
+maci-crypto@^0.5.3, maci-crypto@~0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/maci-crypto/-/maci-crypto-0.5.3.tgz#8135324667e90503580f07e2c6d866c097f816e9"
+  integrity sha512-ZWFLfovjX/JdQbsLozOLxK6htZIy+ogT7PoAeHpTFkJmyDqbo5empjsWST638Hl36ySqpJWtbNqw2cM3T92zJg==
   dependencies:
     circomlib "https://github.com/iden3/circomlib.git#01da5f90dbbefeed5d78cec3b87303244338b920"
     ethers "^4.0.45"
     ffjavascript "0.1.0"
 
-maci-domainobjs@^0.4.11, maci-domainobjs@~0.4.11:
-  version "0.4.11"
-  resolved "https://registry.yarnpkg.com/maci-domainobjs/-/maci-domainobjs-0.4.11.tgz#0d9a2e477ccb9c06569e426cc98ddc69e6b5542e"
-  integrity sha512-INlm1FaI/CuiQ4e9XuweRnb3Du/oLLtG+3+RcP7CO0U8Ij5KK9lx1lC5uuUoEBo/AWDPDpILyXcEunMJrgejRQ==
+maci-domainobjs@^0.5.3, maci-domainobjs@~0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/maci-domainobjs/-/maci-domainobjs-0.5.3.tgz#637fd280956a3653bda3c279290c8814a852d48c"
+  integrity sha512-YyxPsGBkdRr9Ew/yvTWNgwkqbYX5xUTrfqoS+BrZ78/hno5GgpgvdbNOiajgRc8XCJZMvxTcpQbD3SGnewvtog==
 
 mafmt@^7.0.0, mafmt@^7.0.1, mafmt@^7.1.0:
   version "7.1.0"
@@ -12362,6 +12377,11 @@ mz@^2.4.0:
     any-promise "^1.0.0"
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
+
+n-readlines@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/n-readlines/-/n-readlines-1.0.1.tgz#bbb7364d38bc31a170a199f986fcacfa76b95f6e"
+  integrity sha512-z4SyAIVgMy7CkgsoNw7YVz40v0g4+WWvvqy8+ZdHrCtgevcEO758WQyrYcw3XPxcLxF+//RszTz/rO48nzD0wQ==
 
 nan@2.13.2:
   version "2.13.2"
@@ -14703,6 +14723,15 @@ r1csfile@0.0.14:
   dependencies:
     fastfile "0.0.7"
     ffjavascript "0.2.4"
+
+r1csfile@0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/r1csfile/-/r1csfile-0.0.16.tgz#53c66a79b50eebc2d15a1048e39d548ce9da7ccd"
+  integrity sha512-A2jRVWzGgmXeG2lVAc0H4suJmzt50it5UvBnycJgBCpMXM3tH/M6RguP7nvs6suY/yYnkN6jX6iTScSiDUF3FA==
+  dependencies:
+    "@iden3/bigarray" "0.0.2"
+    fastfile "0.0.18"
+    ffjavascript "0.2.22"
 
 r1csfile@0.0.5:
   version "0.0.5"
@@ -17624,6 +17653,14 @@ wasmbuilder@0.0.10:
   integrity sha512-zQSvZ7d74d9OvN+mCN6ucNne4QS5/cBBYTHldX0Oe+u9gStY21orapvuX1ajisA7RVIpuFhYg+ZgdySsPfeh0A==
   dependencies:
     big-integer "^1.6.48"
+
+wasmcurves@0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/wasmcurves/-/wasmcurves-0.0.12.tgz#1496e2219ac07f9a420f527803ae13b1d7a89246"
+  integrity sha512-1Jl9mkatyHSNj80ILjf85SZUNuZQBCkTjJlhzqHnZQXUmIimCIWkugaVaYNjozLs1Gun4h/keZe1MBeBN0sRpg==
+  dependencies:
+    big-integer "^1.6.42"
+    blakejs "^1.1.0"
 
 wasmcurves@0.0.4:
   version "0.0.4"

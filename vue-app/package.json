@@ -17,7 +17,7 @@
     "ethereum-blockies-base64": "^1.0.2",
     "ethers": "^5.0.17",
     "luxon": "^1.24.1",
-    "maci-domainobjs": "~0.4.11",
+    "maci-domainobjs": "~0.5.3",
     "qrcode": "^1.4.4",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.2",
