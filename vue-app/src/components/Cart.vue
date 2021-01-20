@@ -97,12 +97,11 @@ import {
   MAX_CART_SIZE,
   CartItem,
   loadCart,
-  saveCart,
   loadContributorData,
 } from '@/api/contributions'
 import { userRegistryType } from '@/api/core'
 import { RoundStatus } from '@/api/round'
-import { LOAD_USER_INFO } from '@/store/action-types'
+import { LOAD_USER_INFO, SAVE_CART } from '@/store/action-types'
 import {
   SET_CONTRIBUTOR,
   ADD_CART_ITEM,
@@ -111,19 +110,7 @@ import {
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 
-@Component({
-  watch: {
-    cart(items: CartItem[]) {
-      const currentUser = this.$store.state.currentUser
-      const currentRound = this.$store.state.currentRound
-      if (!currentUser || !currentRound) {
-        return
-      }
-      // Save cart to local storage on changes
-      saveCart(currentUser, currentRound.fundingRoundAddress, items)
-    },
-  },
-})
+@Component
 export default class Cart extends Vue {
 
   mounted() {
@@ -266,6 +253,7 @@ export default class Cart extends Vue {
 
   updateAmount(item: CartItem, amount: string) {
     this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
+    this.$store.dispatch(SAVE_CART)
   }
 
   canRemoveItem(): boolean {
@@ -275,6 +263,7 @@ export default class Cart extends Vue {
 
   removeItem(item: CartItem) {
     this.$store.commit(REMOVE_CART_ITEM, item)
+    this.$store.dispatch(SAVE_CART)
   }
 
   canSubmit(): boolean {
