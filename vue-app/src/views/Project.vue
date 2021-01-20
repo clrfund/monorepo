@@ -77,6 +77,7 @@ import { RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
 import KlerosGTCRAdapterModal from '@/components/KlerosGTCRAdapterModal.vue'
+import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 
 @Component({
@@ -207,6 +208,7 @@ export default class ProjectView extends Vue {
       amount: DEFAULT_CONTRIBUTION_AMOUNT.toString(),
       isCleared: false,
     })
+    this.$store.dispatch(SAVE_CART)
   }
 
   hasClaimBtn(): boolean {

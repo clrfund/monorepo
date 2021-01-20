@@ -6,6 +6,7 @@ import {
   MAX_CART_SIZE,
   CartItem,
   Contributor,
+  saveCart,
   getContributionAmount,
 } from '@/api/contributions'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
@@ -14,6 +15,7 @@ import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
 import {
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
+  SAVE_CART,
 } from './action-types'
 import {
   SET_CURRENT_USER,
@@ -164,6 +166,13 @@ const actions = {
         balance,
       })
     }
+  },
+  [SAVE_CART]({ state }) {
+    saveCart(
+      state.currentUser,
+      state.currentRound.fundingRoundAddress,
+      state.cart,
+    )
   },
 }
 
