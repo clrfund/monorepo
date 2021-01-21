@@ -99,90 +99,15 @@ import {
 } from '@/api/contributions'
 import { userRegistryType } from '@/api/core'
 import { RoundStatus } from '@/api/round'
-import {
-  LOAD_USER_INFO,
-  SAVE_CART,
-  CLEAR_CART,
-  LOAD_CART,
-  LOAD_CONTRIBUTOR_DATA,
-} from '@/store/action-types'
-import {
-  SET_CONTRIBUTOR,
-  UPDATE_CART_ITEM,
-  REMOVE_CART_ITEM,
-} from '@/store/mutation-types'
+import { SAVE_CART } from '@/store/action-types'
+import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 
 @Component
 export default class Cart extends Vue {
 
-  mounted() {
-    // Reload cart when wallet account or round changes
-    this.$store.watch(
-      (state) => {
-        return (
-          state.currentUser?.walletAddress +
-          state.currentRound?.fundingRoundAddress
-        )
-      },
-      this.refreshCart,
-    )
-    this.refreshCart()
-
-    // Reload contributor info if wallet account of round changes
-    this.$store.watch(
-      (state) => {
-        return (
-          state.currentUser?.walletAddress +
-          state.currentRound?.fundingRoundAddress
-        )
-      },
-      this.refreshContributor,
-    )
-    this.refreshContributor()
-
-    // Reload user info when round info loads or changes
-    this.$store.watch(
-      (state) => state.currentRound?.fundingRoundAddress,
-      () => {
-        this.$store.dispatch(LOAD_USER_INFO)
-      },
-    )
-  }
-
   private get cart(): CartItem[] {
     return this.$store.state.cart
-  }
-
-  private refreshCart() {
-    const currentUser = this.$store.state.currentUser
-    if (!currentUser) {
-      // Clear the cart on log out / when not logged in
-      this.$store.dispatch(CLEAR_CART)
-      return
-    }
-    const currentRound = this.$store.state.currentRound
-    if (!currentRound) {
-      this.$store.dispatch(CLEAR_CART)
-      return
-    }
-    // Load cart from local storage
-    this.$store.dispatch(LOAD_CART)
-  }
-
-  private refreshContributor() {
-    const currentUser = this.$store.state.currentUser
-    if (!currentUser) {
-      // Reset contributor no log out / when not logged in
-      this.$store.commit(SET_CONTRIBUTOR, null)
-      return
-    }
-    const currentRound = this.$store.state.currentRound
-    if (!currentRound) {
-      return
-    }
-    // Load contributor data from local storage
-    this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
   }
 
   get tokenSymbol(): string {
