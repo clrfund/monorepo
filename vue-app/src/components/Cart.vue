@@ -96,15 +96,18 @@ import {
   MAX_CONTRIBUTION_AMOUNT,
   MAX_CART_SIZE,
   CartItem,
-  loadCart,
-  loadContributorData,
 } from '@/api/contributions'
 import { userRegistryType } from '@/api/core'
 import { RoundStatus } from '@/api/round'
-import { LOAD_USER_INFO, SAVE_CART } from '@/store/action-types'
+import {
+  LOAD_USER_INFO,
+  SAVE_CART,
+  CLEAR_CART,
+  LOAD_CART,
+  LOAD_CONTRIBUTOR_DATA,
+} from '@/store/action-types'
 import {
   SET_CONTRIBUTOR,
-  ADD_CART_ITEM,
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
 } from '@/store/mutation-types'
@@ -151,30 +154,20 @@ export default class Cart extends Vue {
     return this.$store.state.cart
   }
 
-  private clearCart() {
-    this.cart.slice().forEach((item) => {
-      this.$store.commit(REMOVE_CART_ITEM, item)
-    })
-  }
-
   private refreshCart() {
     const currentUser = this.$store.state.currentUser
     if (!currentUser) {
       // Clear the cart on log out / when not logged in
-      this.clearCart()
+      this.$store.dispatch(CLEAR_CART)
       return
     }
     const currentRound = this.$store.state.currentRound
     if (!currentRound) {
-      this.clearCart()
+      this.$store.dispatch(CLEAR_CART)
       return
     }
     // Load cart from local storage
-    const cart = loadCart(currentUser, currentRound.fundingRoundAddress)
-    this.clearCart()
-    for (const item of cart) {
-      this.$store.commit(ADD_CART_ITEM, item)
-    }
+    this.$store.dispatch(LOAD_CART)
   }
 
   private refreshContributor() {
@@ -189,13 +182,7 @@ export default class Cart extends Vue {
       return
     }
     // Load contributor data from local storage
-    const contributor = loadContributorData(
-      currentUser,
-      currentRound.fundingRoundAddress,
-    )
-    if (contributor) {
-      this.$store.commit(SET_CONTRIBUTOR, contributor)
-    }
+    this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
   }
 
   get tokenSymbol(): string {

@@ -54,10 +54,9 @@ import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract, FixedNumber, Signer } from 'ethers'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
-import { saveContributorData } from '@/api/contributions'
 import { RoundInfo } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
-import { LOAD_ROUND_INFO } from '@/store/action-types'
+import { LOAD_ROUND_INFO, SAVE_CONTRIBUTOR_DATA } from '@/store/action-types'
 import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
@@ -155,13 +154,9 @@ export default class ContributionModal extends Vue {
       stateIndex: stateIndex.toNumber(),
     }
     // Save contributor data to storage
-    saveContributorData(
-      this.$store.state.currentUser,
-      fundingRoundAddress,
-      contributor,
-    )
-    // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTOR, contributor)
+    this.$store.dispatch(SAVE_CONTRIBUTOR_DATA)
+    // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTION, total)
     this.$store.dispatch(LOAD_ROUND_INFO)
     // Vote (step 3)

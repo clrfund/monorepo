@@ -7,6 +7,9 @@ import {
   CartItem,
   Contributor,
   saveCart,
+  loadCart,
+  saveContributorData,
+  loadContributorData,
   getContributionAmount,
 } from '@/api/contributions'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
@@ -16,6 +19,10 @@ import {
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   SAVE_CART,
+  CLEAR_CART,
+  LOAD_CART,
+  SAVE_CONTRIBUTOR_DATA,
+  LOAD_CONTRIBUTOR_DATA,
 } from './action-types'
 import {
   SET_CURRENT_USER,
@@ -173,6 +180,37 @@ const actions = {
       state.currentRound.fundingRoundAddress,
       state.cart,
     )
+  },
+  [CLEAR_CART]({ commit, state }) {
+    state.cart.slice().forEach((item) => {
+      commit(REMOVE_CART_ITEM, item)
+    })
+  },
+  [LOAD_CART]({ commit, dispatch, state }) {
+    const cart = loadCart(
+      state.currentUser,
+      state.currentRound.fundingRoundAddress,
+    )
+    dispatch(CLEAR_CART)
+    for (const item of cart) {
+      commit(ADD_CART_ITEM, item)
+    }
+  },
+  [SAVE_CONTRIBUTOR_DATA]({ state }) {
+    saveContributorData(
+      state.currentUser,
+      state.currentRound.fundingRoundAddress,
+      state.contributor,
+    )
+  },
+  [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
+    const contributor = loadContributorData(
+      state.currentUser,
+      state.currentRound.fundingRoundAddress,
+    )
+    if (contributor) {
+      commit(SET_CONTRIBUTOR, contributor)
+    }
   },
 }
 
