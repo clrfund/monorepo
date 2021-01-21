@@ -158,6 +158,7 @@ export default class ContributionModal extends Vue {
     this.$store.dispatch(SAVE_CONTRIBUTOR_DATA)
     // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTION, total)
+    // Reload contribution pool size
     this.$store.dispatch(LOAD_ROUND_INFO)
     // Vote (step 3)
     const messages: Message[] = []

@@ -32,8 +32,17 @@ import { Web3Provider } from '@ethersproject/providers'
 
 import { provider as jsonRpcProvider } from '@/api/core'
 import { User, getProfileImageUrl } from '@/api/user'
-import { LOAD_USER_INFO } from '@/store/action-types'
-import { SET_CURRENT_USER, SET_CONTRIBUTION } from '@/store/mutation-types'
+import {
+  LOAD_USER_INFO,
+  CLEAR_CART,
+  LOAD_CART,
+  LOAD_CONTRIBUTOR_DATA,
+} from '@/store/action-types'
+import {
+  SET_CURRENT_USER,
+  SET_CONTRIBUTION,
+  SET_CONTRIBUTOR,
+} from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 
 const LOGIN_MESSAGE = 'Sign this message to access clr.fund'
@@ -65,6 +74,8 @@ export default class Profile extends Vue {
           // Log out user to prevent interactions with incorrect network
           this.$store.commit(SET_CURRENT_USER, null)
           this.$store.commit(SET_CONTRIBUTION, null)
+          this.$store.commit(SET_CONTRIBUTOR, null)
+          this.$store.dispatch(CLEAR_CART)
         }
       }
     })
@@ -74,6 +85,8 @@ export default class Profile extends Vue {
         // Log out user if wallet account changes
         this.$store.commit(SET_CURRENT_USER, null)
         this.$store.commit(SET_CONTRIBUTION, null)
+        this.$store.commit(SET_CONTRIBUTOR, null)
+        this.$store.dispatch(CLEAR_CART)
       }
       accounts = _accounts
     })
@@ -135,9 +148,15 @@ export default class Profile extends Vue {
       balance: null,
       contribution: null,
     }
+    getProfileImageUrl(user.walletAddress)
+      .then((url) => this.profileImageUrl = url)
     this.$store.commit(SET_CURRENT_USER, user)
-    this.$store.dispatch(LOAD_USER_INFO)
-    this.profileImageUrl = await getProfileImageUrl(user.walletAddress)
+    await this.$store.dispatch(LOAD_USER_INFO)
+    if (this.$store.state.currentRound) {
+      // Load cart & contributor data for current round
+      this.$store.dispatch(LOAD_CART)
+      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    }
   }
 }
 </script>
