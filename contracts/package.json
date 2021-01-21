@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^3.2.0",
-    "maci-contracts": "0.4.11",
+    "maci-contracts": "0.5.4",
     "solidity-rlp": "~2.0.3"
   },
   "devDependencies": {
@@ -40,9 +40,9 @@
     "ethers": "^5.0.17",
     "hardhat": "^2.0.6",
     "ipfs-only-hash": "^2.0.1",
-    "maci-cli": "0.4.11",
-    "maci-crypto": "~0.4.11",
-    "maci-domainobjs": "~0.4.11",
+    "maci-cli": "0.5.4",
+    "maci-crypto": "~0.5.3",
+    "maci-domainobjs": "~0.5.3",
     "solhint": "^3.3.2",
     "ts-generator": "^0.0.8",
     "ts-node": "^8.8.1",
