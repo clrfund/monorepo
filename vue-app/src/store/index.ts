@@ -6,13 +6,16 @@ import {
   MAX_CART_SIZE,
   CartItem,
   Contributor,
-  saveCart,
-  loadCart,
-  saveContributorData,
-  loadContributorData,
+  getCartStorageKey,
+  serializeCart,
+  deserializeCart,
+  getContributorStorageKey,
+  serializeContributorData,
+  deserializeContributorData,
   getContributionAmount,
 } from '@/api/contributions'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
+import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
 import {
@@ -175,10 +178,12 @@ const actions = {
     }
   },
   [SAVE_CART]({ state }) {
-    saveCart(
-      state.currentUser,
-      state.currentRound.fundingRoundAddress,
-      state.cart,
+    const serializedCart = serializeCart(state.cart)
+    storage.setItem(
+      state.currentUser.walletAddress,
+      state.currentUser.encryptionKey,
+      getCartStorageKey(state.currentRound.fundingRoundAddress),
+      serializedCart,
     )
   },
   [CLEAR_CART]({ commit, state }) {
@@ -187,27 +192,33 @@ const actions = {
     })
   },
   [LOAD_CART]({ commit, dispatch, state }) {
-    const cart = loadCart(
-      state.currentUser,
-      state.currentRound.fundingRoundAddress,
+    const data = storage.getItem(
+      state.currentUser.walletAddress,
+      state.currentUser.encryptionKey,
+      getCartStorageKey(state.currentRound.fundingRoundAddress),
     )
+    const cart = deserializeCart(data)
     dispatch(CLEAR_CART)
     for (const item of cart) {
       commit(ADD_CART_ITEM, item)
     }
   },
   [SAVE_CONTRIBUTOR_DATA]({ state }) {
-    saveContributorData(
-      state.currentUser,
-      state.currentRound.fundingRoundAddress,
-      state.contributor,
+    const serializedData = serializeContributorData(state.contributor)
+    storage.setItem(
+      state.currentUser.walletAddress,
+      state.currentUser.encryptionKey,
+      getContributorStorageKey(state.currentRound.fundingRoundAddress),
+      serializedData,
     )
   },
   [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
-    const contributor = loadContributorData(
-      state.currentUser,
-      state.currentRound.fundingRoundAddress,
+    const data = storage.getItem(
+      state.currentUser.walletAddress,
+      state.currentUser.encryptionKey,
+      getContributorStorageKey(state.currentRound.fundingRoundAddress),
     )
+    const contributor = deserializeContributorData(data)
     if (contributor) {
       commit(SET_CONTRIBUTOR, contributor)
     }

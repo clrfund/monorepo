@@ -5,8 +5,6 @@ import { Keypair, PrivKey } from 'maci-domainobjs'
 import { FundingRound } from './abi'
 import { provider } from './core'
 import { Project } from './projects'
-import { storage } from './storage'
-import { User } from './user'
 
 export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
@@ -24,73 +22,38 @@ export interface Contributor {
   stateIndex: number;
 }
 
-function getCartStorageKey(roundAddress: string): string {
+export function getCartStorageKey(roundAddress: string): string {
   return `cart-${roundAddress.toLowerCase()}`
 }
 
-function getContributorStorageKey(roundAddress: string): string {
+export function getContributorStorageKey(roundAddress: string): string {
   return `contributor-${roundAddress.toLowerCase()}`
 }
 
-export function saveCart(
-  user: User,
-  roundAddress: string,
-  cart: CartItem[],
-) {
-  storage.setItem(
-    user.walletAddress,
-    user.encryptionKey,
-    getCartStorageKey(roundAddress),
-    JSON.stringify(cart),
-  )
+export function serializeCart(cart: CartItem[]): string {
+  return JSON.stringify(cart)
 }
 
-export function loadCart(
-  user: User,
-  roundAddress: string,
-): CartItem[] {
-  const serializedData = storage.getItem(
-    user.walletAddress,
-    user.encryptionKey,
-    getCartStorageKey(roundAddress),
-  )
-  if (serializedData) {
-    return JSON.parse(serializedData)
+export function deserializeCart(data: string | null): CartItem[] {
+  if (data) {
+    return JSON.parse(data)
   } else {
     return []
   }
 }
 
-export function saveContributorData(
-  user: User,
-  roundAddress: string,
-  contributor: Contributor,
-) {
-  const serializedData = JSON.stringify({
+export function serializeContributorData(contributor: Contributor): string {
+  return JSON.stringify({
     privateKey: contributor.keypair.privKey.serialize(),
     stateIndex: contributor.stateIndex,
   })
-  storage.setItem(
-    user.walletAddress,
-    user.encryptionKey,
-    getContributorStorageKey(roundAddress),
-    serializedData,
-  )
 }
 
-export function loadContributorData(
-  user: User,
-  roundAddress: string,
-): Contributor | null {
-  const serializedData = storage.getItem(
-    user.walletAddress,
-    user.encryptionKey,
-    getContributorStorageKey(roundAddress),
-  )
-  if (serializedData) {
-    const data = JSON.parse(serializedData)
-    const keypair = new Keypair(PrivKey.unserialize(data.privateKey))
-    return { keypair, stateIndex: data.stateIndex }
+export function deserializeContributorData(data: string | null): Contributor | null {
+  if (data) {
+    const parsed = JSON.parse(data)
+    const keypair = new Keypair(PrivKey.unserialize(parsed.privateKey))
+    return { keypair, stateIndex: parsed.stateIndex }
   } else {
     return null
   }
