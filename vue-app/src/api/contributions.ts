@@ -24,8 +24,13 @@ export interface Contributor {
   stateIndex: number;
 }
 
-const CART_STORAGE_KEY = 'cart'
-const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
+function getCartStorageKey(roundAddress: string): string {
+  return `cart-${roundAddress.toLowerCase()}`
+}
+
+function getContributorStorageKey(roundAddress: string): string {
+  return `contributor-${roundAddress.toLowerCase()}`
+}
 
 export function saveCart(
   user: User,
@@ -35,8 +40,7 @@ export function saveCart(
   storage.setItem(
     user.walletAddress,
     user.encryptionKey,
-    roundAddress,
-    CART_STORAGE_KEY,
+    getCartStorageKey(roundAddress),
     JSON.stringify(cart),
   )
 }
@@ -48,8 +52,7 @@ export function loadCart(
   const serializedData = storage.getItem(
     user.walletAddress,
     user.encryptionKey,
-    roundAddress,
-    CART_STORAGE_KEY,
+    getCartStorageKey(roundAddress),
   )
   if (serializedData) {
     return JSON.parse(serializedData)
@@ -70,8 +73,7 @@ export function saveContributorData(
   storage.setItem(
     user.walletAddress,
     user.encryptionKey,
-    roundAddress,
-    CONTRIBUTOR_INFO_STORAGE_KEY,
+    getContributorStorageKey(roundAddress),
     serializedData,
   )
 }
@@ -83,8 +85,7 @@ export function loadContributorData(
   const serializedData = storage.getItem(
     user.walletAddress,
     user.encryptionKey,
-    roundAddress,
-    CONTRIBUTOR_INFO_STORAGE_KEY,
+    getContributorStorageKey(roundAddress),
   )
   if (serializedData) {
     const data = JSON.parse(serializedData)
