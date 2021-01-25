@@ -80,7 +80,9 @@ import {
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   LOAD_CART,
+  UNWATCH_CART,
   LOAD_CONTRIBUTOR_DATA,
+  UNWATCH_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import { SET_CURRENT_ROUND_ADDRESS } from '@/store/mutation-types'
 
@@ -123,6 +125,8 @@ export default class ProjectList extends Vue {
     const roundAddress = this.$route.params.address || null
     if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
       // Change current round and reload round info
+      this.$store.dispatch(UNWATCH_CART)
+      this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
       this.$store.commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
       ;(async () => {
         await this.$store.dispatch(LOAD_ROUND_INFO)

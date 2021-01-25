@@ -61,3 +61,16 @@ export async function getValue(key: string): Promise<string | null> {
     })
   })
 }
+
+export function watch(
+  key: string,
+  callback: (value: string | null) => any,
+): void {
+  user.get('data').get(key).on((value) => {
+    callback(value)
+  })
+}
+
+export function unwatch(key: string): void {
+  user.get('data').get(key).off()
+}
