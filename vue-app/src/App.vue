@@ -48,7 +48,9 @@ import {
   LOAD_USER_INFO,
   LOAD_ROUND_INFO,
   LOAD_CART,
+  UNWATCH_CART,
   LOAD_CONTRIBUTOR_DATA,
+  UNWATCH_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 
 @Component({
@@ -77,6 +79,8 @@ export default class App extends Vue {
     if (this.$store.state.currentRoundAddress === null) {
       // Set round address on init, but only if necessary.
       // ProjectList component could have already set it.
+      this.$store.dispatch(UNWATCH_CART)
+      this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
       this.$store.commit(SET_CURRENT_ROUND_ADDRESS, currentRoundAddress)
       ;(async () => {
         await this.$store.dispatch(LOAD_ROUND_INFO)

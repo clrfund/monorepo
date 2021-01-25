@@ -1,5 +1,5 @@
 import { sha256, encrypt, decrypt } from '@/utils/crypto'
-import { setValue, getValue } from './gun'
+import { setValue, getValue, watch, unwatch } from './gun'
 
 function getFullStorageKey(
   accountId: string,
@@ -31,4 +31,25 @@ async function getItem(
   return value
 }
 
-export const storage = { setItem, getItem }
+function watchItem(
+  accountId: string,
+  encryptionKey: string,
+  storageKey: string,
+  callback: (value: string | null) => any,
+) {
+  const fullStorageKey = getFullStorageKey(accountId, storageKey)
+  watch(fullStorageKey, (encryptedValue) => {
+    const value = encryptedValue ? decrypt(encryptedValue, encryptionKey) : null
+    callback(value)
+  })
+}
+
+function unwatchItem(
+  accountId: string,
+  storageKey: string,
+): void {
+  const fullStorageKey = getFullStorageKey(accountId, storageKey)
+  unwatch(fullStorageKey)
+}
+
+export const storage = { setItem, getItem, watchItem, unwatchItem }

@@ -25,8 +25,10 @@ import {
   SAVE_CART,
   CLEAR_CART,
   LOAD_CART,
+  UNWATCH_CART,
   SAVE_CONTRIBUTOR_DATA,
   LOAD_CONTRIBUTOR_DATA,
+  UNWATCH_CONTRIBUTOR_DATA,
   LOGIN_USER,
   LOGOUT_USER,
 } from './action-types'
@@ -194,17 +196,28 @@ const actions = {
       commit(REMOVE_CART_ITEM, item)
     })
   },
-  async [LOAD_CART]({ commit, dispatch, state }) {
-    const data = await storage.getItem(
+  [LOAD_CART]({ commit, dispatch, state }) {
+    storage.watchItem(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
       getCartStorageKey(state.currentRound.fundingRoundAddress),
+      (data: string | null) => {
+        const cart = deserializeCart(data)
+        dispatch(CLEAR_CART)
+        for (const item of cart) {
+          commit(ADD_CART_ITEM, item)
+        }
+      },
     )
-    const cart = deserializeCart(data)
-    dispatch(CLEAR_CART)
-    for (const item of cart) {
-      commit(ADD_CART_ITEM, item)
+  },
+  [UNWATCH_CART]({ state }) {
+    if (!state.currentUser || !state.currentRound) {
+      return
     }
+    storage.unwatchItem(
+      state.currentUser.walletAddress,
+      getCartStorageKey(state.currentRound.fundingRoundAddress),
+    )
   },
   [SAVE_CONTRIBUTOR_DATA]({ state }) {
     const serializedData = serializeContributorData(state.contributor)
@@ -215,16 +228,27 @@ const actions = {
       serializedData,
     )
   },
-  async [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
-    const data = await storage.getItem(
+  [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
+    storage.watchItem(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
       getContributorStorageKey(state.currentRound.fundingRoundAddress),
+      (data: string | null) => {
+        const contributor = deserializeContributorData(data)
+        if (contributor) {
+          commit(SET_CONTRIBUTOR, contributor)
+        }
+      },
     )
-    const contributor = deserializeContributorData(data)
-    if (contributor) {
-      commit(SET_CONTRIBUTOR, contributor)
+  },
+  [UNWATCH_CONTRIBUTOR_DATA]({ state }) {
+    if (!state.currentUser || !state.currentRound) {
+      return
     }
+    storage.unwatchItem(
+      state.currentUser.walletAddress,
+      getContributorStorageKey(state.currentRound.fundingRoundAddress),
+    )
   },
   async [LOGIN_USER]({ state }) {
     await loginUser(
