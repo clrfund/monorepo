@@ -1,6 +1,7 @@
 <template>
   <div class="profile">
     <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
+    <template v-else-if="!isLoaded()"></template>
     <div
       v-else-if="walletProvider && !isCorrectNetwork()"
       class="provider-error"
@@ -41,7 +42,7 @@ const LOGIN_MESSAGE = 'Sign this message to access clr.fund'
 export default class Profile extends Vue {
 
   private jsonRpcNetwork: Network | null = null
-  private walletChainId = '0xNaN'
+  private walletChainId: string | null = null
   profileImageUrl: string | null = null
 
   get walletProvider(): any {
@@ -52,11 +53,11 @@ export default class Profile extends Vue {
     return this.$store.state.currentUser
   }
 
-  mounted() {
+  async mounted() {
     if (!this.walletProvider) {
       return
     }
-    this.walletChainId = this.walletProvider.chainId
+    this.walletChainId = await this.walletProvider.request({ method: 'eth_chainId' })
     this.walletProvider.on('chainChanged', (_chainId: string) => {
       if (_chainId !== this.walletChainId) {
         this.walletChainId = _chainId
@@ -76,16 +77,20 @@ export default class Profile extends Vue {
       }
       accounts = _accounts
     })
-    this.getJsonRpcNetwork()
-  }
-
-  async getJsonRpcNetwork() {
     this.jsonRpcNetwork = await jsonRpcProvider.getNetwork()
   }
 
+  isLoaded(): boolean {
+    return this.jsonRpcNetwork !== null && this.walletChainId !== null
+  }
+
   isCorrectNetwork(): boolean {
-    if (this.jsonRpcNetwork === null || this.walletChainId === '0xNaN') {
-      // Skip check if loading or if on devnet
+    if (this.jsonRpcNetwork === null || this.walletChainId === null) {
+      // Still loading
+      return false
+    }
+    if (this.walletChainId === '0xNaN') {
+      // Devnet
       return true
     }
     return this.jsonRpcNetwork.chainId === parseInt(this.walletChainId, 16)
