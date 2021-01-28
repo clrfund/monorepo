@@ -4,6 +4,8 @@ import Gun from 'gun/gun'
 import 'gun/sea'
 
 import { gunApiUrl } from './core'
+import { LOGIN_MESSAGE } from './user'
+import { md5 } from '@/utils/crypto'
 
 interface GunSchema {
   data: { [key: string]: string };
@@ -18,10 +20,14 @@ const user = db.user() as any
 
 export async function loginUser(
   accountId: string,
-  passKey: string,
+  encryptionKey: string,
 ): Promise<void> {
+  // GunDB needs username and password to create a key pair.
+  // The user name is md5 hash of account ID and login message
+  const username = md5(`${accountId.toLowerCase()}-${LOGIN_MESSAGE}`)
+  const password = encryptionKey
   await new Promise((resolve, reject) => {
-    user.create(accountId.toLowerCase(), passKey, (ack) => {
+    user.create(username, password, (ack) => {
       if (ack.ok === 0 || ack.err === 'User already created!') {
         resolve()
       } else {
@@ -30,7 +36,7 @@ export async function loginUser(
     })
   })
   await new Promise((resolve, reject) => {
-    user.auth(accountId.toLowerCase(), passKey, (ack) => {
+    user.auth(username, password, (ack) => {
       if (ack.err) {
         reject()
       } else {

@@ -31,7 +31,7 @@ import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 
 import { provider as jsonRpcProvider } from '@/api/core'
-import { User, getProfileImageUrl } from '@/api/user'
+import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import {
   LOAD_USER_INFO,
   CLEAR_CART,
@@ -48,8 +48,6 @@ import {
   SET_CONTRIBUTOR,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
-
-const LOGIN_MESSAGE = 'Sign this message to access clr.fund'
 
 @Component
 export default class Profile extends Vue {
@@ -161,10 +159,10 @@ export default class Profile extends Vue {
     getProfileImageUrl(user.walletAddress)
       .then((url) => this.profileImageUrl = url)
     this.$store.commit(SET_CURRENT_USER, user)
-    await this.$store.dispatch(LOAD_USER_INFO)
     await this.$store.dispatch(LOGIN_USER)
     if (this.$store.state.currentRound) {
       // Load cart & contributor data for current round
+      await this.$store.dispatch(LOAD_USER_INFO)
       this.$store.dispatch(LOAD_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
     }
