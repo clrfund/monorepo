@@ -1,7 +1,6 @@
 export const LOAD_ROUND_INFO = 'LOAD_ROUND_INFO'
 export const LOAD_USER_INFO = 'LOAD_USER_INFO'
 export const SAVE_CART = 'SAVE_CART'
-export const CLEAR_CART = 'CLEAR_CART'
 export const LOAD_CART = 'LOAD_CART'
 export const UNWATCH_CART = 'UNWATCH_CART'
 export const SAVE_CONTRIBUTOR_DATA = 'SAVE_CONTRIBUTOR_DATA'

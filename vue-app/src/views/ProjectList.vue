@@ -132,7 +132,7 @@ export default class ProjectList extends Vue {
         await this.$store.dispatch(LOAD_ROUND_INFO)
         if (this.$store.state.currentUser) {
           // Reload user data when switching between rounds
-          await this.$store.dispatch(LOAD_USER_INFO)
+          this.$store.dispatch(LOAD_USER_INFO)
           this.$store.dispatch(LOAD_CART)
           this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
         }
