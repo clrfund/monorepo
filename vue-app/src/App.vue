@@ -86,7 +86,7 @@ export default class App extends Vue {
         await this.$store.dispatch(LOAD_ROUND_INFO)
         if (this.$store.state.currentUser) {
           // Load user data if already logged in
-          await this.$store.dispatch(LOAD_USER_INFO)
+          this.$store.dispatch(LOAD_USER_INFO)
           this.$store.dispatch(LOAD_CART)
           this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
         }

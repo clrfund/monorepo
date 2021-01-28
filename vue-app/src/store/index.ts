@@ -23,7 +23,6 @@ import {
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   SAVE_CART,
-  CLEAR_CART,
   LOAD_CART,
   UNWATCH_CART,
   SAVE_CONTRIBUTOR_DATA,
@@ -42,6 +41,7 @@ import {
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
+  CLEAR_CART,
 } from './mutation-types'
 
 Vue.use(Vuex)
@@ -126,10 +126,7 @@ export const mutations = {
     if (itemIndex === -1) {
       throw new Error('item is not in the cart')
     } else if (state.contribution === null) {
-      // TODO: the contribution is null when the cart is being cleared after logout
-      // so this operation should be allowed. Looking for a better solution.
-      // throw new Error('invalid operation')
-      state.cart.splice(itemIndex, 1)
+      throw new Error('invalid operation')
     } else if (state.contribution.isZero() || state.cart.length > MAX_CART_SIZE) {
       state.cart.splice(itemIndex, 1)
     } else {
@@ -137,6 +134,9 @@ export const mutations = {
       // so we just clear contribution amount and mark item with a flag
       Vue.set(state.cart, itemIndex, { ...removedItem, amount: '0', isCleared: true })
     }
+  },
+  [CLEAR_CART](state) {
+    state.cart = []
   },
 }
 
@@ -191,19 +191,14 @@ const actions = {
       serializedCart,
     )
   },
-  [CLEAR_CART]({ commit, state }) {
-    state.cart.slice().forEach((item) => {
-      commit(REMOVE_CART_ITEM, item)
-    })
-  },
-  [LOAD_CART]({ commit, dispatch, state }) {
+  [LOAD_CART]({ commit, state }) {
     storage.watchItem(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
       getCartStorageKey(state.currentRound.fundingRoundAddress),
       (data: string | null) => {
         const cart = deserializeCart(data)
-        dispatch(CLEAR_CART)
+        commit(CLEAR_CART)
         for (const item of cart) {
           commit(ADD_CART_ITEM, item)
         }

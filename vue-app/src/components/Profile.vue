@@ -34,7 +34,6 @@ import { provider as jsonRpcProvider } from '@/api/core'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import {
   LOAD_USER_INFO,
-  CLEAR_CART,
   LOAD_CART,
   UNWATCH_CART,
   LOAD_CONTRIBUTOR_DATA,
@@ -46,6 +45,7 @@ import {
   SET_CURRENT_USER,
   SET_CONTRIBUTION,
   SET_CONTRIBUTOR,
+  CLEAR_CART,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 
@@ -80,7 +80,7 @@ export default class Profile extends Vue {
           this.$store.commit(SET_CURRENT_USER, null)
           this.$store.commit(SET_CONTRIBUTION, null)
           this.$store.commit(SET_CONTRIBUTOR, null)
-          this.$store.dispatch(CLEAR_CART)
+          this.$store.commit(CLEAR_CART)
         }
       }
     })
@@ -94,7 +94,7 @@ export default class Profile extends Vue {
         this.$store.commit(SET_CURRENT_USER, null)
         this.$store.commit(SET_CONTRIBUTION, null)
         this.$store.commit(SET_CONTRIBUTOR, null)
-        this.$store.dispatch(CLEAR_CART)
+        this.$store.commit(CLEAR_CART)
       }
       accounts = _accounts
     })
@@ -162,7 +162,7 @@ export default class Profile extends Vue {
     await this.$store.dispatch(LOGIN_USER)
     if (this.$store.state.currentRound) {
       // Load cart & contributor data for current round
-      await this.$store.dispatch(LOAD_USER_INFO)
+      this.$store.dispatch(LOAD_USER_INFO)
       this.$store.dispatch(LOAD_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
     }
