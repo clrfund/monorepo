@@ -109,7 +109,10 @@ export const mutations = {
     if (itemIndex === -1) {
       throw new Error('item is not in the cart')
     } else if (state.contribution === null) {
-      throw new Error('invalid operation')
+      // TODO: the contribution is null when the cart is being cleared after logout
+      // so this operation should be allowed. Looking for a better solution.
+      // throw new Error('invalid operation')
+      state.cart.splice(itemIndex, 1)
     } else if (state.contribution.isZero() || state.cart.length > MAX_CART_SIZE) {
       state.cart.splice(itemIndex, 1)
     } else {
