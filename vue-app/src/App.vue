@@ -321,7 +321,6 @@ a {
     z-index: 2;
 
     .logo {
-      height: $nav-header-height-sm;
       margin: 0 auto;
     }
 
@@ -352,6 +351,7 @@ a {
 
   #nav-header {
     display: flex;
+    height: $nav-header-height-sm;
   }
 
   #content {
