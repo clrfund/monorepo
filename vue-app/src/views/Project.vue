@@ -289,5 +289,6 @@ export default class ProjectView extends Vue {
 .project-description {
   font-size: 20px;
   line-height: 30px;
+  word-wrap: break-word;
 }
 </style>
