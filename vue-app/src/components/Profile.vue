@@ -176,7 +176,6 @@ export default class Profile extends Vue {
 
 .profile {
   align-items: center;
-  background-color: #23212f;
   display: flex;
   height: $profile-image-size;
   justify-content: center;
