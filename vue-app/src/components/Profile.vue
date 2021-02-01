@@ -31,12 +31,23 @@ import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 
 import { provider as jsonRpcProvider } from '@/api/core'
-import { User, getProfileImageUrl } from '@/api/user'
-import { LOAD_USER_INFO } from '@/store/action-types'
-import { SET_CURRENT_USER, SET_CONTRIBUTION } from '@/store/mutation-types'
+import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
+import {
+  LOAD_USER_INFO,
+  LOAD_CART,
+  UNWATCH_CART,
+  LOAD_CONTRIBUTOR_DATA,
+  UNWATCH_CONTRIBUTOR_DATA,
+  LOGIN_USER,
+  LOGOUT_USER,
+} from '@/store/action-types'
+import {
+  SET_CURRENT_USER,
+  SET_CONTRIBUTION,
+  SET_CONTRIBUTOR,
+  CLEAR_CART,
+} from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
-
-const LOGIN_MESSAGE = 'Sign this message to access clr.fund'
 
 @Component
 export default class Profile extends Vue {
@@ -63,8 +74,13 @@ export default class Profile extends Vue {
         this.walletChainId = _chainId
         if (this.currentUser) {
           // Log out user to prevent interactions with incorrect network
+          this.$store.dispatch(UNWATCH_CART)
+          this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
+          this.$store.dispatch(LOGOUT_USER)
           this.$store.commit(SET_CURRENT_USER, null)
           this.$store.commit(SET_CONTRIBUTION, null)
+          this.$store.commit(SET_CONTRIBUTOR, null)
+          this.$store.commit(CLEAR_CART)
         }
       }
     })
@@ -72,8 +88,13 @@ export default class Profile extends Vue {
     this.walletProvider.on('accountsChanged', (_accounts: string[]) => {
       if (_accounts !== accounts) {
         // Log out user if wallet account changes
+        this.$store.dispatch(UNWATCH_CART)
+        this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
+        this.$store.dispatch(LOGOUT_USER)
         this.$store.commit(SET_CURRENT_USER, null)
         this.$store.commit(SET_CONTRIBUTION, null)
+        this.$store.commit(SET_CONTRIBUTOR, null)
+        this.$store.commit(CLEAR_CART)
       }
       accounts = _accounts
     })
@@ -135,9 +156,16 @@ export default class Profile extends Vue {
       balance: null,
       contribution: null,
     }
+    getProfileImageUrl(user.walletAddress)
+      .then((url) => this.profileImageUrl = url)
     this.$store.commit(SET_CURRENT_USER, user)
-    this.$store.dispatch(LOAD_USER_INFO)
-    this.profileImageUrl = await getProfileImageUrl(user.walletAddress)
+    await this.$store.dispatch(LOGIN_USER)
+    if (this.$store.state.currentRound) {
+      // Load cart & contributor data for current round
+      this.$store.dispatch(LOAD_USER_INFO)
+      this.$store.dispatch(LOAD_CART)
+      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    }
   }
 }
 </script>

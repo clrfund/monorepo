@@ -86,160 +86,28 @@ import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
-import { Keypair, PrivKey } from 'maci-domainobjs'
 
 import BrightIdModal from '@/components/BrightIdModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 
-import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, CartItem, Contributor } from '@/api/contributions'
+import {
+  MAX_CONTRIBUTION_AMOUNT,
+  MAX_CART_SIZE,
+  CartItem,
+} from '@/api/contributions'
 import { userRegistryType } from '@/api/core'
 import { RoundStatus } from '@/api/round'
-import { storage } from '@/api/storage'
-import { User } from '@/api/user'
-import { LOAD_USER_INFO } from '@/store/action-types'
-import {
-  SET_CONTRIBUTOR,
-  ADD_CART_ITEM,
-  UPDATE_CART_ITEM,
-  REMOVE_CART_ITEM,
-} from '@/store/mutation-types'
+import { SAVE_CART } from '@/store/action-types'
+import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 
-const CART_STORAGE_KEY = 'cart'
-const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
-
-function loadContributorInfo(
-  fundingRoundAddress: string,
-  user: User,
-): Contributor | null {
-  const serializedData = storage.getItem(
-    user.walletAddress,
-    user.encryptionKey,
-    fundingRoundAddress,
-    CONTRIBUTOR_INFO_STORAGE_KEY,
-  )
-  if (serializedData) {
-    const data = JSON.parse(serializedData)
-    const keypair = new Keypair(PrivKey.unserialize(data.privateKey))
-    return { keypair, stateIndex: data.stateIndex }
-  } else {
-    return null
-  }
-}
-
-@Component({
-  watch: {
-    cart(items: CartItem[]) {
-      const currentUser = this.$store.state.currentUser
-      const currentRound = this.$store.state.currentRound
-      if (!currentUser || !currentRound) {
-        return
-      }
-      // Save cart to local storage on changes
-      storage.setItem(
-        currentUser.walletAddress,
-        currentUser.encryptionKey,
-        currentRound.fundingRoundAddress,
-        CART_STORAGE_KEY,
-        JSON.stringify(items),
-      )
-    },
-  },
-})
+@Component
 export default class Cart extends Vue {
-
-  mounted() {
-    // Reload cart when wallet account or round changes
-    this.$store.watch(
-      (state) => {
-        return (
-          state.currentUser?.walletAddress +
-          state.currentRound?.fundingRoundAddress
-        )
-      },
-      this.refreshCart,
-    )
-    this.refreshCart()
-
-    // Reload contributor info if wallet account of round changes
-    this.$store.watch(
-      (state) => {
-        return (
-          state.currentUser?.walletAddress +
-          state.currentRound?.fundingRoundAddress
-        )
-      },
-      this.refreshContributor,
-    )
-    this.refreshContributor()
-
-    // Reload user info when round info loads or changes
-    this.$store.watch(
-      (state) => state.currentRound?.fundingRoundAddress,
-      () => {
-        this.$store.dispatch(LOAD_USER_INFO)
-      },
-    )
-  }
 
   private get cart(): CartItem[] {
     return this.$store.state.cart
-  }
-
-  private clearCart() {
-    this.cart.slice().forEach((item) => {
-      this.$store.commit(REMOVE_CART_ITEM, item)
-    })
-  }
-
-  private refreshCart() {
-    const currentUser = this.$store.state.currentUser
-    if (!currentUser) {
-      // Clear the cart on log out / when not logged in
-      this.clearCart()
-      return
-    }
-    const currentRound = this.$store.state.currentRound
-    if (!currentRound) {
-      this.clearCart()
-      return
-    }
-    // Load cart from local storage
-    const serializedCart = storage.getItem(
-      currentUser.walletAddress,
-      currentUser.encryptionKey,
-      currentRound.fundingRoundAddress,
-      CART_STORAGE_KEY,
-    )
-    if (serializedCart) {
-      this.clearCart()
-      for (const item of JSON.parse(serializedCart)) {
-        this.$store.commit(ADD_CART_ITEM, item)
-      }
-    }
-  }
-
-  private refreshContributor() {
-    const currentUser = this.$store.state.currentUser
-    if (!currentUser) {
-      // Reset contributor no log out / when not logged in
-      this.$store.commit(SET_CONTRIBUTOR, null)
-      return
-    }
-    const currentRound = this.$store.state.currentRound
-    if (!currentRound) {
-      return
-    }
-    // Load contributor info from local storage
-    const contributor = loadContributorInfo(
-      currentRound.fundingRoundAddress,
-      currentUser,
-    )
-    if (contributor) {
-      this.$store.commit(SET_CONTRIBUTOR, contributor)
-    }
   }
 
   get tokenSymbol(): string {
@@ -297,6 +165,7 @@ export default class Cart extends Vue {
 
   updateAmount(item: CartItem, amount: string) {
     this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
+    this.$store.dispatch(SAVE_CART)
   }
 
   canRemoveItem(): boolean {
@@ -306,6 +175,7 @@ export default class Cart extends Vue {
 
   removeItem(item: CartItem) {
     this.$store.commit(REMOVE_CART_ITEM, item)
+    this.$store.dispatch(SAVE_CART)
   }
 
   canSubmit(): boolean {

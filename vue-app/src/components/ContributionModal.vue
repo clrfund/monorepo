@@ -54,37 +54,14 @@ import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract, FixedNumber, Signer } from 'ethers'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
-import { Contributor } from '@/api/contributions'
 import { RoundInfo } from '@/api/round'
-import { storage } from '@/api/storage'
-import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
-import { LOAD_ROUND_INFO } from '@/store/action-types'
+import { LOAD_ROUND_INFO, SAVE_CONTRIBUTOR_DATA } from '@/store/action-types'
 import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
 import { FundingRound, ERC20, MACI } from '@/api/abi'
-
-const CONTRIBUTOR_INFO_STORAGE_KEY = 'contributor-info'
-
-function saveContributorInfo(
-  fundingRoundAddress: string,
-  user: User,
-  contributor: Contributor,
-) {
-  const serializedData = JSON.stringify({
-    privateKey: contributor.keypair.privKey.serialize(),
-    stateIndex: contributor.stateIndex,
-  })
-  storage.setItem(
-    user.walletAddress,
-    user.encryptionKey,
-    fundingRoundAddress,
-    CONTRIBUTOR_INFO_STORAGE_KEY,
-    serializedData,
-  )
-}
 
 @Component({
   components: {
@@ -176,15 +153,12 @@ export default class ContributionModal extends Vue {
       keypair: contributorKeypair,
       stateIndex: stateIndex.toNumber(),
     }
-    // Save contributor info to storage
-    saveContributorInfo(
-      fundingRoundAddress,
-      this.$store.state.currentUser,
-      contributor,
-    )
-    // Set contribution and update round info
+    // Save contributor data to storage
     this.$store.commit(SET_CONTRIBUTOR, contributor)
+    this.$store.dispatch(SAVE_CONTRIBUTOR_DATA)
+    // Set contribution and update round info
     this.$store.commit(SET_CONTRIBUTION, total)
+    // Reload contribution pool size
     this.$store.dispatch(LOAD_ROUND_INFO)
     // Vote (step 3)
     const messages: Message[] = []

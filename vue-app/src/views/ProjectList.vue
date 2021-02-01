@@ -76,7 +76,14 @@ import { Project, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
-import { LOAD_ROUND_INFO } from '@/store/action-types'
+import {
+  LOAD_ROUND_INFO,
+  LOAD_USER_INFO,
+  LOAD_CART,
+  UNWATCH_CART,
+  LOAD_CONTRIBUTOR_DATA,
+  UNWATCH_CONTRIBUTOR_DATA,
+} from '@/store/action-types'
 import { SET_CURRENT_ROUND_ADDRESS } from '@/store/mutation-types'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
@@ -118,8 +125,18 @@ export default class ProjectList extends Vue {
     const roundAddress = this.$route.params.address || null
     if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
       // Change current round and reload round info
+      this.$store.dispatch(UNWATCH_CART)
+      this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
       this.$store.commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
-      this.$store.dispatch(LOAD_ROUND_INFO)
+      ;(async () => {
+        await this.$store.dispatch(LOAD_ROUND_INFO)
+        if (this.$store.state.currentUser) {
+          // Reload user data when switching between rounds
+          this.$store.dispatch(LOAD_USER_INFO)
+          this.$store.dispatch(LOAD_CART)
+          this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+        }
+      })()
     }
 
     // Wait for round info to load and get project list
@@ -167,6 +184,7 @@ export default class ProjectList extends Vue {
       { },
       {
         closed: () => {
+          // Reload matching pool size
           this.$store.dispatch(LOAD_ROUND_INFO)
         },
       },

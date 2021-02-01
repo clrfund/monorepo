@@ -1,6 +1,6 @@
 import { BigNumber, Contract, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { Keypair } from 'maci-domainobjs'
+import { Keypair, PrivKey } from 'maci-domainobjs'
 
 import { FundingRound } from './abi'
 import { provider } from './core'
@@ -20,6 +20,43 @@ export interface CartItem extends Project {
 export interface Contributor {
   keypair: Keypair;
   stateIndex: number;
+}
+
+export function getCartStorageKey(roundAddress: string): string {
+  return `cart-${roundAddress.toLowerCase()}`
+}
+
+export function getContributorStorageKey(roundAddress: string): string {
+  return `contributor-${roundAddress.toLowerCase()}`
+}
+
+export function serializeCart(cart: CartItem[]): string {
+  return JSON.stringify(cart)
+}
+
+export function deserializeCart(data: string | null): CartItem[] {
+  if (data) {
+    return JSON.parse(data)
+  } else {
+    return []
+  }
+}
+
+export function serializeContributorData(contributor: Contributor): string {
+  return JSON.stringify({
+    privateKey: contributor.keypair.privKey.serialize(),
+    stateIndex: contributor.stateIndex,
+  })
+}
+
+export function deserializeContributorData(data: string | null): Contributor | null {
+  if (data) {
+    const parsed = JSON.parse(data)
+    const keypair = new Keypair(PrivKey.unserialize(parsed.privateKey))
+    return { keypair, stateIndex: parsed.stateIndex }
+  } else {
+    return null
+  }
 }
 
 export async function getContributionAmount(
