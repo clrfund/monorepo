@@ -23,6 +23,8 @@
 
     <h2>What's under the hood?</h2>
     <p>ETHDenver's Quadratic Funding round is powered by <a href="https://clr.fund" target="_blank" rel="noopener">clr.fund</a>, a QF protocol built on Ethereum using Zero Knowledge Proofs (courtesy of the <a href="https://github.com/appliedzkp/maci" target="_blank" rel="noopener">MACI</a>).</p>
+    <p>Clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community. Clr.fund strives for credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity.</p>
+    <p>Want to learn more or contribute? Check out the <a href="https://forumclr.fund" target="_blank" rel="noopener">clr.fund forum</a> or <a href="https://t.me/clrfund" target="_blank" rel="noopener">Telegram group</a>.</p>
   </div>
 </template>
 
