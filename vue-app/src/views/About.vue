@@ -2,24 +2,27 @@
   <div class="about">
     <h1 class="content-heading">About</h1>
 
-    <h2>What is clr.fund?</h2>
-    <p>Clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community. Clr.fund strives for credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity.</p>
-
-    <h2>Why does clr.fund exist?</h2>
-    <p> Allocating funds towards public goods — commodities or services that deliver a net benefit even when they cannot be sold —  is a challenge for any ecosystem, and Ethereum is no exception.</p>
-    <p>Clr.fund’s goal is to enable funds to be allocated towards public goods that benefit the Ethereum Network without relying on centralized entities and in a way that reflects the preferences of the Ethereum Community.</p>
-    <p>See the <a href="https://github.com/clrfund/constitution" target="_blank" rel="noopener">Clr.fund Constitution</a> for more detail on Clr.fund’s goals and values.</p>
+    <h2>What is this?</h2>
+    <p>A first for ETHDenver, the Open Track prizes will be distributed via Quadratic Funding (wtf it qf? Learn more at <a href="https://wtfisqf.com" target="_blank" rel="noopener">wtfisqf.com</a>).</p>
 
     <h2>How does it work?</h2>
-    <p>The clr.fund protocol uses the <a href="https://blogchains.org/wp-content/uploads/sites/4/2019/04/SSRN-id3243656.pdf" target="_blank" rel="noopener">Constrained Liberal Radicalism (CLR)</a> algorithm, commonly called quadratic funding (QF), to facilitate monetary contributions from members of the Ethereum Community towards builders of Ethereum public goods.
-    <p>With its logic encoded into Ethereum smart contracts and other web3 technologies, clr.fund requires minimal trust in any individual people or entities to function and is resilient to collusion and bribery.</p>
+    <p>The top 20 projects, as selected by the judges, will progress to the quadratic funding round and be given the opportunity to present on stage.</p>
+    <p>Celebrity judges and Round 1 judges will allocate prize funding to their favorite projects with ETHDenver contributing matching funds quadratically.</p>
 
-    <p>At a high-level, clr.fund consists of a matching pool and a funding round. Philanthropic individuals or organisations contribute to the matching pool so as to have those funds efficiently allocated according to community preference. Users contribute directly to projects they value and, in doing so, earn a share of the matching pool for the projects, along with their contribution. Effectively increasing the value of their contribution.</p>
+    <h2>Can I judge?</h2>
+    <p>Of course!</p>
+    <p>All ETHDenver attendees who vote on how the matching pool should be allocated by contributing xDai to their favorite projects. Just make sure to log in with the Ethereum address you provided in the ETHDenver signup form.</p>
 
-    <p>Under the hood, clr.fund uses zero-knowledge proofs (zk-snarks), courtesy of the <a href="https://github.com/appliedzkp/maci" target="_blank" rel="noopener">Minimal Anti-collusion Infrastructure (MACI)</a>, to keep individual contributions private and limit effectiveness of collusion and bribery.</p>
+    <h2>How do I vote?</h2>
+    <p>To vote, simply <a href="https://www.xdaichain.com/for-users/wallets/metamask/metamask-setup" target="_blank" rel="noopener">connect your metamask to xDai</a>, hit the "contribute" button next to any projects that you want to vote for, and allocate any amount of xDai to each of the projects you selected. Remember, your vote weight for each project is the square root of the amount of xDai you contribute to that project.</p>
 
-    <p>To ensure that every contributor is a unique person clr.fund uses <a href="https://brightid.org" target="_blank" rel="noopener">BrightID</a>, and recipients are curated by our <a href="https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398" target="_blank" rel="noopener">Kleros TCR</a>.</p>
+    <h2>Where can I get xDai?</h2>
+    <p>Don't have any xDai yet? No worries.</p>
+    <p>If you have Dai on mainnet, you can bridge it over to xDai using the <a href="https://bridge.xdaichain.com/" target="_blank" rel="noopener">xDai bridge</a></p>
+    <p>Alternatively, you can buy xDai with a credit/debit card on <a href="https://honeyswap.org/" target="_blank" rel="noopener">Honeyswap</a>
 
+    <h2>What's under the hood?</h2>
+    <p>ETHDenver's Quadratic Funding round is powered by <a href="https://clr.fund" target="_blank" rel="noopener">clr.fund</a>, a QF protocol built on Ethereum using Zero Knowledge Proofs (courtesy of the <a href="https://github.com/appliedzkp/maci" target="_blank" rel="noopener">MACI</a>).</p>
   </div>
 </template>
 
