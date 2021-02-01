@@ -18,7 +18,7 @@ Deploy MACI factory:
 ```
 const [deployer] = await ethers.getSigners()
 const { deployMaciFactory } = require('./utils/deployment')
-const maciFactory = await deployMaciFactory(deployer, circuit = 'small')
+const maciFactory = await deployMaciFactory(deployer, 'small')
 ```
 
 The `deployMaciFactory` function deploys MACI factory and other contracts required by it:
@@ -26,6 +26,17 @@ The `deployMaciFactory` function deploys MACI factory and other contracts requir
 - Poseidon T6 library
 - State tree batch update verifier contract
 - Quadratic vote tally verifier contract
+
+Alternatively, one can deploy these contracts one by one:
+
+```javascript
+const { deployContract, deployMaciFactory } = require('./utils/deployment')
+const poseidonT3 = await deployContract(deployer, ':PoseidonT3')
+const poseidonT6 = await deployContract(deployer, ':PoseidonT6')
+const batchUstVerifier = await deployContract(deployer, 'BatchUpdateStateTreeVerifierSmall')
+const qvtVerifier = await deployContract(deployer, 'QuadVoteTallyVerifierSmall')
+const maciFactory = await deployMaciFactory(deployer, 'small', { poseidonT3, poseidonT6, batchUstVerifier, qvtVerifier })
+```
 
 ### Funding round factory
 
