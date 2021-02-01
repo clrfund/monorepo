@@ -26,7 +26,7 @@ const config: HardhatUserConfig = {
       accounts: { mnemonic: '' },
     },
     xdai: {
-      url: 'https://rpc.xdaichain.com',
+      url: 'https://xdai-archive.blockscout.com',
       timeout: 60000,
       accounts: { mnemonic: '' },
     },

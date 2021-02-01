@@ -8,7 +8,7 @@
           src="@/assets/menu.svg"
           @click="toggleNavBar()"
         >
-        <img class="logo" alt="clr.fund" src="@/assets/clr.svg" />
+        <img class="logo" alt="clr.fund" src="@/assets/ethdenver-spork-marmot-logo.svg" />
         <img
           class="cart-btn"
           alt="cart"
@@ -18,11 +18,7 @@
       </div>
       <div id="nav-menu">
         <router-link to="/">Projects</router-link>
-        <router-link to="/rounds">Rounds</router-link>
         <router-link to="/about">About</router-link>
-        <a href="https://blog.clr.fund" target=_blank>Blog</a>
-        <a href="https://forum.clr.fund" target=_blank>Forum</a>
-        <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a>
       </div>
     </div>
     <div id="content">
