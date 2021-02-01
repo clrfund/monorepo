@@ -4,10 +4,14 @@
 
     <h2>What is this?</h2>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <p>A first for ETHDenver, the Open Track prizes will be distributed via Quadratic Funding (wtf is Quadratic Funding? Learn more at <a href="https://wtfisqf.com" target="_blank" rel="noopener">wtfisqf.com</a>).</p>
 =======
     <p>A first for ETHDenver, the Open Track prizes will be distributed via Quadratic Funding (wtf it qf? Learn more at <a href="https://wtfisqf.com" target="_blank" rel="noopener">wtfisqf.com</a>).</p>
 >>>>>>> Ethdenver setup
+=======
+    <p>A first for ETHDenver, the Open Track prizes will be distributed via Quadratic Funding (wtf is Quadratic Funding? Learn more at <a href="https://wtfisqf.com" target="_blank" rel="noopener">wtfisqf.com</a>).</p>
+>>>>>>> fixed typo
 
     <h2>How does it work?</h2>
     <p>The top 20 projects, as selected by the judges, will progress to the quadratic funding round and be given the opportunity to present on stage.</p>
