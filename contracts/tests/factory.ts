@@ -7,7 +7,7 @@ import { Keypair } from 'maci-domainobjs';
 
 import { ZERO_ADDRESS, UNIT } from '../utils/constants'
 import { getGasUsage, getEventArg } from '../utils/contracts'
-import { deployMaciFactory } from '../utils/deployment'
+import { deployContract, deployMaciFactory } from '../utils/deployment'
 import { MaciParameters } from '../utils/maci'
 
 use(solidity);
@@ -28,8 +28,7 @@ describe('Funding Round Factory', () => {
     maciFactory = await deployMaciFactory(deployer)
     maciParameters = await MaciParameters.read(maciFactory)
 
-    const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
-    factory = await FundingRoundFactory.deploy(maciFactory.address)
+    factory = await deployContract(deployer, 'FundingRoundFactory', [maciFactory.address])
 
     expect(factory.address).to.properAddress;
     expect(await getGasUsage(factory.deployTransaction)).lessThan(5100000)

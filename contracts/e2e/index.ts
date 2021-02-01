@@ -8,7 +8,7 @@ import { Keypair } from 'maci-domainobjs'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
-import { deployMaciFactory } from '../utils/deployment'
+import { deployContract, deployMaciFactory } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import { MaciParameters, createMessage, getRecipientClaimData } from '../utils/maci'
 
@@ -57,7 +57,16 @@ describe('End-to-end Tests', function () {
     await deployer.sendTransaction({ to: coordinator.address, value: UNIT.mul(10) })
 
     // Deploy funding round factory
-    const maciFactory = await deployMaciFactory(deployer)
+    const poseidonT3 = await deployContract(deployer, ':PoseidonT3')
+    const poseidonT6 = await deployContract(deployer, ':PoseidonT6')
+    const batchUstVerifier = await deployContract(deployer, 'BatchUpdateStateTreeVerifier')
+    const qvtVerifier = await deployContract(deployer, 'QuadVoteTallyVerifier')
+    const maciFactory = await deployMaciFactory(deployer, 'test', {
+      poseidonT3,
+      poseidonT6,
+      batchUstVerifier,
+      qvtVerifier,
+    })
     const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
     fundingRoundFactory = await FundingRoundFactory.deploy(maciFactory.address)
     await maciFactory.transferOwnership(fundingRoundFactory.address)
