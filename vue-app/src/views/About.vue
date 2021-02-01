@@ -3,7 +3,11 @@
     <h1 class="content-heading">About</h1>
 
     <h2>What is this?</h2>
+<<<<<<< HEAD
     <p>A first for ETHDenver, the Open Track prizes will be distributed via Quadratic Funding (wtf is Quadratic Funding? Learn more at <a href="https://wtfisqf.com" target="_blank" rel="noopener">wtfisqf.com</a>).</p>
+=======
+    <p>A first for ETHDenver, the Open Track prizes will be distributed via Quadratic Funding (wtf it qf? Learn more at <a href="https://wtfisqf.com" target="_blank" rel="noopener">wtfisqf.com</a>).</p>
+>>>>>>> Ethdenver setup
 
     <h2>How does it work?</h2>
     <p>The top 20 projects, as selected by the judges, will progress to the quadratic funding round and be given the opportunity to present on stage.</p>
@@ -23,8 +27,11 @@
 
     <h2>What's under the hood?</h2>
     <p>ETHDenver's Quadratic Funding round is powered by <a href="https://clr.fund" target="_blank" rel="noopener">clr.fund</a>, a QF protocol built on Ethereum using Zero Knowledge Proofs (courtesy of the <a href="https://github.com/appliedzkp/maci" target="_blank" rel="noopener">MACI</a>).</p>
+<<<<<<< HEAD
     <p>Clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community. Clr.fund strives for credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity.</p>
     <p>Want to learn more or contribute? Check out the <a href="https://forumclr.fund" target="_blank" rel="noopener">clr.fund forum</a> or <a href="https://t.me/clrfund" target="_blank" rel="noopener">Telegram group</a>.</p>
+=======
+>>>>>>> Ethdenver setup
   </div>
 </template>
 
