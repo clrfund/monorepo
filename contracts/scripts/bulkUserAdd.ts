@@ -1,9 +1,6 @@
 import fs from 'fs'
 import { ethers } from 'hardhat'
 
-import { UNIT } from '../utils/constants'
-import { getEventArg } from '../utils/contracts'
-
 async function main() {
   let users = JSON.parse(fs.readFileSync('users.json').toString())
   users = users.users
