@@ -11,7 +11,7 @@
 
     <h2>Can I judge?</h2>
     <p>Of course!</p>
-    <p>All ETHDenver attendees who vote on how the matching pool should be allocated by contributing xDai to their favorite projects. Just make sure to log in with the Ethereum address you provided in the ETHDenver signup form.</p>
+    <p>The first ~200 ETHDenver attendees to contribute to the QF round get to help decide how the matching pool should be allocated by contributing xDai to their favorite projects. Just make sure to log in with the Ethereum address you provided in the ETHDenver signup form.</p>
 
     <h2>How do I vote?</h2>
     <p>To vote, simply <a href="https://www.xdaichain.com/for-users/wallets/metamask/metamask-setup" target="_blank" rel="noopener">connect your metamask to xDai</a>, hit the "contribute" button next to any projects that you want to vote for, and allocate any amount of xDai to each of the projects you selected. Remember, your vote weight for each project is the square root of the amount of xDai you contribute to that project.</p>
@@ -22,7 +22,7 @@
     <p>Alternatively, you can buy xDai with a credit/debit card on <a href="https://honeyswap.org/" target="_blank" rel="noopener">Honeyswap</a>
 
     <h2>What's under the hood?</h2>
-    <p>ETHDenver's Quadratic Funding round is powered by <a href="https://clr.fund" target="_blank" rel="noopener">clr.fund</a>, a QF protocol built on Ethereum using Zero Knowledge Proofs (courtesy of the <a href="https://github.com/appliedzkp/maci" target="_blank" rel="noopener">MACI</a>).</p>
+    <p>ETHDenver's Quadratic Funding round is powered by <a href="https://clr.fund" target="_blank" rel="noopener">clr.fund</a>, a QF protocol built on Ethereum using Zero Knowledge Proofs (courtesy of <a href="https://github.com/appliedzkp/maci" target="_blank" rel="noopener">MACI</a>).</p>
     <p>Clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community. Clr.fund strives for credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity.</p>
     <p>Want to learn more or contribute? Check out the <a href="https://forumclr.fund" target="_blank" rel="noopener">clr.fund forum</a> or <a href="https://t.me/clrfund" target="_blank" rel="noopener">Telegram group</a>.</p>
   </div>
