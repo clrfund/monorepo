@@ -3,3 +3,4 @@ cache
 node_modules
 state.json
 tally.json
+users.json

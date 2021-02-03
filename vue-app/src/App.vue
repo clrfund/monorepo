@@ -17,7 +17,7 @@
         >
       </div>
       <div id="nav-menu">
-        <router-link to="/">Projects</router-link>
+        <router-link to="/">Open Track</router-link>
         <router-link to="/about">About</router-link>
       </div>
     </div>
