@@ -248,12 +248,11 @@ export default class ProjectList extends Vue {
 
 .add-matching-funds-btn {
   display: inline-block;
-  line-height: 1;
   margin-left: 5px;
 
   img {
-    height: 1em;
-    vertical-align: bottom;
+    height: 1.1em;
+    vertical-align: middle;
   }
 }
 
