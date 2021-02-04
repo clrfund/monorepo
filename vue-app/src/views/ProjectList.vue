@@ -14,20 +14,20 @@
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Contribution Deadline:</div>
-        <div class="round-info-value">{{ currentRound.signUpDeadline | formatDate }}</div>
+        <div class="round-info-value">{{ formatDate(currentRound.signUpDeadline) }}</div>
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Reallocation Deadline:</div>
-        <div class="round-info-value">{{ currentRound.votingDeadline | formatDate }}</div>
+        <div class="round-info-value">{{ formatDate(currentRound.votingDeadline) }}</div>
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Total Funds:</div>
-        <div class="round-info-value">{{ currentRound.totalFunds | formatAmount }} {{ currentRound.nativeTokenSymbol }}</div>
+        <div class="round-info-value">{{ formatAmount(currentRound.totalFunds) }} {{ currentRound.nativeTokenSymbol }}</div>
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Matching Pool:</div>
         <div class="round-info-value">
-          {{ currentRound.matchingPool | formatAmount }} {{ currentRound.nativeTokenSymbol }}
+          {{ formatAmount(currentRound.matchingPool) }} {{ currentRound.nativeTokenSymbol }}
           <a
             @click="addMatchingFunds()"
             class="add-matching-funds-btn"
@@ -39,11 +39,11 @@
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Contributions:</div>
-        <div class="round-info-value">{{ currentRound.contributions | formatAmount }} {{ currentRound.nativeTokenSymbol }}</div>
+        <div class="round-info-value">{{ formatAmount(currentRound.contributions)  }} {{ currentRound.nativeTokenSymbol }}</div>
       </div>
       <div class="round-info-item">
         <div class="round-info-title">Your Contribution:</div>
-        <div class="round-info-value">{{ contribution | formatAmount }} {{ currentRound.nativeTokenSymbol }}</div>
+        <div class="round-info-value">{{ formatAmount(contribution) }} {{ currentRound.nativeTokenSymbol }}</div>
       </div>
     </div>
     <div v-if="projects.length > 0" class="project-search">
@@ -70,6 +70,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
+import { DateTime } from 'luxon'
 
 import { RoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
@@ -163,6 +164,14 @@ export default class ProjectList extends Vue {
     })
     shuffleArray(visibleProjects)
     this.projects = visibleProjects
+  }
+
+  formatAmount(value: FixedNumber): string | null {
+    return value ? (value._value === '0.0' ? '0' : value.toString()) : null
+  }
+
+  formatDate(value: DateTime): string {
+    return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
   }
 
   get contribution(): FixedNumber {
