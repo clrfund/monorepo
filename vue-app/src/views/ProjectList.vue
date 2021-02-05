@@ -3,31 +3,15 @@
     <h1 class="content-heading">Projects</h1>
     <div v-if="currentRound" class="round-info">
       <div class="round-info-item">
-        <div class="round-info-title">Current Round:</div>
+        <div class="round-info-title">Round</div>
         <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
-          {{ currentRound.roundNumber }}
+          <div class="value large">{{ currentRound.roundNumber }}</div>
+          <div class="unit">{{ currentRound.status }}</div>
         </div>
       </div>
       <div class="round-info-item">
-        <div class="round-info-title">Status:</div>
-        <div class="round-info-value">{{ currentRound.status }}</div>
-      </div>
-      <div class="round-info-item">
-        <div class="round-info-title">Contribution Deadline:</div>
-        <div class="round-info-value">{{ formatDate(currentRound.signUpDeadline) }}</div>
-      </div>
-      <div class="round-info-item">
-        <div class="round-info-title">Reallocation Deadline:</div>
-        <div class="round-info-value">{{ formatDate(currentRound.votingDeadline) }}</div>
-      </div>
-      <div class="round-info-item">
-        <div class="round-info-title">Total Funds:</div>
-        <div class="round-info-value">{{ formatAmount(currentRound.totalFunds) }} {{ currentRound.nativeTokenSymbol }}</div>
-      </div>
-      <div class="round-info-item">
-        <div class="round-info-title">Matching Pool:</div>
-        <div class="round-info-value">
-          {{ formatAmount(currentRound.matchingPool) }} {{ currentRound.nativeTokenSymbol }}
+        <div class="round-info-title">
+          Matching pool
           <a
             @click="addMatchingFunds()"
             class="add-matching-funds-btn"
@@ -36,22 +20,58 @@
             <img src="@/assets/add.svg" >
           </a>
         </div>
+        <div class="round-info-value">
+          <div class="value large">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
+          <div class="value large extra">{{ formatFractionalPart(currentRound.matchingPool) }}</div>
+          <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
+        </div>
       </div>
       <div class="round-info-item">
-        <div class="round-info-title">Contributions:</div>
-        <div class="round-info-value">{{ formatAmount(currentRound.contributions)  }} {{ currentRound.nativeTokenSymbol }}</div>
+        <div class="round-info-title">Contributions</div>
+        <div class="round-info-value">
+          <div class="value">{{ formatIntegerPart(currentRound.contributions) }}</div>
+          <div class="value extra">{{ formatFractionalPart(currentRound.contributions) }}</div>
+          <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
+          <div class="value">{{ currentRound.contributors }}</div>
+          <div class="unit">contributors</div>
+        </div>
       </div>
-      <div class="round-info-item">
-        <div class="round-info-title">Your Contribution:</div>
-        <div class="round-info-value">{{ formatAmount(contribution) }} {{ currentRound.nativeTokenSymbol }}</div>
+      <div v-if="currentRound.status === 'Contributing'" class="round-info-item">
+        <div class="round-info-title">Time left to contribute</div>
+        <div
+          class="round-info-value"
+          :title="'Contribution Deadline: ' + formatDate(currentRound.signUpDeadline)"
+        >
+          <div class="value" v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
+          <div class="unit" v-if="contributionTimeLeft.days > 0">days</div>
+          <div class="value">{{ contributionTimeLeft.hours }}</div>
+          <div class="unit">hours</div>
+          <div class="value" v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
+          <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
+        </div>
+      </div>
+      <div v-if="currentRound.status === 'Reallocating'" class="round-info-item">
+        <div class="round-info-title">Time left to reallocate</div>
+        <div
+          class="round-info-value"
+          :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
+        >
+          <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
+          <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
+          <div class="value">{{ reallocationTimeLeft.hours }}</div>
+          <div class="unit">hours</div>
+          <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
+          <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
+        </div>
       </div>
     </div>
     <div v-if="projects.length > 0" class="project-search">
+      <img src="@/assets/search.svg">
       <input
         v-model="search"
         class="input"
         name="search"
-        placeholder="Search projects..."
+        placeholder="Search projects"
         autocomplete="off"
       >
     </div>
@@ -102,6 +122,21 @@ function shuffleArray(array: any[]) {
     const j = Math.floor(random(SHUFFLE_RANDOM_SEED, i) * (i + 1))
     ;[array[i], array[j]] = [array[j], array[i]]
   }
+}
+
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+}
+
+function timeLeft(date: DateTime): TimeLeft {
+  const now = DateTime.local()
+  if (now >= date) {
+    return { days: 0, hours: 0, minutes: 0 }
+  }
+  const { days, hours, minutes } = date.diff(now, ['days', 'hours', 'minutes'])
+  return { days, hours, minutes: Math.ceil(minutes) }
 }
 
 @Component({
@@ -166,21 +201,28 @@ export default class ProjectList extends Vue {
     this.projects = visibleProjects
   }
 
-  formatAmount(value: FixedNumber): string | null {
-    return value ? (value._value === '0.0' ? '0' : value.toString()) : null
+  formatIntegerPart(value: FixedNumber): string {
+    if (value._value === '0.0') {
+      return '0'
+    }
+    const integerPart = value.toString().split('.')[0]
+    return integerPart + (value.round(0) === value ? '' : '.')
+  }
+
+  formatFractionalPart(value: FixedNumber): string {
+    return value._value === '0.0' ? '' : value.toString().split('.')[1]
   }
 
   formatDate(value: DateTime): string {
     return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
   }
 
-  get contribution(): FixedNumber {
-    const contribution = this.$store.state.contribution
-    const decimals = this.currentRound?.nativeTokenDecimals
-    if (!contribution || !decimals) {
-      return FixedNumber.from(0)
-    }
-    return FixedNumber.fromValue(contribution, decimals)
+  get contributionTimeLeft(): TimeLeft {
+    return timeLeft(this.$store.state.currentRound.signUpDeadline)
+  }
+
+  get reallocationTimeLeft(): TimeLeft {
+    return timeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   addMatchingFunds(): void {
@@ -215,35 +257,61 @@ export default class ProjectList extends Vue {
 @import '../styles/vars';
 
 .round-info {
+  border-bottom: $border;
+  border-top: $border;
   display: flex;
   flex-wrap: wrap;
-  font-size: 12px;
+  margin: 0 (-$content-space);
+  padding: 20px $content-space;
+  gap: $content-space;
 }
 
 .round-info-item {
-  border-right: $border;
-  border-top: $border;
-  box-sizing: border-box;
-  flex: 0 0 25%;
-  overflow: hidden;
-  padding: 10px $content-space;
-
-  &:nth-child(4n + 1) {
-    padding-left: 0;
-  }
-
-  &:nth-child(4n + 0) {
-    border-right: none;
-  }
+  display: flex;
+  flex: 1 0 10%;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .round-info-title {
-  margin-bottom: 5px;
+  color: $text-secondary-color;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  margin-bottom: $content-space;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .round-info-value {
-  overflow: hidden;
-  text-overflow: ellipsis;
+  align-items: baseline;
+  display: flex;
+  flex-direction: row;
+  line-height: 30px;
+
+  .value {
+    font-size: 32px;
+
+    &.large {
+      font-size: 44px;
+    }
+
+    &.extra {
+      color: $text-secondary-color;
+    }
+  }
+
+  .unit {
+    color: #91A4C8;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 10px;
+    text-transform: uppercase;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 }
 
 .add-matching-funds-btn {
@@ -251,21 +319,35 @@ export default class ProjectList extends Vue {
   margin-left: 5px;
 
   img {
-    height: 1.1em;
+    height: 1.8em;
     vertical-align: middle;
   }
 }
 
 .project-search {
+  border: $border;
+  border-radius: 30px;
+  box-sizing: border-box;
+  display: flex;
   margin: 20px 0;
+  min-width: 300px;
+  padding: 8px 15px;
+  width: 33%;
+
+  img {
+    margin-right: 10px;
+  }
 
   input {
-    background-color: $bg-secondary-color;
+    background-color: transparent;
     border: none;
-    border-radius: 20px;
     font-size: 14px;
-    padding: 2px 10px;
+    padding: 0;
     width: 100%;
+
+    &::placeholder {
+      opacity: 1;
+    }
   }
 }
 
@@ -275,17 +357,13 @@ export default class ProjectList extends Vue {
   gap: $content-space;
 }
 
-@media (max-width: 1150px) {
-  .round-info-item {
-    flex: 0 0 50%;
+@media (max-width: 1500px) {
+  .round-info-item:nth-child(2n) {
+    break-after: always;
+  }
 
-    &:nth-child(2n+1) {
-      padding-left: 0;
-    }
-
-    &:nth-child(2n) {
-      border-right: none;
-    }
+  .round-info-title {
+    margin-bottom: $content-space / 2;
   }
 }
 </style>

@@ -25,6 +25,7 @@ export interface RoundInfo {
   totalFunds: FixedNumber;
   matchingPool: FixedNumber;
   contributions: FixedNumber;
+  contributors: number;
 }
 
 export enum RoundStatus {
@@ -145,6 +146,7 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
   const nativeTokenDecimals = await nativeToken.decimals()
 
   const now = DateTime.local()
+  const contributionsInfo = await getTotalContributed(fundingRoundAddress)
   let status: string
   let contributions: BigNumber
   let matchingPool: BigNumber
@@ -164,7 +166,7 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     } else {
       status = RoundStatus.Tallying
     }
-    contributions = await getTotalContributed(fundingRoundAddress)
+    contributions = contributionsInfo.amount
     const lockedFunding = await nativeToken.balanceOf(factory.address)
     const approvedFunding = await getApprovedFunding(fundingRound, nativeToken)
     matchingPool = lockedFunding.add(approvedFunding)
@@ -191,5 +193,6 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),
     matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),
     contributions: FixedNumber.fromValue(contributions, nativeTokenDecimals),
+    contributors: contributionsInfo.count,
   }
 }
