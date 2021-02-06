@@ -1,5 +1,6 @@
 build
 cache
 node_modules
+snark-params
 state.json
 tally.json

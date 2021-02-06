@@ -1,14 +1,22 @@
 # clr.fund contracts
 
-## End-to-end tests
+## Working with ZK proofs
 
 Install [zkutil](https://github.com/poma/zkutil) (see instructions in [MACI readme](https://github.com/appliedzkp/maci#get-started)).
 
-Set the path to zkutil binary if needed:
+Download [zkSNARK parameters](https://ipfs.io/ipfs/QmeBhtC46dXSEXaemgiAjzpzTxH6FykXDgnTdvHujjPaAR) for 'test' circuits to `snark-params` directory. Example:
 
 ```
-export NODE_CONFIG='{"zkutil_bin": "/usr/bin/zkutil"}'
+ipfs get --output snark-params QmeBhtC46dXSEXaemgiAjzpzTxH6FykXDgnTdvHujjPaAR
 ```
+
+Set the path to downloaded parameter files and also the path to `zkutil` binary (if needed):
+
+```
+export NODE_CONFIG='{"zkutil_bin": "/usr/bin/zkutil", "snarkParamsPath": "../../../contracts/snark-params/"}'
+```
+
+## End-to-end tests
 
 Run the tests:
 
@@ -41,14 +49,6 @@ yarn deployTestRound:local
 ```
 
 ### Run test round
-
-Install [zkutil](https://github.com/poma/zkutil) (see instructions in [MACI readme](https://github.com/appliedzkp/maci#get-started)).
-
-Set the path to zkutil binary if needed:
-
-```
-export NODE_CONFIG='{"zkutil_bin": "/usr/bin/zkutil"}'
-```
 
 Set coordinator's private key (optional, by default the Ganache account #1 will be used):
 
