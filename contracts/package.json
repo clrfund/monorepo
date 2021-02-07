@@ -11,6 +11,7 @@
     "contribute:local": "hardhat run --network localhost scripts/contribute.ts",
     "vote:local": "hardhat run --network localhost scripts/vote.ts",
     "tally:local": "hardhat run --network localhost scripts/tally.ts",
+    "finalize:local": "hardhat run --network localhost scripts/finalize.ts",
     "claim:local": "hardhat run --network localhost scripts/claim.ts",
     "test": "hardhat test",
     "e2e": "NODE_OPTIONS=--max-old-space-size=4096 hardhat test --network ganache e2e/index.ts",

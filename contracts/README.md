@@ -66,7 +66,7 @@ sleep 300s && yarn vote:local
 Wait until voting period ends, process messages, tally votes and verify the results:
 
 ```
-sleep 300s && yarn tally:local
+sleep 300s && yarn tally:local && yarn finalize:local
 ```
 
 Claim funds:

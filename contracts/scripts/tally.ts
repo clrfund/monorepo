@@ -41,13 +41,6 @@ async function main() {
   const tallyHash = await getIpfsHash(tally)
   await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
   console.log(`Tally hash is ${tallyHash}`)
-
-  // Finalize the round
-  const factory = await ethers.getContractAt('FundingRoundFactory', state.factory)
-  const totalSpent = parseInt(tally.totalVoiceCredits.spent)
-  const totalSpentSalt = tally.totalVoiceCredits.salt
-  await factory.transferMatchingFunds(totalSpent, totalSpentSalt)
-  console.log('Round finalized, totals verified.')
 }
 
 main()
