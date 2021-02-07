@@ -147,10 +147,19 @@ a {
   border-radius: 2px;
   box-sizing: border-box;
   color: $text-color;
+  font-family: Inter, sans-serif;
   padding: 7px;
 
   &.invalid {
     border-color: $error-color;
+  }
+
+  &::placeholder {
+    opacity: 0.5;
+  }
+
+  &:focus {
+    outline: none;
   }
 }
 
