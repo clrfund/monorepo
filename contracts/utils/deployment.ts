@@ -36,7 +36,8 @@ export async function deployContract(
   contractArgs: any[] = [],
 ): Promise<Contract> {
   const contractFactory = await ethers.getContractFactory(contractName, account)
-  return await contractFactory.deploy(...contractArgs)
+  const contract = await contractFactory.deploy(...contractArgs)
+  return await contract.deployed()
 }
 
 interface MaciFactoryDependencies {

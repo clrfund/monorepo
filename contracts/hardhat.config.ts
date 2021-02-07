@@ -57,17 +57,6 @@ task('compile', 'Compiles the entire project, building all artifacts', async (_,
       JSON.stringify({ ...artifact, linkReferences: {} }),
     )
   }
-  // Prepare verifier artifacts for 'test' circuits
-  const verifiers = ['BatchUpdateStateTreeVerifier', 'QuadVoteTallyVerifier']
-  for (const contractName of verifiers) {
-    const abi = JSON.parse(fs.readFileSync(`../node_modules/maci-contracts/compiled/${contractName}.abi`).toString())
-    const bytecode = fs.readFileSync(`../node_modules/maci-contracts/compiled/${contractName}.bin`).toString()
-    const artifact = { contractName, abi, bytecode, linkReferences: {} }
-    fs.writeFileSync(
-      path.join(config.paths.artifacts, `${contractName}.json`),
-      JSON.stringify(artifact),
-    )
-  }
 });
 
 export default config
