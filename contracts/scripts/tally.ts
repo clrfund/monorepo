@@ -19,7 +19,7 @@ async function main() {
     contract: maciAddress,
     eth_privkey: coordinatorEthPrivKey,
     eth_provider: providerUrl,
-    privkey: state.coordinator.privKey,
+    privkey: state.coordinatorPrivKey,
     repeat: true,
   })
 
@@ -28,7 +28,7 @@ async function main() {
     contract: maciAddress,
     eth_privkey: coordinatorEthPrivKey,
     eth_provider: providerUrl,
-    privkey: state.coordinator.privKey,
+    privkey: state.coordinatorPrivKey,
     repeat: true,
     current_results_salt: '0x0',
     current_total_vc_salt: '0x0',

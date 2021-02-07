@@ -104,10 +104,7 @@ async function main() {
   fs.writeFileSync('state.json', JSON.stringify({
     factory: factory.address,
     fundingRound: fundingRoundAddress,
-    coordinator: {
-      privKey: coordinatorKeyPair.privKey.serialize(),
-      pubKey: coordinatorKeyPair.pubKey.serialize(),
-    },
+    coordinatorPrivKey: coordinatorKeyPair.privKey.serialize(),
   }))
 }
 

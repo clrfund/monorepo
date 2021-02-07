@@ -1,14 +1,14 @@
 import fs from 'fs';
 import { ethers } from 'hardhat'
 import { BigNumber } from 'ethers'
-import { PrivKey, PubKey, Keypair } from 'maci-domainobjs'
+import { PrivKey, Keypair } from 'maci-domainobjs'
 
 import { createMessage } from '../utils/maci'
 
 async function main() {
   const [,,,,, contributor1, contributor2] = await ethers.getSigners()
   const state = JSON.parse(fs.readFileSync('state.json').toString())
-  const coordinatorPubKey = PubKey.unserialize(state.coordinator.pubKey)
+  const coordinatorKeyPair = new Keypair(PrivKey.unserialize(state.coordinatorPrivKey))
 
   for (const contributor of [contributor1, contributor2]) {
     const contributorAddress = await contributor.getAddress()
@@ -22,7 +22,7 @@ async function main() {
     const [message, encPubKey] = createMessage(
       contributorData.stateIndex,
       contributorKeyPair, newContributorKeypair,
-      coordinatorPubKey,
+      coordinatorKeyPair.pubKey,
       null, null, nonce,
     )
     messages.push(message.asContractParam())
@@ -34,7 +34,7 @@ async function main() {
       const [message, encPubKey] = createMessage(
         contributorData.stateIndex,
         newContributorKeypair, null,
-        coordinatorPubKey,
+        coordinatorKeyPair.pubKey,
         recipientIndex, votes, nonce,
       )
       messages.push(message.asContractParam())
