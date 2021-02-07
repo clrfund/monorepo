@@ -70,3 +70,33 @@ Finally, the [CID](https://ipfs.io/ipns/docs.ipfs.io/concepts/content-addressing
 ```
 await fundingRound.publishTallyHash('<CID>')
 ```
+
+### Tally votes using clrfund script (experimental)
+
+Install [zkutil](https://github.com/poma/zkutil) (see instructions in [MACI readme](https://github.com/appliedzkp/maci#get-started)).
+
+Switch to `contracts` directory:
+
+```
+cd contracts/
+```
+
+Download [zkSNARK parameters](https://ipfs.io/ipfs/QmateegDyF81zE1T8cfxE5qNo5aphEV4r7b1oxYMBsty5N) for 'small' circuits to `snark-params` directory. Example:
+
+```
+ipfs get --output snark-params QmateegDyF81zE1T8cfxE5qNo5aphEV4r7b1oxYMBsty5N
+```
+
+Set the path to downloaded parameter files and also the path to `zkutil` binary (if needed):
+
+```
+export NODE_CONFIG='{"snarkParamsPath": "../../../contracts/snark-params/", "zkutil_bin": "/usr/bin/zkutil"}'
+```
+
+Decrypt messages and tally the votes:
+
+```
+COORDINATOR_ETH_PK=<eth-private-key> CLRFUND_STATE='{"fundingRound": "<funding-round-address>", "coordinatorPrivKey": "<coordinator-private-key>"}' yarn hardhat run --network xdai scripts/tally.ts
+```
+
+Result will be saved to `tally.json` file, which must then be published via IPFS.

@@ -4312,9 +4312,9 @@ circomlib@0.2.4:
     circom "0.5.21"
     ffjavascript "0.1.0"
 
-"circomlib@git+https://github.com/iden3/circomlib.git#01da5f90dbbefeed5d78cec3b87303244338b920":
+"circomlib@https://github.com/iden3/circomlib.git#01da5f90dbbefeed5d78cec3b87303244338b920":
   version "0.2.3"
-  resolved "git+https://github.com/iden3/circomlib.git#01da5f90dbbefeed5d78cec3b87303244338b920"
+  resolved "https://github.com/iden3/circomlib.git#01da5f90dbbefeed5d78cec3b87303244338b920"
   dependencies:
     blake-hash "^1.1.0"
     blake2b "^2.1.3"

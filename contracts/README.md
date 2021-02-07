@@ -13,7 +13,7 @@ ipfs get --output snark-params QmeBhtC46dXSEXaemgiAjzpzTxH6FykXDgnTdvHujjPaAR
 Set the path to downloaded parameter files and also the path to `zkutil` binary (if needed):
 
 ```
-export NODE_CONFIG='{"zkutil_bin": "/usr/bin/zkutil", "snarkParamsPath": "../../../contracts/snark-params/"}'
+export NODE_CONFIG='{"snarkParamsPath": "../../../contracts/snark-params/", "zkutil_bin": "/usr/bin/zkutil"}'
 ```
 
 ## End-to-end tests
