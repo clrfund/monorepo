@@ -3,7 +3,7 @@
     <div v-if="step === 0">
       <h3>Contributing</h3>
       <div>
-        You are about to contribute {{ contribution | formatAmount }} {{ currentRound.nativeTokenSymbol }} to {{ votes.length }} projects.
+        You are about to contribute {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} to {{ votes.length }} projects.
         You can re-allocate contributed funds later to different projects but it is not possible to increase the total contribution amount.
       </div>
       <div class="btn-row">
@@ -38,9 +38,9 @@
     <div v-if="step === 4">
       <h3>Success!</h3>
       <div>
-        Successfully contributed {{ contribution | formatAmount }} {{ currentRound.nativeTokenSymbol }} to the funding round. Only the coordinator can know which projects you have supported.
+        Successfully contributed {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} to the funding round. Only the coordinator can know which projects you have supported.
         <br>
-        You can reallocate contributed funds until {{ currentRound.votingDeadline | formatDate }}.
+        You can reallocate contributed funds until {{ formatDate(currentRound.votingDeadline) }}.
       </div>
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
@@ -51,13 +51,15 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { BigNumber, Contract, FixedNumber, Signer } from 'ethers'
+import { BigNumber, Contract, Signer } from 'ethers'
+import { DateTime } from 'luxon'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
 import { RoundInfo } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
 import { LOAD_ROUND_INFO, SAVE_CONTRIBUTOR_DATA } from '@/store/action-types'
 import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
+import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
@@ -86,18 +88,19 @@ export default class ContributionModal extends Vue {
     return this.$store.state.currentRound
   }
 
+  formatAmount(value: BigNumber): string {
+    return formatAmount(value, this.currentRound.nativeTokenDecimals)
+  }
+
+  formatDate(value: DateTime): string {
+    return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
+  }
+
   getTotal(): BigNumber {
     const { voiceCreditFactor } = this.currentRound
     return this.votes.reduce((total: BigNumber, [, voiceCredits]) => {
       return total.add(voiceCredits.mul(voiceCreditFactor))
     }, BigNumber.from(0))
-  }
-
-  get contribution(): FixedNumber {
-    return FixedNumber.fromValue(
-      this.getTotal(),
-      this.currentRound.nativeTokenDecimals,
-    )
   }
 
   async contribute() {

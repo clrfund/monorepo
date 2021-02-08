@@ -10,7 +10,7 @@
     </div>
     <div v-if="step === 2">
       <h3>Success!</h3>
-      <div>{{ amount | formatAmount }} {{ currentRound.nativeTokenSymbol }} has been sent to <code>{{ recipientAddress }}</code></div>
+      <div>{{ formatAmount(amount) }} {{ currentRound.nativeTokenSymbol }} has been sent to <code>{{ recipientAddress }}</code></div>
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
   </div>
@@ -20,12 +20,13 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { Contract, FixedNumber, Signer } from 'ethers'
+import { Contract, BigNumber, Signer } from 'ethers'
 
 import { FundingRound } from '@/api/abi'
 import { Project } from '@/api/projects'
 import { RoundInfo } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
+import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
 
@@ -42,11 +43,15 @@ export default class ClaimModal extends Vue {
   step = 1
   claimTxHash = ''
   claimTxError = ''
-  amount = FixedNumber.from(0)
+  amount = BigNumber.from(0)
   recipientAddress = ''
 
   get currentRound(): RoundInfo {
     return this.$store.state.currentRound
+  }
+
+  formatAmount(value: BigNumber): string {
+    return formatAmount(value, this.currentRound.nativeTokenDecimals)
   }
 
   mounted() {
@@ -55,7 +60,7 @@ export default class ClaimModal extends Vue {
 
   private async claim() {
     const signer: Signer = this.$store.state.currentUser.walletProvider.getSigner()
-    const { fundingRoundAddress, recipientTreeDepth, nativeTokenDecimals } = this.currentRound
+    const { fundingRoundAddress, recipientTreeDepth } = this.currentRound
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
     const recipientClaimData = getRecipientClaimData(
       this.project.index,
@@ -72,10 +77,7 @@ export default class ClaimModal extends Vue {
       this.claimTxError = error.message
       return
     }
-    this.amount = FixedNumber.fromValue(
-      getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount'),
-      nativeTokenDecimals,
-    )
+    this.amount = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount')
     this.recipientAddress = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_recipient')
     this.step += 1
   }
