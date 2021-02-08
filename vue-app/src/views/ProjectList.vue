@@ -3,13 +3,6 @@
     <h1 class="content-heading">Projects</h1>
     <div v-if="currentRound" class="round-info">
       <div class="round-info-item">
-        <div class="round-info-title">Round</div>
-        <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
-          <div class="value large">{{ currentRound.roundNumber }}</div>
-          <div class="unit">{{ currentRound.status }}</div>
-        </div>
-      </div>
-      <div class="round-info-item">
         <div class="round-info-title">
           Matching pool
           <a
@@ -44,10 +37,10 @@
         >
           <div class="value" v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
           <div class="unit" v-if="contributionTimeLeft.days > 0">days</div>
-          <div class="value">{{ contributionTimeLeft.hours }}</div>
-          <div class="unit">hours</div>
-          <div class="value" v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
-          <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
+          <div class="value" v-if="contributionTimeLeft.hours > 0">{{ contributionTimeLeft.hours }}</div>
+          <div class="unit" v-if="contributionTimeLeft.hours > 0">hours</div>
+          <div class="value" >{{ contributionTimeLeft.minutes }}</div>
+          <div class="unit" >minutes</div>
         </div>
       </div>
       <div v-if="currentRound.status === 'Reallocating'" class="round-info-item">
