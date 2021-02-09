@@ -8,7 +8,7 @@
           src="@/assets/menu.svg"
           @click="toggleNavBar()"
         >
-        <img class="logo" alt="clr.fund" src="@/assets/ethdenver-spork-marmot-logo.svg" />
+        <img class="logo" alt="ETHDenver" src="@/assets/ethdenver-spork-marmot-logo.svg" />
         <img
           class="cart-btn"
           alt="cart"
@@ -50,10 +50,10 @@ import {
 } from '@/store/action-types'
 
 @Component({
-  name: 'clr.fund',
+  name: 'ETHDenver',
   metaInfo: {
-    title: 'clr.fund',
-    titleTemplate: 'clr.fund - %s',
+    title: 'ETHDenver',
+    titleTemplate: 'ETHDenver - %s',
     meta: [{
       name: 'git-commit',
       content: process.env.VUE_APP_GIT_COMMIT || '',

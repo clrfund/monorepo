@@ -1,5 +1,10 @@
-{"users":[
-  "0xd714Dd60e22BbB1cbAFD0e40dE5Cfa7bBDD3F3C8",
-  "0x53bcFaEd43441C7bB6149563eC11f756739C9f6A"
+{
+  "users":[
+    {
+      "address": "0x1234...5678"
+    },
+    {
+      "address": "0xabcd...efgh"
+    }
   ]
 }

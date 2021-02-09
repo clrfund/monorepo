@@ -6,19 +6,32 @@ async function main() {
   users = users.users
   const registry = await ethers.getContractAt('SimpleUserRegistry', "0xd1ed2db0c04cc06bdc386b92cbd0d0247e2b4ba3")
 
-  for (const user of users) {
-    if (await registry.isVerifiedUser(user)) {
-      console.log(`${user} already verified.`);
-    }
-    else {
-      try {
-        await registry.addUser(user)
-        console.log(`Added: ${user}`);
-      } catch (error) {
-        console.log(`Something went wrong while adding ${user}, do you have permission?`);
+  for (let i = 0; i < users.length; i++) {
+    try {
+      if (await registry.isVerifiedUser(users[i].address)) {
+        console.log(`${users[i].address} already verified.`);
       }
+      else {
+        try {
+          await registry.addUser(users[i].address)
+          console.log(`Added: ${users[i].address}`);
+        } catch (error) {
+          console.log(`Error adding ${users[i].address}`);
+          console.log(error)
+          i--;
+        }
+        await delay(6000);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
+  console.log("great success 👍️");
+
+}
+
+function delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
 main()
