@@ -129,8 +129,8 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     signUpTimestamp.add(signUpDurationSeconds).add(votingDurationSeconds).toNumber(),
   )
   const endBlock = startBlock.add(
-    // Average block time is 15 seconds
-    signUpDurationSeconds.add(votingDurationSeconds).div(15),
+    // Average block time is 5 seconds
+    signUpDurationSeconds.add(votingDurationSeconds).div(5),
   )
   const coordinatorPubKey = new PubKey([
     BigInt(coordinatorPubKeyRaw.x),

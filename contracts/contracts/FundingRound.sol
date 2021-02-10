@@ -320,7 +320,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
       _voteOptionIndex,
        startBlock,
       // TODO: use block numbers in MACI
-      startBlock + (maci.signUpDurationSeconds() + maci.votingDurationSeconds()) / 15
+      startBlock + (maci.signUpDurationSeconds() + maci.votingDurationSeconds()) /  5
     );
     if (recipient == address(0)) {
       // Send funds back to the matching pool
