@@ -27,6 +27,8 @@ export async function getProjects(
 ): Promise<Project[]> {
   const registry = new Contract(registryAddress, SimpleRecipientRegistry, provider)
   const recipientAddedFilter = registry.filters.RecipientAdded()
+  const latestBlock = (await provider.getBlock('latest')).number
+  endBlock = endBlock ? Math.min(latestBlock, endBlock) : endBlock
   const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0, endBlock)
   const recipientRemovedFilter = registry.filters.RecipientRemoved()
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
