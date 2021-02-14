@@ -1,9 +1,12 @@
 # Coordinator manual
 
+## Coordinate using MACI CLI
+
 Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.5.7:
 
 ```
 git clone https://github.com/appliedzkp/maci.git
+cd maci/
 git checkout v0.5.7
 ```
 
@@ -23,14 +26,16 @@ cd ../contracts
 npm run compileSol
 ```
 
-Generate coordinator key:
+### Generate coordinator key
 
 ```
 cd ../cli
 node build/index.js genMaciKeypair
 ```
 
-## Tally votes
+A single key can be used to coordinate multiple rounds.
+
+### Tally votes
 
 Decrypt messages:
 
@@ -71,7 +76,9 @@ Finally, the [CID](https://ipfs.io/ipns/docs.ipfs.io/concepts/content-addressing
 await fundingRound.publishTallyHash('<CID>')
 ```
 
-### Tally votes using clrfund script (experimental)
+## Coordinate using clrfund scripts (exprimental, not recommended)
+
+### Tally votes
 
 Install [zkutil](https://github.com/poma/zkutil) (see instructions in [MACI readme](https://github.com/appliedzkp/maci#get-started)).
 
