@@ -105,7 +105,12 @@ import {
   LOAD_CONTRIBUTOR_DATA,
   UNWATCH_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
-import { SET_CURRENT_ROUND_ADDRESS } from '@/store/mutation-types'
+import {
+  SET_CURRENT_ROUND_ADDRESS,
+  SET_CONTRIBUTION,
+  SET_CONTRIBUTOR,
+  CLEAR_CART,
+} from '@/store/mutation-types'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 
@@ -163,6 +168,9 @@ export default class ProjectList extends Vue {
       // Change current round and reload round info
       this.$store.dispatch(UNWATCH_CART)
       this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
+      this.$store.commit(SET_CONTRIBUTION, null)
+      this.$store.commit(SET_CONTRIBUTOR, null)
+      this.$store.commit(CLEAR_CART)
       this.$store.commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
       ;(async () => {
         await this.$store.dispatch(LOAD_ROUND_INFO)
