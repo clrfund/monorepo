@@ -6,6 +6,11 @@ export async function getGasUsage(transaction: TransactionResponse): Promise<num
   return receipt.gasUsed.toNumber()
 }
 
+export async function getTxFee(transaction: TransactionResponse): Promise<BigNumber> {
+  const receipt = await transaction.wait()
+  return receipt.gasUsed.mul(transaction.gasPrice)
+}
+
 export async function getEventArg(
   transaction: TransactionResponse,
   contract: Contract,

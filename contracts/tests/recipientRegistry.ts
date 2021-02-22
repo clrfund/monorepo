@@ -1,11 +1,13 @@
 import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
-import { Contract } from 'ethers'
+import { BigNumber, Contract } from 'ethers'
 import { keccak256 } from '@ethersproject/solidity'
 import { gtcrEncode } from '@kleros/gtcr-encoder'
 
-import { ZERO_ADDRESS } from '../utils/constants'
+import { UNIT, ZERO_ADDRESS } from '../utils/constants'
+import { getTxFee } from '../utils/contracts'
+import { deployContract } from '../utils/deployment'
 
 use(solidity)
 
@@ -413,6 +415,294 @@ describe('Kleros GTCR adapter', () => {
       expect(await registry.getRecipientAddress(
         2, blockNumber2, blockNumber3,
       )).to.equal(addedRecipient1)
+    })
+  })
+})
+
+describe('Optimistic recipient registry', () => {
+  const [, deployer, controller, recipient, requester] = provider.getWallets()
+  let registry: Contract
+
+  const baseDeposit = UNIT.div(10) // 0.1 ETH
+  const challengePeriodDuration = BigNumber.from(86400) // Seconds
+
+  beforeEach(async () => {
+    registry = await deployContract(deployer, 'OptimisticRecipientRegistry', [
+      baseDeposit,
+      challengePeriodDuration,
+      controller.address,
+    ])
+  })
+
+  it('initializes correctly', async () => {
+    expect(await registry.baseDeposit()).to.equal(baseDeposit)
+    expect(await registry.challengePeriodDuration()).to.equal(challengePeriodDuration)
+    expect(await registry.controller()).to.equal(controller.address)
+    expect(await registry.maxRecipients()).to.equal(0)
+  })
+
+  describe('managing recipients', () => {
+    const recipientIndex = 1
+    let recipientAddress: string
+    let metadata: string
+    let recipientId: string
+
+    function getRecipientId(address: string, metadata: string): string {
+      return keccak256(
+        ['address', 'string'],
+        [address, metadata],
+      )
+    }
+
+    beforeEach(async () => {
+      await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
+      recipientAddress = recipient.address
+      metadata = JSON.stringify({ name: 'Recipient', description: 'Description', imageHash: 'Ipfs imageHash' })
+      recipientId = getRecipientId(recipientAddress, metadata)
+    })
+
+    it('allows anyone to submit registration request', async () => {
+      await expect(registry.connect(requester).addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      ))
+        .to.emit(registry, 'RequestSubmitted')
+        .withArgs(recipientId, recipientAddress, metadata)
+      expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
+    })
+
+    it('should not accept zero-address as recipient address', async () => {
+      recipientAddress = ZERO_ADDRESS
+      await expect(registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      ))
+        .to.be.revertedWith('RecipientRegistry: Recipient address is zero')
+    })
+
+    it('should not accept empty string as recipient metadata', async () => {
+      metadata = ''
+      await expect(registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      ))
+        .to.be.revertedWith('RecipientRegistry: Metadata info is empty string')
+    })
+
+    it('should not accept registration request if recipient is already registered', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await provider.send('evm_increaseTime', [86400])
+      await registry.executeRequest(recipientId)
+      await expect(registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      ))
+        .to.be.revertedWith('RecipientRegistry: Recipient already registered')
+    })
+
+    it('should not accept new registration request if previous request is not resolved', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await expect(registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      ))
+        .to.be.revertedWith('RecipientRegistry: Request already submitted')
+    })
+
+    it('should not accept registration request with incorrect deposit size', async () => {
+      await expect(registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit.div(2) },
+      ))
+        .to.be.revertedWith('RecipientRegistry: Incorrect deposit amount')
+    })
+
+    it('allows owner to challenge registration request', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      const ownerBalanceBefore = await provider.getBalance(deployer.address)
+      const requestChallenged = registry.challengeRequest(recipientId)
+      await expect(requestChallenged)
+        .to.emit(registry, 'RequestRejected')
+        .withArgs(recipientId)
+      const txFee = await getTxFee(await requestChallenged)
+      const ownerBalanceAfter = await provider.getBalance(deployer.address)
+      expect(ownerBalanceBefore.sub(txFee).add(baseDeposit))
+        .to.equal(ownerBalanceAfter)
+    })
+
+    it('allows only owner to challenge requests', async () => {
+      await registry.connect(requester).addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await expect(registry.connect(requester).challengeRequest(recipientId))
+        .to.be.revertedWith('Ownable: caller is not the owner')
+    })
+
+    it('should not allow to challenge resolved request', async () => {
+      await registry.connect(requester).addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await registry.challengeRequest(recipientId)
+      await expect(registry.challengeRequest(recipientId))
+        .to.be.revertedWith('RecipientRegistry: Request does not exist')
+    })
+
+    it('allows anyone to execute unchallenged registration request', async () => {
+      await registry.connect(requester).addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await provider.send('evm_increaseTime', [86400])
+      await expect(registry.connect(requester).executeRequest(recipientId))
+        .to.emit(registry, 'RecipientAdded')
+        .withArgs(recipientId, recipientAddress, metadata, recipientIndex)
+
+      const currentBlock = await getCurrentBlockNumber()
+      expect(await registry.getRecipientAddress(
+        recipientIndex, currentBlock, currentBlock,
+      )).to.equal(recipientAddress)
+    })
+
+    it('should not allow to execute request that does not exist', async () => {
+      await expect(registry.executeRequest(recipientId))
+        .to.be.revertedWith('RecipientRegistry: Request does not exist')
+    })
+
+    it('should not allow to execute request during challenge period', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await expect(registry.executeRequest(recipientId))
+        .to.be.revertedWith('RecipientRegistry: Challenge period is not over')
+    })
+
+    it('should limit the number of recipients', async () => {
+      let recipientName
+      for (let i = 0; i < MAX_RECIPIENTS + 1; i++) {
+        recipientName = String(i + 1).padStart(4, '0')
+        metadata = JSON.stringify({ name: recipientName, description: 'Description', imageHash: 'Ipfs imageHash' })
+        recipientAddress = `0x000000000000000000000000000000000000${recipientName}`
+        recipientId = getRecipientId(recipientAddress, metadata)
+        if (i < MAX_RECIPIENTS) {
+          await registry.addRecipient(
+            recipientAddress, metadata, { value: baseDeposit },
+          )
+          await provider.send('evm_increaseTime', [86400])
+          await registry.executeRequest(recipientId)
+        } else {
+          await registry.addRecipient(
+            recipientAddress, metadata, { value: baseDeposit },
+          )
+          await provider.send('evm_increaseTime', [86400])
+          await expect(registry.executeRequest(recipientId))
+            .to.be.revertedWith('RecipientRegistry: Recipient limit reached')
+        }
+      }
+    })
+
+    it('allows anyone to submit removal request', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await provider.send('evm_increaseTime', [86400])
+      await registry.executeRequest(recipientId)
+
+      await expect(registry.connect(requester).removeRecipient(
+        recipientId, { value: baseDeposit },
+      ))
+        .to.emit(registry, 'RequestSubmitted')
+        .withArgs(recipientId, ZERO_ADDRESS, '')
+      expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
+    })
+
+    it('should not accept removal request if recipient is not in registry', async () => {
+      await expect(registry.removeRecipient(
+        recipientId, { value: baseDeposit },
+      ))
+        .to.be.revertedWith('RecipientRegistry: Recipient is not in the registry')
+    })
+
+    it('should not accept removal request if recipient is already removed', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await provider.send('evm_increaseTime', [86400])
+      await registry.executeRequest(recipientId)
+
+      await registry.removeRecipient(recipientId, { value: baseDeposit })
+      await provider.send('evm_increaseTime', [86400])
+      await registry.connect(requester).executeRequest(recipientId)
+
+      await expect(registry.removeRecipient(
+        recipientId, { value: baseDeposit },
+      ))
+        .to.be.revertedWith('RecipientRegistry: Recipient already removed')
+    })
+
+    it('should not accept new removal request if previous removal request is not resolved', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await provider.send('evm_increaseTime', [86400])
+      await registry.executeRequest(recipientId)
+
+      await registry.removeRecipient(recipientId, { value: baseDeposit })
+      await expect(registry.removeRecipient(recipientId, { value: baseDeposit }))
+        .to.be.revertedWith('RecipientRegistry: Request already submitted')
+    })
+
+    it('should not accept removal request with incorrect deposit size', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await provider.send('evm_increaseTime', [86400])
+      await registry.executeRequest(recipientId)
+
+      await expect(registry.removeRecipient(recipientId, { value: baseDeposit.div(2) }))
+        .to.be.revertedWith('RecipientRegistry: Incorrect deposit amount')
+    })
+
+    it('allows owner to challenge removal request', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await provider.send('evm_increaseTime', [86400])
+      await registry.executeRequest(recipientId)
+
+      await registry.removeRecipient(recipientId, { value: baseDeposit })
+      const ownerBalanceBefore = await provider.getBalance(deployer.address)
+      const requestChallenged = registry.challengeRequest(recipientId)
+      await expect(requestChallenged)
+        .to.emit(registry, 'RequestRejected')
+        .withArgs(recipientId)
+      const txFee = await getTxFee(await requestChallenged)
+      const ownerBalanceAfter = await provider.getBalance(deployer.address)
+      expect(ownerBalanceBefore.sub(txFee).add(baseDeposit))
+        .to.equal(ownerBalanceAfter)
+
+      // Recipient is not removed
+      const currentBlock = await getCurrentBlockNumber()
+      expect(await registry.getRecipientAddress(
+        recipientIndex, currentBlock, currentBlock,
+      )).to.equal(recipientAddress)
+    })
+
+    it('allows anyone to execute unchallenged removal request', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await provider.send('evm_increaseTime', [86400])
+      await registry.executeRequest(recipientId)
+
+      await registry.connect(requester).removeRecipient(recipientId, { value: baseDeposit })
+      await provider.send('evm_increaseTime', [86400])
+      await expect(registry.connect(requester).executeRequest(recipientId))
+        .to.emit(registry, 'RecipientRemoved')
+        .withArgs(recipientId)
+
+      const currentBlock = await getCurrentBlockNumber()
+      expect(await registry.getRecipientAddress(
+        recipientIndex, currentBlock, currentBlock,
+      )).to.equal(ZERO_ADDRESS)
     })
   })
 })
