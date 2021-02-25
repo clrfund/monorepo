@@ -58,12 +58,8 @@ export function setValue(key: string, value: string): void {
 export async function getValue(key: string): Promise<string | null> {
   return await new Promise<string | null>((resolve) => {
     // WARNING: once() may not work correctly after on() and off()
-    user.get('data').get(key).once((node) => {
-      if (node) {
-        resolve(node)
-      } else {
-        resolve(null)
-      }
+    user.get('data').get(key).once((value) => {
+      resolve(value)
     })
   })
 }
