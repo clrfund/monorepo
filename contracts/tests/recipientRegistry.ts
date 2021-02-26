@@ -58,27 +58,37 @@ describe('Simple Recipient Registry', () => {
     const recipientIndex = 1
     let recipientAddress: string
     let metadata: string
+    let recipientId: string
+
+    function getRecipientId(address: string, metadata: string): string {
+      return keccak256(
+        ['address', 'string'],
+        [address, metadata],
+      )
+    }
 
     beforeEach(async () => {
       await registry.connect(controller).setMaxRecipients(MAX_RECIPIENTS)
       recipientAddress = recipient.address
       metadata = JSON.stringify({ name: 'Recipient', description: 'Description', imageHash: 'Ipfs imageHash' })
+      recipientId = getRecipientId(recipientAddress, metadata)
     })
 
     it('allows owner to add recipient', async () => {
       await expect(registry.addRecipient(recipientAddress, metadata))
         .to.emit(registry, 'RecipientAdded')
-        .withArgs(recipientAddress, metadata, recipientIndex)
+        .withArgs(recipientId, recipientAddress, metadata, recipientIndex)
       const currentBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientAddress(
         recipientIndex, currentBlock, currentBlock,
       )).to.equal(recipientAddress)
 
       const anotherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
+      const anotherRecipientId = getRecipientId(anotherRecipientAddress, metadata)
       // Should increase recipient index for every new recipient
       await expect(registry.addRecipient(anotherRecipientAddress, metadata))
         .to.emit(registry, 'RecipientAdded')
-        .withArgs(anotherRecipientAddress, metadata, recipientIndex + 1)
+        .withArgs(anotherRecipientId, anotherRecipientAddress, metadata, recipientIndex + 1)
     })
 
     it('rejects attempts to add recipient from anyone except owner', async () => {
@@ -101,7 +111,6 @@ describe('Simple Recipient Registry', () => {
 
     it('should not add already registered recipient', async () => {
       await registry.addRecipient(recipientAddress, metadata)
-      metadata = JSON.stringify({ name: 'Recipient 2', description: 'Description 2', imageHash: 'Ipfs imageHash 2' })
       await expect(registry.addRecipient(recipientAddress, metadata))
         .to.be.revertedWith('RecipientRegistry: Recipient already registered')
     })
@@ -123,9 +132,9 @@ describe('Simple Recipient Registry', () => {
 
     it('allows owner to remove recipient', async () => {
       await registry.addRecipient(recipientAddress, metadata)
-      await expect(registry.removeRecipient(recipientAddress))
+      await expect(registry.removeRecipient(recipientId))
         .to.emit(registry, 'RecipientRemoved')
-        .withArgs(recipientAddress)
+        .withArgs(recipientId)
       const currentBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientAddress(
         recipientIndex, currentBlock, currentBlock,
@@ -134,14 +143,14 @@ describe('Simple Recipient Registry', () => {
 
     it('rejects attempts to remove recipient from anyone except owner', async () => {
       const registryAsRecipient = registry.connect(recipient)
-      await expect(registryAsRecipient.removeRecipient(recipientAddress))
+      await expect(registryAsRecipient.removeRecipient(recipientId))
         .to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('should not remove already removed recipient', async () => {
       await registry.addRecipient(recipientAddress, metadata)
-      await registry.removeRecipient(recipientAddress)
-      await expect(registry.removeRecipient(recipientAddress))
+      await registry.removeRecipient(recipientId)
+      await expect(registry.removeRecipient(recipientId))
         .to.be.revertedWith('RecipientRegistry: Recipient already removed')
     })
 
@@ -158,7 +167,7 @@ describe('Simple Recipient Registry', () => {
     it('should return recipient address for recipient that has been removed after the beginning of round', async () => {
       await registry.addRecipient(recipientAddress, metadata)
       const startBlock = await getCurrentBlockNumber()
-      await registry.removeRecipient(recipientAddress)
+      await registry.removeRecipient(recipientId)
       await provider.send('evm_increaseTime', [1000])
       const endBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientAddress(
@@ -177,9 +186,11 @@ describe('Simple Recipient Registry', () => {
 
       // Replace recipients
       const removedRecipient1 = '0x0000000000000000000000000000000000000001'
+      const removedRecipient1Id = getRecipientId(removedRecipient1, metadata)
       const removedRecipient2 = '0x0000000000000000000000000000000000000002'
-      await registry.removeRecipient(removedRecipient1)
-      await registry.removeRecipient(removedRecipient2)
+      const removedRecipient2Id = getRecipientId(removedRecipient2, metadata)
+      await registry.removeRecipient(removedRecipient1Id)
+      await registry.removeRecipient(removedRecipient2Id)
       const addedRecipient1 = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
       const addedRecipient2 = '0xef9e07C93b40681F6a63085Cf276aBA3D868Ac6E'
       const addedRecipient3 = '0x927be3E75380CC412148AfE80d9e9D02fF488738'

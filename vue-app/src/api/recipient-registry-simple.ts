@@ -1,5 +1,5 @@
 import { Contract, Event } from 'ethers'
-import { isAddress } from '@ethersproject/address'
+import { isHexString } from '@ethersproject/bytes'
 
 import { SimpleRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
@@ -9,7 +9,7 @@ function decodeRecipientAdded(event: Event): Project {
   const args = event.args as any
   const metadata = JSON.parse(args._metadata)
   return {
-    id: args._recipient,
+    id: args._recipientId,
     address: args._recipient,
     name: metadata.name,
     description: metadata.description,
@@ -40,7 +40,7 @@ export async function getProjects(
       continue
     }
     const removed = recipientRemovedEvents.find((event) => {
-      return (event.args as any)._recipient === project.id
+      return (event.args as any)._recipientId === project.id
     })
     if (removed) {
       if (!startBlock || startBlock && removed.blockNumber <= startBlock) {
@@ -58,13 +58,13 @@ export async function getProjects(
 
 export async function getProject(
   registryAddress: string,
-  recipientAddress: string,
+  recipientId: string,
 ): Promise<Project | null> {
-  if (!isAddress(recipientAddress)) {
+  if (!isHexString(recipientId, 32)) {
     return null
   }
   const registry = new Contract(registryAddress, SimpleRecipientRegistry, provider)
-  const recipientAddedFilter = registry.filters.RecipientAdded(recipientAddress)
+  const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
   const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   if (recipientAddedEvents.length !== 1) {
     return null
@@ -76,7 +76,7 @@ export async function getProject(
     // Invalid metadata
     return null
   }
-  const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientAddress)
+  const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientId)
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   if (recipientRemovedEvents.length !== 0) {
     project.isLocked = true
