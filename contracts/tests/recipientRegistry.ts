@@ -147,6 +147,12 @@ describe('Simple Recipient Registry', () => {
         .to.be.revertedWith('Ownable: caller is not the owner')
     })
 
+    it('reverts if recipient is not in registry', async () => {
+      recipientId = `0x${'0'.repeat(64)}`
+      await expect(registry.removeRecipient(recipientId))
+        .to.be.revertedWith('RecipientRegistry: Recipient is not in the registry')
+    })
+
     it('should not remove already removed recipient', async () => {
       await registry.addRecipient(recipientAddress, metadata)
       await registry.removeRecipient(recipientId)
