@@ -12,6 +12,8 @@ export interface RoundInfo {
   userRegistryAddress: string;
   maciAddress: string;
   recipientTreeDepth: number;
+  maxContributors: number;
+  maxMessages: number;
   startBlock: number;
   endBlock: number;
   coordinatorPubKey: PubKey;
@@ -26,6 +28,7 @@ export interface RoundInfo {
   matchingPool: FixedNumber;
   contributions: FixedNumber;
   contributors: number;
+  messages: number;
 }
 
 export enum RoundStatus {
@@ -115,12 +118,14 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     signUpDurationSeconds,
     votingDurationSeconds,
     coordinatorPubKeyRaw,
+    messages,
   ] = await Promise.all([
     maci.treeDepths(),
     maci.signUpTimestamp(),
     maci.signUpDurationSeconds(),
     maci.votingDurationSeconds(),
     maci.coordinatorPubKey(),
+    maci.numMessages(),
   ])
   const signUpDeadline = DateTime.fromSeconds(
     signUpTimestamp.add(signUpDurationSeconds).toNumber(),
@@ -180,6 +185,8 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     userRegistryAddress,
     maciAddress,
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
+    maxContributors: 2 ** maciTreeDepths.stateTreeDepth - 1,
+    maxMessages: 2 ** maciTreeDepths.messageTreeDepth - 1,
     startBlock: startBlock.toNumber(),
     endBlock: endBlock.toNumber(),
     coordinatorPubKey,
@@ -194,5 +201,6 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),
     contributions: FixedNumber.fromValue(contributions, nativeTokenDecimals),
     contributors: contributionsInfo.count,
+    messages: messages.toNumber(),
   }
 }

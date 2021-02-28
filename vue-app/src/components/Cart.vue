@@ -229,12 +229,16 @@ export default class Cart extends Vue {
       return `Cart can not contain more than ${MAX_CART_SIZE} items`
     } else if (currentRound.status === RoundStatus.Cancelled) {
       return 'Funding round has been cancelled'
+    } else if (currentRound.messages + this.cart.length >= currentRound.maxMessages) {
+      return 'The limit on the number of votes has been reached'
     } else {
       const total = this.getTotal()
       if (this.contribution.isZero()) {
         // Contributing
         if (DateTime.local() >= currentRound.signUpDeadline) {
           return 'The contribution period has ended'
+        } else if (currentRound.contributors >= currentRound.maxContributors) {
+          return 'The limit on the number of contributors has been reached'
         } else if (total.eq(BigNumber.from(0))) {
           return 'Contribution amount must be greater then zero'
         } else if (currentUser.balance === null) {
