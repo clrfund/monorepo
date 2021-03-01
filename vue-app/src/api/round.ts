@@ -47,32 +47,6 @@ export async function getCurrentRound(): Promise<string | null> {
   return fundingRoundAddress
 }
 
-async function getApprovedFunding(
-  fundingRound: Contract,
-  token: Contract,
-): Promise<BigNumber> {
-  // TODO: replace with single call when necessary getter will be implemented
-  const addSourceFilter = factory.filters.FundingSourceAdded()
-  const addSourceEvents = await factory.queryFilter(addSourceFilter, 0)
-  const removeSourceFilter = factory.filters.FundingSourceRemoved()
-  const removeSourceEvents = await factory.queryFilter(removeSourceFilter, 0)
-  let total = BigNumber.from(0)
-  for (const event of addSourceEvents) {
-    const sourceAddress = (event.args as any)._source
-    const removed = removeSourceEvents.find((event) => {
-      return (event.args as any)._source === sourceAddress
-    })
-    if (removed) {
-      continue
-    }
-    const allowance = await token.allowance(sourceAddress, factory.address)
-    const balance = await token.balanceOf(sourceAddress)
-    const contribution = allowance.lt(balance) ? allowance : balance
-    total = total.add(contribution)
-  }
-  return total
-}
-
 async function getRoundNumber(roundAddress: string): Promise<number> {
   const eventFilter = factory.filters.RoundStarted()
   const events = await factory.queryFilter(eventFilter, 0)
@@ -172,9 +146,7 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
       status = RoundStatus.Tallying
     }
     contributions = contributionsInfo.amount
-    const lockedFunding = await nativeToken.balanceOf(factory.address)
-    const approvedFunding = await getApprovedFunding(fundingRound, nativeToken)
-    matchingPool = lockedFunding.add(approvedFunding)
+    matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
   }
 
   const totalFunds = matchingPool.add(contributions)

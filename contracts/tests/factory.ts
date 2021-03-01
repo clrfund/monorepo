@@ -293,6 +293,20 @@ describe('Funding Round Factory', () => {
       roundDuration = maciParameters.signUpDuration + maciParameters.votingDuration + 10
     })
 
+    it('returns the amount of available matching funding', async () => {
+      await factory.addFundingSource(deployer.address)
+      await factory.addFundingSource(contributor.address)
+      // Allowance is more than available balance
+      await token.connect(deployer).approve(factory.address, contributionAmount)
+      // Allowance is less than available balance
+      await token.connect(contributor).approve(factory.address, contributionAmount)
+      // Direct contribution
+      await token.connect(contributor).transfer(factory.address, contributionAmount)
+      await factory.deployNewRound()
+      expect(await factory.getMatchingFunds(token.address))
+        .to.equal(contributionAmount.mul(2))
+    })
+
     it('allows owner to finalize round', async () => {
       await token.connect(contributor).transfer(factory.address, contributionAmount)
       await factory.deployNewRound();
@@ -311,7 +325,7 @@ describe('Funding Round Factory', () => {
     it('pulls funds from funding source', async () => {
       await factory.addFundingSource(contributor.address)
       token.connect(contributor).approve(factory.address, contributionAmount)
-      await factory.addFundingSource(deployer.address) // Not a funding source
+      await factory.addFundingSource(deployer.address) // Doesn't have tokens
       await factory.deployNewRound()
       await provider.send('evm_increaseTime', [roundDuration])
       await expect(factory.transferMatchingFunds(totalSpent, totalSpentSalt))
