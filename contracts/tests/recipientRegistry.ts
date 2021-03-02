@@ -14,10 +14,6 @@ use(solidity)
 const { provider } = waffle
 const MAX_RECIPIENTS = 15
 
-async function getCurrentBlockNumber(): Promise<number> {
-  return (await provider.getBlock('latest')).number
-}
-
 async function getCurrentTime(): Promise<number> {
   return (await provider.getBlock('latest')).timestamp
 }
@@ -81,20 +77,23 @@ describe('Simple Recipient Registry', () => {
     })
 
     it('allows owner to add recipient', async () => {
-      await expect(registry.addRecipient(recipientAddress, metadata))
+      const recipientAdded = await registry.addRecipient(recipientAddress, metadata)
+      let currentTime = await getCurrentTime()
+      expect(recipientAdded)
         .to.emit(registry, 'RecipientAdded')
-        .withArgs(recipientId, recipientAddress, metadata, recipientIndex)
-      const currentBlock = await getCurrentBlockNumber()
+        .withArgs(recipientId, recipientAddress, metadata, recipientIndex, currentTime)
       expect(await registry.getRecipientAddress(
-        recipientIndex, currentBlock, currentBlock,
+        recipientIndex, currentTime, currentTime,
       )).to.equal(recipientAddress)
 
       const anotherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
       const anotherRecipientId = getRecipientId(anotherRecipientAddress, metadata)
+      const anotherRecipientAdded = await registry.addRecipient(anotherRecipientAddress, metadata)
+      currentTime = await getCurrentTime()
       // Should increase recipient index for every new recipient
-      await expect(registry.addRecipient(anotherRecipientAddress, metadata))
+      expect(anotherRecipientAdded)
         .to.emit(registry, 'RecipientAdded')
-        .withArgs(anotherRecipientId, anotherRecipientAddress, metadata, recipientIndex + 1)
+        .withArgs(anotherRecipientId, anotherRecipientAddress, metadata, recipientIndex + 1, currentTime)
     })
 
     it('rejects attempts to add recipient from anyone except owner', async () => {
@@ -138,12 +137,13 @@ describe('Simple Recipient Registry', () => {
 
     it('allows owner to remove recipient', async () => {
       await registry.addRecipient(recipientAddress, metadata)
-      await expect(registry.removeRecipient(recipientId))
+      const recipientRemoved = await registry.removeRecipient(recipientId)
+      const currentTime = await getCurrentTime()
+      expect(recipientRemoved)
         .to.emit(registry, 'RecipientRemoved')
-        .withArgs(recipientId)
-      const currentBlock = await getCurrentBlockNumber()
+        .withArgs(recipientId, currentTime)
       expect(await registry.getRecipientAddress(
-        recipientIndex, currentBlock, currentBlock,
+        recipientIndex, currentTime, currentTime,
       )).to.equal(ZERO_ADDRESS)
     })
 
@@ -167,23 +167,23 @@ describe('Simple Recipient Registry', () => {
     })
 
     it('should not return recipient address for recipient that has been added after the end of round', async () => {
-      const startBlock = await getCurrentBlockNumber()
+      const startTime = await getCurrentTime()
       await provider.send('evm_increaseTime', [1000])
-      const endBlock = await getCurrentBlockNumber()
+      const endTime = await getCurrentTime()
       await registry.addRecipient(recipientAddress, metadata)
       expect(await registry.getRecipientAddress(
-        recipientIndex, startBlock, endBlock,
+        recipientIndex, startTime, endTime,
       )).to.equal(ZERO_ADDRESS)
     })
 
     it('should return recipient address for recipient that has been removed after the beginning of round', async () => {
       await registry.addRecipient(recipientAddress, metadata)
-      const startBlock = await getCurrentBlockNumber()
+      const startTime = await getCurrentTime()
       await registry.removeRecipient(recipientId)
       await provider.send('evm_increaseTime', [1000])
-      const endBlock = await getCurrentBlockNumber()
+      const endTime = await getCurrentTime()
       expect(await registry.getRecipientAddress(
-        recipientIndex, startBlock, endBlock,
+        recipientIndex, startTime, endTime,
       )).to.equal(recipientAddress)
     })
 
@@ -194,7 +194,7 @@ describe('Simple Recipient Registry', () => {
         recipientAddress = `0x000000000000000000000000000000000000${recipientName}`
         await registry.addRecipient(recipientAddress, metadata)
       }
-      const blockNumber1 = await getCurrentBlockNumber()
+      const time1 = await getCurrentTime()
 
       // Replace recipients
       const removedRecipient1 = '0x0000000000000000000000000000000000000001'
@@ -210,40 +210,40 @@ describe('Simple Recipient Registry', () => {
       await registry.addRecipient(addedRecipient2, metadata)
       await expect(registry.addRecipient(addedRecipient3, metadata))
         .to.be.revertedWith('RecipientRegistry: Recipient limit reached')
-      const blockNumber2 = await getCurrentBlockNumber()
+      const time2 = await getCurrentTime()
 
       // Recipients removed during the round should still be valid
       expect(await registry.getRecipientAddress(
-        1, blockNumber1, blockNumber2,
+        1, time1, time2,
       )).to.equal(removedRecipient1)
       expect(await registry.getRecipientAddress(
-        2, blockNumber1, blockNumber2,
+        2, time1, time2,
       )).to.equal(removedRecipient2)
 
       await provider.send('evm_increaseTime', [1000])
-      const blockNumber3 = await getCurrentBlockNumber()
+      const time3 = await getCurrentTime()
       // Recipients removed before the beginning of the round should be replaced
       expect(await registry.getRecipientAddress(
-        1, blockNumber2, blockNumber3,
+        1, time2, time3,
       )).to.equal(addedRecipient2)
       expect(await registry.getRecipientAddress(
-        2, blockNumber2, blockNumber3,
+        2, time2, time3,
       )).to.equal(addedRecipient1)
     })
   })
 
   describe('get recipient address', () => {
     it('should return zero address for zero index', async () => {
-      const currentBlock = await getCurrentBlockNumber()
+      const currentTime = await getCurrentTime()
       expect(await registry.getRecipientAddress(
-        0, currentBlock, currentBlock,
+        0, currentTime, currentTime,
       )).to.equal(ZERO_ADDRESS)
     })
 
     it('should return zero address for unregistered recipient', async () => {
-      const currentBlock = await getCurrentBlockNumber()
+      const currentTime = await getCurrentTime()
       expect(await registry.getRecipientAddress(
-        99, currentBlock, currentBlock,
+        99, currentTime, currentTime,
       )).to.equal(ZERO_ADDRESS)
     })
   })
@@ -298,21 +298,24 @@ describe('Kleros GTCR adapter', () => {
 
     it('allows anyone to add recipient', async () => {
       await tcr.addItem(recipientData)
-      await expect(registry.connect(recipient).addRecipient(recipientId))
+      const recipientAdded = await registry.connect(recipient).addRecipient(recipientId)
+      let currentTime = await getCurrentTime()
+      expect(recipientAdded)
         .to.emit(registry, 'RecipientAdded')
-        .withArgs(recipientId, recipientData, recipientIndex)
-      const currentBlock = await getCurrentBlockNumber()
+        .withArgs(recipientId, recipientData, recipientIndex, currentTime)
       expect(await registry.getRecipientAddress(
-        recipientIndex, currentBlock, currentBlock,
+        recipientIndex, currentTime, currentTime,
       )).to.equal(recipient.address)
 
       const anotherRecipientAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045'
       const [anotherRecipientId, anotherRecipientData] = encodeRecipient(anotherRecipientAddress)
       await tcr.addItem(anotherRecipientData)
+      const anotherRecipientAdded = await registry.connect(recipient).addRecipient(anotherRecipientId)
+      currentTime = await getCurrentTime()
       // Should increase recipient index for every new recipient
-      await expect(registry.connect(recipient).addRecipient(anotherRecipientId))
+      expect(anotherRecipientAdded)
         .to.emit(registry, 'RecipientAdded')
-        .withArgs(anotherRecipientId, anotherRecipientData, recipientIndex + 1)
+        .withArgs(anotherRecipientId, anotherRecipientData, recipientIndex + 1, currentTime)
     })
 
     it('should not accept recipient who is not registered in TCR', async () => {
@@ -336,12 +339,13 @@ describe('Kleros GTCR adapter', () => {
       await tcr.addItem(recipientData)
       await registry.connect(recipient).addRecipient(recipientId)
       await tcr.removeItem(recipientId)
-      await expect(registry.connect(recipient).removeRecipient(recipientId))
+      const recipientRemoved = await registry.connect(recipient).removeRecipient(recipientId)
+      const currentTime = await getCurrentTime()
+      expect(recipientRemoved)
         .to.emit(registry, 'RecipientRemoved')
-        .withArgs(recipientId)
-      const currentBlock = await getCurrentBlockNumber()
+        .withArgs(recipientId, currentTime)
       expect(await registry.getRecipientAddress(
-        recipientIndex, currentBlock, currentBlock,
+        recipientIndex, currentTime, currentTime,
       )).to.equal(ZERO_ADDRESS)
     })
 
@@ -386,7 +390,7 @@ describe('Kleros GTCR adapter', () => {
         const recipientAddress = `0x100000000000000000000000000000000000${recipientName}`
         await addRecipient(recipientAddress)
       }
-      const blockNumber1 = await getCurrentBlockNumber()
+      const time1 = await getCurrentTime()
 
       // Replace recipients
       const removedRecipient1 = '0x1000000000000000000000000000000000000001'
@@ -400,24 +404,24 @@ describe('Kleros GTCR adapter', () => {
       await addRecipient(addedRecipient2)
       await expect(addRecipient(addedRecipient3))
         .to.be.revertedWith('RecipientRegistry: Recipient limit reached')
-      const blockNumber2 = await getCurrentBlockNumber()
+      const time2 = await getCurrentTime()
 
       // Recipients removed during the round should still be valid
       expect(await registry.getRecipientAddress(
-        1, blockNumber1, blockNumber2,
+        1, time1, time2,
       )).to.equal(removedRecipient1)
       expect(await registry.getRecipientAddress(
-        2, blockNumber1, blockNumber2,
+        2, time1, time2,
       )).to.equal(removedRecipient2)
 
       await provider.send('evm_increaseTime', [1000])
-      const blockNumber3 = await getCurrentBlockNumber()
+      const time3 = await getCurrentTime()
       // Recipients removed before the beginning of the round should be replaced
       expect(await registry.getRecipientAddress(
-        1, blockNumber2, blockNumber3,
+        1, time2, time3,
       )).to.equal(addedRecipient2)
       expect(await registry.getRecipientAddress(
-        2, blockNumber2, blockNumber3,
+        2, time2, time3,
       )).to.equal(addedRecipient1)
     })
   })
@@ -600,9 +604,8 @@ describe('Optimistic recipient registry', () => {
       expect(requesterBalanceBefore.sub(txFee).add(baseDeposit))
         .to.equal(requesterBalanceAfter)
 
-      const currentBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientAddress(
-        recipientIndex, currentBlock, currentBlock,
+        recipientIndex, currentTime, currentTime,
       )).to.equal(recipientAddress)
     })
 
@@ -744,9 +747,8 @@ describe('Optimistic recipient registry', () => {
       expect(requesterBalanceBefore.add(baseDeposit)).to.equal(requesterBalanceAfter)
 
       // Recipient is not removed
-      const currentBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientAddress(
-        recipientIndex, currentBlock, currentBlock,
+        recipientIndex, currentTime, currentTime,
       )).to.equal(recipientAddress)
     })
 
@@ -771,9 +773,8 @@ describe('Optimistic recipient registry', () => {
       expect(requesterBalanceBefore.sub(txFee).add(baseDeposit))
         .to.equal(requesterBalanceAfter)
 
-      const currentBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientAddress(
-        recipientIndex, currentBlock, currentBlock,
+        recipientIndex, currentTime, currentTime,
       )).to.equal(ZERO_ADDRESS)
     })
   })

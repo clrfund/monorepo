@@ -65,8 +65,8 @@ function decodeRecipientAdded(event: Event, columns: TcrColumn[]): Project {
 
 export async function getProjects(
   registryAddress: string,
-  startBlock?: number,
-  endBlock?: number,
+  startTime?: number,
+  endTime?: number,
 ): Promise<Project[]> {
   const registry = new Contract(registryAddress, KlerosGTCRAdapter, provider)
   const tcrAddress = await registry.tcr()
@@ -79,19 +79,19 @@ export async function getProjects(
   const projects: Project[] = []
   for (const event of recipientAddedEvents) {
     const project = decodeRecipientAdded(event, tcrColumns)
-    if (endBlock && event.blockNumber >= endBlock) {
+    const addedAt = (event.args as any)._timestamp.toNumber()
+    if (endTime && addedAt >= endTime) {
       // Hide recipient if it is added after the end of round.
-      // We can not do this with filter because on xDai node returns
-      // "One of the blocks specified in filter ... cannot be found"
       project.isHidden = true
     }
     const removed = recipientRemovedEvents.find((event) => {
       return (event.args as any)._tcrItemId === project.id
     })
     if (removed) {
-      if (!startBlock || startBlock && removed.blockNumber <= startBlock) {
-        // Start block not specified
-        // or recipient had been removed before start block
+      const removedAt = (removed.args as any)._timestamp.toNumber()
+      if (!startTime || startTime && removedAt <= startTime) {
+        // Start time not specified
+        // or recipient had been removed before start time
         project.isHidden = true
       } else {
         // Disallow contributions to removed recipient, but don't hide it

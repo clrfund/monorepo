@@ -77,7 +77,7 @@ abstract contract BaseRecipientRegistry is IRecipientRegistry {
       recipientIndex = recipients[removedRecipient].index;
       slots[recipientIndex - 1].push(_recipientId);
     }
-    recipients[_recipientId] = Recipient(_recipient, recipientIndex, block.number, 0);
+    recipients[_recipientId] = Recipient(_recipient, recipientIndex, block.timestamp, 0);
     return recipientIndex;
   }
 
@@ -90,21 +90,21 @@ abstract contract BaseRecipientRegistry is IRecipientRegistry {
   {
     require(recipients[_recipientId].index != 0, 'RecipientRegistry: Recipient is not in the registry');
     require(recipients[_recipientId].removedAt == 0, 'RecipientRegistry: Recipient already removed');
-    recipients[_recipientId].removedAt = block.number;
+    recipients[_recipientId].removedAt = block.timestamp;
     removed.push(_recipientId);
   }
 
   /**
     * @dev Get recipient address by index.
     * @param _index Recipient index.
-    * @param _startBlock Starting block of the funding round.
-    * @param _endBlock Ending block of the funding round.
+    * @param _startTime The start time of the funding round.
+    * @param _endTime The end time of the funding round.
     * @return Recipient address.
     */
   function getRecipientAddress(
     uint256 _index,
-    uint256 _startBlock,
-    uint256 _endBlock
+    uint256 _startTime,
+    uint256 _endTime
   )
     override
     external
@@ -123,11 +123,11 @@ abstract contract BaseRecipientRegistry is IRecipientRegistry {
     for (uint256 idx = history.length; idx > 0; idx--) {
       bytes32 recipientId = history[idx - 1];
       Recipient memory recipient = recipients[recipientId];
-      if (recipient.addedAt > _endBlock) {
+      if (recipient.addedAt > _endTime) {
         // Recipient added after the end of the funding round, skip
         continue;
       }
-      else if (recipient.removedAt != 0 && recipient.removedAt <= _startBlock) {
+      else if (recipient.removedAt != 0 && recipient.removedAt <= _startTime) {
         // Recipient had been already removed when the round started
         // Stop search because subsequent items were removed even earlier
         return prevRecipientAddress;

@@ -22,8 +22,8 @@ function decodeRecipientAdded(event: Event): Project {
 
 export async function getProjects(
   registryAddress: string,
-  startBlock?: number,
-  endBlock?: number,
+  startTime?: number,
+  endTime?: number,
 ): Promise<Project[]> {
   const registry = new Contract(registryAddress, SimpleRecipientRegistry, provider)
   const recipientAddedFilter = registry.filters.RecipientAdded()
@@ -39,7 +39,8 @@ export async function getProjects(
       // Invalid metadata
       continue
     }
-    if (endBlock && event.blockNumber >= endBlock) {
+    const addedAt = (event.args as any)._timestamp.toNumber()
+    if (endTime && addedAt >= endTime) {
       // Hide recipient if it is added after the end of round
       project.isHidden = true
     }
@@ -47,9 +48,10 @@ export async function getProjects(
       return (event.args as any)._recipientId === project.id
     })
     if (removed) {
-      if (!startBlock || startBlock && removed.blockNumber <= startBlock) {
-        // Start block not specified
-        // or recipient had been removed before start block
+      const removedAt = (removed.args as any)._timestamp.toNumber()
+      if (!startTime || startTime && removedAt <= startTime) {
+        // Start time not specified
+        // or recipient had been removed before start time
         project.isHidden = true
       } else {
         // Disallow contributions to removed recipient, but don't hide it
