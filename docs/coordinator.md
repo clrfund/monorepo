@@ -2,12 +2,12 @@
 
 ## Coordinate using MACI CLI
 
-Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.5.7:
+Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.6.7:
 
 ```
 git clone https://github.com/appliedzkp/maci.git
 cd maci/
-git checkout v0.5.7
+git checkout v0.6.7
 ```
 
 Follow instructions in README.md to install necessary dependencies.
@@ -37,38 +37,33 @@ A single key can be used to coordinate multiple rounds.
 
 ### Tally votes
 
-Decrypt messages:
+Decrypt messages and tally the votes:
 
 ```
 cd ../cli
-node build/index.js process \
+node build/index.js genProofs \
     --eth-provider <json-rpc-api-url> \
     --contract <maci-address> \
     --privkey <coordinator-private-key> \
-    --eth-privkey <eth-private-key> \
-    --repeat
+    --output proofs.json \
+    --tally-file tally.json
 ```
 
 Coordinator private key must be in MACI key format (starts with `macisk`).
 Ethereum private key can be any private key that controls the necessary amount of ETH to pay for gas.
 
-The `process` command will print `Random state leaf` value at the end. This value will be needed to run the next command which tallies the votes:
+The `genProofs` command will create two files: `proofs.json` and `tally.json`. The `proofs.json` file will be needed to run the next command which submits proofs to MACI contract:
 
 ```
-node build/index.js tally \
+node build/index.js proveOnChain \
     --eth-provider <json-rpc-api-url> \
     --contract <maci-address> \
     --privkey <coordinator-private-key> \
     --eth-privkey <eth-private-key> \
-    --current-results-salt 0x0 \
-    --current-total-vc-salt 0x0 \
-    --current-per-vo-vc-salt 0x0 \
-    --tally-file tally.json \
-    --leaf-zero <random-state-leaf> \
-    --repeat
+    --proof-file proofs.json
 ```
 
-The process may take several hours. Result will be saved to `tally.json` file in the same directory, which must then be published via IPFS.
+The process may take several hours. Results can be found in `tally.json` file, which must then be published via IPFS.
 
 Finally, the [CID](https://ipfs.io/ipns/docs.ipfs.io/concepts/content-addressing/) of tally file must be submitted to `FundingRound` contract:
 

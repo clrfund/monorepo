@@ -2,7 +2,7 @@
 import fs from 'fs'
 import { network, ethers } from 'hardhat'
 import { Wallet } from 'ethers'
-import { processMessages as processCmd, tally as tallyCmd } from 'maci-cli'
+import { genProofs, proveOnChain } from 'maci-cli'
 
 import { getIpfsHash } from '../utils/ipfs'
 
@@ -20,30 +20,25 @@ async function main() {
   const maciAddress = await fundingRound.maci()
   const providerUrl = (network.config as any).url
 
-  // Process messages
-  const randomStateLeaf = await processCmd({
+  // Process messages and tally votes
+  const results = await genProofs({
     contract: maciAddress,
-    eth_privkey: coordinatorEthPrivKey,
     eth_provider: providerUrl,
     privkey: state.coordinatorPrivKey,
-    repeat: true,
-  })
-  if (!randomStateLeaf) {
-    throw new Error('message processing failed')
-  }
-
-  // Tally votes
-  const tally: any = await tallyCmd({
-    contract: maciAddress,
-    eth_privkey: coordinatorEthPrivKey,
-    eth_provider: providerUrl,
-    privkey: state.coordinatorPrivKey,
-    repeat: true,
-    current_results_salt: '0x0',
-    current_total_vc_salt: '0x0',
-    current_per_vo_vc_salt: '0x0',
-    leaf_zero: randomStateLeaf,
     tally_file: 'tally.json',
+  })
+  if (!results) {
+    throw new Error('generation of proofs failed')
+  }
+  const { proofs, tally } = results
+
+  // Submit proofs to MACI contract
+  await proveOnChain({
+    contract: maciAddress,
+    eth_privkey: coordinatorEthPrivKey,
+    eth_provider: providerUrl,
+    privkey: state.coordinatorPrivKey,
+    proof_file: proofs,
   })
 
   // Publish tally hash

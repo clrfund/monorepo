@@ -3,7 +3,7 @@ import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { BigNumber, Contract, Signer, Wallet } from 'ethers'
-import { processMessages as processCmd, tally as tallyCmd } from 'maci-cli'
+import { genProofs, proveOnChain } from 'maci-cli'
 import { Keypair } from 'maci-domainobjs'
 
 import { UNIT } from '../utils/constants'
@@ -174,26 +174,24 @@ describe('End-to-end Tests', function () {
   async function finalizeRound(): Promise<any> {
     const providerUrl = (provider as any)._hardhatNetwork.config.url
 
-    // Process messages
-    const randomStateLeaf = await processCmd({
+    // Process messages and tally votes
+    const results = await genProofs({
       contract: maci.address,
-      eth_privkey: coordinator.privateKey,
       eth_provider: providerUrl,
       privkey: coordinatorKeypair.privKey.serialize(),
-      repeat: true,
     })
+    if (!results) {
+      throw new Error('generation of proofs failed')
+    }
+    const { proofs, tally } = results
 
-    // Tally votes
-    const tally: any = await tallyCmd({
+    // Submit proofs to MACI contract
+    await proveOnChain({
       contract: maci.address,
       eth_privkey: coordinator.privateKey,
       eth_provider: providerUrl,
       privkey: coordinatorKeypair.privKey.serialize(),
-      repeat: true,
-      current_results_salt: '0x0',
-      current_total_vc_salt: '0x0',
-      current_per_vo_vc_salt: '0x0',
-      leaf_zero: randomStateLeaf,
+      proof_file: proofs,
     })
     const tallyHash = await getIpfsHash(tally)
     await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
@@ -205,7 +203,7 @@ describe('End-to-end Tests', function () {
     )
 
     // Claim funds
-    tally.claims = {}
+    const claims: { [index: number]: BigNumber } = {}
     const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
     for (const recipientIndex of [1, 2]) {
       const recipient = recipientIndex === 1 ? recipient1 : recipient2
@@ -216,9 +214,9 @@ describe('End-to-end Tests', function () {
       )
       const claimTx = await fundingRound.connect(recipient).claimFunds(...recipientClaimData)
       const claimedAmount = await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_amount')
-      tally.claims[recipientIndex] = claimedAmount
+      claims[recipientIndex] = claimedAmount
     }
-    return tally
+    return { tally, claims }
   }
 
   it('should allocate funds correctly when users change keys', async () => {
@@ -268,10 +266,10 @@ describe('End-to-end Tests', function () {
 
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
-    const tally = await finalizeRound()
+    const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('160000')
-    expect(tally.claims[1]).to.equal(UNIT.mul(58).div(10))
-    expect(tally.claims[2]).to.equal(UNIT.mul(58).div(10))
+    expect(claims[1]).to.equal(UNIT.mul(58).div(10))
+    expect(claims[2]).to.equal(UNIT.mul(58).div(10))
   })
 
   it('should allocate funds correctly if not all voice credits are spent', async () => {
@@ -299,10 +297,10 @@ describe('End-to-end Tests', function () {
 
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
-    const tally = await finalizeRound()
+    const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('80000')
-    expect(tally.claims[1]).to.equal(UNIT.mul(58).div(10))
-    expect(tally.claims[2]).to.equal(UNIT.mul(58).div(10))
+    expect(claims[1]).to.equal(UNIT.mul(58).div(10))
+    expect(claims[2]).to.equal(UNIT.mul(58).div(10))
   })
 
   it('should overwrite votes 1', async () => {
@@ -334,12 +332,12 @@ describe('End-to-end Tests', function () {
 
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
-    const tally = await finalizeRound()
+    const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('50000')
     expect(tally.results.tally[1]).to.equal('200')
     expect(tally.results.tally[2]).to.equal('100')
-    expect(tally.claims[1].toString()).to.equal('7066666666666666666')
-    expect(tally.claims[2].toString()).to.equal('3433333333333333333')
+    expect(claims[1].toString()).to.equal('7066666666666666666')
+    expect(claims[2].toString()).to.equal('3433333333333333333')
   })
 
   it('should overwrite votes 2', async () => {
@@ -372,12 +370,12 @@ describe('End-to-end Tests', function () {
 
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
-    const tally = await finalizeRound()
+    const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('160000')
     expect(tally.results.tally[1]).to.equal('0')
     expect(tally.results.tally[2]).to.equal('400')
-    expect(tally.claims[1]).to.equal(ZERO)
-    expect(tally.claims[2]).to.equal(UNIT.mul(116).div(10))
+    expect(claims[1]).to.equal(ZERO)
+    expect(claims[2]).to.equal(UNIT.mul(116).div(10))
   })
 
   it('should overwrite previous batch of votes', async () => {
@@ -415,7 +413,7 @@ describe('End-to-end Tests', function () {
 
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
-    const tally = await finalizeRound()
+    const { tally } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('80000')
     expect(tally.results.tally[1]).to.equal('200')
     expect(tally.results.tally[2]).to.equal('200')
@@ -508,9 +506,9 @@ describe('End-to-end Tests', function () {
     )
 
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
-    const tally = await finalizeRound()
+    const { tally, claims } = await finalizeRound()
     expect(tally.totalVoiceCredits.spent).to.equal('40000')
-    expect(tally.claims[1]).to.equal(BigNumber.from(0))
-    expect(tally.claims[2]).to.equal(UNIT.mul(104).div(10))
+    expect(claims[1]).to.equal(BigNumber.from(0))
+    expect(claims[2]).to.equal(UNIT.mul(104).div(10))
   })
 })

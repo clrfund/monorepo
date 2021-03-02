@@ -169,6 +169,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     MACI maci = maciFactory.deployMaci(
       SignUpGatekeeper(newRound),
       InitialVoiceCreditProxy(newRound),
+      coordinator,
       coordinatorPubKey
     );
     newRound.setMaci(maci);
