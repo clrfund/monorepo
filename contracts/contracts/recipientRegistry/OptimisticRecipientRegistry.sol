@@ -15,6 +15,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
   struct Request {
     address payable requester;
     uint256 submissionTime;
+    uint256 deposit;
     address recipientAddress; // Undefined in removal requests
     string recipientMetadata;
   }
@@ -49,6 +50,26 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
   }
 
   /**
+    * @dev Change base deposit.
+    */
+  function setBaseDeposit(uint256 _baseDeposit)
+    external
+    onlyOwner
+  {
+    baseDeposit = _baseDeposit;
+  }
+
+  /**
+    * @dev Change challenge period duration.
+    */
+  function setChallengePeriodDuration(uint256 _challengePeriodDuration)
+    external
+    onlyOwner
+  {
+    challengePeriodDuration = _challengePeriodDuration;
+  }
+
+  /**
     * @dev Submit recipient registration request.
     * @param _recipient The address that receives funds.
     * @param _metadata The metadata info of the recipient.
@@ -66,6 +87,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     requests[recipientId] = Request(
       msg.sender,
       block.timestamp,
+      msg.value,
       _recipient,
       _metadata
     );
@@ -87,6 +109,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     requests[_recipientId] = Request(
       msg.sender,
       block.timestamp,
+      msg.value,
       address(0),
       ''
     );
@@ -105,7 +128,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     Request memory request = requests[_recipientId];
     require(request.submissionTime != 0, 'RecipientRegistry: Request does not exist');
     address payable challenger = payable(owner());
-    bool isSent = challenger.send(baseDeposit);
+    bool isSent = challenger.send(request.deposit);
     delete requests[_recipientId];
     emit RequestRejected(_recipientId);
     return isSent;
@@ -139,7 +162,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
         recipientIndex
       );
     }
-    bool isSent = request.requester.send(baseDeposit);
+    bool isSent = request.requester.send(request.deposit);
     delete requests[_recipientId];
     return isSent;
   }

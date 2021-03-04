@@ -441,6 +441,18 @@ describe('Optimistic recipient registry', () => {
     expect(await registry.maxRecipients()).to.equal(0)
   })
 
+  it('changes base deposit', async () => {
+    const newBaseDeposit = baseDeposit.mul(2)
+    await registry.setBaseDeposit(newBaseDeposit)
+    expect(await registry.baseDeposit()).to.equal(newBaseDeposit)
+  })
+
+  it('changes challenge period duration', async () => {
+    const newChallengePeriodDuration = challengePeriodDuration.mul(2)
+    await registry.setChallengePeriodDuration(newChallengePeriodDuration)
+    expect(await registry.challengePeriodDuration()).to.equal(newChallengePeriodDuration)
+  })
+
   describe('managing recipients', () => {
     const recipientIndex = 1
     let recipientAddress: string
@@ -580,6 +592,21 @@ describe('Optimistic recipient registry', () => {
       )
       await expect(registry.executeRequest(recipientId))
         .to.be.revertedWith('RecipientRegistry: Challenge period is not over')
+    })
+
+    it('should remember initial deposit amount during registration', async () => {
+      await registry.connect(requester).addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      await registry.setBaseDeposit(baseDeposit.mul(2))
+      await provider.send('evm_increaseTime', [86400])
+
+      const requesterBalanceBefore = await provider.getBalance(requester.address)
+      const requestExecuted = await registry.connect(requester).executeRequest(recipientId)
+      const txFee = await getTxFee(requestExecuted)
+      const requesterBalanceAfter = await provider.getBalance(requester.address)
+      expect(requesterBalanceBefore.sub(txFee).add(baseDeposit))
+        .to.equal(requesterBalanceAfter)
     })
 
     it('should limit the number of recipients', async () => {
