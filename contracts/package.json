@@ -21,9 +21,9 @@
     "clean": "rm -rf cache && rm -rf build"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^3.2.0",
+    "@openzeppelin/contracts": "3.2.0",
     "maci-contracts": "0.5.7",
-    "solidity-rlp": "~2.0.3"
+    "solidity-rlp": "2.0.3"
   },
   "devDependencies": {
     "@kleros/gtcr-encoder": "^1.4.0",
@@ -37,9 +37,9 @@
     "@typescript-eslint/parser": "^2.34.0",
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
-    "ethereum-waffle": "^3.2.1",
+    "ethereum-waffle": "~3.2.2",
     "ethers": "^5.0.17",
-    "hardhat": "^2.0.6",
+    "hardhat": "^2.0.11",
     "ipfs-only-hash": "^2.0.1",
     "maci-cli": "0.5.7",
     "maci-crypto": "~0.5.7",
