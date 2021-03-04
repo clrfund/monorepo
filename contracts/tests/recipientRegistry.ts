@@ -520,11 +520,11 @@ describe('Optimistic recipient registry', () => {
         recipientAddress, metadata, { value: baseDeposit },
       )
       const ownerBalanceBefore = await provider.getBalance(deployer.address)
-      const requestChallenged = registry.challengeRequest(recipientId)
-      await expect(requestChallenged)
+      const requestChallenged = await registry.challengeRequest(recipientId)
+      expect(requestChallenged)
         .to.emit(registry, 'RequestRejected')
         .withArgs(recipientId)
-      const txFee = await getTxFee(await requestChallenged)
+      const txFee = await getTxFee(requestChallenged)
       const ownerBalanceAfter = await provider.getBalance(deployer.address)
       expect(ownerBalanceBefore.sub(txFee).add(baseDeposit))
         .to.equal(ownerBalanceAfter)
@@ -552,9 +552,16 @@ describe('Optimistic recipient registry', () => {
         recipientAddress, metadata, { value: baseDeposit },
       )
       await provider.send('evm_increaseTime', [86400])
-      await expect(registry.connect(requester).executeRequest(recipientId))
+
+      const requesterBalanceBefore = await provider.getBalance(requester.address)
+      const requestExecuted = await registry.connect(requester).executeRequest(recipientId)
+      expect(requestExecuted)
         .to.emit(registry, 'RecipientAdded')
         .withArgs(recipientId, recipientAddress, metadata, recipientIndex)
+      const txFee = await getTxFee(requestExecuted)
+      const requesterBalanceAfter = await provider.getBalance(requester.address)
+      expect(requesterBalanceBefore.sub(txFee).add(baseDeposit))
+        .to.equal(requesterBalanceAfter)
 
       const currentBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientAddress(
@@ -670,11 +677,11 @@ describe('Optimistic recipient registry', () => {
 
       await registry.removeRecipient(recipientId, { value: baseDeposit })
       const ownerBalanceBefore = await provider.getBalance(deployer.address)
-      const requestChallenged = registry.challengeRequest(recipientId)
-      await expect(requestChallenged)
+      const requestChallenged = await registry.challengeRequest(recipientId)
+      expect(requestChallenged)
         .to.emit(registry, 'RequestRejected')
         .withArgs(recipientId)
-      const txFee = await getTxFee(await requestChallenged)
+      const txFee = await getTxFee(requestChallenged)
       const ownerBalanceAfter = await provider.getBalance(deployer.address)
       expect(ownerBalanceBefore.sub(txFee).add(baseDeposit))
         .to.equal(ownerBalanceAfter)
@@ -695,9 +702,16 @@ describe('Optimistic recipient registry', () => {
 
       await registry.connect(requester).removeRecipient(recipientId, { value: baseDeposit })
       await provider.send('evm_increaseTime', [86400])
-      await expect(registry.connect(requester).executeRequest(recipientId))
+
+      const requesterBalanceBefore = await provider.getBalance(requester.address)
+      const requestExecuted = await registry.connect(requester).executeRequest(recipientId)
+      expect(requestExecuted)
         .to.emit(registry, 'RecipientRemoved')
         .withArgs(recipientId)
+      const txFee = await getTxFee(requestExecuted)
+      const requesterBalanceAfter = await provider.getBalance(requester.address)
+      expect(requesterBalanceBefore.sub(txFee).add(baseDeposit))
+        .to.equal(requesterBalanceAfter)
 
       const currentBlock = await getCurrentBlockNumber()
       expect(await registry.getRecipientAddress(
