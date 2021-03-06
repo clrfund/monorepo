@@ -3,6 +3,7 @@ import { ethers } from 'hardhat'
 import { Keypair } from 'maci-domainobjs'
 
 import { UNIT } from '../utils/constants'
+import { getEventArg } from '../utils/contracts'
 import { MaciParameters } from '../utils/maci'
 
 async function main() {
@@ -81,13 +82,48 @@ async function main() {
     description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
     imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
   }
+  const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
   const recipientRegistryAddress = await factory.recipientRegistry()
-  const recipientRegistry = await ethers.getContractAt(
-    'SimpleRecipientRegistry',
-    recipientRegistryAddress,
-  )
-  await recipientRegistry.addRecipient(recipient1.getAddress(), JSON.stringify(metadataRecipient1))
-  await recipientRegistry.addRecipient(recipient2.getAddress(), JSON.stringify(metadataRecipient2))
+  if (recipientRegistryType === 'simple') {
+    const recipientRegistry = await ethers.getContractAt(
+      'SimpleRecipientRegistry',
+      recipientRegistryAddress,
+    )
+    await recipientRegistry.addRecipient(
+      recipient1.getAddress(),
+      JSON.stringify(metadataRecipient1),
+    )
+    await recipientRegistry.addRecipient(
+      recipient2.getAddress(),
+      JSON.stringify(metadataRecipient2),
+    )
+  } else if (recipientRegistryType === 'optimistic') {
+    const recipientRegistry = await ethers.getContractAt(
+      'OptimisticRecipientRegistry',
+      recipientRegistryAddress,
+    )
+    const deposit = await recipientRegistry.baseDeposit()
+    const recipient1Added = await recipientRegistry.addRecipient(
+      recipient1.getAddress(),
+      JSON.stringify(metadataRecipient1),
+      { value: deposit },
+    )
+    const recipient1Id = await getEventArg(
+      recipient1Added, recipientRegistry,
+      'RequestSubmitted', '_recipientId',
+    )
+    await recipientRegistry.executeRequest(recipient1Id)
+    const recipient2Added = await recipientRegistry.addRecipient(
+      recipient2.getAddress(),
+      JSON.stringify(metadataRecipient2),
+      { value: deposit },
+    )
+    const recipient2Id = await getEventArg(
+      recipient2Added, recipientRegistry,
+      'RequestSubmitted', '_recipientId',
+    )
+    await recipientRegistry.executeRequest(recipient2Id)
+  }
 
   // Deploy new funding round and MACI
   await factory.deployNewRound();

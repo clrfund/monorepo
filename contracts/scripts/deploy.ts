@@ -1,5 +1,7 @@
 import { ethers } from 'hardhat'
+import { Contract } from 'ethers'
 
+import { UNIT } from '../utils/constants'
 import { deployMaciFactory } from '../utils/deployment'
 
 async function main() {
@@ -23,13 +25,29 @@ async function main() {
   const userRegistry = await SimpleUserRegistry.deploy()
   await fundingRoundFactory.setUserRegistry(userRegistry.address)
 
-  const SimpleRecipientRegistry = await ethers.getContractFactory(
-    'SimpleRecipientRegistry',
-    deployer,
-  )
-  const recipientRegistry = await SimpleRecipientRegistry.deploy(
-    fundingRoundFactory.address,
-  )
+  const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
+  let recipientRegistry: Contract
+  if (recipientRegistryType === 'simple') {
+    const SimpleRecipientRegistry = await ethers.getContractFactory(
+      'SimpleRecipientRegistry',
+      deployer,
+    )
+    recipientRegistry = await SimpleRecipientRegistry.deploy(
+      fundingRoundFactory.address,
+    )
+  } else if (recipientRegistryType === 'optimistic') {
+    const OptimisticRecipientRegistry = await ethers.getContractFactory(
+      'OptimisticRecipientRegistry',
+      deployer,
+    )
+    recipientRegistry = await OptimisticRecipientRegistry.deploy(
+      UNIT.div(1000),
+      0,
+      fundingRoundFactory.address,
+    )
+  } else {
+    throw new Error('unsupported recipient registry type')
+  }
   await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
 
   console.log(`Factory deployed: ${fundingRoundFactory.address}`)
