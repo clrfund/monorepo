@@ -18,6 +18,8 @@
     "ethereum-blockies-base64": "^1.0.2",
     "ethers": "^5.0.17",
     "gun": "https://github.com/amark/gun",
+    "humanize-duration": "^3.25.1",
+    "is-ipfs": "^2.0.0",
     "luxon": "^1.24.1",
     "maci-domainobjs": "~0.5.7",
     "qrcode": "^1.4.4",
@@ -27,12 +29,14 @@
     "vue-meta": "^2.4.0",
     "vue-property-decorator": "^8.3.0",
     "vue-router": "^3.1.5",
+    "vuelidate": "^0.7.6",
     "vuex": "^3.1.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.8",
     "@types/luxon": "^1.24.3",
     "@types/mocha": "^5.2.4",
+    "@types/vuelidate": "^0.7.14",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
     "@vue/cli-plugin-eslint": "~4.4.6",

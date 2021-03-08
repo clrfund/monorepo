@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
 import ProjectList from '../views/ProjectList.vue'
+import ProjectView from '../views/Project.vue'
 import RoundList from '../views/RoundList.vue'
 import About from '../views/About.vue'
-import ProjectView from '../views/Project.vue'
+import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 
 Vue.use(VueRouter)
 
@@ -12,6 +14,11 @@ const routes = [
     path: '/',
     name: 'projects',
     component: ProjectList,
+  },
+  {
+    path: '/project/:id',
+    name: 'project',
+    component: ProjectView,
   },
   {
     path: '/rounds',
@@ -29,9 +36,9 @@ const routes = [
     component: About,
   },
   {
-    path: '/project/:id',
-    name: 'project',
-    component: ProjectView,
+    path: '/recipients',
+    name: 'recipients',
+    component: RecipientRegistryView,
   },
 ]
 
