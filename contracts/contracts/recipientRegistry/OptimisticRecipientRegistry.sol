@@ -128,8 +128,8 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     Request memory request = requests[_recipientId];
     require(request.submissionTime != 0, 'RecipientRegistry: Request does not exist');
     address payable challenger = payable(owner());
-    bool isSent = challenger.send(request.deposit);
     delete requests[_recipientId];
+    bool isSent = challenger.send(request.deposit);
     emit RequestRejected(_recipientId);
     return isSent;
   }
@@ -162,8 +162,8 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
         recipientIndex
       );
     }
-    bool isSent = request.requester.send(request.deposit);
     delete requests[_recipientId];
+    bool isSent = request.requester.send(request.deposit);
     return isSent;
   }
 }
