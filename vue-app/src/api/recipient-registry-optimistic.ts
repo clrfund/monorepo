@@ -30,16 +30,12 @@ enum RequestType {
   Removal = 'Removal',
 }
 
-enum RequestStatus {
-  Pending = 'Pending',
-  Rejected = 'Rejected',
-  Executed = 'Executed',
-}
-
 export interface Request {
   id: string;
   type: RequestType;
-  status: RequestStatus;
+  timestamp: number;
+  isRejected: boolean;
+  isExecuted: boolean;
   name: string;
   description: string;
   imageUrl: string;
@@ -52,7 +48,9 @@ function decodeRequestSubmitted(event: Event): Request {
   return {
     id: args._recipientId,
     type: args._recipient === '0x0000000000000000000000000000000000000000' ? RequestType.Removal : RequestType.Registration,
-    status: RequestStatus.Pending,
+    timestamp: args._timestamp.toNumber(),
+    isRejected: false,
+    isExecuted: false,
     name: metadata.name,
     description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
@@ -83,21 +81,21 @@ export async function getRequests(registryAddress: string): Promise<Request[]> {
       return (event.args as any)._recipientId === request.id
     })
     if (rejected) {
-      request.status = RequestStatus.Rejected
+      request.isRejected = true
     } else {
       if (request.type === RequestType.Removal) {
         const removed = recipientRemovedEvents.find((event) => {
           return (event.args as any)._recipientId === request.id
         })
         if (removed) {
-          request.status = RequestStatus.Executed
+          request.isExecuted = true
         }
       } else {
         const added = recipientAddedEvents.find((event) => {
           return (event.args as any)._recipientId === request.id
         })
         if (added) {
-          request.status = RequestStatus.Executed
+          request.isExecuted = true
         }
       }
     }

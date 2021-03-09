@@ -20,7 +20,7 @@
     "gun": "https://github.com/amark/gun",
     "humanize-duration": "^3.25.1",
     "is-ipfs": "^2.0.0",
-    "luxon": "^1.24.1",
+    "luxon": "^1.26.0",
     "maci-domainobjs": "~0.5.7",
     "qrcode": "^1.4.4",
     "vue": "^2.6.11",
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.8",
-    "@types/luxon": "^1.24.3",
+    "@types/luxon": "^1.26.2",
     "@types/mocha": "^5.2.4",
     "@types/vuelidate": "^0.7.14",
     "@typescript-eslint/eslint-plugin": "^2.18.0",

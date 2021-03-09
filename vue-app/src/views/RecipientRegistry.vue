@@ -34,7 +34,7 @@
             <a class="project-image-link" :href="request.imageUrl" target="_blank" rel="noopener">{{ request.imageUrl }}</a>
           </td>
           <td>{{ request.type }}</td>
-          <td>{{ request.status }}</td>
+          <td>{{ getRequestStatus(request) }}</td>
         </tr>
       </tbody>
     </table>
@@ -46,6 +46,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
+import { DateTime } from 'luxon'
 
 import { recipientRegistryType } from '@/api/core'
 import { getRecipientRegistryAddress } from '@/api/projects'
@@ -85,6 +86,21 @@ export default class RecipientRegistryView extends Vue {
 
   formatDuration(value: number): string {
     return humanizeDuration(value * 1000)
+  }
+
+  getRequestStatus(request: Request): string {
+    if (request.isRejected) {
+      return 'Rejected'
+    }
+    if (request.isExecuted) {
+      return 'Executed'
+    }
+    const now = DateTime.now().toSeconds()
+    const periodDuration = this.registryInfo?.challengePeriodDuration as number
+    if (request.timestamp + periodDuration < now) {
+      return 'Accepted'
+    }
+    return 'Submitted'
   }
 
   canSubmitProject(): boolean {
