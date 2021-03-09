@@ -26,8 +26,16 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
   mapping(bytes32 => Request) private requests;
 
   // Events
-  event RequestSubmitted(bytes32 indexed _recipientId, address _recipient, string _metadata);
-  event RequestRejected(bytes32 indexed _recipientId);
+  event RequestSubmitted(
+    bytes32 indexed _recipientId,
+    address _recipient,
+    string _metadata,
+    uint256 _timestamp
+  );
+  event RequestRejected(
+    bytes32 indexed _recipientId,
+    uint256 _timestamp
+  );
   event RecipientAdded(bytes32 indexed _recipientId, address _recipient, string _metadata, uint256 _index);
   event RecipientRemoved(bytes32 indexed _recipientId);
 
@@ -91,7 +99,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
       _recipient,
       _metadata
     );
-    emit RequestSubmitted(recipientId, _recipient, _metadata);
+    emit RequestSubmitted(recipientId, _recipient, _metadata, block.timestamp);
   }
 
   /**
@@ -113,7 +121,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
       address(0),
       ''
     );
-    emit RequestSubmitted(_recipientId, address(0), '');
+    emit RequestSubmitted(_recipientId, address(0), '', block.timestamp);
   }
 
   /**
@@ -130,7 +138,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     require(request.submissionTime != 0, 'RecipientRegistry: Request does not exist');
     delete requests[_recipientId];
     bool isSent = _beneficiary.send(request.deposit);
-    emit RequestRejected(_recipientId);
+    emit RequestRejected(_recipientId, block.timestamp);
     return isSent;
   }
 

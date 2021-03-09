@@ -18,6 +18,10 @@ async function getCurrentBlockNumber(): Promise<number> {
   return (await provider.getBlock('latest')).number
 }
 
+async function getCurrentTime(): Promise<number> {
+  return (await provider.getBlock('latest')).timestamp
+}
+
 describe('Simple Recipient Registry', () => {
   const [, deployer, controller, recipient] = provider.getWallets()
 
@@ -474,11 +478,15 @@ describe('Optimistic recipient registry', () => {
     })
 
     it('allows anyone to submit registration request', async () => {
-      await expect(registry.connect(requester).addRecipient(
-        recipientAddress, metadata, { value: baseDeposit },
-      ))
+      const requestSubmitted = await registry.connect(requester).addRecipient(
+        recipientAddress,
+        metadata,
+        { value: baseDeposit },
+      )
+      const currentTime = await getCurrentTime()
+      expect(requestSubmitted)
         .to.emit(registry, 'RequestSubmitted')
-        .withArgs(recipientId, recipientAddress, metadata)
+        .withArgs(recipientId, recipientAddress, metadata, currentTime)
       expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
     })
 
@@ -532,9 +540,11 @@ describe('Optimistic recipient registry', () => {
         recipientAddress, metadata, { value: baseDeposit },
       )
       const requesterBalanceBefore = await provider.getBalance(requester.address)
-      await expect(registry.challengeRequest(recipientId, requester.address))
+      const requestRejected = await registry.challengeRequest(recipientId, requester.address)
+      const currentTime = await getCurrentTime()
+      expect(requestRejected)
         .to.emit(registry, 'RequestRejected')
-        .withArgs(recipientId)
+        .withArgs(recipientId, currentTime)
       const requesterBalanceAfter = await provider.getBalance(requester.address)
       expect(requesterBalanceBefore.add(baseDeposit)).to.equal(requesterBalanceAfter)
     })
@@ -649,11 +659,14 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await expect(registry.connect(requester).removeRecipient(
-        recipientId, { value: baseDeposit },
-      ))
+      const requestSubmitted = await registry.connect(requester).removeRecipient(
+        recipientId,
+        { value: baseDeposit },
+      )
+      const currentTime = await getCurrentTime()
+      expect(requestSubmitted)
         .to.emit(registry, 'RequestSubmitted')
-        .withArgs(recipientId, ZERO_ADDRESS, '')
+        .withArgs(recipientId, ZERO_ADDRESS, '', currentTime)
       expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
     })
 
@@ -716,9 +729,11 @@ describe('Optimistic recipient registry', () => {
         { value: baseDeposit },
       )
       const requesterBalanceBefore = await provider.getBalance(requester.address)
-      await expect(registry.challengeRequest(recipientId, requester.address))
+      const requestRejected = await registry.challengeRequest(recipientId, requester.address)
+      const currentTime = await getCurrentTime()
+      expect(requestRejected)
         .to.emit(registry, 'RequestRejected')
-        .withArgs(recipientId)
+        .withArgs(recipientId, currentTime)
       const requesterBalanceAfter = await provider.getBalance(requester.address)
       expect(requesterBalanceBefore.add(baseDeposit)).to.equal(requesterBalanceAfter)
 
