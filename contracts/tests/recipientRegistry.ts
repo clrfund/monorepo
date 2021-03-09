@@ -528,25 +528,34 @@ describe('Optimistic recipient registry', () => {
     })
 
     it('allows owner to challenge registration request', async () => {
+      await registry.connect(requester).addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      const requesterBalanceBefore = await provider.getBalance(requester.address)
+      await expect(registry.challengeRequest(recipientId, requester.address))
+        .to.emit(registry, 'RequestRejected')
+        .withArgs(recipientId)
+      const requesterBalanceAfter = await provider.getBalance(requester.address)
+      expect(requesterBalanceBefore.add(baseDeposit)).to.equal(requesterBalanceAfter)
+    })
+
+    it('allows owner to set beneficiary address when challenging request', async () => {
       await registry.addRecipient(
         recipientAddress, metadata, { value: baseDeposit },
       )
-      const ownerBalanceBefore = await provider.getBalance(deployer.address)
-      const requestChallenged = await registry.challengeRequest(recipientId)
-      expect(requestChallenged)
-        .to.emit(registry, 'RequestRejected')
-        .withArgs(recipientId)
-      const txFee = await getTxFee(requestChallenged)
-      const ownerBalanceAfter = await provider.getBalance(deployer.address)
-      expect(ownerBalanceBefore.sub(txFee).add(baseDeposit))
-        .to.equal(ownerBalanceAfter)
+      const controllerBalanceBefore = await provider.getBalance(controller.address)
+      await registry.challengeRequest(recipientId, controller.address)
+      const controllerBalanceAfter = await provider.getBalance(controller.address)
+      expect(controllerBalanceBefore.add(baseDeposit)).to.equal(controllerBalanceAfter)
     })
 
     it('allows only owner to challenge requests', async () => {
       await registry.connect(requester).addRecipient(
         recipientAddress, metadata, { value: baseDeposit },
       )
-      await expect(registry.connect(requester).challengeRequest(recipientId))
+      await expect(registry.connect(requester).challengeRequest(
+        recipientId, requester.address,
+      ))
         .to.be.revertedWith('Ownable: caller is not the owner')
     })
 
@@ -554,8 +563,8 @@ describe('Optimistic recipient registry', () => {
       await registry.connect(requester).addRecipient(
         recipientAddress, metadata, { value: baseDeposit },
       )
-      await registry.challengeRequest(recipientId)
-      await expect(registry.challengeRequest(recipientId))
+      await registry.challengeRequest(recipientId, requester.address)
+      await expect(registry.challengeRequest(recipientId, requester.address))
         .to.be.revertedWith('RecipientRegistry: Request does not exist')
     })
 
@@ -702,16 +711,16 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await registry.removeRecipient(recipientId, { value: baseDeposit })
-      const ownerBalanceBefore = await provider.getBalance(deployer.address)
-      const requestChallenged = await registry.challengeRequest(recipientId)
-      expect(requestChallenged)
+      await registry.connect(requester).removeRecipient(
+        recipientId,
+        { value: baseDeposit },
+      )
+      const requesterBalanceBefore = await provider.getBalance(requester.address)
+      await expect(registry.challengeRequest(recipientId, requester.address))
         .to.emit(registry, 'RequestRejected')
         .withArgs(recipientId)
-      const txFee = await getTxFee(requestChallenged)
-      const ownerBalanceAfter = await provider.getBalance(deployer.address)
-      expect(ownerBalanceBefore.sub(txFee).add(baseDeposit))
-        .to.equal(ownerBalanceAfter)
+      const requesterBalanceAfter = await provider.getBalance(requester.address)
+      expect(requesterBalanceBefore.add(baseDeposit)).to.equal(requesterBalanceAfter)
 
       // Recipient is not removed
       const currentBlock = await getCurrentBlockNumber()

@@ -119,17 +119,17 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
   /**
     * @dev Reject request.
     * @param _recipientId The ID of recipient.
+    * @param _beneficiary Address to which the deposit should be transferred.
     */
-  function challengeRequest(bytes32 _recipientId)
+  function challengeRequest(bytes32 _recipientId, address payable _beneficiary)
     external
     onlyOwner
     returns (bool)
   {
     Request memory request = requests[_recipientId];
     require(request.submissionTime != 0, 'RecipientRegistry: Request does not exist');
-    address payable challenger = payable(owner());
     delete requests[_recipientId];
-    bool isSent = challenger.send(request.deposit);
+    bool isSent = _beneficiary.send(request.deposit);
     emit RequestRejected(_recipientId);
     return isSent;
   }
