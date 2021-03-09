@@ -24,7 +24,7 @@ export async function getProjects(
   endBlock?: number,
 ): Promise<Project[]> {
   const registryAddress = await getRecipientRegistryAddress()
-  if (recipientRegistryType === 'simple') {
+  if (recipientRegistryType === 'simple' || recipientRegistryType === 'optimistic') {
     return await SimpleRegistry.getProjects(registryAddress, startBlock, endBlock)
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProjects(registryAddress, startBlock, endBlock)
@@ -35,7 +35,7 @@ export async function getProjects(
 
 export async function getProject(id: string): Promise<Project | null> {
   const registryAddress = await getRecipientRegistryAddress()
-  if (recipientRegistryType === 'simple') {
+  if (recipientRegistryType === 'simple' || recipientRegistryType === 'optimistic') {
     return await SimpleRegistry.getProject(registryAddress, id)
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProject(registryAddress, id)

@@ -5,6 +5,7 @@
     "not-rely-on-time": "off",
     "quotes": ["error", "single"],
     "reason-string": ["warn", {"maxLength": 64}],
-    "max-states-count": ["warn", 18]
+    "max-states-count": ["warn", 18],
+    "check-send-result": "off"
   }
 }
