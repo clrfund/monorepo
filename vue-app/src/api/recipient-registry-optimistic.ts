@@ -3,7 +3,7 @@ import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract
 import { getEventArg } from '@/utils/contracts'
 
 import { OptimisticRecipientRegistry } from './abi'
-import { provider, ipfsGatewayUrl } from './core'
+import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
 
 export interface RegistryInfo {
   deposit: BigNumber;
@@ -16,12 +16,11 @@ export async function getRegistryInfo(registryAddress: string): Promise<Registry
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const deposit = await registry.baseDeposit()
   const challengePeriodDuration = await registry.challengePeriodDuration()
-  const listingPolicyIpfsHash = 'QmeygKjvrpidJeFHv6ywjUrj718nwtFQgCCPPR4r5nL87R'
   return {
     deposit,
     depositToken: 'ETH',
     challengePeriodDuration: challengePeriodDuration.toNumber(),
-    listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${listingPolicyIpfsHash}`,
+    listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
   }
 }
 
