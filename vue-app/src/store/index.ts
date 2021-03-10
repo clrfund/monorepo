@@ -32,6 +32,7 @@ import {
   LOGOUT_USER,
 } from './action-types'
 import {
+  SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_CURRENT_USER,
   SET_CURRENT_ROUND_ADDRESS,
   SET_CURRENT_ROUND,
@@ -47,6 +48,7 @@ import {
 Vue.use(Vuex)
 
 interface RootState {
+  recipientRegistryAddress: string | null;
   currentUser: User | null;
   currentRoundAddress: string | null;
   currentRound: RoundInfo | null;
@@ -57,6 +59,7 @@ interface RootState {
 }
 
 const state: RootState = {
+  recipientRegistryAddress: null,
   currentUser: null,
   currentRoundAddress: null,
   currentRound: null,
@@ -67,6 +70,9 @@ const state: RootState = {
 }
 
 export const mutations = {
+  [SET_RECIPIENT_REGISTRY_ADDRESS](state, address: string) {
+    state.recipientRegistryAddress = address
+  },
   [SET_CURRENT_USER](state, user: User | null) {
     state.currentUser = user
   },

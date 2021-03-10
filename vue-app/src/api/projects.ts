@@ -1,4 +1,6 @@
-import { factory, recipientRegistryType } from './core'
+import { Contract } from 'ethers'
+import { FundingRound } from './abi'
+import { factory, provider, recipientRegistryType } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
 import KlerosRegistry from './recipient-registry-kleros'
@@ -15,15 +17,20 @@ export interface Project {
   extra?: any; // Registry-specific data
 }
 
-export async function getRecipientRegistryAddress(): Promise<string> {
-  return await factory.recipientRegistry()
+export async function getRecipientRegistryAddress(roundAddress: string | null): Promise<string> {
+  if (roundAddress !== null) {
+    const fundingRound = new Contract(roundAddress, FundingRound, provider)
+    return await fundingRound.recipientRegistry()
+  } else {
+    return await factory.recipientRegistry()
+  }
 }
 
 export async function getProjects(
+  registryAddress: string,
   startBlock?: number,
   endBlock?: number,
 ): Promise<Project[]> {
-  const registryAddress = await getRecipientRegistryAddress()
   if (recipientRegistryType === 'simple' || recipientRegistryType === 'optimistic') {
     return await SimpleRegistry.getProjects(registryAddress, startBlock, endBlock)
   } else if (recipientRegistryType === 'kleros') {
@@ -33,12 +40,14 @@ export async function getProjects(
   }
 }
 
-export async function getProject(id: string): Promise<Project | null> {
-  const registryAddress = await getRecipientRegistryAddress()
+export async function getProject(
+  registryAddress: string,
+  recipientId: string,
+): Promise<Project | null> {
   if (recipientRegistryType === 'simple' || recipientRegistryType === 'optimistic') {
-    return await SimpleRegistry.getProject(registryAddress, id)
+    return await SimpleRegistry.getProject(registryAddress, recipientId)
   } else if (recipientRegistryType === 'kleros') {
-    return await KlerosRegistry.getProject(registryAddress, id)
+    return await KlerosRegistry.getProject(registryAddress, recipientId)
   } else {
     throw new Error('invalid recipient registry type')
   }

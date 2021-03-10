@@ -21,7 +21,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
-import { Project, getRecipientRegistryAddress } from '@/api/projects'
+import { Project } from '@/api/projects'
 import { registerProject } from '@/api/recipient-registry-kleros'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
@@ -46,7 +46,7 @@ export default class KlerosGTCRAdapterModal extends Vue {
   }
 
   private async register() {
-    const recipientRegistryAddress = await getRecipientRegistryAddress()
+    const recipientRegistryAddress = this.$store.state.recipientRegistryAddress
     const signer = this.$store.state.currentUser.walletProvider.getSigner()
     try {
       await waitForTransaction(

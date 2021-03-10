@@ -55,7 +55,9 @@ import {
   getRegistryInfo,
   getRequests,
 } from '@/api/recipient-registry-optimistic'
+import { getCurrentRound } from '@/api/round'
 import RecipientSubmissionModal from '@/components/RecipientSubmissionModal.vue'
+import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 
 @Component({
@@ -66,7 +68,6 @@ import { formatAmount } from '@/utils/amounts'
 })
 export default class RecipientRegistryView extends Vue {
 
-  registryAddress: string | null = null
   registryInfo: RegistryInfo | null = null
   requests: Request[] = []
 
@@ -74,9 +75,13 @@ export default class RecipientRegistryView extends Vue {
     if (recipientRegistryType !== 'optimistic') {
       return
     }
-    this.registryAddress = await getRecipientRegistryAddress()
-    this.registryInfo = await getRegistryInfo(this.registryAddress)
-    this.requests = await getRequests(this.registryAddress, this.registryInfo)
+    if (this.$store.state.recipientRegistryAddress === null) {
+      const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+      const registryAddress = await getRecipientRegistryAddress(roundAddress)
+      this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
+    }
+    this.registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+    this.requests = await getRequests(this.$store.state.recipientRegistryAddress,  this.registryInfo)
   }
 
   formatAmount(value: BigNumber): string {
@@ -95,14 +100,17 @@ export default class RecipientRegistryView extends Vue {
     this.$modal.show(
       RecipientSubmissionModal,
       {
-        registryAddress: this.registryAddress,
+        registryAddress: this.$store.state.recipientRegistryAddress,
         registryInfo: this.registryInfo,
       },
       { width: 500 },
       {
         closed: async () => {
-          if (this.registryAddress && this.registryInfo) {
-            this.requests = await getRequests(this.registryAddress, this.registryInfo)
+          if (this.registryInfo) {
+            this.requests = await getRequests(
+              this.$store.state.recipientRegistryAddress,
+              this.registryInfo,
+            )
           }
         },
       },

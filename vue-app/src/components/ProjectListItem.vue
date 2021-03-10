@@ -86,7 +86,10 @@ export default class ProjectListItem extends Vue {
       { },
       {
         closed: async () => {
-          const project = await getProject(this.project.id)
+          const project = await getProject(
+            this.$store.state.recipientRegistryAddress,
+            this.project.id,
+          )
           if (project) {
             this.project.index = project.index
           }

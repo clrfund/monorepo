@@ -71,7 +71,7 @@ import { DateTime } from 'luxon'
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
-import { Project, getProject } from '@/api/projects'
+import { Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import { RoundStatus, getCurrentRound } from '@/api/round'
 import { Tally } from '@/api/tally'
@@ -87,6 +87,7 @@ import {
   UNWATCH_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import {
+  SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_CURRENT_ROUND_ADDRESS,
   SET_CONTRIBUTION,
   SET_CONTRIBUTOR,
@@ -134,6 +135,7 @@ export default class ProjectView extends Vue {
         this.$store.commit(SET_CONTRIBUTION, null)
         this.$store.commit(SET_CONTRIBUTOR, null)
         this.$store.commit(CLEAR_CART)
+        this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
       }
       this.$store.commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
       ;(async () => {
@@ -146,8 +148,15 @@ export default class ProjectView extends Vue {
         }
       })()
     }
+    if (this.$store.state.recipientRegistryAddress === null) {
+      const registryAddress = await getRecipientRegistryAddress(roundAddress)
+      this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
+    }
 
-    const project = await getProject(this.$route.params.id)
+    const project = await getProject(
+      this.$store.state.recipientRegistryAddress,
+      this.$route.params.id,
+    )
     if (project === null || project.isHidden) {
       // Project not found
       this.$router.push({ name: 'projects' })
@@ -215,7 +224,10 @@ export default class ProjectView extends Vue {
       { },
       {
         closed: async () => {
-          this.project = await getProject(this.$route.params.id)
+          this.project = await getProject(
+            this.$store.state.recipientRegistryAddress,
+            this.$route.params.id,
+          )
         },
       },
     )

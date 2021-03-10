@@ -93,7 +93,7 @@ import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { RoundInfo, getCurrentRound } from '@/api/round'
-import { Project, getProjects } from '@/api/projects'
+import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
@@ -106,6 +106,7 @@ import {
   UNWATCH_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import {
+  SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_CURRENT_ROUND_ADDRESS,
   SET_CONTRIBUTION,
   SET_CONTRIBUTOR,
@@ -173,24 +174,21 @@ export default class ProjectList extends Vue {
         this.$store.commit(SET_CONTRIBUTION, null)
         this.$store.commit(SET_CONTRIBUTOR, null)
         this.$store.commit(CLEAR_CART)
+        this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
       }
       this.$store.commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
-      ;(async () => {
-        await this.$store.dispatch(LOAD_ROUND_INFO)
-        if (this.$store.state.currentUser) {
-          // Load user data if already logged in
-          this.$store.dispatch(LOAD_USER_INFO)
-          this.$store.dispatch(LOAD_CART)
-          this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-        }
-      })()
+      await this.$store.dispatch(LOAD_ROUND_INFO)
+      if (this.$store.state.currentUser) {
+        // Load user data if already logged in
+        this.$store.dispatch(LOAD_USER_INFO)
+        this.$store.dispatch(LOAD_CART)
+        this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+      }
     }
-
-    // Wait for round info to load and get project list
-    this.roundWatcherStop = this.$store.watch(
-      (state) => state.currentRound?.fundingRoundAddress,
-      this.loadProjects,
-    )
+    if (this.$store.state.recipientRegistryAddress === null) {
+      const registryAddress = await getRecipientRegistryAddress(roundAddress)
+      this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
+    }
     this.loadProjects()
   }
 
@@ -202,6 +200,7 @@ export default class ProjectList extends Vue {
 
   private async loadProjects() {
     const projects = await getProjects(
+      this.$store.state.recipientRegistryAddress,
       this.currentRound?.startBlock,
       this.currentRound?.endBlock,
     )
