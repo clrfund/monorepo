@@ -73,12 +73,26 @@ import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
-import { RoundStatus } from '@/api/round'
+import { RoundStatus, getCurrentRound } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
 import KlerosGTCRAdapterModal from '@/components/KlerosGTCRAdapterModal.vue'
-import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM } from '@/store/mutation-types'
+import {
+  LOAD_ROUND_INFO,
+  LOAD_USER_INFO,
+  LOAD_CART,
+  SAVE_CART,
+  UNWATCH_CART,
+  LOAD_CONTRIBUTOR_DATA,
+  UNWATCH_CONTRIBUTOR_DATA,
+} from '@/store/action-types'
+import {
+  SET_CURRENT_ROUND_ADDRESS,
+  SET_CONTRIBUTION,
+  SET_CONTRIBUTOR,
+  ADD_CART_ITEM,
+  CLEAR_CART,
+} from '@/store/mutation-types'
 
 @Component({
   name: 'ProjectView',
@@ -110,6 +124,29 @@ export default class ProjectView extends Vue {
   }
 
   async created() {
+    const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+    if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
+      // Change current round and reload round info
+      if (this.$store.state.currentRoundAddress) {
+        // Clear current round
+        this.$store.dispatch(UNWATCH_CART)
+        this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
+        this.$store.commit(SET_CONTRIBUTION, null)
+        this.$store.commit(SET_CONTRIBUTOR, null)
+        this.$store.commit(CLEAR_CART)
+      }
+      this.$store.commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
+      ;(async () => {
+        await this.$store.dispatch(LOAD_ROUND_INFO)
+        if (this.$store.state.currentUser) {
+          // Load user data if already logged in
+          this.$store.dispatch(LOAD_USER_INFO)
+          this.$store.dispatch(LOAD_CART)
+          this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+        }
+      })()
+    }
+
     const project = await getProject(this.$route.params.id)
     if (project === null || project.isHidden) {
       // Project not found
