@@ -50,7 +50,7 @@ import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
-import KlerosGTCRAdapterModal from '@/components/KlerosGTCRAdapterModal.vue'
+import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 
@@ -68,11 +68,16 @@ export default class ProjectListItem extends Vue {
   }
 
   hasRegisterBtn(): boolean {
-    return (
-      recipientRegistryType === 'kleros' &&
-      this.project.index === 0 &&
-      this.project.extra.tcrItemStatus === TcrItemStatus.Registered
-    )
+    if (recipientRegistryType === 'optimistic') {
+      return this.project.index === 0
+    }
+    else if (recipientRegistryType === 'kleros') {
+      return (
+        this.project.index === 0 &&
+        this.project.extra.tcrItemStatus === TcrItemStatus.Registered
+      )
+    }
+    return false
   }
 
   canRegister(): boolean  {
@@ -81,7 +86,7 @@ export default class ProjectListItem extends Vue {
 
   register() {
     this.$modal.show(
-      KlerosGTCRAdapterModal,
+      RecipientRegistrationModal,
       { project: this.project },
       { },
       {

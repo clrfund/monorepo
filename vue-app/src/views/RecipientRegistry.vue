@@ -34,7 +34,18 @@
             <a class="project-image-link" :href="request.imageUrl" target="_blank" rel="noopener">{{ request.imageUrl }}</a>
           </td>
           <td>{{ request.type }}</td>
-          <td>{{ request.status }}</td>
+          <td>
+            <template v-if="hasProjectLink(request)">
+              <router-link
+                :to="{ name: 'project', params: { id: request.id }}"
+              >
+                {{ request.status }}
+              </router-link>
+            </template>
+            <template v-else>
+              {{ request.status }}
+            </template>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -51,6 +62,8 @@ import { recipientRegistryType } from '@/api/core'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import {
   RegistryInfo,
+  RequestType,
+  RequestStatus,
   Request,
   getRegistryInfo,
   getRequests,
@@ -90,6 +103,13 @@ export default class RecipientRegistryView extends Vue {
 
   formatDuration(value: number): string {
     return humanizeDuration(value * 1000)
+  }
+
+  hasProjectLink(request: Request): boolean {
+    return (
+      request.type === RequestType.Registration &&
+      [RequestStatus.Executed, RequestStatus.Accepted].includes(request.status)
+    )
   }
 
   canSubmitProject(): boolean {

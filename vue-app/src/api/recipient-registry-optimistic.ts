@@ -145,8 +145,8 @@ export function getRequestId(
   return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
-function decodeRecipientAdded(event: Event): Project {
-  const args = event.args as any
+function decodeProject(requestSubmittedEvent: Event): Project {
+  const args = requestSubmittedEvent.args as any
   const metadata = JSON.parse(args._metadata)
   return {
     id: args._recipientId,
@@ -154,9 +154,13 @@ function decodeRecipientAdded(event: Event): Project {
     name: metadata.name,
     description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
-    index: args._index.toNumber(),
+    // Only unregistered project can have invalid index 0
+    index: 0,
     isHidden: false,
     isLocked: false,
+    extra: {
+      submissionTime: args._timestamp.toNumber(),
+    },
   }
 }
 
@@ -166,18 +170,40 @@ export async function getProjects(
   endBlock?: number,
 ): Promise<Project[]> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
+  const now = DateTime.now().toSeconds()
+  const challengePeriodDuration = (await registry.challengePeriodDuration()).toNumber()
+  const requestSubmittedFilter = registry.filters.RequestSubmitted()
+  const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0, endBlock)
+  const requestRejectedFilter = registry.filters.RequestRejected()
+  const requestRejectedEvents = await registry.queryFilter(requestRejectedFilter, 0)
   const recipientAddedFilter = registry.filters.RecipientAdded()
   const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0, endBlock)
   const recipientRemovedFilter = registry.filters.RecipientRemoved()
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   const projects: Project[] = []
-  for (const event of recipientAddedEvents) {
-    let project
+  for (const event of requestSubmittedEvents) {
+    let project: Project
     try {
-      project = decodeRecipientAdded(event)
+      project = decodeProject(event)
     } catch {
       // Invalid metadata
       continue
+    }
+    if (project.extra.submissionTime + challengePeriodDuration >= now) {
+      // Challenge period is not over yet
+      continue
+    }
+    const rejected = requestRejectedEvents.find((event) => {
+      return (event.args as any)._recipientId === project.id
+    })
+    if (rejected) {
+      continue
+    }
+    const added = recipientAddedEvents.find((event) => {
+      return (event.args as any)._recipientId === project.id
+    })
+    if (added) {
+      project.index = (added.args as any)._index.toNumber()
     }
     const removed = recipientRemovedEvents.find((event) => {
       return (event.args as any)._recipientId === project.id
@@ -204,17 +230,34 @@ export async function getProject(
     return null
   }
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
-  const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
-  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
-  if (recipientAddedEvents.length !== 1) {
+  const now = DateTime.now().toSeconds()
+  const challengePeriodDuration = (await registry.challengePeriodDuration()).toNumber()
+  const requestSubmittedFilter = registry.filters.RequestSubmitted(recipientId)
+  const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0)
+  if (requestSubmittedEvents.length !== 1) {
     return null
   }
-  let project
+  let project: Project
   try {
-    project = decodeRecipientAdded(recipientAddedEvents[0])
+    project = decodeProject(requestSubmittedEvents[0])
   } catch {
     // Invalid metadata
     return null
+  }
+  if (project.extra.submissionTime + challengePeriodDuration >= now) {
+    // Challenge period is not over yet
+    return null
+  }
+  const requestRejectedFilter = registry.filters.RequestRejected(recipientId)
+  const requestRejectedEvents = await registry.queryFilter(requestRejectedFilter, 0)
+  if (requestRejectedEvents.length !== 0) {
+    return null
+  }
+  const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
+  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
+  if (recipientAddedEvents.length !== 0) {
+    const recipientAddedEvent = recipientAddedEvents[0]
+    project.index = (recipientAddedEvent.args as any)._index.toNumber()
   }
   const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientId)
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
@@ -224,4 +267,14 @@ export async function getProject(
   return project
 }
 
-export default { getProjects, getProject }
+export async function registerProject(
+  registryAddress: string,
+  recipientId: string,
+  signer: Signer,
+): Promise<TransactionResponse> {
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
+  const transaction = await registry.executeRequest(recipientId)
+  return transaction
+}
+
+export default { getProjects, getProject, registerProject }

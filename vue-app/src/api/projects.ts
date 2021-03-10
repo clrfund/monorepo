@@ -1,4 +1,5 @@
-import { Contract } from 'ethers'
+import { Contract, Signer } from 'ethers'
+import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { FundingRound } from './abi'
 import { factory, provider, recipientRegistryType } from './core'
 
@@ -53,6 +54,20 @@ export async function getProject(
     return await OptimisticRegistry.getProject(registryAddress, recipientId)
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProject(registryAddress, recipientId)
+  } else {
+    throw new Error('invalid recipient registry type')
+  }
+}
+
+export async function registerProject(
+  registryAddress: string,
+  recipientId: string,
+  signer: Signer,
+): Promise<TransactionResponse> {
+  if (recipientRegistryType === 'optimistic') {
+    return await OptimisticRegistry.registerProject(registryAddress, recipientId, signer)
+  } else if (recipientRegistryType === 'kleros') {
+    return await KlerosRegistry.registerProject(registryAddress, recipientId, signer)
   } else {
     throw new Error('invalid recipient registry type')
   }

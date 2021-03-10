@@ -76,7 +76,7 @@ import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import { RoundStatus, getCurrentRound } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
-import KlerosGTCRAdapterModal from '@/components/KlerosGTCRAdapterModal.vue'
+import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -193,11 +193,19 @@ export default class ProjectView extends Vue {
   }
 
   hasRegisterBtn(): boolean {
-    return (
-      recipientRegistryType === 'kleros' &&
-      this.project?.index === 0 &&
-      this.project?.extra.tcrItemStatus === TcrItemStatus.Registered
-    )
+    if (this.project === null) {
+      return false
+    }
+    if (recipientRegistryType === 'optimistic') {
+      return this.project.index === 0
+    }
+    else if (recipientRegistryType === 'kleros') {
+      return (
+        this.project.index === 0 &&
+        this.project.extra.tcrItemStatus === TcrItemStatus.Registered
+      )
+    }
+    return false
   }
 
   canRegister(): boolean {
@@ -206,7 +214,7 @@ export default class ProjectView extends Vue {
 
   register() {
     this.$modal.show(
-      KlerosGTCRAdapterModal,
+      RecipientRegistrationModal,
       { project: this.project },
       { },
       {
