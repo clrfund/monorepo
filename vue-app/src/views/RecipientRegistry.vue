@@ -34,7 +34,7 @@
             <a class="project-image-link" :href="request.imageUrl" target="_blank" rel="noopener">{{ request.imageUrl }}</a>
           </td>
           <td>{{ request.type }}</td>
-          <td>{{ getRequestStatus(request) }}</td>
+          <td>{{ request.status }}</td>
         </tr>
       </tbody>
     </table>
@@ -46,7 +46,6 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
-import { DateTime } from 'luxon'
 
 import { recipientRegistryType } from '@/api/core'
 import { getRecipientRegistryAddress } from '@/api/projects'
@@ -77,7 +76,7 @@ export default class RecipientRegistryView extends Vue {
     }
     this.registryAddress = await getRecipientRegistryAddress()
     this.registryInfo = await getRegistryInfo(this.registryAddress)
-    this.requests = await getRequests(this.registryAddress)
+    this.requests = await getRequests(this.registryAddress, this.registryInfo)
   }
 
   formatAmount(value: BigNumber): string {
@@ -86,21 +85,6 @@ export default class RecipientRegistryView extends Vue {
 
   formatDuration(value: number): string {
     return humanizeDuration(value * 1000)
-  }
-
-  getRequestStatus(request: Request): string {
-    if (request.isRejected) {
-      return 'Rejected'
-    }
-    if (request.isExecuted) {
-      return 'Executed'
-    }
-    const now = DateTime.now().toSeconds()
-    const periodDuration = this.registryInfo?.challengePeriodDuration as number
-    if (request.timestamp + periodDuration < now) {
-      return 'Accepted'
-    }
-    return 'Submitted'
   }
 
   canSubmitProject(): boolean {
@@ -117,8 +101,8 @@ export default class RecipientRegistryView extends Vue {
       { width: 500 },
       {
         closed: async () => {
-          if (this.registryAddress) {
-            this.requests = await getRequests(this.registryAddress)
+          if (this.registryAddress && this.registryInfo) {
+            this.requests = await getRequests(this.registryAddress, this.registryInfo)
           }
         },
       },

@@ -1,5 +1,6 @@
 import { BigNumber, Contract, Event, Signer } from 'ethers'
 import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
+import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
 
 import { OptimisticRecipientRegistry } from './abi'
@@ -24,32 +25,37 @@ export async function getRegistryInfo(registryAddress: string): Promise<Registry
   }
 }
 
-enum RequestType {
+export enum RequestType {
   Registration = 'Registration',
   Removal = 'Removal',
+}
+
+export enum RequestStatus {
+  Submitted = 'Submitted',
+  Rejected = 'Rejected',
+  Accepted = 'Accepted',
+  Executed = 'Executed',
 }
 
 export interface Request {
   id: string;
   type: RequestType;
   timestamp: number;
-  isRejected: boolean;
-  isExecuted: boolean;
+  status: RequestStatus;
   name: string;
   description: string;
   imageUrl: string;
   address: string;
 }
 
-function decodeRequestSubmitted(event: Event): Request {
-  const args = event.args as any
+function decodeRequest(requestSubmittedEvent: Event): Request {
+  const args = requestSubmittedEvent.args as any
   const metadata = JSON.parse(args._metadata)
   return {
     id: args._recipientId,
     type: args._recipient === '0x0000000000000000000000000000000000000000' ? RequestType.Removal : RequestType.Registration,
     timestamp: args._timestamp.toNumber(),
-    isRejected: false,
-    isExecuted: false,
+    status: RequestStatus.Submitted,
     name: metadata.name,
     description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
@@ -57,7 +63,10 @@ function decodeRequestSubmitted(event: Event): Request {
   }
 }
 
-export async function getRequests(registryAddress: string): Promise<Request[]> {
+export async function getRequests(
+  registryAddress: string,
+  registryInfo: RegistryInfo,
+): Promise<Request[]> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const requestSubmittedFilter = registry.filters.RequestSubmitted()
   const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0)
@@ -71,30 +80,34 @@ export async function getRequests(registryAddress: string): Promise<Request[]> {
   for (const event of requestSubmittedEvents) {
     let request: Request
     try {
-      request = decodeRequestSubmitted(event)
+      request = decodeRequest(event)
     } catch (error) {
       // Invalid metadata
       continue
+    }
+    const now = DateTime.now().toSeconds()
+    if (request.timestamp + registryInfo.challengePeriodDuration < now) {
+      request.status = RequestStatus.Accepted
     }
     const rejected = requestRejectedEvents.find((event) => {
       return (event.args as any)._recipientId === request.id
     })
     if (rejected) {
-      request.isRejected = true
+      request.status = RequestStatus.Rejected
     } else {
       if (request.type === RequestType.Removal) {
         const removed = recipientRemovedEvents.find((event) => {
           return (event.args as any)._recipientId === request.id
         })
         if (removed) {
-          request.isExecuted = true
+          request.status = RequestStatus.Executed
         }
       } else {
         const added = recipientAddedEvents.find((event) => {
           return (event.args as any)._recipientId === request.id
         })
         if (added) {
-          request.isExecuted = true
+          request.status = RequestStatus.Executed
         }
       }
     }
