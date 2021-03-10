@@ -18,6 +18,10 @@ async function getCurrentBlockNumber(): Promise<number> {
   return (await provider.getBlock('latest')).number
 }
 
+async function getCurrentTime(): Promise<number> {
+  return (await provider.getBlock('latest')).timestamp
+}
+
 describe('Simple Recipient Registry', () => {
   const [, deployer, controller, recipient] = provider.getWallets()
 
@@ -474,11 +478,15 @@ describe('Optimistic recipient registry', () => {
     })
 
     it('allows anyone to submit registration request', async () => {
-      await expect(registry.connect(requester).addRecipient(
-        recipientAddress, metadata, { value: baseDeposit },
-      ))
+      const requestSubmitted = await registry.connect(requester).addRecipient(
+        recipientAddress,
+        metadata,
+        { value: baseDeposit },
+      )
+      const currentTime = await getCurrentTime()
+      expect(requestSubmitted)
         .to.emit(registry, 'RequestSubmitted')
-        .withArgs(recipientId, recipientAddress, metadata)
+        .withArgs(recipientId, recipientAddress, metadata, currentTime)
       expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
     })
 
@@ -528,25 +536,36 @@ describe('Optimistic recipient registry', () => {
     })
 
     it('allows owner to challenge registration request', async () => {
+      await registry.connect(requester).addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+      const requesterBalanceBefore = await provider.getBalance(requester.address)
+      const requestRejected = await registry.challengeRequest(recipientId, requester.address)
+      const currentTime = await getCurrentTime()
+      expect(requestRejected)
+        .to.emit(registry, 'RequestRejected')
+        .withArgs(recipientId, currentTime)
+      const requesterBalanceAfter = await provider.getBalance(requester.address)
+      expect(requesterBalanceBefore.add(baseDeposit)).to.equal(requesterBalanceAfter)
+    })
+
+    it('allows owner to set beneficiary address when challenging request', async () => {
       await registry.addRecipient(
         recipientAddress, metadata, { value: baseDeposit },
       )
-      const ownerBalanceBefore = await provider.getBalance(deployer.address)
-      const requestChallenged = await registry.challengeRequest(recipientId)
-      expect(requestChallenged)
-        .to.emit(registry, 'RequestRejected')
-        .withArgs(recipientId)
-      const txFee = await getTxFee(requestChallenged)
-      const ownerBalanceAfter = await provider.getBalance(deployer.address)
-      expect(ownerBalanceBefore.sub(txFee).add(baseDeposit))
-        .to.equal(ownerBalanceAfter)
+      const controllerBalanceBefore = await provider.getBalance(controller.address)
+      await registry.challengeRequest(recipientId, controller.address)
+      const controllerBalanceAfter = await provider.getBalance(controller.address)
+      expect(controllerBalanceBefore.add(baseDeposit)).to.equal(controllerBalanceAfter)
     })
 
     it('allows only owner to challenge requests', async () => {
       await registry.connect(requester).addRecipient(
         recipientAddress, metadata, { value: baseDeposit },
       )
-      await expect(registry.connect(requester).challengeRequest(recipientId))
+      await expect(registry.connect(requester).challengeRequest(
+        recipientId, requester.address,
+      ))
         .to.be.revertedWith('Ownable: caller is not the owner')
     })
 
@@ -554,8 +573,8 @@ describe('Optimistic recipient registry', () => {
       await registry.connect(requester).addRecipient(
         recipientAddress, metadata, { value: baseDeposit },
       )
-      await registry.challengeRequest(recipientId)
-      await expect(registry.challengeRequest(recipientId))
+      await registry.challengeRequest(recipientId, requester.address)
+      await expect(registry.challengeRequest(recipientId, requester.address))
         .to.be.revertedWith('RecipientRegistry: Request does not exist')
     })
 
@@ -640,11 +659,14 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await expect(registry.connect(requester).removeRecipient(
-        recipientId, { value: baseDeposit },
-      ))
+      const requestSubmitted = await registry.connect(requester).removeRecipient(
+        recipientId,
+        { value: baseDeposit },
+      )
+      const currentTime = await getCurrentTime()
+      expect(requestSubmitted)
         .to.emit(registry, 'RequestSubmitted')
-        .withArgs(recipientId, ZERO_ADDRESS, '')
+        .withArgs(recipientId, ZERO_ADDRESS, '', currentTime)
       expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
     })
 
@@ -702,16 +724,18 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await registry.removeRecipient(recipientId, { value: baseDeposit })
-      const ownerBalanceBefore = await provider.getBalance(deployer.address)
-      const requestChallenged = await registry.challengeRequest(recipientId)
-      expect(requestChallenged)
+      await registry.connect(requester).removeRecipient(
+        recipientId,
+        { value: baseDeposit },
+      )
+      const requesterBalanceBefore = await provider.getBalance(requester.address)
+      const requestRejected = await registry.challengeRequest(recipientId, requester.address)
+      const currentTime = await getCurrentTime()
+      expect(requestRejected)
         .to.emit(registry, 'RequestRejected')
-        .withArgs(recipientId)
-      const txFee = await getTxFee(requestChallenged)
-      const ownerBalanceAfter = await provider.getBalance(deployer.address)
-      expect(ownerBalanceBefore.sub(txFee).add(baseDeposit))
-        .to.equal(ownerBalanceAfter)
+        .withArgs(recipientId, currentTime)
+      const requesterBalanceAfter = await provider.getBalance(requester.address)
+      expect(requesterBalanceBefore.add(baseDeposit)).to.equal(requesterBalanceAfter)
 
       // Recipient is not removed
       const currentBlock = await getCurrentBlockNumber()
