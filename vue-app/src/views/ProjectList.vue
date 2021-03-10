@@ -98,19 +98,14 @@ import { Project, getRecipientRegistryAddress, getProjects } from '@/api/project
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import {
+  SELECT_ROUND,
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   LOAD_CART,
-  UNWATCH_CART,
   LOAD_CONTRIBUTOR_DATA,
-  UNWATCH_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
-  SET_CURRENT_ROUND_ADDRESS,
-  SET_CONTRIBUTION,
-  SET_CONTRIBUTOR,
-  CLEAR_CART,
 } from '@/store/mutation-types'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
@@ -166,17 +161,8 @@ export default class ProjectList extends Vue {
   async created() {
     const roundAddress = this.$route.params.address || this.$store.state.currentRoundAddress || await getCurrentRound()
     if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
-      // Change current round and reload round info
-      if (this.$store.state.currentRoundAddress) {
-        // Clear current round
-        this.$store.dispatch(UNWATCH_CART)
-        this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
-        this.$store.commit(SET_CONTRIBUTION, null)
-        this.$store.commit(SET_CONTRIBUTOR, null)
-        this.$store.commit(CLEAR_CART)
-        this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
-      }
-      this.$store.commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
+      // Select round and (re)load round info
+      this.$store.dispatch(SELECT_ROUND, roundAddress)
       await this.$store.dispatch(LOAD_ROUND_INFO)
       if (this.$store.state.currentUser) {
         // Load user data if already logged in

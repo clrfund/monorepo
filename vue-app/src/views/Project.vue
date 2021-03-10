@@ -78,21 +78,16 @@ import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
 import KlerosGTCRAdapterModal from '@/components/KlerosGTCRAdapterModal.vue'
 import {
+  SELECT_ROUND,
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   LOAD_CART,
   SAVE_CART,
-  UNWATCH_CART,
   LOAD_CONTRIBUTOR_DATA,
-  UNWATCH_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
-  SET_CURRENT_ROUND_ADDRESS,
-  SET_CONTRIBUTION,
-  SET_CONTRIBUTOR,
   ADD_CART_ITEM,
-  CLEAR_CART,
 } from '@/store/mutation-types'
 
 @Component({
@@ -127,17 +122,9 @@ export default class ProjectView extends Vue {
   async created() {
     const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
     if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
-      // Change current round and reload round info
-      if (this.$store.state.currentRoundAddress) {
-        // Clear current round
-        this.$store.dispatch(UNWATCH_CART)
-        this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
-        this.$store.commit(SET_CONTRIBUTION, null)
-        this.$store.commit(SET_CONTRIBUTOR, null)
-        this.$store.commit(CLEAR_CART)
-        this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
-      }
-      this.$store.commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
+      // Select round
+      this.$store.dispatch(SELECT_ROUND, roundAddress)
+      // Don't wait for round info to improve loading time
       ;(async () => {
         await this.$store.dispatch(LOAD_ROUND_INFO)
         if (this.$store.state.currentUser) {

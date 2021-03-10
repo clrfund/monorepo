@@ -35,17 +35,12 @@ import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import {
   LOAD_USER_INFO,
   LOAD_CART,
-  UNWATCH_CART,
   LOAD_CONTRIBUTOR_DATA,
-  UNWATCH_CONTRIBUTOR_DATA,
   LOGIN_USER,
   LOGOUT_USER,
 } from '@/store/action-types'
 import {
   SET_CURRENT_USER,
-  SET_CONTRIBUTION,
-  SET_CONTRIBUTOR,
-  CLEAR_CART,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 
@@ -74,13 +69,7 @@ export default class Profile extends Vue {
         this.walletChainId = _chainId
         if (this.currentUser) {
           // Log out user to prevent interactions with incorrect network
-          this.$store.dispatch(UNWATCH_CART)
-          this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
           this.$store.dispatch(LOGOUT_USER)
-          this.$store.commit(SET_CURRENT_USER, null)
-          this.$store.commit(SET_CONTRIBUTION, null)
-          this.$store.commit(SET_CONTRIBUTOR, null)
-          this.$store.commit(CLEAR_CART)
         }
       }
     })
@@ -88,13 +77,7 @@ export default class Profile extends Vue {
     this.walletProvider.on('accountsChanged', (_accounts: string[]) => {
       if (_accounts !== accounts) {
         // Log out user if wallet account changes
-        this.$store.dispatch(UNWATCH_CART)
-        this.$store.dispatch(UNWATCH_CONTRIBUTOR_DATA)
         this.$store.dispatch(LOGOUT_USER)
-        this.$store.commit(SET_CURRENT_USER, null)
-        this.$store.commit(SET_CONTRIBUTION, null)
-        this.$store.commit(SET_CONTRIBUTOR, null)
-        this.$store.commit(CLEAR_CART)
       }
       accounts = _accounts
     })

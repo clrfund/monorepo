@@ -20,6 +20,7 @@ import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
 import {
+  SELECT_ROUND,
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   SAVE_CART,
@@ -78,9 +79,6 @@ export const mutations = {
   },
   [SET_CURRENT_ROUND_ADDRESS](state, address: string) {
     state.currentRoundAddress = address
-    // Reset round info and contribution amount
-    state.currentRound = null
-    state.contribution = null
   },
   [SET_CURRENT_ROUND](state, round: RoundInfo) {
     state.currentRound = round
@@ -147,6 +145,19 @@ export const mutations = {
 }
 
 const actions = {
+  [SELECT_ROUND]({ commit, dispatch, state }, roundAddress: string) {
+    if (state.currentRoundAddress) {
+      // Reset everything that depends on round
+      dispatch(UNWATCH_CART)
+      dispatch(UNWATCH_CONTRIBUTOR_DATA)
+      commit(SET_CONTRIBUTION, null)
+      commit(SET_CONTRIBUTOR, null)
+      commit(CLEAR_CART)
+      commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
+      commit(SET_CURRENT_ROUND, null)
+    }
+    commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
+  },
   async [LOAD_ROUND_INFO]({ commit, state }) {
     const roundAddress = state.currentRoundAddress
     if (roundAddress === null) {
@@ -257,8 +268,14 @@ const actions = {
       state.currentUser.encryptionKey,
     )
   },
-  [LOGOUT_USER]() {
+  [LOGOUT_USER]({ commit, dispatch }) {
+    dispatch(UNWATCH_CART)
+    dispatch(UNWATCH_CONTRIBUTOR_DATA)
     logoutUser()
+    commit(SET_CURRENT_USER, null)
+    commit(SET_CONTRIBUTION, null)
+    commit(SET_CONTRIBUTOR, null)
+    commit(CLEAR_CART)
   },
 }
 
