@@ -3,6 +3,7 @@ import { FundingRound } from './abi'
 import { factory, provider, recipientRegistryType } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
+import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
 
 export interface Project {
@@ -31,8 +32,10 @@ export async function getProjects(
   startBlock?: number,
   endBlock?: number,
 ): Promise<Project[]> {
-  if (recipientRegistryType === 'simple' || recipientRegistryType === 'optimistic') {
+  if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startBlock, endBlock)
+  } else if (recipientRegistryType === 'optimistic') {
+    return await OptimisticRegistry.getProjects(registryAddress, startBlock, endBlock)
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProjects(registryAddress, startBlock, endBlock)
   } else {
@@ -44,8 +47,10 @@ export async function getProject(
   registryAddress: string,
   recipientId: string,
 ): Promise<Project | null> {
-  if (recipientRegistryType === 'simple' || recipientRegistryType === 'optimistic') {
+  if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProject(registryAddress, recipientId)
+  } else if (recipientRegistryType === 'optimistic') {
+    return await OptimisticRegistry.getProject(registryAddress, recipientId)
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProject(registryAddress, recipientId)
   } else {
