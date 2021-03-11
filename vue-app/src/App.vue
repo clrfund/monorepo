@@ -19,6 +19,7 @@
       <div id="nav-menu">
         <router-link to="/">Projects</router-link>
         <router-link to="/rounds">Rounds</router-link>
+        <router-link to="/recipients" v-if="hasRecipientRegistryLink()">Registry</router-link>
         <router-link to="/about">About</router-link>
         <a href="https://blog.clr.fund" target=_blank>Blog</a>
         <a href="https://forum.clr.fund" target=_blank>Forum</a>
@@ -40,6 +41,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
+import { recipientRegistryType } from '@/api/core'
 import { getCurrentRound } from '@/api/round'
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
@@ -111,6 +113,10 @@ export default class App extends Vue {
     this.navBarCollapsed = true
     this.userBarCollapsed = true
   }
+
+  hasRecipientRegistryLink(): boolean {
+    return recipientRegistryType === 'optimistic'
+  }
 }
 </script>
 
@@ -144,6 +150,7 @@ a {
   box-sizing: border-box;
   color: $text-color;
   font-family: Inter, sans-serif;
+  font-size: 14px;
   padding: 7px;
 
   &.invalid {
