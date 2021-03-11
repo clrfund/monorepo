@@ -430,6 +430,11 @@ describe('Optimistic recipient registry', () => {
   const baseDeposit = UNIT.div(10) // 0.1 ETH
   const challengePeriodDuration = BigNumber.from(86400) // Seconds
 
+  enum RequestType {
+    Registration = 0,
+    Removal = 1,
+  }
+
   beforeEach(async () => {
     registry = await deployContract(deployer, 'OptimisticRecipientRegistry', [
       baseDeposit,
@@ -486,7 +491,7 @@ describe('Optimistic recipient registry', () => {
       const currentTime = await getCurrentTime()
       expect(requestSubmitted)
         .to.emit(registry, 'RequestSubmitted')
-        .withArgs(recipientId, recipientAddress, metadata, currentTime)
+        .withArgs(recipientId, RequestType.Registration, recipientAddress, metadata, currentTime)
       expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
     })
 
@@ -543,8 +548,8 @@ describe('Optimistic recipient registry', () => {
       const requestRejected = await registry.challengeRequest(recipientId, requester.address)
       const currentTime = await getCurrentTime()
       expect(requestRejected)
-        .to.emit(registry, 'RequestRejected')
-        .withArgs(recipientId, currentTime)
+        .to.emit(registry, 'RequestResolved')
+        .withArgs(recipientId, RequestType.Registration, true, 0, currentTime)
       const requesterBalanceAfter = await provider.getBalance(requester.address)
       expect(requesterBalanceBefore.add(baseDeposit)).to.equal(requesterBalanceAfter)
     })
@@ -586,9 +591,10 @@ describe('Optimistic recipient registry', () => {
 
       const requesterBalanceBefore = await provider.getBalance(requester.address)
       const requestExecuted = await registry.connect(requester).executeRequest(recipientId)
+      const currentTime = await getCurrentTime()
       expect(requestExecuted)
-        .to.emit(registry, 'RecipientAdded')
-        .withArgs(recipientId, recipientAddress, metadata, recipientIndex)
+        .to.emit(registry, 'RequestResolved')
+        .withArgs(recipientId, RequestType.Registration, false, recipientIndex, currentTime)
       const txFee = await getTxFee(requestExecuted)
       const requesterBalanceAfter = await provider.getBalance(requester.address)
       expect(requesterBalanceBefore.sub(txFee).add(baseDeposit))
@@ -666,7 +672,7 @@ describe('Optimistic recipient registry', () => {
       const currentTime = await getCurrentTime()
       expect(requestSubmitted)
         .to.emit(registry, 'RequestSubmitted')
-        .withArgs(recipientId, ZERO_ADDRESS, '', currentTime)
+        .withArgs(recipientId, RequestType.Removal, ZERO_ADDRESS, '', currentTime)
       expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
     })
 
@@ -732,8 +738,8 @@ describe('Optimistic recipient registry', () => {
       const requestRejected = await registry.challengeRequest(recipientId, requester.address)
       const currentTime = await getCurrentTime()
       expect(requestRejected)
-        .to.emit(registry, 'RequestRejected')
-        .withArgs(recipientId, currentTime)
+        .to.emit(registry, 'RequestResolved')
+        .withArgs(recipientId, RequestType.Removal, true, 0, currentTime)
       const requesterBalanceAfter = await provider.getBalance(requester.address)
       expect(requesterBalanceBefore.add(baseDeposit)).to.equal(requesterBalanceAfter)
 
@@ -756,9 +762,10 @@ describe('Optimistic recipient registry', () => {
 
       const requesterBalanceBefore = await provider.getBalance(requester.address)
       const requestExecuted = await registry.connect(requester).executeRequest(recipientId)
+      const currentTime = await getCurrentTime()
       expect(requestExecuted)
-        .to.emit(registry, 'RecipientRemoved')
-        .withArgs(recipientId)
+        .to.emit(registry, 'RequestResolved')
+        .withArgs(recipientId, RequestType.Removal, false, 0, currentTime)
       const txFee = await getTxFee(requestExecuted)
       const requesterBalanceAfter = await provider.getBalance(requester.address)
       expect(requesterBalanceBefore.sub(txFee).add(baseDeposit))
