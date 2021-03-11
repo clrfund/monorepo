@@ -39,30 +39,19 @@ export enum RequestStatus {
   Executed = 'Executed',
 }
 
-export interface Request {
-  id: string;
-  type: RequestType;
-  timestamp: number;
-  status: RequestStatus;
+interface RecipientMetadata {
   name: string;
   description: string;
   imageUrl: string;
-  address: string;
 }
 
-function decodeRequest(requestSubmittedEvent: Event): Request {
-  const args = requestSubmittedEvent.args as any
-  const metadata = JSON.parse(args._metadata)
-  return {
-    id: args._recipientId,
-    type: args._recipient === '0x0000000000000000000000000000000000000000' ? RequestType.Removal : RequestType.Registration,
-    timestamp: args._timestamp.toNumber(),
-    status: RequestStatus.Submitted,
-    name: metadata.name,
-    description: metadata.description,
-    imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
-    address: args._recipient,
-  }
+export interface Request {
+  type: RequestType;
+  timestamp: number;
+  status: RequestStatus;
+  recipientId: string;
+  recipient: string;
+  metadata: RecipientMetadata;
 }
 
 export async function getRequests(
@@ -80,33 +69,58 @@ export async function getRequests(
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   const requests: Request[] = []
   for (const event of requestSubmittedEvents) {
-    let request: Request
-    try {
-      request = decodeRequest(event)
-    } catch (error) {
-      // Invalid metadata
-      continue
+    const args = event.args as any
+    let type: RequestType
+    let metadata: RecipientMetadata
+    if (args._recipient === '0x0000000000000000000000000000000000000000') {
+      // Removal request
+      type = RequestType.Removal
+      // Find corresponding registration request and update metadata
+      const registrationRequest = requests.find((item) => {
+        return item.recipientId === args._recipientId
+      })
+      if (!registrationRequest) {
+        throw new Error('registration request not found')
+      }
+      metadata = registrationRequest.metadata
+    } else {
+      // Registration request
+      type = RequestType.Registration
+      const { name, description, imageHash } = JSON.parse(args._metadata)
+      metadata = {
+        name,
+        description,
+        imageUrl: `${ipfsGatewayUrl}/ipfs/${imageHash}`,
+      }
+    }
+    const request: Request = {
+      type,
+      timestamp: args._timestamp.toNumber(),
+      status: RequestStatus.Submitted,
+      recipientId: args._recipientId,
+      recipient: args._recipient,
+      metadata,
     }
     const now = DateTime.now().toSeconds()
     if (request.timestamp + registryInfo.challengePeriodDuration < now) {
       request.status = RequestStatus.Accepted
     }
     const rejected = requestRejectedEvents.find((event) => {
-      return (event.args as any)._recipientId === request.id
+      return (event.args as any)._recipientId === request.recipientId
     })
     if (rejected) {
       request.status = RequestStatus.Rejected
     } else {
       if (request.type === RequestType.Removal) {
         const removed = recipientRemovedEvents.find((event) => {
-          return (event.args as any)._recipientId === request.id
+          return (event.args as any)._recipientId === request.recipientId
         })
         if (removed) {
           request.status = RequestStatus.Executed
         }
       } else {
         const added = recipientAddedEvents.find((event) => {
-          return (event.args as any)._recipientId === request.id
+          return (event.args as any)._recipientId === request.recipientId
         })
         if (added) {
           request.status = RequestStatus.Executed
@@ -147,6 +161,10 @@ export function getRequestId(
 
 function decodeProject(requestSubmittedEvent: Event): Project {
   const args = requestSubmittedEvent.args as any
+  if (args._recipient === '0x0000000000000000000000000000000000000000') {
+    // Removal request
+    throw new Error('not a registration request')
+  }
   const metadata = JSON.parse(args._metadata)
   return {
     id: args._recipientId,
@@ -234,12 +252,16 @@ export async function getProject(
   const challengePeriodDuration = (await registry.challengePeriodDuration()).toNumber()
   const requestSubmittedFilter = registry.filters.RequestSubmitted(recipientId)
   const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0)
-  if (requestSubmittedEvents.length !== 1) {
+  const requestSubmittedEvent = requestSubmittedEvents.find((event) => {
+    // Find registration request
+    return (event.args as any)._recipient !== '0x0000000000000000000000000000000000000000'
+  })
+  if (!requestSubmittedEvent) {
     return null
   }
   let project: Project
   try {
-    project = decodeProject(requestSubmittedEvents[0])
+    project = decodeProject(requestSubmittedEvent)
   } catch {
     // Invalid metadata
     return null

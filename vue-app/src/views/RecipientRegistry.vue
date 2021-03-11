@@ -19,25 +19,27 @@
     <table v-if="requests.length > 0" class="requests">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Project</th>
+          <th>Project ID</th>
+          <th>Description</th>
           <th>Type</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="request in requests.slice().reverse()" :key="request.id">
-          <td>{{ request.id }}</td>
+        <tr v-for="request in requests.slice().reverse()" :key="request.timestamp">
+          <td>{{ request.recipientId }}</td>
           <td>
-            <div class="project-name">{{ request.name }}</div>
-            <div class="project-description">{{ request.description }}</div>
-            <a class="project-image-link" :href="request.imageUrl" target="_blank" rel="noopener">{{ request.imageUrl }}</a>
+            <div class="project-name">{{ request.metadata.name }}</div>
+            <div class="project-description">{{ request.metadata.description }}</div>
+            <a class="project-image-link" :href="request.imageUrl" target="_blank" rel="noopener">
+              {{ request.metadata.imageUrl }}
+            </a>
           </td>
           <td>{{ request.type }}</td>
           <td>
             <template v-if="hasProjectLink(request)">
               <router-link
-                :to="{ name: 'project', params: { id: request.id }}"
+                :to="{ name: 'project', params: { id: request.recipientId }}"
               >
                 {{ request.status }}
               </router-link>
