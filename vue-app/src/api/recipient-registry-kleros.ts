@@ -179,4 +179,4 @@ export async function registerProject(
   return transaction
 }
 
-export default { getProjects, getProject }
+export default { getProjects, getProject, registerProject }

@@ -19,22 +19,35 @@
     <table v-if="requests.length > 0" class="requests">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Project</th>
+          <th>Project ID</th>
+          <th>Description</th>
           <th>Type</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="request in requests.slice().reverse()" :key="request.id">
-          <td>{{ request.id }}</td>
+        <tr v-for="request in requests.slice().reverse()" :key="request.timestamp">
+          <td>{{ request.recipientId }}</td>
           <td>
-            <div class="project-name">{{ request.name }}</div>
-            <div class="project-description">{{ request.description }}</div>
-            <a class="project-image-link" :href="request.imageUrl" target="_blank" rel="noopener">{{ request.imageUrl }}</a>
+            <div class="project-name">{{ request.metadata.name }}</div>
+            <div class="project-description">{{ request.metadata.description }}</div>
+            <a class="project-image-link" :href="request.imageUrl" target="_blank" rel="noopener">
+              {{ request.metadata.imageUrl }}
+            </a>
           </td>
           <td>{{ request.type }}</td>
-          <td>{{ request.status }}</td>
+          <td>
+            <template v-if="hasProjectLink(request)">
+              <router-link
+                :to="{ name: 'project', params: { id: request.recipientId }}"
+              >
+                {{ request.status }}
+              </router-link>
+            </template>
+            <template v-else>
+              {{ request.status }}
+            </template>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -51,11 +64,15 @@ import { recipientRegistryType } from '@/api/core'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import {
   RegistryInfo,
+  RequestType,
+  RequestStatus,
   Request,
   getRegistryInfo,
   getRequests,
 } from '@/api/recipient-registry-optimistic'
+import { getCurrentRound } from '@/api/round'
 import RecipientSubmissionModal from '@/components/RecipientSubmissionModal.vue'
+import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 
 @Component({
@@ -66,7 +83,6 @@ import { formatAmount } from '@/utils/amounts'
 })
 export default class RecipientRegistryView extends Vue {
 
-  registryAddress: string | null = null
   registryInfo: RegistryInfo | null = null
   requests: Request[] = []
 
@@ -74,9 +90,13 @@ export default class RecipientRegistryView extends Vue {
     if (recipientRegistryType !== 'optimistic') {
       return
     }
-    this.registryAddress = await getRecipientRegistryAddress()
-    this.registryInfo = await getRegistryInfo(this.registryAddress)
-    this.requests = await getRequests(this.registryAddress, this.registryInfo)
+    if (this.$store.state.recipientRegistryAddress === null) {
+      const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+      const registryAddress = await getRecipientRegistryAddress(roundAddress)
+      this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
+    }
+    this.registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+    this.requests = await getRequests(this.$store.state.recipientRegistryAddress,  this.registryInfo)
   }
 
   formatAmount(value: BigNumber): string {
@@ -87,6 +107,13 @@ export default class RecipientRegistryView extends Vue {
     return humanizeDuration(value * 1000)
   }
 
+  hasProjectLink(request: Request): boolean {
+    return (
+      request.type === RequestType.Registration &&
+      [RequestStatus.Executed, RequestStatus.Accepted].includes(request.status)
+    )
+  }
+
   canSubmitProject(): boolean {
     return this.registryInfo !== null && this.$store.state.currentUser !== null
   }
@@ -95,14 +122,17 @@ export default class RecipientRegistryView extends Vue {
     this.$modal.show(
       RecipientSubmissionModal,
       {
-        registryAddress: this.registryAddress,
+        registryAddress: this.$store.state.recipientRegistryAddress,
         registryInfo: this.registryInfo,
       },
       { width: 500 },
       {
         closed: async () => {
-          if (this.registryAddress && this.registryInfo) {
-            this.requests = await getRequests(this.registryAddress, this.registryInfo)
+          if (this.registryInfo) {
+            this.requests = await getRequests(
+              this.$store.state.recipientRegistryAddress,
+              this.registryInfo,
+            )
           }
         },
       },

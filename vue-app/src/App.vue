@@ -42,15 +42,11 @@ import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
 import { recipientRegistryType } from '@/api/core'
-import { getCurrentRound } from '@/api/round'
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
-import { SET_CURRENT_ROUND_ADDRESS } from '@/store/mutation-types'
 import {
   LOAD_USER_INFO,
   LOAD_ROUND_INFO,
-  LOAD_CART,
-  LOAD_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 
 @Component({
@@ -74,22 +70,7 @@ export default class App extends Vue {
   navBarCollapsed = true
   userBarCollapsed = true
 
-  async created() {
-    const currentRoundAddress = await getCurrentRound()
-    if (this.$store.state.currentRoundAddress === null) {
-      // Set round address on init, but only if necessary.
-      // ProjectList component could have already set it.
-      this.$store.commit(SET_CURRENT_ROUND_ADDRESS, currentRoundAddress)
-      ;(async () => {
-        await this.$store.dispatch(LOAD_ROUND_INFO)
-        if (this.$store.state.currentUser) {
-          // Load user data if already logged in
-          this.$store.dispatch(LOAD_USER_INFO)
-          this.$store.dispatch(LOAD_CART)
-          this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-        }
-      })()
-    }
+  created() {
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)

@@ -71,14 +71,24 @@ import { DateTime } from 'luxon'
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
-import { Project, getProject } from '@/api/projects'
+import { Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
-import { RoundStatus } from '@/api/round'
+import { RoundStatus, getCurrentRound } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
-import KlerosGTCRAdapterModal from '@/components/KlerosGTCRAdapterModal.vue'
-import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM } from '@/store/mutation-types'
+import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
+import {
+  SELECT_ROUND,
+  LOAD_ROUND_INFO,
+  LOAD_USER_INFO,
+  LOAD_CART,
+  SAVE_CART,
+  LOAD_CONTRIBUTOR_DATA,
+} from '@/store/action-types'
+import {
+  SET_RECIPIENT_REGISTRY_ADDRESS,
+  ADD_CART_ITEM,
+} from '@/store/mutation-types'
 
 @Component({
   name: 'ProjectView',
@@ -110,7 +120,30 @@ export default class ProjectView extends Vue {
   }
 
   async created() {
-    const project = await getProject(this.$route.params.id)
+    const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+    if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
+      // Select round
+      this.$store.dispatch(SELECT_ROUND, roundAddress)
+      // Don't wait for round info to improve loading time
+      ;(async () => {
+        await this.$store.dispatch(LOAD_ROUND_INFO)
+        if (this.$store.state.currentUser) {
+          // Load user data if already logged in
+          this.$store.dispatch(LOAD_USER_INFO)
+          this.$store.dispatch(LOAD_CART)
+          this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+        }
+      })()
+    }
+    if (this.$store.state.recipientRegistryAddress === null) {
+      const registryAddress = await getRecipientRegistryAddress(roundAddress)
+      this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
+    }
+
+    const project = await getProject(
+      this.$store.state.recipientRegistryAddress,
+      this.$route.params.id,
+    )
     if (project === null || project.isHidden) {
       // Project not found
       this.$router.push({ name: 'projects' })
@@ -160,11 +193,19 @@ export default class ProjectView extends Vue {
   }
 
   hasRegisterBtn(): boolean {
-    return (
-      recipientRegistryType === 'kleros' &&
-      this.project?.index === 0 &&
-      this.project?.extra.tcrItemStatus === TcrItemStatus.Registered
-    )
+    if (this.project === null) {
+      return false
+    }
+    if (recipientRegistryType === 'optimistic') {
+      return this.project.index === 0
+    }
+    else if (recipientRegistryType === 'kleros') {
+      return (
+        this.project.index === 0 &&
+        this.project.extra.tcrItemStatus === TcrItemStatus.Registered
+      )
+    }
+    return false
   }
 
   canRegister(): boolean {
@@ -173,12 +214,15 @@ export default class ProjectView extends Vue {
 
   register() {
     this.$modal.show(
-      KlerosGTCRAdapterModal,
+      RecipientRegistrationModal,
       { project: this.project },
       { },
       {
         closed: async () => {
-          this.project = await getProject(this.$route.params.id)
+          this.project = await getProject(
+            this.$store.state.recipientRegistryAddress,
+            this.$route.params.id,
+          )
         },
       },
     )
