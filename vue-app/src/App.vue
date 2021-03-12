@@ -278,21 +278,11 @@ a {
   width: 25%;
 }
 
-.vm--modal {
-  background-color: transparent !important;
-}
-
-.modal-body {
-  background-color: $bg-light-color;
-  padding: $modal-space;
-  text-align: center;
-}
-
 .loader {
   display: block;
-  width: 40px;
   height: 40px;
-  margin: $modal-space auto;
+  margin: $content-space auto;
+  width: 40px;
 }
 
 .loader:after {
@@ -305,6 +295,20 @@ a {
   border: 6px solid #fff;
   border-color: #fff transparent #fff transparent;
   animation: loader 1.2s linear infinite;
+}
+
+.vm--modal {
+  background-color: transparent !important;
+}
+
+.modal-body {
+  background-color: $bg-light-color;
+  padding: $modal-space;
+  text-align: center;
+
+  .loader {
+    margin: $modal-space auto;
+  }
 }
 
 @keyframes loader {
