@@ -50,7 +50,7 @@
           <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
         </div>
       </div>
-      <div v-if="currentRound.status === 'Reallocating'" class="round-info-item">
+      <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
         <div class="round-info-title">Time left to reallocate</div>
         <div
           class="round-info-value"
