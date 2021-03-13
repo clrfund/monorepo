@@ -32,6 +32,11 @@ export enum RequestType {
   Removal = 'Removal',
 }
 
+enum RequestTypeCode {
+  Registration = 0,
+  Removal = 1,
+}
+
 export enum RequestStatus {
   Submitted = 'Submitted',
   Rejected = 'Rejected',
@@ -61,23 +66,19 @@ export async function getRequests(
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const requestSubmittedFilter = registry.filters.RequestSubmitted()
   const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0)
-  const requestRejectedFilter = registry.filters.RequestRejected()
-  const requestRejectedEvents = await registry.queryFilter(requestRejectedFilter, 0)
-  const recipientAddedFilter = registry.filters.RecipientAdded()
-  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
-  const recipientRemovedFilter = registry.filters.RecipientRemoved()
-  const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
+  const requestResolvedFilter = registry.filters.RequestResolved()
+  const requestResolvedEvents = await registry.queryFilter(requestResolvedFilter, 0)
   const requests: Request[] = []
   for (const event of requestSubmittedEvents) {
-    const args = event.args as any
+    const eventArgs = event.args as any
     let type: RequestType
     let metadata: RecipientMetadata
-    if (args._recipient === '0x0000000000000000000000000000000000000000') {
+    if (eventArgs._type === RequestTypeCode.Removal) {
       // Removal request
       type = RequestType.Removal
       // Find corresponding registration request and update metadata
       const registrationRequest = requests.find((item) => {
-        return item.recipientId === args._recipientId
+        return item.recipientId === eventArgs._recipientId
       })
       if (!registrationRequest) {
         throw new Error('registration request not found')
@@ -86,7 +87,7 @@ export async function getRequests(
     } else {
       // Registration request
       type = RequestType.Registration
-      const { name, description, imageHash } = JSON.parse(args._metadata)
+      const { name, description, imageHash } = JSON.parse(eventArgs._metadata)
       metadata = {
         name,
         description,
@@ -95,37 +96,28 @@ export async function getRequests(
     }
     const request: Request = {
       type,
-      timestamp: args._timestamp.toNumber(),
+      timestamp: eventArgs._timestamp.toNumber(),
       status: RequestStatus.Submitted,
-      recipientId: args._recipientId,
-      recipient: args._recipient,
+      recipientId: eventArgs._recipientId,
+      recipient: eventArgs._recipient,
       metadata,
     }
     const now = DateTime.now().toSeconds()
     if (request.timestamp + registryInfo.challengePeriodDuration < now) {
       request.status = RequestStatus.Accepted
     }
-    const rejected = requestRejectedEvents.find((event) => {
-      return (event.args as any)._recipientId === request.recipientId
-    })
-    if (rejected) {
-      request.status = RequestStatus.Rejected
-    } else {
-      if (request.type === RequestType.Removal) {
-        const removed = recipientRemovedEvents.find((event) => {
-          return (event.args as any)._recipientId === request.recipientId
-        })
-        if (removed) {
-          request.status = RequestStatus.Executed
-        }
+    // Find corresponding RequestResolved event
+    const resolved = requestResolvedEvents.find((event) => {
+      const args = event.args as any
+      if (request.type === RequestType.Registration) {
+        return args._recipientId === request.recipientId && args._type === RequestTypeCode.Registration
       } else {
-        const added = recipientAddedEvents.find((event) => {
-          return (event.args as any)._recipientId === request.recipientId
-        })
-        if (added) {
-          request.status = RequestStatus.Executed
-        }
+        return args._recipientId === request.recipientId && args._type === RequestTypeCode.Removal
       }
+    })
+    if (resolved) {
+      const isRejected = (resolved.args as any)._rejected
+      request.status = isRejected ? RequestStatus.Rejected : RequestStatus.Executed
     }
     requests.push(request)
   }
@@ -161,8 +153,7 @@ export function getRequestId(
 
 function decodeProject(requestSubmittedEvent: Event): Project {
   const args = requestSubmittedEvent.args as any
-  if (args._recipient === '0x0000000000000000000000000000000000000000') {
-    // Removal request
+  if (args._type !== RequestTypeCode.Registration) {
     throw new Error('not a registration request')
   }
   const metadata = JSON.parse(args._metadata)
@@ -192,39 +183,42 @@ export async function getProjects(
   const challengePeriodDuration = (await registry.challengePeriodDuration()).toNumber()
   const requestSubmittedFilter = registry.filters.RequestSubmitted()
   const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0, endBlock)
-  const requestRejectedFilter = registry.filters.RequestRejected()
-  const requestRejectedEvents = await registry.queryFilter(requestRejectedFilter, 0)
-  const recipientAddedFilter = registry.filters.RecipientAdded()
-  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0, endBlock)
-  const recipientRemovedFilter = registry.filters.RecipientRemoved()
-  const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
+  const requestResolvedFilter = registry.filters.RequestResolved()
+  const requestResolvedEvents = await registry.queryFilter(requestResolvedFilter, 0)
   const projects: Project[] = []
   for (const event of requestSubmittedEvents) {
     let project: Project
     try {
       project = decodeProject(event)
     } catch {
-      // Invalid metadata
+      // Invalid metadata or not a registration request
       continue
     }
     if (project.extra.submissionTime + challengePeriodDuration >= now) {
       // Challenge period is not over yet
       continue
     }
-    const rejected = requestRejectedEvents.find((event) => {
-      return (event.args as any)._recipientId === project.id
+    // Find corresponding RequestResolved event
+    const registration = requestResolvedEvents.find((event) => {
+      const args = event.args as any
+      return args._recipientId === project.id && args._type === RequestTypeCode.Registration
     })
-    if (rejected) {
-      continue
+    if (registration) {
+      const isRejected = (registration.args as any)._rejected
+      if (isRejected) {
+        continue
+      } else {
+        project.index = (registration.args as any)._recipientIndex.toNumber()
+      }
     }
-    const added = recipientAddedEvents.find((event) => {
-      return (event.args as any)._recipientId === project.id
-    })
-    if (added) {
-      project.index = (added.args as any)._index.toNumber()
-    }
-    const removed = recipientRemovedEvents.find((event) => {
-      return (event.args as any)._recipientId === project.id
+    // Find corresponding removal event
+    const removed = requestResolvedEvents.find((event) => {
+      const args = event.args as any
+      return (
+        args._recipientId === project.id &&
+        args._type === RequestTypeCode.Removal &&
+        args._rejected === false
+      )
     })
     if (removed) {
       if (!startBlock || startBlock && removed.blockNumber <= startBlock) {
@@ -252,9 +246,9 @@ export async function getProject(
   const challengePeriodDuration = (await registry.challengePeriodDuration()).toNumber()
   const requestSubmittedFilter = registry.filters.RequestSubmitted(recipientId)
   const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0)
+  // Find registration request
   const requestSubmittedEvent = requestSubmittedEvents.find((event) => {
-    // Find registration request
-    return (event.args as any)._recipient !== '0x0000000000000000000000000000000000000000'
+    return (event.args as any)._type === RequestTypeCode.Registration
   })
   if (!requestSubmittedEvent) {
     return null
@@ -270,20 +264,26 @@ export async function getProject(
     // Challenge period is not over yet
     return null
   }
-  const requestRejectedFilter = registry.filters.RequestRejected(recipientId)
-  const requestRejectedEvents = await registry.queryFilter(requestRejectedFilter, 0)
-  if (requestRejectedEvents.length !== 0) {
-    return null
+  // Find corresponding RequestResolved event
+  const requestResolvedFilter = registry.filters.RequestResolved(recipientId)
+  const requestResolvedEvents = await registry.queryFilter(requestResolvedFilter, 0)
+  const registration = requestResolvedEvents.find((event) => {
+    return (event.args as any)._type === RequestTypeCode.Registration
+  })
+  if (registration) {
+    const isRejected = (registration.args as any)._rejected
+    if (isRejected) {
+      return null
+    } else {
+      project.index = (registration.args as any)._recipientIndex.toNumber()
+    }
   }
-  const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
-  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
-  if (recipientAddedEvents.length !== 0) {
-    const recipientAddedEvent = recipientAddedEvents[0]
-    project.index = (recipientAddedEvent.args as any)._index.toNumber()
-  }
-  const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientId)
-  const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
-  if (recipientRemovedEvents.length !== 0) {
+  // Find corresponding removal event
+  const removed = requestResolvedEvents.find((event) => {
+    const args = event.args as any
+    return args._type === RequestTypeCode.Removal && args._rejected === false
+  })
+  if (removed) {
     project.isLocked = true
   }
   return project
