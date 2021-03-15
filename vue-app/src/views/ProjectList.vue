@@ -50,7 +50,7 @@
           <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
         </div>
       </div>
-      <div v-if="currentRound.status === 'Reallocating'" class="round-info-item">
+      <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
         <div class="round-info-title">Time left to reallocate</div>
         <div
           class="round-info-value"
@@ -65,6 +65,7 @@
         </div>
       </div>
     </div>
+    <div v-if="isLoading" class="loader"></div>
     <div v-if="projects.length > 0" class="project-search">
       <img src="@/assets/search.svg">
       <input
@@ -151,12 +152,7 @@ export default class ProjectList extends Vue {
 
   projects: Project[] = []
   search = ''
-
-  roundWatcherStop?: Function
-
-  get currentRound(): RoundInfo | null {
-    return this.$store.state.currentRound
-  }
+  isLoading = true
 
   async created() {
     const roundAddress = this.$route.params.address || this.$store.state.currentRoundAddress || await getCurrentRound()
@@ -175,13 +171,8 @@ export default class ProjectList extends Vue {
       const registryAddress = await getRecipientRegistryAddress(roundAddress)
       this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
     }
-    this.loadProjects()
-  }
-
-  beforeDestroy() {
-    if (this.roundWatcherStop) {
-      this.roundWatcherStop()
-    }
+    await this.loadProjects()
+    this.isLoading = false
   }
 
   private async loadProjects() {
@@ -195,6 +186,10 @@ export default class ProjectList extends Vue {
     })
     shuffleArray(visibleProjects)
     this.projects = visibleProjects
+  }
+
+  get currentRound(): RoundInfo | null {
+    return this.$store.state.currentRound
   }
 
   formatIntegerPart(value: FixedNumber): string {

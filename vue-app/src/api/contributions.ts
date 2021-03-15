@@ -77,6 +77,16 @@ export async function getContributionAmount(
   return event.args._amount
 }
 
+export async function isContributionWithdrawn(
+  roundAddress: string,
+  contributorAddress: string,
+): Promise<boolean> {
+  const fundingRound = new Contract(roundAddress, FundingRound, provider)
+  const filter = fundingRound.filters.ContributionWithdrawn(contributorAddress)
+  const events = await fundingRound.queryFilter(filter, 0)
+  return events.length > 0
+}
+
 export async function getTotalContributed(
   fundingRoundAddress: string,
 ): Promise<{ count: number; amount: BigNumber }> {

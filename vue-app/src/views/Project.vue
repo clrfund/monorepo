@@ -6,6 +6,7 @@
     >
         ⟵ All projects
     </a>
+    <div v-if="isLoading" class="loader"></div>
     <div v-if="project" class="project-page">
       <img class="project-image" :src="project.imageUrl" :alt="project.name">
       <h2
@@ -101,6 +102,7 @@ export default class ProjectView extends Vue {
   project: Project | null = null
   allocatedAmount: FixedNumber | null = null
   claimed: boolean | null = null
+  isLoading = true
 
   private async checkAllocation(tally: Tally | null) {
     const currentRound = this.$store.state.currentRound
@@ -157,6 +159,7 @@ export default class ProjectView extends Vue {
       this.checkAllocation,
     )
     this.checkAllocation(this.$store.state.tally)
+    this.isLoading = false
   }
 
   goBackToList(): void {

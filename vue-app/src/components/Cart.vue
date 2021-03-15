@@ -229,6 +229,8 @@ export default class Cart extends Vue {
       return `Cart can not contain more than ${MAX_CART_SIZE} items`
     } else if (currentRound.status === RoundStatus.Cancelled) {
       return 'Funding round has been cancelled'
+    } else if (DateTime.local() >= currentRound.votingDeadline) {
+      return 'The funding round has ended'
     } else if (currentRound.messages + this.cart.length >= currentRound.maxMessages) {
       return 'The limit on the number of votes has been reached'
     } else {
@@ -256,9 +258,7 @@ export default class Cart extends Vue {
         }
       } else {
         // Reallocating funds
-        if (DateTime.local() >= currentRound.votingDeadline) {
-          return 'The funding round has ended'
-        } else if (!this.$store.state.contributor) {
+        if (!this.$store.state.contributor) {
           return 'Contributor key is not found'
         } else if (this.isGreaterThanInitialContribution()) {
           return 'The total can not exceed the initial contribution'

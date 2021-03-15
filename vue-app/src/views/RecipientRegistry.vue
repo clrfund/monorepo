@@ -15,6 +15,7 @@
         Submit project
       </button>
     </div>
+    <div v-if="isLoading" class="loader"></div>
     <h2 v-if="requests.length > 0">Recent changes</h2>
     <table v-if="requests.length > 0" class="requests">
       <thead>
@@ -85,6 +86,7 @@ export default class RecipientRegistryView extends Vue {
 
   registryInfo: RegistryInfo | null = null
   requests: Request[] = []
+  isLoading = true
 
   async created() {
     if (recipientRegistryType !== 'optimistic') {
@@ -97,6 +99,7 @@ export default class RecipientRegistryView extends Vue {
     }
     this.registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
     this.requests = await getRequests(this.$store.state.recipientRegistryAddress,  this.registryInfo)
+    this.isLoading = false
   }
 
   formatAmount(value: BigNumber): string {
@@ -144,12 +147,9 @@ export default class RecipientRegistryView extends Vue {
 <style scoped lang="scss">
 @import '../styles/vars';
 
-.content-heading {
-  border-bottom: $border;
-}
-
 .submit-project {
   border-bottom: $border;
+  border-top: $border;
   font-size: 16px;
   line-height: 150%;
   padding: $content-space * 1.5;
