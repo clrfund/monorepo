@@ -94,7 +94,7 @@ contract KlerosGTCRMock is Ownable {
     itemList.push(itemID);
     itemIDtoIndex[itemID] = itemList.length - 1;
     emit ItemSubmitted(itemID, msg.sender, 0, item.data);
-    emit ItemStatusChange(itemID, 0, 0, false, false);
+    emit ItemStatusChange(itemID, 0, 0, false, true);
   }
 
   /** @dev Submit a request to remove an item from the list. Accepts enough ETH to cover the deposit, reimburses the rest.
