@@ -222,10 +222,11 @@ export default class ProjectView extends Vue {
       { },
       {
         closed: async () => {
-          this.project = await getProject(
+          const project = await getProject(
             this.$store.state.recipientRegistryAddress,
             this.$route.params.id,
           )
+          Object.assign(this.project, project)
         },
       },
     )
@@ -265,6 +266,7 @@ export default class ProjectView extends Vue {
       currentRound.status === RoundStatus.Finalized &&
       this.project !== null &&
       this.project.index !== 0 &&
+      this.project.isHidden === false &&
       this.allocatedAmount !== null &&
       this.claimed !== null
     )
