@@ -49,6 +49,7 @@ import { DateTime } from 'luxon'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
+import { RoundStatus } from '@/api/round'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import { SAVE_CART } from '@/store/action-types'
@@ -111,6 +112,7 @@ export default class ProjectListItem extends Vue {
       this.$store.state.currentUser &&
       this.$store.state.currentRound &&
       DateTime.local() < this.$store.state.currentRound.votingDeadline &&
+      this.$store.state.currentRound.status !== RoundStatus.Cancelled &&
       this.project.isHidden === false &&
       this.project.isLocked === false
     )
