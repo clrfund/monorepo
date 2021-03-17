@@ -182,7 +182,7 @@ export async function getProjects(
   const now = DateTime.now().toSeconds()
   const challengePeriodDuration = (await registry.challengePeriodDuration()).toNumber()
   const requestSubmittedFilter = registry.filters.RequestSubmitted()
-  const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0, endBlock)
+  const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0)
   const requestResolvedFilter = registry.filters.RequestResolved()
   const requestResolvedEvents = await registry.queryFilter(requestResolvedFilter, 0)
   const projects: Project[] = []
@@ -198,16 +198,22 @@ export async function getProjects(
       // Challenge period is not over yet
       continue
     }
-    // Find corresponding RequestResolved event
+    // Find corresponding registration event
     const registration = requestResolvedEvents.find((event) => {
       const args = event.args as any
       return args._recipientId === project.id && args._type === RequestTypeCode.Registration
     })
+    // Unregistered recipients are always visible,
+    // even if request is submitted after the end of round.
     if (registration) {
       const isRejected = (registration.args as any)._rejected
       if (isRejected) {
         continue
       } else {
+        if (endBlock && registration.blockNumber >= endBlock) {
+          // Hide recipient if it is added after the end of round
+          project.isHidden = true
+        }
         project.index = (registration.args as any)._recipientIndex.toNumber()
       }
     }
@@ -226,6 +232,7 @@ export async function getProjects(
         // or recipient had been removed before start block
         project.isHidden = true
       } else {
+        // Disallow contributions to removed recipient, but don't hide it
         project.isLocked = true
       }
     }
@@ -251,6 +258,7 @@ export async function getProject(
     return (event.args as any)._type === RequestTypeCode.Registration
   })
   if (!requestSubmittedEvent) {
+    // Project does not exist
     return null
   }
   let project: Project
@@ -284,6 +292,7 @@ export async function getProject(
     return args._type === RequestTypeCode.Removal && args._rejected === false
   })
   if (removed) {
+    // Disallow contributions to removed recipient
     project.isLocked = true
   }
   return project

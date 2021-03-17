@@ -14,7 +14,7 @@ export interface Project {
   description: string;
   imageUrl: string;
   index: number;
-  isHidden: boolean; // Hidden from the list
+  isHidden: boolean; // Hidden from the list (does not participate in round)
   isLocked: boolean; // Visible, but contributions are not allowed
   extra?: any; // Registry-specific data
 }

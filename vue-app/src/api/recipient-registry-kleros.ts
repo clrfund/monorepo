@@ -80,7 +80,7 @@ export async function getProjects(
   for (const event of recipientAddedEvents) {
     const project = decodeRecipientAdded(event, tcrColumns)
     if (endBlock && event.blockNumber >= endBlock) {
-      // Skip recipients added after the end of round.
+      // Hide recipient if it is added after the end of round.
       // We can not do this with filter because on xDai node returns
       // "One of the blocks specified in filter ... cannot be found"
       project.isHidden = true
@@ -94,12 +94,15 @@ export async function getProjects(
         // or recipient had been removed before start block
         project.isHidden = true
       } else {
+        // Disallow contributions to removed recipient, but don't hide it
         project.isLocked = true
       }
     }
     projects.push(project)
   }
-  // Search for unregistered recipients
+  // Search for unregistered recipients.
+  // Unregistered recipients are always visible,
+  // even if item is submitted after the end of round.
   const tcrItemSubmittedFilter = tcr.filters.ItemSubmitted()
   const tcrItemSubmittedEvents = await tcr.queryFilter(tcrItemSubmittedFilter, 0)
   for (const event of tcrItemSubmittedEvents) {
@@ -164,6 +167,7 @@ export async function getProject(
   const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientId)
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   if (recipientRemovedEvents.length !== 0) {
+    // Disallow contributions to removed recipient
     project.isLocked = true
   }
   return project

@@ -27,7 +27,7 @@ export async function getProjects(
 ): Promise<Project[]> {
   const registry = new Contract(registryAddress, SimpleRecipientRegistry, provider)
   const recipientAddedFilter = registry.filters.RecipientAdded()
-  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0, endBlock)
+  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   const recipientRemovedFilter = registry.filters.RecipientRemoved()
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   const projects: Project[] = []
@@ -39,6 +39,10 @@ export async function getProjects(
       // Invalid metadata
       continue
     }
+    if (endBlock && event.blockNumber >= endBlock) {
+      // Hide recipient if it is added after the end of round
+      project.isHidden = true
+    }
     const removed = recipientRemovedEvents.find((event) => {
       return (event.args as any)._recipientId === project.id
     })
@@ -48,9 +52,11 @@ export async function getProjects(
         // or recipient had been removed before start block
         project.isHidden = true
       } else {
+        // Disallow contributions to removed recipient, but don't hide it
         project.isLocked = true
       }
     }
+    // TODO: set isHidden to 'true' if project replaces removed project during the round
     projects.push(project)
   }
   return projects
@@ -67,6 +73,7 @@ export async function getProject(
   const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
   const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
   if (recipientAddedEvents.length !== 1) {
+    // Project does not exist
     return null
   }
   let project
@@ -79,8 +86,11 @@ export async function getProject(
   const recipientRemovedFilter = registry.filters.RecipientRemoved(recipientId)
   const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
   if (recipientRemovedEvents.length !== 0) {
+    // Disallow contributions to removed recipient
     project.isLocked = true
   }
+  // TODO: set isHidden to 'true' if project was removed before the beginning of the round
+  // TODO: set isHidden to 'true' if project was added after the end of round
   return project
 }
 

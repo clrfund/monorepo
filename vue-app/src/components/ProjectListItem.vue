@@ -95,9 +95,7 @@ export default class ProjectListItem extends Vue {
             this.$store.state.recipientRegistryAddress,
             this.project.id,
           )
-          if (project) {
-            this.project.index = project.index
-          }
+          Object.assign(this.project, project)
         },
       },
     )
@@ -113,7 +111,8 @@ export default class ProjectListItem extends Vue {
       this.$store.state.currentUser &&
       this.$store.state.currentRound &&
       DateTime.local() < this.$store.state.currentRound.votingDeadline &&
-      !this.project.isLocked
+      this.project.isHidden === false &&
+      this.project.isLocked === false
     )
   }
 
