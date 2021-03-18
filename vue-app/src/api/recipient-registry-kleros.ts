@@ -89,7 +89,7 @@ export async function getProjects(
     })
     if (removed) {
       const removedAt = (removed.args as any)._timestamp.toNumber()
-      if (!startTime || startTime && removedAt <= startTime) {
+      if (!startTime || removedAt <= startTime) {
         // Start time not specified
         // or recipient had been removed before start time
         project.isHidden = true
