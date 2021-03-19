@@ -245,6 +245,7 @@ export default class ProjectView extends Vue {
       this.hasContributeBtn() &&
       this.$store.state.currentUser &&
       DateTime.local() < this.$store.state.currentRound.votingDeadline &&
+      this.$store.state.currentRound.status !== RoundStatus.Cancelled &&
       this.project !== null &&
       !this.project.isLocked
     )

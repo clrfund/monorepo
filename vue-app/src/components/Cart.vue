@@ -179,7 +179,7 @@ export default class Cart extends Vue {
   }
 
   canSubmit(): boolean {
-    return this.$store.state.currentRound && this.cart.length > 0
+    return this.$store.state.currentRound && this.cart.length > 0 || this.canWithdrawContribution()
   }
 
   private isFormValid(): boolean {
@@ -271,6 +271,7 @@ export default class Cart extends Vue {
 
   hasUnallocatedFunds(): boolean {
     return (
+      this.errorMessage === null &&
       this.contribution !== null &&
       !this.contribution.isZero() &&
       this.getTotal().lt(this.contribution)
@@ -312,8 +313,10 @@ export default class Cart extends Vue {
   }
 
   canWithdrawContribution(): boolean {
-    const { status } = this.$store.state.currentRound
-    return status === RoundStatus.Cancelled && !this.contribution.isZero()
+    return (
+      this.$store.state.currentRound?.status === RoundStatus.Cancelled &&
+      !this.contribution.isZero()
+    )
   }
 
   withdrawContribution(): void {

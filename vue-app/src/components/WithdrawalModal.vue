@@ -23,6 +23,7 @@ import { BigNumber } from 'ethers'
 
 import { withdrawContribution } from '@/api/contributions'
 import Transaction from '@/components/Transaction.vue'
+import { SET_CONTRIBUTION } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction } from '@/utils/contracts'
 
@@ -54,6 +55,7 @@ export default class WithdrawalModal extends Vue {
       this.withdrawalTxError = error.message
       return
     }
+    this.$store.commit(SET_CONTRIBUTION, BigNumber.from(0))
     this.step += 1
   }
 
