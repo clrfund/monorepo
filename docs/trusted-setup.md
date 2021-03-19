@@ -11,11 +11,11 @@ git checkout v0.6.7
 
 Follow instructions in README.md to install necessary dependencies.
 
-Download trusted setup files into `circuits/params/` directory and rebuild the keys:
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits into `circuits/params/` directory and rebuild the keys:
 
 ```
 cd circuits
-./scripts/buildSnarksSmall.sh
+./scripts/buildSnarksMedium.sh
 ```
 
 Recompile the contracts:

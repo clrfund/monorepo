@@ -12,11 +12,11 @@ git checkout v0.6.7
 
 Follow instructions in README.md to install necessary dependencies.
 
-Download trusted setup files into `circuits/params/` directory and rebuild the keys:
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits into `circuits/params/` directory and rebuild the keys:
 
 ```
 cd circuits
-./scripts/buildSnarksSmall.sh
+./scripts/buildSnarksMedium.sh
 ```
 
 Recompile the contracts:
@@ -83,10 +83,10 @@ Switch to `contracts` directory:
 cd contracts/
 ```
 
-Download [zkSNARK parameters](https://ipfs.io/ipfs/QmateegDyF81zE1T8cfxE5qNo5aphEV4r7b1oxYMBsty5N) for 'small' circuits to `snark-params` directory. Example:
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits to `snark-params` directory. Example:
 
 ```
-ipfs get --output snark-params QmateegDyF81zE1T8cfxE5qNo5aphEV4r7b1oxYMBsty5N
+ipfs get --output snark-params QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD
 ```
 
 Set the path to downloaded parameter files and also the path to `zkutil` binary (if needed):
