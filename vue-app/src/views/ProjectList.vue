@@ -178,8 +178,8 @@ export default class ProjectList extends Vue {
   private async loadProjects() {
     const projects = await getProjects(
       this.$store.state.recipientRegistryAddress,
-      this.currentRound?.startBlock,
-      this.currentRound?.endBlock,
+      this.currentRound?.startTime.toSeconds(),
+      this.currentRound?.votingDeadline.toSeconds(),
     )
     const visibleProjects = projects.filter(project => {
       return (!project.isHidden && !project.isLocked)

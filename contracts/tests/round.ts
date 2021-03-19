@@ -34,8 +34,10 @@ describe('Funding Round', () => {
   async function deployMaciMock(): Promise<Contract> {
     const MACIArtifact = await artifacts.readArtifact('MACI')
     const maci = await deployMockContract(deployer, MACIArtifact.abi)
-    const signUpDeadline = (await provider.getBlock('latest')).timestamp + signUpDuration
+    const currentTime = (await provider.getBlock('latest')).timestamp
+    const signUpDeadline = currentTime + signUpDuration
     const votingDeadline = signUpDeadline + votingDuration
+    await maci.mock.signUpTimestamp.returns(currentTime)
     await maci.mock.signUpDurationSeconds.returns(signUpDuration)
     await maci.mock.votingDurationSeconds.returns(votingDuration)
     await maci.mock.calcSignUpDeadline.returns(signUpDeadline)

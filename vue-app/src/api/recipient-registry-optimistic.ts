@@ -175,8 +175,8 @@ function decodeProject(requestSubmittedEvent: Event): Project {
 
 export async function getProjects(
   registryAddress: string,
-  startBlock?: number,
-  endBlock?: number,
+  startTime?: number,
+  endTime?: number,
 ): Promise<Project[]> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const now = DateTime.now().toSeconds()
@@ -210,7 +210,8 @@ export async function getProjects(
       if (isRejected) {
         continue
       } else {
-        if (endBlock && registration.blockNumber >= endBlock) {
+        const addedAt = (registration.args as any)._timestamp.toNumber()
+        if (endTime && addedAt >= endTime) {
           // Hide recipient if it is added after the end of round
           project.isHidden = true
         }
@@ -227,9 +228,10 @@ export async function getProjects(
       )
     })
     if (removed) {
-      if (!startBlock || startBlock && removed.blockNumber <= startBlock) {
-        // Start block not specified
-        // or recipient had been removed before start block
+      const removedAt = (removed.args as any)._timestamp.toNumber()
+      if (!startTime || removedAt <= startTime) {
+        // Start time not specified
+        // or recipient had been removed before start time
         project.isHidden = true
       } else {
         // Disallow contributions to removed recipient, but don't hide it

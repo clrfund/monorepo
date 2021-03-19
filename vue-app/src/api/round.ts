@@ -14,14 +14,13 @@ export interface RoundInfo {
   recipientTreeDepth: number;
   maxContributors: number;
   maxMessages: number;
-  startBlock: number;
-  endBlock: number;
   coordinatorPubKey: PubKey;
   nativeTokenAddress: string;
   nativeTokenSymbol: string;
   nativeTokenDecimals: number;
   voiceCreditFactor: BigNumber;
   status: string;
+  startTime: DateTime;
   signUpDeadline: DateTime;
   votingDeadline: DateTime;
   totalFunds: FixedNumber;
@@ -71,7 +70,6 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     maciAddress,
     nativeTokenAddress,
     userRegistryAddress,
-    startBlock,
     voiceCreditFactor,
     isFinalized,
     isCancelled,
@@ -79,7 +77,6 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     fundingRound.maci(),
     fundingRound.nativeToken(),
     fundingRound.userRegistry(),
-    fundingRound.startBlock(),
     fundingRound.voiceCreditFactor(),
     fundingRound.isFinalized(),
     fundingRound.isCancelled(),
@@ -101,15 +98,12 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     maci.coordinatorPubKey(),
     maci.numMessages(),
   ])
+  const startTime = DateTime.fromSeconds(signUpTimestamp.toNumber())
   const signUpDeadline = DateTime.fromSeconds(
-    signUpTimestamp.add(signUpDurationSeconds).toNumber(),
-  )
-  const votingDeadline = DateTime.fromSeconds(
     signUpTimestamp.add(signUpDurationSeconds).add(votingDurationSeconds).toNumber(),
   )
-  const endBlock = startBlock.add(
-    // Average block time is 15 seconds
-    signUpDurationSeconds.add(votingDurationSeconds).div(15),
+  const votingDeadline = DateTime.fromSeconds(
+    signUpTimestamp.add(signUpDurationSeconds).toNumber(),
   )
   const coordinatorPubKey = new PubKey([
     BigInt(coordinatorPubKeyRaw.x),
@@ -159,14 +153,13 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
     maxContributors: 2 ** maciTreeDepths.stateTreeDepth - 1,
     maxMessages: 2 ** maciTreeDepths.messageTreeDepth - 1,
-    startBlock: startBlock.toNumber(),
-    endBlock: endBlock.toNumber(),
     coordinatorPubKey,
     nativeTokenAddress,
     nativeTokenSymbol,
     nativeTokenDecimals,
     voiceCreditFactor,
     status,
+    startTime,
     signUpDeadline,
     votingDeadline,
     totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),

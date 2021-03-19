@@ -30,15 +30,15 @@ export async function getRecipientRegistryAddress(roundAddress: string | null): 
 
 export async function getProjects(
   registryAddress: string,
-  startBlock?: number,
-  endBlock?: number,
+  startTime?: number,
+  endTime?: number,
 ): Promise<Project[]> {
   if (recipientRegistryType === 'simple') {
-    return await SimpleRegistry.getProjects(registryAddress, startBlock, endBlock)
+    return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProjects(registryAddress, startBlock, endBlock)
+    return await OptimisticRegistry.getProjects(registryAddress, startTime, endTime)
   } else if (recipientRegistryType === 'kleros') {
-    return await KlerosRegistry.getProjects(registryAddress, startBlock, endBlock)
+    return await KlerosRegistry.getProjects(registryAddress, startTime, endTime)
   } else {
     throw new Error('invalid recipient registry type')
   }
