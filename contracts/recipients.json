@@ -1,0 +1,20 @@
+{
+    "recipients":[
+        {
+            "address": "0x1234...5678",
+            "metadata": {
+                "name": "Recipient Name",
+                "description": "A decsription of the project.",
+                "imageHash": "IPFS hash of the projects image/logo"
+            }
+        },
+        {
+            "address": "0x1234...5678",
+            "metadata": {
+                "name": "Recipient Name",
+                "description": "A decsription of the project.",
+                "imageHash": "IPFS hash of the projects image/logo"
+            }
+        }
+    ]
+}
