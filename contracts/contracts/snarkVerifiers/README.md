@@ -1,3 +1,6 @@
 # SNARK verifiers
 
-Trusted setup: https://ipfs.io/ipfs/QmateegDyF81zE1T8cfxE5qNo5aphEV4r7b1oxYMBsty5N
+Trusted setup:
+
+- 'test' circuits: https://gateway.pinata.cloud/ipfs/Qmbi3nqjBwANPMk5BRyKjCJ4QSHK6WNp7v9NLLo4uwrG1f
+- 'medium' circuits: https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD

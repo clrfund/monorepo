@@ -74,6 +74,7 @@ describe('Funding Round', () => {
     const maciDeployed = await maciFactory.deployMaci(
       fundingRound.address,
       fundingRound.address,
+      coordinator.address,
       coordinatorPubKey.asContractParam(),
     );
     const maciAddress = await getEventArg(maciDeployed, maciFactory, 'MaciDeployed', '_maci');

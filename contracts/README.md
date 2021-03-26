@@ -4,10 +4,10 @@
 
 Install [zkutil](https://github.com/poma/zkutil) (see instructions in [MACI readme](https://github.com/appliedzkp/maci#get-started)).
 
-Download [zkSNARK parameters](https://ipfs.io/ipfs/QmeBhtC46dXSEXaemgiAjzpzTxH6FykXDgnTdvHujjPaAR) for 'test' circuits to `snark-params` directory. Example:
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/Qmbi3nqjBwANPMk5BRyKjCJ4QSHK6WNp7v9NLLo4uwrG1f) for 'test' circuits to `snark-params` directory. Example:
 
 ```
-ipfs get --output snark-params QmeBhtC46dXSEXaemgiAjzpzTxH6FykXDgnTdvHujjPaAR
+ipfs get --output snark-params Qmbi3nqjBwANPMk5BRyKjCJ4QSHK6WNp7v9NLLo4uwrG1f
 ```
 
 Set the path to downloaded parameter files and also the path to `zkutil` binary (if needed):

@@ -100,10 +100,10 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
   ])
   const startTime = DateTime.fromSeconds(signUpTimestamp.toNumber())
   const signUpDeadline = DateTime.fromSeconds(
-    signUpTimestamp.add(signUpDurationSeconds).add(votingDurationSeconds).toNumber(),
+    signUpTimestamp.add(signUpDurationSeconds).toNumber(),
   )
   const votingDeadline = DateTime.fromSeconds(
-    signUpTimestamp.add(signUpDurationSeconds).toNumber(),
+    signUpTimestamp.add(signUpDurationSeconds).add(votingDurationSeconds).toNumber(),
   )
   const coordinatorPubKey = new PubKey([
     BigInt(coordinatorPubKeyRaw.x),
