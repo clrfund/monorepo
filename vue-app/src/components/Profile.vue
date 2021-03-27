@@ -43,6 +43,7 @@ import {
   SET_CURRENT_USER,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
+import { getNetworkName } from '@/utils/networks'
 
 @Component
 export default class Profile extends Vue {
@@ -101,13 +102,7 @@ export default class Profile extends Vue {
   }
 
   get networkName(): string {
-    if (this.jsonRpcNetwork === null) {
-      return ''
-    } else if (this.jsonRpcNetwork.name === 'unknown' && this.jsonRpcNetwork.chainId === 100) {
-      return 'xdai'
-    } else {
-      return this.jsonRpcNetwork.name
-    }
+    return this.jsonRpcNetwork === null ? '' : getNetworkName(this.jsonRpcNetwork)
   }
 
   async connect(): Promise<void> {
