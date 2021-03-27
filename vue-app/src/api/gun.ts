@@ -3,7 +3,7 @@
 import Gun from 'gun/gun'
 import 'gun/sea'
 
-import { gunApiUrl } from './core'
+import { gunPeers } from './core'
 import { LOGIN_MESSAGE } from './user'
 import { md5 } from '@/utils/crypto'
 
@@ -12,9 +12,7 @@ interface GunSchema {
 }
 
 const db = Gun<GunSchema>({
-  peers: [
-    gunApiUrl,
-  ],
+  peers: gunPeers,
 })
 const user = db.user() as any
 
