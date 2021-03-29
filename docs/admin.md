@@ -35,7 +35,7 @@ const poseidonT3 = await deployContract(deployer, ':PoseidonT3')
 const poseidonT6 = await deployContract(deployer, ':PoseidonT6')
 const batchUstVerifier = await deployContract(deployer, 'BatchUpdateStateTreeVerifierMedium')
 const qvtVerifier = await deployContract(deployer, 'QuadVoteTallyVerifierMedium')
-const maciFactory = await deployMaciFactory(deployer, 'small', { poseidonT3, poseidonT6, batchUstVerifier, qvtVerifier })
+const maciFactory = await deployMaciFactory(deployer, 'medium', { poseidonT3, poseidonT6, batchUstVerifier, qvtVerifier })
 ```
 
 ### Funding round factory

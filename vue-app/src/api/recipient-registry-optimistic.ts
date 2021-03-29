@@ -3,6 +3,7 @@ import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract
 import { isHexString } from '@ethersproject/bytes'
 import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
+import { getNetworkToken } from '@/utils/networks'
 
 import { OptimisticRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
@@ -19,9 +20,10 @@ export async function getRegistryInfo(registryAddress: string): Promise<Registry
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const deposit = await registry.baseDeposit()
   const challengePeriodDuration = await registry.challengePeriodDuration()
+  const network = await provider.getNetwork()
   return {
     deposit,
-    depositToken: 'ETH',
+    depositToken: getNetworkToken(network),
     challengePeriodDuration: challengePeriodDuration.toNumber(),
     listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
   }
