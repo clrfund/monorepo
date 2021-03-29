@@ -30,11 +30,13 @@
         <tr v-for="request in requests.slice().reverse()" :key="request.timestamp">
           <td>{{ request.recipientId }}</td>
           <td>
-            <div class="project-name">{{ request.metadata.name }}</div>
+            <div class="project-name">
+              <a :href="request.metadata.imageUrl" target="_blank" rel="noopener">
+                <img class="project-image" :src="request.metadata.imageUrl">
+              </a>
+              {{ request.metadata.name }}
+            </div>
             <div class="project-description" v-html="renderDescription(request)"></div>
-            <a class="project-image-link" :href="request.metadata.imageUrl" target="_blank" rel="noopener">
-              {{ request.metadata.imageUrl }}
-            </a>
           </td>
           <td>{{ request.type }}</td>
           <td>
@@ -206,6 +208,12 @@ h2 {
     .project-name {
       font-weight: 600;
       margin-bottom: 10px;
+    }
+
+    .project-image {
+      height: 1.2em;
+      margin-right: 5px;
+      vertical-align: middle;
     }
   }
 }
