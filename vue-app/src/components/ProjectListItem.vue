@@ -13,7 +13,7 @@
       >
         {{ project.name }}
       </router-link>
-      <div class="project-description">{{ project.description }}</div>
+      <div class="project-description" v-html="renderMarkdown(project.description)"></div>
       <button
         v-if="hasRegisterBtn()"
         class="btn"
@@ -54,11 +54,16 @@ import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
+import { markdown } from '@/utils/markdown'
 
 @Component
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
+
+  get descriptionHtml(): string {
+    return markdown.renderInline(this.project.description)
+  }
 
   get inCart(): boolean {
     const index = this.$store.state.cart.findIndex((item: CartItem) => {

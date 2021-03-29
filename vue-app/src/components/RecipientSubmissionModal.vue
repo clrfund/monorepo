@@ -30,6 +30,7 @@
           <label for="recipient-description">Description</label>
           <textarea
             id="recipient-description"
+            placeholder="Project description (markdown is supported)"
             v-model="$v.form.description.$model"
             class="input"
             :class="{ invalid: $v.form.description.$error }"

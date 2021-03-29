@@ -22,6 +22,8 @@
     "is-ipfs": "^2.0.0",
     "luxon": "^1.26.0",
     "maci-domainobjs": "~0.6.7",
+    "markdown-it": "^12.0.4",
+    "markdown-it-link-attributes": "^3.0.0",
     "qrcode": "^1.4.4",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.2",

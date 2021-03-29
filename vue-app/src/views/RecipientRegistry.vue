@@ -31,8 +31,8 @@
           <td>{{ request.recipientId }}</td>
           <td>
             <div class="project-name">{{ request.metadata.name }}</div>
-            <div class="project-description">{{ request.metadata.description }}</div>
-            <a class="project-image-link" :href="request.imageUrl" target="_blank" rel="noopener">
+            <div class="project-description" v-html="renderDescription(request)"></div>
+            <a class="project-image-link" :href="request.metadata.imageUrl" target="_blank" rel="noopener">
               {{ request.metadata.imageUrl }}
             </a>
           </td>
@@ -75,6 +75,7 @@ import { getCurrentRound } from '@/api/round'
 import RecipientSubmissionModal from '@/components/RecipientSubmissionModal.vue'
 import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
+import { markdown } from '@/utils/markdown'
 
 @Component({
   name: 'recipient-registry',
@@ -140,6 +141,10 @@ export default class RecipientRegistryView extends Vue {
         },
       },
     )
+  }
+
+  renderDescription(request: Request): string {
+    return markdown.renderInline(request.metadata.description)
   }
 }
 </script>
