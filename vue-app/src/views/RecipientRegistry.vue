@@ -20,15 +20,13 @@
     <table v-if="requests.length > 0" class="requests">
       <thead>
         <tr>
-          <th>Project ID</th>
-          <th>Description</th>
-          <th>Type</th>
+          <th>Project</th>
+          <th>Request type</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="request in requests.slice().reverse()" :key="request.timestamp">
-          <td>{{ request.recipientId }}</td>
           <td>
             <div class="project-name">
               <a :href="request.metadata.imageUrl" target="_blank" rel="noopener">
@@ -37,6 +35,12 @@
               {{ request.metadata.name }}
             </div>
             <div class="project-description" v-html="renderDescription(request)"></div>
+            <details class="project-details">
+              <summary>Additional info</summary>
+              <div>Transaction: <code>{{ request.transactionHash }}</code></div>
+              <div>Project ID: <code>{{ request.recipientId }}</code></div>
+              <div>Recipient address: <code>{{ request.recipient }}</code></div>
+            </details>
           </td>
           <td>{{ request.type }}</td>
           <td>
@@ -198,11 +202,14 @@ h2 {
     padding: $content-space / 2;
     text-align: left;
     text-overflow: ellipsis;
-    width: 80px;
 
-    &:nth-child(2) {
+    &:nth-child(1) {
       width: auto;
       word-wrap: break-word;
+    }
+
+    &:nth-child(n + 2) {
+      width: 100px;
     }
 
     .project-name {
@@ -214,6 +221,10 @@ h2 {
       height: 1.2em;
       margin-right: 5px;
       vertical-align: middle;
+    }
+
+    .project-details {
+      margin-top: 10px;
     }
   }
 }

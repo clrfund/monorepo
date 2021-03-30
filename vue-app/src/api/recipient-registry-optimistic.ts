@@ -53,6 +53,7 @@ interface RecipientMetadata {
 }
 
 export interface Request {
+  transactionHash: string;
   type: RequestType;
   timestamp: number;
   status: RequestStatus;
@@ -97,6 +98,7 @@ export async function getRequests(
       }
     }
     const request: Request = {
+      transactionHash: event.transactionHash,
       type,
       timestamp: eventArgs._timestamp.toNumber(),
       status: RequestStatus.Submitted,
