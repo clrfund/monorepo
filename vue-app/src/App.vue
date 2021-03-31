@@ -39,15 +39,6 @@
       <Profile />
       <Cart />
     </div>
-    <div id="footer">
-      <h3>More</h3>
-      <ul>
-        <li><a href="#">GitHub</a></li>
-        <li><a href="#">More on Eth2</a></li>
-        <li><a href="#">Provide Feedback</a></li>
-        <li><a href="#">Something else?</a></li>
-      </ul>
-    </div>
   </div>
 </template>
 
