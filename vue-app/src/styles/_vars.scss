@@ -9,11 +9,20 @@ $button-color: #7375a6;
 $button-disabled-color: #56567a;
 $button-disabled-text-color: #aaa9af;
 $error-color: #BD6B5E;
+$clr-green: #16C8B5;
+$clr-pink: #C72AB9;
+$clr-blue: #252A77;
+$clr-pink-light-gradient: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.55%);
+$clr-pink-dark-gradient: linear-gradient(315deg, #C72AB9 0%, #252A77 100%);
+$clr-green-gradient: linear-gradient(315deg, #2B364B 0%, #6CF4D5 100%);
+$clr-blue-gradient: linear-gradient(109.01deg, #252A77 6.45%, #292447 53.48%, #2C3F45 99.55%);
+
+
 
 $border: 2px solid $border-color;
-$content-space: 30px;
-$modal-space: 20px;
+$content-space: 32px;
+$modal-space: 24px;
 
 $nav-header-height-sm: 40px;
-$nav-header-height: 68px;
-$profile-image-size: 50px;
+$nav-header-height: 64px;
+$profile-image-size: 40px;
