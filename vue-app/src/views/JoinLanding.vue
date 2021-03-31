@@ -19,7 +19,7 @@
         </div> 
       </div>
       <button class="btn btn-shell" @click="seeCriteria()">See round criteria</button>
-      <div class="btn btn-primary">Add project</div>
+      <button class="btn btn-primary" @click="launchApplication()">Add project</button>
       
     </div>
   </div>
@@ -29,6 +29,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import CriteriaModal from '@/components/CriteriaModal.vue'
+import ApplicationForm from '@/components/ApplicationForm.vue'
 
 @Component({
   name: 'join',
@@ -41,6 +42,13 @@ export default class JoinLanding extends Vue {
   seeCriteria(): void {
     this.$modal.show(
       CriteriaModal,
+      { },
+      { width: 500 },
+    )
+  }
+  launchApplication(): void {
+    this.$modal.show(
+      ApplicationForm,
       { },
       { width: 500 },
     )
@@ -138,6 +146,7 @@ ol li::before {
 
 .btn-primary {
   background: #16C8B5;
+  width: 100%;
 }
 
 .link-primary {

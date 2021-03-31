@@ -7,7 +7,7 @@
             <h1>Round criteria</h1>
             <p>Your project must meet the following requirements. If it doesn’t, it will be removed and you’ll lose your deposit.</p>
             [Project criteria goes here]
-            <div class="btn btn-primary">Add project</div>
+            <button class="btn btn-primary" @click="launchApplication(), $emit('close')">Add project</button>
         </div>
     </div>
 </template>
@@ -15,9 +15,18 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import ApplicationForm from './ApplicationForm.vue'
+
 
 @Component
 export default class CriteriaModal extends Vue {
+  launchApplication(): void {
+    this.$modal.show(
+      ApplicationForm,
+      { },
+      { width: 500 },
+    )
+  }
 }
 </script>
 
