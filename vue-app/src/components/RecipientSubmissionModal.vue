@@ -27,10 +27,25 @@
           </div>
         </div>
         <div class="input-wrapper">
+          <label for="recipient-address">ETH address</label>
+          <input
+            id="recipient-address"
+            type="text"
+            placeholder="Address where recipient will receive funds"
+            v-model="$v.form.address.$model"
+            class="input"
+            :class="{ invalid: $v.form.address.$error }"
+          >
+          <div class="input-error" v-if="$v.form.address.$error">
+            <template v-if="!$v.form.address.required">Field is required.</template>
+            <template v-else-if="!$v.form.address.validEthAddress">Invalid ethereum address.</template>
+          </div>
+        </div>
+        <div class="input-wrapper">
           <label for="recipient-description">Description</label>
           <textarea
             id="recipient-description"
-            placeholder="Project description (markdown is supported)"
+            placeholder="Project description should include proof of ownership of the receiving address. Markdown is supported."
             v-model="$v.form.description.$model"
             class="input"
             :class="{ invalid: $v.form.description.$error }"
@@ -55,21 +70,6 @@
           <div class="input-error" v-if="$v.form.imageHash.$error">
             <template v-if="!$v.form.imageHash.required">Field is required.</template>
             <template v-else-if="!$v.form.imageHash.validIpfsHash">Invalid IPFS hash.</template>
-          </div>
-        </div>
-        <div class="input-wrapper">
-          <label for="recipient-address">ETH address</label>
-          <input
-            id="recipient-address"
-            type="text"
-            placeholder="Address where recipient will receive funds"
-            v-model="$v.form.address.$model"
-            class="input"
-            :class="{ invalid: $v.form.address.$error }"
-          >
-          <div class="input-error" v-if="$v.form.address.$error">
-            <template v-if="!$v.form.address.required">Field is required.</template>
-            <template v-else-if="!$v.form.address.validEthAddress">Invalid ethereum address.</template>
           </div>
         </div>
       </form>
@@ -218,6 +218,10 @@ export default class RecipientSubmissionModal extends mixins(validationMixin) {
       margin-top: 3px;
     }
   }
+}
+
+#recipient-description {
+  height: 100px;
 }
 
 .success {

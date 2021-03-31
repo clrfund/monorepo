@@ -232,7 +232,9 @@ h2 {
 @media (max-width: 600px) {
   .requests th,
   .requests td {
-    width: auto;
+    &:nth-child(n + 2) {
+      width: auto;
+    }
   }
 }
 </style>
