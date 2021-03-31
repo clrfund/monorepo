@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import Landing from '../views/Landing.vue'
+import JoinLanding from '../views/JoinLanding.vue'
 import ProjectList from '../views/ProjectList.vue'
 import ProjectView from '../views/Project.vue'
 import RoundList from '../views/RoundList.vue'
@@ -45,6 +46,11 @@ const routes = [
     path: '/recipients',
     name: 'recipients',
     component: RecipientRegistryView,
+  },
+  {
+    path: '/join',
+    name: 'join',
+    component: JoinLanding,
   },
 ]
 

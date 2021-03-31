@@ -121,7 +121,7 @@ html {
   background-color: $bg-primary-color;
   color: $text-color;
   font-family: Inter, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 a {
@@ -137,7 +137,7 @@ a {
   box-sizing: border-box;
   color: $text-color;
   font-family: Inter, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   padding: 7px;
 
   &.invalid {
@@ -265,7 +265,7 @@ a {
   .content-heading {
     display: block;
     font-family: 'Glacial Indifference', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: normal;
     letter-spacing: 6px;
     margin: 0;

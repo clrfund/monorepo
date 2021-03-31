@@ -11,10 +11,11 @@ Vue.use(VModal, {
   dynamicDefaults: {
     adaptive: true,
     clickToClose: false,
-    height: 'auto',
+    height: '100%',
     width: 450,
   },
 })
+
 
 Vue.config.productionTip = false
 

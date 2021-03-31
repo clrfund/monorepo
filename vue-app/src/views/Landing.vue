@@ -16,7 +16,7 @@
         <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
         <div id="btn-row">
           <div id="view-criteria" class="btn link-primary">View criteria</div>
-          <div id="apply-to-join" class="btn btn-primary">Apply to join</div>
+          <router-link to="/join"><div id="apply-to-join" class="btn btn-primary">Apply to join</div></router-link>
         </div>
       </div>
     </div>
