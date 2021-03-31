@@ -2,22 +2,28 @@
   <div id="app">
     <div id="nav-bar" :class="{'collapsed': navBarCollapsed}">
       <div id="nav-header">
+        <img class="clr-logo" alt="clr.fund" src="@/assets/clr.svg" />
+        <img v-if="true" class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
+        <img
+          v-if="false"
+          class="cart-btn"
+          alt="cart"
+          src="@/assets/cart.svg"
+          @click="toggleUserBar()"
+        >
         <img
           class="menu-btn"
           alt="nav"
           src="@/assets/menu.svg"
           @click="toggleNavBar()"
         >
-        <img class="logo" alt="clr.fund" src="@/assets/clr.svg" />
-        <img
-          class="cart-btn"
-          alt="cart"
-          src="@/assets/cart.svg"
-          @click="toggleUserBar()"
-        >
+        <div class="app-btn">
+          App
+        </div>
       </div>
       <div id="nav-menu">
-        <router-link to="/">Projects</router-link>
+        <router-link to="/">Home</router-link>
+        <router-link to="/projects">Projects</router-link>
         <router-link to="/rounds">Rounds</router-link>
         <router-link to="/recipients" v-if="hasRecipientRegistryLink()">Registry</router-link>
         <router-link to="/about">About</router-link>
@@ -29,9 +35,18 @@
     <div id="content">
       <router-view :key="$route.path" />
     </div>
-    <div id="user-bar" :class="{'collapsed': userBarCollapsed}">
+    <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': true}">
       <Profile />
       <Cart />
+    </div>
+    <div id="footer">
+      <h3>More</h3>
+      <ul>
+        <li><a href="#">GitHub</a></li>
+        <li><a href="#">More on Eth2</a></li>
+        <li><a href="#">Provide Feedback</a></li>
+        <li><a href="#">Something else?</a></li>
+      </ul>
     </div>
   </div>
 </template>
@@ -67,7 +82,7 @@ import {
 export default class App extends Vue {
 
   // Only for small screens
-  navBarCollapsed = true
+  navBarCollapsed = false
   userBarCollapsed = true
 
   created() {
@@ -200,14 +215,12 @@ a {
   flex-shrink: 0;
   min-width: 150px;
   max-width: 350px;
-  padding: $content-space;
+  padding: $modal-space;
   width: 25%;
 
-  .logo {
+  .clr-logo {
     display: block;
-    margin-left: 15%;
-    min-width: 150px - 2 * $content-space;
-    max-width: 50%;
+    /* max-height: 100%; */
   }
 
   .menu-btn,
@@ -323,19 +336,25 @@ a {
 @media (max-width: 900px) {
   #app {
     flex-direction: column;
+    position: relative;
   }
 
   #nav-bar {
-    bottom: $profile-image-size + $content-space * 2; /* offset for profile block */
+    /* bottom: $profile-image-size + $content-space * 2; offset for profile block */
     border-right: none;
-    max-width: 100%;
+    max-width: 100vw;
     position: fixed;
     top: 0;
     width: 100%;
+    /* height: 64px; */
     z-index: 2;
 
-    .logo {
-      margin: 0 auto;
+    .clr-logo {
+      margin-right: 0.5rem;
+    }
+    .ef-logo {
+      margin: 0 auto 0 0;
+      max-height: 100%;
     }
 
     .menu-btn,
@@ -350,12 +369,22 @@ a {
       margin-right: 5%;
     }
 
+    .app-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.55%);
+      padding: 0 1.5rem;
+      height: 2rem;
+      border-radius: 1rem;
+    }
+
     .cart-btn {
       margin-left: 5%;
     }
 
     &.collapsed {
-      bottom: auto;
+      /* bottom: auto; */
 
       #nav-menu {
         display: none;
@@ -365,19 +394,19 @@ a {
 
   #nav-header {
     display: flex;
-    height: $nav-header-height-sm;
+    align-items: center;
   }
 
   #content {
     margin-bottom: $profile-image-size + $content-space * 2; /* offset for profile block */
-    margin-top: $nav-header-height-sm + $content-space * 2; /* offset for nav header */
+    padding: $nav-header-height 0 0 0;
   }
 
   #user-bar {
     bottom: 0;
     max-width: none;
     overflow-y: scroll;
-    position: fixed;
+    position: sticky;
     top: $nav-header-height-sm + $content-space * 2; /* offset for nav header */
     width: 100%;
     z-index: 1;
@@ -393,6 +422,18 @@ a {
         display: none;
       }
     }
+    &.hidden {
+      display: none;
+    }
+  }
+
+  #footer {
+    max-width: 100vw;
+    padding: $content-space;
+    > li {
+      list-style-type: none;
+    }
   }
 }
+
 </style>
