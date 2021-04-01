@@ -25,6 +25,9 @@ $clr-pink-dark-gradient-bg: linear-gradient(315deg, rgba(199, 42, 185, 0.6) 0%, 
 $clr-blue-gradient-bg: linear-gradient(109.01deg, rgba(37, 42, 119, 0.6) 6.45%, rgba(41, 36, 71, 0.6) 53.48%, rgba(44, 63, 69, 0.6) 99.55%);
 
 
+// inactive - 20% opacity
+$clr-pink-light-gradient-inactive: linear-gradient(109.01deg, rgba(151, 137, 196, 0.2) 6.45%, rgba(199, 42, 185, 0.2) 99.55%);
+
 $border: 2px solid $border-color;
 $content-space: 32px;
 $modal-space: 24px;

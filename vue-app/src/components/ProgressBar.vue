@@ -31,19 +31,21 @@ export default class Transaction extends Vue {
 
 .progress-bar {
   color: $error-color;
-  margin: 32px 0;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
 }
 
 .step {
-  background-color: pink;
+  background: $clr-pink-light-gradient;
   height: 8px;
   width: 48px;
-
+  border-radius: 32px;
 }
+
 .inactive {
-  background-color: purple;
+  background: $clr-pink-light-gradient-inactive;
 }
 
 </style>
