@@ -37,7 +37,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { BigNumber, Contract } from 'ethers'
+import { BigNumber, Contract, Signer } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 
 import Transaction from '@/components/Transaction.vue'
@@ -56,9 +56,15 @@ export default class MatchingFundsModal extends Vue {
 
   step = 1
 
+  signer!: Signer
+
   amount = '100'
   transferTxHash = ''
   transferTxError = ''
+
+  created() {
+    this.signer = this.$store.state.currentUser.walletProvider.getSigner()
+  }
 
   isRoundFinished(): boolean {
     const { status } = this.$store.state.currentRound
@@ -85,9 +91,8 @@ export default class MatchingFundsModal extends Vue {
 
   async contributeMatchingFunds() {
     this.step += 1
-    const signer = this.$store.state.currentUser.walletProvider.getSigner()
     const { nativeTokenAddress, nativeTokenDecimals } = this.$store.state.currentRound
-    const token = new Contract(nativeTokenAddress, ERC20, signer)
+    const token = new Contract(nativeTokenAddress, ERC20, this.signer)
     const amount = parseFixed(this.amount, nativeTokenDecimals)
     try {
       await waitForTransaction(

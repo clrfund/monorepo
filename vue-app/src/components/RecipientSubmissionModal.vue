@@ -100,7 +100,7 @@ import Component, { mixins } from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { validationMixin } from 'vuelidate'
 import { required, minLength } from 'vuelidate/lib/validators'
-import { BigNumber } from 'ethers'
+import { BigNumber, Signer } from 'ethers'
 import { isAddress } from '@ethersproject/address'
 import * as isIPFS from 'is-ipfs'
 
@@ -149,6 +149,8 @@ export default class RecipientSubmissionModal extends mixins(validationMixin) {
 
   step = 1
 
+  signer!: Signer
+
   form: RecipientData = {
     name: '',
     description: '',
@@ -159,17 +161,20 @@ export default class RecipientSubmissionModal extends mixins(validationMixin) {
   submissionTxError = ''
   recipientId = ''
 
+  created() {
+    this.signer = this.$store.state.currentUser.walletProvider.getSigner()
+  }
+
   formatAmount(value: BigNumber): string {
     return formatAmount(value, 18)
   }
 
   async addRecipient() {
     this.step += 1
-    const signer = this.$store.state.currentUser.walletProvider.getSigner()
     let submissionTxReceipt
     try {
       submissionTxReceipt = await waitForTransaction(
-        addRecipient(this.registryAddress, this.form, this.registryInfo.deposit, signer),
+        addRecipient(this.registryAddress, this.form, this.registryInfo.deposit, this.signer),
         (hash) => this.submissionTxHash = hash,
       )
     } catch (error) {
