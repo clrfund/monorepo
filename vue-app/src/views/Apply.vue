@@ -7,9 +7,9 @@
         <h3>
           Step {{currentStep + 1}} of {{steps.length}}
         </h3>
-        <a class="link" @click="goBackStep()">
-              Cancel
-        </a>
+        <router-link to="/apply">
+          <a class="link">Cancel</a>
+        </router-link>
       </div>
       <v-form v-model="isFormValid">
         <div class="your-project">Your project</div>
