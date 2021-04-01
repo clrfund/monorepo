@@ -19,6 +19,7 @@
             <div class="form-background">
               <label for="name" class="input-label">Name</label>
               <input required placeholder="example: clr.fund" id="name" class="input" />
+              <p class="input-error">This is required</p>
             </div>
             <div class="form-background">
               <label for="tagline" class="input-label">Tagline</label>
@@ -303,6 +304,16 @@ export default class About extends Vue {
     border: 2px solid $button-color;
     background-color: $bg-secondary-color;
   }
+  &:invalid {
+    border: 2px solid $error-color; 
+  }
+}
+
+.input-error {
+  display: none;
+  &:invalid {
+    display: block;
+  }
 }
 
 .input-description {
@@ -321,6 +332,6 @@ export default class About extends Vue {
   letter-spacing: 0em;
   text-align: left;
   margin: 0;
-}
+  }
 
 </style>
