@@ -15,18 +15,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import ApplicationForm from './ApplicationForm.vue'
 
 
 @Component
 export default class CriteriaModal extends Vue {
-  launchApplication(): void {
-    this.$modal.show(
-      ApplicationForm,
-      { },
-      { width: 500 },
-    )
-  }
+
 }
 </script>
 

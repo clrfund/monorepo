@@ -29,7 +29,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import CriteriaModal from '@/components/CriteriaModal.vue'
-import ApplicationForm from '@/components/ApplicationForm.vue'
 
 @Component({
   name: 'join',
