@@ -5,6 +5,7 @@ import ProjectList from '../views/ProjectList.vue'
 import ProjectView from '../views/Project.vue'
 import RoundList from '../views/RoundList.vue'
 import About from '../views/About.vue'
+import ApplyVue from '../views/Apply.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 
 Vue.use(VueRouter)
@@ -34,6 +35,11 @@ const routes = [
     path: '/about',
     name: 'about',
     component: About,
+  },
+  {
+    path: '/apply/:step',
+    name: 'apply',
+    component: ApplyVue,
   },
   {
     path: '/recipients',
