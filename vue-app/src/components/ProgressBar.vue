@@ -30,17 +30,17 @@ export default class Transaction extends Vue {
 @import '../styles/vars';
 
 .progress-bar {
-  color: $error-color;
+  display: grid;
+  /* TODO make columns dynamic */
+  grid-template-columns: repeat(6, 1fr);
+  column-gap: 0.5rem;
   margin-top: 2rem;
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: space-between;
 }
 
 .step {
   background: $clr-pink-light-gradient;
   height: 8px;
-  width: 64px;
+  width: 100%;
   border-radius: 32px;
 }
 

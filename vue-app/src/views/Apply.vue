@@ -136,9 +136,15 @@
           <h2 class="step-title">Review</h2>
         </div>
         <div class="btn-row">
-          <router-link v-if="currentStep > 0" :to="{ name: 'apply', params: { step: steps[currentStep - 1] }}"><button class="btn btn-secondary">Previous step</button></router-link>
-          <router-link :disabled="!isFormValid" v-if="currentStep < 5" :to="{ name: 'apply', params: { step: steps[currentStep + 1] }}"><v-btn :disabled="!isFormValid" class="btn btn-primary">Next step</v-btn></router-link>
-          <router-link v-if="currentStep == 5" :to="{ name: 'apply', params: { step: steps[currentStep + 1] }}"><button class="btn btn-primary">Finish</button></router-link>
+          <router-link v-if="currentStep > 0" :to="{ name: 'apply', params: { step: steps[currentStep - 1] }}">
+            <button class="btn btn-secondary">Previous step</button>
+          </router-link>
+          <router-link :disabled="!isFormValid" v-if="currentStep < 5" :to="{ name: 'apply', params: { step: steps[currentStep + 1] }}">
+            <button :disabled="!isFormValid" class="btn btn-primary">Next step</button>
+          </router-link>
+          <router-link v-if="currentStep == 5" :to="{ name: 'apply', params: { step: steps[currentStep + 1] }}">
+            <button class="btn btn-primary">Finish</button>
+          </router-link>
         </div>
       </v-form>
       </div>
@@ -161,11 +167,12 @@ import ProgressBar from '@/components/ProgressBar.vue'
 })
 export default class About extends Vue { 
   
+  // TODO sort out type definitions
   data: () => ({
     isFormValid: false;
   })
   currentStep: number | null = null
-  steps: string[]
+  steps: string[] = []
 
   created() {
     const steps = ['one', 'two', 'three', 'four', 'five', 'six']
