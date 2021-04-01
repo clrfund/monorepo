@@ -27,7 +27,7 @@
         <router-link to="/rounds">Rounds</router-link>
         <router-link to="/recipients" v-if="hasRecipientRegistryLink()">Registry</router-link>
         <router-link to="/about">About</router-link>
-        <router-link to="/apply/one">Apply</router-link>
+        <router-link to="/join">Apply</router-link>
         <a href="https://blog.clr.fund" target=_blank>Blog</a>
         <a href="https://forum.clr.fund" target=_blank>Forum</a>
         <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a>

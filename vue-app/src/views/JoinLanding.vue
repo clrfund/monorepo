@@ -19,7 +19,7 @@
         </div> 
       </div>
       <button class="btn btn-shell" @click="seeCriteria()">See round criteria</button>
-      <button class="btn btn-primary" @click="launchApplication()">Add project</button>
+      <router-link to="/apply/one"><button class="btn btn-primary">Add project</button></router-link>
       
     </div>
   </div>
@@ -42,13 +42,6 @@ export default class JoinLanding extends Vue {
   seeCriteria(): void {
     this.$modal.show(
       CriteriaModal,
-      { },
-      { width: 500 },
-    )
-  }
-  launchApplication(): void {
-    this.$modal.show(
-      ApplicationForm,
       { },
       { width: 500 },
     )

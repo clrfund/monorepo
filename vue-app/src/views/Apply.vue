@@ -7,7 +7,7 @@
         <h3>
           Step {{currentStep + 1}} of {{steps.length}}
         </h3>
-        <router-link to="/apply">
+        <router-link to="/join">
           <a class="link">Cancel</a>
         </router-link>
       </div>
@@ -227,7 +227,7 @@ export default class About extends Vue {
 
 .application-page {
   display: flex;
-
+  padding: 1rem;
   height: 100%;
   flex-direction: column;
   justify-content: space-between;

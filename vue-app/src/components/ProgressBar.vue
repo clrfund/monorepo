@@ -40,7 +40,7 @@ export default class Transaction extends Vue {
 .step {
   background: $clr-pink-light-gradient;
   height: 8px;
-  width: 48px;
+  width: 64px;
   border-radius: 32px;
 }
 
