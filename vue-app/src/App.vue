@@ -1,26 +1,31 @@
 <template>
   <div id="app">
-    <div id="nav-bar" :class="{'collapsed': navBarCollapsed}">
-      <div id="nav-header">
-        <img class="clr-logo" alt="clr.fund" src="@/assets/clr.svg" />
-        <img v-if="true" class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
-        <img
+    <div id="nav-bar">
+        <router-link to="/">
+          <img v-if="true" class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
+        </router-link>
+        <!-- <img
           v-if="false"
           class="cart-btn"
           alt="cart"
           src="@/assets/cart.svg"
           @click="toggleUserBar()"
-        >
-        <img
+        > -->
+        <!-- <img
           class="menu-btn"
           alt="nav"
           src="@/assets/menu.svg"
-          @click="toggleNavBar()"
-        >
-        <div class="app-btn">
-          App
-        </div>
-      </div>
+          @click="toggleSidebar()"
+        > -->
+        <router-link to="/projects/">
+          <div class="app-btn">
+            App
+          </div>
+        </router-link>
+    </div>
+    <div id="content-container">
+    <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
+    <div id="sidebar" :class="{'collapsed': sidebarCollapsed, 'hidden': sidebarCollapsed}">
       <div id="nav-menu">
         <router-link to="/">Home</router-link>
         <router-link to="/projects">Projects</router-link>
@@ -36,9 +41,11 @@
     <div id="content">
       <router-view :key="$route.path" />
     </div>
-    <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': true}">
+    <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
+    <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': userBarCollapsed}">
       <Profile />
       <Cart />
+    </div>
     </div>
   </div>
 </template>
@@ -74,10 +81,12 @@ import {
 export default class App extends Vue {
 
   // Only for small screens
-  navBarCollapsed = false
+  sidebarCollapsed = false
   userBarCollapsed = true
 
   created() {
+    this.userBarCollapsed = this.$route.name === 'landing'
+    this.sidebarCollapsed = this.$route.name === 'landing'
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)
@@ -86,19 +95,24 @@ export default class App extends Vue {
     }, 60 * 1000)
   }
 
-  toggleNavBar() {
+  updated() {
+    this.userBarCollapsed = this.$route.name === 'landing'
+    this.sidebarCollapsed = this.$route.name === 'landing'
+  }
+
+  toggleSidebar() {
     this.userBarCollapsed = true
-    this.navBarCollapsed = !this.navBarCollapsed
+    this.sidebarCollapsed = !this.sidebarCollapsed
   }
 
   toggleUserBar() {
-    this.navBarCollapsed = true
+    this.sidebarCollapsed = true
     this.userBarCollapsed = !this.userBarCollapsed
   }
 
   @Watch('$route', { immediate: true, deep: true })
   onNavigation() {
-    this.navBarCollapsed = true
+    this.sidebarCollapsed = true
     this.userBarCollapsed = true
   }
 
@@ -197,10 +211,33 @@ a {
 
 #app {
   display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+#content-container {
+  display: flex;
   min-height: 100%;
 }
 
 #nav-bar {
+  display: flex;
+  padding: 1rem 1.5rem;
+  justify-content: space-between;
+  border-bottom: $border;
+
+  .app-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $clr-pink-light-gradient;
+    padding: 0 1.5rem;
+    height: 2rem;
+    border-radius: 1rem;
+    color: white;
+  }
+}
+
+#sidebar {
   background-color: $bg-secondary-color;
   border-right: $border;
   box-sizing: border-box;
@@ -325,13 +362,17 @@ a {
   }
 }
 
+.hidden {
+  display: none;
+}
+
 @media (max-width: 900px) {
   #app {
     flex-direction: column;
     position: relative;
   }
 
-  #nav-bar {
+  #sidebar {
     /* bottom: $profile-image-size + $content-space * 2; offset for profile block */
     border-right: none;
     max-width: 100vw;
@@ -359,16 +400,6 @@ a {
 
     .menu-btn {
       margin-right: 5%;
-    }
-
-    .app-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.55%);
-      padding: 0 1.5rem;
-      height: 2rem;
-      border-radius: 1rem;
     }
 
     .cart-btn {
@@ -413,9 +444,6 @@ a {
       .cart {
         display: none;
       }
-    }
-    &.hidden {
-      display: none;
     }
   }
 
