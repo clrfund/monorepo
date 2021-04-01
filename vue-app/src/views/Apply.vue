@@ -11,15 +11,24 @@
           <a class="link">Cancel</a>
         </router-link>
       </div>
-      <v-form v-model="isFormValid">
+      <form>
         <div class="your-project">Your project</div>
         <div v-if="currentStep === 0">
           <h2 class="step-title">About the project</h2>
           <div class="inputs">
             <div class="form-background">
               <label for="name" class="input-label">Name</label>
-              <input required placeholder="example: clr.fund" id="name" class="input" />
-              <p class="input-error">This is required</p>
+              <!-- TODO figure out onblur validation -->
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="example: clr.fund"
+                  v-model="$v.form.name.$model"
+                  @change="$v.form.name.$touch"
+                  class="input"
+                  :class="{ invalid: $v.form.name.$error }"
+                >
+                <p v-if="$v.form.name.$error">Enter a valid name</p>
             </div>
             <div class="form-background">
               <label for="tagline" class="input-label">Tagline</label>
@@ -139,24 +148,36 @@
           <router-link v-if="currentStep > 0" :to="{ name: 'apply', params: { step: steps[currentStep - 1] }}">
             <button class="btn btn-secondary">Previous step</button>
           </router-link>
-          <router-link :disabled="!isFormValid" v-if="currentStep < 5" :to="{ name: 'apply', params: { step: steps[currentStep + 1] }}">
-            <button :disabled="!isFormValid" class="btn btn-primary">Next step</button>
+          <router-link v-if="currentStep < 5" :to="{ name: 'apply', params: { step: steps[currentStep + 1] }}">
+            <button class="btn btn-primary">Next step</button>
           </router-link>
           <router-link v-if="currentStep == 5" :to="{ name: 'apply', params: { step: steps[currentStep + 1] }}">
             <button class="btn btn-primary">Finish</button>
           </router-link>
         </div>
-      </v-form>
+      </form>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+// import Vue from 'vue'
+import Component, { mixins } from 'vue-class-component'
+import { validationMixin } from 'vuelidate'
+import { required, minLength } from 'vuelidate/lib/validators'
+import * as isIPFS from 'is-ipfs'
+import { isAddress } from '@ethersproject/address'
 
 import ProgressBar from '@/components/ProgressBar.vue'
+
+
+interface RecipientData {
+  name: string;
+  description: string;
+  imageHash: string;
+  address: string;
+}
 
 @Component({
   name: 'ApplyView',
@@ -164,13 +185,35 @@ import ProgressBar from '@/components/ProgressBar.vue'
   components: {
     ProgressBar,
   },
+  validations: {
+    form: {
+      name: {
+        required,
+        minLength: minLength(4),
+      },
+      description: {
+        required,
+        minLength: minLength(30),
+      },
+      imageHash: {
+        required,
+        validIpfsHash: (value) => isIPFS.cid(value),
+      },
+      address: {
+        required,
+        validEthAddress: (value) => isAddress(value),
+      },
+    },
+  },
 })
-export default class About extends Vue { 
-  
-  // TODO sort out type definitions
-  data: () => ({
-    isFormValid: false;
-  })
+export default class ApplyView extends mixins(validationMixin) {
+
+  form: RecipientData = {
+    name: '',
+    description: '',
+    imageHash: '',
+    address: '',
+  }
   currentStep: number | null = null
   steps: string[] = []
 
