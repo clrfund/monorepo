@@ -13,7 +13,7 @@
       >
         {{ project.name }}
       </router-link>
-      <div class="project-description" v-html="renderMarkdown(project.description)"></div>
+      <div class="project-description" v-html="descriptionHtml"></div>
       <button
         v-if="hasRegisterBtn()"
         class="btn"
