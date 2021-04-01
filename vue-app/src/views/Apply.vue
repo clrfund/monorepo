@@ -32,7 +32,7 @@
             </div>
             <div class="form-background">
               <label for="category" class="input-label">Category</label>
-              <select required placeholder ="Choose the best fit" id="category" class="input">
+              <select required id="category" class="input">
                   <option selected disabled label="Choose the best fit" />
                   <option value="content">Content</option>
                   <option value="researcg">Research</option>
@@ -53,17 +53,17 @@
             <div class="form-background">
               <label for="eth-address" class="input-label">Ethereum address</label>
               <p class="input-description">This doesn’t have to be the same address as the one you use to send your application.</p>
-              <input placeholder="example: clr.eth, clr.crypto, 0x123..." id="eth-address" class="input" />
+              <input required placeholder="example: clr.eth, clr.crypto, 0x123..." id="eth-address" class="input" />
             </div>
             <div class="form-background">
               <label for="funding" class="input-label">How will you spend your funding?</label>
               <p class="input-description">Potential contributors might convert based on your specific funding plans.</p>
-              <textarea placeholder="example: on our roadmap..." id="funding" class="input" />
+              <textarea required placeholder="example: on our roadmap..." id="funding" class="input" />
             </div>
           </div>
         </div>
         <div v-if="currentStep === 2">
-          <h2 class="step-title">About the team  </h2>
+          <h2 class="step-title">About the team (optional) </h2>
           <div class="inputs">
             <div class="form-background">
               <label for="team-name" class="input-label">Team name</label>
@@ -291,11 +291,19 @@ export default class About extends Vue {
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0em;
-  &:valid { border: 2px solid $clr-green;
+  &:valid { 
+    border: 2px solid $clr-green;
+  }
+  &:hover { 
+    background: $bg-primary-color; 
+    border: 2px solid $highlight-color;
+    box-shadow: 0px 4px 16px 0px 25,22,35,0.4;
+  }
+  &:optional {
+    border: 2px solid $button-color;
+    background-color: $bg-secondary-color;
   }
 }
-
-
 
 .input-description {
   margin-top: 0.25rem;
@@ -308,15 +316,11 @@ export default class About extends Vue {
   font-family: Inter;
   font-size: 16px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 24px;
   letter-spacing: 0em;
   text-align: left;
   margin: 0;
-}
-
-.dropdown-default {
-  opacity: 0.4;
 }
 
 </style>
