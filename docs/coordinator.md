@@ -2,12 +2,12 @@
 
 ## Coordinate using MACI CLI
 
-Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.6.7:
+Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.7.1:
 
 ```
 git clone https://github.com/appliedzkp/maci.git
 cd maci/
-git checkout v0.6.7
+git checkout v0.7.1
 ```
 
 Follow instructions in README.md to install necessary dependencies.
