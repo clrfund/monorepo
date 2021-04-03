@@ -58,7 +58,7 @@
           Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
         </template>
       </button>
-      <div class="project-description">{{ project.description }}</div>
+      <div class="project-description" v-html="descriptionHtml"></div>
     </div>
   </div>
 </template>
@@ -90,6 +90,7 @@ import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
   ADD_CART_ITEM,
 } from '@/store/mutation-types'
+import { markdown } from '@/utils/markdown'
 
 @Component({
   name: 'ProjectView',
@@ -297,6 +298,10 @@ export default class ProjectView extends Vue {
         },
       },
     )
+  }
+
+  get descriptionHtml(): string {
+    return markdown.renderInline(this.project?.description || '')
   }
 }
 </script>

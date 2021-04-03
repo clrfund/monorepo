@@ -124,6 +124,10 @@ a {
   text-decoration: none;
 }
 
+summary:focus {
+  outline: none;
+}
+
 .input {
   background-color: $bg-light-color;
   border: 2px solid $button-color;

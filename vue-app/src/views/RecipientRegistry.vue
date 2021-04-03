@@ -20,21 +20,28 @@
     <table v-if="requests.length > 0" class="requests">
       <thead>
         <tr>
-          <th>Project ID</th>
-          <th>Description</th>
-          <th>Type</th>
+          <th>Project</th>
+          <th>Request type</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="request in requests.slice().reverse()" :key="request.timestamp">
-          <td>{{ request.recipientId }}</td>
+        <tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
           <td>
-            <div class="project-name">{{ request.metadata.name }}</div>
-            <div class="project-description">{{ request.metadata.description }}</div>
-            <a class="project-image-link" :href="request.imageUrl" target="_blank" rel="noopener">
-              {{ request.metadata.imageUrl }}
-            </a>
+            <div class="project-name">
+              <a :href="request.metadata.imageUrl" target="_blank" rel="noopener">
+                <img class="project-image" :src="request.metadata.imageUrl">
+              </a>
+              {{ request.metadata.name }}
+            </div>
+            <div class="project-description" v-html="renderDescription(request)"></div>
+            <details class="project-details">
+              <summary>Additional info</summary>
+              <div>Transaction: <code>{{ request.transactionHash }}</code></div>
+              <div>Project ID: <code>{{ request.recipientId }}</code></div>
+              <div>Recipient address: <code>{{ request.recipient }}</code></div>
+              <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div>
+            </details>
           </td>
           <td>{{ request.type }}</td>
           <td>
@@ -60,6 +67,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
+import { DateTime } from 'luxon'
 
 import { recipientRegistryType } from '@/api/core'
 import { getRecipientRegistryAddress } from '@/api/projects'
@@ -75,6 +83,7 @@ import { getCurrentRound } from '@/api/round'
 import RecipientSubmissionModal from '@/components/RecipientSubmissionModal.vue'
 import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
+import { markdown } from '@/utils/markdown'
 
 @Component({
   name: 'recipient-registry',
@@ -108,6 +117,18 @@ export default class RecipientRegistryView extends Vue {
 
   formatDuration(value: number): string {
     return humanizeDuration(value * 1000)
+  }
+
+  formatDate(date: DateTime): string {
+    return date.toLocaleString(DateTime.DATETIME_SHORT)
+  }
+
+  renderDescription(request: Request): string {
+    return markdown.renderInline(request.metadata.description)
+  }
+
+  isPending(request: Request): boolean {
+    return request.status === RequestStatus.Submitted
   }
 
   hasProjectLink(request: Request): boolean {
@@ -191,16 +212,29 @@ h2 {
     padding: $content-space / 2;
     text-align: left;
     text-overflow: ellipsis;
-    width: 80px;
 
-    &:nth-child(2) {
+    &:nth-child(1) {
       width: auto;
       word-wrap: break-word;
+    }
+
+    &:nth-child(n + 2) {
+      width: 100px;
     }
 
     .project-name {
       font-weight: 600;
       margin-bottom: 10px;
+    }
+
+    .project-image {
+      height: 1.2em;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    .project-details {
+      margin-top: 10px;
     }
   }
 }
@@ -208,7 +242,9 @@ h2 {
 @media (max-width: 600px) {
   .requests th,
   .requests td {
-    width: auto;
+    &:nth-child(n + 2) {
+      width: auto;
+    }
   }
 }
 </style>
