@@ -55,8 +55,8 @@ interface RecipientMetadata {
 export interface Request {
   transactionHash: string;
   type: RequestType;
-  timestamp: number;
   status: RequestStatus;
+  acceptanceDate: DateTime;
   recipientId: string;
   recipient: string;
   metadata: RecipientMetadata;
@@ -97,17 +97,19 @@ export async function getRequests(
         imageUrl: `${ipfsGatewayUrl}/ipfs/${imageHash}`,
       }
     }
+    const acceptanceDate = DateTime.fromSeconds(
+      eventArgs._timestamp.toNumber() +
+      registryInfo.challengePeriodDuration)
     const request: Request = {
       transactionHash: event.transactionHash,
       type,
-      timestamp: eventArgs._timestamp.toNumber(),
       status: RequestStatus.Submitted,
+      acceptanceDate,
       recipientId: eventArgs._recipientId,
       recipient: eventArgs._recipient,
       metadata,
     }
-    const now = DateTime.now().toSeconds()
-    if (request.timestamp + registryInfo.challengePeriodDuration < now) {
+    if (acceptanceDate < DateTime.now()) {
       request.status = RequestStatus.Accepted
     }
     // Find corresponding RequestResolved event

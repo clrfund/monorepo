@@ -26,7 +26,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="request in requests.slice().reverse()" :key="request.timestamp">
+        <tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
           <td>
             <div class="project-name">
               <a :href="request.metadata.imageUrl" target="_blank" rel="noopener">
@@ -40,6 +40,7 @@
               <div>Transaction: <code>{{ request.transactionHash }}</code></div>
               <div>Project ID: <code>{{ request.recipientId }}</code></div>
               <div>Recipient address: <code>{{ request.recipient }}</code></div>
+              <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div>
             </details>
           </td>
           <td>{{ request.type }}</td>
@@ -66,6 +67,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
+import { DateTime } from 'luxon'
 
 import { recipientRegistryType } from '@/api/core'
 import { getRecipientRegistryAddress } from '@/api/projects'
@@ -117,6 +119,18 @@ export default class RecipientRegistryView extends Vue {
     return humanizeDuration(value * 1000)
   }
 
+  formatDate(date: DateTime): string {
+    return date.toLocaleString(DateTime.DATETIME_SHORT)
+  }
+
+  renderDescription(request: Request): string {
+    return markdown.renderInline(request.metadata.description)
+  }
+
+  isPending(request: Request): boolean {
+    return request.status === RequestStatus.Submitted
+  }
+
   hasProjectLink(request: Request): boolean {
     return (
       request.type === RequestType.Registration &&
@@ -147,10 +161,6 @@ export default class RecipientRegistryView extends Vue {
         },
       },
     )
-  }
-
-  renderDescription(request: Request): string {
-    return markdown.renderInline(request.metadata.description)
   }
 }
 </script>
