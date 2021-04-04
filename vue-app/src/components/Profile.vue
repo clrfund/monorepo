@@ -30,8 +30,10 @@ import Component from 'vue-class-component'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 
+import { isContributionWithdrawn } from '@/api/contributions'
 import { provider as jsonRpcProvider } from '@/api/core'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
+import Withdrawal04Modal from '@/components/Withdrawal04Modal.vue'
 import {
   LOAD_USER_INFO,
   LOAD_CART,
@@ -143,6 +145,12 @@ export default class Profile extends Vue {
       this.$store.dispatch(LOAD_USER_INFO)
       this.$store.dispatch(LOAD_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    }
+    const isWithdrawn = await isContributionWithdrawn('0x4a7242887b004E6C2919E8F040E5B3Cf3369Cd7C', walletAddress)
+    if (!isWithdrawn) {
+      this.$modal.show(
+        Withdrawal04Modal,
+      )
     }
   }
 }
