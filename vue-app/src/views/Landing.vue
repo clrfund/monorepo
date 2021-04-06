@@ -6,17 +6,20 @@
       <span>{{startDate}}</span>
     </div>
     <div id="hero">
-      <h1>Send your favourite Eth2 projects to the moon!</h1>
-      <div id="subtitle" class="subtitle">Every project you contribute to gets a portion of extra funding.</div>
-      <div id="go-to-app" class="btn btn-hero-primary">Go to app</div>
-      <div id="how-it-works" class="btn btn-shell">How it works</div>
-      <div id="apply-callout">
-        <div id="countdown" class="caps">11 days</div>
-        <div id="countdown-label" class="caps">Time to apply</div>
-        <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
-        <div id="btn-row">
-          <div id="view-criteria" class="btn link-primary">View criteria</div>
-          <router-link to="/join"><div id="apply-to-join" class="btn btn-primary">Apply to join</div></router-link>
+      <div class="image-wrapper">
+        <img src="@/assets/docking.png" height="100%" width="100%" />
+        <h1>Send your favourite Eth2 projects to the moon!</h1>
+        <div id="subtitle" class="subtitle">Every project you contribute to gets a portion of extra funding.</div>
+        <div id="go-to-app" class="btn btn-hero-primary">Go to app</div>
+        <div id="how-it-works" class="btn btn-shell">How it works</div>
+        <div id="apply-callout">
+          <div id="countdown" class="caps">11 days</div>
+          <div id="countdown-label" class="caps">Time to apply</div>
+          <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
+          <div id="btn-row">
+            <div id="view-criteria" class="btn link-primary">View criteria</div>
+            <router-link to="/join"><div id="apply-to-join" class="btn btn-primary">Apply to join</div></router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -220,6 +223,18 @@ ol li::before {
 
 #hero {
   background: $clr-pink-dark-gradient;
+
+.image-wrapper {
+      background-image: url("/assets/docking.jpg");
+      background-size: cover;
+      position: relative;
+      height: 100%;
+  }
+
+.image-wrapper img {
+  mix-blend-mode: exclusion;
+  transform: rotate(15deg);
+  }
 }
 
 #countdown {

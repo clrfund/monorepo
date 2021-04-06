@@ -17,17 +17,47 @@
           src="@/assets/menu.svg"
           @click="toggleSidebar()"
         > -->
-        <router-link to="/projects/">
-          <div class="app-btn">
-            App
-          </div>
-        </router-link>
+        <div class="btn-row">
+          <router-link to="/">
+            <div class="dropdown-btn">
+              ...
+            </div>
+          </router-link>
+          <router-link to="/projects">
+            <div class="dropdown-btn">
+              <img
+              alt="cart"
+              class="cart-btn"
+              width="16px"
+              style="margin-right: 0.5rem"
+              src="@/assets/cart.svg"
+            > 
+              Cart
+            </div>
+          </router-link>
+          <router-link to="/projects">
+            <div class="app-btn">
+              App
+            </div>
+          </router-link>
+        </div>
     </div>
     <div id="content-container">
     <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
     <div id="sidebar" :class="{'collapsed': sidebarCollapsed, 'hidden': sidebarCollapsed}">
       <div id="nav-menu">
-        <router-link to="/">Home</router-link>
+        <div class="image-wrapper">
+          <img src="@/assets/docking.png" height="100%" />
+        </div>
+        <div class="round">
+          <h2>Eth2 CLR</h2>
+          <div class="status"> 
+            <div class="circle pulse open" /> Open
+          </div>
+        </div>
+
+       <router-view key="/round-information" /> 
+        <!-- <router-link to="/">Home</router-link>
         <router-link to="/projects">Projects</router-link>
         <router-link to="/rounds">Rounds</router-link>
         <router-link to="/recipients" v-if="hasRecipientRegistryLink()">Registry</router-link>
@@ -35,17 +65,24 @@
         <router-link to="/join">Apply</router-link>
         <a href="https://blog.clr.fund" target=_blank>Blog</a>
         <a href="https://forum.clr.fund" target=_blank>Forum</a>
-        <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a> -->
       </div>
     </div>
     <div id="content">
+      <div class="title">
+        <h2 style="line-height: 130%; margin-bottom: 0.5rem;">Projects</h2>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p>
+          <router-link to="/join"><div class="btn">Add project</div></router-link>
+        </div>
+      </div>
       <router-view :key="$route.path" />
     </div>
     <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
-    <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': userBarCollapsed}">
+    <!-- <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': userBarCollapsed}">
       <Profile />
       <Cart />
-    </div>
+    </div> -->
     </div>
   </div>
 </template>
@@ -223,8 +260,13 @@ a {
   display: flex;
   padding: 1rem 1.5rem;
   justify-content: space-between;
-  border-bottom: $border;
+  background: $bg-secondary-color;
 
+ .btn-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+ }
   .app-btn {
     display: flex;
     justify-content: center;
@@ -235,17 +277,97 @@ a {
     border-radius: 1rem;
     color: white;
   }
+  .dropdown-btn {
+    background: rgba(44,41,56,1);
+    border: 1px solid rgba(115,117,166,0.3);
+    border-radius: 8px;
+    padding: 0.25rem 0.5rem;
+    color: white;
+    margin-right: 0.5rem;
+    display: flex;
+
+  }
 }
 
 #sidebar {
-  background-color: $bg-secondary-color;
-  border-right: $border;
-  box-sizing: border-box;
+  background-color: $bg-primary-color;
+  /* border-right: $border; */
+  /* box-sizing: border-box; */
   flex-shrink: 0;
-  min-width: 150px;
-  max-width: 350px;
-  padding: $modal-space;
-  width: 25%;
+  padding: 1.5rem;
+  width: 20%;
+  height: 100%;
+
+  .image-wrapper {
+    border-radius: 8px;
+    background: $clr-pink-dark-gradient;
+    height: 160px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .image-wrapper img {
+    mix-blend-mode: exclusion;
+    transform: rotate(15deg);
+  }
+
+
+  .round {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+.open{
+  background: $clr-green;
+}
+
+.circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.pulse {
+  animation: pulse-animation 2s infinite ease-out;
+}
+
+@keyframes pulse-animation {
+  0% {
+    box-shadow: 0 0 0 0px $bg-primary-color;
+  }
+
+  50% {
+    box-shadow: 0 0 0 2.5px $clr-green;
+  }
+
+  100% {
+    box-shadow: 0 0 0 5px $clr-pink;
+
+  }
+}
+
+
+.master{
+  color:black;
+  float:right;
+}
+
+  .status {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    
+  }
+
+  .round-info-div {
+    background: $bg-light-color;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+
+  }
 
   .clr-logo {
     display: block;
@@ -255,12 +377,13 @@ a {
   .menu-btn,
   .cart-btn {
     display: none;
+    margin-right: 0.5rem;
   }
 }
 
 #nav-menu {
-  margin-left: 15%;
-  padding: 50px 5% 0;
+  /* margin-left: 15%;
+  padding: 50px 5% 0; */
 
   a {
     color: $text-color;
@@ -296,7 +419,7 @@ a {
 }
 
 #content {
-  background-color: $bg-primary-color;
+  background-color: $bg-light-color;
   flex-grow: 1;
   padding: $content-space;
 
@@ -309,6 +432,12 @@ a {
     margin: 0;
     padding-bottom: $content-space;
     text-transform: uppercase;
+  }
+
+  .title {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(115,117,166,1);
+    margin-bottom: 2rem;
   }
 }
 

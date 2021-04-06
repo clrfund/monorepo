@@ -6,6 +6,7 @@ import JoinLanding from '../views/JoinLanding.vue'
 import ProjectList from '../views/ProjectList.vue'
 import ProjectView from '../views/Project.vue'
 import RoundList from '../views/RoundList.vue'
+import RoundInformation from '../views/RoundInformation.vue'
 import About from '../views/About.vue'
 import ApplyVue from '../views/Apply.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
@@ -27,6 +28,12 @@ const routes = [
     path: '/project/:id',
     name: 'project',
     component: ProjectView,
+  },
+
+  {
+    path: '/round-informationm',
+    name: 'round information',
+    component: RoundInformation,
   },
   {
     path: '/rounds',

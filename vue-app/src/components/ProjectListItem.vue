@@ -31,6 +31,12 @@
         Contribute
       </button>
       <button
+        class="btn contribute-btn"
+        @click="contribute(project)"
+      >
+        More
+      </button>
+      <button
         v-if="hasContributeBtn() && inCart"
         class="btn btn-inactive in-cart"
       >
@@ -133,9 +139,8 @@ export default class ProjectListItem extends Vue {
 @import '../styles/vars';
 
 .project-item {
-  background-color: $bg-secondary-color;
-  border: $border;
-  border-radius: 20px;
+  background-color: $bg-primary-color;
+  border-radius: 8px;
   box-sizing: border-box;
 
   &:hover {
@@ -150,14 +155,13 @@ export default class ProjectListItem extends Vue {
   }
 }
 
-.project-image {
-  display: block;
 
+
+.project-image {
   img {
     border: none;
-    border-radius: 20px 20px 0 0;
+    border-radius: 8px;
     display: block;
-    height: 150px;
     object-fit: cover;
     text-align: center;
     width: 100%;
