@@ -201,7 +201,7 @@ export default class ProjectList extends Vue {
   }
 
   formatFractionalPart(value: FixedNumber): string {
-    return value._value === '0.0' ? '' : value.toString().split('.')[1]
+    return value._value === '0.0' ? '' : value.round(2).toString().split('.')[1]
   }
 
   formatDate(value: DateTime): string {
