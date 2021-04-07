@@ -12,7 +12,19 @@ export async function waitForTransaction(
     throw new Error(error.message)
   }
   onTransactionHash(transaction.hash)
-  const transactionReceipt = await transaction.wait()
+  let transactionReceipt
+  while (!transactionReceipt) {
+    try {
+      transactionReceipt = await transaction.wait()
+    } catch (receiptError) {
+      const errorMessage = receiptError.data?.message || ''
+      if (errorMessage.includes('Block information is incomplete')) {
+        console.warn('Failed to get receipt, retrying...')
+      } else {
+        throw receiptError
+      }
+    }
+  }
   if (transactionReceipt.status !== 1) {
     throw new Error('Transaction failed')
   }
