@@ -124,7 +124,7 @@ export default class RecipientRegistryView extends Vue {
   }
 
   renderDescription(request: Request): string {
-    return markdown.renderInline(request.metadata.description)
+    return markdown.render(request.metadata.description)
   }
 
   isPending(request: Request): boolean {
@@ -231,6 +231,12 @@ h2 {
       height: 1.2em;
       margin-right: 5px;
       vertical-align: middle;
+    }
+
+    .project-description ::v-deep {
+      p, ul, ol {
+        margin: 10px 0;
+      }
     }
 
     .project-details {
