@@ -301,7 +301,7 @@ export default class ProjectView extends Vue {
   }
 
   get descriptionHtml(): string {
-    return markdown.renderInline(this.project?.description || '')
+    return markdown.render(this.project?.description || '')
   }
 }
 </script>
@@ -347,5 +347,11 @@ export default class ProjectView extends Vue {
   font-size: 20px;
   line-height: 30px;
   word-wrap: break-word;
+
+  ::v-deep {
+    &:first-child {
+      margin-top: 0;
+    }
+  }
 }
 </style>
