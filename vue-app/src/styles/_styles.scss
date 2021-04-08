@@ -1,0 +1,39 @@
+@import "./vars";
+
+.btn-primary,
+.btn-og,
+.btn-action,
+.btn-secondary,
+.btn-alternate,
+.btn-mini,
+.btn-app {
+  display: grid;
+  place-items: center;
+  padding: 0.5rem 1.5rem;
+  height: 2.5rem;
+  border-radius: 1.25rem;
+  color: white;
+}
+
+.btn-primary {
+  background: $clr-green;
+}
+
+.btn-og {
+  background: $button-color;
+}
+
+.btn-app,
+.btn-action {
+  background: $clr-pink-light-gradient;
+}
+
+.btn-app {
+  height: 1.5rem;
+}
+
+.btn-secondary {
+  border: 2px solid $clr-green;
+  color: $clr-green;
+  background: none;
+}
