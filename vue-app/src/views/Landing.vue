@@ -6,11 +6,14 @@
       <span>{{startDate}}</span>
     </div>
     <div id="hero">
+      <img src="@/assets/moon.png" id="moon" />
       <div class="image-wrapper">
-        <img src="@/assets/docking.png" height="100%" width="100%" />
+        <img src="@/assets/docking.png" />
+      </div>
+      <div class="hero-content">
         <h1>Send your favourite Eth2 projects to the moon!</h1>
         <div id="subtitle" class="subtitle">Every project you contribute to gets a portion of extra funding.</div>
-        <div id="go-to-app" class="btn btn-hero-primary">Go to app</div>
+        <div id="go-to-app" class="btn-action">Go to app</div>
         <div id="how-it-works" class="btn btn-shell">How it works</div>
         <div id="apply-callout">
           <div id="countdown" class="caps">11 days</div>
@@ -97,6 +100,7 @@ export default class Landing extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/styles';
 
 #page > div {
   padding: $content-space;
@@ -222,20 +226,37 @@ ol li::before {
 }
 
 #hero {
+  position: relative;
   background: $clr-pink-dark-gradient;
+  overflow: hidden;
 
-.image-wrapper {
-      background-image: url("/assets/docking.jpg");
-      background-size: cover;
-      position: relative;
+  .image-wrapper img {
+    position: absolute;
+    mix-blend-mode: exclusion;
+    height: auto;
+    transform: rotate(15deg);
+    width: 100%;
+    @media (max-width: 800px) {
+      /* display: grid;
+      place-items: center; */
+      width: auto;
       height: 100%;
+      left: -100px;
+    }
   }
 
-.image-wrapper img {
-  mix-blend-mode: exclusion;
-  transform: rotate(15deg);
+  .hero-content {
+    position: relative;
+  }
+
+  #moon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    mix-blend-mode: exclusion;
   }
 }
+
 
 #countdown {
   font-family: 'Glacial Indifference', sans-serif;
