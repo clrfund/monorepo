@@ -1,6 +1,6 @@
 <template>
   <div id="nav-bar">
-    <router-link v-if="inApp" to="/">
+    <router-link v-if="!inApp" to="/">
       <img class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
     </router-link>
     <router-link v-else to="/projects">
@@ -93,6 +93,5 @@ export default class Nav extends Vue {
     /* max-height: 100%; */
     height: 100%;
   }
-
 }
 </style>
