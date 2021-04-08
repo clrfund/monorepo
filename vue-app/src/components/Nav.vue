@@ -1,0 +1,98 @@
+<template>
+  <div id="nav-bar">
+    <router-link v-if="inApp" to="/">
+      <img class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
+    </router-link>
+    <router-link v-else to="/projects">
+      <img class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
+    </router-link>
+    <div class="btn-row">
+      <router-link v-if="inApp" to="/">
+        <div class="dropdown-btn">
+          ...
+        </div>
+      </router-link>
+      <router-link v-if="inApp" to="/projects">
+        <div class="dropdown-btn">
+          <img
+          alt="cart"
+          class="cart-btn"
+          width="16px"
+          style="margin-right: 0.5rem"
+          src="@/assets/cart.svg"
+        > 
+          Cart
+        </div>
+      </router-link>
+      <router-link v-if="!inApp" to="/projects">
+        <div class="btn-app">
+          App
+        </div>
+      </router-link>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { Prop } from 'vue-property-decorator'
+
+@Component
+export default class Nav extends Vue {
+  profileImageUrl: string | null = null
+  // TODO: Update Nav based on in the app or not
+  inApp = false;
+
+  // get currentUser(): User | null {
+  //   return this.$store.state.currentUser
+  // }
+}
+</script>
+
+
+<style scoped lang="scss">
+@import '../styles/vars';
+@import '../styles/styles';
+
+#nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  padding: 1rem 1.5rem;
+  justify-content: space-between;
+  background: $bg-secondary-color;
+
+ .btn-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .app-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $clr-pink-light-gradient;
+    padding: 0 1.5rem;
+    height: 2rem;
+    border-radius: 1rem;
+    color: white;
+  }
+  .dropdown-btn {
+    background: rgba(44,41,56,1);
+    border: 1px solid rgba(115,117,166,0.3);
+    border-radius: 8px;
+    padding: 0.25rem 0.5rem;
+    color: white;
+    margin-right: 0.5rem;
+    display: flex;
+  }
+  .ef-logo {
+    margin: 0 auto 0 0;
+    /* max-height: 100%; */
+    height: 100%;
+  }
+
+}
+</style>

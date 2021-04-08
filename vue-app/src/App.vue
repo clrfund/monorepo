@@ -1,88 +1,47 @@
 <template>
   <div id="app">
-    <div id="nav-bar">
-        <router-link to="/">
-          <img v-if="true" class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
-        </router-link>
-        <!-- <img
-          v-if="false"
-          class="cart-btn"
-          alt="cart"
-          src="@/assets/cart.svg"
-          @click="toggleUserBar()"
-        > -->
-        <!-- <img
-          class="menu-btn"
-          alt="nav"
-          src="@/assets/menu.svg"
-          @click="toggleSidebar()"
-        > -->
-        <div class="btn-row">
-          <router-link to="/">
-            <div class="dropdown-btn">
-              ...
-            </div>
-          </router-link>
-          <router-link to="/projects">
-            <div class="dropdown-btn">
-              <img
-              alt="cart"
-              class="cart-btn"
-              width="16px"
-              style="margin-right: 0.5rem"
-              src="@/assets/cart.svg"
-            > 
-              Cart
-            </div>
-          </router-link>
-          <router-link to="/projects">
-            <div class="app-btn">
-              App
-            </div>
-          </router-link>
-        </div>
-    </div>
+    <Nav :inApp="inApp" />
     <div id="content-container">
-    <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
-    <div id="sidebar" :class="{'collapsed': sidebarCollapsed, 'hidden': sidebarCollapsed}">
-      <div id="nav-menu">
-        <div class="image-wrapper">
-          <img src="@/assets/docking.png" height="100%" />
+      <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
+      <div id="sidebar" :class="{'collapsed': sidebarCollapsed, 'hidden': sidebarCollapsed}">
+        <div id="nav-menu">
+          <div class="image-wrapper">
+            <img src="@/assets/docking.png" height="100%" />
+          </div>
+          <div class="round">
+            <h2>Eth2 CLR</h2>
+            <div class="status"> 
+              <div class="circle pulse open" /> Open
+            </div>
+          </div>
+
+        <RoundInformation /> 
+          <!-- <router-link to="/">Home</router-link>
+          <router-link to="/projects">Projects</router-link>
+          <router-link to="/rounds">Rounds</router-link>
+          <router-link to="/recipients" v-if="hasRecipientRegistryLink()">Registry</router-link>
+          <router-link to="/about">About</router-link>
+          <router-link to="/join">Apply</router-link>
+          <a href="https://blog.clr.fund" target=_blank>Blog</a>
+          <a href="https://forum.clr.fund" target=_blank>Forum</a>
+          <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a> -->
         </div>
-        <div class="round">
-          <h2>Eth2 CLR</h2>
-          <div class="status"> 
-            <div class="circle pulse open" /> Open
+      </div>
+      <!-- <div id="content">
+        <div class="title">
+          <h2 style="line-height: 130%; margin-bottom: 0.5rem;">Projects</h2>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p>
+            <router-link to="/join"><div class="btn">Add project</div></router-link>
           </div>
         </div>
-
-       <router-view key="/round-information" /> 
-        <!-- <router-link to="/">Home</router-link>
-        <router-link to="/projects">Projects</router-link>
-        <router-link to="/rounds">Rounds</router-link>
-        <router-link to="/recipients" v-if="hasRecipientRegistryLink()">Registry</router-link>
-        <router-link to="/about">About</router-link>
-        <router-link to="/join">Apply</router-link>
-        <a href="https://blog.clr.fund" target=_blank>Blog</a>
-        <a href="https://forum.clr.fund" target=_blank>Forum</a>
-        <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a> -->
-      </div>
-    </div>
-    <div id="content">
-      <div class="title">
-        <h2 style="line-height: 130%; margin-bottom: 0.5rem;">Projects</h2>
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p>
-          <router-link to="/join"><div class="btn">Add project</div></router-link>
-        </div>
-      </div>
+      </div> -->
       <router-view :key="$route.path" />
-    </div>
-    <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
-    <!-- <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': userBarCollapsed}">
-      <Profile />
-      <Cart />
-    </div> -->
+      <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
+      <!-- <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': userBarCollapsed}">
+        <Profile />
+        <Cart />
+      </div> -->
     </div>
   </div>
 </template>
@@ -95,6 +54,9 @@ import { Watch } from 'vue-property-decorator'
 import { recipientRegistryType } from '@/api/core'
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
+import RoundInformation from '@/views/RoundInformation.vue'
+import Nav from '@/components/Nav.vue'
+
 import {
   LOAD_USER_INFO,
   LOAD_ROUND_INFO,
@@ -110,18 +72,16 @@ import {
       content: process.env.VUE_APP_GIT_COMMIT || '',
     }],
   },
-  components: {
-    Cart,
-    Profile,
-  },
+  components: { RoundInformation, Nav },
 })
 export default class App extends Vue {
 
   // Only for small screens
   sidebarCollapsed = false
   userBarCollapsed = true
-
+  inApp = false
   created() {
+    this.inApp = this.$route.name !== 'landing'
     this.userBarCollapsed = this.$route.name === 'landing'
     this.sidebarCollapsed = this.$route.name === 'landing'
     setInterval(() => {
@@ -254,39 +214,6 @@ a {
 #content-container {
   display: flex;
   min-height: 100%;
-}
-
-#nav-bar {
-  display: flex;
-  padding: 1rem 1.5rem;
-  justify-content: space-between;
-  background: $bg-secondary-color;
-
- .btn-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
- }
-  .app-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: $clr-pink-light-gradient;
-    padding: 0 1.5rem;
-    height: 2rem;
-    border-radius: 1rem;
-    color: white;
-  }
-  .dropdown-btn {
-    background: rgba(44,41,56,1);
-    border: 1px solid rgba(115,117,166,0.3);
-    border-radius: 8px;
-    padding: 0.25rem 0.5rem;
-    color: white;
-    margin-right: 0.5rem;
-    display: flex;
-
-  }
 }
 
 #sidebar {
