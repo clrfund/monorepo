@@ -10,9 +10,13 @@
   display: grid;
   place-items: center;
   padding: 0.5rem 1.5rem;
-  height: 2.5rem;
-  border-radius: 1.25rem;
+  height: 32px;
+  border-radius: 32px;
   color: white;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 150%;
+  text-align: center;
 }
 
 .btn-primary {
