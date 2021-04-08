@@ -32,7 +32,7 @@ const routes = [
   },
 
   {
-    path: '/round-informationm',
+    path: '/round-information',
     name: 'round information',
     component: RoundInformation,
   },
