@@ -6,7 +6,8 @@
 .btn-secondary,
 .btn-alternate,
 .btn-mini,
-.btn-app {
+.btn-app,
+.btn-white {
   display: grid;
   place-items: center;
   padding: 0.5rem 1.5rem;
@@ -39,5 +40,10 @@
 .btn-secondary {
   border: 2px solid $clr-green;
   color: $clr-green;
-  background: none;
+}
+
+.btn-white {
+  border: 2px solid white;
+  color: white;
+  background: #FFF2;
 }

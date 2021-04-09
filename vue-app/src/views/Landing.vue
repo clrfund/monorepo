@@ -13,15 +13,17 @@
       <div class="hero-content">
         <h1>Send your favourite Eth2 projects to the moon!</h1>
         <div id="subtitle" class="subtitle">Every project you contribute to gets a portion of extra funding.</div>
-        <div id="go-to-app" class="btn-action">Go to app</div>
-        <div id="how-it-works" class="btn btn-shell">How it works</div>
+        <div class="btn-group">
+          <div id="go-to-app" class="btn-action">Go to app</div>
+          <div id="how-it-works" class="btn-white">How it works</div>
+        </div>
         <div id="apply-callout">
           <div id="countdown" class="caps">11 days</div>
           <div id="countdown-label" class="caps">Time to apply</div>
           <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
           <div id="btn-row">
-            <div id="view-criteria" class="btn link-primary">View criteria</div>
-            <router-link to="/join"><div id="apply-to-join" class="btn btn-primary">Apply to join</div></router-link>
+            <div id="view-criteria" class="link-primary">View criteria</div>
+            <router-link to="/join"><div id="apply-to-join" class="btn-primary">Apply to join</div></router-link>
           </div>
         </div>
       </div>
@@ -44,7 +46,7 @@
       <div>
         <!-- Optimism icon -->
         <p><b>Optimism for fast and cheap transation fees</b></p>
-        <div class="btn btn-hero-primary">Get Optimism funds</div>
+        <div class="btn-primary">Get Optimism funds</div>
       </div>
     </div>
     <div class="pre-req" id="bright-id">
@@ -52,7 +54,7 @@
         <!-- BrightID icon -->
         <p><b>BrightID for private, decentralized identity verification</b></p>
       </div>
-      <div class="btn btn-secondary">Download BrightID</div>
+      <div class="btn-white">Download BrightID</div>
     </div>
     <div id="about-1">
       <h2>It's not about how much...</h2>
@@ -160,27 +162,6 @@ ol li::before {
   vertical-align: middle;
 }
 
-.btn {
-  padding: 0.5rem 1.5rem;
-  margin: 0 auto;
-  border-radius: 2rem;
-  color: white;
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 150%;
-  text-align: center;
-  background: none;
-  border: none;
-}
-
-.btn-shell {
-  background: rgba(255, 255, 255, 0.15);
-  border: 2px solid #FFFFFF;
-  margin-top: 1rem;
-
-}
 .btn-hero-primary {
   background: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.55%);
 }
@@ -200,9 +181,6 @@ ol li::before {
   font-size: 16px;
 }
 
-.btn-secondary {
-  background: $clr-green-gradient;
-}
 
 #optimism {
   background: $clr-pink-dark-gradient-bg;
@@ -227,26 +205,30 @@ ol li::before {
 
 #hero {
   position: relative;
-  background: $clr-pink-dark-gradient;
   overflow: hidden;
+  @media (max-width: $breakpoint-m) {
+    background: $clr-pink-dark-gradient;
+  }
 
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
     height: auto;
     transform: rotate(15deg);
-    width: 100%;
-    @media (max-width: 800px) {
-      /* display: grid;
-      place-items: center; */
+    right: 0;
+    width: 80%;
+    @media (max-width: $breakpoint-l) {
       width: auto;
       height: 100%;
-      left: -100px;
+      right: -100px;
     }
   }
 
   .hero-content {
     position: relative;
+    @media (min-width: $breakpoint-m) {
+      max-width: 50%;
+    }
   }
 
   #moon {
@@ -254,6 +236,12 @@ ol li::before {
     top: 0;
     right: 0;
     mix-blend-mode: exclusion;
+  }
+
+  .btn-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 }
 

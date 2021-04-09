@@ -441,10 +441,6 @@ a {
     .clr-logo {
       margin-right: 0.5rem;
     }
-    .ef-logo {
-      margin: 0 auto 0 0;
-      max-height: 100%;
-    }
 
     .menu-btn,
     .cart-btn {
