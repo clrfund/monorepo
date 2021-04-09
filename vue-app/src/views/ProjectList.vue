@@ -100,7 +100,7 @@
         <h2 class="prep-title">Get prepared</h2>
         <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
         </div>
-        <div class="btn-action">Start prep</div>
+        <div class="btn-action" style="cursor: pointer;">Start prep</div>
       </div>
       <project-list-item
         v-for="project in filteredProjects"
@@ -410,6 +410,10 @@ export default class ProjectList extends Vue {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  &:hover {
+    transform: scale(1.01);
+    box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+  }
 }
 
 .prep-title {

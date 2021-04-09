@@ -81,6 +81,44 @@ async function main() {
     description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
     imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
   }
+
+  const metadataRecipient3 = {
+    name: 'Synthereum: synthetic assets with liquidity pools to bridge traditional and digital finance',
+    description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
+    imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+  }
+  const metadataRecipient4 = {
+    name: 'Synthereum: synthetic assets with liquidity pools to bridge traditional and digital finance',
+    description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
+    imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+  }
+  const metadataRecipient5 = {
+    name: 'Synthereum: synthetic assets with liquidity pools to bridge traditional and digital finance',
+    description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
+    imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+  }
+  const metadataRecipient6 = {
+    name: 'Synthereum: synthetic assets with liquidity pools to bridge traditional and digital finance',
+    description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
+    imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+  }
+  const metadataRecipient7 = {
+    name: 'Synthereum: synthetic assets with liquidity pools to bridge traditional and digital finance',
+    description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
+    imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+  }
+  const metadataRecipient8 = {
+    name: 'Synthereum: synthetic assets with liquidity pools to bridge traditional and digital finance',
+    description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
+    imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+  }
+  const metadataRecipient9 = {
+    name: 'Synthereum: synthetic assets with liquidity pools to bridge traditional and digital finance',
+    description: 'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
+    imageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+  }
+
+  
   const recipientRegistryAddress = await factory.recipientRegistry()
   const recipientRegistry = await ethers.getContractAt(
     'SimpleRecipientRegistry',
