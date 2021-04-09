@@ -1,80 +1,84 @@
 <template>
   <div class="project-item">
-    <router-link
-      :to="{ name: 'project', params: { id: project.id }}"
-    >
-      <div class="project-image">
-        <img :src="project.imageUrl" :alt="project.name">
-      </div>
-    </router-link>
-    <div class="project-info">
+    <div>
       <router-link
-        class="project-name"
         :to="{ name: 'project', params: { id: project.id }}"
       >
-        {{ project.name }}
+        <div class="project-image">
+          <img :src="project.imageUrl" :alt="project.name">
+        </div>
       </router-link>
-      <router-link
-        :to="{ name: 'project', params: { id: project.id }}"
-      >
-        <div class="project-description">{{ project.description }}</div>
-      </router-link>
-      <button
-        v-if="hasRegisterBtn()"
-        class="btn"
-        :disabled="!canRegister()"
-        @click="register()"
-      >
-        Register
-      </button>
-
-      <form action="#">
-      <div class="input-button">
-          <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.png">
-          <input
-            v-model="search"
-            class="input"
-            name="search"
-            placeholder="10"
-            autocomplete="on"
-            onfocus="this.value=''" 
-          >
-          <input type="submit"
-            v-if="hasContributeBtn() && !inCart"
-            class="donate-btn"
-            :disabled="!canContribute()"
-            @click="contribute(project)"
-            value="Add"
-          >
-      </div>
-      </form>
-
-      <!-- <button
-        v-if="hasContributeBtn() && !inCart"
-        class="btn contribute-btn"
-        :disabled="!canContribute()"
-        @click="contribute(project)"
-      >
-        Contribute
-      </button> -->
-      <router-link
-        :to="{ name: 'project', params: { id: project.id }}"
-      >
-        <button
-          class="more-btn"
+      <div class="project-info">
+        <router-link
+          class="project-name"
+          :to="{ name: 'project', params: { id: project.id }}"
         >
-          More
-        </button>
-      </router-link>
-      <button
-        v-if="hasContributeBtn() && inCart"
-        class="btn btn-inactive in-cart"
-      >
-        <img src="@/assets/checkmark.svg" />
-        <span>In cart</span>
-      </button>
+          {{ project.name }}
+        </router-link>
+        <router-link
+          :to="{ name: 'project', params: { id: project.id }}"
+        >
+          <div class="project-description">{{ project.description }}</div>
+        </router-link>
+      </div>
     </div>
-  </div>
+    <div class="buttons">
+        <button
+          v-if="hasRegisterBtn()"
+          class="btn"
+          :disabled="!canRegister()"
+          @click="register()"
+        >
+          Register
+        </button>
+
+        <form action="#">
+        <div class="input-button">
+            <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.png">
+            <input
+              v-model="search"
+              class="input"
+              name="search"
+              placeholder="10"
+              autocomplete="on"
+              onfocus="this.value=''" 
+            >
+            <input type="submit"
+              v-if="hasContributeBtn() && !inCart"
+              class="donate-btn"
+              :disabled="!canContribute()"
+              @click="contribute(project)"
+              value="Add"
+            >
+        </div>
+        </form>
+
+        <!-- <button
+          v-if="hasContributeBtn() && !inCart"
+          class="btn contribute-btn"
+          :disabled="!canContribute()"
+          @click="contribute(project)"
+        >
+          Contribute
+        </button> -->
+        <router-link
+          :to="{ name: 'project', params: { id: project.id }}"
+        >
+          <button
+            class="more-btn"
+          >
+            More
+          </button>
+        </router-link>
+        <button
+          v-if="hasContributeBtn() && inCart"
+          class="btn btn-inactive in-cart"
+        >
+          <img src="@/assets/checkmark.svg" />
+          <span>In cart</span>
+        </button>
+      </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -173,7 +177,7 @@ export default class ProjectListItem extends Vue {
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   z-index: 99;
   &:hover {
     transform: scale(1.01);
@@ -260,21 +264,24 @@ export default class ProjectListItem extends Vue {
   display: flex;
   line-height: 150%;
   flex-direction: column;
-  padding: 1.5rem;
+  padding: 0 1.5rem;
   padding-top: 0rem;
 }
 
+.buttons {
+  display: flex;
+  flex-direction: column;
+  padding: 0 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
 .project-name {
-  color: $text-color;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  font-size: 18px;
-  font-weight: 500;
-  height: 45px;
-  margin: 15px 0;
-  max-height: 45px;
-  overflow: hidden;
+  color: #f7f7f7;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: Inter;
+  margin-bottom: 0.5rem;
+
 }
 
 .project-description {
