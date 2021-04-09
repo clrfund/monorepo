@@ -17,7 +17,7 @@
           <div id="go-to-app" class="btn-action">Go to app</div>
           <div id="how-it-works" class="btn-white">How it works</div>
         </div>
-        <div id="apply-callout">
+        <div id="apply-callout-mobile">
           <div id="countdown" class="caps">11 days</div>
           <div id="countdown-label" class="caps">Time to apply</div>
           <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
@@ -26,6 +26,16 @@
             <router-link to="/join"><div id="apply-to-join" class="btn-primary">Apply to join</div></router-link>
           </div>
         </div>
+      </div>
+      <div id="apply-callout-desktop">
+        <div class="column">
+          <h2>Join the funding round</h2>
+          <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
+        </div>
+        <div class="centered">
+          <router-link to="/join"><div id="join-round" class="btn-primary">Join round</div></router-link>
+        </div>
+        <div class="centered">11 days to join</div>
       </div>
     </div>
     <div id="section-how-it-works">
@@ -162,6 +172,11 @@ ol li::before {
   vertical-align: middle;
 }
 
+.centered {
+  display: grid;
+  place-items: center;
+}
+
 .btn-hero-primary {
   background: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.55%);
 }
@@ -242,6 +257,35 @@ ol li::before {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+  }
+
+  #apply-callout-mobile,
+  #apply-callout-desktop {
+    background: #191623;
+    opacity: 0.9;
+    border: 2px solid #9789C4;
+    box-sizing: border-box;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 3rem 0; 
+  }
+
+  #apply-callout-mobile {
+    @media (min-width: $breakpoint-m) {
+      display: none;
+    }    
+  }
+
+  #apply-callout-desktop {
+    display: flex;
+    gap: 2rem;
+    .column {
+      flex: 1;
+    }
+
+    @media (max-width: $breakpoint-m) {
+      display: none;
+    }
   }
 }
 
