@@ -5,16 +5,6 @@
       <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
       <div id="sidebar" :class="{'collapsed': sidebarCollapsed, 'hidden': sidebarCollapsed}">
         <div id="nav-menu">
-          <div class="image-wrapper">
-            <img src="@/assets/docking.png" height="100%" />
-          </div>
-          <div class="round">
-            <h2>Eth2 CLR</h2>
-            <div class="status"> 
-              <div class="circle pulse open" /> Open
-            </div>
-          </div>
-
         <RoundInformation /> 
           <!-- <router-link to="/">Home</router-link>
           <router-link to="/projects">Projects</router-link>
@@ -27,23 +17,16 @@
           <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a> -->
         </div>
       </div>
-      <!-- <div id="content">
-        <div class="title">
-          <h2 style="line-height: 130%; margin-bottom: 0.5rem;">Projects</h2>
-          <div style="display: flex; align-items: center; justify-content: space-between;">
-            <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p>
-            <router-link to="/join"><div class="btn">Add project</div></router-link>
-          </div>
+      <div id="content">
+                <router-view :key="$route.path" />
         </div>
-      </div> -->
-      <router-view :key="$route.path" />
+      </div>
       <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
       <!-- <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': userBarCollapsed}">
         <Profile />
         <Cart />
       </div> -->
     </div>
-  </div>
 </template>
 
 <script lang="ts">
@@ -214,6 +197,7 @@ a {
 #content-container {
   display: flex;
   min-height: 100%;
+  background: $bg-light-color;
 }
 
 #sidebar {
@@ -225,55 +209,6 @@ a {
   width: 20%;
   height: 100%;
 
-  .image-wrapper {
-    border-radius: 8px;
-    background: $clr-pink-dark-gradient;
-    height: 160px;
-    display: flex;
-    justify-content: center;
-  }
-
-  .image-wrapper img {
-    mix-blend-mode: exclusion;
-    transform: rotate(15deg);
-  }
-
-
-  .round {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-.open{
-  background: $clr-green;
-}
-
-.circle {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 0.5rem;
-}
-
-.pulse {
-  animation: pulse-animation 2s infinite ease-out;
-}
-
-@keyframes pulse-animation {
-  0% {
-    box-shadow: 0 0 0 0px $bg-primary-color;
-  }
-
-  50% {
-    box-shadow: 0 0 0 2.5px $clr-green;
-  }
-
-  100% {
-    box-shadow: 0 0 0 5px $clr-pink;
-
-  }
-}
 
 
 .master{
@@ -349,6 +284,7 @@ a {
   background-color: $bg-light-color;
   flex-grow: 1;
   padding: $content-space;
+  height: 100%;
 
   .content-heading {
     display: block;
@@ -363,9 +299,20 @@ a {
 
   .title {
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(115,117,166,1);
+    /* border-bottom: 1px solid rgba(115,117,166,1); */
     margin-bottom: 2rem;
   }
+}
+
+.verified {
+    background: $clr-pink-light-gradient;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin-left: 0.5rem;
 }
 
 #user-bar {

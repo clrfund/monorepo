@@ -12,8 +12,7 @@
           ...
         </div>
       </router-link>
-      <router-link v-if="inApp" to="/projects">
-        <div class="dropdown-btn">
+      <button class="dropdown-btn" v-if="inApp" @click="openCart()">
           <img
           alt="cart"
           class="cart-btn"
@@ -22,13 +21,13 @@
           src="@/assets/cart.svg"
         > 
           Cart
-        </div>
-      </router-link>
+      </button>
       <router-link v-if="!inApp" to="/projects">
         <div class="btn-app">
           App
         </div>
       </router-link>
+      <Profile />
     </div>
   </div>
 </template>
@@ -36,17 +35,26 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import Profile from './Profile.vue'
+import CartModal from './CartModal.vue'
 import { Prop } from 'vue-property-decorator'
 
 @Component
 export default class Nav extends Vue {
   profileImageUrl: string | null = null
   // TODO: Update Nav based on in the app or not
-  inApp = false;
+  inApp = true;
 
   // get currentUser(): User | null {
   //   return this.$store.state.currentUser
   // }
+  openCart(): void {
+    this.$modal.show(
+      CartModal,
+      { },
+      { width: 500 },
+    )
+  }
 }
 </script>
 
@@ -87,6 +95,9 @@ export default class Nav extends Vue {
     color: white;
     margin-right: 0.5rem;
     display: flex;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
   }
   .ef-logo {
     margin: 0 auto 0 0;

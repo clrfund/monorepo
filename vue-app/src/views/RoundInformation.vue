@@ -1,43 +1,36 @@
 <template>
   <div class="projects">
-    <h1 class="content-heading">Projects</h1>
     <div v-if="currentRound" class="round-info">
-      <div class="round-info-item">
-        <div class="round-info-title">Round</div>
-        <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
-          <div class="value large">{{ currentRound.roundNumber }}</div>
-          <div class="unit">{{ currentRound.status }}</div>
-        </div>
-      </div>
-      <div class="round-info-item">
-        <div class="round-info-title">
-          Matching pool
-          <a
-            @click="addMatchingFunds()"
-            class="add-matching-funds-btn"
-            title="Add matching funds"
+      <div class="image-wrapper">
+            <img src="@/assets/docking.png" height="100%" />
+          </div>
+          <div class="round">
+            <div style="display: flex; align-items: center;">
+              <h2 style="line-height: 120%; margin: 0;">Eth2 CLR</h2>
+              <div class="verified"><a style="" href="#"><img height="8px" src="@/assets/checkmark.svg" /></a></div>
+            </div>
+            <div class="status"> 
+              <div class="circle pulse open" /> Open
+            </div>
+          </div>
+      <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
+        <div>
+          <div class="round-info-title" style="margin-bottom: 0.5rem;">Time left to reallocate</div>
+          <div
+            class="round-info-value"
+            :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
           >
-            <img src="@/assets/add.svg" >
-          </a>
-        </div>
-        <div class="round-info-value">
-          <div class="value large">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
-          <div class="value large extra">{{ formatFractionalPart(currentRound.matchingPool) }}</div>
-          <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
-        </div>
-      </div>
-      <div class="round-info-item">
-        <div class="round-info-title">Contributions</div>
-        <div class="round-info-value">
-          <div class="value">{{ formatIntegerPart(currentRound.contributions) }}</div>
-          <div class="value extra">{{ formatFractionalPart(currentRound.contributions) }}</div>
-          <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
-          <div class="value">{{ currentRound.contributors }}</div>
-          <div class="unit">contributors</div>
+            <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
+            <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
+            <div class="value">{{ reallocationTimeLeft.hours }}</div>
+            <div class="unit">hours</div>
+            <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
+            <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
+          </div>
         </div>
       </div>
       <div v-if="currentRound.status === 'Contributing'" class="round-info-item">
-        <div class="round-info-title">Time left to contribute</div>
+        <div class="round-info-title" style="margin-bottom: 0.5rem;">Time left to contribute</div>
         <div
           class="round-info-value"
           :title="'Contribution Deadline: ' + formatDate(currentRound.signUpDeadline)"
@@ -50,18 +43,76 @@
           <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
         </div>
       </div>
-      <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
-        <div class="round-info-title">Time left to reallocate</div>
-        <div
-          class="round-info-value"
-          :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
-        >
-          <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-          <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
-          <div class="value">{{ reallocationTimeLeft.hours }}</div>
-          <div class="unit">hours</div>
-          <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-          <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
+      <!-- <div class="round-info-item">
+        <div class="round-info-title">Round 0</div>
+        <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
+          <div class="value large">{{ currentRound.roundNumber }}</div>
+          <div class="unit">{{ currentRound.status }}</div>
+        </div>
+      </div> -->
+      <div v-if="currentRound" class="round-value-info">
+        <div class="round-value-info-item">
+          <div>
+            <div class="round-info-title" style="margin-bottom: 0.5rem;">
+              Total in round
+            </div>
+            <div class="round-info-value">
+              <div class="value large">{{ formatIntegerPart(currentRound.contributions) + formatIntegerPart(currentRound.matchingPool) }}</div>
+              <div class="value extra">{{ formatFractionalPart(currentRound.contributions) + formatFractionalPart(currentRound.matchingPool) }}</div>
+              <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="round-info-sub-item">
+          <div>
+            <div class="round-info-title" style="margin-bottom: 0.5rem;">
+              Matching pool
+            </div>
+            <div class="round-info-value">
+              <div class="value">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
+              <div class="value">{{ formatFractionalPart(currentRound.matchingPool) }}</div>
+              <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
+            </div>
+          </div>
+          <a 
+              style="margin-bottom: 0;"
+              @click="addMatchingFunds()"
+              title="Add matching funds"
+            >
+            <div class="btn-secondary">
+                Add
+            </div>
+          </a>
+        </div>
+        <div class="round-info-sub-item">
+          <div>
+            <div class="round-info-title" style="margin-bottom: 0.5rem;">
+              Contributions total
+            </div>
+            <div class="round-info-value">
+              <div class="value">{{ formatIntegerPart(currentRound.contributions) }}</div>
+              <div class="value extra">{{ formatFractionalPart(currentRound.contributions) }}</div>
+              <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="round-info-sub-item">
+            <div>
+              <div class="round-info-title" style="margin-bottom: 0.5rem;">Contributors</div>
+              <div class="round-info-value">
+                <div class="value">{{ currentRound.contributors }}</div>
+                <div class="unit">legends</div>
+              </div>
+            </div>
+            <a 
+                style="margin-bottom: 0;"
+                @click="addMatchingFunds()"
+                title="Add matching funds"
+              >
+              <div class="btn-secondary">
+                  ...
+              </div>
+            </a>
         </div>
       </div>
     </div>
@@ -228,32 +279,118 @@ export default class RoundInformation extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/styles';
+
+
+  .image-wrapper {
+    border-radius: 8px;
+    background: $clr-pink-dark-gradient;
+    height: 160px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .image-wrapper img {
+    mix-blend-mode: exclusion;
+    transform: rotate(15deg);
+  }
+
+
+  .round {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+  }
+
+.open{
+  background: $clr-green;
+}
+
+.circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.pulse {
+  animation: pulse-animation 2s infinite ease-out;
+}
+
+@keyframes pulse-animation {
+  0% {
+    box-shadow: 0 0 0 0px $bg-primary-color;
+  }
+
+  50% {
+    box-shadow: 0 0 0 2.5px $clr-green;
+  }
+
+  100% {
+    box-shadow: 0 0 0 5px $clr-pink;
+
+  }
+}
+
 
 .round-info {
-  border-bottom: $border;
-  border-top: $border;
   display: flex;
   flex-wrap: wrap;
-  margin: 0 (-$content-space);
-  padding: 20px $content-space;
-  gap: $content-space;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.round-value-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.round-value-info-item {
+  display: flex;
+  flex: 1 0 10%;
+  justify-content: space-between;
+  align-items: center;
+  background: $bg-light-color;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border-radius: 0.5rem 0.5rem 0rem 0rem;
+  box-shadow: inset 0px -1px 0px #7375A6; 
 }
 
 .round-info-item {
   display: flex;
   flex: 1 0 10%;
-  flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   background: $bg-light-color;
   padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.round-info-sub-item {
+  display: flex;
+  flex: 1 0 10%;
+  justify-content: space-between;
+  align-items: center;
+  background: $bg-secondary-color;
+  padding: 1rem;
+  box-shadow: inset 0px -1px 0px #7375A6; 
+  &:last-child {
+      border-radius: 0 0 0.5rem 0.5rem;
+      box-shadow: none; 
+    }
 }
 
 .round-info-title {
-  color: $text-secondary-color;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 20px;
-  margin-bottom: $content-space;
+  color: white;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 120%;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -261,26 +398,36 @@ export default class RoundInformation extends Vue {
 .round-info-value {
   display: flex;
   flex-direction: row;
-  line-height: 30px;
+  align-items: flex-end;
 
   .value {
-    font-size: 32px;
+    font-size: 24px;
+    font-family:'Glacial Indifference', sans-serif;
+    color: white;
+    font-weight: 700;
+    line-height: 120%;
 
     &.large {
-      font-size: 44px;
+      font-size: 32px;
+      line-height: 120%;
     }
 
     &.extra {
-      color: $text-secondary-color;
+      font-size: 32px;
+      font-family:'Glacial Indifference', sans-serif;
+      color: white;
+      line-height: 120%;
     }
   }
 
   .unit {
-    color: #91A4C8;
-    font-size: 12px;
+    color: white;
+    font-family:'Glacial Indifference', sans-serif;
+    font-size: 16px;
     font-weight: 600;
-    margin: 0 10px;
     text-transform: uppercase;
+    line-height: 150%;
+    margin: 0 0.5rem;
 
     &:last-child {
       margin-right: 0;
