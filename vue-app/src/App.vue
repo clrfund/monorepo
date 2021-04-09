@@ -5,7 +5,7 @@
       <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
       <div id="sidebar" :class="{'collapsed': sidebarCollapsed, 'hidden': sidebarCollapsed}">
         <div id="nav-menu">
-        <RoundInformation /> 
+          <RoundInformation /> 
           <!-- <router-link to="/">Home</router-link>
           <router-link to="/projects">Projects</router-link>
           <router-link to="/rounds">Rounds</router-link>
@@ -18,15 +18,15 @@
         </div>
       </div>
       <div id="content">
-                <router-view :key="$route.path" />
-        </div>
+        <router-view :key="$route.path" />
       </div>
+    </div>
       <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
       <!-- <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': userBarCollapsed}">
         <Profile />
         <Cart />
       </div> -->
-    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -283,7 +283,7 @@ a {
 #content {
   background-color: $bg-light-color;
   flex-grow: 1;
-  padding: $content-space;
+  /* padding: $content-space; */
   height: 100%;
 
   .content-heading {
@@ -421,7 +421,7 @@ a {
 
   #content {
     margin-bottom: $profile-image-size + $content-space * 2; /* offset for profile block */
-    padding: $nav-header-height 0 0 0;
+    /* padding: $nav-header-height 0 0 0; */
   }
 
   #user-bar {

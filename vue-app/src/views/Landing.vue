@@ -39,15 +39,17 @@
       </div>
     </div>
     <div id="section-how-it-works">
-      <h2>Every donation is amplified by the matching pool.</h2>
-      <p>This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.</p>
-      <img src="@/assets/dai-drip.svg" id="dai-drip" />
-      <h2>How it works</h2>
-      <ol>
-        <li>The Ethereum Foundation and other donors send funds to the matching pool smart contract.</li>
-        <li>The round begins and you can donate to as many projects as you like.</li>
-        <li>Once the round finishes, the smart contract distributes the matching pool funds to projects based primarily on number of contributions, <strong>not contribution value</strong></li>
-      </ol>
+      <div id="how-it-works-content">
+        <h2>Every donation is amplified by the matching pool.</h2>
+        <p>This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.</p>
+        <img src="@/assets/dai-drip.svg" id="dai-drip" />
+        <h2>How it works</h2>
+        <ol>
+          <li>The Ethereum Foundation and other donors send funds to the matching pool smart contract.</li>
+          <li>The round begins and you can donate to as many projects as you like.</li>
+          <li>Once the round finishes, the smart contract distributes the matching pool funds to projects based primarily on number of contributions, <strong>not contribution value</strong></li>
+        </ol>
+      </div>
     </div>
     <div id="what-you-will-need">
       <h2>What you'll need</h2>
@@ -114,8 +116,11 @@ export default class Landing extends Vue {
 @import '../styles/vars';
 @import '../styles/styles';
 
-#page > div {
+#page > div {  
   padding: $content-space;
+  @media (min-width: $breakpoint-l) {
+    padding: $content-space (2 * $content-space);
+  }
 }
 
 h1 {
@@ -131,6 +136,7 @@ h2 {
   font-weight: bold;
   font-size: 24px;
   letter-spacing: -0.015em;
+  margin: 1rem 0;
 }
 
 p {
@@ -145,7 +151,7 @@ ol {
 }
 
 ol li {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 2rem 0;
   counter-increment: li-counter;
   position: relative;
   max-width: calc(100vw - (2 * $content-space));
@@ -153,7 +159,7 @@ ol li {
 ol li::before {
   content: counter(li-counter); 
   position: absolute;
-  top: 0.5rem;
+  top: 0.125rem; /* adjusts circle up and down */
   left: -3rem;
   line-height: 2rem;
   width: 2rem;
@@ -169,7 +175,8 @@ ol li::before {
   border: 2px solid #9789C4;
   box-sizing: border-box;
   text-align: center;
-  vertical-align: middle;
+  padding-top: 0.375rem;
+  /* vertical-align: baseline; */
 }
 
 .centered {
@@ -215,12 +222,16 @@ ol li::before {
   justify-content: space-between;
   padding: 1rem 2rem;
   align-items: center;
-  margin-top: 1rem;
+  /* margin-top: 1rem; */
+  background: $bg-primary-color;
 }
 
 #hero {
   position: relative;
   overflow: hidden;
+  background: $bg-primary-color;
+  padding: 0;
+
   @media (max-width: $breakpoint-m) {
     background: $clr-pink-dark-gradient;
   }
@@ -232,7 +243,7 @@ ol li::before {
     transform: rotate(15deg);
     right: 0;
     width: 80%;
-    @media (max-width: $breakpoint-l) {
+    @media (max-width: $breakpoint-m) {
       width: auto;
       height: 100%;
       right: -100px;
@@ -241,8 +252,14 @@ ol li::before {
 
   .hero-content {
     position: relative;
-    @media (min-width: $breakpoint-m) {
-      max-width: 50%;
+    max-width: 50%;
+    min-height: 500px;
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    @media (max-width: $breakpoint-m) {
+      max-width: 100%;
     }
   }
 
@@ -271,8 +288,9 @@ ol li::before {
   }
 
   #apply-callout-mobile {
-    @media (min-width: $breakpoint-m) {
-      display: none;
+    display: none;
+    @media (max-width: $breakpoint-m) {
+      display: inline-block;
     }    
   }
 
@@ -322,7 +340,33 @@ ol li::before {
 }
 
 #section-how-it-works {
- /* background-image */
+  background: $clr-purple-gradient-bg;
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: flex-end;
+}
+
+#how-it-works-content {
+  display: flex;
+  flex-direction: column;
+  background: $bg-light-color;
+  width: 40%;
+  border-radius: 1rem;
+  padding: 1rem 2rem 0;
+  & > img {
+    display: none;
+  }
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+    border-radius: 0;
+    padding: 0;
+    background: none;
+    & > img {
+      display: inline-block;
+      align-self: center;
+      /* max-width: 500px; */
+    }
+  }
 }
 
 #btn-row {
