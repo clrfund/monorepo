@@ -39,6 +39,7 @@
       </div>
     </div>
     <div id="section-how-it-works">
+      <!-- <img src="@/assets/dai-wormhole.png" alt="Image of Dai token funneling through a wormhole" id="dai-wormhole"> -->
       <div id="how-it-works-content">
         <h2>Every donation is amplified by the matching pool.</h2>
         <p>This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.</p>
@@ -51,23 +52,28 @@
         </ol>
       </div>
     </div>
-    <div id="what-you-will-need">
+    <div id="what-you-will-need-header">
       <h2>What you'll need</h2>
     </div>
-    <div class="pre-req" id="optimism">
-      <div>
-        <!-- Optimism icon -->
-        <p><b>Optimism for fast and cheap transation fees</b></p>
-        <div class="btn-primary">Get Optimism funds</div>
+    <div id="what-you-will-need">
+      <div class="pre-req" id="optimism">
+        <div class="icon-row">
+          <!-- Optimism icon -->
+          <img src="@/assets/optimism.png" id="optimism-icon"/>
+          <p><b>Optimism for fast and cheap transation fees</b></p>
+        </div>
+        <div class="btn-action">Get Optimism funds</div>
+      </div>
+      <div class="pre-req" id="bright-id">
+        <div class="icon-row">
+          <!-- BrightID icon -->
+          <img src="@/assets/bright-id.png" id="bright-id-icon"/>
+          <p><b>BrightID for private, decentralized identity verification</b></p>
+        </div>
+        <div class="btn-primary">Download BrightID</div>
       </div>
     </div>
-    <div class="pre-req" id="bright-id">
-      <div>
-        <!-- BrightID icon -->
-        <p><b>BrightID for private, decentralized identity verification</b></p>
-      </div>
-      <div class="btn-white">Download BrightID</div>
-    </div>
+
     <div id="about-1">
       <h2>It's not about how much...</h2>
       <p>Using quadratic funding, your donation counts as a vote. Projects with the most votes at the end of the round get the highest amount from the matching pool. That means even a small donation can have a massive impact.</p>
@@ -116,11 +122,12 @@ export default class Landing extends Vue {
 @import '../styles/vars';
 @import '../styles/styles';
 
+#page {
+  background: $bg-primary-color;
+}
+
 #page > div {  
-  padding: $content-space;
-  @media (min-width: $breakpoint-l) {
-    padding: $content-space (2 * $content-space);
-  }
+  padding: $content-space (2 * $content-space);
 }
 
 h1 {
@@ -212,6 +219,20 @@ ol li::before {
   background: $clr-blue-gradient-bg;
 }
 
+#optimism-icon,
+#bright-id-icon {
+  box-sizing: border-box;
+  height: 4rem;
+  width: auto;
+  border-radius: 1rem;
+
+}
+
+#bright-id-icon {
+  padding: 0.5rem;
+  background: black;
+}
+
 .caps {
   text-transform: uppercase;
 }
@@ -224,6 +245,21 @@ ol li::before {
   align-items: center;
   /* margin-top: 1rem; */
   background: $bg-primary-color;
+}
+
+.pre-req {
+  padding: $content-space;
+  flex: 1;
+}
+
+#page > #what-you-will-need {
+  display: flex;
+  gap: $content-space;
+  @media (max-width: $breakpoint-l) {
+    flex-direction: column;
+    padding: 0rem;
+    gap: 0;
+  }
 }
 
 #hero {
@@ -239,10 +275,11 @@ ol li::before {
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
+    width: 70%;
     height: auto;
     transform: rotate(15deg);
+    /* top: -20px; */
     right: 0;
-    width: 80%;
     @media (max-width: $breakpoint-m) {
       width: auto;
       height: 100%;
@@ -252,9 +289,8 @@ ol li::before {
 
   .hero-content {
     position: relative;
-    max-width: 50%;
-    min-height: 500px;
-    /* border: 1px solid red; */
+    max-width: 40%;
+    min-height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -307,6 +343,20 @@ ol li::before {
   }
 }
 
+.pre-req {
+  display: flex;
+  gap: $content-space;
+  flex-direction: column;
+  border-radius: 1rem;
+
+  @media (max-width: $breakpoint-l) {
+    border-radius: 0;
+  }
+}
+.icon-row {
+  display: flex;
+  gap: $content-space;
+}
 
 #countdown {
   font-family: 'Glacial Indifference', sans-serif;
@@ -341,12 +391,16 @@ ol li::before {
 
 #section-how-it-works {
   background: $clr-purple-gradient-bg;
-  /* border: 1px solid red; */
   display: flex;
   justify-content: flex-end;
+  #dai-wormhole {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 }
-
 #how-it-works-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: $bg-light-color;
