@@ -52,7 +52,7 @@
         </ol>
       </div>
     </div>
-    <div id="what-you-will-need-header">
+    <div class="section-header">
       <h2>What you'll need</h2>
     </div>
     <div id="what-you-will-need">
@@ -73,26 +73,30 @@
         <div class="btn-primary">Download BrightID</div>
       </div>
     </div>
-
-    <div id="about-1">
-      <h2>It's not about how much...</h2>
-      <p>Using quadratic funding, your donation counts as a vote. Projects with the most votes at the end of the round get the highest amount from the matching pool. That means even a small donation can have a massive impact.</p>
-      <p>To learn more about the technology behind this fundraiser, check out this primer.</p>
-      <p>
-        <a href="https://wtfisqf.com/">WTF is QF?</a>
-      </p>
+    <div class="section-header">
+      <h2>About</h2>
     </div>
-    <div id="about-2">
-      <h2>Protect against bribery</h2>
-      <p>
-        Using <a href="#">MACI</a>, a zero-knowledge technology, it's impossible to prove how you voted. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!
-      </p>
-    </div>
-    <div id="about-3">
-      <h2>Built using the CLR protocol</h2>
-      <p>clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the prefences of the Ethereum Community.</p>
-      <p><!-- Discussion icon --><a href="#">clr.fund forum</a></p>
-      <p><!-- GitHub icon --><a href="#">Fork your own CLR</a></p>
+    <div id="about-section">
+      <div id="about-1">
+        <h2>It's not about how much...</h2>
+        <p>Using quadratic funding, your donation counts as a vote. Projects with the most votes at the end of the round get the highest amount from the matching pool. That means even a small donation can have a massive impact.</p>
+        <p>To learn more about the technology behind this fundraiser, check out this primer.</p>
+        <p>
+          <a href="https://wtfisqf.com/">WTF is QF?</a>
+        </p>
+      </div>
+      <div id="about-2">
+        <h2>Protect against bribery</h2>
+        <p>
+          Using <a href="#">MACI</a>, a zero-knowledge technology, it's impossible to prove how you voted. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!
+        </p>
+      </div>
+      <div id="about-3">
+        <h2>Built using the CLR protocol</h2>
+        <p>clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the prefences of the Ethereum Community.</p>
+        <p><!-- Discussion icon --><a href="#">clr.fund forum</a></p>
+        <p><!-- GitHub icon --><a href="#">Fork your own CLR</a></p>
+      </div>
     </div>
     <div id="footer">
       <h2>More</h2>
@@ -128,6 +132,9 @@ export default class Landing extends Vue {
 
 #page > div {  
   padding: $content-space (2 * $content-space);
+  @media (max-width: $breakpoint-m) {
+    padding: $content-space
+  }
 }
 
 h1 {
@@ -247,19 +254,25 @@ ol li::before {
   background: $bg-primary-color;
 }
 
-.pre-req {
+.pre-req,
+#about-1, #about-2, #about-3 {
   padding: $content-space;
   flex: 1;
 }
 
-#page > #what-you-will-need {
+#page > #what-you-will-need,
+#page > #about-section {
   display: flex;
-  gap: $content-space;
+  gap: 2 * $content-space;
   @media (max-width: $breakpoint-l) {
     flex-direction: column;
     padding: 0rem;
     gap: 0;
   }
+}
+
+#page > .section-header {
+  padding-bottom: 0;
 }
 
 #hero {
@@ -376,12 +389,24 @@ ol li::before {
   margin-top: 0.5rem;
 }
 
-#about-2 {
-  background: $bg-secondary-color;
-}
-
-#about-3 {
+#about-1, #about-2, #about-3 {
   background: $bg-light-color;
+  border-radius: 0.5rem;
+}
+#about-1 {
+  @media (max-width: $breakpoint-l) {
+    background: none;  
+  }
+}
+#about-2 {
+  @media (max-width: $breakpoint-l) {
+    background: $bg-secondary-color;
+  }
+}
+#about-3 {
+  @media (max-width: $breakpoint-l) {
+    background: $bg-light-color;
+  }
 }
 
 #subtitle {
