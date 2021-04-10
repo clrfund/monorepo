@@ -392,6 +392,9 @@ ol li::before {
 #about-1, #about-2, #about-3 {
   background: $bg-light-color;
   border-radius: 0.5rem;
+  @media (max-width: $breakpoint-l) {
+    border-radius: 0;
+  }
 }
 #about-1 {
   @media (max-width: $breakpoint-l) {
