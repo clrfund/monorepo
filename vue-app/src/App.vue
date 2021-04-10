@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Nav :inApp="inApp" />
+    <Nav v-bind:in-app="inApp" />
     <div id="content-container">
       <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
       <div id="sidebar" :class="{'collapsed': sidebarCollapsed, 'hidden': sidebarCollapsed}">
@@ -76,6 +76,7 @@ export default class App extends Vue {
   }
 
   updated() {
+    this.inApp = this.$route.name !== 'landing'
     this.userBarCollapsed = this.$route.name === 'landing'
     this.sidebarCollapsed = this.$route.name === 'landing'
   }

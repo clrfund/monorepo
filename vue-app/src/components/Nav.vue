@@ -42,8 +42,7 @@ import { Prop } from 'vue-property-decorator'
 @Component
 export default class Nav extends Vue {
   profileImageUrl: string | null = null
-  // TODO: Update Nav based on in the app or not
-  inApp = true;
+  @Prop() inApp;
 
   // get currentUser(): User | null {
   //   return this.$store.state.currentUser
