@@ -202,9 +202,12 @@ summary:focus {
   border-right: $border;
   box-sizing: border-box;
   flex-shrink: 0;
+  height: 100vh;
   min-width: 150px;
   max-width: 350px;
   padding: $content-space;
+  position: sticky;
+  top: 0;
   width: 25%;
 
   .logo {
@@ -277,8 +280,12 @@ summary:focus {
 #user-bar {
   background-color: $bg-light-color;
   flex-shrink: 0;
+  height: 100vh;
   min-width: 250px;
   max-width: 350px;
+  position: sticky;
+  top: 0;
+  overflow-y: scroll;
   width: 25%;
 }
 
@@ -332,6 +339,7 @@ summary:focus {
   #nav-bar {
     bottom: $profile-image-size + $content-space * 2; /* offset for profile block */
     border-right: none;
+    height: auto;
     max-width: 100%;
     position: fixed;
     top: 0;
@@ -379,6 +387,7 @@ summary:focus {
 
   #user-bar {
     bottom: 0;
+    height: auto;
     max-width: none;
     overflow-y: scroll;
     position: fixed;
