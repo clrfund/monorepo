@@ -1,6 +1,6 @@
 <template>
   <div class="cart">
-    <div v-if="isEmptyCart" class="empty-cart">
+    <div v-if="isCartEmpty" class="empty-cart">
       <img src="@/assets/empty.svg">
       <h3>No projects selected</h3>
       <div>Please select the projects that you want to contribute to</div>
@@ -36,35 +36,35 @@
       </form>
     </div>
     <div
-      v-if="canSubmit()"
-      class="submit-btn-wrapper"
+      v-if="hasContributorActionBtn()"
+      class="action-btn-wrapper"
     >
-      <div v-if="errorMessage" class="submit-error">
+      <div v-if="errorMessage" class="action-error">
         {{ errorMessage }}
       </div>
-      <div v-if="hasUnallocatedFunds()" class="submit-suggestion">
+      <div v-if="hasUnallocatedFunds()" class="action-suggestion">
         Unallocated funds will be used as matching funding
       </div>
-      <div v-if="canRegisterWithBrightId()" class="submit-suggestion">
+      <div v-if="canRegisterWithBrightId()" class="action-suggestion">
         <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
       </div>
-      <div v-if="canBuyWxdai()" class="submit-suggestion">
+      <div v-if="canBuyWxdai()" class="action-suggestion">
         <a href="https://wrapeth.com/" target="_blank" rel="noopener">
           Click here to wrap XDAI
         </a>
       </div>
       <button
         v-if="canWithdrawContribution()"
-        class="btn submit-btn"
+        class="btn action-btn"
         @click="withdrawContribution()"
       >
         Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
       </button>
       <button
         v-else
-        class="btn submit-btn"
+        class="btn action-btn"
         :disabled="errorMessage !== null"
-        @click="submit()"
+        @click="submitCart()"
       >
         <template v-if="contribution.isZero()">
           Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
@@ -124,8 +124,13 @@ export default class Cart extends Vue {
     return this.cart.filter((item) => !item.isCleared)
   }
 
-  get isEmptyCart(): boolean {
-    return this.$store.state.currentUser && this.filteredCart.length === 0
+  get isCartEmpty(): boolean {
+    return (
+      this.$store.state.currentUser &&
+      this.$store.state.contribution !== null &&
+      this.$store.state.contribution.isZero() &&
+      this.filteredCart.length === 0
+    )
   }
 
   formatAmount(value: BigNumber): string {
@@ -178,8 +183,14 @@ export default class Cart extends Vue {
     this.$store.dispatch(SAVE_CART)
   }
 
-  canSubmit(): boolean {
-    return this.$store.state.currentRound && this.cart.length > 0 || this.canWithdrawContribution()
+  hasContributorActionBtn(): boolean {
+    // Show cart action button:
+    // - if there are items in cart
+    // - if contribution can be withdrawn
+    // - if contributor data has been lost
+    return this.$store.state.currentRound && (
+      this.cart.length > 0 || !this.contribution.isZero()
+    )
   }
 
   private isFormValid(): boolean {
@@ -272,7 +283,6 @@ export default class Cart extends Vue {
   hasUnallocatedFunds(): boolean {
     return (
       this.errorMessage === null &&
-      this.contribution !== null &&
       !this.contribution.isZero() &&
       this.getTotal().lt(this.contribution)
     )
@@ -298,7 +308,7 @@ export default class Cart extends Vue {
     )
   }
 
-  submit() {
+  submitCart() {
     const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
     const votes = this.cart.map((item: CartItem) => {
       const amount = parseFixed(item.amount, nativeTokenDecimals)
@@ -422,7 +432,7 @@ $project-image-size: 50px;
   }
 }
 
-.submit-btn-wrapper {
+.action-btn-wrapper {
   align-self: flex-end;
   box-sizing: border-box;
   margin-top: auto;
@@ -430,15 +440,15 @@ $project-image-size: 50px;
   text-align: center;
   width: 100%;
 
-  .submit-error {
+  .action-error {
     padding: 15px 0 0;
   }
 
-  .submit-suggestion {
+  .action-suggestion {
     padding-top: 5px;
   }
 
-  .submit-btn {
+  .action-btn {
     margin-top: 15px;
     width: 100%;
   }
