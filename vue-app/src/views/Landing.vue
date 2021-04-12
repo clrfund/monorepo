@@ -1,10 +1,6 @@
-@ -0,0 +1,36 @@
 <template>
   <div id="page">
-    <div id="waiting-banner" class="caps">
-      <span>Funding Starts: {{timeRemaining}}</span>
-      <span>{{startDate}}</span>
-    </div>
+    <round-status-banner />
     <div id="hero">
       <img src="@/assets/moon.png" id="moon" />
       <div class="image-wrapper">
@@ -111,15 +107,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
 @Component({
-  name: 'landing',
-  metaInfo: { title: 'Landing' },
+  components: { RoundStatusBanner },
 })
-export default class Landing extends Vue {
-  startDate = '03 April' // TODO: use Date() object
-  timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
-}
+export default class Landing extends Vue {}
 </script>
 
 <style scoped lang="scss">
@@ -240,19 +233,15 @@ ol li::before {
   background: black;
 }
 
-.caps {
-  text-transform: uppercase;
-}
-
-#page > #waiting-banner {
+/* #page > #waiting-banner {
   display: flex;
   height: 48px;
   justify-content: space-between;
   padding: 1rem 2rem;
   align-items: center;
-  /* margin-top: 1rem; */
+  // margin-top: 1rem;
   background: $bg-primary-color;
-}
+} */
 
 .pre-req,
 #about-1, #about-2, #about-3 {
