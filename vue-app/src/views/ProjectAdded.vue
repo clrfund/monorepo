@@ -19,11 +19,11 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import CriteriaModal from '@/components/CriteriaModal.vue'
-import ProgresssBar from '@/components/ProgressBar.vue'
+// import CriteriaModal from '@/components/CriteriaModal.vue'
+// import ProgresssBar from '@/components/ProgressBar.vue'
 
 @Component({
-  name: 'project added',
+  name: 'projectAdded',
   metaInfo: { title: 'project added' },
 })
 

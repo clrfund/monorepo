@@ -27,7 +27,7 @@
           App
         </div>
       </router-link>
-      <Profile />
+      <!-- <Profile /> -->
     </div>
   </div>
 </template>
@@ -35,11 +35,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import Profile from './Profile.vue'
+// import Profile from './Profile.vue'
 import CartModal from './CartModal.vue'
 import { Prop } from 'vue-property-decorator'
 
-@Component
+@Component({
+  // components: { Profile },
+})
 export default class Nav extends Vue {
   profileImageUrl: string | null = null
   @Prop() inApp;

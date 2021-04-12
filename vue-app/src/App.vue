@@ -1,11 +1,13 @@
 <template>
   <div id="app">
-    <Nav v-bind:in-app="inApp" />
+    <Nav :in-app="inApp" />
     <div id="content-container">
       <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
-      <div id="sidebar" :class="{'collapsed': sidebarCollapsed, 'hidden': sidebarCollapsed}">
-        <div id="nav-menu">
-          <RoundInformation /> 
+      <div
+        id="sidebar"
+        :class="{ collapsed: sidebarCollapsed, hidden: sidebarCollapsed }"
+      >
+          <round-information />
           <!-- <router-link to="/">Home</router-link>
           <router-link to="/projects">Projects</router-link>
           <router-link to="/rounds">Rounds</router-link>
@@ -15,14 +17,13 @@
           <a href="https://blog.clr.fund" target=_blank>Blog</a>
           <a href="https://forum.clr.fund" target=_blank>Forum</a>
           <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a> -->
-        </div>
       </div>
-      <div id="content">
+      <div id="content" :class="{ padded: !sidebarCollapsed }">
         <router-view :key="$route.path" />
       </div>
     </div>
-      <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
-      <!-- <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': userBarCollapsed}">
+    <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
+    <!-- <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': userBarCollapsed}">
         <Profile />
         <Cart />
       </div> -->
@@ -35,34 +36,33 @@ import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
 import { recipientRegistryType } from '@/api/core'
-import Cart from '@/components/Cart.vue'
-import Profile from '@/components/Profile.vue'
+// import Cart from '@/components/Cart.vue'
+// import Profile from '@/components/Profile.vue'
 import RoundInformation from '@/views/RoundInformation.vue'
 import Nav from '@/components/Nav.vue'
 
-import {
-  LOAD_USER_INFO,
-  LOAD_ROUND_INFO,
-} from '@/store/action-types'
+import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 
 @Component({
   name: 'clr.fund',
   metaInfo: {
     title: 'clr.fund',
     titleTemplate: 'clr.fund - %s',
-    meta: [{
-      name: 'git-commit',
-      content: process.env.VUE_APP_GIT_COMMIT || '',
-    }],
+    meta: [
+      {
+        name: 'git-commit',
+        content: process.env.VUE_APP_GIT_COMMIT || '',
+      },
+    ],
   },
   components: { RoundInformation, Nav },
 })
 export default class App extends Vue {
-
   // Only for small screens
-  sidebarCollapsed = false
-  userBarCollapsed = true
-  inApp = false
+  sidebarCollapsed = false;
+  userBarCollapsed = true;
+  inApp = false;
+
   created() {
     this.inApp = this.$route.name !== 'landing'
     this.userBarCollapsed = this.$route.name === 'landing'
@@ -104,8 +104,8 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
-@import 'styles/vars';
-@import 'styles/fonts';
+@import "styles/vars";
+@import "styles/fonts";
 
 html,
 body {
@@ -210,18 +210,15 @@ a {
   width: 20%;
   height: 100%;
 
-
-
-.master{
-  color:black;
-  float:right;
-}
+  .master {
+    color: black;
+    float: right;
+  }
 
   .status {
     font-size: 16px;
     display: flex;
     align-items: center;
-    
   }
 
   .round-info-div {
@@ -229,7 +226,6 @@ a {
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 2rem;
-
   }
 
   .clr-logo {
@@ -269,7 +265,7 @@ a {
         border-radius: 10px;
         bottom: 0;
         box-sizing: border-box;
-        content: '';
+        content: "";
         display: block;
         height: 0.75em;
         left: -25px;
@@ -284,12 +280,11 @@ a {
 #content {
   background-color: $bg-light-color;
   flex-grow: 1;
-  /* padding: $content-space; */
   height: 100%;
 
   .content-heading {
     display: block;
-    font-family: 'Glacial Indifference', sans-serif;
+    font-family: "Glacial Indifference", sans-serif;
     font-size: 16px;
     font-weight: normal;
     letter-spacing: 6px;
@@ -305,15 +300,19 @@ a {
   }
 }
 
+#content.padded {
+  padding: $content-space;
+}
+
 .verified {
-    background: $clr-pink-light-gradient;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    margin-left: 0.5rem;
+  background: $clr-pink-light-gradient;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin-left: 0.5rem;
 }
 
 #user-bar {
@@ -455,5 +454,4 @@ a {
     }
   }
 }
-
 </style>
