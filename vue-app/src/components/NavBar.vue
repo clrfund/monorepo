@@ -23,7 +23,7 @@
           Cart
       </button>
       <router-link v-if="!inApp" to="/projects">
-        <div class="btn-app">
+        <div class="app-btn">
           App
         </div>
       </router-link>
@@ -39,12 +39,10 @@ import Component from 'vue-class-component'
 import CartModal from './CartModal.vue'
 import { Prop } from 'vue-property-decorator'
 
-@Component({
-  // components: { Profile },
-})
+@Component
 export default class NavBar extends Vue {
-  profileImageUrl: string | null = null
   @Prop() inApp;
+  profileImageUrl: string | null = null
 
   // get currentUser(): User | null {
   //   return this.$store.state.currentUser
@@ -78,16 +76,8 @@ export default class NavBar extends Vue {
     flex-direction: row;
     align-items: center;
   }
-  .app-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: $clr-pink-light-gradient;
-    padding: 0 1.5rem;
-    height: 2rem;
-    border-radius: 1rem;
-    color: white;
-  }
+
+  .app-btn,
   .dropdown-btn {
     background: rgba(44,41,56,1);
     border: 1px solid rgba(115,117,166,0.3);
@@ -99,9 +89,17 @@ export default class NavBar extends Vue {
     font-size: 16px;
     display: flex;
     align-items: center;
+    /* box-sizing: border-box; */
+  }
+
+  .app-btn {
+    padding: 0.25rem 1.25rem;
+    background: $clr-pink-light-gradient;
+    border: none;
+    border-radius: 1rem;
   }
   .ef-logo {
-    margin: 0 auto 0 0;
+    margin: 0;
     /* max-height: 100%; */
     height: 100%;
   }

@@ -6,7 +6,6 @@
 .btn-secondary,
 .btn-alternate,
 .btn-mini,
-.btn-app,
 .btn-white {
   display: grid;
   place-items: center;
@@ -33,13 +32,8 @@
   background: $button-color;
 }
 
-.btn-app,
 .btn-action {
   background: $clr-pink-light-gradient;
-}
-
-.btn-app {
-  height: 1.5rem;
 }
 
 .btn-secondary {
