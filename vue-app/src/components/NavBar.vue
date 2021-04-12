@@ -1,5 +1,5 @@
 <template>
-  <div id="nav-bar">
+  <nav id="nav-bar">
     <router-link v-if="!inApp" to="/">
       <img class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
     </router-link>
@@ -29,7 +29,7 @@
       </router-link>
       <!-- <Profile /> -->
     </div>
-  </div>
+  </nav>
 </template>
 
 <script lang="ts">
@@ -42,7 +42,7 @@ import { Prop } from 'vue-property-decorator'
 @Component({
   // components: { Profile },
 })
-export default class Nav extends Vue {
+export default class NavBar extends Vue {
   profileImageUrl: string | null = null
   @Prop() inApp;
 

@@ -19,14 +19,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-// import CriteriaModal from '@/components/CriteriaModal.vue'
-// import ProgresssBar from '@/components/ProgressBar.vue'
+import ProgressBar from '@/components/ProgressBar.vue'
 
 @Component({
   name: 'projectAdded',
   metaInfo: { title: 'project added' },
+  components: { ProgressBar },
 })
-
 export default class ProjectAdded extends Vue {
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging

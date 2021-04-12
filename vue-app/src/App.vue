@@ -1,12 +1,8 @@
 <template>
   <div id="app">
-    <Nav :in-app="inApp" />
+    <nav-bar :in-app="isInApp" />
     <div id="content-container">
-      <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
-      <div
-        id="sidebar"
-        :class="{ collapsed: sidebarCollapsed, hidden: sidebarCollapsed }"
-      >
+      <div id="sidebar" :class="{ hidden: isSidebarCollapsed}">
           <round-information />
           <!-- <router-link to="/">Home</router-link>
           <router-link to="/projects">Projects</router-link>
@@ -18,15 +14,10 @@
           <a href="https://forum.clr.fund" target=_blank>Forum</a>
           <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a> -->
       </div>
-      <div id="content" :class="{ padded: !sidebarCollapsed }">
+      <div id="content" :class="{ padded: !isSidebarCollapsed }">
         <router-view :key="$route.path" />
       </div>
     </div>
-    <!-- TODO probably don't need both 'collapsed' & 'hidden' -->
-    <!-- <div id="user-bar" :class="{'collapsed': userBarCollapsed, 'hidden': userBarCollapsed}">
-        <Profile />
-        <Cart />
-      </div> -->
   </div>
 </template>
 
@@ -39,7 +30,7 @@ import { recipientRegistryType } from '@/api/core'
 // import Cart from '@/components/Cart.vue'
 // import Profile from '@/components/Profile.vue'
 import RoundInformation from '@/views/RoundInformation.vue'
-import Nav from '@/components/Nav.vue'
+import NavBar from '@/components/NavBar.vue'
 
 import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 
@@ -55,18 +46,11 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
       },
     ],
   },
-  components: { RoundInformation, Nav },
+  components: { RoundInformation, NavBar },
 })
 export default class App extends Vue {
-  // Only for small screens
-  sidebarCollapsed = false;
-  userBarCollapsed = true;
-  inApp = false;
-
   created() {
-    this.inApp = this.$route.name !== 'landing'
-    this.userBarCollapsed = this.$route.name === 'landing'
-    this.sidebarCollapsed = this.$route.name === 'landing'
+    // TODO clearInterval on unmount
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)
@@ -75,30 +59,12 @@ export default class App extends Vue {
     }, 60 * 1000)
   }
 
-  updated() {
-    this.inApp = this.$route.name !== 'landing'
-    this.userBarCollapsed = this.$route.name === 'landing'
-    this.sidebarCollapsed = this.$route.name === 'landing'
+  get isInApp(): boolean {
+    return this.$route.name !== 'landing'
   }
 
-  toggleSidebar() {
-    this.userBarCollapsed = true
-    this.sidebarCollapsed = !this.sidebarCollapsed
-  }
-
-  toggleUserBar() {
-    this.sidebarCollapsed = true
-    this.userBarCollapsed = !this.userBarCollapsed
-  }
-
-  @Watch('$route', { immediate: true, deep: true })
-  onNavigation() {
-    this.sidebarCollapsed = true
-    this.userBarCollapsed = true
-  }
-
-  hasRecipientRegistryLink(): boolean {
-    return recipientRegistryType === 'optimistic'
+  get isSidebarCollapsed(): boolean {
+    return this.$route.name === 'landing' || this.$route.name === 'projectAdded'
   }
 }
 </script>
@@ -315,14 +281,6 @@ a {
   margin-left: 0.5rem;
 }
 
-#user-bar {
-  background-color: $bg-light-color;
-  flex-shrink: 0;
-  min-width: 250px;
-  max-width: 350px;
-  width: 25%;
-}
-
 .loader {
   display: block;
   height: 40px;
@@ -404,14 +362,6 @@ a {
     .cart-btn {
       margin-left: 5%;
     }
-
-    &.collapsed {
-      /* bottom: auto; */
-
-      #nav-menu {
-        display: none;
-      }
-    }
   }
 
   #nav-header {
@@ -422,28 +372,6 @@ a {
   #content {
     margin-bottom: $profile-image-size + $content-space * 2; /* offset for profile block */
     /* padding: $nav-header-height 0 0 0; */
-  }
-
-  #user-bar {
-    bottom: 0;
-    max-width: none;
-    overflow-y: scroll;
-    position: sticky;
-    top: $nav-header-height-sm + $content-space * 2; /* offset for nav header */
-    width: 100%;
-    z-index: 1;
-
-    .cart {
-      min-height: auto;
-    }
-
-    &.collapsed {
-      top: auto;
-
-      .cart {
-        display: none;
-      }
-    }
   }
 
   #footer {

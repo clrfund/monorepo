@@ -36,9 +36,9 @@
         <div class="input-button">
             <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.png">
             <input
-              v-model="search"
+              v-model="amount"
               class="input"
-              name="search"
+              name="amount"
               placeholder="10"
               autocomplete="on"
               onfocus="this.value=''" 
@@ -99,6 +99,7 @@ import { ADD_CART_ITEM } from '@/store/mutation-types'
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
+  amount = 10;
 
   get inCart(): boolean {
     const index = this.$store.state.cart.findIndex((item: CartItem) => {
