@@ -285,6 +285,10 @@ export default class ProjectList extends Vue {
   gap: $content-space;
 }
 
+/* .projects {
+  padding: $content-space
+}
+ */
 .title {
     padding-bottom: 1.5rem;
     border-bottom: 1px solid rgba(115,117,166,1); 
