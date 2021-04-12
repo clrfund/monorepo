@@ -65,7 +65,7 @@ export default class App extends Vue {
 
   get isSidebarCollapsed(): boolean {
     const routes = ['landing', 'projectAdded', 'join', 'joinStep']
-    return routes.includes(this.$route.name)
+    return routes.includes(this.$route.name as string)
   }
 }
 </script>
@@ -74,6 +74,9 @@ export default class App extends Vue {
 @import "styles/vars";
 @import "styles/fonts";
 
+/**
+ * Global styles
+ */
 html,
 body {
   height: 100%;
@@ -91,6 +94,10 @@ a {
   color: $highlight-color;
   cursor: pointer;
   text-decoration: none;
+}
+
+.caps {
+  text-transform: uppercase;
 }
 
 .input {
