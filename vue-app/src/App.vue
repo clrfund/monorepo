@@ -64,7 +64,8 @@ export default class App extends Vue {
   }
 
   get isSidebarCollapsed(): boolean {
-    return this.$route.name === 'landing' || this.$route.name === 'projectAdded'
+    const routes = ['landing', 'projectAdded', 'join', 'joinStep']
+    return routes.includes(this.$route.name)
   }
 }
 </script>

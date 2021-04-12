@@ -7,7 +7,7 @@
             <h1>Round criteria</h1>
             <p>Your project must meet the following requirements. If it doesn’t, it will be removed and you’ll lose your deposit.</p>
             [Project criteria goes here]
-            <router-link to="/apply/one"><button class="btn btn-primary" @click="$emit('close')">Add project</button></router-link>
+            <router-link to="/join/one"><button class="btn btn-primary" @click="$emit('close')">Add project</button></router-link>
         </div>
     </div>
 </template>

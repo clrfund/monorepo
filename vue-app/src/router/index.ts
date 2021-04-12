@@ -9,7 +9,7 @@ import RoundList from '../views/RoundList.vue'
 import ProjectAdded from '../views/ProjectAdded.vue'
 import RoundInformation from '../views/RoundInformation.vue'
 import About from '../views/About.vue'
-import ApplyVue from '../views/Apply.vue'
+import JoinView from '../views/Join.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 
 Vue.use(VueRouter)
@@ -52,11 +52,6 @@ const routes = [
     component: About,
   },
   {
-    path: '/apply/:step',
-    name: 'apply',
-    component: ApplyVue,
-  },
-  {
     path: '/project-added',
     name: 'projectAdded',
     component: ProjectAdded,
@@ -70,6 +65,11 @@ const routes = [
     path: '/join',
     name: 'join',
     component: JoinLanding,
+  },
+  {
+    path: '/join/:step',
+    name: 'joinStep',
+    component: JoinView,
   },
 ]
 

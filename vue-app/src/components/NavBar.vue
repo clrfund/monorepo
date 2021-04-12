@@ -62,7 +62,7 @@ export default class NavBar extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
-@import '../styles/styles';
+@import '../styles/theme';
 
 #nav-bar {
   position: sticky;

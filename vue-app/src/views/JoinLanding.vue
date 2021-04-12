@@ -19,7 +19,7 @@
         </div> 
       </div>
       <button class="btn btn-shell" @click="seeCriteria()">See round criteria</button>
-      <router-link to="/apply/one"><button class="btn btn-primary">Add project</button></router-link>
+      <router-link to="/join/one"><button class="btn btn-primary">Add project</button></router-link>
       
     </div>
   </div>

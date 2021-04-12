@@ -274,7 +274,7 @@ export default class ProjectList extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
-@import '../styles/styles';
+@import '../styles/theme';
 
 .round-info {
 

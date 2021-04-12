@@ -124,7 +124,7 @@ export default class Landing extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
-@import '../styles/styles';
+@import '../styles/theme';
 
 #page {
   background: $bg-primary-color;

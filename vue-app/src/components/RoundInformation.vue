@@ -279,7 +279,7 @@ export default class RoundInformation extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
-@import '../styles/styles';
+@import '../styles/theme';
 
 
   .image-wrapper {
@@ -367,7 +367,7 @@ export default class RoundInformation extends Vue {
   flex-direction: column;
   flex: 1 0 10%;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   background: $bg-light-color;
   padding: 1rem;
   border-radius: 0.5rem;

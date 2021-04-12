@@ -1,4 +1,5 @@
 <template>
+  <layout-steps>
   <div class="application-page">
     <div class="application">
       <div>
@@ -143,32 +144,36 @@
         </div>
         <div v-if="currentStep === 5">
           <h2 class="step-title">Review</h2>
+          <!-- TODO show summary of information -->
+          Summary of all data!
         </div>
         <div class="btn-row">
-          <router-link v-if="currentStep > 0" :to="{ name: 'apply', params: { step: steps[currentStep - 1] }}">
-            <button class="btn btn-secondary">Previous step</button>
+          <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
+            Previous step
           </router-link>
-          <router-link v-if="currentStep < 5" :to="{ name: 'apply', params: { step: steps[currentStep + 1] }}">
-            <button class="btn btn-primary">Next step</button>
+          <router-link v-if="currentStep < 5" :to="{ name: 'joinStep', params: { step: steps[currentStep + 1] }}" class="btn-primary">
+            Next step
           </router-link>
-          <router-link v-if="currentStep == 5" :to="{ name: 'apply', params: { step: steps[currentStep + 1] }}">
-            <button class="btn btn-primary">Finish</button>
+          <!-- TODO button to trigger tx  -->
+          <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
+            Finish
           </router-link>
         </div>
       </form>
       </div>
     </div>
   </div>
+  </layout-steps>
 </template>
 
 <script lang="ts">
-// import Vue from 'vue'
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
 import { required, minLength } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
 
+import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 
 
@@ -180,9 +185,8 @@ interface RecipientData {
 }
 
 @Component({
-  name: 'ApplyView',
-  metaInfo: { title: 'Apply' },
   components: {
+    LayoutSteps,
     ProgressBar,
   },
   validations: {
@@ -206,7 +210,7 @@ interface RecipientData {
     },
   },
 })
-export default class ApplyView extends mixins(validationMixin) {
+export default class JoinView extends mixins(validationMixin) {
 
   form: RecipientData = {
     name: '',
@@ -222,7 +226,7 @@ export default class ApplyView extends mixins(validationMixin) {
     const currentStep = steps.indexOf(this.$route.params.step)
     this.steps = steps
     this.currentStep = currentStep
-    // TODO redirect to /apply/one if step doesn't exist
+    // TODO redirect to /join/one if step doesn't exist
     // if (currentStep < 0) {
     //   console.log('NO STEP')
     //   this.$router.push({ name: 'apply', params: 'one' })
@@ -234,6 +238,7 @@ export default class ApplyView extends mixins(validationMixin) {
 
 <style scoped lang="scss">
 @import "../styles/vars";
+@import "../styles/theme";
 
 .content-heading {
   color: $text-color;
@@ -304,10 +309,6 @@ export default class ApplyView extends mixins(validationMixin) {
   border: none;
     &:disabled { background: $clr-green;
   }
-}
-
-.btn-primary {
-  background: $clr-green;
 }
 
 .btn-secondary {
