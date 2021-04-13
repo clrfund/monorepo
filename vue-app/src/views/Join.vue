@@ -1,8 +1,15 @@
 <template>
+<div>
+  <div class="desktop-title">
+    <h1 class="title" style="padding: 0;">Your project</h1>
+    <router-link to="/join">
+      <a class="desktop-link">Cancel</a>
+    </router-link>
+  </div>
   <layout-steps>
   <div class="application-page">
     <div class="application">
-      <div>
+      <div class="progress">
       <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length"/>
       <div class="row">
         <h3>
@@ -11,6 +18,7 @@
         <router-link to="/join">
           <a class="link">Cancel</a>
         </router-link>
+      </div>
       </div>
       <form>
         <div class="your-project">Your project</div>
@@ -365,9 +373,31 @@
         </div>
       </form>
       </div>
-    </div>
+  </div>
+
+  <div class="progress-block">
+        <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length"/>
+        <h3>
+          Step {{currentStep + 1}} of {{steps.length}}
+        </h3>
+          <div v-if="currentStep === 0">
+          <h2>About the project</h2>
+          </div>
+          <div class="btn-row">
+          <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
+            Previous step
+          </router-link>
+          <router-link v-if="currentStep < 5" :to="{ name: 'joinStep', params: { step: steps[currentStep + 1] }}" class="btn-primary">
+            Next step
+          </router-link>
+          <!-- TODO button to trigger tx  -->
+          <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
+            Finish
+          </router-link>
+        </div>
   </div>
   </layout-steps>
+  </div>
 </template>
 
 <script lang="ts">
@@ -533,10 +563,39 @@ export default class JoinView extends mixins(validationMixin) {
   letter-spacing: 6px;
   margin-top: 2rem;;
   text-transform: uppercase;
+  @media (min-width: $breakpoint-m) {
+      display: none;
+    }
+}
+
+.title {
+  margin-left: 16rem;
+  padding: 0;
+}
+
+.desktop-title {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4rem;
+
+  @media (max-width: $breakpoint-m) {
+      display: none;
+    }
 }
 
 .step-title {
   font-size: 2rem;
+  @media (min-width: $breakpoint-m) {
+      display: none;
+    }
+}
+
+.progress {
+  @media (min-width: $breakpoint-m) {
+      display: none;
+    }
 }
 
 .row {
@@ -557,6 +616,13 @@ export default class JoinView extends mixins(validationMixin) {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+   @media (min-width: $breakpoint-m) {
+      background: $bg-secondary-color;
+      padding: 1.5rem;
+      border-radius: 1rem;
+    }
+
+
 }
 
 .application-page {
@@ -565,6 +631,10 @@ export default class JoinView extends mixins(validationMixin) {
   height: 100%;
   flex-direction: column;
   justify-content: space-between;
+  @media (min-width: $breakpoint-m) {
+    padding: 0;
+    width: 100%;
+  }
 }
 
 .link {
@@ -608,6 +678,11 @@ export default class JoinView extends mixins(validationMixin) {
   flex-direction: column;
   &:last-of-type {
     margin-bottom: 2rem;
+  }
+  @media (max-width: $breakpoint-m) {
+  &:first-of-type {
+    margin-top: 0;
+  }
   }
 }
 
@@ -666,5 +741,18 @@ export default class JoinView extends mixins(validationMixin) {
 .error {
   color: $error-color;
   margin: 0.5rem 0 -1rem;
+}
+
+.progress-block {
+  margin-left: 1.5rem; 
+  background: $bg-secondary-color; 
+  border-radius: 8px; 
+  padding: 1rem; 
+  height: 100%;
+  width: 33%;
+}
+
+.desktop-link {
+  margin-right: 16rem;
 }
 </style>
