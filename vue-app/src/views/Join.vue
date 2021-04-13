@@ -18,32 +18,58 @@
           <h2 class="step-title">About the project</h2>
           <div class="inputs">
             <div class="form-background">
-              <label for="name" class="input-label">Name</label>
+              <label for="project-name" class="input-label">Name</label>
               <!-- TODO figure out onblur validation -->
-                <input
-                  id="name"
-                  type="text"
-                  placeholder="example: clr.fund"
-                  v-model="$v.form.name.$model"
-                  @change="$v.form.name.$touch"
-                  class="input"
-                  :class="{ invalid: $v.form.name.$error }"
-                >
-                <p v-if="$v.form.name.$error">Enter a valid name</p>
+              <input
+                id="project-name"
+                type="text"
+                placeholder="example: clr.fund"
+                v-model="$v.form.project.name.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.project.name.$error
+                }"
+              >
+              <p v-if="$v.form.project.name.$error">Enter a valid name</p>
             </div>
             <div class="form-background">
-              <label for="tagline" class="input-label">Tagline</label>
+              <label for="project-tagline" class="input-label">Tagline</label>
               <p class="input-description">Describe your project in a sentence.</p>
-              <input required placeholder="example: A quadratic funding protocol" id="tagline" class="input" />
+              <input
+                id="project-tagline"
+                type="text"
+                placeholder="example: A quadratic funding protocol"
+                v-model="$v.form.project.tagline.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.project.tagline.$error
+                }"
+              />
             </div>
             <div class="form-background">
-              <label for="description" class="input-label">Description</label>
+              <label for="project-description" class="input-label">Description</label>
               <p class="input-description">Markdown supported.</p>
-              <textarea required id="description" placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..." class="input" />
+              <textarea
+                id="project-description"
+                placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                v-model="$v.form.project.description.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.project.description.$error
+                }"
+              />
             </div>
             <div class="form-background">
-              <label for="category" class="input-label">Category</label>
-              <select required id="category" class="input">
+              <label for="project-category" class="input-label">Category</label>
+              <select
+                id="project-category"
+                class="input"
+                v-model="$v.form.project.category.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.project.category.$error
+                }"
+              >
                   <option selected disabled label="Choose the best fit" />
                   <option value="content">Content</option>
                   <option value="researcg">Research</option>
@@ -52,9 +78,17 @@
               </select>
             </div>
             <div class="form-background">
-              <label for="problem-space" class="input-label">Problem space</label>
+              <label for="project-problem-space" class="input-label">Problem space</label>
               <p class="input-description">Explain the problems you're trying to solve.</p>
-              <textarea required id="problem-space" placeholder="example: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model." class="input" />
+              <textarea
+                id="project-problem-space"
+                placeholder="example: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
+                v-model="$v.form.project.problemSpace.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.project.problemSpace.$error
+                }"
+              />
             </div>
           </div>
         </div>    
@@ -62,14 +96,30 @@
           <h2 class="step-title">Donation details</h2>
           <div class="inputs">
             <div class="form-background">
-              <label for="eth-address" class="input-label">Ethereum address</label>
+              <label for="fund-address" class="input-label">Ethereum address</label>
               <p class="input-description">This doesn’t have to be the same address as the one you use to send your application.</p>
-              <input required placeholder="example: clr.eth, clr.crypto, 0x123..." id="eth-address" class="input" />
+              <input
+                id="fund-address"
+                placeholder="example: clr.eth, clr.crypto, 0x123..."
+                v-model="$v.form.fund.address.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.fund.address.$error
+                }"
+              />
             </div>
             <div class="form-background">
-              <label for="funding" class="input-label">How will you spend your funding?</label>
+              <label for="fund-plans" class="input-label">How will you spend your funding?</label>
               <p class="input-description">Potential contributors might convert based on your specific funding plans.</p>
-              <textarea required placeholder="example: on our roadmap..." id="funding" class="input" />
+              <textarea
+                id="fund-plans"
+                placeholder="example: on our roadmap..."
+                v-model="$v.form.fund.plans.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.fund.plans.$error
+                }"
+              />
             </div>
           </div>
         </div>
@@ -79,12 +129,28 @@
             <div class="form-background">
               <label for="team-name" class="input-label">Team name</label>
               <p class="input-description">If different to project name.</p>
-              <input placeholder="example: clr.fund" id="team-name" class="input" />
+              <input
+                id="team-name"
+                placeholder="example: clr.fund"
+                v-model="$v.form.team.name.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.team.name.$error
+                }"
+              />
             </div>
             <div class="form-background">
               <label for="team-desc" class="input-label">Description</label>
               <p class="input-description">If different to project description.</p>
-              <textarea id="team-desc" placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..." class="input" />
+              <textarea
+                id="team-desc"
+                placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                v-model="$v.form.team.description.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.team.description.$error
+                }"
+              />
             </div>
           </div>
         </div>
@@ -92,24 +158,74 @@
           <h2 class="step-title">Links</h2>
           <div class="inputs">
             <div class="form-background">
-              <label for="github" class="input-label">GitHub</label>
-              <input type="link" placeholder="example: github.com/ethereum/clrfund" id="github" class="input" />
+              <label for="links-github" class="input-label">GitHub</label>
+              <input
+                id="links-github" 
+                type="link" 
+                placeholder="example: github.com/ethereum/clrfund" 
+                class="input"
+                v-model="$v.form.links.github.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.links.github.$error
+                }"
+              />
             </div>
             <div class="form-background">
-              <label for="radicle" class="input-label">Radicle</label>
-              <input type="link" placeholder="example: github.com/ethereum/clrfund" id="radicle" class="input" />
+              <label for="links-radicle" class="input-label">Radicle</label>
+              <input
+                id="links-radicle" 
+                type="link" 
+                placeholder="example: radicle.com/ethereum/clrfund" 
+                class="input"
+                v-model="$v.form.links.radicle.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.links.radicle.$error
+                }"
+              />
             </div>
             <div class="form-background">
-              <label for="website" class="input-label">Website</label>
-              <input type="link" placeholder="example: github.com/ethereum/clrfund" id="website" class="input" />
+              <label for="links-website" class="input-label">Website</label>
+              <input
+                id="links-website" 
+                type="link" 
+                placeholder="example: website.com/ethereum/clrfund" 
+                class="input"
+                v-model="$v.form.links.website.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.links.website.$error
+                }"
+              />
             </div>
             <div class="form-background">
-              <label for="twitter" class="input-label">Twitter</label>
-              <input type="link" placeholder="example: github.com/ethereum/clrfund" id="twitter" class="input" />
+              <label for="links-twitter" class="input-label">Twitter</label>
+              <input
+                id="links-twitter" 
+                type="link" 
+                placeholder="example: github.com/ethereum/clrfund" 
+                class="input"
+                v-model="$v.form.links.twitter.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.links.twitter.$error
+                }"
+              />
             </div>
             <div class="form-background">
-              <label for="discord" class="input-label">Discord</label>
-              <input type="link" placeholder="example: github.com/ethereum/clrfund" id="discord" class="input" />
+              <label for="links-discord" class="input-label">Discord</label>
+              <input
+                id="links-discord" 
+                type="link" 
+                placeholder="example: github.com/ethereum/clrfund" 
+                class="input"
+                v-model="$v.form.links.discord.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.links.discord.$error
+                }"
+              />
             </div>
           </div>
         </div>
@@ -120,25 +236,76 @@
               <div class="row">
                 <form>
                   <div>
-                    <input type="radio" id="IPFS" name="IPFS" value="IPFS">
+                    <input
+                      id="IPFS"
+                      type="radio"
+                      name="image-requiresUpload"
+                      value="false"
+                      v-model="$v.form.image.requiresUpload.$model"
+                    >
                     <label for="IPFS">IPFS – you have IPFS hashes for your images</label>
                   </div>
                   <div>
-                    <input type="radio" id="upload" name="Upload" value="Upload">
-                    <label for="Upload">Upload – you'd like to upload from your device</label>
+                    <input
+                      id="upload"
+                      type="radio"
+                      name="image-requiresUpload"
+                      value="true"
+                      v-model="$v.form.image.requiresUpload.$model"
+                    >
+                    <label for="upload">Upload – you'd like to upload from your device</label>
                   </div>
                 </form>
               </div>
             </div>
             <div class="form-background">
-              <label for="github" class="input-label">Banner image</label>
-              <p class="input-description">Recommended dimensions: 500 x 300</p>
-              <input type="file" placeholder="example: github.com/ethereum/clrfund" id="github" class="input" />
+              <label
+                :for="requiresUpload ? 'image-banner-upload' : 'image-banner-hash'"
+                class="input-label"
+              >Banner image
+                <p class="input-description">Recommended dimensions: 500 x 300</p>
+              </label>
+              <input
+                v-if="requiresUpload"
+                id="image-banner-upload"
+                type="file"
+                class="input"
+              />
+              <input
+                v-if="!requiresUpload"
+                id="image-banner-hash"
+                placeholder="example: ipfs://hash"
+                class="input"
+                v-model="$v.form.image.banner.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.image.banner.$error
+                }"
+              />
             </div>
             <div class="form-background">
-              <label for="github" class="input-label">Banner image</label>
-              <p class="input-description">Recommended dimensions: 80 x 80</p>
-              <input type="file" placeholder="example: github.com/ethereum/clrfund" id="github" class="input" />
+              <label
+                :for="requiresUpload ? 'image-thumbnail-upload' : 'image-thumbnail-hash'"
+                class="input-label"
+              >Thumbnail image
+                <p class="input-description">Recommended dimensions: 80 x 80</p>
+              </label>
+              <input
+                v-if="requiresUpload"
+                id="image-thumbnail-upload"
+                type="file"
+                class="input"
+              />
+              <input
+                v-if="!requiresUpload"
+                id="image-thumbnail-hash"
+                placeholder="example: ipfs://hash"
+                v-model="$v.form.image.thumbnail.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.form.image.thumbnail.$error
+                }"
+              />
             </div>
           </div>
         </div>
@@ -169,7 +336,7 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, minLength } from 'vuelidate/lib/validators'
+import { required, minLength, maxLength, url } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
 
@@ -177,11 +344,34 @@ import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 
 
-interface RecipientData {
-  name: string;
-  description: string;
-  imageHash: string;
-  address: string;
+interface FormData {
+  project: {
+    name: string;
+    tagline: string;
+    description: string;
+    category: string;
+    problemSpace: string;
+  };
+  fund: {
+    address: string;
+    plans: string;
+  };
+  team: {
+    name: string;
+    description: string;
+  };
+  links: {
+    github: string;
+    radicle: string;
+    website: string;
+    twitter: string;
+    discord: string;
+  };
+  image: {
+    requiresUpload: '' | 'true' | 'false';
+    banner: string;
+    thumbnail: string;
+  };
 }
 
 @Component({
@@ -191,32 +381,79 @@ interface RecipientData {
   },
   validations: {
     form: {
-      name: {
-        required,
-        minLength: minLength(4),
+      project: {
+        name: {
+          required,
+        },
+        tagline: {
+          required,
+          maxLength: maxLength(140),
+        },
+        description: { required },
+        category: { required },
+        problemSpace: { required },
       },
-      description: {
-        required,
-        minLength: minLength(30),
+      fund: {
+        address: {
+          required,
+          validEthAddress: isAddress,
+        },
+        plans: { required },
       },
-      imageHash: {
-        required,
-        validIpfsHash: (value) => isIPFS.cid(value),
+      team: {
+        name: {},
+        description: {},
       },
-      address: {
-        required,
-        validEthAddress: (value) => isAddress(value),
+      links: {
+        github: { url },
+        radicle: { url },
+        website: { url },
+        twitter: {},
+        discord: { url },
+      },
+      image: {
+        requiresUpload: {},
+        banner: {
+          required,
+          validIpfsHash: isIPFS.cid,
+        },
+        thumbnail: {
+          required,
+          validIpfsHash: isIPFS.cid,
+        },
       },
     },
   },
 })
 export default class JoinView extends mixins(validationMixin) {
-
-  form: RecipientData = {
-    name: '',
-    description: '',
-    imageHash: '',
-    address: '',
+  form: FormData = {
+    project: {
+      name: '',
+      tagline: '',
+      description: '',
+      category: '',
+      problemSpace: '',
+    },
+    fund: {
+      address: '',
+      plans: '',
+    },
+    team: {
+      name: '',
+      description: '',
+    },
+    links: {
+      github: '',
+      radicle: '',
+      website: '',
+      twitter: '',
+      discord: '',
+    },
+    image: {
+      requiresUpload: '',
+      banner: '',
+      thumbnail: '',
+    },
   }
   currentStep: number | null = null
   steps: string[] = []
@@ -232,6 +469,11 @@ export default class JoinView extends mixins(validationMixin) {
     //   this.$router.push({ name: 'apply', params: 'one' })
     //   return
     // }
+  }
+
+
+  get requiresUpload(): boolean {
+    return this.form.image.requiresUpload === 'true'
   }
 } 
 </script>
