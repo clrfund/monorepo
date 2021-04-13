@@ -1,7 +1,9 @@
 <template>
     <div id="banner" class="caps">
-      <span>Funding Starts: {{timeRemaining}}</span>
-      <span>{{startDate}}</span>
+      <div class="marquee-content">
+          <span class="label">Funding Starts: {{timeRemaining}} </span>
+          <span>{{startDate}}</span>
+      </div>
     </div>
 </template>
 
@@ -27,11 +29,44 @@ import { RoundInfo, getCurrentRound } from '@/api/round'
 @import '../styles/theme';
 
 #banner {
-  display: flex;
-  height: 48px;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  align-items: center;
+  width: 100%;
   background: $bg-primary-color;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-content {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
+  padding-left: 100%;
+  margin: 1rem 0;
+
+@media (max-width: $breakpoint-m) {
+      animation: marquee 10s linear infinite;
+    }
+}
+
+.marquee-content:hover {
+  animation-play-state: paused
+}
+
+.label {
+  font-family: "Glacial Indifference", sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  text-align: left;
+  margin-right: 1.5rem;
+}
+
+/* Transition */
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0)
+  }
+  100% {
+    transform: translateX(-100%)
+  }
 }
 </style>

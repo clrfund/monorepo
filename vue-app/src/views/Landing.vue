@@ -1,6 +1,7 @@
 <template>
+  <div>
+  <round-status-banner />
   <div id="page">
-    <round-status-banner />
     <div id="hero">
       <img src="@/assets/moon.png" id="moon" />
       <div class="image-wrapper">
@@ -101,6 +102,7 @@
         <div class="link-li">Provide Feedback</div>
         <div class="link-li">Something else?</div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -267,12 +269,12 @@ ol li::before {
 #hero {
   position: relative;
   overflow: hidden;
-  background: $bg-primary-color;
+  background: $clr-pink-dark-gradient;
   padding: 0;
 
-  @media (max-width: $breakpoint-m) {
+ /*  @media (max-width: $breakpoint-m) {
     background: $clr-pink-dark-gradient;
-  }
+  } */
 
   .image-wrapper img {
     position: absolute;
