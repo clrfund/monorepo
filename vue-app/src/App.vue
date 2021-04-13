@@ -96,6 +96,20 @@ a {
   text-decoration: none;
 }
 
+.mobile {
+  display: none;
+  @media (max-width: $breakpoint-m) {
+    display: inherit;
+  }
+}
+
+.desktop {
+  display: inherit;
+  @media (max-width: $breakpoint-m) {
+    display: none;
+  }
+}
+
 .caps {
   text-transform: uppercase;
 }
@@ -179,7 +193,8 @@ a {
 }
 #content-container {
   display: flex;
-  min-height: 100%;
+  /* min-height: 100%; */
+  height: calc(100vh - 61.5px);
   background: $bg-light-color;
 }
 
