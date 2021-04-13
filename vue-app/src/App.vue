@@ -100,6 +100,14 @@ a {
   text-transform: uppercase;
 }
 
+.btn-container {
+  display: flex;
+  gap: 1rem;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+  }
+}
+
 .input {
   background-color: $bg-light-color;
   border: 2px solid $button-color;

@@ -2,24 +2,28 @@
 <template>
   <div>
     <round-status-banner />
-    <div id="hero" style="display: flex;">
-      <div class="content">
-        <h1>Join the next funding round</h1>
-        <div id="subtitle" class="subtitle">We’ll need some information about your project and a 0.1 ETH security deposit.</div>
-        <div id="info-boxes">
-          <div id="apply-callout">
-            <div id="countdown-label" class="caps">Joining close</div>
-            <div id="countdown" class="caps">11 days</div>
-          </div> 
-          <div id="apply-callout">
-            <div id="countdown-label" class="caps">Time to complete</div>
-            <div id="countdown" class="caps">15 minutes (ish)</div>
+    <div class="gradient">
+      <div class="hero">
+        <img src="@/assets/core.png" width="100%" />
+        <div class="content">
+          <h1>Join the next funding round</h1>
+          <div id="subtitle" class="subtitle">We’ll need some information about your project and a 0.1 ETH security deposit.</div>
+          <div id="info-boxes">
+            <div id="apply-callout">
+              <div id="countdown-label" class="caps">Joining close</div>
+              <div id="countdown" class="caps">11 days</div>
+            </div> 
+            <div id="apply-callout">
+              <div id="countdown-label" class="caps">Time to complete</div>
+              <div id="countdown" class="caps">15 minutes (ish)</div>
+            </div> 
+          </div>
+          <div class="btn-container">
+            <button class="btn-secondary" @click="seeCriteria()">See round criteria</button>
+            <router-link to="/join/one" class="btn-primary">Add project</router-link>
           </div> 
         </div>
-        <button class="btn-secondary" @click="seeCriteria()">See round criteria</button>
-        <router-link to="/join/one" class="btn-primary">Add project</router-link>
       </div>
-      <img src="@/assets/newrings.png" width="100%"/>
     </div>
   </div>
 </template>
@@ -57,7 +61,8 @@ export default class JoinLanding extends Vue {
 
 .content {
   padding: $content-space;
-  background: $bg-primary-color;
+  /* background: $bg-primary-color; */
+  width: 40%;
 }
 
 h1 {
@@ -68,12 +73,22 @@ h1 {
   line-height: 120%;
 }
 
-.hero {
+.gradient {
   background: $clr-pink-dark-gradient;
+}
+.hero {
+  position: relative;
+  display: flex;
+  background: linear-gradient(286.78deg, rgba(173, 131, 218, 0) -32.78%, #191623 78.66%);
+  height: calc(100vh - 113px);
 }
 
 .hero img {
+  position: absolute;
+  bottom: 0;
+  right: 0;
     mix-blend-mode: exclusion;
+    /* width: 100%; */
   }
 
 #countdown {
