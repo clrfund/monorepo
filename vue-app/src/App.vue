@@ -97,16 +97,16 @@ a {
 }
 
 .mobile {
-  display: none;
+  display: none !important;
   @media (max-width: $breakpoint-m) {
-    display: inherit;
+    display: inline-block !important;
   }
 }
 
 .desktop {
-  display: inherit;
+  display: inline-block !important;
   @media (max-width: $breakpoint-m) {
-    display: none;
+    display: none !important;
   }
 }
 

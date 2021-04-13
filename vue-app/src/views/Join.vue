@@ -2,36 +2,40 @@
   <div class="container">
     <div class="grid">
       <div class="progress-area">
-        <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" class="desktop" />
-        <h3>
-          Step {{currentStep + 1}} of {{steps.length}}
-        </h3>
-        <div v-if="currentStep === 0">
-          <h2>About the project</h2>
+        <div class="">
+          <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+          <h3>
+            Step {{currentStep + 1}} of {{steps.length}}
+          </h3>
+          <div v-if="currentStep === 0">
+            <h2>About the project</h2>
+          </div>
+          <div class="btn-row">
+            <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
+              Previous step
+            </router-link>
+            <router-link v-if="currentStep < 5" :to="{ name: 'joinStep', params: { step: steps[currentStep + 1] }}" class="btn-primary">
+              Next step
+            </router-link>
+            <!-- TODO button to trigger tx  -->
+            <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
+              Finish
+            </router-link>
+          </div>
         </div>
-        <div class="btn-row">
-          <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
-            Previous step
-          </router-link>
-          <router-link v-if="currentStep < 5" :to="{ name: 'joinStep', params: { step: steps[currentStep + 1] }}" class="btn-primary">
-            Next step
-          </router-link>
-          <!-- TODO button to trigger tx  -->
-          <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
-            Finish
-          </router-link>
-        </div>
-
       </div>
       <div class="title-area">
-        <h1 class="title" style="padding: 0;">Your project</h1>
-        <router-link to="/join">
-          <a class="desktop-link">Cancel</a>
-        </router-link>
+        <div class="mobile your-project">Your project</div>
+        <div class="desktop your-project">
+          <h1>Your project</h1>
+          <router-link to="/join">
+            <a class="desktop-link">Cancel</a>
+          </router-link>
+        </div>
       </div>
       <div class="form-area">
         <div class="application">
-          <div class="progress">
+          <!-- <div class="progress">
             <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length"/>
             <div class="row">
               <h3>
@@ -41,9 +45,8 @@
                 <a class="link">Cancel</a>
               </router-link>
             </div>
-          </div>
+          </div> -->
           <form>
-            <div class="your-project">Your project</div>
             <div v-if="currentStep === 0">
               <h2 class="step-title">About the project</h2>
               <div class="inputs">
@@ -375,25 +378,38 @@
                 </div>
               </div>
             </div>
-            <div v-if="currentStep === 5">
-              <h2 class="step-title">Review</h2>
-              <!-- TODO show summary of information -->
-              Summary of all data!
-            </div>
-            <div class="btn-row">
-              <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
-                Previous step
-              </router-link>
-              <router-link v-if="currentStep < 5" :to="{ name: 'joinStep', params: { step: steps[currentStep + 1] }}" class="btn-primary">
-                Next step
-              </router-link>
-              <!-- TODO button to trigger tx  -->
-              <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
-                Finish
-              </router-link>
-            </div>
           </form>
         </div>
+      </div>
+      <div class="nav-area">
+        <div v-if="currentStep === 5">
+          <h2 class="step-title">Review</h2>
+          <!-- TODO show summary of information -->
+          Summary of all data!
+        </div>
+        <div class="nav-area btn-row mobile">
+          <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
+            Previous step
+          </router-link>
+          <router-link v-if="currentStep < 5" :to="{ name: 'joinStep', params: { step: steps[currentStep + 1] }}" class="btn-primary">
+            Next step
+          </router-link>
+          <!-- TODO button to trigger tx  -->
+          <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
+            Finish
+          </router-link>
+        </div>
+<!--    <div class="btn-row">
+          <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
+            Previous step
+          </router-link>
+          <router-link v-if="currentStep < 5" :to="{ name: 'joinStep', params: { step: steps[currentStep + 1] }}" class="btn-primary">
+            Next step
+          </router-link>
+          <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
+            Finish
+          </router-link>
+        </div> -->
       </div>
     </div>
   </div>
@@ -555,34 +571,39 @@ export default class JoinView extends mixins(validationMixin) {
 .container {
   width: clamp(calc(800px - 4rem), calc(100% - 4rem), 1440px);
   margin: 0 auto;
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+  }
 }
 
 .grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-template-rows: repeat(3, auto);
+  grid-template-rows: repeat(4, auto);
   grid-template-areas:
     "title title"
     "title title"
-    "form progress";
+    "form progress"
+    "form navi";
   position: relative;
-  gap: 2rem;
+  gap: 0 2rem;
+  height: calc(100vh - $nav-header-height);
   @media (max-width: $breakpoint-m) {
+    grid-template-rows: auto auto 1fr auto;
     grid-template-areas:
       "progress progress"
       "title title"
-      "form form";
+      "form form"
+      "navi navi";
+    gap: 0;
   }
 }
 
 .progress-area {
   grid-area: progress;
-  /* margin-left: 1.5rem;  */
+  padding: 1rem; 
   background: $bg-secondary-color; 
   border-radius: 8px; 
-  padding: 1rem; 
-  /* height: 100%;
-  width: 33%; */
   @media (max-width: $breakpoint-m) {
     border-radius: 0;
   }
@@ -590,6 +611,7 @@ export default class JoinView extends mixins(validationMixin) {
 
 .title-area {
   grid-area: title;
+  padding: 1rem; 
   /* width: 100%; */
   display: flex;
   justify-content: space-between;
@@ -610,6 +632,10 @@ export default class JoinView extends mixins(validationMixin) {
     padding: 0;
     width: 100%;
   }
+}
+
+.nav-area {
+  grid-area: navi;
 }
 
 .desktop-title {
@@ -647,15 +673,15 @@ export default class JoinView extends mixins(validationMixin) {
   letter-spacing: 6px;
   margin-top: 2rem;;
   text-transform: uppercase;
-  @media (min-width: $breakpoint-m) {
+  /* @media (min-width: $breakpoint-m) {
       display: none;
-    }
+    } */
 }
 
-.title {
+/* .title {
   margin-left: 16rem;
   padding: 0;
-}
+} */
 
 .step-title {
   font-size: 2rem;
@@ -732,11 +758,6 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
-/* .btn-secondary {
-  border: 2px solid $clr-green;
-  color: $clr-green;
-} */
-
 .inputs {
   margin: 1.5rem 0;
 }
@@ -785,12 +806,6 @@ export default class JoinView extends mixins(validationMixin) {
 .input.invalid {
   border: 2px solid $error-color; 
 }
-/* .input-error {
-  display: none;
-  &:invalid {
-    display: block;
-  }
-} */
 
 .input-description {
   margin-top: 0.25rem;
@@ -815,14 +830,14 @@ export default class JoinView extends mixins(validationMixin) {
   margin: 0.5rem 0 -1rem;
 }
 
-.progress-block {
-  /* margin-left: 1.5rem; 
+/* .progress-block {
+  margin-left: 1.5rem; 
   background: $bg-secondary-color; 
   border-radius: 8px; 
   padding: 1rem; 
   height: 100%;
-  width: 33%; */
-}
+  width: 33%;
+} */
 
 .desktop-link {
   margin-right: 16rem;
