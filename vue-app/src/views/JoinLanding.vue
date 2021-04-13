@@ -60,6 +60,8 @@ export default class JoinLanding extends Vue {
 
 
 .content {
+  position: relative;
+  z-index: 1;
   padding: $content-space;
   /* background: $bg-primary-color; */
   width: 40%;
