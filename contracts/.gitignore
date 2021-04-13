@@ -4,3 +4,4 @@ node_modules
 snark-params
 state.json
 tally.json
+.env
