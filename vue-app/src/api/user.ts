@@ -1,4 +1,3 @@
-import { getProfile } from '3box/lib/api'
 import makeBlockie from 'ethereum-blockies-base64'
 import { BigNumber, Contract } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
@@ -17,9 +16,11 @@ export interface User {
 }
 
 export async function getProfileImageUrl(walletAddress: string): Promise<string | null> {
+  const threeBoxProfileUrl = `https://ipfs.3box.io/profile?address=${walletAddress}`
   let profileImageHash: string
   try {
-    const profile = await getProfile(walletAddress)
+    const response = await fetch(threeBoxProfileUrl)
+    const profile = await response.json()
     profileImageHash = profile.image[0].contentUrl['/']
   } catch (error) {
     return makeBlockie(walletAddress)

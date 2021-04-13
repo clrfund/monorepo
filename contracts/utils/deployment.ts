@@ -28,6 +28,11 @@ const CIRCUITS: {[name: string]: any} = {
     qvtVerifier: 'QuadVoteTallyVerifierSmall',
     treeDepths: { stateTreeDepth: 8, messageTreeDepth: 11, voteOptionTreeDepth: 3 },
   },
+  medium: {
+    batchUstVerifier: 'BatchUpdateStateTreeVerifierMedium',
+    qvtVerifier: 'QuadVoteTallyVerifierMedium',
+    treeDepths: { stateTreeDepth: 9, messageTreeDepth: 13, voteOptionTreeDepth: 3 },
+  },
 }
 
 export async function deployContract(

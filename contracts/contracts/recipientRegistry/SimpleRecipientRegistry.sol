@@ -12,8 +12,17 @@ import './BaseRecipientRegistry.sol';
 contract SimpleRecipientRegistry is Ownable, BaseRecipientRegistry {
 
   // Events
-  event RecipientAdded(bytes32 indexed _recipientId, address _recipient, string _metadata, uint256 _index);
-  event RecipientRemoved(bytes32 indexed _recipientId);
+  event RecipientAdded(
+    bytes32 indexed _recipientId,
+    address _recipient,
+    string _metadata,
+    uint256 _index,
+    uint256 _timestamp
+  );
+  event RecipientRemoved(
+    bytes32 indexed _recipientId,
+    uint256 _timestamp
+  );
 
   /**
     * @dev Deploy the registry.
@@ -40,7 +49,7 @@ contract SimpleRecipientRegistry is Ownable, BaseRecipientRegistry {
     require(bytes(_metadata).length != 0, 'RecipientRegistry: Metadata info is empty string');
     bytes32 recipientId = keccak256(abi.encodePacked(_recipient, _metadata));
     uint256 recipientIndex = _addRecipient(recipientId, _recipient);
-    emit RecipientAdded(recipientId, _recipient, _metadata, recipientIndex);
+    emit RecipientAdded(recipientId, _recipient, _metadata, recipientIndex, block.timestamp);
   }
 
   /**
@@ -52,6 +61,6 @@ contract SimpleRecipientRegistry is Ownable, BaseRecipientRegistry {
     onlyOwner
   {
     _removeRecipient(_recipientId);
-    emit RecipientRemoved(_recipientId);
+    emit RecipientRemoved(_recipientId, block.timestamp);
   }
 }

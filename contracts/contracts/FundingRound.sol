@@ -29,7 +29,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   }
 
   // State
-  uint256 public startBlock;
   uint256 public voiceCreditFactor;
   uint256 public contributorCount;
   uint256 public matchingPoolSize;
@@ -75,7 +74,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     userRegistry = _userRegistry;
     recipientRegistry = _recipientRegistry;
     coordinator = _coordinator;
-    startBlock = block.number;
   }
 
   /**
@@ -316,11 +314,11 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
       require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
     }
     recipients[_voteOptionIndex] = true;
+    uint256 startTime = maci.signUpTimestamp();
     address recipient = recipientRegistry.getRecipientAddress(
       _voteOptionIndex,
-       startBlock,
-      // TODO: use block numbers in MACI
-      startBlock + (maci.signUpDurationSeconds() + maci.votingDurationSeconds()) / 15
+      startTime,
+      startTime + maci.signUpDurationSeconds() + maci.votingDurationSeconds()
     );
     if (recipient == address(0)) {
       // Send funds back to the matching pool

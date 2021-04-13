@@ -169,10 +169,30 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     MACI maci = maciFactory.deployMaci(
       SignUpGatekeeper(newRound),
       InitialVoiceCreditProxy(newRound),
+      coordinator,
       coordinatorPubKey
     );
     newRound.setMaci(maci);
     emit RoundStarted(address(newRound));
+  }
+
+  /**
+    * @dev Get total amount of matching funds.
+    */
+  function getMatchingFunds(ERC20 token)
+    external
+    view
+    returns (uint256)
+  {
+    uint256 matchingPoolSize = token.balanceOf(address(this));
+    for (uint256 index = 0; index < fundingSources.length(); index++) {
+      address fundingSource = fundingSources.at(index);
+      uint256 allowance = token.allowance(fundingSource, address(this));
+      uint256 balance = token.balanceOf(fundingSource);
+      uint256 contribution = allowance < balance ? allowance : balance;
+      matchingPoolSize += contribution;
+    }
+    return matchingPoolSize;
   }
 
   /**
