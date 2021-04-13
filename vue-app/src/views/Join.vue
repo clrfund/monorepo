@@ -25,13 +25,15 @@
         </div>
       </div>
       <div class="title-area">
-        <div class="mobile your-project">Your project</div>
-        <div class="desktop your-project">
-          <h1>Your project</h1>
-          <router-link to="/join">
-            <a class="desktop-link">Cancel</a>
-          </router-link>
+        <h1 class="desktop">Your project</h1>
+        <div class="your-project mobile">
+          Your project
         </div>
+      </div>
+      <div class="cancel-area desktop">
+        <router-link to="/join">
+          Cancel
+        </router-link>
       </div>
       <div class="form-area">
         <div class="application">
@@ -579,10 +581,9 @@ export default class JoinView extends mixins(validationMixin) {
 .grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-template-rows: repeat(4, auto);
+  grid-template-rows: auto 1fr auto;
   grid-template-areas:
-    "title title"
-    "title title"
+    "title cancel"
     "form progress"
     "form navi";
   position: relative;
@@ -590,11 +591,12 @@ export default class JoinView extends mixins(validationMixin) {
   height: calc(100vh - $nav-header-height);
   @media (max-width: $breakpoint-m) {
     grid-template-rows: auto auto 1fr auto;
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "progress progress"
-      "title title"
-      "form form"
-      "navi navi";
+      "progress"
+      "title"
+      "form"
+      "navi";
     gap: 0;
   }
 }
@@ -617,6 +619,13 @@ export default class JoinView extends mixins(validationMixin) {
   justify-content: space-between;
   align-items: center;
   /* margin-top: 4rem; */
+}
+
+.cancel-area {
+  grid-area: cancel;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .form-area {
@@ -722,9 +731,9 @@ export default class JoinView extends mixins(validationMixin) {
 
 
 }
-
+/* 
 .application-page {
-  /* display: flex;
+  display: flex;
   padding: 1rem;
   height: 100%;
   flex-direction: column;
@@ -732,8 +741,8 @@ export default class JoinView extends mixins(validationMixin) {
   @media (min-width: $breakpoint-m) {
     padding: 0;
     width: 100%;
-  } */
-}
+  }
+} */
 
 .link {
   font-family: Inter;
@@ -828,18 +837,5 @@ export default class JoinView extends mixins(validationMixin) {
 .error {
   color: $error-color;
   margin: 0.5rem 0 -1rem;
-}
-
-/* .progress-block {
-  margin-left: 1.5rem; 
-  background: $bg-secondary-color; 
-  border-radius: 8px; 
-  padding: 1rem; 
-  height: 100%;
-  width: 33%;
-} */
-
-.desktop-link {
-  margin-right: 16rem;
 }
 </style>

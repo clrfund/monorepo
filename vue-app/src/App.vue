@@ -99,12 +99,12 @@ a {
 .mobile {
   display: none !important;
   @media (max-width: $breakpoint-m) {
-    display: inline-block !important;
+    display: inherit !important;
   }
 }
 
 .desktop {
-  display: inline-block !important;
+  display: inherit !important;
   @media (max-width: $breakpoint-m) {
     display: none !important;
   }
