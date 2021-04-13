@@ -96,6 +96,11 @@ a {
   text-decoration: none;
 }
 
+textarea {
+  resize: vertical;
+  border-end-end-radius: 0 !important;
+}
+
 .mobile {
   display: none !important;
   @media (max-width: $breakpoint-m) {
