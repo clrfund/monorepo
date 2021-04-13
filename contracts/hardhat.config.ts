@@ -1,9 +1,12 @@
 import fs from 'fs';
 import path from 'path';
+import dotenv from 'dotenv'
 
 import { HardhatUserConfig, task } from 'hardhat/config'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ganache'
+
+dotenv.config()
 
 const GAS_LIMIT = 10000000
 
@@ -14,7 +17,7 @@ const config: HardhatUserConfig = {
       blockGasLimit: GAS_LIMIT,
     },
     localhost: {
-      url: "http://127.0.0.1:18545"
+      url: 'http://127.0.0.1:18545',
     },
     ganache: {
       // Workaround for https://github.com/nomiclabs/hardhat/issues/518
@@ -32,11 +35,11 @@ const config: HardhatUserConfig = {
     },
   },
   paths: {
-    artifacts: "build/contracts",
-    tests: "tests"
+    artifacts: 'build/contracts',
+    tests: 'tests',
   },
   solidity: {
-    version: "0.6.12",
+    version: '0.6.12',
     settings: {
       optimizer: {
         enabled: true,
