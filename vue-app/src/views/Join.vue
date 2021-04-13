@@ -30,7 +30,10 @@
                   invalid: $v.form.project.name.$error
                 }"
               >
-              <p v-if="$v.form.project.name.$error">Enter a valid name</p>
+              <p :class="{
+                error: true,
+                invisible: !$v.form.project.name.$error
+              }">Enter a valid name</p>
             </div>
             <div class="form-background">
               <label for="project-tagline" class="input-label">Tagline</label>
@@ -45,10 +48,16 @@
                   invalid: $v.form.project.tagline.$error
                 }"
               />
+              <p :class="{
+                error: true,
+                invisible: !$v.form.project.tagline.$error
+              }">Enter a valid tagline</p>
             </div>
             <div class="form-background">
-              <label for="project-description" class="input-label">Description</label>
-              <p class="input-description">Markdown supported.</p>
+              <label for="project-description" class="input-label">
+                Description
+                <p class="input-description">Markdown supported.</p>
+              </label>
               <textarea
                 id="project-description"
                 placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
@@ -58,6 +67,10 @@
                   invalid: $v.form.project.description.$error
                 }"
               />
+              <p :class="{
+                error: true,
+                invisible: !$v.form.project.description.$error
+              }">Enter a valid description</p>
             </div>
             <div class="form-background">
               <label for="project-category" class="input-label">Category</label>
@@ -76,6 +89,10 @@
                   <option value="tooling">Tooling</option>
                   <option value="data">Data</option>
               </select>
+              <p :class="{
+                error: true,
+                invisible: !$v.form.project.category.$error
+              }">Select a category</p>
             </div>
             <div class="form-background">
               <label for="project-problem-space" class="input-label">Problem space</label>
@@ -89,6 +106,10 @@
                   invalid: $v.form.project.problemSpace.$error
                 }"
               />
+              <p :class="{
+                error: true,
+                invisible: !$v.form.project.problemSpace.$error
+              }">Enter a valid response</p>
             </div>
           </div>
         </div>    
@@ -107,6 +128,10 @@
                   invalid: $v.form.fund.address.$error
                 }"
               />
+              <p :class="{
+                error: true,
+                invisible: !$v.form.fund.address.$error
+              }">Enter a valid Ethereum address (Ox or ENS)</p>
             </div>
             <div class="form-background">
               <label for="fund-plans" class="input-label">How will you spend your funding?</label>
@@ -120,6 +145,10 @@
                   invalid: $v.form.fund.plans.$error
                 }"
               />
+              <p :class="{
+                error: true,
+                invisible: !$v.form.fund.plans.$error
+              }">Enter a valid description of plans</p>
             </div>
           </div>
         </div>
@@ -242,6 +271,10 @@
                       name="image-requiresUpload"
                       value="false"
                       v-model="$v.form.image.requiresUpload.$model"
+                      :class="{
+                        input: true,
+                        invalid: $v.form.image.requiresUpload.$error
+                      }"
                     >
                     <label for="IPFS">IPFS – you have IPFS hashes for your images</label>
                   </div>
@@ -252,6 +285,10 @@
                       name="image-requiresUpload"
                       value="true"
                       v-model="$v.form.image.requiresUpload.$model"
+                      :class="{
+                        input: true,
+                        invalid: $v.form.image.requiresUpload.$error
+                      }"
                     >
                     <label for="upload">Upload – you'd like to upload from your device</label>
                   </div>
@@ -450,7 +487,7 @@ export default class JoinView extends mixins(validationMixin) {
       discord: '',
     },
     image: {
-      requiresUpload: '',
+      requiresUpload: 'false',
       banner: '',
       thumbnail: '',
     },
@@ -474,7 +511,7 @@ export default class JoinView extends mixins(validationMixin) {
 
   get requiresUpload(): boolean {
     return this.form.image.requiresUpload === 'true'
-  }
+  }    
 } 
 </script>
 
@@ -597,17 +634,16 @@ export default class JoinView extends mixins(validationMixin) {
     border: 2px solid $button-color;
     background-color: $bg-secondary-color;
   }
-  &:invalid {
-    border: 2px solid $error-color; 
-  }
 }
-
-.input-error {
+.input.invalid {
+  border: 2px solid $error-color; 
+}
+/* .input-error {
   display: none;
   &:invalid {
     display: block;
   }
-}
+} */
 
 .input-description {
   margin-top: 0.25rem;
@@ -627,4 +663,8 @@ export default class JoinView extends mixins(validationMixin) {
   margin: 0;
   }
 
+.error {
+  color: $error-color;
+  margin: 0.5rem 0 -1rem;
+}
 </style>

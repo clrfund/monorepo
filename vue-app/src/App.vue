@@ -335,6 +335,10 @@ a {
   display: none;
 }
 
+.invisible {
+  visibility: hidden;
+}
+
 @media (max-width: 900px) {
   #app {
     flex-direction: column;
