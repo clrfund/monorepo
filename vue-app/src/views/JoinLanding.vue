@@ -1,26 +1,25 @@
 @ -0,0 +1,36 @@
 <template>
-  <div id="page">
-    <div id="waiting-banner" class="caps">
-      <span>Funding Starts: {{timeRemaining}}</span>
-      <span>{{startDate}}</span>
-    </div>
-    <div id="hero">
-      <h1>Join the next funding round</h1>
-      <div id="subtitle" class="subtitle">We’ll need some information about your project and a 0.1 ETH security deposit.</div>
-      <div id="info-boxes">
-        <div id="apply-callout">
-          <div id="countdown-label" class="caps">Joining close</div>
-          <div id="countdown" class="caps">11 days</div>
-        </div> 
-        <div id="apply-callout">
-          <div id="countdown-label" class="caps">Time to complete</div>
-          <div id="countdown" class="caps">15 minutes (ish)</div>
-        </div> 
+  <div>
+    <round-status-banner />
+    <div id="hero" style="display: flex;">
+      <div class="content">
+        <h1>Join the next funding round</h1>
+        <div id="subtitle" class="subtitle">We’ll need some information about your project and a 0.1 ETH security deposit.</div>
+        <div id="info-boxes">
+          <div id="apply-callout">
+            <div id="countdown-label" class="caps">Joining close</div>
+            <div id="countdown" class="caps">11 days</div>
+          </div> 
+          <div id="apply-callout">
+            <div id="countdown-label" class="caps">Time to complete</div>
+            <div id="countdown" class="caps">15 minutes (ish)</div>
+          </div> 
+        </div>
+        <button class="btn-secondary" @click="seeCriteria()">See round criteria</button>
+        <router-link to="/join/one" class="btn-primary">Add project</router-link>
       </div>
-      <button class="btn btn-shell" @click="seeCriteria()">See round criteria</button>
-      <router-link to="/join/one"><button class="btn btn-primary">Add project</button></router-link>
-      
+      <img src="@/assets/newrings.png" width="100%"/>
     </div>
   </div>
 </template>
@@ -29,10 +28,12 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import CriteriaModal from '@/components/CriteriaModal.vue'
+import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
 @Component({
   name: 'join',
   metaInfo: { title: 'Join' },
+  components: { RoundStatusBanner },
 })
 
 export default class JoinLanding extends Vue {
@@ -51,9 +52,12 @@ export default class JoinLanding extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
 
-#page > div {
+
+.content {
   padding: $content-space;
+  background: $bg-primary-color;
 }
 
 h1 {
@@ -64,122 +68,13 @@ h1 {
   line-height: 120%;
 }
 
-h2 {
-  font-family: 'Glacial Indifference', sans-serif;
-  font-weight: bold;
-  font-size: 24px;
-  letter-spacing: -0.015em;
-}
-
-p {
-  font-size: 16px;
-  line-height: 30px;
-}
-
-ol {
-  list-style: none;
-  counter-reset: li-counter;
-  padding-left: 3rem;
-}
-
-ol li {
-  margin: 0 0 0.5rem 0;
-  counter-increment: li-counter;
-  position: relative;
-  max-width: calc(100vw - (2 * $content-space));
-}
-ol li::before {
-  content: counter(li-counter); 
-  position: absolute;
-  top: 0.5rem;
-  left: -3rem;
-  line-height: 2rem;
-  width: 2rem;
-  height: 2rem;
-  font-family: Inter;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 100%;
-  border-radius: 50%;
-  color: white;
-  background: #2A2736;
-  border: 2px solid #9789C4;
-  box-sizing: border-box;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.btn {
-  padding: 0.5rem 1.5rem;
-  margin: 0 auto;
-  border-radius: 2rem;
-  color: white;
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 150%;
-  text-align: center;
-  background: none;
-  border: none;
-}
-
-.btn-shell {
-  background: rgba(255, 255, 255, 0.15);
-  border: 2px solid #FFFFFF;
-  margin-bottom: 1rem;
-  width: 100%;
-
-}
-.btn-hero-primary {
-  background: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.55%);
-}
-
-.btn-primary {
-  background: #16C8B5;
-  width: 100%;
-}
-
-.link-primary {
-  color: #16C8B5;
-}
-
-.link-li {
-  color: white;
-  text-decoration: underline;
-  margin-bottom: 1rem;
-  font-size: 16px;
-}
-
-.btn-secondary {
-  background: $clr-green-gradient;
-}
-
-#optimism {
-  background: $clr-pink-dark-gradient-bg;
-}
-
-#bright-id {
-  background: $clr-blue-gradient-bg;
-}
-
-.caps {
-  text-transform: uppercase;
-}
-
-#page > #waiting-banner {
-  display: flex;
-  height: 48px;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  align-items: center;
-  margin-top: 1rem;
-}
-
-#hero {
+.hero {
   background: $clr-pink-dark-gradient;
 }
+
+.hero img {
+    mix-blend-mode: exclusion;
+  }
 
 #countdown {
   font-family: 'Glacial Indifference', sans-serif;
@@ -199,31 +94,9 @@ ol li::before {
   margin-bottom: 0.5rem;
 }
 
-#about-2 {
-  background: $bg-secondary-color;
-}
-
-#about-3 {
-  background: $bg-light-color;
-}
 
 #subtitle {
   font-size: 20px;
-}
-
-#section-how-it-works {
- /* background-image */
-}
-
-#btn-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-#dai-drip {
-  max-width: 100%;
 }
 
 #apply-callout {
@@ -241,13 +114,5 @@ ol li::before {
 #info-boxes {
   margin-bottom: 2rem; 
 }
-
-#footer {
-    max-width: 100vw;
-    padding: $content-space;
-    > li {
-      list-style-type: none;
-    }
-  }
 
 </style>
