@@ -27,7 +27,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-// import { clipboardy } from  'clipboardy'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 
@@ -44,10 +43,9 @@ import {
   SET_CURRENT_USER,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
-import clipboardy from 'clipboardy'
 
 @Component
-export default class Profile extends Vue {
+export default class WalletWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
   profileImageUrl: string | null = null

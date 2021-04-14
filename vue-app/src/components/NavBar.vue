@@ -30,7 +30,7 @@
           App
         </div>
       </router-link>
-      <Profile />
+      <WalletWidget />
     </div>
   </nav>
 </template>
@@ -38,12 +38,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import Profile from './Profile.vue'
+import WalletWidget from './WalletWidget.vue'
 import CartModal from './CartModal.vue'
 import { Prop } from 'vue-property-decorator'
 
 @Component({
-  components: { Profile, CartModal },
+  components: { WalletWidget, CartModal },
 })
 export default class NavBar extends Vue {
   @Prop() inApp

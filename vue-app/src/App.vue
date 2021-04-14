@@ -28,7 +28,7 @@ import { Watch } from 'vue-property-decorator'
 
 import { recipientRegistryType } from '@/api/core'
 // import Cart from '@/components/Cart.vue'
-// import Profile from '@/components/Profile.vue'
+// import WalletWidget from '@/components/WalletWidget.vue'
 import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
 import Cart from '@/components/Cart.vue'
