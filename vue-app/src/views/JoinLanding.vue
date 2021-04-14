@@ -67,6 +67,10 @@ export default class JoinLanding extends Vue {
   width: min(100%, 512px);
   margin-left: 2rem;
   margin-top: 4rem;
+  @media (max-width: ($breakpoint-m + 1px)) {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 h1 {
