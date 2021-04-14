@@ -102,14 +102,12 @@ textarea {
 }
 
 .mobile {
-  display: none !important;
-  @media (max-width: $breakpoint-m) {
-    display: inherit !important;
+  @media (min-width: ($breakpoint-m + 1px)) {
+    display: none !important;
   }
 }
 
 .desktop {
-  display: inherit !important;
   @media (max-width: $breakpoint-m) {
     display: none !important;
   }
@@ -280,9 +278,7 @@ textarea {
 }
 
 #content {
-  background-color: $bg-light-color;
-  flex-grow: 1;
-  height: 100%;
+  flex: 1;
 
   .content-heading {
     display: block;
@@ -297,7 +293,6 @@ textarea {
 
   .title {
     padding-bottom: 1.5rem;
-    /* border-bottom: 1px solid rgba(115,117,166,1); */
     margin-bottom: 2rem;
   }
 }
@@ -409,10 +404,9 @@ textarea {
     align-items: center;
   }
 
-  #content {
-    margin-bottom: $profile-image-size + $content-space * 2; /* offset for profile block */
-    /* padding: $nav-header-height 0 0 0; */
-  }
+  /* #content {
+    margin-bottom: $profile-image-size + $content-space * 2; // profile offset
+  } */
 
   #footer {
     max-width: 100vw;

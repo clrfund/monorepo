@@ -2,7 +2,7 @@
   <div class="container">
     <div class="grid">
       <div class="progress-area">
-        <div class="">
+        <div class="progress-container">
           <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
           <h3>
             Step {{currentStep + 1}} of {{steps.length}}
@@ -67,7 +67,7 @@
                   >
                   <p :class="{
                     error: true,
-                    invisible: !$v.form.project.name.$error
+                    hidden: !$v.form.project.name.$error
                   }">Enter a valid name</p>
                 </div>
                 <div class="form-background">
@@ -84,7 +84,7 @@
                   />
                   <p :class="{
                     error: true,
-                    invisible: !$v.form.project.tagline.$error
+                    hidden: !$v.form.project.tagline.$error
                   }">Enter a valid tagline</p>
                 </div>
                 <div class="form-background">
@@ -103,29 +103,74 @@
                   />
                   <p :class="{
                     error: true,
-                    invisible: !$v.form.project.description.$error
+                    hidden: !$v.form.project.description.$error
                   }">Enter a valid description</p>
                 </div>
                 <div class="form-background">
-                  <label for="project-category" class="input-label">Category</label>
-                  <select
-                    id="project-category"
-                    class="input"
-                    v-model="$v.form.project.category.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.project.category.$error
-                    }"
-                  >
-                      <option selected disabled label="Choose the best fit" />
-                      <option value="content">Content</option>
-                      <option value="researcg">Research</option>
-                      <option value="tooling">Tooling</option>
-                      <option value="data">Data</option>
-                  </select>
+                  <label for="project-category" class="input-label">Category
+                    <p class="input-description">Choose the best fit</p>
+                  </label>
+                  <form class="radio-row">
+                    <div>
+                      <input
+                        id="category-content"
+                        type="radio"
+                        name="project-category"
+                        value="content"
+                        v-model="$v.form.project.category.$model"
+                        :class="{
+                          input: true,
+                          invalid: $v.form.project.category.$error
+                        }"
+                      >
+                      <label for="category-content" class="radio-btn">Content</label>
+                    </div>
+                    <div>
+                      <input
+                        id="research"
+                        type="radio"
+                        name="project-category"
+                        value="research"
+                        v-model="$v.form.project.category.$model"
+                        :class="{
+                          input: true,
+                          invalid: $v.form.project.category.$error
+                        }"
+                      >
+                      <label for="research" class="radio-btn">Research</label>
+                    </div>
+                    <div>
+                      <input
+                        id="tooling"
+                        type="radio"
+                        name="project-category"
+                        value="tooling"
+                        v-model="$v.form.project.category.$model"
+                        :class="{
+                          input: true,
+                          invalid: $v.form.project.category.$error
+                        }"
+                      >
+                      <label for="tooling" class="radio-btn">Tooling</label>
+                    </div>
+                    <div>
+                      <input
+                        id="data"
+                        type="radio"
+                        name="project-category"
+                        value="data"
+                        v-model="$v.form.project.category.$model"
+                        :class="{
+                          input: true,
+                          invalid: $v.form.project.category.$error
+                        }"
+                      >
+                      <label for="data" class="radio-btn">Data</label>
+                    </div>
+                  </form>
                   <p :class="{
                     error: true,
-                    invisible: !$v.form.project.category.$error
+                    hidden: !$v.form.project.category.$error
                   }">Select a category</p>
                 </div>
                 <div class="form-background">
@@ -142,7 +187,7 @@
                   />
                   <p :class="{
                     error: true,
-                    invisible: !$v.form.project.problemSpace.$error
+                    hidden: !$v.form.project.problemSpace.$error
                   }">Enter a valid response</p>
                 </div>
               </div>
@@ -164,7 +209,7 @@
                   />
                   <p :class="{
                     error: true,
-                    invisible: !$v.form.fund.address.$error
+                    hidden: !$v.form.fund.address.$error
                   }">Enter a valid Ethereum address (Ox or ENS)</p>
                 </div>
                 <div class="form-background">
@@ -181,7 +226,7 @@
                   />
                   <p :class="{
                     error: true,
-                    invisible: !$v.form.fund.plans.$error
+                    hidden: !$v.form.fund.plans.$error
                   }">Enter a valid description of plans</p>
                 </div>
               </div>
@@ -383,17 +428,26 @@
           </form>
         </div>
       </div>
-      <div class="nav-area">
+      <div class="nav-area nav-bar mobile">
         <div v-if="currentStep === 5">
           <h2 class="step-title">Review</h2>
           <!-- TODO show summary of information -->
           Summary of all data!
         </div>
-        <div class="nav-area btn-row mobile">
+        <div class="btn-row mobile">
           <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
             Previous step
           </router-link>
-          <router-link v-if="currentStep < 5" :to="{ name: 'joinStep', params: { step: steps[currentStep + 1] }}" class="btn-primary">
+          <router-link
+            v-if="currentStep < 5"
+            :to="{
+              name: 'joinStep',
+              params: {
+                step: steps[currentStep + 1]
+              }
+            }"
+            class="btn-primary"
+          >
             Next step
           </router-link>
           <!-- TODO button to trigger tx  -->
@@ -401,17 +455,6 @@
             Finish
           </router-link>
         </div>
-<!--    <div class="btn-row">
-          <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
-            Previous step
-          </router-link>
-          <router-link v-if="currentStep < 5" :to="{ name: 'joinStep', params: { step: steps[currentStep + 1] }}" class="btn-primary">
-            Next step
-          </router-link>
-          <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
-            Finish
-          </router-link>
-        </div> -->
       </div>
     </div>
   </div>
@@ -581,14 +624,12 @@ export default class JoinView extends mixins(validationMixin) {
 .grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
   grid-template-areas:
     "title cancel"
-    "form progress"
-    "form navi";
-  position: relative;
-  gap: 0 2rem;
+    "form progress";
   height: calc(100vh - $nav-header-height);
+  gap: 0 2rem;
   @media (max-width: $breakpoint-m) {
     grid-template-rows: auto auto 1fr auto;
     grid-template-columns: 1fr;
@@ -603,6 +644,14 @@ export default class JoinView extends mixins(validationMixin) {
 
 .progress-area {
   grid-area: progress;
+  position: relative;
+}
+
+.progress-container {
+  position: sticky;
+  top: 5rem;
+  /* left: 0; */
+  align-self: start;
   padding: 1rem; 
   background: $bg-secondary-color; 
   border-radius: 8px; 
@@ -647,8 +696,17 @@ export default class JoinView extends mixins(validationMixin) {
   grid-area: navi;
 }
 
-.desktop-title {
-  /* width: 100%;
+.nav-bar {
+  display: inherit;
+  position: sticky;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  padding: 1rem;
+  background: $bg-primary-color;
+}
+/* .desktop-title {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -656,8 +714,8 @@ export default class JoinView extends mixins(validationMixin) {
 
   @media (max-width: $breakpoint-m) {
       display: none;
-    } */
-}
+    }
+} */
 
 .layout-steps {
   display: flex;
@@ -832,10 +890,37 @@ export default class JoinView extends mixins(validationMixin) {
   letter-spacing: 0em;
   text-align: left;
   margin: 0;
+}
+
+.radio-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  input {
+    display: none;
   }
+  input[type="radio"]:checked+label {
+    border: 2px solid $clr-green;
+  }
+}
+
+.radio-btn {
+  border: 2px solid $button-color;
+  color: white;
+  border-radius: 0.5rem;
+  font-size: 16px;
+  align-items: center;
+  padding: 0.25rem 1.25rem;
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+    cursor: pointer;
+  }
+  
+}
 
 .error {
   color: $error-color;
-  margin: 0.5rem 0 -1rem;
+  margin-bottom: 0;
 }
 </style>
