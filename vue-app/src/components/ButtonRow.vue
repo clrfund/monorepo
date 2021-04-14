@@ -57,6 +57,7 @@ import { Prop } from 'vue-property-decorator'
 export default class ButtonRow extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]
+  @Prop() isStepValid: boolean
 }
 </script>
 
@@ -69,9 +70,14 @@ export default class ButtonRow extends Vue {
   justify-content: space-between;
   align-items: center;
   @media(max-width: $breakpoint-m) {
-    
     bottom: 0;
-
   }
 }
+.disabled {
+  /* color: currentColor; */
+  cursor: not-allowed;
+  opacity: 0.5;
+  /* text-decoration: none; */
+}
+
 </style>

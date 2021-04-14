@@ -41,7 +41,8 @@ import { Prop } from 'vue-property-decorator'
 
 @Component
 export default class NavBar extends Vue {
-  @Prop() inApp;
+  @Prop() inApp
+  @Prop() isStepValid
   profileImageUrl: string | null = null
 
   // get currentUser(): User | null {
@@ -89,7 +90,6 @@ export default class NavBar extends Vue {
     font-size: 16px;
     display: flex;
     align-items: center;
-    /* box-sizing: border-box; */
   }
 
   .app-btn {

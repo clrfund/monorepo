@@ -10,7 +10,12 @@
           <div v-if="currentStep === 0">
             <h2>About the project</h2>
           </div>
-          <button-row :steps="steps" :currentStep="currentStep" class="desktop" />
+          <button-row
+            :isStepValid="isStepValid"
+            :steps="steps"
+            :currentStep="currentStep"
+            class="desktop"
+          />
         </div>
       </div>
       <div class="title-area">
@@ -404,6 +409,7 @@
               </div>
             </div>
           </form>
+          <!-- TODO show summary of information -->
           <!-- Summary -->
           <div v-if="currentStep === 5" id="summary">
             {{form}}
@@ -412,32 +418,7 @@
       </div>
       <div class="nav-area nav-bar mobile">
         <button-row :steps="steps" :currentStep="currentStep" />
-        <!-- TODO show summary of information -->
-  <!--  <div v-if="currentStep === 5">
-          <h2 class="step-title">Review</h2>
-          Summary of all data!
-        </div>
-        <div class="btn-row mobile">
-          <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
-            Previous step
-          </router-link>
-          <router-link
-            v-if="currentStep < 5"
-            :to="{
-              name: 'joinStep',
-              params: {
-                step: steps[currentStep + 1]
-              }
-            }"
-            class="btn-primary"
-          >
-            Next step
-          </router-link>
-          <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
-            Finish
-          </router-link>
-        </div>  -->
-        <!-- TODO button to trigger tx  -->
+        <!-- TODO submit button to trigger tx, pass callback to above <botton-row />?  -->
       </div>
     </div>
   </div>
@@ -587,9 +568,9 @@ export default class JoinView extends mixins(validationMixin) {
   get requiresUpload(): boolean {
     return this.form.image.requiresUpload === 'true'
   }
-  // get isStepValid(): boolean {
-  //   return this.form[this.steps[this.currentStep]].
-  // }
+  get isStepValid(): boolean {
+    return !this.form[this.steps[this.currentStep]].$invalid
+  }
 } 
 </script>
 
