@@ -17,10 +17,11 @@
     </button>
     <div v-else-if="currentUser" class="profile-info">
       <div class="profile-name" @click="copyAddress">{{ truncatedAddress }}</div>
-      <div class="profile-image">
+      <div class="profile-image" @click="toggleProfile()">
         <img v-if="profileImageUrl" :src="profileImageUrl">
       </div>
     </div>
+    <profile v-if="showProfilePanel" :toggleProfile="toggleProfile" />
   </div>
 </template>
 
@@ -43,20 +44,26 @@ import {
   SET_CURRENT_USER,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
+import Profile from '@/views/Profile.vue'
 
-@Component
+@Component({components: {Profile}})
 export default class WalletWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
+  private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
 
-  async copyAddress(): void {
+  async copyAddress(): Promise<void> {
     try {
       await navigator.clipboard.writeText(this.currentUser.walletAddress)
       // alert('Text copied to clipboard')
     } catch (error) {
       console.warn('Error in copying text: ', error)
     }
+  }
+
+  toggleProfile(): void {
+    this.showProfilePanel = !this.showProfilePanel
   }
 
   get walletProvider(): any {
@@ -68,6 +75,7 @@ export default class WalletWidget extends Vue {
   }
 
   async mounted() {
+    this.showProfilePanel = false
     if (!this.walletProvider) {
       return
     }
@@ -160,11 +168,14 @@ export default class WalletWidget extends Vue {
   }
 
   get truncatedAddress(): string {
-    const address: string = this.currentUser.walletAddress
-    const begin: string = address.substr(0, 6)
-    const end: string = address.substr(address.length - 4, 4)
-    const truncatedAddress = `${begin}…${end}`
-    return truncatedAddress
+    if (this?.currentUser?.walletAddress) {
+      const address: string = this.currentUser.walletAddress
+      const begin: string = address.substr(0, 6)
+      const end: string = address.substr(address.length - 4, 4)
+      const truncatedAddress = `${begin}…${end}`
+      return truncatedAddress
+    }
+    return ''
   }
 }
 </script>

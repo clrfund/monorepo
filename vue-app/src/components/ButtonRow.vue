@@ -57,7 +57,7 @@ import { Prop } from 'vue-property-decorator'
 export default class ButtonRow extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]
-  @Prop() isStepValid: boolean
+  @Prop() isStepValid?: boolean
 }
 </script>
 
