@@ -51,29 +51,35 @@
                   <p :class="{
                     error: true,
                     hidden: !$v.form.project.name.$error
-                  }">Enter a valid name</p>
+                  }">Your project needs a name</p>
                 </div>
                 <div class="form-background">
                   <label for="project-tagline" class="input-label">Tagline</label>
-                  <p class="input-description">Describe your project in a sentence.</p>
+                  <p class="input-description">Describe your project in a sentence. Max characters: 140</p>
                   <textarea
                     id="project-tagline"
                     placeholder="example: A quadratic funding protocol"
                     v-model="$v.form.project.tagline.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.project.tagline.$error
+                      invalid: $v.form.project.tagline.$error 
                     }"
                   />
                   <p :class="{
                     error: true,
                     hidden: !$v.form.project.tagline.$error
-                  }">Enter a valid tagline</p>
+                  }">This tagline is too long. Be brief for potential contributors</p>
+                  <!-- TODO: validation for different error type -->
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.project.tagline.$error
+                  }">Your project needs a tagline</p>
                 </div>
                 <div class="form-background">
                   <label for="project-description" class="input-label">
                     Description
                     <p class="input-description">Markdown supported.</p>
+                    <!-- TODO: actually support markdown in input -->
                   </label>
                   <textarea
                     id="project-description"
@@ -87,14 +93,13 @@
                   <p :class="{
                     error: true,
                     hidden: !$v.form.project.description.$error
-                  }">Enter a valid description</p>
+                  }">Your project needs a description. What are you raising money for?</p>
                 </div>
                 <div class="form-background">
                   <label for="project-category" class="input-label">Category
                     <p class="input-description">Choose the best fit</p>
                   </label>
                   <form class="radio-row">
-                    <div>
                       <input
                         id="category-content"
                         type="radio"
@@ -107,8 +112,7 @@
                         }"
                       >
                       <label for="category-content" class="radio-btn">Content</label>
-                    </div>
-                    <div>
+
                       <input
                         id="research"
                         type="radio"
@@ -121,8 +125,6 @@
                         }"
                       >
                       <label for="research" class="radio-btn">Research</label>
-                    </div>
-                    <div>
                       <input
                         id="tooling"
                         type="radio"
@@ -135,8 +137,6 @@
                         }"
                       >
                       <label for="tooling" class="radio-btn">Tooling</label>
-                    </div>
-                    <div>
                       <input
                         id="data"
                         type="radio"
@@ -149,12 +149,11 @@
                         }"
                       >
                       <label for="data" class="radio-btn">Data</label>
-                    </div>
                   </form>
                   <p :class="{
                     error: true,
                     hidden: !$v.form.project.category.$error
-                  }">Select a category</p>
+                  }">You need to choose a category</p>
                 </div>
                 <div class="form-background">
                   <label for="project-problem-space" class="input-label">Problem space</label>
@@ -171,7 +170,7 @@
                   <p :class="{
                     error: true,
                     hidden: !$v.form.project.problemSpace.$error
-                  }">Enter a valid response</p>
+                  }">Explain the problem your project solves</p>
                 </div>
               </div>
             </div>    
@@ -193,7 +192,8 @@
                   <p :class="{
                     error: true,
                     hidden: !$v.form.fund.address.$error
-                  }">Enter a valid Ethereum address (Ox or ENS)</p>
+                  }">Enter a valid Ethereum address (0x or ENS)</p>
+                  <!-- TODO: only validate after user removes focus on input -->
                 </div>
                 <div class="form-background">
                   <label for="fund-plans" class="input-label">How will you spend your funding?</label>
@@ -210,7 +210,7 @@
                   <p :class="{
                     error: true,
                     hidden: !$v.form.fund.plans.$error
-                  }">Enter a valid description of plans</p>
+                  }">Let potential contributors know what plans you have for their donations.</p>
                 </div>
               </div>
             </div>
@@ -261,6 +261,11 @@
                       invalid: $v.form.links.github.$error
                     }"
                   />
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.links.github.$error
+                  }">This doesn't look like a valid URL</p>
+                  <!-- TODO: only validate after user removes focus on input -->
                 </div>
                 <div class="form-background">
                   <label for="links-radicle" class="input-label">Radicle</label>
@@ -275,6 +280,10 @@
                       invalid: $v.form.links.radicle.$error
                     }"
                   />
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.links.radicle.$error
+                  }">This doesn't look like a valid URL</p>
                 </div>
                 <div class="form-background">
                   <label for="links-website" class="input-label">Website</label>
@@ -289,6 +298,10 @@
                       invalid: $v.form.links.website.$error
                     }"
                   />
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.links.website.$error
+                  }">This doesn't look like a valid URL</p>
                 </div>
                 <div class="form-background">
                   <label for="links-twitter" class="input-label">Twitter</label>
@@ -303,6 +316,10 @@
                       invalid: $v.form.links.twitter.$error
                     }"
                   />
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.links.twitter.$error
+                  }">This doesn't look like a valid URL</p>
                 </div>
                 <div class="form-background">
                   <label for="links-discord" class="input-label">Discord</label>
@@ -317,6 +334,10 @@
                       invalid: $v.form.links.discord.$error
                     }"
                   />
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.links.discord.$error
+                  }">This doesn't look like a valid URL</p>
                 </div>
               </div>
             </div>
@@ -370,6 +391,10 @@
                     type="file"
                     class="input"
                   />
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.image.thumbnail.$error
+                  }">Upload a file</p>
                   <input
                     v-if="!requiresUpload"
                     id="image-banner-hash"
@@ -381,6 +406,10 @@
                       invalid: $v.form.image.banner.$error
                     }"
                   />
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.image.banner.$error
+                  }">This doesn't look like an IPFS hash</p>
                 </div>
                 <div class="form-background">
                   <label
@@ -395,6 +424,10 @@
                     type="file"
                     class="input"
                   />
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.image.thumbnail.$error
+                  }">Upload a file</p>
                   <input
                     v-if="!requiresUpload"
                     id="image-thumbnail-hash"
@@ -405,6 +438,10 @@
                       invalid: $v.form.image.thumbnail.$error
                     }"
                   />
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.image.thumbnail.$error
+                  }">This doesn't look like an IPFS hash</p>
                 </div>
               </div>
             </div>
@@ -501,7 +538,7 @@ interface FormData {
         github: { url },
         radicle: { url },
         website: { url },
-        twitter: {},
+        twitter: { url },
         discord: { url },
       },
       image: {
@@ -622,7 +659,7 @@ export default class JoinView extends mixins(validationMixin) {
   /* left: 0; */
   align-self: start;
   padding: 1rem; 
-  background: $bg-secondary-color; 
+  background: $bg-primary-color; 
   border-radius: 8px; 
   @media (max-width: $breakpoint-m) {
     border-radius: 0;
@@ -663,6 +700,7 @@ export default class JoinView extends mixins(validationMixin) {
 
 .nav-area {
   grid-area: navi;
+  
 }
 
 .nav-bar {
@@ -864,15 +902,17 @@ export default class JoinView extends mixins(validationMixin) {
 .radio-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
   margin-top: 1rem;
   flex-wrap: wrap;
-  height: 3rem;
+  align-items: center;
+  border-radius: 0;
+  gap: -1px;
   input {
     display: none;
   }
   input[type="radio"]:checked+label {
-    border: 2px solid $clr-green;
+    background: $clr-pink;
+    font-weight: 600;
   }
 
 }
@@ -881,13 +921,22 @@ export default class JoinView extends mixins(validationMixin) {
   box-sizing: border-box;
   border: 2px solid $button-color;
   color: white;
-  border-radius: 0.5rem;
   font-size: 16px;
+  line-height: 24px;
   align-items: center;
-  padding: 0.25rem 1.25rem;
+  padding: 0.5rem 1rem;
+  margin-left: -1px;
+  &:first-of-type {
+    border-radius: 16px 0 0 16px;
+    margin-left: 0;
+  }
+  &:last-of-type {
+    border-radius: 0 16px 16px 0;
+  }
   &:hover {
     opacity: 0.8;
-    transform: scale(1.01);
+    background: $bg-secondary-color;
+    transform: scale(1.04);
     cursor: pointer;
   }
   
@@ -902,5 +951,10 @@ export default class JoinView extends mixins(validationMixin) {
 .error {
   color: $error-color;
   margin-bottom: 0;
+  margin-top: 0.5rem;
+  font-size: 14px;
+  &:before {
+    content: "⚠️ "
+  }
 }
 </style>

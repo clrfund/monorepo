@@ -21,7 +21,8 @@
             </div>
             <div style="display: flex; gap: 1rem; align-items: center;">
               <input type="email" class="input" id="contact" placeholder="vitalik@ethereum.org" /> 
-              <submit class="btn primary">Add email</submit>
+              <submit class="btn-primary">Add email</submit>
+              <!-- TODO: sent state -->
             </div>
           </div>
         </div>
@@ -126,7 +127,7 @@ p {
   padding: 1rem;
   opacity: 0.8;
   margin: 2rem 0rem;
-  border: 2px solid $bg-light-color;
+  border: 1px solid #000000;
 }
 
 #subtitle {
