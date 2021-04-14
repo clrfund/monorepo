@@ -42,7 +42,9 @@ import Profile from './Profile.vue'
 import CartModal from './CartModal.vue'
 import { Prop } from 'vue-property-decorator'
 
-@Component
+@Component({
+  components: { Profile, CartModal },
+})
 export default class NavBar extends Vue {
   @Prop() inApp
   @Prop() isStepValid
@@ -116,27 +118,27 @@ window.onclick = function(event) {
   }
 
   .button-menu {
-      display: none;
-      position: absolute;
-      background-color: $bg-secondary-color;
-      min-width: 160px;
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-      z-index: 1;
-      cursor: pointer;
+    display: none;
+    position: absolute;
+    background-color: $bg-secondary-color;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    cursor: pointer;
   }
 
-.show {
-  display: block;
-}
+  .show {
+    display: block;
+  }
 
   .dropdown {
-  position: relative;
-  display: inline-block;
-}
+    position: relative;
+    display: inline-block;
+  }
 
-.button-menu router-link {
-  font-size: 16px;
-}
+  .button-menu router-link {
+    font-size: 16px;
+  }
 
   .app-btn {
     padding: 0.25rem 1.25rem;

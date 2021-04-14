@@ -1,8 +1,7 @@
 <template>
-    <div id="modal">
-      cart
-        <cart />
-    </div>
+  <div id="modal">
+    <cart />
+  </div>
 </template>
 
 <script lang="ts">
@@ -11,7 +10,11 @@ import Component from 'vue-class-component'
 import Cart from './Cart.vue'
 
 
-@Component
+@Component({
+  components: {
+    Cart,
+  },
+})
 export default class CartModal extends Vue {
 
 }
