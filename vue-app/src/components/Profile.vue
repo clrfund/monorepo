@@ -1,5 +1,5 @@
 <template>
-  <div class="profile">
+  <div class="container">
     <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
     <template v-else-if="!isLoaded()"></template>
     <div
@@ -16,7 +16,7 @@
       Connect
     </button>
     <div v-else-if="currentUser" class="profile-info">
-      <div class="profile-name">{{ currentUser.walletAddress }}</div>
+      <div class="profile-name" @click="copyAddress">{{ truncatedAddress }}</div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl">
       </div>
@@ -27,6 +27,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+// import { clipboardy } from  'clipboardy'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 
@@ -43,13 +44,22 @@ import {
   SET_CURRENT_USER,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
+import clipboardy from 'clipboardy'
 
 @Component
 export default class Profile extends Vue {
-
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
   profileImageUrl: string | null = null
+
+  async copyAddress(): void {
+    try {
+      await navigator.clipboard.writeText(this.currentUser.walletAddress)
+      // alert('Text copied to clipboard')
+    } catch (error) {
+      console.warn('Error in copying text: ', error)
+    }
+  }
 
   get walletProvider(): any {
     return (window as any).ethereum
@@ -150,6 +160,14 @@ export default class Profile extends Vue {
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
     }
   }
+
+  get truncatedAddress(): string {
+    const address: string = this.currentUser.walletAddress
+    const begin: string = address.substr(0, 6)
+    const end: string = address.substr(address.length - 4, 4)
+    const truncatedAddress = `${begin}…${end}`
+    return truncatedAddress
+  }
 }
 </script>
 
@@ -157,13 +175,8 @@ export default class Profile extends Vue {
 <style scoped lang="scss">
 @import '../styles/vars';
 
-.profile {
-  align-items: center;
-  background-color: #23212f;
-  display: flex;
-  height: $profile-image-size;
-  justify-content: center;
-  padding: $content-space;
+.container {
+  margin-left: $content-space;
 }
 
 .provider-error {
@@ -177,23 +190,23 @@ export default class Profile extends Vue {
 }
 
 .profile-info {
-  align-items: center;
   display: flex;
-  flex-direction: row;
+  gap: $content-space;
+  align-items: center;
   width: 100%;
 
-  .profile-name {
-    flex: 1;
+  /* .profile-name {
     overflow: hidden;
     text-overflow: ellipsis;
-  }
+    word-break: break-all;
+  } */
 
   .profile-image {
     border: 4px solid $button-color;
     border-radius: 25px;
     box-sizing: border-box;
     height: $profile-image-size;
-    margin-left: 20px;
+    /* margin-left: 20px; */
     overflow: hidden;
     width: $profile-image-size;
 
