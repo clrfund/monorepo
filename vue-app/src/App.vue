@@ -199,6 +199,7 @@ textarea {
   /* min-height: 100%; */
   height: calc(100vh - 61.5px);
   background: $bg-light-color;
+  overflow: scroll;
 }
 
 #sidebar {

@@ -10,18 +10,7 @@
           <div v-if="currentStep === 0">
             <h2>About the project</h2>
           </div>
-          <div class="btn-row">
-            <router-link v-if="currentStep > 0" :to="{ name: 'joinStep', params: { step: steps[currentStep - 1] }}" class="btn-primary">
-              Previous step
-            </router-link>
-            <router-link v-if="currentStep < 5" :to="{ name: 'joinStep', params: { step: steps[currentStep + 1] }}" class="btn-primary">
-              Next step
-            </router-link>
-            <!-- TODO button to trigger tx  -->
-            <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
-              Finish
-            </router-link>
-          </div>
+          <button-row :steps="steps" :currentStep="currentStep" class="desktop" />
         </div>
       </div>
       <div class="title-area">
@@ -37,17 +26,6 @@
       </div>
       <div class="form-area">
         <div class="application">
-          <!-- <div class="progress">
-            <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length"/>
-            <div class="row">
-              <h3>
-                Step {{currentStep + 1}} of {{steps.length}}
-              </h3>
-              <router-link to="/join">
-                <a class="link">Cancel</a>
-              </router-link>
-            </div>
-          </div> -->
           <form>
             <div v-if="currentStep === 0">
               <h2 class="step-title">About the project</h2>
@@ -342,7 +320,7 @@
               <div class="inputs">
                 <div class="form-background">
                   <div class="row">
-                    <form>
+                    <form id="uploadRadio">
                       <div>
                         <input
                           id="IPFS"
@@ -429,9 +407,10 @@
         </div>
       </div>
       <div class="nav-area nav-bar mobile">
-        <div v-if="currentStep === 5">
+        <button-row :steps="steps" :currentStep="currentStep" />
+        <!-- TODO show summary of information -->
+  <!--  <div v-if="currentStep === 5">
           <h2 class="step-title">Review</h2>
-          <!-- TODO show summary of information -->
           Summary of all data!
         </div>
         <div class="btn-row mobile">
@@ -450,11 +429,11 @@
           >
             Next step
           </router-link>
-          <!-- TODO button to trigger tx  -->
           <router-link v-if="currentStep == 5" to="/project-added" class="btn-primary">
             Finish
           </router-link>
-        </div>
+        </div>  -->
+        <!-- TODO button to trigger tx  -->
       </div>
     </div>
   </div>
@@ -469,6 +448,7 @@ import { isAddress } from '@ethersproject/address'
 
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
+import ButtonRow from '@/components/ButtonRow.vue'
 
 
 interface FormData {
@@ -505,6 +485,7 @@ interface FormData {
   components: {
     LayoutSteps,
     ProgressBar,
+    ButtonRow,
   },
   validations: {
     form: {
@@ -769,13 +750,13 @@ export default class JoinView extends mixins(validationMixin) {
   align-items: center;
 }
 
-.btn-row {
+/* .btn-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   bottom: 0;
 }
-
+ */
 .application {
   height: 100%;
   display: flex;
@@ -894,17 +875,22 @@ export default class JoinView extends mixins(validationMixin) {
 
 .radio-row {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
+  height: 3rem;
   input {
     display: none;
   }
   input[type="radio"]:checked+label {
     border: 2px solid $clr-green;
   }
+
 }
 
 .radio-btn {
+  box-sizing: border-box;
   border: 2px solid $button-color;
   color: white;
   border-radius: 0.5rem;
@@ -917,6 +903,12 @@ export default class JoinView extends mixins(validationMixin) {
     cursor: pointer;
   }
   
+}
+
+#uploadRadio {
+  input {
+    margin-right: 0.5rem;
+  }
 }
 
 .error {
