@@ -29,12 +29,12 @@ $clr-purple-gradient-bg: linear-gradient(135deg, rgba(41, 36, 71, 0.2),  rgba(19
 $clr-pink-light-gradient-inactive: linear-gradient(109.01deg, rgba(151, 137, 196, 0.2) 6.45%, rgba(199, 42, 185, 0.2) 99.55%);
 
 $border: 2px solid $border-color;
-$content-space: 32px;
-$modal-space: 24px;
+$content-space: 2rem;
+$modal-space: 1.5rem;
 
-$nav-header-height-sm: 40px;
-$nav-header-height: 61.5px;
-$profile-image-size: 40px;
+$nav-header-height-sm: 2.5rem;
+$nav-header-height: 4.5rem; /* $profile-image-size + 2rem of padding */
+$profile-image-size: 2.5rem;
 
 $breakpoint-m: 800px;
 $breakpoint-l: 1024px;
