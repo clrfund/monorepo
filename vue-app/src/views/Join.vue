@@ -394,7 +394,7 @@
                   <p :class="{
                     error: true,
                     hidden: !$v.form.image.thumbnail.$error
-                  }">Upload a file</p>
+                  }">Upload a file</p>  
                   <input
                     v-if="!requiresUpload"
                     id="image-banner-hash"

@@ -31,6 +31,7 @@ import { recipientRegistryType } from '@/api/core'
 // import Profile from '@/components/Profile.vue'
 import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
+import Cart from '@/components/Cart.vue'
 
 import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 
@@ -46,7 +47,7 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
       },
     ],
   },
-  components: { RoundInformation, NavBar },
+  components: { RoundInformation, NavBar, Cart },
 })
 export default class App extends Vue {
   created() {

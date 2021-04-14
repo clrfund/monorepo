@@ -7,11 +7,14 @@
       <img class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
     </router-link>
     <div class="btn-row">
-      <router-link v-if="inApp" to="/">
-        <div class="dropdown-btn">
-          ...
+      <div class="dropdown">
+        <button @click="openDropdown()" v-if="inApp" class="dropdown-btn">...</button>
+        <div id="myDropdown" class="button-menu">
+          <router-link to="/">About</router-link>
+          <router-link to="/">About</router-link>
+          <router-link to="/">About</router-link>
         </div>
-      </router-link>
+      </div>
       <button class="dropdown-btn" v-if="inApp" @click="openCart()">
           <img
           alt="cart"
@@ -27,7 +30,7 @@
           App
         </div>
       </router-link>
-      <!-- <Profile /> -->
+      <Profile />
     </div>
   </nav>
 </template>
@@ -35,7 +38,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-// import Profile from './Profile.vue'
+import Profile from './Profile.vue'
 import CartModal from './CartModal.vue'
 import { Prop } from 'vue-property-decorator'
 
@@ -56,6 +59,25 @@ export default class NavBar extends Vue {
     )
   }
 }
+
+function openDropdown() {
+  document.getElementById('myDropdown').classList.toggle('show')
+}
+
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropdown-btn')) {
+    const dropdowns = document.getElementsByClassName('button-menu')
+    let i 
+    for (i = 0; i < dropdowns.length; i++) {
+      const openDropdown = dropdowns[i]
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show')
+      }
+    }
+  }
+}
+
 </script>
 
 
@@ -90,7 +112,31 @@ export default class NavBar extends Vue {
     font-size: 16px;
     display: flex;
     align-items: center;
+    cursor: pointer;
   }
+
+  .button-menu {
+      display: none;
+      position: absolute;
+      background-color: $bg-secondary-color;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      cursor: pointer;
+  }
+
+.show {
+  display: block;
+}
+
+  .dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.button-menu router-link {
+  font-size: 16px;
+}
 
   .app-btn {
     padding: 0.25rem 1.25rem;

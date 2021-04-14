@@ -329,11 +329,14 @@ export default class Cart extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
 
 .cart {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - #{$profile-image-size + 2 * $content-space});
+  width: 100%;
+  background: $bg-primary-color;
 }
 
 .empty-cart {
@@ -341,6 +344,7 @@ export default class Cart extends Vue {
   font-weight: 400;
   margin: 50px 50px auto;
   text-align: center;
+  width: 100%;
 
   img {
     height: 70px;

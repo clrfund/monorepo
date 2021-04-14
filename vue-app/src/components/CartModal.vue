@@ -1,6 +1,7 @@
 <template>
     <div id="modal">
-        <Cart />
+      cart
+        <cart />
     </div>
 </template>
 
@@ -37,6 +38,8 @@ export default class CartModal extends Vue {
     font-family: Inter;
     height: 100%;
     top: 64;
+    background: red;
+    width: 100%;
 }
 
 #modal-body {
