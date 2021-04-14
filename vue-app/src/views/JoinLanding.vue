@@ -64,7 +64,9 @@ export default class JoinLanding extends Vue {
   position: relative;
   z-index: 1;
   padding: $content-space;
-  width: min(100%, 800px);
+  width: min(100%, 512px);
+  margin-left: 2rem;
+  margin-top: 4rem;
 }
 
 h1 {
@@ -88,10 +90,15 @@ h1 {
 .hero img {
   position: absolute;
   bottom: 0;
+  right: -128px;
+  mix-blend-mode: exclusion;
+  /* width: 100%; */
+  width: 88%;
+  @media (max-width: ($breakpoint-m + 1px)) {
   right: 0;
-    mix-blend-mode: exclusion;
-    /* width: 100%; */
+  width: 100%;
   }
+}
 
 #countdown {
   font-family: 'Glacial Indifference', sans-serif;
