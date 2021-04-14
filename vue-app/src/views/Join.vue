@@ -404,6 +404,10 @@
               </div>
             </div>
           </form>
+          <!-- Summary -->
+          <div v-if="currentStep === 5" id="summary">
+            {{form}}
+          </div>
         </div>
       </div>
       <div class="nav-area nav-bar mobile">
@@ -567,22 +571,25 @@ export default class JoinView extends mixins(validationMixin) {
   steps: string[] = []
 
   created() {
-    const steps = ['one', 'two', 'three', 'four', 'five', 'six']
+    // const steps = ['one', 'two', 'three', 'four', 'five', 'six']
+    const steps = [...Object.keys(this.form), 'summary']
     const currentStep = steps.indexOf(this.$route.params.step)
     this.steps = steps
     this.currentStep = currentStep
     // TODO redirect to /join/one if step doesn't exist
-    // if (currentStep < 0) {
-    //   console.log('NO STEP')
-    //   this.$router.push({ name: 'apply', params: 'one' })
-    //   return
-    // }
+    // How about back to Join landing?
+    if (this.currentStep < 0) {
+      console.log('NO STEP')
+      this.$router.push({ name: 'join' })
+    }
   }
-
 
   get requiresUpload(): boolean {
     return this.form.image.requiresUpload === 'true'
-  }    
+  }
+  // get isStepValid(): boolean {
+  //   return this.form[this.steps[this.currentStep]].
+  // }
 } 
 </script>
 

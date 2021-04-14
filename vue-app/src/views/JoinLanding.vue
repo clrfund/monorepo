@@ -20,7 +20,8 @@
           </div>
           <div class="btn-container">
             <button class="btn-secondary" @click="seeCriteria()">See round criteria</button>
-            <router-link to="/join/one" class="btn-primary">Add project</router-link>
+            <!-- <router-link to="/join/one" class="btn-primary">Add project</router-link> -->
+            <router-link to="/join/project" class="btn-primary">Add project</router-link>
           </div> 
         </div>
       </div>
