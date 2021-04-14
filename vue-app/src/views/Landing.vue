@@ -318,8 +318,7 @@ ol li::before {
 
   #apply-callout-mobile,
   #apply-callout-desktop {
-    background: #191623;
-    opacity: 0.9;
+    background: #191623e6;
     border: 2px solid #9789C4;
     box-sizing: border-box;
     border-radius: 8px;
@@ -451,16 +450,6 @@ ol li::before {
 
 #dai-drip {
   max-width: 100%;
-}
-
-#apply-callout {
-  background: #191623;
-  opacity: 0.9;
-  border: 2px solid #9789C4;
-  box-sizing: border-box;
-  border-radius: 8px;
-  padding: 1rem;
-  margin: 3rem 0; 
 }
 
 #footer {

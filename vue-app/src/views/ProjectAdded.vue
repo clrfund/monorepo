@@ -122,12 +122,11 @@ p {
 }
 
 .contact {
-  background: $bg-secondary-color;
+  background: #191623E6;
   border-radius: 8px;
   padding: 1rem;
-  opacity: 0.8;
   margin: 2rem 0rem;
-  border: 1px solid #000000;
+  border: 1px solid black;
 }
 
 #subtitle {
