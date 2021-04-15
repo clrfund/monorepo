@@ -179,7 +179,7 @@ export default class ProjectListItem extends Vue {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  z-index: 99;
+  z-index: 0;
   &:hover {
     transform: scale(1.01);
     box-shadow: 0px 4px 4px 0px 0,0,0,0.25;

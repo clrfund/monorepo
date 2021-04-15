@@ -25,12 +25,10 @@
         > 
           Cart
       </button>
-      <router-link v-if="!inApp" to="/projects">
-        <div class="app-btn">
+      <router-link v-if="!inApp" to="/projects" class="app-btn">
           App
-        </div>
       </router-link>
-      <WalletWidget />
+      <WalletWidget v-if="inApp" />
     </div>
   </nav>
 </template>
@@ -92,8 +90,10 @@ window.onclick = function(event) {
   top: 0;
   z-index: 1;
   display: flex;
-  padding: 1rem 1.5rem;
+  padding: 0 1.5rem;
+  height: 64px;
   justify-content: space-between;
+  align-items: center;
   background: $bg-secondary-color;
 
  .btn-row {
@@ -102,7 +102,6 @@ window.onclick = function(event) {
     align-items: center;
   }
 
-  .app-btn,
   .dropdown-btn {
     background: rgba(44,41,56,1);
     border: 1px solid rgba(115,117,166,0.3);
@@ -140,16 +139,10 @@ window.onclick = function(event) {
     font-size: 16px;
   }
 
-  .app-btn {
-    padding: 0.25rem 1.25rem;
-    background: $clr-pink-light-gradient;
-    border: none;
-    border-radius: 1rem;
-  }
   .ef-logo {
     margin: 0;
     /* max-height: 100%; */
-    height: 100%;
+    height: 75%;
   }
 }
 </style>

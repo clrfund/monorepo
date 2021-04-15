@@ -1,13 +1,13 @@
 <template>
   <div class="item">
     <div class="icon">
-      [Icon]
+      <img class="icon img" src="@/assets/dai.png" />
     </div>
     <div class="main">
-      <div class="token-abbrev">
-        DAI
+      <div v-if="abbrev" class="token-abbrev">
+        {{abbrev}}
       </div>
-      <p class="description"></p>
+      <!-- <p class="description"></p> -->
     </div>
     <div class="amount">
       1000.00
@@ -35,17 +35,36 @@ export default class BalanceItem extends Vue {
 
 .item {
   display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #000000;
+  margin-top: -1px;
+  &:first-of-type {
+    margin-top: 0px;
+    border-radius: 8px 8px 0 0;
+  }
+  &:last-of-type {
+    border-radius: 0 0 8px 8px;
+  }
 }
 .icon, .main, .amount {
-  padding: 0.5rem;
+
 }
 .icon {
-
+.img {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 1rem;
+  }
 }
 .main {
   flex: 1;
 }
 .amount {
+  margin: 0;
+}
 
+.token-abbrev {
+  font-weight: 600;
 }
 </style>

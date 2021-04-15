@@ -52,3 +52,14 @@
   color: $error-color;
   background: #19162380;
 }
+
+// app button for use in nav bar
+.app-btn {
+  padding: 0.25rem 1.25rem;
+  background: $clr-pink-light-gradient;
+  border: none;
+  border-radius: 1rem;
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 150%;
+}

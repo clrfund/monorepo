@@ -10,12 +10,16 @@
     </div>
     <button
       v-else-if="walletProvider && !currentUser"
-      class="btn connect-btn"
+      class="app-btn"
       @click="connect"
     >
       Connect
     </button>
     <div v-else-if="currentUser" class="profile-info">
+      <div class="profile-info-balance">
+        <img src="@/assets/dai.png" />
+        <div class="balance" @click="copyAddress">0.123456</div>
+      </div>
       <div class="profile-name" @click="copyAddress">{{ truncatedAddress }}</div>
       <div class="profile-image" @click="toggleProfile()">
         <img v-if="profileImageUrl" :src="profileImageUrl">
@@ -155,6 +159,7 @@ export default class WalletWidget extends Vue {
       balance: null,
       contribution: null,
     }
+
     getProfileImageUrl(user.walletAddress)
       .then((url) => this.profileImageUrl = url)
     this.$store.commit(SET_CURRENT_USER, user)
@@ -178,51 +183,76 @@ export default class WalletWidget extends Vue {
     return ''
   }
 }
+
+
+
 </script>
 
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
 
 .container {
-  margin-left: $content-space;
+  margin-left: 0.5rem;
 }
 
 .provider-error {
   text-align: center;
 }
 
-.connect-btn {
-  display: block;
-  margin: 0 auto;
-  width: 120px;
-}
-
 .profile-info {
   display: flex;
-  gap: $content-space;
+  gap: 0.5rem;
   align-items: center;
-  width: 100%;
+  cursor: pointer;
+  background: $clr-pink-dark-gradient;
+  /* padding: 0.25rem 0.5rem; */
+  border-radius: 32px;
+  padding-right: 0.5rem;
 
-  /* .profile-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: break-all;
-  } */
+  .profile-name {
+    font-size: 14px;
+    opacity: 0.8;
+  } 
+
+  .balance {
+    font-size: 14px;
+    font-weight: 600;
+    font-family: "Glacial Indifference", sans-serif;
+  } 
 
   .profile-image {
-    border: 4px solid $button-color;
-    border-radius: 25px;
+    border-radius: 50%;
     box-sizing: border-box;
     height: $profile-image-size;
     /* margin-left: 20px; */
     overflow: hidden;
     width: $profile-image-size;
-
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    cursor: pointer; 
     img {
       height: 100%;
       width: 100%;
     }
   }
+
+  .profile-info-balance {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    cursor: pointer;
+    background: $bg-primary-color;
+    padding: 0.5rem 0.5rem;
+    border-radius: 32px;
+    margin: 0.25rem;
+    margin-right: 0;
+  }
+
+  .profile-info-balance img {
+    height: 16px;
+    width: 16px;
+  }
+
 }
 </style>

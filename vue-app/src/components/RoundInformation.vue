@@ -7,7 +7,7 @@
           <div class="round">
             <div style="display: flex; align-items: center;">
               <h2 style="line-height: 120%; margin: 0;">Eth2 CLR</h2>
-              <div class="verified"><a style="" href="https://etherescan.io/:address"><img height="8px" src="@/assets/checkmark.svg" /></a> </div>
+              <div class="verified"><a style="" href="https://etherescan.io/:address"><img src="@/assets/verified.svg" /></a> </div>
             </div>
             <div class="status"> 
               <div class="circle pulse open" /> Open
