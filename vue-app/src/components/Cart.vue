@@ -1,81 +1,92 @@
 <template>
-  <div class="cart">
-    <div v-if="isEmptyCart" class="empty-cart">
-      <img src="@/assets/empty.svg">
-      <h3>No projects selected</h3>
-      <div>Please select the projects that you want to contribute to</div>
-    </div>
-    <div v-for="item in filteredCart" class="cart-item" :key="item.id">
-      <div class="project">
-        <img class="project-image" :src="item.imageUrl" :alt="item.name">
-        <router-link
-          class="project-name"
-          :to="{ name: 'project', params: { id: item.id }}"
-        >
-          {{ item.name }}
-        </router-link>
-      </div>
-      <form class="contribution-form">
-        <input
-          :value="item.amount"
-          @input="updateAmount(item, $event.target.value)"
-          class="input contribution-amount"
-          :class="{ invalid: !isAmountValid(item.amount) }"
-          :disabled="!canUpdateAmount()"
-          name="amount"
-          placeholder="Amount"
-        >
-        <div class="contribution-currency">{{ tokenSymbol }}</div>
-        <div
-          v-if="canRemoveItem()"
-          class="remove-cart-item"
-          @click="removeItem(item)"
-        >
-          <img src="@/assets/remove.svg" />
+  <div class="wrapper">
+    <div class="modal-background" @click="toggleCart" />
+    <div class="container">
+      <div class="flex-row" style="justify-content: flex-end;">
+        <div class="close-btn" @click="toggleCart()">
+          <p class="no-margin">Close</p>
+          <img src="@/assets/close.svg" />
         </div>
-      </form>
-    </div>
-    <div
-      v-if="canSubmit()"
-      class="submit-btn-wrapper"
-    >
-      <div v-if="errorMessage" class="submit-error">
-        {{ errorMessage }}
       </div>
-      <div v-if="hasUnallocatedFunds()" class="submit-suggestion">
-        Unallocated funds will be used as matching funding
+      <div class="cart">
+        <div v-if="isEmptyCart" class="empty-cart">
+          <div style="font-size: 64px;">🌚</div>
+          <h3>Your cart is empty</h3>
+          <div>Choose some projects that you want to contribute to</div>
+        </div>
+        <div v-for="item in filteredCart" class="cart-item" :key="item.id">
+          <div class="project">
+            <img class="project-image" :src="item.imageUrl" :alt="item.name">
+            <router-link
+              class="project-name"
+              :to="{ name: 'project', params: { id: item.id }}"
+            >
+              {{ item.name }}
+            </router-link>
+          </div>
+          <form class="contribution-form">
+            <input
+              :value="item.amount"
+              @input="updateAmount(item, $event.target.value)"
+              class="input contribution-amount"
+              :class="{ invalid: !isAmountValid(item.amount) }"
+              :disabled="!canUpdateAmount()"
+              name="amount"
+              placeholder="Amount"
+            >
+            <div class="contribution-currency">{{ tokenSymbol }}</div>
+            <div
+              v-if="canRemoveItem()"
+              class="remove-cart-item"
+              @click="removeItem(item)"
+            >
+              <img src="@/assets/remove.svg" />
+            </div>
+          </form>
+        </div>
+        <div
+          v-if="canSubmit()"
+          class="submit-btn-wrapper"
+        >
+          <div v-if="errorMessage" class="submit-error">
+            {{ errorMessage }}
+          </div>
+          <div v-if="hasUnallocatedFunds()" class="submit-suggestion">
+            Unallocated funds will be used as matching funding
+          </div>
+          <div v-if="canRegisterWithBrightId()" class="submit-suggestion">
+            <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
+          </div>
+          <div v-if="canBuyWxdai()" class="submit-suggestion">
+            <a href="https://wrapeth.com/" target="_blank" rel="noopener">
+              Click here to wrap XDAI
+            </a>
+          </div>
+          <button
+            v-if="canWithdrawContribution()"
+            class="btn submit-btn"
+            @click="withdrawContribution()"
+          >
+            Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
+          </button>
+          <button
+            v-else
+            class="btn submit-btn"
+            :disabled="errorMessage !== null"
+            @click="submit()"
+          >
+            <template v-if="contribution.isZero()">
+              Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
+            </template>
+            <template v-else-if="hasUnallocatedFunds()">
+              Reallocate {{ formatAmount(getTotal()) }} of {{ formatAmount(contribution) }} {{ tokenSymbol }}
+            </template>
+            <template v-else>
+              Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
+            </template>
+          </button>
+        </div>
       </div>
-      <div v-if="canRegisterWithBrightId()" class="submit-suggestion">
-        <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
-      </div>
-      <div v-if="canBuyWxdai()" class="submit-suggestion">
-        <a href="https://wrapeth.com/" target="_blank" rel="noopener">
-          Click here to wrap XDAI
-        </a>
-      </div>
-      <button
-        v-if="canWithdrawContribution()"
-        class="btn submit-btn"
-        @click="withdrawContribution()"
-      >
-        Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
-      </button>
-      <button
-        v-else
-        class="btn submit-btn"
-        :disabled="errorMessage !== null"
-        @click="submit()"
-      >
-        <template v-if="contribution.isZero()">
-          Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
-        </template>
-        <template v-else-if="hasUnallocatedFunds()">
-          Reallocate {{ formatAmount(getTotal()) }} of {{ formatAmount(contribution) }} {{ tokenSymbol }}
-        </template>
-        <template v-else>
-          Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
-        </template>
-      </button>
     </div>
   </div>
 </template>
@@ -102,9 +113,12 @@ import { RoundStatus } from '@/api/round'
 import { SAVE_CART } from '@/store/action-types'
 import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
+import { Prop } from 'vue-property-decorator'
 
 @Component
 export default class Cart extends Vue {
+  
+  @Prop() toggleCart
 
   private get cart(): CartItem[] {
     return this.$store.state.cart
@@ -331,20 +345,58 @@ export default class Cart extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+
+  .modal-background {
+    background: rgba(0,0,0,0.7);
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+.container {
+    position: absolute;
+    right: 0;
+    z-index: 2;
+    background: $bg-secondary-color;
+    height: 100%;
+    width: clamp(200px, 25%, 500px);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 2;
+}
+
+.flex-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .cart {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - #{$profile-image-size + 2 * $content-space});
   width: 100%;
-  background: $bg-primary-color;
+  background: $bg-secondary-color;
+  z-index: 3;
 }
 
 .empty-cart {
   font-size: 16px;
   font-weight: 400;
-  margin: 50px 50px auto;
-  text-align: center;
+  margin: 1rem;
   width: 100%;
+  z-index: 3;
+  background: $bg-secondary-color;
 
   img {
     height: 70px;
@@ -426,6 +478,16 @@ $project-image-size: 50px;
   }
 }
 
+.close-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.01);
+  }
+}
+
 .submit-btn-wrapper {
   align-self: flex-end;
   box-sizing: border-box;
@@ -446,5 +508,5 @@ $project-image-size: 50px;
     margin-top: 15px;
     width: 100%;
   }
-}
+}}
 </style>

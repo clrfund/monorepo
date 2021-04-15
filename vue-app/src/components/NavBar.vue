@@ -15,16 +15,7 @@
           <router-link to="/">About</router-link>
         </div>
       </div>
-      <button class="dropdown-btn" v-if="inApp" @click="openCart()">
-          <img
-          alt="cart"
-          class="cart-btn"
-          width="16px"
-          style="margin-right: 0.5rem"
-          src="@/assets/cart.svg"
-        > 
-          Cart
-      </button>
+      <CartWidget v-if="inApp" />
       <router-link v-if="!inApp" to="/projects" class="app-btn">
           App
       </router-link>
@@ -37,11 +28,11 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import WalletWidget from './WalletWidget.vue'
-import CartModal from './CartModal.vue'
+import CartWidget from './CartWidget.vue'
 import { Prop } from 'vue-property-decorator'
 
 @Component({
-  components: { WalletWidget, CartModal },
+  components: { WalletWidget, CartWidget },
 })
 export default class NavBar extends Vue {
   @Prop() inApp
@@ -51,13 +42,7 @@ export default class NavBar extends Vue {
   // get currentUser(): User | null {
   //   return this.$store.state.currentUser
   // }
-  openCart(): void {
-    this.$modal.show(
-      CartModal,
-      { },
-      { width: 500 },
-    )
-  }
+
 }
 
 function openDropdown() {
