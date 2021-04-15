@@ -76,26 +76,19 @@ export default class WalletWidget extends Vue {
   }
 
   get currentUser(): User | null {
-    console.log('************************')
-    if (this.$store.state.currentUser && this.$store.state.currentUser.balance) {
-      console.log('balance: ', this.$store.state.currentUser.balance.toString())
-      console.log('etherBalance: ', this.$store.state.currentUser.etherBalance.toString())
-      console.log('etherBalance: ', commify(formatUnits(this.$store.state.currentUser.etherBalance, 'ether')))
-    }
-    console.log('************************')
     return this.$store.state.currentUser
   }
 
   get etherBalance(): string | null {
     if (this.currentUser) {
-      return formatUnits(this.currentUser.etherBalance, 'ether')
+      return commify(formatUnits(this.currentUser.etherBalance, 'ether'))
     }
     return null
   }
 
   get balance(): string | null {
     if (this.currentUser) {
-      return formatUnits(this.currentUser.balance, 'ether')
+      return commify(formatUnits(this.currentUser.balance, 18))
     }
     return null
   }
