@@ -2,90 +2,102 @@
   <div class="wrapper">
     <div class="modal-background" @click="toggleCart" />
     <div class="container">
-      <div class="flex-row" style="justify-content: flex-end;">
-        <div class="close-btn" @click="toggleCart()">
-          <p class="no-margin">Close</p>
-          <img src="@/assets/close.svg" />
+      <div>
+        <div class="flex-row">
+          <div class="close-btn" @click="toggleCart()">
+            <p class="no-margin">Close</p>
+            <img src="@/assets/close.svg" />
+          </div>
+        </div>
+        <div class="flex-row">
+          <h2 class="no-margin">Your cart</h2>
+        </div>
+        <div class="cart">
+          <div v-if="isEmptyCart" class="empty-cart">
+            <div style="font-size : 64px;">🌚</div>
+            <h3>Your cart is empty</h3>
+            <div>Choose some projects that you want to contribute to</div>
+          </div>
+          <div v-for="item in filteredCart" class="cart-item" :key="item.id">
+            <div class="project">
+              <img class="project-image" :src="item.imageUrl" :alt="item.name">
+              <router-link
+                class="project-name"
+                :to="{ name: 'project', params: { id: item.id }}"
+              >
+                {{ item.name }}
+              </router-link>
+            </div>
+            <form class="contribution-form">
+
+              <div class="input-button">
+                <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.png">
+                <input
+                  :value="item.amount"
+                  @input="updateAmount(item, $event.target.value)"
+                  class="input contribution-amount"
+                  :class="{ invalid: !isAmountValid(item.amount) }"
+                  :disabled="!canUpdateAmount()"
+                  name="amount"
+                  placeholder="Amount"
+                >
+                <!-- <div class="contribution-currency">{{ tokenSymbol }}</div> -->
+              </div>
+              <div
+                v-if="canRemoveItem()"
+                class="remove-cart-item"
+                @click="removeItem(item)"
+              >
+                <div class="btn-warning" style="display: flex; align-items: center; ">
+                <img class="remove-icon" src="@/assets/remove.svg" />
+                Remove
+              </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-      <div class="cart">
-        <div v-if="isEmptyCart" class="empty-cart">
-          <div style="font-size: 64px;">🌚</div>
-          <h3>Your cart is empty</h3>
-          <div>Choose some projects that you want to contribute to</div>
+      <div
+        v-if="canSubmit()"
+        class="submit-btn-wrapper"
+      >
+        <div v-if="errorMessage" class="submit-error">
+          {{ errorMessage }}
         </div>
-        <div v-for="item in filteredCart" class="cart-item" :key="item.id">
-          <div class="project">
-            <img class="project-image" :src="item.imageUrl" :alt="item.name">
-            <router-link
-              class="project-name"
-              :to="{ name: 'project', params: { id: item.id }}"
-            >
-              {{ item.name }}
-            </router-link>
-          </div>
-          <form class="contribution-form">
-            <input
-              :value="item.amount"
-              @input="updateAmount(item, $event.target.value)"
-              class="input contribution-amount"
-              :class="{ invalid: !isAmountValid(item.amount) }"
-              :disabled="!canUpdateAmount()"
-              name="amount"
-              placeholder="Amount"
-            >
-            <div class="contribution-currency">{{ tokenSymbol }}</div>
-            <div
-              v-if="canRemoveItem()"
-              class="remove-cart-item"
-              @click="removeItem(item)"
-            >
-              <img src="@/assets/remove.svg" />
-            </div>
-          </form>
+        <div v-if="hasUnallocatedFunds()" class="submit-suggestion">
+          Unallocated funds will be used as matching funding
         </div>
-        <div
-          v-if="canSubmit()"
-          class="submit-btn-wrapper"
+        <div v-if="canRegisterWithBrightId()" class="submit-suggestion">
+          <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
+        </div>
+        <div v-if="canBuyWxdai()" class="submit-suggestion">
+          <a href="https://wrapeth.com/" target="_blank" rel="noopener">
+            Click here to wrap XDAI
+          </a>
+        </div>
+        <button
+          v-if="canWithdrawContribution()"
+          class="btn submit-btn"
+          @click="withdrawContribution()"
         >
-          <div v-if="errorMessage" class="submit-error">
-            {{ errorMessage }}
-          </div>
-          <div v-if="hasUnallocatedFunds()" class="submit-suggestion">
-            Unallocated funds will be used as matching funding
-          </div>
-          <div v-if="canRegisterWithBrightId()" class="submit-suggestion">
-            <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
-          </div>
-          <div v-if="canBuyWxdai()" class="submit-suggestion">
-            <a href="https://wrapeth.com/" target="_blank" rel="noopener">
-              Click here to wrap XDAI
-            </a>
-          </div>
-          <button
-            v-if="canWithdrawContribution()"
-            class="btn submit-btn"
-            @click="withdrawContribution()"
-          >
-            Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
-          </button>
-          <button
-            v-else
-            class="btn submit-btn"
-            :disabled="errorMessage !== null"
-            @click="submit()"
-          >
-            <template v-if="contribution.isZero()">
-              Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
-            </template>
-            <template v-else-if="hasUnallocatedFunds()">
-              Reallocate {{ formatAmount(getTotal()) }} of {{ formatAmount(contribution) }} {{ tokenSymbol }}
-            </template>
-            <template v-else>
-              Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
-            </template>
-          </button>
-        </div>
+          Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
+        </button>
+        <button
+          v-else
+          class="btn submit-btn"
+          :disabled="errorMessage !== null"
+          @click="submit()"
+        >
+          <template v-if="contribution.isZero()">
+            Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
+          </template>
+          <template v-else-if="hasUnallocatedFunds()">
+            Reallocate {{ formatAmount(getTotal()) }} of {{ formatAmount(contribution) }} {{ tokenSymbol }}
+          </template>
+          <template v-else>
+            Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
+          </template>
+        </button>
       </div>
     </div>
   </div>
@@ -103,6 +115,7 @@ import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 
+
 import {
   MAX_CONTRIBUTION_AMOUNT,
   MAX_CART_SIZE,
@@ -115,7 +128,9 @@ import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { Prop } from 'vue-property-decorator'
 
-@Component
+@Component({
+  components: {  },
+})
 export default class Cart extends Vue {
   
   @Prop() toggleCart
@@ -345,6 +360,15 @@ export default class Cart extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
+h2 {
+  font-family: Glacial Indifference;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 150%;
+}
+
+
 .wrapper {
   position: fixed;
   top: 0;
@@ -366,13 +390,14 @@ export default class Cart extends Vue {
     right: 0;
     z-index: 2;
     background: $bg-secondary-color;
-    height: 100%;
     width: clamp(200px, 25%, 500px);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 1rem;
     z-index: 2;
+    height: 100%;
 }
 
 .flex-row {
@@ -384,7 +409,6 @@ export default class Cart extends Vue {
 .cart {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - #{$profile-image-size + 2 * $content-space});
   width: 100%;
   background: $bg-secondary-color;
   z-index: 3;
@@ -414,11 +438,8 @@ export default class Cart extends Vue {
 }
 
 .cart-item {
-  border-bottom: $border;
-  padding: $content-space;
+  padding: 1rem 0rem;
 }
-
-$project-image-size: 50px;
 
 .project {
   display: flex;
@@ -428,11 +449,11 @@ $project-image-size: 50px;
     border-radius: 10px;
     box-sizing: border-box;
     display: block;
-    height: $project-image-size;
+    height: 2.5rem;
     margin-right: 15px;
-    min-width: $project-image-size;
+    min-width: 2.5rem;
     object-fit: cover;
-    width: $project-image-size;
+    width: 2.5rem;
   }
 
   .project-name {
@@ -442,38 +463,65 @@ $project-image-size: 50px;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     flex-grow: 1;
-    max-height: $project-image-size;
+    max-height: 2.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+.remove-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+  fill: white;
+}
+
+ .input-button {
+  background: #F7F7F7;
+  border-radius: 2rem;
+  border: 2px solid $bg-primary-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
+  padding: 0.125rem;
+  z-index: 100;
+}
+
+.input {
+  background: none;
+  border: none;
+  color: $bg-primary-color;
+  width: 100%;
 }
 
 .contribution-form {
   align-items: center;
   display: flex;
   flex-direction: row;
-  font-size: 12px;
-  margin-top: 15px;
-  padding-left: $project-image-size + 15px;
+  font-size: 16px;
+  padding-left: 3.5rem;
+  margin-top: 1rem;
+  gap: 0.5rem;
 
-  .contribution-amount {
-    font-size: 12px;
-    width: 60%;
-  }
+
 
   .contribution-currency {
     flex-grow: 1;
     margin-left: 7px;
   }
 
+  .contribution-form img {
+    width: 1rem;
+  }
+
   .remove-cart-item {
     cursor: pointer;
-    margin-left: 7px;
-    min-width: 20px;
-    width: 20px;
+
 
     &:hover {
-      filter: saturate(0%);
+      opacity: 0.8;
+      transform: scale(1.01);
     }
   }
 }
@@ -491,22 +539,28 @@ $project-image-size: 50px;
 .submit-btn-wrapper {
   align-self: flex-end;
   box-sizing: border-box;
-  margin-top: auto;
-  padding: $content-space;
+  background: $bg-primary-color;
+  border-radius: 1rem;
+  padding: 1rem;
   text-align: center;
   width: 100%;
+  margin-bottom: 3rem;
 
   .submit-error {
-    padding: 15px 0 0;
+    &:before {
+      content: '⚠️  '
+    }
   }
 
   .submit-suggestion {
-    padding-top: 5px;
+    font-size: 16px;
   }
 
   .submit-btn {
     margin-top: 15px;
     width: 100%;
   }
+
+  
 }}
 </style>

@@ -50,7 +50,8 @@
 .btn-warning {
   border: 2px solid $error-color;
   color: $error-color;
-  background: #19162380;
+  background: none;
+  box-sizing: border-box;
 }
 
 // app button for use in nav bar

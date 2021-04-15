@@ -72,7 +72,7 @@ h2 {
   font-family: Glacial Indifference;
   font-style: normal;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 24px;
   line-height: 150%;
 }
 

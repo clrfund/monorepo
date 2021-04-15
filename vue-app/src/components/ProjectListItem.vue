@@ -34,14 +34,15 @@
 
         <form action="#">
         <div class="input-button">
-            <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.png">
+            <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.png">
             <input
               v-model="amount"
               class="input"
               name="amount"
               placeholder="10"
               autocomplete="on"
-              onfocus="this.value=''" 
+              onfocus="this.value=''"
+              v-if="!inCart"
             >
             <input type="submit"
               v-if="hasContributeBtn() && !inCart"
@@ -50,6 +51,12 @@
               @click="contribute(project)"
               value="Add"
             >
+            <div 
+              v-if="hasContributeBtn() && inCart"
+              class="donate-btn-full"
+            >
+            In cart 🎉
+            </div>
         </div>
         </form>
 
@@ -70,13 +77,6 @@
             More
           </button>
         </router-link>
-        <button
-          v-if="hasContributeBtn() && inCart"
-          class="btn btn-inactive in-cart"
-        >
-          <img src="@/assets/checkmark.svg" />
-          <span>In cart</span>
-        </button>
       </div>
     </div>
 </template>
@@ -172,6 +172,7 @@ export default class ProjectListItem extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
 
 .project-item {
   background-color: $bg-primary-color;
@@ -217,8 +218,23 @@ export default class ProjectListItem extends Vue {
   border: none;
   cursor: pointer;
   box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
-
 }
+
+.donate-btn-full {
+  background: $bg-primary-color;
+  color: white;
+  border-radius: 32px;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  font-family: Inter;
+  line-height: 150%;
+  border: none;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+  z-index: 1;
+}
+
 
 .more-btn {
   background: $bg-light-color;

@@ -7,7 +7,7 @@
         style="margin-right: 0.5rem"
         src="@/assets/cart.svg"
         > 
-        Cart
+        Cart 
     </button>
     <cart v-if="showCartPanel" :toggleCart="toggleCart" />
   </div>
