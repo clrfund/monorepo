@@ -26,6 +26,7 @@ async function main() {
     eth_provider: providerUrl,
     privkey: state.coordinatorPrivKey,
     tally_file: 'tally.json',
+    output: 'proofs.json',
   })
   if (!results) {
     throw new Error('generation of proofs failed')

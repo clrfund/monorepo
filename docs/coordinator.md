@@ -71,7 +71,16 @@ Finally, the [CID](https://ipfs.io/ipns/docs.ipfs.io/concepts/content-addressing
 await fundingRound.publishTallyHash('<CID>')
 ```
 
-## Coordinate using clrfund scripts (exprimental, not recommended)
+## Coordinate using clrfund scripts
+
+### Generate coordinator key
+
+```
+cd contracts/
+yarn ts-node scripts/generate-key.ts
+```
+
+A single key can be used to coordinate multiple rounds.
 
 ### Tally votes
 
