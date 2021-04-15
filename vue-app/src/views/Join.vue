@@ -7,15 +7,13 @@
           <h3>
             Step {{currentStep + 1}} of {{steps.length}}
           </h3>
-          <div class="progress-step">
-            <img src="@/assets/green-tick.svg">
-            <h2>A finished step</h2>
-          </div>
-          <div class="progress-step">
-            <img src="@/assets/current-step.svg">
-            <h2>About the project</h2>
-          </div>
-          <div v-if="currentStep === 0">
+          <div class="progress-steps">
+            <div v-for="(step, idx) in stepNames" class="progress-step" :key="idx">
+              <img v-if="idx < currentStep" src="@/assets/green-tick.svg">
+              <img v-else-if="idx > currentStep" src="@/assets/step-remaining.svg">
+              <img v-else src="@/assets/current-step.svg">
+              <p v-text="step" class="step" :class="{active: idx === currentStep}" />
+            </div>
           </div>
           <button-row
             :isStepValid="isStepValid"
@@ -595,12 +593,23 @@ export default class JoinView extends mixins(validationMixin) {
   currentStep: number | null = null
   steps: string[] = []
 
+  stepNames: string[] = []
+
   created() {
     // const steps = ['one', 'two', 'three', 'four', 'five', 'six']
     const steps = [...Object.keys(this.form), 'summary']
     const currentStep = steps.indexOf(this.$route.params.step)
+    const stepNames = [
+      'About the project',
+      'Donation details',
+      'Team details',
+      'Links',
+      'Images',
+      'Review',
+    ]
     this.steps = steps
     this.currentStep = currentStep
+    this.stepNames = stepNames
     // TODO redirect to /join/one if step doesn't exist
     // How about back to Join landing?
     if (this.currentStep < 0) {
@@ -615,6 +624,8 @@ export default class JoinView extends mixins(validationMixin) {
   get isStepValid(): boolean {
     return !this.form[this.steps[this.currentStep]].$invalid
   }
+  get   // stepNames[currentStep] -> 
+
 } 
 </script>
 
@@ -663,7 +674,6 @@ export default class JoinView extends mixins(validationMixin) {
 .progress-container {
   position: sticky;
   top: 5rem;
-  /* left: 0; */
   align-self: start;
   padding: 1rem; 
   background: $bg-primary-color; 
@@ -672,11 +682,26 @@ export default class JoinView extends mixins(validationMixin) {
     border-radius: 0;
   }
 
+  .progress-steps {
+    margin-bottom: 1rem;
+  }
+
   .progress-step {
     display: flex;
 
     img {
       margin-right: 1rem;
+    }
+    p {
+      margin: 0.5rem 0;
+    }
+    .step {
+      color: #FFF9
+    }
+    .active {
+      color: white;
+      font-weight: 600;
+      font-size: 1.5rem;
     }
   }
 }
