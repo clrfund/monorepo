@@ -12,6 +12,7 @@
     >
       Previous
     </router-link>
+    <div v-else></div>
 
     <!-- TODO button to trigger tx  -->
     <router-link
@@ -22,29 +23,32 @@
           step: steps[currentStep + 1]
         }
       }"
-      class="btn-primary"
+      :class="{
+        disabled: !isStepValid,
+        'btn-primary': true,
+      }"
+      :disabled="!isStepValid"
     >
       Summary
     </router-link>
-    <router-link
+    <button
       v-else-if="currentStep === 5"
       to="/project-added"
       class="btn-primary"
     >
       Finish
-    </router-link>
-    <router-link
+    </button>
+    <button
       v-else-if="currentStep < 5"
-      :to="{
-        name: 'joinStep',
-        params: {
-          step: steps[currentStep + 1]
-        }
+      @click="handleNav"
+      :class="{
+        disabled: !isStepValid,
+        'btn-primary': true,
       }"
-      class="btn-primary"
+      :disabled="!isStepValid"
     >
       Next
-    </router-link>
+    </button>
   </div>
 </template>
 
@@ -58,6 +62,15 @@ export default class ButtonRow extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]
   @Prop() isStepValid?: boolean
+
+  handleNav(): void {
+    this.$router.push({
+      name: 'joinStep',
+      params: {
+        step: this.steps[this.currentStep + 1],
+      },
+    })
+  }
 }
 </script>
 
@@ -73,11 +86,16 @@ export default class ButtonRow extends Vue {
     bottom: 0;
   }
 }
+
 .disabled {
-  /* color: currentColor; */
   cursor: not-allowed;
   opacity: 0.5;
-  /* text-decoration: none; */
-}
+  background: #FFF7;
 
+  &:hover {
+    opacity: 0.5;
+    transform: scale(1);
+    cursor: not-allowed;
+  }  
+}
 </style>

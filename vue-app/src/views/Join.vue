@@ -16,7 +16,7 @@
             </div>
           </div>
           <button-row
-            :isStepValid="isStepValid"
+            :isStepValid="isStepValid()"
             :steps="steps"
             :currentStep="currentStep"
             class="desktop"
@@ -621,11 +621,12 @@ export default class JoinView extends mixins(validationMixin) {
   get requiresUpload(): boolean {
     return this.form.image.requiresUpload === 'true'
   }
-  get isStepValid(): boolean {
-    return !this.form[this.steps[this.currentStep]].$invalid
+  
+  isStepValid(): boolean {
+    return !this.$v.form[this.steps[this.currentStep]].$invalid
   }
-  get   // stepNames[currentStep] -> 
-
+  
+  // get   // stepNames[currentStep] -> 
 } 
 </script>
 
@@ -787,15 +788,7 @@ export default class JoinView extends mixins(validationMixin) {
   letter-spacing: 6px;
   margin-top: 2rem;;
   text-transform: uppercase;
-  /* @media (min-width: $breakpoint-m) {
-      display: none;
-    } */
 }
-
-/* .title {
-  margin-left: 16rem;
-  padding: 0;
-} */
 
 .step-title {
   font-size: 2rem;
@@ -816,13 +809,6 @@ export default class JoinView extends mixins(validationMixin) {
   align-items: center;
 }
 
-/* .btn-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  bottom: 0;
-}
- */
 .application {
   height: 100%;
   display: flex;
@@ -836,40 +822,11 @@ export default class JoinView extends mixins(validationMixin) {
 
 
 }
-/* 
-.application-page {
-  display: flex;
-  padding: 1rem;
-  height: 100%;
-  flex-direction: column;
-  justify-content: space-between;
-  @media (min-width: $breakpoint-m) {
-    padding: 0;
-    width: 100%;
-  }
-} */
 
 .link {
   font-family: Inter;
   font-size: 16px;
   text-decoration: underline;
-}
-
-.btn {
-  padding: 0.5rem 1.5rem;
-  /* margin: 0 auto; */
-  border-radius: 2rem;
-  color: white;
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 150%;
-  text-align: center;
-  background: none;
-  border: none;
-    &:disabled { background: $clr-green;
-  }
 }
 
 .inputs {
