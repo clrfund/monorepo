@@ -3,7 +3,7 @@
     <div class="modal-background" @click="toggleCart" />
     <div class="container">
       <div>
-        <div class="flex-row">
+        <div class="flex-row" style="justify-content: flex-end;">
           <div class="close-btn" @click="toggleCart()">
             <p class="no-margin">Close</p>
             <img src="@/assets/close.svg" />
@@ -13,6 +13,18 @@
           <h2 class="no-margin">Your cart</h2>
         </div>
         <div class="cart">
+          <div style="display: flex; gap: 0.25rem; width: 100%;">
+            <div class="profile-info-balance">
+              Balance 
+              <img src="@/assets/dai.png" />
+              <div class="balance">0.123456</div>
+            </div>
+            <div class="profile-info-balance">
+              Time left
+              <img src="@/assets/time.svg" />
+              <div class="balance">10 hours</div>
+            </div>
+          </div>
           <div v-if="isEmptyCart" class="empty-cart">
             <div style="font-size : 64px;">🌚</div>
             <h3>Your cart is empty</h3>
@@ -77,14 +89,14 @@
         </div>
         <button
           v-if="canWithdrawContribution()"
-          class="btn submit-btn"
+          class="btn-action"
           @click="withdrawContribution()"
         >
           Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
         </button>
         <button
-          v-else
-          class="btn submit-btn"
+          v-if="!errorMessage"
+          class="btn-action"
           :disabled="errorMessage !== null"
           @click="submit()"
         >
@@ -251,7 +263,7 @@ export default class Cart extends Vue {
     } else if (currentUser.isVerified === null) {
       return '' // No error: waiting for verification check
     } else if (!currentUser.isVerified) {
-      return 'Your account is not verified'
+      return 'You must verify your account before you can contribute.'
     } else if (!this.isFormValid()) {
       return 'Please enter correct amounts'
     } else if (this.cart.length > MAX_CART_SIZE) {
@@ -368,6 +380,9 @@ h2 {
   line-height: 150%;
 }
 
+p.no-margin {
+  margin: 0;
+}
 
 .wrapper {
   position: fixed;
@@ -398,6 +413,31 @@ h2 {
     gap: 1rem;
     z-index: 2;
     height: 100%;
+}
+
+.balance {
+    font-size: 14px;
+    font-weight: 600;
+    font-family: "Glacial Indifference", sans-serif;
+  } 
+
+
+.profile-info-balance {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  cursor: pointer;
+  background: $bg-primary-color;
+  padding: 0.5rem 0.5rem;
+  border-radius: 32px;
+  margin: 0.25rem;
+  margin-right: 0;
+  border: 1px solid #000000;
+  }
+  
+.profile-info-balance img {
+  height: 16px;
+  width: 16px;
 }
 
 .flex-row {
@@ -543,10 +583,12 @@ h2 {
   border-radius: 1rem;
   padding: 1rem;
   text-align: center;
+  gap: 1rem;
   width: 100%;
   margin-bottom: 3rem;
 
   .submit-error {
+    color: $warning-color;
     &:before {
       content: '⚠️  '
     }
@@ -555,12 +597,6 @@ h2 {
   .submit-suggestion {
     font-size: 16px;
   }
-
-  .submit-btn {
-    margin-top: 15px;
-    width: 100%;
-  }
-
   
 }}
 </style>
