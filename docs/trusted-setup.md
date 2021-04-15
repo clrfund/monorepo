@@ -2,6 +2,8 @@
 
 ## How to verify the correctness of execution?
 
+### Verify using MACI CLI
+
 Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.6.7:
 
 ```
@@ -32,4 +34,28 @@ cd ../cli
 node build/index.js verify -t tally.json
 ```
 
+### Verify using clrfund scripts
 
+Switch to `contracts` directory:
+
+```
+cd contracts/
+```
+
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits to `snark-params` directory. Example:
+
+```
+ipfs get --output snark-params QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD
+```
+
+Set the path to downloaded parameter files:
+
+```
+export NODE_CONFIG='{"snarkParamsPath": "../../../contracts/snark-params/"}'
+```
+
+Verify:
+
+```
+yarn ts-node scripts/verify.ts tally.json
+```
