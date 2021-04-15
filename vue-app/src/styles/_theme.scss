@@ -6,7 +6,8 @@
 .btn-secondary,
 .btn-alternate,
 .btn-mini,
-.btn-white {
+.btn-white,
+.btn-warning {
   padding: 0.5rem 1.5rem;
   border-radius: 32px;
   color: white;
@@ -43,5 +44,11 @@
 .btn-white {
   border: 2px solid white;
   color: white;
+  background: #19162380;
+}
+
+.btn-warning {
+  border: 2px solid $error-color;
+  color: $error-color;
   background: #19162380;
 }
