@@ -105,55 +105,54 @@
                     <p class="input-description">Choose the best fit</p>
                   </label>
                   <form class="radio-row">
-                      <input
-                        id="category-content"
-                        type="radio"
-                        name="project-category"
-                        value="content"
-                        v-model="$v.form.project.category.$model"
-                        :class="{
-                          input: true,
-                          invalid: $v.form.project.category.$error
-                        }"
-                      >
-                      <label for="category-content" class="radio-btn">Content</label>
-
-                      <input
-                        id="research"
-                        type="radio"
-                        name="project-category"
-                        value="research"
-                        v-model="$v.form.project.category.$model"
-                        :class="{
-                          input: true,
-                          invalid: $v.form.project.category.$error
-                        }"
-                      >
-                      <label for="research" class="radio-btn">Research</label>
-                      <input
-                        id="tooling"
-                        type="radio"
-                        name="project-category"
-                        value="tooling"
-                        v-model="$v.form.project.category.$model"
-                        :class="{
-                          input: true,
-                          invalid: $v.form.project.category.$error
-                        }"
-                      >
-                      <label for="tooling" class="radio-btn">Tooling</label>
-                      <input
-                        id="data"
-                        type="radio"
-                        name="project-category"
-                        value="data"
-                        v-model="$v.form.project.category.$model"
-                        :class="{
-                          input: true,
-                          invalid: $v.form.project.category.$error
-                        }"
-                      >
-                      <label for="data" class="radio-btn">Data</label>
+                    <input
+                      id="category-content"
+                      type="radio"
+                      name="project-category"
+                      value="content"
+                      v-model="$v.form.project.category.$model"
+                      :class="{
+                        input: true,
+                        invalid: $v.form.project.category.$error
+                      }"
+                    >
+                    <label for="category-content" class="radio-btn">Content</label>
+                    <input
+                      id="research"
+                      type="radio"
+                      name="project-category"
+                      value="research"
+                      v-model="$v.form.project.category.$model"
+                      :class="{
+                        input: true,
+                        invalid: $v.form.project.category.$error
+                      }"
+                    >
+                    <label for="research" class="radio-btn">Research</label>
+                    <input
+                      id="tooling"
+                      type="radio"
+                      name="project-category"
+                      value="tooling"
+                      v-model="$v.form.project.category.$model"
+                      :class="{
+                        input: true,
+                        invalid: $v.form.project.category.$error
+                      }"
+                    >
+                    <label for="tooling" class="radio-btn">Tooling</label>
+                    <input
+                      id="data"
+                      type="radio"
+                      name="project-category"
+                      value="data"
+                      v-model="$v.form.project.category.$model"
+                      :class="{
+                        input: true,
+                        invalid: $v.form.project.category.$error
+                      }"
+                    >
+                    <label for="data" class="radio-btn">Data</label>
                   </form>
                   <p :class="{
                     error: true,
@@ -596,7 +595,6 @@ export default class JoinView extends mixins(validationMixin) {
   stepNames: string[] = []
 
   created() {
-    // const steps = ['one', 'two', 'three', 'four', 'five', 'six']
     const steps = [...Object.keys(this.form), 'summary']
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
@@ -623,20 +621,16 @@ export default class JoinView extends mixins(validationMixin) {
   }
   
   isStepValid(): boolean {
-    return !this.$v.form[this.steps[this.currentStep]].$invalid
+    const stepNumber: number = this.currentStep
+    const stepName: string = this.steps[stepNumber]
+    return !this.$v.form[stepName].$invalid
   }
-  
-  // get   // stepNames[currentStep] -> 
 } 
 </script>
 
 <style scoped lang="scss">
 @import "../styles/vars";
 @import "../styles/theme";
-
-/* .content-heading {
-  color: $text-color;
-} */
 
 .container {
   width: clamp(calc(800px - 4rem), calc(100% - 4rem), 1440px);
@@ -753,24 +747,11 @@ export default class JoinView extends mixins(validationMixin) {
   padding: 1rem;
   background: $bg-primary-color;
 }
-/* .desktop-title {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 4rem;
-
-  @media (max-width: $breakpoint-m) {
-      display: none;
-    }
-} */
 
 .layout-steps {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  /* margin: 0rem 16rem;
-  margin-bottom: 8rem; */
 
   @media (max-width: $breakpoint-m) {
     display: block;
