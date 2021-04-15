@@ -18,14 +18,14 @@
     <div v-else-if="currentUser" class="profile-info">
       <div class="profile-info-balance">
         <img src="@/assets/dai.png" />
-        <div class="balance" @click="copyAddress">0.123456</div>
+        <div class="balance" @click="copyAddress">{{ balance }}</div>
       </div>
       <div class="profile-name" @click="copyAddress">{{ truncatedAddress }}</div>
       <div class="profile-image" @click="toggleProfile()">
         <img v-if="profileImageUrl" :src="profileImageUrl">
       </div>
     </div>
-    <profile v-if="showProfilePanel" :toggleProfile="toggleProfile" />
+    <profile v-if="showProfilePanel" :toggleProfile="toggleProfile" :balance="balance" :etherBalance="etherBalance" />
   </div>
 </template>
 
@@ -34,6 +34,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
+import { commify, formatUnits } from '@ethersproject/units'
 
 import { provider as jsonRpcProvider } from '@/api/core'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
@@ -75,10 +76,32 @@ export default class WalletWidget extends Vue {
   }
 
   get currentUser(): User | null {
+    console.log('************************')
+    if (this.$store.state.currentUser && this.$store.state.currentUser.balance) {
+      console.log('balance: ', this.$store.state.currentUser.balance.toString())
+      console.log('etherBalance: ', this.$store.state.currentUser.etherBalance.toString())
+      console.log('etherBalance: ', commify(formatUnits(this.$store.state.currentUser.etherBalance, 'ether')))
+    }
+    console.log('************************')
     return this.$store.state.currentUser
   }
 
+  get etherBalance(): string | null {
+    if (this.currentUser) {
+      return formatUnits(this.currentUser.etherBalance, 'ether')
+    }
+    return null
+  }
+
+  get balance(): string | null {
+    if (this.currentUser) {
+      return formatUnits(this.currentUser.balance, 'ether')
+    }
+    return null
+  }
+
   async mounted() {
+    console.log('WalletWidget mounted')
     this.showProfilePanel = false
     if (!this.walletProvider) {
       return

@@ -10,7 +10,7 @@
       <!-- <p class="description"></p> -->
     </div>
     <div class="amount">
-      1000.00
+      {{ balance }}
     </div>
   </div>
 </template>
@@ -26,6 +26,10 @@ import { Prop } from 'vue-property-decorator'
 export default class BalanceItem extends Vue {
   @Prop() abbrev: string
   // Need icon, token, and users balance of said token
+
+  @Prop()
+  balance!: string
+
 }
 </script>
 

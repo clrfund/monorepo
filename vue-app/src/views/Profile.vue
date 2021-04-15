@@ -35,8 +35,8 @@
           <img src="@/assets/info.svg">
         </div>
         <div class="balances-card">
-          <balance-item abbrev="DAI" />
-          <balance-item abbrev="ETH" />
+          <balance-item :balance="balance" abbrev="DAI" />
+          <balance-item :balance="etherBalance" abbrev="ETH" />
         </div>
       </div>
       <div class="projects-section">
@@ -60,6 +60,12 @@ import BalanceItem from '@/components/BalanceItem'
 })
 export default class NavBar extends Vue {
   @Prop() toggleProfile
+
+  @Prop()
+  balance!: string
+
+  @Prop()
+  etherBalance!: string
 }
 
 </script>

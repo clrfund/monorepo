@@ -19,7 +19,7 @@ import { loginUser, logoutUser } from '@/api/gun'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
-import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
+import { User, isVerifiedUser, getEtherBalance, getTokenBalance } from '@/api/user'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -181,6 +181,7 @@ const actions = {
           state.currentUser.walletAddress,
         )
       }
+      const etherBalance = await getEtherBalance(state.currentUser.walletAddress)
       const balance = await getTokenBalance(
         state.currentRound.nativeTokenAddress,
         state.currentUser.walletAddress,
@@ -208,6 +209,7 @@ const actions = {
         ...state.currentUser,
         isVerified,
         balance,
+        etherBalance,
       })
     }
   },
