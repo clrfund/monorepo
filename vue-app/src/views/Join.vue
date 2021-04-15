@@ -7,8 +7,15 @@
           <h3>
             Step {{currentStep + 1}} of {{steps.length}}
           </h3>
-          <div v-if="currentStep === 0">
+          <div class="progress-step">
+            <img src="@/assets/green-tick.svg">
+            <h2>A finished step</h2>
+          </div>
+          <div class="progress-step">
+            <img src="@/assets/current-step.svg">
             <h2>About the project</h2>
+          </div>
+          <div v-if="currentStep === 0">
           </div>
           <button-row
             :isStepValid="isStepValid"
@@ -663,6 +670,14 @@ export default class JoinView extends mixins(validationMixin) {
   border-radius: 8px; 
   @media (max-width: $breakpoint-m) {
     border-radius: 0;
+  }
+
+  .progress-step {
+    display: flex;
+
+    img {
+      margin-right: 1rem;
+    }
   }
 }
 
