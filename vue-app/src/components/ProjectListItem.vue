@@ -34,7 +34,7 @@
 
         <form action="#">
         <div class="input-button">
-            <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.png">
+            <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
             <input
               v-model="amount"
               class="input"

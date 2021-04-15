@@ -17,7 +17,7 @@
     </button>
     <div v-else-if="currentUser" class="profile-info">
       <div class="profile-info-balance">
-        <img src="@/assets/dai.png" />
+        <img src="@/assets/dai.svg" />
         <div class="balance" @click="copyAddress">{{ balance }}</div>
       </div>
       <div class="profile-name" @click="copyAddress">{{ truncatedAddress }}</div>

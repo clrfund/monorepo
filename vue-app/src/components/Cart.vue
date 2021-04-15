@@ -16,7 +16,7 @@
           <div style="display: flex; gap: 0.25rem; width: 100%;">
             <div class="profile-info-balance">
               Balance 
-              <img src="@/assets/dai.png" />
+              <img src="@/assets/dai.svg" />
               <div class="balance">0.123456</div>
             </div>
             <div class="profile-info-balance">
@@ -43,7 +43,7 @@
             <form class="contribution-form">
 
               <div class="input-button">
-                <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.png">
+                <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
                 <input
                   :value="item.amount"
                   @input="updateAmount(item, $event.target.value)"

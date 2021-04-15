@@ -1,7 +1,7 @@
 <template>
   <div class="item">
     <div class="icon">
-      <img class="icon img" src="@/assets/dai.png" />
+      <img class="icon img" src="@/assets/dai.svg" />
     </div>
     <div class="main">
       <div v-if="abbrev" class="token-abbrev">
