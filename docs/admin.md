@@ -97,7 +97,7 @@ Set native token:
 await factory.setToken('<token-address>')
 ```
 
-Set coordinator:
+Set [coordinator](./coordinator.md):
 
 ```
 const serializedCoordinatorPubKey = '<coordinator-pub-key>'
