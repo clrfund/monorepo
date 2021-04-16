@@ -14,7 +14,7 @@
           <div id="go-to-app" class="btn-action">Go to app</div>
           <div id="how-it-works" class="btn-white">How it works</div>
         </div>
-        <div id="apply-callout-mobile">
+        <div class="apply-callout mobile">
           <div id="countdown" class="caps">11 days</div>
           <div id="countdown-label" class="caps">Time to apply</div>
           <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div id="apply-callout-desktop">
+      <div class="apply-callout desktop">
         <div class="column">
           <h2>Join the funding round</h2>
           <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
@@ -272,10 +272,6 @@ ol li::before {
   background: $clr-pink-dark-gradient;
   padding: 0;
 
- /*  @media (max-width: $breakpoint-m) {
-    background: $clr-pink-dark-gradient;
-  } */
-
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
@@ -316,32 +312,22 @@ ol li::before {
     gap: 1rem;
   }
 
-  #apply-callout-mobile,
-  #apply-callout-desktop {
+  .apply-callout {
     background: #191623e6;
     border: 2px solid #9789C4;
     box-sizing: border-box;
     border-radius: 8px;
     padding: 1rem;
-    margin: 3rem 0; 
+    margin: 3rem 0;
+
   }
 
-  #apply-callout-mobile {
-    display: none;
-    @media (max-width: $breakpoint-m) {
-      display: inline-block;
-    }    
-  }
-
-  #apply-callout-desktop {
+  .apply-callout.desktop {
+    position: relative;
     display: flex;
     gap: 2rem;
     .column {
       flex: 1;
-    }
-
-    @media (max-width: $breakpoint-m) {
-      display: none;
     }
   }
 }
