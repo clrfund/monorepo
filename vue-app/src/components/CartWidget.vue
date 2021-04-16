@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div v-if="currentUser" class="container">
     <button class="dropdown-btn" @click="toggleCart()">
         <img
         alt="cart"

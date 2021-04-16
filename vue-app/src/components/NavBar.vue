@@ -16,10 +16,10 @@
         </div>
       </div>
       <cart-widget v-if="inApp" />
-      <router-link v-if="!inApp" to="/projects" class="app-btn">
-          App
-      </router-link>
       <wallet-widget v-if="inApp" />
+      <router-link v-if="!inApp" to="/projects" class="app-btn">
+        App
+      </router-link>
     </div>
   </nav>
 </template>

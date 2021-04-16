@@ -105,7 +105,6 @@ p.no-margin {
   margin: 0;
 }
 
-
 .flex-row {
   display: flex;
   justify-content: space-between;
