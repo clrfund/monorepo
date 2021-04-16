@@ -13,7 +13,7 @@
       </div>
       <div class="address-card">
         <h2 class="address">ryanc.eth</h2>
-        0xabc...123
+        {{renderUserAddress(20)}}
         <div class="btn-container" style="justify-content: flex-end;">
           <div class="address-card btn"><img style="margin: 0;" src="@/assets/eject.svg"></div>
           <div class="address-card btn"><img style="margin: 0;" src="@/assets/copy.svg"></div>
@@ -66,6 +66,21 @@ export default class NavBar extends Vue {
 
   @Prop()
   etherBalance!: string
+
+  renderUserAddress(digitsToShow?: number): string {
+    if (this.$store.state.currentUser?.walletAddress) {
+      const address: string = this.$store.state.currentUser.walletAddress
+      if (digitsToShow) {
+        const beginDigits: number = Math.ceil(digitsToShow / 2)
+        const endDigits: number = Math.floor(digitsToShow / 2)
+        const begin: string = address.substr(0, 2 + beginDigits)
+        const end: string = address.substr(address.length - endDigits, endDigits)
+        return `${begin}…${end}`
+      }
+      return address
+    }
+    return ''
+  }
 }
 
 </script>

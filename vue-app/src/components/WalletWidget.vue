@@ -20,7 +20,7 @@
         <img src="@/assets/dai.svg" />
         <div class="balance" @click="copyAddress">{{ balance }}</div>
       </div>
-      <div class="profile-name" @click="copyAddress">{{ truncatedAddress }}</div>
+      <div class="profile-name" @click="copyAddress">{{ renderUserAddress(7) }}</div>
       <div class="profile-image" @click="toggleProfile()">
         <img v-if="profileImageUrl" :src="profileImageUrl">
       </div>
@@ -188,13 +188,17 @@ export default class WalletWidget extends Vue {
     }
   }
 
-  get truncatedAddress(): string {
-    if (this?.currentUser?.walletAddress) {
+  renderUserAddress(digitsToShow?: number): string {
+    if (this.currentUser?.walletAddress) {
       const address: string = this.currentUser.walletAddress
-      const begin: string = address.substr(0, 6)
-      const end: string = address.substr(address.length - 4, 4)
-      const truncatedAddress = `${begin}…${end}`
-      return truncatedAddress
+      if (digitsToShow) {
+        const beginDigits: number = Math.ceil(digitsToShow / 2)
+        const endDigits: number = Math.floor(digitsToShow / 2)
+        const begin: string = address.substr(0, 2 + beginDigits)
+        const end: string = address.substr(address.length - endDigits, endDigits)
+        return `${begin}…${end}`
+      }
+      return address
     }
     return ''
   }
