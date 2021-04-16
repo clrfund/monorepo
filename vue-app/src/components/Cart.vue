@@ -17,7 +17,7 @@
             <div class="profile-info-balance">
               Balance 
               <img src="@/assets/dai.svg" />
-              <div class="balance">0.123456</div>
+              <div class="balance">{{ balance }}</div>
             </div>
             <div class="profile-info-balance">
               Time left
@@ -120,6 +120,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
+import { commify, formatUnits } from '@ethersproject/units'
 import { DateTime } from 'luxon'
 
 import BrightIdModal from '@/components/BrightIdModal.vue'
@@ -253,6 +254,10 @@ export default class Cart extends Vue {
 
   private isGreaterThanInitialContribution(): boolean {
     return this.getTotal().gt(this.contribution)
+  }
+
+  get balance(): string | null {
+    return commify(formatUnits(this.$store.state.currentUser?.balance, 18)) ?? null
   }
 
   get errorMessage(): string | null {
