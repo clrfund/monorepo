@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <div class="grid">
-      <div class="progress-area">
+      <div class="progress-area desktop">
         <div class="progress-container">
           <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-          <p style="margin-bottom: 1.5rem; font-weight: 500; opacity: 0.8;">
+          <p class="subtitle">
             Step {{currentStep + 1}} of {{steps.length}}
           </p>
           <div class="progress-steps">
@@ -23,25 +23,23 @@
           />
         </div>
       </div>
-      <div class="progress-bar-mobile">
+      <div class="progress-area mobile">
         <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
-        <p style="margin: 0; font-weight: 500;">
-            Step {{currentStep + 1}} of {{steps.length}}
-        </p>
-        <router-link class="cancel-link" style="font-weight: 500;" to="/join">
-          Cancel
-        </router-link>
+        <div class="row">
+          <p>
+              Step {{currentStep + 1}} of {{steps.length}}
+          </p>
+          <router-link class="cancel-link" to="/join">
+            Cancel
+          </router-link>
         </div>
       </div>
       <div class="title-area">
-        <h1 class="join-round-title desktop">Join the round</h1>
-        <h1 class="your-project mobile">
-          Join the round
-        </h1>
+        <h1 class="desktop">Join the round</h1>
+        <h1 class="mobile">Join the round</h1>
       </div>
       <div class="cancel-area desktop">
-        <router-link class="cancel-link" style="font-weight: 500;" to="/join">
+        <router-link class="cancel-link" to="/join">
           Cancel
         </router-link>
       </div>
@@ -488,7 +486,7 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
 
 
-interface FormData {
+interface JoinForm {
   project: {
     name: string;
     tagline: string;
@@ -571,7 +569,7 @@ interface FormData {
   },
 })
 export default class JoinView extends mixins(validationMixin) {
-  form: FormData = {
+  form: JoinForm = {
     project: {
       name: '',
       tagline: '',
@@ -652,14 +650,9 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
-.join-round-title {
-  font-family: 'Glacial Indifference', sans-serif;
-  font-weight: 00;
-}
-
 .grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1fr clamp(250px, 25%, 360px);
   grid-template-rows: auto 1fr;
   grid-template-areas:
     "title cancel"
@@ -678,68 +671,91 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
-.progress-area {
+.progress-area.desktop {
   grid-area: progress;
   position: relative;
-    @media (max-width: $breakpoint-m) {
-      display: none;
+
+  .progress-container {
+    position: sticky;
+    top: 5rem;
+    align-self: start;
+    padding: 1.5rem 1rem; 
+    background: $bg-primary-color; 
+    border-radius: 16px; 
+    /* width: 320px; */
+    box-shadow: $box-shadow;
+
+    .progress-steps {
+      margin-bottom: 1rem;
     }
+
+    .progress-step {
+      display: flex;
+
+      img {
+        margin-right: 1rem;
+      }
+      p {
+        margin: 0.5rem 0;
+      }
+      .step {
+        color: #FFF9
+      }
+      .active {
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+    }
+
+    .subtitle {
+      font-weight: 500;
+      opacity: 0.8;
+    }
+  }
 }
 
-.progress-container {
-  position: sticky;
-  top: 5rem;
-  align-self: start;
-  padding: 1.5rem 1rem; 
-  background: $bg-primary-color; 
-  border-radius: 16px; 
-  width: 320px;
-  box-shadow: $box-shadow;
-  @media (max-width: $breakpoint-m) {
-      display: none;
-    }
-
-  .progress-steps {
-    margin-bottom: 1rem;
-  }
-
-  .progress-step {
-    display: flex;
-
-    img {
-      margin-right: 1rem;
-    }
-    p {
-      margin: 0.5rem 0;
-    }
-    .step {
-      color: #FFF9
-    }
-    .active {
-      color: white;
-      font-weight: 600;
-      font-size: 1rem;
-    }
-  }
-}
-
-.progress-bar-mobile {
+.progress-area.mobile {
+  grid-area: progress;
   margin: 2rem 1rem;
   margin-bottom: 0;
-  @media (min-width: $breakpoint-m) {
-      display: none;
+
+  .row {
+    margin-top: 1.5rem;
+
+    p {
+      margin: 0;
+      font-weight: 500;
     }
+
+    .cancel-link {
+      font-weight: 500;
+    }
+  }
 }
 
 .title-area {
   grid-area: title;
-  padding: 1rem;
-  padding-left: 0rem; 
-  /* width: 100%; */
   display: flex;
+  padding: 1rem;
   justify-content: space-between;
   align-items: center;
-  /* margin-top: 4rem; */
+  .desktop {
+    padding-left: 0rem; 
+    font-family: 'Glacial Indifference', sans-serif;
+    font-weight: 00;
+  }
+  .mobile {
+    margin-top: 2rem;
+    padding-bottom: 0;
+    display: block;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    letter-spacing: 6px;
+    margin-top: 2rem;;
+    text-transform: uppercase;
+  }
 }
 
 .cancel-area {
@@ -747,6 +763,10 @@ export default class JoinView extends mixins(validationMixin) {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+
+  .cancel-link {
+    font-weight: 500;
+  }
 }
 
 .form-area {
@@ -754,7 +774,6 @@ export default class JoinView extends mixins(validationMixin) {
   overflow: scroll;
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
   gap: 1rem;
   padding: 1rem;
   height: 100%;
@@ -766,7 +785,6 @@ export default class JoinView extends mixins(validationMixin) {
 
 .nav-area {
   grid-area: navi;
-  
 }
 
 .nav-bar {
@@ -792,28 +810,10 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
-.your-project {
-  margin-top: 2rem;
-  padding-bottom: 0;
-  display: block;
-  font-family: 'Glacial Indifference', sans-serif;
-  font-size: 14px;
-  font-weight: normal;
-  letter-spacing: 6px;
-  margin-top: 2rem;;
-  text-transform: uppercase;
-}
-
 .step-title {
   font-size: 1.5rem;
   margin-top: 1rem;
   font-weight: 600;
-}
-
-.progress {
-  @media (min-width: $breakpoint-m) {
-      display: none;
-    }
 }
 
 .row {
@@ -828,14 +828,12 @@ export default class JoinView extends mixins(validationMixin) {
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: 2rem;
-   @media (min-width: $breakpoint-m) {
-      background: $bg-secondary-color;
-      padding: 1.5rem;
-      border-radius: 1rem;
-      margin-bottom: 4rem;
-    }
-
-
+  @media (min-width: $breakpoint-m) {
+    background: $bg-secondary-color;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 4rem;
+  }
 }
 
 .link {
@@ -845,6 +843,8 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .cancel-link {
+  position: sticky;
+  top: 0px;
   color: $error-color;
   text-decoration: underline;
 }
@@ -894,6 +894,7 @@ export default class JoinView extends mixins(validationMixin) {
     background-color: $bg-secondary-color;
   }
 }
+
 .input.invalid {
   border: 2px solid $error-color; 
 }
