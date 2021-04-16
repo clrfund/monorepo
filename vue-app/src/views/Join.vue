@@ -9,9 +9,9 @@
           </h3>
           <div class="progress-steps">
             <div v-for="(step, idx) in stepNames" class="progress-step" :key="idx">
-              <img v-if="idx < currentStep" src="@/assets/green-tick.svg">
-              <img v-else-if="idx > currentStep" src="@/assets/step-remaining.svg">
-              <img v-else src="@/assets/current-step.svg">
+              <img v-if="idx < currentStep" src="@/assets/green-tick.svg" alt="step complete">
+              <img v-else-if="idx > currentStep" src="@/assets/step-remaining.svg" alt="step remaining">
+              <img v-else src="@/assets/current-step.svg" alt="current step">
               <p v-text="step" class="step" :class="{active: idx === currentStep}" />
             </div>
           </div>
@@ -104,7 +104,7 @@
                   <label for="project-category" class="input-label">Category
                     <p class="input-description">Choose the best fit</p>
                   </label>
-                  <form class="radio-row">
+                  <form class="radio-row" id="category-radio" tabindex="0">
                     <input
                       id="category-content"
                       type="radio"
@@ -917,7 +917,9 @@ export default class JoinView extends mixins(validationMixin) {
     transform: scale(1.04);
     cursor: pointer;
   }
-  
+  &:active {
+    background: $bg-secondary-color;
+  }
 }
 
 #uploadRadio {
