@@ -11,28 +11,32 @@
         </div>
         <div class="flex-row">
           <h2 class="no-margin">Your cart</h2>
+          <div><img class="remove-icon" src="@/assets/remove.svg" />Remove all</div>
         </div>
         <div class="cart">
-          <div style="display: flex; gap: 0.25rem; width: 100%;">
+          <!-- <div style="display: flex; gap: 0.25rem; width: 100%;">
             <div class="profile-info-balance">
               Balance 
               <img src="@/assets/dai.svg" />
               <div class="balance">{{ balance }}</div>
             </div>
-            <div class="profile-info-balance">
-              Time left
-              <img src="@/assets/time.svg" />
-              <div class="balance">10 hours</div>
-            </div>
-          </div>
+          </div> -->
           <div v-if="isEmptyCart" class="empty-cart">
             <div style="font-size : 64px;">🌚</div>
             <h3>Your cart is empty</h3>
             <div>Choose some projects that you want to contribute to</div>
           </div>
+          <div class="balance">
+            <p style="margin: 0;">Balance</p>
+            <div style="display: flex;  align-items: center; gap: 0.5rem;"><img width="20px" src="@/assets/dai.svg" />{{ balance }}</div>
+          </div>
           <div v-for="item in filteredCart" class="cart-item" :key="item.id">
             <div class="project">
-              <img class="project-image" :src="item.imageUrl" :alt="item.name">
+              <router-link
+                :to="{ name: 'project', params: { id: item.id }}"
+              >
+                <img class="project-image" :src="item.imageUrl" :alt="item.name">
+              </router-link>
               <router-link
                 class="project-name"
                 :to="{ name: 'project', params: { id: item.id }}"
@@ -41,7 +45,6 @@
               </router-link>
             </div>
             <form class="contribution-form">
-
               <div class="input-button">
                 <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
                 <input
@@ -76,17 +79,23 @@
         <div v-if="errorMessage" class="submit-error">
           {{ errorMessage }}
         </div>
-        <div v-if="hasUnallocatedFunds()" class="submit-suggestion">
+        <div v-if="hasUnallocatedFunds()">
           Unallocated funds will be used as matching funding
         </div>
-        <div v-if="canRegisterWithBrightId()" class="submit-suggestion">
-          <a @click="registerWithBrightId()">Click here to verify your account using BrightID</a>
+        <div class="flex-row" style="gap: 0.5rem; margin-bottom: 2.5rem;">
+          <div class="profile-info-round">
+            <img src="@/assets/time.svg" />
+            <div>10 hours</div>
         </div>
-        <div v-if="canBuyWxdai()" class="submit-suggestion">
+        <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary">
+          Verify with BrightID
+        </div>
+        </div>
+        <!-- <div v-if="canBuyWxdai()" class="btn-primary">
           <a href="https://wrapeth.com/" target="_blank" rel="noopener">
             Click here to wrap XDAI
           </a>
-        </div>
+        </div> -->
         <button
           v-if="canWithdrawContribution()"
           class="btn-action"
@@ -410,34 +419,28 @@ p.no-margin {
     right: 0;
     z-index: 2;
     background: $bg-secondary-color;
-    width: clamp(200px, 25%, 500px);
-    padding: 1.5rem;
+    width: clamp(200px, 30%, 500px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 1rem;
     z-index: 2;
     height: 100%;
+    padding: 1rem 0;
 }
 
 .balance {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     font-family: "Glacial Indifference", sans-serif;
   } 
 
 
-.profile-info-balance {
+.profile-info-round {
   display: flex;
   gap: 0.5rem;
   align-items: center;
-  cursor: pointer;
-  background: $bg-primary-color;
   padding: 0.5rem 0.5rem;
-  border-radius: 32px;
-  margin: 0.25rem;
-  margin-right: 0;
-  border: 1px solid #000000;
   }
   
 .profile-info-balance img {
@@ -449,6 +452,7 @@ p.no-margin {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0rem 1rem;
 }
 
 .cart {
@@ -483,7 +487,22 @@ p.no-margin {
 }
 
 .cart-item {
-  padding: 1rem 0rem;
+  padding: 1rem;
+  background: $bg-light-color;
+  border-bottom: 1px solid #000000;
+  &:last-of-type {
+    border-bottom: none;
+  }
+
+}
+
+.balance {
+  padding: 1rem;
+  background: $bg-primary-color;
+  border-bottom: 1px solid #000000;
+  border-top: 1px solid #000000;
+  display: flex;
+  justify-content: space-between;
 }
 
 .project {
@@ -585,23 +604,27 @@ p.no-margin {
   align-self: flex-end;
   box-sizing: border-box;
   background: $bg-primary-color;
-  border-radius: 1rem;
-  padding: 1rem;
+  border-top: 1px solid #000000;
   text-align: center;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
-  margin-bottom: 3rem;
+  box-shadow: $box-shadow;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 4;
 
   .submit-error {
     color: $warning-color;
+    margin: 1.5rem 0rem;
     &:before {
       content: '⚠️  '
     }
   }
 
-  .submit-suggestion {
+/*   .submit-suggestion {
     font-size: 16px;
-  }
+  } */
   
 }}
 </style>

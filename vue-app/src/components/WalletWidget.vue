@@ -230,6 +230,7 @@ export default class WalletWidget extends Vue {
   /* padding: 0.25rem 0.5rem; */
   border-radius: 32px;
   padding-right: 0.5rem;
+  
 
   .profile-name {
     font-size: 14px;
@@ -256,6 +257,11 @@ export default class WalletWidget extends Vue {
       height: 100%;
       width: 100%;
     }
+    &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+    cursor: pointer;
+  }
   }
 
   .profile-info-balance {

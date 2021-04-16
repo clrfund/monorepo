@@ -88,20 +88,6 @@ window.onclick = function(event) {
     align-items: center;
   }
 
-  .dropdown-btn {
-    background: rgba(44,41,56,1);
-    border: 1px solid rgba(115,117,166,0.3);
-    border-radius: 8px;
-    padding: 0.25rem 0.5rem;
-    color: white;
-    margin-right: 0.5rem;
-    display: flex;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
-
   .button-menu {
     display: none;
     position: absolute;
