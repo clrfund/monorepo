@@ -11,7 +11,7 @@
         </div>
         <div class="flex-row">
           <h2 class="no-margin">Your cart</h2>
-          <div><img class="remove-icon" src="@/assets/remove.svg" />Remove all</div>
+          <div v-if="!isEmptyCart" ><img class="remove-icon" src="@/assets/remove.svg" />Remove all</div>
         </div>
         <div class="cart">
           <!-- <div style="display: flex; gap: 0.25rem; width: 100%;">
@@ -26,7 +26,7 @@
             <h3>Your cart is empty</h3>
             <div>Choose some projects that you want to contribute to</div>
           </div>
-          <div class="balance">
+          <div class="balance" v-if="!isEmptyCart">
             <p style="margin: 0;">Balance</p>
             <div style="display: flex;  align-items: center; gap: 0.5rem;"><img width="20px" src="@/assets/dai.svg" />{{ balance }}</div>
           </div>
