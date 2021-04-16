@@ -15,13 +15,13 @@
     >
       Connect
     </button>
-    <div v-else-if="currentUser" class="profile-info">
+    <div v-else-if="currentUser" class="profile-info" @click="toggleProfile()">
       <div class="profile-info-balance">
         <img src="@/assets/dai.svg" />
         <div class="balance" @click="copyAddress">{{ balance }}</div>
       </div>
       <div class="profile-name" @click="copyAddress">{{ renderUserAddress(7) }}</div>
-      <div class="profile-image" @click="toggleProfile()">
+      <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl">
       </div>
     </div>
@@ -227,15 +227,12 @@ export default class WalletWidget extends Vue {
   align-items: center;
   cursor: pointer;
   background: $clr-pink-dark-gradient;
-  /* padding: 0.25rem 0.5rem; */
   border-radius: 32px;
   padding-right: 0.5rem;
-  
 
   .profile-name {
     font-size: 14px;
     opacity: 0.8;
-    z-index: 0;
   } 
 
   .balance {

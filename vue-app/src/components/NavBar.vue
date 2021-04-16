@@ -15,11 +15,11 @@
           <router-link to="/">About</router-link>
         </div>
       </div>
-      <CartWidget v-if="inApp" />
+      <cart-widget v-if="inApp" />
       <router-link v-if="!inApp" to="/projects" class="app-btn">
           App
       </router-link>
-      <WalletWidget v-if="inApp" />
+      <wallet-widget v-if="inApp" />
     </div>
   </nav>
 </template>
@@ -36,13 +36,7 @@ import { Prop } from 'vue-property-decorator'
 })
 export default class NavBar extends Vue {
   @Prop() inApp
-  @Prop() isStepValid
   profileImageUrl: string | null = null
-
-  // get currentUser(): User | null {
-  //   return this.$store.state.currentUser
-  // }
-
 }
 
 function openDropdown() {
