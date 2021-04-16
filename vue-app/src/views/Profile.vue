@@ -128,10 +128,9 @@ p.no-margin {
   .container {
     position: absolute;
     right: 0;
-    z-index: 2;
     background: $bg-secondary-color;
     height: 100%;
-    width: clamp(200px, 25%, 500px);
+    width: clamp(350px, 25%, 500px);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
