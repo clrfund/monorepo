@@ -80,6 +80,7 @@ window.onclick = function(event) {
   justify-content: space-between;
   align-items: center;
   background: $bg-secondary-color;
+  box-shadow: $box-shadow;
 
  .btn-row {
     display: flex;

@@ -34,7 +34,6 @@ export default class Transaction extends Vue {
   /* TODO make columns dynamic */
   grid-template-columns: repeat(6, 1fr);
   column-gap: 0.5rem;
-  margin-top: 2rem;
 }
 
 .step {

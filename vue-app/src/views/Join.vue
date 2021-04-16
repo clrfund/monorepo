@@ -4,9 +4,9 @@
       <div class="progress-area">
         <div class="progress-container">
           <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-          <h3>
+          <p style="margin-bottom: 1.5rem; font-weight: 500; opacity: 0.8;">
             Step {{currentStep + 1}} of {{steps.length}}
-          </h3>
+          </p>
           <div class="progress-steps">
             <div v-for="(step, idx) in stepNames" class="progress-step" :key="idx">
               <img v-if="idx < currentStep" src="@/assets/green-tick.svg" alt="step complete">
@@ -23,14 +23,25 @@
           />
         </div>
       </div>
-      <div class="title-area">
-        <h1 class="desktop">Your project</h1>
-        <div class="your-project mobile">
-          Your project
+      <div class="progress-bar-mobile">
+        <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+        <p style="margin: 0; font-weight: 500;">
+            Step {{currentStep + 1}} of {{steps.length}}
+        </p>
+        <router-link class="cancel-link" style="font-weight: 500;" to="/join">
+          Cancel
+        </router-link>
         </div>
       </div>
+      <div class="title-area">
+        <h1 class="join-round-title desktop">Join the round</h1>
+        <h1 class="your-project mobile">
+          Join the round
+        </h1>
+      </div>
       <div class="cancel-area desktop">
-        <router-link to="/join">
+        <router-link class="cancel-link" style="font-weight: 500;" to="/join">
           Cancel
         </router-link>
       </div>
@@ -637,7 +648,13 @@ export default class JoinView extends mixins(validationMixin) {
   margin: 0 auto;
   @media (max-width: $breakpoint-m) {
     width: 100%;
+    background: $bg-secondary-color;
   }
+}
+
+.join-round-title {
+  font-family: 'Glacial Indifference', sans-serif;
+  font-weight: 00;
 }
 
 .grid {
@@ -664,18 +681,23 @@ export default class JoinView extends mixins(validationMixin) {
 .progress-area {
   grid-area: progress;
   position: relative;
+    @media (max-width: $breakpoint-m) {
+      display: none;
+    }
 }
 
 .progress-container {
   position: sticky;
   top: 5rem;
   align-self: start;
-  padding: 1rem; 
+  padding: 1.5rem 1rem; 
   background: $bg-primary-color; 
-  border-radius: 8px; 
+  border-radius: 16px; 
+  width: 320px;
+  box-shadow: $box-shadow;
   @media (max-width: $breakpoint-m) {
-    border-radius: 0;
-  }
+      display: none;
+    }
 
   .progress-steps {
     margin-bottom: 1rem;
@@ -696,14 +718,23 @@ export default class JoinView extends mixins(validationMixin) {
     .active {
       color: white;
       font-weight: 600;
-      font-size: 1.5rem;
+      font-size: 1rem;
     }
   }
 }
 
+.progress-bar-mobile {
+  margin: 2rem 1rem;
+  margin-bottom: 0;
+  @media (min-width: $breakpoint-m) {
+      display: none;
+    }
+}
+
 .title-area {
   grid-area: title;
-  padding: 1rem; 
+  padding: 1rem;
+  padding-left: 0rem; 
   /* width: 100%; */
   display: flex;
   justify-content: space-between;
@@ -744,8 +775,10 @@ export default class JoinView extends mixins(validationMixin) {
   bottom: 0;
   right: 0;
   left: 0;
-  padding: 1rem;
+  padding: 1.5rem;
   background: $bg-primary-color;
+  border-radius: 32px 32px  0 0;
+  box-shadow: $box-shadow;
 }
 
 .layout-steps {
@@ -772,10 +805,9 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .step-title {
-  font-size: 2rem;
-  @media (min-width: $breakpoint-m) {
-      display: none;
-    }
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  font-weight: 600;
 }
 
 .progress {
@@ -795,10 +827,12 @@ export default class JoinView extends mixins(validationMixin) {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-bottom: 2rem;
    @media (min-width: $breakpoint-m) {
       background: $bg-secondary-color;
       padding: 1.5rem;
       border-radius: 1rem;
+      margin-bottom: 4rem;
     }
 
 
@@ -807,6 +841,11 @@ export default class JoinView extends mixins(validationMixin) {
 .link {
   font-family: Inter;
   font-size: 16px;
+  text-decoration: underline;
+}
+
+.cancel-link {
+  color: $error-color;
   text-decoration: underline;
 }
 
@@ -864,6 +903,7 @@ export default class JoinView extends mixins(validationMixin) {
   font-size: 14px;
   font-family: Inter;
   margin-bottom: 0.5rem;
+  line-height: 150%;
 }
 
 .input-label {

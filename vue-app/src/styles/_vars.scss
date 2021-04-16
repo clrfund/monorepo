@@ -20,6 +20,7 @@ $clr-pink-light-gradient: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.5
 $clr-pink-dark-gradient: linear-gradient(315deg, #C72AB9 0%, #252A77 100%);
 $clr-green-gradient: linear-gradient(315deg, #2B364B 0%, #6CF4D5 100%);
 $clr-blue-gradient: linear-gradient(109.01deg, #252A77 6.45%, #292447 53.48%, #2C3F45 99.55%);
+$box-shadow: 0px -4px 16px rgba(255, 255, 255, 0.05);
 
 // when using gradients as backgrounds – 60% opacity
 $clr-pink-dark-gradient-bg: linear-gradient(315deg, rgba(199, 42, 185, 0.6) 0%, rgba(37, 42, 119, 0.6) 100%);

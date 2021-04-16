@@ -409,7 +409,8 @@ export default class ProjectList extends Vue {
 }
 
 .get-prepared {
-  background: $clr-pink-dark-gradient;
+  background: $bg-primary-color;
+  border: 1px solid #000000;
   border-radius: 8px;
   padding: 1.5rem;
   display: flex;

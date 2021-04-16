@@ -96,7 +96,6 @@ export default class ButtonRow extends Vue {
 .disabled {
   cursor: not-allowed;
   opacity: 0.5;
-  background: #FFF7;
 
   &:hover {
     opacity: 0.5;
