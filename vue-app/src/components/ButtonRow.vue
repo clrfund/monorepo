@@ -1,28 +1,26 @@
 <template>
   <div class="btn-row">
-    <router-link
+    <button
       v-if="currentStep > 0"
-      :to="{
-        name: 'joinStep',
-        params: {
-          step: steps[currentStep - 1]
-        }
-      }"
+      @click="handlePrev"
       class="btn-secondary"
     >
       Previous
-    </router-link>
+    </button>
     <div v-else></div>
 
-    <!-- TODO button to trigger tx  -->
-    <router-link
-      v-if="currentStep === 4"
-      :to="{
-        name: 'joinStep',
-        params: {
-          step: steps[currentStep + 1]
-        }
-      }"
+    <!-- TODO: Finish button to trigger tx  -->
+    <button
+      v-if="currentStep === 5"
+      @click="handleSubmit"
+      to="/project-added"
+      class="btn-primary"
+    >
+      Finish
+    </button>
+    <button
+      v-else-if="currentStep === 4"
+      @click="handleNext"
       :class="{
         disabled: !isStepValid,
         'btn-primary': true,
@@ -30,17 +28,10 @@
       :disabled="!isStepValid"
     >
       Summary
-    </router-link>
-    <button
-      v-else-if="currentStep === 5"
-      to="/project-added"
-      class="btn-primary"
-    >
-      Finish
     </button>
     <button
       v-else-if="currentStep < 5"
-      @click="handleNav"
+      @click="handleNext"
       :class="{
         disabled: !isStepValid,
         'btn-primary': true,
@@ -63,7 +54,7 @@ export default class ButtonRow extends Vue {
   @Prop() steps!: string[]
   @Prop() isStepValid?: boolean
 
-  handleNav(): void {
+  handleNext(): void {
     this.$router.push({
       name: 'joinStep',
       params: {
@@ -71,6 +62,21 @@ export default class ButtonRow extends Vue {
       },
     })
   }
+  handlePrev(): void {
+    this.$router.push({
+      name: 'joinStep',
+      params: {
+        step: this.steps[this.currentStep - 1],
+      },
+    })
+  }
+  handleSubmit(): void {
+    alert('submitted')
+    // Submit form data
+    // Clear form store/state data
+  }
+  // Pushing to router stack destroys local form state
+  // Place form data in $store?
 }
 </script>
 
