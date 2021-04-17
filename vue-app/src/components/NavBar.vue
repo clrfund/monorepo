@@ -7,12 +7,13 @@
       <img class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
     </router-link>
     <div class="btn-row">
-      <div class="dropdown">
-        <button @click="openDropdown()" v-if="inApp" class="dropdown-btn">...</button>
+      <div class="dropdown" v-if="inApp" >
+        <button @click="openDropdown()" class="dropdown-btn">...</button>
         <div id="myDropdown" class="button-menu">
-          <router-link to="/">About</router-link>
-          <router-link to="/">About</router-link>
-          <router-link to="/">About</router-link>
+          <router-link v-for="({ to, text, emoji }, idx) of dropdownItems" :to="to" :key="idx" class="dropdown-item">
+            <div class="emoji-wrapper">{{ emoji }}</div>
+            <p class="item-text">{{ text }}</p>
+          </router-link>
         </div>
       </div>
       <cart-widget v-if="inApp" />
@@ -37,11 +38,19 @@ import { Prop } from 'vue-property-decorator'
 export default class NavBar extends Vue {
   @Prop() inApp
   profileImageUrl: string | null = null
+  dropdownItems: {to: string; text: string; emoji: string}[] = [
+    { to: '', text: 'About', emoji: 'ℹ️' },
+    { to: '', text: 'Add project', emoji: '➕' },
+    { to: '', text: 'Code', emoji: '👾' },
+    { to: '', text: 'Docs', emoji: '📑' },
+    { to: '', text: 'Light Mode', emoji: '🔆' },
+  ]
+
+  openDropdown() {
+    document.getElementById('myDropdown').classList.toggle('show')
+  }
 }
 
-function openDropdown() {
-  document.getElementById('myDropdown').classList.toggle('show')
-}
 
 // Close the dropdown menu if the user clicks outside of it
 window.onclick = function(event) {
@@ -76,29 +85,56 @@ window.onclick = function(event) {
   background: $bg-secondary-color;
   box-shadow: $box-shadow;
 
- .btn-row {
+  .btn-row {
     display: flex;
     flex-direction: row;
     align-items: center;
-  }
 
-  .button-menu {
-    display: none;
-    position: absolute;
-    background-color: $bg-secondary-color;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    cursor: pointer;
-  }
+    .dropdown {
+      position: relative;
+      display: inline-block;
 
-  .show {
-    display: block;
-  }
+      .button-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 2rem;
+        background: $bg-secondary-color;
+        border: 1px solid rgba(115,117,166,0.3);
+        border-radius: 0.5rem;
+        min-width: 130px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        cursor: pointer;
+        padding: 0.75rem;
+        gap: 1rem;
 
-  .dropdown {
-    position: relative;
-    display: inline-block;
+        .dropdown-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          .emoji-wrapper {
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 0.25rem;
+            padding: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            display: grid;
+            place-items: center;
+          }
+          
+          .item-text {
+            margin: 0;
+            color: $text-color;
+          }
+        }
+      }
+
+      .show {
+        display: flex;
+      }
+    }
   }
 
   .button-menu router-link {
