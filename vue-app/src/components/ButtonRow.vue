@@ -53,8 +53,10 @@ export default class ButtonRow extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]
   @Prop() isStepValid?: boolean
+  @Prop() callback?: () => void
 
   handleNext(): void {
+    this.callback()
     this.$router.push({
       name: 'joinStep',
       params: {
@@ -63,6 +65,7 @@ export default class ButtonRow extends Vue {
     })
   }
   handlePrev(): void {
+    this.callback()
     this.$router.push({
       name: 'joinStep',
       params: {

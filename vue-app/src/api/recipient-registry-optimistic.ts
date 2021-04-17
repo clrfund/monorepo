@@ -44,6 +44,36 @@ export enum RequestStatus {
   Executed = 'Executed',
 }
 
+export interface RecipientApplicationData {
+  project: {
+    name: string;
+    tagline: string;
+    description: string;
+    category: string;
+    problemSpace: string;
+  };
+  fund: {
+    address: string;
+    plans: string;
+  };
+  team: {
+    name: string;
+    description: string;
+  };
+  links: {
+    github: string;
+    radicle: string;
+    website: string;
+    twitter: string;
+    discord: string;
+  };
+  image: {
+    requiresUpload: '' | 'true' | 'false';
+    banner: string;
+    thumbnail: string;
+  };
+}
+
 interface RecipientMetadata {
   name: string;
   description: string;

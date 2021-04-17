@@ -20,6 +20,7 @@ import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getEtherBalance, getTokenBalance } from '@/api/user'
+import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -45,12 +46,12 @@ import {
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
   CLEAR_CART,
+  SET_RECIPIENT_DATA,
 } from './mutation-types'
 
 Vue.use(Vuex)
 
 interface RootState {
-  recipientRegistryAddress: string | null;
   currentUser: User | null;
   currentRoundAddress: string | null;
   currentRound: RoundInfo | null;
@@ -58,6 +59,8 @@ interface RootState {
   cart: CartItem[];
   contributor: Contributor | null;
   contribution: BigNumber | null;
+  recipientRegistryAddress: string | null;
+  recipient: RecipientApplicationData | null;
 }
 
 const state: RootState = {
@@ -69,6 +72,7 @@ const state: RootState = {
   cart: new Array<CartItem>(),
   contributor: null,
   contribution: null,
+  recipient: null,
 }
 
 export const mutations = {
@@ -142,6 +146,13 @@ export const mutations = {
   },
   [CLEAR_CART](state) {
     state.cart = []
+  },
+  [SET_RECIPIENT_DATA](state, payload: { updatedData: RecipientApplicationData; step: string }) {
+    if (!state.recipient) {
+      state.recipient = payload.updatedData
+    } else {
+      state.recipient[payload.step] = payload.updatedData[payload.step]
+    }
   },
 }
 

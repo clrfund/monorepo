@@ -19,6 +19,7 @@
             :isStepValid="isStepValid()"
             :steps="steps"
             :currentStep="currentStep"
+            :callback="saveFormData"
             class="desktop"
           />
         </div>
@@ -467,7 +468,7 @@
         </div>
       </div>
       <div class="nav-area nav-bar mobile">
-        <button-row :steps="steps" :currentStep="currentStep" />
+        <button-row :steps="steps" :currentStep="currentStep" :callBack="saveFormData" />
         <!-- TODO submit button to trigger tx, pass callback to above <botton-row />?  -->
       </div>
     </div>
@@ -485,36 +486,8 @@ import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
 
-
-interface JoinForm {
-  project: {
-    name: string;
-    tagline: string;
-    description: string;
-    category: string;
-    problemSpace: string;
-  };
-  fund: {
-    address: string;
-    plans: string;
-  };
-  team: {
-    name: string;
-    description: string;
-  };
-  links: {
-    github: string;
-    radicle: string;
-    website: string;
-    twitter: string;
-    discord: string;
-  };
-  image: {
-    requiresUpload: '' | 'true' | 'false';
-    banner: string;
-    thumbnail: string;
-  };
-}
+import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
+import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
 
 @Component({
   components: {
@@ -569,7 +542,7 @@ interface JoinForm {
   },
 })
 export default class JoinView extends mixins(validationMixin) {
-  form: JoinForm = {
+  form: RecipientApplicationData = {
     project: {
       name: '',
       tagline: '',
@@ -617,10 +590,10 @@ export default class JoinView extends mixins(validationMixin) {
     this.steps = steps
     this.currentStep = currentStep
     this.stepNames = stepNames
-    // TODO redirect to /join/one if step doesn't exist
-    // How about back to Join landing?
+    this.form = this.$store.state.recipient || this.form
+
+    // redirect to /join/ if step doesn't exist
     if (this.currentStep < 0) {
-      console.log('NO STEP')
       this.$router.push({ name: 'join' })
     }
   }
@@ -633,6 +606,13 @@ export default class JoinView extends mixins(validationMixin) {
     const stepNumber: number = this.currentStep
     const stepName: string = this.steps[stepNumber]
     return !this.$v.form[stepName].$invalid
+  }
+
+  saveFormData(): void {
+    this.$store.commit(SET_RECIPIENT_DATA, {
+      updatedData: this.form,
+      step: this.steps[this.currentStep],
+    })
   }
 } 
 </script>
