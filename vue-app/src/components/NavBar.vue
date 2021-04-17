@@ -107,8 +107,8 @@ window.onclick = function(event) {
 
   .ef-logo {
     margin: 0;
-    /* max-height: 100%; */
-    height: 75%;
+    height: 2.25rem;
+    vertical-align: middle;
   }
 }
 </style>
