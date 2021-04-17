@@ -35,8 +35,12 @@
         <div class="centered">11 days to join</div>
       </div>
     </div>
-    <div id="section-how-it-works">
-      <!-- <img src="@/assets/dai-wormhole.png" alt="Image of Dai token funneling through a wormhole" id="dai-wormhole"> -->
+    <div id="section-how-it-works" ref="how-it-works">
+      <div class="dai-wormhole desktop">
+        <img src="@/assets/dai-small.svg" alt="Image of Dai token funneling through a wormhole" class="dai-small">
+        <img src="@/assets/wormhole.png" alt="Image of Dai token funneling through a wormhole" class="wormhole">
+        <img src="@/assets/dai-large.svg" alt="Image of Dai token funneling through a wormhole" class="dai-large">
+      </div>
       <div id="how-it-works-content">
         <h2>Every donation is amplified by the matching pool.</h2>
         <p>This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.</p>
@@ -395,34 +399,57 @@ ol li::before {
 
 #section-how-it-works {
   background: $clr-purple-gradient-bg;
-  display: flex;
-  justify-content: flex-end;
-  #dai-wormhole {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-}
-#how-it-works-content {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  background: $bg-light-color;
-  width: 40%;
-  border-radius: 1rem;
-  padding: 1rem 2rem 0;
-  & > img {
-    display: none;
-  }
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  grid-template-rows: repeat(2, auto);
+  grid-template-areas: "image content" "image .";
   @media (max-width: $breakpoint-m) {
+    display: flex;
+  }
+  .dai-wormhole {
+    grid-area: image;
+    position: relative;
+    display: flex;
     width: 100%;
-    border-radius: 0;
-    padding: 0;
-    background: none;
+    .dai-small {
+      position: absolute;
+      left: 8%;
+      top: 0;
+      transform: rotate(-10deg);
+    }
+    .wormhole {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 16/9;
+      mix-blend-mode: exclusion;
+    }
+    .dai-large {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 65%;
+    }
+  }
+  #how-it-works-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: $bg-light-color;
+    /* width: 40%; */
+    border-radius: 1rem;
+    padding: 1rem 2rem 0;
     & > img {
-      display: inline-block;
-      align-self: center;
-      /* max-width: 500px; */
+      display: none;
+    }
+    @media (max-width: $breakpoint-m) {
+      width: 100%;
+      border-radius: 0;
+      padding: 0;
+      background: none;
+      & > img {
+        display: inline-block;
+        align-self: center;
+      }
     }
   }
 }
