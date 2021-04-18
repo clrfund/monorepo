@@ -431,38 +431,41 @@
                   </form>
                 </div>
                 <div class="form-background">
-                  <label
-                    :for="requiresUpload ? 'image-thumbnail-upload' : 'image-thumbnail-hash'"
-                    class="input-label"
-                  >Thumbnail image
-                    <p class="input-description">Recommended dimensions: 80 x 80</p>
-                  </label>
-                  <input
-                    v-if="requiresUpload"
-                    id="image-thumbnail-upload"
-                    type="file"
-                    class="input"
-                    @change="handleUploadFile"
-                    name="thumbnail"
-                  />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.image.thumbnail.$error
-                  }">Upload a file</p>
-                  <input
-                    v-if="!requiresUpload"
-                    id="image-thumbnail-hash"
-                    placeholder="example: QmWQTJU9dMNQHJm6ZnXHi2eN5Y7hdpZaEL7o3SEGBRY8DZ"
-                    v-model="$v.form.image.thumbnail.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.image.thumbnail.$error
-                    }"
-                  />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.image.thumbnail.$error
-                  }">This doesn't look like an IPFS hash</p>
+                  <form method="POST" enctype="multipart/form-data" @submit="handleSubmit" name="thumbnail">
+                    <label
+                      :for="requiresUpload ? 'image-thumbnail-upload' : 'image-thumbnail-hash'"
+                      class="input-label"
+                    >Thumbnail image
+                      <p class="input-description">Recommended dimensions: 80 x 80</p>
+                    </label>
+                    <input
+                      v-if="requiresUpload"
+                      id="image-thumbnail-upload"
+                      type="file"
+                      class="input"
+                      @change="handleUploadFile"
+                      name="thumbnail"
+                    />
+                    <p :class="{
+                      error: true,
+                      hidden: !$v.form.image.thumbnail.$error
+                    }">Upload a file</p>
+                    <input
+                      v-if="!requiresUpload"
+                      id="image-thumbnail-hash"
+                      placeholder="example: QmWQTJU9dMNQHJm6ZnXHi2eN5Y7hdpZaEL7o3SEGBRY8DZ"
+                      v-model="$v.form.image.thumbnail.$model"
+                      :class="{
+                        input: true,
+                        invalid: $v.form.image.thumbnail.$error
+                      }"
+                    />
+                    <p :class="{
+                      error: true,
+                      hidden: !$v.form.image.thumbnail.$error
+                    }">This doesn't look like an IPFS hash</p>
+                    <button v-if="requiresUpload" primary="true" type='submit' label='Upload'>Upload</button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -538,12 +541,26 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
       image: {
         requiresUpload: {},
         banner: {
-          required,
-          validIpfsHash: isIPFS.cid,
+          hash: {
+            required,
+            validIpfsHash: isIPFS.cid,
+          },
+          success: {},
+          failure: {},
+          // modalOpen: false,
+          document: {},
+          loading: {},
         },
         thumbnail: {
-          required,
-          validIpfsHash: isIPFS.cid,
+          hash: {
+            required,
+            validIpfsHash: isIPFS.cid,
+          },
+          success: {},
+          failure: {},
+          // modalOpen: false,
+          document: {},
+          loading: {},
         },
       },
     },
@@ -607,8 +624,6 @@ export default class JoinView extends mixins(validationMixin) {
   created() {
     if (this.$route.params.step === 'image') {
       this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
-      console.log(typeof this.ipfs)
-      console.log(this.ipfs)
     }
     const steps = [...Object.keys(this.form), 'summary']
     const currentStep = steps.indexOf(this.$route.params.step)
