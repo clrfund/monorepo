@@ -9373,6 +9373,13 @@ ipfs-log@^4.5.4, ipfs-log@^4.6.5, ipfs-log@~4.6.2, ipfs-log@~4.6.4:
     p-map "^4.0.0"
     p-whilst "^2.1.0"
 
+ipfs-mini@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/ipfs-mini/-/ipfs-mini-1.1.5.tgz#1ffd1f0b048814aabbdfa24c77cde255c5b11fc7"
+  integrity sha512-BzsoCa3V/gxN2eEHnyqggOdreAwnvbddj4jUvp6Q7jXuzXx9q5XakXe8mG8qV0bn4bMKdH/7BUDbiWBCEMuYBg==
+  dependencies:
+    xmlhttprequest "^1.8.0"
+
 ipfs-only-hash@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/ipfs-only-hash/-/ipfs-only-hash-2.0.1.tgz#4756dfdeb73160d557a0d4512f7f70e40f127ee3"

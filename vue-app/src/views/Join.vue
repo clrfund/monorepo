@@ -393,37 +393,42 @@
                   </div>
                 </div>
                 <div class="form-background">
-                  <label
-                    :for="requiresUpload ? 'image-banner-upload' : 'image-banner-hash'"
-                    class="input-label"
-                  >Banner image
-                    <p class="input-description">Recommended dimensions: 500 x 300</p>
-                  </label>
-                  <input
-                    v-if="requiresUpload"
-                    id="image-banner-upload"
-                    type="file"
-                    class="input"
-                  />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.image.thumbnail.$error
-                  }">Upload a file</p>  
-                  <input
-                    v-if="!requiresUpload"
-                    id="image-banner-hash"
-                    placeholder="example: ipfs://hash"
-                    class="input"
-                    v-model="$v.form.image.banner.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.image.banner.$error
-                    }"
-                  />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.image.banner.$error
-                  }">This doesn't look like an IPFS hash</p>
+                  <form method="POST" enctype="multipart/form-data" @submit="handleSubmit" name="banner">
+                    <label
+                      :for="requiresUpload ? 'image-banner-upload' : 'image-banner-hash'"
+                      class="input-label"
+                    >Banner image
+                      <p class="input-description">Recommended dimensions: 500 x 300</p>
+                    </label>
+                    <input
+                      v-if="requiresUpload"
+                      id="image-banner-upload"
+                      type="file"
+                      class="input"
+                      @change="handleUploadFile"
+                      name="banner"
+                    />
+                    <p :class="{
+                      error: true,
+                      hidden: !$v.form.image.banner.$error
+                    }">Upload a file</p>  
+                    <input
+                      v-if="!requiresUpload"
+                      id="image-banner-hash"
+                      placeholder="example: QmWQTJU9dMNQHJm6ZnXHi2eN5Y7hdpZaEL7o3SEGBRY8DZ"
+                      class="input"
+                      v-model="$v.form.image.banner.$model"
+                      :class="{
+                        input: true,
+                        invalid: $v.form.image.banner.$error
+                      }"
+                    />
+                    <p :class="{
+                      error: true,
+                      hidden: !$v.form.image.banner.$error
+                    }">This doesn't look like an IPFS hash</p>
+                    <button v-if="requiresUpload" primary="true" type='submit' label='Upload'>Upload</button>
+                  </form>
                 </div>
                 <div class="form-background">
                   <label
@@ -437,6 +442,8 @@
                     id="image-thumbnail-upload"
                     type="file"
                     class="input"
+                    @change="handleUploadFile"
+                    name="thumbnail"
                   />
                   <p :class="{
                     error: true,
@@ -445,7 +452,7 @@
                   <input
                     v-if="!requiresUpload"
                     id="image-thumbnail-hash"
-                    placeholder="example: ipfs://hash"
+                    placeholder="example: QmWQTJU9dMNQHJm6ZnXHi2eN5Y7hdpZaEL7o3SEGBRY8DZ"
                     v-model="$v.form.image.thumbnail.$model"
                     :class="{
                       input: true,
@@ -480,6 +487,7 @@ import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
 import { required, minLength, maxLength, url } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
+import IPFS from 'ipfs-mini'
 import { isAddress } from '@ethersproject/address'
 
 import LayoutSteps from '@/components/LayoutSteps.vue'
@@ -567,8 +575,24 @@ export default class JoinView extends mixins(validationMixin) {
     },
     image: {
       requiresUpload: 'false',
-      banner: '',
-      thumbnail: '',
+      bannerHash: '',
+      thumbnailHash: '',
+      banner: {
+        hash: '',
+        success: '',
+        failure: '',
+        // modalOpen: false,
+        document: '',
+        loading: false,
+      },
+      thumbnail: {
+        hash: '',
+        success: '',
+        failure: '',
+        // modalOpen: false,
+        document: '',
+        loading: false,
+      },
     },
   }
   currentStep: number | null = null
@@ -576,7 +600,16 @@ export default class JoinView extends mixins(validationMixin) {
 
   stepNames: string[] = []
 
+  // IPFS
+  ipfs: any = null
+
+
   created() {
+    if (this.$route.params.step === 'image') {
+      this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+      console.log(typeof this.ipfs)
+      console.log(this.ipfs)
+    }
     const steps = [...Object.keys(this.form), 'summary']
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
@@ -613,6 +646,49 @@ export default class JoinView extends mixins(validationMixin) {
       updatedData: this.form,
       step: this.steps[this.currentStep],
     })
+  }
+
+  handleUploadFile(event) {
+    const data = event.target.files[0]
+    const { name } = event.target
+    if (data.type.match('image/*')) {
+      const reader = new FileReader()
+      reader.onload = (function() {
+        return function(e) {
+          this.form.image[name].document = e.target.result
+          console.log(this.form.image)
+        }.bind(this)
+      }.bind(this))(data)
+      reader.readAsDataURL(data)
+    } else {
+      // this.form.image[name].modalOpen = true
+      this.form.image[name].failure = 'That doesn\'t look like an image'
+    }
+  }
+
+  handleSubmit(event) {
+    event.preventDefault()
+    const { name } = event.target
+    console.log(event)
+    this.form.image[name].loading = true
+
+    if (this.form.image[name].document !== '') {
+      this.ipfs.addJSON(this.form.image[name].document, async (err, _hash) => {
+        if (err) {
+          this.form.image[name].failure = 'Error occured: ${err.message}'
+        } else {
+          // this.form.image[name].modalOpen = true
+          this.form.image[name].hash = _hash
+          this.form.image[name].success = `Success! Your hash: ${_hash}`
+          console.log(this.form.image[name].success)
+        }
+      })
+    } else {
+      // this.form.image[name].modalOpen = true
+      this.form.image[name].failure = 'You need an image.'
+    }
+
+    this.form.image[name].loading = false
   }
 } 
 </script>
