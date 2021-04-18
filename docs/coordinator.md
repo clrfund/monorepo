@@ -107,7 +107,7 @@ export NODE_CONFIG='{"snarkParamsPath": "../../../contracts/snark-params/", "zku
 Decrypt messages and tally the votes:
 
 ```
-COORDINATOR_ETH_PK=<eth-private-key> CLRFUND_STATE='{"fundingRound": "<funding-round-address>", "coordinatorPrivKey": "<coordinator-private-key>"}' yarn hardhat run --network xdai scripts/tally.ts
+COORDINATOR_PK=<coordinator-private-key> COORDINATOR_ETH_PK=<eth-private-key> ROUND_ADDRESS=<funding-round-address> yarn hardhat run --network xdai scripts/tally.ts
 ```
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
