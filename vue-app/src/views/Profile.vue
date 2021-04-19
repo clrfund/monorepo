@@ -83,15 +83,13 @@ export default class NavBar extends Vue {
   }
 
   get ens(): string {
-    // TODO: Fetch ENS for this.$store.state.currentUser.walletAddress
-    // Ethers.js - Requires Mainnet provider to fetch (local hardhat won't work)
-    return ''
+    return this.$store.state.currentUser?.ens
   }
 
   async copyAddress(): Promise<void> {
     try {
       await navigator.clipboard.writeText(this.$store.state.currentUser.walletAddress)
-      // alert('Text copied to clipboard')
+      // TODO: UX success feedback
     } catch (error) {
       console.warn('Error in copying text: ', error)
     }

@@ -19,7 +19,7 @@ import { loginUser, logoutUser } from '@/api/gun'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
-import { User, isVerifiedUser, getEtherBalance, getTokenBalance } from '@/api/user'
+import { User, isVerifiedUser, getEtherBalance, getTokenBalance, getENS } from '@/api/user'
 import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
 import {
   SELECT_ROUND,
@@ -195,6 +195,7 @@ const actions = {
           state.currentUser.walletAddress,
         )
       }
+      const ens = await getENS(state.currentUser.walletAddress)
       const etherBalance = await getEtherBalance(state.currentUser.walletAddress)
       const balance = await getTokenBalance(
         state.currentRound.nativeTokenAddress,
@@ -219,11 +220,13 @@ const actions = {
           commit(SET_CONTRIBUTION, contribution)
         }
       }
+
       commit(SET_CURRENT_USER, {
         ...state.currentUser,
         isVerified,
         balance,
         etherBalance,
+        ens,
       })
     }
   },

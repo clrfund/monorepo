@@ -4,7 +4,7 @@ import { BigNumber, Contract } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 
 import { UserRegistry, ERC20 } from './abi'
-import { factory, ipfsGatewayUrl, provider } from './core'
+import { factory, ipfsGatewayUrl, provider, mainnetProvider } from './core'
 
 export const LOGIN_MESSAGE = `Sign this message to access clr.fund at ${factory.address.toLowerCase()}.`
 
@@ -48,4 +48,13 @@ export async function getEtherBalance(
   walletAddress: string,
 ): Promise<BigNumber> {
   return await provider.getBalance(walletAddress)
+}
+
+export async function getENS(
+  walletAddress: string,
+): Promise<string> {
+    // Ethers.js - Requires Mainnet provider to fetch (local hardhat won't work)
+    // Demo: Replace walletAddress below with '0x8ba1f109551bD432803012645Ac136ddd64DBA72'
+    // When logged in, will display: registrar.firefly.eth
+    return await mainnetProvider.lookupAddress(walletAddress)
 }

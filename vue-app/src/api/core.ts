@@ -5,6 +5,9 @@ import { FundingRoundFactory } from './abi'
 export const provider = new ethers.providers.StaticJsonRpcProvider(
   process.env.VUE_APP_ETHEREUM_API_URL,
 )
+export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(
+  process.env.VUE_APP_MAINNET_PROVIDER_URL,
+)
 export const blockExplorer = process.env.VUE_APP_BLOCK_EXPLORER
 export const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
 export const gunApiUrl = process.env.VUE_APP_GUN_API_URL as string
