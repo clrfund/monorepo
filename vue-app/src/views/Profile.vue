@@ -12,8 +12,8 @@
         <h2 class="no-margin">Your wallet</h2>
       </div>
       <div class="address-card">
-        <h2 class="address">ryanc.eth</h2>
-        {{renderUserAddress(20)}}
+        <h2 class="address">{{ ens || renderUserAddress(16)}}</h2>
+        {{ens && renderUserAddress(20)}}
         <div class="btn-container" style="justify-content: flex-end; gap: 0.5rem;">
           <div class="address-card btn"><img style="margin: 0;" src="@/assets/copy.svg"></div>
           <div class="address-card btn"><img style="margin: 0;" src="@/assets/disconnect.svg"></div>
@@ -79,6 +79,12 @@ export default class NavBar extends Vue {
       }
       return address
     }
+    return ''
+  }
+
+  get ens(): string {
+    // TODO: Fetch ENS for this.$store.state.currentUser.walletAddress
+    // Ethers.js - Requires Mainnet provider to fetch (local hardhat won't work)
     return ''
   }
 }
