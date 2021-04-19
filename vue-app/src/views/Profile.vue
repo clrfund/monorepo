@@ -14,9 +14,9 @@
       <div class="address-card">
         <h2 class="address">{{ ens || renderUserAddress(16)}}</h2>
         {{ens && renderUserAddress(20)}}
-        <div class="btn-container" style="justify-content: flex-end; gap: 0.5rem;">
-          <div class="address-card btn"><img style="margin: 0;" src="@/assets/copy.svg"></div>
-          <div class="address-card btn"><img style="margin: 0;" src="@/assets/disconnect.svg"></div>
+        <div class="action-btns">
+          <div class="btn" @click="copyAddress"><img src="@/assets/copy.svg"></div>
+          <div class="btn" @click="disconnect"><img src="@/assets/disconnect.svg"></div>
         </div>
       </div>
       <div class="setup-card">
@@ -86,6 +86,19 @@ export default class NavBar extends Vue {
     // TODO: Fetch ENS for this.$store.state.currentUser.walletAddress
     // Ethers.js - Requires Mainnet provider to fetch (local hardhat won't work)
     return ''
+  }
+
+  async copyAddress(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(this.$store.state.currentUser.walletAddress)
+      // alert('Text copied to clipboard')
+    } catch (error) {
+      console.warn('Error in copying text: ', error)
+    }
+  }
+
+  async disconnect(): Promise<void> {
+    console.log('todo')
   }
 }
 
@@ -158,6 +171,13 @@ p.no-margin {
         margin: 0;
         text-transform: uppercase;
       }
+
+      .action-btns {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+      }
+
       .btn {
         border-radius: 100%;
         display: flex;
@@ -170,6 +190,10 @@ p.no-margin {
         &:hover {
           transform: scale(1.01);
           opacity: 0.8;
+        }
+
+        img {
+          margin: 0;
         }
       }
 
