@@ -10,10 +10,20 @@
       <div class="dropdown" v-if="inApp" >
         <button @click="openDropdown()" class="dropdown-btn">...</button>
         <div id="myDropdown" class="button-menu">
-          <router-link v-for="({ to, text, emoji }, idx) of dropdownItems" :to="to" :key="idx" class="dropdown-item">
-            <div class="emoji-wrapper">{{ emoji }}</div>
-            <p class="item-text">{{ text }}</p>
-          </router-link>
+          <div v-for="({ to, href, text, emoji }, idx) of dropdownItems" :key="idx" class="dropdown-item">
+            <template v-if="href">
+              <a :href="href" target="_blank">
+                <div class="emoji-wrapper">{{ emoji }}</div>
+                <p class="item-text">{{ text }} ↗</p>
+              </a>
+            </template>
+            <template v-else>
+              <router-link :to="to">
+                <div class="emoji-wrapper">{{ emoji }}</div>
+                <p class="item-text">{{ text }}</p>
+              </router-link>
+            </template>
+          </div>
         </div>
       </div>
       <cart-widget v-if="inApp" />
@@ -38,12 +48,12 @@ import { Prop } from 'vue-property-decorator'
 export default class NavBar extends Vue {
   @Prop() inApp
   profileImageUrl: string | null = null
-  dropdownItems: {to: string; text: string; emoji: string}[] = [
-    { to: '', text: 'About', emoji: 'ℹ️' },
-    { to: '', text: 'Add project', emoji: '➕' },
-    { to: '', text: 'Code', emoji: '👾' },
-    { to: '', text: 'Docs', emoji: '📑' },
-    { to: '', text: 'Light Mode', emoji: '🔆' },
+  dropdownItems: {to?: string; href?: string; text: string; emoji: string}[] = [
+    { to: '/about', text: 'About', emoji: 'ℹ️' },
+    { to: '/join', text: 'Add project', emoji: '➕' },
+    { href: 'https://github.com/clrfund/monorepo/', text: 'Code', emoji: '👾' },
+    { href: 'https://github.com/clrfund/monorepo/', text: 'Docs', emoji: '📑' },
+    { to: '#', text: 'Light Mode', emoji: '🔆' },
   ]
 
   openDropdown() {
@@ -109,7 +119,7 @@ window.onclick = function(event) {
         padding: 0.75rem;
         gap: 1rem;
 
-        .dropdown-item {
+        .dropdown-item a {
           display: flex;
           align-items: center;
           gap: 0.5rem;
