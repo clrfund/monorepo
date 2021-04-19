@@ -83,6 +83,7 @@ export interface RecipientApplicationData {
     banner: ImageState;
     thumbnail: ImageState;
   };
+  furthestStep: number;
 }
 
 interface RecipientMetadata {
