@@ -12,7 +12,7 @@
   border-radius: 32px;
   color: white;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 150%;
   text-align: center;
   box-sizing: border-box;
@@ -26,6 +26,7 @@
 
 .btn-primary {
   background: $clr-green;
+  border: 2px solid $clr-green;
 }
 
 .btn-og {
