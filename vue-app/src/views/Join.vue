@@ -8,15 +8,29 @@
             Step {{currentStep + 1}} of {{steps.length}}
           </p>
           <div class="progress-steps">
-            <div v-for="(step, idx) in stepNames" class="progress-step" :key="idx">
-              <img v-if="idx < currentStep" src="@/assets/green-tick.svg" alt="step complete">
-              <img v-else-if="idx > currentStep" src="@/assets/step-remaining.svg" alt="step remaining">
-              <img v-else src="@/assets/current-step.svg" alt="current step">
-              <p v-text="step" class="step" :class="{active: idx === currentStep}" />
+            <div
+              v-for="(name, step) in stepNames"
+              :key="step"
+              class="progress-step"
+              :class="{'progress-step-checked': step <= form.furthestStep && step !== currentStep}"
+              @click="handleStepNav(step)"
+            >
+              <template v-if="step === currentStep">
+                <img src="@/assets/current-step.svg" alt="current step" />
+                <p v-text="name" class="active step" />
+              </template>
+              <template v-else-if="step <= form.furthestStep">
+                <img src="@/assets/green-tick.svg" alt="step complete" />
+                <p v-text="name" class="step" />
+              </template>
+              <template v-else-if="step > form.furthestStep">
+                <img src="@/assets/step-remaining.svg" alt="step remaining" />
+                <p v-text="name" class="step" />
+              </template>
             </div>
           </div>
           <button-row
-            :isStepValid="isStepValid()"
+            :isStepValid="isStepValid(currentStep)"
             :steps="steps"
             :currentStep="currentStep"
             :callback="saveFormData"
@@ -611,10 +625,10 @@ export default class JoinView extends mixins(validationMixin) {
         loading: false,
       },
     },
+    furthestStep: 0,
   }
   currentStep: number | null = null
   steps: string[] = []
-
   stepNames: string[] = []
 
   // IPFS
@@ -625,7 +639,9 @@ export default class JoinView extends mixins(validationMixin) {
     if (this.$route.params.step === 'image') {
       this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
     }
-    const steps = [...Object.keys(this.form), 'summary']
+
+    const steps = Object.keys(this.form)
+    steps[steps.length - 1] = 'summary'
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
       'About the project',
@@ -650,16 +666,20 @@ export default class JoinView extends mixins(validationMixin) {
     return this.form.image.requiresUpload === 'true'
   }
   
-  isStepValid(): boolean {
-    const stepNumber: number = this.currentStep
-    const stepName: string = this.steps[stepNumber]
+  isStepValid(step: number): boolean {
+    const stepName: string = this.steps[step]
     return !this.$v.form[stepName].$invalid
+  }
+
+  isStepUnlocked(step: number): boolean {
+    return this.isStepValid(step) && step <= this.form.furthestStep
   }
 
   saveFormData(): void {
     this.$store.commit(SET_RECIPIENT_DATA, {
       updatedData: this.form,
       step: this.steps[this.currentStep],
+      stepNumber: this.currentStep,
     })
   }
 
@@ -684,7 +704,6 @@ export default class JoinView extends mixins(validationMixin) {
   handleSubmit(event) {
     event.preventDefault()
     const { name } = event.target
-    console.log(event)
     this.form.image[name].loading = true
 
     if (this.form.image[name].document !== '') {
@@ -704,6 +723,18 @@ export default class JoinView extends mixins(validationMixin) {
     }
 
     this.form.image[name].loading = false
+  }
+
+  handleStepNav(step) {
+    this.saveFormData()
+    if (this.isStepUnlocked(step)) {
+      this.$router.push({
+        name: 'joinStep',
+        params: {
+          step: this.steps[step],
+        },
+      })
+    }
   }
 } 
 </script>
@@ -776,6 +807,13 @@ export default class JoinView extends mixins(validationMixin) {
         color: white;
         font-weight: 600;
         font-size: 1rem;
+      }
+    }
+
+    .progress-step-checked {
+      cursor: pointer;
+      &:hover {
+        transform: scale(1.02);
       }
     }
 

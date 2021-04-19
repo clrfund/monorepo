@@ -147,11 +147,14 @@ export const mutations = {
   [CLEAR_CART](state) {
     state.cart = []
   },
-  [SET_RECIPIENT_DATA](state, payload: { updatedData: RecipientApplicationData; step: string }) {
+  [SET_RECIPIENT_DATA](state, payload: { updatedData: RecipientApplicationData; step: string; stepNumber: number }) {
     if (!state.recipient) {
       state.recipient = payload.updatedData
     } else {
       state.recipient[payload.step] = payload.updatedData[payload.step]
+      if (payload.stepNumber > state.recipient.furthestStep) {
+        state.recipient.furthestStep = payload.stepNumber
+      }
     }
   },
 }
