@@ -348,6 +348,7 @@ export default class RoundInformation extends Vue {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  
 }
 
 .round-value-info-item {
