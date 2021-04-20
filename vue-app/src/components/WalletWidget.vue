@@ -94,7 +94,6 @@ export default class WalletWidget extends Vue {
   }
 
   async mounted() {
-    console.log('WalletWidget mounted')
     this.showProfilePanel = false
     if (!this.walletProvider) {
       return

@@ -54,6 +54,7 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import BalanceItem from '@/components/BalanceItem'
 
+import { LOGOUT_USER } from '@/store/action-types'
 
 @Component({
   components: { BalanceItem },
@@ -66,6 +67,14 @@ export default class NavBar extends Vue {
 
   @Prop()
   etherBalance!: string
+
+  get walletProvider(): any {
+    return (window as any).ethereum
+  }
+
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
+  }
 
   renderUserAddress(digitsToShow?: number): string {
     if (this.$store.state.currentUser?.walletAddress) {
@@ -96,7 +105,11 @@ export default class NavBar extends Vue {
   }
 
   async disconnect(): Promise<void> {
-    console.log('todo')
+    if (this.currentUser && this.walletProvider) {
+      // Log out user
+      this.$store.dispatch(LOGOUT_USER)
+      this.toggleProfile()
+    }
   }
 }
 
