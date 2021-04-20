@@ -29,6 +29,8 @@ import { RoundInfo, getCurrentRound } from '@/api/round'
 @import '../styles/theme';
 
 #banner {
+  position: relative;
+  z-index: 1;
   width: 100%;
   background: $bg-primary-color;
   overflow: hidden;
@@ -41,9 +43,9 @@ import { RoundInfo, getCurrentRound } from '@/api/round'
   padding-left: 100%;
   margin: 1rem 0;
 
-@media (max-width: $breakpoint-m) {
-      animation: marquee 10s linear infinite;
-    }
+  @media (max-width: $breakpoint-m) {
+    animation: marquee 10s linear infinite;
+  }
 }
 
 .marquee-content:hover {
