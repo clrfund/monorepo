@@ -124,6 +124,8 @@ textarea {
   @media (max-width: $breakpoint-m) {
     flex-direction: column;
   }
+}
+
 summary:focus {
   outline: none;
 }
@@ -197,6 +199,7 @@ summary:focus {
   flex-direction: column;
   min-height: 100%;
 }
+
 #content-container {
   display: flex;
   /* min-height: 100%; */
