@@ -488,6 +488,7 @@
           <!-- Summary -->
           <div v-if="currentStep === 5" id="summary">
             {{form}}
+            <!--TODO: this will be an on-chain transaction so double check all info and links are correct as it will cost you you to change it -->
           </div>
         </div>
       </div>

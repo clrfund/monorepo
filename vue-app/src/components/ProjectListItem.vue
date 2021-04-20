@@ -49,7 +49,7 @@
               class="donate-btn"
               :disabled="!canContribute()"
               @click="contribute(project)"
-              value="Add"
+              value="Add to cart"
             >
             <div 
               v-if="hasContributeBtn() && inCart"
