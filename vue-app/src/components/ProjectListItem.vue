@@ -175,7 +175,7 @@ export default class ProjectListItem extends Vue {
 @import '../styles/theme';
 
 .project-item {
-  background-color: $bg-primary-color;
+  background-color: $bg-secondary-color;
   border-radius: 8px;
   display: flex;
   flex-direction: column;

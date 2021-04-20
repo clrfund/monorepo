@@ -199,7 +199,7 @@ textarea {
   display: flex;
   /* min-height: 100%; */
   height: calc(100vh - 61.5px);
-  background: $bg-light-color;
+  background: $bg-primary-color;
   overflow: scroll;
 }
 
@@ -281,7 +281,7 @@ textarea {
 
 #content {
   flex: 1;
-
+  
   .content-heading {
     display: block;
     font-family: "Glacial Indifference", sans-serif;
