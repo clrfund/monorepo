@@ -56,8 +56,8 @@ export async function getENS(
   // Requires Mainnet provider to fetch ENS names (local hardhat won't work)
   // Demo: Replace walletAddress below with '0x8ba1f109551bD432803012645Ac136ddd64DBA72'
   // When logged in, will display: registrar.firefly.eth
-  // return await mainnetProvider.lookupAddress(walletAddress)
-  return await mainnetProvider.lookupAddress('0x8ba1f109551bD432803012645Ac136ddd64DBA72')
+  return await mainnetProvider.lookupAddress(walletAddress)
+  // return await mainnetProvider.lookupAddress('0x8ba1f109551bD432803012645Ac136ddd64DBA72')
 }
 
 export async function resolveENS(
