@@ -2,12 +2,12 @@
 
 ## Coordinate using MACI CLI
 
-Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.6.7:
+Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.7.1:
 
 ```
 git clone https://github.com/appliedzkp/maci.git
 cd maci/
-git checkout v0.6.7
+git checkout v0.7.1
 ```
 
 Follow instructions in README.md to install necessary dependencies.
@@ -71,7 +71,16 @@ Finally, the [CID](https://ipfs.io/ipns/docs.ipfs.io/concepts/content-addressing
 await fundingRound.publishTallyHash('<CID>')
 ```
 
-## Coordinate using clrfund scripts (exprimental, not recommended)
+## Coordinate using clrfund scripts
+
+### Generate coordinator key
+
+```
+cd contracts/
+yarn ts-node scripts/generate-key.ts
+```
+
+A single key can be used to coordinate multiple rounds.
 
 ### Tally votes
 
@@ -98,7 +107,7 @@ export NODE_CONFIG='{"snarkParamsPath": "../../../contracts/snark-params/", "zku
 Decrypt messages and tally the votes:
 
 ```
-COORDINATOR_ETH_PK=<eth-private-key> CLRFUND_STATE='{"fundingRound": "<funding-round-address>", "coordinatorPrivKey": "<coordinator-private-key>"}' yarn hardhat run --network xdai scripts/tally.ts
+COORDINATOR_PK=<coordinator-private-key> COORDINATOR_ETH_PK=<eth-private-key> ROUND_ADDRESS=<funding-round-address> yarn hardhat run --network xdai scripts/tally.ts
 ```
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
