@@ -195,7 +195,8 @@ const actions = {
           state.currentUser.walletAddress,
         )
       }
-      const ens = await getENS(state.currentUser.walletAddress)
+      // TODO fix
+      // const ens = await getENS(state.currentUser.walletAddress)
       const etherBalance = await getEtherBalance(state.currentUser.walletAddress)
       const balance = await getTokenBalance(
         state.currentRound.nativeTokenAddress,
@@ -226,7 +227,6 @@ const actions = {
         isVerified,
         balance,
         etherBalance,
-        ens,
       })
     }
   },
