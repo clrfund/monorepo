@@ -14,14 +14,13 @@ export interface RoundInfo {
   recipientTreeDepth: number;
   maxContributors: number;
   maxMessages: number;
-  startBlock: number;
-  endBlock: number;
   coordinatorPubKey: PubKey;
   nativeTokenAddress: string;
   nativeTokenSymbol: string;
   nativeTokenDecimals: number;
   voiceCreditFactor: BigNumber;
   status: string;
+  startTime: DateTime;
   signUpDeadline: DateTime;
   votingDeadline: DateTime;
   totalFunds: FixedNumber;
@@ -45,32 +44,6 @@ export async function getCurrentRound(): Promise<string | null> {
     return null
   }
   return fundingRoundAddress
-}
-
-async function getApprovedFunding(
-  fundingRound: Contract,
-  token: Contract,
-): Promise<BigNumber> {
-  // TODO: replace with single call when necessary getter will be implemented
-  const addSourceFilter = factory.filters.FundingSourceAdded()
-  const addSourceEvents = await factory.queryFilter(addSourceFilter, 0)
-  const removeSourceFilter = factory.filters.FundingSourceRemoved()
-  const removeSourceEvents = await factory.queryFilter(removeSourceFilter, 0)
-  let total = BigNumber.from(0)
-  for (const event of addSourceEvents) {
-    const sourceAddress = (event.args as any)._source
-    const removed = removeSourceEvents.find((event) => {
-      return (event.args as any)._source === sourceAddress
-    })
-    if (removed) {
-      continue
-    }
-    const allowance = await token.allowance(sourceAddress, factory.address)
-    const balance = await token.balanceOf(sourceAddress)
-    const contribution = allowance.lt(balance) ? allowance : balance
-    total = total.add(contribution)
-  }
-  return total
 }
 
 async function getRoundNumber(roundAddress: string): Promise<number> {
@@ -97,7 +70,6 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     maciAddress,
     nativeTokenAddress,
     userRegistryAddress,
-    startBlock,
     voiceCreditFactor,
     isFinalized,
     isCancelled,
@@ -105,7 +77,6 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     fundingRound.maci(),
     fundingRound.nativeToken(),
     fundingRound.userRegistry(),
-    fundingRound.startBlock(),
     fundingRound.voiceCreditFactor(),
     fundingRound.isFinalized(),
     fundingRound.isCancelled(),
@@ -127,15 +98,12 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     maci.coordinatorPubKey(),
     maci.numMessages(),
   ])
+  const startTime = DateTime.fromSeconds(signUpTimestamp.toNumber())
   const signUpDeadline = DateTime.fromSeconds(
     signUpTimestamp.add(signUpDurationSeconds).toNumber(),
   )
   const votingDeadline = DateTime.fromSeconds(
     signUpTimestamp.add(signUpDurationSeconds).add(votingDurationSeconds).toNumber(),
-  )
-  const endBlock = startBlock.add(
-    // Average block time is 15 seconds
-    signUpDurationSeconds.add(votingDurationSeconds).div(15),
   )
   const coordinatorPubKey = new PubKey([
     BigInt(coordinatorPubKeyRaw.x),
@@ -172,9 +140,7 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
       status = RoundStatus.Tallying
     }
     contributions = contributionsInfo.amount
-    const lockedFunding = await nativeToken.balanceOf(factory.address)
-    const approvedFunding = await getApprovedFunding(fundingRound, nativeToken)
-    matchingPool = lockedFunding.add(approvedFunding)
+    matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
   }
 
   const totalFunds = matchingPool.add(contributions)
@@ -187,14 +153,13 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
     maxContributors: 2 ** maciTreeDepths.stateTreeDepth - 1,
     maxMessages: 2 ** maciTreeDepths.messageTreeDepth - 1,
-    startBlock: startBlock.toNumber(),
-    endBlock: endBlock.toNumber(),
     coordinatorPubKey,
     nativeTokenAddress,
     nativeTokenSymbol,
     nativeTokenDecimals,
     voiceCreditFactor,
     status,
+    startTime,
     signUpDeadline,
     votingDeadline,
     totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),

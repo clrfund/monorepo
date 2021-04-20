@@ -76,6 +76,7 @@ describe('MACI factory', () => {
     const maciDeployed = maciFactory.deployMaci(
       signUpGatekeeper.address,
       initialVoiceCreditProxy.address,
+      coordinator.address,
       coordinatorPubKey,
     );
     await expect(maciDeployed).to.emit(maciFactory, 'MaciDeployed');
@@ -89,6 +90,7 @@ describe('MACI factory', () => {
     await expect(coordinatorMaciFactory.deployMaci(
       signUpGatekeeper.address,
       initialVoiceCreditProxy.address,
+      coordinator.address,
       coordinatorPubKey,
     ))
       .to.be.revertedWith('Ownable: caller is not the owner');

@@ -23,8 +23,16 @@ contract KlerosGTCRAdapter is BaseRecipientRegistry {
   IKlerosGTCR public tcr;
 
   // Events
-  event RecipientAdded(bytes32 indexed _tcrItemId, bytes _metadata, uint256 _index);
-  event RecipientRemoved(bytes32 indexed _tcrItemId);
+  event RecipientAdded(
+    bytes32 indexed _tcrItemId,
+    bytes _metadata,
+    uint256 _index,
+    uint256 _timestamp
+  );
+  event RecipientRemoved(
+    bytes32 indexed _tcrItemId,
+    uint256 _timestamp
+  );
 
   /**
     * @dev Deploy the registry.
@@ -54,7 +62,7 @@ contract KlerosGTCRAdapter is BaseRecipientRegistry {
     // Recipient address is at index 1
     address recipientAddress = recipientData[1].toAddress();
     uint256 recipientIndex = _addRecipient(_tcrItemId, recipientAddress);
-    emit RecipientAdded(_tcrItemId, rlpData, recipientIndex);
+    emit RecipientAdded(_tcrItemId, rlpData, recipientIndex, block.timestamp);
   }
 
   /**
@@ -67,6 +75,6 @@ contract KlerosGTCRAdapter is BaseRecipientRegistry {
     (,uint256 status,) = tcr.getItemInfo(_tcrItemId);
     require(status == STATUS_ABSENT, 'RecipientRegistry: Item is not removed from TCR');
     _removeRecipient(_tcrItemId);
-    emit RecipientRemoved(_tcrItemId);
+    emit RecipientRemoved(_tcrItemId, block.timestamp);
   }
 }

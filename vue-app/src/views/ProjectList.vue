@@ -206,8 +206,8 @@ export default class ProjectList extends Vue {
   private async loadProjects() {
     const projects = await getProjects(
       this.$store.state.recipientRegistryAddress,
-      this.currentRound?.startBlock,
-      this.currentRound?.endBlock,
+      this.currentRound?.startTime.toSeconds(),
+      this.currentRound?.votingDeadline.toSeconds(),
     )
     const visibleProjects = projects.filter(project => {
       return (!project.isHidden && !project.isLocked)
@@ -229,7 +229,7 @@ export default class ProjectList extends Vue {
   }
 
   formatFractionalPart(value: FixedNumber): string {
-    return value._value === '0.0' ? '' : value.toString().split('.')[1]
+    return value._value === '0.0' ? '' : value.round(2).toString().split('.')[1]
   }
 
   formatDate(value: DateTime): string {

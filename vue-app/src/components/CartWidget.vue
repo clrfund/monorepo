@@ -33,6 +33,7 @@ import {
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 import Cart from '@/components/Cart.vue'
+import { getNetworkName } from '@/utils/networks'
 
 @Component({components: {Cart}})
 export default class WalletWidget extends Vue {
@@ -105,13 +106,7 @@ export default class WalletWidget extends Vue {
   }
 
   get networkName(): string {
-    if (this.jsonRpcNetwork === null) {
-      return ''
-    } else if (this.jsonRpcNetwork.name === 'unknown' && this.jsonRpcNetwork.chainId === 100) {
-      return 'xdai'
-    } else {
-      return this.jsonRpcNetwork.name
-    }
+    return this.jsonRpcNetwork === null ? '' : getNetworkName(this.jsonRpcNetwork)
   }
 
   async connect(): Promise<void> {

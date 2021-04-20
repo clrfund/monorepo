@@ -94,12 +94,17 @@ import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
+import { markdown } from '@/utils/markdown'
 
 @Component
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
   amount = 10;
+
+  get descriptionHtml(): string {
+    return markdown.renderInline(this.project.description)
+  }
 
   get inCart(): boolean {
     const index = this.$store.state.cart.findIndex((item: CartItem) => {

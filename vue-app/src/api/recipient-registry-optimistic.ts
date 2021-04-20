@@ -3,6 +3,7 @@ import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract
 import { isHexString } from '@ethersproject/bytes'
 import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
+import { getNetworkToken } from '@/utils/networks'
 
 import { OptimisticRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
@@ -19,9 +20,10 @@ export async function getRegistryInfo(registryAddress: string): Promise<Registry
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const deposit = await registry.baseDeposit()
   const challengePeriodDuration = await registry.challengePeriodDuration()
+  const network = await provider.getNetwork()
   return {
     deposit,
-    depositToken: 'ETH',
+    depositToken: getNetworkToken(network),
     challengePeriodDuration: challengePeriodDuration.toNumber(),
     listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
   }
@@ -93,9 +95,10 @@ interface RecipientMetadata {
 }
 
 export interface Request {
+  transactionHash: string;
   type: RequestType;
-  timestamp: number;
   status: RequestStatus;
+  acceptanceDate: DateTime;
   recipientId: string;
   recipient: string;
   metadata: RecipientMetadata;
@@ -136,16 +139,19 @@ export async function getRequests(
         imageUrl: `${ipfsGatewayUrl}/ipfs/${imageHash}`,
       }
     }
+    const acceptanceDate = DateTime.fromSeconds(
+      eventArgs._timestamp.toNumber() +
+      registryInfo.challengePeriodDuration)
     const request: Request = {
+      transactionHash: event.transactionHash,
       type,
-      timestamp: eventArgs._timestamp.toNumber(),
       status: RequestStatus.Submitted,
+      acceptanceDate,
       recipientId: eventArgs._recipientId,
       recipient: eventArgs._recipient,
       metadata,
     }
-    const now = DateTime.now().toSeconds()
-    if (request.timestamp + registryInfo.challengePeriodDuration < now) {
+    if (acceptanceDate < DateTime.now()) {
       request.status = RequestStatus.Accepted
     }
     // Find corresponding RequestResolved event
@@ -217,8 +223,8 @@ function decodeProject(requestSubmittedEvent: Event): Project {
 
 export async function getProjects(
   registryAddress: string,
-  startBlock?: number,
-  endBlock?: number,
+  startTime?: number,
+  endTime?: number,
 ): Promise<Project[]> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const now = DateTime.now().toSeconds()
@@ -252,7 +258,8 @@ export async function getProjects(
       if (isRejected) {
         continue
       } else {
-        if (endBlock && registration.blockNumber >= endBlock) {
+        const addedAt = (registration.args as any)._timestamp.toNumber()
+        if (endTime && addedAt >= endTime) {
           // Hide recipient if it is added after the end of round
           project.isHidden = true
         }
@@ -269,9 +276,10 @@ export async function getProjects(
       )
     })
     if (removed) {
-      if (!startBlock || startBlock && removed.blockNumber <= startBlock) {
-        // Start block not specified
-        // or recipient had been removed before start block
+      const removedAt = (removed.args as any)._timestamp.toNumber()
+      if (!startTime || removedAt <= startTime) {
+        // Start time not specified
+        // or recipient had been removed before start time
         project.isHidden = true
       } else {
         // Disallow contributions to removed recipient, but don't hide it

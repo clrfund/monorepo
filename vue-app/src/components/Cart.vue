@@ -175,8 +175,13 @@ export default class Cart extends Vue {
     return this.cart.filter((item) => !item.isCleared)
   }
 
-  get isEmptyCart(): boolean {
-    return this.$store.state.currentUser && this.filteredCart.length === 0
+  get isCartEmpty(): boolean {
+    return (
+      this.$store.state.currentUser &&
+      this.$store.state.contribution !== null &&
+      this.$store.state.contribution.isZero() &&
+      this.filteredCart.length === 0
+    )
   }
 
   formatAmount(value: BigNumber): string {
@@ -229,8 +234,14 @@ export default class Cart extends Vue {
     this.$store.dispatch(SAVE_CART)
   }
 
-  canSubmit(): boolean {
-    return this.$store.state.currentRound && this.cart.length > 0 || this.canWithdrawContribution()
+  hasContributorActionBtn(): boolean {
+    // Show cart action button:
+    // - if there are items in cart
+    // - if contribution can be withdrawn
+    // - if contributor data has been lost
+    return this.$store.state.currentRound && (
+      this.cart.length > 0 || !this.contribution.isZero()
+    )
   }
 
   private isFormValid(): boolean {
@@ -327,7 +338,6 @@ export default class Cart extends Vue {
   hasUnallocatedFunds(): boolean {
     return (
       this.errorMessage === null &&
-      this.contribution !== null &&
       !this.contribution.isZero() &&
       this.getTotal().lt(this.contribution)
     )
@@ -353,7 +363,7 @@ export default class Cart extends Vue {
     )
   }
 
-  submit() {
+  submitCart() {
     const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
     const votes = this.cart.map((item: CartItem) => {
       const amount = parseFixed(item.amount, nativeTokenDecimals)
@@ -565,8 +575,6 @@ p.no-margin {
     padding-left: 3.5rem;
     margin-top: 1rem;
     gap: 0.5rem;
-
-
 
     .contribution-currency {
       flex-grow: 1;

@@ -124,6 +124,8 @@ textarea {
   @media (max-width: $breakpoint-m) {
     flex-direction: column;
   }
+summary:focus {
+  outline: none;
 }
 
 .input {

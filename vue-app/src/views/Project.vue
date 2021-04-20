@@ -190,6 +190,7 @@ import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
   ADD_CART_ITEM,
 } from '@/store/mutation-types'
+import { markdown } from '@/utils/markdown'
 
 @Component({
   name: 'ProjectView',
@@ -398,6 +399,10 @@ export default class ProjectView extends Vue {
       },
     )
   }
+
+  get descriptionHtml(): string {
+    return markdown.render(this.project?.description || '')
+  }
 }
 </script>
 
@@ -558,6 +563,12 @@ export default class ProjectView extends Vue {
   font-size: 1rem;
   line-height: 150%;
   word-wrap: break-word;
+
+  ::v-deep {
+    &:first-child {
+      margin-top: 0;
+    }
+  }
 }
 
 .nav-area {

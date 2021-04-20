@@ -27,9 +27,25 @@
           </div>
         </div>
         <div class="input-wrapper">
+          <label for="recipient-address">ETH address</label>
+          <input
+            id="recipient-address"
+            type="text"
+            placeholder="Address where recipient will receive funds"
+            v-model="$v.form.address.$model"
+            class="input"
+            :class="{ invalid: $v.form.address.$error }"
+          >
+          <div class="input-error" v-if="$v.form.address.$error">
+            <template v-if="!$v.form.address.required">Field is required.</template>
+            <template v-else-if="!$v.form.address.validEthAddress">Invalid ethereum address.</template>
+          </div>
+        </div>
+        <div class="input-wrapper">
           <label for="recipient-description">Description</label>
           <textarea
             id="recipient-description"
+            placeholder="Project description should include proof of ownership of the receiving address. Markdown is supported."
             v-model="$v.form.description.$model"
             class="input"
             :class="{ invalid: $v.form.description.$error }"
@@ -54,21 +70,6 @@
           <div class="input-error" v-if="$v.form.imageHash.$error">
             <template v-if="!$v.form.imageHash.required">Field is required.</template>
             <template v-else-if="!$v.form.imageHash.validIpfsHash">Invalid IPFS hash.</template>
-          </div>
-        </div>
-        <div class="input-wrapper">
-          <label for="recipient-address">ETH address</label>
-          <input
-            id="recipient-address"
-            type="text"
-            placeholder="Address where recipient will receive funds"
-            v-model="$v.form.address.$model"
-            class="input"
-            :class="{ invalid: $v.form.address.$error }"
-          >
-          <div class="input-error" v-if="$v.form.address.$error">
-            <template v-if="!$v.form.address.required">Field is required.</template>
-            <template v-else-if="!$v.form.address.validEthAddress">Invalid ethereum address.</template>
           </div>
         </div>
       </form>
@@ -100,7 +101,7 @@ import Component, { mixins } from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { validationMixin } from 'vuelidate'
 import { required, minLength } from 'vuelidate/lib/validators'
-import { BigNumber } from 'ethers'
+import { BigNumber, Signer } from 'ethers'
 import { isAddress } from '@ethersproject/address'
 import * as isIPFS from 'is-ipfs'
 
@@ -149,6 +150,8 @@ export default class RecipientSubmissionModal extends mixins(validationMixin) {
 
   step = 1
 
+  signer!: Signer
+
   form: RecipientData = {
     name: '',
     description: '',
@@ -159,17 +162,20 @@ export default class RecipientSubmissionModal extends mixins(validationMixin) {
   submissionTxError = ''
   recipientId = ''
 
+  created() {
+    this.signer = this.$store.state.currentUser.walletProvider.getSigner()
+  }
+
   formatAmount(value: BigNumber): string {
     return formatAmount(value, 18)
   }
 
   async addRecipient() {
     this.step += 1
-    const signer = this.$store.state.currentUser.walletProvider.getSigner()
     let submissionTxReceipt
     try {
       submissionTxReceipt = await waitForTransaction(
-        addRecipient(this.registryAddress, this.form, this.registryInfo.deposit, signer),
+        addRecipient(this.registryAddress, this.form, this.registryInfo.deposit, this.signer),
         (hash) => this.submissionTxHash = hash,
       )
     } catch (error) {
@@ -217,6 +223,10 @@ export default class RecipientSubmissionModal extends mixins(validationMixin) {
       margin-top: 3px;
     }
   }
+}
+
+#recipient-description {
+  height: 100px;
 }
 
 .success {

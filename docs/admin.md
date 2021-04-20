@@ -18,7 +18,7 @@ Deploy MACI factory:
 ```
 const [deployer] = await ethers.getSigners()
 const { deployMaciFactory } = require('./utils/deployment')
-const maciFactory = await deployMaciFactory(deployer, 'small')
+const maciFactory = await deployMaciFactory(deployer, 'medium')
 ```
 
 The `deployMaciFactory` function deploys MACI factory and other contracts required by it:
@@ -33,9 +33,9 @@ Alternatively, one can deploy these contracts one by one:
 const { deployContract, deployMaciFactory } = require('./utils/deployment')
 const poseidonT3 = await deployContract(deployer, ':PoseidonT3')
 const poseidonT6 = await deployContract(deployer, ':PoseidonT6')
-const batchUstVerifier = await deployContract(deployer, 'BatchUpdateStateTreeVerifierSmall')
-const qvtVerifier = await deployContract(deployer, 'QuadVoteTallyVerifierSmall')
-const maciFactory = await deployMaciFactory(deployer, 'small', { poseidonT3, poseidonT6, batchUstVerifier, qvtVerifier })
+const batchUstVerifier = await deployContract(deployer, 'BatchUpdateStateTreeVerifierMedium')
+const qvtVerifier = await deployContract(deployer, 'QuadVoteTallyVerifierMedium')
+const maciFactory = await deployMaciFactory(deployer, 'medium', { poseidonT3, poseidonT6, batchUstVerifier, qvtVerifier })
 ```
 
 ### Funding round factory
@@ -116,13 +116,13 @@ maciParameters.update({ signUpDuration: 86400 * 14, votingDuration: 86400 * 3 })
 await factory.setMaciParameters(...maciParameters.values())
 ```
 
-Add [funding source](./funding-source.md):
+Add [funding source](./funding-source.md) (if needed):
 
 ```
 await factory.addFundingSource('<address>')
 ```
 
-Remove funding source:
+Or remove funding source:
 
 ```
 await factory.removeFundingSource('<address>')
