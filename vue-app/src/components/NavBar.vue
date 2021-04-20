@@ -13,7 +13,7 @@
           <div v-for="({ to, href, text, emoji }, idx) of dropdownItems" :key="idx" class="dropdown-item">
             <template v-if="href">
               <a :href="href" target="_blank">
-                <div class="emoji-wrapper">{{ emoji }}</div>
+                <div>{{ emoji }}</div>
                 <p class="item-text">{{ text }} ↗</p>
               </a>
             </template>
@@ -49,7 +49,7 @@ export default class NavBar extends Vue {
   @Prop() inApp
   profileImageUrl: string | null = null
   dropdownItems: {to?: string; href?: string; text: string; emoji: string}[] = [
-    { to: '/about', text: 'About', emoji: 'ℹ️' },
+    { to: '/', text: 'About', emoji: 'ℹ️' },
     { to: '/join', text: 'Add project', emoji: '➕' },
     { href: 'https://github.com/clrfund/monorepo/', text: 'Code', emoji: '👾' },
     { href: 'https://github.com/clrfund/monorepo/', text: 'Docs', emoji: '📑' },
@@ -109,29 +109,22 @@ window.onclick = function(event) {
         flex-direction: column;
         position: absolute;
         top: 2rem;
+        right: 0.5rem;
         background: $bg-secondary-color;
         border: 1px solid rgba(115,117,166,0.3);
         border-radius: 0.5rem;
-        min-width: 130px;
+        min-width: 160px;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
         z-index: 1;
         cursor: pointer;
-        padding: 0.75rem;
-        gap: 1rem;
 
         .dropdown-item a {
           display: flex;
           align-items: center;
+          padding: 0.5rem; 
           gap: 0.5rem;
-
-          .emoji-wrapper {
-            width: 1.25rem;
-            height: 1.25rem;
-            border-radius: 0.25rem;
-            padding: 1px;
-            background: rgba(255, 255, 255, 0.05);
-            display: grid;
-            place-items: center;
+          &:hover {
+            background: $bg-light-color;
           }
           
           .item-text {
