@@ -63,7 +63,7 @@ export default class WalletWidget extends Vue {
       await navigator.clipboard.writeText(this.currentUser.walletAddress)
       // alert('Text copied to clipboard')
     } catch (error) {
-      console.warn('Error in copying text: ', error)
+      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
     }
   }
 

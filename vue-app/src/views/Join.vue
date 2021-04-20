@@ -503,7 +503,7 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, minLength, maxLength, url } from 'vuelidate/lib/validators'
+import { required, maxLength, url } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import IPFS from 'ipfs-mini'
 import { isAddress } from '@ethersproject/address'
@@ -692,7 +692,7 @@ export default class JoinView extends mixins(validationMixin) {
       reader.onload = (function() {
         return function(e) {
           this.form.image[name].document = e.target.result
-          console.log(this.form.image)
+          console.log(this.form.image) /* eslint-disable-line no-console */
         }.bind(this)
       }.bind(this))(data)
       reader.readAsDataURL(data)
@@ -715,7 +715,7 @@ export default class JoinView extends mixins(validationMixin) {
           // this.form.image[name].modalOpen = true
           this.form.image[name].hash = _hash
           this.form.image[name].success = `Success! Your hash: ${_hash}`
-          console.log(this.form.image[name].success)
+          console.log(this.form.image[name].success) /* eslint-disable-line no-console */
         }
       })
     } else {

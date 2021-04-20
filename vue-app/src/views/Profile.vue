@@ -100,7 +100,7 @@ export default class NavBar extends Vue {
       await navigator.clipboard.writeText(this.$store.state.currentUser.walletAddress)
       // TODO: UX success feedback
     } catch (error) {
-      console.warn('Error in copying text: ', error)
+      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
     }
   }
 
