@@ -13,10 +13,10 @@
       </div>
       <div class="address-card">
         <h2 class="address">{{ ens || renderUserAddress(16)}}</h2>
-        {{ens && renderUserAddress(20)}}
-        <div class="action-btns">
-          <div class="btn" @click="copyAddress"><img src="@/assets/copy.svg"></div>
-          <div class="btn" @click="disconnect"><img src="@/assets/disconnect.svg"></div>
+        <div class="action-row">
+          <div class="copy btn" @click="copyAddress"><img src="@/assets/copy.svg"></div>
+          <div class="address">{{ens && renderUserAddress(20)}}</div>
+          <div class="disconnect btn" @click="disconnect"><img src="@/assets/disconnect.svg"></div>
         </div>
       </div>
       <div class="setup-card">
@@ -170,42 +170,56 @@ p.no-margin {
         text-transform: uppercase;
       }
 
-      .action-btns {
-        display: flex;
-        justify-content: flex-end;
+      .action-row {
+        display: grid;
         gap: 0.5rem;
-      }
+        grid-template-columns: auto 1fr auto;
+        grid-template-areas: "copy address disconnect";
 
-      .btn {
-        border-radius: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: none;
-        border: 1px solid white;
-        padding: 0.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        &:hover {
-          transform: scale(1.01);
-          opacity: 0.8;
+        .copy {
+          grid-area: copy;
         }
+        .address {
+          grid-area: address;
+          display: flex;
+          align-items: center;
+        }
+        .disconnect {
+          grid-area: disconnect;
+        }
+        .btn {
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          /* background: none; */
+          border: 1px solid $text-color;
+          padding: 0.5rem;
+          height: 2rem;
+          width: 2rem;
+          box-sizing: border-box;
+          background: rgba(255, 255, 255, 0.1);
+          &:hover {
+            transform: scale(1.01);
+            opacity: 0.8;
+          }
 
-        img {
-          margin: 0;
+          img {
+            margin: 0;
+          }
         }
       }
-
     }
 
-  .complete-link {
-      color: white;
-      text-decoration: underline;
-      margin: 1rem 0;
-      cursor: pointer;
-      &:hover {
-        transform: scale(1.01);
-      }
-  }
+    .complete-link {
+        color: white;
+        text-decoration: underline;
+        margin: 1rem 0;
+        cursor: pointer;
+        &:hover {
+          transform: scale(1.01);
+        }
+    }
 
     .close-btn {
       display: flex;
