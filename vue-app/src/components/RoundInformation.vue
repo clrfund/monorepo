@@ -67,6 +67,13 @@
           <div>
             <div class="round-info-title" style="margin-bottom: 0.5rem;">
               Matching pool
+              <a 
+              style="margin-bottom: 0;"
+              @click="addMatchingFunds()"
+              title="Add matching funds"
+              >
+                <img src="@/assets/more.svg" />
+              </a>
             </div>
             <div class="round-info-value">
               <div class="value">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
@@ -74,15 +81,6 @@
               <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
             </div>
           </div>
-          <a 
-              style="margin-bottom: 0;"
-              @click="addMatchingFunds()"
-              title="Add matching funds"
-            >
-            <div class="btn-secondary">
-                Add
-            </div>
-          </a>
         </div>
         <div class="round-info-sub-item">
           <div>
@@ -98,21 +96,21 @@
         </div>
         <div class="round-info-sub-item">
             <div>
-              <div class="round-info-title" style="margin-bottom: 0.5rem;">Contributors</div>
+              <div class="round-info-title" style="margin-bottom: 0.5rem;">
+                Contributors
+                <a 
+                  style="margin-bottom: 0;"
+                  @click="addMatchingFunds()"
+                  title="Add matching funds"
+                >
+                  <img src="@/assets/more.svg"/>
+                </a>
+              </div>
               <div class="round-info-value">
                 <div class="value">{{ currentRound.contributors }}</div>
                 <div class="unit">legends</div>
               </div>
             </div>
-            <a 
-                style="margin-bottom: 0;"
-                @click="addMatchingFunds()"
-                title="Add matching funds"
-              >
-              <div class="btn-secondary">
-                  ...
-              </div>
-            </a>
         </div>
       </div>
     </div>
@@ -342,12 +340,14 @@ export default class RoundInformation extends Vue {
   align-items: center;
   gap: 1.5rem;
   margin-top: 1rem;
+
 }
 
 .round-value-info {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+    margin-bottom: 3rem;
   
 }
 
@@ -375,10 +375,7 @@ export default class RoundInformation extends Vue {
 }
 
 .round-info-sub-item {
-  display: flex;
   flex: 1 0 10%;
-  justify-content: space-between;
-  align-items: center;
   background: $bg-secondary-color;
   padding: 1rem;
   box-shadow: inset 0px -1px 0px #7375A6; 
@@ -395,6 +392,9 @@ export default class RoundInformation extends Vue {
   line-height: 120%;
   text-transform: uppercase;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .round-info-value {
@@ -487,6 +487,7 @@ export default class RoundInformation extends Vue {
 
   .round-info-title {
     margin-bottom: $content-space / 2;
+    font-size: 14px;
   }
 }
 </style>
