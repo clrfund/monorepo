@@ -393,134 +393,63 @@
               <h2 class="step-title">Images</h2>
               <div class="inputs">
                 <div class="form-background">
-                  <div class="row">
-                    <form id="uploadRadio">
-                      <div>
-                        <input
-                          id="IPFS"
-                          type="radio"
-                          name="image-requiresUpload"
-                          value="false"
-                          v-model="$v.form.image.requiresUpload.$model"
-                          :class="{
-                            input: true,
-                            invalid: $v.form.image.requiresUpload.$error
-                          }"
-                        >
-                        <label for="IPFS">IPFS – you have IPFS hashes for your images</label>
-                      </div>
-                      <div>
-                        <input
-                          id="upload"
-                          type="radio"
-                          name="image-requiresUpload"
-                          value="true"
-                          v-model="$v.form.image.requiresUpload.$model"
-                          :class="{
-                            input: true,
-                            invalid: $v.form.image.requiresUpload.$error
-                          }"
-                        >
-                        <label for="upload">Upload – you'd like to upload from your device</label>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-                <div class="form-background">
                   <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="banner">
-                    <label
-                      :for="requiresUpload ? 'image-banner-upload' : 'image-banner-hash'"
-                      class="input-label"
-                    >Banner image
-                      <p class="input-description">Recommended dimensions: 500 x 300</p>
-                    </label>
+                    <p class="input-label">Banner image</p>
+                    <p class="input-description">Recommended dimensions: 500px x 300px</p>
                     <input
-                      v-if="requiresUpload"
                       id="image-banner-upload"
                       type="file"
                       class="input"
                       @change="handleLoadFile"
                       name="banner"
                     />
-                    <p :class="{
+                    <button primary="true" type='submit' label='Upload' class="btn-action upload-btn">Upload</button>
+                    <!-- p :class="{
                       error: true,
                       hidden: !$v.form.image.banner.$error
-                    }">Upload a file</p>  
-                    <input
-                      v-if="!requiresUpload"
-                      id="image-banner-hash"
-                      placeholder="example: QmWQTJU9dMNQHJm6ZnXHi2eN5Y7hdpZaEL7o3SEGBRY8DZ"
-                      class="input"
-                      v-model="$v.form.image.banner.$model"
+                    }">Upload a file</p -->
+                  </form>
+                  <div class="preview-section">
+                    <p>Banner Image</p>
+                    <img
+                      :src="bannerImage"
+                      alt="🌄"
                       :class="{
-                        input: true,
-                        invalid: $v.form.image.banner.$error
+                        'banner-image': bannerImage,
+                        spacer: !bannerImage,
                       }"
                     />
-                    <p :class="{
-                      error: true,
-                      hidden: !$v.form.image.banner.$error
-                    }">This doesn't look like an IPFS hash</p>
-                    <button v-if="requiresUpload" primary="true" type='submit' label='Upload'>Upload</button>
-                  </form>
+                  </div>
                 </div>
                 <div class="form-background">
                   <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="thumbnail">
-                    <label
-                      :for="requiresUpload ? 'image-thumbnail-upload' : 'image-thumbnail-hash'"
-                      class="input-label"
-                    >Thumbnail image
-                      <p class="input-description">Recommended dimensions: 80 x 80</p>
-                    </label>
+                    <p class="input-label">Thumbnail image</p>
+                    <p class="input-description">Recommended dimensions: 80px x 80px</p>
                     <input
-                      v-if="requiresUpload"
                       id="image-thumbnail-upload"
                       type="file"
                       class="input"
                       @change="handleLoadFile"
                       name="thumbnail"
                     />
-                    <p :class="{
+                    <button primary="true" type='submit' label='Upload' class="btn-action upload-btn">Upload</button>
+                    <!--p :class="{
                       error: true,
                       hidden: !$v.form.image.thumbnail.$error
-                    }">Upload a file</p>
-                    <input
-                      v-if="!requiresUpload"
-                      id="image-thumbnail-hash"
-                      placeholder="example: QmWQTJU9dMNQHJm6ZnXHi2eN5Y7hdpZaEL7o3SEGBRY8DZ"
-                      v-model="$v.form.image.thumbnail.$model"
+                    }">Upload a file</p-->
+                  </form>
+                  <div class="preview-section">
+                    <p>Thumbnail Image</p>
+                    <img
+                      :src="thumbnailImage"
+                      alt="🌄"
                       :class="{
-                        input: true,
-                        invalid: $v.form.image.thumbnail.$error
+                        'thumbnail-image': thumbnailImage,
+                        spacer: !thumbnailImage,
                       }"
                     />
-                    <p :class="{
-                      error: true,
-                      hidden: !$v.form.image.thumbnail.$error
-                    }">This doesn't look like an IPFS hash</p>
-                    <button v-if="requiresUpload" primary="true" type='submit' label='Upload'>Upload</button>
-                  </form>
+                  </div>
                 </div>
-              </div>
-              <div class="image-preview">
-                Banner Image                
-                <img
-                  :src="bannerImage"
-                  alt="Uploaded banner"
-                  :class="{
-                    'banner-image': bannerImage,
-                    hidden: !bannerImage,
-                  }"
-                />
-                Thumbnail Image                
-                <img
-                  :src="thumbnailImage"
-                  alt="Uploaded thumbnail"
-                  :class="{
-                    'thumbnail-image': thumbnailImage,
-                    hidden: !thumbnailImage,
-                  }"
-                />
               </div>
             </div>
           </form>
@@ -1145,15 +1074,37 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
-#uploadRadio {
+/* #uploadRadio {
   input {
     margin-right: 0.5rem;
   }
+} */
+
+.upload-btn {
+  margin-left: 1rem;
 }
 
-.banner-image {
-  width: 500px;
-  height: auto;
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+
+  .banner-image {
+    width: 500px;
+    height: auto;
+  }
+
+  .thumbnail-image {
+    width: 80px;
+    height: auto;
+  }
+
+  .spacer {
+    border: 2px solid $border-color;
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
 }
 
 .error {
