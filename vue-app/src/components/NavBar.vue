@@ -56,8 +56,8 @@ export default class NavBar extends Vue {
     { to: '#', text: 'Light Mode', emoji: '🔆' },
   ]
 
-  openDropdown() {
-    document.getElementById('myDropdown').classList.toggle('show')
+  openDropdown(): void {
+    document.getElementById('myDropdown')?.classList.toggle('show')
   }
 }
 

@@ -24,12 +24,9 @@ import { Prop } from 'vue-property-decorator'
   components: {},
 })
 export default class BalanceItem extends Vue {
-  @Prop() abbrev: string
-  // Need icon, token, and users balance of said token
-
-  @Prop()
-  balance!: string
-
+  @Prop() abbrev!: string
+  @Prop() balance!: string
+  // TODO: Need token icon, currently hard coded to dai.svg
 }
 </script>
 
@@ -51,19 +48,18 @@ export default class BalanceItem extends Vue {
     border-radius: 0 0 8px 8px;
   }
 }
-.icon, .main, .amount {
-
-}
 .icon {
-.img {
+  .img {
     width: 1.5rem;
     height: 1.5rem;
     margin-right: 1rem;
   }
 }
+
 .main {
   flex: 1;
 }
+
 .amount {
   margin: 0;
 }

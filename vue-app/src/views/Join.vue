@@ -669,7 +669,7 @@ export default class JoinView extends mixins(validationMixin) {
   
   isStepValid(step: number): boolean {
     const stepName: string = this.steps[step]
-    return !this.$v.form[stepName].$invalid
+    return !this.$v.form[stepName]?.$invalid
   }
 
   isStepUnlocked(step: number): boolean {
@@ -677,6 +677,7 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   saveFormData(): void {
+    if (typeof this.currentStep !== 'number') { return }
     this.$store.commit(SET_RECIPIENT_DATA, {
       updatedData: this.form,
       step: this.steps[this.currentStep],

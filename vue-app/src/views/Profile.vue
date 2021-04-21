@@ -52,9 +52,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import BalanceItem from '@/components/BalanceItem'
-
+import BalanceItem from '@/components/BalanceItem.vue'
 import { LOGOUT_USER } from '@/store/action-types'
+import { User } from '@/api/user'
 
 @Component({
   components: { BalanceItem },

@@ -12,8 +12,9 @@ export interface User {
   walletProvider: Web3Provider;
   encryptionKey: string;
   isVerified: boolean | null;
-  balance: BigNumber | null;
-  etherBalance: BigNumber | null;
+  balance?: BigNumber | null;
+  etherBalance?: BigNumber | null;
+  contribution?: BigNumber | null;
 }
 
 export async function getProfileImageUrl(walletAddress: string): Promise<string | null> {

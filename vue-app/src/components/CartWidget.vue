@@ -43,8 +43,9 @@ export default class WalletWidget extends Vue {
   profileImageUrl: string | null = null
 
   async copyAddress(): Promise<void> {
+    if (!this.currentUser) { return }
     try {
-      await navigator.clipboard.writeText(this.currentUser.walletAddress)
+      await navigator.clipboard.writeText(this.currentUser.walletAddress as string)
       // alert('Text copied to clipboard')
     } catch (error) {
       console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
@@ -130,7 +131,7 @@ export default class WalletWidget extends Vue {
       // Signature request rejected
       return
     }
-    const user = {
+    const user: User = {
       walletProvider: new Web3Provider(this.walletProvider),
       walletAddress,
       encryptionKey: sha256(signature),

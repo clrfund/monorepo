@@ -31,6 +31,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { BigNumber } from 'ethers'
 import Component from 'vue-class-component'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
@@ -59,6 +60,7 @@ export default class WalletWidget extends Vue {
   profileImageUrl: string | null = null
 
   async copyAddress(): Promise<void> {
+    if (!this.currentUser) { return }
     try {
       await navigator.clipboard.writeText(this.currentUser.walletAddress)
       // alert('Text copied to clipboard')
@@ -166,7 +168,7 @@ export default class WalletWidget extends Vue {
       // Signature request rejected
       return
     }
-    const user = {
+    const user: User = {
       walletProvider: new Web3Provider(this.walletProvider),
       walletAddress,
       encryptionKey: sha256(signature),
