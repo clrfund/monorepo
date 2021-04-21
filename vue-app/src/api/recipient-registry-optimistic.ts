@@ -46,6 +46,48 @@ export enum RequestStatus {
   Executed = 'Executed',
 }
 
+interface ImageState {
+  hash: string;
+  success: string;
+  failure: string;
+  // modalOpen: boolean;
+  document: string;
+  loading: boolean;
+}
+
+export interface RecipientApplicationData {
+  project: {
+    name: string;
+    tagline: string;
+    description: string;
+    category: string;
+    problemSpace: string;
+  };
+  fund: {
+    address: string;
+    plans: string;
+  };
+  team: {
+    name: string;
+    description: string;
+  };
+  links: {
+    github: string;
+    radicle: string;
+    website: string;
+    twitter: string;
+    discord: string;
+  };
+  image: {
+    requiresUpload: '' | 'true' | 'false';
+    bannerHash: string;
+    thumbnailHash: string;
+    banner: ImageState;
+    thumbnail: ImageState;
+  };
+  furthestStep: number;
+}
+
 interface RecipientMetadata {
   name: string;
   description: string;

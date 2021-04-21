@@ -1,0 +1,92 @@
+@import "./vars";
+
+.btn-primary,
+.btn-og,
+.btn-action,
+.btn-secondary,
+.btn-alternate,
+.btn-mini,
+.btn-white,
+.btn-warning {
+  padding: 0.5rem 1.5rem;
+  border-radius: 32px;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 150%;
+  text-align: center;
+  box-sizing: border-box;
+  border: none;
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+    cursor: pointer;
+  }
+}
+
+.btn-primary {
+  background: $clr-green;
+  border: 2px solid $clr-green;
+}
+
+.btn-og {
+  background: $button-color;
+}
+
+.btn-action {
+  background: $clr-pink-light-gradient;
+}
+
+.btn-secondary {
+  border: 2px solid $clr-green;
+  color: $clr-green;
+  background: none;
+}
+
+.btn-white {
+  border: 2px solid white;
+  color: white;
+  background: #19162380;
+}
+
+.btn-warning {
+  border: 2px solid $error-color;
+  color: $error-color;
+  background: none;
+  box-sizing: border-box;
+}
+
+// app button for use in nav bar
+.app-btn {
+  padding: 0.25rem 1.25rem;
+  background: $clr-pink-light-gradient;
+  border: none;
+  border-radius: 1rem;
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 150%;
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+    cursor: pointer;
+  }
+}
+
+.dropdown-btn {
+  background: rgba(44,41,56,1);
+  border: 1px solid rgba(115,117,166,0.3);
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  color: white;
+  margin-right: 0.5rem;
+  display: flex;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+    cursor: pointer;
+  }
+}

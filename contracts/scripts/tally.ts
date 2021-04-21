@@ -7,14 +7,25 @@ import { genProofs, proveOnChain } from 'maci-cli'
 import { getIpfsHash } from '../utils/ipfs'
 
 async function main() {
-  // Account #1
-  const coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
+  let fundingRoundAddress: string
+  let coordinatorPrivKey: string
+  let coordinatorEthPrivKey: string
+  if (network.name === 'localhost') {
+    const stateStr = fs.readFileSync('state.json').toString();
+    const state = JSON.parse(stateStr)
+    fundingRoundAddress = state.fundingRound
+    coordinatorPrivKey = state.coordinatorPrivKey
+    // Hardhat account #1
+    coordinatorEthPrivKey = '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
+  } else {
+    fundingRoundAddress = process.env.ROUND_ADDRESS || ''
+    coordinatorPrivKey = process.env.COORDINATOR_PK || ''
+    coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || ''
+  }
   const coordinator = new Wallet(coordinatorEthPrivKey, ethers.provider)
-  const stateStr = process.env.CLRFUND_STATE || fs.readFileSync('state.json').toString()
-  const state = JSON.parse(stateStr)
   const fundingRound = await ethers.getContractAt(
     'FundingRound',
-    state.fundingRound,
+    fundingRoundAddress,
     coordinator,
   )
   const maciAddress = await fundingRound.maci()
@@ -24,8 +35,9 @@ async function main() {
   const results = await genProofs({
     contract: maciAddress,
     eth_provider: providerUrl,
-    privkey: state.coordinatorPrivKey,
+    privkey: coordinatorPrivKey,
     tally_file: 'tally.json',
+    output: 'proofs.json',
   })
   if (!results) {
     throw new Error('generation of proofs failed')
@@ -37,7 +49,7 @@ async function main() {
     contract: maciAddress,
     eth_privkey: coordinatorEthPrivKey,
     eth_provider: providerUrl,
-    privkey: state.coordinatorPrivKey,
+    privkey: coordinatorPrivKey,
     proof_file: proofs,
   })
 

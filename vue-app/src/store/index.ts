@@ -19,7 +19,8 @@ import { loginUser, logoutUser } from '@/api/gun'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
-import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
+import { User, isVerifiedUser, getEtherBalance, getTokenBalance, getENS } from '@/api/user'
+import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -45,12 +46,12 @@ import {
   UPDATE_CART_ITEM,
   REMOVE_CART_ITEM,
   CLEAR_CART,
+  SET_RECIPIENT_DATA,
 } from './mutation-types'
 
 Vue.use(Vuex)
 
 interface RootState {
-  recipientRegistryAddress: string | null;
   currentUser: User | null;
   currentRoundAddress: string | null;
   currentRound: RoundInfo | null;
@@ -58,6 +59,8 @@ interface RootState {
   cart: CartItem[];
   contributor: Contributor | null;
   contribution: BigNumber | null;
+  recipientRegistryAddress: string | null;
+  recipient: RecipientApplicationData | null;
 }
 
 const state: RootState = {
@@ -69,6 +72,7 @@ const state: RootState = {
   cart: new Array<CartItem>(),
   contributor: null,
   contribution: null,
+  recipient: null,
 }
 
 export const mutations = {
@@ -143,6 +147,16 @@ export const mutations = {
   [CLEAR_CART](state) {
     state.cart = []
   },
+  [SET_RECIPIENT_DATA](state, payload: { updatedData: RecipientApplicationData; step: string; stepNumber: number }) {
+    if (!state.recipient) {
+      state.recipient = payload.updatedData
+    } else {
+      state.recipient[payload.step] = payload.updatedData[payload.step]
+      if (payload.stepNumber > state.recipient.furthestStep) {
+        state.recipient.furthestStep = payload.stepNumber
+      }
+    }
+  },
 }
 
 const actions = {
@@ -181,6 +195,9 @@ const actions = {
           state.currentUser.walletAddress,
         )
       }
+      // TODO fix
+      // const ens = await getENS(state.currentUser.walletAddress)
+      const etherBalance = await getEtherBalance(state.currentUser.walletAddress)
       const balance = await getTokenBalance(
         state.currentRound.nativeTokenAddress,
         state.currentUser.walletAddress,
@@ -204,10 +221,12 @@ const actions = {
           commit(SET_CONTRIBUTION, contribution)
         }
       }
+
       commit(SET_CURRENT_USER, {
         ...state.currentUser,
         isVerified,
         balance,
+        etherBalance,
       })
     }
   },

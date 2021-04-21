@@ -1,7 +1,34 @@
 <template>
-  <div class="projects">
-    <h1 class="content-heading">Projects</h1>
-    <div v-if="currentRound" class="round-info">
+  <div class="projects">        
+    <div class="title" style="display: flex; align-items: flex-end; justify-content: space-between;">
+      <div>
+        <h2 style="line-height: 130%; margin-bottom: 0.5rem;">Projects</h2>
+        <!-- <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p> -->
+      </div>
+      <div style="display: flex; align-items: center;">
+        <select class="filter" id="filter" style="margin-right: 1rem;">
+          <option selected disabled label="Filter by category" />
+                  <option value="content">Content</option>
+                  <option value="researcg">Research</option>
+                  <option value="tooling">Tooling</option>
+                  <option value="data">Data</option>
+        </select>
+        <div v-if="projects.length > 0" class="project-search" style="margin-right: 1rem;">
+          <img src="@/assets/search.svg">
+          <input
+            v-model="search"
+            class="input"
+            name="search"
+            placeholder="Search projects"
+            autocomplete="on"
+            onfocus="this.value=''" 
+          >
+        </div>
+        <router-link to="/join"><div class="btn-primary">Add project</div></router-link>
+      </div>
+    </div>
+    <!-- <h1 class="content-heading">Projects</h1> -->
+    <!-- <div v-if="currentRound" class="round-info">
       <div class="round-info-item">
         <div class="round-info-title">Round</div>
         <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
@@ -65,24 +92,25 @@
         </div>
       </div>
     </div>
-    <div v-if="isLoading" class="loader"></div>
-    <div v-if="projects.length > 0" class="project-search">
-      <img src="@/assets/search.svg">
-      <input
-        v-model="search"
-        class="input"
-        name="search"
-        placeholder="Search projects"
-        autocomplete="off"
-      >
-    </div>
+    <div v-if="isLoading" class="loader"></div> -->
     <div class="project-list">
+      <div class="get-prepared" v-if="!this.search">
+        <span aria-label="rocket" class="emoji">🚀</span>
+        <div>
+        <h2 class="prep-title">Get prepared</h2>
+        <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
+        </div>
+        <div class="btn-action" style="cursor: pointer;">Start prep</div>
+      </div>
       <project-list-item
         v-for="project in filteredProjects"
         :project="project"
         :key="project.id"
       >
       </project-list-item>
+    </div>
+    <div class="empty-search" v-if="filteredProjects == 0">
+      <div>😢 No projects match your search. Try using the filter to narrow down what you're looking for.</div>
     </div>
   </div>
 </template>
@@ -246,16 +274,26 @@ export default class ProjectList extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
 
 .round-info {
-  border-bottom: $border;
-  border-top: $border;
+
   display: flex;
   flex-wrap: wrap;
   margin: 0 (-$content-space);
   padding: 20px $content-space;
   gap: $content-space;
 }
+
+/* .projects {
+  padding: $content-space
+}
+ */
+.title {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(115,117,166,1); 
+    margin-bottom: 2rem;
+  }
 
 .round-info-item {
   display: flex;
@@ -315,15 +353,26 @@ export default class ProjectList extends Vue {
   }
 }
 
+.filter {
+  font-size: 16px;
+  background: none;
+  color: white;
+  font-weight: 600;
+  border: none;
+}
+
 .project-search {
-  border: $border;
-  border-radius: 30px;
-  box-sizing: border-box;
+  border-radius: 16px;
+  border: 2px solid $button-color;
+  background-color: $bg-secondary-color;
+  padding: 0.5rem 1rem;
   display: flex;
-  margin: 20px 0;
-  min-width: 300px;
-  padding: 8px 15px;
-  width: 33%;
+  font-size: 16px;
+  font-family: Inter;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  width: 160px;
 
   img {
     margin-right: 10px;
@@ -346,6 +395,47 @@ export default class ProjectList extends Vue {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: $content-space;
+  z-index: 0;
+}
+
+.empty-search {
+  background: $bg-secondary-color;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 2rem;
+}
+
+.get-prepared {
+  background: $bg-secondary-color;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  &:hover {
+    transform: scale(1.01);
+    box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+  }
+}
+
+.prep-title {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+.prep-text {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 150%;
+}
+
+.emoji {
+  font-size: 32px;
 }
 
 @media (max-width: 1500px) {
