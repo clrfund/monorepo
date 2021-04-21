@@ -10,7 +10,7 @@
     <div v-if="project" class="project-page" style="margin-top: 1.5rem;">
       <img class="project-image" :src="project.imageUrl" :alt="project.name">
       <div class="content">
-        <div class="about">
+        <div class="about">    
           <h2
             class="project-name"
             :title="project.address"
@@ -22,27 +22,36 @@
               target="_blank"
               rel="noopener"
             >{{ project.name }}</a>
-            <span v-else>{{ project.name }}</span>
+            <span v-else><!-- {{ project.name }} -->Commons simulator</span> <a :href="project.address"><img src="@/assets/verified.svg" /></a>
           </h2>
-          <p class="tagline">Tagline for project goes here. Up to 140 characters.</p>       
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
-          <div class="project-description">{{ project.description }}</div>
+          <p class="tagline">Modeling Sustainable Funding for Public Good</p> 
+          <div class="team-byline">By <a href="#team"><!-- {{ team.name }} -->team A</a></div>
+          <div class="project-section">
+            <h3>About the project</h3>
+            <div class="project-description">{{ project.description }}</div>
+          </div>
+          <div class="project-section">
+            <h3>Funding plans</h3>
+            <div class="project-description">{{ project.description }}</div>
+          </div>
+          <div class="team">
+            <h3 id="team" style="margin-top: 0;">About teamA<!-- {{ project.name }} --></h3>
+            <div class="project-description">{{ project.description }}</div>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <div class="address-label">Recipient address</div>
+              <div class="address">
+                {{ project.address }} 
+                <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/copy.svg"></div>
+                <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
+              </div>
+            </div>
+            <div class="tag">{{ project.tag }} tag example</div>
+          </div>
         </div>
         <div class="sticky-column">  
-          <!--TODO: only make this visible to certain addresses ++ this will trigger a tx-->
+          <!--TODO: only make this visible to certain addresses ++ this will trigger a tx-->  
           <div class="admin-box">
             <h2 class="link-title">Admin controls</h2>
             <button class="btn-warning" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: center;"><img width="16px" src="@/assets/remove.svg"/>Remove project</button>
@@ -404,6 +413,7 @@ export default class ProjectView extends Vue {
     return markdown.render(this.project?.description || '')
   }
 }
+
 </script>
 
 <style scoped lang="scss">
@@ -419,7 +429,6 @@ export default class ProjectView extends Vue {
       }
 }
 
-
 .sticky-column {
   position: sticky;
   top: 2rem;
@@ -432,7 +441,9 @@ export default class ProjectView extends Vue {
 .tagline {
   font-size: 1.5rem;
   line-height: 150%;
-  margin-bottom: 3rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+  font-family: 'Glacial Indifference', sans-serif;
 }
 
 .project-image {
@@ -448,6 +459,24 @@ export default class ProjectView extends Vue {
   display: flex;
   gap: 3rem;
   margin-top: 4rem;
+}
+
+.project-section {
+  margin-bottom: 3rem;
+  color: #f7f7f7;
+}
+
+.team {
+  padding: 1.5rem;
+  margin-bottom: 3rem;
+  border-radius: 0.5rem;
+  border: 1px solid #000000;
+  background: $bg-transparent;
+}
+
+.team-byline {
+  line-height: 150%;
+  margin-bottom: 3rem;
 }
 
 .link-box {
@@ -483,13 +512,26 @@ export default class ProjectView extends Vue {
 .project-name {
   font-family: 'Glacial Indifference', sans-serif;
   font-weight: bold;
-  font-size: 2rem;
+  font-size: 2.5rem;
   letter-spacing: -0.015em;
   margin: 0;
 
   a {
     color: $text-color;
   }
+}
+
+
+
+.tag {
+  padding: 0.5rem 0.75rem;
+  background: $bg-light-color;
+  color: $button-disabled-text-color;
+  font-family: 'Glacial Indifference', sans-serif;
+  margin-bottom: 3rem;
+  width: fit-content;
+  border-radius: 4px;
+  
 }
 
 
@@ -571,6 +613,46 @@ export default class ProjectView extends Vue {
   }
 }
 
+.address {
+  font-family: 'Glacial Indifference', sans-serif;
+/*   padding: 1rem;
+  background: $bg-secondary-color; */
+  /* border: 1px solid #000; */
+  border-radius: 8px;
+  margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  gap: 0.5rem;
+}
+
+.address-label {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.copy-btn {
+  /* border-radius: 50%; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background: none; */
+  /* border: 1px solid $text-color;
+  padding: 0.5rem; */
+  box-sizing: border-box;
+  padding: 0.25rem;
+  cursor: pointer;
+  /* background: rgba(255, 255, 255, 0.1); */
+  &:hover {
+    transform: scale(1.01);
+    opacity: 0.8;
+    background: $bg-light-color;
+    border-radius: 4px;
+  }
+}
+
 .nav-area {
   grid-area: navi;
 }
@@ -586,6 +668,4 @@ export default class ProjectView extends Vue {
   border-radius: 32px 32px  0 0;
   box-shadow: $box-shadow;
 }
-
-
 </style>
