@@ -31,7 +31,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { BigNumber } from 'ethers'
 import Component from 'vue-class-component'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
