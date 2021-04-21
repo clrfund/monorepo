@@ -22,21 +22,21 @@
               target="_blank"
               rel="noopener"
             >{{ project.name }}</a>
-            <span v-else><!-- {{ project.name }} -->Commons simulator</span> <a :href="project.address"><img src="@/assets/verified.svg" /></a>
+            <span v-else> {{ project.name }} </span> <a :href="project.address"><img src="@/assets/verified.svg" /></a>
           </h2>
-          <p class="tagline">Modeling Sustainable Funding for Public Good</p> 
-          <div class="team-byline">By <a href="#team"><!-- {{ team.name }} -->team A</a></div>
+          <p class="tagline">{{ project.tagline }}</p> 
+          <div class="team-byline">By <a href="#team"> {{ project.teamName }} </a></div>
           <div class="project-section">
             <h3>About the project</h3>
             <div class="project-description">{{ project.description }}</div>
           </div>
           <div class="project-section">
             <h3>Funding plans</h3>
-            <div class="project-description">{{ project.description }}</div>
+            <div class="project-description">{{ project.plans }}</div>
           </div>
           <div class="team">
-            <h3 id="team" style="margin-top: 0;">About teamA<!-- {{ project.name }} --></h3>
-            <div class="project-description">{{ project.description }}</div>
+            <h3 id="team" style="margin-top: 0;"> {{ project.teamName }}</h3>
+            <div class="project-description">{{ project.teamDescription }}</div>
           </div>
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div>
@@ -47,7 +47,7 @@
                 <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
               </div>
             </div>
-            <div class="tag">{{ project.tag }} tag example</div>
+            <div class="tag">{{ project.category }} </div>
           </div>
         </div>
         <div class="sticky-column">  
@@ -67,10 +67,10 @@
           <div class="input-button" v-if="hasContributeBtn() && !inCart">
             <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
             <input
-              v-model="amount"
+              v-model="contributionAmount"
               class="input"
-              name="amount"
-              placeholder="10"
+              name="contributionAmount"
+              placeholder="5"
               autocomplete="on"
               onfocus="this.value=''"
 
@@ -105,17 +105,17 @@
           </button>
           <div class="link-box">
             <h2 class="link-title">Check them out</h2>
-            <div class="link-row">
+            <div v-if="project.githubUrl" class="link-row">
               <img src="@/assets/GitHub.svg" />
-              <a href="#">GitHub repo</a>
+              <a :href="project.githubUrl">GitHub repo</a>
             </div>
-            <div class="link-row">
+            <div v-if="project.twitterUrl" class="link-row">
               <img src="@/assets/Twitter.svg" />
-              <a href="#">@Twitter</a>
+              <a :href="project.twitterUrl">@Twitter</a>
             </div>  
-            <div class="link-row">
+            <div v-if="project.websiteUrl" class="link-row">
               <img src="@/assets/Meridians.svg" />
-              <a href="#">www.project.com</a>
+              <a :href="project.websiteUrl">{{ project.websiteUrl }}</a>
             </div>  
           </div>
         </div>
@@ -132,10 +132,10 @@
           <div class="input-button" v-if="hasContributeBtn() && !inCart">
             <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
             <input
-              v-model="amount"
+              v-model="contributionAmount"
               class="input"
-              name="amount"
-              placeholder="10"
+              name="contributionAmount"
+              placeholder="5"
               autocomplete="on"
               onfocus="this.value=''"
 
@@ -211,6 +211,7 @@ export default class ProjectView extends Vue {
 
   project: Project | null = null
   allocatedAmount: FixedNumber | null = null
+  contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
   claimed: boolean | null = null
   isLoading = true
 
@@ -278,6 +279,15 @@ export default class ProjectView extends Vue {
       this.$router.push({ name: 'round', params: { address: roundAddress }})
     } else {
       this.$router.push({ name: 'projects' })
+    }
+  }
+
+  async copyAddress(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(this.project.address)
+      // TODO: UX success feedback
+    } catch (error) {
+      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
     }
   }
 
@@ -364,7 +374,7 @@ export default class ProjectView extends Vue {
   contribute() {
     this.$store.commit(ADD_CART_ITEM, {
       ...this.project,
-      amount: DEFAULT_CONTRIBUTION_AMOUNT.toString(),
+      amount: this.contributionAmount.toString(),
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)

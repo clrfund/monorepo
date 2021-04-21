@@ -199,6 +199,7 @@ export function getRequestId(
   return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
+// TODO add new project fields
 function decodeProject(requestSubmittedEvent: Event): Project {
   const args = requestSubmittedEvent.args as any
   if (args._type !== RequestTypeCode.Registration) {
