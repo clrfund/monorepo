@@ -53,6 +53,7 @@ interface ImageState {
   // modalOpen: boolean;
   document: string;
   loading: boolean;
+  data: string;
 }
 
 export interface RecipientApplicationData {

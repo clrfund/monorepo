@@ -427,7 +427,7 @@
                   </div>
                 </div>
                 <div class="form-background">
-                  <form method="POST" enctype="multipart/form-data" @submit="handleSubmit" name="banner">
+                  <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="banner">
                     <label
                       :for="requiresUpload ? 'image-banner-upload' : 'image-banner-hash'"
                       class="input-label"
@@ -439,7 +439,7 @@
                       id="image-banner-upload"
                       type="file"
                       class="input"
-                      @change="handleUploadFile"
+                      @change="handleLoadFile"
                       name="banner"
                     />
                     <p :class="{
@@ -465,7 +465,7 @@
                   </form>
                 </div>
                 <div class="form-background">
-                  <form method="POST" enctype="multipart/form-data" @submit="handleSubmit" name="thumbnail">
+                  <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="thumbnail">
                     <label
                       :for="requiresUpload ? 'image-thumbnail-upload' : 'image-thumbnail-hash'"
                       class="input-label"
@@ -477,7 +477,7 @@
                       id="image-thumbnail-upload"
                       type="file"
                       class="input"
-                      @change="handleUploadFile"
+                      @change="handleLoadFile"
                       name="thumbnail"
                     />
                     <p :class="{
@@ -501,6 +501,26 @@
                     <button v-if="requiresUpload" primary="true" type='submit' label='Upload'>Upload</button>
                   </form>
                 </div>
+              </div>
+              <div class="image-preview">
+                Banner Image                
+                <img
+                  :src="bannerImage"
+                  alt="Uploaded banner"
+                  :class="{
+                    'banner-image': bannerImage,
+                    hidden: !bannerImage,
+                  }"
+                />
+                Thumbnail Image                
+                <img
+                  :src="thumbnailImage"
+                  alt="Uploaded thumbnail"
+                  :class="{
+                    'thumbnail-image': thumbnailImage,
+                    hidden: !thumbnailImage,
+                  }"
+                />
               </div>
             </div>
           </form>
@@ -641,6 +661,7 @@ export default class JoinView extends mixins(validationMixin) {
         // modalOpen: false,
         document: '',
         loading: false,
+        data: '',
       },
       thumbnail: {
         hash: '',
@@ -649,6 +670,7 @@ export default class JoinView extends mixins(validationMixin) {
         // modalOpen: false,
         document: '',
         loading: false,
+        data: '',
       },
     },
     furthestStep: 0,
@@ -691,6 +713,14 @@ export default class JoinView extends mixins(validationMixin) {
   get requiresUpload(): boolean {
     return this.form.image.requiresUpload === 'true'
   }
+
+  get bannerImage(): string {
+    return this.form.image.banner.data
+  }
+
+  get thumbnailImage(): string {
+    return this.form.image.banner.data
+  }
   
   isStepValid(step: number): boolean {
     const stepName: string = this.steps[step]
@@ -710,7 +740,7 @@ export default class JoinView extends mixins(validationMixin) {
     })
   }
 
-  handleUploadFile(event) {
+  handleLoadFile(event) {
     const data = event.target.files[0]
     const { name } = event.target
     if (data.type.match('image/*')) {
@@ -723,20 +753,30 @@ export default class JoinView extends mixins(validationMixin) {
     }
   }
 
-  handleSubmit(event) {
+  handleUploadToIPFS(event) {
+    // Submit "Upload" button for each image
     event.preventDefault()
     const { name } = event.target
     this.form.image[name].loading = true
 
     if (this.form.image[name].document !== '') {
       this.ipfs.addJSON(this.form.image[name].document, async (err, _hash) => {
-        if (err) {
-          this.form.image[name].failure = 'Error occured: ${err.message}'
-        } else {
+        if (!err) {
           // this.form.image[name].modalOpen = true
           this.form.image[name].hash = _hash
           this.form.image[name].success = `Success! Your hash: ${_hash}`
           console.log(this.form.image[name].success) /* eslint-disable-line no-console */
+          this.ipfs.catJSON(this.form.image[name].hash, async (err2, data) => {
+            if(!err2) {
+              this.form.image[name].data = data
+              console.log({data})
+            } else {
+              // this.form.image[name].modalOpen = true
+              this.form.image[name].failure = `Error occured: ${err.message}`
+            }
+          })
+        } else {
+          this.form.image[name].failure = 'Error occured: ${err.message}'
         }
       })
     } else {
@@ -1109,6 +1149,11 @@ export default class JoinView extends mixins(validationMixin) {
   input {
     margin-right: 0.5rem;
   }
+}
+
+.banner-image {
+  width: 500px;
+  height: auto;
 }
 
 .error {
