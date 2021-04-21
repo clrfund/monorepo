@@ -82,17 +82,15 @@ export default class WalletWidget extends Vue {
   }
 
   get etherBalance(): string | null {
-    if (this.currentUser) {
-      return commify(formatUnits(this.currentUser.etherBalance, 'ether'))
-    }
-    return null
+    const etherBalance = this.currentUser?.etherBalance
+    if (etherBalance === null || typeof etherBalance === 'undefined') { return null }
+    return commify(formatUnits(etherBalance, 'ether'))
   }
 
   get balance(): string | null {
-    if (this.currentUser) {
-      return commify(formatUnits(this.currentUser.balance, 18))
-    }
-    return null
+    const balance = this.currentUser?.balance
+    if (balance === null || typeof balance === 'undefined') { return null }
+    return commify(formatUnits(balance, 18))
   }
 
   async mounted() {
