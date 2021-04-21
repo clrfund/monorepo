@@ -690,12 +690,7 @@ export default class JoinView extends mixins(validationMixin) {
     const { name } = event.target
     if (data.type.match('image/*')) {
       const reader = new FileReader()
-      reader.onload = (function() {
-        return function(e) {
-          this.form.image[name].document = e.target.result
-          console.log(this.form.image) /* eslint-disable-line no-console */
-        }.bind(this)
-      }.bind(this))(data)
+      reader.onload = (() => ((e) => {this.form.image[name].document = e.target.result}))()
       reader.readAsDataURL(data)
     } else {
       // this.form.image[name].modalOpen = true
