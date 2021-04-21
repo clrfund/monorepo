@@ -760,7 +760,7 @@ export default class JoinView extends mixins(validationMixin) {
   grid-template-areas:
     "title cancel"
     "form progress";
-  height: calc(100vh - $nav-header-height);
+  height: calc(100vh - var($nav-header-height));
   gap: 0 2rem;
   @media (max-width: $breakpoint-m) {
     grid-template-rows: auto auto 1fr auto;
