@@ -19,11 +19,11 @@
                 <img src="@/assets/current-step.svg" alt="current step" />
                 <p v-text="name" class="active step" />
               </template>
-              <template v-else-if="step <= form.furthestStep">
+              <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
                 <img src="@/assets/green-tick.svg" alt="step complete" />
                 <p v-text="name" class="step" />
               </template>
-              <template v-else-if="step > form.furthestStep">
+              <template v-else>
                 <img src="@/assets/step-remaining.svg" alt="step remaining" />
                 <p v-text="name" class="step" />
               </template>
@@ -673,7 +673,7 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   isStepUnlocked(step: number): boolean {
-    return this.isStepValid(step) && step <= this.form.furthestStep
+    return step <= this.form.furthestStep
   }
 
   saveFormData(): void {
