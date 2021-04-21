@@ -4,26 +4,19 @@
     <round-status-banner />
     <div class="gradient">
       <div class="hero">
-        <img src="@/assets/newrings.png" width="100%"/>
+        <img src="@/assets/newrings.png" width="100%" />
         <div class="content">
           <span class="emoji">🎉</span>
           <h1>Project added!</h1>
           <div id="subtitle" class="subtitle">You’re on board this funding round!</div>
           <p>Your project will be added to the next round and be visible in a few minutes. Check back soon to see your live project.</p>
+          <div class="contact">
+            <div>For round updates, be sure to follow us on Twitter: 
+            <a href="https://twitter.com/ethdotorg">@ethdotorg </a></div>
+          </div>
           <div class="btn-container">
             <router-link to="/projects" class="btn-primary">View projects</router-link>
             <router-link to="/" class="btn-secondary">Go home</router-link>
-          </div>
-          <div class="contact">
-            <p style="margin: 0; margin-bottom: 1rem;">Give us a contact email so we can let you know important updates about the round and/or your project.</p>
-            <div>
-              <label for="contact" class="input-label">Contact email (optional)</label>
-            </div>
-            <div style="display: flex; gap: 1rem; align-items: center;">
-              <input type="email" class="input" id="contact" placeholder="vitalik@ethereum.org" /> 
-              <submit class="btn-primary">Add email</submit>
-              <!-- TODO: sent state -->
-            </div>
           </div>
         </div>
       </div>
@@ -127,57 +120,18 @@ p {
   padding: 1rem;
   margin: 2rem 0rem;
   border: 1px solid black;
+  display: flex;
+  gap: 0.5rem;  
 }
 
 #subtitle {
   font-size: 20px;
 }
 
-
-.input {
-  border-radius: 16px;
-  border: 2px solid $button-color;
-  background-color: $bg-secondary-color;
-  margin: 0.5rem 0;
-  padding: 0.5rem 1rem;
-  font-size: 16px;
-  font-family: Inter;
-  font-weight: 400;
-  line-height: 24px;
-  letter-spacing: 0em;
-  &:valid { 
-    border: 2px solid $clr-green;
-  }
-  &:hover { 
-    background: $bg-primary-color; 
-    border: 2px solid $highlight-color;
-    box-shadow: 0px 4px 16px 0px 25,22,35,0.4;
-  }
-  &:optional {
-    border: 2px solid $button-color;
-    background-color: $bg-secondary-color;
-  }
-}
-.input.invalid {
-  border: 2px solid $error-color; 
+.icon {
+  width: 1rem;
+  height: 1rem;
 }
 
-.input-description {
-  margin-top: 0.25rem;
-  font-size: 14px;
-  font-family: Inter;
-  margin-bottom: 0.5rem;
-}
-
-.input-label {
-  font-family: Inter;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24px;
-  letter-spacing: 0em;
-  text-align: left;
-  margin: 0;
-}
 
 </style>
