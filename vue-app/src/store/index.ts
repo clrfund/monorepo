@@ -156,7 +156,6 @@ export const mutations = {
     }
   },
   [UPDATE_FORM_PROGRESS](state, nextStep) {
-    console.log({state})
     if (nextStep > state.recipient.furthestStep) {
       state.recipient.furthestStep = nextStep
     }  
