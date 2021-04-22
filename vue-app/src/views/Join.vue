@@ -409,8 +409,7 @@
                       hidden: !$v.form.image.banner.$error
                     }">Upload a file</p -->
                   </form>
-                  <div class="preview-section">
-                    <p>Banner Image</p>
+                  <div class="image-preview">
                     <img
                       :src="bannerImage"
                       alt="🌄"
@@ -419,6 +418,7 @@
                         spacer: !bannerImage,
                       }"
                     />
+                    <p>Hash: {{ bannerHash }}</p>
                   </div>
                 </div>
                 <div class="form-background">
@@ -438,8 +438,7 @@
                       hidden: !$v.form.image.thumbnail.$error
                     }">Upload a file</p-->
                   </form>
-                  <div class="preview-section">
-                    <p>Thumbnail Image</p>
+                  <div class="image-preview">
                     <img
                       :src="thumbnailImage"
                       alt="🌄"
@@ -448,6 +447,7 @@
                         spacer: !thumbnailImage,
                       }"
                     />
+                    <p>Hash: {{ thumbnailHash }}</p>
                   </div>
                 </div>
               </div>
@@ -642,7 +642,15 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   get thumbnailImage(): string {
-    return this.form.image.banner.data
+    return this.form.image.thumbnail.data
+  }
+  
+  get bannerHash(): string {
+    return this.form.image.banner.hash
+  }
+
+  get thumbnailHash(): string {
+    return this.form.image.thumbnail.hash
   }
   
   isStepValid(step: number): boolean {
@@ -1077,11 +1085,10 @@ export default class JoinView extends mixins(validationMixin) {
   margin-left: 1rem;
 }
 
-.preview-section {
+.image-preview {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  align-items: flex-start;
+  margin-top: 1rem;
 
   .banner-image {
     width: 500px;
