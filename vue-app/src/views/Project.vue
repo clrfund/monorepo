@@ -30,18 +30,18 @@
             <div class="team-byline">By <a href="#team"> {{ project.teamName }} team</a></div>
           </div>
           <div class="project-section">
-            <h2>About the project</h2>
+            <h2>📖 About the project</h2>
             <div class="project-description">{{ project.description }}</div>
           </div>
           <div class="project-section">
-            <h2>Funding plans</h2>
-            <div class="project-description">{{ project.plans }}</div>
+            <h2>🔧 The problem it solves</h2>
+            <div class="project-description">{{ project.problemSpace }}</div>
           </div>
           <div class="project-section">
-            <h2 id="team" style="margin-top: 0;">About the team: {{ project.teamName }}</h2>
-            <div class="project-description">{{ project.teamDescription }}</div>
-          </div>
-          <div class="team">
+            <h2>💰 Funding plans</h2>
+            <div class="project-description">{{ project.plans }}</div>
+          </div> 
+          <div class="address-box">
             <div>
               <div class="address-label">Recipient address</div>
               <div class="address">
@@ -52,6 +52,11 @@
               <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/copy.svg"></div>
               <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
             </div>
+          </div>
+          <hr />
+          <div class="team">
+            <h2 id="team" style="margin-top: 0;">Brought to you by {{ project.teamName }}  </h2>
+            <div class="project-description">{{ project.teamDescription }}</div>
           </div>
         </div>
         <div class="sticky-column">  
@@ -490,6 +495,19 @@ export default class ProjectView extends Vue {
 .team {
   padding: 1rem;
   margin-bottom: 3rem;
+  border-radius: 0.25rem;
+  background: $bg-secondary-color;
+}
+
+.team h2 {
+  font-size: 16px;
+  font-weight: 400;
+  font-family: 'Glacial Indifference', sans-serif;
+}
+
+.address-box {
+  padding: 1rem;
+  margin-bottom: 3rem;
   border-radius: 0.5rem;
   box-shadow: $box-shadow;
   background: $clr-blue-gradient;
@@ -700,6 +718,12 @@ export default class ProjectView extends Vue {
 
 .project-page h2 {
   font-size: 20px;
+}
+
+.project-page hr {
+    border: 0;
+    border-bottom: 0.5px solid $button-disabled-text-color;
+    margin-bottom: 3rem;
 }
 
 
