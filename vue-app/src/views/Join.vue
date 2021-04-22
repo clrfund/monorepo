@@ -637,7 +637,7 @@ export default class JoinView extends mixins(validationMixin) {
     },
     furthestStep: 0,
   }
-  currentStep: number | null = null
+  currentStep = 0
   steps: string[] = []
   stepNames: string[] = []
 
