@@ -527,7 +527,6 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
         discord: { url },
       },
       image: {
-        requiresUpload: {},
         banner: {
           hash: {
             required,
@@ -580,7 +579,6 @@ export default class JoinView extends mixins(validationMixin) {
       discord: '',
     },
     image: {
-      requiresUpload: 'false',
       bannerHash: '',
       thumbnailHash: '',
       banner: {
@@ -637,10 +635,6 @@ export default class JoinView extends mixins(validationMixin) {
     if (this.currentStep < 0) {
       this.$router.push({ name: 'join' })
     }
-  }
-
-  get requiresUpload(): boolean {
-    return this.form.image.requiresUpload === 'true'
   }
 
   get bannerImage(): string {

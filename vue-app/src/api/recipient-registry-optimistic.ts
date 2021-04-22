@@ -81,7 +81,6 @@ export interface RecipientApplicationData {
     discord: string;
   };
   image: {
-    requiresUpload: '' | 'true' | 'false';
     bannerHash: string;
     thumbnailHash: string;
     banner: ImageState;
