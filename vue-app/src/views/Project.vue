@@ -11,7 +11,7 @@
       <img class="project-image" :src="project.imageUrl" :alt="project.name">
       <div class="content">
         <div class="about">    
-          <h2
+          <h1 
             class="project-name"
             :title="project.address"
             :data-index="project.index"
@@ -22,40 +22,44 @@
               target="_blank"
               rel="noopener"
             >{{ project.name }}</a>
-            <span v-else> {{ project.name }} </span> <a :href="project.address"><img src="@/assets/verified.svg" /></a>
-          </h2>
+            <span v-else> {{ project.name }} </span>
+          </h1>
           <p class="tagline">{{ project.tagline }}</p> 
-          <div class="team-byline">By <a href="#team"> {{ project.teamName }} </a></div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 3rem;">
+            <div class="tag">{{ project.category }} tag </div>
+            <div class="team-byline">By <a href="#team"> {{ project.teamName }} team</a></div>
+          </div>
           <div class="project-section">
-            <h3>About the project</h3>
+            <h2>About the project</h2>
             <div class="project-description">{{ project.description }}</div>
           </div>
           <div class="project-section">
-            <h3>Funding plans</h3>
+            <h2>Funding plans</h2>
             <div class="project-description">{{ project.plans }}</div>
           </div>
-          <div class="team">
-            <h3 id="team" style="margin-top: 0;"> {{ project.teamName }}</h3>
+          <div class="project-section">
+            <h2 id="team" style="margin-top: 0;">About the team: {{ project.teamName }}</h2>
             <div class="project-description">{{ project.teamDescription }}</div>
           </div>
-          <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div class="team">
             <div>
               <div class="address-label">Recipient address</div>
               <div class="address">
                 {{ project.address }} 
-                <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/copy.svg"></div>
-                <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
               </div>
             </div>
-            <div class="tag">{{ project.category }} </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/copy.svg"></div>
+              <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
+            </div>
           </div>
         </div>
         <div class="sticky-column">  
           <!--TODO: only make this visible to certain addresses ++ this will trigger a tx-->  
-          <div class="admin-box">
-            <h2 class="link-title">Admin controls</h2>
+          <!-- <div class="admin-box">
+            <h2 class="link-title">Admin controls</h2> -->
             <button class="btn-warning" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: center;"><img width="16px" src="@/assets/remove.svg"/>Remove project</button>
-          </div>
+          <!-- </div> -->
           <button
             v-if="hasRegisterBtn()"
             class="btn-primary"
@@ -451,8 +455,8 @@ export default class ProjectView extends Vue {
 .tagline {
   font-size: 1.5rem;
   line-height: 150%;
-  margin-top: 0.5rem;
-  margin-bottom: 0.25rem;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
   font-family: 'Glacial Indifference', sans-serif;
 }
 
@@ -477,16 +481,23 @@ export default class ProjectView extends Vue {
 }
 
 .team {
-  padding: 1.5rem;
+  padding: 1rem;
   margin-bottom: 3rem;
   border-radius: 0.5rem;
-  border: 1px solid #000000;
-  background: $bg-transparent;
+  box-shadow: $box-shadow;
+  background: $clr-blue-gradient;
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between;
+  @media (max-width: $breakpoint-l) {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
 }
 
 .team-byline {
   line-height: 150%;
-  margin-bottom: 3rem;
 }
 
 .link-box {
@@ -538,7 +549,6 @@ export default class ProjectView extends Vue {
   background: $bg-light-color;
   color: $button-disabled-text-color;
   font-family: 'Glacial Indifference', sans-serif;
-  margin-bottom: 3rem;
   width: fit-content;
   border-radius: 4px;
   
@@ -629,37 +639,36 @@ export default class ProjectView extends Vue {
   background: $bg-secondary-color; */
   /* border: 1px solid #000; */
   border-radius: 8px;
-  margin-bottom: 3rem;
   display: flex;
   align-items: center;
   /* justify-content: space-between; */
   gap: 0.5rem;
+  font-weight: 600;
 }
 
 .address-label {
   font-size: 14px;
   margin: 0;
-  font-weight: 500;
+  font-weight: 400;
   margin-bottom: 0.25rem;
+  text-transform: uppercase;
 }
 
 .copy-btn {
-  /* border-radius: 50%; */
+  border-radius: 50%; 
   display: flex;
   justify-content: center;
   align-items: center;
-  /* background: none; */
-  /* border: 1px solid $text-color;
-  padding: 0.5rem; */
+  background: none; 
+  border: 1px solid $text-color;
+  padding: 0.5rem;
   box-sizing: border-box;
   padding: 0.25rem;
   cursor: pointer;
-  /* background: rgba(255, 255, 255, 0.1); */
+  background: rgba(255, 255, 255, 0.1); 
   &:hover {
     transform: scale(1.01);
     opacity: 0.8;
-    background: $bg-light-color;
-    border-radius: 4px;
   }
 }
 
@@ -678,4 +687,13 @@ export default class ProjectView extends Vue {
   border-radius: 32px 32px  0 0;
   box-shadow: $box-shadow;
 }
+
+.project-page {
+}
+
+.project-page h2 {
+  font-size: 20px;
+}
+
+
 </style>
