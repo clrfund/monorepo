@@ -60,6 +60,13 @@
             <h2 class="link-title">Admin controls</h2> -->
             <button class="btn-warning" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: center;"><img width="16px" src="@/assets/remove.svg"/>Remove project</button>
           <!-- </div> -->
+          <button 
+            style="display: flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: center;"
+            class="btn-secondary"
+          >
+            <img width="16px" src="@/assets/edit.svg" />
+            Edit details
+          </button>
           <button
             v-if="hasRegisterBtn()"
             class="btn-primary"
