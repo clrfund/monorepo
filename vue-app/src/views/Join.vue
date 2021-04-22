@@ -698,7 +698,6 @@ export default class JoinView extends mixins(validationMixin) {
           this.ipfs.catJSON(this.form.image[name].hash, async (err2, data) => {
             if(!err2) {
               this.form.image[name].data = data
-              console.log({data})
             } else {
               // this.form.image[name].modalOpen = true
               this.form.image[name].failure = `Error occured: ${err.message}`
