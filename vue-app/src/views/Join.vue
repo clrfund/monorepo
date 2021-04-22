@@ -391,6 +391,7 @@
             </div>
             <div v-if="currentStep === 4">
               <h2 class="step-title">Images</h2>
+              <p>We'll upload your images to IPFS, a decentralized storage platform.</p>
               <div class="inputs">
                 <div class="form-background">
                   <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="banner">
@@ -403,14 +404,16 @@
                       @change="handleLoadFile"
                       name="banner"
                     />
-                    <button primary="true" type='submit' label='Upload' class="btn-action upload-btn">Upload</button>
+                    <button primary="true" type='submit' label='Upload' class="btn-primary upload-btn">Upload </button>
                     <!-- p :class="{
                       error: true,
                       hidden: !$v.form.image.banner.$error
                     }">Upload a file</p -->
                   </form>
                   <div class="image-preview">
+                    <div v-if="!bannerImage" class="loader"></div>
                     <img
+                      v-else
                       :src="bannerImage"
                       alt="🌄"
                       :class="{
@@ -418,7 +421,7 @@
                         spacer: !bannerImage,
                       }"
                     />
-                    <p>Hash: {{ bannerHash }}</p>
+                    <p v-if="bannerImage">IPFS hash: {{ bannerHash }}</p>
                   </div>
                 </div>
                 <div class="form-background">
@@ -432,7 +435,7 @@
                       @change="handleLoadFile"
                       name="thumbnail"
                     />
-                    <button primary="true" type='submit' label='Upload' class="btn-action upload-btn">Upload</button>
+                    <button primary="true" type='submit' label='Upload' class="btn-primary upload-btn">Upload</button>
                     <!--p :class="{
                       error: true,
                       hidden: !$v.form.image.thumbnail.$error
@@ -1101,11 +1104,44 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   .spacer {
-    border: 2px solid $border-color;
+    border: 1px solid #000;
     border-radius: 0.5rem;
     padding: 1rem;
   }
 }
+
+.loader {
+  display: block;
+  height: 40px;
+  margin: $content-space auto;
+  width: 40px;
+}
+
+.loader:after {
+  content: " ";
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 4px;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: loader 1.2s linear infinite;
+}
+
+.loader {
+    margin: $modal-space auto;
+  }
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 
 .error {
   color: $error-color;
