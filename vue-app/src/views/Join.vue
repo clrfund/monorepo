@@ -12,11 +12,18 @@
               v-for="(name, step) in stepNames"
               :key="step"
               class="progress-step"
-              :class="{'progress-step-checked': step <= form.furthestStep && step !== currentStep}"
+              :class="{
+                'zoom-link': step <= form.furthestStep && step !== currentStep && !navDisabled,
+                disabled: navDisabled
+              }"
               @click="handleStepNav(step)"
             >
               <template v-if="step === currentStep">
                 <img src="@/assets/current-step.svg" alt="current step" />
+                <p v-text="name" class="active step" />
+              </template>
+              <template v-else-if="step === furthestStep">
+                <img src="@/assets/furthest-step.svg" alt="current step" />
                 <p v-text="name" class="active step" />
               </template>
               <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
@@ -34,6 +41,8 @@
             :steps="steps"
             :currentStep="currentStep"
             :callback="saveFormData"
+            :handleStepNav="handleStepNav"
+            :navDisabled="navDisabled"
             class="desktop"
           />
         </div>
@@ -637,11 +646,8 @@ export default class JoinView extends mixins(validationMixin) {
 
 
   created() {
-    if (this.$route.params.step === 'image') {
-      this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
-    }
-
     const steps = Object.keys(this.form)
+    // Reassign last key from form object (furthestStep) to 'summary'
     steps[steps.length - 1] = 'summary'
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
@@ -660,6 +666,15 @@ export default class JoinView extends mixins(validationMixin) {
     // redirect to /join/ if step doesn't exist
     if (this.currentStep < 0) {
       this.$router.push({ name: 'join' })
+    }
+    // "Next" button restricts forward navigation via validation, and
+    // eventually updates the `furthestStep` tracker when valid and clicked/tapped.
+    // If URL step is ahead of furthest, navigate back to furthest
+    // if (this.currentStep > this.form.furthestStep) {
+    //   this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
+    // }
+    if (this.$route.params.step === 'image') {
+      this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
     }
   }
 
@@ -722,8 +737,19 @@ export default class JoinView extends mixins(validationMixin) {
     this.form.image[name].loading = false
   }
 
-  handleStepNav(step) {
+  get navDisabled(): boolean {
+    return !this.isStepValid(this.currentStep) && this.currentStep !== this.furthestStep
+  }
+
+  handleStepNav(step): void {
+    // !isStepValid && step !== furthestStep => disable quick-links
+    if (this.navDisabled) {
+      alert('Looks like you screwed something up... or we did')
+      return
+    }
+    // Save form data
     this.saveFormData()
+    // Navigate
     if (this.isStepUnlocked(step)) {
       this.$router.push({
         name: 'joinStep',
@@ -732,6 +758,10 @@ export default class JoinView extends mixins(validationMixin) {
         },
       })
     }
+  }
+
+  get furthestStep() {
+    return this.form.furthestStep
   }
 } 
 </script>
@@ -807,7 +837,7 @@ export default class JoinView extends mixins(validationMixin) {
       }
     }
 
-    .progress-step-checked {
+    .zoom-link {
       cursor: pointer;
       &:hover {
         transform: scale(1.02);
@@ -1083,5 +1113,16 @@ export default class JoinView extends mixins(validationMixin) {
   &:before {
     content: "⚠️ "
   }
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 0.5;
+    transform: scale(1);
+    cursor: not-allowed;
+  }  
 }
 </style>
