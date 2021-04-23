@@ -243,13 +243,33 @@
               </div>
             </div>
             <div v-if="currentStep === 2">
-              <h2 class="step-title">About the team (optional) </h2>
+              <h2 class="step-title">Team details</h2>
               <div class="inputs">
                 <div class="form-background">
-                  <label for="team-name" class="input-label">Team name</label>
+                  <label for="team-email" class="input-label">Contact email</label>
+                  <p class="input-description">For important updates about your project and the funding round.</p>
+                  <input
+                    required
+                    id="team-email"
+                    placeholder="example: doge@goodboi.com"
+                    v-model="$v.form.team.email.$model"
+                    :class="{
+                      input: true,
+                      invalid: $v.form.team.email.$error
+                    }"
+                  >
+                  <p class="input-notice">We won't display this publicly or add it to the on-chain registry.</p>
+                  <p :class="{
+                    error: true,
+                    hidden: !$v.form.team.email.$error
+                  }">This doesn't look like an email.</p>
+                </div>
+                <div class="form-background">
+                  <label for="team-name" class="input-label">Team name (optional)</label>
                   <p class="input-description">If different to project name.</p>
                   <input
                     id="team-name"
+                    type="email"
                     placeholder="example: clr.fund"
                     v-model="$v.form.team.name.$model"
                     :class="{
@@ -259,7 +279,7 @@
                   />
                 </div>
                 <div class="form-background">
-                  <label for="team-desc" class="input-label">Description</label>
+                  <label for="team-desc" class="input-label">Description (optional)</label>
                   <p class="input-description">If different to project description.</p>
                   <textarea
                     id="team-desc"
@@ -503,7 +523,7 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, maxLength, url } from 'vuelidate/lib/validators'
+import { required, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import IPFS from 'ipfs-mini'
 import { isAddress } from '@ethersproject/address'
@@ -545,6 +565,10 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
       team: {
         name: {},
         description: {},
+        email: { 
+          email, 
+          required,
+        },
       },
       links: {
         github: { url },
@@ -597,6 +621,7 @@ export default class JoinView extends mixins(validationMixin) {
     team: {
       name: '',
       description: '',
+      email: '',
     },
     links: {
       github: '',
@@ -1011,6 +1036,17 @@ export default class JoinView extends mixins(validationMixin) {
   font-family: Inter;
   margin-bottom: 0.5rem;
   line-height: 150%;
+}
+
+.input-notice {
+  margin-top: 0.25rem;
+  font-size: 12px;
+  font-family: Inter;
+  margin-bottom: 0.5rem;
+  line-height: 150%;
+  color: $warning-color;
+  text-transform: uppercase;  
+  font-weight: 500;
 }
 
 .input-label {

@@ -70,6 +70,7 @@ export interface RecipientApplicationData {
   team: {
     name: string;
     description: string;
+    email: string;
   };
   links: {
     github: string;
