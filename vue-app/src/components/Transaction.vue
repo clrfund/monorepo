@@ -11,7 +11,7 @@
       <div v-if="hash">
         Waiting for <a :href="getBlockExplorerUrl(hash)" target="_blank">transaction</a> to confirm...
       </div>
-      <div class="loader"></div>
+      <loader />
     </template>
   </div>
 </template>
@@ -20,10 +20,15 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
+import Loader from '@/components/Loader.vue'
 
 import { blockExplorer } from '@/api/core'
 
-@Component
+@Component({
+  components: {
+    Loader,
+  },
+})
 export default class Transaction extends Vue {
 
   @Prop()

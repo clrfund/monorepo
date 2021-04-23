@@ -32,6 +32,7 @@ import { recipientRegistryType } from '@/api/core'
 import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
 import Cart from '@/components/Cart.vue'
+import Loader from '@/components/Loader.vue'
 
 import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 
@@ -47,7 +48,7 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
       },
     ],
   },
-  components: { RoundInformation, NavBar, Cart },
+  components: { RoundInformation, NavBar, Cart, Loader },
 })
 export default class App extends Vue {
   created() {
@@ -319,25 +320,6 @@ summary:focus {
   margin-left: 0.5rem;
 }
 
-.loader {
-  display: block;
-  height: 40px;
-  margin: $content-space auto;
-  width: 40px;
-}
-
-.loader:after {
-  content: " ";
-  display: block;
-  width: 32px;
-  height: 32px;
-  margin: 4px;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: loader 1.2s linear infinite;
-}
-
 .vm--modal {
   background-color: transparent !important;
 }
@@ -349,15 +331,6 @@ summary:focus {
 
   .loader {
     margin: $modal-space auto;
-  }
-}
-
-@keyframes loader {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
 
