@@ -299,6 +299,7 @@ export default class ProjectView extends Vue {
   }
 
   async copyAddress(): Promise<void> {
+    if (!this.project?.address) { return }
     try {
       await navigator.clipboard.writeText(this.project.address)
       // TODO: UX success feedback
@@ -388,6 +389,7 @@ export default class ProjectView extends Vue {
   }
 
   contribute() {
+    if (!this.contributionAmount) { return }
     this.$store.commit(ADD_CART_ITEM, {
       ...this.project,
       amount: this.contributionAmount.toString(),
