@@ -71,10 +71,24 @@ async function main() {
   await userRegistry.addUser(contributor2.getAddress())
 
   // Add dummy recipients
+  // TODO add better dummy data
   const metadataRecipient1 = {
     name: 'Commons Simulator: Modeling Sustainable Funding for Public Good',
     description: 'Funding open-source projects & other public goods is the killer app of blockchain tech. Giveth & BlockScience are joining forces to build the Commons Stack: a modular library of well engineered components that can be used to create economic models for projects that are creating value, yet have trouble finding sustainable business models.',
     imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+    tagline: 'metadata.tagline',
+    category: 'metadata.category',
+    problemSpace: 'metadata.problemSpace',
+    plans: 'metadata.plans',
+    teamName: 'metadata.teamName',
+    teamDescription: 'metadata.teamDescription',
+    githubUrl: 'https://github.com/',
+    radicleUrl: 'https://radicle.com/',
+    websiteUrl: 'https://website.com/',
+    twitterUrl: 'https://twitter.com/',
+    discordUrl: 'https://discord.com/',
+    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
   }
   const metadataRecipient2 = {
     name: 'Synthereum: synthetic assets with liquidity pools to bridge traditional and digital finance',
