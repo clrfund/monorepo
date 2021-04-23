@@ -19,14 +19,15 @@
             </div> 
           </div>
           <div class="btn-container">
-            <button class="btn-secondary" @click="seeCriteria()">See round criteria</button>
+            <button class="btn-secondary" @click="toggleCriteria()">See round criteria</button>
             <!-- <router-link to="/join/one" class="btn-primary">Add project</router-link> -->
             <router-link to="/join/project" class="btn-primary">Add project</router-link>
-          </div> 
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </div>  
+    <criteria-modal v-if="showCriteriaPanel" :toggleCriteria="toggleCriteria" />
+  </div>  
 </template>
 
 <script lang="ts">
@@ -38,21 +39,17 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 @Component({
   name: 'join',
   metaInfo: { title: 'Join' },
-  components: { RoundStatusBanner },
+  components: { RoundStatusBanner, CriteriaModal },
 })
 
 export default class JoinLanding extends Vue {
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
-  seeCriteria(): void {
-    this.$modal.show(
-      CriteriaModal,
-      { },
-      { width: 500 },
-    )
+
+  toggleCriteria(): void {
+    this.showCriteriaPanel = !this.showCriteriaPanel
   }
 }
-
 </script>
 
 <style scoped lang="scss">
