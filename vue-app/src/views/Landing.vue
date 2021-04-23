@@ -11,8 +11,8 @@
         <h1>Send your favourite Eth2 projects to the moon!</h1>
         <div id="subtitle" class="subtitle">Every project you contribute to gets a portion of extra funding.</div>
         <div class="btn-group">
-          <div id="go-to-app" class="btn-action">Go to app</div>
-          <div id="how-it-works" class="btn-white">How it works</div>
+          <router-link to="/projects" class="btn-action">Go to app</router-link>
+          <div class="btn-white" @click="scrollToHowItWorks">How it works</div>
         </div>
         <div class="apply-callout mobile">
           <div id="countdown" class="caps">11 days</div>
@@ -35,7 +35,7 @@
         <div class="centered">11 days to join</div>
       </div>
     </div>
-    <div id="section-how-it-works" ref="how-it-works">
+    <div id="section-how-it-works">
       <div class="dai-wormhole desktop">
         <img src="@/assets/dai-small.svg" alt="Image of Dai token funneling through a wormhole" class="dai-small">
         <img src="@/assets/wormhole.png" alt="Image of Dai token funneling through a wormhole" class="wormhole">
@@ -118,7 +118,11 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 @Component({
   components: { RoundStatusBanner },
 })
-export default class Landing extends Vue {}
+export default class Landing extends Vue {
+  scrollToHowItWorks() {
+    document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })
+  }
+}
 </script>
 
 <style scoped lang="scss">
