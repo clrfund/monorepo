@@ -22,7 +22,7 @@
             </div>
           </div> -->
           <div v-if="isEmptyCart" class="empty-cart">
-            <div style="font-size : 64px;">🌚</div>
+            <div style="font-size: 64px;">🌚</div>
             <h3>Your cart is empty</h3>
             <div>Choose some projects that you want to contribute to</div>
           </div>
