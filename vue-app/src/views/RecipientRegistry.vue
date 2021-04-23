@@ -91,7 +91,7 @@ import { markdown } from '@/utils/markdown'
   metaInfo() {
     return { title: 'Recipient registry' }
   },
-  components: {Loader},
+  components: { Loader },
 })
 export default class RecipientRegistryView extends Vue {
 
