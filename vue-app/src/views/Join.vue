@@ -284,6 +284,9 @@
             </div>
             <div v-if="currentStep === 3">
               <h2 class="step-title">Links</h2>
+              <p class="input-description" :class="{
+                error: $v.form.links.hasLink.$invalid && $v.form.links.$anyDirty
+              }">Must provide at least one</p>
               <div class="inputs">
                 <div class="form-background">
                   <label for="links-github" class="input-label">GitHub</label>
@@ -293,6 +296,7 @@
                     placeholder="example: github.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.github.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.github.$error
@@ -312,6 +316,7 @@
                     placeholder="example: radicle.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.radicle.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.radicle.$error
@@ -330,6 +335,7 @@
                     placeholder="example: website.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.website.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.website.$error
@@ -348,6 +354,7 @@
                     placeholder="example: github.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.twitter.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.twitter.$error
@@ -366,6 +373,7 @@
                     placeholder="example: github.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.discord.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.discord.$error
@@ -512,7 +520,7 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, maxLength, url } from 'vuelidate/lib/validators'
+import { required, sameAs, maxLength, url } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import IPFS from 'ipfs-mini'
 import { isAddress } from '@ethersproject/address'
@@ -533,9 +541,7 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
   validations: {
     form: {
       project: {
-        name: {
-          required,
-        },
+        name: { required },
         tagline: {
           required,
           maxLength: maxLength(140),
@@ -561,6 +567,7 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
         website: { url },
         twitter: { url },
         discord: { url },
+        hasLink: { required: sameAs(() => true) },
       },
       image: {
         requiresUpload: {},
@@ -613,6 +620,7 @@ export default class JoinView extends mixins(validationMixin) {
       website: '',
       twitter: '',
       discord: '',
+      hasLink: false,
     },
     image: {
       requiresUpload: 'false',
@@ -676,6 +684,18 @@ export default class JoinView extends mixins(validationMixin) {
     if (this.$route.params.step === 'image') {
       this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
     }
+  }
+
+  handleLinkUpdate(): void {
+    // Check all link fields for any input
+    // Sets `hasLink` form state boolean to false if all link fields are blank
+    let tracker = false
+    Object.keys(this.form.links).forEach(link => {
+      if (this.form.links[link].length > 0) {
+        tracker = true
+      }
+    })
+    this.form.links.hasLink = tracker
   }
 
   get requiresUpload(): boolean {
