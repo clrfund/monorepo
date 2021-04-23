@@ -243,15 +243,13 @@
               </div>
             </div>
             <div v-if="currentStep === 2">
-              <h2 class="step-title">Team details (optional)</h2>
+              <h2 class="step-title">Team details</h2>
               <div class="inputs">
-                <div class="form-background-off-chain">
-                  <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <label for="team-email" class="input-label">Contact email</label>
-                    <div class="recommended-pill">Recommended</div>
-                  </div>
+                <div class="form-background">
+                  <label for="team-email" class="input-label">Contact email</label>
                   <p class="input-description">For important updates about your project and the funding round.</p>
                   <input
+                    required
                     id="team-email"
                     placeholder="example: doge@goodboi.com"
                     v-model="$v.form.team.email.$model"
@@ -260,16 +258,14 @@
                       invalid: $v.form.team.email.$error
                     }"
                   >
-                  <p class="input-notice"><em>This information will not be displayed publicly and won't be committed to the on-chain registry.</em></p>
+                  <p class="input-notice">We won't display this publicly or add it to the on-chain registry.</p>
                   <p :class="{
                     error: true,
                     hidden: !$v.form.team.email.$error
                   }">This doesn't look like an email.</p>
                 </div>
-              </div>
-              <div class="inputs">
                 <div class="form-background">
-                  <label for="team-name" class="input-label">Team name</label>
+                  <label for="team-name" class="input-label">Team name (optional)</label>
                   <p class="input-description">If different to project name.</p>
                   <input
                     id="team-name"
@@ -283,7 +279,7 @@
                   />
                 </div>
                 <div class="form-background">
-                  <label for="team-desc" class="input-label">Description</label>
+                  <label for="team-desc" class="input-label">Description (optional)</label>
                   <p class="input-description">If different to project description.</p>
                   <textarea
                     id="team-desc"
@@ -569,7 +565,10 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
       team: {
         name: {},
         description: {},
-        email: { email },
+        email: { 
+          email, 
+          required,
+        },
       },
       links: {
         github: { url },
@@ -1002,22 +1001,6 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
-.form-background-off-chain {
-  border-radius: 0.5rem;
-  padding: 1rem;
-  background: $bg-primary-color;
-  margin-top: 1.5rem;
-  display: flex;
-  flex-direction: column;
-}
-
-.recommended-pill {
-  border: 1px dotted $clr-green;
-  padding: 0.25rem;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
 .input {
   border-radius: 16px;
   border: 2px solid $button-color;
@@ -1057,11 +1040,13 @@ export default class JoinView extends mixins(validationMixin) {
 
 .input-notice {
   margin-top: 0.25rem;
-  font-size: 14px;
+  font-size: 12px;
   font-family: Inter;
   margin-bottom: 0.5rem;
   line-height: 150%;
   color: $warning-color;
+  text-transform: uppercase;  
+  font-weight: 500;
 }
 
 .input-label {
