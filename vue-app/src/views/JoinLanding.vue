@@ -73,7 +73,7 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 export default class JoinLanding extends Vue {
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
-  full = true
+  full = false
   closed = false
   seeCriteria(): void {
     this.$modal.show(
