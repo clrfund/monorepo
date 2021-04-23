@@ -6,7 +6,7 @@
     >
       ← Back to projects
     </a>
-    <div v-if="isLoading" class="loader"></div>
+    <loader v-if="isLoading" />
     <div v-if="project" class="project-page" style="margin-top: 1.5rem;">
       <img class="project-image" :src="project.imageUrl" :alt="project.name">
       <div class="content">
@@ -202,6 +202,7 @@ import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import { RoundStatus, getCurrentRound } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
+import Loader from '@/components/Loader.vue'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import {
   SELECT_ROUND,
@@ -222,6 +223,7 @@ import { markdown } from '@/utils/markdown'
   metaInfo() {
     return { title: (this as any).project?.name || '' }
   },
+  components: {Loader},
 })
 export default class ProjectView extends Vue {
 

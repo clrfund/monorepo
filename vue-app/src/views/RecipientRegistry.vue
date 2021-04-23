@@ -15,7 +15,7 @@
         Submit project
       </button>
     </div>
-    <div v-if="isLoading" class="loader"></div>
+    <loader v-if="isLoading"/>
     <h2 v-if="requests.length > 0">Recent changes</h2>
     <table v-if="requests.length > 0" class="requests">
       <thead>
@@ -81,6 +81,7 @@ import {
 } from '@/api/recipient-registry-optimistic'
 import { getCurrentRound } from '@/api/round'
 import RecipientSubmissionModal from '@/components/RecipientSubmissionModal.vue'
+import Loader from '@/components/Loader.vue'
 import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
@@ -90,6 +91,7 @@ import { markdown } from '@/utils/markdown'
   metaInfo() {
     return { title: 'Recipient registry' }
   },
+  components: { Loader },
 })
 export default class RecipientRegistryView extends Vue {
 
