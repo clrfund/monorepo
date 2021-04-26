@@ -46,15 +46,6 @@ export enum RequestStatus {
   Executed = 'Executed',
 }
 
-interface ImageState {
-  hash: string;
-  success: string;
-  failure: string;
-  // modalOpen: boolean;
-  document: string;
-  loading: boolean;
-}
-
 export interface RecipientApplicationData {
   project: {
     name: string;
@@ -70,6 +61,7 @@ export interface RecipientApplicationData {
   team: {
     name: string;
     description: string;
+    email: string;
   };
   links: {
     github: string;
@@ -80,11 +72,8 @@ export interface RecipientApplicationData {
     hasLink: boolean;
   };
   image: {
-    requiresUpload: '' | 'true' | 'false';
     bannerHash: string;
     thumbnailHash: string;
-    banner: ImageState;
-    thumbnail: ImageState;
   };
   furthestStep: number;
 }
@@ -200,6 +189,7 @@ export function getRequestId(
   return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
+// TODO add new project fields
 function decodeProject(requestSubmittedEvent: Event): Project {
   const args = requestSubmittedEvent.args as any
   if (args._type !== RequestTypeCode.Registration) {

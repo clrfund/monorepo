@@ -9,16 +9,19 @@
         </div>
       </router-link>
       <div class="project-info">
+        <div style='display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem;'>
+          <router-link
+            class="project-name"
+            :to="{ name: 'project', params: { id: project.id }}"
+          >
+            {{ project.name }}
+          </router-link>
+          <div class="tag">{{ project.category }}</div>
+        </div>
         <router-link
-          class="project-name"
           :to="{ name: 'project', params: { id: project.id }}"
         >
-          {{ project.name }}
-        </router-link>
-        <router-link
-          :to="{ name: 'project', params: { id: project.id }}"
-        >
-          <div class="project-description">{{ project.description }}</div>
+          <div class="project-description">{{ project.tagline }}</div>
         </router-link>
       </div>
     </div>
@@ -310,7 +313,7 @@ export default class ProjectListItem extends Vue {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
-  font-size: 14px;
+  font-size: 16px;
 /*   height: 60px;
   max-height: 60px; */
   overflow: hidden;
@@ -322,4 +325,17 @@ export default class ProjectListItem extends Vue {
 .btn {
   margin-top: 20px;
 }
+
+
+.tag {
+  padding: 0.5rem 0.75rem;
+  background: $bg-light-color;
+  color: $button-disabled-text-color;
+  font-family: 'Glacial Indifference', sans-serif;
+  width: fit-content;
+  border-radius: 4px; 
+}
+
+//TODO: make tag component?
+
 </style>

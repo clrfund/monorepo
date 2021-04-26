@@ -2,7 +2,7 @@
   <div class="modal-body">
     <div v-if="step === 0">
       <h3>Checking BrightID verification...</h3>
-      <div class="loader"></div>
+      <loader />
     </div>
     <div v-if="step === 1">
       <h3>Step 1 of 3: Connect</h3>
@@ -56,12 +56,14 @@ import {
 } from '@/api/bright-id'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
+import Loader from '@/components/Loader.vue'
 import { LOAD_USER_INFO } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 
 @Component({
   components: {
     Transaction,
+    Loader,
   },
 })
 export default class BrightIdModal extends Vue {

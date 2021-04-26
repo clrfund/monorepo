@@ -114,7 +114,7 @@
         </div>
       </div>
     </div>
-    <div v-if="isLoading" class="loader"></div>
+    <loader v-if="isLoading" />
   </div>
 </template>
 
@@ -129,6 +129,7 @@ import { Project, getRecipientRegistryAddress, getProjects } from '@/api/project
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
+import Loader from '@/components/Loader.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -139,6 +140,7 @@ import {
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
 } from '@/store/mutation-types'
+
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 
@@ -177,6 +179,7 @@ function timeLeft(date: DateTime): TimeLeft {
   metaInfo: { title: 'Round' },
   components: {
     ProjectListItem,
+    Loader,
   },
 })
 export default class RoundInformation extends Vue {
