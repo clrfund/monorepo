@@ -929,38 +929,6 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
-/* #uploadRadio {
-  input {
-    margin-right: 0.5rem;
-  }
-} */
-
-.upload-btn {
-  margin-left: 1rem;
-}
-
-.image-preview {
-  display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
-
-  .banner-image {
-    width: 500px;
-    height: auto;
-  }
-
-  .thumbnail-image {
-    width: 80px;
-    height: auto;
-  }
-
-  .spacer {
-    border: 1px solid #000;
-    border-radius: 0.5rem;
-    padding: 1rem;
-  }
-}
-
 .loader {
   display: block;
   height: 40px;

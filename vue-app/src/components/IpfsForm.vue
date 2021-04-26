@@ -1,17 +1,19 @@
 <template>
-  <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="banner">
+  <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="image">
     <p class="input-label">{{ label }}</p>
     <p class="input-description"> {{description}} </p>
-    <input
-      id="image-banner-upload"
-      type="file"
-      class="input"
-      @change="handleLoadFile"
-      name="banner"
-    />
-    <button primary="true" type='submit' label='Upload' class="btn-primary upload-btn" :class="{disabled: loading || error || !document}">
-      {{ loading ? "Loading..." : "Upload"}}
-    </button>
+    <div class="input-row">
+      <input
+        id="image-upload"
+        type="file"
+        class="input"
+        @change="handleLoadFile"
+        name="image"
+      />
+      <button primary="true" type='submit' label='Upload' class="btn-primary" :class="{disabled: loading || error || !document}">
+        {{ loading ? "Loading..." : "Upload"}}
+      </button>
+    </div>
     <div class="image-preview">
       <loader v-if="loading" />
       <img
@@ -25,6 +27,7 @@
       <p v-if="data">IPFS hash: {{ hash }}</p>
       <p v-if="error" class="error">{{ error }}</p>
     </div>
+    <div @click="handleRemoveImage" class="btn-white small">Clear</div>
   </form>
 </template>
 
@@ -98,6 +101,15 @@ export default class IpfsForm extends Vue {
       this.error = 'You need an image.'
     }
   }
+
+  handleRemoveImage(): void {
+    this.hash = ''
+    this.loading = false
+    this.data = ''
+    this.document = ''
+    this.error = ''
+    this.onUpload(this.formProp, '')
+  }
 }
 </script>
 
@@ -119,5 +131,23 @@ export default class IpfsForm extends Vue {
     transform: scale(1);
     cursor: not-allowed;
   }  
+}
+
+.btn-white.small {
+  max-width: calc(5ch + 4rem);
+}
+
+.input-row {
+  display: flex;
+  gap: 1rem;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+  }
+  margin: 1rem 0 2rem;
+}
+
+.input {
+  flex: 1;
+  margin: 0;
 }
 </style>
