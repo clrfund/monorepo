@@ -591,7 +591,10 @@ export default class JoinView extends mixins(validationMixin) {
     return step <= this.form.furthestStep
   }
 
-  saveFormData(): void {
+  saveFormData(updateFurthest?: boolean): void {
+    if (updateFurthest && this.currentStep + 1 > this.form.furthestStep) {
+      this.form.furthestStep = this.currentStep + 1
+    }
     if (typeof this.currentStep !== 'number') { return }
     this.$store.commit(SET_RECIPIENT_DATA, {
       updatedData: this.form,

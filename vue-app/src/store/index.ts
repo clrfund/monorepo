@@ -47,7 +47,6 @@ import {
   REMOVE_CART_ITEM,
   CLEAR_CART,
   SET_RECIPIENT_DATA,
-  UPDATE_FORM_PROGRESS,
 } from './mutation-types'
 
 Vue.use(Vuex)
@@ -154,11 +153,6 @@ export const mutations = {
     } else {
       state.recipient[payload.step] = payload.updatedData[payload.step]
     }
-  },
-  [UPDATE_FORM_PROGRESS](state, nextStep) {
-    if (nextStep > state.recipient.furthestStep) {
-      state.recipient.furthestStep = nextStep
-    }  
   },
 }
 

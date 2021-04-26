@@ -50,22 +50,19 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { UPDATE_FORM_PROGRESS } from '@/store/mutation-types'
 
 @Component
 export default class ButtonRow extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]
   @Prop() isStepValid!: boolean
-  @Prop() callback!: () => void
+  @Prop() callback!: (updateFurthest?: boolean) => void
   @Prop() handleStepNav!: () => void
   @Prop() navDisabled!: boolean
 
   handleNext(): void {
     // Save form data (first saves when user hits Next after first step)
-    this.callback()
-    // UPDATE_FORM_PROGRESS checks if furthestStep progress needs to be updated, and updates if so
-    this.$store.commit(UPDATE_FORM_PROGRESS, this.currentStep + 1)
+    this.callback(true) // "true" checks to update furthest step
     // Navigate forward
     this.$router.push({
       name: 'joinStep',
