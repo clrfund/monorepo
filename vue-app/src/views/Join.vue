@@ -394,64 +394,10 @@
               <p>We'll upload your images to IPFS, a decentralized storage platform.</p>
               <div class="inputs">
                 <div class="form-background">
-                  <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="banner">
-                    <p class="input-label">Banner image</p>
-                    <p class="input-description">Recommended dimensions: 500px x 300px</p>
-                    <input
-                      id="image-banner-upload"
-                      type="file"
-                      class="input"
-                      @change="handleLoadFile"
-                      name="banner"
-                    />
-                    <button primary="true" type='submit' label='Upload' class="btn-primary upload-btn">Upload </button>
-                    <!-- p :class="{
-                      error: true,
-                      hidden: !$v.form.image.banner.$error
-                    }">Upload a file</p -->
-                  </form>
-                  <div class="image-preview">
-                    <div v-if="!bannerImage" class="loader"></div>
-                    <img
-                      v-else
-                      :src="bannerImage"
-                      alt="🌄"
-                      :class="{
-                        'banner-image': bannerImage,
-                        spacer: !bannerImage,
-                      }"
-                    />
-                    <p v-if="bannerImage">IPFS hash: {{ bannerHash }}</p>
-                  </div>
+                  <ipfs-form label="Banner image" description="Recommended dimensions: 500px x 300px" :onUpload="handleUpload" formProp="bannerHash"/>
                 </div>
                 <div class="form-background">
-                  <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="thumbnail">
-                    <p class="input-label">Thumbnail image</p>
-                    <p class="input-description">Recommended dimensions: 80px x 80px</p>
-                    <input
-                      id="image-thumbnail-upload"
-                      type="file"
-                      class="input"
-                      @change="handleLoadFile"
-                      name="thumbnail"
-                    />
-                    <button primary="true" type='submit' label='Upload' class="btn-primary upload-btn">Upload</button>
-                    <!--p :class="{
-                      error: true,
-                      hidden: !$v.form.image.thumbnail.$error
-                    }">Upload a file</p-->
-                  </form>
-                  <div class="image-preview">
-                    <img
-                      :src="thumbnailImage"
-                      alt="🌄"
-                      :class="{
-                        'thumbnail-image': thumbnailImage,
-                        spacer: !thumbnailImage,
-                      }"
-                    />
-                    <p>Hash: {{ thumbnailHash }}</p>
-                  </div>
+                  <ipfs-form label="Thumbnail image" description="Recommended dimensions: 80px x 80px" :onUpload="handleUpload" formProp="thumbnailHash"/>
                 </div>
               </div>
             </div>
@@ -477,12 +423,12 @@ import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
 import { required, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
-import IPFS from 'ipfs-mini'
 import { isAddress } from '@ethersproject/address'
 
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
+import IpfsForm from '@/components/IpfsForm.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
@@ -492,6 +438,7 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
     LayoutSteps,
     ProgressBar,
     ButtonRow,
+    IpfsForm,
   },
   validations: {
     form: {
@@ -530,27 +477,13 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
         discord: { url },
       },
       image: {
-        banner: {
-          hash: {
-            required,
-            validIpfsHash: isIPFS.cid,
-          },
-          success: {},
-          failure: {},
-          // modalOpen: false,
-          document: {},
-          loading: {},
+        bannerHash: {
+          required,
+          validIpfsHash: isIPFS.cid,
         },
-        thumbnail: {
-          hash: {
-            required,
-            validIpfsHash: isIPFS.cid,
-          },
-          success: {},
-          failure: {},
-          // modalOpen: false,
-          document: {},
-          loading: {},
+        thumbnailHash: {
+          required,
+          validIpfsHash: isIPFS.cid,
         },
       },
     },
@@ -584,24 +517,6 @@ export default class JoinView extends mixins(validationMixin) {
     image: {
       bannerHash: '',
       thumbnailHash: '',
-      banner: {
-        hash: '',
-        success: '',
-        failure: '',
-        // modalOpen: false,
-        document: '',
-        loading: false,
-        data: '',
-      },
-      thumbnail: {
-        hash: '',
-        success: '',
-        failure: '',
-        // modalOpen: false,
-        document: '',
-        loading: false,
-        data: '',
-      },
     },
     furthestStep: 0,
   }
@@ -609,15 +524,8 @@ export default class JoinView extends mixins(validationMixin) {
   steps: string[] = []
   stepNames: string[] = []
 
-  // IPFS
-  ipfs: any = null
-
 
   created() {
-    if (this.$route.params.step === 'image') {
-      this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
-    }
-
     const steps = Object.keys(this.form)
     steps[steps.length - 1] = 'summary'
     const currentStep = steps.indexOf(this.$route.params.step)
@@ -639,22 +547,6 @@ export default class JoinView extends mixins(validationMixin) {
       this.$router.push({ name: 'join' })
     }
   }
-
-  get bannerImage(): string {
-    return this.form.image.banner.data
-  }
-
-  get thumbnailImage(): string {
-    return this.form.image.thumbnail.data
-  }
-  
-  get bannerHash(): string {
-    return this.form.image.banner.hash
-  }
-
-  get thumbnailHash(): string {
-    return this.form.image.thumbnail.hash
-  }
   
   isStepValid(step: number): boolean {
     const stepName: string = this.steps[step]
@@ -674,50 +566,9 @@ export default class JoinView extends mixins(validationMixin) {
     })
   }
 
-  handleLoadFile(event) {
-    const data = event.target.files[0]
-    const { name } = event.target
-    if (data.type.match('image/*')) {
-      const reader = new FileReader()
-      reader.onload = (() => ((e) => {this.form.image[name].document = e.target.result}))()
-      reader.readAsDataURL(data)
-    } else {
-      // this.form.image[name].modalOpen = true
-      this.form.image[name].failure = 'That doesn\'t look like an image'
-    }
-  }
-
-  handleUploadToIPFS(event) {
-    // Submit "Upload" button for each image
-    event.preventDefault()
-    const { name } = event.target
-    this.form.image[name].loading = true
-
-    if (this.form.image[name].document !== '') {
-      this.ipfs.addJSON(this.form.image[name].document, async (err, _hash) => {
-        if (!err) {
-          // this.form.image[name].modalOpen = true
-          this.form.image[name].hash = _hash
-          this.form.image[name].success = `Success! Your hash: ${_hash}`
-          console.log(this.form.image[name].success) /* eslint-disable-line no-console */
-          this.ipfs.catJSON(this.form.image[name].hash, async (err2, data) => {
-            if(!err2) {
-              this.form.image[name].data = data
-            } else {
-              // this.form.image[name].modalOpen = true
-              this.form.image[name].failure = `Error occured: ${err.message}`
-            }
-          })
-        } else {
-          this.form.image[name].failure = 'Error occured: ${err.message}'
-        }
-      })
-    } else {
-      // this.form.image[name].modalOpen = true
-      this.form.image[name].failure = 'You need an image.'
-    }
-
-    this.form.image[name].loading = false
+  // Callback from IpfsForm component
+  handleUpload(key, value) {
+    this.form.image[key] = value
   }
 
   handleStepNav(step) {
