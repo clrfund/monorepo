@@ -585,7 +585,7 @@ export default class JoinView extends mixins(validationMixin) {
 } 
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "../styles/vars";
 @import "../styles/theme";
 

@@ -9,7 +9,7 @@
       @change="handleLoadFile"
       name="banner"
     />
-    <button primary="true" type='submit' label='Upload' class="btn-primary upload-btn">
+    <button primary="true" type='submit' label='Upload' class="btn-primary upload-btn" :class="{disabled: loading || error || !document}">
       {{ loading ? "Loading..." : "Upload"}}
     </button>
     <div class="image-preview">
@@ -23,6 +23,7 @@
         }"
       />
       <p v-if="data">IPFS hash: {{ hash }}</p>
+      <p v-if="error" class="error">{{ error }}</p>
     </div>
   </form>
 </template>
@@ -40,24 +41,16 @@ import IPFS from 'ipfs-mini'
   components: { Loader },
 })
 export default class IpfsForm extends Vue {
+  @Prop() label!: string
+  @Prop() description!: string
+  @Prop() formProp!: string
+  @Prop() onUpload!: (key: string, value: string) => void
 
-  @Prop()
-  label!: string
-
-  @Prop()
-  description!: string
- 
-  @Prop()
-  formProp!: string
-
-  @Prop()
-  onUpload!: (key: string, value: string) => void
-
-  hash: string | null
+  hash = ''
   loading = false
-  data: string | null = null
-  document: string | null
-  error: string | null
+  data = ''
+  document = ''
+  error = ''
   ipfs: any = null
 
   created() {
@@ -66,8 +59,8 @@ export default class IpfsForm extends Vue {
 
   // TODO raise error if not valid image (JPG / PNG / GIF)
   handleLoadFile(event) {
+    this.error = ''
     const data = event.target.files[0]
-    console.log(data)
     if (data.type.match('image/*')) {
       const reader = new FileReader()
       reader.onload = (() => ((e) => {this.document = e.target.result}))()
@@ -105,7 +98,6 @@ export default class IpfsForm extends Vue {
       this.error = 'You need an image.'
     }
   }
-
 }
 </script>
 
@@ -113,9 +105,19 @@ export default class IpfsForm extends Vue {
 @import "../styles/vars";
 @import "../styles/theme";
 
-  .image-preview {
-    width: 500px;
-    height: auto;
-  }
+.image-preview {
+  width: 500px;
+  height: auto;
+}
 
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 0.5;
+    transform: scale(1);
+    cursor: not-allowed;
+  }  
+}
 </style>
