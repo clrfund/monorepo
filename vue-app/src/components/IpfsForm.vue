@@ -24,7 +24,7 @@
           'image-preview': data,
         }"
       />
-      <p v-if="data">IPFS hash: {{ hash }}</p>
+      <p v-if="data" @click="copyHash" class="copy">IPFS hash: {{ hash }} 📋</p>
       <p v-if="error" class="error">{{ error }}</p>
     </div>
     <div @click="handleRemoveImage" class="btn-white small">Clear</div>
@@ -110,6 +110,15 @@ export default class IpfsForm extends Vue {
     this.error = ''
     this.onUpload(this.formProp, '')
   }
+
+  async copyHash(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(this.hash)
+      // TODO: UX success feedback
+    } catch (error) {
+      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
+    }
+  }
 }
 </script>
 
@@ -149,5 +158,9 @@ export default class IpfsForm extends Vue {
 .input {
   flex: 1;
   margin: 0;
+}
+
+.copy {
+  cursor: pointer;
 }
 </style>
