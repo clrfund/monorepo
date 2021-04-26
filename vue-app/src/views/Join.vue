@@ -613,11 +613,8 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   handleStepNav(step): void {
-    // !isStepValid && step !== furthestStep => disable quick-links
-    if (this.navDisabled) {
-      alert('Looks like you screwed something up... or we did')
-      return
-    }
+    // If navDisabled => disable quick-links
+    if (this.navDisabled) return
     // Save form data
     this.saveFormData()
     // Navigate
