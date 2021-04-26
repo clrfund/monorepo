@@ -441,7 +441,6 @@ import { validationMixin } from 'vuelidate'
 import { required, sameAs, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
-
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
@@ -541,7 +540,6 @@ export default class JoinView extends mixins(validationMixin) {
   steps: string[] = []
   stepNames: string[] = []
 
-
   created() {
     const steps = Object.keys(this.form)
     // Reassign last key from form object (furthestStep) to 'summary'
@@ -570,9 +568,6 @@ export default class JoinView extends mixins(validationMixin) {
     // if (this.currentStep > this.form.furthestStep) {
     //   this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
     // }
-    if (this.$route.params.step === 'image') {
-      this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
-    }
   }
 
   handleLinkUpdate(): void {
