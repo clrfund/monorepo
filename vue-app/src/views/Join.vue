@@ -405,7 +405,39 @@
           <!-- TODO show summary of information -->
           <!-- Summary -->
           <div v-if="currentStep === 5" id="summary">
-            {{form}}
+            <div>
+              <h3>About the project</h3>
+              {{form.project.name}}
+              {{form.project.tagline}}
+              {{form.project.description}}
+              {{form.project.category}}
+              {{form.project.problemSpace}}
+            </div>
+            <div>
+              <h3>Funding details</h3>
+              {{form.fund.address}}
+              {{form.fund.plans}}
+            </div>
+            <div>
+              <h3>Team details</h3>
+              {{form.team.email}}
+              {{form.team.name}}
+              {{form.team.description}}
+            </div>  
+            <div>
+              <h3>Links</h3>
+              {{form.links.github}}
+              {{form.links.twitter}}
+              {{form.links.website}}
+              {{form.links.discord}}
+              {{form.links.radicle}}
+            </div>  
+            <div>
+              <h3>Images</h3>
+              {{form.image.bannerHash}}
+              {{form.image.thumbnailHash}}
+            </div>
+            <!-- {{form}} -->
             <!--TODO: this will be an on-chain transaction so double check all info and links are correct as it will cost you you to change it -->
           </div>
         </div>
