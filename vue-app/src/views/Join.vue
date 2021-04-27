@@ -475,27 +475,27 @@
               </div>
               <div class="summary">
                 <h4 class="read-only-title">GitHub</h4>
-                <div class="data">{{form.links.github}} </div>
+                <div class="data">{{form.links.github}} <a v-if="form.links.github" :href=form.links.github><img width="16px" src="@/assets/link.svg" /></a></div>
                 <div class="data" v-if="!form.links.github">Not provided</div>
               </div>
               <div class="summary">
                 <h4 class="read-only-title">Twitter</h4>
-                <div class="data">{{form.links.twitter}} </div>
+                <div class="data">{{form.links.twitter}} <a v-if="form.links.twitter" :href=form.links.twitter><img width="16px" src="@/assets/link.svg" /></a></div>
                 <div class="data" v-if="!form.links.twitter">Not provided</div>
               </div>
               <div class="summary">
                 <h4 class="read-only-title">Website</h4>
-                <div class="data">{{form.links.website}} </div>
+                <div class="data" key="">{{form.links.website}} <a v-if="form.links.website" :href=form.links.website><img width="16px" src="@/assets/link.svg" /></a></div>
                 <div class="data" v-if="!form.links.website">Not provided</div>
               </div>
               <div class="summary">
                 <h4 class="read-only-title">Discord</h4>
-                <div class="data">{{form.links.discord}} </div>
+                <div class="data">{{form.links.discord}} <a v-if="form.links.discord" :href=form.links.discord><img width="16px" src="@/assets/link.svg" /></a></div>
                 <div class="data" v-if="!form.links.discord">Not provided</div>
               </div>
               <div class="summary">
                 <h4 class="read-only-title">Radicle</h4>
-                <div class="data">{{form.links.radicle}} </div>
+                <div class="data">{{form.links.radicle}} <a v-if="form.links.radicle" :href=form.links.radicle><img width="16px" src="@/assets/link.svg" /></a></div>
                 <div class="data" v-if="!form.links.radicle">Not provided</div>
               </div>
             </div>  
@@ -1107,11 +1107,23 @@ export default class JoinView extends mixins(validationMixin) {
   font-family: "Inter";
   font-weight: 500;
   font-size: 16px;
-  color: $clr-green;
+  color: $clr-green;  
 }
 
 .data {
   opacity: 0.8;
   margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.data img {
+  padding: 0.25rem;
+  margin-top: 0.25rem;
+  &:hover {
+    background: $bg-primary-color;
+    border-radius: 4px;
+  }
 }
 </style>
