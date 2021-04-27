@@ -12,18 +12,25 @@
               v-for="(name, step) in stepNames"
               :key="step"
               class="progress-step"
-              :class="{'progress-step-checked': step <= form.furthestStep && step !== currentStep}"
+              :class="{
+                'zoom-link': step <= form.furthestStep && step !== currentStep && !navDisabled,
+                disabled: navDisabled
+              }"
               @click="handleStepNav(step)"
             >
               <template v-if="step === currentStep">
                 <img src="@/assets/current-step.svg" alt="current step" />
                 <p v-text="name" class="active step" />
               </template>
-              <template v-else-if="step <= form.furthestStep">
+              <template v-else-if="step === furthestStep">
+                <img src="@/assets/furthest-step.svg" alt="current step" />
+                <p v-text="name" class="active step" />
+              </template>
+              <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
                 <img src="@/assets/green-tick.svg" alt="step complete" />
                 <p v-text="name" class="step" />
               </template>
-              <template v-else-if="step > form.furthestStep">
+              <template v-else>
                 <img src="@/assets/step-remaining.svg" alt="step remaining" />
                 <p v-text="name" class="step" />
               </template>
@@ -34,6 +41,8 @@
             :steps="steps"
             :currentStep="currentStep"
             :callback="saveFormData"
+            :handleStepNav="handleStepNav"
+            :navDisabled="navDisabled"
             class="desktop"
           />
         </div>
@@ -295,6 +304,9 @@
             </div>
             <div v-if="currentStep === 3">
               <h2 class="step-title">Links</h2>
+              <p class="input-description" :class="{
+                error: $v.form.links.hasLink.$invalid && $v.form.links.$anyDirty
+              }">Must provide at least one</p>
               <div class="inputs">
                 <div class="form-background">
                   <label for="links-github" class="input-label">GitHub</label>
@@ -304,6 +316,7 @@
                     placeholder="example: github.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.github.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.github.$error
@@ -323,6 +336,7 @@
                     placeholder="example: radicle.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.radicle.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.radicle.$error
@@ -341,6 +355,7 @@
                     placeholder="example: website.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.website.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.website.$error
@@ -359,6 +374,7 @@
                     placeholder="example: github.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.twitter.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.twitter.$error
@@ -377,6 +393,7 @@
                     placeholder="example: github.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.discord.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.discord.$error
@@ -391,115 +408,13 @@
             </div>
             <div v-if="currentStep === 4">
               <h2 class="step-title">Images</h2>
+              <p>We'll upload your images to IPFS, a decentralized storage platform.</p>
               <div class="inputs">
                 <div class="form-background">
-                  <div class="row">
-                    <form id="uploadRadio">
-                      <div>
-                        <input
-                          id="IPFS"
-                          type="radio"
-                          name="image-requiresUpload"
-                          value="false"
-                          v-model="$v.form.image.requiresUpload.$model"
-                          :class="{
-                            input: true,
-                            invalid: $v.form.image.requiresUpload.$error
-                          }"
-                        >
-                        <label for="IPFS">IPFS – you have IPFS hashes for your images</label>
-                      </div>
-                      <div>
-                        <input
-                          id="upload"
-                          type="radio"
-                          name="image-requiresUpload"
-                          value="true"
-                          v-model="$v.form.image.requiresUpload.$model"
-                          :class="{
-                            input: true,
-                            invalid: $v.form.image.requiresUpload.$error
-                          }"
-                        >
-                        <label for="upload">Upload – you'd like to upload from your device</label>
-                      </div>
-                    </form>
-                  </div>
+                  <ipfs-form label="Banner image" description="Recommended dimensions: 500px x 300px" :onUpload="handleUpload" formProp="bannerHash"/>
                 </div>
                 <div class="form-background">
-                  <form method="POST" enctype="multipart/form-data" @submit="handleSubmit" name="banner">
-                    <label
-                      :for="requiresUpload ? 'image-banner-upload' : 'image-banner-hash'"
-                      class="input-label"
-                    >Banner image
-                      <p class="input-description">Recommended dimensions: 500 x 300</p>
-                    </label>
-                    <input
-                      v-if="requiresUpload"
-                      id="image-banner-upload"
-                      type="file"
-                      class="input"
-                      @change="handleUploadFile"
-                      name="banner"
-                    />
-                    <p :class="{
-                      error: true,
-                      hidden: !$v.form.image.banner.$error
-                    }">Upload a file</p>  
-                    <input
-                      v-if="!requiresUpload"
-                      id="image-banner-hash"
-                      placeholder="example: QmWQTJU9dMNQHJm6ZnXHi2eN5Y7hdpZaEL7o3SEGBRY8DZ"
-                      class="input"
-                      v-model="$v.form.image.banner.$model"
-                      :class="{
-                        input: true,
-                        invalid: $v.form.image.banner.$error
-                      }"
-                    />
-                    <p :class="{
-                      error: true,
-                      hidden: !$v.form.image.banner.$error
-                    }">This doesn't look like an IPFS hash</p>
-                    <button v-if="requiresUpload" primary="true" type='submit' label='Upload'>Upload</button>
-                  </form>
-                </div>
-                <div class="form-background">
-                  <form method="POST" enctype="multipart/form-data" @submit="handleSubmit" name="thumbnail">
-                    <label
-                      :for="requiresUpload ? 'image-thumbnail-upload' : 'image-thumbnail-hash'"
-                      class="input-label"
-                    >Thumbnail image
-                      <p class="input-description">Recommended dimensions: 80 x 80</p>
-                    </label>
-                    <input
-                      v-if="requiresUpload"
-                      id="image-thumbnail-upload"
-                      type="file"
-                      class="input"
-                      @change="handleUploadFile"
-                      name="thumbnail"
-                    />
-                    <p :class="{
-                      error: true,
-                      hidden: !$v.form.image.thumbnail.$error
-                    }">Upload a file</p>
-                    <input
-                      v-if="!requiresUpload"
-                      id="image-thumbnail-hash"
-                      placeholder="example: QmWQTJU9dMNQHJm6ZnXHi2eN5Y7hdpZaEL7o3SEGBRY8DZ"
-                      v-model="$v.form.image.thumbnail.$model"
-                      :class="{
-                        input: true,
-                        invalid: $v.form.image.thumbnail.$error
-                      }"
-                    />
-                    <p :class="{
-                      error: true,
-                      hidden: !$v.form.image.thumbnail.$error
-                    }">This doesn't look like an IPFS hash</p>
-                    <button v-if="requiresUpload" primary="true" type='submit' label='Upload'>Upload</button>
-                  </form>
+                  <ipfs-form label="Thumbnail image" description="Recommended dimensions: 80px x 80px" :onUpload="handleUpload" formProp="thumbnailHash"/>
                 </div>
               </div>
             </div>
@@ -523,14 +438,13 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, maxLength, url, email } from 'vuelidate/lib/validators'
+import { required, sameAs, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
-import IPFS from 'ipfs-mini'
 import { isAddress } from '@ethersproject/address'
-
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
+import IpfsForm from '@/components/IpfsForm.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
@@ -540,13 +454,12 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
     LayoutSteps,
     ProgressBar,
     ButtonRow,
+    IpfsForm,
   },
   validations: {
     form: {
       project: {
-        name: {
-          required,
-        },
+        name: { required },
         tagline: {
           required,
           maxLength: maxLength(140),
@@ -576,30 +489,16 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
         website: { url },
         twitter: { url },
         discord: { url },
+        hasLink: { required: sameAs(() => true) },
       },
       image: {
-        requiresUpload: {},
-        banner: {
-          hash: {
-            required,
-            validIpfsHash: isIPFS.cid,
-          },
-          success: {},
-          failure: {},
-          // modalOpen: false,
-          document: {},
-          loading: {},
+        bannerHash: {
+          required,
+          validIpfsHash: isIPFS.cid,
         },
-        thumbnail: {
-          hash: {
-            required,
-            validIpfsHash: isIPFS.cid,
-          },
-          success: {},
-          failure: {},
-          // modalOpen: false,
-          document: {},
-          loading: {},
+        thumbnailHash: {
+          required,
+          validIpfsHash: isIPFS.cid,
         },
       },
     },
@@ -629,44 +528,21 @@ export default class JoinView extends mixins(validationMixin) {
       website: '',
       twitter: '',
       discord: '',
+      hasLink: false,
     },
     image: {
-      requiresUpload: 'false',
       bannerHash: '',
       thumbnailHash: '',
-      banner: {
-        hash: '',
-        success: '',
-        failure: '',
-        // modalOpen: false,
-        document: '',
-        loading: false,
-      },
-      thumbnail: {
-        hash: '',
-        success: '',
-        failure: '',
-        // modalOpen: false,
-        document: '',
-        loading: false,
-      },
     },
     furthestStep: 0,
   }
-  currentStep: number | null = null
+  currentStep = 0
   steps: string[] = []
   stepNames: string[] = []
 
-  // IPFS
-  ipfs: any = null
-
-
   created() {
-    if (this.$route.params.step === 'image') {
-      this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
-    }
-
     const steps = Object.keys(this.form)
+    // Reassign last key from form object (furthestStep) to 'summary'
     steps[steps.length - 1] = 'summary'
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
@@ -686,10 +562,24 @@ export default class JoinView extends mixins(validationMixin) {
     if (this.currentStep < 0) {
       this.$router.push({ name: 'join' })
     }
+    // "Next" button restricts forward navigation via validation, and
+    // eventually updates the `furthestStep` tracker when valid and clicked/tapped.
+    // If URL step is ahead of furthest, navigate back to furthest
+    // if (this.currentStep > this.form.furthestStep) {
+    //   this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
+    // }
   }
 
-  get requiresUpload(): boolean {
-    return this.form.image.requiresUpload === 'true'
+  handleLinkUpdate(): void {
+    // Check all link fields for any input
+    // Sets `hasLink` form state boolean to false if all link fields are blank
+    let tracker = false
+    Object.keys(this.form.links).forEach(link => {
+      if (this.form.links[link].length > 0) {
+        tracker = true
+      }
+    })
+    this.form.links.hasLink = tracker
   }
   
   isStepValid(step: number): boolean {
@@ -698,10 +588,13 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   isStepUnlocked(step: number): boolean {
-    return this.isStepValid(step) && step <= this.form.furthestStep
+    return step <= this.form.furthestStep
   }
 
-  saveFormData(): void {
+  saveFormData(updateFurthest?: boolean): void {
+    if (updateFurthest && this.currentStep + 1 > this.form.furthestStep) {
+      this.form.furthestStep = this.currentStep + 1
+    }
     if (typeof this.currentStep !== 'number') { return }
     this.$store.commit(SET_RECIPIENT_DATA, {
       updatedData: this.form,
@@ -710,45 +603,21 @@ export default class JoinView extends mixins(validationMixin) {
     })
   }
 
-  handleUploadFile(event) {
-    const data = event.target.files[0]
-    const { name } = event.target
-    if (data.type.match('image/*')) {
-      const reader = new FileReader()
-      reader.onload = (() => ((e) => {this.form.image[name].document = e.target.result}))()
-      reader.readAsDataURL(data)
-    } else {
-      // this.form.image[name].modalOpen = true
-      this.form.image[name].failure = 'That doesn\'t look like an image'
-    }
+  // Callback from IpfsForm component
+  handleUpload(key, value) {
+    this.form.image[key] = value
   }
 
-  handleSubmit(event) {
-    event.preventDefault()
-    const { name } = event.target
-    this.form.image[name].loading = true
-
-    if (this.form.image[name].document !== '') {
-      this.ipfs.addJSON(this.form.image[name].document, async (err, _hash) => {
-        if (err) {
-          this.form.image[name].failure = 'Error occured: ${err.message}'
-        } else {
-          // this.form.image[name].modalOpen = true
-          this.form.image[name].hash = _hash
-          this.form.image[name].success = `Success! Your hash: ${_hash}`
-          console.log(this.form.image[name].success) /* eslint-disable-line no-console */
-        }
-      })
-    } else {
-      // this.form.image[name].modalOpen = true
-      this.form.image[name].failure = 'You need an image.'
-    }
-
-    this.form.image[name].loading = false
+  get navDisabled(): boolean {
+    return !this.isStepValid(this.currentStep) && this.currentStep !== this.furthestStep
   }
 
-  handleStepNav(step) {
+  handleStepNav(step): void {
+    // If navDisabled => disable quick-links
+    if (this.navDisabled) return
+    // Save form data
     this.saveFormData()
+    // Navigate
     if (this.isStepUnlocked(step)) {
       this.$router.push({
         name: 'joinStep',
@@ -758,10 +627,14 @@ export default class JoinView extends mixins(validationMixin) {
       })
     }
   }
+
+  get furthestStep() {
+    return this.form.furthestStep
+  }
 } 
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "../styles/vars";
 @import "../styles/theme";
 
@@ -832,7 +705,7 @@ export default class JoinView extends mixins(validationMixin) {
       }
     }
 
-    .progress-step-checked {
+    .zoom-link {
       cursor: pointer;
       &:hover {
         transform: scale(1.02);
@@ -1105,11 +978,38 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
-#uploadRadio {
-  input {
-    margin-right: 0.5rem;
+.loader {
+  display: block;
+  height: 40px;
+  margin: $content-space auto;
+  width: 40px;
+}
+
+.loader:after {
+  content: " ";
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 4px;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: loader 1.2s linear infinite;
+}
+
+.loader {
+    margin: $modal-space auto;
+  }
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
+
 
 .error {
   color: $error-color;
@@ -1119,5 +1019,16 @@ export default class JoinView extends mixins(validationMixin) {
   &:before {
     content: "⚠️ "
   }
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 0.5;
+    transform: scale(1);
+    cursor: not-allowed;
+  }  
 }
 </style>
