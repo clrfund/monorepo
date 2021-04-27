@@ -157,7 +157,51 @@ export default class IpfsForm extends Vue {
 
 .input {
   flex: 1;
+  border-radius: 16px;
+  border: 2px solid $button-color;
+  background-color: $bg-secondary-color;
+  margin: 0.5rem 0;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  font-family: Inter;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  &:valid { 
+    border: 2px solid $clr-green;
+  }
+  &:hover { 
+    background: $bg-primary-color; 
+    border: 2px solid $highlight-color;
+    box-shadow: 0px 4px 16px 0px 25,22,35,0.4;
+  }
+  &:optional {
+    border: 2px solid $button-color;
+    background-color: $bg-secondary-color;
+  }
+}
+
+.input.invalid {
+  border: 2px solid $error-color; 
+}
+
+.input-label {
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
   margin: 0;
+}
+
+.input-description {
+  margin-top: 0.25rem;
+  font-size: 14px;
+  font-family: Inter;
+  margin-bottom: 0.5rem;
+  line-height: 150%;
 }
 
 .copy {
