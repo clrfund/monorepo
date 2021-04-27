@@ -128,6 +128,7 @@
                       invalid: $v.form.project.description.$error
                     }"
                   />
+                  <div v-html="descriptionHtml" />
                   <p :class="{
                     error: true,
                     hidden: !$v.form.project.description.$error
@@ -560,6 +561,7 @@ import Warning from '@/components/Warning.vue'
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import { Project } from '@/api/projects'
+import { markdown } from '@/utils/markdown'
 
 @Component({
   components: {
@@ -716,6 +718,11 @@ export default class JoinView extends mixins(validationMixin) {
       stepNumber: this.currentStep,
     })
   }
+
+  get descriptionHtml(): string {
+    return markdown.render(this.$v.form.project.description.$model)
+  }
+
   // Callback from IpfsForm component
   handleUpload(key, value) {
     this.form.image[key] = value
