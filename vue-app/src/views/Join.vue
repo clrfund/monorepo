@@ -405,7 +405,7 @@
           <!-- TODO show summary of information -->
           <!-- Summary -->
           <div v-if="currentStep === 5" id="summary">
-            {{form}}
+            <project-component :data="projectInterface" :previewMode="true" />
             <!--TODO: this will be an on-chain transaction so double check all info and links are correct as it will cost you you to change it -->
           </div>
         </div>
@@ -429,9 +429,11 @@ import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
 import IpfsForm from '@/components/IpfsForm.vue'
+import ProjectComponent from '@/components/ProjectComponent.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
-import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
+import { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
+import { Project } from '@/api/projects'
 
 @Component({
   components: {
@@ -439,6 +441,7 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
     ProgressBar,
     ButtonRow,
     IpfsForm,
+    ProjectComponent,
   },
   validations: {
     form: {
@@ -581,6 +584,10 @@ export default class JoinView extends mixins(validationMixin) {
         },
       })
     }
+  }
+
+  get projectInterface(): Project {
+    return formToProjectInterface(this.form)
   }
 } 
 </script>
