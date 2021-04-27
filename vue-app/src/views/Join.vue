@@ -406,7 +406,7 @@
           <!-- Summary -->
           <div v-if="currentStep === 5" id="summary">
             <h2 class="step-title">Review your information</h2>
-            <p>This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application.</p> 
+            <warning style="margin-bottom: 1rem;" message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application." /> 
             <div class="btn-primary" style="width: fit-content;">Preview</div>
             <div class="form-background">
               <div class="summary-section-header">
@@ -456,6 +456,7 @@
               <div class="summary">
                 <h4 class="read-only-title">Contact email</h4>
                 <div class="data">{{form.team.email}} </div>
+                <div class="input-notice">This information won't be added to the smart contract. It won't cost anything to edit and will only be used to contact you about the round and/or your project.</div>
               </div>
               <div class="summary">
                 <h4 class="read-only-title">Team name</h4>
@@ -536,6 +537,7 @@ import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
 import IpfsForm from '@/components/IpfsForm.vue'
+import Warning from '@/components/Warning.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
@@ -546,6 +548,7 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
     ProgressBar,
     ButtonRow,
     IpfsForm,
+    Warning,
   },
   validations: {
     form: {
