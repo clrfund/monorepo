@@ -2,8 +2,11 @@
   <div class="btn-row">
     <button
       v-if="currentStep > 0"
-      @click="handlePrev"
+      @click="handleStepNav(currentStep - 1)"
       class="btn-secondary"
+      :class="{
+        disabled: navDisabled,
+      }"
     >
       Previous
     </button>
@@ -53,10 +56,14 @@ export default class ButtonRow extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]
   @Prop() isStepValid!: boolean
-  @Prop() callback!: () => void
+  @Prop() callback!: (updateFurthest?: boolean) => void
+  @Prop() handleStepNav!: () => void
+  @Prop() navDisabled!: boolean
 
   handleNext(): void {
-    this.callback()
+    // Save form data (first saves when user hits Next after first step)
+    this.callback(true) // "true" checks to update furthest step
+    // Navigate forward
     this.$router.push({
       name: 'joinStep',
       params: {
