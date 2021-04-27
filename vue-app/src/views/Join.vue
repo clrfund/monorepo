@@ -720,7 +720,7 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   get descriptionHtml(): string {
-    return markdown.render(this.$v.form.project.description.$model)
+    return markdown.render(this.$v.form.project?.description.$model)
   }
 
   // Callback from IpfsForm component
