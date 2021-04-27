@@ -404,8 +404,6 @@
               </div>
             </div>
           </form>
-          <!-- TODO show summary of information -->
-          <!-- Summary -->
           <div v-if="currentStep === 5" id="summary">
             <h2 class="step-title">Review your information</h2>
             <warning style="margin-bottom: 1rem;" message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application." /> 
@@ -443,7 +441,7 @@
               </div>
               <div class="summary">
                 <h4 class="read-only-title">Ethereum address</h4>
-                <div class="data">{{form.fund.address}} <a :href=form.fund.address>View on Etherscan</a></div>
+                <div class="data">{{form.fund.address}} <a :href="'https://etherscan.io/address/' + form.fund.address" target="_blank">View on Etherscan</a></div>
               </div>
               <div class="summary">
                 <h4 class="read-only-title">Funding plans</h4>
@@ -636,7 +634,6 @@ export default class JoinView extends mixins(validationMixin) {
   steps: string[] = []
   stepNames: string[] = []
 
-
   created() {
     const steps = Object.keys(this.form)
     steps[steps.length - 1] = 'summary'
@@ -677,7 +674,6 @@ export default class JoinView extends mixins(validationMixin) {
       stepNumber: this.currentStep,
     })
   }
-
   // Callback from IpfsForm component
   handleUpload(key, value) {
     this.form.image[key] = value
