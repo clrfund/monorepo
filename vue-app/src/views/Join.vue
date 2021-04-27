@@ -12,18 +12,25 @@
               v-for="(name, step) in stepNames"
               :key="step"
               class="progress-step"
-              :class="{'progress-step-checked': step <= form.furthestStep && step !== currentStep}"
+              :class="{
+                'zoom-link': step <= form.furthestStep && step !== currentStep && !navDisabled,
+                disabled: navDisabled
+              }"
               @click="handleStepNav(step)"
             >
               <template v-if="step === currentStep">
                 <img src="@/assets/current-step.svg" alt="current step" />
                 <p v-text="name" class="active step" />
               </template>
-              <template v-else-if="step <= form.furthestStep">
+              <template v-else-if="step === furthestStep">
+                <img src="@/assets/furthest-step.svg" alt="current step" />
+                <p v-text="name" class="active step" />
+              </template>
+              <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
                 <img src="@/assets/green-tick.svg" alt="step complete" />
                 <p v-text="name" class="step" />
               </template>
-              <template v-else-if="step > form.furthestStep">
+              <template v-else>
                 <img src="@/assets/step-remaining.svg" alt="step remaining" />
                 <p v-text="name" class="step" />
               </template>
@@ -34,6 +41,8 @@
             :steps="steps"
             :currentStep="currentStep"
             :callback="saveFormData"
+            :handleStepNav="handleStepNav"
+            :navDisabled="navDisabled"
             class="desktop"
           />
         </div>
@@ -295,6 +304,9 @@
             </div>
             <div v-if="currentStep === 3">
               <h2 class="step-title">Links</h2>
+              <p class="input-description" :class="{
+                error: $v.form.links.hasLink.$invalid && $v.form.links.$anyDirty
+              }">Must provide at least one</p>
               <div class="inputs">
                 <div class="form-background">
                   <label for="links-github" class="input-label">GitHub</label>
@@ -304,6 +316,7 @@
                     placeholder="example: github.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.github.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.github.$error
@@ -323,6 +336,7 @@
                     placeholder="example: radicle.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.radicle.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.radicle.$error
@@ -341,6 +355,7 @@
                     placeholder="example: website.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.website.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.website.$error
@@ -359,6 +374,7 @@
                     placeholder="example: github.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.twitter.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.twitter.$error
@@ -377,6 +393,7 @@
                     placeholder="example: github.com/ethereum/clrfund" 
                     class="input"
                     v-model="$v.form.links.discord.$model"
+                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.discord.$error
@@ -421,10 +438,9 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, maxLength, url, email } from 'vuelidate/lib/validators'
+import { required, sameAs, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
-
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
@@ -443,9 +459,7 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
   validations: {
     form: {
       project: {
-        name: {
-          required,
-        },
+        name: { required },
         tagline: {
           required,
           maxLength: maxLength(140),
@@ -475,6 +489,7 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
         website: { url },
         twitter: { url },
         discord: { url },
+        hasLink: { required: sameAs(() => true) },
       },
       image: {
         bannerHash: {
@@ -513,6 +528,7 @@ export default class JoinView extends mixins(validationMixin) {
       website: '',
       twitter: '',
       discord: '',
+      hasLink: false,
     },
     image: {
       bannerHash: '',
@@ -520,13 +536,13 @@ export default class JoinView extends mixins(validationMixin) {
     },
     furthestStep: 0,
   }
-  currentStep: number | null = null
+  currentStep = 0
   steps: string[] = []
   stepNames: string[] = []
 
-
   created() {
     const steps = Object.keys(this.form)
+    // Reassign last key from form object (furthestStep) to 'summary'
     steps[steps.length - 1] = 'summary'
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
@@ -546,6 +562,24 @@ export default class JoinView extends mixins(validationMixin) {
     if (this.currentStep < 0) {
       this.$router.push({ name: 'join' })
     }
+    // "Next" button restricts forward navigation via validation, and
+    // eventually updates the `furthestStep` tracker when valid and clicked/tapped.
+    // If URL step is ahead of furthest, navigate back to furthest
+    // if (this.currentStep > this.form.furthestStep) {
+    //   this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
+    // }
+  }
+
+  handleLinkUpdate(): void {
+    // Check all link fields for any input
+    // Sets `hasLink` form state boolean to false if all link fields are blank
+    let tracker = false
+    Object.keys(this.form.links).forEach(link => {
+      if (this.form.links[link].length > 0) {
+        tracker = true
+      }
+    })
+    this.form.links.hasLink = tracker
   }
   
   isStepValid(step: number): boolean {
@@ -554,10 +588,13 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   isStepUnlocked(step: number): boolean {
-    return this.isStepValid(step) && step <= this.form.furthestStep
+    return step <= this.form.furthestStep
   }
 
-  saveFormData(): void {
+  saveFormData(updateFurthest?: boolean): void {
+    if (updateFurthest && this.currentStep + 1 > this.form.furthestStep) {
+      this.form.furthestStep = this.currentStep + 1
+    }
     if (typeof this.currentStep !== 'number') { return }
     this.$store.commit(SET_RECIPIENT_DATA, {
       updatedData: this.form,
@@ -571,8 +608,16 @@ export default class JoinView extends mixins(validationMixin) {
     this.form.image[key] = value
   }
 
-  handleStepNav(step) {
+  get navDisabled(): boolean {
+    return !this.isStepValid(this.currentStep) && this.currentStep !== this.furthestStep
+  }
+
+  handleStepNav(step): void {
+    // If navDisabled => disable quick-links
+    if (this.navDisabled) return
+    // Save form data
     this.saveFormData()
+    // Navigate
     if (this.isStepUnlocked(step)) {
       this.$router.push({
         name: 'joinStep',
@@ -581,6 +626,10 @@ export default class JoinView extends mixins(validationMixin) {
         },
       })
     }
+  }
+
+  get furthestStep() {
+    return this.form.furthestStep
   }
 } 
 </script>
@@ -656,7 +705,7 @@ export default class JoinView extends mixins(validationMixin) {
       }
     }
 
-    .progress-step-checked {
+    .zoom-link {
       cursor: pointer;
       &:hover {
         transform: scale(1.02);
@@ -970,5 +1019,16 @@ export default class JoinView extends mixins(validationMixin) {
   &:before {
     content: "⚠️ "
   }
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 0.5;
+    transform: scale(1);
+    cursor: not-allowed;
+  }  
 }
 </style>
