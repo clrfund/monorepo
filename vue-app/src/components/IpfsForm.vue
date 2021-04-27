@@ -88,7 +88,7 @@ export default class IpfsForm extends Vue {
               this.onUpload(this.formProp, this.hash)
 
             } else {
-              this.error = `Error occured: ${err2.message}`
+              this.error = `Error occurred: ${err2.message}`
             }
             this.loading = false
           })
