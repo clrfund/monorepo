@@ -244,6 +244,7 @@
             </div>
             <div v-if="currentStep === 2">
               <h2 class="step-title">Team details</h2>
+              <p>Tell us about the folks behind your project.</p>
               <div class="inputs">
                 <div class="form-background">
                   <label for="team-email" class="input-label">Contact email</label>
@@ -295,6 +296,7 @@
             </div>
             <div v-if="currentStep === 3">
               <h2 class="step-title">Links</h2>
+              <p>Give contributors some links to check out to learn more about your project. Provide at least 1 link.</p>
               <div class="inputs">
                 <div class="form-background">
                   <label for="links-github" class="input-label">GitHub</label>
