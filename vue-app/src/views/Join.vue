@@ -423,7 +423,7 @@
             </div>
           </form>
           <div v-if="currentStep === 5" id="summary">
-            <project-component :data="projectInterface" :previewMode="true" />
+            <project-component :project="projectInterface" :previewMode="true" />
             <h2 class="step-title">Review your information</h2>
             <warning style="margin-bottom: 1rem;" message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application." /> 
             <div class="btn-primary" style="width: fit-content;">Preview</div>

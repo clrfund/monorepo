@@ -1,43 +1,43 @@
 <template>
-  <div v-if="data" class="project-page">
-    <img class="project-image" :src="data.imageUrl" :alt="data.name" />
+  <div v-if="project" class="project-page">
+    <img class="project-image" :src="project.bannerImageUrl" :alt="project.name">
     <div class="content">
       <div class="about">    
         <h1 
           class="project-name"
-          :title="data.address"
-          :data-index="data.index"
+          :title="project.address"
+          :project-index="project.index"
         >
           <a
             v-if="klerosCurateUrl"
             :href="klerosCurateUrl"
             target="_blank"
             rel="noopener"
-          >{{ data.name }}</a>
-          <span v-else> {{ data.name }} </span>
+          >{{ project.name }}</a>
+          <span v-else> {{ project.name }} </span>
         </h1>
-        <p class="tagline">{{ data.tagline }}</p> 
+        <p class="tagline">{{ project.tagline }}</p> 
         <div class="subtitle">
-          <div class="tag">{{ data.category }} tag </div>
-          <div class="team-byline">By <a href="#team"> {{ data.teamName }} team</a></div>
+          <div class="tag">{{ project.category }} tag </div>
+          <div class="team-byline">By <a href="#team"> {{ project.teamName }} team</a></div>
         </div>
         <div class="project-section">
           <h2>📖 About the project</h2>
-          <div class="project-description">{{ data.description }}</div>
+          <div class="project-description" v-html="descriptionHtml"></div>
         </div>
         <div class="project-section">
           <h2>🔧 The problem it solves</h2>
-          <div class="project-description">{{ data.problemSpace }}</div>
+          <div class="project-description">{{ project.problemSpace }}</div>
         </div>
         <div class="project-section">
           <h2>💰 Funding plans</h2>
-          <div class="project-description">{{ data.plans }}</div>
+          <div class="project-description">{{ project.plans }}</div>
         </div> 
         <div class="address-box">
           <div>
             <div class="address-label">Recipient address</div>
             <div class="address">
-              {{ data.address }} 
+              {{ project.address }} 
             </div>
           </div>
           <div class="copy-div">
@@ -46,25 +46,25 @@
           </div>
         </div>
         <hr />
-        <div v-if="data.teamName" class="team">
-          <h2>Brought to you by {{ data.teamName }}</h2>
-          <div class="project-description">{{ data.teamDescription }}</div>
+        <div v-if="project.teamName" class="team">
+          <h2>Brought to you by {{ project.teamName }}</h2>
+          <div class="project-description">{{ project.teamDescription }}</div>
         </div>
       </div>
     </div>  
     <div v-if="previewMode" class="link-box">
       <h2 class="link-title">Check them out</h2>
-      <div v-if="data.githubUrl" class="link-row">
+      <div v-if="project.githubUrl" class="link-row">
         <img src="@/assets/GitHub.svg" />
-        <a :href="data.githubUrl">GitHub repo</a>
+        <a :href="project.githubUrl">GitHub repo</a>
       </div>
-      <div v-if="data.twitterUrl" class="link-row">
+      <div v-if="project.twitterUrl" class="link-row">
         <img src="@/assets/Twitter.svg" />
-        <a :href="data.twitterUrl">@Twitter</a>
+        <a :href="project.twitterUrl">@Twitter</a>
       </div>  
-      <div v-if="data.websiteUrl" class="link-row">
+      <div v-if="project.websiteUrl" class="link-row">
         <img src="@/assets/Meridians.svg" />
-        <a :href="data.websiteUrl">{{ data.websiteUrl }}</a>
+        <a :href="project.websiteUrl">{{ project.websiteUrl }}</a>
       </div>  
     </div>
   </div>
@@ -75,11 +75,16 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { Project } from '@/api/projects'
+import { markdown } from '@/utils/markdown'
 
 @Component export default class ProjectComponent extends Vue {
-  @Prop() data!: Project
+  @Prop() project!: Project
   // @Prop() klerosCurateUrl?: string | null = null
   @Prop() previewMode? = false
+
+  get descriptionHtml(): string {
+    return markdown.render(this.project.description)
+  }
 }
 </script>
 
