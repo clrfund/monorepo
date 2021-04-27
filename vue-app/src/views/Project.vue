@@ -53,10 +53,10 @@
               <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
             </div>
           </div>
-          <hr />
-          <div class="team">
-            <h2 id="team" style="margin-top: 0;">Brought to you by {{ project.teamName }}  </h2>
-            <div class="project-description">{{ project.teamDescription }}</div>
+          <hr v-if="project.teamName || project.teamDescription" />
+          <div v-if="project.teamName || project.teamDescription" class="team">
+            <h2 v-if="project.teamName" id="team" style="margin-top: 0;">Brought to you by {{ project.teamName }}  </h2>
+            <div v-if="project.teamDescription" class="project-description">{{ project.teamDescription }}</div>
           </div>
         </div>
         <div class="sticky-column">  

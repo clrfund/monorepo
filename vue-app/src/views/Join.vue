@@ -142,7 +142,7 @@
                       id="category-content"
                       type="radio"
                       name="project-category"
-                      value="content"
+                      value="Content"
                       v-model="$v.form.project.category.$model"
                       :class="{
                         input: true,
@@ -154,7 +154,7 @@
                       id="research"
                       type="radio"
                       name="project-category"
-                      value="research"
+                      value="Research"
                       v-model="$v.form.project.category.$model"
                       :class="{
                         input: true,
@@ -166,7 +166,7 @@
                       id="tooling"
                       type="radio"
                       name="project-category"
-                      value="tooling"
+                      value="Tooling"
                       v-model="$v.form.project.category.$model"
                       :class="{
                         input: true,
@@ -178,7 +178,7 @@
                       id="data"
                       type="radio"
                       name="project-category"
-                      value="data"
+                      value="Data"
                       v-model="$v.form.project.category.$model"
                       :class="{
                         input: true,
@@ -253,6 +253,7 @@
             </div>
             <div v-if="currentStep === 2">
               <h2 class="step-title">Team details</h2>
+              <p>Tell us about the folks behind your project.</p>
               <div class="inputs">
                 <div class="form-background">
                   <label for="team-email" class="input-label">Contact email</label>
@@ -304,6 +305,7 @@
             </div>
             <div v-if="currentStep === 3">
               <h2 class="step-title">Links</h2>
+              <p>Give contributors some links to check out to learn more about your project. Provide at least 1 link.</p>
               <p class="input-description" :class="{
                 error: $v.form.links.hasLink.$invalid && $v.form.links.$anyDirty
               }">Must provide at least one</p>
@@ -419,10 +421,116 @@
               </div>
             </div>
           </form>
-          <!-- TODO show summary of information -->
-          <!-- Summary -->
           <div v-if="currentStep === 5" id="summary">
-            {{form}}
+            <h2 class="step-title">Review your information</h2>
+            <warning style="margin-bottom: 1rem;" message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application." /> 
+            <div class="btn-primary" style="width: fit-content;">Preview</div>
+            <div class="form-background">
+              <div class="summary-section-header">
+                <h3 class="step-subtitle">About the project</h3>
+                <router-link to="/join/project" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Name</h4>
+                <div class="data">{{form.project.name}}</div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Tagline</h4>
+                <div class="data">{{form.project.tagline}} </div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Description</h4>
+                <div class="data">{{form.project.description}} </div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Category</h4>
+                <div class="data">{{form.project.category}} </div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Problem space</h4>
+                <div class="data">{{form.project.problemSpace}} </div>
+              </div>
+            </div>
+            <div class="form-background">
+              <div class="summary-section-header">
+                <h3 class="step-subtitle">Funding details</h3>
+                <router-link to="/join/fund" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Ethereum address</h4>
+                <div class="data">{{form.fund.address}} <a :href="'https://etherscan.io/address/' + form.fund.address" target="_blank">View on Etherscan</a></div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Funding plans</h4>
+                <div class="data">{{form.fund.plans}} </div>
+              </div>
+            </div>
+            <div class="form-background">
+              <div class="summary-section-header">
+                <h3 class="step-subtitle">Team details</h3>
+                <router-link to="/join/team" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Contact email</h4>
+                <div class="data">{{form.team.email}} </div>
+                <div class="input-notice">This information won't be added to the smart contract. It won't cost anything to edit and will only be used to contact you about the round and/or your project.</div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Team name</h4>
+                <div class="data">{{form.team.name}} </div>
+                <div class="data" v-if="!form.team.name">Not provided</div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Team description</h4>
+                <div class="data">{{form.team.description}} </div>
+                <div class="data" v-if="!form.team.description">Not provided</div>
+              </div>
+            </div>  
+            <div class="form-background">
+              <div class="summary-section-header">
+                <h3 class="step-subtitle">Links</h3>
+                <router-link to="/join/links" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">GitHub</h4>
+                <div class="data">{{form.links.github}} <a v-if="form.links.github" :href=form.links.github><img width="16px" src="@/assets/link.svg" /></a></div>
+                <div class="data" v-if="!form.links.github">Not provided</div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Twitter</h4>
+                <div class="data">{{form.links.twitter}} <a v-if="form.links.twitter" :href=form.links.twitter><img width="16px" src="@/assets/link.svg" /></a></div>
+                <div class="data" v-if="!form.links.twitter">Not provided</div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Website</h4>
+                <div class="data" key="">{{form.links.website}} <a v-if="form.links.website" :href=form.links.website><img width="16px" src="@/assets/link.svg" /></a></div>
+                <div class="data" v-if="!form.links.website">Not provided</div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Discord</h4>
+                <div class="data">{{form.links.discord}} <a v-if="form.links.discord" :href=form.links.discord><img width="16px" src="@/assets/link.svg" /></a></div>
+                <div class="data" v-if="!form.links.discord">Not provided</div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Radicle</h4>
+                <div class="data">{{form.links.radicle}} <a v-if="form.links.radicle" :href=form.links.radicle><img width="16px" src="@/assets/link.svg" /></a></div>
+                <div class="data" v-if="!form.links.radicle">Not provided</div>
+              </div>
+            </div>  
+            <div class="form-background">
+              <div class="summary-section-header">
+                <h3 class="step-subtitle">Images</h3>
+                <router-link to="/join/image" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+              </div>
+               <div class="summary">
+                <h4 class="read-only-title">Banner</h4>
+                <div class="data">{{form.image.bannerHash}} </div>
+              </div>
+              <div class="summary">
+                <h4 class="read-only-title">Thumbnail</h4>
+                <div class="data">{{form.image.thumbnailHash}} </div>
+              </div>            </div>  
+            <!-- {{form}}-->
             <!--TODO: this will be an on-chain transaction so double check all info and links are correct as it will cost you you to change it -->
           </div>
         </div>
@@ -445,6 +553,7 @@ import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
 import IpfsForm from '@/components/IpfsForm.vue'
+import Warning from '@/components/Warning.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
@@ -455,6 +564,7 @@ import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
     ProgressBar,
     ButtonRow,
     IpfsForm,
+    Warning,
   },
   validations: {
     form: {
@@ -602,7 +712,6 @@ export default class JoinView extends mixins(validationMixin) {
       stepNumber: this.currentStep,
     })
   }
-
   // Callback from IpfsForm component
   handleUpload(key, value) {
     this.form.image[key] = value
@@ -1021,6 +1130,53 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
+.read-only-title {
+  line-height: 150%;
+  margin: 0;
+}
+
+.summary {
+  margin-bottom: 1rem;
+}
+
+.summary-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid $highlight-color;
+  padding-bottom: 0.5rem;
+}
+
+.step-subtitle {
+  margin: 0.5rem 0;
+  font-family: "Glacial Indifference", sans-serif;
+  font-size: 1.5rem;
+}
+
+.edit-button {
+  font-family: "Inter";
+  font-weight: 500;
+  font-size: 16px;
+  color: $clr-green;  
+}
+
+.data {
+  opacity: 0.8;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.data img {
+  padding: 0.25rem;
+  margin-top: 0.25rem;
+  &:hover {
+    background: $bg-primary-color;
+    border-radius: 4px;
+  }
+}
 .disabled {
   cursor: not-allowed;
   opacity: 0.5;
