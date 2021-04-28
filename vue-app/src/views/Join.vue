@@ -70,7 +70,7 @@
       <div class="form-area">
         <div v-if="currentStep === 5" class="application">
           <div class="btn-primary" style="width: fit-content;" @click="togglePreview">{{ showSummaryPreview ? 'Close' : 'Preview' }}</div>
-          <project-component v-if="showSummaryPreview" :project="projectInterface" :previewMode="true" class="project-details" />
+          <project-profile v-if="showSummaryPreview" :project="projectInterface" :previewMode="true" class="project-details" />
         </div>
         <div class="application">
           <form>

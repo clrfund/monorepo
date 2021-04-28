@@ -1,7 +1,7 @@
 <template>
   <div class="grid">
     <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name">
-    <project-component class="details" :project="project" :previewMode="false" />
+    <project-profile class="details" :project="project" :previewMode="false" />
     <div class="sticky-column">  
       <!--TODO: only make this visible to certain addresses ++ this will trigger a tx-->  
       <!-- <div class="admin-box">
