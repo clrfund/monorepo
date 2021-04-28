@@ -1,55 +1,53 @@
 <template>
   <div v-if="project" class="project-page">
-    <img class="project-image" :src="project.bannerImageUrl" :alt="project.name">
-    <div class="content">
-      <div class="about">    
-        <h1 
-          class="project-name"
-          :title="project.address"
-          :project-index="project.index"
-        >
-          <a
-            v-if="klerosCurateUrl"
-            :href="klerosCurateUrl"
-            target="_blank"
-            rel="noopener"
-          >{{ project.name }}</a>
-          <span v-else> {{ project.name }} </span>
-        </h1>
-        <p class="tagline">{{ project.tagline }}</p> 
-        <div class="subtitle">
-          <div class="tag">{{ project.category }} tag </div>
-          <div class="team-byline">By <a href="#team"> {{ project.teamName }} team</a></div>
-        </div>
-        <div class="project-section">
-          <h2>📖 About the project</h2>
-          <div class="project-description" v-html="descriptionHtml"></div>
-        </div>
-        <div class="project-section">
-          <h2>🔧 The problem it solves</h2>
-          <div class="project-description">{{ project.problemSpace }}</div>
-        </div>
-        <div class="project-section">
-          <h2>💰 Funding plans</h2>
-          <div class="project-description">{{ project.plans }}</div>
-        </div> 
-        <div class="address-box">
-          <div>
-            <div class="address-label">Recipient address</div>
-            <div class="address">
-              {{ project.address }} 
-            </div>
-          </div>
-          <div class="copy-div">
-            <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/copy.svg"></div>
-            <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
+    <!-- img class="project-image" :src="project.bannerImageUrl" :alt="project.name" -->
+    <div class="about">    
+      <h1 
+        class="project-name"
+        :title="project.address"
+        :project-index="project.index"
+      >
+        <a
+          v-if="klerosCurateUrl"
+          :href="klerosCurateUrl"
+          target="_blank"
+          rel="noopener"
+        >{{ project.name }}</a>
+        <span v-else> {{ project.name }} </span>
+      </h1>
+      <p class="tagline">{{ project.tagline }}</p> 
+      <div class="subtitle">
+        <div class="tag">{{ project.category }} tag </div>
+        <div class="team-byline">By <a href="#team"> {{ project.teamName }} team</a></div>
+      </div>
+      <div class="project-section">
+        <h2>📖 About the project</h2>
+        <div class="project-description" v-html="descriptionHtml"></div>
+      </div>
+      <div class="project-section">
+        <h2>🔧 The problem it solves</h2>
+        <div class="project-description">{{ project.problemSpace }}</div>
+      </div>
+      <div class="project-section">
+        <h2>💰 Funding plans</h2>
+        <div class="project-description">{{ project.plans }}</div>
+      </div> 
+      <div class="address-box">
+        <div>
+          <div class="address-label">Recipient address</div>
+          <div class="address">
+            {{ project.address }} 
           </div>
         </div>
-        <hr />
-        <div v-if="project.teamName" class="team">
-          <h2>Brought to you by {{ project.teamName }}</h2>
-          <div class="project-description">{{ project.teamDescription }}</div>
+        <div class="copy-div">
+          <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/copy.svg"></div>
+          <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
         </div>
+      </div>
+      <hr />
+      <div v-if="project.teamName" class="team">
+        <h2>Brought to you by {{ project.teamName }}</h2>
+        <div class="project-description">{{ project.teamDescription }}</div>
       </div>
     </div>  
     <div v-if="previewMode" class="link-box">
@@ -93,7 +91,7 @@ import { markdown } from '@/utils/markdown'
 @import '../styles/theme';
 
 .project-page {
-  margin-top: 1.5rem;
+  /* margin-top: 1.5rem; */
 
   h2 {
     font-size: 20px;

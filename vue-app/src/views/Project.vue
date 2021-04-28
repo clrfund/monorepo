@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <project-component :data="project" :previewMode="true" />
+  <div class="grid">
+    <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name">
+    <project-component class="details" :project="project" :previewMode="false" />
     <div class="sticky-column">  
       <!--TODO: only make this visible to certain addresses ++ this will trigger a tx-->  
       <!-- <div class="admin-box">
@@ -343,6 +344,34 @@ export default class ProjectView extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
+.grid {
+  display: grid;
+  grid-template-columns: 1fr clamp(320px, 24%, 440px);
+  grid-template-rows: repeat(2, auto);
+  grid-template-areas: 'banner banner' 'details actions';
+  grid-column-gap: 2rem;
+  grid-row-gap: 3rem;
+  @media (max-width: $breakpoint-m) {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, auto);
+    grid-template-areas: 'banner' 'details' 'actions';
+  }
+}
+
+.banner {
+  grid-area: banner;
+}
+
+.sticky-column {
+  grid-area: actions;
+  position: sticky;
+  top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  gap: 1rem;
+}
+
 
 .back-button {
   color: $text-color;
@@ -350,15 +379,6 @@ export default class ProjectView extends Vue {
   &:hover {
         transform: scale(1.01);
       }
-}
-
-.sticky-column {
-  position: sticky;
-  top: 2rem;
-  align-self: start;
-  gap: 1rem;
-  display: flex;
-  flex-direction: column;
 }
 
 .tagline {
@@ -425,7 +445,7 @@ export default class ProjectView extends Vue {
 .link-box {
   background: $bg-primary-color;
   padding: 1.5rem;
-  min-width: 320px;
+  /* min-width: 320px; */
   border-radius: 16px;
   box-shadow: $box-shadow;
 }
