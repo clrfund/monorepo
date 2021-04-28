@@ -7,7 +7,7 @@
           <div class="round">
             <div style="display: flex; align-items: center;">
               <h2 style="line-height: 120%; margin: 0;">Eth2 CLR</h2>
-              <div class="verified"><a style="" href="https://etherescan.io/:address"><img src="@/assets/verified.svg" /></a> </div>
+              <tooltip position="top" :content="currentRound.fundingRoundAddress" :link="'https://etherscan.io/address/' + currentRound.fundingRoundAddress" linkText="View on Etherscan"><div class="verified"><img src="@/assets/verified.svg" /></div></tooltip>
             </div>
             <div class="status"> 
               <div class="circle pulse open" /> Open
@@ -128,6 +128,7 @@ import { RoundInfo, getCurrentRound } from '@/api/round'
 import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
+import Tooltip from '@/components/Tooltip.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
 import {
@@ -180,6 +181,7 @@ function timeLeft(date: DateTime): TimeLeft {
   components: {
     ProjectListItem,
     Loader,
+    Tooltip,
   },
 })
 export default class RoundInformation extends Vue {
