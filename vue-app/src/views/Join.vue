@@ -68,6 +68,10 @@
         </router-link>
       </div>
       <div class="form-area">
+        <div v-if="currentStep === 5" class="application">
+          <div class="btn-primary" style="width: fit-content;" @click="togglePreview">{{ showSummaryPreview ? 'Close' : 'Preview' }}</div>
+          <project-component v-if="showSummaryPreview" :project="projectInterface" :previewMode="true" class="project-details" />
+        </div>
         <div class="application">
           <form>
             <div v-if="currentStep === 0">
@@ -423,8 +427,6 @@
             </div>
           </form>
           <div v-if="currentStep === 5" id="summary">
-            <div class="btn-primary" style="width: fit-content;" @click="togglePreview">{{ showSummaryPreview ? 'Close' : 'Preview' }}</div>
-            <project-component v-if="showSummaryPreview" :project="projectInterface" :previewMode="true" />
             <h2 class="step-title">Review your information</h2>
             <warning style="margin-bottom: 1rem;" message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application." /> 
             <div class="form-background">
@@ -685,6 +687,41 @@ export default class JoinView extends mixins(validationMixin) {
     // if (this.currentStep > this.form.furthestStep) {
     //   this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
     // }
+
+    if (process.env.NODE_ENV === 'development') {
+      this.form = {
+        project: {
+          name: 'CLR.Fund',
+          tagline: 'A quadratic funding protocol',
+          description: '**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...',
+          category: 'research',
+          problemSpace: 'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
+        },
+        fund: {
+          address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
+          plans: 'Create much wow, when lambo?',
+        },
+        team: {
+          name: 'clr.fund',
+          description: 'CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...',
+          email: 'doge@goodboi.com',
+        },
+        links: {
+          github: '',
+          radicle: '',
+          website: 'https://clr.fund',
+          twitter: '',
+          discord: '',
+          hasLink: true,
+        },
+        image: {
+          bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+          thumbnailHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+        },
+        furthestStep: 5,
+      }
+      this.saveFormData()
+    }
   }
 
   handleLinkUpdate(): void {
@@ -957,7 +994,7 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .application {
-  height: 100%;
+  /* height: 100%; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1154,6 +1191,13 @@ export default class JoinView extends mixins(validationMixin) {
 .read-only-title {
   line-height: 150%;
   margin: 0;
+}
+
+.project-details {
+  margin-top: 2rem;
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .summary {

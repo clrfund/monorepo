@@ -108,6 +108,7 @@ import { markdown } from '@/utils/markdown'
     object-fit: cover;
     text-align: center;
     width: 100%;
+    margin-bottom: 2rem;
   }
 
   .content {
@@ -214,7 +215,7 @@ import { markdown } from '@/utils/markdown'
 
     .team {
       padding: 1rem;
-      margin-bottom: 3rem;
+      /* margin-bottom: 3rem; */
       border-radius: 0.25rem;
       background: $bg-secondary-color;
 
