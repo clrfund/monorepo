@@ -1,7 +1,7 @@
 <template>
   <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="image">
     <p class="input-label">{{ label }}</p>
-    <p class="input-description"> {{description}} </p>
+    <p class="input-description">{{ description }}</p>
     <div class="input-row">
       <input
         id="image-upload"
@@ -10,21 +10,21 @@
         @change="handleLoadFile"
         name="image"
       />
-      <button primary="true" type='submit' label='Upload' class="btn-primary" :class="{disabled: loading || error || !document}">
+      <button primary="true" type='submit' label='Upload' class="btn-primary" :class="{disabled: loading || error || !loadedImageData}">
         {{ loading ? "Loading..." : "Upload"}}
       </button>
     </div>
     <div class="image-preview">
       <loader v-if="loading" />
       <img
-        v-if="data"
-        :src="data"
+        v-if="hash"
+        :src="bannerUrl"
         alt=""
         :class="{
-          'image-preview': data,
+          'image-preview': hash,
         }"
       />
-      <p v-if="data" @click="copyHash" class="copy">IPFS hash: {{ hash }} 📋</p>
+      <p v-if="hash" @click="copyHash" class="copy">IPFS hash: {{ hash }} 📋</p>
       <p v-if="error" class="error">{{ error }}</p>
     </div>
     <div @click="handleRemoveImage" class="btn-white small">Clear</div>
@@ -35,6 +35,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
+import { ipfsGatewayUrl } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
 
@@ -49,12 +50,12 @@ export default class IpfsForm extends Vue {
   @Prop() formProp!: string
   @Prop() onUpload!: (key: string, value: string) => void
 
+  ipfs: any = null
   hash = ''
   loading = false
   data = ''
-  document = ''
+  loadedImageData = ''
   error = ''
-  ipfs: any = null
 
   created() {
     this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
@@ -66,7 +67,7 @@ export default class IpfsForm extends Vue {
     const data = event.target.files[0]
     if (data.type.match('image/*')) {
       const reader = new FileReader()
-      reader.onload = (() => ((e) => {this.document = e.target.result}))()
+      reader.onload = (() => ((e) => { this.loadedImageData = e.target.result }))()
       reader.readAsDataURL(data)
     } else {
       this.error = 'That doesn\'t look like an image'
@@ -76,28 +77,22 @@ export default class IpfsForm extends Vue {
   // TODO display error in UI
   handleUploadToIPFS(event) {
     event.preventDefault()
-
-    if (this.document !== '') {
+    console.log('inside handleUploadToIPFS')
+    // Work-around: Raw image data can be loaded through an SVG
+    // https://github.com/SilentCicero/ipfs-mini/issues/4#issuecomment-792351498
+    const fileContents = `<svg xmlns="http://www.w3.org/2000/svg"><image href="${this.loadedImageData}" /></svg>`
+    if (this.loadedImageData !== '') {
       this.loading = true
-      this.ipfs.addJSON(this.document, async (err, _hash) => {
-        if (!err) {
-          this.hash = _hash
-          this.ipfs.catJSON(this.hash, async (err2, data) => {
-            if (!err2) {
-              this.data = data
-              this.onUpload(this.formProp, this.hash)
-
-            } else {
-              this.error = `Error occurred: ${err2.message}`
-            }
-            this.loading = false
-          })
-        } else {
-          this.loading = false
-          this.error = 'Error occured: ${err.message}'
-        }
+      this.ipfs.add(fileContents).then(hash => {
+        this.hash = hash
+        console.log(`Uploaded file hash: ${hash}`)
+        this.onUpload(this.formProp, hash)
+        this.loading = false
+      }).catch(error => {
+        this.error = `Error occurred: ${error}`
+        this.loading = false
       })
-    } else {
+    } else {  
       this.error = 'You need an image.'
     }
   }
@@ -106,7 +101,7 @@ export default class IpfsForm extends Vue {
     this.hash = ''
     this.loading = false
     this.data = ''
-    this.document = ''
+    this.loadedImageData = ''
     this.error = ''
     this.onUpload(this.formProp, '')
   }
@@ -118,6 +113,10 @@ export default class IpfsForm extends Vue {
     } catch (error) {
       console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
     }
+  }
+
+  get bannerUrl(): string {
+    return `${ipfsGatewayUrl}/ipfs/${this.hash}`
   }
 }
 </script>
