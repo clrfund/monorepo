@@ -96,8 +96,8 @@ export function formToProjectInterface(data: RecipientApplicationData): Project 
     websiteUrl: links.website,
     twitterUrl: links.twitter,
     discordUrl: links.discord,
-    bannerImageUrl: image.bannerHash,
-    thumbnailImageUrl: image.thumbnailHash,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${image.bannerHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${image.thumbnailHash}`,
     index: 0,
     isHidden: false,
     isLocked: true,
@@ -235,6 +235,19 @@ function decodeProject(requestSubmittedEvent: Event): Project {
     extra: {
       submissionTime: args._timestamp.toNumber(),
     },
+    tagline: metadata.tagline,
+    category: metadata.category,
+    problemSpace: metadata.problemSpace,
+    plans: metadata.plans,
+    teamName: metadata.teamName,
+    teamDescription: metadata.teamDescription,
+    githubUrl: metadata.githubUrl,
+    radicleUrl: metadata.radicleUrl,
+    websiteUrl: metadata.websiteUrl,
+    twitterUrl: metadata.twitterUrl,
+    discordUrl: metadata.discordUrl,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`,
   }
 }
 
