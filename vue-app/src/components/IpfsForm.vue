@@ -77,7 +77,6 @@ export default class IpfsForm extends Vue {
   // TODO display error in UI
   handleUploadToIPFS(event) {
     event.preventDefault()
-    console.log('inside handleUploadToIPFS')
     // Work-around: Raw image data can be loaded through an SVG
     // https://github.com/SilentCicero/ipfs-mini/issues/4#issuecomment-792351498
     const fileContents = `<svg xmlns="http://www.w3.org/2000/svg"><image href="${this.loadedImageData}" /></svg>`
@@ -85,7 +84,7 @@ export default class IpfsForm extends Vue {
       this.loading = true
       this.ipfs.add(fileContents).then(hash => {
         this.hash = hash
-        console.log(`Uploaded file hash: ${hash}`)
+        console.log(`Uploaded file hash: ${hash}`) /* eslint-disable-line no-console */
         this.onUpload(this.formProp, hash)
         this.loading = false
       }).catch(error => {
