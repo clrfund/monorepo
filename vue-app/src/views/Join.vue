@@ -423,10 +423,10 @@
             </div>
           </form>
           <div v-if="currentStep === 5" id="summary">
-            <project-component :project="projectInterface" :previewMode="true" />
+            <div class="btn-primary" style="width: fit-content;" @click="togglePreview">{{ showSummaryPreview ? 'Close' : 'Preview' }}</div>
+            <project-component v-if="showSummaryPreview" :project="projectInterface" :previewMode="true" />
             <h2 class="step-title">Review your information</h2>
             <warning style="margin-bottom: 1rem;" message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application." /> 
-            <div class="btn-primary" style="width: fit-content;">Preview</div>
             <div class="form-background">
               <div class="summary-section-header">
                 <h3 class="step-subtitle">About the project</h3>
@@ -655,6 +655,7 @@ export default class JoinView extends mixins(validationMixin) {
   currentStep = 0
   steps: string[] = []
   stepNames: string[] = []
+  showSummaryPreview = false
 
   created() {
     const steps = Object.keys(this.form)
@@ -726,6 +727,7 @@ export default class JoinView extends mixins(validationMixin) {
   // Callback from IpfsForm component
   handleUpload(key, value) {
     this.form.image[key] = value
+    this.saveFormData(false)
   }
 
   get navDisabled(): boolean {
@@ -754,6 +756,10 @@ export default class JoinView extends mixins(validationMixin) {
 
   get furthestStep() {
     return this.form.furthestStep
+  }
+
+  togglePreview(): void {
+    this.showSummaryPreview = !this.showSummaryPreview
   }
 } 
 </script>

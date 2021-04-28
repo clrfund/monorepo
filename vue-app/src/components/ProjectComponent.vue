@@ -1,6 +1,6 @@
 <template>
   <div v-if="project" class="project-page">
-    <!-- img class="project-image" :src="project.bannerImageUrl" :alt="project.name" -->
+    <img v-if="previewMode" class="project-image" :src="project.bannerImageUrl" :alt="project.name">
     <div class="about">    
       <h1 
         class="project-name"
@@ -91,8 +91,6 @@ import { markdown } from '@/utils/markdown'
 @import '../styles/theme';
 
 .project-page {
-  /* margin-top: 1.5rem; */
-
   h2 {
     font-size: 20px;
   }
