@@ -75,7 +75,7 @@ import { Prop } from 'vue-property-decorator'
 import { Project } from '@/api/projects'
 import { markdown } from '@/utils/markdown'
 
-@Component export default class ProjectComponent extends Vue {
+@Component export default class ProjectProfile extends Vue {
   @Prop() project!: Project
   // @Prop() klerosCurateUrl?: string | null = null
   @Prop() previewMode? = false

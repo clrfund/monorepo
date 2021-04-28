@@ -96,7 +96,7 @@ import { RoundStatus, getCurrentRound } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
-import ProjectComponent from '@/components/ProjectComponent.vue'
+import ProjectProfile from '@/components/ProjectProfile.vue'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import {
   SELECT_ROUND,
@@ -117,7 +117,7 @@ import { markdown } from '@/utils/markdown'
   metaInfo() {
     return { title: (this as any).project?.name || '' }
   },
-  components: {Loader, ProjectComponent },
+  components: {Loader, ProjectProfile },
 })
 export default class ProjectView extends Vue {
 

@@ -557,7 +557,7 @@ import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
 import IpfsForm from '@/components/IpfsForm.vue'
-import ProjectComponent from '@/components/ProjectComponent.vue'
+import ProjectProfile from '@/components/ProjectProfile.vue'
 import Warning from '@/components/Warning.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
@@ -571,7 +571,7 @@ import { markdown } from '@/utils/markdown'
     ProgressBar,
     ButtonRow,
     IpfsForm,
-    ProjectComponent,
+    ProjectProfile,
     Warning,
   },
   validations: {
