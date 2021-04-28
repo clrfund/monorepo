@@ -12,28 +12,8 @@
     </button>
     <div v-else></div>
 
-    <!-- TODO: Finish button to trigger tx  -->
     <button
-      v-if="currentStep === 5"
-      @click="handleSubmit"
-      to="/project-added"
-      class="btn-primary"
-    >
-      Finish
-    </button>
-    <button
-      v-else-if="currentStep === 4"
-      @click="handleNext"
-      :class="{
-        disabled: !isStepValid,
-        'btn-primary': true,
-      }"
-      :disabled="!isStepValid"
-    >
-      Summary
-    </button>
-    <button
-      v-else-if="currentStep < 5"
+      v-if="currentStep < 5"
       @click="handleNext"
       :class="{
         disabled: !isStepValid,
@@ -43,6 +23,18 @@
     >
       Next
     </button>
+    <!-- TODO: Finish button to trigger tx  -->
+    <!-- current logic disables button unless user wallet is connected -->
+    <button
+      v-if="currentStep === 5"
+      @click="handleSubmit"
+      to="/project-added"
+      class="btn-primary"
+      :disabled="!walletProvider && !currentUser"
+    >
+      Submit
+    </button>
+
   </div>
 </template>
 
@@ -51,6 +43,11 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
+import { addRecipient } from  '@/api/projects'
+import { getRegistryInfo} from '@/api/recipient-registry-optimistic'
+import { waitForTransaction } from '@/utils/contracts'
+
+// TODO rename this component
 @Component
 export default class ButtonRow extends Vue {
   @Prop() currentStep!: number
@@ -59,6 +56,19 @@ export default class ButtonRow extends Vue {
   @Prop() callback!: (updateFurthest?: boolean) => void
   @Prop() handleStepNav!: () => void
   @Prop() navDisabled!: boolean
+
+  // TODO do stuff with this?
+  submissionTxHash = ''
+  submissionTxError = ''
+  recipientId = ''
+
+  get walletProvider(): any {
+    return (window as any).ethereum
+  }
+
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
+  }
 
   handleNext(): void {
     // Save form data (first saves when user hits Next after first step)
@@ -71,6 +81,7 @@ export default class ButtonRow extends Vue {
       },
     })
   }
+
   handlePrev(): void {
     this.callback()
     this.$router.push({
@@ -80,13 +91,38 @@ export default class ButtonRow extends Vue {
       },
     })
   }
+
   handleSubmit(): void {
+    this.addRecipient()
     alert('submitted')
     // Submit form data
     // Clear form store/state data
   }
-  // Pushing to router stack destroys local form state
-  // Place form data in $store?
+
+  private async addRecipient() {
+    const recipientRegistryAddress = this.$store.state.recipientRegistryAddress
+    const signer = this.$store.state.currentUser.walletProvider.getSigner()
+
+    // TODO convert to RecipientData from OptimisticRegistry API
+    const recipient = this.$store.state.recipient
+
+    // TODO get on create()?
+    const registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+
+    let submissionTxReceipt
+    try {
+      submissionTxReceipt = await waitForTransaction(
+        addRecipient(recipientRegistryAddress, recipient, registryInfo.deposit, signer),
+        (hash) => this.submissionTxHash = hash,
+      )
+    } catch (error) {
+      this.submissionTxError = error.message
+      return
+    }
+    this.recipientId = getRequestId(submissionTxReceipt, this.recipientRegistryAddress)
+    console.log(recipientId)
+    // TODO transition user to success step
+  }
 }
 </script>
 

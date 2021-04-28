@@ -190,20 +190,58 @@ export async function getRequests(
   return requests
 }
 
+// TODO merge this with `Project` inteface
 export interface RecipientData {
   name: string;
   description: string;
   imageHash: string;
   address: string;
+  tagline?: string;
+  category?: string;
+  problemSpace?: string;
+  plans?: string;
+  teamName?: string;
+  teamDescription?: string;
+  githubUrl?: string;
+  radicleUrl?: string;
+  websiteUrl?: string;
+  twitterUrl?: string;
+  discordUrl?: string;
+  // fields different vs. Project
+  bannerHash?: string;
+  thumbnailHash?: string;
+}
+
+function formToRecipientData(data: RecipientApplicationData): RecipientData {
+  const { project, fund, team, links, image } = data
+  return {
+    address: fund.address,
+    name: project.name,
+    tagline: project.tagline,
+    description: project.description,
+    category: project.category,
+    problemSpace: project.problemSpace,
+    plans: fund.plans,
+    teamName: team.name,
+    teamDescription: team.description,
+    githubUrl: links.github,
+    radicleUrl: links.radicle,
+    websiteUrl: links.website,
+    twitterUrl: links.twitter,
+    discordUrl: links.discord,
+    bannerHash: image.bannerHash,
+    thumbnailHash: image.thumbnailHash,
+  }
 }
 
 export async function addRecipient(
   registryAddress: string,
-  recipientData: RecipientData,
+  recipientApplicationData: RecipientApplicationData,
   deposit: BigNumber,
   signer: Signer,
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
+  const recipientData = formToRecipientData(recipientApplicationData)
   const { address, ...metadata } = recipientData
   const transaction = await registry.addRecipient(address, JSON.stringify(metadata), { value: deposit })
   return transaction
