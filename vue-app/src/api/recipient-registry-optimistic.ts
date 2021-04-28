@@ -194,7 +194,7 @@ export async function getRequests(
 export interface RecipientData {
   name: string;
   description: string;
-  imageHash: string;
+  imageHash?: string; // TODO remove - old flow
   address: string;
   tagline?: string;
   category?: string;

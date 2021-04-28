@@ -175,7 +175,7 @@ export default class RecipientSubmissionModal extends mixins(validationMixin) {
     let submissionTxReceipt
     try {
       submissionTxReceipt = await waitForTransaction(
-        addRecipient(this.registryAddress, this.form, this.registryInfo.deposit, this.signer),
+        addRecipient(this.registryAddress, this.$store.state.recipient, this.registryInfo.deposit, this.signer),
         (hash) => this.submissionTxHash = hash,
       )
     } catch (error) {

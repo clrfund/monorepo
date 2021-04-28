@@ -23,18 +23,15 @@
     >
       Next
     </button>
-    <!-- TODO: Finish button to trigger tx  -->
-    <!-- current logic disables button unless user wallet is connected -->
     <button
       v-if="currentStep === 5"
       @click="handleSubmit"
       to="/project-added"
       class="btn-primary"
-      :disabled="!walletProvider && !currentUser"
+      :disabled="!canSubmit"
     >
       Submit
     </button>
-
   </div>
 </template>
 
@@ -43,8 +40,8 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
-import { addRecipient } from  '@/api/projects'
-import { getRegistryInfo} from '@/api/recipient-registry-optimistic'
+import { User } from '@/api/user'
+import { addRecipient, getRegistryInfo, getRequestId } from '@/api/recipient-registry-optimistic'
 import { waitForTransaction } from '@/utils/contracts'
 
 // TODO rename this component
@@ -68,6 +65,10 @@ export default class ButtonRow extends Vue {
 
   get currentUser(): User | null {
     return this.$store.state.currentUser
+  }
+
+  get canSubmit(): boolean {
+    return !!this.walletProvider && !!this.currentUser
   }
 
   handleNext(): void {
@@ -94,20 +95,48 @@ export default class ButtonRow extends Vue {
 
   handleSubmit(): void {
     this.addRecipient()
-    alert('submitted')
-    // Submit form data
-    // Clear form store/state data
   }
 
   private async addRecipient() {
     const recipientRegistryAddress = this.$store.state.recipientRegistryAddress
     const signer = this.$store.state.currentUser.walletProvider.getSigner()
-
-    // TODO convert to RecipientData from OptimisticRegistry API
     const recipient = this.$store.state.recipient
 
+    // dummy tx data
+    // const recipient = {
+    //   furthestStep: 5,
+    //   fund: { 
+    //     address: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc',
+    //     plans: 'asd',
+    //   },
+    //   image: {
+    //     bannerHash: 'QmP4qZzXSZpC7sHmsKwYfxZVAzp9tZiDGEpNKzUwA4YzEt',
+    //     thumbnailHash: 'QmP4qZzXSZpC7sHmsKwYfxZVAzp9tZiDGEpNKzUwA4YzEt',
+    //   },
+    //   links: {
+    //     discord: '',
+    //     github: 'https://github.com/ethereum/clrfund/pull/22',
+    //     hasLink: true,
+    //     radicle: '',
+    //     twitter: '',
+    //     website: '',
+    //   },
+    //   project: { 
+    //     category: 'Data',
+    //     description: 'asdf',
+    //     name: 'asdf',
+    //     problemSpace: 'sadf',
+    //     tagline: 'asdf',
+    //   },
+    //   team: {
+    //     description: 'asdf',
+    //     email: 'glr3home@gmail.com',
+    //     name: 'asdf',
+    //   },
+    // }
+
     // TODO get on create()?
-    const registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+    const registryInfo = await getRegistryInfo(recipientRegistryAddress)
 
     let submissionTxReceipt
     try {
@@ -119,8 +148,7 @@ export default class ButtonRow extends Vue {
       this.submissionTxError = error.message
       return
     }
-    this.recipientId = getRequestId(submissionTxReceipt, this.recipientRegistryAddress)
-    console.log(recipientId)
+    this.recipientId = getRequestId(submissionTxReceipt, recipientRegistryAddress)
     // TODO transition user to success step
   }
 }
