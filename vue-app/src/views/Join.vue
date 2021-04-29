@@ -543,8 +543,37 @@
         </div>
       </div>
       <div class="nav-area nav-bar mobile">
+        <div class="checkout" v-if="currentStep === 5">
+          <div class="progress-area">
+            <loader v-if="waiting || pending || wrongNetwork"/>
+            <div v-if="waiting" class="tx-notice">Waiting for you to confirm in your wallet</div>
+            <div v-if="lowFunds || txError" class="input-notice" style="font-size: 40px; margin-bottom: 0;">⚠️</div>
+            <div v-if="lowFunds" class="input-notice"> Not enough ETH in your wallet.<br /> Top up or connect a different wallet.</div>
+            <div v-if="txError" class="input-notice">Something failed.<br /> Check your wallet or Etherscan for more info.</div>
+            <div v-if="wrongNetwork" class="input-notice">We're on Optimism Network.<br /> Switch over to the right network in your wallet.</div>
+            <div v-if="pending">
+              <div class="tx-notice">Transaction pending...</div>
+              <a href="#" class="tx-notice">Follow on Etherscan <img width="16px" src="@/assets/etherscan.svg"/></a>
+            </div>
+          </div>
+          <div class="tx-row">
+            <div class="tx-notice">Security deposit</div>
+            <div class="tx-notice">0.1 ETH <span class="fiat-value">($20.00)</span></div>
+          </div>
+          <div class="tx-row">
+            <div class="tx-notice">Transaction fee</div>
+            <div class="tx-notice">0.0004 ETH <span class="fiat-value">($0.10)</span></div>
+          </div>
+          <hr class="hr"/>
+          <div class="tx-row-total">
+            <div>Total</div>
+            <div>0.1004 ETH <span class="fiat-value">($20.10)</span></div>
+          </div>
+        
+        </div>
         <button-row :steps="steps" :currentStep="currentStep" :callBack="saveFormData" />
         <!-- TODO submit button to trigger tx, pass callback to above <botton-row />?  -->
+        <!-- If the user is not yet connected, the button should prompt connection -->
       </div>
     </div>
   </div>
@@ -563,6 +592,7 @@ import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import Warning from '@/components/Warning.vue'
+import Loader from '@/components/Loader.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
@@ -577,6 +607,7 @@ import { Project } from '@/api/projects'
     Markdown,
     ProjectProfile,
     Warning,
+    Loader,
   },
   validations: {
     form: {
@@ -626,6 +657,11 @@ import { Project } from '@/api/projects'
   },
 })
 export default class JoinView extends mixins(validationMixin) {
+  waiting = true
+  lowFunds = true
+  pending = true
+  txError = true
+  wrongNetwork = true
   form: RecipientApplicationData = {
     project: {
       name: '',
@@ -1103,6 +1139,16 @@ export default class JoinView extends mixins(validationMixin) {
   font-weight: 500;
 }
 
+.tx-notice {
+  margin-top: 0.25rem;
+  font-size: 12px;
+  font-family: Inter;
+  margin-bottom: 0.5rem;
+  line-height: 150%;
+  text-transform: uppercase;  
+  font-weight: 500;
+}
+
 .input-label {
   font-family: Inter;
   font-size: 16px;
@@ -1334,4 +1380,55 @@ export default class JoinView extends mixins(validationMixin) {
 .pt-1 {
   padding-top: 1rem;
 }
+
+.tx-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+.tx-row-total {
+    display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  font-weight: 600;
+  font-size: 20px;
+  font-family: 'Glacial Indifference', sans-serif;
+}
+
+.tx-item {
+
+}
+
+.hr {
+  opacity: 0.1;
+  height: 1px;
+  margin: 1rem 0;
+}
+
+.tx-value {
+
+}
+
+.fiat-value {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.progress-area {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.checkout {
+  margin-bottom: 1rem;
+
+}
+
 </style>

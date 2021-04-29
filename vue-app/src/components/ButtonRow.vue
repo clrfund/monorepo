@@ -27,10 +27,10 @@
       v-if="currentStep === 5"
       @click="handleSubmit"
       to="/project-added"
-      class="btn-primary"
+      class="btn-action"
       :disabled="!canSubmit"
     >
-      Submit
+      Submit project
     </button>
   </div>
 </template>
