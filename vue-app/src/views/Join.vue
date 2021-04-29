@@ -3,48 +3,81 @@
     <div class="grid">
       <div class="progress-area desktop">
         <div class="progress-container">
-          <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-          <p class="subtitle">
-            Step {{currentStep + 1}} of {{steps.length}}
-          </p>
-          <div class="progress-steps">
-            <div
-              v-for="(name, step) in stepNames"
-              :key="step"
-              class="progress-step"
-              :class="{
-                'zoom-link': step <= form.furthestStep && step !== currentStep && !navDisabled,
-                disabled: navDisabled
-              }"
-              @click="handleStepNav(step)"
-            >
-              <template v-if="step === currentStep">
-                <img src="@/assets/current-step.svg" alt="current step" />
-                <p v-text="name" class="active step" />
-              </template>
-              <template v-else-if="step === furthestStep">
-                <img src="@/assets/furthest-step.svg" alt="current step" />
-                <p v-text="name" class="active step" />
-              </template>
-              <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
-                <img src="@/assets/green-tick.svg" alt="step complete" />
-                <p v-text="name" class="step" />
-              </template>
-              <template v-else>
-                <img src="@/assets/step-remaining.svg" alt="step remaining" />
-                <p v-text="name" class="step" />
-              </template>
+          <div class="tx-progress-area" v-if="currentStep === 5 && pending || waiting || txReject || wrongNetwork || lowFunds">
+            <loader v-if="waiting || pending || wrongNetwork"/>
+            <div v-if="waiting" class="tx-notice">Check your wallet for a prompt...</div>
+            <div v-if="lowFunds || txError || txReject" class="input-notice" style="font-size: 40px; margin-bottom: 0;">⚠️</div>
+            <div v-if="lowFunds" class="input-notice"> Not enough ETH in your wallet.<br /> Top up or connect a different wallet.</div>
+            <div v-if="txError" class="input-notice">Something failed.<br /> Check your wallet or Etherscan for more info.</div>
+            <div v-if="txReject" class="input-notice">You rejected the transaction in your wallet</div>
+            <div v-if="wrongNetwork" class="input-notice">We're on Optimism Network.<br /> Switch over to the right network in your wallet.</div>
+            <div v-if="pending">
+              <div class="tx-notice">Sending deposit...</div>
+              <a href="#" class="tx-notice">Follow on Etherscan <img width="16px" src="@/assets/etherscan.svg"/></a>
             </div>
           </div>
-          <button-row
-            :isStepValid="isStepValid(currentStep)"
-            :steps="steps"
-            :currentStep="currentStep"
-            :callback="saveFormData"
-            :handleStepNav="handleStepNav"
-            :navDisabled="navDisabled"
-            class="desktop"
-          />
+          <div v-else>
+            <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+            <p class="subtitle">
+              Step {{currentStep + 1}} of {{steps.length}}
+            </p>
+            <div class="progress-steps">
+              <div
+                v-for="(name, step) in stepNames"
+                :key="step"
+                class="progress-step"
+                :class="{
+                  'zoom-link': step <= form.furthestStep && step !== currentStep && !navDisabled,
+                  disabled: navDisabled
+                }"
+                @click="handleStepNav(step)"
+              >
+                <template v-if="step === currentStep">
+                  <img src="@/assets/current-step.svg" alt="current step" />
+                  <p v-text="name" class="active step" />
+                </template>
+                <template v-else-if="step === furthestStep">
+                  <img src="@/assets/furthest-step.svg" alt="current step" />
+                  <p v-text="name" class="active step" />
+                </template>
+                <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
+                  <img src="@/assets/green-tick.svg" alt="step complete" />
+                  <p v-text="name" class="step" />
+                </template>
+                <template v-else>
+                  <img src="@/assets/step-remaining.svg" alt="step remaining" />
+                  <p v-text="name" class="step" />
+                </template>
+              </div>
+            </div>
+          </div>
+          <div class="checkout" v-if="currentStep === 5">
+            <hr />
+            <p class="tx-subtitle">
+              Transaction summary
+            </p>
+            <div class="tx-row">
+              <div class="tx-item">Security deposit</div>
+              <div class="tx-item">0.1 ETH <span class="fiat-value">($20.00)</span></div>
+            </div>
+            <div class="tx-row">
+              <div class="tx-item">Transaction fee</div>
+              <div class="tx-item">0.0004 ETH <span class="fiat-value">($0.10)</span></div>
+            </div>
+            <div class="tx-row-total" style="margin-bottom: 1.5rem;">
+              <div>Total</div>
+              <div>0.1004 ETH <span class="fiat-value">($20.10)</span></div>
+            </div>      
+          </div>
+        <button-row
+          :isStepValid="isStepValid(currentStep)"
+          :steps="steps"
+          :currentStep="currentStep"
+          :callback="saveFormData"
+          :handleStepNav="handleStepNav"
+          :navDisabled="navDisabled"
+          class="desktop"
+        />
         </div>
       </div>
       <div class="progress-area mobile">
@@ -657,12 +690,12 @@ import { Project } from '@/api/projects'
   },
 })
 export default class JoinView extends mixins(validationMixin) {
-  waiting = false
+  waiting = true 
   lowFunds = false
   pending = false
   txError = false
   wrongNetwork = false
-  txReject = true
+  txReject = false
   form: RecipientApplicationData = {
     project: {
       name: '',
@@ -935,6 +968,7 @@ export default class JoinView extends mixins(validationMixin) {
     }
   }
 }
+
 
 .progress-area.mobile {
   grid-area: progress;
@@ -1431,6 +1465,12 @@ export default class JoinView extends mixins(validationMixin) {
 
 }
 
+.checkout-desktop {
+  padding-top: 1.5rem;
+  border-top: 1px solid $button-color;
+
+}
+
 .tx-notice {
   margin-top: 0.25rem;
   font-size: 12px;
@@ -1440,5 +1480,11 @@ export default class JoinView extends mixins(validationMixin) {
   text-transform: uppercase;  
   font-weight: 500;
 }
+
+ .tx-subtitle {
+      font-weight: 600;
+      font-size: 20px;
+      font-family: 'Glacial Indifference', sans-serif;
+    }
 
 </style>
