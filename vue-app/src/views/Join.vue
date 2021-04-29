@@ -544,27 +544,27 @@
       </div>
       <div class="nav-area nav-bar mobile">
         <div class="checkout" v-if="currentStep === 5">
-          <div class="progress-area">
+          <div class="tx-progress-area">
             <loader v-if="waiting || pending || wrongNetwork"/>
-            <div v-if="waiting" class="tx-notice">Waiting for you to confirm in your wallet</div>
-            <div v-if="lowFunds || txError" class="input-notice" style="font-size: 40px; margin-bottom: 0;">⚠️</div>
+            <div v-if="waiting" class="tx-notice">Check your wallet for a prompt...</div>
+            <div v-if="lowFunds || txError || txReject" class="input-notice" style="font-size: 40px; margin-bottom: 0;">⚠️</div>
             <div v-if="lowFunds" class="input-notice"> Not enough ETH in your wallet.<br /> Top up or connect a different wallet.</div>
             <div v-if="txError" class="input-notice">Something failed.<br /> Check your wallet or Etherscan for more info.</div>
+            <div v-if="txReject" class="input-notice">You rejected the transaction in your wallet</div>
             <div v-if="wrongNetwork" class="input-notice">We're on Optimism Network.<br /> Switch over to the right network in your wallet.</div>
             <div v-if="pending">
-              <div class="tx-notice">Transaction pending...</div>
+              <div class="tx-notice">Sending deposit...</div>
               <a href="#" class="tx-notice">Follow on Etherscan <img width="16px" src="@/assets/etherscan.svg"/></a>
             </div>
           </div>
           <div class="tx-row">
-            <div class="tx-notice">Security deposit</div>
-            <div class="tx-notice">0.1 ETH <span class="fiat-value">($20.00)</span></div>
+            <div class="tx-item">Security deposit</div>
+            <div class="tx-item">0.1 ETH <span class="fiat-value">($20.00)</span></div>
           </div>
           <div class="tx-row">
-            <div class="tx-notice">Transaction fee</div>
-            <div class="tx-notice">0.0004 ETH <span class="fiat-value">($0.10)</span></div>
+            <div class="tx-item">Transaction fee</div>
+            <div class="tx-item">0.0004 ETH <span class="fiat-value">($0.10)</span></div>
           </div>
-          <hr class="hr"/>
           <div class="tx-row-total">
             <div>Total</div>
             <div>0.1004 ETH <span class="fiat-value">($20.10)</span></div>
@@ -657,11 +657,12 @@ import { Project } from '@/api/projects'
   },
 })
 export default class JoinView extends mixins(validationMixin) {
-  waiting = true
-  lowFunds = true
-  pending = true
-  txError = true
-  wrongNetwork = true
+  waiting = false
+  lowFunds = false
+  pending = false
+  txError = false
+  wrongNetwork = false
+  txReject = true
   form: RecipientApplicationData = {
     project: {
       name: '',
@@ -1139,15 +1140,6 @@ export default class JoinView extends mixins(validationMixin) {
   font-weight: 500;
 }
 
-.tx-notice {
-  margin-top: 0.25rem;
-  font-size: 12px;
-  font-family: Inter;
-  margin-bottom: 0.5rem;
-  line-height: 150%;
-  text-transform: uppercase;  
-  font-weight: 500;
-}
 
 .input-label {
   font-family: Inter;
@@ -1397,17 +1389,25 @@ export default class JoinView extends mixins(validationMixin) {
   font-weight: 600;
   font-size: 20px;
   font-family: 'Glacial Indifference', sans-serif;
+  background: $bg-secondary-color;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-top: 1.5rem;
 }
 
 .tx-item {
-
+  font-size: 14px;
+  font-family: Inter;
+  line-height: 150%;
+  text-transform: uppercase;  
+  font-weight: 500;
 }
 
-.hr {
+/* .hr {
   opacity: 0.1;
   height: 1px;
   margin: 1rem 0;
-}
+} */
 
 .tx-value {
 
@@ -1418,7 +1418,7 @@ export default class JoinView extends mixins(validationMixin) {
   opacity: 0.8;
 }
 
-.progress-area {
+.tx-progress-area {
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -1429,6 +1429,16 @@ export default class JoinView extends mixins(validationMixin) {
 .checkout {
   margin-bottom: 1rem;
 
+}
+
+.tx-notice {
+  margin-top: 0.25rem;
+  font-size: 12px;
+  font-family: Inter;
+  margin-bottom: 0.5rem;
+  line-height: 150%;
+  text-transform: uppercase;  
+  font-weight: 500;
 }
 
 </style>
