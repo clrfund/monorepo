@@ -39,11 +39,13 @@ export default {
 }
 .tooltip .tooltip-text {
   visibility: hidden;
-  min-width: 120px;
-  background-color: $bg-light-color;
+  max-width: 320px;
+  width: max-content;
+  overflow-wrap: break-word;
+  background-color: $bg-primary-color;
   box-shadow: $box-shadow;
+  border: 1px solid $button-color;
   color: #fff;
-  border: 1px solid rgba(115,117,166,0.3);
   border-radius: 8px;
   padding: 0.5rem;
   position: absolute;
