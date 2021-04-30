@@ -39,7 +39,7 @@ export default {
 }
 .tooltip .tooltip-text {
   visibility: hidden;
-  max-width: 304px;
+  max-width: 320px;
   width: max-content;
   overflow-wrap: break-word;
   background-color: $bg-primary-color;
