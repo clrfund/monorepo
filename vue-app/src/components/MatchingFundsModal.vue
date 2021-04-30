@@ -75,7 +75,7 @@ export default class MatchingFundsModal extends Vue {
   transferTxError = ''
 
   created() {
-    this.signer = this.$store.state.currentUser.walletProvider.getSigner()
+    /* this.signer = this.$store.state.currentUser.walletProvider.getSigner() */
   }
 
   get walletProvider(): any {
@@ -111,6 +111,7 @@ export default class MatchingFundsModal extends Vue {
 
   async contributeMatchingFunds() {
     this.step += 1
+    this.signer = this.$store.state.currentUser.walletProvider.getSigner()
     const { nativeTokenAddress, nativeTokenDecimals } = this.$store.state.currentRound
     const token = new Contract(nativeTokenAddress, ERC20, this.signer)
     const amount = parseFixed(this.amount, nativeTokenDecimals)
