@@ -1,21 +1,26 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h3>Contribute matching funds to the {{ isRoundFinished() ? 'next' : 'current' }} round</h3>
-      <form class="contribution-form">
-        <div>Please enter amount:</div>
-        <input
-          v-model="amount"
-          class="input"
-          :class="{ invalid: !isAmountValid() }"
-          name="amount"
-          placeholder="Amount"
-        >
-        <div>{{ tokenSymbol }}</div>
-      </form>
-      <div class="btn-row">
-        <button class="btn" @click="$emit('close')">Go back</button>
-        <button class="btn" :disabled="!isAmountValid()" @click="contributeMatchingFunds()">Continue</button>
+      <div v-if="walletProvider && !currentUser">
+        <wallet-widget />
+      </div>
+      <div v-else>
+        <h3>Contribute matching funds to the {{ isRoundFinished() ? 'next' : 'current' }} round</h3>
+        <form class="contribution-form">
+          <div>Please enter amount:</div>
+          <input
+            v-model="amount"
+            class="input"
+            :class="{ invalid: !isAmountValid() }"
+            name="amount"
+            placeholder="Amount"
+          >
+          <div>{{ tokenSymbol }}</div>
+        </form>
+        <div class="btn-row">
+          <button class="btn-secondary" @click="$emit('close')">Go back</button>
+          <button class="btn-action" :disabled="!isAmountValid()" @click="contributeMatchingFunds()">Contribute</button>
+        </div>
       </div>
     </div>
     <div v-if="step === 2">
@@ -27,9 +32,10 @@
       ></transaction>
     </div>
     <div v-if="step === 3">
-      <h3>Success!</h3>
-      <div>Tokens has been sent to the matching pool.</div>
-      <button class="btn close-btn" @click="$emit('close')">OK</button>
+      <div style="font-size: 64px;">💦</div>
+      <h3>You just topped up the pool by {{ amount }} {{ tokenSymbol }}!</h3>
+      <div style="margin-bottom: 2rem;">Thanks for helping out all our projects.</div>
+      <button class="btn-primary" @click="$emit('close')">Done</button>
     </div>
   </div>
 </template>
@@ -39,7 +45,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber, Contract, Signer } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
-
+import WalletWidget from '@/components/WalletWidget.vue'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 
@@ -50,6 +56,7 @@ import { RoundStatus } from '@/api/round'
 @Component({
   components: {
     Transaction,
+    WalletWidget,
   },
 })
 export default class MatchingFundsModal extends Vue {
@@ -57,6 +64,11 @@ export default class MatchingFundsModal extends Vue {
   step = 1
 
   signer!: Signer
+  
+
+  amount = '100'
+  transferTxHash = ''
+  transferTxError = ''
 
   amount = '100'
   transferTxHash = ''
@@ -64,6 +76,14 @@ export default class MatchingFundsModal extends Vue {
 
   created() {
     this.signer = this.$store.state.currentUser.walletProvider.getSigner()
+  }
+
+  get walletProvider(): any {
+    return (window as any).ethereum
+  }
+
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
   }
 
   isRoundFinished(): boolean {
@@ -110,6 +130,8 @@ export default class MatchingFundsModal extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
+
 
 .contribution-form {
   align-items: center;
@@ -134,6 +156,22 @@ export default class MatchingFundsModal extends Vue {
 
 .close-btn {
   margin-top: $modal-space;
+}
+
+.vm--modal {
+  background-color: transparent !important;
+}
+
+.modal-body {
+  background-color: $bg-primary-color;
+  padding: $modal-space;
+  text-align: center;
+  box-shadow: $box-shadow;
+  
+
+  .loader {
+    margin: $modal-space auto;
+  }
 }
 
 </style>
