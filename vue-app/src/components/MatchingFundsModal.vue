@@ -1,5 +1,14 @@
 <template>
   <div class="modal-body">
+    <div v-if="walletProvider && !currentUser">
+      <h3>Connect your wallet to contribute to the matching pool!</h3>
+      <button
+        class="btn-action"
+        @click="connect"
+      >
+        Connect wallet
+      </button>
+    </div>
     <div v-if="step === 1">
       <h3>Contribute matching funds to the {{ isRoundFinished() ? 'next' : 'current' }} round</h3>
       <form class="contribution-form">
@@ -39,10 +48,22 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber, Contract, Signer } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
-
+import { Web3Provider } from '@ethersproject/providers'
+import { provider as jsonRpcProvider } from '@/api/core'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
-
+import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
+import {
+  LOAD_USER_INFO,
+  LOAD_CART,
+  LOAD_CONTRIBUTOR_DATA,
+  LOGIN_USER,
+  LOGOUT_USER,
+} from '@/store/action-types'
+import {
+  SET_CURRENT_USER,
+} from '@/store/mutation-types'
+import { sha256 } from '@/utils/crypto'
 import { ERC20 } from '@/api/abi'
 import { factory } from '@/api/core'
 import { RoundStatus } from '@/api/round'
@@ -53,7 +74,8 @@ import { RoundStatus } from '@/api/round'
   },
 })
 export default class MatchingFundsModal extends Vue {
-
+  private jsonRpcNetwork: Network | null = null
+  private walletChainId: string | null = null
   step = 1
 
   signer!: Signer
@@ -65,6 +87,73 @@ export default class MatchingFundsModal extends Vue {
   created() {
     this.signer = this.$store.state.currentUser.walletProvider.getSigner()
   }
+
+  get walletProvider(): any {
+    return (window as any).ethereum
+  }
+
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
+  }
+
+  async connect(): Promise<void> {
+    if (!this.walletProvider || !this.walletProvider.request) {
+      return
+    }
+    let walletAddress
+    try {
+      [walletAddress] = await this.walletProvider.request({ method: 'eth_requestAccounts' })
+    } catch (error) {
+      // Access denied
+      return
+    }
+    let signature
+    try {
+      signature = await this.walletProvider.request({
+        method: 'personal_sign',
+        params: [LOGIN_MESSAGE, walletAddress],
+      })
+    } catch (error) {
+      // Signature request rejected
+      return
+    }
+    const user: User = {
+      walletProvider: new Web3Provider(this.walletProvider),
+      walletAddress,
+      encryptionKey: sha256(signature),
+      isVerified: null,
+      balance: null,
+      contribution: null,
+    }
+
+    getProfileImageUrl(user.walletAddress)
+      .then((url) => this.profileImageUrl = url)
+    this.$store.commit(SET_CURRENT_USER, user)
+    await this.$store.dispatch(LOGIN_USER)
+    if (this.$store.state.currentRound) {
+      // Load cart & contributor data for current round
+      this.$store.dispatch(LOAD_USER_INFO)
+      this.$store.dispatch(LOAD_CART)
+      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    }
+  }
+
+  // TODO: Extract into a shared function
+  renderUserAddress(digitsToShow?: number): string {
+    if (this.currentUser?.walletAddress) {
+      const address: string = this.currentUser.walletAddress
+      if (digitsToShow) {
+        const beginDigits: number = Math.ceil(digitsToShow / 2)
+        const endDigits: number = Math.floor(digitsToShow / 2)
+        const begin: string = address.substr(0, 2 + beginDigits)
+        const end: string = address.substr(address.length - endDigits, endDigits)
+        return `${begin}…${end}`
+      }
+      return address
+    }
+    return ''
+  }
+
 
   isRoundFinished(): boolean {
     const { status } = this.$store.state.currentRound
@@ -110,6 +199,7 @@ export default class MatchingFundsModal extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
 
 .contribution-form {
   align-items: center;
