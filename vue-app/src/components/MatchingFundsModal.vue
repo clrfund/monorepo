@@ -58,6 +58,7 @@ import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 import { commify, formatUnits } from '@ethersproject/units'
 
+import { User } from '@/api/user'
 import { ERC20 } from '@/api/abi'
 import { factory } from '@/api/core'
 import { RoundStatus } from '@/api/round'
