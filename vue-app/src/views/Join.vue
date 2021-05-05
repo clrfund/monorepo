@@ -693,7 +693,14 @@ export default class JoinView extends mixins(validationMixin) {
         project: {
           name: 'CLR.Fund',
           tagline: 'A quadratic funding protocol',
-          description: '**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...',
+          description: `**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
+# Derp
+## Derp
+### Derp
+#### Derp
+##### Derp
+
+          `,
           category: 'research',
           problemSpace: 'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
         },
@@ -703,7 +710,11 @@ export default class JoinView extends mixins(validationMixin) {
         },
         team: {
           name: 'clr.fund',
-          description: 'CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...',
+          description: `CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
+# Forr
+## Bar
+## Derp
+`,
           email: 'doge@goodboi.com',
         },
         links: {

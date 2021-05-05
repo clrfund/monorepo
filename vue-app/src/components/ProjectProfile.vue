@@ -22,15 +22,15 @@
       </div>
       <div class="project-section">
         <h2>📖 About the project</h2>
-        <div class="project-description" v-html="descriptionHtml"></div>
+        <markdown :raw="project.description"/>
       </div>
       <div class="project-section">
         <h2>🔧 The problem it solves</h2>
-        <div class="project-description">{{ project.problemSpace }}</div>
+        <markdown :raw="project.problemSpace"/>
       </div>
       <div class="project-section">
         <h2>💰 Funding plans</h2>
-        <div class="project-description">{{ project.plans }}</div>
+        <markdown :raw="project.plans"/>
       </div> 
       <div class="address-box">
         <div>
@@ -47,7 +47,7 @@
       <hr />
       <div v-if="project.teamName" class="team">
         <h2>Brought to you by {{ project.teamName }}</h2>
-        <div class="project-description">{{ project.teamDescription }}</div>
+        <markdown :raw="project.teamDescription"/>
       </div>
     </div>  
     <div v-if="previewMode" class="link-box">
@@ -73,16 +73,18 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { Project } from '@/api/projects'
-import { markdown } from '@/utils/markdown'
 
-@Component export default class ProjectProfile extends Vue {
+import Markdown from '@/components/Markdown.vue'
+
+@Component({
+  components: {
+    Markdown,
+  },
+})
+export default class ProjectProfile extends Vue {
   @Prop() project!: Project
   // @Prop() klerosCurateUrl?: string | null = null
   @Prop() previewMode? = false
-
-  get descriptionHtml(): string {
-    return markdown.render(this.project.description)
-  }
 }
 </script>
 
@@ -161,18 +163,6 @@ import { markdown } from '@/utils/markdown'
     .project-section {
       margin-bottom: 3rem;
       color: #f7f7f7;
-    }
-
-    .project-description {
-      font-size: 1rem;
-      line-height: 150%;
-      word-wrap: break-word;
-
-      ::v-deep {
-        &:first-child {
-          margin-top: 0;
-        }
-      }
     }
 
     .address-box {
