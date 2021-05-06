@@ -14,7 +14,7 @@
           </div>
           <div class="subtitle">You’re almost on board this funding round</div>
           <ul>
-            <li>Your project just needs to go through some final checks. If everything is ok, your project will go live within X days. </li>
+            <li>Your project just needs to go through some final checks. If everything is ok, your project will go live within {{ formatDuration(challengePeriodDuration) }}. </li>
             <li>If your project fails the checks because it doesn't meet the round criteria, we'll let you know by email and return your deposit.</li>
           </ul>
           <div class="btn-container" style="margin-top: 2rem;">
@@ -30,8 +30,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import * as humanizeDuration from 'humanize-duration'
+
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
+
+import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
 
 @Component({
@@ -40,15 +44,25 @@ import { blockExplorer } from '@/api/core'
   components: { ProgressBar, RoundStatusBanner },
 })
 export default class ProjectAdded extends Vue {
+  challengePeriodDuration = 1000000 // TODO some other placeholder?
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
   
   // TODO: Retrieve hash of transaction. 
   // We route to this component, pass hash as queryParam after submission?
   txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
+
+  async created() {
+    const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+    this.challengePeriodDuration = registryInfo.challengePeriodDuration
+  }
   
   get blockExplorerUrl(): string {
     return `${blockExplorer}${this.txHash}`
+  }
+
+  formatDuration(value: number): string {
+    return humanizeDuration(value * 1000, { largest: 2 } )
   }
 }
 
