@@ -72,7 +72,7 @@ export default class IpfsImageUpload extends Vue {
   handleLoadFile(event) {
     this.error = ''
     const data = event.target.files[0]
-    if (data.type.match('image/*')) {
+    if (data && data.type.match('image/*')) {
       const reader = new FileReader()
       reader.onload = (() => ((e) => { this.loadedImageData = e.target.result }))()
       reader.readAsDataURL(data)

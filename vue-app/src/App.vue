@@ -341,6 +341,16 @@ summary:focus {
   visibility: hidden;
 }
 
+.error {
+  color: $error-color;
+  margin-bottom: 0;
+  margin-top: 0.5rem;
+  font-size: 14px;
+  &:before {
+    content: "⚠️ "
+  }
+}
+
 @media (max-width: 900px) {
   #app {
     flex-direction: column;

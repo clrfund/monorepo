@@ -425,7 +425,7 @@
               <div class="inputs">
                 <div class="form-background">
                   <ipfs-image-upload label="Banner image" description="Recommended dimensions: 500px x 300px" :onUpload="handleUpload" formProp="bannerHash"/>
-                  <label for="project-banner-image" class="input-label">Banner image IPFS hash</label>
+                  <label for="project-banner-image" class="input-label pt-1">Banner image IPFS hash</label>
                   <input
                     id="project-banner-image"
                     type="text"
@@ -443,7 +443,7 @@
                 </div>
                 <div class="form-background">
                   <ipfs-image-upload label="Thumbnail image" description="Recommended dimensions: 80px x 80px" :onUpload="handleUpload" formProp="thumbnailHash"/>
-                  <label for="project-thumbnail-image" class="input-label">Thumbnail image IPFS hash</label>
+                  <label for="project-thumbnail-image" class="input-label pt-1">Thumbnail image IPFS hash</label>
                   <input
                     id="project-thumbnail-image"
                     type="text"
@@ -1226,17 +1226,6 @@ export default class JoinView extends mixins(validationMixin) {
   }
   100% {
     transform: rotate(360deg);
-  }
-}
-
-
-.error {
-  color: $error-color;
-  margin-bottom: 0;
-  margin-top: 0.5rem;
-  font-size: 14px;
-  &:before {
-    content: "⚠️ "
   }
 }
 
