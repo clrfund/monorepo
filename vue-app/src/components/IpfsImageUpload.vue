@@ -10,7 +10,14 @@
         @change="handleLoadFile"
         name="image"
       />
-      <button primary="true" type='submit' label='Upload' class="btn-primary" :class="{disabled: loading || error || !loadedImageData}">
+      <button
+        primary="true"
+        type='submit'
+        label='Upload'
+        class="btn-primary"
+        :class="{disabled: loading || error || !loadedImageData}"
+        :disabled="loading || error || !loadedImageData"
+      >
         {{ loading ? "Uploading..." : "Upload"}}
       </button>
     </div>
@@ -28,15 +35,6 @@
         <div v-if="hash" @click="handleRemoveImage" class="btn-white small">Remove image</div>
       </div>
     </div>
-      <div v-if="hash" @click="copyHash" class="copy">
-      <div class="label">
-        IPFS hash <img width="16px" src="@/assets/info.svg" />
-      </div>
-      <div class="hash">
-        <!-- {{ copied ? --> {{ hash }} <!-- : "Copied!"}} -->
-        <img width="16px" src="@/assets/copy.svg" />
-        </div>
-      </div>
     <p v-if="error" class="error">{{ error }}</p>
   </form>
 </template>
