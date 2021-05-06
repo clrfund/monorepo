@@ -645,7 +645,6 @@ export default class JoinView extends mixins(validationMixin) {
       website: '',
       twitter: '',
       discord: '',
-      hasLink: false,
     },
     image: {
       bannerHash: '',
@@ -693,7 +692,8 @@ export default class JoinView extends mixins(validationMixin) {
     let isValid = false
     const links = Object.keys(this.form.links)
     for (const link of links) {
-      const linkData = this.$v.form.links[link]
+      const linkData = this.$v.form.links?.[link]
+      if (!linkData) return false
       const isInvalid = linkData.$invalid
       const isEmpty = linkData.$model.length === 0
       if (isInvalid) {
