@@ -142,7 +142,7 @@
                   <label for="project-category" class="input-label">Category
                     <p class="input-description">Choose the best fit.</p>
                   </label>
-                  <form class="radio-row" id="category-radio" tabindex="0">
+                  <form class="radio-row" id="category-radio">
                     <input
                       id="category-content"
                       type="radio"
@@ -1124,42 +1124,52 @@ export default class JoinView extends mixins(validationMixin) {
 
 .radio-row {
   display: flex;
-  flex-wrap: wrap;
   margin-top: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
-  border-radius: 0;
-  gap: -1px;
+  box-sizing: border-box;
+  border: 2px solid $button-color;
+  border-radius: 1rem;
+  overflow: hidden;
+  width: fit-content;
   input {
-    display: none;
+    position: fixed;
+    opacity: 0;
+    pointer-events: none;
   }
   input[type="radio"]:checked+label {
     background: $clr-pink;
     font-weight: 600;
   }
-
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+    flex-direction: column;
+    text-align: center;
+  }
 }
 
 .radio-btn {
   box-sizing: border-box;
-  border: 2px solid $button-color;
   color: white;
   font-size: 16px;
   line-height: 24px;
   align-items: center;
   padding: 0.5rem 1rem;
   margin-left: -1px;
-  &:first-of-type {
-    border-radius: 16px 0 0 16px;
-    margin-left: 0;
+
+  border-right: 2px solid $button-color;
+  border-bottom: none;
+  @media (max-width: $breakpoint-m) {
+    border-right: none;
+    border-bottom: 2px solid $button-color;
   }
   &:last-of-type {
-    border-radius: 0 16px 16px 0;
+    border-right: none;
+    border-bottom: none;
   }
+
   &:hover {
     opacity: 0.8;
     background: $bg-secondary-color;
-    transform: scale(1.04);
+    transform: scale(1.02);
     cursor: pointer;
   }
   &:active {
