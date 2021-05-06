@@ -68,9 +68,11 @@
         </router-link>
       </div>
       <div class="form-area">
-        <div v-if="currentStep === 5" class="application">
-          <div class="btn-primary" style="width: fit-content;" @click="togglePreview">{{ showSummaryPreview ? 'Close' : 'Preview' }}</div>
-          <project-profile v-if="showSummaryPreview" :project="projectInterface" :previewMode="true" class="project-details" />
+        <div v-if="currentStep === 5">
+          <div class="toggle-tabs">
+            <p class="tab" id="review" :class="{'naked-link': showSummaryPreview}" @click="handleToggleTab">Review items</p>
+            <p class="tab" id="preview" :class="{'naked-link': !showSummaryPreview}" @click="handleToggleTab">Preview listing</p>
+          </div>
         </div>
         <div class="application">
           <form>
@@ -433,113 +435,117 @@
             </div>
           </form>
           <div v-if="currentStep === 5" id="summary">
-            <h2 class="step-title">Review your information</h2>
-            <warning style="margin-bottom: 1rem;" message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application." /> 
-            <div class="form-background">
-              <div class="summary-section-header">
-                <h3 class="step-subtitle">About the project</h3>
-                <router-link to="/join/project" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+            <project-profile v-if="showSummaryPreview" :project="projectInterface" :previewMode="true" class="project-details" />
+            <div v-if="!showSummaryPreview">
+              <h2 class="step-title">Review your information</h2>
+              <warning style="margin-bottom: 1rem;" message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application." /> 
+              <div class="form-background">
+                <div class="summary-section-header">
+                  <h3 class="step-subtitle">About the project</h3>
+                  <router-link to="/join/project" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Name</h4>
+                  <div class="data">{{form.project.name}}</div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Tagline</h4>
+                  <div class="data">{{form.project.tagline}} </div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Description</h4>
+                  <div class="data">{{form.project.description}} </div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Category</h4>
+                  <div class="data">{{form.project.category}} </div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Problem space</h4>
+                  <div class="data">{{form.project.problemSpace}} </div>
+                </div>
               </div>
-              <div class="summary">
-                <h4 class="read-only-title">Name</h4>
-                <div class="data">{{form.project.name}}</div>
+              <div class="form-background">
+                <div class="summary-section-header">
+                  <h3 class="step-subtitle">Funding details</h3>
+                  <router-link to="/join/fund" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Ethereum address</h4>
+                  <div class="data">{{form.fund.address}} <a :href="'https://etherscan.io/address/' + form.fund.address" target="_blank">View on Etherscan</a></div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Funding plans</h4>
+                  <div class="data">{{form.fund.plans}} </div>
+                </div>
               </div>
-              <div class="summary">
-                <h4 class="read-only-title">Tagline</h4>
-                <div class="data">{{form.project.tagline}} </div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Description</h4>
-                <div class="data">{{form.project.description}} </div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Category</h4>
-                <div class="data">{{form.project.category}} </div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Problem space</h4>
-                <div class="data">{{form.project.problemSpace}} </div>
+              <div class="form-background">
+                <div class="summary-section-header">
+                  <h3 class="step-subtitle">Team details</h3>
+                  <router-link to="/join/team" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Contact email</h4>
+                  <div class="data">{{form.team.email}} </div>
+                  <div class="input-notice">This information won't be added to the smart contract. It won't cost anything to edit and will only be used to contact you about the round and/or your project.</div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Team name</h4>
+                  <div class="data">{{form.team.name}} </div>
+                  <div class="data" v-if="!form.team.name">Not provided</div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Team description</h4>
+                  <div class="data">{{form.team.description}} </div>
+                  <div class="data" v-if="!form.team.description">Not provided</div>
+                </div>
+              </div>  
+              <div class="form-background">
+                <div class="summary-section-header">
+                  <h3 class="step-subtitle">Links</h3>
+                  <router-link to="/join/links" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">GitHub</h4>
+                  <div class="data">{{form.links.github}} <a v-if="form.links.github" :href=form.links.github><img width="16px" src="@/assets/link.svg" /></a></div>
+                  <div class="data" v-if="!form.links.github">Not provided</div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Twitter</h4>
+                  <div class="data">{{form.links.twitter}} <a v-if="form.links.twitter" :href=form.links.twitter><img width="16px" src="@/assets/link.svg" /></a></div>
+                  <div class="data" v-if="!form.links.twitter">Not provided</div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Website</h4>
+                  <div class="data" key="">{{form.links.website}} <a v-if="form.links.website" :href=form.links.website><img width="16px" src="@/assets/link.svg" /></a></div>
+                  <div class="data" v-if="!form.links.website">Not provided</div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Discord</h4>
+                  <div class="data">{{form.links.discord}} <a v-if="form.links.discord" :href=form.links.discord><img width="16px" src="@/assets/link.svg" /></a></div>
+                  <div class="data" v-if="!form.links.discord">Not provided</div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Radicle</h4>
+                  <div class="data">{{form.links.radicle}} <a v-if="form.links.radicle" :href=form.links.radicle><img width="16px" src="@/assets/link.svg" /></a></div>
+                  <div class="data" v-if="!form.links.radicle">Not provided</div>
+                </div>
+              </div>  
+              <div class="form-background">
+                <div class="summary-section-header">
+                  <h3 class="step-subtitle">Images</h3>
+                  <router-link to="/join/image" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Banner</h4>
+                  <div class="data">{{form.image.bannerHash}} </div>
+                </div>
+                <div class="summary">
+                  <h4 class="read-only-title">Thumbnail</h4>
+                  <div class="data">{{form.image.thumbnailHash}} </div>
+                </div>
               </div>
             </div>
-            <div class="form-background">
-              <div class="summary-section-header">
-                <h3 class="step-subtitle">Funding details</h3>
-                <router-link to="/join/fund" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Ethereum address</h4>
-                <div class="data">{{form.fund.address}} <a :href="'https://etherscan.io/address/' + form.fund.address" target="_blank">View on Etherscan</a></div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Funding plans</h4>
-                <div class="data">{{form.fund.plans}} </div>
-              </div>
-            </div>
-            <div class="form-background">
-              <div class="summary-section-header">
-                <h3 class="step-subtitle">Team details</h3>
-                <router-link to="/join/team" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Contact email</h4>
-                <div class="data">{{form.team.email}} </div>
-                <div class="input-notice">This information won't be added to the smart contract. It won't cost anything to edit and will only be used to contact you about the round and/or your project.</div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Team name</h4>
-                <div class="data">{{form.team.name}} </div>
-                <div class="data" v-if="!form.team.name">Not provided</div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Team description</h4>
-                <div class="data">{{form.team.description}} </div>
-                <div class="data" v-if="!form.team.description">Not provided</div>
-              </div>
-            </div>  
-            <div class="form-background">
-              <div class="summary-section-header">
-                <h3 class="step-subtitle">Links</h3>
-                <router-link to="/join/links" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">GitHub</h4>
-                <div class="data">{{form.links.github}} <a v-if="form.links.github" :href=form.links.github><img width="16px" src="@/assets/link.svg" /></a></div>
-                <div class="data" v-if="!form.links.github">Not provided</div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Twitter</h4>
-                <div class="data">{{form.links.twitter}} <a v-if="form.links.twitter" :href=form.links.twitter><img width="16px" src="@/assets/link.svg" /></a></div>
-                <div class="data" v-if="!form.links.twitter">Not provided</div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Website</h4>
-                <div class="data" key="">{{form.links.website}} <a v-if="form.links.website" :href=form.links.website><img width="16px" src="@/assets/link.svg" /></a></div>
-                <div class="data" v-if="!form.links.website">Not provided</div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Discord</h4>
-                <div class="data">{{form.links.discord}} <a v-if="form.links.discord" :href=form.links.discord><img width="16px" src="@/assets/link.svg" /></a></div>
-                <div class="data" v-if="!form.links.discord">Not provided</div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Radicle</h4>
-                <div class="data">{{form.links.radicle}} <a v-if="form.links.radicle" :href=form.links.radicle><img width="16px" src="@/assets/link.svg" /></a></div>
-                <div class="data" v-if="!form.links.radicle">Not provided</div>
-              </div>
-            </div>  
-            <div class="form-background">
-              <div class="summary-section-header">
-                <h3 class="step-subtitle">Images</h3>
-                <router-link to="/join/image" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
-              </div>
-               <div class="summary">
-                <h4 class="read-only-title">Banner</h4>
-                <div class="data">{{form.image.bannerHash}} </div>
-              </div>
-              <div class="summary">
-                <h4 class="read-only-title">Thumbnail</h4>
-                <div class="data">{{form.image.thumbnailHash}} </div>
-              </div>            </div>  
             <!-- {{form}}-->
             <!--TODO: this will be an on-chain transaction so double check all info and links are correct as it will cost you you to change it -->
           </div>
@@ -695,59 +701,50 @@ export default class JoinView extends mixins(validationMixin) {
       this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
     }
 
-    //     if (process.env.NODE_ENV === 'development') {
-    //       this.form = {
-    //         project: {
-    //           name: 'CLR.Fund',
-    //           tagline: 'A quadratic funding protocol',
-    //           description: `**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
-    // # Derp
+    // if (process.env.NODE_ENV === 'development') {
+    //   this.form = {
+    //     project: {
+    //       name: 'CLR.Fund',
+    //       tagline: 'A quadratic funding protocol',
+    //       description: '**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...\n# Derp\n\nasdfasdfasdf\n\n## Derp\n\nasdfsdasdfsdf\n### Derp\n\nasdfasdfsdaf\n#### Derp\nasdfasdf\n##### Derp',
+    //       category: 'research',
+    //       problemSpace: 'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
+    //     },
+    //     fund: {
+    //       address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
+    //       plans: 'Create much wow, when lambo?',
+    //     },
+    //     team: {
+    //       name: 'clr.fund',
+    //       description: 'clr.fund team **rules**',
+    //       email: 'doge@goodboi.com',
+    //     },
+    //     links: {
+    //       github: '',
+    //       radicle: '',
+    //       website: 'https://clr.fund',
+    //       twitter: '',
+    //       discord: '',
+    //       hasLink: true,
+    //     },
+    //     image: {
+    //       bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+    //       thumbnailHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+    //     },
+    //     furthestStep: 5,
+    //   }
+    //   this.saveFormData()
+    // }
+  }
 
-    // asdfasdfasdf
-
-    // ## Derp
-
-    // asdfsdasdfsdf
-    // ### Derp
-
-    // asdfasdfsdaf
-    // #### Derp
-    // asdfasdf
-    // ##### Derp
-
-    //           `,
-    //           category: 'research',
-    //           problemSpace: 'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
-    //         },
-    //         fund: {
-    //           address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
-    //           plans: 'Create much wow, when lambo?',
-    //         },
-    //         team: {
-    //           name: 'clr.fund',
-    //           description: `CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
-    // # Forr
-    // ## Bar
-    // ## Derp
-    // `,
-    //           email: 'doge@goodboi.com',
-    //         },
-    //         links: {
-    //           github: '',
-    //           radicle: '',
-    //           website: 'https://clr.fund',
-    //           twitter: '',
-    //           discord: '',
-    //           hasLink: true,
-    //         },
-    //         image: {
-    //           bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    //           thumbnailHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    //         },
-    //         furthestStep: 5,
-    //       }
-    //       this.saveFormData()
-    //     }
+  handleToggleTab(event): void {
+    const { id } = event.target
+    // Guard clause: 
+    if (
+      (!this.showSummaryPreview && id === 'review') ||
+      (this.showSummaryPreview && id === 'preview')
+    ) return
+    this.showSummaryPreview = !this.showSummaryPreview
   }
 
   handleLinkUpdate(): void {
@@ -775,7 +772,7 @@ export default class JoinView extends mixins(validationMixin) {
     if (updateFurthest && this.currentStep + 1 > this.form.furthestStep) {
       this.form.furthestStep = this.currentStep + 1
     }
-    if (typeof this.currentStep !== 'number') { return }
+    if (typeof this.currentStep !== 'number') return
     this.$store.commit(SET_RECIPIENT_DATA, {
       updatedData: this.form,
       step: this.steps[this.currentStep],
@@ -815,10 +812,6 @@ export default class JoinView extends mixins(validationMixin) {
 
   get furthestStep() {
     return this.form.furthestStep
-  }
-
-  togglePreview(): void {
-    this.showSummaryPreview = !this.showSummaryPreview
   }
 } 
 </script>
@@ -1233,6 +1226,21 @@ export default class JoinView extends mixins(validationMixin) {
   margin-bottom: 1.5rem;
   border-bottom: 1px solid $highlight-color;
   padding-bottom: 0.5rem;
+}
+
+.toggle-tabs {
+  display: flex;
+  gap: 2rem;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+    gap: 0;
+  }
+  .naked-link {
+    text-decoration: underline;
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
 
 .step-subtitle {
