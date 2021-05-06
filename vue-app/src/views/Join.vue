@@ -316,8 +316,7 @@
             </div>
             <div v-if="currentStep === 3">
               <h2 class="step-title">Links</h2>
-              <p>Give contributors some links to check out to learn more about your project.</p>
-              <p class="input-description" :class="{ error: !isLinkStepValid() }">Must provide at least one</p>
+              <p>Give contributors some links to check out to learn more about your project. Provide at least one.</p>
               <div class="inputs">
                 <div class="form-background">
                   <label for="links-github" class="input-label">GitHub</label>
