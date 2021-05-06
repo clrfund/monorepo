@@ -121,7 +121,6 @@
                   <label for="project-description" class="input-label">
                     Description
                     <p class="input-description">Markdown supported.</p>
-                    <!-- TODO: actually support markdown in input -->
                   </label>
                   <textarea
                     id="project-description"
@@ -132,7 +131,8 @@
                       invalid: $v.form.project.description.$error
                     }"
                   />
-                  <div v-html="descriptionHtml" />
+                  <p v-if="form.project.description" class="input-label pt-1">Preview:</p>
+                  <markdown :raw="form.project.description"/>
                   <p :class="{
                     error: true,
                     hidden: !$v.form.project.description.$error
@@ -140,7 +140,7 @@
                 </div>
                 <div class="form-background">
                   <label for="project-category" class="input-label">Category
-                    <p class="input-description">Choose the best fit</p>
+                    <p class="input-description">Choose the best fit.</p>
                   </label>
                   <form class="radio-row" id="category-radio" tabindex="0">
                     <input
@@ -199,7 +199,7 @@
                 </div>
                 <div class="form-background">
                   <label for="project-problem-space" class="input-label">Problem space</label>
-                  <p class="input-description">Explain the problems you're trying to solve.</p>
+                  <p class="input-description">Explain the problems you're trying to solve. Markdown supported.</p>
                   <textarea
                     id="project-problem-space"
                     placeholder="example: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
@@ -213,6 +213,8 @@
                     error: true,
                     hidden: !$v.form.project.problemSpace.$error
                   }">Explain the problem your project solves</p>
+                  <p v-if="form.project.description" class="input-label pt-1">Preview:</p>
+                  <markdown :raw="form.project.problemSpace"/>
                 </div>
               </div>
             </div>    
@@ -239,7 +241,7 @@
                 </div>
                 <div class="form-background">
                   <label for="fund-plans" class="input-label">How will you spend your funding?</label>
-                  <p class="input-description">Potential contributors might convert based on your specific funding plans.</p>
+                  <p class="input-description">Potential contributors might convert based on your specific funding plans. Markdown supported.</p>
                   <textarea
                     id="fund-plans"
                     placeholder="example: on our roadmap..."
@@ -253,6 +255,8 @@
                     error: true,
                     hidden: !$v.form.fund.plans.$error
                   }">Let potential contributors know what plans you have for their donations.</p>
+                  <p v-if="form.fund.plans" class="input-label pt-1">Preview:</p>
+                  <markdown :raw="form.fund.plans"/>
                 </div>
               </div>
             </div>
@@ -295,7 +299,7 @@
                 </div>
                 <div class="form-background">
                   <label for="team-desc" class="input-label">Description (optional)</label>
-                  <p class="input-description">If different to project description.</p>
+                  <p class="input-description">If different to project description. Markdown supported.</p>
                   <textarea
                     id="team-desc"
                     placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
@@ -305,12 +309,14 @@
                       invalid: $v.form.team.description.$error
                     }"
                   />
+                  <p v-if="form.team.description" class="input-label pt-1">Preview:</p>
+                  <markdown :raw="form.team.description"/>
                 </div>
               </div>
             </div>
             <div v-if="currentStep === 3">
               <h2 class="step-title">Links</h2>
-              <p>Give contributors some links to check out to learn more about your project. Provide at least 1 link.</p>
+              <p>Give contributors some links to check out to learn more about your project.</p>
               <p class="input-description" :class="{
                 error: $v.form.links.hasLink.$invalid && $v.form.links.$anyDirty
               }">Must provide at least one</p>
@@ -320,7 +326,7 @@
                   <input
                     id="links-github" 
                     type="link" 
-                    placeholder="example: github.com/ethereum/clrfund" 
+                    placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.github.$model"
                     @change="handleLinkUpdate"
@@ -340,7 +346,7 @@
                   <input
                     id="links-radicle" 
                     type="link" 
-                    placeholder="example: radicle.com/ethereum/clrfund" 
+                    placeholder="example: https://radicle.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.radicle.$model"
                     @change="handleLinkUpdate"
@@ -359,7 +365,7 @@
                   <input
                     id="links-website" 
                     type="link" 
-                    placeholder="example: website.com/ethereum/clrfund" 
+                    placeholder="example: https://website.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.website.$model"
                     @change="handleLinkUpdate"
@@ -378,7 +384,7 @@
                   <input
                     id="links-twitter" 
                     type="link" 
-                    placeholder="example: github.com/ethereum/clrfund" 
+                    placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.twitter.$model"
                     @change="handleLinkUpdate"
@@ -397,7 +403,7 @@
                   <input
                     id="links-discord" 
                     type="link" 
-                    placeholder="example: github.com/ethereum/clrfund" 
+                    placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.discord.$model"
                     @change="handleLinkUpdate"
@@ -418,10 +424,10 @@
               <p>We'll upload your images to IPFS, a decentralized storage platform.</p>
               <div class="inputs">
                 <div class="form-background">
-                  <ipfs-form label="Banner image" description="Recommended dimensions: 500px x 300px" :onUpload="handleUpload" formProp="bannerHash"/>
+                  <ipfs-image-upload label="Banner image" description="Recommended dimensions: 500px x 300px" :onUpload="handleUpload" formProp="bannerHash"/>
                 </div>
                 <div class="form-background">
-                  <ipfs-form label="Thumbnail image" description="Recommended dimensions: 80px x 80px" :onUpload="handleUpload" formProp="thumbnailHash"/>
+                  <ipfs-image-upload label="Thumbnail image" description="Recommended dimensions: 80px x 80px" :onUpload="handleUpload" formProp="thumbnailHash"/>
                 </div>
               </div>
             </div>
@@ -556,21 +562,22 @@ import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
-import IpfsForm from '@/components/IpfsForm.vue'
+import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
+import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import Warning from '@/components/Warning.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import { Project } from '@/api/projects'
-import { markdown } from '@/utils/markdown'
 
 @Component({
   components: {
     LayoutSteps,
     ProgressBar,
     ButtonRow,
-    IpfsForm,
+    IpfsImageUpload,
+    Markdown,
     ProjectProfile,
     Warning,
   },
@@ -695,9 +702,17 @@ export default class JoinView extends mixins(validationMixin) {
           tagline: 'A quadratic funding protocol',
           description: `**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
 # Derp
+
+asdfasdfasdf
+
 ## Derp
+
+asdfsdasdfsdf
 ### Derp
+
+asdfasdfsdaf
 #### Derp
+asdfasdf
 ##### Derp
 
           `,
@@ -768,11 +783,7 @@ export default class JoinView extends mixins(validationMixin) {
     })
   }
 
-  get descriptionHtml(): string {
-    return markdown.render(this.$v.form.project?.description.$model)
-  }
-
-  // Callback from IpfsForm component
+  // Callback from IpfsImageUpload component
   handleUpload(key, value) {
     this.form.image[key] = value
     this.saveFormData(false)
@@ -1262,5 +1273,8 @@ export default class JoinView extends mixins(validationMixin) {
     transform: scale(1);
     cursor: not-allowed;
   }  
+}
+.pt-1 {
+  padding-top: 1rem;
 }
 </style>
