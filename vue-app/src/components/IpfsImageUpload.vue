@@ -18,7 +18,7 @@
       <loader v-if="loading" />
       <img
         v-if="hash"
-        :src="bannerUrl"
+        :src="imageUrl"
         alt=""
         :class="{
           'image-preview': hash,
@@ -44,7 +44,7 @@ import IPFS from 'ipfs-mini'
 @Component({
   components: { Loader },
 })
-export default class IpfsForm extends Vue {
+export default class IpfsImageUpload extends Vue {
   @Prop() label!: string
   @Prop() description!: string
   @Prop() formProp!: string
@@ -114,7 +114,7 @@ export default class IpfsForm extends Vue {
     }
   }
 
-  get bannerUrl(): string {
+  get imageUrl(): string {
     return `${ipfsGatewayUrl}/ipfs/${this.hash}`
   }
 }
