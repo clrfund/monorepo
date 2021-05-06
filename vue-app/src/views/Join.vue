@@ -691,63 +691,63 @@ export default class JoinView extends mixins(validationMixin) {
     // "Next" button restricts forward navigation via validation, and
     // eventually updates the `furthestStep` tracker when valid and clicked/tapped.
     // If URL step is ahead of furthest, navigate back to furthest
-    // if (this.currentStep > this.form.furthestStep) {
-    //   this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
-    // }
-
-    if (process.env.NODE_ENV === 'development') {
-      this.form = {
-        project: {
-          name: 'CLR.Fund',
-          tagline: 'A quadratic funding protocol',
-          description: `**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
-# Derp
-
-asdfasdfasdf
-
-## Derp
-
-asdfsdasdfsdf
-### Derp
-
-asdfasdfsdaf
-#### Derp
-asdfasdf
-##### Derp
-
-          `,
-          category: 'research',
-          problemSpace: 'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
-        },
-        fund: {
-          address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
-          plans: 'Create much wow, when lambo?',
-        },
-        team: {
-          name: 'clr.fund',
-          description: `CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
-# Forr
-## Bar
-## Derp
-`,
-          email: 'doge@goodboi.com',
-        },
-        links: {
-          github: '',
-          radicle: '',
-          website: 'https://clr.fund',
-          twitter: '',
-          discord: '',
-          hasLink: true,
-        },
-        image: {
-          bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-          thumbnailHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-        },
-        furthestStep: 5,
-      }
-      this.saveFormData()
+    if (this.currentStep > this.form.furthestStep) {
+      this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
     }
+
+    //     if (process.env.NODE_ENV === 'development') {
+    //       this.form = {
+    //         project: {
+    //           name: 'CLR.Fund',
+    //           tagline: 'A quadratic funding protocol',
+    //           description: `**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
+    // # Derp
+
+    // asdfasdfasdf
+
+    // ## Derp
+
+    // asdfsdasdfsdf
+    // ### Derp
+
+    // asdfasdfsdaf
+    // #### Derp
+    // asdfasdf
+    // ##### Derp
+
+    //           `,
+    //           category: 'research',
+    //           problemSpace: 'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
+    //         },
+    //         fund: {
+    //           address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
+    //           plans: 'Create much wow, when lambo?',
+    //         },
+    //         team: {
+    //           name: 'clr.fund',
+    //           description: `CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
+    // # Forr
+    // ## Bar
+    // ## Derp
+    // `,
+    //           email: 'doge@goodboi.com',
+    //         },
+    //         links: {
+    //           github: '',
+    //           radicle: '',
+    //           website: 'https://clr.fund',
+    //           twitter: '',
+    //           discord: '',
+    //           hasLink: true,
+    //         },
+    //         image: {
+    //           bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+    //           thumbnailHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+    //         },
+    //         furthestStep: 5,
+    //       }
+    //       this.saveFormData()
+    //     }
   }
 
   handleLinkUpdate(): void {
