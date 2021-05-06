@@ -1169,7 +1169,7 @@ export default class JoinView extends mixins(validationMixin) {
   &:hover {
     opacity: 0.8;
     background: $bg-secondary-color;
-    transform: scale(1.02);
+    transform: scale(1.04);
     cursor: pointer;
   }
   &:active {
