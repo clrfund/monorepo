@@ -9,18 +9,15 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>Project added!</h1>
-            <a v-if="txHash" :href="blockExplorerUrl" target="_blank">View on Etherscan ↗</a>
+            <h1>Project submitted!</h1>
+            <a v-if="txHash" :href="blockExplorerUrl" target="_blank"><div class="etherscan-btn"><img class="icon" style="width: 16px" src="@/assets/etherscan.svg" />Etherscan ↗</div></a>
           </div>
-          <div class="subtitle">You’re on board this funding round!</div>
-          <p>Your project will be added to the next round and be visible in a few minutes. Check back soon to see your live project.</p>
-          <div class="contact">
-            <div>
-              For round updates, be sure to follow us on Twitter:
-              <a href="https://twitter.com/ethdotorg" target="_blank">@ethdotorg</a>
-            </div>
-          </div>
-          <div class="btn-container">
+          <div class="subtitle">You’re almost on board this funding round</div>
+          <ul>
+            <li>Your project just needs to go through some final checks. If everything is ok, your project will go live within X days. </li>
+            <li>If your project fails the checks because it doesn't meet the round criteria, we'll let you know by email and return your deposit.</li>
+          </ul>
+          <div class="btn-container" style="margin-top: 2rem;">
             <router-link to="/projects" class="btn-primary">View projects</router-link>
             <router-link to="/" class="btn-secondary">Go home</router-link>
           </div>
@@ -70,7 +67,8 @@ h1 {
   font-style: normal;
   font-weight: bold;
   font-size: 40px;
-  line-height: 120%;
+  line-height: 150%;
+  margin: 0;
 }
 
 h2 {
@@ -84,6 +82,16 @@ p {
   font-size: 16px;
   line-height: 30px;
 }
+
+li {
+  font-size: 16px;
+  line-height: 30px;
+}
+
+ul {
+  padding-left: 1.5rem;
+}
+
 
 .gradient {
   background: $clr-pink-dark-gradient;
@@ -102,14 +110,15 @@ p {
     height: calc(100vh - 113px);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
+      padding-bottom: 16rem;
     }
     
     img {
       position: absolute;
       bottom: 0;
-      right: -128px;
+      right: 0;
       mix-blend-mode: exclusion;
-      width: 88%;
+      width: 66%;
       @media (max-width: $breakpoint-m) {
         right: 0;
         width: 100%;
@@ -130,27 +139,23 @@ p {
 
       .flex-title {
         display: flex;
-        justify-content: space-between;
+        gap: 0.5rem;
         align-items: center;
         margin-bottom: 3rem;
-        @media (max-width: $breakpoint-m) {
-          align-items: flex-start;
-          flex-direction: column;
-        }
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+
+        img {
+          width: 1rem;
+          height: 1rem;
+          position: relative;
+          right: 0;
+      }
       }
     }
   }
 }
 
-.contact {
-  background: #191623E6;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin: 2rem 0rem;
-  border: 1px solid black;
-  display: flex;
-  gap: 0.5rem;  
-}
 
 .subtitle {
   font-size: 1.25rem;
@@ -159,6 +164,7 @@ p {
 .icon {
   width: 1rem;
   height: 1rem;
+  position: relative;
 }
 
 

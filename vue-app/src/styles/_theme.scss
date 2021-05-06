@@ -44,6 +44,24 @@
 
 }
 
+.etherscan-btn {
+  background: #fff;
+  box-shadow: $box-shadow;
+  display: flex;
+  gap: 0.5rem;
+  color: $bg-primary-color;
+  border-radius: 32px;
+  padding: 0.5rem;
+  font-size: 14px;
+  border: 1px solid $bg-light-color;
+  font-weight: 500;
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+    cursor: pointer;
+  }
+}
+
 .btn-white {
   border: 2px solid white;
   color: white;
