@@ -15,7 +15,7 @@ export default class Transaction extends Vue {
   @Prop()
   raw!: string
 
-  get body(): string | null {
+  get body(): string {
     return markdown.render(this.raw)
   }
 }
@@ -25,14 +25,10 @@ export default class Transaction extends Vue {
 
 .markdown {
   ::v-deep {
-    h1 { 
-      font-size: 1.25em;
-    }
-    h2 { 
-      font-size: 1.2em;
-    }
-    h3, h4, h5, h6 { 
-      font-size: 1.1em;
+    h1, h2, h3, h4, h5, h6 { 
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 1.5rem 0;
     }
   }
 }
