@@ -127,7 +127,7 @@ export default class Landing extends Vue {
   created() {
     const startTime = this.$store.state.currentRound.startTime
     this.isRoundClosed = hasDateElapsed(startTime)
-    console.log(this.isRoundClosed)
+    console.log(this.isRoundClosed) /* eslint-disable-line no-console */
   }
 
   scrollToHowItWorks() {
