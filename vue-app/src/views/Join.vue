@@ -1010,6 +1010,9 @@ export default class JoinView extends mixins(validationMixin) {
   font-size: 1.5rem;
   margin-top: 1rem;
   font-weight: 600;
+  &:first-of-type {
+    margin-top: 0;
+  }
 }
 
 .row {
