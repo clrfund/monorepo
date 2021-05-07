@@ -35,6 +35,7 @@ export default class Info extends Vue {
     @media (max-width: $breakpoint-m) {
     flex-direction: column;
     padding-bottom: 1rem;
+    align-items: flex-start;
   }
 }
 
