@@ -14,7 +14,7 @@
           </div>
           <div class="subtitle">You’re almost on board this funding round</div>
           <ul>
-            <li>Your project just needs to go through some final checks. If everything is ok, your project will go live within {{ formatDuration(challengePeriodDuration) }}. </li>
+            <li>Your project just needs to go through some final checks. If everything is ok, your project will go live within {{ challengePeriodDuration === null ? '..' : formatDuration(challengePeriodDuration) }}. </li>
             <li>If your project fails the checks because it doesn't meet the round criteria, we'll let you know by email and return your deposit.</li>
           </ul>
           <div class="btn-container" style="margin-top: 2rem;">
@@ -44,7 +44,7 @@ import { blockExplorer } from '@/api/core'
   components: { ProgressBar, RoundStatusBanner },
 })
 export default class ProjectAdded extends Vue {
-  challengePeriodDuration = 1000000 // TODO some other placeholder?
+  challengePeriodDuration: number | null = null
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
   
@@ -62,7 +62,7 @@ export default class ProjectAdded extends Vue {
   }
 
   formatDuration(value: number): string {
-    return humanizeDuration(value * 1000, { largest: 2 } )
+    return humanizeDuration(value * 1000, { largest: 1 } )
   }
 }
 
