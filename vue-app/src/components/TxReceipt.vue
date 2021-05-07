@@ -26,8 +26,8 @@ import { blockExplorer } from '@/api/core'
 })
 export default class TxReceipt extends Vue { 
   @Prop() message!: string
-    pending = true
-    success = false
+    pending = false
+    success = true
 
         txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
         async copyAddress(): Promise<void> {
@@ -95,7 +95,7 @@ export default class TxReceipt extends Vue {
     height: 0.75rem;
     padding: 0.25rem;
     margin-right: 0.25rem;
-    background: $clr-green;
+    background: $clr-pink-light-gradient;
     border-radius: 2rem;
 }
 
