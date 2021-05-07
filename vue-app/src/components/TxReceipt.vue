@@ -1,13 +1,15 @@
 <template>
   <div class="etherscan-btn">
-      <loader v-if="pending" class="pending" />
-      <!-- TODO: add tooltip for pending -->
-      <img class="success" v-if="success" src="@/assets/checkmark.svg" />
-      {{message}}
-      <p class="hash">{{ txHash || renderTxHash() }}</p>
+      <div class="status-label-address">
+        <loader v-if="pending" class="pending" />
+        <!-- TODO: add tooltip for pending -->
+        <img class="success" v-if="success" src="@/assets/checkmark.svg" />
+        <!-- <p class="hash-label">TX</p> -->
+        <p class="hash">{{renderTxHash(8)}}</p>
+      </div>
       <div class="actions">
-        <a :href="'https://etherscan.io/tx/' + txHash"><img class="icon" src="@/assets/etherscan.svg" /></a>
-        <img @click="copyAddress" class="icon" src="@/assets/copy.svg" />
+        <a style="padding: 0; margin: 0;" :href="'https://etherscan.io/tx/' + txHash" target="_blank" title="View on Etherscan"><img class="icon" src="@/assets/etherscan.svg" /></a>
+        <div @click="copyAddress" class="icon"><img style="width: 100%;" src="@/assets/copy.svg" /></div>
       </div>
   </div>
 </template>
@@ -24,8 +26,8 @@ import { blockExplorer } from '@/api/core'
 })
 export default class TxReceipt extends Vue { 
   @Prop() message!: string
-    pending = false
-    success = true
+    pending = true
+    success = false
 
         txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
         async copyAddress(): Promise<void> {
@@ -64,10 +66,11 @@ export default class TxReceipt extends Vue {
 
 .icon {
     width: 1rem;
+    height: 1rem;
     padding: 0.25rem;
+    cursor: pointer;
     &:hover {
-        background: $bg-light-color;
-        opacity: 0.8;
+        background: $clr-pink-light-gradient;
         border-radius: 16px;
     }
     
@@ -76,12 +79,22 @@ export default class TxReceipt extends Vue {
 .hash {
     color: #fff;
     margin: 0;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 500;
 }
+
+/* .hash-label {
+    opacity: 0.5;
+    margin: 0;
+    font-size: 12px;
+} */
 
 .success {
     width: 0.75rem;
     height: 0.75rem;
     padding: 0.25rem;
+    margin-right: 0.25rem;
     background: $clr-green;
     border-radius: 2rem;
 }
@@ -89,28 +102,33 @@ export default class TxReceipt extends Vue {
 .actions {
     display: flex;
     gap: 0.25rem;
+    height: 1.5rem;
+}
+
+.status-label-address {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
 }
 
 .etherscan-btn {
-  background: $bg-secondary-color;
+  background: $clr-pink-light-gradient-inactive;
   box-shadow: $box-shadow;
   justify-content: space-between;
   align-items: center;
   display: flex;
   gap: 0.5rem;
-  color: $bg-primary-color;
   border-radius: 32px;
   padding: 0.25rem;
   padding-left: 0.5rem;
-  font-size: 14px;
-  border: 1px solid $bg-light-color;
+  
   font-weight: 500;
-  margin: 1rem;
+  margin-bottom: 2rem;
+  width: fit-content;
 }
 
 .pending {
     margin: 0.25rem;
-    margin-left: 0rem;
     padding: 0;
     width: 1rem;
     height: 1rem;
