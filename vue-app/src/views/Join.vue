@@ -70,8 +70,8 @@
       <div class="form-area">
         <div v-if="currentStep === 5">
           <div class="toggle-tabs">
-            <p class="tab" id="review" :class="{'naked-link': showSummaryPreview}" @click="handleToggleTab">Review items</p>
-            <p class="tab" id="preview" :class="{'naked-link': !showSummaryPreview}" @click="handleToggleTab">Preview listing</p>
+            <p class="tab" id="review" :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'" @click="handleToggleTab">Review info</p>
+            <p class="tab" id="preview" :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'" @click="handleToggleTab">Preview project</p>
           </div>
         </div>
         <div class="application">
@@ -1231,15 +1231,27 @@ export default class JoinView extends mixins(validationMixin) {
 .toggle-tabs {
   display: flex;
   gap: 2rem;
+  margin-left: 1rem;
   @media (max-width: $breakpoint-m) {
-    flex-direction: column;
-    gap: 0;
+    /* flex-direction: column;
+    gap: 0; */
+    margin-left: 0rem;
   }
-  .naked-link {
-    text-decoration: underline;
+  .active-tab{
+    padding-bottom: 0.5rem;
+    border-bottom: 4px solid $clr-green;
+    border-radius: 4px;
+    font-weight: 600;
+    /* text-decoration: underline; */
+  }
+  .inactive-tab{
+    padding-bottom: 0.5rem;
+    cursor: pointer;
     &:hover {
-      cursor: pointer;
+      opacity: 0.8;
+      transform: scale(1.02);  
     }
+    /* text-decoration: underline; */
   }
 }
 
