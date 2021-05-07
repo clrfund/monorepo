@@ -143,7 +143,7 @@
                   <label for="project-category" class="input-label">Category
                     <p class="input-description">Choose the best fit.</p>
                   </label>
-                  <form class="radio-row" id="category-radio" tabindex="0">
+                  <form class="radio-row" id="category-radio">
                     <input
                       id="category-content"
                       type="radio"
@@ -317,10 +317,7 @@
             </div>
             <div v-if="currentStep === 3">
               <h2 class="step-title">Links</h2>
-              <p>Give contributors some links to check out to learn more about your project.</p>
-              <p class="input-description" :class="{
-                error: $v.form.links.hasLink.$invalid && $v.form.links.$anyDirty
-              }">Must provide at least one</p>
+              <p>Give contributors some links to check out to learn more about your project. Provide at least one.</p>
               <div class="inputs">
                 <div class="form-background">
                   <label for="links-github" class="input-label">GitHub</label>
@@ -330,7 +327,6 @@
                     placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.github.$model"
-                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.github.$error
@@ -350,7 +346,6 @@
                     placeholder="example: https://radicle.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.radicle.$model"
-                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.radicle.$error
@@ -369,7 +364,6 @@
                     placeholder="example: https://website.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.website.$model"
-                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.website.$error
@@ -388,7 +382,6 @@
                     placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.twitter.$model"
-                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.twitter.$error
@@ -407,7 +400,6 @@
                     placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.discord.$model"
-                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.discord.$error
@@ -561,7 +553,7 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, sameAs, maxLength, url, email } from 'vuelidate/lib/validators'
+import { required, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
@@ -619,7 +611,6 @@ import { Project } from '@/api/projects'
         website: { url },
         twitter: { url },
         discord: { url },
-        hasLink: { required: sameAs(() => true) },
       },
       image: {
         bannerHash: {
@@ -658,7 +649,6 @@ export default class JoinView extends mixins(validationMixin) {
       website: '',
       twitter: '',
       discord: '',
-      hasLink: false,
     },
     image: {
       bannerHash: '',
@@ -746,19 +736,28 @@ export default class JoinView extends mixins(validationMixin) {
     this.showSummaryPreview = !this.showSummaryPreview
   }
 
-  handleLinkUpdate(): void {
-    // Check all link fields for any input
-    // Sets `hasLink` form state boolean to false if all link fields are blank
-    let tracker = false
-    Object.keys(this.form.links).forEach(link => {
-      if (this.form.links[link].length > 0) {
-        tracker = true
+  // Check that at least one link is not empty && no links are invalid
+  isLinkStepValid(): boolean {
+    let isValid = false
+    const links = Object.keys(this.form.links)
+    for (const link of links) {
+      const linkData = this.$v.form.links?.[link]
+      if (!linkData) return false
+      const isInvalid = linkData.$invalid
+      const isEmpty = linkData.$model.length === 0
+      if (isInvalid) {
+        return false
+      } else if (!isEmpty) {
+        isValid = true
       }
-    })
-    this.form.links.hasLink = tracker
+    }
+    return isValid
   }
   
   isStepValid(step: number): boolean {
+    if (step === 3) {
+      return this.isLinkStepValid()
+    }
     const stepName: string = this.steps[step]
     return !this.$v.form[stepName]?.$invalid
   }
@@ -1117,38 +1116,48 @@ export default class JoinView extends mixins(validationMixin) {
 
 .radio-row {
   display: flex;
-  flex-wrap: wrap;
   margin-top: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
-  border-radius: 0;
-  gap: -1px;
+  box-sizing: border-box;
+  border: 2px solid $button-color;
+  border-radius: 1rem;
+  overflow: hidden;
+  width: fit-content;
   input {
-    display: none;
+    position: fixed;
+    opacity: 0;
+    pointer-events: none;
   }
   input[type="radio"]:checked+label {
     background: $clr-pink;
     font-weight: 600;
   }
-
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+    flex-direction: column;
+    text-align: center;
+  }
 }
 
 .radio-btn {
   box-sizing: border-box;
-  border: 2px solid $button-color;
   color: white;
   font-size: 16px;
   line-height: 24px;
   align-items: center;
   padding: 0.5rem 1rem;
   margin-left: -1px;
-  &:first-of-type {
-    border-radius: 16px 0 0 16px;
-    margin-left: 0;
+
+  border-right: 2px solid $button-color;
+  border-bottom: none;
+  @media (max-width: $breakpoint-m) {
+    border-right: none;
+    border-bottom: 2px solid $button-color;
   }
   &:last-of-type {
-    border-radius: 0 16px 16px 0;
+    border-right: none;
+    border-bottom: none;
   }
+
   &:hover {
     opacity: 0.8;
     background: $bg-secondary-color;
