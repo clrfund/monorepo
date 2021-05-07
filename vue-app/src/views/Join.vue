@@ -59,16 +59,13 @@
         </div>
       </div>
       <div class="title-area">
-        <div class="desktop">
-          <h1 class="desktop">Join the round</h1>
-          <div v-if="currentStep === 5">
-            <div class="toggle-tabs-desktop">
-              <p class="tab" id="review" :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'" @click="handleToggleTab">Review info</p>
-              <p class="tab" id="preview" :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'" @click="handleToggleTab">Preview project</p>
-            </div>
+        <h1>Join the round</h1>
+        <div v-if="currentStep === 5">
+          <div class="toggle-tabs-desktop">
+            <p class="tab" id="review" :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'" @click="handleToggleTab">Review info</p>
+            <p class="tab" id="preview" :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'" @click="handleToggleTab">Preview project</p>
           </div>
         </div>
-        <h1 class="mobile">Join the round</h1>
       </div>
       <div class="cancel-area desktop">
         <router-link class="cancel-link" to="/join">
@@ -76,12 +73,6 @@
         </router-link>
       </div>
       <div class="form-area">
-        <div class="mobile" v-if="currentStep === 5">
-          <div class="toggle-tabs-mobile">
-            <p class="tab" id="review" :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'" @click="handleToggleTab">Review info</p>
-            <p class="tab" id="preview" :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'" @click="handleToggleTab">Preview project</p>
-          </div>
-        </div>
         <div class="application">
           <form>
             <div v-if="currentStep === 0">
@@ -932,25 +923,21 @@ export default class JoinView extends mixins(validationMixin) {
   grid-area: title;
   display: flex;
   padding: 1rem;
+  padding-left: 0rem; 
   justify-content: space-between;
-  .desktop {
-    padding-left: 0rem; 
-    font-family: 'Glacial Indifference', sans-serif;
-    font-weight: 00;
-    align-items: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+
+  h1 {
+    font-family: "Glacial Indifference", sans-serif;
   }
-  .mobile {
+
+  @media (max-width: $breakpoint-m) {
     margin-top: 2rem;
     padding-bottom: 0;
-    display: flex;
-    font-family: 'Glacial Indifference', sans-serif;
+    padding-left: 1rem; 
     font-size: 14px;
     font-weight: normal;
-    letter-spacing: 6px;
-    margin-top: 2rem;;
-    text-transform: uppercase;
-    justify-content: flex-start;
-    align-items: center;  
   }
 }
 
@@ -1248,7 +1235,7 @@ export default class JoinView extends mixins(validationMixin) {
     /* flex-direction: column;
     gap: 0;
     margin-left: 0rem; */
-    display: none;
+    /* display: none; */
   }
   .active-tab{
     padding-bottom: 0.5rem;
