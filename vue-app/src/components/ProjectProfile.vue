@@ -74,7 +74,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { Project } from '@/api/projects'
-import Info from '@/components/Info'
+import Info from '@/components/Info.vue'
 
 import Markdown from '@/components/Markdown.vue'
 
