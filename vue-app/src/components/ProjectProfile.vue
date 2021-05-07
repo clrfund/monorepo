@@ -18,18 +18,18 @@
       <p class="tagline">{{ project.tagline }}</p> 
       <div class="subtitle">
         <div class="tag">{{ project.category }} tag </div>
-        <div class="team-byline">By <a href="#team"> {{ project.teamName }} team</a></div>
+        <div class="team-byline">Team: <a href="#team"> {{ project.teamName }}</a></div>
       </div>
       <div class="project-section">
-        <h2>📖 About the project</h2>
+        <h2>About the project</h2>
         <markdown :raw="project.description"/>
       </div>
       <div class="project-section">
-        <h2>🔧 The problem it solves</h2>
+        <h2>The problem it solves</h2>
         <markdown :raw="project.problemSpace"/>
       </div>
       <div class="project-section">
-        <h2>💰 Funding plans</h2>
+        <h2>Funding plans</h2>
         <markdown :raw="project.plans"/>
       </div> 
       <div class="address-box">
@@ -43,10 +43,10 @@
           <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/copy.svg"></div>
           <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
         </div>
-      </div>
-      <hr />
-      <div v-if="project.teamName" class="team">
-        <h2>Brought to you by {{ project.teamName }}</h2>
+      </div>        
+      <hr v-if="project.teamName || project.teamDescription" />
+      <div id="team" v-if="project.teamName || project.teamDescription" class="team">
+        <h2>Team: {{ project.teamName }}</h2>
         <markdown :raw="project.teamDescription"/>
       </div>
     </div>  
@@ -205,12 +205,12 @@ export default class ProjectProfile extends Vue {
 
     .team {
       padding: 1rem;
-      /* margin-bottom: 3rem; */
+      margin-bottom: 3rem;
       border-radius: 0.25rem;
       background: $bg-secondary-color;
 
       h2 {
-        font-size: 16px;
+        font-size: 24px;
         font-weight: 400;
         font-family: 'Glacial Indifference', sans-serif;
         margin-top: 0;
