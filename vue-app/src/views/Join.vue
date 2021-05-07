@@ -1262,7 +1262,8 @@ export default class JoinView extends mixins(validationMixin) {
     cursor: pointer;
     &:hover {
       opacity: 0.8;
-      transform: scale(1.02);  
+      border-bottom: 4px solid #fff7;  
+      border-radius: 4px;
     }
     /* text-decoration: underline; */
   }
