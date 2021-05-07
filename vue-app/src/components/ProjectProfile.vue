@@ -1,5 +1,6 @@
 <template>
   <div v-if="project" class="project-page">
+    <info v-if="previewMode" style="margin-bottom: 1.5rem;" message="This is what your contributors will see when they visit your project page." />
     <img v-if="previewMode" class="project-image" :src="project.bannerImageUrl" :alt="project.name">
     <div class="about">    
       <h1 
@@ -73,18 +74,20 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { Project } from '@/api/projects'
+import Info from '@/components/Info.vue'
 
 import Markdown from '@/components/Markdown.vue'
 
 @Component({
   components: {
     Markdown,
+    Info,
   },
 })
 export default class ProjectProfile extends Vue {
   @Prop() project!: Project
   // @Prop() klerosCurateUrl?: string | null = null
-  @Prop() previewMode? = false
+  @Prop() previewMode!: boolean
 }
 </script>
 
@@ -217,6 +220,7 @@ export default class ProjectProfile extends Vue {
       }
     }
   }
+
 
   .sticky-column {
     position: sticky;
