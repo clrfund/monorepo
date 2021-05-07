@@ -19,23 +19,23 @@
 }
 
 .btn-primary {
-  @include button(white, $clr-green, 2px solid $clr-green)
+  @include button(white, $clr-green, 2px solid $clr-green);
 }
 
 .btn-og {
-  @include button(white, $button-color, none)
+  @include button(white, $button-color, none);
 }
 
 .btn-action {
-  @include button(white, $clr-pink-light-gradient, none)
+  @include button(white, $clr-pink-light-gradient, none);
 }
 f
 .btn-secondary {
-  @include button($clr-green, none, 2px solid $clr-green)
+  @include button($clr-green, none, 2px solid $clr-green);
 }
 
 .etherscan-btn {
-  @include button($bg-primary-color, #fff, 1px solid $bg-light-color)  
+  @include button($bg-primary-color, #fff, 1px solid $bg-light-color);
   box-shadow: $box-shadow;
   display: flex;
   gap: 0.5rem;
@@ -45,11 +45,11 @@ f
 }
 
 .btn-white {
-  @include button(white, #19162380, 2px solid white)
+  @include button(white, #19162380, 2px solid white);
 }
 
 .btn-warning {
-  @include button($error-color, none, 2px solid $error-color)
+  @include button($error-color, none, 2px solid $error-color);
 }
 
 // app button for use in nav bar
