@@ -316,10 +316,7 @@
             </div>
             <div v-if="currentStep === 3">
               <h2 class="step-title">Links</h2>
-              <p>Give contributors some links to check out to learn more about your project.</p>
-              <p class="input-description" :class="{
-                error: $v.form.links.hasLink.$invalid && $v.form.links.$anyDirty
-              }">Must provide at least one</p>
+              <p>Give contributors some links to check out to learn more about your project. Provide at least one.</p>
               <div class="inputs">
                 <div class="form-background">
                   <label for="links-github" class="input-label">GitHub</label>
@@ -329,7 +326,6 @@
                     placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.github.$model"
-                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.github.$error
@@ -349,7 +345,6 @@
                     placeholder="example: https://radicle.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.radicle.$model"
-                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.radicle.$error
@@ -368,7 +363,6 @@
                     placeholder="example: https://website.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.website.$model"
-                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.website.$error
@@ -387,7 +381,6 @@
                     placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.twitter.$model"
-                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.twitter.$error
@@ -406,7 +399,6 @@
                     placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.discord.$model"
-                    @change="handleLinkUpdate"
                     :class="{
                       input: true,
                       invalid: $v.form.links.discord.$error
@@ -556,7 +548,7 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, sameAs, maxLength, url, email } from 'vuelidate/lib/validators'
+import { required, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
@@ -614,7 +606,6 @@ import { Project } from '@/api/projects'
         website: { url },
         twitter: { url },
         discord: { url },
-        hasLink: { required: sameAs(() => true) },
       },
       image: {
         bannerHash: {
@@ -653,7 +644,6 @@ export default class JoinView extends mixins(validationMixin) {
       website: '',
       twitter: '',
       discord: '',
-      hasLink: false,
     },
     image: {
       bannerHash: '',
@@ -694,75 +684,30 @@ export default class JoinView extends mixins(validationMixin) {
     if (this.currentStep > this.form.furthestStep) {
       this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
     }
-
-    //     if (process.env.NODE_ENV === 'development') {
-    //       this.form = {
-    //         project: {
-    //           name: 'CLR.Fund',
-    //           tagline: 'A quadratic funding protocol',
-    //           description: `**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
-    // # Derp
-
-    // asdfasdfasdf
-
-    // ## Derp
-
-    // asdfsdasdfsdf
-    // ### Derp
-
-    // asdfasdfsdaf
-    // #### Derp
-    // asdfasdf
-    // ##### Derp
-
-    //           `,
-    //           category: 'research',
-    //           problemSpace: 'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
-    //         },
-    //         fund: {
-    //           address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
-    //           plans: 'Create much wow, when lambo?',
-    //         },
-    //         team: {
-    //           name: 'clr.fund',
-    //           description: `CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...
-    // # Forr
-    // ## Bar
-    // ## Derp
-    // `,
-    //           email: 'doge@goodboi.com',
-    //         },
-    //         links: {
-    //           github: '',
-    //           radicle: '',
-    //           website: 'https://clr.fund',
-    //           twitter: '',
-    //           discord: '',
-    //           hasLink: true,
-    //         },
-    //         image: {
-    //           bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    //           thumbnailHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    //         },
-    //         furthestStep: 5,
-    //       }
-    //       this.saveFormData()
-    //     }
   }
 
-  handleLinkUpdate(): void {
-    // Check all link fields for any input
-    // Sets `hasLink` form state boolean to false if all link fields are blank
-    let tracker = false
-    Object.keys(this.form.links).forEach(link => {
-      if (this.form.links[link].length > 0) {
-        tracker = true
+  // Check that at least one link is not empty && no links are invalid
+  isLinkStepValid(): boolean {
+    let isValid = false
+    const links = Object.keys(this.form.links)
+    for (const link of links) {
+      const linkData = this.$v.form.links?.[link]
+      if (!linkData) return false
+      const isInvalid = linkData.$invalid
+      const isEmpty = linkData.$model.length === 0
+      if (isInvalid) {
+        return false
+      } else if (!isEmpty) {
+        isValid = true
       }
-    })
-    this.form.links.hasLink = tracker
+    }
+    return isValid
   }
   
   isStepValid(step: number): boolean {
+    if (step === 3) {
+      return this.isLinkStepValid()
+    }
     const stepName: string = this.steps[step]
     return !this.$v.form[stepName]?.$invalid
   }

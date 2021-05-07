@@ -69,7 +69,6 @@ export interface RecipientApplicationData {
     website: string;
     twitter: string;
     discord: string;
-    hasLink: boolean;
   };
   image: {
     bannerHash: string;
