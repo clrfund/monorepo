@@ -396,6 +396,7 @@ export default class ProjectList extends Vue {
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: $content-space;
   z-index: 0;
+  padding-bottom: 4rem;
 }
 
 .empty-search {
