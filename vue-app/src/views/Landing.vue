@@ -14,7 +14,7 @@
           <div id="go-to-app" class="btn-action">Go to app</div>
           <div id="how-it-works" class="btn-white">How it works</div>
         </div>
-        <div v-if="!full || !closed" class="apply-callout mobile">
+        <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout mobile">
           <div id="countdown" class="caps">11 days</div>
           <div id="countdown-label" class="caps">Time to apply</div>
           <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div v-if="!closed || !full" class="apply-callout desktop">
+      <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout desktop">
         <div class="column">
           <h2>Join the funding round</h2>
           <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
@@ -113,15 +113,22 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
+import { hasDateElapsed } from '@/utils/dates'
 
+import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
 @Component({
   components: { RoundStatusBanner },
 })
 export default class Landing extends Vue {
-closed = true
-full = false
+  isRoundClosed = false
+  isRoundFull = false // TODO fetch `maxRecipients` from registry & compare to current registry size
+
+  created() {
+    const startTime = this.$store.state.currentRound.startTime
+    this.isRoundClosed = hasDateElapsed(startTime)
+    console.log(this.isRoundClosed)
+  }
 }
 </script>
 

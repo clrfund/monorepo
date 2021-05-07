@@ -75,7 +75,7 @@ export default class JoinLanding extends Vue {
   startDate: string | null = null
   timeRemaining: string | null = null // TODO confirm deadline to apply is `currentRound.startTime`
   isRoundClosed = false
-  isRoundFull = true // TODO fetch `maxRecipients` from registry & compare to current registry size
+  isRoundFull = false // TODO fetch `maxRecipients` from registry & compare to current registry size
 
   created() {
     const startTime = this.$store.state.currentRound.startTime
