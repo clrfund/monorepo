@@ -933,11 +933,11 @@ export default class JoinView extends mixins(validationMixin) {
   display: flex;
   padding: 1rem;
   justify-content: space-between;
-  align-items: center;
   .desktop {
     padding-left: 0rem; 
     font-family: 'Glacial Indifference', sans-serif;
     font-weight: 00;
+    align-items: flex-start;
   }
   .mobile {
     margin-top: 2rem;
@@ -950,6 +950,7 @@ export default class JoinView extends mixins(validationMixin) {
     margin-top: 2rem;;
     text-transform: uppercase;
     justify-content: flex-start;
+    align-items: center;  
   }
 }
 
@@ -1218,7 +1219,6 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .project-details {
-  margin-top: 2rem;
   &:last-child {
     margin-bottom: 0;
   }
