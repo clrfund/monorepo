@@ -6,11 +6,11 @@ export function formatDate(date: DateTime): string {
 }
 
 export function hasDateElapsed(date: DateTime): boolean {
-  return date.diff(DateTime.now()).milliseconds < 0
+  return date.diff(DateTime.local()).milliseconds < 0
 }
 
 export function getDifferenceFromNow(date: DateTime): number {
-  return date.diff(DateTime.now()).milliseconds
+  return date.diff(DateTime.local()).milliseconds
 }
 
 export function formatDateFromNow(date: DateTime): string {
