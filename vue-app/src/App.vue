@@ -205,7 +205,8 @@ summary:focus {
   /* min-height: 100%; */
   height: calc(100vh - 61.5px);
   background: $bg-primary-color;
-  overflow: scroll;
+  overflow-x: clip;
+  overflow-y: scroll;
 }
 
 #sidebar {
