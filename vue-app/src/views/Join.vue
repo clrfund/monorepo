@@ -59,7 +59,15 @@
         </div>
       </div>
       <div class="title-area">
-        <h1 class="desktop">Join the round</h1>
+        <div class="desktop">
+          <h1 class="desktop">Join the round</h1>
+          <div v-if="currentStep === 5">
+            <div class="toggle-tabs-desktop">
+              <p class="tab" id="review" :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'" @click="handleToggleTab">Review info</p>
+              <p class="tab" id="preview" :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'" @click="handleToggleTab">Preview project</p>
+            </div>
+          </div>
+        </div>
         <h1 class="mobile">Join the round</h1>
       </div>
       <div class="cancel-area desktop">
@@ -68,8 +76,8 @@
         </router-link>
       </div>
       <div class="form-area">
-        <div v-if="currentStep === 5">
-          <div class="toggle-tabs">
+        <div class="mobile" v-if="currentStep === 5">
+          <div class="toggle-tabs-mobile">
             <p class="tab" id="review" :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'" @click="handleToggleTab">Review info</p>
             <p class="tab" id="preview" :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'" @click="handleToggleTab">Preview project</p>
           </div>
@@ -934,13 +942,14 @@ export default class JoinView extends mixins(validationMixin) {
   .mobile {
     margin-top: 2rem;
     padding-bottom: 0;
-    display: block;
+    display: flex;
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 14px;
     font-weight: normal;
     letter-spacing: 6px;
     margin-top: 2rem;;
     text-transform: uppercase;
+    justify-content: flex-start;
   }
 }
 
@@ -1228,14 +1237,15 @@ export default class JoinView extends mixins(validationMixin) {
   padding-bottom: 0.5rem;
 }
 
-.toggle-tabs {
+.toggle-tabs-desktop {
   display: flex;
   gap: 2rem;
-  margin-left: 1rem;
+  font-family: "Inter";     
   @media (max-width: $breakpoint-m) {
     /* flex-direction: column;
-    gap: 0; */
-    margin-left: 0rem;
+    gap: 0;
+    margin-left: 0rem; */
+    display: none;
   }
   .active-tab{
     padding-bottom: 0.5rem;
@@ -1254,6 +1264,33 @@ export default class JoinView extends mixins(validationMixin) {
     /* text-decoration: underline; */
   }
 }
+
+.toggle-tabs-mobile {
+    display: flex;
+    gap: 2rem;
+  @media (min-width: $breakpoint-m) {
+    /* flex-direction: column;
+    gap: 0;
+    margin-left: 0rem; */
+    display: none;
+  }
+   .active-tab{
+    padding-bottom: 0.5rem;
+    border-bottom: 4px solid $clr-green;
+    border-radius: 4px;
+    font-weight: 600;
+    /* text-decoration: underline; */
+  }
+  .inactive-tab{
+    padding-bottom: 0.5rem;
+    cursor: pointer;
+    &:hover {
+      opacity: 0.8;
+      transform: scale(1.02);  
+    }
+    /* text-decoration: underline; */
+  }
+} 
 
 .step-subtitle {
   margin: 0.5rem 0;
