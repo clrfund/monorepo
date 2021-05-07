@@ -69,13 +69,38 @@ export interface RecipientApplicationData {
     website: string;
     twitter: string;
     discord: string;
-    hasLink: boolean;
   };
   image: {
     bannerHash: string;
     thumbnailHash: string;
   };
   furthestStep: number;
+}
+
+export function formToProjectInterface(data: RecipientApplicationData): Project {
+  const { project, fund, team, links, image } = data
+  return {
+    id: fund.address,
+    address: fund.address,
+    name: project.name,
+    tagline: project.tagline,
+    description: project.description,
+    category: project.category,
+    problemSpace: project.problemSpace,
+    plans: fund.plans,
+    teamName: team.name,
+    teamDescription: team.description,
+    githubUrl: links.github,
+    radicleUrl: links.radicle,
+    websiteUrl: links.website,
+    twitterUrl: links.twitter,
+    discordUrl: links.discord,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${image.bannerHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${image.thumbnailHash}`,
+    index: 0,
+    isHidden: false,
+    isLocked: true,
+  }
 }
 
 interface RecipientMetadata {
@@ -209,6 +234,19 @@ function decodeProject(requestSubmittedEvent: Event): Project {
     extra: {
       submissionTime: args._timestamp.toNumber(),
     },
+    tagline: metadata.tagline,
+    category: metadata.category,
+    problemSpace: metadata.problemSpace,
+    plans: metadata.plans,
+    teamName: metadata.teamName,
+    teamDescription: metadata.teamDescription,
+    githubUrl: metadata.githubUrl,
+    radicleUrl: metadata.radicleUrl,
+    websiteUrl: metadata.websiteUrl,
+    twitterUrl: metadata.twitterUrl,
+    discordUrl: metadata.discordUrl,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`,
   }
 }
 
