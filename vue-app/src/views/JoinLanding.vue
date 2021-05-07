@@ -4,23 +4,8 @@
     <round-status-banner />
     <div class="gradient">
       <div class="hero">
-        <img src="@/assets/core.png" width="100%" />
-        <div class="content" v-if="full">
-          <div style="font-size: 64px;">☹</div>
-          <h1>Sorry, this round is full</h1>
-          <div id="subtitle" class="subtitle">
-            The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now. Unfortunately we've hit the cap and there's no more room on board.
-          </div> 
-          <div class="subtitle" id="subtitle" style="margin-top: 2rem;">
-            We'll be running another round of funding very soon. Follow on Twitter for updates: <a href="https://twitter.com/ethdotorg">@ethdotorg</a>
-          </div>
-          <div class="btn-container" style="margin-top: 2.5rem;">
-            <!-- <router-link to="/join/one" class="btn-primary">Add project</router-link> -->
-            <router-link to="/" class="btn-primary">Home</router-link>
-            <router-link to="#" class="btn-secondary">More on MACI</router-link>
-          </div> 
-        </div>
-        <div class="content" v-else-if="closed">
+        <img class="core" src="@/assets/core.png" />
+        <div class="content" v-if="closed">
           <div style="font-size: 64px;">☹</div>
           <h1>Sorry, the round is closed</h1>
           <div id="subtitle" class="subtitle">
@@ -34,9 +19,24 @@
             <router-link to="/" class="btn-primary">Home</router-link>
           </div> 
         </div>
+        <div class="content" v-else-if="full">
+          <div style="font-size: 64px;">☹</div>
+          <h1>Sorry, this round is full</h1>
+          <div id="subtitle" class="subtitle">
+            The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now. Unfortunately we've hit the cap and there's no more room on board.
+          </div> 
+          <div class="subtitle" id="subtitle" style="margin-top: 2rem;">
+            We'll be running another round of funding very soon. Follow on Twitter for updates: <a href="https://twitter.com/ethdotorg">@ethdotorg</a>
+          </div>
+          <div class="btn-container" style="margin-top: 2.5rem;">
+            <!-- <router-link to="/join/one" class="btn-primary">Add project</router-link> -->
+            <router-link to="/" class="btn-primary">Home</router-link>
+            <router-link to="/about" class="btn-secondary">More on MACI</router-link>
+          </div> 
+        </div>
         <div class="content" v-else>
           <h1>Join the next funding round</h1>
-          <div id="subtitle" class="subtitle">To get on board this round, we’ll need some information about your project and a 0.1 ETH security deposit.</div>
+          <div id="subtitle" class="subtitle">To get on board this round, we’ll need some information about your project and a <strong>0.1 ETH</strong> security deposit.</div>
           <div id="info-boxes">
             <div id="apply-callout">
               <div id="countdown-label" class="caps">Time left to join</div>
@@ -65,16 +65,15 @@ import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
 @Component({
-  name: 'join',
-  metaInfo: { title: 'Join' },
   components: { RoundStatusBanner },
 })
-
 export default class JoinLanding extends Vue {
+
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
   full = false
   closed = false
+
   seeCriteria(): void {
     this.$modal.show(
       CriteriaModal,
@@ -110,6 +109,11 @@ h1 {
   font-weight: bold;
   font-size: 40px;
   line-height: 120%;
+}
+
+img.core {
+  width: 100%;
+  overflow: hidden;
 }
 
 .gradient {
