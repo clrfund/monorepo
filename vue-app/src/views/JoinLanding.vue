@@ -5,7 +5,8 @@
     <div class="gradient">
       <div class="hero">
         <img class="core" src="@/assets/core.png" />
-        <div class="content" v-if="closed">
+
+        <div class="content" v-if="isRoundClosed">
           <div style="font-size: 64px;">☹</div>
           <h1>Sorry, the round is closed</h1>
           <div id="subtitle" class="subtitle">
@@ -15,11 +16,11 @@
             We'll be running another round of funding very soon. Follow on Twitter for updates: <a href="https://twitter.com/ethdotorg">@ethdotorg</a>
           </div>
           <div class="btn-container" style="margin-top: 2.5rem;">
-            <!-- <router-link to="/join/one" class="btn-primary">Add project</router-link> -->
             <router-link to="/" class="btn-primary">Home</router-link>
           </div> 
         </div>
-        <div class="content" v-else-if="full">
+
+        <div class="content" v-else-if="isRoundFull">
           <div style="font-size: 64px;">☹</div>
           <h1>Sorry, this round is full</h1>
           <div id="subtitle" class="subtitle">
@@ -29,18 +30,18 @@
             We'll be running another round of funding very soon. Follow on Twitter for updates: <a href="https://twitter.com/ethdotorg">@ethdotorg</a>
           </div>
           <div class="btn-container" style="margin-top: 2.5rem;">
-            <!-- <router-link to="/join/one" class="btn-primary">Add project</router-link> -->
             <router-link to="/" class="btn-primary">Home</router-link>
             <router-link to="/about" class="btn-secondary">More on MACI</router-link>
           </div> 
         </div>
+
         <div class="content" v-else>
           <h1>Join the next funding round</h1>
           <div id="subtitle" class="subtitle">To get on board this round, we’ll need some information about your project and a <strong>0.1 ETH</strong> security deposit.</div>
           <div id="info-boxes">
             <div id="apply-callout">
               <div id="countdown-label" class="caps">Time left to join</div>
-              <div id="countdown" class="caps">11 days</div>
+              <div id="countdown" class="caps">{{ timeRemaining === null ? "..." : timeRemaining }}</div>
             </div> 
             <div id="apply-callout">
               <div id="countdown-label" class="caps">Time to complete</div>
@@ -61,18 +62,27 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
+import { formatDate, formatDateFromNow, hasDateElapsed } from '@/utils/dates'
 
 @Component({
   components: { RoundStatusBanner },
 })
 export default class JoinLanding extends Vue {
 
-  startDate = '03 April' // TODO: use Date() object
-  timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
-  full = false
-  closed = false
+  startDate: string | null = null
+  timeRemaining: string | null = null // TODO confirm deadline to apply is `currentRound.startTime`
+  isRoundClosed = false
+  isRoundFull = true // TODO
+
+  created() {
+    const startTime = this.$store.state.currentRound.startTime
+    this.startDate = formatDate(startTime)
+    this.isRoundClosed = hasDateElapsed(startTime)
+    this.timeRemaining = formatDateFromNow(startTime)
+  }
 
   seeCriteria(): void {
     this.$modal.show(
