@@ -425,39 +425,9 @@
               <div class="inputs">
                 <div class="form-background">
                   <ipfs-image-upload label="Banner image" description="Recommended dimensions: 500px x 300px" :onUpload="handleUpload" formProp="bannerHash"/>
-                  <label for="project-banner-image" class="input-label pt-1">Banner image IPFS hash</label>
-                  <input
-                    id="project-banner-image"
-                    type="text"
-                    placeholder="example: Qmb8zVH8HFpg8Uj5GzxeU8YtYTah2qFkAphnwoLmJ94Ej9"
-                    v-model="$v.form.image.bannerHash.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.image.bannerHash.$error
-                    }"
-                  >
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.image.bannerHash.$error
-                  }">Your project needs a banner image</p>
                 </div>
                 <div class="form-background">
                   <ipfs-image-upload label="Thumbnail image" description="Recommended dimensions: 80px x 80px" :onUpload="handleUpload" formProp="thumbnailHash"/>
-                  <label for="project-thumbnail-image" class="input-label pt-1">Thumbnail image IPFS hash</label>
-                  <input
-                    id="project-thumbnail-image"
-                    type="text"
-                    placeholder="example: Qmb8zVH8HFpg8Uj5GzxeU8YtYTah2qFkAphnwoLmJ94Ej9"
-                    v-model="$v.form.image.thumbnailHash.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.image.thumbnailHash.$error
-                    }"
-                  >
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.image.thumbnailHash.$error
-                  }">Your project needs a thumbnail image</p>
                 </div>
               </div>
             </div>

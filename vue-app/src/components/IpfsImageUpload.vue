@@ -4,7 +4,6 @@
     <p class="input-description">{{ description }}</p>
     <div class="input-row">
       <input
-        id="image-upload"
         type="file"
         class="input"
         @change="handleLoadFile"
@@ -33,6 +32,14 @@
       />
       <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
         <div v-if="hash" @click="handleRemoveImage" class="btn-white small">Remove image</div>
+      </div>
+    </div>
+    <div v-if="hash" @click="copyHash" class="copy">
+      <div class="label">
+        IPFS hash <img width="16px" src="@/assets/info.svg" />
+      </div>
+      <div class="hash">
+        {{hash}} <img width="16px" src="@/assets/copy.svg" />
       </div>
     </div>
     <p v-if="error" class="error">{{ error }}</p>
@@ -171,6 +178,7 @@ export default class IpfsImageUpload extends Vue {
 
 .input-row {
   display: flex;
+  align-items: center;
   gap: 1rem;
   @media (max-width: $breakpoint-m) {
     flex-direction: column;
@@ -180,7 +188,28 @@ export default class IpfsImageUpload extends Vue {
 
 .input {
   flex: 1;
-  margin: 0;
+  border-radius: 16px;
+  border: 2px solid $button-color;
+  background-color: $bg-secondary-color;
+  margin: 0.5rem 0;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  font-family: Inter;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  &:valid { 
+    border: 2px solid $clr-green;
+  }
+  &:hover { 
+    background: $bg-primary-color; 
+    border: 2px solid $highlight-color;
+    box-shadow: 0px 4px 16px 0px 25,22,35,0.4;
+  }
+  &:optional {
+    border: 2px solid $button-color;
+    background-color: $bg-secondary-color;
+  }
 }
 
 .copy {
