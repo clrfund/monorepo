@@ -7,15 +7,18 @@
           <div class="round">
             <div style="display: flex; align-items: center;">
               <h2 style="line-height: 120%; margin: 0;">Eth2 CLR</h2>
-              <div class="verified"><a style="" href="https://etherescan.io/:address"><img src="@/assets/verified.svg" /></a> </div>
+              <tooltip position="top" :content="currentRound.fundingRoundAddress" :link="'https://etherscan.io/address/' + currentRound.fundingRoundAddress" linkText="View on Etherscan"><div class="verified"><img src="@/assets/verified.svg" /></div></tooltip>
             </div>
             <div class="status"> 
               <div class="circle pulse open" /> Open
             </div>
           </div>
       <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
-        <div>
-          <div class="round-info-title" style="margin-bottom: 0.5rem;">Time left to reallocate</div>
+        <div style="width: 100%;">
+          <div style="width: 100%; display: flex;  gap: 0.5rem">
+            <div class="round-info-title" style="margin-bottom: 0.5rem;">Time left to reallocate</div>
+            <tooltip position="right" content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or inrease your overall total."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+          </div>
           <div
             class="round-info-value"
             :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
@@ -30,7 +33,12 @@
         </div>
       </div>
       <div v-if="currentRound.status === 'Contributing'" class="round-info-item">
-        <div class="round-info-title" style="margin-bottom: 0.5rem;">Time left to contribute</div>
+        <div style="width: 100%;">
+          <div style="width: 100%; display: flex; gap: 0.5rem;">
+            <div class="round-info-title" style="margin-bottom: 0.5rem;">Time left to contribute</div>
+            <tooltip position="right" content="During this phase, you can contribute to your favourite projects."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+          </div>
+        </div>
         <div
           class="round-info-value"
           :title="'Contribution Deadline: ' + formatDate(currentRound.signUpDeadline)"
@@ -52,9 +60,10 @@
       </div> -->
       <div v-if="currentRound" class="round-value-info">
         <div class="round-value-info-item">
-          <div>
-            <div class="round-info-title" style="margin-bottom: 0.5rem;">
-              Total in round
+          <div style="width: 100%;">
+            <div style="width: 100%; display: flex; gap: 0.5rem;">
+              <div class="round-info-title" style="margin-bottom: 0.5rem;">Total in round</div>
+              <tooltip position="right" content="This total includes the funds in the matching pool and all contributions from the community."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
             </div>
             <div class="round-info-value">
               <div class="value large">{{ formatIntegerPart(currentRound.contributions) + formatIntegerPart(currentRound.matchingPool) }}</div>
@@ -64,24 +73,33 @@
           </div>
         </div>
         <div class="round-info-sub-item">
-          <div>
-            <div class="round-info-title" style="margin-bottom: 0.5rem;">
-              Matching pool
-              <a 
-              style="margin-bottom: 0;"
-              @click="addMatchingFunds()"
-              title="Add matching funds"
-              >
-                <img src="@/assets/more.svg" />
-              </a>
+            <div style="width: 100%; display: flex; gap: 0.5rem;">
+              <div class="round-info-title" style="margin-bottom: 0.5rem;">Matching pool</div>
+              <tooltip position="right" content="These are the funds that will be distributed to all the projects based on the contributions they receive from the community."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+              <div class="add-link">
+                  <a 
+                  style="margin: 0;"
+                  @click="addMatchingFunds()"
+                  title="Add matching funds"
+                  >
+                    <img style="width: 16px;" src="@/assets/add.svg" /> 
+                  </a>
+                  <a 
+                  @click="addMatchingFunds()"
+                  title="Add matching funds"
+                  class="add-funds-link"
+                  >
+                    Add funds
+                  </a>
+                </div>
             </div>
+            
             <div class="round-info-value">
               <div class="value">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
               <div class="value">{{ formatFractionalPart(currentRound.matchingPool) }}</div>
               <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
             </div>
           </div>
-        </div>
         <div class="round-info-sub-item">
           <div>
             <div class="round-info-title" style="margin-bottom: 0.5rem;">
@@ -113,8 +131,8 @@
             </div>
         </div>
       </div>
-    </div>
-    <div v-if="isLoading" class="loader"></div>
+    <loader v-if="isLoading" />
+  </div>
   </div>
 </template>
 
@@ -128,7 +146,9 @@ import { RoundInfo, getCurrentRound } from '@/api/round'
 import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
+import Tooltip from '@/components/Tooltip.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
+import Loader from '@/components/Loader.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -139,6 +159,7 @@ import {
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
 } from '@/store/mutation-types'
+
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 
@@ -177,6 +198,8 @@ function timeLeft(date: DateTime): TimeLeft {
   metaInfo: { title: 'Round' },
   components: {
     ProjectListItem,
+    Loader,
+    Tooltip,
   },
 })
 export default class RoundInformation extends Vue {
@@ -489,5 +512,21 @@ export default class RoundInformation extends Vue {
     margin-bottom: $content-space / 2;
     font-size: 14px;
   }
+}
+
+.add-link {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: $clr-green;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.add-funds-link {
+  margin-bottom: 0.25rem; 
+  font-size: 14px;
+  color: $clr-green;
 }
 </style>
