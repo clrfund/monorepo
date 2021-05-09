@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import * as humanizeDuration from 'humanize-duration'
 
 export function formatDate(date: DateTime): string {
-  return date.toFormat('MMMM dd, yyyy')
+  return date.toFormat('MMMM dd')
 }
 
 export function hasDateElapsed(date: DateTime): boolean {

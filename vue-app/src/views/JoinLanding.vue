@@ -6,6 +6,7 @@
       <div class="hero">
         <img class="core" src="@/assets/core.png" />
 
+        <!-- TODO Add content about going via traditional ESP round for funding -->
         <div class="content" v-if="isRoundClosed">
           <div style="font-size: 64px;">☹</div>
           <h1>Sorry, the round is closed</h1>
@@ -20,6 +21,7 @@
           </div> 
         </div>
 
+        <!-- TODO Add content about going via traditional ESP round for funding -->
         <div class="content" v-else-if="isRoundFull">
           <div style="font-size: 64px;">☹</div>
           <h1>Sorry, this round is full</h1>
@@ -41,7 +43,7 @@
           <div id="info-boxes">
             <div id="apply-callout">
               <div id="countdown-label" class="caps">Time left to join</div>
-              <div id="countdown" class="caps">{{ timeRemaining === null ? "..." : timeRemaining }}</div>
+              <div id="countdown" class="caps">{{ timeRemaining }}</div>
             </div> 
             <div id="apply-callout">
               <div id="countdown-label" class="caps">Time to complete</div>
@@ -77,10 +79,16 @@ export default class JoinLanding extends Vue {
   }
 
   get timeRemaining(): string {
+    if (!this.signUpDeadline) {
+      return  '...'
+    }
     return formatDateFromNow(this.signUpDeadline)
   }
 
   get isRoundClosed(): boolean {
+    if (!this.signUpDeadline) {
+      return  false
+    }
     return hasDateElapsed(this.signUpDeadline)
   }
 

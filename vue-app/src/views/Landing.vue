@@ -32,7 +32,7 @@
         <div class="centered">
           <router-link to="/join"><div id="join-round" class="btn-primary">Join round</div></router-link>
         </div>
-        <div class="centered">11 days to join</div>
+        <div class="centered">{{timeRemaining}} to join</div>
       </div>
     </div>
     <div id="section-how-it-works">
@@ -113,7 +113,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { hasDateElapsed } from '@/utils/dates'
+import { DateTime } from 'luxon'
+import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
 
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
@@ -122,8 +123,22 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 })
 export default class Landing extends Vue {
 
+  private get signUpDeadline(): DateTime {
+    return this.$store.state.currentRound?.signUpDeadline
+  }
+
+  get timeRemaining(): string {
+    if (!this.signUpDeadline) {
+      return  '...'
+    }
+    return formatDateFromNow(this.signUpDeadline)
+  }
+
   get isRoundClosed(): boolean {
-    return hasDateElapsed(this.$store.state.currentRound.signUpDeadline)
+    if (!this.signUpDeadline) {
+      return  false
+    }
+    return hasDateElapsed(this.signUpDeadline)
   }
 
   // TODO fetch `maxRecipients` from registry & compare to current registry size
