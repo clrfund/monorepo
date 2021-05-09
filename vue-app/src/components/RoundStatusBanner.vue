@@ -10,11 +10,24 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { RoundInfo, getCurrentRound } from '@/api/round'
+import { formatDate, formatDateFromNow } from '@/utils/dates'
 
 @Component export default class RoundStatusBanner extends Vue {
-  startDate = '03 April' // TODO: use Date() object
-  timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
+  get startDate(): string {
+    const startTime = this.$store.state.currentRound?.startTime
+    if (!startTime) {
+      return '...'
+    }
+    return formatDate(startTime)
+  }
+
+  get timeRemaining(): string {
+    const signUpDeadline = this.$store.state.currentRound?.signUpDeadline
+    if (!signUpDeadline) {
+      return  '...'
+    }
+    return formatDateFromNow(signUpDeadline)
+  }
   
   // TODO: Pull in round information to determine which banner to show
   // 1. Pre-round - Accepting applications for projects to join funding round
