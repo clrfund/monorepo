@@ -61,8 +61,8 @@ export default class ProjectAdded extends Vue {
     return `${blockExplorer}${this.txHash}`
   }
 
-  formatDuration(value: number): string {
-    return humanizeDuration(value * 1000, { largest: 1 } )
+  formatDuration(seconds: number): string {
+    return humanizeDuration(seconds * 1000, { largest: 1 } )
   }
 }
 
