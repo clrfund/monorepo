@@ -29,6 +29,10 @@ export default class Transaction extends Vue {
       font-size: 1rem;
       font-weight: 600;
       margin: 1.5rem 0;
+      line-height: 150%;
+    }
+    p {
+      line-height: 150%;
     }
   }
 }
