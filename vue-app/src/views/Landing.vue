@@ -121,14 +121,16 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
   components: { RoundStatusBanner },
 })
 export default class Landing extends Vue {
-  isRoundClosed = false
-  isRoundFull = false // TODO fetch `maxRecipients` from registry & compare to current registry size
 
-  created() {
-    const startTime = this.$store.state.currentRound.startTime
-    this.isRoundClosed = hasDateElapsed(startTime)
-    console.log(this.isRoundClosed)
+  get isRoundClosed(): boolean {
+    return hasDateElapsed(this.$store.state.currentRound.signUpDeadline)
   }
+
+  // TODO fetch `maxRecipients` from registry & compare to current registry size
+  get isRoundFull(): boolean {
+    return false
+  }
+
 }
 </script>
 

@@ -50,7 +50,6 @@
           </div>
           <div class="btn-container">
             <button class="btn-secondary" @click="seeCriteria()">See round criteria</button>
-            <!-- <router-link to="/join/one" class="btn-primary">Add project</router-link> -->
             <router-link to="/join/project" class="btn-primary">Add project</router-link>
           </div>
         </div> 
@@ -62,26 +61,32 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { DateTime } from 'luxon'
 
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
-import { formatDate, formatDateFromNow, hasDateElapsed } from '@/utils/dates'
+import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
 
 @Component({
   components: { RoundStatusBanner },
 })
 export default class JoinLanding extends Vue {
 
-  startDate: string | null = null
-  timeRemaining: string | null = null // TODO confirm deadline to apply is `currentRound.startTime`
-  isRoundClosed = false
-  isRoundFull = false // TODO fetch `maxRecipients` from registry & compare to current registry size
+  private get signUpDeadline(): DateTime {
+    return this.$store.state.currentRound.signUpDeadline
+  }
 
-  created() {
-    const startTime = this.$store.state.currentRound.startTime
-    this.startDate = formatDate(startTime)
-    this.isRoundClosed = hasDateElapsed(startTime)
-    this.timeRemaining = formatDateFromNow(startTime)
+  get timeRemaining(): string {
+    return formatDateFromNow(this.signUpDeadline)
+  }
+
+  get isRoundClosed(): boolean {
+    return hasDateElapsed(this.signUpDeadline)
+  }
+
+  // TODO fetch `maxRecipients` from registry & compare to current registry size
+  get isRoundFull(): boolean {
+    return false
   }
 
   seeCriteria(): void {
