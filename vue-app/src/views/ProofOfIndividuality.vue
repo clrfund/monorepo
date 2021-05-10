@@ -88,10 +88,32 @@
         <div v-if="currentStep === 1">
             <h2 class="step-title">Get verified</h2>
             <p>This will help us know you’re not a bot! Here are your options.</p>
+            <div class="option">
+              <div class="tag">🚀Fastest</div>
+              <h3>Join a BrightID party </h3>
+            </div>
+            <div class="option">
+              <div class="tag">💡Most interesting</div>
+              <h3>Join us at “The consensus layer bonanza – an evening with the eth2 researchers”</h3>
+            </div>
+            <div class="option">
+                <div class="tag">🎰 Luckiest</div>
+              <h3>Connect with 2 verified humans</h3>
+            </div>
         </div>
         <div v-if="currentStep === 2">
             <h2 class="step-title">Sponsorship</h2>
-            <p>test</p>
+            <p>You need a sponsorship token to become BrightID verified. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID.</p>
+            <div class="transaction">
+                <wallet-widget />
+                <div class="checkout-row">
+                    <p><b>Estimated transaction fee</b></p>
+                    <p>0.00006 ETH </p>
+                </div>
+                <div class="btn-action">Get sponsored</div>
+                <transaction
+                    :hash="sponsorTxHash" />
+            </div>
         </div>
         <div v-if="currentStep === 3">
             <h2 class="step-title">Get registered</h2>
@@ -119,6 +141,7 @@ import ButtonRow from '@/components/ButtonRow.vue'
 import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
+import WalletWidget from '@/components/WalletWidget.vue'
 import Warning from '@/components/Warning.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
@@ -152,6 +175,7 @@ import { waitForTransaction } from '@/utils/contracts'
     Warning,
     Transaction,
     Loader,
+    WalletWidget,
   },
   validations: {
     form: {
@@ -528,6 +552,10 @@ export default class IndividualityView extends mixins(validationMixin) {
   }
 }
 
+.form-area p {
+    line-height: 150%;
+}
+
 .nav-area {
   grid-area: navi;
 }
@@ -829,7 +857,7 @@ export default class IndividualityView extends mixins(validationMixin) {
 }
 
 .verification-status {
-    background: $bg-light-color;
+    background: $bg-light-color; 
     padding: 1.5rem 2rem;
     border-radius: 1rem;
     display: flex;
@@ -856,11 +884,26 @@ export default class IndividualityView extends mixins(validationMixin) {
 .success {
     color: $clr-green;
     font-weight: 600;
+    margin-left: 1rem;
 }
 
 .unverified {
     color: $error-color;
     font-weight: 600;
+    margin-left: 1rem;
+}
+
+.transaction {
+    background: $bg-primary-color;
+    border: 1px solid #000;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    width: 75%;
+}
+
+.checkout-row {
+    display: flex;
+    justify-content: space-between;
 }
 
 .toggle-tabs-mobile {
@@ -929,6 +972,37 @@ export default class IndividualityView extends mixins(validationMixin) {
 .qr-code {
   width: 320px;
   margin: 2rem;
+}
+
+.option {
+    background: $bg-light-color;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.option h3 {
+    font-family: "Glacial Indifference", sans-serif;
+    font-size: 1.25rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.5rem;
+    letter-spacing: 0em;
+    text-align: left;
+    margin: 0;
+    margin-top: 0.5rem;
+}
+
+.tag {
+    /* background: #fff9; */
+    border-radius: 2rem;
+    font-family: "Glacial Indifference", sans-serif;
+    padding: 0.25rem 0.5rem;
+    padding-left: 0;
+    /* color: $bg-primary-color; */
+    font-size: 16px;
+    text-transform: uppercase;
+    width: fit-content;
 }
 
 .data img {
