@@ -34,6 +34,18 @@ export function getBrightIdLink(userAddress: string): string {
   return deepLink
 }
 
+export interface BrightIDSteps {
+  connect: {
+  };
+  verification: {
+  };
+  sponsorship: {
+  };
+  registration: {
+  };
+  furthestStep: number;
+}
+
 export interface Verification {
   unique: boolean;
   contextIds: string[];
