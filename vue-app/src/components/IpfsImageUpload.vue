@@ -21,26 +21,33 @@
       </button>
     </div>
     <loader v-if="loading" />
-    <div class="image-preview">
+    <div v-if="hash" class="image-preview">
       <img
-        v-if="hash"
         :src="imageUrl"
         alt=""
         :class="{
           'image-preview': hash,
         }"
       />
-      <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
-        <div v-if="hash" @click="handleRemoveImage" class="btn-white small">Remove image</div>
-      </div>
     </div>
-    <div v-if="hash" @click="copyHash" class="copy">
-      <div class="label">
-        IPFS hash <img width="16px" src="@/assets/info.svg" />
+    <div v-if="hash">
+      <p class="input-label">
+        IPFS hash (InterPlanetary File System)
+      </p>
+      <p class="input-description">Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use. <a href="https://ipfs.io/#how">More on IPFS</a>  </p>
+    </div>
+    <div class="hash-area">
+      <div v-if="hash"  class="copy">
+        <div class="hash">
+          <loader class="hash-loader" v-if="loading" />
+          <div v-else>{{hash}}</div>
+        </div>
+        <div class="icons">
+          <div class="icon" @click="copyHash"><img width="16px" src="@/assets/copy.svg" /></div>
+          <a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"><img width="16px" src="@/assets/ipfs-white.svg" /></a>
+        </div>
       </div>
-      <div class="hash">
-        {{hash}} <img width="16px" src="@/assets/copy.svg" />
-      </div>
+      <div v-if="hash" @click="handleRemoveImage" class="btn-white small">Remove image</div>
     </div>
     <p v-if="error" class="error">{{ error }}</p>
   </form>
@@ -53,11 +60,15 @@ import { Prop } from 'vue-property-decorator'
 import { ipfsGatewayUrl } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
+import Tooltip from '@/components/Tooltip.vue'
 
 import IPFS from 'ipfs-mini'
 
 @Component({
-  components: { Loader },
+  components: { 
+    Loader,
+    Tooltip, 
+  },
 })
 export default class IpfsImageUpload extends Vue {
   @Prop() label!: string
@@ -140,21 +151,11 @@ export default class IpfsImageUpload extends Vue {
 .image-preview {
   width: 100%;
   height: auto;
-  display: flex;
-  align-items: center;
-  background: $bg-secondary-color;
-  box-shadow: $box-shadow;
-  border-radius: 8px;
-  @media (max-width: $breakpoint-m) {
-    flex-direction: column;
-  }
+  margin-bottom: 1rem;
 }
 
 .image-preview img {
-  width: 50%;
-  @media (max-width: $breakpoint-m) {
-    width: 100%;
-  }
+
 }
 
 .disabled {
@@ -198,6 +199,7 @@ export default class IpfsImageUpload extends Vue {
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0em;
+    width: 100%;
   &:valid { 
     border: 2px solid $clr-green;
   }
@@ -212,11 +214,29 @@ export default class IpfsImageUpload extends Vue {
   }
 }
 
-.copy {
+.input-label {
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0em;
+  text-align: left;
+  margin: 0;
+}
+
+.input-description {
+  margin-top: 0.25rem;
+  font-size: 14px;
+  font-family: Inter;
+  margin-bottom: 0.5rem;
+  line-height: 150%;
+}
+
+/* .copy {
   border: 1px solid #fff;
-  border-radius: 0.5rem;
+  border-radius: 2rem;
   background: $bg-secondary-color;
-  margin-top: 2rem;
   display: flex;
   width: fit-content;
   cursor: pointer;
@@ -228,15 +248,29 @@ export default class IpfsImageUpload extends Vue {
     flex-direction: column;
     width: 100%;
   }
+} */
+
+.copy {
+  background: $bg-primary-color;
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  border-radius: 32px;
+  padding: 0.25rem 0.5rem;
+  
+  font-weight: 500;
+  width: fit-content;
+
 }
 
-.label {
-  background: $bg-primary-color;
+ .label {
+  /* background: $bg-primary-color;
   padding: 0.5rem;
   text-transform: uppercase;
-  font-size: 16px;
+  font-size: 14px;
   font-family: "Glacial Indifference", sans-serif;
-  border-radius: 0.5rem 0 0 0.5rem;
+  border-radius: 2rem 0 0 2rem;
   border-right: 1px solid #fff;
   line-height: 150%;
   display: flex;
@@ -245,7 +279,13 @@ export default class IpfsImageUpload extends Vue {
   @media (max-width: $breakpoint-m) {
     border-radius: 0.5rem 0.5rem 0 0;
     border-right: 0;
-  }
+  }*/
+} 
+
+.label {
+  display: flex;
+  align-items: center;
+  margin-top: 2rem;
 }
 
 .label img {
@@ -259,19 +299,65 @@ export default class IpfsImageUpload extends Vue {
 
 .hash {
   padding: 0.5rem;
-  font-family: monospace;
+  font-size: 14px;
+  font-weight: 500;
   line-height: 150%;
   display: flex;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+    @media (max-width: $breakpoint-m) {
+    margin-left: 0.5rem;
+  }
 }
 
-.hash img {
-  padding: 0.25rem;
-  border-radius: 4px;
-  &:hover {
-    background: $bg-primary-color;
+.hash-loader {
+    margin: 0.25rem;
+    padding: 0;
+    width: 1rem;
+    height: 1rem;
+}
+.hash-loader:after {
+    width: 0.75rem;
+    height: 0.75rem;
+    margin: 0;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    border-color: #fff transparent #fff transparent;
+}
+
+.hash-area {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+    width: 100%;
   }
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;  
+  @media (max-width: $breakpoint-m) {
+    width: fit-content;
+    margin-right: 1rem;
+    gap: 0.5rem;
+  }
+}
+
+.icon {
+    width: 1rem;
+    height: 1rem;
+    padding: 0.25rem;
+    cursor: pointer;
+    &:hover {
+        background: $bg-light-color;
+        border-radius: 16px;
+    }
 }
 </style>
