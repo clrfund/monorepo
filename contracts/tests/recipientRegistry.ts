@@ -187,6 +187,14 @@ describe('Simple Recipient Registry', () => {
       )).to.equal(recipientAddress)
     })
 
+    it('should return recipient count', async () => {
+      expect(await registry.getRecipientCount()).to.equal(0)
+      await registry.addRecipient(recipientAddress, metadata)
+      expect(await registry.getRecipientCount()).to.equal(1)
+      await registry.removeRecipient(recipientId)
+      expect(await registry.getRecipientCount()).to.equal(0)
+    })
+
     it('allows to re-use index of removed recipient', async () => {
       // Add recipients up to a limit
       for (let i = 0; i < MAX_RECIPIENTS; i++) {
