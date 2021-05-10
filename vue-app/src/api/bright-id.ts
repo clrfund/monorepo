@@ -43,7 +43,6 @@ export interface BrightIDSteps {
   };
   registration: {
   };
-  furthestStep: number;
 }
 
 export interface Verification {

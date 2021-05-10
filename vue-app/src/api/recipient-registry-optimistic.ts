@@ -77,18 +77,6 @@ export interface RecipientApplicationData {
   furthestStep: number;
 }
 
-export interface BrightIDSteps {
-  connect: {
-  };
-  verification: {
-  };
-  sponsorship: {
-  };
-  registration: {
-  };
-  furthestStep: number;
-}
-
 export function formToProjectInterface(data: RecipientApplicationData): Project {
   const { project, fund, team, links, image } = data
   return {

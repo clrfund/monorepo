@@ -13,17 +13,13 @@
               :key="step"
               class="progress-step"
               :class="{
-                'zoom-link': step <= form.furthestStep && step !== currentStep && !navDisabled,
-                disabled: navDisabled
+                'zoom-link': step !== currentStep,
+                disabled: false, // TODO 
               }"
               @click="handleStepNav(step)"
             >
               <template v-if="step === currentStep">
                 <img src="@/assets/current-step.svg" alt="current step" />
-                <p v-text="name" class="active step" />
-              </template>
-              <template v-else-if="step === furthestStep">
-                <img src="@/assets/furthest-step.svg" alt="current step" />
                 <p v-text="name" class="active step" />
               </template>
               <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
@@ -42,7 +38,6 @@
             :currentStep="currentStep"
             :callback="saveFormData"
             :handleStepNav="handleStepNav"
-            :navDisabled="navDisabled"
             class="desktop"
           />
         </div>
@@ -96,8 +91,8 @@
                     <div v-if="!appLinkQrCode">Connect your wallet to get started</div>
                     <wallet-widget v-if="!appLinkQrCode" />
                     <!-- TODO: connection should cause the QR code to appear -->
-                    <p v-if="!desktop">Follow this link to connect your wallet to your BrightID app</p>
-                    <a v-if="!desktop" :href="appLink" target="_blank">{{ appLink }}</a>
+                    <p class="mobile">Follow this link to connect your wallet to your BrightID app</p>
+                    <a class="mobile" :href="appLink" target="_blank">{{ appLink }}</a>
                 </div>
             </div>
             <!-- TODO: success state for linked -->
@@ -150,12 +145,10 @@
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
 import { required, maxLength, url, email } from 'vuelidate/lib/validators'
-import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
-import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
@@ -172,7 +165,7 @@ import {
   isSponsoredUser,
   selfSponsor,
   registerUser,
-  BrightIdSteps,
+  BrightIDSteps,
 } from '@/api/bright-id'
 import { User, getProfileImageUrl } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
@@ -192,7 +185,6 @@ import { waitForTransaction } from '@/utils/contracts'
     LayoutSteps,
     ProgressBar,
     ButtonRow,
-    IpfsImageUpload,
     Markdown,
     ProjectProfile,
     Warning,
@@ -229,7 +221,6 @@ export default class IndividualityView extends mixins(validationMixin) {
     registration: {
 
     },
-
   }
   currentStep = 0
   steps: string[] = []
@@ -266,6 +257,7 @@ export default class IndividualityView extends mixins(validationMixin) {
     let verification
     const checkVerification = async () => {
       try {
+        // TODO fix
         verification = await getVerification(this.currentUser.walletAddress)
       } catch (error) {
         if (
@@ -337,8 +329,6 @@ export default class IndividualityView extends mixins(validationMixin) {
 
   created() {
     const steps = Object.keys(this.form)
-    // Reassign last key from form object (furthestStep) to 'summary'
-    /* steps[steps.length - 1] = 'summary' */
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
       'Connect',
@@ -351,38 +341,36 @@ export default class IndividualityView extends mixins(validationMixin) {
     this.stepNames = stepNames
     this.form = this.$store.state.recipient || this.form
 
-    // redirect to /join/ if step doesn't exist
+    // redirect to /setup/ if step doesn't exist
     if (this.currentStep < 0) {
       this.$router.push({ name: 'setup' })
     }
     // "Next" button restricts forward navigation via validation, and
     // eventually updates the `furthestStep` tracker when valid and clicked/tapped.
     // If URL step is ahead of furthest, navigate back to furthest
-    if (this.currentStep > this.form.furthestStep) {
-      this.$router.push({ name: 'getVerified', params: { step: steps[this.form.furthestStep] }})
-    }
+    
+    // TODO fetch verification data w/ BrightID - don't need furthest step
+    // Particularly for people who are already verified on BrightID...
+    // if (this.currentStep > this.form.furthestStep) {
+    //   this.$router.push({ name: 'getVerified', params: { step: steps[this.form.furthestStep] }})
+    // }
 
   }
-
-
   
   isStepValid(step: number): boolean {
-    if (step === 3) {
-      return this.isLinkStepValid()
-    }
     const stepName: string = this.steps[step]
     return !this.$v.form[stepName]?.$invalid
   }
 
+  // TODO fetch verification data w/ BrightID - don't need furthest step
   isStepUnlocked(step: number): boolean {
-    return step <= this.form.furthestStep
+    return true
+    // return step <= this.form.furthestStep
   }
 
-  saveFormData(updateFurthest?: boolean): void {
-    if (updateFurthest && this.currentStep + 1 > this.form.furthestStep) {
-      this.form.furthestStep = this.currentStep + 1
-    }
+  saveFormData(): void {
     if (typeof this.currentStep !== 'number') return
+    // TODO update to SET_CONTRIBUTOR_DATA
     this.$store.commit(SET_RECIPIENT_DATA, {
       updatedData: this.form,
       step: this.steps[this.currentStep],
@@ -390,19 +378,7 @@ export default class IndividualityView extends mixins(validationMixin) {
     })
   }
 
-  // Callback from IpfsImageUpload component
-  handleUpload(key, value) {
-    this.form.image[key] = value
-    this.saveFormData(false)
-  }
-
-  get navDisabled(): boolean {
-    return !this.isStepValid(this.currentStep) && this.currentStep !== this.furthestStep
-  }
-
   handleStepNav(step): void {
-    // If navDisabled => disable quick-links
-    if (this.navDisabled) return
     // Save form data
     this.saveFormData()
     // Navigate
@@ -414,14 +390,6 @@ export default class IndividualityView extends mixins(validationMixin) {
         },
       })
     }
-  }
-
-  get projectInterface(): Project {
-    return formToProjectInterface(this.form)
-  }
-
-  get furthestStep() {
-    return this.form.furthestStep
   }
 } 
 
