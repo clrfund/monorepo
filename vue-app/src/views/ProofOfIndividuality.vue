@@ -77,17 +77,30 @@
         <div class="application">
         <div v-if="currentStep === 0">
             <h2 class="step-title">Connect</h2>
-            <p>Open your BrightID app and scan this QR code. This will make the initial link between your BrightID account and our funding round.</p>
+            <p>First you need to connect your BrightID account with your wallet address.</p>
             <div class="qr">
-                <img :src="appLinkQrCode" class="qr-code">
-                <loader v-if="!appLinkQrCode" />
-                <div v-if="!appLinkQrCode">Connect your wallet to get started</div>
-                <wallet-widget v-if="!appLinkQrCode" />
-                <!-- TODO: connection should cause the QR code to appear -->
-                <a v-if="!desktop" :href="appLink" target="_blank">{{ appLink }}</a>
+                <div v-if="step > 1">
+                    <div class="connected-message">
+                        <div class="checkmark"><img src="@/assets/checkmark.svg" /></div>
+                        <div class="profile-image">
+                            <img :src="profileImageUrl">
+                            <!-- TODO: display blockie next to checkmark -->
+                        </div>
+                        <p>Move along! Your BrightID app is connected</p>
+                    </div>
+                </div>
+                <div v-else>
+                    <p>Scan this QR code with your BrightID app</p>
+                    <img :src="appLinkQrCode" class="qr-code">
+                    <loader v-if="!appLinkQrCode" />
+                    <div v-if="!appLinkQrCode">Connect your wallet to get started</div>
+                    <wallet-widget v-if="!appLinkQrCode" />
+                    <!-- TODO: connection should cause the QR code to appear -->
+                    <p v-if="!desktop">Follow this link to connect your wallet to your BrightID app</p>
+                    <a v-if="!desktop" :href="appLink" target="_blank">{{ appLink }}</a>
+                </div>
             </div>
             <!-- TODO: success state for linked -->
-            <p v-if="verification">Connected!</p>
         </div>    
         <div v-if="currentStep === 1">
             <h2 class="step-title">Get verified</h2>
@@ -147,7 +160,6 @@ import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 import Warning from '@/components/Warning.vue'
-
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import { Project } from '@/api/projects'
@@ -162,10 +174,16 @@ import {
   registerUser,
   BrightIdSteps,
 } from '@/api/bright-id'
-import { User } from '@/api/user'
+import { User, getProfileImageUrl } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
-import { LOAD_USER_INFO } from '@/store/action-types'
+import {
+  LOAD_USER_INFO,
+  LOAD_CART,
+  LOAD_CONTRIBUTOR_DATA,
+  LOGIN_USER,
+  LOGOUT_USER,
+} from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 
 
@@ -227,6 +245,7 @@ export default class IndividualityView extends mixins(validationMixin) {
   sponsorTxError = ''
   registrationTxHash = ''
   registrationTxError = ''
+  profileImageUrl: string | null = null
 
   private get currentUser(): User {
     return this.$store.state.currentUser
@@ -314,6 +333,7 @@ export default class IndividualityView extends mixins(validationMixin) {
     this.$store.dispatch(LOAD_USER_INFO)
     this.step += 1
   }
+
 
   created() {
     const steps = Object.keys(this.form)
@@ -404,6 +424,7 @@ export default class IndividualityView extends mixins(validationMixin) {
     return this.form.furthestStep
   }
 } 
+
 </script>
 
 <style scoped lang="scss">
@@ -541,6 +562,26 @@ export default class IndividualityView extends mixins(validationMixin) {
   .cancel-link {
     font-weight: 500;
   }
+}
+
+.connected-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkmark {
+    background: $clr-green;
+    border-radius: 2rem;
+    padding: 0.5rem;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+}
+
+.checkmark img {
+    width: 1rem;
+    height: 1rem;
 }
 
 .form-area {
