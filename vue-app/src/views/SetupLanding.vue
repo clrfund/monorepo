@@ -15,11 +15,14 @@
           <h2>What you'll need</h2>
           <ul>
             <li>An Ethereum address</li>
-            <li>BrightID – available on iOS or Android.</li>
+            <li>BrightID – available on <a href="https://apps.apple.com/us/app/brightid/id1428946820" target="_blank"> iOS</a> or <a href="https://play.google.com/store/apps/details?id=org.brightid" target="_blank">Android</a></li>
             <li>Access to Zoom or Google Meet</li>
           </ul>
           <div class="btn-container" style="margin-top: 2rem;">
-            <router-link to="/setup/get-verified/connect" class="btn-primary">View projects</router-link>
+            <div>
+                <div v-if="walletProvider && !currentUser"><wallet-widget /></div>
+                <router-link v-else to="/setup/get-verified/connect" class="btn-primary">Get started</router-link>
+            </div>
             <router-link to="/" class="btn-secondary">Go home</router-link>
           </div>
         </div>
@@ -32,17 +35,18 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import * as humanizeDuration from 'humanize-duration'
-
+import { User } from '@/api/user'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
-
+import { commify, formatUnits } from '@ethersproject/units'
+import WalletWidget from '@/components/WalletWidget.vue'
 import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
 
 @Component({
   name: 'setupLanding',
   metaInfo: { title: 'Setup' },
-  components: { ProgressBar, RoundStatusBanner },
+  components: { ProgressBar, RoundStatusBanner, WalletWidget },
 })
 export default class SetupLanding extends Vue {
   challengePeriodDuration: number | null = null
@@ -56,6 +60,18 @@ export default class SetupLanding extends Vue {
   async created() {
     const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
     this.challengePeriodDuration = registryInfo.challengePeriodDuration
+  }
+
+  get walletProvider(): any {
+    return (window as any).ethereum
+  }
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
+  }
+  get balance(): string | null {
+    const balance = this.currentUser?.balance
+    if (balance === null || typeof balance === 'undefined') { return null }
+    return commify(formatUnits(balance, 18))
   }
   
   get blockExplorerUrl(): string {
