@@ -80,6 +80,10 @@
             <p>Open your BrightID app and scan this QR code. This will make the initial link between your BrightID account and our funding round.</p>
             <div class="qr">
                 <img :src="appLinkQrCode" class="qr-code">
+                <loader v-if="!appLinkQrCode" />
+                <div v-if="!appLinkQrCode">Connect your wallet to get started</div>
+                <wallet-widget v-if="!appLinkQrCode" />
+                <!-- TODO: connection should cause the QR code to appear -->
                 <a v-if="!desktop" :href="appLink" target="_blank">{{ appLink }}</a>
             </div>
             <!-- TODO: success state for linked -->
@@ -145,7 +149,7 @@ import WalletWidget from '@/components/WalletWidget.vue'
 import Warning from '@/components/Warning.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
-import { RecipientApplicationData, formToProjectInterface, BrightIDSteps } from '@/api/recipient-registry-optimistic'
+import { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import { Project } from '@/api/projects'
 import QRCode from 'qrcode'
 import {
@@ -156,6 +160,7 @@ import {
   isSponsoredUser,
   selfSponsor,
   registerUser,
+  BrightIdSteps,
 } from '@/api/bright-id'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
