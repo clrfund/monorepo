@@ -1,188 +1,81 @@
 <template>
-  <div class="project">
-    <a
-      class="back-button"
-      @click="goBackToList()"
-    >
-      ← Back to projects
-    </a>
-    <loader v-if="isLoading" />
-    <div v-if="project" class="project-page" style="margin-top: 1.5rem;">
-      <img class="project-image" :src="project.imageUrl" :alt="project.name">
-      <div class="content">
-        <div class="about">    
-          <h1 
-            class="project-name"
-            :title="project.address"
-            :data-index="project.index"
-          >
-            <a
-              v-if="klerosCurateUrl"
-              :href="klerosCurateUrl"
-              target="_blank"
-              rel="noopener"
-            >{{ project.name }}</a>
-            <span v-else> {{ project.name }} </span>
-          </h1>
-          <p class="tagline">{{ project.tagline }}</p> 
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 3rem;">
-            <div class="tag">{{ project.category }} tag </div>
-            <div class="team-byline">By <a href="#team"> {{ project.teamName }} team</a></div>
-          </div>
-          <div class="project-section">
-            <h2>📖 About the project</h2>
-            <div class="project-description">{{ project.description }}</div>
-          </div>
-          <div class="project-section">
-            <h2>🔧 The problem it solves</h2>
-            <div class="project-description">{{ project.problemSpace }}</div>
-          </div>
-          <div class="project-section">
-            <h2>💰 Funding plans</h2>
-            <div class="project-description">{{ project.plans }}</div>
-          </div> 
-          <div class="address-box">
-            <div>
-              <div class="address-label">Recipient address</div>
-              <div class="address">
-                {{ project.address }} 
-              </div>
-            </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/copy.svg"></div>
-              <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
-            </div>
-          </div>
-          <hr v-if="project.teamName || project.teamDescription" />
-          <div v-if="project.teamName || project.teamDescription" class="team">
-            <h2 v-if="project.teamName" id="team" style="margin-top: 0;">Brought to you by {{ project.teamName }}  </h2>
-            <div v-if="project.teamDescription" class="project-description">{{ project.teamDescription }}</div>
-          </div>
-        </div>
-        <div class="sticky-column">  
-          <!--TODO: only make this visible to certain addresses ++ this will trigger a tx-->  
-          <!-- <div class="admin-box">
-            <h2 class="link-title">Admin controls</h2> -->
-            <button class="btn-warning" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: center;"><img width="16px" src="@/assets/remove.svg"/>Remove project</button>
-          <!-- </div> -->
-          <button 
-            style="display: flex; align-items: center; gap: 0.5rem; width: 100%; justify-content: center;"
-            class="btn-secondary"
-          >
-            <img width="16px" src="@/assets/edit.svg" />
-            Edit details
-          </button>
-          <button
-            v-if="hasRegisterBtn()"
-            class="btn-primary"
-            :disabled="!canRegister()"
-            @click="register()"
-          >
-            Register
-          </button>
-          <div class="input-button" v-if="hasContributeBtn() && !inCart">
-            <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
-            <input
-              v-model="contributionAmount"
-              class="input"
-              name="contributionAmount"
-              placeholder="5"
-              autocomplete="on"
-              onfocus="this.value=''"
+  <div class="grid">
+    <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name">
+    <project-profile class="details" :project="project" :previewMode="false" />
+    <div class="sticky-column">  
+      <!--TODO: only make this visible to certain addresses ++ this will trigger a tx-->  
+      <!-- <div class="admin-box">
+      <h2 class="link-title">Admin controls</h2>
+      <button class="btn-warning button">
+        <img width="16px" src="@/assets/remove.svg"/>
+        Remove project
+      </button>
+      </div>
+      <button class="btn-secondary button">
+        <img width="16px" src="@/assets/edit.svg" />
+        Edit details
+      </button> -->
+      <button
+        v-if="hasRegisterBtn()"
+        class="btn-primary"
+        :disabled="!canRegister()"
+        @click="register()"
+      >
+        Register
+      </button>
+      <div class="input-button" v-if="hasContributeBtn() && !inCart">
+        <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
+        <input
+          v-model="contributionAmount"
+          class="input"
+          name="contributionAmount"
+          placeholder="5"
+          autocomplete="on"
+          onfocus="this.value=''"
 
-            >
-            <input type="submit"
-              class="donate-btn"
-              :disabled="!canContribute()"
-              @click="contribute()"
-              value="Add to cart"
-            >
-          </div>
-          <div class="input-button" v-if="hasContributeBtn() && inCart">
-            <button
-              class="donate-btn-full"
-            >
-              <span>In cart 🎉</span>
-            </button>
-          </div>
-          <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
-          <button
-            v-if="hasClaimBtn()"
-            class="btn-primary"
-            :disabled="!canClaim()"
-            @click="claim()"
-          >
-            <template v-if="claimed">
-              Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-            </template>
-            <template v-else>
-              Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
-            </template>
-          </button>
-          <div class="link-box">
-            <h2 class="link-title">Check them out</h2>
-            <div v-if="project.githubUrl" class="link-row">
-              <img src="@/assets/GitHub.svg" />
-              <a :href="project.githubUrl">GitHub repo</a>
-            </div>
-            <div v-if="project.twitterUrl" class="link-row">
-              <img src="@/assets/Twitter.svg" />
-              <a :href="project.twitterUrl">@Twitter</a>
-            </div>  
-            <div v-if="project.websiteUrl" class="link-row">
-              <img src="@/assets/Meridians.svg" />
-              <a :href="project.websiteUrl">{{ project.websiteUrl }}</a>
-            </div>  
-          </div>
-        </div>
-      </div>  
-      <div class="nav-area nav-bar mobile">
+        >
+        <input type="submit"
+          class="donate-btn"
+          :disabled="!canContribute()"
+          @click="contribute()"
+          value="Add to cart"
+        >
+      </div>
+      <div class="input-button" v-if="hasContributeBtn() && inCart">
         <button
-            v-if="hasRegisterBtn()"
-            class="btn-primary"
-            :disabled="!canRegister()"
-            @click="register()"
-          >
-            Register
-          </button>
-          <div class="input-button" v-if="hasContributeBtn() && !inCart">
-            <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
-            <input
-              v-model="contributionAmount"
-              class="input"
-              name="contributionAmount"
-              placeholder="5"
-              autocomplete="on"
-              onfocus="this.value=''"
-
-            >
-            <input type="submit"
-              class="donate-btn"
-              :disabled="!canContribute()"
-              @click="contribute()"
-              value="Add to cart"
-            >
-          </div>
-          <div class="input-button" v-if="hasContributeBtn() && inCart">
-            <button
-              class="donate-btn-full"
-            >
-              <span>In cart 🎉</span>
-            </button>
-          </div>
-          <button
-            v-if="hasClaimBtn()"
-            class="btn-primary"
-            :disabled="!canClaim()"
-            @click="claim()"
-          >
-            <template v-if="claimed">
-              Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-            </template>
-            <template v-else>
-              Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
-            </template>
-          </button>   
+          class="donate-btn-full"
+        >
+          <span>In cart 🎉</span>
+        </button>
+      </div>
+      <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
+      <button
+        v-if="hasClaimBtn()"
+        class="btn-primary"
+        :disabled="!canClaim()"
+        @click="claim()"
+      >
+        <template v-if="claimed">
+          Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
+        </template>
+        <template v-else>
+          Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
+        </template>
+      </button>
+      <div class="link-box">
+        <h2 class="link-title">Check them out</h2>
+        <div v-if="project.githubUrl" class="link-row">
+          <img src="@/assets/GitHub.svg" />
+          <a :href="project.githubUrl">GitHub repo</a>
+        </div>
+        <div v-if="project.twitterUrl" class="link-row">
+          <img src="@/assets/Twitter.svg" />
+          <a :href="project.twitterUrl">@Twitter</a>
+        </div>  
+        <div v-if="project.websiteUrl" class="link-row">
+          <img src="@/assets/Meridians.svg" />
+          <a :href="project.websiteUrl">{{ project.websiteUrl }}</a>
+        </div>  
       </div>
     </div>
   </div>
@@ -190,7 +83,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Component, { mixins } from 'vue-class-component'
+import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
@@ -203,6 +96,7 @@ import { RoundStatus, getCurrentRound } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
+import ProjectProfile from '@/components/ProjectProfile.vue'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import {
   SELECT_ROUND,
@@ -223,7 +117,7 @@ import { markdown } from '@/utils/markdown'
   metaInfo() {
     return { title: (this as any).project?.name || '' }
   },
-  components: {Loader},
+  components: {Loader, ProjectProfile },
 })
 export default class ProjectView extends Vue {
 
@@ -450,6 +344,34 @@ export default class ProjectView extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
+.grid {
+  display: grid;
+  grid-template-columns: 1fr clamp(320px, 24%, 440px);
+  grid-template-rows: repeat(2, auto);
+  grid-template-areas: 'banner banner' 'details actions';
+  grid-column-gap: 2rem;
+  grid-row-gap: 3rem;
+  @media (max-width: $breakpoint-m) {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, auto);
+    grid-template-areas: 'banner' 'details' 'actions';
+  }
+}
+
+.banner {
+  grid-area: banner;
+}
+
+.sticky-column {
+  grid-area: actions;
+  position: sticky;
+  top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  gap: 1rem;
+}
+
 
 .back-button {
   color: $text-color;
@@ -457,15 +379,6 @@ export default class ProjectView extends Vue {
   &:hover {
         transform: scale(1.01);
       }
-}
-
-.sticky-column {
-  position: sticky;
-  top: 2rem;
-  align-self: start;
-  gap: 1rem;
-  display: flex;
-  flex-direction: column;
 }
 
 .tagline {
@@ -532,7 +445,7 @@ export default class ProjectView extends Vue {
 .link-box {
   background: $bg-primary-color;
   padding: 1.5rem;
-  min-width: 320px;
+  /* min-width: 320px; */
   border-radius: 16px;
   box-shadow: $box-shadow;
 }
@@ -571,8 +484,6 @@ export default class ProjectView extends Vue {
   }
 }
 
-
-
 .tag {
   padding: 0.5rem 0.75rem;
   background: $bg-light-color;
@@ -580,7 +491,6 @@ export default class ProjectView extends Vue {
   font-family: 'Glacial Indifference', sans-serif;
   width: fit-content;
   border-radius: 4px;
-  
 }
 
 
@@ -715,9 +625,6 @@ export default class ProjectView extends Vue {
   background: $bg-primary-color;
   border-radius: 32px 32px  0 0;
   box-shadow: $box-shadow;
-}
-
-.project-page {
 }
 
 .project-page h2 {
