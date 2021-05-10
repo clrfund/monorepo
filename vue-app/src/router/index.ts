@@ -7,7 +7,9 @@ import ProjectList from '../views/ProjectList.vue'
 import ProjectView from '../views/Project.vue'
 import RoundList from '../views/RoundList.vue'
 import ProjectAdded from '../views/ProjectAdded.vue'
+import IndividualityView from '../views/ProofOfIndividuality.vue'
 import RoundInformation from '../views/RoundInformation.vue'
+import SetupLanding from '../views/SetupLanding.vue'
 import About from '../views/About.vue'
 import JoinView from '../views/Join.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
@@ -65,6 +67,16 @@ const routes = [
     path: '/join',
     name: 'join',
     component: JoinLanding,
+  },
+  {
+    path: '/setup',
+    name: 'setup',
+    component: SetupLanding,
+  },
+  {
+    path: '/setup/get-verified/:step',
+    name: 'getVerified',
+    component: IndividualityView,
   },
   {
     path: '/join/:step',

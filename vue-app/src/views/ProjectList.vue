@@ -100,7 +100,7 @@
         <h2 class="prep-title">Get prepared</h2>
         <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
         </div>
-        <div class="btn-action" style="cursor: pointer;">Start prep</div>
+        <router-link to="/setup" class="btn-action" style="cursor: pointer;">Start prep</router-link>
       </div>
       <project-list-item
         v-for="project in filteredProjects"
