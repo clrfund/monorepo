@@ -20,7 +20,7 @@
     "humanize-duration": "^3.25.1",
     "is-ipfs": "^2.0.0",
     "luxon": "^1.26.0",
-    "maci-domainobjs": "~0.7.1",
+    "maci-domainobjs": "~0.7.4",
     "markdown-it": "^12.0.4",
     "markdown-it-link-attributes": "^3.0.0",
     "qrcode": "^1.4.4",
