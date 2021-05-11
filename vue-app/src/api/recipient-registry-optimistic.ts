@@ -46,15 +46,6 @@ export enum RequestStatus {
   Executed = 'Executed',
 }
 
-interface ImageState {
-  hash: string;
-  success: string;
-  failure: string;
-  // modalOpen: boolean;
-  document: string;
-  loading: boolean;
-}
-
 export interface RecipientApplicationData {
   project: {
     name: string;
@@ -70,6 +61,7 @@ export interface RecipientApplicationData {
   team: {
     name: string;
     description: string;
+    email: string;
   };
   links: {
     github: string;
@@ -79,13 +71,36 @@ export interface RecipientApplicationData {
     discord: string;
   };
   image: {
-    requiresUpload: '' | 'true' | 'false';
     bannerHash: string;
     thumbnailHash: string;
-    banner: ImageState;
-    thumbnail: ImageState;
   };
   furthestStep: number;
+}
+
+export function formToProjectInterface(data: RecipientApplicationData): Project {
+  const { project, fund, team, links, image } = data
+  return {
+    id: fund.address,
+    address: fund.address,
+    name: project.name,
+    tagline: project.tagline,
+    description: project.description,
+    category: project.category,
+    problemSpace: project.problemSpace,
+    plans: fund.plans,
+    teamName: team.name,
+    teamDescription: team.description,
+    githubUrl: links.github,
+    radicleUrl: links.radicle,
+    websiteUrl: links.website,
+    twitterUrl: links.twitter,
+    discordUrl: links.discord,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${image.bannerHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${image.thumbnailHash}`,
+    index: 0,
+    isHidden: false,
+    isLocked: true,
+  }
 }
 
 interface RecipientMetadata {
@@ -199,6 +214,7 @@ export function getRequestId(
   return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
+// TODO add new project fields
 function decodeProject(requestSubmittedEvent: Event): Project {
   const args = requestSubmittedEvent.args as any
   if (args._type !== RequestTypeCode.Registration) {
@@ -218,6 +234,19 @@ function decodeProject(requestSubmittedEvent: Event): Project {
     extra: {
       submissionTime: args._timestamp.toNumber(),
     },
+    tagline: metadata.tagline,
+    category: metadata.category,
+    problemSpace: metadata.problemSpace,
+    plans: metadata.plans,
+    teamName: metadata.teamName,
+    teamDescription: metadata.teamDescription,
+    githubUrl: metadata.githubUrl,
+    radicleUrl: metadata.radicleUrl,
+    websiteUrl: metadata.websiteUrl,
+    twitterUrl: metadata.twitterUrl,
+    discordUrl: metadata.discordUrl,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`,
   }
 }
 

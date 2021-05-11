@@ -12,10 +12,10 @@
         <h2 class="no-margin">Your wallet</h2>
       </div>
       <div class="address-card">
-        <h2 class="address">{{ ens || renderUserAddress(16)}}</h2>
+        <h2 class="address">{{renderUserAddress(16)}}</h2>
         <div class="action-row">
           <div class="copy btn" @click="copyAddress"><img src="@/assets/copy.svg"></div>
-          <div class="address">{{ens && renderUserAddress(20)}}</div>
+          <div class="address">{{renderUserAddress(20)}}</div>
           <div class="disconnect btn" @click="disconnect"><img src="@/assets/disconnect.svg"></div>
         </div>
       </div>
@@ -89,10 +89,6 @@ export default class NavBar extends Vue {
       return address
     }
     return ''
-  }
-
-  get ens(): string {
-    return this.$store.state.currentUser?.ens
   }
 
   async copyAddress(): Promise<void> {

@@ -51,6 +51,9 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 })
 export default class App extends Vue {
   created() {
+    this.$store.dispatch(LOAD_ROUND_INFO) // TODO confirm we should fetch this info immediately
+    this.$store.dispatch(LOAD_USER_INFO) // TODO confirm we should fetch this info immediately
+
     // TODO clearInterval on unmount
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
@@ -204,6 +207,8 @@ summary:focus {
   display: flex;
   height: calc(100vh - 61.5px);
   background: $bg-primary-color;
+  overflow-x: clip;
+  /* overflow-y: scroll; */
 }
 
 #sidebar {
@@ -317,25 +322,6 @@ summary:focus {
   margin-left: 0.5rem;
 }
 
-.loader {
-  display: block;
-  height: 40px;
-  margin: $content-space auto;
-  width: 40px;
-}
-
-.loader:after {
-  content: " ";
-  display: block;
-  width: 32px;
-  height: 32px;
-  margin: 4px;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: loader 1.2s linear infinite;
-}
-
 .vm--modal {
   background-color: transparent !important;
 }
@@ -347,15 +333,6 @@ summary:focus {
 
   .loader {
     margin: $modal-space auto;
-  }
-}
-
-@keyframes loader {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
 

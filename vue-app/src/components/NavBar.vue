@@ -8,7 +8,7 @@
     </router-link>
     <div class="btn-row">
       <div class="dropdown" v-if="inApp" >
-        <button @click="openDropdown()" class="dropdown-btn"><img src="@/assets/more.svg" /></button>
+        <img @click="openDropdown()" class="dropdown-btn" src="@/assets/more.svg" />
         <div id="myDropdown" class="button-menu">
           <div v-for="({ to, href, text, emoji }, idx) of dropdownItems" :key="idx" class="dropdown-item">
             <template v-if="href">
@@ -117,6 +117,7 @@ window.onclick = function(event) {
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
         z-index: 1;
         cursor: pointer;
+        overflow: hidden;
 
         .dropdown-item a {
           display: flex;
@@ -133,10 +134,10 @@ window.onclick = function(event) {
           }
         }
       }
-
       .show {
         display: flex;
       }
+
     }
   }
 
