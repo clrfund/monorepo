@@ -202,10 +202,8 @@ summary:focus {
 
 #content-container {
   display: flex;
-  /* min-height: 100%; */
   height: calc(100vh - 61.5px);
   background: $bg-primary-color;
-  overflow: scroll;
 }
 
 #sidebar {
