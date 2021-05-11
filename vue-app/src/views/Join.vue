@@ -12,96 +12,6 @@
         :handleStepNav="handleStepNav"
         :saveFormData="saveFormData"
       />
-      <!-- <div class="progress-area desktop">
-        <div class="progress-container">
-          <div class="tx-progress-area" v-if="currentStep === 5 && pending || waiting || txReject || wrongNetwork || lowFunds">
-            <loader v-if="waiting || pending || wrongNetwork"/>
-            <div v-if="waiting" class="tx-notice">Check your wallet for a prompt...</div>
-            <div v-if="lowFunds || txError || txReject" class="input-notice" style="font-size: 40px; margin-bottom: 0;">⚠️</div>
-            <div v-if="lowFunds" class="input-notice"> Not enough ETH in your wallet.<br /> Top up or connect a different wallet.</div>
-            <div v-if="txError" class="input-notice">Something failed.<br /> Check your wallet or Etherscan for more info.</div>
-            <div v-if="txReject" class="input-notice">You rejected the transaction in your wallet</div>
-            <div v-if="wrongNetwork" class="input-notice">We're on Optimism Network.<br /> Switch over to the right network in your wallet.</div>
-            <div v-if="pending">
-              <div class="tx-notice">Sending deposit...</div>
-              <a href="#" class="tx-notice">Follow on Etherscan <img width="16px" src="@/assets/etherscan.svg"/></a>
-            </div>
-          </div>
-          <div v-else>
-            <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-            <p class="subtitle">
-              Step {{currentStep + 1}} of {{steps.length}}
-            </p>
-            <div class="progress-steps">
-              <div
-                v-for="(name, step) in stepNames"
-                :key="step"
-                class="progress-step"
-                :class="{
-                  'zoom-link': step <= form.furthestStep && step !== currentStep && !isNavDisabled,
-                  disabled: isNavDisabled
-                }"
-                @click="handleStepNav(step)"
-              >
-                <template v-if="step === currentStep">
-                  <img src="@/assets/current-step.svg" alt="current step" />
-                  <p v-text="name" class="active step" />
-                </template>
-                <template v-else-if="step === furthestStep">
-                  <img src="@/assets/furthest-step.svg" alt="current step" />
-                  <p v-text="name" class="active step" />
-                </template>
-                <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
-                  <img src="@/assets/green-tick.svg" alt="step complete" />
-                  <p v-text="name" class="step" />
-                </template>
-                <template v-else>
-                  <img src="@/assets/step-remaining.svg" alt="step remaining" />
-                  <p v-text="name" class="step" />
-                </template>
-              </div>
-            </div>
-          </div>
-          <div class="checkout" v-if="currentStep === 5">
-            <hr />
-            <p class="tx-subtitle">
-              Transaction summary
-            </p>
-            <div class="tx-row">
-              <div class="tx-item">Security deposit</div>
-              <div class="tx-item">0.1 ETH <span class="fiat-value">($20.00)</span></div>
-            </div>
-            <div class="tx-row">
-              <div class="tx-item">Transaction fee</div>
-              <div class="tx-item">0.0004 ETH <span class="fiat-value">($0.10)</span></div>
-            </div>
-            <div class="tx-row-total" style="margin-bottom: 1.5rem;">
-              <div>Total</div>
-              <div>0.1004 ETH <span class="fiat-value">($20.10)</span></div>
-            </div>      
-          </div>
-        <form-navigation
-          :isStepValid="isStepValid(currentStep)"
-          :steps="steps"
-          :currentStep="currentStep"
-          :callback="saveFormData"
-          :handleStepNav="handleStepNav"
-          :isNavDisabled="isNavDisabled"
-          class="desktop"
-        />
-        </div>
-      </div>
-      <div class="progress-area mobile">
-        <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-        <div class="row">
-          <p>
-              Step {{currentStep + 1}} of {{steps.length}}
-          </p>
-          <router-link class="cancel-link" to="/join">
-            Cancel
-          </router-link>
-        </div>
-      </div> -->
       <div class="title-area">
         <h1>Join the round</h1>
         <div v-if="currentStep === 5">
@@ -580,14 +490,21 @@
                 </div>
               </div>
             </div>
-            <!-- {{form}}-->
-            <!--TODO: this will be an on-chain transaction so double check all info and links are correct as it will cost you you to change it -->
+          </div>
+          <div v-if="currentStep === 6">
+            <h2 class="step-title">Submit Project</h2>
+            <p>We'll submit your application to the blockchain.</p>
+            <div class="inputs">
+              <div class="form-background">
+                <recipient-submission-widget />
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <!-- TODO how to handle? Move to FormProgressWidget? -->
-      <div class="nav-area nav-bar mobile">
-        <div class="checkout" v-if="currentStep === 5">
+      <!-- <div class="nav-area nav-bar mobile">
+        <div class="checkout" v-if="currentStep === 6">
           <div class="tx-progress-area">
             <loader v-if="waiting || pending || wrongNetwork"/>
             <div v-if="waiting" class="tx-notice">Check your wallet for a prompt...</div>
@@ -623,7 +540,7 @@
           :handleStepNav="handleStepNav"
           :isNavDisabled="isNavDisabled"
         />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -639,10 +556,11 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
 import FormProgressWidget from '@/components/FormProgressWidget.vue'
 import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
+import Loader from '@/components/Loader.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
+import RecipientSubmissionWidget from '@/components/RecipientSubmissionWidget.vue'
 import Warning from '@/components/Warning.vue'
-import Loader from '@/components/Loader.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
@@ -655,10 +573,11 @@ import { Project } from '@/api/projects'
     FormNavigation,
     FormProgressWidget,
     IpfsImageUpload,
+    Loader,
     Markdown,
     ProjectProfile,
+    RecipientSubmissionWidget,
     Warning,
-    Loader,
   },
   validations: {
     form: {
@@ -708,12 +627,6 @@ import { Project } from '@/api/projects'
   },
 })
 export default class JoinView extends mixins(validationMixin) {
-  waiting = false 
-  lowFunds = false
-  pending = false
-  txError = false
-  wrongNetwork = false
-  txReject = false
   form: RecipientApplicationData = {
     project: {
       name: '',
@@ -751,8 +664,8 @@ export default class JoinView extends mixins(validationMixin) {
 
   created() {
     const steps = Object.keys(this.form)
-    // Reassign last key from form object (furthestStep) to 'summary'
-    steps[steps.length - 1] = 'summary'
+    steps.splice(steps.length - 1, 1, 'summary', 'submit')
+
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
       'About the project',
@@ -761,6 +674,7 @@ export default class JoinView extends mixins(validationMixin) {
       'Links',
       'Images',
       'Review',
+      'Submit',
     ]
     this.steps = steps
     this.currentStep = currentStep
@@ -802,7 +716,6 @@ export default class JoinView extends mixins(validationMixin) {
     //       website: 'https://clr.fund',
     //       twitter: '',
     //       discord: '',
-    //       hasLink: true,
     //     },
     //     image: {
     //       bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
