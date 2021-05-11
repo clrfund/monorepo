@@ -37,6 +37,7 @@
             </div>
           </div>
           <button-row
+            v-bind:isJoin="true"
             :isStepValid="isStepValid(currentStep)"
             :steps="steps"
             :currentStep="currentStep"

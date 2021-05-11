@@ -225,6 +225,7 @@ export default class WalletWidget extends Vue {
 
 .container {
   margin-left: 0.5rem;
+  width: fit-content;
 }
 
 .provider-error {
@@ -239,6 +240,7 @@ export default class WalletWidget extends Vue {
   background: $clr-pink-dark-gradient;
   border-radius: 32px;
   padding-right: 0.5rem;
+  width: fit-content;
 
   .profile-name {
     font-size: 14px;

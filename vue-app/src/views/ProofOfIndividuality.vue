@@ -35,6 +35,7 @@
             </div>
           </div>
           <button-row
+            v-bind:isJoin="false"
             :isStepValid="isStepValid(currentStep)"
             :steps="steps"
             :currentStep="currentStep"
@@ -174,7 +175,8 @@
                   </div>
                 </div>
                 <div v-else>
-                  <wallet-widget v-bind:showEth="true" />
+                  <wallet-widget class="mx0" v-bind:showEth="true" />
+                  <!--TODO: mobile view for this wallet widget has a weird background -->
                   <div class="checkout-row">
                       <p class="m0"><b>Estimated transaction fee</b></p>
                       <p class="m0">{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
@@ -197,10 +199,10 @@
               <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
             </div>
             <div class="transaction" v-if="isVerified">
-                <wallet-widget />
+                <wallet-widget class="mx0" v-bind:showEth="true"/>
                 <div class="checkout-row">
-                    <p><b>Estimated transaction fee</b></p>
-                    <p>{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
+                  <p class="m0"><b>Estimated transaction fee</b></p>
+                  <p class="m0">{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
                 </div>
                 <div class="btn-action">Become a contributor</div>
                 <transaction
@@ -304,7 +306,7 @@ export default class IndividualityView extends mixins(validationMixin) {
   steps: string[] = []
   stepNames: string[] = []
   showSummaryPreview = false
-  isVerified = false
+  isVerified = true
   sponsoredBy: 'Gitcoin'
   txFee = '0.00006'
   feeToken = 'ETH'
@@ -1205,5 +1207,10 @@ export default class IndividualityView extends mixins(validationMixin) {
 
 .m0 {
   margin: 0;
+}
+
+.mx0 {
+  margin-left: 0;
+  margin-right: 0;
 }
 </style>
