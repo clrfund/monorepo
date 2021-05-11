@@ -1,9 +1,6 @@
 <template>
   <div>
     <loader v-if="isLoading"/>
-    <div v-else>
-      Required security deposit: {{ formatAmount(registryInfo.deposit) }} {{ registryInfo.depositToken }}.
-    </div>
     <wallet-widget />
     <div class="tx-progress-area">
       <loader v-if="isWaiting || isPending || isWrongNetwork"/>
@@ -31,8 +28,12 @@
       </div>
     </div>
     <div class="checkout-row">
-        <p class="m0"><b>Estimated transaction fee</b></p>
-        <p class="m0">{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
+      <p class="m0"><b>Required security deposit</b></p>
+      <p class="m0">{{ formatAmount(registryInfo.deposit) }} {{ registryInfo.depositToken }}</p>
+    </div>
+    <div class="checkout-row">
+      <p class="m0"><b>Estimated transaction fee</b></p>
+      <p class="m0">{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
     </div>
     <button
       @click="handleSubmit"
@@ -133,7 +134,6 @@ export default class RecipientSubmissionWidget extends Vue {
     this.isWaiting = true
     let submissionTxReceipt
     try {
-      console.log('TRYING')
       submissionTxReceipt = await waitForTransaction(
         addRecipient(recipientRegistryAddress, recipient, registryInfo.deposit, signer),
         (hash) => this.txHash = hash,
@@ -141,12 +141,12 @@ export default class RecipientSubmissionWidget extends Vue {
     } catch (error) {
       this.isWaiting = false
       this.txError = error.message
-      console.log('txError: ', this.txError)
       return
     }
     this.isWaiting = false
+
+    // TODO needed?
     this.recipientId = getRequestId(submissionTxReceipt, recipientRegistryAddress)
-    console.log(this.recipientId)
 
     this.$router.push({
       name: 'projectAdded',
@@ -154,8 +154,6 @@ export default class RecipientSubmissionWidget extends Vue {
         txHash: this.txHash,
       },
     })
-
-    // TODO transition user to success step
   }
 }
 </script>
