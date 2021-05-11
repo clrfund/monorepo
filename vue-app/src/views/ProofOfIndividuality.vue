@@ -65,7 +65,7 @@
         <div class="verification-status" v-if="currentStep === 1">
             <div>
                 <h2>Verification status</h2>
-                <p>Follow the instructions below to get verified. It’s not immediate so feel free to move onto the next step when you’re ready.</p>
+                <p>{{isVerified ? 'You\'re BrightID verified! Complete the remaining steps to start contributing.' : 'Follow the instructions below to get verified. It’s not immediate so feel free to move onto the next step when you’re ready.'}}</p>
             </div>
             <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
         </div>
@@ -94,6 +94,7 @@
                     <p class="mobile">Follow this link to connect your wallet to your BrightID app</p>
                     <a class="mobile" :href="appLink" target="_blank">{{ appLink }}</a>
                 </div>
+                <loader v-if="step = 0" />
             </div>
             <!-- TODO: success state for linked -->
         </div>    
@@ -129,7 +130,14 @@
         </div>
         <div v-if="currentStep === 3">
             <h2 class="step-title">Get registered</h2>
-            <p>test</p>
+            <p>To protect the round from bribery and fraud, you need to add your wallet address to a smart contract register. Once you’re done, you can join the funding round!</p>
+            <div class="verification-status" v-if="!isVerified">
+            <div>
+                <h2>You can't register yet</h2>
+                <p>You can’t join the round until you’re BrightID verified. Reminder: it can take up to a few hours even after you've met the requirements. <a href="/setup/get-verified/verification">How to get verified</a></p>
+            </div>
+            <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
+        </div>
         </div>
         </div>
       </div>
