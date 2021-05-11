@@ -94,23 +94,26 @@
                         <p>Move along! Your BrightID app is connected</p>
                     </div>
                 </div>
-                <div v-else>
-                    <p v-if="appLinkQrCode">Scan this QR code with your BrightID app</p>
-                    <img :src="appLinkQrCode" class="qr-code">
-                    <loader v-if="!appLinkQrCode" />
-                    <div v-if="!appLinkQrCode">Connect your wallet to get started</div>
-                    <wallet-widget v-if="!appLinkQrCode" />
+                <div class="instructions" v-else>
+                    <p class="desktop" v-if="appLinkQrCode">Scan this QR code with your BrightID app</p>
+                    <img :src="appLinkQrCode" class="desktop qr-code">
                     <!-- TODO: connection should cause the QR code to appear -->
                     <p class="mobile">Follow this link to connect your wallet to your BrightID app</p>
                     <a class="mobile" :href="appLink" target="_blank">{{ appLink }}</a>
                 </div>
+
                 <loader v-if="step = 0" />
+            </div>
+            <div v-if="!appLinkQrCode">
+              <loader  />
+              <div>Connect your wallet to get started</div>
+              <wallet-widget />
             </div>
             <!-- TODO: success state for linked -->
         </div>    
         <div v-if="currentStep === 1 && !isVerified">
             <h2 class="step-title">Get verified</h2>
-            <p>BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person. There are a few different ways to do this....</p>
+            <p>BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person. There are a few different ways to do this...</p>
             <div class="option">
               <div class="option-header">
                 <div>
@@ -1089,8 +1092,18 @@ export default class IndividualityView extends mixins(validationMixin) {
     border-radius: 1rem;
     margin-top: 2rem;  
     padding: 2rem; 
-    @media (max-width: $breakpoint-m) {
+    /* @media (max-width: $breakpoint-m) {
         width: 100%;
+  } */
+}
+
+.instructions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  a {
+    overflow-wrap: anywhere;
   }
 }
 

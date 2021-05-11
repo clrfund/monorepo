@@ -14,7 +14,7 @@
           <div class="subtitle">We use BrightID to stop bots and cheaters, and make our funding more democratic. We’ll walk you through getting set up.</div>
           <h2>What you'll need</h2>
           <ul>
-            <li>An Ethereum address</li>
+            <li>An Ethereum wallet</li>
             <li>BrightID – available on <a href="https://apps.apple.com/us/app/brightid/id1428946820" target="_blank"> iOS</a> or <a href="https://play.google.com/store/apps/details?id=org.brightid" target="_blank">Android</a></li>
             <li>Access to Zoom or Google Meet</li>
           </ul>
