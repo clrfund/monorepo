@@ -2,6 +2,7 @@
 <template>
   <div>
     <round-status-banner />
+    <!-- TODO: add confetti -->
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon"/>
       <div class="hero">
@@ -30,7 +31,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import * as humanizeDuration from 'humanize-duration'
-
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
