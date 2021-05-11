@@ -69,7 +69,7 @@
               <div>0.1004 ETH <span class="fiat-value">($20.10)</span></div>
             </div>      
           </div>
-        <button-row
+        <form-navigation
           :isStepValid="isStepValid(currentStep)"
           :steps="steps"
           :currentStep="currentStep"
@@ -604,7 +604,7 @@
           </div>
         
         </div>
-        <button-row :steps="steps" :currentStep="currentStep" :callBack="saveFormData" />
+        <form-navigation :steps="steps" :currentStep="currentStep" :callBack="saveFormData" />
         <!-- TODO submit button to trigger tx, pass callback to above <botton-row />?  -->
         <!-- If the user is not yet connected, the button should prompt connection -->
       </div>
@@ -620,7 +620,7 @@ import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
-import ButtonRow from '@/components/ButtonRow.vue'
+import FormNavigation from '@/components/FormNavigation.vue'
 import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
@@ -635,7 +635,7 @@ import { Project } from '@/api/projects'
   components: {
     LayoutSteps,
     ProgressBar,
-    ButtonRow,
+    FormNavigation,
     IpfsImageUpload,
     Markdown,
     ProjectProfile,
@@ -690,7 +690,7 @@ import { Project } from '@/api/projects'
   },
 })
 export default class JoinView extends mixins(validationMixin) {
-  waiting = true 
+  waiting = false 
   lowFunds = false
   pending = false
   txError = false

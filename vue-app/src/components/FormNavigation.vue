@@ -44,9 +44,8 @@ import { User } from '@/api/user'
 import { addRecipient, getRegistryInfo, getRequestId } from '@/api/recipient-registry-optimistic'
 import { waitForTransaction } from '@/utils/contracts'
 
-// TODO rename this component
 @Component
-export default class ButtonRow extends Vue {
+export default class FormNavigation extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]
   @Prop() isStepValid!: boolean
