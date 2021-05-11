@@ -108,20 +108,50 @@
             </div>
             <!-- TODO: success state for linked -->
         </div>    
-        <div v-if="currentStep === 1">
+        <div v-if="currentStep === 1 && !isVerified">
             <h2 class="step-title">Get verified</h2>
-            <p>This will help us know you’re not a bot! Here are your options.</p>
+            <p>BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person. There are a few different ways to do this....</p>
             <div class="option">
-              <div class="tag">🚀Fastest</div>
-              <h3>Join a BrightID party </h3>
+              <div class="option-header">
+                <div>
+                  <div class="tag">🚀Fastest</div>
+                  <h3>Join a BrightID party </h3>
+                </div>
+                <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
+                <img @click="handleToggleTab" v-if="!showExpandedOption" src="@/assets/chevron-down.svg" />
+              </div>
+              <div v-if="showExpandedOption" id="fastest">
+                <p>
+                  BrightID run verification parties regularly. Join the call, meet other new users, and they'll verify you’re a human and not a bot. Quick and painless, even for you introverts out there.
+                </p>
+                <div class="btn-secondary">View party schedule</div>
+              </div>
             </div>
             <div class="option">
-              <div class="tag">💡Most interesting</div>
-              <h3>Join us at “The consensus layer bonanza – an evening with the eth2 researchers”</h3>
+              <div class="option-header">
+                <div>
+                  <div class="tag">💡Most interesting</div>
+                  <h3>Join us at “The consensus layer bonanza – an evening with the eth2 researchers”</h3>
+                </div>
+                <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
+                <img @click="handleToggleTab" v-if="!showExpandedOption" src="@/assets/chevron-down.svg" />
+              </div>
+              <p v-if="showExpandedOption" id="interesting">
+                Information to come
+              </p>
             </div>
             <div class="option">
-                <div class="tag">🎰 Luckiest</div>
-              <h3>Connect with 2 verified humans</h3>
+              <div class="option-header">
+                <div>
+                  <div class="tag">🎰 Luckiest</div>
+                  <h3>Connect with 2 verified humans</h3>
+                </div>
+                <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
+                <img @click="handleToggleTab" v-if="!showExpandedOption" src="@/assets/chevron-down.svg" />
+              </div>
+              <p v-if="showExpandedOption" id="luckiest">
+                Know anyone that's contributed to Gitcoin Grants or clr.fund rounds? They may already be verified. Hit them up and see if they can verify you!
+              </p>
             </div>
         </div>
         <div v-if="currentStep === 2">
@@ -270,13 +300,14 @@ export default class IndividualityView extends mixins(validationMixin) {
   steps: string[] = []
   stepNames: string[] = []
   showSummaryPreview = false
-  isVerified = true
+  isVerified = false
   sponsoredBy: 'Gitcoin'
   txFee = '0.00006'
   feeToken = 'ETH'
   fiatFee = '1.04'
   fiatSign = '$'
   step = 0
+  showExpandedOption = false
 
   appLink = ''
   appLinkQrCode = ''
@@ -290,6 +321,18 @@ export default class IndividualityView extends mixins(validationMixin) {
   private get currentUser(): User {
     return this.$store.state.currentUser
   }
+
+  handleToggleTab(event): void {
+    const { id } = event.target
+    // Guard clause: 
+    if (
+      (this.showExpandedOption && id === 'review') ||
+      (this.showExpandedOption && id === 'preview')
+    ) return
+    this.showExpandedOption = !this.showExpandedOption
+  }
+
+  
 
   mounted() {
     // Present app link and QR code
@@ -1061,9 +1104,18 @@ export default class IndividualityView extends mixins(validationMixin) {
     padding: 1rem;
     border-radius: 0.5rem;
     margin-bottom: 1rem;
-}
 
-.option h3 {
+  img {
+    margin: 0.5rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    &:hover {
+      background: $bg-secondary-color;
+      border-radius: 0.5rem;
+    }
+  }
+  
+  h3 {
     font-family: "Glacial Indifference", sans-serif;
     font-size: 1.25rem;
     font-style: normal;
@@ -1073,7 +1125,16 @@ export default class IndividualityView extends mixins(validationMixin) {
     text-align: left;
     margin: 0;
     margin-top: 0.5rem;
+    text-transform: uppercase;
+  }
 }
+
+
+.option-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+} 
 
 .tag {
     /* background: #fff9; */

@@ -11,6 +11,7 @@
   color: $color;
   background: $background;
   border: $border;
+  width: fit-content;
   &:hover {
     opacity: 0.8;
     transform: scale(1.02);
@@ -29,7 +30,7 @@
 .btn-action {
   @include button(white, $clr-pink-light-gradient, none);
 }
-f
+
 .btn-secondary {
   @include button($clr-green, none, 2px solid $clr-green);
 }

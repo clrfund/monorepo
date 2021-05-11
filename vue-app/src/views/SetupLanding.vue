@@ -11,7 +11,7 @@
           <div class="flex-title">
             <h1>Prove you’re only using 1 account</h1>
           </div>
-          <div class="subtitle">We use BrightID to prevent bots and malicious folks from skewing the funding. We’ll walk you through getting set up.</div>
+          <div class="subtitle">We use BrightID to stop bots and cheaters, and make our funding more democratic. We’ll walk you through getting set up.</div>
           <h2>What you'll need</h2>
           <ul>
             <li>An Ethereum address</li>
@@ -98,7 +98,7 @@ h1 {
   font-style: normal;
   font-weight: bold;
   font-size: 40px;
-  line-height: 150%;
+  line-height: 120%;
   margin: 0;
 }
 
