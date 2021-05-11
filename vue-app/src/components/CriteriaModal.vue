@@ -15,15 +15,13 @@
           <div v-for="({ emoji, criteria, description }, idx) in criterion" :key="idx" class="criteria-point">
             <div class="emoji">{{ emoji }}</div>
             <div> 
-              <h3 class="criteria">{{ criteria }}</h3>
-              <p class="criteria-description">{{ description }}</p>
+              <h3 class="no-margin">{{ criteria }}</h3>
+              <p class="no-margin">{{ description }}</p>
             </div>
           </div>
         </div>  
       </div>
-      <div class="button-container">
-        <router-link to="/join/project" class="btn-primary">Add project</router-link>
-      </div>
+      <router-link to="/join/project" class="btn-primary fit-content">Add project</router-link>
     </div>
   </div>
 </template>
@@ -104,28 +102,20 @@ export default class CriteriaModal extends Vue {
 
   .container {
     position: absolute;
-    right: 0;
-    background: $bg-secondary-color;
-    width: clamp(350px, 75%, 900px);
-    display: flex;
-    flex-direction: column;
-    z-index: 2;
-    height: 100%;
-    padding: 3rem 2rem;
     top: 4rem;
+    right: 0;
+    bottom: 0;
+    width: clamp(350px, 75%, 900px);
+    z-index: 2;
     display: flex;
     flex-direction: column;
+    padding: 3rem 2rem;
     overflow: scroll;
-    /* justify-content: space-between; */
+    background: $bg-secondary-color;
     @media (max-width: $breakpoint-m) {
       box-sizing: border-box;
       width: 100%;
-      padding-bottom: 8rem;
     }
-  }
-
-  p.no-margin {
-    margin: 0;
   }
 
   .flex-row {
@@ -139,19 +129,12 @@ export default class CriteriaModal extends Vue {
     }
   }
 
-  .modal-btn {
-    bottom: 0;
-  }
-
   .content {
     font-size: 14px;
     line-height: 150%;
     border-radius: 16px;
-    overflow: scroll;
-    height: 320px;
     background: $bg-light-color;
-    padding: 1rem;
-    padding-top: 1.5rem;
+    padding: 1.5rem 1rem;
     margin-bottom: 3rem;
     margin-top: 2rem;
     @media (max-width: $breakpoint-m) {
@@ -159,26 +142,26 @@ export default class CriteriaModal extends Vue {
     }
   }
 
+  .criteria-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
   .emoji {
     font-size: 1.5rem;
   }
 
-  .criteria {
+  .no-margin {
     margin: 0;
   }
 
-  .criteria-description {
-    margin: 0;
-  }
-
-  .button-container {
-  }
-
-  .criteria-point {
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
+  .fit-content {
+    width: fit-content;
   }
 }
 
