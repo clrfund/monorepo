@@ -11,6 +11,7 @@ import IndividualityView from '../views/ProofOfIndividuality.vue'
 import RoundInformation from '../views/RoundInformation.vue'
 import SetupLanding from '../views/SetupLanding.vue'
 import About from '../views/About.vue'
+import Verified from '../views/Verified.vue'
 import JoinView from '../views/Join.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 
@@ -77,6 +78,11 @@ const routes = [
     path: '/setup/get-verified/:step',
     name: 'getVerified',
     component: IndividualityView,
+  },
+  {
+    path: '/setup/verified',
+    name: 'verified',
+    component: Verified,
   },
   {
     path: '/join/:step',

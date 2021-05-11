@@ -19,12 +19,14 @@
               @click="handleStepNav(step)"
             >
               <template v-if="step === currentStep">
-                <img src="@/assets/current-step.svg" alt="current step" />
-                <p v-text="name" class="active step" />
+                <loader v-if="step === 1 && isStepUnlocked(1) && !isVerified" class="progress-steps-loader" />
+                <img v-else src="@/assets/current-step.svg" alt="current step" />
+                <p v-text="name" class="active step" /> <tooltip v-if="step === 1 && isStepUnlocked(1) && !isVerified" position="left" content="We'll keep checking with BrightID to see if you're verified"><img src="@/assets/info.svg" /></tooltip>
               </template>
               <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
-                <img src="@/assets/green-tick.svg" alt="step complete" />
-                <p v-text="name" class="step" />
+                <loader v-if="step === 1 && isStepUnlocked(1) && !isVerified" class="progress-steps-loader" />
+                <img v-else src="@/assets/green-tick.svg" alt="step complete" />
+                <p v-text="name" class="step" /> <tooltip v-if="step === 1 && isStepUnlocked(1) && !isVerified" position="left" content="You still need verification from BrightID"><img src="@/assets/info.svg" /></tooltip>
               </template>
               <template v-else>
                 <img src="@/assets/step-remaining.svg" alt="step remaining" />
@@ -69,6 +71,14 @@
             </div>
             <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
         </div>
+        <!-- The below should be displayed if the user was already sponsored and didn't have to do a tx through our app -->
+        <div class="verification-status" v-if="currentStep === 2 && isSponsored">
+            <div>
+                <!-- TODO: add blockie -->
+                <h2>You're already sponsored!</h2>
+            </div>
+            <div class="success">Sponsored by {{sponsoredBy}}</div>
+        </div>
         <div class="application">
         <div v-if="currentStep === 0">
             <h2 class="step-title">Connect</h2>
@@ -85,7 +95,7 @@
                     </div>
                 </div>
                 <div v-else>
-                    <p>Scan this QR code with your BrightID app</p>
+                    <p v-if="appLinkQrCode">Scan this QR code with your BrightID app</p>
                     <img :src="appLinkQrCode" class="qr-code">
                     <loader v-if="!appLinkQrCode" />
                     <div v-if="!appLinkQrCode">Connect your wallet to get started</div>
@@ -118,26 +128,50 @@
             <h2 class="step-title">Sponsorship</h2>
             <p>You need a sponsorship token to become BrightID verified. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID.</p>
             <div class="transaction">
-                <wallet-widget />
-                <div class="checkout-row">
-                    <p><b>Estimated transaction fee</b></p>
-                    <p>0.00006 ETH </p>
+                <div v-if="isSponsored">
+                  <div class="connected-message">
+                      <div class="checkmark"><img src="@/assets/checkmark.svg" /></div>
+                      <div class="profile-image">
+                          <img :src="profileImageUrl">
+                          <!-- TODO: display blockie next to checkmark -->
+                      </div>
+                      <p>Move along! You're sponsored!</p>
+                      <!-- TODO: if isSponsored = true and the user did it via our UI we should show the tx receipt -->
+                  </div>
                 </div>
-                <div class="btn-action">Get sponsored</div>
-                <transaction
-                    :hash="sponsorTxHash" />
+                <div v-else>
+                  <wallet-widget />
+                  <div class="checkout-row">
+                      <p><b>Estimated transaction fee</b></p>
+                      <p>{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
+                  </div>
+                  <div class="btn-action">Get sponsored</div>
+                  <transaction
+                      :hash="sponsorTxHash" />
+                </div>
             </div>
+            
         </div>
         <div v-if="currentStep === 3">
             <h2 class="step-title">Get registered</h2>
             <p>To protect the round from bribery and fraud, you need to add your wallet address to a smart contract register. Once you’re done, you can join the funding round!</p>
             <div class="verification-status" v-if="!isVerified">
-            <div>
-                <h2>You can't register yet</h2>
-                <p>You can’t join the round until you’re BrightID verified. Reminder: it can take up to a few hours even after you've met the requirements. <a href="/setup/get-verified/verification">How to get verified</a></p>
+              <div>
+                  <h2>You can't register yet</h2>
+                  <p>You can’t join the round until you’re BrightID verified. Reminder: it can take up to a few hours even after you've met the requirements. <a href="/setup/get-verified/verification">How to get verified</a></p>
+              </div>
+              <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
             </div>
-            <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
-        </div>
+            <div class="transaction" v-if="isVerified">
+                <wallet-widget />
+                <div class="checkout-row">
+                    <p><b>Estimated transaction fee</b></p>
+                    <p>{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
+                </div>
+                <div class="btn-action">Become a contributor</div>
+                <transaction
+                    :hash="sponsorTxHash" />
+            </div>
         </div>
         </div>
       </div>
@@ -157,6 +191,7 @@ import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import ButtonRow from '@/components/ButtonRow.vue'
+import Tooltip from '@/components/Tooltip.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
@@ -199,6 +234,7 @@ import { waitForTransaction } from '@/utils/contracts'
     Transaction,
     Loader,
     WalletWidget,
+    Tooltip,
   },
   validations: {
     form: {
@@ -235,6 +271,11 @@ export default class IndividualityView extends mixins(validationMixin) {
   stepNames: string[] = []
   showSummaryPreview = false
   isVerified = true
+  sponsoredBy: 'Gitcoin'
+  txFee = '0.00006'
+  feeToken = 'ETH'
+  fiatFee = '1.04'
+  fiatSign = '$'
   step = 0
 
   appLink = ''
@@ -455,8 +496,27 @@ export default class IndividualityView extends mixins(validationMixin) {
       margin-bottom: 1rem;
     }
 
+    .progress-steps-loader {
+      margin: 0rem;
+      margin-right: 1rem;
+      margin-top: 0.5rem;
+      padding: 0;
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .progress-steps-loader:after {
+      width: 1rem;
+      height: 1rem;
+      margin: 0;
+      border-radius: 50%;
+      border: 3px solid $clr-pink;
+      border-color: $clr-pink transparent $clr-pink transparent;
+    }
+
     .progress-step {
       display: flex;
+
 
       img {
         margin-right: 1rem;
