@@ -2,22 +2,26 @@
   <div class="wrapper">
     <div class="modal-background" @click="toggleCriteria" />
     <div class="container">
-      <div class="flex-row" style="justify-content: flex-end;">
-        <div class="close-btn" @click="toggleCriteria">
-          <p class="no-margin">Close</p>
-          <img src="@/assets/close.svg" />
-        </div>
-      </div>
-      <h2>Round criteria</h2>
-      <p>For this pilot round, Ethereum Foundation team members will remove any projects that don't meet the round criteria. So read carefully! In later rounds we're hoping that this review process can be done by the community.</p>
-      <div class="content">
-        <div v-for="({ emoji, criteria, description }, idx) in criterion" :key="idx" class="criteria-point">
-          <div class="emoji">{{ emoji }}</div>
-          <div> 
-            <h3 class="criteria">{{ criteria }}</h3>
-            <p class="criteria-description">{{ description }}</p>
+      <div>
+          <div class="flex-row">
+            <h2>Round criteria</h2>
+            <div class="close-btn" @click="toggleCriteria">
+              <p class="no-margin">Close</p>
+              <img src="@/assets/close.svg" />
+            </div>
           </div>
-        </div>
+          <p>For this pilot round, Ethereum Foundation team members will remove any projects that don't meet the round criteria. So read carefully! In later rounds we're hoping that this review process can be done by the community.</p>
+        <div class="content">
+          <div v-for="({ emoji, criteria, description }, idx) in criterion" :key="idx" class="criteria-point">
+            <div class="emoji">{{ emoji }}</div>
+            <div> 
+              <h3 class="criteria">{{ criteria }}</h3>
+              <p class="criteria-description">{{ description }}</p>
+            </div>
+          </div>
+        </div>  
+      </div>
+      <div class="button-container">
         <router-link to="/join/project" class="btn-primary">Add project</router-link>
       </div>
     </div>
@@ -102,16 +106,21 @@ export default class CriteriaModal extends Vue {
     position: absolute;
     right: 0;
     background: $bg-secondary-color;
-    width: clamp(350px, 50%, 500px);
+    width: clamp(350px, 75%, 900px);
     display: flex;
     flex-direction: column;
     z-index: 2;
     height: 100%;
     padding: 3rem 2rem;
     top: 4rem;
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+    /* justify-content: space-between; */
     @media (max-width: $breakpoint-m) {
       box-sizing: border-box;
       width: 100%;
+      padding-bottom: 8rem;
     }
   }
 
@@ -123,6 +132,11 @@ export default class CriteriaModal extends Vue {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    @media (max-width: $breakpoint-m) {
+      flex-direction: column-reverse;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
   }
 
   .modal-btn {
@@ -133,8 +147,16 @@ export default class CriteriaModal extends Vue {
     font-size: 14px;
     line-height: 150%;
     border-radius: 16px;
+    overflow: scroll;
+    height: 320px;
+    background: $bg-light-color;
+    padding: 1rem;
+    padding-top: 1.5rem;
+    margin-bottom: 3rem;
     margin-top: 2rem;
-    margin-bottom: 2rem;
+    @media (max-width: $breakpoint-m) {
+      margin-bottom: 2rem;
+    }
   }
 
   .emoji {
@@ -149,14 +171,14 @@ export default class CriteriaModal extends Vue {
     margin: 0;
   }
 
+  .button-container {
+  }
+
   .criteria-point {
     margin-bottom: 1.5rem;
     display: flex;
     align-items: flex-start;
     gap: 1rem;
-    &:last-of-type {
-      margin-bottom: 3rem;
-    }
   }
 }
 
