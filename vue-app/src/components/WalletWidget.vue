@@ -17,8 +17,10 @@
     </button>
     <div v-else-if="currentUser" class="profile-info" @click="toggleProfile()">
       <div class="profile-info-balance">
-        <img src="@/assets/dai.svg" />
-        <div class="balance" @click="copyAddress">{{ balance }}</div>
+        <img v-if="!showEth" src="@/assets/dai.svg" />
+        <img v-if="showEth" src="@/assets/eth.svg" />
+        <div v-if="!showEth" class="balance" @click="copyAddress">{{ balance }}</div>
+        <div v-if="showEth" class="balance">{{etherBalance}}</div>
       </div>
       <div class="profile-name" @click="copyAddress">{{ ens || renderUserAddress(7) }}</div>
       <div class="profile-image">
@@ -50,6 +52,7 @@ import {
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 import Profile from '@/views/Profile.vue'
+import { Prop } from 'vue-property-decorator'
 
 @Component({components: {Profile}})
 export default class WalletWidget extends Vue {
@@ -57,6 +60,8 @@ export default class WalletWidget extends Vue {
   private walletChainId: string | null = null
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
+  @Prop()
+  showEth!: boolean
 
   async copyAddress(): Promise<void> {
     if (!this.currentUser) { return }

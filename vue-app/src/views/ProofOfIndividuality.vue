@@ -100,6 +100,7 @@
                     <!-- TODO: connection should cause the QR code to appear -->
                     <p class="mobile">Follow this link to connect your wallet to your BrightID app</p>
                     <a class="mobile" :href="appLink" target="_blank">{{ appLink }}</a>
+                    <p class="mobile"><em>This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.</em></p>
                 </div>
 
                 <loader v-if="step = 0" />
@@ -173,10 +174,10 @@
                   </div>
                 </div>
                 <div v-else>
-                  <wallet-widget />
+                  <wallet-widget v-bind:showEth="true" />
                   <div class="checkout-row">
-                      <p><b>Estimated transaction fee</b></p>
-                      <p>{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
+                      <p class="m0"><b>Estimated transaction fee</b></p>
+                      <p class="m0">{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
                   </div>
                   <div class="btn-action">Get sponsored</div>
                   <transaction
@@ -991,6 +992,11 @@ export default class IndividualityView extends mixins(validationMixin) {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    @media (max-width: $breakpoint-m) {
+    flex-direction: column-reverse;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
 }
 
 .verification-status h2 {
@@ -1013,12 +1019,20 @@ export default class IndividualityView extends mixins(validationMixin) {
     color: $clr-green;
     font-weight: 600;
     margin-left: 1rem;
+    @media (max-width: $breakpoint-m) {
+    margin-left: 0;
+    margin-bottom: 1rem;
+  }
 }
 
 .unverified {
     color: $error-color;
     font-weight: 600;
     margin-left: 1rem;
+    @media (max-width: $breakpoint-m) {
+    margin-left: 0;
+    margin-bottom: 1rem;
+  }
 }
 
 .transaction {
@@ -1026,12 +1040,18 @@ export default class IndividualityView extends mixins(validationMixin) {
     border: 1px solid #000;
     padding: 1.5rem;
     border-radius: 1rem;
-    width: 75%;
+    width: auto;
 }
 
 .checkout-row {
     display: flex;
     justify-content: space-between;
+    margin: 2rem 0;
+    @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+    justify-content: flex-start;
+    margin: 1rem 0;
+  }
 }
 
 .toggle-tabs-mobile {
@@ -1181,5 +1201,9 @@ export default class IndividualityView extends mixins(validationMixin) {
 }
 .pt-1 {
   padding-top: 1rem;
+}
+
+.m0 {
+  margin: 0;
 }
 </style>
