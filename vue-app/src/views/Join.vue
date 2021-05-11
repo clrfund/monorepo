@@ -1,7 +1,18 @@
 <template>
   <div class="container">
     <div class="grid">
-      <div class="progress-area desktop">
+      <form-progress-widget
+        :currentStep="currentStep"
+        :furthestStep="furthestStep"
+        :steps="steps"
+        :stepNames="stepNames"
+        :isNavDisabled="isNavDisabled"
+        :isStepUnlocked="isStepUnlocked"
+        :isStepValid="isStepValid"
+        :handleStepNav="handleStepNav"
+        :saveFormData="saveFormData"
+      />
+      <!-- <div class="progress-area desktop">
         <div class="progress-container">
           <div class="tx-progress-area" v-if="currentStep === 5 && pending || waiting || txReject || wrongNetwork || lowFunds">
             <loader v-if="waiting || pending || wrongNetwork"/>
@@ -27,8 +38,8 @@
                 :key="step"
                 class="progress-step"
                 :class="{
-                  'zoom-link': step <= form.furthestStep && step !== currentStep && !navDisabled,
-                  disabled: navDisabled
+                  'zoom-link': step <= form.furthestStep && step !== currentStep && !isNavDisabled,
+                  disabled: isNavDisabled
                 }"
                 @click="handleStepNav(step)"
               >
@@ -75,7 +86,7 @@
           :currentStep="currentStep"
           :callback="saveFormData"
           :handleStepNav="handleStepNav"
-          :navDisabled="navDisabled"
+          :isNavDisabled="isNavDisabled"
           class="desktop"
         />
         </div>
@@ -90,7 +101,7 @@
             Cancel
           </router-link>
         </div>
-      </div>
+      </div> -->
       <div class="title-area">
         <h1>Join the round</h1>
         <div v-if="currentStep === 5">
@@ -113,7 +124,6 @@
               <div class="inputs">
                 <div class="form-background">
                   <label for="project-name" class="input-label">Name</label>
-                  <!-- TODO figure out onblur validation -->
                   <input
                     id="project-name"
                     type="text"
@@ -575,6 +585,7 @@
           </div>
         </div>
       </div>
+      <!-- TODO how to handle? Move to FormProgressWidget? -->
       <div class="nav-area nav-bar mobile">
         <div class="checkout" v-if="currentStep === 5">
           <div class="tx-progress-area">
@@ -604,9 +615,14 @@
           </div>
         
         </div>
-        <form-navigation :steps="steps" :currentStep="currentStep" :callBack="saveFormData" />
-        <!-- TODO submit button to trigger tx, pass callback to above <botton-row />?  -->
-        <!-- If the user is not yet connected, the button should prompt connection -->
+        <form-navigation
+          :isStepValid="isStepValid(currentStep)"
+          :steps="steps"
+          :currentStep="currentStep"
+          :callback="saveFormData"
+          :handleStepNav="handleStepNav"
+          :isNavDisabled="isNavDisabled"
+        />
       </div>
     </div>
   </div>
@@ -621,6 +637,7 @@ import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
+import FormProgressWidget from '@/components/FormProgressWidget.vue'
 import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
@@ -636,6 +653,7 @@ import { Project } from '@/api/projects'
     LayoutSteps,
     ProgressBar,
     FormNavigation,
+    FormProgressWidget,
     IpfsImageUpload,
     Markdown,
     ProjectProfile,
@@ -854,13 +872,13 @@ export default class JoinView extends mixins(validationMixin) {
     this.saveFormData(false)
   }
 
-  get navDisabled(): boolean {
+  get isNavDisabled(): boolean {
     return !this.isStepValid(this.currentStep) && this.currentStep !== this.furthestStep
   }
 
   handleStepNav(step): void {
-    // If navDisabled => disable quick-links
-    if (this.navDisabled) return
+    // If isNavDisabled => disable quick-links
+    if (this.isNavDisabled) return
     // Save form data
     this.saveFormData()
     // Navigate
@@ -915,77 +933,6 @@ export default class JoinView extends mixins(validationMixin) {
       "form"
       "navi";
     gap: 0;
-  }
-}
-
-.progress-area.desktop {
-  grid-area: progress;
-  position: relative;
-
-  .progress-container {
-    position: sticky;
-    top: 5rem;
-    align-self: start;
-    padding: 1.5rem 1rem; 
-    background: $bg-primary-color; 
-    border-radius: 16px; 
-    /* width: 320px; */
-    box-shadow: $box-shadow;
-
-    .progress-steps {
-      margin-bottom: 1rem;
-    }
-
-    .progress-step {
-      display: flex;
-
-      img {
-        margin-right: 1rem;
-      }
-      p {
-        margin: 0.5rem 0;
-      }
-      .step {
-        color: #FFF9
-      }
-      .active {
-        color: white;
-        font-weight: 600;
-        font-size: 1rem;
-      }
-    }
-
-    .zoom-link {
-      cursor: pointer;
-      &:hover {
-        transform: scale(1.02);
-      }
-    }
-
-    .subtitle {
-      font-weight: 500;
-      opacity: 0.8;
-    }
-  }
-}
-
-
-.progress-area.mobile {
-  grid-area: progress;
-  margin: 2rem 1rem;
-  margin-bottom: 0;
-
-  .row {
-    margin-top: 1.5rem;
-
-    p {
-      margin: 0;
-      font-weight: 500;
-    }
-
-    .cancel-link {
-      font-weight: 500;
-    }
   }
 }
 
@@ -1070,12 +1017,6 @@ export default class JoinView extends mixins(validationMixin) {
   &:first-of-type {
     margin-top: 0;
   }
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .application {

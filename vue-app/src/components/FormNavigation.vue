@@ -5,7 +5,7 @@
       @click="handleStepNav(currentStep - 1)"
       class="btn-secondary"
       :class="{
-        disabled: navDisabled,
+        disabled: isNavDisabled,
       }"
     >
       Previous
@@ -51,7 +51,7 @@ export default class FormNavigation extends Vue {
   @Prop() isStepValid!: boolean
   @Prop() callback!: (updateFurthest?: boolean) => void
   @Prop() handleStepNav!: () => void
-  @Prop() navDisabled!: boolean
+  @Prop() isNavDisabled!: boolean
 
   // TODO do stuff with this?
   submissionTxHash = ''
