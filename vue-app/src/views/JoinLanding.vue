@@ -68,6 +68,7 @@ export default class JoinLanding extends Vue {
   @media (max-width: ($breakpoint-m + 1px)) {
     width: 100%;
     margin: 0;
+    padding-bottom: 6rem;
   }
 }
 
@@ -87,6 +88,10 @@ h1 {
   display: flex;
   background: linear-gradient(286.78deg, rgba(173, 131, 218, 0) -32.78%, #191623 78.66%);
   height: calc(100vh - 113px);
+  @media (max-width: ($breakpoint-m + 1px)) {
+    width: 100%;
+    padding-bottom: 20rem;
+  }
 }
 
 .hero img {
