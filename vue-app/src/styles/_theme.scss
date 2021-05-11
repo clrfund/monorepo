@@ -52,7 +52,6 @@
   @include button($error-color, none, 2px solid $error-color);
 }
 
-// app button for use in nav bar
 .app-btn {
   @include button(white, $clr-pink-light-gradient, none);
   padding: 0.25rem 1.25rem;

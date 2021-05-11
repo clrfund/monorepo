@@ -1334,11 +1334,4 @@ export default class JoinView extends mixins(validationMixin) {
   text-transform: uppercase;  
   font-weight: 500;
 }
-
- .tx-subtitle {
-      font-weight: 600;
-      font-size: 20px;
-      font-family: 'Glacial Indifference', sans-serif;
-    }
-
 </style>
