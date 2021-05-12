@@ -19,24 +19,23 @@
           <div class="disconnect btn" @click="disconnect"><img src="@/assets/disconnect.svg"></div>
         </div>
       </div>
-      <div class="setup-card">
-        <div class="flex-row">
+      <bright-id-widget />
+        <!-- <div class="flex-row">
           <h2 class="no-margin">Contributor setup</h2>
           3/5
         </div>
         <div class="contributor-setup-progress">
           ===== ===== ===== ----- -----
         </div>
-        <router-link to="#" class="complete-link">Complete setup</router-link>
-      </div>
+        <router-link to="#" class="complete-link">Complete setup</router-link> -->
       <div class="balances-section">
         <div class="flex-row">
           <h2>Optimism balances</h2>
           <img src="@/assets/info.svg">
         </div>
         <div class="balances-card">
-          <balance-item :balance="balance" abbrev="DAI" />
-          <balance-item :balance="etherBalance" abbrev="ETH" />
+          <balance-item :balance="balance" abbrev="DAI"><icon-status v-bind:custom="true" logo='dai.svg' secondaryLogo='optimism.png' bg="red" /></balance-item>
+          <balance-item :balance="etherBalance" abbrev="ETH"><icon-status v-bind:custom="true" logo='eth.svg' secondaryLogo='optimism.png' bg="red" /></balance-item>
         </div>
       </div>
       <div class="projects-section">
@@ -53,11 +52,13 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import BalanceItem from '@/components/BalanceItem.vue'
+import IconStatus from '@/components/IconStatus.vue'
+import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
 
 @Component({
-  components: { BalanceItem },
+  components: { BalanceItem, BrightIdWidget, IconStatus },
 })
 export default class NavBar extends Vue {
   @Prop() toggleProfile
@@ -158,7 +159,7 @@ p.no-margin {
   .container {
     position: absolute;
     right: 0;
-    background: $bg-secondary-color;
+    background: $bg-light-color;
     height: 100%;
     width: clamp(350px, 25%, 500px);
     padding: 1.5rem;
@@ -176,7 +177,7 @@ p.no-margin {
       gap: 1rem;
     }
     .address-card {
-      background: $clr-pink-light-gradient;
+      background: $clr-pink-dark-gradient;
 
       .address {
         margin: 0;
