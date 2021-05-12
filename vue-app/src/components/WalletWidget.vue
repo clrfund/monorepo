@@ -20,7 +20,7 @@
         <img src="@/assets/dai.svg" />
         <div class="balance" @click="copyAddress">{{ balance }}</div>
       </div>
-      <div class="profile-name" @click="copyAddress">{{ ens || renderUserAddress(7) }}</div>
+      <div class="profile-name" @click="copyAddress">{{ renderUserAddress(7) }}</div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl">
       </div>
@@ -201,12 +201,6 @@ export default class WalletWidget extends Vue {
     }
     return ''
   }
-
-  // TODO: Extract into a shared function
-  get ens(): string {
-    return this.$store.state.currentUser?.ens
-  }
-
 }
 
 
