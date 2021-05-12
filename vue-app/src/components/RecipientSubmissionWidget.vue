@@ -1,7 +1,10 @@
 <template>
-  <div>
+  <div class="recipient-submission-widget">
     <loader v-if="isLoading"/>
-    <wallet-widget />
+    <div>
+      <!-- TODO why still full width?? -->
+      <wallet-widget />
+    </div>
     <div class="tx-progress-area">
       <loader v-if="isWaiting || isPending || isWrongNetwork"/>
       <div v-if="isWaiting" class="tx-notice">
@@ -35,13 +38,15 @@
       <p class="m0"><b>Estimated transaction fee</b></p>
       <p class="m0">{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
     </div>
-    <button
-      @click="handleSubmit"
-      class="app-btn"
-      :disabled="!canSubmit"
-    >
-      Submit project
-    </button>
+    <div>
+      <button
+        @click="handleSubmit"
+        class="app-btn"
+        :disabled="!canSubmit"
+      >
+        Submit project
+      </button>
+    </div>
     <!-- TODO display conditionally -->
     <transaction v-if="isPending" :hash="txHash" :error="txError"/>
   </div>
@@ -161,6 +166,11 @@ export default class RecipientSubmissionWidget extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+
+.recipient-submission-widget {
+  display: flex;
+  flex-direction: column;
+}
 
 .checkout-row {
   display: flex;

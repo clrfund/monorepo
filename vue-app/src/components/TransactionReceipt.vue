@@ -52,18 +52,14 @@ export default class TransactionReceipt extends Vue {
   }
   
   renderHash(digitsToShow?: number): string {
-    if (this.hash) {
-      const hash: string = this.hash
-      if (digitsToShow) {
-        const beginDigits: number = Math.ceil(digitsToShow / 2)
-        const endDigits: number = Math.floor(digitsToShow / 2)
-        const begin: string = hash.substr(0, 2 + beginDigits)
-        const end: string = hash.substr(hash.length - endDigits, endDigits)
-        return `${begin}…${end}`
-      }
-      return hash
+    if (digitsToShow) {
+      const beginDigits = Math.ceil(digitsToShow / 2)
+      const endDigits = Math.floor(digitsToShow / 2)
+      const begin = this.hash.substr(0, 2 + beginDigits)
+      const end = this.hash.substr(this.hash.length - endDigits, endDigits)
+      return `${begin}…${end}`
     }
-    return ''
+    return this.hash
   }
   
   get blockExplorerUrl(): string {
