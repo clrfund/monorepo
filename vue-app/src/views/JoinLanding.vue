@@ -1,4 +1,3 @@
-@ -0,0 +1,36 @@
 <template>
   <div>
     <div class="gradient">
