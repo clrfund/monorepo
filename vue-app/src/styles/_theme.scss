@@ -30,7 +30,7 @@
 .btn-action {
   @include button(white, $clr-pink-light-gradient, none);
 }
-f
+
 .btn-secondary {
   @include button($clr-green, none, 2px solid $clr-green);
 }
@@ -66,4 +66,13 @@ f
   border-radius: 8px;
   margin-right: 0.5rem;
   display: flex;
+}
+
+.warning-text {
+  font-size: 12px;
+  font-family: Inter;
+  line-height: 150%;
+  color: $warning-color;
+  text-transform: uppercase;  
+  font-weight: 500;
 }
