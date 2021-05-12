@@ -9,6 +9,7 @@ import RoundList from '../views/RoundList.vue'
 import ProjectAdded from '../views/ProjectAdded.vue'
 import RoundInformation from '../views/RoundInformation.vue'
 import About from '../views/About.vue'
+import AboutMaci from '../views/AboutMaci.vue'
 import JoinView from '../views/Join.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 
@@ -50,6 +51,11 @@ const routes = [
     path: '/about',
     name: 'about',
     component: About,
+  },
+  {
+    path: '/about-maci',
+    name: 'about-maci',
+    component: AboutMaci,
   },
   {
     path: '/project-added',

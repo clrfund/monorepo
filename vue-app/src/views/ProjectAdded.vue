@@ -1,4 +1,3 @@
-@ -0,0 +1,36 @@
 <template>
   <div>
     <round-status-banner />
@@ -34,6 +33,7 @@ import * as humanizeDuration from 'humanize-duration'
 
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
+import Warning from '@/components/Warning.vue'
 
 import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
@@ -41,7 +41,7 @@ import { blockExplorer } from '@/api/core'
 @Component({
   name: 'projectAdded',
   metaInfo: { title: 'project added' },
-  components: { ProgressBar, RoundStatusBanner },
+  components: { ProgressBar, RoundStatusBanner, Warning },
 })
 export default class ProjectAdded extends Vue {
   challengePeriodDuration: number | null = null
@@ -61,8 +61,8 @@ export default class ProjectAdded extends Vue {
     return `${blockExplorer}${this.txHash}`
   }
 
-  formatDuration(value: number): string {
-    return humanizeDuration(value * 1000, { largest: 1 } )
+  formatDuration(seconds: number): string {
+    return humanizeDuration(seconds * 1000, { largest: 1 } )
   }
 }
 

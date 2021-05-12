@@ -117,8 +117,8 @@ export default class RecipientRegistryView extends Vue {
     return formatAmount(value, 18)
   }
 
-  formatDuration(value: number): string {
-    return humanizeDuration(value * 1000)
+  formatDuration(seconds: number): string {
+    return humanizeDuration(seconds * 1000)
   }
 
   formatDate(date: DateTime): string {

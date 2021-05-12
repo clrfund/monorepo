@@ -66,3 +66,12 @@
   margin-right: 0.5rem;
   display: flex;
 }
+
+.warning-text {
+  font-size: 12px;
+  font-family: Inter;
+  line-height: 150%;
+  color: $warning-color;
+  text-transform: uppercase;  
+  font-weight: 500;
+}
