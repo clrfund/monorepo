@@ -11,12 +11,12 @@
     <!-- TODO Add content about going via traditional ESP round for funding -->
     <div class="content" v-if="isRoundClosed">
       <div style="font-size: 64px;">☹</div>
-      <h1>Sorry, the round is closed</h1>
+      <h1>Sorry, it's too late to join</h1>
       <div id="subtitle" class="subtitle">
-        Our smart contracts are busy tallying contributions so it's too late to get on board.
+        The round is about to start. It's now too late to get on board.
       </div> 
       <div class="subtitle" id="subtitle" style="margin-top: 2rem;">
-        We'll be running another round of funding very soon. Follow on Twitter for updates: <a href="https://twitter.com/ethdotorg">@ethdotorg</a>
+        Check out these <a href="https://ethereum.org/en/community/grants/">other ways to source funding</a>. Or follow us on Twitter for updates about future rounds: <a href="https://twitter.com/ethdotorg">@ethdotorg</a>
       </div>
       <div class="btn-container" style="margin-top: 2.5rem;">
         <router-link to="/" class="btn-primary">Home</router-link>
@@ -26,12 +26,12 @@
     <!-- TODO Add content about going via traditional ESP round for funding -->
     <div class="content" v-else-if="isRoundFull">
       <div style="font-size: 64px;">☹</div>
-      <h1>Sorry, this round is full</h1>
+      <h1>Sorry, the round is full</h1>
       <div id="subtitle" class="subtitle">
         The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now. Unfortunately we've hit the cap and there's no more room on board.
       </div> 
       <div class="subtitle" id="subtitle" style="margin-top: 2rem;">
-        We'll be running another round of funding very soon. Follow on Twitter for updates: <a href="https://twitter.com/ethdotorg">@ethdotorg</a>
+        Check out these <a href="https://ethereum.org/en/community/grants/">other ways to source funding</a>. Or follow us on Twitter for updates about future rounds: <a href="https://twitter.com/ethdotorg">@ethdotorg</a>
       </div>
       <div class="btn-container" style="margin-top: 2.5rem;">
         <router-link to="/" class="btn-primary">Home</router-link>
