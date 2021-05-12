@@ -8,8 +8,11 @@
   
     <round-status-banner />
 
-    <!-- TODO Add content about going via traditional ESP round for funding -->
-    <div class="content" v-if="isRoundClosed">
+    <div class="content" v-if="isLoading">
+      <h1>Fetching round data...</h1>
+    </div>
+
+    <div class="content" v-else-if="isRoundClosed">
       <div style="font-size: 64px;">☹</div>
       <h1>Sorry, it's too late to join</h1>
       <div id="subtitle" class="subtitle">
@@ -23,7 +26,6 @@
       </div> 
     </div>
 
-    <!-- TODO Add content about going via traditional ESP round for funding -->
     <div class="content" v-else-if="isRoundFull">
       <div style="font-size: 64px;">☹</div>
       <h1>Sorry, the round is full</h1>
@@ -41,7 +43,7 @@
 
     <div class="content" v-else>
       <h1>Join the next funding round</h1>
-      <div class="subtitle">To get on board this round, we’ll need some information about your project and a <strong>0.1 ETH</strong> security deposit.</div>
+      <div class="subtitle">To get on board this round, we’ll need some information about your project and a <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security deposit.</div>
       <div class="info-boxes">
         <div class="apply-callout">
           <div class="countdown-label caps">Time left to join</div>
@@ -51,9 +53,9 @@
           <div class="countdown-label caps">Time to complete</div>
           <div class="countdown caps">15 minutes (ish)</div>
         </div> 
-        <div v-if="!spaces" class="apply-callout-warning">
+        <div v-if="isRoundFillingUp" class="apply-callout-warning">
           <div style="display: flex; justify-content: space-between; align-items: flex-start;f">
-            <div class="countdown caps">{{ spaces || 'X'}} spaces left, hurry!</div>
+            <div class="countdown caps">{{ spacesRemainingString }} left, hurry!</div>
               <div class="dropdown">
               <img class="icon" @click="openTooltip" src="@/assets/info.svg" />
               <div id="myTooltip" class="hidden button-menu">
@@ -61,8 +63,7 @@
               </div>
             </div>
           </div>
-          <p class="warning-text" style="margin-bottom: 0;">There's a chance the round may fill up before you finish.</p>
-          <!-- TODO: This will need to query *MACI CAP - (projects in challenge period + projects in round)* and display if less than 20[tbc] spaces available* --> 
+          <p class="warning-text" style="margin-bottom: 0;">You will get your deposit back if you don’t make it into the round this time.</p>
         </div> 
       </div>
       <div class="btn-container">
@@ -79,23 +80,37 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
+import { BigNumber } from 'ethers'
 
-// import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
+import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
+
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
+import { formatAmount } from '@/utils/amounts'
 
 @Component({
   components: { RoundStatusBanner, CriteriaModal },
 })
 export default class JoinLanding extends Vue {
+  isLoading = true
   showCriteriaPanel = false
+  recipientCount: number | null = null
+  spacesRemaining: number | null = null
+  deposit: BigNumber | null = null
+  depositToken: string | null = null
 
-  // async created() {
-  // const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
-  // console.log(registryInfo.recipients)
-  // this.challengePeriodDuration = registryInfo.challengePeriodDuration
-  // }
+  // TODO fix on page refresh - `recipientRegistryAddress` is `null`
+  // Refactor to computed properties, so we can react to having `recipientRegistryAddress`?
+  async created() {
+    const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+    const maxRecipients = this.$store.state.currentRound.maxRecipients
+    this.recipientCount = registryInfo.recipientCount
+    this.deposit = registryInfo.deposit
+    this.depositToken = registryInfo.depositToken
+    this.spacesRemaining = maxRecipients - registryInfo.recipientCount
+    this.isLoading = false
+  }
 
   private get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
@@ -115,9 +130,22 @@ export default class JoinLanding extends Vue {
     return hasDateElapsed(this.signUpDeadline)
   }
 
-  // TODO fetch `maxRecipients` from registry & compare to current registry size
   get isRoundFull(): boolean {
-    return false
+    if (this.spacesRemaining === null) {
+      return false
+    }
+    return this.spacesRemaining === 0
+  }
+
+  get isRoundFillingUp(): boolean {
+    if (this.spacesRemaining === null) {
+      return false
+    }
+    return this.spacesRemaining < 20
+  }
+
+  get spacesRemainingString(): string {
+    return this.spacesRemaining === 1 ? '1 space' : `${this.spacesRemaining} spaces`
   }
 
   openTooltip(): void {
@@ -126,6 +154,13 @@ export default class JoinLanding extends Vue {
 
   toggleCriteria(): void {
     this.showCriteriaPanel = !this.showCriteriaPanel
+  }
+
+  formatAmount(value: BigNumber): string {
+    if (!value) {
+      return ''
+    }
+    return formatAmount(value, 18)
   }
 }
 </script>
