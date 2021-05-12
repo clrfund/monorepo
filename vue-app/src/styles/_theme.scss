@@ -35,13 +35,18 @@
 }
 
 .etherscan-btn {
-  @include button($bg-primary-color, #fff, 1px solid $bg-light-color);
+  @include button(white, $clr-pink-light-gradient-inactive, 1px solid $bg-light-color);
   box-shadow: $box-shadow;
   display: flex;
   gap: 0.5rem;
   padding: 0.5rem;
   font-size: 14px;
   font-weight: 500;
+  &:hover {
+    opacity: 1;
+    transform: scale(1);
+    cursor: default;
+  }
 }
 
 .btn-white {
@@ -52,7 +57,6 @@
   @include button($error-color, none, 2px solid $error-color);
 }
 
-// app button for use in nav bar
 .app-btn {
   @include button(white, $clr-pink-light-gradient, none);
   padding: 0.25rem 1.25rem;

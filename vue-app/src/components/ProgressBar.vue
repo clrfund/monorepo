@@ -19,8 +19,7 @@ export default class Transaction extends Vue {
   @Prop()
   totalSteps!: number
 
-  // TODO best way to pass props to CSS?
-  isFutureStep (step) {
+  isFutureStep(step: number): boolean {
     return step > this.currentStep
   }
 }
@@ -32,7 +31,7 @@ export default class Transaction extends Vue {
 .progress-bar {
   display: grid;
   /* TODO make columns dynamic */
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   column-gap: 0.5rem;
 }
 

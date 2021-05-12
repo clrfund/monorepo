@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
     <template v-else-if="!isLoaded()"></template>
     <div
@@ -211,10 +211,6 @@ export default class WalletWidget extends Vue {
 <style scoped lang="scss">
 @import '../styles/vars';
 @import '../styles/theme';
-
-.container {
-  margin-left: 0.5rem;
-}
 
 .provider-error {
   text-align: center;

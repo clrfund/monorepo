@@ -1,0 +1,135 @@
+<template>
+  <div class="etherscan-btn tx-receipt">
+    <div class="status-label-address">
+      <loader v-if="isPending" class="pending" />
+      <!-- TODO: add tooltip for pending -->
+      <img class="success" v-if="!isPending" src="@/assets/checkmark.svg" />
+      <p class="hash">{{renderHash(8)}}</p>
+    </div>
+    <div class="actions">
+      <a style="padding: 0; margin: 0;" :href="'https://etherscan.io/tx/' + hash" target="_blank" title="View on Etherscan"><img class="icon" src="@/assets/etherscan.svg" /></a>
+      <div @click="copyAddress" class="icon"><img style="width: 100%;" src="@/assets/copy.svg" /></div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { Prop } from 'vue-property-decorator'
+
+import Loader from '@/components/Loader.vue'
+import { blockExplorer } from '@/api/core'
+import { isTransactionMined } from '@/utils/contracts'
+
+@Component({
+  components: { Loader },
+})
+export default class TransactionReceipt extends Vue { 
+  isPending = true
+
+  @Prop() hash!: string
+
+  created() {
+    this.checkTxStatus()
+  }
+
+  async checkTxStatus(): Promise<void> {
+    while(this.isPending) {
+      await new Promise(resolve => setTimeout(resolve, 5000))
+      const isMined = await isTransactionMined(this.hash)
+      this.isPending = !isMined
+    }
+  }
+  
+  async copyAddress(): Promise<void> {
+    if (!this.hash) { return }
+    try {
+      await navigator.clipboard.writeText(this.hash)
+    } catch (error) {
+      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
+    }
+  }
+  
+  renderHash(digitsToShow?: number): string {
+    if (digitsToShow) {
+      const beginDigits = Math.ceil(digitsToShow / 2)
+      const endDigits = Math.floor(digitsToShow / 2)
+      const begin = this.hash.substr(0, 2 + beginDigits)
+      const end = this.hash.substr(this.hash.length - endDigits, endDigits)
+      return `${begin}…${end}`
+    }
+    return this.hash
+  }
+  
+  get blockExplorerUrl(): string {
+    return `${blockExplorer}${this.hash}`
+  }
+}
+</script>
+
+<style scoped lang="scss">
+@import '../styles/vars';
+@import '../styles/theme';
+
+.tx-receipt {
+  min-width: 200px;
+}
+
+.icon {
+  width: 1rem;
+  height: 1rem;
+  padding: 0.25rem;
+  cursor: pointer;
+  &:hover {
+    background: $clr-pink-light-gradient;
+    border-radius: 16px;
+  }
+}
+
+.hash {
+  color: #fff;
+  margin: 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.success {
+  width: 0.75rem;
+  height: 0.75rem;
+  padding: 0.25rem;
+  margin-right: 0.25rem;
+  background: $clr-pink-light-gradient;
+  border-radius: 2rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.25rem;
+  height: 1.5rem;
+}
+
+.status-label-address {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.pending {
+  margin: 0.25rem;
+  padding: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.pending:after {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid $clr-pink;
+  border-color: $clr-pink transparent $clr-pink transparent;
+}
+</style>
+
