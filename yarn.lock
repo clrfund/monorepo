@@ -9391,10 +9391,10 @@ luxon@^1.26.0:
   resolved "https://registry.yarnpkg.com/luxon/-/luxon-1.26.0.tgz#d3692361fda51473948252061d0f8561df02b578"
   integrity sha512-+V5QIQ5f6CDXQpWNICELwjwuHdqeJM1UenlZWx5ujcRMc9venvluCjFb4t5NYLhb6IhkbMVOxzVuOqkgMxee2A==
 
-maci-circuits@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-0.7.1.tgz#c74d7ed054de2dfdb0823bf43c2c15ed031d61cb"
-  integrity sha512-fICU8uzKf4faZpfTqhdYj/4fnYPozqi1KA1/5Zpnl+flL1YtbN5tY4NbBxWp8aZsR2pTYb/pd4sQASoB/YxQMw==
+maci-circuits@^0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/maci-circuits/-/maci-circuits-0.7.4.tgz#29b61c12577620db9db3b101d98ea05d8b430a7c"
+  integrity sha512-d+7v8mzKiiU+vkI+PFOwtdqa21Ehe/GTouhRrqWR7P+8DkenvxcN6GsU7EjPRC7e5lVuONnWXlj5xAt+K/7nZQ==
   dependencies:
     argparse "^1.0.10"
     circom "0.5.38"
@@ -9403,34 +9403,34 @@ maci-circuits@^0.7.1:
     shelljs "^0.8.3"
     snarkjs "0.3.59"
 
-maci-cli@0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.7.1.tgz#cdd4c6e01477d83cebaf936ce01d66f05c0b9453"
-  integrity sha512-j8Bp6C1oPjoVOULCbRwcx+d8nVP+WfpL0l+jaroAk4z1zs5yjbAkwszpoJKzjmHfl7X7ZrVanZjlavmZmONw7g==
+maci-cli@0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/maci-cli/-/maci-cli-0.7.4.tgz#a719bea29b998dc3213f40469762bf61fab6f1f4"
+  integrity sha512-TvuQ53ZRJTGG/1Ucx0Tw4rUx9URLxhYb0iyfEYMhu9Q7kSBsq4h5gVGVIzyd5ePbXGUzlCCvOONUl+QM7MOuPw==
   dependencies:
     argparse "^1.0.10"
     ethers "^4.0.45"
-    maci-circuits "^0.7.1"
-    maci-config "^0.7.1"
-    maci-contracts "^0.7.1"
-    maci-core "^0.7.1"
-    maci-crypto "^0.7.1"
-    maci-domainobjs "^0.7.1"
+    maci-circuits "^0.7.4"
+    maci-config "^0.7.4"
+    maci-contracts "^0.7.4"
+    maci-core "^0.7.4"
+    maci-crypto "^0.7.4"
+    maci-domainobjs "^0.7.4"
     prompt-sync "4.2.0"
 
-maci-config@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/maci-config/-/maci-config-0.7.1.tgz#5efe2e28e28d637efd3031e86e5e2d782a0009e3"
-  integrity sha512-FxDPm2stuzxOcm/vzxH71K507aBPmSC3lqrL5YsuH/b7wLBo3U+/CqqindeavE0Gl8S37Tcyp7iqsKvWN3r99Q==
+maci-config@^0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/maci-config/-/maci-config-0.7.4.tgz#cee6129bef8d18d35f2d20775f991e310badd436"
+  integrity sha512-KvUuihOEt8kDmTxgKqd0P5kFqZ9nSQPupD/tqCizqZu7ESsWp50R7fw12Uj4JUpR2T/Ynbw+v1JwwWCXBGRROw==
   dependencies:
     config "^3.2.4"
     js-yaml "^3.13.1"
     path "^0.12.7"
 
-maci-contracts@0.7.1, maci-contracts@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.7.1.tgz#bff316321a389b1dd72976f99fbae130acb7e0be"
-  integrity sha512-owFHlc+44iCeDO2lZJ8XOzg7ZMReUqM0ehrrPGVc8NUXslRHCy0frG5KZPALI2moOIAaT5KY49Grd5vGzawFkg==
+maci-contracts@0.7.4, maci-contracts@^0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/maci-contracts/-/maci-contracts-0.7.4.tgz#14510fcc09ba2d224062b14877729fb826911e2f"
+  integrity sha512-/dx/pou5vyC96bqYZp1tZhy1IWMeM3j8RnnKunE26KG7rMYvQDH+JRp95S+2V/wfLVs1BrXM3j26UeyR2Z8RRg==
   dependencies:
     "@openzeppelin/contracts" "~3.2.0"
     argparse "^1.0.10"
@@ -9438,30 +9438,30 @@ maci-contracts@0.7.1, maci-contracts@^0.7.1:
     ethers "^4.0.45"
     module-alias "^2.2.2"
 
-maci-core@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/maci-core/-/maci-core-0.7.1.tgz#ea310406082df1f63f1126bef91fc692e72573e4"
-  integrity sha512-To3Hj9JQ/KyIKMvMHeubtw9HwlvldEW5fU2pUjojr+KOvrMeeA407zqPKllXllSwEGdlb5H9DQbrdQeDTcKb2Q==
+maci-core@^0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/maci-core/-/maci-core-0.7.4.tgz#713cfb3884fe7f74543b790c8d2c2196f855a523"
+  integrity sha512-u6zrHjuWC1zlPpOHdvSGtX/J6HFKAbR8fYeQ5gXIQWuRF6MXPh/PIYcboTOU3DWMt7TQPplyqc52VuV1P8plQg==
   dependencies:
     ethers "^4.0.45"
-    maci-config "^0.7.1"
-    maci-crypto "^0.7.1"
-    maci-domainobjs "^0.7.1"
+    maci-config "^0.7.4"
+    maci-crypto "^0.7.4"
+    maci-domainobjs "^0.7.4"
     module-alias "^2.2.2"
 
-maci-crypto@^0.7.1, maci-crypto@~0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/maci-crypto/-/maci-crypto-0.7.1.tgz#c305c32b3be9f570d6dc1250923cf269a9527698"
-  integrity sha512-DKaaBE9EnP5EQzlWTWP2fG0YAf3PJ4zxKO1IvA31/4dvPe7dCu3MSMK7z6iLFMiK2sozPaRdAnePIlK2JouZjA==
+maci-crypto@^0.7.4, maci-crypto@~0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/maci-crypto/-/maci-crypto-0.7.4.tgz#6b9a518ff163da4e1aaea73bd6298206d99a0a5c"
+  integrity sha512-F7sdQJmgZO4nieFVjdhgbbOVF9lYUDp2gozNQ5V68fMaM3LQvDq6I8eAQ2bwYHo3xBcKmL8dKKliZ3Gn5kWXEw==
   dependencies:
     circomlib "0.5.1"
     ethers "^4.0.45"
     ffjavascript "0.2.35"
 
-maci-domainobjs@^0.7.1, maci-domainobjs@~0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/maci-domainobjs/-/maci-domainobjs-0.7.1.tgz#438c06ae1c6745647a026d2744f96eb1617d72bb"
-  integrity sha512-EIdzC+UoUFvxORnVbTyEUPpl/lg4m/NhB76F7BncOsUeVfH3Cl+oiMr2Oup30eoO3uNj8IUuBT2GY803x1ofwQ==
+maci-domainobjs@^0.7.4, maci-domainobjs@~0.7.4:
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/maci-domainobjs/-/maci-domainobjs-0.7.4.tgz#4574cae71e42cc889921bdc2ba268b0a109af658"
+  integrity sha512-cpi6m2o6UrU0tr7og61hQb2sxdWkRih4g/3Ly6+BFEu9YBVaA6vbC9scmJYxTiTAKP8Xi6ozDUbZrLvubabvZw==
 
 mafmt@^8.0.0:
   version "8.0.4"
