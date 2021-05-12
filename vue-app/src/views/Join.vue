@@ -414,7 +414,7 @@
             </div>
             <div v-if="currentStep === 4">
               <h2 class="step-title">Images</h2>
-              <p>We'll upload your images to IPFS, a decentralized storage platform.</p>
+              <p>We'll upload your images to IPFS, a decentralized storage platform. <a target="_blank" href="https://ipfs.io/#how">More on IPFS</a>.</p>
               <div class="inputs">
                 <div class="form-background">
                   <ipfs-image-upload label="Banner image" description="Recommended aspect ratio: 16x9" :onUpload="handleUpload" formProp="bannerHash"/>

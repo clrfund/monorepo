@@ -32,9 +32,9 @@
     </div>
     <div v-if="hash">
       <p class="input-label">
-        IPFS hash (InterPlanetary File System)
+        IPFS hash
       </p>
-      <p class="input-description">Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use. <a href="https://ipfs.io/#how">More on IPFS</a>  </p>
+      <p class="input-description">Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use.</p>
     </div>
     <div class="hash-area">
       <div v-if="hash"  class="copy">
