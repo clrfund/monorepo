@@ -16,6 +16,10 @@ const config: HardhatUserConfig = {
     hardhat: {
       gas: GAS_LIMIT,
       blockGasLimit: GAS_LIMIT,
+      mining: {
+        auto: false,
+        interval: 5000,
+      },
     },
     localhost: {
       url: 'http://127.0.0.1:18545',
