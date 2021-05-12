@@ -27,7 +27,7 @@
         <a href="#" class="tx-notice">Follow on Etherscan <img width="16px" src="@/assets/etherscan.svg"/></a>
       </div>
     </div>
-    <div class="checkout-row">
+    <div v-if="txHasDeposit" class="checkout-row">
       <p class="m0"><b>Required security deposit</b></p>
       <p class="m0">{{ formatAmount(registryInfo.deposit) }} {{ registryInfo.depositToken }}</p>
     </div>
@@ -91,7 +91,6 @@ export default class RecipientSubmissionWidget extends Vue {
   fiatSign = '$' // TODO add logic
 
   registryInfo: RegistryInfo | null = null
-  recipientId = ''
 
   async created() {
     this.registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
@@ -114,6 +113,10 @@ export default class RecipientSubmissionWidget extends Vue {
     return !!this.txError
   }
 
+  get txHasDeposit(): boolean {
+    return true
+  }
+
   formatAmount(value: BigNumber): string {
     return formatAmount(value, 18)
   }
@@ -131,6 +134,7 @@ export default class RecipientSubmissionWidget extends Vue {
     const registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
 
     // TODO where to make `isPending` vs. `isWaiting`? In `waitForTransaction`?
+    // Check out Launchpad repo to view transaction states
     this.isWaiting = true
     let submissionTxReceipt
     try {
@@ -144,9 +148,6 @@ export default class RecipientSubmissionWidget extends Vue {
       return
     }
     this.isWaiting = false
-
-    // TODO needed?
-    this.recipientId = getRequestId(submissionTxReceipt, recipientRegistryAddress)
 
     this.$router.push({
       name: 'projectAdded',
