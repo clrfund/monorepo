@@ -7,6 +7,7 @@
         <div v-if="!isVerified">
             <icon-status v-bind:sad="true" logo='brightid.svg' secondaryLogo='close-black.svg' />
         </div>
+        <!-- TODO: should this icon demo verified status or completion of entire setup? Is it even needed?-->
         <h2>BrightID setup</h2>
         <p>
             <span :class="{
