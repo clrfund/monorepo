@@ -11,6 +11,7 @@ import IndividualityView from '../views/ProofOfIndividuality.vue'
 import RoundInformation from '../views/RoundInformation.vue'
 import SetupLanding from '../views/SetupLanding.vue'
 import About from '../views/About.vue'
+import AboutSybilResistance from '../views/AboutSybilResistance.vue'
 import Verified from '../views/Verified.vue'
 import JoinView from '../views/Join.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
@@ -88,6 +89,11 @@ const routes = [
     path: '/join/:step',
     name: 'joinStep',
     component: JoinView,
+  },
+  {
+    path: '/sybil-resistance',
+    name: 'sybil-resistance',
+    component: AboutSybilResistance,
   },
 ]
 
