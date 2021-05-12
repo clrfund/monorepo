@@ -307,7 +307,7 @@ export default class IndividualityView extends mixins(validationMixin) {
   stepNames: string[] = []
   showSummaryPreview = false
   isVerified = true
-  sponsoredBy: 'Gitcoin'
+  sponsoredBy = 'Gitcoin'
   txFee = '0.00006'
   feeToken = 'ETH'
   fiatFee = '1.04'
