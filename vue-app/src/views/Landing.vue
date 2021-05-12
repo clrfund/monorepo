@@ -341,9 +341,11 @@ ol li::before {
   }
 
   .btn-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
     gap: 1rem;
+    @media (max-width: $breakpoint-l) {
+      flex-direction: column;
+    }
   }
 
   .apply-callout {
