@@ -1,93 +1,78 @@
 @import "./vars";
 
-.btn-primary,
-.btn-og,
-.btn-action,
-.btn-secondary,
-.btn-alternate,
-.btn-mini,
-.btn-white,
-.btn-warning {
+@mixin button($color, $background, $border) {
   padding: 0.5rem 1.5rem;
-  border-radius: 32px;
-  color: white;
-  font-weight: 600;
+  border-radius: 2rem;
   font-size: 1rem;
+  font-weight: 600;
   line-height: 150%;
   max-height: 2.75rem;
   text-align: center;
   box-sizing: border-box;
-  border: none;
+  color: $color;
+  background: $background;
+  border: $border;
   &:hover {
     opacity: 0.8;
-    transform: scale(1.01);
+    transform: scale(1.02);
     cursor: pointer;
   }
 }
 
 .btn-primary {
-  background: $clr-green;
-  border: 2px solid $clr-green;
+  @include button(white, $clr-green, 2px solid $clr-green);
 }
 
 .btn-og {
-  background: $button-color;
+  @include button(white, $button-color, none);
 }
 
 .btn-action {
-  background: $clr-pink-light-gradient;
+  @include button(white, $clr-pink-light-gradient, none);
 }
 
 .btn-secondary {
-  border: 2px solid $clr-green;
-  color: $clr-green;
-  background: none;
+  @include button($clr-green, none, 2px solid $clr-green);
+}
+
+.etherscan-btn {
+  @include button($bg-primary-color, #fff, 1px solid $bg-light-color);
+  box-shadow: $box-shadow;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .btn-white {
-  border: 2px solid white;
-  color: white;
-  background: #19162380;
+  @include button(white, #19162380, 2px solid white);
 }
 
 .btn-warning {
-  border: 2px solid $error-color;
-  color: $error-color;
-  background: none;
-  box-sizing: border-box;
+  @include button($error-color, none, 2px solid $error-color);
 }
 
 // app button for use in nav bar
 .app-btn {
+  @include button(white, $clr-pink-light-gradient, none);
   padding: 0.25rem 1.25rem;
-  background: $clr-pink-light-gradient;
-  border: none;
   border-radius: 1rem;
-  color: #ffffff;
-  font-size: 16px;
-  line-height: 150%;
-  &:hover {
-    opacity: 0.8;
-    transform: scale(1.01);
-    cursor: pointer;
-  }
 }
 
 .dropdown-btn {
-  background: rgba(44,41,56,1);
-  border: 1px solid rgba(115,117,166,0.3);
-  border-radius: 8px;
+  @include button(white, $bg-light-color, 1px solid rgba(115,117,166,0.3));
   padding: 0.25rem 0.5rem;
-  color: white;
+  border-radius: 8px;
   margin-right: 0.5rem;
   display: flex;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.8;
-    transform: scale(1.01);
-    cursor: pointer;
-  }
+}
+
+.warning-text {
+  font-size: 12px;
+  font-family: Inter;
+  line-height: 150%;
+  color: $warning-color;
+  text-transform: uppercase;  
+  font-weight: 500;
 }

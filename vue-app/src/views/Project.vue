@@ -5,16 +5,16 @@
     <div class="sticky-column">  
       <!--TODO: only make this visible to certain addresses ++ this will trigger a tx-->  
       <!-- <div class="admin-box">
-      <h2 class="link-title">Admin controls</h2> -->
+      <h2 class="link-title">Admin controls</h2>
       <button class="btn-warning button">
         <img width="16px" src="@/assets/remove.svg"/>
         Remove project
       </button>
-      <!-- </div> -->
+      </div>
       <button class="btn-secondary button">
         <img width="16px" src="@/assets/edit.svg" />
         Edit details
-      </button>
+      </button> -->
       <button
         v-if="hasRegisterBtn()"
         class="btn-primary"

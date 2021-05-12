@@ -14,7 +14,7 @@
           <router-link to="/projects" class="btn-action">Go to app</router-link>
           <div class="btn-white" @click="scrollToHowItWorks">How it works</div>
         </div>
-        <div class="apply-callout mobile">
+        <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout mobile">
           <div id="countdown" class="caps">11 days</div>
           <div id="countdown-label" class="caps">Time to apply</div>
           <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="apply-callout desktop">
+      <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout desktop">
         <div class="column">
           <h2>Join the funding round</h2>
           <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
@@ -32,7 +32,7 @@
         <div class="centered">
           <router-link to="/join"><div id="join-round" class="btn-primary">Join round</div></router-link>
         </div>
-        <div class="centered">11 days to join</div>
+        <div class="centered">{{timeRemaining}} to join</div>
       </div>
     </div>
     <div id="section-how-it-works">
@@ -113,12 +113,39 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { DateTime } from 'luxon'
+import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
+
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
 @Component({
   components: { RoundStatusBanner },
 })
 export default class Landing extends Vue {
+
+  private get signUpDeadline(): DateTime {
+    return this.$store.state.currentRound?.signUpDeadline
+  }
+
+  get timeRemaining(): string {
+    if (!this.signUpDeadline) {
+      return  '...'
+    }
+    return formatDateFromNow(this.signUpDeadline)
+  }
+
+  get isRoundClosed(): boolean {
+    if (!this.signUpDeadline) {
+      return  false
+    }
+    return hasDateElapsed(this.signUpDeadline)
+  }
+
+  // TODO fetch `maxRecipients` from registry & compare to current registry size
+  get isRoundFull(): boolean {
+    return false
+  }
+
   scrollToHowItWorks() {
     document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })
   }

@@ -13,6 +13,7 @@ export interface RoundInfo {
   maciAddress: string;
   recipientTreeDepth: number;
   maxContributors: number;
+  maxRecipients: number;
   maxMessages: number;
   coordinatorPubKey: PubKey;
   nativeTokenAddress: string;
@@ -152,6 +153,7 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     maciAddress,
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
     maxContributors: 2 ** maciTreeDepths.stateTreeDepth - 1,
+    maxRecipients: 2 ** maciTreeDepths.voteOptionTreeDepth - 1,
     maxMessages: 2 ** maciTreeDepths.messageTreeDepth - 1,
     coordinatorPubKey,
     nativeTokenAddress,

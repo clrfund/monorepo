@@ -51,6 +51,9 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 })
 export default class App extends Vue {
   created() {
+    this.$store.dispatch(LOAD_ROUND_INFO) // TODO confirm we should fetch this info immediately
+    this.$store.dispatch(LOAD_USER_INFO) // TODO confirm we should fetch this info immediately
+
     // TODO clearInterval on unmount
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
@@ -202,10 +205,10 @@ summary:focus {
 
 #content-container {
   display: flex;
-  /* min-height: 100%; */
   height: calc(100vh - 61.5px);
   background: $bg-primary-color;
-  overflow: scroll;
+  overflow-x: clip;
+  /* overflow-y: scroll; */
 }
 
 #sidebar {
