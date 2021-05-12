@@ -417,10 +417,10 @@
               <p>We'll upload your images to IPFS, a decentralized storage platform.</p>
               <div class="inputs">
                 <div class="form-background">
-                  <ipfs-image-upload label="Banner image" description="Recommended dimensions: 500px x 300px" :onUpload="handleUpload" formProp="bannerHash"/>
+                  <ipfs-image-upload label="Banner image" description="Recommended aspect ratio: 16x9" :onUpload="handleUpload" formProp="bannerHash"/>
                 </div>
                 <div class="form-background">
-                  <ipfs-image-upload label="Thumbnail image" description="Recommended dimensions: 80px x 80px" :onUpload="handleUpload" formProp="thumbnailHash"/>
+                  <ipfs-image-upload label="Thumbnail image" description="Recommended aspect ratio: 1x1 (square)" :onUpload="handleUpload" formProp="thumbnailHash"/>
                 </div>
               </div>
             </div>

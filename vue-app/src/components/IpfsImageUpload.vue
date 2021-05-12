@@ -90,13 +90,19 @@ export default class IpfsImageUpload extends Vue {
   handleLoadFile(event) {
     this.error = ''
     const data = event.target.files[0]
-    if (data && data.type.match('image/*')) {
-      const reader = new FileReader()
-      reader.onload = (() => ((e) => { this.loadedImageData = e.target.result }))()
-      reader.readAsDataURL(data)
-    } else {
+    if (!data) return
+    if (!data.type.match('image/*')) {
       this.error = 'That doesn\'t look like an image'
+      return
     }
+    if (data.size > 512000) { 
+      // Limit 512 kB file size
+      this.error = 'File size limited to 512 kB'
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = (() => ((e) => { this.loadedImageData = e.target.result }))()
+    reader.readAsDataURL(data)
   }
 
   // TODO display error in UI
