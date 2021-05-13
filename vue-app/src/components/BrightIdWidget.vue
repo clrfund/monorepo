@@ -1,47 +1,79 @@
 <template>
-  <div class="setup-container">
-    <div class="row">
-        <div v-if="isVerified">
-            <icon-status v-bind:happy="true" logo='brightid.svg' secondaryLogo='checkmark.svg' />
+  <div>
+    <div class="setup-container" v-if="!projectCard">
+        <div class="row">
+            <div v-if="isVerified">
+                <icon-status v-bind:happy="true" logo='brightid.svg' secondaryLogo='checkmark.svg' />
+            </div>
+            <div v-if="!isVerified">
+                <icon-status v-bind:sad="true" logo='brightid.svg' secondaryLogo='close-black.svg' />
+            </div>
+            <!-- TODO: should this icon demo verified status or completion of entire setup? Is it even needed?-->
+            <h2>BrightID setup</h2>
+            <p>
+                <span :class="{
+                    'step0': !isConnected && !isVerified && !isSponsored && !isRegistered,
+                    'step1': isConnected,
+                    'step2': isVerified || isSponsored,
+                    'step3': isVerified && isSponsored,
+                    'step4': isRegistered
+                }" />
+                / 4
+            </p>
         </div>
-        <div v-if="!isVerified">
-            <icon-status v-bind:sad="true" logo='brightid.svg' secondaryLogo='close-black.svg' />
-        </div>
-        <!-- TODO: should this icon demo verified status or completion of entire setup? Is it even needed?-->
-        <h2>BrightID setup</h2>
-        <p>
-            <span :class="{
-                'step0': !isConnected && !isVerified && !isSponsored && !isRegistered,
-                'step1': isConnected,
-                'step2': isVerified || isSponsored,
-                'step3': isVerified && isSponsored,
-                'step4': isRegistered
+        <div class="progress">
+            <div :class="{
+                'half': isVerified || isSponsored,
+                'quarter': isConnected,
+                'three-quarters': isVerified && isSponsored,
+                'full': isRegistered
             }" />
-            / 4
-        </p>
-    </div>
-    <div class="progress">
-        <div :class="{
-            'half': isVerified || isSponsored,
-            'quarter': isConnected,
-            'three-quarters': isVerified && isSponsored,
-            'full': isRegistered
-        }" />
-    </div>
-    <div class="row">
-        <div v-if="isConnected">
-            <div v-if="isRegistered"><a href="/#/projects">Start contributing <span role="img" aria-label="party emoji">🎉</span></a></div> 
-            <div v-else><a href="/#/setup/get-verified/:step">Continue setup</a></div>
         </div>
-        <!-- <a href="#" v-if="isConnected || isVerified || isSponsored">Continue setup</a>
-        <a href="#" v-if="isRegistered">Start contributing</a> -->
-        <a href="/#/setup/" v-else>Start setup</a>
-        <tooltip 
-            position="left" 
-            :content="isVerified ? 'You\'re a verified human on BrightID!' : 'Your BrightID profile still needs to be verified.'"
-        >
-            <p :class="isVerified ? 'brightid-verified' : 'unverified'">{{isVerified ? 'Verified' : 'Unverified'}}</p>
-        </tooltip>
+        <div class="row">
+            <div v-if="isConnected">
+                <div v-if="isRegistered"><a href="/#/projects">Start contributing <span role="img" aria-label="party emoji">🎉</span></a></div> 
+                <div v-else><a href="/#/setup/get-verified/:step">Continue setup</a></div>
+            </div>
+            <!-- <a href="#" v-if="isConnected || isVerified || isSponsored">Continue setup</a>
+            <a href="#" v-if="isRegistered">Start contributing</a> -->
+            <a href="/#/setup/" v-else>Start setup</a>
+            <tooltip 
+                position="left" 
+                :content="isVerified ? 'You\'re a verified human on BrightID!' : 'Your BrightID profile still needs to be verified.'"
+            >
+                <p :class="isVerified ? 'brightid-verified' : 'unverified'">{{isVerified ? 'Verified' : 'Unverified'}}</p>
+            </tooltip>
+        </div>
+    </div>
+    <div class="setup-container-project-card" v-else>
+        <div class="row">
+            <div v-if="isVerified">
+                <icon-status v-bind:happy="true" logo='brightid.svg' secondaryLogo='checkmark.svg' />
+            </div>
+            <div v-if="!isVerified">
+                <icon-status v-bind:sad="true" logo='brightid.svg' secondaryLogo='close-black.svg' />
+            </div>
+            <!-- TODO: should this icon demo verified status or completion of entire setup? Is it even needed?-->
+            <h2>BrightID setup</h2>
+            <p>
+                <span :class="{
+                    'step0': !isConnected && !isVerified && !isSponsored && !isRegistered,
+                    'step1': isConnected,
+                    'step2': isVerified || isSponsored,
+                    'step3': isVerified && isSponsored,
+                    'step4': isRegistered
+                }" />
+                / 4
+            </p>
+        </div>
+        <div class="progress">
+            <div :class="{
+                'half': isVerified || isSponsored,
+                'quarter': isConnected,
+                'three-quarters': isVerified && isSponsored,
+                'full': isRegistered
+            }" />
+        </div>
     </div>
   </div>
 </template>
@@ -61,9 +93,12 @@ export default class BrightIdWidget extends Vue {
     isVerified = false
     isSponsored = true
     isRegistered = false
+    projectCard = false
+
     // You can only have isRegistered status if all the above are true
   @Prop() abbrev!: string
   @Prop() balance!: string
+  @Prop() projectCard!: boolean
 }
 
 </script>
@@ -76,6 +111,63 @@ export default class BrightIdWidget extends Vue {
   background: $bg-secondary-color;
   border-radius: 0.5rem;
   padding: 1rem;
+  width: auto;
+  height: auto;
+
+  h2 {
+      font-size: 20px;
+      font-family: "Glacial Indifference", sans-serif;
+      margin: 0;
+  }
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    p {
+        margin: 0;
+        font-weight: 600;
+    }
+    a {
+        margin: 0;
+        line-height: 0;
+    }
+    .unverified {
+        color: $warning-color
+    }
+    .brightid-verified {
+        color: $clr-green
+    }
+
+    .step0:before {
+        content: "0";
+    }
+    .step1:before {
+        content: "1";
+    }
+    .step2:before {
+        content: "2";
+    }
+    .step3:before {
+        content: "3";
+    }
+    .step4:before {
+        content: "4";
+    }
+    .span {
+        margin: 0;
+        line-height: 0;
+    }
+    
+}
+
+.setup-container-project-card {
+  background: $bg-secondary-color;
+  border-radius: 0.5rem;
+
   width: auto;
   height: auto;
 

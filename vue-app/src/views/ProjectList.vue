@@ -93,24 +93,30 @@
       </div>
     </div>
     <div v-if="isLoading" class="loader"></div> -->
+    <div class="empty-search" v-if="filteredProjects == 0">
+      <div>😢 No projects match your search. Try using the filter to narrow down what you're looking for.</div>
+    </div>
     <div class="project-list">
-      <div class="get-prepared" v-if="!this.search">
-        <span aria-label="rocket" class="emoji">🚀</span>
-        <div>
-        <h2 class="prep-title">Get prepared</h2>
-        <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
+      <div class="get-prepared" v-if="!isVerified && !this.search">
+        <bright-id-widget v-if="prepStarted" v-bind:projectCard="true" />
+        <span v-else aria-label="rocket" class="emoji">🚀</span>
+        <div v-if="!prepStarted">
+          <h2 class="prep-title">Get prepared</h2>
+          <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
         </div>
-        <router-link to="/setup" class="btn-action" style="cursor: pointer;">Start prep</router-link>
-      </div>
+        <div v-else>
+          <h2 class="prep-title-continue">Continue setup</h2>
+          <p class="prep-text">You still have a few things to do before you can contribute...</p>
+        </div>
+        <router-link v-if="!prepStarted" to="/setup" class="btn-action" style="cursor: pointer;">Start prep</router-link>
+        <router-link v-else to="/setup" class="btn-action" style="cursor: pointer;">Continue setup</router-link>
+      </div>      
       <project-list-item
         v-for="project in filteredProjects"
         :project="project"
         :key="project.id"
       >
       </project-list-item>
-    </div>
-    <div class="empty-search" v-if="filteredProjects == 0">
-      <div>😢 No projects match your search. Try using the filter to narrow down what you're looking for.</div>
     </div>
   </div>
 </template>
@@ -123,7 +129,7 @@ import { DateTime } from 'luxon'
 
 import { RoundInfo, getCurrentRound } from '@/api/round'
 import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
-
+import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import {
@@ -174,6 +180,7 @@ function timeLeft(date: DateTime): TimeLeft {
   metaInfo: { title: 'Projects' },
   components: {
     ProjectListItem,
+    BrightIdWidget,
   },
 })
 export default class ProjectList extends Vue {
@@ -181,6 +188,8 @@ export default class ProjectList extends Vue {
   projects: Project[] = []
   search = ''
   isLoading = true
+  prepStarted = true
+  isVerified = false
 
   async created() {
     const roundAddress = this.$route.params.address || this.$store.state.currentRoundAddress || await getCurrentRound()
@@ -409,23 +418,27 @@ export default class ProjectList extends Vue {
   padding: 2rem;
 }
 
+
+
 .get-prepared {
   background: $bg-secondary-color;
   border: 1px solid #000000;
   border-radius: 8px;
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  padding: 1.5rem;
   justify-content: space-between;
-  &:hover {
-    transform: scale(1.01);
-    box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
-  }
 }
 
 .prep-title {
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .prep-title-continue {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.5rem;
     font-weight: 700;
   }
 
