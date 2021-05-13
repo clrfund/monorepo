@@ -367,13 +367,13 @@
             </div>
             <div v-if="currentStep === 4">
               <h2 class="step-title">Images</h2>
-              <p>We'll upload your images to IPFS, a decentralized storage platform.</p>
+              <p>We'll upload your images to IPFS, a decentralized storage platform. <a target="_blank" href="https://ipfs.io/#how">More on IPFS</a>.</p>
               <div class="inputs">
                 <div class="form-background">
-                  <ipfs-image-upload label="Banner image" description="Recommended dimensions: 500px x 300px" :onUpload="handleUpload" formProp="bannerHash"/>
+                  <ipfs-image-upload label="Banner image" description="Recommended aspect ratio: 16x9" :onUpload="handleUpload" formProp="bannerHash"/>
                 </div>
                 <div class="form-background">
-                  <ipfs-image-upload label="Thumbnail image" description="Recommended dimensions: 80px x 80px" :onUpload="handleUpload" formProp="thumbnailHash"/>
+                  <ipfs-image-upload label="Thumbnail image" description="Recommended aspect ratio: 1x1 (square)" :onUpload="handleUpload" formProp="thumbnailHash"/>
                 </div>
               </div>
             </div>
@@ -1124,17 +1124,6 @@ export default class JoinView extends mixins(validationMixin) {
   }
   100% {
     transform: rotate(360deg);
-  }
-}
-
-
-.error {
-  color: $error-color;
-  margin-bottom: 0;
-  margin-top: 0.5rem;
-  font-size: 14px;
-  &:before {
-    content: "⚠️ "
   }
 }
 
