@@ -5,7 +5,7 @@
         :to="{ name: 'project', params: { id: project.id }}"
       >
         <div class="project-image">
-          <img :src="project.imageUrl" :alt="project.name">
+          <img :src="projectImageUrl" :alt="project.name">
         </div>
       </router-link>
       <div class="project-info">
@@ -107,6 +107,16 @@ export default class ProjectListItem extends Vue {
 
   get descriptionHtml(): string {
     return markdown.renderInline(this.project.description)
+  }
+
+  get projectImageUrl(): string | null {
+    if (typeof this.project.bannerImageUrl !== 'undefined') {
+      return this.project.bannerImageUrl
+    }
+    if (typeof this.project.imageUrl !== 'undefined') {
+      return this.project.imageUrl
+    }
+    return null
   }
 
   get inCart(): boolean {
