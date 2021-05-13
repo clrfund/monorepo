@@ -34,13 +34,15 @@
       <p class="input-label">
         IPFS hash
       </p>
-      <p class="input-description">Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use.</p>
+      <p class="input-description">
+        Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use.
+      </p>
     </div>
     <div class="hash-area">
       <div v-if="hash"  class="copy">
         <div class="hash">
           <loader class="hash-loader" v-if="loading" />
-          <div v-else>{{hash}}</div>
+          <div v-else>{{ renderCopiedOrHash }}</div>
         </div>
         <div class="icons">
           <div class="icon" @click="copyHash"><img width="16px" src="@/assets/copy.svg" /></div>
@@ -81,9 +83,14 @@ export default class IpfsImageUpload extends Vue {
   loading = false
   loadedImageData = ''
   error = ''
+  isCopied = false
 
   created() {
     this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+  }
+
+  get renderCopiedOrHash(): string {
+    return this.isCopied ? 'Copied!' : this.hash
   }
 
   // TODO raise error if not valid image (JPG / PNG / GIF)
@@ -138,7 +145,9 @@ export default class IpfsImageUpload extends Vue {
   async copyHash(): Promise<void> {
     try {
       await navigator.clipboard.writeText(this.hash)
-      // TODO: UX success feedback
+      this.isCopied = true
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      this.isCopied = false
     } catch (error) {
       console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
     }
@@ -239,23 +248,6 @@ export default class IpfsImageUpload extends Vue {
   line-height: 150%;
 }
 
-/* .copy {
-  border: 1px solid #fff;
-  border-radius: 2rem;
-  background: $bg-secondary-color;
-  display: flex;
-  width: fit-content;
-  cursor: pointer;
-
-  &:hover {
-    background: $bg-light-color;
-  }
-  @media (max-width: $breakpoint-m) {
-    flex-direction: column;
-    width: 100%;
-  }
-} */
-
 .copy {
   background: $bg-primary-color;
   justify-content: space-between;
@@ -264,29 +256,13 @@ export default class IpfsImageUpload extends Vue {
   gap: 0.5rem;
   border-radius: 32px;
   padding: 0.25rem 0.5rem;
+  flex-grow: 1;
+  max-width: 530px;
   
   font-weight: 500;
   width: fit-content;
 
 }
-
- .label {
-  /* background: $bg-primary-color;
-  padding: 0.5rem;
-  text-transform: uppercase;
-  font-size: 14px;
-  font-family: "Glacial Indifference", sans-serif;
-  border-radius: 2rem 0 0 2rem;
-  border-right: 1px solid #fff;
-  line-height: 150%;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  @media (max-width: $breakpoint-m) {
-    border-radius: 0.5rem 0.5rem 0 0;
-    border-right: 0;
-  }*/
-} 
 
 .label {
   display: flex;
@@ -336,6 +312,7 @@ export default class IpfsImageUpload extends Vue {
 
 .hash-area {
   display: flex;
+  justify-content: space-between;
   gap: 1rem;
   align-items: center;
   margin-top: 1rem;
