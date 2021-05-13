@@ -45,8 +45,8 @@
           <div v-else>{{ renderCopiedOrHash }}</div>
         </div>
         <div class="icons">
-          <div class="icon" @click="copyHash"><img width="16px" src="@/assets/copy.svg" /></div>
-          <a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"><img width="16px" src="@/assets/ipfs-white.svg" /></a>
+          <tooltip position="bottom" :content="isCopied ? 'Copied!' : 'Copy hash'"><div class="icon" @click="copyHash"><img width="16px" src="@/assets/copy.svg" /></div></tooltip>
+          <tooltip position="bottom" content="View IPFS link"><a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"><img width="16px" src="@/assets/ipfs-white.svg" /></a></tooltip>
         </div>
       </div>
       <div v-if="hash" @click="handleRemoveImage" class="btn-white small">Remove image</div>
@@ -99,12 +99,12 @@ export default class IpfsImageUpload extends Vue {
     const data = event.target.files[0]
     if (!data) return
     if (!data.type.match('image/*')) {
-      this.error = 'That doesn\'t look like an image'
+      this.error = 'Upload a JPG, PNG, or GIF'
       return
     }
     if (data.size > 512000) { 
       // Limit 512 kB file size
-      this.error = 'File size limited to 512 kB'
+      this.error = 'Upload an image smaller than 512 kB'
       return
     }
     const reader = new FileReader()
@@ -165,7 +165,6 @@ export default class IpfsImageUpload extends Vue {
 
 .image-preview {
   width: 100%;
-  height: auto;
   margin-bottom: 1rem;
 }
 
