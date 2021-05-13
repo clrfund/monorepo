@@ -4,7 +4,7 @@
       <loader v-if="isPending" class="pending" />
       <!-- TODO: add tooltip for pending -->
       <img class="success" v-if="!isPending" src="@/assets/checkmark.svg" />
-      <p class="hash">{{renderHash(8)}}</p>
+      <p class="hash">{{ renderCopiedOrHash }}</p>
     </div>
     <div class="actions">
       <a style="padding: 0; margin: 0;" :href="'https://etherscan.io/tx/' + hash" target="_blank" title="View on Etherscan"><img class="icon" src="@/assets/etherscan.svg" /></a>
@@ -27,11 +27,16 @@ import { isTransactionMined } from '@/utils/contracts'
 })
 export default class TransactionReceipt extends Vue { 
   isPending = true
+  isCopied = false
 
   @Prop() hash!: string
 
   created() {
     this.checkTxStatus()
+  }
+
+  get renderCopiedOrHash(): string {
+    return this.isCopied ? 'Copied!' : this.renderHash(8)
   }
 
   async checkTxStatus(): Promise<void> {
@@ -46,6 +51,9 @@ export default class TransactionReceipt extends Vue {
     if (!this.hash) { return }
     try {
       await navigator.clipboard.writeText(this.hash)
+      this.isCopied = true
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      this.isCopied = false
     } catch (error) {
       console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
     }
@@ -74,6 +82,8 @@ export default class TransactionReceipt extends Vue {
 
 .tx-receipt {
   min-width: 200px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .icon {
