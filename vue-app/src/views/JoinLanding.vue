@@ -10,6 +10,7 @@
 
     <div class="content" v-if="isLoading">
       <h1>Fetching round data...</h1>
+      <loader />
     </div>
 
     <div class="content" v-else-if="isRoundClosed">
@@ -81,7 +82,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 import { BigNumber } from 'ethers'
-
+import Loader from '@/components/Loader.vue'
 import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
 
 import CriteriaModal from '@/components/CriteriaModal.vue'
@@ -90,7 +91,7 @@ import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
 import { formatAmount } from '@/utils/amounts'
 
 @Component({
-  components: { RoundStatusBanner, CriteriaModal },
+  components: { RoundStatusBanner, CriteriaModal, Loader },
 })
 export default class JoinLanding extends Vue {
   isLoading = true
