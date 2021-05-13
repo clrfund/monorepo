@@ -21,35 +21,43 @@
       </button>
     </div>
     <loader v-if="loading" />
-    <div v-if="hash" class="image-preview">
-      <img
-        :src="imageUrl"
-        alt=""
-        :class="{
-          'image-preview': hash,
-        }"
-      />
-    </div>
     <div v-if="hash">
-      <p class="input-label">
-        IPFS hash
-      </p>
-      <p class="input-description">
-        Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use.
-      </p>
-    </div>
-    <div class="hash-area">
-      <div v-if="hash"  class="copy">
-        <div class="hash">
-          <loader class="hash-loader" v-if="loading" />
-          <div v-else>{{ renderCopiedOrHash }}</div>
-        </div>
-        <div class="icons">
-          <tooltip position="bottom" :content="isCopied ? 'Copied!' : 'Copy hash'"><div class="icon" @click="copyHash"><img width="16px" src="@/assets/copy.svg" /></div></tooltip>
-          <tooltip position="bottom" content="View IPFS link"><a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"><img width="16px" src="@/assets/ipfs-white.svg" /></a></tooltip>
-        </div>
+      <div :class="{
+        'banner-preview': formProp === 'bannerHash',
+        'thumbnail-preview': formProp === 'thumbnailHash',
+        }">
+        <img
+          :src="imageUrl"
+          alt="Uploaded image preview"
+          :class="{
+            banner: formProp === 'bannerHash',
+            thumbnail: formProp === 'thumbnailHash',
+          }"
+          height="100%"
+          width="100%"
+        />
       </div>
-      <div v-if="hash" @click="handleRemoveImage" class="btn-white small">Remove image</div>
+      <div>
+        <p class="input-label">
+          IPFS hash
+        </p>
+        <p class="input-description">
+          Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use.
+        </p>
+      </div>
+      <div class="hash-area">
+        <div class="copy">
+          <div class="hash">
+            <loader class="hash-loader" v-if="loading" />
+            <div v-else>{{ renderCopiedOrHash }}</div>
+          </div>
+          <div class="icons">
+            <tooltip position="bottom" :content="isCopied ? 'Copied!' : 'Copy hash'"><div class="icon" @click="copyHash"><img width="16px" src="@/assets/copy.svg" /></div></tooltip>
+            <tooltip position="bottom" content="View IPFS link"><a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"><img width="16px" src="@/assets/ipfs-white.svg" /></a></tooltip>
+          </div>
+        </div>
+        <div @click="handleRemoveImage" class="btn-warning">Remove image</div>
+      </div>
     </div>
     <p v-if="error" class="error">{{ error }}</p>
   </form>
@@ -163,13 +171,23 @@ export default class IpfsImageUpload extends Vue {
 @import "../styles/vars";
 @import "../styles/theme";
 
-.image-preview {
+.banner-preview {
   width: 100%;
-  margin-bottom: 1rem;
+  aspect-ratio: 16 / 9;
 }
 
-.image-preview img {
+.thumbnail-preview {
+  width: 200px;
+  aspect-ratio: 1 / 1;
+}
 
+.banner-preview, .thumbnail-preview {
+  margin-bottom: 1rem;
+  img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .disabled {
@@ -183,9 +201,7 @@ export default class IpfsImageUpload extends Vue {
   }  
 }
 
-.btn-white.small {
-  color: $error-color;
-  border: 2px solid $error-color;
+.btn-warning {
   @media (max-width: $breakpoint-m) {
     margin: 1rem;
   }
