@@ -16,7 +16,11 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
-@Component
+import Tooltip from '@/components/Tooltip.vue'
+
+@Component({
+  components: { Tooltip },
+})
 export default class IpfsCopyWidget extends Vue {
   @Prop() hash!: string
   isLoading = false
