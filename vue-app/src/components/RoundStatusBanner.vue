@@ -12,12 +12,12 @@
           <span class="label">The round is closed! Thanks everyone, watch out for a summary blog post soon</span>        
         </div>
         <div v-else class="messsage">
-          <span class="label">Funding starts: {{contributionStart}} </span>
-          <span class="date">🗓 {{startDate}}</span>
+          <span class="label" v-if="joinPhase">Funding starts: {{contributionStart}} </span>
+          <span class="date" v-if="joinPhase">🗓 {{startDate}}</span>
           <span class="label" v-if="joinPhase">Time left to add a project: {{timeRemaining}}</span>
-          <span v-if="isRoundFillingUp && !isRoundFull">Hurry, only {{ spacesRemaining }} project spaces left</span>
-          <span v-if="isRoundFull || !joinPhase" class="label" >Project applications are closed</span>
-          <!-- TODO: signup deadline will have to be before the funding round starts or we'll run into complications -->
+          <span v-if="isRoundFillingUp && !isRoundFull && joinPhase">Hurry, only {{ spacesRemaining }} project spaces left</span>
+<!--           <span v-if="isRoundFull || joinPhase" class="label" >Project applications are closed</span>
+ -->          <!-- TODO: signup deadline will have to be before the funding round starts or we'll run into complications -->
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@ import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimist
   isContributionClosing = false
   reallocationPhase = false
   reallocationTimeRemaining = '3 days'
-  userActionsOver = false
+  userActionsOver = true
 
   // TODO fix on page refresh - `recipientRegistryAddress` is `null`
   // Refactor to computed properties, so we can react to having `recipientRegistryAddress`?
