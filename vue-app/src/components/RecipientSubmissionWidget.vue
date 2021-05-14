@@ -55,12 +55,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { BigNumber } from 'ethers'
 
 import {
   addRecipient,
   getRegistryInfo,
-  getRequestId,
   RegistryInfo,
 } from '@/api/recipient-registry-optimistic'
 import { User } from '@/api/user'
