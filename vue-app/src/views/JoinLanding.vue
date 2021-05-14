@@ -104,13 +104,18 @@ export default class JoinLanding extends Vue {
   // TODO fix on page refresh - `recipientRegistryAddress` is `null`
   // Refactor to computed properties, so we can react to having `recipientRegistryAddress`?
   async created() {
-    const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
-    const maxRecipients = this.$store.state.currentRound.maxRecipients
-    this.recipientCount = registryInfo.recipientCount
-    this.deposit = registryInfo.deposit
-    this.depositToken = registryInfo.depositToken
-    this.spacesRemaining = maxRecipients - registryInfo.recipientCount
-    this.isLoading = false
+    try {
+      const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+      const maxRecipients = this.$store.state.currentRound.maxRecipients
+      this.recipientCount = registryInfo.recipientCount
+      this.deposit = registryInfo.deposit
+      this.depositToken = registryInfo.depositToken
+      this.spacesRemaining = maxRecipients - registryInfo.recipientCount
+    } catch (error) {
+      console.warn(error) /* eslint-disable-line no-console */
+    } finally {
+      this.isLoading = false
+    }
   }
 
   private get signUpDeadline(): DateTime {
