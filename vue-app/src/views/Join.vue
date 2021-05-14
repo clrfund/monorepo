@@ -482,11 +482,15 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Banner</h4>
-                  <div class="data">{{form.image.bannerHash}} </div>
+                  <div class="data">
+                    <ipfs-copy-widget :hash="form.image.bannerHash" />
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Thumbnail</h4>
-                  <div class="data">{{form.image.thumbnailHash}} </div>
+                  <div class="data">
+                    <ipfs-copy-widget :hash="form.image.thumbnailHash" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -527,6 +531,7 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
 import FormProgressWidget from '@/components/FormProgressWidget.vue'
 import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
+import IpfsCopyWidget from '@/components/IpfsCopyWidget.vue'
 import Loader from '@/components/Loader.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
@@ -544,6 +549,7 @@ import { Project } from '@/api/projects'
     FormNavigation,
     FormProgressWidget,
     IpfsImageUpload,
+    IpfsCopyWidget,
     Loader,
     Markdown,
     ProjectProfile,
