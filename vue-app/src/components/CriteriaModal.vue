@@ -13,7 +13,7 @@
           <p>For this pilot round, Ethereum Foundation team members will remove any projects that don't meet the round criteria. So read carefully! In later rounds we're hoping that this review process can be done by the community.</p>
         <div class="content">
           <div v-for="({ emoji, criteria, description }, idx) in criterion" :key="idx" class="criteria-point">
-            <div class="emoji">{{ emoji }}</div>
+            <div class="emoji" aria-hidden="true">{{ emoji }}</div>
             <div> 
               <h3 class="no-margin">{{ criteria }}</h3>
               <p class="no-margin">{{ description }}</p>

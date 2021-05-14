@@ -43,8 +43,8 @@
     </div>
 
     <div class="content" v-else>
-      <h1>Join the next funding round</h1>
-      <div class="subtitle">To get on board this round, we’ll need some information about your project and a <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security deposit.</div>
+      <h1>Join the funding round</h1>
+      <div class="subtitle">We’ll need some information about your project and a <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security deposit.</div>
       <div class="info-boxes">
         <div class="apply-callout">
           <div class="countdown-label caps">Time left to join</div>
@@ -224,7 +224,6 @@ h1 {
   padding: $content-space;
   width: min(100%, 512px);
   margin-left: 2rem;
-  margin-top: 4rem;
   width: min(100%, 512px);
   @media (max-width: ($breakpoint-m)) {
     width: 100%;
