@@ -8,12 +8,12 @@
           <div v-if="isWaiting" class="tx-notice">
             Check your wallet for a prompt...
           </div>
-          <div v-if="hasLowFunds || hasTxError || isTxRejected" class="input-notice" style="font-size: 24px; margin-bottom: 0;">
+          <div v-if=" hasTxError || isTxRejected" class="input-notice" style="font-size: 24px; margin-bottom: 0;">
             ⚠️
           </div>
-          <div v-if="hasLowFunds" class="input-notice">
+          <!-- <div v-if="hasLowFunds" class="input-notice">
             Not enough ETH in your wallet.<br /> Top up or connect a different wallet.
-          </div>
+          </div> -->
           <div v-if="hasTxError" class="input-notice">
             Something failed: {{txError}}<br /> Check your wallet or Etherscan for more info.
           </div>
@@ -29,6 +29,9 @@
           </div>
         </div>
       <div class="connected" v-if="currentUser">
+        <div class="total-title">Total<tooltip position="bottom" content="Estimate – this total may be slightly different in your wallet."><img src="@/assets/info.svg" /></tooltip></div>
+        <div class="total">{{ depositAmount + txFee }} <span class="total-currency">  {{depositToken}}</span></div>
+        <div class="warning-text" v-if="hasLowFunds">Not enough {{depositToken}} in your wallet.<br /> Top up or connect a different wallet.</div>
         <div v-if="txHasDeposit" class="checkout-row">
           <p class="m05"><b>Security deposit</b></p>
           <p class="m05">{{ depositAmount }} {{ depositToken }} <span class="o5">({{fiatSign}}{{fiatFee}})</span> </p>
@@ -40,7 +43,7 @@
         <div class="cta">
           <button
             @click="handleSubmit"
-            :class="isWaiting || isPending ? 'btn-action-disabled' : 'btn-action'"
+            :class="isWaiting || isPending || hasLowFunds ? 'btn-action-disabled' : 'btn-action'"
             :disabled="!canSubmit"
           >
             <div v-if="isWaiting || isPending"><loader class="button-loader"/> </div>
@@ -67,6 +70,7 @@ import { User } from '@/api/user'
 import { Web3Provider } from '@ethersproject/providers'
 
 import Loader from '@/components/Loader.vue'
+import Tooltip from '@/components/Tooltip.vue'
 import Transaction from '@/components/Transaction.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 
@@ -78,6 +82,7 @@ import { waitForTransaction } from '@/utils/contracts'
     Loader,
     Transaction,
     WalletWidget,
+    Tooltip,
   },
 })
 export default class RecipientSubmissionWidget extends Vue {
@@ -90,7 +95,7 @@ export default class RecipientSubmissionWidget extends Vue {
   txError = ''
   // TODO
   txFee = '0.00006' // TODO add logic
-  hasLowFunds = false // TODO add logic
+  hasLowFunds = true // TODO add logic
   feeToken = 'ETH' // TODO add logic
   fiatFee = '1.04' // TODO add logic
   fiatSign = '$' // TODO add logic
@@ -253,9 +258,23 @@ export default class RecipientSubmissionWidget extends Vue {
   height: 1rem;
 }
 
+.total {
+  font-size: 64px;
+  font-weight: 700;
+  font-family: "Glacial Indifference", sans-serif;
+  overflow-wrap: break-word;
+  width: 100%;
+  text-align: center;
+  line-height: 100%;
+  margin-bottom: 1rem;
+}
+
 .checkout-row {
   width: 100%;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
     @media (max-width: $breakpoint-m) {
     flex-direction: column;
     justify-content: flex-start;
@@ -281,10 +300,48 @@ export default class RecipientSubmissionWidget extends Vue {
   margin-bottom: 2rem;
 }
 
+.total-currency {
+  font-size: 48px;
+}
+
+.total-title {
+  color: white;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 100%;
+  text-transform: uppercase;
+  justify-content: flex-start;
+  align-items: center;
+  display: flex;
+  width: fit-content;
+  padding: 0.5rem;
+  background: $bg-light-color;
+  border-radius: 2rem;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+
+  img {
+    width: 16px;
+    height: 16px;
+  }
+}
+
 .btn-action-disabled {
   @include button(white, $clr-pink-light-gradient, none);
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.warning-text {
+  margin-top: 0.25rem;
+  font-size: 14px;
+  font-family: Inter;
+  margin-bottom: 2rem;
+  line-height: 150%;
+  color: $warning-color;
+  text-transform: uppercase;  
+  font-weight: 500;
+  text-align: center;
 }
 
 </style>
