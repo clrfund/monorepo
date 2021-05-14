@@ -499,7 +499,7 @@
             <h2 class="step-title">Submit project</h2>
             <p>This is a blockchain transaction that will add your project information to the funding round.</p>
             <div class="inputs">
-                <recipient-submission-widget />
+                <recipient-submission-widget cta="Submit project" pending="Sending deposit..."/>
             </div>
           </div>
         </div>

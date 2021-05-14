@@ -24,12 +24,13 @@
             We're on Optimism Network.<br /> Switch over to the right network in your wallet.
           </div>
           <div v-if="isPending">
-            <div class="tx-notice">Sending deposit...</div>
-            <a href="#" class="tx-notice">Follow on Etherscan <img width="16px" src="@/assets/etherscan.svg"/></a>
+            <div class="tx-notice">{{pending}}</div>
+            <transaction-receipt :hash="txHash" />
+            <!-- This will hopefully appear once we remove immediate direction to project-added -->
           </div>
         </div>
       <div class="connected" v-if="currentUser">
-        <div class="total-title">Total<tooltip position="bottom" content="Estimate – this total may be slightly different in your wallet."><img src="@/assets/info.svg" /></tooltip></div>
+        <div class="total-title">Total to submit<tooltip position="bottom" content="Estimate – this total may be slightly different in your wallet."><img src="@/assets/info.svg" /></tooltip></div>
         <div class="total">{{ depositAmount + txFee }} <span class="total-currency">  {{depositToken}}</span></div>
         <div class="warning-text" v-if="hasLowFunds">Not enough {{depositToken}} in your wallet.<br /> Top up or connect a different wallet.</div>
         <div v-if="txHasDeposit" class="checkout-row">
@@ -47,11 +48,11 @@
             :disabled="!canSubmit"
           >
             <div v-if="isWaiting || isPending"><loader class="button-loader"/> </div>
-            <div v-else>Submit project</div>
+            <div v-else>{{cta}}</div>
           </button>
         </div>
         <!-- TODO display conditionally -->
-        <transaction v-if="isPending" :hash="txHash" :error="txError"/>
+        <!-- <transaction v-if="isPending" :hash="txHash" :error="txError"/> -->
       </div>
     </div>
   </div>
@@ -60,7 +61,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-
+import { Prop } from 'vue-property-decorator'
+import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import {
   addRecipient,
   getRegistryInfo,
@@ -86,6 +88,8 @@ import { waitForTransaction } from '@/utils/contracts'
   },
 })
 export default class RecipientSubmissionWidget extends Vue {
+  @Prop() cta!: string
+  @Prop() pending!: string
   isLoading = false
   isWaiting = false // TODO add logic
   isPending = false // TODO add logic
@@ -95,7 +99,7 @@ export default class RecipientSubmissionWidget extends Vue {
   txError = ''
   // TODO
   txFee = '0.00006' // TODO add logic
-  hasLowFunds = true // TODO add logic
+  hasLowFunds = false // TODO add logic
   feeToken = 'ETH' // TODO add logic
   fiatFee = '1.04' // TODO add logic
   fiatSign = '$' // TODO add logic
