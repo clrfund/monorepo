@@ -502,45 +502,16 @@
           </div>
         </div>
       </div>
-      <!-- TODO how to handle? Move to FormProgressWidget? -->
-      <!-- <div class="nav-area nav-bar mobile">
-        <div class="checkout" v-if="currentStep === 6">
-          <div class="tx-progress-area">
-            <loader v-if="waiting || pending || wrongNetwork"/>
-            <div v-if="waiting" class="tx-notice">Check your wallet for a prompt...</div>
-            <div v-if="lowFunds || txError || txReject" class="input-notice" style="font-size: 40px; margin-bottom: 0;">⚠️</div>
-            <div v-if="lowFunds" class="input-notice"> Not enough ETH in your wallet.<br /> Top up or connect a different wallet.</div>
-            <div v-if="txError" class="input-notice">Something failed.<br /> Check your wallet or Etherscan for more info.</div>
-            <div v-if="txReject" class="input-notice">You rejected the transaction in your wallet</div>
-            <div v-if="wrongNetwork" class="input-notice">We're on Optimism Network.<br /> Switch over to the right network in your wallet.</div>
-            <div v-if="pending">
-              <div class="tx-notice">Sending deposit...</div>
-              <a href="#" class="tx-notice">Follow on Etherscan <img width="16px" src="@/assets/etherscan.svg"/></a>
-            </div>
-          </div>
-          <div class="tx-row">
-            <div class="tx-item">Security deposit</div>
-            <div class="tx-item">0.1 ETH <span class="fiat-value">($20.00)</span></div>
-          </div>
-          <div class="tx-row">
-            <div class="tx-item">Transaction fee</div>
-            <div class="tx-item">0.0004 ETH <span class="fiat-value">($0.10)</span></div>
-          </div>
-          <div class="tx-row-total">
-            <div>Total</div>
-            <div>0.1004 ETH <span class="fiat-value">($20.10)</span></div>
-          </div>
-        
-        </div>
-        <form-navigation
-          :isStepValid="isStepValid(currentStep)"
-          :steps="steps"
-          :currentStep="currentStep"
-          :callback="saveFormData"
-          :handleStepNav="handleStepNav"
-          :isNavDisabled="isNavDisabled"
-        />
-      </div> -->
+    </div>
+    <div class="mobile nav-bar">
+      <form-navigation
+        :isStepValid="isStepValid(currentStep)"
+        :steps="steps"
+        :currentStep="currentStep"
+        :callback="saveFormData"
+        :handleStepNav="handleStepNav"
+        :isNavDisabled="isNavDisabled"
+      />
     </div>
   </div>
 </template>
@@ -843,8 +814,7 @@ export default class JoinView extends mixins(validationMixin) {
     grid-template-areas:
       "progress"
       "title"
-      "form"
-      "navi";
+      "form";
     gap: 0;
   }
 }
@@ -894,10 +864,6 @@ export default class JoinView extends mixins(validationMixin) {
     padding: 0;
     width: 100%;
   }
-}
-
-.nav-area {
-  grid-area: navi;
 }
 
 .nav-bar {
