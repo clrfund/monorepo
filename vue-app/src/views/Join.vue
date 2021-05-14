@@ -496,12 +496,10 @@
             </div>
           </div>
           <div v-if="currentStep === 6">
-            <h2 class="step-title">Submit Project</h2>
-            <p>We'll submit your application to the blockchain.</p>
+            <h2 class="step-title">Submit project</h2>
+            <p>This is a blockchain transaction that will add your project information to the funding round.</p>
             <div class="inputs">
-              <div class="form-background">
                 <recipient-submission-widget />
-              </div>
             </div>
           </div>
         </div>
@@ -606,33 +604,33 @@ import { Project } from '@/api/projects'
 export default class JoinView extends mixins(validationMixin) {
   form: RecipientApplicationData = {
     project: {
-      name: '',
-      tagline: '',
-      description: '',
-      category: '',
-      problemSpace: '',
+      name: 'asdasdsadd',
+      tagline: 'asdas12414dsa',
+      description: 'as124124dsadsad',
+      category: 'Content',
+      problemSpace: 'asda1234sdasd',
     },
     fund: {
-      address: '',
-      plans: '',
+      address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
+      plans: 'asdasdasasdsaddasd',
     },
     team: {
       name: '',
       description: '',
-      email: '',
+      email: 'a@a.com',
     },
     links: {
-      github: '',
+      github: 'https://google.com/asd',
       radicle: '',
       website: '',
       twitter: '',
       discord: '',
     },
     image: {
-      bannerHash: '',
-      thumbnailHash: '',
+      bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+      thumbnailHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
     },
-    furthestStep: 0,
+    furthestStep: 6,
   }
   currentStep = 0
   steps: string[] = []
