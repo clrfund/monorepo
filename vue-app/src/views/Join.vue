@@ -367,13 +367,13 @@
             </div>
             <div v-if="currentStep === 4">
               <h2 class="step-title">Images</h2>
-              <p>We'll upload your images to IPFS, a decentralized storage platform. <a target="_blank" href="https://ipfs.io/#how">More on IPFS</a>.</p>
+              <p>We'll upload your images to IPFS, a decentralized storage platform. <a target="_blank" href="https://ipfs.io/#how">More on IPFS</a></p>
               <div class="inputs">
                 <div class="form-background">
-                  <ipfs-image-upload label="Banner image" description="Recommended aspect ratio: 16x9" :onUpload="handleUpload" formProp="bannerHash"/>
+                  <ipfs-image-upload label="Banner image" description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF" :onUpload="handleUpload" formProp="bannerHash"/>
                 </div>
                 <div class="form-background">
-                  <ipfs-image-upload label="Thumbnail image" description="Recommended aspect ratio: 1x1 (square)" :onUpload="handleUpload" formProp="thumbnailHash"/>
+                  <ipfs-image-upload label="Thumbnail image" description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF" :onUpload="handleUpload" formProp="thumbnailHash"/>
                 </div>
               </div>
             </div>
@@ -482,11 +482,15 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Banner</h4>
-                  <div class="data">{{form.image.bannerHash}} </div>
+                  <div class="data">
+                    <ipfs-copy-widget :hash="form.image.bannerHash" />
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Thumbnail</h4>
-                  <div class="data">{{form.image.thumbnailHash}} </div>
+                  <div class="data">
+                    <ipfs-copy-widget :hash="form.image.thumbnailHash" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -502,45 +506,16 @@
           </div>
         </div>
       </div>
-      <!-- TODO how to handle? Move to FormProgressWidget? -->
-      <!-- <div class="nav-area nav-bar mobile">
-        <div class="checkout" v-if="currentStep === 6">
-          <div class="tx-progress-area">
-            <loader v-if="waiting || pending || wrongNetwork"/>
-            <div v-if="waiting" class="tx-notice">Check your wallet for a prompt...</div>
-            <div v-if="lowFunds || txError || txReject" class="input-notice" style="font-size: 40px; margin-bottom: 0;">⚠️</div>
-            <div v-if="lowFunds" class="input-notice"> Not enough ETH in your wallet.<br /> Top up or connect a different wallet.</div>
-            <div v-if="txError" class="input-notice">Something failed.<br /> Check your wallet or Etherscan for more info.</div>
-            <div v-if="txReject" class="input-notice">You rejected the transaction in your wallet</div>
-            <div v-if="wrongNetwork" class="input-notice">We're on Optimism Network.<br /> Switch over to the right network in your wallet.</div>
-            <div v-if="pending">
-              <div class="tx-notice">Sending deposit...</div>
-              <a href="#" class="tx-notice">Follow on Etherscan <img width="16px" src="@/assets/etherscan.svg"/></a>
-            </div>
-          </div>
-          <div class="tx-row">
-            <div class="tx-item">Security deposit</div>
-            <div class="tx-item">0.1 ETH <span class="fiat-value">($20.00)</span></div>
-          </div>
-          <div class="tx-row">
-            <div class="tx-item">Transaction fee</div>
-            <div class="tx-item">0.0004 ETH <span class="fiat-value">($0.10)</span></div>
-          </div>
-          <div class="tx-row-total">
-            <div>Total</div>
-            <div>0.1004 ETH <span class="fiat-value">($20.10)</span></div>
-          </div>
-        
-        </div>
-        <form-navigation
-          :isStepValid="isStepValid(currentStep)"
-          :steps="steps"
-          :currentStep="currentStep"
-          :callback="saveFormData"
-          :handleStepNav="handleStepNav"
-          :isNavDisabled="isNavDisabled"
-        />
-      </div> -->
+    </div>
+    <div class="mobile nav-bar">
+      <form-navigation
+        :isStepValid="isStepValid(currentStep)"
+        :steps="steps"
+        :currentStep="currentStep"
+        :callback="saveFormData"
+        :handleStepNav="handleStepNav"
+        :isNavDisabled="isNavDisabled"
+      />
     </div>
   </div>
 </template>
@@ -556,6 +531,7 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
 import FormProgressWidget from '@/components/FormProgressWidget.vue'
 import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
+import IpfsCopyWidget from '@/components/IpfsCopyWidget.vue'
 import Loader from '@/components/Loader.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
@@ -573,6 +549,7 @@ import { Project } from '@/api/projects'
     FormNavigation,
     FormProgressWidget,
     IpfsImageUpload,
+    IpfsCopyWidget,
     Loader,
     Markdown,
     ProjectProfile,
@@ -843,8 +820,7 @@ export default class JoinView extends mixins(validationMixin) {
     grid-template-areas:
       "progress"
       "title"
-      "form"
-      "navi";
+      "form";
     gap: 0;
   }
 }
@@ -894,10 +870,6 @@ export default class JoinView extends mixins(validationMixin) {
     padding: 0;
     width: 100%;
   }
-}
-
-.nav-area {
-  grid-area: navi;
 }
 
 .nav-bar {

@@ -208,8 +208,8 @@ export interface RecipientData {
   twitterUrl?: string;
   discordUrl?: string;
   // fields different vs. Project
-  bannerHash?: string;
-  thumbnailHash?: string;
+  bannerImageHash?: string;
+  thumbnailImageHash?: string;
 }
 
 function formToRecipientData(data: RecipientApplicationData): RecipientData {
@@ -229,8 +229,8 @@ function formToRecipientData(data: RecipientApplicationData): RecipientData {
     websiteUrl: links.website,
     twitterUrl: links.twitter,
     discordUrl: links.discord,
-    bannerHash: image.bannerHash,
-    thumbnailHash: image.thumbnailHash,
+    bannerImageHash: image.bannerHash,
+    thumbnailImageHash: image.thumbnailHash,
   }
 }
 

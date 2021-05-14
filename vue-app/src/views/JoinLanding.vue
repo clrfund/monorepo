@@ -10,6 +10,7 @@
 
     <div class="content" v-if="isLoading">
       <h1>Fetching round data...</h1>
+      <loader />
     </div>
 
     <div class="content" v-else-if="isRoundClosed">
@@ -81,7 +82,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 import { BigNumber } from 'ethers'
-
+import Loader from '@/components/Loader.vue'
 import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
 
 import CriteriaModal from '@/components/CriteriaModal.vue'
@@ -90,7 +91,7 @@ import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
 import { formatAmount } from '@/utils/amounts'
 
 @Component({
-  components: { RoundStatusBanner, CriteriaModal },
+  components: { RoundStatusBanner, CriteriaModal, Loader },
 })
 export default class JoinLanding extends Vue {
   isLoading = true
@@ -103,13 +104,18 @@ export default class JoinLanding extends Vue {
   // TODO fix on page refresh - `recipientRegistryAddress` is `null`
   // Refactor to computed properties, so we can react to having `recipientRegistryAddress`?
   async created() {
-    const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
-    const maxRecipients = this.$store.state.currentRound.maxRecipients
-    this.recipientCount = registryInfo.recipientCount
-    this.deposit = registryInfo.deposit
-    this.depositToken = registryInfo.depositToken
-    this.spacesRemaining = maxRecipients - registryInfo.recipientCount
-    this.isLoading = false
+    try {
+      const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+      const maxRecipients = this.$store.state.currentRound.maxRecipients
+      this.recipientCount = registryInfo.recipientCount
+      this.deposit = registryInfo.deposit
+      this.depositToken = registryInfo.depositToken
+      this.spacesRemaining = maxRecipients - registryInfo.recipientCount
+    } catch (error) {
+      console.warn(error) /* eslint-disable-line no-console */
+    } finally {
+      this.isLoading = false
+    }
   }
 
   private get signUpDeadline(): DateTime {

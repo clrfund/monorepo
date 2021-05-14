@@ -135,10 +135,7 @@ export default class FormProgressWidget extends Vue {
       opacity: 0.8;
     }
   }
-}
 
-
-.progress-area  
   .mobile {
     margin: 2rem 1rem;
     margin-bottom: 0;
@@ -155,6 +152,7 @@ export default class FormProgressWidget extends Vue {
         font-weight: 500;
       }
     }
+  }
 }
 
 .cancel-link {

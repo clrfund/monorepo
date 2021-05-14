@@ -51,7 +51,7 @@
         <markdown :raw="project.teamDescription"/>
       </div>
     </div>  
-    <div v-if="previewMode" class="link-box">
+    <div v-if="previewMode">
       <h2 class="link-title">Check them out</h2>
       <div v-if="project.githubUrl" class="link-row">
         <img src="@/assets/GitHub.svg" />
@@ -260,6 +260,13 @@ export default class ProjectProfile extends Vue {
         opacity: 0.8;
       }
     }
+  }
+
+  .link-row {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    gap: 0.5rem;
   }
 }
 </style>
