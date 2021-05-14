@@ -49,14 +49,19 @@ export default class CriteriaModal extends Vue {
       description: 'Your project code must be available to anyone to use under an open source license.',
     },
     {
-      emoji: '😇',
-      criteria: 'Honest and credible',
-      description: '__ Needs defining',
+      emoji: '👺',
+      criteria: 'No scams',
+      description: 'Obviously, your project must not put anyone\'s funds or information at risk.',
     },
     {
       emoji: '👯‍♀️',
       criteria: 'No clones',
       description: 'If you\'ve forked code, you must provide additional, unique value to the ecosystem.',
+    },
+    {
+      emoji: '🙋‍♀️',
+      criteria: 'Project ownership',
+      description: 'The project must be yours or you must have permission from the project owner.',
     },
     {
       emoji: '💻',
