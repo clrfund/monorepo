@@ -58,11 +58,6 @@ const routes = [
     component: AboutMaci,
   },
   {
-    path: '/project-added',
-    name: 'projectAdded',
-    component: ProjectAdded,
-  },
-  {
     path: '/recipients',
     name: 'recipients',
     component: RecipientRegistryView,
@@ -71,6 +66,11 @@ const routes = [
     path: '/join',
     name: 'join',
     component: JoinLanding,
+  },
+  {
+    path: '/join/success',
+    name: 'projectAdded',
+    component: ProjectAdded,
   },
   {
     path: '/join/:step',
