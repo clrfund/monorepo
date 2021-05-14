@@ -32,7 +32,7 @@
     </div>
     <div v-if="txHasDeposit" class="checkout-row">
       <p class="m0"><b>Required security deposit</b></p>
-      <p class="m0">{{ formatAmount(registryInfo.deposit) }} {{ registryInfo.depositToken }}</p>
+      <p class="m0">{{ depositAmount }} {{ depositToken }}</p>
     </div>
     <div class="checkout-row">
       <p class="m0"><b>Estimated transaction fee</b></p>
@@ -119,11 +119,15 @@ export default class RecipientSubmissionWidget extends Vue {
   }
 
   get txHasDeposit(): boolean {
-    return true
+    return !!this.registryInfo?.deposit
   }
 
-  formatAmount(value: BigNumber): string {
-    return formatAmount(value, 18)
+  get depositAmount(): string {
+    return this.registryInfo ? formatAmount(this.registryInfo.deposit, 18) : '...'
+  }
+
+  get depositToken(): string {
+    return this.registryInfo?.depositToken
   }
 
   handleSubmit(): void {
@@ -141,9 +145,8 @@ export default class RecipientSubmissionWidget extends Vue {
     // TODO where to make `isPending` vs. `isWaiting`? In `waitForTransaction`?
     // Check out Launchpad repo to view transaction states
     this.isWaiting = true
-    let submissionTxReceipt
     try {
-      submissionTxReceipt = await waitForTransaction(
+      await waitForTransaction(
         addRecipient(recipientRegistryAddress, recipient, registryInfo.deposit, signer),
         (hash) => this.txHash = hash,
       )
