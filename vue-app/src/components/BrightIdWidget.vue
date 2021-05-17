@@ -93,12 +93,11 @@ export default class BrightIdWidget extends Vue {
     isVerified = false
     isSponsored = true
     isRegistered = false
-    projectCard = false
 
     // You can only have isRegistered status if all the above are true
   @Prop() abbrev!: string
   @Prop() balance!: string
-  @Prop() projectCard!: boolean
+  @Prop() projectCard = false
 }
 
 </script>
