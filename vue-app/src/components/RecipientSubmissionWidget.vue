@@ -136,7 +136,7 @@ export default class RecipientSubmissionWidget extends Vue {
   }
 
   get depositToken(): string {
-    return this.registryInfo?.depositToken
+    return this.registryInfo?.depositToken ?? ''
   }
 
   handleSubmit(): void {
