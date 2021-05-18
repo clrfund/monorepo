@@ -87,7 +87,7 @@
             <img src="@/assets/time.svg" />
             <div>10 hours</div>
         </div>
-        <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary">
+        <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId" class="btn-primary">
           Verify with BrightID
         </div>
         </div>
@@ -175,7 +175,7 @@ export default class Cart extends Vue {
     return this.cart.filter((item) => !item.isCleared)
   }
 
-  get isCartEmpty(): boolean {
+  get isEmptyCart(): boolean {
     return (
       this.$store.state.currentUser &&
       this.$store.state.contribution !== null &&
