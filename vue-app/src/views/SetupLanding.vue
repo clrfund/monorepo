@@ -19,11 +19,9 @@
             <li>Access to Zoom or Google Meet</li>
           </ul>
           <a href="/#/sybil-resistance/  ">Why is this important?</a>
-          <div class="btn-container" style="margin-top: 2rem;">
-            <div>
-                <div v-if="walletProvider && !currentUser"><wallet-widget /></div>
-                <router-link v-else to="/setup/get-verified/connect" class="btn-primary">Get started</router-link>
-            </div>
+          <div class="btn-container">
+            <wallet-widget v-if="walletProvider && !currentUser" :connectOnly="true" />
+            <router-link v-if="!walletProvider || currentUser" to="/setup/get-verified/connect" class="btn-primary">Get started</router-link>
             <router-link to="/" class="btn-secondary">Go home</router-link>
           </div>
         </div>
@@ -45,8 +43,6 @@ import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimist
 import { blockExplorer } from '@/api/core'
 
 @Component({
-  name: 'setupLanding',
-  metaInfo: { title: 'Setup' },
   components: { ProgressBar, RoundStatusBanner, WalletWidget },
 })
 export default class SetupLanding extends Vue {
@@ -182,7 +178,11 @@ ul {
           height: 1rem;
           position: relative;
           right: 0;
+        }
       }
+      
+      .btn-container {
+        margin-top: 2rem;
       }
     }
   }

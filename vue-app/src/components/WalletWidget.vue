@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div :class="{ container: !connectOnly }">
     <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
     <template v-else-if="!isLoaded()"></template>
     <div
@@ -10,7 +10,11 @@
     </div>
     <button
       v-else-if="walletProvider && !currentUser"
-      class="app-btn"
+      :class="{
+        'app-btn': !connectOnly,
+        'btn-action': connectOnly,
+        'full-width': connectOnly,
+      }"
       @click="connect"
     >
       Connect
@@ -60,8 +64,8 @@ export default class WalletWidget extends Vue {
   private walletChainId: string | null = null
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
-  @Prop()
-  showEth!: boolean
+  @Prop() showEth!: boolean
+  @Prop() connectOnly = true
 
   async copyAddress(): Promise<void> {
     if (!this.currentUser) { return }
@@ -289,6 +293,9 @@ export default class WalletWidget extends Vue {
     height: 16px;
     width: 16px;
   }
+}
 
+.full-width {
+  width: 100%;
 }
 </style>
