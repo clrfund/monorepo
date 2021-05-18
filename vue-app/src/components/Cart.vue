@@ -73,7 +73,7 @@
         </div>
       </div>
       <div
-        v-if="canSubmit()"
+        v-if="canSubmit"
         class="submit-btn-wrapper"
       >
         <div v-if="errorMessage" class="submit-error">
@@ -361,6 +361,11 @@ export default class Cart extends Vue {
       { },
       { width: 500 },
     )
+  }
+
+  get canSubmit(): boolean {
+    // TODO: Add logic
+    return true
   }
 
   submitCart() {
