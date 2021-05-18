@@ -61,7 +61,7 @@
         <div class="icon-row">
           <!-- Optimism icon -->
           <img src="@/assets/optimism.png" id="optimism-icon"/>
-          <p><b>Optimism for fast and cheap transation fees</b></p>
+          <p><b>Optimism for fast and cheap transaction fees</b></p>
         </div>
         <div class="btn-action">Get Optimism funds</div>
       </div>

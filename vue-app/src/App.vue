@@ -2,22 +2,14 @@
   <div id="app">
     <nav-bar :in-app="isInApp" />
     <div id="content-container">
-      <div id="sidebar" :class="{ hidden: isSidebarCollapsed}">
+      <div id="sidebar" :class="{ hidden: isSidebarCollapsed, desktop: true }">
           <round-information />
-          <!-- <router-link to="/">Home</router-link>
-          <router-link to="/projects">Projects</router-link>
-          <router-link to="/rounds">Rounds</router-link>
-          <router-link to="/recipients" v-if="hasRecipientRegistryLink()">Registry</router-link>
-          <router-link to="/about">About</router-link>
-          <router-link to="/join">Apply</router-link>
-          <a href="https://blog.clr.fund" target=_blank>Blog</a>
-          <a href="https://forum.clr.fund" target=_blank>Forum</a>
-          <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a> -->
       </div>
       <div id="content" :class="{ padded: !isSidebarCollapsed }">
         <router-view :key="$route.path" />
       </div>
     </div>
+    <mobile-tabs :class="{ hidden: isSidebarCollapsed, mobile: true }" />
   </div>
 </template>
 
@@ -32,6 +24,7 @@ import { recipientRegistryType } from '@/api/core'
 import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
 import Cart from '@/components/Cart.vue'
+import MobileTabs from '@/components/MobileTabs.vue'
 
 import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 
@@ -47,7 +40,7 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
       },
     ],
   },
-  components: { RoundInformation, NavBar, Cart },
+  components: { RoundInformation, NavBar, Cart, MobileTabs },
 })
 export default class App extends Vue {
   created() {
@@ -77,6 +70,7 @@ export default class App extends Vue {
 <style lang="scss">
 @import "styles/vars";
 @import "styles/fonts";
+@import 'styles/theme';
 
 /**
  * Global styles

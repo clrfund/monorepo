@@ -1,10 +1,10 @@
 <template>
   <div class="wrapper">
-    <div class="modal-background" @click="toggleCart" />
+    <!-- <div class="modal-background" @click="toggleCart" /> -->
     <div class="container">
       <div>
         <div class="flex-row" style="justify-content: flex-end;">
-          <div class="close-btn" @click="toggleCart()">
+          <div class="close-btn" @click="toggleCart">
             <p class="no-margin">Close</p>
             <img src="@/assets/close.svg" />
           </div>
@@ -73,7 +73,7 @@
         </div>
       </div>
       <div
-        v-if="canSubmit()"
+        v-if="canSubmit"
         class="submit-btn-wrapper"
       >
         <div v-if="errorMessage" class="submit-error">
@@ -107,7 +107,7 @@
           v-if="!errorMessage"
           class="btn-action"
           :disabled="errorMessage !== null"
-          @click="submit()"
+          @click="submitCart"
         >
           <template v-if="contribution.isZero()">
             Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
@@ -155,7 +155,7 @@ import { Prop } from 'vue-property-decorator'
 })
 export default class Cart extends Vue {
   
-  @Prop() toggleCart
+  // @Prop() toggleCart
 
   private get cart(): CartItem[] {
     return this.$store.state.cart
@@ -361,6 +361,10 @@ export default class Cart extends Vue {
       { },
       { width: 500 },
     )
+  }
+
+  get canSubmit(): boolean {
+    return true
   }
 
   submitCart() {

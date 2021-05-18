@@ -31,7 +31,6 @@ const routes = [
     name: 'project',
     component: ProjectView,
   },
-
   {
     path: '/round-information',
     name: 'round information',

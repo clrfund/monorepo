@@ -1,19 +1,20 @@
 <template>
+<div>
   <div class="projects">        
-    <div class="title" style="display: flex; align-items: flex-end; justify-content: space-between;">
+    <div class="title">
       <div>
-        <h2 style="line-height: 130%; margin-bottom: 0.5rem;">Projects</h2>
+        <h2>Projects</h2>
         <!-- <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p> -->
       </div>
-      <div style="display: flex; align-items: center;">
-        <select class="filter" id="filter" style="margin-right: 1rem;">
+      <div class="action-bar">
+        <select class="filter" id="filter">
           <option selected disabled label="Filter by category" />
                   <option value="content">Content</option>
                   <option value="researcg">Research</option>
                   <option value="tooling">Tooling</option>
                   <option value="data">Data</option>
         </select>
-        <div v-if="projects.length > 0" class="project-search" style="margin-right: 1rem;">
+        <div v-if="projects.length > 0" class="project-search">
           <img src="@/assets/search.svg">
           <input
             v-model="search"
@@ -24,7 +25,7 @@
             onfocus="this.value=''" 
           >
         </div>
-        <router-link to="/join"><div class="btn-primary">Add project</div></router-link>
+        <router-link to="/join" class="btn-primary">Add project</router-link>
       </div>
     </div>
     <!-- <h1 class="content-heading">Projects</h1> -->
@@ -113,6 +114,10 @@
       <div>😢 No projects match your search. Try using the filter to narrow down what you're looking for.</div>
     </div>
   </div>
+  <div class="cart">
+    <cart-widget />
+  </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -126,6 +131,7 @@ import { Project, getRecipientRegistryAddress, getProjects } from '@/api/project
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
+import CartWidget from '@/components/CartWidget.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -174,6 +180,7 @@ function timeLeft(date: DateTime): TimeLeft {
   metaInfo: { title: 'Projects' },
   components: {
     ProjectListItem,
+    CartWidget,
   },
 })
 export default class ProjectList extends Vue {
@@ -290,10 +297,37 @@ export default class ProjectList extends Vue {
 }
  */
 .title {
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(115,117,166,1); 
-    margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(115,117,166,1); 
+  margin-bottom: 2rem;
+  @media (max-width: $breakpoint-l) {
+    flex-direction: column-reverse;
   }
+
+  h2 {
+    line-height: 130%;
+    margin-bottom: 0.5rem;
+    @media (max-width: $breakpoint-l) {
+      width: 100%;
+    }
+  }
+
+  .action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 1rem;
+    @media (max-width: $breakpoint-l) {
+      width: 100%;
+      align-items: flex-end;
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+}
 
 .round-info-item {
   display: flex;
