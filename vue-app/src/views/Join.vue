@@ -416,7 +416,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Ethereum address</h4>
-                  <div class="data">{{form.fund.address}} <a :href="'https://etherscan.io/address/' + form.fund.address" target="_blank">View on Etherscan</a></div>
+                  <div class="data break-all">{{form.fund.address}} <a :href="'https://etherscan.io/address/' + form.fund.address" target="_blank" class="no-break">View on Etherscan</a></div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Funding plans</h4>
@@ -1294,5 +1294,13 @@ export default class JoinView extends mixins(validationMixin) {
   line-height: 150%;
   text-transform: uppercase;  
   font-weight: 500;
+}
+
+.break-all {
+  word-break: break-all;
+}
+
+.no-break {
+  white-space: nowrap;
 }
 </style>
