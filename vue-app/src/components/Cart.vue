@@ -890,7 +890,7 @@ p.no-margin {
   text-align: center;
   gap: 0.5rem;
   width: 100%;
-  box-shadow: $box-shadow;
+  /* box-shadow: $box-shadow; */
   display: flex;
   flex-direction: column;
   align-items: center;

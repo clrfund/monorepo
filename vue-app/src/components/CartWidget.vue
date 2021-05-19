@@ -6,7 +6,13 @@
       'collapsed-container': !showCartPanel,
     }"
   >
-    <button class="dropdown-btn" @click="toggleCart">
+    <button
+      :class="{
+        'toggle-btn': true,
+        'shift-left': showCartPanel,
+      }"
+      @click="toggleCart"
+    >
       <img
         v-if="!showCartPanel"
         alt="open"
@@ -25,7 +31,7 @@
         src="@/assets/chevron-right.svg"
       >
     </button>
-    <cart v-if="showCartPanel" :toggleCart="toggleCart" class="desktop" />
+    <cart v-if="showCartPanel" :toggleCart="toggleCart" class="desktop cart-component" />
     <div v-if="!showCartPanel" class="collapsed-cart desktop" />
   </div>
 </template>
@@ -190,6 +196,7 @@ export default class CartWidget extends Vue {
 .container {
   height: 100%;
   width: minmax(300px, 100%);
+  box-sizing: border-box;
 }
 
 .collapsed-container {
@@ -197,33 +204,42 @@ export default class CartWidget extends Vue {
   width: 5rem;
 }
 
+.cart {
+  position: relative;
+
+}
+
 .collapsed-cart {
   position: absolute;
+  top: 0;
   right: 0;
   height: 100%;
   width: 3rem;
-  background: $bg-light-color;
+  /* background: $bg-light-color; */
+  border-left: 1px solid $bg-light-color;
   z-index: 0;
 }
 
-.dropdown-btn {
+.toggle-btn {
   box-sizing: border-box;
-  position: absolute;
-  top: 7rem;
-  right: 0.5rem;
+  position: relative;
+  top: 3rem;
   z-index: 1;
   background: rgba(44,41,56,1);
   border: 1px solid rgba(115,117,166,0.3);
-  border-radius: 8px;
-  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  padding: 0.25rem;
   color: white;
   margin-right: 0.5rem;
   display: flex;
   font-size: 16px;
-  display: flex;
   align-items: center;
   cursor: pointer;
   gap: 0.5rem;
+}
+
+.shift-left {
+  right: 0.5rem;
 }
 
 .provider-error {
@@ -282,5 +298,10 @@ export default class CartWidget extends Vue {
     height: 16px;
     width: 16px;
   }
+}
+
+.cart-component {
+  padding-top: 3rem;
+  border-left: 1px solid $bg-light-color;
 }
 </style>

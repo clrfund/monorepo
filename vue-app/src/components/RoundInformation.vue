@@ -395,6 +395,7 @@ export default class RoundInformation extends Vue {
   align-items: flex-start;
   background: $bg-light-color;
   padding: 1rem;
+  border-radius: 0.5rem;
 }
 
 .round-info-sub-item {
