@@ -63,7 +63,7 @@
               {{ item.name }}
             </router-link>
             <div class="contribution-form" v-if="reallocationPhase">
-              {{item.amount}} DAI
+              {{item.amount}} {{tokenSymbol}}
             </div>
           </div>
           <form v-if="!reallocationPhase" class="contribution-form">
@@ -94,6 +94,10 @@
           </form>
         </div>
       </div>
+    </div>
+    <div class="total-bar">
+      <div><span class="total-label">Total</span> {{ formatAmount(getTotal()) }} {{ tokenSymbol }}</div>
+      <div class="btn-secondary"><img src="@/assets/chevron-down.svg" /></div>
     </div>
     <div
       v-if="canSubmit && currentUser"
@@ -194,7 +198,7 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   private showCartPanel: boolean | null = null
   profileImageUrl: string | null = null
-  reallocationPhase = true
+  reallocationPhase = false
   
   @Prop() toggleCart!: () => void
 
@@ -603,7 +607,7 @@ p.no-margin {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0rem 2rem;
+    padding: 0rem 1rem;
   }
 
   .flex-row-reallocation {
@@ -643,6 +647,28 @@ p.no-margin {
     div {
       color: #d5d4d7;
     }
+  }
+
+  .total-bar {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    justify-content: space-between;
+    background: $bg-primary-color;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+    font-family: "Glacial Indifference", sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .total-label {
+    font-family: "Inter";
+    font-size: 1rem;
+    line-height: 0;
+    margin-top: 0.125rem;
+    text-transform: uppercase;
+    margin-right: 1rem;
   }
 
   .cart-item {
