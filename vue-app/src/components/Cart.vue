@@ -627,28 +627,14 @@ p.no-margin {
   margin: 0;
 }
 
-/* .modal-background {
-  background: rgba(0,0,0,0.7);
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-} */
-
 .container {
   box-sizing: border-box;
   position: relative;
   right: 0;
   background: $bg-primary-color;
-  border: 2px solid red;
-  /* width: clamp(350px, 25%, 500px); */ /* TODO: Move width management to #cart section of App.vue */
-  /* display: flex;
-  flex-direction: column;
-  justify-content: space-between; */
-  gap: 1rem;
-  /* z-index: 2; */
-  height: 100%;
   width: 100%;
+  gap: 1rem;
+  height: 100%;
   padding: 1rem 0rem;
   @media (max-width: $breakpoint-m) {
     padding-bottom: 4rem;
