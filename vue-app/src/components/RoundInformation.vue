@@ -2,17 +2,17 @@
   <div class="projects">
     <div v-if="currentRound" class="round-info">
       <div class="image-wrapper">
-            <img src="@/assets/docking.png" height="100%" />
-          </div>
-          <div class="round">
-            <div style="display: flex; align-items: center;">
-              <h2 style="line-height: 120%; margin: 0;">Eth2 CLR</h2>
-              <tooltip position="top" :content="currentRound.fundingRoundAddress" :link="'https://etherscan.io/address/' + currentRound.fundingRoundAddress" linkText="View on Etherscan"><div class="verified"><img src="@/assets/verified.svg" /></div></tooltip>
-            </div>
-            <div class="status"> 
-              <div class="circle pulse open" /> Open
-            </div>
-          </div>
+        <img src="@/assets/docking.png" height="100%" />
+      </div>
+      <div class="round">
+        <div style="display: flex; align-items: center;">
+          <h2 style="line-height: 120%; margin: 0;">Eth2 CLR</h2>
+          <tooltip position="top" :content="currentRound.fundingRoundAddress" :link="'https://etherscan.io/address/' + currentRound.fundingRoundAddress" linkText="View on Etherscan"><div class="verified"><img src="@/assets/verified.svg" /></div></tooltip>
+        </div>
+        <div class="status"> 
+          <div class="circle pulse open" /> Open
+        </div>
+      </div>
       <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex;  gap: 0.5rem">
@@ -372,7 +372,7 @@ export default class RoundInformation extends Vue {
 
 .round-value-info-item {
   display: flex;
-  flex: 1 0 10%;
+  flex: 1 0 auto;
   justify-content: space-between;
   align-items: center;
   background: $bg-light-color;
@@ -385,7 +385,7 @@ export default class RoundInformation extends Vue {
 .round-info-item {
   display: flex;
   flex-direction: column;
-  flex: 1 0 10%;
+  flex: 1 0 auto;
   justify-content: space-between;
   align-items: flex-start;
   background: $bg-light-color;
@@ -494,6 +494,9 @@ export default class RoundInformation extends Vue {
 }
 
 .project-list {
+  box-sizing: border-box;
+  margin: 100%;
+
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: $content-space;

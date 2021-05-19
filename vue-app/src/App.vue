@@ -227,12 +227,11 @@ summary:focus {
 }
 
 #sidebar {
+  box-sizing: border-box;
   background-color: $bg-primary-color;
-  /* border-right: $border; */
-  /* box-sizing: border-box; */
   flex-shrink: 0;
   padding: 1.5rem;
-  width: 20%;
+  width: clamp(300px, 20%, 400px);
   height: 100%;
 
   .master {
