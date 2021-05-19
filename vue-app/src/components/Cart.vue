@@ -29,7 +29,8 @@
         <div v-if="isCartEmpty" class="empty-cart">
           <div style="font-size: 64px;">🌚</div>
           <h3>Your cart is empty</h3>
-          <div>Choose some projects that you want to contribute to</div>
+          <div>Choose some projects that you want to contribute to...</div>
+          <router-link to="/projects" class="btn-secondary mobile mt1">See projects</router-link>
         </div>
         <div v-if="canRemoveItem()">
           <div v-if="!currentUser" class="empty-cart">
@@ -49,7 +50,7 @@
         </div> -->
         <div class="new-items" v-if="reallocationPhase && currentUser">
           <div class="flex-row-reallocation">
-            <div>New</div>
+            <div>New ✨</div>
             <div>Remove all</div>
           </div>
           <div v-for="item in filteredCart" class="new-cart-item" :key="item.id">
@@ -65,6 +66,18 @@
               >
                 {{ item.name }}
               </router-link>
+              <div
+                v-if="canRemoveItem()"
+                class="remove-cart-item"
+                @click="removeItem(item)"
+              >
+              <!-- TODO: remove icon shouldn't appear in read-only item state -->
+              <tooltip position="bottom" content="Remove project">
+                <div class="remove-icon-background">
+                  <img class="remove-icon" src="@/assets/remove.svg" />
+                </div>
+              </tooltip>
+              </div>
             </div>
             <form class="contribution-form">
               <div class="input-button">
@@ -79,17 +92,6 @@
                   placeholder="Amount"
                 >
                 <!-- <div class="contribution-currency">{{ tokenSymbol }}</div> -->
-              </div>
-              <div
-                v-if="canRemoveItem()"
-                class="remove-cart-item"
-                @click="removeItem(item)"
-              >
-              <tooltip position="bottom" content="Remove project">
-                <div class="remove-icon-background">
-                  <img class="remove-icon" src="@/assets/remove.svg" />
-                </div>
-              </tooltip>
               </div>
             </form>
           </div>
@@ -111,6 +113,17 @@
             >
               {{ item.name }}
             </router-link>
+            <div
+              v-if="canRemoveItem()"
+              class="remove-cart-item"
+              @click="removeItem(item)"
+            >
+            <tooltip position="bottom" content="Remove project">
+              <div class="remove-icon-background">
+                <img class="remove-icon" src="@/assets/remove.svg" />
+              </div>
+            </tooltip>
+            </div>
             <div class="contribution-form" v-if="reallocationPhase">
               {{item.amount}} {{tokenSymbol}}
             </div>
@@ -129,22 +142,11 @@
               >
               <!-- <div class="contribution-currency">{{ tokenSymbol }}</div> -->
             </div>
-            <div
-              v-if="canRemoveItem()"
-              class="remove-cart-item"
-              @click="removeItem(item)"
-            >
-            <tooltip position="bottom" content="Remove project">
-              <div class="remove-icon-background">
-                <img class="remove-icon" src="@/assets/remove.svg" />
-              </div>
-            </tooltip>
-            </div>
           </form>
         </div>
       </div>
     </div>
-    <div class="total-bar">
+    <div class="total-bar" v-if="currentUser">
       <div><span class="total-label">Total</span> {{ formatAmount(getTotal()) }} {{ tokenSymbol }}</div>
       <div class="btn-secondary"><img src="@/assets/chevron-down.svg" /></div>
     </div>
@@ -271,7 +273,7 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   private showCartPanel: boolean | null = null
   profileImageUrl: string | null = null
-  reallocationPhase = true
+  reallocationPhase = false
   
   @Prop() toggleCart!: () => void
 
@@ -846,6 +848,7 @@ p.no-margin {
       background: $bg-secondary-color;
       border-radius: 0.5rem;
     }
+    cursor: pointer;
   }
 
   .input-button {
@@ -857,6 +860,7 @@ p.no-margin {
     align-items: center;
     color: black;
     padding: 0.125rem;
+    width: 100%;
     /* z-index: 100; */
   }
 
@@ -931,6 +935,11 @@ p.no-margin {
   .p1 {
     padding: 1rem;
     width: -webkit-fill-available;
+  }
+
+  .mt1 {
+    margin-top: 1rem;
+    width: fit-content;
   }
 
 </style>
