@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
     <div id="content-container">
       <div id="sidebar" :class="{ hidden: isSidebarCollapsed, desktop: true }">
@@ -131,6 +131,12 @@ summary:focus {
   outline: none;
 }
 
+.wrapper {
+  min-height: 100%;
+  position: relative;
+}
+
+
 .input {
   background-color: $bg-light-color;
   border: 2px solid $button-color;
@@ -206,6 +212,7 @@ summary:focus {
   height: calc(100vh - 61.5px);
   background: $bg-primary-color;
   overflow-x: clip;
+  padding-bottom: 4rem;
   /* overflow-y: scroll; */
 }
 

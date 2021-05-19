@@ -50,7 +50,7 @@ export default class MobileTabs extends Vue {
 
 <style lang="scss" scoped>
 .tab-container {
-  position: sticky;
+  position: fixed;
   bottom: 0;
   width: 100%;
   height: 4rem;
