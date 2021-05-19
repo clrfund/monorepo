@@ -2,6 +2,7 @@
   <div class="container">
     <div>
       <div class="flex-row" style="justify-content: flex-end;">
+        <router-link to="/projects" class="desktop">Back to projects</router-link>
 <!--         <div class="close-btn" @click="toggleCart">
           <p class="no-margin">Close</p>
           <img src="@/assets/close.svg" />
@@ -652,7 +653,7 @@ p.no-margin {
     position: relative;
     right: 0;
     background: $bg-primary-color;
-    width: clamp(350px, 25%, 500px);
+    /* width: clamp(350px, 25%, 500px); */ /* TODO: Move width management to #cart section of App.vue */
     /* display: flex;
     flex-direction: column;
     justify-content: space-between; */

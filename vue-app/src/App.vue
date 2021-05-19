@@ -8,7 +8,7 @@
       <div id="content" :class="{ padded: !isSidebarCollapsed && !isCartPadding }">
         <router-view :key="$route.path" />
       </div>
-      <div id="cart" :class="{ hidden: isSidebarCollapsed, desktop: true }">
+      <div id="cart" :class="{ hidden: isSideCartCollapsed, desktop: true }">
         <cart-widget class="cart-widget" />
       </div>
     </div>
@@ -67,6 +67,12 @@ export default class App extends Vue {
   get isSidebarCollapsed(): boolean {
     const routes = ['landing', 'projectAdded', 'join', 'joinStep']
     return routes.includes(this.$route.name || '')
+  }
+
+  get isSideCartCollapsed(): boolean {
+    // Collapse side-cart on any page where sidebar is collapsed, and also on
+    // the `/cart` path since this natively displays the `Cart` component
+    return this.isSidebarCollapsed || this.$route.name === 'cart'
   }
 
   get isCartPadding(): boolean {
