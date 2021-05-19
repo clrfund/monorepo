@@ -1,123 +1,123 @@
 <template>
-<div>
-  <div class="projects">        
-    <div class="title">
-      <div>
-        <h2>Projects</h2>
-        <!-- <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p> -->
-      </div>
-      <div class="action-bar">
-        <select class="filter" id="filter">
-          <option selected disabled label="Filter by category" />
-                  <option value="content">Content</option>
-                  <option value="researcg">Research</option>
-                  <option value="tooling">Tooling</option>
-                  <option value="data">Data</option>
-        </select>
-        <div v-if="projects.length > 0" class="project-search">
-          <img src="@/assets/search.svg">
-          <input
-            v-model="search"
-            class="input"
-            name="search"
-            placeholder="Search projects"
-            autocomplete="on"
-            onfocus="this.value=''" 
-          >
-        </div>
-        <router-link to="/join" class="btn-primary">Add project</router-link>
-      </div>
-    </div>
-    <!-- <h1 class="content-heading">Projects</h1> -->
-    <!-- <div v-if="currentRound" class="round-info">
-      <div class="round-info-item">
-        <div class="round-info-title">Round</div>
-        <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
-          <div class="value large">{{ currentRound.roundNumber }}</div>
-          <div class="unit">{{ currentRound.status }}</div>
-        </div>
-      </div>
-      <div class="round-info-item">
-        <div class="round-info-title">
-          Matching pool
-          <a
-            @click="addMatchingFunds()"
-            class="add-matching-funds-btn"
-            title="Add matching funds"
-          >
-            <img src="@/assets/add.svg" >
-          </a>
-        </div>
-        <div class="round-info-value">
-          <div class="value large">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
-          <div class="value large extra">{{ formatFractionalPart(currentRound.matchingPool) }}</div>
-          <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
-        </div>
-      </div>
-      <div class="round-info-item">
-        <div class="round-info-title">Contributions</div>
-        <div class="round-info-value">
-          <div class="value">{{ formatIntegerPart(currentRound.contributions) }}</div>
-          <div class="value extra">{{ formatFractionalPart(currentRound.contributions) }}</div>
-          <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
-          <div class="value">{{ currentRound.contributors }}</div>
-          <div class="unit">contributors</div>
-        </div>
-      </div>
-      <div v-if="currentRound.status === 'Contributing'" class="round-info-item">
-        <div class="round-info-title">Time left to contribute</div>
-        <div
-          class="round-info-value"
-          :title="'Contribution Deadline: ' + formatDate(currentRound.signUpDeadline)"
-        >
-          <div class="value" v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
-          <div class="unit" v-if="contributionTimeLeft.days > 0">days</div>
-          <div class="value">{{ contributionTimeLeft.hours }}</div>
-          <div class="unit">hours</div>
-          <div class="value" v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
-          <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
-        </div>
-      </div>
-      <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
-        <div class="round-info-title">Time left to reallocate</div>
-        <div
-          class="round-info-value"
-          :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
-        >
-          <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-          <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
-          <div class="value">{{ reallocationTimeLeft.hours }}</div>
-          <div class="unit">hours</div>
-          <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-          <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
-        </div>
-      </div>
-    </div>
-    <div v-if="isLoading" class="loader"></div> -->
-    <div class="project-list">
-      <div class="get-prepared" v-if="!this.search">
-        <span aria-label="rocket" class="emoji">🚀</span>
+  <div class="project-container">
+    <div class="projects">        
+      <div class="title">
         <div>
-        <h2 class="prep-title">Get prepared</h2>
-        <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
+          <h2>Projects</h2>
+          <!-- <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p> -->
         </div>
-        <div class="btn-action" style="cursor: pointer;">Start prep</div>
+        <div class="action-bar">
+          <select class="filter" id="filter">
+            <option selected disabled label="Filter by category" />
+                    <option value="content">Content</option>
+                    <option value="researcg">Research</option>
+                    <option value="tooling">Tooling</option>
+                    <option value="data">Data</option>
+          </select>
+          <div v-if="projects.length > 0" class="project-search">
+            <img src="@/assets/search.svg">
+            <input
+              v-model="search"
+              class="input"
+              name="search"
+              placeholder="Search projects"
+              autocomplete="on"
+              onfocus="this.value=''" 
+            >
+          </div>
+          <router-link to="/join" class="btn-primary">Add project</router-link>
+        </div>
       </div>
-      <project-list-item
-        v-for="project in filteredProjects"
-        :project="project"
-        :key="project.id"
-      >
-      </project-list-item>
+      <!-- <h1 class="content-heading">Projects</h1> -->
+      <!-- <div v-if="currentRound" class="round-info">
+        <div class="round-info-item">
+          <div class="round-info-title">Round</div>
+          <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
+            <div class="value large">{{ currentRound.roundNumber }}</div>
+            <div class="unit">{{ currentRound.status }}</div>
+          </div>
+        </div>
+        <div class="round-info-item">
+          <div class="round-info-title">
+            Matching pool
+            <a
+              @click="addMatchingFunds()"
+              class="add-matching-funds-btn"
+              title="Add matching funds"
+            >
+              <img src="@/assets/add.svg" >
+            </a>
+          </div>
+          <div class="round-info-value">
+            <div class="value large">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
+            <div class="value large extra">{{ formatFractionalPart(currentRound.matchingPool) }}</div>
+            <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
+          </div>
+        </div>
+        <div class="round-info-item">
+          <div class="round-info-title">Contributions</div>
+          <div class="round-info-value">
+            <div class="value">{{ formatIntegerPart(currentRound.contributions) }}</div>
+            <div class="value extra">{{ formatFractionalPart(currentRound.contributions) }}</div>
+            <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
+            <div class="value">{{ currentRound.contributors }}</div>
+            <div class="unit">contributors</div>
+          </div>
+        </div>
+        <div v-if="currentRound.status === 'Contributing'" class="round-info-item">
+          <div class="round-info-title">Time left to contribute</div>
+          <div
+            class="round-info-value"
+            :title="'Contribution Deadline: ' + formatDate(currentRound.signUpDeadline)"
+          >
+            <div class="value" v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
+            <div class="unit" v-if="contributionTimeLeft.days > 0">days</div>
+            <div class="value">{{ contributionTimeLeft.hours }}</div>
+            <div class="unit">hours</div>
+            <div class="value" v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
+            <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
+          </div>
+        </div>
+        <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
+          <div class="round-info-title">Time left to reallocate</div>
+          <div
+            class="round-info-value"
+            :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
+          >
+            <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
+            <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
+            <div class="value">{{ reallocationTimeLeft.hours }}</div>
+            <div class="unit">hours</div>
+            <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
+            <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
+          </div>
+        </div>
+      </div>
+      <div v-if="isLoading" class="loader"></div> -->
+      <div class="project-list">
+        <div class="get-prepared" v-if="!this.search">
+          <span aria-label="rocket" class="emoji">🚀</span>
+          <div>
+          <h2 class="prep-title">Get prepared</h2>
+          <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
+          </div>
+          <div class="btn-action" style="cursor: pointer;">Start prep</div>
+        </div>
+        <project-list-item
+          v-for="project in filteredProjects"
+          :project="project"
+          :key="project.id"
+        >
+        </project-list-item>
+      </div>
+      <div class="empty-search" v-if="filteredProjects == 0">
+        <div>😢 No projects match your search. Try using the filter to narrow down what you're looking for.</div>
+      </div>
     </div>
-    <div class="empty-search" v-if="filteredProjects == 0">
-      <div>😢 No projects match your search. Try using the filter to narrow down what you're looking for.</div>
+    <div class="cart desktop">
+      <cart-widget />
     </div>
   </div>
-  <div class="cart">
-    <cart-widget />
-  </div>
-</div>
 </template>
 
 <script lang="ts">
@@ -176,8 +176,6 @@ function timeLeft(date: DateTime): TimeLeft {
 }
 
 @Component({
-  name: 'project-list',
-  metaInfo: { title: 'Projects' },
   components: {
     ProjectListItem,
     CartWidget,
@@ -283,8 +281,14 @@ export default class ProjectList extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.round-info {
+.project-container {
+  display: flex;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column-reverse;
+  }
+}
 
+.round-info {
   display: flex;
   flex-wrap: wrap;
   margin: 0 (-$content-space);
@@ -292,10 +296,16 @@ export default class ProjectList extends Vue {
   gap: $content-space;
 }
 
-/* .projects {
-  padding: $content-space
+.projects {
+  flex: 1;
 }
- */
+
+.cart {
+  flex: 0 1 4rem;
+  width: 100%;
+  border: 2px solid red;
+}
+
 .title {
   display: flex;
   justify-content: space-between;

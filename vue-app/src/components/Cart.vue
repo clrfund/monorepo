@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <!-- <div class="modal-background" @click="toggleCart" /> -->
+    <div class="modal-background" @click="toggleCart" />
     <div class="container">
       <div>
         <div class="flex-row" style="justify-content: flex-end;">
@@ -155,7 +155,7 @@ import { Prop } from 'vue-property-decorator'
 })
 export default class Cart extends Vue {
   
-  // @Prop() toggleCart
+  @Prop() toggleCart!: () => void
 
   private get cart(): CartItem[] {
     return this.$store.state.cart

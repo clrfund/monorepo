@@ -1,20 +1,21 @@
 <template>
   <div class="tab-container mobile">
-    <div
-      v-for="({ icon, title, id }) of tabs"
-      :key="id"
+    <router-link
+      v-for="({ icon, title, to }, idx) of tabs"
+      :key="idx"
       :class="{
         'tab-item': true,
-        active: activeTab === id,
+        active: activeTab === to,
       }"
-      @click="() => clickHandler(id)">
+      :to="to"
+    >
       <img
+        :src="icon"
         :alt="title"
         width="16px"
-        :src="icon"
       > 
-      {{ id }}
-    </div>
+      {{ title }}
+    </router-link>
   </div>
 </template>
 
@@ -24,35 +25,24 @@ import Vue from 'vue'
 export default class MobileTabs extends Vue {
   tabs = [
     {
-      icon: 'src/assets/timer.svg',
+      icon: '@/assets/timer.svg',
       title: 'Round',
-      id: 'round',
+      to: '/round-information',
     },
     {
       icon: '@/assets/projects.svg',
       title: 'Projects',
-      id: 'projects',
+      to: '/projects',
     },
     {
       icon: '@/assets/cart.svg',
       title: 'Cart',
-      id: 'cart',
+      to: '/cart',
     },
   ]
-
-  activeTab = 'projects'
   
-  get active() {
-    return this.activeTab
-  }
-
-  isTabActive(id: string): boolean {
-    return this.activeTab === id
-  }
-
-  clickHandler(id) {
-    this.activeTab = id
-    console.log(this.activeTab)
+  get activeTab(): string {
+    return this.$route.path
   }
 }
 

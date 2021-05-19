@@ -36,7 +36,7 @@ import Cart from '@/components/Cart.vue'
 import { getNetworkName } from '@/utils/networks'
 
 @Component({components: {Cart}})
-export default class WalletWidget extends Vue {
+export default class CartWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
   private showCartPanel: boolean | null = null

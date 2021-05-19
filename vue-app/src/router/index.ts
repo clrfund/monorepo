@@ -12,6 +12,7 @@ import About from '../views/About.vue'
 import AboutMaci from '../views/AboutMaci.vue'
 import JoinView from '../views/Join.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
+import CartView from '@/views/Cart.vue'
 
 Vue.use(VueRouter)
 
@@ -75,6 +76,11 @@ const routes = [
     path: '/join/:step',
     name: 'joinStep',
     component: JoinView,
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: CartView,
   },
 ]
 
