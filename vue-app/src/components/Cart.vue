@@ -1,13 +1,6 @@
 <template>
   <div class="container">
     <div>
-      <div class="flex-row" style="justify-content: flex-end;">
-        <router-link to="/projects" class="desktop">Back to projects</router-link>
-<!--         <div class="close-btn" @click="toggleCart">
-          <p class="no-margin">Close</p>
-          <img src="@/assets/close.svg" />
-        </div> -->
-      </div>
       <div class="flex-row">
         <h2 class="no-margin">Your cart</h2>
         <div v-if="!reallocationPhase">
@@ -634,15 +627,7 @@ p.no-margin {
   margin: 0;
 }
 
-/* .wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-
- */  .modal-background {
+.modal-background {
     background: rgba(0,0,0,0.7);
     position: fixed;
     width: 100%;

@@ -2,8 +2,8 @@
   <div
     v-if="currentUser"
     :class="{
-      container: true,
-      collapsed: !showCartPanel,
+      container: showCartPanel,
+      'collapsed-container': !showCartPanel,
     }"
   >
     <button class="dropdown-btn" @click="toggleCart">
@@ -16,6 +16,7 @@
         Cart
     </button>
     <cart v-if="showCartPanel" :toggleCart="toggleCart" class="desktop" />
+    <div v-if="!showCartPanel" class="collapsed-cart" />
   </div>
 </template>
 
@@ -182,7 +183,26 @@ export default class CartWidget extends Vue {
   width: fit-content;
 }
 
+.collapsed-container {
+  height: 100%;
+  width: 5rem;
+}
+
+.collapsed-cart {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  width: 3rem;
+  background: $bg-light-color;
+  z-index: 0;
+}
+
 .dropdown-btn {
+  box-sizing: border-box;
+  position: absolute;
+  top: 6rem;
+  right: 0.5rem;
+  z-index: 1;
   background: rgba(44,41,56,1);
   border: 1px solid rgba(115,117,166,0.3);
   border-radius: 8px;

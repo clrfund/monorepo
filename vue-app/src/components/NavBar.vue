@@ -26,7 +26,7 @@
           </div>
         </div>
       </div>
-      <div class="desktop"><cart-widget v-if="inApp" /></div>
+      <!-- <div class="desktop"><cart-widget v-if="inApp" /></div> -->
       <wallet-widget class="wallet-widget" v-if="inApp" />
       <router-link v-if="!inApp" to="/projects" class="app-btn">
         App
