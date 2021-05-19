@@ -15,7 +15,9 @@ import {
   getContributionAmount,
   isContributionWithdrawn,
 } from '@/api/contributions'
+import { recipientRegistryType } from '@/api/core'
 import { loginUser, logoutUser } from '@/api/gun'
+import { getRegistryInfo, RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
@@ -23,6 +25,7 @@ import { User, isVerifiedUser, getTokenBalance } from '@/api/user'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
+  LOAD_RECIPIENT_REGISTRY_INFO,
   LOAD_USER_INFO,
   SAVE_CART,
   LOAD_CART,
@@ -35,6 +38,7 @@ import {
 } from './action-types'
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
+  SET_RECIPIENT_REGISTRY_INFO,
   SET_CURRENT_USER,
   SET_CURRENT_ROUND_ADDRESS,
   SET_CURRENT_ROUND,
@@ -51,6 +55,7 @@ Vue.use(Vuex)
 
 interface RootState {
   recipientRegistryAddress: string | null;
+  recipientRegistryInfo: RegistryInfo | null;
   currentUser: User | null;
   currentRoundAddress: string | null;
   currentRound: RoundInfo | null;
@@ -62,6 +67,7 @@ interface RootState {
 
 const state: RootState = {
   recipientRegistryAddress: null,
+  recipientRegistryInfo: null,
   currentUser: null,
   currentRoundAddress: null,
   currentRound: null,
@@ -74,6 +80,9 @@ const state: RootState = {
 export const mutations = {
   [SET_RECIPIENT_REGISTRY_ADDRESS](state, address: string) {
     state.recipientRegistryAddress = address
+  },
+  [SET_RECIPIENT_REGISTRY_INFO](state, info: RegistryInfo) {
+    state.recipientRegistryInfo = info
   },
   [SET_CURRENT_USER](state, user: User | null) {
     state.currentUser = user
@@ -155,6 +164,7 @@ const actions = {
       commit(SET_CONTRIBUTOR, null)
       commit(CLEAR_CART)
       commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
+      commit(SET_RECIPIENT_REGISTRY_INFO, null)
       commit(SET_CURRENT_ROUND, null)
     }
     commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
@@ -171,6 +181,15 @@ const actions = {
       const tally = await getTally(roundAddress)
       commit(SET_TALLY, tally)
     }
+  },
+  async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
+    const recipientRegistryAddress = state.recipientRegistryAddress
+    if (recipientRegistryAddress === null || recipientRegistryType !== 'optimistic') {
+      commit(SET_RECIPIENT_REGISTRY_INFO, null)
+      return
+    }
+    const info = await getRegistryInfo(recipientRegistryAddress)
+    commit(SET_RECIPIENT_REGISTRY_INFO, info)
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (state.currentRound && state.currentUser) {
