@@ -52,6 +52,8 @@ import {
   SET_RECIPIENT_DATA,
 } from './mutation-types'
 
+import { getDifferenceFromNow, hasDateElapsed } from '@/utils/dates'
+
 Vue.use(Vuex)
 
 interface RootState {
@@ -323,10 +325,49 @@ const actions = {
   },
 }
 
+const getters = {
+  hasCurrentRound: state => !!state.currentRound,
+  hasRegistryInfo: state => !!state.registryInfo,
+  // i.e. "join" phase
+  isRecipientRegistryOpen: (state, getters) => {
+    if (!getters.hasCurrentRound) {
+      return true
+    }
+    if (!getters.hasRegistryInfo) {
+      return false
+    }
+    // TODO confirm this math
+    const millisecondsFromDeadline = getDifferenceFromNow(state.currentRound.signUpDeadline)
+    return millisecondsFromDeadline -  state.registryInfo.challengePeriodDuration > 0
+  },
+  // During "buffer" phase:
+  // - recipients cannot join
+  // - users can only browse projects, add to cart & get verified
+  isBufferPhase: (state, getters) => {
+    return !getters.isRecipientRegistryOpen && !hasDateElapsed(state.currentRound.signUpDeadline)
+  },
+  // During "contribution" phase:
+  // - recipients cannot join
+  // - users can make contributions
+  isContributionPhase: (state, getters) => {
+    // TODO implement
+    // TODO check `startTime`?
+    return getters.hasCurrentRound && !hasDateElapsed(state.currentRound.signUpDeadline)
+  },
+  // During "reallocation" phase:
+  // - recipients cannot join
+  // - contributors can make reallocate
+  isReallocationPhase: (state, getters) => {
+    // TODO implement
+    return getters.hasCurrentRound && hasDateElapsed(state.currentRound.signUpDeadline) && !hasDateElapsed(state.currentRound.votingDeadline)
+  },
+}
+
 const store: StoreOptions<RootState> = {
   state,
   mutations,
   actions,
+  getters,
   modules: {},
 }
 
