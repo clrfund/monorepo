@@ -1,7 +1,7 @@
 <template>
 <div>
   <router-link to="/projects" class="back desktop">Back to projects</router-link>
-  <round-information/>
+  <round-information class="padding" />
 </div>
 </template>
 
@@ -22,8 +22,12 @@ export default class RoundInformationVue extends Vue {}
 <style lang="scss" scoped>
 .back {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   padding: 1rem 1rem 0;
+}
+
+.padding {
+  padding: 0 1rem;
 }
 </style>

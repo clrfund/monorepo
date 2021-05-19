@@ -16,7 +16,7 @@
         Cart
     </button>
     <cart v-if="showCartPanel" :toggleCart="toggleCart" class="desktop" />
-    <div v-if="!showCartPanel" class="collapsed-cart" />
+    <div v-if="!showCartPanel" class="collapsed-cart desktop" />
   </div>
 </template>
 
@@ -178,9 +178,8 @@ export default class CartWidget extends Vue {
 @import '../styles/theme';
 
 .container {
-  /* margin-left: -0.5rem; */
   height: 100%;
-  width: fit-content;
+  width: minmax(300px, 100%);
 }
 
 .collapsed-container {

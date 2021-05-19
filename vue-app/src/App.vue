@@ -9,7 +9,7 @@
         <router-view :key="$route.path" />
       </div>
       <div id="cart" :class="{ hidden: isSideCartCollapsed, desktop: true }">
-        <cart-widget class="cart-widget" />
+        <cart-widget />
       </div>
     </div>
     <mobile-tabs :class="{ hidden: isSidebarCollapsed, mobile: true }" />

@@ -18,7 +18,7 @@ export default class CartView extends Vue {
 <style lang="scss" scoped>
 .back {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   padding: 1rem;
 }
