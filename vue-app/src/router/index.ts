@@ -8,7 +8,7 @@ import ProjectView from '../views/Project.vue'
 import RoundList from '../views/RoundList.vue'
 import ProjectAdded from '../views/ProjectAdded.vue'
 import RoundInformation from '../views/RoundInformation.vue'
-import About from '../views/About.vue'
+import About from '../views/About.vue'  
 import AboutMaci from '../views/AboutMaci.vue'
 import JoinView from '../views/Join.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
@@ -87,6 +87,9 @@ const routes = [
 const router = new VueRouter({
   base: window.location.pathname,
   routes,
+  scrollBehavior () {
+    return { x: 0, y: 0 }
+  },
 })
 
 export default router
