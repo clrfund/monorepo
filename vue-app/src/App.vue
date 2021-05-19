@@ -5,7 +5,7 @@
       <div id="sidebar" :class="{ hidden: isSidebarCollapsed, desktop: true }">
           <round-information />
       </div>
-      <div id="content" :class="{ padded: !isSidebarCollapsed }">
+      <div id="content" :class="{ padded: !isSidebarCollapsed && !isCartPadding }">
         <router-view :key="$route.path" />
       </div>
       <div id="cart" :class="{ hidden: isSidebarCollapsed, desktop: true }">
@@ -66,6 +66,11 @@ export default class App extends Vue {
 
   get isSidebarCollapsed(): boolean {
     const routes = ['landing', 'projectAdded', 'join', 'joinStep']
+    return routes.includes(this.$route.name || '')
+  }
+
+  get isCartPadding(): boolean {
+    const routes = ['cart']
     return routes.includes(this.$route.name || '')
   }
 }

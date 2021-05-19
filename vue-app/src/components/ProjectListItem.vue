@@ -36,6 +36,7 @@
         </button>
 
         <form action="#">
+          <!-- TODO: if a user is unconnected, adding to cart should trigger wallet connection -->
         <div class="input-button">
             <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
             <input

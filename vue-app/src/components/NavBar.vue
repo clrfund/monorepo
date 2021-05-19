@@ -26,7 +26,7 @@
           </div>
         </div>
       </div>
-      <cart-widget v-if="inApp" />
+      <div class="desktop"><cart-widget v-if="inApp" /></div>
       <wallet-widget class="wallet-widget" v-if="inApp" />
       <router-link v-if="!inApp" to="/projects" class="app-btn">
         App
@@ -94,6 +94,9 @@ window.onclick = function(event) {
   align-items: center;
   background: $bg-secondary-color;
   box-shadow: $box-shadow;
+  @media (max-width: $breakpoint-m) {
+    padding: 0 1rem;
+  }
 
   .wallet-widget {
     margin-left: 0.5rem;

@@ -2,14 +2,19 @@
   <div class="container">
     <div>
       <div class="flex-row" style="justify-content: flex-end;">
-        <div class="close-btn" @click="toggleCart">
+<!--         <div class="close-btn" @click="toggleCart">
           <p class="no-margin">Close</p>
           <img src="@/assets/close.svg" />
-        </div>
+        </div> -->
       </div>
       <div class="flex-row">
         <h2 class="no-margin">Your cart</h2>
-        <div v-if="!isEmptyCart" ><img class="remove-icon" src="@/assets/remove.svg" />Remove all</div>
+          <div v-if="canRemoveItem() && !isCartEmpty && currentUser ">
+            <img class="remove-icon" src="@/assets/remove.svg" />Remove all
+          </div>
+      </div>
+      <div v-if="reallocationPhase && currentUser">
+        You’ve already contributed this round. If you add new projects to your cart now you can reallocate, but you’ll have to reduce funding for other projects.
       </div>
       <div class="cart">
         <!-- <div style="display: flex; gap: 0.25rem; width: 100%;">
@@ -19,14 +24,30 @@
             <div class="balance">{{ balance }}</div>
           </div>
         </div> -->
-        <div v-if="isEmptyCart" class="empty-cart">
+        <div v-if="isCartEmpty" class="empty-cart">
           <div style="font-size: 64px;">🌚</div>
           <h3>Your cart is empty</h3>
           <div>Choose some projects that you want to contribute to</div>
         </div>
-        <div class="balance" v-if="!isEmptyCart">
+        <div v-if="canRemoveItem()">
+          <div v-if="!currentUser" class="empty-cart">
+            <div style="font-size: 64px;">🌚</div>
+            <h3>Connect to see your cart </h3>
+            <wallet-widget />
+          </div>
+        </div>
+        <div v-if="!canRemoveItem()" class="empty-cart">
+          <div style="font-size: 64px;">🌚</div>
+          <h3>Too late to donate</h3>
+          <div>Sorry, the deadline for donating has passed.</div>
+        </div>
+<!--         <div class="balance" v-if="!isEmptyCart">
           <p style="margin: 0;">Balance</p>
           <div style="display: flex;  align-items: center; gap: 0.5rem;"><img width="20px" src="@/assets/dai.svg" />{{ balance }}</div>
+        </div> -->
+        <div class="flex-row-reallocation" v-if="reallocationPhase && currentUser">
+          <div>Your contributions</div>
+          <div>Edit</div>
         </div>
         <div v-for="item in filteredCart" class="cart-item" :key="item.id">
           <div class="project">
@@ -41,8 +62,11 @@
             >
               {{ item.name }}
             </router-link>
+            <div class="contribution-form" v-if="reallocationPhase">
+              {{item.amount}} DAI
+            </div>
           </div>
-          <form class="contribution-form">
+          <form v-if="!reallocationPhase" class="contribution-form">
             <div class="input-button">
               <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
               <input
@@ -61,17 +85,18 @@
               class="remove-cart-item"
               @click="removeItem(item)"
             >
-              <div class="btn-warning" style="display: flex; align-items: center; ">
-              <img class="remove-icon" src="@/assets/remove.svg" />
-              Remove
-            </div>
+            <tooltip position="bottom" content="Remove project">
+              <div class="remove-icon-background">
+                <img class="remove-icon" src="@/assets/remove.svg" />
+              </div>
+            </tooltip>
             </div>
           </form>
         </div>
       </div>
     </div>
     <div
-      v-if="canSubmit"
+      v-if="canSubmit && currentUser"
       class="submit-btn-wrapper"
     >
       <div v-if="errorMessage" class="submit-error">
@@ -85,9 +110,10 @@
           <img src="@/assets/time.svg" />
           <div>10 hours</div>
       </div>
-      <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary">
+      <!-- <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary"> -->
+      <router-link to="/setup" v-if="canRegisterWithBrightId()" class="btn-primary"> 
         Verify with BrightID
-      </div>
+      </router-link>
       </div>
       <!-- <div v-if="canBuyWxdai()" class="btn-primary">
         <a href="https://wrapeth.com/" target="_blank" rel="noopener">
@@ -128,34 +154,148 @@ import { BigNumber, FixedNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { commify, formatUnits } from '@ethersproject/units'
 import { DateTime } from 'luxon'
-
+import WalletWidget from '@/components/WalletWidget.vue'
 import BrightIdModal from '@/components/BrightIdModal.vue'
+import Tooltip from '@/components/Tooltip.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
-
-
+import { Web3Provider } from '@ethersproject/providers'
+import {
+  SET_CURRENT_USER,
+} from '@/store/mutation-types'
+import { sha256 } from '@/utils/crypto'
 import {
   MAX_CONTRIBUTION_AMOUNT,
   MAX_CART_SIZE,
   CartItem,
 } from '@/api/contributions'
-import { userRegistryType } from '@/api/core'
+import { userRegistryType, provider as jsonRpcProvider } from '@/api/core'
 import { RoundStatus } from '@/api/round'
-import { SAVE_CART } from '@/store/action-types'
+import {
+  LOAD_USER_INFO,
+  LOAD_CART,
+  LOAD_CONTRIBUTOR_DATA,
+  LOGIN_USER,
+  LOGOUT_USER,
+  SAVE_CART,
+} from '@/store/action-types'
+import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { Prop } from 'vue-property-decorator'
+import { getNetworkName } from '@/utils/networks'
 
 @Component({
-  components: {  },
+  components: { Tooltip, WalletWidget },
 })
 export default class Cart extends Vue {
+  private jsonRpcNetwork: Network | null = null
+  private walletChainId: string | null = null
+  private showCartPanel: boolean | null = null
+  profileImageUrl: string | null = null
+  reallocationPhase = true
   
   @Prop() toggleCart!: () => void
 
   private get cart(): CartItem[] {
     return this.$store.state.cart
+  }
+
+  get walletProvider(): any {
+    return (window as any).ethereum
+  }
+
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
+  }
+
+  async mounted() {
+    this.showCartPanel = false
+    if (!this.walletProvider) {
+      return
+    }
+    this.walletChainId = await this.walletProvider.request({ method: 'eth_chainId' })
+    this.walletProvider.on('chainChanged', (_chainId: string) => {
+      if (_chainId !== this.walletChainId) {
+        this.walletChainId = _chainId
+        if (this.currentUser) {
+          // Log out user to prevent interactions with incorrect network
+          this.$store.dispatch(LOGOUT_USER)
+        }
+      }
+    })
+    let accounts: string[]
+    this.walletProvider.on('accountsChanged', (_accounts: string[]) => {
+      if (_accounts !== accounts) {
+        // Log out user if wallet account changes
+        this.$store.dispatch(LOGOUT_USER)
+      }
+      accounts = _accounts
+    })
+    this.jsonRpcNetwork = await jsonRpcProvider.getNetwork()
+  }
+
+  isLoaded(): boolean {
+    return this.jsonRpcNetwork !== null && this.walletChainId !== null
+  }
+
+  isCorrectNetwork(): boolean {
+    if (this.jsonRpcNetwork === null || this.walletChainId === null) {
+      // Still loading
+      return false
+    }
+    if (this.walletChainId === '0xNaN') {
+      // Devnet
+      return true
+    }
+    return this.jsonRpcNetwork.chainId === parseInt(this.walletChainId, 16)
+  }
+
+  get networkName(): string {
+    return this.jsonRpcNetwork === null ? '' : getNetworkName(this.jsonRpcNetwork)
+  }
+
+  async connect(): Promise<void> {
+    if (!this.walletProvider || !this.walletProvider.request) {
+      return
+    }
+    let walletAddress
+    try {
+      [walletAddress] = await this.walletProvider.request({ method: 'eth_requestAccounts' })
+    } catch (error) {
+      // Access denied
+      return
+    }
+    let signature
+    try {
+      signature = await this.walletProvider.request({
+        method: 'personal_sign',
+        params: [LOGIN_MESSAGE, walletAddress],
+      })
+    } catch (error) {
+      // Signature request rejected
+      return
+    }
+    const user: User = {
+      walletProvider: new Web3Provider(this.walletProvider),
+      walletAddress,
+      encryptionKey: sha256(signature),
+      isVerified: null,
+      balance: null,
+      contribution: null,
+    }
+
+    getProfileImageUrl(user.walletAddress)
+      .then((url) => this.profileImageUrl = url)
+    this.$store.commit(SET_CURRENT_USER, user)
+    await this.$store.dispatch(LOGIN_USER)
+    if (this.$store.state.currentRound) {
+      // Load cart & contributor data for current round
+      this.$store.dispatch(LOAD_USER_INFO)
+      this.$store.dispatch(LOAD_CART)
+      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    }
   }
 
   get tokenSymbol(): string {
@@ -398,11 +538,7 @@ export default class Cart extends Vue {
 @import '../styles/theme';
 
 h2 {
-  font-family: Glacial Indifference;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 150%;
+  line-height: 130%;
 }
 
 p.no-margin {
@@ -428,17 +564,19 @@ p.no-margin {
   .container {
     position: relative;
     right: 0;
-    background: $bg-secondary-color;
+    background: $bg-primary-color;
     width: clamp(350px, 25%, 500px);
-    display: flex;
+    /* display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-between; */
     gap: 1rem;
     z-index: 2;
     height: 100%;
-    padding: 1rem 0;
+    padding: 1rem 0rem;
     @media (max-width: $breakpoint-m) {
     padding-bottom: 4rem;
+    padding-top: 2rem;
+    width: 100%;
     }
   }
 
@@ -465,7 +603,15 @@ p.no-margin {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0rem 2rem;
+  }
+
+  .flex-row-reallocation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 0rem 1rem;
+    margin: 1rem 0;
   }
 
   .cart {
@@ -480,8 +626,8 @@ p.no-margin {
     font-size: 16px;
     font-weight: 400;
     margin: 1rem;
-    width: 100%;
     z-index: 3;
+    padding: 1.5rem 1.5rem;
     background: $bg-secondary-color;
 
     img {
@@ -520,6 +666,7 @@ p.no-margin {
   .project {
     display: flex;
     flex-direction: row;
+    align-items: center;
 
     .project-image {
       border-radius: 10px;
@@ -541,15 +688,22 @@ p.no-margin {
       flex-grow: 1;
       max-height: 2.5rem;
       overflow: hidden;
+      font-weight: 600;
       text-overflow: ellipsis;
     }
   }
 
   .remove-icon {
-    width: 1rem;
-    height: 1rem;
-    margin-right: 0.5rem;
-    fill: white;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .remove-icon-background {
+    padding: 0.5rem;
+    &:hover {
+      background: $bg-secondary-color;
+      border-radius: 0.5rem;
+    }
   }
 
   .input-button {
@@ -577,7 +731,7 @@ p.no-margin {
     flex-direction: row;
     font-size: 16px;
     padding-left: 3.5rem;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     gap: 0.5rem;
 
     .contribution-currency {
@@ -627,6 +781,7 @@ p.no-margin {
     .submit-error {
       color: $warning-color;
       margin: 1.5rem 0rem;
+      padding: 0 1.5rem;
       &:before {
         content: '⚠️  '
       }
