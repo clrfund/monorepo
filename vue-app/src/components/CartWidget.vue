@@ -1,5 +1,11 @@
 <template>
-  <div v-if="currentUser" class="container">
+  <div
+    v-if="currentUser"
+    :class="{
+      container: true,
+      collapsed: !showCartPanel,
+    }"
+  >
     <button class="dropdown-btn" @click="toggleCart">
         <img
         alt="cart"
@@ -7,9 +13,9 @@
         style="margin-right: 0.5rem"
         src="@/assets/cart.svg"
         > 
-        Cart 
+        Cart
     </button>
-    <cart v-if="showCartPanel" :toggleCart="toggleCart" />
+    <cart v-if="showCartPanel" :toggleCart="toggleCart" class="desktop" />
   </div>
 </template>
 
@@ -171,22 +177,24 @@ export default class CartWidget extends Vue {
 @import '../styles/theme';
 
 .container {
-  margin-left: 0.5rem;
+  /* margin-left: -0.5rem; */
+  height: 100%;
+  width: fit-content;
 }
 
- .dropdown-btn {
-    background: rgba(44,41,56,1);
-    border: 1px solid rgba(115,117,166,0.3);
-    border-radius: 8px;
-    padding: 0.25rem 0.5rem;
-    color: white;
-    margin-right: 0.5rem;
-    display: flex;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
+.dropdown-btn {
+  background: rgba(44,41,56,1);
+  border: 1px solid rgba(115,117,166,0.3);
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  color: white;
+  margin-right: 0.5rem;
+  display: flex;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
 
 .provider-error {
   text-align: center;

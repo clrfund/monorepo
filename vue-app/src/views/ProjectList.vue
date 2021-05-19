@@ -114,9 +114,6 @@
         <div>😢 No projects match your search. Try using the filter to narrow down what you're looking for.</div>
       </div>
     </div>
-    <div class="cart desktop">
-      <cart-widget />
-    </div>
   </div>
 </template>
 
@@ -300,26 +297,20 @@ export default class ProjectList extends Vue {
   flex: 1;
 }
 
-.cart {
-  flex: 0 1 4rem;
-  width: 100%;
-  border: 2px solid red;
-}
-
 .title {
   display: flex;
   justify-content: space-between;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid rgba(115,117,166,1); 
   margin-bottom: 2rem;
-  @media (max-width: $breakpoint-l) {
+  @media (max-width: $breakpoint-m) {
     flex-direction: column-reverse;
   }
 
   h2 {
     line-height: 130%;
     margin-bottom: 0.5rem;
-    @media (max-width: $breakpoint-l) {
+    @media (max-width: $breakpoint-m) {
       width: 100%;
     }
   }
@@ -330,7 +321,7 @@ export default class ProjectList extends Vue {
     justify-content: flex-end;
     align-items: flex-end;
     gap: 1rem;
-    @media (max-width: $breakpoint-l) {
+    @media (max-width: $breakpoint-m) {
       width: 100%;
       align-items: flex-end;
       flex-direction: column;

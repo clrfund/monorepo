@@ -8,6 +8,9 @@
       <div id="content" :class="{ padded: !isSidebarCollapsed }">
         <router-view :key="$route.path" />
       </div>
+      <div id="cart" :class="{ hidden: isSidebarCollapsed, desktop: true }">
+        <cart-widget class="cart-widget" />
+      </div>
     </div>
     <mobile-tabs :class="{ hidden: isSidebarCollapsed, mobile: true }" />
   </div>
@@ -23,6 +26,7 @@ import { recipientRegistryType } from '@/api/core'
 // import WalletWidget from '@/components/WalletWidget.vue'
 import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
+import CartWidget from '@/components/CartWidget.vue'
 import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
 
@@ -40,7 +44,7 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
       },
     ],
   },
-  components: { RoundInformation, NavBar, Cart, MobileTabs },
+  components: { RoundInformation, NavBar, Cart, MobileTabs, CartWidget },
 })
 export default class App extends Vue {
   created() {
@@ -348,7 +352,7 @@ summary:focus {
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: $breakpoint-m) {
   #app {
     flex-direction: column;
     position: relative;

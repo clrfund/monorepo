@@ -1,125 +1,122 @@
 <template>
-  <div class="wrapper">
-    <div class="modal-background" @click="toggleCart" />
-    <div class="container">
-      <div>
-        <div class="flex-row" style="justify-content: flex-end;">
-          <div class="close-btn" @click="toggleCart">
-            <p class="no-margin">Close</p>
-            <img src="@/assets/close.svg" />
-          </div>
-        </div>
-        <div class="flex-row">
-          <h2 class="no-margin">Your cart</h2>
-          <div v-if="!isEmptyCart" ><img class="remove-icon" src="@/assets/remove.svg" />Remove all</div>
-        </div>
-        <div class="cart">
-          <!-- <div style="display: flex; gap: 0.25rem; width: 100%;">
-            <div class="profile-info-balance">
-              Balance 
-              <img src="@/assets/dai.svg" />
-              <div class="balance">{{ balance }}</div>
-            </div>
-          </div> -->
-          <div v-if="isEmptyCart" class="empty-cart">
-            <div style="font-size: 64px;">🌚</div>
-            <h3>Your cart is empty</h3>
-            <div>Choose some projects that you want to contribute to</div>
-          </div>
-          <div class="balance" v-if="!isEmptyCart">
-            <p style="margin: 0;">Balance</p>
-            <div style="display: flex;  align-items: center; gap: 0.5rem;"><img width="20px" src="@/assets/dai.svg" />{{ balance }}</div>
-          </div>
-          <div v-for="item in filteredCart" class="cart-item" :key="item.id">
-            <div class="project">
-              <router-link
-                :to="{ name: 'project', params: { id: item.id }}"
-              >
-                <img class="project-image" :src="item.imageUrl" :alt="item.name">
-              </router-link>
-              <router-link
-                class="project-name"
-                :to="{ name: 'project', params: { id: item.id }}"
-              >
-                {{ item.name }}
-              </router-link>
-            </div>
-            <form class="contribution-form">
-              <div class="input-button">
-                <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
-                <input
-                  :value="item.amount"
-                  @input="updateAmount(item, $event.target.value)"
-                  class="input contribution-amount"
-                  :class="{ invalid: !isAmountValid(item.amount) }"
-                  :disabled="!canUpdateAmount()"
-                  name="amount"
-                  placeholder="Amount"
-                >
-                <!-- <div class="contribution-currency">{{ tokenSymbol }}</div> -->
-              </div>
-              <div
-                v-if="canRemoveItem()"
-                class="remove-cart-item"
-                @click="removeItem(item)"
-              >
-                <div class="btn-warning" style="display: flex; align-items: center; ">
-                <img class="remove-icon" src="@/assets/remove.svg" />
-                Remove
-              </div>
-              </div>
-            </form>
-          </div>
+  <div class="container">
+    <div>
+      <div class="flex-row" style="justify-content: flex-end;">
+        <div class="close-btn" @click="toggleCart">
+          <p class="no-margin">Close</p>
+          <img src="@/assets/close.svg" />
         </div>
       </div>
-      <div
-        v-if="canSubmit"
-        class="submit-btn-wrapper"
-      >
-        <div v-if="errorMessage" class="submit-error">
-          {{ errorMessage }}
-        </div>
-        <div v-if="hasUnallocatedFunds()">
-          Unallocated funds will be used as matching funding
-        </div>
-        <div class="flex-row" style="gap: 0.5rem; margin-bottom: 2.5rem;">
-          <div class="profile-info-round">
-            <img src="@/assets/time.svg" />
-            <div>10 hours</div>
-        </div>
-        <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary">
-          Verify with BrightID
-        </div>
-        </div>
-        <!-- <div v-if="canBuyWxdai()" class="btn-primary">
-          <a href="https://wrapeth.com/" target="_blank" rel="noopener">
-            Click here to wrap XDAI
-          </a>
+      <div class="flex-row">
+        <h2 class="no-margin">Your cart</h2>
+        <div v-if="!isEmptyCart" ><img class="remove-icon" src="@/assets/remove.svg" />Remove all</div>
+      </div>
+      <div class="cart">
+        <!-- <div style="display: flex; gap: 0.25rem; width: 100%;">
+          <div class="profile-info-balance">
+            Balance 
+            <img src="@/assets/dai.svg" />
+            <div class="balance">{{ balance }}</div>
+          </div>
         </div> -->
-        <button
-          v-if="canWithdrawContribution()"
-          class="btn-action"
-          @click="withdrawContribution()"
-        >
-          Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
-        </button>
-        <button
-          v-if="!errorMessage"
-          class="btn-action"
-          :disabled="errorMessage !== null"
-          @click="submitCart"
-        >
-          <template v-if="contribution.isZero()">
-            Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
-          </template>
-          <template v-else-if="hasUnallocatedFunds()">
-            Reallocate {{ formatAmount(getTotal()) }} of {{ formatAmount(contribution) }} {{ tokenSymbol }}
-          </template>
-          <template v-else>
-            Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
-          </template>
-        </button>
+        <div v-if="isEmptyCart" class="empty-cart">
+          <div style="font-size: 64px;">🌚</div>
+          <h3>Your cart is empty</h3>
+          <div>Choose some projects that you want to contribute to</div>
+        </div>
+        <div class="balance" v-if="!isEmptyCart">
+          <p style="margin: 0;">Balance</p>
+          <div style="display: flex;  align-items: center; gap: 0.5rem;"><img width="20px" src="@/assets/dai.svg" />{{ balance }}</div>
+        </div>
+        <div v-for="item in filteredCart" class="cart-item" :key="item.id">
+          <div class="project">
+            <router-link
+              :to="{ name: 'project', params: { id: item.id }}"
+            >
+              <img class="project-image" :src="item.imageUrl" :alt="item.name">
+            </router-link>
+            <router-link
+              class="project-name"
+              :to="{ name: 'project', params: { id: item.id }}"
+            >
+              {{ item.name }}
+            </router-link>
+          </div>
+          <form class="contribution-form">
+            <div class="input-button">
+              <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
+              <input
+                :value="item.amount"
+                @input="updateAmount(item, $event.target.value)"
+                class="input contribution-amount"
+                :class="{ invalid: !isAmountValid(item.amount) }"
+                :disabled="!canUpdateAmount()"
+                name="amount"
+                placeholder="Amount"
+              >
+              <!-- <div class="contribution-currency">{{ tokenSymbol }}</div> -->
+            </div>
+            <div
+              v-if="canRemoveItem()"
+              class="remove-cart-item"
+              @click="removeItem(item)"
+            >
+              <div class="btn-warning" style="display: flex; align-items: center; ">
+              <img class="remove-icon" src="@/assets/remove.svg" />
+              Remove
+            </div>
+            </div>
+          </form>
+        </div>
       </div>
+    </div>
+    <div
+      v-if="canSubmit"
+      class="submit-btn-wrapper"
+    >
+      <div v-if="errorMessage" class="submit-error">
+        {{ errorMessage }}
+      </div>
+      <div v-if="hasUnallocatedFunds()">
+        Unallocated funds will be used as matching funding
+      </div>
+      <div class="flex-row" style="gap: 0.5rem; margin-bottom: 2.5rem;">
+        <div class="profile-info-round">
+          <img src="@/assets/time.svg" />
+          <div>10 hours</div>
+      </div>
+      <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary">
+        Verify with BrightID
+      </div>
+      </div>
+      <!-- <div v-if="canBuyWxdai()" class="btn-primary">
+        <a href="https://wrapeth.com/" target="_blank" rel="noopener">
+          Click here to wrap XDAI
+        </a>
+      </div> -->
+      <button
+        v-if="canWithdrawContribution()"
+        class="btn-action"
+        @click="withdrawContribution()"
+      >
+        Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
+      </button>
+      <button
+        v-if="!errorMessage"
+        class="btn-action"
+        :disabled="errorMessage !== null"
+        @click="submitCart"
+      >
+        <template v-if="contribution.isZero()">
+          Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
+        </template>
+        <template v-else-if="hasUnallocatedFunds()">
+          Reallocate {{ formatAmount(getTotal()) }} of {{ formatAmount(contribution) }} {{ tokenSymbol }}
+        </template>
+        <template v-else>
+          Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
+        </template>
+      </button>
     </div>
   </div>
 </template>
@@ -412,7 +409,7 @@ p.no-margin {
   margin: 0;
 }
 
-.wrapper {
+/* .wrapper {
   position: fixed;
   top: 0;
   left: 0;
@@ -420,7 +417,7 @@ p.no-margin {
   bottom: 0;
   z-index: 1;
 
-  .modal-background {
+ */  .modal-background {
     background: rgba(0,0,0,0.7);
     position: fixed;
     width: 100%;
@@ -429,7 +426,7 @@ p.no-margin {
   }
 
   .container {
-    position: absolute;
+    position: relative;
     right: 0;
     background: $bg-secondary-color;
     width: clamp(350px, 25%, 500px);
@@ -632,5 +629,5 @@ p.no-margin {
       }
     }  
   }
-}
+
 </style>

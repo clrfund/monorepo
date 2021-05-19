@@ -178,7 +178,7 @@ export default class ProjectProfile extends Vue {
       align-items: center; 
       justify-content: space-between;
 
-      @media (max-width: $breakpoint-l) {
+      @media (max-width: $breakpoint-m) {
         flex-direction: column;
         gap: 0.5rem;
         align-items: flex-start;
