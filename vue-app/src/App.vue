@@ -42,12 +42,18 @@ import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
 import { recipientRegistryType } from '@/api/core'
+import { getCurrentRound } from '@/api/round'
+import { getRecipientRegistryAddress } from '@/api/projects'
+import { getRegistryInfo } from '@/api/recipient-registry-optimistic'
+
 import Cart from '@/components/Cart.vue'
 import Profile from '@/components/Profile.vue'
+
+import { LOAD_USER_INFO, LOAD_ROUND_INFO, LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 import {
-  LOAD_USER_INFO,
-  LOAD_ROUND_INFO,
-} from '@/store/action-types'
+  SET_RECIPIENT_REGISTRY_ADDRESS,
+  SET_RECIPIENT_REGISTRY_INFO,
+} from '@/store/mutation-types'
 
 @Component({
   name: 'clr.fund',
@@ -75,8 +81,20 @@ export default class App extends Vue {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)
     setInterval(() => {
+      this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+    }, 60 * 1000)
+    setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)
+  }
+
+  // TODO commit() approach? Or dispatch() on interval?
+  async mounted() {
+    const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+    const registryAddress = this.$store.state.recipientRegistryAddress || await getRecipientRegistryAddress(roundAddress)
+    this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
+    const registryInfo = this.$store.state.recipientRegistryInfo || await getRegistryInfo(registryAddress)
+    this.$store.commit(SET_RECIPIENT_REGISTRY_INFO, registryInfo)
   }
 
   toggleNavBar() {
