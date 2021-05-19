@@ -2,9 +2,12 @@
   <div class="project-container">
     <div class="projects">        
       <div class="title">
-        <div>
+        <div class="header">
           <h2>Projects</h2>
           <!-- <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p> -->
+          <div class="mobile">
+            <router-link to="/join" class="btn-primary">Add project</router-link>
+          </div>
         </div>
         <div class="action-bar">
           <select class="filter" id="filter">
@@ -25,7 +28,9 @@
               onfocus="this.value=''" 
             >
           </div>
-          <router-link to="/join" class="btn-primary">Add project</router-link>
+          <div class="desktop">
+            <router-link to="/join" class="btn-primary">Add project</router-link>
+          </div>
         </div>
       </div>
       <!-- <h1 class="content-heading">Projects</h1> -->
@@ -297,21 +302,34 @@ export default class ProjectList extends Vue {
   flex: 1;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @media (max-width: $breakpoint-m) {
+  width: 100%;
+  }
+}
+
 .title {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 1.5rem;
+  align-items: center;
   border-bottom: 1px solid rgba(115,117,166,1); 
   margin-bottom: 2rem;
   @media (max-width: $breakpoint-m) {
-    flex-direction: column-reverse;
+    flex-direction: column;
+    border-bottom: 0;
+    padding-bottom: 0;
+    margin-bottom: 1.5rem;
   }
 
   h2 {
     line-height: 130%;
-    margin-bottom: 0.5rem;
+    /* margin-bottom: 0.5rem; */
     @media (max-width: $breakpoint-m) {
       width: 100%;
+      margin-bottom: 1rem;
     }
   }
 
@@ -319,13 +337,18 @@ export default class ProjectList extends Vue {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
-    align-items: flex-end;
+    align-items: center;
     gap: 1rem;
     @media (max-width: $breakpoint-m) {
       width: 100%;
-      align-items: flex-end;
-      flex-direction: column;
+      align-items: center;
+      flex-direction: row;
       gap: 1rem;
+      border-top: 1px solid rgba(115,117,166,1); 
+      padding-top: 1.5rem;
+      margin-top: 1rem;
+      justify-content: space-between;
+
     }
   }
 }
