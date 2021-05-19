@@ -31,7 +31,8 @@ import { BigNumber } from 'ethers'
 import { DateTime } from 'luxon'
 import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
 
-@Component export default class RoundStatusBanner extends Vue {
+@Component
+export default class RoundStatusBanner extends Vue {
   isLoading = true
   recipientCount: number | null = null
   spacesRemaining: number | null = null

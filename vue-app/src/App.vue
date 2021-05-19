@@ -26,14 +26,20 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 
-import { recipientRegistryType } from '@/api/core'
+import { getCurrentRound } from '@/api/round'
+import { getRecipientRegistryAddress } from '@/api/projects'
+import { getRegistryInfo } from '@/api/recipient-registry-optimistic'
 // import Cart from '@/components/Cart.vue'
 // import WalletWidget from '@/components/WalletWidget.vue'
 import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
 import Cart from '@/components/Cart.vue'
 
-import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
+import { LOAD_USER_INFO, LOAD_ROUND_INFO, LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
+import {
+  SET_RECIPIENT_REGISTRY_ADDRESS,
+  SET_RECIPIENT_REGISTRY_INFO,
+} from '@/store/mutation-types'
 
 @Component({
   name: 'clr.fund',
@@ -52,6 +58,7 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 export default class App extends Vue {
   created() {
     this.$store.dispatch(LOAD_ROUND_INFO) // TODO confirm we should fetch this info immediately
+    this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO) // TODO confirm we should fetch this info immediately
     this.$store.dispatch(LOAD_USER_INFO) // TODO confirm we should fetch this info immediately
 
     // TODO clearInterval on unmount
@@ -59,8 +66,20 @@ export default class App extends Vue {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)
     setInterval(() => {
+      this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+    }, 60 * 1000)
+    setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)
+  }
+
+  // TODO commit() approach? Or dispatch() on interval?
+  async mounted() {
+    const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+    const registryAddress = this.$store.state.recipientRegistryAddress || await getRecipientRegistryAddress(roundAddress)
+    this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
+    const registryInfo = this.$store.state.recipientRegistryInfo || await getRegistryInfo(registryAddress)
+    this.$store.commit(SET_RECIPIENT_REGISTRY_INFO, registryInfo)
   }
 
   get isInApp(): boolean {
