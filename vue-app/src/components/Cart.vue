@@ -437,6 +437,9 @@ p.no-margin {
     z-index: 2;
     height: 100%;
     padding: 1rem 0;
+    @media (max-width: $breakpoint-m) {
+    padding-bottom: 4rem;
+    }
   }
 
   .balance {

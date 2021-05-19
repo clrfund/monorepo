@@ -212,7 +212,6 @@ summary:focus {
   height: calc(100vh - 61.5px);
   background: $bg-primary-color;
   overflow-x: clip;
-  padding-bottom: 4rem;
   /* overflow-y: scroll; */
 }
 
@@ -294,6 +293,7 @@ summary:focus {
 
 #content {
   flex: 1;
+  padding-bottom: 4rem;
   
   .content-heading {
     display: block;

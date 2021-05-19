@@ -363,7 +363,9 @@ export default class RoundInformation extends Vue {
   align-items: center;
   gap: 1.5rem;
   margin-top: 1rem;
-
+  @media (max-width: $breakpoint-m) {
+    padding-bottom: 4rem;
+  }
 }
 
 .round-value-info {

@@ -287,6 +287,7 @@ export default class ProjectList extends Vue {
   display: flex;
   @media (max-width: $breakpoint-m) {
     flex-direction: column-reverse;
+    padding-bottom: 4rem;
   }
 }
 
