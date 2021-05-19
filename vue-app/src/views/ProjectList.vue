@@ -128,7 +128,7 @@ import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { RoundInfo, getCurrentRound } from '@/api/round'
+import { RoundInfo, getCurrentRound, TimeLeft } from '@/api/round'
 import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
 
 import ProjectListItem from '@/components/ProjectListItem.vue'
@@ -160,12 +160,6 @@ function shuffleArray(array: any[]) {
     const j = Math.floor(random(SHUFFLE_RANDOM_SEED, i) * (i + 1))
     ;[array[i], array[j]] = [array[j], array[i]]
   }
-}
-
-interface TimeLeft {
-  days: number;
-  hours: number;
-  minutes: number;
 }
 
 function timeLeft(date: DateTime): TimeLeft {

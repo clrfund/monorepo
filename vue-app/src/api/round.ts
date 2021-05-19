@@ -31,6 +31,12 @@ export interface RoundInfo {
   messages: number;
 }
 
+export interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+}
+
 export enum RoundStatus {
   Contributing = 'Contributing',
   Reallocating = 'Reallocating',

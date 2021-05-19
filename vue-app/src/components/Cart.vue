@@ -222,6 +222,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
+import { Network } from '@ethersproject/networks'
 import { parseFixed } from '@ethersproject/bignumber'
 import { commify, formatUnits } from '@ethersproject/units'
 import { DateTime } from 'luxon'
@@ -242,7 +243,7 @@ import {
   CartItem,
 } from '@/api/contributions'
 import { userRegistryType, provider as jsonRpcProvider } from '@/api/core'
-import { RoundStatus } from '@/api/round'
+import { RoundStatus, TimeLeft } from '@/api/round'
 import {
   LOAD_USER_INFO,
   LOAD_CART,
