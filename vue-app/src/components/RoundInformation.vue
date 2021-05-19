@@ -354,7 +354,7 @@ export default class RoundInformation extends Vue {
 .round-info {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 1.5rem;
   margin-top: 1rem;
   @media (max-width: $breakpoint-m) {
@@ -363,11 +363,19 @@ export default class RoundInformation extends Vue {
 }
 
 .round-value-info {
-  display: flex;
-  flex-wrap: wrap;
+  width: 100%;
+  display: grid;
   align-items: center;
-    margin-bottom: 3rem;
-  
+  margin-bottom: 3rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+
+  &>div {
+    box-shadow: inset 0px -1px 0px #7375A6;
+    &:last-of-type {
+      box-shadow: none; 
+    }
+  }
 }
 
 .round-value-info-item {
@@ -377,9 +385,6 @@ export default class RoundInformation extends Vue {
   align-items: center;
   background: $bg-light-color;
   padding: 1rem;
-  border-radius: 0.5rem;
-  border-radius: 0.5rem 0.5rem 0rem 0rem;
-  box-shadow: inset 0px -1px 0px #7375A6; 
 }
 
 .round-info-item {
@@ -390,18 +395,12 @@ export default class RoundInformation extends Vue {
   align-items: flex-start;
   background: $bg-light-color;
   padding: 1rem;
-  border-radius: 0.5rem;
 }
 
 .round-info-sub-item {
   flex: 1 0 10%;
   background: $bg-secondary-color;
   padding: 1rem;
-  box-shadow: inset 0px -1px 0px #7375A6; 
-  &:last-child {
-      border-radius: 0 0 0.5rem 0.5rem;
-      box-shadow: none; 
-    }
 }
 
 .round-info-title {
@@ -527,5 +526,11 @@ export default class RoundInformation extends Vue {
   margin-bottom: 0.25rem; 
   font-size: 14px;
   color: $clr-green;
+}
+
+.status {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
 }
 </style>
