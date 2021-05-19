@@ -156,12 +156,12 @@
       </div>
       <!-- <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary"> -->
       <div class="p1">
-        <router-link to="/setup" v-if="canRegisterWithBrightId()" class="btn-primary" style="width: 100%;"> 
+        <router-link to="/setup" v-if="canRegisterWithBrightId()" class="btn-primary"> 
           Verify with BrightID
         </router-link>
         <div class="time-left">
           <div class="flex"><img src="@/assets/time.svg" /> Time left</div>
-          <div v-if="reallocationPhase">
+          <div v-if="reallocationPhase" class="flex">
             <div v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
             <div v-if="reallocationTimeLeft.days > 0">days</div>
             <div>{{ reallocationTimeLeft.hours }}</div>
@@ -169,7 +169,7 @@
             <div v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
             <div v-if="reallocationTimeLeft.days === 0">minutes</div>
           </div>
-          <div v-else>
+          <div v-else class="flex">
             <div v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
             <div v-if="contributionTimeLeft.days > 0">days</div>
             <div>{{ contributionTimeLeft.hours }}</div>
@@ -676,7 +676,7 @@ p.no-margin {
 .time-left {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   width: 100%;
   margin-top: 1rem;
 }
@@ -707,14 +707,12 @@ p.no-margin {
   flex-direction: column;
   width: 100%;
   background: $bg-secondary-color;
-  z-index: 3;
 }
 
 .empty-cart {
   font-size: 16px;
   font-weight: 400;
   margin: 1rem;
-  z-index: 3;
   padding: 1.5rem 1.5rem;
   background: $bg-secondary-color;
 
@@ -836,7 +834,6 @@ p.no-margin {
   color: black;
   padding: 0.125rem;
   width: 100%;
-  /* z-index: 100; */
 }
 
 .input {
@@ -897,7 +894,7 @@ p.no-margin {
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 4;
+  padding: 1rem;
 
   .submit-error {
     color: $warning-color;
@@ -909,12 +906,13 @@ p.no-margin {
 
 .p1 {
   padding: 1rem;
-  width: -webkit-fill-available;
+  width: 100%;
 }
 
 .mt1 {
   margin-top: 1rem;
   width: fit-content;
 }
+
 
 </style>

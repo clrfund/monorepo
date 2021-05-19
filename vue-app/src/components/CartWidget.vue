@@ -7,13 +7,23 @@
     }"
   >
     <button class="dropdown-btn" @click="toggleCart">
-        <img
+      <img
+        v-if="!showCartPanel"
+        alt="open"
+        width="16px"
+        src="@/assets/chevron-left.svg"
+      >
+      <img
         alt="cart"
         width="16px"
-        style="margin-right: 0.5rem"
         src="@/assets/cart.svg"
-        > 
-        Cart
+      > 
+      <img
+        v-if="showCartPanel"
+        alt="close"
+        width="16px"
+        src="@/assets/chevron-right.svg"
+      >
     </button>
     <cart v-if="showCartPanel" :toggleCart="toggleCart" class="desktop" />
     <div v-if="!showCartPanel" class="collapsed-cart desktop" />
@@ -199,7 +209,7 @@ export default class CartWidget extends Vue {
 .dropdown-btn {
   box-sizing: border-box;
   position: absolute;
-  top: 6rem;
+  top: 7rem;
   right: 0.5rem;
   z-index: 1;
   background: rgba(44,41,56,1);
@@ -213,6 +223,7 @@ export default class CartWidget extends Vue {
   display: flex;
   align-items: center;
   cursor: pointer;
+  gap: 0.5rem;
 }
 
 .provider-error {
