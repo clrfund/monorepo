@@ -9,11 +9,13 @@
       </div>
       <div class="flex-row">
         <h2 class="no-margin">Your cart</h2>
-          <div v-if="canRemoveItem() && !isCartEmpty && currentUser ">
+        <div v-if="!reallocationPhase">
+          <div v-if="canRemoveItem() && !isCartEmpty && currentUser">
             <img class="remove-icon" src="@/assets/remove.svg" />Remove all
           </div>
+        </div>
       </div>
-      <div v-if="reallocationPhase && currentUser">
+      <div class="reallocation-intro" v-if="reallocationPhase && currentUser">
         You’ve already contributed this round. If you add new projects to your cart now you can reallocate, but you’ll have to reduce funding for other projects.
       </div>
       <div class="cart">
@@ -45,6 +47,53 @@
           <p style="margin: 0;">Balance</p>
           <div style="display: flex;  align-items: center; gap: 0.5rem;"><img width="20px" src="@/assets/dai.svg" />{{ balance }}</div>
         </div> -->
+        <div class="new-items" v-if="reallocationPhase && currentUser">
+          <div class="flex-row-reallocation">
+            <div>New</div>
+            <div>Remove all</div>
+          </div>
+          <div v-for="item in filteredCart" class="new-cart-item" :key="item.id">
+            <div class="project">
+              <router-link
+                :to="{ name: 'project', params: { id: item.id }}"
+              >
+                <img class="project-image" :src="item.imageUrl" :alt="item.name">
+              </router-link>
+              <router-link
+                class="project-name"
+                :to="{ name: 'project', params: { id: item.id }}"
+              >
+                {{ item.name }}
+              </router-link>
+            </div>
+            <form class="contribution-form">
+              <div class="input-button">
+                <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
+                <input
+                  :value="item.amount"
+                  @input="updateAmount(item, $event.target.value)"
+                  class="input contribution-amount"
+                  :class="{ invalid: !isAmountValid(item.amount) }"
+                  :disabled="!canUpdateAmount()"
+                  name="amount"
+                  placeholder="Amount"
+                >
+                <!-- <div class="contribution-currency">{{ tokenSymbol }}</div> -->
+              </div>
+              <div
+                v-if="canRemoveItem()"
+                class="remove-cart-item"
+                @click="removeItem(item)"
+              >
+              <tooltip position="bottom" content="Remove project">
+                <div class="remove-icon-background">
+                  <img class="remove-icon" src="@/assets/remove.svg" />
+                </div>
+              </tooltip>
+              </div>
+            </form>
+          </div>
+        </div>
         <div class="flex-row-reallocation" v-if="reallocationPhase && currentUser">
           <div>Your contributions</div>
           <div>Edit</div>
@@ -109,15 +158,30 @@
       <div v-if="hasUnallocatedFunds()">
         Unallocated funds will be used as matching funding
       </div>
-      <div class="flex-row" style="gap: 0.5rem; margin-bottom: 2.5rem;">
-        <div class="profile-info-round">
-          <img src="@/assets/time.svg" />
-          <div>10 hours</div>
-      </div>
       <!-- <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary"> -->
-      <router-link to="/setup" v-if="canRegisterWithBrightId()" class="btn-primary"> 
-        Verify with BrightID
-      </router-link>
+      <div class="p1">
+        <router-link to="/setup" v-if="canRegisterWithBrightId()" class="btn-primary" style="width: 100%;"> 
+          Verify with BrightID
+        </router-link>
+        <div class="time-left">
+          <div class="flex"><img src="@/assets/time.svg" /> Time left</div>
+          <div v-if="reallocationPhase">
+            <div v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
+            <div v-if="reallocationTimeLeft.days > 0">days</div>
+            <div>{{ reallocationTimeLeft.hours }}</div>
+            <div>hours</div>
+            <div v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
+            <div v-if="reallocationTimeLeft.days === 0">minutes</div>
+          </div>
+          <div v-else>
+            <div v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
+            <div v-if="contributionTimeLeft.days > 0">days</div>
+            <div>{{ contributionTimeLeft.hours }}</div>
+            <div>hours</div>
+            <div v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
+            <div v-if="contributionTimeLeft.days === 0">minutes</div>
+          </div>
+        </div>
       </div>
       <!-- <div v-if="canBuyWxdai()" class="btn-primary">
         <a href="https://wrapeth.com/" target="_blank" rel="noopener">
@@ -190,6 +254,15 @@ import { formatAmount } from '@/utils/amounts'
 import { Prop } from 'vue-property-decorator'
 import { getNetworkName } from '@/utils/networks'
 
+function timeLeft(date: DateTime): TimeLeft {
+  const now = DateTime.local()
+  if (now >= date) {
+    return { days: 0, hours: 0, minutes: 0 }
+  }
+  const { days, hours, minutes } = date.diff(now, ['days', 'hours', 'minutes'])
+  return { days, hours, minutes: Math.ceil(minutes) }
+}
+
 @Component({
   components: { Tooltip, WalletWidget },
 })
@@ -198,7 +271,7 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   private showCartPanel: boolean | null = null
   profileImageUrl: string | null = null
-  reallocationPhase = false
+  reallocationPhase = true
   
   @Prop() toggleCart!: () => void
 
@@ -385,6 +458,14 @@ export default class Cart extends Vue {
     )
   }
 
+  get contributionTimeLeft(): TimeLeft {
+    return timeLeft(this.$store.state.currentRound.signUpDeadline)
+  }
+
+  get reallocationTimeLeft(): TimeLeft {
+    return timeLeft(this.$store.state.currentRound.votingDeadline)
+  }
+
   private isFormValid(): boolean {
     const invalidCount = this.cart.filter((item) => {
       return this.isAmountValid(item.amount) === false
@@ -429,7 +510,7 @@ export default class Cart extends Vue {
     } else if (currentUser.isVerified === null) {
       return '' // No error: waiting for verification check
     } else if (!currentUser.isVerified) {
-      return 'You must verify your account before you can contribute.'
+      return 'To contribute, you need to set up BrightID.'
     } else if (!this.isFormValid()) {
       return 'Please enter correct amounts'
     } else if (this.cart.length > MAX_CART_SIZE) {
@@ -574,7 +655,7 @@ p.no-margin {
     flex-direction: column;
     justify-content: space-between; */
     gap: 1rem;
-    z-index: 2;
+    /* z-index: 2; */
     height: 100%;
     padding: 1rem 0rem;
     @media (max-width: $breakpoint-m) {
@@ -590,12 +671,18 @@ p.no-margin {
     font-family: "Glacial Indifference", sans-serif;
   } 
 
+  .reallocation-intro {
+    padding: 1rem;
+    padding-top: 0rem;
+    margin-bottom: 1rem;
+  }
 
   .profile-info-round {
     display: flex;
-    gap: 0.5rem;
+    justify-content: space-between;
     align-items: center;
     padding: 0.5rem 0.5rem;
+    width: 100%;
   }
   
   .profile-info-balance img {
@@ -603,11 +690,31 @@ p.no-margin {
     width: 16px;
   }
 
+  .button-container {
+    width: 100%;
+    padding: 0rem 1rem;
+  }
+
+  .time-left {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1rem;
+
+  }
+
   .flex-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0rem 1rem;
+  }
+
+  .flex {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .flex-row-reallocation {
@@ -680,6 +787,15 @@ p.no-margin {
     }
   }
 
+  .new-cart-item {
+  padding: 1rem;
+  background: $clr-green-bg;
+  border-bottom: 1px solid #000000;
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
   .balance {
     padding: 1rem;
     background: $bg-primary-color;
@@ -741,7 +857,7 @@ p.no-margin {
     align-items: center;
     color: black;
     padding: 0.125rem;
-    z-index: 100;
+    /* z-index: 100; */
   }
 
   .input {
@@ -807,11 +923,14 @@ p.no-margin {
     .submit-error {
       color: $warning-color;
       margin: 1.5rem 0rem;
+      margin-bottom: 0rem;
       padding: 0 1.5rem;
-      &:before {
-        content: '⚠️  '
-      }
     }  
+  }
+
+  .p1 {
+    padding: 1rem;
+    width: -webkit-fill-available;
   }
 
 </style>
