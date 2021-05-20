@@ -12,7 +12,7 @@
         <cart-widget />
       </div>
     </div>
-    <mobile-tabs :class="{ hidden: isSidebarCollapsed, mobile: true }" />
+    <mobile-tabs v-if="!isSidebarCollapsedMobile" :class="{ hidden: isSidebarCollapsed, mobile: true  }" />
   </div>
 </template>
 
@@ -66,6 +66,11 @@ export default class App extends Vue {
 
   get isSidebarCollapsed(): boolean {
     const routes = ['landing', 'projectAdded', 'join', 'joinStep', 'round information']
+    return routes.includes(this.$route.name || '')
+  }
+
+  get isSidebarCollapsedMobile(): boolean {
+    const routes = ['landing', 'projectAdded', 'join', 'joinStep', 'setup']
     return routes.includes(this.$route.name || '')
   }
 

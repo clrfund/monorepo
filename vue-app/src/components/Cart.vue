@@ -268,7 +268,7 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   private showCartPanel: boolean | null = null
   profileImageUrl: string | null = null
-  reallocationPhase = true
+  reallocationPhase = false
   
   @Prop() toggleCart!: () => void
 
@@ -644,6 +644,7 @@ p.no-margin {
   right: 0;
   background: $bg-primary-color;
   width: 100%;
+  max-width: 400px; 
   gap: 1rem;
   height: 100%;
   padding: 1rem 0rem;
@@ -651,6 +652,7 @@ p.no-margin {
     padding-bottom: 4rem;
     padding-top: 2rem;
     width: 100%;
+    max-width: 100%;
   }
 }
 

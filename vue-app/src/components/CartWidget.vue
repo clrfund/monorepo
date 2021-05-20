@@ -216,8 +216,8 @@ export default class CartWidget extends Vue {
   right: 0;
   height: 100%;
   width: 3rem;
-  /* background: $bg-light-color; */
-  border-left: 1px solid $bg-light-color;
+  background: $bg-secondary-color;
+/*   border-left: 1px solid $bg-light-color; */
   z-index: 0;
 }
 
@@ -248,10 +248,12 @@ export default class CartWidget extends Vue {
   right: 0.5rem;
   border-radius: 0 0.5rem 0.5rem 0;
   width: fit-content;
+  background: $bg-primary-color;
   &:hover {
-  gap: 0.75rem;
+  gap: 1rem;
   padding-right: 0.25rem;
   margin-left: 0rem;
+  background: $bg-secondary-color;
   }
 }
 
@@ -314,7 +316,8 @@ export default class CartWidget extends Vue {
 }
 
 .cart-component {
-  padding-top: 3rem;
+  /* padding-top: 3rem; */
   border-left: 1px solid $bg-light-color;
+  height: 100%;
 }
 </style>
