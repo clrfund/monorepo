@@ -16,7 +16,7 @@
       <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex;  gap: 0.5rem">
-            <div class="round-info-title" style="margin-bottom: 0.5rem;">Time left to reallocate</div>
+            <div class="round-info-title">Time left to reallocate</div>
             <tooltip position="right" content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or inrease your overall total."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
           </div>
           <div
@@ -35,7 +35,7 @@
       <div v-if="currentRound.status === 'Contributing'" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex; gap: 0.5rem;">
-            <div class="round-info-title" style="margin-bottom: 0.5rem;">Time left to contribute</div>
+            <div class="round-info-title">Time left to contribute</div>
             <tooltip position="right" content="During this phase, you can contribute to your favourite projects."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
           </div>
         </div>
@@ -62,7 +62,7 @@
         <div class="round-value-info-item">
           <div style="width: 100%;">
             <div style="width: 100%; display: flex; gap: 0.5rem;">
-              <div class="round-info-title" style="margin-bottom: 0.5rem;">Total in round</div>
+              <div class="round-info-title">Total in round</div>
               <tooltip position="right" content="This total includes the funds in the matching pool and all contributions from the community."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
             </div>
             <div class="round-info-value">
@@ -74,7 +74,7 @@
         </div>
         <div class="round-info-sub-item">
             <div style="width: 100%; display: flex; gap: 0.5rem;">
-              <div class="round-info-title" style="margin-bottom: 0.5rem;">Matching pool</div>
+              <div class="round-info-title">Matching pool</div>
               <tooltip position="right" content="These are the funds that will be distributed to all the projects based on the contributions they receive from the community."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
               <div class="add-link">
                   <a 
@@ -102,7 +102,7 @@
           </div>
         <div class="round-info-sub-item">
           <div>
-            <div class="round-info-title" style="margin-bottom: 0.5rem;">
+            <div class="round-info-title">
               Contributions total
             </div>
             <div class="round-info-value">
@@ -114,7 +114,7 @@
         </div>
         <div class="round-info-sub-item">
             <div>
-              <div class="round-info-title" style="margin-bottom: 0.5rem;">
+              <div class="round-info-title">
                 Contributors
                 <a 
                   style="margin-bottom: 0;"
@@ -407,7 +407,7 @@ export default class RoundInformation extends Vue {
 
 .round-info-title {
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 120%;
   text-transform: uppercase;
@@ -415,6 +415,7 @@ export default class RoundInformation extends Vue {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 0.5rem;
 }
 
 .round-info-value {
@@ -503,7 +504,7 @@ export default class RoundInformation extends Vue {
   gap: $content-space;
 }
 
-@media (max-width: 1500px) {
+/* @media (max-width: 1500px) {
   .round-info-item:nth-child(2n) {
     break-after: always;
   }
@@ -512,7 +513,7 @@ export default class RoundInformation extends Vue {
     margin-bottom: $content-space / 2;
     font-size: 14px;
   }
-}
+} */
 
 .add-link {
   display: flex;
