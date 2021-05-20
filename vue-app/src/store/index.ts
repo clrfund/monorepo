@@ -18,6 +18,7 @@ import {
 import { recipientRegistryType } from '@/api/core'
 import { loginUser, logoutUser } from '@/api/gun'
 import { getRegistryInfo, RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
@@ -183,7 +184,8 @@ const actions = {
     }
   },
   async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
-    const recipientRegistryAddress = state.recipientRegistryAddress
+    const recipientRegistryAddress = state.recipientRegistryAddress || await getRecipientRegistryAddress(state.currentRoundAddress)
+    commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
     if (recipientRegistryAddress === null || recipientRegistryType !== 'optimistic') {
       commit(SET_RECIPIENT_REGISTRY_INFO, null)
       return
