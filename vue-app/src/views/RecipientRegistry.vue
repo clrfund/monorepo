@@ -1,5 +1,6 @@
 <template>
   <div class="recipients">
+    <div v-if="currentUser && isDeployerAddress">
     <h1 class="content-heading">Recipient registry</h1>
     <!-- <div v-if="registryInfo" class="submit-project">
       <div class="submit-project-info">
@@ -74,6 +75,12 @@
         </tr>
       </tbody>
     </table>
+    </div>
+    <div v-else>
+      <div style="font-size: 64px;" aria-label="hand">🤚</div>
+      <h2>Important ETH2 CLR business, EF-employees only!</h2>
+      <router-link class="btn-primary" to="/projects">Back to projects</router-link>
+    </div>
   </div>
 </template>
 
@@ -113,6 +120,8 @@ export default class RecipientRegistryView extends Vue {
   registryInfo: RegistryInfo | null = null
   requests: Request[] = []
   isLoading = true
+  currentUser = false
+  isDeployerAddress = false
 
   async created() {
     if (recipientRegistryType !== 'optimistic') {
