@@ -11,7 +11,7 @@
           </div>
         </div>
         <div class="action-bar">
-          <select class="filter" id="filter">
+          <select class="dropdown-btn" id="filter">
             <option selected disabled label="Filter by category" />
                     <option value="content">Content</option>
                     <option value="researcg">Research</option>
@@ -414,6 +414,12 @@ export default class ProjectList extends Vue {
   color: white;
   font-weight: 600;
   border: none;
+  &:hover {
+    background: $bg-secondary-color;
+  }
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+  }
 }
 
 .project-search {
@@ -428,7 +434,10 @@ export default class ProjectList extends Vue {
   line-height: 24px;
   letter-spacing: 0em;
   width: 160px;
-
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
   img {
     margin-right: 10px;
   }
