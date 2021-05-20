@@ -245,15 +245,15 @@ export default class CartWidget extends Vue {
 }
 
 .shift-left {
-  right: 0.5rem;
+  right: -1.5rem;
   border-radius: 0 0.5rem 0.5rem 0;
   width: fit-content;
   background: $bg-primary-color;
   &:hover {
-  gap: 1rem;
-  padding-right: 0.25rem;
-  margin-left: 0rem;
-  background: $bg-secondary-color;
+    gap: 1rem;
+    padding-right: 0.25rem;
+    margin-left: 0rem;
+    background: $bg-secondary-color;
   }
 }
 
@@ -319,5 +319,6 @@ export default class CartWidget extends Vue {
   /* padding-top: 3rem; */
   border-left: 1px solid $bg-light-color;
   height: 100%;
+  margin-left: 2rem;
 }
 </style>

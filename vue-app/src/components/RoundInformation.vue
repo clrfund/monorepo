@@ -358,6 +358,7 @@ export default class RoundInformation extends Vue {
   gap: 1.5rem;
   margin-top: 1rem;
   @media (max-width: $breakpoint-m) {
+    padding: 1rem;
     padding-bottom: 4rem;
   }
 }
