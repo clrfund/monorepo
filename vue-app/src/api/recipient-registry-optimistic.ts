@@ -43,10 +43,11 @@ enum RequestTypeCode {
 }
 
 export enum RequestStatus {
-  Submitted = 'Submitted',
+  Submitted = 'Needs review',
   Rejected = 'Rejected',
   Accepted = 'Accepted',
-  Executed = 'Executed',
+  Executed = 'Live',
+  Removed = 'Removed'
 }
 
 export interface RecipientApplicationData {

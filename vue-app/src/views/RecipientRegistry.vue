@@ -1,7 +1,7 @@
 <template>
   <div class="recipients">
     <h1 class="content-heading">Recipient registry</h1>
-    <div v-if="registryInfo" class="submit-project">
+    <!-- <div v-if="registryInfo" class="submit-project">
       <div class="submit-project-info">
         In order to become a recipient of funding, a project must go through a review process.
         <br>
@@ -14,15 +14,16 @@
       >
         Submit project
       </button>
-    </div>
+    </div> -->
     <loader v-if="isLoading"/>
-    <h2 v-if="requests.length > 0">Recent changes</h2>
+    <h2 v-if="requests.length > 0">Projects</h2>
     <table v-if="requests.length > 0" class="requests">
       <thead>
         <tr>
           <th>Project</th>
-          <th>Request type</th>
+          <th>Time left</th>
           <th>Status</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -34,7 +35,7 @@
               </a>
               {{ request.metadata.name }}
             </div>
-            <div class="project-description" v-html="renderDescription(request)"></div>
+            <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
             <details class="project-details">
               <summary>Additional info</summary>
               <div>Transaction: <code>{{ request.transactionHash }}</code></div>
@@ -43,7 +44,8 @@
               <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div>
             </details>
           </td>
-          <td>{{ request.type }}</td>
+          <!-- <td>{{ request.type }}</td> -->
+          <td> countdown</td> 
           <td>
             <template v-if="hasProjectLink(request)">
               <router-link
@@ -55,6 +57,19 @@
             <template v-else>
               {{ request.status }}
             </template>
+          </td>
+          <td v-if="hasProjectLink">
+            <div class="btn-warning">
+              Remove
+            </div>
+          </td>
+          <td v-if="!hasProjectLink" class="btn-row">
+            <div class="icon-btn">
+              <img src="@/assets/checkmark.svg" />
+            </div>
+            <div class="icon-btn">
+              <img src="@/assets/close.svg" />
+            </div>
           </td>
         </tr>
       </tbody>
@@ -68,7 +83,6 @@ import Component from 'vue-class-component'
 import { BigNumber } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
-
 import { recipientRegistryType } from '@/api/core'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import {
@@ -78,6 +92,7 @@ import {
   Request,
   getRegistryInfo,
   getRequests,
+  decodeProject,
 } from '@/api/recipient-registry-optimistic'
 import { getCurrentRound } from '@/api/round'
 import RecipientSubmissionModal from '@/components/RecipientSubmissionModal.vue'
@@ -169,6 +184,7 @@ export default class RecipientRegistryView extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
 
 .submit-project {
   border-bottom: $border;
@@ -214,6 +230,7 @@ h2 {
     padding: $content-space / 2;
     text-align: left;
     text-overflow: ellipsis;
+    
 
     &:nth-child(1) {
       width: auto;
@@ -245,6 +262,31 @@ h2 {
       margin-top: 10px;
     }
   }
+
+  .icon-btn {
+    line-height: 0;
+    margin: 0;
+    border-radius: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $bg-light-color;
+    cursor: pointer;
+    &:hover {
+      transform: scale(1.1);
+      opacity: 0.8;
+      background: $bg-light-color;
+    }
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
 }
 
 @media (max-width: 600px) {
