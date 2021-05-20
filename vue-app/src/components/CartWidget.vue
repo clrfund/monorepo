@@ -43,7 +43,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
-import Tooltip from '@/components/Tooltip'
+import Tooltip from '@/components/Tooltip.vue'
 import { provider as jsonRpcProvider } from '@/api/core'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import {
