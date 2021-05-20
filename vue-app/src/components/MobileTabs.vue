@@ -16,10 +16,10 @@
         width="16px"
       > 
       <div 
-        class="cart-indicator" 
-        v-if="!isCartEmpty" 
+        class="cart-indicator"
+        v-if="title === 'Cart' && !isCartEmpty" 
       >
-        {{ cartNumber }}
+        {{ cartItemTotal }}
       </div>
     </div>
       <span class="tab-title">{{ title }}</span>
@@ -31,8 +31,7 @@
 import Vue from 'vue'
 
 export default class MobileTabs extends Vue {
-  isCartEmpty = false
-  cartNumber = '8'
+  cartItemTotal = 8 // TODO: Replace with state data
   tabs = [
     {
       icon: 'timer.svg',
@@ -50,7 +49,11 @@ export default class MobileTabs extends Vue {
       to: '/cart',
     },
   ]
-  
+
+  get isCartEmpty(): boolean {
+    return this.cartItemTotal === 0
+  }
+
   get activeTab(): string {
     return this.$route.path
   }
@@ -106,6 +109,7 @@ export default class MobileTabs extends Vue {
 
 .icon {
   display: flex;
+  gap: 0.25rem;
 }
 
 .active {
