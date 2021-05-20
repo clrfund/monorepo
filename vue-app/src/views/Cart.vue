@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <router-link to="/projects" class="back desktop">Back to projects</router-link>
-    <cart :toggleCart="() => null" />
-  </div>
+  <cart :toggleCart="() => null" />
 </template>
 
 <script lang="ts">
@@ -11,16 +8,8 @@ import Component from 'vue-class-component'
 import Cart from '@/components/Cart.vue'
 
 @Component({ components: { Cart }})
-export default class CartView extends Vue {
-}
+export default class CartView extends Vue {}
 </script>
 
 <style lang="scss" scoped>
-.back {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 2rem 1rem 0;
-  text-decoration: underline;
-}
 </style>

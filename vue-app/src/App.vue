@@ -2,33 +2,31 @@
   <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
     <div id="content-container">
-      <div id="sidebar" :class="{ hidden: isSidebarCollapsed, desktop: true }">
+      <div id="sidebar" v-if="isSidebarShown" class="desktop">
           <round-information />
       </div>
-      <div id="content" :class="{ padded: !isSidebarCollapsed && !isCartPadding }">
+      <div id="content" :class="{ padded: isSidebarShown && !isCartPadding }">
+        <back-to-projects v-if="isProjectsLinkShown" />
         <router-view :key="$route.path" />
       </div>
-      <div id="cart" :class="{ hidden: isSideCartCollapsed, desktop: true }">
+      <div id="cart" v-if="isSideCartShown"  class="desktop">
         <cart-widget />
       </div>
     </div>
-    <mobile-tabs v-if="!isSidebarCollapsedMobile" :class="{ hidden: isSidebarCollapsed, mobile: true  }" />
+    <mobile-tabs v-if="isMobileTabsShown" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Watch } from 'vue-property-decorator'
 
-import { recipientRegistryType } from '@/api/core'
-// import Cart from '@/components/Cart.vue'
-// import WalletWidget from '@/components/WalletWidget.vue'
 import RoundInformation from '@/components/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
 import CartWidget from '@/components/CartWidget.vue'
 import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
+import BackToProjects from '@/components/BackToProjects.vue'
 
 import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 
@@ -44,7 +42,7 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
       },
     ],
   },
-  components: { RoundInformation, NavBar, Cart, MobileTabs, CartWidget },
+  components: { RoundInformation, NavBar, Cart, MobileTabs, CartWidget, BackToProjects },
 })
 export default class App extends Vue {
   created() {
@@ -64,25 +62,30 @@ export default class App extends Vue {
     return this.$route.name !== 'landing'
   }
 
-  get isSidebarCollapsed(): boolean {
+  get isSidebarShown(): boolean {
     const routes = ['landing', 'projectAdded', 'join', 'joinStep', 'round information']
-    return routes.includes(this.$route.name || '')
+    return !routes.includes(this.$route.name || '')
   }
 
-  get isSidebarCollapsedMobile(): boolean {
+  get isMobileTabsShown(): boolean {
     const routes = ['landing', 'projectAdded', 'join', 'joinStep', 'setup']
-    return routes.includes(this.$route.name || '')
+    return !routes.includes(this.$route.name || '')
   }
 
-  get isSideCartCollapsed(): boolean {
-    // Collapse side-cart on any page where sidebar is collapsed, and also on
-    // the `/cart` path since this natively displays the `Cart` component
-    return this.isSidebarCollapsed || this.$route.name === 'cart'
+  get isSideCartShown(): boolean {
+    // Show side-cart anytime sidebar is shown, except `/cart` path
+    return this.isSidebarShown && this.$route.name !== 'cart'
   }
 
   get isCartPadding(): boolean {
     const routes = ['cart']
     return routes.includes(this.$route.name || '')
+  }
+
+  get isProjectsLinkShown(): boolean {
+    // Provides explicit link back to "projects" section of the app
+    const routes = ['landing', 'projectAdded', 'join', 'joinStep', 'projects']
+    return !routes.includes(this.$route.name || '')
   }
 }
 </script>

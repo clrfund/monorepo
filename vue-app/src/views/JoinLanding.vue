@@ -7,6 +7,7 @@
     </div>  
   
     <round-status-banner />
+    <back-to-projects :isDesktopOnly="false" />
 
     <div class="content" v-if="isLoading">
       <h1>Fetching round data...</h1>
@@ -89,9 +90,10 @@ import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
 import { formatAmount } from '@/utils/amounts'
+import BackToProjects from '../components/BackToProjects.vue'
 
 @Component({
-  components: { RoundStatusBanner, CriteriaModal, Loader },
+  components: { RoundStatusBanner, CriteriaModal, Loader, BackToProjects },
 })
 export default class JoinLanding extends Vue {
   isLoading = true
