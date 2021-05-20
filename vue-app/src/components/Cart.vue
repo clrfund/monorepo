@@ -73,7 +73,7 @@
               </tooltip>
               </div>
             </div>
-            <form class="contribution-form">
+            <form class="contribution-form" id="edit">
               <div class="input-button">
                 <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
                 <input
@@ -90,9 +90,9 @@
             </form>
           </div>
         </div>
-        <div class="flex-row-reallocation" v-if="reallocationPhase && currentUser">
+        <div class="flex-row-reallocation" v-if="reallocationPhase && currentUser" id="readOnly">
           <div>Your contributions</div>
-          <div>Edit</div>
+          <div @click="handleEditState">Edit</div>
         </div>
         <div v-for="item in filteredCart" class="cart-item" :key="item.id">
           <div class="project">
@@ -268,13 +268,24 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   private showCartPanel: boolean | null = null
   profileImageUrl: string | null = null
-  reallocationPhase = false
+  reallocationPhase = true
   
   @Prop() toggleCart!: () => void
 
   private get cart(): CartItem[] {
     return this.$store.state.cart
   }
+
+  handleEditState(event): void {
+    const { id } = event.target
+    // Guard clause: 
+    if (
+      (!this.reallocationPhase && id === 'edit') ||
+      (this.reallocationPhase && id === 'readOnly')
+    ) return
+    this.reallocationPhase = !this.reallocationPhase
+  }
+
 
   get walletProvider(): any {
     return (window as any).ethereum
