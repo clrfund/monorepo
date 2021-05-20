@@ -6,6 +6,7 @@
           <h2>Projects</h2>
           <!-- <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p> -->
           <div class="mobile">
+            <!-- TODO: we should repeat mobile styling for this when showCartPanel = true -->
             <router-link to="/join" class="btn-primary">Add project</router-link>
           </div>
         </div>
@@ -182,6 +183,7 @@ export default class ProjectList extends Vue {
   projects: Project[] = []
   search = ''
   isLoading = true
+  private showCartPanel: boolean | null = null
 
   async created() {
     const roundAddress = this.$route.params.address || this.$store.state.currentRoundAddress || await getCurrentRound()
