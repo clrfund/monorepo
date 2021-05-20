@@ -6,31 +6,33 @@
       'collapsed-container': !showCartPanel,
     }"
   >
-    <button
-      :class="{
-        'toggle-btn': true,
-        'shift-left': showCartPanel,
-      }"
-      @click="toggleCart"
-    >
-      <img
-        v-if="!showCartPanel"
-        alt="open"
-        width="16px"
-        src="@/assets/chevron-left.svg"
+    <tooltip :position="showCartPanel ? 'right' : 'bottom'" :content="showCartPanel ? 'Close cart' : 'Cart'">
+      <div
+        :class="{
+          'toggle-btn': true,
+          'shift-left': showCartPanel,
+        }"
+        @click="toggleCart"
       >
-      <img
-        alt="cart"
-        width="16px"
-        src="@/assets/cart.svg"
-      > 
-      <img
-        v-if="showCartPanel"
-        alt="close"
-        width="16px"
-        src="@/assets/chevron-right.svg"
-      >
-    </button>
+        <img
+          v-if="!showCartPanel"
+          alt="open"
+          width="16px"
+          src="@/assets/chevron-left.svg"
+        >
+        <img
+          alt="cart"
+          width="16px"
+          src="@/assets/cart.svg"
+        > 
+        <img
+          v-if="showCartPanel"
+          alt="close"
+          width="16px"
+          src="@/assets/chevron-right.svg"
+        >
+      </div>
+    </tooltip>
     <cart v-if="showCartPanel" :toggleCart="toggleCart" class="desktop cart-component" />
     <div v-if="!showCartPanel" class="collapsed-cart desktop" />
   </div>
@@ -41,7 +43,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
-
+import Tooltip from '@/components/Tooltip'
 import { provider as jsonRpcProvider } from '@/api/core'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import {
@@ -58,7 +60,7 @@ import { sha256 } from '@/utils/crypto'
 import Cart from '@/components/Cart.vue'
 import { getNetworkName } from '@/utils/networks'
 
-@Component({components: {Cart}})
+@Component({components: {Cart, Tooltip}})
 export default class CartWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
@@ -201,7 +203,6 @@ export default class CartWidget extends Vue {
 
 .collapsed-container {
   height: 100%;
-  width: 5rem;
 }
 
 .cart {
@@ -223,23 +224,35 @@ export default class CartWidget extends Vue {
 .toggle-btn {
   box-sizing: border-box;
   position: relative;
-  top: 3rem;
+  margin-top: 3rem;
   z-index: 1;
-  background: rgba(44,41,56,1);
-  border: 1px solid rgba(115,117,166,0.3);
-  border-radius: 0.5rem;
-  padding: 0.25rem;
-  color: white;
-  margin-right: 0.5rem;
+  border-radius: 0.5rem 0 0 0.5rem;
   display: flex;
   font-size: 16px;
   align-items: center;
   cursor: pointer;
   gap: 0.5rem;
+  padding: 0.75rem 0.5rem;
+  background: $bg-primary-color;
+  color: white;
+  background: rgba(44,41,56,1);
+  border: 1px solid rgba(115,117,166,0.3);
+  &:hover {
+    background: $bg-secondary-color;
+    gap: 0.75rem;
+    margin-left: -0.25rem;
+  }
 }
 
 .shift-left {
   right: 0.5rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+  width: fit-content;
+  &:hover {
+  gap: 0.75rem;
+  padding-right: 0.25rem;
+  margin-left: 0rem;
+  }
 }
 
 .provider-error {
