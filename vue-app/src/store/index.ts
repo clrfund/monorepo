@@ -54,6 +54,7 @@ import {
 } from './mutation-types'
 
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
+import { DateTime } from 'luxon'
 
 Vue.use(Vuex)
 
@@ -328,19 +329,24 @@ const actions = {
 }
 
 const getters = {
+  recipientJoinDeadline: (state: RootState): DateTime | null => {
+    if (!state.currentRound || !state.recipientRegistryInfo) {
+      return null
+    }
+    return state.currentRound.signUpDeadline.minus({ seconds: state.recipientRegistryInfo.challengePeriodDuration })
+  },
   // During "join" phase:
   // - recipients can join
   // - users can only browse projects, add to cart & get verified
   // - time left until `signUpDeadline` > `challengePeriodDuration`
-  isRoundJoinPhase: (state: RootState): boolean => {
+  isRoundJoinPhase: (state: RootState, getters): boolean => {
     if (!state.currentRound) {
       return true
     }
     if (!state.recipientRegistryInfo) {
       return false
     }
-    const secondsFromDeadline = getSecondsFromNow(state.currentRound.signUpDeadline)
-    return secondsFromDeadline - state.recipientRegistryInfo.challengePeriodDuration > 0
+    return !hasDateElapsed(getters.recipientJoinDeadline)
   },
   recipientSpacesRemaining: (state: RootState): number | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
@@ -351,7 +357,6 @@ const getters = {
     return maxRecipients - recipientCount
   },
   isRecipientRegistryFull: (_, getters): boolean => {
-    console.log('getters.recipientSpacesRemaining: ', getters.recipientSpacesRemaining)
     return getters.recipientSpacesRemaining === 0
   },
   isRecipientRegistryFillingUp: (_, getters): boolean => {
@@ -361,26 +366,25 @@ const getters = {
   // - recipients cannot join
   // - users can only browse projects, add to cart & get verified
   // - time left until `signUpDeadline` < `challengePeriodDuration`
-  isRoundBufferPhase: (state, getters) => {
-    return !getters.isJoinPhase && !hasDateElapsed(state.currentRound.signUpDeadline)
+  isRoundBufferPhase: (state: RootState, getters): boolean => {
+    return !!state.currentRound && !getters.isJoinPhase && !hasDateElapsed(state.currentRound.signUpDeadline)
   },
-  isRoundContributionPhase: (state) => {
+  isRoundContributionPhase: (state: RootState): boolean => {
     return !!state.currentRound && state.currentRound.status === RoundStatus.Contributing
   },
-  // Contributions close in < 24 hours
-  isRoundContributionPhaseEnding: (state, getters): boolean => {
-    return getters.isRoundContributionPhase && getSecondsFromNow(state.currentRound.signUpDeadline) < 24 * 60 * 60
+  isRoundContributionPhaseEnding: (state: RootState, getters): boolean => {
+    return !!state.currentRound && getters.isRoundContributionPhase && getSecondsFromNow(state.currentRound.signUpDeadline) < 24 * 60 * 60
   },
-  isRoundReallocationPhase: (state) => {
+  isRoundReallocationPhase: (state: RootState): boolean => {
     return !!state.currentRound && state.currentRound.status === RoundStatus.Reallocating
   },
-  isRoundTallying: (state) => {
+  isRoundTallying: (state: RootState): boolean => {
     return !!state.currentRound && state.currentRound.status === RoundStatus.Tallying
   },
-  isRoundFinalized: (state) => {
+  isRoundFinalized: (state: RootState): boolean => {
     return !!state.currentRound && state.currentRound.status === RoundStatus.Finalized
   },
-  isRoundClosed: (state) => {
+  isRoundClosed: (state: RootState): boolean => {
     return !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
   },
 }
