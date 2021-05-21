@@ -117,7 +117,7 @@ import { markdown } from '@/utils/markdown'
   metaInfo() {
     return { title: (this as any).project?.name || '' }
   },
-  components: {Loader, ProjectProfile },
+  components: {Loader, ProjectProfile, RecipientRegistrationModal },
 })
 export default class ProjectView extends Vue {
 
