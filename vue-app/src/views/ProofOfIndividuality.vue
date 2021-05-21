@@ -35,7 +35,7 @@
             </div>
           </div>
           <button-row
-            v-bind:isJoin="false"
+            :isJoin="false"
             :isStepValid="isStepValid(currentStep)"
             :steps="steps"
             :currentStep="currentStep"
@@ -100,7 +100,12 @@
                     <img :src="appLinkQrCode" class="desktop qr-code">
                     <!-- TODO: connection should cause the QR code to appear -->
                     <p class="mobile">Follow this link to connect your wallet to your BrightID app</p>
-                    <a class="mobile" :href="appLink" target="_blank">{{ appLink }}</a>
+                    <a class="mobile" :href="appLink" target="_blank">
+                      <div class="icon">
+                        <img src="@/assets/bright-id.png" />
+                      </div>
+                      {{ appLink }}
+                    </a>
                     <p class="mobile"><em>This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.</em></p>
                 </div>
 
@@ -454,7 +459,7 @@ export default class IndividualityView extends mixins(validationMixin) {
     // }
 
   }
-  
+
   isStepValid(step: number): boolean {
     const stepName: string = this.steps[step]
     return !this.$v.form[stepName]?.$invalid
@@ -462,8 +467,22 @@ export default class IndividualityView extends mixins(validationMixin) {
 
   // TODO fetch verification data w/ BrightID - don't need furthest step
   isStepUnlocked(step: number): boolean {
-    return true
-    // return step <= this.form.furthestStep
+    switch (step) {
+    case 0:
+      // Connect
+      return true
+    case 1:
+      // Verify
+      return this.isVerified
+    case 2:
+      // Sponsor
+      return this.sponsoredBy.length > 0
+    case 3:
+      // Register
+      return this.registrationTxHash.length > 0
+    default:
+      return false
+    }
   }
 
   saveFormData(): void {
@@ -1212,5 +1231,18 @@ export default class IndividualityView extends mixins(validationMixin) {
 .mx0 {
   margin-left: 0;
   margin-right: 0;
+}
+
+.icon {
+  $icon-height: 5rem;
+  height: $icon-height;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  img {
+    width: $icon-height;
+    aspect-ratio: 1;
+  }
 }
 </style>
