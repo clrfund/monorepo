@@ -34,7 +34,9 @@
               <a :href="request.metadata.thumbnailImageUrl" target="_blank" rel="noopener">
                 <img class="project-image" :src="request.metadata.thumbnailImageUrl">
               </a>
-              {{ request.metadata.name }}
+              {{ request.metadata.name }} <router-link
+                :to="{ name: 'project', params: { id: request.recipientId }}"
+              >-></router-link>
             </div>
             <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
             <details class="project-details">
