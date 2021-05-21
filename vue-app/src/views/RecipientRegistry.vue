@@ -80,6 +80,49 @@
       <div style="font-size: 64px;" aria-label="hand">🤚</div>
       <h2>Important ETH2 CLR business, EF-employees only!</h2>
       <router-link class="btn-primary" to="/projects">Back to projects</router-link>
+      <table v-if="requests.length > 0" class="requests">
+      <thead>
+        <tr>
+          <th>Project</th>
+          <th>Time left</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
+          <td>
+            <div class="project-name">
+              <a :href="request.metadata.imageUrl" target="_blank" rel="noopener">
+                <img class="project-image" :src="request.metadata.imageUrl">
+              </a>
+              {{ request.metadata.name }}
+            </div>
+            <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
+            <details class="project-details">
+              <summary>Additional info</summary>
+              <div>Transaction: <code>{{ request.transactionHash }}</code></div>
+              <div>Project ID: <code>{{ request.recipientId }}</code></div>
+              <div>Recipient address: <code>{{ request.recipient }}</code></div>
+              <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div>
+            </details>
+          </td>
+          <!-- <td>{{ request.type }}</td> -->
+          <td> countdown</td> 
+          <td>
+            <template v-if="hasProjectLink(request)">
+              <router-link
+                :to="{ name: 'project', params: { id: request.recipientId }}"
+              >
+                {{ request.status }}
+              </router-link>
+            </template>
+            <template v-else>
+              {{ request.status }}
+            </template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
     </div>
   </div>
 </template>
