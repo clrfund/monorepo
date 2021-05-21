@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="cart-container">
     <div>
       <div class="flex-row">
         <h2 class="no-margin">Your cart</h2>
@@ -638,13 +638,11 @@ p.no-margin {
   margin: 0;
 }
 
-.container {
+.cart-container {
   box-sizing: border-box;
   position: relative;
   right: 0;
   background: $bg-primary-color;
-  width: 100%;
-  max-width: 400px; 
   gap: 1rem;
   height: 100%;
   padding: 1rem 0rem;

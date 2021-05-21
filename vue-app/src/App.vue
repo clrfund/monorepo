@@ -272,6 +272,11 @@ summary:focus {
   }
 }
 
+#cart {
+  height: 100%;
+  overflow-y: scroll;
+}
+
 #nav-menu {
   /* margin-left: 15%;
   padding: 50px 5% 0; */

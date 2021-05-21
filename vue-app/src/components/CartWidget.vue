@@ -6,11 +6,11 @@
       'collapsed-container': !showCartPanel,
     }"
   >
-    <tooltip :position="showCartPanel ? 'right' : 'bottom'" :content="showCartPanel ? 'Close cart' : 'Cart'">
+    <!-- <tooltip :position="showCartPanel ? 'right' : 'bottom'" :content="showCartPanel ? 'Close cart' : 'Cart'"> -->
       <div
         :class="{
           'toggle-btn': true,
-          'shift-left': showCartPanel,
+          'shifted': showCartPanel,
         }"
         @click="toggleCart"
       >
@@ -32,7 +32,7 @@
           src="@/assets/chevron-right.svg"
         >
       </div>
-    </tooltip>
+    <!-- </tooltip> -->
     <cart v-if="showCartPanel" :toggleCart="toggleCart" class="desktop cart-component" />
     <div v-if="!showCartPanel" class="collapsed-cart desktop" />
   </div>
@@ -196,8 +196,8 @@ export default class CartWidget extends Vue {
 @import '../styles/theme';
 
 .container {
+  position: relative;
   height: 100%;
-  width: minmax(300px, 100%);
   box-sizing: border-box;
 }
 
@@ -217,14 +217,13 @@ export default class CartWidget extends Vue {
   height: 100%;
   width: 3rem;
   background: $bg-secondary-color;
-/*   border-left: 1px solid $bg-light-color; */
   z-index: 0;
 }
 
 .toggle-btn {
   box-sizing: border-box;
   position: relative;
-  margin-top: 3rem;
+  top: 3rem;
   z-index: 1;
   border-radius: 0.5rem 0 0 0.5rem;
   display: flex;
@@ -233,9 +232,8 @@ export default class CartWidget extends Vue {
   cursor: pointer;
   gap: 0.5rem;
   padding: 0.75rem 0.5rem;
-  background: $bg-primary-color;
   color: white;
-  background: rgba(44,41,56,1);
+  background: rgba(44,41,56,1); 
   border: 1px solid rgba(115,117,166,0.3);
   &:hover {
     background: $bg-secondary-color;
@@ -244,11 +242,14 @@ export default class CartWidget extends Vue {
   }
 }
 
-.shift-left {
-  right: -1.5rem;
+.shifted {
+  position: absolute;
+  top: 3rem;
+  left: 1.5rem;
+  /* left: 0rem; */
   border-radius: 0 0.5rem 0.5rem 0;
   width: fit-content;
-  background: $bg-primary-color;
+  background: rgba(44,41,56,1); 
   &:hover {
     gap: 1rem;
     padding-right: 0.25rem;
@@ -316,9 +317,10 @@ export default class CartWidget extends Vue {
 }
 
 .cart-component {
-  /* padding-top: 3rem; */
+  padding-top: 5rem;
   border-left: 1px solid $bg-light-color;
   height: 100%;
   margin-left: 2rem;
+  background: $bg-secondary-color;
 }
 </style>
