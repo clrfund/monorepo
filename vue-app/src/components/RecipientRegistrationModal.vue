@@ -1,10 +1,7 @@
 <template>
-  <div class="new-modal-body">
+  <div class="modal-body">
     <div v-if="step === 1">
-      <div class="flex-row">
-        <h3>Register project</h3>
-        <div @click="$emit('close')"><img src="@/assets/close.svg" /></div>
-      </div>
+      <h3>Register project</h3>
       <transaction
         :hash="registrationTxHash"
         :error="registrationTxError"
@@ -69,26 +66,5 @@ export default class RecipientRegistrationModal extends Vue {
 
 .close-btn {
   margin-top: $modal-space;
-}
-
-.new-modal-body {
-  background: $bg-light-color;
-  box-shadow: $box-shadow;
-  padding: 1.5rem;
-  border-radius: 1rem;
-}
-
-.flex-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  img {
-    cursor: pointer;
-    &:hover {
-      transform: scale(1.1);
-      opacity: 0.8;
-    }
-  }
 }
 </style>

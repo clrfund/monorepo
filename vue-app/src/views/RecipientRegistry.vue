@@ -22,7 +22,7 @@
       <thead>
         <tr>
           <th>Project</th>
-          <th>Automatic acceptance date</th>
+          <th>Time left</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -31,26 +31,22 @@
         <tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
           <td>
             <div class="project-name">
-              <a :href="request.metadata.thumbnailImageUrl" target="_blank" rel="noopener">
-                <img class="project-image" :src="request.metadata.thumbnailImageUrl">
+              <a :href="request.metadata.imageUrl" target="_blank" rel="noopener">
+                <img class="project-image" :src="request.metadata.imageUrl">
               </a>
               {{ request.metadata.name }}
             </div>
             <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
             <details class="project-details">
               <summary>Additional info</summary>
-              
-              <div>Transaction: <code>{{ request.transactionHash }}</code><div class="icon"><img width="16px" src="@/assets/copy.svg" /></div></div>
-              <div>Project ID: <code>{{ request.recipientId }}</code><div class="icon"><img width="16px" src="@/assets/copy.svg" /></div></div>
-              <div>Recipient address: <code>{{ request.recipient }}</code><div class="icon"><img width="16px" src="@/assets/copy.svg" /></div></div>
+              <div>Transaction: <code>{{ request.transactionHash }}</code></div>
+              <div>Project ID: <code>{{ request.recipientId }}</code></div>
+              <div>Recipient address: <code>{{ request.recipient }}</code></div>
               <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div>
             </details>
           </td>
           <!-- <td>{{ request.type }}</td> -->
-          <td>
-            <div v-if="isPending(request)">{{ formatDate(request.acceptanceDate) }}</div>
-            <div v-if="!isPending(request)">Challenge period over</div>
-          </td> 
+          <td> countdown</td> 
           <td>
             <template v-if="hasProjectLink(request)">
               <router-link
@@ -63,15 +59,13 @@
               {{ request.status }}
             </template>
           </td>
-          <td v-if="!isPending(request)">
+          <td v-if="hasProjectLink">
             <div class="btn-warning">
               Remove
             </div>
           </td>
-          <td v-if="isPending(request)" class="btn-row">
-            <div class="icon-btn"
-              @click="register()"
-            >
+          <td v-if="!hasProjectLink" class="btn-row">
+            <div class="icon-btn">
               <img src="@/assets/checkmark.svg" />
             </div>
             <div class="icon-btn">
@@ -140,7 +134,7 @@ import { BigNumber } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 import { recipientRegistryType } from '@/api/core'
-import { Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
+import { getRecipientRegistryAddress } from '@/api/projects'
 import {
   RegistryInfo,
   RequestType,
@@ -156,7 +150,6 @@ import Loader from '@/components/Loader.vue'
 import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
-import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 
 @Component({
   name: 'recipient-registry',
@@ -170,8 +163,8 @@ export default class RecipientRegistryView extends Vue {
   registryInfo: RegistryInfo | null = null
   requests: Request[] = []
   isLoading = true
-  currentUser = true
-  isDeployerAddress = true
+  currentUser = false
+  isDeployerAddress = false
 
   async created() {
     if (recipientRegistryType !== 'optimistic') {
@@ -211,37 +204,6 @@ export default class RecipientRegistryView extends Vue {
     return (
       request.type === RequestType.Registration &&
       [RequestStatus.Executed, RequestStatus.Accepted].includes(request.status)
-    )
-  }
-
-  hasRegisterBtn(): boolean {
-    if (this.project === null) {
-      return false
-    }
-    if (recipientRegistryType === 'optimistic') {
-      return this.project.index === 0
-    }
-    return false
-  }
-
-  canRegister(): boolean {
-    return this.hasRegisterBtn() && this.$store.state.currentUser
-  }
-
-  register() {
-    this.$modal.show(
-      RecipientRegistrationModal,
-      { project: this.project },
-      { },
-      {
-        closed: async () => {
-          const project = await getProject(
-            this.$store.state.recipientRegistryAddress,
-            this.$route.params.id,
-          )
-          Object.assign(this.project, project)
-        },
-      },
     )
   }
 
@@ -323,34 +285,33 @@ h2 {
     
 
     &:nth-child(1) {
-      width: 25%;
+      width: auto;
       word-wrap: break-word;
     }
 
     &:nth-child(n + 2) {
-      width: 25%;
+      width: 100px;
     }
 
     .project-name {
       font-weight: 600;
-      margin-bottom: 0.5rem;
+      margin-bottom: 10px;
     }
 
     .project-image {
-      height: 1rem;
-      margin-right: 0.25rem;
+      height: 1.2em;
+      margin-right: 5px;
       vertical-align: middle;
     }
 
     .project-description ::v-deep {
       p, ul, ol {
-        margin: 0.5rem 0;
+        margin: 10px 0;
       }
     }
 
     .project-details {
-      margin-top: 0.5rem;
-      font-size: 14px;
+      margin-top: 10px;
     }
   }
 
