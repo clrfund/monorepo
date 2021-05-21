@@ -64,17 +64,20 @@
             </template>
           </td>
           <td v-if="!isPending(request)">
+            <div class="btn-secondary">
+              Add to round
+            </div>
             <div class="btn-warning">
               Remove
             </div>
           </td>
           <td v-if="isPending(request)" class="btn-row">
-            <div class="icon-btn"
+            <div class="icon-btn-approve"
               @click="register()"
             >
               <img src="@/assets/checkmark.svg" />
             </div>
-            <div class="icon-btn">
+            <div class="icon-btn-reject">
               <img src="@/assets/close.svg" />
             </div>
           </td>
@@ -207,6 +210,14 @@ export default class RecipientRegistryView extends Vue {
     return request.status === RequestStatus.Submitted
   }
 
+  isAccepted(request: Request): boolean {
+    return request.status === RequestStatus.Accepted
+  }
+
+  isExecuted(request: Request): boolean {
+    return request.status === RequestStatus.Executed
+  }
+
   hasProjectLink(request: Request): boolean {
     return (
       request.type === RequestType.Registration &&
@@ -299,14 +310,17 @@ h2 {
 }
 
 .requests {
-  border: $border;
+  border: 1px solid  #000;
+  border-radius: 0.5rem;
   border-spacing: 0;
   line-height: 150%;
   table-layout: fixed;
   width: 100%;
+  background-color: $bg-light-color;
 
   thead {
-    background-color: $bg-light-color;
+    background-color: $bg-primary-color;
+    border-radius: 6px;
   }
 
   tr {
@@ -328,7 +342,6 @@ h2 {
     }
 
     &:nth-child(n + 2) {
-      width: 25%;
     }
 
     .project-name {
@@ -354,7 +367,7 @@ h2 {
     }
   }
 
-  .icon-btn {
+  .icon-btn-approve {
     line-height: 0;
     margin: 0;
     border-radius: 0.5rem;
@@ -365,11 +378,30 @@ h2 {
     align-items: center;
     justify-content: center;
     border: 1px solid $bg-light-color;
+    background: $clr-green-bg600;
     cursor: pointer;
     &:hover {
       transform: scale(1.1);
       opacity: 0.8;
-      background: $bg-light-color;
+    }
+  }
+
+  .icon-btn-reject {
+    line-height: 0;
+    margin: 0;
+    border-radius: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $bg-light-color;
+    background: $error-color;
+    cursor: pointer;
+    &:hover {
+      transform: scale(1.1);
+      opacity: 0.8;
     }
   }
 

@@ -45,7 +45,7 @@ enum RequestTypeCode {
 export enum RequestStatus {
   Submitted = 'Needs review',
   Rejected = 'Rejected',
-  Accepted = 'Accepted',
+  Accepted = 'Needs adding',
   Executed = 'Live',
   Removed = 'Removed'
 }
