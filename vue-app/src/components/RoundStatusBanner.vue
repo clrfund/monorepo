@@ -6,10 +6,13 @@
           <span v-if="isContributionClosing" class="label">⌛️ The round will close in {{contributionTimeRemaining}}. Get your contributions in now! </span>
         </div>
         <div v-if="reallocationPhase" class="messsage">
-          <span class="label">The round is closed! If you contributed, you have {{reallocationTimeRemaining}} left to change your mind</span>        
+          <span class="label">Funding is closed! If you contributed, you have {{reallocationTimeRemaining}} left to change your mind</span>        
         </div>
-        <div v-if="userActionsOver" class="messsage">
-          <span class="label">The round is closed! Thanks everyone, watch out for a summary blog post soon</span>        
+        <div v-if="tallyingPhase" class="messsage">
+          <span class="label">🎉 Funding is closed! Our smart contracts are busy tallying final amounts... </span>
+        </div>
+        <div v-if="finalisedPhase" class="messsage">
+          <span class="label">Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds. <router-link to="/projects">View projects</router-link></span>
         </div>
         <div v-else class="messsage">
           <span class="label" v-if="joinPhase">Funding starts: {{contributionStart}} </span>
@@ -44,7 +47,8 @@ export default class RoundStatusBanner extends Vue {
   isContributionClosing = false
   reallocationPhase = false
   reallocationTimeRemaining = '3 days'
-  userActionsOver = true
+  tallyingphase = false
+  finalisedPhase = true
 
   // TODO fix on page refresh - `recipientRegistryAddress` is `null`
   // Refactor to computed properties, so we can react to having `recipientRegistryAddress`?
