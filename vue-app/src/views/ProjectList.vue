@@ -4,35 +4,33 @@
       <div class="title">
         <div class="header">
           <h2>Projects</h2>
-          <!-- <p style="line-height: 130%; margin: 0; ">Choose donation amounts for your favourite projects.</p> -->
-          <div class="mobile">
-            <!-- TODO: we should repeat mobile styling for this when showCartPanel = true -->
-            <router-link to="/join" class="btn-primary">Add project</router-link>
-          </div>
         </div>
-        <div class="action-bar">
+        <div class="category-filter">
           <select class="dropdown-btn" id="filter">
-            <option selected disabled label="Filter by category" />
-                    <option value="content">Content</option>
-                    <option value="researcg">Research</option>
-                    <option value="tooling">Tooling</option>
-                    <option value="data">Data</option>
+            <option selected value="" label="Filter by category" />
+            <option value="content">Content</option>
+            <option value="researcg">Research</option>
+            <option value="tooling">Tooling</option>
+            <option value="data">Data</option>
           </select>
-          <div v-if="projects.length > 0" class="project-search">
-            <img src="@/assets/search.svg">
-            <input
-              v-model="search"
-              class="input"
-              name="search"
-              placeholder="Search projects"
-              autocomplete="on"
-              onfocus="this.value=''" 
-            >
-          </div>
-          <div class="desktop">
-            <router-link to="/join" class="btn-primary">Add project</router-link>
-          </div>
         </div>
+        <div v-if="projects.length > 0" class="project-search">
+          <img src="@/assets/search.svg">
+          <input
+            v-model="search"
+            class="input"
+            name="search"
+            placeholder="Search projects"
+            autocomplete="on"
+            onfocus="this.value=''" 
+          >
+        </div>
+        <!-- <div class="action-bar">
+        </div> -->
+        <div class="add-project">
+          <router-link to="/join" class="btn-primary">Add project</router-link>
+        </div>
+        <div class="hr" />
       </div>
       <!-- <h1 class="content-heading">Projects</h1> -->
       <!-- <div v-if="currentRound" class="round-info">
@@ -299,21 +297,22 @@ export default class ProjectList extends Vue {
   flex: 1;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  @media (max-width: $breakpoint-m) {
-  width: 100%;
-  }
-}
-
 .title {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr repeat(3, auto);
+  grid-template-areas: "header filter search add" "hr hr hr hr";
   align-items: center;
-  border-bottom: 1px solid rgba(115,117,166,1); 
+  gap: 1rem;
   margin-bottom: 2rem;
+  
+  @media (max-width: $breakpoint-xl) {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "header add" "hr hr " "filter search";
+    border-bottom: none;
+  }
+  @media (max-width: $breakpoint-l) {
+    grid-template-areas: "header add" "hr hr" "search search" "filter filter";
+  }
   @media (max-width: $breakpoint-m) {
     flex-direction: column;
     border-bottom: 0;
@@ -321,32 +320,87 @@ export default class ProjectList extends Vue {
     margin-bottom: 1.5rem;
   }
 
-  h2 {
-    line-height: 130%;
-    /* margin-bottom: 0.5rem; */
+  .header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: auto;
+    @media (max-width: $breakpoint-xl) {
+      /* border-bottom: 1px solid rgba(115,117,166,1);  */
+    }
     @media (max-width: $breakpoint-m) {
-      width: 100%;
-      margin-bottom: 1rem;
+      h2 {
+        margin-bottom: 1rem;
+      }
+    }
+    h2 {
+      line-height: 130%;
+      margin: 0;
     }
   }
 
-  .action-bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 1rem;
-    @media (max-width: $breakpoint-m) {
-      width: 100%;
-      align-items: center;
-      flex-direction: row;
-      gap: 1rem;
-      border-top: 1px solid rgba(115,117,166,1); 
-      padding-top: 1.5rem;
-      margin-top: 1rem;
-      justify-content: space-between;
+  .add {
+    grid-area: add;
+  }
 
+  .category-filter {
+    grid-area: filter;
+    #filter {
+      font-size: 16px;
+      background: none;
+      color: white;
+      font-weight: 600;
+      /* border: none; */
+      margin: 0;
+      &:hover {
+        background: $bg-secondary-color;
+      }
     }
+    @media (max-width: $breakpoint-xl) {
+      margin-right: auto;
+    }
+  }
+
+
+  .project-search {
+    grid-area: search;
+    border-radius: 16px;
+    border: 2px solid $button-color;
+    background-color: $bg-secondary-color;
+    padding: 0.5rem 1rem;
+    display: flex;
+    font-size: 16px;
+    font-family: Inter;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0em;
+    width: 160px;
+    @media (max-width: $breakpoint-m) {
+      width: auto;
+      margin-top: 0.5rem;
+    }
+    img {
+      margin-right: 10px;
+    }
+
+    input {
+      background-color: transparent;
+      border: none;
+      font-size: 14px;
+      padding: 0;
+      width: 100%;
+
+      &::placeholder {
+        opacity: 1;
+      }
+    }
+  }
+
+  .hr {
+    grid-area: hr;
+    width: 100%;
+    border-bottom: 1px solid rgba(115,117,166,1);
   }
 }
 
@@ -405,53 +459,6 @@ export default class ProjectList extends Vue {
   img {
     height: 1.8em;
     vertical-align: middle;
-  }
-}
-
-.filter {
-  font-size: 16px;
-  background: none;
-  color: white;
-  font-weight: 600;
-  border: none;
-  &:hover {
-    background: $bg-secondary-color;
-  }
-  @media (max-width: $breakpoint-m) {
-    width: 100%;
-  }
-}
-
-.project-search {
-  border-radius: 16px;
-  border: 2px solid $button-color;
-  background-color: $bg-secondary-color;
-  padding: 0.5rem 1rem;
-  display: flex;
-  font-size: 16px;
-  font-family: Inter;
-  font-weight: 400;
-  line-height: 24px;
-  letter-spacing: 0em;
-  width: 160px;
-  @media (max-width: $breakpoint-m) {
-    width: 100%;
-    margin-top: 0.5rem;
-  }
-  img {
-    margin-right: 10px;
-  }
-
-  input {
-    background-color: transparent;
-    border: none;
-    font-size: 14px;
-    padding: 0;
-    width: 100%;
-
-    &::placeholder {
-      opacity: 1;
-    }
   }
 }
 
