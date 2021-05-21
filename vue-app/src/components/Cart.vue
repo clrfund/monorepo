@@ -23,7 +23,7 @@
             <div class="balance">{{ balance }}</div>
           </div>
         </div> -->
-        <div v-if="isCartEmpty" class="empty-cart">
+        <div v-if="isCartEmpty && contributionPhase" class="empty-cart">
           <div style="font-size: 64px;">🌚</div>
           <h3>Your cart is empty</h3>
           <div>Choose some projects that you want to contribute to...</div>
@@ -273,9 +273,9 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   private showCartPanel: boolean | null = null
   profileImageUrl: string | null = null
-  contributionPhase = true
-  reallocationPhase = false
-  userContributed = true
+  contributionPhase = false
+  reallocationPhase = true
+  userContributed = false
   tallyingPhase = false
   finalisationPhase = false
   
