@@ -42,6 +42,7 @@ export default class RoundStatusBanner extends Vue {
     }
     return '🎉 Funding is closed! Thanks everyone, watch out for a summary blog post soon'
   }
+
   get startDate(): string {
     return formatDate(this.$store.state.currentRound?.startTime)
   }
