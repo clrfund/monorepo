@@ -32,9 +32,15 @@ export default class RoundStatusBanner extends Vue {
         `🎉 The round is open! ${this.contributionTimeRemaining} left to contribute to your favourite projects`
     }
     if (this.$store.getters.isRoundReallocationPhase) {
-      return `The round is closed! If you contributed, you have ${this.reallocationTimeRemaining} left to change your mind`
+      return `Funding is closed! If you contributed, you have ${this.reallocationTimeRemaining} left to change your mind`
     }
-    return 'The round is closed! Thanks everyone, watch out for a summary blog post soon'
+    if (this.$store.getters.isRoundTallying) {
+      return '🎉 Funding is closed! Our smart contracts are busy tallying final amounts...'
+    }
+    if (this.$store.getters.isRoundFinalized) {
+      return 'Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds.'
+    }
+    return '🎉 Funding is closed! Thanks everyone, watch out for a summary blog post soon'
   }
   get startDate(): string {
     return formatDate(this.$store.state.currentRound?.startTime)
