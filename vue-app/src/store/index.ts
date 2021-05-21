@@ -17,6 +17,7 @@ import {
 } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { loginUser, logoutUser } from '@/api/gun'
+import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
@@ -52,7 +53,7 @@ import {
   SET_RECIPIENT_DATA,
 } from './mutation-types'
 
-import { getDifferenceFromNow, hasDateElapsed } from '@/utils/dates'
+import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 
 Vue.use(Vuex)
 
@@ -195,7 +196,8 @@ const actions = {
     }
   },
   async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
-    const recipientRegistryAddress = state.recipientRegistryAddress
+    const recipientRegistryAddress = state.recipientRegistryAddress || await getRecipientRegistryAddress(state.currentRoundAddress)
+    commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
     if (recipientRegistryAddress === null || recipientRegistryType !== 'optimistic') {
       commit(SET_RECIPIENT_REGISTRY_INFO, null)
       return
@@ -326,40 +328,60 @@ const actions = {
 }
 
 const getters = {
-  hasCurrentRound: state => !!state.currentRound,
-  hasRegistryInfo: state => !!state.registryInfo,
-  // i.e. "join" phase
-  isRecipientRegistryOpen: (state, getters) => {
-    if (!getters.hasCurrentRound) {
+  // During "join" phase:
+  // - recipients can join
+  // - users can only browse projects, add to cart & get verified
+  // - time left until `signUpDeadline` > `challengePeriodDuration`
+  isRoundJoinPhase: (state: RootState): boolean => {
+    if (!state.currentRound) {
       return true
     }
-    if (!getters.hasRegistryInfo) {
+    if (!state.recipientRegistryInfo) {
       return false
     }
-    // TODO confirm this math
-    const millisecondsFromDeadline = getDifferenceFromNow(state.currentRound.signUpDeadline)
-    return millisecondsFromDeadline -  state.registryInfo.challengePeriodDuration > 0
+    const secondsFromDeadline = getSecondsFromNow(state.currentRound.signUpDeadline)
+    return secondsFromDeadline - state.recipientRegistryInfo.challengePeriodDuration > 0
+  },
+  recipientSpacesRemaining: (state: RootState): number | null => {
+    if (!state.currentRound || !state.recipientRegistryInfo) {
+      return null
+    }
+    const maxRecipients = state.currentRound.maxRecipients
+    const recipientCount = state.recipientRegistryInfo.recipientCount
+    return maxRecipients - recipientCount
+  },
+  isRecipientRegistryFull: (_, getters): boolean => {
+    console.log('getters.recipientSpacesRemaining: ', getters.recipientSpacesRemaining)
+    return getters.recipientSpacesRemaining === 0
+  },
+  isRecipientRegistryFillingUp: (_, getters): boolean => {
+    return getters.recipientSpacesRemaining !== null && getters.recipientSpacesRemaining < 20
   },
   // During "buffer" phase:
   // - recipients cannot join
   // - users can only browse projects, add to cart & get verified
-  isBufferPhase: (state, getters) => {
-    return !getters.isRecipientRegistryOpen && !hasDateElapsed(state.currentRound.signUpDeadline)
+  // - time left until `signUpDeadline` < `challengePeriodDuration`
+  isRoundBufferPhase: (state, getters) => {
+    return !getters.isJoinPhase && !hasDateElapsed(state.currentRound.signUpDeadline)
   },
-  // During "contribution" phase:
-  // - recipients cannot join
-  // - users can make contributions
-  isContributionPhase: (state, getters) => {
-    // TODO implement
-    // TODO check `startTime`?
-    return getters.hasCurrentRound && !hasDateElapsed(state.currentRound.signUpDeadline)
+  isRoundContributionPhase: (state) => {
+    return !!state.currentRound && state.currentRound.status === RoundStatus.Contributing
   },
-  // During "reallocation" phase:
-  // - recipients cannot join
-  // - contributors can make reallocate
-  isReallocationPhase: (state, getters) => {
-    // TODO implement
-    return getters.hasCurrentRound && hasDateElapsed(state.currentRound.signUpDeadline) && !hasDateElapsed(state.currentRound.votingDeadline)
+  // Contributions close in < 24 hours
+  isRoundContributionPhaseEnding: (state, getters): boolean => {
+    return getters.isRoundContributionPhase && getSecondsFromNow(state.currentRound.signUpDeadline) < 24 * 60 * 60
+  },
+  isRoundReallocationPhase: (state) => {
+    return !!state.currentRound && state.currentRound.status === RoundStatus.Reallocating
+  },
+  isRoundTallying: (state) => {
+    return !!state.currentRound && state.currentRound.status === RoundStatus.Tallying
+  },
+  isRoundFinalized: (state) => {
+    return !!state.currentRound && state.currentRound.status === RoundStatus.Finalized
+  },
+  isRoundClosed: (state) => {
+    return !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
   },
 }
 

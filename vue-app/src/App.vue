@@ -4,15 +4,6 @@
     <div id="content-container">
       <div id="sidebar" :class="{ hidden: isSidebarCollapsed}">
           <round-information />
-          <!-- <router-link to="/">Home</router-link>
-          <router-link to="/projects">Projects</router-link>
-          <router-link to="/rounds">Rounds</router-link>
-          <router-link to="/recipients" v-if="hasRecipientRegistryLink()">Registry</router-link>
-          <router-link to="/about">About</router-link>
-          <router-link to="/join">Apply</router-link>
-          <a href="https://blog.clr.fund" target=_blank>Blog</a>
-          <a href="https://forum.clr.fund" target=_blank>Forum</a>
-          <a href="https://github.com/clrfund/monorepo/" target="_blank" rel="noopener">GitHub</a> -->
       </div>
       <div id="content" :class="{ padded: !isSidebarCollapsed }">
         <router-view :key="$route.path" />
@@ -24,22 +15,14 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Watch } from 'vue-property-decorator'
 
 import { getCurrentRound } from '@/api/round'
-import { getRecipientRegistryAddress } from '@/api/projects'
-import { getRegistryInfo } from '@/api/recipient-registry-optimistic'
-// import Cart from '@/components/Cart.vue'
-// import WalletWidget from '@/components/WalletWidget.vue'
+
 import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
 import Cart from '@/components/Cart.vue'
 
-import { LOAD_USER_INFO, LOAD_ROUND_INFO, LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
-import {
-  SET_RECIPIENT_REGISTRY_ADDRESS,
-  SET_RECIPIENT_REGISTRY_INFO,
-} from '@/store/mutation-types'
+import { LOAD_USER_INFO, LOAD_ROUND_INFO, LOAD_RECIPIENT_REGISTRY_INFO, SELECT_ROUND } from '@/store/action-types'
 
 @Component({
   name: 'clr.fund',
@@ -57,11 +40,7 @@ import {
 })
 export default class App extends Vue {
   created() {
-    this.$store.dispatch(LOAD_ROUND_INFO) // TODO confirm we should fetch this info immediately
-    this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO) // TODO confirm we should fetch this info immediately
-    this.$store.dispatch(LOAD_USER_INFO) // TODO confirm we should fetch this info immediately
-
-    // TODO clearInterval on unmount
+    // TODO clearInterval on unmount?
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)
@@ -73,13 +52,11 @@ export default class App extends Vue {
     }, 60 * 1000)
   }
 
-  // TODO commit() approach? Or dispatch() on interval?
   async mounted() {
     const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
-    const registryAddress = this.$store.state.recipientRegistryAddress || await getRecipientRegistryAddress(roundAddress)
-    this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
-    const registryInfo = this.$store.state.recipientRegistryInfo || await getRegistryInfo(registryAddress)
-    this.$store.commit(SET_RECIPIENT_REGISTRY_INFO, registryInfo)
+    await this.$store.dispatch(SELECT_ROUND, roundAddress)
+    this.$store.dispatch(LOAD_ROUND_INFO)
+    this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
   }
 
   get isInApp(): boolean {

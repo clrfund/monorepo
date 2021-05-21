@@ -1,23 +1,8 @@
 <template>
     <div id="banner" class="caps">
       <div class="marquee-content">
-        <div v-if="contributionPhase" class="messsage">
-          <span v-if="!isContributionClosing" class="label">🎉 The round is open! {{contributionTimeRemaining}} left to contribute to your favourite projects </span>
-          <span v-if="isContributionClosing" class="label">⌛️ The round will close in {{contributionTimeRemaining}}. Get your contributions in now! </span>
-        </div>
-        <div v-if="reallocationPhase" class="messsage">
-          <span class="label">The round is closed! If you contributed, you have {{reallocationTimeRemaining}} left to change your mind</span>        
-        </div>
-        <div v-if="userActionsOver" class="messsage">
-          <span class="label">The round is closed! Thanks everyone, watch out for a summary blog post soon</span>        
-        </div>
-        <div v-else class="messsage">
-          <span class="label" v-if="joinPhase">Funding starts: {{contributionStart}} </span>
-          <span class="date" v-if="joinPhase">🗓 {{startDate}}</span>
-          <span class="label" v-if="joinPhase">Time left to add a project: {{timeRemaining}}</span>
-          <span v-if="isRoundFillingUp && !isRoundFull && joinPhase">Hurry, only {{ spacesRemaining }} project spaces left</span>
-<!--           <span v-if="isRoundFull || joinPhase" class="label" >Project applications are closed</span>
- -->          <!-- TODO: signup deadline will have to be before the funding round starts or we'll run into complications -->
+        <div class="messsage">
+          <span class="label">{{ message }}</span>
         </div>
       </div>
     </div>
@@ -26,70 +11,51 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { formatDate, formatDateFromNow, hasDateElapsed } from '@/utils/dates'
-import { BigNumber } from 'ethers'
-import { DateTime } from 'luxon'
-import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
+import { formatDate, formatDateFromNow } from '@/utils/dates'
 
 @Component
 export default class RoundStatusBanner extends Vue {
-  isLoading = true
-  recipientCount: number | null = null
-  spacesRemaining: number | null = null
-  contributionStart = '3 days'
-  joinPhase = false
-  // This will probably be challenge period length...
-  contributionPhase = false
-  contributionTimeRemaining = '25 days'
-  isContributionClosing = false
-  reallocationPhase = false
-  reallocationTimeRemaining = '3 days'
-  userActionsOver = true
-
-  // TODO fix on page refresh - `recipientRegistryAddress` is `null`
-  // Refactor to computed properties, so we can react to having `recipientRegistryAddress`?
-  async created() {
-    const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
-    const maxRecipients = this.$store.state.currentRound.maxRecipients
-    this.recipientCount = registryInfo.recipientCount
-    this.spacesRemaining = maxRecipients - registryInfo.recipientCount
-    this.isLoading = false
-  }
-
-  private get signUpDeadline(): DateTime {
-    return this.$store.state.currentRound?.signUpDeadline
-  }
-
-  get timeRemaining(): string {
-    if (!this.signUpDeadline) {
-      return  '...'
+  get message(): string {
+    if (this.$store.getters.isRoundJoinPhase) {
+      let message = `Funding starts: 🗓 ${this.startDate}. `
+      if (this.$store.getters.isRecipientRegistryFull) {
+        message += 'Project applications are closed.'
+      } else if (this.$store.getters.isRecipientRegistryFillingUp){
+        message += `Hurry, only ${this.recipientSpacesRemainingString} left!`
+      } else {
+        message += `Time left to add a project: ${this.joinTimeRemaining}.`
+      }
+      return message
     }
-    return formatDateFromNow(this.signUpDeadline)
-  }
-
-  get isRoundClosed(): boolean {
-    if (!this.signUpDeadline) {
-      return  false
+    if (this.$store.getters.isRoundContributionPhase) {
+      return this.$store.getters.isRoundContributionPhaseEnding ?
+        `⌛️ The round will close in ${this.contributionTimeRemaining}. Get your contributions in now!` :
+        `🎉 The round is open! ${this.contributionTimeRemaining} left to contribute to your favourite projects`
     }
-    return hasDateElapsed(this.signUpDeadline)
-  }
-
-  get isRoundFull(): boolean {
-    if (this.spacesRemaining === null) {
-      return false
+    if (this.$store.getters.isRoundReallocationPhase) {
+      return `The round is closed! If you contributed, you have ${this.reallocationTimeRemaining} left to change your mind`
     }
-    return this.spacesRemaining === 0
+    // Round is closed
+    return 'The round is closed! Thanks everyone, watch out for a summary blog post soon'
   }
 
-  get isRoundFillingUp(): boolean {
-    if (this.spacesRemaining === null) {
-      return false
-    }
-    return this.spacesRemaining < 20
+  // TODO update to account for `challengePeriodDuration` buffer
+  get joinTimeRemaining(): string {
+    return formatDateFromNow(this.$store.state.currentRound?.startTime)
   }
 
-  get spacesRemainingString(): string {
-    return this.spacesRemaining === 1 ? '1 space' : `${this.spacesRemaining} spaces`
+  get contributionTimeRemaining(): string {
+    return formatDateFromNow(this.$store.state.currentRound?.signUpDeadline)
+  }
+
+  get reallocationTimeRemaining(): string {
+    return formatDateFromNow(this.$store.state.currentRound?.votingDeadline)
+  }
+
+  get recipientSpacesRemainingString(): string {
+    return this.$store.getters.recipientSpacesRemaining === 1 ?
+      `${this.$store.getters.recipientSpacesRemaining} project space` :
+      `${this.$store.getters.recipientSpacesRemaining} project spaces`
   }
 
   get startDate(): string {
