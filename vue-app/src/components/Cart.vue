@@ -273,8 +273,8 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   private showCartPanel: boolean | null = null
   profileImageUrl: string | null = null
-  contributionPhase = false
-  reallocationPhase = true
+  contributionPhase = true
+  reallocationPhase = false
   userContributed = false
   tallyingPhase = false
   finalisationPhase = false
