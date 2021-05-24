@@ -95,7 +95,7 @@ export default class App extends Vue {
 
   get isSideCartShown(): boolean {
     // Show side-cart anytime sidebar is shown, except `/cart` path
-    return this.isSidebarShown && this.$route.name !== 'cart' && this.currentUser
+    return this.isSidebarShown && this.$route.name !== 'cart' && !!this.currentUser
   }
 
   get isCartPadding(): boolean {
