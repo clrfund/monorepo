@@ -20,6 +20,12 @@
           width="16px"
           src="@/assets/chevron-left.svg"
         >
+        <div 
+          :class="[cart.length +- 0 ? 'circle pulse cart-indicator' : 'cart-indicator']"
+          v-if="!showCartPanel && !isCartEmpty" 
+        >
+        {{ cart.length }}
+        </div>
         <img
           alt="cart"
           width="16px"
@@ -79,6 +85,19 @@ export default class CartWidget extends Vue {
 
   toggleCart(): void {
     this.showCartPanel = !this.showCartPanel
+  }
+
+  private get cart(): CartItem[] {
+    return this.$store.state.cart
+  }
+
+  get isCartEmpty(): boolean {
+    return this.cart.length === 0
+  }
+
+  get filteredCart(): CartItem[] {
+    // Hide cleared items
+    return this.cart.filter((item) => !item.isCleared)
   }
 
   get walletProvider(): any {
@@ -201,6 +220,45 @@ export default class CartWidget extends Vue {
   box-sizing: border-box;
 }
 
+.cart-indicator {
+  border-radius: 2rem;
+  background: $clr-pink-light-gradient;
+  padding: 0.25rem;
+  font-size: 10px;
+  color: #fff;
+  line-height: 100%;
+  width: 8px;
+  height: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.open{
+  background: $clr-green;
+}
+
+.circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.pulse {
+  animation: pulse-animation 2s 1 ease-out;
+}
+
+@keyframes pulse-animation {
+  0% {
+    box-shadow: 0 0 0 0px $bg-primary-color;
+  }
+
+  100% {
+    box-shadow: 0 0 0 4px $clr-pink;
+
+  }
+}
+
 .collapsed-container {
   height: 100%;
 }
@@ -314,7 +372,7 @@ export default class CartWidget extends Vue {
     height: 16px;
     width: 16px;
   }
-}
+
 
 .cart-component {
   padding-top: 5rem;
@@ -323,4 +381,6 @@ export default class CartWidget extends Vue {
   margin-left: 2rem;
   background: $bg-secondary-color;
 }
+}
+
 </style>
