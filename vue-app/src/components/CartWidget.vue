@@ -6,31 +6,29 @@
       'collapsed-container': !$store.state.showCartPanel,
     }"
   >
-    <!-- <tooltip :position="$store.state.showCartPanel ? 'right' : 'bottom'" :content="$store.state.showCartPanel ? 'Close cart' : 'Cart'"> -->
-      <div
-        v-if="!$store.state.showCartPanel"
-        class="toggle-btn desktop"
-        @click="toggleCart"
+    <div
+      v-if="!$store.state.showCartPanel"
+      class="toggle-btn desktop"
+      @click="toggleCart"
+    >
+      <img
+        alt="open"
+        width="16px"
+        src="@/assets/chevron-left.svg"
       >
-        <img
-          alt="open"
-          width="16px"
-          src="@/assets/chevron-left.svg"
-        >
-        <div 
-          :class="[cart.length +- 0 ? 'circle pulse cart-indicator' : 'cart-indicator']"
-          v-if="!$store.state.showCartPanel && !isCartEmpty" 
-        >
-        {{ cart.length }}
-        </div>
-        <img
-          alt="cart"
-          width="16px"
-          src="@/assets/cart.svg"
-        > 
+      <div 
+        :class="[cart.length +- 0 ? 'circle pulse cart-indicator' : 'cart-indicator']"
+        v-if="!$store.state.showCartPanel && !isCartEmpty" 
+      >
+      {{ cart.length }}
       </div>
-    <!-- </tooltip> -->
-    <cart v-if="$store.state.showCartPanel" :toggleCart="toggleCart" class="desktop cart-component" />
+      <img
+        alt="cart"
+        width="16px"
+        src="@/assets/cart.svg"
+      > 
+    </div>
+    <cart v-if="$store.state.showCartPanel" :toggleCart="toggleCart" class="cart-component" />
     <div v-if="!$store.state.showCartPanel" class="collapsed-cart desktop" />
   </div>
 </template>
@@ -209,7 +207,6 @@ export default class CartWidget extends Vue {
   position: relative;
   height: 100%;
   box-sizing: border-box;
-  width: 400px;
 }
 
 .cart-indicator {
@@ -265,7 +262,7 @@ export default class CartWidget extends Vue {
   top: 0;
   right: 0;
   height: 100%;
-  width: 3rem;
+  width: $cart-width-closed;
   background: $bg-secondary-color;
   z-index: 0;
 }
@@ -273,7 +270,7 @@ export default class CartWidget extends Vue {
 .toggle-btn {
   box-sizing: border-box;
   position: relative;
-  top: 3rem;
+  top: $content-space;
   z-index: 1;
   border-radius: 0.5rem 0 0 0.5rem;
   display: flex;
@@ -366,13 +363,19 @@ export default class CartWidget extends Vue {
   }
 
 
-.cart-component {
-  padding-top: 5rem;
-  border-left: 1px solid $bg-light-color;
-  height: 100%;
-  margin-left: 2rem;
-  background: $bg-secondary-color;
-}
+  .cart-component {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    /* padding-top: 5rem; */
+    /* border-left: 1px solid $bg-light-color; */
+    /* height: 100%; */
+    /* margin-left: 2rem; */
+    /* background: $bg-secondary-color; */
+  }
 }
 
 </style>

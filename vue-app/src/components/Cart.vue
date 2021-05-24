@@ -6,27 +6,26 @@
     <wallet-widget :isActionButton="true" />
   </div>
   <div v-else class="cart-container">
-    <div>
-      <div class="flex-row">
-        <div v-if="showCollapseCart" @click="toggleCart" class="toggle-btn">
-          <img
-            alt="cart"
-            width="16px"
-            src="@/assets/cart.svg"
-          >
-          <img
-            alt="close"
-            width="16px"
-            src="@/assets/chevron-right.svg"
-          >
-        </div>
-        <h2 class="no-margin">Your cart</h2>
-        <div v-if="!reallocationPhase">
-          <div v-if="!isCartEmpty && (contributionPhase || reallocationPhase)">
-            <img class="remove-icon" src="@/assets/remove.svg" />Remove all
-          </div>
-        </div>
+    <div class="flex cart-title-bar">
+      <div v-if="showCollapseCart" @click="toggleCart" class="absolute-left dropdown-btn">
+        <img
+          alt="cart"
+          width="16px"
+          src="@/assets/cart.svg"
+        >
+        <img
+          alt="close"
+          width="16px"
+          src="@/assets/chevron-right.svg"
+        >
       </div>
+      <h2 class="no-margin center">Your cart</h2>
+      <div v-if="!isCartEmpty && (contributionPhase || reallocationPhase)" class="absolute-right dropdown-btn">
+        <!-- <img class="remove-icon" src="@/assets/remove.svg" />Remove all -->
+        <img @click="openDropdown()" src="@/assets/more.svg" />
+      </div>
+    </div>
+    <div>
       <div class="reallocation-intro" v-if="reallocationPhase && userContributed">
         You’ve already contributed this round. If you add new projects to your cart now you can reallocate, but you’ll have to reduce funding for other projects.
       </div>
@@ -658,10 +657,8 @@ p.no-margin {
 }
 
 .cart-container {
-  /* width: clamp(320px, 35%, 550px); */
   box-sizing: border-box;
   position: relative;
-  right: 0;
   background: $bg-primary-color;
   gap: 1rem;
   height: 100%;
@@ -669,12 +666,9 @@ p.no-margin {
   width: 100%;
   @media (max-width: $breakpoint-m) {
     padding: 4rem 4rem 2rem;
-    /* max-width: 100%; */
   }
   @media (max-width: $breakpoint-s) {
-    padding: 0;
-    /* width: 100%; */
-    /* max-width: 100%; */
+    padding: 1rem 0rem;
   }
 
 }
@@ -717,6 +711,12 @@ p.no-margin {
   margin-top: 1rem;
 }
 
+.cart-title-bar {
+  position: sticky;
+  top: 0;
+  background: $bg-primary-color;
+}
+
 .flex-row {
   display: flex;
   justify-content: space-between;
@@ -736,6 +736,21 @@ p.no-margin {
   align-items: center;
   padding: 0rem 1rem;
   margin: 1rem 0;
+}
+
+.center { 
+  width: 100%;
+  text-align: center;
+}
+
+.absolute-left {
+  position: absolute;
+  left: 0;
+}
+
+.absolute-right {
+  position: absolute;
+  right: 1rem;
 }
 
 .cart {
@@ -770,6 +785,8 @@ p.no-margin {
 .total-bar {
   display: flex;
   align-items: center;
+  position: sticky;
+  bottom: 0;
   padding: 1rem;
   justify-content: space-between;
   background: $bg-primary-color;

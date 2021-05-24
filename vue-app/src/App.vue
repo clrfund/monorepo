@@ -5,11 +5,18 @@
       <div id="sidebar" v-if="isSidebarShown" class="desktop-l">
           <round-information />
       </div>
-      <div id="content" :class="{ padded: isSidebarShown && !isCartPadding }">
+      <div
+        id="content"
+        :class="{
+          padded: isSidebarShown && !isCartPadding,
+          'mr-cart-open': isCartToggledOpen && isSideCartShown,
+          'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
+        }"
+      >
         <back-to-projects v-if="isProjectsLinkShown" />
         <router-view :key="$route.path" />
       </div>
-      <div id="cart" v-if="isSideCartShown"  class="desktop">
+      <div id="cart" v-if="isSideCartShown" :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`">
         <cart-widget />
       </div>
     </div>
@@ -22,6 +29,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { getCurrentRound } from '@/api/round'
+import { User } from '@/api/user'
 
 import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
@@ -67,6 +75,10 @@ export default class App extends Vue {
     this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
   }
 
+  private get currentUser(): User {
+    return this.$store.state.currentUser
+  }
+
   get isInApp(): boolean {
     return this.$route.name !== 'landing'
   }
@@ -83,7 +95,7 @@ export default class App extends Vue {
 
   get isSideCartShown(): boolean {
     // Show side-cart anytime sidebar is shown, except `/cart` path
-    return this.isSidebarShown && this.$route.name !== 'cart'
+    return this.isSidebarShown && this.$route.name !== 'cart' && this.currentUser
   }
 
   get isCartPadding(): boolean {
@@ -95,6 +107,10 @@ export default class App extends Vue {
     // Provides explicit link back to "projects" section of the app
     const routes = ['landing', 'projectAdded', 'join', 'joinStep', 'projects']
     return !routes.includes(this.$route.name || '')
+  }
+
+  get isCartToggledOpen(): boolean {
+    return this.$store.state.showCartPanel
   }
 }
 </script>
@@ -288,8 +304,20 @@ summary:focus {
 }
 
 #cart {
-  height: 100%;
+  position: fixed;
+  right: 0;
+  top: $nav-header-height;
+  bottom: 0;
+}
+
+.open-cart {
+  width: $cart-width-open;
   overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.closed-cart {
+  width: 4rem;
 }
 
 #nav-menu {
@@ -352,6 +380,20 @@ summary:focus {
 
 #content.padded {
   padding: $content-space;
+}
+
+#content.mr-cart-open {
+  margin-right: $cart-width-open;
+  @media (max-width: $breakpoint-m) {
+    margin-right: 0;
+  }
+}
+
+#content.mr-cart-closed {
+  margin-right: $cart-width-closed;
+  @media (max-width: $breakpoint-m) {
+    margin-right: 0;
+  }
 }
 
 .verified {
@@ -438,10 +480,6 @@ summary:focus {
     display: flex;
     align-items: center;
   }
-
-  /* #content {
-    margin-bottom: $profile-image-size + $content-space * 2; // profile offset
-  } */
 
   #footer {
     max-width: 100vw;
