@@ -29,12 +29,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { UPDATE_CART_ITEM, REMOVE_CART_ITEM, SAVE_CART } from '@/store/mutation-types'
-import {
-  MAX_CONTRIBUTION_AMOUNT,
-  MAX_CART_SIZE,
-  CartItem,
-} from '@/api/contributions'
+import { CartItem } from '@/api/contributions'
 
 export default class MobileTabs extends Vue {
   tabs = [

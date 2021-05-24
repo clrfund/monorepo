@@ -52,6 +52,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import Tooltip from '@/components/Tooltip.vue'
 import { provider as jsonRpcProvider } from '@/api/core'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
+import { CartItem } from '@/api/contributions'
 import {
   LOAD_USER_INFO,
   LOAD_CART,
