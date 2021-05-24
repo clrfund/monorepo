@@ -335,10 +335,6 @@ const getters = {
     }
     return state.currentRound.signUpDeadline.minus({ seconds: state.recipientRegistryInfo.challengePeriodDuration })
   },
-  // During "join" phase:
-  // - recipients can join
-  // - users can only browse projects, add to cart & get verified
-  // - time left until `signUpDeadline` > `challengePeriodDuration`
   isRoundJoinPhase: (state: RootState, getters): boolean => {
     if (!state.currentRound) {
       return true
@@ -347,6 +343,9 @@ const getters = {
       return false
     }
     return !hasDateElapsed(getters.recipientJoinDeadline)
+  },
+  isRoundJoinOnlyPhase: (state: RootState, getters): boolean => {
+    return !!state.currentRound && getters.isRoundJoinPhase && !hasDateElapsed(state.currentRound.startTime)
   },
   recipientSpacesRemaining: (state: RootState): number | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
@@ -362,10 +361,6 @@ const getters = {
   isRecipientRegistryFillingUp: (_, getters): boolean => {
     return getters.recipientSpacesRemaining !== null && getters.recipientSpacesRemaining < 20
   },
-  // During "buffer" phase:
-  // - recipients cannot join
-  // - users can only browse projects, add to cart & get verified
-  // - time left until `signUpDeadline` < `challengePeriodDuration`
   isRoundBufferPhase: (state: RootState, getters): boolean => {
     return !!state.currentRound && !getters.isJoinPhase && !hasDateElapsed(state.currentRound.signUpDeadline)
   },

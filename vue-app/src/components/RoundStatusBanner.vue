@@ -1,8 +1,24 @@
 <template>
     <div id="banner" class="caps">
       <div class="marquee-content">
-        <div class="messsage">
-          <span class="label">{{ message }}</span>
+        <div v-if="$store.getters.isJoinOnlyPhase" class="messsage">
+          <span class="label">Funding starts 🗓 {{startDate}}.</span>
+          <span v-if="$store.getters.isRecipientRegistryFull" class="label"> Project applications are closed.</span>
+          <span v-if="$store.getters.isRecipientRegistryFillingUp" class="label"> Hurry, only {{recipientSpacesRemainingString}} left! </span>
+          <span v-if="!$store.getters.isRecipientRegistryFull" class="label"> Time left to add a project: {{joinTimeRemaining}}.</span>
+        </div>
+        <div v-if="$store.getters.isRoundContributionPhase" class="messsage">
+          <span v-if="$store.getters.isRoundContributionPhaseEnding" class="label">⌛️ The round will close in {{contributionTimeRemaining}}. Get your contributions in now! </span>
+          <span v-else class="label">🎉 The round is open! {{contributionTimeRemaining}} left to contribute to your favourite projects </span>
+        </div>
+        <div v-if="$store.getters.isRoundReallocationPhase" class="messsage">
+          <span class="label">Funding is closed! If you contributed, you have {{reallocationTimeRemaining}} left to change your mind</span>
+        </div>
+        <div v-if="$store.getters.isRoundTallying" class="messsage">
+          <span class="label">🎉 Funding is closed! Our smart contracts are busy tallying final amounts... </span>
+        </div>
+        <div v-if="$store.getters.isRoundFinalized" class="messsage">
+          <span class="label">Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds. <router-link to="/projects">View projects</router-link></span>
         </div>
       </div>
     </div>
@@ -15,34 +31,6 @@ import { formatDate, formatDateFromNow } from '@/utils/dates'
 
 @Component
 export default class RoundStatusBanner extends Vue {
-  get message(): string {
-    if (this.$store.getters.isRoundJoinPhase) {
-      let message = `Funding starts: 🗓 ${this.startDate}. `
-      if (this.$store.getters.isRecipientRegistryFull) {
-        message += 'Project applications are closed.'
-      } else if (this.$store.getters.isRecipientRegistryFillingUp){
-        message += `Hurry, only ${this.recipientSpacesRemainingString} left! `
-      }
-      message += `Time left to add a project: ${this.joinTimeRemaining}.`
-      return message
-    }
-    if (this.$store.getters.isRoundContributionPhase) {
-      return this.$store.getters.isRoundContributionPhaseEnding ?
-        `⌛️ The round will close in ${this.contributionTimeRemaining}. Get your contributions in now!` :
-        `🎉 The round is open! ${this.contributionTimeRemaining} left to contribute to your favourite projects`
-    }
-    if (this.$store.getters.isRoundReallocationPhase) {
-      return `Funding is closed! If you contributed, you have ${this.reallocationTimeRemaining} left to change your mind`
-    }
-    if (this.$store.getters.isRoundTallying) {
-      return '🎉 Funding is closed! Our smart contracts are busy tallying final amounts...'
-    }
-    if (this.$store.getters.isRoundFinalized) {
-      return 'Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds.'
-    }
-    return '🎉 Funding is closed! Thanks everyone, watch out for a summary blog post soon'
-  }
-
   get startDate(): string {
     return formatDate(this.$store.state.currentRound?.startTime)
   }
