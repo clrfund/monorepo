@@ -159,30 +159,11 @@
       <div v-if="hasUnallocatedFunds()">
         Unallocated funds will be used as matching funding
       </div>
-      <!-- <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary"> -->
+      <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary"> -->
       <div class="p1">
         <router-link to="/setup" v-if="canRegisterWithBrightId()" class="btn-primary"> 
           Verify with BrightID
         </router-link>
-        <div class="time-left">
-          <div class="flex"><img src="@/assets/time.svg" /> Time left</div>
-          <div v-if="reallocationPhase" class="flex">
-            <div v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-            <div v-if="reallocationTimeLeft.days > 0">days</div>
-            <div>{{ reallocationTimeLeft.hours }}</div>
-            <div>hours</div>
-            <div v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-            <div v-if="reallocationTimeLeft.days === 0">minutes</div>
-          </div>
-          <div v-else class="flex">
-            <div v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
-            <div v-if="contributionTimeLeft.days > 0">days</div>
-            <div>{{ contributionTimeLeft.hours }}</div>
-            <div>hours</div>
-            <div v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
-            <div v-if="contributionTimeLeft.days === 0">minutes</div>
-          </div>
-        </div>
       </div>
       <!-- <div v-if="canBuyWxdai()" class="btn-primary">
         <a href="https://wrapeth.com/" target="_blank" rel="noopener">
@@ -212,6 +193,26 @@
           Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
         </template>
       </button>
+      <div class="time-left">
+          <div class="flex"><img src="@/assets/time.svg" /> Time left</div>
+          <div v-if="reallocationPhase" class="flex">
+            <div v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
+            <div v-if="reallocationTimeLeft.days > 0">days</div>
+            <div>{{ reallocationTimeLeft.hours }}</div>
+            <div>hours</div>
+            <div v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
+            <div v-if="reallocationTimeLeft.days === 0">minutes</div>
+          </div>
+          <div v-else class="flex">
+            <div v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
+            <div v-if="contributionTimeLeft.days > 0">days</div>
+            <div>{{ contributionTimeLeft.hours }}</div>
+            <div>hours</div>
+            <div v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
+            <div v-if="contributionTimeLeft.days === 0">minutes</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

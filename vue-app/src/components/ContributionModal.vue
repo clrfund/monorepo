@@ -1,18 +1,20 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 0">
-      <h3>Contributing</h3>
-      <div>
-        You are about to contribute {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} to {{ votes.length }} projects.
-        You can re-allocate contributed funds later to different projects but it is not possible to increase the total contribution amount.
-      </div>
+      <h2>Confirm {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} contribution</h2>
+      <p>Your <b>{{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }}</b> contribution total is final. You won't be able to increase this amount. Make sure this is the maximum you might want to spend on contributions.</p>
+      <!-- <p>
+        <em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
+      </p> -->
       <div class="btn-row">
-        <button class="btn" @click="$emit('close')">Go back</button>
-        <button class="btn" @click="contribute()">Continue</button>
+        <button class="btn-secondary" @click="$emit('close')">Cancel</button>
+        <button class="btn-primary" @click="contribute()">Continue</button>
       </div>
     </div>
     <div v-if="step === 1">
-      <h3>Step 1 of 3: Approve</h3>
+      <progress-bar currentStep="1" totalSteps="3" />
+      <h2>Approve {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }}</h2>
+      <p>This gives this app permission to withdraw 100 DAI from your wallet for your contribution.</p>
       <transaction
         :hash="approvalTxHash"
         :error="approvalTxError"
@@ -20,7 +22,9 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <h3>Step 2 of 3: Contribute</h3>
+      <progress-bar currentStep="2" totalSteps="3" />
+      <h2>Send {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} contribution</h2>
+      <p>This transaction sends out your {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} contribution to your chosen projects.</p>
       <transaction
         :hash="contributionTxHash"
         :error="contributionTxError"
@@ -28,7 +32,9 @@
       ></transaction>
     </div>
     <div v-if="step === 3">
-      <h3>Step 3 of 3: Vote</h3>
+      <progress-bar currentStep="3" totalSteps="3" />
+      <h2>Matching pool magic ✨</h2>
+      <p>This transaction lets the matching pool know how much {{ currentRound.nativeTokenSymbol }} to send to your favourite projects based on your contributions.</p>
       <transaction
         :hash="voteTxHash"
         :error="voteTxError"
@@ -42,7 +48,7 @@
         <br>
         You can reallocate contributed funds until {{ formatDate(currentRound.votingDeadline) }}.
       </div>
-      <button class="btn close-btn" @click="$emit('close')">OK</button>
+      <button class="btn-secondary" @click="$emit('close')">Close</button>
     </div>
   </div>
 </template>
@@ -62,12 +68,14 @@ import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
+import ProgressBar from '@/components/ProgressBar.vue'
 
 import { FundingRound, ERC20, MACI } from '@/api/abi'
 
 @Component({
   components: {
     Transaction,
+    ProgressBar,
   },
 })
 export default class ContributionModal extends Vue {
@@ -198,13 +206,27 @@ export default class ContributionModal extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
 
 .btn-row {
-  margin: $modal-space auto 0;
+  display: flex;
+  margin: 1rem 0;
+  margin-top: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 
   .btn {
     margin: 0 $modal-space;
   }
+}
+
+.modal-body {
+  text-align: left;
+  background: $bg-secondary-color;
+  border-radius: 1rem;
+  box-shadow: $box-shadow;
+  padding: 1.5rem;
 }
 
 .close-btn {
