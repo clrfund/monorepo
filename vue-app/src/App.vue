@@ -21,14 +21,16 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import RoundInformation from '@/components/RoundInformation.vue'
+import { getCurrentRound } from '@/api/round'
+
+import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
 import CartWidget from '@/components/CartWidget.vue'
 import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
 import BackToProjects from '@/components/BackToProjects.vue'
 
-import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
+import { LOAD_USER_INFO, LOAD_ROUND_INFO, LOAD_RECIPIENT_REGISTRY_INFO, SELECT_ROUND } from '@/store/action-types'
 
 @Component({
   name: 'clr.fund',
@@ -46,16 +48,23 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO } from '@/store/action-types'
 })
 export default class App extends Vue {
   created() {
-    this.$store.dispatch(LOAD_ROUND_INFO) // TODO confirm we should fetch this info immediately
-    this.$store.dispatch(LOAD_USER_INFO) // TODO confirm we should fetch this info immediately
-
-    // TODO clearInterval on unmount
+    // TODO clearInterval on unmount?
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)
     setInterval(() => {
+      this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+    }, 60 * 1000)
+    setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)
+  }
+
+  async mounted() {
+    const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+    await this.$store.dispatch(SELECT_ROUND, roundAddress)
+    this.$store.dispatch(LOAD_ROUND_INFO)
+    this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
   }
 
   get isInApp(): boolean {

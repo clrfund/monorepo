@@ -6,6 +6,7 @@
       >
         <div class="project-image">
           <img :src="projectImageUrl" :alt="project.name">
+          <div class="tag">{{ project.category }}</div>
         </div>
       </router-link>
       <div class="project-info">
@@ -16,7 +17,6 @@
           >
             {{ project.name }}
           </router-link>
-          <div class="tag">{{ project.category }}</div>
         </div>
         <router-link
           :to="{ name: 'project', params: { id: project.id }}"
@@ -286,6 +286,7 @@ export default class ProjectListItem extends Vue {
   align-items: center;
   overflow: hidden;
   box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+  position: relative;
 
   img {
     /* width: 100%; */
@@ -341,10 +342,14 @@ export default class ProjectListItem extends Vue {
 .tag {
   padding: 0.5rem 0.75rem;
   background: $bg-light-color;
+  box-shadow: $box-shadow;
   color: $button-disabled-text-color;
   font-family: 'Glacial Indifference', sans-serif;
   width: fit-content;
   border-radius: 4px; 
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
 }
 
 //TODO: make tag component?

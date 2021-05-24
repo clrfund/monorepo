@@ -13,7 +13,7 @@
           <div class="circle pulse open" /> Open
         </div>
       </div>
-      <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
+      <div v-if="currentRound.status === 'Reallocating'" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex;  gap: 0.5rem">
             <div class="round-info-title">Time left to reallocate</div>
@@ -49,6 +49,32 @@
           <div class="unit">hours</div>
           <div class="value" v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
           <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
+        </div>
+      </div>
+      <div v-if="currentRound.status === 'Tallying'" class="round-info-item">
+        <div style="width: 100%;">
+          <div style="width: 100%; display: flex;  gap: 0.5rem">
+            <div class="round-info-title" style="margin-bottom: 0.5rem;">Round status </div>
+            <tooltip position="right" content="Our smart contracts are busy figuring out final contribution amounts."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+          </div>
+          <div
+            class="round-info-value"
+          >
+          <div class="message">Tallying all contributions.</div>
+          </div>
+        </div>
+      </div>
+      <div v-if="currentRound.status === 'Finalised'" class="round-info-item">
+        <div style="width: 100%;">
+          <div style="width: 100%; display: flex;  gap: 0.5rem">
+            <div class="round-info-title" style="margin-bottom: 0.5rem;">Round status</div>
+            <tooltip position="right" content="If you're a project owner you can now claim your funds!"><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+          </div>
+          <div
+            class="round-info-value"
+          >
+          <div class="message">Contributions are ready to claim 🎉</div>
+          </div>
         </div>
       </div>
       <!-- <div class="round-info-item">
@@ -197,7 +223,6 @@ function timeLeft(date: DateTime): TimeLeft {
   },
 })
 export default class RoundInformation extends Vue {
-
   projects: Project[] = []
   search = ''
   isLoading = true
@@ -456,6 +481,15 @@ export default class RoundInformation extends Vue {
       margin-right: 0;
     }
   }
+}
+
+.message {
+    color: white;
+    font-family:'Glacial Indifference', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    line-height: 150%;
 }
 
 .add-matching-funds-btn {

@@ -15,15 +15,18 @@ import {
   getContributionAmount,
   isContributionWithdrawn,
 } from '@/api/contributions'
+import { recipientRegistryType } from '@/api/core'
 import { loginUser, logoutUser } from '@/api/gun'
+import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getEtherBalance, getTokenBalance } from '@/api/user'
-import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
+import { getRegistryInfo, RecipientApplicationData, RegistryInfo } from '@/api/recipient-registry-optimistic'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
+  LOAD_RECIPIENT_REGISTRY_INFO,
   LOAD_USER_INFO,
   SAVE_CART,
   LOAD_CART,
@@ -36,6 +39,7 @@ import {
 } from './action-types'
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
+  SET_RECIPIENT_REGISTRY_INFO,
   SET_CURRENT_USER,
   SET_CURRENT_ROUND_ADDRESS,
   SET_CURRENT_ROUND,
@@ -49,6 +53,9 @@ import {
   SET_RECIPIENT_DATA,
 } from './mutation-types'
 
+import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
+import { DateTime } from 'luxon'
+
 Vue.use(Vuex)
 
 interface RootState {
@@ -60,11 +67,11 @@ interface RootState {
   contributor: Contributor | null;
   contribution: BigNumber | null;
   recipientRegistryAddress: string | null;
+  recipientRegistryInfo: RegistryInfo | null;
   recipient: RecipientApplicationData | null;
 }
 
 const state: RootState = {
-  recipientRegistryAddress: null,
   currentUser: null,
   currentRoundAddress: null,
   currentRound: null,
@@ -72,12 +79,17 @@ const state: RootState = {
   cart: new Array<CartItem>(),
   contributor: null,
   contribution: null,
+  recipientRegistryAddress: null,
+  recipientRegistryInfo: null,
   recipient: null,
 }
 
 export const mutations = {
   [SET_RECIPIENT_REGISTRY_ADDRESS](state, address: string) {
     state.recipientRegistryAddress = address
+  },
+  [SET_RECIPIENT_REGISTRY_INFO](state, info: RegistryInfo) {
+    state.recipientRegistryInfo = info
   },
   [SET_CURRENT_USER](state, user: User | null) {
     state.currentUser = user
@@ -166,6 +178,7 @@ const actions = {
       commit(SET_CONTRIBUTOR, null)
       commit(CLEAR_CART)
       commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
+      commit(SET_RECIPIENT_REGISTRY_INFO, null)
       commit(SET_CURRENT_ROUND, null)
     }
     commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
@@ -182,6 +195,16 @@ const actions = {
       const tally = await getTally(roundAddress)
       commit(SET_TALLY, tally)
     }
+  },
+  async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
+    const recipientRegistryAddress = state.recipientRegistryAddress || await getRecipientRegistryAddress(state.currentRoundAddress)
+    commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
+    if (recipientRegistryAddress === null || recipientRegistryType !== 'optimistic') {
+      commit(SET_RECIPIENT_REGISTRY_INFO, null)
+      return
+    }
+    const info = await getRegistryInfo(recipientRegistryAddress)
+    commit(SET_RECIPIENT_REGISTRY_INFO, info)
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (state.currentRound && state.currentUser) {
@@ -305,10 +328,73 @@ const actions = {
   },
 }
 
+const getters = {
+  recipientJoinDeadline: (state: RootState): DateTime | null => {
+    if (!state.currentRound || !state.recipientRegistryInfo) {
+      return null
+    }
+    return state.currentRound.signUpDeadline.minus({ seconds: state.recipientRegistryInfo.challengePeriodDuration })
+  },
+  isRoundJoinPhase: (state: RootState, getters): boolean => {
+    if (!state.currentRound) {
+      return true
+    }
+    if (!state.recipientRegistryInfo) {
+      return false
+    }
+    return !hasDateElapsed(getters.recipientJoinDeadline)
+  },
+  isRoundJoinOnlyPhase: (state: RootState, getters): boolean => {
+    return !!state.currentRound && getters.isRoundJoinPhase && !hasDateElapsed(state.currentRound.startTime)
+  },
+  recipientSpacesRemaining: (state: RootState): number | null => {
+    if (!state.currentRound || !state.recipientRegistryInfo) {
+      return null
+    }
+    const maxRecipients = state.currentRound.maxRecipients
+    const recipientCount = state.recipientRegistryInfo.recipientCount
+    return maxRecipients - recipientCount
+  },
+  isRecipientRegistryFull: (_, getters): boolean => {
+    return getters.recipientSpacesRemaining === 0
+  },
+  isRecipientRegistryFillingUp: (_, getters): boolean => {
+    return getters.recipientSpacesRemaining !== null && getters.recipientSpacesRemaining < 20
+  },
+  isRoundBufferPhase: (state: RootState, getters): boolean => {
+    return !!state.currentRound && !getters.isJoinPhase && !hasDateElapsed(state.currentRound.signUpDeadline)
+  },
+  isRoundContributionPhase: (state: RootState): boolean => {
+    return !!state.currentRound && state.currentRound.status === RoundStatus.Contributing
+  },
+  isRoundContributionPhaseEnding: (state: RootState, getters): boolean => {
+    return !!state.currentRound && getters.isRoundContributionPhase && getSecondsFromNow(state.currentRound.signUpDeadline) < 24 * 60 * 60
+  },
+  isRoundReallocationPhase: (state: RootState): boolean => {
+    return !!state.currentRound && state.currentRound.status === RoundStatus.Reallocating
+  },
+  isRoundTallying: (state: RootState): boolean => {
+    return !!state.currentRound && state.currentRound.status === RoundStatus.Tallying
+  },
+  isRoundFinalized: (state: RootState): boolean => {
+    return !!state.currentRound && state.currentRound.status === RoundStatus.Finalized
+  },
+  isRoundClosed: (state: RootState): boolean => {
+    return !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
+  },
+  hasUserContributed: (state: RootState): boolean => {
+    return !!state.currentUser && !!state.contribution && !state.contribution.isZero()
+  },
+  canUserRellocate: (_, getters): boolean => {
+    return getters.hasUserContributed && (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
+  },
+}
+
 const store: StoreOptions<RootState> = {
   state,
   mutations,
   actions,
+  getters,
   modules: {},
 }
 

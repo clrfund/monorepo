@@ -193,16 +193,13 @@ export default class ProjectProfile extends Vue {
       }
 
       .address {
-        font-family: 'Glacial Indifference', sans-serif;
-        /* padding: 1rem; */
-        /* background: $bg-secondary-color; */
-        /* border: 1px solid #000; */
-        border-radius: 8px;
         display: flex;
-        align-items: center;
-        /* justify-content: space-between; */
-        gap: 0.5rem;
+        font-family: 'Glacial Indifference', sans-serif;
         font-weight: 600;
+        border-radius: 8px;
+        align-items: center;
+        gap: 0.5rem;
+        word-break: break-all;
       }
     }
 
