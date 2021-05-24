@@ -12,7 +12,7 @@ import { Prop } from 'vue-property-decorator'
 
 @Component
 export default class extends Vue {
-  @Prop() isDesktopOnly = true
+  @Prop() isDesktopOnly!: boolean
 }
 </script>
 

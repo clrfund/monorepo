@@ -219,6 +219,7 @@ export default class CartWidget extends Vue {
   position: relative;
   height: 100%;
   box-sizing: border-box;
+  width: 400px;
 }
 
 .cart-indicator {

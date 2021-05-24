@@ -1,5 +1,5 @@
 <template>
-  <div class="grid">
+  <div class="grid" v-if="project" >
     <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name">
     <project-profile class="details" :project="project" :previewMode="false" />
     <div class="sticky-column">  

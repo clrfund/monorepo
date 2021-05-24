@@ -1,18 +1,24 @@
 <template>
-  <div class="cart-container">
+<div>
+  <div v-if="!currentUser" class="empty-cart">
+    <div style="font-size: 64px;">🌚</div>
+    <h3>Connect to see your cart </h3>
+    <wallet-widget />
+  </div>
+  <div v-else class="cart-container">
     <div>
       <div class="flex-row">
         <h2 class="no-margin">Your cart</h2>
         <div v-if="!reallocationPhase">
-          <div v-if="canRemoveItem() && !isCartEmpty && currentUser && contributionPhase || reallocationPhase">
+          <div v-if="!isCartEmpty && (contributionPhase || reallocationPhase)">
             <img class="remove-icon" src="@/assets/remove.svg" />Remove all
           </div>
         </div>
       </div>
-      <div class="reallocation-intro" v-if="reallocationPhase && currentUser && userContributed">
+      <div class="reallocation-intro" v-if="reallocationPhase && userContributed">
         You’ve already contributed this round. If you add new projects to your cart now you can reallocate, but you’ll have to reduce funding for other projects.
       </div>
-      <div class="reallocation-intro" v-if="tallyingPhase && currentUser && userContributed || finalisationPhase && currentUser && userContributed ">
+      <div class="reallocation-intro" v-if="tallyingPhase &&  userContributed || finalisationPhase && userContributed ">
         This round is over. Here’s how you contributed. Thanks!
       </div>
       <div class="cart">
@@ -29,13 +35,6 @@
           <div>Choose some projects that you want to contribute to...</div>
           <router-link to="/projects" class="btn-secondary mobile mt1">See projects</router-link>
         </div>
-        <div v-if="canRemoveItem()">
-          <div v-if="!currentUser" class="empty-cart">
-            <div style="font-size: 64px;">🌚</div>
-            <h3>Connect to see your cart </h3>
-            <wallet-widget />
-          </div>
-        </div>
         <div v-if=" reallocationPhase && !userContributed || tallyingPhase && !userContributed || finalisationPhase && !userContributed" class="empty-cart">
           <div style="font-size: 64px;">🌚</div>
           <h3>Too late to donate</h3>
@@ -45,7 +44,7 @@
           <p style="margin: 0;">Balance</p>
           <div style="display: flex;  align-items: center; gap: 0.5rem;"><img width="20px" src="@/assets/dai.svg" />{{ balance }}</div>
         </div> -->
-        <div class="new-items" v-if="reallocationPhase && currentUser && userContributed && !tallingPhase && !contributionPhase">
+        <div class="new-items" v-if="reallocationPhase && userContributed && !tallingPhase && !contributionPhase">
           <div class="flex-row-reallocation">
             <div>New ✨</div>
             <div>Remove all</div>
@@ -64,7 +63,6 @@
                 {{ item.name }}
               </router-link>
               <div
-                v-if="canRemoveItem()"
                 class="remove-cart-item"
                 @click="removeItem(item)"
               >
@@ -78,7 +76,7 @@
             </div>
             <form v-if="contributionPhase || reallocationPhase && userContributed" class="contribution-form" id="edit">
               <div class="input-button">
-                <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
+                <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
                 <input
                   :value="item.amount"
                   @input="updateAmount(item, $event.target.value)"
@@ -93,11 +91,11 @@
             </form>
           </div>
         </div>
-        <div class="flex-row-reallocation" v-if="reallocationPhase && currentUser && userContributed || tallyingPhase && currentUser && userContributed || finalisationPhase && currentUser && userContributed" id="readOnly">
+        <div class="flex-row-reallocation" v-if="reallocationPhase && userContributed || tallyingPhase && userContributed || finalisationPhase && userContributed" id="readOnly">
           <div>Your contributions</div>
           <div @click="handleEditState" v-if="reallocationPhase">Edit</div>
         </div>
-        <div v-if="contributionPhase || reallocationPhase && currentUser && userContributed || tallyingPhase && currentUser && userContributed || finalisationPhase && currentUser && userContributed">
+        <div v-if="contributionPhase || reallocationPhase && userContributed || tallyingPhase && userContributed || finalisationPhase && userContributed">
           <div v-for="item in filteredCart" class="cart-item" :key="item.id">
             <div class="project">
               <router-link
@@ -112,15 +110,14 @@
                 {{ item.name }}
               </router-link>
               <div
-                v-if="canRemoveItem()"
                 class="remove-cart-item"
                 @click="removeItem(item)"
               >
-              <tooltip position="bottom" content="Remove project">
-                <div v-if="contributionPhase || reallocationPhase && userContributed" class="remove-icon-background">
-                  <img class="remove-icon" src="@/assets/remove.svg" />
-                </div>
-              </tooltip>
+                <tooltip position="bottom" content="Remove project">
+                  <div v-if="contributionPhase || (reallocationPhase && userContributed)" class="remove-icon-background">
+                    <img class="remove-icon" src="@/assets/remove.svg" />
+                  </div>
+                </tooltip>
               </div>
               <div class="contribution-form" v-if="reallocationPhase || tallyingPhase || finalisationPhase">
                 {{item.amount}} {{tokenSymbol}}
@@ -128,7 +125,7 @@
             </div>
             <form v-if="contributionPhase || reallocationPhase && userContributed" class="contribution-form">
               <div class="input-button">
-                <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
+                <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
                 <input
                   :value="item.amount"
                   @input="updateAmount(item, $event.target.value)"
@@ -145,12 +142,12 @@
         </div>
       </div>
     </div>
-    <div class="total-bar" v-if="currentUser && userContributed">
+    <div class="total-bar" v-if="userContributed">
       <div><span class="total-label">Total</span> {{ formatAmount(getTotal()) }} {{ tokenSymbol }}</div>
       <div class="btn-secondary"><img src="@/assets/chevron-down.svg" /></div>
     </div>
     <div
-      v-if="currentUser && contributionPhase || currentUser && reallocationPhase && userContributed"
+      v-if="contributionPhase || reallocationPhase && userContributed"
       class="submit-btn-wrapper"
     >
       <div v-if="errorMessage" class="submit-error">
@@ -214,6 +211,7 @@
         </div>
     </div>
   </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -451,13 +449,8 @@ export default class Cart extends Vue {
   }
 
   updateAmount(item: CartItem, amount: string) {
-    this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
+    this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount })
     this.$store.dispatch(SAVE_CART)
-  }
-
-  canRemoveItem(): boolean {
-    const currentRound = this.$store.state.currentRound
-    return currentRound && DateTime.local() < currentRound.votingDeadline
   }
 
   removeItem(item: CartItem) {
@@ -648,6 +641,7 @@ p.no-margin {
 }
 
 .cart-container {
+  /* width: clamp(320px, 35%, 550px); */
   box-sizing: border-box;
   position: relative;
   right: 0;
@@ -655,12 +649,17 @@ p.no-margin {
   gap: 1rem;
   height: 100%;
   padding: 1rem 0rem;
+  width: 100%;
   @media (max-width: $breakpoint-m) {
-    padding-bottom: 4rem;
-    padding-top: 2rem;
-    width: 100%;
-    max-width: 100%;
+    padding: 4rem 4rem 2rem;
+    /* max-width: 100%; */
   }
+  @media (max-width: $breakpoint-s) {
+    padding: 0;
+    /* width: 100%; */
+    /* max-width: 100%; */
+  }
+
 }
 
 .balance {

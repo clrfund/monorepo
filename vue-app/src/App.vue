@@ -2,7 +2,7 @@
   <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
     <div id="content-container">
-      <div id="sidebar" v-if="isSidebarShown" class="desktop">
+      <div id="sidebar" v-if="isSidebarShown" class="desktop-l">
           <round-information />
       </div>
       <div id="content" :class="{ padded: isSidebarShown && !isCartPadding }">
@@ -139,6 +139,12 @@ textarea {
 
 .desktop {
   @media (max-width: $breakpoint-m) {
+    display: none !important;
+  }
+}
+
+.desktop-l {
+  @media (max-width: $breakpoint-l) {
     display: none !important;
   }
 }

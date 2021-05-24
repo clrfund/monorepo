@@ -86,8 +86,21 @@ import Markdown from '@/components/Markdown.vue'
 })
 export default class ProjectProfile extends Vue {
   @Prop() project!: Project
-  // @Prop() klerosCurateUrl?: string | null = null
+  @Prop() klerosCurateUrl!: string | null
   @Prop() previewMode!: boolean
+  isCopied = false
+
+  async copyAddress(): Promise<void> {
+    if (!this.project?.address) return
+    try {
+      await navigator.clipboard.writeText(this.project.address)
+      this.isCopied = true
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      this.isCopied = false
+    } catch (error) {
+      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
+    }
+  }
 }
 </script>
 
