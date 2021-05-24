@@ -66,7 +66,7 @@ export default class NavBar extends Vue {
 window.onclick = function(event) {
   if (!event.target.matches('.dropdown-btn')) {
     const dropdowns = document.getElementsByClassName('button-menu')
-    let i 
+    let i: number
     for (i = 0; i < dropdowns.length; i++) {
       const openDropdown = dropdowns[i]
       if (openDropdown.classList.contains('show')) {
