@@ -16,10 +16,10 @@
         width="16px"
       > 
       <div 
-        class="cart-indicator"
+        :class="[cart.length +- 0 ? 'circle pulse cart-indicator' : 'cart-indicator']"
         v-if="title === 'Cart' && !isCartEmpty" 
       >
-        {{ cartItemTotal }}
+        {{ cart.length }}
       </div>
     </div>
       <span class="tab-title">{{ title }}</span>
@@ -29,9 +29,14 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import { UPDATE_CART_ITEM, REMOVE_CART_ITEM, SAVE_CART } from '@/store/mutation-types'
+import {
+  MAX_CONTRIBUTION_AMOUNT,
+  MAX_CART_SIZE,
+  CartItem,
+} from '@/api/contributions'
 
 export default class MobileTabs extends Vue {
-  cartItemTotal = 8 // TODO: Replace with state data
   tabs = [
     {
       icon: 'timer.svg',
@@ -50,15 +55,25 @@ export default class MobileTabs extends Vue {
     },
   ]
 
-  get isCartEmpty(): boolean {
-    return this.cartItemTotal === 0
+  private get cart(): CartItem[] {
+    return this.$store.state.cart
   }
+
+  get isCartEmpty(): boolean {
+    return this.cart.length === 0
+  }
+
 
   get activeTab(): string {
     return this.$route.path
   }
-}
 
+  get filteredCart(): CartItem[] {
+    // Hide cleared items
+    return this.cart.filter((item) => !item.isCleared)
+  }
+
+}
 </script>
 
 <style lang="scss" scoped>
@@ -115,5 +130,31 @@ export default class MobileTabs extends Vue {
 .active {
   background: #211E2B;
   box-shadow: inset 0px 2px 0px #7375A6;
+}
+
+.open{
+  background: $clr-green;
+}
+
+.circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+}
+
+.pulse {
+  animation: pulse-animation 2s 1 ease-out;
+}
+
+@keyframes pulse-animation {
+  0% {
+    box-shadow: 0 0 0 0px $bg-primary-color;
+  }
+
+  100% {
+    box-shadow: 0 0 0 4px $clr-pink;
+
+  }
 }
 </style>

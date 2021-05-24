@@ -159,7 +159,7 @@
       <div v-if="hasUnallocatedFunds()">
         Unallocated funds will be used as matching funding
       </div>
-      <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary"> -->
+      <!-- <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary"> -->
       <div class="p1">
         <router-link to="/setup" v-if="canRegisterWithBrightId()" class="btn-primary"> 
           Verify with BrightID
@@ -212,7 +212,6 @@
             <div v-if="contributionTimeLeft.days === 0">minutes</div>
           </div>
         </div>
-      </div>
     </div>
   </div>
 </template>
