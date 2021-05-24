@@ -13,7 +13,7 @@
             alt="cart"
             width="16px"
             src="@/assets/cart.svg"
-          > 
+          >
           <img
             alt="close"
             width="16px"
@@ -154,10 +154,6 @@
         </div>
       </div>
     </div>
-    <div class="total-bar" v-if="userContributed">
-      <div><span class="total-label">Total</span> {{ formatAmount(getTotal()) }} {{ tokenSymbol }}</div>
-      <div class="btn-secondary"><img src="@/assets/chevron-down.svg" /></div>
-    </div>
     <div
       v-if="contributionPhase || reallocationPhase && userContributed"
       class="submit-btn-wrapper"
@@ -221,6 +217,11 @@
             <div v-if="contributionTimeLeft.days === 0">minutes</div>
           </div>
         </div>
+    </div>
+    <!-- TODO under what conditions to display? -->
+    <div class="total-bar" v-if="true">
+      <div><span class="total-label">Total</span> {{ formatAmount(getTotal()) }} {{ tokenSymbol }}</div>
+      <div class="btn-secondary"><img src="@/assets/chevron-down.svg" /></div>
     </div>
   </div>
 </div>
