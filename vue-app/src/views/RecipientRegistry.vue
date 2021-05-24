@@ -153,7 +153,6 @@ import {
   Request,
   getRegistryInfo,
   getRequests,
-  decodeProject,
 } from '@/api/recipient-registry-optimistic'
 import { getCurrentRound } from '@/api/round'
 import RecipientSubmissionModal from '@/components/RecipientSubmissionModal.vue'
@@ -177,7 +176,7 @@ export default class RecipientRegistryView extends Vue {
   isLoading = true
   currentUser = true
   isDeployerAddress = true
-
+  project: Project | null = null
   async created() {
     if (recipientRegistryType !== 'optimistic') {
       return
