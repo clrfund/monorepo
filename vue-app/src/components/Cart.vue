@@ -3,7 +3,7 @@
   <div v-if="!currentUser" class="empty-cart">
     <div style="font-size: 64px;">🌚</div>
     <h3>Connect to see your cart </h3>
-    <wallet-widget />
+    <wallet-widget :isActionButton="true" />
   </div>
   <div v-else class="cart-container">
     <div>

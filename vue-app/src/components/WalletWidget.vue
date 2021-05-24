@@ -10,7 +10,7 @@
     </div>
     <button
       v-else-if="walletProvider && !currentUser"
-      class="app-btn"
+      :class="isActionButton ? 'btn-action' : 'app-btn'"
       @click="connect"
     >
       Connect
@@ -32,6 +32,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Prop } from 'vue-property-decorator'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 import { commify, formatUnits } from '@ethersproject/units'
@@ -57,6 +58,7 @@ export default class WalletWidget extends Vue {
   private walletChainId: string | null = null
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
+  @Prop() isActionButton!: boolean
 
   async copyAddress(): Promise<void> {
     if (!this.currentUser) { return }
