@@ -382,6 +382,12 @@ const getters = {
   isRoundClosed: (state: RootState): boolean => {
     return !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
   },
+  hasUserContributed: (state: RootState): boolean => {
+    return !!state.currentUser && !!state.contribution && !state.contribution.isZero()
+  },
+  canUserRellocate: (_, getters): boolean => {
+    return getters.hasUserContributed && (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
+  },
 }
 
 const store: StoreOptions<RootState> = {
