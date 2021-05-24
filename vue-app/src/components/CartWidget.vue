@@ -2,27 +2,24 @@
   <div
     v-if="currentUser"
     :class="{
-      container: showCartPanel,
-      'collapsed-container': !showCartPanel,
+      container: $store.state.showCartPanel,
+      'collapsed-container': !$store.state.showCartPanel,
     }"
   >
-    <!-- <tooltip :position="showCartPanel ? 'right' : 'bottom'" :content="showCartPanel ? 'Close cart' : 'Cart'"> -->
+    <!-- <tooltip :position="$store.state.showCartPanel ? 'right' : 'bottom'" :content="$store.state.showCartPanel ? 'Close cart' : 'Cart'"> -->
       <div
-        :class="{
-          'toggle-btn': true,
-          'shifted': showCartPanel,
-        }"
+        v-if="!$store.state.showCartPanel"
+        class="toggle-btn desktop"
         @click="toggleCart"
       >
         <img
-          v-if="!showCartPanel"
           alt="open"
           width="16px"
           src="@/assets/chevron-left.svg"
         >
         <div 
           :class="[cart.length +- 0 ? 'circle pulse cart-indicator' : 'cart-indicator']"
-          v-if="!showCartPanel && !isCartEmpty" 
+          v-if="!$store.state.showCartPanel && !isCartEmpty" 
         >
         {{ cart.length }}
         </div>
@@ -31,16 +28,10 @@
           width="16px"
           src="@/assets/cart.svg"
         > 
-        <img
-          v-if="showCartPanel"
-          alt="close"
-          width="16px"
-          src="@/assets/chevron-right.svg"
-        >
       </div>
     <!-- </tooltip> -->
-    <cart v-if="showCartPanel" :toggleCart="toggleCart" class="desktop cart-component" />
-    <div v-if="!showCartPanel" class="collapsed-cart desktop" />
+    <cart v-if="$store.state.showCartPanel" :toggleCart="toggleCart" class="desktop cart-component" />
+    <div v-if="!$store.state.showCartPanel" class="collapsed-cart desktop" />
   </div>
 </template>
 
@@ -62,6 +53,7 @@ import {
 } from '@/store/action-types'
 import {
   SET_CURRENT_USER,
+  TOGGLE_SHOW_CART_PANEL,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 import Cart from '@/components/Cart.vue'
@@ -71,7 +63,6 @@ import { getNetworkName } from '@/utils/networks'
 export default class CartWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
-  private showCartPanel: boolean | null = null
   profileImageUrl: string | null = null
 
   async copyAddress(): Promise<void> {
@@ -85,7 +76,7 @@ export default class CartWidget extends Vue {
   }
 
   toggleCart(): void {
-    this.showCartPanel = !this.showCartPanel
+    this.$store.commit(TOGGLE_SHOW_CART_PANEL)
   }
 
   private get cart(): CartItem[] {
@@ -110,7 +101,6 @@ export default class CartWidget extends Vue {
   }
 
   async mounted() {
-    this.showCartPanel = false
     if (!this.walletProvider) {
       return
     }

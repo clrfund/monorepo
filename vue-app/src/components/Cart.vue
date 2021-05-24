@@ -8,6 +8,18 @@
   <div v-else class="cart-container">
     <div>
       <div class="flex-row">
+        <div v-if="showCollapseCart" @click="toggleCart" class="toggle-btn">
+          <img
+            alt="cart"
+            width="16px"
+            src="@/assets/cart.svg"
+          > 
+          <img
+            alt="close"
+            width="16px"
+            src="@/assets/chevron-right.svg"
+          >
+        </div>
         <h2 class="no-margin">Your cart</h2>
         <div v-if="!reallocationPhase">
           <div v-if="!isCartEmpty && (contributionPhase || reallocationPhase)">
@@ -624,6 +636,10 @@ export default class Cart extends Vue {
     this.$modal.show(
       WithdrawalModal,
     )
+  }
+
+  get showCollapseCart(): boolean {
+    return this.$route.name !== 'cart'
   }
 }
 </script>

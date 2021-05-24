@@ -51,6 +51,7 @@ import {
   REMOVE_CART_ITEM,
   CLEAR_CART,
   SET_RECIPIENT_DATA,
+  TOGGLE_SHOW_CART_PANEL,
 } from './mutation-types'
 
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
@@ -64,6 +65,7 @@ interface RootState {
   currentRound: RoundInfo | null;
   tally: Tally | null;
   cart: CartItem[];
+  showCartPanel: boolean;
   contributor: Contributor | null;
   contribution: BigNumber | null;
   recipientRegistryAddress: string | null;
@@ -77,6 +79,7 @@ const state: RootState = {
   currentRound: null,
   tally: null,
   cart: new Array<CartItem>(),
+  showCartPanel: false,
   contributor: null,
   contribution: null,
   recipientRegistryAddress: null,
@@ -165,6 +168,9 @@ export const mutations = {
     } else {
       state.recipient[payload.step] = payload.updatedData[payload.step]
     }
+  },
+  [TOGGLE_SHOW_CART_PANEL](state) {
+    state.showCartPanel = !state.showCartPanel
   },
 }
 
@@ -325,6 +331,9 @@ const actions = {
     commit(SET_CONTRIBUTION, null)
     commit(SET_CONTRIBUTOR, null)
     commit(CLEAR_CART)
+  },
+  [TOGGLE_SHOW_CART_PANEL](state) {
+    state.showCartPanel = !state.showCartPanel
   },
 }
 
