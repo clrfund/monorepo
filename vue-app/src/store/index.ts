@@ -22,7 +22,15 @@ import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getEtherBalance, getTokenBalance } from '@/api/user'
-import { getRegistryInfo, RecipientApplicationData, RegistryInfo } from '@/api/recipient-registry-optimistic'
+import {
+  RegistryInfo,
+  RequestType,
+  RequestStatus,
+  Request,
+  getRegistryInfo,
+  getRequests,
+  RecipientApplicationData,
+} from '@/api/recipient-registry-optimistic'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -69,6 +77,8 @@ interface RootState {
   recipientRegistryAddress: string | null;
   recipientRegistryInfo: RegistryInfo | null;
   recipient: RecipientApplicationData | null;
+  requestStatus: RequestStatus | null;
+  request: Request | null;
 }
 
 const state: RootState = {
@@ -82,6 +92,8 @@ const state: RootState = {
   recipientRegistryAddress: null,
   recipientRegistryInfo: null,
   recipient: null,
+  requestStatus: null,
+  request: null,
 }
 
 export const mutations = {
@@ -387,6 +399,21 @@ const getters = {
   },
   canUserRellocate: (_, getters): boolean => {
     return getters.hasUserContributed && (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
+  },
+  canAdminDecide: (_, getters): boolean => {
+    return getters.isJoinPhase && !hasDateElapsed(getters.recipientJoinDeadline)
+  },
+  isAccepted: (state: RootState): boolean => {
+    return !!state.requestStatus && state.requestStatus === RequestStatus.Accepted
+  },
+  isRejected: (state: RootState): boolean => {
+    return !!state.requestStatus && state.requestStatus === RequestStatus.Rejected
+  },
+  isPending: (state: RootState, getters): boolean => {
+    return !!state.requestStatus && state.requestStatus === RequestStatus.Submitted && (!getters.isAccepted && !getters.isRejected && !getters.isLive)
+  },
+  isLive: (state: RootState): boolean => {
+    return !!state.requestStatus && state.requestStatus === RequestStatus.Executed
   },
 }
 

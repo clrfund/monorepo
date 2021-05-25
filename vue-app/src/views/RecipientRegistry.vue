@@ -65,21 +65,26 @@
               {{ request.status }}
             </template>
           </td>
-          <td v-if="!isPending(request)">
-            <div class="btn-secondary">
+          <td>
+            <div v-if="$store.getters.canAdminDecide && $store.getters.isAccepted" class="btn-secondary">
               Add to round
             </div>
-            <div class="btn-warning">
+            <div v-if="$store.getters.isLive" class="btn-warning">
               Remove
             </div>
           </td>
-          <td v-if="isPending(request)" class="btn-row">
-            <div class="icon-btn-approve"
+          <td v-if="$store.getters.canAdminDecide" class="btn-row">
+            <div 
+              class="icon-btn-approve"
               @click="register()"
+              v-if="$store.getters.isPending && !$store.getters.isAccepted && !$store.getters.isRejected"
             >
               <img src="@/assets/checkmark.svg" />
             </div>
-            <div class="icon-btn-reject">
+            <div 
+              class="icon-btn-reject"
+              v-if="$store.getters.isPending && !$store.getters.isAccepted && !$store.getters.isRejected"
+            >
               <img src="@/assets/close.svg" />
             </div>
           </td>
