@@ -422,6 +422,8 @@ export default class RoundInformation extends Vue {
   background: $bg-light-color;
   padding: 1rem;
   border-radius: 0.5rem;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .round-info-sub-item {
@@ -484,12 +486,12 @@ export default class RoundInformation extends Vue {
 }
 
 .message {
-    color: white;
-    font-family:'Glacial Indifference', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    line-height: 150%;
+  color: white;
+  font-family:'Glacial Indifference', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: 150%;
 }
 
 .add-matching-funds-btn {
