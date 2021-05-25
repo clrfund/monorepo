@@ -269,11 +269,14 @@ export default class CartWidget extends Vue {
 
 .toggle-btn {
   box-sizing: border-box;
-  position: relative;
-  top: $content-space;
+  position: absolute;
+  top: 1.875rem;
+  right: 0;
+  width: fit-content;
   z-index: 1;
   border-radius: 0.5rem 0 0 0.5rem;
   display: flex;
+  justify-content: flex-end;
   font-size: 16px;
   align-items: center;
   cursor: pointer;
@@ -282,26 +285,10 @@ export default class CartWidget extends Vue {
   color: white;
   background: rgba(44,41,56,1); 
   border: 1px solid rgba(115,117,166,0.3);
+  border-right: none;
   &:hover {
     background: $bg-secondary-color;
-    gap: 0.75rem;
-    margin-left: -0.25rem;
-  }
-}
-
-.shifted {
-  position: absolute;
-  top: 3rem;
-  left: 1.5rem;
-  /* left: 0rem; */
-  border-radius: 0 0.5rem 0.5rem 0;
-  width: fit-content;
-  background: rgba(44,41,56,1); 
-  &:hover {
-    gap: 1rem;
-    padding-right: 0.25rem;
-    margin-left: 0rem;
-    background: $bg-secondary-color;
+    gap: 0.65rem;
   }
 }
 
@@ -315,7 +302,6 @@ export default class CartWidget extends Vue {
   align-items: center;
   cursor: pointer;
   background: $clr-pink-dark-gradient;
-  /* padding: 0.25rem 0.5rem; */
   border-radius: 32px;
   padding-right: 0.5rem;
 
@@ -334,7 +320,6 @@ export default class CartWidget extends Vue {
     border-radius: 50%;
     box-sizing: border-box;
     height: $profile-image-size;
-    /* margin-left: 20px; */
     overflow: hidden;
     width: $profile-image-size;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -369,12 +354,6 @@ export default class CartWidget extends Vue {
     right: 0;
     bottom: 0;
     left: 0;
-
-    /* padding-top: 5rem; */
-    /* border-left: 1px solid $bg-light-color; */
-    /* height: 100%; */
-    /* margin-left: 2rem; */
-    /* background: $bg-secondary-color; */
   }
 }
 

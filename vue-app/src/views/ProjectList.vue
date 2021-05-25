@@ -1,7 +1,7 @@
 <template>
   <div class="project-container">
     <div class="projects">        
-      <div class="title">
+      <div :class="`title ${!!$store.state.currentUser && !$store.state.showCartPanel && 'title-with-cart-closed'}`">
         <div class="header">
           <h2>Projects</h2>
         </div>
@@ -401,6 +401,15 @@ export default class ProjectList extends Vue {
     grid-area: hr;
     width: 100%;
     border-bottom: 1px solid rgba(115,117,166,1);
+  }
+}
+
+.title-with-cart-closed {
+  /* Nudges right edge of "title bar" inward when the cart
+  toggle button is present. Only as issue when cart is closed,
+  AND the user is logged in. */
+  @media (min-width: $breakpoint-m + 1px) {
+    margin-right: 1rem;
   }
 }
 
