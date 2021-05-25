@@ -157,6 +157,12 @@
       v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase"
       class="submit-btn-wrapper"
     >
+      <div v-if="canRegisterWithBrightId() && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
+        Round opens for contributing on {{state.currentRound.signUpDeadline}}. Get verified with BrightID while you wait. 
+      </div>
+      <div v-if="!canRegisterWithBrightId() && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
+        Round opens for contibuting on {{state.currentRound.signUpDeadline}}. 
+      </div>
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
@@ -164,11 +170,11 @@
         Unallocated funds will be used as matching funding
       </div>
       <!-- <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary"> -->
-      <!-- <div class="p1">
+      <div class="p1">
         <router-link to="/setup" v-if="canRegisterWithBrightId()" class="btn-primary"> 
           Verify with BrightID
         </router-link>
-      </div> -->
+      </div>
       <!-- <div v-if="canBuyWxdai()" class="btn-primary">
         <a href="https://wrapeth.com/" target="_blank" rel="noopener">
           Click here to wrap XDAI
