@@ -15,7 +15,7 @@
     >
       Connect
     </button>
-    <div v-else-if="currentUser" class="profile-info" @click="toggleProfile">
+    <div v-else-if="currentUser && !isActionButton" class="profile-info" @click="toggleProfile">
       <div class="profile-info-balance">
         <img src="@/assets/dai.svg" />
         <div class="balance" @click="copyAddress">{{ balance }}</div>
@@ -58,13 +58,15 @@ export default class WalletWidget extends Vue {
   private walletChainId: string | null = null
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
+
+  // Boolean to only show Connect button, styled like an action button,
+  // which hides the widget that would otherwise display after connecting
   @Prop() isActionButton!: boolean
 
   async copyAddress(): Promise<void> {
     if (!this.currentUser) { return }
     try {
       await navigator.clipboard.writeText(this.currentUser.walletAddress)
-      // alert('Text copied to clipboard')
     } catch (error) {
       console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
     }
