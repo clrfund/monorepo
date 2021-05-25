@@ -26,40 +26,26 @@
       </div>
     </div>
     <div class="buttons">
-        <!-- <button
-          v-if="hasRegisterBtn()"
-          class="btn"
-          :disabled="!canRegister()"
-          @click="register()"
-        >
-          Register
-        </button> -->
-
-        <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
-        
-        <router-link
-          :to="{ name: 'project', params: { id: project.id }}"
-        >
-          <button
-            class="more-btn"
-          >
-            More
-          </button>
-        </router-link>
-      </div>
+      <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
+      <router-link
+        :to="{ name: 'project', params: { id: project.id }}"
+      >
+        <button class="more-btn">
+          More
+        </button>
+      </router-link>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
-import { DateTime } from 'luxon'
 
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import { CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
-import { RoundStatus } from '@/api/round'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import { markdown } from '@/utils/markdown'
@@ -132,10 +118,6 @@ export default class ProjectListItem extends Vue {
         },
       },
     )
-  }
-
-  hasContributeBtn(): boolean {
-    return this.project.index !== 0
   }
 }
 </script>
