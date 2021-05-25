@@ -26,14 +26,14 @@
       </div>
     </div>
     <div class="buttons">
-        <button
+        <!-- <button
           v-if="hasRegisterBtn()"
           class="btn"
           :disabled="!canRegister()"
           @click="register()"
         >
           Register
-        </button>
+        </button> -->
 
         <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
         
