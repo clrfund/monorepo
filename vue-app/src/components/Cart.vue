@@ -20,7 +20,7 @@
         >
       </div>
       <h2 class="no-margin center">Your cart</h2>
-      <div v-if="!isCartEmpty && (contributionPhase || reallocationPhase)" class="absolute-right dropdown-btn">
+      <div v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="absolute-right dropdown-btn">
         <!-- <img class="remove-icon" src="@/assets/remove.svg" />Remove all -->
         <img @click="openDropdown()" src="@/assets/more.svg" />
       </div>
