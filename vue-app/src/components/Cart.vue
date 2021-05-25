@@ -267,9 +267,8 @@ import {
   SAVE_CART,
 } from '@/store/action-types'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
-import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
+import { UPDATE_CART_ITEM, REMOVE_CART_ITEM, TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
-import { Prop } from 'vue-property-decorator'
 import { getNetworkName } from '@/utils/networks'
 
 function timeLeft(date: DateTime): TimeLeft {
@@ -287,12 +286,7 @@ function timeLeft(date: DateTime): TimeLeft {
 export default class Cart extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
-  private showCartPanel: boolean | null = null
   profileImageUrl: string | null = null
-
-  
-  @Prop() toggleCart!: () => void
-
   private get cart(): CartItem[] {
     return this.$store.state.cart
   }
@@ -307,6 +301,9 @@ export default class Cart extends Vue {
     // this.reallocationPhase = !this.reallocationPhase
   }
 
+  toggleCart(): void {
+    this.$store.commit(TOGGLE_SHOW_CART_PANEL)
+  }
 
   get walletProvider(): any {
     return (window as any).ethereum
@@ -317,7 +314,6 @@ export default class Cart extends Vue {
   }
 
   async mounted() {
-    this.showCartPanel = false
     if (!this.walletProvider) {
       return
     }
@@ -641,6 +637,7 @@ export default class Cart extends Vue {
   }
 
   get showCollapseCart(): boolean {
+    // Hide cart toggle button when directly on `/cart` path
     return this.$route.name !== 'cart'
   }
 }

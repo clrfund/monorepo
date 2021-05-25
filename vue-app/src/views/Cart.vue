@@ -1,5 +1,5 @@
 <template>
-  <cart :toggleCart="() => null" />
+  <cart />
 </template>
 
 <script lang="ts">
