@@ -29,7 +29,7 @@
       <div class="reallocation-intro" v-if="$store.getters.canUserReallocate">
         You’ve already contributed this round. If you add new projects to your cart now you can reallocate, but you’ll have to reduce funding for other projects.
       </div>
-      <div class="reallocation-intro" v-if="$store.getters.hasUserContributed && ($store.getters.isRoundTallying || $store.getters.isRoundFinalized || $store.getters.isRoundClosed)">
+      <div class="reallocation-intro" v-if="$store.getters.hasUserContributed && !$store.getters.isRoundReallocationPhase && ($store.getters.isRoundTallying || $store.getters.isRoundFinalized || $store.getters.isRoundClosed)">
         This round is over. Here’s how you contributed. Thanks!
       </div>
       <div class="cart">
@@ -125,7 +125,7 @@
                 @click="removeItem(item)"
               >
                 <tooltip position="bottom" content="Remove project">
-                  <div v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase" class="remove-icon-background">
+                  <div v-if="$store.getters.isRoundContributionPhase && !$store.getters.hasUserContributed" class="remove-icon-background">
                     <img class="remove-icon" src="@/assets/remove.svg" />
                   </div>
                 </tooltip>
@@ -134,7 +134,7 @@
                 {{item.amount}} {{tokenSymbol}}
               </div>
             </div>
-            <form v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase" class="contribution-form">
+            <form v-if="$store.getters.isRoundContributionPhase && !$store.getters.hasUserContributed" class="contribution-form">
               <div class="input-button">
                 <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
                 <input
@@ -283,11 +283,7 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   private showCartPanel: boolean | null = null
   profileImageUrl: string | null = null
-  contributionPhase = true
-  reallocationPhase = false
-  userContributed = false
-  tallyingPhase = false
-  finalisationPhase = false
+
   
   @Prop() toggleCart!: () => void
 
@@ -664,6 +660,7 @@ p.no-margin {
   height: 100%;
   padding: 1rem 0rem;
   width: 100%;
+
   @media (max-width: $breakpoint-m) {
     padding: 4rem 4rem 2rem;
   }
@@ -757,7 +754,7 @@ p.no-margin {
   display: flex;
   flex-direction: column;
   width: 100%;
-  background: $bg-secondary-color;
+  background: $bg-primary-color;
 }
 
 .empty-cart {
@@ -765,7 +762,7 @@ p.no-margin {
   font-weight: 400;
   margin: 1rem;
   padding: 1.5rem 1.5rem;
-  background: $bg-secondary-color;
+  background: $bg-primary-color;
 
   img {
     height: 70px;
