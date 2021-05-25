@@ -158,10 +158,10 @@
       class="submit-btn-wrapper"
     >
       <div v-if="canRegisterWithBrightId() && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
-        Round opens for contributing on {{state.currentRound.signUpDeadline}}. Get verified with BrightID while you wait. 
+        Round opens for contributing on {{$store.state.currentRound.signUpDeadline}}. Get verified with BrightID while you wait. 
       </div>
       <div v-if="!canRegisterWithBrightId() && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
-        Round opens for contibuting on {{state.currentRound.signUpDeadline}}. 
+        Round opens for contibuting on {{$store.state.currentRound.signUpDeadline}}. 
       </div>
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
