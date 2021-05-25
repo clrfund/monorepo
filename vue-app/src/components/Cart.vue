@@ -299,12 +299,12 @@ export default class Cart extends Vue {
 
   handleEditState(event): void {
     const { id } = event.target
-    // Guard clause: 
-    if (
-      (!this.reallocationPhase && id === 'edit') ||
-      (this.reallocationPhase && id === 'readOnly')
-    ) return
-    this.reallocationPhase = !this.reallocationPhase
+    // // Guard clause: 
+    // if (
+    //   (!this.reallocationPhase && id === 'edit') ||
+    //   (this.reallocationPhase && id === 'readOnly')
+    // ) return
+    // this.reallocationPhase = !this.reallocationPhase
   }
 
 
