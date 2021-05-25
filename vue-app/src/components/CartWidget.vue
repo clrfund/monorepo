@@ -28,7 +28,7 @@
         src="@/assets/cart.svg"
       > 
     </div>
-    <cart v-if="$store.state.showCartPanel" :toggleCart="toggleCart" class="cart-component" />
+    <cart v-if="$store.state.showCartPanel" class="cart-component" />
     <div v-if="!$store.state.showCartPanel" class="collapsed-cart desktop" />
   </div>
 </template>
