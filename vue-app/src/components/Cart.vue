@@ -7,7 +7,7 @@
   </div>
   <div v-else class="cart-container">
     <div class="flex cart-title-bar">
-      <div v-if="showCollapseCart" @click="toggleCart" class="absolute-left dropdown-btn">
+      <div v-if="showCollapseCart" @click="toggleCart" class="absolute-left cart-btn">
         <img
           alt="cart"
           width="16px"
@@ -287,18 +287,13 @@ export default class Cart extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
   profileImageUrl: string | null = null
+  private editMode = false
   private get cart(): CartItem[] {
     return this.$store.state.cart
   }
 
-  handleEditState(event): void {
-    const { id } = event.target
-    // // Guard clause: 
-    // if (
-    //   (!this.reallocationPhase && id === 'edit') ||
-    //   (this.reallocationPhase && id === 'readOnly')
-    // ) return
-    // this.reallocationPhase = !this.reallocationPhase
+  handleEditState(): void {
+    this.editMode = !this.editMode
   }
 
   toggleCart(): void {
@@ -751,6 +746,13 @@ p.no-margin {
 .absolute-right {
   position: absolute;
   right: 1rem;
+}
+
+.cart-btn {
+  @include button(white, $bg-light-color, 1px solid rgba(115,117,166,0.3));
+  padding: 0.75rem 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
 }
 
 .cart {
