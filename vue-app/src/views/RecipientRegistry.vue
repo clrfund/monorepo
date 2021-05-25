@@ -40,12 +40,12 @@
             </div>
             <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
             <details class="project-details">
-              <summary>Additional info</summary>
+              <summary>More</summary>
               
-              <div>Transaction: <code>{{ request.transactionHash }}</code><div class="icon"><img width="16px" src="@/assets/copy.svg" /></div></div>
-              <div>Project ID: <code>{{ request.recipientId }}</code><div class="icon"><img width="16px" src="@/assets/copy.svg" /></div></div>
-              <div>Recipient address: <code>{{ request.recipient }}</code><div class="icon"><img width="16px" src="@/assets/copy.svg" /></div></div>
-              <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div>
+              <div><span>Transaction <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.transactionHash }}</code></div>
+              <div><span>Project ID <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.recipientId }}</code></div>
+              <div><span>Recipient address <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.recipient }}</code></div>
+              <!-- <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div> -->
             </details>
           </td>
           <!-- <td>{{ request.type }}</td> -->
@@ -370,6 +370,13 @@ h2 {
     .project-details {
       margin-top: 0.5rem;
       font-size: 14px;
+      margin-left: 0.5rem;
+
+      div {
+        margin: 0.5rem 0;
+        font-weight: 500;
+        margin-left: 1rem;
+      }
     }
   }
 
