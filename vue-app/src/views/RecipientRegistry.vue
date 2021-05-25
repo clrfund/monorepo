@@ -68,8 +68,10 @@
           <td>
             <div v-if="$store.getters.canAdminDecide && $store.getters.isAccepted" class="btn-secondary">
               Add to round
+              <!-- TODO: only possible once challenge period is over. Ideal scenario, we can do this to cancel challenge period -->
             </div>
             <div v-if="$store.getters.isLive" class="btn-warning">
+              <!-- TODO: admin can remove a project once EXECUTED aka live -->
               Remove
             </div>
           </td>
@@ -79,6 +81,7 @@
               @click="register()"
               v-if="$store.getters.isPending && !$store.getters.isAccepted && !$store.getters.isRejected"
             >
+              <!-- TODO: admin can approve if the project has been submitted and need review. Ideal scenario is this will also EXECUTE the project to add to the round -->
               <img src="@/assets/checkmark.svg" />
             </div>
             <div 
@@ -86,6 +89,7 @@
               v-if="$store.getters.isPending && !$store.getters.isAccepted && !$store.getters.isRejected"
             >
               <img src="@/assets/close.svg" />
+              <!-- TODO: admin can reject a project once submitted -->
             </div>
           </td>
         </tr>
