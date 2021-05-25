@@ -29,6 +29,12 @@
             Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
           </template>
         </button>
+        <button
+          class="donate-btn-full"
+          v-if="inCart && $store.getters.hasUserContributed && !$store.getters.isRoundContributionPhase && !$store.getters.canUserReallocate"
+        >
+          <span>Contributed!</span>
+        </button>
       </div>
       <div class="link-box">
         <h2 class="link-title">Check them out</h2>
