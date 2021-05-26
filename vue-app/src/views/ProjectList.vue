@@ -39,7 +39,7 @@
         <div class="hr" />
       </div>
       <div class="project-list">
-        <div class="get-prepared" v-if="!this.search">
+        <div class="get-prepared" v-if="!this.search && this.selectedCategories.length === 0">
           <span aria-label="rocket" class="emoji">🚀</span>
           <div>
           <h2 class="prep-title">Get prepared</h2>
@@ -129,6 +129,12 @@ export default class ProjectList extends Vue {
   categories: string[] = ['content', 'research', 'tooling', 'data']
   selectedCategories: string[] = []
 
+  get projectsByCategoriesSelected(): Project[] {
+    return this.selectedCategories.length === 0
+      ? this.projects
+      : this.projects.filter(project => this.selectedCategories.includes((project.category as string).toLowerCase()))
+  }
+
   async created() {
     const roundAddress = this.$route.params.address || this.$store.state.currentRoundAddress || await getCurrentRound()
     if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
@@ -209,7 +215,7 @@ export default class ProjectList extends Vue {
   }
 
   get filteredProjects(): Project[] {
-    return this.projects.filter((project: Project) => {
+    return this.projectsByCategoriesSelected.filter((project: Project) => {
       if (!this.search) {
         return true
       }
@@ -459,7 +465,6 @@ export default class ProjectList extends Vue {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
   padding: 2rem;
 }
 
