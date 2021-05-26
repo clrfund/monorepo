@@ -21,16 +21,11 @@
       </div>
       <h2 class="no-margin center">Your cart</h2>
       <div v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="absolute-right dropdown">
-        <!-- <img class="remove-icon" src="@/assets/remove.svg" />Remove all -->
         <img @click="openDropdown" class="dropdown-btn" src="@/assets/more.svg" />
         <div id="cart-dropdown" class="button-menu">
-          <div v-for="({ href, text, icon }, idx) of dropdownItems" :key="idx" class="dropdown-item">
-            <template v-if="href">
-              <a :href="href" target="_blank">
-                <img width="16px" :src="require(`@/assets/${icon}`)" />
-                <p>{{ text }}</p>
-              </a>
-            </template>
+          <div v-for="({ callback, text, icon }, idx) of dropdownItems" :key="idx" class="dropdown-item" @click="callback">
+            <img width="16px" :src="require(`@/assets/${icon}`)" />
+            <p>{{ text }}</p>
           </div>
         </div>
       </div>
@@ -277,7 +272,7 @@ import {
   SAVE_CART,
 } from '@/store/action-types'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
-import { UPDATE_CART_ITEM, REMOVE_CART_ITEM, TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
+import { UPDATE_CART_ITEM, REMOVE_CART_ITEM, CLEAR_CART, TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { getNetworkName } from '@/utils/networks'
 
@@ -298,9 +293,14 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   profileImageUrl: string | null = null
   private editMode = false
-  dropdownItems: {to?: string; href?: string; text: string; icon: string}[] = [
-    { href: '#', text: 'Remove all', icon: 'remove.svg' },
-    { href: '#', text: 'Split evenly', icon: 'remove.svg' },
+  dropdownItems: {callback: () => void | null; text: string; icon: string}[] = [
+    { callback: () => {
+      this.$store.commit(CLEAR_CART)
+      this.$store.dispatch(SAVE_CART)
+    }, text: 'Remove all', icon: 'remove.svg' },
+    { callback: () => {
+      alert('TODO: Split evenly between projects in cart')
+    }, text: 'Split evenly', icon: 'split.svg' },
   ]
 
   private get cart(): CartItem[] {
@@ -468,12 +468,12 @@ export default class Cart extends Vue {
     return currentRound && DateTime.local() < currentRound.votingDeadline
   }
 
-  updateAmount(item: CartItem, amount: string) {
+  updateAmount(item: CartItem, amount: string): void {
     this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount })
     this.$store.dispatch(SAVE_CART)
   }
 
-  removeItem(item: CartItem) {
+  removeItem(item: CartItem): void {
     this.$store.commit(REMOVE_CART_ITEM, item)
     this.$store.dispatch(SAVE_CART)
   }
@@ -1032,7 +1032,7 @@ p.no-margin {
     cursor: pointer;
     overflow: hidden;
 
-    .dropdown-item a {
+    .dropdown-item {
       display: flex;
       align-items: center;
       padding: 0.25rem; 
