@@ -259,7 +259,8 @@ summary:focus {
 
 #content-container {
   display: flex;
-  height: calc(100vh - 61.5px);
+  /* height: calc(100vh - 61.5px); */
+  height: 100%;
   background: $bg-primary-color;
   overflow-x: clip;
   /* overflow-y: scroll; */
@@ -270,8 +271,9 @@ summary:focus {
   background-color: $bg-primary-color;
   flex-shrink: 0;
   padding: 1.5rem;
-  width: clamp(300px, 20%, 400px);
+  width: $cart-width-open;
   height: 100%;
+
 
   .master {
     color: black;

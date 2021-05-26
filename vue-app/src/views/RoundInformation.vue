@@ -1,5 +1,5 @@
 <template>
-  <round-information class="padding" />
+  <round-information />
 </template>
 
 <script lang="ts">
@@ -16,7 +16,4 @@ export default class RoundInformationVue extends Vue {}
 </script>
 
 <style lang="scss" scoped>
-.padding {
-  padding: 0 1rem;
-}
 </style>
