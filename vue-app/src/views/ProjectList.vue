@@ -10,13 +10,17 @@
           <h2>Projects</h2>
         </div>
         <div class="category-filter">
-          <select class="dropdown-btn" id="filter">
-            <option selected value="" label="Filter by category" />
-            <option value="content">Content</option>
-            <option value="researcg">Research</option>
-            <option value="tooling">Tooling</option>
-            <option value="data">Data</option>
-          </select>
+          <div class="filter-wrapper">
+            <div
+              v-for="(category, idx) of categories"
+              :key="idx"
+              :class="{
+                'filter-btn': true,
+                'filter-btn-selected': selectedCategories.includes(category)
+              }"
+              @click="handleFilterClick"
+            >{{category}}</div>
+          </div>
         </div>
         <div v-if="projects.length > 0" class="project-search">
           <img src="@/assets/search.svg">
@@ -122,6 +126,8 @@ export default class ProjectList extends Vue {
   projects: Project[] = []
   search = ''
   isLoading = true
+  categories: string[] = ['content', 'research', 'tooling', 'data']
+  selectedCategories: string[] = []
 
   async created() {
     const roundAddress = this.$route.params.address || this.$store.state.currentRoundAddress || await getCurrentRound()
@@ -210,6 +216,15 @@ export default class ProjectList extends Vue {
       return project.name.toLowerCase().includes(this.search.toLowerCase())
     })
   }
+
+  handleFilterClick(event): void {
+    const selection = event.target.innerText.toLowerCase()
+    if (this.selectedCategories.includes(selection)) {
+      this.selectedCategories = this.selectedCategories.filter(category => category !== selection)
+    } else {
+      this.selectedCategories.push(selection)
+    }
+  }
 }
 </script>
 
@@ -256,7 +271,7 @@ export default class ProjectList extends Vue {
 }
 @mixin project-grid-l {
   grid-template-columns: auto 1fr auto;
-  grid-template-areas: "header . add" "hr hr hr" "search search search" "filter . .";
+  grid-template-areas: "header . add" "hr hr hr" "search search search" "filter filter filter";
 }
 @mixin project-grid-m {
   grid-template-columns: 1fr;
@@ -305,19 +320,44 @@ export default class ProjectList extends Vue {
 
   .category-filter {
     grid-area: filter;
-    #filter {
-      font-size: 16px;
-      background: none;
-      color: white;
-      font-weight: 600;
-      /* border: none; */
-      margin: 0;
-      &:hover {
-        background: $bg-secondary-color;
+    .filter-wrapper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid $border-color;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      .filter-btn {
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        border-right: 1px solid $border-color;
+        background: none;
+        text-transform: capitalize;
+        &:last-of-type {
+          border-right: none;
+        }
       }
-    }
-    @media (max-width: $breakpoint-xl) {
-      margin-right: auto;
+      .filter-btn-selected {
+        background: $button-disabled-color;
+      }
+      @media (max-width: $breakpoint-s) {
+        grid-template-columns: repeat(2, 1fr);
+        .filter-btn {
+          padding: 0.35rem 0.5rem;
+          border: none;
+          &:nth-child(1) {
+            border-right: 1px solid $border-color;
+            border-bottom: 1px solid $border-color;
+          }
+          &:nth-child(2) {
+            border-bottom: 1px solid $border-color;
+          }
+          &:nth-child(3) {
+            border-right: 1px solid $border-color;
+          }
+        }
+      }
     }
   }
 
