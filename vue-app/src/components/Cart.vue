@@ -527,13 +527,13 @@ export default class Cart extends Vue {
     /* } else if (!currentUser.isVerified) {
       return 'To contribute, you need to set up BrightID.' */
     } else if (!this.isFormValid()) {
-      return 'Please enter correct amounts'
+      return 'Only numbers in your contributions please.'
     } else if (this.cart.length > MAX_CART_SIZE) {
-      return `Cart can not contain more than ${MAX_CART_SIZE} items`
+      return `Your cart can't include over ${MAX_CART_SIZE} projects.`
     } else if (currentRound.status === RoundStatus.Cancelled) {
-      return 'Funding round has been cancelled'
+      return 'Sorry, we\'ve had to cancel this funding round.'
     } else if (DateTime.local() >= currentRound.votingDeadline) {
-      return 'The funding round has ended'
+      return 'The funding round has ended.'
     } else if (currentRound.messages + this.cart.length >= currentRound.maxMessages) {
       return 'The limit on the number of votes has been reached'
     } else {
@@ -541,11 +541,12 @@ export default class Cart extends Vue {
       if (this.contribution.isZero()) {
         // Contributing
         if (DateTime.local() >= currentRound.signUpDeadline) {
-          return 'The contribution period has ended'
+          return 'Contributions are over for this funding round.'
+          // the above error might not be necessary now we have our cart states in the HTML above
         } else if (currentRound.contributors >= currentRound.maxContributors) {
           return 'The limit on the number of contributors has been reached'
-        } else if (total.eq(BigNumber.from(0))) {
-          return 'Contribution amount must be greater then zero'
+        } else if (total.eq(BigNumber.from(0)) && !this.isCartEmpty) {
+          return `Your total must be more then 0 ${currentRound.nativeTokenSymbol}`
         } else if (currentUser.balance === null) {
           return '' // No error: waiting for balance
         } else if (total.gt(currentUser.balance)) {
@@ -553,9 +554,9 @@ export default class Cart extends Vue {
             currentUser.balance,
             currentRound.nativeTokenDecimals,
           )
-          return `Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}`
+          return `Not enough funds. Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}.`
         } else if (this.isGreaterThanMax()) {
-          return 'Contribution amount is too large'
+          return `Your contribution is too generous. The max contribution is ${MAX_CONTRIBUTION_AMOUNT} ${currentRound.nativeTokenSymbol}.`
         } else {
           return null
         }
@@ -564,7 +565,7 @@ export default class Cart extends Vue {
         if (!this.$store.state.contributor) {
           return 'Contributor key is not found'
         } else if (this.isGreaterThanInitialContribution()) {
-          return 'The total can not exceed the initial contribution'
+          return 'Your new total can\'t be more than your original contribution.'
         } else {
           return null
         }
