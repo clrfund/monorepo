@@ -228,10 +228,11 @@
           </div>
         </div>
     </div>
+    <div id="cart-bottom-scroll-point"></div>
     <!-- TODO under what conditions to display? -->
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && ($store.getters.isRoundTallying || $store.getters.isRoundFinalized || $store.getters.isRoundClosed))">
       <div><span class="total-label">Total</span> {{ formatAmount(getTotal()) }} {{ tokenSymbol }}</div>
-      <div class="btn-secondary"><img src="@/assets/chevron-down.svg" /></div>
+      <div class="btn-secondary" @click="scrollToBottom"><img src="@/assets/chevron-down.svg" /></div>
     </div>
   </div>
 </div>
@@ -651,8 +652,15 @@ export default class Cart extends Vue {
     // Hide cart toggle button when directly on `/cart` path
     return this.$route.name !== 'cart'
   }
+
   openDropdown(): void {
     document.getElementById('cart-dropdown')?.classList.toggle('show')
+  }
+
+  scrollToBottom(): void {
+    const el = document.getElementById('cart-bottom-scroll-point')
+    if (!el) return
+    el.scrollIntoView({ behavior: 'smooth' })
   }
 }
 
@@ -819,11 +827,12 @@ p.no-margin {
 }
 
 .total-bar {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   position: sticky;
   bottom: 0;
-  padding: 1rem;
+  padding: 1rem 0;
   justify-content: space-between;
   background: $bg-primary-color;
   border-top: 1px solid #000;
@@ -831,6 +840,17 @@ p.no-margin {
   font-family: "Glacial Indifference", sans-serif;
   font-size: 1.5rem;
   font-weight: 600;
+  @media (max-width: $breakpoint-m) {
+    position: fixed;
+    bottom: 4rem;
+    width: calc(100% - 6rem);
+  }
+  @media (max-width: $breakpoint-s) {
+    position: fixed;
+    bottom: 4rem;
+    width: 100%;
+    padding: 1rem;
+  }
 }
 
 .total-label {
