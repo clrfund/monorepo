@@ -29,79 +29,11 @@
             onfocus="this.value=''" 
           >
         </div>
-        <!-- <div class="action-bar">
-        </div> -->
         <div class="add-project">
           <router-link to="/join" class="btn-primary">Add project</router-link>
         </div>
         <div class="hr" />
       </div>
-      <!-- <h1 class="content-heading">Projects</h1> -->
-      <!-- <div v-if="currentRound" class="round-info">
-        <div class="round-info-item">
-          <div class="round-info-title">Round</div>
-          <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
-            <div class="value large">{{ currentRound.roundNumber }}</div>
-            <div class="unit">{{ currentRound.status }}</div>
-          </div>
-        </div>
-        <div class="round-info-item">
-          <div class="round-info-title">
-            Matching pool
-            <a
-              @click="addMatchingFunds()"
-              class="add-matching-funds-btn"
-              title="Add matching funds"
-            >
-              <img src="@/assets/add.svg" >
-            </a>
-          </div>
-          <div class="round-info-value">
-            <div class="value large">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
-            <div class="value large extra">{{ formatFractionalPart(currentRound.matchingPool) }}</div>
-            <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
-          </div>
-        </div>
-        <div class="round-info-item">
-          <div class="round-info-title">Contributions</div>
-          <div class="round-info-value">
-            <div class="value">{{ formatIntegerPart(currentRound.contributions) }}</div>
-            <div class="value extra">{{ formatFractionalPart(currentRound.contributions) }}</div>
-            <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
-            <div class="value">{{ currentRound.contributors }}</div>
-            <div class="unit">contributors</div>
-          </div>
-        </div>
-        <div v-if="currentRound.status === 'Contributing'" class="round-info-item">
-          <div class="round-info-title">Time left to contribute</div>
-          <div
-            class="round-info-value"
-            :title="'Contribution Deadline: ' + formatDate(currentRound.signUpDeadline)"
-          >
-            <div class="value" v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
-            <div class="unit" v-if="contributionTimeLeft.days > 0">days</div>
-            <div class="value">{{ contributionTimeLeft.hours }}</div>
-            <div class="unit">hours</div>
-            <div class="value" v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
-            <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
-          </div>
-        </div>
-        <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
-          <div class="round-info-title">Time left to reallocate</div>
-          <div
-            class="round-info-value"
-            :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
-          >
-            <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-            <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
-            <div class="value">{{ reallocationTimeLeft.hours }}</div>
-            <div class="unit">hours</div>
-            <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-            <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
-          </div>
-        </div>
-      </div>
-      <div v-if="isLoading" class="loader"></div> -->
       <div class="project-list">
         <div class="get-prepared" v-if="!this.search">
           <span aria-label="rocket" class="emoji">🚀</span>
