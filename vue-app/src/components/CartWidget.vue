@@ -18,7 +18,7 @@
       >
       <div 
         :class="[cart.length +- 0 ? 'circle pulse cart-indicator' : 'cart-indicator']"
-        v-if="!$store.state.showCartPanel && !isCartEmpty" 
+        v-if="!$store.state.showCartPanel && isCartBadgeShown" 
       >
       {{ cart.length }}
       </div>
@@ -194,6 +194,18 @@ export default class CartWidget extends Vue {
       return truncatedAddress
     }
     return ''
+  }
+
+  get isCartBadgeShown(): boolean {
+    /**
+     * Only show cart badge counter if there are new/changed items present
+     * and the user is still able to contribute/reallocate these changes.
+     */
+    return (
+      (this.$store.getters.canUserReallocate ||
+      this.$store.getters.isRoundContributionPhase) &&
+      !!this.$store.state.cart.length
+    )
   }
 }
 </script>

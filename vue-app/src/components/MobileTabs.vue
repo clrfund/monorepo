@@ -17,7 +17,7 @@
       > 
       <div 
         :class="[cart.length +- 0 ? 'circle pulse cart-indicator' : 'cart-indicator']"
-        v-if="title === 'Cart' && !isCartEmpty" 
+        v-if="title === 'Cart' && isCartBadgeShown" 
       >
         {{ cart.length }}
       </div>
@@ -68,6 +68,17 @@ export default class MobileTabs extends Vue {
     return this.cart.filter((item) => !item.isCleared)
   }
 
+  get isCartBadgeShown(): boolean {
+    /**
+     * Only show cart badge counter if there are new/changed items present
+     * and the user is still able to contribute/reallocate these changes.
+     */
+    return (
+      (this.$store.getters.canUserReallocate ||
+      this.$store.getters.isRoundContributionPhase) &&
+      !this.isCartEmpty
+    )
+  }
 }
 </script>
 
