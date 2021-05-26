@@ -22,8 +22,8 @@
       <h2 class="no-margin center">Your cart</h2>
       <div v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="absolute-right dropdown">
         <!-- <img class="remove-icon" src="@/assets/remove.svg" />Remove all -->
-        <img @click="openDropdown()" class="dropdown-btn" src="@/assets/more.svg" />
-        <div id="cartDropdown" class="button-menu">
+        <img @click="openDropdown" class="dropdown-btn" src="@/assets/more.svg" />
+        <div id="cart-dropdown" class="button-menu">
           <div v-for="({ href, text, icon }, idx) of dropdownItems" :key="idx" class="dropdown-item">
             <template v-if="href">
               <a :href="href" target="_blank">
@@ -88,11 +88,11 @@
                 @click="removeItem(item)"
               >
               <!-- TODO: remove icon shouldn't appear in read-only item state -->
-              <tooltip position="bottom" content="Remove project">
+              <!-- <tooltip position="bottom" content="Remove project"> -->
                 <div class="remove-icon-background">
-                  <img class="remove-icon" src="@/assets/remove.svg" />
+                  <img class="remove-icon" src="@/assets/remove.svg" aria-label="Remove project"/>
                 </div>
-              </tooltip>
+              <!-- </tooltip> -->
               </div>
             </div>
             <form v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="contribution-form" id="edit">
@@ -134,11 +134,11 @@
                 class="remove-cart-item"
                 @click="removeItem(item)"
               >
-                <tooltip position="bottom" content="Remove project">
+                <!-- <tooltip position="bottom" content="Remove project"> -->
                   <div v-if="$store.getters.isRoundContributionPhase && !$store.getters.hasUserContributed" class="remove-icon-background">
-                    <img class="remove-icon" src="@/assets/remove.svg" />
+                    <img class="remove-icon" src="@/assets/remove.svg" aria-label="Remove project"/>
                   </div>
-                </tooltip>
+                <!-- </tooltip> -->
               </div>
               <div class="contribution-form" v-if="$store.getters.hasUserContributed">
                 {{item.amount}} {{tokenSymbol}}
@@ -652,7 +652,7 @@ export default class Cart extends Vue {
     return this.$route.name !== 'cart'
   }
   openDropdown(): void {
-    document.getElementById('cartDropdown')?.classList.toggle('show')
+    document.getElementById('cart-dropdown')?.classList.toggle('show')
   }
 }
 
@@ -780,6 +780,7 @@ p.no-margin {
 .absolute-right {
   position: absolute;
   right: 1rem;
+  z-index: 9999;
 }
 
 .cart-btn {
@@ -1010,49 +1011,49 @@ p.no-margin {
 }
 
 .moon-emoji {
-  Font-size: 4rem;
+  font-size: 4rem;
 }
 
 .dropdown {
-      position: relative;
-      display: inline-block;
+  position: relative;
+  display: inline-block;
 
-      .button-menu {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 2rem;
-        right: 0.5rem;
-        background: $bg-secondary-color;
-        border: 1px solid rgba(115,117,166,0.3);
-        border-radius: 0.5rem;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-        cursor: pointer;
-        overflow: hidden;
+  .button-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 2rem;
+    right: 0.5rem;
+    background: $bg-secondary-color;
+    border: 1px solid rgba(115,117,166,0.3);
+    border-radius: 0.5rem;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    cursor: pointer;
+    overflow: hidden;
 
-        .dropdown-item a {
-          display: flex;
-          align-items: center;
-          padding: 0.25rem; 
-          padding-left: 1rem;
-          gap: 0.5rem;
-          color: #fff;
-          &:hover {
-            background: $bg-light-color;
-          }
-          
-          .item-text {
-            margin: 0;
-            color: #fff;
-          }
-        }
+    .dropdown-item a {
+      display: flex;
+      align-items: center;
+      padding: 0.25rem; 
+      padding-left: 1rem;
+      gap: 0.5rem;
+      color: #fff;
+      &:hover {
+        background: $bg-light-color;
       }
-      .show {
-        display: flex;
+      
+      .item-text {
+        margin: 0;
+        color: #fff;
       }
-
     }
+  }
+
+  .show {
+    display: flex;
+  }
+}
 
 </style>
