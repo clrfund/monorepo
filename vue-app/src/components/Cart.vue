@@ -20,7 +20,7 @@
         >
       </div>
       <h2 class="no-margin center">Your cart</h2>
-      <div v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="absolute-right dropdown">
+      <div v-if="($store.getters.isRoundContributionPhase || $store.getters.canUserReallocate) && !isCartEmpty" class="absolute-right dropdown">
         <img @click="openDropdown" class="dropdown-btn" src="@/assets/more.svg" />
         <div id="cart-dropdown" class="button-menu">
           <div v-for="({ callback, text, icon }, idx) of dropdownItems" :key="idx" class="dropdown-item" @click="callback">
