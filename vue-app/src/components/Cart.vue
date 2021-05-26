@@ -20,9 +20,19 @@
         >
       </div>
       <h2 class="no-margin center">Your cart</h2>
-      <div v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="absolute-right dropdown-btn">
+      <div v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="absolute-right dropdown">
         <!-- <img class="remove-icon" src="@/assets/remove.svg" />Remove all -->
-        <img @click="openDropdown()" src="@/assets/more.svg" />
+        <img @click="openDropdown()" class="dropdown-btn" src="@/assets/more.svg" />
+        <div id="cartDropdown" class="button-menu">
+          <div v-for="({ href, text, icon }, idx) of dropdownItems" :key="idx" class="dropdown-item">
+            <template v-if="href">
+              <a :href="href" target="_blank">
+                <img width="16px" :src="require(`@/assets/${icon}`)" />
+                <p>{{ text }}</p>
+              </a>
+            </template>
+          </div>
+        </div>
       </div>
     </div>
     <div>
@@ -288,6 +298,11 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   profileImageUrl: string | null = null
   private editMode = false
+  dropdownItems: {to?: string; href?: string; text: string; icon: string}[] = [
+    { href: '#', text: 'Remove all', icon: 'remove.svg' },
+    { href: '#', text: 'Split evenly', icon: 'remove.svg' },
+  ]
+
   private get cart(): CartItem[] {
     return this.$store.state.cart
   }
@@ -636,6 +651,24 @@ export default class Cart extends Vue {
     // Hide cart toggle button when directly on `/cart` path
     return this.$route.name !== 'cart'
   }
+  openDropdown(): void {
+    document.getElementById('cartDropdown')?.classList.toggle('show')
+  }
+}
+
+
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropdown-btn')) {
+    const dropdowns = document.getElementsByClassName('button-menu')
+    let i: number
+    for (i = 0; i < dropdowns.length; i++) {
+      const openDropdown = dropdowns[i]
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show')
+      }
+    }
+  }
 }
 </script>
 
@@ -979,5 +1012,47 @@ p.no-margin {
 .moon-emoji {
   Font-size: 4rem;
 }
+
+.dropdown {
+      position: relative;
+      display: inline-block;
+
+      .button-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 2rem;
+        right: 0.5rem;
+        background: $bg-secondary-color;
+        border: 1px solid rgba(115,117,166,0.3);
+        border-radius: 0.5rem;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        cursor: pointer;
+        overflow: hidden;
+
+        .dropdown-item a {
+          display: flex;
+          align-items: center;
+          padding: 0.25rem; 
+          padding-left: 1rem;
+          gap: 0.5rem;
+          color: #fff;
+          &:hover {
+            background: $bg-light-color;
+          }
+          
+          .item-text {
+            margin: 0;
+            color: #fff;
+          }
+        }
+      }
+      .show {
+        display: flex;
+      }
+
+    }
 
 </style>
