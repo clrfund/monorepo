@@ -1,5 +1,5 @@
 <template>
-<div>
+<div style="height: 100%;">
   <div v-if="!currentUser" class="empty-cart">
     <div class="moon-emoji">🌚</div>
     <h3>Connect to see your cart </h3>
