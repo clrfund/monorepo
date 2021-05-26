@@ -1,7 +1,11 @@
 <template>
   <div class="project-container">
     <div class="projects">        
-      <div :class="`title ${!!$store.state.currentUser && !$store.state.showCartPanel && 'title-with-cart-closed'}`">
+      <div :class="{
+        title: true,
+        'title-with-cart-closed': !!$store.state.currentUser && !$store.state.showCartPanel,
+        'title-with-cart-open': !!$store.state.currentUser && $store.state.showCartPanel,
+      }">
         <div class="header">
           <h2>Projects</h2>
         </div>
@@ -117,6 +121,9 @@
       <div class="empty-search" v-if="filteredProjects == 0">
         <div>😢 No projects match your search. Try using the filter to narrow down what you're looking for.</div>
       </div>
+      <div v-if="!!$store.state.currentUser && $store.state.showCartPanel" class="round-info-container">
+        <round-information />
+      </div>
     </div>
   </div>
 </template>
@@ -133,6 +140,7 @@ import { Project, getRecipientRegistryAddress, getProjects } from '@/api/project
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import CartWidget from '@/components/CartWidget.vue'
+import RoundInformation from '@/components/RoundInformation.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -174,6 +182,7 @@ function timeLeft(date: DateTime): TimeLeft {
   components: {
     ProjectListItem,
     CartWidget,
+    RoundInformation,
   },
 })
 export default class ProjectList extends Vue {
@@ -181,7 +190,6 @@ export default class ProjectList extends Vue {
   projects: Project[] = []
   search = ''
   isLoading = true
-  private showCartPanel: boolean | null = null
 
   async created() {
     const roundAddress = this.$route.params.address || this.$store.state.currentRoundAddress || await getCurrentRound()
@@ -285,39 +293,61 @@ export default class ProjectList extends Vue {
   }
 }
 
-.round-info {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 (-$content-space);
-  padding: 20px $content-space;
-  gap: $content-space;
+.round-info-container {
+  /* Shows <round-information/> at the bottom if cart open, and screen between $breakpoint-m
+     and $breakpoint-l (while the left sidebar would be hidden, and no mobile tabs yet) */
+  display: none;
+  @media (max-width: $breakpoint-l) {
+    display: flex;
+    margin: 0 (-$content-space);
+    padding: 20px $content-space;
+  }
+  @media (max-width: $breakpoint-m - 1px) {
+    display: none;
+  }
+  
 }
 
 .projects {
   flex: 1;
 }
 
-.title {
-  display: grid;
+/* Project grid layouts by breakpoints */
+/* For use with .title, .title-with-cart-closed, .title-with-cart-open classes */
+@mixin project-grid-defaults {
   grid-template-columns: 1fr repeat(3, auto);
   grid-template-areas: "header filter search add" "hr hr hr hr";
+}
+@mixin project-grid-xl {
+  grid-template-columns: auto 1fr 1.5fr auto;
+  grid-template-areas: "header . . add" "hr hr hr hr" "filter . search search";
+}
+@mixin project-grid-l {
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "header . add" "hr hr hr" "search search search" "filter . .";
+}
+@mixin project-grid-m {
+  grid-template-columns: 1fr;
+  grid-template-areas: "header" "hr" "search" "filter" "add";
+}
+
+.title {
+  display: grid;
+  @include project-grid-defaults();
   align-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
   
+  /* Default breakpoints when user is not logged in, thus no cart */
+  /* See below for adjustments when cart is present */
   @media (max-width: $breakpoint-xl) {
-    grid-template-columns: 1fr auto;
-    grid-template-areas: "header add" "hr hr " "filter search";
-    border-bottom: none;
+    @include project-grid-xl();
   }
   @media (max-width: $breakpoint-l) {
-    grid-template-areas: "header add" "hr hr" "search search" "filter filter";
+    @include project-grid-l();
   }
   @media (max-width: $breakpoint-m) {
-    flex-direction: column;
-    border-bottom: 0;
-    padding-bottom: 0;
-    margin-bottom: 1.5rem;
+    @include project-grid-m();
   }
 
   .header {
@@ -326,9 +356,6 @@ export default class ProjectList extends Vue {
     align-items: center;
     justify-content: space-between;
     margin-right: auto;
-    @media (max-width: $breakpoint-xl) {
-      /* border-bottom: 1px solid rgba(115,117,166,1);  */
-    }
     @media (max-width: $breakpoint-m) {
       h2 {
         margin-bottom: 1rem;
@@ -340,7 +367,7 @@ export default class ProjectList extends Vue {
     }
   }
 
-  .add {
+  .add-project {
     grid-area: add;
   }
 
@@ -362,7 +389,6 @@ export default class ProjectList extends Vue {
     }
   }
 
-
   .project-search {
     grid-area: search;
     border-radius: 16px;
@@ -375,11 +401,10 @@ export default class ProjectList extends Vue {
     font-weight: 400;
     line-height: 24px;
     letter-spacing: 0em;
-    width: 160px;
     @media (max-width: $breakpoint-m) {
-      width: auto;
       margin-top: 0.5rem;
     }
+    width: auto;
     img {
       margin-right: 10px;
     }
@@ -409,55 +434,32 @@ export default class ProjectList extends Vue {
   toggle button is present. Only as issue when cart is closed,
   AND the user is logged in. */
   @media (min-width: $breakpoint-m + 1px) {
+    // Desktop only
     margin-right: 1rem;
   }
-}
-
-.round-info-item {
-  display: flex;
-  flex: 1 0 10%;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.round-info-title {
-  color: $text-secondary-color;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 20px;
-  margin-bottom: $content-space;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.round-info-value {
-  align-items: baseline;
-  display: flex;
-  flex-direction: row;
-  line-height: 30px;
-
-  .value {
-    font-size: 32px;
-
-    &.large {
-      font-size: 44px;
-    }
-
-    &.extra {
-      color: $text-secondary-color;
-    }
+  /* Adjusts breakpoints for when cart is present but closed */
+  @media (max-width: $breakpoint-xl + $cart-width-closed) {
+    @include project-grid-xl();
   }
+  @media (max-width: $breakpoint-l + $cart-width-closed) {
+    @include project-grid-l();
+  }
+  @media (max-width: $breakpoint-m + $cart-width-closed) {
+    @include project-grid-m();
 
-  .unit {
-    color: #91A4C8;
-    font-size: 12px;
-    font-weight: 600;
-    margin: 0 10px;
-    text-transform: uppercase;
+  }
+}
 
-    &:last-child {
-      margin-right: 0;
-    }
+.title-with-cart-open {
+  /* Adjusts breakpoints for when cart is present and open */
+  @media (max-width: $breakpoint-xl + $cart-width-open) {
+    @include project-grid-xl();
+  }
+  @media (max-width: $breakpoint-l + $cart-width-open) {
+    @include project-grid-l();
+  }
+  @media (max-width: $breakpoint-m + $cart-width-open) {
+    @include project-grid-m();
   }
 }
 
