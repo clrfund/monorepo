@@ -780,7 +780,6 @@ p.no-margin {
 .absolute-right {
   position: absolute;
   right: 1rem;
-  z-index: 9999;
 }
 
 .cart-btn {
