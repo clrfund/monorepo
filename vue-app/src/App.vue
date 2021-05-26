@@ -153,6 +153,12 @@ textarea {
   }
 }
 
+.mobile-l {
+  @media (min-width: ($breakpoint-l + 1px)) {
+    display: none !important;
+  }
+}
+
 .desktop {
   @media (max-width: $breakpoint-m) {
     display: none !important;

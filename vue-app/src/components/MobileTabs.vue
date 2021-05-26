@@ -1,5 +1,5 @@
 <template>
-  <div class="tab-container mobile">
+  <div :class="`tab-container ${isOnCartOrRoundPage ? 'mobile-l' : 'mobile'}`">
     <router-link
       v-for="({ icon, title, to }, idx) of tabs"
       :key="idx"
@@ -78,6 +78,10 @@ export default class MobileTabs extends Vue {
       this.$store.getters.isRoundContributionPhase) &&
       !this.isCartEmpty
     )
+  }
+
+  get isOnCartOrRoundPage(): boolean {
+    return this.$route.name === 'cart' || this.$route.name === 'round information'
   }
 }
 </script>

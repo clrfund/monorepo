@@ -375,6 +375,10 @@ export default class RoundInformation extends Vue {
   }
 }
 
+.projects {
+  display: flex;
+  justify-content: center;;
+}
 
 .round-info {
   display: flex;
@@ -382,6 +386,7 @@ export default class RoundInformation extends Vue {
   align-items: flex-start;
   gap: 1.5rem;
   margin-top: 1rem;
+  max-width: 800px;
   @media (max-width: $breakpoint-m) {
     padding: 1rem;
     padding-bottom: 4rem;
