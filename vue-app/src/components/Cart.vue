@@ -65,7 +65,7 @@
               <router-link
                 :to="{ name: 'project', params: { id: item.id }}"
               >
-                <img class="project-image" :src="item.imageUrl" :alt="item.name">
+                <img class="project-image" :src="item.thumbnailUrl" :alt="item.name">
               </router-link>
               <router-link
                 class="project-name"
@@ -112,7 +112,7 @@
               <router-link
                 :to="{ name: 'project', params: { id: item.id }}"
               >
-                <img class="project-image" :src="item.imageUrl" :alt="item.name">
+                <img class="project-image" :src="item.thumbnailImageUrl" :alt="item.name">
               </router-link>
               <router-link
                 class="project-name"
@@ -157,7 +157,7 @@
       v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase"
       class="submit-btn-wrapper"
     >
-      <div v-if="canRegisterWithBrightId && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
+      <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
         Round opens for contributing on {{$store.state.currentRound.signUpDeadline}}. Get verified with BrightID while you wait. 
       </div>
       <div v-if="!canRegisterWithBrightId && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
