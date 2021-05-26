@@ -7,7 +7,7 @@
     </div>  
   
     <round-status-banner />
-    <back-to-projects :isDesktopOnly="false" />
+    <back-to-projects :alsoShowOnMobile="true" />
 
     <div class="content" v-if="isLoading">
       <h1>Fetching round data...</h1>

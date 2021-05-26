@@ -1,7 +1,7 @@
 <template>
   <router-link to="/projects" :class="{
     back: true,
-    desktop: isDesktopOnly
+    desktop: !alsoShowOnMobile,
   }">Back to projects</router-link>
 </template>
 
@@ -12,7 +12,7 @@ import { Prop } from 'vue-property-decorator'
 
 @Component
 export default class extends Vue {
-  @Prop() isDesktopOnly!: boolean
+  @Prop() alsoShowOnMobile!: boolean
 }
 </script>
 
