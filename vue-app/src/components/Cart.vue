@@ -1,7 +1,7 @@
 <template>
 <div>
   <div v-if="!currentUser" class="empty-cart">
-    <div style="font-size: 64px;">🌚</div>
+    <div class="moon-emoji">🌚</div>
     <h3>Connect to see your cart </h3>
     <wallet-widget :isActionButton="true" />
   </div>
@@ -41,13 +41,13 @@
           </div>
         </div> -->
         <div v-if="isCartEmpty && $store.getters.isRoundContributionPhase" class="empty-cart">
-          <div style="font-size: 64px;">🌚</div>
+          <div class="moon-emoji">🌚</div>
           <h3>Your cart is empty</h3>
           <div>Choose some projects that you want to contribute to...</div>
           <router-link to="/projects" class="btn-secondary mobile mt1">See projects</router-link>
         </div>
         <div v-if="!$store.getters.canUserReallocate && !$store.getters.isRoundContributionPhase" class="empty-cart">
-          <div style="font-size: 64px;">🌚</div>
+          <div class="moon-emoji">🌚</div>
           <h3>Too late to donate</h3>
           <div>Sorry, the deadline for donating has passed.</div>
         </div>
@@ -157,10 +157,10 @@
       v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase"
       class="submit-btn-wrapper"
     >
-      <div v-if="canRegisterWithBrightId() && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
+      <div v-if="canRegisterWithBrightId && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
         Round opens for contributing on {{$store.state.currentRound.signUpDeadline}}. Get verified with BrightID while you wait. 
       </div>
-      <div v-if="!canRegisterWithBrightId() && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
+      <div v-if="!canRegisterWithBrightId && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
         Round opens for contibuting on {{$store.state.currentRound.signUpDeadline}}. 
       </div>
       <div v-if="errorMessage" class="submit-error">
@@ -169,9 +169,9 @@
       <div v-if="hasUnallocatedFunds()">
         Unallocated funds will be used as matching funding
       </div>
-      <!-- <div v-if="canRegisterWithBrightId()" @click="registerWithBrightId()" class="btn-primary"> -->
+      <!-- <div v-if="canRegisterWithBrightId" @click="registerWithBrightId()" class="btn-primary"> -->
       <div class="p1">
-        <router-link to="/setup" v-if="canRegisterWithBrightId()" class="btn-primary"> 
+        <router-link to="/setup" v-if="canRegisterWithBrightId" class="btn-primary"> 
           Verify with BrightID
         </router-link>
       </div>
@@ -580,7 +580,7 @@ export default class Cart extends Vue {
     )
   }
 
-  canRegisterWithBrightId(): boolean {
+  get canRegisterWithBrightId(): boolean {
     return userRegistryType === 'brightid' && this.$store.state.currentUser?.isVerified === false
   }
 
@@ -660,7 +660,7 @@ p.no-margin {
   width: 100%;
 
   @media (max-width: $breakpoint-m) {
-    padding: 4rem 4rem 2rem;
+    padding: 2rem 3rem;
   }
   @media (max-width: $breakpoint-s) {
     padding: 1rem 0rem;
@@ -945,17 +945,23 @@ p.no-margin {
   text-align: center;
   gap: 0.5rem;
   width: 100%;
-  /* box-shadow: $box-shadow; */
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 1rem;
+  position: relative;
 
   .submit-error {
     color: $warning-color;
     margin: 1.5rem 0rem;
     margin-bottom: 0rem;
     padding: 0 1.5rem;
+  }
+
+  .btn-action {
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
   }  
 }
 
@@ -969,5 +975,8 @@ p.no-margin {
   width: fit-content;
 }
 
+.moon-emoji {
+  Font-size: 4rem;
+}
 
 </style>

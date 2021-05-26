@@ -22,7 +22,7 @@
 }
 
 .btn-primary {
-  @include button(white, $clr-green, 2px solid $clr-green);
+  @include button(white, $clr-green, none);
 }
 
 .btn-og {

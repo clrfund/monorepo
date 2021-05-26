@@ -2,7 +2,7 @@
   <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
     <div id="content-container">
-      <div id="sidebar" v-if="isSidebarShown" class="desktop-l">
+      <div id="sidebar" v-if="isSidebarShown" :class="`${$store.state.showCartPanel ? 'desktop-l' :  'desktop'}`">
           <round-information />
       </div>
       <div
