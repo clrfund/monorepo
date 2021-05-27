@@ -163,11 +163,9 @@
       v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase"
       class="submit-btn-wrapper"
     >
+      <!--  TODO: Also, add getter for pre-contribution phase -->
       <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
-        Round opens for contributing on {{$store.state.currentRound.signUpDeadline}}. Get verified with BrightID while you wait. 
-      </div>
-      <div v-if="!canRegisterWithBrightId && ($store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase)">
-        Round opens for contibuting on {{$store.state.currentRound.signUpDeadline}}. 
+        Round opens for contributing in {{startDateCountdown}}. <span v-if="canRegisterWithBrightId">Get verified with BrightID while you wait.</span>
       </div>
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
@@ -277,6 +275,7 @@ import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import { UPDATE_CART_ITEM, REMOVE_CART_ITEM, CLEAR_CART, TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { getNetworkName } from '@/utils/networks'
+import { formatDateFromNow } from '@/utils/dates'
 
 function timeLeft(date: DateTime): TimeLeft {
   const now = DateTime.local()
@@ -490,6 +489,10 @@ export default class Cart extends Vue {
     )
   }
 
+  get startDateCountdown(): string {
+    return formatDateFromNow(this.$store.state.currentRound?.startTime)
+  }
+
   get contributionTimeLeft(): TimeLeft {
     return timeLeft(this.$store.state.currentRound.signUpDeadline)
   }
@@ -541,8 +544,8 @@ export default class Cart extends Vue {
       return 'Please connect your wallet'
     } else if (currentUser.isVerified === null) {
       return '' // No error: waiting for verification check
-    /* } else if (!currentUser.isVerified) {
-      return 'To contribute, you need to set up BrightID.' */
+    } else if (!currentUser.isVerified) {
+      return 'To contribute, you need to set up BrightID.'
     } else if (!this.isFormValid()) {
       return 'Only numbers in your contributions please.'
     } else if (this.cart.length > MAX_CART_SIZE) {
@@ -601,6 +604,8 @@ export default class Cart extends Vue {
   get canRegisterWithBrightId(): boolean {
     return userRegistryType === 'brightid' && this.$store.state.currentUser?.isVerified === false
   }
+  // TODO: Check that we are pre-reallocation phase
+  // Double check logic with Contribute button
 
   canBuyWxdai(): boolean {
     return (
@@ -623,6 +628,7 @@ export default class Cart extends Vue {
   }
 
   submitCart() {
+    //TODO: prevent defaults
     const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
     const votes = this.cart.map((item: CartItem) => {
       const amount = parseFixed(item.amount, nativeTokenDecimals)
