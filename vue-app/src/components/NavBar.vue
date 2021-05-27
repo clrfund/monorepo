@@ -7,9 +7,10 @@
       <img class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
     </router-link>
     <div class="btn-row">
-      <div class="dropdown" v-if="inApp" >
-        <img @click="openDropdown()" class="dropdown-btn" src="@/assets/more.svg" />
-        <div id="myDropdown" class="button-menu">
+      <div class="help-dropdown" v-if="inApp" >
+        <img @click="openHelpDropdown()" class="dropdown-btn" src="@/assets/help.svg" />
+        <div id="myHelpDropdown" class="button-menu">
+          <div class="dropdown-title">Help</div>
           <div v-for="({ to, href, text, emoji }, idx) of dropdownItems" :key="idx" class="dropdown-item">
             <template v-if="href">
               <a :href="href" target="_blank">
@@ -50,17 +51,21 @@ export default class NavBar extends Vue {
   profileImageUrl: string | null = null
   dropdownItems: {to?: string; href?: string; text: string; emoji: string}[] = [
     { to: '/', text: 'About', emoji: 'ℹ️' },
-    { to: '/join', text: 'Add project', emoji: '➕' },
+    { to: '/how-it-works', text: 'How it works', emoji: '⚙️' },
+    { to: '/about-maci', text: 'Bribery protection', emoji: '🤑' },
+    { to: '/about-sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
+    { to: '/about-layer2', text: 'About [layer 2]', emoji: '🚀' },
     { href: 'https://github.com/clrfund/monorepo/', text: 'Code', emoji: '👾' },
-    { href: 'https://github.com/clrfund/monorepo/', text: 'Docs', emoji: '📑' },
-    { to: '#', text: 'Light Mode', emoji: '🔆' },
   ]
 
   openDropdown(): void {
     document.getElementById('myDropdown')?.classList.toggle('show')
   }
-}
 
+  openHelpDropdown(): void {
+    document.getElementById('myHelpDropdown')?.classList.toggle('show')
+  }
+}
 
 // Close the dropdown menu if the user clicks outside of it
 window.onclick = function(event) {
@@ -144,6 +149,51 @@ window.onclick = function(event) {
 
     }
   }
+
+  .help-dropdown {
+      position: relative;
+      display: inline-block;
+
+      .button-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 2rem;
+        right: 0.5rem;
+        background: $bg-secondary-color;
+        border: 1px solid rgba(115,117,166,0.3);
+        border-radius: 0.5rem;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        cursor: pointer;
+        overflow: hidden;
+
+        .dropdown-title {
+          padding: 0.5rem;
+          font-weight: 600;
+        }
+
+        .dropdown-item a {
+          display: flex;
+          align-items: center;
+          padding: 0.5rem; 
+          gap: 0.5rem;
+          width: 176px;
+          &:hover {
+            background: $bg-light-color;
+          }
+          
+          .item-text {
+            margin: 0;
+            color: $text-color;
+          }
+        }
+      }
+      .show {
+        display: flex;
+      }
+    }
 
   .button-menu router-link {
     font-size: 16px;

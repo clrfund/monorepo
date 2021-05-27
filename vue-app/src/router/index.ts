@@ -10,6 +10,9 @@ import ProjectAdded from '../views/ProjectAdded.vue'
 import RoundInformation from '../views/RoundInformation.vue'
 import About from '../views/About.vue'
 import AboutMaci from '../views/AboutMaci.vue'
+import HowItWorks from '../views/HowItWorks.vue'
+import AboutLayer2 from '../views/AboutLayer2.vue'
+import AboutSybilAttacks from '../views/AboutSybilAttacks.vue'
 import JoinView from '../views/Join.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 
@@ -54,8 +57,23 @@ const routes = [
   },
   {
     path: '/about-maci',
-    name: 'about-maci',
+    name: 'about maci',
     component: AboutMaci,
+  },
+  {
+    path: '/about-sybil-resistance',
+    name: 'about sybil resistance',
+    component: AboutSybilAttacks,
+  },
+  {
+    path: '/about-layer2',
+    name: 'about layer 2',
+    component: AboutLayer2,
+  },
+  {
+    path: '/how-it-works',
+    name: 'how it works',
+    component: HowItWorks,
   },
   {
     path: '/recipients',
