@@ -15,7 +15,9 @@
             'filter-btn-cart-closed': !!$store.state.currentUser && !$store.state.showCartPanel,
             'filter-btn-cart-open': !!$store.state.currentUser && $store.state.showCartPanel,
           }" @click="handleFilterDropdown">
-            Filter <span v-if="selectedCategories.length > 0">({{selectedCategories.length}})</span>
+            <span>
+              Filter <span v-if="selectedCategories.length > 0">({{selectedCategories.length}})</span>
+            </span>
             <img src="@/assets/chevron-down.svg" alt="Down arrow" id="chevron">
           </div>
           <div class="selector-wrapper" id="category-selector">
@@ -27,7 +29,7 @@
                 'category-btn-selected': selectedCategories.includes(category)
               }"
               @click="handleFilterClick"
-            >{{category}}</div>
+            >{{category}} <span v-if="selectedCategories.includes(category)"><img src="@/assets/close.svg"></span></div>
           </div>
         </div>
         <div v-if="projects.length > 0" class="project-search">
@@ -46,6 +48,7 @@
         </div>
         <div class="hr" />
       </div>
+
       <div class="project-list">
         <div class="get-prepared" v-if="!this.search && this.selectedCategories.length === 0">
           <span aria-label="rocket" class="emoji">🚀</span>
@@ -361,6 +364,7 @@ window.onclick = function(event) {
 
     .filter-btn {
       background: none;
+      cursor: pointer;
       border: 1px solid $border-color;
       border-radius: 0.75rem;
       width: fit-content; /*  */
@@ -369,6 +373,10 @@ window.onclick = function(event) {
       gap: 1rem;
       padding: 0.5rem 0.75rem;
       transition: transform 0.1s;
+      &:hover {
+        opacity: 0.8;
+        transform:scale(1.01);
+      }
       .filter-chevron-open {
         transform: rotate(180deg);
       }
@@ -392,24 +400,36 @@ window.onclick = function(event) {
       position: absolute;
       top: 110%;
       right: 0;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(1, 4fr);
       border: 1px solid $border-color;
       border-radius: 0.75rem;
       overflow: hidden;
+      justify-content: space-between;
+      width: 100%;
+      z-index: 99;
       .category-btn {
         display: grid;
         place-items: center;
         cursor: pointer;
-        padding: 0.25rem 0.5rem;
-        border-right: 1px solid $border-color;
+        padding: 0.5rem;
         background: $bg-primary-color;
         text-transform: capitalize;
-        &:last-of-type {
-          border-right: none;
+        &:hover {
+          background: $bg-secondary-color;
         }
       }
       .category-btn-selected {
-        background: $button-disabled-color;
+        background: $clr-pink;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        line-height: 0;
+        margin: 0;
+        justify-content: space-between;
+        
+        &:hover {
+          background: $clr-pink;
+        }
       }
       @media (max-width: $breakpoint-s) {
         grid-template-columns: repeat(2, 1fr);
