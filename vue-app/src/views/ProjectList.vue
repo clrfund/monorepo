@@ -10,13 +10,21 @@
           <h2>Projects</h2>
         </div>
         <div class="category-filter">
-          <div class="filter-wrapper">
+          <div :class="{
+            'filter-btn': true,
+            'filter-btn-cart-closed': !!$store.state.currentUser && !$store.state.showCartPanel,
+            'filter-btn-cart-open': !!$store.state.currentUser && $store.state.showCartPanel,
+          }" @click="handleFilterDropdown">
+            Filter <span v-if="selectedCategories.length > 0">({{selectedCategories.length}})</span>
+            <img src="@/assets/chevron-down.svg" alt="Down arrow" id="chevron">
+          </div>
+          <div class="selector-wrapper" id="category-selector">
             <div
               v-for="(category, idx) of categories"
               :key="idx"
               :class="{
-                'filter-btn': true,
-                'filter-btn-selected': selectedCategories.includes(category)
+                'category-btn': true,
+                'category-btn-selected': selectedCategories.includes(category)
               }"
               @click="handleFilterClick"
             >{{category}}</div>
@@ -214,6 +222,11 @@ export default class ProjectList extends Vue {
     )
   }
 
+  handleFilterDropdown(): void {
+    document.getElementById('chevron')?.classList.toggle('filter-chevron-open')
+    document.getElementById('category-selector')?.classList.toggle('show')
+  }
+
   get filteredProjects(): Project[] {
     return this.projectsByCategoriesSelected.filter((project: Project) => {
       if (!this.search) {
@@ -232,6 +245,24 @@ export default class ProjectList extends Vue {
     }
   }
 }
+
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+  console.log(event.target)
+  if (
+    !event.target.matches('.filter-btn') &&
+    !event.target.matches('.category-btn') &&
+    event.target.id !== 'chevron'
+  ) {
+    const dropdowns = document.getElementsByClassName('selector-wrapper')
+    let i: number
+    for (i = 0; i < dropdowns.length; i++) {
+      const openDropdown = dropdowns[i]
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show')
+      }
+    }
+  }
 </script>
 
 <style scoped lang="scss">
@@ -326,31 +357,63 @@ export default class ProjectList extends Vue {
 
   .category-filter {
     grid-area: filter;
-    .filter-wrapper {
-      display: grid;
+    position: relative;
+
+    .filter-btn {
+      background: none;
+      border: 1px solid $border-color;
+      border-radius: 0.75rem;
+      width: fit-content; /*  */
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.5rem 0.75rem;
+      transition: transform 0.1s;
+      .filter-chevron-open {
+        transform: rotate(180deg);
+      }
+      @media (max-width: $breakpoint-m) {
+        width: auto;
+      }
+    }
+    .filter-btn-cart-closed {
+      @media (max-width: $breakpoint-m + $cart-width-closed) {
+        width: auto;
+      }
+    }
+    .filter-btn-cart-open {
+      @media (max-width: $breakpoint-m + $cart-width-open) {
+        width: auto;
+      }
+    }
+
+    .selector-wrapper {
+      display: none;
+      position: absolute;
+      top: 110%;
+      right: 0;
       grid-template-columns: repeat(4, 1fr);
       border: 1px solid $border-color;
       border-radius: 0.75rem;
       overflow: hidden;
-      .filter-btn {
+      .category-btn {
         display: grid;
         place-items: center;
         cursor: pointer;
         padding: 0.25rem 0.5rem;
         border-right: 1px solid $border-color;
-        background: none;
+        background: $bg-primary-color;
         text-transform: capitalize;
         &:last-of-type {
           border-right: none;
         }
       }
-      .filter-btn-selected {
+      .category-btn-selected {
         background: $button-disabled-color;
       }
       @media (max-width: $breakpoint-s) {
         grid-template-columns: repeat(2, 1fr);
-        .filter-btn {
-          padding: 0.35rem 0.5rem;
+        .category-btn {
           border: none;
           &:nth-child(1) {
             border-right: 1px solid $border-color;
@@ -364,6 +427,9 @@ export default class ProjectList extends Vue {
           }
         }
       }
+    }
+    .show {
+      display: grid;
     }
   }
 
