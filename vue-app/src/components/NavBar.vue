@@ -11,25 +11,6 @@
         <img @click="openHelpDropdown()" class="dropdown-btn" src="@/assets/help.svg" />
         <div id="myHelpDropdown" class="button-menu">
           <div class="dropdown-title">Help</div>
-          <div v-for="({ to, href, text, emoji }, idx) of helpDropdownItems" :key="idx" class="dropdown-item">
-            <template v-if="href">
-              <a :href="href" target="_blank">
-                <div>{{ emoji }}</div>
-                <p class="item-text">{{ text }} ↗</p>
-              </a>
-            </template>
-            <template v-else>
-              <router-link :to="to">
-                <div class="emoji-wrapper">{{ emoji }}</div>
-                <p class="item-text">{{ text }}</p>
-              </router-link>
-            </template>
-          </div>
-        </div>
-      </div>
-      <div class="dropdown" v-if="inApp" >
-        <img @click="openDropdown()" class="dropdown-btn" src="@/assets/more.svg" />
-        <div id="myDropdown" class="button-menu">
           <div v-for="({ to, href, text, emoji }, idx) of dropdownItems" :key="idx" class="dropdown-item">
             <template v-if="href">
               <a :href="href" target="_blank">
@@ -70,16 +51,11 @@ export default class NavBar extends Vue {
   profileImageUrl: string | null = null
   dropdownItems: {to?: string; href?: string; text: string; emoji: string}[] = [
     { to: '/', text: 'About', emoji: 'ℹ️' },
-    { to: '/join', text: 'Add project', emoji: '➕' },
-    { href: 'https://github.com/clrfund/monorepo/', text: 'Code', emoji: '👾' },
-    { href: 'https://github.com/clrfund/monorepo/', text: 'Docs', emoji: '📑' },
-    { to: '#', text: 'Light Mode', emoji: '🔆' },
-  ]
-  helpDropdownItems: {to?: string; href?: string; text: string; emoji: string}[] = [
-    { to: '/about-round', text: 'About the round', emoji: '⚙️' },
+    { to: '/about-round', text: 'How it works', emoji: '⚙️' },
     { to: '/about-maci', text: 'Bribery protection', emoji: '🤑' },
     { to: '/about-sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
     { to: '/about-layer2', text: 'About [layer 2]', emoji: '🚀' },
+    { href: 'https://github.com/clrfund/monorepo/', text: 'Code', emoji: '👾' },
   ]
 
   openDropdown(): void {
