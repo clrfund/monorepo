@@ -48,9 +48,10 @@
         <h2>How it works</h2>
         <ol>
           <li>The Ethereum Foundation and other donors send funds to the matching pool smart contract.</li>
-          <li>The round begins and you can donate to as many projects as you like.</li>
-          <li>Once the round finishes, the smart contract distributes the matching pool funds to projects based primarily on number of contributions, <strong>not contribution value</strong></li>
+          <li>The round begins and you can donate to your favourite projects.</li>
+          <li>Once the round finishes, the smart contract distributes the matching pool funds to projects based primarily on number of contributions, <strong>not contribution value</strong>.</li>
         </ol>
+        <router-link class="btn-secondary" to="/about-round">How the round works</router-link>
       </div>
     </div>
     <div class="section-header">
@@ -89,8 +90,9 @@
       <div id="about-2">
         <h2>Protect against bribery</h2>
         <p>
-          Using <a href="#">MACI</a>, a zero-knowledge technology, it's impossible to prove how you voted. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!
+          Using MACI, a zero-knowledge technology, it's impossible to prove how you voted. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!
         </p>
+        <router-link to="/about-maci">About MACI</router-link>
       </div>
       <div id="about-3">
         <h2>Built using the CLR protocol</h2>
@@ -101,10 +103,13 @@
     </div>
     <div id="footer">
       <h2>More</h2>
-        <div class="link-li"><a href="#">GitHub</a></div>
-        <div class="link-li">More on Eth2</div>
+        <div class="link-li"><a href="https://github.com/ethereum/clrfund/">GitHub</a></div>
+        <div class="link-li"><a href="https://ethereum.org/eth2/">More on Eth2</a></div>
+        <div class="link-li"><router-link to="/about-round">How the round works</router-link></div>
+        <div class="link-li"><router-link to="/about-layer2">Learn about [Layer 2]</router-link></div>
+        <div class="link-li"><router-link to="/about-maci">Learn about MACI</router-link></div>
+        <div class="link-li"><router-link to="/about-sybil-attacks">Learn about BrightID</router-link></div> 
         <div class="link-li">Provide Feedback</div>
-        <div class="link-li">Something else?</div>
     </div>
   </div>
   </div>
@@ -469,7 +474,7 @@ ol li::before {
     background: $bg-light-color;
     /* width: 40%; */
     border-radius: 1rem;
-    padding: 1rem 2rem 0;
+    padding: 2rem;
     & > img {
       display: none;
     }
