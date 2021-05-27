@@ -19,7 +19,8 @@
           src="@/assets/chevron-right.svg"
         >
       </div>
-      <h2 class="no-margin center">Your cart</h2>
+      <h2 class="no-margin center desktop">Your cart</h2>
+      <h2 class="mobile ml1">Your cart</h2>
       <div v-if="($store.getters.isRoundContributionPhase || $store.getters.canUserReallocate) && !isCartEmpty" class="absolute-right dropdown">
         <img @click="openDropdown" class="dropdown-btn" src="@/assets/more.svg" />
         <div id="cart-dropdown" class="button-menu">
@@ -703,7 +704,7 @@ p.no-margin {
   width: 100%;
 
   @media (max-width: $breakpoint-m) {
-    padding: 2rem 3rem;
+    padding: 0rem;
   }
   @media (max-width: $breakpoint-s) {
     padding: 1rem 0rem;
@@ -754,6 +755,10 @@ p.no-margin {
   padding-top: 1rem;  
   top: 0;
   background: $bg-primary-color;
+  @media (max-width: $breakpoint-m) {
+    justify-content: space-between;
+  }
+  
 }
 
 .flex-row {
@@ -845,7 +850,8 @@ p.no-margin {
   @media (max-width: $breakpoint-m) {
     position: fixed;
     bottom: 4rem;
-    width: calc(100% - 6rem);
+    padding: 1rem;
+    width: 100%;
   }
   @media (max-width: $breakpoint-s) {
     position: fixed;
@@ -1006,6 +1012,9 @@ p.no-margin {
   align-items: center;
   padding: 1rem;
   position: relative;
+  @media (max-width: $breakpoint-m) {
+    padding: 2rem;
+  }
 
   .submit-error {
     color: $warning-color;
@@ -1029,6 +1038,10 @@ p.no-margin {
 .mt1 {
   margin-top: 1rem;
   width: fit-content;
+}
+
+.ml1{
+  margin-left: 1rem;
 }
 
 .moon-emoji {
