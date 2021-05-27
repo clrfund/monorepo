@@ -1,8 +1,8 @@
 <template>
   <div class="recipients">
-    <div v-if="currentUser && isDeployerAddress">
+    <div v-if="isUserRegistryOwner">
     <h1 class="content-heading">Recipient registry</h1>
-    <div v-if="registryInfo" class="submit-project">
+    <!-- <div v-if="registryInfo" class="submit-project">
       <div class="submit-project-info">
         In order to become a recipient of funding, a project must go through a review process.
         <br>
@@ -15,7 +15,7 @@
       >
         Submit project
       </button>
-    </div>
+    </div> -->
     <loader v-if="isLoading"/>
     <h2 v-if="requests.length > 0">Projects</h2>
     <table v-if="requests.length > 0" class="requests">
@@ -98,8 +98,12 @@
     </div>
     <div v-else>
       <div style="font-size: 64px;" aria-label="hand">🤚</div>
-      <h2>Important ETH2 CLR business, EF-employees only!</h2>
+      <h2>You must be the contract owner to access this page</h2>
+      <div v-if="!isUserConnected">
+        <h2>Please connect your wallet.</h2>
+      </div>
       <router-link class="btn-primary" to="/projects">Back to projects</router-link>
+      <!-- TODO do we show anything for non-owner? or delete all of this? -->
       <table v-if="requests.length > 0" class="requests">
       <thead>
         <tr>
@@ -168,6 +172,7 @@ import RecipientSubmissionModal from '@/components/RecipientSubmissionModal.vue'
 import Loader from '@/components/Loader.vue'
 import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
+import { isSameAddress } from '@/utils/accounts'
 import { markdown } from '@/utils/markdown'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 
@@ -183,8 +188,6 @@ export default class RecipientRegistryView extends Vue {
   registryInfo: RegistryInfo | null = null
   requests: Request[] = []
   isLoading = true
-  currentUser = true
-  isDeployerAddress = true
   project: Project | null = null
 
   async created() {
@@ -199,6 +202,14 @@ export default class RecipientRegistryView extends Vue {
     this.registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
     this.requests = await getRequests(this.$store.state.recipientRegistryAddress,  this.registryInfo)
     this.isLoading = false
+  }
+
+  get isUserConnected(): boolean {
+    return !!this.$store.state.currentUser
+  }
+
+  get isUserRegistryOwner(): boolean {
+    return this.isUserConnected && !!this.registryInfo && isSameAddress(this.$store.state.currentUser.walletAddress, this.registryInfo.owner)
   }
 
   formatAmount(value: BigNumber): string {

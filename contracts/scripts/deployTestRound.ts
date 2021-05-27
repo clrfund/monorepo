@@ -288,6 +288,12 @@ async function main() {
       'RequestSubmitted', '_recipientId',
     )
     await recipientRegistry.executeRequest(recipient2Id)
+    // Add recipient without executing
+    await recipientRegistry.addRecipient(
+      recipient3.getAddress(),
+      JSON.stringify(metadataRecipient3),
+      { value: deposit },
+    )
   }
 
   // Deploy new funding round and MACI

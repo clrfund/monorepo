@@ -24,7 +24,6 @@ import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getEtherBalance, getTokenBalance } from '@/api/user'
 import {
   RegistryInfo,
-  RequestStatus,
   getRegistryInfo,
   RecipientApplicationData,
 } from '@/api/recipient-registry-optimistic'

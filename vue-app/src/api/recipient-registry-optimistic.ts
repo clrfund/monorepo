@@ -15,6 +15,7 @@ export interface RegistryInfo {
   challengePeriodDuration: number;
   listingPolicyUrl: string;
   recipientCount: number;
+  owner: string;
 }
 
 export async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
@@ -23,12 +24,14 @@ export async function getRegistryInfo(registryAddress: string): Promise<Registry
   const challengePeriodDuration = await registry.challengePeriodDuration()
   const network = await provider.getNetwork()
   const recipientCount = await registry.getRecipientCount()
+  const owner = await registry.owner()
   return {
     deposit,
     depositToken: getNetworkToken(network),
     challengePeriodDuration: challengePeriodDuration.toNumber(),
     listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
     recipientCount: recipientCount.toNumber(),
+    owner,
   }
 }
 
