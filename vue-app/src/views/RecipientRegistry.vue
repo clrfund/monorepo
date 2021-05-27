@@ -2,7 +2,7 @@
   <div class="recipients">
     <div v-if="currentUser && isDeployerAddress">
     <h1 class="content-heading">Recipient registry</h1>
-    <!-- <div v-if="registryInfo" class="submit-project">
+    <div v-if="registryInfo" class="submit-project">
       <div class="submit-project-info">
         In order to become a recipient of funding, a project must go through a review process.
         <br>
@@ -15,7 +15,7 @@
       >
         Submit project
       </button>
-    </div> -->
+    </div>
     <loader v-if="isLoading"/>
     <h2 v-if="requests.length > 0">Projects</h2>
     <table v-if="requests.length > 0" class="requests">
@@ -186,6 +186,7 @@ export default class RecipientRegistryView extends Vue {
   currentUser = true
   isDeployerAddress = true
   project: Project | null = null
+
   async created() {
     if (recipientRegistryType !== 'optimistic') {
       return
