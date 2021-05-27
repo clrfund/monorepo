@@ -356,6 +356,10 @@ const getters = {
   isRoundJoinOnlyPhase: (state: RootState, getters): boolean => {
     return !!state.currentRound && getters.isRoundJoinPhase && !hasDateElapsed(state.currentRound.startTime)
   },
+  hasStartTimeElapsed: (state: RootState): boolean => {
+    if (!state.currentRound) return true
+    return hasDateElapsed(state.currentRound.startTime)
+  },
   recipientSpacesRemaining: (state: RootState): number | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
       return null
@@ -388,8 +392,11 @@ const getters = {
   isRoundFinalized: (state: RootState): boolean => {
     return !!state.currentRound && state.currentRound.status === RoundStatus.Finalized
   },
-  isRoundClosed: (state: RootState): boolean => {
+  hasContributionPhaseEnded: (state: RootState): boolean => {
     return !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
+  },
+  hasReallocationPhaseEnded: (state: RootState): boolean => {
+    return !!state.currentRound && hasDateElapsed(state.currentRound.votingDeadline)
   },
   hasUserContributed: (state: RootState): boolean => {
     return !!state.currentUser && !!state.contribution && !state.contribution.isZero()

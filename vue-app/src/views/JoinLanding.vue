@@ -14,7 +14,7 @@
       <loader />
     </div>
 
-    <div class="content" v-else-if="isRoundClosed">
+    <div class="content" v-else-if="$store.getters.hasContributionPhaseEnded">
       <div style="font-size: 64px;">☹</div>
       <h1>Sorry, it's too late to join</h1>
       <div id="subtitle" class="subtitle">
@@ -129,13 +129,6 @@ export default class JoinLanding extends Vue {
       return  '...'
     }
     return formatDateFromNow(this.signUpDeadline)
-  }
-
-  get isRoundClosed(): boolean {
-    if (!this.signUpDeadline) {
-      return  false
-    }
-    return hasDateElapsed(this.signUpDeadline)
   }
 
   get isRoundFull(): boolean {

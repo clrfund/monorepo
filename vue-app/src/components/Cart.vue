@@ -35,36 +35,26 @@
       <div class="reallocation-intro" v-if="$store.getters.canUserReallocate">
         You’ve already contributed this round. If you add new projects to your cart now you can reallocate, but you’ll have to reduce funding for other projects.
       </div>
-      <div class="reallocation-intro" v-if="$store.getters.hasUserContributed && !$store.getters.isRoundReallocationPhase && ($store.getters.isRoundTallying || $store.getters.isRoundFinalized || $store.getters.isRoundClosed)">
+      <div class="reallocation-intro" v-if="$store.getters.hasUserContributed && $store.getters.hasReallocationPhaseEnded">
         This round is over. Here’s how you contributed. Thanks!
       </div>
       <div class="cart">
-        <!-- <div style="display: flex; gap: 0.25rem; width: 100%;">
-          <div class="profile-info-balance">
-            Balance 
-            <img src="@/assets/dai.svg" />
-            <div class="balance">{{ balance }}</div>
-          </div>
-        </div> -->
-        <div v-if="isCartEmpty && $store.getters.isRoundContributionPhase" class="empty-cart">
+        <div v-if="!$store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded" class="empty-cart">
+          <div class="moon-emoji">🌚</div>
+          <h3>Too late to donate</h3>
+          <div>Sorry, the deadline for donating has passed.</div>
+        </div>
+        <div v-else-if="isCartEmpty && $store.getters.isRoundContributionPhase" class="empty-cart">
           <div class="moon-emoji">🌚</div>
           <h3>Your cart is empty</h3>
           <div>Choose some projects that you want to contribute to...</div>
           <router-link to="/projects" class="btn-secondary mobile mt1">See projects</router-link>
         </div>
-        <div v-if="!$store.getters.canUserReallocate && !$store.getters.isRoundContributionPhase" class="empty-cart">
-          <div class="moon-emoji">🌚</div>
-          <h3>Too late to donate</h3>
-          <div>Sorry, the deadline for donating has passed.</div>
-        </div>
-<!--         <div class="balance" v-if="!isEmptyCart">
-          <p style="margin: 0;">Balance</p>
-          <div style="display: flex;  align-items: center; gap: 0.5rem;"><img width="20px" src="@/assets/dai.svg" />{{ balance }}</div>
-        </div> -->
-        <div class="new-items" v-if="$store.getters.canUserReallocate">
+        <div v-else-if="$store.getters.canUserReallocate" class="new-items" >
           <div class="flex-row-reallocation">
             <div>New ✨</div>
             <div>Remove all</div>
+            <div @click="handleEditState" v-if="$store.getters.canUserReallocate">Edit</div>
           </div>
           <div v-for="item in filteredCart" class="new-cart-item" :key="item.id">
             <div class="project">
@@ -91,7 +81,7 @@
               <!-- </tooltip> -->
               </div>
             </div>
-            <form v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="contribution-form" id="edit">
+            <form class="contribution-form" id="edit">
               <div class="input-button">
                 <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
                 <input
@@ -108,11 +98,12 @@
             </form>
           </div>
         </div>
-        <div class="flex-row-reallocation" v-if="$store.getters.hasUserContributed" id="readOnly">
+        <div v-else-if="$store.getters.hasUserContributed && $store.getters.hasReallocationPhaseEnded" class="flex-row-reallocation" id="readOnly">
+          <!-- Round is finalized -->
           <div>Your contributions</div>
           <div @click="handleEditState" v-if="$store.getters.canUserReallocate">Edit</div>
         </div>
-        <div v-if="$store.getters.hasUserContributed || $store.getters.isRoundContributionPhase">
+        <div v-else-if="$store.getters.hasUserContributed || $store.getters.isRoundContributionPhase">
           <div v-for="item in filteredCart" class="cart-item" :key="item.id">
             <div class="project">
               <router-link
@@ -229,7 +220,7 @@
     </div>
     <div id="cart-bottom-scroll-point"></div>
     <!-- TODO under what conditions to display? -->
-    <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && ($store.getters.isRoundTallying || $store.getters.isRoundFinalized || $store.getters.isRoundClosed))">
+    <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && ($store.getters.isRoundTallying || $store.getters.isRoundFinalized || $store.getters.hasContributionPhaseEnded))">
       <div><span class="total-label">Total</span> {{ formatAmount(getTotal()) }} {{ tokenSymbol }}</div>
       <div class="btn-secondary" @click="scrollToBottom"><img src="@/assets/chevron-down.svg" /></div>
     </div>
@@ -602,7 +593,7 @@ export default class Cart extends Vue {
   }
 
   get canRegisterWithBrightId(): boolean {
-    return userRegistryType === 'brightid' && this.$store.state.currentUser?.isVerified === false
+    return userRegistryType === 'brightid' && !this.$store.state.currentUser?.isVerified
   }
   // TODO: Check that we are pre-reallocation phase
   // Double check logic with Contribute button
