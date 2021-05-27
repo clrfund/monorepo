@@ -21,6 +21,55 @@
         <div class="tag">{{ project.category }} tag </div>
         <div class="team-byline">Team: <a href="#team"> {{ project.teamName }}</a></div>
       </div>
+      <div class="mobile mb2">
+      <button
+        v-if="hasRegisterBtn()"
+        class="btn-primary"
+        :disabled="!canRegister()"
+        @click="register()"
+      >
+        Register
+      </button>
+      <div class="input-button" v-if="hasContributeBtn() && !inCart">
+        <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
+        <input
+          v-model="contributionAmount"
+          class="input"
+          name="contributionAmount"
+          placeholder="5"
+          autocomplete="on"
+          onfocus="this.value=''"
+
+        >
+        <input type="submit"
+          class="donate-btn"
+          :disabled="!canContribute()"
+          @click="contribute()"
+          value="Add to cart"
+        >
+      </div>
+      <div class="input-button" v-if="hasContributeBtn() && inCart">
+        <button
+          class="donate-btn-full"
+        >
+          <span>In cart 🎉</span>
+        </button>
+      </div>
+      <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
+      <button
+        v-if="hasClaimBtn()"
+        class="btn-primary"
+        :disabled="!canClaim()"
+        @click="claim()"
+      >
+        <template v-if="claimed">
+          Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
+        </template>
+        <template v-else>
+          Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
+        </template>
+      </button>
+      </div>
       <div class="project-section">
         <h2>About the project</h2>
         <markdown :raw="project.description"/>
@@ -33,7 +82,12 @@
         <h2>Funding plans</h2>
         <markdown :raw="project.plans"/>
       </div> 
-      <div class="address-box">
+      <div 
+        :class="{
+          'address-box': project.teamName || project.teamDescription,
+          'address-box-no-team': !project.teamName && !project.teamDescription,
+          }"
+      >
         <div>
           <div class="address-label">Recipient address</div>
           <div class="address">
@@ -73,10 +127,26 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { Project } from '@/api/projects'
+import { DateTime } from 'luxon'
+import { FixedNumber } from 'ethers'
+import { Tally } from '@/api/tally'
+import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
+import { Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
 import Info from '@/components/Info.vue'
-
+import { recipientRegistryType } from '@/api/core'
+import { TcrItemStatus } from '@/api/recipient-registry-kleros'
+import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import Markdown from '@/components/Markdown.vue'
+import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
+import { RoundStatus, getCurrentRound } from '@/api/round'
+import {
+  SAVE_CART,
+} from '@/store/action-types'
+import {
+  ADD_CART_ITEM,
+} from '@/store/mutation-types'
+import ClaimModal from '@/components/ClaimModal.vue'
+
 
 @Component({
   components: {
@@ -85,9 +155,146 @@ import Markdown from '@/components/Markdown.vue'
   },
 })
 export default class ProjectProfile extends Vue {
+  allocatedAmount: FixedNumber | null = null
+  contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
+  claimed: boolean | null = null
   @Prop() project!: Project
   // @Prop() klerosCurateUrl?: string | null = null
   @Prop() previewMode!: boolean
+
+  private async checkAllocation(tally: Tally | null) {
+    const currentRound = this.$store.state.currentRound
+    if (!this.project || !currentRound || currentRound.status !== RoundStatus.Finalized || !tally) {
+      return
+    }
+    this.allocatedAmount = await getAllocatedAmount(
+      currentRound.fundingRoundAddress,
+      currentRound.nativeTokenDecimals,
+      tally.results.tally[this.project.index],
+      tally.totalVoiceCreditsPerVoteOption.tally[this.project.index],
+    )
+    this.claimed = await isFundsClaimed(
+      currentRound.fundingRoundAddress,
+      this.project.index,
+    )
+  }
+
+  get inCart(): boolean {
+    const project = this.project
+    if (project === null) {
+      return false
+    }
+    const index = this.$store.state.cart.findIndex((item: CartItem) => {
+      // Ignore cleared items
+      return item.id === project.id && !item.isCleared
+    })
+    return index !== -1
+  }
+
+  hasRegisterBtn(): boolean {
+    if (this.project === null) {
+      return false
+    }
+    if (recipientRegistryType === 'optimistic') {
+      return this.project.index === 0
+    }
+    else if (recipientRegistryType === 'kleros') {
+      return (
+        this.project.index === 0 &&
+        this.project.extra.tcrItemStatus === TcrItemStatus.Registered
+      )
+    }
+    return false
+  }
+
+  canRegister(): boolean {
+    return this.hasRegisterBtn() && this.$store.state.currentUser
+  }
+
+  register() {
+    this.$modal.show(
+      RecipientRegistrationModal,
+      { project: this.project },
+      { },
+      {
+        closed: async () => {
+          const project = await getProject(
+            this.$store.state.recipientRegistryAddress,
+            this.$route.params.id,
+          )
+          Object.assign(this.project, project)
+        },
+      },
+    )
+  }
+
+  hasContributeBtn(): boolean {
+    return (
+      this.$store.state.currentRound &&
+      this.project !== null &&
+      this.project.index !== 0
+    )
+  }
+
+  canContribute(): boolean {
+    return (
+      this.hasContributeBtn() &&
+      this.$store.state.currentUser &&
+      DateTime.local() < this.$store.state.currentRound.votingDeadline &&
+      this.$store.state.currentRound.status !== RoundStatus.Cancelled &&
+      this.project !== null &&
+      !this.project.isLocked
+    )
+  }
+
+  contribute() {
+    if (!this.contributionAmount) { return }
+    this.$store.commit(ADD_CART_ITEM, {
+      ...this.project,
+      amount: this.contributionAmount.toString(),
+      isCleared: false,
+    })
+    this.$store.dispatch(SAVE_CART)
+  }
+
+  hasClaimBtn(): boolean {
+    const currentRound = this.$store.state.currentRound
+    return (
+      currentRound &&
+      currentRound.status === RoundStatus.Finalized &&
+      this.project !== null &&
+      this.project.index !== 0 &&
+      this.project.isHidden === false &&
+      this.allocatedAmount !== null &&
+      this.claimed !== null
+    )
+  }
+
+  canClaim(): boolean {
+    return (
+      this.hasClaimBtn() &&
+      this.$store.state.currentUser &&
+      this.claimed === false
+    )
+  }
+
+  formatAmount(value: FixedNumber | null): string {
+    const decimals = 6
+    return value ? value.toUnsafeFloat().toFixed(decimals) : ''
+  }
+
+  claim() {
+    this.$modal.show(
+      ClaimModal,
+      { project: this.project },
+      { },
+      {
+        closed: () => {
+          this.checkAllocation(this.$store.state.tally)
+        },
+      },
+    )
+  }
 }
 </script>
 
@@ -96,6 +303,7 @@ export default class ProjectProfile extends Vue {
 @import '../styles/theme';
 
 .project-page {
+
   h2 {
     font-size: 20px;
   }
@@ -120,6 +328,7 @@ export default class ProjectProfile extends Vue {
     display: flex;
     gap: 3rem;
     margin-top: 4rem;
+    
   }
 
   .about {
@@ -148,6 +357,12 @@ export default class ProjectProfile extends Vue {
       align-items: center;
       gap: 0.5rem;
       margin-bottom: 3rem;
+      @media (max-width: $breakpoint-l) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
 
       .tag {
         padding: 0.5rem 0.75rem;
@@ -203,11 +418,30 @@ export default class ProjectProfile extends Vue {
       }
     }
 
+    .address-box-no-team {
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: $box-shadow;
+      background: $clr-blue-gradient;
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+
+      @media (max-width: $breakpoint-l) {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+      }
+    }
+
     .team {
       padding: 1rem;
       margin-bottom: 3rem;
       border-radius: 0.25rem;
       background: $bg-secondary-color;
+      @media (max-width: $breakpoint-l) {
+        margin-bottom: 0;
+      }
 
       h2 {
         font-size: 24px;
@@ -265,5 +499,67 @@ export default class ProjectProfile extends Vue {
     padding: 0.5rem;
     gap: 0.5rem;
   }
+
+.input-button {
+  background: #F7F7F7;
+  border-radius: 2rem;
+  border: 2px solid $bg-primary-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
+  padding: 0.125rem;
+  z-index: 100;
+}
+
+.donate-btn {
+  padding: 0.5rem 1rem;
+  background: $bg-primary-color;
+  color: white;
+  border-radius: 32px;
+  font-size: 16px;
+  font-family: Inter;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+}
+
+.donate-btn-full {
+  background: $bg-primary-color;
+  color: white;
+  border-radius: 32px;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  font-family: Inter;
+  line-height: 150%;
+  border: none;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+  z-index: 1;
+}
+
+.input-button {
+  background: #F7F7F7;
+  border-radius: 2rem;
+  border: 2px solid $bg-primary-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
+  padding: 0.125rem;
+  z-index: 100;
+}
+
+.input {
+  background: none;
+  border: none;
+  color: $bg-primary-color;
+  width: 100%;
+}
+
+.mb2 {
+  margin-bottom: 2rem;
+}
 }
 </style>
