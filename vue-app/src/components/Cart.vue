@@ -699,6 +699,7 @@ p.no-margin {
   gap: 1rem;
   height: 100%;
   padding: 1rem 0rem;
+  padding-top: 0rem;
   width: 100%;
 
   @media (max-width: $breakpoint-m) {
@@ -750,6 +751,7 @@ p.no-margin {
 
 .cart-title-bar {
   position: sticky;
+  padding-top: 1rem;  
   top: 0;
   background: $bg-primary-color;
 }
