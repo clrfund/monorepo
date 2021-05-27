@@ -248,7 +248,6 @@ export default class ProjectList extends Vue {
 
 // Close the dropdown menu if the user clicks outside of it
 window.onclick = function(event) {
-  console.log(event.target)
   if (
     !event.target.matches('.filter-btn') &&
     !event.target.matches('.category-btn') &&
@@ -263,6 +262,7 @@ window.onclick = function(event) {
       }
     }
   }
+}
 </script>
 
 <style scoped lang="scss">
