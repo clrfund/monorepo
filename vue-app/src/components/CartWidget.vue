@@ -300,7 +300,7 @@ export default class CartWidget extends Vue {
   border-right: none;
   &:hover {
     background: $bg-secondary-color;
-    gap: 0.65rem;
+    gap: 0.75rem;
   }
 }
 

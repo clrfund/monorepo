@@ -2,7 +2,7 @@
   <router-link to="/projects" :class="{
     back: true,
     desktop: !alsoShowOnMobile,
-  }">Back to projects</router-link>
+  }">← Back to projects</router-link>
 </template>
 
 <script lang="ts">
@@ -21,9 +21,12 @@ export default class extends Vue {
   position: relative;
   display: flex;
   flex: 1 0 auto;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   padding: 1rem;
-  text-decoration: underline;
+  color: #fff;
+  &:hover {
+    opacity: 0.8;
+  }
 }
 </style>

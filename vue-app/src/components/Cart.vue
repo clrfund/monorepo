@@ -755,6 +755,7 @@ p.no-margin {
   padding-top: 1rem;  
   top: 0;
   background: $bg-primary-color;
+  padding-left: 1rem;
   @media (max-width: $breakpoint-m) {
     justify-content: space-between;
   }
@@ -788,8 +789,9 @@ p.no-margin {
 }
 
 .absolute-left {
-  position: absolute;
-  left: 0;
+  /* position: absolute;
+  left: 0; */
+  /* margin-left: 1rem; */
 }
 
 .absolute-right {
@@ -799,9 +801,18 @@ p.no-margin {
 
 .cart-btn {
   @include button(white, $bg-light-color, 1px solid rgba(115,117,166,0.3));
+  border: 0px solid #fff;
+  background: transparent;
   padding: 0.75rem 0.5rem;
   border-radius: 0.5rem;
   display: flex;
+  gap: 0.5rem;
+  margin-right: -0.5rem;
+  &:hover {
+    background: $bg-secondary-color;
+    gap: 0.75rem;
+    margin-right: -0.75rem;
+  }
 }
 
 .cart {
