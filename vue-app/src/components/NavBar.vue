@@ -51,7 +51,7 @@ export default class NavBar extends Vue {
   profileImageUrl: string | null = null
   dropdownItems: {to?: string; href?: string; text: string; emoji: string}[] = [
     { to: '/', text: 'About', emoji: 'ℹ️' },
-    { to: '/about-round', text: 'How it works', emoji: '⚙️' },
+    { to: '/how-it-works', text: 'How it works', emoji: '⚙️' },
     { to: '/about-maci', text: 'Bribery protection', emoji: '🤑' },
     { to: '/about-sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
     { to: '/about-layer2', text: 'About [layer 2]', emoji: '🚀' },

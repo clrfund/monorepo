@@ -64,11 +64,11 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
+// TODO connect with state to add durations to content
 @Component({
-  name: 'about-round',
-  metaInfo: { title: 'About Round' },
+  metaInfo: { title: 'How it works' },
 })
-export default class AboutRound extends Vue { }
+export default class HowItWorks extends Vue { }
 </script>
 
 <style scoped lang="scss">

@@ -51,7 +51,7 @@
           <li>The round begins and you can donate to your favourite projects.</li>
           <li>Once the round finishes, the smart contract distributes the matching pool funds to projects based primarily on number of contributions, <strong>not contribution value</strong>.</li>
         </ol>
-        <router-link class="btn-secondary" to="/about-round">How the round works</router-link>
+        <router-link class="btn-secondary" to="/how-it-works">How the round works</router-link>
       </div>
     </div>
     <div class="section-header">
@@ -105,7 +105,7 @@
       <h2>More</h2>
         <div class="link-li"><a href="https://github.com/ethereum/clrfund/">GitHub</a></div>
         <div class="link-li"><a href="https://ethereum.org/eth2/">More on Eth2</a></div>
-        <div class="link-li"><router-link to="/about-round">How the round works</router-link></div>
+        <div class="link-li"><router-link to="/how-it-works">How the round works</router-link></div>
         <div class="link-li"><router-link to="/about-layer2">Learn about [Layer 2]</router-link></div>
         <div class="link-li"><router-link to="/about-maci">Learn about MACI</router-link></div>
         <div class="link-li"><router-link to="/about-sybil-attacks">Learn about BrightID</router-link></div> 
