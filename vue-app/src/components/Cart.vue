@@ -63,13 +63,13 @@
           />
           <!-- removed old cart list, replaced with component -->
         </div>
-        <div v-else-if="$store.getters.hasUserContributed && $store.getters.hasReallocationPhaseEnded" class="flex-row-reallocation" id="readOnly">
+        <div v-else-if="$store.getters.hasUserContributed" class="flex-row-reallocation" id="readOnly">
           <!-- Round is finalized -->
           <div>Your contributions</div>
           <!-- TODO: after contribution, your cart should appear under here. Project items should only appear under new if they add a project during reallocation -->
           <div @click="handleEditState" v-if="$store.getters.canUserReallocate"><span v-if="isEditMode">Cancel</span><span v-if="!isEditMode">Edit</span></div>
         </div>
-        <div v-else-if="$store.getters.hasUserContributed || $store.getters.isRoundContributionPhase">
+        <div>
           <cart-items
             :cartList="filteredCart"
             :isEditMode="isEditMode"
