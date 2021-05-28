@@ -21,7 +21,7 @@
           <img class="remove-icon" src="@/assets/remove.svg" aria-label="Remove project"/>
         </div>
       </div>
-      <div class="contribution-form" v-if="$store.getters.hasUserContributed">
+      <div class="contribution-form" v-if="$store.getters.hasUserContributed && !isEditMode">
         {{item.amount}} {{tokenSymbol}}
       </div>
     </div>

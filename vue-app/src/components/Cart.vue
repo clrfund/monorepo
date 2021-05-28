@@ -52,8 +52,8 @@
         <div v-else-if="$store.getters.canUserReallocate" class="new-items" >
           <div class="flex-row-reallocation">
             <div>New ✨</div>
-            <div>Remove all</div>
-            <div @click="handleEditState" v-if="$store.getters.canUserReallocate">Edit</div>
+            <div @click="CLEAR_CART && SAVE_CART" v-if="$store.getters.canUserReallocate">Remove all</div>
+            <!--TODO: clear cart -->
           </div>
           <cart-items
             :cartList="filteredCart"
@@ -66,7 +66,8 @@
         <div v-else-if="$store.getters.hasUserContributed && $store.getters.hasReallocationPhaseEnded" class="flex-row-reallocation" id="readOnly">
           <!-- Round is finalized -->
           <div>Your contributions</div>
-          <div @click="handleEditState" v-if="$store.getters.canUserReallocate">Edit</div>
+          <!-- TODO: after contribution, your cart should appear under here. Project items should only appear under new if they add a project during reallocation -->
+          <div @click="handleEditState" v-if="$store.getters.canUserReallocate"><span v-if="isEditMode">Cancel</span><span v-if="!isEditMode">Edit</span></div>
         </div>
         <div v-else-if="$store.getters.hasUserContributed || $store.getters.isRoundContributionPhase">
           <cart-items
@@ -89,8 +90,8 @@
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
-      <div v-if="hasUnallocatedFunds()">
-        Unallocated funds will be used as matching funding
+      <div class="p1" v-if="hasUnallocatedFunds()">
+        Unallocated funds ({{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}) will be sent to the matching pool
       </div>
       <!-- <div v-if="canRegisterWithBrightId" @click="registerWithBrightId()" class="btn-primary"> -->
       <div class="p1" v-if="canRegisterWithBrightId">
