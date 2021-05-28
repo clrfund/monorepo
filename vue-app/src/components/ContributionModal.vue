@@ -3,6 +3,7 @@
     <div v-if="step === 0">
       <h2>Confirm {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} contribution</h2>
       <p>Your <b>{{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }}</b> contribution total is final. You won't be able to increase this amount. Make sure this is the maximum you might want to spend on contributions.</p>
+      <!-- TODO: if you get 1/3 of the way through these transactions and come back, you shouldn't get this warning again. This warning should only appear if you haven't already signed 'approve' transaction -->
       <!-- <p>
         <em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
       </p> -->
@@ -14,7 +15,7 @@
     <div v-if="step === 1">
       <progress-bar currentStep="1" totalSteps="3" />
       <h2>Approve {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }}</h2>
-      <p>This gives this app permission to withdraw 100 DAI from your wallet for your contribution.</p>
+      <p>This gives this app permission to withdraw {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} from your wallet for your contribution.</p>
       <transaction
         :hash="approvalTxHash"
         :error="approvalTxError"

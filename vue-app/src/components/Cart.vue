@@ -83,9 +83,9 @@
       v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase"
     >
       <!--  TODO: Also, add getter for pre-contribution phase -->
-      <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
+      <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
         Round opens for contributing in {{startDateCountdown}}. <span v-if="canRegisterWithBrightId">Get verified with BrightID while you wait.</span>
-      </div>
+      </div> --> 
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
@@ -93,8 +93,8 @@
         Unallocated funds will be used as matching funding
       </div>
       <!-- <div v-if="canRegisterWithBrightId" @click="registerWithBrightId()" class="btn-primary"> -->
-      <div class="p1">
-        <router-link to="/setup" v-if="canRegisterWithBrightId" class="btn-primary"> 
+      <div class="p1" v-if="canRegisterWithBrightId">
+        <router-link to="/setup" class="btn-primary"> 
           Verify with BrightID
         </router-link>
       </div>
@@ -463,7 +463,7 @@ export default class Cart extends Vue {
       return 'Please connect your wallet'
     } else if (currentUser.isVerified === null) {
       return '' // No error: waiting for verification check
-    } else if (!currentUser.isVerified) {
+    } else if (!currentUser.isVerified && userRegistryType === 'brightid') {
       return 'To contribute, you need to set up BrightID.'
     } else if (!this.isFormValid()) {
       return 'Only numbers in your contributions please.'
