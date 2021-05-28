@@ -43,7 +43,7 @@
               v-model="amount"
               class="input"
               name="amount"
-              placeholder="10"
+              :placeholder="DEFAULT_CONTRIBUTION_AMOUNT"
               autocomplete="on"
               onfocus="this.value=''"
               v-if="!inCart"
@@ -52,7 +52,7 @@
               v-if="hasContributeBtn() && !inCart"
               class="donate-btn"
               :disabled="!canContribute()"
-              @click="contribute(project)"
+              @click="contribute()"
               value="Add to cart"
             >
             <div 
@@ -104,7 +104,7 @@ import { markdown } from '@/utils/markdown'
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
-  amount = 10;
+  amount = DEFAULT_CONTRIBUTION_AMOUNT;
 
   get descriptionHtml(): string {
     return markdown.renderInline(this.project.description)
@@ -181,7 +181,7 @@ export default class ProjectListItem extends Vue {
   contribute() {
     this.$store.commit(ADD_CART_ITEM, {
       ...this.project,
-      amount: DEFAULT_CONTRIBUTION_AMOUNT.toString(),
+      amount: this.amount.toString(),
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)
