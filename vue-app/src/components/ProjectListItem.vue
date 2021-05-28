@@ -43,7 +43,7 @@
               v-model="amount"
               class="input"
               name="amount"
-              :placeholder="DEFAULT_CONTRIBUTION_AMOUNT"
+              :placeholder="defaultContributionAmount"
               autocomplete="on"
               onfocus="this.value=''"
               v-if="!inCart"
@@ -185,6 +185,10 @@ export default class ProjectListItem extends Vue {
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)
+  }
+
+  get defaultContributionAmount() {
+    return DEFAULT_CONTRIBUTION_AMOUNT
   }
 }
 </script>
