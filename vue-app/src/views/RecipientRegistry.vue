@@ -1,104 +1,107 @@
 <template>
   <div class="recipients">
-    <div v-if="isUserRegistryOwner">
-    <h1 class="content-heading">Recipient registry</h1>
-    <!-- <div v-if="registryInfo" class="submit-project">
-      <div class="submit-project-info">
-        In order to become a recipient of funding, a project must go through a review process.
-        <br>
-        It takes {{ formatDuration(registryInfo.challengePeriodDuration) }} and requires a {{ formatAmount(registryInfo.deposit) }} {{ registryInfo.depositToken }} security deposit.
+    <div v-if="isRecipientRegistryOwner">
+      <h1 class="content-heading">Recipient registry</h1>
+      <!-- <div v-if="registryInfo" class="submit-project">
+        <div class="submit-project-info">
+          In order to become a recipient of funding, a project must go through a review process.
+          <br>
+          It takes {{ formatDuration(registryInfo.challengePeriodDuration) }} and requires a {{ formatAmount(registryInfo.deposit) }} {{ registryInfo.depositToken }} security deposit.
+        </div>
+        <button
+          class="btn"
+          @click="submitProject()"
+          :disabled="!canSubmitProject()"
+        >
+          Submit project
+        </button>
+      </div> -->
+      <loader v-if="isLoading"/>
+      <div v-if-else="requests.length > 0">
+        <h2>Projects</h2>
+        <table class="requests">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Request type</th>
+              <th>Automatic acceptance date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
+              <td>
+                <div class="project-name">
+                  <a :href="request.metadata.thumbnailImageUrl" target="_blank" rel="noopener">
+                    <img class="project-image" :src="request.metadata.thumbnailImageUrl">
+                  </a>
+                  {{ request.metadata.name }} <router-link
+                    :to="{ name: 'project', params: { id: request.recipientId }}"
+                  >-></router-link>
+                </div>
+                <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
+                <details class="project-details">
+                  <summary>More</summary>
+                  
+                  <div><span>Transaction hash <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.transactionHash }}</code></div>
+                  <div><span>Project ID <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.recipientId }}</code></div>
+                  <div><span>Recipient address <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.recipient }}</code></div>
+                  <!-- <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div> -->
+                </details>
+              </td>
+              <td>{{ request.type }}</td>
+              <td>
+                <div v-if="isPending(request)">{{ formatDate(request.acceptanceDate) }}</div>
+                <div v-if="!isPending(request)">Challenge period over</div>
+              </td>
+              <td>
+                <template v-if="hasProjectLink(request)">
+                  <router-link
+                    :to="{ name: 'project', params: { id: request.recipientId }}"
+                  >
+                    {{ request.status }}
+                  </router-link>
+                </template>
+                <template v-else>
+                  {{ request.status }}
+                </template>
+              </td>
+              <td>
+                <!-- If challenge period is over, display button to register project -->
+                <div v-if="isAccepted(request)" @click="register(request)" class="btn-secondary">
+                  Add to round
+                </div>
+                <div v-if="$store.getters.isLive" class="btn-warning">
+                  <!-- TODO: admin can remove a project once EXECUTED aka live -->
+                  Remove
+                </div>
+              </td>
+              <td v-if="$store.getters.canAdminDecide" class="btn-row">
+                <div 
+                  class="icon-btn-approve"
+                  @click="register()"
+                  v-if="$store.getters.isPending && !$store.getters.isAccepted && !$store.getters.isRejected"
+                >
+                  <!-- TODO: admin can approve if the project has been submitted and need review. Ideal scenario is this will also EXECUTE the project to add to the round -->
+                  <img src="@/assets/checkmark.svg" />
+                </div>
+                <div 
+                  class="icon-btn-reject"
+                  v-if="$store.getters.isPending && !$store.getters.isAccepted && !$store.getters.isRejected"
+                >
+                  <img src="@/assets/close.svg" />
+                  <!-- TODO: admin can reject a project once submitted -->
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <button
-        class="btn"
-        @click="submitProject()"
-        :disabled="!canSubmitProject()"
-      >
-        Submit project
-      </button>
-    </div> -->
-    <loader v-if="isLoading"/>
-    <h2 v-if="requests.length > 0">Projects</h2>
-    <table v-if="requests.length > 0" class="requests">
-      <thead>
-        <tr>
-          <th>Project</th>
-          <th>Automatic acceptance date</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
-          <td>
-            <div class="project-name">
-              <a :href="request.metadata.thumbnailImageUrl" target="_blank" rel="noopener">
-                <img class="project-image" :src="request.metadata.thumbnailImageUrl">
-              </a>
-              {{ request.metadata.name }} <router-link
-                :to="{ name: 'project', params: { id: request.recipientId }}"
-              >-></router-link>
-            </div>
-            <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
-            <details class="project-details">
-              <summary>More</summary>
-              
-              <div><span>Transaction <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.transactionHash }}</code></div>
-              <div><span>Project ID <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.recipientId }}</code></div>
-              <div><span>Recipient address <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.recipient }}</code></div>
-              <!-- <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div> -->
-            </details>
-          </td>
-          <!-- <td>{{ request.type }}</td> -->
-          <td>
-            <div v-if="isPending(request)">{{ formatDate(request.acceptanceDate) }}</div>
-            <div v-if="!isPending(request)">Challenge period over</div>
-          </td> 
-          <td>
-            <template v-if="hasProjectLink(request)">
-              <router-link
-                :to="{ name: 'project', params: { id: request.recipientId }}"
-              >
-                {{ request.status }}
-              </router-link>
-            </template>
-            <template v-else>
-              {{ request.status }}
-            </template>
-          </td>
-          <td>
-            <div v-if="$store.getters.canAdminDecide && $store.getters.isAccepted" class="btn-secondary">
-              Add to round
-              <!-- TODO: only possible once challenge period is over. Ideal scenario, we can do this to cancel challenge period -->
-            </div>
-            <div v-if="$store.getters.isLive" class="btn-warning">
-              <!-- TODO: admin can remove a project once EXECUTED aka live -->
-              Remove
-            </div>
-          </td>
-          <td v-if="$store.getters.canAdminDecide" class="btn-row">
-            <div 
-              class="icon-btn-approve"
-              @click="register()"
-              v-if="$store.getters.isPending && !$store.getters.isAccepted && !$store.getters.isRejected"
-            >
-              <!-- TODO: admin can approve if the project has been submitted and need review. Ideal scenario is this will also EXECUTE the project to add to the round -->
-              <img src="@/assets/checkmark.svg" />
-            </div>
-            <div 
-              class="icon-btn-reject"
-              v-if="$store.getters.isPending && !$store.getters.isAccepted && !$store.getters.isRejected"
-            >
-              <img src="@/assets/close.svg" />
-              <!-- TODO: admin can reject a project once submitted -->
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
     </div>
     <div v-else>
       <div style="font-size: 64px;" aria-label="hand">🤚</div>
-      <h2>You must be the contract owner to access this page</h2>
+      <h2>You must be the recipient registry contract owner to access this page</h2>
       <div v-if="!isUserConnected">
         <h2>Please connect your wallet.</h2>
       </div>
@@ -208,7 +211,7 @@ export default class RecipientRegistryView extends Vue {
     return !!this.$store.state.currentUser
   }
 
-  get isUserRegistryOwner(): boolean {
+  get isRecipientRegistryOwner(): boolean {
     return this.isUserConnected && !!this.registryInfo && isSameAddress(this.$store.state.currentUser.walletAddress, this.registryInfo.owner)
   }
 
@@ -247,32 +250,19 @@ export default class RecipientRegistryView extends Vue {
     )
   }
 
-  hasRegisterBtn(): boolean {
-    if (this.project === null) {
-      return false
-    }
-    if (recipientRegistryType === 'optimistic') {
-      return this.project.index === 0
-    }
-    return false
-  }
-
-  canRegister(): boolean {
-    return this.hasRegisterBtn() && this.$store.state.currentUser
-  }
-
-  register() {
+  register(request: Request) {
     this.$modal.show(
       RecipientRegistrationModal,
-      { project: this.project },
+      { project: { id: request.recipientId, name: request.recipient } },
       { },
       {
         closed: async () => {
-          const project = await getProject(
-            this.$store.state.recipientRegistryAddress,
-            this.$route.params.id,
-          )
-          Object.assign(this.project, project)
+          if (this.registryInfo) {
+            this.requests = await getRequests(
+              this.$store.state.recipientRegistryAddress,
+              this.registryInfo,
+            )
+          }
         },
       },
     )
