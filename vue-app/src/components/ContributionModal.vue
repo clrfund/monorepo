@@ -47,7 +47,16 @@
       <div>
         Thanks for contributing {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} to the Eth2 ecosystem. 
         <br>
-        You have {{ formatDate(currentRound.votingDeadline) }} days to change your choices.
+        You have 
+        <span v-if="$store.getters.canUserReallocate" class="flex">
+          <span v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</span>
+          <span v-if="reallocationTimeLeft.days > 0">days</span>
+          <span>{{ reallocationTimeLeft.hours }}</span>
+          <span>hours</span>
+          <span v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</span>
+          <span v-if="reallocationTimeLeft.days === 0">minutes</span>
+        </span>
+          to change your choices.
       </div>
       <button class="btn-secondary" @click="$emit('close')">Close</button>
     </div>
@@ -62,7 +71,7 @@ import { BigNumber, Contract, Signer } from 'ethers'
 import { DateTime } from 'luxon'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
-import { RoundInfo } from '@/api/round'
+import { RoundInfo, TimeLeft } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
 import { LOAD_ROUND_INFO, SAVE_CONTRIBUTOR_DATA } from '@/store/action-types'
 import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
@@ -72,6 +81,15 @@ import { createMessage } from '@/utils/maci'
 import ProgressBar from '@/components/ProgressBar.vue'
 
 import { FundingRound, ERC20, MACI } from '@/api/abi'
+
+function timeLeft(date: DateTime): TimeLeft {
+  const now = DateTime.local()
+  if (now >= date) {
+    return { days: 0, hours: 0, minutes: 0 }
+  }
+  const { days, hours, minutes } = date.diff(now, ['days', 'hours', 'minutes'])
+  return { days, hours, minutes: Math.ceil(minutes) }
+}
 
 @Component({
   components: {
@@ -103,6 +121,10 @@ export default class ContributionModal extends Vue {
 
   formatDate(value: DateTime): string {
     return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
+  }
+
+  get reallocationTimeLeft(): TimeLeft {
+    return timeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   getTotal(): BigNumber {

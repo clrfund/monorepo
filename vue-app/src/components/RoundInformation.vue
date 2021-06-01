@@ -13,15 +13,17 @@
           <div class="circle pulse open" /> Open
         </div>
       </div>
-      <div v-if="currentRound.status === 'Reallocating'" class="round-info-item">
+      <div v-if="currentRound.status === 'Reallocating' || $store.getters.hasUserContributed || (currentRound.status === 'Reallocating'  && $store.getters.canUserReallocate)" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex;  gap: 0.5rem">
-            <div class="round-info-title">Time left to reallocate</div>
-            <tooltip position="right" content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or inrease your overall total."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+            <div class="round-info-title" v-if="$store.getters.hasUserContributed">Time left to reallocate</div>
+            <div class="round-info-title" v-if="!$store.getters.hasUserContributed">Round status</div>
+            <tooltip position="right" content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
           </div>
-          <div
+          <!-- <div
             class="round-info-value"
             :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
+            v-if="currentRound.status === 'Reallocating'"
           >
             <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
             <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
@@ -29,10 +31,25 @@
             <div class="unit">hours</div>
             <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
             <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
+          </div> -->
+          <div class="message" v-if="!$store.getters.hasUserContributed" >Closed for contributions</div>
+          <div
+            class="round-info-value"
+            :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
+            v-if="$store.getters.hasUserContributed"
+          >
+            <div v-if="$store.getters.canUserReallocate" class="round-info-value">
+            <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
+            <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
+            <div class="value">{{ reallocationTimeLeft.hours }}</div>
+            <div class="unit">hours</div>
+            <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
+            <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
+          </div>
           </div>
         </div>
       </div>
-      <div v-if="currentRound.status === 'Contributing'" class="round-info-item">
+      <div v-if="currentRound.status === 'Contributing' && !$store.getters.canUserReallocate" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex; gap: 0.5rem;">
             <div class="round-info-title">Time left to contribute</div>
@@ -60,7 +77,7 @@
           <div
             class="round-info-value"
           >
-          <div class="message">Tallying all contributions.</div>
+          <div class="message">Tallying all contributions</div>
           </div>
         </div>
       </div>

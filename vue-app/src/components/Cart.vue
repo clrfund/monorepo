@@ -671,7 +671,7 @@ h2 {
   align-items: center;
   justify-content: space-around;
   width: 100%;
-  margin-top: 1rem;
+  margin: 1rem 0rem;
 }
 
 .cart-title-bar {
