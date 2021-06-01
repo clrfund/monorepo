@@ -49,7 +49,7 @@
           <div>Choose some projects that you want to contribute to...</div>
           <router-link to="/projects" class="btn-secondary mobile mt1">See projects</router-link>
         </div>
-        <div v-else-if="$store.getters.canUserReallocate" class="new-items" >
+        <div v-else-if="$store.getters.canUserReallocate && isListNew" class="new-items" >
           <div class="flex-row-reallocation">
             <div>New ✨</div>
             <div @click="CLEAR_CART && SAVE_CART" v-if="$store.getters.canUserReallocate">Remove all</div>
@@ -63,7 +63,8 @@
           />
           <!-- removed old cart list, replaced with component -->
         </div>
-        <div v-else-if="$store.getters.hasUserContributed" class="flex-row-reallocation" id="readOnly">
+        <div v-else-if="$store.getters.hasUserContributed || $store.getters.hasReallocationPhaseEnded" class="flex-row-reallocation" id="readOnly">
+          <!-- NOTE: we'll want to see the "Your contributions" header after contribution not after reallocation ahs ended -->
           <!-- Round is finalized -->
           <div>Your contributions</div>
           <!-- TODO: after contribution, your cart should appear under here. Project items should only appear under new if they add a project during reallocation -->
