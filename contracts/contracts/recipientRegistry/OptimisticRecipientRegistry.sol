@@ -181,10 +181,12 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
   {
     Request memory request = requests[_recipientId];
     require(request.submissionTime != 0, 'RecipientRegistry: Request does not exist');
-    require(
-      block.timestamp - request.submissionTime >= challengePeriodDuration,
-      'RecipientRegistry: Challenge period is not over'
-    );
+    if (msg.sender != _owner) {
+      require(
+        block.timestamp - request.submissionTime >= challengePeriodDuration,
+        'RecipientRegistry: Challenge period is not over'
+      );
+    }
     uint256 recipientIndex = 0;
     if (request.requestType == RequestType.Removal) {
       _removeRecipient(_recipientId);
