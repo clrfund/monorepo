@@ -197,7 +197,9 @@ export default class RecipientRegistryView extends Vue {
     if (recipientRegistryType !== 'optimistic') {
       return
     }
+    // TODO fetch/read this data from the store vs. storing in component state
     if (this.$store.state.recipientRegistryAddress === null) {
+      // this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
       const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
       const registryAddress = await getRecipientRegistryAddress(roundAddress)
       this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
