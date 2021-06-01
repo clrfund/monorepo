@@ -52,8 +52,7 @@
         <div v-else-if="$store.getters.canUserReallocate && isListNew" class="new-items" >
           <div class="flex-row-reallocation">
             <div>New ✨</div>
-            <div @click="CLEAR_CART && SAVE_CART" v-if="$store.getters.canUserReallocate">Remove all</div>
-            <!--TODO: clear cart -->
+            <div @click="removeAll" v-if="$store.getters.canUserReallocate">Remove all</div>
           </div>
           <cart-items
             :cartList="filteredCart"
@@ -212,10 +211,15 @@ export default class Cart extends Vue {
   private walletChainId: string | null = null
   profileImageUrl: string | null = null
   private editModeSelection = false
+  
+  removeAll(): void {
+    this.$store.commit(CLEAR_CART)
+    this.$store.commit(SAVE_CART)
+  }
+
   dropdownItems: {callback: () => void | null; text: string; icon: string}[] = [
     { callback: () => {
-      this.$store.commit(CLEAR_CART)
-      this.$store.dispatch(SAVE_CART)
+      this.removeAll()
     }, text: 'Remove all', icon: 'remove.svg' },
     { callback: () => {
       alert('TODO: Split evenly between projects in cart')
