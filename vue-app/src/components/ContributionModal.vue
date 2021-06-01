@@ -43,11 +43,11 @@
       ></transaction>
     </div>
     <div v-if="step === 4">
-      <h3>Success!</h3>
+      <h3>You just contributed!</h3>
       <div>
-        Successfully contributed {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} to the funding round. Only the coordinator can know which projects you have supported.
+        Thanks for contributing {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} to the Eth2 ecosystem. 
         <br>
-        You can reallocate contributed funds until {{ formatDate(currentRound.votingDeadline) }}.
+        You have {{ formatDate(currentRound.votingDeadline) }} days to change your choices.
       </div>
       <button class="btn-secondary" @click="$emit('close')">Close</button>
     </div>
