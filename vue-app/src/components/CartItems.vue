@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div v-for="item in cartList" :class="isListNew ? 'new-cart-item' : 'cart-item'" :key="item.id">
+  <div v-for="item in cartList" class="cart-item" :key="item.id">
     <div class="project">
       <router-link
         :to="{ name: 'project', params: { id: item.id }}"
@@ -57,7 +57,6 @@ import { SAVE_CART } from '@/store/action-types'
 export default class extends Vue {
   @Prop() cartList!: CartItem[]
   @Prop() isEditMode!: boolean
-  @Prop() isListNew!: boolean
   @Prop() isAmountValid!: () => boolean
 
   canUpdateAmount(): boolean {

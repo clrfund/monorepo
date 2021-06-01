@@ -49,35 +49,24 @@
           <div>Choose some projects that you want to contribute to...</div>
           <router-link to="/projects" class="btn-secondary mobile mt1">See projects</router-link>
         </div>
-        <div v-else-if="$store.getters.canUserReallocate && isListNew" class="new-items" >
+        <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
           <div class="flex-row-reallocation">
-            <div>New ✨</div>
+            <div @click="handleEditState" v-if="$store.getters.canUserReallocate">
+              <span v-if="editModeSelection">Cancel</span>
+              <span v-else>Edit</span>
+            </div>
             <div @click="removeAll" v-if="$store.getters.canUserReallocate">Remove all</div>
           </div>
-          <cart-items
-            :cartList="filteredCart"
-            :isEditMode="isEditMode"
-            :isAmountValid="isAmountValid"
-            :isListNew="true"
-          />
-          <!-- removed old cart list, replaced with component -->
         </div>
-        <div v-else-if="$store.getters.hasUserContributed || $store.getters.hasReallocationPhaseEnded" class="flex-row-reallocation" id="readOnly">
-          <!-- NOTE: we'll want to see the "Your contributions" header after contribution not after reallocation ahs ended -->
+        <div v-else-if="$store.getters.hasUserContributed" class="flex-row-reallocation" id="readOnly">
           <!-- Round is finalized -->
           <div>Your contributions</div>
-          <!-- TODO: after contribution, your cart should appear under here. Project items should only appear under new if they add a project during reallocation -->
-          <div @click="handleEditState" v-if="$store.getters.canUserReallocate"><span v-if="isEditMode">Cancel</span><span v-if="!isEditMode">Edit</span></div>
         </div>
-        <div>
-          <cart-items
-            :cartList="filteredCart"
-            :isEditMode="isEditMode"
-            :isAmountValid="isAmountValid"
-            :isListNew="false"
-          />
-          <!-- removed old cart list, replaced with component -->
-        </div>
+        <cart-items
+          :cartList="filteredCart"
+          :isEditMode="isEditMode"
+          :isAmountValid="isAmountValid"
+        />
       </div>
     </div>
     <div class="submit-btn-wrapper"
@@ -218,12 +207,16 @@ export default class Cart extends Vue {
   }
 
   dropdownItems: {callback: () => void | null; text: string; icon: string}[] = [
-    { callback: () => {
-      this.removeAll()
-    }, text: 'Remove all', icon: 'remove.svg' },
-    { callback: () => {
-      alert('TODO: Split evenly between projects in cart')
-    }, text: 'Split evenly', icon: 'split.svg' },
+    {
+      callback: this.removeAll,
+      text: 'Remove all', icon: 'remove.svg',
+    },
+    {
+      callback: () => {
+        alert('TODO: Split evenly between projects in cart')
+      },
+      text: 'Split evenly', icon: 'split.svg',
+    },
   ]
 
   get isCartFinalized(): boolean {
@@ -549,10 +542,6 @@ export default class Cart extends Vue {
     )
   }
 
-  get canSubmit(): boolean {
-    return true
-  }
-
   submitCart(event) {
     event.preventDefault()
     const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
@@ -566,6 +555,7 @@ export default class Cart extends Vue {
       { votes },
       { width: 500 },
     )
+    this.editModeSelection = false
   }
 
   canWithdrawContribution(): boolean {
