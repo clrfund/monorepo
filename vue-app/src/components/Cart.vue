@@ -32,7 +32,7 @@
     </div>
     <div class="messages-and-cart-items">
       <div class="reallocation-intro" v-if="$store.getters.canUserReallocate">
-        You’ve already contributed this round. If you add new projects to your cart now you can reallocate, but you’ll have to reduce funding for other projects.
+        You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount. <router-link to="/about-maci">Why?</router-link>
       </div>
       <div class="reallocation-intro" v-if="$store.getters.hasUserContributed && $store.getters.hasReallocationPhaseEnded">
         This round is over. Here’s how you contributed. Thanks!
@@ -645,6 +645,7 @@ h2 {
   padding: 1rem;
   padding-top: 0rem;
   margin-bottom: 1rem;
+  font-size: 14px;
 }
 
 .profile-info-round {
