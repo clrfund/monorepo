@@ -25,6 +25,7 @@
           {{item.amount}} {{tokenSymbol}}
         </div>
       </div>
+      <!-- TODO: if in tallying phase and the user contributed to matching pool as part of reallocation we should list it here -->
       <form v-if="isEditMode" class="contribution-form">
         <div class="input-button">
           <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
@@ -107,6 +108,7 @@ export default class extends Vue {
   display: flex;
   flex-direction: row;
   align-items: center;
+  cursor: pointer;
 
   .project-image {
     border-radius: 10px;
@@ -117,6 +119,10 @@ export default class extends Vue {
     min-width: 2.5rem;
     object-fit: cover;
     width: 2.5rem;
+    &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+  }
   }
 
   .project-name {
@@ -130,6 +136,10 @@ export default class extends Vue {
     overflow: hidden;
     font-weight: 600;
     text-overflow: ellipsis;
+    &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+  }
   }
 }
 

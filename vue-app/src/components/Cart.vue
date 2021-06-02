@@ -899,7 +899,6 @@ h2 {
   }
 
   .submit-error {
-
     margin-bottom: 1rem;
   }
 
