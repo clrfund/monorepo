@@ -36,13 +36,14 @@
         </button>
 
         <form action="#">
+          <!-- TODO: if a user is unconnected, adding to cart should trigger wallet connection -->
         <div class="input-button">
             <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
             <input
               v-model="amount"
               class="input"
               name="amount"
-              placeholder="10"
+              :placeholder="defaultContributionAmount"
               autocomplete="on"
               onfocus="this.value=''"
               v-if="!inCart"
@@ -51,7 +52,7 @@
               v-if="hasContributeBtn() && !inCart"
               class="donate-btn"
               :disabled="!canContribute()"
-              @click="contribute(project)"
+              @click="contribute()"
               value="Add to cart"
             >
             <div 
@@ -103,7 +104,7 @@ import { markdown } from '@/utils/markdown'
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
-  amount = 10;
+  amount = DEFAULT_CONTRIBUTION_AMOUNT;
 
   get descriptionHtml(): string {
     return markdown.renderInline(this.project.description)
@@ -180,10 +181,14 @@ export default class ProjectListItem extends Vue {
   contribute() {
     this.$store.commit(ADD_CART_ITEM, {
       ...this.project,
-      amount: DEFAULT_CONTRIBUTION_AMOUNT.toString(),
+      amount: this.amount.toString(),
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)
+  }
+
+  get defaultContributionAmount() {
+    return DEFAULT_CONTRIBUTION_AMOUNT
   }
 }
 </script>

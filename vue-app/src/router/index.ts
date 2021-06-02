@@ -8,13 +8,14 @@ import ProjectView from '../views/Project.vue'
 import RoundList from '../views/RoundList.vue'
 import ProjectAdded from '../views/ProjectAdded.vue'
 import RoundInformation from '../views/RoundInformation.vue'
-import About from '../views/About.vue'
+import About from '../views/About.vue'  
 import AboutMaci from '../views/AboutMaci.vue'
 import HowItWorks from '../views/HowItWorks.vue'
 import AboutLayer2 from '../views/AboutLayer2.vue'
 import AboutSybilAttacks from '../views/AboutSybilAttacks.vue'
 import JoinView from '../views/Join.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
+import CartView from '@/views/Cart.vue'
 
 Vue.use(VueRouter)
 
@@ -34,7 +35,6 @@ const routes = [
     name: 'project',
     component: ProjectView,
   },
-
   {
     path: '/round-information',
     name: 'round information',
@@ -95,11 +95,19 @@ const routes = [
     name: 'joinStep',
     component: JoinView,
   },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: CartView,
+  },
 ]
 
 const router = new VueRouter({
   base: window.location.pathname,
   routes,
+  scrollBehavior () {
+    return { x: 0, y: 0 }
+  },
 })
 
 export default router

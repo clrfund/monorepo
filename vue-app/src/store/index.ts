@@ -51,6 +51,7 @@ import {
   REMOVE_CART_ITEM,
   CLEAR_CART,
   SET_RECIPIENT_DATA,
+  TOGGLE_SHOW_CART_PANEL,
 } from './mutation-types'
 
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
@@ -64,6 +65,7 @@ interface RootState {
   currentRound: RoundInfo | null;
   tally: Tally | null;
   cart: CartItem[];
+  showCartPanel: boolean;
   contributor: Contributor | null;
   contribution: BigNumber | null;
   recipientRegistryAddress: string | null;
@@ -77,6 +79,7 @@ const state: RootState = {
   currentRound: null,
   tally: null,
   cart: new Array<CartItem>(),
+  showCartPanel: false,
   contributor: null,
   contribution: null,
   recipientRegistryAddress: null,
@@ -165,6 +168,9 @@ export const mutations = {
     } else {
       state.recipient[payload.step] = payload.updatedData[payload.step]
     }
+  },
+  [TOGGLE_SHOW_CART_PANEL](state) {
+    state.showCartPanel = !state.showCartPanel
   },
 }
 
@@ -347,6 +353,10 @@ const getters = {
   isRoundJoinOnlyPhase: (state: RootState, getters): boolean => {
     return !!state.currentRound && getters.isRoundJoinPhase && !hasDateElapsed(state.currentRound.startTime)
   },
+  hasStartTimeElapsed: (state: RootState): boolean => {
+    if (!state.currentRound) return true
+    return hasDateElapsed(state.currentRound.startTime)
+  },
   recipientSpacesRemaining: (state: RootState): number | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
       return null
@@ -379,15 +389,20 @@ const getters = {
   isRoundFinalized: (state: RootState): boolean => {
     return !!state.currentRound && state.currentRound.status === RoundStatus.Finalized
   },
-  isRoundClosed: (state: RootState): boolean => {
+  hasContributionPhaseEnded: (state: RootState): boolean => {
     return !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
+  },
+  hasReallocationPhaseEnded: (state: RootState): boolean => {
+    return !!state.currentRound && hasDateElapsed(state.currentRound.votingDeadline)
   },
   hasUserContributed: (state: RootState): boolean => {
     return !!state.currentUser && !!state.contribution && !state.contribution.isZero()
   },
-  canUserRellocate: (_, getters): boolean => {
+  canUserReallocate: (_, getters): boolean => {
     return getters.hasUserContributed && (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
   },
+
+  // might need a state for user has updated cart during reallocation
 }
 
 const store: StoreOptions<RootState> = {

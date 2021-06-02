@@ -1,5 +1,5 @@
 <template>
-  <div class="grid">
+  <div :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`" v-if="project" >
     <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name">
     <project-profile class="details" :project="project" :previewMode="false" />
     <div class="sticky-column">  
@@ -230,6 +230,10 @@ export default class ProjectView extends Vue {
     return index !== -1
   }
 
+  get isCartToggledOpen(): boolean {
+    return this.$store.state.showCartPanel
+  }
+
   hasRegisterBtn(): boolean {
     if (this.project === null) {
       return false
@@ -346,17 +350,33 @@ export default class ProjectView extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.grid {
+@mixin project-grid() {
   display: grid;
   grid-template-columns: 1fr clamp(320px, 24%, 440px);
   grid-template-rows: repeat(2, auto);
   grid-template-areas: 'banner banner' 'details actions';
   grid-column-gap: 2rem;
   grid-row-gap: 3rem;
+}
+
+@mixin project-grid-mobile() {
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3, auto);
+  grid-template-areas: 'banner' 'details' 'actions';
+  padding-bottom: 6rem;
+}
+
+.grid.cart-open {
+  @include project-grid();
+  @media (max-width: $breakpoint-xl) {
+    @include project-grid-mobile();
+  }
+}
+
+.grid.cart-closed {
+  @include project-grid();
   @media (max-width: $breakpoint-m) {
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, auto);
-    grid-template-areas: 'banner' 'details' 'actions';
+    @include project-grid-mobile();
   }
 }
 

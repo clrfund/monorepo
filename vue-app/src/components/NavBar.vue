@@ -27,7 +27,7 @@
           </div>
         </div>
       </div>
-      <cart-widget v-if="inApp" />
+      <!-- <div class="desktop"><cart-widget v-if="inApp" /></div> -->
       <wallet-widget class="wallet-widget" v-if="inApp" />
       <router-link v-if="!inApp" to="/projects" class="app-btn">
         App
@@ -71,7 +71,7 @@ export default class NavBar extends Vue {
 window.onclick = function(event) {
   if (!event.target.matches('.dropdown-btn')) {
     const dropdowns = document.getElementsByClassName('button-menu')
-    let i 
+    let i: number
     for (i = 0; i < dropdowns.length; i++) {
       const openDropdown = dropdowns[i]
       if (openDropdown.classList.contains('show')) {
@@ -99,6 +99,9 @@ window.onclick = function(event) {
   align-items: center;
   background: $bg-secondary-color;
   box-shadow: $box-shadow;
+  @media (max-width: $breakpoint-m) {
+    padding: 0 1rem;
+  }
 
   .wallet-widget {
     margin-left: 0.5rem;

@@ -14,7 +14,7 @@
           <router-link to="/projects" class="btn-action">Go to app</router-link>
           <div class="btn-white" @click="scrollToHowItWorks">How it works</div>
         </div>
-        <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout mobile">
+        <div v-if="!$store.getters.hasContributionPhaseEnded && !isRoundFull" class="apply-callout mobile">
           <div id="countdown" class="caps">11 days</div>
           <div id="countdown-label" class="caps">Time to apply</div>
           <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout desktop">
+      <div v-if="!$store.getters.hasContributionPhaseEnded && !isRoundFull" class="apply-callout desktop">
         <div class="column">
           <h2>Join the funding round</h2>
           <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
@@ -62,7 +62,7 @@
         <div class="icon-row">
           <!-- Optimism icon -->
           <img src="@/assets/optimism.png" id="optimism-icon"/>
-          <p><b>Optimism for fast and cheap transation fees</b></p>
+          <p><b>Optimism for fast and cheap transaction fees</b></p>
         </div>
         <div class="btn-action">Get Optimism funds</div>
       </div>
@@ -137,13 +137,6 @@ export default class Landing extends Vue {
       return  '...'
     }
     return formatDateFromNow(this.signUpDeadline)
-  }
-
-  get isRoundClosed(): boolean {
-    if (!this.signUpDeadline) {
-      return  false
-    }
-    return hasDateElapsed(this.signUpDeadline)
   }
 
   // TODO fetch `maxRecipients` from registry & compare to current registry size

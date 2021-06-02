@@ -7,13 +7,14 @@
     </div>  
   
     <round-status-banner />
+    <back-to-projects :alsoShowOnMobile="true" />
 
     <div class="content" v-if="isLoading">
       <h1>Fetching round data...</h1>
       <loader />
     </div>
 
-    <div class="content" v-else-if="isRoundClosed">
+    <div class="content" v-else-if="$store.getters.hasContributionPhaseEnded">
       <div style="font-size: 64px;">☹</div>
       <h1>Sorry, it's too late to join</h1>
       <div id="subtitle" class="subtitle">
@@ -89,9 +90,10 @@ import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
 import { formatAmount } from '@/utils/amounts'
+import BackToProjects from '../components/BackToProjects.vue'
 
 @Component({
-  components: { RoundStatusBanner, CriteriaModal, Loader },
+  components: { RoundStatusBanner, CriteriaModal, Loader, BackToProjects },
 })
 export default class JoinLanding extends Vue {
   isLoading = true
@@ -127,13 +129,6 @@ export default class JoinLanding extends Vue {
       return  '...'
     }
     return formatDateFromNow(this.signUpDeadline)
-  }
-
-  get isRoundClosed(): boolean {
-    if (!this.signUpDeadline) {
-      return  false
-    }
-    return hasDateElapsed(this.signUpDeadline)
   }
 
   get isRoundFull(): boolean {

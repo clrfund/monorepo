@@ -159,8 +159,20 @@ export default class ProjectProfile extends Vue {
   contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
   claimed: boolean | null = null
   @Prop() project!: Project
-  // @Prop() klerosCurateUrl?: string | null = null
+  @Prop() klerosCurateUrl!: string | null
   @Prop() previewMode!: boolean
+  isCopied = false
+
+  async copyAddress(): Promise<void> {
+    if (!this.project?.address) return
+    try {
+      await navigator.clipboard.writeText(this.project.address)
+      this.isCopied = true
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      this.isCopied = false
+    } catch (error) {
+      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
+    }
 
   private async checkAllocation(tally: Tally | null) {
     const currentRound = this.$store.state.currentRound
@@ -393,7 +405,7 @@ export default class ProjectProfile extends Vue {
       align-items: center; 
       justify-content: space-between;
 
-      @media (max-width: $breakpoint-l) {
+      @media (max-width: $breakpoint-m) {
         flex-direction: column;
         gap: 0.5rem;
         align-items: flex-start;
