@@ -78,18 +78,10 @@ import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
+import { getTimeLeft } from '@/utils/dates'
 import ProgressBar from '@/components/ProgressBar.vue'
 
 import { FundingRound, ERC20, MACI } from '@/api/abi'
-
-function timeLeft(date: DateTime): TimeLeft {
-  const now = DateTime.local()
-  if (now >= date) {
-    return { days: 0, hours: 0, minutes: 0 }
-  }
-  const { days, hours, minutes } = date.diff(now, ['days', 'hours', 'minutes'])
-  return { days, hours, minutes: Math.ceil(minutes) }
-}
 
 @Component({
   components: {
@@ -124,7 +116,7 @@ export default class ContributionModal extends Vue {
   }
 
   get reallocationTimeLeft(): TimeLeft {
-    return timeLeft(this.$store.state.currentRound.votingDeadline)
+    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   getTotal(): BigNumber {

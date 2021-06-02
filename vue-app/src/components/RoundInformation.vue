@@ -188,6 +188,8 @@ import { DateTime } from 'luxon'
 import { RoundInfo, getCurrentRound, TimeLeft } from '@/api/round'
 import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
 
+import { getTimeLeft } from '@/utils/dates'
+
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
@@ -219,15 +221,6 @@ function shuffleArray(array: any[]) {
     const j = Math.floor(random(SHUFFLE_RANDOM_SEED, i) * (i + 1))
     ;[array[i], array[j]] = [array[j], array[i]]
   }
-}
-
-function timeLeft(date: DateTime): TimeLeft {
-  const now = DateTime.local()
-  if (now >= date) {
-    return { days: 0, hours: 0, minutes: 0 }
-  }
-  const { days, hours, minutes } = date.diff(now, ['days', 'hours', 'minutes'])
-  return { days, hours, minutes: Math.ceil(minutes) }
 }
 
 @Component({
@@ -299,11 +292,11 @@ export default class RoundInformation extends Vue {
   }
 
   get contributionTimeLeft(): TimeLeft {
-    return timeLeft(this.$store.state.currentRound.signUpDeadline)
+    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
   }
 
   get reallocationTimeLeft(): TimeLeft {
-    return timeLeft(this.$store.state.currentRound.votingDeadline)
+    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   addMatchingFunds(): void {

@@ -134,8 +134,7 @@
         </div>
     </div>
     <div id="cart-bottom-scroll-point"></div>
-    <!-- TODO under what conditions to display? -->
-    <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && ($store.getters.isRoundTallying || $store.getters.isRoundFinalized || $store.getters.hasContributionPhaseEnded))">
+    <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
       <div><span class="total-label">Total</span> {{ formatAmount(getTotal()) }} {{ tokenSymbol }}</div>
       <div class="btn-secondary" @click="scrollToBottom"><img src="@/assets/chevron-down.svg" /></div>
     </div>
@@ -182,16 +181,7 @@ import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import { CLEAR_CART, TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { getNetworkName } from '@/utils/networks'
-import { formatDateFromNow } from '@/utils/dates'
-
-function timeLeft(date: DateTime): TimeLeft {
-  const now = DateTime.local()
-  if (now >= date) {
-    return { days: 0, hours: 0, minutes: 0 }
-  }
-  const { days, hours, minutes } = date.diff(now, ['days', 'hours', 'minutes'])
-  return { days, hours, minutes: Math.ceil(minutes) }
-}
+import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
 
 @Component({
   components: { Tooltip, WalletWidget, CartItems },
@@ -399,26 +389,16 @@ export default class Cart extends Vue {
     return normalizedValue === value
   }
 
-  hasContributorActionBtn(): boolean {
-    // Show cart action button:
-    // - if there are items in cart
-    // - if contribution can be withdrawn
-    // - if contributor data has been lost
-    return this.$store.state.currentRound && (
-      this.cart.length > 0 || !this.contribution.isZero()
-    )
-  }
-
   get startDateCountdown(): string {
     return formatDateFromNow(this.$store.state.currentRound?.startTime)
   }
 
   get contributionTimeLeft(): TimeLeft {
-    return timeLeft(this.$store.state.currentRound.signUpDeadline)
+    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
   }
 
   get reallocationTimeLeft(): TimeLeft {
-    return timeLeft(this.$store.state.currentRound.votingDeadline)
+    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   private isFormValid(): boolean {
@@ -573,7 +553,6 @@ export default class Cart extends Vue {
   }
 
   get showCollapseCart(): boolean {
-    // Hide cart toggle button when directly on `/cart` path
     return this.$route.name !== 'cart'
   }
 
