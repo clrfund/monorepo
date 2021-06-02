@@ -90,6 +90,8 @@
         </div>
         + {{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}
       </div> 
+      <div class="split-link" v-if="this.isGreaterThanInitialContribution() || hasUnallocatedFunds()"><img src="@/assets/split.svg" /> Split {{ formatAmount(this.contribution) }} {{tokenSymbol}} evenly</div>
+      <!-- TODO: should probably only appear if more than 1 item in cart -->
     </div>
     <div class="submit-btn-wrapper"
       v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase"
@@ -156,7 +158,7 @@
     </div>
     <div id="cart-bottom-scroll-point"></div>
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
-      <div><span class="total-label">Total</span> <span v-if="this.isGreaterThanInitialContribution()">{{ formatAmount(getTotal()) }} / {{ formatAmount(contribution)}} </span> <span v-else>{{ formatAmount(getTotal()) }}</span> {{ tokenSymbol }}</div>
+      <div><span class="total-label">Total</span> <span v-if="this.isGreaterThanInitialContribution()">{{ formatAmount(getTotal()) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> <span v-else>{{ formatAmount(getTotal()) }}</span> {{ tokenSymbol }}</div>
       <div class="btn-secondary" @click="scrollToBottom"><img src="@/assets/chevron-down.svg" /></div>
     </div>
   </div>
@@ -802,9 +804,10 @@ h2 {
   background: $bg-primary-color;
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
-  font-family: "Glacial Indifference", sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-family: "Inter";
+  font-size: 1rem;
+  line-height: 0;
+  font-weight: 400;
   @media (max-width: $breakpoint-m) {
     position: fixed;
     bottom: 4rem;
@@ -818,13 +821,19 @@ h2 {
   }
 }
 
-.total-label {
+.total-reallocation {
   font-family: "Inter";
   font-size: 1rem;
   line-height: 0;
-  margin-top: 0.125rem;
-  text-transform: uppercase;
-  margin-right: 1rem;
+  font-weight: 700;
+}
+
+.total-label {
+  font-family: "Glacial Indifference", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 0;
+  margin-right: 0.5rem;
 }
 
 .reallocation-message {
@@ -936,7 +945,19 @@ h2 {
   span { 
     color: $warning-color;
     margin-right: 0.25rem; }
-  
+}
+
+.split-link {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  text-decoration: underline;
+  cursor:  pointer;
+  justify-content: flex-end;
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+  }
 }
 
 .reallocation-row-matching-pool {
