@@ -1,46 +1,46 @@
 <template>
-<div>
-  <div v-for="item in cartList" class="cart-item" :key="item.id">
-    <div class="project">
-      <router-link
-        :to="{ name: 'project', params: { id: item.id }}"
-      >
-        <img class="project-image" :src="item.thumbnailImageUrl" :alt="item.name">
-      </router-link>
-      <router-link
-        class="project-name"
-        :to="{ name: 'project', params: { id: item.id }}"
-      >
-        {{ item.name }}
-      </router-link>
-      <div
-        class="remove-cart-item"
-        @click="removeItem(item)"
-      >
-        <div v-if="isEditMode" class="remove-icon-background">
-          <img class="remove-icon" src="@/assets/remove.svg" aria-label="Remove project"/>
+  <div>
+    <div v-for="item in cartList" class="cart-item" :key="item.id">
+      <div class="project">
+        <router-link
+          :to="{ name: 'project', params: { id: item.id }}"
+        >
+          <img class="project-image" :src="item.thumbnailImageUrl" :alt="item.name">
+        </router-link>
+        <router-link
+          class="project-name"
+          :to="{ name: 'project', params: { id: item.id }}"
+        >
+          {{ item.name }}
+        </router-link>
+        <div
+          class="remove-cart-item"
+          @click="removeItem(item)"
+        >
+          <div v-if="isEditMode" class="remove-icon-background">
+            <img class="remove-icon" src="@/assets/remove.svg" aria-label="Remove project"/>
+          </div>
+        </div>
+        <div class="contribution-form" v-if="$store.getters.hasUserContributed && !isEditMode">
+          {{item.amount}} {{tokenSymbol}}
         </div>
       </div>
-      <div class="contribution-form" v-if="$store.getters.hasUserContributed && !isEditMode">
-        {{item.amount}} {{tokenSymbol}}
-      </div>
+      <form v-if="isEditMode" class="contribution-form">
+        <div class="input-button">
+          <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
+          <input
+            :value="item.amount"
+            @input="updateAmount(item, $event.target.value)"
+            class="input contribution-amount"
+            :class="{ invalid: !isAmountValid(item.amount) }"
+            :disabled="!canUpdateAmount()"
+            name="amount"
+            placeholder="Amount"
+          >
+        </div>
+      </form>
     </div>
-    <form v-if="isEditMode" class="contribution-form">
-      <div class="input-button">
-        <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
-        <input
-          :value="item.amount"
-          @input="updateAmount(item, $event.target.value)"
-          class="input contribution-amount"
-          :class="{ invalid: !isAmountValid(item.amount) }"
-          :disabled="!canUpdateAmount()"
-          name="amount"
-          placeholder="Amount"
-        >
-      </div>
-    </form>
   </div>
-</div>
 </template>
 
 <script lang="ts">

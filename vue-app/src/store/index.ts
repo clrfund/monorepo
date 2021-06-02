@@ -332,9 +332,6 @@ const actions = {
     commit(SET_CONTRIBUTOR, null)
     commit(CLEAR_CART)
   },
-  [TOGGLE_SHOW_CART_PANEL](state) {
-    state.showCartPanel = !state.showCartPanel
-  },
 }
 
 const getters = {

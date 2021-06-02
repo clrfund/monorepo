@@ -3,7 +3,7 @@
     <nav-bar :in-app="isInApp" />
     <div id="content-container">
       <div id="sidebar" v-if="isSidebarShown" :class="`${$store.state.showCartPanel ? 'desktop-l' :  'desktop'}`">
-          <round-information />
+        <round-information />
       </div>
       <div
         id="content"
@@ -13,7 +13,7 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <back-to-projects v-if="isProjectsLinkShown" />
+        <back-to-projects v-if="showProjectsLink" />
         <router-view :key="$route.path" />
       </div>
       <div id="cart" v-if="isSideCartShown" :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`">
@@ -94,8 +94,7 @@ export default class App extends Vue {
   }
 
   get isSideCartShown(): boolean {
-    // Show side-cart anytime sidebar is shown, except `/cart` path
-    return this.isSidebarShown && this.$route.name !== 'cart' && !!this.currentUser
+    return !!this.currentUser && this.isSidebarShown && this.$route.name !== 'cart'
   }
 
   get isCartPadding(): boolean {
@@ -103,8 +102,7 @@ export default class App extends Vue {
     return routes.includes(this.$route.name || '')
   }
 
-  get isProjectsLinkShown(): boolean {
-    // Provides explicit link back to "projects" section of the app
+  get showProjectsLink(): boolean {
     const routes = ['landing', 'projectAdded', 'join', 'joinStep', 'projects']
     return !routes.includes(this.$route.name || '')
   }

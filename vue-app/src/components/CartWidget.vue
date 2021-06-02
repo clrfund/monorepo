@@ -86,7 +86,6 @@ export default class CartWidget extends Vue {
   }
 
   get filteredCart(): CartItem[] {
-    // Hide cleared items
     return this.cart.filter((item) => !item.isCleared)
   }
 
