@@ -150,7 +150,7 @@
             </div>
             <div class="round-info-value">
               <div class="value">{{ formatIntegerPart(currentRound.contributions) }}</div>
-              <div class="value extra">{{ formatFractionalPart(currentRound.contributions) }}</div>
+              <div class="value">{{ formatFractionalPart(currentRound.contributions) }}</div>
               <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
             </div>
           </div>
