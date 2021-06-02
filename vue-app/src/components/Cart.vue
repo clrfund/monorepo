@@ -71,7 +71,7 @@
         />
       </div>
     </div>
-    <div class="reallocation-section" v-if="$store.getters.canUserReallocate">
+    <div class="reallocation-section" v-if="$store.getters.canUserReallocate && editModeSelection">
       <div class="reallocation-row">
         <span>Original contribution</span> 
         {{ formatAmount(this.contribution) }} {{tokenSymbol}}
@@ -92,9 +92,9 @@
       </div> 
       <div class="split-link" v-if="this.isGreaterThanInitialContribution() || hasUnallocatedFunds()"><img src="@/assets/split.svg" /> Split {{ formatAmount(this.contribution) }} {{tokenSymbol}} evenly</div>
       <!-- TODO: should probably only appear if more than 1 item in cart -->
-    </div>
+    </div> 
     <div class="submit-btn-wrapper"
-      v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase"
+      v-if="($store.getters.canUserReallocate && editModeSelection) || $store.getters.isRoundContributionPhase"
     >
       <!--  TODO: Also, add getter for pre-contribution phase -->
       <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
@@ -167,6 +167,10 @@
       </div>
       <div class="btn-secondary" @click="scrollToBottom"><img src="@/assets/chevron-down.svg" /></div>
     </div>
+    <!-- <div class="reallocation-bar-container">
+      <div class="reallocation-bar" /> 
+    </div> -->
+    <!-- TODO: reallocation bar -->
   </div>
 </div>
 </template>
@@ -1000,6 +1004,32 @@ h2 {
   gap: 0.5rem;
   padding: 1rem;
   border-top: 1px solid #000;
+}
+
+.reallocation-bar {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 2rem;
+  background: $button-color;
+}
+
+.reallocation-bar-warning {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 2rem;
+  background: $warning-color;
+}
+
+.reallocation-bar-happy {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 2rem;
+  background: $clr-green;
+}
+
+.reallocation-bar-container {
+  display: flex;
+  padding: 1rem;
 }
 
 .dropdown {
