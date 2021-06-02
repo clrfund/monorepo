@@ -109,8 +109,7 @@
               <tooltip position="right" content="This total includes the funds in the matching pool and all contributions from the community."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
             </div>
             <div class="round-info-value">
-              <div class="value large">{{ formatIntegerPart(currentRound.contributions) + formatIntegerPart(currentRound.matchingPool) }}</div>
-              <div class="value extra">{{ formatFractionalPart(currentRound.contributions) + formatFractionalPart(currentRound.matchingPool) }}</div>
+              <div class="value large">{{ formatAmount(currentRound.contributions) + formatAmount(currentRound.matchingPool) }}</div>
               <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
             </div>
           </div>
@@ -182,14 +181,14 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { FixedNumber } from 'ethers'
+import { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { RoundInfo, getCurrentRound, TimeLeft } from '@/api/round'
 import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
 
 import { getTimeLeft } from '@/utils/dates'
-
+import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
@@ -289,6 +288,11 @@ export default class RoundInformation extends Vue {
 
   formatDate(value: DateTime): string {
     return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
+  }
+
+  formatAmount(value: BigNumber): string {
+    const decimals = this.$store.state.currentRound.nativeTokenDecimals
+    return formatAmount(value, decimals)
   }
 
   get contributionTimeLeft(): TimeLeft {
