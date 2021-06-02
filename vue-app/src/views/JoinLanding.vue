@@ -18,7 +18,7 @@
       <div style="font-size: 64px;">☹</div>
       <h1>Sorry, it's too late to join</h1>
       <div id="subtitle" class="subtitle">
-        The round is about to start. It's now too late to get on board.
+        The round is closed for new projects. It's now too late to get on board.
       </div> 
       <div class="subtitle" id="subtitle" style="margin-top: 2rem;">
         Check out these <a href="https://ethereum.org/en/community/grants/">other ways to source funding</a>. Or follow us on Twitter for updates about future rounds: <a href="https://twitter.com/ethdotorg">@ethdotorg</a>

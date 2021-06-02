@@ -15,53 +15,55 @@
         <img width="16px" src="@/assets/edit.svg" />
         Edit details
       </button> -->
-      <button
-        v-if="hasRegisterBtn()"
-        class="btn-primary"
-        :disabled="!canRegister()"
-        @click="register()"
-      >
-        Register
-      </button>
-      <div class="input-button" v-if="hasContributeBtn() && !inCart">
-        <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
-        <input
-          v-model="contributionAmount"
-          class="input"
-          name="contributionAmount"
-          placeholder="5"
-          autocomplete="on"
-          onfocus="this.value=''"
-
-        >
-        <input type="submit"
-          class="donate-btn"
-          :disabled="!canContribute()"
-          @click="contribute()"
-          value="Add to cart"
-        >
-      </div>
-      <div class="input-button" v-if="hasContributeBtn() && inCart">
+      <div class="desktop">
         <button
-          class="donate-btn-full"
+          v-if="hasRegisterBtn()"
+          class="btn-primary"
+          :disabled="!canRegister()"
+          @click="register()"
         >
-          <span>In cart 🎉</span>
+          Register
+        </button>
+        <div class="input-button" v-if="hasContributeBtn() && !inCart">
+          <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
+          <input
+            v-model="contributionAmount"
+            class="input"
+            name="contributionAmount"
+            placeholder="5"
+            autocomplete="on"
+            onfocus="this.value=''"
+
+          >
+          <input type="submit"
+            class="donate-btn"
+            :disabled="!canContribute()"
+            @click="contribute()"
+            value="Add to cart"
+          >
+        </div>
+        <div class="input-button" v-if="hasContributeBtn() && inCart">
+          <button
+            class="donate-btn-full"
+          >
+            <span>In cart 🎉</span>
+          </button>
+        </div>
+        <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
+        <button
+          v-if="hasClaimBtn()"
+          class="btn-primary"
+          :disabled="!canClaim()"
+          @click="claim()"
+        >
+          <template v-if="claimed">
+            Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
+          </template>
+          <template v-else>
+            Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
+          </template>
         </button>
       </div>
-      <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
-      <button
-        v-if="hasClaimBtn()"
-        class="btn-primary"
-        :disabled="!canClaim()"
-        @click="claim()"
-      >
-        <template v-if="claimed">
-          Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-        </template>
-        <template v-else>
-          Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
-        </template>
-      </button>
       <div class="link-box">
         <h2 class="link-title">Check them out</h2>
         <div v-if="project.githubUrl" class="link-row">
@@ -390,6 +392,9 @@ export default class ProjectView extends Vue {
   flex-direction: column;
   align-self: start;
   gap: 1rem;
+  @media (max-width: $breakpoint-l) {
+    margin-bottom: 3rem;
+  }
 }
 
 
