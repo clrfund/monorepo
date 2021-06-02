@@ -42,6 +42,7 @@
             autocomplete="on"
             onfocus="this.value=''" 
           >
+          <img v-if="search.length > 0" @click="clearSearch" src="@/assets/close.svg" height="20">
         </div>
         <div class="add-project">
           <router-link to="/join" class="btn-primary">Add project</router-link>
@@ -239,6 +240,10 @@ export default class ProjectList extends Vue {
     } else {
       this.selectedCategories.push(selection)
     }
+  }
+
+  clearSearch():  void {
+    this.search = ''
   }
 }
 
