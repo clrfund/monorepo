@@ -70,6 +70,25 @@
           :isAmountValid="isAmountValid"
         />
       </div>
+      <div v-if="$store.getters.canUserReallocate && !isEditMode" class="time-left-read-only">
+          <div class="flex"><img src="@/assets/time.svg" />Time left</div>
+          <div v-if="$store.getters.canUserReallocate" class="flex">
+            <div v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
+            <div v-if="reallocationTimeLeft.days > 0">days</div>
+            <div>{{ reallocationTimeLeft.hours }}</div>
+            <div>hours</div>
+            <div v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
+            <div v-if="reallocationTimeLeft.days === 0">minutes</div>
+          </div>
+          <div v-else class="flex">
+            <div v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
+            <div v-if="contributionTimeLeft.days > 0">days</div>
+            <div>{{ contributionTimeLeft.hours }}</div>
+            <div>hours</div>
+            <div v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
+            <div v-if="contributionTimeLeft.days === 0">minutes</div>
+          </div>
+        </div>
     </div>
     <div class="reallocation-section" v-if="$store.getters.canUserReallocate && editModeSelection">
       <div class="reallocation-row">
@@ -94,7 +113,7 @@
       <!-- TODO: should probably only appear if more than 1 item in cart -->
     </div> 
     <div class="submit-btn-wrapper"
-      v-if="($store.getters.canUserReallocate && editModeSelection) || $store.getters.isRoundContributionPhase"
+      v-if="($store.getters.canUserReallocate && isEditMode) || $store.getters.isRoundContributionPhase"
     >
       <!--  TODO: Also, add getter for pre-contribution phase -->
       <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
@@ -697,6 +716,13 @@ h2 {
   align-items: center;
   justify-content: space-between;
   width: 100%;  
+}
+
+.time-left-read-only {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem; 
 }
 
 .cart-title-bar {
