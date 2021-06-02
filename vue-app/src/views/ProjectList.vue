@@ -42,6 +42,7 @@
             autocomplete="on"
             onfocus="this.value=''" 
           >
+          <img v-if="search.length > 0" @click="clearSearch" src="@/assets/close.svg" height="20" class="pointer">
         </div>
         <div class="add-project">
           <router-link to="/join" class="btn-primary">Add project</router-link>
@@ -56,7 +57,7 @@
           <h2 class="prep-title">Get prepared</h2>
           <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
           </div>
-          <div class="btn-action" style="cursor: pointer;">Start prep</div>
+          <div class="btn-action pointer">Start prep</div>
         </div>
         <project-list-item
           v-for="project in filteredProjects"
@@ -239,6 +240,10 @@ export default class ProjectList extends Vue {
     } else {
       this.selectedCategories.push(selection)
     }
+  }
+
+  clearSearch():  void {
+    this.search = ''
   }
 }
 

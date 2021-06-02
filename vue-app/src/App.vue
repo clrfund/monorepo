@@ -445,6 +445,10 @@ summary:focus {
   }
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 @media (max-width: $breakpoint-m) {
   #app {
     flex-direction: column;
