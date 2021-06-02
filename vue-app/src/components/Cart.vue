@@ -145,6 +145,7 @@
         :class="{'btn-action': !errorMessage,
         'btn-action disabled': errorMessage }"
         @click="submitCart"
+        :disabled="errorMessage"
       >
         <template v-if="contribution.isZero()">
           Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
@@ -960,6 +961,12 @@ h2 {
 
 .disabled {
   opacity: 0.5;
+  cursor: not-allowed;
+  &:hover {
+    transform: none;  
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 }
 
 .reallocation-row {
