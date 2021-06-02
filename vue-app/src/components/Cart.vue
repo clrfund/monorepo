@@ -63,6 +63,7 @@
           <div>Your contributions</div>
         </div>
         <cart-items
+          v-if="$store.getters.hasUserContributed || !$store.getters.hasContributionPhaseEnded"
           :cartList="filteredCart"
           :isEditMode="isEditMode"
           :isAmountValid="isAmountValid"
