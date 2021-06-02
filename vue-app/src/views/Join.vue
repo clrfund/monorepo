@@ -431,7 +431,7 @@
                 <div class="summary">
                   <h4 class="read-only-title">Contact email</h4>
                   <div class="data">{{form.team.email}} </div>
-                  <div class="input-notice">This information won't be added to the smart contract. It won't cost anything to edit and will only be used to contact you about the round and/or your project.</div>
+                  <div class="input-notice">This information won't be added to the smart contract. </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Team name</h4>
