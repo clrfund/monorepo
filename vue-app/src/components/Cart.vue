@@ -71,6 +71,26 @@
         />
       </div>
     </div>
+    <div class="reallocation-section" v-if="$store.getters.canUserReallocate">
+      <div class="reallocation-row">
+        <span>Original contribution</span> 
+        {{ formatAmount(this.contribution) }} {{tokenSymbol}}
+      </div>
+      <div :class="{
+        'reallocation-row': !this.isGreaterThanInitialContribution(),
+        'reallocation-row-warning': this.isGreaterThanInitialContribution()
+        }">
+        <span>Your cart</span> 
+        <div class="reallocation-warning"><span v-if="this.isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getTotal())}} {{tokenSymbol}}</div>
+      </div>  
+      <div v-if="hasUnallocatedFunds()" class="reallocation-row-matching-pool">
+        <div>
+          <div><b>Matching pool</b></div> 
+          <div>Remaining funds go to matching pool</div>
+        </div>
+        + {{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}
+      </div> 
+    </div>
     <div class="submit-btn-wrapper"
       v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase"
     >
@@ -108,7 +128,7 @@
           Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
         </template>
         <template v-else-if="hasUnallocatedFunds()">
-          Reallocate {{ formatAmount(getTotal()) }} of {{ formatAmount(contribution) }} {{ tokenSymbol }}
+          Reallocate contribution
         </template>
         <template v-else>
           Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
@@ -136,7 +156,7 @@
     </div>
     <div id="cart-bottom-scroll-point"></div>
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
-      <div><span class="total-label">Total</span> {{ formatAmount(getTotal()) }} {{ tokenSymbol }}</div>
+      <div><span class="total-label">Total</span> <span v-if="this.isGreaterThanInitialContribution()">{{ formatAmount(getTotal()) }} / {{ formatAmount(contribution)}} </span> <span v-else>{{ formatAmount(getTotal()) }}</span> {{ tokenSymbol }}</div>
       <div class="btn-secondary" @click="scrollToBottom"><img src="@/assets/chevron-down.svg" /></div>
     </div>
   </div>
@@ -884,6 +904,63 @@ h2 {
 
 .moon-emoji {
   font-size: 4rem;
+}
+
+.reallocation-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+  span {
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+.reallocation-row-warning {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: $warning-color;
+  span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+  }
+}
+
+.reallocation-warning {
+  span { 
+    color: $warning-color;
+    margin-right: 0.25rem; }
+  
+}
+
+.reallocation-row-matching-pool {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-weight: 600;
+  font-size: 16px;
+  color: $clr-green;
+  div {
+    font-size: 14px;
+    font-weight: 400;
+    color: #fff;
+    padding: 0.125rem 0;
+  }
+}
+
+
+.reallocation-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-top: 1px solid #000;
 }
 
 .dropdown {
