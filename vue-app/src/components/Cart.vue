@@ -49,7 +49,7 @@
           <div>Choose some projects that you want to contribute to...</div>
           <router-link to="/projects" class="btn-secondary mobile mt1">See projects</router-link>
         </div>
-        <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
+        <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty && !$store.getters.hasReallocationPhaseEnded">
           <div class="flex-row-reallocation">
             <div class="semi-bold">{{editModeSelection ? "Edit contributions" : "Your contributions"}}</div>
             <div class="semi-bold" @click="handleEditState" v-if="$store.getters.canUserReallocate">
@@ -100,6 +100,7 @@
       <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
         Round opens for contributing in {{startDateCountdown}}. <span v-if="canRegisterWithBrightId">Get verified with BrightID while you wait.</span>
       </div> --> 
+      <div v-if="errorMessage" class="error-title">Can't <span v-if="$store.getters.canUserReallocate">reallocate</span><span v-else>contribute</span></div>
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
@@ -121,19 +122,19 @@
         Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
       </button>
       <button
-        v-if="!errorMessage && !isCartEmpty"
-        class="btn-action"
-        :disabled="errorMessage !== null || isCartEmpty"
+        v-if="!isCartEmpty"
+        :class="{'btn-action': !errorMessage,
+        'btn-action disabled': errorMessage }"
         @click="submitCart"
       >
         <template v-if="contribution.isZero()">
           Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
         </template>
-        <template v-else-if="hasUnallocatedFunds()">
+        <!-- <template v-else-if="hasUnallocatedFunds()">
           Reallocate contribution
-        </template>
+        </template> -->
         <template v-else>
-          Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
+          Reallocate contribution
         </template>
       </button>
       <div v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="time-left">
@@ -158,7 +159,12 @@
     </div>
     <div id="cart-bottom-scroll-point"></div>
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
-      <div><span class="total-label">Total</span> <span v-if="this.isGreaterThanInitialContribution()">{{ formatAmount(getTotal()) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> <span v-else>{{ formatAmount(getTotal()) }}</span> {{ tokenSymbol }}</div>
+      <div>
+        <span class="total-label">Total</span> 
+        <span v-if="this.isGreaterThanInitialContribution() && $store.getters.isRoundReallocationPhase">{{ formatAmount(getTotal()) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> 
+        <span v-else>{{ formatAmount(getTotal()) }}</span> 
+        {{ tokenSymbol }}
+      </div>
       <div class="btn-secondary" @click="scrollToBottom"><img src="@/assets/chevron-down.svg" /></div>
     </div>
   </div>
@@ -525,7 +531,8 @@ export default class Cart extends Vue {
         if (!this.$store.state.contributor) {
           return 'Contributor key is not found'
         } else if (this.isGreaterThanInitialContribution()) {
-          return 'Your new total can\'t be more than your original contribution.'
+          return `Your new total can't be more than your original ${formatAmount(this.contribution)} contribution.`
+          // TODO: need to turn this into a small number
         } else {
           return null
         }
@@ -684,9 +691,8 @@ h2 {
 .time-left {
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  width: 100%;
-  margin: 1rem 0rem;
+  justify-content: space-between;
+  width: 100%;  
 }
 
 .cart-title-bar {
@@ -871,35 +877,43 @@ h2 {
   box-sizing: border-box;
   background: $bg-primary-color;
   border-top: 1px solid #000000;
-  text-align: center;
+  text-align: left;
   gap: 0.5rem;
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   padding: 1rem;
   position: relative;
+  background: $bg-secondary-color;
   @media (max-width: $breakpoint-m) {
     padding: 2rem;
   }
 
-  .submit-error {
+  .error-title {
+    text-align: left;
     color: $warning-color;
-    margin: 1.5rem 0rem;
-    margin-bottom: 0rem;
-    padding: 0 1.5rem;
+    :after {
+      content: ' ⚠️';
+    }
+  }
+
+  .submit-error {
+
+    margin-bottom: 1rem;
   }
 
   .btn-action {
     padding-left: 0;
     padding-right: 0;
     width: 100%;
+    margin-bottom: 1rem;
   }  
 }
 
 .p1 {
-  padding: 1rem;
   width: 100%;
+  margin-bottom: 1rem;
 }
 
 .mt1 {
@@ -915,6 +929,10 @@ h2 {
   font-size: 4rem;
 }
 
+.disabled {
+  opacity: 0.5;
+}
+
 .reallocation-row {
   display: flex;
   justify-content: space-between;
@@ -926,6 +944,7 @@ h2 {
     font-weight: 600;
   }
 }
+
 
 .reallocation-row-warning {
   display: flex;
