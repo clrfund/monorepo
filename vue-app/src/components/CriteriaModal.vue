@@ -13,7 +13,7 @@
           <p>For this pilot round, Ethereum Foundation team members will remove any projects that don't meet the round criteria. So read carefully! In later rounds we're hoping that this review process can be done by the community.</p>
         <div class="content">
           <div v-for="({ emoji, criteria, description }, idx) in criterion" :key="idx" class="criteria-point">
-            <div class="emoji">{{ emoji }}</div>
+            <div class="emoji" aria-hidden="true">{{ emoji }}</div>
             <div> 
               <h3 class="no-margin">{{ criteria }}</h3>
               <p class="no-margin">{{ description }}</p>
@@ -49,14 +49,19 @@ export default class CriteriaModal extends Vue {
       description: 'Your project code must be available to anyone to use under an open source license.',
     },
     {
-      emoji: '😇',
-      criteria: 'Honest and credible',
-      description: '__ Needs defining',
+      emoji: '👺',
+      criteria: 'No scams',
+      description: 'Obviously, your project must not put anyone\'s funds or information at risk.',
     },
     {
       emoji: '👯‍♀️',
       criteria: 'No clones',
       description: 'If you\'ve forked code, you must provide additional, unique value to the ecosystem.',
+    },
+    {
+      emoji: '🙋‍♀️',
+      criteria: 'Project ownership',
+      description: 'The project must be yours or you must have permission from the project owner.',
     },
     {
       emoji: '💻',
