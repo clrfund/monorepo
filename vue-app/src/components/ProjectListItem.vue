@@ -49,7 +49,7 @@
                 v-if="!inCart"
               >
               <input type="submit"
-                v-if="hasContributeBtn() && !inCart"
+                v-if="hasContributeBtn() && !inCart && currentUser"
                 class="donate-btn"
                 :disabled="!canContribute()"
                 @click="contribute()"
@@ -61,6 +61,13 @@
               >
               In cart 🎉
               </div>
+            <div
+              v-if="!currentUser"
+              class="donate-btn"
+              @click="promptConnection()"
+            >
+              Add to cart
+            </div>
           </div>
         </form>
 
@@ -90,6 +97,7 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
+import ConnectionModal from '@/components/ConnectionModal.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
@@ -97,10 +105,14 @@ import { RoundStatus } from '@/api/round'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM } from '@/store/mutation-types'
+import { ADD_CART_ITEM, LOAD_ROUND_INFO } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
-@Component
+@Component({
+  components: {
+    ConnectionModal,
+  },
+})
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
@@ -108,6 +120,13 @@ export default class ProjectListItem extends Vue {
 
   get descriptionHtml(): string {
     return markdown.renderInline(this.project.description)
+  }
+
+  get walletProvider(): any {
+    return (window as any).ethereum
+  }
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
   }
 
   get projectImageUrl(): string | null {
@@ -194,6 +213,18 @@ export default class ProjectListItem extends Vue {
 
   get defaultContributionAmount() {
     return DEFAULT_CONTRIBUTION_AMOUNT
+  }
+
+  promptConnection(): void {
+    return this.$modal.show(
+      ConnectionModal,
+      { },
+      { },
+      {
+        closed: () => { this.$store.dispatch(LOAD_ROUND_INFO) 
+        },
+      },
+    )
   }
 }
 </script>
