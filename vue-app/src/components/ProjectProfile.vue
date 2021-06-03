@@ -173,6 +173,7 @@ export default class ProjectProfile extends Vue {
     } catch (error) {
       console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
     }
+  }
 
   private async checkAllocation(tally: Tally | null) {
     const currentRound = this.$store.state.currentRound

@@ -109,7 +109,7 @@
               <tooltip position="right" content="This total includes the funds in the matching pool and all contributions from the community."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
             </div>
             <div class="round-info-value">
-              <div class="value large">{{ formatAmount(currentRound.contributions) + formatAmount(currentRound.matchingPool) }}</div>
+              <div class="value large">{{ formatTotalInRound }}</div>
               <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
             </div>
           </div>
@@ -274,6 +274,30 @@ export default class RoundInformation extends Vue {
     return this.$store.state.currentRound
   }
 
+  get contributionTimeLeft(): TimeLeft {
+    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
+  }
+
+  get reallocationTimeLeft(): TimeLeft {
+    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
+  }
+
+  get formatTotalInRound(): string {
+    const { currentRound } = this.$store.state
+    const totalInRound = currentRound.contributions.addUnsafe(currentRound.matchingPool)
+    
+    return this.formatAmount(totalInRound)
+  }
+
+  get filteredProjects(): Project[] {
+    return this.projects.filter((project: Project) => {
+      if (!this.search) {
+        return true
+      }
+      return project.name.toLowerCase().includes(this.search.toLowerCase())
+    })
+  }
+
   formatIntegerPart(value: FixedNumber): string {
     if (value._value === '0.0') {
       return '0'
@@ -295,14 +319,6 @@ export default class RoundInformation extends Vue {
     return formatAmount(value, decimals)
   }
 
-  get contributionTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
-  }
-
-  get reallocationTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
-  }
-
   addMatchingFunds(): void {
     if (!this.$store.state.currentUser) {
       return
@@ -318,15 +334,6 @@ export default class RoundInformation extends Vue {
         },
       },
     )
-  }
-
-  get filteredProjects(): Project[] {
-    return this.projects.filter((project: Project) => {
-      if (!this.search) {
-        return true
-      }
-      return project.name.toLowerCase().includes(this.search.toLowerCase())
-    })
   }
 }
 </script>
