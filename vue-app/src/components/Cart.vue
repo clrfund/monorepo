@@ -70,25 +70,7 @@
           :isAmountValid="isAmountValid"
         />
       </div>
-      <div v-if="$store.getters.canUserReallocate && !isEditMode" class="time-left-read-only">
-          <div class="flex"><img src="@/assets/time.svg" />Time left</div>
-          <div v-if="$store.getters.canUserReallocate" class="flex">
-            <div v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-            <div v-if="reallocationTimeLeft.days > 0">days</div>
-            <div>{{ reallocationTimeLeft.hours }}</div>
-            <div>hours</div>
-            <div v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-            <div v-if="reallocationTimeLeft.days === 0">minutes</div>
-          </div>
-          <div v-else class="flex">
-            <div v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
-            <div v-if="contributionTimeLeft.days > 0">days</div>
-            <div>{{ contributionTimeLeft.hours }}</div>
-            <div>hours</div>
-            <div v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
-            <div v-if="contributionTimeLeft.days === 0">minutes</div>
-          </div>
-        </div>
+      <cart-time-left v-if="$store.getters.canUserReallocate && !isEditMode" class="time-left-read-only" />
     </div>
     <div class="reallocation-section" v-if="$store.getters.canUserReallocate && editModeSelection">
       <div class="reallocation-row">
@@ -111,7 +93,7 @@
       </div> 
       <div class="split-link" v-if="this.isGreaterThanInitialContribution() || hasUnallocatedFunds()"><img src="@/assets/split.svg" /> Split {{ formatAmount(this.contribution) }} {{tokenSymbol}} evenly</div>
       <!-- TODO: should probably only appear if more than 1 item in cart -->
-    </div> 
+    </div>
     <div class="submit-btn-wrapper"
       v-if="($store.getters.canUserReallocate && isEditMode) || $store.getters.isRoundContributionPhase"
     >
@@ -157,25 +139,7 @@
           Reallocate contribution
         </template>
       </button>
-      <div v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="time-left">
-          <div class="flex"><img src="@/assets/time.svg" /> Time left</div>
-          <div v-if="$store.getters.canUserReallocate" class="flex">
-            <div v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-            <div v-if="reallocationTimeLeft.days > 0">days</div>
-            <div>{{ reallocationTimeLeft.hours }}</div>
-            <div>hours</div>
-            <div v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-            <div v-if="reallocationTimeLeft.days === 0">minutes</div>
-          </div>
-          <div v-else class="flex">
-            <div v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
-            <div v-if="contributionTimeLeft.days > 0">days</div>
-            <div>{{ contributionTimeLeft.hours }}</div>
-            <div>hours</div>
-            <div v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
-            <div v-if="contributionTimeLeft.days === 0">minutes</div>
-          </div>
-        </div>
+      <cart-time-left v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="time-left" />
     </div>
     <div id="cart-bottom-scroll-point"></div>
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
@@ -210,6 +174,7 @@ import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import CartItems from '@/components/CartItems.vue'
+import CartTimeLeft from '@/components/CartTimeLeft.vue'
 import { Web3Provider } from '@ethersproject/providers'
 import {
   SET_CURRENT_USER,
@@ -238,7 +203,7 @@ import { getNetworkName } from '@/utils/networks'
 import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
 
 @Component({
-  components: { Tooltip, WalletWidget, CartItems },
+  components: { Tooltip, WalletWidget, CartItems, CartTimeLeft },
 })
 export default class Cart extends Vue {
   private jsonRpcNetwork: Network | null = null
@@ -555,7 +520,7 @@ export default class Cart extends Vue {
         if (!this.$store.state.contributor) {
           return 'Contributor key is not found'
         } else if (this.isGreaterThanInitialContribution()) {
-          return `Your new total can't be more than your original ${formatAmount(this.contribution)} contribution.`
+          return `Your new total can't be more than your original ${this.formatAmount(this.contribution)} contribution.`
           // TODO: need to turn this into a small number
         } else {
           return null
