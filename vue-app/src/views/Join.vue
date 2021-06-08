@@ -1,64 +1,17 @@
 <template>
   <div class="container">
     <div class="grid">
-      <div class="progress-area desktop">
-        <div class="progress-container">
-          <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-          <p class="subtitle">
-            Step {{currentStep + 1}} of {{steps.length}}
-          </p>
-          <div class="progress-steps">
-            <div
-              v-for="(name, step) in stepNames"
-              :key="step"
-              class="progress-step"
-              :class="{
-                'zoom-link': step <= form.furthestStep && step !== currentStep && !navDisabled,
-                disabled: navDisabled
-              }"
-              @click="handleStepNav(step)"
-            >
-              <template v-if="step === currentStep">
-                <img src="@/assets/current-step.svg" alt="current step" />
-                <p v-text="name" class="active step" />
-              </template>
-              <template v-else-if="step === furthestStep">
-                <img src="@/assets/furthest-step.svg" alt="current step" />
-                <p v-text="name" class="active step" />
-              </template>
-              <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
-                <img src="@/assets/green-tick.svg" alt="step complete" />
-                <p v-text="name" class="step" />
-              </template>
-              <template v-else>
-                <img src="@/assets/step-remaining.svg" alt="step remaining" />
-                <p v-text="name" class="step" />
-              </template>
-            </div>
-          </div>
-          <button-row
-            v-bind:isJoin="true"
-            :isStepValid="isStepValid(currentStep)"
-            :steps="steps"
-            :currentStep="currentStep"
-            :callback="saveFormData"
-            :handleStepNav="handleStepNav"
-            :navDisabled="navDisabled"
-            class="desktop"
-          />
-        </div>
-      </div>
-      <div class="progress-area mobile">
-        <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-        <div class="row">
-          <p>
-              Step {{currentStep + 1}} of {{steps.length}}
-          </p>
-          <router-link class="cancel-link" to="/join">
-            Cancel
-          </router-link>
-        </div>
-      </div>
+      <form-progress-widget
+        :currentStep="currentStep"
+        :furthestStep="furthestStep"
+        :steps="steps"
+        :stepNames="stepNames"
+        :isNavDisabled="isNavDisabled"
+        :isStepUnlocked="isStepUnlocked"
+        :isStepValid="isStepValid"
+        :handleStepNav="handleStepNav"
+        :saveFormData="saveFormData"
+      />
       <div class="title-area">
         <h1>Join the round</h1>
         <div v-if="currentStep === 5">
@@ -81,7 +34,6 @@
               <div class="inputs">
                 <div class="form-background">
                   <label for="project-name" class="input-label">Name</label>
-                  <!-- TODO figure out onblur validation -->
                   <input
                     id="project-name"
                     type="text"
@@ -415,13 +367,13 @@
             </div>
             <div v-if="currentStep === 4">
               <h2 class="step-title">Images</h2>
-              <p>We'll upload your images to IPFS, a decentralized storage platform.</p>
+              <p>We'll upload your images to IPFS, a decentralized storage platform. <a target="_blank" href="https://ipfs.io/#how">More on IPFS</a></p>
               <div class="inputs">
                 <div class="form-background">
-                  <ipfs-image-upload label="Banner image" description="Recommended dimensions: 500px x 300px" :onUpload="handleUpload" formProp="bannerHash"/>
+                  <ipfs-image-upload label="Banner image" description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF" :onUpload="handleUpload" formProp="bannerHash"/>
                 </div>
                 <div class="form-background">
-                  <ipfs-image-upload label="Thumbnail image" description="Recommended dimensions: 80px x 80px" :onUpload="handleUpload" formProp="thumbnailHash"/>
+                  <ipfs-image-upload label="Thumbnail image" description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF" :onUpload="handleUpload" formProp="thumbnailHash"/>
                 </div>
               </div>
             </div>
@@ -464,7 +416,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Ethereum address</h4>
-                  <div class="data">{{form.fund.address}} <a :href="'https://etherscan.io/address/' + form.fund.address" target="_blank">View on Etherscan</a></div>
+                  <div class="data break-all">{{form.fund.address}} <a :href="'https://etherscan.io/address/' + form.fund.address" target="_blank" class="no-break">View on Etherscan</a></div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Funding plans</h4>
@@ -479,7 +431,7 @@
                 <div class="summary">
                   <h4 class="read-only-title">Contact email</h4>
                   <div class="data">{{form.team.email}} </div>
-                  <div class="input-notice">This information won't be added to the smart contract. It won't cost anything to edit and will only be used to contact you about the round and/or your project.</div>
+                  <div class="input-notice">This information won't be added to the smart contract. </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Team name</h4>
@@ -530,23 +482,40 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Banner</h4>
-                  <div class="data">{{form.image.bannerHash}} </div>
+                  <div class="data">
+                    <ipfs-copy-widget :hash="form.image.bannerHash" />
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Thumbnail</h4>
-                  <div class="data">{{form.image.thumbnailHash}} </div>
+                  <div class="data">
+                    <ipfs-copy-widget :hash="form.image.thumbnailHash" />
+                  </div>
                 </div>
               </div>
             </div>
-            <!-- {{form}}-->
-            <!--TODO: this will be an on-chain transaction so double check all info and links are correct as it will cost you you to change it -->
+          </div>
+          <div v-if="currentStep === 6">
+            <h2 class="step-title">Submit Project</h2>
+            <p>We'll submit your application to the blockchain.</p>
+            <div class="inputs">
+              <div class="form-background">
+                <recipient-submission-widget />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="nav-area nav-bar mobile">
-        <button-row :steps="steps" :currentStep="currentStep" :callBack="saveFormData" />
-        <!-- TODO submit button to trigger tx, pass callback to above <botton-row />?  -->
-      </div>
+    </div>
+    <div class="mobile nav-bar">
+      <form-navigation
+        :isStepValid="isStepValid(currentStep)"
+        :steps="steps"
+        :currentStep="currentStep"
+        :callback="saveFormData"
+        :handleStepNav="handleStepNav"
+        :isNavDisabled="isNavDisabled"
+      />
     </div>
   </div>
 </template>
@@ -559,10 +528,14 @@ import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
-import ButtonRow from '@/components/ButtonRow.vue'
+import FormNavigation from '@/components/FormNavigation.vue'
+import FormProgressWidget from '@/components/FormProgressWidget.vue'
 import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
+import IpfsCopyWidget from '@/components/IpfsCopyWidget.vue'
+import Loader from '@/components/Loader.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
+import RecipientSubmissionWidget from '@/components/RecipientSubmissionWidget.vue'
 import Warning from '@/components/Warning.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
@@ -573,10 +546,14 @@ import { Project } from '@/api/projects'
   components: {
     LayoutSteps,
     ProgressBar,
-    ButtonRow,
+    FormNavigation,
+    FormProgressWidget,
     IpfsImageUpload,
+    IpfsCopyWidget,
+    Loader,
     Markdown,
     ProjectProfile,
+    RecipientSubmissionWidget,
     Warning,
   },
   validations: {
@@ -664,8 +641,8 @@ export default class JoinView extends mixins(validationMixin) {
 
   created() {
     const steps = Object.keys(this.form)
-    // Reassign last key from form object (furthestStep) to 'summary'
-    steps[steps.length - 1] = 'summary'
+    steps.splice(steps.length - 1, 1, 'summary', 'submit')
+
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
       'About the project',
@@ -674,6 +651,7 @@ export default class JoinView extends mixins(validationMixin) {
       'Links',
       'Images',
       'Review',
+      'Submit',
     ]
     this.steps = steps
     this.currentStep = currentStep
@@ -715,7 +693,6 @@ export default class JoinView extends mixins(validationMixin) {
     //       website: 'https://clr.fund',
     //       twitter: '',
     //       discord: '',
-    //       hasLink: true,
     //     },
     //     image: {
     //       bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
@@ -785,13 +762,13 @@ export default class JoinView extends mixins(validationMixin) {
     this.saveFormData(false)
   }
 
-  get navDisabled(): boolean {
+  get isNavDisabled(): boolean {
     return !this.isStepValid(this.currentStep) && this.currentStep !== this.furthestStep
   }
 
   handleStepNav(step): void {
-    // If navDisabled => disable quick-links
-    if (this.navDisabled) return
+    // If isNavDisabled => disable quick-links
+    if (this.isNavDisabled) return
     // Save form data
     this.saveFormData()
     // Navigate
@@ -843,79 +820,8 @@ export default class JoinView extends mixins(validationMixin) {
     grid-template-areas:
       "progress"
       "title"
-      "form"
-      "navi";
+      "form";
     gap: 0;
-  }
-}
-
-.progress-area.desktop {
-  grid-area: progress;
-  position: relative;
-
-  .progress-container {
-    position: sticky;
-    top: 5rem;
-    align-self: start;
-    padding: 1.5rem 1rem; 
-    background: $bg-primary-color; 
-    border-radius: 16px; 
-    /* width: 320px; */
-    box-shadow: $box-shadow;
-
-    .progress-steps {
-      margin-bottom: 1rem;
-    }
-
-    .progress-step {
-      display: flex;
-
-      img {
-        margin-right: 1rem;
-      }
-      p {
-        margin: 0.5rem 0;
-      }
-      .step {
-        color: #FFF9
-      }
-      .active {
-        color: white;
-        font-weight: 600;
-        font-size: 1rem;
-      }
-    }
-
-    .zoom-link {
-      cursor: pointer;
-      &:hover {
-        transform: scale(1.02);
-      }
-    }
-
-    .subtitle {
-      font-weight: 500;
-      opacity: 0.8;
-    }
-  }
-}
-
-.progress-area.mobile {
-  grid-area: progress;
-  margin: 2rem 1rem;
-  margin-bottom: 0;
-
-  .row {
-    margin-top: 1.5rem;
-
-    p {
-      margin: 0;
-      font-weight: 500;
-    }
-
-    .cancel-link {
-      font-weight: 500;
-    }
   }
 }
 
@@ -966,10 +872,6 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
-.nav-area {
-  grid-area: navi;
-}
-
 .nav-bar {
   display: inherit;
   position: sticky;
@@ -1000,12 +902,6 @@ export default class JoinView extends mixins(validationMixin) {
   &:first-of-type {
     margin-top: 0;
   }
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .application {
@@ -1104,6 +1000,7 @@ export default class JoinView extends mixins(validationMixin) {
   font-weight: 500;
 }
 
+
 .input-label {
   font-family: Inter;
   font-size: 16px;
@@ -1199,17 +1096,6 @@ export default class JoinView extends mixins(validationMixin) {
   }
   100% {
     transform: rotate(360deg);
-  }
-}
-
-
-.error {
-  color: $error-color;
-  margin-bottom: 0;
-  margin-top: 0.5rem;
-  font-size: 14px;
-  &:before {
-    content: "⚠️ "
   }
 }
 
@@ -1334,5 +1220,87 @@ export default class JoinView extends mixins(validationMixin) {
 }
 .pt-1 {
   padding-top: 1rem;
+}
+
+.tx-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+.tx-row-total {
+    display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  font-weight: 600;
+  font-size: 20px;
+  font-family: 'Glacial Indifference', sans-serif;
+  background: $bg-secondary-color;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-top: 1.5rem;
+}
+
+.tx-item {
+  font-size: 14px;
+  font-family: Inter;
+  line-height: 150%;
+  text-transform: uppercase;  
+  font-weight: 500;
+}
+
+/* .hr {
+  opacity: 0.1;
+  height: 1px;
+  margin: 1rem 0;
+} */
+
+.tx-value {
+
+}
+
+.fiat-value {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.tx-progress-area {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.checkout {
+  margin-bottom: 1rem;
+
+}
+
+.checkout-desktop {
+  padding-top: 1.5rem;
+  border-top: 1px solid $button-color;
+
+}
+
+.tx-notice {
+  margin-top: 0.25rem;
+  font-size: 12px;
+  font-family: Inter;
+  margin-bottom: 0.5rem;
+  line-height: 150%;
+  text-transform: uppercase;  
+  font-weight: 500;
+}
+
+.break-all {
+  word-break: break-all;
+}
+
+.no-break {
+  white-space: nowrap;
 }
 </style>

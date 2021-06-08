@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ container: !connectOnly }">
+  <div :class="{ container: !isActionButton }">
     <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
     <template v-else-if="!isLoaded()"></template>
     <div
@@ -10,23 +10,19 @@
     </div>
     <button
       v-else-if="walletProvider && !currentUser"
-      :class="{
-        'app-btn': !connectOnly,
-        'btn-action': connectOnly,
-        'full-width': connectOnly,
-      }"
+      :class="isActionButton ? 'btn-action' : 'app-btn'"
       @click="connect"
     >
       Connect
     </button>
-    <div v-else-if="currentUser" class="profile-info" @click="toggleProfile()">
+    <div v-else-if="currentUser && !isActionButton" class="profile-info" @click="toggleProfile">
       <div class="profile-info-balance">
         <img v-if="!showEth" src="@/assets/dai.svg" />
         <img v-if="showEth" src="@/assets/eth.svg" />
         <div v-if="!showEth" class="balance" @click="copyAddress">{{ balance }}</div>
         <div v-if="showEth" class="balance">{{etherBalance}}</div>
       </div>
-      <div class="profile-name" @click="copyAddress">{{ ens || renderUserAddress(7) }}</div>
+      <div class="profile-name" @click="copyAddress">{{ renderUserAddress(7) }}</div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl">
       </div>
@@ -38,6 +34,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Prop } from 'vue-property-decorator'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 import { commify, formatUnits } from '@ethersproject/units'
@@ -56,7 +53,6 @@ import {
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 import Profile from '@/views/Profile.vue'
-import { Prop } from 'vue-property-decorator'
 
 @Component({components: {Profile}})
 export default class WalletWidget extends Vue {
@@ -65,13 +61,15 @@ export default class WalletWidget extends Vue {
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
   @Prop() showEth!: boolean
-  @Prop() connectOnly = true
+
+  // Boolean to only show Connect button, styled like an action button,
+  // which hides the widget that would otherwise display after connecting
+  @Prop() isActionButton!: boolean
 
   async copyAddress(): Promise<void> {
     if (!this.currentUser) { return }
     try {
       await navigator.clipboard.writeText(this.currentUser.walletAddress)
-      // alert('Text copied to clipboard')
     } catch (error) {
       console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
     }
@@ -210,12 +208,6 @@ export default class WalletWidget extends Vue {
     }
     return ''
   }
-
-  // TODO: Extract into a shared function
-  get ens(): string {
-    return this.$store.state.currentUser?.ens
-  }
-
 }
 
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="grid">
+  <div :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`" v-if="project" >
     <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name">
     <project-profile class="details" :project="project" :previewMode="false" />
     <div class="sticky-column">  
@@ -15,53 +15,55 @@
         <img width="16px" src="@/assets/edit.svg" />
         Edit details
       </button> -->
-      <button
-        v-if="hasRegisterBtn()"
-        class="btn-primary"
-        :disabled="!canRegister()"
-        @click="register()"
-      >
-        Register
-      </button>
-      <div class="input-button" v-if="hasContributeBtn() && !inCart">
-        <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
-        <input
-          v-model="contributionAmount"
-          class="input"
-          name="contributionAmount"
-          placeholder="5"
-          autocomplete="on"
-          onfocus="this.value=''"
-
-        >
-        <input type="submit"
-          class="donate-btn"
-          :disabled="!canContribute()"
-          @click="contribute()"
-          value="Add to cart"
-        >
-      </div>
-      <div class="input-button" v-if="hasContributeBtn() && inCart">
+      <div class="desktop">
         <button
-          class="donate-btn-full"
+          v-if="hasRegisterBtn()"
+          class="btn-primary"
+          :disabled="!canRegister()"
+          @click="register()"
         >
-          <span>In cart 🎉</span>
+          Register
+        </button>
+        <div class="input-button" v-if="hasContributeBtn() && !inCart">
+          <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
+          <input
+            v-model="contributionAmount"
+            class="input"
+            name="contributionAmount"
+            placeholder="5"
+            autocomplete="on"
+            onfocus="this.value=''"
+
+          >
+          <input type="submit"
+            class="donate-btn"
+            :disabled="!canContribute()"
+            @click="contribute()"
+            value="Add to cart"
+          >
+        </div>
+        <div class="input-button" v-if="hasContributeBtn() && inCart">
+          <button
+            class="donate-btn-full"
+          >
+            <span>In cart 🎉</span>
+          </button>
+        </div>
+        <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
+        <button
+          v-if="hasClaimBtn()"
+          class="btn-primary"
+          :disabled="!canClaim()"
+          @click="claim()"
+        >
+          <template v-if="claimed">
+            Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
+          </template>
+          <template v-else>
+            Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
+          </template>
         </button>
       </div>
-      <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
-      <button
-        v-if="hasClaimBtn()"
-        class="btn-primary"
-        :disabled="!canClaim()"
-        @click="claim()"
-      >
-        <template v-if="claimed">
-          Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-        </template>
-        <template v-else>
-          Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
-        </template>
-      </button>
       <div class="link-box">
         <h2 class="link-title">Check them out</h2>
         <div v-if="project.githubUrl" class="link-row">
@@ -228,6 +230,10 @@ export default class ProjectView extends Vue {
     return index !== -1
   }
 
+  get isCartToggledOpen(): boolean {
+    return this.$store.state.showCartPanel
+  }
+
   hasRegisterBtn(): boolean {
     if (this.project === null) {
       return false
@@ -344,17 +350,33 @@ export default class ProjectView extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.grid {
+@mixin project-grid() {
   display: grid;
   grid-template-columns: 1fr clamp(320px, 24%, 440px);
   grid-template-rows: repeat(2, auto);
   grid-template-areas: 'banner banner' 'details actions';
   grid-column-gap: 2rem;
   grid-row-gap: 3rem;
+}
+
+@mixin project-grid-mobile() {
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3, auto);
+  grid-template-areas: 'banner' 'details' 'actions';
+  padding-bottom: 6rem;
+}
+
+.grid.cart-open {
+  @include project-grid();
+  @media (max-width: $breakpoint-xl) {
+    @include project-grid-mobile();
+  }
+}
+
+.grid.cart-closed {
+  @include project-grid();
   @media (max-width: $breakpoint-m) {
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, auto);
-    grid-template-areas: 'banner' 'details' 'actions';
+    @include project-grid-mobile();
   }
 }
 
@@ -370,6 +392,9 @@ export default class ProjectView extends Vue {
   flex-direction: column;
   align-self: start;
   gap: 1rem;
+  @media (max-width: $breakpoint-l) {
+    margin-bottom: 3rem;
+  }
 }
 
 

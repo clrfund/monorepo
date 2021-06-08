@@ -14,7 +14,7 @@
           <router-link to="/projects" class="btn-action">Go to app</router-link>
           <div class="btn-white" @click="scrollToHowItWorks">How it works</div>
         </div>
-        <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout mobile">
+        <div v-if="!$store.getters.hasContributionPhaseEnded && !isRoundFull" class="apply-callout mobile">
           <div id="countdown" class="caps">11 days</div>
           <div id="countdown-label" class="caps">Time to apply</div>
           <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout desktop">
+      <div v-if="!$store.getters.hasContributionPhaseEnded && !isRoundFull" class="apply-callout desktop">
         <div class="column">
           <h2>Join the funding round</h2>
           <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
@@ -48,9 +48,10 @@
         <h2>How it works</h2>
         <ol>
           <li>The Ethereum Foundation and other donors send funds to the matching pool smart contract.</li>
-          <li>The round begins and you can donate to as many projects as you like.</li>
-          <li>Once the round finishes, the smart contract distributes the matching pool funds to projects based primarily on number of contributions, <strong>not contribution value</strong></li>
+          <li>The round begins and you can donate to your favourite projects.</li>
+          <li>Once the round finishes, the smart contract distributes the matching pool funds to projects based primarily on number of contributions, <strong>not contribution value</strong>.</li>
         </ol>
+        <router-link class="btn-secondary" to="/how-it-works">How the round works</router-link>
       </div>
     </div>
     <div class="section-header">
@@ -61,7 +62,7 @@
         <div class="icon-row">
           <!-- Optimism icon -->
           <img src="@/assets/optimism.png" id="optimism-icon"/>
-          <p><b>Optimism for fast and cheap transation fees</b></p>
+          <p><b>Optimism for fast and cheap transaction fees</b></p>
         </div>
         <div class="btn-action">Get Optimism funds</div>
       </div>
@@ -89,8 +90,9 @@
       <div id="about-2">
         <h2>Protect against bribery</h2>
         <p>
-          Using <a href="#">MACI</a>, a zero-knowledge technology, it's impossible to prove how you voted. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!
+          Using MACI, a zero-knowledge technology, it's impossible to prove how you voted. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!
         </p>
+        <router-link to="/about-maci">About MACI</router-link>
       </div>
       <div id="about-3">
         <h2>Built using the CLR protocol</h2>
@@ -101,10 +103,13 @@
     </div>
     <div id="footer">
       <h2>More</h2>
-        <div class="link-li"><a href="#">GitHub</a></div>
-        <div class="link-li">More on Eth2</div>
+        <div class="link-li"><a href="https://github.com/ethereum/clrfund/">GitHub</a></div>
+        <div class="link-li"><a href="https://ethereum.org/eth2/">More on Eth2</a></div>
+        <div class="link-li"><router-link to="/how-it-works">How the round works</router-link></div>
+        <div class="link-li"><router-link to="/about-layer2">Learn about [Layer 2]</router-link></div>
+        <div class="link-li"><router-link to="/about-maci">Learn about MACI</router-link></div>
+        <div class="link-li"><router-link to="/about-sybil-attacks">Learn about BrightID</router-link></div> 
         <div class="link-li">Provide Feedback</div>
-        <div class="link-li">Something else?</div>
     </div>
   </div>
   </div>
@@ -132,13 +137,6 @@ export default class Landing extends Vue {
       return  '...'
     }
     return formatDateFromNow(this.signUpDeadline)
-  }
-
-  get isRoundClosed(): boolean {
-    if (!this.signUpDeadline) {
-      return  false
-    }
-    return hasDateElapsed(this.signUpDeadline)
   }
 
   // TODO fetch `maxRecipients` from registry & compare to current registry size
@@ -341,9 +339,11 @@ ol li::before {
   }
 
   .btn-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
     gap: 1rem;
+    @media (max-width: $breakpoint-l) {
+      flex-direction: column;
+    }
   }
 
   .apply-callout {
@@ -467,7 +467,7 @@ ol li::before {
     background: $bg-light-color;
     /* width: 40%; */
     border-radius: 1rem;
-    padding: 1rem 2rem 0;
+    padding: 2rem;
     & > img {
       display: none;
     }

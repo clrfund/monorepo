@@ -22,7 +22,7 @@ export default class Transaction extends Vue {
   get progressBarStyle(): string {
     return `grid-template-columns: repeat(${this.totalSteps}, 1fr);`
   }
-  isFutureStep (step) {
+  isFutureStep(step: number): boolean {
     return step > this.currentStep
   }
 }

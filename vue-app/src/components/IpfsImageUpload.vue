@@ -4,30 +4,53 @@
     <p class="input-description">{{ description }}</p>
     <div class="input-row">
       <input
-        id="image-upload"
         type="file"
         class="input"
         @change="handleLoadFile"
         name="image"
       />
-      <button primary="true" type='submit' label='Upload' class="btn-primary" :class="{disabled: loading || error || !loadedImageData}">
-        {{ loading ? "Loading..." : "Upload"}}
+      <button
+        primary="true"
+        type='submit'
+        label='Upload'
+        class="btn-primary"
+        :class="{disabled: loading || error || !loadedImageData}"
+        :disabled="loading || error || !loadedImageData"
+      >
+        {{ loading ? "Uploading..." : "Upload"}}
       </button>
     </div>
-    <div class="image-preview">
-      <loader v-if="loading" />
-      <img
-        v-if="hash"
-        :src="imageUrl"
-        alt=""
-        :class="{
-          'image-preview': hash,
-        }"
-      />
-      <p v-if="hash" @click="copyHash" class="copy">IPFS hash: {{ hash }} 📋</p>
-      <p v-if="error" class="error">{{ error }}</p>
+    <loader v-if="loading" />
+    <div v-if="hash">
+      <div :class="{
+        'banner-preview': formProp === 'bannerHash',
+        'thumbnail-preview': formProp === 'thumbnailHash',
+        }">
+        <img
+          :src="imageUrl"
+          alt="Uploaded image preview"
+          :class="{
+            banner: formProp === 'bannerHash',
+            thumbnail: formProp === 'thumbnailHash',
+          }"
+          height="100%"
+          width="100%"
+        />
+      </div>
+      <div>
+        <p class="input-label">
+          IPFS hash
+        </p>
+        <p class="input-description">
+          Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use.
+        </p>
+      </div>
+      <div class="hash-area">
+        <ipfs-copy-widget :hash="hash" />
+        <div @click="handleRemoveImage" class="btn-warning">Remove image</div>
+      </div>
     </div>
-    <div @click="handleRemoveImage" class="btn-white small">Clear</div>
+    <p v-if="error" class="error">{{ error }}</p>
   </form>
 </template>
 
@@ -38,11 +61,17 @@ import { Prop } from 'vue-property-decorator'
 import { ipfsGatewayUrl } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
+import Tooltip from '@/components/Tooltip.vue'
+import IpfsCopyWidget from '@/components/IpfsCopyWidget.vue'
 
 import IPFS from 'ipfs-mini'
 
 @Component({
-  components: { Loader },
+  components: { 
+    Loader,
+    Tooltip,
+    IpfsCopyWidget,
+  },
 })
 export default class IpfsImageUpload extends Vue {
   @Prop() label!: string
@@ -53,7 +82,6 @@ export default class IpfsImageUpload extends Vue {
   ipfs: any = null
   hash = ''
   loading = false
-  data = ''
   loadedImageData = ''
   error = ''
 
@@ -65,13 +93,19 @@ export default class IpfsImageUpload extends Vue {
   handleLoadFile(event) {
     this.error = ''
     const data = event.target.files[0]
-    if (data.type.match('image/*')) {
-      const reader = new FileReader()
-      reader.onload = (() => ((e) => { this.loadedImageData = e.target.result }))()
-      reader.readAsDataURL(data)
-    } else {
-      this.error = 'That doesn\'t look like an image'
+    if (!data) return
+    if (!data.type.match('image/*')) {
+      this.error = 'Upload a JPG, PNG, or GIF'
+      return
     }
+    if (data.size > 512000) { 
+      // Limit 512 kB file size
+      this.error = 'Upload an image smaller than 512 kB'
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = (() => ((e) => { this.loadedImageData = e.target.result }))()
+    reader.readAsDataURL(data)
   }
 
   // TODO display error in UI
@@ -99,19 +133,9 @@ export default class IpfsImageUpload extends Vue {
   handleRemoveImage(): void {
     this.hash = ''
     this.loading = false
-    this.data = ''
     this.loadedImageData = ''
     this.error = ''
     this.onUpload(this.formProp, '')
-  }
-
-  async copyHash(): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(this.hash)
-      // TODO: UX success feedback
-    } catch (error) {
-      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
-    }
   }
 
   get imageUrl(): string {
@@ -124,9 +148,23 @@ export default class IpfsImageUpload extends Vue {
 @import "../styles/vars";
 @import "../styles/theme";
 
-.image-preview {
-  width: 500px;
-  height: auto;
+.banner-preview {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.thumbnail-preview {
+  width: 200px;
+  aspect-ratio: 1 / 1;
+}
+
+.banner-preview, .thumbnail-preview {
+  margin-bottom: 1rem;
+  img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .disabled {
@@ -140,12 +178,15 @@ export default class IpfsImageUpload extends Vue {
   }  
 }
 
-.btn-white.small {
-  max-width: calc(5ch + 4rem);
+.btn-warning {
+  @media (max-width: $breakpoint-m) {
+    margin: 1rem;
+  }
 }
 
 .input-row {
   display: flex;
+  align-items: center;
   gap: 1rem;
   @media (max-width: $breakpoint-m) {
     flex-direction: column;
@@ -165,6 +206,7 @@ export default class IpfsImageUpload extends Vue {
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0em;
+    width: 100%;
   &:valid { 
     border: 2px solid $clr-green;
   }
@@ -177,10 +219,6 @@ export default class IpfsImageUpload extends Vue {
     border: 2px solid $button-color;
     background-color: $bg-secondary-color;
   }
-}
-
-.input.invalid {
-  border: 2px solid $error-color; 
 }
 
 .input-label {
@@ -202,7 +240,16 @@ export default class IpfsImageUpload extends Vue {
   line-height: 150%;
 }
 
-.copy {
-  cursor: pointer;
+.hash-area {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+    width: 100%;
+  }
 }
+
 </style>

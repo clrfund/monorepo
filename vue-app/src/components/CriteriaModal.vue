@@ -1,63 +1,74 @@
 <template>
-    <div class="wrapper">
-        <div id="modal">
-            <div id="back">
-                <div class="close-btn" @click="$emit('close')">← Back</div>
+  <div class="wrapper">
+    <div class="modal-background" @click="toggleCriteria" />
+    <div class="container">
+      <div>
+          <div class="flex-row">
+            <h2>Round criteria</h2>
+            <div class="close-btn" @click="toggleCriteria">
+              <p class="no-margin">Close</p>
+              <img src="@/assets/close.svg" />
             </div>
-            <div id="modal-body">
-                <h2>Round criteria</h2>
-                <p>For this pilot round, Ethereum Foundation team members will remove any projects that don't meet the round criteria. So read carefully! In later rounds we're hoping that this review process can be done by the community.</p>
-                <div class="content">
-                    <div class="criteria-point">
-                        <div style="font-size: 24px;">💰</div>
-                        <div>
-                            <h3 class="criteria">Related to Eth2 and staking</h3>
-                            <p class="criteria-description">Your project must support Ethereum staking/validating.</p>
-                        </div>
-                    </div>
-                    <div class="criteria-point">
-                        <div style="font-size: 24px;">🤲</div>
-                        <div>
-                            <h3 class="criteria">Free and open source</h3>
-                            <p class="criteria-description">Your project code must be available to anyone to use under an open source license.</p>
-                        </div>
-                    </div>
-                    <div class="criteria-point">
-                        <div style="font-size: 24px;">😇</div>
-                        <div>
-                            <h3 class="criteria">Honest and credible</h3>
-                            <p class="criteria-description">Don't know how to credibly define this.</p>
-                        </div>
-                    </div>
-                    <div class="criteria-point">
-                        <div style="font-size: 24px;">👯‍♀️</div>
-                        <div>
-                            <h3 class="criteria">No clones</h3>
-                            <p class="criteria-description">If you've forked code, you must provide additional, unique value to the ecosystem.</p>
-                        </div>
-                    </div>
-                    <div class="criteria-point">
-                        <div style="font-size: 24px;">💻</div>
-                        <div>
-                            <h3 class="criteria">No clients</h3>
-                            <p class="criteria-description">Client teams are so important but this round of funding is focused on supporting other parts of the ecosystem. </p>
-                        </div>
-                    </div>
-                </div>
-                <router-link to="/join/project" class="modal-btn"><button class="btn-primary" @click="$emit('close')">Add project</button></router-link>
+          </div>
+          <p>For this pilot round, Ethereum Foundation team members will remove any projects that don't meet the round criteria. So read carefully! In later rounds we're hoping that this review process can be done by the community.</p>
+        <div class="content">
+          <div v-for="({ emoji, criteria, description }, idx) in criterion" :key="idx" class="criteria-point">
+            <div class="emoji" aria-hidden="true">{{ emoji }}</div>
+            <div> 
+              <h3 class="no-margin">{{ criteria }}</h3>
+              <p class="no-margin">{{ description }}</p>
             </div>
-        </div>
+          </div>
+        </div>  
+      </div>
+      <router-link to="/join/project" class="btn-primary fit-content">Add project</router-link>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Prop } from 'vue-property-decorator'
 
 
 @Component
 export default class CriteriaModal extends Vue {
 
+  @Prop() toggleCriteria!: () => void;
+
+  criterion = [
+    {
+      emoji: '💰',
+      criteria: 'Related to Eth2 and staking',
+      description: 'Your project must support Ethereum staking/validating.',
+    },
+    {
+      emoji: '🤲',
+      criteria: 'Free and open source',
+      description: 'Your project code must be available to anyone to use under an open source license.',
+    },
+    {
+      emoji: '👺',
+      criteria: 'No scams',
+      description: 'Obviously, your project must not put anyone\'s funds or information at risk.',
+    },
+    {
+      emoji: '👯‍♀️',
+      criteria: 'No clones',
+      description: 'If you\'ve forked code, you must provide additional, unique value to the ecosystem.',
+    },
+    {
+      emoji: '🙋‍♀️',
+      criteria: 'Project ownership',
+      description: 'The project must be yours or you must have permission from the project owner.',
+    },
+    {
+      emoji: '💻',
+      criteria: 'No clients',
+      description: 'Client teams are so important but this round of funding is focused on supporting other parts of the ecosystem.',
+    },
+  ]
 }
 </script>
 
@@ -66,13 +77,15 @@ export default class CriteriaModal extends Vue {
 @import '../styles/theme';
 
 .close-btn {
+  display: flex;
+  gap: 0.5rem;
   color: white;
   text-decoration: underline;
   font-size: 1rem;
   cursor: pointer;
   &:hover {
-      transform: scale(1.01);
-      opacity: 0.8;
+    transform: scale(1.01);
+    opacity: 0.8;
   }
 }
 
@@ -82,82 +95,79 @@ export default class CriteriaModal extends Vue {
   left: 0;
   right: 0;
   bottom: 0;
-}
+  z-index: 1;
 
-
-#back {
-    padding: 1rem 0;
-}
-
-#modal {
-    font-family: Inter;
-    height: 100%;
-    top: 64;
-    background: $bg-primary-color;
-    height: 100%;
-    padding: 1.5rem;
-    box-shadow: 0px -1px 0px 0px 115,117,166,1 inset;
-    position: absolute;
-    right: 0;
-    background: $bg-secondary-color;
-    height: 100%;
-    width: 480px;
-    gap: 1rem;
-    z-index: 2;
-
-    @media (max-width: $breakpoint-m) {
+  .modal-background {
+    background: rgba(0,0,0,0.7);
+    position: fixed;
     width: 100%;
-    right: auto;
+    height: 100%;
+    z-index: 0;
   }
-}
 
-#modal-body {
-}
-
-.modal-btn {
+  .container {
+    position: absolute;
+    top: 4rem;
+    right: 0;
     bottom: 0;
-}
+    width: clamp(350px, 75%, 900px);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    padding: 3rem 2rem;
+    overflow: scroll;
+    background: $bg-secondary-color;
+    @media (max-width: $breakpoint-m) {
+      box-sizing: border-box;
+      width: 100%;
+    }
+  }
 
-.content {
+  .flex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    @media (max-width: $breakpoint-m) {
+      flex-direction: column-reverse;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+  }
+
+  .content {
     font-size: 14px;
     line-height: 150%;
     border-radius: 16px;
+    background: $bg-light-color;
+    padding: 1.5rem 1rem;
+    margin-bottom: 3rem;
     margin-top: 2rem;
-    margin-bottom: 2rem;
-}
+    @media (max-width: $breakpoint-m) {
+      margin-bottom: 2rem;
+    }
+  }
 
-.criteria {
-    margin: 0;
-}
-
-.criteria-description {
-    margin: 0;
-}
-
-.criteria-point {
-    margin-bottom: 1.5rem;
+  .criteria-point {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
+    margin-bottom: 1.5rem;
     &:last-of-type {
-        margin-bottom: 0;
+      margin-bottom: 0;
     }
-}
+  }
 
-.btn {
-  padding: 0.5rem 1.5rem;
-  margin: 0 auto;
-  border-radius: 2rem;
-  color: white;
-  font-family: Inter;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 150%;
-  text-align: center;
-  background: none;
-  border: none;
-}
+  .emoji {
+    font-size: 1.5rem;
+  }
 
+  .no-margin {
+    margin: 0;
+  }
+
+  .fit-content {
+    width: fit-content;
+  }
+}
 
 </style>
