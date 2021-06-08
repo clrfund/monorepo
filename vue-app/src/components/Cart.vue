@@ -70,7 +70,8 @@
           :isAmountValid="isAmountValid"
         />
       </div>
-      <cart-time-left v-if="$store.getters.canUserReallocate && !isEditMode" class="time-left-read-only" />
+      <cart-time-left v-if="($store.getters.canUserReallocate && !isEditMode) ||
+      ($store.getters.isRoundContributionPhase && !$store.getters.canUserReallocate)" class="time-left-read-only" />
     </div>
     <div class="reallocation-section" v-if="$store.getters.canUserReallocate && editModeSelection">
       <div class="reallocation-row">
@@ -95,7 +96,8 @@
       <!-- TODO: should probably only appear if more than 1 item in cart -->
     </div>
     <div class="submit-btn-wrapper"
-      v-if="($store.getters.canUserReallocate && isEditMode) || $store.getters.isRoundContributionPhase"
+    v-if="($store.getters.canUserReallocate && isEditMode) ||
+    (!$store.getters.canUserReallocate && $store.getters.isRoundContributionPhase)"
     >
       <!--  TODO: Also, add getter for pre-contribution phase -->
       <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
@@ -139,7 +141,7 @@
           Reallocate contribution
         </template>
       </button>
-      <cart-time-left v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="time-left" />
+      <cart-time-left v-if="$store.getters.canUserReallocate && isEditMode" class="time-left" />
     </div>
     <div id="cart-bottom-scroll-point"></div>
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
