@@ -653,6 +653,7 @@ h2 {
   padding: 1rem;  
   top: 0;
   background: $bg-primary-color;
+  z-index: 1;
   @media (max-width: $breakpoint-m) {
     justify-content: space-between;
   }
