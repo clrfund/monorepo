@@ -35,33 +35,33 @@
           Register
         </button>
 
-        <form action="#">
+        <form action="#" v-if="shouldShowCartInput">
           <!-- TODO: if a user is unconnected, adding to cart should trigger wallet connection -->
-        <div class="input-button">
-            <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
-            <input
-              v-model="amount"
-              class="input"
-              name="amount"
-              :placeholder="defaultContributionAmount"
-              autocomplete="on"
-              onfocus="this.value=''"
-              v-if="!inCart"
-            >
-            <input type="submit"
-              v-if="hasContributeBtn() && !inCart"
-              class="donate-btn"
-              :disabled="!canContribute()"
-              @click="contribute()"
-              value="Add to cart"
-            >
-            <div 
-              v-if="hasContributeBtn() && inCart"
-              class="donate-btn-full"
-            >
-            In cart 🎉
-            </div>
-        </div>
+          <div class="input-button">
+              <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
+              <input
+                v-model="amount"
+                class="input"
+                name="amount"
+                :placeholder="defaultContributionAmount"
+                autocomplete="on"
+                onfocus="this.value=''"
+                v-if="!inCart"
+              >
+              <input type="submit"
+                v-if="hasContributeBtn() && !inCart"
+                class="donate-btn"
+                :disabled="!canContribute()"
+                @click="contribute()"
+                value="Add to cart"
+              >
+              <div 
+                v-if="hasContributeBtn() && inCart"
+                class="donate-btn-full"
+              >
+              In cart 🎉
+              </div>
+          </div>
         </form>
 
         <!-- <button
@@ -126,6 +126,11 @@ export default class ProjectListItem extends Vue {
       return item.id === this.project.id && !item.isCleared
     })
     return index !== -1
+  }
+
+  get shouldShowCartInput(): boolean {
+    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
+    return isRoundContributionPhase || canUserReallocate
   }
 
   hasRegisterBtn(): boolean {

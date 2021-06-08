@@ -24,31 +24,34 @@
         >
           Register
         </button>
-        <div class="input-button" v-if="hasContributeBtn() && !inCart">
-          <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
-          <input
-            v-model="contributionAmount"
-            class="input"
-            name="contributionAmount"
-            placeholder="5"
-            autocomplete="on"
-            onfocus="this.value=''"
 
-          >
-          <input type="submit"
-            class="donate-btn"
-            :disabled="!canContribute()"
-            @click="contribute()"
-            value="Add to cart"
-          >
+        <div v-if="shouldShowCartInput">
+          <div class="input-button" v-if="hasContributeBtn() && !inCart">
+            <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
+            <input
+              v-model="contributionAmount"
+              class="input"
+              name="contributionAmount"
+              placeholder="5"
+              autocomplete="on"
+              onfocus="this.value=''"
+            >
+            <input type="submit"
+              class="donate-btn"
+              :disabled="!canContribute()"
+              @click="contribute()"
+              value="Add to cart"
+            >
+          </div>
+          <div class="input-button" v-if="hasContributeBtn() && inCart">
+            <button
+              class="donate-btn-full"
+            >
+              <span>In cart 🎉</span>
+            </button>
+          </div>
         </div>
-        <div class="input-button" v-if="hasContributeBtn() && inCart">
-          <button
-            class="donate-btn-full"
-          >
-            <span>In cart 🎉</span>
-          </button>
-        </div>
+
         <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
         <button
           v-if="hasClaimBtn()"
@@ -232,6 +235,11 @@ export default class ProjectView extends Vue {
 
   get isCartToggledOpen(): boolean {
     return this.$store.state.showCartPanel
+  }
+
+  get shouldShowCartInput(): boolean {
+    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
+    return isRoundContributionPhase || canUserReallocate
   }
 
   hasRegisterBtn(): boolean {
