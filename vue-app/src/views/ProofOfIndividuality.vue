@@ -231,7 +231,7 @@ import { required, maxLength, url, email } from 'vuelidate/lib/validators'
 import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
-import ButtonRow from '@/components/ButtonRow.vue'
+import FormProgressWidget from '@/components/FormProgressWidget.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
@@ -268,7 +268,7 @@ import { waitForTransaction } from '@/utils/contracts'
   components: {
     LayoutSteps,
     ProgressBar,
-    ButtonRow,
+    FormProgressWidget,
     Markdown,
     ProjectProfile,
     Warning,
