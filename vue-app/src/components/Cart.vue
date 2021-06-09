@@ -432,14 +432,10 @@ export default class Cart extends Vue {
   }
 
   getTotal(): BigNumber {
-    const { cart, committedCart, currentRound } = this.$store.state
+    const { cart, committedCart } = this.$store.state
+    const { hasReallocationPhaseEnded } = this.$store.getters
 
-    // If reallocation phase has ended use committedCart
-    if (this.$store.getters.hasReallocationPhaseEnded) {
-      return this.getCartTotal(committedCart)
-    }
-
-    return this.getCartTotal(cart)
+    return this.getCartTotal(hasReallocationPhaseEnded ? committedCart : cart)
   }
 
   private isGreaterThanMax(): boolean {
