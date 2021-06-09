@@ -137,11 +137,12 @@ export default class extends Vue {
 .contribution-form {
   align-items: center;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   font-size: 16px;
   padding-left: 3.5rem;
   margin-top: 0.5rem;
   gap: 0.5rem;
+  flex-shrink: 0;
 
   img {
     width: 1rem;
