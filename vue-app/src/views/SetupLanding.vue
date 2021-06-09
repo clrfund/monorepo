@@ -18,10 +18,11 @@
             <li>An Ethereum wallet</li>
             <li>Access to Zoom or Google Meet</li>
           </ul>
-          <a href="/#/sybil-resistance/  ">Why is this important?</a>
+          <router-link to="/sybil-resistance/">Why is this important?</router-link>
+          <div v-if="isRecipientRegistryFull" class="warning-message">Sorry! Registry is all filled up. </div>
           <div class="btn-container">
-            <wallet-widget v-if="walletProvider && !currentUser" :connectOnly="true" />
-            <router-link v-if="!walletProvider || currentUser" to="/setup/get-verified/connect" class="btn-primary">Get started</router-link>
+            <wallet-widget v-if="!isRecipientRegistryFull && walletProvider && !currentUser" :isActionButton="true" />
+            <router-link v-if="!isRecipientRegistryFull && (!walletProvider || currentUser)" to="/setup/get-verified/connect" class="btn-primary">Get started</router-link>
             <router-link to="/" class="btn-secondary">Go home</router-link>
           </div>
         </div>
@@ -62,9 +63,11 @@ export default class SetupLanding extends Vue {
   get walletProvider(): any {
     return (window as any).ethereum
   }
+
   get currentUser(): User | null {
     return this.$store.state.currentUser
   }
+
   get balance(): string | null {
     const balance = this.currentUser?.balance
     if (balance === null || typeof balance === 'undefined') { return null }
@@ -73,6 +76,10 @@ export default class SetupLanding extends Vue {
   
   get blockExplorerUrl(): string {
     return `${blockExplorer}${this.txHash}`
+  }
+
+  get isRecipientRegistryFull(): boolean {
+    return this.$store.getters.isRecipientRegistryFull
   }
 
   formatDuration(value: number): string {
@@ -200,5 +207,17 @@ ul {
   position: relative;
 }
 
+.warning-message {
+  border: 1px solid $error-color;
+  background: $bg-primary-color;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin: 0.5rem 0 0;
+  color: $error-color;
+  font-size: 14px;
+  &:before {
+    content: "⚠️ "
+  }
+}
 
 </style>    
