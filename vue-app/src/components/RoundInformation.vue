@@ -109,8 +109,7 @@
               <tooltip position="right" content="This total includes the funds in the matching pool and all contributions from the community."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
             </div>
             <div class="round-info-value">
-              <div class="value large">{{ formatIntegerPart(currentRound.contributions) + formatIntegerPart(currentRound.matchingPool) }}</div>
-              <div class="value extra">{{ formatFractionalPart(currentRound.contributions) + formatFractionalPart(currentRound.matchingPool) }}</div>
+              <div class="value large">{{ formatTotalInRound }}</div>
               <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
             </div>
           </div>
@@ -150,7 +149,7 @@
             </div>
             <div class="round-info-value">
               <div class="value">{{ formatIntegerPart(currentRound.contributions) }}</div>
-              <div class="value extra">{{ formatFractionalPart(currentRound.contributions) }}</div>
+              <div class="value">{{ formatFractionalPart(currentRound.contributions) }}</div>
               <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
             </div>
           </div>
@@ -169,7 +168,7 @@
               </div>
               <div class="round-info-value">
                 <div class="value">{{ currentRound.contributors }}</div>
-                <div class="unit">legends</div>
+                <div class="unit">legend{{ currentRound.contributors !== 1 ? "s": "" }}</div>
               </div>
             </div>
         </div>
@@ -182,14 +181,14 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { FixedNumber } from 'ethers'
+import { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { RoundInfo, getCurrentRound, TimeLeft } from '@/api/round'
 import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
 
 import { getTimeLeft } from '@/utils/dates'
-
+import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
@@ -275,6 +274,30 @@ export default class RoundInformation extends Vue {
     return this.$store.state.currentRound
   }
 
+  get contributionTimeLeft(): TimeLeft {
+    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
+  }
+
+  get reallocationTimeLeft(): TimeLeft {
+    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
+  }
+
+  get formatTotalInRound(): string {
+    const { currentRound } = this.$store.state
+    const totalInRound = currentRound.contributions.addUnsafe(currentRound.matchingPool)
+    
+    return this.formatAmount(totalInRound)
+  }
+
+  get filteredProjects(): Project[] {
+    return this.projects.filter((project: Project) => {
+      if (!this.search) {
+        return true
+      }
+      return project.name.toLowerCase().includes(this.search.toLowerCase())
+    })
+  }
+
   formatIntegerPart(value: FixedNumber): string {
     if (value._value === '0.0') {
       return '0'
@@ -291,12 +314,9 @@ export default class RoundInformation extends Vue {
     return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
   }
 
-  get contributionTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
-  }
-
-  get reallocationTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
+  formatAmount(value: BigNumber): string {
+    const decimals = this.$store.state.currentRound.nativeTokenDecimals
+    return formatAmount(value, decimals)
   }
 
   addMatchingFunds(): void {
@@ -314,15 +334,6 @@ export default class RoundInformation extends Vue {
         },
       },
     )
-  }
-
-  get filteredProjects(): Project[] {
-    return this.projects.filter((project: Project) => {
-      if (!this.search) {
-        return true
-      }
-      return project.name.toLowerCase().includes(this.search.toLowerCase())
-    })
   }
 }
 </script>
