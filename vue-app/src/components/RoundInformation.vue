@@ -168,7 +168,7 @@
               </div>
               <div class="round-info-value">
                 <div class="value">{{ currentRound.contributors }}</div>
-                <div class="unit">legends</div>
+                <div class="unit">legend{{ currentRound.contributors !== 1 ? "s": "" }}</div>
               </div>
             </div>
         </div>
