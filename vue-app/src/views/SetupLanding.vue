@@ -19,10 +19,10 @@
             <li>Access to Zoom or Google Meet</li>
           </ul>
           <router-link to="/sybil-resistance/">Why is this important?</router-link>
-          <div v-if="isRecipientRegistryFull" class="warning-message">Sorry! Registry is all filled up. </div>
+          <div v-if="isRoundFullOrOver" class="warning-message">The current round is no longer accepting new contributions. You can still get BrightID verified to prepare for next time.</div>
           <div class="btn-container">
-            <wallet-widget v-if="!isRecipientRegistryFull && walletProvider && !currentUser" :isActionButton="true" />
-            <router-link v-if="!isRecipientRegistryFull && (!walletProvider || currentUser)" to="/setup/get-verified/connect" class="btn-primary">Get started</router-link>
+            <wallet-widget v-if="walletProvider && !currentUser" :isActionButton="true" />
+            <router-link v-if="!walletProvider || currentUser" to="/setup/get-verified/connect" class="btn-primary">Get started</router-link>
             <router-link to="/" class="btn-secondary">Go home</router-link>
           </div>
         </div>
@@ -78,8 +78,8 @@ export default class SetupLanding extends Vue {
     return `${blockExplorer}${this.txHash}`
   }
 
-  get isRecipientRegistryFull(): boolean {
-    return this.$store.getters.isRecipientRegistryFull
+  get isRoundFullOrOver(): boolean {
+    return this.$store.getters.isRecipientRegistryFull || this.$store.getters.hasContributionPhaseEnded
   }
 
   formatDuration(value: number): string {
@@ -212,12 +212,12 @@ ul {
   background: $bg-primary-color;
   border-radius: 1rem;
   padding: 1rem;
-  margin: 0.5rem 0 0;
+  margin: 1rem 0 0;
   color: $error-color;
   font-size: 14px;
-  &:before {
-    content: "⚠️ "
-  }
+  // &:before {
+  //   content: "⚠️ "
+  // }
 }
 
 </style>    
