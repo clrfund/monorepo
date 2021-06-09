@@ -128,7 +128,7 @@
                   <h3>Join a BrightID party </h3>
                 </div>
                 <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
-                <img @click="handleToggleTab" v-if="!showExpandedOption" src="@/assets/chevron-down.svg" />
+                <img @click="handleToggleTab" v-else src="@/assets/chevron-down.svg" />
               </div>
               <div v-if="showExpandedOption" id="fastest">
                 <p>
@@ -144,7 +144,7 @@
                   <h3>Join us at “The consensus layer bonanza – an evening with the eth2 researchers”</h3>
                 </div>
                 <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
-                <img @click="handleToggleTab" v-if="!showExpandedOption" src="@/assets/chevron-down.svg" />
+                <img @click="handleToggleTab" v-else src="@/assets/chevron-down.svg" />
               </div>
               <p v-if="showExpandedOption" id="interesting">
                 Information to come
@@ -157,7 +157,7 @@
                   <h3>Connect with 2 verified humans</h3>
                 </div>
                 <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
-                <img @click="handleToggleTab" v-if="!showExpandedOption" src="@/assets/chevron-down.svg" />
+                <img @click="handleToggleTab" v-else src="@/assets/chevron-down.svg" />
               </div>
               <p v-if="showExpandedOption" id="luckiest">
                 Know anyone that's contributed to Gitcoin Grants or clr.fund rounds? They may already be verified. Hit them up and see if they can verify you!
@@ -311,7 +311,6 @@ export default class IndividualityView extends mixins(validationMixin) {
   steps: string[] = []
   stepNames: string[] = []
   showSummaryPreview = false
-  isVerified = true
   sponsoredBy = 'Gitcoin'
   txFee = '0.00006'
   feeToken = 'ETH'
@@ -331,6 +330,10 @@ export default class IndividualityView extends mixins(validationMixin) {
 
   private get currentUser(): User {
     return this.$store.state.currentUser
+  }
+
+  private get isVerified(): boolean {
+    return this.$store.state.currentUser?.isVerified
   }
 
   handleToggleTab(event): void {
@@ -448,10 +451,7 @@ export default class IndividualityView extends mixins(validationMixin) {
     if (this.currentStep < 0) {
       this.$router.push({ name: 'setup' })
     }
-    // "Next" button restricts forward navigation via validation, and
-    // eventually updates the `furthestStep` tracker when valid and clicked/tapped.
-    // If URL step is ahead of furthest, navigate back to furthest
-    
+
     // TODO fetch verification data w/ BrightID - don't need furthest step
     // Particularly for people who are already verified on BrightID...
     // if (this.currentStep > this.form.furthestStep) {
