@@ -66,7 +66,7 @@ export default class MobileTabs extends Vue {
 
   get filteredCart(): CartItem[] {
     // In tallying round use committedCart for cart items
-    if (this.$store.state.currentRound.status === RoundStatus.Tallying) {
+    if (this.$store.getters.hasReallocationPhaseEnded) {
       return this.$store.state.committedCart
     }
 

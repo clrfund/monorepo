@@ -31,7 +31,7 @@ import { getRegistryInfo, RecipientApplicationData, RegistryInfo } from '@/api/r
 // Constants
 import {
   LOAD_CART,
-  LOAD_COMMITTED_CART_DISPATCH,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
   LOAD_RECIPIENT_REGISTRY_INFO,
   LOAD_ROUND_INFO,
@@ -49,7 +49,6 @@ import {
 
   ADD_CART_ITEM,
   CLEAR_CART,
-  LOAD_COMMITTED_CART,
   REMOVE_CART_ITEM,
   RESTORE_COMMITTED_CART_TO_LOCAL_CART,
   SAVE_COMMITTED_CART,
@@ -188,9 +187,6 @@ export const mutations = {
   [TOGGLE_SHOW_CART_PANEL](state) {
     state.showCartPanel = !state.showCartPanel
   },
-  [LOAD_COMMITTED_CART](state, committedCart: Array<CartItem>) {
-    state.committedCart = committedCart
-  },
   [RESTORE_COMMITTED_CART_TO_LOCAL_CART](state) {
     // Spread to avoid reference
     state.cart = [...state.committedCart]
@@ -323,14 +319,14 @@ const actions = {
       serializedCart,
     )
   },
-  [LOAD_COMMITTED_CART_DISPATCH]({ commit, state}) {
+  [LOAD_COMMITTED_CART]({ commit, state}) {
     storage.watchItem(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
       getCommittedCartStorageKey(state.currentRound.fundingRoundAddress),
       (data: string | null) => {
         const committedCart = deserializeCart(data)
-        commit(LOAD_COMMITTED_CART, committedCart)
+        Vue.set(state, 'committedCart', committedCart)
         commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
       },
     )

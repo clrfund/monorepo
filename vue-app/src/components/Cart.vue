@@ -172,7 +172,7 @@ import { RoundStatus, TimeLeft } from '@/api/round'
 import {
   LOAD_USER_INFO,
   LOAD_CART,
-  LOAD_COMMITTED_CART_DISPATCH,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
   LOGIN_USER,
   LOGOUT_USER,
@@ -337,7 +337,7 @@ export default class Cart extends Vue {
       // Load cart & contributor data for current round
       this.$store.dispatch(LOAD_USER_INFO)
       this.$store.dispatch(LOAD_CART)
-      this.$store.dispatch(LOAD_COMMITTED_CART_DISPATCH)
+      this.$store.dispatch(LOAD_COMMITTED_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
     }
   }
@@ -353,7 +353,7 @@ export default class Cart extends Vue {
 
   get filteredCart(): CartItem[] {
     // In tallying round use committedCart for cart items
-    if (this.$store.state.currentRound.status === RoundStatus.Tallying) {
+    if (this.$store.getters.hasReallocationPhaseEnded) {
       return this.$store.state.committedCart
     }
     // Hide cleared items
@@ -418,22 +418,9 @@ export default class Cart extends Vue {
     return invalidCount === 0
   }
 
-  getTotal(): BigNumber {
-    // In tally round, use the committedCart to get total contribution amount
-    if (this.$store.state.currentRound.status === RoundStatus.Tallying) {
-      const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
-      return this.$store.state.committedCart.reduce((total: BigNumber, item: CartItem) => {
-        let amount
-        try {
-          amount = parseFixed(item.amount, nativeTokenDecimals)
-        } catch {
-          return total
-        }
-        return total.add(amount.div(voiceCreditFactor).mul(voiceCreditFactor))
-      }, BigNumber.from(0))
-    }
+  private getCartTotal(cart: Array<CartItem>): BigNumber {
     const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
-    return this.cart.reduce((total: BigNumber, item: CartItem) => {
+    return cart.reduce((total: BigNumber, item: CartItem) => {
       let amount
       try {
         amount = parseFixed(item.amount, nativeTokenDecimals)
@@ -442,6 +429,17 @@ export default class Cart extends Vue {
       }
       return total.add(amount.div(voiceCreditFactor).mul(voiceCreditFactor))
     }, BigNumber.from(0))
+  }
+
+  getTotal(): BigNumber {
+    const { cart, committedCart, currentRound } = this.$store.state
+
+    // If reallocation phase has ended use committedCart
+    if (this.$store.getters.hasReallocationPhaseEnded) {
+      return this.getCartTotal(committedCart)
+    }
+
+    return this.getCartTotal(cart)
   }
 
   private isGreaterThanMax(): boolean {

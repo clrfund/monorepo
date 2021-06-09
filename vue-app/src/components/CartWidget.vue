@@ -46,7 +46,7 @@ import { CartItem } from '@/api/contributions'
 import {
   LOAD_USER_INFO,
   LOAD_CART,
-  LOAD_COMMITTED_CART_DISPATCH,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
   LOGIN_USER,
   LOGOUT_USER,
@@ -89,7 +89,7 @@ export default class CartWidget extends Vue {
 
   get filteredCart(): CartItem[] {
     // In tallying round use committedCart for cart items
-    if (this.$store.state.currentRound.status === RoundStatus.Tallying) {
+    if (this.$store.getters.hasReallocationPhaseEnded) {
       return this.$store.state.committedCart
     }
 
@@ -187,7 +187,7 @@ export default class CartWidget extends Vue {
       // Load cart & contributor data for current round
       this.$store.dispatch(LOAD_USER_INFO)
       this.$store.dispatch(LOAD_CART)
-      this.$store.dispatch(LOAD_COMMITTED_CART_DISPATCH)
+      this.$store.dispatch(LOAD_COMMITTED_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
     }
   }

@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers'
 
 import { MAX_CART_SIZE, CartItem } from '@/api/contributions'
 import { mutations } from '@/store'
-import { ADD_CART_ITEM, UPDATE_CART_ITEM, REMOVE_CART_ITEM, LOAD_COMMITTED_CART, RESTORE_COMMITTED_CART_TO_LOCAL_CART, SAVE_COMMITTED_CART } from '@/store/mutation-types'
+import { ADD_CART_ITEM, UPDATE_CART_ITEM, REMOVE_CART_ITEM, RESTORE_COMMITTED_CART_TO_LOCAL_CART, SAVE_COMMITTED_CART } from '@/store/mutation-types'
 
 function createItem(props: any): CartItem {
   return {
@@ -151,17 +151,6 @@ describe('Cart mutations', () => {
 })
 
 describe('committedCart Mutations', () => {
-  it('loads committedCart', () => {
-    const item = createItem({ id: '0x1' })
-    const loadState = [item]
-    const state = {
-      committedCart: [],
-    }
-
-    mutations[LOAD_COMMITTED_CART](state, loadState)
-    expect(state.committedCart).to.deep.equal(loadState)
-  })
-
   it('restores committedCart into local cart', () => {
     const item = createItem({ id: '0x1' })
     const state = {
