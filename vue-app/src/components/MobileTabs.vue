@@ -30,6 +30,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { CartItem } from '@/api/contributions'
+import { RoundStatus } from '@/api/round'
 
 export default class MobileTabs extends Vue {
   tabs = [
@@ -64,6 +65,11 @@ export default class MobileTabs extends Vue {
   }
 
   get filteredCart(): CartItem[] {
+    // In tallying round use committedCart for cart items
+    if (this.$store.state.currentRound.status === RoundStatus.Tallying) {
+      return this.$store.state.committedCart
+    }
+
     // Hide cleared items
     return this.cart.filter((item) => !item.isCleared)
   }

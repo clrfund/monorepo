@@ -24,6 +24,7 @@ import { BigNumber, Contract } from 'ethers'
 import { PubKey, Message } from 'maci-domainobjs'
 
 import Transaction from '@/components/Transaction.vue'
+import { SAVE_COMMITTED_CART_DISPATCH } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
@@ -80,6 +81,7 @@ export default class ReallocationModal extends Vue {
       return
     }
     this.step += 1
+    this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
   }
 }
 </script>

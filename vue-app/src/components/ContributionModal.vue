@@ -73,7 +73,7 @@ import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
 import { RoundInfo, TimeLeft } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
-import { LOAD_ROUND_INFO, SAVE_CONTRIBUTOR_DATA } from '@/store/action-types'
+import { LOAD_ROUND_INFO, SAVE_COMMITTED_CART_DISPATCH, SAVE_CONTRIBUTOR_DATA } from '@/store/action-types'
 import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
@@ -215,6 +215,7 @@ export default class ContributionModal extends Vue {
       return
     }
     this.step += 1
+    this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
   }
 }
 </script>
