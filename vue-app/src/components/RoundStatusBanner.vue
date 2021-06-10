@@ -63,6 +63,7 @@ export default class RoundStatusBanner extends Vue {
   position: relative;
   z-index: 1;
   width: 100%;
+  max-width: 100vw;
   background: $bg-primary-color;
   overflow: hidden;
   white-space: nowrap;
