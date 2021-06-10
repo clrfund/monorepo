@@ -12,8 +12,8 @@
             <h2>BrightID setup</h2>
             <p>
                 <span :class="{
-                    'step0': !isConnected && !isVerified && !isSponsored && !isRegistered,
-                    'step1': isConnected,
+                    'step0': !isLinked && !isVerified && !isSponsored && !isRegistered,
+                    'step1': isLinked,
                     'step2': isVerified || isSponsored,
                     'step3': isVerified && isSponsored,
                     'step4': isRegistered
@@ -24,17 +24,17 @@
         <div class="progress">
             <div :class="{
                 'half': isVerified || isSponsored,
-                'quarter': isConnected,
+                'quarter': isLinked,
                 'three-quarters': isVerified && isSponsored,
                 'full': isRegistered
             }" />
         </div>
         <div class="row">
-            <div v-if="isConnected">
+            <div v-if="isLinked">
                 <div v-if="isRegistered"><a href="/#/projects">Start contributing <span role="img" aria-label="party emoji">🎉</span></a></div> 
                 <div v-else><a href="/#/setup/get-verified/:step">Continue setup</a></div>
             </div>
-            <!-- <a href="#" v-if="isConnected || isVerified || isSponsored">Continue setup</a>
+            <!-- <a href="#" v-if="isLinked || isVerified || isSponsored">Continue setup</a>
             <a href="#" v-if="isRegistered">Start contributing</a> -->
             <a href="/#/setup/" v-else>Start setup</a>
             <tooltip 
@@ -57,8 +57,8 @@
             <h2>BrightID setup</h2>
             <p>
                 <span :class="{
-                    'step0': !isConnected && !isVerified && !isSponsored && !isRegistered,
-                    'step1': isConnected,
+                    'step0': !isLinked && !isVerified && !isSponsored && !isRegistered,
+                    'step1': isLinked,
                     'step2': isVerified || isSponsored,
                     'step3': isVerified && isSponsored,
                     'step4': isRegistered
@@ -69,7 +69,7 @@
         <div class="progress">
             <div :class="{
                 'half': isVerified || isSponsored,
-                'quarter': isConnected,
+                'quarter': isLinked,
                 'three-quarters': isVerified && isSponsored,
                 'full': isRegistered
             }" />
@@ -89,10 +89,10 @@ import IconStatus from '@/components/IconStatus.vue'
   components: { Tooltip, IconStatus },
 })
 export default class BrightIdWidget extends Vue {
-    isConnected = true
-    isVerified = false
+    isLinked = true // user wallet is connected && BrightID profile is linked to user ETH address
+    isVerified = true // user is verified with Bright ID (NOT necessarily in the registry contract)
     isSponsored = true
-    isRegistered = false
+    isRegistered = true // user is registered in the user registry contract
 
     // You can only have isRegistered status if all the above are true
   @Prop() abbrev!: string

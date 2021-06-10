@@ -108,6 +108,7 @@
           <h2 class="prep-title-continue">Continue setup</h2>
           <p class="prep-text">You still have a few things to do before you can contribute...</p>
         </div>
+        <!-- TODO update to drop into current step of flow -->
         <router-link v-if="!prepStarted" to="/setup" class="btn-action" style="cursor: pointer;">Start prep</router-link>
         <router-link v-else to="/setup" class="btn-action" style="cursor: pointer;">Continue setup</router-link>
       </div>      
@@ -188,8 +189,8 @@ export default class ProjectList extends Vue {
   projects: Project[] = []
   search = ''
   isLoading = true
-  prepStarted = true
-  isVerified = false
+  prepStarted = true // TODO configure logic - this is true if 1st step of get-verified is complete, which is linking ETH address & BrightID profile
+  isVerified = true // TODO currentUser.isVerified
 
   async created() {
     const roundAddress = this.$route.params.address || this.$store.state.currentRoundAddress || await getCurrentRound()

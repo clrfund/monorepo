@@ -7,6 +7,8 @@ import { factory, ipfsGatewayUrl, provider, mainnetProvider } from './core'
 
 export const LOGIN_MESSAGE = `Sign this message to access clr.fund at ${factory.address.toLowerCase()}.`
 
+// TODO add BrightID isVerified status
+// Need to differentiate verification in BrightID vs. registration in the user registry
 export interface User {
   walletAddress: string;
   walletProvider: Web3Provider;
