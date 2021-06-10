@@ -320,10 +320,7 @@ export default class RoundInformation extends Vue {
   }
 
   addMatchingFunds(): void {
-    if (!this.$store.state.currentUser) {
-      return
-    }
-    this.$modal.show(
+    return this.$modal.show(
       MatchingFundsModal,
       { },
       { },
