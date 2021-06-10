@@ -6,6 +6,9 @@
     <wallet-widget :isActionButton="true" />
   </div>
   <div v-else class="cart-container">
+    <div class="reallocation-message" v-if="$store.getters.canUserReallocate">
+        You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount. <router-link to="/about-maci" class="message-link">Why?</router-link>
+      </div>
     <div class="flex cart-title-bar">
       <div v-if="showCollapseCart" @click="toggleCart" class="absolute-left cart-btn">
         <img
@@ -19,7 +22,7 @@
           src="@/assets/chevron-right.svg"
         >
       </div>
-      <h2>Your cart</h2>
+      <h2>{{editModeSelection ? "Edit cart" : "Your cart"}}</h2>
       <div v-if="($store.getters.isRoundContributionPhase || $store.getters.canUserReallocate) && !isCartEmpty" class="absolute-right dropdown">
         <img @click="openDropdown" class="dropdown-btn" src="@/assets/more.svg" />
         <div id="cart-dropdown" class="button-menu">
@@ -31,9 +34,6 @@
       </div>
     </div>
     <div class="messages-and-cart-items">
-      <div class="reallocation-intro" v-if="$store.getters.canUserReallocate">
-        You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount. <router-link to="/about-maci">Why?</router-link>
-      </div>
       <div class="reallocation-intro" v-if="$store.getters.hasUserContributed && $store.getters.hasReallocationPhaseEnded">
         This round is over. Here’s how you contributed. Thanks!
       </div>
@@ -599,6 +599,7 @@ h2 {
   padding: 1rem 0rem;
   padding-top: 0rem;
   width: 100%;
+  border-left: 1px solid #000;
 
   @media (max-width: $breakpoint-m) {
     padding: 0rem;
@@ -780,6 +781,16 @@ h2 {
   margin-right: 1rem;
 }
 
+.reallocation-message {
+  padding: 1rem;
+  background: $highlight-color;
+  font-size: 14px;
+}
+
+.message-link {
+  color: #fff;
+  text-decoration: underline;
+}
 
 .balance {
   padding: 1rem;
