@@ -1,10 +1,10 @@
 <template>
   <div class="modal-body">
-    <div v-if="walletProvider && !currentUser">
+    <div v-if="walletProvider">
       <h3>Connect your wallet</h3>
       <div style="margin-bottom: 2rem;">You must connect to add projects to your cart.</div>
       <div class="btn-row">
-        <wallet-widget />
+        <wallet-widget @connected="$emit('close')" />
         <!-- Connecting needs to add the project to your cart and close modal overlay -->
         <button class="btn-secondary" @click="$emit('close')">Cancel</button>
       </div>
@@ -17,60 +17,16 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { BigNumber, Contract, Signer } from 'ethers'
-import { parseFixed } from '@ethersproject/bignumber'
 import WalletWidget from '@/components/WalletWidget.vue'
-import Transaction from '@/components/Transaction.vue'
-import { waitForTransaction } from '@/utils/contracts'
-import { commify, formatUnits } from '@ethersproject/units'
-import { ADD_CART_ITEM, LOAD_ROUND_INFO } from '@/store/mutation-types'
-import { SAVE_CART } from '@/store/action-types'
-import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
-import { User } from '@/api/user'
-import { ERC20 } from '@/api/abi'
-import { factory } from '@/api/core'
-import { RoundStatus } from '@/api/round'
 
 @Component({
   components: {
-    Transaction,
     WalletWidget,
   },
 })
 export default class ConnectionModal extends Vue {
-
-  step = 1
-
-  signer!: Signer
-  
-  amount = '100'
-  transferTxHash = ''
-  transferTxError = ''
-
-  created() {
-    /* this.signer = this.$store.state.currentUser.walletProvider.getSigner() */
-  }
-
   get walletProvider(): any {
     return (window as any).ethereum
-  }
-
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
-
-  contribute() {
-    this.$store.commit(ADD_CART_ITEM, {
-      ...this.project,
-      amount: this.amount.toString(),
-      isCleared: false,
-    })
-    this.$store.dispatch(SAVE_CART)
-  }
-
-  isRoundFinished(): boolean {
-    const { status } = this.$store.state.currentRound
-    return [RoundStatus.Finalized, RoundStatus.Cancelled].includes(status)
   }
 }
 </script>

@@ -49,10 +49,10 @@
                 v-if="!inCart"
               >
               <input type="submit"
-                v-if="hasContributeBtn() && !inCart && currentUser"
+                v-if="hasContributeBtn() && !inCart"
                 class="donate-btn"
                 :disabled="!canContribute()"
-                @click="contribute()"
+                @click.prevent="handleAddToCartClick"
                 value="Add to cart"
               >
               <div 
@@ -61,13 +61,6 @@
               >
               In cart 🎉
               </div>
-            <div
-              v-if="!currentUser"
-              class="donate-btn"
-              @click="promptConnection()"
-            >
-              Add to cart
-            </div>
           </div>
         </form>
 
@@ -101,11 +94,12 @@ import ConnectionModal from '@/components/ConnectionModal.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
+import { User } from '@/api/user'
 import { RoundStatus } from '@/api/round'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM, LOAD_ROUND_INFO } from '@/store/mutation-types'
+import { ADD_CART_ITEM } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
 @Component({
@@ -122,9 +116,6 @@ export default class ProjectListItem extends Vue {
     return markdown.renderInline(this.project.description)
   }
 
-  get walletProvider(): any {
-    return (window as any).ethereum
-  }
   get currentUser(): User | null {
     return this.$store.state.currentUser
   }
@@ -221,10 +212,24 @@ export default class ProjectListItem extends Vue {
       { },
       { },
       {
-        closed: () => { this.$store.dispatch(LOAD_ROUND_INFO) 
-        },
+        closed: this.handleConnectionModalClose,
       },
     )
+  }
+
+  handleConnectionModalClose(): void {
+    if(this.currentUser) {
+      this.contribute()
+    }
+  }
+
+  handleAddToCartClick(): void {
+    if(this.hasContributeBtn() && this.currentUser) {
+      this.contribute()
+      return
+    }
+
+    this.promptConnection()
   }
 }
 </script>
