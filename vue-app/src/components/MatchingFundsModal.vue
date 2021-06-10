@@ -1,7 +1,7 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <div v-if="walletProvider && !currentUser">
+      <div v-if="!currentUser">
         <h3>Connect your wallet</h3>
         <div style="margin-bottom: 2rem;">You must connect to add to the matching pool.</div>
         <wallet-widget />
@@ -10,7 +10,7 @@
         <h3>Contribute {{ tokenSymbol }} to the {{ isRoundFinished() ? 'next' : 'current' }} round</h3>
         <form class="contribution-form">
           <div class="input-button">
-            <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
+            <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
             <input
               v-model="amount"
               class="input"
@@ -24,7 +24,6 @@
           </div>
         </form>
         <div v-if="amount > balance" class="balance-check-warning">⚠️ You only have {{ balance }} {{tokenSymbol}}</div>
-        <div class="transaction-fee">Estimated transaction fee: {{getTxFee}}</div>
         <div class="btn-row">
           <button class="btn-secondary" @click="$emit('close')">Cancel</button>
           <button class="btn-action" :disabled="!isAmountValid()" @click="contributeMatchingFunds()">Contribute</button>
@@ -78,10 +77,6 @@ export default class MatchingFundsModal extends Vue {
   amount = '100'
   transferTxHash = ''
   transferTxError = ''
-
-  created() {
-    /* this.signer = this.$store.state.currentUser.walletProvider.getSigner() */
-  }
 
   get walletProvider(): any {
     return (window as any).ethereum
