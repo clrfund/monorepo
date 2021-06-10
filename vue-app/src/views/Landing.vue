@@ -3,6 +3,7 @@
   <round-status-banner />
   <div id="page">
     <div id="hero">
+      <div class="mobile" style="width: 100%; background: linear-gradient(180deg, #211E2B 0%, rgba(33, 30, 43, 0) 60.61%); height: 100%; position: absolute; opacity: 0.1; margin: -2rem" />
       <img src="@/assets/moon.png" id="moon" />
       <div class="image-wrapper">
         <img src="@/assets/docking.png" />
@@ -14,25 +15,16 @@
           <router-link to="/projects" class="btn-action">Go to app</router-link>
           <div class="btn-white" @click="scrollToHowItWorks">How it works</div>
         </div>
-        <div v-if="!$store.getters.hasContributionPhaseEnded && !isRoundFull" class="apply-callout mobile">
-          <div id="countdown" class="caps">11 days</div>
-          <div id="countdown-label" class="caps">Time to apply</div>
-          <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
-          <div id="btn-row">
-            <div id="view-criteria" class="link-primary">View criteria</div>
-            <router-link to="/join"><div id="apply-to-join" class="btn-primary">Apply to join</div></router-link>
-          </div>
-        </div>
       </div>
-      <div v-if="!$store.getters.hasContributionPhaseEnded && !isRoundFull" class="apply-callout desktop">
+      <div class="apply-callout" v-if="!$store.getters.hasContributionPhaseEnded && !isRoundFull">
         <div class="column">
           <h2>Join the funding round</h2>
           <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
         </div>
-        <div class="centered">
-          <router-link to="/join"><div id="join-round" class="btn-primary">Join round</div></router-link>
+        <div class="button-group">
+          <router-link to="/join" class="btn-primary w100">Join round</router-link>
+          <div>{{timeRemaining}} to join</div>
         </div>
-        <div class="centered">{{timeRemaining}} to join</div>
       </div>
     </div>
     <div id="section-how-it-works">
@@ -220,10 +212,20 @@ ol li::before {
   /* vertical-align: baseline; */
 }
 
-.centered {
-  display: grid;
-  place-items: center;
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-right: 1rem;
+  align-items: center;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
 }
+
+
 
 .btn-hero-primary {
   background: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.55%);
@@ -353,15 +355,17 @@ ol li::before {
     border-radius: 8px;
     padding: 1rem;
     margin: 3rem 0;
-
-  }
-
-  .apply-callout.desktop {
     position: relative;
     display: flex;
-    gap: 2rem;
+    justify-content: space-between;
+    gap: 1rem;
     .column {
       flex: 1;
+    }
+    @media (max-width: $breakpoint-m) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem
     }
   }
 }
@@ -482,6 +486,13 @@ ol li::before {
       }
     }
   }
+}
+
+.w100 {
+  width: 100%;
+  @media (min-width: $breakpoint-m) {
+      width: fit-content;
+    }
 }
 
 #btn-row {
