@@ -5,35 +5,15 @@
       @click="handleStepNav(currentStep - 1)"
       class="btn-secondary"
       :class="{
-        disabled: navDisabled,
+        disabled: isNavDisabled,
       }"
     >
       Previous
     </button>
     <div v-else></div>
 
-    <!-- TODO: Finish button to trigger tx  -->
     <button
-      v-if="currentStep === 5"
-      @click="handleSubmit"
-      to="/project-added"
-      class="btn-primary"
-    >
-      Finish
-    </button>
-    <button
-      v-else-if="currentStep === 4"
-      @click="handleNext"
-      :class="{
-        disabled: !isStepValid,
-        'btn-primary': true,
-      }"
-      :disabled="!isStepValid"
-    >
-      Summary
-    </button>
-    <button
-      v-else-if="currentStep < 5"
+      v-if="currentStep < steps.length - 1"
       @click="handleNext"
       :class="{
         disabled: !isStepValid,
@@ -52,14 +32,15 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
 @Component
-export default class ButtonRow extends Vue {
+export default class FormNavigation extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]
   @Prop() isStepValid!: boolean
   @Prop() callback!: (updateFurthest?: boolean) => void
   @Prop() handleStepNav!: () => void
-  @Prop() navDisabled!: boolean
+  @Prop() isNavDisabled!: boolean
 
+  // TODO is this needed? Why do we pass `callback` & `handleStepNav`?
   handleNext(): void {
     // Save form data (first saves when user hits Next after first step)
     this.callback(true) // "true" checks to update furthest step
@@ -71,22 +52,10 @@ export default class ButtonRow extends Vue {
       },
     })
   }
+
   handlePrev(): void {
     this.callback()
-    this.$router.push({
-      name: 'joinStep',
-      params: {
-        step: this.steps[this.currentStep - 1],
-      },
-    })
   }
-  handleSubmit(): void {
-    alert('submitted')
-    // Submit form data
-    // Clear form store/state data
-  }
-  // Pushing to router stack destroys local form state
-  // Place form data in $store?
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
     <template v-else-if="!isLoaded()"></template>
     <div
@@ -10,17 +10,17 @@
     </div>
     <button
       v-else-if="walletProvider && !currentUser"
-      class="app-btn"
+      :class="isActionButton ? 'btn-action' : 'app-btn'"
       @click="connect"
     >
       Connect
     </button>
-    <div v-else-if="currentUser" class="profile-info" @click="toggleProfile()">
+    <div v-else-if="currentUser && !isActionButton" class="profile-info" @click="toggleProfile">
       <div class="profile-info-balance">
         <img src="@/assets/dai.svg" />
         <div class="balance" @click="copyAddress">{{ balance }}</div>
       </div>
-      <div class="profile-name" @click="copyAddress">{{ ens || renderUserAddress(7) }}</div>
+      <div class="profile-name" @click="copyAddress">{{ renderUserAddress(7) }}</div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl">
       </div>
@@ -32,6 +32,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Prop } from 'vue-property-decorator'
 import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 import { commify, formatUnits } from '@ethersproject/units'
@@ -58,11 +59,14 @@ export default class WalletWidget extends Vue {
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
 
+  // Boolean to only show Connect button, styled like an action button,
+  // which hides the widget that would otherwise display after connecting
+  @Prop() isActionButton!: boolean
+
   async copyAddress(): Promise<void> {
     if (!this.currentUser) { return }
     try {
       await navigator.clipboard.writeText(this.currentUser.walletAddress)
-      // alert('Text copied to clipboard')
     } catch (error) {
       console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
     }
@@ -201,12 +205,6 @@ export default class WalletWidget extends Vue {
     }
     return ''
   }
-
-  // TODO: Extract into a shared function
-  get ens(): string {
-    return this.$store.state.currentUser?.ens
-  }
-
 }
 
 
@@ -217,10 +215,6 @@ export default class WalletWidget extends Vue {
 <style scoped lang="scss">
 @import '../styles/vars';
 @import '../styles/theme';
-
-.container {
-  margin-left: 0.5rem;
-}
 
 .provider-error {
   text-align: center;

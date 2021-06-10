@@ -5,7 +5,8 @@
         :to="{ name: 'project', params: { id: project.id }}"
       >
         <div class="project-image">
-          <img :src="project.imageUrl" :alt="project.name">
+          <img :src="projectImageUrl" :alt="project.name">
+          <div class="tag">{{ project.category }}</div>
         </div>
       </router-link>
       <div class="project-info">
@@ -16,7 +17,6 @@
           >
             {{ project.name }}
           </router-link>
-          <div class="tag">{{ project.category }}</div>
         </div>
         <router-link
           :to="{ name: 'project', params: { id: project.id }}"
@@ -35,32 +35,33 @@
           Register
         </button>
 
-        <form action="#">
-        <div class="input-button">
-            <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
-            <input
-              v-model="amount"
-              class="input"
-              name="amount"
-              placeholder="10"
-              autocomplete="on"
-              onfocus="this.value=''"
-              v-if="!inCart"
-            >
-            <input type="submit"
-              v-if="hasContributeBtn() && !inCart"
-              class="donate-btn"
-              :disabled="!canContribute()"
-              @click="contribute(project)"
-              value="Add to cart"
-            >
-            <div 
-              v-if="hasContributeBtn() && inCart"
-              class="donate-btn-full"
-            >
-            In cart 🎉
-            </div>
-        </div>
+        <form action="#" v-if="shouldShowCartInput">
+          <!-- TODO: if a user is unconnected, adding to cart should trigger wallet connection -->
+          <div class="input-button">
+              <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
+              <input
+                v-model="amount"
+                class="input"
+                name="amount"
+                :placeholder="defaultContributionAmount"
+                autocomplete="on"
+                onfocus="this.value=''"
+                v-if="!inCart"
+              >
+              <input type="submit"
+                v-if="hasContributeBtn() && !inCart"
+                class="donate-btn"
+                :disabled="!canContribute()"
+                @click="contribute()"
+                value="Add to cart"
+              >
+              <div 
+                v-if="hasContributeBtn() && inCart"
+                class="donate-btn-full"
+              >
+              In cart 🎉
+              </div>
+          </div>
         </form>
 
         <!-- <button
@@ -103,10 +104,20 @@ import { markdown } from '@/utils/markdown'
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
-  amount = 10;
+  amount = DEFAULT_CONTRIBUTION_AMOUNT;
 
   get descriptionHtml(): string {
     return markdown.renderInline(this.project.description)
+  }
+
+  get projectImageUrl(): string | null {
+    if (typeof this.project.bannerImageUrl !== 'undefined') {
+      return this.project.bannerImageUrl
+    }
+    if (typeof this.project.imageUrl !== 'undefined') {
+      return this.project.imageUrl
+    }
+    return null
   }
 
   get inCart(): boolean {
@@ -115,6 +126,11 @@ export default class ProjectListItem extends Vue {
       return item.id === this.project.id && !item.isCleared
     })
     return index !== -1
+  }
+
+  get shouldShowCartInput(): boolean {
+    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
+    return isRoundContributionPhase || canUserReallocate
   }
 
   hasRegisterBtn(): boolean {
@@ -170,10 +186,14 @@ export default class ProjectListItem extends Vue {
   contribute() {
     this.$store.commit(ADD_CART_ITEM, {
       ...this.project,
-      amount: DEFAULT_CONTRIBUTION_AMOUNT.toString(),
+      amount: this.amount.toString(),
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)
+  }
+
+  get defaultContributionAmount() {
+    return DEFAULT_CONTRIBUTION_AMOUNT
   }
 }
 </script>
@@ -275,6 +295,7 @@ export default class ProjectListItem extends Vue {
   align-items: center;
   overflow: hidden;
   box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+  position: relative;
 
   img {
     /* width: 100%; */
@@ -330,10 +351,14 @@ export default class ProjectListItem extends Vue {
 .tag {
   padding: 0.5rem 0.75rem;
   background: $bg-light-color;
+  box-shadow: $box-shadow;
   color: $button-disabled-text-color;
   font-family: 'Glacial Indifference', sans-serif;
   width: fit-content;
   border-radius: 4px; 
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
 }
 
 //TODO: make tag component?

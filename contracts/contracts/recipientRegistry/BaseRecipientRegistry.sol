@@ -138,4 +138,12 @@ abstract contract BaseRecipientRegistry is IRecipientRegistry {
     }
     return prevRecipientAddress;
   }
+
+  /**
+    * @dev Get recipient count.
+    * @return count of active recipients in the registry.
+    */
+  function getRecipientCount() public view returns(uint256) {
+      return slots.length - removed.length;
+  }
 }

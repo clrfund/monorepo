@@ -187,6 +187,14 @@ describe('Simple Recipient Registry', () => {
       )).to.equal(recipientAddress)
     })
 
+    it('should return recipient count', async () => {
+      expect(await registry.getRecipientCount()).to.equal(0)
+      await registry.addRecipient(recipientAddress, metadata)
+      expect(await registry.getRecipientCount()).to.equal(1)
+      await registry.removeRecipient(recipientId)
+      expect(await registry.getRecipientCount()).to.equal(0)
+    })
+
     it('allows to re-use index of removed recipient', async () => {
       // Add recipients up to a limit
       for (let i = 0; i < MAX_RECIPIENTS; i++) {
@@ -614,12 +622,27 @@ describe('Optimistic recipient registry', () => {
         .to.be.revertedWith('RecipientRegistry: Request does not exist')
     })
 
-    it('should not allow to execute request during challenge period', async () => {
+    it('should not allow non-owner to execute request during challenge period', async () => {
       await registry.addRecipient(
         recipientAddress, metadata, { value: baseDeposit },
       )
-      await expect(registry.executeRequest(recipientId))
+
+      await expect(registry.connect(requester).executeRequest(recipientId))
         .to.be.revertedWith('RecipientRegistry: Challenge period is not over')
+    })
+
+    it('should allow owner to execute request during challenge period', async () => {
+      await registry.addRecipient(
+        recipientAddress, metadata, { value: baseDeposit },
+      )
+
+      let recipientCount = await registry.getRecipientCount()
+      expect(recipientCount.toNumber()).to.equal(0)
+
+      await registry.executeRequest(recipientId)
+
+      recipientCount = await registry.getRecipientCount()
+      expect(recipientCount.toNumber()).to.equal(1)
     })
 
     it('should remember initial deposit amount during registration', async () => {
