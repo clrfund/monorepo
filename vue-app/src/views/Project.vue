@@ -25,32 +25,7 @@
           Register
         </button>
 
-        <div v-if="shouldShowCartInput">
-          <div class="input-button" v-if="hasContributeBtn() && !inCart">
-            <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
-            <input
-              v-model="contributionAmount"
-              class="input"
-              name="contributionAmount"
-              placeholder="5"
-              autocomplete="on"
-              onfocus="this.value=''"
-            >
-            <input type="submit"
-              class="donate-btn"
-              :disabled="!canContribute()"
-              @click="contribute()"
-              value="Add to cart"
-            >
-          </div>
-          <div class="input-button" v-if="hasContributeBtn() && inCart">
-            <button
-              class="donate-btn-full"
-            >
-              <span>In cart 🎉</span>
-            </button>
-          </div>
-        </div>
+        <add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn()" :project="project" />
 
         <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
         <button
@@ -93,7 +68,6 @@ import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
-import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
@@ -103,17 +77,16 @@ import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
+import AddToCartButton from '@/components/AddToCartButton.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   LOAD_CART,
-  SAVE_CART,
   LOAD_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
-  ADD_CART_ITEM,
 } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
@@ -122,13 +95,12 @@ import { markdown } from '@/utils/markdown'
   metaInfo() {
     return { title: (this as any).project?.name || '' }
   },
-  components: {Loader, ProjectProfile },
+  components: {Loader, ProjectProfile, AddToCartButton },
 })
 export default class ProjectView extends Vue {
 
   project: Project | null = null
   allocatedAmount: FixedNumber | null = null
-  contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
   claimed: boolean | null = null
   isLoading = true
 
@@ -221,18 +193,6 @@ export default class ProjectView extends Vue {
     return currentRound ? currentRound.nativeTokenSymbol : ''
   }
 
-  get inCart(): boolean {
-    const project = this.project
-    if (project === null) {
-      return false
-    }
-    const index = this.$store.state.cart.findIndex((item: CartItem) => {
-      // Ignore cleared items
-      return item.id === project.id && !item.isCleared
-    })
-    return index !== -1
-  }
-
   get isCartToggledOpen(): boolean {
     return this.$store.state.showCartPanel
   }
@@ -285,27 +245,6 @@ export default class ProjectView extends Vue {
       this.project !== null &&
       this.project.index !== 0
     )
-  }
-
-  canContribute(): boolean {
-    return (
-      this.hasContributeBtn() &&
-      this.$store.state.currentUser &&
-      DateTime.local() < this.$store.state.currentRound.votingDeadline &&
-      this.$store.state.currentRound.status !== RoundStatus.Cancelled &&
-      this.project !== null &&
-      !this.project.isLocked
-    )
-  }
-
-  contribute() {
-    if (!this.contributionAmount) { return }
-    this.$store.commit(ADD_CART_ITEM, {
-      ...this.project,
-      amount: this.contributionAmount.toString(),
-      isCleared: false,
-    })
-    this.$store.dispatch(SAVE_CART)
   }
 
   hasClaimBtn(): boolean {
