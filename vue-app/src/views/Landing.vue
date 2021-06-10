@@ -294,11 +294,14 @@ ol li::before {
   background: $clr-pink-dark-gradient;
   padding: 0;
   min-height: 639px; /* This is the height when adding in the callout */
+  display: flex;
+  flex-flow: wrap;
 
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
     width: 70%;
+    max-width: 880px;
     height: auto;
     transform: rotate(15deg);
     /* top: -20px; */
