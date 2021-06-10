@@ -109,10 +109,10 @@
                     <p class="mobile"><em>This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.</em></p>
                 </div>
 
-                <loader v-if="step = 0" />
+                <loader v-if="step === 0" />
             </div>
             <div v-if="!appLinkQrCode">
-              <loader  />
+              <loader />
               <div>Connect your wallet to get started</div>
               <wallet-widget />
             </div>
@@ -199,7 +199,7 @@
             <div class="verification-status" v-if="!isVerified">
               <div>
                   <h2>You can't register yet</h2>
-                  <p>You can’t join the round until you’re BrightID verified. Reminder: it can take up to a few hours even after you've met the requirements. <a href="/setup/get-verified/verification">How to get verified</a></p>
+                  <p>You can’t join the round until you’re BrightID verified. Reminder: it can take up to a few hours even after you've met the requirements. <router-link to="/setup/get-verified/verification">How to get verified</router-link></p>
               </div>
               <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
             </div>
@@ -217,7 +217,8 @@
         </div>
       </div>
       <div class="nav-area nav-bar mobile">
-        <button-row :steps="steps" :currentStep="currentStep" :callBack="saveFormData" />
+        <!-- TODO fix props we pass to form-progress-widget -->
+        <form-progress-widget :steps="steps" :currentStep="currentStep" :callBack="saveFormData" />
         <!-- TODO submit button to trigger tx, pass callback to above <botton-row />?  -->
       </div>
     </div>
