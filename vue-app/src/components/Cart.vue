@@ -51,11 +51,12 @@
         </div>
         <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
           <div class="flex-row-reallocation">
-            <div @click="handleEditState" v-if="$store.getters.canUserReallocate">
+            <div class="semi-bold">{{editModeSelection ? "Edit contributions" : "Your contributions"}}</div>
+            <div class="semi-bold" @click="handleEditState" v-if="$store.getters.canUserReallocate">
               <span v-if="editModeSelection">Cancel</span>
               <span v-else>Edit</span>
             </div>
-            <div @click="removeAll" v-if="$store.getters.canUserReallocate">Remove all</div>
+            <!-- <div @click="removeAll" v-if="$store.getters.canUserReallocate">Remove all</div> -->
           </div>
         </div>
         <div v-else-if="$store.getters.hasUserContributed" class="flex-row-reallocation" id="readOnly">
@@ -673,6 +674,14 @@ h2 {
   justify-content: space-between;
   align-items: center;
   padding: 0rem 1rem;
+}
+
+.semi-bold {
+  font-weight: 500;
+  font-size: 14px;
+  span {
+    text-decoration: underline;
+  }
 }
 
 .flex {
