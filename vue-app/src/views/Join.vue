@@ -910,6 +910,7 @@ export default class JoinView extends mixins(validationMixin) {
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: 2rem;
+  overflow: none;
   @media (min-width: $breakpoint-m) {
     background: $bg-secondary-color;
     padding: 1.5rem;
