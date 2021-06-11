@@ -161,7 +161,7 @@ export default class Landing extends Vue {
 #page > div {  
   padding: $content-space (2 * $content-space);
   @media (max-width: $breakpoint-m) {
-    padding: $content-space
+    padding: $content-space;
   }
 }
 
