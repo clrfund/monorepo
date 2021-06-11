@@ -267,16 +267,6 @@ ol li::before {
   background: black;
 }
 
-/* #page > #waiting-banner {
-  display: flex;
-  height: 48px;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  align-items: center;
-  // margin-top: 1rem;
-  background: $bg-primary-color;
-} */
-
 .pre-req,
 #about-1, #about-2, #about-3 {
   padding: $content-space;
@@ -303,11 +293,15 @@ ol li::before {
   overflow: hidden;
   background: $clr-pink-dark-gradient;
   padding: 0;
+  min-height: 639px; /* This is the height when adding in the callout */
+  display: flex;
+  flex-flow: wrap;
 
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
     width: 70%;
+    max-width: 880px;
     height: auto;
     transform: rotate(15deg);
     /* top: -20px; */
