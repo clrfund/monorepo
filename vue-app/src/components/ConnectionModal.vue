@@ -4,7 +4,7 @@
       <h3>Connect your wallet</h3>
       <div style="margin-bottom: 2rem;">You must connect to add projects to your cart.</div>
       <div class="btn-row">
-        <wallet-widget @connected="$emit('close')" />
+        <wallet-widget :is-action-button="true" @connected="$emit('close')" />
         <!-- Connecting needs to add the project to your cart and close modal overlay -->
         <button class="btn-secondary" @click="$emit('close')">Cancel</button>
       </div>
