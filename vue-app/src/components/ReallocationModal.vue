@@ -76,12 +76,12 @@ export default class ReallocationModal extends Vue {
         ),
         (hash) => this.voteTxHash = hash,
       )
+      this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
     } catch (error) {
       this.voteTxError = error.message
       return
     }
     this.step += 1
-    this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
   }
 }
 </script>
