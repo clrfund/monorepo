@@ -46,7 +46,6 @@ import {
   UNWATCH_CONTRIBUTOR_DATA,
 } from './action-types'
 import {
-
   ADD_CART_ITEM,
   CLEAR_CART,
   REMOVE_CART_ITEM,
