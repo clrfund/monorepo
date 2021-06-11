@@ -180,6 +180,8 @@ import CartTimeLeft from '@/components/CartTimeLeft.vue'
 import { Web3Provider } from '@ethersproject/providers'
 import {
   SET_CURRENT_USER,
+  TOGGLE_EDIT_SELECTION,
+  SET_EDIT_SELECTION_OFF,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 import {
@@ -211,7 +213,6 @@ export default class Cart extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
   profileImageUrl: string | null = null
-  private editModeSelection = false
   
   removeAll(): void {
     this.$store.commit(CLEAR_CART)
@@ -235,16 +236,20 @@ export default class Cart extends Vue {
     return this.$store.getters.hasReallocationPhaseEnded
   }
 
+  get editModeSelection(): boolean {
+    return this.$store.state.editModeSelection
+  }
+
   get isEditMode(): boolean {
     if (this.isCartFinalized) return false
     if (this.$store.getters.hasContributionPhaseEnded) {
       return this.$store.getters.hasUserContributed
-        ? this.editModeSelection
+        ? this.$store.state.editModeSelection
         : false
     }
     if (this.$store.getters.isRoundContributionPhase) {
       return this.$store.getters.hasUserContributed
-        ? this.editModeSelection
+        ? this.$store.state.editModeSelection
         : true
     }
     return true
@@ -256,10 +261,10 @@ export default class Cart extends Vue {
 
   handleEditState(): void {
     // When hitting cancel in edit mode, restore committedCart to local cart
-    if (this.editModeSelection) {
+    if (this.$store.state.editModeSelection) {
       this.$store.commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
     }
-    this.editModeSelection = !this.editModeSelection
+    this.$store.commit(TOGGLE_EDIT_SELECTION)
   }
 
   toggleCart(): void {
@@ -377,7 +382,7 @@ export default class Cart extends Vue {
       return this.$store.state.committedCart
     }
     // Hide cleared items
-    return this.cart.filter((item) => !item.isCleared)
+    return this.cart.filter((item) => !item.isCleared).map(item => ({ ...item, isCommited: true }))
   }
 
   get isCartEmpty(): boolean {
@@ -574,7 +579,7 @@ export default class Cart extends Vue {
       { votes },
       { width: 500 },
     )
-    this.editModeSelection = false
+    this.$store.commit(SET_EDIT_SELECTION_OFF)
   }
 
   canWithdrawContribution(): boolean {
