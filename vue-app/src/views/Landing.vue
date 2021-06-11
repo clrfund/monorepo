@@ -16,14 +16,14 @@
           <div class="btn-white" @click="scrollToHowItWorks">How it works</div>
         </div>
       </div>
-      <div class="apply-callout" v-if="!$store.getters.hasContributionPhaseEnded && !isRoundFull">
+      <div class="apply-callout" v-if="$store.state.currentRound && $store.getters.isRoundJoinPhase && !$store.getters.isRecipientRegistryFull">
         <div class="column">
           <h2>Join the funding round</h2>
           <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
         </div>
         <div class="button-group">
           <router-link to="/join" class="btn-primary w100">Join round</router-link>
-          <div>{{timeRemaining}} to join</div>
+          <div>{{timeRemaining}}</div>
         </div>
       </div>
     </div>
@@ -125,15 +125,7 @@ export default class Landing extends Vue {
   }
 
   get timeRemaining(): string {
-    if (!this.signUpDeadline) {
-      return  '...'
-    }
-    return formatDateFromNow(this.signUpDeadline)
-  }
-
-  // TODO fetch `maxRecipients` from registry & compare to current registry size
-  get isRoundFull(): boolean {
-    return false
+    return this.signUpDeadline ? `${formatDateFromNow(this.signUpDeadline)}  to join` : '...'
   }
 
   scrollToHowItWorks() {
