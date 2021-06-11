@@ -2,7 +2,7 @@
   <div class="copy">
     <div class="hash">
       <loader class="hash-loader" v-if="isLoading" />
-      <div v-else>{{ renderCopiedOrHash }}</div>
+      <div class="hash-text" v-else>{{ renderCopiedOrHash }}</div>
     </div>
     <div class="icons">
       <tooltip position="bottom" :content="isCopied ? 'Copied!' : 'Copy hash'"><div class="icon" @click="copyHash"><img width="16px" src="@/assets/copy.svg" /></div></tooltip>
@@ -56,11 +56,10 @@ export default class IpfsCopyWidget extends Vue {
   border-radius: 32px;
   padding: 0.25rem 0.5rem;
   flex-grow: 1;
+  min-width: 47%;
   max-width: 530px;
-  
   font-weight: 500;
   width: fit-content;
-
 }
 
 .hash {
@@ -71,9 +70,8 @@ export default class IpfsCopyWidget extends Vue {
   display: flex;
   align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
+  min-width: 10%;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
     @media (max-width: $breakpoint-m) {
     margin-left: 0.5rem;
   }
@@ -114,5 +112,12 @@ export default class IpfsCopyWidget extends Vue {
         background: $bg-light-color;
         border-radius: 16px;
     }
+}
+
+.hash-text {
+  white-space: nowrap; 
+  overflow: hidden;
+  width: 100%;
+  text-overflow: ellipsis; 
 }
 </style>
