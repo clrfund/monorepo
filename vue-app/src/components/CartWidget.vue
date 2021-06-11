@@ -40,11 +40,13 @@ import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 import Tooltip from '@/components/Tooltip.vue'
 import { provider as jsonRpcProvider } from '@/api/core'
+import { RoundStatus } from '@/api/round'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import { CartItem } from '@/api/contributions'
 import {
   LOAD_USER_INFO,
   LOAD_CART,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
   LOGIN_USER,
   LOGOUT_USER,
@@ -86,6 +88,11 @@ export default class CartWidget extends Vue {
   }
 
   get filteredCart(): CartItem[] {
+    // Once reallocation phase ends, use committedCart for cart items
+    if (this.$store.getters.hasReallocationPhaseEnded) {
+      return this.$store.state.committedCart
+    }
+
     return this.cart.filter((item) => !item.isCleared)
   }
 
@@ -180,6 +187,7 @@ export default class CartWidget extends Vue {
       // Load cart & contributor data for current round
       this.$store.dispatch(LOAD_USER_INFO)
       this.$store.dispatch(LOAD_CART)
+      this.$store.dispatch(LOAD_COMMITTED_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
     }
   }

@@ -198,6 +198,7 @@ import {
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   LOAD_CART,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import {
@@ -246,6 +247,7 @@ export default class RoundInformation extends Vue {
         // Load user data if already logged in
         this.$store.dispatch(LOAD_USER_INFO)
         this.$store.dispatch(LOAD_CART)
+        this.$store.dispatch(LOAD_COMMITTED_CART)
         this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
       }
     }

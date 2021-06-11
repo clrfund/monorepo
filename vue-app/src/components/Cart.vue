@@ -172,13 +172,14 @@ import { RoundStatus, TimeLeft } from '@/api/round'
 import {
   LOAD_USER_INFO,
   LOAD_CART,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
   LOGIN_USER,
   LOGOUT_USER,
   SAVE_CART,
 } from '@/store/action-types'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
-import { CLEAR_CART, TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
+import { CLEAR_CART, RESTORE_COMMITTED_CART_TO_LOCAL_CART, TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { getNetworkName } from '@/utils/networks'
 import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
@@ -234,6 +235,10 @@ export default class Cart extends Vue {
   }
 
   handleEditState(): void {
+    // When hitting cancel in edit mode, restore committedCart to local cart
+    if (this.editModeSelection) {
+      this.$store.commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
+    }
     this.editModeSelection = !this.editModeSelection
   }
 
@@ -332,6 +337,7 @@ export default class Cart extends Vue {
       // Load cart & contributor data for current round
       this.$store.dispatch(LOAD_USER_INFO)
       this.$store.dispatch(LOAD_CART)
+      this.$store.dispatch(LOAD_COMMITTED_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
     }
   }
@@ -346,6 +352,10 @@ export default class Cart extends Vue {
   }
 
   get filteredCart(): CartItem[] {
+    // Once reallocation phase ends, use committedCart for cart items
+    if (this.$store.getters.hasReallocationPhaseEnded) {
+      return this.$store.state.committedCart
+    }
     // Hide cleared items
     return this.cart.filter((item) => !item.isCleared)
   }
@@ -408,9 +418,9 @@ export default class Cart extends Vue {
     return invalidCount === 0
   }
 
-  getTotal(): BigNumber {
+  private getCartTotal(cart: Array<CartItem>): BigNumber {
     const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
-    return this.cart.reduce((total: BigNumber, item: CartItem) => {
+    return cart.reduce((total: BigNumber, item: CartItem) => {
       let amount
       try {
         amount = parseFixed(item.amount, nativeTokenDecimals)
@@ -419,6 +429,13 @@ export default class Cart extends Vue {
       }
       return total.add(amount.div(voiceCreditFactor).mul(voiceCreditFactor))
     }, BigNumber.from(0))
+  }
+
+  getTotal(): BigNumber {
+    const { cart, committedCart } = this.$store.state
+    const { hasReallocationPhaseEnded } = this.$store.getters
+
+    return this.getCartTotal(hasReallocationPhaseEnded ? committedCart : cart)
   }
 
   private isGreaterThanMax(): boolean {
