@@ -382,7 +382,7 @@ export default class Cart extends Vue {
       return this.$store.state.committedCart
     }
     // Hide cleared items
-    return this.cart.filter((item) => !item.isCleared).map(item => ({ ...item, isCommited: true }))
+    return this.cart.filter((item) => !item.isCleared)
   }
 
   get isCartEmpty(): boolean {

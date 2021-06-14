@@ -1,6 +1,11 @@
 <template>
   <div>
-    <div v-for="item in cartList" class="cart-item" :key="item.id">
+    <div
+      v-for="item in cartList"
+      class="cart-item"
+      :class="{ 'new-cart-item': !item.isCommited && $store.getters.hasUserContributed }"
+      :key="item.id"
+      >
       <div class="project">
         <router-link
           :to="{ name: 'project', params: { id: item.id }}"

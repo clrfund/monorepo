@@ -204,8 +204,12 @@ export const mutations = {
     state.showCartPanel = !state.showCartPanel
   },
   [RESTORE_COMMITTED_CART_TO_LOCAL_CART](state) {
+    // Flag the committed items. Useful to identify new items added into the Cart
+    // during the reallocation phase.
+    const commitedCart = state.committedCart.map(item => ({ ...item, isCommited: true }))
+    
     // Spread to avoid reference
-    state.cart = [...state.committedCart]
+    state.cart = [...commitedCart]
   },
   [SAVE_COMMITTED_CART](state) {
     // Spread to avoid reference
