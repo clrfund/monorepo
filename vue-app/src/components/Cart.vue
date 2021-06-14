@@ -81,7 +81,7 @@
         {{ errorMessage }}
       </div>
       <div class="p1" v-if="hasUnallocatedFunds()">
-        Unallocated funds ({{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}) will be sent to the matching pool.
+        Funds you don't contribute to projects ({{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}) will be sent to the matching pool at the end of the round.
         Your cart must add up to your original {{ formatAmount(this.contribution) }} {{tokenSymbol}} donation.
       </div>
       <!-- <div v-if="canRegisterWithBrightId" @click="registerWithBrightId()" class="btn-primary"> -->
