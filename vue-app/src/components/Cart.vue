@@ -204,9 +204,7 @@ export default class Cart extends Vue {
       text: 'Remove all', icon: 'remove.svg',
     },
     {
-      callback: () => {
-        alert('TODO: Split evenly between projects in cart')
-      },
+      callback: this.splitContributionsEvenly,
       text: 'Split evenly', icon: 'split.svg',
     },
   ]
@@ -581,6 +579,16 @@ export default class Cart extends Vue {
     const el = document.getElementById('cart-bottom-scroll-point')
     if (!el) return
     el.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  splitContributionsEvenly(): void {
+    const { cart, currentRound: { contributions } } = this.$store.state
+    const cartAmountTotal = cart.reduce((acc, curr) => acc += parseFloat(curr.amount), 0)
+    const splitAmount = (this.$store.getters.canUserReallocate ? contributions._value : cartAmountTotal) / cart.length
+
+    cart.map((item: CartItem) => {
+      item.amount = splitAmount.toPrecision()
+    })
   }
 }
 
