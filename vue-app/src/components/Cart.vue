@@ -56,7 +56,7 @@
               <span v-if="editModeSelection">Cancel</span>
               <span v-else>Edit</span>
             </div>
-            <!-- <div @click="removeAll" v-if="$store.getters.canUserReallocate">Remove all</div> -->
+            <div v-if="editModeSelection" @click="removeAll">Remove all</div>
           </div>
         </div>
         <div v-else-if="$store.getters.hasUserContributed" class="flex-row-reallocation" id="readOnly">
