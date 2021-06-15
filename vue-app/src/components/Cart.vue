@@ -56,7 +56,7 @@
               <span v-if="editModeSelection">Cancel</span>
               <span v-else>Edit</span>
             </div>
-            <div v-if="editModeSelection" @click="removeAll">Remove all</div>
+            <!-- <div v-if="editModeSelection" @click="removeAll">Remove all</div> -->
           </div>
         </div>
         <div v-else-if="$store.getters.hasUserContributed" class="flex-row-reallocation" id="readOnly">
@@ -244,12 +244,12 @@ export default class Cart extends Vue {
     if (this.isCartFinalized) return false
     if (this.$store.getters.hasContributionPhaseEnded) {
       return this.$store.getters.hasUserContributed
-        ? this.$store.state.editModeSelection
+        ? this.editModeSelection
         : false
     }
     if (this.$store.getters.isRoundContributionPhase) {
       return this.$store.getters.hasUserContributed
-        ? this.$store.state.editModeSelection
+        ? this.editModeSelection
         : true
     }
     return true
@@ -261,7 +261,7 @@ export default class Cart extends Vue {
 
   handleEditState(): void {
     // When hitting cancel in edit mode, restore committedCart to local cart
-    if (this.$store.state.editModeSelection) {
+    if (this.editModeSelection) {
       this.$store.commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
     }
     this.$store.commit(TOGGLE_EDIT_SELECTION)
