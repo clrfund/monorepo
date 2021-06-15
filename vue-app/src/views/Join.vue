@@ -496,12 +496,10 @@
             </div>
           </div>
           <div v-if="currentStep === 6">
-            <h2 class="step-title">Submit Project</h2>
-            <p>We'll submit your application to the blockchain.</p>
+            <h2 class="step-title">Submit project</h2>
+            <p>This is a blockchain transaction that will add your project information to the funding round.</p>
             <div class="inputs">
-              <div class="form-background">
-                <recipient-submission-widget />
-              </div>
+                <recipient-submission-widget cta="Submit project" pending="Sending deposit..."/>
             </div>
           </div>
         </div>
