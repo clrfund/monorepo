@@ -3,7 +3,7 @@
     <div
       v-for="item in cartList"
       class="cart-item"
-      :class="{ 'new-cart-item': !item.isCommited && $store.getters.hasUserContributed }"
+      :class="{ 'new-cart-item': isNewOrUpdated(item) && $store.getters.hasUserContributed }"
       :key="item.id"
       >
       <div class="project">
@@ -78,6 +78,14 @@ export default class extends Vue {
   removeItem(item: CartItem): void {
     this.$store.commit(REMOVE_CART_ITEM, item)
     this.$store.dispatch(SAVE_CART)
+  }
+
+  isNewOrUpdated(item: CartItem): boolean {
+    const itemIndex = this.$store.state.committedCart.findIndex((i) => {
+      return i.id === item.id && i.amount === item.amount
+    })
+
+    return itemIndex === -1
   }
 
   get tokenSymbol(): string {
