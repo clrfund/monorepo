@@ -11,6 +11,7 @@
           <div v-if=" hasTxError || isTxRejected" class="input-notice" style="font-size: 24px; margin-bottom: 0;">
             ⚠️
           </div>
+          <!-- TODO add check -->
           <!-- <div v-if="hasLowFunds" class="input-notice">
             Not enough ETH in your wallet.<br /> Top up or connect a different wallet.
           </div> -->
@@ -31,16 +32,20 @@
         </div>
       <div class="connected" v-if="currentUser">
         <div class="total-title">Total to submit<tooltip position="bottom" content="Estimate – this total may be slightly different in your wallet."><img src="@/assets/info.svg" /></tooltip></div>
-        <div class="total">{{ depositAmount + txFee }} <span class="total-currency">  {{depositToken}}</span></div>
+        <div class="total">{{ depositAmount }} <span class="total-currency">  {{depositToken}}</span></div>
         <div class="warning-text" v-if="hasLowFunds">Not enough {{depositToken}} in your wallet.<br /> Top up or connect a different wallet.</div>
         <div v-if="txHasDeposit" class="checkout-row">
           <p class="m05"><b>Security deposit</b></p>
-          <p class="m05">{{ depositAmount }} {{ depositToken }} <span class="o5">({{fiatSign}}{{fiatFee}})</span> </p>
+          <p class="m05">{{ depositAmount }} {{ depositToken }}
+            <!-- TODO fetch ETH price for fiat estimate -->
+            <!-- <span class="o5">({{fiatSign}}{{fiatFee}})</span>  -->
+          </p>
         </div>
-        <div class="checkout-row">
+        <!-- TODO estimate transaction fee -->
+        <!-- <div class="checkout-row">
           <p class="m05"><b>Estimated transaction fee</b></p>
           <p class="m05">{{txFee}} {{feeToken}} <span class="o5">({{fiatSign}}{{fiatFee}})</span> </p>
-        </div>
+        </div> -->
         <div class="cta">
           <button
             @click="handleSubmit"
@@ -51,8 +56,6 @@
             <div v-else>{{cta}}</div>
           </button>
         </div>
-        <!-- TODO display conditionally -->
-        <!-- <transaction v-if="isPending" :hash="txHash" :error="txError"/> -->
       </div>
     </div>
   </div>
@@ -62,7 +65,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import {
   addRecipient,
   getRegistryInfo,
@@ -98,11 +100,11 @@ export default class RecipientSubmissionWidget extends Vue {
   txHash = ''
   txError = ''
   // TODO
-  txFee = '0.00006' // TODO add logic
-  hasLowFunds = false // TODO add logic
-  feeToken = 'ETH' // TODO add logic
-  fiatFee = '1.04' // TODO add logic
-  fiatSign = '$' // TODO add logic
+  // txFee = '0.00006' // TODO add logic
+  // hasLowFunds = false // TODO add logic
+  // feeToken = 'ETH' // TODO add logic
+  // fiatFee = '1.04' // TODO add logic
+  // fiatSign = '$' // TODO add logic
 
   registryInfo: RegistryInfo | null = null
 

@@ -604,33 +604,33 @@ import { Project } from '@/api/projects'
 export default class JoinView extends mixins(validationMixin) {
   form: RecipientApplicationData = {
     project: {
-      name: 'asdasdsadd',
-      tagline: 'asdas12414dsa',
-      description: 'as124124dsadsad',
-      category: 'Content',
-      problemSpace: 'asda1234sdasd',
+      name: '',
+      tagline: '',
+      description: '',
+      category: '',
+      problemSpace: '',
     },
     fund: {
-      address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
-      plans: 'asdasdasasdsaddasd',
+      address: '',
+      plans: '',
     },
     team: {
       name: '',
       description: '',
-      email: 'a@a.com',
+      email: '',
     },
     links: {
-      github: 'https://google.com/asd',
+      github: '',
       radicle: '',
       website: '',
       twitter: '',
       discord: '',
     },
     image: {
-      bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-      thumbnailHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+      bannerHash: '',
+      thumbnailHash: '',
     },
-    furthestStep: 6,
+    furthestStep: 0,
   }
   currentStep = 0
   steps: string[] = []
