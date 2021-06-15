@@ -36,15 +36,7 @@
         </button>
 
         <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
-
-        <!-- <button
-          v-if="hasContributeBtn() && !inCart"
-          class="btn contribute-btn"
-          :disabled="!canContribute()"
-          @click="contribute(project)"
-        >
-          Contribute
-        </button> -->
+        
         <router-link
           :to="{ name: 'project', params: { id: project.id }}"
         >
