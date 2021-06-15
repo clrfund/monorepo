@@ -8,7 +8,6 @@
           name="amount"
           autocomplete="on"
           onfocus="this.value=''"
-          v-bind="$attrs"
           :placeholder="defaultAmount"
           v-model="amount"
         >
@@ -47,7 +46,6 @@ import ConnectionModal from '@/components/ConnectionModal.vue'
   components: {
     ConnectionModal,
   },
-  inheritAttrs: false,
 })
 export default class AddToCartButton extends Vue {
   amount = DEFAULT_CONTRIBUTION_AMOUNT;
