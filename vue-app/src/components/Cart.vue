@@ -160,6 +160,7 @@ import CartItems from '@/components/CartItems.vue'
 import { Web3Provider } from '@ethersproject/providers'
 import {
   SET_CURRENT_USER,
+  UPDATE_CART_ITEM,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 import {
@@ -583,12 +584,22 @@ export default class Cart extends Vue {
 
   splitContributionsEvenly(): void {
     const { cart, currentRound: { contributions } } = this.$store.state
-    const cartAmountTotal = cart.reduce((acc, curr) => acc += parseFloat(curr.amount), 0)
-    const splitAmount = (this.$store.getters.canUserReallocate ? contributions._value : cartAmountTotal) / cart.length
+    const total = this.$store.getters.canUserReallocate
+      ? contributions._value
+      : cart.reduce((acc, curr) => acc += parseFloat(curr.amount), 0)
+    const splitAmount = total / cart.length
 
-    cart.map((item: CartItem) => {
-      item.amount = splitAmount.toPrecision()
+    // Each iteration subtracts from the totalRemaining until the last round to accomodate for decimal rounding. ex 10/3
+    let totalRemaining = total
+    cart.map((item: CartItem, index: number) => {
+      if (cart.length-1 === index) {
+        this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount: parseFloat(totalRemaining.toFixed(5)).toString() })
+      } else {
+        this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount: parseFloat(splitAmount.toFixed(5)).toString() })
+        totalRemaining -= Number(splitAmount.toFixed(5))
+      }
     })
+    this.$store.dispatch(SAVE_CART)
   }
 }
 
