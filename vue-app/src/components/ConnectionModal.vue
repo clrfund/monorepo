@@ -9,6 +9,12 @@
         <button class="btn-secondary" @click="$emit('close')">Cancel</button>
       </div>
     </div>
+    <div v-if="!walletProvider">
+      <h3>No wallet found</h3>
+      <div class="btn-row">
+        <button class="btn-secondary" @click="$emit('close')">Cancel</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -35,18 +41,6 @@ export default class ConnectionModal extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-
-.contribution-form {
-  align-items: flex-start;
-  display: flex;
-  flex-direction: row;
-  margin-top: $modal-space;
-
-  input {
-    width: 100%;
-  }
-}
-
 .btn-row {
   margin: $modal-space auto 0;
   width: 100%;
@@ -56,10 +50,6 @@ export default class ConnectionModal extends Vue {
   .btn {
     margin: 0 $modal-space;
   }
-}
-
-.close-btn {
-  margin-top: $modal-space;
 }
 
 .vm--modal {
@@ -76,47 +66,6 @@ export default class ConnectionModal extends Vue {
   .loader {
     margin: $modal-space auto;
   }
-}
-
-.input-button {
-  background: #F7F7F7;
-  border-radius: 2rem;
-  border: 2px solid $bg-primary-color;
-  display: flex;
-  align-items: center;
-  color: black;
-  padding: 0.125rem;
-  z-index: 100;
-  width: 100%;
-}
-
-.input {
-  background: none;
-  border: none;
-  color: $bg-primary-color;
-  width: 100%;
-}
-
-.balance-check {
-  font-size: 14px;
-  text-transform: uppercase;
-  font-weight: 500;
-  margin-top: 0.5rem;
-}
-.balance-check-warning {
-  font-size: 14px;
-  text-transform: uppercase;
-  font-weight: 500;
-  margin-top: 0.5rem;
-  color: $warning-color;
-}
-
-.transaction-fee {
-  opacity: 0.6;
-  font-size: 14px;
-  text-transform: uppercase;
-  font-weight: 500;
-  margin-top: 1rem;
 }
 
 </style>
