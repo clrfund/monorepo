@@ -52,9 +52,8 @@
         <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty && !$store.getters.hasReallocationPhaseEnded">
           <div class="flex-row-reallocation">
             <div class="semi-bold">{{editModeSelection ? "Edit contributions" : "Your contributions"}}</div>
-            <div class="semi-bold" @click="handleEditState" v-if="$store.getters.canUserReallocate">
-              <span v-if="editModeSelection">Cancel</span>
-              <span v-else>Edit</span>
+            <div class="semi-bold" v-if="$store.getters.canUserReallocate">
+              <button @click="handleEditState">{{ editModeSelection ? "Cancel" : "Edit" }}</button>
             </div>
             <!-- <div v-if="editModeSelection" @click="removeAll">Remove all</div> -->
           </div>
@@ -727,7 +726,13 @@ h2 {
 .semi-bold {
   font-weight: 500;
   font-size: 14px;
-  span {
+  button {
+    font-family: "Inter";
+    font-weight: 500;
+    font-size: 14px;
+    color: $text-color;
+    border: 0;
+    background: none;
     text-decoration: underline;
   }
 }
