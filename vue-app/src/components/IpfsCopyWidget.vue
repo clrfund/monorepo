@@ -56,8 +56,8 @@ export default class IpfsCopyWidget extends Vue {
   border-radius: 32px;
   padding: 0.25rem 0.5rem;
   flex-grow: 1;
-  min-width: 47%;
-  max-width: 530px;
+  min-width: 0;
+  max-width: 100%;
   font-weight: 500;
   width: fit-content;
 }
