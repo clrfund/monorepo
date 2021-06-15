@@ -3,7 +3,7 @@
   <round-status-banner />
   <div id="page">
     <div id="hero">
-      <div class="mobile" style="width: 100%; background: linear-gradient(180deg, #211E2B 0%, rgba(33, 30, 43, 0) 60.61%); height: 100%; position: absolute; opacity: 0.1; margin: -2rem" />
+      <div class="full-gradient mobile" />
       <img src="@/assets/moon.png" id="moon" />
       <div class="image-wrapper">
         <img src="@/assets/docking.png" />
@@ -298,6 +298,15 @@ ol li::before {
   background: $clr-pink-dark-gradient;
   padding: 0;
 
+  .full-gradient {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #211E2B 0%, rgba(33, 30, 43, 0) 60.61%);
+    opacity: 0.1;
+    margin: -2rem;
+  }
+
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
@@ -372,6 +381,7 @@ ol li::before {
     border-radius: 0;
   }
 }
+
 .icon-row {
   display: flex;
   gap: $content-space;
@@ -402,16 +412,19 @@ ol li::before {
     border-radius: 0;
   }
 }
+
 #about-1 {
   @media (max-width: $breakpoint-l) {
     background: none;  
   }
 }
+
 #about-2 {
   @media (max-width: $breakpoint-l) {
     background: $bg-secondary-color;
   }
 }
+
 #about-3 {
   @media (max-width: $breakpoint-l) {
     background: $bg-light-color;
