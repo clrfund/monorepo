@@ -53,7 +53,7 @@
           <div class="flex-row-reallocation">
             <div class="semi-bold">{{editModeSelection ? "Edit contributions" : "Your contributions"}}</div>
             <div class="semi-bold" v-if="$store.getters.canUserReallocate">
-              <button @click="handleEditState">{{ editModeSelection ? "Cancel" : "Edit" }}</button>
+              <button @click="handleEditState" class="pointer">{{ editModeSelection ? "Cancel" : "Edit" }}</button>
             </div>
             <!-- <div v-if="editModeSelection" @click="removeAll">Remove all</div> -->
           </div>
