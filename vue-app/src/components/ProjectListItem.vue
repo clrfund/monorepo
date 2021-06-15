@@ -198,7 +198,7 @@ export default class ProjectListItem extends Vue {
   }
 
   toggleCartPanel() {
-    this.$store.commit(TOGGLE_SHOW_CART_PANEL)
+    this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
   }
 }
 </script>
