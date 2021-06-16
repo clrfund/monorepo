@@ -22,7 +22,7 @@
           src="@/assets/chevron-right.svg"
         >
       </div>
-      <h2>{{editModeSelection ? "Edit cart" : "Your cart"}}</h2>
+      <h2>{{isEditMode ? "Edit cart" : "Your cart"}}</h2>
       <div v-if="($store.getters.isRoundContributionPhase || $store.getters.canUserReallocate) && !isCartEmpty" class="absolute-right dropdown">
         <img @click="openDropdown" class="dropdown-btn" src="@/assets/more.svg" />
         <div id="cart-dropdown" class="button-menu">
@@ -51,11 +51,10 @@
         </div>
         <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty && !$store.getters.hasReallocationPhaseEnded">
           <div class="flex-row-reallocation">
-            <div class="semi-bold">{{editModeSelection ? "Edit contributions" : "Your contributions"}}</div>
+            <div class="semi-bold">{{isEditMode ? "Edit contributions" : "Your contributions"}}</div>
             <div class="semi-bold" v-if="$store.getters.canUserReallocate">
-              <button @click="handleEditState">{{ editModeSelection ? "Cancel" : "Edit" }}</button>
+              <button @click="handleEditState">{{ isEditMode ? "Cancel" : "Edit" }}</button>
             </div>
-            <!-- <div v-if="editModeSelection" @click="removeAll">Remove all</div> -->
           </div>
         </div>
         <div v-else-if="$store.getters.hasUserContributed" class="flex-row-reallocation" id="readOnly">
@@ -72,7 +71,7 @@
       <cart-time-left v-if="($store.getters.canUserReallocate && !isEditMode) ||
       ($store.getters.isRoundContributionPhase && !$store.getters.canUserReallocate)" class="time-left-read-only" />
     </div>
-    <div class="reallocation-section" v-if="$store.getters.canUserReallocate && editModeSelection">
+    <div class="reallocation-section" v-if="$store.getters.canUserReallocate && isEditMode">
       <div class="reallocation-row">
         <span>Original contribution</span> 
         {{ formatAmount(this.contribution) }} {{tokenSymbol}}
@@ -180,7 +179,6 @@ import { Web3Provider } from '@ethersproject/providers'
 import {
   SET_CURRENT_USER,
   TOGGLE_EDIT_SELECTION,
-  SET_EDIT_SELECTION_OFF,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 import {
@@ -231,27 +229,22 @@ export default class Cart extends Vue {
     },
   ]
 
-  get isCartFinalized(): boolean {
-    return this.$store.getters.hasReallocationPhaseEnded
-  }
-
-  get editModeSelection(): boolean {
-    return this.$store.state.editModeSelection
-  }
-
   get isEditMode(): boolean {
-    if (this.isCartFinalized) return false
-    if (this.$store.getters.hasContributionPhaseEnded) {
-      return this.$store.getters.hasUserContributed
-        ? this.editModeSelection
-        : false
+    const {
+      isRoundContributionPhase,
+      isRoundReallocationPhase,
+      hasUserContributed,
+    } = this.$store.getters
+
+    if (isRoundContributionPhase && !hasUserContributed) {
+      return true
     }
-    if (this.$store.getters.isRoundContributionPhase) {
-      return this.$store.getters.hasUserContributed
-        ? this.editModeSelection
-        : true
+
+    if ((isRoundContributionPhase && hasUserContributed) || isRoundReallocationPhase) {
+      return this.$store.state.cartEditModeSelected
     }
-    return true
+
+    return false
   }
 
   private get cart(): CartItem[] {
@@ -260,7 +253,7 @@ export default class Cart extends Vue {
 
   handleEditState(): void {
     // When hitting cancel in edit mode, restore committedCart to local cart
-    if (this.editModeSelection) {
+    if (this.$store.state.cartEditModeSelected) {
       this.$store.commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
     }
     this.$store.commit(TOGGLE_EDIT_SELECTION)
@@ -578,7 +571,7 @@ export default class Cart extends Vue {
       { votes },
       { width: 500 },
     )
-    this.$store.commit(SET_EDIT_SELECTION_OFF)
+    this.$store.commit(TOGGLE_EDIT_SELECTION, false)
   }
 
   canWithdrawContribution(): boolean {

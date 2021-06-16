@@ -63,8 +63,6 @@ import {
   TOGGLE_SHOW_CART_PANEL,
   UPDATE_CART_ITEM,
   TOGGLE_EDIT_SELECTION,
-  SET_EDIT_SELECTION_OFF,
-  SET_EDIT_SELECTION_ON,
 } from './mutation-types'
 
 
@@ -87,7 +85,7 @@ interface RootState {
   recipientRegistryInfo: RegistryInfo | null;
   showCartPanel: boolean;
   tally: Tally | null;
-  editModeSelection: boolean;
+  cartEditModeSelected: boolean;
 }
 
 const state: RootState = {
@@ -103,18 +101,17 @@ const state: RootState = {
   recipientRegistryInfo: null,
   showCartPanel: false,
   tally: null,
-  editModeSelection: false,
+  cartEditModeSelected: false,
 }
 
 export const mutations = {
-  [TOGGLE_EDIT_SELECTION](state) {
-    state.editModeSelection = !state.editModeSelection
-  },
-  [SET_EDIT_SELECTION_ON](state) {
-    state.editModeSelection = true
-  },
-  [SET_EDIT_SELECTION_OFF](state) {
-    state.editModeSelection = false
+  [TOGGLE_EDIT_SELECTION](state, isOpen: boolean | undefined) {
+    // Handle the case of both null and undefined
+    if (isOpen != null) {
+      state.cartEditModeSelected = isOpen
+    } else {
+      state.cartEditModeSelected = !state.cartEditModeSelected
+    }
   },
   [SET_RECIPIENT_REGISTRY_ADDRESS](state, address: string) {
     state.recipientRegistryAddress = address
@@ -163,7 +160,7 @@ export const mutations = {
     }
 
     // When a new item is added force edit mode ON
-    state.editModeSelection = true
+    state.cartEditModeSelected = true
   },
   [UPDATE_CART_ITEM](state, updatedItem: CartItem) {
     const itemIndex = state.cart.findIndex((item) => {
