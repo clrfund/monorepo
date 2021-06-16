@@ -184,7 +184,8 @@ export const mutations = {
     }
   },
   [TOGGLE_SHOW_CART_PANEL](state, isOpen: boolean | undefined) {
-    if (isOpen) {
+    // Handle the case of both null and undefined
+    if (isOpen != null) {
       state.showCartPanel = isOpen
     } else {
       state.showCartPanel = !state.showCartPanel
