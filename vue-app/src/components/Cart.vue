@@ -22,7 +22,7 @@
           src="@/assets/chevron-right.svg"
         >
       </div>
-      <h2>{{editModeSelection ? "Edit cart" : "Your cart"}}</h2>
+      <h2>{{isEditMode ? "Edit cart" : "Your cart"}}</h2>
       <div v-if="($store.getters.isRoundContributionPhase || $store.getters.canUserReallocate) && !isCartEmpty" class="absolute-right dropdown">
         <img @click="openDropdown" class="dropdown-btn" src="@/assets/more.svg" />
         <div id="cart-dropdown" class="button-menu">
@@ -51,12 +51,10 @@
         </div>
         <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
           <div class="flex-row-reallocation">
-            <div class="semi-bold">{{editModeSelection ? "Edit contributions" : "Your contributions"}}</div>
-            <div class="semi-bold" @click="handleEditState" v-if="$store.getters.canUserReallocate">
-              <span v-if="editModeSelection">Cancel</span>
-              <span v-else>Edit</span>
+            <div class="semi-bold">{{isEditMode ? "Edit contributions" : "Your contributions"}}</div>
+            <div class="semi-bold" v-if="$store.getters.canUserReallocate">
+              <button @click="handleEditState" class="pointer">{{ isEditMode ? "Cancel" : "Edit" }}</button>
             </div>
-            <!-- <div @click="removeAll" v-if="$store.getters.canUserReallocate">Remove all</div> -->
           </div>
         </div>
         <div v-else-if="$store.getters.hasUserContributed" class="flex-row-reallocation" id="readOnly">
@@ -70,14 +68,40 @@
           :isAmountValid="isAmountValid"
         />
       </div>
+      <cart-time-left v-if="($store.getters.canUserReallocate && !isEditMode) ||
+      ($store.getters.isRoundContributionPhase && !$store.getters.canUserReallocate)" class="time-left-read-only" />
+    </div>
+    <div class="reallocation-section" v-if="$store.getters.canUserReallocate && isEditMode">
+      <div class="reallocation-row">
+        <span>Original contribution</span> 
+        {{ formatAmount(this.contribution) }} {{tokenSymbol}}
+      </div>
+      <div :class="{
+        'reallocation-row': !this.isGreaterThanInitialContribution(),
+        'reallocation-row-warning': this.isGreaterThanInitialContribution()
+        }">
+        <span>Your cart</span> 
+        <div class="reallocation-warning"><span v-if="this.isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getTotal())}} {{tokenSymbol}}</div>
+      </div>  
+      <div v-if="hasUnallocatedFunds()" class="reallocation-row-matching-pool">
+        <div>
+          <div><b>Matching pool</b></div> 
+          <div>Remaining funds go to matching pool</div>
+        </div>
+        + {{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}
+      </div> 
+      <div class="split-link" v-if="this.isGreaterThanInitialContribution() || hasUnallocatedFunds()"><img src="@/assets/split.svg" /> Split {{ formatAmount(this.contribution) }} {{tokenSymbol}} evenly</div>
+      <!-- TODO: should probably only appear if more than 1 item in cart -->
     </div>
     <div class="submit-btn-wrapper"
-      v-if="$store.getters.canUserReallocate || $store.getters.isRoundContributionPhase"
+    v-if="($store.getters.canUserReallocate && isEditMode) ||
+    (!$store.getters.canUserReallocate && $store.getters.isRoundContributionPhase)"
     >
       <!--  TODO: Also, add getter for pre-contribution phase -->
       <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
         Round opens for contributing in {{startDateCountdown}}. <span v-if="canRegisterWithBrightId">Get verified with BrightID while you wait.</span>
       </div> --> 
+      <div v-if="errorMessage" class="error-title">Can't <span v-if="$store.getters.canUserReallocate">reallocate</span><span v-else>contribute</span></div>
       <div v-if="errorMessage" class="submit-error">
         {{ errorMessage }}
       </div>
@@ -99,46 +123,35 @@
         Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
       </button>
       <button
-        v-if="!errorMessage && !isCartEmpty"
-        class="btn-action"
-        :disabled="errorMessage !== null || isCartEmpty"
+        v-if="!isCartEmpty"
+        :class="{'btn-action': !errorMessage,
+        'btn-action disabled': errorMessage }"
         @click="submitCart"
+        :disabled="errorMessage"
       >
         <template v-if="contribution.isZero()">
           Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
         </template>
-        <template v-else-if="hasUnallocatedFunds()">
-          Reallocate {{ formatAmount(getTotal()) }} of {{ formatAmount(contribution) }} {{ tokenSymbol }}
-        </template>
         <template v-else>
-          Reallocate {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
+          Reallocate contribution
         </template>
       </button>
-      <div v-if="$store.getters.isRoundContributionPhase || $store.getters.canUserReallocate" class="time-left">
-          <div class="flex"><img src="@/assets/time.svg" /> Time left</div>
-          <div v-if="$store.getters.canUserReallocate" class="flex">
-            <div v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-            <div v-if="reallocationTimeLeft.days > 0">days</div>
-            <div>{{ reallocationTimeLeft.hours }}</div>
-            <div>hours</div>
-            <div v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-            <div v-if="reallocationTimeLeft.days === 0">minutes</div>
-          </div>
-          <div v-else class="flex">
-            <div v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
-            <div v-if="contributionTimeLeft.days > 0">days</div>
-            <div>{{ contributionTimeLeft.hours }}</div>
-            <div>hours</div>
-            <div v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
-            <div v-if="contributionTimeLeft.days === 0">minutes</div>
-          </div>
-        </div>
+      <cart-time-left v-if="$store.getters.canUserReallocate && isEditMode" class="time-left" />
     </div>
     <div id="cart-bottom-scroll-point"></div>
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
-      <div><span class="total-label">Total</span> {{ formatAmount(getTotal()) }} {{ tokenSymbol }}</div>
+      <div>
+        <span class="total-label">Total</span> 
+        <span v-if="this.isGreaterThanInitialContribution() && $store.getters.isRoundReallocationPhase">{{ formatAmount(getTotal()) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> 
+        <span v-else>{{ formatAmount(getTotal()) }}</span> 
+        {{ tokenSymbol }}
+      </div>
       <div class="btn-secondary" @click="scrollToBottom"><img src="@/assets/chevron-down.svg" /></div>
     </div>
+    <!-- <div class="reallocation-bar-container">
+      <div class="reallocation-bar" /> 
+    </div> -->
+    <!-- TODO: reallocation bar -->
   </div>
 </div>
 </template>
@@ -158,9 +171,11 @@ import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import CartItems from '@/components/CartItems.vue'
+import CartTimeLeft from '@/components/CartTimeLeft.vue'
 import { Web3Provider } from '@ethersproject/providers'
 import {
   SET_CURRENT_USER,
+  TOGGLE_EDIT_SELECTION,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 import {
@@ -186,17 +201,17 @@ import { getNetworkName } from '@/utils/networks'
 import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
 
 @Component({
-  components: { Tooltip, WalletWidget, CartItems },
+  components: { Tooltip, WalletWidget, CartItems, CartTimeLeft },
 })
 export default class Cart extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
   profileImageUrl: string | null = null
-  private editModeSelection = false
   
   removeAll(): void {
     this.$store.commit(CLEAR_CART)
     this.$store.commit(SAVE_CART)
+    this.$store.commit(TOGGLE_EDIT_SELECTION, true)
   }
 
   dropdownItems: {callback: () => void | null; text: string; icon: string}[] = [
@@ -212,23 +227,22 @@ export default class Cart extends Vue {
     },
   ]
 
-  get isCartFinalized(): boolean {
-    return this.$store.getters.hasReallocationPhaseEnded
-  }
-
   get isEditMode(): boolean {
-    if (this.isCartFinalized) return false
-    if (this.$store.getters.hasContributionPhaseEnded) {
-      return this.$store.getters.hasUserContributed
-        ? this.editModeSelection
-        : false
+    const {
+      isRoundContributionPhase,
+      isRoundReallocationPhase,
+      hasUserContributed,
+    } = this.$store.getters
+
+    if (isRoundContributionPhase && !hasUserContributed) {
+      return true
     }
-    if (this.$store.getters.isRoundContributionPhase) {
-      return this.$store.getters.hasUserContributed
-        ? this.editModeSelection
-        : true
+
+    if ((isRoundContributionPhase && hasUserContributed) || isRoundReallocationPhase) {
+      return this.$store.state.cartEditModeSelected
     }
-    return true
+
+    return false
   }
 
   private get cart(): CartItem[] {
@@ -237,10 +251,10 @@ export default class Cart extends Vue {
 
   handleEditState(): void {
     // When hitting cancel in edit mode, restore committedCart to local cart
-    if (this.editModeSelection) {
+    if (this.$store.state.cartEditModeSelected) {
       this.$store.commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
     }
-    this.editModeSelection = !this.editModeSelection
+    this.$store.commit(TOGGLE_EDIT_SELECTION)
   }
 
   toggleCart(): void {
@@ -503,7 +517,8 @@ export default class Cart extends Vue {
         if (!this.$store.state.contributor) {
           return 'Contributor key is not found'
         } else if (this.isGreaterThanInitialContribution()) {
-          return 'Your new total can\'t be more than your original contribution.'
+          return `Your new total can't be more than your original ${this.formatAmount(this.contribution)} contribution.`
+          // TODO: need to turn this into a small number
         } else {
           return null
         }
@@ -554,7 +569,7 @@ export default class Cart extends Vue {
       { votes },
       { width: 500 },
     )
-    this.editModeSelection = false
+    this.$store.commit(TOGGLE_EDIT_SELECTION, false)
   }
 
   canWithdrawContribution(): boolean {
@@ -662,9 +677,15 @@ h2 {
 .time-left {
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  width: 100%;
-  margin: 1rem 0rem;
+  justify-content: space-between;
+  width: 100%;  
+}
+
+.time-left-read-only {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem; 
 }
 
 .cart-title-bar {
@@ -696,7 +717,13 @@ h2 {
 .semi-bold {
   font-weight: 500;
   font-size: 14px;
-  span {
+  button {
+    font-family: "Inter";
+    font-weight: 500;
+    font-size: 14px;
+    color: $text-color;
+    border: 0;
+    background: none;
     text-decoration: underline;
   }
 }
@@ -782,9 +809,10 @@ h2 {
   background: $bg-primary-color;
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
-  font-family: "Glacial Indifference", sans-serif;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-family: "Inter";
+  font-size: 1rem;
+  line-height: 0;
+  font-weight: 400;
   @media (max-width: $breakpoint-m) {
     position: fixed;
     bottom: 4rem;
@@ -798,13 +826,19 @@ h2 {
   }
 }
 
-.total-label {
+.total-reallocation {
   font-family: "Inter";
   font-size: 1rem;
   line-height: 0;
-  margin-top: 0.125rem;
-  text-transform: uppercase;
-  margin-right: 1rem;
+  font-weight: 700;
+}
+
+.total-label {
+  font-family: "Glacial Indifference", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 0;
+  margin-right: 0.5rem;
 }
 
 .reallocation-message {
@@ -842,35 +876,42 @@ h2 {
   box-sizing: border-box;
   background: $bg-primary-color;
   border-top: 1px solid #000000;
-  text-align: center;
+  text-align: left;
   gap: 0.5rem;
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   padding: 1rem;
   position: relative;
+  background: $bg-secondary-color;
   @media (max-width: $breakpoint-m) {
     padding: 2rem;
   }
 
-  .submit-error {
+  .error-title {
+    text-align: left;
     color: $warning-color;
-    margin: 1.5rem 0rem;
-    margin-bottom: 0rem;
-    padding: 0 1.5rem;
+    :after {
+      content: ' ⚠️';
+    }
+  }
+
+  .submit-error {
+    margin-bottom: 1rem;
   }
 
   .btn-action {
     padding-left: 0;
     padding-right: 0;
     width: 100%;
+    margin-bottom: 1rem;
   }  
 }
 
 .p1 {
-  padding: 1rem;
   width: 100%;
+  margin-bottom: 1rem;
 }
 
 .mt1 {
@@ -884,6 +925,112 @@ h2 {
 
 .moon-emoji {
   font-size: 4rem;
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  &:hover {
+    transform: none;  
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.reallocation-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+  span {
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+
+.reallocation-row-warning {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 16px;
+  color: $warning-color;
+  span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+  }
+}
+
+.reallocation-warning {
+  span { 
+    color: $warning-color;
+    margin-right: 0.25rem; }
+}
+
+.split-link {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  text-decoration: underline;
+  cursor:  pointer;
+  justify-content: flex-end;
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+  }
+}
+
+.reallocation-row-matching-pool {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-weight: 600;
+  font-size: 16px;
+  color: $clr-green;
+  div {
+    font-size: 14px;
+    font-weight: 400;
+    color: #fff;
+    padding: 0.125rem 0;
+  }
+}
+
+
+.reallocation-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-top: 1px solid #000;
+}
+
+.reallocation-bar {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 2rem;
+  background: $button-color;
+}
+
+.reallocation-bar-warning {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 2rem;
+  background: $warning-color;
+}
+
+.reallocation-bar-happy {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 2rem;
+  background: $clr-green;
+}
+
+.reallocation-bar-container {
+  display: flex;
+  padding: 1rem;
 }
 
 .dropdown {

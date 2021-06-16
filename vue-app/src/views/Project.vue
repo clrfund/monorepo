@@ -115,6 +115,7 @@ import {
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
   ADD_CART_ITEM,
+  TOGGLE_EDIT_SELECTION,
 } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
@@ -308,6 +309,7 @@ export default class ProjectView extends Vue {
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)
+    this.$store.commit(TOGGLE_EDIT_SELECTION)
   }
 
   hasClaimBtn(): boolean {

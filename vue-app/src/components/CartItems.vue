@@ -1,6 +1,11 @@
 <template>
   <div>
-    <div v-for="item in cartList" class="cart-item" :key="item.id">
+    <div
+      v-for="item in cartList"
+      class="cart-item"
+      :class="{ 'new-cart-item': isNewOrUpdated(item) && $store.getters.hasUserContributed }"
+      :key="item.id"
+      >
       <div class="project">
         <router-link
           :to="{ name: 'project', params: { id: item.id }}"
@@ -74,6 +79,14 @@ export default class extends Vue {
     this.$store.dispatch(SAVE_CART)
   }
 
+  isNewOrUpdated(item: CartItem): boolean {
+    const itemIndex = this.$store.state.committedCart.findIndex((i) => {
+      return i.id === item.id && i.amount === item.amount
+    })
+
+    return itemIndex === -1
+  }
+
   get tokenSymbol(): string {
     const currentRound = this.$store.state.currentRound
     return currentRound ? currentRound.nativeTokenSymbol : ''
@@ -107,6 +120,7 @@ export default class extends Vue {
   display: flex;
   flex-direction: row;
   align-items: center;
+  cursor: pointer;
 
   .project-image {
     border-radius: 10px;
@@ -117,6 +131,10 @@ export default class extends Vue {
     min-width: 2.5rem;
     object-fit: cover;
     width: 2.5rem;
+    &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+  }
   }
 
   .project-name {
@@ -130,6 +148,10 @@ export default class extends Vue {
     overflow: hidden;
     font-weight: 600;
     text-overflow: ellipsis;
+    &:hover {
+    opacity: 0.8;
+    transform: scale(1.01);
+  }
   }
 }
 
