@@ -128,7 +128,7 @@ export const mutations = {
         state.cart.push(addedItem)
       }
     } else {
-      console.warn('item is already in the cart')
+      console.warn('item is already in the cart') /* eslint-disable-line no-console */
       Vue.set(state.cart, itemIndex, addedItem)
     }
   },
