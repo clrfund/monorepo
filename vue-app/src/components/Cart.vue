@@ -601,9 +601,9 @@ export default class Cart extends Vue {
   splitContributionsEvenly(): void {
     this.$store.commit(TOGGLE_EDIT_SELECTION, true)
 
-    const { cart, currentRound: { contributions } } = this.$store.state
+    const { cart } = this.$store.state
     const total = this.$store.getters.canUserReallocate
-      ? contributions._value
+      ? this.formatAmount(this.contribution)
       : cart.reduce((acc, curr) => acc += parseFloat(curr.amount), 0)
     const splitAmount = total / cart.length
 
