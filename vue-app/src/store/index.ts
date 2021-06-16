@@ -183,8 +183,13 @@ export const mutations = {
       state.recipient[payload.step] = payload.updatedData[payload.step]
     }
   },
-  [TOGGLE_SHOW_CART_PANEL](state) {
-    state.showCartPanel = !state.showCartPanel
+  [TOGGLE_SHOW_CART_PANEL](state, isOpen: boolean | undefined) {
+    // Handle the case of both null and undefined
+    if (isOpen != null) {
+      state.showCartPanel = isOpen
+    } else {
+      state.showCartPanel = !state.showCartPanel
+    }
   },
   [RESTORE_COMMITTED_CART_TO_LOCAL_CART](state) {
     // Spread to avoid reference
