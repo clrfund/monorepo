@@ -18,7 +18,9 @@
           <div style="width: 100%; display: flex;  gap: 0.5rem">
             <div class="round-info-title" v-if="$store.getters.hasUserContributed">Time left to reallocate</div>
             <div class="round-info-title" v-if="!$store.getters.hasUserContributed">Round status</div>
-            <tooltip position="right" content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+            <tooltip v-if="$store.getters.hasUserContributed" position="right" content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+            <tooltip v-else-if="!this.$store.state.currentUser" position="right" content="Message about connecting wallet."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+            <tooltip v-else position="right" content="Message about user hasn't contributed and round is over."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
           </div>
           <!-- <div
             class="round-info-value"
