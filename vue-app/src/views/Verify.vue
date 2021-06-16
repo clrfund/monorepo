@@ -51,7 +51,7 @@
           <p>
               Step {{currentStep + 1}} of {{steps.length}}
           </p>
-          <router-link class="cancel-link" to="/setup">
+          <router-link class="cancel-link" to="/verify">
             Cancel
           </router-link>
         </div>
@@ -60,7 +60,7 @@
         <h1>Set up BrightID</h1>
       </div>
       <div class="cancel-area desktop">
-        <router-link class="cancel-link" to="/setup">
+        <router-link class="cancel-link" to="/verify">
           Cancel
         </router-link>
       </div>
@@ -199,7 +199,7 @@
             <div class="verification-status" v-if="!isVerified">
               <div>
                   <h2>You can't register yet</h2>
-                  <p>You can’t join the round until you’re BrightID verified. Reminder: it can take up to a few hours even after you've met the requirements. <router-link to="/setup/get-verified/verification">How to get verified</router-link></p>
+                  <p>You can’t join the round until you’re BrightID verified. Reminder: it can take up to a few hours even after you've met the requirements. <router-link to="/verify/verification">How to get verified</router-link></p>
               </div>
               <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
             </div>
@@ -293,7 +293,7 @@ import { waitForTransaction } from '@/utils/contracts'
     },
   },
 })
-export default class IndividualityView extends mixins(validationMixin) {
+export default class VerifyView extends mixins(validationMixin) {
   form: BrightIDSteps = {
     connect: {
 
@@ -448,15 +448,15 @@ export default class IndividualityView extends mixins(validationMixin) {
     this.stepNames = stepNames
     this.form = this.$store.state.recipient || this.form
 
-    // redirect to /setup/ if step doesn't exist
+    // redirect to /verify/ if step doesn't exist
     if (this.currentStep < 0) {
-      this.$router.push({ name: 'setup' })
+      this.$router.push({ name: 'verify' })
     }
 
     // TODO fetch verification data w/ BrightID - don't need furthest step
     // Particularly for people who are already verified on BrightID...
     // if (this.currentStep > this.form.furthestStep) {
-    //   this.$router.push({ name: 'getVerified', params: { step: steps[this.form.furthestStep] }})
+    //   this.$router.push({ name: 'verifyStep', params: { step: steps[this.form.furthestStep] }})
     // }
 
   }
@@ -502,7 +502,7 @@ export default class IndividualityView extends mixins(validationMixin) {
     // Navigate
     if (this.isStepUnlocked(step)) {
       this.$router.push({
-        name: 'getVerified',
+        name: 'verifyStep',
         params: {
           step: this.steps[step],
         },

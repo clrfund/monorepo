@@ -22,7 +22,7 @@
           <div v-if="isRoundFullOrOver" class="warning-message">The current round is no longer accepting new contributions. You can still get BrightID verified to prepare for next time.</div>
           <div class="btn-container">
             <wallet-widget v-if="walletProvider && !currentUser" :isActionButton="true" />
-            <router-link v-if="!walletProvider || currentUser" to="/setup/get-verified/connect" class="btn-primary">Get started</router-link>
+            <router-link v-if="!walletProvider || currentUser" to="/verify/connect" class="btn-primary">Get started</router-link>
             <router-link to="/" class="btn-secondary">Go home</router-link>
           </div>
         </div>
@@ -46,7 +46,7 @@ import { blockExplorer } from '@/api/core'
 @Component({
   components: { ProgressBar, RoundStatusBanner, WalletWidget },
 })
-export default class SetupLanding extends Vue {
+export default class VerifyLanding extends Vue {
   challengePeriodDuration: number | null = null
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging

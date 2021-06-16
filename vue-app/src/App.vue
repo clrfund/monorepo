@@ -84,12 +84,12 @@ export default class App extends Vue {
   }
 
   get isSidebarShown(): boolean {
-    const excludedRoutes = ['landing', 'projectAdded', 'join', 'joinStep', 'round information', 'setup', 'getVerified']
+    const excludedRoutes = ['landing', 'projectAdded', 'join', 'joinStep', 'round information', 'verify', 'verifyStep', 'verified']
     return !excludedRoutes.includes(this.$route.name || '')
   }
 
   get isMobileTabsShown(): boolean {
-    const excludedRoutes = ['landing', 'projectAdded', 'join', 'joinStep', 'setup', 'getVerified']
+    const excludedRoutes = ['landing', 'projectAdded', 'join', 'joinStep', 'verify', 'verifyStep', 'verified']
     return !excludedRoutes.includes(this.$route.name || '')
   }
 
@@ -103,7 +103,7 @@ export default class App extends Vue {
   }
 
   get showProjectsLink(): boolean {
-    const excludedRoutes = ['landing', 'projectAdded', 'join', 'joinStep', 'projects', 'setup', 'getVerified']
+    const excludedRoutes = ['landing', 'projectAdded', 'join', 'joinStep', 'projects', 'verify', 'verifyStep', 'verified']
     return !excludedRoutes.includes(this.$route.name || '')
   }
 

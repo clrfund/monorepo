@@ -58,7 +58,7 @@
       </button>
       <router-link
         v-if="currentStep === 3"
-        to="/setup/verified"
+        to="/verify/success"
         class="btn-primary"
       >
         Finish

@@ -111,7 +111,7 @@
       </div>
       <!-- <div v-if="canRegisterWithBrightId" @click="registerWithBrightId()" class="btn-primary"> -->
       <div class="p1" v-if="canRegisterWithBrightId">
-        <router-link to="/setup" class="btn-primary"> 
+        <router-link to="/verify" class="btn-primary"> 
           Verify with BrightID
         </router-link>
       </div>

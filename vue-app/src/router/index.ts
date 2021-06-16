@@ -7,9 +7,8 @@ import ProjectList from '../views/ProjectList.vue'
 import ProjectView from '../views/Project.vue'
 import RoundList from '../views/RoundList.vue'
 import ProjectAdded from '../views/ProjectAdded.vue'
-import IndividualityView from '../views/ProofOfIndividuality.vue'
 import RoundInformation from '../views/RoundInformation.vue'
-import SetupLanding from '../views/SetupLanding.vue'
+import VerifyLanding from '../views/VerifyLanding.vue'
 import About from '../views/About.vue'
 import AboutSybilResistance from '../views/AboutSybilResistance.vue'
 import Verified from '../views/Verified.vue'
@@ -18,6 +17,7 @@ import HowItWorks from '../views/HowItWorks.vue'
 import AboutLayer2 from '../views/AboutLayer2.vue'
 import AboutSybilAttacks from '../views/AboutSybilAttacks.vue'
 import JoinView from '../views/Join.vue'
+import VerifyView from '../views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 import CartView from '@/views/Cart.vue'
 
@@ -85,24 +85,24 @@ const routes = [
     component: RecipientRegistryView,
   },
   {
+    path: '/verify',
+    name: 'verify',
+    component: VerifyLanding,
+  },
+  {
+    path: '/verify/success',
+    name: 'verified',
+    component: Verified,
+  },
+  {
+    path: '/verify/:step',
+    name: 'verifyStep',
+    component: VerifyView,
+  },
+  {
     path: '/join',
     name: 'join',
     component: JoinLanding,
-  },
-  {
-    path: '/setup',
-    name: 'setup',
-    component: SetupLanding,
-  },
-  {
-    path: '/setup/get-verified/:step',
-    name: 'getVerified',
-    component: IndividualityView,
-  },
-  {
-    path: '/setup/verified',
-    name: 'verified',
-    component: Verified,
   },
   {
     path: '/join/success',
