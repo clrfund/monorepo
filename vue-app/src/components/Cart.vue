@@ -138,15 +138,17 @@
       </button>
       <cart-time-left v-if="$store.getters.canUserReallocate && isEditMode" class="time-left" />
     </div>
-    <div id="cart-bottom-scroll-point"></div>
+    <div>
+      <div></div>
+      <div></div>
+    </div>
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
+      <span class="total-label">Total</span>
       <div>
-        <span class="total-label">Total</span> 
         <span v-if="this.isGreaterThanInitialContribution() && $store.getters.isRoundReallocationPhase">{{ formatAmount(getTotal()) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> 
         <span v-else>{{ formatAmount(getTotal()) }}</span> 
         {{ tokenSymbol }}
       </div>
-      <div class="btn-secondary" @click="scrollToBottom"><img src="@/assets/chevron-down.svg" /></div>
     </div>
     <!-- <div class="reallocation-bar-container">
       <div class="reallocation-bar" /> 
@@ -592,12 +594,6 @@ export default class Cart extends Vue {
   openDropdown(): void {
     document.getElementById('cart-dropdown')?.classList.toggle('show')
   }
-
-  scrollToBottom(): void {
-    const el = document.getElementById('cart-bottom-scroll-point')
-    if (!el) return
-    el.scrollIntoView({ behavior: 'smooth' })
-  }
 }
 
 // Close the dropdown menu if the user clicks outside of it
@@ -813,6 +809,7 @@ h2 {
   font-size: 1rem;
   line-height: 0;
   font-weight: 400;
+  height: 60px;
   @media (max-width: $breakpoint-m) {
     position: fixed;
     bottom: 4rem;
