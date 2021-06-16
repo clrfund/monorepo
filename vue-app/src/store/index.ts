@@ -62,6 +62,7 @@ import {
   SET_RECIPIENT_REGISTRY_INFO,
   TOGGLE_SHOW_CART_PANEL,
   UPDATE_CART_ITEM,
+  TOGGLE_EDIT_SELECTION,
 } from './mutation-types'
 
 
@@ -73,6 +74,7 @@ Vue.use(Vuex)
 
 interface RootState {
   cart: CartItem[];
+  cartEditModeSelected: boolean;
   committedCart: CartItem[];
   contribution: BigNumber | null;
   contributor: Contributor | null;
@@ -88,6 +90,7 @@ interface RootState {
 
 const state: RootState = {
   cart: new Array<CartItem>(),
+  cartEditModeSelected: false,
   committedCart: new Array<CartItem>(),
   contribution: null,
   contributor: null,
@@ -102,6 +105,14 @@ const state: RootState = {
 }
 
 export const mutations = {
+  [TOGGLE_EDIT_SELECTION](state, isOpen: boolean | undefined) {
+    // Handle the case of both null and undefined
+    if (isOpen != null) {
+      state.cartEditModeSelected = isOpen
+    } else {
+      state.cartEditModeSelected = !state.cartEditModeSelected
+    }
+  },
   [SET_RECIPIENT_REGISTRY_ADDRESS](state, address: string) {
     state.recipientRegistryAddress = address
   },
