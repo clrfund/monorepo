@@ -24,31 +24,34 @@
         >
           Register
         </button>
-        <div class="input-button" v-if="hasContributeBtn() && !inCart">
-          <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
-          <input
-            v-model="contributionAmount"
-            class="input"
-            name="contributionAmount"
-            placeholder="5"
-            autocomplete="on"
-            onfocus="this.value=''"
 
-          >
-          <input type="submit"
-            class="donate-btn"
-            :disabled="!canContribute()"
-            @click="contribute()"
-            value="Add to cart"
-          >
+        <div v-if="shouldShowCartInput">
+          <div class="input-button" v-if="hasContributeBtn() && !inCart">
+            <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
+            <input
+              v-model="contributionAmount"
+              class="input"
+              name="contributionAmount"
+              placeholder="5"
+              autocomplete="on"
+              onfocus="this.value=''"
+            >
+            <input type="submit"
+              class="donate-btn"
+              :disabled="!canContribute()"
+              @click="contribute()"
+              value="Add to cart"
+            >
+          </div>
+          <div class="input-button" v-if="hasContributeBtn() && inCart">
+            <button
+              class="donate-btn-full"
+            >
+              <span>In cart 🎉</span>
+            </button>
+          </div>
         </div>
-        <div class="input-button" v-if="hasContributeBtn() && inCart">
-          <button
-            class="donate-btn-full"
-          >
-            <span>In cart 🎉</span>
-          </button>
-        </div>
+
         <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
         <button
           v-if="hasClaimBtn()"
@@ -105,12 +108,14 @@ import {
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   LOAD_CART,
+  LOAD_COMMITTED_CART,
   SAVE_CART,
   LOAD_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
   ADD_CART_ITEM,
+  TOGGLE_EDIT_SELECTION,
 } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
@@ -158,6 +163,7 @@ export default class ProjectView extends Vue {
           // Load user data if already logged in
           this.$store.dispatch(LOAD_USER_INFO)
           this.$store.dispatch(LOAD_CART)
+          this.$store.dispatch(LOAD_COMMITTED_CART)
           this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
         }
       })()
@@ -234,6 +240,11 @@ export default class ProjectView extends Vue {
     return this.$store.state.showCartPanel
   }
 
+  get shouldShowCartInput(): boolean {
+    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
+    return isRoundContributionPhase || canUserReallocate
+  }
+
   hasRegisterBtn(): boolean {
     if (this.project === null) {
       return false
@@ -298,6 +309,7 @@ export default class ProjectView extends Vue {
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)
+    this.$store.commit(TOGGLE_EDIT_SELECTION)
   }
 
   hasClaimBtn(): boolean {

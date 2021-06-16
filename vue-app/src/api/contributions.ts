@@ -26,6 +26,10 @@ export function getCartStorageKey(roundAddress: string): string {
   return `cart-${roundAddress.toLowerCase()}`
 }
 
+export function getCommittedCartStorageKey(roundAddress: string): string {
+  return `committed-cart-${roundAddress.toLowerCase()}`
+}
+
 export function getContributorStorageKey(roundAddress: string): string {
   return `contributor-${roundAddress.toLowerCase()}`
 }

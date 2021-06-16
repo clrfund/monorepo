@@ -35,33 +35,34 @@
           Register
         </button>
 
-        <form action="#">
+        <form action="#" v-if="shouldShowCartInput">
           <!-- TODO: if a user is unconnected, adding to cart should trigger wallet connection -->
-        <div class="input-button">
-            <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
-            <input
-              v-model="amount"
-              class="input"
-              name="amount"
-              :placeholder="defaultContributionAmount"
-              autocomplete="on"
-              onfocus="this.value=''"
-              v-if="!inCart"
-            >
-            <input type="submit"
-              v-if="hasContributeBtn() && !inCart"
-              class="donate-btn"
-              :disabled="!canContribute()"
-              @click="contribute()"
-              value="Add to cart"
-            >
-            <div 
-              v-if="hasContributeBtn() && inCart"
-              class="donate-btn-full"
-            >
-            In cart 🎉
-            </div>
-        </div>
+          <div class="input-button">
+              <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
+              <input
+                v-model="amount"
+                class="input"
+                name="amount"
+                :placeholder="defaultContributionAmount"
+                autocomplete="on"
+                onfocus="this.value=''"
+                v-if="!inCart"
+              >
+              <input type="submit"
+                v-if="hasContributeBtn() && !inCart"
+                class="donate-btn"
+                :disabled="!canContribute()"
+                @click="contribute()"
+                value="Add to cart"
+              >
+              <div 
+                v-if="hasContributeBtn() && inCart"
+                class="donate-btn-full"
+                @click="toggleCartPanel()"
+              >
+              In cart 🎉
+              </div>
+          </div>
         </form>
 
         <!-- <button
@@ -97,7 +98,7 @@ import { RoundStatus } from '@/api/round'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM } from '@/store/mutation-types'
+import { ADD_CART_ITEM, TOGGLE_SHOW_CART_PANEL, TOGGLE_EDIT_SELECTION } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
 @Component
@@ -126,6 +127,11 @@ export default class ProjectListItem extends Vue {
       return item.id === this.project.id && !item.isCleared
     })
     return index !== -1
+  }
+
+  get shouldShowCartInput(): boolean {
+    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
+    return isRoundContributionPhase || canUserReallocate
   }
 
   hasRegisterBtn(): boolean {
@@ -185,10 +191,15 @@ export default class ProjectListItem extends Vue {
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)
+    this.$store.commit(TOGGLE_EDIT_SELECTION, true)
   }
 
   get defaultContributionAmount() {
     return DEFAULT_CONTRIBUTION_AMOUNT
+  }
+
+  toggleCartPanel() {
+    this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
   }
 }
 </script>
@@ -256,6 +267,10 @@ export default class ProjectListItem extends Vue {
   text-align: center;
   box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
   z-index: 1;
+  cursor: pointer;
+  &:hover {
+    background: $bg-light-color;
+  }
 }
 
 
