@@ -30,7 +30,6 @@
           {{item.amount}} {{tokenSymbol}}
         </div>
       </div>
-      <!-- TODO: if in tallying phase and the user contributed to matching pool as part of reallocation we should list it here -->
       <form v-if="isEditMode" class="contribution-form">
         <div class="input-button">
           <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">

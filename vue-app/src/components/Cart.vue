@@ -49,7 +49,7 @@
           <div>Choose some projects that you want to contribute to...</div>
           <router-link to="/projects" class="btn-secondary mobile mt1">See projects</router-link>
         </div>
-        <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty && !$store.getters.hasReallocationPhaseEnded">
+        <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
           <div class="flex-row-reallocation">
             <div class="semi-bold">{{isEditMode ? "Edit contributions" : "Your contributions"}}</div>
             <div class="semi-bold" v-if="$store.getters.canUserReallocate">
@@ -132,9 +132,6 @@
         <template v-if="contribution.isZero()">
           Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
         </template>
-        <!-- <template v-else-if="hasUnallocatedFunds()">
-          Reallocate contribution
-        </template> -->
         <template v-else>
           Reallocate contribution
         </template>

@@ -74,6 +74,7 @@ Vue.use(Vuex)
 
 interface RootState {
   cart: CartItem[];
+  cartEditModeSelected: boolean;
   committedCart: CartItem[];
   contribution: BigNumber | null;
   contributor: Contributor | null;
@@ -85,11 +86,11 @@ interface RootState {
   recipientRegistryInfo: RegistryInfo | null;
   showCartPanel: boolean;
   tally: Tally | null;
-  cartEditModeSelected: boolean;
 }
 
 const state: RootState = {
   cart: new Array<CartItem>(),
+  cartEditModeSelected: false,
   committedCart: new Array<CartItem>(),
   contribution: null,
   contributor: null,
@@ -101,7 +102,6 @@ const state: RootState = {
   recipientRegistryInfo: null,
   showCartPanel: false,
   tally: null,
-  cartEditModeSelected: false,
 }
 
 export const mutations = {
