@@ -214,6 +214,7 @@ export default class Cart extends Vue {
   removeAll(): void {
     this.$store.commit(CLEAR_CART)
     this.$store.commit(SAVE_CART)
+    this.$store.commit(TOGGLE_EDIT_SELECTION, true)
   }
 
   dropdownItems: {callback: () => void | null; text: string; icon: string}[] = [
