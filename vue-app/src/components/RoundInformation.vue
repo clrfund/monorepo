@@ -419,7 +419,6 @@ export default class RoundInformation extends Vue {
   align-items: center;
   margin-bottom: 3rem;
   border-radius: 0.5rem;
-  overflow: hidden;
 
   &>div {
     box-shadow: inset 0px -1px 0px #7375A6;
