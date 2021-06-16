@@ -53,7 +53,7 @@
           <div class="flex-row-reallocation">
             <div class="semi-bold">{{isEditMode ? "Edit contributions" : "Your contributions"}}</div>
             <div class="semi-bold" v-if="$store.getters.canUserReallocate">
-              <button @click="handleEditState">{{ isEditMode ? "Cancel" : "Edit" }}</button>
+              <button @click="handleEditState" class="pointer">{{ isEditMode ? "Cancel" : "Edit" }}</button>
             </div>
           </div>
         </div>
