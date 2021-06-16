@@ -58,6 +58,7 @@
               <div 
                 v-if="hasContributeBtn() && inCart"
                 class="donate-btn-full"
+                @click="toggleCartPanel()"
               >
               In cart 🎉
               </div>
@@ -97,7 +98,7 @@ import { RoundStatus } from '@/api/round'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM, TOGGLE_EDIT_SELECTION } from '@/store/mutation-types'
+import { ADD_CART_ITEM, TOGGLE_SHOW_CART_PANEL, TOGGLE_EDIT_SELECTION } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
 @Component
@@ -196,6 +197,10 @@ export default class ProjectListItem extends Vue {
   get defaultContributionAmount() {
     return DEFAULT_CONTRIBUTION_AMOUNT
   }
+
+  toggleCartPanel() {
+    this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
+  }
 }
 </script>
 
@@ -262,6 +267,10 @@ export default class ProjectListItem extends Vue {
   text-align: center;
   box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
   z-index: 1;
+  cursor: pointer;
+  &:hover {
+    background: $bg-light-color;
+  }
 }
 
 
