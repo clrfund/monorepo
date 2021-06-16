@@ -97,7 +97,7 @@ import { RoundStatus } from '@/api/round'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM } from '@/store/mutation-types'
+import { ADD_CART_ITEM, TOGGLE_EDIT_SELECTION } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
 @Component
@@ -190,6 +190,7 @@ export default class ProjectListItem extends Vue {
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)
+    this.$store.commit(TOGGLE_EDIT_SELECTION, true)
   }
 
   get defaultContributionAmount() {

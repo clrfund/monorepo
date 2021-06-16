@@ -158,9 +158,6 @@ export const mutations = {
     } else {
       throw new Error('item is already in the cart')
     }
-
-    // When a new item is added force edit mode ON
-    state.cartEditModeSelected = true
   },
   [UPDATE_CART_ITEM](state, updatedItem: CartItem) {
     const itemIndex = state.cart.findIndex((item) => {
