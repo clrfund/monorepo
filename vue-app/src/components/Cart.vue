@@ -814,8 +814,6 @@ h2 {
   flex-direction: column;
   padding: 1rem 0;
   background: $bg-primary-color;
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
   font-family: "Inter";
   font-size: 1rem;
   line-height: 0;
