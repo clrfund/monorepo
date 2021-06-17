@@ -179,6 +179,8 @@ export default class WalletWidget extends Vue {
       contribution: null,
     }
 
+    this.$emit('connected')
+
     getProfileImageUrl(user.walletAddress)
       .then((url) => this.profileImageUrl = url)
     this.$store.commit(SET_CURRENT_USER, user)
