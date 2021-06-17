@@ -13,7 +13,7 @@
     ]
   },
   "lint-staged": {
-    "**/*.{js,jsx,ts,tsx,json,scss,vue}": [
+    "**/*.{js,ts,json,scss,css,vue}": [
       "prettier --write"
     ]
   },
@@ -33,9 +33,9 @@
     "lint": "yarn workspaces run lint",
     "lint:contracts": "yarn workspace @clrfund/contracts run lint",
     "lint:web": "yarn workspace @clrfund/vue-app run lint",
-    "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|jsx|ts|tsx|json|css|vue)\"",
+    "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|ts|json|scss|css|vue)\"",
     "format": "yarn prettier --write",
-    "check-format": "yarn prettier --list-different",
+    "check-format": "yarn prettier --check",
     "prepare": "husky install"
   },
   "devDependencies": {
