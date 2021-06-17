@@ -602,15 +602,16 @@ export default class Cart extends Vue {
     this.$store.commit(TOGGLE_EDIT_SELECTION, true)
 
     const { cart } = this.$store.state
+    const filteredCart = cart.filter((item) => !item.isCleared) // Filter out isCleared cart items for accurate split
     const total = this.$store.getters.canUserReallocate
       ? this.formatAmount(this.contribution)
-      : cart.reduce((acc, curr) => acc += parseFloat(curr.amount), 0)
-    const splitAmount = total / cart.length
-
+      : filteredCart.reduce((acc, curr) => acc += parseFloat(curr.amount), 0)
+    const splitAmount = total / filteredCart.length
     // Each iteration subtracts from the totalRemaining until the last round to accomodate for decimal rounding. ex 10/3
-    let totalRemaining = total
-    cart.map((item: CartItem, index: number) => {
-      if (cart.length-1 === index) {
+    let totalRemaining = Number(total)
+
+    filteredCart.map((item: CartItem, index: number) => {
+      if (filteredCart.length-1 === index) {
         this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount: parseFloat(totalRemaining.toFixed(5)).toString() })
       } else {
         this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount: parseFloat(splitAmount.toFixed(5)).toString() })
