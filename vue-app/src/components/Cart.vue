@@ -138,9 +138,19 @@
       </button>
       <cart-time-left v-if="$store.getters.canUserReallocate && isEditMode" class="time-left" />
     </div>
-    <div>
-      <div></div>
-      <div></div>
+    <div class="line-item-bar" v-if="$store.getters.hasUserContributed && !isEditMode">
+      <div class="line-item">
+        <span>Projects</span>
+        <div>
+          <span>{{ formatAmount(getCartTotal($store.state.committedCart))}} {{ tokenSymbol }}</span>
+        </div>
+      </div>
+      <div class="line-item">
+        <span>Matching Pool</span>
+        <div>
+          <span>{{ getCartMatchingPoolTotal() }} {{ tokenSymbol }}</span>
+        </div>
+      </div>
     </div>
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
       <span class="total-label">Total</span>
@@ -433,6 +443,10 @@ export default class Cart extends Vue {
       return this.isAmountValid(item.amount) === false
     }).length
     return invalidCount === 0
+  }
+
+  public getCartMatchingPoolTotal(): string {
+    return this.formatAmount(this.contribution.sub(this.getCartTotal(this.$store.state.committedCart)))
   }
 
   private getCartTotal(cart: Array<CartItem>): BigNumber {
@@ -792,6 +806,27 @@ h2 {
   div {
     color: #d5d4d7;
   }
+}
+
+.line-item-bar {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  padding: 1rem 0;
+  background: $bg-primary-color;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  font-family: "Inter";
+  font-size: 1rem;
+  line-height: 0;
+  font-weight: 400;
+}
+
+.line-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1rem;
 }
 
 .total-bar {
