@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: refactor this to something more generalized -->
   <div>
     <div class="btn-row" v-if="isJoin">
       <button

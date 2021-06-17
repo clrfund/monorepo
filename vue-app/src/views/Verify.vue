@@ -1,6 +1,9 @@
 <template>
   <div class="container">
     <div class="grid">
+      <!-- TODO: use FormProgressWidget.vue component... -->
+      <!-- This is all copy/pasted from there -->
+      <!-- Will likely need to generalize it a bit -->
       <div class="progress-area desktop">
         <div class="progress-container">
           <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
@@ -14,7 +17,7 @@
               class="progress-step"
               :class="{
                 'zoom-link': step !== currentStep,
-                disabled: false, // TODO 
+                disabled: false, // TODO add logic
               }"
               @click="handleStepNav(step)"
             >
@@ -34,7 +37,7 @@
               </template>
             </div>
           </div>
-          <button-row
+          <form-navigation
             :isJoin="false"
             :isStepValid="isStepValid(currentStep)"
             :steps="steps"
@@ -218,7 +221,12 @@
       </div>
       <div class="nav-area nav-bar mobile">
         <!-- TODO fix props we pass to form-progress-widget -->
-        <form-progress-widget :steps="steps" :currentStep="currentStep" :callBack="saveFormData" />
+        <!-- <form-progress-widget
+          :steps="steps"
+          :currentStep="currentStep"
+          :callBack="saveFormData"
+          :isStepValid="isStepValid(currentStep)"
+        /> -->
         <!-- TODO submit button to trigger tx, pass callback to above <botton-row />?  -->
       </div>
     </div>
@@ -227,11 +235,13 @@
 
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
+// TODO do we need validation for this flow? I don't think so...
 import { validationMixin } from 'vuelidate'
-import { required, maxLength, url, email } from 'vuelidate/lib/validators'
-import { isAddress } from '@ethersproject/address'
+// import { required, maxLength, url, email } from 'vuelidate/lib/validators'
+// import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
+import FormNavigation from '@/components/FormNavigation.vue'
 import FormProgressWidget from '@/components/FormProgressWidget.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import Markdown from '@/components/Markdown.vue'
@@ -239,8 +249,6 @@ import ProjectProfile from '@/components/ProjectProfile.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 import Warning from '@/components/Warning.vue'
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
-import { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
-import { Project } from '@/api/projects'
 import QRCode from 'qrcode'
 import {
   getBrightIdLink,
@@ -252,23 +260,27 @@ import {
   registerUser,
   BrightIDSteps,
 } from '@/api/bright-id'
-import { User, getProfileImageUrl } from '@/api/user'
+import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
-import {
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_CONTRIBUTOR_DATA,
-  LOGIN_USER,
-  LOGOUT_USER,
-} from '@/store/action-types'
+import { LOAD_USER_INFO } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 
+// TODO is this needed? What data do we need to track in each step of flow?
+// How long should we expect this flow to take some users? Should we store in GUN db?
+// See how this is handled in BrightIdModal.vue
+interface BrightIDSteps {
+    connect: {};
+    verification: {};
+    sponsorship: {};
+    registration: {};
+}
 
 @Component({
   components: {
     LayoutSteps,
     ProgressBar,
+    FormNavigation,
     FormProgressWidget,
     Markdown,
     ProjectProfile,
@@ -280,33 +292,19 @@ import { waitForTransaction } from '@/utils/contracts'
   },
   validations: {
     form: {
-      connect: {
-      },
-      verification: {
-      },
-      sponsorship: {
-
-      },
-      registration: {
-
-      },
+      connect: {},
+      verification: {},
+      sponsorship: {},
+      registration: {},
     },
   },
 })
 export default class VerifyView extends mixins(validationMixin) {
   form: BrightIDSteps = {
-    connect: {
-
-    },
-    verification: {
-
-    },
-    sponsorship: {
-
-    },
-    registration: {
-
-    },
+    connect: {},
+    verification: {},
+    sponsorship: {},
+    registration: {},
   }
   currentStep = 0
   steps: string[] = []
@@ -319,6 +317,7 @@ export default class VerifyView extends mixins(validationMixin) {
   fiatSign = '$'
   step = 0
   showExpandedOption = false
+  isSponsored = false // TODO implement
 
   appLink = ''
   appLinkQrCode = ''
@@ -461,9 +460,9 @@ export default class VerifyView extends mixins(validationMixin) {
 
   }
 
+  // TODO implement
   isStepValid(step: number): boolean {
-    const stepName: string = this.steps[step]
-    return !this.$v.form[stepName]?.$invalid
+    return !!step
   }
 
   // TODO fetch verification data w/ BrightID - don't need furthest step
@@ -486,6 +485,8 @@ export default class VerifyView extends mixins(validationMixin) {
     }
   }
 
+  // TODO refactor/remove - this is copied from Join.vue
+  // Not sure if we need to save any form data
   saveFormData(): void {
     if (typeof this.currentStep !== 'number') return
     // TODO update to SET_CONTRIBUTOR_DATA
@@ -496,6 +497,8 @@ export default class VerifyView extends mixins(validationMixin) {
     })
   }
 
+  // TODO refactor/remove - this is copied from Join.vue
+  // Not sure if we need to save any form data
   handleStepNav(step): void {
     // Save form data
     this.saveFormData()
