@@ -35,44 +35,8 @@
           Register
         </button>
 
-        <form action="#" v-if="shouldShowCartInput">
-          <!-- TODO: if a user is unconnected, adding to cart should trigger wallet connection -->
-          <div class="input-button">
-              <img style="margin-left: 0.5rem;" height="24px" v-if="!inCart" src="@/assets/dai.svg">
-              <input
-                v-model="amount"
-                class="input"
-                name="amount"
-                :placeholder="defaultContributionAmount"
-                autocomplete="on"
-                onfocus="this.value=''"
-                v-if="!inCart"
-              >
-              <input type="submit"
-                v-if="hasContributeBtn() && !inCart"
-                class="donate-btn"
-                :disabled="!canContribute()"
-                @click="contribute()"
-                value="Add to cart"
-              >
-              <div 
-                v-if="hasContributeBtn() && inCart"
-                class="donate-btn-full"
-                @click="toggleCartPanel()"
-              >
-              In cart 🎉
-              </div>
-          </div>
-        </form>
-
-        <!-- <button
-          v-if="hasContributeBtn() && !inCart"
-          class="btn contribute-btn"
-          :disabled="!canContribute()"
-          @click="contribute(project)"
-        >
-          Contribute
-        </button> -->
+        <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
+        
         <router-link
           :to="{ name: 'project', params: { id: project.id }}"
         >
@@ -91,21 +55,23 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
-import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
+import AddToCartButton from '@/components/AddToCartButton.vue'
+import { CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
-import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM, TOGGLE_SHOW_CART_PANEL, TOGGLE_EDIT_SELECTION } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
-@Component
+@Component({
+  components: {
+    AddToCartButton,
+  },
+})
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project;
-  amount = DEFAULT_CONTRIBUTION_AMOUNT;
 
   get descriptionHtml(): string {
     return markdown.renderInline(this.project.description)
@@ -170,36 +136,6 @@ export default class ProjectListItem extends Vue {
 
   hasContributeBtn(): boolean {
     return this.project.index !== 0
-  }
-
-  canContribute(): boolean {
-    return (
-      this.hasContributeBtn() &&
-      this.$store.state.currentUser &&
-      this.$store.state.currentRound &&
-      DateTime.local() < this.$store.state.currentRound.votingDeadline &&
-      this.$store.state.currentRound.status !== RoundStatus.Cancelled &&
-      this.project.isHidden === false &&
-      this.project.isLocked === false
-    )
-  }
-
-  contribute() {
-    this.$store.commit(ADD_CART_ITEM, {
-      ...this.project,
-      amount: this.amount.toString(),
-      isCleared: false,
-    })
-    this.$store.dispatch(SAVE_CART)
-    this.$store.commit(TOGGLE_EDIT_SELECTION, true)
-  }
-
-  get defaultContributionAmount() {
-    return DEFAULT_CONTRIBUTION_AMOUNT
-  }
-
-  toggleCartPanel() {
-    this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
   }
 }
 </script>
