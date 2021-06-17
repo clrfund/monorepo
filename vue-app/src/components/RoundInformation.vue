@@ -13,7 +13,7 @@
           <div class="circle pulse open" /> Open
         </div>
       </div>
-      <div v-if="currentRound.status === 'Reallocating' || $store.getters.hasUserContributed || (currentRound.status === 'Reallocating'  && $store.getters.canUserReallocate)" class="round-info-item">
+      <div v-if="$store.getters.isRoundReallocationPhase || $store.getters.hasUserContributed" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex;  gap: 0.5rem">
             <div class="round-info-title" v-if="$store.getters.hasUserContributed">Time left to reallocate</div>
@@ -51,7 +51,7 @@
           </div>
         </div>
       </div>
-      <div v-if="currentRound.status === 'Contributing' && !$store.getters.canUserReallocate" class="round-info-item">
+      <div v-if="$store.getters.isRoundContributionPhase && !$store.getters.hasUserContributed" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex; gap: 0.5rem;">
             <div class="round-info-title">Time left to contribute</div>
@@ -70,7 +70,7 @@
           <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
         </div>
       </div>
-      <div v-if="currentRound.status === 'Tallying'" class="round-info-item">
+      <div v-if="$store.getters.isRoundTallying" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex;  gap: 0.5rem">
             <div class="round-info-title" style="margin-bottom: 0.5rem;">Round status </div>
@@ -83,7 +83,7 @@
           </div>
         </div>
       </div>
-      <div v-if="currentRound.status === 'Finalised'" class="round-info-item">
+      <div v-if="$store.getters.isRoundFinalized" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex;  gap: 0.5rem">
             <div class="round-info-title" style="margin-bottom: 0.5rem;">Round status</div>
@@ -96,13 +96,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="round-info-item">
-        <div class="round-info-title">Round 0</div>
-        <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
-          <div class="value large">{{ currentRound.roundNumber }}</div>
-          <div class="unit">{{ currentRound.status }}</div>
-        </div>
-      </div> -->
       <div v-if="currentRound" class="round-value-info">
         <div class="round-value-info-item">
           <div style="width: 100%;">
