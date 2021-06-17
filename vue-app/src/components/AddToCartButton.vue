@@ -21,7 +21,7 @@
       </div>
     </form>
     <div class="input-button" v-if="inCart">
-      <button class="donate-btn-full">
+      <button class="donate-btn-full" @click="toggleCartPanel()">
         <span>In cart 🎉</span>
       </button>
     </div>
@@ -34,7 +34,7 @@ import { Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
 import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM } from '@/store/mutation-types'
+import { ADD_CART_ITEM, TOGGLE_SHOW_CART_PANEL, TOGGLE_EDIT_SELECTION } from '@/store/mutation-types'
 import { DEFAULT_CONTRIBUTION_AMOUNT } from '@/api/contributions'
 import { User } from '@/api/user'
 import { Project } from '@/api/projects'
@@ -97,6 +97,7 @@ export default class AddToCartButton extends Vue {
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)
+    this.$store.commit(TOGGLE_EDIT_SELECTION, true)
   }
 
   handleSubmit(): void {
@@ -125,6 +126,10 @@ export default class AddToCartButton extends Vue {
     if(this.currentUser) {
       this.contribute()
     }
+  }
+
+  toggleCartPanel() {
+    this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
   }
 }
 
@@ -179,6 +184,10 @@ export default class AddToCartButton extends Vue {
   text-align: center;
   box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
   z-index: 1;
+  cursor: pointer;
+  &:hover {
+    background: $bg-light-color;
+  }
 }
 
 </style>
