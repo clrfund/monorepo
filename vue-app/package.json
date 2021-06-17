@@ -8,20 +8,7 @@
     "build": "rm -rf dist/ && vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test": "vue-cli-service test:unit",
-    "test:lint": "eslint 'src/**/*.{js,ts,vue}'",
-    "test:format": "prettier --check 'src/**/*.{js,ts,vue}'",
-    "format": "prettier --write 'src/**/*.{js,ts,vue}'"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "src/**/*.{js,ts,vue}": [
-      "prettier --write", 
-      "git add"   
-    ]
+    "test:lint": "eslint 'src/**/*.{js,ts,vue}'"
   },
   "dependencies": {
     "@kleros/gtcr-encoder": "^1.4.0",
@@ -69,9 +56,6 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-vue": "^6.1.2",
     "gun-cli": "^1.7.1",
-    "husky": "^6.0.0",
-    "lint-staged": "^11.0.0",
-    "prettier": "^2.3.0",
     "sass": "^1.25.0",
     "sass-loader": "^8.0.2",
     "typescript": "~3.9.3",
