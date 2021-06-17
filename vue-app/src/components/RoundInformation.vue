@@ -13,44 +13,6 @@
           <div class="circle pulse open" /> Open
         </div>
       </div>
-      <div v-if="$store.getters.isRoundReallocationPhase || $store.getters.hasUserContributed" class="round-info-item">
-        <div style="width: 100%;">
-          <div style="width: 100%; display: flex;  gap: 0.5rem">
-            <div class="round-info-title" v-if="$store.getters.hasUserContributed">Time left to reallocate</div>
-            <div class="round-info-title" v-if="!$store.getters.hasUserContributed">Round status</div>
-            <tooltip v-if="$store.getters.hasUserContributed" position="right" content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
-            <tooltip v-else-if="!this.$store.state.currentUser" position="right" content="Message about connecting wallet."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
-            <tooltip v-else position="right" content="Message about user hasn't contributed and round is over."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
-          </div>
-          <!-- <div
-            class="round-info-value"
-            :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
-            v-if="currentRound.status === 'Reallocating'"
-          >
-            <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-            <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
-            <div class="value">{{ reallocationTimeLeft.hours }}</div>
-            <div class="unit">hours</div>
-            <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-            <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
-          </div> -->
-          <div class="message" v-if="!$store.getters.hasUserContributed" >Closed for contributions</div>
-          <div
-            class="round-info-value"
-            :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
-            v-if="$store.getters.hasUserContributed"
-          >
-            <div v-if="$store.getters.canUserReallocate" class="round-info-value">
-            <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-            <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
-            <div class="value">{{ reallocationTimeLeft.hours }}</div>
-            <div class="unit">hours</div>
-            <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-            <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
-          </div>
-          </div>
-        </div>
-      </div>
       <div v-if="$store.getters.isRoundContributionPhase && !$store.getters.hasUserContributed" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex; gap: 0.5rem;">
@@ -70,7 +32,32 @@
           <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
         </div>
       </div>
-      <div v-if="$store.getters.isRoundTallying" class="round-info-item">
+      <div v-else-if="$store.getters.isRoundReallocationPhase || $store.getters.canUserReallocate" class="round-info-item">
+        <div style="width: 100%;">
+          <div style="width: 100%; display: flex;  gap: 0.5rem">
+            <div class="round-info-title">{{ $store.getters.hasUserContributed ? "Time left to reallocate" : "Round status"}}</div>
+            <tooltip v-if="$store.getters.hasUserContributed" position="right" content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+            <tooltip v-else-if="!this.$store.state.currentUser" position="right" content="If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+            <tooltip v-else position="right" content="This round has closed for new contributions."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+          </div>
+          <div class="message" v-if="!$store.getters.hasUserContributed">Closed for contributions</div>
+          <div
+            v-else
+            class="round-info-value"
+            :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
+          >
+            <div class="round-info-value">
+              <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
+              <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
+              <div class="value">{{ reallocationTimeLeft.hours }}</div>
+              <div class="unit">hours</div>
+              <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
+              <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="$store.getters.isRoundTallying" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex;  gap: 0.5rem">
             <div class="round-info-title" style="margin-bottom: 0.5rem;">Round status </div>
@@ -83,7 +70,7 @@
           </div>
         </div>
       </div>
-      <div v-if="$store.getters.isRoundFinalized" class="round-info-item">
+      <div v-else-if="$store.getters.isRoundFinalized" class="round-info-item">
         <div style="width: 100%;">
           <div style="width: 100%; display: flex;  gap: 0.5rem">
             <div class="round-info-title" style="margin-bottom: 0.5rem;">Round status</div>
