@@ -1,12 +1,16 @@
+// Libraries
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
 import { BigNumber } from 'ethers'
+import { DateTime } from 'luxon'
 
+// API
 import {
   MAX_CART_SIZE,
   CartItem,
   Contributor,
   getCartStorageKey,
+  getCommittedCartStorageKey,
   serializeCart,
   deserializeCart,
   getContributorStorageKey,
@@ -23,71 +27,92 @@ import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
 import { User, isVerifiedUser, getEtherBalance, getTokenBalance } from '@/api/user'
 import { getRegistryInfo, RecipientApplicationData, RegistryInfo } from '@/api/recipient-registry-optimistic'
+
+// Constants
 import {
-  SELECT_ROUND,
-  LOAD_ROUND_INFO,
-  LOAD_RECIPIENT_REGISTRY_INFO,
-  LOAD_USER_INFO,
-  SAVE_CART,
   LOAD_CART,
-  UNWATCH_CART,
-  SAVE_CONTRIBUTOR_DATA,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
-  UNWATCH_CONTRIBUTOR_DATA,
+  LOAD_RECIPIENT_REGISTRY_INFO,
+  LOAD_ROUND_INFO,
+  LOAD_USER_INFO,
   LOGIN_USER,
   LOGOUT_USER,
+  SAVE_CART,
+  SAVE_COMMITTED_CART_DISPATCH,
+  SAVE_CONTRIBUTOR_DATA,
+  SELECT_ROUND,
+  UNWATCH_CART,
+  UNWATCH_CONTRIBUTOR_DATA,
 } from './action-types'
 import {
+  ADD_CART_ITEM,
+  CLEAR_CART,
+  REMOVE_CART_ITEM,
+  RESTORE_COMMITTED_CART_TO_LOCAL_CART,
+  SAVE_COMMITTED_CART,
+  SET_CONTRIBUTION,
+  SET_CONTRIBUTOR,
+  SET_CURRENT_ROUND,
+  SET_CURRENT_ROUND_ADDRESS,
+  SET_TALLY,
+  SET_CURRENT_USER,
+  SET_RECIPIENT_DATA,
   SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_RECIPIENT_REGISTRY_INFO,
-  SET_CURRENT_USER,
-  SET_CURRENT_ROUND_ADDRESS,
-  SET_CURRENT_ROUND,
-  SET_TALLY,
-  SET_CONTRIBUTOR,
-  SET_CONTRIBUTION,
-  ADD_CART_ITEM,
-  UPDATE_CART_ITEM,
-  REMOVE_CART_ITEM,
-  CLEAR_CART,
-  SET_RECIPIENT_DATA,
   TOGGLE_SHOW_CART_PANEL,
+  UPDATE_CART_ITEM,
+  TOGGLE_EDIT_SELECTION,
 } from './mutation-types'
 
+
+// Utils
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
-import { DateTime } from 'luxon'
+
 
 Vue.use(Vuex)
 
 interface RootState {
-  currentUser: User | null;
-  currentRoundAddress: string | null;
-  currentRound: RoundInfo | null;
-  tally: Tally | null;
   cart: CartItem[];
-  showCartPanel: boolean;
-  contributor: Contributor | null;
+  cartEditModeSelected: boolean;
+  committedCart: CartItem[];
   contribution: BigNumber | null;
+  contributor: Contributor | null;
+  currentRound: RoundInfo | null;
+  currentRoundAddress: string | null;
+  currentUser: User | null;
+  recipient: RecipientApplicationData | null;
   recipientRegistryAddress: string | null;
   recipientRegistryInfo: RegistryInfo | null;
-  recipient: RecipientApplicationData | null;
+  showCartPanel: boolean;
+  tally: Tally | null;
 }
 
 const state: RootState = {
-  currentUser: null,
-  currentRoundAddress: null,
-  currentRound: null,
-  tally: null,
   cart: new Array<CartItem>(),
-  showCartPanel: false,
-  contributor: null,
+  cartEditModeSelected: false,
+  committedCart: new Array<CartItem>(),
   contribution: null,
+  contributor: null,
+  currentRound: null,
+  currentRoundAddress: null,
+  currentUser: null,
+  recipient: null,
   recipientRegistryAddress: null,
   recipientRegistryInfo: null,
-  recipient: null,
+  showCartPanel: false,
+  tally: null,
 }
 
 export const mutations = {
+  [TOGGLE_EDIT_SELECTION](state, isOpen: boolean | undefined) {
+    // Handle the case of both null and undefined
+    if (isOpen != null) {
+      state.cartEditModeSelected = isOpen
+    } else {
+      state.cartEditModeSelected = !state.cartEditModeSelected
+    }
+  },
   [SET_RECIPIENT_REGISTRY_ADDRESS](state, address: string) {
     state.recipientRegistryAddress = address
   },
@@ -167,8 +192,21 @@ export const mutations = {
       state.recipient[payload.step] = payload.updatedData[payload.step]
     }
   },
-  [TOGGLE_SHOW_CART_PANEL](state) {
-    state.showCartPanel = !state.showCartPanel
+  [TOGGLE_SHOW_CART_PANEL](state, isOpen: boolean | undefined) {
+    // Handle the case of both null and undefined
+    if (isOpen != null) {
+      state.showCartPanel = isOpen
+    } else {
+      state.showCartPanel = !state.showCartPanel
+    }
+  },
+  [RESTORE_COMMITTED_CART_TO_LOCAL_CART](state) {
+    // Spread to avoid reference
+    state.cart = [...state.committedCart]
+  },
+  [SAVE_COMMITTED_CART](state) {
+    // Spread to avoid reference
+    state.committedCart = [...state.cart.filter((item) => item.amount != 0)]
   },
 }
 
@@ -282,6 +320,28 @@ const actions = {
     storage.unwatchItem(
       state.currentUser.walletAddress,
       getCartStorageKey(state.currentRound.fundingRoundAddress),
+    )
+  },
+  [SAVE_COMMITTED_CART_DISPATCH]({ commit, state }) {
+    commit(SAVE_COMMITTED_CART)
+    const serializedCart = serializeCart(state.committedCart)
+    storage.setItem(
+      state.currentUser.walletAddress,
+      state.currentUser.encryptionKey,
+      getCommittedCartStorageKey(state.currentRound.fundingRoundAddress),
+      serializedCart,
+    )
+  },
+  [LOAD_COMMITTED_CART]({ commit, state}) {
+    storage.watchItem(
+      state.currentUser.walletAddress,
+      state.currentUser.encryptionKey,
+      getCommittedCartStorageKey(state.currentRound.fundingRoundAddress),
+      (data: string | null) => {
+        const committedCart = deserializeCart(data)
+        Vue.set(state, 'committedCart', committedCart)
+        commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
+      },
     )
   },
   [SAVE_CONTRIBUTOR_DATA]({ state }) {

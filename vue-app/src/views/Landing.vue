@@ -3,6 +3,7 @@
   <round-status-banner />
   <div id="page">
     <div id="hero">
+      <div class="full-gradient mobile" />
       <img src="@/assets/moon.png" id="moon" />
       <div class="image-wrapper">
         <img src="@/assets/docking.png" />
@@ -14,25 +15,16 @@
           <router-link to="/projects" class="btn-action">Go to app</router-link>
           <div class="btn-white" @click="scrollToHowItWorks">How it works</div>
         </div>
-        <div v-if="!$store.getters.hasContributionPhaseEnded && !isRoundFull" class="apply-callout mobile">
-          <div id="countdown" class="caps">11 days</div>
-          <div id="countdown-label" class="caps">Time to apply</div>
-          <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
-          <div id="btn-row">
-            <div id="view-criteria" class="link-primary">View criteria</div>
-            <router-link to="/join"><div id="apply-to-join" class="btn-primary">Apply to join</div></router-link>
-          </div>
-        </div>
       </div>
-      <div v-if="!$store.getters.hasContributionPhaseEnded && !isRoundFull" class="apply-callout desktop">
+      <div class="apply-callout" v-if="$store.state.currentRound && $store.getters.isRoundJoinPhase && !$store.getters.isRecipientRegistryFull">
         <div class="column">
           <h2>Join the funding round</h2>
           <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
         </div>
-        <div class="centered">
-          <router-link to="/join"><div id="join-round" class="btn-primary">Join round</div></router-link>
+        <div class="button-group">
+          <router-link to="/join" class="btn-primary w100">Join round</router-link>
+          <div>{{timeRemaining}}</div>
         </div>
-        <div class="centered">{{timeRemaining}} to join</div>
       </div>
     </div>
     <div id="section-how-it-works">
@@ -133,15 +125,7 @@ export default class Landing extends Vue {
   }
 
   get timeRemaining(): string {
-    if (!this.signUpDeadline) {
-      return  '...'
-    }
-    return formatDateFromNow(this.signUpDeadline)
-  }
-
-  // TODO fetch `maxRecipients` from registry & compare to current registry size
-  get isRoundFull(): boolean {
-    return false
+    return this.signUpDeadline ? `${formatDateFromNow(this.signUpDeadline)}  to join` : '...'
   }
 
   scrollToHowItWorks() {
@@ -161,7 +145,7 @@ export default class Landing extends Vue {
 #page > div {  
   padding: $content-space (2 * $content-space);
   @media (max-width: $breakpoint-m) {
-    padding: $content-space
+    padding: $content-space;
   }
 }
 
@@ -220,10 +204,20 @@ ol li::before {
   /* vertical-align: baseline; */
 }
 
-.centered {
-  display: grid;
-  place-items: center;
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-right: 1rem;
+  align-items: center;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
 }
+
+
 
 .btn-hero-primary {
   background: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.55%);
@@ -267,16 +261,6 @@ ol li::before {
   background: black;
 }
 
-/* #page > #waiting-banner {
-  display: flex;
-  height: 48px;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  align-items: center;
-  // margin-top: 1rem;
-  background: $bg-primary-color;
-} */
-
 .pre-req,
 #about-1, #about-2, #about-3 {
   padding: $content-space;
@@ -303,11 +287,24 @@ ol li::before {
   overflow: hidden;
   background: $clr-pink-dark-gradient;
   padding: 0;
+  min-height: 639px; /* This is the height when adding in the callout */
+  display: flex;
+  flex-flow: wrap;
+
+  .full-gradient {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #211E2B 0%, rgba(33, 30, 43, 0) 60.61%);
+    opacity: 0.1;
+    margin: -2rem;
+  }
 
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
     width: 70%;
+    max-width: 880px;
     height: auto;
     transform: rotate(15deg);
     /* top: -20px; */
@@ -353,15 +350,17 @@ ol li::before {
     border-radius: 8px;
     padding: 1rem;
     margin: 3rem 0;
-
-  }
-
-  .apply-callout.desktop {
     position: relative;
     display: flex;
-    gap: 2rem;
+    justify-content: space-between;
+    gap: 1rem;
     .column {
       flex: 1;
+    }
+    @media (max-width: $breakpoint-m) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem
     }
   }
 }
@@ -376,6 +375,7 @@ ol li::before {
     border-radius: 0;
   }
 }
+
 .icon-row {
   display: flex;
   gap: $content-space;
@@ -406,16 +406,19 @@ ol li::before {
     border-radius: 0;
   }
 }
+
 #about-1 {
   @media (max-width: $breakpoint-l) {
     background: none;  
   }
 }
+
 #about-2 {
   @media (max-width: $breakpoint-l) {
     background: $bg-secondary-color;
   }
 }
+
 #about-3 {
   @media (max-width: $breakpoint-l) {
     background: $bg-light-color;
@@ -482,6 +485,13 @@ ol li::before {
       }
     }
   }
+}
+
+.w100 {
+  width: 100%;
+  @media (min-width: $breakpoint-m) {
+      width: fit-content;
+    }
 }
 
 #btn-row {

@@ -59,7 +59,6 @@ import AddToCartButton from '@/components/AddToCartButton.vue'
 import { CartItem } from '@/api/contributions'
 import { recipientRegistryType } from '@/api/core'
 import { Project, getProject } from '@/api/projects'
-import { User } from '@/api/user'
 import { RoundStatus } from '@/api/round'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
@@ -76,10 +75,6 @@ export default class ProjectListItem extends Vue {
 
   get descriptionHtml(): string {
     return markdown.renderInline(this.project.description)
-  }
-
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
   }
 
   get projectImageUrl(): string | null {
@@ -208,6 +203,10 @@ export default class ProjectListItem extends Vue {
   text-align: center;
   box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
   z-index: 1;
+  cursor: pointer;
+  &:hover {
+    background: $bg-light-color;
+  }
 }
 
 
