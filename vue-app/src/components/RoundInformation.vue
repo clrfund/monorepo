@@ -84,7 +84,7 @@
             </div>
           </div>
         </div>
-        <div v-if="currentRound" class="round-value-info">
+        <div class="round-value-info">
           <div class="round-value-info-item">
             <div style="width: 100%;">
               <div style="width: 100%; display: flex; gap: 0.5rem;">
