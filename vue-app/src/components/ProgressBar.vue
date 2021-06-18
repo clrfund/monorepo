@@ -1,5 +1,5 @@
 <template>
-  <div class="progress-bar">
+  <div class="progress-bar" :style="progressBarStyle">
     <div v-for="idx in totalSteps" v-bind:key="idx">
       <div class="step" :class="{'inactive': isFutureStep(idx)}"/>
     </div>
@@ -19,6 +19,9 @@ export default class Transaction extends Vue {
   @Prop()
   totalSteps!: number
 
+  get progressBarStyle(): string {
+    return `grid-template-columns: repeat(${this.totalSteps}, 1fr);`
+  }
   isFutureStep(step: number): boolean {
     return step > this.currentStep
   }
@@ -30,8 +33,6 @@ export default class Transaction extends Vue {
 
 .progress-bar {
   display: grid;
-  /* TODO make columns dynamic */
-  grid-template-columns: repeat(7, 1fr);
   column-gap: 0.5rem;
 }
 

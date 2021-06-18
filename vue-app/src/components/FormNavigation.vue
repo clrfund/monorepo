@@ -1,28 +1,77 @@
 <template>
-  <div class="btn-row">
-    <button
-      v-if="currentStep > 0"
-      @click="handleStepNav(currentStep - 1)"
-      class="btn-secondary"
-      :class="{
-        disabled: isNavDisabled,
-      }"
-    >
-      Previous
-    </button>
-    <div v-else></div>
+  <!-- TODO: refactor this to something more generalized -->
+  <div>
+    <div class="btn-row" v-if="isJoin">
+      <button
+        v-if="currentStep > 0"
+        @click="handleStepNav(currentStep - 1)"
+        class="btn-secondary"
+        :class="{
+          disabled: isNavDisabled,
+        }"
+      >
+        Previous
+      </button>
+      <div v-else></div>
 
-    <button
-      v-if="currentStep < steps.length - 1"
-      @click="handleNext"
-      :class="{
-        disabled: !isStepValid,
-        'btn-primary': true,
-      }"
-      :disabled="!isStepValid"
-    >
-      Next
-    </button>
+      <!-- TODO: Finish button to trigger tx  -->
+      <button
+        v-if="currentStep === 5"
+        @click="handleSubmit"
+        to="/project-added"
+        class="btn-primary"
+      >
+        Finish
+      </button>
+      <button
+        v-else-if="currentStep === 4"
+        @click="handleNext"
+        :class="{
+          disabled: !isStepValid,
+          'btn-primary': true,
+        }"
+        :disabled="!isStepValid"
+      >
+        Summary
+      </button>
+      <button
+        v-else-if="currentStep < 5"
+        @click="handleNext"
+        :class="{
+          disabled: !isStepValid,
+          'btn-primary': true,
+        }"
+        :disabled="!isStepValid"
+      >
+        Next
+      </button>
+    </div>
+    <div class="btn-row" v-if="!isJoin">
+      <button
+        v-if="currentStep > 0"
+        @click="handleStepNav(currentStep - 1)"
+        class="btn-secondary"
+        :class="{
+          disabled: isNavDisabled,
+        }"
+      >
+        Previous
+      </button>
+      <router-link
+        v-if="currentStep === 3"
+        to="/verify/success"
+        class="btn-primary"
+      >
+        Finish
+      </router-link>
+      <button
+        v-else-if="currentStep < 3"
+        @click="handleStepNav(currentStep + 1)"
+        class="btn-primary"
+      >
+        Next
+      </button>
+    </div>
   </div>
 </template>
 
@@ -38,6 +87,7 @@ export default class FormNavigation extends Vue {
   @Prop() isStepValid!: boolean
   @Prop() callback!: (updateFurthest?: boolean) => void
   @Prop() handleStepNav!: () => void
+  @Prop() isJoin!: boolean
   @Prop() isNavDisabled!: boolean
 
   // TODO is this needed? Why do we pass `callback` & `handleStepNav`?

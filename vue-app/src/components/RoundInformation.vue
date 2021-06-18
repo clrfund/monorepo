@@ -14,43 +14,7 @@
             <div class="circle pulse open" /> Open
           </div>
         </div>
-        <div v-if="currentRound.status === 'Reallocating' || $store.getters.hasUserContributed || (currentRound.status === 'Reallocating'  && $store.getters.canUserReallocate)" class="round-info-item">
-          <div style="width: 100%;">
-            <div style="width: 100%; display: flex;  gap: 0.5rem">
-              <div class="round-info-title" v-if="$store.getters.hasUserContributed">Time left to reallocate</div>
-              <div class="round-info-title" v-if="!$store.getters.hasUserContributed">Round status</div>
-              <tooltip position="right" content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
-            </div>
-            <!-- <div
-              class="round-info-value"
-              :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
-              v-if="currentRound.status === 'Reallocating'"
-            >
-              <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-              <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
-              <div class="value">{{ reallocationTimeLeft.hours }}</div>
-              <div class="unit">hours</div>
-              <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-              <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
-            </div> -->
-            <div class="message" v-if="!$store.getters.hasUserContributed" >Closed for contributions</div>
-            <div
-              class="round-info-value"
-              :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
-              v-if="$store.getters.hasUserContributed"
-            >
-              <div v-if="$store.getters.canUserReallocate" class="round-info-value">
-              <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-              <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
-              <div class="value">{{ reallocationTimeLeft.hours }}</div>
-              <div class="unit">hours</div>
-              <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-              <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
-            </div>
-            </div>
-          </div>
-        </div>
-        <div v-if="currentRound.status === 'Contributing' && !$store.getters.canUserReallocate" class="round-info-item">
+        <div v-if="$store.getters.isRoundContributionPhase && !$store.getters.hasUserContributed" class="round-info-item">
           <div style="width: 100%;">
             <div style="width: 100%; display: flex; gap: 0.5rem;">
               <div class="round-info-title">Time left to contribute</div>
@@ -69,7 +33,32 @@
             <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
           </div>
         </div>
-        <div v-if="currentRound.status === 'Tallying'" class="round-info-item">
+        <div v-else-if="$store.getters.isRoundReallocationPhase || $store.getters.canUserReallocate" class="round-info-item">
+          <div style="width: 100%;">
+            <div style="width: 100%; display: flex;  gap: 0.5rem">
+              <div class="round-info-title">{{ $store.getters.hasUserContributed ? "Time left to reallocate" : "Round status"}}</div>
+              <tooltip v-if="$store.getters.hasUserContributed" position="right" content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+              <tooltip v-else-if="!this.$store.state.currentUser" position="right" content="If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+              <tooltip v-else position="right" content="This round has closed for new contributions."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+            </div>
+            <div class="message" v-if="!$store.getters.hasUserContributed">Closed for contributions</div>
+            <div
+              v-else
+              class="round-info-value"
+              :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
+            >
+              <div class="round-info-value">
+                <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
+                <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
+                <div class="value">{{ reallocationTimeLeft.hours }}</div>
+                <div class="unit">hours</div>
+                <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
+                <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else-if="$store.getters.isRoundTallying" class="round-info-item">
           <div style="width: 100%;">
             <div style="width: 100%; display: flex;  gap: 0.5rem">
               <div class="round-info-title" style="margin-bottom: 0.5rem;">Round status </div>
@@ -82,7 +71,7 @@
             </div>
           </div>
         </div>
-        <div v-if="currentRound.status === 'Finalized'" class="round-info-item">
+        <div v-else-if="$store.getters.isRoundFinalized" class="round-info-item">
           <div style="width: 100%;">
             <div style="width: 100%; display: flex;  gap: 0.5rem">
               <div class="round-info-title" style="margin-bottom: 0.5rem;">Round status</div>
@@ -95,14 +84,7 @@
             </div>
           </div>
         </div>
-        <!-- <div class="round-info-item">
-          <div class="round-info-title">Round 0</div>
-          <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
-            <div class="value large">{{ currentRound.roundNumber }}</div>
-            <div class="unit">{{ currentRound.status }}</div>
-          </div>
-        </div> -->
-        <div class="round-value-info">
+        <div v-if="currentRound" class="round-value-info">
           <div class="round-value-info-item">
             <div style="width: 100%;">
               <div style="width: 100%; display: flex; gap: 0.5rem;">
@@ -110,40 +92,39 @@
                 <tooltip position="right" content="This total includes the funds in the matching pool and all contributions from the community."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
               </div>
               <div class="round-info-value">
-                <div class="value large">{{ formatIntegerPart(currentRound.contributions) + formatIntegerPart(currentRound.matchingPool) }}</div>
-                <div class="value extra">{{ formatFractionalPart(currentRound.contributions) + formatFractionalPart(currentRound.matchingPool) }}</div>
+                <div class="value large">{{ formatTotalInRound }}</div>
                 <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
               </div>
             </div>
           </div>
           <div class="round-info-sub-item">
-              <div style="width: 100%; display: flex; gap: 0.5rem;">
-                <div class="round-info-title">Matching pool</div>
-                <tooltip position="right" content="These are the funds that will be distributed to all the projects based on the contributions they receive from the community."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
-                <div class="add-link">
-                    <a 
-                    style="margin: 0;"
-                    @click="addMatchingFunds()"
-                    title="Add matching funds"
-                    >
-                      <img style="width: 16px;" src="@/assets/add.svg" /> 
-                    </a>
-                    <a 
-                    @click="addMatchingFunds()"
-                    title="Add matching funds"
-                    class="add-funds-link"
-                    >
-                      Add funds
-                    </a>
-                  </div>
-              </div>
-              
-              <div class="round-info-value">
-                <div class="value">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
-                <div class="value">{{ formatFractionalPart(currentRound.matchingPool) }}</div>
-                <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
-              </div>
+            <div style="width: 100%; display: flex; gap: 0.5rem;">
+              <div class="round-info-title">Matching pool</div>
+              <tooltip position="right" content="These are the funds that will be distributed to all the projects based on the contributions they receive from the community."><img style="opacity: 0.6;" width="16px" src="@/assets/info.svg" /></tooltip>
+              <div class="add-link">
+                  <a 
+                  style="margin: 0;"
+                  @click="addMatchingFunds()"
+                  title="Add matching funds"
+                  >
+                    <img style="width: 16px;" src="@/assets/add.svg" /> 
+                  </a>
+                  <a 
+                  @click="addMatchingFunds()"
+                  title="Add matching funds"
+                  class="add-funds-link"
+                  >
+                    Add funds
+                  </a>
+                </div>
             </div>
+            
+            <div class="round-info-value">
+              <div class="value">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
+              <div class="value">{{ formatFractionalPart(currentRound.matchingPool) }}</div>
+              <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
+            </div>
+          </div>
           <div class="round-info-sub-item">
             <div>
               <div class="round-info-title">
@@ -151,7 +132,7 @@
               </div>
               <div class="round-info-value">
                 <div class="value">{{ formatIntegerPart(currentRound.contributions) }}</div>
-                <div class="value extra">{{ formatFractionalPart(currentRound.contributions) }}</div>
+                <div class="value">{{ formatFractionalPart(currentRound.contributions) }}</div>
                 <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
               </div>
             </div>
@@ -170,14 +151,11 @@
                 </div>
                 <div class="round-info-value">
                   <div class="value">{{ currentRound.contributors }}</div>
-                  <div class="unit">legends</div>
+                  <div class="unit">legend{{ currentRound.contributors !== 1 ? "s": "" }}</div>
                 </div>
               </div>
           </div>
         </div>
-      </template>
-      <template v-else-if="!isLoading">
-        TODO: Copy for join-only phase / pre-round phase
       </template>
       <loader v-if="isLoading" />
     </div>
@@ -187,14 +165,14 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { FixedNumber } from 'ethers'
+import { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { RoundInfo, getCurrentRound, TimeLeft } from '@/api/round'
 import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
 
 import { getTimeLeft } from '@/utils/dates'
-
+import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
@@ -204,6 +182,7 @@ import {
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   LOAD_CART,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import {
@@ -252,6 +231,7 @@ export default class RoundInformation extends Vue {
         // Load user data if already logged in
         this.$store.dispatch(LOAD_USER_INFO)
         this.$store.dispatch(LOAD_CART)
+        this.$store.dispatch(LOAD_COMMITTED_CART)
         this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
       }
     }
@@ -280,6 +260,30 @@ export default class RoundInformation extends Vue {
     return this.$store.state.currentRound
   }
 
+  get contributionTimeLeft(): TimeLeft {
+    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
+  }
+
+  get reallocationTimeLeft(): TimeLeft {
+    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
+  }
+
+  get formatTotalInRound(): string {
+    const { currentRound } = this.$store.state
+    const totalInRound = currentRound.contributions.addUnsafe(currentRound.matchingPool)
+    
+    return this.formatAmount(totalInRound)
+  }
+
+  get filteredProjects(): Project[] {
+    return this.projects.filter((project: Project) => {
+      if (!this.search) {
+        return true
+      }
+      return project.name.toLowerCase().includes(this.search.toLowerCase())
+    })
+  }
+
   formatIntegerPart(value: FixedNumber): string {
     if (value._value === '0.0') {
       return '0'
@@ -296,19 +300,13 @@ export default class RoundInformation extends Vue {
     return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
   }
 
-  get contributionTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
-  }
-
-  get reallocationTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
+  formatAmount(value: BigNumber): string {
+    const decimals = this.$store.state.currentRound.nativeTokenDecimals
+    return formatAmount(value, decimals)
   }
 
   addMatchingFunds(): void {
-    if (!this.$store.state.currentUser) {
-      return
-    }
-    this.$modal.show(
+    return this.$modal.show(
       MatchingFundsModal,
       { },
       { },
@@ -319,15 +317,6 @@ export default class RoundInformation extends Vue {
         },
       },
     )
-  }
-
-  get filteredProjects(): Project[] {
-    return this.projects.filter((project: Project) => {
-      if (!this.search) {
-        return true
-      }
-      return project.name.toLowerCase().includes(this.search.toLowerCase())
-    })
   }
 }
 </script>
@@ -414,7 +403,6 @@ export default class RoundInformation extends Vue {
   align-items: center;
   margin-bottom: 3rem;
   border-radius: 0.5rem;
-  overflow: hidden;
 
   &>div {
     box-shadow: inset 0px -1px 0px #7375A6;

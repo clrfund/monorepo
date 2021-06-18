@@ -42,6 +42,7 @@
             autocomplete="on"
             onfocus="this.value=''" 
           >
+          <img v-if="search.length > 0" @click="clearSearch" src="@/assets/close.svg" height="20" class="pointer">
         </div>
         <div class="add-project">
           <router-link to="/join" class="btn-primary">Add project</router-link>
@@ -50,14 +51,7 @@
       </div>
 
       <div class="project-list">
-        <div class="get-prepared" v-if="!this.search && this.selectedCategories.length === 0">
-          <span aria-label="rocket" class="emoji">🚀</span>
-          <div>
-          <h2 class="prep-title">Get prepared</h2>
-          <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
-          </div>
-          <div class="btn-action" style="cursor: pointer;">Start prep</div>
-        </div>
+        <call-to-action-card v-if="!this.search && this.selectedCategories.length === 0"/>
         <project-list-item
           v-for="project in filteredProjects"
           :project="project"
@@ -86,19 +80,22 @@ import { Project, getRecipientRegistryAddress, getProjects } from '@/api/project
 
 import { getTimeLeft } from '@/utils/dates'
 
-import ProjectListItem from '@/components/ProjectListItem.vue'
-import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
+import CallToActionCard from '@/components/CallToActionCard.vue'
 import CartWidget from '@/components/CartWidget.vue'
+import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
+import ProjectListItem from '@/components/ProjectListItem.vue'
 import RoundInformation from '@/components/RoundInformation.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   LOAD_CART,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
+  TOGGLE_SHOW_CART_PANEL,
 } from '@/store/mutation-types'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
@@ -120,8 +117,9 @@ function shuffleArray(array: any[]) {
 
 @Component({
   components: {
-    ProjectListItem,
+    CallToActionCard,
     CartWidget,
+    ProjectListItem,
     RoundInformation,
   },
 })
@@ -149,6 +147,7 @@ export default class ProjectList extends Vue {
         // Load user data if already logged in
         this.$store.dispatch(LOAD_USER_INFO)
         this.$store.dispatch(LOAD_CART)
+        this.$store.dispatch(LOAD_COMMITTED_CART)
         this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
       }
     }
@@ -239,6 +238,10 @@ export default class ProjectList extends Vue {
     } else {
       this.selectedCategories.push(selection)
     }
+  }
+
+  clearSearch():  void {
+    this.search = ''
   }
 }
 
@@ -547,23 +550,27 @@ window.onclick = function(event) {
   padding: 2rem;
 }
 
+
+
 .get-prepared {
   background: $bg-secondary-color;
   border: 1px solid #000000;
   border-radius: 8px;
-  padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  padding: 1.5rem;
   justify-content: space-between;
-  &:hover {
-    transform: scale(1.01);
-    box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
-  }
 }
 
 .prep-title {
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .prep-title-continue {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.5rem;
     font-weight: 700;
   }
 

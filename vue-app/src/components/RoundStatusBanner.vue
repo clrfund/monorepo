@@ -15,7 +15,7 @@
           <span class="label">Funding is closed! If you contributed, you have {{reallocationTimeRemaining}} left to change your mind</span>
         </div>
         <div v-if="$store.getters.isRoundTallying" class="messsage">
-          <span class="label">🎉 Funding is closed! Our smart contracts are busy tallying final amounts... </span>
+          <span class="label">🎉 Funding is closed! Our smart contracts are busy tallying contributions... </span>
         </div>
         <div v-if="$store.getters.isRoundFinalized" class="messsage">
           <span class="label">Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds. <router-link to="/projects">View projects</router-link></span>
@@ -63,6 +63,7 @@ export default class RoundStatusBanner extends Vue {
   position: relative;
   z-index: 1;
   width: 100%;
+  max-width: 100vw;
   background: $bg-primary-color;
   overflow: hidden;
   white-space: nowrap;

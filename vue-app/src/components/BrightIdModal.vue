@@ -94,7 +94,7 @@ export default class BrightIdModal extends Vue {
   }
 
   private async waitForVerification() {
-    let verification
+    let verification: Verification | null = null
     const checkVerification = async () => {
       try {
         verification = await getVerification(this.currentUser.walletAddress)

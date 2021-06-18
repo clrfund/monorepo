@@ -7,11 +7,13 @@ import { factory, ipfsGatewayUrl, provider } from './core'
 
 export const LOGIN_MESSAGE = `Sign this message to access clr.fund at ${factory.address.toLowerCase()}.`
 
+// TODO update isVerified to isRegistered?
 export interface User {
   walletAddress: string;
   walletProvider: Web3Provider;
   encryptionKey: string;
-  isVerified: boolean | null;
+  isVerified: boolean | null; // If is in user registry
+  isUnique?: boolean | null; // If is verified in BrightID // TODO implement this
   balance?: BigNumber | null;
   etherBalance?: BigNumber | null;
   contribution?: BigNumber | null;
