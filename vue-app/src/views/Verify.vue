@@ -235,7 +235,7 @@
 
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
-// TODO do we need validation for this flow? I don't think so...
+// TODO do we need form validation for this flow? I don't think so...
 import { validationMixin } from 'vuelidate'
 // import { required, maxLength, url, email } from 'vuelidate/lib/validators'
 // import { isAddress } from '@ethersproject/address'

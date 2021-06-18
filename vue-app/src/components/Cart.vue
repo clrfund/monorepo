@@ -109,7 +109,7 @@
         Funds you don't contribute to projects ({{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}) will be sent to the matching pool at the end of the round.
         Your cart must add up to your original {{ formatAmount(this.contribution) }} {{tokenSymbol}} donation.
       </div>
-      <!-- <div v-if="canRegisterWithBrightId" @click="registerWithBrightId()" class="btn-primary"> -->
+      <!-- TODO check logic - will this ever be true? within canUserReallocate conditional -->
       <div class="p1" v-if="canRegisterWithBrightId">
         <router-link to="/verify" class="btn-primary"> 
           Verify with BrightID

@@ -35,6 +35,7 @@
         </div>
       </div>
       <form-navigation
+        :isJoin="true"
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
         :currentStep="currentStep"

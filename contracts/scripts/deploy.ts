@@ -18,6 +18,7 @@ async function main() {
   await fundingRoundFactory.deployed();
   await maciFactory.transferOwnership(fundingRoundFactory.address);
 
+  // TODO deploy registry conditionally based on process.env.USER_REGISTRY_TYPE (new ENV var)
   const SimpleUserRegistry = await ethers.getContractFactory(
     'SimpleUserRegistry',
     deployer,

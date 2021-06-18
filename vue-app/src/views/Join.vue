@@ -507,6 +507,7 @@
     </div>
     <div class="mobile nav-bar">
       <form-navigation
+        :isJoin="true"
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
         :currentStep="currentStep"
