@@ -258,7 +258,6 @@ import {
   isSponsoredUser,
   selfSponsor,
   registerUser,
-  BrightIDSteps,
 } from '@/api/bright-id'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
