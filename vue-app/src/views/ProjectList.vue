@@ -95,6 +95,7 @@ import {
 } from '@/store/action-types'
 import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
+  TOGGLE_SHOW_CART_PANEL,
 } from '@/store/mutation-types'
 
 const SHUFFLE_RANDOM_SEED = Math.random()

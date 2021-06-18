@@ -3,18 +3,6 @@
     <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name">
     <project-profile class="details" :project="project" :previewMode="false" />
     <div class="sticky-column">  
-      <!--TODO: only make this visible to certain addresses ++ this will trigger a tx-->  
-      <!-- <div class="admin-box">
-      <h2 class="link-title">Admin controls</h2>
-      <button class="btn-warning button">
-        <img width="16px" src="@/assets/remove.svg"/>
-        Remove project
-      </button>
-      </div>
-      <button class="btn-secondary button">
-        <img width="16px" src="@/assets/edit.svg" />
-        Edit details
-      </button> -->
       <div class="desktop">
         <button
           v-if="hasRegisterBtn()"
@@ -40,6 +28,12 @@
           <template v-else>
             Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
           </template>
+        </button>
+        <button
+          class="donate-btn-full"
+          v-if="inCart && $store.getters.hasUserContributed && !$store.getters.isRoundContributionPhase && !$store.getters.canUserReallocate"
+        >
+          <span>Contributed!</span>
         </button>
       </div>
       <div class="link-box">

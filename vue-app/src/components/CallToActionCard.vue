@@ -1,5 +1,6 @@
 <template>
-  <div v-if="showUserVerification" class="get-prepared">
+  <!-- Get prepared CTA -->
+  <div class="get-prepared" v-if="showUserVerification" >
     <bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
     <span v-else aria-label="rocket" class="emoji">🚀</span>
     <div>
@@ -9,6 +10,23 @@
     <router-link v-if="!hasStartedVerification" to="/verify" class="btn-action">Start prep</router-link>
     <router-link v-else to="/verify" class="btn-action">Continue setup</router-link>
   </div> 
+  <!-- Reallocate CTA -->
+  <div class="get-prepared" v-else-if="$store.getters.canUserReallocate">
+    <span aria-label="thinking face" class="emoji">🤔</span>
+    <div>
+      <h2 class="prep-title">Changed your mind?</h2>
+      <p class="prep-text">You still have time to reallocate your contributions. </p>
+      <div class="btn-action" @click="toggleCartPanel()">Open cart</div>
+    </div>
+  </div>
+  <!-- Round is over notification -->
+  <div class="get-prepared" v-else-if="$store.getters.hasContributionPhaseEnded">
+    <span aria-label="hand" class="emoji">🤚</span>
+    <div>
+      <h2 class="prep-title">Round over for contributions</h2>
+      <p class="prep-text">You can no longer make any contributions this round.</p>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -17,6 +35,7 @@ import Component from 'vue-class-component'
 
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 
+import { TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import { userRegistryType } from '@/api/core'
 
 @Component({
@@ -37,6 +56,10 @@ export default class CallToActionCard extends Vue {
 
   get showUserVerification(): boolean {
     return userRegistryType === 'brightid' && (!this.isUserVerified || !this.isUserUnique)
+  }
+
+  toggleCartPanel() {
+    this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
   }
 }
 </script>

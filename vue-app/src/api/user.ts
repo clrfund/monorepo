@@ -13,7 +13,7 @@ export interface User {
   walletProvider: Web3Provider;
   encryptionKey: string;
   isVerified: boolean | null; // If is in user registry
-  isUnique?: boolean | null; // If is verified in BrightID
+  isUnique?: boolean | null; // If is verified in BrightID // TODO implement this
   balance?: BigNumber | null;
   etherBalance?: BigNumber | null;
   contribution?: BigNumber | null;

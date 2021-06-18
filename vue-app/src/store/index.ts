@@ -459,8 +459,6 @@ const getters = {
   canUserReallocate: (_, getters): boolean => {
     return getters.hasUserContributed && (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
   },
-
-  // might need a state for user has updated cart during reallocation
 }
 
 const store: StoreOptions<RootState> = {
