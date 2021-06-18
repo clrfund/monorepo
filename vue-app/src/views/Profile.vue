@@ -19,7 +19,7 @@
           <div class="disconnect btn" @click="disconnect"><img src="@/assets/disconnect.svg"></div>
         </div>
       </div>
-      <bright-id-widget />
+      <bright-id-widget v-if="showBrightIdWidget" :isProjectCard="false" />
         <!-- <div class="flex-row">
           <h2 class="no-margin">Contributor setup</h2>
           3/5
@@ -57,6 +57,8 @@ import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
 
+import { userRegistryType } from '@/api/core'
+
 @Component({
   components: { BalanceItem, BrightIdWidget, IconStatus },
 })
@@ -75,6 +77,10 @@ export default class NavBar extends Vue {
 
   get currentUser(): User | null {
     return this.$store.state.currentUser
+  }
+
+  get showBrightIdWidget(): boolean {
+    return userRegistryType === 'brightid'
   }
 
   renderUserAddress(digitsToShow?: number): string {

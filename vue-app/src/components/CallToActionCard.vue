@@ -1,12 +1,12 @@
 <template>
-  <div v-if="!isVerified" class="get-prepared">
-    <bright-id-widget v-if="prepStarted" v-bind:projectCard="true" />
+  <div v-if="showUserVerification" class="get-prepared">
+    <bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
     <span v-else aria-label="rocket" class="emoji">🚀</span>
     <div>
     <h2 class="prep-title">Get prepared</h2>
     <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
     </div>
-    <router-link v-if="!prepStarted" to="/verify" class="btn-action">Start prep</router-link>
+    <router-link v-if="!hasStartedVerification" to="/verify" class="btn-action">Start prep</router-link>
     <router-link v-else to="/verify" class="btn-action">Continue setup</router-link>
   </div> 
 </template>
@@ -17,14 +17,27 @@ import Component from 'vue-class-component'
 
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 
+import { userRegistryType } from '@/api/core'
+
 @Component({
   components: {
     BrightIdWidget,
   },
 })
 export default class CallToActionCard extends Vue {
-  prepStarted = true // TODO configure logic - this is true if 1st step of get-verified is complete, which is linking ETH address & BrightID profile
-  isVerified = true // TODO currentUser.isVerified
+  hasStartedVerification = false // TODO configure logic - this is true if 1st step of get-verified is complete, which is linking ETH address & BrightID profile
+
+  get isUserVerified(): boolean {
+    return this.$store.state.currentUser && this.$store.state.currentUser.isVerified
+  }
+
+  get isUserUnique(): boolean {
+    return this.$store.state.currentUser && this.$store.state.currentUser.isUnique
+  }
+
+  get showUserVerification(): boolean {
+    return userRegistryType === 'brightid' && (!this.isUserVerified || !this.isUserUnique)
+  }
 }
 </script>
 
