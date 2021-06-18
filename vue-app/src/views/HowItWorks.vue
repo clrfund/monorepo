@@ -15,14 +15,14 @@
         <li>This phase will last xxx days.</li>
         <li>There will be a maximum of 125 projects in the round.</li>
         <li>Projects must meet <router-link to="/join">round criteria</router-link>.</li>
-        <li>If you want to contribute, this is a perfect time to get <router-link to="/setup">set up to contribute</router-link>.</li>
+        <li>If you want to contribute, this is a perfect time to get <router-link to="/verify">set up to contribute</router-link>.</li>
     </ul>
     <h2>Contribution phase</h2>
     <p>Once the join phase is complete, the contribution phase will start shortly afterwards. This is the time for you to add your favourite projects to your cart and contribute.</p>
     <h3>Need to know</h3>
     <ul>
         <li>This phase will last xxx days.</li>
-        <li>You will need to go through some <router-link to="/setup">setup</router-link> before you can contribute.</li>
+        <li>You will need to go through some <router-link to="/verify">setup</router-link> before you can contribute.</li>
         <li>You can contribute to a maximum of 13 projects in the round.</li>
         <li>Your contribution will include a mandatory donation to the matching pool to protect the round against spam.</li>
         <li>The maximum contribution amount is 10000 Dai.</li>

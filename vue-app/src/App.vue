@@ -84,13 +84,13 @@ export default class App extends Vue {
   }
 
   get isSidebarShown(): boolean {
-    const routes = ['landing', 'projectAdded', 'join', 'joinStep', 'round information']
-    return !routes.includes(this.$route.name || '')
+    const excludedRoutes = ['landing', 'projectAdded', 'join', 'joinStep', 'round information', 'verify', 'verifyStep', 'verified']
+    return !excludedRoutes.includes(this.$route.name || '')
   }
 
   get isMobileTabsShown(): boolean {
-    const routes = ['landing', 'projectAdded', 'join', 'joinStep', 'setup']
-    return !routes.includes(this.$route.name || '')
+    const excludedRoutes = ['landing', 'projectAdded', 'join', 'joinStep', 'verify', 'verifyStep', 'verified']
+    return !excludedRoutes.includes(this.$route.name || '')
   }
 
   get isSideCartShown(): boolean {
@@ -103,8 +103,8 @@ export default class App extends Vue {
   }
 
   get showProjectsLink(): boolean {
-    const routes = ['landing', 'projectAdded', 'join', 'joinStep', 'projects']
-    return !routes.includes(this.$route.name || '')
+    const excludedRoutes = ['landing', 'projectAdded', 'join', 'joinStep', 'projects', 'verify', 'verifyStep', 'verified']
+    return !excludedRoutes.includes(this.$route.name || '')
   }
 
   get isCartToggledOpen(): boolean {

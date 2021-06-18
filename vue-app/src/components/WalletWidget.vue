@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{ container: !isActionButton }">
     <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
     <template v-else-if="!isLoaded()"></template>
     <div
@@ -17,8 +17,10 @@
     </button>
     <div v-else-if="currentUser && !isActionButton" class="profile-info" @click="toggleProfile">
       <div class="profile-info-balance">
-        <img src="@/assets/dai.svg" />
-        <div class="balance" @click="copyAddress">{{ balance }}</div>
+        <img v-if="!showEth" src="@/assets/dai.svg" />
+        <img v-if="showEth" src="@/assets/eth.svg" />
+        <div v-if="!showEth" class="balance" @click="copyAddress">{{ balance }}</div>
+        <div v-if="showEth" class="balance">{{etherBalance}}</div>
       </div>
       <div class="profile-name" @click="copyAddress">{{ renderUserAddress(7) }}</div>
       <div class="profile-image">
@@ -59,6 +61,7 @@ export default class WalletWidget extends Vue {
   private walletChainId: string | null = null
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
+  @Prop() showEth!: boolean
 
   // Boolean to only show Connect button, styled like an action button,
   // which hides the widget that would otherwise display after connecting
@@ -220,6 +223,11 @@ export default class WalletWidget extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
+.container {
+  margin-left: 0.5rem;
+  width: fit-content;
+}
+
 .provider-error {
   text-align: center;
 }
@@ -232,6 +240,7 @@ export default class WalletWidget extends Vue {
   background: $clr-pink-dark-gradient;
   border-radius: 32px;
   padding-right: 0.5rem;
+  width: fit-content;
 
   .profile-name {
     font-size: 14px;
@@ -280,6 +289,9 @@ export default class WalletWidget extends Vue {
     height: 16px;
     width: 16px;
   }
+}
 
+.full-width {
+  width: 100%;
 }
 </style>
