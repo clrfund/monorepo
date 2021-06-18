@@ -157,6 +157,9 @@
           </div>
         </div>
       </template>
+      <template v-else-if="!currentRound && !isLoading">
+          TODO: Add copy for pre-round status
+      </template>
       <loader v-if="isLoading" />
     </div>
   </div>
