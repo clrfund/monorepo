@@ -82,7 +82,7 @@
             </div>
           </div>
         </div>
-        <div v-if="currentRound.status === 'Finalised'" class="round-info-item">
+        <div v-if="currentRound.status === 'Finalized'" class="round-info-item">
           <div style="width: 100%;">
             <div style="width: 100%; display: flex;  gap: 0.5rem">
               <div class="round-info-title" style="margin-bottom: 0.5rem;">Round status</div>
