@@ -58,8 +58,8 @@ export default class CallToActionCard extends Vue {
     return userRegistryType === 'brightid' && (!this.isUserVerified || !this.isUserUnique)
   }
 
-    this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
   toggleCartPanel() {
+    this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
   }
 }
 </script>
