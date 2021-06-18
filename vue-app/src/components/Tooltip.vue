@@ -14,11 +14,11 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
-/* @Component
+@Component
 export class Tooltip extends Vue {
     @Prop() position!: string
     @Prop() content!: string
-} */
+}
 
 export default {
   props: {

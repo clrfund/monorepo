@@ -7,13 +7,19 @@ import ProjectList from '../views/ProjectList.vue'
 import ProjectView from '../views/Project.vue'
 import RoundList from '../views/RoundList.vue'
 import ProjectAdded from '../views/ProjectAdded.vue'
-import IndividualityView from '../views/ProofOfIndividuality.vue'
 import RoundInformation from '../views/RoundInformation.vue'
-import SetupLanding from '../views/SetupLanding.vue'
+import VerifyLanding from '../views/VerifyLanding.vue'
 import About from '../views/About.vue'
+import AboutSybilResistance from '../views/AboutSybilResistance.vue'
 import Verified from '../views/Verified.vue'
+import AboutMaci from '../views/AboutMaci.vue'
+import HowItWorks from '../views/HowItWorks.vue'
+import AboutLayer2 from '../views/AboutLayer2.vue'
+import AboutSybilAttacks from '../views/AboutSybilAttacks.vue'
 import JoinView from '../views/Join.vue'
+import VerifyView from '../views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
+import CartView from '@/views/Cart.vue'
 
 Vue.use(VueRouter)
 
@@ -33,7 +39,6 @@ const routes = [
     name: 'project',
     component: ProjectView,
   },
-
   {
     path: '/round-information',
     name: 'round information',
@@ -55,9 +60,24 @@ const routes = [
     component: About,
   },
   {
-    path: '/project-added',
-    name: 'projectAdded',
-    component: ProjectAdded,
+    path: '/about-maci',
+    name: 'about maci',
+    component: AboutMaci,
+  },
+  {
+    path: '/about-sybil-resistance',
+    name: 'about sybil resistance',
+    component: AboutSybilAttacks,
+  },
+  {
+    path: '/about-layer2',
+    name: 'about layer 2',
+    component: AboutLayer2,
+  },
+  {
+    path: '/how-it-works',
+    name: 'how it works',
+    component: HowItWorks,
   },
   {
     path: '/recipients',
@@ -65,35 +85,52 @@ const routes = [
     component: RecipientRegistryView,
   },
   {
+    path: '/verify',
+    name: 'verify',
+    component: VerifyLanding,
+  },
+  {
+    path: '/verify/success',
+    name: 'verified',
+    component: Verified,
+  },
+  {
+    path: '/verify/:step',
+    name: 'verifyStep',
+    component: VerifyView,
+  },
+  {
     path: '/join',
     name: 'join',
     component: JoinLanding,
   },
   {
-    path: '/setup',
-    name: 'setup',
-    component: SetupLanding,
-  },
-  {
-    path: '/setup/get-verified/:step',
-    name: 'getVerified',
-    component: IndividualityView,
-  },
-  {
-    path: '/setup/verified',
-    name: 'verified',
-    component: Verified,
+    path: '/join/success',
+    name: 'projectAdded',
+    component: ProjectAdded,
   },
   {
     path: '/join/:step',
     name: 'joinStep',
     component: JoinView,
   },
+  {
+    path: '/sybil-resistance',
+    name: 'sybil-resistance',
+    component: AboutSybilResistance,
+  },
+  {
+    path: '/cart',
+    name: 'cart',
+    component: CartView,
+  },
 ]
-
 const router = new VueRouter({
   base: window.location.pathname,
   routes,
+  scrollBehavior () {
+    return { x: 0, y: 0 }
+  },
 })
 
 export default router

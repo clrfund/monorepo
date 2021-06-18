@@ -3,6 +3,7 @@
   <round-status-banner />
   <div id="page">
     <div id="hero">
+      <div class="full-gradient mobile" />
       <img src="@/assets/moon.png" id="moon" />
       <div class="image-wrapper">
         <img src="@/assets/docking.png" />
@@ -14,25 +15,16 @@
           <router-link to="/projects" class="btn-action">Go to app</router-link>
           <div class="btn-white" @click="scrollToHowItWorks">How it works</div>
         </div>
-        <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout mobile">
-          <div id="countdown" class="caps">11 days</div>
-          <div id="countdown-label" class="caps">Time to apply</div>
-          <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
-          <div id="btn-row">
-            <div id="view-criteria" class="link-primary">View criteria</div>
-            <router-link to="/join"><div id="apply-to-join" class="btn-primary">Apply to join</div></router-link>
-          </div>
-        </div>
       </div>
-      <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout desktop">
+      <div class="apply-callout" v-if="$store.state.currentRound && $store.getters.isRoundJoinPhase && !$store.getters.isRecipientRegistryFull">
         <div class="column">
           <h2>Join the funding round</h2>
           <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
         </div>
-        <div class="centered">
-          <router-link to="/join"><div id="join-round" class="btn-primary">Join round</div></router-link>
+        <div class="button-group">
+          <router-link to="/join" class="btn-primary w100">Join round</router-link>
+          <div>{{timeRemaining}}</div>
         </div>
-        <div class="centered">{{timeRemaining}} to join</div>
       </div>
     </div>
     <div id="section-how-it-works">
@@ -48,9 +40,10 @@
         <h2>How it works</h2>
         <ol>
           <li>The Ethereum Foundation and other donors send funds to the matching pool smart contract.</li>
-          <li>The round begins and you can donate to as many projects as you like.</li>
-          <li>Once the round finishes, the smart contract distributes the matching pool funds to projects based primarily on number of contributions, <strong>not contribution value</strong></li>
+          <li>The round begins and you can donate to your favourite projects.</li>
+          <li>Once the round finishes, the smart contract distributes the matching pool funds to projects based primarily on number of contributions, <strong>not contribution value</strong>.</li>
         </ol>
+        <router-link class="btn-secondary" to="/how-it-works">How the round works</router-link>
       </div>
     </div>
     <div class="section-header">
@@ -61,7 +54,7 @@
         <div class="icon-row">
           <!-- Optimism icon -->
           <img src="@/assets/optimism.png" id="optimism-icon"/>
-          <p><b>Optimism for fast and cheap transation fees</b></p>
+          <p><b>Optimism for fast and cheap transaction fees</b></p>
         </div>
         <div class="btn-action">Get Optimism funds</div>
       </div>
@@ -89,8 +82,9 @@
       <div id="about-2">
         <h2>Protect against bribery</h2>
         <p>
-          Using <a href="#">MACI</a>, a zero-knowledge technology, it's impossible to prove how you voted. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!
+          Using MACI, a zero-knowledge technology, it's impossible to prove how you voted. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!
         </p>
+        <router-link to="/about-maci">About MACI</router-link>
       </div>
       <div id="about-3">
         <h2>Built using the CLR protocol</h2>
@@ -101,10 +95,13 @@
     </div>
     <div id="footer">
       <h2>More</h2>
-        <div class="link-li"><a href="#">GitHub</a></div>
-        <div class="link-li">More on Eth2</div>
+        <div class="link-li"><a href="https://github.com/ethereum/clrfund/">GitHub</a></div>
+        <div class="link-li"><a href="https://ethereum.org/eth2/">More on Eth2</a></div>
+        <div class="link-li"><router-link to="/how-it-works">How the round works</router-link></div>
+        <div class="link-li"><router-link to="/about-layer2">Learn about [Layer 2]</router-link></div>
+        <div class="link-li"><router-link to="/about-maci">Learn about MACI</router-link></div>
+        <div class="link-li"><router-link to="/about-sybil-attacks">Learn about BrightID</router-link></div> 
         <div class="link-li">Provide Feedback</div>
-        <div class="link-li">Something else?</div>
     </div>
   </div>
   </div>
@@ -128,22 +125,7 @@ export default class Landing extends Vue {
   }
 
   get timeRemaining(): string {
-    if (!this.signUpDeadline) {
-      return  '...'
-    }
-    return formatDateFromNow(this.signUpDeadline)
-  }
-
-  get isRoundClosed(): boolean {
-    if (!this.signUpDeadline) {
-      return  false
-    }
-    return hasDateElapsed(this.signUpDeadline)
-  }
-
-  // TODO fetch `maxRecipients` from registry & compare to current registry size
-  get isRoundFull(): boolean {
-    return false
+    return this.signUpDeadline ? `${formatDateFromNow(this.signUpDeadline)}  to join` : '...'
   }
 
   scrollToHowItWorks() {
@@ -163,7 +145,7 @@ export default class Landing extends Vue {
 #page > div {  
   padding: $content-space (2 * $content-space);
   @media (max-width: $breakpoint-m) {
-    padding: $content-space
+    padding: $content-space;
   }
 }
 
@@ -222,10 +204,20 @@ ol li::before {
   /* vertical-align: baseline; */
 }
 
-.centered {
-  display: grid;
-  place-items: center;
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-right: 1rem;
+  align-items: center;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
 }
+
+
 
 .btn-hero-primary {
   background: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.55%);
@@ -269,16 +261,6 @@ ol li::before {
   background: black;
 }
 
-/* #page > #waiting-banner {
-  display: flex;
-  height: 48px;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  align-items: center;
-  // margin-top: 1rem;
-  background: $bg-primary-color;
-} */
-
 .pre-req,
 #about-1, #about-2, #about-3 {
   padding: $content-space;
@@ -305,11 +287,24 @@ ol li::before {
   overflow: hidden;
   background: $clr-pink-dark-gradient;
   padding: 0;
+  min-height: 639px; /* This is the height when adding in the callout */
+  display: flex;
+  flex-flow: wrap;
+
+  .full-gradient {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #211E2B 0%, rgba(33, 30, 43, 0) 60.61%);
+    opacity: 0.1;
+    margin: -2rem;
+  }
 
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
     width: 70%;
+    max-width: 880px;
     height: auto;
     transform: rotate(15deg);
     /* top: -20px; */
@@ -341,9 +336,11 @@ ol li::before {
   }
 
   .btn-group {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
     gap: 1rem;
+    @media (max-width: $breakpoint-l) {
+      flex-direction: column;
+    }
   }
 
   .apply-callout {
@@ -353,15 +350,17 @@ ol li::before {
     border-radius: 8px;
     padding: 1rem;
     margin: 3rem 0;
-
-  }
-
-  .apply-callout.desktop {
     position: relative;
     display: flex;
-    gap: 2rem;
+    justify-content: space-between;
+    gap: 1rem;
     .column {
       flex: 1;
+    }
+    @media (max-width: $breakpoint-m) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem
     }
   }
 }
@@ -376,6 +375,7 @@ ol li::before {
     border-radius: 0;
   }
 }
+
 .icon-row {
   display: flex;
   gap: $content-space;
@@ -406,16 +406,19 @@ ol li::before {
     border-radius: 0;
   }
 }
+
 #about-1 {
   @media (max-width: $breakpoint-l) {
     background: none;  
   }
 }
+
 #about-2 {
   @media (max-width: $breakpoint-l) {
     background: $bg-secondary-color;
   }
 }
+
 #about-3 {
   @media (max-width: $breakpoint-l) {
     background: $bg-light-color;
@@ -467,7 +470,7 @@ ol li::before {
     background: $bg-light-color;
     /* width: 40%; */
     border-radius: 1rem;
-    padding: 1rem 2rem 0;
+    padding: 2rem;
     & > img {
       display: none;
     }
@@ -482,6 +485,13 @@ ol li::before {
       }
     }
   }
+}
+
+.w100 {
+  width: 100%;
+  @media (min-width: $breakpoint-m) {
+      width: fit-content;
+    }
 }
 
 #btn-row {

@@ -11,18 +11,18 @@
           <div class="flex-title">
             <h1>Prove you’re only using 1 account</h1>
           </div>
-          <div class="subtitle">We use BrightID to stop bots and cheaters, and make our funding more democratic. We’ll walk you through getting set up.</div>
+          <div class="subtitle">We use BrightID to stop bots and cheaters, and make our funding more democratic.</div>
           <h2>What you'll need</h2>
           <ul>
-            <li>An Ethereum wallet</li>
             <li>BrightID – available on <a href="https://apps.apple.com/us/app/brightid/id1428946820" target="_blank"> iOS</a> or <a href="https://play.google.com/store/apps/details?id=org.brightid" target="_blank">Android</a></li>
+            <li>An Ethereum wallet</li>
             <li>Access to Zoom or Google Meet</li>
           </ul>
-          <div class="btn-container" style="margin-top: 2rem;">
-            <div>
-                <div v-if="walletProvider && !currentUser"><wallet-widget /></div>
-                <router-link v-else to="/setup/get-verified/connect" class="btn-primary">Get started</router-link>
-            </div>
+          <router-link to="/sybil-resistance/">Why is this important?</router-link>
+          <div v-if="isRoundFullOrOver" class="warning-message">The current round is no longer accepting new contributions. You can still get BrightID verified to prepare for next time.</div>
+          <div class="btn-container">
+            <wallet-widget v-if="walletProvider && !currentUser" :isActionButton="true" />
+            <router-link v-if="!walletProvider || currentUser" to="/verify/connect" class="btn-primary">Get started</router-link>
             <router-link to="/" class="btn-secondary">Go home</router-link>
           </div>
         </div>
@@ -44,11 +44,9 @@ import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimist
 import { blockExplorer } from '@/api/core'
 
 @Component({
-  name: 'setupLanding',
-  metaInfo: { title: 'Setup' },
   components: { ProgressBar, RoundStatusBanner, WalletWidget },
 })
-export default class SetupLanding extends Vue {
+export default class VerifyLanding extends Vue {
   challengePeriodDuration: number | null = null
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
@@ -65,9 +63,11 @@ export default class SetupLanding extends Vue {
   get walletProvider(): any {
     return (window as any).ethereum
   }
+
   get currentUser(): User | null {
     return this.$store.state.currentUser
   }
+
   get balance(): string | null {
     const balance = this.currentUser?.balance
     if (balance === null || typeof balance === 'undefined') { return null }
@@ -76,6 +76,10 @@ export default class SetupLanding extends Vue {
   
   get blockExplorerUrl(): string {
     return `${blockExplorer}${this.txHash}`
+  }
+
+  get isRoundFullOrOver(): boolean {
+    return this.$store.getters.isRecipientRegistryFull || this.$store.getters.hasContributionPhaseEnded
   }
 
   formatDuration(value: number): string {
@@ -181,7 +185,11 @@ ul {
           height: 1rem;
           position: relative;
           right: 0;
+        }
       }
+      
+      .btn-container {
+        margin-top: 2rem;
       }
     }
   }
@@ -199,5 +207,17 @@ ul {
   position: relative;
 }
 
+.warning-message {
+  border: 1px solid $error-color;
+  background: $bg-primary-color;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin: 1rem 0 0;
+  color: $error-color;
+  font-size: 14px;
+  // &:before {
+  //   content: "⚠️ "
+  // }
+}
 
 </style>    

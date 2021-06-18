@@ -1,6 +1,9 @@
 <template>
   <div class="container">
     <div class="grid">
+      <!-- TODO: use FormProgressWidget.vue component... -->
+      <!-- This is all copy/pasted from there -->
+      <!-- Will likely need to generalize it a bit -->
       <div class="progress-area desktop">
         <div class="progress-container">
           <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
@@ -14,7 +17,7 @@
               class="progress-step"
               :class="{
                 'zoom-link': step !== currentStep,
-                disabled: false, // TODO 
+                disabled: false, // TODO add logic
               }"
               @click="handleStepNav(step)"
             >
@@ -34,8 +37,8 @@
               </template>
             </div>
           </div>
-          <button-row
-            v-bind:isJoin="false"
+          <form-navigation
+            :isJoin="false"
             :isStepValid="isStepValid(currentStep)"
             :steps="steps"
             :currentStep="currentStep"
@@ -51,7 +54,7 @@
           <p>
               Step {{currentStep + 1}} of {{steps.length}}
           </p>
-          <router-link class="cancel-link" to="/setup">
+          <router-link class="cancel-link" to="/verify">
             Cancel
           </router-link>
         </div>
@@ -60,7 +63,7 @@
         <h1>Set up BrightID</h1>
       </div>
       <div class="cancel-area desktop">
-        <router-link class="cancel-link" to="/setup">
+        <router-link class="cancel-link" to="/verify">
           Cancel
         </router-link>
       </div>
@@ -100,14 +103,19 @@
                     <img :src="appLinkQrCode" class="desktop qr-code">
                     <!-- TODO: connection should cause the QR code to appear -->
                     <p class="mobile">Follow this link to connect your wallet to your BrightID app</p>
-                    <a class="mobile" :href="appLink" target="_blank">{{ appLink }}</a>
+                    <a class="mobile" :href="appLink" target="_blank">
+                      <div class="icon">
+                        <img src="@/assets/bright-id.png" />
+                      </div>
+                      {{ appLink }}
+                    </a>
                     <p class="mobile"><em>This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.</em></p>
                 </div>
 
-                <loader v-if="step = 0" />
+                <loader v-if="step === 0" />
             </div>
             <div v-if="!appLinkQrCode">
-              <loader  />
+              <loader />
               <div>Connect your wallet to get started</div>
               <wallet-widget />
             </div>
@@ -123,7 +131,7 @@
                   <h3>Join a BrightID party </h3>
                 </div>
                 <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
-                <img @click="handleToggleTab" v-if="!showExpandedOption" src="@/assets/chevron-down.svg" />
+                <img @click="handleToggleTab" v-else src="@/assets/chevron-down.svg" />
               </div>
               <div v-if="showExpandedOption" id="fastest">
                 <p>
@@ -139,7 +147,7 @@
                   <h3>Join us at “The consensus layer bonanza – an evening with the eth2 researchers”</h3>
                 </div>
                 <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
-                <img @click="handleToggleTab" v-if="!showExpandedOption" src="@/assets/chevron-down.svg" />
+                <img @click="handleToggleTab" v-else src="@/assets/chevron-down.svg" />
               </div>
               <p v-if="showExpandedOption" id="interesting">
                 Information to come
@@ -152,7 +160,7 @@
                   <h3>Connect with 2 verified humans</h3>
                 </div>
                 <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
-                <img @click="handleToggleTab" v-if="!showExpandedOption" src="@/assets/chevron-down.svg" />
+                <img @click="handleToggleTab" v-else src="@/assets/chevron-down.svg" />
               </div>
               <p v-if="showExpandedOption" id="luckiest">
                 Know anyone that's contributed to Gitcoin Grants or clr.fund rounds? They may already be verified. Hit them up and see if they can verify you!
@@ -194,7 +202,7 @@
             <div class="verification-status" v-if="!isVerified">
               <div>
                   <h2>You can't register yet</h2>
-                  <p>You can’t join the round until you’re BrightID verified. Reminder: it can take up to a few hours even after you've met the requirements. <a href="/setup/get-verified/verification">How to get verified</a></p>
+                  <p>You can’t join the round until you’re BrightID verified. Reminder: it can take up to a few hours even after you've met the requirements. <router-link to="/verify/verification">How to get verified</router-link></p>
               </div>
               <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
             </div>
@@ -212,7 +220,13 @@
         </div>
       </div>
       <div class="nav-area nav-bar mobile">
-        <button-row :steps="steps" :currentStep="currentStep" :callBack="saveFormData" />
+        <!-- TODO fix props we pass to form-progress-widget -->
+        <!-- <form-progress-widget
+          :steps="steps"
+          :currentStep="currentStep"
+          :callBack="saveFormData"
+          :isStepValid="isStepValid(currentStep)"
+        /> -->
         <!-- TODO submit button to trigger tx, pass callback to above <botton-row />?  -->
       </div>
     </div>
@@ -221,20 +235,20 @@
 
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
+// TODO do we need validation for this flow? I don't think so...
 import { validationMixin } from 'vuelidate'
-import { required, maxLength, url, email } from 'vuelidate/lib/validators'
-import { isAddress } from '@ethersproject/address'
+// import { required, maxLength, url, email } from 'vuelidate/lib/validators'
+// import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
-import ButtonRow from '@/components/ButtonRow.vue'
+import FormNavigation from '@/components/FormNavigation.vue'
+import FormProgressWidget from '@/components/FormProgressWidget.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 import Warning from '@/components/Warning.vue'
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
-import { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
-import { Project } from '@/api/projects'
 import QRCode from 'qrcode'
 import {
   getBrightIdLink,
@@ -244,26 +258,29 @@ import {
   isSponsoredUser,
   selfSponsor,
   registerUser,
-  BrightIDSteps,
 } from '@/api/bright-id'
-import { User, getProfileImageUrl } from '@/api/user'
+import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
-import {
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_CONTRIBUTOR_DATA,
-  LOGIN_USER,
-  LOGOUT_USER,
-} from '@/store/action-types'
+import { LOAD_USER_INFO } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 
+// TODO is this needed? What data do we need to track in each step of flow?
+// How long should we expect this flow to take some users? Should we store in GUN db?
+// See how this is handled in BrightIdModal.vue
+interface BrightIDSteps {
+    connect: {};
+    verification: {};
+    sponsorship: {};
+    registration: {};
+}
 
 @Component({
   components: {
     LayoutSteps,
     ProgressBar,
-    ButtonRow,
+    FormNavigation,
+    FormProgressWidget,
     Markdown,
     ProjectProfile,
     Warning,
@@ -274,39 +291,24 @@ import { waitForTransaction } from '@/utils/contracts'
   },
   validations: {
     form: {
-      connect: {
-      },
-      verification: {
-      },
-      sponsorship: {
-
-      },
-      registration: {
-
-      },
+      connect: {},
+      verification: {},
+      sponsorship: {},
+      registration: {},
     },
   },
 })
-export default class IndividualityView extends mixins(validationMixin) {
+export default class VerifyView extends mixins(validationMixin) {
   form: BrightIDSteps = {
-    connect: {
-
-    },
-    verification: {
-
-    },
-    sponsorship: {
-
-    },
-    registration: {
-
-    },
+    connect: {},
+    verification: {},
+    sponsorship: {},
+    registration: {},
   }
   currentStep = 0
   steps: string[] = []
   stepNames: string[] = []
   showSummaryPreview = false
-  isVerified = true
   sponsoredBy = 'Gitcoin'
   txFee = '0.00006'
   feeToken = 'ETH'
@@ -314,6 +316,7 @@ export default class IndividualityView extends mixins(validationMixin) {
   fiatSign = '$'
   step = 0
   showExpandedOption = false
+  isSponsored = false // TODO implement
 
   appLink = ''
   appLinkQrCode = ''
@@ -326,6 +329,10 @@ export default class IndividualityView extends mixins(validationMixin) {
 
   private get currentUser(): User {
     return this.$store.state.currentUser
+  }
+
+  private get isVerified(): boolean {
+    return this.$store.state.currentUser?.isVerified
   }
 
   handleToggleTab(event): void {
@@ -439,33 +446,46 @@ export default class IndividualityView extends mixins(validationMixin) {
     this.stepNames = stepNames
     this.form = this.$store.state.recipient || this.form
 
-    // redirect to /setup/ if step doesn't exist
+    // redirect to /verify/ if step doesn't exist
     if (this.currentStep < 0) {
-      this.$router.push({ name: 'setup' })
+      this.$router.push({ name: 'verify' })
     }
-    // "Next" button restricts forward navigation via validation, and
-    // eventually updates the `furthestStep` tracker when valid and clicked/tapped.
-    // If URL step is ahead of furthest, navigate back to furthest
-    
+
     // TODO fetch verification data w/ BrightID - don't need furthest step
     // Particularly for people who are already verified on BrightID...
     // if (this.currentStep > this.form.furthestStep) {
-    //   this.$router.push({ name: 'getVerified', params: { step: steps[this.form.furthestStep] }})
+    //   this.$router.push({ name: 'verifyStep', params: { step: steps[this.form.furthestStep] }})
     // }
 
   }
-  
+
+  // TODO implement
   isStepValid(step: number): boolean {
-    const stepName: string = this.steps[step]
-    return !this.$v.form[stepName]?.$invalid
+    return !!step
   }
 
   // TODO fetch verification data w/ BrightID - don't need furthest step
   isStepUnlocked(step: number): boolean {
-    return true
-    // return step <= this.form.furthestStep
+    switch (step) {
+    case 0:
+      // Connect
+      return true
+    case 1:
+      // Verify
+      return this.isVerified
+    case 2:
+      // Sponsor
+      return this.sponsoredBy.length > 0
+    case 3:
+      // Register
+      return this.registrationTxHash.length > 0
+    default:
+      return false
+    }
   }
 
+  // TODO refactor/remove - this is copied from Join.vue
+  // Not sure if we need to save any form data
   saveFormData(): void {
     if (typeof this.currentStep !== 'number') return
     // TODO update to SET_CONTRIBUTOR_DATA
@@ -476,13 +496,15 @@ export default class IndividualityView extends mixins(validationMixin) {
     })
   }
 
+  // TODO refactor/remove - this is copied from Join.vue
+  // Not sure if we need to save any form data
   handleStepNav(step): void {
     // Save form data
     this.saveFormData()
     // Navigate
     if (this.isStepUnlocked(step)) {
       this.$router.push({
-        name: 'getVerified',
+        name: 'verifyStep',
         params: {
           step: this.steps[step],
         },
@@ -1212,5 +1234,18 @@ export default class IndividualityView extends mixins(validationMixin) {
 .mx0 {
   margin-left: 0;
   margin-right: 0;
+}
+
+.icon {
+  $icon-height: 5rem;
+  height: $icon-height;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  img {
+    width: $icon-height;
+    aspect-ratio: 1;
+  }
 }
 </style>

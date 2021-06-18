@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: refactor this to something more generalized -->
   <div>
     <div class="btn-row" v-if="isJoin">
       <button
@@ -6,7 +7,7 @@
         @click="handleStepNav(currentStep - 1)"
         class="btn-secondary"
         :class="{
-          disabled: navDisabled,
+          disabled: isNavDisabled,
         }"
       >
         Previous
@@ -51,14 +52,14 @@
         @click="handleStepNav(currentStep - 1)"
         class="btn-secondary"
         :class="{
-          disabled: navDisabled,
+          disabled: isNavDisabled,
         }"
       >
         Previous
       </button>
       <router-link
         v-if="currentStep === 3"
-        to="/setup/verified"
+        to="/verify/success"
         class="btn-primary"
       >
         Finish
@@ -80,15 +81,16 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
 @Component
-export default class ButtonRow extends Vue {
+export default class FormNavigation extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]
   @Prop() isStepValid!: boolean
   @Prop() callback!: (updateFurthest?: boolean) => void
   @Prop() handleStepNav!: () => void
-  @Prop() navDisabled!: boolean
   @Prop() isJoin!: boolean
+  @Prop() isNavDisabled!: boolean
 
+  // TODO is this needed? Why do we pass `callback` & `handleStepNav`?
   handleNext(): void {
     // Save form data (first saves when user hits Next after first step)
     this.callback(true) // "true" checks to update furthest step
@@ -100,22 +102,10 @@ export default class ButtonRow extends Vue {
       },
     })
   }
+
   handlePrev(): void {
     this.callback()
-    this.$router.push({
-      name: 'joinStep',
-      params: {
-        step: this.steps[this.currentStep - 1],
-      },
-    })
   }
-  handleSubmit(): void {
-    alert('submitted')
-    // Submit form data
-    // Clear form store/state data
-  }
-  // Pushing to router stack destroys local form state
-  // Place form data in $store?
 }
 </script>
 

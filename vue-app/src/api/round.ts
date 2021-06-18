@@ -13,6 +13,7 @@ export interface RoundInfo {
   maciAddress: string;
   recipientTreeDepth: number;
   maxContributors: number;
+  maxRecipients: number;
   maxMessages: number;
   coordinatorPubKey: PubKey;
   nativeTokenAddress: string;
@@ -28,6 +29,12 @@ export interface RoundInfo {
   contributions: FixedNumber;
   contributors: number;
   messages: number;
+}
+
+export interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
 }
 
 export enum RoundStatus {
@@ -152,6 +159,7 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
     maciAddress,
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
     maxContributors: 2 ** maciTreeDepths.stateTreeDepth - 1,
+    maxRecipients: 5 ** maciTreeDepths.voteOptionTreeDepth - 1,
     maxMessages: 2 ** maciTreeDepths.messageTreeDepth - 1,
     coordinatorPubKey,
     nativeTokenAddress,

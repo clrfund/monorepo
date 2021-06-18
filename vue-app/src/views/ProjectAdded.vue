@@ -1,4 +1,3 @@
-@ -0,0 +1,36 @@
 <template>
   <div>
     <round-status-banner />
@@ -10,7 +9,7 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Project submitted!</h1>
-            <a v-if="txHash" :href="blockExplorerUrl" target="_blank"><div class="etherscan-btn"><img class="icon" style="width: 16px" src="@/assets/etherscan.svg" />Etherscan ↗</div></a>
+            <transaction-receipt :hash="txHash" />
           </div>
           <div class="subtitle">You’re almost on board this funding round</div>
           <ul>
@@ -34,25 +33,23 @@ import * as humanizeDuration from 'humanize-duration'
 
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
+import TransactionReceipt from '@/components/TransactionReceipt.vue'
+import Warning from '@/components/Warning.vue'
 
 import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
 
 @Component({
-  name: 'projectAdded',
-  metaInfo: { title: 'project added' },
-  components: { ProgressBar, RoundStatusBanner },
+  components: { ProgressBar, RoundStatusBanner, TransactionReceipt, Warning },
 })
 export default class ProjectAdded extends Vue {
   challengePeriodDuration: number | null = null
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
-  
-  // TODO: Retrieve hash of transaction. 
-  // We route to this component, pass hash as queryParam after submission?
-  txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
+  txHash = ''
 
   async created() {
+    this.txHash = this.$route.params.txHash
     const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
     this.challengePeriodDuration = registryInfo.challengePeriodDuration
   }
@@ -61,8 +58,8 @@ export default class ProjectAdded extends Vue {
     return `${blockExplorer}${this.txHash}`
   }
 
-  formatDuration(value: number): string {
-    return humanizeDuration(value * 1000, { largest: 1 } )
+  formatDuration(seconds: number): string {
+    return humanizeDuration(seconds * 1000, { largest: 1 } )
   }
 }
 

@@ -1,16 +1,19 @@
 @import "./vars";
 
 @mixin button($color, $background, $border) {
+  display: block;
+  box-sizing: border-box;
   padding: 0.5rem 1.5rem;
   border-radius: 2rem;
   font-size: 1rem;
   font-weight: 600;
   line-height: 150%;
+  max-height: 2.75rem;
   text-align: center;
-  box-sizing: border-box;
   color: $color;
   background: $background;
   border: $border;
+  white-space: nowrap;
   &:hover {
     opacity: 0.8;
     transform: scale(1.02);
@@ -19,7 +22,7 @@
 }
 
 .btn-primary {
-  @include button(white, $clr-green, 2px solid $clr-green);
+  @include button(white, $clr-green, none);
 }
 
 .btn-og {
@@ -35,13 +38,18 @@
 }
 
 .etherscan-btn {
-  @include button($bg-primary-color, #fff, 1px solid $bg-light-color);
+  @include button(white, $clr-pink-light-gradient-inactive, 1px solid $bg-light-color);
   box-shadow: $box-shadow;
   display: flex;
   gap: 0.5rem;
   padding: 0.5rem;
   font-size: 14px;
   font-weight: 500;
+  &:hover {
+    opacity: 1;
+    transform: scale(1);
+    cursor: default;
+  }
 }
 
 .btn-white {
@@ -52,7 +60,6 @@
   @include button($error-color, none, 2px solid $error-color);
 }
 
-// app button for use in nav bar
 .app-btn {
   @include button(white, $clr-pink-light-gradient, none);
   padding: 0.25rem 1.25rem;
@@ -65,4 +72,29 @@
   border-radius: 8px;
   margin-right: 0.5rem;
   display: flex;
+}
+
+.warning-text {
+  font-size: 12px;
+  font-family: Inter;
+  line-height: 150%;
+  color: $warning-color;
+  text-transform: uppercase;  
+  font-weight: 500;
+}
+
+.button-loader {
+  margin: 0.25rem;
+  padding: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.button-loader:after {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  border-color: #fff transparent #fff transparent;
 }

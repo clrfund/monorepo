@@ -14,6 +14,7 @@ export interface RegistryInfo {
   depositToken: string;
   challengePeriodDuration: number;
   listingPolicyUrl: string;
+  recipientCount: number;
 }
 
 export async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
@@ -21,11 +22,13 @@ export async function getRegistryInfo(registryAddress: string): Promise<Registry
   const deposit = await registry.baseDeposit()
   const challengePeriodDuration = await registry.challengePeriodDuration()
   const network = await provider.getNetwork()
+  const recipientCount = await registry.getRecipientCount()
   return {
     deposit,
     depositToken: getNetworkToken(network),
     challengePeriodDuration: challengePeriodDuration.toNumber(),
     listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
+    recipientCount: recipientCount.toNumber(),
   }
 }
 
@@ -187,20 +190,58 @@ export async function getRequests(
   return requests
 }
 
+// TODO merge this with `Project` inteface
 export interface RecipientData {
   name: string;
   description: string;
-  imageHash: string;
+  imageHash?: string; // TODO remove - old flow
   address: string;
+  tagline?: string;
+  category?: string;
+  problemSpace?: string;
+  plans?: string;
+  teamName?: string;
+  teamDescription?: string;
+  githubUrl?: string;
+  radicleUrl?: string;
+  websiteUrl?: string;
+  twitterUrl?: string;
+  discordUrl?: string;
+  // fields different vs. Project
+  bannerImageHash?: string;
+  thumbnailImageHash?: string;
+}
+
+function formToRecipientData(data: RecipientApplicationData): RecipientData {
+  const { project, fund, team, links, image } = data
+  return {
+    address: fund.address,
+    name: project.name,
+    tagline: project.tagline,
+    description: project.description,
+    category: project.category,
+    problemSpace: project.problemSpace,
+    plans: fund.plans,
+    teamName: team.name,
+    teamDescription: team.description,
+    githubUrl: links.github,
+    radicleUrl: links.radicle,
+    websiteUrl: links.website,
+    twitterUrl: links.twitter,
+    discordUrl: links.discord,
+    bannerImageHash: image.bannerHash,
+    thumbnailImageHash: image.thumbnailHash,
+  }
 }
 
 export async function addRecipient(
   registryAddress: string,
-  recipientData: RecipientData,
+  recipientApplicationData: RecipientApplicationData,
   deposit: BigNumber,
   signer: Signer,
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
+  const recipientData = formToRecipientData(recipientApplicationData)
   const { address, ...metadata } = recipientData
   const transaction = await registry.addRecipient(address, JSON.stringify(metadata), { value: deposit })
   return transaction
