@@ -59,8 +59,8 @@ async function main() {
   )
   const maciParameters = await MaciParameters.read(maciFactory)
   maciParameters.update({
-    signUpDuration: 300,  // 5 minutes
-    votingDuration: 300,
+    signUpDuration: 60 * 5,  // 5 minutes
+    votingDuration: 60 * 5,
   })
   await factory.setMaciParameters(...maciParameters.values())
 
@@ -290,23 +290,23 @@ async function main() {
     await recipientRegistry.executeRequest(recipient2Id)
   }
 
-  // Deploy new funding round and MACI
-  await factory.deployNewRound();
-  const fundingRoundAddress = await factory.getCurrentRound()
-  console.log(`Funding round deployed: ${fundingRoundAddress}`)
-  const fundingRound = await ethers.getContractAt(
-    'FundingRound',
-    fundingRoundAddress,
-  )
-  const maciAddress = await fundingRound.maci()
-  console.log(`MACI address: ${maciAddress}`)
+  // // Deploy new funding round and MACI
+  // await factory.deployNewRound();
+  // const fundingRoundAddress = await factory.getCurrentRound()
+  // console.log(`Funding round deployed: ${fundingRoundAddress}`)
+  // const fundingRound = await ethers.getContractAt(
+  //   'FundingRound',
+  //   fundingRoundAddress,
+  // )
+  // const maciAddress = await fundingRound.maci()
+  // console.log(`MACI address: ${maciAddress}`)
 
-  // Save the current state of the round
-  fs.writeFileSync('state.json', JSON.stringify({
-    factory: factory.address,
-    fundingRound: fundingRoundAddress,
-    coordinatorPrivKey: coordinatorKeyPair.privKey.serialize(),
-  }))
+  // // Save the current state of the round
+  // fs.writeFileSync('state.json', JSON.stringify({
+  //   factory: factory.address,
+  //   fundingRound: fundingRoundAddress,
+  //   coordinatorPrivKey: coordinatorKeyPair.privKey.serialize(),
+  // }))
 }
 
 main()
