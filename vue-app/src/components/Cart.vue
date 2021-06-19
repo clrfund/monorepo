@@ -462,10 +462,7 @@ export default class Cart extends Vue {
   }
 
   getTotal(): BigNumber {
-    const { cart } = this.$store.state
-    const { hasUserContributed } = this.$store.getters
-
-    return hasUserContributed ? this.contribution : this.getCartTotal(cart)
+    return this.getCartTotal(this.$store.state.cart)
   }
 
   private isGreaterThanMax(): boolean {
