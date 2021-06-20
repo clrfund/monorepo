@@ -1,3 +1,4 @@
 node_modules
 vue-app/.env
 vue-app/gundata/
+vetur.config.js
