@@ -255,19 +255,22 @@ export function getRequestId(
   return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
-// TODO add new project fields
 function decodeProject(requestSubmittedEvent: Event): Project {
   const args = requestSubmittedEvent.args as any
   if (args._type !== RequestTypeCode.Registration) {
     throw new Error('not a registration request')
   }
   const metadata = JSON.parse(args._metadata)
+
+  // imageUrl is the legacy form property - fall back to this if bannerImageHash or thumbnailImageHash don't exist
+  const imageUrl = `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`
+
   return {
     id: args._recipientId,
     address: args._recipient,
     name: metadata.name,
     description: metadata.description,
-    imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
+    imageUrl,
     // Only unregistered project can have invalid index 0
     index: 0,
     isHidden: false,
@@ -286,8 +289,8 @@ function decodeProject(requestSubmittedEvent: Event): Project {
     websiteUrl: metadata.websiteUrl,
     twitterUrl: metadata.twitterUrl,
     discordUrl: metadata.discordUrl,
-    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`,
-    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`,
+    bannerImageUrl: metadata.bannerImageHash ? `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}` : imageUrl,
+    thumbnailImageUrl: metadata.thumbnailImageHash ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}` : imageUrl,
   }
 }
 
