@@ -81,7 +81,7 @@
         'reallocation-row-warning': this.isGreaterThanInitialContribution()
         }">
         <span>Your cart</span> 
-        <div class="reallocation-warning"><span v-if="this.isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getTotal())}} {{tokenSymbol}}</div>
+        <div class="reallocation-warning"><span v-if="this.isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getCartTotal(this.$store.state.cart))}} {{tokenSymbol}}</div>
       </div>  
       <div v-if="hasUnallocatedFunds()" class="reallocation-row-matching-pool">
         <div>
@@ -155,7 +155,7 @@
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
       <span class="total-label">Total</span>
       <div>
-        <span v-if="this.isGreaterThanInitialContribution() && $store.getters.isRoundReallocationPhase">{{ formatAmount(getTotal()) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> 
+        <span v-if="this.isGreaterThanInitialContribution() && $store.getters.hasUserContributed">{{ formatAmount(getCartTotal(this.$store.state.cart)) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> 
         <span v-else>{{ formatAmount(getTotal()) }}</span> 
         {{ tokenSymbol }}
       </div>
@@ -462,7 +462,10 @@ export default class Cart extends Vue {
   }
 
   getTotal(): BigNumber {
-    return this.getCartTotal(this.$store.state.cart)
+    const { cart } = this.$store.state
+    const { hasUserContributed } = this.$store.getters
+
+    return hasUserContributed ? this.contribution : this.getCartTotal(cart)
   }
 
   private isGreaterThanMax(): boolean {
@@ -474,7 +477,7 @@ export default class Cart extends Vue {
   }
 
   private isGreaterThanInitialContribution(): boolean {
-    return this.getTotal().gt(this.contribution)
+    return this.getCartTotal(this.$store.state.cart).gt(this.contribution)
   }
 
   get balance(): string | null {
