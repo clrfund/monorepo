@@ -152,11 +152,9 @@ export const mutations = {
       } else {
         state.cart.push(addedItem)
       }
-    } else if (state.cart[itemIndex].isCleared) {
-      // Restore cleared item
-      Vue.set(state.cart, itemIndex, addedItem)
     } else {
-      throw new Error('item is already in the cart')
+      console.warn('item is already in the cart') /* eslint-disable-line no-console */
+      Vue.set(state.cart, itemIndex, addedItem)
     }
   },
   [UPDATE_CART_ITEM](state, updatedItem: CartItem) {
@@ -461,8 +459,6 @@ const getters = {
   canUserReallocate: (_, getters): boolean => {
     return getters.hasUserContributed && (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
   },
-
-  // might need a state for user has updated cart during reallocation
 }
 
 const store: StoreOptions<RootState> = {

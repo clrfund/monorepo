@@ -81,7 +81,7 @@
         'reallocation-row-warning': this.isGreaterThanInitialContribution()
         }">
         <span>Your cart</span> 
-        <div class="reallocation-warning"><span v-if="this.isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getTotal())}} {{tokenSymbol}}</div>
+        <div class="reallocation-warning"><span v-if="this.isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getCartTotal(this.$store.state.cart))}} {{tokenSymbol}}</div>
       </div>  
       <div v-if="hasUnallocatedFunds()" class="reallocation-row-matching-pool">
         <div>
@@ -109,9 +109,9 @@
         Funds you don't contribute to projects ({{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}) will be sent to the matching pool at the end of the round.
         Your cart must add up to your original {{ formatAmount(this.contribution) }} {{tokenSymbol}} donation.
       </div>
-      <!-- <div v-if="canRegisterWithBrightId" @click="registerWithBrightId()" class="btn-primary"> -->
+      <!-- TODO check logic - will this ever be true? within canUserReallocate conditional -->
       <div class="p1" v-if="canRegisterWithBrightId">
-        <router-link to="/setup" class="btn-primary"> 
+        <router-link to="/verify" class="btn-primary"> 
           Verify with BrightID
         </router-link>
       </div>
@@ -138,15 +138,27 @@
       </button>
       <cart-time-left v-if="$store.getters.canUserReallocate && isEditMode" class="time-left" />
     </div>
-    <div id="cart-bottom-scroll-point"></div>
+    <div class="line-item-bar" v-if="$store.getters.hasUserContributed && !isEditMode">
+      <div class="line-item">
+        <span>Projects</span>
+        <div>
+          <span>{{ formatAmount(getCartTotal($store.state.committedCart))}} {{ tokenSymbol }}</span>
+        </div>
+      </div>
+      <div class="line-item">
+        <span>Matching Pool</span>
+        <div>
+          <span>{{ getCartMatchingPoolTotal() }} {{ tokenSymbol }}</span>
+        </div>
+      </div>
+    </div>
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
+      <span class="total-label">Total</span>
       <div>
-        <span class="total-label">Total</span> 
-        <span v-if="this.isGreaterThanInitialContribution() && $store.getters.isRoundReallocationPhase">{{ formatAmount(getTotal()) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> 
+        <span v-if="this.isGreaterThanInitialContribution() && $store.getters.hasUserContributed">{{ formatAmount(getCartTotal(this.$store.state.cart)) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> 
         <span v-else>{{ formatAmount(getTotal()) }}</span> 
         {{ tokenSymbol }}
       </div>
-      <div class="btn-secondary" @click="scrollToBottom"><img src="@/assets/chevron-down.svg" /></div>
     </div>
     <!-- <div class="reallocation-bar-container">
       <div class="reallocation-bar" /> 
@@ -176,6 +188,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import {
   SET_CURRENT_USER,
   TOGGLE_EDIT_SELECTION,
+  UPDATE_CART_ITEM,
 } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 import {
@@ -220,9 +233,7 @@ export default class Cart extends Vue {
       text: 'Remove all', icon: 'remove.svg',
     },
     {
-      callback: () => {
-        alert('TODO: Split evenly between projects in cart')
-      },
+      callback: this.splitContributionsEvenly,
       text: 'Split evenly', icon: 'split.svg',
     },
   ]
@@ -433,6 +444,10 @@ export default class Cart extends Vue {
     return invalidCount === 0
   }
 
+  public getCartMatchingPoolTotal(): string {
+    return this.formatAmount(this.contribution.sub(this.getCartTotal(this.$store.state.committedCart)))
+  }
+
   private getCartTotal(cart: Array<CartItem>): BigNumber {
     const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
     return cart.reduce((total: BigNumber, item: CartItem) => {
@@ -447,10 +462,10 @@ export default class Cart extends Vue {
   }
 
   getTotal(): BigNumber {
-    const { cart, committedCart } = this.$store.state
-    const { hasReallocationPhaseEnded } = this.$store.getters
+    const { cart } = this.$store.state
+    const { hasUserContributed } = this.$store.getters
 
-    return this.getCartTotal(hasReallocationPhaseEnded ? committedCart : cart)
+    return hasUserContributed ? this.contribution : this.getCartTotal(cart)
   }
 
   private isGreaterThanMax(): boolean {
@@ -462,7 +477,7 @@ export default class Cart extends Vue {
   }
 
   private isGreaterThanInitialContribution(): boolean {
-    return this.getTotal().gt(this.contribution)
+    return this.getCartTotal(this.$store.state.cart).gt(this.contribution)
   }
 
   get balance(): string | null {
@@ -593,10 +608,27 @@ export default class Cart extends Vue {
     document.getElementById('cart-dropdown')?.classList.toggle('show')
   }
 
-  scrollToBottom(): void {
-    const el = document.getElementById('cart-bottom-scroll-point')
-    if (!el) return
-    el.scrollIntoView({ behavior: 'smooth' })
+  splitContributionsEvenly(): void {
+    this.$store.commit(TOGGLE_EDIT_SELECTION, true)
+
+    const { cart } = this.$store.state
+    const filteredCart = cart.filter((item) => !item.isCleared) // Filter out isCleared cart items for accurate split
+    const total = this.$store.getters.canUserReallocate
+      ? this.formatAmount(this.contribution)
+      : filteredCart.reduce((acc, curr) => acc += parseFloat(curr.amount), 0)
+    const splitAmount = total / filteredCart.length
+    // Each iteration subtracts from the totalRemaining until the last round to accomodate for decimal rounding. ex 10/3
+    let totalRemaining = Number(total)
+
+    filteredCart.map((item: CartItem, index: number) => {
+      if (filteredCart.length-1 === index) {
+        this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount: parseFloat(totalRemaining.toFixed(5)).toString() })
+      } else {
+        this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount: parseFloat(splitAmount.toFixed(5)).toString() })
+        totalRemaining -= Number(splitAmount.toFixed(5))
+      }
+    })
+    this.$store.dispatch(SAVE_CART)
   }
 }
 
@@ -798,6 +830,25 @@ h2 {
   }
 }
 
+.line-item-bar {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  padding: 1rem 0;
+  background: $bg-primary-color;
+  font-family: "Inter";
+  font-size: 1rem;
+  line-height: 0;
+  font-weight: 400;
+}
+
+.line-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
 .total-bar {
   box-sizing: border-box;
   display: flex;
@@ -813,6 +864,7 @@ h2 {
   font-size: 1rem;
   line-height: 0;
   font-weight: 400;
+  height: 60px;
   @media (max-width: $breakpoint-m) {
     position: fixed;
     bottom: 4rem;
