@@ -37,15 +37,14 @@
         <div v-if="txHasDeposit" class="checkout-row">
           <p class="m05"><b>Security deposit</b></p>
           <p class="m05">{{ depositAmount }} {{ depositToken }}
-            <!-- TODO fetch ETH price for fiat estimate -->
-            <!-- <span class="o5">({{fiatSign}}{{fiatFee}})</span>  -->
+            <span class="o5">({{fiatSign}}{{ calculateFiatFee(this.registryInfo.deposit) }})</span> 
           </p>
         </div>
         <!-- TODO estimate transaction fee -->
-        <!-- <div class="checkout-row">
-          <p class="m05"><b>Estimated transaction fee</b></p>
-          <p class="m05">{{txFee}} {{feeToken}} <span class="o5">({{fiatSign}}{{fiatFee}})</span> </p>
-        </div> -->
+        <div class="checkout-row">
+          <p class="m05"><b>Est. transaction fee</b></p>
+          <p class="m05">{{ gasFeeAmount }} {{feeToken}} <span class="o5">({{fiatSign}}{{ calculateFiatFee(this.estimatedGasFee) }})</span> </p>
+        </div>
         <div class="cta">
           <button
             @click="handleSubmit"
@@ -65,9 +64,13 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
+import { BigNumber, Contract, Signer } from 'ethers'
+import { OptimisticRecipientRegistry } from '@/api/abi'
+import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import {
   addRecipient,
   getRegistryInfo,
+  RecipientApplicationData,
   RegistryInfo,
 } from '@/api/recipient-registry-optimistic'
 import { User } from '@/api/user'
@@ -99,18 +102,33 @@ export default class RecipientSubmissionWidget extends Vue {
   isTxRejected = false // TODO add logic
   txHash = ''
   txError = ''
-  // TODO
-  // txFee = '0.00006' // TODO add logic
-  // hasLowFunds = false // TODO add logic
-  // feeToken = 'ETH' // TODO add logic
-  // fiatFee = '1.04' // TODO add logic
-  // fiatSign = '$' // TODO add logic
-
+  ethPrice: EthPrice | null = null
+  fiatFee = '-'
+  fiatSign = '$'
+  estimatedGasFee: BigNumber = BigNumber.from(0)
+  feeToken = 'ETH'
   registryInfo: RegistryInfo | null = null
+  recipientRegistryAddress: string | null = null
+  signer: Signer | null = null
+  recipient: RecipientApplicationData | null = null
+  hasLowFunds = false // TODO add logic
+  
 
   async created() {
     this.registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
     this.isLoading = false
+    this.ethPrice = await fetchCurrentEthPrice()
+    this.recipientRegistryAddress = this.$store.state.recipientRegistryAddress
+    this.signer = this.$store.state.currentUser ? this.$store.state.currentUser.walletProvider.getSigner() : null
+    this.recipient = this.$store.state.recipient
+    this.estimatedGasFee = await this.getEstimatedGasFee()
+  }
+
+  async updated() {
+    this.recipientRegistryAddress = this.$store.state.recipientRegistryAddress
+    this.signer = this.$store.state.currentUser ? this.$store.state.currentUser.walletProvider.getSigner() : null
+    this.recipient = this.$store.state.recipient
+    this.estimatedGasFee = await this.getEstimatedGasFee()
   }
 
   get currentUser(): User | null {
@@ -137,6 +155,10 @@ export default class RecipientSubmissionWidget extends Vue {
     return this.registryInfo ? formatAmount(this.registryInfo.deposit, 18) : '...'
   }
 
+  get gasFeeAmount(): string {
+    return this.estimatedGasFee ? formatAmount(this.estimatedGasFee, 18) : '-'
+  }
+ 
   get depositToken(): string {
     return this.registryInfo?.depositToken ?? ''
   }
@@ -145,35 +167,57 @@ export default class RecipientSubmissionWidget extends Vue {
     this.addRecipient()
   }
 
-  private async addRecipient() {
-    // TODO move to create()?
-    const recipientRegistryAddress = this.$store.state.recipientRegistryAddress
-    const signer = this.$store.state.currentUser.walletProvider.getSigner()
-    const recipient = this.$store.state.recipient
-    // TODO use this.registryInfo
-    const registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+  public calculateFiatFee(ethAmount: BigNumber): string {
+    if (this.registryInfo && this.ethPrice) {
+      return Number(this.ethPrice.ethereum.usd * Number(formatAmount(ethAmount, 18))).toFixed(2)
+    }
+    return '-'
+  }
 
+  private async getEstimatedGasFee(): Promise<BigNumber> {
+    if (
+      this.registryInfo
+      && this.ethPrice
+      && this.walletProvider
+      && this.recipientRegistryAddress
+      && this.recipient
+    ) {
+      const registry = new Contract(this.recipientRegistryAddress, OptimisticRecipientRegistry, this.walletProvider)
+
+      return await registry.estimateGas.addRecipient(this.recipient.fund.address, JSON.stringify({
+        ...this.recipient.fund,
+        ...this.recipient.links,
+        ...this.recipient.image,
+        ...this.recipient.project,
+      }), {value: this.registryInfo.deposit})
+    }
+    return BigNumber.from(0)
+  }
+
+  private async addRecipient() {
     // TODO where to make `isPending` vs. `isWaiting`? In `waitForTransaction`?
     // Check out Launchpad repo to view transaction states
     this.isWaiting = true
-    try {
-      await waitForTransaction(
-        addRecipient(recipientRegistryAddress, recipient, registryInfo.deposit, signer),
-        (hash) => this.txHash = hash,
-      )
-    } catch (error) {
+    if (this.recipientRegistryAddress && this.recipient && this.registryInfo && this.signer) {
+      try {
+        await waitForTransaction(
+          addRecipient(this.recipientRegistryAddress, this.recipient, this.registryInfo.deposit, this.signer),
+          (hash) => this.txHash = hash,
+        )
+      } catch (error) {
+        this.isWaiting = false
+        this.txError = error.message
+        return
+      }
       this.isWaiting = false
-      this.txError = error.message
-      return
-    }
-    this.isWaiting = false
 
-    this.$router.push({
-      name: 'projectAdded',
-      params: {
-        txHash: this.txHash,
-      },
-    })
+      this.$router.push({
+        name: 'projectAdded',
+        params: {
+          txHash: this.txHash,
+        },
+      })
+    }
   }
 }
 </script>
