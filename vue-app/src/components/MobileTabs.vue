@@ -87,7 +87,7 @@ export default class MobileTabs extends Vue {
   }
 
   get isOnCartOrRoundPage(): boolean {
-    return this.$route.name === 'cart' || this.$route.name === 'round information'
+    return this.$route.name === 'cart' || this.$route.name === 'round-information'
   }
 }
 </script>
