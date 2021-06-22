@@ -81,7 +81,7 @@
         'reallocation-row-warning': this.isGreaterThanInitialContribution()
         }">
         <span>Your cart</span> 
-        <div class="reallocation-warning"><span v-if="this.isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getTotal())}} {{tokenSymbol}}</div>
+        <div class="reallocation-warning"><span v-if="this.isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getCartTotal(this.$store.state.cart))}} {{tokenSymbol}}</div>
       </div>  
       <div v-if="hasUnallocatedFunds()" class="reallocation-row-matching-pool">
         <div>
@@ -90,7 +90,7 @@
         </div>
         + {{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}
       </div> 
-      <div class="split-link" v-if="this.isGreaterThanInitialContribution() || hasUnallocatedFunds()"><img src="@/assets/split.svg" /> Split {{ formatAmount(this.contribution) }} {{tokenSymbol}} evenly</div>
+      <div @click="splitContributionsEvenly" class="split-link" v-if="this.isGreaterThanInitialContribution() || hasUnallocatedFunds()"><img src="@/assets/split.svg" /> Split {{ formatAmount(this.contribution) }} {{tokenSymbol}} evenly</div>
       <!-- TODO: should probably only appear if more than 1 item in cart -->
     </div>
     <div class="submit-btn-wrapper"
@@ -155,7 +155,7 @@
     <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
       <span class="total-label">Total</span>
       <div>
-        <span v-if="this.isGreaterThanInitialContribution() && $store.getters.isRoundReallocationPhase">{{ formatAmount(getTotal()) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> 
+        <span v-if="this.isGreaterThanInitialContribution() && $store.getters.hasUserContributed">{{ formatAmount(getCartTotal(this.$store.state.cart)) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> 
         <span v-else>{{ formatAmount(getTotal()) }}</span> 
         {{ tokenSymbol }}
       </div>
@@ -223,7 +223,7 @@ export default class Cart extends Vue {
   
   removeAll(): void {
     this.$store.commit(CLEAR_CART)
-    this.$store.commit(SAVE_CART)
+    this.$store.dispatch(SAVE_CART)
     this.$store.commit(TOGGLE_EDIT_SELECTION, true)
   }
 
@@ -493,7 +493,7 @@ export default class Cart extends Vue {
   }
 
   private isGreaterThanInitialContribution(): boolean {
-    return this.getTotal().gt(this.contribution)
+    return this.getCartTotal(this.$store.state.cart).gt(this.contribution)
   }
 
   get balance(): string | null {
