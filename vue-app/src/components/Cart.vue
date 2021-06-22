@@ -90,7 +90,7 @@
         </div>
         + {{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}
       </div> 
-      <div class="split-link" v-if="this.isGreaterThanInitialContribution() || hasUnallocatedFunds()"><img src="@/assets/split.svg" /> Split {{ formatAmount(this.contribution) }} {{tokenSymbol}} evenly</div>
+      <div @click="splitContributionsEvenly" class="split-link" v-if="this.isGreaterThanInitialContribution() || hasUnallocatedFunds()"><img src="@/assets/split.svg" /> Split {{ formatAmount(this.contribution) }} {{tokenSymbol}} evenly</div>
       <!-- TODO: should probably only appear if more than 1 item in cart -->
     </div>
     <div class="submit-btn-wrapper"
@@ -124,8 +124,7 @@
       </button>
       <button
         v-if="!isCartEmpty"
-        :class="{'btn-action': !errorMessage,
-        'btn-action disabled': errorMessage }"
+        :class="{'btn-action': !errorMessage, 'btn-action disabled': errorMessage }"
         @click="submitCart"
         :disabled="errorMessage"
       >
@@ -223,7 +222,7 @@ export default class Cart extends Vue {
   
   removeAll(): void {
     this.$store.commit(CLEAR_CART)
-    this.$store.commit(SAVE_CART)
+    this.$store.dispatch(SAVE_CART)
     this.$store.commit(TOGGLE_EDIT_SELECTION, true)
   }
 
