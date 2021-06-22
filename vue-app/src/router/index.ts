@@ -41,7 +41,7 @@ const routes = [
   },
   {
     path: '/round-information',
-    name: 'round information',
+    name: 'round-information',
     component: RoundInformation,
   },
   {
@@ -61,22 +61,22 @@ const routes = [
   },
   {
     path: '/about-maci',
-    name: 'about maci',
+    name: 'about-maci',
     component: AboutMaci,
   },
   {
     path: '/about-sybil-resistance',
-    name: 'about sybil resistance',
+    name: 'about-sybil-resistance',
     component: AboutSybilAttacks,
   },
   {
     path: '/about-layer2',
-    name: 'about layer 2',
+    name: 'about-layer-2',
     component: AboutLayer2,
   },
   {
     path: '/how-it-works',
-    name: 'how it works',
+    name: 'how-it-works',
     component: HowItWorks,
   },
   {
@@ -96,7 +96,7 @@ const routes = [
   },
   {
     path: '/verify/:step',
-    name: 'verifyStep',
+    name: 'verify-step',
     component: VerifyView,
   },
   {
@@ -106,12 +106,12 @@ const routes = [
   },
   {
     path: '/join/success',
-    name: 'projectAdded',
+    name: 'project-added',
     component: ProjectAdded,
   },
   {
     path: '/join/:step',
-    name: 'joinStep',
+    name: 'join-step',
     component: JoinView,
   },
   {

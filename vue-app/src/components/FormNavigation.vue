@@ -96,7 +96,7 @@ export default class FormNavigation extends Vue {
     this.callback(true) // "true" checks to update furthest step
     // Navigate forward
     this.$router.push({
-      name: 'joinStep',
+      name: 'join-step',
       params: {
         step: this.steps[this.currentStep + 1],
       },

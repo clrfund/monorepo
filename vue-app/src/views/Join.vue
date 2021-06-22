@@ -665,7 +665,7 @@ export default class JoinView extends mixins(validationMixin) {
     // eventually updates the `furthestStep` tracker when valid and clicked/tapped.
     // If URL step is ahead of furthest, navigate back to furthest
     if (this.currentStep > this.form.furthestStep) {
-      this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
+      this.$router.push({ name: 'join-step', params: { step: steps[this.form.furthestStep] }})
     }
 
     // if (process.env.NODE_ENV === 'development') {
@@ -773,7 +773,7 @@ export default class JoinView extends mixins(validationMixin) {
     // Navigate
     if (this.isStepUnlocked(step)) {
       this.$router.push({
-        name: 'joinStep',
+        name: 'join-step',
         params: {
           step: this.steps[step],
         },

@@ -454,7 +454,7 @@ export default class VerifyView extends mixins(validationMixin) {
     // TODO fetch verification data w/ BrightID - don't need furthest step
     // Particularly for people who are already verified on BrightID...
     // if (this.currentStep > this.form.furthestStep) {
-    //   this.$router.push({ name: 'verifyStep', params: { step: steps[this.form.furthestStep] }})
+    //   this.$router.push({ name: 'verify-step', params: { step: steps[this.form.furthestStep] }})
     // }
 
   }
@@ -504,7 +504,7 @@ export default class VerifyView extends mixins(validationMixin) {
     // Navigate
     if (this.isStepUnlocked(step)) {
       this.$router.push({
-        name: 'verifyStep',
+        name: 'verify-step',
         params: {
           step: this.steps[step],
         },
