@@ -94,3 +94,25 @@ yarn start:web
 yarn lint
 ```
 
+### Visual Studio Code
+As a recommendation, use the [Vetur](https://vuejs.github.io/vetur/) extension.
+It gives you some useful features for Vue like syntax highlights, autocomplete,
+etc.
+
+Create a `vetur.config.js` file at the project root with the following content:
+```
+/** @type {import('vls').VeturConfig} */
+module.exports = {
+  settings: {
+    'vetur.useWorkspaceDependencies': true,
+  },
+  projects: [
+    {
+      root: './vue-app',
+      package: './package.json',
+      tsconfig: './tsconfig.json',
+      globalComponents: ['./src/components/**/*.vue'],
+    },
+  ],
+}
+```
