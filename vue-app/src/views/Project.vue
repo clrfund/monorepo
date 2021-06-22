@@ -31,7 +31,7 @@
         </button>
         <button
           class="donate-btn-full"
-          v-if="inCart && $store.getters.hasUserContributed && !$store.getters.isRoundContributionPhase && !$store.getters.canUserReallocate"
+          v-if="$store.getters.hasUserContributed && !$store.getters.canUserReallocate"
         >
           <span>Contributed!</span>
         </button>
