@@ -28,7 +28,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { CartItem } from '@/api/contributions'
-import { RoundStatus } from '@/api/round'
 
 export default class MobileTabs extends Vue {
   tabs = [

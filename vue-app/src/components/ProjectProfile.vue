@@ -153,18 +153,14 @@ import { DateTime } from 'luxon'
 import { FixedNumber } from 'ethers'
 import { Tally } from '@/api/tally'
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
-import {
-  Project,
-  getRecipientRegistryAddress,
-  getProject,
-} from '@/api/projects'
+import { Project, getProject } from '@/api/projects'
 import Info from '@/components/Info.vue'
 import { recipientRegistryType } from '@/api/core'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import Markdown from '@/components/Markdown.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
-import { RoundStatus, getCurrentRound } from '@/api/round'
+import { RoundStatus } from '@/api/round'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 import ClaimModal from '@/components/ClaimModal.vue'

@@ -72,7 +72,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
-import { DateTime } from 'luxon'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { recipientRegistryType } from '@/api/core'

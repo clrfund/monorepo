@@ -185,7 +185,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
-import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
+import { formatDateFromNow } from '@/utils/dates'
 
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 

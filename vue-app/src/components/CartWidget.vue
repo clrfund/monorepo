@@ -34,7 +34,6 @@ import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 import Tooltip from '@/components/Tooltip.vue'
 import { provider as jsonRpcProvider } from '@/api/core'
-import { RoundStatus } from '@/api/round'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import { CartItem } from '@/api/contributions'
 import {

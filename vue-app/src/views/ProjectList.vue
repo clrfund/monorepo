@@ -132,10 +132,7 @@ import {
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
-import {
-  SET_RECIPIENT_REGISTRY_ADDRESS,
-  TOGGLE_SHOW_CART_PANEL,
-} from '@/store/mutation-types'
+import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 

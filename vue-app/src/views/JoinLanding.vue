@@ -120,7 +120,7 @@ import {
 
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
-import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
+import { formatDateFromNow } from '@/utils/dates'
 import { formatAmount } from '@/utils/amounts'
 import BackToProjects from '../components/BackToProjects.vue'
 
