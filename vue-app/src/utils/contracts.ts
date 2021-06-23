@@ -23,9 +23,8 @@ export async function waitForTransaction(
     } catch (receiptError) {
       const errorMessage = receiptError.data?.message || ''
       if (errorMessage.includes('Block information is incomplete')) {
-        console.warn(
-          'Failed to get receipt, retrying...'
-        ) /* eslint-disable-line no-console */
+        /* eslint-disable-next-line no-console */
+        console.warn('Failed to get receipt, retrying...')
       } else {
         throw receiptError
       }

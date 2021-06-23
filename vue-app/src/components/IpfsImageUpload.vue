@@ -128,9 +128,8 @@ export default class IpfsImageUpload extends Vue {
         .add(fileContents)
         .then((hash) => {
           this.hash = hash
-          console.log(
-            `Uploaded file hash: ${hash}`
-          ) /* eslint-disable-line no-console */
+          /* eslint-disable-next-line no-console */
+          console.log(`Uploaded file hash: ${hash}`)
           this.onUpload(this.formProp, hash)
           this.loading = false
         })

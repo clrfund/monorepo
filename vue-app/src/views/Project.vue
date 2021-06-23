@@ -194,10 +194,8 @@ export default class ProjectView extends Vue {
       await navigator.clipboard.writeText(this.project.address)
       // TODO: UX success feedback
     } catch (error) {
-      console.warn(
-        'Error in copying text: ',
-        error
-      ) /* eslint-disable-line no-console */
+      /* eslint-disable-next-line no-console */
+      console.warn('Error in copying text: ', error)
     }
   }
 

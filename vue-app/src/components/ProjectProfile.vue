@@ -188,10 +188,8 @@ export default class ProjectProfile extends Vue {
       await new Promise((resolve) => setTimeout(resolve, 1000))
       this.isCopied = false
     } catch (error) {
-      console.warn(
-        'Error in copying text: ',
-        error
-      ) /* eslint-disable-line no-console */
+      /* eslint-disable-next-line no-console */
+      console.warn('Error in copying text: ', error)
     }
   }
 
