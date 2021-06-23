@@ -60,8 +60,8 @@ export default class App extends Vue {
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)
-    setInterval(() => {
-      this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+    setInterval(async () => {
+      await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
     }, 60 * 1000)
     setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)
@@ -72,7 +72,7 @@ export default class App extends Vue {
     const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
     await this.$store.dispatch(SELECT_ROUND, roundAddress)
     this.$store.dispatch(LOAD_ROUND_INFO)
-    this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+    await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
   }
 
   private get currentUser(): User {

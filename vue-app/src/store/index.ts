@@ -241,12 +241,13 @@ const actions = {
   async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
     const recipientRegistryAddress = state.recipientRegistryAddress || await getRecipientRegistryAddress(state.currentRoundAddress)
     commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
-    if (recipientRegistryAddress === null || recipientRegistryType !== 'optimistic') {
+
+    if (recipientRegistryAddress) {
+      const info = await getRegistryInfo(recipientRegistryAddress)
+      commit(SET_RECIPIENT_REGISTRY_INFO, info)
+    } else {
       commit(SET_RECIPIENT_REGISTRY_INFO, null)
-      return
     }
-    const info = await getRegistryInfo(recipientRegistryAddress)
-    commit(SET_RECIPIENT_REGISTRY_INFO, info)
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (state.currentRound && state.currentUser) {

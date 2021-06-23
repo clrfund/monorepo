@@ -4,32 +4,28 @@
       <loader v-if="isLoading"/>
       <wallet-widget class="m2" v-if="!currentUser"/>
       <div v-if="currentUser" :class="isWaiting || isPending || txError ? 'tx-progress-area' : 'tx-progress-area-no-notice'">
-          <loader class="button-loader" v-if="isWaiting || isPending || isWrongNetwork"/>
-          <div v-if="isWaiting" class="tx-notice">
-            Check your wallet for a prompt...
-          </div>
-          <div v-if=" hasTxError || isTxRejected" class="input-notice" style="font-size: 24px; margin-bottom: 0;">
-            ⚠️
-          </div>
-          <!-- TODO add check -->
-          <!-- <div v-if="hasLowFunds" class="input-notice">
-            Not enough ETH in your wallet.<br /> Top up or connect a different wallet.
-          </div> -->
-          <div v-if="hasTxError" class="input-notice">
-            Something failed: {{txError}}<br /> Check your wallet or Etherscan for more info.
-          </div>
-          <div v-if="isTxRejected" class="input-notice">
-            You rejected the transaction in your wallet
-          </div>
-          <div v-if="isWrongNetwork" class="input-notice">
-            We're on Optimism Network.<br /> Switch over to the right network in your wallet.
-          </div>
-          <div v-if="isPending">
-            <div class="tx-notice">{{pending}}</div>
-            <transaction-receipt :hash="txHash" />
-            <!-- This will hopefully appear once we remove immediate direction to project-added -->
-          </div>
+        <loader class="button-loader" v-if="isWaiting || isPending || isWrongNetwork"/>
+        <div v-if="isWaiting" class="tx-notice">
+          Check your wallet for a prompt...
         </div>
+        <div v-if=" hasTxError || isTxRejected" class="warning-text" style="font-size: 24px; margin-bottom: 0;">
+          ⚠️
+        </div>
+        <div v-if="hasTxError" class="warning-text">
+          Something failed: {{txError}}<br /> Check your wallet or Etherscan for more info.
+        </div>
+        <div v-if="isTxRejected" class="warning-text">
+          You rejected the transaction in your wallet
+        </div>
+        <div v-if="isWrongNetwork" class="warning-text">
+          We're on Optimism Network.<br /> Switch over to the right network in your wallet.
+        </div>
+        <div v-if="isPending">
+          <div class="tx-notice">{{pending}}</div>
+          <transaction-receipt :hash="txHash" />
+          <!-- This will hopefully appear once we remove immediate direction to project-added -->
+        </div>
+      </div>
       <div class="connected" v-if="currentUser">
         <div class="total-title">Total to submit<tooltip position="bottom" content="Estimate – this total may be slightly different in your wallet."><img src="@/assets/info.svg" /></tooltip></div>
         <div class="total">{{ depositAmount }} <span class="total-currency">  {{depositToken}}</span></div>
@@ -37,10 +33,9 @@
         <div v-if="txHasDeposit" class="checkout-row">
           <p class="m05"><b>Security deposit</b></p>
           <p class="m05">{{ depositAmount }} {{ depositToken }}
-            <span class="o5">({{fiatSign}}{{ calculateFiatFee(this.registryInfo.deposit) }})</span> 
+            <span class="o5">({{fiatSign}}{{ calculateFiatFee($store.state.recipientRegistryInfo.deposit) }})</span> 
           </p>
         </div>
-        <!-- TODO estimate transaction fee -->
         <div class="checkout-row">
           <p class="m05"><b>Est. transaction fee</b></p>
           <p class="m05">{{ gasFeeAmount }} {{feeToken}} <span class="o5">({{fiatSign}}{{ calculateFiatFee(this.estimatedGasFee) }})</span> </p>
@@ -64,14 +59,11 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { BigNumber, Contract, Signer } from 'ethers'
+import { BigNumber, Contract } from 'ethers'
 import { OptimisticRecipientRegistry } from '@/api/abi'
 import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import {
   addRecipient,
-  getRegistryInfo,
-  RecipientApplicationData,
-  RegistryInfo,
 } from '@/api/recipient-registry-optimistic'
 import { User } from '@/api/user'
 import { Web3Provider } from '@ethersproject/providers'
@@ -95,7 +87,7 @@ import { waitForTransaction } from '@/utils/contracts'
 export default class RecipientSubmissionWidget extends Vue {
   @Prop() cta!: string
   @Prop() pending!: string
-  isLoading = false
+  isLoading = true
   isWaiting = false // TODO add logic
   isPending = false // TODO add logic
   isWrongNetwork = false  // TODO remove? WalletWidget can handle this?
@@ -107,27 +99,14 @@ export default class RecipientSubmissionWidget extends Vue {
   fiatSign = '$'
   estimatedGasFee: BigNumber = BigNumber.from(0)
   feeToken = 'ETH'
-  registryInfo: RegistryInfo | null = null
-  recipientRegistryAddress: string | null = null
-  signer: Signer | null = null
-  recipient: RecipientApplicationData | null = null
-  hasLowFunds = false // TODO add logic
-  
 
   async created() {
-    this.registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
-    this.isLoading = false
     this.ethPrice = await fetchCurrentEthPrice()
-    this.recipientRegistryAddress = this.$store.state.recipientRegistryAddress
-    this.signer = this.$store.state.currentUser ? this.$store.state.currentUser.walletProvider.getSigner() : null
-    this.recipient = this.$store.state.recipient
     this.estimatedGasFee = await this.getEstimatedGasFee()
+    this.isLoading = false
   }
 
   async updated() {
-    this.recipientRegistryAddress = this.$store.state.recipientRegistryAddress
-    this.signer = this.$store.state.currentUser ? this.$store.state.currentUser.walletProvider.getSigner() : null
-    this.recipient = this.$store.state.recipient
     this.estimatedGasFee = await this.getEstimatedGasFee()
   }
 
@@ -140,7 +119,7 @@ export default class RecipientSubmissionWidget extends Vue {
   }
 
   get canSubmit(): boolean {
-    return !!this.currentUser && !!this.walletProvider && !!this.registryInfo
+    return !!this.currentUser && !!this.walletProvider && !!this.$store.state.recipientRegistryInfo
   }
 
   get hasTxError(): boolean {
@@ -148,11 +127,11 @@ export default class RecipientSubmissionWidget extends Vue {
   }
 
   get txHasDeposit(): boolean {
-    return !!this.registryInfo?.deposit
+    return !!this.$store.state.recipientRegistryInfo?.deposit
   }
 
   get depositAmount(): string {
-    return this.registryInfo ? formatAmount(this.registryInfo.deposit, 18) : '...'
+    return this.$store.state.recipientRegistryInfo ? formatAmount(this.$store.state.recipientRegistryInfo.deposit, 18) : '...'
   }
 
   get gasFeeAmount(): string {
@@ -160,7 +139,19 @@ export default class RecipientSubmissionWidget extends Vue {
   }
  
   get depositToken(): string {
-    return this.registryInfo?.depositToken ?? ''
+    return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
+  }
+
+  get hasLowFunds(): boolean {
+    const {
+      currentUser,
+      recipientRegistryInfo,
+    } = this.$store.state
+
+    if (currentUser && currentUser.balance && recipientRegistryInfo && recipientRegistryInfo.deposit) {
+      return currentUser.balance.lt(recipientRegistryInfo.deposit)
+    }
+    return false
   }
 
   handleSubmit(): void {
@@ -168,40 +159,53 @@ export default class RecipientSubmissionWidget extends Vue {
   }
 
   public calculateFiatFee(ethAmount: BigNumber): string {
-    if (this.registryInfo && this.ethPrice) {
+    if (this.$store.state.recipientRegistryInfo && this.ethPrice) {
       return Number(this.ethPrice.ethereum.usd * Number(formatAmount(ethAmount, 18))).toFixed(2)
     }
     return '-'
   }
 
   private async getEstimatedGasFee(): Promise<BigNumber> {
+    const {
+      recipient,
+      recipientRegistryAddress,
+      recipientRegistryInfo,
+    } = this.$store.state
+
     if (
-      this.registryInfo
+      recipientRegistryInfo
       && this.ethPrice
       && this.walletProvider
-      && this.recipientRegistryAddress
-      && this.recipient
+      && recipientRegistryAddress
+      && recipient
     ) {
-      const registry = new Contract(this.recipientRegistryAddress, OptimisticRecipientRegistry, this.walletProvider)
+      const registry = new Contract(recipientRegistryAddress, OptimisticRecipientRegistry, this.walletProvider)
 
-      return await registry.estimateGas.addRecipient(this.recipient.fund.address, JSON.stringify({
-        ...this.recipient.fund,
-        ...this.recipient.links,
-        ...this.recipient.image,
-        ...this.recipient.project,
-      }), {value: this.registryInfo.deposit})
+      return await registry.estimateGas.addRecipient(recipient.fund.address, JSON.stringify({
+        ...recipient.fund,
+        ...recipient.links,
+        ...recipient.image,
+        ...recipient.project,
+      }), {value: recipientRegistryInfo.deposit})
     }
     return BigNumber.from(0)
   }
 
   private async addRecipient() {
+    const {
+      currentUser,
+      recipient,
+      recipientRegistryAddress,
+      recipientRegistryInfo,
+    } = this.$store.state
+
     // TODO where to make `isPending` vs. `isWaiting`? In `waitForTransaction`?
     // Check out Launchpad repo to view transaction states
     this.isWaiting = true
-    if (this.recipientRegistryAddress && this.recipient && this.registryInfo && this.signer) {
+    if (recipientRegistryAddress && recipient && recipientRegistryInfo && currentUser) {
       try {
         await waitForTransaction(
-          addRecipient(this.recipientRegistryAddress, this.recipient, this.registryInfo.deposit, this.signer),
+          addRecipient(recipientRegistryAddress, recipient, recipientRegistryInfo.deposit, currentUser.walletProvider.getSigner()),
           (hash) => this.txHash = hash,
         )
       } catch (error) {

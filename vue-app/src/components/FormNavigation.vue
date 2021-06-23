@@ -14,10 +14,9 @@
       </button>
       <div v-else></div>
 
-      <!-- TODO: Finish button to trigger tx  -->
       <button
         v-if="currentStep === 5"
-        @click="handleSubmit"
+        @click="handleNext"
         to="/project-added"
         class="btn-primary"
       >
