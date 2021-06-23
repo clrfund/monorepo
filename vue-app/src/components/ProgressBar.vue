@@ -1,7 +1,7 @@
 <template>
   <div class="progress-bar" :style="progressBarStyle">
     <div v-for="idx in totalSteps" v-bind:key="idx">
-      <div class="step" :class="{'inactive': isFutureStep(idx)}"/>
+      <div class="step" :class="{ inactive: isFutureStep(idx) }" />
     </div>
   </div>
 </template>
@@ -46,5 +46,4 @@ export default class Transaction extends Vue {
 .inactive {
   background: $clr-pink-light-gradient-inactive;
 }
-
 </style>

@@ -2,7 +2,9 @@
   <div class="modal-body">
     <div v-if="walletProvider">
       <h3>Connect your wallet</h3>
-      <div style="margin-bottom: 2rem;">You must connect to add projects to your cart.</div>
+      <div style="margin-bottom: 2rem">
+        You must connect to add projects to your cart.
+      </div>
       <div class="btn-row">
         <wallet-widget :is-action-button="true" @connected="$emit('close')" />
         <!-- Connecting needs to add the project to your cart and close modal overlay -->
@@ -61,11 +63,9 @@ export default class ConnectionModal extends Vue {
   padding: $modal-space;
   box-shadow: $box-shadow;
   text-align: left;
-  
 
   .loader {
     margin: $modal-space auto;
   }
 }
-
 </style>

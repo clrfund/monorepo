@@ -1,31 +1,33 @@
 <template>
-  <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="image">
+  <form
+    method="POST"
+    enctype="multipart/form-data"
+    @submit="handleUploadToIPFS"
+    name="image"
+  >
     <p class="input-label">{{ label }}</p>
     <p class="input-description">{{ description }}</p>
     <div class="input-row">
-      <input
-        type="file"
-        class="input"
-        @change="handleLoadFile"
-        name="image"
-      />
+      <input type="file" class="input" @change="handleLoadFile" name="image" />
       <button
         primary="true"
-        type='submit'
-        label='Upload'
+        type="submit"
+        label="Upload"
         class="btn-primary"
-        :class="{disabled: loading || error || !loadedImageData}"
+        :class="{ disabled: loading || error || !loadedImageData }"
         :disabled="loading || error || !loadedImageData"
       >
-        {{ loading ? "Uploading..." : "Upload"}}
+        {{ loading ? 'Uploading...' : 'Upload' }}
       </button>
     </div>
     <loader v-if="loading" />
     <div v-if="hash">
-      <div :class="{
-        'banner-preview': formProp === 'bannerHash',
-        'thumbnail-preview': formProp === 'thumbnailHash',
-        }">
+      <div
+        :class="{
+          'banner-preview': formProp === 'bannerHash',
+          'thumbnail-preview': formProp === 'thumbnailHash',
+        }"
+      >
         <img
           :src="imageUrl"
           alt="Uploaded image preview"
@@ -38,11 +40,11 @@
         />
       </div>
       <div>
-        <p class="input-label">
-          IPFS hash
-        </p>
+        <p class="input-label">IPFS hash</p>
         <p class="input-description">
-          Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use.
+          Your image is now stored on a decentralized network at the following
+          hash. You don't need to do anything with it but you may want to keep
+          it for future use.
         </p>
       </div>
       <div class="hash-area">
@@ -67,7 +69,7 @@ import IpfsCopyWidget from '@/components/IpfsCopyWidget.vue'
 import IPFS from 'ipfs-mini'
 
 @Component({
-  components: { 
+  components: {
     Loader,
     Tooltip,
     IpfsCopyWidget,
@@ -86,7 +88,11 @@ export default class IpfsImageUpload extends Vue {
   error = ''
 
   created() {
-    this.ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+    this.ipfs = new IPFS({
+      host: 'ipfs.infura.io',
+      port: 5001,
+      protocol: 'https',
+    })
   }
 
   // TODO raise error if not valid image (JPG / PNG / GIF)
@@ -98,13 +104,15 @@ export default class IpfsImageUpload extends Vue {
       this.error = 'Upload a JPG, PNG, or GIF'
       return
     }
-    if (data.size > 512000) { 
+    if (data.size > 512000) {
       // Limit 512 kB file size
       this.error = 'Upload an image smaller than 512 kB'
       return
     }
     const reader = new FileReader()
-    reader.onload = (() => ((e) => { this.loadedImageData = e.target.result }))()
+    reader.onload = (() => (e) => {
+      this.loadedImageData = e.target.result
+    })()
     reader.readAsDataURL(data)
   }
 
@@ -116,16 +124,21 @@ export default class IpfsImageUpload extends Vue {
     const fileContents = `<svg xmlns="http://www.w3.org/2000/svg"><image href="${this.loadedImageData}" /></svg>`
     if (this.loadedImageData !== '') {
       this.loading = true
-      this.ipfs.add(fileContents).then(hash => {
-        this.hash = hash
-        console.log(`Uploaded file hash: ${hash}`) /* eslint-disable-line no-console */
-        this.onUpload(this.formProp, hash)
-        this.loading = false
-      }).catch(error => {
-        this.error = `Error occurred: ${error}`
-        this.loading = false
-      })
-    } else {  
+      this.ipfs
+        .add(fileContents)
+        .then((hash) => {
+          this.hash = hash
+          console.log(
+            `Uploaded file hash: ${hash}`
+          ) /* eslint-disable-line no-console */
+          this.onUpload(this.formProp, hash)
+          this.loading = false
+        })
+        .catch((error) => {
+          this.error = `Error occurred: ${error}`
+          this.loading = false
+        })
+    } else {
       this.error = 'You need an image.'
     }
   }
@@ -145,8 +158,8 @@ export default class IpfsImageUpload extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import "../styles/vars";
-@import "../styles/theme";
+@import '../styles/vars';
+@import '../styles/theme';
 
 .banner-preview {
   width: 100%;
@@ -158,7 +171,8 @@ export default class IpfsImageUpload extends Vue {
   aspect-ratio: 1 / 1;
 }
 
-.banner-preview, .thumbnail-preview {
+.banner-preview,
+.thumbnail-preview {
   margin-bottom: 1rem;
   img {
     object-fit: cover;
@@ -175,7 +189,7 @@ export default class IpfsImageUpload extends Vue {
     opacity: 0.5;
     transform: scale(1);
     cursor: not-allowed;
-  }  
+  }
 }
 
 .btn-warning {
@@ -206,14 +220,14 @@ export default class IpfsImageUpload extends Vue {
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0em;
-    width: 100%;
-  &:valid { 
+  width: 100%;
+  &:valid {
     border: 2px solid $clr-green;
   }
-  &:hover { 
-    background: $bg-primary-color; 
+  &:hover {
+    background: $bg-primary-color;
     border: 2px solid $highlight-color;
-    box-shadow: 0px 4px 16px 0px 25,22,35,0.4;
+    box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
   }
   &:optional {
     border: 2px solid $button-color;
@@ -251,5 +265,4 @@ export default class IpfsImageUpload extends Vue {
     width: 100%;
   }
 }
-
 </style>

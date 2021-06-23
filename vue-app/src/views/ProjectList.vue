@@ -1,24 +1,40 @@
 <template>
   <div class="project-container">
-    <div class="projects">        
-      <div :class="{
-        title: true,
-        'title-with-cart-closed': !!$store.state.currentUser && !$store.state.showCartPanel,
-        'title-with-cart-open': !!$store.state.currentUser && $store.state.showCartPanel,
-      }">
+    <div class="projects">
+      <div
+        :class="{
+          title: true,
+          'title-with-cart-closed':
+            !!$store.state.currentUser && !$store.state.showCartPanel,
+          'title-with-cart-open':
+            !!$store.state.currentUser && $store.state.showCartPanel,
+        }"
+      >
         <div class="header">
           <h2>Projects</h2>
         </div>
         <div class="category-filter">
-          <div :class="{
-            'filter-btn': true,
-            'filter-btn-cart-closed': !!$store.state.currentUser && !$store.state.showCartPanel,
-            'filter-btn-cart-open': !!$store.state.currentUser && $store.state.showCartPanel,
-          }" @click="handleFilterDropdown">
+          <div
+            :class="{
+              'filter-btn': true,
+              'filter-btn-cart-closed':
+                !!$store.state.currentUser && !$store.state.showCartPanel,
+              'filter-btn-cart-open':
+                !!$store.state.currentUser && $store.state.showCartPanel,
+            }"
+            @click="handleFilterDropdown"
+          >
             <span>
-              Filter <span v-if="selectedCategories.length > 0">({{selectedCategories.length}})</span>
+              Filter
+              <span v-if="selectedCategories.length > 0"
+                >({{ selectedCategories.length }})</span
+              >
             </span>
-            <img src="@/assets/chevron-down.svg" alt="Down arrow" id="chevron">
+            <img
+              src="@/assets/chevron-down.svg"
+              alt="Down arrow"
+              id="chevron"
+            />
           </div>
           <div class="selector-wrapper" id="category-selector">
             <div
@@ -26,23 +42,34 @@
               :key="idx"
               :class="{
                 'category-btn': true,
-                'category-btn-selected': selectedCategories.includes(category)
+                'category-btn-selected': selectedCategories.includes(category),
               }"
               @click="handleFilterClick"
-            >{{category}} <span v-if="selectedCategories.includes(category)"><img src="@/assets/close.svg"></span></div>
+            >
+              {{ category }}
+              <span v-if="selectedCategories.includes(category)"
+                ><img src="@/assets/close.svg"
+              /></span>
+            </div>
           </div>
         </div>
         <div v-if="projects.length > 0" class="project-search">
-          <img src="@/assets/search.svg">
+          <img src="@/assets/search.svg" />
           <input
             v-model="search"
             class="input"
             name="search"
             placeholder="Search projects"
             autocomplete="on"
-            onfocus="this.value=''" 
-          >
-          <img v-if="search.length > 0" @click="clearSearch" src="@/assets/close.svg" height="20" class="pointer">
+            onfocus="this.value=''"
+          />
+          <img
+            v-if="search.length > 0"
+            @click="clearSearch"
+            src="@/assets/close.svg"
+            height="20"
+            class="pointer"
+          />
         </div>
         <div class="add-project">
           <router-link to="/join" class="btn-primary">Add project</router-link>
@@ -51,7 +78,9 @@
       </div>
 
       <div class="project-list">
-        <call-to-action-card v-if="!this.search && this.selectedCategories.length === 0"/>
+        <call-to-action-card
+          v-if="!this.search && this.selectedCategories.length === 0"
+        />
         <project-list-item
           v-for="project in filteredProjects"
           :project="project"
@@ -60,9 +89,15 @@
         </project-list-item>
       </div>
       <div class="empty-search" v-if="filteredProjects == 0">
-        <div>😢 No projects match your search. Try using the filter to narrow down what you're looking for.</div>
+        <div>
+          😢 No projects match your search. Try using the filter to narrow down
+          what you're looking for.
+        </div>
       </div>
-      <div v-if="!!$store.state.currentUser && $store.state.showCartPanel" class="round-info-container">
+      <div
+        v-if="!!$store.state.currentUser && $store.state.showCartPanel"
+        class="round-info-container"
+      >
         <round-information />
       </div>
     </div>
@@ -76,7 +111,11 @@ import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { RoundInfo, getCurrentRound, TimeLeft } from '@/api/round'
-import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
+import {
+  Project,
+  getRecipientRegistryAddress,
+  getProjects,
+} from '@/api/projects'
 
 import { getTimeLeft } from '@/utils/dates'
 
@@ -124,7 +163,6 @@ function shuffleArray(array: any[]) {
   },
 })
 export default class ProjectList extends Vue {
-
   projects: Project[] = []
   search = ''
   isLoading = true
@@ -134,12 +172,22 @@ export default class ProjectList extends Vue {
   get projectsByCategoriesSelected(): Project[] {
     return this.selectedCategories.length === 0
       ? this.projects
-      : this.projects.filter(project => this.selectedCategories.includes((project.category as string).toLowerCase()))
+      : this.projects.filter((project) =>
+          this.selectedCategories.includes(
+            (project.category as string).toLowerCase()
+          )
+        )
   }
 
   async created() {
-    const roundAddress = this.$route.params.address || this.$store.state.currentRoundAddress || await getCurrentRound()
-    if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
+    const roundAddress =
+      this.$route.params.address ||
+      this.$store.state.currentRoundAddress ||
+      (await getCurrentRound())
+    if (
+      roundAddress &&
+      roundAddress !== this.$store.state.currentRoundAddress
+    ) {
       // Select round and (re)load round info
       this.$store.dispatch(SELECT_ROUND, roundAddress)
       await this.$store.dispatch(LOAD_ROUND_INFO)
@@ -163,10 +211,10 @@ export default class ProjectList extends Vue {
     const projects = await getProjects(
       this.$store.state.recipientRegistryAddress,
       this.currentRound?.startTime.toSeconds(),
-      this.currentRound?.votingDeadline.toSeconds(),
+      this.currentRound?.votingDeadline.toSeconds()
     )
-    const visibleProjects = projects.filter(project => {
-      return (!project.isHidden && !project.isLocked)
+    const visibleProjects = projects.filter((project) => {
+      return !project.isHidden && !project.isLocked
     })
     shuffleArray(visibleProjects)
     this.projects = visibleProjects
@@ -206,14 +254,14 @@ export default class ProjectList extends Vue {
     }
     this.$modal.show(
       MatchingFundsModal,
-      { },
-      { },
+      {},
+      {},
       {
         closed: () => {
           // Reload matching pool size
           this.$store.dispatch(LOAD_ROUND_INFO)
         },
-      },
+      }
     )
   }
 
@@ -234,19 +282,21 @@ export default class ProjectList extends Vue {
   handleFilterClick(event): void {
     const selection = event.target.innerText.toLowerCase()
     if (this.selectedCategories.includes(selection)) {
-      this.selectedCategories = this.selectedCategories.filter(category => category !== selection)
+      this.selectedCategories = this.selectedCategories.filter(
+        (category) => category !== selection
+      )
     } else {
       this.selectedCategories.push(selection)
     }
   }
 
-  clearSearch():  void {
+  clearSearch(): void {
     this.search = ''
   }
 }
 
 // Close the dropdown menu if the user clicks outside of it
-window.onclick = function(event) {
+window.onclick = function (event) {
   if (
     !event.target.matches('.filter-btn') &&
     !event.target.matches('.category-btn') &&
@@ -288,7 +338,6 @@ window.onclick = function(event) {
   @media (max-width: $breakpoint-m - 1px) {
     display: none;
   }
-  
 }
 
 .projects {
@@ -299,19 +348,19 @@ window.onclick = function(event) {
 /* For use with .title, .title-with-cart-closed, .title-with-cart-open classes */
 @mixin project-grid-defaults {
   grid-template-columns: 1fr repeat(3, auto);
-  grid-template-areas: "header filter search add" "hr hr hr hr";
+  grid-template-areas: 'header filter search add' 'hr hr hr hr';
 }
 @mixin project-grid-xl {
   grid-template-columns: auto 1fr 1.5fr auto;
-  grid-template-areas: "header . . add" "hr hr hr hr" "filter . search search";
+  grid-template-areas: 'header . . add' 'hr hr hr hr' 'filter . search search';
 }
 @mixin project-grid-l {
   grid-template-columns: auto 1fr auto;
-  grid-template-areas: "header . add" "hr hr hr" "search search search" "filter filter filter";
+  grid-template-areas: 'header . add' 'hr hr hr' 'search search search' 'filter filter filter';
 }
 @mixin project-grid-m {
   grid-template-columns: 1fr;
-  grid-template-areas: "header" "hr" "search" "filter" "add";
+  grid-template-areas: 'header' 'hr' 'search' 'filter' 'add';
 }
 
 .title {
@@ -320,7 +369,7 @@ window.onclick = function(event) {
   align-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
-  
+
   /* Default breakpoints when user is not logged in, thus no cart */
   /* See below for adjustments when cart is present */
   @media (max-width: $breakpoint-xl) {
@@ -371,7 +420,7 @@ window.onclick = function(event) {
       transition: transform 0.1s;
       &:hover {
         opacity: 0.8;
-        transform:scale(1.01);
+        transform: scale(1.01);
       }
       .filter-chevron-open {
         transform: rotate(180deg);
@@ -422,7 +471,7 @@ window.onclick = function(event) {
         line-height: 0;
         margin: 0;
         justify-content: space-between;
-        
+
         &:hover {
           background: $clr-pink;
         }
@@ -485,7 +534,7 @@ window.onclick = function(event) {
   .hr {
     grid-area: hr;
     width: 100%;
-    border-bottom: 1px solid rgba(115,117,166,1);
+    border-bottom: 1px solid rgba(115, 117, 166, 1);
   }
 }
 
@@ -506,7 +555,6 @@ window.onclick = function(event) {
   }
   @media (max-width: $breakpoint-m + $cart-width-closed) {
     @include project-grid-m();
-
   }
 }
 
@@ -550,8 +598,6 @@ window.onclick = function(event) {
   padding: 2rem;
 }
 
-
-
 .get-prepared {
   background: $bg-secondary-color;
   border: 1px solid #000000;
@@ -563,16 +609,16 @@ window.onclick = function(event) {
 }
 
 .prep-title {
-    font-family: 'Glacial Indifference', sans-serif;
-    font-size: 2rem;
-    font-weight: 700;
-  }
+  font-family: 'Glacial Indifference', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+}
 
-  .prep-title-continue {
-    font-family: 'Glacial Indifference', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-  }
+.prep-title-continue {
+  font-family: 'Glacial Indifference', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
 
 .prep-text {
   font-family: Inter;

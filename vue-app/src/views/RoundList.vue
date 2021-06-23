@@ -1,21 +1,15 @@
 <template>
   <div class="rounds">
     <h1 class="content-heading">Rounds</h1>
-    <div
-      class="round"
-      v-for="round in rounds"
-      :key="round.index"
-    >
+    <div class="round" v-for="round in rounds" :key="round.index">
       <router-link
         v-if="round.address"
         class="round-name"
-        :to="{ name: 'round', params: { address: round.address }}"
+        :to="{ name: 'round', params: { address: round.address } }"
       >
         Round {{ round.index }}
       </router-link>
-      <a v-else :href="round.url">
-        Round {{ round.index }}
-      </a>
+      <a v-else :href="round.url"> Round {{ round.index }} </a>
     </div>
   </div>
 </template>
@@ -31,13 +25,11 @@ import { Round, getRounds } from '@/api/rounds'
   metaInfo: { title: 'Rounds' },
 })
 export default class RoundList extends Vue {
-
   rounds: Round[] = []
 
   async created() {
     this.rounds = (await getRounds()).reverse()
   }
-
 }
 </script>
 

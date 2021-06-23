@@ -3,26 +3,56 @@
   <div>
     <round-status-banner />
     <div class="gradient">
-      <img src="@/assets/moon.png" class="moon"/>
+      <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
-        <img src="@/assets/newrings.png"/>
+        <img src="@/assets/newrings.png" />
         <div class="content">
           <!-- <span class="emoji">🎉</span> -->
           <div class="flex-title">
             <h1>Prove you’re only using 1 account</h1>
           </div>
-          <div class="subtitle">We use BrightID to stop bots and cheaters, and make our funding more democratic.</div>
+          <div class="subtitle">
+            We use BrightID to stop bots and cheaters, and make our funding more
+            democratic.
+          </div>
           <h2>What you'll need</h2>
           <ul>
-            <li>BrightID – available on <a href="https://apps.apple.com/us/app/brightid/id1428946820" target="_blank"> iOS</a> or <a href="https://play.google.com/store/apps/details?id=org.brightid" target="_blank">Android</a></li>
+            <li>
+              BrightID – available on
+              <a
+                href="https://apps.apple.com/us/app/brightid/id1428946820"
+                target="_blank"
+              >
+                iOS</a
+              >
+              or
+              <a
+                href="https://play.google.com/store/apps/details?id=org.brightid"
+                target="_blank"
+                >Android</a
+              >
+            </li>
             <li>An Ethereum wallet</li>
             <li>Access to Zoom or Google Meet</li>
           </ul>
-          <router-link to="/sybil-resistance/">Why is this important?</router-link>
-          <div v-if="isRoundFullOrOver" class="warning-message">The current round is no longer accepting new contributions. You can still get BrightID verified to prepare for next time.</div>
+          <router-link to="/sybil-resistance/"
+            >Why is this important?</router-link
+          >
+          <div v-if="isRoundFullOrOver" class="warning-message">
+            The current round is no longer accepting new contributions. You can
+            still get BrightID verified to prepare for next time.
+          </div>
           <div class="btn-container">
-            <wallet-widget v-if="walletProvider && !currentUser" :isActionButton="true" />
-            <router-link v-if="!walletProvider || currentUser" to="/verify/connect" class="btn-primary">Get started</router-link>
+            <wallet-widget
+              v-if="walletProvider && !currentUser"
+              :isActionButton="true"
+            />
+            <router-link
+              v-if="!walletProvider || currentUser"
+              to="/verify/connect"
+              class="btn-primary"
+              >Get started</router-link
+            >
             <router-link to="/" class="btn-secondary">Go home</router-link>
           </div>
         </div>
@@ -40,7 +70,10 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { commify, formatUnits } from '@ethersproject/units'
 import WalletWidget from '@/components/WalletWidget.vue'
-import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
+import {
+  RegistryInfo,
+  getRegistryInfo,
+} from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
 
 @Component({
@@ -50,13 +83,15 @@ export default class VerifyLanding extends Vue {
   challengePeriodDuration: number | null = null
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
-  
-  // TODO: Retrieve hash of transaction. 
+
+  // TODO: Retrieve hash of transaction.
   // We route to this component, pass hash as queryParam after submission?
   txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
 
   async created() {
-    const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+    const registryInfo: RegistryInfo = await getRegistryInfo(
+      this.$store.state.recipientRegistryAddress
+    )
     this.challengePeriodDuration = registryInfo.challengePeriodDuration
   }
 
@@ -70,23 +105,27 @@ export default class VerifyLanding extends Vue {
 
   get balance(): string | null {
     const balance = this.currentUser?.balance
-    if (balance === null || typeof balance === 'undefined') { return null }
+    if (balance === null || typeof balance === 'undefined') {
+      return null
+    }
     return commify(formatUnits(balance, 18))
   }
-  
+
   get blockExplorerUrl(): string {
     return `${blockExplorer}${this.txHash}`
   }
 
   get isRoundFullOrOver(): boolean {
-    return this.$store.getters.isRecipientRegistryFull || this.$store.getters.hasContributionPhaseEnded
+    return (
+      this.$store.getters.isRecipientRegistryFull ||
+      this.$store.getters.hasContributionPhaseEnded
+    )
   }
 
   formatDuration(value: number): string {
-    return humanizeDuration(value * 1000, { largest: 1 } )
+    return humanizeDuration(value * 1000, { largest: 1 })
   }
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -127,7 +166,6 @@ ul {
   padding-left: 1.5rem;
 }
 
-
 .gradient {
   background: $clr-pink-dark-gradient;
   position: relative;
@@ -141,13 +179,17 @@ ul {
   .hero {
     bottom: 0;
     display: flex;
-    background: linear-gradient(286.78deg, rgba(173, 131, 218, 0) -32.78%, #191623 78.66%);
+    background: linear-gradient(
+      286.78deg,
+      rgba(173, 131, 218, 0) -32.78%,
+      #191623 78.66%
+    );
     height: calc(100vh - 113px);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
       padding-bottom: 16rem;
     }
-    
+
     img {
       position: absolute;
       bottom: 0;
@@ -187,14 +229,13 @@ ul {
           right: 0;
         }
       }
-      
+
       .btn-container {
         margin-top: 2rem;
       }
     }
   }
 }
-
 
 .subtitle {
   font-size: 1.25rem;
@@ -219,5 +260,4 @@ ul {
   //   content: "⚠️ "
   // }
 }
-
-</style>    
+</style>

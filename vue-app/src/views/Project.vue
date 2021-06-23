@@ -1,8 +1,15 @@
 <template>
-  <div :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`" v-if="project" >
-    <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name">
+  <div
+    :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`"
+    v-if="project"
+  >
+    <img
+      class="project-image banner"
+      :src="project.bannerImageUrl"
+      :alt="project.name"
+    />
     <project-profile class="details" :project="project" :previewMode="false" />
-    <div class="sticky-column">  
+    <div class="sticky-column">
       <div class="desktop">
         <button
           v-if="hasRegisterBtn()"
@@ -13,7 +20,10 @@
           Register
         </button>
 
-        <add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn()" :project="project" />
+        <add-to-cart-button
+          v-if="shouldShowCartInput && hasContributeBtn()"
+          :project="project"
+        />
 
         <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
         <button
@@ -26,12 +36,15 @@
             Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
           </template>
           <template v-else>
-            Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
+            Claim {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
           </template>
         </button>
         <button
           class="donate-btn-full"
-          v-if="$store.getters.hasUserContributed && !$store.getters.canUserReallocate"
+          v-if="
+            $store.getters.hasUserContributed &&
+            !$store.getters.canUserReallocate
+          "
         >
           <span>Contributed!</span>
         </button>
@@ -45,11 +58,11 @@
         <div v-if="project.twitterUrl" class="link-row">
           <img src="@/assets/Twitter.svg" />
           <a :href="project.twitterUrl">@Twitter</a>
-        </div>  
+        </div>
         <div v-if="project.websiteUrl" class="link-row">
           <img src="@/assets/Meridians.svg" />
           <a :href="project.websiteUrl">{{ project.websiteUrl }}</a>
-        </div>  
+        </div>
       </div>
     </div>
   </div>
@@ -63,7 +76,11 @@ import { DateTime } from 'luxon'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { recipientRegistryType } from '@/api/core'
-import { Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
+import {
+  Project,
+  getRecipientRegistryAddress,
+  getProject,
+} from '@/api/projects'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import { RoundStatus, getCurrentRound } from '@/api/round'
 import { Tally } from '@/api/tally'
@@ -80,9 +97,7 @@ import {
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
-import {
-  SET_RECIPIENT_REGISTRY_ADDRESS,
-} from '@/store/mutation-types'
+import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
 @Component({
@@ -90,10 +105,9 @@ import { markdown } from '@/utils/markdown'
   metaInfo() {
     return { title: (this as any).project?.name || '' }
   },
-  components: {Loader, ProjectProfile, AddToCartButton },
+  components: { Loader, ProjectProfile, AddToCartButton },
 })
 export default class ProjectView extends Vue {
-
   project: Project | null = null
   allocatedAmount: FixedNumber | null = null
   claimed: boolean | null = null
@@ -101,24 +115,33 @@ export default class ProjectView extends Vue {
 
   private async checkAllocation(tally: Tally | null) {
     const currentRound = this.$store.state.currentRound
-    if (!this.project || !currentRound || currentRound.status !== RoundStatus.Finalized || !tally) {
+    if (
+      !this.project ||
+      !currentRound ||
+      currentRound.status !== RoundStatus.Finalized ||
+      !tally
+    ) {
       return
     }
     this.allocatedAmount = await getAllocatedAmount(
       currentRound.fundingRoundAddress,
       currentRound.nativeTokenDecimals,
       tally.results.tally[this.project.index],
-      tally.totalVoiceCreditsPerVoteOption.tally[this.project.index],
+      tally.totalVoiceCreditsPerVoteOption.tally[this.project.index]
     )
     this.claimed = await isFundsClaimed(
       currentRound.fundingRoundAddress,
-      this.project.index,
+      this.project.index
     )
   }
 
   async created() {
-    const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
-    if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
+    const roundAddress =
+      this.$store.state.currentRoundAddress || (await getCurrentRound())
+    if (
+      roundAddress &&
+      roundAddress !== this.$store.state.currentRoundAddress
+    ) {
       // Select round
       this.$store.dispatch(SELECT_ROUND, roundAddress)
       // Don't wait for round info to improve loading time
@@ -140,7 +163,7 @@ export default class ProjectView extends Vue {
 
     const project = await getProject(
       this.$store.state.recipientRegistryAddress,
-      this.$route.params.id,
+      this.$route.params.id
     )
     if (project === null || project.isHidden) {
       // Project not found
@@ -150,10 +173,7 @@ export default class ProjectView extends Vue {
       this.project = project
     }
     // Wait for tally to load and get claim status
-    this.$store.watch(
-      (state) => state.tally,
-      this.checkAllocation,
-    )
+    this.$store.watch((state) => state.tally, this.checkAllocation)
     this.checkAllocation(this.$store.state.tally)
     this.isLoading = false
   }
@@ -161,19 +181,24 @@ export default class ProjectView extends Vue {
   goBackToList(): void {
     const roundAddress = this.$store.state.currentRound?.fundingRoundAddress
     if (roundAddress) {
-      this.$router.push({ name: 'round', params: { address: roundAddress }})
+      this.$router.push({ name: 'round', params: { address: roundAddress } })
     } else {
       this.$router.push({ name: 'projects' })
     }
   }
 
   async copyAddress(): Promise<void> {
-    if (!this.project?.address) { return }
+    if (!this.project?.address) {
+      return
+    }
     try {
       await navigator.clipboard.writeText(this.project.address)
       // TODO: UX success feedback
     } catch (error) {
-      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
+      console.warn(
+        'Error in copying text: ',
+        error
+      ) /* eslint-disable-line no-console */
     }
   }
 
@@ -204,8 +229,7 @@ export default class ProjectView extends Vue {
     }
     if (recipientRegistryType === 'optimistic') {
       return this.project.index === 0
-    }
-    else if (recipientRegistryType === 'kleros') {
+    } else if (recipientRegistryType === 'kleros') {
       return (
         this.project.index === 0 &&
         this.project.extra.tcrItemStatus === TcrItemStatus.Registered
@@ -222,16 +246,16 @@ export default class ProjectView extends Vue {
     this.$modal.show(
       RecipientRegistrationModal,
       { project: this.project },
-      { },
+      {},
       {
         closed: async () => {
           const project = await getProject(
             this.$store.state.recipientRegistryAddress,
-            this.$route.params.id,
+            this.$route.params.id
           )
           Object.assign(this.project, project)
         },
-      },
+      }
     )
   }
 
@@ -273,12 +297,12 @@ export default class ProjectView extends Vue {
     this.$modal.show(
       ClaimModal,
       { project: this.project },
-      { },
+      {},
       {
         closed: () => {
           this.checkAllocation(this.$store.state.tally)
         },
-      },
+      }
     )
   }
 
@@ -286,7 +310,6 @@ export default class ProjectView extends Vue {
     return markdown.render(this.project?.description || '')
   }
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -340,13 +363,12 @@ export default class ProjectView extends Vue {
   }
 }
 
-
 .back-button {
   color: $text-color;
   text-decoration: underline;
   &:hover {
-        transform: scale(1.01);
-      }
+    transform: scale(1.01);
+  }
 }
 
 .tagline {
@@ -396,8 +418,8 @@ export default class ProjectView extends Vue {
   border-radius: 0.5rem;
   box-shadow: $box-shadow;
   background: $clr-blue-gradient;
-  display: flex; 
-  align-items: center; 
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   @media (max-width: $breakpoint-l) {
     flex-direction: column;
@@ -461,7 +483,6 @@ export default class ProjectView extends Vue {
   border-radius: 4px;
 }
 
-
 .contribute-btn,
 .in-cart,
 .register-btn,
@@ -470,7 +491,7 @@ export default class ProjectView extends Vue {
 }
 
 .input-button {
-  background: #F7F7F7;
+  background: #f7f7f7;
   border-radius: 2rem;
   border: 2px solid $bg-primary-color;
   display: flex;
@@ -490,7 +511,7 @@ export default class ProjectView extends Vue {
   font-family: Inter;
   border: none;
   cursor: pointer;
-  box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
 }
 
 .donate-btn-full {
@@ -504,12 +525,12 @@ export default class ProjectView extends Vue {
   border: none;
   width: 100%;
   text-align: center;
-  box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
   z-index: 1;
 }
 
 .input-button {
-  background: #F7F7F7;
+  background: #f7f7f7;
   border-radius: 2rem;
   border: 2px solid $bg-primary-color;
   display: flex;
@@ -527,7 +548,6 @@ export default class ProjectView extends Vue {
   width: 100%;
 }
 
-
 .project-description {
   font-size: 1rem;
   line-height: 150%;
@@ -542,7 +562,7 @@ export default class ProjectView extends Vue {
 
 .address {
   font-family: 'Glacial Indifference', sans-serif;
-/*   padding: 1rem;
+  /*   padding: 1rem;
   background: $bg-secondary-color; */
   /* border: 1px solid #000; */
   border-radius: 8px;
@@ -562,17 +582,17 @@ export default class ProjectView extends Vue {
 }
 
 .copy-btn {
-  border-radius: 50%; 
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: none; 
+  background: none;
   border: 1px solid $text-color;
   padding: 0.5rem;
   box-sizing: border-box;
   padding: 0.25rem;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.1); 
+  background: rgba(255, 255, 255, 0.1);
   &:hover {
     transform: scale(1.01);
     opacity: 0.8;
@@ -591,7 +611,7 @@ export default class ProjectView extends Vue {
   left: 0;
   padding: 1.5rem;
   background: $bg-primary-color;
-  border-radius: 32px 32px  0 0;
+  border-radius: 32px 32px 0 0;
   box-shadow: $box-shadow;
 }
 
@@ -600,10 +620,8 @@ export default class ProjectView extends Vue {
 }
 
 .project-page hr {
-    border: 0;
-    border-bottom: 0.5px solid $button-disabled-text-color;
-    margin-bottom: 3rem;
+  border: 0;
+  border-bottom: 0.5px solid $button-disabled-text-color;
+  margin-bottom: 3rem;
 }
-
-
 </style>

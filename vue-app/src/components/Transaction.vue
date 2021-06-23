@@ -5,11 +5,11 @@
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </template>
     <template v-else>
-      <div v-if="!hash">
-        Please approve transaction in your wallet
-      </div>
+      <div v-if="!hash">Please approve transaction in your wallet</div>
       <div v-if="hash">
-        Waiting for <a :href="getBlockExplorerUrl(hash)" target="_blank">transaction</a> to confirm...
+        Waiting for
+        <a :href="getBlockExplorerUrl(hash)" target="_blank">transaction</a> to
+        confirm...
       </div>
       <loader />
     </template>
@@ -30,7 +30,6 @@ import { blockExplorer } from '@/api/core'
   },
 })
 export default class Transaction extends Vue {
-
   @Prop()
   hash!: string
 

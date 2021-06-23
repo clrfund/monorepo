@@ -30,7 +30,9 @@ export default class CartTimeLeft extends Vue {
   }
 
   get timeLeft(): TimeLeft {
-    return this.$store.getters.canUserReallocate ? this.reallocationTimeLeft : this.contributionTimeLeft
+    return this.$store.getters.canUserReallocate
+      ? this.reallocationTimeLeft
+      : this.contributionTimeLeft
   }
 }
 </script>

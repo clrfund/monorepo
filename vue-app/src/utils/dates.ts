@@ -13,7 +13,6 @@ export function hasDateElapsed(date: DateTime): boolean {
   return DateTime.local() >= date
 }
 
-
 export function getMillisecondsFromNow(date: DateTime): number {
   return date.diff(DateTime.local()).milliseconds
 }
@@ -37,5 +36,9 @@ export function formatDateFromNow(date: DateTime): string {
     return '...' //  TODO best place to do this?
   }
   const difference = getMillisecondsFromNow(date)
-  return humanizeDuration(difference, { largest: 1, units: ['mo', 'w', 'd', 'h', 'm'], round: true })
+  return humanizeDuration(difference, {
+    largest: 1,
+    units: ['mo', 'w', 'd', 'h', 'm'],
+    round: true,
+  })
 }

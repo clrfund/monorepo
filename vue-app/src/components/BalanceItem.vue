@@ -5,7 +5,7 @@
     </div>
     <div class="main">
       <div v-if="abbrev" class="token-abbrev">
-        {{abbrev}}
+        {{ abbrev }}
       </div>
       <!-- <p class="description"></p> -->
     </div>

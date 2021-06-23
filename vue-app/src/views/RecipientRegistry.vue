@@ -3,9 +3,12 @@
     <h1 class="content-heading">Recipient registry</h1>
     <div v-if="registryInfo" class="submit-project">
       <div class="submit-project-info">
-        In order to become a recipient of funding, a project must go through a review process.
-        <br>
-        It takes {{ formatDuration(registryInfo.challengePeriodDuration) }} and requires a {{ formatAmount(registryInfo.deposit) }} {{ registryInfo.depositToken }} security deposit.
+        In order to become a recipient of funding, a project must go through a
+        review process.
+        <br />
+        It takes {{ formatDuration(registryInfo.challengePeriodDuration) }} and
+        requires a {{ formatAmount(registryInfo.deposit) }}
+        {{ registryInfo.depositToken }} security deposit.
       </div>
       <button
         class="btn"
@@ -15,7 +18,7 @@
         Submit project
       </button>
     </div>
-    <loader v-if="isLoading"/>
+    <loader v-if="isLoading" />
     <h2 v-if="requests.length > 0">Recent changes</h2>
     <table v-if="requests.length > 0" class="requests">
       <thead>
@@ -26,28 +29,46 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
+        <tr
+          v-for="request in requests.slice().reverse()"
+          :key="request.transactionHash"
+        >
           <td>
             <div class="project-name">
-              <a :href="request.metadata.imageUrl" target="_blank" rel="noopener">
-                <img class="project-image" :src="request.metadata.imageUrl">
+              <a
+                :href="request.metadata.imageUrl"
+                target="_blank"
+                rel="noopener"
+              >
+                <img class="project-image" :src="request.metadata.imageUrl" />
               </a>
               {{ request.metadata.name }}
             </div>
-            <div class="project-description" v-html="renderDescription(request)"></div>
+            <div
+              class="project-description"
+              v-html="renderDescription(request)"
+            ></div>
             <details class="project-details">
               <summary>Additional info</summary>
-              <div>Transaction: <code>{{ request.transactionHash }}</code></div>
-              <div>Project ID: <code>{{ request.recipientId }}</code></div>
-              <div>Recipient address: <code>{{ request.recipient }}</code></div>
-              <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div>
+              <div>
+                Transaction: <code>{{ request.transactionHash }}</code>
+              </div>
+              <div>
+                Project ID: <code>{{ request.recipientId }}</code>
+              </div>
+              <div>
+                Recipient address: <code>{{ request.recipient }}</code>
+              </div>
+              <div v-if="isPending(request)">
+                Acceptance date: {{ formatDate(request.acceptanceDate) }}
+              </div>
             </details>
           </td>
           <td>{{ request.type }}</td>
           <td>
             <template v-if="hasProjectLink(request)">
               <router-link
-                :to="{ name: 'project', params: { id: request.recipientId }}"
+                :to="{ name: 'project', params: { id: request.recipientId } }"
               >
                 {{ request.status }}
               </router-link>
@@ -94,7 +115,6 @@ import { markdown } from '@/utils/markdown'
   components: { Loader },
 })
 export default class RecipientRegistryView extends Vue {
-
   registryInfo: RegistryInfo | null = null
   requests: Request[] = []
   isLoading = true
@@ -104,12 +124,18 @@ export default class RecipientRegistryView extends Vue {
       return
     }
     if (this.$store.state.recipientRegistryAddress === null) {
-      const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+      const roundAddress =
+        this.$store.state.currentRoundAddress || (await getCurrentRound())
       const registryAddress = await getRecipientRegistryAddress(roundAddress)
       this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
     }
-    this.registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
-    this.requests = await getRequests(this.$store.state.recipientRegistryAddress,  this.registryInfo)
+    this.registryInfo = await getRegistryInfo(
+      this.$store.state.recipientRegistryAddress
+    )
+    this.requests = await getRequests(
+      this.$store.state.recipientRegistryAddress,
+      this.registryInfo
+    )
     this.isLoading = false
   }
 
@@ -157,11 +183,11 @@ export default class RecipientRegistryView extends Vue {
           if (this.registryInfo) {
             this.requests = await getRequests(
               this.$store.state.recipientRegistryAddress,
-              this.registryInfo,
+              this.registryInfo
             )
           }
         },
-      },
+      }
     )
   }
 }
@@ -209,7 +235,8 @@ h2 {
     }
   }
 
-  th, td {
+  th,
+  td {
     overflow: hidden;
     padding: $content-space / 2;
     text-align: left;
@@ -236,7 +263,9 @@ h2 {
     }
 
     .project-description ::v-deep {
-      p, ul, ol {
+      p,
+      ul,
+      ol {
         margin: 10px 0;
       }
     }

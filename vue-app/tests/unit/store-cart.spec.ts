@@ -3,7 +3,13 @@ import { BigNumber } from 'ethers'
 
 import { MAX_CART_SIZE, CartItem } from '@/api/contributions'
 import { mutations } from '@/store'
-import { ADD_CART_ITEM, UPDATE_CART_ITEM, REMOVE_CART_ITEM, RESTORE_COMMITTED_CART_TO_LOCAL_CART, SAVE_COMMITTED_CART } from '@/store/mutation-types'
+import {
+  ADD_CART_ITEM,
+  UPDATE_CART_ITEM,
+  REMOVE_CART_ITEM,
+  RESTORE_COMMITTED_CART_TO_LOCAL_CART,
+  SAVE_COMMITTED_CART,
+} from '@/store/mutation-types'
 
 function createItem(props: any): CartItem {
   return {

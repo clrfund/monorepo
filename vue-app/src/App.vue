@@ -2,7 +2,11 @@
   <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
     <div id="content-container">
-      <div id="sidebar" v-if="isSidebarShown" :class="`${$store.state.showCartPanel ? 'desktop-l' :  'desktop'}`">
+      <div
+        id="sidebar"
+        v-if="isSidebarShown"
+        :class="`${$store.state.showCartPanel ? 'desktop-l' : 'desktop'}`"
+      >
         <round-information />
       </div>
       <div
@@ -16,7 +20,11 @@
         <back-to-projects v-if="showProjectsLink" />
         <router-view :key="$route.path" />
       </div>
-      <div id="cart" v-if="isSideCartShown" :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`">
+      <div
+        id="cart"
+        v-if="isSideCartShown"
+        :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`"
+      >
         <cart-widget />
       </div>
     </div>
@@ -38,7 +46,12 @@ import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
 import BackToProjects from '@/components/BackToProjects.vue'
 
-import { LOAD_USER_INFO, LOAD_ROUND_INFO, LOAD_RECIPIENT_REGISTRY_INFO, SELECT_ROUND } from '@/store/action-types'
+import {
+  LOAD_USER_INFO,
+  LOAD_ROUND_INFO,
+  LOAD_RECIPIENT_REGISTRY_INFO,
+  SELECT_ROUND,
+} from '@/store/action-types'
 
 @Component({
   name: 'clr.fund',
@@ -52,7 +65,14 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO, LOAD_RECIPIENT_REGISTRY_INFO, SELECT_R
       },
     ],
   },
-  components: { RoundInformation, NavBar, Cart, MobileTabs, CartWidget, BackToProjects },
+  components: {
+    RoundInformation,
+    NavBar,
+    Cart,
+    MobileTabs,
+    CartWidget,
+    BackToProjects,
+  },
 })
 export default class App extends Vue {
   created() {
@@ -69,7 +89,8 @@ export default class App extends Vue {
   }
 
   async mounted() {
-    const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+    const roundAddress =
+      this.$store.state.currentRoundAddress || (await getCurrentRound())
     await this.$store.dispatch(SELECT_ROUND, roundAddress)
     this.$store.dispatch(LOAD_ROUND_INFO)
     this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
@@ -84,17 +105,36 @@ export default class App extends Vue {
   }
 
   get isSidebarShown(): boolean {
-    const excludedRoutes = ['landing', 'project-added', 'join', 'join-step', 'round-information', 'verify', 'verify-step', 'verified']
+    const excludedRoutes = [
+      'landing',
+      'project-added',
+      'join',
+      'join-step',
+      'round-information',
+      'verify',
+      'verify-step',
+      'verified',
+    ]
     return !excludedRoutes.includes(this.$route.name || '')
   }
 
   get isMobileTabsShown(): boolean {
-    const excludedRoutes = ['landing', 'project-added', 'join', 'join-step', 'verify', 'verify-step', 'verified']
+    const excludedRoutes = [
+      'landing',
+      'project-added',
+      'join',
+      'join-step',
+      'verify',
+      'verify-step',
+      'verified',
+    ]
     return !excludedRoutes.includes(this.$route.name || '')
   }
 
   get isSideCartShown(): boolean {
-    return !!this.currentUser && this.isSidebarShown && this.$route.name !== 'cart'
+    return (
+      !!this.currentUser && this.isSidebarShown && this.$route.name !== 'cart'
+    )
   }
 
   get isCartPadding(): boolean {
@@ -103,7 +143,16 @@ export default class App extends Vue {
   }
 
   get showProjectsLink(): boolean {
-    const excludedRoutes = ['landing', 'project-added', 'join', 'join-step', 'projects', 'verify', 'verify-step', 'verified']
+    const excludedRoutes = [
+      'landing',
+      'project-added',
+      'join',
+      'join-step',
+      'projects',
+      'verify',
+      'verify-step',
+      'verified',
+    ]
     return !excludedRoutes.includes(this.$route.name || '')
   }
 
@@ -114,8 +163,8 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
-@import "styles/vars";
-@import "styles/fonts";
+@import 'styles/vars';
+@import 'styles/fonts';
 @import 'styles/theme';
 
 /**
@@ -189,7 +238,6 @@ summary:focus {
   min-height: 100%;
   position: relative;
 }
-
 
 .input {
   background-color: $bg-light-color;
@@ -278,7 +326,6 @@ summary:focus {
   width: $cart-width-open;
   height: 100%;
 
-
   .master {
     color: black;
     float: right;
@@ -351,7 +398,7 @@ summary:focus {
         border-radius: 10px;
         bottom: 0;
         box-sizing: border-box;
-        content: "";
+        content: '';
         display: block;
         height: 0.75em;
         left: -25px;
@@ -366,10 +413,10 @@ summary:focus {
 #content {
   flex: 1;
   padding-bottom: 4rem;
-  
+
   .content-heading {
     display: block;
-    font-family: "Glacial Indifference", sans-serif;
+    font-family: 'Glacial Indifference', sans-serif;
     font-size: 16px;
     font-weight: normal;
     letter-spacing: 6px;
@@ -441,7 +488,7 @@ summary:focus {
   margin-top: 0.5rem;
   font-size: 14px;
   &:before {
-    content: "⚠️ "
+    content: '⚠️ ';
   }
 }
 

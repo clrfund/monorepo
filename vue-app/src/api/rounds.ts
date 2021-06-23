@@ -1,9 +1,9 @@
 import { factory, ipfsGatewayUrl, extraRounds } from './core'
 
 export interface Round {
-  index: number;
-  address: string;
-  url?: string;
+  index: number
+  address: string
+  url?: string
 }
 
 export async function getRounds(): Promise<Round[]> {

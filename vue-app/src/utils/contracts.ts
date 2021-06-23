@@ -1,10 +1,13 @@
 import { Contract } from 'ethers'
-import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
+import {
+  TransactionResponse,
+  TransactionReceipt,
+} from '@ethersproject/abstract-provider'
 import { provider } from '@/api/core'
 
 export async function waitForTransaction(
   pendingTransaction: Promise<TransactionResponse>,
-  onTransactionHash: (hash: string) => void,
+  onTransactionHash: (hash: string) => void
 ): Promise<TransactionReceipt> {
   let transaction
   try {
@@ -20,7 +23,9 @@ export async function waitForTransaction(
     } catch (receiptError) {
       const errorMessage = receiptError.data?.message || ''
       if (errorMessage.includes('Block information is incomplete')) {
-        console.warn('Failed to get receipt, retrying...')  /* eslint-disable-line no-console */
+        console.warn(
+          'Failed to get receipt, retrying...'
+        ) /* eslint-disable-line no-console */
       } else {
         throw receiptError
       }
@@ -36,7 +41,7 @@ export function getEventArg(
   transactionReceipt: TransactionReceipt,
   contract: Contract,
   eventName: string,
-  argumentName: string,
+  argumentName: string
 ): any {
   for (const log of transactionReceipt.logs || []) {
     if (log.address != contract.address) {

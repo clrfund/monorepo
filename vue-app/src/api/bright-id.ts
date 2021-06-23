@@ -10,7 +10,7 @@ const CONTEXT = 'clr.fund'
 
 export async function isSponsoredUser(
   registryAddress: string,
-  userAddress: string,
+  userAddress: string
 ): Promise<boolean> {
   const registry = new Contract(registryAddress, BrightIdUserRegistry, provider)
   const eventFilter = registry.filters.Sponsor(userAddress)
@@ -20,7 +20,7 @@ export async function isSponsoredUser(
 
 export async function selfSponsor(
   registryAddress: string,
-  signer: Signer,
+  signer: Signer
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, BrightIdUserRegistry, signer)
   const userAddress = await signer.getAddress()
@@ -35,14 +35,13 @@ export function getBrightIdLink(userAddress: string): string {
 }
 
 export interface Verification {
-  unique: boolean;
-  contextIds: string[];
-  sig: { r: string; s: string; v: number };
-  timestamp: number;
+  unique: boolean
+  contextIds: string[]
+  sig: { r: string; s: string; v: number }
+  timestamp: number
 }
 
 export class BrightIdError extends Error {
-
   code?: number
 
   constructor(code?: number) {
@@ -54,7 +53,9 @@ export class BrightIdError extends Error {
   }
 }
 
-export async function getVerification(userAddress: string): Promise<Verification | null> {
+export async function getVerification(
+  userAddress: string
+): Promise<Verification | null> {
   const apiUrl = `${NODE_URL}/verifications/clr.fund/${userAddress}?signed=eth&timestamp=seconds`
   const response = await fetch(apiUrl)
   const data = await response.json()
@@ -68,7 +69,7 @@ export async function getVerification(userAddress: string): Promise<Verification
 export async function registerUser(
   registryAddress: string,
   verification: Verification,
-  signer: Signer,
+  signer: Signer
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, BrightIdUserRegistry, signer)
   const transaction = await registry.register(
@@ -77,7 +78,7 @@ export async function registerUser(
     verification.timestamp,
     verification.sig.v,
     '0x' + verification.sig.r,
-    '0x' + verification.sig.s,
+    '0x' + verification.sig.s
   )
   return transaction
 }
