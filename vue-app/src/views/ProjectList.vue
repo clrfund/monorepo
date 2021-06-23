@@ -13,46 +13,13 @@
         <div class="header">
           <h2>Projects</h2>
         </div>
-        <div class="category-filter">
-          <div
-            :class="{
-              'filter-btn': true,
-              'filter-btn-cart-closed':
-                !!$store.state.currentUser && !$store.state.showCartPanel,
-              'filter-btn-cart-open':
-                !!$store.state.currentUser && $store.state.showCartPanel,
-            }"
-            @click="handleFilterDropdown"
-          >
-            <span>
-              Filter
-              <span v-if="selectedCategories.length > 0"
-                >({{ selectedCategories.length }})</span
-              >
-            </span>
-            <img
-              src="@/assets/chevron-down.svg"
-              alt="Down arrow"
-              id="chevron"
-            />
-          </div>
-          <div class="selector-wrapper" id="category-selector">
-            <div
-              v-for="(category, idx) of categories"
-              :key="idx"
-              :class="{
-                'category-btn': true,
-                'category-btn-selected': selectedCategories.includes(category),
-              }"
-              @click="handleFilterClick"
-            >
-              {{ category }}
-              <span v-if="selectedCategories.includes(category)"
-                ><img src="@/assets/close.svg"
-              /></span>
-            </div>
-          </div>
-        </div>
+
+        <filter-dropdown
+          :categories="categories"
+          :selectedCategories="selectedCategories"
+          @change="handleFilterClick"
+        />
+
         <div v-if="projects.length > 0" class="project-search">
           <img src="@/assets/search.svg" />
           <input
@@ -124,6 +91,7 @@ import CartWidget from '@/components/CartWidget.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import RoundInformation from '@/components/RoundInformation.vue'
+import FilterDropdown from '@/components/FilterDropdown.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -157,6 +125,7 @@ function shuffleArray(array: any[]) {
     CartWidget,
     ProjectListItem,
     RoundInformation,
+    FilterDropdown,
   },
 })
 export default class ProjectList extends Vue {
@@ -262,11 +231,6 @@ export default class ProjectList extends Vue {
     )
   }
 
-  handleFilterDropdown(): void {
-    document.getElementById('chevron')?.classList.toggle('filter-chevron-open')
-    document.getElementById('category-selector')?.classList.toggle('show')
-  }
-
   get filteredProjects(): Project[] {
     return this.projectsByCategoriesSelected.filter((project: Project) => {
       if (!this.search) {
@@ -276,8 +240,7 @@ export default class ProjectList extends Vue {
     })
   }
 
-  handleFilterClick(event): void {
-    const selection = event.target.innerText.toLowerCase()
+  handleFilterClick(selection: string): void {
     if (this.selectedCategories.includes(selection)) {
       this.selectedCategories = this.selectedCategories.filter(
         (category) => category !== selection
@@ -289,24 +252,6 @@ export default class ProjectList extends Vue {
 
   clearSearch(): void {
     this.search = ''
-  }
-}
-
-// Close the dropdown menu if the user clicks outside of it
-window.onclick = function (event) {
-  if (
-    !event.target.matches('.filter-btn') &&
-    !event.target.matches('.category-btn') &&
-    event.target.id !== 'chevron'
-  ) {
-    const dropdowns = document.getElementsByClassName('selector-wrapper')
-    let i: number
-    for (i = 0; i < dropdowns.length; i++) {
-      const openDropdown = dropdowns[i]
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show')
-      }
-    }
   }
 }
 </script>
@@ -398,101 +343,6 @@ window.onclick = function (event) {
 
   .add-project {
     grid-area: add;
-  }
-
-  .category-filter {
-    grid-area: filter;
-    position: relative;
-
-    .filter-btn {
-      background: none;
-      cursor: pointer;
-      border: 1px solid $border-color;
-      border-radius: 0.75rem;
-      width: fit-content; /*  */
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.5rem 0.75rem;
-      transition: transform 0.1s;
-      &:hover {
-        opacity: 0.8;
-        transform: scale(1.01);
-      }
-      .filter-chevron-open {
-        transform: rotate(180deg);
-      }
-      @media (max-width: $breakpoint-m) {
-        width: auto;
-      }
-    }
-    .filter-btn-cart-closed {
-      @media (max-width: $breakpoint-m + $cart-width-closed) {
-        width: auto;
-      }
-    }
-    .filter-btn-cart-open {
-      @media (max-width: $breakpoint-m + $cart-width-open) {
-        width: auto;
-      }
-    }
-
-    .selector-wrapper {
-      display: none;
-      position: absolute;
-      top: 110%;
-      right: 0;
-      grid-template-columns: repeat(1, 4fr);
-      border: 1px solid $border-color;
-      border-radius: 0.75rem;
-      overflow: hidden;
-      justify-content: space-between;
-      width: 100%;
-      z-index: 99;
-      .category-btn {
-        display: grid;
-        place-items: center;
-        cursor: pointer;
-        padding: 0.5rem;
-        background: $bg-primary-color;
-        text-transform: capitalize;
-        &:hover {
-          background: $bg-secondary-color;
-        }
-      }
-      .category-btn-selected {
-        background: $clr-pink;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        line-height: 0;
-        margin: 0;
-        justify-content: space-between;
-
-        &:hover {
-          background: $clr-pink;
-        }
-      }
-      @media (max-width: $breakpoint-s) {
-        grid-template-columns: repeat(2, 1fr);
-        .category-btn {
-          border: none;
-          &:nth-child(1) {
-            border-right: 1px solid $border-color;
-            border-bottom: 1px solid $border-color;
-          }
-          &:nth-child(2) {
-            border-bottom: 1px solid $border-color;
-          }
-          &:nth-child(3) {
-            border-right: 1px solid $border-color;
-          }
-        }
-      }
-    }
-    .show {
-      display: grid;
-    }
   }
 
   .project-search {
