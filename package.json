@@ -37,7 +37,7 @@
     "lint": "yarn workspaces run lint",
     "lint:contracts": "yarn workspace @clrfund/contracts run lint",
     "lint:web": "yarn workspace @clrfund/vue-app run lint",
-    "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|ts|json|scss|css|vue)\"",
+    "prettier": "prettier \"**/*.+(js|ts|json|scss|css|vue)\"",
     "format": "yarn prettier --write",
     "prepare": "husky install"
   },
