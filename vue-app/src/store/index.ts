@@ -19,7 +19,6 @@ import {
   getContributionAmount,
   isContributionWithdrawn,
 } from '@/api/contributions'
-import { recipientRegistryType } from '@/api/core'
 import { loginUser, logoutUser } from '@/api/gun'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
@@ -459,6 +458,17 @@ const getters = {
   },
   canUserReallocate: (_, getters): boolean => {
     return getters.hasUserContributed && (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
+  },
+  hasLowFunds(state: RootState): boolean {
+    const {
+      currentUser,
+      recipientRegistryInfo,
+    } = state
+
+    if (currentUser && currentUser.balance && recipientRegistryInfo && recipientRegistryInfo.deposit) {
+      return currentUser.balance.lt(recipientRegistryInfo.deposit)
+    }
+    return false
   },
 }
 

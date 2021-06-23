@@ -29,7 +29,7 @@
       <div class="connected" v-if="currentUser">
         <div class="total-title">Total to submit<tooltip position="bottom" content="Estimate – this total may be slightly different in your wallet."><img src="@/assets/info.svg" /></tooltip></div>
         <div class="total">{{ depositAmount }} <span class="total-currency">  {{depositToken}}</span></div>
-        <div class="warning-text" v-if="hasLowFunds">Not enough {{depositToken}} in your wallet.<br /> Top up or connect a different wallet.</div>
+        <div class="warning-text" v-if="$store.getters.hasLowFunds">Not enough {{depositToken}} in your wallet.<br /> Top up or connect a different wallet.</div>
         <div v-if="txHasDeposit" class="checkout-row">
           <p class="m05"><b>Security deposit</b></p>
           <p class="m05">{{ depositAmount }} {{ depositToken }}
@@ -43,7 +43,7 @@
         <div class="cta">
           <button
             @click="handleSubmit"
-            :class="isWaiting || isPending || hasLowFunds ? 'btn-action-disabled' : 'btn-action'"
+            :class="isWaiting || isPending || $store.getters.hasLowFunds ? 'btn-action-disabled' : 'btn-action'"
             :disabled="!canSubmit"
           >
             <div v-if="isWaiting || isPending"><loader class="button-loader"/> </div>
@@ -140,18 +140,6 @@ export default class RecipientSubmissionWidget extends Vue {
  
   get depositToken(): string {
     return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
-  }
-
-  get hasLowFunds(): boolean {
-    const {
-      currentUser,
-      recipientRegistryInfo,
-    } = this.$store.state
-
-    if (currentUser && currentUser.balance && recipientRegistryInfo && recipientRegistryInfo.deposit) {
-      return currentUser.balance.lt(recipientRegistryInfo.deposit)
-    }
-    return false
   }
 
   handleSubmit(): void {
