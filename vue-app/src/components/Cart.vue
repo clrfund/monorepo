@@ -124,9 +124,10 @@
       </button>
       <button
         v-if="!isCartEmpty"
-        :class="{'btn-action': !errorMessage, 'btn-action disabled': errorMessage }"
+        :class="{'btn-action': !errorMessage,
+        'btn-action disabled': errorMessage || ($store.getters.hasUserContributed && !isDirty) }"
         @click="submitCart"
-        :disabled="errorMessage"
+        :disabled="errorMessage || ($store.getters.hasUserContributed && !isDirty)"
       >
         <template v-if="contribution.isZero()">
           Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
@@ -253,6 +254,22 @@ export default class Cart extends Vue {
     }
 
     return false
+  }
+
+  get isDirty(): boolean {
+    const { committedCart } = this.$store.state
+
+    return this.cart
+      .filter((item) => !item.isCleared)
+      .some((item: CartItem) => {
+        const index = committedCart.findIndex((commitedItem: CartItem) => {
+          return (
+            item.id === commitedItem.id && item.amount === commitedItem.amount
+          )
+        })
+
+        return index === -1
+      })
   }
 
   private get cart(): CartItem[] {

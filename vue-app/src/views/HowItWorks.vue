@@ -45,7 +45,7 @@
     <ul>
         <li>This phase will last xxx days.</li>
     </ul>
-    <h2>Finalised phase</h2>
+    <h2>Finalized phase</h2>
     <p>All the calculations are done. Project owners can come and claim their funding!</p>
     <h3>Need to know</h3>
     <ul>
