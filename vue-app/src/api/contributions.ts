@@ -13,13 +13,13 @@ export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
 export const MAX_CART_SIZE = 13
 
 export interface CartItem extends Project {
-  amount: string;
-  isCleared: boolean; // Item has been removed from cart and its amount cleared
+  amount: string
+  isCleared: boolean // Item has been removed from cart and its amount cleared
 }
 
 export interface Contributor {
-  keypair: Keypair;
-  stateIndex: number;
+  keypair: Keypair
+  stateIndex: number
 }
 
 export function getCartStorageKey(roundAddress: string): string {
@@ -53,7 +53,9 @@ export function serializeContributorData(contributor: Contributor): string {
   })
 }
 
-export function deserializeContributorData(data: string | null): Contributor | null {
+export function deserializeContributorData(
+  data: string | null
+): Contributor | null {
   if (data) {
     const parsed = JSON.parse(data)
     const keypair = new Keypair(PrivKey.unserialize(parsed.privateKey))
@@ -65,13 +67,9 @@ export function deserializeContributorData(data: string | null): Contributor | n
 
 export async function getContributionAmount(
   fundingRoundAddress: string,
-  contributorAddress: string,
+  contributorAddress: string
 ): Promise<BigNumber> {
-  const fundingRound = new Contract(
-    fundingRoundAddress,
-    FundingRound,
-    provider,
-  )
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const filter = fundingRound.filters.Contribution(contributorAddress)
   const events = await fundingRound.queryFilter(filter, 0)
   const event = events[0]
@@ -83,7 +81,7 @@ export async function getContributionAmount(
 
 export async function isContributionWithdrawn(
   roundAddress: string,
-  contributorAddress: string,
+  contributorAddress: string
 ): Promise<boolean> {
   const fundingRound = new Contract(roundAddress, FundingRound, provider)
   const filter = fundingRound.filters.ContributionWithdrawn(contributorAddress)
@@ -92,17 +90,13 @@ export async function isContributionWithdrawn(
 }
 
 export async function getTotalContributed(
-  fundingRoundAddress: string,
+  fundingRoundAddress: string
 ): Promise<{ count: number; amount: BigNumber }> {
-  const fundingRound = new Contract(
-    fundingRoundAddress,
-    FundingRound,
-    provider,
-  )
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const filter = fundingRound.filters.Contribution()
   const events = await fundingRound.queryFilter(filter, 0)
   let amount = BigNumber.from(0)
-  events.forEach(event => {
+  events.forEach((event) => {
     if (!event.args) {
       return
     }
@@ -113,7 +107,7 @@ export async function getTotalContributed(
 
 export async function withdrawContribution(
   roundAddress: string,
-  signer: Signer,
+  signer: Signer
 ): Promise<TransactionResponse> {
   const fundingRound = new Contract(roundAddress, FundingRound, signer)
   const transaction = await fundingRound.withdrawContribution()

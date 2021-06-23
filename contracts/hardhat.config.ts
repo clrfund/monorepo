@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
 import dotenv from 'dotenv'
 
 import { HardhatUserConfig, task } from 'hardhat/config'
@@ -9,7 +9,7 @@ import '@nomiclabs/hardhat-ganache'
 dotenv.config()
 
 const GAS_LIMIT = 10000000
-const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC || '';
+const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC || ''
 
 const config: HardhatUserConfig = {
   networks: {
@@ -48,19 +48,29 @@ const config: HardhatUserConfig = {
       },
     },
   },
-};
+}
 
-task('compile', 'Compiles the entire project, building all artifacts', async (_, { config }, runSuper) => {
-  await runSuper();
-  // Copy Poseidon artifacts
-  const poseidons = ['PoseidonT3', 'PoseidonT6']
-  for (const contractName of poseidons) {
-    const artifact = JSON.parse(fs.readFileSync(`../node_modules/maci-contracts/compiled/${contractName}.json`).toString())
-    fs.writeFileSync(
-      path.join(config.paths.artifacts, `${contractName}.json`),
-      JSON.stringify({ ...artifact, linkReferences: {} }),
-    )
+task(
+  'compile',
+  'Compiles the entire project, building all artifacts',
+  async (_, { config }, runSuper) => {
+    await runSuper()
+    // Copy Poseidon artifacts
+    const poseidons = ['PoseidonT3', 'PoseidonT6']
+    for (const contractName of poseidons) {
+      const artifact = JSON.parse(
+        fs
+          .readFileSync(
+            `../node_modules/maci-contracts/compiled/${contractName}.json`
+          )
+          .toString()
+      )
+      fs.writeFileSync(
+        path.join(config.paths.artifacts, `${contractName}.json`),
+        JSON.stringify({ ...artifact, linkReferences: {} })
+      )
+    }
   }
-});
+)
 
 export default config

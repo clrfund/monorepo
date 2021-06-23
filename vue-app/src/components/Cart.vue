@@ -1,171 +1,282 @@
 <template>
-<div style="height: 100%;">
-  <div v-if="!currentUser" class="empty-cart">
-    <div class="moon-emoji">🌚</div>
-    <h3>Connect to see your cart </h3>
-    <wallet-widget :isActionButton="true" />
-  </div>
-  <div v-else class="cart-container">
-    <div class="reallocation-message" v-if="$store.getters.canUserReallocate">
-        You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount. <router-link to="/about-maci" class="message-link">Why?</router-link>
-      </div>
-    <div class="flex cart-title-bar">
-      <div v-if="showCollapseCart" @click="toggleCart" class="absolute-left cart-btn">
-        <img
-          alt="cart"
-          width="16px"
-          src="@/assets/cart.svg"
-        >
-        <img
-          alt="close"
-          width="16px"
-          src="@/assets/chevron-right.svg"
-        >
-      </div>
-      <h2>{{isEditMode ? "Edit cart" : "Your cart"}}</h2>
-      <div v-if="($store.getters.isRoundContributionPhase || $store.getters.canUserReallocate) && !isCartEmpty" class="absolute-right dropdown">
-        <img @click="openDropdown" class="dropdown-btn" src="@/assets/more.svg" />
-        <div id="cart-dropdown" class="button-menu">
-          <div v-for="({ callback, text, icon }, idx) of dropdownItems" :key="idx" class="dropdown-item" @click="callback">
-            <img width="16px" :src="require(`@/assets/${icon}`)" />
-            <p>{{ text }}</p>
-          </div>
-        </div>
-      </div>
+  <div style="height: 100%">
+    <div v-if="!currentUser" class="empty-cart">
+      <div class="moon-emoji">🌚</div>
+      <h3>Connect to see your cart</h3>
+      <wallet-widget :isActionButton="true" />
     </div>
-    <div class="messages-and-cart-items">
-      <div class="reallocation-intro" v-if="$store.getters.hasUserContributed && $store.getters.hasReallocationPhaseEnded">
-        This round is over. Here’s how you contributed. Thanks!
+    <div v-else class="cart-container">
+      <div class="reallocation-message" v-if="$store.getters.canUserReallocate">
+        You’ve already contributed this round. You can edit your choices and add
+        new projects, but your cart total must always equal your original
+        contribution amount.
+        <router-link to="/about-maci" class="message-link">Why?</router-link>
       </div>
-      <div class="cart">
-        <div v-if="!$store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded" class="empty-cart">
-          <div class="moon-emoji">🌚</div>
-          <h3>Too late to donate</h3>
-          <div>Sorry, the deadline for donating has passed.</div>
+      <div class="flex cart-title-bar">
+        <div
+          v-if="showCollapseCart"
+          @click="toggleCart"
+          class="absolute-left cart-btn"
+        >
+          <img alt="cart" width="16px" src="@/assets/cart.svg" />
+          <img alt="close" width="16px" src="@/assets/chevron-right.svg" />
         </div>
-        <div v-else-if="isCartEmpty && $store.getters.isRoundContributionPhase" class="empty-cart">
-          <div class="moon-emoji">🌚</div>
-          <h3>Your cart is empty</h3>
-          <div>Choose some projects that you want to contribute to...</div>
-          <router-link to="/projects" class="btn-secondary mobile mt1">See projects</router-link>
-        </div>
-        <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
-          <div class="flex-row-reallocation">
-            <div class="semi-bold">{{isEditMode ? "Edit contributions" : "Your contributions"}}</div>
-            <div class="semi-bold" v-if="$store.getters.canUserReallocate">
-              <button @click="handleEditState" class="pointer">{{ isEditMode ? "Cancel" : "Edit" }}</button>
+        <h2>{{ isEditMode ? 'Edit cart' : 'Your cart' }}</h2>
+        <div
+          v-if="
+            ($store.getters.isRoundContributionPhase ||
+              $store.getters.canUserReallocate) &&
+            !isCartEmpty
+          "
+          class="absolute-right dropdown"
+        >
+          <img
+            @click="openDropdown"
+            class="dropdown-btn"
+            src="@/assets/more.svg"
+          />
+          <div id="cart-dropdown" class="button-menu">
+            <div
+              v-for="({ callback, text, icon }, idx) of dropdownItems"
+              :key="idx"
+              class="dropdown-item"
+              @click="callback"
+            >
+              <img width="16px" :src="require(`@/assets/${icon}`)" />
+              <p>{{ text }}</p>
             </div>
           </div>
         </div>
-        <div v-else-if="$store.getters.hasUserContributed" class="flex-row-reallocation" id="readOnly">
-          <!-- Round is finalized -->
-          <div>Your contributions</div>
+      </div>
+      <div class="messages-and-cart-items">
+        <div
+          class="reallocation-intro"
+          v-if="
+            $store.getters.hasUserContributed &&
+            $store.getters.hasReallocationPhaseEnded
+          "
+        >
+          This round is over. Here’s how you contributed. Thanks!
         </div>
-        <cart-items
-          v-if="$store.getters.hasUserContributed || !$store.getters.hasContributionPhaseEnded"
-          :cartList="filteredCart"
-          :isEditMode="isEditMode"
-          :isAmountValid="isAmountValid"
+        <div class="cart">
+          <div
+            v-if="
+              !$store.getters.hasUserContributed &&
+              $store.getters.hasContributionPhaseEnded
+            "
+            class="empty-cart"
+          >
+            <div class="moon-emoji">🌚</div>
+            <h3>Too late to donate</h3>
+            <div>Sorry, the deadline for donating has passed.</div>
+          </div>
+          <div
+            v-else-if="isCartEmpty && $store.getters.isRoundContributionPhase"
+            class="empty-cart"
+          >
+            <div class="moon-emoji">🌚</div>
+            <h3>Your cart is empty</h3>
+            <div>Choose some projects that you want to contribute to...</div>
+            <router-link to="/projects" class="btn-secondary mobile mt1"
+              >See projects</router-link
+            >
+          </div>
+          <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
+            <div class="flex-row-reallocation">
+              <div class="semi-bold">
+                {{ isEditMode ? 'Edit contributions' : 'Your contributions' }}
+              </div>
+              <div class="semi-bold" v-if="$store.getters.canUserReallocate">
+                <button @click="handleEditState" class="pointer">
+                  {{ isEditMode ? 'Cancel' : 'Edit' }}
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            v-else-if="$store.getters.hasUserContributed"
+            class="flex-row-reallocation"
+            id="readOnly"
+          >
+            <!-- Round is finalized -->
+            <div>Your contributions</div>
+          </div>
+          <cart-items
+            v-if="
+              $store.getters.hasUserContributed ||
+              !$store.getters.hasContributionPhaseEnded
+            "
+            :cartList="filteredCart"
+            :isEditMode="isEditMode"
+            :isAmountValid="isAmountValid"
+          />
+        </div>
+        <cart-time-left
+          v-if="
+            ($store.getters.canUserReallocate && !isEditMode) ||
+            ($store.getters.isRoundContributionPhase &&
+              !$store.getters.canUserReallocate)
+          "
+          class="time-left-read-only"
         />
       </div>
-      <cart-time-left v-if="($store.getters.canUserReallocate && !isEditMode) ||
-      ($store.getters.isRoundContributionPhase && !$store.getters.canUserReallocate)" class="time-left-read-only" />
-    </div>
-    <div class="reallocation-section" v-if="$store.getters.canUserReallocate && isEditMode">
-      <div class="reallocation-row">
-        <span>Original contribution</span> 
-        {{ formatAmount(this.contribution) }} {{tokenSymbol}}
-      </div>
-      <div :class="{
-        'reallocation-row': !this.isGreaterThanInitialContribution(),
-        'reallocation-row-warning': this.isGreaterThanInitialContribution()
-        }">
-        <span>Your cart</span> 
-        <div class="reallocation-warning"><span v-if="this.isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getCartTotal(this.$store.state.cart))}} {{tokenSymbol}}</div>
-      </div>  
-      <div v-if="hasUnallocatedFunds()" class="reallocation-row-matching-pool">
-        <div>
-          <div><b>Matching pool</b></div> 
-          <div>Remaining funds go to matching pool</div>
+      <div
+        class="reallocation-section"
+        v-if="$store.getters.canUserReallocate && isEditMode"
+      >
+        <div class="reallocation-row">
+          <span>Original contribution</span>
+          {{ formatAmount(this.contribution) }} {{ tokenSymbol }}
         </div>
-        + {{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}
-      </div> 
-      <div @click="splitContributionsEvenly" class="split-link" v-if="this.isGreaterThanInitialContribution() || hasUnallocatedFunds()"><img src="@/assets/split.svg" /> Split {{ formatAmount(this.contribution) }} {{tokenSymbol}} evenly</div>
-      <!-- TODO: should probably only appear if more than 1 item in cart -->
-    </div>
-    <div class="submit-btn-wrapper"
-    v-if="($store.getters.canUserReallocate && isEditMode) ||
-    (!$store.getters.canUserReallocate && $store.getters.isRoundContributionPhase)"
-    >
-      <!--  TODO: Also, add getter for pre-contribution phase -->
-      <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
+        <div
+          :class="{
+            'reallocation-row': !this.isGreaterThanInitialContribution(),
+            'reallocation-row-warning': this.isGreaterThanInitialContribution(),
+          }"
+        >
+          <span>Your cart</span>
+          <div class="reallocation-warning">
+            <span v-if="this.isGreaterThanInitialContribution()">⚠️</span
+            >{{ formatAmount(getCartTotal(this.$store.state.cart)) }}
+            {{ tokenSymbol }}
+          </div>
+        </div>
+        <div
+          v-if="hasUnallocatedFunds()"
+          class="reallocation-row-matching-pool"
+        >
+          <div>
+            <div><b>Matching pool</b></div>
+            <div>Remaining funds go to matching pool</div>
+          </div>
+          + {{ formatAmount(this.contribution) - formatAmount(getTotal()) }}
+          {{ tokenSymbol }}
+        </div>
+        <div
+          @click="splitContributionsEvenly"
+          class="split-link"
+          v-if="
+            this.isGreaterThanInitialContribution() || hasUnallocatedFunds()
+          "
+        >
+          <img src="@/assets/split.svg" /> Split
+          {{ formatAmount(this.contribution) }} {{ tokenSymbol }} evenly
+        </div>
+        <!-- TODO: should probably only appear if more than 1 item in cart -->
+      </div>
+      <div
+        class="submit-btn-wrapper"
+        v-if="
+          ($store.getters.canUserReallocate && isEditMode) ||
+          (!$store.getters.canUserReallocate &&
+            $store.getters.isRoundContributionPhase)
+        "
+      >
+        <!--  TODO: Also, add getter for pre-contribution phase -->
+        <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
         Round opens for contributing in {{startDateCountdown}}. <span v-if="canRegisterWithBrightId">Get verified with BrightID while you wait.</span>
-      </div> --> 
-      <div v-if="errorMessage" class="error-title">Can't <span v-if="$store.getters.canUserReallocate">reallocate</span><span v-else>contribute</span></div>
-      <div v-if="errorMessage" class="submit-error">
-        {{ errorMessage }}
+      </div> -->
+        <div v-if="errorMessage" class="error-title">
+          Can't <span v-if="$store.getters.canUserReallocate">reallocate</span
+          ><span v-else>contribute</span>
+        </div>
+        <div v-if="errorMessage" class="submit-error">
+          {{ errorMessage }}
+        </div>
+        <div class="p1" v-if="hasUnallocatedFunds()">
+          Funds you don't contribute to projects ({{
+            formatAmount(this.contribution) - formatAmount(getTotal())
+          }}
+          {{ tokenSymbol }}) will be sent to the matching pool at the end of the
+          round. Your cart must add up to your original
+          {{ formatAmount(this.contribution) }} {{ tokenSymbol }} donation.
+        </div>
+        <!-- TODO check logic - will this ever be true? within canUserReallocate conditional -->
+        <div class="p1" v-if="canRegisterWithBrightId">
+          <router-link to="/verify" class="btn-primary">
+            Verify with BrightID
+          </router-link>
+        </div>
+        <button
+          v-if="canWithdrawContribution()"
+          class="btn-action"
+          @click="withdrawContribution()"
+        >
+          Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
+        </button>
+        <button
+          v-if="!isCartEmpty"
+          :class="{
+            'btn-action': !errorMessage,
+            'btn-action disabled':
+              errorMessage || ($store.getters.hasUserContributed && !isDirty),
+          }"
+          @click="submitCart"
+          :disabled="
+            errorMessage || ($store.getters.hasUserContributed && !isDirty)
+          "
+        >
+          <template v-if="contribution.isZero()">
+            Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to
+            {{ cart.length }} projects
+          </template>
+          <template v-else> Reallocate contribution </template>
+        </button>
+        <cart-time-left
+          v-if="$store.getters.canUserReallocate && isEditMode"
+          class="time-left"
+        />
       </div>
-      <div class="p1" v-if="hasUnallocatedFunds()">
-        Funds you don't contribute to projects ({{ formatAmount(this.contribution) - formatAmount(getTotal())}} {{ tokenSymbol }}) will be sent to the matching pool at the end of the round.
-        Your cart must add up to your original {{ formatAmount(this.contribution) }} {{tokenSymbol}} donation.
-      </div>
-      <!-- TODO check logic - will this ever be true? within canUserReallocate conditional -->
-      <div class="p1" v-if="canRegisterWithBrightId">
-        <router-link to="/verify" class="btn-primary"> 
-          Verify with BrightID
-        </router-link>
-      </div>
-      <button
-        v-if="canWithdrawContribution()"
-        class="btn-action"
-        @click="withdrawContribution()"
+      <div
+        class="line-item-bar"
+        v-if="$store.getters.hasUserContributed && !isEditMode"
       >
-        Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
-      </button>
-      <button
-        v-if="!isCartEmpty"
-        :class="{'btn-action': !errorMessage,
-        'btn-action disabled': errorMessage || ($store.getters.hasUserContributed && !isDirty) }"
-        @click="submitCart"
-        :disabled="errorMessage || ($store.getters.hasUserContributed && !isDirty)"
-      >
-        <template v-if="contribution.isZero()">
-          Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
-        </template>
-        <template v-else>
-          Reallocate contribution
-        </template>
-      </button>
-      <cart-time-left v-if="$store.getters.canUserReallocate && isEditMode" class="time-left" />
-    </div>
-    <div class="line-item-bar" v-if="$store.getters.hasUserContributed && !isEditMode">
-      <div class="line-item">
-        <span>Projects</span>
-        <div>
-          <span>{{ formatAmount(getCartTotal($store.state.committedCart))}} {{ tokenSymbol }}</span>
+        <div class="line-item">
+          <span>Projects</span>
+          <div>
+            <span
+              >{{ formatAmount(getCartTotal($store.state.committedCart)) }}
+              {{ tokenSymbol }}</span
+            >
+          </div>
+        </div>
+        <div class="line-item">
+          <span>Matching Pool</span>
+          <div>
+            <span>{{ getCartMatchingPoolTotal() }} {{ tokenSymbol }}</span>
+          </div>
         </div>
       </div>
-      <div class="line-item">
-        <span>Matching Pool</span>
+      <div
+        class="total-bar"
+        v-if="
+          $store.getters.isRoundContributionPhase ||
+          ($store.getters.hasUserContributed &&
+            $store.getters.hasContributionPhaseEnded)
+        "
+      >
+        <span class="total-label">Total</span>
         <div>
-          <span>{{ getCartMatchingPoolTotal() }} {{ tokenSymbol }}</span>
+          <span
+            v-if="
+              this.isGreaterThanInitialContribution() &&
+              $store.getters.hasUserContributed
+            "
+            >{{ formatAmount(getCartTotal(this.$store.state.cart)) }} /
+            <span class="total-reallocation">{{
+              formatAmount(contribution)
+            }}</span>
+          </span>
+          <span v-else>{{ formatAmount(getTotal()) }}</span>
+          {{ tokenSymbol }}
         </div>
       </div>
-    </div>
-    <div class="total-bar" v-if="$store.getters.isRoundContributionPhase || ($store.getters.hasUserContributed && $store.getters.hasContributionPhaseEnded)">
-      <span class="total-label">Total</span>
-      <div>
-        <span v-if="this.isGreaterThanInitialContribution() && $store.getters.hasUserContributed">{{ formatAmount(getCartTotal(this.$store.state.cart)) }} / <span class="total-reallocation">{{ formatAmount(contribution)}}</span> </span> 
-        <span v-else>{{ formatAmount(getTotal()) }}</span> 
-        {{ tokenSymbol }}
-      </div>
-    </div>
-    <!-- <div class="reallocation-bar-container">
+      <!-- <div class="reallocation-bar-container">
       <div class="reallocation-bar" /> 
     </div> -->
-    <!-- TODO: reallocation bar -->
+      <!-- TODO: reallocation bar -->
+    </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">
@@ -208,7 +319,11 @@ import {
   SAVE_CART,
 } from '@/store/action-types'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
-import { CLEAR_CART, RESTORE_COMMITTED_CART_TO_LOCAL_CART, TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
+import {
+  CLEAR_CART,
+  RESTORE_COMMITTED_CART_TO_LOCAL_CART,
+  TOGGLE_SHOW_CART_PANEL,
+} from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { getNetworkName } from '@/utils/networks'
 import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
@@ -220,23 +335,26 @@ export default class Cart extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
   profileImageUrl: string | null = null
-  
+
   removeAll(): void {
     this.$store.commit(CLEAR_CART)
     this.$store.dispatch(SAVE_CART)
     this.$store.commit(TOGGLE_EDIT_SELECTION, true)
   }
 
-  dropdownItems: {callback: () => void | null; text: string; icon: string}[] = [
-    {
-      callback: this.removeAll,
-      text: 'Remove all', icon: 'remove.svg',
-    },
-    {
-      callback: this.splitContributionsEvenly,
-      text: 'Split evenly', icon: 'split.svg',
-    },
-  ]
+  dropdownItems: { callback: () => void | null; text: string; icon: string }[] =
+    [
+      {
+        callback: this.removeAll,
+        text: 'Remove all',
+        icon: 'remove.svg',
+      },
+      {
+        callback: this.splitContributionsEvenly,
+        text: 'Split evenly',
+        icon: 'split.svg',
+      },
+    ]
 
   get isEditMode(): boolean {
     const {
@@ -249,7 +367,10 @@ export default class Cart extends Vue {
       return true
     }
 
-    if ((isRoundContributionPhase && hasUserContributed) || isRoundReallocationPhase) {
+    if (
+      (isRoundContributionPhase && hasUserContributed) ||
+      isRoundReallocationPhase
+    ) {
       return this.$store.state.cartEditModeSelected
     }
 
@@ -300,7 +421,9 @@ export default class Cart extends Vue {
     if (!this.walletProvider) {
       return
     }
-    this.walletChainId = await this.walletProvider.request({ method: 'eth_chainId' })
+    this.walletChainId = await this.walletProvider.request({
+      method: 'eth_chainId',
+    })
     this.walletProvider.on('chainChanged', (_chainId: string) => {
       if (_chainId !== this.walletChainId) {
         this.walletChainId = _chainId
@@ -338,7 +461,9 @@ export default class Cart extends Vue {
   }
 
   get networkName(): string {
-    return this.jsonRpcNetwork === null ? '' : getNetworkName(this.jsonRpcNetwork)
+    return this.jsonRpcNetwork === null
+      ? ''
+      : getNetworkName(this.jsonRpcNetwork)
   }
 
   async connect(): Promise<void> {
@@ -347,7 +472,9 @@ export default class Cart extends Vue {
     }
     let walletAddress
     try {
-      [walletAddress] = await this.walletProvider.request({ method: 'eth_requestAccounts' })
+      ;[walletAddress] = await this.walletProvider.request({
+        method: 'eth_requestAccounts',
+      })
     } catch (error) {
       // Access denied
       return
@@ -371,8 +498,9 @@ export default class Cart extends Vue {
       contribution: null,
     }
 
-    getProfileImageUrl(user.walletAddress)
-      .then((url) => this.profileImageUrl = url)
+    getProfileImageUrl(user.walletAddress).then(
+      (url) => (this.profileImageUrl = url)
+    )
     this.$store.commit(SET_CURRENT_USER, user)
     await this.$store.dispatch(LOGIN_USER)
     if (this.$store.state.currentRound) {
@@ -432,12 +560,12 @@ export default class Cart extends Vue {
     if (amount.lt(BigNumber.from(0))) {
       return false
     }
-    const normalizedValue = FixedNumber
-      .fromValue(
-        amount.div(voiceCreditFactor).mul(voiceCreditFactor),
-        nativeTokenDecimals,
-      )
-      .toUnsafeFloat().toString()
+    const normalizedValue = FixedNumber.fromValue(
+      amount.div(voiceCreditFactor).mul(voiceCreditFactor),
+      nativeTokenDecimals
+    )
+      .toUnsafeFloat()
+      .toString()
     return normalizedValue === value
   }
 
@@ -461,11 +589,14 @@ export default class Cart extends Vue {
   }
 
   public getCartMatchingPoolTotal(): string {
-    return this.formatAmount(this.contribution.sub(this.getCartTotal(this.$store.state.committedCart)))
+    return this.formatAmount(
+      this.contribution.sub(this.getCartTotal(this.$store.state.committedCart))
+    )
   }
 
   private getCartTotal(cart: Array<CartItem>): BigNumber {
-    const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
+    const { nativeTokenDecimals, voiceCreditFactor } =
+      this.$store.state.currentRound
     return cart.reduce((total: BigNumber, item: CartItem) => {
       let amount
       try {
@@ -497,7 +628,9 @@ export default class Cart extends Vue {
   }
 
   get balance(): string | null {
-    return commify(formatUnits(this.$store.state.currentUser?.balance, 18)) ?? null
+    return (
+      commify(formatUnits(this.$store.state.currentUser?.balance, 18)) ?? null
+    )
   }
 
   get errorMessage(): string | null {
@@ -514,10 +647,13 @@ export default class Cart extends Vue {
     } else if (this.cart.length > MAX_CART_SIZE) {
       return `Your cart can't include over ${MAX_CART_SIZE} projects.`
     } else if (currentRound.status === RoundStatus.Cancelled) {
-      return 'Sorry, we\'ve had to cancel this funding round.'
+      return "Sorry, we've had to cancel this funding round."
     } else if (DateTime.local() >= currentRound.votingDeadline) {
       return 'The funding round has ended.'
-    } else if (currentRound.messages + this.cart.length >= currentRound.maxMessages) {
+    } else if (
+      currentRound.messages + this.cart.length >=
+      currentRound.maxMessages
+    ) {
       return 'The limit on the number of votes has been reached'
     } else {
       const total = this.getTotal()
@@ -535,7 +671,7 @@ export default class Cart extends Vue {
         } else if (total.gt(currentUser.balance)) {
           const balanceDisplay = formatAmount(
             currentUser.balance,
-            currentRound.nativeTokenDecimals,
+            currentRound.nativeTokenDecimals
           )
           return `Not enough funds. Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}.`
         } else if (this.isGreaterThanMax()) {
@@ -548,7 +684,9 @@ export default class Cart extends Vue {
         if (!this.$store.state.contributor) {
           return 'Contributor key is not found'
         } else if (this.isGreaterThanInitialContribution()) {
-          return `Your new total can't be more than your original ${this.formatAmount(this.contribution)} contribution.`
+          return `Your new total can't be more than your original ${this.formatAmount(
+            this.contribution
+          )} contribution.`
           // TODO: need to turn this into a small number
         } else {
           return null
@@ -566,7 +704,10 @@ export default class Cart extends Vue {
   }
 
   get canRegisterWithBrightId(): boolean {
-    return userRegistryType === 'brightid' && !this.$store.state.currentUser?.isVerified
+    return (
+      userRegistryType === 'brightid' &&
+      !this.$store.state.currentUser?.isVerified
+    )
   }
   // TODO: Check that we are pre-reallocation phase
   // Double check logic with Contribute button
@@ -580,16 +721,13 @@ export default class Cart extends Vue {
   }
 
   registerWithBrightId(): void {
-    this.$modal.show(
-      BrightIdModal,
-      { },
-      { width: 500 },
-    )
+    this.$modal.show(BrightIdModal, {}, { width: 500 })
   }
 
   submitCart(event) {
     event.preventDefault()
-    const { nativeTokenDecimals, voiceCreditFactor } = this.$store.state.currentRound
+    const { nativeTokenDecimals, voiceCreditFactor } =
+      this.$store.state.currentRound
     const votes = this.cart.map((item: CartItem) => {
       const amount = parseFixed(item.amount, nativeTokenDecimals)
       const voiceCredits = amount.div(voiceCreditFactor)
@@ -598,7 +736,7 @@ export default class Cart extends Vue {
     this.$modal.show(
       this.contribution.isZero() ? ContributionModal : ReallocationModal,
       { votes },
-      { width: 500 },
+      { width: 500 }
     )
     this.$store.commit(TOGGLE_EDIT_SELECTION, false)
   }
@@ -611,9 +749,7 @@ export default class Cart extends Vue {
   }
 
   withdrawContribution(): void {
-    this.$modal.show(
-      WithdrawalModal,
-    )
+    this.$modal.show(WithdrawalModal)
   }
 
   get showCollapseCart(): boolean {
@@ -631,16 +767,22 @@ export default class Cart extends Vue {
     const filteredCart = cart.filter((item) => !item.isCleared) // Filter out isCleared cart items for accurate split
     const total = this.$store.getters.canUserReallocate
       ? this.formatAmount(this.contribution)
-      : filteredCart.reduce((acc, curr) => acc += parseFloat(curr.amount), 0)
+      : filteredCart.reduce((acc, curr) => (acc += parseFloat(curr.amount)), 0)
     const splitAmount = total / filteredCart.length
     // Each iteration subtracts from the totalRemaining until the last round to accomodate for decimal rounding. ex 10/3
     let totalRemaining = Number(total)
 
     filteredCart.map((item: CartItem, index: number) => {
-      if (filteredCart.length-1 === index) {
-        this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount: parseFloat(totalRemaining.toFixed(5)).toString() })
+      if (filteredCart.length - 1 === index) {
+        this.$store.commit(UPDATE_CART_ITEM, {
+          ...item,
+          amount: parseFloat(totalRemaining.toFixed(5)).toString(),
+        })
       } else {
-        this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount: parseFloat(splitAmount.toFixed(5)).toString() })
+        this.$store.commit(UPDATE_CART_ITEM, {
+          ...item,
+          amount: parseFloat(splitAmount.toFixed(5)).toString(),
+        })
         totalRemaining -= Number(splitAmount.toFixed(5))
       }
     })
@@ -649,7 +791,7 @@ export default class Cart extends Vue {
 }
 
 // Close the dropdown menu if the user clicks outside of it
-window.onclick = function(event) {
+window.onclick = function (event) {
   if (!event.target.matches('.dropdown-btn')) {
     const dropdowns = document.getElementsByClassName('button-menu')
     let i: number
@@ -688,14 +830,13 @@ h2 {
   @media (max-width: $breakpoint-s) {
     padding: 1rem 0rem;
   }
-
 }
 
 .balance {
   font-size: 16px;
   font-weight: 600;
-  font-family: "Glacial Indifference", sans-serif;
-} 
+  font-family: 'Glacial Indifference', sans-serif;
+}
 
 .reallocation-intro {
   padding: 1rem;
@@ -726,19 +867,19 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;  
+  width: 100%;
 }
 
 .time-left-read-only {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem; 
+  padding: 1rem;
 }
 
 .cart-title-bar {
   position: sticky;
-  padding: 1rem;  
+  padding: 1rem;
   top: 0;
   background: $bg-primary-color;
   z-index: 1;
@@ -766,7 +907,7 @@ h2 {
   font-weight: 500;
   font-size: 14px;
   button {
-    font-family: "Inter";
+    font-family: 'Inter';
     font-weight: 500;
     font-size: 14px;
     color: $text-color;
@@ -802,7 +943,7 @@ h2 {
 }
 
 .cart-btn {
-  @include button(white, $bg-light-color, 1px solid rgba(115,117,166,0.3));
+  @include button(white, $bg-light-color, 1px solid rgba(115, 117, 166, 0.3));
   border: 0px solid #fff;
   background: transparent;
   padding: 0.75rem 0.5rem;
@@ -852,7 +993,7 @@ h2 {
   flex-direction: column;
   padding: 1rem 0;
   background: $bg-primary-color;
-  font-family: "Inter";
+  font-family: 'Inter';
   font-size: 1rem;
   line-height: 0;
   font-weight: 400;
@@ -876,7 +1017,7 @@ h2 {
   background: $bg-primary-color;
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
-  font-family: "Inter";
+  font-family: 'Inter';
   font-size: 1rem;
   line-height: 0;
   font-weight: 400;
@@ -895,14 +1036,14 @@ h2 {
 }
 
 .total-reallocation {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-size: 1rem;
   line-height: 0;
   font-weight: 700;
 }
 
 .total-label {
-  font-family: "Glacial Indifference", sans-serif;
+  font-family: 'Glacial Indifference', sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 0;
@@ -974,7 +1115,7 @@ h2 {
     padding-right: 0;
     width: 100%;
     margin-bottom: 1rem;
-  }  
+  }
 }
 
 .p1 {
@@ -987,7 +1128,7 @@ h2 {
   width: fit-content;
 }
 
-.ml1{
+.ml1 {
   margin-left: 1rem;
 }
 
@@ -999,7 +1140,7 @@ h2 {
   opacity: 0.5;
   cursor: not-allowed;
   &:hover {
-    transform: none;  
+    transform: none;
     cursor: not-allowed;
     opacity: 0.5;
   }
@@ -1017,7 +1158,6 @@ h2 {
   }
 }
 
-
 .reallocation-row-warning {
   display: flex;
   justify-content: space-between;
@@ -1033,9 +1173,10 @@ h2 {
 }
 
 .reallocation-warning {
-  span { 
+  span {
     color: $warning-color;
-    margin-right: 0.25rem; }
+    margin-right: 0.25rem;
+  }
 }
 
 .split-link {
@@ -1043,7 +1184,7 @@ h2 {
   gap: 0.25rem;
   align-items: center;
   text-decoration: underline;
-  cursor:  pointer;
+  cursor: pointer;
   justify-content: flex-end;
   &:hover {
     opacity: 0.8;
@@ -1065,7 +1206,6 @@ h2 {
     padding: 0.125rem 0;
   }
 }
-
 
 .reallocation-section {
   display: flex;
@@ -1116,10 +1256,10 @@ h2 {
     top: 2rem;
     right: 0.5rem;
     background: $bg-secondary-color;
-    border: 1px solid rgba(115,117,166,0.3);
+    border: 1px solid rgba(115, 117, 166, 0.3);
     border-radius: 0.5rem;
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     cursor: pointer;
     overflow: hidden;
@@ -1127,14 +1267,14 @@ h2 {
     .dropdown-item {
       display: flex;
       align-items: center;
-      padding: 0.25rem; 
+      padding: 0.25rem;
       padding-left: 1rem;
       gap: 0.5rem;
       color: #fff;
       &:hover {
         background: $bg-light-color;
       }
-      
+
       .item-text {
         margin: 0;
         color: #fff;
@@ -1146,5 +1286,4 @@ h2 {
     display: flex;
   }
 }
-
 </style>

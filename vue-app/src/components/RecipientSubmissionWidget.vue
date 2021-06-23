@@ -1,53 +1,105 @@
 <template>
   <div class="tx-container">
-    <div :class="isWaiting || isPending ? 'recipient-submission-widget shine' : 'recipient-submission-widget'">
-      <loader v-if="isLoading"/>
-      <wallet-widget class="m2" v-if="!currentUser"/>
-      <div v-if="currentUser" :class="isWaiting || isPending || txError ? 'tx-progress-area' : 'tx-progress-area-no-notice'">
-        <loader class="button-loader" v-if="isWaiting || isPending || isWrongNetwork"/>
+    <div
+      :class="
+        isWaiting || isPending
+          ? 'recipient-submission-widget shine'
+          : 'recipient-submission-widget'
+      "
+    >
+      <loader v-if="isLoading" />
+      <wallet-widget class="m2" v-if="!currentUser" />
+      <div
+        v-if="currentUser"
+        :class="
+          isWaiting || isPending || txError
+            ? 'tx-progress-area'
+            : 'tx-progress-area-no-notice'
+        "
+      >
+        <loader
+          class="button-loader"
+          v-if="isWaiting || isPending || isWrongNetwork"
+        />
         <div v-if="isWaiting" class="tx-notice">
           Check your wallet for a prompt...
         </div>
-        <div v-if=" hasTxError || isTxRejected" class="warning-text" style="font-size: 24px; margin-bottom: 0;">
+        <div
+          v-if="hasTxError || isTxRejected"
+          class="warning-text"
+          style="font-size: 24px; margin-bottom: 0"
+        >
           ⚠️
         </div>
         <div v-if="hasTxError" class="warning-text">
-          Something failed: {{txError}}<br /> Check your wallet or Etherscan for more info.
+          Something failed: {{ txError }}<br />
+          Check your wallet or Etherscan for more info.
         </div>
         <div v-if="isTxRejected" class="warning-text">
           You rejected the transaction in your wallet
         </div>
         <div v-if="isWrongNetwork" class="warning-text">
-          We're on Optimism Network.<br /> Switch over to the right network in your wallet.
+          We're on Optimism Network.<br />
+          Switch over to the right network in your wallet.
         </div>
         <div v-if="isPending">
-          <div class="tx-notice">{{pending}}</div>
+          <div class="tx-notice">{{ pending }}</div>
           <transaction-receipt :hash="txHash" />
           <!-- This will hopefully appear once we remove immediate direction to project-added -->
         </div>
       </div>
       <div class="connected" v-if="currentUser">
-        <div class="total-title">Total to submit<tooltip position="bottom" content="Estimate – this total may be slightly different in your wallet."><img src="@/assets/info.svg" /></tooltip></div>
-        <div class="total">{{ depositAmount }} <span class="total-currency">  {{depositToken}}</span></div>
-        <div class="warning-text" v-if="$store.getters.hasLowFunds">Not enough {{depositToken}} in your wallet.<br /> Top up or connect a different wallet.</div>
+        <div class="total-title">
+          Total to submit<tooltip
+            position="bottom"
+            content="Estimate – this total may be slightly different in your wallet."
+            ><img src="@/assets/info.svg"
+          /></tooltip>
+        </div>
+        <div class="total">
+          {{ depositAmount }}
+          <span class="total-currency"> {{ depositToken }}</span>
+        </div>
+        <div class="warning-text" v-if="$store.getters.hasLowFunds">
+          Not enough {{ depositToken }} in your wallet.<br />
+          Top up or connect a different wallet.
+        </div>
         <div v-if="txHasDeposit" class="checkout-row">
           <p class="m05"><b>Security deposit</b></p>
-          <p class="m05">{{ depositAmount }} {{ depositToken }}
-            <span class="o5">({{fiatSign}}{{ calculateFiatFee($store.state.recipientRegistryInfo.deposit) }})</span> 
+          <p class="m05">
+            {{ depositAmount }} {{ depositToken }}
+            <span class="o5"
+              >({{ fiatSign
+              }}{{
+                calculateFiatFee($store.state.recipientRegistryInfo.deposit)
+              }})</span
+            >
           </p>
         </div>
         <div class="checkout-row">
           <p class="m05"><b>Est. transaction fee</b></p>
-          <p class="m05">{{ gasFeeAmount }} {{feeToken}} <span class="o5">({{fiatSign}}{{ calculateFiatFee(this.estimatedGasFee) }})</span> </p>
+          <p class="m05">
+            {{ gasFeeAmount }} {{ feeToken }}
+            <span class="o5"
+              >({{ fiatSign
+              }}{{ calculateFiatFee(this.estimatedGasFee) }})</span
+            >
+          </p>
         </div>
         <div class="cta">
           <button
             @click="handleSubmit"
-            :class="isWaiting || isPending || $store.getters.hasLowFunds ? 'btn-action-disabled' : 'btn-action'"
+            :class="
+              isWaiting || isPending || $store.getters.hasLowFunds
+                ? 'btn-action-disabled'
+                : 'btn-action'
+            "
             :disabled="!canSubmit"
           >
-            <div v-if="isWaiting || isPending"><loader class="button-loader"/> </div>
-            <div v-else>{{cta}}</div>
+            <div v-if="isWaiting || isPending">
+              <loader class="button-loader" />
+            </div>
+            <div v-else>{{ cta }}</div>
           </button>
         </div>
       </div>
@@ -62,9 +114,7 @@ import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract } from 'ethers'
 import { OptimisticRecipientRegistry } from '@/api/abi'
 import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
-import {
-  addRecipient,
-} from '@/api/recipient-registry-optimistic'
+import { addRecipient } from '@/api/recipient-registry-optimistic'
 import { User } from '@/api/user'
 import { Web3Provider } from '@ethersproject/providers'
 
@@ -90,7 +140,7 @@ export default class RecipientSubmissionWidget extends Vue {
   isLoading = true
   isWaiting = false // TODO add logic
   isPending = false // TODO add logic
-  isWrongNetwork = false  // TODO remove? WalletWidget can handle this?
+  isWrongNetwork = false // TODO remove? WalletWidget can handle this?
   isTxRejected = false // TODO add logic
   txHash = ''
   txError = ''
@@ -113,13 +163,17 @@ export default class RecipientSubmissionWidget extends Vue {
   get currentUser(): User | null {
     return this.$store.state.currentUser
   }
-  
+
   get walletProvider(): Web3Provider | undefined {
     return this.currentUser?.walletProvider
   }
 
   get canSubmit(): boolean {
-    return !!this.currentUser && !!this.walletProvider && !!this.$store.state.recipientRegistryInfo
+    return (
+      !!this.currentUser &&
+      !!this.walletProvider &&
+      !!this.$store.state.recipientRegistryInfo
+    )
   }
 
   get hasTxError(): boolean {
@@ -131,13 +185,15 @@ export default class RecipientSubmissionWidget extends Vue {
   }
 
   get depositAmount(): string {
-    return this.$store.state.recipientRegistryInfo ? formatAmount(this.$store.state.recipientRegistryInfo.deposit, 18) : '...'
+    return this.$store.state.recipientRegistryInfo
+      ? formatAmount(this.$store.state.recipientRegistryInfo.deposit, 18)
+      : '...'
   }
 
   get gasFeeAmount(): string {
     return this.estimatedGasFee ? formatAmount(this.estimatedGasFee, 18) : '-'
   }
- 
+
   get depositToken(): string {
     return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
   }
@@ -148,33 +204,40 @@ export default class RecipientSubmissionWidget extends Vue {
 
   public calculateFiatFee(ethAmount: BigNumber): string {
     if (this.$store.state.recipientRegistryInfo && this.ethPrice) {
-      return Number(this.ethPrice.ethereum.usd * Number(formatAmount(ethAmount, 18))).toFixed(2)
+      return Number(
+        this.ethPrice.ethereum.usd * Number(formatAmount(ethAmount, 18))
+      ).toFixed(2)
     }
     return '-'
   }
 
   private async getEstimatedGasFee(): Promise<BigNumber> {
-    const {
-      recipient,
-      recipientRegistryAddress,
-      recipientRegistryInfo,
-    } = this.$store.state
+    const { recipient, recipientRegistryAddress, recipientRegistryInfo } =
+      this.$store.state
 
     if (
-      recipientRegistryInfo
-      && this.ethPrice
-      && this.walletProvider
-      && recipientRegistryAddress
-      && recipient
+      recipientRegistryInfo &&
+      this.ethPrice &&
+      this.walletProvider &&
+      recipientRegistryAddress &&
+      recipient
     ) {
-      const registry = new Contract(recipientRegistryAddress, OptimisticRecipientRegistry, this.walletProvider)
+      const registry = new Contract(
+        recipientRegistryAddress,
+        OptimisticRecipientRegistry,
+        this.walletProvider
+      )
 
-      return await registry.estimateGas.addRecipient(recipient.fund.address, JSON.stringify({
-        ...recipient.fund,
-        ...recipient.links,
-        ...recipient.image,
-        ...recipient.project,
-      }), {value: recipientRegistryInfo.deposit})
+      return await registry.estimateGas.addRecipient(
+        recipient.fund.address,
+        JSON.stringify({
+          ...recipient.fund,
+          ...recipient.links,
+          ...recipient.image,
+          ...recipient.project,
+        }),
+        { value: recipientRegistryInfo.deposit }
+      )
     }
     return BigNumber.from(0)
   }
@@ -190,11 +253,21 @@ export default class RecipientSubmissionWidget extends Vue {
     // TODO where to make `isPending` vs. `isWaiting`? In `waitForTransaction`?
     // Check out Launchpad repo to view transaction states
     this.isWaiting = true
-    if (recipientRegistryAddress && recipient && recipientRegistryInfo && currentUser) {
+    if (
+      recipientRegistryAddress &&
+      recipient &&
+      recipientRegistryInfo &&
+      currentUser
+    ) {
       try {
         await waitForTransaction(
-          addRecipient(recipientRegistryAddress, recipient, recipientRegistryInfo.deposit, currentUser.walletProvider.getSigner()),
-          (hash) => this.txHash = hash,
+          addRecipient(
+            recipientRegistryAddress,
+            recipient,
+            recipientRegistryInfo.deposit,
+            currentUser.walletProvider.getSigner()
+          ),
+          (hash) => (this.txHash = hash)
         )
       } catch (error) {
         this.isWaiting = false
@@ -218,7 +291,6 @@ export default class RecipientSubmissionWidget extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-
 .tx-container {
   width: 100%;
   display: flex;
@@ -241,27 +313,32 @@ export default class RecipientSubmissionWidget extends Vue {
   }
 }
 
-
 .shine {
   background: $bg-primary-color;
-  background-image: linear-gradient(to right, $bg-primary-color 0%, $bg-secondary-color 10%, $bg-primary-color 40%, $bg-primary-color 100%);
+  background-image: linear-gradient(
+    to right,
+    $bg-primary-color 0%,
+    $bg-secondary-color 10%,
+    $bg-primary-color 40%,
+    $bg-primary-color 100%
+  );
   background-repeat: repeat;
-  position: relative; 
-  
+  position: relative;
+
   -webkit-animation-duration: 8s;
-  -webkit-animation-fill-mode: forwards; 
+  -webkit-animation-fill-mode: forwards;
   -webkit-animation-iteration-count: infinite;
   -webkit-animation-name: placeholderShimmer;
   -webkit-animation-timing-function: linear;
-  }
+}
 
 @-webkit-keyframes placeholderShimmer {
   0% {
     background-position: calc(-100vw) 0;
   }
-  
+
   100% {
-    background-position: calc(100vw) 0; 
+    background-position: calc(100vw) 0;
   }
 }
 
@@ -303,7 +380,7 @@ export default class RecipientSubmissionWidget extends Vue {
 .total {
   font-size: 64px;
   font-weight: 700;
-  font-family: "Glacial Indifference", sans-serif;
+  font-family: 'Glacial Indifference', sans-serif;
   overflow-wrap: break-word;
   width: 100%;
   text-align: center;
@@ -317,7 +394,7 @@ export default class RecipientSubmissionWidget extends Vue {
   display: flex;
   align-items: center;
   justify-content: space-between;
-    @media (max-width: $breakpoint-m) {
+  @media (max-width: $breakpoint-m) {
     flex-direction: column;
     justify-content: flex-start;
   }
@@ -327,7 +404,6 @@ export default class RecipientSubmissionWidget extends Vue {
   margin: 0.5rem 0rem;
 }
 
-
 .m2 {
   margin: 2rem 0rem;
 }
@@ -335,7 +411,6 @@ export default class RecipientSubmissionWidget extends Vue {
 .o5 {
   opacity: 0.5;
 }
-
 
 .cta {
   margin: 2rem 0rem;
@@ -381,9 +456,8 @@ export default class RecipientSubmissionWidget extends Vue {
   margin-bottom: 2rem;
   line-height: 150%;
   color: $warning-color;
-  text-transform: uppercase;  
+  text-transform: uppercase;
   font-weight: 500;
   text-align: center;
 }
-
 </style>

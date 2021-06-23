@@ -11,22 +11,16 @@
       class="toggle-btn desktop"
       @click="toggleCart"
     >
-      <img
-        alt="open"
-        width="16px"
-        src="@/assets/chevron-left.svg"
+      <img alt="open" width="16px" src="@/assets/chevron-left.svg" />
+      <div
+        :class="[
+          cart.length + -0 ? 'circle pulse cart-indicator' : 'cart-indicator',
+        ]"
+        v-if="!$store.state.showCartPanel && isCartBadgeShown"
       >
-      <div 
-        :class="[cart.length +- 0 ? 'circle pulse cart-indicator' : 'cart-indicator']"
-        v-if="!$store.state.showCartPanel && isCartBadgeShown" 
-      >
-      {{ cart.length }}
+        {{ cart.length }}
       </div>
-      <img
-        alt="cart"
-        width="16px"
-        src="@/assets/cart.svg"
-      > 
+      <img alt="cart" width="16px" src="@/assets/cart.svg" />
     </div>
     <cart v-if="$store.state.showCartPanel" class="cart-component" />
     <div v-if="!$store.state.showCartPanel" class="collapsed-cart desktop" />
@@ -40,7 +34,6 @@ import { Network } from '@ethersproject/networks'
 import { Web3Provider } from '@ethersproject/providers'
 import Tooltip from '@/components/Tooltip.vue'
 import { provider as jsonRpcProvider } from '@/api/core'
-import { RoundStatus } from '@/api/round'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
 import { CartItem } from '@/api/contributions'
 import {
@@ -59,19 +52,24 @@ import { sha256 } from '@/utils/crypto'
 import Cart from '@/components/Cart.vue'
 import { getNetworkName } from '@/utils/networks'
 
-@Component({components: {Cart, Tooltip}})
+@Component({ components: { Cart, Tooltip } })
 export default class CartWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
   profileImageUrl: string | null = null
 
   async copyAddress(): Promise<void> {
-    if (!this.currentUser) { return }
+    if (!this.currentUser) {
+      return
+    }
     try {
-      await navigator.clipboard.writeText(this.currentUser.walletAddress as string)
+      await navigator.clipboard.writeText(
+        this.currentUser.walletAddress as string
+      )
       // alert('Text copied to clipboard')
     } catch (error) {
-      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
+      /* eslint-disable-next-line no-console */
+      console.warn('Error in copying text: ', error)
     }
   }
 
@@ -108,7 +106,9 @@ export default class CartWidget extends Vue {
     if (!this.walletProvider) {
       return
     }
-    this.walletChainId = await this.walletProvider.request({ method: 'eth_chainId' })
+    this.walletChainId = await this.walletProvider.request({
+      method: 'eth_chainId',
+    })
     this.walletProvider.on('chainChanged', (_chainId: string) => {
       if (_chainId !== this.walletChainId) {
         this.walletChainId = _chainId
@@ -146,7 +146,9 @@ export default class CartWidget extends Vue {
   }
 
   get networkName(): string {
-    return this.jsonRpcNetwork === null ? '' : getNetworkName(this.jsonRpcNetwork)
+    return this.jsonRpcNetwork === null
+      ? ''
+      : getNetworkName(this.jsonRpcNetwork)
   }
 
   async connect(): Promise<void> {
@@ -155,7 +157,9 @@ export default class CartWidget extends Vue {
     }
     let walletAddress
     try {
-      [walletAddress] = await this.walletProvider.request({ method: 'eth_requestAccounts' })
+      ;[walletAddress] = await this.walletProvider.request({
+        method: 'eth_requestAccounts',
+      })
     } catch (error) {
       // Access denied
       return
@@ -179,8 +183,9 @@ export default class CartWidget extends Vue {
       contribution: null,
     }
 
-    getProfileImageUrl(user.walletAddress)
-      .then((url) => this.profileImageUrl = url)
+    getProfileImageUrl(user.walletAddress).then(
+      (url) => (this.profileImageUrl = url)
+    )
     this.$store.commit(SET_CURRENT_USER, user)
     await this.$store.dispatch(LOGIN_USER)
     if (this.$store.state.currentRound) {
@@ -210,13 +215,12 @@ export default class CartWidget extends Vue {
      */
     return (
       (this.$store.getters.canUserReallocate ||
-      this.$store.getters.isRoundContributionPhase) &&
+        this.$store.getters.isRoundContributionPhase) &&
       !!this.$store.state.cart.length
     )
   }
 }
 </script>
-
 
 <style scoped lang="scss">
 @import '../styles/vars';
@@ -242,7 +246,7 @@ export default class CartWidget extends Vue {
   align-items: center;
 }
 
-.open{
+.open {
   background: $clr-green;
 }
 
@@ -263,7 +267,6 @@ export default class CartWidget extends Vue {
 
   100% {
     box-shadow: 0 0 0 4px $clr-pink;
-
   }
 }
 
@@ -273,7 +276,6 @@ export default class CartWidget extends Vue {
 
 .cart {
   position: relative;
-
 }
 
 .collapsed-cart {
@@ -302,8 +304,8 @@ export default class CartWidget extends Vue {
   gap: 0.5rem;
   padding: 0.75rem 0.5rem;
   color: white;
-  background: rgba(44,41,56,1); 
-  border: 1px solid rgba(115,117,166,0.3);
+  background: rgba(44, 41, 56, 1);
+  border: 1px solid rgba(115, 117, 166, 0.3);
   border-right: none;
   &:hover {
     background: $bg-secondary-color;
@@ -327,13 +329,13 @@ export default class CartWidget extends Vue {
   .profile-name {
     font-size: 14px;
     opacity: 0.8;
-  } 
+  }
 
   .balance {
     font-size: 14px;
     font-weight: 600;
-    font-family: "Glacial Indifference", sans-serif;
-  } 
+    font-family: 'Glacial Indifference', sans-serif;
+  }
 
   .profile-image {
     border-radius: 50%;
@@ -342,7 +344,7 @@ export default class CartWidget extends Vue {
     overflow: hidden;
     width: $profile-image-size;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    cursor: pointer; 
+    cursor: pointer;
     img {
       height: 100%;
       width: 100%;
@@ -366,7 +368,6 @@ export default class CartWidget extends Vue {
     width: 16px;
   }
 
-
   .cart-component {
     position: absolute;
     top: 0;
@@ -375,5 +376,4 @@ export default class CartWidget extends Vue {
     left: 0;
   }
 }
-
 </style>

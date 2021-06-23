@@ -1,7 +1,7 @@
 <template>
   <div class="info">
-      <span class="icon" aria-label="info icon">ℹ</span>
-      {{message}}
+    <span class="icon" aria-label="info icon">ℹ</span>
+    {{ message }}
   </div>
 </template>
 
@@ -11,7 +11,7 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
 @Component
-export default class Info extends Vue { 
+export default class Info extends Vue {
   @Prop() message!: string
 }
 </script>
@@ -21,18 +21,18 @@ export default class Info extends Vue {
 @import '../styles/theme';
 
 .info {
-    background: $bg-transparent;
-    border: 1px solid $highlight-color;
-    border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-size: 16px;
-    font-family: Inter;
-    line-height: 150%;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    @media (max-width: $breakpoint-m) {
+  background: $bg-transparent;
+  border: 1px solid $highlight-color;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  font-family: Inter;
+  line-height: 150%;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  @media (max-width: $breakpoint-m) {
     flex-direction: column;
     padding-bottom: 1rem;
     align-items: flex-start;
@@ -40,11 +40,10 @@ export default class Info extends Vue {
 }
 
 .icon {
-    font-size: 24px;
-    padding: 0.5rem;
-    @media (max-width: $breakpoint-m) {
+  font-size: 24px;
+  padding: 0.5rem;
+  @media (max-width: $breakpoint-m) {
     padding: 0.5rem 0rem;
   }
 }
-
 </style>

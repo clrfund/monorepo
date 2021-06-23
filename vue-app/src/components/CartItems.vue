@@ -3,36 +3,49 @@
     <div
       v-for="item in cartList"
       class="cart-item"
-      :class="{ 'new-cart-item': isNewOrUpdated(item) && $store.getters.hasUserContributed }"
+      :class="{
+        'new-cart-item':
+          isNewOrUpdated(item) && $store.getters.hasUserContributed,
+      }"
       :key="item.id"
-      >
+    >
       <div class="project">
-        <router-link
-          :to="{ name: 'project', params: { id: item.id }}"
-        >
-          <img class="project-image" :src="item.thumbnailImageUrl" :alt="item.name">
+        <router-link :to="{ name: 'project', params: { id: item.id } }">
+          <img
+            class="project-image"
+            :src="item.thumbnailImageUrl"
+            :alt="item.name"
+          />
         </router-link>
         <router-link
           class="project-name"
-          :to="{ name: 'project', params: { id: item.id }}"
+          :to="{ name: 'project', params: { id: item.id } }"
         >
           {{ item.name }}
         </router-link>
-        <div
-          class="remove-cart-item"
-          @click="removeItem(item)"
-        >
+        <div class="remove-cart-item" @click="removeItem(item)">
           <div v-if="isEditMode" class="remove-icon-background">
-            <img class="remove-icon" src="@/assets/remove.svg" aria-label="Remove project"/>
+            <img
+              class="remove-icon"
+              src="@/assets/remove.svg"
+              aria-label="Remove project"
+            />
           </div>
         </div>
-        <div class="contribution-form" v-if="$store.getters.hasUserContributed && !isEditMode">
-          {{item.amount}} {{tokenSymbol}}
+        <div
+          class="contribution-form"
+          v-if="$store.getters.hasUserContributed && !isEditMode"
+        >
+          {{ item.amount }} {{ tokenSymbol }}
         </div>
       </div>
       <form v-if="isEditMode" class="contribution-form">
         <div class="input-button">
-          <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
+          <img
+            style="margin-left: 0.5rem"
+            height="24px"
+            src="@/assets/dai.svg"
+          />
           <input
             :value="item.amount"
             @input="updateAmount(item, $event.target.value)"
@@ -41,7 +54,7 @@
             :disabled="!canUpdateAmount()"
             name="amount"
             placeholder="Amount"
-          >
+          />
         </div>
       </form>
     </div>
@@ -70,7 +83,7 @@ export default class extends Vue {
   }
 
   updateAmount(item: CartItem, amount: string): void {
-    this.$store.commit(UPDATE_CART_ITEM, { ...item  , amount })
+    this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
     this.$store.dispatch(SAVE_CART)
   }
 
@@ -132,9 +145,9 @@ export default class extends Vue {
     object-fit: cover;
     width: 2.5rem;
     &:hover {
-    opacity: 0.8;
-    transform: scale(1.01);
-  }
+      opacity: 0.8;
+      transform: scale(1.01);
+    }
   }
 
   .project-name {
@@ -149,12 +162,11 @@ export default class extends Vue {
     font-weight: 600;
     text-overflow: ellipsis;
     &:hover {
-    opacity: 0.8;
-    transform: scale(1.01);
-  }
+      opacity: 0.8;
+      transform: scale(1.01);
+    }
   }
 }
-
 
 .contribution-form {
   align-items: center;
@@ -171,7 +183,7 @@ export default class extends Vue {
   }
 
   .input-button {
-    background: #F7F7F7;
+    background: #f7f7f7;
     border-radius: 2rem;
     border: 2px solid $bg-primary-color;
     display: flex;

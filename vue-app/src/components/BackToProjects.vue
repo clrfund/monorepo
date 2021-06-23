@@ -1,8 +1,12 @@
 <template>
-  <router-link to="/projects" :class="{
-    back: true,
-    desktop: !alsoShowOnMobile,
-  }">← Back to projects</router-link>
+  <router-link
+    to="/projects"
+    :class="{
+      back: true,
+      desktop: !alsoShowOnMobile,
+    }"
+    >← Back to projects</router-link
+  >
 </template>
 
 <script lang="ts">

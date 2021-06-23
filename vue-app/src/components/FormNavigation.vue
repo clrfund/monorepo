@@ -116,7 +116,7 @@ export default class FormNavigation extends Vue {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  @media(max-width: $breakpoint-m) {
+  @media (max-width: $breakpoint-m) {
     bottom: 0;
   }
 }
@@ -129,6 +129,6 @@ export default class FormNavigation extends Vue {
     opacity: 0.5;
     transform: scale(1);
     cursor: not-allowed;
-  }  
+  }
 }
 </style>

@@ -1,10 +1,7 @@
 import { sha256, encrypt, decrypt } from '@/utils/crypto'
 import { setValue, getValue, watch, unwatch } from './gun'
 
-function getFullStorageKey(
-  accountId: string,
-  storageKey: string,
-): string {
+function getFullStorageKey(accountId: string, storageKey: string): string {
   accountId = accountId.toLowerCase()
   return sha256(`clrfund-${accountId}-${storageKey}`)
 }
@@ -13,7 +10,7 @@ function setItem(
   accountId: string,
   encryptionKey: string,
   storageKey: string,
-  value: string,
+  value: string
 ): void {
   const encryptedValue = encrypt(value, encryptionKey)
   const fullStorageKey = getFullStorageKey(accountId, storageKey)
@@ -23,7 +20,7 @@ function setItem(
 async function getItem(
   accountId: string,
   encryptionKey: string,
-  storageKey: string,
+  storageKey: string
 ): Promise<string | null> {
   const fullStorageKey = getFullStorageKey(accountId, storageKey)
   const encryptedValue = await getValue(fullStorageKey)
@@ -35,7 +32,7 @@ function watchItem(
   accountId: string,
   encryptionKey: string,
   storageKey: string,
-  callback: (value: string | null) => any,
+  callback: (value: string | null) => any
 ) {
   const fullStorageKey = getFullStorageKey(accountId, storageKey)
   watch(fullStorageKey, (encryptedValue) => {
@@ -44,10 +41,7 @@ function watchItem(
   })
 }
 
-function unwatchItem(
-  accountId: string,
-  storageKey: string,
-): void {
+function unwatchItem(accountId: string, storageKey: string): void {
   const fullStorageKey = getFullStorageKey(accountId, storageKey)
   unwatch(fullStorageKey)
 }

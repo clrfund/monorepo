@@ -2,10 +2,9 @@
   <div :class="`tooltip ${position}`">
     <slot></slot>
     <span class="tooltip-text">
-        <div>{{content}}</div>
-        <a v-if="link" :href="`${link}`">{{linkText}}</a>
+      <div>{{ content }}</div>
+      <a v-if="link" :href="`${link}`">{{ linkText }}</a>
     </span>
-    
   </div>
 </template>
 
@@ -16,8 +15,8 @@ import { Prop } from 'vue-property-decorator'
 
 @Component
 export class Tooltip extends Vue {
-    @Prop() position!: string
-    @Prop() content!: string
+  @Prop() position!: string
+  @Prop() content!: string
 }
 
 export default {
@@ -26,7 +25,8 @@ export default {
     content: String,
     link: String,
     linkText: String,
-  }}
+  },
+}
 </script>
 
 <style scoped lang="scss">
@@ -83,5 +83,4 @@ export default {
   visibility: visible;
   opacity: 1;
 }
-
 </style>

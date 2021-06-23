@@ -5,23 +5,23 @@ import { UNIT } from '../utils/constants'
 import { deployMaciFactory } from '../utils/deployment'
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
-  const maciFactory = await deployMaciFactory(deployer);
+  const [deployer] = await ethers.getSigners()
+  const maciFactory = await deployMaciFactory(deployer)
 
   const FundingRoundFactory = await ethers.getContractFactory(
     'FundingRoundFactory',
-    deployer,
-  );
+    deployer
+  )
   const fundingRoundFactory = await FundingRoundFactory.deploy(
-    maciFactory.address,
-  );
-  await fundingRoundFactory.deployed();
-  await maciFactory.transferOwnership(fundingRoundFactory.address);
+    maciFactory.address
+  )
+  await fundingRoundFactory.deployed()
+  await maciFactory.transferOwnership(fundingRoundFactory.address)
 
   // TODO deploy registry conditionally based on process.env.USER_REGISTRY_TYPE (new ENV var)
   const SimpleUserRegistry = await ethers.getContractFactory(
     'SimpleUserRegistry',
-    deployer,
+    deployer
   )
   const userRegistry = await SimpleUserRegistry.deploy()
   await fundingRoundFactory.setUserRegistry(userRegistry.address)
@@ -31,20 +31,20 @@ async function main() {
   if (recipientRegistryType === 'simple') {
     const SimpleRecipientRegistry = await ethers.getContractFactory(
       'SimpleRecipientRegistry',
-      deployer,
+      deployer
     )
     recipientRegistry = await SimpleRecipientRegistry.deploy(
-      fundingRoundFactory.address,
+      fundingRoundFactory.address
     )
   } else if (recipientRegistryType === 'optimistic') {
     const OptimisticRecipientRegistry = await ethers.getContractFactory(
       'OptimisticRecipientRegistry',
-      deployer,
+      deployer
     )
     recipientRegistry = await OptimisticRecipientRegistry.deploy(
       UNIT.div(1000),
       0,
-      fundingRoundFactory.address,
+      fundingRoundFactory.address
     )
   } else {
     throw new Error('unsupported recipient registry type')
@@ -56,7 +56,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch(error => {
-    console.error(error);
-    process.exit(1);
-  });
+  .catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })

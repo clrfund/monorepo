@@ -3,14 +3,23 @@
     <div v-if="step === 1">
       <div v-if="!currentUser">
         <h3>Connect your wallet</h3>
-        <div style="margin-bottom: 2rem;">You must connect to add to the matching pool.</div>
+        <div style="margin-bottom: 2rem">
+          You must connect to add to the matching pool.
+        </div>
         <wallet-widget />
       </div>
       <div v-else>
-        <h3>Contribute {{ tokenSymbol }} to the {{ isRoundFinished() ? 'next' : 'current' }} round</h3>
+        <h3>
+          Contribute {{ tokenSymbol }} to the
+          {{ isRoundFinished() ? 'next' : 'current' }} round
+        </h3>
         <form class="contribution-form">
           <div class="input-button">
-            <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
+            <img
+              style="margin-left: 0.5rem"
+              height="24px"
+              src="@/assets/dai.svg"
+            />
             <input
               v-model="amount"
               class="input"
@@ -20,18 +29,29 @@
               type="number"
               required
               placeholder="10"
-            >
+            />
           </div>
         </form>
-        <div v-if="amount > balance" class="balance-check-warning">⚠️ You only have {{ balance }} {{tokenSymbol}}</div>
+        <div v-if="amount > balance" class="balance-check-warning">
+          ⚠️ You only have {{ balance }} {{ tokenSymbol }}
+        </div>
         <div class="btn-row">
           <button class="btn-secondary" @click="$emit('close')">Cancel</button>
-          <button class="btn-action" :disabled="!isAmountValid()" @click="contributeMatchingFunds()">Contribute</button>
+          <button
+            class="btn-action"
+            :disabled="!isAmountValid()"
+            @click="contributeMatchingFunds()"
+          >
+            Contribute
+          </button>
         </div>
       </div>
     </div>
     <div v-if="step === 2">
-      <h3>Contribute {{ amount }} {{ tokenSymbol }} to the {{ isRoundFinished() ? 'next' : 'current' }} round</h3>
+      <h3>
+        Contribute {{ amount }} {{ tokenSymbol }} to the
+        {{ isRoundFinished() ? 'next' : 'current' }} round
+      </h3>
       <transaction
         :hash="transferTxHash"
         :error="transferTxError"
@@ -39,9 +59,11 @@
       ></transaction>
     </div>
     <div v-if="step === 3">
-      <div style="font-size: 64px;">💦</div>
+      <div style="font-size: 64px">💦</div>
       <h3>You just topped up the pool by {{ amount }} {{ tokenSymbol }}!</h3>
-      <div style="margin-bottom: 2rem;">Thanks for helping out all our projects.</div>
+      <div style="margin-bottom: 2rem">
+        Thanks for helping out all our projects.
+      </div>
       <button class="btn-primary" @click="$emit('close')">Done</button>
     </div>
   </div>
@@ -69,11 +91,10 @@ import { RoundStatus } from '@/api/round'
   },
 })
 export default class MatchingFundsModal extends Vue {
-
   step = 1
 
   signer!: Signer
-  
+
   amount = '100'
   transferTxHash = ''
   transferTxError = ''
@@ -88,7 +109,9 @@ export default class MatchingFundsModal extends Vue {
 
   get balance(): string | null {
     const balance = this.currentUser?.balance
-    if (balance === null || typeof balance === 'undefined') { return null }
+    if (balance === null || typeof balance === 'undefined') {
+      return null
+    }
     return commify(formatUnits(balance, 18))
   }
 
@@ -118,13 +141,14 @@ export default class MatchingFundsModal extends Vue {
   async contributeMatchingFunds() {
     this.step += 1
     this.signer = this.$store.state.currentUser.walletProvider.getSigner()
-    const { nativeTokenAddress, nativeTokenDecimals } = this.$store.state.currentRound
+    const { nativeTokenAddress, nativeTokenDecimals } =
+      this.$store.state.currentRound
     const token = new Contract(nativeTokenAddress, ERC20, this.signer)
     const amount = parseFixed(this.amount, nativeTokenDecimals)
     try {
       await waitForTransaction(
         token.transfer(factory.address, amount),
-        (hash) => this.transferTxHash = hash,
+        (hash) => (this.transferTxHash = hash)
       )
     } catch (error) {
       this.transferTxError = error.message
@@ -138,7 +162,6 @@ export default class MatchingFundsModal extends Vue {
 <style scoped lang="scss">
 @import '../styles/vars';
 @import '../styles/theme';
-
 
 .contribution-form {
   align-items: flex-start;
@@ -175,7 +198,6 @@ export default class MatchingFundsModal extends Vue {
   padding: $modal-space;
   box-shadow: $box-shadow;
   text-align: left;
-  
 
   .loader {
     margin: $modal-space auto;
@@ -183,7 +205,7 @@ export default class MatchingFundsModal extends Vue {
 }
 
 .input-button {
-  background: #F7F7F7;
+  background: #f7f7f7;
   border-radius: 2rem;
   border: 2px solid $bg-primary-color;
   display: flex;
@@ -222,5 +244,4 @@ export default class MatchingFundsModal extends Vue {
   font-weight: 500;
   margin-top: 1rem;
 }
-
 </style>

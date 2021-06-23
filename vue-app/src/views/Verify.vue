@@ -6,9 +6,12 @@
       <!-- Will likely need to generalize it a bit -->
       <div class="progress-area desktop">
         <div class="progress-container">
-          <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+          <progress-bar
+            :currentStep="currentStep + 1"
+            :totalSteps="steps.length"
+          />
           <p class="subtitle">
-            Step {{currentStep + 1}} of {{steps.length}}
+            Step {{ currentStep + 1 }} of {{ steps.length }}
           </p>
           <div class="progress-steps">
             <div
@@ -22,14 +25,36 @@
               @click="handleStepNav(step)"
             >
               <template v-if="step === currentStep">
-                <loader v-if="step === 1 && isStepUnlocked(1) && !isVerified" class="progress-steps-loader" />
-                <img v-else src="@/assets/current-step.svg" alt="current step" />
-                <p v-text="name" class="active step" /> <tooltip v-if="step === 1 && isStepUnlocked(1) && !isVerified" position="left" content="We'll keep checking with BrightID to see if you're verified"><img src="@/assets/info.svg" /></tooltip>
+                <loader
+                  v-if="step === 1 && isStepUnlocked(1) && !isVerified"
+                  class="progress-steps-loader"
+                />
+                <img
+                  v-else
+                  src="@/assets/current-step.svg"
+                  alt="current step"
+                />
+                <p v-text="name" class="active step" />
+                <tooltip
+                  v-if="step === 1 && isStepUnlocked(1) && !isVerified"
+                  position="left"
+                  content="We'll keep checking with BrightID to see if you're verified"
+                  ><img src="@/assets/info.svg"
+                /></tooltip>
               </template>
               <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
-                <loader v-if="step === 1 && isStepUnlocked(1) && !isVerified" class="progress-steps-loader" />
+                <loader
+                  v-if="step === 1 && isStepUnlocked(1) && !isVerified"
+                  class="progress-steps-loader"
+                />
                 <img v-else src="@/assets/green-tick.svg" alt="step complete" />
-                <p v-text="name" class="step" /> <tooltip v-if="step === 1 && isStepUnlocked(1) && !isVerified" position="left" content="You still need verification from BrightID"><img src="@/assets/info.svg" /></tooltip>
+                <p v-text="name" class="step" />
+                <tooltip
+                  v-if="step === 1 && isStepUnlocked(1) && !isVerified"
+                  position="left"
+                  content="You still need verification from BrightID"
+                  ><img src="@/assets/info.svg"
+                /></tooltip>
               </template>
               <template v-else>
                 <img src="@/assets/step-remaining.svg" alt="step remaining" />
@@ -49,70 +74,93 @@
         </div>
       </div>
       <div class="progress-area mobile">
-        <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+        <progress-bar
+          :currentStep="currentStep + 1"
+          :totalSteps="steps.length"
+        />
         <div class="row">
-          <p>
-              Step {{currentStep + 1}} of {{steps.length}}
-          </p>
-          <router-link class="cancel-link" to="/verify">
-            Cancel
-          </router-link>
+          <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
+          <router-link class="cancel-link" to="/verify"> Cancel </router-link>
         </div>
       </div>
       <div class="title-area">
         <h1>Set up BrightID</h1>
       </div>
       <div class="cancel-area desktop">
-        <router-link class="cancel-link" to="/verify">
-          Cancel
-        </router-link>
+        <router-link class="cancel-link" to="/verify"> Cancel </router-link>
       </div>
       <div class="form-area">
         <div class="verification-status" v-if="currentStep === 1">
-            <div>
-                <h2>Verification status</h2>
-                <p>{{isVerified ? 'You\'re BrightID verified! Complete the remaining steps to start contributing.' : 'Follow the instructions below to get verified. It’s not immediate so feel free to move onto the next step when you’re ready.'}}</p>
-            </div>
-            <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
+          <div>
+            <h2>Verification status</h2>
+            <p>
+              {{
+                isVerified
+                  ? "You're BrightID verified! Complete the remaining steps to start contributing."
+                  : 'Follow the instructions below to get verified. It’s not immediate so feel free to move onto the next step when you’re ready.'
+              }}
+            </p>
+          </div>
+          <div :class="isVerified ? 'success' : 'unverified'">
+            {{ isVerified ? 'Ready!' : 'Unverified' }}
+          </div>
         </div>
         <!-- The below should be displayed if the user was already sponsored and didn't have to do a tx through our app -->
-        <div class="verification-status" v-if="currentStep === 2 && isSponsored">
-            <div>
-                <!-- TODO: add blockie -->
-                <h2>You're already sponsored!</h2>
-            </div>
-            <div class="success">Sponsored by {{sponsoredBy}}</div>
+        <div
+          class="verification-status"
+          v-if="currentStep === 2 && isSponsored"
+        >
+          <div>
+            <!-- TODO: add blockie -->
+            <h2>You're already sponsored!</h2>
+          </div>
+          <div class="success">Sponsored by {{ sponsoredBy }}</div>
         </div>
         <div class="application">
-        <div v-if="currentStep === 0">
+          <div v-if="currentStep === 0">
             <h2 class="step-title">Connect</h2>
-            <p>First you need to connect your BrightID account with your wallet address.</p>
+            <p>
+              First you need to connect your BrightID account with your wallet
+              address.
+            </p>
             <div class="qr">
-                <div v-if="step > 1">
-                    <div class="connected-message">
-                        <div class="checkmark"><img src="@/assets/checkmark.svg" /></div>
-                        <div class="profile-image">
-                            <img :src="profileImageUrl">
-                            <!-- TODO: display blockie next to checkmark -->
-                        </div>
-                        <p>Move along! Your BrightID app is connected</p>
-                    </div>
+              <div v-if="step > 1">
+                <div class="connected-message">
+                  <div class="checkmark">
+                    <img src="@/assets/checkmark.svg" />
+                  </div>
+                  <div class="profile-image">
+                    <img :src="profileImageUrl" />
+                    <!-- TODO: display blockie next to checkmark -->
+                  </div>
+                  <p>Move along! Your BrightID app is connected</p>
                 </div>
-                <div class="instructions" v-else>
-                    <p class="desktop" v-if="appLinkQrCode">Scan this QR code with your BrightID app</p>
-                    <img :src="appLinkQrCode" class="desktop qr-code">
-                    <!-- TODO: connection should cause the QR code to appear -->
-                    <p class="mobile">Follow this link to connect your wallet to your BrightID app</p>
-                    <a class="mobile" :href="appLink" target="_blank">
-                      <div class="icon">
-                        <img src="@/assets/bright-id.png" />
-                      </div>
-                      {{ appLink }}
-                    </a>
-                    <p class="mobile"><em>This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.</em></p>
-                </div>
+              </div>
+              <div class="instructions" v-else>
+                <p class="desktop" v-if="appLinkQrCode">
+                  Scan this QR code with your BrightID app
+                </p>
+                <img :src="appLinkQrCode" class="desktop qr-code" />
+                <!-- TODO: connection should cause the QR code to appear -->
+                <p class="mobile">
+                  Follow this link to connect your wallet to your BrightID app
+                </p>
+                <a class="mobile" :href="appLink" target="_blank">
+                  <div class="icon">
+                    <img src="@/assets/bright-id.png" />
+                  </div>
+                  {{ appLink }}
+                </a>
+                <p class="mobile">
+                  <em
+                    >This link might look scary but it just makes a connection
+                    between your connected wallet address, our app, and
+                    BrightID. Make sure your address looks correct.</em
+                  >
+                </p>
+              </div>
 
-                <loader v-if="step === 0" />
+              <loader v-if="step === 0" />
             </div>
             <div v-if="!appLinkQrCode">
               <loader />
@@ -120,22 +168,38 @@
               <wallet-widget />
             </div>
             <!-- TODO: success state for linked -->
-        </div>    
-        <div v-if="currentStep === 1 && !isVerified">
+          </div>
+          <div v-if="currentStep === 1 && !isVerified">
             <h2 class="step-title">Get verified</h2>
-            <p>BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person. There are a few different ways to do this...</p>
+            <p>
+              BrightID verification helps prove that you’re a unique human. To
+              get verified, you need enough people to confirm they've met you
+              and you're a real person. There are a few different ways to do
+              this...
+            </p>
             <div class="option">
               <div class="option-header">
                 <div>
                   <div class="tag">🚀Fastest</div>
-                  <h3>Join a BrightID party </h3>
+                  <h3>Join a BrightID party</h3>
                 </div>
-                <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
-                <img @click="handleToggleTab" v-else src="@/assets/chevron-down.svg" />
+                <img
+                  @click="handleToggleTab"
+                  v-if="showExpandedOption"
+                  src="@/assets/chevron-up.svg"
+                />
+                <img
+                  @click="handleToggleTab"
+                  v-else
+                  src="@/assets/chevron-down.svg"
+                />
               </div>
               <div v-if="showExpandedOption" id="fastest">
                 <p>
-                  BrightID run verification parties regularly. Join the call, meet other new users, and they'll verify you’re a human and not a bot. Quick and painless, even for you introverts out there.
+                  BrightID run verification parties regularly. Join the call,
+                  meet other new users, and they'll verify you’re a human and
+                  not a bot. Quick and painless, even for you introverts out
+                  there.
                 </p>
                 <div class="btn-secondary">View party schedule</div>
               </div>
@@ -144,10 +208,21 @@
               <div class="option-header">
                 <div>
                   <div class="tag">💡Most interesting</div>
-                  <h3>Join us at “The consensus layer bonanza – an evening with the eth2 researchers”</h3>
+                  <h3>
+                    Join us at “The consensus layer bonanza – an evening with
+                    the eth2 researchers”
+                  </h3>
                 </div>
-                <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
-                <img @click="handleToggleTab" v-else src="@/assets/chevron-down.svg" />
+                <img
+                  @click="handleToggleTab"
+                  v-if="showExpandedOption"
+                  src="@/assets/chevron-up.svg"
+                />
+                <img
+                  @click="handleToggleTab"
+                  v-else
+                  src="@/assets/chevron-down.svg"
+                />
               </div>
               <p v-if="showExpandedOption" id="interesting">
                 Information to come
@@ -159,64 +234,95 @@
                   <div class="tag">🎰 Luckiest</div>
                   <h3>Connect with 2 verified humans</h3>
                 </div>
-                <img @click="handleToggleTab" v-if="showExpandedOption" src="@/assets/chevron-up.svg" />
-                <img @click="handleToggleTab" v-else src="@/assets/chevron-down.svg" />
+                <img
+                  @click="handleToggleTab"
+                  v-if="showExpandedOption"
+                  src="@/assets/chevron-up.svg"
+                />
+                <img
+                  @click="handleToggleTab"
+                  v-else
+                  src="@/assets/chevron-down.svg"
+                />
               </div>
               <p v-if="showExpandedOption" id="luckiest">
-                Know anyone that's contributed to Gitcoin Grants or clr.fund rounds? They may already be verified. Hit them up and see if they can verify you!
+                Know anyone that's contributed to Gitcoin Grants or clr.fund
+                rounds? They may already be verified. Hit them up and see if
+                they can verify you!
               </p>
             </div>
-        </div>
-        <div v-if="currentStep === 2">
+          </div>
+          <div v-if="currentStep === 2">
             <h2 class="step-title">Sponsorship</h2>
-            <p>You need a sponsorship token to become BrightID verified. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID.</p>
+            <p>
+              You need a sponsorship token to become BrightID verified. This
+              helps support BrightID as a decentralized platform. You’ll only
+              ever need to do this once and it covers you for any other app that
+              works with BrightID.
+            </p>
             <div class="transaction">
-                <div v-if="isSponsored">
-                  <div class="connected-message">
-                      <div class="checkmark"><img src="@/assets/checkmark.svg" /></div>
-                      <div class="profile-image">
-                          <img :src="profileImageUrl">
-                          <!-- TODO: display blockie next to checkmark -->
-                      </div>
-                      <p>Move along! You're sponsored!</p>
-                      <!-- TODO: if isSponsored = true and the user did it via our UI we should show the tx receipt -->
+              <div v-if="isSponsored">
+                <div class="connected-message">
+                  <div class="checkmark">
+                    <img src="@/assets/checkmark.svg" />
                   </div>
-                </div>
-                <div v-else>
-                  <wallet-widget class="mx0" v-bind:showEth="true" />
-                  <!--TODO: mobile view for this wallet widget has a weird background -->
-                  <div class="checkout-row">
-                      <p class="m0"><b>Estimated transaction fee</b></p>
-                      <p class="m0">{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
+                  <div class="profile-image">
+                    <img :src="profileImageUrl" />
+                    <!-- TODO: display blockie next to checkmark -->
                   </div>
-                  <div class="btn-action">Get sponsored</div>
-                  <transaction
-                      :hash="sponsorTxHash" />
+                  <p>Move along! You're sponsored!</p>
+                  <!-- TODO: if isSponsored = true and the user did it via our UI we should show the tx receipt -->
                 </div>
-            </div>
-            
-        </div>
-        <div v-if="currentStep === 3">
-            <h2 class="step-title">Get registered</h2>
-            <p>To protect the round from bribery and fraud, you need to add your wallet address to a smart contract register. Once you’re done, you can join the funding round!</p>
-            <div class="verification-status" v-if="!isVerified">
-              <div>
-                  <h2>You can't register yet</h2>
-                  <p>You can’t join the round until you’re BrightID verified. Reminder: it can take up to a few hours even after you've met the requirements. <router-link to="/verify/verification">How to get verified</router-link></p>
               </div>
-              <div :class="isVerified ? 'success' : 'unverified'">{{isVerified ? 'Ready!' : 'Unverified'}} </div>
-            </div>
-            <div class="transaction" v-if="isVerified">
-                <wallet-widget class="mx0" v-bind:showEth="true"/>
+              <div v-else>
+                <wallet-widget class="mx0" v-bind:showEth="true" />
+                <!--TODO: mobile view for this wallet widget has a weird background -->
                 <div class="checkout-row">
                   <p class="m0"><b>Estimated transaction fee</b></p>
-                  <p class="m0">{{txFee}} {{feeToken}} ({{fiatSign}}{{fiatFee}}) </p>
+                  <p class="m0">
+                    {{ txFee }} {{ feeToken }} ({{ fiatSign }}{{ fiatFee }})
+                  </p>
                 </div>
-                <div class="btn-action">Become a contributor</div>
-                <transaction
-                    :hash="sponsorTxHash" />
+                <div class="btn-action">Get sponsored</div>
+                <transaction :hash="sponsorTxHash" />
+              </div>
             </div>
-        </div>
+          </div>
+          <div v-if="currentStep === 3">
+            <h2 class="step-title">Get registered</h2>
+            <p>
+              To protect the round from bribery and fraud, you need to add your
+              wallet address to a smart contract register. Once you’re done, you
+              can join the funding round!
+            </p>
+            <div class="verification-status" v-if="!isVerified">
+              <div>
+                <h2>You can't register yet</h2>
+                <p>
+                  You can’t join the round until you’re BrightID verified.
+                  Reminder: it can take up to a few hours even after you've met
+                  the requirements.
+                  <router-link to="/verify/verification"
+                    >How to get verified</router-link
+                  >
+                </p>
+              </div>
+              <div :class="isVerified ? 'success' : 'unverified'">
+                {{ isVerified ? 'Ready!' : 'Unverified' }}
+              </div>
+            </div>
+            <div class="transaction" v-if="isVerified">
+              <wallet-widget class="mx0" v-bind:showEth="true" />
+              <div class="checkout-row">
+                <p class="m0"><b>Estimated transaction fee</b></p>
+                <p class="m0">
+                  {{ txFee }} {{ feeToken }} ({{ fiatSign }}{{ fiatFee }})
+                </p>
+              </div>
+              <div class="btn-action">Become a contributor</div>
+              <transaction :hash="sponsorTxHash" />
+            </div>
+          </div>
         </div>
       </div>
       <div class="nav-area nav-bar mobile">
@@ -269,10 +375,10 @@ import { waitForTransaction } from '@/utils/contracts'
 // How long should we expect this flow to take some users? Should we store in GUN db?
 // See how this is handled in BrightIdModal.vue
 interface BrightIDSteps {
-    connect: {};
-    verification: {};
-    sponsorship: {};
-    registration: {};
+  connect: {}
+  verification: {}
+  sponsorship: {}
+  registration: {}
 }
 
 @Component({
@@ -337,15 +443,14 @@ export default class VerifyView extends mixins(validationMixin) {
 
   handleToggleTab(event): void {
     const { id } = event.target
-    // Guard clause: 
+    // Guard clause:
     if (
       (this.showExpandedOption && id === 'review') ||
       (this.showExpandedOption && id === 'preview')
-    ) return
+    )
+      return
     this.showExpandedOption = !this.showExpandedOption
   }
-
-  
 
   mounted() {
     // Present app link and QR code
@@ -399,13 +504,13 @@ export default class VerifyView extends mixins(validationMixin) {
     const signer = this.currentUser.walletProvider.getSigner()
     const isSponsored = await isSponsoredUser(
       userRegistryAddress,
-      this.currentUser.walletAddress,
+      this.currentUser.walletAddress
     )
     if (!isSponsored) {
       try {
         await waitForTransaction(
           selfSponsor(userRegistryAddress, signer),
-          (hash) => this.sponsorTxHash = hash,
+          (hash) => (this.sponsorTxHash = hash)
         )
       } catch (error) {
         this.sponsorTxError = error.message
@@ -421,7 +526,7 @@ export default class VerifyView extends mixins(validationMixin) {
     try {
       await waitForTransaction(
         registerUser(userRegistryAddress, verification, signer),
-        (hash) => this.registrationTxHash = hash,
+        (hash) => (this.registrationTxHash = hash)
       )
     } catch (error) {
       this.registrationTxError = error.message
@@ -430,7 +535,6 @@ export default class VerifyView extends mixins(validationMixin) {
     this.$store.dispatch(LOAD_USER_INFO)
     this.step += 1
   }
-
 
   created() {
     const steps = Object.keys(this.form)
@@ -456,7 +560,6 @@ export default class VerifyView extends mixins(validationMixin) {
     // if (this.currentStep > this.form.furthestStep) {
     //   this.$router.push({ name: 'verify-step', params: { step: steps[this.form.furthestStep] }})
     // }
-
   }
 
   // TODO implement
@@ -467,20 +570,20 @@ export default class VerifyView extends mixins(validationMixin) {
   // TODO fetch verification data w/ BrightID - don't need furthest step
   isStepUnlocked(step: number): boolean {
     switch (step) {
-    case 0:
-      // Connect
-      return true
-    case 1:
-      // Verify
-      return this.isVerified
-    case 2:
-      // Sponsor
-      return this.sponsoredBy.length > 0
-    case 3:
-      // Register
-      return this.registrationTxHash.length > 0
-    default:
-      return false
+      case 0:
+        // Connect
+        return true
+      case 1:
+        // Verify
+        return this.isVerified
+      case 2:
+        // Sponsor
+        return this.sponsoredBy.length > 0
+      case 3:
+        // Register
+        return this.registrationTxHash.length > 0
+      default:
+        return false
     }
   }
 
@@ -511,13 +614,12 @@ export default class VerifyView extends mixins(validationMixin) {
       })
     }
   }
-} 
-
+}
 </script>
 
 <style scoped lang="scss">
-@import "../styles/vars";
-@import "../styles/theme";
+@import '../styles/vars';
+@import '../styles/theme';
 
 .container {
   width: clamp(calc(800px - 4rem), calc(100% - 4rem), 1440px);
@@ -533,18 +635,18 @@ export default class VerifyView extends mixins(validationMixin) {
   grid-template-columns: 1fr clamp(250px, 25%, 360px);
   grid-template-rows: auto 1fr;
   grid-template-areas:
-    "title cancel"
-    "form progress";
+    'title cancel'
+    'form progress';
   height: calc(100vh - var($nav-header-height));
   gap: 0 2rem;
   @media (max-width: $breakpoint-m) {
     grid-template-rows: auto auto 1fr auto;
     grid-template-columns: 1fr;
     grid-template-areas:
-      "progress"
-      "title"
-      "form"
-      "navi";
+      'progress'
+      'title'
+      'form'
+      'navi';
     gap: 0;
   }
 }
@@ -557,9 +659,9 @@ export default class VerifyView extends mixins(validationMixin) {
     position: sticky;
     top: 5rem;
     align-self: start;
-    padding: 1.5rem 1rem; 
-    background: $bg-primary-color; 
-    border-radius: 16px; 
+    padding: 1.5rem 1rem;
+    background: $bg-primary-color;
+    border-radius: 16px;
     /* width: 320px; */
     box-shadow: $box-shadow;
 
@@ -588,7 +690,6 @@ export default class VerifyView extends mixins(validationMixin) {
     .progress-step {
       display: flex;
 
-
       img {
         margin-right: 1rem;
       }
@@ -596,7 +697,7 @@ export default class VerifyView extends mixins(validationMixin) {
         margin: 0.5rem 0;
       }
       .step {
-        color: #FFF9
+        color: #fff9;
       }
       .active {
         color: white;
@@ -642,19 +743,19 @@ export default class VerifyView extends mixins(validationMixin) {
   grid-area: title;
   display: flex;
   padding: 1rem;
-  padding-left: 0rem; 
+  padding-left: 0rem;
   justify-content: space-between;
   align-items: flex-start;
   flex-direction: column;
 
   h1 {
-    font-family: "Glacial Indifference", sans-serif;
+    font-family: 'Glacial Indifference', sans-serif;
   }
 
   @media (max-width: $breakpoint-m) {
     margin-top: 2rem;
     padding-bottom: 0;
-    padding-left: 1rem; 
+    padding-left: 1rem;
     font-size: 14px;
     font-weight: normal;
   }
@@ -672,23 +773,23 @@ export default class VerifyView extends mixins(validationMixin) {
 }
 
 .connected-message {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .checkmark {
-    background: $clr-green;
-    border-radius: 2rem;
-    padding: 0.5rem;
-    width: fit-content;
-    display: flex;
-    align-items: center;
+  background: $clr-green;
+  border-radius: 2rem;
+  padding: 0.5rem;
+  width: fit-content;
+  display: flex;
+  align-items: center;
 }
 
 .checkmark img {
-    width: 1rem;
-    height: 1rem;
+  width: 1rem;
+  height: 1rem;
 }
 
 .form-area {
@@ -706,7 +807,7 @@ export default class VerifyView extends mixins(validationMixin) {
 }
 
 .form-area p {
-    line-height: 150%;
+  line-height: 150%;
 }
 
 .nav-area {
@@ -721,7 +822,7 @@ export default class VerifyView extends mixins(validationMixin) {
   left: 0;
   padding: 1.5rem;
   background: $bg-primary-color;
-  border-radius: 32px 32px  0 0;
+  border-radius: 32px 32px 0 0;
   box-shadow: $box-shadow;
 }
 
@@ -793,9 +894,9 @@ export default class VerifyView extends mixins(validationMixin) {
     margin-bottom: 2rem;
   }
   @media (max-width: $breakpoint-m) {
-  &:first-of-type {
-    margin-top: 0;
-  }
+    &:first-of-type {
+      margin-top: 0;
+    }
   }
 }
 
@@ -810,13 +911,13 @@ export default class VerifyView extends mixins(validationMixin) {
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0em;
-  &:valid { 
+  &:valid {
     border: 2px solid $clr-green;
   }
-  &:hover { 
-    background: $bg-primary-color; 
+  &:hover {
+    background: $bg-primary-color;
     border: 2px solid $highlight-color;
-    box-shadow: 0px 4px 16px 0px 25,22,35,0.4;
+    box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
   }
   &:optional {
     border: 2px solid $button-color;
@@ -825,7 +926,7 @@ export default class VerifyView extends mixins(validationMixin) {
 }
 
 .input.invalid {
-  border: 2px solid $error-color; 
+  border: 2px solid $error-color;
 }
 
 .input-description {
@@ -843,7 +944,7 @@ export default class VerifyView extends mixins(validationMixin) {
   margin-bottom: 0.5rem;
   line-height: 150%;
   color: $warning-color;
-  text-transform: uppercase;  
+  text-transform: uppercase;
   font-weight: 500;
 }
 
@@ -871,7 +972,7 @@ export default class VerifyView extends mixins(validationMixin) {
     opacity: 0;
     pointer-events: none;
   }
-  input[type="radio"]:checked+label {
+  input[type='radio']:checked + label {
     background: $clr-pink;
     font-weight: 600;
   }
@@ -921,7 +1022,7 @@ export default class VerifyView extends mixins(validationMixin) {
 }
 
 .loader:after {
-  content: " ";
+  content: ' ';
   display: block;
   width: 32px;
   height: 32px;
@@ -933,8 +1034,8 @@ export default class VerifyView extends mixins(validationMixin) {
 }
 
 .loader {
-    margin: $modal-space auto;
-  }
+  margin: $modal-space auto;
+}
 
 @keyframes loader {
   0% {
@@ -945,14 +1046,13 @@ export default class VerifyView extends mixins(validationMixin) {
   }
 }
 
-
 .error {
   color: $error-color;
   margin-bottom: 0;
   margin-top: 0.5rem;
   font-size: 14px;
   &:before {
-    content: "⚠️ "
+    content: '⚠️ ';
   }
 }
 
@@ -974,7 +1074,7 @@ export default class VerifyView extends mixins(validationMixin) {
 .summary-section-header {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
+  justify-content: space-between;
   margin-bottom: 1.5rem;
   border-bottom: 1px solid $highlight-color;
   padding-bottom: 0.5rem;
@@ -983,26 +1083,26 @@ export default class VerifyView extends mixins(validationMixin) {
 .toggle-tabs-desktop {
   display: flex;
   gap: 2rem;
-  font-family: "Inter";     
+  font-family: 'Inter';
   @media (max-width: $breakpoint-m) {
     /* flex-direction: column;
     gap: 0;
     margin-left: 0rem; */
     /* display: none; */
   }
-  .active-tab{
+  .active-tab {
     padding-bottom: 0.5rem;
     border-bottom: 4px solid $clr-green;
     border-radius: 4px;
     font-weight: 600;
     /* text-decoration: underline; */
   }
-  .inactive-tab{
+  .inactive-tab {
     padding-bottom: 0.5rem;
     cursor: pointer;
     &:hover {
       opacity: 0.8;
-      border-bottom: 4px solid #fff7;  
+      border-bottom: 4px solid #fff7;
       border-radius: 4px;
     }
     /* text-decoration: underline; */
@@ -1010,13 +1110,13 @@ export default class VerifyView extends mixins(validationMixin) {
 }
 
 .verification-status {
-    background: $bg-light-color; 
-    padding: 1.5rem 2rem;
-    border-radius: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    @media (max-width: $breakpoint-m) {
+  background: $bg-light-color;
+  padding: 1.5rem 2rem;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  @media (max-width: $breakpoint-m) {
     flex-direction: column-reverse;
     padding: 1rem;
     margin-bottom: 1.5rem;
@@ -1024,54 +1124,54 @@ export default class VerifyView extends mixins(validationMixin) {
 }
 
 .verification-status h2 {
-    font-family: "Glacial Indifference", sans-serif;
-    font-size: 1.25rem;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 1.5rem;
-    letter-spacing: 0em;
-    text-align: left;
-    margin: 0;
+  font-family: 'Glacial Indifference', sans-serif;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.5rem;
+  letter-spacing: 0em;
+  text-align: left;
+  margin: 0;
 }
 
 .verification-status p {
-    margin: 0;
-    margin-top: 0.5rem;
+  margin: 0;
+  margin-top: 0.5rem;
 }
 
 .success {
-    color: $clr-green;
-    font-weight: 600;
-    margin-left: 1rem;
-    @media (max-width: $breakpoint-m) {
+  color: $clr-green;
+  font-weight: 600;
+  margin-left: 1rem;
+  @media (max-width: $breakpoint-m) {
     margin-left: 0;
     margin-bottom: 1rem;
   }
 }
 
 .unverified {
-    color: $error-color;
-    font-weight: 600;
-    margin-left: 1rem;
-    @media (max-width: $breakpoint-m) {
+  color: $error-color;
+  font-weight: 600;
+  margin-left: 1rem;
+  @media (max-width: $breakpoint-m) {
     margin-left: 0;
     margin-bottom: 1rem;
   }
 }
 
 .transaction {
-    background: $bg-primary-color;
-    border: 1px solid #000;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    width: auto;
+  background: $bg-primary-color;
+  border: 1px solid #000;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  width: auto;
 }
 
 .checkout-row {
-    display: flex;
-    justify-content: space-between;
-    margin: 2rem 0;
-    @media (max-width: $breakpoint-m) {
+  display: flex;
+  justify-content: space-between;
+  margin: 2rem 0;
+  @media (max-width: $breakpoint-m) {
     flex-direction: column;
     justify-content: flex-start;
     margin: 1rem 0;
@@ -1079,43 +1179,43 @@ export default class VerifyView extends mixins(validationMixin) {
 }
 
 .toggle-tabs-mobile {
-    display: flex;
-    gap: 2rem;
+  display: flex;
+  gap: 2rem;
   @media (min-width: $breakpoint-m) {
     /* flex-direction: column;
     gap: 0;
     margin-left: 0rem; */
     display: none;
   }
-   .active-tab{
+  .active-tab {
     padding-bottom: 0.5rem;
     border-bottom: 4px solid $clr-green;
     border-radius: 4px;
     font-weight: 600;
     /* text-decoration: underline; */
   }
-  .inactive-tab{
+  .inactive-tab {
     padding-bottom: 0.5rem;
     cursor: pointer;
     &:hover {
       opacity: 0.8;
-      transform: scale(1.02);  
+      transform: scale(1.02);
     }
     /* text-decoration: underline; */
   }
-} 
+}
 
 .step-subtitle {
   margin: 0.5rem 0;
-  font-family: "Glacial Indifference", sans-serif;
+  font-family: 'Glacial Indifference', sans-serif;
   font-size: 1.5rem;
 }
 
 .edit-button {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-weight: 500;
   font-size: 16px;
-  color: $clr-green;  
+  color: $clr-green;
 }
 
 .data {
@@ -1126,17 +1226,16 @@ export default class VerifyView extends mixins(validationMixin) {
   gap: 0.5rem;
 }
 
-
 .qr {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: $bg-primary-color;  
-    border-radius: 1rem;
-    margin-top: 2rem;  
-    padding: 2rem; 
-    /* @media (max-width: $breakpoint-m) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: $bg-primary-color;
+  border-radius: 1rem;
+  margin-top: 2rem;
+  padding: 2rem;
+  /* @media (max-width: $breakpoint-m) {
         width: 100%;
   } */
 }
@@ -1157,10 +1256,10 @@ export default class VerifyView extends mixins(validationMixin) {
 }
 
 .option {
-    background: $bg-light-color;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
+  background: $bg-light-color;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
 
   img {
     margin: 0.5rem;
@@ -1171,9 +1270,9 @@ export default class VerifyView extends mixins(validationMixin) {
       border-radius: 0.5rem;
     }
   }
-  
+
   h3 {
-    font-family: "Glacial Indifference", sans-serif;
+    font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.25rem;
     font-style: normal;
     font-weight: 700;
@@ -1186,23 +1285,22 @@ export default class VerifyView extends mixins(validationMixin) {
   }
 }
 
-
 .option-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-} 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 .tag {
-    /* background: #fff9; */
-    border-radius: 2rem;
-    font-family: "Glacial Indifference", sans-serif;
-    padding: 0.25rem 0.5rem;
-    padding-left: 0;
-    /* color: $bg-primary-color; */
-    font-size: 16px;
-    text-transform: uppercase;
-    width: fit-content;
+  /* background: #fff9; */
+  border-radius: 2rem;
+  font-family: 'Glacial Indifference', sans-serif;
+  padding: 0.25rem 0.5rem;
+  padding-left: 0;
+  /* color: $bg-primary-color; */
+  font-size: 16px;
+  text-transform: uppercase;
+  width: fit-content;
 }
 
 .data img {
@@ -1221,7 +1319,7 @@ export default class VerifyView extends mixins(validationMixin) {
     opacity: 0.5;
     transform: scale(1);
     cursor: not-allowed;
-  }  
+  }
 }
 .pt-1 {
   padding-top: 1rem;
