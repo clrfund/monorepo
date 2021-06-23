@@ -4,21 +4,32 @@
     <round-status-banner />
     <!-- TODO: add confetti -->
     <div class="gradient">
-      <img src="@/assets/moon.png" class="moon"/>
+      <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
-        <img src="@/assets/newrings.png"/>
+        <img src="@/assets/newrings.png" />
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Ready to contribute!</h1>
-            <a v-if="txHash" :href="blockExplorerUrl" target="_blank"><div class="etherscan-btn"><img class="icon" style="width: 16px" src="@/assets/etherscan.svg" />Etherscan ↗</div></a>
+            <a v-if="txHash" :href="blockExplorerUrl" target="_blank"
+              ><div class="etherscan-btn">
+                <img
+                  class="icon"
+                  style="width: 16px"
+                  src="@/assets/etherscan.svg"
+                />Etherscan ↗
+              </div></a
+            >
           </div>
-          <div class="subtitle">You’re on board this funding round! And fully verified for BrightID – you’ll never have to do that again.</div>
-          <p>
-            You can now start contributing to your favourite projects.
-          </p>
-          <div class="btn-container" style="margin-top: 2rem;">
-            <router-link to="/projects" class="btn-primary">View projects</router-link>
+          <div class="subtitle">
+            You’re on board this funding round! And fully verified for BrightID
+            – you’ll never have to do that again.
+          </div>
+          <p>You can now start contributing to your favourite projects.</p>
+          <div class="btn-container" style="margin-top: 2rem">
+            <router-link to="/projects" class="btn-primary"
+              >View projects</router-link
+            >
             <router-link to="/" class="btn-secondary">Go home</router-link>
           </div>
         </div>
@@ -34,7 +45,10 @@ import * as humanizeDuration from 'humanize-duration'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
-import { RegistryInfo, getRegistryInfo } from '@/api/recipient-registry-optimistic'
+import {
+  RegistryInfo,
+  getRegistryInfo,
+} from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
 
 @Component({
@@ -46,25 +60,26 @@ export default class Verified extends Vue {
   challengePeriodDuration: number | null = null
   startDate = '03 April' // TODO: use Date() object
   timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
-  
-  // TODO: Retrieve hash of transaction. 
+
+  // TODO: Retrieve hash of transaction.
   // We route to this component, pass hash as queryParam after submission?
   txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
 
   async created() {
-    const registryInfo: RegistryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
+    const registryInfo: RegistryInfo = await getRegistryInfo(
+      this.$store.state.recipientRegistryAddress
+    )
     this.challengePeriodDuration = registryInfo.challengePeriodDuration
   }
-  
+
   get blockExplorerUrl(): string {
     return `${blockExplorer}${this.txHash}`
   }
 
   formatDuration(value: number): string {
-    return humanizeDuration(value * 1000, { largest: 1 } )
+    return humanizeDuration(value * 1000, { largest: 1 })
   }
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -105,7 +120,6 @@ ul {
   padding-left: 1.5rem;
 }
 
-
 .gradient {
   background: $clr-pink-dark-gradient;
   position: relative;
@@ -119,13 +133,17 @@ ul {
   .hero {
     bottom: 0;
     display: flex;
-    background: linear-gradient(286.78deg, rgba(173, 131, 218, 0) -32.78%, #191623 78.66%);
+    background: linear-gradient(
+      286.78deg,
+      rgba(173, 131, 218, 0) -32.78%,
+      #191623 78.66%
+    );
     height: calc(100vh - 113px);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
       padding-bottom: 16rem;
     }
-    
+
     img {
       position: absolute;
       bottom: 0;
@@ -163,12 +181,11 @@ ul {
           height: 1rem;
           position: relative;
           right: 0;
-      }
+        }
       }
     }
   }
 }
-
 
 .subtitle {
   font-size: 1.25rem;
@@ -179,6 +196,4 @@ ul {
   height: 1rem;
   position: relative;
 }
-
-
 </style>

@@ -1,17 +1,33 @@
 <template>
   <nav id="nav-bar">
     <router-link v-if="!inApp" to="/">
-      <img class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
+      <img
+        class="ef-logo"
+        alt="ethereum foundation"
+        src="@/assets/eth-diamond-rainbow.svg"
+      />
     </router-link>
     <router-link v-else to="/projects">
-      <img class="ef-logo" alt="ethereum foundation" src="@/assets/eth-diamond-rainbow.svg" />
+      <img
+        class="ef-logo"
+        alt="ethereum foundation"
+        src="@/assets/eth-diamond-rainbow.svg"
+      />
     </router-link>
     <div class="btn-row">
-      <div class="help-dropdown" v-if="inApp" >
-        <img @click="openHelpDropdown()" class="dropdown-btn" src="@/assets/help.svg" />
+      <div class="help-dropdown" v-if="inApp">
+        <img
+          @click="openHelpDropdown()"
+          class="dropdown-btn"
+          src="@/assets/help.svg"
+        />
         <div id="myHelpDropdown" class="button-menu">
           <div class="dropdown-title">Help</div>
-          <div v-for="({ to, href, text, emoji }, idx) of dropdownItems" :key="idx" class="dropdown-item">
+          <div
+            v-for="({ to, href, text, emoji }, idx) of dropdownItems"
+            :key="idx"
+            class="dropdown-item"
+          >
             <template v-if="href">
               <a :href="href" target="_blank">
                 <div>{{ emoji }}</div>
@@ -49,14 +65,19 @@ import { Prop } from 'vue-property-decorator'
 export default class NavBar extends Vue {
   @Prop() inApp
   profileImageUrl: string | null = null
-  dropdownItems: {to?: string; href?: string; text: string; emoji: string}[] = [
-    { to: '/', text: 'About', emoji: 'ℹ️' },
-    { to: '/how-it-works', text: 'How it works', emoji: '⚙️' },
-    { to: '/about-maci', text: 'Bribery protection', emoji: '🤑' },
-    { to: '/about-sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
-    { to: '/about-layer2', text: 'About [layer 2]', emoji: '🚀' },
-    { href: 'https://github.com/clrfund/monorepo/', text: 'Code', emoji: '👾' },
-  ]
+  dropdownItems: { to?: string; href?: string; text: string; emoji: string }[] =
+    [
+      { to: '/', text: 'About', emoji: 'ℹ️' },
+      { to: '/how-it-works', text: 'How it works', emoji: '⚙️' },
+      { to: '/about-maci', text: 'Bribery protection', emoji: '🤑' },
+      { to: '/about-sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
+      { to: '/about-layer2', text: 'About [layer 2]', emoji: '🚀' },
+      {
+        href: 'https://github.com/clrfund/monorepo/',
+        text: 'Code',
+        emoji: '👾',
+      },
+    ]
 
   openDropdown(): void {
     document.getElementById('myDropdown')?.classList.toggle('show')
@@ -68,7 +89,7 @@ export default class NavBar extends Vue {
 }
 
 // Close the dropdown menu if the user clicks outside of it
-window.onclick = function(event) {
+window.onclick = function (event) {
   if (!event.target.matches('.dropdown-btn')) {
     const dropdowns = document.getElementsByClassName('button-menu')
     let i: number
@@ -80,9 +101,7 @@ window.onclick = function(event) {
     }
   }
 }
-
 </script>
-
 
 <style scoped lang="scss">
 @import '../styles/vars';
@@ -123,10 +142,10 @@ window.onclick = function(event) {
         top: 2rem;
         right: 0.5rem;
         background: $bg-secondary-color;
-        border: 1px solid rgba(115,117,166,0.3);
+        border: 1px solid rgba(115, 117, 166, 0.3);
         border-radius: 0.5rem;
         min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
         z-index: 1;
         cursor: pointer;
         overflow: hidden;
@@ -134,12 +153,12 @@ window.onclick = function(event) {
         .dropdown-item a {
           display: flex;
           align-items: center;
-          padding: 0.5rem; 
+          padding: 0.5rem;
           gap: 0.5rem;
           &:hover {
             background: $bg-light-color;
           }
-          
+
           .item-text {
             margin: 0;
             color: $text-color;
@@ -149,54 +168,53 @@ window.onclick = function(event) {
       .show {
         display: flex;
       }
-
     }
   }
 
   .help-dropdown {
-      position: relative;
-      display: inline-block;
+    position: relative;
+    display: inline-block;
 
-      .button-menu {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 2rem;
-        right: 0.5rem;
-        background: $bg-secondary-color;
-        border: 1px solid rgba(115,117,166,0.3);
-        border-radius: 0.5rem;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-        z-index: 1;
-        cursor: pointer;
-        overflow: hidden;
+    .button-menu {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 2rem;
+      right: 0.5rem;
+      background: $bg-secondary-color;
+      border: 1px solid rgba(115, 117, 166, 0.3);
+      border-radius: 0.5rem;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      cursor: pointer;
+      overflow: hidden;
 
-        .dropdown-title {
-          padding: 0.5rem;
-          font-weight: 600;
-        }
-
-        .dropdown-item a {
-          display: flex;
-          align-items: center;
-          padding: 0.5rem; 
-          gap: 0.5rem;
-          width: 176px;
-          &:hover {
-            background: $bg-light-color;
-          }
-          
-          .item-text {
-            margin: 0;
-            color: $text-color;
-          }
-        }
+      .dropdown-title {
+        padding: 0.5rem;
+        font-weight: 600;
       }
-      .show {
+
+      .dropdown-item a {
         display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        gap: 0.5rem;
+        width: 176px;
+        &:hover {
+          background: $bg-light-color;
+        }
+
+        .item-text {
+          margin: 0;
+          color: $text-color;
+        }
       }
     }
+    .show {
+      display: flex;
+    }
+  }
 
   .button-menu router-link {
     font-size: 16px;

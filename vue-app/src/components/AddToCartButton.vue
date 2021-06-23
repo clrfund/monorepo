@@ -2,7 +2,7 @@
   <div>
     <form action="#" v-if="!inCart">
       <div class="input-button">
-        <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
+        <img style="margin-left: 0.5rem" height="24px" src="@/assets/dai.svg" />
         <input
           class="input"
           name="amount"
@@ -10,14 +10,14 @@
           onfocus="this.value=''"
           :placeholder="defaultAmount"
           v-model="amount"
-        >
+        />
         <input
           type="submit"
           class="donate-btn"
           value="Add to cart"
           :disabled="!canContribute()"
           @click.prevent="handleSubmit"
-        >
+        />
       </div>
     </form>
     <div class="input-button" v-if="inCart">
@@ -34,7 +34,11 @@ import { Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
 import { SAVE_CART } from '@/store/action-types'
-import { ADD_CART_ITEM, TOGGLE_SHOW_CART_PANEL, TOGGLE_EDIT_SELECTION } from '@/store/mutation-types'
+import {
+  ADD_CART_ITEM,
+  TOGGLE_SHOW_CART_PANEL,
+  TOGGLE_EDIT_SELECTION,
+} from '@/store/mutation-types'
 import { DEFAULT_CONTRIBUTION_AMOUNT } from '@/api/contributions'
 import { User } from '@/api/user'
 import { Project } from '@/api/projects'
@@ -48,10 +52,10 @@ import ConnectionModal from '@/components/ConnectionModal.vue'
   },
 })
 export default class AddToCartButton extends Vue {
-  amount = DEFAULT_CONTRIBUTION_AMOUNT;
+  amount = DEFAULT_CONTRIBUTION_AMOUNT
 
   @Prop()
-  project!: Project;
+  project!: Project
 
   get currentUser(): User | null {
     return this.$store.state.currentUser
@@ -101,7 +105,7 @@ export default class AddToCartButton extends Vue {
   }
 
   handleSubmit(): void {
-    if(this.hasContributeBtn() && this.currentUser) {
+    if (this.hasContributeBtn() && this.currentUser) {
       this.contribute()
       return
     }
@@ -112,18 +116,18 @@ export default class AddToCartButton extends Vue {
   promptConnection(): void {
     return this.$modal.show(
       ConnectionModal,
-      { },
-      { },
+      {},
+      {},
       {
         closed: this.handleConnectionModalClose,
-      },
+      }
     )
   }
 
   handleConnectionModalClose(): void {
     // The modal can be closed by clicking in Cancel or when the user is
     // connected successfully. Hence, this checks if we are in the latter case
-    if(this.currentUser) {
+    if (this.currentUser) {
       this.contribute()
     }
   }
@@ -132,7 +136,6 @@ export default class AddToCartButton extends Vue {
     this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
   }
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -140,7 +143,7 @@ export default class AddToCartButton extends Vue {
 @import '../styles/theme';
 
 .input-button {
-  background: #F7F7F7;
+  background: #f7f7f7;
   border-radius: 2rem;
   border: 2px solid $bg-primary-color;
   display: flex;
@@ -168,7 +171,7 @@ export default class AddToCartButton extends Vue {
   font-family: Inter;
   border: none;
   cursor: pointer;
-  box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
 }
 
 .donate-btn-full {
@@ -182,12 +185,11 @@ export default class AddToCartButton extends Vue {
   border: none;
   width: 100%;
   text-align: center;
-  box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
+  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
   z-index: 1;
   cursor: pointer;
   &:hover {
     background: $bg-light-color;
   }
 }
-
 </style>

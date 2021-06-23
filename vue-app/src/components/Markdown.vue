@@ -11,7 +11,6 @@ import { markdown } from '@/utils/markdown'
 
 @Component
 export default class Transaction extends Vue {
-
   @Prop()
   raw!: string
 
@@ -22,10 +21,14 @@ export default class Transaction extends Vue {
 </script>
 
 <style scoped lang="scss">
-
 .markdown {
   ::v-deep {
-    h1, h2, h3, h4, h5, h6 { 
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       font-size: 1rem;
       font-weight: 600;
       margin: 1.5rem 0;

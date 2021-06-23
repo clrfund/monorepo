@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'fs'
 import { ethers } from 'hardhat'
 import { BigNumber } from 'ethers'
 import { PrivKey, Keypair } from 'maci-domainobjs'
@@ -6,14 +6,18 @@ import { PrivKey, Keypair } from 'maci-domainobjs'
 import { createMessage } from '../utils/maci'
 
 async function main() {
-  const [,,,,, contributor1, contributor2] = await ethers.getSigners()
+  const [, , , , , contributor1, contributor2] = await ethers.getSigners()
   const state = JSON.parse(fs.readFileSync('state.json').toString())
-  const coordinatorKeyPair = new Keypair(PrivKey.unserialize(state.coordinatorPrivKey))
+  const coordinatorKeyPair = new Keypair(
+    PrivKey.unserialize(state.coordinatorPrivKey)
+  )
 
   for (const contributor of [contributor1, contributor2]) {
     const contributorAddress = await contributor.getAddress()
     const contributorData = state.contributors[contributorAddress]
-    const contributorKeyPair = new Keypair(PrivKey.unserialize(contributorData.privKey))
+    const contributorKeyPair = new Keypair(
+      PrivKey.unserialize(contributorData.privKey)
+    )
     const messages = []
     const encPubKeys = []
     let nonce = 1
@@ -21,9 +25,12 @@ async function main() {
     const newContributorKeypair = new Keypair()
     const [message, encPubKey] = createMessage(
       contributorData.stateIndex,
-      contributorKeyPair, newContributorKeypair,
+      contributorKeyPair,
+      newContributorKeypair,
       coordinatorKeyPair.pubKey,
-      null, null, nonce,
+      null,
+      null,
+      nonce
     )
     messages.push(message.asContractParam())
     encPubKeys.push(encPubKey.asContractParam())
@@ -33,9 +40,12 @@ async function main() {
       const votes = BigNumber.from(contributorData.voiceCredits).div(4)
       const [message, encPubKey] = createMessage(
         contributorData.stateIndex,
-        newContributorKeypair, null,
+        newContributorKeypair,
+        null,
         coordinatorKeyPair.pubKey,
-        recipientIndex, votes, nonce,
+        recipientIndex,
+        votes,
+        nonce
       )
       messages.push(message.asContractParam())
       encPubKeys.push(encPubKey.asContractParam())
@@ -45,11 +55,11 @@ async function main() {
     const fundingRoundAsContributor = await ethers.getContractAt(
       'FundingRound',
       state.fundingRound,
-      contributor,
+      contributor
     )
     await fundingRoundAsContributor.submitMessageBatch(
       messages.reverse(),
-      encPubKeys.reverse(),
+      encPubKeys.reverse()
     )
     console.log(`Contributor ${contributorAddress} voted.`)
   }
@@ -57,7 +67,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch(error => {
+  .catch((error) => {
     console.error(error)
     process.exit(1)
   })

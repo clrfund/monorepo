@@ -11,12 +11,13 @@ async function main() {
   let coordinatorPrivKey: string
   let coordinatorEthPrivKey: string
   if (network.name === 'localhost') {
-    const stateStr = fs.readFileSync('state.json').toString();
+    const stateStr = fs.readFileSync('state.json').toString()
     const state = JSON.parse(stateStr)
     fundingRoundAddress = state.fundingRound
     coordinatorPrivKey = state.coordinatorPrivKey
     // Hardhat account #1
-    coordinatorEthPrivKey = '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
+    coordinatorEthPrivKey =
+      '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
   } else {
     fundingRoundAddress = process.env.ROUND_ADDRESS || ''
     coordinatorPrivKey = process.env.COORDINATOR_PK || ''
@@ -26,7 +27,7 @@ async function main() {
   const fundingRound = await ethers.getContractAt(
     'FundingRound',
     fundingRoundAddress,
-    coordinator,
+    coordinator
   )
   const maciAddress = await fundingRound.maci()
   const providerUrl = (network.config as any).url
@@ -61,7 +62,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch(error => {
+  .catch((error) => {
     console.error(error)
     process.exit(1)
   })

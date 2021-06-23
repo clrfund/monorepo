@@ -7,7 +7,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 @Component
-export default class Loader extends Vue { }
+export default class Loader extends Vue {}
 </script>
 
 <style scoped lang="scss">
@@ -22,7 +22,7 @@ export default class Loader extends Vue { }
 }
 
 .loader:after {
-  content: " ";
+  content: ' ';
   display: block;
   width: 32px;
   height: 32px;
@@ -41,5 +41,4 @@ export default class Loader extends Vue { }
     transform: rotate(360deg);
   }
 }
-
 </style>

@@ -4,10 +4,14 @@
       <h3>Submit project</h3>
       <div class="requirements">
         Please make sure that your project meets the requirements
-        <br>
-        of the <a :href="registryInfo.listingPolicyUrl" target="_blank" rel="noopener">Listing Policy</a>.
-        <br>
-        Required security deposit: {{ formatAmount(registryInfo.deposit) }} {{ registryInfo.depositToken }}.
+        <br />
+        of the
+        <a :href="registryInfo.listingPolicyUrl" target="_blank" rel="noopener"
+          >Listing Policy</a
+        >.
+        <br />
+        Required security deposit: {{ formatAmount(registryInfo.deposit) }}
+        {{ registryInfo.depositToken }}.
       </div>
       <form class="recipient-form">
         <div class="input-wrapper">
@@ -18,11 +22,14 @@
             v-model="$v.form.name.$model"
             class="input"
             :class="{ invalid: $v.form.name.$error }"
-          >
+          />
           <div class="input-error" v-if="$v.form.name.$error">
-            <template v-if="!$v.form.name.required">Field is required.</template>
+            <template v-if="!$v.form.name.required"
+              >Field is required.</template
+            >
             <template v-else-if="!$v.form.name.minLength">
-              Name must be at least {{ $v.form.name.$params.minLength.min }} characters long.
+              Name must be at least
+              {{ $v.form.name.$params.minLength.min }} characters long.
             </template>
           </div>
         </div>
@@ -35,10 +42,14 @@
             v-model="$v.form.address.$model"
             class="input"
             :class="{ invalid: $v.form.address.$error }"
-          >
+          />
           <div class="input-error" v-if="$v.form.address.$error">
-            <template v-if="!$v.form.address.required">Field is required.</template>
-            <template v-else-if="!$v.form.address.validEthAddress">Invalid ethereum address.</template>
+            <template v-if="!$v.form.address.required"
+              >Field is required.</template
+            >
+            <template v-else-if="!$v.form.address.validEthAddress"
+              >Invalid ethereum address.</template
+            >
           </div>
         </div>
         <div class="input-wrapper">
@@ -51,9 +62,12 @@
             :class="{ invalid: $v.form.description.$error }"
           ></textarea>
           <div class="input-error" v-if="$v.form.description.$error">
-            <template v-if="!$v.form.description.required">Field is required.</template>
+            <template v-if="!$v.form.description.required"
+              >Field is required.</template
+            >
             <template v-else-if="!$v.form.description.minLength">
-              Description must be at least {{ $v.form.description.$params.minLength.min }} characters long.
+              Description must be at least
+              {{ $v.form.description.$params.minLength.min }} characters long.
             </template>
           </div>
         </div>
@@ -66,16 +80,26 @@
             v-model="$v.form.imageHash.$model"
             class="input"
             :class="{ invalid: $v.form.imageHash.$error }"
-          >
+          />
           <div class="input-error" v-if="$v.form.imageHash.$error">
-            <template v-if="!$v.form.imageHash.required">Field is required.</template>
-            <template v-else-if="!$v.form.imageHash.validIpfsHash">Invalid IPFS hash.</template>
+            <template v-if="!$v.form.imageHash.required"
+              >Field is required.</template
+            >
+            <template v-else-if="!$v.form.imageHash.validIpfsHash"
+              >Invalid IPFS hash.</template
+            >
           </div>
         </div>
       </form>
       <div class="btn-row">
         <button class="btn" @click="$emit('close')">Go back</button>
-        <button class="btn" @click="addRecipient()" :disabled="$v.form.$invalid">Continue</button>
+        <button
+          class="btn"
+          @click="addRecipient()"
+          :disabled="$v.form.$invalid"
+        >
+          Continue
+        </button>
       </div>
     </div>
     <div v-if="step === 2">
@@ -89,7 +113,9 @@
     <div v-if="step === 3">
       <h3>Success!</h3>
       <div class="success">
-        Successfully submitted recipient registration request. Request ID is <code>{{ recipientId }}</code>.
+        Successfully submitted recipient registration request. Request ID is
+        <code>{{ recipientId }}</code
+        >.
       </div>
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
@@ -141,7 +167,6 @@ import { waitForTransaction } from '@/utils/contracts'
   },
 })
 export default class RecipientSubmissionModal extends mixins(validationMixin) {
-
   @Prop()
   registryAddress!: string
 
@@ -175,8 +200,13 @@ export default class RecipientSubmissionModal extends mixins(validationMixin) {
     let submissionTxReceipt
     try {
       submissionTxReceipt = await waitForTransaction(
-        addRecipient(this.registryAddress, this.$store.state.recipient, this.registryInfo.deposit, this.signer),
-        (hash) => this.submissionTxHash = hash,
+        addRecipient(
+          this.registryAddress,
+          this.$store.state.recipient,
+          this.registryInfo.deposit,
+          this.signer
+        ),
+        (hash) => (this.submissionTxHash = hash)
       )
     } catch (error) {
       this.submissionTxError = error.message
@@ -211,7 +241,8 @@ export default class RecipientSubmissionModal extends mixins(validationMixin) {
       padding: 10px 0 0;
     }
 
-    input, textarea {
+    input,
+    textarea {
       background-color: #332f40;
       flex-grow: 1;
     }

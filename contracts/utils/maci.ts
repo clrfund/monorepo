@@ -3,7 +3,6 @@ import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
 import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
 
 export class MaciParameters {
-
   stateTreeDepth = 4
   messageTreeDepth = 4
   voteOptionTreeDepth = 2
@@ -14,13 +13,13 @@ export class MaciParameters {
   signUpDuration = 7 * 86400
   votingDuration = 7 * 86400
 
-  constructor(parameters: {[name: string]: any} = {}) {
+  constructor(parameters: { [name: string]: any } = {}) {
     this.update(parameters)
   }
 
-  update(parameters: {[name: string]: any}) {
+  update(parameters: { [name: string]: any }) {
     for (const [name, value] of Object.entries(parameters)) {
-      (this as any)[name] = value
+      ;(this as any)[name] = value
     }
   }
 
@@ -40,7 +39,8 @@ export class MaciParameters {
   }
 
   static async read(maciFactory: Contract): Promise<MaciParameters> {
-    const { stateTreeDepth, messageTreeDepth, voteOptionTreeDepth } = await maciFactory.treeDepths()
+    const { stateTreeDepth, messageTreeDepth, voteOptionTreeDepth } =
+      await maciFactory.treeDepths()
     const { tallyBatchSize, messageBatchSize } = await maciFactory.batchSizes()
     const batchUstVerifier = await maciFactory.batchUstVerifier()
     const qvtVerifier = await maciFactory.qvtVerifier()
@@ -70,7 +70,7 @@ export function bnSqrt(a: BigNumber): BigNumber {
   let x1 = a.div(2)
   do {
     x = x1
-    x1 = (x.add(a.div(x))).div(2)
+    x1 = x.add(a.div(x)).div(2)
   } while (!x.eq(x1))
   return x
 }
@@ -83,7 +83,7 @@ export function createMessage(
   voteOptionIndex: number | null,
   voiceCredits: BigNumber | null,
   nonce: number,
-  salt?: BigInt,
+  salt?: BigInt
 ): [Message, PubKey] {
   const encKeypair = new Keypair()
   if (!salt) {
@@ -96,12 +96,12 @@ export function createMessage(
     BigInt(voteOptionIndex || 0),
     BigInt(quadraticVoteWeight),
     BigInt(nonce),
-    BigInt(salt),
+    BigInt(salt)
   )
   const signature = command.sign(userKeypair.privKey)
   const message = command.encrypt(
     signature,
-    Keypair.genEcdhSharedKey(encKeypair.privKey, coordinatorPubKey),
+    Keypair.genEcdhSharedKey(encKeypair.privKey, coordinatorPubKey)
   )
   return [message, encKeypair.pubKey]
 }
@@ -109,7 +109,7 @@ export function createMessage(
 export function getRecipientClaimData(
   recipientIndex: number,
   recipientTreeDepth: number,
-  tally: any,
+  tally: any
 ): any[] {
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]

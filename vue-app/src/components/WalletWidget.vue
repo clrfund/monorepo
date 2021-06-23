@@ -15,19 +15,32 @@
     >
       Connect
     </button>
-    <div v-else-if="currentUser && !isActionButton" class="profile-info" @click="toggleProfile">
+    <div
+      v-else-if="currentUser && !isActionButton"
+      class="profile-info"
+      @click="toggleProfile"
+    >
       <div class="profile-info-balance">
         <img v-if="!showEth" src="@/assets/dai.svg" />
         <img v-if="showEth" src="@/assets/eth.svg" />
-        <div v-if="!showEth" class="balance" @click="copyAddress">{{ balance }}</div>
-        <div v-if="showEth" class="balance">{{etherBalance}}</div>
+        <div v-if="!showEth" class="balance" @click="copyAddress">
+          {{ balance }}
+        </div>
+        <div v-if="showEth" class="balance">{{ etherBalance }}</div>
       </div>
-      <div class="profile-name" @click="copyAddress">{{ renderUserAddress(7) }}</div>
+      <div class="profile-name" @click="copyAddress">
+        {{ renderUserAddress(7) }}
+      </div>
       <div class="profile-image">
-        <img v-if="profileImageUrl" :src="profileImageUrl">
+        <img v-if="profileImageUrl" :src="profileImageUrl" />
       </div>
     </div>
-    <profile v-if="showProfilePanel" :toggleProfile="toggleProfile" :balance="balance" :etherBalance="etherBalance" />
+    <profile
+      v-if="showProfilePanel"
+      :toggleProfile="toggleProfile"
+      :balance="balance"
+      :etherBalance="etherBalance"
+    />
   </div>
 </template>
 
@@ -49,13 +62,11 @@ import {
   LOGIN_USER,
   LOGOUT_USER,
 } from '@/store/action-types'
-import {
-  SET_CURRENT_USER,
-} from '@/store/mutation-types'
+import { SET_CURRENT_USER } from '@/store/mutation-types'
 import { sha256 } from '@/utils/crypto'
 import Profile from '@/views/Profile.vue'
 
-@Component({components: {Profile}})
+@Component({ components: { Profile } })
 export default class WalletWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
@@ -68,11 +79,14 @@ export default class WalletWidget extends Vue {
   @Prop() isActionButton!: boolean
 
   async copyAddress(): Promise<void> {
-    if (!this.currentUser) { return }
+    if (!this.currentUser) {
+      return
+    }
     try {
       await navigator.clipboard.writeText(this.currentUser.walletAddress)
     } catch (error) {
-      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
+      /* eslint-disable-next-line no-console */
+      console.warn('Error in copying text: ', error)
     }
   }
 
@@ -90,13 +104,17 @@ export default class WalletWidget extends Vue {
 
   get etherBalance(): string | null {
     const etherBalance = this.currentUser?.etherBalance
-    if (etherBalance === null || typeof etherBalance === 'undefined') { return null }
+    if (etherBalance === null || typeof etherBalance === 'undefined') {
+      return null
+    }
     return commify(formatUnits(etherBalance, 'ether'))
   }
 
   get balance(): string | null {
     const balance = this.currentUser?.balance
-    if (balance === null || typeof balance === 'undefined') { return null }
+    if (balance === null || typeof balance === 'undefined') {
+      return null
+    }
     return commify(formatUnits(balance, 18))
   }
 
@@ -105,7 +123,9 @@ export default class WalletWidget extends Vue {
     if (!this.walletProvider) {
       return
     }
-    this.walletChainId = await this.walletProvider.request({ method: 'eth_chainId' })
+    this.walletChainId = await this.walletProvider.request({
+      method: 'eth_chainId',
+    })
     this.walletProvider.on('chainChanged', (_chainId: string) => {
       if (_chainId !== this.walletChainId) {
         this.walletChainId = _chainId
@@ -145,7 +165,10 @@ export default class WalletWidget extends Vue {
   get networkName(): string {
     if (this.jsonRpcNetwork === null) {
       return ''
-    } else if (this.jsonRpcNetwork.name === 'unknown' && this.jsonRpcNetwork.chainId === 100) {
+    } else if (
+      this.jsonRpcNetwork.name === 'unknown' &&
+      this.jsonRpcNetwork.chainId === 100
+    ) {
       return 'xdai'
     } else {
       return this.jsonRpcNetwork.name
@@ -158,7 +181,9 @@ export default class WalletWidget extends Vue {
     }
     let walletAddress
     try {
-      [walletAddress] = await this.walletProvider.request({ method: 'eth_requestAccounts' })
+      ;[walletAddress] = await this.walletProvider.request({
+        method: 'eth_requestAccounts',
+      })
     } catch (error) {
       // Access denied
       return
@@ -184,8 +209,9 @@ export default class WalletWidget extends Vue {
 
     this.$emit('connected')
 
-    getProfileImageUrl(user.walletAddress)
-      .then((url) => this.profileImageUrl = url)
+    getProfileImageUrl(user.walletAddress).then(
+      (url) => (this.profileImageUrl = url)
+    )
     this.$store.commit(SET_CURRENT_USER, user)
     await this.$store.dispatch(LOGIN_USER)
     if (this.$store.state.currentRound) {
@@ -205,7 +231,10 @@ export default class WalletWidget extends Vue {
         const beginDigits: number = Math.ceil(digitsToShow / 2)
         const endDigits: number = Math.floor(digitsToShow / 2)
         const begin: string = address.substr(0, 2 + beginDigits)
-        const end: string = address.substr(address.length - endDigits, endDigits)
+        const end: string = address.substr(
+          address.length - endDigits,
+          endDigits
+        )
         return `${begin}…${end}`
       }
       return address
@@ -213,11 +242,7 @@ export default class WalletWidget extends Vue {
     return ''
   }
 }
-
-
-
 </script>
-
 
 <style scoped lang="scss">
 @import '../styles/vars';
@@ -245,13 +270,13 @@ export default class WalletWidget extends Vue {
   .profile-name {
     font-size: 14px;
     opacity: 0.8;
-  } 
+  }
 
   .balance {
     font-size: 14px;
     font-weight: 600;
-    font-family: "Glacial Indifference", sans-serif;
-  } 
+    font-family: 'Glacial Indifference', sans-serif;
+  }
 
   .profile-image {
     border-radius: 50%;
@@ -261,16 +286,16 @@ export default class WalletWidget extends Vue {
     overflow: hidden;
     width: $profile-image-size;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    cursor: pointer; 
+    cursor: pointer;
     img {
       height: 100%;
       width: 100%;
     }
     &:hover {
-    opacity: 0.8;
-    transform: scale(1.01);
-    cursor: pointer;
-  }
+      opacity: 0.8;
+      transform: scale(1.01);
+      cursor: pointer;
+    }
   }
 
   .profile-info-balance {

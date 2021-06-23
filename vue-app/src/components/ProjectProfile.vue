@@ -1,9 +1,18 @@
 <template>
   <div v-if="project" class="project-page">
-    <info v-if="previewMode" style="margin-bottom: 1.5rem;" message="This is what your contributors will see when they visit your project page." />
-    <img v-if="previewMode" class="project-image" :src="project.bannerImageUrl" :alt="project.name">
-    <div class="about">    
-      <h1 
+    <info
+      v-if="previewMode"
+      style="margin-bottom: 1.5rem"
+      message="This is what your contributors will see when they visit your project page."
+    />
+    <img
+      v-if="previewMode"
+      class="project-image"
+      :src="project.bannerImageUrl"
+      :alt="project.name"
+    />
+    <div class="about">
+      <h1
         class="project-name"
         :title="project.address"
         :project-index="project.index"
@@ -13,98 +22,111 @@
           :href="klerosCurateUrl"
           target="_blank"
           rel="noopener"
-        >{{ project.name }}</a>
+          >{{ project.name }}</a
+        >
         <span v-else> {{ project.name }} </span>
       </h1>
-      <p class="tagline">{{ project.tagline }}</p> 
+      <p class="tagline">{{ project.tagline }}</p>
       <div class="subtitle">
-        <div class="tag">{{ project.category }} tag </div>
-        <div class="team-byline">Team: <a href="#team"> {{ project.teamName }}</a></div>
+        <div class="tag">{{ project.category }} tag</div>
+        <div class="team-byline">
+          Team: <a href="#team"> {{ project.teamName }}</a>
+        </div>
       </div>
       <div class="mobile mb2">
-      <button
-        v-if="hasRegisterBtn()"
-        class="btn-primary"
-        :disabled="!canRegister()"
-        @click="register()"
-      >
-        Register
-      </button>
-      <div class="input-button" v-if="hasContributeBtn() && !inCart">
-        <img style="margin-left: 0.5rem;" height="24px" src="@/assets/dai.svg">
-        <input
-          v-model="contributionAmount"
-          class="input"
-          name="contributionAmount"
-          placeholder="5"
-          autocomplete="on"
-          onfocus="this.value=''"
-
-        >
-        <input type="submit"
-          class="donate-btn"
-          :disabled="!canContribute()"
-          @click="contribute()"
-          value="Add to cart"
-        >
-      </div>
-      <div class="input-button" v-if="hasContributeBtn() && inCart">
         <button
-          class="donate-btn-full"
+          v-if="hasRegisterBtn()"
+          class="btn-primary"
+          :disabled="!canRegister()"
+          @click="register()"
         >
-          <span>In cart 🎉</span>
+          Register
         </button>
-      </div>
-      <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
-      <button
-        v-if="hasClaimBtn()"
-        class="btn-primary"
-        :disabled="!canClaim()"
-        @click="claim()"
-      >
-        <template v-if="claimed">
-          Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-        </template>
-        <template v-else>
-          Claim {{ formatAmount(allocatedAmount)  }} {{ tokenSymbol }}
-        </template>
-      </button>
+        <div class="input-button" v-if="hasContributeBtn() && !inCart">
+          <img
+            style="margin-left: 0.5rem"
+            height="24px"
+            src="@/assets/dai.svg"
+          />
+          <input
+            v-model="contributionAmount"
+            class="input"
+            name="contributionAmount"
+            placeholder="5"
+            autocomplete="on"
+            onfocus="this.value=''"
+          />
+          <input
+            type="submit"
+            class="donate-btn"
+            :disabled="!canContribute()"
+            @click="contribute()"
+            value="Add to cart"
+          />
+        </div>
+        <div class="input-button" v-if="hasContributeBtn() && inCart">
+          <button class="donate-btn-full">
+            <span>In cart 🎉</span>
+          </button>
+        </div>
+        <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
+        <button
+          v-if="hasClaimBtn()"
+          class="btn-primary"
+          :disabled="!canClaim()"
+          @click="claim()"
+        >
+          <template v-if="claimed">
+            Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
+          </template>
+          <template v-else>
+            Claim {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
+          </template>
+        </button>
       </div>
       <div class="project-section">
         <h2>About the project</h2>
-        <markdown :raw="project.description"/>
+        <markdown :raw="project.description" />
       </div>
       <div class="project-section">
         <h2>The problem it solves</h2>
-        <markdown :raw="project.problemSpace"/>
+        <markdown :raw="project.problemSpace" />
       </div>
       <div class="project-section">
         <h2>Funding plans</h2>
-        <markdown :raw="project.plans"/>
-      </div> 
-      <div 
+        <markdown :raw="project.plans" />
+      </div>
+      <div
         :class="{
           'address-box': project.teamName || project.teamDescription,
           'address-box-no-team': !project.teamName && !project.teamDescription,
-          }"
+        }"
       >
         <div>
           <div class="address-label">Recipient address</div>
           <div class="address">
-            {{ project.address }} 
+            {{ project.address }}
           </div>
         </div>
         <div class="copy-div">
-          <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/copy.svg"></div>
-          <div class="copy-btn" @click="copyAddress"><img width="16px" src="@/assets/etherscan.svg"></div>
+          <div class="copy-btn" @click="copyAddress">
+            <img width="16px" src="@/assets/copy.svg" />
+          </div>
+          <div class="copy-btn" @click="copyAddress">
+            <img width="16px" src="@/assets/etherscan.svg" />
+          </div>
         </div>
-      </div>        
-      <hr v-if="project.teamName || project.teamDescription" />
-      <div id="team" v-if="project.teamName || project.teamDescription" class="team">
-        <h2>Team: {{ project.teamName }}</h2>
-        <markdown :raw="project.teamDescription"/>
       </div>
-    </div>  
+      <hr v-if="project.teamName || project.teamDescription" />
+      <div
+        id="team"
+        v-if="project.teamName || project.teamDescription"
+        class="team"
+      >
+        <h2>Team: {{ project.teamName }}</h2>
+        <markdown :raw="project.teamDescription" />
+      </div>
+    </div>
     <div v-if="previewMode">
       <h2 class="link-title">Check them out</h2>
       <div v-if="project.githubUrl" class="link-row">
@@ -114,11 +136,11 @@
       <div v-if="project.twitterUrl" class="link-row">
         <img src="@/assets/Twitter.svg" />
         <a :href="project.twitterUrl">@Twitter</a>
-      </div>  
+      </div>
       <div v-if="project.websiteUrl" class="link-row">
         <img src="@/assets/Meridians.svg" />
         <a :href="project.websiteUrl">{{ project.websiteUrl }}</a>
-      </div>  
+      </div>
     </div>
   </div>
 </template>
@@ -131,22 +153,17 @@ import { DateTime } from 'luxon'
 import { FixedNumber } from 'ethers'
 import { Tally } from '@/api/tally'
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
-import { Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
+import { Project, getProject } from '@/api/projects'
 import Info from '@/components/Info.vue'
 import { recipientRegistryType } from '@/api/core'
 import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import Markdown from '@/components/Markdown.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
-import { RoundStatus, getCurrentRound } from '@/api/round'
-import {
-  SAVE_CART,
-} from '@/store/action-types'
-import {
-  ADD_CART_ITEM,
-} from '@/store/mutation-types'
+import { RoundStatus } from '@/api/round'
+import { SAVE_CART } from '@/store/action-types'
+import { ADD_CART_ITEM } from '@/store/mutation-types'
 import ClaimModal from '@/components/ClaimModal.vue'
-
 
 @Component({
   components: {
@@ -168,27 +185,33 @@ export default class ProjectProfile extends Vue {
     try {
       await navigator.clipboard.writeText(this.project.address)
       this.isCopied = true
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       this.isCopied = false
     } catch (error) {
-      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
+      /* eslint-disable-next-line no-console */
+      console.warn('Error in copying text: ', error)
     }
   }
 
   private async checkAllocation(tally: Tally | null) {
     const currentRound = this.$store.state.currentRound
-    if (!this.project || !currentRound || currentRound.status !== RoundStatus.Finalized || !tally) {
+    if (
+      !this.project ||
+      !currentRound ||
+      currentRound.status !== RoundStatus.Finalized ||
+      !tally
+    ) {
       return
     }
     this.allocatedAmount = await getAllocatedAmount(
       currentRound.fundingRoundAddress,
       currentRound.nativeTokenDecimals,
       tally.results.tally[this.project.index],
-      tally.totalVoiceCreditsPerVoteOption.tally[this.project.index],
+      tally.totalVoiceCreditsPerVoteOption.tally[this.project.index]
     )
     this.claimed = await isFundsClaimed(
       currentRound.fundingRoundAddress,
-      this.project.index,
+      this.project.index
     )
   }
 
@@ -210,8 +233,7 @@ export default class ProjectProfile extends Vue {
     }
     if (recipientRegistryType === 'optimistic') {
       return this.project.index === 0
-    }
-    else if (recipientRegistryType === 'kleros') {
+    } else if (recipientRegistryType === 'kleros') {
       return (
         this.project.index === 0 &&
         this.project.extra.tcrItemStatus === TcrItemStatus.Registered
@@ -228,16 +250,16 @@ export default class ProjectProfile extends Vue {
     this.$modal.show(
       RecipientRegistrationModal,
       { project: this.project },
-      { },
+      {},
       {
         closed: async () => {
           const project = await getProject(
             this.$store.state.recipientRegistryAddress,
-            this.$route.params.id,
+            this.$route.params.id
           )
           Object.assign(this.project, project)
         },
-      },
+      }
     )
   }
 
@@ -261,7 +283,9 @@ export default class ProjectProfile extends Vue {
   }
 
   contribute() {
-    if (!this.contributionAmount) { return }
+    if (!this.contributionAmount) {
+      return
+    }
     this.$store.commit(ADD_CART_ITEM, {
       ...this.project,
       amount: this.contributionAmount.toString(),
@@ -300,12 +324,12 @@ export default class ProjectProfile extends Vue {
     this.$modal.show(
       ClaimModal,
       { project: this.project },
-      { },
+      {},
       {
         closed: () => {
           this.checkAllocation(this.$store.state.tally)
         },
-      },
+      }
     )
   }
 }
@@ -316,7 +340,6 @@ export default class ProjectProfile extends Vue {
 @import '../styles/theme';
 
 .project-page {
-
   h2 {
     font-size: 20px;
   }
@@ -341,7 +364,6 @@ export default class ProjectProfile extends Vue {
     display: flex;
     gap: 3rem;
     margin-top: 4rem;
-    
   }
 
   .about {
@@ -402,8 +424,8 @@ export default class ProjectProfile extends Vue {
       border-radius: 0.5rem;
       box-shadow: $box-shadow;
       background: $clr-blue-gradient;
-      display: flex; 
-      align-items: center; 
+      display: flex;
+      align-items: center;
       justify-content: space-between;
 
       @media (max-width: $breakpoint-m) {
@@ -436,8 +458,8 @@ export default class ProjectProfile extends Vue {
       border-radius: 0.5rem;
       box-shadow: $box-shadow;
       background: $clr-blue-gradient;
-      display: flex; 
-      align-items: center; 
+      display: flex;
+      align-items: center;
       justify-content: space-between;
 
       @media (max-width: $breakpoint-l) {
@@ -465,7 +487,6 @@ export default class ProjectProfile extends Vue {
     }
   }
 
-
   .sticky-column {
     position: sticky;
     top: 2rem;
@@ -488,17 +509,17 @@ export default class ProjectProfile extends Vue {
     gap: 0.5rem;
 
     .copy-btn {
-      border-radius: 50%; 
+      border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: none; 
+      background: none;
       border: 1px solid $text-color;
       padding: 0.5rem;
       box-sizing: border-box;
       padding: 0.25rem;
       cursor: pointer;
-      background: rgba(255, 255, 255, 0.1); 
+      background: rgba(255, 255, 255, 0.1);
       &:hover {
         transform: scale(1.01);
         opacity: 0.8;
@@ -513,66 +534,66 @@ export default class ProjectProfile extends Vue {
     gap: 0.5rem;
   }
 
-.input-button {
-  background: #F7F7F7;
-  border-radius: 2rem;
-  border: 2px solid $bg-primary-color;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: black;
-  padding: 0.125rem;
-  z-index: 100;
-}
+  .input-button {
+    background: #f7f7f7;
+    border-radius: 2rem;
+    border: 2px solid $bg-primary-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: black;
+    padding: 0.125rem;
+    z-index: 100;
+  }
 
-.donate-btn {
-  padding: 0.5rem 1rem;
-  background: $bg-primary-color;
-  color: white;
-  border-radius: 32px;
-  font-size: 16px;
-  font-family: Inter;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
-}
+  .donate-btn {
+    padding: 0.5rem 1rem;
+    background: $bg-primary-color;
+    color: white;
+    border-radius: 32px;
+    font-size: 16px;
+    font-family: Inter;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  }
 
-.donate-btn-full {
-  background: $bg-primary-color;
-  color: white;
-  border-radius: 32px;
-  padding: 0.5rem 1rem;
-  font-size: 16px;
-  font-family: Inter;
-  line-height: 150%;
-  border: none;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0px 4px 4px 0px 0,0,0,0.25;
-  z-index: 1;
-}
+  .donate-btn-full {
+    background: $bg-primary-color;
+    color: white;
+    border-radius: 32px;
+    padding: 0.5rem 1rem;
+    font-size: 16px;
+    font-family: Inter;
+    line-height: 150%;
+    border: none;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+    z-index: 1;
+  }
 
-.input-button {
-  background: #F7F7F7;
-  border-radius: 2rem;
-  border: 2px solid $bg-primary-color;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: black;
-  padding: 0.125rem;
-  z-index: 100;
-}
+  .input-button {
+    background: #f7f7f7;
+    border-radius: 2rem;
+    border: 2px solid $bg-primary-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: black;
+    padding: 0.125rem;
+    z-index: 100;
+  }
 
-.input {
-  background: none;
-  border: none;
-  color: $bg-primary-color;
-  width: 100%;
-}
+  .input {
+    background: none;
+    border: none;
+    color: $bg-primary-color;
+    width: 100%;
+  }
 
-.mb2 {
-  margin-bottom: 2rem;
-}
+  .mb2 {
+    margin-bottom: 2rem;
+  }
 }
 </style>

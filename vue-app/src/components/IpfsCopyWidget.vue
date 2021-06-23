@@ -5,8 +5,14 @@
       <div class="hash-text" v-else>{{ renderCopiedOrHash }}</div>
     </div>
     <div class="icons">
-      <tooltip position="bottom" :content="isCopied ? 'Copied!' : 'Copy hash'"><div class="icon" @click="copyHash"><img width="16px" src="@/assets/copy.svg" /></div></tooltip>
-      <tooltip position="bottom" content="View IPFS link"><a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"><img width="16px" src="@/assets/ipfs-white.svg" /></a></tooltip>
+      <tooltip position="bottom" :content="isCopied ? 'Copied!' : 'Copy hash'"
+        ><div class="icon" @click="copyHash">
+          <img width="16px" src="@/assets/copy.svg" /></div
+      ></tooltip>
+      <tooltip position="bottom" content="View IPFS link"
+        ><a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"
+          ><img width="16px" src="@/assets/ipfs-white.svg" /></a
+      ></tooltip>
     </div>
   </div>
 </template>
@@ -34,10 +40,11 @@ export default class IpfsCopyWidget extends Vue {
     try {
       await navigator.clipboard.writeText(this.hash)
       this.isCopied = true
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       this.isCopied = false
     } catch (error) {
-      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
+      /* eslint-disable-next-line no-console */
+      console.warn('Error in copying text: ', error)
     }
   }
 }
@@ -72,30 +79,30 @@ export default class IpfsCopyWidget extends Vue {
   gap: 1rem;
   min-width: 10%;
   text-transform: uppercase;
-    @media (max-width: $breakpoint-m) {
+  @media (max-width: $breakpoint-m) {
     margin-left: 0.5rem;
   }
 }
 
 .hash-loader {
-    margin: 0.25rem;
-    padding: 0;
-    width: 1rem;
-    height: 1rem;
+  margin: 0.25rem;
+  padding: 0;
+  width: 1rem;
+  height: 1rem;
 }
 .hash-loader:after {
-    width: 0.75rem;
-    height: 0.75rem;
-    margin: 0;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    border-color: #fff transparent #fff transparent;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  border-color: #fff transparent #fff transparent;
 }
 
 .icons {
   display: flex;
   align-items: center;
-  gap: 0.25rem;  
+  gap: 0.25rem;
   @media (max-width: $breakpoint-m) {
     width: fit-content;
     margin-right: 1rem;
@@ -104,20 +111,20 @@ export default class IpfsCopyWidget extends Vue {
 }
 
 .icon {
-    width: 1rem;
-    height: 1rem;
-    padding: 0.25rem;
-    cursor: pointer;
-    &:hover {
-        background: $bg-light-color;
-        border-radius: 16px;
-    }
+  width: 1rem;
+  height: 1rem;
+  padding: 0.25rem;
+  cursor: pointer;
+  &:hover {
+    background: $bg-light-color;
+    border-radius: 16px;
+  }
 }
 
 .hash-text {
-  white-space: nowrap; 
+  white-space: nowrap;
   overflow: hidden;
   width: 100%;
-  text-overflow: ellipsis; 
+  text-overflow: ellipsis;
 }
 </style>

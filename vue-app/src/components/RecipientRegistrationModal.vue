@@ -10,7 +10,10 @@
     </div>
     <div v-if="step === 2">
       <h3>Success!</h3>
-      <div>You have successfully registered {{ project.name }} as a funding recipient.</div>
+      <div>
+        You have successfully registered {{ project.name }} as a funding
+        recipient.
+      </div>
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
   </div>
@@ -21,7 +24,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
-import { registerProject } from  '@/api/projects'
+import { registerProject } from '@/api/projects'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 
@@ -31,7 +34,6 @@ import { waitForTransaction } from '@/utils/contracts'
   },
 })
 export default class RecipientRegistrationModal extends Vue {
-
   @Prop()
   project!: { id: string; name: string }
 
@@ -50,7 +52,7 @@ export default class RecipientRegistrationModal extends Vue {
     try {
       await waitForTransaction(
         registerProject(recipientRegistryAddress, this.project.id, signer),
-        (hash) => this.registrationTxHash = hash,
+        (hash) => (this.registrationTxHash = hash)
       )
     } catch (error) {
       this.registrationTxError = error.message

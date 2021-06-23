@@ -1,30 +1,44 @@
 <template>
   <!-- Get prepared CTA -->
-  <div class="get-prepared" v-if="showUserVerification" >
+  <div class="get-prepared" v-if="showUserVerification">
     <bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
     <span v-else aria-label="rocket" class="emoji">🚀</span>
     <div>
-    <h2 class="prep-title">Get prepared</h2>
-    <p class="prep-text">You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.</p>
+      <h2 class="prep-title">Get prepared</h2>
+      <p class="prep-text">
+        You’ll need to set up a few things before you contribute. You can do
+        this any time before or during the funding round.
+      </p>
     </div>
-    <router-link v-if="!hasStartedVerification" to="/verify" class="btn-action">Start prep</router-link>
-    <router-link v-else to="/verify" class="btn-action">Continue setup</router-link>
-  </div> 
+    <router-link v-if="!hasStartedVerification" to="/verify" class="btn-action"
+      >Start prep</router-link
+    >
+    <router-link v-else to="/verify" class="btn-action"
+      >Continue setup</router-link
+    >
+  </div>
   <!-- Reallocate CTA -->
   <div class="get-prepared" v-else-if="$store.getters.canUserReallocate">
     <span aria-label="thinking face" class="emoji">🤔</span>
     <div>
       <h2 class="prep-title">Changed your mind?</h2>
-      <p class="prep-text">You still have time to reallocate your contributions. </p>
+      <p class="prep-text">
+        You still have time to reallocate your contributions.
+      </p>
       <div class="btn-action" @click="toggleCartPanel()">Open cart</div>
     </div>
   </div>
   <!-- Round is over notification -->
-  <div class="get-prepared" v-else-if="$store.getters.hasContributionPhaseEnded">
+  <div
+    class="get-prepared"
+    v-else-if="$store.getters.hasContributionPhaseEnded"
+  >
     <span aria-label="hand" class="emoji">🤚</span>
     <div>
       <h2 class="prep-title">Round over for contributions</h2>
-      <p class="prep-text">You can no longer make any contributions this round.</p>
+      <p class="prep-text">
+        You can no longer make any contributions this round.
+      </p>
     </div>
   </div>
 </template>
@@ -47,15 +61,22 @@ export default class CallToActionCard extends Vue {
   hasStartedVerification = false // TODO configure logic - this is true if 1st step of get-verified is complete, which is linking ETH address & BrightID profile
 
   get isUserVerified(): boolean {
-    return this.$store.state.currentUser && this.$store.state.currentUser.isVerified
+    return (
+      this.$store.state.currentUser && this.$store.state.currentUser.isVerified
+    )
   }
 
   get isUserUnique(): boolean {
-    return this.$store.state.currentUser && this.$store.state.currentUser.isUnique
+    return (
+      this.$store.state.currentUser && this.$store.state.currentUser.isUnique
+    )
   }
 
   get showUserVerification(): boolean {
-    return userRegistryType === 'brightid' && (!this.isUserVerified || !this.isUserUnique)
+    return (
+      userRegistryType === 'brightid' &&
+      (!this.isUserVerified || !this.isUserUnique)
+    )
   }
 
   toggleCartPanel() {
@@ -79,16 +100,16 @@ export default class CallToActionCard extends Vue {
 }
 
 .prep-title {
-    font-family: 'Glacial Indifference', sans-serif;
-    font-size: 2rem;
-    font-weight: 700;
-  }
+  font-family: 'Glacial Indifference', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+}
 
-  .prep-title-continue {
-    font-family: 'Glacial Indifference', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-  }
+.prep-title-continue {
+  font-family: 'Glacial Indifference', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
 
 .prep-text {
   font-family: Inter;

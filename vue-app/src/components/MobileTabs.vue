@@ -9,19 +9,17 @@
       }"
       :to="to"
     >
-    <div class="icon">
-      <img
-        :src="require(`@/assets/${icon}`)"
-        :alt="title"
-        width="16px"
-      > 
-      <div 
-        :class="[cart.length +- 0 ? 'circle pulse cart-indicator' : 'cart-indicator']"
-        v-if="title === 'Cart' && isCartBadgeShown" 
-      >
-        {{ cart.length }}
+      <div class="icon">
+        <img :src="require(`@/assets/${icon}`)" :alt="title" width="16px" />
+        <div
+          :class="[
+            cart.length + -0 ? 'circle pulse cart-indicator' : 'cart-indicator',
+          ]"
+          v-if="title === 'Cart' && isCartBadgeShown"
+        >
+          {{ cart.length }}
+        </div>
       </div>
-    </div>
       <span class="tab-title">{{ title }}</span>
     </router-link>
   </div>
@@ -30,7 +28,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import { CartItem } from '@/api/contributions'
-import { RoundStatus } from '@/api/round'
 
 export default class MobileTabs extends Vue {
   tabs = [
@@ -59,7 +56,6 @@ export default class MobileTabs extends Vue {
     return this.cart.length === 0
   }
 
-
   get activeTab(): string {
     return this.$route.path
   }
@@ -81,13 +77,15 @@ export default class MobileTabs extends Vue {
      */
     return (
       (this.$store.getters.canUserReallocate ||
-      this.$store.getters.isRoundContributionPhase) &&
+        this.$store.getters.isRoundContributionPhase) &&
       !this.isCartEmpty
     )
   }
 
   get isOnCartOrRoundPage(): boolean {
-    return this.$route.name === 'cart' || this.$route.name === 'round-information'
+    return (
+      this.$route.name === 'cart' || this.$route.name === 'round-information'
+    )
   }
 }
 </script>
@@ -101,7 +99,7 @@ export default class MobileTabs extends Vue {
   bottom: 0;
   width: 100%;
   height: 4rem;
-  background: #2C2938;
+  background: #2c2938;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
@@ -144,11 +142,11 @@ export default class MobileTabs extends Vue {
 }
 
 .active {
-  background: #211E2B;
-  box-shadow: inset 0px 2px 0px #7375A6;
+  background: #211e2b;
+  box-shadow: inset 0px 2px 0px #7375a6;
 }
 
-.open{
+.open {
   background: $clr-green;
 }
 
@@ -170,7 +168,6 @@ export default class MobileTabs extends Vue {
 
   100% {
     box-shadow: 0 0 0 4px $clr-pink;
-
   }
 }
 </style>

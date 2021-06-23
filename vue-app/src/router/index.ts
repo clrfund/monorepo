@@ -128,7 +128,7 @@ const routes = [
 const router = new VueRouter({
   base: window.location.pathname,
   routes,
-  scrollBehavior () {
+  scrollBehavior() {
     return { x: 0, y: 0 }
   },
 })
