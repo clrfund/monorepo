@@ -12,6 +12,11 @@
       "**/@nomiclabs/**"
     ]
   },
+  "lint-staged": {
+    "**/*.{js,ts,json,scss,css,vue}": [
+      "prettier --write"
+    ]
+  },
   "scripts": {
     "build": "yarn workspaces run build",
     "build:contracts": "yarn workspace @clrfund/contracts run build",
@@ -24,12 +29,21 @@
     "test": "yarn workspaces run test",
     "test:contracts": "yarn workspace @clrfund/contracts run test",
     "test:web": "yarn workspace @clrfund/vue-app run test",
+    "test:format": "yarn prettier --check",
     "deploy:local": "yarn workspace @clrfund/contracts run deploy:local && yarn workspace @clrfund/contracts run deployTestRound:local",
     "deploy:local-registry": "yarn workspace @clrfund/contracts run deploy:local",
     "deploy:local-round": "yarn workspace @clrfund/contracts run deployTestRound:local",
     "upgrade:local": "yarn workspace @clrfund/contracts run upgrade:local",
     "lint": "yarn workspaces run lint",
     "lint:contracts": "yarn workspace @clrfund/contracts run lint",
-    "lint:web": "yarn workspace @clrfund/vue-app run lint"
+    "lint:web": "yarn workspace @clrfund/vue-app run lint",
+    "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|ts|json|scss|css|vue)\"",
+    "format": "yarn prettier --write",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.3.1"
   }
 }
