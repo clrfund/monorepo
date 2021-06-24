@@ -12,38 +12,13 @@
       >
         Previous
       </button>
-      <div v-else></div>
-
-      <!-- TODO: Finish button to trigger tx  -->
       <button
-        v-if="currentStep === 5"
-        @click="handleSubmit"
-        to="/project-added"
+        v-if="currentStep < 6"
+        @click="handleNext"
         class="btn-primary"
-      >
-        Finish
-      </button>
-      <button
-        v-else-if="currentStep === 4"
-        @click="handleNext"
-        :class="{
-          disabled: !isStepValid,
-          'btn-primary': true,
-        }"
         :disabled="!isStepValid"
       >
-        Summary
-      </button>
-      <button
-        v-else-if="currentStep < 5"
-        @click="handleNext"
-        :class="{
-          disabled: !isStepValid,
-          'btn-primary': true,
-        }"
-        :disabled="!isStepValid"
-      >
-        Next
+        {{ currentStep === 5 ? 'Finish' : 'Next' }}
       </button>
     </div>
     <div class="btn-row" v-if="!isJoin">
