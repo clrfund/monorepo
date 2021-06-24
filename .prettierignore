@@ -7,6 +7,12 @@ snark-params
 vue-app/gundata/
 yarn.lock
 
+# local config
+vetur.config.js
+
+# local generated file
+contracts/state.json
+
 # local env files
 .env
 .env.local
