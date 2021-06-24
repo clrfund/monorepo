@@ -140,7 +140,7 @@ export default class ProjectList extends Vue {
       ? this.projects
       : this.projects.filter((project) =>
           this.selectedCategories.includes(
-            (project.category as string).toLowerCase()
+            ((project.category as string) || '').toLowerCase()
           )
         )
   }
