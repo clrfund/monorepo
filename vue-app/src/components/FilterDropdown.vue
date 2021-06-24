@@ -24,9 +24,11 @@
         @click="handleFilterClick(category)"
       >
         {{ category }}
-        <span v-if="selectedCategories.includes(category)">
-          <img class="close" src="@/assets/close.svg" />
-        </span>
+        <img
+          v-if="selectedCategories.includes(category)"
+          class="close"
+          src="@/assets/close.svg"
+        />
       </div>
     </div>
   </div>
@@ -130,6 +132,7 @@ export default class FilterDropdown extends Vue {
       line-height: 0;
       margin: 0;
       justify-content: space-between;
+      line-height: 24px;
 
       &:hover {
         background: $clr-pink;
