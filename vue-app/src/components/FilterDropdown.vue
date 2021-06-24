@@ -1,15 +1,6 @@
 <template>
   <div class="category-filter" v-click-outside="closeDropdown">
-    <div
-      :class="{
-        'filter-btn': true,
-        'filter-btn-cart-closed':
-          !!$store.state.currentUser && !$store.state.showCartPanel,
-        'filter-btn-cart-open':
-          !!$store.state.currentUser && $store.state.showCartPanel,
-      }"
-      @click="toggleDropdown"
-    >
+    <div class="filter-btn" @click="toggleDropdown">
       <span class="filter-text">
         Filter
         <span v-if="selectedCategories.length"
@@ -80,6 +71,7 @@ export default class FilterDropdown extends Vue {
 @import '../styles/vars';
 
 .category-filter {
+  width: 140px;
   grid-area: filter;
   position: relative;
 
@@ -88,8 +80,8 @@ export default class FilterDropdown extends Vue {
     cursor: pointer;
     border: 1px solid $border-color;
     border-radius: 0.75rem;
-    width: fit-content; /*  */
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 1rem;
     padding: 0.5rem 0.75rem;
@@ -102,16 +94,6 @@ export default class FilterDropdown extends Vue {
       transform: rotate(180deg);
     }
     @media (max-width: $breakpoint-m) {
-      width: auto;
-    }
-  }
-  .filter-btn-cart-closed {
-    @media (max-width: $breakpoint-m + $cart-width-closed) {
-      width: auto;
-    }
-  }
-  .filter-btn-cart-open {
-    @media (max-width: $breakpoint-m + $cart-width-open) {
       width: auto;
     }
   }
@@ -135,6 +117,7 @@ export default class FilterDropdown extends Vue {
       padding: 0.5rem;
       background: $bg-primary-color;
       text-transform: capitalize;
+      line-height: 24px;
       &:hover {
         background: $bg-secondary-color;
       }
