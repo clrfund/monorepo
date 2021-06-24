@@ -80,8 +80,8 @@ export default class App extends Vue {
     setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)
-    setInterval(async () => {
-      await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+    setInterval(() => {
+      this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
     }, 60 * 1000)
     setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)

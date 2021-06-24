@@ -527,12 +527,7 @@ const getters = {
   hasLowFunds(state: RootState): boolean {
     const { currentUser, recipientRegistryInfo } = state
 
-    if (
-      currentUser &&
-      currentUser.balance &&
-      recipientRegistryInfo &&
-      recipientRegistryInfo.deposit
-    ) {
+    if (currentUser?.balance && recipientRegistryInfo?.deposit) {
       return currentUser.balance.lt(recipientRegistryInfo.deposit)
     }
     return false

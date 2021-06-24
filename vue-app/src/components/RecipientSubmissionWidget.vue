@@ -277,7 +277,7 @@ export default class RecipientSubmissionWidget extends Vue {
       this.isWaiting = false
 
       this.$router.push({
-        name: 'projectAdded',
+        name: 'project-added',
         params: {
           txHash: this.txHash,
         },
