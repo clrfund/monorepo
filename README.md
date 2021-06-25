@@ -122,6 +122,19 @@ the contracts ones. This is because there are not changes very often in the
 /contracts folder. However, if you do make a change in /contracts don't forget
 to run `yarn test` or `yarn test:contracts`.
 
+### Tech stack resources
+
+- `/contracts`
+  - [Hardhat](https://hardhat.org/)
+  - [Openzeppelin](https://openzeppelin.com/)
+- `/vue-app`
+  - [Vuex](https://vuex.vuejs.org/)
+  - [Vue class component](https://class-component.vuejs.org/)
+  - [Vuelidate](https://vuelidate-next.netlify.app/)
+  - [Vue js modal](http://vue-js-modal.yev.io/)
+  - [Ethers](https://docs.ethers.io/v5/)
+  - [Gun](https://gun.eco/docs/)
+
 ### Visual Studio Code
 
 As a recommendation, use the [Vetur](https://vuejs.github.io/vetur/) extension.
