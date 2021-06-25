@@ -23,6 +23,11 @@ The clr.fund application can use any [EVM-compatible chain](https://ethereum.org
 
 For more details, see the [sequence diagram](docs/clrfund.svg) and [clr.fund constitution](https://github.com/clrfund/constitution).
 
+Some helpful blogposts to explain the clr.fund project:
+- https://blog.clr.fund/clr-fund-explained-pt-1/
+- https://blog.clr.fund/clr-fund-explained-pt-2/
+- https://blog.clr.fund/clr-fund-explained-pt-3/
+
 ### Limitations
 
 There are various limitations in our current design; we discuss some of them here.
