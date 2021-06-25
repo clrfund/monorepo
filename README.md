@@ -58,6 +58,11 @@ In a future version, we plan to address this by routing ETH and token contributi
 nvm install 12
 nvm use 12
 ```
+If using the M1 chip in Apple products, you need to use Node v16.
+```sh
+nvm install 16
+nvm use 16
+```
 
 ### Install the dependencies
 
@@ -66,6 +71,11 @@ yarn
 
 # Along with the dependencies, git hooks are also installed. At the end of the installation, you will see the following line after a successful setup.
 husky - Git hooks installed
+```
+
+### Copy env for contracts
+```sh
+cp contracts/.env.example contracts/.env    # adjust if necessary
 ```
 
 #### Compile the contracts
