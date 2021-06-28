@@ -24,8 +24,21 @@
             Open
           </div>
         </div>
+        <div class="round-info-item" v-if="$store.getters.isRoundJoinPhase">
+          <div style="width: 100%">
+            <div style="width: 100%; display: flex; gap: 0.5rem">
+              <div class="round-info-title">⏱️ Round opening</div>
+            </div>
+          </div>
+          <div class="round-info-value">
+            <div class="value">{{ joinTimeLeft.days }}</div>
+            <div class="unit">days</div>
+            <div class="value">{{ joinTimeLeft.hours }}</div>
+            <div class="unit">hours</div>
+          </div>
+        </div>
         <div
-          v-if="
+          v-else-if="
             $store.getters.isRoundContributionPhase &&
             !$store.getters.hasUserContributed
           "
@@ -257,7 +270,16 @@
         </div>
       </template>
       <template v-else-if="!currentRound && !isLoading">
-        TODO: Add copy for pre-round status
+        <div class="round-info-item">
+          <div style="width: 100%">
+            <div style="width: 100%; display: flex; gap: 0.5rem">
+              <div class="round-info-title">No scheduled round</div>
+            </div>
+          </div>
+          <div class="round-info-value">
+            <!-- TODO: add no schedule round description -->
+          </div>
+        </div>
       </template>
       <loader v-if="isLoading" />
     </div>
@@ -367,6 +389,10 @@ export default class RoundInformation extends Vue {
 
   get currentRound(): RoundInfo | null {
     return this.$store.state.currentRound
+  }
+
+  get joinTimeLeft(): TimeLeft {
+    return getTimeLeft(this.$store.getters.recipientJoinDeadline)
   }
 
   get contributionTimeLeft(): TimeLeft {
