@@ -76,7 +76,8 @@
             >
           </p>
         </div>
-        <div class="checkout-row">
+        <!-- TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate -->
+        <!-- <div class="checkout-row">
           <p class="m05"><b>Est. transaction fee</b></p>
           <p class="m05">
             {{ gasFeeAmount }} {{ feeToken }}
@@ -85,7 +86,7 @@
               }}{{ calculateFiatFee(this.estimatedGasFee) }})</span
             >
           </p>
-        </div>
+        </div> -->
         <div class="cta">
           <button
             @click="handleSubmit"
@@ -150,17 +151,13 @@ export default class RecipientSubmissionWidget extends Vue {
   ethPrice: EthPrice | null = null
   fiatFee = '-'
   fiatSign = '$'
-  estimatedGasFee: BigNumber = BigNumber.from(0)
+  // estimatedGasFee: BigNumber = BigNumber.from(0) TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
   feeToken = 'ETH'
 
   async created() {
     this.ethPrice = await fetchCurrentEthPrice()
-    this.estimatedGasFee = await this.getEstimatedGasFee()
+    // this.estimatedGasFee = await this.getEstimatedGasFee() TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
     this.isLoading = false
-  }
-
-  async updated() {
-    this.estimatedGasFee = await this.getEstimatedGasFee()
   }
 
   get currentUser(): User | null {
@@ -193,9 +190,10 @@ export default class RecipientSubmissionWidget extends Vue {
       : '...'
   }
 
-  get gasFeeAmount(): string {
-    return this.estimatedGasFee ? formatAmount(this.estimatedGasFee, 18) : '-'
-  }
+  // TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
+  // get gasFeeAmount(): string {
+  //   return this.estimatedGasFee ? formatAmount(this.estimatedGasFee, 18) : '-'
+  // }
 
   get depositToken(): string {
     return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
@@ -214,34 +212,35 @@ export default class RecipientSubmissionWidget extends Vue {
     return '-'
   }
 
-  private async getEstimatedGasFee(): Promise<BigNumber> {
-    const { recipient, recipientRegistryAddress, recipientRegistryInfo } =
-      this.$store.state
+  // TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
+  // private async getEstimatedGasFee(): Promise<BigNumber> {
+  //   const { recipient, recipientRegistryAddress, recipientRegistryInfo } =
+  //     this.$store.state
 
-    if (
-      recipientRegistryInfo &&
-      this.ethPrice &&
-      this.walletProvider &&
-      recipientRegistryAddress &&
-      recipient
-    ) {
-      const registry = new Contract(
-        recipientRegistryAddress,
-        OptimisticRecipientRegistry,
-        this.walletProvider
-      )
+  //   if (
+  //     recipientRegistryInfo &&
+  //     this.ethPrice &&
+  //     this.walletProvider &&
+  //     recipientRegistryAddress &&
+  //     recipient
+  //   ) {
+  //     const registry = new Contract(
+  //       recipientRegistryAddress,
+  //       OptimisticRecipientRegistry,
+  //       this.walletProvider
+  //     )
 
-      const recipientData = formToRecipientData(recipient)
-      const { address, ...metadata } = recipientData
+  //     const recipientData = formToRecipientData(recipient)
+  //     const { address, ...metadata } = recipientData
 
-      return await registry.estimateGas.addRecipient(
-        recipient.fund.address,
-        JSON.stringify(metadata),
-        { value: recipientRegistryInfo.deposit }
-      )
-    }
-    return BigNumber.from(0)
-  }
+  //     return await registry.estimateGas.addRecipient(
+  //       recipient.fund.address,
+  //       JSON.stringify(metadata),
+  //       { value: recipientRegistryInfo.deposit }
+  //     )
+  //   }
+  //   return BigNumber.from(0)
+  // }
 
   private async addRecipient() {
     const {
