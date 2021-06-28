@@ -114,7 +114,10 @@ import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract } from 'ethers'
 import { OptimisticRecipientRegistry } from '@/api/abi'
 import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
-import { addRecipient } from '@/api/recipient-registry-optimistic'
+import {
+  addRecipient,
+  formToRecipientData,
+} from '@/api/recipient-registry-optimistic'
 import { User } from '@/api/user'
 import { Web3Provider } from '@ethersproject/providers'
 
@@ -228,14 +231,12 @@ export default class RecipientSubmissionWidget extends Vue {
         this.walletProvider
       )
 
+      const recipientData = formToRecipientData(recipient)
+      const { address, ...metadata } = recipientData
+
       return await registry.estimateGas.addRecipient(
         recipient.fund.address,
-        JSON.stringify({
-          ...recipient.fund,
-          ...recipient.links,
-          ...recipient.image,
-          ...recipient.project,
-        }),
+        JSON.stringify(metadata),
         { value: recipientRegistryInfo.deposit }
       )
     }
