@@ -71,29 +71,6 @@
         @close="$emit('close')"
       ></transaction>
     </div>
-    <div v-if="step === 4">
-      <h3>You just contributed!</h3>
-      <div>
-        Thanks for contributing {{ formatAmount(getTotal()) }}
-        {{ currentRound.nativeTokenSymbol }} to the Eth2 ecosystem.
-        <br />
-        You have
-        <span v-if="$store.getters.canUserReallocate" class="flex">
-          <span v-if="reallocationTimeLeft.days > 0">{{
-            reallocationTimeLeft.days
-          }}</span>
-          <span v-if="reallocationTimeLeft.days > 0">days</span>
-          <span>{{ reallocationTimeLeft.hours }}</span>
-          <span>hours</span>
-          <span v-if="reallocationTimeLeft.days === 0">{{
-            reallocationTimeLeft.minutes
-          }}</span>
-          <span v-if="reallocationTimeLeft.days === 0">minutes</span>
-        </span>
-        to change your choices.
-      </div>
-      <button class="btn-secondary" @click="$emit('close')">Close</button>
-    </div>
   </div>
 </template>
 
@@ -265,6 +242,14 @@ export default class ContributionModal extends Vue {
         (hash) => (this.voteTxHash = hash)
       )
       this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
+      this.$emit('close')
+      this.$router.push({
+        name: `transaction-success`,
+        params: {
+          type: 'contribution',
+          hash: this.contributionTxHash,
+        },
+      })
     } catch (error) {
       this.voteTxError = error.message
       return
