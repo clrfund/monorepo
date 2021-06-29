@@ -24,7 +24,13 @@
             Open
           </div>
         </div>
-        <div class="round-info-item" v-if="$store.getters.isRoundJoinPhase">
+        <div
+          class="round-info-item"
+          v-if="
+            $store.getters.isRoundJoinPhase &&
+            !$store.getters.isRoundContributionPhase
+          "
+        >
           <div style="width: 100%">
             <div style="width: 100%; display: flex; gap: 0.5rem">
               <div class="round-info-title">⏱️ Round opening</div>
