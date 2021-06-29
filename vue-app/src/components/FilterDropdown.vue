@@ -114,7 +114,7 @@ export default class FilterDropdown extends Vue {
     z-index: 99;
     .category-btn {
       display: grid;
-      place-items: center;
+      place-items: left;
       cursor: pointer;
       padding: 0.5rem;
       background: $bg-primary-color;
