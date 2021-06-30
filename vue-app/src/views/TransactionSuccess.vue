@@ -74,7 +74,7 @@ import { getTimeLeft } from '@/utils/dates'
 })
 export default class TransactionSuccess extends Vue {
   get contribution(): BigNumber | null {
-    return this.$store.state.contriubtion
+    return this.$store.state.contribution
   }
 
   get currentRound(): RoundInfo | null {
@@ -92,7 +92,6 @@ export default class TransactionSuccess extends Vue {
   }
 
   redirectToProjects() {
-    console.log('ello')
     this.$router.push({ name: 'projects' })
   }
 }
