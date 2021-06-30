@@ -38,6 +38,7 @@
         <div v-if="isTxRejected" class="warning-text">
           You rejected the transaction in your wallet
         </div>
+        <!-- TODO update -->
         <div v-if="isWrongNetwork" class="warning-text">
           We're on Optimism Network.<br />
           Switch over to the right network in your wallet.
@@ -112,13 +113,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { BigNumber, Contract } from 'ethers'
-import { OptimisticRecipientRegistry } from '@/api/abi'
+import { BigNumber } from 'ethers'
 import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
-import {
-  addRecipient,
-  formToRecipientData,
-} from '@/api/recipient-registry-optimistic'
+import { addRecipient } from '@/api/recipient-registry-optimistic'
 import { User } from '@/api/user'
 import { Web3Provider } from '@ethersproject/providers'
 

@@ -524,6 +524,7 @@ const getters = {
       (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
     )
   },
+  // TODO adjust for if recipient or contributor
   hasLowFunds(state: RootState): boolean {
     const { currentUser, recipientRegistryInfo } = state
     const balance =
