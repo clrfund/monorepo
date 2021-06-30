@@ -524,19 +524,6 @@ const getters = {
       (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
     )
   },
-  // TODO adjust for if recipient or contributor
-  hasLowFunds(state: RootState): boolean {
-    const { currentUser, recipientRegistryInfo } = state
-    const balance =
-      recipientRegistryInfo?.depositToken === 'ETH'
-        ? currentUser?.etherBalance
-        : currentUser?.balance
-
-    if (balance && recipientRegistryInfo?.deposit) {
-      return balance.lt(recipientRegistryInfo.deposit)
-    }
-    return false
-  },
 }
 
 const store: StoreOptions<RootState> = {

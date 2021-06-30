@@ -61,7 +61,7 @@
           {{ depositAmount }}
           <span class="total-currency"> {{ depositToken }}</span>
         </div>
-        <div class="warning-text" v-if="$store.getters.hasLowFunds">
+        <div class="warning-text" v-if="hasLowFunds">
           Not enough {{ depositToken }} in your wallet.<br />
           Top up or connect a different wallet.
         </div>
@@ -185,6 +185,15 @@ export default class RecipientSubmissionWidget extends Vue {
     return this.$store.state.recipientRegistryInfo
       ? formatAmount(this.$store.state.recipientRegistryInfo.deposit, 18)
       : '...'
+  }
+
+  get hasLowFunds(): boolean {
+    const { currentUser, recipientRegistryInfo } = this.$store.state
+
+    if (currentUser?.balance && recipientRegistryInfo?.deposit) {
+      return currentUser.balance.lt(recipientRegistryInfo.deposit)
+    }
+    return false
   }
 
   // TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
