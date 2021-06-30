@@ -526,9 +526,13 @@ const getters = {
   },
   hasLowFunds(state: RootState): boolean {
     const { currentUser, recipientRegistryInfo } = state
+    const balance =
+      recipientRegistryInfo?.depositToken === 'ETH'
+        ? currentUser?.etherBalance
+        : currentUser?.balance
 
-    if (currentUser?.balance && recipientRegistryInfo?.deposit) {
-      return currentUser.balance.lt(recipientRegistryInfo.deposit)
+    if (balance && recipientRegistryInfo?.deposit) {
+      return balance.lt(recipientRegistryInfo.deposit)
     }
     return false
   },
