@@ -2,20 +2,6 @@
   <div class="recipients">
     <div v-if="isRecipientRegistryOwner">
       <h1 class="content-heading">Recipient registry</h1>
-      <!-- <div v-if="registryInfo" class="submit-project">
-        <div class="submit-project-info">
-          In order to become a recipient of funding, a project must go through a review process.
-          <br>
-          It takes {{ formatDuration(registryInfo.challengePeriodDuration) }} and requires a {{ formatAmount(registryInfo.deposit) }} {{ registryInfo.depositToken }} security deposit.
-        </div>
-        <button
-          class="btn"
-          @click="submitProject()"
-          :disabled="!canSubmitProject()"
-        >
-          Submit project
-        </button>
-      </div> -->
       <loader v-if="isLoading" />
       <div v-else>
         <h2>Projects</h2>
@@ -157,68 +143,6 @@
       <div v-if="!isUserConnected">
         <h2>Please connect your wallet.</h2>
       </div>
-      <router-link class="btn-primary" to="/projects"
-        >Back to projects</router-link
-      >
-      <!-- TODO do we show anything for non-owner? or delete all of this? -->
-      <table v-if="requests.length > 0" class="requests">
-        <thead>
-          <tr>
-            <th>Project</th>
-            <th>Time left</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="request in requests.slice().reverse()"
-            :key="request.transactionHash"
-          >
-            <td>
-              <div class="project-name">
-                <a
-                  :href="request.metadata.imageUrl"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <img class="project-image" :src="request.metadata.imageUrl" />
-                </a>
-                {{ request.metadata.name }}
-              </div>
-              <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
-              <details class="project-details">
-                <summary>Additional info</summary>
-                <div>
-                  Transaction: <code>{{ request.transactionHash }}</code>
-                </div>
-                <div>
-                  Project ID: <code>{{ request.recipientId }}</code>
-                </div>
-                <div>
-                  Recipient address: <code>{{ request.recipient }}</code>
-                </div>
-                <div v-if="isPending(request)">
-                  Acceptance date: {{ formatDate(request.acceptanceDate) }}
-                </div>
-              </details>
-            </td>
-            <!-- <td>{{ request.type }}</td> -->
-            <td>countdown</td>
-            <td>
-              <template v-if="hasProjectLink(request)">
-                <router-link
-                  :to="{ name: 'project', params: { id: request.recipientId } }"
-                >
-                  {{ request.status }}
-                </router-link>
-              </template>
-              <template v-else>
-                {{ request.status }}
-              </template>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </template>
@@ -241,7 +165,6 @@ import {
   getRequests,
 } from '@/api/recipient-registry-optimistic'
 import { getCurrentRound } from '@/api/round'
-import RecipientSubmissionModal from '@/components/RecipientSubmissionModal.vue'
 import Loader from '@/components/Loader.vue'
 import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
@@ -339,31 +262,6 @@ export default class RecipientRegistryView extends Vue {
       RecipientRegistrationModal,
       { project: { id: request.recipientId, name: request.recipient } },
       {},
-      {
-        closed: async () => {
-          if (this.registryInfo) {
-            this.requests = await getRequests(
-              this.$store.state.recipientRegistryAddress,
-              this.registryInfo
-            )
-          }
-        },
-      }
-    )
-  }
-
-  canSubmitProject(): boolean {
-    return this.registryInfo !== null && this.$store.state.currentUser !== null
-  }
-
-  submitProject(): void {
-    this.$modal.show(
-      RecipientSubmissionModal,
-      {
-        registryAddress: this.$store.state.recipientRegistryAddress,
-        registryInfo: this.registryInfo,
-      },
-      { width: 500 },
       {
         closed: async () => {
           if (this.registryInfo) {
