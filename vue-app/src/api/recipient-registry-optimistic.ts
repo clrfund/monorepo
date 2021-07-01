@@ -241,7 +241,9 @@ export interface RecipientData {
   thumbnailImageHash?: string
 }
 
-function formToRecipientData(data: RecipientApplicationData): RecipientData {
+export function formToRecipientData(
+  data: RecipientApplicationData
+): RecipientData {
   const { project, fund, team, links, image } = data
   return {
     address: fund.address,
