@@ -90,10 +90,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-@Component({
-  name: 'sybil-resistance',
-  metaInfo: { title: 'Sybil Resistance' },
-})
+@Component
 export default class AboutSybilResistance extends Vue {}
 </script>
 
