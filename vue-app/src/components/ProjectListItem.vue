@@ -43,10 +43,7 @@ import { Component, Prop } from 'vue-property-decorator'
 
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import { CartItem } from '@/api/contributions'
-import { recipientRegistryType } from '@/api/core'
-import { Project, getProject } from '@/api/projects'
-import { TcrItemStatus } from '@/api/recipient-registry-kleros'
-import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
+import { Project } from '@/api/projects'
 import { markdown } from '@/utils/markdown'
 
 @Component({
@@ -83,39 +80,6 @@ export default class ProjectListItem extends Vue {
   get shouldShowCartInput(): boolean {
     const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
     return isRoundContributionPhase || canUserReallocate
-  }
-
-  hasRegisterBtn(): boolean {
-    if (recipientRegistryType === 'optimistic') {
-      return this.project.index === 0
-    } else if (recipientRegistryType === 'kleros') {
-      return (
-        this.project.index === 0 &&
-        this.project.extra.tcrItemStatus === TcrItemStatus.Registered
-      )
-    }
-    return false
-  }
-
-  canRegister(): boolean {
-    return this.hasRegisterBtn() && this.$store.state.currentUser
-  }
-
-  register() {
-    this.$modal.show(
-      RecipientRegistrationModal,
-      { project: this.project },
-      {},
-      {
-        closed: async () => {
-          const project = await getProject(
-            this.$store.state.recipientRegistryAddress,
-            this.project.id
-          )
-          Object.assign(this.project, project)
-        },
-      }
-    )
   }
 }
 </script>

@@ -397,6 +397,13 @@ export async function getProjects(
         project.index = (registration.args as any)._recipientIndex.toNumber()
       }
     }
+
+    // If project is unregistered then set its visibility and locked to true
+    if (!registration) {
+      project.isHidden = true
+      project.isLocked = true
+    }
+
     // Find corresponding removal event
     const removed = requestResolvedEvents.find((event) => {
       const args = event.args as any
