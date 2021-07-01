@@ -2,17 +2,16 @@
   <div class="progress-area">
     <div class="desktop progress-container">
       <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-      <p class="subtitle">
-        Step {{currentStep + 1}} of {{steps.length}}
-      </p>
+      <p class="subtitle">Step {{ currentStep + 1 }} of {{ steps.length }}</p>
       <div class="progress-steps">
         <div
           v-for="(name, step) in stepNames"
           :key="step"
           class="progress-step"
           :class="{
-            'zoom-link': step <= furthestStep && step !== currentStep && !isNavDisabled,
-            disabled: isNavDisabled
+            'zoom-link':
+              step <= furthestStep && step !== currentStep && !isNavDisabled,
+            disabled: isNavDisabled,
           }"
           @click="handleStepNav(step)"
         >
@@ -35,6 +34,7 @@
         </div>
       </div>
       <form-navigation
+        :isJoin="true"
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
         :currentStep="currentStep"
@@ -43,17 +43,15 @@
         :isNavDisabled="isNavDisabled"
         class="desktop"
       />
-  </div>
-  <div class="mobile">
-    <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-    <div class="row">
-      <p>Step {{currentStep + 1}} of {{steps.length}}</p>
-      <router-link class="cancel-link" to="/join">
-        Cancel
-      </router-link>
+    </div>
+    <div class="mobile">
+      <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+      <div class="row">
+        <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
+        <router-link class="cancel-link" to="/join"> Cancel </router-link>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">
@@ -95,9 +93,9 @@ export default class FormProgressWidget extends Vue {
     position: sticky;
     top: 5rem;
     align-self: start;
-    padding: 1.5rem 1rem; 
-    background: $bg-primary-color; 
-    border-radius: 16px; 
+    padding: 1.5rem 1rem;
+    background: $bg-primary-color;
+    border-radius: 16px;
     box-shadow: $box-shadow;
 
     .progress-steps {
@@ -114,7 +112,7 @@ export default class FormProgressWidget extends Vue {
         margin: 0.5rem 0;
       }
       .step {
-        color: #FFF9
+        color: #fff9;
       }
       .active {
         color: white;

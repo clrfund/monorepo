@@ -16,15 +16,27 @@
         <h1>Join the round</h1>
         <div v-if="currentStep === 5">
           <div class="toggle-tabs-desktop">
-            <p class="tab" id="review" :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'" @click="handleToggleTab">Review info</p>
-            <p class="tab" id="preview" :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'" @click="handleToggleTab">Preview project</p>
+            <p
+              class="tab"
+              id="review"
+              :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'"
+              @click="handleToggleTab"
+            >
+              Review info
+            </p>
+            <p
+              class="tab"
+              id="preview"
+              :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'"
+              @click="handleToggleTab"
+            >
+              Preview project
+            </p>
           </div>
         </div>
       </div>
       <div class="cancel-area desktop">
-        <router-link class="cancel-link" to="/join">
-          Cancel
-        </router-link>
+        <router-link class="cancel-link" to="/join"> Cancel </router-link>
       </div>
       <div class="form-area">
         <div class="application">
@@ -41,35 +53,52 @@
                     v-model="$v.form.project.name.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.project.name.$error
+                      invalid: $v.form.project.name.$error,
+                    }"
+                  />
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.project.name.$error,
                     }"
                   >
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.project.name.$error
-                  }">Your project needs a name</p>
+                    Your project needs a name
+                  </p>
                 </div>
                 <div class="form-background">
-                  <label for="project-tagline" class="input-label">Tagline</label>
-                  <p class="input-description">Describe your project in a sentence. Max characters: 140</p>
+                  <label for="project-tagline" class="input-label"
+                    >Tagline</label
+                  >
+                  <p class="input-description">
+                    Describe your project in a sentence. Max characters: 140
+                  </p>
                   <textarea
                     id="project-tagline"
                     placeholder="example: A quadratic funding protocol"
                     v-model="$v.form.project.tagline.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.project.tagline.$error 
+                      invalid: $v.form.project.tagline.$error,
                     }"
                   />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.project.tagline.$error
-                  }">This tagline is too long. Be brief for potential contributors</p>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.project.tagline.$error,
+                    }"
+                  >
+                    This tagline is too long. Be brief for potential
+                    contributors
+                  </p>
                   <!-- TODO: validation for different error type -->
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.project.tagline.$error
-                  }">Your project needs a tagline</p>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.project.tagline.$error,
+                    }"
+                  >
+                    Your project needs a tagline
+                  </p>
                 </div>
                 <div class="form-background">
                   <label for="project-description" class="input-label">
@@ -82,18 +111,26 @@
                     v-model="$v.form.project.description.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.project.description.$error
+                      invalid: $v.form.project.description.$error,
                     }"
                   />
-                  <p v-if="form.project.description" class="input-label pt-1">Preview:</p>
-                  <markdown :raw="form.project.description"/>
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.project.description.$error
-                  }">Your project needs a description. What are you raising money for?</p>
+                  <p v-if="form.project.description" class="input-label pt-1">
+                    Preview:
+                  </p>
+                  <markdown :raw="form.project.description" />
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.project.description.$error,
+                    }"
+                  >
+                    Your project needs a description. What are you raising money
+                    for?
+                  </p>
                 </div>
                 <div class="form-background">
-                  <label for="project-category" class="input-label">Category
+                  <label for="project-category" class="input-label"
+                    >Category
                     <p class="input-description">Choose the best fit.</p>
                   </label>
                   <form class="radio-row" id="category-radio">
@@ -105,10 +142,12 @@
                       v-model="$v.form.project.category.$model"
                       :class="{
                         input: true,
-                        invalid: $v.form.project.category.$error
+                        invalid: $v.form.project.category.$error,
                       }"
+                    />
+                    <label for="category-content" class="radio-btn"
+                      >Content</label
                     >
-                    <label for="category-content" class="radio-btn">Content</label>
                     <input
                       id="research"
                       type="radio"
@@ -117,9 +156,9 @@
                       v-model="$v.form.project.category.$model"
                       :class="{
                         input: true,
-                        invalid: $v.form.project.category.$error
+                        invalid: $v.form.project.category.$error,
                       }"
-                    >
+                    />
                     <label for="research" class="radio-btn">Research</label>
                     <input
                       id="tooling"
@@ -129,9 +168,9 @@
                       v-model="$v.form.project.category.$model"
                       :class="{
                         input: true,
-                        invalid: $v.form.project.category.$error
+                        invalid: $v.form.project.category.$error,
                       }"
-                    >
+                    />
                     <label for="tooling" class="radio-btn">Tooling</label>
                     <input
                       id="data"
@@ -141,76 +180,112 @@
                       v-model="$v.form.project.category.$model"
                       :class="{
                         input: true,
-                        invalid: $v.form.project.category.$error
+                        invalid: $v.form.project.category.$error,
                       }"
-                    >
+                    />
                     <label for="data" class="radio-btn">Data</label>
                   </form>
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.project.category.$error
-                  }">You need to choose a category</p>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.project.category.$error,
+                    }"
+                  >
+                    You need to choose a category
+                  </p>
                 </div>
                 <div class="form-background">
-                  <label for="project-problem-space" class="input-label">Problem space</label>
-                  <p class="input-description">Explain the problems you're trying to solve. Markdown supported.</p>
+                  <label for="project-problem-space" class="input-label"
+                    >Problem space</label
+                  >
+                  <p class="input-description">
+                    Explain the problems you're trying to solve. Markdown
+                    supported.
+                  </p>
                   <textarea
                     id="project-problem-space"
                     placeholder="example: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
                     v-model="$v.form.project.problemSpace.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.project.problemSpace.$error
+                      invalid: $v.form.project.problemSpace.$error,
                     }"
                   />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.project.problemSpace.$error
-                  }">Explain the problem your project solves</p>
-                  <p v-if="form.project.description" class="input-label pt-1">Preview:</p>
-                  <markdown :raw="form.project.problemSpace"/>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.project.problemSpace.$error,
+                    }"
+                  >
+                    Explain the problem your project solves
+                  </p>
+                  <p v-if="form.project.description" class="input-label pt-1">
+                    Preview:
+                  </p>
+                  <markdown :raw="form.project.problemSpace" />
                 </div>
               </div>
-            </div>    
+            </div>
             <div v-if="currentStep === 1">
               <h2 class="step-title">Donation details</h2>
               <div class="inputs">
                 <div class="form-background">
-                  <label for="fund-address" class="input-label">Ethereum address</label>
-                  <p class="input-description">This doesn’t have to be the same address as the one you use to send your application.</p>
+                  <label for="fund-address" class="input-label"
+                    >Ethereum address</label
+                  >
+                  <p class="input-description">
+                    This doesn’t have to be the same address as the one you use
+                    to send your application.
+                  </p>
                   <input
                     id="fund-address"
                     placeholder="example: clr.eth, clr.crypto, 0x123..."
                     v-model="$v.form.fund.address.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.fund.address.$error
+                      invalid: $v.form.fund.address.$error,
                     }"
                   />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.fund.address.$error
-                  }">Enter a valid Ethereum address (0x or ENS)</p>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.fund.address.$error,
+                    }"
+                  >
+                    Enter a valid Ethereum address (0x or ENS)
+                  </p>
                   <!-- TODO: only validate after user removes focus on input -->
                 </div>
                 <div class="form-background">
-                  <label for="fund-plans" class="input-label">How will you spend your funding?</label>
-                  <p class="input-description">Potential contributors might convert based on your specific funding plans. Markdown supported.</p>
+                  <label for="fund-plans" class="input-label"
+                    >How will you spend your funding?</label
+                  >
+                  <p class="input-description">
+                    Potential contributors might convert based on your specific
+                    funding plans. Markdown supported.
+                  </p>
                   <textarea
                     id="fund-plans"
                     placeholder="example: on our roadmap..."
                     v-model="$v.form.fund.plans.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.fund.plans.$error
+                      invalid: $v.form.fund.plans.$error,
                     }"
                   />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.fund.plans.$error
-                  }">Let potential contributors know what plans you have for their donations.</p>
-                  <p v-if="form.fund.plans" class="input-label pt-1">Preview:</p>
-                  <markdown :raw="form.fund.plans"/>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.fund.plans.$error,
+                    }"
+                  >
+                    Let potential contributors know what plans you have for
+                    their donations.
+                  </p>
+                  <p v-if="form.fund.plans" class="input-label pt-1">
+                    Preview:
+                  </p>
+                  <markdown :raw="form.fund.plans" />
                 </div>
               </div>
             </div>
@@ -219,8 +294,13 @@
               <p>Tell us about the folks behind your project.</p>
               <div class="inputs">
                 <div class="form-background">
-                  <label for="team-email" class="input-label">Contact email</label>
-                  <p class="input-description">For important updates about your project and the funding round.</p>
+                  <label for="team-email" class="input-label"
+                    >Contact email</label
+                  >
+                  <p class="input-description">
+                    For important updates about your project and the funding
+                    round.
+                  </p>
                   <input
                     required
                     id="team-email"
@@ -228,17 +308,26 @@
                     v-model="$v.form.team.email.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.team.email.$error
+                      invalid: $v.form.team.email.$error,
+                    }"
+                  />
+                  <p class="input-notice">
+                    We won't display this publicly or add it to the on-chain
+                    registry.
+                  </p>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.team.email.$error,
                     }"
                   >
-                  <p class="input-notice">We won't display this publicly or add it to the on-chain registry.</p>
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.team.email.$error
-                  }">This doesn't look like an email.</p>
+                    This doesn't look like an email.
+                  </p>
                 </div>
                 <div class="form-background">
-                  <label for="team-name" class="input-label">Team name (optional)</label>
+                  <label for="team-name" class="input-label"
+                    >Team name (optional)</label
+                  >
                   <p class="input-description">If different to project name.</p>
                   <input
                     id="team-name"
@@ -247,238 +336,346 @@
                     v-model="$v.form.team.name.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.team.name.$error
+                      invalid: $v.form.team.name.$error,
                     }"
                   />
                 </div>
                 <div class="form-background">
-                  <label for="team-desc" class="input-label">Description (optional)</label>
-                  <p class="input-description">If different to project description. Markdown supported.</p>
+                  <label for="team-desc" class="input-label"
+                    >Description (optional)</label
+                  >
+                  <p class="input-description">
+                    If different to project description. Markdown supported.
+                  </p>
                   <textarea
                     id="team-desc"
                     placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
                     v-model="$v.form.team.description.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.team.description.$error
+                      invalid: $v.form.team.description.$error,
                     }"
                   />
-                  <p v-if="form.team.description" class="input-label pt-1">Preview:</p>
-                  <markdown :raw="form.team.description"/>
+                  <p v-if="form.team.description" class="input-label pt-1">
+                    Preview:
+                  </p>
+                  <markdown :raw="form.team.description" />
                 </div>
               </div>
             </div>
             <div v-if="currentStep === 3">
               <h2 class="step-title">Links</h2>
-              <p>Give contributors some links to check out to learn more about your project. Provide at least one.</p>
+              <p>
+                Give contributors some links to check out to learn more about
+                your project. Provide at least one.
+              </p>
               <div class="inputs">
                 <div class="form-background">
                   <label for="links-github" class="input-label">GitHub</label>
                   <input
-                    id="links-github" 
-                    type="link" 
+                    id="links-github"
+                    type="link"
                     placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.github.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.links.github.$error
+                      invalid: $v.form.links.github.$error,
                     }"
                   />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.links.github.$error
-                  }">This doesn't look like a valid URL</p>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.links.github.$error,
+                    }"
+                  >
+                    This doesn't look like a valid URL
+                  </p>
                   <!-- TODO: only validate after user removes focus on input -->
                 </div>
                 <div class="form-background">
                   <label for="links-radicle" class="input-label">Radicle</label>
                   <input
-                    id="links-radicle" 
-                    type="link" 
+                    id="links-radicle"
+                    type="link"
                     placeholder="example: https://radicle.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.radicle.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.links.radicle.$error
+                      invalid: $v.form.links.radicle.$error,
                     }"
                   />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.links.radicle.$error
-                  }">This doesn't look like a valid URL</p>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.links.radicle.$error,
+                    }"
+                  >
+                    This doesn't look like a valid URL
+                  </p>
                 </div>
                 <div class="form-background">
                   <label for="links-website" class="input-label">Website</label>
                   <input
-                    id="links-website" 
-                    type="link" 
+                    id="links-website"
+                    type="link"
                     placeholder="example: https://website.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.website.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.links.website.$error
+                      invalid: $v.form.links.website.$error,
                     }"
                   />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.links.website.$error
-                  }">This doesn't look like a valid URL</p>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.links.website.$error,
+                    }"
+                  >
+                    This doesn't look like a valid URL
+                  </p>
                 </div>
                 <div class="form-background">
                   <label for="links-twitter" class="input-label">Twitter</label>
                   <input
-                    id="links-twitter" 
-                    type="link" 
+                    id="links-twitter"
+                    type="link"
                     placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.twitter.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.links.twitter.$error
+                      invalid: $v.form.links.twitter.$error,
                     }"
                   />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.links.twitter.$error
-                  }">This doesn't look like a valid URL</p>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.links.twitter.$error,
+                    }"
+                  >
+                    This doesn't look like a valid URL
+                  </p>
                 </div>
                 <div class="form-background">
                   <label for="links-discord" class="input-label">Discord</label>
                   <input
-                    id="links-discord" 
-                    type="link" 
+                    id="links-discord"
+                    type="link"
                     placeholder="example: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.discord.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.links.discord.$error
+                      invalid: $v.form.links.discord.$error,
                     }"
                   />
-                  <p :class="{
-                    error: true,
-                    hidden: !$v.form.links.discord.$error
-                  }">This doesn't look like a valid URL</p>
+                  <p
+                    :class="{
+                      error: true,
+                      hidden: !$v.form.links.discord.$error,
+                    }"
+                  >
+                    This doesn't look like a valid URL
+                  </p>
                 </div>
               </div>
             </div>
             <div v-if="currentStep === 4">
               <h2 class="step-title">Images</h2>
-              <p>We'll upload your images to IPFS, a decentralized storage platform. <a target="_blank" href="https://ipfs.io/#how">More on IPFS</a></p>
+              <p>
+                We'll upload your images to IPFS, a decentralized storage
+                platform.
+                <a target="_blank" href="https://ipfs.io/#how">More on IPFS</a>
+              </p>
               <div class="inputs">
                 <div class="form-background">
-                  <ipfs-image-upload label="Banner image" description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF" :onUpload="handleUpload" formProp="bannerHash"/>
+                  <ipfs-image-upload
+                    label="Banner image"
+                    description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF"
+                    :onUpload="handleUpload"
+                    formProp="bannerHash"
+                  />
                 </div>
                 <div class="form-background">
-                  <ipfs-image-upload label="Thumbnail image" description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF" :onUpload="handleUpload" formProp="thumbnailHash"/>
+                  <ipfs-image-upload
+                    label="Thumbnail image"
+                    description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF"
+                    :onUpload="handleUpload"
+                    formProp="thumbnailHash"
+                  />
                 </div>
               </div>
             </div>
           </form>
           <div v-if="currentStep === 5" id="summary">
-            <project-profile v-if="showSummaryPreview" :project="projectInterface" :previewMode="true" class="project-details" />
+            <project-profile
+              v-if="showSummaryPreview"
+              :project="projectInterface"
+              :previewMode="true"
+              class="project-details"
+            />
             <div v-if="!showSummaryPreview">
               <h2 class="step-title">Review your information</h2>
-              <warning style="margin-bottom: 1rem;" message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application." /> 
+              <warning
+                style="margin-bottom: 1rem"
+                message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application."
+              />
               <div class="form-background">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">About the project</h3>
-                  <router-link to="/join/project" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+                  <router-link to="/join/project" class="edit-button"
+                    >Edit <img width="16px" src="@/assets/edit.svg"
+                  /></router-link>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Name</h4>
-                  <div class="data">{{form.project.name}}</div>
+                  <div class="data">{{ form.project.name }}</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Tagline</h4>
-                  <div class="data">{{form.project.tagline}} </div>
+                  <div class="data">{{ form.project.tagline }}</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Description</h4>
-                  <div class="data">{{form.project.description}} </div>
+                  <div class="data">{{ form.project.description }}</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Category</h4>
-                  <div class="data">{{form.project.category}} </div>
+                  <div class="data">{{ form.project.category }}</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Problem space</h4>
-                  <div class="data">{{form.project.problemSpace}} </div>
+                  <div class="data">{{ form.project.problemSpace }}</div>
                 </div>
               </div>
               <div class="form-background">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Funding details</h3>
-                  <router-link to="/join/fund" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+                  <router-link to="/join/fund" class="edit-button"
+                    >Edit <img width="16px" src="@/assets/edit.svg"
+                  /></router-link>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Ethereum address</h4>
-                  <div class="data break-all">{{form.fund.address}} <a :href="'https://etherscan.io/address/' + form.fund.address" target="_blank" class="no-break">View on Etherscan</a></div>
+                  <div class="data break-all">
+                    {{ form.fund.address }}
+                    <a
+                      :href="
+                        'https://etherscan.io/address/' + form.fund.address
+                      "
+                      target="_blank"
+                      class="no-break"
+                      >View on Etherscan</a
+                    >
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Funding plans</h4>
-                  <div class="data">{{form.fund.plans}} </div>
+                  <div class="data">{{ form.fund.plans }}</div>
                 </div>
               </div>
               <div class="form-background">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Team details</h3>
-                  <router-link to="/join/team" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+                  <router-link to="/join/team" class="edit-button"
+                    >Edit <img width="16px" src="@/assets/edit.svg"
+                  /></router-link>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Contact email</h4>
-                  <div class="data">{{form.team.email}} </div>
-                  <div class="input-notice">This information won't be added to the smart contract. It won't cost anything to edit and will only be used to contact you about the round and/or your project.</div>
+                  <div class="data">{{ form.team.email }}</div>
+                  <div class="input-notice">
+                    This information won't be added to the smart contract.
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Team name</h4>
-                  <div class="data">{{form.team.name}} </div>
+                  <div class="data">{{ form.team.name }}</div>
                   <div class="data" v-if="!form.team.name">Not provided</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Team description</h4>
-                  <div class="data">{{form.team.description}} </div>
-                  <div class="data" v-if="!form.team.description">Not provided</div>
+                  <div class="data">{{ form.team.description }}</div>
+                  <div class="data" v-if="!form.team.description">
+                    Not provided
+                  </div>
                 </div>
-              </div>  
+              </div>
               <div class="form-background">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Links</h3>
-                  <router-link to="/join/links" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+                  <router-link to="/join/links" class="edit-button"
+                    >Edit <img width="16px" src="@/assets/edit.svg"
+                  /></router-link>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">GitHub</h4>
-                  <div class="data">{{form.links.github}} <a v-if="form.links.github" :href=form.links.github><img width="16px" src="@/assets/link.svg" /></a></div>
+                  <div class="data">
+                    {{ form.links.github }}
+                    <a v-if="form.links.github" :href="form.links.github"
+                      ><img width="16px" src="@/assets/link.svg"
+                    /></a>
+                  </div>
                   <div class="data" v-if="!form.links.github">Not provided</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Twitter</h4>
-                  <div class="data">{{form.links.twitter}} <a v-if="form.links.twitter" :href=form.links.twitter><img width="16px" src="@/assets/link.svg" /></a></div>
-                  <div class="data" v-if="!form.links.twitter">Not provided</div>
+                  <div class="data">
+                    {{ form.links.twitter }}
+                    <a v-if="form.links.twitter" :href="form.links.twitter"
+                      ><img width="16px" src="@/assets/link.svg"
+                    /></a>
+                  </div>
+                  <div class="data" v-if="!form.links.twitter">
+                    Not provided
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Website</h4>
-                  <div class="data" key="">{{form.links.website}} <a v-if="form.links.website" :href=form.links.website><img width="16px" src="@/assets/link.svg" /></a></div>
-                  <div class="data" v-if="!form.links.website">Not provided</div>
+                  <div class="data" key="">
+                    {{ form.links.website }}
+                    <a v-if="form.links.website" :href="form.links.website"
+                      ><img width="16px" src="@/assets/link.svg"
+                    /></a>
+                  </div>
+                  <div class="data" v-if="!form.links.website">
+                    Not provided
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Discord</h4>
-                  <div class="data">{{form.links.discord}} <a v-if="form.links.discord" :href=form.links.discord><img width="16px" src="@/assets/link.svg" /></a></div>
-                  <div class="data" v-if="!form.links.discord">Not provided</div>
+                  <div class="data">
+                    {{ form.links.discord }}
+                    <a v-if="form.links.discord" :href="form.links.discord"
+                      ><img width="16px" src="@/assets/link.svg"
+                    /></a>
+                  </div>
+                  <div class="data" v-if="!form.links.discord">
+                    Not provided
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Radicle</h4>
-                  <div class="data">{{form.links.radicle}} <a v-if="form.links.radicle" :href=form.links.radicle><img width="16px" src="@/assets/link.svg" /></a></div>
-                  <div class="data" v-if="!form.links.radicle">Not provided</div>
+                  <div class="data">
+                    {{ form.links.radicle }}
+                    <a v-if="form.links.radicle" :href="form.links.radicle"
+                      ><img width="16px" src="@/assets/link.svg"
+                    /></a>
+                  </div>
+                  <div class="data" v-if="!form.links.radicle">
+                    Not provided
+                  </div>
                 </div>
-              </div>  
+              </div>
               <div class="form-background">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Images</h3>
-                  <router-link to="/join/image" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></router-link>
+                  <router-link to="/join/image" class="edit-button"
+                    >Edit <img width="16px" src="@/assets/edit.svg"
+                  /></router-link>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Banner</h4>
@@ -496,12 +693,16 @@
             </div>
           </div>
           <div v-if="currentStep === 6">
-            <h2 class="step-title">Submit Project</h2>
-            <p>We'll submit your application to the blockchain.</p>
+            <h2 class="step-title">Submit project</h2>
+            <p>
+              This is a blockchain transaction that will add your project
+              information to the funding round.
+            </p>
             <div class="inputs">
-              <div class="form-background">
-                <recipient-submission-widget />
-              </div>
+              <recipient-submission-widget
+                cta="Submit project"
+                pending="Sending deposit..."
+              />
             </div>
           </div>
         </div>
@@ -509,6 +710,7 @@
     </div>
     <div class="mobile nav-bar">
       <form-navigation
+        :isJoin="true"
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
         :currentStep="currentStep"
@@ -539,7 +741,10 @@ import RecipientSubmissionWidget from '@/components/RecipientSubmissionWidget.vu
 import Warning from '@/components/Warning.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
-import { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
+import {
+  RecipientApplicationData,
+  formToProjectInterface,
+} from '@/api/recipient-registry-optimistic'
 import { Project } from '@/api/projects'
 
 @Component({
@@ -578,8 +783,8 @@ import { Project } from '@/api/projects'
       team: {
         name: {},
         description: {},
-        email: { 
-          email, 
+        email: {
+          email,
           required,
         },
       },
@@ -666,7 +871,10 @@ export default class JoinView extends mixins(validationMixin) {
     // eventually updates the `furthestStep` tracker when valid and clicked/tapped.
     // If URL step is ahead of furthest, navigate back to furthest
     if (this.currentStep > this.form.furthestStep) {
-      this.$router.push({ name: 'joinStep', params: { step: steps[this.form.furthestStep] }})
+      this.$router.push({
+        name: 'join-step',
+        params: { step: steps[this.form.furthestStep] },
+      })
     }
 
     // if (process.env.NODE_ENV === 'development') {
@@ -706,11 +914,12 @@ export default class JoinView extends mixins(validationMixin) {
 
   handleToggleTab(event): void {
     const { id } = event.target
-    // Guard clause: 
+    // Guard clause:
     if (
       (!this.showSummaryPreview && id === 'review') ||
       (this.showSummaryPreview && id === 'preview')
-    ) return
+    )
+      return
     this.showSummaryPreview = !this.showSummaryPreview
   }
 
@@ -731,7 +940,7 @@ export default class JoinView extends mixins(validationMixin) {
     }
     return isValid
   }
-  
+
   isStepValid(step: number): boolean {
     if (step === 3) {
       return this.isLinkStepValid()
@@ -763,7 +972,10 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   get isNavDisabled(): boolean {
-    return !this.isStepValid(this.currentStep) && this.currentStep !== this.furthestStep
+    return (
+      !this.isStepValid(this.currentStep) &&
+      this.currentStep !== this.furthestStep
+    )
   }
 
   handleStepNav(step): void {
@@ -774,7 +986,7 @@ export default class JoinView extends mixins(validationMixin) {
     // Navigate
     if (this.isStepUnlocked(step)) {
       this.$router.push({
-        name: 'joinStep',
+        name: 'join-step',
         params: {
           step: this.steps[step],
         },
@@ -789,12 +1001,12 @@ export default class JoinView extends mixins(validationMixin) {
   get furthestStep() {
     return this.form.furthestStep
   }
-} 
+}
 </script>
 
 <style scoped lang="scss">
-@import "../styles/vars";
-@import "../styles/theme";
+@import '../styles/vars';
+@import '../styles/theme';
 
 .container {
   width: clamp(calc(800px - 4rem), calc(100% - 4rem), 1440px);
@@ -810,17 +1022,17 @@ export default class JoinView extends mixins(validationMixin) {
   grid-template-columns: 1fr clamp(250px, 25%, 360px);
   grid-template-rows: auto 1fr;
   grid-template-areas:
-    "title cancel"
-    "form progress";
+    'title cancel'
+    'form progress';
   height: calc(100vh - var($nav-header-height));
   gap: 0 2rem;
   @media (max-width: $breakpoint-m) {
     grid-template-rows: auto auto 1fr auto;
     grid-template-columns: 1fr;
     grid-template-areas:
-      "progress"
-      "title"
-      "form";
+      'progress'
+      'title'
+      'form';
     gap: 0;
   }
 }
@@ -829,19 +1041,19 @@ export default class JoinView extends mixins(validationMixin) {
   grid-area: title;
   display: flex;
   padding: 1rem;
-  padding-left: 0rem; 
+  padding-left: 0rem;
   justify-content: space-between;
   align-items: flex-start;
   flex-direction: column;
 
   h1 {
-    font-family: "Glacial Indifference", sans-serif;
+    font-family: 'Glacial Indifference', sans-serif;
   }
 
   @media (max-width: $breakpoint-m) {
     margin-top: 2rem;
     padding-bottom: 0;
-    padding-left: 1rem; 
+    padding-left: 1rem;
     font-size: 14px;
     font-weight: normal;
   }
@@ -880,7 +1092,7 @@ export default class JoinView extends mixins(validationMixin) {
   left: 0;
   padding: 1.5rem;
   background: $bg-primary-color;
-  border-radius: 32px 32px  0 0;
+  border-radius: 32px 32px 0 0;
   box-shadow: $box-shadow;
 }
 
@@ -910,6 +1122,7 @@ export default class JoinView extends mixins(validationMixin) {
   flex-direction: column;
   justify-content: space-between;
   margin-bottom: 2rem;
+  overflow: none;
   @media (min-width: $breakpoint-m) {
     background: $bg-secondary-color;
     padding: 1.5rem;
@@ -946,9 +1159,9 @@ export default class JoinView extends mixins(validationMixin) {
     margin-bottom: 2rem;
   }
   @media (max-width: $breakpoint-m) {
-  &:first-of-type {
-    margin-top: 0;
-  }
+    &:first-of-type {
+      margin-top: 0;
+    }
   }
 }
 
@@ -963,13 +1176,13 @@ export default class JoinView extends mixins(validationMixin) {
   font-weight: 400;
   line-height: 24px;
   letter-spacing: 0em;
-  &:valid { 
+  &:valid {
     border: 2px solid $clr-green;
   }
-  &:hover { 
-    background: $bg-primary-color; 
+  &:hover {
+    background: $bg-primary-color;
     border: 2px solid $highlight-color;
-    box-shadow: 0px 4px 16px 0px 25,22,35,0.4;
+    box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
   }
   &:optional {
     border: 2px solid $button-color;
@@ -978,7 +1191,7 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .input.invalid {
-  border: 2px solid $error-color; 
+  border: 2px solid $error-color;
 }
 
 .input-description {
@@ -996,10 +1209,9 @@ export default class JoinView extends mixins(validationMixin) {
   margin-bottom: 0.5rem;
   line-height: 150%;
   color: $warning-color;
-  text-transform: uppercase;  
+  text-transform: uppercase;
   font-weight: 500;
 }
-
 
 .input-label {
   font-family: Inter;
@@ -1025,7 +1237,7 @@ export default class JoinView extends mixins(validationMixin) {
     opacity: 0;
     pointer-events: none;
   }
-  input[type="radio"]:checked+label {
+  input[type='radio']:checked + label {
     background: $clr-pink;
     font-weight: 600;
   }
@@ -1075,7 +1287,7 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .loader:after {
-  content: " ";
+  content: ' ';
   display: block;
   width: 32px;
   height: 32px;
@@ -1087,8 +1299,8 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .loader {
-    margin: $modal-space auto;
-  }
+  margin: $modal-space auto;
+}
 
 @keyframes loader {
   0% {
@@ -1117,7 +1329,7 @@ export default class JoinView extends mixins(validationMixin) {
 .summary-section-header {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
+  justify-content: space-between;
   margin-bottom: 1.5rem;
   border-bottom: 1px solid $highlight-color;
   padding-bottom: 0.5rem;
@@ -1126,26 +1338,26 @@ export default class JoinView extends mixins(validationMixin) {
 .toggle-tabs-desktop {
   display: flex;
   gap: 2rem;
-  font-family: "Inter";     
+  font-family: 'Inter';
   @media (max-width: $breakpoint-m) {
     /* flex-direction: column;
     gap: 0;
     margin-left: 0rem; */
     /* display: none; */
   }
-  .active-tab{
+  .active-tab {
     padding-bottom: 0.5rem;
     border-bottom: 4px solid $clr-green;
     border-radius: 4px;
     font-weight: 600;
     /* text-decoration: underline; */
   }
-  .inactive-tab{
+  .inactive-tab {
     padding-bottom: 0.5rem;
     cursor: pointer;
     &:hover {
       opacity: 0.8;
-      border-bottom: 4px solid #fff7;  
+      border-bottom: 4px solid #fff7;
       border-radius: 4px;
     }
     /* text-decoration: underline; */
@@ -1153,43 +1365,43 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .toggle-tabs-mobile {
-    display: flex;
-    gap: 2rem;
+  display: flex;
+  gap: 2rem;
   @media (min-width: $breakpoint-m) {
     /* flex-direction: column;
     gap: 0;
     margin-left: 0rem; */
     display: none;
   }
-   .active-tab{
+  .active-tab {
     padding-bottom: 0.5rem;
     border-bottom: 4px solid $clr-green;
     border-radius: 4px;
     font-weight: 600;
     /* text-decoration: underline; */
   }
-  .inactive-tab{
+  .inactive-tab {
     padding-bottom: 0.5rem;
     cursor: pointer;
     &:hover {
       opacity: 0.8;
-      transform: scale(1.02);  
+      transform: scale(1.02);
     }
     /* text-decoration: underline; */
   }
-} 
+}
 
 .step-subtitle {
   margin: 0.5rem 0;
-  font-family: "Glacial Indifference", sans-serif;
+  font-family: 'Glacial Indifference', sans-serif;
   font-size: 1.5rem;
 }
 
 .edit-button {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-weight: 500;
   font-size: 16px;
-  color: $clr-green;  
+  color: $clr-green;
 }
 
 .data {
@@ -1216,7 +1428,7 @@ export default class JoinView extends mixins(validationMixin) {
     opacity: 0.5;
     transform: scale(1);
     cursor: not-allowed;
-  }  
+  }
 }
 .pt-1 {
   padding-top: 1rem;
@@ -1231,7 +1443,7 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .tx-row-total {
-    display: flex;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 0.5rem 0;
@@ -1248,7 +1460,7 @@ export default class JoinView extends mixins(validationMixin) {
   font-size: 14px;
   font-family: Inter;
   line-height: 150%;
-  text-transform: uppercase;  
+  text-transform: uppercase;
   font-weight: 500;
 }
 
@@ -1259,7 +1471,6 @@ export default class JoinView extends mixins(validationMixin) {
 } */
 
 .tx-value {
-
 }
 
 .fiat-value {
@@ -1277,13 +1488,11 @@ export default class JoinView extends mixins(validationMixin) {
 
 .checkout {
   margin-bottom: 1rem;
-
 }
 
 .checkout-desktop {
   padding-top: 1.5rem;
   border-top: 1px solid $button-color;
-
 }
 
 .tx-notice {
@@ -1292,7 +1501,7 @@ export default class JoinView extends mixins(validationMixin) {
   font-family: Inter;
   margin-bottom: 0.5rem;
   line-height: 150%;
-  text-transform: uppercase;  
+  text-transform: uppercase;
   font-weight: 500;
 }
 

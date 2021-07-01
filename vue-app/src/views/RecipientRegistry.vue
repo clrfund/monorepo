@@ -16,7 +16,7 @@
           Submit project
         </button>
       </div> -->
-      <loader v-if="isLoading"/>
+      <loader v-if="isLoading" />
       <div v-if-else="requests.length > 0">
         <h2>Projects</h2>
         <table class="requests">
@@ -30,35 +30,73 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
+            <tr
+              v-for="request in requests.slice().reverse()"
+              :key="request.transactionHash"
+            >
               <td>
                 <div class="project-name">
-                  <a :href="request.metadata.thumbnailImageUrl" target="_blank" rel="noopener">
-                    <img class="project-image" :src="request.metadata.thumbnailImageUrl">
+                  <a
+                    :href="request.metadata.thumbnailImageUrl"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <img
+                      class="project-image"
+                      :src="request.metadata.thumbnailImageUrl"
+                    />
                   </a>
-                  {{ request.metadata.name }} <router-link
-                    :to="{ name: 'project', params: { id: request.recipientId }}"
-                  >-></router-link>
+                  {{ request.metadata.name }}
+                  <router-link
+                    :to="{
+                      name: 'project',
+                      params: { id: request.recipientId },
+                    }"
+                    >-></router-link
+                  >
                 </div>
                 <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
                 <details class="project-details">
                   <summary>More</summary>
-                  
-                  <div><span>Transaction hash <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.transactionHash }}</code></div>
-                  <div><span>Project ID <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.recipientId }}</code></div>
-                  <div><span>Recipient address <img class="icon" width="16px" src="@/assets/copy.svg" /></span> <code>{{ request.recipient }}</code></div>
+
+                  <div>
+                    <span
+                      >Transaction hash
+                      <img class="icon" width="16px" src="@/assets/copy.svg"
+                    /></span>
+                    <code>{{ request.transactionHash }}</code>
+                  </div>
+                  <div>
+                    <span
+                      >Project ID
+                      <img class="icon" width="16px" src="@/assets/copy.svg"
+                    /></span>
+                    <code>{{ request.recipientId }}</code>
+                  </div>
+                  <div>
+                    <span
+                      >Recipient address
+                      <img class="icon" width="16px" src="@/assets/copy.svg"
+                    /></span>
+                    <code>{{ request.recipient }}</code>
+                  </div>
                   <!-- <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div> -->
                 </details>
               </td>
               <td>{{ request.type }}</td>
               <td>
-                <div v-if="isPending(request)">{{ formatDate(request.acceptanceDate) }}</div>
+                <div v-if="isPending(request)">
+                  {{ formatDate(request.acceptanceDate) }}
+                </div>
                 <div v-if="!isPending(request)">Challenge period over</div>
               </td>
               <td>
                 <template v-if="hasProjectLink(request)">
                   <router-link
-                    :to="{ name: 'project', params: { id: request.recipientId }}"
+                    :to="{
+                      name: 'project',
+                      params: { id: request.recipientId },
+                    }"
                   >
                     {{ request.status }}
                   </router-link>
@@ -69,7 +107,11 @@
               </td>
               <td>
                 <!-- If challenge period is over, display button to register project -->
-                <div v-if="isAccepted(request)" @click="register(request)" class="btn-secondary">
+                <div
+                  v-if="isAccepted(request)"
+                  @click="register(request)"
+                  class="btn-secondary"
+                >
                   Add to round
                 </div>
                 <div v-if="$store.getters.isLive" class="btn-warning">
@@ -78,17 +120,25 @@
                 </div>
               </td>
               <td v-if="$store.getters.canAdminDecide" class="btn-row">
-                <div 
+                <div
                   class="icon-btn-approve"
                   @click="register()"
-                  v-if="$store.getters.isPending && !$store.getters.isAccepted && !$store.getters.isRejected"
+                  v-if="
+                    $store.getters.isPending &&
+                    !$store.getters.isAccepted &&
+                    !$store.getters.isRejected
+                  "
                 >
                   <!-- TODO: admin can approve if the project has been submitted and need review. Ideal scenario is this will also EXECUTE the project to add to the round -->
                   <img src="@/assets/checkmark.svg" />
                 </div>
-                <div 
+                <div
                   class="icon-btn-reject"
-                  v-if="$store.getters.isPending && !$store.getters.isAccepted && !$store.getters.isRejected"
+                  v-if="
+                    $store.getters.isPending &&
+                    !$store.getters.isAccepted &&
+                    !$store.getters.isRejected
+                  "
                 >
                   <img src="@/assets/close.svg" />
                   <!-- TODO: admin can reject a project once submitted -->
@@ -100,56 +150,75 @@
       </div>
     </div>
     <div v-else>
-      <div style="font-size: 64px;" aria-label="hand">🤚</div>
-      <h2>You must be the recipient registry contract owner to access this page</h2>
+      <div style="font-size: 64px" aria-label="hand">🤚</div>
+      <h2>
+        You must be the recipient registry contract owner to access this page
+      </h2>
       <div v-if="!isUserConnected">
         <h2>Please connect your wallet.</h2>
       </div>
-      <router-link class="btn-primary" to="/projects">Back to projects</router-link>
+      <router-link class="btn-primary" to="/projects"
+        >Back to projects</router-link
+      >
       <!-- TODO do we show anything for non-owner? or delete all of this? -->
       <table v-if="requests.length > 0" class="requests">
-      <thead>
-        <tr>
-          <th>Project</th>
-          <th>Time left</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
-          <td>
-            <div class="project-name">
-              <a :href="request.metadata.imageUrl" target="_blank" rel="noopener">
-                <img class="project-image" :src="request.metadata.imageUrl">
-              </a>
-              {{ request.metadata.name }}
-            </div>
-            <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
-            <details class="project-details">
-              <summary>Additional info</summary>
-              <div>Transaction: <code>{{ request.transactionHash }}</code></div>
-              <div>Project ID: <code>{{ request.recipientId }}</code></div>
-              <div>Recipient address: <code>{{ request.recipient }}</code></div>
-              <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div>
-            </details>
-          </td>
-          <!-- <td>{{ request.type }}</td> -->
-          <td> countdown</td> 
-          <td>
-            <template v-if="hasProjectLink(request)">
-              <router-link
-                :to="{ name: 'project', params: { id: request.recipientId }}"
-              >
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Time left</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="request in requests.slice().reverse()"
+            :key="request.transactionHash"
+          >
+            <td>
+              <div class="project-name">
+                <a
+                  :href="request.metadata.imageUrl"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <img class="project-image" :src="request.metadata.imageUrl" />
+                </a>
+                {{ request.metadata.name }}
+              </div>
+              <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
+              <details class="project-details">
+                <summary>Additional info</summary>
+                <div>
+                  Transaction: <code>{{ request.transactionHash }}</code>
+                </div>
+                <div>
+                  Project ID: <code>{{ request.recipientId }}</code>
+                </div>
+                <div>
+                  Recipient address: <code>{{ request.recipient }}</code>
+                </div>
+                <div v-if="isPending(request)">
+                  Acceptance date: {{ formatDate(request.acceptanceDate) }}
+                </div>
+              </details>
+            </td>
+            <!-- <td>{{ request.type }}</td> -->
+            <td>countdown</td>
+            <td>
+              <template v-if="hasProjectLink(request)">
+                <router-link
+                  :to="{ name: 'project', params: { id: request.recipientId } }"
+                >
+                  {{ request.status }}
+                </router-link>
+              </template>
+              <template v-else>
                 {{ request.status }}
-              </router-link>
-            </template>
-            <template v-else>
-              {{ request.status }}
-            </template>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              </template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -160,8 +229,9 @@ import Component from 'vue-class-component'
 import { BigNumber } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
+
 import { recipientRegistryType } from '@/api/core'
-import { Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
+import { Project, getRecipientRegistryAddress } from '@/api/projects'
 import {
   RegistryInfo,
   RequestType,
@@ -187,7 +257,6 @@ import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.
   components: { Loader },
 })
 export default class RecipientRegistryView extends Vue {
-
   registryInfo: RegistryInfo | null = null
   requests: Request[] = []
   isLoading = true
@@ -200,12 +269,18 @@ export default class RecipientRegistryView extends Vue {
     // TODO fetch/read this data from the store vs. storing in component state
     if (this.$store.state.recipientRegistryAddress === null) {
       // this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
-      const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+      const roundAddress =
+        this.$store.state.currentRoundAddress || (await getCurrentRound())
       const registryAddress = await getRecipientRegistryAddress(roundAddress)
       this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
     }
-    this.registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
-    this.requests = await getRequests(this.$store.state.recipientRegistryAddress,  this.registryInfo)
+    this.registryInfo = await getRegistryInfo(
+      this.$store.state.recipientRegistryAddress
+    )
+    this.requests = await getRequests(
+      this.$store.state.recipientRegistryAddress,
+      this.registryInfo
+    )
     this.isLoading = false
   }
 
@@ -214,7 +289,14 @@ export default class RecipientRegistryView extends Vue {
   }
 
   get isRecipientRegistryOwner(): boolean {
-    return this.isUserConnected && !!this.registryInfo && isSameAddress(this.$store.state.currentUser.walletAddress, this.registryInfo.owner)
+    return (
+      this.isUserConnected &&
+      !!this.registryInfo &&
+      isSameAddress(
+        this.$store.state.currentUser.walletAddress,
+        this.registryInfo.owner
+      )
+    )
   }
 
   formatAmount(value: BigNumber): string {
@@ -256,17 +338,17 @@ export default class RecipientRegistryView extends Vue {
     this.$modal.show(
       RecipientRegistrationModal,
       { project: { id: request.recipientId, name: request.recipient } },
-      { },
+      {},
       {
         closed: async () => {
           if (this.registryInfo) {
             this.requests = await getRequests(
               this.$store.state.recipientRegistryAddress,
-              this.registryInfo,
+              this.registryInfo
             )
           }
         },
-      },
+      }
     )
   }
 
@@ -287,11 +369,11 @@ export default class RecipientRegistryView extends Vue {
           if (this.registryInfo) {
             this.requests = await getRequests(
               this.$store.state.recipientRegistryAddress,
-              this.registryInfo,
+              this.registryInfo
             )
           }
         },
-      },
+      }
     )
   }
 }
@@ -324,7 +406,7 @@ h2 {
 }
 
 .requests {
-  border: 1px solid  #000;
+  border: 1px solid #000;
   border-radius: 0.5rem;
   border-spacing: 0;
   line-height: 150%;
@@ -343,12 +425,12 @@ h2 {
     }
   }
 
-  th, td {
+  th,
+  td {
     overflow: hidden;
     padding: $content-space / 2;
     text-align: left;
     text-overflow: ellipsis;
-    
 
     &:nth-child(1) {
       width: 25%;
@@ -370,7 +452,9 @@ h2 {
     }
 
     .project-description ::v-deep {
-      p, ul, ol {
+      p,
+      ul,
+      ol {
         margin: 0.5rem 0;
       }
     }
@@ -430,7 +514,6 @@ h2 {
     display: flex;
     gap: 0.5rem;
   }
-
 }
 
 @media (max-width: 600px) {

@@ -1,112 +1,183 @@
 <template>
   <div>
-  <round-status-banner />
-  <div id="page">
-    <div id="hero">
-      <img src="@/assets/moon.png" id="moon" />
-      <div class="image-wrapper">
-        <img src="@/assets/docking.png" />
-      </div>
-      <div class="hero-content">
-        <h1>Send your favourite Eth2 projects to the moon!</h1>
-        <div id="subtitle" class="subtitle">Every project you contribute to gets a portion of extra funding.</div>
-        <div class="btn-group">
-          <router-link to="/projects" class="btn-action">Go to app</router-link>
-          <div class="btn-white" @click="scrollToHowItWorks">How it works</div>
+    <round-status-banner />
+    <div id="page">
+      <div id="hero">
+        <div class="full-gradient mobile" />
+        <img src="@/assets/moon.png" id="moon" />
+        <div class="image-wrapper">
+          <img src="@/assets/docking.png" />
         </div>
-        <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout mobile">
-          <div id="countdown" class="caps">11 days</div>
-          <div id="countdown-label" class="caps">Time to apply</div>
-          <p>Applications are open to join this fundraising round. If you're working on anything related to Eth2, we'd love to hear about your project.</p>
-          <div id="btn-row">
-            <div id="view-criteria" class="link-primary">View criteria</div>
-            <router-link to="/join"><div id="apply-to-join" class="btn-primary">Apply to join</div></router-link>
+        <div class="hero-content">
+          <h1>Send your favourite Eth2 projects to the moon!</h1>
+          <div id="subtitle" class="subtitle">
+            Every project you contribute to gets a portion of extra funding.
+          </div>
+          <div class="btn-group">
+            <router-link to="/projects" class="btn-action"
+              >Go to app</router-link
+            >
+            <div class="btn-white" @click="scrollToHowItWorks">
+              How it works
+            </div>
+          </div>
+        </div>
+        <div
+          class="apply-callout"
+          v-if="
+            $store.state.currentRound &&
+            $store.getters.isRoundJoinPhase &&
+            !$store.getters.isRecipientRegistryFull
+          "
+        >
+          <div class="column">
+            <h2>Join the funding round</h2>
+            <p>
+              Add your project to the next funding round. If you're working on
+              anything related to Eth2, you can join in.
+            </p>
+          </div>
+          <div class="button-group">
+            <router-link to="/join" class="btn-primary w100"
+              >Join round</router-link
+            >
+            <div>{{ timeRemaining }}</div>
           </div>
         </div>
       </div>
-      <div v-if="!isRoundClosed && !isRoundFull" class="apply-callout desktop">
-        <div class="column">
-          <h2>Join the funding round</h2>
-          <p>Add your project to the next funding round. If you're working on anything related to Eth2, you can join in.</p>
+      <div id="section-how-it-works">
+        <div class="dai-wormhole desktop">
+          <img
+            src="@/assets/dai-small.svg"
+            alt="Image of Dai token funneling through a wormhole"
+            class="dai-small"
+          />
+          <img
+            src="@/assets/wormhole.png"
+            alt="Image of Dai token funneling through a wormhole"
+            class="wormhole"
+          />
+          <img
+            src="@/assets/dai-large.svg"
+            alt="Image of Dai token funneling through a wormhole"
+            class="dai-large"
+          />
         </div>
-        <div class="centered">
-          <router-link to="/join"><div id="join-round" class="btn-primary">Join round</div></router-link>
+        <div id="how-it-works-content">
+          <h2>Every donation is amplified by the matching pool.</h2>
+          <p>
+            This fundraiser rewards projects with the most unique demand, not
+            just those with the wealthiest backers.
+          </p>
+          <img src="@/assets/dai-drip.svg" id="dai-drip" />
+          <h2>How it works</h2>
+          <ol>
+            <li>
+              The Ethereum Foundation and other donors send funds to the
+              matching pool smart contract.
+            </li>
+            <li>
+              The round begins and you can donate to your favourite projects.
+            </li>
+            <li>
+              Once the round finishes, the smart contract distributes the
+              matching pool funds to projects based primarily on number of
+              contributions, <strong>not contribution value</strong>.
+            </li>
+          </ol>
+          <router-link class="btn-secondary" to="/how-it-works"
+            >How the round works</router-link
+          >
         </div>
-        <div class="centered">{{timeRemaining}} to join</div>
       </div>
-    </div>
-    <div id="section-how-it-works">
-      <div class="dai-wormhole desktop">
-        <img src="@/assets/dai-small.svg" alt="Image of Dai token funneling through a wormhole" class="dai-small">
-        <img src="@/assets/wormhole.png" alt="Image of Dai token funneling through a wormhole" class="wormhole">
-        <img src="@/assets/dai-large.svg" alt="Image of Dai token funneling through a wormhole" class="dai-large">
+      <div class="section-header">
+        <h2>What you'll need</h2>
       </div>
-      <div id="how-it-works-content">
-        <h2>Every donation is amplified by the matching pool.</h2>
-        <p>This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.</p>
-        <img src="@/assets/dai-drip.svg" id="dai-drip" />
-        <h2>How it works</h2>
-        <ol>
-          <li>The Ethereum Foundation and other donors send funds to the matching pool smart contract.</li>
-          <li>The round begins and you can donate to as many projects as you like.</li>
-          <li>Once the round finishes, the smart contract distributes the matching pool funds to projects based primarily on number of contributions, <strong>not contribution value</strong></li>
-        </ol>
-      </div>
-    </div>
-    <div class="section-header">
-      <h2>What you'll need</h2>
-    </div>
-    <div id="what-you-will-need">
-      <div class="pre-req" id="optimism">
-        <div class="icon-row">
-          <!-- Optimism icon -->
-          <img src="@/assets/optimism.png" id="optimism-icon"/>
-          <p><b>Optimism for fast and cheap transation fees</b></p>
+      <div id="what-you-will-need">
+        <div class="pre-req" id="optimism">
+          <div class="icon-row">
+            <!-- Optimism icon -->
+            <img src="@/assets/optimism.png" id="optimism-icon" />
+            <p><b>Optimism for fast and cheap transaction fees</b></p>
+          </div>
+          <div class="btn-action">Get Optimism funds</div>
         </div>
-        <div class="btn-action">Get Optimism funds</div>
-      </div>
-      <div class="pre-req" id="bright-id">
-        <div class="icon-row">
-          <!-- BrightID icon -->
-          <img src="@/assets/bright-id.png" id="bright-id-icon"/>
-          <p><b>BrightID for private, decentralized identity verification</b></p>
+        <div class="pre-req" id="bright-id">
+          <div class="icon-row">
+            <!-- BrightID icon -->
+            <img src="@/assets/bright-id.png" id="bright-id-icon" />
+            <p>
+              <b>BrightID for private, decentralized identity verification</b>
+            </p>
+          </div>
+          <div class="btn-primary">Download BrightID</div>
         </div>
-        <div class="btn-primary">Download BrightID</div>
       </div>
-    </div>
-    <div class="section-header">
-      <h2>About</h2>
-    </div>
-    <div id="about-section">
-      <div id="about-1">
-        <h2>It's not about how much...</h2>
-        <p>Using quadratic funding, your donation counts as a vote. Projects with the most votes at the end of the round get the highest amount from the matching pool. That means even a small donation can have a massive impact.</p>
-        <p>To learn more about the technology behind this fundraiser, check out this primer.</p>
-        <p>
-          <a href="https://wtfisqf.com/">WTF is QF?</a>
-        </p>
+      <div class="section-header">
+        <h2>About</h2>
       </div>
-      <div id="about-2">
-        <h2>Protect against bribery</h2>
-        <p>
-          Using <a href="#">MACI</a>, a zero-knowledge technology, it's impossible to prove how you voted. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!
-        </p>
+      <div id="about-section">
+        <div id="about-1">
+          <h2>It's not about how much...</h2>
+          <p>
+            Using quadratic funding, your donation counts as a vote. Projects
+            with the most votes at the end of the round get the highest amount
+            from the matching pool. That means even a small donation can have a
+            massive impact.
+          </p>
+          <p>
+            To learn more about the technology behind this fundraiser, check out
+            this primer.
+          </p>
+          <p>
+            <a href="https://wtfisqf.com/">WTF is QF?</a>
+          </p>
+        </div>
+        <div id="about-2">
+          <h2>Protect against bribery</h2>
+          <p>
+            Using MACI, a zero-knowledge technology, it's impossible to prove
+            how you voted. This drives bribers insane because they have no idea
+            whether you actually did what they bribed you to do!
+          </p>
+          <router-link to="/about-maci">About MACI</router-link>
+        </div>
+        <div id="about-3">
+          <h2>Built using the CLR protocol</h2>
+          <p>
+            clr.fund is a protocol for efficiently allocating funds to public
+            goods that benefit the Ethereum Network according to the prefences
+            of the Ethereum Community.
+          </p>
+          <p><!-- Discussion icon --><a href="#">clr.fund forum</a></p>
+          <p><!-- GitHub icon --><a href="#">Fork your own CLR</a></p>
+        </div>
       </div>
-      <div id="about-3">
-        <h2>Built using the CLR protocol</h2>
-        <p>clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the prefences of the Ethereum Community.</p>
-        <p><!-- Discussion icon --><a href="#">clr.fund forum</a></p>
-        <p><!-- GitHub icon --><a href="#">Fork your own CLR</a></p>
-      </div>
-    </div>
-    <div id="footer">
-      <h2>More</h2>
-        <div class="link-li"><a href="#">GitHub</a></div>
-        <div class="link-li">More on Eth2</div>
+      <div id="footer">
+        <h2>More</h2>
+        <div class="link-li">
+          <a href="https://github.com/ethereum/clrfund/">GitHub</a>
+        </div>
+        <div class="link-li">
+          <a href="https://ethereum.org/eth2/">More on Eth2</a>
+        </div>
+        <div class="link-li">
+          <router-link to="/how-it-works">How the round works</router-link>
+        </div>
+        <div class="link-li">
+          <router-link to="/about-layer2">Learn about [Layer 2]</router-link>
+        </div>
+        <div class="link-li">
+          <router-link to="/about-maci">Learn about MACI</router-link>
+        </div>
+        <div class="link-li">
+          <router-link to="/about-sybil-attacks"
+            >Learn about BrightID</router-link
+          >
+        </div>
         <div class="link-li">Provide Feedback</div>
-        <div class="link-li">Something else?</div>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -114,7 +185,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
-import { formatDateFromNow, hasDateElapsed } from '@/utils/dates'
+import { formatDateFromNow } from '@/utils/dates'
 
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
@@ -122,32 +193,20 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
   components: { RoundStatusBanner },
 })
 export default class Landing extends Vue {
-
   private get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
   }
 
   get timeRemaining(): string {
-    if (!this.signUpDeadline) {
-      return  '...'
-    }
-    return formatDateFromNow(this.signUpDeadline)
-  }
-
-  get isRoundClosed(): boolean {
-    if (!this.signUpDeadline) {
-      return  false
-    }
-    return hasDateElapsed(this.signUpDeadline)
-  }
-
-  // TODO fetch `maxRecipients` from registry & compare to current registry size
-  get isRoundFull(): boolean {
-    return false
+    return this.signUpDeadline
+      ? `${formatDateFromNow(this.signUpDeadline)}  to join`
+      : '...'
   }
 
   scrollToHowItWorks() {
-    document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })
+    document
+      .getElementById('section-how-it-works')
+      ?.scrollIntoView({ behavior: 'smooth' })
   }
 }
 </script>
@@ -160,10 +219,10 @@ export default class Landing extends Vue {
   background: $bg-primary-color;
 }
 
-#page > div {  
+#page > div {
   padding: $content-space (2 * $content-space);
   @media (max-width: $breakpoint-m) {
-    padding: $content-space
+    padding: $content-space;
   }
 }
 
@@ -200,7 +259,7 @@ ol li {
   position: relative;
 }
 ol li::before {
-  content: counter(li-counter); 
+  content: counter(li-counter);
   position: absolute;
   top: 0.125rem; /* adjusts circle up and down */
   left: -3rem;
@@ -214,29 +273,36 @@ ol li::before {
   line-height: 100%;
   border-radius: 50%;
   color: white;
-  background: #2A2736;
-  border: 2px solid #9789C4;
+  background: #2a2736;
+  border: 2px solid #9789c4;
   box-sizing: border-box;
   text-align: center;
   padding-top: 0.375rem;
   /* vertical-align: baseline; */
 }
 
-.centered {
-  display: grid;
-  place-items: center;
+.button-group {
+  display: flex;
+  gap: 1rem;
+  margin-right: 1rem;
+  align-items: center;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
 }
 
 .btn-hero-primary {
-  background: linear-gradient(109.01deg, #9789C4 6.45%, #C72AB9 99.55%);
+  background: linear-gradient(109.01deg, #9789c4 6.45%, #c72ab9 99.55%);
 }
 
 .btn-primary {
-  background: #16C8B5;
+  background: #16c8b5;
 }
 
 .link-primary {
-  color: #16C8B5;
+  color: #16c8b5;
 }
 
 .link-li {
@@ -245,7 +311,6 @@ ol li::before {
   margin-bottom: 1rem;
   font-size: 16px;
 }
-
 
 #optimism {
   background: $clr-pink-dark-gradient-bg;
@@ -261,7 +326,6 @@ ol li::before {
   height: 4rem;
   width: auto;
   border-radius: 1rem;
-
 }
 
 #bright-id-icon {
@@ -269,18 +333,10 @@ ol li::before {
   background: black;
 }
 
-/* #page > #waiting-banner {
-  display: flex;
-  height: 48px;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  align-items: center;
-  // margin-top: 1rem;
-  background: $bg-primary-color;
-} */
-
 .pre-req,
-#about-1, #about-2, #about-3 {
+#about-1,
+#about-2,
+#about-3 {
   padding: $content-space;
   flex: 1;
 }
@@ -305,11 +361,24 @@ ol li::before {
   overflow: hidden;
   background: $clr-pink-dark-gradient;
   padding: 0;
+  min-height: 639px; /* This is the height when adding in the callout */
+  display: flex;
+  flex-flow: wrap;
+
+  .full-gradient {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #211e2b 0%, rgba(33, 30, 43, 0) 60.61%);
+    opacity: 0.1;
+    margin: -2rem;
+  }
 
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
     width: 70%;
+    max-width: 880px;
     height: auto;
     transform: rotate(15deg);
     /* top: -20px; */
@@ -350,20 +419,22 @@ ol li::before {
 
   .apply-callout {
     background: #191623e6;
-    border: 2px solid #9789C4;
+    border: 2px solid #9789c4;
     box-sizing: border-box;
     border-radius: 8px;
     padding: 1rem;
     margin: 3rem 0;
-
-  }
-
-  .apply-callout.desktop {
     position: relative;
     display: flex;
-    gap: 2rem;
+    justify-content: space-between;
+    gap: 1rem;
     .column {
       flex: 1;
+    }
+    @media (max-width: $breakpoint-m) {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
   }
 }
@@ -378,6 +449,7 @@ ol li::before {
     border-radius: 0;
   }
 }
+
 .icon-row {
   display: flex;
   gap: $content-space;
@@ -401,23 +473,28 @@ ol li::before {
   margin-top: 0.5rem;
 }
 
-#about-1, #about-2, #about-3 {
+#about-1,
+#about-2,
+#about-3 {
   background: $bg-light-color;
   border-radius: 0.5rem;
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }
 }
+
 #about-1 {
   @media (max-width: $breakpoint-l) {
-    background: none;  
+    background: none;
   }
 }
+
 #about-2 {
   @media (max-width: $breakpoint-l) {
     background: $bg-secondary-color;
   }
 }
+
 #about-3 {
   @media (max-width: $breakpoint-l) {
     background: $bg-light-color;
@@ -434,7 +511,7 @@ ol li::before {
   display: grid;
   grid-template-columns: 3fr 2fr;
   grid-template-rows: repeat(2, auto);
-  grid-template-areas: "image content" "image .";
+  grid-template-areas: 'image content' 'image .';
   @media (max-width: $breakpoint-m) {
     display: flex;
   }
@@ -469,7 +546,7 @@ ol li::before {
     background: $bg-light-color;
     /* width: 40%; */
     border-radius: 1rem;
-    padding: 1rem 2rem 0;
+    padding: 2rem;
     & > img {
       display: none;
     }
@@ -486,6 +563,13 @@ ol li::before {
   }
 }
 
+.w100 {
+  width: 100%;
+  @media (min-width: $breakpoint-m) {
+    width: fit-content;
+  }
+}
+
 #btn-row {
   display: flex;
   justify-content: space-between;
@@ -498,11 +582,10 @@ ol li::before {
 }
 
 #footer {
-    max-width: 100vw;
-    padding: $content-space;
-    > li {
-      list-style-type: none;
-    }
+  max-width: 100vw;
+  padding: $content-space;
+  > li {
+    list-style-type: none;
   }
-
+}
 </style>

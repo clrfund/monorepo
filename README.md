@@ -22,12 +22,18 @@ The clr.fund smart contracts consist of a factory contract that deploys a new co
 The clr.fund application can use any [EVM-compatible chain](https://ethereum.org/) as a backend. The application can be hosted on [IPFS](https://ipfs.io/) and can also run locally.
 
 For more details, see the [sequence diagram](docs/clrfund.svg) and [clr.fund constitution](https://github.com/clrfund/constitution).
-![sequence diagram](docs/clrfund.svg)
+
+Some helpful blogposts to explain the clr.fund project:
+- https://blog.clr.fund/clr-fund-explained-pt-1/
+- https://blog.clr.fund/clr-fund-explained-pt-2/
+- https://blog.clr.fund/clr-fund-explained-pt-3/
 
 ### Limitations
+
 There are various limitations in our current design; we discuss some of them here.
 
 #### Trusted Participants
+
 The need for several trusted parties is the biggest limitation in the current design. The owner could, and likely will, be replaced with a DAO or some other decision-making mechanism which could alleviate the trust concern for this role.
 
 However, without some breakthrough in oblivious computation, the zk-SNARK computations must necessarily be done by some trusted party who becomes a prime target for bribery as they are the only participant who can know the details of each contributor’s contributions.
@@ -35,6 +41,7 @@ However, without some breakthrough in oblivious computation, the zk-SNARK comput
 Several solutions have been suggested, such as having the operator’s private keys and computations happen inside of some trusted computing environment or wallfacer-esque isolation of the operator. But most just kick the trust-can down the road a little further.
 
 #### Single Token
+
 For simplicity's sake in the contract, the zk-SNARK, and the user interface, clr.fund selects an ERC20 token as it's native token (set by the contract owner), which is the only token that the funding round contract interacts with. This is an issue given our goal of being agnostic to the funding source.
 
 For example, block reward funding would be in ETH, while many users may want to contribute DAI or other ERC20 tokens.
@@ -52,45 +59,118 @@ In a future version, we plan to address this by routing ETH and token contributi
 
 ### Install Node v12 with nvm
 
-```
+```sh
 nvm install 12
 nvm use 12
 ```
+If using the M1 chip in Apple products, you need to use Node v16.
+```sh
+nvm install 16
+nvm use 16
+```
 
 ### Install the dependencies
-```
+
+```sh
 yarn
+
+# Along with the dependencies, git hooks are also installed. At the end of the installation, you will see the following line after a successful setup.
+husky - Git hooks installed
+```
+
+### Copy env for contracts
+```sh
+cp contracts/.env.example contracts/.env    # adjust if necessary
 ```
 
 #### Compile the contracts
-```
+
+```sh
 yarn build:contracts
 ```
 
 #### Run unit tests
-```
+
+```sh
 yarn test
 ```
 
 #### Start the frontend app in development mode (hot-code reloading, error reporting, etc.)
-```
+
+```sh
 yarn start:node
 ```
 
 and in a new terminal
 
-```
+```sh
 cp vue-app/.env.example vue-app/.env    # adjust if necessary
 yarn start:dev
 ```
 
 #### Start the frontend sans a local blockchain
-```
+
+```sh
 yarn start:web
 ```
 
 #### Lint the files
-```
+
+```sh
 yarn lint
 ```
 
+### Git hooks
+
+#### Pre-commit
+
+Prettier is executed on the staged files to keep a consistent format style
+across the codebase.
+
+#### Pre-push
+
+`yarn test:format` and `yarn test:web` is going to be triggered to ensure that
+the code is in good shape.
+
+As you can see, we are only checking the web (/vue-app) tests and not
+the contracts ones. This is because there are not changes very often in the
+/contracts folder. However, if you do make a change in /contracts don't forget
+to run `yarn test` or `yarn test:contracts`.
+
+### Tech stack resources
+
+- `/contracts`
+  - [Hardhat](https://hardhat.org/)
+  - [Openzeppelin](https://openzeppelin.com/)
+- `/vue-app`
+  - [Vuex](https://vuex.vuejs.org/)
+  - [Vue class component](https://class-component.vuejs.org/)
+  - [Vuelidate](https://vuelidate-next.netlify.app/)
+  - [Vue js modal](http://vue-js-modal.yev.io/)
+  - [Ethers](https://docs.ethers.io/v5/)
+  - [Gun](https://gun.eco/docs/)
+
+### Visual Studio Code
+
+As a recommendation, use the [Vetur](https://vuejs.github.io/vetur/) extension.
+It gives you some useful features for Vue like syntax highlights, autocomplete,
+etc.
+
+Create a `vetur.config.js` file at the project root with the following content:
+
+```ts
+/** @type {import('vls').VeturConfig} */
+module.exports = {
+  settings: {
+    'vetur.useWorkspaceDependencies': true,
+  },
+  projects: [
+    {
+      root: './vue-app',
+      package: './package.json',
+      tsconfig: './tsconfig.json',
+      globalComponents: ['./src/components/**/*.vue'],
+    },
+  ],
+}
+```

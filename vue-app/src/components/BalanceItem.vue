@@ -1,11 +1,11 @@
 <template>
   <div class="item">
     <div class="icon">
-      <img class="icon img" src="@/assets/dai.svg" />
+      <div class="icon img"><slot></slot></div>
     </div>
     <div class="main">
       <div v-if="abbrev" class="token-abbrev">
-        {{abbrev}}
+        {{ abbrev }}
       </div>
       <!-- <p class="description"></p> -->
     </div>
@@ -19,13 +19,15 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
+import IconStatus from '@/components/IconStatus.vue'
 
 @Component({
-  components: {},
+  components: { IconStatus },
 })
 export default class BalanceItem extends Vue {
   @Prop() abbrev!: string
   @Prop() balance!: string
+  @Prop() image!: string
   // TODO: Need token icon, currently hard coded to dai.svg
 }
 </script>

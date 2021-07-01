@@ -7,8 +7,16 @@
       <p class="hash">{{ renderCopiedOrHash }}</p>
     </div>
     <div class="actions">
-      <a style="padding: 0; margin: 0;" :href="'https://etherscan.io/tx/' + hash" target="_blank" title="View on Etherscan"><img class="icon" src="@/assets/etherscan.svg" /></a>
-      <div @click="copyAddress" class="icon"><img style="width: 100%;" src="@/assets/copy.svg" /></div>
+      <a
+        style="padding: 0; margin: 0"
+        :href="'https://etherscan.io/tx/' + hash"
+        target="_blank"
+        title="View on Etherscan"
+        ><img class="icon" src="@/assets/etherscan.svg"
+      /></a>
+      <div @click="copyAddress" class="icon">
+        <img style="width: 100%" src="@/assets/copy.svg" />
+      </div>
     </div>
   </div>
 </template>
@@ -25,7 +33,7 @@ import { isTransactionMined } from '@/utils/contracts'
 @Component({
   components: { Loader },
 })
-export default class TransactionReceipt extends Vue { 
+export default class TransactionReceipt extends Vue {
   isPending = true
   isCopied = false
 
@@ -40,25 +48,28 @@ export default class TransactionReceipt extends Vue {
   }
 
   async checkTxStatus(): Promise<void> {
-    while(this.isPending) {
-      await new Promise(resolve => setTimeout(resolve, 5000))
+    while (this.isPending) {
+      await new Promise((resolve) => setTimeout(resolve, 5000))
       const isMined = await isTransactionMined(this.hash)
       this.isPending = !isMined
     }
   }
-  
+
   async copyAddress(): Promise<void> {
-    if (!this.hash) { return }
+    if (!this.hash) {
+      return
+    }
     try {
       await navigator.clipboard.writeText(this.hash)
       this.isCopied = true
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       this.isCopied = false
     } catch (error) {
-      console.warn('Error in copying text: ', error) /* eslint-disable-line no-console */
+      /* eslint-disable-next-line no-console */
+      console.warn('Error in copying text: ', error)
     }
   }
-  
+
   renderHash(digitsToShow?: number): string {
     if (digitsToShow) {
       const beginDigits = Math.ceil(digitsToShow / 2)
@@ -69,7 +80,7 @@ export default class TransactionReceipt extends Vue {
     }
     return this.hash
   }
-  
+
   get blockExplorerUrl(): string {
     return `${blockExplorer}${this.hash}`
   }
@@ -142,4 +153,3 @@ export default class TransactionReceipt extends Vue {
   border-color: $clr-pink transparent $clr-pink transparent;
 }
 </style>
-

@@ -1,25 +1,97 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">About MACI</h1>
+    <h1 class="content-heading">
+      About MACI (Minimal Anti-Collusion Infrastructure)
+    </h1>
 
     <h2>What is MACI?</h2>
-    <p>Clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community. Clr.fund strives for credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity.</p>
+    <p><b>tl;dr: bribers are ngmi (not going to make it)</b></p>
+    <p>
+      We use MACI to protect the funding round from bribery and collusion. To
+      understand why this is important let's recap quadratic funding...
+    </p>
 
-    <h2>Anti-collusion</h2>
-    <p> Allocating funds towards public goods — commodities or services that deliver a net benefit even when they cannot be sold —  is a challenge for any ecosystem, and Ethereum is no exception.</p>
-    <p>Clr.fund’s goal is to enable funds to be allocated towards public goods that benefit the Ethereum Network without relying on centralized entities and in a way that reflects the preferences of the Ethereum Community.</p>
-    <p>See the <a href="https://github.com/clrfund/constitution" target="_blank" rel="noopener">Clr.fund Constitution</a> for more detail on Clr.fund’s goals and values.</p>
-
-    <h2>Why is there a project cap?</h2>
-    <p>The clr.fund protocol uses the <a href="https://blogchains.org/wp-content/uploads/sites/4/2019/04/SSRN-id3243656.pdf" target="_blank" rel="noopener">Constrained Liberal Radicalism (CLR)</a> algorithm, commonly called quadratic funding (QF), to facilitate monetary contributions from members of the Ethereum Community towards builders of Ethereum public goods.
-    <p>With its logic encoded into Ethereum smart contracts and other web3 technologies, clr.fund requires minimal trust in any individual people or entities to function and is resilient to collusion and bribery.</p>
-
-    <p>At a high-level, clr.fund consists of a matching pool and a funding round. Philanthropic individuals or organisations contribute to the matching pool so as to have those funds efficiently allocated according to community preference. Users contribute directly to projects they value and, in doing so, earn a share of the matching pool for the projects, along with their contribution. Effectively increasing the value of their contribution.</p>
-
-    <p>Under the hood, clr.fund uses zero-knowledge proofs (zk-snarks), courtesy of the <a href="https://github.com/appliedzkp/maci" target="_blank" rel="noopener">Minimal Anti-collusion Infrastructure (MACI)</a>, to keep individual contributions private and limit effectiveness of collusion and bribery.</p>
-
-    <p>To ensure that every contributor is a unique person clr.fund uses <a href="https://brightid.org" target="_blank" rel="noopener">BrightID</a>, and recipients are curated by our <a href="https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398" target="_blank" rel="noopener">Kleros TCR</a>.</p>
-
+    <h2>Quadratic funding</h2>
+    <p>
+      This is the mechanism for our funding round. When you contribute to a
+      project you're not just sending them money, you're voting for them. At the
+      end, the matching pool funds are distributed to projects based on number
+      of votes at the end of the round.
+    </p>
+    <p>
+      This is great for democratic funding but poses some risks. It could be
+      quite cost-effective for a project owner to bribe users to vote for their
+      project as their eventual matching pool amount could be really high. This
+      type of fraud puts the entire concept at risk as it is no longer about
+      which projects offer the most value to the most amount of people.
+    </p>
+    <h2>How MACI helps</h2>
+    <p>
+      Bribery only works if the briber can confirm that the person they're
+      paying actually goes through with the conditions of the bribe. This is
+      where MACI comes in. With MACI, it's impossible to prove how you voted, so
+      bribers will never know if you did what they paid you to do.
+    </p>
+    <h2>How this works, technically</h2>
+    <p>
+      When you contribute/vote you register an identity with the round
+      coordinator. But at any time before the end of the round, you can
+      invalidate your identity by secretly changing the public key associated
+      with your identity before casting the vote. You can then use a different
+      key pair to sign the vote (which renders the vote invalid, but it's
+      impossible to see if the vote is invalid).
+    </p>
+    <p>
+      MACI does all this using zero-knowledge proofs. These mathematically prove
+      the authenticity of votes without providing any of the details. So bribers
+      can’t tell what actions the people they bribed took.
+    </p>
+    <h2>Constraints</h2>
+    <p>
+      This is cutting-edge technology and comes with a few constraints right
+      now.
+    </p>
+    <ul>
+      <li>
+        There are limits on the number of projects, contributors, and
+        contributions. This means you may miss out but know that it's for the
+        integrity of the round.
+      </li>
+      <li>
+        You can only contribute one amount per round. Once you have contributed,
+        you can add/remove projects but you can't increase your total amount.
+      </li>
+    </ul>
+    <h2>More</h2>
+    <h3>Further reading</h3>
+    <ul>
+      <li>
+        <a
+          href="https://ethresear.ch/t/minimal-anti-collusion-infrastructure/541"
+          >Vitalik Buterin on Minimal anti-collusion infrastructure</a
+        >
+      </li>
+      <li><a href="https://github.com/appliedzkp/maci">The MACI repo</a></li>
+      <li>
+        <a
+          href="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md"
+          >The technical spec</a
+        >
+      </li>
+    </ul>
+    <h3>Videos</h3>
+    <ul>
+      <li>
+        <a href="https://www.youtube.com/watch?v=ooxgPzdaZ_s"
+          >MACI high-level intro</a
+        >
+      </li>
+      <li>
+        <a href="https://www.youtube.com/watch?v=sKuNj_IQVYI"
+          >MACI technical intro</a
+        >
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -31,11 +103,15 @@ import Component from 'vue-class-component'
   name: 'about-maci',
   metaInfo: { title: 'About Maci' },
 })
-export default class AboutMaci extends Vue { }
+export default class AboutMaci extends Vue {}
 </script>
 
 <style scoped lang="scss">
 @import '../styles/vars';
+
+.about {
+  padding-bottom: 4rem;
+}
 
 .content-heading {
   border-bottom: $border;
@@ -50,6 +126,11 @@ h2 {
 
 p {
   font-size: 16px;
-  line-height: 30px;
+  line-height: 150%;
+}
+
+li {
+  font-size: 16px;
+  line-height: 150%;
 }
 </style>

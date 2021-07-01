@@ -1,0 +1,24 @@
+.DS_Store
+cache
+dist
+build
+node_modules
+snark-params
+vue-app/gundata/
+yarn.lock
+
+# local config
+vetur.config.js
+
+# local generated file
+contracts/state.json
+
+# local env files
+.env
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

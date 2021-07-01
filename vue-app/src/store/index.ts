@@ -1,12 +1,16 @@
+// Libraries
 import Vue from 'vue'
 import Vuex, { StoreOptions } from 'vuex'
 import { BigNumber } from 'ethers'
+import { DateTime } from 'luxon'
 
+// API
 import {
   MAX_CART_SIZE,
   CartItem,
   Contributor,
   getCartStorageKey,
+  getCommittedCartStorageKey,
   serializeCart,
   deserializeCart,
   getContributorStorageKey,
@@ -21,74 +25,101 @@ import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
-import { User, isVerifiedUser, getEtherBalance, getTokenBalance } from '@/api/user'
 import {
-  RegistryInfo,
+  User,
+  isVerifiedUser,
+  getEtherBalance,
+  getTokenBalance,
+} from '@/api/user'
+import {
   getRegistryInfo,
   RecipientApplicationData,
+  RegistryInfo,
 } from '@/api/recipient-registry-optimistic'
+
+// Constants
 import {
-  SELECT_ROUND,
-  LOAD_ROUND_INFO,
-  LOAD_RECIPIENT_REGISTRY_INFO,
-  LOAD_USER_INFO,
-  SAVE_CART,
   LOAD_CART,
-  UNWATCH_CART,
-  SAVE_CONTRIBUTOR_DATA,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
-  UNWATCH_CONTRIBUTOR_DATA,
+  LOAD_RECIPIENT_REGISTRY_INFO,
+  LOAD_ROUND_INFO,
+  LOAD_USER_INFO,
   LOGIN_USER,
   LOGOUT_USER,
+  SAVE_CART,
+  SAVE_COMMITTED_CART_DISPATCH,
+  SAVE_CONTRIBUTOR_DATA,
+  SELECT_ROUND,
+  UNWATCH_CART,
+  UNWATCH_CONTRIBUTOR_DATA,
 } from './action-types'
 import {
+  ADD_CART_ITEM,
+  CLEAR_CART,
+  REMOVE_CART_ITEM,
+  RESTORE_COMMITTED_CART_TO_LOCAL_CART,
+  SAVE_COMMITTED_CART,
+  SET_CONTRIBUTION,
+  SET_CONTRIBUTOR,
+  SET_CURRENT_ROUND,
+  SET_CURRENT_ROUND_ADDRESS,
+  SET_TALLY,
+  SET_CURRENT_USER,
+  SET_RECIPIENT_DATA,
   SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_RECIPIENT_REGISTRY_INFO,
-  SET_CURRENT_USER,
-  SET_CURRENT_ROUND_ADDRESS,
-  SET_CURRENT_ROUND,
-  SET_TALLY,
-  SET_CONTRIBUTOR,
-  SET_CONTRIBUTION,
-  ADD_CART_ITEM,
+  TOGGLE_SHOW_CART_PANEL,
   UPDATE_CART_ITEM,
-  REMOVE_CART_ITEM,
-  CLEAR_CART,
-  SET_RECIPIENT_DATA,
+  TOGGLE_EDIT_SELECTION,
 } from './mutation-types'
 
+// Utils
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
-import { DateTime } from 'luxon'
 
 Vue.use(Vuex)
 
 interface RootState {
-  currentUser: User | null;
-  currentRoundAddress: string | null;
-  currentRound: RoundInfo | null;
-  tally: Tally | null;
-  cart: CartItem[];
-  contributor: Contributor | null;
-  contribution: BigNumber | null;
-  recipientRegistryAddress: string | null;
-  recipientRegistryInfo: RegistryInfo | null;
-  recipient: RecipientApplicationData | null;
+  cart: CartItem[]
+  cartEditModeSelected: boolean
+  committedCart: CartItem[]
+  contribution: BigNumber | null
+  contributor: Contributor | null
+  currentRound: RoundInfo | null
+  currentRoundAddress: string | null
+  currentUser: User | null
+  recipient: RecipientApplicationData | null
+  recipientRegistryAddress: string | null
+  recipientRegistryInfo: RegistryInfo | null
+  showCartPanel: boolean
+  tally: Tally | null
 }
 
 const state: RootState = {
-  currentUser: null,
-  currentRoundAddress: null,
-  currentRound: null,
-  tally: null,
   cart: new Array<CartItem>(),
-  contributor: null,
+  cartEditModeSelected: false,
+  committedCart: new Array<CartItem>(),
   contribution: null,
+  contributor: null,
+  currentRound: null,
+  currentRoundAddress: null,
+  currentUser: null,
+  recipient: null,
   recipientRegistryAddress: null,
   recipientRegistryInfo: null,
-  recipient: null,
+  showCartPanel: false,
+  tally: null,
 }
 
 export const mutations = {
+  [TOGGLE_EDIT_SELECTION](state, isOpen: boolean | undefined) {
+    // Handle the case of both null and undefined
+    if (isOpen != null) {
+      state.cartEditModeSelected = isOpen
+    } else {
+      state.cartEditModeSelected = !state.cartEditModeSelected
+    }
+  },
   [SET_RECIPIENT_REGISTRY_ADDRESS](state, address: string) {
     state.recipientRegistryAddress = address
   },
@@ -128,11 +159,10 @@ export const mutations = {
       } else {
         state.cart.push(addedItem)
       }
-    } else if (state.cart[itemIndex].isCleared) {
-      // Restore cleared item
-      Vue.set(state.cart, itemIndex, addedItem)
     } else {
-      throw new Error('item is already in the cart')
+      /* eslint-disable-next-line no-console */
+      console.warn('item is already in the cart')
+      Vue.set(state.cart, itemIndex, addedItem)
     }
   },
   [UPDATE_CART_ITEM](state, updatedItem: CartItem) {
@@ -152,23 +182,53 @@ export const mutations = {
       throw new Error('item is not in the cart')
     } else if (state.contribution === null) {
       throw new Error('invalid operation')
-    } else if (state.contribution.isZero() || state.cart.length > MAX_CART_SIZE) {
+    } else if (
+      state.contribution.isZero() ||
+      state.cart.length > MAX_CART_SIZE
+    ) {
       state.cart.splice(itemIndex, 1)
     } else {
       // The number of MACI messages can't go down after initial submission
       // so we just clear contribution amount and mark item with a flag
-      Vue.set(state.cart, itemIndex, { ...removedItem, amount: '0', isCleared: true })
+      Vue.set(state.cart, itemIndex, {
+        ...removedItem,
+        amount: '0',
+        isCleared: true,
+      })
     }
   },
   [CLEAR_CART](state) {
     state.cart = []
   },
-  [SET_RECIPIENT_DATA](state, payload: { updatedData: RecipientApplicationData; step: string; stepNumber: number }) {
+  [SET_RECIPIENT_DATA](
+    state,
+    payload: {
+      updatedData: RecipientApplicationData
+      step: string
+      stepNumber: number
+    }
+  ) {
     if (!state.recipient) {
       state.recipient = payload.updatedData
     } else {
       state.recipient[payload.step] = payload.updatedData[payload.step]
     }
+  },
+  [TOGGLE_SHOW_CART_PANEL](state, isOpen: boolean | undefined) {
+    // Handle the case of both null and undefined
+    if (isOpen != null) {
+      state.showCartPanel = isOpen
+    } else {
+      state.showCartPanel = !state.showCartPanel
+    }
+  },
+  [RESTORE_COMMITTED_CART_TO_LOCAL_CART](state) {
+    // Spread to avoid reference
+    state.cart = [...state.committedCart]
+  },
+  [SAVE_COMMITTED_CART](state) {
+    // Spread to avoid reference
+    state.committedCart = [...state.cart.filter((item) => item.amount != 0)]
   },
 }
 
@@ -201,9 +261,14 @@ const actions = {
     }
   },
   async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
-    const recipientRegistryAddress = state.recipientRegistryAddress || await getRecipientRegistryAddress(state.currentRoundAddress)
+    const recipientRegistryAddress =
+      state.recipientRegistryAddress ||
+      (await getRecipientRegistryAddress(state.currentRoundAddress))
     commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
-    if (recipientRegistryAddress === null || recipientRegistryType !== 'optimistic') {
+    if (
+      recipientRegistryAddress === null ||
+      recipientRegistryType !== 'optimistic'
+    ) {
       commit(SET_RECIPIENT_REGISTRY_INFO, null)
       return
     }
@@ -216,13 +281,15 @@ const actions = {
       if (!isVerified) {
         isVerified = await isVerifiedUser(
           state.currentRound.userRegistryAddress,
-          state.currentUser.walletAddress,
+          state.currentUser.walletAddress
         )
       }
-      const etherBalance = await getEtherBalance(state.currentUser.walletAddress)
+      const etherBalance = await getEtherBalance(
+        state.currentUser.walletAddress
+      )
       const balance = await getTokenBalance(
         state.currentRound.nativeTokenAddress,
-        state.currentUser.walletAddress,
+        state.currentUser.walletAddress
       )
       let contribution = state.contribution
       if (!contribution || contribution.isZero()) {
@@ -230,7 +297,7 @@ const actions = {
         if (state.currentRound.status === RoundStatus.Cancelled) {
           isWithdrawn = await isContributionWithdrawn(
             state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress,
+            state.currentUser.walletAddress
           )
         }
         if (isWithdrawn) {
@@ -238,7 +305,7 @@ const actions = {
         } else {
           contribution = await getContributionAmount(
             state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress,
+            state.currentUser.walletAddress
           )
           commit(SET_CONTRIBUTION, contribution)
         }
@@ -258,7 +325,7 @@ const actions = {
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
       getCartStorageKey(state.currentRound.fundingRoundAddress),
-      serializedCart,
+      serializedCart
     )
   },
   [LOAD_CART]({ commit, state }) {
@@ -272,7 +339,7 @@ const actions = {
         for (const item of cart) {
           commit(ADD_CART_ITEM, item)
         }
-      },
+      }
     )
   },
   [UNWATCH_CART]({ state }) {
@@ -281,7 +348,29 @@ const actions = {
     }
     storage.unwatchItem(
       state.currentUser.walletAddress,
-      getCartStorageKey(state.currentRound.fundingRoundAddress),
+      getCartStorageKey(state.currentRound.fundingRoundAddress)
+    )
+  },
+  [SAVE_COMMITTED_CART_DISPATCH]({ commit, state }) {
+    commit(SAVE_COMMITTED_CART)
+    const serializedCart = serializeCart(state.committedCart)
+    storage.setItem(
+      state.currentUser.walletAddress,
+      state.currentUser.encryptionKey,
+      getCommittedCartStorageKey(state.currentRound.fundingRoundAddress),
+      serializedCart
+    )
+  },
+  [LOAD_COMMITTED_CART]({ commit, state }) {
+    storage.watchItem(
+      state.currentUser.walletAddress,
+      state.currentUser.encryptionKey,
+      getCommittedCartStorageKey(state.currentRound.fundingRoundAddress),
+      (data: string | null) => {
+        const committedCart = deserializeCart(data)
+        Vue.set(state, 'committedCart', committedCart)
+        commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
+      }
     )
   },
   [SAVE_CONTRIBUTOR_DATA]({ state }) {
@@ -290,7 +379,7 @@ const actions = {
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
       getContributorStorageKey(state.currentRound.fundingRoundAddress),
-      serializedData,
+      serializedData
     )
   },
   [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
@@ -303,7 +392,7 @@ const actions = {
         if (contributor) {
           commit(SET_CONTRIBUTOR, contributor)
         }
-      },
+      }
     )
   },
   [UNWATCH_CONTRIBUTOR_DATA]({ state }) {
@@ -312,13 +401,13 @@ const actions = {
     }
     storage.unwatchItem(
       state.currentUser.walletAddress,
-      getContributorStorageKey(state.currentRound.fundingRoundAddress),
+      getContributorStorageKey(state.currentRound.fundingRoundAddress)
     )
   },
   async [LOGIN_USER]({ state }) {
     await loginUser(
       state.currentUser.walletAddress,
-      state.currentUser.encryptionKey,
+      state.currentUser.encryptionKey
     )
   },
   [LOGOUT_USER]({ commit, dispatch }) {
@@ -337,7 +426,9 @@ const getters = {
     if (!state.currentRound || !state.recipientRegistryInfo) {
       return null
     }
-    return state.currentRound.signUpDeadline.minus({ seconds: state.recipientRegistryInfo.challengePeriodDuration })
+    return state.currentRound.signUpDeadline.minus({
+      seconds: state.recipientRegistryInfo.challengePeriodDuration,
+    })
   },
   isRoundJoinPhase: (state: RootState, getters): boolean => {
     if (!state.currentRound) {
@@ -349,7 +440,15 @@ const getters = {
     return !hasDateElapsed(getters.recipientJoinDeadline)
   },
   isRoundJoinOnlyPhase: (state: RootState, getters): boolean => {
-    return !!state.currentRound && getters.isRoundJoinPhase && !hasDateElapsed(state.currentRound.startTime)
+    return (
+      !!state.currentRound &&
+      getters.isRoundJoinPhase &&
+      !hasDateElapsed(state.currentRound.startTime)
+    )
+  },
+  hasStartTimeElapsed: (state: RootState): boolean => {
+    if (!state.currentRound) return true
+    return hasDateElapsed(state.currentRound.startTime)
   },
   recipientSpacesRemaining: (state: RootState): number | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
@@ -363,34 +462,70 @@ const getters = {
     return getters.recipientSpacesRemaining === 0
   },
   isRecipientRegistryFillingUp: (_, getters): boolean => {
-    return getters.recipientSpacesRemaining !== null && getters.recipientSpacesRemaining < 20
+    return (
+      getters.recipientSpacesRemaining !== null &&
+      getters.recipientSpacesRemaining < 20
+    )
   },
   isRoundBufferPhase: (state: RootState, getters): boolean => {
-    return !!state.currentRound && !getters.isJoinPhase && !hasDateElapsed(state.currentRound.signUpDeadline)
+    return (
+      !!state.currentRound &&
+      !getters.isJoinPhase &&
+      !hasDateElapsed(state.currentRound.signUpDeadline)
+    )
   },
   isRoundContributionPhase: (state: RootState): boolean => {
-    return !!state.currentRound && state.currentRound.status === RoundStatus.Contributing
+    return (
+      !!state.currentRound &&
+      state.currentRound.status === RoundStatus.Contributing
+    )
   },
   isRoundContributionPhaseEnding: (state: RootState, getters): boolean => {
-    return !!state.currentRound && getters.isRoundContributionPhase && getSecondsFromNow(state.currentRound.signUpDeadline) < 24 * 60 * 60
+    return (
+      !!state.currentRound &&
+      getters.isRoundContributionPhase &&
+      getSecondsFromNow(state.currentRound.signUpDeadline) < 24 * 60 * 60
+    )
   },
   isRoundReallocationPhase: (state: RootState): boolean => {
-    return !!state.currentRound && state.currentRound.status === RoundStatus.Reallocating
+    return (
+      !!state.currentRound &&
+      state.currentRound.status === RoundStatus.Reallocating
+    )
   },
   isRoundTallying: (state: RootState): boolean => {
-    return !!state.currentRound && state.currentRound.status === RoundStatus.Tallying
+    return (
+      !!state.currentRound && state.currentRound.status === RoundStatus.Tallying
+    )
   },
   isRoundFinalized: (state: RootState): boolean => {
-    return !!state.currentRound && state.currentRound.status === RoundStatus.Finalized
+    return (
+      !!state.currentRound &&
+      state.currentRound.status === RoundStatus.Finalized
+    )
   },
-  isRoundClosed: (state: RootState): boolean => {
-    return !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
+  hasContributionPhaseEnded: (state: RootState): boolean => {
+    return (
+      !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
+    )
+  },
+  hasReallocationPhaseEnded: (state: RootState): boolean => {
+    return (
+      !!state.currentRound && hasDateElapsed(state.currentRound.votingDeadline)
+    )
   },
   hasUserContributed: (state: RootState): boolean => {
-    return !!state.currentUser && !!state.contribution && !state.contribution.isZero()
+    return (
+      !!state.currentUser &&
+      !!state.contribution &&
+      !state.contribution.isZero()
+    )
   },
-  canUserRellocate: (_, getters): boolean => {
-    return getters.hasUserContributed && (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
+  canUserReallocate: (_, getters): boolean => {
+    return (
+      getters.hasUserContributed &&
+      (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
+    )
   },
 }
 

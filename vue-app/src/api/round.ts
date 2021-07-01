@@ -7,28 +7,34 @@ import { provider, factory, extraRounds } from './core'
 import { getTotalContributed } from './contributions'
 
 export interface RoundInfo {
-  fundingRoundAddress: string;
-  roundNumber: number;
-  userRegistryAddress: string;
-  maciAddress: string;
-  recipientTreeDepth: number;
-  maxContributors: number;
-  maxRecipients: number;
-  maxMessages: number;
-  coordinatorPubKey: PubKey;
-  nativeTokenAddress: string;
-  nativeTokenSymbol: string;
-  nativeTokenDecimals: number;
-  voiceCreditFactor: BigNumber;
-  status: string;
-  startTime: DateTime;
-  signUpDeadline: DateTime;
-  votingDeadline: DateTime;
-  totalFunds: FixedNumber;
-  matchingPool: FixedNumber;
-  contributions: FixedNumber;
-  contributors: number;
-  messages: number;
+  fundingRoundAddress: string
+  roundNumber: number
+  userRegistryAddress: string
+  maciAddress: string
+  recipientTreeDepth: number
+  maxContributors: number
+  maxRecipients: number
+  maxMessages: number
+  coordinatorPubKey: PubKey
+  nativeTokenAddress: string
+  nativeTokenSymbol: string
+  nativeTokenDecimals: number
+  voiceCreditFactor: BigNumber
+  status: string
+  startTime: DateTime
+  signUpDeadline: DateTime
+  votingDeadline: DateTime
+  totalFunds: FixedNumber
+  matchingPool: FixedNumber
+  contributions: FixedNumber
+  contributors: number
+  messages: number
+}
+
+export interface TimeLeft {
+  days: number
+  hours: number
+  minutes: number
 }
 
 export enum RoundStatus {
@@ -51,7 +57,7 @@ async function getRoundNumber(roundAddress: string): Promise<number> {
   const eventFilter = factory.filters.RoundStarted()
   const events = await factory.queryFilter(eventFilter, 0)
   const roundIndex = events.findIndex((event) => {
-    const args = (event.args as any)
+    const args = event.args as any
     return args._round.toLowerCase() === roundAddress.toLowerCase()
   })
   if (roundIndex === -1) {
@@ -60,13 +66,11 @@ async function getRoundNumber(roundAddress: string): Promise<number> {
   return roundIndex + extraRounds.length
 }
 
-export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundInfo> {
+export async function getRoundInfo(
+  fundingRoundAddress: string
+): Promise<RoundInfo> {
   const roundNumber = await getRoundNumber(fundingRoundAddress)
-  const fundingRound = new Contract(
-    fundingRoundAddress,
-    FundingRound,
-    provider,
-  )
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const [
     maciAddress,
     nativeTokenAddress,
@@ -101,21 +105,20 @@ export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundIn
   ])
   const startTime = DateTime.fromSeconds(signUpTimestamp.toNumber())
   const signUpDeadline = DateTime.fromSeconds(
-    signUpTimestamp.add(signUpDurationSeconds).toNumber(),
+    signUpTimestamp.add(signUpDurationSeconds).toNumber()
   )
   const votingDeadline = DateTime.fromSeconds(
-    signUpTimestamp.add(signUpDurationSeconds).add(votingDurationSeconds).toNumber(),
+    signUpTimestamp
+      .add(signUpDurationSeconds)
+      .add(votingDurationSeconds)
+      .toNumber()
   )
   const coordinatorPubKey = new PubKey([
     BigInt(coordinatorPubKeyRaw.x),
     BigInt(coordinatorPubKeyRaw.y),
   ])
 
-  const nativeToken = new Contract(
-    nativeTokenAddress,
-    ERC20,
-    provider,
-  )
+  const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
   const nativeTokenSymbol = await nativeToken.symbol()
   const nativeTokenDecimals = await nativeToken.decimals()
 

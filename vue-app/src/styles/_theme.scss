@@ -1,4 +1,4 @@
-@import "./vars";
+@import './vars';
 
 @mixin button($color, $background, $border) {
   display: block;
@@ -22,7 +22,7 @@
 }
 
 .btn-primary {
-  @include button(white, $clr-green, 2px solid $clr-green);
+  @include button(white, $clr-green, none);
 }
 
 .btn-og {
@@ -38,7 +38,11 @@
 }
 
 .etherscan-btn {
-  @include button(white, $clr-pink-light-gradient-inactive, 1px solid $bg-light-color);
+  @include button(
+    white,
+    $clr-pink-light-gradient-inactive,
+    1px solid $bg-light-color
+  );
   box-shadow: $box-shadow;
   display: flex;
   gap: 0.5rem;
@@ -67,7 +71,7 @@
 }
 
 .dropdown-btn {
-  @include button(white, $bg-light-color, 1px solid rgba(115,117,166,0.3));
+  @include button(white, $bg-light-color, 1px solid rgba(115, 117, 166, 0.3));
   padding: 0.25rem 0.5rem;
   border-radius: 8px;
   margin-right: 0.5rem;
@@ -79,6 +83,22 @@
   font-family: Inter;
   line-height: 150%;
   color: $warning-color;
-  text-transform: uppercase;  
+  text-transform: uppercase;
   font-weight: 500;
+}
+
+.button-loader {
+  margin: 0.25rem;
+  padding: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.button-loader:after {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  border-color: #fff transparent #fff transparent;
 }

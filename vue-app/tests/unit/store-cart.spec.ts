@@ -3,7 +3,13 @@ import { BigNumber } from 'ethers'
 
 import { MAX_CART_SIZE, CartItem } from '@/api/contributions'
 import { mutations } from '@/store'
-import { ADD_CART_ITEM, UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
+import {
+  ADD_CART_ITEM,
+  UPDATE_CART_ITEM,
+  REMOVE_CART_ITEM,
+  RESTORE_COMMITTED_CART_TO_LOCAL_CART,
+  SAVE_COMMITTED_CART,
+} from '@/store/mutation-types'
 
 function createItem(props: any): CartItem {
   return {
@@ -31,15 +37,13 @@ describe('Cart mutations', () => {
     expect(state.cart[1]).to.equal(newItem)
   })
 
-  it('does not add item that is already in cart', () => {
+  it('replaces the item if it is already in cart', () => {
     const item = createItem({ id: '0x1' })
     const state = { cart: [item] }
     const newItem = createItem({ id: '0x1', amount: '3.5' })
-    expect(() => {
-      mutations[ADD_CART_ITEM](state, newItem)
-    }).to.throw('item is already in the cart')
+    mutations[ADD_CART_ITEM](state, newItem)
     expect(state.cart.length).to.equal(1)
-    expect(state.cart[0].amount).to.equal(item.amount)
+    expect(state.cart[0].amount).to.equal(newItem.amount)
   })
 
   it('replaces cleared items', () => {
@@ -147,5 +151,29 @@ describe('Cart mutations', () => {
     expect(state.cart[MAX_CART_SIZE - 1].id).to.equal(newItem2.id)
     expect(state.cart[MAX_CART_SIZE - 1].amount).to.equal('0')
     expect(state.cart[MAX_CART_SIZE - 1].isCleared).to.equal(true)
+  })
+})
+
+describe('committedCart Mutations', () => {
+  it('restores committedCart into local cart', () => {
+    const item = createItem({ id: '0x1' })
+    const state = {
+      cart: [],
+      committedCart: [item],
+    }
+
+    mutations[RESTORE_COMMITTED_CART_TO_LOCAL_CART](state)
+    expect(state.cart).to.deep.equal(state.committedCart)
+  })
+
+  it('saves local cart into committedCart', () => {
+    const item = createItem({ id: '0x1' })
+    const state = {
+      cart: [item],
+      committedCart: [],
+    }
+
+    mutations[SAVE_COMMITTED_CART](state)
+    expect(state.committedCart).to.deep.equal(state.cart)
   })
 })

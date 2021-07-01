@@ -1,27 +1,49 @@
 <template>
-    <div id="banner" class="caps">
-      <div class="marquee-content">
-        <div v-if="$store.getters.isJoinOnlyPhase" class="messsage">
-          <span class="label">Funding starts 🗓 {{startDate}}.</span>
-          <span v-if="$store.getters.isRecipientRegistryFull" class="label"> Project applications are closed.</span>
-          <span v-if="$store.getters.isRecipientRegistryFillingUp" class="label"> Hurry, only {{recipientSpacesRemainingString}} left! </span>
-          <span v-if="!$store.getters.isRecipientRegistryFull" class="label"> Time left to add a project: {{joinTimeRemaining}}.</span>
-        </div>
-        <div v-if="$store.getters.isRoundContributionPhase" class="messsage">
-          <span v-if="$store.getters.isRoundContributionPhaseEnding" class="label">⌛️ The round will close in {{contributionTimeRemaining}}. Get your contributions in now! </span>
-          <span v-else class="label">🎉 The round is open! {{contributionTimeRemaining}} left to contribute to your favourite projects </span>
-        </div>
-        <div v-if="$store.getters.isRoundReallocationPhase" class="messsage">
-          <span class="label">Funding is closed! If you contributed, you have {{reallocationTimeRemaining}} left to change your mind</span>
-        </div>
-        <div v-if="$store.getters.isRoundTallying" class="messsage">
-          <span class="label">🎉 Funding is closed! Our smart contracts are busy tallying final amounts... </span>
-        </div>
-        <div v-if="$store.getters.isRoundFinalized" class="messsage">
-          <span class="label">Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds. <router-link to="/projects">View projects</router-link></span>
-        </div>
+  <div id="banner" class="caps">
+    <div class="marquee-content">
+      <div v-if="$store.getters.isJoinOnlyPhase" class="messsage">
+        <span class="label">Funding starts 🗓 {{ startDate }}.</span>
+        <span v-if="$store.getters.isRecipientRegistryFull" class="label">
+          Project applications are closed.</span
+        >
+        <span v-if="$store.getters.isRecipientRegistryFillingUp" class="label">
+          Hurry, only {{ recipientSpacesRemainingString }} left!
+        </span>
+        <span v-if="!$store.getters.isRecipientRegistryFull" class="label">
+          Time left to add a project: {{ joinTimeRemaining }}.</span
+        >
+      </div>
+      <div v-if="$store.getters.isRoundContributionPhase" class="messsage">
+        <span v-if="$store.getters.isRoundContributionPhaseEnding" class="label"
+          >⌛️ The round will close in {{ contributionTimeRemaining }}. Get your
+          contributions in now!
+        </span>
+        <span v-else class="label"
+          >🎉 The round is open! {{ contributionTimeRemaining }} left to
+          contribute to your favourite projects
+        </span>
+      </div>
+      <div v-if="$store.getters.isRoundReallocationPhase" class="messsage">
+        <span class="label"
+          >Funding is closed! If you contributed, you have
+          {{ reallocationTimeRemaining }} left to change your mind</span
+        >
+      </div>
+      <div v-if="$store.getters.isRoundTallying" class="messsage">
+        <span class="label"
+          >🎉 Funding is closed! Our smart contracts are busy tallying
+          contributions...
+        </span>
+      </div>
+      <div v-if="$store.getters.isRoundFinalized" class="messsage">
+        <span class="label"
+          >Funding is closed! Contributions are ready to claim. Head to your
+          project page to claim your funds.
+          <router-link to="/projects">View projects</router-link></span
+        >
       </div>
     </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -48,9 +70,9 @@ export default class RoundStatusBanner extends Vue {
   }
 
   get recipientSpacesRemainingString(): string {
-    return this.$store.getters.recipientSpacesRemaining === 1 ?
-      `${this.$store.getters.recipientSpacesRemaining} project space` :
-      `${this.$store.getters.recipientSpacesRemaining} project spaces`
+    return this.$store.getters.recipientSpacesRemaining === 1
+      ? `${this.$store.getters.recipientSpacesRemaining} project space`
+      : `${this.$store.getters.recipientSpacesRemaining} project spaces`
   }
 }
 </script>
@@ -63,6 +85,7 @@ export default class RoundStatusBanner extends Vue {
   position: relative;
   z-index: 1;
   width: 100%;
+  max-width: 100vw;
   background: $bg-primary-color;
   overflow: hidden;
   white-space: nowrap;
@@ -80,11 +103,11 @@ export default class RoundStatusBanner extends Vue {
 }
 
 .marquee-content:hover {
-  animation-play-state: paused
+  animation-play-state: paused;
 }
 
 .label {
-  font-family: "Glacial Indifference", sans-serif;
+  font-family: 'Glacial Indifference', sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -115,10 +138,10 @@ export default class RoundStatusBanner extends Vue {
 
 @keyframes marquee {
   0% {
-    transform: translateX(0)
+    transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%)
+    transform: translateX(-100%);
   }
 }
 </style>

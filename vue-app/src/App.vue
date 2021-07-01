@@ -1,14 +1,34 @@
 <template>
-  <div id="app">
+  <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
     <div id="content-container">
-      <div id="sidebar" :class="{ hidden: isSidebarCollapsed}">
-          <round-information />
+      <div
+        id="sidebar"
+        v-if="isSidebarShown"
+        :class="`${$store.state.showCartPanel ? 'desktop-l' : 'desktop'}`"
+      >
+        <round-information />
       </div>
-      <div id="content" :class="{ padded: !isSidebarCollapsed }">
+      <div
+        id="content"
+        :class="{
+          padded: isSidebarShown && !isCartPadding,
+          'mr-cart-open': isCartToggledOpen && isSideCartShown,
+          'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
+        }"
+      >
+        <back-to-projects v-if="showProjectsLink" />
         <router-view :key="$route.path" />
       </div>
+      <div
+        id="cart"
+        v-if="isSideCartShown"
+        :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`"
+      >
+        <cart-widget />
+      </div>
     </div>
+    <mobile-tabs v-if="isMobileTabsShown" />
   </div>
 </template>
 
@@ -17,12 +37,21 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import { getCurrentRound } from '@/api/round'
+import { User } from '@/api/user'
 
 import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
+import CartWidget from '@/components/CartWidget.vue'
 import Cart from '@/components/Cart.vue'
+import MobileTabs from '@/components/MobileTabs.vue'
+import BackToProjects from '@/components/BackToProjects.vue'
 
-import { LOAD_USER_INFO, LOAD_ROUND_INFO, LOAD_RECIPIENT_REGISTRY_INFO, SELECT_ROUND } from '@/store/action-types'
+import {
+  LOAD_USER_INFO,
+  LOAD_ROUND_INFO,
+  LOAD_RECIPIENT_REGISTRY_INFO,
+  SELECT_ROUND,
+} from '@/store/action-types'
 
 @Component({
   name: 'clr.fund',
@@ -36,7 +65,14 @@ import { LOAD_USER_INFO, LOAD_ROUND_INFO, LOAD_RECIPIENT_REGISTRY_INFO, SELECT_R
       },
     ],
   },
-  components: { RoundInformation, NavBar, Cart },
+  components: {
+    RoundInformation,
+    NavBar,
+    Cart,
+    MobileTabs,
+    CartWidget,
+    BackToProjects,
+  },
 })
 export default class App extends Vue {
   created() {
@@ -53,26 +89,83 @@ export default class App extends Vue {
   }
 
   async mounted() {
-    const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
+    const roundAddress =
+      this.$store.state.currentRoundAddress || (await getCurrentRound())
     await this.$store.dispatch(SELECT_ROUND, roundAddress)
     this.$store.dispatch(LOAD_ROUND_INFO)
     this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+  }
+
+  private get currentUser(): User {
+    return this.$store.state.currentUser
   }
 
   get isInApp(): boolean {
     return this.$route.name !== 'landing'
   }
 
-  get isSidebarCollapsed(): boolean {
-    const routes = ['landing', 'projectAdded', 'join', 'joinStep']
+  get isSidebarShown(): boolean {
+    const excludedRoutes = [
+      'landing',
+      'project-added',
+      'join',
+      'join-step',
+      'round-information',
+      'verify',
+      'verify-step',
+      'verified',
+    ]
+    return !excludedRoutes.includes(this.$route.name || '')
+  }
+
+  get isMobileTabsShown(): boolean {
+    const excludedRoutes = [
+      'landing',
+      'project-added',
+      'join',
+      'join-step',
+      'verify',
+      'verify-step',
+      'verified',
+    ]
+    return !excludedRoutes.includes(this.$route.name || '')
+  }
+
+  get isSideCartShown(): boolean {
+    return (
+      !!this.currentUser && this.isSidebarShown && this.$route.name !== 'cart'
+    )
+  }
+
+  get isCartPadding(): boolean {
+    const routes = ['cart']
     return routes.includes(this.$route.name || '')
+  }
+
+  get showProjectsLink(): boolean {
+    const excludedRoutes = [
+      'landing',
+      'project-added',
+      'join',
+      'join-step',
+      'projects',
+      'verify',
+      'verify-step',
+      'verified',
+    ]
+    return !excludedRoutes.includes(this.$route.name || '')
+  }
+
+  get isCartToggledOpen(): boolean {
+    return this.$store.state.showCartPanel
   }
 }
 </script>
 
 <style lang="scss">
-@import "styles/vars";
-@import "styles/fonts";
+@import 'styles/vars';
+@import 'styles/fonts';
+@import 'styles/theme';
 
 /**
  * Global styles
@@ -107,8 +200,20 @@ textarea {
   }
 }
 
+.mobile-l {
+  @media (min-width: ($breakpoint-l + 1px)) {
+    display: none !important;
+  }
+}
+
 .desktop {
   @media (max-width: $breakpoint-m) {
+    display: none !important;
+  }
+}
+
+.desktop-l {
+  @media (max-width: $breakpoint-l) {
     display: none !important;
   }
 }
@@ -127,6 +232,11 @@ textarea {
 
 summary:focus {
   outline: none;
+}
+
+.wrapper {
+  min-height: 100%;
+  position: relative;
 }
 
 .input {
@@ -201,19 +311,19 @@ summary:focus {
 
 #content-container {
   display: flex;
-  height: calc(100vh - 61.5px);
+  /* height: calc(100vh - 61.5px); */
+  height: 100%;
   background: $bg-primary-color;
   overflow-x: clip;
   /* overflow-y: scroll; */
 }
 
 #sidebar {
+  box-sizing: border-box;
   background-color: $bg-primary-color;
-  /* border-right: $border; */
-  /* box-sizing: border-box; */
   flex-shrink: 0;
   padding: 1.5rem;
-  width: 20%;
+  width: $cart-width-open;
   height: 100%;
 
   .master {
@@ -246,6 +356,23 @@ summary:focus {
   }
 }
 
+#cart {
+  position: fixed;
+  right: 0;
+  top: $nav-header-height;
+  bottom: 0;
+}
+
+.open-cart {
+  width: $cart-width-open;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.closed-cart {
+  width: 4rem;
+}
+
 #nav-menu {
   /* margin-left: 15%;
   padding: 50px 5% 0; */
@@ -271,7 +398,7 @@ summary:focus {
         border-radius: 10px;
         bottom: 0;
         box-sizing: border-box;
-        content: "";
+        content: '';
         display: block;
         height: 0.75em;
         left: -25px;
@@ -285,10 +412,11 @@ summary:focus {
 
 #content {
   flex: 1;
-  
+  padding-bottom: 4rem;
+
   .content-heading {
     display: block;
-    font-family: "Glacial Indifference", sans-serif;
+    font-family: 'Glacial Indifference', sans-serif;
     font-size: 16px;
     font-weight: normal;
     letter-spacing: 6px;
@@ -305,6 +433,20 @@ summary:focus {
 
 #content.padded {
   padding: $content-space;
+}
+
+#content.mr-cart-open {
+  margin-right: $cart-width-open;
+  @media (max-width: $breakpoint-m) {
+    margin-right: 0;
+  }
+}
+
+#content.mr-cart-closed {
+  margin-right: $cart-width-closed;
+  @media (max-width: $breakpoint-m) {
+    margin-right: 0;
+  }
 }
 
 .verified {
@@ -346,11 +488,15 @@ summary:focus {
   margin-top: 0.5rem;
   font-size: 14px;
   &:before {
-    content: "⚠️ "
+    content: '⚠️ ';
   }
 }
 
-@media (max-width: 900px) {
+.pointer {
+  cursor: pointer;
+}
+
+@media (max-width: $breakpoint-m) {
   #app {
     flex-direction: column;
     position: relative;
@@ -391,10 +537,6 @@ summary:focus {
     display: flex;
     align-items: center;
   }
-
-  /* #content {
-    margin-bottom: $profile-image-size + $content-space * 2; // profile offset
-  } */
 
   #footer {
     max-width: 100vw;
