@@ -81,7 +81,7 @@
         <!-- <div class="checkout-row">
           <p class="m05"><b>Est. transaction fee</b></p>
           <p class="m05">
-            {{ gasFeeAmount }} {{ feeToken }}
+            {{ gasFeeAmount }} {{ depositToken }}
             <span class="o5"
               >({{ fiatSign
               }}{{ calculateFiatFee(this.estimatedGasFee) }})</span
@@ -92,7 +92,7 @@
           <button
             @click="handleSubmit"
             :class="
-              isWaiting || isPending || $store.getters.hasLowFunds
+              isWaiting || isPending || hasLowFunds
                 ? 'btn-action-disabled'
                 : 'btn-action'
             "
@@ -149,7 +149,6 @@ export default class RecipientSubmissionWidget extends Vue {
   fiatFee = '-'
   fiatSign = '$'
   // estimatedGasFee: BigNumber = BigNumber.from(0) TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
-  feeToken = 'ETH'
 
   async created() {
     this.ethPrice = await fetchCurrentEthPrice()
@@ -190,8 +189,8 @@ export default class RecipientSubmissionWidget extends Vue {
   get hasLowFunds(): boolean {
     const { currentUser, recipientRegistryInfo } = this.$store.state
 
-    if (currentUser?.balance && recipientRegistryInfo?.deposit) {
-      return currentUser.balance.lt(recipientRegistryInfo.deposit)
+    if (currentUser?.etherBalance && recipientRegistryInfo?.deposit) {
+      return currentUser.etherBalance.lt(recipientRegistryInfo.deposit)
     }
     return false
   }
