@@ -17,7 +17,7 @@
         </button>
       </div> -->
       <loader v-if="isLoading" />
-      <div v-if-else="requests.length > 0">
+      <div v-else>
         <h2>Projects</h2>
         <table class="requests">
           <thead>
