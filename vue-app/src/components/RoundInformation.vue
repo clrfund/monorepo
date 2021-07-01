@@ -19,18 +19,13 @@
               ><div class="verified"><img src="@/assets/verified.svg" /></div
             ></tooltip>
           </div>
+          <!-- TODO add logic to status -->
           <div class="status">
             <div class="circle pulse open" />
             Open
           </div>
         </div>
-        <div
-          class="round-info-item"
-          v-if="
-            $store.getters.isRoundJoinPhase &&
-            !$store.getters.isRoundContributionPhase
-          "
-        >
+        <div class="round-info-item" v-if="$store.getters.isRoundJoinOnlyPhase">
           <div style="width: 100%">
             <div style="width: 100%; display: flex; gap: 0.5rem">
               <div class="round-info-title">⏱️ Round opening</div>
@@ -283,7 +278,7 @@
             </div>
           </div>
           <div class="round-info-value">
-            <!-- TODO: add no schedule round description -->
+            We haven't yet scheduled a funding round. Stay tuned!
           </div>
         </div>
       </template>
