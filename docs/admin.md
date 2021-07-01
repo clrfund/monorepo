@@ -18,7 +18,7 @@ WALLET_PRIVATE_KEY={{deployer-private-key}}
 
 If using single private key, update `hardhat.config.ts`:
 
-```tsx
+```ts
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || ''
 
 // Change Rinkeby to: 
@@ -27,7 +27,7 @@ const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || ''
 
 Open hardhat console
 
-```bash
+```
 cd contracts/
 yarn hardhat console --network rinkeby
 ```
@@ -199,7 +199,7 @@ await factory.deployNewRound()
 
 Finalize current round and transfer matching funds to the pool:
 
-```
+```js
 await factory.transferMatchingFunds('<total-spent>', '<total-spent-salt>')
 ```
 
@@ -210,13 +210,15 @@ The arguments for `transferMatchingFunds` method should be taken from `tally.jso
 
 Cancel current round:
 
-```
+```js
 await factory.cancelCurrentRound()
 ```
 
 ## User interface
 
 User interface can be configured using environment variables. See [.env file example](../vue-app/.env.example) for details.
+
+> If following along with Rinkeby, make sure to update `VUE_APP_CLRFUND_FACTORY_ADDRESS` with your Rinkeby funding factory address, and update `VUE_APP_ETHEREUM_API_URL` with a Rinkeby provider (ie. Infura or Alchemy). Double check you are using the same user and recipient registry types as used during deployment above.
 
 Build the dApp for production:
 
@@ -228,4 +230,8 @@ Add static files to IPFS:
 
 ```
 ipfs add -r vue-app/dist/
+```
+
+```
+yarn start:web
 ```
