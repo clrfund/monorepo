@@ -73,24 +73,26 @@
     </div>
     <div v-if="step === 4">
       <h3>You just contributed!</h3>
-      <div>
-        Thanks for contributing {{ formatAmount(getTotal()) }}
-        {{ currentRound.nativeTokenSymbol }} to the Eth2 ecosystem.
-        <br />
-        You have
-        <span v-if="$store.getters.canUserReallocate" class="flex">
-          <span v-if="reallocationTimeLeft.days > 0">{{
-            reallocationTimeLeft.days
-          }}</span>
-          <span v-if="reallocationTimeLeft.days > 0">days</span>
-          <span>{{ reallocationTimeLeft.hours }}</span>
-          <span>hours</span>
-          <span v-if="reallocationTimeLeft.days === 0">{{
-            reallocationTimeLeft.minutes
-          }}</span>
-          <span v-if="reallocationTimeLeft.days === 0">minutes</span>
-        </span>
-        to change your choices.
+      <div class="content">
+        <div>
+          Thanks for contributing {{ formatAmount(getTotal()) }}
+          {{ currentRound.nativeTokenSymbol }} to the Eth2 ecosystem.
+        </div>
+        <div>
+          You have
+          <span v-if="$store.getters.canUserReallocate" class="flex">
+            <span v-if="reallocationTimeLeft.days > 0">
+              {{ reallocationTimeLeft.days }} days
+            </span>
+            <span v-if="reallocationTimeLeft.hours > 0">
+              {{ reallocationTimeLeft.hours }} hours
+            </span>
+            <span v-if="reallocationTimeLeft.days === 0">
+              {{ reallocationTimeLeft.minutes }} minutes
+            </span>
+          </span>
+          to change your choices.
+        </div>
       </div>
       <button class="btn-secondary" @click="$emit('close')">Close</button>
     </div>
@@ -301,5 +303,12 @@ export default class ContributionModal extends Vue {
 
 .close-btn {
   margin-top: $modal-space;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 </style>
