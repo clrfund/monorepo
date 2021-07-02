@@ -24,7 +24,7 @@
       </div>
     </div>
     <div v-if="step === 1">
-      <progress-bar currentStep="1" totalSteps="3" />
+      <progress-bar :currentStep="1" :totalSteps="3" />
       <h2>
         Approve {{ formatAmount(getTotal()) }}
         {{ currentRound.nativeTokenSymbol }}
@@ -41,7 +41,7 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <progress-bar currentStep="2" totalSteps="3" />
+      <progress-bar :currentStep="2" :totalSteps="3" />
       <h2>
         Send {{ formatAmount(getTotal()) }}
         {{ currentRound.nativeTokenSymbol }} contribution
@@ -58,7 +58,7 @@
       ></transaction>
     </div>
     <div v-if="step === 3">
-      <progress-bar currentStep="3" totalSteps="3" />
+      <progress-bar :currentStep="3" :totalSteps="3" />
       <h2>Matching pool magic ✨</h2>
       <p>
         This transaction lets the matching pool know how much
