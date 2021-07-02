@@ -241,10 +241,9 @@ h1 {
     img {
       position: absolute;
       bottom: 0;
-      right: calc(-700px + 50vw);
+      right: -128px;
       mix-blend-mode: exclusion;
-      max-width: 88%;
-      max-height: 100%;
+      width: 88%;
       @media (max-width: ($breakpoint-m)) {
         right: 1rem;
         width: 100%;
