@@ -8,15 +8,18 @@
     </div>
     <div class="actions">
       <a
-        style="padding: 0; margin: 0"
+        class="explorerLink"
         :href="'https://etherscan.io/tx/' + hash"
         target="_blank"
         title="View on Etherscan"
         ><img class="icon" src="@/assets/etherscan.svg"
       /></a>
-      <div @click="copyAddress" class="icon">
-        <img style="width: 100%" src="@/assets/copy.svg" />
-      </div>
+      <copy-button
+        :text="hash"
+        type="hash"
+        :callback="updateIsCopied"
+        myClass="tx-receipt"
+      />
     </div>
   </div>
 </template>
@@ -27,17 +30,22 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
 import Loader from '@/components/Loader.vue'
+import CopyButton from '@/components/CopyButton.vue'
 import { blockExplorer } from '@/api/core'
 import { isTransactionMined } from '@/utils/contracts'
 
 @Component({
-  components: { Loader },
+  components: { Loader, CopyButton },
 })
 export default class TransactionReceipt extends Vue {
   isPending = true
   isCopied = false
 
   @Prop() hash!: string
+
+  updateIsCopied(value: boolean): void {
+    this.isCopied = value
+  }
 
   created() {
     this.checkTxStatus()
@@ -52,21 +60,6 @@ export default class TransactionReceipt extends Vue {
       await new Promise((resolve) => setTimeout(resolve, 5000))
       const isMined = await isTransactionMined(this.hash)
       this.isPending = !isMined
-    }
-  }
-
-  async copyAddress(): Promise<void> {
-    if (!this.hash) {
-      return
-    }
-    try {
-      await navigator.clipboard.writeText(this.hash)
-      this.isCopied = true
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      this.isCopied = false
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
     }
   }
 
@@ -131,6 +124,10 @@ export default class TransactionReceipt extends Vue {
   height: 1.5rem;
 }
 
+.explorerLink {
+  padding: 0;
+  margin: 0;
+}
 .status-label-address {
   display: flex;
   gap: 0.25rem;
