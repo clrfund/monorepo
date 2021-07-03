@@ -8,7 +8,7 @@
         :text="hash"
         type="hash"
         :callback="updateIsCopied"
-        divClass="ipfs-copy-btn"
+        myClass="ipfs-copy-widget"
       />
       <tooltip position="bottom" content="View IPFS link"
         ><a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"

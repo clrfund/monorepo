@@ -1,6 +1,6 @@
 <template>
   <tooltip v-if="text" :position="position || 'bottom'" :content="isCopied ? 'Copied!' : `Copy${type && ` ${type}`}`">
-    <div :class="divClass || 'copy-btn'" @click="copyToClipboard">
+    <div :class="myClass || 'button'" @click="copyToClipboard">
       <img width="16px" src="@/assets/copy.svg" />
     </div>
   </tooltip>
@@ -18,7 +18,7 @@ export default class CopyButton extends Vue {
   @Prop() text!: string // Required: Text to copy
   @Prop() type!: string // Optional: Fills in "Copy ____" in tooltip
   @Prop() position!: string // Optional: Position of tooltip (default "bottom")
-  @Prop() divClass!: string
+  @Prop() myClass!: string // Optional class override for custom styling
   @Prop() callback!: (value: boolean) => void
 
   isLoading = false
@@ -54,29 +54,33 @@ export default class CopyButton extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.ipfs-copy-btn {
+@mixin icon($bg, $bg-hover) {
   width: 1rem;
   height: 1rem;
+  border-radius: 1rem;
   padding: 0.25rem;
   cursor: pointer;
+  background: $bg;
   &:hover {
-    background: $bg-light-color;
-    border-radius: 16px;
+    background: $bg-hover;
   }
 }
 
-.copy-btn {
-  border-radius: 50%;
+.tx-receipt {
+  @include icon(none, $clr-pink-light-gradient);
+}
+
+.ipfs-copy-widget {
+  @include icon(none, $bg-light-color);
+}
+
+.button {
+  @include icon(rgba(#FFF, 0.1), rgba(#FFF, 0.1));
   display: flex;
   justify-content: center;
   align-items: center;
-  background: none;
-  border: 1px solid $text-color;
-  padding: 0.5rem;
   box-sizing: border-box;
-  padding: 0.25rem;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid $text-color;
   &:hover {
     transform: scale(1.01);
     opacity: 0.8;
