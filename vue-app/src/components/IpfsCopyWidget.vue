@@ -1,14 +1,15 @@
 <template>
   <div class="copy">
     <div class="hash">
-      <loader class="hash-loader" v-if="isLoading" />
-      <div class="hash-text" v-else>{{ renderCopiedOrHash }}</div>
+      {{ renderCopiedOrHash }}
     </div>
     <div class="icons">
-      <tooltip position="bottom" :content="isCopied ? 'Copied!' : 'Copy hash'"
-        ><div class="icon" @click="copyHash">
-          <img width="16px" src="@/assets/copy.svg" /></div
-      ></tooltip>
+      <copy-button
+        :text="hash"
+        type="hash"
+        :callback="updateIsCopied"
+        divClass="ipfs-copy-btn"
+      />
       <tooltip position="bottom" content="View IPFS link"
         ><a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"
           ><img width="16px" src="@/assets/ipfs-white.svg" /></a
@@ -23,29 +24,21 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
 import Tooltip from '@/components/Tooltip.vue'
+import CopyButton from '@/components/CopyButton.vue'
 
 @Component({
-  components: { Tooltip },
+  components: { CopyButton, Tooltip },
 })
 export default class IpfsCopyWidget extends Vue {
   @Prop() hash!: string
-  isLoading = false
   isCopied = false
+
+  updateIsCopied(value: boolean): void {
+    this.isCopied = value
+  }
 
   get renderCopiedOrHash(): string {
     return this.isCopied ? 'Copied!' : this.hash
-  }
-
-  async copyHash(): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(this.hash)
-      this.isCopied = true
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      this.isCopied = false
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
-    }
   }
 }
 </script>
@@ -77,8 +70,12 @@ export default class IpfsCopyWidget extends Vue {
   display: flex;
   align-items: center;
   gap: 1rem;
+  width: 100%;
   min-width: 10%;
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   @media (max-width: $breakpoint-m) {
     margin-left: 0.5rem;
   }
@@ -119,12 +116,5 @@ export default class IpfsCopyWidget extends Vue {
     background: $bg-light-color;
     border-radius: 16px;
   }
-}
-
-.hash-text {
-  white-space: nowrap;
-  overflow: hidden;
-  width: 100%;
-  text-overflow: ellipsis;
 }
 </style>
