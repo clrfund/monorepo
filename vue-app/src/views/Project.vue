@@ -11,15 +11,6 @@
     <project-profile class="details" :project="project" :previewMode="false" />
     <div class="sticky-column">
       <div class="desktop">
-        <button
-          v-if="hasRegisterBtn()"
-          class="btn-primary"
-          :disabled="!canRegister()"
-          @click="register()"
-        >
-          Register
-        </button>
-
         <add-to-cart-button
           v-if="shouldShowCartInput && hasContributeBtn()"
           :project="project"
@@ -80,13 +71,11 @@ import {
   getRecipientRegistryAddress,
   getProject,
 } from '@/api/projects'
-import { TcrItemStatus } from '@/api/recipient-registry-kleros'
 import { RoundStatus, getCurrentRound } from '@/api/round'
 import { Tally } from '@/api/tally'
 import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
-import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import {
   SELECT_ROUND,
@@ -218,42 +207,6 @@ export default class ProjectView extends Vue {
   get shouldShowCartInput(): boolean {
     const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
     return isRoundContributionPhase || canUserReallocate
-  }
-
-  hasRegisterBtn(): boolean {
-    if (this.project === null) {
-      return false
-    }
-    if (recipientRegistryType === 'optimistic') {
-      return this.project.index === 0
-    } else if (recipientRegistryType === 'kleros') {
-      return (
-        this.project.index === 0 &&
-        this.project.extra.tcrItemStatus === TcrItemStatus.Registered
-      )
-    }
-    return false
-  }
-
-  canRegister(): boolean {
-    return this.hasRegisterBtn() && this.$store.state.currentUser
-  }
-
-  register() {
-    this.$modal.show(
-      RecipientRegistrationModal,
-      { project: this.project },
-      {},
-      {
-        closed: async () => {
-          const project = await getProject(
-            this.$store.state.recipientRegistryAddress,
-            this.$route.params.id
-          )
-          Object.assign(this.project, project)
-        },
-      }
-    )
   }
 
   hasContributeBtn(): boolean {
@@ -482,7 +435,6 @@ export default class ProjectView extends Vue {
 
 .contribute-btn,
 .in-cart,
-.register-btn,
 .claim-btn {
   width: 100%;
 }

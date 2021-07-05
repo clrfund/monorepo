@@ -34,14 +34,6 @@
         </div>
       </div>
       <div class="mobile mb2">
-        <button
-          v-if="hasRegisterBtn()"
-          class="btn-primary"
-          :disabled="!canRegister()"
-          @click="register()"
-        >
-          Register
-        </button>
         <div class="input-button" v-if="hasContributeBtn() && !inCart">
           <img
             style="margin-left: 0.5rem"
@@ -153,11 +145,8 @@ import { DateTime } from 'luxon'
 import { FixedNumber } from 'ethers'
 import { Tally } from '@/api/tally'
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
-import { Project, getProject } from '@/api/projects'
+import { Project } from '@/api/projects'
 import Info from '@/components/Info.vue'
-import { recipientRegistryType } from '@/api/core'
-import { TcrItemStatus } from '@/api/recipient-registry-kleros'
-import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import Markdown from '@/components/Markdown.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
@@ -225,42 +214,6 @@ export default class ProjectProfile extends Vue {
       return item.id === project.id && !item.isCleared
     })
     return index !== -1
-  }
-
-  hasRegisterBtn(): boolean {
-    if (this.project === null) {
-      return false
-    }
-    if (recipientRegistryType === 'optimistic') {
-      return this.project.index === 0
-    } else if (recipientRegistryType === 'kleros') {
-      return (
-        this.project.index === 0 &&
-        this.project.extra.tcrItemStatus === TcrItemStatus.Registered
-      )
-    }
-    return false
-  }
-
-  canRegister(): boolean {
-    return this.hasRegisterBtn() && this.$store.state.currentUser
-  }
-
-  register() {
-    this.$modal.show(
-      RecipientRegistrationModal,
-      { project: this.project },
-      {},
-      {
-        closed: async () => {
-          const project = await getProject(
-            this.$store.state.recipientRegistryAddress,
-            this.$route.params.id
-          )
-          Object.assign(this.project, project)
-        },
-      }
-    )
   }
 
   hasContributeBtn(): boolean {

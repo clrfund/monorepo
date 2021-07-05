@@ -19,7 +19,6 @@ import {
   getContributionAmount,
   isContributionWithdrawn,
 } from '@/api/contributions'
-import { recipientRegistryType } from '@/api/core'
 import { loginUser, logoutUser } from '@/api/gun'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
@@ -265,15 +264,13 @@ const actions = {
       state.recipientRegistryAddress ||
       (await getRecipientRegistryAddress(state.currentRoundAddress))
     commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
-    if (
-      recipientRegistryAddress === null ||
-      recipientRegistryType !== 'optimistic'
-    ) {
+
+    if (recipientRegistryAddress) {
+      const info = await getRegistryInfo(recipientRegistryAddress)
+      commit(SET_RECIPIENT_REGISTRY_INFO, info)
+    } else {
       commit(SET_RECIPIENT_REGISTRY_INFO, null)
-      return
     }
-    const info = await getRegistryInfo(recipientRegistryAddress)
-    commit(SET_RECIPIENT_REGISTRY_INFO, info)
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (state.currentRound && state.currentUser) {

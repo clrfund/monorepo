@@ -9,7 +9,7 @@
     <round-status-banner />
     <back-to-projects :alsoShowOnMobile="true" />
 
-    <div class="content" v-if="isLoading">
+    <div class="content" v-if="isLoading || !$store.state.currentRound">
       <h1>Fetching round data...</h1>
       <loader />
     </div>
