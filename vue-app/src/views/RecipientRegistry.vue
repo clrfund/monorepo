@@ -10,7 +10,6 @@
             <tr>
               <th>Project</th>
               <th>Request type</th>
-              <th>Automatic acceptance date</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -34,6 +33,7 @@
                   </a>
                   {{ request.metadata.name }}
                   <router-link
+                    v-if="hasProjectLink(request)"
                     :to="{
                       name: 'project',
                       params: { id: request.recipientId },
@@ -41,7 +41,6 @@
                     >-></router-link
                   >
                 </div>
-                <!-- <div class="project-description" v-html="renderDescription(request)"></div> -->
                 <details class="project-details">
                   <summary>More</summary>
 
@@ -66,16 +65,9 @@
                     /></span>
                     <code>{{ request.recipient }}</code>
                   </div>
-                  <!-- <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div> -->
                 </details>
               </td>
               <td>{{ request.type }}</td>
-              <td>
-                <div v-if="isPending(request)">
-                  {{ formatDate(request.acceptanceDate) }}
-                </div>
-                <div v-if="!isPending(request)">Challenge period over</div>
-              </td>
               <td>
                 <template v-if="hasProjectLink(request)">
                   <router-link
@@ -92,42 +84,26 @@
                 </template>
               </td>
               <td>
-                <!-- If challenge period is over, display button to register project -->
                 <div
-                  v-if="isAccepted(request)"
-                  @click="register(request)"
-                  class="btn-secondary"
+                  class="btn-warning"
+                  @click="remove(request)"
+                  v-if="isExecuted(request)"
                 >
-                  Add to round
-                </div>
-                <div v-if="$store.getters.isLive" class="btn-warning">
-                  <!-- TODO: admin can remove a project once EXECUTED aka live -->
                   Remove
                 </div>
-              </td>
-              <td v-if="$store.getters.canAdminDecide" class="btn-row">
                 <div
                   class="icon-btn-approve"
-                  @click="register()"
-                  v-if="
-                    $store.getters.isPending &&
-                    !$store.getters.isAccepted &&
-                    !$store.getters.isRejected
-                  "
+                  @click="approve(request)"
+                  v-if="isPending(request)"
                 >
-                  <!-- TODO: admin can approve if the project has been submitted and need review. Ideal scenario is this will also EXECUTE the project to add to the round -->
                   <img src="@/assets/checkmark.svg" />
                 </div>
                 <div
                   class="icon-btn-reject"
-                  v-if="
-                    $store.getters.isPending &&
-                    !$store.getters.isAccepted &&
-                    !$store.getters.isRejected
-                  "
+                  @click="reject(request)"
+                  v-if="isPending(request)"
                 >
                   <img src="@/assets/close.svg" />
-                  <!-- TODO: admin can reject a project once submitted -->
                 </div>
               </td>
             </tr>
@@ -155,7 +131,7 @@ import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 
 import { recipientRegistryType } from '@/api/core'
-import { Project, getRecipientRegistryAddress } from '@/api/projects'
+import { getRecipientRegistryAddress } from '@/api/projects'
 import {
   RegistryInfo,
   RequestType,
@@ -163,6 +139,9 @@ import {
   Request,
   getRegistryInfo,
   getRequests,
+  registerProject,
+  rejectProject,
+  removeProject,
 } from '@/api/recipient-registry-optimistic'
 import { getCurrentRound } from '@/api/round'
 import Loader from '@/components/Loader.vue'
@@ -170,7 +149,7 @@ import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { isSameAddress } from '@/utils/accounts'
 import { markdown } from '@/utils/markdown'
-import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
+import { waitForTransaction } from '@/utils/contracts'
 
 @Component({
   name: 'recipient-registry',
@@ -183,7 +162,6 @@ export default class RecipientRegistryView extends Vue {
   registryInfo: RegistryInfo | null = null
   requests: Request[] = []
   isLoading = true
-  project: Project | null = null
 
   async created() {
     if (recipientRegistryType !== 'optimistic') {
@@ -242,8 +220,8 @@ export default class RecipientRegistryView extends Vue {
     return request.status === RequestStatus.Submitted
   }
 
-  isAccepted(request: Request): boolean {
-    return request.status === RequestStatus.Accepted
+  isRejected(request: Request): boolean {
+    return request.status === RequestStatus.Rejected
   }
 
   isExecuted(request: Request): boolean {
@@ -253,26 +231,71 @@ export default class RecipientRegistryView extends Vue {
   hasProjectLink(request: Request): boolean {
     return (
       request.type === RequestType.Registration &&
-      [RequestStatus.Executed, RequestStatus.Accepted].includes(request.status)
+      request.status === RequestStatus.Executed
     )
   }
 
-  register(request: Request) {
-    this.$modal.show(
-      RecipientRegistrationModal,
-      { project: { id: request.recipientId, name: request.recipient } },
-      {},
-      {
-        closed: async () => {
-          if (this.registryInfo) {
-            this.requests = await getRequests(
-              this.$store.state.recipientRegistryAddress,
-              this.registryInfo
-            )
-          }
-        },
+  async approve(request: Request): Promise<void> {
+    const { recipientRegistryAddress, currentUser } = this.$store.state
+    const signer = currentUser.walletProvider.getSigner()
+
+    let registrationTxHash, registrationTxError
+    try {
+      await waitForTransaction(
+        registerProject(recipientRegistryAddress, request.recipientId, signer),
+        (hash) => (registrationTxHash = hash)
+      )
+      if (this.registryInfo) {
+        this.requests = await getRequests(
+          this.$store.state.recipientRegistryAddress,
+          this.registryInfo
+        )
       }
-    )
+    } catch (error) {
+      registrationTxError = error.message
+    }
+  }
+
+  async reject(request: Request): Promise<void> {
+    const { recipientRegistryAddress, currentUser } = this.$store.state
+    const signer = currentUser.walletProvider.getSigner()
+
+    let registrationTxHash, registrationTxError
+    try {
+      await waitForTransaction(
+        rejectProject(recipientRegistryAddress, request.recipientId, signer),
+        (hash) => (registrationTxHash = hash)
+      )
+      if (this.registryInfo) {
+        this.requests = await getRequests(
+          this.$store.state.recipientRegistryAddress,
+          this.registryInfo
+        )
+      }
+    } catch (error) {
+      registrationTxError = error.message
+    }
+  }
+
+  async remove(request: Request): Promise<void> {
+    const { recipientRegistryAddress, currentUser } = this.$store.state
+    const signer = currentUser.walletProvider.getSigner()
+
+    let registrationTxHash, registrationTxError
+    try {
+      await waitForTransaction(
+        removeProject(recipientRegistryAddress, request.recipientId, signer),
+        (hash) => (registrationTxHash = hash)
+      )
+      if (this.registryInfo) {
+        this.requests = await getRequests(
+          this.$store.state.recipientRegistryAddress,
+          this.registryInfo
+        )
+      }
+    } catch (error) {
+      registrationTxError = error.message
+    }
   }
 }
 </script>

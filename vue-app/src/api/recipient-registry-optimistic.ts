@@ -57,7 +57,6 @@ enum RequestTypeCode {
 export enum RequestStatus {
   Submitted = 'Needs review',
   Rejected = 'Rejected',
-  Accepted = 'Needs adding',
   Executed = 'Live',
   Removed = 'Removed',
 }
@@ -195,7 +194,7 @@ export async function getRequests(
       metadata,
     }
     if (acceptanceDate < DateTime.now()) {
-      request.status = RequestStatus.Accepted
+      // request.status = RequestStatus.Accepted
     }
     // Find corresponding RequestResolved event
     const resolved = requestResolvedEvents.find((event) => {
@@ -214,8 +213,12 @@ export async function getRequests(
     })
     if (resolved) {
       const isRejected = (resolved.args as any)._rejected
+      const type = (resolved.args as any)._type
+
       request.status = isRejected
         ? RequestStatus.Rejected
+        : type === RequestTypeCode.Removal
+        ? RequestStatus.Removed
         : RequestStatus.Executed
     }
     requests.push(request)
@@ -504,6 +507,38 @@ export async function registerProject(
     signer
   )
   const transaction = await registry.executeRequest(recipientId)
+  return transaction
+}
+
+export async function rejectProject(
+  registryAddress: string,
+  recipientId: string,
+  signer: Signer
+) {
+  const registry = new Contract(
+    registryAddress,
+    OptimisticRecipientRegistry,
+    signer
+  )
+  const owner = await registry.owner()
+  const transaction = await registry.challengeRequest(recipientId, owner)
+  return transaction
+}
+
+export async function removeProject(
+  registryAddress: string,
+  recipientId: string,
+  signer: Signer
+) {
+  const registry = new Contract(
+    registryAddress,
+    OptimisticRecipientRegistry,
+    signer
+  )
+
+  await registry.removeRecipient(recipientId)
+  const transaction = await registry.executeRequest(recipientId)
+
   return transaction
 }
 
