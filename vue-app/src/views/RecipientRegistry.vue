@@ -1,10 +1,15 @@
 <template>
   <div class="recipients">
     <div v-if="isRecipientRegistryOwner">
-      <h1 class="content-heading">Recipient registry</h1>
+      <!-- <h1 class="content-heading">Recipient registry</h1> -->
+      <div class="title">
+        <div class="header">
+          <h2>Recipient registry</h2>
+        </div>
+        <div class="hr" />
+      </div>
       <loader v-if="isLoading" />
       <div v-else>
-        <h2>Projects</h2>
         <table class="requests">
           <thead>
             <tr>
@@ -83,7 +88,7 @@
                   {{ request.status }}
                 </template>
               </td>
-              <td>
+              <td class="actions">
                 <div
                   class="btn-warning"
                   @click="remove(request)"
@@ -304,26 +309,27 @@ export default class RecipientRegistryView extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.submit-project {
-  border-bottom: $border;
-  border-top: $border;
-  font-size: 16px;
-  line-height: 150%;
-  padding: $content-space * 1.5;
-  text-align: center;
+.title {
+  display: grid;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
 
-  .submit-project-info {
-    margin: 0 auto;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: auto;
+    h2 {
+      line-height: 130%;
+      margin: 0;
+    }
   }
 
-  button {
-    margin: $content-space auto 0;
+  .hr {
+    width: 100%;
+    border-bottom: 1px solid rgba(115, 117, 166, 1);
   }
-}
-
-h2 {
-  font-weight: 400;
-  margin: $content-space 0;
 }
 
 .requests {
@@ -358,7 +364,8 @@ h2 {
       word-wrap: break-word;
     }
 
-    &:nth-child(n + 2) {
+    &.actions {
+      display: flex;
     }
 
     .project-name {
@@ -370,14 +377,6 @@ h2 {
       height: 1rem;
       margin-right: 0.25rem;
       vertical-align: middle;
-    }
-
-    .project-description ::v-deep {
-      p,
-      ul,
-      ol {
-        margin: 0.5rem 0;
-      }
     }
 
     .project-details {
