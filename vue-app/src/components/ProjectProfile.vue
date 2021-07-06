@@ -108,7 +108,7 @@
           />
           <a
             class="explorerLink"
-            :href="'https://etherscan.io/address/' + hash"
+            :href="`https://etherscan.io/address/${project.address}`"
             target="_blank"
             title="View on Etherscan"
           >
