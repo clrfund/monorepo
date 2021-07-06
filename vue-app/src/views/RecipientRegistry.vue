@@ -244,11 +244,9 @@ export default class RecipientRegistryView extends Vue {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
-    let registrationTxHash, registrationTxError
     try {
       await waitForTransaction(
-        registerProject(recipientRegistryAddress, request.recipientId, signer),
-        (hash) => (registrationTxHash = hash)
+        registerProject(recipientRegistryAddress, request.recipientId, signer)
       )
       if (this.registryInfo) {
         this.requests = await getRequests(
@@ -257,7 +255,8 @@ export default class RecipientRegistryView extends Vue {
         )
       }
     } catch (error) {
-      registrationTxError = error.message
+      /* eslint-disable-next-line no-console */
+      console.warn(error.message)
     }
   }
 
@@ -265,11 +264,14 @@ export default class RecipientRegistryView extends Vue {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
-    let registrationTxHash, registrationTxError
     try {
       await waitForTransaction(
-        rejectProject(recipientRegistryAddress, request.recipientId, signer),
-        (hash) => (registrationTxHash = hash)
+        rejectProject(
+          recipientRegistryAddress,
+          request.recipientId,
+          request.recipient,
+          signer
+        )
       )
       if (this.registryInfo) {
         this.requests = await getRequests(
@@ -278,7 +280,8 @@ export default class RecipientRegistryView extends Vue {
         )
       }
     } catch (error) {
-      registrationTxError = error.message
+      /* eslint-disable-next-line no-console */
+      console.warn(error.message)
     }
   }
 
@@ -286,11 +289,9 @@ export default class RecipientRegistryView extends Vue {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
-    let registrationTxHash, registrationTxError
     try {
       await waitForTransaction(
-        removeProject(recipientRegistryAddress, request.recipientId, signer),
-        (hash) => (registrationTxHash = hash)
+        removeProject(recipientRegistryAddress, request.recipientId, signer)
       )
       if (this.registryInfo) {
         this.requests = await getRequests(
@@ -299,7 +300,8 @@ export default class RecipientRegistryView extends Vue {
         )
       }
     } catch (error) {
-      registrationTxError = error.message
+      /* eslint-disable-next-line no-console */
+      console.warn(error.message)
     }
   }
 }

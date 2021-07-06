@@ -523,6 +523,7 @@ export async function registerProject(
 export async function rejectProject(
   registryAddress: string,
   recipientId: string,
+  recipientAddress: string,
   signer: Signer
 ) {
   const registry = new Contract(
@@ -530,8 +531,10 @@ export async function rejectProject(
     OptimisticRecipientRegistry,
     signer
   )
-  const owner = await registry.owner()
-  const transaction = await registry.challengeRequest(recipientId, owner)
+  const transaction = await registry.challengeRequest(
+    recipientId,
+    recipientAddress
+  )
   return transaction
 }
 
