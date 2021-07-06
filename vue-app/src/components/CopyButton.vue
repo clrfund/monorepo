@@ -1,5 +1,9 @@
 <template>
-  <tooltip v-if="text" :position="position || 'bottom'" :content="isCopied ? 'Copied!' : `Copy${type && ` ${type}`}`">
+  <tooltip
+    v-if="text"
+    :position="position || 'bottom'"
+    :content="isCopied ? 'Copied!' : `Copy${type && ` ${type}`}`"
+  >
     <div :class="myClass || 'button'" @click="copyToClipboard">
       <img width="16px" src="@/assets/copy.svg" />
     </div>
@@ -54,18 +58,6 @@ export default class CopyButton extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-@mixin icon($bg, $bg-hover) {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 1rem;
-  padding: 0.25rem;
-  cursor: pointer;
-  background: $bg;
-  &:hover {
-    background: $bg-hover;
-  }
-}
-
 .tx-receipt {
   @include icon(none, $clr-pink-light-gradient);
 }
@@ -75,15 +67,6 @@ export default class CopyButton extends Vue {
 }
 
 .button {
-  @include icon(rgba(#FFF, 0.1), rgba(#FFF, 0.1));
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  border: 1px solid $text-color;
-  &:hover {
-    transform: scale(1.01);
-    opacity: 0.8;
-  }
+  @include icon(none, $clr-green-gradient);
 }
 </style>

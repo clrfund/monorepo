@@ -10,10 +10,11 @@
         :callback="updateIsCopied"
         myClass="ipfs-copy-widget"
       />
-      <tooltip position="bottom" content="View IPFS link"
-        ><a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"
-          ><img width="16px" src="@/assets/ipfs-white.svg" /></a
-      ></tooltip>
+      <tooltip position="bottom" content="View IPFS link">
+        <a :href="'https://ipfs.io/ipfs/' + hash" target="_blank">
+          <img class="icon" src="@/assets/ipfs-white.svg" />
+        </a>
+      </tooltip>
     </div>
   </div>
 </template>
