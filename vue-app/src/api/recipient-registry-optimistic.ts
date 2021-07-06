@@ -155,7 +155,7 @@ export async function getRequests(
     requestResolvedFilter,
     0
   )
-  const requests: Request[] = []
+  const requests: Record<string, Request> = {}
   for (const event of requestSubmittedEvents) {
     const eventArgs = event.args as any
     let type: RequestType
@@ -164,9 +164,7 @@ export async function getRequests(
       // Removal request
       type = RequestType.Removal
       // Find corresponding registration request and update metadata
-      const registrationRequest = requests.find((item) => {
-        return item.recipientId === eventArgs._recipientId
-      })
+      const registrationRequest = requests[eventArgs._recipientId]
       if (!registrationRequest) {
         throw new Error('registration request not found')
       }
@@ -193,9 +191,6 @@ export async function getRequests(
       recipient: eventArgs._recipient,
       metadata,
     }
-    if (acceptanceDate < DateTime.now()) {
-      // request.status = RequestStatus.Accepted
-    }
     // Find corresponding RequestResolved event
     const resolved = requestResolvedEvents.find((event) => {
       const args = event.args as any
@@ -215,15 +210,21 @@ export async function getRequests(
       const isRejected = (resolved.args as any)._rejected
       const type = (resolved.args as any)._type
 
-      request.status = isRejected
-        ? RequestStatus.Rejected
-        : type === RequestTypeCode.Removal
-        ? RequestStatus.Removed
-        : RequestStatus.Executed
+      if (isRejected) {
+        request.status = RequestStatus.Rejected
+      } else {
+        request.status =
+          type === RequestTypeCode.Removal
+            ? RequestStatus.Removed
+            : RequestStatus.Executed
+      }
     }
-    requests.push(request)
+
+    // In case there are two requests submissions events, we always prioritize
+    // the last one since you can only have one request per recipient
+    requests[request.recipientId] = request
   }
-  return requests
+  return Object.keys(requests).map((recipientId) => requests[recipientId])
 }
 
 // TODO merge this with `Project` inteface
