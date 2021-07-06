@@ -168,12 +168,7 @@ export default class RecipientRegistryView extends Vue {
     }
 
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
-
-    const { recipientRegistryAddress } = this.$store.state
-    this.requests = await getRequests(
-      recipientRegistryAddress,
-      this.$store.state.recipientRegistryInfo
-    )
+    await this.loadRequests()
     this.isLoading = false
   }
 
@@ -188,6 +183,15 @@ export default class RecipientRegistryView extends Vue {
       this.isUserConnected &&
       !!recipientRegistryInfo &&
       isSameAddress(currentUser.walletAddress, recipientRegistryInfo.owner)
+    )
+  }
+
+  async loadRequests() {
+    const { recipientRegistryAddress, recipientRegistryInfo } =
+      this.$store.state
+    this.requests = await getRequests(
+      recipientRegistryAddress,
+      recipientRegistryInfo
     )
   }
 
@@ -227,18 +231,14 @@ export default class RecipientRegistryView extends Vue {
   }
 
   async approve(request: Request): Promise<void> {
-    const { recipientRegistryAddress, recipientRegistryInfo, currentUser } =
-      this.$store.state
+    const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
     try {
       await waitForTransaction(
         registerProject(recipientRegistryAddress, request.recipientId, signer)
       )
-      this.requests = await getRequests(
-        this.$store.state.recipientRegistryAddress,
-        recipientRegistryInfo
-      )
+      await this.loadRequests()
     } catch (error) {
       /* eslint-disable-next-line no-console */
       console.warn(error.message)
@@ -246,8 +246,7 @@ export default class RecipientRegistryView extends Vue {
   }
 
   async reject(request: Request): Promise<void> {
-    const { recipientRegistryAddress, recipientRegistryInfo, currentUser } =
-      this.$store.state
+    const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
     try {
@@ -259,10 +258,7 @@ export default class RecipientRegistryView extends Vue {
           signer
         )
       )
-      this.requests = await getRequests(
-        this.$store.state.recipientRegistryAddress,
-        recipientRegistryInfo
-      )
+      await this.loadRequests()
     } catch (error) {
       /* eslint-disable-next-line no-console */
       console.warn(error.message)
@@ -270,18 +266,14 @@ export default class RecipientRegistryView extends Vue {
   }
 
   async remove(request: Request): Promise<void> {
-    const { recipientRegistryAddress, recipientRegistryInfo, currentUser } =
-      this.$store.state
+    const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
     try {
       await waitForTransaction(
         removeProject(recipientRegistryAddress, request.recipientId, signer)
       )
-      this.requests = await getRequests(
-        this.$store.state.recipientRegistryAddress,
-        recipientRegistryInfo
-      )
+      await this.loadRequests()
     } catch (error) {
       /* eslint-disable-next-line no-console */
       console.warn(error.message)
