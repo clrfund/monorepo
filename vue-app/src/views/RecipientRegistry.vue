@@ -1,7 +1,6 @@
 <template>
   <div class="recipients">
     <div v-if="isRecipientRegistryOwner">
-      <!-- <h1 class="content-heading">Recipient registry</h1> -->
       <div class="title">
         <div class="header">
           <h2>Recipient registry</h2>
@@ -136,25 +135,21 @@ import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 
 import { recipientRegistryType } from '@/api/core'
-import { getRecipientRegistryAddress } from '@/api/projects'
 import {
-  RegistryInfo,
   RequestType,
   RequestStatus,
   Request,
-  getRegistryInfo,
   getRequests,
   registerProject,
   rejectProject,
   removeProject,
 } from '@/api/recipient-registry-optimistic'
-import { getCurrentRound } from '@/api/round'
 import Loader from '@/components/Loader.vue'
-import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { isSameAddress } from '@/utils/accounts'
 import { markdown } from '@/utils/markdown'
 import { waitForTransaction } from '@/utils/contracts'
+import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 
 @Component({
   name: 'recipient-registry',
@@ -164,7 +159,6 @@ import { waitForTransaction } from '@/utils/contracts'
   components: { Loader },
 })
 export default class RecipientRegistryView extends Vue {
-  registryInfo: RegistryInfo | null = null
   requests: Request[] = []
   isLoading = true
 
@@ -172,20 +166,13 @@ export default class RecipientRegistryView extends Vue {
     if (recipientRegistryType !== 'optimistic') {
       return
     }
-    // TODO fetch/read this data from the store vs. storing in component state
-    if (this.$store.state.recipientRegistryAddress === null) {
-      // this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
-      const roundAddress =
-        this.$store.state.currentRoundAddress || (await getCurrentRound())
-      const registryAddress = await getRecipientRegistryAddress(roundAddress)
-      this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
-    }
-    this.registryInfo = await getRegistryInfo(
-      this.$store.state.recipientRegistryAddress
-    )
+
+    await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+
+    const { recipientRegistryAddress } = this.$store.state
     this.requests = await getRequests(
-      this.$store.state.recipientRegistryAddress,
-      this.registryInfo
+      recipientRegistryAddress,
+      this.$store.state.recipientRegistryInfo
     )
     this.isLoading = false
   }
@@ -195,13 +182,12 @@ export default class RecipientRegistryView extends Vue {
   }
 
   get isRecipientRegistryOwner(): boolean {
+    const { recipientRegistryInfo, currentUser } = this.$store.state
+
     return (
       this.isUserConnected &&
-      !!this.registryInfo &&
-      isSameAddress(
-        this.$store.state.currentUser.walletAddress,
-        this.registryInfo.owner
-      )
+      !!recipientRegistryInfo &&
+      isSameAddress(currentUser.walletAddress, recipientRegistryInfo.owner)
     )
   }
 
@@ -241,19 +227,18 @@ export default class RecipientRegistryView extends Vue {
   }
 
   async approve(request: Request): Promise<void> {
-    const { recipientRegistryAddress, currentUser } = this.$store.state
+    const { recipientRegistryAddress, recipientRegistryInfo, currentUser } =
+      this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
     try {
       await waitForTransaction(
         registerProject(recipientRegistryAddress, request.recipientId, signer)
       )
-      if (this.registryInfo) {
-        this.requests = await getRequests(
-          this.$store.state.recipientRegistryAddress,
-          this.registryInfo
-        )
-      }
+      this.requests = await getRequests(
+        this.$store.state.recipientRegistryAddress,
+        recipientRegistryInfo
+      )
     } catch (error) {
       /* eslint-disable-next-line no-console */
       console.warn(error.message)
@@ -261,7 +246,8 @@ export default class RecipientRegistryView extends Vue {
   }
 
   async reject(request: Request): Promise<void> {
-    const { recipientRegistryAddress, currentUser } = this.$store.state
+    const { recipientRegistryAddress, recipientRegistryInfo, currentUser } =
+      this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
     try {
@@ -273,12 +259,10 @@ export default class RecipientRegistryView extends Vue {
           signer
         )
       )
-      if (this.registryInfo) {
-        this.requests = await getRequests(
-          this.$store.state.recipientRegistryAddress,
-          this.registryInfo
-        )
-      }
+      this.requests = await getRequests(
+        this.$store.state.recipientRegistryAddress,
+        recipientRegistryInfo
+      )
     } catch (error) {
       /* eslint-disable-next-line no-console */
       console.warn(error.message)
@@ -286,19 +270,18 @@ export default class RecipientRegistryView extends Vue {
   }
 
   async remove(request: Request): Promise<void> {
-    const { recipientRegistryAddress, currentUser } = this.$store.state
+    const { recipientRegistryAddress, recipientRegistryInfo, currentUser } =
+      this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
     try {
       await waitForTransaction(
         removeProject(recipientRegistryAddress, request.recipientId, signer)
       )
-      if (this.registryInfo) {
-        this.requests = await getRequests(
-          this.$store.state.recipientRegistryAddress,
-          this.registryInfo
-        )
-      }
+      this.requests = await getRequests(
+        this.$store.state.recipientRegistryAddress,
+        recipientRegistryInfo
+      )
     } catch (error) {
       /* eslint-disable-next-line no-console */
       console.warn(error.message)
