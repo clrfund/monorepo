@@ -175,19 +175,6 @@ export default class ProjectView extends Vue {
     }
   }
 
-  async copyAddress(): Promise<void> {
-    if (!this.project?.address) {
-      return
-    }
-    try {
-      await navigator.clipboard.writeText(this.project.address)
-      // TODO: UX success feedback
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
-    }
-  }
-
   get klerosCurateUrl(): string | null {
     if (recipientRegistryType === 'kleros') {
       return this.project?.extra?.tcrItemUrl || null

@@ -122,18 +122,6 @@ export default class NavBar extends Vue {
     return ''
   }
 
-  async copyAddress(): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(
-        this.$store.state.currentUser.walletAddress
-      )
-      // TODO: UX success feedback
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
-    }
-  }
-
   async disconnect(): Promise<void> {
     if (this.currentUser && this.walletProvider) {
       // Log out user
