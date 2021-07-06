@@ -104,7 +104,7 @@
           <copy-button
             :text="project.address"
             type="address"
-            myClass="button"
+            myClass="project-profile"
           />
           <a
             class="explorerLink"
