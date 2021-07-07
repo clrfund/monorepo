@@ -72,7 +72,7 @@ You should usually open a pull request in the following situations:
 - Start work on a contribution that was already asked for, or that you’ve already discussed, in an issue
 - A pull request doesn’t have to represent finished work. It’s usually better to open a pull request early on, so others can watch or give feedback on your progress. Just mark it as a “WIP” (Work in Progress) in the subject line. You can always add more commits later.
 
-If the project is on GitHub, here’s how to submit a pull request:
+Here’s how to submit a pull request:
 
 1) Fork the repository and clone it locally. Connect your local to the original “upstream” repository by adding it as a remote. Pull in changes from “upstream” often so that you stay up to date so that when you submit your pull request, merge conflicts will be less likely.
 2) Create a branch for your edits.
