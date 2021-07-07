@@ -66,6 +66,7 @@ import {
   SET_TALLY,
   SET_CURRENT_USER,
   SET_RECIPIENT_DATA,
+  RESET_RECIPIENT_DATA,
   SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_RECIPIENT_REGISTRY_INFO,
   TOGGLE_SHOW_CART_PANEL,
@@ -212,6 +213,9 @@ export const mutations = {
     } else {
       state.recipient[payload.step] = payload.updatedData[payload.step]
     }
+  },
+  [RESET_RECIPIENT_DATA](state) {
+    state.recipient = null
   },
   [TOGGLE_SHOW_CART_PANEL](state, isOpen: boolean | undefined) {
     // Handle the case of both null and undefined
