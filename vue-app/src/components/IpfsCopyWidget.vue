@@ -109,13 +109,6 @@ export default class IpfsCopyWidget extends Vue {
 }
 
 .icon {
-  width: 1rem;
-  height: 1rem;
-  padding: 0.25rem;
-  cursor: pointer;
-  &:hover {
-    background: $bg-light-color;
-    border-radius: 16px;
-  }
+  @include icon(none, $bg-light-color);
 }
 </style>
