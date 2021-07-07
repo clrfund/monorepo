@@ -134,6 +134,7 @@ export interface Request {
   recipientId: string
   recipient: string
   metadata: RecipientMetadata
+  requester: string
 }
 
 export async function getRequests(
@@ -190,6 +191,7 @@ export async function getRequests(
       recipientId: eventArgs._recipientId,
       recipient: eventArgs._recipient,
       metadata,
+      requester: eventArgs._requester,
     }
     // Find corresponding RequestResolved event
     const resolved = requestResolvedEvents.find((event) => {
@@ -523,7 +525,7 @@ export async function registerProject(
 export async function rejectProject(
   registryAddress: string,
   recipientId: string,
-  recipientAddress: string,
+  requesterAddress: string,
   signer: Signer
 ) {
   const registry = new Contract(
@@ -533,7 +535,7 @@ export async function rejectProject(
   )
   const transaction = await registry.challengeRequest(
     recipientId,
-    recipientAddress
+    requesterAddress
   )
   return transaction
 }

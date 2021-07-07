@@ -254,7 +254,7 @@ export default class RecipientRegistryView extends Vue {
         rejectProject(
           recipientRegistryAddress,
           request.recipientId,
-          request.recipient,
+          request.requester,
           signer
         )
       )

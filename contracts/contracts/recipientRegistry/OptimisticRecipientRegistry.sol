@@ -38,7 +38,8 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     RequestType indexed _type,
     address _recipient,
     string _metadata,
-    uint256 _timestamp
+    uint256 _timestamp,
+    address _requester
   );
   event RequestResolved(
     bytes32 indexed _recipientId,
@@ -114,7 +115,8 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
       RequestType.Registration,
       _recipient,
       _metadata,
-      block.timestamp
+      block.timestamp,
+      msg.sender
     );
   }
 
@@ -142,7 +144,8 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
       RequestType.Removal,
       address(0),
       '',
-      block.timestamp
+      block.timestamp,
+      msg.sender
     );
   }
 
