@@ -105,6 +105,7 @@
             :text="project.address"
             type="address"
             myClass="project-profile"
+            :hasBorder="true"
           />
           <a
             class="explorerLink"
@@ -461,6 +462,7 @@ export default class ProjectProfile extends Vue {
       padding: 0;
       .icon {
         @include icon(none, $clr-green-gradient);
+        border: 1px solid $text-color;
       }
     }
   }
