@@ -4,7 +4,10 @@
     :position="position || 'bottom'"
     :content="isCopied ? 'Copied!' : `Copy${type && ` ${type}`}`"
   >
-    <div :class="myClass || 'button'" @click="copyToClipboard">
+    <div
+      :class="`${myClass || 'default'} ${hasBorder && 'border'}`"
+      @click="copyToClipboard"
+    >
       <img width="16px" src="@/assets/copy.svg" />
     </div>
   </tooltip>
@@ -23,6 +26,7 @@ export default class CopyButton extends Vue {
   @Prop() type!: string // Optional: Fills in "Copy ____" in tooltip
   @Prop() position!: string // Optional: Position of tooltip (default "bottom")
   @Prop() myClass!: string // Optional class override for custom styling
+  @Prop() hasBorder!: boolean
   @Prop() callback!: (value: boolean) => void
 
   isLoading = false
@@ -58,6 +62,10 @@ export default class CopyButton extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
+.default {
+  @include icon(none, none);
+}
+
 .tx-receipt {
   @include icon(none, $clr-pink-light-gradient);
 }
@@ -72,7 +80,10 @@ export default class CopyButton extends Vue {
 
 .profile {
   @include icon(rgba(white, 0.1), rgba(white, 0.2));
-  border: 1px solid $text-color;
   padding: 0.5rem;
+}
+
+.border {
+  border: 1px solid $text-color;
 }
 </style>
