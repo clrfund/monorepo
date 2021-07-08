@@ -461,7 +461,7 @@ export default class ProjectProfile extends Vue {
       margin: 0;
       padding: 0;
       .icon {
-        @include icon(none, $clr-green-gradient);
+        @include icon(none, $bg-light-color);
         border: 1px solid $text-color;
       }
     }

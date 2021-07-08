@@ -65,12 +65,8 @@ export default class CopyButton extends Vue {
   @include icon(none, $clr-pink-light-gradient);
 }
 
-.ipfs-copy-widget {
+.ipfs-copy-widget, .project-profile {
   @include icon(none, $bg-light-color);
-}
-
-.project-profile {
-  @include icon(none, $clr-green-gradient);
 }
 
 .profile {
