@@ -40,21 +40,7 @@
           <span>Contributed!</span>
         </button>
       </div>
-      <div class="link-box">
-        <h2 class="link-title">Check them out</h2>
-        <div v-if="project.githubUrl" class="link-row">
-          <img src="@/assets/GitHub.svg" />
-          <a :href="project.githubUrl">GitHub repo</a>
-        </div>
-        <div v-if="project.twitterUrl" class="link-row">
-          <img src="@/assets/Twitter.svg" />
-          <a :href="project.twitterUrl">@Twitter</a>
-        </div>
-        <div v-if="project.websiteUrl" class="link-row">
-          <img src="@/assets/Meridians.svg" />
-          <a :href="project.websiteUrl">{{ project.websiteUrl }}</a>
-        </div>
-      </div>
+      <link-box :project="project" />
     </div>
   </div>
 </template>
@@ -77,6 +63,7 @@ import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
+import LinkBox from '@/components/LinkBox.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -93,7 +80,7 @@ import { markdown } from '@/utils/markdown'
   metaInfo() {
     return { title: (this as any).project?.name || '' }
   },
-  components: { Loader, ProjectProfile, AddToCartButton },
+  components: { Loader, ProjectProfile, AddToCartButton, LinkBox },
 })
 export default class ProjectView extends Vue {
   project: Project | null = null
@@ -369,34 +356,12 @@ export default class ProjectView extends Vue {
   line-height: 150%;
 }
 
-.link-box {
-  background: $bg-primary-color;
-  padding: 1.5rem;
-  /* min-width: 320px; */
-  border-radius: 16px;
-  box-shadow: $box-shadow;
-}
-
 .admin-box {
   background: $bg-primary-color;
   padding: 1.5rem;
   min-width: 320px;
   border-radius: 16px;
   border: 1px solid $error-color;
-}
-
-.link-title {
-  font-size: 24px;
-  margin: 0;
-  margin-bottom: 1rem;
-  font-family: 'Glacial Indifference', sans-serif;
-}
-
-.link-row {
-  display: flex;
-  align-items: center;
-  padding: 0.5rem;
-  gap: 0.5rem;
 }
 
 .project-name {

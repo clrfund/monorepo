@@ -127,21 +127,7 @@
         <markdown :raw="project.teamDescription" />
       </div>
     </div>
-    <div v-if="previewMode">
-      <h2 class="link-title">Check them out</h2>
-      <div v-if="project.githubUrl" class="link-row">
-        <img src="@/assets/GitHub.svg" />
-        <a :href="project.githubUrl">GitHub repo</a>
-      </div>
-      <div v-if="project.twitterUrl" class="link-row">
-        <img src="@/assets/Twitter.svg" />
-        <a :href="project.twitterUrl">@Twitter</a>
-      </div>
-      <div v-if="project.websiteUrl" class="link-row">
-        <img src="@/assets/Meridians.svg" />
-        <a :href="project.websiteUrl">{{ project.websiteUrl }}</a>
-      </div>
-    </div>
+    <link-box v-if="previewMode" :project="project" class="mt2" />
   </div>
 </template>
 
@@ -162,14 +148,9 @@ import { RoundStatus } from '@/api/round'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 import ClaimModal from '@/components/ClaimModal.vue'
+import LinkBox from '@/components/LinkBox.vue'
 
-@Component({
-  components: {
-    Markdown,
-    Info,
-    CopyButton,
-  },
-})
+@Component({ components: { Markdown, Info, LinkBox, CopyButton } })
 export default class ProjectProfile extends Vue {
   allocatedAmount: FixedNumber | null = null
   contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
@@ -467,13 +448,6 @@ export default class ProjectProfile extends Vue {
     }
   }
 
-  .link-row {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    gap: 0.5rem;
-  }
-
   .input-button {
     background: #f7f7f7;
     border-radius: 2rem;
@@ -534,6 +508,10 @@ export default class ProjectProfile extends Vue {
 
   .mb2 {
     margin-bottom: 2rem;
+  }
+
+  .mt2 {
+    margin-top: 2rem;
   }
 }
 </style>
