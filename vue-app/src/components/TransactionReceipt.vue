@@ -15,9 +15,9 @@
         ><img class="icon" src="@/assets/etherscan.svg"
       /></a>
       <copy-button
-        :text="hash"
-        type="hash"
-        :callback="updateIsCopied"
+        :value="hash"
+        text="hash"
+        v-on:copied="updateIsCopied"
         myClass="tx-receipt"
       />
     </div>

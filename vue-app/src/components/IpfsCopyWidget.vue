@@ -5,9 +5,9 @@
     </div>
     <div class="icons">
       <copy-button
-        :text="hash"
-        type="hash"
-        :callback="updateIsCopied"
+        :value="hash"
+        text="hash"
+        v-on:copied="updateIsCopied"
         myClass="ipfs-copy-widget"
       />
       <tooltip position="bottom" content="View IPFS link">
@@ -34,8 +34,8 @@ export default class IpfsCopyWidget extends Vue {
   @Prop() hash!: string
   isCopied = false
 
-  updateIsCopied(value: boolean): void {
-    this.isCopied = value
+  updateIsCopied(isCopied: boolean): void {
+    this.isCopied = isCopied
   }
 
   get renderCopiedOrHash(): string {

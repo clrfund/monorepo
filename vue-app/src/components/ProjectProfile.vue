@@ -102,8 +102,8 @@
         </div>
         <div class="copy-div">
           <copy-button
-            :text="project.address"
-            type="address"
+            :value="project.address"
+            text="address"
             myClass="project-profile"
             :hasBorder="true"
           />

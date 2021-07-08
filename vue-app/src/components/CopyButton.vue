@@ -1,8 +1,8 @@
 <template>
   <tooltip
-    v-if="text"
+    v-if="value"
     :position="position || 'bottom'"
-    :content="isCopied ? 'Copied!' : `Copy${type && ` ${type}`}`"
+    :content="isCopied ? 'Copied!' : `Copy${text && ` ${text}`}`"
   >
     <div
       :class="`${myClass || 'default'} ${hasBorder && 'border'}`"
@@ -22,12 +22,11 @@ import Tooltip from '@/components/Tooltip.vue'
 
 @Component({ components: { Tooltip } })
 export default class CopyButton extends Vue {  
-  @Prop() text!: string // Required: Text to copy
-  @Prop() type!: string // Optional: Fills in "Copy ____" in tooltip
+  @Prop() value!: string // Required: Text to copy
+  @Prop() text!: string // Optional: Fills in "Copy ____" in tooltip
   @Prop() position!: string // Optional: Position of tooltip (default "bottom")
   @Prop() myClass!: string // Optional class override for custom styling
   @Prop() hasBorder!: boolean
-  @Prop() callback!: (value: boolean) => void
 
   isLoading = false
   isCopied = false
@@ -35,17 +34,13 @@ export default class CopyButton extends Vue {
   async copyToClipboard (): Promise<void> {
     this.isLoading = true
     try {
-      await navigator.clipboard.writeText(this.text)
+      await navigator.clipboard.writeText(this.value)
       this.isLoading = false
       this.isCopied = true
-      if (typeof this.callback !== 'undefined') {
-        this.callback(true)
-      }
+      this.$emit('copied', true)
       await new Promise((resolve) => setTimeout(resolve, 1000))
       this.isCopied = false
-      if (typeof this.callback !== 'undefined') {
-        this.callback(false)
-      }
+      this.$emit('copied', false)
     } catch (error) {
       this.isLoading = false
       if (process.env.NODE_ENV !== "production") {

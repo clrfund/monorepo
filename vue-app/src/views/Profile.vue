@@ -15,8 +15,8 @@
         <h2 class="address">{{ renderUserAddress(16) }}</h2>
         <div class="action-row">
           <copy-button
-            :text="currentUser.walletAddress"
-            type="address"
+            :value="currentUser.walletAddress"
+            text="address"
             myClass="profile"
             class="copy"
           />
