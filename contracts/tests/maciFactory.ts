@@ -34,18 +34,18 @@ describe('MACI factory', () => {
 
   it('sets default MACI parameters', async () => {
     const { maxUsers, maxMessages, maxVoteOptions } = await maciFactory.maxValues()
-    expect(maxUsers).to.equal(15)
-    expect(maxMessages).to.equal(15)
-    expect(maxVoteOptions).to.equal(24)
+    expect(maxUsers).to.equal(4294967295)
+    expect(maxMessages).to.equal(4294967295)
+    expect(maxVoteOptions).to.equal(124)
     expect(await maciFactory.signUpDuration()).to.equal(604800);
     expect(await maciFactory.votingDuration()).to.equal(604800);
   });
 
   it('sets MACI parameters', async () => {
     maciParameters.update({
-      stateTreeDepth: 8,
-      messageTreeDepth: 12,
-      voteOptionTreeDepth: 4,
+      stateTreeDepth: 32,
+      messageTreeDepth: 32,
+      voteOptionTreeDepth: 3,
       signUpDuration: 86400,
       votingDuration: 86400,
     });
@@ -82,7 +82,7 @@ describe('MACI factory', () => {
     await expect(maciDeployed).to.emit(maciFactory, 'MaciDeployed');
 
     const deployTx = await maciDeployed;
-    expect(await getGasUsage(deployTx)).lessThan(7200000);
+    expect(await getGasUsage(deployTx)).lessThan(9000000);
   });
 
   it('allows only owner to deploy MACI', async () => {

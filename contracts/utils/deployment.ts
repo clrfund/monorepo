@@ -19,9 +19,9 @@ export function linkBytecode(
 
 const CIRCUITS: {[name: string]: any} = {
   test: {
-    batchUstVerifier: 'BatchUpdateStateTreeVerifier',
-    qvtVerifier: 'QuadVoteTallyVerifier',
-    treeDepths: { stateTreeDepth: 4, messageTreeDepth: 4, voteOptionTreeDepth: 2 },
+    batchUstVerifier: 'BatchUpdateStateTreeVerifier32',
+    qvtVerifier: 'QuadVoteTallyVerifier32',
+    treeDepths: { stateTreeDepth: 32, messageTreeDepth: 32, voteOptionTreeDepth: 3 },
   },
   small: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifierSmall',
