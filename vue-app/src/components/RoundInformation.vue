@@ -7,7 +7,7 @@
       <template v-if="currentRound">
         <div class="round">
           <div style="display: flex; align-items: center">
-            <h2 style="line-height: 120%; margin: 0">Eth2 CLR</h2>
+            <h2 style="line-height: 120%; margin: 0">CLR.fund</h2>
             <tooltip
               position="top"
               :content="currentRound.fundingRoundAddress"

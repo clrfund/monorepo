@@ -49,8 +49,8 @@ export default class CriteriaModal extends Vue {
   criterion = [
     {
       emoji: '💰',
-      criteria: 'Related to Eth2 and staking',
-      description: 'Your project must support Ethereum staking/validating.',
+      criteria: 'Public Good',
+      description: 'Your project must be a public good.',
     },
     {
       emoji: '🤲',

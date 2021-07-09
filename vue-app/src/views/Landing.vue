@@ -9,7 +9,7 @@
           <img src="@/assets/docking.png" />
         </div>
         <div class="hero-content">
-          <h1>Send your favourite Eth2 projects to the moon!</h1>
+          <h1>Send your favourite projects to the moon!</h1>
           <div id="subtitle" class="subtitle">
             Every project you contribute to gets a portion of extra funding.
           </div>
@@ -33,8 +33,7 @@
           <div class="column">
             <h2>Join the funding round</h2>
             <p>
-              Add your project to the next funding round. If you're working on
-              anything related to Eth2, you can join in.
+              Add your project to the next funding round.
             </p>
           </div>
           <div class="button-group">
@@ -157,9 +156,6 @@
         <h2>More</h2>
         <div class="link-li">
           <a href="https://github.com/ethereum/clrfund/">GitHub</a>
-        </div>
-        <div class="link-li">
-          <a href="https://ethereum.org/eth2/">More on Eth2</a>
         </div>
         <div class="link-li">
           <router-link to="/how-it-works">How the round works</router-link>

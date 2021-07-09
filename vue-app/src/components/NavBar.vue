@@ -4,14 +4,14 @@
       <img
         class="ef-logo"
         alt="ethereum foundation"
-        src="@/assets/eth-diamond-rainbow.svg"
+        src="@/assets/clr.svg"
       />
     </router-link>
     <router-link v-else to="/projects">
       <img
         class="ef-logo"
         alt="ethereum foundation"
-        src="@/assets/eth-diamond-rainbow.svg"
+        src="@/assets/clr.svg"
       />
     </router-link>
     <div class="btn-row">

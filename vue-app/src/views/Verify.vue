@@ -209,8 +209,7 @@
                 <div>
                   <div class="tag">💡Most interesting</div>
                   <h3>
-                    Join us at “The consensus layer bonanza – an evening with
-                    the eth2 researchers”
+                    Join us at “CLR.hack”
                   </h3>
                 </div>
                 <img

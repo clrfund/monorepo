@@ -10,7 +10,7 @@
 
     <h2>Quick recap on quadratic funding</h2>
     <p>
-      In this ETH2 CLR, projects will receive funding from individual
+      In CLR.fund, projects will receive funding from individual
       contributions and the matching pool, supplied by the Ethereum Foundation.
       When you contribute to your favourite projects, your contribution also
       acts as a vote. The more contributions a project receives, the more votes.

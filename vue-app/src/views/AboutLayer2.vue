@@ -17,7 +17,7 @@
     <h2>Why Layer2?</h2>
     <p>
       As a decentralized funding product, you'll need to submit a few
-      transactions on the way to contributing to your favourite Eth2 projects.
+      transactions on the way to contributing to your favourite projects.
       On mainnet, this would lead to quite a bill of transaction fees. We've
       opted to use [layer 2 solution], so your transaction fees are at a
       fraction of the cost and a lot quicker too.

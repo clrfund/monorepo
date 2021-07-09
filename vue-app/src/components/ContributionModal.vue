@@ -76,7 +76,7 @@
       <div class="content">
         <div>
           Thanks for contributing {{ formatAmount(getTotal()) }}
-          {{ currentRound.nativeTokenSymbol }} to the Eth2 ecosystem.
+          {{ currentRound.nativeTokenSymbol }} to the CLR.fund ecosystem.
         </div>
         <div>
           You have
