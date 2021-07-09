@@ -11,7 +11,7 @@ Vue.use(VModal, {
   dynamicDefaults: {
     adaptive: true,
     clickToClose: false,
-    height: 'auto',
+    height: '100%',
     width: 450,
   },
 })
@@ -21,5 +21,5 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
-  render: h => h(App),
+  render: (h) => h(App),
 }).$mount('#app')
