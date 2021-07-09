@@ -1,17 +1,13 @@
 <template>
   <div :class="{ container: !isActionButton }">
-    <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
-    <template v-else-if="!isLoaded()"></template>
-    <div
-      v-else-if="walletProvider && !isCorrectNetwork()"
-      class="provider-error"
-    >
+    <template v-if="!isLoaded()"></template>
+    <div v-if="walletProvider && !isCorrectNetwork()" class="provider-error">
       Please change network to {{ networkName }}
     </div>
     <button
-      v-else-if="walletProvider && !currentUser"
+      v-else-if="!currentUser"
       :class="isActionButton ? 'btn-action' : 'app-btn'"
-      @click="connect"
+      @click="showModal()"
     >
       Connect
     </button>
@@ -49,24 +45,15 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { Network } from '@ethersproject/networks'
-import { Web3Provider } from '@ethersproject/providers'
 import { commify, formatUnits } from '@ethersproject/units'
 
 import { provider as jsonRpcProvider } from '@/api/core'
-import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
-import {
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-  LOGIN_USER,
-  LOGOUT_USER,
-} from '@/store/action-types'
-import { SET_CURRENT_USER } from '@/store/mutation-types'
-import { sha256 } from '@/utils/crypto'
+import { User } from '@/api/user'
+import WalletModal from '@/components/WalletModal.vue'
+import { LOGOUT_USER } from '@/store/action-types'
 import Profile from '@/views/Profile.vue'
 
-@Component({ components: { Profile } })
+@Component({ components: { Profile, WalletModal } })
 export default class WalletWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
   private walletChainId: string | null = null
@@ -175,52 +162,16 @@ export default class WalletWidget extends Vue {
     }
   }
 
-  async connect(): Promise<void> {
-    if (!this.walletProvider || !this.walletProvider.request) {
-      return
-    }
-    let walletAddress
-    try {
-      ;[walletAddress] = await this.walletProvider.request({
-        method: 'eth_requestAccounts',
-      })
-    } catch (error) {
-      // Access denied
-      return
-    }
-    let signature
-    try {
-      signature = await this.walletProvider.request({
-        method: 'personal_sign',
-        params: [LOGIN_MESSAGE, walletAddress],
-      })
-    } catch (error) {
-      // Signature request rejected
-      return
-    }
-    const user: User = {
-      walletProvider: new Web3Provider(this.walletProvider),
-      walletAddress,
-      encryptionKey: sha256(signature),
-      isVerified: null,
-      balance: null,
-      contribution: null,
-    }
-
-    this.$emit('connected')
-
-    getProfileImageUrl(user.walletAddress).then(
-      (url) => (this.profileImageUrl = url)
+  async showModal(): Promise<void> {
+    this.$modal.show(
+      WalletModal,
+      { updateProfileImage: this.updateProfileImage },
+      { width: 400, top: 20 }
     )
-    this.$store.commit(SET_CURRENT_USER, user)
-    await this.$store.dispatch(LOGIN_USER)
-    if (this.$store.state.currentRound) {
-      // Load cart & contributor data for current round
-      this.$store.dispatch(LOAD_USER_INFO)
-      this.$store.dispatch(LOAD_CART)
-      this.$store.dispatch(LOAD_COMMITTED_CART)
-      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-    }
+  }
+
+  updateProfileImage(url: string): void {
+    this.profileImageUrl = url
   }
 
   // TODO: Extract into a shared function
