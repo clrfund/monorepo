@@ -57,7 +57,7 @@ async function getRoundNumber(roundAddress: string): Promise<number> {
   const eventFilter = factory.filters.RoundStarted()
   const events = await factory.queryFilter(eventFilter, 0)
   const roundIndex = events.findIndex((event) => {
-    const args = event.args as any
+    const args = (event.args as any)
     return args._round.toLowerCase() === roundAddress.toLowerCase()
   })
   if (roundIndex === -1) {
@@ -66,11 +66,13 @@ async function getRoundNumber(roundAddress: string): Promise<number> {
   return roundIndex + extraRounds.length
 }
 
-export async function getRoundInfo(
-  fundingRoundAddress: string,
-): Promise<RoundInfo> {
+export async function getRoundInfo(fundingRoundAddress: string): Promise<RoundInfo> {
   const roundNumber = await getRoundNumber(fundingRoundAddress)
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
+  const fundingRound = new Contract(
+    fundingRoundAddress,
+    FundingRound,
+    provider,
+  )
   const [
     maciAddress,
     nativeTokenAddress,
@@ -108,17 +110,18 @@ export async function getRoundInfo(
     signUpTimestamp.add(signUpDurationSeconds).toNumber(),
   )
   const votingDeadline = DateTime.fromSeconds(
-    signUpTimestamp
-      .add(signUpDurationSeconds)
-      .add(votingDurationSeconds)
-      .toNumber(),
+    signUpTimestamp.add(signUpDurationSeconds).add(votingDurationSeconds).toNumber(),
   )
   const coordinatorPubKey = new PubKey([
     BigInt(coordinatorPubKeyRaw.x),
     BigInt(coordinatorPubKeyRaw.y),
   ])
 
-  const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
+  const nativeToken = new Contract(
+    nativeTokenAddress,
+    ERC20,
+    provider,
+  )
   const nativeTokenSymbol = await nativeToken.symbol()
   const nativeTokenDecimals = await nativeToken.decimals()
 

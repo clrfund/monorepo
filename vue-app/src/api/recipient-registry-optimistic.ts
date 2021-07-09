@@ -1,8 +1,5 @@
 import { BigNumber, Contract, Event, Signer } from 'ethers'
-import {
-  TransactionResponse,
-  TransactionReceipt,
-} from '@ethersproject/abstract-provider'
+import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
 import { isHexString } from '@ethersproject/bytes'
 import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
@@ -20,14 +17,8 @@ export interface RegistryInfo {
   recipientCount: number;
 }
 
-export async function getRegistryInfo(
-  registryAddress: string,
-): Promise<RegistryInfo> {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider,
-  )
+export async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const deposit = await registry.baseDeposit()
   const challengePeriodDuration = await registry.challengePeriodDuration()
   const network = await provider.getNetwork()
@@ -137,21 +128,11 @@ export async function getRequests(
   registryAddress: string,
   registryInfo: RegistryInfo,
 ): Promise<Request[]> {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider,
-  )
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const requestSubmittedFilter = registry.filters.RequestSubmitted()
-  const requestSubmittedEvents = await registry.queryFilter(
-    requestSubmittedFilter,
-    0,
-  )
+  const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0)
   const requestResolvedFilter = registry.filters.RequestResolved()
-  const requestResolvedEvents = await registry.queryFilter(
-    requestResolvedFilter,
-    0,
-  )
+  const requestResolvedEvents = await registry.queryFilter(requestResolvedFilter, 0)
   const requests: Request[] = []
   for (const event of requestSubmittedEvents) {
     const eventArgs = event.args as any
@@ -179,8 +160,8 @@ export async function getRequests(
       }
     }
     const acceptanceDate = DateTime.fromSeconds(
-      eventArgs._timestamp.toNumber() + registryInfo.challengePeriodDuration,
-    )
+      eventArgs._timestamp.toNumber() +
+      registryInfo.challengePeriodDuration)
     const request: Request = {
       transactionHash: event.transactionHash,
       type,
@@ -197,22 +178,14 @@ export async function getRequests(
     const resolved = requestResolvedEvents.find((event) => {
       const args = event.args as any
       if (request.type === RequestType.Registration) {
-        return (
-          args._recipientId === request.recipientId &&
-          args._type === RequestTypeCode.Registration
-        )
+        return args._recipientId === request.recipientId && args._type === RequestTypeCode.Registration
       } else {
-        return (
-          args._recipientId === request.recipientId &&
-          args._type === RequestTypeCode.Removal
-        )
+        return args._recipientId === request.recipientId && args._type === RequestTypeCode.Removal
       }
     })
     if (resolved) {
       const isRejected = (resolved.args as any)._rejected
-      request.status = isRejected
-        ? RequestStatus.Rejected
-        : RequestStatus.Executed
+      request.status = isRejected ? RequestStatus.Rejected : RequestStatus.Executed
     }
     requests.push(request)
   }
@@ -271,18 +244,10 @@ export async function addRecipient(
   deposit: BigNumber,
   signer: Signer,
 ): Promise<TransactionResponse> {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    signer,
-  )
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
   const recipientData = formToRecipientData(recipientApplicationData)
   const { address, ...metadata } = recipientData
-  const transaction = await registry.addRecipient(
-    address,
-    JSON.stringify(metadata),
-    { value: deposit },
-  )
+  const transaction = await registry.addRecipient(address, JSON.stringify(metadata), { value: deposit })
   return transaction
 }
 
@@ -342,25 +307,13 @@ export async function getProjects(
   startTime?: number,
   endTime?: number,
 ): Promise<Project[]> {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider,
-  )
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const now = DateTime.now().toSeconds()
-  const challengePeriodDuration = (
-    await registry.challengePeriodDuration()
-  ).toNumber()
+  const challengePeriodDuration = (await registry.challengePeriodDuration()).toNumber()
   const requestSubmittedFilter = registry.filters.RequestSubmitted()
-  const requestSubmittedEvents = await registry.queryFilter(
-    requestSubmittedFilter,
-    0,
-  )
+  const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0)
   const requestResolvedFilter = registry.filters.RequestResolved()
-  const requestResolvedEvents = await registry.queryFilter(
-    requestResolvedFilter,
-    0,
-  )
+  const requestResolvedEvents = await registry.queryFilter(requestResolvedFilter, 0)
   const projects: Project[] = []
   for (const event of requestSubmittedEvents) {
     let project: Project
@@ -377,10 +330,7 @@ export async function getProjects(
     // Find corresponding registration event
     const registration = requestResolvedEvents.find((event) => {
       const args = event.args as any
-      return (
-        args._recipientId === project.id &&
-        args._type === RequestTypeCode.Registration
-      )
+      return args._recipientId === project.id && args._type === RequestTypeCode.Registration
     })
     // Unregistered recipients are always visible,
     // even if request is submitted after the end of round.
@@ -436,20 +386,11 @@ export async function getProject(
   if (!isHexString(recipientId, 32)) {
     return null
   }
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider,
-  )
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, provider)
   const now = DateTime.now().toSeconds()
-  const challengePeriodDuration = (
-    await registry.challengePeriodDuration()
-  ).toNumber()
+  const challengePeriodDuration = (await registry.challengePeriodDuration()).toNumber()
   const requestSubmittedFilter = registry.filters.RequestSubmitted(recipientId)
-  const requestSubmittedEvents = await registry.queryFilter(
-    requestSubmittedFilter,
-    0,
-  )
+  const requestSubmittedEvents = await registry.queryFilter(requestSubmittedFilter, 0)
   // Find registration request
   const requestSubmittedEvent = requestSubmittedEvents.find((event) => {
     return (event.args as any)._type === RequestTypeCode.Registration
@@ -471,10 +412,7 @@ export async function getProject(
   }
   // Find corresponding RequestResolved event
   const requestResolvedFilter = registry.filters.RequestResolved(recipientId)
-  const requestResolvedEvents = await registry.queryFilter(
-    requestResolvedFilter,
-    0,
-  )
+  const requestResolvedEvents = await registry.queryFilter(requestResolvedFilter, 0)
   const registration = requestResolvedEvents.find((event) => {
     return (event.args as any)._type === RequestTypeCode.Registration
   })
@@ -503,11 +441,7 @@ export async function registerProject(
   recipientId: string,
   signer: Signer,
 ): Promise<TransactionResponse> {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    signer,
-  )
+  const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
   const transaction = await registry.executeRequest(recipientId)
   return transaction
 }

@@ -19,9 +19,7 @@ export interface User {
   contribution?: BigNumber | null;
 }
 
-export async function getProfileImageUrl(
-  walletAddress: string,
-): Promise<string | null> {
+export async function getProfileImageUrl(walletAddress: string): Promise<string | null> {
   const threeBoxProfileUrl = `https://ipfs.3box.io/profile?address=${walletAddress}`
   let profileImageHash: string
   try {

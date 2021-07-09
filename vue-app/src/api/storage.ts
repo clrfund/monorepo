@@ -1,7 +1,10 @@
 import { sha256, encrypt, decrypt } from '@/utils/crypto'
 import { setValue, getValue, watch, unwatch } from './gun'
 
-function getFullStorageKey(accountId: string, storageKey: string): string {
+function getFullStorageKey(
+  accountId: string,
+  storageKey: string,
+): string {
   accountId = accountId.toLowerCase()
   return sha256(`clrfund-${accountId}-${storageKey}`)
 }
@@ -41,7 +44,10 @@ function watchItem(
   })
 }
 
-function unwatchItem(accountId: string, storageKey: string): void {
+function unwatchItem(
+  accountId: string,
+  storageKey: string,
+): void {
   const fullStorageKey = getFullStorageKey(accountId, storageKey)
   unwatch(fullStorageKey)
 }
