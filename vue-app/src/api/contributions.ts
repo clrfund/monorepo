@@ -69,7 +69,11 @@ export async function getContributionAmount(
   fundingRoundAddress: string,
   contributorAddress: string,
 ): Promise<BigNumber> {
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
+  const fundingRound = new Contract(
+    fundingRoundAddress,
+    FundingRound,
+    provider,
+  )
   const filter = fundingRound.filters.Contribution(contributorAddress)
   const events = await fundingRound.queryFilter(filter, 0)
   const event = events[0]
