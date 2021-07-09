@@ -157,7 +157,7 @@ export default class IpfsImageUpload extends Vue {
 
     // Clear file selector input
     const fileSelector = document.getElementById(
-      `${this.formProp}-input`
+      `${this.formProp}-input`,
     ) as HTMLInputElement
     if (fileSelector) {
       fileSelector.value = ''

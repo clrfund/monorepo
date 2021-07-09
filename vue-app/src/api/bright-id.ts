@@ -42,7 +42,6 @@ export interface Verification {
 }
 
 export class BrightIdError extends Error {
-
   code?: number
 
   constructor(code?: number) {
@@ -54,7 +53,9 @@ export class BrightIdError extends Error {
   }
 }
 
-export async function getVerification(userAddress: string): Promise<Verification | null> {
+export async function getVerification(
+  userAddress: string,
+): Promise<Verification | null> {
   const apiUrl = `${NODE_URL}/verifications/clr.fund/${userAddress}?signed=eth&timestamp=seconds`
   const response = await fetch(apiUrl)
   const data = await response.json()

@@ -62,13 +62,13 @@ export default class CriteriaModal extends Vue {
       emoji: '👺',
       criteria: 'No scams',
       description:
-        "Obviously, your project must not put anyone's funds or information at risk.",
+        'Obviously, your project must not put anyone\'s funds or information at risk.',
     },
     {
       emoji: '👯‍♀️',
       criteria: 'No clones',
       description:
-        "If you've forked code, you must provide additional, unique value to the ecosystem.",
+        'If you\'ve forked code, you must provide additional, unique value to the ecosystem.',
     },
     {
       emoji: '🙋‍♀️',

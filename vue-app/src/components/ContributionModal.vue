@@ -181,13 +181,13 @@ export default class ContributionModal extends Vue {
     // Approve transfer (step 1)
     const allowance = await token.allowance(
       signer.getAddress(),
-      fundingRoundAddress
+      fundingRoundAddress,
     )
     if (allowance < total) {
       try {
         await waitForTransaction(
           token.approve(fundingRoundAddress, total),
-          (hash) => (this.approvalTxHash = hash)
+          (hash) => (this.approvalTxHash = hash),
         )
       } catch (error) {
         this.approvalTxError = error.message
@@ -203,9 +203,9 @@ export default class ContributionModal extends Vue {
       contributionTxReceipt = await waitForTransaction(
         fundingRound.contribute(
           contributorKeypair.pubKey.asContractParam(),
-          total
+          total,
         ),
-        (hash) => (this.contributionTxHash = hash)
+        (hash) => (this.contributionTxHash = hash),
       )
     } catch (error) {
       this.contributionTxError = error.message
@@ -217,13 +217,13 @@ export default class ContributionModal extends Vue {
       contributionTxReceipt,
       maci,
       'SignUp',
-      '_stateIndex'
+      '_stateIndex',
     )
     const voiceCredits = getEventArg(
       contributionTxReceipt,
       maci,
       'SignUp',
-      '_voiceCreditBalance'
+      '_voiceCreditBalance',
     )
     if (!voiceCredits.mul(voiceCreditFactor).eq(total)) {
       throw new Error('Incorrect amount of voice credits')
@@ -251,7 +251,7 @@ export default class ContributionModal extends Vue {
         coordinatorPubKey,
         recipientIndex,
         voiceCredits,
-        nonce
+        nonce,
       )
       messages.push(message)
       encPubKeys.push(encPubKey)
@@ -262,9 +262,9 @@ export default class ContributionModal extends Vue {
       await waitForTransaction(
         fundingRound.submitMessageBatch(
           messages.reverse().map((msg) => msg.asContractParam()),
-          encPubKeys.reverse().map((key) => key.asContractParam())
+          encPubKeys.reverse().map((key) => key.asContractParam()),
         ),
-        (hash) => (this.voteTxHash = hash)
+        (hash) => (this.voteTxHash = hash),
       )
       this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
     } catch (error) {

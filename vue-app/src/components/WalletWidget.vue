@@ -181,7 +181,7 @@ export default class WalletWidget extends Vue {
     }
     let walletAddress
     try {
-      ;[walletAddress] = await this.walletProvider.request({
+      [walletAddress] = await this.walletProvider.request({
         method: 'eth_requestAccounts',
       })
     } catch (error) {
@@ -210,7 +210,7 @@ export default class WalletWidget extends Vue {
     this.$emit('connected')
 
     getProfileImageUrl(user.walletAddress).then(
-      (url) => (this.profileImageUrl = url)
+      (url) => (this.profileImageUrl = url),
     )
     this.$store.commit(SET_CURRENT_USER, user)
     await this.$store.dispatch(LOGIN_USER)
@@ -233,7 +233,7 @@ export default class WalletWidget extends Vue {
         const begin: string = address.substr(0, 2 + beginDigits)
         const end: string = address.substr(
           address.length - endDigits,
-          endDigits
+          endDigits,
         )
         return `${begin}…${end}`
       }

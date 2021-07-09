@@ -472,7 +472,7 @@ export default class Cart extends Vue {
     }
     let walletAddress
     try {
-      ;[walletAddress] = await this.walletProvider.request({
+      [walletAddress] = await this.walletProvider.request({
         method: 'eth_requestAccounts',
       })
     } catch (error) {
@@ -499,7 +499,7 @@ export default class Cart extends Vue {
     }
 
     getProfileImageUrl(user.walletAddress).then(
-      (url) => (this.profileImageUrl = url)
+      (url) => (this.profileImageUrl = url),
     )
     this.$store.commit(SET_CURRENT_USER, user)
     await this.$store.dispatch(LOGIN_USER)
@@ -562,7 +562,7 @@ export default class Cart extends Vue {
     }
     const normalizedValue = FixedNumber.fromValue(
       amount.div(voiceCreditFactor).mul(voiceCreditFactor),
-      nativeTokenDecimals
+      nativeTokenDecimals,
     )
       .toUnsafeFloat()
       .toString()
@@ -590,7 +590,7 @@ export default class Cart extends Vue {
 
   public getCartMatchingPoolTotal(): string {
     return this.formatAmount(
-      this.contribution.sub(this.getCartTotal(this.$store.state.committedCart))
+      this.contribution.sub(this.getCartTotal(this.$store.state.committedCart)),
     )
   }
 
@@ -647,7 +647,7 @@ export default class Cart extends Vue {
     } else if (this.cart.length > MAX_CART_SIZE) {
       return `Your cart can't include over ${MAX_CART_SIZE} projects.`
     } else if (currentRound.status === RoundStatus.Cancelled) {
-      return "Sorry, we've had to cancel this funding round."
+      return 'Sorry, we\'ve had to cancel this funding round.'
     } else if (DateTime.local() >= currentRound.votingDeadline) {
       return 'The funding round has ended.'
     } else if (
@@ -671,7 +671,7 @@ export default class Cart extends Vue {
         } else if (total.gt(currentUser.balance)) {
           const balanceDisplay = formatAmount(
             currentUser.balance,
-            currentRound.nativeTokenDecimals
+            currentRound.nativeTokenDecimals,
           )
           return `Not enough funds. Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}.`
         } else if (this.isGreaterThanMax()) {
@@ -685,7 +685,7 @@ export default class Cart extends Vue {
           return 'Contributor key is not found'
         } else if (this.isGreaterThanInitialContribution()) {
           return `Your new total can't be more than your original ${this.formatAmount(
-            this.contribution
+            this.contribution,
           )} contribution.`
           // TODO: need to turn this into a small number
         } else {
@@ -736,7 +736,7 @@ export default class Cart extends Vue {
     this.$modal.show(
       this.contribution.isZero() ? ContributionModal : ReallocationModal,
       { votes },
-      { width: 500 }
+      { width: 500 },
     )
     this.$store.commit(TOGGLE_EDIT_SELECTION, false)
   }

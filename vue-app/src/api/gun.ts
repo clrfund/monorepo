@@ -56,9 +56,12 @@ export function setValue(key: string, value: string): void {
 export async function getValue(key: string): Promise<string | null> {
   return await new Promise<string | null>((resolve) => {
     // WARNING: once() may not work correctly after on() and off()
-    user.get('data').get(key).once((value) => {
-      resolve(value)
-    })
+    user
+      .get('data')
+      .get(key)
+      .once((value) => {
+        resolve(value)
+      })
   })
 }
 
@@ -66,9 +69,12 @@ export function watch(
   key: string,
   callback: (value: string | null) => any,
 ): void {
-  user.get('data').get(key).on((value) => {
-    callback(value)
-  })
+  user
+    .get('data')
+    .get(key)
+    .on((value) => {
+      callback(value)
+    })
 }
 
 export function unwatch(key: string): void {

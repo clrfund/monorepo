@@ -1,8 +1,8 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">About</h1>
+    <h1 class="content-heading">About Sybil Resistance</h1>
 
-    <h2>What is clr.fund?</h2>
+    <h2>What is sybil resistance?</h2>
     <p>
       Clr.fund is a protocol for efficiently allocating funds to public goods
       that benefit the Ethereum Network according to the preferences of the
@@ -10,7 +10,7 @@
       decentralization, permissionlessness, trustlessness, and pseudonymity.
     </p>
 
-    <h2>Why does clr.fund exist?</h2>
+    <h2>Why is it needed?</h2>
     <p>
       Allocating funds towards public goods — commodities or services that
       deliver a net benefit even when they cannot be sold — is a challenge for
@@ -32,7 +32,7 @@
       for more detail on Clr.fund’s goals and values.
     </p>
 
-    <h2>How does it work?</h2>
+    <h2>What is BrightID?</h2>
     <p>
       The clr.fund protocol uses the
       <a
@@ -91,10 +91,10 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 @Component({
-  name: 'about',
-  metaInfo: { title: 'About' },
+  name: 'sybil-resistance',
+  metaInfo: { title: 'Sybil Resistance' },
 })
-export default class About extends Vue {}
+export default class AboutSybilResistance extends Vue {}
 </script>
 
 <style scoped lang="scss">

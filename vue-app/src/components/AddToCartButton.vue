@@ -120,7 +120,7 @@ export default class AddToCartButton extends Vue {
       {},
       {
         closed: this.handleConnectionModalClose,
-      }
+      },
     )
   }
 

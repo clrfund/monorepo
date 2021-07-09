@@ -65,7 +65,7 @@ export default class ReallocationModal extends Vue {
         coordinatorPubKey,
         recipientIndex,
         voiceCredits,
-        nonce
+        nonce,
       )
       messages.push(message)
       encPubKeys.push(encPubKey)
@@ -75,9 +75,9 @@ export default class ReallocationModal extends Vue {
       await waitForTransaction(
         fundingRound.submitMessageBatch(
           messages.reverse().map((msg) => msg.asContractParam()),
-          encPubKeys.reverse().map((key) => key.asContractParam())
+          encPubKeys.reverse().map((key) => key.asContractParam()),
         ),
-        (hash) => (this.voteTxHash = hash)
+        (hash) => (this.voteTxHash = hash),
       )
       this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
     } catch (error) {

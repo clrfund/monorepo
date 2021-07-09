@@ -64,7 +64,7 @@ export default class CartWidget extends Vue {
     }
     try {
       await navigator.clipboard.writeText(
-        this.currentUser.walletAddress as string
+        this.currentUser.walletAddress as string,
       )
       // alert('Text copied to clipboard')
     } catch (error) {
@@ -157,7 +157,7 @@ export default class CartWidget extends Vue {
     }
     let walletAddress
     try {
-      ;[walletAddress] = await this.walletProvider.request({
+      [walletAddress] = await this.walletProvider.request({
         method: 'eth_requestAccounts',
       })
     } catch (error) {
@@ -184,7 +184,7 @@ export default class CartWidget extends Vue {
     }
 
     getProfileImageUrl(user.walletAddress).then(
-      (url) => (this.profileImageUrl = url)
+      (url) => (this.profileImageUrl = url),
     )
     this.$store.commit(SET_CURRENT_USER, user)
     await this.$store.dispatch(LOGIN_USER)

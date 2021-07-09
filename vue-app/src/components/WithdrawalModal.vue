@@ -48,7 +48,7 @@ export default class WithdrawalModal extends Vue {
     try {
       await waitForTransaction(
         withdrawContribution(fundingRoundAddress, signer),
-        (hash) => (this.withdrawalTxHash = hash)
+        (hash) => (this.withdrawalTxHash = hash),
       )
     } catch (error) {
       this.withdrawalTxError = error.message

@@ -11,10 +11,7 @@ export async function getAllocatedAmount(
 ): Promise<FixedNumber> {
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const allocatedAmount = await fundingRound.getAllocatedAmount(result, spent)
-  return FixedNumber.fromValue(
-    allocatedAmount,
-    tokenDecimals,
-  )
+  return FixedNumber.fromValue(allocatedAmount, tokenDecimals)
 }
 
 export async function isFundsClaimed(

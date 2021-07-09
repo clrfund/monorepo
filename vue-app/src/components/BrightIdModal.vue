@@ -132,13 +132,13 @@ export default class BrightIdModal extends Vue {
     const signer = this.currentUser.walletProvider.getSigner()
     const isSponsored = await isSponsoredUser(
       userRegistryAddress,
-      this.currentUser.walletAddress
+      this.currentUser.walletAddress,
     )
     if (!isSponsored) {
       try {
         await waitForTransaction(
           selfSponsor(userRegistryAddress, signer),
-          (hash) => (this.sponsorTxHash = hash)
+          (hash) => (this.sponsorTxHash = hash),
         )
       } catch (error) {
         this.sponsorTxError = error.message
@@ -154,7 +154,7 @@ export default class BrightIdModal extends Vue {
     try {
       await waitForTransaction(
         registerUser(userRegistryAddress, verification, signer),
-        (hash) => (this.registrationTxHash = hash)
+        (hash) => (this.registrationTxHash = hash),
       )
     } catch (error) {
       this.registrationTxError = error.message

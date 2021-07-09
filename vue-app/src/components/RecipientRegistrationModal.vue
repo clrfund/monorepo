@@ -52,7 +52,7 @@ export default class RecipientRegistrationModal extends Vue {
     try {
       await waitForTransaction(
         registerProject(recipientRegistryAddress, this.project.id, signer),
-        (hash) => (this.registrationTxHash = hash)
+        (hash) => (this.registrationTxHash = hash),
       )
     } catch (error) {
       this.registrationTxError = error.message

@@ -204,9 +204,9 @@ export default class RecipientSubmissionModal extends mixins(validationMixin) {
           this.registryAddress,
           this.$store.state.recipient,
           this.registryInfo.deposit,
-          this.signer
+          this.signer,
         ),
-        (hash) => (this.submissionTxHash = hash)
+        (hash) => (this.submissionTxHash = hash),
       )
     } catch (error) {
       this.submissionTxError = error.message

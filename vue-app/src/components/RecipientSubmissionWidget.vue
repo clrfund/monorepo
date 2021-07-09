@@ -212,7 +212,7 @@ export default class RecipientSubmissionWidget extends Vue {
   public calculateFiatFee(ethAmount: BigNumber): string {
     if (this.$store.state.recipientRegistryInfo && this.ethPrice) {
       return Number(
-        this.ethPrice.ethereum.usd * Number(formatAmount(ethAmount, 18))
+        this.ethPrice.ethereum.usd * Number(formatAmount(ethAmount, 18)),
       ).toFixed(2)
     }
     return '-'
@@ -271,9 +271,9 @@ export default class RecipientSubmissionWidget extends Vue {
             recipientRegistryAddress,
             recipient,
             recipientRegistryInfo.deposit,
-            currentUser.walletProvider.getSigner()
+            currentUser.walletProvider.getSigner(),
           ),
-          (hash) => (this.txHash = hash)
+          (hash) => (this.txHash = hash),
         )
         this.$store.commit(RESET_RECIPIENT_DATA)
       } catch (error) {

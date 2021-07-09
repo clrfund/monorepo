@@ -379,7 +379,7 @@ export default class RoundInformation extends Vue {
     const projects = await getProjects(
       this.$store.state.recipientRegistryAddress,
       this.currentRound?.startTime.toSeconds(),
-      this.currentRound?.votingDeadline.toSeconds()
+      this.currentRound?.votingDeadline.toSeconds(),
     )
     const visibleProjects = projects.filter((project) => {
       return !project.isHidden && !project.isLocked
@@ -407,7 +407,7 @@ export default class RoundInformation extends Vue {
   get formatTotalInRound(): string {
     const { currentRound } = this.$store.state
     const totalInRound = currentRound.contributions.addUnsafe(
-      currentRound.matchingPool
+      currentRound.matchingPool,
     )
 
     return this.formatAmount(totalInRound)
@@ -453,7 +453,7 @@ export default class RoundInformation extends Vue {
           // Reload matching pool size
           this.$store.dispatch(LOAD_ROUND_INFO)
         },
-      }
+      },
     )
   }
 }

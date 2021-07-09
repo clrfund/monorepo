@@ -68,13 +68,13 @@ export default class ClaimModal extends Vue {
     const recipientClaimData = getRecipientClaimData(
       this.project.index,
       recipientTreeDepth,
-      this.$store.state.tally
+      this.$store.state.tally,
     )
     let claimTxReceipt
     try {
       claimTxReceipt = await waitForTransaction(
         fundingRound.claimFunds(...recipientClaimData),
-        (hash) => (this.claimTxHash = hash)
+        (hash) => (this.claimTxHash = hash),
       )
     } catch (error) {
       this.claimTxError = error.message
@@ -84,13 +84,13 @@ export default class ClaimModal extends Vue {
       claimTxReceipt,
       fundingRound,
       'FundsClaimed',
-      '_amount'
+      '_amount',
     )
     this.recipientAddress = getEventArg(
       claimTxReceipt,
       fundingRound,
       'FundsClaimed',
-      '_recipient'
+      '_recipient',
     )
     this.step += 1
   }

@@ -178,11 +178,11 @@ export default class ProjectProfile extends Vue {
       currentRound.fundingRoundAddress,
       currentRound.nativeTokenDecimals,
       tally.results.tally[this.project.index],
-      tally.totalVoiceCreditsPerVoteOption.tally[this.project.index]
+      tally.totalVoiceCreditsPerVoteOption.tally[this.project.index],
     )
     this.claimed = await isFundsClaimed(
       currentRound.fundingRoundAddress,
-      this.project.index
+      this.project.index,
     )
   }
 
@@ -264,7 +264,7 @@ export default class ProjectProfile extends Vue {
         closed: () => {
           this.checkAllocation(this.$store.state.tally)
         },
-      }
+      },
     )
   }
 }

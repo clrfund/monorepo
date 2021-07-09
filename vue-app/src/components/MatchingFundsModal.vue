@@ -148,7 +148,7 @@ export default class MatchingFundsModal extends Vue {
     try {
       await waitForTransaction(
         token.transfer(factory.address, amount),
-        (hash) => (this.transferTxHash = hash)
+        (hash) => (this.transferTxHash = hash),
       )
     } catch (error) {
       this.transferTxError = error.message

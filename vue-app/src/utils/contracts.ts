@@ -1,5 +1,9 @@
 import { Contract } from 'ethers'
-import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
+import {
+  TransactionResponse,
+  TransactionReceipt,
+} from '@ethersproject/abstract-provider'
+import { provider } from '@/api/core'
 
 export async function waitForTransaction(
   pendingTransaction: Promise<TransactionResponse>,
@@ -19,7 +23,8 @@ export async function waitForTransaction(
     } catch (receiptError) {
       const errorMessage = receiptError.data?.message || ''
       if (errorMessage.includes('Block information is incomplete')) {
-        console.warn('Failed to get receipt, retrying...')  /* eslint-disable-line no-console */
+        /* eslint-disable-next-line no-console */
+        console.warn('Failed to get receipt, retrying...')
       } else {
         throw receiptError
       }
@@ -47,4 +52,9 @@ export function getEventArg(
     }
   }
   throw new Error('Event not found')
+}
+
+export async function isTransactionMined(hash: string): Promise<boolean> {
+  const receipt = await provider.getTransactionReceipt(hash)
+  return !!receipt
 }
