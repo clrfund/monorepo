@@ -2,16 +2,16 @@
   <div class="modal-body">
     <div v-if="step === 0">
       <h3>Checking BrightID verification...</h3>
-      <div class="loader"></div>
+      <loader />
     </div>
     <div v-if="step === 1">
       <h3>Step 1 of 3: Connect</h3>
       <div>
         Please scan the QR code or open the link with your BrightID app.
-        <br>
+        <br />
         Verification of your account may take a few minutes.
       </div>
-      <img :src="appLinkQrCode" class="qr-code">
+      <img :src="appLinkQrCode" class="qr-code" />
       <div>
         <a :href="appLink" target="_blank">{{ appLink }}</a>
       </div>
@@ -56,16 +56,17 @@ import {
 } from '@/api/bright-id'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
+import Loader from '@/components/Loader.vue'
 import { LOAD_USER_INFO } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 
 @Component({
   components: {
     Transaction,
+    Loader,
   },
 })
 export default class BrightIdModal extends Vue {
-
   step = 0
 
   appLink = ''
@@ -92,7 +93,7 @@ export default class BrightIdModal extends Vue {
   }
 
   private async waitForVerification() {
-    let verification
+    let verification: Verification | null = null
     const checkVerification = async () => {
       try {
         verification = await getVerification(this.currentUser.walletAddress)
@@ -137,7 +138,7 @@ export default class BrightIdModal extends Vue {
       try {
         await waitForTransaction(
           selfSponsor(userRegistryAddress, signer),
-          (hash) => this.sponsorTxHash = hash,
+          (hash) => (this.sponsorTxHash = hash),
         )
       } catch (error) {
         this.sponsorTxError = error.message
@@ -153,7 +154,7 @@ export default class BrightIdModal extends Vue {
     try {
       await waitForTransaction(
         registerUser(userRegistryAddress, verification, signer),
-        (hash) => this.registrationTxHash = hash,
+        (hash) => (this.registrationTxHash = hash),
       )
     } catch (error) {
       this.registrationTxError = error.message
