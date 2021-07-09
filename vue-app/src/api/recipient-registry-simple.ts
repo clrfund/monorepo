@@ -17,6 +17,19 @@ function decodeRecipientAdded(event: Event): Project {
     index: args._index.toNumber(),
     isHidden: false,
     isLocked: false,
+    tagline: metadata.tagline,
+    category: metadata.category,
+    problemSpace: metadata.problemSpace,
+    plans: metadata.plans,
+    teamName: metadata.teamName,
+    teamDescription: metadata.teamDescription,
+    githubUrl: metadata.githubUrl,
+    radicleUrl: metadata.radicleUrl,
+    websiteUrl: metadata.websiteUrl,
+    twitterUrl: metadata.twitterUrl,
+    discordUrl: metadata.discordUrl,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`,
   }
 }
 

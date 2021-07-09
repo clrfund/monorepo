@@ -42,7 +42,7 @@ export interface Verification {
 }
 
 export class BrightIdError extends Error {
-
+  
   code?: number
 
   constructor(code?: number) {

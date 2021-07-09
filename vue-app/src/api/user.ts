@@ -7,12 +7,16 @@ import { factory, ipfsGatewayUrl, provider } from './core'
 
 export const LOGIN_MESSAGE = `Sign this message to access clr.fund at ${factory.address.toLowerCase()}.`
 
+// TODO update isVerified to isRegistered?
 export interface User {
   walletAddress: string;
   walletProvider: Web3Provider;
   encryptionKey: string;
-  isVerified: boolean | null;
-  balance: BigNumber | null;
+  isVerified: boolean | null; // If is in user registry
+  isUnique?: boolean | null; // If is verified in BrightID // TODO implement this
+  balance?: BigNumber | null;
+  etherBalance?: BigNumber | null;
+  contribution?: BigNumber | null;
 }
 
 export async function getProfileImageUrl(walletAddress: string): Promise<string | null> {
@@ -42,4 +46,10 @@ export async function getTokenBalance(
 ): Promise<BigNumber> {
   const token = new Contract(tokenAddress, ERC20, provider)
   return await token.balanceOf(walletAddress)
+}
+
+export async function getEtherBalance(
+  walletAddress: string,
+): Promise<BigNumber> {
+  return await provider.getBalance(walletAddress)
 }

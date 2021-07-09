@@ -14,6 +14,7 @@ export interface RegistryInfo {
   depositToken: string;
   challengePeriodDuration: number;
   listingPolicyUrl: string;
+  recipientCount: number;
 }
 
 export async function getRegistryInfo(registryAddress: string): Promise<RegistryInfo> {
@@ -21,11 +22,13 @@ export async function getRegistryInfo(registryAddress: string): Promise<Registry
   const deposit = await registry.baseDeposit()
   const challengePeriodDuration = await registry.challengePeriodDuration()
   const network = await provider.getNetwork()
+  const recipientCount = await registry.getRecipientCount()
   return {
     deposit,
     depositToken: getNetworkToken(network),
     challengePeriodDuration: challengePeriodDuration.toNumber(),
     listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
+    recipientCount: recipientCount.toNumber(),
   }
 }
 
@@ -44,6 +47,65 @@ export enum RequestStatus {
   Rejected = 'Rejected',
   Accepted = 'Accepted',
   Executed = 'Executed',
+}
+
+export interface RecipientApplicationData {
+  project: {
+    name: string;
+    tagline: string;
+    description: string;
+    category: string;
+    problemSpace: string;
+  };
+  fund: {
+    address: string;
+    plans: string;
+  };
+  team: {
+    name: string;
+    description: string;
+    email: string;
+  };
+  links: {
+    github: string;
+    radicle: string;
+    website: string;
+    twitter: string;
+    discord: string;
+  };
+  image: {
+    bannerHash: string;
+    thumbnailHash: string;
+  };
+  furthestStep: number;
+}
+
+export function formToProjectInterface(
+  data: RecipientApplicationData,
+): Project {
+  const { project, fund, team, links, image } = data
+  return {
+    id: fund.address,
+    address: fund.address,
+    name: project.name,
+    tagline: project.tagline,
+    description: project.description,
+    category: project.category,
+    problemSpace: project.problemSpace,
+    plans: fund.plans,
+    teamName: team.name,
+    teamDescription: team.description,
+    githubUrl: links.github,
+    radicleUrl: links.radicle,
+    websiteUrl: links.website,
+    twitterUrl: links.twitter,
+    discordUrl: links.discord,
+    bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${image.bannerHash}`,
+    thumbnailImageUrl: `${ipfsGatewayUrl}/ipfs/${image.thumbnailHash}`,
+    index: 0,
+    isHidden: false,
+    isLocked: true,
+  }
 }
 
 interface RecipientMetadata {
@@ -130,20 +192,60 @@ export async function getRequests(
   return requests
 }
 
+// TODO merge this with `Project` inteface
 export interface RecipientData {
   name: string;
   description: string;
-  imageHash: string;
+  imageHash?: string; // TODO remove - old flow
   address: string;
+  tagline?: string;
+  category?: string;
+  problemSpace?: string;
+  plans?: string;
+  teamName?: string;
+  teamDescription?: string;
+  githubUrl?: string;
+  radicleUrl?: string;
+  websiteUrl?: string;
+  twitterUrl?: string;
+  discordUrl?: string;
+  // fields different vs. Project
+  bannerImageHash?: string;
+  thumbnailImageHash?: string;
+}
+
+export function formToRecipientData(
+  data: RecipientApplicationData,
+): RecipientData {
+  const { project, fund, team, links, image } = data
+  return {
+    address: fund.address,
+    name: project.name,
+    tagline: project.tagline,
+    description: project.description,
+    category: project.category,
+    problemSpace: project.problemSpace,
+    plans: fund.plans,
+    teamName: team.name,
+    teamDescription: team.description,
+    githubUrl: links.github,
+    radicleUrl: links.radicle,
+    websiteUrl: links.website,
+    twitterUrl: links.twitter,
+    discordUrl: links.discord,
+    bannerImageHash: image.bannerHash,
+    thumbnailImageHash: image.thumbnailHash,
+  }
 }
 
 export async function addRecipient(
   registryAddress: string,
-  recipientData: RecipientData,
+  recipientApplicationData: RecipientApplicationData,
   deposit: BigNumber,
   signer: Signer,
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, OptimisticRecipientRegistry, signer)
+  const recipientData = formToRecipientData(recipientApplicationData)
   const { address, ...metadata } = recipientData
   const transaction = await registry.addRecipient(address, JSON.stringify(metadata), { value: deposit })
   return transaction
@@ -163,12 +265,16 @@ function decodeProject(requestSubmittedEvent: Event): Project {
     throw new Error('not a registration request')
   }
   const metadata = JSON.parse(args._metadata)
+
+  // imageUrl is the legacy form property - fall back to this if bannerImageHash or thumbnailImageHash don't exist
+  const imageUrl = `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`
+
   return {
     id: args._recipientId,
     address: args._recipient,
     name: metadata.name,
     description: metadata.description,
-    imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
+    imageUrl,
     // Only unregistered project can have invalid index 0
     index: 0,
     isHidden: false,
@@ -176,6 +282,23 @@ function decodeProject(requestSubmittedEvent: Event): Project {
     extra: {
       submissionTime: args._timestamp.toNumber(),
     },
+    tagline: metadata.tagline,
+    category: metadata.category,
+    problemSpace: metadata.problemSpace,
+    plans: metadata.plans,
+    teamName: metadata.teamName,
+    teamDescription: metadata.teamDescription,
+    githubUrl: metadata.githubUrl,
+    radicleUrl: metadata.radicleUrl,
+    websiteUrl: metadata.websiteUrl,
+    twitterUrl: metadata.twitterUrl,
+    discordUrl: metadata.discordUrl,
+    bannerImageUrl: metadata.bannerImageHash
+      ? `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`
+      : imageUrl,
+    thumbnailImageUrl: metadata.thumbnailImageHash
+      ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`
+      : imageUrl,
   }
 }
 
@@ -224,6 +347,13 @@ export async function getProjects(
         project.index = (registration.args as any)._recipientIndex.toNumber()
       }
     }
+
+    // If project is unregistered then set its visibility and locked to true
+    if (!registration) {
+      project.isHidden = true
+      project.isLocked = true
+    }
+
     // Find corresponding removal event
     const removed = requestResolvedEvents.find((event) => {
       const args = event.args as any
