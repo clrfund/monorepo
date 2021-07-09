@@ -1,8 +1,5 @@
 import { Contract } from 'ethers'
-import {
-  TransactionResponse,
-  TransactionReceipt,
-} from '@ethersproject/abstract-provider'
+import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
 import { provider } from '@/api/core'
 
 export async function waitForTransaction(
@@ -23,8 +20,7 @@ export async function waitForTransaction(
     } catch (receiptError) {
       const errorMessage = receiptError.data?.message || ''
       if (errorMessage.includes('Block information is incomplete')) {
-        /* eslint-disable-next-line no-console */
-        console.warn('Failed to get receipt, retrying...')
+        console.warn('Failed to get receipt, retrying...')  /* eslint-disable-line no-console */
       } else {
         throw receiptError
       }

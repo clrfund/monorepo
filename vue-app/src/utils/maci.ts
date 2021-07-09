@@ -12,7 +12,7 @@ function bnSqrt(a: BigNumber): BigNumber {
   let x1 = a.div(2)
   do {
     x = x1
-    x1 = x.add(a.div(x)).div(2)
+    x1 = (x.add(a.div(x))).div(2)
   } while (!x.eq(x1))
   return x
 }

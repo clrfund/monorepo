@@ -53,9 +53,7 @@ export function serializeContributorData(contributor: Contributor): string {
   })
 }
 
-export function deserializeContributorData(
-  data: string | null,
-): Contributor | null {
+export function deserializeContributorData(data: string | null): Contributor | null {
   if (data) {
     const parsed = JSON.parse(data)
     const keypair = new Keypair(PrivKey.unserialize(parsed.privateKey))
@@ -96,11 +94,15 @@ export async function isContributionWithdrawn(
 export async function getTotalContributed(
   fundingRoundAddress: string,
 ): Promise<{ count: number; amount: BigNumber }> {
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
+  const fundingRound = new Contract(
+    fundingRoundAddress,
+    FundingRound,
+    provider,
+  )
   const filter = fundingRound.filters.Contribution()
   const events = await fundingRound.queryFilter(filter, 0)
   let amount = BigNumber.from(0)
-  events.forEach((event) => {
+  events.forEach(event => {
     if (!event.args) {
       return
     }

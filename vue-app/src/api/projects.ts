@@ -32,9 +32,7 @@ export interface Project {
   extra?: any; // Registry-specific data
 }
 
-export async function getRecipientRegistryAddress(
-  roundAddress: string | null,
-): Promise<string> {
+export async function getRecipientRegistryAddress(roundAddress: string | null): Promise<string> {
   if (roundAddress !== null) {
     const fundingRound = new Contract(roundAddress, FundingRound, provider)
     return await fundingRound.recipientRegistry()
@@ -51,11 +49,7 @@ export async function getProjects(
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)
   } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProjects(
-      registryAddress,
-      startTime,
-      endTime,
-    )
+    return await OptimisticRegistry.getProjects(registryAddress, startTime, endTime)
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProjects(registryAddress, startTime, endTime)
   } else {
@@ -84,17 +78,9 @@ export async function registerProject(
   signer: Signer,
 ): Promise<TransactionResponse> {
   if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.registerProject(
-      registryAddress,
-      recipientId,
-      signer,
-    )
+    return await OptimisticRegistry.registerProject(registryAddress, recipientId, signer)
   } else if (recipientRegistryType === 'kleros') {
-    return await KlerosRegistry.registerProject(
-      registryAddress,
-      recipientId,
-      signer,
-    )
+    return await KlerosRegistry.registerProject(registryAddress, recipientId, signer)
   } else {
     throw new Error('invalid recipient registry type')
   }
