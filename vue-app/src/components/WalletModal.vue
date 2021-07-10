@@ -1,33 +1,45 @@
 <template>
-  <div class="modal-body">
-    <div class="top">
-      <p>Connect to a wallet</p>
-      <img class="pointer" src="@/assets/close.svg" @click="$emit('close')" />
+  <div>
+    <div v-if="connectingWallet" class="modal-body loading">
+      <loader />
+      <p>Connecting wallet</p>
     </div>
-    <div v-if="windowEthereum" class="option" @click="connectMetaMask()">
-      <p>MetaMask</p>
-      <img height="24px" width="24px" src="@/assets/metamask.png" />
+    <div v-else class="modal-body">
+      <div class="top">
+        <p>Connect to a wallet</p>
+        <img class="pointer" src="@/assets/close.svg" @click="$emit('close')" />
+      </div>
+      <div v-if="windowEthereum" class="option" @click="connectMetaMask()">
+        <p>MetaMask</p>
+        <img height="24px" width="24px" src="@/assets/metamask.png" />
+      </div>
+      <div v-else class="option" @click="redirectToMetamaskWebsite()">
+        <p>Install MetaMask</p>
+        <img height="24px" width="24px" src="@/assets/metamask.png" />
+      </div>
+      <div class="option" @click="connectWalletConnect()">
+        <p>WalletConnect</p>
+        <img height="24px" width="24px" src="@/assets/walletConnectIcon.svg" />
+      </div>
     </div>
-    <div v-else class="option" @click="redirectToMetamaskWebsite()">
-      <p>Install MetaMask</p>
-      <img height="24px" width="24px" src="@/assets/metamask.png" />
-    </div>
-    <div class="option" @click="connectWalletConnect()">
-      <p>WalletConnect</p>
-      <img height="24px" width="24px" src="@/assets/walletConnectIcon.svg" />
-    </div>
-    <!-- TODO: Add html for when user is connecting to wallet after selecting a wallet provider -->
   </div>
 </template>
 
 <script lang="ts">
+// Libraries
 import { Web3Provider } from '@ethersproject/providers'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
+// API
 import { providers } from '@/api/core'
 import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
+
+// Components
+import Loader from '@/components/Loader.vue'
+
+// Store
 import {
   LOAD_USER_INFO,
   LOAD_CART,
@@ -36,11 +48,19 @@ import {
   LOGIN_USER,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
+
+// Utils
 import { sha256 } from '@/utils/crypto'
 
-@Component
+@Component({
+  components: {
+    Loader,
+  },
+})
 export default class WalletModal extends Vue {
   @Prop() updateProfileImage!: (profileImageUrl: string | null) => void
+
+  connectingWallet = false
 
   get windowEthereum(): any {
     return (window as any).ethereum
@@ -51,6 +71,7 @@ export default class WalletModal extends Vue {
       return
     }
 
+    this.connectingWallet = true
     let walletAddress
     try {
       ;[walletAddress] = await this.windowEthereum.request({
@@ -68,6 +89,7 @@ export default class WalletModal extends Vue {
       })
     } catch (error) {
       // Signature request rejected
+      this.connectingWallet = false
       return
     }
     const user: User = {
@@ -80,6 +102,7 @@ export default class WalletModal extends Vue {
     }
 
     this.$emit('connected')
+    this.connectingWallet = false
 
     getProfileImageUrl(user.walletAddress).then((url) => {
       this.updateProfileImage(url)
@@ -97,7 +120,7 @@ export default class WalletModal extends Vue {
   }
 
   async connectWalletConnect() {
-    // TODO: Add boolean here to toggle modal for loader when clicking wallet connect
+    this.connectingWallet = true
     await providers.walletconnectProvider.enable()
 
     let signature
@@ -108,6 +131,7 @@ export default class WalletModal extends Vue {
       })
     } catch (error) {
       // Signature request rejected
+      this.connectingWallet = false
       return
     }
 
@@ -121,6 +145,7 @@ export default class WalletModal extends Vue {
     }
 
     this.$emit('connected')
+    this.connectingWallet = false
 
     getProfileImageUrl(user.walletAddress).then((url) => {
       this.updateProfileImage(url)
@@ -147,15 +172,22 @@ export default class WalletModal extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-// TODO: Look at styles for modal body
+.vm--modal {
+  background-color: transparent !important;
+  box-shadow: none;
+}
+
 .modal-body {
   margin-top: $modal-space;
   text-align: left;
   background: $bg-secondary-color;
   border-radius: 1rem;
-  box-shadow: $box-shadow;
   display: grid;
   grid-gap: 10px;
+}
+
+.loading {
+  align-content: center;
 }
 
 .top {
