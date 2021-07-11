@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div class="background" />
+    <div class="image-wrapper">
+      <img src="@/assets/docking.png" />
+    </div>
     <div class="content">
       <span class="contributed-icon">🎉</span>
       <p
@@ -101,14 +103,30 @@ export default class TransactionSuccess extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.content {
+.image-wrapper {
+  position: fixed;
+  height: 100vh;
+  background: $clr-pink-dark-gradient;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: -2.5em;
+  @media (max-width: $breakpoint-m) {
+    margin: -2em;
+  }
 }
 
-.background {
-  position: absolute;
-  min-height: 100%;
-  background: linear-gradient(315deg, #c72ab9 0%, #252a77 100%);
-  transform: matrix(-1, 0, 0, 1, 0, 0);
+.image-wrapper img {
+  height: 95%;
+  mix-blend-mode: exclusion;
+  transform: translateX(-6em) translateY(3em) rotate(15deg);
+}
+
+.content {
+  position: fixed;
+  height: 100%;
+  padding-top: 4rem;
+  margin-right: 2.5rem;
 }
 
 .contributed-icon {
