@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="image-wrapper">
-      <img src="@/assets/docking.png" />
+      <img class="docking" src="@/assets/docking.png" />
+      <img class="money" src="@/assets/money.gif" />
+      <img class="money" src="@/assets/confetti.gif" />
     </div>
     <div class="content">
       <span class="contributed-icon">🎉</span>
@@ -110,23 +112,31 @@ export default class TransactionSuccess extends Vue {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin: -2.5em;
   @media (max-width: $breakpoint-m) {
     margin: -2em;
   }
 }
 
-.image-wrapper img {
+.image-wrapper .docking {
   height: 95%;
   mix-blend-mode: exclusion;
   transform: translateX(-6em) translateY(3em) rotate(15deg);
 }
 
+.image-wrapper .money {
+  position: fixed;
+  width: 100%;
+  mix-blend-mode: exclusion;
+}
+
 .content {
   position: fixed;
-  height: 100%;
   padding-top: 4rem;
-  margin-right: 2.5rem;
+  max-width: 500px;
+  margin: auto;
+  @media (max-width: $breakpoint-m) {
+    margin-right: 2.5rem;
+  }
 }
 
 .contributed-icon {
