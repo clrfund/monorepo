@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div class="image-wrapper">
       <img class="docking" src="@/assets/docking.png" />
       <img class="money" src="@/assets/money.gif" />
@@ -105,6 +105,10 @@ export default class TransactionSuccess extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
+.container {
+  position: relative;
+}
+
 .image-wrapper {
   position: fixed;
   height: 100vh;
@@ -112,15 +116,15 @@ export default class TransactionSuccess extends Vue {
   width: 100%;
   display: flex;
   justify-content: center;
-  @media (max-width: $breakpoint-m) {
-    margin: -2em;
-  }
 }
 
 .image-wrapper .docking {
   height: 95%;
   mix-blend-mode: exclusion;
-  transform: translateX(-6em) translateY(3em) rotate(15deg);
+  transform: rotate(15deg);
+  @media (max-width: $breakpoint-m) {
+    transform: translateX(-6em) translateY(3em) rotate(15deg);
+  }
 }
 
 .image-wrapper .money {
@@ -130,12 +134,12 @@ export default class TransactionSuccess extends Vue {
 }
 
 .content {
-  position: fixed;
+  position: relative;
   padding-top: 4rem;
   max-width: 500px;
   margin: auto;
   @media (max-width: $breakpoint-m) {
-    margin-right: 2.5rem;
+    padding: 4rem 2.5rem;
   }
 }
 
