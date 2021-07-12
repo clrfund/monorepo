@@ -8,7 +8,13 @@
     <p class="input-label">{{ label }}</p>
     <p class="input-description">{{ description }}</p>
     <div class="input-row">
-      <input type="file" class="input" @change="handleLoadFile" name="image" />
+      <input
+        type="file"
+        class="input"
+        @change="handleLoadFile"
+        name="image"
+        :id="`${formProp}-input`"
+      />
       <button
         primary="true"
         type="submit"
@@ -148,6 +154,14 @@ export default class IpfsImageUpload extends Vue {
     this.loadedImageData = ''
     this.error = ''
     this.onUpload(this.formProp, '')
+
+    // Clear file selector input
+    const fileSelector = document.getElementById(
+      `${this.formProp}-input`
+    ) as HTMLInputElement
+    if (fileSelector) {
+      fileSelector.value = ''
+    }
   }
 
   get imageUrl(): string {
