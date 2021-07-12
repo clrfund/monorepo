@@ -248,7 +248,7 @@
               </div>
             </div>
           </div>
-          <div class="round-info-sub-item">
+          <div class="round-info-sub-item bottom-info">
             <div>
               <div class="round-info-title">
                 Contributors
@@ -537,7 +537,6 @@ export default class RoundInformation extends Vue {
   align-items: center;
   margin-bottom: 3rem;
   border-radius: 0.5rem;
-  overflow: hidden;
 
   & > div {
     box-shadow: inset 0px -1px 0px #7375a6;
@@ -554,6 +553,7 @@ export default class RoundInformation extends Vue {
   align-items: center;
   background: $bg-light-color;
   padding: 1rem;
+  border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .round-info-item {
@@ -573,6 +573,10 @@ export default class RoundInformation extends Vue {
   flex: 1 0 10%;
   background: $bg-secondary-color;
   padding: 1rem;
+}
+
+.bottom-info {
+  border-radius: 0.5rem;
 }
 
 .round-info-title {
