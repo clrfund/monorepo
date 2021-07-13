@@ -14,9 +14,12 @@
       <div class="address-card">
         <h2 class="address">{{ renderUserAddress(16) }}</h2>
         <div class="action-row">
-          <div class="copy btn" @click="copyAddress">
-            <img src="@/assets/copy.svg" />
-          </div>
+          <copy-button
+            :value="currentUser.walletAddress"
+            text="address"
+            myClass="profile"
+            class="copy"
+          />
           <div class="address">{{ renderUserAddress(20) }}</div>
           <div class="disconnect btn" @click="disconnect">
             <img src="@/assets/disconnect.svg" />
@@ -38,27 +41,28 @@
           <img src="@/assets/info.svg" />
         </div>
         <div class="balances-card">
-          <balance-item :balance="balance" abbrev="DAI"
-            ><icon-status
+          <balance-item :balance="balance" abbrev="DAI">
+            <icon-status
               v-bind:custom="true"
               logo="dai.svg"
               secondaryLogo="optimism.png"
               bg="red"
-          /></balance-item>
-          <balance-item :balance="etherBalance" abbrev="ETH"
-            ><icon-status
+            />
+          </balance-item>
+          <balance-item :balance="etherBalance" abbrev="ETH">
+            <icon-status
               v-bind:custom="true"
               logo="eth.svg"
               secondaryLogo="optimism.png"
               bg="red"
-          /></balance-item>
+            />
+          </balance-item>
         </div>
       </div>
       <div class="projects-section">
         <h2>Projects</h2>
         <!-- <div class="project-item" v-for=" eacah project user owns " /> -->
       </div>
-      <!-- <div class="btn-warning">Disconnect wallet</div> -->
     </div>
   </div>
 </template>
@@ -70,13 +74,14 @@ import { Prop } from 'vue-property-decorator'
 import BalanceItem from '@/components/BalanceItem.vue'
 import IconStatus from '@/components/IconStatus.vue'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
+import CopyButton from '@/components/CopyButton.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
 
 import { userRegistryType } from '@/api/core'
 
 @Component({
-  components: { BalanceItem, BrightIdWidget, IconStatus },
+  components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
 })
 export default class NavBar extends Vue {
   @Prop() toggleProfile
@@ -115,18 +120,6 @@ export default class NavBar extends Vue {
       return address
     }
     return ''
-  }
-
-  async copyAddress(): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(
-        this.$store.state.currentUser.walletAddress
-      )
-      // TODO: UX success feedback
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
-    }
   }
 
   async disconnect(): Promise<void> {
@@ -229,13 +222,12 @@ p.no-margin {
           display: flex;
           justify-content: center;
           align-items: center;
-          /* background: none; */
           border: 1px solid $text-color;
           padding: 0.5rem;
           height: 2rem;
           width: 2rem;
           box-sizing: border-box;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(white, 0.1);
           &:hover {
             transform: scale(1.01);
             opacity: 0.8;

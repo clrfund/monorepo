@@ -58,21 +58,6 @@ export default class CartWidget extends Vue {
   private walletChainId: string | null = null
   profileImageUrl: string | null = null
 
-  async copyAddress(): Promise<void> {
-    if (!this.currentUser) {
-      return
-    }
-    try {
-      await navigator.clipboard.writeText(
-        this.currentUser.walletAddress as string
-      )
-      // alert('Text copied to clipboard')
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
-    }
-  }
-
   toggleCart(): void {
     this.$store.commit(TOGGLE_SHOW_CART_PANEL)
   }
