@@ -67,7 +67,7 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
-import { CartItem } from '@/api/contributions'
+import { CartItem, MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
 import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { SAVE_CART } from '@/store/action-types'
 
@@ -99,8 +99,14 @@ export default class extends Vue {
       // Remove any remaining decimal points
       const decimalStringClean: string = decimalString.replace(/[.]/g, '')
       // Truncate decimal string to {MAX_DECIMAL_PLACES} digits
-      const decimalStringToUse: string = decimalStringClean.length > MAX_DECIMAL_PLACES ? decimalStringClean.substr(0, MAX_DECIMAL_PLACES) : decimalStringClean
+      const decimalStringToUse: string =
+        decimalStringClean.length > MAX_DECIMAL_PLACES
+          ? decimalStringClean.substr(0, MAX_DECIMAL_PLACES)
+          : decimalStringClean
       newAmount = `${leftOfDecimal}.${decimalStringToUse}`
+    }
+    if (parseFloat(newAmount) > MAX_CONTRIBUTION_AMOUNT) {
+      return MAX_CONTRIBUTION_AMOUNT.toString()
     }
     return newAmount
   }
