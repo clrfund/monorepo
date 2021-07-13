@@ -84,7 +84,9 @@
                   <p
                     :class="{
                       error: true,
-                      hidden: !$v.form.project.tagline.$error || !$v.form.project.tagline.$model,
+                      hidden:
+                        !$v.form.project.tagline.$error ||
+                        $v.form.project.tagline.maxLength,
                     }"
                   >
                     This tagline is too long. Be brief for potential
@@ -93,7 +95,9 @@
                   <p
                     :class="{
                       error: true,
-                      hidden: !$v.form.project.tagline.$error || !!$v.form.project.tagline.$model,
+                      hidden:
+                        !$v.form.project.tagline.$error ||
+                        !$v.form.project.tagline.maxLength,
                     }"
                   >
                     Your project needs a tagline
