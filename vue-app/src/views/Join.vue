@@ -84,17 +84,20 @@
                   <p
                     :class="{
                       error: true,
-                      hidden: !$v.form.project.tagline.$error,
+                      hidden:
+                        !$v.form.project.tagline.$error ||
+                        $v.form.project.tagline.maxLength,
                     }"
                   >
                     This tagline is too long. Be brief for potential
                     contributors
                   </p>
-                  <!-- TODO: validation for different error type -->
                   <p
                     :class="{
                       error: true,
-                      hidden: !$v.form.project.tagline.$error,
+                      hidden:
+                        !$v.form.project.tagline.$error ||
+                        !$v.form.project.tagline.maxLength,
                     }"
                   >
                     Your project needs a tagline
@@ -252,7 +255,7 @@
                       hidden: !$v.form.fund.address.$error,
                     }"
                   >
-                    Enter a valid Ethereum address (0x or ENS)
+                    Enter a valid Ethereum 0x address
                   </p>
                   <!-- TODO: only validate after user removes focus on input -->
                 </div>
