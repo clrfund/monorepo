@@ -53,33 +53,6 @@ exports.handler = async function (event) {
 
     await doc.loadInfo()
     const sheet = doc.sheetsByIndex[0]
-    sheet.setHeaderRow([
-      // Project
-      'projectname',
-      'projecttagline',
-      'projectdescription',
-      'projectcategory',
-      'projectproblemSpace',
-      // Fund
-      'fundaddress',
-      'fundplans',
-      // Team
-      'teamname',
-      'teamdescription',
-      'teamemail',
-      // Links
-      'linksgithub',
-      'linksradicle',
-      'linkswebsite',
-      'linkstwitter',
-      'linksdiscord',
-      // Image
-      'imagebannerHash',
-      'imagethumbnailHash',
-      // Etc
-      'furthestStep',
-    ])
-
     const row = recipientToRow(recipient)
     await sheet.addRow(row)
 
