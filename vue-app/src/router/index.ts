@@ -28,7 +28,7 @@ const routes = [
     path: '/',
     name: 'landing',
     component: Landing,
-    metaInfo: {
+    meta: {
       title: 'Eth2 clr.fund',
     },
   },
@@ -36,7 +36,7 @@ const routes = [
     path: '/projects',
     name: 'projects',
     component: ProjectList,
-    metaInfo: {
+    meta: {
       title: 'Project List',
     },
   },
@@ -49,7 +49,7 @@ const routes = [
     path: '/round-information',
     name: 'round-information',
     component: RoundInformation,
-    metaInfo: {
+    meta: {
       title: 'Round Information',
     },
   },
@@ -57,7 +57,7 @@ const routes = [
     path: '/rounds',
     name: 'rounds',
     component: RoundList,
-    metaInfo: {
+    meta: {
       title: 'Rounds',
     },
   },
@@ -65,7 +65,7 @@ const routes = [
     path: '/round/:address',
     name: 'round',
     component: ProjectList,
-    metaInfo: {
+    meta: {
       title: 'Project List for Round',
     },
   },
@@ -73,7 +73,7 @@ const routes = [
     path: '/about',
     name: 'about',
     component: About,
-    metaInfo: {
+    meta: {
       title: 'About',
     },
   },
@@ -81,7 +81,7 @@ const routes = [
     path: '/about-maci',
     name: 'about-maci',
     component: AboutMaci,
-    metaInfo: {
+    meta: {
       title: 'About MACI',
     },
   },
@@ -89,7 +89,7 @@ const routes = [
     path: '/about-sybil-attacks',
     name: 'about-sybil-attacks',
     component: AboutSybilAttacks,
-    metaInfo: {
+    meta: {
       title: 'About Sybil Attacks',
     },
   },
@@ -97,7 +97,7 @@ const routes = [
     path: '/about-layer2',
     name: 'about-layer-2',
     component: AboutLayer2,
-    metaInfo: {
+    meta: {
       title: 'About Layer 2',
     },
   },
@@ -105,7 +105,7 @@ const routes = [
     path: '/how-it-works',
     name: 'how-it-works',
     component: HowItWorks,
-    metaInfo: {
+    meta: {
       title: 'How it works',
     },
   },
@@ -113,7 +113,7 @@ const routes = [
     path: '/recipients',
     name: 'recipients',
     component: RecipientRegistryView,
-    metaInfo: {
+    meta: {
       title: 'Recipient registry',
     },
   },
@@ -121,7 +121,7 @@ const routes = [
     path: '/verify',
     name: 'verify',
     component: VerifyLanding,
-    metaInfo: {
+    meta: {
       title: 'BrightID Verify Landing',
     },
   },
@@ -129,7 +129,7 @@ const routes = [
     path: '/verify/success',
     name: 'verified',
     component: Verified,
-    metaInfo: {
+    meta: {
       title: 'Verified',
     },
   },
@@ -137,7 +137,7 @@ const routes = [
     path: '/verify/:step',
     name: 'verify-step',
     component: VerifyView,
-    metaInfo: {
+    meta: {
       title: 'Verification Steps',
     },
   },
@@ -145,7 +145,7 @@ const routes = [
     path: '/join',
     name: 'join',
     component: JoinLanding,
-    metaInfo: {
+    meta: {
       title: 'Recipient Join Form Landing',
     },
   },
@@ -153,7 +153,7 @@ const routes = [
     path: '/join/success',
     name: 'project-added',
     component: ProjectAdded,
-    metaInfo: {
+    meta: {
       title: 'Recipient Join Form Success',
     },
   },
@@ -161,7 +161,7 @@ const routes = [
     path: '/join/:step',
     name: 'join-step',
     component: JoinView,
-    metaInfo: {
+    meta: {
       title: 'Recipient Join Form Steps',
     },
   },
@@ -169,7 +169,7 @@ const routes = [
     path: '/sybil-resistance',
     name: 'sybil-resistance',
     component: AboutSybilResistance,
-    metaInfo: {
+    meta: {
       title: 'Sybil Resistance',
     },
   },
@@ -177,7 +177,7 @@ const routes = [
     path: '/cart',
     name: 'cart',
     component: CartView,
-    metaInfo: {
+    meta: {
       title: 'Cart',
     },
   },
