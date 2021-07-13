@@ -34,14 +34,6 @@
         </div>
       </div>
       <div class="mobile mb2">
-        <button
-          v-if="hasRegisterBtn()"
-          class="btn-primary"
-          :disabled="!canRegister()"
-          @click="register()"
-        >
-          Register
-        </button>
         <div class="input-button" v-if="hasContributeBtn() && !inCart">
           <img
             style="margin-left: 0.5rem"
@@ -127,21 +119,7 @@
         <markdown :raw="project.teamDescription" />
       </div>
     </div>
-    <div v-if="previewMode">
-      <h2 class="link-title">Check them out</h2>
-      <div v-if="project.githubUrl" class="link-row">
-        <img src="@/assets/GitHub.svg" />
-        <a :href="project.githubUrl">GitHub repo</a>
-      </div>
-      <div v-if="project.twitterUrl" class="link-row">
-        <img src="@/assets/Twitter.svg" />
-        <a :href="project.twitterUrl">@Twitter</a>
-      </div>
-      <div v-if="project.websiteUrl" class="link-row">
-        <img src="@/assets/Meridians.svg" />
-        <a :href="project.websiteUrl">{{ project.websiteUrl }}</a>
-      </div>
-    </div>
+    <link-box v-if="previewMode" :project="project" class="mt2" />
   </div>
 </template>
 
@@ -153,24 +131,17 @@ import { DateTime } from 'luxon'
 import { FixedNumber } from 'ethers'
 import { Tally } from '@/api/tally'
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
-import { Project, getProject } from '@/api/projects'
+import { Project } from '@/api/projects'
 import Info from '@/components/Info.vue'
-import { recipientRegistryType } from '@/api/core'
-import { TcrItemStatus } from '@/api/recipient-registry-kleros'
-import RecipientRegistrationModal from '@/components/RecipientRegistrationModal.vue'
 import Markdown from '@/components/Markdown.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 import ClaimModal from '@/components/ClaimModal.vue'
+import LinkBox from '@/components/LinkBox.vue'
 
-@Component({
-  components: {
-    Markdown,
-    Info,
-  },
-})
+@Component({ components: { Markdown, Info, LinkBox } })
 export default class ProjectProfile extends Vue {
   allocatedAmount: FixedNumber | null = null
   contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
@@ -225,42 +196,6 @@ export default class ProjectProfile extends Vue {
       return item.id === project.id && !item.isCleared
     })
     return index !== -1
-  }
-
-  hasRegisterBtn(): boolean {
-    if (this.project === null) {
-      return false
-    }
-    if (recipientRegistryType === 'optimistic') {
-      return this.project.index === 0
-    } else if (recipientRegistryType === 'kleros') {
-      return (
-        this.project.index === 0 &&
-        this.project.extra.tcrItemStatus === TcrItemStatus.Registered
-      )
-    }
-    return false
-  }
-
-  canRegister(): boolean {
-    return this.hasRegisterBtn() && this.$store.state.currentUser
-  }
-
-  register() {
-    this.$modal.show(
-      RecipientRegistrationModal,
-      { project: this.project },
-      {},
-      {
-        closed: async () => {
-          const project = await getProject(
-            this.$store.state.recipientRegistryAddress,
-            this.$route.params.id
-          )
-          Object.assign(this.project, project)
-        },
-      }
-    )
   }
 
   hasContributeBtn(): boolean {
@@ -527,13 +462,6 @@ export default class ProjectProfile extends Vue {
     }
   }
 
-  .link-row {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    gap: 0.5rem;
-  }
-
   .input-button {
     background: #f7f7f7;
     border-radius: 2rem;
@@ -594,6 +522,10 @@ export default class ProjectProfile extends Vue {
 
   .mb2 {
     margin-bottom: 2rem;
+  }
+
+  .mt2 {
+    margin-top: 2rem;
   }
 }
 </style>

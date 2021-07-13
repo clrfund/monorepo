@@ -1009,7 +1009,7 @@ export default class JoinView extends mixins(validationMixin) {
 @import '../styles/theme';
 
 .container {
-  width: clamp(calc(800px - 4rem), calc(100% - 4rem), 1440px);
+  width: clamp(calc(800px - 4rem), calc(100% - 4rem), 1100px);
   margin: 0 auto;
   @media (max-width: $breakpoint-m) {
     width: 100%;

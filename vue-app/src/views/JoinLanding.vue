@@ -9,7 +9,7 @@
     <round-status-banner />
     <back-to-projects :alsoShowOnMobile="true" />
 
-    <div class="content" v-if="isLoading">
+    <div class="content" v-if="isLoading || !$store.state.currentRound">
       <h1>Fetching round data...</h1>
       <loader />
     </div>
@@ -241,9 +241,11 @@ h1 {
     img {
       position: absolute;
       bottom: 0;
-      right: -128px;
+      right: calc(-700px + 50vw);
       mix-blend-mode: exclusion;
-      width: 88%;
+      max-width: 88%;
+      max-height: 100%;
+
       @media (max-width: ($breakpoint-m)) {
         right: 1rem;
         width: 100%;

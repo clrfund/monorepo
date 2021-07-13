@@ -241,7 +241,9 @@ export interface RecipientData {
   thumbnailImageHash?: string
 }
 
-function formToRecipientData(data: RecipientApplicationData): RecipientData {
+export function formToRecipientData(
+  data: RecipientApplicationData
+): RecipientData {
   const { project, fund, team, links, image } = data
   return {
     address: fund.address,
@@ -395,6 +397,13 @@ export async function getProjects(
         project.index = (registration.args as any)._recipientIndex.toNumber()
       }
     }
+
+    // If project is unregistered then set its visibility and locked to true
+    if (!registration) {
+      project.isHidden = true
+      project.isLocked = true
+    }
+
     // Find corresponding removal event
     const removed = requestResolvedEvents.find((event) => {
       const args = event.args as any

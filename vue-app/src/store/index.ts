@@ -19,7 +19,6 @@ import {
   getContributionAmount,
   isContributionWithdrawn,
 } from '@/api/contributions'
-import { recipientRegistryType } from '@/api/core'
 import { loginUser, logoutUser } from '@/api/gun'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
@@ -67,6 +66,7 @@ import {
   SET_TALLY,
   SET_CURRENT_USER,
   SET_RECIPIENT_DATA,
+  RESET_RECIPIENT_DATA,
   SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_RECIPIENT_REGISTRY_INFO,
   TOGGLE_SHOW_CART_PANEL,
@@ -214,6 +214,9 @@ export const mutations = {
       state.recipient[payload.step] = payload.updatedData[payload.step]
     }
   },
+  [RESET_RECIPIENT_DATA](state) {
+    state.recipient = null
+  },
   [TOGGLE_SHOW_CART_PANEL](state, isOpen: boolean | undefined) {
     // Handle the case of both null and undefined
     if (isOpen != null) {
@@ -265,15 +268,13 @@ const actions = {
       state.recipientRegistryAddress ||
       (await getRecipientRegistryAddress(state.currentRoundAddress))
     commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
-    if (
-      recipientRegistryAddress === null ||
-      recipientRegistryType !== 'optimistic'
-    ) {
+
+    if (recipientRegistryAddress) {
+      const info = await getRegistryInfo(recipientRegistryAddress)
+      commit(SET_RECIPIENT_REGISTRY_INFO, info)
+    } else {
       commit(SET_RECIPIENT_REGISTRY_INFO, null)
-      return
     }
-    const info = await getRegistryInfo(recipientRegistryAddress)
-    commit(SET_RECIPIENT_REGISTRY_INFO, info)
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (state.currentRound && state.currentUser) {
