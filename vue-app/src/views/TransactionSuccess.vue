@@ -12,7 +12,7 @@
         class="contributed-header"
       >
         {{ formatContribution() }}
-        {{ $store.state.currentRound.nativeTokenSymbol }} reallocated!
+        {{ currentRound.nativeTokenSymbol }} reallocated!
       </p>
       <p
         v-else-if="$route.params.type === 'contribution'"
@@ -85,10 +85,8 @@ export default class TransactionSuccess extends Vue {
     return this.$store.state.currentRound
   }
 
-  get reallocationTimeLeft(): TimeLeft | string {
-    return this.currentRound
-      ? getTimeLeft(this.currentRound.votingDeadline)
-      : ''
+  get reallocationTimeLeft(): TimeLeft {
+    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   formatContribution() {
