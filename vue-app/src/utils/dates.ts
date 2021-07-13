@@ -27,7 +27,11 @@ export function getTimeLeft(date: DateTime): TimeLeft {
     return { days: 0, hours: 0, minutes: 0 }
   }
   const { days, hours, minutes } = date.diff(now, ['days', 'hours', 'minutes'])
-  return { days, hours, minutes: Math.ceil(minutes) }
+  return {
+    days,
+    hours: days !== 0 ? hours : Math.ceil(minutes) % 60 ? hours : hours + 1, // If days are 0, and minutes are 60, add 1 to the hours to display properly
+    minutes: Math.ceil(minutes) % 60 ? Math.ceil(minutes) : 0, // If minutes are 60, carry that over to the hours above and show 0
+  }
 }
 
 // TODO handle dates in the past (difference < 0, returns '0 seconds')
