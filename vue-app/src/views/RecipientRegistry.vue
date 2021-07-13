@@ -97,7 +97,6 @@ import {
   RequestType,
   RequestStatus,
   Request,
-  getRegistryInfo,
   getRequests,
 } from '@/api/recipient-registry-optimistic'
 import { getCurrentRound } from '@/api/round'
@@ -115,7 +114,6 @@ import { markdown } from '@/utils/markdown'
   components: { Loader },
 })
 export default class RecipientRegistryView extends Vue {
-  registryInfo: RegistryInfo | null = null
   requests: Request[] = []
   isLoading = true
 
@@ -129,14 +127,15 @@ export default class RecipientRegistryView extends Vue {
       const registryAddress = await getRecipientRegistryAddress(roundAddress)
       this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
     }
-    this.registryInfo = await getRegistryInfo(
-      this.$store.state.recipientRegistryAddress
-    )
     this.requests = await getRequests(
       this.$store.state.recipientRegistryAddress,
       this.registryInfo
     )
     this.isLoading = false
+  }
+
+  get registryInfo(): RegistryInfo {
+    return this.$store.state.recipientRegistryInfo
   }
 
   formatAmount(value: BigNumber): string {

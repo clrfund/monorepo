@@ -45,10 +45,7 @@ import * as humanizeDuration from 'humanize-duration'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
-import {
-  RegistryInfo,
-  getRegistryInfo,
-} from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
 
 @Component({
@@ -66,10 +63,11 @@ export default class Verified extends Vue {
   txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
 
   async created() {
-    const registryInfo: RegistryInfo = await getRegistryInfo(
-      this.$store.state.recipientRegistryAddress
-    )
-    this.challengePeriodDuration = registryInfo.challengePeriodDuration
+    this.challengePeriodDuration = this.registryInfo.challengePeriodDuration
+  }
+
+  get registryInfo(): RegistryInfo {
+    return this.$store.state.recipientRegistryInfo
   }
 
   get blockExplorerUrl(): string {
