@@ -68,7 +68,6 @@ export default class IpfsCopyWidget extends Vue {
   font-size: 14px;
   font-weight: 500;
   line-height: 150%;
-  display: flex;
   align-items: center;
   gap: 1rem;
   width: 100%;
