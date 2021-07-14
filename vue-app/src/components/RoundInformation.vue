@@ -248,7 +248,7 @@
               </div>
             </div>
           </div>
-          <div class="round-info-sub-item bottom-info">
+          <div class="round-info-sub-item">
             <div>
               <div class="round-info-title">
                 Contributors
