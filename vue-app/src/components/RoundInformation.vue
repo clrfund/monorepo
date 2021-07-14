@@ -540,7 +540,11 @@ export default class RoundInformation extends Vue {
 
   & > div {
     box-shadow: inset 0px -1px 0px #7375a6;
+    &:first-of-type {
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
     &:last-of-type {
+      border-radius: 0 0 0.5rem 0.5rem;
       box-shadow: none;
     }
   }
@@ -553,7 +557,6 @@ export default class RoundInformation extends Vue {
   align-items: center;
   background: $bg-light-color;
   padding: 1rem;
-  border-radius: 0.5rem 0.5rem 0 0;
 }
 
 .round-info-item {
@@ -573,10 +576,6 @@ export default class RoundInformation extends Vue {
   flex: 1 0 10%;
   background: $bg-secondary-color;
   padding: 1rem;
-}
-
-.bottom-info {
-  border-radius: 0.5rem;
 }
 
 .round-info-title {
