@@ -11,7 +11,7 @@ import 'hardhat-contract-sizer';
 dotenv.config()
 
 
-const GAS_LIMIT = 20000000
+const GAS_LIMIT = 14000000
 const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC || '';
 
 const config: HardhatUserConfig = {
@@ -52,10 +52,28 @@ const config: HardhatUserConfig = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 0,
+        runs: 200,
       },
     },
     overrides: {
+      "contracts/FundingRoundFactory.sol": {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000000,
+          },
+        },
+      },
+      "contracts/FundingRound.sol": {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000000,
+          },
+        },
+      },
       "contracts/snarkVerifiers/BatchUpdateStateTreeVerifier32.sol": {
         version: "0.6.12",
         settings: {
