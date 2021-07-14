@@ -538,7 +538,11 @@ export default class RoundInformation extends Vue {
 
   & > div {
     box-shadow: inset 0px -1px 0px #7375a6;
+    &:first-of-type {
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
     &:last-of-type {
+      border-radius: 0 0 0.5rem 0.5rem;
       box-shadow: none;
     }
   }
