@@ -2,21 +2,29 @@
 
 ## Coordinate using MACI CLI
 
-Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.7.1:
+Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.9.4:
 
 ```
 git clone https://github.com/appliedzkp/maci.git
 cd maci/
-git checkout v0.7.1
+git checkout v0.9.4
 ```
 
 Follow instructions in README.md to install necessary dependencies.
 
+### Medium Circuits
 Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits into `circuits/params/` directory and rebuild the keys:
 
 ```
 cd circuits
 ./scripts/buildSnarksMedium.sh
+```
+### x32 Circuits
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) for 'x32' circuits into `circuits/params/` directory and rebuild the keys:
+
+```
+cd circuits
+./scripts/buildSnarks32.sh
 ```
 
 Recompile the contracts:
