@@ -3,7 +3,6 @@
     <round-status-banner />
     <div id="page">
       <div id="hero">
-        <div class="full-gradient mobile" />
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
           <img src="@/assets/docking.png" />
@@ -365,15 +364,6 @@ ol li::before {
   display: flex;
   flex-flow: wrap;
 
-  .full-gradient {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, #211e2b 0%, rgba(33, 30, 43, 0) 60.61%);
-    opacity: 0.1;
-    margin: -2rem;
-  }
-
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
@@ -398,7 +388,14 @@ ol li::before {
     flex-direction: column;
     justify-content: center;
     @media (max-width: $breakpoint-m) {
-      max-width: 100%;
+      max-width: 880px;
+      margin: -2rem;
+      padding: 2rem;
+      background: linear-gradient(
+        182.34deg,
+        rgba(0, 0, 0, 0.4) 81%,
+        rgba(196, 196, 196, 0) 89.75%
+      );
     }
   }
 
