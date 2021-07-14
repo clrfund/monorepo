@@ -107,13 +107,7 @@ import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
 
-@Component({
-  name: 'recipient-registry',
-  metaInfo() {
-    return { title: 'Recipient registry' }
-  },
-  components: { Loader },
-})
+@Component({ components: { Loader } })
 export default class RecipientRegistryView extends Vue {
   registryInfo: RegistryInfo | null = null
   requests: Request[] = []

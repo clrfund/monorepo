@@ -28,11 +28,17 @@ const routes = [
     path: '/',
     name: 'landing',
     component: Landing,
+    meta: {
+      title: 'Eth2 clr.fund',
+    },
   },
   {
     path: '/projects',
     name: 'projects',
     component: ProjectList,
+    meta: {
+      title: 'Project List',
+    },
   },
   {
     path: '/project/:id',
@@ -43,86 +49,137 @@ const routes = [
     path: '/round-information',
     name: 'round-information',
     component: RoundInformation,
+    meta: {
+      title: 'Round Information',
+    },
   },
   {
     path: '/rounds',
     name: 'rounds',
     component: RoundList,
+    meta: {
+      title: 'Rounds',
+    },
   },
   {
     path: '/round/:address',
     name: 'round',
     component: ProjectList,
+    meta: {
+      title: 'Project List for Round',
+    },
   },
   {
     path: '/about',
     name: 'about',
     component: About,
+    meta: {
+      title: 'About',
+    },
   },
   {
     path: '/about-maci',
     name: 'about-maci',
     component: AboutMaci,
+    meta: {
+      title: 'About MACI',
+    },
   },
   {
-    path: '/about-sybil-resistance',
-    name: 'about-sybil-resistance',
+    path: '/about-sybil-attacks',
+    name: 'about-sybil-attacks',
     component: AboutSybilAttacks,
+    meta: {
+      title: 'About Sybil Attacks',
+    },
   },
   {
     path: '/about-layer2',
     name: 'about-layer-2',
     component: AboutLayer2,
+    meta: {
+      title: 'About Layer 2',
+    },
   },
   {
     path: '/how-it-works',
     name: 'how-it-works',
     component: HowItWorks,
+    meta: {
+      title: 'How it works',
+    },
   },
   {
     path: '/recipients',
     name: 'recipients',
     component: RecipientRegistryView,
+    meta: {
+      title: 'Recipient registry',
+    },
   },
   {
     path: '/verify',
     name: 'verify',
     component: VerifyLanding,
+    meta: {
+      title: 'BrightID Verify Landing',
+    },
   },
   {
     path: '/verify/success',
     name: 'verified',
     component: Verified,
+    meta: {
+      title: 'Verified',
+    },
   },
   {
     path: '/verify/:step',
     name: 'verify-step',
     component: VerifyView,
+    meta: {
+      title: 'Verification Steps',
+    },
   },
   {
     path: '/join',
     name: 'join',
     component: JoinLanding,
+    meta: {
+      title: 'Recipient Join Form Landing',
+    },
   },
   {
     path: '/join/success',
     name: 'project-added',
     component: ProjectAdded,
+    meta: {
+      title: 'Recipient Join Form Success',
+    },
   },
   {
     path: '/join/:step',
     name: 'join-step',
     component: JoinView,
+    meta: {
+      title: 'Recipient Join Form Steps',
+    },
   },
   {
     path: '/sybil-resistance',
     name: 'sybil-resistance',
     component: AboutSybilResistance,
+    meta: {
+      title: 'Sybil Resistance',
+    },
   },
   {
     path: '/cart',
     name: 'cart',
     component: CartView,
+    meta: {
+      title: 'Cart',
+    },
   },
 ]
 const router = new VueRouter({

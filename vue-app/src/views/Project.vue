@@ -76,7 +76,6 @@ import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
 @Component({
-  name: 'ProjectView',
   metaInfo() {
     return { title: (this as any).project?.name || '' }
   },

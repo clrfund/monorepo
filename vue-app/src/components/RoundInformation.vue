@@ -334,8 +334,6 @@ function shuffleArray(array: any[]) {
 }
 
 @Component({
-  name: 'round-info',
-  metaInfo: { title: 'Round' },
   components: {
     ProjectListItem,
     Loader,

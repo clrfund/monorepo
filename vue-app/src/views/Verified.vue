@@ -51,11 +51,7 @@ import {
 } from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
 
-@Component({
-  name: 'verified',
-  metaInfo: { title: 'verified' },
-  components: { ProgressBar, RoundStatusBanner },
-})
+@Component({ components: { ProgressBar, RoundStatusBanner } })
 export default class Verified extends Vue {
   challengePeriodDuration: number | null = null
   startDate = '03 April' // TODO: use Date() object
