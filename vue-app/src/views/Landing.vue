@@ -49,19 +49,9 @@
       <div id="section-how-it-works">
         <div class="dai-wormhole desktop">
           <img
-            src="@/assets/dai-small.svg"
-            alt="Image of Dai token funneling through a wormhole"
-            class="dai-small"
-          />
-          <img
             src="@/assets/wormhole.png"
             alt="Image of Dai token funneling through a wormhole"
             class="wormhole"
-          />
-          <img
-            src="@/assets/dai-large.svg"
-            alt="Image of Dai token funneling through a wormhole"
-            class="dai-large"
           />
         </div>
         <div id="how-it-works-content">
@@ -95,13 +85,13 @@
         <h2>What you'll need</h2>
       </div>
       <div id="what-you-will-need">
-        <div class="pre-req" id="optimism">
+        <div class="pre-req" id="arbitrum">
           <div class="icon-row">
-            <!-- Optimism icon -->
-            <img src="@/assets/optimism.png" id="optimism-icon" />
-            <p><b>Optimism for fast and cheap transaction fees</b></p>
+            <!-- Arbitrum icon -->
+            <img src="@/assets/arbitrum.png" id="arbitrum-icon" />
+            <p><b>Arbitrum for fast and cheap transaction fees</b></p>
           </div>
-          <div class="btn-action">Get Optimism funds</div>
+          <div class="btn-action">Get Arbitrum funds</div>
         </div>
         <div class="pre-req" id="bright-id">
           <div class="icon-row">
@@ -313,7 +303,7 @@ ol li::before {
   font-size: 16px;
 }
 
-#optimism {
+#arbitrum {
   background: $clr-pink-dark-gradient-bg;
 }
 
@@ -321,7 +311,7 @@ ol li::before {
   background: $clr-blue-gradient-bg;
 }
 
-#optimism-icon,
+#arbitrum-icon,
 #bright-id-icon {
   box-sizing: border-box;
   height: 4rem;
