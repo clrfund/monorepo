@@ -134,16 +134,20 @@ export default class TransactionSuccess extends Vue {
 .content {
   position: relative;
   padding-top: 4rem;
-  max-width: 500px;
+  width: 500px;
   margin: 0 2.5rem;
   @media (max-width: $breakpoint-m) {
     padding: 4rem 2.5rem;
+    width: 90%;
     margin: auto;
     background: linear-gradient(
       171.34deg,
       rgba(0, 0, 0, 0.4) 56.5%,
-      rgba(196, 196, 196, 0) 100.75%
+      rgba(196, 196, 196, 0) 78.75%
     );
+  }
+  @media (max-width: $breakpoint-s) {
+    width: 80%;
   }
 }
 
