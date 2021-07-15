@@ -364,6 +364,10 @@ ol li::before {
   display: flex;
   flex-flow: wrap;
 
+  @media (max-width: $breakpoint-m) {
+    flex-flow: column;
+  }
+
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
