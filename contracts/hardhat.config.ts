@@ -11,7 +11,7 @@ import 'hardhat-contract-sizer';
 dotenv.config()
 
 
-const GAS_LIMIT = 14000000
+const GAS_LIMIT = 20000000
 const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC || '';
 
 const config: HardhatUserConfig = {
@@ -22,6 +22,9 @@ const config: HardhatUserConfig = {
     },
     localhost: {
       url: 'http://127.0.0.1:18545',
+      timeout: 60000,
+      gas: GAS_LIMIT,
+      blockGasLimit: GAS_LIMIT,
     },
     ganache: {
       // Workaround for https://github.com/nomiclabs/hardhat/issues/518

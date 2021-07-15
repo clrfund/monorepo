@@ -4,11 +4,11 @@ import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
 
 export class MaciParameters {
 
-  stateTreeDepth = 4
-  messageTreeDepth = 4
-  voteOptionTreeDepth = 2
-  tallyBatchSize = 4
-  messageBatchSize = 4
+  stateTreeDepth = 32
+  messageTreeDepth = 32
+  voteOptionTreeDepth = 3
+  tallyBatchSize = 8
+  messageBatchSize = 8
   batchUstVerifier!: string
   qvtVerifier!: string
   signUpDuration = 7 * 86400
