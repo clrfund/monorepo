@@ -21,7 +21,7 @@ import { Prop } from 'vue-property-decorator'
 import Tooltip from '@/components/Tooltip.vue'
 
 @Component({ components: { Tooltip } })
-export default class CopyButton extends Vue {  
+export default class CopyButton extends Vue {
   @Prop() value!: string // Required: Text to copy
   @Prop() text!: string // Optional: Fills in "Copy ____" in tooltip
   @Prop() position!: string // Optional: Position of tooltip (default "bottom")
@@ -31,7 +31,7 @@ export default class CopyButton extends Vue {
   isLoading = false
   isCopied = false
 
-  async copyToClipboard (): Promise<void> {
+  async copyToClipboard(): Promise<void> {
     this.isLoading = true
     try {
       await navigator.clipboard.writeText(this.value)
@@ -43,7 +43,7 @@ export default class CopyButton extends Vue {
       this.$emit('copied', false)
     } catch (error) {
       this.isLoading = false
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== 'production') {
         /* eslint-disable-next-line no-console */
         console.warn('Error in copying text: ', error)
       }
@@ -51,7 +51,6 @@ export default class CopyButton extends Vue {
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
 @import '../styles/vars';
@@ -65,7 +64,8 @@ export default class CopyButton extends Vue {
   @include icon(none, $clr-pink-light-gradient);
 }
 
-.ipfs-copy-widget, .project-profile {
+.ipfs-copy-widget,
+.project-profile {
   @include icon(none, $bg-light-color);
 }
 

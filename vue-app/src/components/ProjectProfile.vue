@@ -113,7 +113,7 @@
             target="_blank"
             title="View on Etherscan"
           >
-            <img class="icon" src="@/assets/etherscan.svg"/>
+            <img class="icon" src="@/assets/etherscan.svg" />
           </a>
         </div>
       </div>
