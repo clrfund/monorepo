@@ -26,8 +26,9 @@ export function getTimeLeft(date: DateTime): TimeLeft {
   if (now >= date) {
     return { days: 0, hours: 0, minutes: 0 }
   }
-  const { days, hours, minutes } = date.diff(now, ['days', 'hours', 'minutes'])
-  return { days, hours, minutes: Math.ceil(minutes) }
+  const diff = date.diff(now)
+  const [days, hours, minutes] = diff.toFormat('d h m').split(' ').map(Number)
+  return { days, hours, minutes }
 }
 
 // TODO handle dates in the past (difference < 0, returns '0 seconds')
