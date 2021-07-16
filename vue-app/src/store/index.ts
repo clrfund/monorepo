@@ -337,9 +337,10 @@ const actions = {
       (data: string | null) => {
         const cart = deserializeCart(data)
         commit(CLEAR_CART)
-        for (const item of cart) {
-          commit(ADD_CART_ITEM, item)
-        }
+        Vue.set(state, 'cart', cart)
+        // for (const item of cart) {
+        //   commit(ADD_CART_ITEM, item)
+        // }
       }
     )
   },

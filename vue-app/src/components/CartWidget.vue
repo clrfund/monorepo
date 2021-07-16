@@ -12,14 +12,15 @@
       @click="toggleCart"
     >
       <img alt="open" width="16px" src="@/assets/chevron-left.svg" />
-      <div
-        :class="[
-          cart.length + -0 ? 'circle pulse cart-indicator' : 'cart-indicator',
-        ]"
-        v-if="!$store.state.showCartPanel && isCartBadgeShown"
-      >
-        {{ cart.length }}
-      </div>
+      <transition name="pulse" appear>
+        <div
+          :key="cart.length"
+          :class="[cart.length ? 'circle cart-indicator' : 'cart-indicator']"
+          v-if="!$store.state.showCartPanel && isCartBadgeShown"
+        >
+          {{ cart.length }}
+        </div>
+      </transition>
       <img alt="cart" width="16px" src="@/assets/cart.svg" />
     </div>
     <cart v-if="$store.state.showCartPanel" class="cart-component" />
@@ -85,6 +86,10 @@ export default class CartWidget extends Vue {
 
   get currentUser(): User | null {
     return this.$store.state.currentUser
+  }
+
+  get cartItemsAmount(): number {
+    return this.cart.length
   }
 
   async mounted() {
@@ -241,7 +246,7 @@ export default class CartWidget extends Vue {
   border-radius: 50%;
 }
 
-.pulse {
+.pulse-enter-active {
   animation: pulse-animation 2s 1 ease-out;
 }
 
