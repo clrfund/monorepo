@@ -12,7 +12,7 @@
       @click="toggleCart"
     >
       <img alt="open" width="16px" src="@/assets/chevron-left.svg" />
-      <transition name="pulse" appear>
+      <transition name="pulse" mode="out-in">
         <div
           :key="cart.length"
           :class="[cart.length ? 'circle cart-indicator' : 'cart-indicator']"
@@ -86,10 +86,6 @@ export default class CartWidget extends Vue {
 
   get currentUser(): User | null {
     return this.$store.state.currentUser
-  }
-
-  get cartItemsAmount(): number {
-    return this.cart.length
   }
 
   async mounted() {
