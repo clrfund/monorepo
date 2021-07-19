@@ -47,10 +47,10 @@
         </div>
       </div>
       <div id="section-how-it-works">
-        <div class="dai-wormhole desktop">
+        <div class="wormhole-wrapper desktop-l">
           <img
             src="@/assets/wormhole.png"
-            alt="Image of Dai token funneling through a wormhole"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
             class="wormhole"
           />
         </div>
@@ -60,7 +60,10 @@
             This fundraiser rewards projects with the most unique demand, not
             just those with the wealthiest backers.
           </p>
-          <img src="@/assets/dai-drip.svg" id="dai-drip" />
+          <img
+            src="@/assets/wormhole.png"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
+          />
           <h2>How it works</h2>
           <ol>
             <li>
@@ -505,31 +508,20 @@ ol li::before {
   grid-template-columns: 3fr 2fr;
   grid-template-rows: repeat(2, auto);
   grid-template-areas: 'image content' 'image .';
-  @media (max-width: $breakpoint-m) {
+  @media (max-width: $breakpoint-l) {
     display: flex;
   }
-  .dai-wormhole {
+  .wormhole-wrapper {
     grid-area: image;
     position: relative;
     display: flex;
     width: 100%;
-    .dai-small {
-      position: absolute;
-      left: 8%;
-      top: 0;
-      transform: rotate(-10deg);
-    }
+    align-items: center;
     .wormhole {
       width: 100%;
-      height: 100%;
+      height: auto;
       aspect-ratio: 16/9;
       mix-blend-mode: exclusion;
-    }
-    .dai-large {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      width: 65%;
     }
   }
   #how-it-works-content {
@@ -543,7 +535,7 @@ ol li::before {
     & > img {
       display: none;
     }
-    @media (max-width: $breakpoint-m) {
+    @media (max-width: $breakpoint-l) {
       width: 100%;
       border-radius: 0;
       padding: 0;
@@ -551,6 +543,7 @@ ol li::before {
       & > img {
         display: inline-block;
         align-self: center;
+        width: 100%;
       }
     }
   }
@@ -568,10 +561,6 @@ ol li::before {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-}
-
-#dai-drip {
-  max-width: 100%;
 }
 
 #footer {
