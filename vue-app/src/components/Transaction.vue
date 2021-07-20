@@ -2,7 +2,9 @@
   <div class="transaction">
     <template v-if="error">
       <div class="error">{{ error }}</div>
-      <button class="btn close-btn" @click="$emit('close')">OK</button>
+      <button class="btn-secondary close-btn" @click="$emit('close')">
+        Close
+      </button>
     </template>
     <template v-else>
       <div v-if="!hash">Please approve transaction in your wallet</div>
