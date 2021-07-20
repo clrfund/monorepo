@@ -36,7 +36,7 @@
       </p>
       <transaction
         :hash="approvalTxHash"
-        :error="approvalTxError"
+        :error="approvalTxError || error"
         @close="$emit('close')"
       ></transaction>
     </div>
@@ -53,7 +53,7 @@
       </p>
       <transaction
         :hash="contributionTxHash"
-        :error="contributionTxError"
+        :error="contributionTxError || error"
         @close="$emit('close')"
       ></transaction>
     </div>
@@ -67,7 +67,7 @@
       </p>
       <transaction
         :hash="voteTxHash"
-        :error="voteTxError"
+        :error="voteTxError || error"
         @close="$emit('close')"
       ></transaction>
     </div>
@@ -141,6 +141,7 @@ export default class ContributionModal extends Vue {
   contributionTxError = ''
   voteTxHash = ''
   voteTxError = ''
+  error = ''
 
   get currentRound(): RoundInfo {
     return this.$store.state.currentRound
@@ -166,112 +167,123 @@ export default class ContributionModal extends Vue {
   }
 
   async contribute() {
-    this.step += 1
-    const signer: Signer =
-      this.$store.state.currentUser.walletProvider.getSigner()
-    const {
-      coordinatorPubKey,
-      nativeTokenAddress,
-      voiceCreditFactor,
-      maciAddress,
-      fundingRoundAddress,
-    } = this.currentRound
-    const total = this.getTotal()
-    const token = new Contract(nativeTokenAddress, ERC20, signer)
-    // Approve transfer (step 1)
-    const allowance = await token.allowance(
-      signer.getAddress(),
-      fundingRoundAddress
-    )
-    if (allowance < total) {
+    try {
+      this.step += 1
+      const signer: Signer =
+        this.$store.state.currentUser.walletProvider.getSigner()
+      const {
+        coordinatorPubKey,
+        nativeTokenAddress,
+        voiceCreditFactor,
+        maciAddress,
+        fundingRoundAddress,
+      } = this.currentRound
+      const total = this.getTotal()
+      const token = new Contract(nativeTokenAddress, ERC20, signer)
+      // Approve transfer (step 1)
+      const allowance = await token.allowance(
+        signer.getAddress(),
+        fundingRoundAddress
+      )
+      if (allowance < total) {
+        try {
+          await waitForTransaction(
+            token.approve(fundingRoundAddress, total),
+            (hash) => (this.approvalTxHash = hash)
+          )
+        } catch (error) {
+          this.approvalTxError = error.message
+          return
+        }
+      }
+      this.step += 1
+      // Contribute (step 2)
+      const contributorKeypair = new Keypair()
+      const fundingRound = new Contract(
+        fundingRoundAddress,
+        FundingRound,
+        signer
+      )
+      let contributionTxReceipt
       try {
-        await waitForTransaction(
-          token.approve(fundingRoundAddress, total),
-          (hash) => (this.approvalTxHash = hash)
+        contributionTxReceipt = await waitForTransaction(
+          fundingRound.contribute(
+            contributorKeypair.pubKey.asContractParam(),
+            total
+          ),
+          (hash) => (this.contributionTxHash = hash)
         )
       } catch (error) {
-        this.approvalTxError = error.message
+        this.contributionTxError = error.message
         return
       }
-    }
-    this.step += 1
-    // Contribute (step 2)
-    const contributorKeypair = new Keypair()
-    const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
-    let contributionTxReceipt
-    try {
-      contributionTxReceipt = await waitForTransaction(
-        fundingRound.contribute(
-          contributorKeypair.pubKey.asContractParam(),
-          total
-        ),
-        (hash) => (this.contributionTxHash = hash)
+      // Get state index and amount of voice credits
+      const maci = new Contract(maciAddress, MACI, signer)
+      const stateIndex = getEventArg(
+        contributionTxReceipt,
+        maci,
+        'SignUp',
+        '_stateIndex'
       )
-    } catch (error) {
-      this.contributionTxError = error.message
-      return
-    }
-    // Get state index and amount of voice credits
-    const maci = new Contract(maciAddress, MACI, signer)
-    const stateIndex = getEventArg(
-      contributionTxReceipt,
-      maci,
-      'SignUp',
-      '_stateIndex'
-    )
-    const voiceCredits = getEventArg(
-      contributionTxReceipt,
-      maci,
-      'SignUp',
-      '_voiceCreditBalance'
-    )
-    if (!voiceCredits.mul(voiceCreditFactor).eq(total)) {
-      throw new Error('Incorrect amount of voice credits')
-    }
-    const contributor = {
-      keypair: contributorKeypair,
-      stateIndex: stateIndex.toNumber(),
-    }
-    // Save contributor data to storage
-    this.$store.commit(SET_CONTRIBUTOR, contributor)
-    this.$store.dispatch(SAVE_CONTRIBUTOR_DATA)
-    // Set contribution and update round info
-    this.$store.commit(SET_CONTRIBUTION, total)
-    // Reload contribution pool size
-    this.$store.dispatch(LOAD_ROUND_INFO)
-    // Vote (step 3)
-    const messages: Message[] = []
-    const encPubKeys: PubKey[] = []
-    let nonce = 1
-    for (const [recipientIndex, voiceCredits] of this.votes) {
-      const [message, encPubKey] = createMessage(
-        contributor.stateIndex,
-        contributor.keypair,
-        null,
-        coordinatorPubKey,
-        recipientIndex,
-        voiceCredits,
-        nonce
+      const voiceCredits = getEventArg(
+        contributionTxReceipt,
+        maci,
+        'SignUp',
+        '_voiceCreditBalance'
       )
-      messages.push(message)
-      encPubKeys.push(encPubKey)
-      nonce += 1
+      if (!voiceCredits.mul(voiceCreditFactor).eq(total)) {
+        throw new Error('Incorrect amount of voice credits')
+      }
+      const contributor = {
+        keypair: contributorKeypair,
+        stateIndex: stateIndex.toNumber(),
+      }
+      // Save contributor data to storage
+      this.$store.commit(SET_CONTRIBUTOR, contributor)
+      this.$store.dispatch(SAVE_CONTRIBUTOR_DATA)
+      // Set contribution and update round info
+      this.$store.commit(SET_CONTRIBUTION, total)
+      // Reload contribution pool size
+      this.$store.dispatch(LOAD_ROUND_INFO)
+      // Vote (step 3)
+      const messages: Message[] = []
+      const encPubKeys: PubKey[] = []
+      let nonce = 1
+      for (const [recipientIndex, voiceCredits] of this.votes) {
+        const [message, encPubKey] = createMessage(
+          contributor.stateIndex,
+          contributor.keypair,
+          null,
+          coordinatorPubKey,
+          recipientIndex,
+          voiceCredits,
+          nonce
+        )
+        messages.push(message)
+        encPubKeys.push(encPubKey)
+        nonce += 1
+      }
+      this.step += 1
+      try {
+        await waitForTransaction(
+          fundingRound.submitMessageBatch(
+            messages.reverse().map((msg) => msg.asContractParam()),
+            encPubKeys.reverse().map((key) => key.asContractParam())
+          ),
+          (hash) => (this.voteTxHash = hash)
+        )
+        this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
+      } catch (error) {
+        this.voteTxError = error.message
+        return
+      }
+      this.step += 1
+    } catch (err) {
+      /* eslint-disable-next-line no-console */
+      console.log(err)
+      this.error =
+        'Something unexpected ocurred. Refresh the page and try again.'
     }
-    this.step += 1
-    try {
-      await waitForTransaction(
-        fundingRound.submitMessageBatch(
-          messages.reverse().map((msg) => msg.asContractParam()),
-          encPubKeys.reverse().map((key) => key.asContractParam())
-        ),
-        (hash) => (this.voteTxHash = hash)
-      )
-      this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
-    } catch (error) {
-      this.voteTxError = error.message
-      return
-    }
-    this.step += 1
   }
 }
 </script>
@@ -285,7 +297,7 @@ export default class ContributionModal extends Vue {
   margin: 1rem 0;
   margin-top: 1.5rem;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 1rem;
 
   .btn {
