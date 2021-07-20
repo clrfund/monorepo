@@ -326,7 +326,7 @@ summary:focus {
   width: $cart-width-open;
   height: 100%;
   position: sticky;
-  top: 0;
+  top: 1.5rem;
 
   .master {
     color: black;
