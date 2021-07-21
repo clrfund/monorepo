@@ -38,7 +38,8 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     RequestType indexed _type,
     address _recipient,
     string _metadata,
-    uint256 _timestamp
+    uint256 _timestamp,
+    address _requester
   );
   event RequestResolved(
     bytes32 indexed _recipientId,
@@ -114,7 +115,8 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
       RequestType.Registration,
       _recipient,
       _metadata,
-      block.timestamp
+      block.timestamp,
+      msg.sender
     );
   }
 
@@ -129,7 +131,6 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     require(recipients[_recipientId].index != 0, 'RecipientRegistry: Recipient is not in the registry');
     require(recipients[_recipientId].removedAt == 0, 'RecipientRegistry: Recipient already removed');
     require(requests[_recipientId].submissionTime == 0, 'RecipientRegistry: Request already submitted');
-    require(msg.value == baseDeposit, 'RecipientRegistry: Incorrect deposit amount');
     requests[_recipientId] = Request(
       RequestType.Removal,
       msg.sender,
@@ -143,7 +144,8 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
       RequestType.Removal,
       address(0),
       '',
-      block.timestamp
+      block.timestamp,
+      msg.sender
     );
   }
 

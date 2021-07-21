@@ -7,7 +7,7 @@ import { provider } from '@/api/core'
 
 export async function waitForTransaction(
   pendingTransaction: Promise<TransactionResponse>,
-  onTransactionHash: (hash: string) => void
+  onTransactionHash?: (hash: string) => void
 ): Promise<TransactionReceipt> {
   let transaction
   try {
@@ -15,7 +15,7 @@ export async function waitForTransaction(
   } catch (error) {
     throw new Error(error.message)
   }
-  onTransactionHash(transaction.hash)
+  onTransactionHash?.(transaction.hash)
   let transactionReceipt
   while (!transactionReceipt) {
     try {
