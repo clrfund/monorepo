@@ -20,6 +20,7 @@ import JoinView from '../views/Join.vue'
 import VerifyView from '../views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 import CartView from '@/views/Cart.vue'
+import TransactionSuccess from '@/views/TransactionSuccess.vue'
 
 Vue.use(VueRouter)
 
@@ -180,6 +181,11 @@ const routes = [
     meta: {
       title: 'Cart',
     },
+  },
+  {
+    path: '/transaction-success/:type/:hash',
+    name: 'transaction-success',
+    component: TransactionSuccess,
   },
 ]
 const router = new VueRouter({
