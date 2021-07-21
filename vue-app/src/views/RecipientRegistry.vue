@@ -51,22 +51,37 @@
                   <div>
                     <span
                       >Transaction hash
-                      <img class="icon" width="16px" src="@/assets/copy.svg"
-                    /></span>
+                      <button
+                        class="button-copy"
+                        @click="copyAddress(request.transactionHash)"
+                      >
+                        <img src="@/assets/copy.svg" />
+                      </button>
+                    </span>
                     <code>{{ request.transactionHash }}</code>
                   </div>
                   <div>
                     <span
                       >Project ID
-                      <img class="icon" width="16px" src="@/assets/copy.svg"
-                    /></span>
+                      <button
+                        class="button-copy"
+                        @click="copyAddress(request.recipientId)"
+                      >
+                        <img src="@/assets/copy.svg" />
+                      </button>
+                    </span>
                     <code>{{ request.recipientId }}</code>
                   </div>
                   <div>
                     <span
                       >Recipient address
-                      <img class="icon" width="16px" src="@/assets/copy.svg"
-                    /></span>
+                      <button
+                        class="button-copy"
+                        @click="copyAddress(request.recipient)"
+                      >
+                        <img src="@/assets/copy.svg" />
+                      </button>
+                    </span>
                     <code>{{ request.recipient }}</code>
                   </div>
                 </details>
@@ -279,6 +294,15 @@ export default class RecipientRegistryView extends Vue {
       console.warn(error.message)
     }
   }
+
+  async copyAddress(text: string): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch (error) {
+      /* eslint-disable-next-line no-console */
+      console.warn('Error in copying text: ', error)
+    }
+  }
 }
 </script>
 
@@ -410,6 +434,16 @@ export default class RecipientRegistryView extends Vue {
   .btn-row {
     display: flex;
     gap: 0.5rem;
+  }
+}
+
+.button-copy {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+
+  img {
+    width: 16px;
   }
 }
 
