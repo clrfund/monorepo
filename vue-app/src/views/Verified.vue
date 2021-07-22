@@ -45,7 +45,6 @@ import * as humanizeDuration from 'humanize-duration'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
 
 @Component({
@@ -54,21 +53,9 @@ import { blockExplorer } from '@/api/core'
   components: { ProgressBar, RoundStatusBanner },
 })
 export default class Verified extends Vue {
-  challengePeriodDuration: number | null = null
-  startDate = '03 April' // TODO: use Date() object
-  timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
-
   // TODO: Retrieve hash of transaction.
   // We route to this component, pass hash as queryParam after submission?
   txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
-
-  async created() {
-    this.challengePeriodDuration = this.registryInfo.challengePeriodDuration
-  }
-
-  get registryInfo(): RegistryInfo {
-    return this.$store.state.recipientRegistryInfo
-  }
 
   get blockExplorerUrl(): string {
     return `${blockExplorer}${this.txHash}`
