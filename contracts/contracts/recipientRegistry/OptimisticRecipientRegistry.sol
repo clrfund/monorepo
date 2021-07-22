@@ -126,6 +126,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     */
   function removeRecipient(bytes32 _recipientId)
     external
+    onlyOwner
     payable
   {
     require(recipients[_recipientId].index != 0, 'RecipientRegistry: Recipient is not in the registry');
