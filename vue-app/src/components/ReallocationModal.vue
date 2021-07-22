@@ -8,11 +8,6 @@
         @close="$emit('close')"
       ></transaction>
     </div>
-    <div v-if="step === 2">
-      <h3>Success!</h3>
-      <div>Contributed funds have been successfully reallocated.</div>
-      <button class="btn close-btn" @click="$emit('close')">OK</button>
-    </div>
   </div>
 </template>
 
@@ -80,6 +75,14 @@ export default class ReallocationModal extends Vue {
         (hash) => (this.voteTxHash = hash)
       )
       this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
+      this.$emit('close')
+      this.$router.push({
+        name: `transaction-success`,
+        params: {
+          type: 'reallocation',
+          hash: this.voteTxHash,
+        },
+      })
     } catch (error) {
       this.voteTxError = error.message
       return

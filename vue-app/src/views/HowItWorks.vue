@@ -133,9 +133,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 // TODO connect with state to add durations to content
-@Component({
-  metaInfo: { title: 'How it works' },
-})
+@Component
 export default class HowItWorks extends Vue {}
 </script>
 

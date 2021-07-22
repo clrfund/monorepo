@@ -76,7 +76,6 @@ import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
 @Component({
-  name: 'ProjectView',
   metaInfo() {
     return { title: (this as any).project?.name || '' }
   },
@@ -159,19 +158,6 @@ export default class ProjectView extends Vue {
       this.$router.push({ name: 'round', params: { address: roundAddress } })
     } else {
       this.$router.push({ name: 'projects' })
-    }
-  }
-
-  async copyAddress(): Promise<void> {
-    if (!this.project?.address) {
-      return
-    }
-    try {
-      await navigator.clipboard.writeText(this.project.address)
-      // TODO: UX success feedback
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
     }
   }
 
@@ -493,24 +479,6 @@ export default class ProjectView extends Vue {
   font-weight: 400;
   margin-bottom: 0.25rem;
   text-transform: uppercase;
-}
-
-.copy-btn {
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: none;
-  border: 1px solid $text-color;
-  padding: 0.5rem;
-  box-sizing: border-box;
-  padding: 0.25rem;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.1);
-  &:hover {
-    transform: scale(1.01);
-    opacity: 0.8;
-  }
 }
 
 .nav-area {

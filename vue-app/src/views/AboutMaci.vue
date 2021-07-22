@@ -99,10 +99,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-@Component({
-  name: 'about-maci',
-  metaInfo: { title: 'About Maci' },
-})
+@Component
 export default class AboutMaci extends Vue {}
 </script>
 

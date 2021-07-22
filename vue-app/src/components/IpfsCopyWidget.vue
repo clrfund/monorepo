@@ -1,18 +1,20 @@
 <template>
   <div class="copy">
     <div class="hash">
-      <loader class="hash-loader" v-if="isLoading" />
-      <div class="hash-text" v-else>{{ renderCopiedOrHash }}</div>
+      {{ renderCopiedOrHash }}
     </div>
     <div class="icons">
-      <tooltip position="bottom" :content="isCopied ? 'Copied!' : 'Copy hash'"
-        ><div class="icon" @click="copyHash">
-          <img width="16px" src="@/assets/copy.svg" /></div
-      ></tooltip>
-      <tooltip position="bottom" content="View IPFS link"
-        ><a class="icon" :href="'https://ipfs.io/ipfs/' + hash" target="_blank"
-          ><img width="16px" src="@/assets/ipfs-white.svg" /></a
-      ></tooltip>
+      <copy-button
+        :value="hash"
+        text="hash"
+        v-on:copied="updateIsCopied"
+        myClass="ipfs-copy-widget"
+      />
+      <tooltip position="bottom" content="View IPFS link">
+        <a :href="'https://ipfs.io/ipfs/' + hash" target="_blank">
+          <img class="icon" src="@/assets/ipfs-white.svg" />
+        </a>
+      </tooltip>
     </div>
   </div>
 </template>
@@ -23,29 +25,21 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
 import Tooltip from '@/components/Tooltip.vue'
+import CopyButton from '@/components/CopyButton.vue'
 
 @Component({
-  components: { Tooltip },
+  components: { CopyButton, Tooltip },
 })
 export default class IpfsCopyWidget extends Vue {
   @Prop() hash!: string
-  isLoading = false
   isCopied = false
+
+  updateIsCopied(isCopied: boolean): void {
+    this.isCopied = isCopied
+  }
 
   get renderCopiedOrHash(): string {
     return this.isCopied ? 'Copied!' : this.hash
-  }
-
-  async copyHash(): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(this.hash)
-      this.isCopied = true
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      this.isCopied = false
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
-    }
   }
 }
 </script>
@@ -74,11 +68,14 @@ export default class IpfsCopyWidget extends Vue {
   font-size: 14px;
   font-weight: 500;
   line-height: 150%;
-  display: flex;
   align-items: center;
   gap: 1rem;
+  width: 100%;
   min-width: 10%;
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   @media (max-width: $breakpoint-m) {
     margin-left: 0.5rem;
   }
@@ -111,20 +108,6 @@ export default class IpfsCopyWidget extends Vue {
 }
 
 .icon {
-  width: 1rem;
-  height: 1rem;
-  padding: 0.25rem;
-  cursor: pointer;
-  &:hover {
-    background: $bg-light-color;
-    border-radius: 16px;
-  }
-}
-
-.hash-text {
-  white-space: nowrap;
-  overflow: hidden;
-  width: 100%;
-  text-overflow: ellipsis;
+  @include icon(none, $bg-light-color);
 }
 </style>

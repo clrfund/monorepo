@@ -3,45 +3,46 @@
     <round-status-banner />
     <div id="page">
       <div id="hero">
-        <div class="full-gradient mobile" />
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
           <img src="@/assets/docking.png" />
         </div>
-        <div class="hero-content">
-          <h1>Send your favourite Eth2 projects to the moon!</h1>
-          <div id="subtitle" class="subtitle">
-            Every project you contribute to gets a portion of extra funding.
-          </div>
-          <div class="btn-group">
-            <router-link to="/projects" class="btn-action"
-              >Go to app</router-link
-            >
-            <div class="btn-white" @click="scrollToHowItWorks">
-              How it works
+        <div>
+          <div class="hero-content">
+            <h1>Send your favourite Eth2 projects to the moon!</h1>
+            <div id="subtitle" class="subtitle">
+              Every project you contribute to gets a portion of extra funding.
+            </div>
+            <div class="btn-group">
+              <router-link to="/projects" class="btn-action"
+                >Go to app</router-link
+              >
+              <div class="btn-white" @click="scrollToHowItWorks">
+                How it works
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          class="apply-callout"
-          v-if="
-            $store.state.currentRound &&
-            $store.getters.isRoundJoinPhase &&
-            !$store.getters.isRecipientRegistryFull
-          "
-        >
-          <div class="column">
-            <h2>Join the funding round</h2>
-            <p>
-              Add your project to the next funding round. If you're working on
-              anything related to Eth2, you can join in.
-            </p>
-          </div>
-          <div class="button-group">
-            <router-link to="/join" class="btn-primary w100"
-              >Join round</router-link
-            >
-            <div>{{ timeRemaining }}</div>
+          <div
+            class="apply-callout"
+            v-if="
+              $store.state.currentRound &&
+              $store.getters.isRoundJoinPhase &&
+              !$store.getters.isRecipientRegistryFull
+            "
+          >
+            <div class="column">
+              <h2>Join the funding round</h2>
+              <p>
+                Add your project to the next funding round. If you're working on
+                anything related to Eth2, you can join in.
+              </p>
+            </div>
+            <div class="button-group">
+              <router-link to="/join" class="btn-primary w100"
+                >Join round</router-link
+              >
+              <div>{{ timeRemaining }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -365,13 +366,8 @@ ol li::before {
   display: flex;
   flex-flow: wrap;
 
-  .full-gradient {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, #211e2b 0%, rgba(33, 30, 43, 0) 60.61%);
-    opacity: 0.1;
-    margin: -2rem;
+  @media (max-width: $breakpoint-m) {
+    flex-flow: column;
   }
 
   .image-wrapper img {
@@ -398,7 +394,14 @@ ol li::before {
     flex-direction: column;
     justify-content: center;
     @media (max-width: $breakpoint-m) {
-      max-width: 100%;
+      max-width: 880px;
+      margin: -2rem;
+      padding: 2rem;
+      background: linear-gradient(
+        182.34deg,
+        rgba(0, 0, 0, 0.4) 81%,
+        rgba(196, 196, 196, 0) 89.75%
+      );
     }
   }
 

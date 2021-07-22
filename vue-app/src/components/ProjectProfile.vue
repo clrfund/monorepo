@@ -101,12 +101,20 @@
           </div>
         </div>
         <div class="copy-div">
-          <div class="copy-btn" @click="copyAddress">
-            <img width="16px" src="@/assets/copy.svg" />
-          </div>
-          <div class="copy-btn" @click="copyAddress">
-            <img width="16px" src="@/assets/etherscan.svg" />
-          </div>
+          <copy-button
+            :value="project.address"
+            text="address"
+            myClass="project-profile"
+            :hasBorder="true"
+          />
+          <a
+            class="explorerLink"
+            :href="`https://etherscan.io/address/${project.address}`"
+            target="_blank"
+            title="View on Etherscan"
+          >
+            <img class="icon" src="@/assets/etherscan.svg" />
+          </a>
         </div>
       </div>
       <hr v-if="project.teamName || project.teamDescription" />
@@ -134,6 +142,7 @@ import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { Project } from '@/api/projects'
 import Info from '@/components/Info.vue'
 import Markdown from '@/components/Markdown.vue'
+import CopyButton from '@/components/CopyButton.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
 import { SAVE_CART } from '@/store/action-types'
@@ -141,7 +150,7 @@ import { ADD_CART_ITEM } from '@/store/mutation-types'
 import ClaimModal from '@/components/ClaimModal.vue'
 import LinkBox from '@/components/LinkBox.vue'
 
-@Component({ components: { Markdown, Info, LinkBox } })
+@Component({ components: { Markdown, Info, LinkBox, CopyButton } })
 export default class ProjectProfile extends Vue {
   allocatedAmount: FixedNumber | null = null
   contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
@@ -149,20 +158,6 @@ export default class ProjectProfile extends Vue {
   @Prop() project!: Project
   @Prop() klerosCurateUrl!: string | null
   @Prop() previewMode!: boolean
-  isCopied = false
-
-  async copyAddress(): Promise<void> {
-    if (!this.project?.address) return
-    try {
-      await navigator.clipboard.writeText(this.project.address)
-      this.isCopied = true
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      this.isCopied = false
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
-    }
-  }
 
   private async checkAllocation(tally: Tally | null) {
     const currentRound = this.$store.state.currentRound
@@ -443,21 +438,12 @@ export default class ProjectProfile extends Vue {
     display: flex;
     gap: 0.5rem;
 
-    .copy-btn {
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: none;
-      border: 1px solid $text-color;
-      padding: 0.5rem;
-      box-sizing: border-box;
-      padding: 0.25rem;
-      cursor: pointer;
-      background: rgba(255, 255, 255, 0.1);
-      &:hover {
-        transform: scale(1.01);
-        opacity: 0.8;
+    .explorerLink {
+      margin: 0;
+      padding: 0;
+      .icon {
+        @include icon(none, $bg-light-color);
+        border: 1px solid $text-color;
       }
     }
   }

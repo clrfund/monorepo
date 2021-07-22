@@ -47,11 +47,7 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 
 import { blockExplorer } from '@/api/core'
 
-@Component({
-  name: 'verified',
-  metaInfo: { title: 'verified' },
-  components: { ProgressBar, RoundStatusBanner },
-})
+@Component({ components: { ProgressBar, RoundStatusBanner } })
 export default class Verified extends Vue {
   // TODO: Retrieve hash of transaction.
   // We route to this component, pass hash as queryParam after submission?
