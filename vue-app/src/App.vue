@@ -328,6 +328,8 @@ summary:focus {
   padding: 1.5rem;
   width: $cart-width-open;
   height: 100%;
+  position: sticky;
+  top: 1.5rem;
 
   .master {
     color: black;
