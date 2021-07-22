@@ -47,21 +47,11 @@
         </div>
       </div>
       <div id="section-how-it-works">
-        <div class="dai-wormhole desktop">
-          <img
-            src="@/assets/dai-small.svg"
-            alt="Image of Dai token funneling through a wormhole"
-            class="dai-small"
-          />
+        <div class="wormhole-wrapper desktop-l">
           <img
             src="@/assets/wormhole.png"
-            alt="Image of Dai token funneling through a wormhole"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
             class="wormhole"
-          />
-          <img
-            src="@/assets/dai-large.svg"
-            alt="Image of Dai token funneling through a wormhole"
-            class="dai-large"
           />
         </div>
         <div id="how-it-works-content">
@@ -70,7 +60,10 @@
             This fundraiser rewards projects with the most unique demand, not
             just those with the wealthiest backers.
           </p>
-          <img src="@/assets/dai-drip.svg" id="dai-drip" />
+          <img
+            src="@/assets/wormhole.png"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
+          />
           <h2>How it works</h2>
           <ol>
             <li>
@@ -95,23 +88,33 @@
         <h2>What you'll need</h2>
       </div>
       <div id="what-you-will-need">
-        <div class="pre-req" id="optimism">
+        <div class="pre-req" id="arbitrum">
           <div class="icon-row">
-            <!-- Optimism icon -->
-            <img src="@/assets/optimism.png" id="optimism-icon" />
-            <p><b>Optimism for fast and cheap transaction fees</b></p>
+            <img src="@/assets/arbitrum.png" id="arbitrum-icon" />
+            <p><b>Arbitrum for fast and cheap transaction fees</b></p>
           </div>
-          <div class="btn-action">Get Optimism funds</div>
+          <a
+            href="https://bridge.arbitrum.io/"
+            target="_blank"
+            rel="noopener"
+            class="btn-action"
+            >Get Arbitrum funds</a
+          >
         </div>
         <div class="pre-req" id="bright-id">
           <div class="icon-row">
-            <!-- BrightID icon -->
             <img src="@/assets/bright-id.png" id="bright-id-icon" />
             <p>
               <b>BrightID for private, decentralized identity verification</b>
             </p>
           </div>
-          <div class="btn-primary">Download BrightID</div>
+          <a
+            href="https://brightid.org"
+            target="_blank"
+            rel="noopener"
+            class="btn-primary"
+            >Download BrightID</a
+          >
         </div>
       </div>
       <div class="section-header">
@@ -313,7 +316,7 @@ ol li::before {
   font-size: 16px;
 }
 
-#optimism {
+#arbitrum {
   background: $clr-pink-dark-gradient-bg;
 }
 
@@ -321,7 +324,7 @@ ol li::before {
   background: $clr-blue-gradient-bg;
 }
 
-#optimism-icon,
+#arbitrum-icon,
 #bright-id-icon {
   box-sizing: border-box;
   height: 4rem;
@@ -444,7 +447,8 @@ ol li::before {
 
 .pre-req {
   display: flex;
-  gap: $content-space;
+  gap: 1rem;
+  justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
 
@@ -515,31 +519,20 @@ ol li::before {
   grid-template-columns: 3fr 2fr;
   grid-template-rows: repeat(2, auto);
   grid-template-areas: 'image content' 'image .';
-  @media (max-width: $breakpoint-m) {
+  @media (max-width: $breakpoint-l) {
     display: flex;
   }
-  .dai-wormhole {
+  .wormhole-wrapper {
     grid-area: image;
     position: relative;
     display: flex;
     width: 100%;
-    .dai-small {
-      position: absolute;
-      left: 8%;
-      top: 0;
-      transform: rotate(-10deg);
-    }
+    align-items: center;
     .wormhole {
       width: 100%;
-      height: 100%;
+      height: auto;
       aspect-ratio: 16/9;
       mix-blend-mode: exclusion;
-    }
-    .dai-large {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      width: 65%;
     }
   }
   #how-it-works-content {
@@ -553,7 +546,7 @@ ol li::before {
     & > img {
       display: none;
     }
-    @media (max-width: $breakpoint-m) {
+    @media (max-width: $breakpoint-l) {
       width: 100%;
       border-radius: 0;
       padding: 0;
@@ -561,6 +554,7 @@ ol li::before {
       & > img {
         display: inline-block;
         align-self: center;
+        width: 100%;
       }
     }
   }
@@ -578,10 +572,6 @@ ol li::before {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-}
-
-#dai-drip {
-  max-width: 100%;
 }
 
 #footer {
