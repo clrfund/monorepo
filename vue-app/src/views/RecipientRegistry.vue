@@ -204,6 +204,10 @@ export default class RecipientRegistryView extends Vue {
     )
   }
 
+  get registryInfo(): RegistryInfo {
+    return this.$store.state.recipientRegistryInfo
+  }
+
   formatAmount(value: BigNumber): string {
     return formatAmount(value, 18)
   }

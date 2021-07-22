@@ -18,7 +18,7 @@
               everything is ok, your project will go live within
               {{
                 challengePeriodDuration === null
-                  ? '..'
+                  ? '...'
                   : formatDuration(challengePeriodDuration)
               }}.
             </li>
@@ -49,10 +49,7 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import Warning from '@/components/Warning.vue'
 
-import {
-  RegistryInfo,
-  getRegistryInfo,
-} from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
 
 @Component({
@@ -66,10 +63,11 @@ export default class ProjectAdded extends Vue {
 
   async created() {
     this.txHash = this.$route.params.txHash
-    const registryInfo: RegistryInfo = await getRegistryInfo(
-      this.$store.state.recipientRegistryAddress
-    )
-    this.challengePeriodDuration = registryInfo.challengePeriodDuration
+    this.challengePeriodDuration = this.registryInfo.challengePeriodDuration
+  }
+
+  get registryInfo(): RegistryInfo {
+    return this.$store.state.recipientRegistryInfo
   }
 
   get blockExplorerUrl(): string {
