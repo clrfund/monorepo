@@ -18,7 +18,7 @@
               everything is ok, your project will go live within
               {{
                 challengePeriodDuration === null
-                  ? '..'
+                  ? '...'
                   : formatDuration(challengePeriodDuration)
               }}.
             </li>

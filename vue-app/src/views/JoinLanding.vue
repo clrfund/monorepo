@@ -132,8 +132,6 @@ export default class JoinLanding extends Vue {
   deposit: BigNumber | null = null
   depositToken: string | null = null
 
-  // TODO fix on page refresh - `recipientRegistryAddress` is `null`
-  // Refactor to computed properties, so we can react to having `recipientRegistryAddress`?
   async created() {
     try {
       const maxRecipients = this.$store.state.currentRound.maxRecipients

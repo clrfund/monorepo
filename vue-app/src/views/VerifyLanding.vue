@@ -69,7 +69,6 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { commify, formatUnits } from '@ethersproject/units'
 import WalletWidget from '@/components/WalletWidget.vue'
-import { blockExplorer } from '@/api/core'
 
 @Component({
   components: { ProgressBar, RoundStatusBanner, WalletWidget },
@@ -89,10 +88,6 @@ export default class VerifyLanding extends Vue {
       return null
     }
     return commify(formatUnits(balance, 18))
-  }
-
-  get blockExplorerUrl(): string {
-    return `${blockExplorer}${this.txHash}`
   }
 
   get isRoundFullOrOver(): boolean {
