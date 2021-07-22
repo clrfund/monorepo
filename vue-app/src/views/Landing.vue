@@ -90,21 +90,31 @@
       <div id="what-you-will-need">
         <div class="pre-req" id="arbitrum">
           <div class="icon-row">
-            <!-- Arbitrum icon -->
             <img src="@/assets/arbitrum.png" id="arbitrum-icon" />
             <p><b>Arbitrum for fast and cheap transaction fees</b></p>
           </div>
-          <div class="btn-action">Get Arbitrum funds</div>
+          <a
+            href="https://bridge.arbitrum.io/"
+            target="_blank"
+            rel="noopener"
+            class="btn-action"
+            >Get Arbitrum funds</a
+          >
         </div>
         <div class="pre-req" id="bright-id">
           <div class="icon-row">
-            <!-- BrightID icon -->
             <img src="@/assets/bright-id.png" id="bright-id-icon" />
             <p>
               <b>BrightID for private, decentralized identity verification</b>
             </p>
           </div>
-          <div class="btn-primary">Download BrightID</div>
+          <a
+            href="https://brightid.org"
+            target="_blank"
+            rel="noopener"
+            class="btn-primary"
+            >Download BrightID</a
+          >
         </div>
       </div>
       <div class="section-header">
@@ -437,7 +447,8 @@ ol li::before {
 
 .pre-req {
   display: flex;
-  gap: $content-space;
+  gap: 1rem;
+  justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
 
