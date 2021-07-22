@@ -308,7 +308,8 @@
                     required
                     id="team-email"
                     placeholder="example: doge@goodboi.com"
-                    v-model="$v.form.team.email.$model"
+                    v-model="form.team.email"
+                    @blur="$v.form.team.email.$touch()"
                     :class="{
                       input: true,
                       invalid: $v.form.team.email.$error,
