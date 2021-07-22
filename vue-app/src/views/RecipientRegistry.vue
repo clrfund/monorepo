@@ -165,6 +165,7 @@ import { isSameAddress } from '@/utils/accounts'
 import { markdown } from '@/utils/markdown'
 import { waitForTransaction } from '@/utils/contracts'
 import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
+import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 
 @Component({ components: { Loader } })
 export default class RecipientRegistryView extends Vue {
