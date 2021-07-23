@@ -81,53 +81,37 @@ export default class WalletModal extends Vue {
       // Access denied
       return
     }
-    let signature
-    try {
-      signature = await this.windowEthereum.request({
-        method: 'personal_sign',
-        params: [LOGIN_MESSAGE, walletAddress],
-      })
-    } catch (error) {
-      // Signature request rejected
-      this.connectingWallet = false
-      return
-    }
-    const user: User = {
-      walletProvider: new Web3Provider(this.windowEthereum),
-      walletAddress,
-      encryptionKey: sha256(signature),
-      isVerified: null,
-      balance: null,
-      contribution: null,
-    }
 
-    this.$emit('connected')
-    this.connectingWallet = false
+    const user = await this.connectAccount(this.windowEthereum, walletAddress)
 
-    getProfileImageUrl(user.walletAddress).then((url) => {
-      this.updateProfileImage(url)
-    })
-    this.$store.commit(SET_CURRENT_USER, user)
-    await this.$store.dispatch(LOGIN_USER)
-    if (this.$store.state.currentRound) {
-      // Load cart & contributor data for current round
-      this.$store.dispatch(LOAD_USER_INFO)
-      this.$store.dispatch(LOAD_CART)
-      this.$store.dispatch(LOAD_COMMITTED_CART)
-      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    if (user) {
+      await this.loginUser(user)
     }
-    this.$emit('close')
   }
 
   async connectWalletConnect() {
     this.connectingWallet = true
     await providers.walletconnectProvider.enable()
 
+    const user = await this.connectAccount(
+      providers.walletconnectProvider,
+      providers.walletconnectProvider.accounts[0]
+    )
+
+    if (user) {
+      await this.loginUser(user)
+    }
+  }
+
+  async connectAccount(
+    provider: any,
+    account: string
+  ): Promise<User | undefined> {
     let signature
     try {
-      signature = await providers.walletconnectProvider.request({
+      signature = await provider.request({
         method: 'personal_sign',
-        params: [LOGIN_MESSAGE, providers.walletconnectProvider.accounts[0]],
+        params: [LOGIN_MESSAGE, account],
       })
     } catch (error) {
       // Signature request rejected
@@ -136,20 +120,24 @@ export default class WalletModal extends Vue {
     }
 
     const user: User = {
-      walletProvider: new Web3Provider(providers.walletconnectProvider),
-      walletAddress: providers.walletconnectProvider.accounts[0],
+      walletProvider: new Web3Provider(provider),
+      walletAddress: account,
       encryptionKey: sha256(signature),
       isVerified: null,
       balance: null,
       contribution: null,
     }
 
+    return user
+  }
+
+  async loginUser(user: User): Promise<void> {
     this.$emit('connected')
     this.connectingWallet = false
 
-    getProfileImageUrl(user.walletAddress).then((url) => {
-      this.updateProfileImage(url)
-    })
+    const url = await getProfileImageUrl(user.walletAddress)
+    this.updateProfileImage(url)
+
     this.$store.commit(SET_CURRENT_USER, user)
     await this.$store.dispatch(LOGIN_USER)
     if (this.$store.state.currentRound) {
