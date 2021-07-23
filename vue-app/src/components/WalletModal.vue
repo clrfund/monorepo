@@ -67,23 +67,10 @@ export default class WalletModal extends Vue {
   }
 
   async connectMetaMask() {
-    if (!this.windowEthereum || !this.windowEthereum.request) {
-      return
-    }
-
     this.connectingWallet = true
-    let walletAddress
-    try {
-      ;[walletAddress] = await this.windowEthereum.request({
-        method: 'eth_requestAccounts',
-      })
-    } catch (error) {
-      // Access denied
-      return
-    }
+    const user = await this.$web3.connectWallet('metamask')
 
-    const user = await this.connectAccount(this.windowEthereum, walletAddress)
-
+    this.connectingWallet = false
     if (user) {
       await this.loginUser(user)
     }
@@ -91,49 +78,17 @@ export default class WalletModal extends Vue {
 
   async connectWalletConnect() {
     this.connectingWallet = true
-    await providers.walletconnectProvider.enable()
+    const user = await this.$web3.connectWallet('walletconnect')
 
-    const user = await this.connectAccount(
-      providers.walletconnectProvider,
-      providers.walletconnectProvider.accounts[0]
-    )
+    this.connectingWallet = false
 
     if (user) {
       await this.loginUser(user)
     }
   }
 
-  async connectAccount(
-    provider: any,
-    account: string
-  ): Promise<User | undefined> {
-    let signature
-    try {
-      signature = await provider.request({
-        method: 'personal_sign',
-        params: [LOGIN_MESSAGE, account],
-      })
-    } catch (error) {
-      // Signature request rejected
-      this.connectingWallet = false
-      return
-    }
-
-    const user: User = {
-      walletProvider: new Web3Provider(provider),
-      walletAddress: account,
-      encryptionKey: sha256(signature),
-      isVerified: null,
-      balance: null,
-      contribution: null,
-    }
-
-    return user
-  }
-
   async loginUser(user: User): Promise<void> {
     this.$emit('connected')
-    this.connectingWallet = false
 
     const url = await getProfileImageUrl(user.walletAddress)
     this.updateProfileImage(url)
