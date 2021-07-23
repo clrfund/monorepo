@@ -295,13 +295,7 @@ import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import CartItems from '@/components/CartItems.vue'
 import CartTimeLeft from '@/components/CartTimeLeft.vue'
-import { Web3Provider } from '@ethersproject/providers'
-import {
-  SET_CURRENT_USER,
-  TOGGLE_EDIT_SELECTION,
-  UPDATE_CART_ITEM,
-} from '@/store/mutation-types'
-import { sha256 } from '@/utils/crypto'
+import { TOGGLE_EDIT_SELECTION, UPDATE_CART_ITEM } from '@/store/mutation-types'
 import {
   MAX_CONTRIBUTION_AMOUNT,
   MAX_CART_SIZE,
@@ -309,16 +303,8 @@ import {
 } from '@/api/contributions'
 import { userRegistryType, provider as jsonRpcProvider } from '@/api/core'
 import { RoundStatus, TimeLeft } from '@/api/round'
-import {
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-  LOGIN_USER,
-  LOGOUT_USER,
-  SAVE_CART,
-} from '@/store/action-types'
-import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
+import { LOGOUT_USER, SAVE_CART } from '@/store/action-types'
+import { User } from '@/api/user'
 import {
   CLEAR_CART,
   RESTORE_COMMITTED_CART_TO_LOCAL_CART,
@@ -464,52 +450,6 @@ export default class Cart extends Vue {
     return this.jsonRpcNetwork === null
       ? ''
       : getNetworkName(this.jsonRpcNetwork)
-  }
-
-  async connect(): Promise<void> {
-    if (!this.walletProvider || !this.walletProvider.request) {
-      return
-    }
-    let walletAddress
-    try {
-      ;[walletAddress] = await this.walletProvider.request({
-        method: 'eth_requestAccounts',
-      })
-    } catch (error) {
-      // Access denied
-      return
-    }
-    let signature
-    try {
-      signature = await this.walletProvider.request({
-        method: 'personal_sign',
-        params: [LOGIN_MESSAGE, walletAddress],
-      })
-    } catch (error) {
-      // Signature request rejected
-      return
-    }
-    const user: User = {
-      walletProvider: new Web3Provider(this.walletProvider),
-      walletAddress,
-      encryptionKey: sha256(signature),
-      isVerified: null,
-      balance: null,
-      contribution: null,
-    }
-
-    getProfileImageUrl(user.walletAddress).then(
-      (url) => (this.profileImageUrl = url)
-    )
-    this.$store.commit(SET_CURRENT_USER, user)
-    await this.$store.dispatch(LOGIN_USER)
-    if (this.$store.state.currentRound) {
-      // Load cart & contributor data for current round
-      this.$store.dispatch(LOAD_USER_INFO)
-      this.$store.dispatch(LOAD_CART)
-      this.$store.dispatch(LOAD_COMMITTED_CART)
-      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-    }
   }
 
   get tokenSymbol(): string {
