@@ -18,12 +18,27 @@ async function main() {
   await fundingRoundFactory.deployed()
   await maciFactory.transferOwnership(fundingRoundFactory.address)
 
-  // TODO deploy registry conditionally based on process.env.USER_REGISTRY_TYPE (new ENV var)
-  const SimpleUserRegistry = await ethers.getContractFactory(
-    'SimpleUserRegistry',
-    deployer
-  )
-  const userRegistry = await SimpleUserRegistry.deploy()
+  const userRegistryType = process.env.USER_REGISTRY_TYPE || 'simple'
+  let userRegistry: Contract
+  if (userRegistryType === 'simple') {
+    const SimpleUserRegistry = await ethers.getContractFactory(
+      'SimpleUserRegistry',
+      deployer
+    )
+    userRegistry = await SimpleUserRegistry.deploy()
+  } else if (userRegistryType === 'brightid') {
+    const BrightIdUserRegistry = await ethers.getContractFactory(
+      'BrightIdUserRegistry',
+      deployer
+    )
+    // TODO sort out if these arguments are sensible
+    userRegistry = await BrightIdUserRegistry.deploy(
+      '0x636c722e66756e64000000000000000000000000000000000000000000000000', // Do we have a test `context`?
+      fundingRoundFactory.address // Not sure if `verifier` should be EOA or contract account
+    )
+  } else {
+    throw new Error('unsupported user registry type')
+  }
   await fundingRoundFactory.setUserRegistry(userRegistry.address)
 
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'

@@ -67,13 +67,16 @@ async function main() {
   await poolContributorToken.transfer(factory.address, poolContributionAmount)
 
   // Add contributors
-  const userRegistryAddress = await factory.userRegistry()
-  const userRegistry = await ethers.getContractAt(
-    'SimpleUserRegistry',
-    userRegistryAddress
-  )
-  await userRegistry.addUser(contributor1.getAddress())
-  await userRegistry.addUser(contributor2.getAddress())
+  const userRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
+  if (userRegistryType === 'simple') {
+    const userRegistryAddress = await factory.userRegistry()
+    const userRegistry = await ethers.getContractAt(
+      'SimpleUserRegistry',
+      userRegistryAddress
+    )
+    await userRegistry.addUser(contributor1.getAddress())
+    await userRegistry.addUser(contributor2.getAddress())
+  }
 
   // Add dummy recipients
   // TODO add better dummy data
