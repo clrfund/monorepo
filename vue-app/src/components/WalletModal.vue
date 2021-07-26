@@ -27,14 +27,12 @@
 
 <script lang="ts">
 // Libraries
-import { Web3Provider } from '@ethersproject/providers'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
 // API
-import { providers } from '@/api/core'
-import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
+import { User, getProfileImageUrl } from '@/api/user'
 
 // Components
 import Loader from '@/components/Loader.vue'
@@ -48,9 +46,6 @@ import {
   LOGIN_USER,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
-
-// Utils
-import { sha256 } from '@/utils/crypto'
 
 @Component({
   components: {
@@ -81,7 +76,6 @@ export default class WalletModal extends Vue {
     const user = await this.$web3.connectWallet('walletconnect')
 
     this.connectingWallet = false
-
     if (user) {
       await this.loginUser(user)
     }

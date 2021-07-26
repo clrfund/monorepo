@@ -3,7 +3,7 @@ import { LOGIN_MESSAGE, User } from '@/api/user'
 import { sha256 } from '@/utils/crypto'
 
 export default {
-  connect: async (): Promise<User> => {
+  connect: async (): Promise<User | undefined> => {
     const provider =
       (window as any).ethereum ||
       ((window as any).web3 && (window as any).web3.currentProvider)
@@ -26,6 +26,7 @@ export default {
         console.log('Please connect to MetaMask.')
       } else {
         console.error(err)
+        return
       }
     }
 
@@ -43,8 +44,9 @@ export default {
         method: 'personal_sign',
         params: [LOGIN_MESSAGE, account],
       })
-    } catch (error) {
-      // TODO
+    } catch (err) {
+      console.error(err)
+      return
     }
 
     const user: User = {

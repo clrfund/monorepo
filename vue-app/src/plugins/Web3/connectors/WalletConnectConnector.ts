@@ -4,17 +4,11 @@ import { LOGIN_MESSAGE, User } from '@/api/user'
 import { sha256 } from '@/utils/crypto'
 
 export default {
-  connect: async (): Promise<User> => {
+  connect: async (): Promise<User | undefined> => {
     const provider = new WalletConnectProvider({
-      // rpc: {
-      //   [configService.env.NETWORK]: configService.network.rpc,
-      // },
-      infuraId: '4299898b85054e0386e7136ab3170d11',
       rpc: {
-        // 1: "http://localhost:18545",
-        3: 'https://rinkeby.infura.io/v3/',
+        1: process.env.VUE_APP_ETHEREUM_API_URL!,
       },
-      // chainId: 1
     })
 
     let account
@@ -27,6 +21,7 @@ export default {
         console.log('Please connect to WalletConnect.')
       } else {
         console.error(err)
+        return
       }
     }
 
@@ -36,8 +31,9 @@ export default {
         method: 'personal_sign',
         params: [LOGIN_MESSAGE, account],
       })
-    } catch (error) {
-      // TODO
+    } catch (err) {
+      console.error(err)
+      return
     }
 
     const user: User = {

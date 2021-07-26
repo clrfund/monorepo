@@ -1,27 +1,9 @@
 import { ethers } from 'ethers'
-import WalletConnectProvider from '@walletconnect/web3-provider'
 
 import { FundingRoundFactory } from './abi'
 
-export const providers = {
-  metamaskProvider: new ethers.providers.StaticJsonRpcProvider(
-    process.env.VUE_APP_ETHEREUM_API_URL
-  ),
-  walletconnectProvider: new WalletConnectProvider({
-    infuraId: '4299898b85054e0386e7136ab3170d11',
-    rpc: {
-      // 1: "http://localhost:18545",
-      3: 'https://rinkeby.infura.io/v3/',
-    },
-    // chainId: 1
-  }),
-}
-
 export const provider = new ethers.providers.StaticJsonRpcProvider(
   process.env.VUE_APP_ETHEREUM_API_URL
-)
-export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(
-  process.env.VUE_APP_MAINNET_PROVIDER_URL
 )
 export const blockExplorer = process.env.VUE_APP_BLOCK_EXPLORER
 export const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
