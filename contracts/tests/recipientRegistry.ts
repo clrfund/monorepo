@@ -598,7 +598,8 @@ describe('Optimistic recipient registry', () => {
           RequestType.Registration,
           recipientAddress,
           metadata,
-          currentTime
+          currentTime,
+          requester.address
         )
       expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
     })
@@ -827,16 +828,14 @@ describe('Optimistic recipient registry', () => {
       }
     })
 
-    it('allows anyone to submit removal request', async () => {
+    it('allows owner to submit removal request', async () => {
       await registry.addRecipient(recipientAddress, metadata, {
         value: baseDeposit,
       })
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      const requestSubmitted = await registry
-        .connect(requester)
-        .removeRecipient(recipientId, { value: baseDeposit })
+      const requestSubmitted = await registry.removeRecipient(recipientId)
       const currentTime = await getCurrentTime()
       expect(requestSubmitted)
         .to.emit(registry, 'RequestSubmitted')
@@ -845,15 +844,25 @@ describe('Optimistic recipient registry', () => {
           RequestType.Removal,
           ZERO_ADDRESS,
           '',
-          currentTime
+          currentTime,
+          deployer.address
         )
-      expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
+    })
+
+    it('allows only owner to submit removal request', async () => {
+      await registry.addRecipient(recipientAddress, metadata, {
+        value: baseDeposit,
+      })
+      await provider.send('evm_increaseTime', [86400])
+      await registry.executeRequest(recipientId)
+
+      await expect(
+        registry.connect(requester).removeRecipient(recipientId)
+      ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('should not accept removal request if recipient is not in registry', async () => {
-      await expect(
-        registry.removeRecipient(recipientId, { value: baseDeposit })
-      ).to.be.revertedWith(
+      await expect(registry.removeRecipient(recipientId)).to.be.revertedWith(
         'RecipientRegistry: Recipient is not in the registry'
       )
     })
@@ -865,13 +874,13 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await registry.removeRecipient(recipientId, { value: baseDeposit })
+      await registry.removeRecipient(recipientId)
       await provider.send('evm_increaseTime', [86400])
       await registry.connect(requester).executeRequest(recipientId)
 
-      await expect(
-        registry.removeRecipient(recipientId, { value: baseDeposit })
-      ).to.be.revertedWith('RecipientRegistry: Recipient already removed')
+      await expect(registry.removeRecipient(recipientId)).to.be.revertedWith(
+        'RecipientRegistry: Recipient already removed'
+      )
     })
 
     it('should not accept new removal request if previous removal request is not resolved', async () => {
@@ -881,22 +890,10 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await registry.removeRecipient(recipientId, { value: baseDeposit })
-      await expect(
-        registry.removeRecipient(recipientId, { value: baseDeposit })
-      ).to.be.revertedWith('RecipientRegistry: Request already submitted')
-    })
-
-    it('should not accept removal request with incorrect deposit size', async () => {
-      await registry.addRecipient(recipientAddress, metadata, {
-        value: baseDeposit,
-      })
-      await provider.send('evm_increaseTime', [86400])
-      await registry.executeRequest(recipientId)
-
-      await expect(
-        registry.removeRecipient(recipientId, { value: baseDeposit.div(2) })
-      ).to.be.revertedWith('RecipientRegistry: Incorrect deposit amount')
+      await registry.removeRecipient(recipientId)
+      await expect(registry.removeRecipient(recipientId)).to.be.revertedWith(
+        'RecipientRegistry: Request already submitted'
+      )
     })
 
     it('allows owner to challenge removal request', async () => {
@@ -906,12 +903,7 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await registry
-        .connect(requester)
-        .removeRecipient(recipientId, { value: baseDeposit })
-      const requesterBalanceBefore = await provider.getBalance(
-        requester.address
-      )
+      await registry.removeRecipient(recipientId)
       const requestRejected = await registry.challengeRequest(
         recipientId,
         requester.address
@@ -920,10 +912,6 @@ describe('Optimistic recipient registry', () => {
       expect(requestRejected)
         .to.emit(registry, 'RequestResolved')
         .withArgs(recipientId, RequestType.Removal, true, 0, currentTime)
-      const requesterBalanceAfter = await provider.getBalance(requester.address)
-      expect(requesterBalanceBefore.add(baseDeposit)).to.equal(
-        requesterBalanceAfter
-      )
 
       // Recipient is not removed
       expect(
@@ -942,14 +930,9 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await registry
-        .connect(requester)
-        .removeRecipient(recipientId, { value: baseDeposit })
+      await registry.removeRecipient(recipientId)
       await provider.send('evm_increaseTime', [86400])
 
-      const requesterBalanceBefore = await provider.getBalance(
-        requester.address
-      )
       const requestExecuted = await registry
         .connect(requester)
         .executeRequest(recipientId)
@@ -957,11 +940,6 @@ describe('Optimistic recipient registry', () => {
       expect(requestExecuted)
         .to.emit(registry, 'RequestResolved')
         .withArgs(recipientId, RequestType.Removal, false, 0, currentTime)
-      const txFee = await getTxFee(requestExecuted)
-      const requesterBalanceAfter = await provider.getBalance(requester.address)
-      expect(requesterBalanceBefore.sub(txFee).add(baseDeposit)).to.equal(
-        requesterBalanceAfter
-      )
 
       expect(
         await registry.getRecipientAddress(
