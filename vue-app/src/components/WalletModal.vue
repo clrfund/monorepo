@@ -125,6 +125,7 @@ export default class WalletModal extends Vue {
 
 .loading {
   align-content: center;
+  text-align: center;
 }
 
 .top {

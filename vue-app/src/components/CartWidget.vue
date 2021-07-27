@@ -72,7 +72,7 @@ export default class CartWidget extends Vue {
   }
 
   get walletProvider(): any {
-    return this.currentUser?.walletProvider
+    return this.$web3.provider
   }
 
   get walletChainId(): number | null {
