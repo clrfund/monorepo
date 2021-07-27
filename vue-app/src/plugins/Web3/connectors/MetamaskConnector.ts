@@ -6,6 +6,7 @@ export default {
       ((window as any).web3 && (window as any).web3.currentProvider)
 
     if (!provider) {
+      /* eslint-disable-next-line no-console */
       console.error(
         'Tried to connect to MetaMask but it was not detected. Please install MetaMask.'
       )
@@ -21,8 +22,10 @@ export default {
       if (err.code === 4001) {
         // EIP-1193 userRejectedRequest error
         // If this happens, the user rejected the connection request.
+        /* eslint-disable-next-line no-console */
         console.log('Please connect to MetaMask.')
       } else {
+        /* eslint-disable-next-line no-console */
         console.error(err)
         return
       }

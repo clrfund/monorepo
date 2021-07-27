@@ -56,16 +56,10 @@ export default {
         })
         // TODO?: conn.provider.on('disconnect', this.handleDisconnect)
 
-        let signature
-        try {
-          signature = await conn.provider.request({
-            method: 'personal_sign',
-            params: [LOGIN_MESSAGE, account],
-          })
-        } catch (err) {
-          console.error(err)
-          return
-        }
+        const signature = await conn.provider.request({
+          method: 'personal_sign',
+          params: [LOGIN_MESSAGE, account],
+        })
 
         return {
           ...conn,
@@ -82,6 +76,7 @@ export default {
           walletAddress: account,
         }
       } catch (err) {
+        /* eslint-disable-next-line no-console */
         console.error(err)
       }
     }
