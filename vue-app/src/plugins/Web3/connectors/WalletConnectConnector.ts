@@ -5,7 +5,8 @@ export default {
   connect: async (): Promise<any | undefined> => {
     const provider = new WalletConnectProvider({
       rpc: {
-        1: process.env.VUE_APP_ETHEREUM_API_URL!,
+        [process.env.VUE_APP_ETHEREUM_API_CHAINID!]:
+          process.env.VUE_APP_ETHEREUM_API_URL!,
       },
     })
 
