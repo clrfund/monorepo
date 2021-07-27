@@ -88,7 +88,7 @@ export default class NavBar extends Vue {
   etherBalance!: string
 
   get walletProvider(): any {
-    return (window as any).ethereum
+    return this.$store.state.currentUser?.walletProvider
   }
 
   get currentUser(): User | null {

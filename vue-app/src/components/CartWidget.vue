@@ -43,7 +43,6 @@ import { getNetworkName } from '@/utils/networks'
 @Component({ components: { Cart, Tooltip } })
 export default class CartWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
-  private walletChainId: string | null = null
   profileImageUrl: string | null = null
 
   async copyAddress(): Promise<void> {
@@ -82,38 +81,38 @@ export default class CartWidget extends Vue {
     return this.cart.filter((item) => !item.isCleared)
   }
 
-  get walletProvider(): any {
-    return (window as any).ethereum
-  }
-
   get currentUser(): User | null {
     return this.$store.state.currentUser
   }
 
+  get walletProvider(): any {
+    return this.currentUser?.walletProvider
+  }
+
+  get walletChainId(): number | null {
+    return this.$web3.chainId
+  }
+
   async mounted() {
-    if (!this.walletProvider) {
-      return
-    }
-    this.walletChainId = await this.walletProvider.request({
-      method: 'eth_chainId',
-    })
-    this.walletProvider.on('chainChanged', (_chainId: string) => {
-      if (_chainId !== this.walletChainId) {
-        this.walletChainId = _chainId
-        if (this.currentUser) {
-          // Log out user to prevent interactions with incorrect network
-          this.$store.dispatch(LOGOUT_USER)
-        }
+    // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
+    // upper level where we hear this events only once (there are other
+    // components that do the same).
+    this.$web3.$on('chainChanged', () => {
+      if (this.currentUser) {
+        // Log out user to prevent interactions with incorrect network
+        this.$store.dispatch(LOGOUT_USER)
       }
     })
+
     let accounts: string[]
-    this.walletProvider.on('accountsChanged', (_accounts: string[]) => {
+    this.$web3.$on('accountsChanged', (_accounts: string[]) => {
       if (_accounts !== accounts) {
         // Log out user if wallet account changes
         this.$store.dispatch(LOGOUT_USER)
       }
       accounts = _accounts
     })
+
     this.jsonRpcNetwork = await jsonRpcProvider.getNetwork()
   }
 
@@ -126,11 +125,7 @@ export default class CartWidget extends Vue {
       // Still loading
       return false
     }
-    if (this.walletChainId === '0xNaN') {
-      // Devnet
-      return true
-    }
-    return this.jsonRpcNetwork.chainId === parseInt(this.walletChainId, 16)
+    return this.jsonRpcNetwork.chainId === this.walletChainId
   }
 
   get networkName(): string {

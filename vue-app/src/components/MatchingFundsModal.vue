@@ -100,7 +100,7 @@ export default class MatchingFundsModal extends Vue {
   transferTxError = ''
 
   get walletProvider(): any {
-    return (window as any).ethereum
+    return this.$store.state.currentUser?.walletProvider
   }
 
   get currentUser(): User | null {

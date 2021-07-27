@@ -96,7 +96,7 @@ export default class VerifyLanding extends Vue {
   }
 
   get walletProvider(): any {
-    return (window as any).ethereum
+    return this.$store.state.currentUser?.walletProvider
   }
 
   get currentUser(): User | null {

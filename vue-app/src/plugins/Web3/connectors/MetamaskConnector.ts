@@ -1,9 +1,8 @@
-import { Web3Provider } from '@ethersproject/providers'
-import { LOGIN_MESSAGE, User } from '@/api/user'
+import { LOGIN_MESSAGE } from '@/api/user'
 import { sha256 } from '@/utils/crypto'
 
 export default {
-  connect: async (): Promise<User | undefined> => {
+  connect: async (): Promise<any | undefined> => {
     const provider =
       (window as any).ethereum ||
       ((window as any).web3 && (window as any).web3.currentProvider)
@@ -14,11 +13,12 @@ export default {
       )
     }
 
-    let account
+    let account, chainId
     try {
       ;[account] = await provider.request({
         method: 'eth_requestAccounts',
       })
+      chainId = await provider.request({ method: 'eth_chainId' })
     } catch (err) {
       if (err.code === 4001) {
         // EIP-1193 userRejectedRequest error
@@ -49,15 +49,14 @@ export default {
       return
     }
 
-    const user: User = {
-      walletProvider: new Web3Provider(provider),
-      walletAddress: account,
+    return {
+      provider,
+      account,
+      chainId,
       encryptionKey: sha256(signature),
       isVerified: null,
       balance: null,
       contribution: null,
     }
-
-    return user
   },
 }

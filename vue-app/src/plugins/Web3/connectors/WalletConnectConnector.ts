@@ -1,19 +1,20 @@
 import WalletConnectProvider from '@walletconnect/web3-provider'
-import { Web3Provider } from '@ethersproject/providers'
-import { LOGIN_MESSAGE, User } from '@/api/user'
+import { LOGIN_MESSAGE } from '@/api/user'
 import { sha256 } from '@/utils/crypto'
 
 export default {
-  connect: async (): Promise<User | undefined> => {
+  // TODO: add better return type
+  connect: async (): Promise<any | undefined> => {
     const provider = new WalletConnectProvider({
       rpc: {
         1: process.env.VUE_APP_ETHEREUM_API_URL!,
       },
     })
 
-    let account
+    let account, chainId
     try {
       ;[account] = await provider.enable()
+      chainId = await provider.request({ method: 'eth_chainId' })
     } catch (err) {
       if (err.code === 4001) {
         // EIP-1193 userRejectedRequest error
@@ -36,15 +37,14 @@ export default {
       return
     }
 
-    const user: User = {
-      walletProvider: new Web3Provider(provider),
-      walletAddress: account,
+    return {
+      provider,
+      account,
+      chainId,
       encryptionKey: sha256(signature),
       isVerified: null,
       balance: null,
       contribution: null,
     }
-
-    return user
   },
 }
