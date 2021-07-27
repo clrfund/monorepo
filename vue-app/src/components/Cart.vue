@@ -578,7 +578,7 @@ export default class Cart extends Vue {
     } else if (!currentUser.isVerified && userRegistryType === 'brightid') {
       return 'To contribute, you need to set up BrightID.'
     } else if (!this.isFormValid()) {
-      return 'Only numbers in your contributions please.'
+      return 'Include valid contribution amount.'
     } else if (this.cart.length > MAX_CART_SIZE) {
       return `Your cart can't include over ${MAX_CART_SIZE} projects.`
     } else if (currentRound.status === RoundStatus.Cancelled) {

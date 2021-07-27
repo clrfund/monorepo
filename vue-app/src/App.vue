@@ -111,6 +111,7 @@ export default class App extends Vue {
       'join',
       'join-step',
       'round-information',
+      'transaction-success',
       'verify',
       'verify-step',
       'verified',
@@ -124,6 +125,7 @@ export default class App extends Vue {
       'project-added',
       'join',
       'join-step',
+      'transaction-success',
       'verify',
       'verify-step',
       'verified',
@@ -149,6 +151,7 @@ export default class App extends Vue {
       'join',
       'join-step',
       'projects',
+      'transaction-success',
       'verify',
       'verify-step',
       'verified',
@@ -325,6 +328,8 @@ summary:focus {
   padding: 1.5rem;
   width: $cart-width-open;
   height: 100%;
+  position: sticky;
+  top: 1.5rem;
 
   .master {
     color: black;

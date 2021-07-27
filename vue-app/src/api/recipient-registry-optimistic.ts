@@ -18,6 +18,7 @@ export interface RegistryInfo {
   challengePeriodDuration: number
   listingPolicyUrl: string
   recipientCount: number
+  owner: string
 }
 
 export async function getRegistryInfo(
@@ -32,12 +33,14 @@ export async function getRegistryInfo(
   const challengePeriodDuration = await registry.challengePeriodDuration()
   const network = await provider.getNetwork()
   const recipientCount = await registry.getRecipientCount()
+  const owner = await registry.owner()
   return {
     deposit,
     depositToken: getNetworkToken(network),
     challengePeriodDuration: challengePeriodDuration.toNumber(),
     listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
     recipientCount: recipientCount.toNumber(),
+    owner,
   }
 }
 
@@ -52,10 +55,10 @@ enum RequestTypeCode {
 }
 
 export enum RequestStatus {
-  Submitted = 'Submitted',
+  Submitted = 'Needs review',
   Rejected = 'Rejected',
-  Accepted = 'Accepted',
-  Executed = 'Executed',
+  Executed = 'Live',
+  Removed = 'Removed',
 }
 
 export interface RecipientApplicationData {
@@ -131,6 +134,7 @@ export interface Request {
   recipientId: string
   recipient: string
   metadata: RecipientMetadata
+  requester: string
 }
 
 export async function getRequests(
@@ -152,7 +156,7 @@ export async function getRequests(
     requestResolvedFilter,
     0
   )
-  const requests: Request[] = []
+  const requests: Record<string, Request> = {}
   for (const event of requestSubmittedEvents) {
     const eventArgs = event.args as any
     let type: RequestType
@@ -161,9 +165,7 @@ export async function getRequests(
       // Removal request
       type = RequestType.Removal
       // Find corresponding registration request and update metadata
-      const registrationRequest = requests.find((item) => {
-        return item.recipientId === eventArgs._recipientId
-      })
+      const registrationRequest = requests[eventArgs._recipientId]
       if (!registrationRequest) {
         throw new Error('registration request not found')
       }
@@ -189,9 +191,7 @@ export async function getRequests(
       recipientId: eventArgs._recipientId,
       recipient: eventArgs._recipient,
       metadata,
-    }
-    if (acceptanceDate < DateTime.now()) {
-      request.status = RequestStatus.Accepted
+      requester: eventArgs._requester,
     }
     // Find corresponding RequestResolved event
     const resolved = requestResolvedEvents.find((event) => {
@@ -210,13 +210,23 @@ export async function getRequests(
     })
     if (resolved) {
       const isRejected = (resolved.args as any)._rejected
-      request.status = isRejected
-        ? RequestStatus.Rejected
-        : RequestStatus.Executed
+      const type = (resolved.args as any)._type
+
+      if (isRejected) {
+        request.status = RequestStatus.Rejected
+      } else {
+        request.status =
+          type === RequestTypeCode.Removal
+            ? RequestStatus.Removed
+            : RequestStatus.Executed
+      }
     }
-    requests.push(request)
+
+    // In case there are two requests submissions events, we always prioritize
+    // the last one since you can only have one request per recipient
+    requests[request.recipientId] = request
   }
-  return requests
+  return Object.keys(requests).map((recipientId) => requests[recipientId])
 }
 
 // TODO merge this with `Project` inteface
@@ -509,6 +519,41 @@ export async function registerProject(
     signer
   )
   const transaction = await registry.executeRequest(recipientId)
+  return transaction
+}
+
+export async function rejectProject(
+  registryAddress: string,
+  recipientId: string,
+  requesterAddress: string,
+  signer: Signer
+) {
+  const registry = new Contract(
+    registryAddress,
+    OptimisticRecipientRegistry,
+    signer
+  )
+  const transaction = await registry.challengeRequest(
+    recipientId,
+    requesterAddress
+  )
+  return transaction
+}
+
+export async function removeProject(
+  registryAddress: string,
+  recipientId: string,
+  signer: Signer
+) {
+  const registry = new Contract(
+    registryAddress,
+    OptimisticRecipientRegistry,
+    signer
+  )
+
+  await registry.removeRecipient(recipientId)
+  const transaction = await registry.executeRequest(recipientId)
+
   return transaction
 }
 

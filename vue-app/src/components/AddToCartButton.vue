@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form action="#" v-if="!inCart">
+    <form action="#" v-if="!inCart && canContribute()">
       <div class="input-button">
         <img style="margin-left: 0.5rem" height="24px" src="@/assets/dai.svg" />
         <input
@@ -20,7 +20,7 @@
         />
       </div>
     </form>
-    <div class="input-button" v-if="inCart">
+    <div class="input-button" v-if="inCart && canContribute()">
       <button class="donate-btn-full" @click="toggleCartPanel()">
         <span>In cart 🎉</span>
       </button>

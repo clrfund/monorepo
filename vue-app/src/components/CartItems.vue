@@ -67,7 +67,7 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
-import { CartItem } from '@/api/contributions'
+import { CartItem, MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
 import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { SAVE_CART } from '@/store/action-types'
 
@@ -82,8 +82,38 @@ export default class extends Vue {
     return currentRound && DateTime.local() < currentRound.votingDeadline
   }
 
+  private sanitizeAmount(amount: string): string {
+    const MAX_DECIMAL_PLACES = 5
+    // Extract only numbers or decimal points from amount string
+    const cleanAmount: string = amount.replace(/[^0-9.]/g, '')
+    // Find decimal point (if it exists)
+    const decimalIndex: number = cleanAmount.indexOf('.')
+    let newAmount: string
+    if (decimalIndex === -1 || decimalIndex === cleanAmount.length - 1) {
+      // If first decimal is either absent or last, return clean amount
+      newAmount = cleanAmount
+    } else {
+      // Split up left and right of decimal point
+      const leftOfDecimal: string = cleanAmount.substr(0, decimalIndex)
+      const decimalString: string = cleanAmount.substr(decimalIndex)
+      // Remove any remaining decimal points
+      const decimalStringClean: string = decimalString.replace(/[.]/g, '')
+      // Truncate decimal string to {MAX_DECIMAL_PLACES} digits
+      const decimalStringToUse: string =
+        decimalStringClean.length > MAX_DECIMAL_PLACES
+          ? decimalStringClean.substr(0, MAX_DECIMAL_PLACES)
+          : decimalStringClean
+      newAmount = `${leftOfDecimal}.${decimalStringToUse}`
+    }
+    if (parseFloat(newAmount) > MAX_CONTRIBUTION_AMOUNT) {
+      return MAX_CONTRIBUTION_AMOUNT.toString()
+    }
+    return newAmount
+  }
+
   updateAmount(item: CartItem, amount: string): void {
-    this.$store.commit(UPDATE_CART_ITEM, { ...item, amount })
+    const sanitizedAmount: string = this.sanitizeAmount(amount)
+    this.$store.commit(UPDATE_CART_ITEM, { ...item, amount: sanitizedAmount })
     this.$store.dispatch(SAVE_CART)
   }
 

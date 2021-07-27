@@ -19,12 +19,12 @@
       <div class="profile-info-balance">
         <img v-if="!showEth" src="@/assets/dai.svg" />
         <img v-if="showEth" src="@/assets/eth.svg" />
-        <div v-if="!showEth" class="balance" @click="copyAddress">
+        <div v-if="!showEth" class="balance">
           {{ balance }}
         </div>
         <div v-if="showEth" class="balance">{{ etherBalance }}</div>
       </div>
-      <div class="profile-name" @click="copyAddress">
+      <div class="profile-name">
         {{ renderUserAddress(7) }}
       </div>
       <div class="profile-image">
@@ -63,18 +63,6 @@ export default class WalletWidget extends Vue {
   // Boolean to only show Connect button, styled like an action button,
   // which hides the widget that would otherwise display after connecting
   @Prop() isActionButton!: boolean
-
-  async copyAddress(): Promise<void> {
-    if (!this.currentUser) {
-      return
-    }
-    try {
-      await navigator.clipboard.writeText(this.currentUser.walletAddress)
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn('Error in copying text: ', error)
-    }
-  }
 
   toggleProfile(): void {
     this.showProfilePanel = !this.showProfilePanel

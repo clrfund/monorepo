@@ -126,6 +126,7 @@ import WalletWidget from '@/components/WalletWidget.vue'
 
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction } from '@/utils/contracts'
+import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
 
 @Component({
   components: {
@@ -274,6 +275,17 @@ export default class RecipientSubmissionWidget extends Vue {
           ),
           (hash) => (this.txHash = hash)
         )
+
+        // Send application data to a Google Spreadsheet
+        await fetch('/.netlify/functions/recipient', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(recipient),
+        })
+
+        this.$store.commit(RESET_RECIPIENT_DATA)
       } catch (error) {
         this.isWaiting = false
         this.txError = error.message

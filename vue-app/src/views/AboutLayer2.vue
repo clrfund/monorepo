@@ -37,10 +37,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-@Component({
-  name: 'about-layer2',
-  metaInfo: { title: 'About Layer 2' },
-})
+@Component
 export default class AboutLayer2 extends Vue {}
 </script>
 

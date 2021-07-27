@@ -7,7 +7,6 @@
       <div class="hero">
         <img src="@/assets/newrings.png" />
         <div class="content">
-          <!-- <span class="emoji">🎉</span> -->
           <div class="flex-title">
             <h1>Prove you’re only using 1 account</h1>
           </div>
@@ -70,31 +69,11 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { commify, formatUnits } from '@ethersproject/units'
 import WalletWidget from '@/components/WalletWidget.vue'
-import {
-  RegistryInfo,
-  getRegistryInfo,
-} from '@/api/recipient-registry-optimistic'
-import { blockExplorer } from '@/api/core'
 
 @Component({
   components: { ProgressBar, RoundStatusBanner, WalletWidget },
 })
 export default class VerifyLanding extends Vue {
-  challengePeriodDuration: number | null = null
-  startDate = '03 April' // TODO: use Date() object
-  timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
-
-  // TODO: Retrieve hash of transaction.
-  // We route to this component, pass hash as queryParam after submission?
-  txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
-
-  async created() {
-    const registryInfo: RegistryInfo = await getRegistryInfo(
-      this.$store.state.recipientRegistryAddress
-    )
-    this.challengePeriodDuration = registryInfo.challengePeriodDuration
-  }
-
   get walletProvider(): any {
     return this.$store.state.currentUser?.walletProvider
   }
@@ -109,10 +88,6 @@ export default class VerifyLanding extends Vue {
       return null
     }
     return commify(formatUnits(balance, 18))
-  }
-
-  get blockExplorerUrl(): string {
-    return `${blockExplorer}${this.txHash}`
   }
 
   get isRoundFullOrOver(): boolean {

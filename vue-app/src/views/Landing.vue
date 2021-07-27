@@ -3,64 +3,55 @@
     <round-status-banner />
     <div id="page">
       <div id="hero">
-        <div class="full-gradient mobile" />
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
           <img src="@/assets/docking.png" />
         </div>
-        <div class="hero-content">
-          <h1>Send your favourite Eth2 projects to the moon!</h1>
-          <div id="subtitle" class="subtitle">
-            Every project you contribute to gets a portion of extra funding.
-          </div>
-          <div class="btn-group">
-            <router-link to="/projects" class="btn-action"
-              >Go to app</router-link
-            >
-            <div class="btn-white" @click="scrollToHowItWorks">
-              How it works
+        <div>
+          <div class="hero-content">
+            <h1>Send your favourite Eth2 projects to the moon!</h1>
+            <div id="subtitle" class="subtitle">
+              Every project you contribute to gets a portion of extra funding.
+            </div>
+            <div class="btn-group">
+              <router-link to="/projects" class="btn-action"
+                >Go to app</router-link
+              >
+              <div class="btn-white" @click="scrollToHowItWorks">
+                How it works
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          class="apply-callout"
-          v-if="
-            $store.state.currentRound &&
-            $store.getters.isRoundJoinPhase &&
-            !$store.getters.isRecipientRegistryFull
-          "
-        >
-          <div class="column">
-            <h2>Join the funding round</h2>
-            <p>
-              Add your project to the next funding round. If you're working on
-              anything related to Eth2, you can join in.
-            </p>
-          </div>
-          <div class="button-group">
-            <router-link to="/join" class="btn-primary w100"
-              >Join round</router-link
-            >
-            <div>{{ timeRemaining }}</div>
+          <div
+            class="apply-callout"
+            v-if="
+              $store.state.currentRound &&
+              $store.getters.isRoundJoinPhase &&
+              !$store.getters.isRecipientRegistryFull
+            "
+          >
+            <div class="column">
+              <h2>Join the funding round</h2>
+              <p>
+                Add your project to the next funding round. If you're working on
+                anything related to Eth2, you can join in.
+              </p>
+            </div>
+            <div class="button-group">
+              <router-link to="/join" class="btn-primary w100"
+                >Join round</router-link
+              >
+              <div>{{ timeRemaining }}</div>
+            </div>
           </div>
         </div>
       </div>
       <div id="section-how-it-works">
-        <div class="dai-wormhole desktop">
-          <img
-            src="@/assets/dai-small.svg"
-            alt="Image of Dai token funneling through a wormhole"
-            class="dai-small"
-          />
+        <div class="wormhole-wrapper desktop-l">
           <img
             src="@/assets/wormhole.png"
-            alt="Image of Dai token funneling through a wormhole"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
             class="wormhole"
-          />
-          <img
-            src="@/assets/dai-large.svg"
-            alt="Image of Dai token funneling through a wormhole"
-            class="dai-large"
           />
         </div>
         <div id="how-it-works-content">
@@ -69,7 +60,10 @@
             This fundraiser rewards projects with the most unique demand, not
             just those with the wealthiest backers.
           </p>
-          <img src="@/assets/dai-drip.svg" id="dai-drip" />
+          <img
+            src="@/assets/wormhole.png"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
+          />
           <h2>How it works</h2>
           <ol>
             <li>
@@ -94,23 +88,33 @@
         <h2>What you'll need</h2>
       </div>
       <div id="what-you-will-need">
-        <div class="pre-req" id="optimism">
+        <div class="pre-req" id="arbitrum">
           <div class="icon-row">
-            <!-- Optimism icon -->
-            <img src="@/assets/optimism.png" id="optimism-icon" />
-            <p><b>Optimism for fast and cheap transaction fees</b></p>
+            <img src="@/assets/arbitrum.png" id="arbitrum-icon" />
+            <p><b>Arbitrum for fast and cheap transaction fees</b></p>
           </div>
-          <div class="btn-action">Get Optimism funds</div>
+          <a
+            href="https://bridge.arbitrum.io/"
+            target="_blank"
+            rel="noopener"
+            class="btn-action"
+            >Get Arbitrum funds</a
+          >
         </div>
         <div class="pre-req" id="bright-id">
           <div class="icon-row">
-            <!-- BrightID icon -->
             <img src="@/assets/bright-id.png" id="bright-id-icon" />
             <p>
               <b>BrightID for private, decentralized identity verification</b>
             </p>
           </div>
-          <div class="btn-primary">Download BrightID</div>
+          <a
+            href="https://brightid.org"
+            target="_blank"
+            rel="noopener"
+            class="btn-primary"
+            >Download BrightID</a
+          >
         </div>
       </div>
       <div class="section-header">
@@ -312,7 +316,7 @@ ol li::before {
   font-size: 16px;
 }
 
-#optimism {
+#arbitrum {
   background: $clr-pink-dark-gradient-bg;
 }
 
@@ -320,7 +324,7 @@ ol li::before {
   background: $clr-blue-gradient-bg;
 }
 
-#optimism-icon,
+#arbitrum-icon,
 #bright-id-icon {
   box-sizing: border-box;
   height: 4rem;
@@ -365,13 +369,8 @@ ol li::before {
   display: flex;
   flex-flow: wrap;
 
-  .full-gradient {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, #211e2b 0%, rgba(33, 30, 43, 0) 60.61%);
-    opacity: 0.1;
-    margin: -2rem;
+  @media (max-width: $breakpoint-m) {
+    flex-flow: column;
   }
 
   .image-wrapper img {
@@ -398,7 +397,14 @@ ol li::before {
     flex-direction: column;
     justify-content: center;
     @media (max-width: $breakpoint-m) {
-      max-width: 100%;
+      max-width: 880px;
+      margin: -2rem;
+      padding: 2rem;
+      background: linear-gradient(
+        182.34deg,
+        rgba(0, 0, 0, 0.4) 81%,
+        rgba(196, 196, 196, 0) 89.75%
+      );
     }
   }
 
@@ -441,7 +447,8 @@ ol li::before {
 
 .pre-req {
   display: flex;
-  gap: $content-space;
+  gap: 1rem;
+  justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
 
@@ -512,31 +519,20 @@ ol li::before {
   grid-template-columns: 3fr 2fr;
   grid-template-rows: repeat(2, auto);
   grid-template-areas: 'image content' 'image .';
-  @media (max-width: $breakpoint-m) {
+  @media (max-width: $breakpoint-l) {
     display: flex;
   }
-  .dai-wormhole {
+  .wormhole-wrapper {
     grid-area: image;
     position: relative;
     display: flex;
     width: 100%;
-    .dai-small {
-      position: absolute;
-      left: 8%;
-      top: 0;
-      transform: rotate(-10deg);
-    }
+    align-items: center;
     .wormhole {
       width: 100%;
-      height: 100%;
+      height: auto;
       aspect-ratio: 16/9;
       mix-blend-mode: exclusion;
-    }
-    .dai-large {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      width: 65%;
     }
   }
   #how-it-works-content {
@@ -550,7 +546,7 @@ ol li::before {
     & > img {
       display: none;
     }
-    @media (max-width: $breakpoint-m) {
+    @media (max-width: $breakpoint-l) {
       width: 100%;
       border-radius: 0;
       padding: 0;
@@ -558,6 +554,7 @@ ol li::before {
       & > img {
         display: inline-block;
         align-self: center;
+        width: 100%;
       }
     }
   }
@@ -575,10 +572,6 @@ ol li::before {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-}
-
-#dai-drip {
-  max-width: 100%;
 }
 
 #footer {

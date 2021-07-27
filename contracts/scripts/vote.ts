@@ -6,7 +6,8 @@ import { PrivKey, Keypair } from 'maci-domainobjs'
 import { createMessage } from '../utils/maci'
 
 async function main() {
-  const [, , , , , contributor1, contributor2] = await ethers.getSigners()
+  const [, , , , , , , , , , , , contributor1, contributor2] =
+    await ethers.getSigners()
   const state = JSON.parse(fs.readFileSync('state.json').toString())
   const coordinatorKeyPair = new Keypair(
     PrivKey.unserialize(state.coordinatorPrivKey)

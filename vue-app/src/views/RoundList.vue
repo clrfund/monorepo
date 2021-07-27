@@ -20,10 +20,7 @@ import Component from 'vue-class-component'
 
 import { Round, getRounds } from '@/api/rounds'
 
-@Component({
-  name: 'round-list',
-  metaInfo: { title: 'Rounds' },
-})
+@Component
 export default class RoundList extends Vue {
   rounds: Round[] = []
 
