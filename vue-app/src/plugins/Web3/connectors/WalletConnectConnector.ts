@@ -1,6 +1,4 @@
 import WalletConnectProvider from '@walletconnect/web3-provider'
-import { LOGIN_MESSAGE } from '@/api/user'
-import { sha256 } from '@/utils/crypto'
 
 export default {
   // TODO: add better return type
@@ -11,9 +9,9 @@ export default {
       },
     })
 
-    let account, chainId
+    let accounts, chainId
     try {
-      ;[account] = await provider.enable()
+      accounts = await provider.enable()
       chainId = await provider.request({ method: 'eth_chainId' })
     } catch (err) {
       if (err.code === 4001) {
@@ -26,25 +24,10 @@ export default {
       }
     }
 
-    let signature
-    try {
-      signature = await provider.request({
-        method: 'personal_sign',
-        params: [LOGIN_MESSAGE, account],
-      })
-    } catch (err) {
-      console.error(err)
-      return
-    }
-
     return {
       provider,
-      account,
-      chainId,
-      encryptionKey: sha256(signature),
-      isVerified: null,
-      balance: null,
-      contribution: null,
+      accounts,
+      chainId: Number(chainId),
     }
   },
 }

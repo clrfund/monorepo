@@ -1,4 +1,5 @@
-import { User } from '@/api/user'
+import { LOGIN_MESSAGE, User } from '@/api/user'
+import { sha256 } from '@/utils/crypto'
 import { Web3Provider } from '@ethersproject/providers'
 import MetamaskConnector from './connectors/MetamaskConnector'
 import WalletConnectConnector from './connectors/WalletConnectConnector'
@@ -17,7 +18,8 @@ export default {
         accounts: [],
         provider: null,
         chainId: null,
-        // TODO: add default provider
+        // TODO: add `defaultProvider` in order to have everything web3 related
+        // stuff here in this plugin
       },
     })
 
@@ -40,6 +42,7 @@ export default {
         }
 
         const conn = await connector.connect()
+        const account = conn.accounts[0]
         plugin.chainId = Number(conn.chainId)
         plugin.provider = conn.provider
 
@@ -53,13 +56,30 @@ export default {
         })
         // TODO?: conn.provider.on('disconnect', this.handleDisconnect)
 
+        let signature
+        try {
+          signature = await conn.provider.request({
+            method: 'personal_sign',
+            params: [LOGIN_MESSAGE, account],
+          })
+        } catch (err) {
+          console.error(err)
+          return
+        }
+
         return {
           ...conn,
-          // TODO: `walletProvider` and `walletAddress` should be removed. We
-          // are only keeping them for compatibility with old code. In short,
-          // we shouldn't be storing in the $store the entire provider.
+          // TODO: we are keeping most of these things for compatibility with
+          // old code because we are storing them in vuex. Clean this up, do not
+          // store them and read them directly from the plugin, `this.$web3`.
+          // Separate the concept of User from here. Create the User when the
+          // connection is made, from the consumer.
+          encryptionKey: sha256(signature),
+          isVerified: null,
+          balance: null,
+          contribution: null,
           walletProvider: new Web3Provider(conn.provider),
-          walletAddress: conn.account,
+          walletAddress: account,
         }
       } catch (err) {
         console.error(err)

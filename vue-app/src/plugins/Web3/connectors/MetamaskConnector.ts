@@ -1,7 +1,5 @@
-import { LOGIN_MESSAGE } from '@/api/user'
-import { sha256 } from '@/utils/crypto'
-
 export default {
+  // TODO: add better return type
   connect: async (): Promise<any | undefined> => {
     const provider =
       (window as any).ethereum ||
@@ -13,9 +11,9 @@ export default {
       )
     }
 
-    let account, chainId
+    let accounts, chainId
     try {
-      ;[account] = await provider.request({
+      accounts = await provider.request({
         method: 'eth_requestAccounts',
       })
       chainId = await provider.request({ method: 'eth_chainId' })
@@ -31,32 +29,17 @@ export default {
     }
 
     // if account is still moot, try the bad old way - enable()
-    if (!account) {
+    if (!accounts) {
       // have to any it, since enable technically shouldn't be there anymore.
       // but might, for legacy clients.
       const response = await (provider as any).enable()
-      ;[account] = response?.result || response
-    }
-
-    let signature
-    try {
-      signature = await provider.request({
-        method: 'personal_sign',
-        params: [LOGIN_MESSAGE, account],
-      })
-    } catch (err) {
-      console.error(err)
-      return
+      accounts = response?.result || response
     }
 
     return {
       provider,
-      account,
-      chainId,
-      encryptionKey: sha256(signature),
-      isVerified: null,
-      balance: null,
-      contribution: null,
+      accounts,
+      chainId: Number(chainId),
     }
   },
 }
