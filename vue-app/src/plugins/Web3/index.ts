@@ -42,8 +42,20 @@ export default {
         }
 
         const conn = await connector.connect()
+
+        const supportedChainId = Number(
+          process.env.VUE_APP_ETHEREUM_API_CHAINID
+        )
+        // The wallet needs to sign with the same chain id we support
+        if (conn.chainId !== supportedChainId) {
+          throw new Error(
+            `Unsupported chain id: ${conn.chainId}. Supported chain id is: ${supportedChainId}`
+          )
+        }
+
+        // Populate the plugin with the initial data
         const account = conn.accounts[0]
-        plugin.chainId = Number(conn.chainId)
+        plugin.chainId = conn.chainId
         plugin.provider = conn.provider
 
         conn.provider.on('accountsChanged', (newAccounts) => {
