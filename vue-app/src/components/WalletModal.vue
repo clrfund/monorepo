@@ -21,6 +21,7 @@
         <p>WalletConnect</p>
         <img height="24px" width="24px" src="@/assets/walletConnectIcon.svg" />
       </div>
+      <div v-if="error" class="error">{{ error }}</div>
     </div>
   </div>
 </template>
@@ -56,29 +57,38 @@ export default class WalletModal extends Vue {
   @Prop() updateProfileImage!: (profileImageUrl: string | null) => void
 
   connectingWallet = false
+  error = ''
 
   get windowEthereum(): any {
     return (window as any).ethereum
   }
 
   async connectMetaMask() {
+    this.error = ''
     this.connectingWallet = true
-    const user = await this.$web3.connectWallet('metamask')
-
-    this.connectingWallet = false
-    if (user) {
-      await this.loginUser(user)
+    try {
+      const user = await this.$web3.connectWallet('metamask')
+      if (user) {
+        await this.loginUser(user)
+      }
+    } catch (error) {
+      this.error = error.message
     }
+    this.connectingWallet = false
   }
 
   async connectWalletConnect() {
+    this.error = ''
     this.connectingWallet = true
-    const user = await this.$web3.connectWallet('walletconnect')
-
-    this.connectingWallet = false
-    if (user) {
-      await this.loginUser(user)
+    try {
+      const user = await this.$web3.connectWallet('walletconnect')
+      if (user) {
+        await this.loginUser(user)
+      }
+    } catch (error) {
+      this.error = error.message
     }
+    this.connectingWallet = false
   }
 
   async loginUser(user: User): Promise<void> {
