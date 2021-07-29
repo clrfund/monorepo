@@ -6,8 +6,11 @@ import { deployMaciFactory } from '../utils/deployment'
 
 async function main() {
   const [deployer] = await ethers.getSigners()
+  console.log(`Deploying from address: ${deployer.address}`)
+
   const maciFactory = await deployMaciFactory(deployer)
   await maciFactory.deployTransaction.wait()
+  console.log(`MACIFactory deployed: ${maciFactory.address}`)
 
   const FundingRoundFactory = await ethers.getContractFactory(
     'FundingRoundFactory',
@@ -17,11 +20,9 @@ async function main() {
     maciFactory.address
   )
   await fundingRoundFactory.deployTransaction.wait()
+  console.log(`FundingRoundFactory deployed: ${fundingRoundFactory.address}`)
 
-  const transferReceipt = await maciFactory.transferOwnership(
-    fundingRoundFactory.address
-  )
-  await transferReceipt.wait()
+  await maciFactory.transferOwnership(fundingRoundFactory.address)
 
   const userRegistryType = process.env.USER_REGISTRY_TYPE || 'simple'
   let userRegistry: Contract
@@ -46,6 +47,7 @@ async function main() {
   }
   await userRegistry.deployTransaction.wait()
   console.log(`User registry deployed: ${userRegistry.address}`)
+
   await fundingRoundFactory.setUserRegistry(userRegistry.address)
 
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
@@ -74,12 +76,8 @@ async function main() {
   await recipientRegistry.deployTransaction.wait()
   console.log(`Recipient registry deployed: ${recipientRegistry.address}`)
 
-  const setRecipientReceipt = await fundingRoundFactory.setRecipientRegistry(
-    recipientRegistry.address
-  )
-  await setRecipientReceipt.wait()
-
-  console.log(`Factory deployed: ${fundingRoundFactory.address}`)
+  await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
+  console.log(`Deployment complete!`)
 }
 
 main()
