@@ -7,6 +7,7 @@ import { deployMaciFactory } from '../utils/deployment'
 async function main() {
   const [deployer] = await ethers.getSigners()
   const maciFactory = await deployMaciFactory(deployer)
+  await maciFactory.deployTransaction.wait()
 
   const FundingRoundFactory = await ethers.getContractFactory(
     'FundingRoundFactory',
@@ -15,8 +16,12 @@ async function main() {
   const fundingRoundFactory = await FundingRoundFactory.deploy(
     maciFactory.address
   )
-  await fundingRoundFactory.deployed()
-  await maciFactory.transferOwnership(fundingRoundFactory.address)
+  await fundingRoundFactory.deployTransaction.wait()
+
+  const transferReceipt = await maciFactory.transferOwnership(
+    fundingRoundFactory.address
+  )
+  await transferReceipt.wait()
 
   const userRegistryType = process.env.USER_REGISTRY_TYPE || 'simple'
   let userRegistry: Contract
@@ -39,6 +44,8 @@ async function main() {
   } else {
     throw new Error('unsupported user registry type')
   }
+  await userRegistry.deployTransaction.wait()
+  console.log(`User registry deployed: ${userRegistry.address}`)
   await fundingRoundFactory.setUserRegistry(userRegistry.address)
 
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
@@ -64,7 +71,13 @@ async function main() {
   } else {
     throw new Error('unsupported recipient registry type')
   }
-  await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
+  await recipientRegistry.deployTransaction.wait()
+  console.log(`Recipient registry deployed: ${recipientRegistry.address}`)
+
+  const setRecipientReceipt = await fundingRoundFactory.setRecipientRegistry(
+    recipientRegistry.address
+  )
+  await setRecipientReceipt.wait()
 
   console.log(`Factory deployed: ${fundingRoundFactory.address}`)
 }
