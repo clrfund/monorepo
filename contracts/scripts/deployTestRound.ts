@@ -31,10 +31,15 @@ async function main() {
   const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer)
   const tokenInitialSupply = UNIT.mul(1000)
   const token = await Token.deploy(tokenInitialSupply)
+  await token.deployTransaction.wait()
   console.log(`Token deployed: ${token.address}`)
-  await token.transfer(poolContributor.getAddress(), UNIT.mul(100))
-  await token.transfer(contributor1.getAddress(), UNIT.mul(100))
-  await token.transfer(contributor2.getAddress(), UNIT.mul(100))
+
+  const tokenReceivers = [poolContributor, contributor1, contributor2]
+  let transferTx
+  for (const account of tokenReceivers) {
+    transferTx = await token.transfer(account.getAddress(), UNIT.mul(100))
+    transferTx.wait()
+  }
 
   // Configure factory
   const factory = await ethers.getContractAt(
@@ -69,7 +74,11 @@ async function main() {
   // Add to matching pool
   const poolContributionAmount = UNIT.mul(10)
   const poolContributorToken = token.connect(poolContributor)
-  await poolContributorToken.transfer(factory.address, poolContributionAmount)
+  const poolContributionTx = await poolContributorToken.transfer(
+    factory.address,
+    poolContributionAmount
+  )
+  await poolContributionTx.wait()
 
   // Add contributors
   const userRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
@@ -79,8 +88,12 @@ async function main() {
       'SimpleUserRegistry',
       userRegistryAddress
     )
-    await userRegistry.addUser(contributor1.getAddress())
-    await userRegistry.addUser(contributor2.getAddress())
+    const users = [contributor1, contributor2]
+    let addUserTx
+    for (const account of users) {
+      addUserTx = await userRegistry.addUser(account.getAddress())
+      addUserTx.wait()
+    }
   }
 
   // Add dummy recipients
@@ -270,42 +283,25 @@ async function main() {
       'SimpleRecipientRegistry',
       recipientRegistryAddress
     )
-    await recipientRegistry.addRecipient(
-      recipient1.getAddress(),
-      JSON.stringify(metadataRecipient1)
-    )
-    await recipientRegistry.addRecipient(
-      recipient2.getAddress(),
-      JSON.stringify(metadataRecipient2)
-    )
-    await recipientRegistry.addRecipient(
-      recipient3.getAddress(),
-      JSON.stringify(metadataRecipient3)
-    )
-    await recipientRegistry.addRecipient(
-      recipient4.getAddress(),
-      JSON.stringify(metadataRecipient4)
-    )
-    await recipientRegistry.addRecipient(
-      recipient5.getAddress(),
-      JSON.stringify(metadataRecipient5)
-    )
-    await recipientRegistry.addRecipient(
-      recipient6.getAddress(),
-      JSON.stringify(metadataRecipient6)
-    )
-    await recipientRegistry.addRecipient(
-      recipient7.getAddress(),
-      JSON.stringify(metadataRecipient7)
-    )
-    await recipientRegistry.addRecipient(
-      recipient8.getAddress(),
-      JSON.stringify(metadataRecipient8)
-    )
-    await recipientRegistry.addRecipient(
-      recipient9.getAddress(),
-      JSON.stringify(metadataRecipient9)
-    )
+    const recipients = [
+      { account: recipient1, metadata: metadataRecipient1 },
+      { account: recipient2, metadata: metadataRecipient2 },
+      { account: recipient3, metadata: metadataRecipient3 },
+      { account: recipient4, metadata: metadataRecipient4 },
+      { account: recipient5, metadata: metadataRecipient5 },
+      { account: recipient6, metadata: metadataRecipient6 },
+      { account: recipient7, metadata: metadataRecipient7 },
+      { account: recipient8, metadata: metadataRecipient8 },
+      { account: recipient9, metadata: metadataRecipient9 },
+    ]
+    let addRecipientTx
+    for (const recipient of recipients) {
+      addRecipientTx = await recipientRegistry.addRecipient(
+        recipient.account.getAddress(),
+        JSON.stringify(recipient.metadata)
+      )
+      addRecipientTx.wait()
+    }
   } else if (recipientRegistryType === 'optimistic') {
     const recipientRegistry = await ethers.getContractAt(
       'OptimisticRecipientRegistry',
@@ -317,31 +313,40 @@ async function main() {
       JSON.stringify(metadataRecipient1),
       { value: deposit }
     )
+    await recipient1Added.wait()
+
     const recipient1Id = await getEventArg(
       recipient1Added,
       recipientRegistry,
       'RequestSubmitted',
       '_recipientId'
     )
-    await recipientRegistry.executeRequest(recipient1Id)
+    const executeRequest1 = await recipientRegistry.executeRequest(recipient1Id)
+    await executeRequest1.wait()
+
     const recipient2Added = await recipientRegistry.addRecipient(
       recipient2.getAddress(),
       JSON.stringify(metadataRecipient2),
       { value: deposit }
     )
+    await recipient2Added.wait()
+
     const recipient2Id = await getEventArg(
       recipient2Added,
       recipientRegistry,
       'RequestSubmitted',
       '_recipientId'
     )
-    await recipientRegistry.executeRequest(recipient2Id)
+    const executeRequest2 = await recipientRegistry.executeRequest(recipient2Id)
+    await executeRequest2.wait()
+
     // Add recipient without executing
-    await recipientRegistry.addRecipient(
+    const recipient3Added = await recipientRegistry.addRecipient(
       recipient3.getAddress(),
       JSON.stringify(metadataRecipient3),
       { value: deposit }
     )
+    recipient3Added.wait()
   }
 
   // Deploy new funding round and MACI
