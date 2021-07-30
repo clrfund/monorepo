@@ -84,7 +84,7 @@ async function main() {
   await setRecipientRegistryTx.wait()
 
   const setTokenTx = await fundingRoundFactory.setToken(
-    process.env.TOKEN_ADDRESS
+    process.env.NATIVE_TOKEN_ADDRESS
   )
   await setTokenTx.wait()
 
