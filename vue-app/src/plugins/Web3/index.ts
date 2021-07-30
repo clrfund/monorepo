@@ -64,8 +64,9 @@ export default {
       }
 
       // Populate the plugin with the initial data
-      plugin.chainId = conn.chainId
+      plugin.accounts = conn.accounts
       plugin.provider = conn.provider
+      plugin.chainId = conn.chainId
 
       conn.provider.on('accountsChanged', (newAccounts) => {
         plugin.accounts = newAccounts
