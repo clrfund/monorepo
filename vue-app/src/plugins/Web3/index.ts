@@ -20,7 +20,7 @@ export default {
         provider: null,
         chainId: null,
         // TODO: add `defaultProvider` in order to have everything web3 related
-        // stuff here in this plugin
+        // encapsulated here in this plugin
       },
     })
 
@@ -47,10 +47,11 @@ export default {
         params: [LOGIN_MESSAGE, account],
       })
 
+      // Check if user is using the supported chain id
       const supportedChainId = Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
       if (conn.chainId !== supportedChainId) {
         if (conn.provider instanceof WalletConnectProvider) {
-          // Close session
+          // Close walletconnect session
           await conn.provider.disconnect()
         }
 
@@ -68,6 +69,7 @@ export default {
       plugin.provider = conn.provider
       plugin.chainId = conn.chainId
 
+      // Emit EIP-1193 events and update plugin values
       conn.provider.on('accountsChanged', (newAccounts) => {
         plugin.accounts = newAccounts
         plugin.$emit('accountsChanged', plugin.accounts)
@@ -76,7 +78,10 @@ export default {
         plugin.chainId = Number(newChainId)
         plugin.$emit('chainChanged', plugin.chainId)
       })
-      // TODO?: conn.provider.on('disconnect', this.handleDisconnect)
+      conn.provider.on('disconnect', () => {
+        plugin.disconnectWallet()
+        plugin.$emit('disconnect')
+      })
 
       return {
         ...conn,
@@ -94,8 +99,18 @@ export default {
       }
     }
 
-    plugin.disconnectWallet = async () => {
-      // TODO
+    plugin.disconnectWallet = () => {
+      plugin.accounts = []
+      plugin.chainId = null
+
+      if (plugin.provider?.disconnect) {
+        plugin.provider.disconnect()
+      }
+      if (plugin.provider?.close) {
+        plugin.provider.close()
+      }
+
+      plugin.provider = null
     }
 
     Object.defineProperty(Vue.prototype, '$web3', {

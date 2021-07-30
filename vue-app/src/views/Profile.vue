@@ -13,7 +13,7 @@
       </div>
       <div class="address-card">
         <h2 class="address">{{ renderUserAddress(16) }}</h2>
-        <div class="action-row">
+        <div class="action-row" v-if="currentUser">
           <copy-button
             :value="currentUser.walletAddress"
             text="address"
@@ -125,6 +125,7 @@ export default class NavBar extends Vue {
   async disconnect(): Promise<void> {
     if (this.currentUser && this.walletProvider) {
       // Log out user
+      this.$web3.disconnectWallet()
       this.$store.dispatch(LOGOUT_USER)
       this.toggleProfile()
     }
