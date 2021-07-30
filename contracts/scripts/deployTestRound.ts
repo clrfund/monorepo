@@ -41,12 +41,14 @@ async function main() {
     'FundingRoundFactory',
     factoryAddress
   )
-  await factory.setToken(token.address)
+  const setTokenTx = await factory.setToken(token.address)
+  await setTokenTx.wait()
   const coordinatorKeyPair = new Keypair()
-  await factory.setCoordinator(
+  const setCoordinatorTx = await factory.setCoordinator(
     coordinator.getAddress(),
     coordinatorKeyPair.pubKey.asContractParam()
   )
+  await setCoordinatorTx.wait()
 
   // Configure MACI factory
   const maciFactoryAddress = await factory.maciFactory()
@@ -59,7 +61,10 @@ async function main() {
     signUpDuration: 60 * 5, // 5 minutes
     votingDuration: 60 * 5,
   })
-  await factory.setMaciParameters(...maciParameters.values())
+  const setMaciParametersTx = await factory.setMaciParameters(
+    ...maciParameters.values()
+  )
+  await setMaciParametersTx.wait()
 
   // Add to matching pool
   const poolContributionAmount = UNIT.mul(10)
@@ -340,7 +345,8 @@ async function main() {
   }
 
   // Deploy new funding round and MACI
-  await factory.deployNewRound()
+  const deployNewRoundTx = await factory.deployNewRound()
+  await deployNewRoundTx.wait()
   const fundingRoundAddress = await factory.getCurrentRound()
   console.log(`Funding round deployed: ${fundingRoundAddress}`)
   const fundingRound = await ethers.getContractAt(

@@ -22,7 +22,10 @@ async function main() {
   await fundingRoundFactory.deployTransaction.wait()
   console.log(`FundingRoundFactory deployed: ${fundingRoundFactory.address}`)
 
-  await maciFactory.transferOwnership(fundingRoundFactory.address)
+  const transferOwnershipTx = await maciFactory.transferOwnership(
+    fundingRoundFactory.address
+  )
+  await transferOwnershipTx.wait()
 
   const userRegistryType = process.env.USER_REGISTRY_TYPE || 'simple'
   let userRegistry: Contract
@@ -48,7 +51,10 @@ async function main() {
   await userRegistry.deployTransaction.wait()
   console.log(`User registry deployed: ${userRegistry.address}`)
 
-  await fundingRoundFactory.setUserRegistry(userRegistry.address)
+  const setUserRegistryTx = await fundingRoundFactory.setUserRegistry(
+    userRegistry.address
+  )
+  await setUserRegistryTx.wait()
 
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
   let recipientRegistry: Contract
@@ -76,7 +82,10 @@ async function main() {
   await recipientRegistry.deployTransaction.wait()
   console.log(`Recipient registry deployed: ${recipientRegistry.address}`)
 
-  await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
+  const setRecipientRegistryTx = await fundingRoundFactory.setRecipientRegistry(
+    recipientRegistry.address
+  )
+  await setRecipientRegistryTx.wait()
   console.log(`Deployment complete!`)
 }
 
