@@ -83,8 +83,9 @@ async function main() {
   )
   await setRecipientRegistryTx.wait()
 
-  const rinkebyDaiAddress = '0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea'
-  const setTokenTx = await fundingRoundFactory.setToken(rinkebyDaiAddress)
+  const setTokenTx = await fundingRoundFactory.setToken(
+    process.env.TOKEN_ADDRESS
+  )
   await setTokenTx.wait()
 
   // Generate coordinator key
