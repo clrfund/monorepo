@@ -30,7 +30,7 @@
     "test:contracts": "yarn workspace @clrfund/contracts run test",
     "test:web": "yarn workspace @clrfund/vue-app run test",
     "test:format": "yarn prettier --check",
-    "deploy:local": "yarn workspace @clrfund/contracts run deploy:local && yarn workspace @clrfund/contracts run deployTestRound:local",
+    "deploy:local": "yarn deploy:local-registry && yarn deploy:local-round",
     "deploy:local-registry": "yarn workspace @clrfund/contracts run deploy:local",
     "deploy:local-round": "yarn workspace @clrfund/contracts run deployTestRound:local",
     "upgrade:local": "yarn workspace @clrfund/contracts run upgrade:local",
