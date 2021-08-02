@@ -9,7 +9,11 @@
         <p>Connect to a wallet</p>
         <img class="pointer" src="@/assets/close.svg" @click="$emit('close')" />
       </div>
-      <div v-if="windowEthereum" class="option" @click="connectMetaMask()">
+      <div
+        v-if="windowEthereum"
+        class="option"
+        @click="connectWallet('metamask')"
+      >
         <p>MetaMask</p>
         <img height="24px" width="24px" src="@/assets/metamask.png" />
       </div>
@@ -17,7 +21,7 @@
         <p>Install MetaMask</p>
         <img height="24px" width="24px" src="@/assets/metamask.png" />
       </div>
-      <div class="option" @click="connectWalletConnect()">
+      <div class="option" @click="connectWallet('walletconnect')">
         <p>WalletConnect</p>
         <img height="24px" width="24px" src="@/assets/walletConnectIcon.svg" />
       </div>
@@ -63,25 +67,11 @@ export default class WalletModal extends Vue {
     return (window as any).ethereum
   }
 
-  async connectMetaMask() {
+  async connectWallet(walletType: string) {
     this.error = ''
     this.connectingWallet = true
     try {
-      const user = await this.$web3.connectWallet('metamask')
-      if (user) {
-        await this.loginUser(user)
-      }
-    } catch (error) {
-      this.error = error.message
-    }
-    this.connectingWallet = false
-  }
-
-  async connectWalletConnect() {
-    this.error = ''
-    this.connectingWallet = true
-    try {
-      const user = await this.$web3.connectWallet('walletconnect')
+      const user = await this.$web3.connectWallet(walletType)
       if (user) {
         await this.loginUser(user)
       }
