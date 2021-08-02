@@ -34,7 +34,7 @@ import WalletWidget from '@/components/WalletWidget.vue'
 })
 export default class ConnectionModal extends Vue {
   get walletProvider(): any {
-    return (window as any).ethereum
+    return this.$store.state.currentUser?.walletProvider
   }
 }
 </script>

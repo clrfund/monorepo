@@ -162,7 +162,7 @@ export default class RecipientSubmissionWidget extends Vue {
   }
 
   get walletProvider(): Web3Provider | undefined {
-    return this.currentUser?.walletProvider
+    return this.$web3.provider
   }
 
   get canSubmit(): boolean {
