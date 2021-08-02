@@ -209,7 +209,6 @@ recipientRegistry.address
 userRegistry.address
 serializedCoordinatorPrivKey
 serializedCoordinatorPubKey
-coordinatorPubKey.serialize()
 ```
 
 Finalize current round and transfer matching funds to the pool:

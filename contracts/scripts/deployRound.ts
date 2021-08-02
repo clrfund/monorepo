@@ -106,7 +106,6 @@ async function main() {
   await setCoordinatorTx.wait()
   console.log('serializedCoordinatorPrivKey: ', serializedCoordinatorPrivKey)
   console.log('serializedCoordinatorPubKey: ', serializedCoordinatorPubKey)
-  console.log('coordinatorPubKey.serialize(): ', coordinatorPubKey.serialize())
 
   maciFactory = await ethers.getContractAt('MACIFactory', maciFactory.address)
   const maciParameters = await MaciParameters.read(maciFactory)
