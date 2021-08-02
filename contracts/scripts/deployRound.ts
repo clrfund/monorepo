@@ -3,12 +3,16 @@ import { Contract } from 'ethers'
 import { Keypair } from 'maci-domainobjs'
 
 import { deployMaciFactory } from '../utils/deployment'
+import { getEventArg } from '../utils/contracts'
 import { MaciParameters } from '../utils/maci'
 
 async function main() {
   const [deployer] = await ethers.getSigners()
+  console.log('deployer.address: ', deployer.address)
+
   let maciFactory = await deployMaciFactory(deployer)
   await maciFactory.deployTransaction.wait()
+  console.log('maciFactory.address: ', maciFactory.address)
 
   const FundingRoundFactory = await ethers.getContractFactory(
     'FundingRoundFactory',
@@ -18,6 +22,7 @@ async function main() {
     maciFactory.address
   )
   await fundingRoundFactory.deployTransaction.wait()
+  console.log('fundingRoundFactory.address: ', fundingRoundFactory.address)
 
   const transferOwnershipTx = await maciFactory.transferOwnership(
     fundingRoundFactory.address
@@ -32,7 +37,6 @@ async function main() {
       deployer
     )
     userRegistry = await SimpleUserRegistry.deploy()
-    await userRegistry.deployTransaction.wait()
   } else if (userRegistryType === 'brightid') {
     const BrightIdUserRegistry = await ethers.getContractFactory(
       'BrightIdUserRegistry',
@@ -43,10 +47,12 @@ async function main() {
       '0x636c722e66756e64000000000000000000000000000000000000000000000000', // Do we have a test `context`?
       fundingRoundFactory.address // Not sure if `verifier` should be EOA or contract account
     )
-    await userRegistry.deployTransaction.wait()
   } else {
     throw new Error('unsupported user registry type')
   }
+  await userRegistry.deployTransaction.wait()
+  console.log('userRegistry.address: ', userRegistry.address)
+
   const setUserRegistryTx = await fundingRoundFactory.setUserRegistry(
     userRegistry.address
   )
@@ -62,7 +68,6 @@ async function main() {
     recipientRegistry = await SimpleRecipientRegistry.deploy(
       fundingRoundFactory.address
     )
-    await recipientRegistry.deployTransaction.wait()
   } else if (recipientRegistryType === 'optimistic') {
     const OptimisticRecipientRegistry = await ethers.getContractFactory(
       'OptimisticRecipientRegistry',
@@ -73,10 +78,11 @@ async function main() {
       300,
       fundingRoundFactory.address
     )
-    await recipientRegistry.deployTransaction.wait()
   } else {
     throw new Error('unsupported recipient registry type')
   }
+  await recipientRegistry.deployTransaction.wait()
+  console.log('recipientRegistry.address: ', recipientRegistry.address)
 
   const setRecipientRegistryTx = await fundingRoundFactory.setRecipientRegistry(
     recipientRegistry.address
@@ -98,6 +104,9 @@ async function main() {
     coordinatorPubKey.asContractParam()
   )
   await setCoordinatorTx.wait()
+  console.log('serializedCoordinatorPrivKey: ', serializedCoordinatorPrivKey)
+  console.log('serializedCoordinatorPubKey: ', serializedCoordinatorPubKey)
+  console.log('coordinatorPubKey.serialize(): ', coordinatorPubKey.serialize())
 
   maciFactory = await ethers.getContractAt('MACIFactory', maciFactory.address)
   const maciParameters = await MaciParameters.read(maciFactory)
@@ -110,6 +119,47 @@ async function main() {
   )
   await setMaciParametersTx.wait()
 
+  const metadataRecipient1 = {
+    name: 'Commons Simulator',
+    description:
+      'Funding open-source projects & other public goods is the killer app of blockchain tech. Giveth & BlockScience are joining forces to build the Commons Stack: a modular library of well engineered components that can be used to create economic models for projects that are creating value, yet have trouble finding sustainable business models.',
+    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+    tagline: 'Modeling Sustainable Funding for Public Good',
+    category: 'Data',
+    problemSpace: 'metadata.problemSpace',
+    plans: 'metadata.plans',
+    teamName: 'metadata.teamName',
+    teamDescription: 'metadata.teamDescription',
+    githubUrl: 'https://github.com/',
+    radicleUrl: 'https://radicle.com/',
+    websiteUrl: 'https://website.com/',
+    twitterUrl: 'https://twitter.com/',
+    discordUrl: 'https://discord.com/',
+    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+  }
+
+  const metadataRecipient2 = {
+    name: 'Synthereum',
+    description:
+      'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
+    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
+    tagline:
+      'Synthetic assets with liquidity pools to bridge traditional and digital finance.',
+    category: 'Content',
+    problemSpace: 'metadata.problemSpace',
+    plans: 'metadata.plans',
+    teamName: 'metadata.teamName',
+    teamDescription: 'metadata.teamDescription',
+    githubUrl: 'https://github.com/',
+    radicleUrl: 'https://radicle.com/',
+    websiteUrl: 'https://website.com/',
+    twitterUrl: 'https://twitter.com/',
+    discordUrl: 'https://discord.com/',
+    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
+  }
+
   const addFundingSourceTx = await fundingRoundFactory.addFundingSource(
     deployer.address
   )
@@ -118,22 +168,53 @@ async function main() {
   const deployNewRoundTx = await fundingRoundFactory.deployNewRound()
   await deployNewRoundTx.wait()
 
-  console.log('deployer.address')
-  console.log(deployer.address)
-  console.log('maciFactory.address')
-  console.log(maciFactory.address)
-  console.log('fundingRoundFactory.address')
-  console.log(fundingRoundFactory.address)
-  console.log('recipientRegistry.address')
-  console.log(recipientRegistry.address)
-  console.log('userRegistry.address')
-  console.log(userRegistry.address)
-  console.log('serializedCoordinatorPrivKey')
-  console.log(serializedCoordinatorPrivKey)
-  console.log('serializedCoordinatorPubKey')
-  console.log(serializedCoordinatorPubKey)
-  console.log('coordinatorPubKey.serialize()')
-  console.log(coordinatorPubKey.serialize())
+  if (recipientRegistryType === 'simple') {
+    const recipients = [
+      { account: deployer.address, metadata: metadataRecipient1 },
+      { account: deployer.address, metadata: metadataRecipient2 },
+    ]
+    let addRecipientTx
+    for (const recipient of recipients) {
+      addRecipientTx = await recipientRegistry.addRecipient(
+        deployer.address,
+        JSON.stringify(recipient.metadata)
+      )
+      addRecipientTx.wait()
+    }
+  } else if (recipientRegistryType === 'optimistic') {
+    const deposit = await recipientRegistry.baseDeposit()
+    const recipient1Added = await recipientRegistry.addRecipient(
+      deployer.address,
+      JSON.stringify(metadataRecipient1),
+      { value: deposit }
+    )
+    await recipient1Added.wait()
+
+    const recipient1Id = await getEventArg(
+      recipient1Added,
+      recipientRegistry,
+      'RequestSubmitted',
+      '_recipientId'
+    )
+    const executeRequest1 = await recipientRegistry.executeRequest(recipient1Id)
+    await executeRequest1.wait()
+
+    const recipient2Added = await recipientRegistry.addRecipient(
+      deployer.address,
+      JSON.stringify(metadataRecipient2),
+      { value: deposit }
+    )
+    await recipient2Added.wait()
+
+    const recipient2Id = await getEventArg(
+      recipient2Added,
+      recipientRegistry,
+      'RequestSubmitted',
+      '_recipientId'
+    )
+    const executeRequest2 = await recipientRegistry.executeRequest(recipient2Id)
+    await executeRequest2.wait()
+  }
 }
 
 main()
