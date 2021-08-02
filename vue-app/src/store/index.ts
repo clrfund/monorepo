@@ -24,12 +24,7 @@ import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
-import {
-  User,
-  isVerifiedUser,
-  getEtherBalance,
-  getTokenBalance,
-} from '@/api/user'
+import { User, getEtherBalance, getTokenBalance } from '@/api/user'
 import {
   getRegistryInfo,
   RecipientApplicationData,
@@ -278,13 +273,6 @@ const actions = {
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (state.currentRound && state.currentUser) {
-      let isVerified = state.currentUser.isVerified
-      if (!isVerified) {
-        isVerified = await isVerifiedUser(
-          state.currentRound.userRegistryAddress,
-          state.currentUser.walletAddress
-        )
-      }
       const etherBalance = await getEtherBalance(
         state.currentUser.walletAddress
       )
@@ -314,7 +302,6 @@ const actions = {
 
       commit(SET_CURRENT_USER, {
         ...state.currentUser,
-        isVerified,
         balance,
         etherBalance,
       })

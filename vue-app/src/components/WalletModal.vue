@@ -37,7 +37,7 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
 // API
-import { User, getProfileImageUrl } from '@/api/user'
+import { User, getProfileImageUrl, getBrightId } from '@/api/user'
 
 // Components
 import Loader from '@/components/Loader.vue'
@@ -86,6 +86,13 @@ export default class WalletModal extends Vue {
 
     const url = await getProfileImageUrl(user.walletAddress)
     this.updateProfileImage(url)
+
+    // Bright id verification
+    // TODO: move this to the store? to LOAD_USER_INFO?
+    user.brightId = await getBrightId(
+      this.$store.state.currentRound.userRegistryAddress,
+      user.walletAddress
+    )
 
     this.$store.commit(SET_CURRENT_USER, user)
     await this.$store.dispatch(LOGIN_USER)
