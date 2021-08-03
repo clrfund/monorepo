@@ -78,7 +78,7 @@ import CopyButton from '@/components/CopyButton.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
 
-import { userRegistryType } from '@/api/core'
+import { userRegistryType, UserRegistryType } from '@/api/core'
 
 @Component({
   components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
@@ -101,7 +101,7 @@ export default class NavBar extends Vue {
   }
 
   get showBrightIdWidget(): boolean {
-    return userRegistryType === 'brightid'
+    return userRegistryType === UserRegistryType.BRIGHT_ID
   }
 
   renderUserAddress(digitsToShow?: number): string {

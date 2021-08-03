@@ -91,7 +91,6 @@ export default {
         // Separate the concept of User from here. Create the User when the
         // connection is made, from the consumer.
         encryptionKey: sha256(signature),
-        isVerified: null,
         balance: null,
         contribution: null,
         walletProvider: new Web3Provider(conn.provider),

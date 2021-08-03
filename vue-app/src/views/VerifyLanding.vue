@@ -42,12 +42,9 @@
             still get BrightID verified to prepare for next time.
           </div>
           <div class="btn-container">
-            <wallet-widget
-              v-if="walletProvider && !currentUser"
-              :isActionButton="true"
-            />
+            <wallet-widget v-if="!currentUser" :isActionButton="true" />
             <router-link
-              v-if="!walletProvider || currentUser"
+              v-if="currentUser"
               to="/verify/connect"
               class="btn-primary"
               >Get started</router-link
@@ -74,10 +71,6 @@ import WalletWidget from '@/components/WalletWidget.vue'
   components: { ProgressBar, RoundStatusBanner, WalletWidget },
 })
 export default class VerifyLanding extends Vue {
-  get walletProvider(): any {
-    return this.$store.state.currentUser?.walletProvider
-  }
-
   get currentUser(): User | null {
     return this.$store.state.currentUser
   }

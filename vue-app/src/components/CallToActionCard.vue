@@ -50,7 +50,7 @@ import Component from 'vue-class-component'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 
 import { TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
-import { userRegistryType } from '@/api/core'
+import { userRegistryType, UserRegistryType } from '@/api/core'
 
 @Component({
   components: {
@@ -74,7 +74,7 @@ export default class CallToActionCard extends Vue {
 
   get showUserVerification(): boolean {
     return (
-      userRegistryType === 'brightid' &&
+      userRegistryType === UserRegistryType.BRIGHT_ID &&
       (!this.isUserVerified || !this.isUserUnique)
     )
   }

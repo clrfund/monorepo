@@ -26,9 +26,11 @@ import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
 import {
   User,
-  isVerifiedUser,
   getEtherBalance,
   getTokenBalance,
+  isVerifiedUser,
+  getBrightId,
+  BrightId,
 } from '@/api/user'
 import {
   getRegistryInfo,
@@ -76,6 +78,7 @@ import {
 
 // Utils
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
+import { UserRegistryType, userRegistryType } from '@/api/core'
 
 Vue.use(Vuex)
 
@@ -278,13 +281,23 @@ const actions = {
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (state.currentRound && state.currentUser) {
-      let isVerified = state.currentUser.isVerified
-      if (!isVerified) {
-        isVerified = await isVerifiedUser(
-          state.currentRound.userRegistryAddress,
-          state.currentUser.walletAddress
-        )
+      // Check if this user is in our user registry
+      const isRegistered = await isVerifiedUser(
+        state.currentRound.userRegistryAddress,
+        state.currentUser.walletAddress
+      )
+
+      // If the user is registered, we assume all brightId steps as done
+      let brightId: BrightId = {
+        isLinked: true,
+        isSponsored: true,
+        isVerified: true,
       }
+      if (!isRegistered && userRegistryType === UserRegistryType.BRIGHT_ID) {
+        // Fetch brightId info
+        brightId = await getBrightId(state.currentUser.walletAddress)
+      }
+
       const etherBalance = await getEtherBalance(
         state.currentUser.walletAddress
       )
@@ -314,7 +327,8 @@ const actions = {
 
       commit(SET_CURRENT_USER, {
         ...state.currentUser,
-        isVerified,
+        brightId,
+        isRegistered,
         balance,
         etherBalance,
       })

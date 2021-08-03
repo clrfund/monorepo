@@ -17,7 +17,15 @@ export const factory = new ethers.Contract(
   provider
 )
 export const userRegistryType = process.env.VUE_APP_USER_REGISTRY_TYPE
-if (!['simple', 'brightid'].includes(userRegistryType as string)) {
+export enum UserRegistryType {
+  BRIGHT_ID = 'brightid',
+  SIMPLE = 'simple',
+}
+if (
+  ![UserRegistryType.BRIGHT_ID, UserRegistryType.SIMPLE].includes(
+    userRegistryType as UserRegistryType
+  )
+) {
   throw new Error('invalid user registry type')
 }
 export const recipientRegistryType = process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE
