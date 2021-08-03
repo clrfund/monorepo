@@ -12,14 +12,15 @@
       @click="toggleCart"
     >
       <img alt="open" width="16px" src="@/assets/chevron-left.svg" />
-      <div
-        :class="[
-          cart.length + -0 ? 'circle pulse cart-indicator' : 'cart-indicator',
-        ]"
-        v-if="!$store.state.showCartPanel && isCartBadgeShown"
-      >
-        {{ cart.length }}
-      </div>
+      <transition name="pulse" mode="out-in">
+        <div
+          :key="cart.length"
+          :class="[cart.length ? 'circle cart-indicator' : 'cart-indicator']"
+          v-if="!$store.state.showCartPanel && isCartBadgeShown"
+        >
+          {{ cart.length }}
+        </div>
+      </transition>
       <img alt="cart" width="16px" src="@/assets/cart.svg" />
     </div>
     <cart v-if="$store.state.showCartPanel" class="cart-component" />
@@ -31,31 +32,18 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Network } from '@ethersproject/networks'
-import { Web3Provider } from '@ethersproject/providers'
 import Tooltip from '@/components/Tooltip.vue'
 import { provider as jsonRpcProvider } from '@/api/core'
-import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
+import { User } from '@/api/user'
 import { CartItem } from '@/api/contributions'
-import {
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-  LOGIN_USER,
-  LOGOUT_USER,
-} from '@/store/action-types'
-import {
-  SET_CURRENT_USER,
-  TOGGLE_SHOW_CART_PANEL,
-} from '@/store/mutation-types'
-import { sha256 } from '@/utils/crypto'
+import { LOGOUT_USER } from '@/store/action-types'
+import { TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import Cart from '@/components/Cart.vue'
 import { getNetworkName } from '@/utils/networks'
 
 @Component({ components: { Cart, Tooltip } })
 export default class CartWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
-  private walletChainId: string | null = null
   profileImageUrl: string | null = null
 
   toggleCart(): void {
@@ -79,38 +67,38 @@ export default class CartWidget extends Vue {
     return this.cart.filter((item) => !item.isCleared)
   }
 
-  get walletProvider(): any {
-    return (window as any).ethereum
-  }
-
   get currentUser(): User | null {
     return this.$store.state.currentUser
   }
 
+  get walletProvider(): any {
+    return this.$web3.provider
+  }
+
+  get walletChainId(): number | null {
+    return this.$web3.chainId
+  }
+
   async mounted() {
-    if (!this.walletProvider) {
-      return
-    }
-    this.walletChainId = await this.walletProvider.request({
-      method: 'eth_chainId',
-    })
-    this.walletProvider.on('chainChanged', (_chainId: string) => {
-      if (_chainId !== this.walletChainId) {
-        this.walletChainId = _chainId
-        if (this.currentUser) {
-          // Log out user to prevent interactions with incorrect network
-          this.$store.dispatch(LOGOUT_USER)
-        }
+    // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
+    // upper level where we hear this events only once (there are other
+    // components that do the same).
+    this.$web3.$on('chainChanged', () => {
+      if (this.currentUser) {
+        // Log out user to prevent interactions with incorrect network
+        this.$store.dispatch(LOGOUT_USER)
       }
     })
+
     let accounts: string[]
-    this.walletProvider.on('accountsChanged', (_accounts: string[]) => {
+    this.$web3.$on('accountsChanged', (_accounts: string[]) => {
       if (_accounts !== accounts) {
         // Log out user if wallet account changes
         this.$store.dispatch(LOGOUT_USER)
       }
       accounts = _accounts
     })
+
     this.jsonRpcNetwork = await jsonRpcProvider.getNetwork()
   }
 
@@ -123,63 +111,13 @@ export default class CartWidget extends Vue {
       // Still loading
       return false
     }
-    if (this.walletChainId === '0xNaN') {
-      // Devnet
-      return true
-    }
-    return this.jsonRpcNetwork.chainId === parseInt(this.walletChainId, 16)
+    return this.jsonRpcNetwork.chainId === this.walletChainId
   }
 
   get networkName(): string {
     return this.jsonRpcNetwork === null
       ? ''
       : getNetworkName(this.jsonRpcNetwork)
-  }
-
-  async connect(): Promise<void> {
-    if (!this.walletProvider || !this.walletProvider.request) {
-      return
-    }
-    let walletAddress
-    try {
-      ;[walletAddress] = await this.walletProvider.request({
-        method: 'eth_requestAccounts',
-      })
-    } catch (error) {
-      // Access denied
-      return
-    }
-    let signature
-    try {
-      signature = await this.walletProvider.request({
-        method: 'personal_sign',
-        params: [LOGIN_MESSAGE, walletAddress],
-      })
-    } catch (error) {
-      // Signature request rejected
-      return
-    }
-    const user: User = {
-      walletProvider: new Web3Provider(this.walletProvider),
-      walletAddress,
-      encryptionKey: sha256(signature),
-      isVerified: null,
-      balance: null,
-      contribution: null,
-    }
-
-    getProfileImageUrl(user.walletAddress).then(
-      (url) => (this.profileImageUrl = url)
-    )
-    this.$store.commit(SET_CURRENT_USER, user)
-    await this.$store.dispatch(LOGIN_USER)
-    if (this.$store.state.currentRound) {
-      // Load cart & contributor data for current round
-      this.$store.dispatch(LOAD_USER_INFO)
-      this.$store.dispatch(LOAD_CART)
-      this.$store.dispatch(LOAD_COMMITTED_CART)
-      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-    }
   }
 
   get truncatedAddress(): string {
@@ -241,7 +179,7 @@ export default class CartWidget extends Vue {
   border-radius: 50%;
 }
 
-.pulse {
+.pulse-enter-active {
   animation: pulse-animation 2s 1 ease-out;
 }
 

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import Web3 from './plugins/Web3'
 
 import Meta from 'vue-meta'
 import VModal from 'vue-js-modal'
@@ -15,6 +16,7 @@ Vue.use(VModal, {
     width: 450,
   },
 })
+Vue.use(Web3)
 
 Vue.config.productionTip = false
 

@@ -113,10 +113,7 @@ import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 import { BigNumber } from 'ethers'
 import Loader from '@/components/Loader.vue'
-import {
-  RegistryInfo,
-  getRegistryInfo,
-} from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
@@ -135,23 +132,22 @@ export default class JoinLanding extends Vue {
   deposit: BigNumber | null = null
   depositToken: string | null = null
 
-  // TODO fix on page refresh - `recipientRegistryAddress` is `null`
-  // Refactor to computed properties, so we can react to having `recipientRegistryAddress`?
   async created() {
     try {
-      const registryInfo: RegistryInfo = await getRegistryInfo(
-        this.$store.state.recipientRegistryAddress
-      )
       const maxRecipients = this.$store.state.currentRound.maxRecipients
-      this.recipientCount = registryInfo.recipientCount
-      this.deposit = registryInfo.deposit
-      this.depositToken = registryInfo.depositToken
-      this.spacesRemaining = maxRecipients - registryInfo.recipientCount
+      this.recipientCount = this.registryInfo.recipientCount
+      this.deposit = this.registryInfo.deposit
+      this.depositToken = this.registryInfo.depositToken
+      this.spacesRemaining = maxRecipients - this.registryInfo.recipientCount
     } catch (error) {
       console.warn(error) /* eslint-disable-line no-console */
     } finally {
       this.isLoading = false
     }
+  }
+
+  get registryInfo(): RegistryInfo {
+    return this.$store.state.recipientRegistryInfo
   }
 
   private get signUpDeadline(): DateTime {

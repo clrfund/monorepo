@@ -11,14 +11,15 @@
     >
       <div class="icon">
         <img :src="require(`@/assets/${icon}`)" :alt="title" width="16px" />
-        <div
-          :class="[
-            cart.length + -0 ? 'circle pulse cart-indicator' : 'cart-indicator',
-          ]"
-          v-if="title === 'Cart' && isCartBadgeShown"
-        >
-          {{ cart.length }}
-        </div>
+        <transition name="pulse" mode="out-in">
+          <div
+            :key="cart.length"
+            :class="[cart.length ? 'circle cart-indicator' : 'cart-indicator']"
+            v-if="title === 'Cart' && isCartBadgeShown"
+          >
+            {{ cart.length }}
+          </div>
+        </transition>
       </div>
       <span class="tab-title">{{ title }}</span>
     </router-link>
@@ -157,7 +158,7 @@ export default class MobileTabs extends Vue {
   margin-right: 0.5rem;
 }
 
-.pulse {
+.pulse-enter-active {
   animation: pulse-animation 2s 1 ease-out;
 }
 

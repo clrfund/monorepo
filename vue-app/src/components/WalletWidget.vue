@@ -1,17 +1,13 @@
 <template>
   <div :class="{ container: !isActionButton }">
-    <div v-if="!walletProvider" class="provider-error">Wallet not found</div>
-    <template v-else-if="!isLoaded()"></template>
-    <div
-      v-else-if="walletProvider && !isCorrectNetwork()"
-      class="provider-error"
-    >
+    <template v-if="!isLoaded()"></template>
+    <div v-if="walletProvider && !isCorrectNetwork()" class="provider-error">
       Please change network to {{ networkName }}
     </div>
     <button
-      v-else-if="walletProvider && !currentUser"
+      v-else-if="!currentUser"
       :class="isActionButton ? 'btn-action' : 'app-btn'"
-      @click="connect"
+      @click="showModal()"
     >
       Connect
     </button>
@@ -49,27 +45,17 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { Network } from '@ethersproject/networks'
-import { Web3Provider } from '@ethersproject/providers'
 import { commify, formatUnits } from '@ethersproject/units'
 
 import { provider as jsonRpcProvider } from '@/api/core'
-import { LOGIN_MESSAGE, User, getProfileImageUrl } from '@/api/user'
-import {
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-  LOGIN_USER,
-  LOGOUT_USER,
-} from '@/store/action-types'
-import { SET_CURRENT_USER } from '@/store/mutation-types'
-import { sha256 } from '@/utils/crypto'
+import { User } from '@/api/user'
+import WalletModal from '@/components/WalletModal.vue'
+import { LOGOUT_USER } from '@/store/action-types'
 import Profile from '@/views/Profile.vue'
 
-@Component({ components: { Profile } })
+@Component({ components: { Profile, WalletModal } })
 export default class WalletWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
-  private walletChainId: string | null = null
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
   @Prop() showEth!: boolean
@@ -82,12 +68,16 @@ export default class WalletWidget extends Vue {
     this.showProfilePanel = !this.showProfilePanel
   }
 
-  get walletProvider(): any {
-    return (window as any).ethereum
-  }
-
   get currentUser(): User | null {
     return this.$store.state.currentUser
+  }
+
+  get walletProvider(): any {
+    return this.$web3.provider
+  }
+
+  get walletChainId(): number | null {
+    return this.$web3.chainId
   }
 
   get etherBalance(): string | null {
@@ -108,29 +98,30 @@ export default class WalletWidget extends Vue {
 
   async mounted() {
     this.showProfilePanel = false
-    if (!this.walletProvider) {
-      return
-    }
-    this.walletChainId = await this.walletProvider.request({
-      method: 'eth_chainId',
+
+    this.$web3.$on('disconnect', () => {
+      this.$store.dispatch(LOGOUT_USER)
     })
-    this.walletProvider.on('chainChanged', (_chainId: string) => {
-      if (_chainId !== this.walletChainId) {
-        this.walletChainId = _chainId
-        if (this.currentUser) {
-          // Log out user to prevent interactions with incorrect network
-          this.$store.dispatch(LOGOUT_USER)
-        }
+
+    // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
+    // upper level where we hear this events only once (there are other
+    // components that do the same).
+    this.$web3.$on('chainChanged', () => {
+      if (this.currentUser) {
+        // Log out user to prevent interactions with incorrect network
+        this.$store.dispatch(LOGOUT_USER)
       }
     })
+
     let accounts: string[]
-    this.walletProvider.on('accountsChanged', (_accounts: string[]) => {
+    this.$web3.$on('accountsChanged', (_accounts: string[]) => {
       if (_accounts !== accounts) {
         // Log out user if wallet account changes
         this.$store.dispatch(LOGOUT_USER)
       }
       accounts = _accounts
     })
+
     this.jsonRpcNetwork = await jsonRpcProvider.getNetwork()
   }
 
@@ -143,11 +134,7 @@ export default class WalletWidget extends Vue {
       // Still loading
       return false
     }
-    if (this.walletChainId === '0xNaN') {
-      // Devnet
-      return true
-    }
-    return this.jsonRpcNetwork.chainId === parseInt(this.walletChainId, 16)
+    return this.jsonRpcNetwork.chainId === this.walletChainId
   }
 
   get networkName(): string {
@@ -163,52 +150,16 @@ export default class WalletWidget extends Vue {
     }
   }
 
-  async connect(): Promise<void> {
-    if (!this.walletProvider || !this.walletProvider.request) {
-      return
-    }
-    let walletAddress
-    try {
-      ;[walletAddress] = await this.walletProvider.request({
-        method: 'eth_requestAccounts',
-      })
-    } catch (error) {
-      // Access denied
-      return
-    }
-    let signature
-    try {
-      signature = await this.walletProvider.request({
-        method: 'personal_sign',
-        params: [LOGIN_MESSAGE, walletAddress],
-      })
-    } catch (error) {
-      // Signature request rejected
-      return
-    }
-    const user: User = {
-      walletProvider: new Web3Provider(this.walletProvider),
-      walletAddress,
-      encryptionKey: sha256(signature),
-      isVerified: null,
-      balance: null,
-      contribution: null,
-    }
-
-    this.$emit('connected')
-
-    getProfileImageUrl(user.walletAddress).then(
-      (url) => (this.profileImageUrl = url)
+  async showModal(): Promise<void> {
+    this.$modal.show(
+      WalletModal,
+      { updateProfileImage: this.updateProfileImage },
+      { width: 400, top: 20 }
     )
-    this.$store.commit(SET_CURRENT_USER, user)
-    await this.$store.dispatch(LOGIN_USER)
-    if (this.$store.state.currentRound) {
-      // Load cart & contributor data for current round
-      this.$store.dispatch(LOAD_USER_INFO)
-      this.$store.dispatch(LOAD_CART)
-      this.$store.dispatch(LOAD_COMMITTED_CART)
-      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-    }
+  }
+
+  updateProfileImage(url: string): void {
+    this.profileImageUrl = url
   }
 
   // TODO: Extract into a shared function
