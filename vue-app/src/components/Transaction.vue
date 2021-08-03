@@ -2,7 +2,9 @@
   <div class="transaction">
     <template v-if="error">
       <div class="error">{{ error }}</div>
-      <button class="btn close-btn" @click="$emit('close')">OK</button>
+      <button class="btn-secondary close-btn" @click="$emit('close')">
+        Close
+      </button>
     </template>
     <template v-else>
       <div v-if="!hash">Please approve transaction in your wallet</div>
@@ -12,6 +14,12 @@
         confirm...
       </div>
       <loader />
+      <div v-if="displayWarning">
+        <small class="warning-text">
+          If you have been waiting a while, consider refreshing your browser and
+          reconnecting your wallet.
+        </small>
+      </div>
     </template>
   </div>
 </template>
@@ -28,8 +36,26 @@ import { blockExplorer } from '@/api/core'
   components: {
     Loader,
   },
+  watch: {
+    hash: {
+      handler: function () {
+        // Every time the hash changes, restart the timer to display the warning
+        // message to the user
+        clearTimeout(this.$data.waitingWarningTimeout)
+        this.$data.displayWarning = false
+
+        this.$data.waitingWarningTimeout = setTimeout(() => {
+          this.$data.displayWarning = true
+        }, 30000)
+      },
+      immediate: true,
+    },
+  },
 })
 export default class Transaction extends Vue {
+  waitingWarningTimeout
+  displayWarning = false
+
   @Prop()
   hash!: string
 
