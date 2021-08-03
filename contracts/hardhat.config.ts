@@ -34,6 +34,10 @@ const config: HardhatUserConfig = {
       timeout: 60000,
       accounts: { mnemonic: WALLET_MNEMONIC },
     },
+    rinkarby: {
+      url: process.env.RINKARBY_JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
+      accounts: { mnemonic: WALLET_MNEMONIC },
+    },
   },
   paths: {
     artifacts: 'build/contracts',

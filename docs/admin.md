@@ -32,6 +32,9 @@ cd contracts/
 yarn hardhat console --network rinkeby
 ```
 
+**Prepare .env file**
+You will need to set up an RPC provider for the `RINKEBY_JSONRPC_HTTP_URL` variable. Can use infura, pocket, alchemy, etc.
+
 ## Deployment
 
 ### MACI factory
@@ -136,7 +139,7 @@ const rinkebyDaiAddress = '0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea'
 await factory.setToken(rinkebyDaiAddress)
 ```
 
-If a [coordinator](./coordinator.md) key has not yet been created:
+If a [coordinator](./coordinator.md) key has not yet been created. Make sure you save your keys in a file as they will not be displayed again, and you're private key is needed to generate the proofs at the end, and tally the votes:
 
 ```js
 // Generate coordinator key
@@ -197,6 +200,17 @@ Start new funding round:
 await factory.deployNewRound()
 ```
 
+Info to keep track of:
+```
+deployer.address
+maciFactory.address
+factory.address
+recipientRegistry.address
+userRegistry.address
+serializedCoordinatorPrivKey
+serializedCoordinatorPubKey
+```
+
 Finalize current round and transfer matching funds to the pool:
 
 ```js
@@ -234,4 +248,11 @@ ipfs add -r vue-app/dist/
 
 ```
 yarn start:web
+```
+
+## deployRound Script
+There is a new deployRound script that has been created that automates the above process (minus taking the new factory address and injecting it into the UI). To run this, first change directories to the contracts folder, run the following:
+
+```
+npx hardhat run --network {network-name} scripts/deployRound.ts
 ```
