@@ -8,17 +8,17 @@ import { BrightIdError, getVerification } from './bright-id'
 
 export const LOGIN_MESSAGE = `Sign this message to access clr.fund at ${factory.address.toLowerCase()}.`
 
-interface BrightId {
+export interface BrightId {
   isLinked: boolean
   isSponsored: boolean
   isVerified: boolean // If is verified in BrightID
-  isRegistered: boolean // If is in user registry
 }
 export interface User {
   walletAddress: string
   walletProvider: Web3Provider
   encryptionKey: string
   brightId: BrightId
+  isRegistered: boolean // If is in user registry
   balance?: BigNumber | null
   etherBalance?: BigNumber | null
   contribution?: BigNumber | null
@@ -61,57 +61,34 @@ export async function getEtherBalance(
   return await provider.getBalance(walletAddress)
 }
 
-export async function getBrightId(
-  userRegistryAddress: string,
-  walletAddress: string
-): Promise<BrightId> {
+export async function getBrightId(contextId: string): Promise<BrightId> {
   const brightId: BrightId = {
     isLinked: false,
     isSponsored: false,
     isVerified: false,
-    isRegistered: false,
   }
 
   try {
-    const isRegistered = await isVerifiedUser(
-      userRegistryAddress,
-      walletAddress
-    )
+    await getVerification(contextId)
+    brightId.isLinked = true
+    brightId.isSponsored = true
+    brightId.isVerified = true
+  } catch (error) {
+    if (!(error instanceof BrightIdError)) {
+      /* eslint-disable-next-line no-console */
+      console.error(error)
+    }
 
-    if (isRegistered) {
-      // If the user is in our registry is because he has been verifed before
+    // Not verified user
+    if (error.code === 3) {
       brightId.isLinked = true
       brightId.isSponsored = true
-      brightId.isVerified = true
-      brightId.isRegistered = true
-    } else {
-      // For not registered users, lets fetch the Bright ID status
-      try {
-        await getVerification(walletAddress)
-        brightId.isLinked = true
-        brightId.isSponsored = true
-        brightId.isVerified = true
-      } catch (error) {
-        if (error instanceof BrightIdError) {
-          // Not verified user
-          if (error.code === 3) {
-            brightId.isLinked = true
-            brightId.isSponsored = true
-          }
-
-          // Not sponsored user
-          if (error.code === 4) {
-            brightId.isLinked = true
-          }
-        }
-
-        /* eslint-disable-next-line no-console */
-        console.error(error)
-      }
     }
-  } catch (error) {
-    /* eslint-disable-next-line no-console */
-    console.error(error)
+
+    // Not sponsored user
+    if (error.code === 4) {
+      brightId.isLinked = true
+    }
   }
 
   return brightId

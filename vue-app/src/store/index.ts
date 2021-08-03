@@ -24,7 +24,14 @@ import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { Tally, getTally } from '@/api/tally'
-import { User, getEtherBalance, getTokenBalance } from '@/api/user'
+import {
+  User,
+  getEtherBalance,
+  getTokenBalance,
+  isVerifiedUser,
+  getBrightId,
+  BrightId,
+} from '@/api/user'
 import {
   getRegistryInfo,
   RecipientApplicationData,
@@ -273,6 +280,23 @@ const actions = {
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (state.currentRound && state.currentUser) {
+      // Check if this user is in our user registry
+      const isRegistered = await isVerifiedUser(
+        state.currentRound.userRegistryAddress,
+        state.currentUser.walletAddress
+      )
+
+      // If the user is registered, we assume all brightId steps as done
+      let brightId: BrightId = {
+        isLinked: true,
+        isSponsored: true,
+        isVerified: true,
+      }
+      if (!isRegistered) {
+        // Fetch brightId info
+        brightId = await getBrightId(state.currentUser.walletAddress)
+      }
+
       const etherBalance = await getEtherBalance(
         state.currentUser.walletAddress
       )
@@ -302,6 +326,8 @@ const actions = {
 
       commit(SET_CURRENT_USER, {
         ...state.currentUser,
+        brightId,
+        isRegistered,
         balance,
         etherBalance,
       })
