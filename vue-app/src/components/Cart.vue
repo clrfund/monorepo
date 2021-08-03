@@ -301,7 +301,11 @@ import {
   MAX_CART_SIZE,
   CartItem,
 } from '@/api/contributions'
-import { userRegistryType, provider as jsonRpcProvider } from '@/api/core'
+import {
+  userRegistryType,
+  provider as jsonRpcProvider,
+  UserRegistryType,
+} from '@/api/core'
 import { RoundStatus, TimeLeft } from '@/api/round'
 import { LOGOUT_USER, SAVE_CART } from '@/store/action-types'
 import { User } from '@/api/user'
@@ -575,7 +579,10 @@ export default class Cart extends Vue {
       return 'Please connect your wallet'
     } else if (currentUser.isVerified === null) {
       return '' // No error: waiting for verification check
-    } else if (!currentUser.isVerified && userRegistryType === 'brightid') {
+    } else if (
+      !currentUser.isVerified &&
+      userRegistryType === UserRegistryType.BRIGHT_ID
+    ) {
       return 'To contribute, you need to set up BrightID.'
     } else if (!this.isFormValid()) {
       return 'Include valid contribution amount.'
@@ -640,7 +647,7 @@ export default class Cart extends Vue {
 
   get canRegisterWithBrightId(): boolean {
     return (
-      userRegistryType === 'brightid' &&
+      userRegistryType === UserRegistryType.BRIGHT_ID &&
       !this.$store.state.currentUser?.isVerified
     )
   }

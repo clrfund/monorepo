@@ -78,6 +78,7 @@ import {
 
 // Utils
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
+import { UserRegistryType, userRegistryType } from '@/api/core'
 
 Vue.use(Vuex)
 
@@ -292,7 +293,7 @@ const actions = {
         isSponsored: true,
         isVerified: true,
       }
-      if (!isRegistered) {
+      if (!isRegistered && userRegistryType === UserRegistryType.BRIGHT_ID) {
         // Fetch brightId info
         brightId = await getBrightId(state.currentUser.walletAddress)
       }
