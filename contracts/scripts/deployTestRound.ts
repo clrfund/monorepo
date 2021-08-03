@@ -81,7 +81,7 @@ async function main() {
   await poolContributionTx.wait()
 
   // Add contributors
-  const userRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
+  const userRegistryType = process.env.USER_REGISTRY_TYPE || 'simple'
   if (userRegistryType === 'simple') {
     const userRegistryAddress = await factory.userRegistry()
     const userRegistry = await ethers.getContractAt(
