@@ -8,6 +8,12 @@ import { provider } from './core'
 const NODE_URL = 'https://app.brightid.org/node/v5'
 const CONTEXT = 'clr.fund'
 
+export interface BrightId {
+  isLinked: boolean
+  isSponsored: boolean
+  isVerified: boolean // If is verified in BrightID
+}
+
 export async function isSponsoredUser(
   registryAddress: string,
   userAddress: string
@@ -81,4 +87,37 @@ export async function registerUser(
     '0x' + verification.sig.s
   )
   return transaction
+}
+
+export async function getBrightId(contextId: string): Promise<BrightId> {
+  const brightId: BrightId = {
+    isLinked: false,
+    isSponsored: false,
+    isVerified: false,
+  }
+
+  try {
+    const verification = await getVerification(contextId)
+    brightId.isLinked = true
+    brightId.isSponsored = true
+    brightId.isVerified = !!verification?.unique
+  } catch (error) {
+    if (!(error instanceof BrightIdError)) {
+      /* eslint-disable-next-line no-console */
+      console.error(error)
+    }
+
+    // Not verified user
+    if (error.code === 3) {
+      brightId.isLinked = true
+      brightId.isSponsored = true
+    }
+
+    // Not sponsored user
+    if (error.code === 4) {
+      brightId.isLinked = true
+    }
+  }
+
+  return brightId
 }

@@ -161,7 +161,6 @@
             </div>
             <!-- TODO: success state for linked -->
           </div>
-
           <div v-if="currentStep === 1">
             <h2 class="step-title">Sponsorship</h2>
             <p>
@@ -353,8 +352,9 @@ import {
   isSponsoredUser,
   selfSponsor,
   registerUser,
+  BrightId,
 } from '@/api/bright-id'
-import { User, BrightId } from '@/api/user'
+import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import { LOAD_USER_INFO } from '@/store/action-types'
@@ -458,7 +458,7 @@ export default class VerifyView extends Vue {
       return 2
     }
 
-    if (!this.brightId.isRegistered) {
+    if (!this.currentUser?.isRegistered) {
       return 3
     }
 
@@ -562,7 +562,7 @@ export default class VerifyView extends Vue {
         return this.brightId.isVerified
       case 3:
         // Register
-        return this.brightId.isRegistered
+        return this.currentUser?.isRegistered
       default:
         return false
     }

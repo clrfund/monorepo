@@ -29,8 +29,6 @@ import {
   getEtherBalance,
   getTokenBalance,
   isVerifiedUser,
-  getBrightId,
-  BrightId,
 } from '@/api/user'
 import {
   getRegistryInfo,
@@ -79,6 +77,7 @@ import {
 // Utils
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { UserRegistryType, userRegistryType } from '@/api/core'
+import { BrightId, getBrightId } from '@/api/bright-id'
 
 Vue.use(Vuex)
 
