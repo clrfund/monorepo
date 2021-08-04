@@ -6,7 +6,6 @@ import { BrightIdUserRegistry } from './abi'
 import { provider } from './core'
 
 const NODE_URL = 'https://app.brightid.org/node/v5'
-const CONTEXT = 'clr.fund'
 
 export interface BrightId {
   isLinked: boolean
@@ -36,7 +35,7 @@ export async function selfSponsor(
 
 export function getBrightIdLink(userAddress: string): string {
   const nodeUrl = 'http:%2f%2fnode.brightid.org'
-  const deepLink = `brightid://link-verification/${nodeUrl}/${CONTEXT}/${userAddress}`
+  const deepLink = `brightid://link-verification/${nodeUrl}/${process.env.VUE_APP_BRIGHTID_CONTEXT}/${userAddress}`
   return deepLink
 }
 
@@ -62,7 +61,7 @@ export class BrightIdError extends Error {
 export async function getVerification(
   userAddress: string
 ): Promise<Verification | null> {
-  const apiUrl = `${NODE_URL}/verifications/clr.fund/${userAddress}?signed=eth&timestamp=seconds`
+  const apiUrl = `${NODE_URL}/verifications/${process.env.VUE_APP_BRIGHTID_CONTEXT}/${userAddress}?signed=eth&timestamp=seconds`
   const response = await fetch(apiUrl)
   const data = await response.json()
   if (data['error']) {
@@ -79,7 +78,7 @@ export async function registerUser(
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, BrightIdUserRegistry, signer)
   const transaction = await registry.register(
-    formatBytes32String(CONTEXT),
+    formatBytes32String(process.env.VUE_APP_BRIGHTID_CONTEXT || ''),
     verification.contextIds,
     verification.timestamp,
     verification.sig.v,

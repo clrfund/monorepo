@@ -347,8 +347,6 @@ import QRCode from 'qrcode'
 import {
   getBrightIdLink,
   Verification,
-  BrightIdError,
-  getVerification,
   isSponsoredUser,
   selfSponsor,
   registerUser,
@@ -357,7 +355,7 @@ import {
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
-import { LOAD_USER_INFO } from '@/store/action-types'
+import { LOAD_USER_INFO, LOAD_BRIGHT_ID } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 
 // TODO is this needed? What data do we need to track in each step of flow?
@@ -384,7 +382,6 @@ interface BrightIDStep {
   },
 })
 export default class VerifyView extends Vue {
-  currentStep = 0
   steps: Array<BrightIDStep> = [
     { page: 'connect', name: 'Connect' },
     { page: 'sponsorship', name: 'Sponsorship' },
@@ -417,39 +414,11 @@ export default class VerifyView extends Vue {
     return this.currentUser?.brightId
   }
 
-  created() {
-    if (!this.currentUser?.walletAddress) {
-      this.$router.replace({ name: 'verify' })
-      return
+  get currentStep(): number {
+    if (!this.brightId || !this.brightId.isLinked) {
+      return 0
     }
 
-    const currentStep = this.getCurrentStep()
-    this.currentStep = currentStep
-
-    // redirect to /verify/ if step doesn't exist
-    if (this.currentStep < 0) {
-      this.$router.replace({ name: 'verify' })
-    }
-
-    // TODO fetch verification data w/ BrightID - don't need furthest step
-    // Particularly for people who are already verified on BrightID...
-    // if (this.currentStep > this.form.furthestStep) {
-    //   this.$router.push({ name: 'verify-step', params: { step: steps[this.form.furthestStep] }})
-    // }
-  }
-
-  mounted() {
-    // Present app link and QR code
-    this.appLink = getBrightIdLink(this.currentUser?.walletAddress)
-    QRCode.toDataURL(this.appLink, (error, url: string) => {
-      if (!error) {
-        this.appLinkQrCode = url
-      }
-    })
-    this.waitForVerification()
-  }
-
-  getCurrentStep() {
     if (!this.brightId.isSponsored) {
       return 1
     }
@@ -462,49 +431,58 @@ export default class VerifyView extends Vue {
       return 3
     }
 
-    return 0
+    // This means the user is registered
+    return -1
   }
 
-  private async waitForVerification() {
-    let verification
-    const checkVerification = async () => {
-      try {
-        // TODO fix
-        verification = await getVerification(this.currentUser.walletAddress)
-      } catch (error) {
-        if (
-          error instanceof BrightIdError &&
-          error.code === 4 &&
-          this.currentStep <= 1
-        ) {
-          // Error 4: Not sponsored.
-          // Go to step 2
-          this.sponsor()
-        }
-      }
-      if (verification) {
-        // Verified means the user is unique and sponsored
-        // Go to step 3, final step
-        this.register(verification)
-      }
+  created() {
+    if (!this.currentUser?.walletAddress) {
+      this.$router.replace({ name: 'verify' })
+      return
     }
-    await checkVerification()
-    if (this.currentStep === 0) {
-      // First check completed
-      this.currentStep = 1
+
+    // redirect to the verify success page if the user is registered
+    if (this.currentStep < 0) {
+      this.$router.replace({ name: 'verified' })
     }
-    // if (!verification) {
-    //   const intervalId = setInterval(async () => {
-    //     await checkVerification()
-    //     if (verification) {
-    //       clearInterval(intervalId)
-    //     }
-    //   }, 5000)
+
+    // TODO fetch verification data w/ BrightID - don't need furthest step
+    // Particularly for people who are already verified on BrightID...
+    // if (this.currentStep > this.form.furthestStep) {
+    //   this.$router.push({ name: 'verify-step', params: { step: steps[this.form.furthestStep] }})
     // }
   }
 
+  mounted() {
+    if (this.currentUser) {
+      // Present app link and QR code
+      this.appLink = getBrightIdLink(this.currentUser.walletAddress)
+      QRCode.toDataURL(this.appLink, (error, url: string) => {
+        if (!error) {
+          this.appLinkQrCode = url
+        }
+      })
+      this.waitForVerification()
+    }
+  }
+
+  private async waitForVerification() {
+    const checkVerification = async () => {
+      await this.$store.dispatch(LOAD_BRIGHT_ID)
+    }
+    await checkVerification()
+    if (!this.brightId.isVerified) {
+      const intervalId = setInterval(async () => {
+        await checkVerification()
+        if (this.brightId.isVerified) {
+          clearInterval(intervalId)
+        }
+      }, 5000)
+    }
+  }
+
   private async sponsor() {
-    this.currentStep = 2
+    // this.currentStep = 2
     const { userRegistryAddress } = this.$store.state.currentRound
     const signer = this.currentUser.walletProvider.getSigner()
     const isSponsored = await isSponsoredUser(
@@ -525,7 +503,7 @@ export default class VerifyView extends Vue {
   }
 
   private async register(verification: Verification) {
-    this.currentStep = 3
+    // this.currentStep = 3
     const { userRegistryAddress } = this.$store.state.currentRound
     const signer = this.currentUser.walletProvider.getSigner()
     try {
@@ -538,7 +516,7 @@ export default class VerifyView extends Vue {
       return
     }
     this.$store.dispatch(LOAD_USER_INFO)
-    this.currentStep += 1
+    // this.currentStep += 1
   }
 
   isStepValid(step: number): boolean {

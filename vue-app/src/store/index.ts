@@ -38,6 +38,7 @@ import {
 
 // Constants
 import {
+  LOAD_BRIGHT_ID,
   LOAD_CART,
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
@@ -286,6 +287,7 @@ const actions = {
         state.currentUser.walletAddress
       )
 
+      // TODO: remove this logic and use LOAD_BRIGHT_ID
       // If the user is registered, we assume all brightId steps as done
       let brightId: BrightId = {
         isLinked: true,
@@ -330,6 +332,28 @@ const actions = {
         isRegistered,
         balance,
         etherBalance,
+      })
+    }
+  },
+  async [LOAD_BRIGHT_ID]({ commit, state }) {
+    if (state.currentUser) {
+      // If the user is registered, we assume all brightId steps as done
+      let brightId: BrightId = {
+        isLinked: true,
+        isSponsored: true,
+        isVerified: true,
+      }
+      if (
+        !state.currentUser.isRegistered &&
+        userRegistryType === UserRegistryType.BRIGHT_ID
+      ) {
+        // Fetch brightId info
+        brightId = await getBrightId(state.currentUser.walletAddress)
+      }
+
+      commit(SET_CURRENT_USER, {
+        ...state.currentUser,
+        brightId,
       })
     }
   },
