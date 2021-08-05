@@ -46,7 +46,7 @@
         <router-link v-if="currentUser" to="/verify/connect" class="btn-primary"
           >I have BrightID installed</router-link
         >
-        <router-link to="/" class="btn-secondary">Go home</router-link>
+        <router-link to="/projects" class="btn-secondary">Go back</router-link>
       </div>
     </div>
   </div>
