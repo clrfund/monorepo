@@ -33,7 +33,7 @@
             >Android</a
           >
         </li>
-        <li>An Ethereum wallet</li>
+        <li>An Ethereum wallet, with enough gas for two transactions</li>
         <li>Access to Zoom or Google Meet</li>
       </ul>
       <router-link to="/sybil-resistance/">Why is this important?</router-link>
