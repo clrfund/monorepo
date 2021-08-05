@@ -58,24 +58,23 @@ import { userRegistryType, UserRegistryType } from '@/api/core'
   },
 })
 export default class CallToActionCard extends Vue {
-  hasStartedVerification = false // TODO configure logic - this is true if 1st step of get-verified is complete, which is linking ETH address & BrightID profile
-
-  get isUserVerified(): boolean {
+  get hasStartedVerification(): boolean {
     return (
-      this.$store.state.currentUser && this.$store.state.currentUser.isVerified
+      this.$store.state.currentUser &&
+      this.$store.state.currentUser.brightId.isLinked
     )
   }
 
-  get isUserUnique(): boolean {
+  get isUserVerified(): boolean {
     return (
-      this.$store.state.currentUser && this.$store.state.currentUser.isUnique
+      this.$store.state.currentUser &&
+      this.$store.state.currentUser.brightId.isVerified
     )
   }
 
   get showUserVerification(): boolean {
     return (
-      userRegistryType === UserRegistryType.BRIGHT_ID &&
-      (!this.isUserVerified || !this.isUserUnique)
+      userRegistryType === UserRegistryType.BRIGHT_ID && !this.isUserVerified
     )
   }
 
