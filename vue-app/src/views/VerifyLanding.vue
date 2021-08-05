@@ -80,7 +80,7 @@ export default class VerifyLanding extends Vue {
 
   get isRoundFullOrOver(): boolean {
     return (
-      this.$store.getters.isRecipientRegistryFull ||
+      this.$store.getters.isMessageLimitReached ||
       this.$store.getters.hasContributionPhaseEnded
     )
   }
