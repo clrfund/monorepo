@@ -66,8 +66,8 @@ export default class Transaction extends Vue {
   @Prop()
   error!: string
 
-  @Prop()
-  displayCloseBtn = true
+  @Prop({ default: true })
+  displayCloseBtn!: boolean
 
   getBlockExplorerUrl(transactionHash: string): string {
     return `${blockExplorer}${transactionHash}`
