@@ -242,7 +242,7 @@
                   </p>
                   <input
                     id="fund-address"
-                    placeholder="example: clr.eth, clr.crypto, 0x123..."
+                    placeholder="example: 0x123..."
                     v-model="$v.form.fund.address.$model"
                     :class="{
                       input: true,
