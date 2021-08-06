@@ -27,12 +27,6 @@
                   alt="current step"
                 />
                 <p v-text="step.name" class="active step" />
-                <tooltip
-                  v-if="stepIndex === 2 && !brightId.isVerified"
-                  position="left"
-                  content="We'll keep checking with BrightID to see if you're verified"
-                  ><img src="@/assets/info.svg"
-                /></tooltip>
               </template>
               <template
                 v-else-if="isStepUnlocked(stepIndex) && isStepValid(stepIndex)"
@@ -43,12 +37,6 @@
                 />
                 <img v-else src="@/assets/green-tick.svg" alt="step complete" />
                 <p v-text="step.name" class="step" />
-                <tooltip
-                  v-if="stepIndex === 2 && !brightId.isVerified"
-                  position="left"
-                  content="You still need verification from BrightID"
-                  ><img src="@/assets/info.svg"
-                /></tooltip>
               </template>
               <template v-else>
                 <img src="@/assets/step-remaining.svg" alt="step remaining" />
@@ -282,7 +270,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import ProgressBar from '@/components/ProgressBar.vue'
-import Tooltip from '@/components/Tooltip.vue'
 import QRCode from 'qrcode'
 import {
   getBrightIdLink,
@@ -306,7 +293,6 @@ interface BrightIDStep {
     ProgressBar,
     Transaction,
     Loader,
-    Tooltip,
   },
 })
 export default class VerifyView extends Vue {
