@@ -287,18 +287,6 @@ const actions = {
         state.currentUser.walletAddress
       )
 
-      // TODO: remove this logic and use LOAD_BRIGHT_ID
-      // If the user is registered, we assume all brightId steps as done
-      let brightId: BrightId = {
-        isLinked: true,
-        isSponsored: true,
-        isVerified: true,
-      }
-      if (!isRegistered && userRegistryType === UserRegistryType.BRIGHT_ID) {
-        // Fetch brightId info
-        brightId = await getBrightId(state.currentUser.walletAddress)
-      }
-
       const etherBalance = await getEtherBalance(
         state.currentUser.walletAddress
       )
@@ -328,7 +316,6 @@ const actions = {
 
       commit(SET_CURRENT_USER, {
         ...state.currentUser,
-        brightId,
         isRegistered,
         balance,
         etherBalance,

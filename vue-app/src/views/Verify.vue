@@ -56,7 +56,11 @@
               </template>
             </div>
           </div>
-          <button @click="loadBrightId" class="btn-primary">
+          <button
+            v-if="currentStep === 2"
+            @click="loadBrightId"
+            class="btn-primary"
+          >
             Check if you are verified
           </button>
         </div>
@@ -366,7 +370,7 @@ export default class VerifyView extends Vue {
     return this.$store.state.currentUser
   }
 
-  get brightId(): BrightId {
+  get brightId(): BrightId | undefined {
     return this.currentUser?.brightId
   }
 
@@ -418,31 +422,12 @@ export default class VerifyView extends Vue {
           this.appLinkQrCode = url
         }
       })
-      this.waitUntil(this.brightId.isLinked)
+      this.waitUntil(() => this.brightId?.isLinked)
     }
   }
 
   async loadBrightId() {
     await this.$store.dispatch(LOAD_BRIGHT_ID)
-  }
-
-  /**
-   * Check bright id state until it met the condition
-   */
-  private async waitUntil(condition, intervalTime = 5000) {
-    const checkVerification = async () => {
-      await this.loadBrightId()
-    }
-    await checkVerification()
-
-    if (!condition) {
-      const intervalId = setInterval(async () => {
-        await checkVerification()
-        if (condition) {
-          clearInterval(intervalId)
-        }
-      }, intervalTime)
-    }
   }
 
   async sponsor() {
@@ -457,7 +442,7 @@ export default class VerifyView extends Vue {
         (hash) => (this.sponsorTxHash = hash)
       )
       this.loadingTx = false
-      await this.waitUntil(this.brightId.isSponsored)
+      this.waitUntil(() => this.brightId?.isSponsored)
     } catch (error) {
       this.sponsorTxError = error.message
       return
@@ -468,7 +453,7 @@ export default class VerifyView extends Vue {
     const { userRegistryAddress } = this.$store.state.currentRound
     const signer = this.currentUser.walletProvider.getSigner()
 
-    if (this.brightId.verification) {
+    if (this.brightId?.verification) {
       this.loadingTx = true
       this.registrationTxError = ''
       try {
@@ -483,6 +468,28 @@ export default class VerifyView extends Vue {
         return
       }
       this.$store.dispatch(LOAD_USER_INFO)
+    }
+  }
+
+  /**
+   * Start polling brightId state until the condition is met
+   */
+  private async waitUntil(isConditionMetFn, intervalTime = 5000) {
+    let isConditionMet = false
+
+    const checkVerification = async () => {
+      await this.loadBrightId()
+      isConditionMet = isConditionMetFn()
+    }
+    await checkVerification()
+
+    if (!isConditionMet) {
+      const intervalId = setInterval(async () => {
+        await checkVerification()
+        if (isConditionMet) {
+          clearInterval(intervalId)
+        }
+      }, intervalTime)
     }
   }
 
