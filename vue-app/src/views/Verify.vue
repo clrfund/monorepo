@@ -219,7 +219,14 @@
                   not a bot. Quick and painless, even for you introverts out
                   there.
                 </p>
-                <div class="btn-secondary">View party schedule</div>
+                <a
+                  class="btn-secondary"
+                  href="https://meet.brightid.org/"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  View party schedule
+                </a>
               </div>
             </div>
             <div class="option">
@@ -340,7 +347,6 @@ import Warning from '@/components/Warning.vue'
 import QRCode from 'qrcode'
 import {
   getBrightIdLink,
-  Verification,
   selfSponsor,
   registerUser,
   BrightId,
@@ -352,9 +358,6 @@ import Loader from '@/components/Loader.vue'
 import { LOAD_USER_INFO, LOAD_BRIGHT_ID } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 
-// TODO is this needed? What data do we need to track in each step of flow?
-// How long should we expect this flow to take some users? Should we store in GUN db?
-// See how this is handled in BrightIdModal.vue
 interface BrightIDStep {
   page: 'connect' | 'sponsorship' | 'verification' | 'registration'
   name: string
