@@ -63,7 +63,7 @@ export default class Transaction extends Vue {
   error!: string
 
   getBlockExplorerUrl(transactionHash: string): string {
-    return `${blockExplorer}${transactionHash}`
+    return `${blockExplorer}/tx/${transactionHash}`
   }
 }
 </script>

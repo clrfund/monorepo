@@ -109,7 +109,7 @@
           />
           <a
             class="explorerLink"
-            :href="`https://etherscan.io/address/${project.address}`"
+            :href="`${blockExplorer}/address/${project.address}`"
             target="_blank"
             title="View on Etherscan"
           >
@@ -145,6 +145,7 @@ import Markdown from '@/components/Markdown.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
+import { blockExplorer } from '@/api/core'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 import ClaimModal from '@/components/ClaimModal.vue'
@@ -261,6 +262,10 @@ export default class ProjectProfile extends Vue {
         },
       }
     )
+  }
+
+  private get blockExplorer(): string {
+    return blockExplorer
   }
 }
 </script>

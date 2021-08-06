@@ -11,10 +11,7 @@
             <tooltip
               position="top"
               :content="currentRound.fundingRoundAddress"
-              :link="
-                'https://etherscan.io/address/' +
-                currentRound.fundingRoundAddress
-              "
+              :link="blockExplorerUrl"
               linkText="View on Etherscan"
               ><div class="verified"><img src="@/assets/verified.svg" /></div
             ></tooltip>
@@ -299,6 +296,7 @@ import {
   getRecipientRegistryAddress,
   getProjects,
 } from '@/api/projects'
+import { blockExplorer } from '@/api/core'
 
 import { getTimeLeft } from '@/utils/dates'
 import { formatAmount } from '@/utils/amounts'
@@ -453,6 +451,13 @@ export default class RoundInformation extends Vue {
         },
       }
     )
+  }
+
+  get blockExplorerUrl(): string {
+    if (!this.currentRound) {
+      return ''
+    }
+    return `${blockExplorer}/address/${this.currentRound.fundingRoundAddress}`
   }
 }
 </script>
