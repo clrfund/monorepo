@@ -424,7 +424,7 @@
                   <input
                     id="links-website"
                     type="link"
-                    placeholder="example: https://website.com/ethereum/clrfund"
+                    placeholder="example: https://ethereum.foundation"
                     class="input"
                     v-model="$v.form.links.website.$model"
                     :class="{
@@ -446,7 +446,7 @@
                   <input
                     id="links-twitter"
                     type="link"
-                    placeholder="example: https://github.com/ethereum/clrfund"
+                    placeholder="example: https://twitter.com/ethereum"
                     class="input"
                     v-model="$v.form.links.twitter.$model"
                     :class="{
@@ -468,7 +468,7 @@
                   <input
                     id="links-discord"
                     type="link"
-                    placeholder="example: https://github.com/ethereum/clrfund"
+                    placeholder="example: https://discord.gg/5Prub9zbGz"
                     class="input"
                     v-model="$v.form.links.discord.$model"
                     :class="{
