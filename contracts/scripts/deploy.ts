@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import { Contract } from 'ethers'
+import { Contract, utils } from 'ethers'
 
 import { UNIT } from '../utils/constants'
 import { deployMaciFactory } from '../utils/deployment'
@@ -42,7 +42,7 @@ async function main() {
     )
     // TODO sort out if these arguments are sensible
     userRegistry = await BrightIdUserRegistry.deploy(
-      '0x636c722e66756e64000000000000000000000000000000000000000000000000', // Do we have a test `context`?
+      utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
       fundingRoundFactory.address // Not sure if `verifier` should be EOA or contract account
     )
   } else {
