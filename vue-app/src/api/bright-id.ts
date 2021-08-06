@@ -11,6 +11,15 @@ export interface BrightId {
   isLinked: boolean
   isSponsored: boolean
   isVerified: boolean // If is verified in BrightID
+  verification?: Verification
+}
+
+export interface Verification {
+  unique: boolean
+  contextIds: string[]
+  sig: { r: string; s: string; v: number }
+  timestamp: number
+  app: string
 }
 
 export async function isSponsoredUser(
@@ -39,13 +48,6 @@ export function getBrightIdLink(userAddress: string): string {
   return deepLink
 }
 
-export interface Verification {
-  unique: boolean
-  contextIds: string[]
-  sig: { r: string; s: string; v: number }
-  timestamp: number
-}
-
 export class BrightIdError extends Error {
   code?: number
 
@@ -60,14 +62,14 @@ export class BrightIdError extends Error {
 
 export async function getVerification(
   userAddress: string
-): Promise<Verification | null> {
+): Promise<Verification> {
   const apiUrl = `${NODE_URL}/verifications/${process.env.VUE_APP_BRIGHTID_CONTEXT}/${userAddress}?signed=eth&timestamp=seconds`
   const response = await fetch(apiUrl)
   const data = await response.json()
   if (data['error']) {
     throw new BrightIdError(data['errorNum'])
   } else {
-    return data['data']['unique'] ? data['data'] : null
+    return data['data']
   }
 }
 
@@ -99,7 +101,9 @@ export async function getBrightId(contextId: string): Promise<BrightId> {
     const verification = await getVerification(contextId)
     brightId.isLinked = true
     brightId.isSponsored = true
+    // the `unique` field tell us if the user is a verified user
     brightId.isVerified = !!verification?.unique
+    brightId.verification = verification
   } catch (error) {
     if (!(error instanceof BrightIdError)) {
       /* eslint-disable-next-line no-console */

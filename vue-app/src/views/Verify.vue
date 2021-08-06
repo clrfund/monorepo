@@ -97,17 +97,6 @@
             {{ brightId.isVerified ? 'Ready!' : 'Unverified' }}
           </div>
         </div>
-        <!-- The below should be displayed if the user was already sponsored and didn't have to do a tx through our app -->
-        <div
-          class="verification-status"
-          v-if="currentStep === 1 && brightId.isSponsored"
-        >
-          <div>
-            <!-- TODO: add blockie -->
-            <h2>You're already sponsored!</h2>
-          </div>
-          <div class="success">Sponsored by {{ sponsoredBy }}</div>
-        </div>
         <div class="application">
           <div v-if="currentStep === 0">
             <h2 class="step-title">Connect</h2>
@@ -116,24 +105,11 @@
               address.
             </p>
             <div class="qr">
-              <div v-if="currentStep > 1">
-                <div class="connected-message">
-                  <div class="checkmark">
-                    <img src="@/assets/checkmark.svg" />
-                  </div>
-                  <div class="profile-image">
-                    <img :src="profileImageUrl" />
-                    <!-- TODO: display blockie next to checkmark -->
-                  </div>
-                  <p>Move along! Your BrightID app is connected</p>
-                </div>
-              </div>
-              <div class="instructions" v-else>
+              <div class="instructions">
                 <p class="desktop" v-if="appLinkQrCode">
                   Scan this QR code with your BrightID app
                 </p>
                 <img :src="appLinkQrCode" class="desktop qr-code" />
-                <!-- TODO: connection should cause the QR code to appear -->
                 <p class="mobile">
                   Follow this link to connect your wallet to your BrightID app
                 </p>
@@ -144,22 +120,16 @@
                   {{ appLink }}
                 </a>
                 <p class="mobile">
-                  <em
-                    >This link might look scary but it just makes a connection
+                  <em>
+                    This link might look scary but it just makes a connection
                     between your connected wallet address, our app, and
-                    BrightID. Make sure your address looks correct.</em
-                  >
+                    BrightID. Make sure your address looks correct.
+                  </em>
                 </p>
               </div>
 
-              <loader v-if="currentStep === 0" />
-            </div>
-            <div v-if="!appLinkQrCode">
               <loader />
-              <div>Connect your wallet to get started</div>
-              <wallet-widget />
             </div>
-            <!-- TODO: success state for linked -->
           </div>
           <div v-if="currentStep === 1">
             <h2 class="step-title">Sponsorship</h2>
@@ -342,7 +312,6 @@ import FormProgressWidget from '@/components/FormProgressWidget.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
-import WalletWidget from '@/components/WalletWidget.vue'
 import Warning from '@/components/Warning.vue'
 import QRCode from 'qrcode'
 import {
@@ -350,7 +319,6 @@ import {
   selfSponsor,
   registerUser,
   BrightId,
-  getVerification,
 } from '@/api/bright-id'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
@@ -374,7 +342,6 @@ interface BrightIDStep {
     Warning,
     Transaction,
     Loader,
-    WalletWidget,
     Tooltip,
   },
 })
@@ -386,12 +353,6 @@ export default class VerifyView extends Vue {
     { page: 'registration', name: 'Get registered' },
   ]
 
-  showSummaryPreview = false
-  sponsoredBy = 'Gitcoin'
-  txFee = '0.00006'
-  feeToken = 'ETH'
-  fiatFee = '1.04'
-  fiatSign = '$'
   showExpandedOption = false
 
   appLink = ''
@@ -506,14 +467,13 @@ export default class VerifyView extends Vue {
   async register() {
     const { userRegistryAddress } = this.$store.state.currentRound
     const signer = this.currentUser.walletProvider.getSigner()
-    const verification = await getVerification(this.currentUser.walletAddress)
 
-    if (verification) {
+    if (this.brightId.verification) {
       this.loadingTx = true
       this.registrationTxError = ''
       try {
         await waitForTransaction(
-          registerUser(userRegistryAddress, verification, signer),
+          registerUser(userRegistryAddress, this.brightId.verification, signer),
           (hash) => (this.registrationTxHash = hash)
         )
         this.loadingTx = false
