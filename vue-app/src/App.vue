@@ -330,6 +330,7 @@ summary:focus {
   height: 100%;
   position: sticky;
   top: 1.5rem;
+  z-index: 2;
 
   .master {
     color: black;
