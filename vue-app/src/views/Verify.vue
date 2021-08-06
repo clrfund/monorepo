@@ -15,10 +15,6 @@
               v-for="(step, stepIndex) in steps"
               :key="step.page"
               class="progress-step"
-              :class="{
-                'zoom-link': stepIndex !== currentStep,
-                disabled: false, // TODO add logic
-              }"
             >
               <template v-if="stepIndex === currentStep">
                 <loader
@@ -61,7 +57,7 @@
             </div>
           </div>
           <button @click="loadBrightId" class="btn-primary">
-            Check your status
+            Check if you are verified
           </button>
         </div>
       </div>
@@ -616,13 +612,6 @@ export default class VerifyView extends Vue {
         color: white;
         font-weight: 600;
         font-size: 1rem;
-      }
-    }
-
-    .zoom-link {
-      cursor: pointer;
-      &:hover {
-        transform: scale(1.02);
       }
     }
 
