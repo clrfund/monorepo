@@ -1,9 +1,6 @@
 <template>
   <div class="container">
     <div class="grid">
-      <!-- TODO: use FormProgressWidget.vue component... -->
-      <!-- This is all copy/pasted from there -->
-      <!-- Will likely need to generalize it a bit -->
       <div class="progress-area desktop">
         <div class="progress-container">
           <progress-bar
@@ -63,6 +60,9 @@
               </template>
             </div>
           </div>
+          <button @click="loadBrightId" class="btn-primary">
+            Check your status
+          </button>
         </div>
       </div>
       <div class="progress-area mobile">
@@ -426,12 +426,16 @@ export default class VerifyView extends Vue {
     }
   }
 
+  async loadBrightId() {
+    await this.$store.dispatch(LOAD_BRIGHT_ID)
+  }
+
   /**
    * Check bright id state until it met the condition
    */
   private async waitUntil(condition, intervalTime = 5000) {
     const checkVerification = async () => {
-      await this.$store.dispatch(LOAD_BRIGHT_ID)
+      await this.loadBrightId()
     }
     await checkVerification()
 
