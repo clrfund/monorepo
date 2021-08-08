@@ -40,10 +40,10 @@ async function main() {
       'BrightIdUserRegistry',
       deployer
     )
-    // TODO sort out if these arguments are sensible
+
     userRegistry = await BrightIdUserRegistry.deploy(
       utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
-      fundingRoundFactory.address // Not sure if `verifier` should be EOA or contract account
+      process.env.BRIGHTID_VERIFIER_ADDR
     )
   } else {
     throw new Error('unsupported user registry type')
