@@ -315,6 +315,13 @@ const actions = {
       }
 
       commit(SET_CURRENT_USER, {
+        // By default, when a currentUser has not been loaded before, set all
+        // brightid states to false
+        brightId: {
+          isLinked: false,
+          isSponsored: false,
+          isVerified: false,
+        },
         ...state.currentUser,
         isRegistered,
         balance,
@@ -323,18 +330,16 @@ const actions = {
     }
   },
   async [LOAD_BRIGHT_ID]({ commit, state }) {
-    if (state.currentUser) {
+    if (state.currentUser && userRegistryType === UserRegistryType.BRIGHT_ID) {
       // If the user is registered, we assume all brightId steps as done
       let brightId: BrightId = {
         isLinked: true,
         isSponsored: true,
         isVerified: true,
       }
-      if (
-        !state.currentUser.isRegistered &&
-        userRegistryType === UserRegistryType.BRIGHT_ID
-      ) {
-        // Fetch brightId info
+
+      if (!state.currentUser.isRegistered) {
+        // If not registered, then fetch brightId data
         brightId = await getBrightId(state.currentUser.walletAddress)
       }
 
