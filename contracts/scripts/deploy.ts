@@ -43,8 +43,7 @@ async function main() {
 
     userRegistry = await BrightIdUserRegistry.deploy(
       utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
-      process.env.BRIGHTID_VERIFIER_ADDR ||
-        '0xb1d71F62bEe34E9Fc349234C201090c33BCdF6DB'
+      process.env.BRIGHTID_VERIFIER_ADDR
     )
   } else {
     throw new Error('unsupported user registry type')
