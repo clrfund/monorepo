@@ -96,9 +96,9 @@ export default class VerifyLanding extends Vue {
       this.$store.state.currentRound.maxContributors <=
       this.$store.state.currentRound.contributors
     return (
-      !hasHitMaxContributors ||
+      this.$store.getters.hasContributionPhaseEnded ||
       this.$store.getters.isMessageLimitReached ||
-      this.$store.getters.hasContributionPhaseEnded
+      hasHitMaxContributors
     )
   }
 
