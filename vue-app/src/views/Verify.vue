@@ -68,23 +68,25 @@
             <h2>Verification status</h2>
             <p>
               {{
-                brightId.isVerified
+                isManuallyVerified
                   ? "You're BrightID verified! Complete the remaining steps to start contributing."
                   : 'Follow the instructions below to get verified. It’s not immediate so feel free to click the below button when you’re ready.'
               }}
             </p>
             <div class="actions">
               <button
-                v-if="currentStep === 2"
-                @click="loadBrightId"
+                v-if="!isManuallyVerified"
+                @click="handleIsVerifiedClick"
                 class="btn-primary"
+                :class="{ disabled: loadingManualVerify }"
               >
                 Check if you are verified
               </button>
+              <loader v-if="loadingManualVerify" />
             </div>
           </div>
-          <div :class="brightId.isVerified ? 'success' : 'unverified'">
-            {{ brightId.isVerified ? 'Ready!' : 'Unverified' }}
+          <div :class="isManuallyVerified ? 'success' : 'unverified'">
+            {{ isManuallyVerified ? 'Ready!' : 'Unverified' }}
           </div>
         </div>
         <div class="application">
@@ -276,12 +278,15 @@ import {
   selfSponsor,
   registerUser,
   BrightId,
+  getVerification,
+  BrightIdError,
 } from '@/api/bright-id'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import { LOAD_USER_INFO, LOAD_BRIGHT_ID } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
+import { SET_CURRENT_USER } from '@/store/mutation-types'
 
 interface BrightIDStep {
   page: 'connect' | 'sponsorship' | 'verification' | 'registration'
@@ -314,6 +319,9 @@ export default class VerifyView extends Vue {
   registrationTxError = ''
 
   loadingTx = false
+
+  isManuallyVerified = false
+  loadingManualVerify = false
 
   get currentUser(): User {
     return this.$store.state.currentUser
@@ -407,6 +415,34 @@ export default class VerifyView extends Vue {
       }
       this.$store.dispatch(LOAD_USER_INFO)
     }
+  }
+
+  async handleIsVerifiedClick() {
+    this.loadingManualVerify = true
+
+    try {
+      const verification = await getVerification(this.currentUser.walletAddress)
+
+      if (verification.unique) {
+        this.isManuallyVerified = true
+        setTimeout(() => {
+          this.$store.commit(SET_CURRENT_USER, {
+            ...this.currentUser,
+            brightId: {
+              ...this.currentUser.brightId,
+              isVerified: true,
+            },
+          })
+        }, 5000)
+      }
+    } catch (error) {
+      if (!(error instanceof BrightIdError)) {
+        /* eslint-disable-next-line no-console */
+        console.warn('Error while fetching bright id verification', error)
+      }
+    }
+
+    this.loadingManualVerify = false
   }
 
   /**
