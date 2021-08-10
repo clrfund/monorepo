@@ -1,53 +1,15 @@
 <template>
-  <span
-    v-if="
-      timeLeft.days === 0 &&
-      timeLeft.hours === 0 &&
-      timeLeft.minutes === 0 &&
-      timeLeft.seconds === 0
-    "
-    :class="valueClass || 'value'"
-  >
-    {{ timeLeft.days }}
-    <span :class="unitClass || 'unit'"
-      >day{{ timeLeft.days !== 1 ? 's' : '' }}</span
-    >
-    {{ timeLeft.hours }}
-    <span :class="unitClass || 'unit'"
-      >hour{{ timeLeft.hours !== 1 ? 's' : '' }}</span
-    >
-  </span>
-  <span v-else-if="timeLeft.days > 0" :class="valueClass || 'value'">
-    {{ timeLeft.days }}
-    <span :class="unitClass || 'unit'"
-      >day{{ timeLeft.days !== 1 ? 's' : '' }}</span
-    >
-    {{ timeLeft.hours }}
-    <span :class="unitClass || 'unit'"
-      >hour{{ timeLeft.hours !== 1 ? 's' : '' }}</span
-    >
-  </span>
-  <span v-else-if="timeLeft.hours > 0" :class="valueClass || 'value'">
-    {{ timeLeft.hours }}
-    <span :class="unitClass || 'unit'"
-      >hour{{ timeLeft.hours !== 1 ? 's' : '' }}</span
-    >
-    {{ timeLeft.minutes }}
-    <span :class="unitClass || 'unit'"
-      >minute{{ timeLeft.minutes !== 1 ? 's' : '' }}</span
-    >
-  </span>
-  <span v-else-if="timeLeft.minutes > 0" :class="valueClass || 'value'">
-    {{ timeLeft.minutes }}
-    <span :class="unitClass || 'unit'"
-      >minute{{ timeLeft.minutes !== 1 ? 's' : '' }}</span
-    >
-  </span>
-  <span v-else-if="timeLeft.seconds > 0" :class="valueClass || 'value'">
-    {{ timeLeft.seconds }}
-    <span :class="unitClass || 'unit'"
-      >second{{ timeLeft.seconds !== 1 ? 's' : '' }}</span
-    >
+  <span :class="valueClass || 'value'">
+    {{ values[0] }}
+    <span :class="unitClass || 'unit'">
+      {{ units[0] }}
+    </span>
+    <span v-if="units[1].length > 0">
+      {{ units[1].length > 0 && values[1] }}
+      <span :class="unitClass || 'unit'">
+        {{ units[1] }}
+      </span>
+    </span>
   </span>
 </template>
 
@@ -68,6 +30,31 @@ export default class extends Vue {
 
   get timeLeft(): TimeLeft {
     return getTimeLeft(this.date)
+  }
+
+  get values(): number[] {
+    if (this.timeLeft.days > 0) return [this.timeLeft.days, this.timeLeft.hours]
+    if (this.timeLeft.hours > 0)
+      return [this.timeLeft.hours, this.timeLeft.minutes]
+    if (this.timeLeft.minutes > 0) return [this.timeLeft.minutes, 0]
+    if (this.timeLeft.seconds > 0) return [this.timeLeft.seconds, 0]
+    return [0, 0]
+  }
+
+  get units(): string[] {
+    if (this.timeLeft.days > 0)
+      return [this.unitPlurality('days'), this.unitPlurality('hours')]
+    if (this.timeLeft.hours > 0)
+      return [this.unitPlurality('hours'), this.unitPlurality('minutes')]
+    if (this.timeLeft.minutes > 0) return [this.unitPlurality('minutes'), '']
+    if (this.timeLeft.seconds > 0) return [this.unitPlurality('seconds'), '']
+    return [this.unitPlurality('days'), this.unitPlurality('hours')]
+  }
+
+  unitPlurality(pluralUnit: string): string {
+    return this.timeLeft[pluralUnit] !== 1
+      ? `${pluralUnit}`
+      : `${pluralUnit.substring(0, pluralUnit.length - 1)}`
   }
 }
 </script>
