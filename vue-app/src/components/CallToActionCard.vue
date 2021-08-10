@@ -61,14 +61,14 @@ export default class CallToActionCard extends Vue {
   get hasStartedVerification(): boolean {
     return (
       this.$store.state.currentUser &&
+      this.$store.state.currentUser.brightId &&
       this.$store.state.currentUser.brightId.isLinked
     )
   }
 
   get isUserVerified(): boolean {
     return (
-      this.$store.state.currentUser &&
-      this.$store.state.currentUser.brightId.isVerified
+      this.$store.state.currentUser && this.$store.state.currentUser.isVerified
     )
   }
 
