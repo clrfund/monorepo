@@ -92,9 +92,12 @@ export default class VerifyLanding extends Vue {
   }
 
   get isRoundFullOrOver(): boolean {
+    const currentRound = this.$store.state.currentRound
+    if (!currentRound) {
+      return true
+    }
     const hasHitMaxContributors =
-      this.$store.state.currentRound.maxContributors <=
-      this.$store.state.currentRound.contributors
+      currentRound.maxContributors <= currentRound.contributors
     return (
       this.$store.getters.hasContributionPhaseEnded ||
       this.$store.getters.isMessageLimitReached ||
