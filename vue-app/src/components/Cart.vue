@@ -118,11 +118,7 @@
               ($store.getters.isRoundContributionPhase &&
                 !$store.getters.canUserReallocate)
             "
-            :date="
-              $store.getters.canUserReallocate
-                ? $store.state.currentRound.votingDeadline
-                : $store.state.currentRound.signUpDeadline
-            "
+            :date="timeLeftDate"
           />
         </div>
       </div>
@@ -232,11 +228,7 @@
           v-if="$store.getters.canUserReallocate && isEditMode"
           valueClass="time-left"
           unitClass="time-left"
-          :date="
-            $store.getters.canUserReallocate
-              ? $store.state.currentRound.votingDeadline
-              : $store.state.currentRound.signUpDeadline
-          "
+          :date="timeLeftDate"
         />
       </div>
       <div
@@ -735,6 +727,12 @@ export default class Cart extends Vue {
       }
     })
     this.$store.dispatch(SAVE_CART)
+  }
+
+  get timeLeftDate(): DateTime {
+    return this.$store.getters.canUserReallocate
+      ? this.$store.state.currentRound.votingDeadline
+      : this.$store.state.currentRound.signUpDeadline
   }
 }
 
