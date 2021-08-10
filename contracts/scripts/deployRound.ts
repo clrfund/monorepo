@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import { Contract } from 'ethers'
+import { Contract, utils } from 'ethers'
 import { Keypair } from 'maci-domainobjs'
 
 import { deployMaciFactory } from '../utils/deployment'
@@ -42,10 +42,9 @@ async function main() {
       'BrightIdUserRegistry',
       deployer
     )
-    // TODO sort out if these arguments are sensible
     userRegistry = await BrightIdUserRegistry.deploy(
-      '0x636c722e66756e64000000000000000000000000000000000000000000000000', // Do we have a test `context`?
-      fundingRoundFactory.address // Not sure if `verifier` should be EOA or contract account
+      utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
+      process.env.BRIGHTID_VERIFIER_ADDR
     )
   } else {
     throw new Error('unsupported user registry type')

@@ -6,11 +6,21 @@ import { BrightIdUserRegistry } from './abi'
 import { provider } from './core'
 
 const NODE_URL = 'https://app.brightid.org/node/v5'
+const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
 
 export interface BrightId {
   isLinked: boolean
   isSponsored: boolean
   isVerified: boolean // If is verified in BrightID
+  verification?: Verification
+}
+
+export interface Verification {
+  unique: boolean
+  contextIds: string[]
+  sig: { r: string; s: string; v: number }
+  timestamp: number
+  app: string
 }
 
 export async function isSponsoredUser(
@@ -35,15 +45,8 @@ export async function selfSponsor(
 
 export function getBrightIdLink(userAddress: string): string {
   const nodeUrl = 'http:%2f%2fnode.brightid.org'
-  const deepLink = `brightid://link-verification/${nodeUrl}/${process.env.VUE_APP_BRIGHTID_CONTEXT}/${userAddress}`
+  const deepLink = `brightid://link-verification/${nodeUrl}/${CONTEXT}/${userAddress}`
   return deepLink
-}
-
-export interface Verification {
-  unique: boolean
-  contextIds: string[]
-  sig: { r: string; s: string; v: number }
-  timestamp: number
 }
 
 export class BrightIdError extends Error {
@@ -60,14 +63,14 @@ export class BrightIdError extends Error {
 
 export async function getVerification(
   userAddress: string
-): Promise<Verification | null> {
-  const apiUrl = `${NODE_URL}/verifications/${process.env.VUE_APP_BRIGHTID_CONTEXT}/${userAddress}?signed=eth&timestamp=seconds`
+): Promise<Verification> {
+  const apiUrl = `${NODE_URL}/verifications/${CONTEXT}/${userAddress}?signed=eth&timestamp=seconds`
   const response = await fetch(apiUrl)
   const data = await response.json()
   if (data['error']) {
     throw new BrightIdError(data['errorNum'])
   } else {
-    return data['data']['unique'] ? data['data'] : null
+    return data['data']
   }
 }
 
@@ -78,7 +81,7 @@ export async function registerUser(
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, BrightIdUserRegistry, signer)
   const transaction = await registry.register(
-    formatBytes32String(process.env.VUE_APP_BRIGHTID_CONTEXT || ''),
+    formatBytes32String(CONTEXT),
     verification.contextIds,
     verification.timestamp,
     verification.sig.v,
@@ -99,7 +102,9 @@ export async function getBrightId(contextId: string): Promise<BrightId> {
     const verification = await getVerification(contextId)
     brightId.isLinked = true
     brightId.isSponsored = true
+    // the `unique` field tell us if the user is a verified user
     brightId.isVerified = !!verification?.unique
+    brightId.verification = verification
   } catch (error) {
     if (!(error instanceof BrightIdError)) {
       /* eslint-disable-next-line no-console */
