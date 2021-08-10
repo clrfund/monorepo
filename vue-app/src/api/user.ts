@@ -11,7 +11,7 @@ export interface User {
   walletAddress: string
   walletProvider: Web3Provider
   encryptionKey: string
-  brightId: BrightId
+  brightId?: BrightId
   isRegistered: boolean // If is in user registry
   balance?: BigNumber | null
   etherBalance?: BigNumber | null

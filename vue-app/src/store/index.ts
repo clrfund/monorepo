@@ -315,13 +315,6 @@ const actions = {
       }
 
       commit(SET_CURRENT_USER, {
-        // By default, when a currentUser has not been loaded before, set all
-        // brightid states to false
-        brightId: {
-          isLinked: false,
-          isSponsored: false,
-          isVerified: false,
-        },
         ...state.currentUser,
         isRegistered,
         balance,
