@@ -43,7 +43,6 @@ export default class extends Vue {
   }
 
   updateTimeLeft(): TimeLeft {
-    console.log('get timeLeft')
     return getTimeLeft(this.date)
   }
 
