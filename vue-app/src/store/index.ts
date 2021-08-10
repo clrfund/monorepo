@@ -550,6 +550,12 @@ const getters = {
       (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
     )
   },
+  isMessageLimitReached: (state: RootState): boolean => {
+    return (
+      !!state.currentRound &&
+      state.currentRound.maxMessages <= state.currentRound.messages
+    )
+  },
 }
 
 const store: StoreOptions<RootState> = {
