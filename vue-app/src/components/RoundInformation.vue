@@ -250,16 +250,7 @@
           </div>
           <div class="round-info-sub-item">
             <div>
-              <div class="round-info-title">
-                Contributors
-                <a
-                  style="margin-bottom: 0"
-                  @click="addMatchingFunds()"
-                  title="Add matching funds"
-                >
-                  <img src="@/assets/more.svg" />
-                </a>
-              </div>
+              <div class="round-info-title">Contributors</div>
               <div class="round-info-value">
                 <div class="value">{{ currentRound.contributors }}</div>
                 <div class="unit">
