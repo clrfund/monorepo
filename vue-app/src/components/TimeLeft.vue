@@ -28,7 +28,22 @@ export default class extends Vue {
   @Prop() valueClass!: string
   @Prop() unitClass!: string
 
-  get timeLeft(): TimeLeft {
+  timeLeft: TimeLeft = getTimeLeft(this.date)
+  interval
+
+  mounted() {
+    this.interval = setInterval(() => {
+      this.timeLeft = getTimeLeft(this.date)
+      console.log(typeof this.interval)
+    }, 1000)
+  }
+
+  beforeDestroy() {
+    clearInterval(this.interval)
+  }
+
+  updateTimeLeft(): TimeLeft {
+    console.log('get timeLeft')
     return getTimeLeft(this.date)
   }
 
