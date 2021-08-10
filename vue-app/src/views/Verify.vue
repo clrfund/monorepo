@@ -1,9 +1,6 @@
 <template>
   <div class="container">
     <div class="grid">
-      <!-- TODO: use FormProgressWidget.vue component... -->
-      <!-- This is all copy/pasted from there -->
-      <!-- Will likely need to generalize it a bit -->
       <div class="progress-area desktop">
         <div class="progress-container">
           <progress-bar
@@ -18,10 +15,6 @@
               v-for="(step, stepIndex) in steps"
               :key="step.page"
               class="progress-step"
-              :class="{
-                'zoom-link': stepIndex !== currentStep,
-                disabled: false, // TODO add logic
-              }"
             >
               <template v-if="stepIndex === currentStep">
                 <loader
@@ -34,12 +27,6 @@
                   alt="current step"
                 />
                 <p v-text="step.name" class="active step" />
-                <tooltip
-                  v-if="stepIndex === 2 && !brightId.isVerified"
-                  position="left"
-                  content="We'll keep checking with BrightID to see if you're verified"
-                  ><img src="@/assets/info.svg"
-                /></tooltip>
               </template>
               <template
                 v-else-if="isStepUnlocked(stepIndex) && isStepValid(stepIndex)"
@@ -50,12 +37,6 @@
                 />
                 <img v-else src="@/assets/green-tick.svg" alt="step complete" />
                 <p v-text="step.name" class="step" />
-                <tooltip
-                  v-if="stepIndex === 2 && !brightId.isVerified"
-                  position="left"
-                  content="You still need verification from BrightID"
-                  ><img src="@/assets/info.svg"
-                /></tooltip>
               </template>
               <template v-else>
                 <img src="@/assets/step-remaining.svg" alt="step remaining" />
@@ -87,26 +68,26 @@
             <h2>Verification status</h2>
             <p>
               {{
-                brightId.isVerified
+                isManuallyVerified
                   ? "You're BrightID verified! Complete the remaining steps to start contributing."
-                  : 'Follow the instructions below to get verified. It’s not immediate so feel free to move onto the next step when you’re ready.'
+                  : 'Follow the instructions below to get verified. It’s not immediate so feel free to click the below button when you’re ready.'
               }}
             </p>
+            <div class="actions">
+              <button
+                v-if="!isManuallyVerified"
+                @click="handleIsVerifiedClick"
+                class="btn-primary"
+                :class="{ disabled: loadingManualVerify }"
+              >
+                Check if you are verified
+              </button>
+              <loader v-if="loadingManualVerify" />
+            </div>
           </div>
-          <div :class="brightId.isVerified ? 'success' : 'unverified'">
-            {{ brightId.isVerified ? 'Ready!' : 'Unverified' }}
+          <div :class="isManuallyVerified ? 'success' : 'unverified'">
+            {{ isManuallyVerified ? 'Ready!' : 'Unverified' }}
           </div>
-        </div>
-        <!-- The below should be displayed if the user was already sponsored and didn't have to do a tx through our app -->
-        <div
-          class="verification-status"
-          v-if="currentStep === 1 && brightId.isSponsored"
-        >
-          <div>
-            <!-- TODO: add blockie -->
-            <h2>You're already sponsored!</h2>
-          </div>
-          <div class="success">Sponsored by {{ sponsoredBy }}</div>
         </div>
         <div class="application">
           <div v-if="currentStep === 0">
@@ -116,24 +97,11 @@
               address.
             </p>
             <div class="qr">
-              <div v-if="currentStep > 1">
-                <div class="connected-message">
-                  <div class="checkmark">
-                    <img src="@/assets/checkmark.svg" />
-                  </div>
-                  <div class="profile-image">
-                    <img :src="profileImageUrl" />
-                    <!-- TODO: display blockie next to checkmark -->
-                  </div>
-                  <p>Move along! Your BrightID app is connected</p>
-                </div>
-              </div>
-              <div class="instructions" v-else>
+              <div class="instructions">
                 <p class="desktop" v-if="appLinkQrCode">
                   Scan this QR code with your BrightID app
                 </p>
                 <img :src="appLinkQrCode" class="desktop qr-code" />
-                <!-- TODO: connection should cause the QR code to appear -->
                 <p class="mobile">
                   Follow this link to connect your wallet to your BrightID app
                 </p>
@@ -144,22 +112,16 @@
                   {{ appLink }}
                 </a>
                 <p class="mobile">
-                  <em
-                    >This link might look scary but it just makes a connection
+                  <em>
+                    This link might look scary but it just makes a connection
                     between your connected wallet address, our app, and
-                    BrightID. Make sure your address looks correct.</em
-                  >
+                    BrightID. Make sure your address looks correct.
+                  </em>
                 </p>
               </div>
 
-              <loader v-if="currentStep === 0" />
-            </div>
-            <div v-if="!appLinkQrCode">
               <loader />
-              <div>Connect your wallet to get started</div>
-              <wallet-widget />
             </div>
-            <!-- TODO: success state for linked -->
           </div>
           <div v-if="currentStep === 1">
             <h2 class="step-title">Sponsorship</h2>
@@ -170,34 +132,24 @@
               works with BrightID.
             </p>
             <div class="transaction">
-              <div v-if="brightId.isSponsored">
-                <div class="connected-message">
-                  <div class="checkmark">
-                    <img src="@/assets/checkmark.svg" />
-                  </div>
-                  <div class="profile-image">
-                    <img :src="profileImageUrl" />
-                    <!-- TODO: display blockie next to checkmark -->
-                  </div>
-                  <p>Move along! You're sponsored!</p>
-                  <!-- TODO: if isSponsored = true and the user did it via our UI we should show the tx receipt -->
-                </div>
-              </div>
-              <div v-else>
-                <wallet-widget class="mx0" v-bind:showEth="true" />
-                <!--TODO: mobile view for this wallet widget has a weird background -->
-                <div class="checkout-row">
-                  <p class="m0"><b>Estimated transaction fee</b></p>
-                  <p class="m0">
-                    {{ txFee }} {{ feeToken }} ({{ fiatSign }}{{ fiatFee }})
-                  </p>
-                </div>
-                <div class="btn-action">Get sponsored</div>
-                <transaction :hash="sponsorTxHash" />
+              <div>
+                <button
+                  type="button"
+                  class="btn-action btn-block"
+                  @click="sponsor"
+                >
+                  Get sponsored
+                </button>
+                <transaction
+                  v-if="loadingTx || sponsorTxError"
+                  :display-close-btn="false"
+                  :hash="sponsorTxHash"
+                  :error="sponsorTxError"
+                />
               </div>
             </div>
           </div>
-          <div v-if="currentStep === 2 && !brightId.isVerified">
+          <div v-if="currentStep === 2">
             <h2 class="step-title">Get verified</h2>
             <p>
               BrightID verification helps prove that you’re a unique human. To
@@ -229,7 +181,14 @@
                   not a bot. Quick and painless, even for you introverts out
                   there.
                 </p>
-                <div class="btn-secondary">View party schedule</div>
+                <a
+                  class="btn-secondary"
+                  href="https://meet.brightid.org/"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  View party schedule
+                </a>
               </div>
             </div>
             <div class="option">
@@ -287,45 +246,23 @@
               wallet address to a smart contract register. Once you’re done, you
               can join the funding round!
             </p>
-            <div class="verification-status" v-if="!brightId.isVerified">
-              <div>
-                <h2>You can't register yet</h2>
-                <p>
-                  You can’t join the round until you’re BrightID verified.
-                  Reminder: it can take up to a few hours even after you've met
-                  the requirements.
-                  <router-link to="/verify/verification"
-                    >How to get verified</router-link
-                  >
-                </p>
-              </div>
-              <div :class="brightId.isVerified ? 'success' : 'unverified'">
-                {{ brightId.isVerified ? 'Ready!' : 'Unverified' }}
-              </div>
-            </div>
-            <div class="transaction" v-if="brightId.isVerified">
-              <wallet-widget class="mx0" v-bind:showEth="true" />
-              <div class="checkout-row">
-                <p class="m0"><b>Estimated transaction fee</b></p>
-                <p class="m0">
-                  {{ txFee }} {{ feeToken }} ({{ fiatSign }}{{ fiatFee }})
-                </p>
-              </div>
-              <div class="btn-action">Become a contributor</div>
-              <transaction :hash="sponsorTxHash" />
+            <div class="transaction">
+              <button
+                type="button"
+                class="btn-action btn-block"
+                @click="register"
+              >
+                Become a contributor
+              </button>
+              <transaction
+                v-if="loadingTx || registrationTxError"
+                :display-close-btn="false"
+                :hash="registrationTxHash"
+                :error="registrationTxError"
+              />
             </div>
           </div>
         </div>
-      </div>
-      <div class="nav-area nav-bar mobile">
-        <!-- TODO fix props we pass to form-progress-widget -->
-        <!-- <form-progress-widget
-          :steps="steps"
-          :currentStep="currentStep"
-          :callBack="saveFormData"
-          :isStepValid="isStepValid(currentStep)"
-        /> -->
-        <!-- TODO submit button to trigger tx, pass callback to above <botton-row />?  -->
       </div>
     </div>
   </div>
@@ -334,33 +271,23 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
-import FormNavigation from '@/components/FormNavigation.vue'
-import FormProgressWidget from '@/components/FormProgressWidget.vue'
-import Tooltip from '@/components/Tooltip.vue'
-import Markdown from '@/components/Markdown.vue'
-import ProjectProfile from '@/components/ProjectProfile.vue'
-import WalletWidget from '@/components/WalletWidget.vue'
-import Warning from '@/components/Warning.vue'
 import QRCode from 'qrcode'
 import {
   getBrightIdLink,
-  Verification,
-  isSponsoredUser,
   selfSponsor,
   registerUser,
   BrightId,
+  getVerification,
+  BrightIdError,
 } from '@/api/bright-id'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import { LOAD_USER_INFO, LOAD_BRIGHT_ID } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
+import { SET_CURRENT_USER } from '@/store/mutation-types'
 
-// TODO is this needed? What data do we need to track in each step of flow?
-// How long should we expect this flow to take some users? Should we store in GUN db?
-// See how this is handled in BrightIdModal.vue
 interface BrightIDStep {
   page: 'connect' | 'sponsorship' | 'verification' | 'registration'
   name: string
@@ -368,17 +295,9 @@ interface BrightIDStep {
 
 @Component({
   components: {
-    LayoutSteps,
     ProgressBar,
-    FormNavigation,
-    FormProgressWidget,
-    Markdown,
-    ProjectProfile,
-    Warning,
     Transaction,
     Loader,
-    WalletWidget,
-    Tooltip,
   },
 })
 export default class VerifyView extends Vue {
@@ -389,12 +308,6 @@ export default class VerifyView extends Vue {
     { page: 'registration', name: 'Get registered' },
   ]
 
-  showSummaryPreview = false
-  sponsoredBy = 'Gitcoin'
-  txFee = '0.00006'
-  feeToken = 'ETH'
-  fiatFee = '1.04'
-  fiatSign = '$'
   showExpandedOption = false
 
   appLink = ''
@@ -404,13 +317,17 @@ export default class VerifyView extends Vue {
   sponsorTxError = ''
   registrationTxHash = ''
   registrationTxError = ''
-  profileImageUrl: string | null = null
+
+  loadingTx = false
+
+  isManuallyVerified = false
+  loadingManualVerify = false
 
   get currentUser(): User {
     return this.$store.state.currentUser
   }
 
-  get brightId(): BrightId {
+  get brightId(): BrightId | undefined {
     return this.currentUser?.brightId
   }
 
@@ -438,23 +355,16 @@ export default class VerifyView extends Vue {
   created() {
     if (!this.currentUser?.walletAddress) {
       this.$router.replace({ name: 'verify' })
-      return
     }
 
     // redirect to the verify success page if the user is registered
     if (this.currentStep < 0) {
       this.$router.replace({ name: 'verified' })
     }
-
-    // TODO fetch verification data w/ BrightID - don't need furthest step
-    // Particularly for people who are already verified on BrightID...
-    // if (this.currentStep > this.form.furthestStep) {
-    //   this.$router.push({ name: 'verify-step', params: { step: steps[this.form.furthestStep] }})
-    // }
   }
 
   mounted() {
-    if (this.currentUser) {
+    if (this.currentUser && !this.brightId?.isLinked) {
       // Present app link and QR code
       this.appLink = getBrightIdLink(this.currentUser.walletAddress)
       QRCode.toDataURL(this.appLink, (error, url: string) => {
@@ -462,61 +372,103 @@ export default class VerifyView extends Vue {
           this.appLinkQrCode = url
         }
       })
-      this.waitForVerification()
+      this.waitUntil(() => this.brightId?.isLinked)
     }
   }
 
-  private async waitForVerification() {
-    const checkVerification = async () => {
-      await this.$store.dispatch(LOAD_BRIGHT_ID)
-    }
-    await checkVerification()
-    if (!this.brightId.isVerified) {
-      const intervalId = setInterval(async () => {
-        await checkVerification()
-        if (this.brightId.isVerified) {
-          clearInterval(intervalId)
-        }
-      }, 5000)
-    }
-  }
-
-  private async sponsor() {
-    // this.currentStep = 2
+  async sponsor() {
     const { userRegistryAddress } = this.$store.state.currentRound
     const signer = this.currentUser.walletProvider.getSigner()
-    const isSponsored = await isSponsoredUser(
-      userRegistryAddress,
-      this.currentUser.walletAddress
-    )
-    if (!isSponsored) {
-      try {
-        await waitForTransaction(
-          selfSponsor(userRegistryAddress, signer),
-          (hash) => (this.sponsorTxHash = hash)
-        )
-      } catch (error) {
-        this.sponsorTxError = error.message
-        return
-      }
-    }
-  }
 
-  private async register(verification: Verification) {
-    // this.currentStep = 3
-    const { userRegistryAddress } = this.$store.state.currentRound
-    const signer = this.currentUser.walletProvider.getSigner()
+    this.loadingTx = true
+    this.sponsorTxError = ''
     try {
       await waitForTransaction(
-        registerUser(userRegistryAddress, verification, signer),
-        (hash) => (this.registrationTxHash = hash)
+        selfSponsor(userRegistryAddress, signer),
+        (hash) => (this.sponsorTxHash = hash)
       )
+      this.loadingTx = false
+      this.waitUntil(() => this.brightId?.isSponsored)
     } catch (error) {
-      this.registrationTxError = error.message
+      this.sponsorTxError = error.message
       return
     }
-    this.$store.dispatch(LOAD_USER_INFO)
-    // this.currentStep += 1
+  }
+
+  async register() {
+    const { userRegistryAddress } = this.$store.state.currentRound
+    const signer = this.currentUser.walletProvider.getSigner()
+
+    if (this.brightId?.verification) {
+      this.loadingTx = true
+      this.registrationTxError = ''
+      try {
+        await waitForTransaction(
+          registerUser(userRegistryAddress, this.brightId.verification, signer),
+          (hash) => (this.registrationTxHash = hash)
+        )
+        this.loadingTx = false
+        this.$router.push({ name: 'verified' })
+      } catch (error) {
+        this.registrationTxError = error.message
+        return
+      }
+      this.$store.dispatch(LOAD_USER_INFO)
+    }
+  }
+
+  async handleIsVerifiedClick() {
+    this.loadingManualVerify = true
+
+    try {
+      const verification = await getVerification(this.currentUser.walletAddress)
+
+      if (verification.unique) {
+        this.isManuallyVerified = true
+        setTimeout(() => {
+          this.$store.commit(SET_CURRENT_USER, {
+            ...this.currentUser,
+            brightId: {
+              ...this.currentUser.brightId,
+              isVerified: true,
+            },
+          })
+        }, 5000)
+      }
+    } catch (error) {
+      if (!(error instanceof BrightIdError)) {
+        /* eslint-disable-next-line no-console */
+        console.warn('Error while fetching bright id verification', error)
+      }
+    }
+
+    this.loadingManualVerify = false
+  }
+
+  /**
+   * Start polling brightId state until the condition is met
+   */
+  private async waitUntil(isConditionMetFn, intervalTime = 5000) {
+    let isConditionMet = false
+
+    const checkVerification = async () => {
+      await this.loadBrightId()
+      isConditionMet = isConditionMetFn()
+    }
+    await checkVerification()
+
+    if (!isConditionMet) {
+      const intervalId = setInterval(async () => {
+        await checkVerification()
+        if (isConditionMet) {
+          clearInterval(intervalId)
+        }
+      }, intervalTime)
+    }
+  }
+
+  async loadBrightId() {
+    await this.$store.dispatch(LOAD_BRIGHT_ID)
   }
 
   isStepValid(step: number): boolean {
@@ -645,13 +597,6 @@ export default class VerifyView extends Vue {
         color: white;
         font-weight: 600;
         font-size: 1rem;
-      }
-    }
-
-    .zoom-link {
-      cursor: pointer;
-      &:hover {
-        transform: scale(1.02);
       }
     }
 
@@ -1081,6 +1026,15 @@ export default class VerifyView extends Vue {
   margin-top: 0.5rem;
 }
 
+.verification-status .actions {
+  margin-top: 1rem;
+  @media (max-width: $breakpoint-m) {
+    button {
+      width: 100%;
+    }
+  }
+}
+
 .success {
   color: $clr-green;
   font-weight: 600;
@@ -1287,5 +1241,10 @@ export default class VerifyView extends Vue {
     width: $icon-height;
     aspect-ratio: 1;
   }
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
 }
 </style>
