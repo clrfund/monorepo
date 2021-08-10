@@ -642,7 +642,7 @@ export default class Cart extends Vue {
   get isBrightIdRequired(): boolean {
     return (
       userRegistryType === UserRegistryType.BRIGHT_ID &&
-      (!this.currentUser?.brightId.isVerified ||
+      (!this.currentUser?.brightId?.isVerified ||
         !this.currentUser?.isRegistered)
     )
   }
