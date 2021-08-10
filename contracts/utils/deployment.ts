@@ -113,6 +113,7 @@ export async function deployMaciFactory(
   })
 
   const maciFactory = await MACIFactory.deploy(...maciParameters.values())
-  await maciFactory.deployed()
+  await maciFactory.deployTransaction.wait()
+
   return maciFactory
 }
