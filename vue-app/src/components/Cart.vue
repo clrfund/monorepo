@@ -642,8 +642,7 @@ export default class Cart extends Vue {
   get isBrightIdRequired(): boolean {
     return (
       userRegistryType === UserRegistryType.BRIGHT_ID &&
-      (!this.currentUser?.brightId?.isVerified ||
-        !this.currentUser?.isRegistered)
+      !this.currentUser?.isRegistered
     )
   }
   // TODO: Check that we are pre-reallocation phase
