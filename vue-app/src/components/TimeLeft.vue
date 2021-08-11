@@ -34,7 +34,6 @@ export default class extends Vue {
   mounted() {
     this.interval = setInterval(() => {
       this.timeLeft = getTimeLeft(this.date)
-      console.log(typeof this.interval)
     }, 1000)
   }
 
