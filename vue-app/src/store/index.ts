@@ -77,6 +77,7 @@ import {
 } from './mutation-types'
 
 // Utils
+import { isSameAddress } from '@/utils/accounts'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 
@@ -540,6 +541,18 @@ const getters = {
     return (
       getters.hasUserContributed &&
       (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
+    )
+  },
+
+  isRecipientRegistryOwner(state: RootState): boolean {
+    return (
+      (state.currentUser &&
+        !!state.recipientRegistryInfo &&
+        isSameAddress(
+          state.currentUser.walletAddress,
+          state.recipientRegistryInfo.owner
+        )) ||
+      false
     )
   },
 }
