@@ -10,9 +10,9 @@
       <img @click="toggleIsOpen" v-if="isOpen" src="@/assets/chevron-up.svg" />
       <img @click="toggleIsOpen" v-else src="@/assets/chevron-down.svg" />
     </div>
-    <div v-if="isOpen" @click="openTab">
+    <div v-if="isOpen">
       <p v-if="isOpen">{{ content }}</p>
-      <div v-if="linkButton" class="btn-primary">
+      <div v-if="linkButton" class="btn-primary" @click="openTab">
         {{ linkButton.text }}
       </div>
     </div>
