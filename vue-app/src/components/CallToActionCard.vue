@@ -1,24 +1,6 @@
 <template>
-  <!-- Get prepared CTA -->
-  <div class="get-prepared" v-if="showUserVerification">
-    <bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
-    <span v-else aria-label="rocket" class="emoji">🚀</span>
-    <div>
-      <h2 class="prep-title">Get prepared</h2>
-      <p class="prep-text">
-        You’ll need to set up a few things before you contribute. You can do
-        this any time before or during the funding round.
-      </p>
-    </div>
-    <router-link v-if="!hasStartedVerification" to="/verify" class="btn-action"
-      >Start prep</router-link
-    >
-    <router-link v-else to="/verify" class="btn-action"
-      >Continue setup</router-link
-    >
-  </div>
   <!-- Reallocate CTA -->
-  <div class="get-prepared" v-else-if="$store.getters.canUserReallocate">
+  <div class="get-prepared" v-if="$store.getters.canUserReallocate">
     <span aria-label="thinking face" class="emoji">🤔</span>
     <div>
       <h2 class="prep-title">Changed your mind?</h2>
@@ -40,6 +22,24 @@
         You can no longer make any contributions this round.
       </p>
     </div>
+  </div>
+  <!-- Get prepared CTA -->
+  <div class="get-prepared" v-else-if="showUserVerification">
+    <bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
+    <span v-else aria-label="rocket" class="emoji">🚀</span>
+    <div>
+      <h2 class="prep-title">Get prepared</h2>
+      <p class="prep-text">
+        You’ll need to set up a few things before you contribute. You can do
+        this any time before or during the funding round.
+      </p>
+    </div>
+    <router-link v-if="!hasStartedVerification" to="/verify" class="btn-action"
+      >Start prep</router-link
+    >
+    <router-link v-else to="/verify/connect" class="btn-action"
+      >Continue setup</router-link
+    >
   </div>
 </template>
 
@@ -66,17 +66,11 @@ export default class CallToActionCard extends Vue {
     )
   }
 
-  get isUserVerified(): boolean {
-    return (
-      this.$store.state.currentUser &&
-      this.$store.state.currentUser.brightId &&
-      this.$store.state.currentUser.brightId.isVerified
-    )
-  }
-
   get showUserVerification(): boolean {
     return (
-      userRegistryType === UserRegistryType.BRIGHT_ID && !this.isUserVerified
+      userRegistryType === UserRegistryType.BRIGHT_ID &&
+      this.$store.state.currentUser &&
+      !this.$store.state.currentUser.isRegistered
     )
   }
 
