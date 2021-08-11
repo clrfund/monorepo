@@ -41,10 +41,6 @@ export default class extends Vue {
     clearInterval(this.interval)
   }
 
-  updateTimeLeft(): TimeLeft {
-    return getTimeLeft(this.date)
-  }
-
   get values(): number[] {
     if (this.timeLeft.days > 0) return [this.timeLeft.days, this.timeLeft.hours]
     if (this.timeLeft.hours > 0)
