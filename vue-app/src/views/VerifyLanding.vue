@@ -18,38 +18,29 @@
           <ul>
             <li>
               BrightID – available on
-              <a
-                href="https://apps.apple.com/us/app/brightid/id1428946820"
-                target="_blank"
-              >
-                iOS</a
+              <links to="https://apps.apple.com/us/app/brightid/id1428946820">
+                iOS</links
               >
               or
-              <a
-                href="https://play.google.com/store/apps/details?id=org.brightid"
-                target="_blank"
-                >Android</a
+              <links
+                to="https://play.google.com/store/apps/details?id=org.brightid"
+                >Android</links
               >
             </li>
             <li>An Ethereum wallet</li>
             <li>Access to Zoom or Google Meet</li>
           </ul>
-          <router-link to="/sybil-resistance/"
-            >Why is this important?</router-link
-          >
+          <links to="/sybil-resistance/">Why is this important?</links>
           <div v-if="isRoundFullOrOver" class="warning-message">
             The current round is no longer accepting new contributions. You can
             still get BrightID verified to prepare for next time.
           </div>
           <div class="btn-container">
             <wallet-widget v-if="!currentUser" :isActionButton="true" />
-            <router-link
-              v-if="currentUser"
-              to="/verify/connect"
-              class="btn-primary"
-              >Get started</router-link
+            <links v-if="currentUser" to="/verify/connect" class="btn-primary"
+              >Get started</links
             >
-            <router-link to="/" class="btn-secondary">Go home</router-link>
+            <links to="/" class="btn-secondary">Go home</links>
           </div>
         </div>
       </div>
@@ -66,9 +57,10 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { commify, formatUnits } from '@ethersproject/units'
 import WalletWidget from '@/components/WalletWidget.vue'
+import Links from '@/components/Links.vue'
 
 @Component({
-  components: { ProgressBar, RoundStatusBanner, WalletWidget },
+  components: { ProgressBar, RoundStatusBanner, WalletWidget, Links },
 })
 export default class VerifyLanding extends Vue {
   get currentUser(): User | null {

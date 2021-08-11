@@ -207,20 +207,20 @@
                 ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
               /></tooltip>
               <div class="add-link">
-                <a
+                <links
                   style="margin: 0"
                   @click="addMatchingFunds()"
                   title="Add matching funds"
                 >
                   <img style="width: 16px" src="@/assets/add.svg" />
-                </a>
-                <a
+                </links>
+                <links
                   @click="addMatchingFunds()"
                   title="Add matching funds"
                   class="add-funds-link"
                 >
                   Add funds
-                </a>
+                </links>
               </div>
             </div>
 
@@ -252,13 +252,13 @@
             <div>
               <div class="round-info-title">
                 Contributors
-                <a
+                <links
                   style="margin-bottom: 0"
                   @click="addMatchingFunds()"
                   title="Add matching funds"
                 >
                   <img src="@/assets/more.svg" />
-                </a>
+                </links>
               </div>
               <div class="round-info-value">
                 <div class="value">{{ currentRound.contributors }}</div>
@@ -306,6 +306,7 @@ import ProjectListItem from '@/components/ProjectListItem.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
+import Links from '@/components/Links.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -338,6 +339,7 @@ function shuffleArray(array: any[]) {
     ProjectListItem,
     Loader,
     Tooltip,
+    Links,
   },
 })
 export default class RoundInformation extends Vue {

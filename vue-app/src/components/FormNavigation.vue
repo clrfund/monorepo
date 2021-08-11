@@ -32,13 +32,9 @@
       >
         Previous
       </button>
-      <router-link
-        v-if="currentStep === 3"
-        to="/verify/success"
-        class="btn-primary"
-      >
+      <links v-if="currentStep === 3" to="/verify/success" class="btn-primary">
         Finish
-      </router-link>
+      </links>
       <button
         v-else-if="currentStep < 3"
         @click="handleStepNav(currentStep + 1)"
@@ -54,8 +50,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
+import Links from '@/components/Links.vue'
 
-@Component
+@Component({ components: { Links } })
 export default class FormNavigation extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]

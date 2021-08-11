@@ -34,7 +34,7 @@
         <div class="contributor-setup-progress">
           ===== ===== ===== ----- -----
         </div>
-        <router-link to="#" class="complete-link">Complete setup</router-link> -->
+        <links to="#" class="complete-link">Complete setup</links> -->
       <div class="balances-section">
         <div class="flex-row">
           <h2>Optimism balances</h2>
@@ -75,13 +75,14 @@ import BalanceItem from '@/components/BalanceItem.vue'
 import IconStatus from '@/components/IconStatus.vue'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import CopyButton from '@/components/CopyButton.vue'
+import Links from '@/components/Links.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
 
 import { userRegistryType, UserRegistryType } from '@/api/core'
 
 @Component({
-  components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
+  components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton, Links },
 })
 export default class NavBar extends Vue {
   @Prop() toggleProfile

@@ -11,14 +11,14 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Ready to contribute!</h1>
-            <a v-if="txHash" :href="blockExplorerUrl" target="_blank"
+            <links v-if="txHash" :to="blockExplorerUrl"
               ><div class="etherscan-btn">
                 <img
                   class="icon"
                   style="width: 16px"
                   src="@/assets/etherscan.svg"
                 />Etherscan ↗
-              </div></a
+              </div></links
             >
           </div>
           <div class="subtitle">
@@ -27,10 +27,8 @@
           </div>
           <p>You can now start contributing to your favourite projects.</p>
           <div class="btn-container" style="margin-top: 2rem">
-            <router-link to="/projects" class="btn-primary"
-              >View projects</router-link
-            >
-            <router-link to="/" class="btn-secondary">Go home</router-link>
+            <links to="/projects" class="btn-primary">View projects</links>
+            <links to="/" class="btn-secondary">Go home</links>
           </div>
         </div>
       </div>
@@ -44,10 +42,11 @@ import Component from 'vue-class-component'
 import * as humanizeDuration from 'humanize-duration'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
+import Links from '@/components/Links.vue'
 
 import { blockExplorer } from '@/api/core'
 
-@Component({ components: { ProgressBar, RoundStatusBanner } })
+@Component({ components: { ProgressBar, RoundStatusBanner, Links } })
 export default class Verified extends Vue {
   // TODO: Retrieve hash of transaction.
   // We route to this component, pass hash as queryParam after submission?

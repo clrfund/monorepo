@@ -39,7 +39,7 @@
           />
         </div>
         <div class="add-project">
-          <router-link to="/join" class="btn-primary">Add project</router-link>
+          <links to="/join" class="btn-primary">Add project</links>
         </div>
         <div class="hr" />
       </div>
@@ -92,6 +92,7 @@ import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import RoundInformation from '@/components/RoundInformation.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
+import Links from '@/components/Links.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -126,6 +127,7 @@ function shuffleArray(array: any[]) {
     ProjectListItem,
     RoundInformation,
     FilterDropdown,
+    Links,
   },
 })
 export default class ProjectList extends Vue {

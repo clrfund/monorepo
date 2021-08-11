@@ -85,18 +85,18 @@
     <div class="row">
       <div v-if="isLinked">
         <div v-if="isRegistered">
-          <a href="/#/projects"
+          <links to="/#/projects"
             >Start contributing
-            <span role="img" aria-label="party emoji">🎉</span></a
+            <span role="img" aria-label="party emoji">🎉</span></links
           >
         </div>
         <div v-else>
-          <a href="/#/setup/get-verified/:step">Continue setup</a>
+          <links to="/#/setup/get-verified/:step">Continue setup</links>
         </div>
       </div>
-      <!-- <a href="#" v-if="isLinked || isVerified || isSponsored">Continue setup</a>
-      <a href="#" v-if="isRegistered">Start contributing</a> -->
-      <a href="/#/setup/" v-else>Start setup</a>
+      <!-- <links to="#" v-if="isLinked || isVerified || isSponsored">Continue setup</links>
+      <links to="#" v-if="isRegistered">Start contributing</links> -->
+      <links to="/#/setup/" v-else>Start setup</links>
       <tooltip
         position="left"
         :content="
@@ -119,10 +119,11 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import Tooltip from '@/components/Tooltip.vue'
 import IconStatus from '@/components/IconStatus.vue'
+import Links from '@/components/Links.vue'
 
 // TODO clean up this component
 @Component({
-  components: { Tooltip, IconStatus },
+  components: { Tooltip, IconStatus, Links },
 })
 export default class BrightIdWidget extends Vue {
   isLinked = true // TODO add logic: user wallet is connected && BrightID profile is linked to user ETH address

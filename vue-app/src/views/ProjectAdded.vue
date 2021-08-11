@@ -28,10 +28,8 @@
             </li>
           </ul>
           <div class="btn-container" style="margin-top: 2rem">
-            <router-link to="/projects" class="btn-primary"
-              >View projects</router-link
-            >
-            <router-link to="/" class="btn-secondary">Go home</router-link>
+            <links to="/projects" class="btn-primary">View projects</links>
+            <links to="/" class="btn-secondary">Go home</links>
           </div>
         </div>
       </div>
@@ -48,12 +46,19 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import Warning from '@/components/Warning.vue'
+import Links from '@/components/Links.vue'
 
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
 
 @Component({
-  components: { ProgressBar, RoundStatusBanner, TransactionReceipt, Warning },
+  components: {
+    ProgressBar,
+    RoundStatusBanner,
+    TransactionReceipt,
+    Warning,
+    Links,
+  },
 })
 export default class ProjectAdded extends Vue {
   challengePeriodDuration: number | null = null

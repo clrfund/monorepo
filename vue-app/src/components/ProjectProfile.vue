@@ -17,20 +17,16 @@
         :title="project.address"
         :project-index="project.index"
       >
-        <a
-          v-if="klerosCurateUrl"
-          :href="klerosCurateUrl"
-          target="_blank"
-          rel="noopener"
-          >{{ project.name }}</a
-        >
+        <links v-if="klerosCurateUrl" :to="klerosCurateUrl">{{
+          project.name
+        }}</links>
         <span v-else> {{ project.name }} </span>
       </h1>
       <p class="tagline">{{ project.tagline }}</p>
       <div class="subtitle">
         <div class="tag">{{ project.category }} tag</div>
         <div class="team-byline">
-          Team: <a href="#team"> {{ project.teamName }}</a>
+          Team: <links to="#team"> {{ project.teamName }}</links>
         </div>
       </div>
       <div class="mobile mb2">
@@ -107,14 +103,13 @@
             myClass="project-profile"
             :hasBorder="true"
           />
-          <a
+          <links
             class="explorerLink"
-            :href="`https://etherscan.io/address/${project.address}`"
-            target="_blank"
+            :to="`https://etherscan.io/address/${project.address}`"
             title="View on Etherscan"
           >
             <img class="icon" src="@/assets/etherscan.svg" />
-          </a>
+          </links>
         </div>
       </div>
       <hr v-if="project.teamName || project.teamDescription" />
@@ -149,8 +144,9 @@ import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 import ClaimModal from '@/components/ClaimModal.vue'
 import LinkBox from '@/components/LinkBox.vue'
+import Links from '@/components/Links.vue'
 
-@Component({ components: { Markdown, Info, LinkBox, CopyButton } })
+@Component({ components: { Markdown, Info, LinkBox, CopyButton, Links } })
 export default class ProjectProfile extends Vue {
   allocatedAmount: FixedNumber | null = null
   contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
