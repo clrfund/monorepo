@@ -1,7 +1,7 @@
 <template>
-  <div v-if="isProjectCard" class="setup-container-project-card">
+  <div class="setup-container-project-card">
     <div class="row">
-      <div v-if="isLinked && isRegistered && isSponsored && isVerified">
+      <div v-if="isVerified">
         <icon-status
           v-bind:happy="true"
           logo="brightid.svg"
@@ -16,18 +16,7 @@
         />
       </div>
       <h2>BrightID setup</h2>
-      <p>
-        <span
-          :class="{
-            step0: !isLinked && !isVerified && !isSponsored && !isRegistered,
-            step1: isLinked,
-            step2: isVerified || isSponsored,
-            step3: isVerified && isSponsored,
-            step4: isRegistered,
-          }"
-        />
-        / 4
-      </p>
+      <p>{{ getCurrentStep }} / 4</p>
     </div>
     <div class="progress">
       <div
@@ -39,72 +28,33 @@
         }"
       />
     </div>
-  </div>
-  <div v-else class="setup-container">
-    <div class="row">
-      <div v-if="isLinked && isRegistered && isSponsored && isVerified">
-        <icon-status
-          v-bind:happy="true"
-          logo="brightid.svg"
-          secondaryLogo="checkmark.svg"
-        />
-      </div>
-      <div v-else>
-        <icon-status
-          v-bind:sad="true"
-          logo="brightid.svg"
-          secondaryLogo="close-black.svg"
-        />
-      </div>
-      <h2>BrightID setup</h2>
-      <p>
-        <span
-          :class="{
-            step0: !isLinked && !isVerified && !isSponsored && !isRegistered,
-            step1: isLinked,
-            step2: isVerified || isSponsored,
-            step3: isVerified && isSponsored,
-            step4: isRegistered,
-          }"
-        />
-        / 4
-      </p>
-    </div>
-    <div class="progress">
-      <div
-        :class="{
-          half: isVerified || isSponsored,
-          quarter: isLinked,
-          'three-quarters': isVerified && isSponsored,
-          full: isRegistered,
-        }"
-      />
-    </div>
-    <div class="row">
-      <div v-if="isLinked">
-        <div v-if="isRegistered">
-          <a href="/#/projects"
-            >Start contributing
-            <span role="img" aria-label="party emoji">🎉</span></a
-          >
+    <div v-if="!isProjectCard" class="setup-container">
+      <div class="row">
+        <div v-if="isLinked">
+          <div v-if="isRegistered">
+            <a href="/#/projects"
+              >Start contributing
+              <span role="img" aria-label="party emoji">🎉</span></a
+            >
+          </div>
+          <div v-else>
+            <a href="/#/verify/">Continue setup</a>
+          </div>
         </div>
-        <div v-else>
-          <a href="/#/verify/">Continue setup</a>
-        </div>
+        <a href="/#/verify/" @click="toggleProfile" v-else>Start setup</a>
+        <tooltip
+          position="left"
+          :content="
+            isVerified
+              ? 'You\'re a verified human on BrightID!'
+              : 'Your BrightID profile still needs to be verified.'
+          "
+        >
+          <p :class="isVerified ? 'brightid-verified' : 'unverified'">
+            {{ isVerified ? 'Verified' : 'Unverified' }}
+          </p>
+        </tooltip>
       </div>
-      <a href="/#/verify/" v-else>Start setup</a>
-      <tooltip
-        position="left"
-        :content="
-          isVerified
-            ? 'You\'re a verified human on BrightID!'
-            : 'Your BrightID profile still needs to be verified.'
-        "
-      >
-        <p :class="isVerified ? 'brightid-verified' : 'unverified'">
-          {{ isVerified ? 'Verified' : 'Unverified' }}
-        </p>
-      </tooltip>
     </div>
   </div>
 </template>
@@ -121,6 +71,11 @@ import IconStatus from '@/components/IconStatus.vue'
   components: { Tooltip, IconStatus },
 })
 export default class BrightIdWidget extends Vue {
+  @Prop() abbrev!: string
+  @Prop() balance!: string
+  @Prop() isProjectCard!: boolean
+  @Prop() toggleProfile!: void
+
   get isLinked(): boolean {
     return (
       this.$store.state.currentUser &&
@@ -149,10 +104,25 @@ export default class BrightIdWidget extends Vue {
     )
   }
 
-  // You can only have isRegistered status if all the above are true
-  @Prop() abbrev!: string
-  @Prop() balance!: string
-  @Prop() isProjectCard!: boolean
+  get getCurrentStep(): number {
+    if (!this.isLinked) {
+      return 0
+    }
+
+    if (!this.isSponsored) {
+      return 1
+    }
+
+    if (!this.isVerified) {
+      return 2
+    }
+
+    if (!this.isRegistered) {
+      return 3
+    }
+
+    return 4
+  }
 }
 </script>
 
