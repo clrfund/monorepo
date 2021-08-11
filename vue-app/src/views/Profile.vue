@@ -26,15 +26,11 @@
           </div>
         </div>
       </div>
-      <bright-id-widget v-if="showBrightIdWidget" :isProjectCard="false" />
-      <!-- <div class="flex-row">
-          <h2 class="no-margin">Contributor setup</h2>
-          3/5
-        </div>
-        <div class="contributor-setup-progress">
-          ===== ===== ===== ----- -----
-        </div>
-        <router-link to="#" class="complete-link">Complete setup</router-link> -->
+      <bright-id-widget
+        v-if="showBrightIdWidget"
+        :isProjectCard="false"
+        :toggleProfile="toggleProfile"
+      />
       <div class="balances-section">
         <div class="flex-row">
           <h2>Optimism balances</h2>
