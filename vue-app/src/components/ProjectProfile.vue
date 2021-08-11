@@ -109,7 +109,7 @@
           />
           <a
             class="explorerLink"
-            :href="`${blockExplorer}/address/${project.address}`"
+            :href="blockExplorerUrl"
             target="_blank"
             title="View on Etherscan"
           >
@@ -264,8 +264,8 @@ export default class ProjectProfile extends Vue {
     )
   }
 
-  private get blockExplorer(): string {
-    return blockExplorer
+  get blockExplorerUrl(): string {
+    return `${blockExplorer}/address/${this.project.address}`
   }
 }
 </script>
