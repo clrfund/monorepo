@@ -38,7 +38,7 @@
             >
           </div>
           <div v-else>
-            <a href="/#/verify/">Continue setup</a>
+            <a href="/#/verify/" @click="toggleProfile">Continue setup</a>
           </div>
         </div>
         <a href="/#/verify/" @click="toggleProfile" v-else>Start setup</a>
