@@ -1,5 +1,10 @@
 <template>
-  <div class="setup-container-project-card">
+  <div
+    :class="{
+      'bright-id-widget-container': true,
+      'bright-id-profile-widget': !isProjectCard,
+    }"
+  >
     <div class="row">
       <div v-if="isVerified">
         <icon-status
@@ -133,7 +138,7 @@ export default class BrightIdWidget extends Vue {
 .setup-container {
   background: $bg-secondary-color;
   border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 0.5rem 0;
   width: auto;
   height: auto;
 
@@ -186,7 +191,7 @@ export default class BrightIdWidget extends Vue {
   }
 }
 
-.setup-container-project-card {
+.bright-id-widget-container {
   background: $bg-secondary-color;
   border-radius: 0.5rem;
 
@@ -198,6 +203,10 @@ export default class BrightIdWidget extends Vue {
     font-family: 'Glacial Indifference', sans-serif;
     margin: 0;
   }
+}
+
+.bright-id-profile-widget {
+  padding: 1rem;
 }
 
 .row {
