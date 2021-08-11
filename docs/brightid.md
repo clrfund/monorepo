@@ -4,7 +4,8 @@ We use BrightID as part of the user verification and registration flow to become
 
 In order to enable BrightID in the app, follow these steps:
 
-**#1 enable the brightid registry**
+**#1 enable the BrightID user registry**
+
 ```.sh
 # /vue-app/.env
 VUE_APP_USER_REGISTRY_TYPE=brightid
@@ -13,9 +14,10 @@ VUE_APP_USER_REGISTRY_TYPE=brightid
 USER_REGISTRY_TYPE=brightid
 ```
 
-**#2 enable the brightid context you want to use**
+**#2 enable the BrightID context you want to use**
 
 Available envs:
+
 - Testing: `CLRFundTest`
 - Production: `clr.fund`
 
@@ -34,8 +36,15 @@ The following tool provided by BrightID is used for manual linking, sponsoring, 
 https://acolytec3.github.io/brightid_test_app/
 
 Required fields:
+
 - Context: `CLRFundTest`
 - Testing key: `55HhFtQvaHB0BJeR`
 - ContextId: `{walletAddress}` you want to test
 
 Note: this tool is only going to work with **testing** contexts, like `CLRFundTest`. Production contexts like `clr.fund` are not going to work.
+
+## Resources
+
+- [BrightID developer documentation](https://dev.brightid.org/)
+- [BrightID smart contract templates](https://github.com/BrightID/BrightID-SmartContract)
+- [BrightID Discord](https://discord.gg/8ECzHEAwug)
