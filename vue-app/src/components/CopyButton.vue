@@ -2,7 +2,7 @@
   <div
     v-tooltip="{
       content: isCopied ? 'Copied!' : `Copy${text && ` ${text}`}`,
-      show: isCopied,
+      hideOnTargetClick: false,
     }"
     :class="`${myClass || 'default'} ${hasBorder && 'border'}`"
     @click="copyToClipboard"
