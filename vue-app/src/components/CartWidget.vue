@@ -32,7 +32,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Network } from '@ethersproject/networks'
-import Tooltip from '@/components/Tooltip.vue'
 import { provider as jsonRpcProvider } from '@/api/core'
 import { User } from '@/api/user'
 import { CartItem } from '@/api/contributions'
@@ -41,7 +40,7 @@ import { TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import Cart from '@/components/Cart.vue'
 import { getNetworkName } from '@/utils/networks'
 
-@Component({ components: { Cart, Tooltip } })
+@Component({ components: { Cart } })
 export default class CartWidget extends Vue {
   private jsonRpcNetwork: Network | null = null
   profileImageUrl: string | null = null

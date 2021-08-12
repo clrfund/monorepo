@@ -47,18 +47,16 @@
           </div>
         </div>
         <a href="/#/verify/" @click="toggleProfile" v-else>Start setup</a>
-        <tooltip
-          position="left"
-          :content="
+        <p
+          v-tooltip="
             isVerified
               ? 'You\'re a verified human on BrightID!'
               : 'Your BrightID profile still needs to be verified.'
           "
+          :class="isVerified ? 'brightid-verified' : 'unverified'"
         >
-          <p :class="isVerified ? 'brightid-verified' : 'unverified'">
-            {{ isVerified ? 'Verified' : 'Unverified' }}
-          </p>
-        </tooltip>
+          {{ isVerified ? 'Verified' : 'Unverified' }}
+        </p>
       </div>
     </div>
   </div>
@@ -68,12 +66,11 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import Tooltip from '@/components/Tooltip.vue'
 import IconStatus from '@/components/IconStatus.vue'
 
 // TODO clean up this component
 @Component({
-  components: { Tooltip, IconStatus },
+  components: { IconStatus },
 })
 export default class BrightIdWidget extends Vue {
   @Prop() abbrev!: string

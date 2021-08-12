@@ -51,11 +51,13 @@
       </div>
       <div class="connected" v-if="currentUser">
         <div class="total-title">
-          Total to submit<tooltip
-            position="bottom"
-            content="Estimate – this total may be slightly different in your wallet."
-            ><img src="@/assets/info.svg"
-          /></tooltip>
+          Total to submit
+          <img
+            v-tooltip="
+              'Estimate – this total may be slightly different in your wallet.'
+            "
+            src="@/assets/info.svg"
+          />
         </div>
         <div class="total">
           {{ depositAmount }}
@@ -120,7 +122,6 @@ import { User } from '@/api/user'
 import { Web3Provider } from '@ethersproject/providers'
 
 import Loader from '@/components/Loader.vue'
-import Tooltip from '@/components/Tooltip.vue'
 import Transaction from '@/components/Transaction.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 
@@ -133,7 +134,6 @@ import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
     Loader,
     Transaction,
     WalletWidget,
-    Tooltip,
   },
 })
 export default class RecipientSubmissionWidget extends Vue {

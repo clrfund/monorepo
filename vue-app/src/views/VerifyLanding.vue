@@ -18,11 +18,14 @@
       </div>
       <h2>
         What you'll need
-        <tooltip
-          position="top"
-          content="If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps"
-          ><img width="16px" src="@/assets/info.svg" class="info-icon"
-        /></tooltip>
+        <img
+          v-tooltip="
+            `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`
+          "
+          width="16px"
+          src="@/assets/info.svg"
+          class="info-icon"
+        />
       </h2>
       <ul>
         <li>
@@ -68,14 +71,12 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { commify, formatUnits } from '@ethersproject/units'
 import WalletWidget from '@/components/WalletWidget.vue'
-import Tooltip from '@/components/Tooltip.vue'
 
 @Component({
   components: {
     ProgressBar,
     RoundStatusBanner,
     WalletWidget,
-    Tooltip,
   },
 })
 export default class VerifyLanding extends Vue {

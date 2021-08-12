@@ -288,7 +288,6 @@ import { commify, formatUnits } from '@ethersproject/units'
 import { DateTime } from 'luxon'
 import WalletWidget from '@/components/WalletWidget.vue'
 import BrightIdModal from '@/components/BrightIdModal.vue'
-import Tooltip from '@/components/Tooltip.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
@@ -318,7 +317,7 @@ import { getNetworkName } from '@/utils/networks'
 import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
 
 @Component({
-  components: { Tooltip, WalletWidget, CartItems, CartTimeLeft },
+  components: { WalletWidget, CartItems, CartTimeLeft },
 })
 export default class Cart extends Vue {
   private jsonRpcNetwork: Network | null = null

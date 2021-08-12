@@ -1,16 +1,14 @@
 <template>
-  <tooltip
-    v-if="value"
-    :position="position || 'bottom'"
-    :content="isCopied ? 'Copied!' : `Copy${text && ` ${text}`}`"
+  <div
+    v-tooltip="{
+      content: isCopied ? 'Copied!' : `Copy${text && ` ${text}`}`,
+      show: isCopied,
+    }"
+    :class="`${myClass || 'default'} ${hasBorder && 'border'}`"
+    @click="copyToClipboard"
   >
-    <div
-      :class="`${myClass || 'default'} ${hasBorder && 'border'}`"
-      @click="copyToClipboard"
-    >
-      <img width="16px" src="@/assets/copy.svg" />
-    </div>
-  </tooltip>
+    <img width="16px" src="@/assets/copy.svg" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -18,9 +16,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
-import Tooltip from '@/components/Tooltip.vue'
-
-@Component({ components: { Tooltip } })
+@Component
 export default class CopyButton extends Vue {
   @Prop() value!: string // Required: Text to copy
   @Prop() text!: string // Optional: Fills in "Copy ____" in tooltip

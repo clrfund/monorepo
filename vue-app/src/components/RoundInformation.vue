@@ -48,11 +48,14 @@
           <div style="width: 100%">
             <div style="width: 100%; display: flex; gap: 0.5rem">
               <div class="round-info-title">Time left to contribute</div>
-              <tooltip
-                position="right"
-                content="During this phase, you can contribute to your favourite projects."
-                ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
-              /></tooltip>
+              <img
+                v-tooltip="
+                  'During this phase, you can contribute to your favourite projects.'
+                "
+                style="opacity: 0.6"
+                width="16px"
+                src="@/assets/info.svg"
+              />
             </div>
           </div>
           <div
@@ -92,24 +95,31 @@
                     : 'Round status'
                 }}
               </div>
-              <tooltip
+              <img
                 v-if="$store.getters.hasUserContributed"
-                position="right"
-                content="During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total."
-                ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
-              /></tooltip>
-              <tooltip
+                v-tooltip="
+                  `During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.`
+                "
+                style="opacity: 0.6"
+                width="16px"
+                src="@/assets/info.svg"
+              />
+              <img
                 v-else-if="!this.$store.state.currentUser"
-                position="right"
-                content="If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet."
-                ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
-              /></tooltip>
-              <tooltip
+                v-tooltip="
+                  `If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.`
+                "
+                style="opacity: 0.6"
+                width="16px"
+                src="@/assets/info.svg"
+              />
+              <img
                 v-else
-                position="right"
-                content="This round has closed for new contributions."
-                ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
-              /></tooltip>
+                v-tooltip="`This round has closed for new contributions.`"
+                style="opacity: 0.6"
+                width="16px"
+                src="@/assets/info.svg"
+              />
             </div>
             <div class="message" v-if="!$store.getters.hasUserContributed">
               Closed for contributions
@@ -147,11 +157,14 @@
               <div class="round-info-title" style="margin-bottom: 0.5rem">
                 Round status
               </div>
-              <tooltip
-                position="right"
-                content="Our smart contracts are busy figuring out final contribution amounts."
-                ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
-              /></tooltip>
+              <img
+                v-tooltip="
+                  `Our smart contracts are busy figuring out final contribution amounts.`
+                "
+                style="opacity: 0.6"
+                width="16px"
+                src="@/assets/info.svg"
+              />
             </div>
             <div class="round-info-value">
               <div class="message">Tallying all contributions</div>
@@ -167,11 +180,14 @@
               <div class="round-info-title" style="margin-bottom: 0.5rem">
                 Round status
               </div>
-              <tooltip
-                position="right"
-                content="If you're a project owner you can now claim your funds!"
-                ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
-              /></tooltip>
+              <img
+                v-tooltip="
+                  `If you're a project owner you can now claim your funds!`
+                "
+                style="opacity: 0.6"
+                width="16px"
+                src="@/assets/info.svg"
+              />
             </div>
             <div class="round-info-value">
               <div class="message">Contributions are ready to claim 🎉</div>
@@ -183,14 +199,14 @@
             <div style="width: 100%">
               <div style="width: 100%; display: flex; gap: 0.5rem">
                 <div class="round-info-title">Total in round</div>
-                <tooltip
-                  position="right"
-                  content="This total includes the funds in the matching pool and all contributions from the community."
-                  ><img
-                    style="opacity: 0.6"
-                    width="16px"
-                    src="@/assets/info.svg"
-                /></tooltip>
+                <img
+                  v-tooltip="
+                    `This total includes the funds in the matching pool and all contributions from the community.`
+                  "
+                  style="opacity: 0.6"
+                  width="16px"
+                  src="@/assets/info.svg"
+                />
               </div>
               <div class="round-info-value">
                 <div class="value large">{{ formatTotalInRound }}</div>
@@ -201,24 +217,19 @@
           <div class="round-info-sub-item">
             <div style="width: 100%; display: flex; gap: 0.5rem">
               <div class="round-info-title">Matching pool</div>
-              <tooltip
-                position="right"
-                content="These are the funds that will be distributed to all the projects based on the contributions they receive from the community."
-                ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
-              /></tooltip>
-              <div class="add-link">
-                <a
-                  style="margin: 0"
-                  @click="addMatchingFunds()"
-                  title="Add matching funds"
-                >
+              <img
+                v-tooltip="
+                  'These are the funds that will be distributed to all the projects based on the contributions they receive from the community.'
+                "
+                style="opacity: 0.6"
+                width="16px"
+                src="@/assets/info.svg"
+              />
+              <div v-tooltip="'Add matching funds'" class="add-link">
+                <a style="margin: 0" @click="addMatchingFunds()">
                   <img style="width: 16px" src="@/assets/add.svg" />
                 </a>
-                <a
-                  @click="addMatchingFunds()"
-                  title="Add matching funds"
-                  class="add-funds-link"
-                >
+                <a @click="addMatchingFunds()" class="add-funds-link">
                   Add funds
                 </a>
               </div>
@@ -294,7 +305,6 @@ import {
 import { getTimeLeft } from '@/utils/dates'
 import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
-import Tooltip from '@/components/Tooltip.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
 import {
@@ -328,7 +338,6 @@ function shuffleArray(array: any[]) {
   components: {
     ProjectListItem,
     Loader,
-    Tooltip,
   },
 })
 export default class RoundInformation extends Vue {

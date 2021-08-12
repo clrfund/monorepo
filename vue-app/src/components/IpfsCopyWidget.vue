@@ -10,11 +10,13 @@
         v-on:copied="updateIsCopied"
         myClass="ipfs-copy-widget"
       />
-      <tooltip position="bottom" content="View IPFS link">
-        <a :href="'https://ipfs.io/ipfs/' + hash" target="_blank">
-          <img class="icon" src="@/assets/ipfs-white.svg" />
-        </a>
-      </tooltip>
+      <a
+        v-tooltip="'View IPFS link'"
+        :href="'https://ipfs.io/ipfs/' + hash"
+        target="_blank"
+      >
+        <img class="icon" src="@/assets/ipfs-white.svg" />
+      </a>
     </div>
   </div>
 </template>
@@ -24,11 +26,10 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
-import Tooltip from '@/components/Tooltip.vue'
 import CopyButton from '@/components/CopyButton.vue'
 
 @Component({
-  components: { CopyButton, Tooltip },
+  components: { CopyButton },
 })
 export default class IpfsCopyWidget extends Vue {
   @Prop() hash!: string
