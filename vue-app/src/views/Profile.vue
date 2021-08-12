@@ -21,7 +21,11 @@
             class="copy"
           />
           <div class="address">{{ renderUserAddress(20) }}</div>
-          <div class="disconnect btn" @click="disconnect">
+          <div
+            v-tooltip="'Disconnect wallet'"
+            class="disconnect btn"
+            @click="disconnect"
+          >
             <img src="@/assets/disconnect.svg" />
           </div>
         </div>
