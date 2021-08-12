@@ -65,7 +65,6 @@
                     'During this phase, you can contribute to your favourite projects.',
                   trigger: 'hover click',
                 }"
-                style="opacity: 0.6"
                 width="16px"
                 src="@/assets/info.svg"
               />
@@ -114,7 +113,6 @@
                   content: `During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.`,
                   trigger: 'hover click',
                 }"
-                style="opacity: 0.6"
                 width="16px"
                 src="@/assets/info.svg"
               />
@@ -124,7 +122,6 @@
                   content: `If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.`,
                   trigger: 'hover click',
                 }"
-                style="opacity: 0.6"
                 width="16px"
                 src="@/assets/info.svg"
               />
@@ -134,7 +131,6 @@
                   content: `This round has closed for new contributions.`,
                   trigger: 'hover click',
                 }"
-                style="opacity: 0.6"
                 width="16px"
                 src="@/assets/info.svg"
               />
@@ -180,7 +176,6 @@
                   content: `Our smart contracts are busy figuring out final contribution amounts.`,
                   trigger: 'hover click',
                 }"
-                style="opacity: 0.6"
                 width="16px"
                 src="@/assets/info.svg"
               />
@@ -204,7 +199,6 @@
                   content: `If you're a project owner you can now claim your funds!`,
                   trigger: 'hover click',
                 }"
-                style="opacity: 0.6"
                 width="16px"
                 src="@/assets/info.svg"
               />
@@ -224,7 +218,6 @@
                     content: `This total includes the funds in the matching pool and all contributions from the community.`,
                     trigger: 'hover click',
                   }"
-                  style="opacity: 0.6"
                   width="16px"
                   src="@/assets/info.svg"
                 />
@@ -244,7 +237,6 @@
                     'These are the funds that will be distributed to all the projects based on the contributions they receive from the community.',
                   trigger: 'hover click',
                 }"
-                style="opacity: 0.6"
                 width="16px"
                 src="@/assets/info.svg"
               />
@@ -556,6 +548,10 @@ export default class RoundInformation extends Vue {
   margin-bottom: 3rem;
   border-radius: 0.5rem;
 
+  img {
+    opacity: 0.6;
+  }
+
   & > div {
     box-shadow: inset 0px -1px 0px #7375a6;
     &:first-of-type {
@@ -588,12 +584,20 @@ export default class RoundInformation extends Vue {
   border-radius: 0.5rem;
   box-sizing: border-box;
   width: 100%;
+
+  img {
+    opacity: 0.6;
+  }
 }
 
 .round-info-sub-item {
   flex: 1 0 10%;
   background: $bg-secondary-color;
   padding: 1rem;
+
+  img {
+    opacity: 0.6;
+  }
 }
 
 .round-info-title {
