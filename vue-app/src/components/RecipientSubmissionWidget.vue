@@ -53,9 +53,11 @@
         <div class="total-title">
           Total to submit
           <img
-            v-tooltip="
-              'Estimate – this total may be slightly different in your wallet.'
-            "
+            v-tooltip="{
+              content:
+                'Estimate – this total may be slightly different in your wallet.',
+              trigger: 'hover click',
+            }"
             src="@/assets/info.svg"
           />
         </div>

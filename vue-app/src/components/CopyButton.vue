@@ -3,6 +3,7 @@
     v-tooltip="{
       content: isCopied ? 'Copied!' : `Copy${text && ` ${text}`}`,
       hideOnTargetClick: false,
+      trigger: 'hover click',
     }"
     :class="`${myClass || 'default'} ${hasBorder && 'border'}`"
     @click="copyToClipboard"

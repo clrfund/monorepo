@@ -48,11 +48,12 @@
         </div>
         <a href="/#/verify/" @click="toggleProfile" v-else>Start setup</a>
         <p
-          v-tooltip="
-            isVerified
+          v-tooltip="{
+            content: isVerified
               ? 'You\'re a verified human on BrightID!'
-              : 'Your BrightID profile still needs to be verified.'
-          "
+              : 'Your BrightID profile still needs to be verified.',
+            trigger: 'hover click',
+          }"
           :class="isVerified ? 'brightid-verified' : 'unverified'"
         >
           {{ isVerified ? 'Verified' : 'Unverified' }}

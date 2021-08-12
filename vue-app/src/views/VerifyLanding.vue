@@ -19,9 +19,10 @@
       <h2>
         What you'll need
         <img
-          v-tooltip="
-            `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`
-          "
+          v-tooltip="{
+            content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
+            trigger: 'hover click',
+          }"
           width="16px"
           src="@/assets/info.svg"
           class="info-icon"

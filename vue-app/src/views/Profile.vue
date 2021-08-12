@@ -22,7 +22,10 @@
           />
           <div class="address">{{ renderUserAddress(20) }}</div>
           <div
-            v-tooltip="'Disconnect wallet'"
+            v-tooltip="{
+              content: 'Disconnect wallet',
+              trigger: 'hover click',
+            }"
             class="disconnect btn"
             @click="disconnect"
           >
