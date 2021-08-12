@@ -68,10 +68,13 @@ describe('End-to-end Tests', function () {
     const poseidonT6 = await deployContract(deployer, ':PoseidonT6')
     const batchUstVerifier = await deployContract(
       deployer,
-      'BatchUpdateStateTreeVerifier'
+      'BatchUpdateStateTreeVerifier32'
     )
-    const qvtVerifier = await deployContract(deployer, 'QuadVoteTallyVerifier')
-    const maciFactory = await deployMaciFactory(deployer, 'test', {
+    const qvtVerifier = await deployContract(
+      deployer,
+      'QuadVoteTallyVerifier32'
+    )
+    const maciFactory = await deployMaciFactory(deployer, 'x32', {
       poseidonT3,
       poseidonT6,
       batchUstVerifier,

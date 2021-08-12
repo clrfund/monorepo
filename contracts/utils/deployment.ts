@@ -45,6 +45,15 @@ const CIRCUITS: { [name: string]: any } = {
       voteOptionTreeDepth: 3,
     },
   },
+  x32: {
+    batchUstVerifier: 'BatchUpdateStateTreeVerifier32',
+    qvtVerifier: 'QuadVoteTallyVerifier32',
+    treeDepths: {
+      stateTreeDepth: 32,
+      messageTreeDepth: 32,
+      voteOptionTreeDepth: 3,
+    },
+  },
 }
 
 export async function deployContract(
@@ -66,7 +75,7 @@ interface MaciFactoryDependencies {
 
 export async function deployMaciFactory(
   account: Signer,
-  circuit = 'test',
+  circuit = 'x32',
   {
     poseidonT3,
     poseidonT6,
