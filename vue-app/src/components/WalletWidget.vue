@@ -39,10 +39,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+import { Prop, Watch } from 'vue-property-decorator'
 import { commify, formatUnits } from '@ethersproject/units'
 
-import { User } from '@/api/user'
+import { User, getProfileImageUrl } from '@/api/user'
 import WalletModal from '@/components/WalletModal.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import Profile from '@/views/Profile.vue'
@@ -113,15 +113,15 @@ export default class WalletWidget extends Vue {
   }
 
   async showModal(): Promise<void> {
-    this.$modal.show(
-      WalletModal,
-      { updateProfileImage: this.updateProfileImage },
-      { width: 400, top: 20 }
-    )
+    this.$modal.show(WalletModal, {}, { width: 400, top: 20 })
   }
 
-  updateProfileImage(url: string): void {
-    this.profileImageUrl = url
+  @Watch('currentUser')
+  async updateProfileImage(currentUser: User): Promise<void> {
+    if (currentUser) {
+      const url = await getProfileImageUrl(currentUser.walletAddress)
+      this.profileImageUrl = url
+    }
   }
 
   // TODO: Extract into a shared function
