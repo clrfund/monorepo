@@ -641,18 +641,17 @@ summary:focus {
   }
 
   &.popover {
-    /* $color: #f9f9f9; */
-
     .popover-inner {
       background: $bg-primary-color;
-      color: black;
-      padding: 1.5rem;
+      color: white;
+      padding: 1rem;
+      margin: 0.5rem;
       border-radius: 5px;
       box-shadow: 0 5px 30px rgba(black, 0.1);
     }
 
     .popover-arrow {
-      border-color: $button-color;
+      border-color: $bg-primary-color;
     }
   }
 

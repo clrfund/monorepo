@@ -168,10 +168,6 @@ export default class CartWidget extends Vue {
   align-items: center;
 }
 
-.open {
-  background: $clr-green;
-}
-
 .circle {
   width: 8px;
   height: 8px;

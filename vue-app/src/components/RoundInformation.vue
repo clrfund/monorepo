@@ -8,20 +8,31 @@
         <div class="round">
           <div style="display: flex; align-items: center">
             <h2 style="line-height: 120%; margin: 0">Eth2 CLR</h2>
-            <tooltip
-              position="top"
-              :content="currentRound.fundingRoundAddress"
-              :link="
-                'https://etherscan.io/address/' +
-                currentRound.fundingRoundAddress
-              "
-              linkText="View on Etherscan"
-              ><div class="verified"><img src="@/assets/verified.svg" /></div
-            ></tooltip>
+            <v-popover offset="16">
+              <div class="verified">
+                <img src="@/assets/verified.svg" />
+              </div>
+              <template slot="popover">
+                <div
+                  style="text-overflow: ellipsis; width: 100%; overflow: hidden"
+                >
+                  {{ currentRound.fundingRoundAddress }}
+                </div>
+                <a
+                  :href="
+                    'https://etherscan.io/address/' +
+                    currentRound.fundingRoundAddress
+                  "
+                  target="_blank"
+                  rel="noopener"
+                  >View on Etherscan</a
+                >
+              </template>
+            </v-popover>
           </div>
           <!-- TODO add logic to status -->
           <div class="status">
-            <div class="circle pulse open" />
+            <div class="circle open-pulse" />
             Open
           </div>
         </div>
@@ -482,10 +493,6 @@ export default class RoundInformation extends Vue {
   width: 100%;
 }
 
-.open {
-  background: $clr-green;
-}
-
 .circle {
   width: 8px;
   height: 8px;
@@ -493,8 +500,9 @@ export default class RoundInformation extends Vue {
   margin-right: 0.5rem;
 }
 
-.pulse {
+.open-pulse {
   animation: pulse-animation 2s infinite ease-out;
+  background: $clr-green;
 }
 
 @keyframes pulse-animation {
