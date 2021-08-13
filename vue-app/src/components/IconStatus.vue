@@ -63,7 +63,7 @@ export default class IconStatus extends Vue {
 .logo {
   width: 1.25rem;
   height: 1.25rem;
-  position: fixed;
+  position: absolute;
 }
 
 .secondary-icon {

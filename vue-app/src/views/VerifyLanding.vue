@@ -6,43 +6,54 @@
       <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
         <img src="@/assets/newrings.png" />
-        <div class="content">
-          <div class="flex-title">
-            <h1>Prove you’re only using 1 account</h1>
-          </div>
-          <div class="subtitle">
-            We use BrightID to stop bots and cheaters, and make our funding more
-            democratic.
-          </div>
-          <h2>What you'll need</h2>
-          <ul>
-            <li>
-              BrightID – available on
-              <links to="https://apps.apple.com/us/app/brightid/id1428946820">
-                iOS</links
-              >
-              or
-              <links
-                to="https://play.google.com/store/apps/details?id=org.brightid"
-                >Android</links
-              >
-            </li>
-            <li>An Ethereum wallet</li>
-            <li>Access to Zoom or Google Meet</li>
-          </ul>
-          <links to="/sybil-resistance/">Why is this important?</links>
-          <div v-if="isRoundFullOrOver" class="warning-message">
-            The current round is no longer accepting new contributions. You can
-            still get BrightID verified to prepare for next time.
-          </div>
-          <div class="btn-container">
-            <wallet-widget v-if="!currentUser" :isActionButton="true" />
-            <links v-if="currentUser" to="/verify/connect" class="btn-primary"
-              >Get started</links
-            >
-            <links to="/" class="btn-secondary">Go home</links>
-          </div>
-        </div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="flex-title">
+        <h1>Prove you’re only using one account</h1>
+      </div>
+      <div class="subtitle">
+        We use BrightID to stop bots and cheaters, and make our funding more
+        democratic.
+      </div>
+      <h2>
+        What you'll need
+        <tooltip
+          position="top"
+          content="If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps"
+          ><img width="16px" src="@/assets/info.svg" class="info-icon"
+        /></tooltip>
+      </h2>
+      <ul>
+        <li>
+          BrightID – available on
+          <a
+            href="https://apps.apple.com/us/app/brightid/id1428946820"
+            target="_blank"
+          >
+            iOS</a
+          >
+          or
+          <a
+            href="https://play.google.com/store/apps/details?id=org.brightid"
+            target="_blank"
+            >Android</a
+          >
+        </li>
+        <li>An Ethereum wallet, with enough gas for two transactions</li>
+        <li>Access to Zoom or Google Meet</li>
+      </ul>
+      <links to="/sybil-resistance/">Why is this important?</links>
+      <div v-if="isRoundFullOrOver" class="warning-message">
+        The current round is no longer accepting new contributions. You can
+        still get BrightID verified to prepare for next time.
+      </div>
+      <div class="btn-container">
+        <wallet-widget v-if="!currentUser" :isActionButton="true" />
+        <links v-if="currentUser" to="/verify/connect" class="btn-primary"
+          >I have BrightID installed</links
+        >
+        <links to="/projects" class="btn-secondary">Go back</links>
       </div>
     </div>
   </div>
@@ -58,9 +69,16 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { commify, formatUnits } from '@ethersproject/units'
 import WalletWidget from '@/components/WalletWidget.vue'
 import Links from '@/components/Links.vue'
+import Tooltip from '@/components/Tooltip.vue'
 
 @Component({
-  components: { ProgressBar, RoundStatusBanner, WalletWidget, Links },
+  components: {
+    ProgressBar,
+    RoundStatusBanner,
+    WalletWidget,
+    Tooltip,
+    Links,
+  },
 })
 export default class VerifyLanding extends Vue {
   get currentUser(): User | null {
@@ -76,9 +94,16 @@ export default class VerifyLanding extends Vue {
   }
 
   get isRoundFullOrOver(): boolean {
+    const currentRound = this.$store.state.currentRound
+    if (!currentRound) {
+      return true
+    }
+    const hasHitMaxContributors =
+      currentRound.maxContributors <= currentRound.contributors
     return (
-      this.$store.getters.isRecipientRegistryFull ||
-      this.$store.getters.hasContributionPhaseEnded
+      this.$store.getters.hasContributionPhaseEnded ||
+      this.$store.getters.isMessageLimitReached ||
+      hasHitMaxContributors
     )
   }
 
@@ -102,7 +127,6 @@ h1 {
   font-weight: bold;
   font-size: 40px;
   line-height: 120%;
-  margin: 0;
 }
 
 h2 {
@@ -128,7 +152,11 @@ ul {
 
 .gradient {
   background: $clr-pink-dark-gradient;
-  position: relative;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
 
   .moon {
     position: absolute;
@@ -137,17 +165,20 @@ ul {
     mix-blend-mode: exclusion;
   }
   .hero {
-    bottom: 0;
     display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
     background: linear-gradient(
       286.78deg,
       rgba(173, 131, 218, 0) -32.78%,
       #191623 78.66%
     );
-    height: calc(100vh - 113px);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
-      padding-bottom: 16rem;
+      padding-bottom: 0rem;
     }
 
     img {
@@ -161,39 +192,37 @@ ul {
         width: 100%;
       }
     }
+  }
+}
+.content {
+  position: relative;
+  z-index: 1;
+  padding: $content-space;
+  width: min(100%, 512px);
+  margin: 2rem;
+  box-sizing: border-box;
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+    margin: 0;
+    padding-bottom: 35vw;
+  }
 
-    .content {
+  .flex-title {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+
+    img {
+      width: 1rem;
+      height: 1rem;
       position: relative;
-      z-index: 1;
-      padding: $content-space;
-      width: min(100%, 512px);
-      margin-left: 2rem;
-      margin-top: 3rem;
-      @media (max-width: $breakpoint-m) {
-        width: 100%;
-        margin: 0;
-      }
-
-      .flex-title {
-        display: flex;
-        gap: 0.5rem;
-        align-items: center;
-        margin-bottom: 3rem;
-        margin-top: 1.5rem;
-        flex-wrap: wrap;
-
-        img {
-          width: 1rem;
-          height: 1rem;
-          position: relative;
-          right: 0;
-        }
-      }
-
-      .btn-container {
-        margin-top: 2rem;
-      }
+      right: 0;
     }
+  }
+
+  .btn-container {
+    margin-top: 2rem;
   }
 }
 
@@ -216,8 +245,9 @@ ul {
   margin: 1rem 0 0;
   color: $error-color;
   font-size: 14px;
-  // &:before {
-  //   content: "⚠️ "
-  // }
+}
+
+.info-icon {
+  margin-left: 0.5rem;
 }
 </style>
