@@ -70,7 +70,7 @@ export default class Transaction extends Vue {
   displayCloseBtn!: boolean
 
   getBlockExplorerUrl(transactionHash: string): string {
-    return `${blockExplorer}${transactionHash}`
+    return `${blockExplorer}/tx/${transactionHash}`
   }
 }
 </script>
