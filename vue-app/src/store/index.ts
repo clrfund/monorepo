@@ -545,14 +545,12 @@ const getters = {
   },
 
   isRecipientRegistryOwner(state: RootState): boolean {
-    return (
-      (state.currentUser &&
-        !!state.recipientRegistryInfo &&
-        isSameAddress(
-          state.currentUser.walletAddress,
-          state.recipientRegistryInfo.owner
-        )) ||
-      false
+    if (!state.currentUser || !state.recipientRegistryInfo) {
+      return false
+    }
+    return isSameAddress(
+      state.currentUser.walletAddress,
+      state.recipientRegistryInfo.owner
     )
   },
 }
