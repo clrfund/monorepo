@@ -1,7 +1,7 @@
 <template>
   <a
-    v-if="isExternal && hideArrow"
-    :class="className"
+    v-if="isExternal"
+    :class="{ 'external-link': !hideArrow }"
     :href="to"
     :aria-label="ariaLabel"
     target="_blank"
@@ -9,17 +9,7 @@
   >
     <slot />
   </a>
-  <a
-    v-else-if="isExternal"
-    :class="`external-link ${className}`"
-    :href="to"
-    :aria-label="ariaLabel"
-    target="_blank"
-    rel="noopener"
-  >
-    <slot />
-  </a>
-  <router-link v-else :class="className" :to="to" :aria-label="ariaLabel">
+  <router-link v-else :to="to" :aria-label="ariaLabel">
     <slot />
   </router-link>
 </template>
@@ -34,7 +24,6 @@ export default class extends Vue {
   @Prop() to!: string | { [key: string]: any }
   @Prop() href!: string
   @Prop() hideArrow!: boolean
-  @Prop() className!: string
   @Prop() ariaLabel!: string
 
   isExternal = false
@@ -62,6 +51,7 @@ export default class extends Vue {
     content: '↗';
     transition: all 0.1s ease-in-out;
     font-style: normal;
+    color: white;
   }
   &:hover {
     &:after {
