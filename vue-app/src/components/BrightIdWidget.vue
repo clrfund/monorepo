@@ -70,11 +70,10 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import Tooltip from '@/components/Tooltip.vue'
 import IconStatus from '@/components/IconStatus.vue'
-import Links from '@/components/Links.vue'
 
 // TODO clean up this component
 @Component({
-  components: { Tooltip, IconStatus, Links },
+  components: { Tooltip, IconStatus },
 })
 export default class BrightIdWidget extends Vue {
   @Prop() abbrev!: string

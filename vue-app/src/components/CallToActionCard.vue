@@ -34,12 +34,10 @@
         this any time before or during the funding round.
       </p>
     </div>
-    <router-link v-if="!hasStartedVerification" to="/verify" class="btn-action"
-      >Start prep</router-link
+    <links v-if="!hasStartedVerification" to="/verify" class="btn-action"
+      >Start prep</links
     >
-    <router-link v-else to="/verify/connect" class="btn-action"
-      >Continue setup</router-link
-    >
+    <links v-else to="/verify/connect" class="btn-action">Continue setup</links>
   </div>
 </template>
 

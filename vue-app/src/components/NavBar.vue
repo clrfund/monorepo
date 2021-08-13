@@ -207,7 +207,7 @@ window.onclick = function (event) {
     }
   }
 
-  .button-menu router-link {
+  .button-menu links {
     font-size: 16px;
   }
 
