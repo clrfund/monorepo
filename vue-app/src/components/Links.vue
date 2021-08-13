@@ -19,7 +19,7 @@
   >
     <slot />
   </a>
-  <router-link v-else :class="className" :href="to" :aria-label="ariaLabel">
+  <router-link v-else :class="className" :to="to" :aria-label="ariaLabel">
     <slot />
   </router-link>
 </template>
