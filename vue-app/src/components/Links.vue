@@ -31,7 +31,7 @@ import { Prop } from 'vue-property-decorator'
 
 @Component
 export default class extends Vue {
-  @Prop() to!: string
+  @Prop() to!: string | { [key: string]: any }
   @Prop() href!: string
   @Prop() hideArrow!: boolean
   @Prop() className!: string
@@ -43,7 +43,9 @@ export default class extends Vue {
     if (this.href) {
       this.to = this.href
     }
-    this.isExternal = this.to.includes('http' || 'mailto:')
+    if (typeof this.to === 'string') {
+      this.isExternal = this.to.includes('http') || this.to.includes('mailto:')
+    }
   }
 }
 </script>
