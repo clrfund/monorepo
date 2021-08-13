@@ -8,16 +8,7 @@
         <div class="round">
           <div style="display: flex; align-items: center">
             <h2 style="line-height: 120%; margin: 0">Eth2 CLR</h2>
-            <tooltip
-              position="top"
-              :content="currentRound.fundingRoundAddress"
-              :link="
-                'https://etherscan.io/address/' +
-                currentRound.fundingRoundAddress
-              "
-              linkText="View on Etherscan"
-              ><div class="verified"><img src="@/assets/verified.svg" /></div
-            ></tooltip>
+            <div class="verified"><img src="@/assets/verified.svg" /></div>
           </div>
           <!-- TODO add logic to status -->
           <div class="status">
