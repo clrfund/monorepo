@@ -92,6 +92,7 @@ import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import RoundInformation from '@/components/RoundInformation.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
+import WalletModal from '@/components/WalletModal.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -126,6 +127,7 @@ function shuffleArray(array: any[]) {
     ProjectListItem,
     RoundInformation,
     FilterDropdown,
+    WalletModal,
   },
 })
 export default class ProjectList extends Vue {
@@ -216,7 +218,14 @@ export default class ProjectList extends Vue {
 
   addMatchingFunds(): void {
     if (!this.$store.state.currentUser) {
-      return
+      return this.$modal.show(
+        WalletModal,
+        {},
+        { width: 400, top: 20 },
+        {
+          closed: this.addMatchingFunds,
+        }
+      )
     }
     this.$modal.show(
       MatchingFundsModal,

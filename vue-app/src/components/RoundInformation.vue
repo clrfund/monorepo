@@ -297,6 +297,7 @@ import ProjectListItem from '@/components/ProjectListItem.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
+import WalletModal from '@/components/WalletModal.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -329,6 +330,7 @@ function shuffleArray(array: any[]) {
     ProjectListItem,
     Loader,
     Tooltip,
+    WalletModal,
   },
 })
 export default class RoundInformation extends Vue {
@@ -433,6 +435,17 @@ export default class RoundInformation extends Vue {
   }
 
   addMatchingFunds(): void {
+    if (!this.$store.state.currentUser) {
+      return this.$modal.show(
+        WalletModal,
+        {},
+        { width: 400, top: 20 },
+        {
+          closed: this.addMatchingFunds,
+        }
+      )
+    }
+
     return this.$modal.show(
       MatchingFundsModal,
       {},
