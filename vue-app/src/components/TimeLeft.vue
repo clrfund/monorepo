@@ -5,7 +5,7 @@
       {{ units[0] }}
     </span>
     <span v-if="units[1].length > 0">
-      {{ units[1].length > 0 && values[1] }}
+      {{ values[1] }}
       <span :class="unitClass || 'unit'">
         {{ units[1] }}
       </span>
