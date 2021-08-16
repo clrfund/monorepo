@@ -52,6 +52,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   event ContributionWithdrawn(address indexed _contributor);
   event FundsClaimed(uint256 indexed _voteOptionIndex, address indexed _recipient, uint256 _amount);
   event TallyPublished(string _tallyHash);
+  event Voted(address indexed _sender);
 
   /**
     * @dev Set round parameters.
@@ -179,6 +180,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     for (uint8 i = 0; i < batchSize; i++) {
       maci.publishMessage(_messages[i], _encPubKeys[i]);
     }
+    emit Voted(msg.sender);
   }
 
   /**
