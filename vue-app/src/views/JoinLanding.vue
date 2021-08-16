@@ -9,7 +9,7 @@
     <round-status-banner />
     <back-to-projects :alsoShowOnMobile="true" />
 
-    <div class="content" v-if="isLoading || !$store.state.currentRound">
+    <div class="content" v-if="!$store.state.currentRound">
       <h1>Fetching round data...</h1>
       <loader />
     </div>
@@ -125,33 +125,33 @@ import BackToProjects from '../components/BackToProjects.vue'
   components: { RoundStatusBanner, CriteriaModal, Loader, BackToProjects },
 })
 export default class JoinLanding extends Vue {
-  isLoading = true
   showCriteriaPanel = false
-  recipientCount: number | null = null
-  spacesRemaining: number | null = null
-  deposit: BigNumber | null = null
-  depositToken: string | null = null
-
-  async created() {
-    try {
-      const maxRecipients = this.$store.state.currentRound.maxRecipients
-      this.recipientCount = this.registryInfo.recipientCount
-      this.deposit = this.registryInfo.deposit
-      this.depositToken = this.registryInfo.depositToken
-      this.spacesRemaining = maxRecipients - this.registryInfo.recipientCount
-    } catch (error) {
-      console.warn(error) /* eslint-disable-line no-console */
-    } finally {
-      this.isLoading = false
-    }
-  }
 
   get registryInfo(): RegistryInfo {
     return this.$store.state.recipientRegistryInfo
   }
 
+  get deposit(): BigNumber | null {
+    return this.registryInfo.deposit
+  }
+
+  get depositToken(): string | null {
+    return this.registryInfo.depositToken
+  }
+
+  get recipientCount(): number | null {
+    return this.registryInfo.recipientCount
+  }
+
   private get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
+  }
+
+  get spacesRemaining(): number | null {
+    return (
+      this.$store.state.currentRound.maxRecipients -
+      this.registryInfo.recipientCount
+    )
   }
 
   get timeRemaining(): string {
