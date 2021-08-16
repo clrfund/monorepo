@@ -89,7 +89,11 @@ import {
   SAVE_COMMITTED_CART_DISPATCH,
   SAVE_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
-import { SET_CONTRIBUTOR, SET_CONTRIBUTION } from '@/store/mutation-types'
+import {
+  SET_CONTRIBUTOR,
+  SET_CONTRIBUTION,
+  SET_HAS_VOTED,
+} from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
@@ -118,8 +122,27 @@ export default class ContributionModal extends Vue {
   voteTxError = ''
   error = ''
 
+  mounted() {
+    if (
+      this.$store.getters.hasUserContributed &&
+      !this.$store.getters.hasUserVoted
+    ) {
+      this.step = 3
+      this.sendVotes()
+    }
+  }
+
   get currentRound(): RoundInfo {
     return this.$store.state.currentRound
+  }
+
+  get signer(): Signer {
+    return this.$store.state.currentUser.walletProvider.getSigner()
+  }
+
+  get fundingRound(): Contract {
+    const { fundingRoundAddress } = this.currentRound
+    return new Contract(fundingRoundAddress, FundingRound, this.signer)
   }
 
   formatAmount(value: BigNumber): string {
@@ -144,20 +167,17 @@ export default class ContributionModal extends Vue {
   async contribute() {
     try {
       this.step += 1
-      const signer: Signer =
-        this.$store.state.currentUser.walletProvider.getSigner()
       const {
-        coordinatorPubKey,
         nativeTokenAddress,
         voiceCreditFactor,
         maciAddress,
         fundingRoundAddress,
       } = this.currentRound
       const total = this.getTotal()
-      const token = new Contract(nativeTokenAddress, ERC20, signer)
+      const token = new Contract(nativeTokenAddress, ERC20, this.signer)
       // Approve transfer (step 1)
       const allowance = await token.allowance(
-        signer.getAddress(),
+        this.signer.getAddress(),
         fundingRoundAddress
       )
       if (allowance < total) {
@@ -174,15 +194,10 @@ export default class ContributionModal extends Vue {
       this.step += 1
       // Contribute (step 2)
       const contributorKeypair = new Keypair()
-      const fundingRound = new Contract(
-        fundingRoundAddress,
-        FundingRound,
-        signer
-      )
       let contributionTxReceipt
       try {
         contributionTxReceipt = await waitForTransaction(
-          fundingRound.contribute(
+          this.fundingRound.contribute(
             contributorKeypair.pubKey.asContractParam(),
             total
           ),
@@ -193,7 +208,7 @@ export default class ContributionModal extends Vue {
         return
       }
       // Get state index and amount of voice credits
-      const maci = new Contract(maciAddress, MACI, signer)
+      const maci = new Contract(maciAddress, MACI, this.signer)
       const stateIndex = getEventArg(
         contributionTxReceipt,
         maci,
@@ -220,53 +235,62 @@ export default class ContributionModal extends Vue {
       this.$store.commit(SET_CONTRIBUTION, total)
       // Reload contribution pool size
       this.$store.dispatch(LOAD_ROUND_INFO)
+      this.step += 1
       // Vote (step 3)
-      const messages: Message[] = []
-      const encPubKeys: PubKey[] = []
-      let nonce = 1
-      for (const [recipientIndex, voiceCredits] of this.votes) {
-        const [message, encPubKey] = createMessage(
-          contributor.stateIndex,
-          contributor.keypair,
-          null,
-          coordinatorPubKey,
-          recipientIndex,
-          voiceCredits,
-          nonce
-        )
-        messages.push(message)
-        encPubKeys.push(encPubKey)
-        nonce += 1
-      }
-      this.step += 1
-      try {
-        await waitForTransaction(
-          fundingRound.submitMessageBatch(
-            messages.reverse().map((msg) => msg.asContractParam()),
-            encPubKeys.reverse().map((key) => key.asContractParam())
-          ),
-          (hash) => (this.voteTxHash = hash)
-        )
-        this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
-        this.$emit('close')
-        this.$router.push({
-          name: `transaction-success`,
-          params: {
-            type: 'contribution',
-            hash: this.contributionTxHash,
-          },
-        })
-      } catch (error) {
-        this.voteTxError = error.message
-        return
-      }
-      this.step += 1
+      await this.sendVotes()
     } catch (err) {
       /* eslint-disable-next-line no-console */
       console.log(err)
       this.error =
         'Something unexpected ocurred. Refresh the page and try again.'
     }
+  }
+
+  async sendVotes() {
+    const { coordinatorPubKey } = this.currentRound
+
+    const contributor = this.$store.state.contributor
+    const messages: Message[] = []
+    const encPubKeys: PubKey[] = []
+    let nonce = 1
+    for (const [recipientIndex, voiceCredits] of this.votes) {
+      const [message, encPubKey] = createMessage(
+        contributor.stateIndex,
+        contributor.keypair,
+        null,
+        coordinatorPubKey,
+        recipientIndex,
+        voiceCredits,
+        nonce
+      )
+      messages.push(message)
+      encPubKeys.push(encPubKey)
+      nonce += 1
+    }
+
+    try {
+      await waitForTransaction(
+        this.fundingRound.submitMessageBatch(
+          messages.reverse().map((msg) => msg.asContractParam()),
+          encPubKeys.reverse().map((key) => key.asContractParam())
+        ),
+        (hash) => (this.voteTxHash = hash)
+      )
+      this.$store.commit(SET_HAS_VOTED, true)
+      this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
+      this.$emit('close')
+      this.$router.push({
+        name: `transaction-success`,
+        params: {
+          type: 'contribution',
+          hash: this.contributionTxHash,
+        },
+      })
+    } catch (error) {
+      this.voteTxError = error.message
+      return
+    }
+    this.step += 1
   }
 }
 </script>
