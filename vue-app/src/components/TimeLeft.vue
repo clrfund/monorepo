@@ -1,11 +1,15 @@
 <template>
-  <span :class="valueClass || 'value'">
-    {{ values[0] }}
+  <span>
+    <span :class="valueClass || 'value'">
+      {{ values[0] }}
+    </span>
     <span :class="unitClass || 'unit'">
       {{ units[0] }}
     </span>
     <span v-if="units[1].length > 0">
-      {{ values[1] }}
+      <span :class="valueClass || 'value'">
+        {{ values[1] }}
+      </span>
       <span :class="unitClass || 'unit'">
         {{ units[1] }}
       </span>
@@ -46,7 +50,8 @@ export default class extends Vue {
     if (this.timeLeft.hours > 0)
       return [this.timeLeft.hours, this.timeLeft.minutes]
     if (this.timeLeft.minutes > 5) return [this.timeLeft.minutes, 0]
-    if (this.timeLeft.minutes > 0) return [this.timeLeft.minutes, this.timeLeft.seconds]
+    if (this.timeLeft.minutes > 0)
+      return [this.timeLeft.minutes, this.timeLeft.seconds]
     if (this.timeLeft.seconds > 0) return [this.timeLeft.seconds, 0]
     return [0, 0]
   }
@@ -57,7 +62,8 @@ export default class extends Vue {
     if (this.timeLeft.hours > 0)
       return [this.unitPlurality('hours'), this.unitPlurality('minutes')]
     if (this.timeLeft.minutes > 5) return [this.unitPlurality('minutes'), '']
-    if (this.timeLeft.minutes > 0) return [this.unitPlurality('minutes'), this.unitPlurality('seconds')]
+    if (this.timeLeft.minutes > 0)
+      return [this.unitPlurality('minutes'), this.unitPlurality('seconds')]
     if (this.timeLeft.seconds > 0) return [this.unitPlurality('seconds'), '']
     return [this.unitPlurality('days'), this.unitPlurality('hours')]
   }
