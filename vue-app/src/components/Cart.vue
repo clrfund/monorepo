@@ -6,7 +6,10 @@
       <wallet-widget :isActionButton="true" />
     </div>
     <div v-else class="cart-container">
-      <div class="reallocation-message" v-if="$store.getters.canUserReallocate">
+      <div
+        class="reallocation-message"
+        v-if="$store.getters.canUserReallocate && $store.getters.hasUserVoted"
+      >
         You’ve already contributed this round. You can edit your choices and add
         new projects, but your cart total must always equal your original
         contribution amount.
@@ -14,7 +17,7 @@
       </div>
       <div
         class="reallocation-message"
-        v-if="$store.getters.hasUserContributed && !$store.getters.hasUserVoted"
+        v-if="$store.getters.canUserReallocate && !$store.getters.hasUserVoted"
       >
         Almost done! You must submit one more transaction to complete your
         contribution.
@@ -176,7 +179,8 @@
         v-if="
           ($store.getters.canUserReallocate && isEditMode) ||
           (!$store.getters.canUserReallocate &&
-            $store.getters.isRoundContributionPhase)
+            $store.getters.isRoundContributionPhase) ||
+          !$store.getters.hasUserVoted
         "
       >
         <!--  TODO: Also, add getter for pre-contribution phase -->
@@ -687,7 +691,7 @@ export default class Cart extends Vue {
       return [item.index, voiceCredits]
     })
     this.$modal.show(
-      this.contribution.isZero() || !this.$store.state.hasUserVoted
+      this.contribution.isZero() || !this.$store.getters.hasUserVoted
         ? ContributionModal
         : ReallocationModal,
       { votes },

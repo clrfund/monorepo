@@ -562,7 +562,6 @@ const getters = {
   canUserReallocate: (_, getters): boolean => {
     return (
       getters.hasUserContributed &&
-      getters.hasUserVoted &&
       (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
     )
   },
