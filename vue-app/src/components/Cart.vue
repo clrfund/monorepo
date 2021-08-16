@@ -111,15 +111,16 @@
             :isAmountValid="isAmountValid"
           />
         </div>
-        <div class="time-left-read-only">
-          <time-left
-            v-if="
-              ($store.getters.canUserReallocate && !isEditMode) ||
-              ($store.getters.isRoundContributionPhase &&
-                !$store.getters.canUserReallocate)
-            "
-            :date="timeLeftDate"
-          />
+        <div
+          v-if="
+            ($store.getters.canUserReallocate && !isEditMode) ||
+            ($store.getters.isRoundContributionPhase &&
+              !$store.getters.canUserReallocate)
+          "
+          class="time-left-read-only"
+        >
+          <div class="caps">Time left:</div>
+          <time-left :date="timeLeftDate" />
         </div>
       </div>
       <div
@@ -176,7 +177,7 @@
       >
         <!--  TODO: Also, add getter for pre-contribution phase -->
         <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
-        Round opens for contributing in {{startDateCountdown}}. <span v-if="canRegisterWithBrightId">Get verified with BrightID while you wait.</span>
+        Round opens for contributing in <time-left :date="$store.state.currentRound?.startTime"/>. <span v-if="canRegisterWithBrightId">Get verified with BrightID while you wait.</span>
       </div> -->
         <div v-if="errorMessage" class="error-title">
           Can't <span v-if="$store.getters.canUserReallocate">reallocate</span
@@ -222,14 +223,15 @@
             Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to
             {{ cart.length }} projects
           </template>
-          <template v-else> Reallocate contribution </template>
+          <template v-else>Reallocate contribution</template>
         </button>
-        <time-left
-          v-if="$store.getters.canUserReallocate && isEditMode"
-          valueClass="time-left"
-          unitClass="time-left"
-          :date="timeLeftDate"
-        />
+        <div class="time-left">
+          <div class="caps">Time left:</div>
+          <time-left
+            v-if="$store.getters.canUserReallocate && isEditMode"
+            :date="timeLeftDate"
+          />
+        </div>
       </div>
       <div
         class="line-item-bar"
@@ -317,7 +319,6 @@ import {
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { getNetworkName } from '@/utils/networks'
-import { formatDateFromNow } from '@/utils/dates'
 
 @Component({
   components: {
@@ -512,10 +513,6 @@ export default class Cart extends Vue {
       .toUnsafeFloat()
       .toString()
     return normalizedValue === value
-  }
-
-  get startDateCountdown(): string {
-    return formatDateFromNow(this.$store.state.currentRound?.startTime)
   }
 
   private isFormValid(): boolean {
@@ -811,14 +808,14 @@ h2 {
 
 .time-left {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   width: 100%;
 }
 
 .time-left-read-only {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   padding: 1rem;
 }
