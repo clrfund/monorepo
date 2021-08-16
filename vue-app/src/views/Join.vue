@@ -242,7 +242,7 @@
                   </p>
                   <input
                     id="fund-address"
-                    placeholder="example: clr.eth, clr.crypto, 0x123..."
+                    placeholder="example: 0x123..."
                     v-model="$v.form.fund.address.$model"
                     :class="{
                       input: true,
@@ -424,7 +424,7 @@
                   <input
                     id="links-website"
                     type="link"
-                    placeholder="example: https://website.com/ethereum/clrfund"
+                    placeholder="example: https://ethereum.foundation"
                     class="input"
                     v-model="$v.form.links.website.$model"
                     :class="{
@@ -446,7 +446,7 @@
                   <input
                     id="links-twitter"
                     type="link"
-                    placeholder="example: https://github.com/ethereum/clrfund"
+                    placeholder="example: https://twitter.com/ethereum"
                     class="input"
                     v-model="$v.form.links.twitter.$model"
                     :class="{
@@ -468,7 +468,7 @@
                   <input
                     id="links-discord"
                     type="link"
-                    placeholder="example: https://github.com/ethereum/clrfund"
+                    placeholder="example: https://discord.gg/5Prub9zbGz"
                     class="input"
                     v-model="$v.form.links.discord.$model"
                     :class="{
@@ -525,7 +525,7 @@
               <h2 class="step-title">Review your information</h2>
               <warning
                 style="margin-bottom: 1rem"
-                message="This information will be stored in a smart contract, so please review carefully. There’s a transaction fee for every edit once you’ve sent your application."
+                message="This information will be stored in a smart contract and cannot be edited, so please review carefully."
               />
               <div class="form-background">
                 <div class="summary-section-header">
@@ -566,12 +566,7 @@
                   <h4 class="read-only-title">Ethereum address</h4>
                   <div class="data break-all">
                     {{ form.fund.address }}
-                    <a
-                      :href="
-                        'https://etherscan.io/address/' + form.fund.address
-                      "
-                      target="_blank"
-                      class="no-break"
+                    <a :href="blockExplorerUrl" target="_blank" class="no-break"
                       >View on Etherscan</a
                     >
                   </div>
@@ -750,6 +745,7 @@ import {
   formToProjectInterface,
 } from '@/api/recipient-registry-optimistic'
 import { Project } from '@/api/projects'
+import { blockExplorer } from '@/api/core'
 
 @Component({
   components: {
@@ -1004,6 +1000,10 @@ export default class JoinView extends mixins(validationMixin) {
 
   get furthestStep() {
     return this.form.furthestStep
+  }
+
+  get blockExplorerUrl(): string {
+    return `${blockExplorer}/address/${this.form.fund.address}`
   }
 }
 </script>

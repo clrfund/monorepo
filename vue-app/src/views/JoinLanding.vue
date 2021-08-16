@@ -234,7 +234,7 @@ h1 {
       rgba(173, 131, 218, 0) -32.78%,
       #191623 78.66%
     );
-    @media (max-width: ($breakpoint-m)) {
+    @media (max-width: $breakpoint-m) {
       width: 100%;
       padding-bottom: 0rem;
     }
@@ -247,7 +247,7 @@ h1 {
       max-width: 88%;
       max-height: 100%;
 
-      @media (max-width: ($breakpoint-m)) {
+      @media (max-width: $breakpoint-m) {
         right: 1rem;
         width: 100%;
       }
@@ -260,13 +260,12 @@ h1 {
   z-index: 1;
   box-sizing: border-box;
   padding: $content-space;
-  width: min(100%, 512px);
   margin-left: 2rem;
   width: min(100%, 512px);
-  @media (max-width: ($breakpoint-m)) {
+  @media (max-width: $breakpoint-m) {
     width: 100%;
     margin: 0;
-    padding-bottom: 10rem;
+    padding-bottom: 35vw;
   }
 }
 

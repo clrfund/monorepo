@@ -11,10 +11,7 @@
             <tooltip
               position="top"
               :content="currentRound.fundingRoundAddress"
-              :link="
-                'https://etherscan.io/address/' +
-                currentRound.fundingRoundAddress
-              "
+              :link="blockExplorerUrl"
               linkText="View on Etherscan"
               ><div class="verified"><img src="@/assets/verified.svg" /></div
             ></tooltip>
@@ -223,16 +220,7 @@
           </div>
           <div class="round-info-sub-item">
             <div>
-              <div class="round-info-title">
-                Contributors
-                <a
-                  style="margin-bottom: 0"
-                  @click="addMatchingFunds()"
-                  title="Add matching funds"
-                >
-                  <img src="@/assets/more.svg" />
-                </a>
-              </div>
+              <div class="round-info-title">Contributors</div>
               <div class="round-info-value">
                 <div class="value">{{ currentRound.contributors }}</div>
                 <div class="unit">
@@ -272,6 +260,7 @@ import {
   getRecipientRegistryAddress,
   getProjects,
 } from '@/api/projects'
+import { blockExplorer } from '@/api/core'
 
 import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
@@ -415,6 +404,13 @@ export default class RoundInformation extends Vue {
         },
       }
     )
+  }
+
+  get blockExplorerUrl(): string {
+    if (!this.currentRound) {
+      return ''
+    }
+    return `${blockExplorer}/address/${this.currentRound.fundingRoundAddress}`
   }
 }
 </script>

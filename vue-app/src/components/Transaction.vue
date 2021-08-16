@@ -2,7 +2,11 @@
   <div class="transaction">
     <template v-if="error">
       <div class="error">{{ error }}</div>
-      <button class="btn-secondary close-btn" @click="$emit('close')">
+      <button
+        v-if="displayCloseBtn"
+        class="btn-secondary close-btn"
+        @click="$emit('close')"
+      >
         Close
       </button>
     </template>
@@ -62,8 +66,11 @@ export default class Transaction extends Vue {
   @Prop()
   error!: string
 
+  @Prop({ default: true })
+  displayCloseBtn!: boolean
+
   getBlockExplorerUrl(transactionHash: string): string {
-    return `${blockExplorer}${transactionHash}`
+    return `${blockExplorer}/tx/${transactionHash}`
   }
 }
 </script>

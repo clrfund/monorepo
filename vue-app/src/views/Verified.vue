@@ -54,7 +54,7 @@ export default class Verified extends Vue {
   txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}${this.txHash}`
+    return `${blockExplorer}/tx/${this.txHash}`
   }
 
   formatDuration(value: number): string {

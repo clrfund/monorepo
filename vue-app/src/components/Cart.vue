@@ -194,8 +194,7 @@
           round. Your cart must add up to your original
           {{ formatAmount(this.contribution) }} {{ tokenSymbol }} donation.
         </div>
-        <!-- TODO check logic - will this ever be true? within canUserReallocate conditional -->
-        <div class="p1" v-if="canRegisterWithBrightId">
+        <div class="p1" v-if="isBrightIdRequired">
           <router-link to="/verify" class="btn-primary">
             Verify with BrightID
           </router-link>
@@ -572,12 +571,7 @@ export default class Cart extends Vue {
     const currentRound = this.$store.state.currentRound
     if (!currentUser) {
       return 'Please connect your wallet'
-    } else if (currentUser.isVerified === null) {
-      return '' // No error: waiting for verification check
-    } else if (
-      !currentUser.isVerified &&
-      userRegistryType === UserRegistryType.BRIGHT_ID
-    ) {
+    } else if (this.isBrightIdRequired) {
       return 'To contribute, you need to set up BrightID.'
     } else if (!this.isFormValid()) {
       return 'Include valid contribution amount.'
@@ -640,10 +634,10 @@ export default class Cart extends Vue {
     )
   }
 
-  get canRegisterWithBrightId(): boolean {
+  get isBrightIdRequired(): boolean {
     return (
       userRegistryType === UserRegistryType.BRIGHT_ID &&
-      !this.$store.state.currentUser?.isVerified
+      !this.currentUser?.isRegistered
     )
   }
   // TODO: Check that we are pre-reallocation phase
