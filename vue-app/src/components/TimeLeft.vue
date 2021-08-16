@@ -55,7 +55,8 @@ export default class extends Vue {
       return [this.unitPlurality('days'), this.unitPlurality('hours')]
     if (this.timeLeft.hours > 0)
       return [this.unitPlurality('hours'), this.unitPlurality('minutes')]
-    if (this.timeLeft.minutes > 0) return [this.unitPlurality('minutes'), '']
+    if (this.timeLeft.minutes > 5) return [this.unitPlurality('minutes'), '']
+    if (this.timeLeft.minutes > 0) return [this.unitPlurality('minutes'), this.unitPlurality('seconds')]
     if (this.timeLeft.seconds > 0) return [this.unitPlurality('seconds'), '']
     return [this.unitPlurality('days'), this.unitPlurality('hours')]
   }
