@@ -12,6 +12,13 @@
         contribution amount.
         <router-link to="/about-maci" class="message-link">Why?</router-link>
       </div>
+      <div
+        class="reallocation-message"
+        v-if="$store.getters.hasUserContributed && !$store.getters.hasUserVoted"
+      >
+        Almost done! You must submit one more transaction to complete your
+        contribution.
+      </div>
       <div class="flex cart-title-bar">
         <div
           v-if="showCollapseCart"
@@ -86,7 +93,7 @@
               <div class="semi-bold">
                 {{ isEditMode ? 'Edit contributions' : 'Your contributions' }}
               </div>
-              <div class="semi-bold" v-if="$store.getters.canUserReallocate">
+              <div class="semi-bold">
                 <button @click="handleEditState" class="pointer">
                   {{ isEditMode ? 'Cancel' : 'Edit' }}
                 </button>
@@ -177,8 +184,9 @@
         Round opens for contributing in {{startDateCountdown}}. <span v-if="isBrightIdRequired">Get verified with BrightID while you wait.</span>
       </div> -->
         <div v-if="errorMessage" class="error-title">
-          Can't <span v-if="$store.getters.canUserReallocate">reallocate</span
-          ><span v-else>contribute</span>
+          Can't
+          <span v-if="$store.getters.canUserReallocate">reallocate</span>
+          <span v-else>contribute</span>
         </div>
         <div v-if="errorMessage" class="submit-error">
           {{ errorMessage }}
@@ -208,16 +216,25 @@
           :class="{
             'btn-action': !errorMessage,
             'btn-action disabled':
-              errorMessage || ($store.getters.hasUserContributed && !isDirty),
+              errorMessage ||
+              ($store.getters.hasUserContributed &&
+                $store.getters.hasUserVoted &&
+                !isDirty),
           }"
           @click="submitCart"
           :disabled="
-            errorMessage || ($store.getters.hasUserContributed && !isDirty)
+            errorMessage ||
+            ($store.getters.hasUserContributed &&
+              $store.getters.hasUserVoted &&
+              !isDirty)
           "
         >
           <template v-if="contribution.isZero()">
             Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to
             {{ cart.length }} projects
+          </template>
+          <template v-else-if="!$store.getters.hasUserVoted">
+            Finish contribution
           </template>
           <template v-else> Reallocate contribution </template>
         </button>
@@ -670,7 +687,9 @@ export default class Cart extends Vue {
       return [item.index, voiceCredits]
     })
     this.$modal.show(
-      this.contribution.isZero() ? ContributionModal : ReallocationModal,
+      this.contribution.isZero() || !this.$store.state.hasUserVoted
+        ? ContributionModal
+        : ReallocationModal,
       { votes },
       { width: 500 }
     )

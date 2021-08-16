@@ -18,6 +18,7 @@ import {
   deserializeContributorData,
   getContributionAmount,
   isContributionWithdrawn,
+  hasContributorVoted,
 } from '@/api/contributions'
 import { loginUser, logoutUser } from '@/api/gun'
 import { getRecipientRegistryAddress } from '@/api/projects'
@@ -73,6 +74,7 @@ import {
   TOGGLE_SHOW_CART_PANEL,
   UPDATE_CART_ITEM,
   TOGGLE_EDIT_SELECTION,
+  SET_HAS_VOTED,
 } from './mutation-types'
 
 // Utils
@@ -88,6 +90,7 @@ interface RootState {
   committedCart: CartItem[]
   contribution: BigNumber | null
   contributor: Contributor | null
+  hasVoted: boolean
   currentRound: RoundInfo | null
   currentRoundAddress: string | null
   currentUser: User | null
@@ -104,6 +107,7 @@ const state: RootState = {
   committedCart: new Array<CartItem>(),
   contribution: null,
   contributor: null,
+  hasVoted: false,
   currentRound: null,
   currentRoundAddress: null,
   currentUser: null,
@@ -146,6 +150,9 @@ export const mutations = {
   },
   [SET_CONTRIBUTION](state, contribution: BigNumber | null) {
     state.contribution = contribution
+  },
+  [SET_HAS_VOTED](state, hasVoted: boolean) {
+    state.hasVoted = hasVoted
   },
   [ADD_CART_ITEM](state, addedItem: CartItem) {
     const itemIndex = state.cart.findIndex((item) => {
@@ -310,7 +317,12 @@ const actions = {
             state.currentRound.fundingRoundAddress,
             state.currentUser.walletAddress
           )
+          const hasVoted = await hasContributorVoted(
+            state.currentRound.fundingRoundAddress,
+            state.currentUser.walletAddress
+          )
           commit(SET_CONTRIBUTION, contribution)
+          commit(SET_HAS_VOTED, hasVoted)
         }
       }
 
@@ -544,9 +556,13 @@ const getters = {
       !state.contribution.isZero()
     )
   },
+  hasUserVoted: (state: RootState): boolean => {
+    return state.hasVoted
+  },
   canUserReallocate: (_, getters): boolean => {
     return (
       getters.hasUserContributed &&
+      getters.hasUserVoted &&
       (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
     )
   },
