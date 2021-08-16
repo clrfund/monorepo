@@ -566,11 +566,9 @@
                   <h4 class="read-only-title">Ethereum address</h4>
                   <div class="data break-all">
                     {{ form.fund.address }}
-                    <links
-                      :to="'https://etherscan.io/address/' + form.fund.address"
-                      class="no-break"
-                      >View on Etherscan</links
-                    >
+                    <links :to="blockExplorerUrl" class="no-break">
+                      View on Etherscan
+                    </links>
                   </div>
                 </div>
                 <div class="summary">
@@ -748,6 +746,7 @@ import {
   formToProjectInterface,
 } from '@/api/recipient-registry-optimistic'
 import { Project } from '@/api/projects'
+import { blockExplorer } from '@/api/core'
 
 @Component({
   components: {
@@ -1003,6 +1002,10 @@ export default class JoinView extends mixins(validationMixin) {
 
   get furthestStep() {
     return this.form.furthestStep
+  }
+
+  get blockExplorerUrl(): string {
+    return `${blockExplorer}/address/${this.form.fund.address}`
   }
 }
 </script>

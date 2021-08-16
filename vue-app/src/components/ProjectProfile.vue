@@ -105,7 +105,7 @@
           />
           <links
             class="explorerLink"
-            :to="`https://etherscan.io/address/${project.address}`"
+            :to="blockExplorerUrl"
             title="View on Etherscan"
           >
             <img class="icon" src="@/assets/etherscan.svg" />
@@ -140,6 +140,7 @@ import Markdown from '@/components/Markdown.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
+import { blockExplorer } from '@/api/core'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 import ClaimModal from '@/components/ClaimModal.vue'
@@ -257,6 +258,10 @@ export default class ProjectProfile extends Vue {
         },
       }
     )
+  }
+
+  get blockExplorerUrl(): string {
+    return `${blockExplorer}/address/${this.project.address}`
   }
 }
 </script>

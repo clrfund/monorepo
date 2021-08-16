@@ -8,7 +8,15 @@
         <div class="round">
           <div style="display: flex; align-items: center">
             <h2 style="line-height: 120%; margin: 0">Eth2 CLR</h2>
+            <!-- TODO: Add v-tooltip / v-popover -->
             <div class="verified"><img src="@/assets/verified.svg" /></div>
+            <!-- <tooltip
+              position="top"
+              :content="currentRound.fundingRoundAddress"
+              :link="blockExplorerUrl"
+              linkText="View on Etherscan"
+              ><div class="verified"><img src="@/assets/verified.svg" /></div
+            ></tooltip> -->
           </div>
           <!-- TODO add logic to status -->
           <div class="status">
@@ -282,6 +290,7 @@ import {
   getRecipientRegistryAddress,
   getProjects,
 } from '@/api/projects'
+import { blockExplorer } from '@/api/core'
 
 import { getTimeLeft } from '@/utils/dates'
 import { formatAmount } from '@/utils/amounts'
@@ -436,6 +445,13 @@ export default class RoundInformation extends Vue {
         },
       }
     )
+  }
+
+  get blockExplorerUrl(): string {
+    if (!this.currentRound) {
+      return ''
+    }
+    return `${blockExplorer}/address/${this.currentRound.fundingRoundAddress}`
   }
 }
 </script>

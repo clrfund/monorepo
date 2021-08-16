@@ -76,7 +76,7 @@ export default class ProjectAdded extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}${this.txHash}`
+    return `${blockExplorer}/tx/${this.txHash}`
   }
 
   formatDuration(seconds: number): string {
