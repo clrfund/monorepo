@@ -34,10 +34,9 @@
 // Libraries
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
 
 // API
-import { User, getProfileImageUrl } from '@/api/user'
+import { User } from '@/api/user'
 
 // Components
 import Loader from '@/components/Loader.vue'
@@ -59,8 +58,6 @@ import { SET_CURRENT_USER } from '@/store/mutation-types'
   },
 })
 export default class WalletModal extends Vue {
-  @Prop() updateProfileImage!: (profileImageUrl: string | null) => void
-
   connectingWallet = false
   error = ''
 
@@ -85,9 +82,6 @@ export default class WalletModal extends Vue {
   async loginUser(user: User): Promise<void> {
     this.$emit('connected')
 
-    const url = await getProfileImageUrl(user.walletAddress)
-    this.updateProfileImage(url)
-
     this.$store.commit(SET_CURRENT_USER, user)
     await this.$store.dispatch(LOGIN_USER)
     if (this.$store.state.currentRound) {
@@ -98,6 +92,7 @@ export default class WalletModal extends Vue {
       this.$store.dispatch(LOAD_COMMITTED_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
     }
+
     this.$emit('close')
   }
 
