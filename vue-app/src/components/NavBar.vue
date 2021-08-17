@@ -15,6 +15,13 @@
       />
     </links>
     <div class="btn-row">
+      <a
+        href="/#/recipients"
+        v-if="$store.getters.isRecipientRegistryOwner"
+        class="btn-primary margin-right"
+      >
+        Manage Recipients
+      </a>
       <div class="help-dropdown" v-if="inApp">
         <img
           @click="openHelpDropdown()"
@@ -165,6 +172,7 @@ window.onclick = function (event) {
   .help-dropdown {
     position: relative;
     display: inline-block;
+    margin-left: 0.5rem;
 
     .button-menu {
       display: none;
@@ -215,6 +223,10 @@ window.onclick = function (event) {
     margin: 0;
     height: 2.25rem;
     vertical-align: middle;
+  }
+
+  .margin-right {
+    margin-right: 0.5rem;
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="recipients">
-    <div v-if="isRecipientRegistryOwner">
+    <div v-if="$store.getters.isRecipientRegistryOwner">
       <div class="title">
         <div class="header">
           <h2>Recipient registry</h2>
@@ -158,7 +158,6 @@ import {
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
 import { formatAmount } from '@/utils/amounts'
-import { isSameAddress } from '@/utils/accounts'
 import { markdown } from '@/utils/markdown'
 import { waitForTransaction } from '@/utils/contracts'
 import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
@@ -181,16 +180,6 @@ export default class RecipientRegistryView extends Vue {
 
   get isUserConnected(): boolean {
     return !!this.$store.state.currentUser
-  }
-
-  get isRecipientRegistryOwner(): boolean {
-    const { recipientRegistryInfo, currentUser } = this.$store.state
-
-    return (
-      this.isUserConnected &&
-      !!recipientRegistryInfo &&
-      isSameAddress(currentUser.walletAddress, recipientRegistryInfo.owner)
-    )
   }
 
   async loadRequests() {
