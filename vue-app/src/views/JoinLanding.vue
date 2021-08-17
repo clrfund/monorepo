@@ -65,7 +65,13 @@
       <div class="info-boxes">
         <div class="apply-callout">
           <div class="countdown-label caps">Time left to join</div>
-          <div class="countdown caps">{{ timeRemaining }}</div>
+          <div class="countdown caps">
+            <time-left
+              valueClass="none"
+              unitClass="none"
+              :date="signUpDeadline"
+            />
+          </div>
         </div>
         <div class="apply-callout">
           <div class="countdown-label caps">Time to complete</div>
@@ -112,17 +118,23 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 import { BigNumber } from 'ethers'
-import Loader from '@/components/Loader.vue'
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 
+import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { formatAmount } from '@/utils/amounts'
+import Loader from '@/components/Loader.vue'
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
-import { formatDateFromNow } from '@/utils/dates'
-import { formatAmount } from '@/utils/amounts'
-import BackToProjects from '../components/BackToProjects.vue'
+import BackToProjects from '@/components/BackToProjects.vue'
+import TimeLeft from '@/components/TimeLeft.vue'
 
 @Component({
-  components: { RoundStatusBanner, CriteriaModal, Loader, BackToProjects },
+  components: {
+    RoundStatusBanner,
+    CriteriaModal,
+    Loader,
+    BackToProjects,
+    TimeLeft,
+  },
 })
 export default class JoinLanding extends Vue {
   isLoading = true
@@ -150,15 +162,8 @@ export default class JoinLanding extends Vue {
     return this.$store.state.recipientRegistryInfo
   }
 
-  private get signUpDeadline(): DateTime {
+  get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
-  }
-
-  get timeRemaining(): string {
-    if (!this.signUpDeadline) {
-      return '...'
-    }
-    return formatDateFromNow(this.signUpDeadline)
   }
 
   get isRoundFull(): boolean {

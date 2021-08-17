@@ -111,14 +111,17 @@
             :isAmountValid="isAmountValid"
           />
         </div>
-        <cart-time-left
+        <div
           v-if="
             ($store.getters.canUserReallocate && !isEditMode) ||
             ($store.getters.isRoundContributionPhase &&
               !$store.getters.canUserReallocate)
           "
           class="time-left-read-only"
-        />
+        >
+          <div class="caps">Time left:</div>
+          <time-left :date="timeLeftDate" />
+        </div>
       </div>
       <div
         class="reallocation-section"
@@ -174,7 +177,7 @@
       >
         <!--  TODO: Also, add getter for pre-contribution phase -->
         <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
-        Round opens for contributing in {{startDateCountdown}}. <span v-if="isBrightIdRequired">Get verified with BrightID while you wait.</span>
+        Round opens for contributing in <time-left :date="$store.state.currentRound?.startTime"/>. <span v-if="canRegisterWithBrightId">Get verified with BrightID while you wait.</span>
       </div> -->
         <div v-if="errorMessage" class="error-title">
           Can't <span v-if="$store.getters.canUserReallocate">reallocate</span
@@ -219,12 +222,15 @@
             Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to
             {{ cart.length }} projects
           </template>
-          <template v-else> Reallocate contribution </template>
+          <template v-else>Reallocate contribution</template>
         </button>
-        <cart-time-left
-          v-if="$store.getters.canUserReallocate && isEditMode"
-          class="time-left"
-        />
+        <div class="time-left">
+          <div class="caps">Time left:</div>
+          <time-left
+            v-if="$store.getters.canUserReallocate && isEditMode"
+            :date="timeLeftDate"
+          />
+        </div>
       </div>
       <div
         class="line-item-bar"
@@ -270,9 +276,6 @@
           {{ tokenSymbol }}
         </div>
       </div>
-      <!-- <div class="reallocation-bar-container">
-      <div class="reallocation-bar" /> 
-    </div> -->
       <!-- TODO: reallocation bar -->
     </div>
   </div>
@@ -293,7 +296,7 @@ import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import CartItems from '@/components/CartItems.vue'
-import CartTimeLeft from '@/components/CartTimeLeft.vue'
+import TimeLeft from '@/components/TimeLeft.vue'
 import { TOGGLE_EDIT_SELECTION, UPDATE_CART_ITEM } from '@/store/mutation-types'
 import {
   MAX_CONTRIBUTION_AMOUNT,
@@ -305,7 +308,7 @@ import {
   provider as jsonRpcProvider,
   UserRegistryType,
 } from '@/api/core'
-import { RoundStatus, TimeLeft } from '@/api/round'
+import { RoundStatus } from '@/api/round'
 import { LOGOUT_USER, SAVE_CART } from '@/store/action-types'
 import { User } from '@/api/user'
 import {
@@ -315,10 +318,14 @@ import {
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { getNetworkName } from '@/utils/networks'
-import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
 
 @Component({
-  components: { Tooltip, WalletWidget, CartItems, CartTimeLeft },
+  components: {
+    Tooltip,
+    WalletWidget,
+    CartItems,
+    TimeLeft,
+  },
 })
 export default class Cart extends Vue {
   private jsonRpcNetwork: Network | null = null
@@ -505,18 +512,6 @@ export default class Cart extends Vue {
       .toUnsafeFloat()
       .toString()
     return normalizedValue === value
-  }
-
-  get startDateCountdown(): string {
-    return formatDateFromNow(this.$store.state.currentRound?.startTime)
-  }
-
-  get contributionTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
-  }
-
-  get reallocationTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   private isFormValid(): boolean {
@@ -724,6 +719,12 @@ export default class Cart extends Vue {
     })
     this.$store.dispatch(SAVE_CART)
   }
+
+  get timeLeftDate(): DateTime {
+    return this.$store.getters.canUserReallocate
+      ? this.$store.state.currentRound.votingDeadline
+      : this.$store.state.currentRound.signUpDeadline
+  }
 }
 
 // Close the dropdown menu if the user clicks outside of it
@@ -801,14 +802,14 @@ h2 {
 
 .time-left {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   width: 100%;
 }
 
 .time-left-read-only {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   padding: 1rem;
 }
@@ -1221,5 +1222,11 @@ h2 {
   .show {
     display: flex;
   }
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 </style>

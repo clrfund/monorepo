@@ -41,7 +41,10 @@
               <router-link to="/join" class="btn-primary w100"
                 >Join round</router-link
               >
-              <div>{{ timeRemaining }}</div>
+              <div v-if="signUpDeadline">
+                <time-left unitClass="none" :date="signUpDeadline" />
+                to join
+              </div>
             </div>
           </div>
         </div>
@@ -189,22 +192,16 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
-import { formatDateFromNow } from '@/utils/dates'
 
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
+import TimeLeft from '@/components/TimeLeft.vue'
 
 @Component({
-  components: { RoundStatusBanner },
+  components: { RoundStatusBanner, TimeLeft },
 })
 export default class Landing extends Vue {
-  private get signUpDeadline(): DateTime {
+  get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
-  }
-
-  get timeRemaining(): string {
-    return this.signUpDeadline
-      ? `${formatDateFromNow(this.signUpDeadline)}  to join`
-      : '...'
   }
 
   scrollToHowItWorks() {
