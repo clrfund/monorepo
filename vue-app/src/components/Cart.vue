@@ -245,12 +245,12 @@
           </template>
           <template v-else> Reallocate contribution </template>
         </button>
-        <div class="time-left">
+        <div
+          class="time-left"
+          v-if="$store.getters.canUserReallocate && isEditMode"
+        >
           <div class="caps">Time left:</div>
-          <time-left
-            v-if="$store.getters.canUserReallocate && isEditMode"
-            :date="timeLeftDate"
-          />
+          <time-left :date="timeLeftDate" />
         </div>
       </div>
       <div

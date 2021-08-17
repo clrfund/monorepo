@@ -82,7 +82,7 @@ import { BigNumber, Contract, Signer } from 'ethers'
 import { DateTime } from 'luxon'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
 
-import { RoundInfo, TimeLeft } from '@/api/round'
+import { RoundInfo } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
 import {
   LOAD_ROUND_INFO,
@@ -97,7 +97,6 @@ import {
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
-import { getTimeLeft } from '@/utils/dates'
 import ProgressBar from '@/components/ProgressBar.vue'
 
 import { FundingRound, ERC20, MACI } from '@/api/abi'
