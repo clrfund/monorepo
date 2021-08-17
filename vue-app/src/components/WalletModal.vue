@@ -36,22 +36,8 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
-// API
-import { User, getProfileImageUrl } from '@/api/user'
-
 // Components
 import Loader from '@/components/Loader.vue'
-
-// Store
-import {
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-  LOGIN_USER,
-  LOAD_BRIGHT_ID,
-} from '@/store/action-types'
-import { SET_CURRENT_USER } from '@/store/mutation-types'
 
 @Component({
   components: {
@@ -72,33 +58,12 @@ export default class WalletModal extends Vue {
     this.error = ''
     this.connectingWallet = true
     try {
-      const user = await this.$web3.connectWallet(walletType)
-      if (user) {
-        await this.loginUser(user)
-      }
+      await this.$web3.connectWallet(walletType)
+      this.$emit('close')
     } catch (error) {
       this.error = error.message
     }
     this.connectingWallet = false
-  }
-
-  async loginUser(user: User): Promise<void> {
-    this.$emit('connected')
-
-    const url = await getProfileImageUrl(user.walletAddress)
-    this.updateProfileImage(url)
-
-    this.$store.commit(SET_CURRENT_USER, user)
-    await this.$store.dispatch(LOGIN_USER)
-    if (this.$store.state.currentRound) {
-      // Load cart & contributor data for current round
-      await this.$store.dispatch(LOAD_USER_INFO)
-      await this.$store.dispatch(LOAD_BRIGHT_ID)
-      this.$store.dispatch(LOAD_CART)
-      this.$store.dispatch(LOAD_COMMITTED_CART)
-      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-    }
-    this.$emit('close')
   }
 
   redirectToMetamaskWebsite() {

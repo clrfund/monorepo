@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import Component from 'vue-class-component'
+import { Component, Watch } from 'vue-property-decorator'
 
 import { getCurrentRound } from '@/api/round'
 import { User } from '@/api/user'
@@ -51,7 +51,13 @@ import {
   LOAD_ROUND_INFO,
   LOAD_RECIPIENT_REGISTRY_INFO,
   SELECT_ROUND,
+  LOAD_CART,
+  LOAD_COMMITTED_CART,
+  LOAD_CONTRIBUTOR_DATA,
+  LOGIN_USER,
+  LOAD_BRIGHT_ID,
 } from '@/store/action-types'
+import { SET_CURRENT_USER } from '@/store/mutation-types'
 
 @Component({
   name: 'clr.fund',
@@ -94,6 +100,22 @@ export default class App extends Vue {
     await this.$store.dispatch(SELECT_ROUND, roundAddress)
     this.$store.dispatch(LOAD_ROUND_INFO)
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+  }
+
+  @Watch('$web3.user')
+  loginUser = async () => {
+    if (!this.$web3.user) return
+
+    this.$store.commit(SET_CURRENT_USER, this.$web3.user)
+    await this.$store.dispatch(LOGIN_USER)
+    if (this.$store.state.currentRound) {
+      // Load cart & contributor data for current round
+      await this.$store.dispatch(LOAD_USER_INFO)
+      await this.$store.dispatch(LOAD_BRIGHT_ID)
+      this.$store.dispatch(LOAD_CART)
+      this.$store.dispatch(LOAD_COMMITTED_CART)
+      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    }
   }
 
   private get currentUser(): User {
