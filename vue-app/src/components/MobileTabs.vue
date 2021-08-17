@@ -1,6 +1,6 @@
 <template>
   <div :class="`tab-container ${isOnCartOrRoundPage ? 'mobile-l' : 'mobile'}`">
-    <router-link
+    <links
       v-for="({ icon, title, to }, idx) of tabs"
       :key="idx"
       :class="{
@@ -22,14 +22,17 @@
         </transition>
       </div>
       <span class="tab-title">{{ title }}</span>
-    </router-link>
+    </links>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import Component from 'vue-class-component'
 import { CartItem } from '@/api/contributions'
+import Links from '@/components/Links.vue'
 
+@Component({ components: { Links } })
 export default class MobileTabs extends Vue {
   tabs = [
     {

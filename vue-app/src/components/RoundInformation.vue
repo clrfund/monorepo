@@ -8,13 +8,15 @@
         <div class="round">
           <div style="display: flex; align-items: center">
             <h2 style="line-height: 120%; margin: 0">Eth2 CLR</h2>
-            <tooltip
+            <!-- TODO: Add v-tooltip / v-popover -->
+            <div class="verified"><img src="@/assets/verified.svg" /></div>
+            <!-- <tooltip
               position="top"
               :content="currentRound.fundingRoundAddress"
               :link="blockExplorerUrl"
               linkText="View on Etherscan"
               ><div class="verified"><img src="@/assets/verified.svg" /></div
-            ></tooltip>
+            ></tooltip> -->
           </div>
           <!-- TODO add logic to status -->
           <div class="status">
@@ -177,20 +179,21 @@
                 ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
               /></tooltip>
               <div class="add-link">
-                <a
-                  style="margin: 0"
+                <span
+                  style="margin: 0; cursor: pointer"
                   @click="addMatchingFunds()"
                   title="Add matching funds"
                 >
                   <img style="width: 16px" src="@/assets/add.svg" />
-                </a>
-                <a
+                </span>
+                <span
                   @click="addMatchingFunds()"
+                  style="cursor: pointer"
                   title="Add matching funds"
                   class="add-funds-link"
                 >
                   Add funds
-                </a>
+                </span>
               </div>
             </div>
 

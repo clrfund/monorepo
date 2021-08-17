@@ -25,24 +25,20 @@
             >
               <td>
                 <div class="project-name">
-                  <a
-                    :href="request.metadata.thumbnailImageUrl"
-                    target="_blank"
-                    rel="noopener"
-                  >
+                  <links :to="request.metadata.thumbnailImageUrl">
                     <img
                       class="project-image"
                       :src="request.metadata.thumbnailImageUrl"
                     />
-                  </a>
+                  </links>
                   {{ request.metadata.name }}
-                  <router-link
+                  <links
                     v-if="hasProjectLink(request)"
                     :to="{
                       name: 'project',
                       params: { id: request.recipientId },
                     }"
-                    >-></router-link
+                    >-></links
                   >
                 </div>
                 <details class="project-details">
@@ -89,14 +85,14 @@
               <td>{{ request.type }}</td>
               <td>
                 <template v-if="hasProjectLink(request)">
-                  <router-link
+                  <links
                     :to="{
                       name: 'project',
                       params: { id: request.recipientId },
                     }"
                   >
                     {{ request.status }}
-                  </router-link>
+                  </links>
                 </template>
                 <template v-else>
                   {{ request.status }}
@@ -160,6 +156,7 @@ import {
   removeProject,
 } from '@/api/recipient-registry-optimistic'
 import Loader from '@/components/Loader.vue'
+import Links from '@/components/Links.vue'
 import { formatAmount } from '@/utils/amounts'
 import { isSameAddress } from '@/utils/accounts'
 import { markdown } from '@/utils/markdown'
@@ -167,7 +164,7 @@ import { waitForTransaction } from '@/utils/contracts'
 import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 
-@Component({ components: { Loader } })
+@Component({ components: { Loader, Links } })
 export default class RecipientRegistryView extends Vue {
   requests: Request[] = []
   isLoading = true

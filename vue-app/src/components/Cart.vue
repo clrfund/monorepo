@@ -10,7 +10,7 @@
         You’ve already contributed this round. You can edit your choices and add
         new projects, but your cart total must always equal your original
         contribution amount.
-        <router-link to="/about-maci" class="message-link">Why?</router-link>
+        <links to="/about-maci" class="message-link">Why?</links>
       </div>
       <div class="flex cart-title-bar">
         <div
@@ -77,8 +77,8 @@
             <div class="moon-emoji">🌚</div>
             <h3>Your cart is empty</h3>
             <div>Choose some projects that you want to contribute to...</div>
-            <router-link to="/projects" class="btn-secondary mobile mt1"
-              >See projects</router-link
+            <links to="/projects" class="btn-secondary mobile mt1"
+              >See projects</links
             >
           </div>
           <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
@@ -195,9 +195,7 @@
           {{ formatAmount(this.contribution) }} {{ tokenSymbol }} donation.
         </div>
         <div class="p1" v-if="isBrightIdRequired">
-          <router-link to="/verify" class="btn-primary">
-            Verify with BrightID
-          </router-link>
+          <links to="/verify" class="btn-primary"> Verify with BrightID </links>
         </div>
         <button
           v-if="canWithdrawContribution()"
@@ -296,6 +294,7 @@ import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import CartItems from '@/components/CartItems.vue'
+import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import { TOGGLE_EDIT_SELECTION, UPDATE_CART_ITEM } from '@/store/mutation-types'
 import {
@@ -324,6 +323,7 @@ import { getNetworkName } from '@/utils/networks'
     Tooltip,
     WalletWidget,
     CartItems,
+    Links,
     TimeLeft,
   },
 })

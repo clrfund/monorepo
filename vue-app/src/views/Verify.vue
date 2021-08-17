@@ -53,14 +53,14 @@
         />
         <div class="row">
           <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-          <router-link class="cancel-link" to="/verify"> Cancel </router-link>
+          <links class="cancel-link" to="/verify"> Cancel </links>
         </div>
       </div>
       <div class="title-area">
         <h1>Set up BrightID</h1>
       </div>
       <div class="cancel-area desktop">
-        <router-link class="cancel-link" to="/verify"> Cancel </router-link>
+        <links class="cancel-link" to="/verify"> Cancel </links>
       </div>
       <div class="form-area">
         <div class="verification-status" v-if="currentStep === 2">
@@ -105,12 +105,12 @@
                 <p class="mobile">
                   Follow this link to connect your wallet to your BrightID app
                 </p>
-                <a class="mobile" :href="appLink" target="_blank">
+                <links class="mobile" :to="appLink">
                   <div class="icon">
                     <img src="@/assets/bright-id.png" />
                   </div>
                   {{ appLink }}
-                </a>
+                </links>
                 <p class="mobile">
                   <em>
                     This link might look scary but it just makes a connection
@@ -228,6 +228,7 @@ import {
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
+import Links from '@/components/Links.vue'
 import { LOAD_USER_INFO, LOAD_BRIGHT_ID } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
@@ -243,6 +244,7 @@ interface BrightIDStep {
     ProgressBar,
     Transaction,
     Loader,
+    Links,
   },
 })
 export default class VerifyView extends Vue {

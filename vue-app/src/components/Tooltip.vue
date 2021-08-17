@@ -3,7 +3,7 @@
     <slot></slot>
     <span class="tooltip-text">
       <div>{{ content }}</div>
-      <a v-if="link" :href="`${link}`">{{ linkText }}</a>
+      <links v-if="link" :to="link">{{ linkText }}</links>
     </span>
   </div>
 </template>
@@ -12,8 +12,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
+import Links from '@/components/Links.vue'
 
-@Component
+@Component({ components: { Links } })
 export class Tooltip extends Vue {
   @Prop() position!: string
   @Prop() content!: string

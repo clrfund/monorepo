@@ -1,19 +1,19 @@
 <template>
   <nav id="nav-bar">
-    <router-link v-if="!inApp" to="/">
+    <links v-if="!inApp" to="/">
       <img
         class="ef-logo"
         alt="ethereum foundation"
         src="@/assets/eth-diamond-rainbow.svg"
       />
-    </router-link>
-    <router-link v-else to="/projects">
+    </links>
+    <links v-else to="/projects">
       <img
         class="ef-logo"
         alt="ethereum foundation"
         src="@/assets/eth-diamond-rainbow.svg"
       />
-    </router-link>
+    </links>
     <div class="btn-row">
       <div class="help-dropdown" v-if="inApp">
         <img
@@ -24,30 +24,20 @@
         <div id="myHelpDropdown" class="button-menu">
           <div class="dropdown-title">Help</div>
           <div
-            v-for="({ to, href, text, emoji }, idx) of dropdownItems"
+            v-for="({ to, text, emoji }, idx) of dropdownItems"
             :key="idx"
             class="dropdown-item"
           >
-            <template v-if="href">
-              <a :href="href" target="_blank">
-                <div>{{ emoji }}</div>
-                <p class="item-text">{{ text }} ↗</p>
-              </a>
-            </template>
-            <template v-else>
-              <router-link :to="to">
-                <div class="emoji-wrapper">{{ emoji }}</div>
-                <p class="item-text">{{ text }}</p>
-              </router-link>
-            </template>
+            <links :to="to">
+              <div class="emoji-wrapper">{{ emoji }}</div>
+              <p class="item-text">{{ text }}</p>
+            </links>
           </div>
         </div>
       </div>
       <!-- <div class="desktop"><cart-widget v-if="inApp" /></div> -->
       <wallet-widget class="wallet-widget" v-if="inApp" />
-      <router-link v-if="!inApp" to="/projects" class="app-btn">
-        App
-      </router-link>
+      <links v-if="!inApp" to="/projects" class="app-btn">App</links>
     </div>
   </nav>
 </template>
@@ -55,29 +45,30 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import WalletWidget from './WalletWidget.vue'
-import CartWidget from './CartWidget.vue'
 import { Prop } from 'vue-property-decorator'
 
+import WalletWidget from './WalletWidget.vue'
+import CartWidget from './CartWidget.vue'
+import Links from './Links.vue'
+
 @Component({
-  components: { WalletWidget, CartWidget },
+  components: { WalletWidget, CartWidget, Links },
 })
 export default class NavBar extends Vue {
   @Prop() inApp
   profileImageUrl: string | null = null
-  dropdownItems: { to?: string; href?: string; text: string; emoji: string }[] =
-    [
-      { to: '/', text: 'About', emoji: 'ℹ️' },
-      { to: '/how-it-works', text: 'How it works', emoji: '⚙️' },
-      { to: '/about-maci', text: 'Bribery protection', emoji: '🤑' },
-      { to: '/about-sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
-      { to: '/about-layer2', text: 'About [layer 2]', emoji: '🚀' },
-      {
-        href: 'https://github.com/clrfund/monorepo/',
-        text: 'Code',
-        emoji: '👾',
-      },
-    ]
+  dropdownItems: { to?: string; text: string; emoji: string }[] = [
+    { to: '/', text: 'About', emoji: 'ℹ️' },
+    { to: '/how-it-works', text: 'How it works', emoji: '⚙️' },
+    { to: '/about-maci', text: 'Bribery protection', emoji: '🤑' },
+    { to: '/about-sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
+    { to: '/about-layer2', text: 'About [layer 2]', emoji: '🚀' },
+    {
+      to: 'https://github.com/clrfund/monorepo/',
+      text: 'Code',
+      emoji: '👾',
+    },
+  ]
 
   openDropdown(): void {
     document.getElementById('myDropdown')?.classList.toggle('show')
@@ -216,7 +207,7 @@ window.onclick = function (event) {
     }
   }
 
-  .button-menu router-link {
+  .button-menu links {
     font-size: 16px;
   }
 

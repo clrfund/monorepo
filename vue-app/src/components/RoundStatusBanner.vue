@@ -61,7 +61,7 @@
         <span class="label"
           >Funding is closed! Contributions are ready to claim. Head to your
           project page to claim your funds.
-          <router-link to="/projects">View projects</router-link></span
+          <links to="/projects">View projects</links></span
         >
       </div>
     </div>
@@ -74,8 +74,9 @@ import Component from 'vue-class-component'
 
 import { formatDate } from '@/utils/dates'
 import TimeLeft from '@/components/TimeLeft.vue'
+import Links from '@/components/Links.vue'
 
-@Component({ components: { TimeLeft } })
+@Component({ components: { TimeLeft, Links } })
 export default class RoundStatusBanner extends Vue {
   get startDate(): string {
     return formatDate(this.$store.state.currentRound?.startTime)

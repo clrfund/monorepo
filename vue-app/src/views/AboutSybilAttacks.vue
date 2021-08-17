@@ -49,9 +49,12 @@
     <ul>
       <li>
         Download BrightID for
-        <a href="https://apps.apple.com/us/app/brightid/id1428946820">iOS</a> or
-        <a href="https://play.google.com/store/apps/details?id=org.brightid"
-          >Android</a
+        <links to="https://apps.apple.com/us/app/brightid/id1428946820"
+          >iOS</links
+        >
+        or
+        <links to="https://play.google.com/store/apps/details?id=org.brightid"
+          >Android</links
         >
       </li>
       <li>
@@ -64,13 +67,14 @@
       <li>
         Pay a small transaction fee to cover BrightID's costs, also known as
         sponsorship.
-        <a href="https://medium.com/brightid/brightid-sponsorships-5327a8d39f1e"
-          >More on BrightID sponsorship</a
+        <links
+          to="https://medium.com/brightid/brightid-sponsorships-5327a8d39f1e"
+          >More on BrightID sponsorship</links
         >
       </li>
       <li>
         Add yourself to the approved user registry. This is a requirement for
-        <router-link to="/about-maci">MACI, our anti-bribery tech</router-link>.
+        <links to="/about-maci">MACI, our anti-bribery tech</links>.
       </li>
     </ul>
     <h2>More</h2>
@@ -80,8 +84,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import Links from '@/components/Links.vue'
 
-@Component
+@Component({ components: { Links } })
 export default class AboutSybilAttacks extends Vue {}
 </script>
 
