@@ -7,7 +7,7 @@ export enum ChainId {
 }
 
 interface ChainInfo {
-  [chainId: number]: { explorer: string; label: string }
+  [chainId: number]: { explorer: string; label: string; rpcUrl?: string }
 }
 
 export const CHAIN_INFO: ChainInfo = {
@@ -29,6 +29,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.ARBITRUM_RINKEBY]: {
     explorer: 'https://rinkeby-explorer.arbitrum.io/#/',
+    rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     label: 'Arbitrum Rinkeby',
   },
 }

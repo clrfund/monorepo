@@ -1,3 +1,48 @@
+import { CHAIN_INFO } from '../constants/chains'
+
+async function setupNetwork(provider): Promise<void> {
+  const chainId = parseInt(process.env.VUE_APP_ETHEREUM_API_CHAINID || '1', 10)
+  const hexChainId = `0x${chainId.toString(16)}`
+
+  // Recommended usage of these methods
+  // https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
+  try {
+    await provider.request({
+      method: 'wallet_switchEthereumChain',
+      params: [
+        {
+          chainId: hexChainId,
+        },
+      ],
+    })
+  } catch (error) {
+    // This error code indicates that the chain has not been added to MetaMask.
+    if (error.code === 4902 && CHAIN_INFO[chainId].rpcUrl) {
+      try {
+        await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [
+            {
+              chainId: hexChainId,
+              chainName: CHAIN_INFO[chainId].label,
+              nativeCurrency: {
+                name: 'ETH',
+                symbol: 'eth',
+                decimals: 18,
+              },
+              rpcUrls: [CHAIN_INFO[chainId].rpcUrl],
+              blockExplorerUrls: [CHAIN_INFO[chainId].explorer],
+            },
+          ],
+        })
+      } catch (error) {
+        /* eslint-disable-next-line no-console */
+        console.warn('Failed to add network information to wallet.')
+      }
+    }
+  }
+}
+
 export default {
   // TODO: add better return type
   connect: async (): Promise<any | undefined> => {
@@ -11,6 +56,9 @@ export default {
         'Tried to connect to MetaMask but it was not detected. Please install MetaMask.'
       )
     }
+
+    // Prompt the user to add or switch to our supported network
+    await setupNetwork(provider)
 
     let accounts, chainId
     try {
