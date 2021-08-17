@@ -43,17 +43,17 @@
         <li>An Ethereum wallet, with enough gas for two transactions</li>
         <li>Access to Zoom or Google Meet</li>
       </ul>
-      <router-link to="/sybil-resistance/">Why is this important?</router-link>
+      <links to="/sybil-resistance/">Why is this important?</links>
       <div v-if="isRoundFullOrOver" class="warning-message">
         The current round is no longer accepting new contributions. You can
         still get BrightID verified to prepare for next time.
       </div>
       <div class="btn-container">
         <wallet-widget v-if="!currentUser" :isActionButton="true" />
-        <router-link v-if="currentUser" to="/verify/connect" class="btn-primary"
-          >I have BrightID installed</router-link
+        <links v-if="currentUser" to="/verify/connect" class="btn-primary"
+          >I have BrightID installed</links
         >
-        <router-link to="/projects" class="btn-secondary">Go back</router-link>
+        <links to="/projects" class="btn-secondary">Go back</links>
       </div>
     </div>
   </div>
@@ -68,6 +68,7 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { commify, formatUnits } from '@ethersproject/units'
 import WalletWidget from '@/components/WalletWidget.vue'
+import Links from '@/components/Links.vue'
 import Tooltip from '@/components/Tooltip.vue'
 
 @Component({
@@ -76,6 +77,7 @@ import Tooltip from '@/components/Tooltip.vue'
     RoundStatusBanner,
     WalletWidget,
     Tooltip,
+    Links,
   },
 })
 export default class VerifyLanding extends Vue {

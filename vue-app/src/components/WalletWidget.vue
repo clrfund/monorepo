@@ -1,11 +1,7 @@
 <template>
   <div :class="{ container: !isActionButton }">
-    <template v-if="!isLoaded()"></template>
-    <div v-if="walletProvider && !isCorrectNetwork()" class="provider-error">
-      Please change network to {{ networkName }}
-    </div>
     <button
-      v-else-if="!currentUser"
+      v-if="!currentUser"
       :class="isActionButton ? 'btn-action' : 'app-btn'"
       @click="showModal()"
     >
@@ -43,19 +39,16 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { Network } from '@ethersproject/networks'
+import { Prop, Watch } from 'vue-property-decorator'
 import { commify, formatUnits } from '@ethersproject/units'
 
-import { provider as jsonRpcProvider } from '@/api/core'
-import { User } from '@/api/user'
+import { User, getProfileImageUrl } from '@/api/user'
 import WalletModal from '@/components/WalletModal.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import Profile from '@/views/Profile.vue'
 
 @Component({ components: { Profile, WalletModal } })
 export default class WalletWidget extends Vue {
-  private jsonRpcNetwork: Network | null = null
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
   @Prop() showEth!: boolean
@@ -70,10 +63,6 @@ export default class WalletWidget extends Vue {
 
   get currentUser(): User | null {
     return this.$store.state.currentUser
-  }
-
-  get walletProvider(): any {
-    return this.$web3.provider
   }
 
   get walletChainId(): number | null {
@@ -121,45 +110,18 @@ export default class WalletWidget extends Vue {
       }
       accounts = _accounts
     })
-
-    this.jsonRpcNetwork = await jsonRpcProvider.getNetwork()
-  }
-
-  isLoaded(): boolean {
-    return this.jsonRpcNetwork !== null && this.walletChainId !== null
-  }
-
-  isCorrectNetwork(): boolean {
-    if (this.jsonRpcNetwork === null || this.walletChainId === null) {
-      // Still loading
-      return false
-    }
-    return this.jsonRpcNetwork.chainId === this.walletChainId
-  }
-
-  get networkName(): string {
-    if (this.jsonRpcNetwork === null) {
-      return ''
-    } else if (
-      this.jsonRpcNetwork.name === 'unknown' &&
-      this.jsonRpcNetwork.chainId === 100
-    ) {
-      return 'xdai'
-    } else {
-      return this.jsonRpcNetwork.name
-    }
   }
 
   async showModal(): Promise<void> {
-    this.$modal.show(
-      WalletModal,
-      { updateProfileImage: this.updateProfileImage },
-      { width: 400, top: 20 }
-    )
+    this.$modal.show(WalletModal, {}, { width: 400, top: 20 })
   }
 
-  updateProfileImage(url: string): void {
-    this.profileImageUrl = url
+  @Watch('currentUser')
+  async updateProfileImage(currentUser: User): Promise<void> {
+    if (currentUser) {
+      const url = await getProfileImageUrl(currentUser.walletAddress)
+      this.profileImageUrl = url
+    }
   }
 
   // TODO: Extract into a shared function
@@ -190,10 +152,6 @@ export default class WalletWidget extends Vue {
 .container {
   margin-left: 0.5rem;
   width: fit-content;
-}
-
-.provider-error {
-  text-align: center;
 }
 
 .profile-info {

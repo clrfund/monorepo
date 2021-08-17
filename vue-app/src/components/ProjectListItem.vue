@@ -1,12 +1,12 @@
 <template>
   <div class="project-item">
     <div>
-      <router-link :to="{ name: 'project', params: { id: project.id } }">
+      <links :to="{ name: 'project', params: { id: project.id } }">
         <div class="project-image">
           <img :src="projectImageUrl" :alt="project.name" />
           <div class="tag">{{ project.category }}</div>
         </div>
-      </router-link>
+      </links>
       <div class="project-info">
         <div
           style="
@@ -16,23 +16,23 @@
             margin-bottom: 1rem;
           "
         >
-          <router-link
+          <links
             class="project-name"
             :to="{ name: 'project', params: { id: project.id } }"
           >
             {{ project.name }}
-          </router-link>
+          </links>
         </div>
-        <router-link :to="{ name: 'project', params: { id: project.id } }">
+        <links :to="{ name: 'project', params: { id: project.id } }">
           <div class="project-description">{{ project.tagline }}</div>
-        </router-link>
+        </links>
       </div>
     </div>
     <div class="buttons">
       <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
-      <router-link :to="{ name: 'project', params: { id: project.id } }">
+      <links :to="{ name: 'project', params: { id: project.id } }">
         <button class="more-btn">More</button>
-      </router-link>
+      </links>
     </div>
   </div>
 </template>
@@ -42,6 +42,7 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 
 import AddToCartButton from '@/components/AddToCartButton.vue'
+import Links from '@/components/Links.vue'
 import { CartItem } from '@/api/contributions'
 import { Project } from '@/api/projects'
 import { markdown } from '@/utils/markdown'
@@ -49,6 +50,7 @@ import { markdown } from '@/utils/markdown'
 @Component({
   components: {
     AddToCartButton,
+    Links,
   },
 })
 export default class ProjectListItem extends Vue {

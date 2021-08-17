@@ -28,20 +28,18 @@
     <h2>Join phase</h2>
     <p>
       To kick things off, projects will be invited to
-      <router-link to="/join">join the round</router-link>. If you're an eager
-      contributor, you'll be able to browse the projects and add them to your
-      cart but you won't be able to contribute just yet.
+      <links to="/join">join the round</links>. If you're an eager contributor,
+      you'll be able to browse the projects and add them to your cart but you
+      won't be able to contribute just yet.
     </p>
     <h3>Need to know</h3>
     <ul>
       <li>This phase will last xxx days.</li>
       <li>There will be a maximum of 125 projects in the round.</li>
-      <li>
-        Projects must meet <router-link to="/join">round criteria</router-link>.
-      </li>
+      <li>Projects must meet <links to="/join">round criteria</links>.</li>
       <li>
         If you want to contribute, this is a perfect time to get
-        <router-link to="/verify">set up to contribute</router-link>.
+        <links to="/verify">set up to contribute</links>.
       </li>
     </ul>
     <h2>Contribution phase</h2>
@@ -55,7 +53,7 @@
       <li>This phase will last xxx days.</li>
       <li>
         You will need to go through some
-        <router-link to="/verify">setup</router-link> before you can contribute.
+        <links to="/verify">setup</links> before you can contribute.
       </li>
       <li>You can contribute to a maximum of 13 projects in the round.</li>
       <li>
@@ -116,13 +114,10 @@
       actors. You can learn more about them below:
     </p>
     <ul>
+      <li><links to="/about-maci">MACI</links> – to protect against bribery</li>
       <li>
-        <router-link to="/about-maci">MACI</router-link> – to protect against
-        bribery
-      </li>
-      <li>
-        <router-link to="/about-sybil-attacks">BrightID</router-link> – to
-        protect against sybil attacks
+        <links to="/about-sybil-attacks">BrightID</links> – to protect against
+        sybil attacks
       </li>
     </ul>
   </div>
@@ -131,9 +126,10 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import Links from '@/components/Links.vue'
 
 // TODO connect with state to add durations to content
-@Component
+@Component({ components: { Links } })
 export default class HowItWorks extends Vue {}
 </script>
 

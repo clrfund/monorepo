@@ -34,7 +34,6 @@
 // Libraries
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
 
 // Components
 import Loader from '@/components/Loader.vue'
@@ -45,8 +44,6 @@ import Loader from '@/components/Loader.vue'
   },
 })
 export default class WalletModal extends Vue {
-  @Prop() updateProfileImage!: (profileImageUrl: string | null) => void
-
   connectingWallet = false
   error = ''
 

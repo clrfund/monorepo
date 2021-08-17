@@ -5,6 +5,7 @@ import WalletConnectProvider from '@walletconnect/web3-provider'
 import MetamaskConnector from './connectors/MetamaskConnector'
 import WalletConnectConnector from './connectors/WalletConnectConnector'
 import { lsGet, lsSet, lsRemove } from '@/utils/connection'
+import { CHAIN_INFO } from './constants/chains'
 
 export type Wallet = 'metamask' | 'walletconnect'
 
@@ -68,7 +69,7 @@ export default {
           `Unsupported chain id: ${conn.chainId}. Supported chain id is: ${supportedChainId}`
         )
         throw new Error(
-          'Wrong Network. Please connect to the appropriate Ethereum network.'
+          `Wrong Network. Please connect to the ${CHAIN_INFO[supportedChainId].label} Ethereum network.`
         )
       }
 

@@ -66,29 +66,31 @@
     <h3>Further reading</h3>
     <ul>
       <li>
-        <a
-          href="https://ethresear.ch/t/minimal-anti-collusion-infrastructure/541"
-          >Vitalik Buterin on Minimal anti-collusion infrastructure</a
+        <links
+          to="https://ethresear.ch/t/minimal-anti-collusion-infrastructure/541"
+          >Vitalik Buterin on Minimal anti-collusion infrastructure</links
         >
       </li>
-      <li><a href="https://github.com/appliedzkp/maci">The MACI repo</a></li>
       <li>
-        <a
-          href="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md"
-          >The technical spec</a
+        <links to="https://github.com/appliedzkp/maci">The MACI repo</links>
+      </li>
+      <li>
+        <links
+          to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md"
+          >The technical spec</links
         >
       </li>
     </ul>
     <h3>Videos</h3>
     <ul>
       <li>
-        <a href="https://www.youtube.com/watch?v=ooxgPzdaZ_s"
-          >MACI high-level intro</a
+        <links to="https://www.youtube.com/watch?v=ooxgPzdaZ_s"
+          >MACI high-level intro</links
         >
       </li>
       <li>
-        <a href="https://www.youtube.com/watch?v=sKuNj_IQVYI"
-          >MACI technical intro</a
+        <links to="https://www.youtube.com/watch?v=sKuNj_IQVYI"
+          >MACI technical intro</links
         >
       </li>
     </ul>
@@ -98,8 +100,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import Links from '@/components/Links.vue'
 
-@Component
+@Component({ components: { Links } })
 export default class AboutMaci extends Vue {}
 </script>
 

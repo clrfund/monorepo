@@ -30,8 +30,8 @@
           </div>
         </div>
       </div>
-      <router-link to="/join/project" class="btn-primary fit-content"
-        >Add project</router-link
+      <links to="/join/project" class="btn-primary fit-content"
+        >Add project</links
       >
     </div>
   </div>
@@ -41,8 +41,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
+import Links from '@/components/Links.vue'
 
-@Component
+@Component({ components: { Links } })
 export default class CriteriaModal extends Vue {
   @Prop() toggleCriteria!: () => void
 
