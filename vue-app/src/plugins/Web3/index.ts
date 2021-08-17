@@ -122,7 +122,6 @@ export default {
 
     // If previous provider was found, initiate connection.
     if (alreadyConnectedProvider) {
-      console.log({ alreadyConnectedProvider })
       plugin.connectWallet(alreadyConnectedProvider)
     }
 
