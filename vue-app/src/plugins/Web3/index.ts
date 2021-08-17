@@ -1,9 +1,10 @@
-import { LOGIN_MESSAGE, User } from '@/api/user'
+import { LOGIN_MESSAGE } from '@/api/user'
 import { sha256 } from '@/utils/crypto'
 import { Web3Provider } from '@ethersproject/providers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import MetamaskConnector from './connectors/MetamaskConnector'
 import WalletConnectConnector from './connectors/WalletConnectConnector'
+import { lsGet, lsSet, lsRemove } from '@/utils/connection'
 
 export type Wallet = 'metamask' | 'walletconnect'
 
@@ -14,19 +15,23 @@ const connectors: Record<Wallet, any> = {
 
 export default {
   install: async (Vue) => {
+    const alreadyConnectedProvider: Wallet | null = lsGet(
+      'connectedProvider',
+      null
+    )
+
     const plugin = new Vue({
       data: {
         accounts: [],
         provider: null,
         chainId: null,
+        user: null,
         // TODO: add `defaultProvider` in order to have everything web3 related
         // encapsulated here in this plugin
       },
     })
 
-    plugin.connectWallet = async (
-      wallet: Wallet
-    ): Promise<User | undefined> => {
+    plugin.connectWallet = async (wallet: Wallet): Promise<void> => {
       if (!wallet || typeof wallet !== 'string') {
         throw new Error(
           'Please provide a wallet to facilitate a web3 connection.'
@@ -46,6 +51,9 @@ export default {
         method: 'personal_sign',
         params: [LOGIN_MESSAGE, account],
       })
+
+      // Save chosen provider to localStorage
+      lsSet('connectedProvider', wallet)
 
       // Check if user is using the supported chain id
       const supportedChainId = Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
@@ -68,6 +76,19 @@ export default {
       plugin.accounts = conn.accounts
       plugin.provider = conn.provider
       plugin.chainId = conn.chainId
+      plugin.user = {
+        ...conn,
+        // TODO: we are keeping most of these things for compatibility with
+        // old code because we are storing them in vuex. Clean this up, do not
+        // store them and read them directly from the plugin, `this.$web3`.
+        // Separate the concept of User from here. Create the User when the
+        // connection is made, from the consumer.
+        encryptionKey: sha256(signature),
+        balance: null,
+        contribution: null,
+        walletProvider: new Web3Provider(conn.provider),
+        walletAddress: account,
+      }
 
       // Emit EIP-1193 events and update plugin values
       conn.provider.on('accountsChanged', (newAccounts) => {
@@ -82,26 +103,12 @@ export default {
         plugin.disconnectWallet()
         plugin.$emit('disconnect')
       })
-
-      return {
-        ...conn,
-        // TODO: we are keeping most of these things for compatibility with
-        // old code because we are storing them in vuex. Clean this up, do not
-        // store them and read them directly from the plugin, `this.$web3`.
-        // Separate the concept of User from here. Create the User when the
-        // connection is made, from the consumer.
-        encryptionKey: sha256(signature),
-        balance: null,
-        contribution: null,
-        walletProvider: new Web3Provider(conn.provider),
-        walletAddress: account,
-      }
     }
 
     plugin.disconnectWallet = () => {
       plugin.accounts = []
       plugin.chainId = null
-
+      lsRemove('connectedProvider')
       if (plugin.provider?.disconnect) {
         plugin.provider.disconnect()
       }
@@ -110,6 +117,13 @@ export default {
       }
 
       plugin.provider = null
+      plugin.user = null
+    }
+
+    // If previous provider was found, initiate connection.
+    if (alreadyConnectedProvider) {
+      console.log({ alreadyConnectedProvider })
+      plugin.connectWallet(alreadyConnectedProvider)
     }
 
     Object.defineProperty(Vue.prototype, '$web3', {
