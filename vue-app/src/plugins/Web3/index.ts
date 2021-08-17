@@ -123,7 +123,11 @@ export default {
 
     // If previous provider was found, initiate connection.
     if (alreadyConnectedProvider) {
-      plugin.connectWallet(alreadyConnectedProvider)
+      try {
+        await plugin.connectWallet(alreadyConnectedProvider)
+      } catch (error) {
+        plugin.disconnectWallet()
+      }
     }
 
     Object.defineProperty(Vue.prototype, '$web3', {
