@@ -10,24 +10,46 @@
           Hurry, only {{ recipientSpacesRemainingString }} left!
         </span>
         <span v-if="!$store.getters.isRecipientRegistryFull" class="label">
-          Time left to add a project: {{ joinTimeRemaining }}.</span
-        >
+          Time left to add a project:
+          <time-left
+            unitClass="none"
+            valueClass="none"
+            :date="$store.getters.recipientJoinDeadline"
+          />
+        </span>
       </div>
       <div v-if="$store.getters.isRoundContributionPhase" class="messsage">
-        <span v-if="$store.getters.isRoundContributionPhaseEnding" class="label"
-          >⌛️ The round will close in {{ contributionTimeRemaining }}. Get your
-          contributions in now!
+        <span
+          v-if="$store.getters.isRoundContributionPhaseEnding"
+          class="label"
+        >
+          ⌛️ The round will close in
+          <time-left
+            unitClass="none"
+            valueClass="none"
+            :date="$store.state.currentRound.signUpDeadline"
+          />. Get your contributions in now!
         </span>
         <span v-else class="label"
-          >🎉 The round is open! {{ contributionTimeRemaining }} left to
-          contribute to your favourite projects
+          >🎉 The round is open!
+          <time-left
+            unitClass="none"
+            valueClass="none"
+            :date="$store.state.currentRound.signUpDeadline"
+          />
+          left to contribute to your favourite projects
         </span>
       </div>
       <div v-if="$store.getters.isRoundReallocationPhase" class="messsage">
-        <span class="label"
-          >Funding is closed! If you contributed, you have
-          {{ reallocationTimeRemaining }} left to change your mind</span
-        >
+        <span class="label">
+          Funding is closed! If you contributed, you have
+          <time-left
+            unitClass="none"
+            valueClass="none"
+            :date="$store.state.currentRound.votingDeadline"
+          />
+          left to change your mind
+        </span>
       </div>
       <div v-if="$store.getters.isRoundTallying" class="messsage">
         <span class="label"
@@ -49,30 +71,19 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { formatDate, formatDateFromNow } from '@/utils/dates'
 
-@Component
+import { formatDate } from '@/utils/dates'
+import TimeLeft from '@/components/TimeLeft.vue'
+
+@Component({ components: { TimeLeft } })
 export default class RoundStatusBanner extends Vue {
   get startDate(): string {
     return formatDate(this.$store.state.currentRound?.startTime)
   }
 
-  get joinTimeRemaining(): string {
-    return formatDateFromNow(this.$store.getters.recipientJoinDeadline)
-  }
-
-  get contributionTimeRemaining(): string {
-    return formatDateFromNow(this.$store.state.currentRound?.signUpDeadline)
-  }
-
-  get reallocationTimeRemaining(): string {
-    return formatDateFromNow(this.$store.state.currentRound?.votingDeadline)
-  }
-
   get recipientSpacesRemainingString(): string {
-    return this.$store.getters.recipientSpacesRemaining === 1
-      ? `${this.$store.getters.recipientSpacesRemaining} project space`
-      : `${this.$store.getters.recipientSpacesRemaining} project spaces`
+    const spaces: number = this.$store.getters.recipientSpacesRemaining
+    return `${spaces} project space${spaces !== 1 && 's'}`
   }
 }
 </script>

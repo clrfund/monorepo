@@ -11,10 +11,7 @@
             <tooltip
               position="top"
               :content="currentRound.fundingRoundAddress"
-              :link="
-                'https://etherscan.io/address/' +
-                currentRound.fundingRoundAddress
-              "
+              :link="blockExplorerUrl"
               linkText="View on Etherscan"
               ><div class="verified"><img src="@/assets/verified.svg" /></div
             ></tooltip>
@@ -32,10 +29,7 @@
             </div>
           </div>
           <div class="round-info-value">
-            <div class="value">{{ joinTimeLeft.days }}</div>
-            <div class="unit">days</div>
-            <div class="value">{{ joinTimeLeft.hours }}</div>
-            <div class="unit">hours</div>
+            <time-left :date="$store.getters.recipientJoinDeadline" />
           </div>
         </div>
         <div
@@ -62,18 +56,7 @@
               formatDate(currentRound.signUpDeadline)
             "
           >
-            <div class="value" v-if="contributionTimeLeft.days > 0">
-              {{ contributionTimeLeft.days }}
-            </div>
-            <div class="unit" v-if="contributionTimeLeft.days > 0">days</div>
-            <div class="value">{{ contributionTimeLeft.hours }}</div>
-            <div class="unit">hours</div>
-            <div class="value" v-if="contributionTimeLeft.days === 0">
-              {{ contributionTimeLeft.minutes }}
-            </div>
-            <div class="unit" v-if="contributionTimeLeft.days === 0">
-              minutes
-            </div>
+            <time-left :date="$store.state.currentRound.signUpDeadline" />
           </div>
         </div>
         <div
@@ -99,7 +82,7 @@
                 ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
               /></tooltip>
               <tooltip
-                v-else-if="!this.$store.state.currentUser"
+                v-else-if="!$store.state.currentUser"
                 position="right"
                 content="If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet."
                 ><img style="opacity: 0.6" width="16px" src="@/assets/info.svg"
@@ -123,20 +106,7 @@
               "
             >
               <div class="round-info-value">
-                <div class="value" v-if="reallocationTimeLeft.days > 0">
-                  {{ reallocationTimeLeft.days }}
-                </div>
-                <div class="unit" v-if="reallocationTimeLeft.days > 0">
-                  days
-                </div>
-                <div class="value">{{ reallocationTimeLeft.hours }}</div>
-                <div class="unit">hours</div>
-                <div class="value" v-if="reallocationTimeLeft.days === 0">
-                  {{ reallocationTimeLeft.minutes }}
-                </div>
-                <div class="unit" v-if="reallocationTimeLeft.days === 0">
-                  minutes
-                </div>
+                <time-left :date="$store.state.currentRound.votingDeadline" />
               </div>
             </div>
           </div>
@@ -284,19 +254,20 @@ import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { RoundInfo, getCurrentRound, TimeLeft } from '@/api/round'
+import { RoundInfo, getCurrentRound } from '@/api/round'
 import {
   Project,
   getRecipientRegistryAddress,
   getProjects,
 } from '@/api/projects'
+import { blockExplorer } from '@/api/core'
 
-import { getTimeLeft } from '@/utils/dates'
 import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import Tooltip from '@/components/Tooltip.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
+import TimeLeft from '@/components/TimeLeft.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -329,6 +300,7 @@ function shuffleArray(array: any[]) {
     ProjectListItem,
     Loader,
     Tooltip,
+    TimeLeft,
   },
 })
 export default class RoundInformation extends Vue {
@@ -379,18 +351,6 @@ export default class RoundInformation extends Vue {
 
   get currentRound(): RoundInfo | null {
     return this.$store.state.currentRound
-  }
-
-  get joinTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.getters.recipientJoinDeadline)
-  }
-
-  get contributionTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
-  }
-
-  get reallocationTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   get formatTotalInRound(): string {
@@ -444,6 +404,13 @@ export default class RoundInformation extends Vue {
         },
       }
     )
+  }
+
+  get blockExplorerUrl(): string {
+    if (!this.currentRound) {
+      return ''
+    }
+    return `${blockExplorer}/address/${this.currentRound.fundingRoundAddress}`
   }
 }
 </script>

@@ -155,10 +155,6 @@ export default class ContributionModal extends Vue {
     return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
   }
 
-  get reallocationTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
-  }
-
   getTotal(): BigNumber {
     const { voiceCreditFactor } = this.currentRound
     return this.votes.reduce((total: BigNumber, [, voiceCredits]) => {

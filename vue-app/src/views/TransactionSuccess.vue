@@ -27,10 +27,11 @@
         >
           Your choices have been updated! You can update your choices again any
           time in the next
-          <span class="contributed-content-bold"
-            >{{ reallocationTimeLeft.days }} days
-            {{ reallocationTimeLeft.hours }} hours</span
-          >.
+          <time-left
+            valueClass="contributed-content-bold"
+            unitClass="contributed-content-bold"
+            :date="currentRound.votingDeadline"
+          />.
         </p>
         <p
           v-else-if="$route.params.type === 'contribution'"
@@ -38,10 +39,11 @@
         >
           Thanks for contributing to the Eth2 ecosystem. If you change your
           mind, you have
-          <span class="contributed-content-bold"
-            >{{ reallocationTimeLeft.days }} days
-            {{ reallocationTimeLeft.hours }} hours</span
-          >
+          <time-left
+            valueClass="contributed-content-bold"
+            unitClass="contributed-content-bold"
+            :date="currentRound.votingDeadline"
+          />
           to reallocate your contributions.
         </p>
         <div class="receipt" v-if="$route.params.hash">
@@ -64,17 +66,17 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 // API
-import { RoundInfo, TimeLeft } from '@/api/round'
+import { RoundInfo } from '@/api/round'
 
 // Components
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
+import TimeLeft from '@/components/TimeLeft.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
-import { getTimeLeft } from '@/utils/dates'
 
 @Component({
-  components: { TransactionReceipt },
+  components: { TransactionReceipt, TimeLeft },
 })
 export default class TransactionSuccess extends Vue {
   get contribution(): BigNumber | null {
@@ -83,10 +85,6 @@ export default class TransactionSuccess extends Vue {
 
   get currentRound(): RoundInfo | null {
     return this.$store.state.currentRound
-  }
-
-  get reallocationTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   formatContribution() {
