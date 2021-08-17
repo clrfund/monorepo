@@ -300,11 +300,7 @@ import {
   MAX_CART_SIZE,
   CartItem,
 } from '@/api/contributions'
-import {
-  userRegistryType,
-  provider as jsonRpcProvider,
-  UserRegistryType,
-} from '@/api/core'
+import { userRegistryType, UserRegistryType } from '@/api/core'
 import { RoundStatus, TimeLeft } from '@/api/round'
 import { LOGOUT_USER, SAVE_CART } from '@/store/action-types'
 import { User } from '@/api/user'
@@ -314,7 +310,6 @@ import {
   TOGGLE_SHOW_CART_PANEL,
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
-import { getNetworkName } from '@/utils/networks'
 import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
@@ -322,7 +317,6 @@ import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
   components: { Tooltip, WalletWidget, CartItems, CartTimeLeft },
 })
 export default class Cart extends Vue {
-  private jsonRpcNetwork: Network | null = null
   profileImageUrl: string | null = null
 
   removeAll(): void {
@@ -441,8 +435,6 @@ export default class Cart extends Vue {
       }
       accounts = _accounts
     })
-
-    this.jsonRpcNetwork = await jsonRpcProvider.getNetwork()
   }
 
   get tokenSymbol(): string {
