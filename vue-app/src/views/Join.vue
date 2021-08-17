@@ -614,7 +614,10 @@
                   <h4 class="read-only-title">GitHub</h4>
                   <div class="data">
                     {{ form.links.github }}
-                    <links v-if="form.links.github" :to="form.links.github"
+                    <links
+                      v-if="form.links.github"
+                      :to="form.links.github"
+                      :hideArrow="true"
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
@@ -624,7 +627,10 @@
                   <h4 class="read-only-title">Twitter</h4>
                   <div class="data">
                     {{ form.links.twitter }}
-                    <links v-if="form.links.twitter" :to="form.links.twitter"
+                    <links
+                      v-if="form.links.twitter"
+                      :to="form.links.twitter"
+                      :hideArrow="true"
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
@@ -636,7 +642,10 @@
                   <h4 class="read-only-title">Website</h4>
                   <div class="data" key="">
                     {{ form.links.website }}
-                    <links v-if="form.links.website" :to="form.links.website"
+                    <links
+                      v-if="form.links.website"
+                      :to="form.links.website"
+                      :hideArrow="true"
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
@@ -648,7 +657,10 @@
                   <h4 class="read-only-title">Discord</h4>
                   <div class="data">
                     {{ form.links.discord }}
-                    <links v-if="form.links.discord" :to="form.links.discord"
+                    <links
+                      v-if="form.links.discord"
+                      :to="form.links.discord"
+                      :hideArrow="true"
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
@@ -660,7 +672,10 @@
                   <h4 class="read-only-title">Radicle</h4>
                   <div class="data">
                     {{ form.links.radicle }}
-                    <links v-if="form.links.radicle" :to="form.links.radicle"
+                    <links
+                      v-if="form.links.radicle"
+                      :to="form.links.radicle"
+                      :hideArrow="true"
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>

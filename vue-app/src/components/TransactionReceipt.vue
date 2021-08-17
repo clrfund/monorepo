@@ -11,6 +11,7 @@
         class="explorerLink"
         :to="blockExplorerUrl"
         title="View on Etherscan"
+        :hideArrow="true"
         ><img class="icon" src="@/assets/etherscan.svg"
       /></links>
       <copy-button

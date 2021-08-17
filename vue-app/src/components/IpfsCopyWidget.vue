@@ -11,7 +11,7 @@
         myClass="ipfs-copy-widget"
       />
       <tooltip position="bottom" content="View IPFS link">
-        <links :to="'https://ipfs.io/ipfs/' + hash">
+        <links :to="'https://ipfs.io/ipfs/' + hash" :hideArrow="true">
           <img class="icon" src="@/assets/ipfs-white.svg" />
         </links>
       </tooltip>

@@ -11,15 +11,15 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Ready to contribute!</h1>
-            <links v-if="txHash" :to="blockExplorerUrl"
-              ><div class="etherscan-btn">
+            <links v-if="txHash" :to="blockExplorerUrl">
+              <div class="etherscan-btn">
                 <img
                   class="icon"
                   style="width: 16px"
                   src="@/assets/etherscan.svg"
-                />Etherscan ↗
-              </div></links
-            >
+                />Etherscan
+              </div>
+            </links>
           </div>
           <div class="subtitle">
             You’re on board this funding round! And fully verified for BrightID
