@@ -29,8 +29,6 @@ import {
   getEtherBalance,
   getTokenBalance,
   isVerifiedUser,
-  getBrightId,
-  BrightId,
 } from '@/api/user'
 import {
   getRegistryInfo,
@@ -40,6 +38,7 @@ import {
 
 // Constants
 import {
+  LOAD_BRIGHT_ID,
   LOAD_CART,
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
@@ -80,6 +79,7 @@ import {
 import { isSameAddress } from '@/utils/accounts'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { UserRegistryType, userRegistryType } from '@/api/core'
+import { BrightId, getBrightId } from '@/api/bright-id'
 
 Vue.use(Vuex)
 
@@ -288,17 +288,6 @@ const actions = {
         state.currentUser.walletAddress
       )
 
-      // If the user is registered, we assume all brightId steps as done
-      let brightId: BrightId = {
-        isLinked: true,
-        isSponsored: true,
-        isVerified: true,
-      }
-      if (!isRegistered && userRegistryType === UserRegistryType.BRIGHT_ID) {
-        // Fetch brightId info
-        brightId = await getBrightId(state.currentUser.walletAddress)
-      }
-
       const etherBalance = await getEtherBalance(
         state.currentUser.walletAddress
       )
@@ -328,10 +317,29 @@ const actions = {
 
       commit(SET_CURRENT_USER, {
         ...state.currentUser,
-        brightId,
         isRegistered,
         balance,
         etherBalance,
+      })
+    }
+  },
+  async [LOAD_BRIGHT_ID]({ commit, state }) {
+    if (state.currentUser && userRegistryType === UserRegistryType.BRIGHT_ID) {
+      // If the user is registered, we assume all brightId steps as done
+      let brightId: BrightId = {
+        isLinked: true,
+        isSponsored: true,
+        isVerified: true,
+      }
+
+      if (!state.currentUser.isRegistered) {
+        // If not registered, then fetch brightId data
+        brightId = await getBrightId(state.currentUser.walletAddress)
+      }
+
+      commit(SET_CURRENT_USER, {
+        ...state.currentUser,
+        brightId,
       })
     }
   },
@@ -543,14 +551,19 @@ const getters = {
       (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
     )
   },
-
-  isRecipientRegistryOwner(state: RootState): boolean {
+  isRecipientRegistryOwner: (state: RootState): boolean => {
     if (!state.currentUser || !state.recipientRegistryInfo) {
       return false
     }
     return isSameAddress(
       state.currentUser.walletAddress,
       state.recipientRegistryInfo.owner
+    )
+  },
+  isMessageLimitReached: (state: RootState): boolean => {
+    return (
+      !!state.currentRound &&
+      state.currentRound.maxMessages <= state.currentRound.messages
     )
   },
 }

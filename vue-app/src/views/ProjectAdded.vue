@@ -57,8 +57,6 @@ import { blockExplorer } from '@/api/core'
 })
 export default class ProjectAdded extends Vue {
   challengePeriodDuration: number | null = null
-  startDate = '03 April' // TODO: use Date() object
-  timeRemaining = '17 days' // TODO: startDate - new Date() -> parse to days/hours/minutes accordinging
   txHash = ''
 
   async created() {
@@ -71,7 +69,7 @@ export default class ProjectAdded extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}${this.txHash}`
+    return `${blockExplorer}/tx/${this.txHash}`
   }
 
   formatDuration(seconds: number): string {

@@ -1,5 +1,10 @@
 <template>
-  <div v-if="isProjectCard" class="setup-container-project-card">
+  <div
+    :class="{
+      'bright-id-widget-container': true,
+      'bright-id-profile-widget': !isProjectCard,
+    }"
+  >
     <div class="row">
       <div v-if="isVerified">
         <icon-status
@@ -8,27 +13,15 @@
           secondaryLogo="checkmark.svg"
         />
       </div>
-      <div v-if="!isVerified">
+      <div v-else>
         <icon-status
           v-bind:sad="true"
           logo="brightid.svg"
           secondaryLogo="close-black.svg"
         />
       </div>
-      <!-- TODO: should this icon demo verified status or completion of entire setup? Is it even needed?-->
       <h2>BrightID setup</h2>
-      <p>
-        <span
-          :class="{
-            step0: !isLinked && !isVerified && !isSponsored && !isRegistered,
-            step1: isLinked,
-            step2: isVerified || isSponsored,
-            step3: isVerified && isSponsored,
-            step4: isRegistered,
-          }"
-        />
-        / 4
-      </p>
+      <p>{{ getCurrentStep }} / 4</p>
     </div>
     <div class="progress">
       <div
@@ -40,75 +33,33 @@
         }"
       />
     </div>
-  </div>
-  <div v-else class="setup-container">
-    <div class="row">
-      <div v-if="isVerified">
-        <icon-status
-          v-bind:happy="true"
-          logo="brightid.svg"
-          secondaryLogo="checkmark.svg"
-        />
-      </div>
-      <div v-if="!isVerified">
-        <icon-status
-          v-bind:sad="true"
-          logo="brightid.svg"
-          secondaryLogo="close-black.svg"
-        />
-      </div>
-      <!-- TODO: should this icon demo verified status or completion of entire setup? Is it even needed?-->
-      <h2>BrightID setup</h2>
-      <p>
-        <span
-          :class="{
-            step0: !isLinked && !isVerified && !isSponsored && !isRegistered,
-            step1: isLinked,
-            step2: isVerified || isSponsored,
-            step3: isVerified && isSponsored,
-            step4: isRegistered,
-          }"
-        />
-        / 4
-      </p>
-    </div>
-    <div class="progress">
-      <div
-        :class="{
-          half: isVerified || isSponsored,
-          quarter: isLinked,
-          'three-quarters': isVerified && isSponsored,
-          full: isRegistered,
-        }"
-      />
-    </div>
-    <div class="row">
-      <div v-if="isLinked">
-        <div v-if="isRegistered">
-          <a href="/#/projects"
-            >Start contributing
-            <span role="img" aria-label="party emoji">🎉</span></a
-          >
+    <div v-if="!isProjectCard" class="setup-container">
+      <div class="row">
+        <div v-if="isLinked">
+          <div v-if="isRegistered">
+            <a href="/#/projects"
+              >Start contributing
+              <span role="img" aria-label="party emoji">🎉</span></a
+            >
+          </div>
+          <div v-else>
+            <a href="/#/verify/" @click="toggleProfile">Continue setup</a>
+          </div>
         </div>
-        <div v-else>
-          <a href="/#/setup/get-verified/:step">Continue setup</a>
-        </div>
+        <a href="/#/verify/" @click="toggleProfile" v-else>Start setup</a>
+        <tooltip
+          position="left"
+          :content="
+            isVerified
+              ? 'You\'re a verified human on BrightID!'
+              : 'Your BrightID profile still needs to be verified.'
+          "
+        >
+          <p :class="isVerified ? 'brightid-verified' : 'unverified'">
+            {{ isVerified ? 'Verified' : 'Unverified' }}
+          </p>
+        </tooltip>
       </div>
-      <!-- <a href="#" v-if="isLinked || isVerified || isSponsored">Continue setup</a>
-      <a href="#" v-if="isRegistered">Start contributing</a> -->
-      <a href="/#/setup/" v-else>Start setup</a>
-      <tooltip
-        position="left"
-        :content="
-          isVerified
-            ? 'You\'re a verified human on BrightID!'
-            : 'Your BrightID profile still needs to be verified.'
-        "
-      >
-        <p :class="isVerified ? 'brightid-verified' : 'unverified'">
-          {{ isVerified ? 'Verified' : 'Unverified' }}
-        </p>
-      </tooltip>
     </div>
   </div>
 </template>
@@ -125,15 +76,58 @@ import IconStatus from '@/components/IconStatus.vue'
   components: { Tooltip, IconStatus },
 })
 export default class BrightIdWidget extends Vue {
-  isLinked = true // TODO add logic: user wallet is connected && BrightID profile is linked to user ETH address
-  isVerified = true // TODO add logic: user is verified with Bright ID (NOT necessarily in the registry contract)
-  isSponsored = true // TODO add logic
-  isRegistered = true // TODO add logic: user is registered in the user registry contract
-
-  // You can only have isRegistered status if all the above are true
   @Prop() abbrev!: string
   @Prop() balance!: string
   @Prop() isProjectCard!: boolean
+  @Prop() toggleProfile!: void
+
+  get isLinked(): boolean {
+    return (
+      this.$store.state.currentUser &&
+      this.$store.state.currentUser.brightId.isLinked
+    )
+  }
+
+  get isVerified(): boolean {
+    return (
+      this.$store.state.currentUser &&
+      this.$store.state.currentUser.brightId.isVerified
+    )
+  }
+
+  get isSponsored(): boolean {
+    return (
+      this.$store.state.currentUser &&
+      this.$store.state.currentUser.brightId.isSponsored
+    )
+  }
+
+  get isRegistered(): boolean {
+    return (
+      this.$store.state.currentUser &&
+      this.$store.state.currentUser.isRegistered
+    )
+  }
+
+  get getCurrentStep(): number {
+    if (!this.isLinked) {
+      return 0
+    }
+
+    if (!this.isSponsored) {
+      return 1
+    }
+
+    if (!this.isVerified) {
+      return 2
+    }
+
+    if (!this.isRegistered) {
+      return 3
+    }
+
+    return 4
+  }
 }
 </script>
 
@@ -144,7 +138,7 @@ export default class BrightIdWidget extends Vue {
 .setup-container {
   background: $bg-secondary-color;
   border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 0.5rem 0;
   width: auto;
   height: auto;
 
@@ -197,7 +191,7 @@ export default class BrightIdWidget extends Vue {
   }
 }
 
-.setup-container-project-card {
+.bright-id-widget-container {
   background: $bg-secondary-color;
   border-radius: 0.5rem;
 
@@ -209,6 +203,10 @@ export default class BrightIdWidget extends Vue {
     font-family: 'Glacial Indifference', sans-serif;
     margin: 0;
   }
+}
+
+.bright-id-profile-widget {
+  padding: 1rem;
 }
 
 .row {

@@ -313,7 +313,7 @@ describe('Funding Round', () => {
       )
       await expect(messagePublished).to.emit(maci, 'PublishMessage')
       const publishTx = await messagePublished
-      expect(await getGasUsage(publishTx)).lessThan(800000)
+      expect(await getGasUsage(publishTx)).lessThan(2100000)
     })
 
     it('submits a key-changing message', async () => {
@@ -406,7 +406,7 @@ describe('Funding Round', () => {
         messages,
         encPubKeys
       )
-      expect(await getGasUsage(messageBatchSubmitted)).lessThan(2100000)
+      expect(await getGasUsage(messageBatchSubmitted)).lessThan(4900000)
     }).timeout(100000)
   })
 

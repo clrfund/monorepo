@@ -9,7 +9,7 @@
     <div class="actions">
       <a
         class="explorerLink"
-        :href="'https://etherscan.io/tx/' + hash"
+        :href="blockExplorerUrl"
         target="_blank"
         title="View on Etherscan"
         ><img class="icon" src="@/assets/etherscan.svg"
@@ -75,7 +75,7 @@ export default class TransactionReceipt extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}${this.hash}`
+    return `${blockExplorer}/tx/${this.hash}`
   }
 }
 </script>
