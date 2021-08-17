@@ -81,15 +81,16 @@ import { SET_CURRENT_USER } from '@/store/mutation-types'
   },
 })
 export default class App extends Vue {
+  intervals: { [key: string]: any } = {}
+
   created() {
-    // TODO clearInterval on unmount?
-    setInterval(() => {
+    this.intervals.round = setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)
-    setInterval(async () => {
+    this.intervals.recipient = setInterval(async () => {
       await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
     }, 60 * 1000)
-    setInterval(() => {
+    this.intervals.user = setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)
   }
@@ -100,6 +101,12 @@ export default class App extends Vue {
     await this.$store.dispatch(SELECT_ROUND, roundAddress)
     this.$store.dispatch(LOAD_ROUND_INFO)
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+  }
+
+  beforeDestroy() {
+    for (const interval of Object.keys(this.intervals)) {
+      clearInterval(this.intervals[interval])
+    }
   }
 
   @Watch('$web3.user')
