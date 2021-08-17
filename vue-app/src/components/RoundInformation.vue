@@ -18,15 +18,7 @@
                 >
                   {{ currentRound.fundingRoundAddress }}
                 </div>
-                <a
-                  :href="
-                    'https://etherscan.io/address/' +
-                    currentRound.fundingRoundAddress
-                  "
-                  target="_blank"
-                  rel="noopener"
-                  >View on Etherscan</a
-                >
+                <links :href="blockExplorerUrl"> View on Etherscan </links>
               </template>
             </v-popover>
           </div>
@@ -43,10 +35,7 @@
             </div>
           </div>
           <div class="round-info-value">
-            <div class="value">{{ joinTimeLeft.days }}</div>
-            <div class="unit">days</div>
-            <div class="value">{{ joinTimeLeft.hours }}</div>
-            <div class="unit">hours</div>
+            <time-left :date="$store.getters.recipientJoinDeadline" />
           </div>
         </div>
         <div
@@ -77,18 +66,7 @@
               formatDate(currentRound.signUpDeadline)
             "
           >
-            <div class="value" v-if="contributionTimeLeft.days > 0">
-              {{ contributionTimeLeft.days }}
-            </div>
-            <div class="unit" v-if="contributionTimeLeft.days > 0">days</div>
-            <div class="value">{{ contributionTimeLeft.hours }}</div>
-            <div class="unit">hours</div>
-            <div class="value" v-if="contributionTimeLeft.days === 0">
-              {{ contributionTimeLeft.minutes }}
-            </div>
-            <div class="unit" v-if="contributionTimeLeft.days === 0">
-              minutes
-            </div>
+            <time-left :date="$store.state.currentRound.signUpDeadline" />
           </div>
         </div>
         <div
@@ -147,20 +125,7 @@
               "
             >
               <div class="round-info-value">
-                <div class="value" v-if="reallocationTimeLeft.days > 0">
-                  {{ reallocationTimeLeft.days }}
-                </div>
-                <div class="unit" v-if="reallocationTimeLeft.days > 0">
-                  days
-                </div>
-                <div class="value">{{ reallocationTimeLeft.hours }}</div>
-                <div class="unit">hours</div>
-                <div class="value" v-if="reallocationTimeLeft.days === 0">
-                  {{ reallocationTimeLeft.minutes }}
-                </div>
-                <div class="unit" v-if="reallocationTimeLeft.days === 0">
-                  minutes
-                </div>
+                <time-left :date="$store.state.currentRound.votingDeadline" />
               </div>
             </div>
           </div>
@@ -241,12 +206,19 @@
                 src="@/assets/info.svg"
               />
               <div v-tooltip="'Add matching funds'" class="add-link">
-                <a style="margin: 0" @click="addMatchingFunds()">
+                <span
+                  style="margin: 0; cursor: pointer"
+                  @click="addMatchingFunds()"
+                >
                   <img style="width: 16px" src="@/assets/add.svg" />
-                </a>
-                <a @click="addMatchingFunds()" class="add-funds-link">
+                </span>
+                <span
+                  @click="addMatchingFunds()"
+                  style="cursor: pointer"
+                  class="add-funds-link"
+                >
                   Add funds
-                </a>
+                </span>
               </div>
             </div>
 
@@ -310,18 +282,19 @@ import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { RoundInfo, getCurrentRound, TimeLeft } from '@/api/round'
+import { RoundInfo, getCurrentRound } from '@/api/round'
 import {
   Project,
   getRecipientRegistryAddress,
   getProjects,
 } from '@/api/projects'
+import { blockExplorer } from '@/api/core'
 
-import { getTimeLeft } from '@/utils/dates'
 import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
+import TimeLeft from '@/components/TimeLeft.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -353,6 +326,7 @@ function shuffleArray(array: any[]) {
   components: {
     ProjectListItem,
     Loader,
+    TimeLeft,
   },
 })
 export default class RoundInformation extends Vue {
@@ -403,18 +377,6 @@ export default class RoundInformation extends Vue {
 
   get currentRound(): RoundInfo | null {
     return this.$store.state.currentRound
-  }
-
-  get joinTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.getters.recipientJoinDeadline)
-  }
-
-  get contributionTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
-  }
-
-  get reallocationTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   get formatTotalInRound(): string {
@@ -468,6 +430,13 @@ export default class RoundInformation extends Vue {
         },
       }
     )
+  }
+
+  get blockExplorerUrl(): string {
+    if (!this.currentRound) {
+      return ''
+    }
+    return `${blockExplorer}/address/${this.currentRound.fundingRoundAddress}`
   }
 }
 </script>
