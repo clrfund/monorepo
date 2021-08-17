@@ -14,9 +14,7 @@
               Every project you contribute to gets a portion of extra funding.
             </div>
             <div class="btn-group">
-              <router-link to="/projects" class="btn-action"
-                >Go to app</router-link
-              >
+              <links to="/projects" class="btn-action">Go to app</links>
               <div class="btn-white" @click="scrollToHowItWorks">
                 How it works
               </div>
@@ -38,10 +36,11 @@
               </p>
             </div>
             <div class="button-group">
-              <router-link to="/join" class="btn-primary w100"
-                >Join round</router-link
-              >
-              <div>{{ timeRemaining }}</div>
+              <links to="/join" class="btn-primary w100">Join round</links>
+              <div v-if="signUpDeadline">
+                <time-left unitClass="none" :date="signUpDeadline" />
+                to join
+              </div>
             </div>
           </div>
         </div>
@@ -79,8 +78,8 @@
               contributions, <strong>not contribution value</strong>.
             </li>
           </ol>
-          <router-link class="btn-secondary" to="/how-it-works"
-            >How the round works</router-link
+          <links class="btn-secondary" to="/how-it-works"
+            >How the round works</links
           >
         </div>
       </div>
@@ -93,12 +92,8 @@
             <img src="@/assets/arbitrum.png" id="arbitrum-icon" />
             <p><b>Arbitrum for fast and cheap transaction fees</b></p>
           </div>
-          <a
-            href="https://bridge.arbitrum.io/"
-            target="_blank"
-            rel="noopener"
-            class="btn-action"
-            >Get Arbitrum funds</a
+          <links to="https://bridge.arbitrum.io/" class="btn-action"
+            >Get Arbitrum funds</links
           >
         </div>
         <div class="pre-req" id="bright-id">
@@ -108,12 +103,8 @@
               <b>BrightID for private, decentralized identity verification</b>
             </p>
           </div>
-          <a
-            href="https://brightid.org"
-            target="_blank"
-            rel="noopener"
-            class="btn-primary"
-            >Download BrightID</a
+          <links to="https://brightid.org" class="btn-primary"
+            >Download BrightID</links
           >
         </div>
       </div>
@@ -134,7 +125,7 @@
             this primer.
           </p>
           <p>
-            <a href="https://wtfisqf.com/">WTF is QF?</a>
+            <links to="https://wtfisqf.com/">WTF is QF?</links>
           </p>
         </div>
         <div id="about-2">
@@ -144,7 +135,7 @@
             how you voted. This drives bribers insane because they have no idea
             whether you actually did what they bribed you to do!
           </p>
-          <router-link to="/about-maci">About MACI</router-link>
+          <links to="/about-maci">About MACI</links>
         </div>
         <div id="about-3">
           <h2>Built using the CLR protocol</h2>
@@ -153,31 +144,29 @@
             goods that benefit the Ethereum Network according to the prefences
             of the Ethereum Community.
           </p>
-          <p><!-- Discussion icon --><a href="#">clr.fund forum</a></p>
-          <p><!-- GitHub icon --><a href="#">Fork your own CLR</a></p>
+          <p><!-- Discussion icon --><links to="#">clr.fund forum</links></p>
+          <p><!-- GitHub icon --><links to="#">Fork your own CLR</links></p>
         </div>
       </div>
       <div id="footer">
         <h2>More</h2>
         <div class="link-li">
-          <a href="https://github.com/ethereum/clrfund/">GitHub</a>
+          <links to="https://github.com/ethereum/clrfund/">GitHub</links>
         </div>
         <div class="link-li">
-          <a href="https://ethereum.org/eth2/">More on Eth2</a>
+          <links to="https://ethereum.org/eth2/">More on Eth2</links>
         </div>
         <div class="link-li">
-          <router-link to="/how-it-works">How the round works</router-link>
+          <links to="/how-it-works">How the round works</links>
         </div>
         <div class="link-li">
-          <router-link to="/about-layer2">Learn about [Layer 2]</router-link>
+          <links to="/about-layer2">Learn about [Layer 2]</links>
         </div>
         <div class="link-li">
-          <router-link to="/about-maci">Learn about MACI</router-link>
+          <links to="/about-maci">Learn about MACI</links>
         </div>
         <div class="link-li">
-          <router-link to="/about-sybil-attacks"
-            >Learn about BrightID</router-link
-          >
+          <links to="/about-sybil-attacks">Learn about BrightID</links>
         </div>
         <div class="link-li">Provide Feedback</div>
       </div>
@@ -189,22 +178,17 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
-import { formatDateFromNow } from '@/utils/dates'
 
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
+import TimeLeft from '@/components/TimeLeft.vue'
+import Links from '@/components/Links.vue'
 
 @Component({
-  components: { RoundStatusBanner },
+  components: { RoundStatusBanner, TimeLeft, Links },
 })
 export default class Landing extends Vue {
-  private get signUpDeadline(): DateTime {
+  get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
-  }
-
-  get timeRemaining(): string {
-    return this.signUpDeadline
-      ? `${formatDateFromNow(this.signUpDeadline)}  to join`
-      : '...'
   }
 
   scrollToHowItWorks() {

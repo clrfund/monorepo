@@ -13,7 +13,7 @@
       </div>
       <img :src="appLinkQrCode" class="qr-code" />
       <div>
-        <a :href="appLink" target="_blank">{{ appLink }}</a>
+        <links :to="appLink">{{ appLink }}</links>
       </div>
     </div>
     <div v-if="step === 2">
@@ -57,6 +57,7 @@ import {
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
+import Links from '@/components/Links.vue'
 import { LOAD_USER_INFO } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 
@@ -64,6 +65,7 @@ import { waitForTransaction } from '@/utils/contracts'
   components: {
     Transaction,
     Loader,
+    Links,
   },
 })
 export default class BrightIdModal extends Vue {

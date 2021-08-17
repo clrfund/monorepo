@@ -7,13 +7,13 @@
       <p class="hash">{{ renderCopiedOrHash }}</p>
     </div>
     <div class="actions">
-      <a
+      <links
         class="explorerLink"
-        :href="'https://etherscan.io/tx/' + hash"
-        target="_blank"
+        :to="blockExplorerUrl"
         title="View on Etherscan"
+        :hideArrow="true"
         ><img class="icon" src="@/assets/etherscan.svg"
-      /></a>
+      /></links>
       <copy-button
         :value="hash"
         text="hash"
@@ -31,11 +31,12 @@ import { Prop } from 'vue-property-decorator'
 
 import Loader from '@/components/Loader.vue'
 import CopyButton from '@/components/CopyButton.vue'
+import Links from '@/components/Links.vue'
 import { blockExplorer } from '@/api/core'
 import { isTransactionMined } from '@/utils/contracts'
 
 @Component({
-  components: { Loader, CopyButton },
+  components: { Loader, CopyButton, Links },
 })
 export default class TransactionReceipt extends Vue {
   isPending = true
@@ -75,7 +76,7 @@ export default class TransactionReceipt extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}${this.hash}`
+    return `${blockExplorer}/tx/${this.hash}`
   }
 }
 </script>

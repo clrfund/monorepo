@@ -10,7 +10,7 @@
         You’ve already contributed this round. You can edit your choices and add
         new projects, but your cart total must always equal your original
         contribution amount.
-        <router-link to="/about-maci" class="message-link">Why?</router-link>
+        <links to="/about-maci" class="message-link">Why?</links>
       </div>
       <div class="flex cart-title-bar">
         <div
@@ -77,8 +77,8 @@
             <div class="moon-emoji">🌚</div>
             <h3>Your cart is empty</h3>
             <div>Choose some projects that you want to contribute to...</div>
-            <router-link to="/projects" class="btn-secondary mobile mt1"
-              >See projects</router-link
+            <links to="/projects" class="btn-secondary mobile mt1"
+              >See projects</links
             >
           </div>
           <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
@@ -111,14 +111,17 @@
             :isAmountValid="isAmountValid"
           />
         </div>
-        <cart-time-left
+        <div
           v-if="
             ($store.getters.canUserReallocate && !isEditMode) ||
             ($store.getters.isRoundContributionPhase &&
               !$store.getters.canUserReallocate)
           "
           class="time-left-read-only"
-        />
+        >
+          <div class="caps">Time left:</div>
+          <time-left :date="timeLeftDate" />
+        </div>
       </div>
       <div
         class="reallocation-section"
@@ -174,7 +177,7 @@
       >
         <!--  TODO: Also, add getter for pre-contribution phase -->
         <!-- REMOVING FOR NOW WHILE WE DON'T HAVE A JOIN PHASE: <div v-if="$store.getters.isRoundJoinPhase || $store.getters.isRoundJoinOnlyPhase || $store.getters.isRoundBufferPhase">
-        Round opens for contributing in {{startDateCountdown}}. <span v-if="isBrightIdRequired">Get verified with BrightID while you wait.</span>
+        Round opens for contributing in <time-left :date="$store.state.currentRound?.startTime"/>. <span v-if="canRegisterWithBrightId">Get verified with BrightID while you wait.</span>
       </div> -->
         <div v-if="errorMessage" class="error-title">
           Can't <span v-if="$store.getters.canUserReallocate">reallocate</span
@@ -192,9 +195,7 @@
           {{ formatAmount(this.contribution) }} {{ tokenSymbol }} donation.
         </div>
         <div class="p1" v-if="isBrightIdRequired">
-          <router-link to="/verify" class="btn-primary">
-            Verify with BrightID
-          </router-link>
+          <links to="/verify" class="btn-primary"> Verify with BrightID </links>
         </div>
         <button
           v-if="canWithdrawContribution()"
@@ -219,12 +220,15 @@
             Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to
             {{ cart.length }} projects
           </template>
-          <template v-else> Reallocate contribution </template>
+          <template v-else>Reallocate contribution</template>
         </button>
-        <cart-time-left
-          v-if="$store.getters.canUserReallocate && isEditMode"
-          class="time-left"
-        />
+        <div class="time-left">
+          <div class="caps">Time left:</div>
+          <time-left
+            v-if="$store.getters.canUserReallocate && isEditMode"
+            :date="timeLeftDate"
+          />
+        </div>
       </div>
       <div
         class="line-item-bar"
@@ -270,9 +274,6 @@
           {{ tokenSymbol }}
         </div>
       </div>
-      <!-- <div class="reallocation-bar-container">
-      <div class="reallocation-bar" /> 
-    </div> -->
       <!-- TODO: reallocation bar -->
     </div>
   </div>
@@ -293,7 +294,8 @@ import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import CartItems from '@/components/CartItems.vue'
-import CartTimeLeft from '@/components/CartTimeLeft.vue'
+import Links from '@/components/Links.vue'
+import TimeLeft from '@/components/TimeLeft.vue'
 import { TOGGLE_EDIT_SELECTION, UPDATE_CART_ITEM } from '@/store/mutation-types'
 import {
   MAX_CONTRIBUTION_AMOUNT,
@@ -301,7 +303,7 @@ import {
   CartItem,
 } from '@/api/contributions'
 import { userRegistryType, UserRegistryType } from '@/api/core'
-import { RoundStatus, TimeLeft } from '@/api/round'
+import { RoundStatus } from '@/api/round'
 import { LOGOUT_USER, SAVE_CART } from '@/store/action-types'
 import { User } from '@/api/user'
 import {
@@ -314,7 +316,13 @@ import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
 @Component({
-  components: { Tooltip, WalletWidget, CartItems, CartTimeLeft },
+  components: {
+    Tooltip,
+    WalletWidget,
+    CartItems,
+    Links,
+    TimeLeft,
+  },
 })
 export default class Cart extends Vue {
   profileImageUrl: string | null = null
@@ -492,18 +500,6 @@ export default class Cart extends Vue {
       .toUnsafeFloat()
       .toString()
     return normalizedValue === value
-  }
-
-  get startDateCountdown(): string {
-    return formatDateFromNow(this.$store.state.currentRound?.startTime)
-  }
-
-  get contributionTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
-  }
-
-  get reallocationTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   private isFormValid(): boolean {
@@ -713,6 +709,12 @@ export default class Cart extends Vue {
     })
     this.$store.dispatch(SAVE_CART)
   }
+
+  get timeLeftDate(): DateTime {
+    return this.$store.getters.canUserReallocate
+      ? this.$store.state.currentRound.votingDeadline
+      : this.$store.state.currentRound.signUpDeadline
+  }
 }
 
 // Close the dropdown menu if the user clicks outside of it
@@ -790,14 +792,14 @@ h2 {
 
 .time-left {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   width: 100%;
 }
 
 .time-left-read-only {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   padding: 1rem;
 }
@@ -1210,5 +1212,11 @@ h2 {
   .show {
     display: flex;
   }
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 </style>

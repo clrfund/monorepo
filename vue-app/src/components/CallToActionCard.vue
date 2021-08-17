@@ -34,12 +34,10 @@
         this any time before or during the funding round.
       </p>
     </div>
-    <router-link v-if="!hasStartedVerification" to="/verify" class="btn-action"
-      >Start prep</router-link
+    <links v-if="!hasStartedVerification" to="/verify" class="btn-action"
+      >Start prep</links
     >
-    <router-link v-else to="/verify/connect" class="btn-action"
-      >Continue setup</router-link
-    >
+    <links v-else to="/verify/connect" class="btn-action">Continue setup</links>
   </div>
 </template>
 
@@ -48,6 +46,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
+import Links from '@/components/Links.vue'
 
 import { TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import { userRegistryType, UserRegistryType } from '@/api/core'
@@ -55,6 +54,7 @@ import { userRegistryType, UserRegistryType } from '@/api/core'
 @Component({
   components: {
     BrightIdWidget,
+    Links,
   },
 })
 export default class CallToActionCard extends Vue {
