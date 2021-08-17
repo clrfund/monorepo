@@ -52,7 +52,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   event ContributionWithdrawn(address indexed _contributor);
   event FundsClaimed(uint256 indexed _voteOptionIndex, address indexed _recipient, uint256 _amount);
   event TallyPublished(string _tallyHash);
-  event Voted(address indexed _sender);
+  event Voted(address indexed _contributor);
 
   /**
     * @dev Set round parameters.

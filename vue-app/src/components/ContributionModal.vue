@@ -127,6 +127,8 @@ export default class ContributionModal extends Vue {
       this.$store.getters.hasUserContributed &&
       !this.$store.getters.hasUserVoted
     ) {
+      // If the user has already contributed but without sending the votes
+      // (final step 3), move automatically to that step
       this.step = 3
       this.sendVotes()
     }
