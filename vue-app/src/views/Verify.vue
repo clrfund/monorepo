@@ -157,87 +157,30 @@
               and you're a real person. There are a few different ways to do
               this...
             </p>
-            <div class="option">
-              <div class="option-header">
-                <div>
-                  <div class="tag">🚀 Fastest</div>
-                  <h3>Join a BrightID party</h3>
-                </div>
-                <img
-                  @click="handleToggleTab"
-                  v-if="showExpandedOption"
-                  src="@/assets/chevron-up.svg"
-                />
-                <img
-                  @click="handleToggleTab"
-                  v-else
-                  src="@/assets/chevron-down.svg"
-                />
-              </div>
-              <div v-if="showExpandedOption" id="fastest">
-                <p>
-                  BrightID run verification parties regularly. Join the call,
-                  meet other new users, and they'll verify you’re a human and
-                  not a bot. Quick and painless, even for you introverts out
-                  there.
-                </p>
-                <a
-                  class="btn-secondary"
-                  href="https://meet.brightid.org/"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  View party schedule
-                </a>
-              </div>
-            </div>
-            <div class="option">
-              <div class="option-header">
-                <div>
-                  <div class="tag">💡 Most interesting</div>
-                  <h3>
-                    Join us at “The consensus layer bonanza – an evening with
-                    the eth2 researchers”
-                  </h3>
-                </div>
-                <img
-                  @click="handleToggleTab"
-                  v-if="showExpandedOption"
-                  src="@/assets/chevron-up.svg"
-                />
-                <img
-                  @click="handleToggleTab"
-                  v-else
-                  src="@/assets/chevron-down.svg"
-                />
-              </div>
-              <p v-if="showExpandedOption" id="interesting">
-                Information to come
-              </p>
-            </div>
-            <div class="option">
-              <div class="option-header">
-                <div>
-                  <div class="tag">🎰 Luckiest</div>
-                  <h3>Connect with 2 verified humans</h3>
-                </div>
-                <img
-                  @click="handleToggleTab"
-                  v-if="showExpandedOption"
-                  src="@/assets/chevron-up.svg"
-                />
-                <img
-                  @click="handleToggleTab"
-                  v-else
-                  src="@/assets/chevron-down.svg"
-                />
-              </div>
-              <p v-if="showExpandedOption" id="luckiest">
-                Know anyone that's contributed to Gitcoin Grants or clr.fund
+            <accordion
+              tag="🚀 Fastest"
+              header="Join a BrightId party"
+              content="BrightID run verification parties regularly. Join the call,
+            meet other new users, and they'll verify you’re a human and not a
+            bot. Quick and painless, even for you introverts out there."
+              :linkButton="{
+                link: 'https://meet.brightid.org/#/',
+                text: 'View party schedule',
+              }"
+            />
+            <accordion
+              tag="💡 Most interesting"
+              header="Join us at “The consensus layer bonanza – an evening with
+                    the eth2 researchers”"
+              content="Information to come"
+            />
+            <accordion
+              tag="🎰 Luckiest"
+              header="Connect with 2 verified humans"
+              content="Know anyone that's contributed to Gitcoin Grants or clr.fund
                 rounds? They may already be verified. Hit them up and see if
-                they can verify you!
-              </p>
-            </div>
+                they can verify you!"
+            />
           </div>
           <div v-if="currentStep === 3">
             <h2 class="step-title">Get registered</h2>
@@ -271,6 +214,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import Accordion from '@/components/Accordion.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
 import {
@@ -296,6 +240,7 @@ interface BrightIDStep {
 
 @Component({
   components: {
+    Accordion,
     ProgressBar,
     Transaction,
     Loader,
@@ -309,8 +254,6 @@ export default class VerifyView extends Vue {
     { page: 'verification', name: 'Get verified' },
     { page: 'registration', name: 'Get registered' },
   ]
-
-  showExpandedOption = false
 
   appLink = ''
   appLinkQrCode = ''
@@ -498,17 +441,6 @@ export default class VerifyView extends Vue {
       default:
         return false
     }
-  }
-
-  handleToggleTab(event): void {
-    const { id } = event.target
-    // Guard clause:
-    if (
-      (this.showExpandedOption && id === 'review') ||
-      (this.showExpandedOption && id === 'preview')
-    )
-      return
-    this.showExpandedOption = !this.showExpandedOption
   }
 }
 </script>
@@ -1151,54 +1083,6 @@ export default class VerifyView extends Vue {
 .qr-code {
   width: 320px;
   margin: 2rem;
-}
-
-.option {
-  background: $bg-light-color;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-
-  img {
-    margin: 0.5rem;
-    padding: 0.5rem;
-    cursor: pointer;
-    &:hover {
-      background: $bg-secondary-color;
-      border-radius: 0.5rem;
-    }
-  }
-
-  h3 {
-    font-family: 'Glacial Indifference', sans-serif;
-    font-size: 1.25rem;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 1.5rem;
-    letter-spacing: 0em;
-    text-align: left;
-    margin: 0;
-    margin-top: 0.5rem;
-    text-transform: uppercase;
-  }
-}
-
-.option-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.tag {
-  /* background: #fff9; */
-  border-radius: 2rem;
-  font-family: 'Glacial Indifference', sans-serif;
-  padding: 0.25rem 0.5rem;
-  padding-left: 0;
-  /* color: $bg-primary-color; */
-  font-size: 16px;
-  text-transform: uppercase;
-  width: fit-content;
 }
 
 .data img {
