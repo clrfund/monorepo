@@ -284,6 +284,7 @@ import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
+import Links from '@/components/Links.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -316,6 +317,7 @@ function shuffleArray(array: any[]) {
     ProjectListItem,
     Loader,
     TimeLeft,
+    Links,
   },
 })
 export default class RoundInformation extends Vue {
