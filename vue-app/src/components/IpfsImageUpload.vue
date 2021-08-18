@@ -69,7 +69,6 @@ import { Prop } from 'vue-property-decorator'
 import { ipfsGatewayUrl } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
-import Tooltip from '@/components/Tooltip.vue'
 import IpfsCopyWidget from '@/components/IpfsCopyWidget.vue'
 
 import IPFS from 'ipfs-mini'
@@ -77,7 +76,6 @@ import IPFS from 'ipfs-mini'
 @Component({
   components: {
     Loader,
-    Tooltip,
     IpfsCopyWidget,
   },
 })

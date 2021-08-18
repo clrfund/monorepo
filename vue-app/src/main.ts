@@ -6,6 +6,7 @@ import Web3 from './plugins/Web3'
 
 import Meta from 'vue-meta'
 import VModal from 'vue-js-modal'
+import VTooltip from 'v-tooltip'
 
 Vue.use(Meta)
 Vue.use(VModal, {
@@ -17,6 +18,7 @@ Vue.use(VModal, {
   },
 })
 Vue.use(Web3)
+Vue.use(VTooltip)
 
 Vue.config.productionTip = false
 

@@ -76,6 +76,7 @@ import {
 } from './mutation-types'
 
 // Utils
+import { isSameAddress } from '@/utils/accounts'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
@@ -548,6 +549,15 @@ const getters = {
     return (
       getters.hasUserContributed &&
       (getters.isRoundContributionPhase || getters.isRoundReallocationPhase)
+    )
+  },
+  isRecipientRegistryOwner: (state: RootState): boolean => {
+    if (!state.currentUser || !state.recipientRegistryInfo) {
+      return false
+    }
+    return isSameAddress(
+      state.currentUser.walletAddress,
+      state.recipientRegistryInfo.owner
     )
   },
   isMessageLimitReached: (state: RootState): boolean => {

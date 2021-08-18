@@ -24,7 +24,10 @@
           />
         </div>
       </form>
-      <div v-if="amount > balance" class="balance-check-warning">
+      <div
+        v-if="parseFloat(amount) > parseFloat(balance)"
+        class="balance-check-warning"
+      >
         ⚠️ You only have {{ balance }} {{ tokenSymbol }}
       </div>
       <div class="btn-row">

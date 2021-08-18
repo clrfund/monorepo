@@ -23,11 +23,8 @@
     </p>
     <p>
       See the
-      <a
-        href="https://github.com/clrfund/constitution"
-        target="_blank"
-        rel="noopener"
-        >Clr.fund Constitution</a
+      <links to="https://github.com/clrfund/constitution"
+        >Clr.fund Constitution</links
       >
       for more detail on Clr.fund’s goals and values.
     </p>
@@ -35,11 +32,9 @@
     <h2>How does it work?</h2>
     <p>
       The clr.fund protocol uses the
-      <a
-        href="https://blogchains.org/wp-content/uploads/sites/4/2019/04/SSRN-id3243656.pdf"
-        target="_blank"
-        rel="noopener"
-        >Constrained Liberal Radicalism (CLR)</a
+      <links
+        to="https://blogchains.org/wp-content/uploads/sites/4/2019/04/SSRN-id3243656.pdf"
+        >Constrained Liberal Radicalism (CLR)</links
       >
       algorithm, commonly called quadratic funding (QF), to facilitate monetary
       contributions from members of the Ethereum Community towards builders of
@@ -63,24 +58,19 @@
     <p>
       Under the hood, clr.fund uses zero-knowledge proofs (zk-snarks), courtesy
       of the
-      <a
-        href="https://github.com/appliedzkp/maci"
-        target="_blank"
-        rel="noopener"
-        >Minimal Anti-collusion Infrastructure (MACI)</a
+      <links to="https://github.com/appliedzkp/maci"
+        >Minimal Anti-collusion Infrastructure (MACI)</links
       >, to keep individual contributions private and limit effectiveness of
       collusion and bribery.
     </p>
 
     <p>
       To ensure that every contributor is a unique person clr.fund uses
-      <a href="https://brightid.org" target="_blank" rel="noopener">BrightID</a
-      >, and recipients are curated by our
-      <a
-        href="https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398"
-        target="_blank"
-        rel="noopener"
-        >Kleros TCR</a
+      <links to="https://brightid.org">BrightID</links>, and recipients are
+      curated by our
+      <links
+        to="https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398"
+        >Kleros TCR</links
       >.
     </p>
   </div>
@@ -89,8 +79,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import Links from '@/components/Links.vue'
 
-@Component
+@Component({ components: { Links } })
 export default class About extends Vue {}
 </script>
 

@@ -18,11 +18,15 @@
       </div>
       <h2>
         What you'll need
-        <tooltip
-          position="top"
-          content="If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps"
-          ><img width="16px" src="@/assets/info.svg" class="info-icon"
-        /></tooltip>
+        <img
+          v-tooltip="{
+            content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
+            trigger: 'hover click',
+          }"
+          width="16px"
+          src="@/assets/info.svg"
+          class="info-icon"
+        />
       </h2>
       <ul>
         <li>
@@ -43,17 +47,17 @@
         <li>An Ethereum wallet, with enough gas for two transactions</li>
         <li>Access to Zoom or Google Meet</li>
       </ul>
-      <router-link to="/sybil-resistance/">Why is this important?</router-link>
+      <links to="/sybil-resistance/">Why is this important?</links>
       <div v-if="isRoundFullOrOver" class="warning-message">
         The current round is no longer accepting new contributions. You can
         still get BrightID verified to prepare for next time.
       </div>
       <div class="btn-container">
         <wallet-widget v-if="!currentUser" :isActionButton="true" />
-        <router-link v-if="currentUser" to="/verify/connect" class="btn-primary"
-          >I have BrightID installed</router-link
-        >
-        <router-link to="/projects" class="btn-secondary">Go back</router-link>
+        <links v-if="currentUser" to="/verify/connect" class="btn-primary">
+          I have BrightID installed
+        </links>
+        <links to="/projects" class="btn-secondary">Go back</links>
       </div>
     </div>
   </div>
@@ -68,14 +72,14 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { commify, formatUnits } from '@ethersproject/units'
 import WalletWidget from '@/components/WalletWidget.vue'
-import Tooltip from '@/components/Tooltip.vue'
+import Links from '@/components/Links.vue'
 
 @Component({
   components: {
     ProgressBar,
     RoundStatusBanner,
     WalletWidget,
-    Tooltip,
+    Links,
   },
 })
 export default class VerifyLanding extends Vue {
