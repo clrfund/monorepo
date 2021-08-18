@@ -6,19 +6,19 @@
       </div>
       <template v-if="currentRound">
         <div class="round">
-          <div style="display: flex; align-items: center">
-            <h2 style="line-height: 120%; margin: 0">Eth2 CLR</h2>
-            <v-popover offset="16">
+          <div class="rount-title-bar">
+            <h2 class="round-title">Eth2 CLR</h2>
+            <v-popover class="verified-container">
               <div class="verified">
                 <img src="@/assets/verified.svg" />
               </div>
               <template slot="popover">
-                <div
-                  style="text-overflow: ellipsis; width: 100%; overflow: hidden"
-                >
-                  {{ currentRound.fundingRoundAddress }}
+                <div class="contract-popover">
+                  <div class="contract-address">
+                    {{ currentRound.fundingRoundAddress }}
+                  </div>
+                  <links :href="blockExplorerUrl">View on Etherscan</links>
                 </div>
-                <links :href="blockExplorerUrl"> View on Etherscan </links>
               </template>
             </v-popover>
           </div>
@@ -29,8 +29,8 @@
           </div>
         </div>
         <div class="round-info-item" v-if="$store.getters.isRoundJoinOnlyPhase">
-          <div style="width: 100%">
-            <div style="width: 100%; display: flex; gap: 0.5rem">
+          <div class="full-width">
+            <div class="round-info-item-top">
               <div class="round-info-title">⏱️ Round opening</div>
             </div>
           </div>
@@ -45,8 +45,8 @@
           "
           class="round-info-item"
         >
-          <div style="width: 100%">
-            <div style="width: 100%; display: flex; gap: 0.5rem">
+          <div class="full-width">
+            <div class="round-info-item-top">
               <div class="round-info-title">Time left to contribute</div>
               <img
                 v-tooltip="{
@@ -76,8 +76,8 @@
           "
           class="round-info-item"
         >
-          <div style="width: 100%">
-            <div style="width: 100%; display: flex; gap: 0.5rem">
+          <div class="full-width">
+            <div class="round-info-item-top">
               <div class="round-info-title">
                 {{
                   $store.getters.hasUserContributed
@@ -131,11 +131,9 @@
           </div>
         </div>
         <div v-else-if="$store.getters.isRoundTallying" class="round-info-item">
-          <div style="width: 100%">
-            <div style="width: 100%; display: flex; gap: 0.5rem">
-              <div class="round-info-title" style="margin-bottom: 0.5rem">
-                Round status
-              </div>
+          <div class="full-width">
+            <div class="round-info-item-top">
+              <div class="round-info-title">Round status</div>
               <img
                 v-tooltip="{
                   content: `Our smart contracts are busy figuring out final contribution amounts.`,
@@ -154,11 +152,9 @@
           v-else-if="$store.getters.isRoundFinalized"
           class="round-info-item"
         >
-          <div style="width: 100%">
-            <div style="width: 100%; display: flex; gap: 0.5rem">
-              <div class="round-info-title" style="margin-bottom: 0.5rem">
-                Round status
-              </div>
+          <div class="full-width">
+            <div class="round-info-item-top">
+              <div class="round-info-title">Round status</div>
               <img
                 v-tooltip="{
                   content: `If you're a project owner you can now claim your funds!`,
@@ -175,8 +171,8 @@
         </div>
         <div class="round-value-info">
           <div class="round-value-info-item">
-            <div style="width: 100%">
-              <div style="width: 100%; display: flex; gap: 0.5rem">
+            <div class="full-width">
+              <div class="round-info-item-top">
                 <div class="round-info-title">Total in round</div>
                 <img
                   v-tooltip="{
@@ -194,7 +190,7 @@
             </div>
           </div>
           <div class="round-info-sub-item">
-            <div style="width: 100%; display: flex; gap: 0.5rem">
+            <div class="round-info-item-top">
               <div class="round-info-title">Matching pool</div>
               <img
                 v-tooltip="{
@@ -205,20 +201,13 @@
                 width="16px"
                 src="@/assets/info.svg"
               />
-              <div v-tooltip="'Add matching funds'" class="add-link">
-                <span
-                  style="margin: 0; cursor: pointer"
-                  @click="addMatchingFunds()"
-                >
-                  <img style="width: 16px" src="@/assets/add.svg" />
-                </span>
-                <span
-                  @click="addMatchingFunds()"
-                  style="cursor: pointer"
-                  class="add-funds-link"
-                >
-                  Add funds
-                </span>
+              <div
+                v-tooltip="'Add matching funds'"
+                class="add-link"
+                @click="addMatchingFunds"
+              >
+                <img src="@/assets/add.svg" width="16px" />
+                <span class="add-funds-link">Add funds</span>
               </div>
             </div>
 
@@ -261,8 +250,8 @@
       </template>
       <template v-else-if="!currentRound && !isLoading">
         <div class="round-info-item">
-          <div style="width: 100%">
-            <div style="width: 100%; display: flex; gap: 0.5rem">
+          <div class="full-width">
+            <div class="round-info-item-top">
               <div class="round-info-title">No scheduled round</div>
             </div>
           </div>
@@ -466,6 +455,26 @@ export default class RoundInformation extends Vue {
   width: 100%;
 }
 
+.rount-title-bar {
+  display: flex;
+  align-items: center;
+}
+.round-title {
+  line-height: 120%;
+  margin: 0;
+}
+
+.verified-container {
+  align-self: flex-end;
+}
+
+.contract-address {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
 .circle {
   width: 8px;
   height: 8px;
@@ -557,6 +566,13 @@ export default class RoundInformation extends Vue {
   img {
     opacity: 0.6;
   }
+}
+
+.round-info-item-top {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
 }
 
 .round-info-sub-item {
@@ -690,23 +706,26 @@ export default class RoundInformation extends Vue {
 
 .add-link {
   display: flex;
-  align-items: center;
   gap: 0.25rem;
   color: $clr-green;
+  margin-left: auto;
+  cursor: pointer;
   &:hover {
     opacity: 0.8;
   }
 }
 
 .add-funds-link {
-  margin-bottom: 0.25rem;
   font-size: 14px;
-  color: $clr-green;
 }
 
 .status {
   font-size: 16px;
   display: flex;
   align-items: center;
+}
+
+.full-width {
+  width: 100%;
 }
 </style>
