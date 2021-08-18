@@ -6,11 +6,21 @@
       <wallet-widget :isActionButton="true" />
     </div>
     <div v-else class="cart-container">
-      <div class="reallocation-message" v-if="$store.getters.canUserReallocate">
+      <div
+        class="reallocation-message"
+        v-if="$store.getters.canUserReallocate && $store.getters.hasUserVoted"
+      >
         You’ve already contributed this round. You can edit your choices and add
         new projects, but your cart total must always equal your original
         contribution amount.
         <links to="/about-maci" class="message-link">Why?</links>
+      </div>
+      <div
+        class="reallocation-message"
+        v-if="$store.getters.canUserReallocate && !$store.getters.hasUserVoted"
+      >
+        Almost done! You must submit one more transaction to complete your
+        contribution.
       </div>
       <div class="flex cart-title-bar">
         <div
@@ -172,7 +182,8 @@
         v-if="
           ($store.getters.canUserReallocate && isEditMode) ||
           (!$store.getters.canUserReallocate &&
-            $store.getters.isRoundContributionPhase)
+            $store.getters.isRoundContributionPhase) ||
+          !$store.getters.hasUserVoted
         "
       >
         <!--  TODO: Also, add getter for pre-contribution phase -->
@@ -180,8 +191,9 @@
         Round opens for contributing in <time-left :date="$store.state.currentRound?.startTime"/>. <span v-if="canRegisterWithBrightId">Get verified with BrightID while you wait.</span>
       </div> -->
         <div v-if="errorMessage" class="error-title">
-          Can't <span v-if="$store.getters.canUserReallocate">reallocate</span
-          ><span v-else>contribute</span>
+          Can't
+          <span v-if="$store.getters.canUserReallocate">reallocate</span>
+          <span v-else>contribute</span>
         </div>
         <div v-if="errorMessage" class="submit-error">
           {{ errorMessage }}
@@ -209,25 +221,34 @@
           :class="{
             'btn-action': !errorMessage,
             'btn-action disabled':
-              errorMessage || ($store.getters.hasUserContributed && !isDirty),
+              errorMessage ||
+              ($store.getters.hasUserContributed &&
+                $store.getters.hasUserVoted &&
+                !isDirty),
           }"
           @click="submitCart"
           :disabled="
-            errorMessage || ($store.getters.hasUserContributed && !isDirty)
+            errorMessage ||
+            ($store.getters.hasUserContributed &&
+              $store.getters.hasUserVoted &&
+              !isDirty)
           "
         >
           <template v-if="contribution.isZero()">
             Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to
             {{ cart.length }} projects
           </template>
-          <template v-else>Reallocate contribution</template>
+          <template v-else-if="!$store.getters.hasUserVoted">
+            Finish contribution
+          </template>
+          <template v-else> Reallocate contribution </template>
         </button>
-        <div class="time-left">
+        <div
+          class="time-left"
+          v-if="$store.getters.canUserReallocate && isEditMode"
+        >
           <div class="caps">Time left:</div>
-          <time-left
-            v-if="$store.getters.canUserReallocate && isEditMode"
-            :date="timeLeftDate"
-          />
+          <time-left :date="timeLeftDate" />
         </div>
       </div>
       <div
@@ -653,7 +674,9 @@ export default class Cart extends Vue {
       return [item.index, voiceCredits]
     })
     this.$modal.show(
-      this.contribution.isZero() ? ContributionModal : ReallocationModal,
+      this.contribution.isZero() || !this.$store.getters.hasUserVoted
+        ? ContributionModal
+        : ReallocationModal,
       { votes },
       { width: 500 }
     )

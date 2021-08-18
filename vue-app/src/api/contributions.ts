@@ -113,3 +113,13 @@ export async function withdrawContribution(
   const transaction = await fundingRound.withdrawContribution()
   return transaction
 }
+
+export async function hasContributorVoted(
+  fundingRoundAddress: string,
+  contributorAddress: string
+): Promise<boolean> {
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
+  const filter = fundingRound.filters.Voted(contributorAddress)
+  const events = await fundingRound.queryFilter(filter, 0)
+  return events.length > 0
+}
