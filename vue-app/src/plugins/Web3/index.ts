@@ -9,6 +9,8 @@ import { CHAIN_INFO } from './constants/chains'
 
 export type Wallet = 'metamask' | 'walletconnect'
 
+const CONNECTED_PROVIDER = 'connected-provider'
+
 const connectors: Record<Wallet, any> = {
   metamask: MetamaskConnector,
   walletconnect: WalletConnectConnector,
@@ -17,7 +19,7 @@ const connectors: Record<Wallet, any> = {
 export default {
   install: async (Vue) => {
     const alreadyConnectedProvider: Wallet | null = lsGet(
-      'connectedProvider',
+      CONNECTED_PROVIDER,
       null
     )
 
@@ -54,7 +56,7 @@ export default {
       })
 
       // Save chosen provider to localStorage
-      lsSet('connectedProvider', wallet)
+      lsSet(CONNECTED_PROVIDER, wallet)
 
       // Check if user is using the supported chain id
       const supportedChainId = Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
@@ -109,7 +111,7 @@ export default {
     plugin.disconnectWallet = () => {
       plugin.accounts = []
       plugin.chainId = null
-      lsRemove('connectedProvider')
+      lsRemove(CONNECTED_PROVIDER)
       if (plugin.provider?.disconnect) {
         plugin.provider.disconnect()
       }
@@ -123,9 +125,8 @@ export default {
 
     // If previous provider was found, initiate connection.
     if (alreadyConnectedProvider) {
-      try {
-        await plugin.connectWallet(alreadyConnectedProvider)
-      } catch (error) {
+      const response = plugin.connectWallet(alreadyConnectedProvider)
+      if (response.state !== 'fulfilled') {
         plugin.disconnectWallet()
       }
     }
