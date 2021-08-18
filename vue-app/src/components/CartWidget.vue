@@ -31,14 +31,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import Tooltip from '@/components/Tooltip.vue'
 import { User } from '@/api/user'
 import { CartItem } from '@/api/contributions'
 import { LOGOUT_USER } from '@/store/action-types'
 import { TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import Cart from '@/components/Cart.vue'
 
-@Component({ components: { Cart, Tooltip } })
+@Component({ components: { Cart } })
 export default class CartWidget extends Vue {
   profileImageUrl: string | null = null
 
@@ -143,10 +142,6 @@ export default class CartWidget extends Vue {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.open {
-  background: $clr-green;
 }
 
 .circle {

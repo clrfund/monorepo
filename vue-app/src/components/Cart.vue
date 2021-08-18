@@ -289,7 +289,6 @@ import { commify, formatUnits } from '@ethersproject/units'
 import { DateTime } from 'luxon'
 import WalletWidget from '@/components/WalletWidget.vue'
 import BrightIdModal from '@/components/BrightIdModal.vue'
-import Tooltip from '@/components/Tooltip.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
@@ -317,7 +316,6 @@ import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
 @Component({
   components: {
-    Tooltip,
     WalletWidget,
     CartItems,
     Links,

@@ -150,10 +150,6 @@ export default class MobileTabs extends Vue {
   box-shadow: inset 0px 2px 0px #7375a6;
 }
 
-.open {
-  background: $clr-green;
-}
-
 .circle {
   width: 8px;
   height: 8px;

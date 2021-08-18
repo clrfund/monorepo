@@ -18,11 +18,15 @@
       </div>
       <h2>
         What you'll need
-        <tooltip
-          position="top"
-          content="If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps"
-          ><img width="16px" src="@/assets/info.svg" class="info-icon"
-        /></tooltip>
+        <img
+          v-tooltip="{
+            content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
+            trigger: 'hover click',
+          }"
+          width="16px"
+          src="@/assets/info.svg"
+          class="info-icon"
+        />
       </h2>
       <ul>
         <li>
@@ -50,9 +54,9 @@
       </div>
       <div class="btn-container">
         <wallet-widget v-if="!currentUser" :isActionButton="true" />
-        <links v-if="currentUser" to="/verify/connect" class="btn-primary"
-          >I have BrightID installed</links
-        >
+        <links v-if="currentUser" to="/verify/connect" class="btn-primary">
+          I have BrightID installed
+        </links>
         <links to="/projects" class="btn-secondary">Go back</links>
       </div>
     </div>
@@ -69,14 +73,12 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import { commify, formatUnits } from '@ethersproject/units'
 import WalletWidget from '@/components/WalletWidget.vue'
 import Links from '@/components/Links.vue'
-import Tooltip from '@/components/Tooltip.vue'
 
 @Component({
   components: {
     ProgressBar,
     RoundStatusBanner,
     WalletWidget,
-    Tooltip,
     Links,
   },
 })
