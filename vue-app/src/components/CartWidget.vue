@@ -31,18 +31,14 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Network } from '@ethersproject/networks'
-import { provider as jsonRpcProvider } from '@/api/core'
 import { User } from '@/api/user'
 import { CartItem } from '@/api/contributions'
 import { LOGOUT_USER } from '@/store/action-types'
 import { TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import Cart from '@/components/Cart.vue'
-import { getNetworkName } from '@/utils/networks'
 
 @Component({ components: { Cart } })
 export default class CartWidget extends Vue {
-  private jsonRpcNetwork: Network | null = null
   profileImageUrl: string | null = null
 
   toggleCart(): void {
@@ -97,26 +93,6 @@ export default class CartWidget extends Vue {
       }
       accounts = _accounts
     })
-
-    this.jsonRpcNetwork = await jsonRpcProvider.getNetwork()
-  }
-
-  isLoaded(): boolean {
-    return this.jsonRpcNetwork !== null && this.walletChainId !== null
-  }
-
-  isCorrectNetwork(): boolean {
-    if (this.jsonRpcNetwork === null || this.walletChainId === null) {
-      // Still loading
-      return false
-    }
-    return this.jsonRpcNetwork.chainId === this.walletChainId
-  }
-
-  get networkName(): string {
-    return this.jsonRpcNetwork === null
-      ? ''
-      : getNetworkName(this.jsonRpcNetwork)
   }
 
   get truncatedAddress(): string {
