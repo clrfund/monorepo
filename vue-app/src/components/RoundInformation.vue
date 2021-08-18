@@ -455,7 +455,7 @@ export default class RoundInformation extends Vue {
   width: 100%;
 }
 
-.rount-title-bar {
+.round-title-bar {
   display: flex;
   align-items: center;
 }
