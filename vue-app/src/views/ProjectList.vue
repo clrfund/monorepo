@@ -88,11 +88,9 @@ import { getTimeLeft } from '@/utils/dates'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import CartWidget from '@/components/CartWidget.vue'
-import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import RoundInformation from '@/components/RoundInformation.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
-import WalletModal from '@/components/WalletModal.vue'
 import Links from '@/components/Links.vue'
 import {
   SELECT_ROUND,
@@ -128,7 +126,6 @@ function shuffleArray(array: any[]) {
     ProjectListItem,
     RoundInformation,
     FilterDropdown,
-    WalletModal,
     Links,
   },
 })
@@ -216,38 +213,6 @@ export default class ProjectList extends Vue {
 
   get reallocationTimeLeft(): TimeLeft {
     return getTimeLeft(this.$store.state.currentRound.votingDeadline)
-  }
-
-  addMatchingFunds(): void {
-    console.warn('test')
-    if (!this.$store.state.currentUser) {
-      return this.$modal.show(
-        WalletModal,
-        {},
-        { width: 400, top: 20 },
-        {
-          // If closed but no user was connected in the event, then this will be closing the WalletModal
-          // and dont do anythign else. If closed and a user was connected, call the addMatchingFunds method
-          // again to pop open the MatchingFundsModal after the WalletModal.
-          closed: () => {
-            if (this.$store.state.currentUser) {
-              this.addMatchingFunds()
-            }
-          },
-        }
-      )
-    }
-    this.$modal.show(
-      MatchingFundsModal,
-      {},
-      {},
-      {
-        closed: () => {
-          // Reload matching pool size
-          this.$store.dispatch(LOAD_ROUND_INFO)
-        },
-      }
-    )
   }
 
   get filteredProjects(): Project[] {
@@ -434,16 +399,6 @@ export default class ProjectList extends Vue {
   }
   @media (max-width: $breakpoint-m + $cart-width-open) {
     @include project-grid-m();
-  }
-}
-
-.add-matching-funds-btn {
-  display: inline-block;
-  margin-left: 5px;
-
-  img {
-    height: 1.8em;
-    vertical-align: middle;
   }
 }
 
