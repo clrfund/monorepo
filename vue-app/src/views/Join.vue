@@ -36,7 +36,7 @@
         </div>
       </div>
       <div class="cancel-area desktop">
-        <router-link class="cancel-link" to="/join"> Cancel </router-link>
+        <links class="cancel-link" to="/join"> Cancel </links>
       </div>
       <div class="form-area">
         <div class="application">
@@ -492,7 +492,7 @@
               <p>
                 We'll upload your images to IPFS, a decentralized storage
                 platform.
-                <a target="_blank" href="https://ipfs.io/#how">More on IPFS</a>
+                <links to="https://ipfs.io/#how">More on IPFS</links>
               </p>
               <div class="inputs">
                 <div class="form-background">
@@ -530,9 +530,9 @@
               <div class="form-background">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">About the project</h3>
-                  <router-link to="/join/project" class="edit-button"
+                  <links to="/join/project" class="edit-button"
                     >Edit <img width="16px" src="@/assets/edit.svg"
-                  /></router-link>
+                  /></links>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Name</h4>
@@ -558,17 +558,17 @@
               <div class="form-background">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Funding details</h3>
-                  <router-link to="/join/fund" class="edit-button"
+                  <links to="/join/fund" class="edit-button"
                     >Edit <img width="16px" src="@/assets/edit.svg"
-                  /></router-link>
+                  /></links>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Ethereum address</h4>
                   <div class="data break-all">
                     {{ form.fund.address }}
-                    <a :href="blockExplorerUrl" target="_blank" class="no-break"
-                      >View on Etherscan</a
-                    >
+                    <links :to="blockExplorerUrl" class="no-break">
+                      View on Etherscan
+                    </links>
                   </div>
                 </div>
                 <div class="summary">
@@ -579,9 +579,9 @@
               <div class="form-background">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Team details</h3>
-                  <router-link to="/join/team" class="edit-button"
+                  <links to="/join/team" class="edit-button"
                     >Edit <img width="16px" src="@/assets/edit.svg"
-                  /></router-link>
+                  /></links>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Contact email</h4>
@@ -606,17 +606,20 @@
               <div class="form-background">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Links</h3>
-                  <router-link to="/join/links" class="edit-button"
+                  <links to="/join/links" class="edit-button"
                     >Edit <img width="16px" src="@/assets/edit.svg"
-                  /></router-link>
+                  /></links>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">GitHub</h4>
                   <div class="data">
                     {{ form.links.github }}
-                    <a v-if="form.links.github" :href="form.links.github"
+                    <links
+                      v-if="form.links.github"
+                      :to="form.links.github"
+                      :hideArrow="true"
                       ><img width="16px" src="@/assets/link.svg"
-                    /></a>
+                    /></links>
                   </div>
                   <div class="data" v-if="!form.links.github">Not provided</div>
                 </div>
@@ -624,9 +627,12 @@
                   <h4 class="read-only-title">Twitter</h4>
                   <div class="data">
                     {{ form.links.twitter }}
-                    <a v-if="form.links.twitter" :href="form.links.twitter"
+                    <links
+                      v-if="form.links.twitter"
+                      :to="form.links.twitter"
+                      :hideArrow="true"
                       ><img width="16px" src="@/assets/link.svg"
-                    /></a>
+                    /></links>
                   </div>
                   <div class="data" v-if="!form.links.twitter">
                     Not provided
@@ -636,9 +642,12 @@
                   <h4 class="read-only-title">Website</h4>
                   <div class="data" key="">
                     {{ form.links.website }}
-                    <a v-if="form.links.website" :href="form.links.website"
+                    <links
+                      v-if="form.links.website"
+                      :to="form.links.website"
+                      :hideArrow="true"
                       ><img width="16px" src="@/assets/link.svg"
-                    /></a>
+                    /></links>
                   </div>
                   <div class="data" v-if="!form.links.website">
                     Not provided
@@ -648,9 +657,12 @@
                   <h4 class="read-only-title">Discord</h4>
                   <div class="data">
                     {{ form.links.discord }}
-                    <a v-if="form.links.discord" :href="form.links.discord"
+                    <links
+                      v-if="form.links.discord"
+                      :to="form.links.discord"
+                      :hideArrow="true"
                       ><img width="16px" src="@/assets/link.svg"
-                    /></a>
+                    /></links>
                   </div>
                   <div class="data" v-if="!form.links.discord">
                     Not provided
@@ -660,9 +672,12 @@
                   <h4 class="read-only-title">Radicle</h4>
                   <div class="data">
                     {{ form.links.radicle }}
-                    <a v-if="form.links.radicle" :href="form.links.radicle"
+                    <links
+                      v-if="form.links.radicle"
+                      :to="form.links.radicle"
+                      :hideArrow="true"
                       ><img width="16px" src="@/assets/link.svg"
-                    /></a>
+                    /></links>
                   </div>
                   <div class="data" v-if="!form.links.radicle">
                     Not provided
@@ -672,9 +687,9 @@
               <div class="form-background">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Images</h3>
-                  <router-link to="/join/image" class="edit-button"
+                  <links to="/join/image" class="edit-button"
                     >Edit <img width="16px" src="@/assets/edit.svg"
-                  /></router-link>
+                  /></links>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Banner</h4>
@@ -738,6 +753,7 @@ import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import RecipientSubmissionWidget from '@/components/RecipientSubmissionWidget.vue'
 import Warning from '@/components/Warning.vue'
+import Links from '@/components/Links.vue'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import {
@@ -760,6 +776,7 @@ import { blockExplorer } from '@/api/core'
     ProjectProfile,
     RecipientSubmissionWidget,
     Warning,
+    Links,
   },
   validations: {
     form: {

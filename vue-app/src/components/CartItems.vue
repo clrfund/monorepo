@@ -10,19 +10,19 @@
       :key="item.id"
     >
       <div class="project">
-        <router-link :to="{ name: 'project', params: { id: item.id } }">
+        <links :to="{ name: 'project', params: { id: item.id } }">
           <img
             class="project-image"
             :src="item.thumbnailImageUrl"
             :alt="item.name"
           />
-        </router-link>
-        <router-link
+        </links>
+        <links
           class="project-name"
           :to="{ name: 'project', params: { id: item.id } }"
         >
           {{ item.name }}
-        </router-link>
+        </links>
         <div class="remove-cart-item" @click="removeItem(item)">
           <div v-if="isEditMode" class="remove-icon-background">
             <img
@@ -70,8 +70,9 @@ import { DateTime } from 'luxon'
 import { CartItem, MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
 import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { SAVE_CART } from '@/store/action-types'
+import Links from '@/components/Links.vue'
 
-@Component
+@Component({ components: { Links } })
 export default class extends Vue {
   @Prop() cartList!: CartItem[]
   @Prop() isEditMode!: boolean

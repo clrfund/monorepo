@@ -3,15 +3,15 @@
     <h2 class="link-title">Check them out</h2>
     <div v-if="project.githubUrl" class="link-row">
       <img src="@/assets/GitHub.svg" />
-      <a :href="project.githubUrl">GitHub repo</a>
+      <links :to="project.githubUrl">GitHub repo</links>
     </div>
     <div v-if="project.twitterUrl" class="link-row">
       <img src="@/assets/Twitter.svg" />
-      <a :href="project.twitterUrl">@Twitter</a>
+      <links :to="project.twitterUrl">@Twitter</links>
     </div>
     <div v-if="project.websiteUrl" class="link-row">
       <img src="@/assets/Meridians.svg" />
-      <a :href="project.websiteUrl">{{ project.websiteUrl }}</a>
+      <links :to="project.websiteUrl">{{ project.websiteUrl }}</links>
     </div>
   </div>
 </template>
@@ -21,8 +21,9 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { Project } from '@/api/projects'
+import Links from '@/components/Links.vue'
 
-@Component
+@Component({ components: { Links } })
 export default class extends Vue {
   @Prop() project!: Project
 }

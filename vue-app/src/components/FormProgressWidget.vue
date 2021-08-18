@@ -48,7 +48,7 @@
       <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
       <div class="row">
         <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-        <router-link class="cancel-link" to="/join"> Cancel </router-link>
+        <links class="cancel-link" to="/join"> Cancel </links>
       </div>
     </div>
   </div>
@@ -61,12 +61,14 @@ import { Prop } from 'vue-property-decorator'
 
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
+import Links from '@/components/Links.vue'
 
 // TODO make `furthestStep` logic optional (not used in BrightID flow)
 @Component({
   components: {
     FormNavigation,
     ProgressBar,
+    Links,
   },
 })
 export default class FormProgressWidget extends Vue {

@@ -1,11 +1,11 @@
 <template>
-  <router-link
+  <links
     to="/projects"
     :class="{
       back: true,
       desktop: !alsoShowOnMobile,
     }"
-    >← Back to projects</router-link
+    >← Back to projects</links
   >
 </template>
 
@@ -13,8 +13,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
+import Links from '@/components/Links.vue'
 
-@Component
+@Component({ components: { Links } })
 export default class extends Vue {
   @Prop() alsoShowOnMobile!: boolean
 }

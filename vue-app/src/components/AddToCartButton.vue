@@ -44,11 +44,11 @@ import { User } from '@/api/user'
 import { Project } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { CartItem } from '@/api/contributions'
-import ConnectionModal from '@/components/ConnectionModal.vue'
+import WalletModal from './WalletModal.vue'
 
 @Component({
   components: {
-    ConnectionModal,
+    WalletModal,
   },
 })
 export default class AddToCartButton extends Vue {
@@ -115,16 +115,16 @@ export default class AddToCartButton extends Vue {
 
   promptConnection(): void {
     return this.$modal.show(
-      ConnectionModal,
+      WalletModal,
       {},
-      {},
+      { width: 400, top: 20 },
       {
-        closed: this.handleConnectionModalClose,
+        closed: this.handleWalletModalClose,
       }
     )
   }
 
-  handleConnectionModalClose(): void {
+  handleWalletModalClose(): void {
     // The modal can be closed by clicking in Cancel or when the user is
     // connected successfully. Hence, this checks if we are in the latter case
     if (this.currentUser) {

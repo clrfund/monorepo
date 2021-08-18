@@ -11,9 +11,9 @@
         myClass="ipfs-copy-widget"
       />
       <tooltip position="bottom" content="View IPFS link">
-        <a :href="'https://ipfs.io/ipfs/' + hash" target="_blank">
+        <links :to="'https://ipfs.io/ipfs/' + hash" :hideArrow="true">
           <img class="icon" src="@/assets/ipfs-white.svg" />
-        </a>
+        </links>
       </tooltip>
     </div>
   </div>
@@ -26,9 +26,10 @@ import { Prop } from 'vue-property-decorator'
 
 import Tooltip from '@/components/Tooltip.vue'
 import CopyButton from '@/components/CopyButton.vue'
+import Links from '@/components/Links.vue'
 
 @Component({
-  components: { CopyButton, Tooltip },
+  components: { CopyButton, Tooltip, Links },
 })
 export default class IpfsCopyWidget extends Vue {
   @Prop() hash!: string

@@ -22,13 +22,13 @@
       </div>
       <div class="subtitle" id="subtitle" style="margin-top: 2rem">
         Check out these
-        <a href="https://ethereum.org/en/community/grants/"
-          >other ways to source funding</a
+        <links to="https://ethereum.org/en/community/grants/"
+          >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <a href="https://twitter.com/ethdotorg">@ethdotorg</a>
+        <links to="https://twitter.com/ethdotorg">@ethdotorg</links>
       </div>
       <div class="btn-container">
-        <router-link to="/" class="btn-primary">Home</router-link>
+        <links to="/" class="btn-primary">Home</links>
       </div>
     </div>
 
@@ -42,16 +42,14 @@
       </div>
       <div class="subtitle" id="subtitle" style="margin-top: 2rem">
         Check out these
-        <a href="https://ethereum.org/en/community/grants/"
-          >other ways to source funding</a
+        <links to="https://ethereum.org/en/community/grants/"
+          >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <a href="https://twitter.com/ethdotorg">@ethdotorg</a>
+        <links to="https://twitter.com/ethdotorg">@ethdotorg</links>
       </div>
       <div class="btn-container">
-        <router-link to="/" class="btn-primary">Home</router-link>
-        <router-link to="/about" class="btn-secondary"
-          >More on MACI</router-link
-        >
+        <links to="/" class="btn-primary">Home</links>
+        <links to="/about" class="btn-secondary">More on MACI</links>
       </div>
     </div>
 
@@ -65,7 +63,13 @@
       <div class="info-boxes">
         <div class="apply-callout">
           <div class="countdown-label caps">Time left to join</div>
-          <div class="countdown caps">{{ timeRemaining }}</div>
+          <div class="countdown caps">
+            <time-left
+              valueClass="none"
+              unitClass="none"
+              :date="signUpDeadline"
+            />
+          </div>
         </div>
         <div class="apply-callout">
           <div class="countdown-label caps">Time to complete</div>
@@ -83,7 +87,7 @@
               <div id="myTooltip" class="hidden button-menu">
                 MACI, our anti-bribery tech, currently limits the amount of
                 projects allowed per round.
-                <router-link to="/about-maci">More on MACI</router-link>
+                <links to="/about-maci">More on MACI</links>
               </div>
             </div>
           </div>
@@ -97,9 +101,7 @@
         <button class="btn-secondary" @click="toggleCriteria">
           See round criteria
         </button>
-        <router-link to="/join/project" class="btn-primary"
-          >Add project</router-link
-        >
+        <links to="/join/project" class="btn-primary">Add project</links>
       </div>
     </div>
 
@@ -112,17 +114,27 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 import { BigNumber } from 'ethers'
-import Loader from '@/components/Loader.vue'
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 
+import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { formatAmount } from '@/utils/amounts'
+import Loader from '@/components/Loader.vue'
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
+import BackToProjects from '@/components/BackToProjects.vue'
+import Links from '@/components/Links.vue'
+import TimeLeft from '@/components/TimeLeft.vue'
+
 import { formatDateFromNow } from '@/utils/dates'
-import { formatAmount } from '@/utils/amounts'
-import BackToProjects from '../components/BackToProjects.vue'
 
 @Component({
-  components: { RoundStatusBanner, CriteriaModal, Loader, BackToProjects },
+  components: {
+    RoundStatusBanner,
+    CriteriaModal,
+    Loader,
+    BackToProjects,
+    Links,
+    TimeLeft,
+  },
 })
 export default class JoinLanding extends Vue {
   showCriteriaPanel = false
