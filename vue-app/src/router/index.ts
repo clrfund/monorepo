@@ -183,7 +183,7 @@ const routes = [
     },
   },
   {
-    path: '/transaction-success/:type/:hash',
+    path: '/transaction-success/:type/:hash?',
     name: 'transaction-success',
     component: TransactionSuccess,
   },
