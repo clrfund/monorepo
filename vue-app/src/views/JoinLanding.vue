@@ -124,8 +124,6 @@ import BackToProjects from '@/components/BackToProjects.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 
-import { formatDateFromNow } from '@/utils/dates'
-
 @Component({
   components: {
     RoundStatusBanner,
@@ -164,13 +162,6 @@ export default class JoinLanding extends Vue {
       this.$store.state.currentRound.maxRecipients -
       this.registryInfo.recipientCount
     )
-  }
-
-  get timeRemaining(): string {
-    if (!this.signUpDeadline) {
-      return '...'
-    }
-    return formatDateFromNow(this.signUpDeadline)
   }
 
   get isRoundFull(): boolean {
