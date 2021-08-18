@@ -467,12 +467,15 @@ summary:focus {
 
 .vm--modal {
   background-color: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
 }
 
 .modal-body {
   background-color: $bg-light-color;
   padding: $modal-space;
   text-align: center;
+  box-shadow: 0 20px 60px -2px rgba(27, 33, 58, 0.4);
 
   .loader {
     margin: $modal-space auto;
