@@ -10,9 +10,13 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
     string private constant ERROR_NOT_AUTHORIZED = 'NOT AUTHORIZED';
     string private constant ERROR_INVALID_VERIFIER = 'INVALID VERIFIER';
     string private constant ERROR_INVALID_CONTEXT = 'INVALID CONTEXT';
+    string private constant ERROR_FEE_TO_LOW = 'FEE TO LOW';
 
     bytes32 public context;
     address public verifier;
+
+    uint public fee;
+    address public feeRecipient;
 
     struct Verification {
         uint256 time;
@@ -22,6 +26,8 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
 
     event SetBrightIdSettings(bytes32 context, address verifier);
     event Sponsor(address indexed addr);
+    event SetFee(uint fee);
+    event SetFeeRecipient(address feeRecipient);
 
     /**
      * @param _context BrightID context used for verifying users
@@ -38,8 +44,11 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
     /**
      * @notice Sponsor a BrightID user by context id
      * @param addr BrightID context id
+     * @notice Requires transaction value to be equal to fee.
      */
-    function sponsor(address addr) public {
+    function sponsor(address addr) public payable {
+        require(msg.value == fee, ERROR_FEE_TO_LOW);
+        payable(feeRecipient).transfer(msg.value);
         emit Sponsor(addr);
     }
 
@@ -55,6 +64,24 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
         context = _context;
         verifier = _verifier;
         emit SetBrightIdSettings(_context, _verifier);
+    }
+
+    /**
+     * @notice Set the sponsorship fee
+     * @param _fee Value to set the fee to
+    */
+    function setFee(uint _fee) external onlyOwner {
+        fee = _fee;
+        emit SetFee(fee);
+    }
+
+    /**
+     * @notice Set the address to receive fees
+     * @param _feeRecipient Address to receive fees
+    */
+    function setFee(address _feeRecipient) external onlyOwner {
+        feeRecipient = _feeRecipient;
+        emit SetFeeRecipient(feeRecipient);
     }
 
     /**
