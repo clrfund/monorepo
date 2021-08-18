@@ -6,7 +6,7 @@
       </div>
       <template v-if="currentRound">
         <div class="round">
-          <div class="rount-title-bar">
+          <div class="round-title-bar">
             <h2 class="round-title">Eth2 CLR</h2>
             <v-popover class="verified-container">
               <div class="verified">
