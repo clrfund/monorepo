@@ -81,7 +81,7 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
      * @notice Set the address to receive fees
      * @param _feeRecipient Address to receive fees
     */
-    function setFee(address _feeRecipient) external onlyOwner {
+    function setFeeRecipient(address _feeRecipient) external onlyOwner {
         feeRecipient = _feeRecipient;
         emit SetFeeRecipient(feeRecipient);
     }

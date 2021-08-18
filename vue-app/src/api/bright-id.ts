@@ -31,7 +31,7 @@ export async function selfSponsor(
   let overrides = {
     value: await registry.fee
   };
-  const transaction = await registry.sponsor(userAddress);
+  const transaction = await registry.sponsor(userAddress, overrides);
   return transaction;
 }
 
