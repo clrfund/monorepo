@@ -4,7 +4,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import MetamaskConnector from './connectors/MetamaskConnector'
 import WalletConnectConnector from './connectors/WalletConnectConnector'
-import { lsGet, lsSet, lsRemove } from '@/utils/connection'
+import { lsGet, lsSet, lsRemove } from '@/utils/localStorage'
 import { CHAIN_INFO } from './constants/chains'
 
 export type Wallet = 'metamask' | 'walletconnect'
