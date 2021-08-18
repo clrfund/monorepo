@@ -5,10 +5,13 @@ import dotenv from 'dotenv'
 import { HardhatUserConfig, task } from 'hardhat/config'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ganache'
+import 'hardhat-contract-sizer';
+
 
 dotenv.config()
 
-const GAS_LIMIT = 10000000
+
+const GAS_LIMIT = 20000000
 const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC || '';
 
 const config: HardhatUserConfig = {
@@ -19,6 +22,9 @@ const config: HardhatUserConfig = {
     },
     localhost: {
       url: 'http://127.0.0.1:18545',
+      timeout: 60000,
+      gas: GAS_LIMIT,
+      blockGasLimit: GAS_LIMIT,
     },
     ganache: {
       // Workaround for https://github.com/nomiclabs/hardhat/issues/518
@@ -39,15 +45,86 @@ const config: HardhatUserConfig = {
     artifacts: 'build/contracts',
     tests: 'tests',
   },
+  contractSizer: {
+    alphaSort: true,
+    runOnCompile: true,
+    disambiguatePaths: false,
+  },
   solidity: {
     version: '0.6.12',
     settings: {
       optimizer: {
         enabled: true,
-        runs: 20,
+        runs: 200,
       },
     },
+    overrides: {
+      "contracts/FundingRoundFactory.sol": {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000000,
+          },
+        },
+      },
+      "contracts/FundingRound.sol": {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000000,
+          },
+        },
+      },
+      "contracts/snarkVerifiers/BatchUpdateStateTreeVerifier32.sol": {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 10000000,
+          },
+        },
+      },
+      "contracts/snarkVerifiers/QuadVoteTallyVerifier32.sol": {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 10000000,
+          },
+        },
+      },
+      "contracts/recipientRegistry/OptimisticRecipientRegistry.sol": {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000000,
+          },
+        },
+      },
+      "contracts/userRegistry/SimpleUserRegistry.sol": {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000000,
+          },
+        },
+      },
+      "contracts/userRegistry/BrightIdUserRegistry.sol": {
+        version: "0.6.12",
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000000,
+          },
+        },
+      }
+    }
   },
+  
 };
 
 task('compile', 'Compiles the entire project, building all artifacts', async (_, { config }, runSuper) => {
