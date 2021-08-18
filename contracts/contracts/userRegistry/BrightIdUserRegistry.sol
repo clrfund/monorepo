@@ -48,7 +48,9 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
      */
     function sponsor(address addr) public payable {
         require(msg.value == fee, ERROR_FEE_TO_LOW);
-        payable(feeRecipient).transfer(msg.value);
+        if (fee > 0) {
+            payable(feeRecipient).transfer(msg.value);
+        }
         emit Sponsor(addr);
     }
 
