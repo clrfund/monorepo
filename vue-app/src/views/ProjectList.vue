@@ -226,7 +226,9 @@ export default class ProjectList extends Vue {
         {},
         { width: 400, top: 20 },
         {
-          // If closed but no user was connected in the event, then this will be closing the WalletModal and dont do anythign else. If closed and a user was connected, call the addMatchingFunds method again to pop open the MatchingFundsModal after the WalletModal.
+          // If closed but no user was connected in the event, then this will be closing the WalletModal
+          // and dont do anythign else. If closed and a user was connected, call the addMatchingFunds method
+          // again to pop open the MatchingFundsModal after the WalletModal.
           closed: () => {
             if (this.$store.state.currentUser) {
               this.addMatchingFunds()
