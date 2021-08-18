@@ -168,7 +168,9 @@ export default class JoinLanding extends Vue {
     if (this.spacesRemaining === null) {
       return false
     }
-    return this.spacesRemaining === 0
+    return (
+      this.spacesRemaining === 0 || this.$store.getters.isMessageLimitReached
+    )
   }
 
   get isRoundFillingUp(): boolean {
