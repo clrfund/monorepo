@@ -417,13 +417,13 @@ ol li::before {
     position: relative;
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
     gap: 1rem;
     .column {
       flex: 1;
     }
     @media (max-width: $breakpoint-m) {
       display: flex;
-      flex-direction: column;
       gap: 0.5rem;
     }
   }
