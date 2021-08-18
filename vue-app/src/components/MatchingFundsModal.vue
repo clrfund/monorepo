@@ -123,6 +123,9 @@ export default class MatchingFundsModal extends Vue {
     if (amount.lte(BigNumber.from(0))) {
       return false
     }
+    if (this.balance && parseFloat(this.amount) > parseFloat(this.balance)) {
+      return false
+    }
     return true
   }
 
