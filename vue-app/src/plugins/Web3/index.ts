@@ -125,10 +125,8 @@ export default {
 
     // If previous provider was found, initiate connection.
     if (alreadyConnectedProvider) {
-      const response = plugin.connectWallet(alreadyConnectedProvider)
-      if (response.state !== 'fulfilled') {
-        plugin.disconnectWallet()
-      }
+      lsRemove(CONNECTED_PROVIDER)
+      plugin.connectWallet(alreadyConnectedProvider)
     }
 
     Object.defineProperty(Vue.prototype, '$web3', {
