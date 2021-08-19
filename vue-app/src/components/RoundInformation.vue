@@ -23,9 +23,19 @@
             </v-popover>
           </div>
           <!-- TODO add logic to status -->
-          <div class="status">
+          <div
+            class="status"
+            v-if="
+              !$store.getters.isRoundFinalized &&
+              !$store.getters.isRoundTallying
+            "
+          >
             <div class="circle open-pulse" />
             Open
+          </div>
+          <div v-else class="status">
+            <div class="circle closed" />
+            Closed
           </div>
         </div>
         <div class="round-info-item" v-if="$store.getters.isRoundJoinOnlyPhase">
@@ -202,6 +212,10 @@
                 src="@/assets/info.svg"
               />
               <div
+                v-if="
+                  !$store.getters.isRoundFinalized &&
+                  !$store.getters.isRoundTallying
+                "
                 v-tooltip="'Add matching funds'"
                 class="add-link"
                 @click="addMatchingFunds"
@@ -482,6 +496,12 @@ export default class RoundInformation extends Vue {
   height: 8px;
   border-radius: 50%;
   margin-right: 0.5rem;
+}
+
+.closed {
+  width: 12px;
+  height: 12px;
+  background: $bg-light-color;
 }
 
 .open-pulse {
