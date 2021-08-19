@@ -1,53 +1,44 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <div v-if="!currentUser">
-        <h3>Connect your wallet</h3>
-        <div style="margin-bottom: 2rem">
-          You must connect to add to the matching pool.
+      <h3>
+        Contribute {{ tokenSymbol }} to the
+        {{ isRoundFinished() ? 'next' : 'current' }} round
+      </h3>
+      <form class="contribution-form">
+        <div class="input-button">
+          <img
+            style="margin-left: 0.5rem"
+            height="24px"
+            src="@/assets/dai.svg"
+          />
+          <input
+            v-model="amount"
+            class="input"
+            id="input"
+            :class="{ invalid: !isAmountValid() }"
+            name="amount"
+            type="number"
+            required
+            placeholder="10"
+          />
         </div>
-        <wallet-widget />
+      </form>
+      <div
+        v-if="parseFloat(amount) > parseFloat(balance)"
+        class="balance-check-warning"
+      >
+        ⚠️ You only have {{ balance }} {{ tokenSymbol }}
       </div>
-      <div v-else>
-        <h3>
-          Contribute {{ tokenSymbol }} to the
-          {{ isRoundFinished() ? 'next' : 'current' }} round
-        </h3>
-        <form class="contribution-form">
-          <div class="input-button">
-            <img
-              style="margin-left: 0.5rem"
-              height="24px"
-              src="@/assets/dai.svg"
-            />
-            <input
-              v-model="amount"
-              class="input"
-              id="input"
-              :class="{ invalid: !isAmountValid() }"
-              name="amount"
-              type="number"
-              required
-              placeholder="10"
-            />
-          </div>
-        </form>
-        <div
-          v-if="parseFloat(amount) > parseFloat(balance)"
-          class="balance-check-warning"
+      <div class="btn-row">
+        <button class="btn-secondary" @click="$emit('close')">Cancel</button>
+        <button
+          class="btn-action"
+          :disabled="!isAmountValid()"
+          @click="contributeMatchingFunds()"
         >
-          ⚠️ You only have {{ balance }} {{ tokenSymbol }}
-        </div>
-        <div class="btn-row">
-          <button class="btn-secondary" @click="$emit('close')">Cancel</button>
-          <button
-            class="btn-action"
-            :disabled="!isAmountValid()"
-            @click="contributeMatchingFunds()"
-          >
-            Contribute
-          </button>
-        </div>
+          Contribute
+        </button>
       </div>
     </div>
     <div v-if="step === 2">
@@ -77,7 +68,6 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber, Contract, Signer } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
-import WalletWidget from '@/components/WalletWidget.vue'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 import { commify, formatUnits } from '@ethersproject/units'
@@ -90,7 +80,6 @@ import { RoundStatus } from '@/api/round'
 @Component({
   components: {
     Transaction,
-    WalletWidget,
   },
 })
 export default class MatchingFundsModal extends Vue {
@@ -132,6 +121,9 @@ export default class MatchingFundsModal extends Vue {
       return false
     }
     if (amount.lte(BigNumber.from(0))) {
+      return false
+    }
+    if (this.balance && parseFloat(this.amount) > parseFloat(this.balance)) {
       return false
     }
     return true

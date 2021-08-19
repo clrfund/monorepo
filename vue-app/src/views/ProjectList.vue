@@ -88,7 +88,6 @@ import { getTimeLeft } from '@/utils/dates'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import CartWidget from '@/components/CartWidget.vue'
-import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import RoundInformation from '@/components/RoundInformation.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
@@ -214,23 +213,6 @@ export default class ProjectList extends Vue {
 
   get reallocationTimeLeft(): TimeLeft {
     return getTimeLeft(this.$store.state.currentRound.votingDeadline)
-  }
-
-  addMatchingFunds(): void {
-    if (!this.$store.state.currentUser) {
-      return
-    }
-    this.$modal.show(
-      MatchingFundsModal,
-      {},
-      {},
-      {
-        closed: () => {
-          // Reload matching pool size
-          this.$store.dispatch(LOAD_ROUND_INFO)
-        },
-      }
-    )
   }
 
   get filteredProjects(): Project[] {
@@ -417,16 +399,6 @@ export default class ProjectList extends Vue {
   }
   @media (max-width: $breakpoint-m + $cart-width-open) {
     @include project-grid-m();
-  }
-}
-
-.add-matching-funds-btn {
-  display: inline-block;
-  margin-left: 5px;
-
-  img {
-    height: 1.8em;
-    vertical-align: middle;
   }
 }
 

@@ -283,6 +283,7 @@ import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
+import WalletModal from '@/components/WalletModal.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
 import {
@@ -316,6 +317,7 @@ function shuffleArray(array: any[]) {
   components: {
     ProjectListItem,
     Loader,
+    WalletModal,
     TimeLeft,
     Links,
   },
@@ -410,6 +412,24 @@ export default class RoundInformation extends Vue {
   }
 
   addMatchingFunds(): void {
+    if (!this.$store.state.currentUser) {
+      return this.$modal.show(
+        WalletModal,
+        {},
+        { width: 400, top: 20 },
+        {
+          // If closed but no user was connected in the event, then this will be closing the WalletModal
+          // and dont do anythign else. If closed and a user was connected, call the addMatchingFunds method
+          // again to pop open the MatchingFundsModal after the WalletModal.
+          closed: () => {
+            if (this.$store.state.currentUser) {
+              this.addMatchingFunds()
+            }
+          },
+        }
+      )
+    }
+
     return this.$modal.show(
       MatchingFundsModal,
       {},
