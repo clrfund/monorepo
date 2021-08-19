@@ -34,13 +34,13 @@
                 Add your project to the next funding round. If you're working on
                 anything related to Eth2, you can join in.
               </p>
-              <div v-if="signUpDeadline">
-                <time-left unitClass="none" :date="signUpDeadline" />
-                to join
+              <div class="button-group">
+                <links to="/join" class="btn-primary w100">Join round</links>
+                <div v-if="signUpDeadline">
+                  <time-left unitClass="none" :date="signUpDeadline" />
+                  to join
+                </div>
               </div>
-            </div>
-            <div class="button-group">
-              <links to="/join" class="btn-primary w100">Join round</links>
             </div>
           </div>
         </div>
@@ -275,7 +275,8 @@ ol li::before {
   margin-right: 1rem;
   align-items: center;
   @media (max-width: $breakpoint-m) {
-    flex-direction: column;
+    flex-direction: column-reverse;
+    align-items: flex-start;
     width: 100%;
     margin: 0.5rem 0;
   }
