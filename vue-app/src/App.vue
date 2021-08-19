@@ -465,14 +465,21 @@ summary:focus {
   margin-left: 0.5rem;
 }
 
+.vm--overlay {
+  background-color: rgba(black, 0.5) !important;
+}
+
 .vm--modal {
   background-color: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
 }
 
 .modal-body {
   background-color: $bg-light-color;
   padding: $modal-space;
   text-align: center;
+  box-shadow: $box-shadow;
 
   .loader {
     margin: $modal-space auto;
