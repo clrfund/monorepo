@@ -139,7 +139,6 @@ export default class FilterDropdown extends Vue {
       }
     }
     @media (max-width: $breakpoint-s) {
-      grid-template-columns: repeat(2, 1fr);
       .category-btn {
         border: none;
         &:nth-child(1) {
