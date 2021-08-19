@@ -465,6 +465,10 @@ summary:focus {
   margin-left: 0.5rem;
 }
 
+.vm--overlay {
+  background-color: rgba(black, 0.5) !important;
+}
+
 .vm--modal {
   background-color: transparent !important;
   box-shadow: none !important;
