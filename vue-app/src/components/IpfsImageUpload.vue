@@ -20,7 +20,6 @@
         type="submit"
         label="Upload"
         class="btn-primary"
-        :class="{ disabled: loading || error || !loadedImageData }"
         :disabled="loading || error || !loadedImageData"
       >
         {{ loading ? 'Uploading...' : 'Upload' }}
@@ -189,17 +188,6 @@ export default class IpfsImageUpload extends Vue {
     object-fit: cover;
     width: 100%;
     height: 100%;
-  }
-}
-
-.disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-
-  &:hover {
-    opacity: 0.5;
-    transform: scale(1);
-    cursor: not-allowed;
   }
 }
 

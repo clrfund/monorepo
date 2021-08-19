@@ -218,14 +218,7 @@
         </button>
         <button
           v-if="!isCartEmpty"
-          :class="{
-            'btn-action': !errorMessage,
-            'btn-action disabled':
-              errorMessage ||
-              ($store.getters.hasUserContributed &&
-                $store.getters.hasUserVoted &&
-                !isDirty),
-          }"
+          class="btn-action"
           @click="submitCart"
           :disabled="
             errorMessage ||
@@ -1082,16 +1075,6 @@ h2 {
 
 .moon-emoji {
   font-size: 4rem;
-}
-
-.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  &:hover {
-    transform: none;
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
 }
 
 .reallocation-row {

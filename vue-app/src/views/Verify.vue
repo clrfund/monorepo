@@ -78,7 +78,7 @@
                 v-if="!isManuallyVerified"
                 @click="handleIsVerifiedClick"
                 class="btn-primary"
-                :class="{ disabled: loadingManualVerify }"
+                :disabled="loadingManualVerify"
               >
                 Check if you are verified
               </button>
@@ -1093,16 +1093,7 @@ export default class VerifyView extends Vue {
     border-radius: 4px;
   }
 }
-.disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
 
-  &:hover {
-    opacity: 0.5;
-    transform: scale(1);
-    cursor: not-allowed;
-  }
-}
 .pt-1 {
   padding-top: 1rem;
 }

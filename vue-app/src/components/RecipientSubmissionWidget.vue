@@ -95,12 +95,8 @@
         <div class="cta">
           <button
             @click="handleSubmit"
-            :class="
-              isWaiting || isPending || hasLowFunds
-                ? 'btn-action-disabled'
-                : 'btn-action'
-            "
-            :disabled="!canSubmit"
+            class="btn-action"
+            :disabled="!canSubmit || isWaiting || isPending || hasLowFunds"
           >
             <div v-if="isWaiting || isPending">
               <loader class="button-loader" />
