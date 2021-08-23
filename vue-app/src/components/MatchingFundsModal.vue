@@ -24,11 +24,8 @@
           />
         </div>
       </form>
-      <div
-        v-if="parseFloat(amount) > parseFloat(balance)"
-        class="balance-check-warning"
-      >
-        ⚠️ You only have {{ balance }} {{ tokenSymbol }}
+      <div v-if="!isBalanceSufficient" class="balance-check-warning">
+        ⚠️ You only have {{ renderBalance }} {{ tokenSymbol }}
       </div>
       <div class="btn-row">
         <button class="btn-secondary" @click="$emit('close')">Cancel</button>
@@ -104,7 +101,17 @@ export default class MatchingFundsModal extends Vue {
     if (balance === null || typeof balance === 'undefined') {
       return null
     }
-    return commify(formatUnits(balance, 18))
+    return formatUnits(balance, 18)
+  }
+
+  get renderBalance(): string | null {
+    if (this.balance === null) return null
+    return commify(this.balance)
+  }
+
+  get isBalanceSufficient(): boolean {
+    if (this.balance === null) return false
+    return parseFloat(this.balance) >= parseFloat(this.amount)
   }
 
   isRoundFinished(): boolean {
