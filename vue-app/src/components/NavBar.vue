@@ -200,6 +200,9 @@ window.onclick = function (event) {
         padding: 0.5rem;
         gap: 0.5rem;
         width: 176px;
+        &:after {
+          color: $text-color;
+        }
         &:hover {
           background: $bg-light-color;
         }
