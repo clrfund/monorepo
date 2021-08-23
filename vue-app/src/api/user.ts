@@ -6,7 +6,14 @@ import { UserRegistry, ERC20 } from './abi'
 import { factory, ipfsGatewayUrl, provider } from './core'
 import { BrightId } from './bright-id'
 
-export const LOGIN_MESSAGE = `Sign this message to access clr.fund at ${factory.address.toLowerCase()}.`
+export const LOGIN_MESSAGE = `Welcome to clr.fund!
+
+To get logged in, sign this message to prove you have access to this wallet. This does not cost any ether.
+
+You will be asked to sign each time you load the app.
+
+Contract address: ${factory.address.toLowerCase()}.`
+
 export interface User {
   walletAddress: string
   walletProvider: Web3Provider
