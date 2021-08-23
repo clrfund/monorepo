@@ -164,7 +164,6 @@ export default class TransactionSuccess extends Vue {
   line-height: 120%;
   margin-right: 0.5rem;
   color: $text-color;
-  width: 230px;
 }
 
 .contributed-content {

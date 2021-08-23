@@ -86,7 +86,6 @@ export default class TransactionReceipt extends Vue {
 @import '../styles/theme';
 
 .tx-receipt {
-  min-width: 200px;
   display: flex;
   justify-content: space-between;
 }
