@@ -10,7 +10,7 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
     string private constant ERROR_NOT_AUTHORIZED = 'NOT AUTHORIZED';
     string private constant ERROR_INVALID_VERIFIER = 'INVALID VERIFIER';
     string private constant ERROR_INVALID_CONTEXT = 'INVALID CONTEXT';
-    string private constant ERROR_FEE_TO_LOW = 'FEE TO LOW';
+    string private constant ERROR_FEE_TOO_LOW = 'FEE TOO LOW';
 
     bytes32 public context;
     address public verifier;
@@ -33,12 +33,14 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
      * @param _context BrightID context used for verifying users
      * @param _verifier BrightID verifier address that signs BrightID verifications
      */
-    constructor(bytes32 _context, address _verifier) public {
+    constructor(bytes32 _context, address _verifier, uint _fee, address _feeRecipient) public {
         // ecrecover returns zero on error
         require(_verifier != address(0), ERROR_INVALID_VERIFIER);
 
         context = _context;
         verifier = _verifier;
+        fee = _fee;
+        feeRecipient = _feeRecipient;
     }
 
     /**
@@ -47,7 +49,7 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
      * @notice Requires transaction value to be equal to fee.
      */
     function sponsor(address addr) public payable {
-        require(msg.value == fee, ERROR_FEE_TO_LOW);
+        require(msg.value == fee, ERROR_FEE_TOO_LOW);
         if (fee > 0) {
             payable(feeRecipient).transfer(msg.value);
         }
