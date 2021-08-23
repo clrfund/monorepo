@@ -1,16 +1,24 @@
 <template>
   <div class="etherscan-btn tx-receipt">
     <div class="status-label-address">
-      <loader v-if="isPending" class="pending" />
-      <!-- TODO: add tooltip for pending -->
-      <img class="success" v-if="!isPending" src="@/assets/checkmark.svg" />
+      <loader
+        v-if="isPending"
+        v-tooltip="'Awaiting transaction confirmation'"
+        class="pending"
+      />
+      <img
+        class="success"
+        v-tooltip="'Transaction confirmed'"
+        v-if="!isPending"
+        src="@/assets/checkmark.svg"
+      />
       <p class="hash">{{ renderCopiedOrHash }}</p>
     </div>
     <div class="actions">
       <links
         class="explorerLink"
         :to="blockExplorerUrl"
-        title="View on Etherscan"
+        v-tooltip="'View on Etherscan'"
         :hideArrow="true"
         ><img class="icon" src="@/assets/etherscan.svg"
       /></links>
@@ -53,7 +61,7 @@ export default class TransactionReceipt extends Vue {
   }
 
   get renderCopiedOrHash(): string {
-    return this.isCopied ? 'Copied!' : this.renderHash(8)
+    return this.isCopied ? 'Copied!' : this.renderHash(16)
   }
 
   async checkTxStatus(): Promise<void> {
