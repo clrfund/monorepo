@@ -17,7 +17,7 @@
                   <div class="contract-address">
                     {{ currentRound.fundingRoundAddress }}
                   </div>
-                  <links :href="blockExplorerUrl">View on Etherscan</links>
+                  <links :to="blockExplorerUrl">View on Etherscan</links>
                 </div>
               </template>
             </v-popover>
