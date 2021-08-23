@@ -40,24 +40,31 @@
       />
       <div class="balances-section">
         <div class="flex-row">
-          <h2>Optimism balances</h2>
-          <img src="@/assets/info.svg" />
+          <h2>Arbitrum balances</h2>
+          <div
+            v-tooltip="{
+              content: 'Balance of wallet on Arbitrum chain',
+              trigger: 'hover click',
+            }"
+          >
+            <img src="@/assets/info.svg" />
+          </div>
         </div>
         <div class="balances-card">
           <balance-item :balance="balance" abbrev="DAI">
             <icon-status
               v-bind:custom="true"
               logo="dai.svg"
-              secondaryLogo="optimism.png"
-              bg="red"
+              secondaryLogo="arbitrum.png"
+              :bg="balanceBackgroundColor"
             />
           </balance-item>
           <balance-item :balance="etherBalance" abbrev="ETH">
             <icon-status
               v-bind:custom="true"
               logo="eth.svg"
-              secondaryLogo="optimism.png"
-              bg="red"
+              secondaryLogo="arbitrum.png"
+              :bg="balanceBackgroundColor"
             />
           </balance-item>
         </div>
@@ -94,6 +101,8 @@ export default class NavBar extends Vue {
 
   @Prop()
   etherBalance!: string
+
+  balanceBackgroundColor = '#2a374b'
 
   get walletProvider(): any {
     return this.$store.state.currentUser?.walletProvider
