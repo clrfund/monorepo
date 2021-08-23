@@ -24,13 +24,7 @@
         <div v-if="isWaiting" class="tx-notice">
           Check your wallet for a prompt...
         </div>
-        <div
-          v-if="hasTxError || isTxRejected"
-          class="warning-text"
-          style="font-size: 24px; margin-bottom: 0"
-        >
-          ⚠️
-        </div>
+        <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
           Something failed: {{ txError }}<br />
           Check your wallet or Etherscan for more info.
@@ -468,15 +462,19 @@ export default class RecipientSubmissionWidget extends Vue {
   cursor: not-allowed;
 }
 
+.warning-icon {
+  font-size: 24px;
+}
+
 .warning-text {
-  margin-top: 0.25rem;
   font-size: 14px;
-  font-family: Inter;
-  margin-bottom: 2rem;
+}
+
+.warning-text,
+.warning-icon {
   line-height: 150%;
   color: $warning-color;
   text-transform: uppercase;
-  font-weight: 500;
   text-align: center;
 }
 </style>

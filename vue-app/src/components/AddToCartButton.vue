@@ -2,7 +2,7 @@
   <div>
     <form action="#" v-if="!inCart && canContribute()">
       <div class="input-button">
-        <img style="margin-left: 0.5rem" height="24px" src="@/assets/dai.svg" />
+        <img class="token-icon" height="24px" src="@/assets/dai.svg" />
         <input
           class="input"
           name="amount"

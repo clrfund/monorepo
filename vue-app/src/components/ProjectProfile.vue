@@ -2,7 +2,7 @@
   <div v-if="project" class="project-page">
     <info
       v-if="previewMode"
-      style="margin-bottom: 1.5rem"
+      class="info"
       message="This is what your contributors will see when they visit your project page."
     />
     <img
@@ -31,11 +31,7 @@
       </div>
       <div class="mobile mb2">
         <div class="input-button" v-if="hasContributeBtn() && !inCart">
-          <img
-            style="margin-left: 0.5rem"
-            height="24px"
-            src="@/assets/dai.svg"
-          />
+          <img class="token-icon" height="24px" src="@/assets/dai.svg" />
           <input
             v-model="contributionAmount"
             class="input"
@@ -282,6 +278,10 @@ export default class ProjectProfile extends Vue {
     margin-bottom: 3rem;
   }
 
+  .info {
+    margin-bottom: 1.5rem;
+  }
+
   .project-image {
     border-radius: 0.25rem;
     display: block;
@@ -506,14 +506,6 @@ export default class ProjectProfile extends Vue {
     border: none;
     color: $bg-primary-color;
     width: 100%;
-  }
-
-  .mb2 {
-    margin-bottom: 2rem;
-  }
-
-  .mt2 {
-    margin-top: 2rem;
   }
 }
 </style>

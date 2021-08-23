@@ -7,11 +7,7 @@
       </h3>
       <form class="contribution-form">
         <div class="input-button">
-          <img
-            style="margin-left: 0.5rem"
-            height="24px"
-            src="@/assets/dai.svg"
-          />
+          <img class="token-icon" height="24px" src="@/assets/dai.svg" />
           <input
             v-model="amount"
             class="input"
@@ -53,11 +49,9 @@
       ></transaction>
     </div>
     <div v-if="step === 3">
-      <div style="font-size: 64px">💦</div>
+      <div class="big-emoji">💦</div>
       <h3>You just topped up the pool by {{ amount }} {{ tokenSymbol }}!</h3>
-      <div style="margin-bottom: 2rem">
-        Thanks for helping out all our projects.
-      </div>
+      <div class="mb2">Thanks for helping out all our projects.</div>
       <button class="btn-primary" @click="$emit('close')">Done</button>
     </div>
   </div>
@@ -174,10 +168,6 @@ export default class MatchingFundsModal extends Vue {
   width: 100%;
   display: flex;
   justify-content: space-between;
-
-  .btn {
-    margin: 0 $modal-space;
-  }
 }
 
 .close-btn {
