@@ -167,11 +167,11 @@ const routes = [
     },
   },
   {
-    path: '/sybil-resistance',
-    name: 'sybil-resistance',
+    path: '/about-sybil-resistance',
+    name: 'about-sybil-resistance',
     component: AboutSybilResistance,
     meta: {
-      title: 'Sybil Resistance',
+      title: 'About Sybil Resistance',
     },
   },
   {
