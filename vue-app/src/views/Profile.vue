@@ -40,7 +40,7 @@
       />
       <div class="balances-section">
         <div class="flex-row">
-          <h2>Arbitrum balances</h2>
+          <h2>{{ chainInfo.label }} balances</h2>
           <div
             v-tooltip="{
               content: 'Balance of wallet on Arbitrum chain',
@@ -55,7 +55,7 @@
             <icon-status
               v-bind:custom="true"
               logo="dai.svg"
-              secondaryLogo="arbitrum.png"
+              :secondaryLogo="chainInfo.logo"
               :bg="balanceBackgroundColor"
             />
           </balance-item>
@@ -63,7 +63,7 @@
             <icon-status
               v-bind:custom="true"
               logo="eth.svg"
-              secondaryLogo="arbitrum.png"
+              :secondaryLogo="chainInfo.logo"
               :bg="balanceBackgroundColor"
             />
           </balance-item>
@@ -87,8 +87,8 @@ import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
-
 import { userRegistryType, UserRegistryType } from '@/api/core'
+import { CHAIN_INFO, ChainInfo } from '@/plugins/Web3/constants/chains'
 
 @Component({
   components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
@@ -114,6 +114,10 @@ export default class NavBar extends Vue {
 
   get showBrightIdWidget(): boolean {
     return userRegistryType === UserRegistryType.BRIGHT_ID
+  }
+
+  get chainInfo(): ChainInfo {
+    return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
   }
 
   renderUserAddress(digitsToShow?: number): string {
