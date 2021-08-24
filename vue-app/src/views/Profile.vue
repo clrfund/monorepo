@@ -43,7 +43,7 @@
           <h2>{{ chainInfo.label }} balances</h2>
           <div
             v-tooltip="{
-              content: 'Balance of wallet on Arbitrum chain',
+              content: `Balance of wallet on ${chainInfo.label} chain`,
               trigger: 'hover click',
             }"
           >
