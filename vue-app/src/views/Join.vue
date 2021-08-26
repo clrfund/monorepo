@@ -1441,16 +1441,7 @@ export default class JoinView extends mixins(validationMixin) {
     border-radius: 4px;
   }
 }
-.disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
 
-  &:hover {
-    opacity: 0.5;
-    transform: scale(1);
-    cursor: not-allowed;
-  }
-}
 .pt-1 {
   padding-top: 1rem;
 }

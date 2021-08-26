@@ -1,5 +1,14 @@
 @import './vars';
 
+@mixin disabledAttribute() {
+  &[disabled],
+  &[disabled]:hover {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
 @mixin button($color, $background, $border) {
   display: block;
   box-sizing: border-box;
@@ -19,6 +28,7 @@
     transform: scale(1.02);
     cursor: pointer;
   }
+  @include disabledAttribute;
 }
 
 .btn-primary {

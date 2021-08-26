@@ -472,6 +472,7 @@ export default class ProjectProfile extends Vue {
     border: none;
     cursor: pointer;
     box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+    @include disabledAttribute;
   }
 
   .donate-btn-full {

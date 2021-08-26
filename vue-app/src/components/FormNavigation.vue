@@ -6,9 +6,7 @@
         v-if="currentStep > 0"
         @click="handleStepNav(currentStep - 1)"
         class="btn-secondary"
-        :class="{
-          disabled: isNavDisabled,
-        }"
+        :disabled="isNavDisabled"
       >
         Previous
       </button>
@@ -26,9 +24,7 @@
         v-if="currentStep > 0"
         @click="handleStepNav(currentStep - 1)"
         class="btn-secondary"
-        :class="{
-          disabled: isNavDisabled,
-        }"
+        :disabled="isNavDisabled"
       >
         Previous
       </button>
@@ -91,17 +87,6 @@ export default class FormNavigation extends Vue {
   align-items: center;
   @media (max-width: $breakpoint-m) {
     bottom: 0;
-  }
-}
-
-.disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-
-  &:hover {
-    opacity: 0.5;
-    transform: scale(1);
-    cursor: not-allowed;
   }
 }
 </style>
