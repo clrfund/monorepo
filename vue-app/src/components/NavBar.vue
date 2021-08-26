@@ -24,11 +24,11 @@
       </a>
       <div class="help-dropdown" v-if="inApp">
         <img
-          @click="openHelpDropdown()"
+          @click="toggleHelpDropdown()"
           class="dropdown-btn"
           src="@/assets/help.svg"
         />
-        <div id="myHelpDropdown" class="button-menu">
+        <div id="myHelpDropdown" class="button-menu" v-if="showHelpDowndown">
           <div class="dropdown-title">Help</div>
           <div
             v-for="({ to, text, emoji }, idx) of dropdownItems"
@@ -63,6 +63,7 @@ import Links from './Links.vue'
 })
 export default class NavBar extends Vue {
   @Prop() inApp
+  showHelpDowndown = false
   profileImageUrl: string | null = null
   dropdownItems: { to?: string; text: string; emoji: string }[] = [
     { to: '/', text: 'About', emoji: 'ℹ️' },
@@ -77,26 +78,8 @@ export default class NavBar extends Vue {
     },
   ]
 
-  openDropdown(): void {
-    document.getElementById('myDropdown')?.classList.toggle('show')
-  }
-
-  openHelpDropdown(): void {
-    document.getElementById('myHelpDropdown')?.classList.toggle('show')
-  }
-}
-
-// Close the dropdown menu if the user clicks outside of it
-window.onclick = function (event) {
-  if (!event.target.matches('.dropdown-btn')) {
-    const dropdowns = document.getElementsByClassName('button-menu')
-    let i: number
-    for (i = 0; i < dropdowns.length; i++) {
-      const openDropdown = dropdowns[i]
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show')
-      }
-    }
+  toggleHelpDropdown(): void {
+    this.showHelpDowndown = !this.showHelpDowndown
   }
 }
 </script>
@@ -128,45 +111,6 @@ window.onclick = function (event) {
     display: flex;
     flex-direction: row;
     align-items: center;
-
-    .dropdown {
-      position: relative;
-      display: inline-block;
-
-      .button-menu {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 2rem;
-        right: 0.5rem;
-        background: $bg-secondary-color;
-        border: 1px solid rgba(115, 117, 166, 0.3);
-        border-radius: 0.5rem;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-        cursor: pointer;
-        overflow: hidden;
-
-        .dropdown-item a {
-          display: flex;
-          align-items: center;
-          padding: 0.5rem;
-          gap: 0.5rem;
-          &:hover {
-            background: $bg-light-color;
-          }
-
-          .item-text {
-            margin: 0;
-            color: $text-color;
-          }
-        }
-      }
-      .show {
-        display: flex;
-      }
-    }
   }
 
   .help-dropdown {
@@ -175,7 +119,7 @@ window.onclick = function (event) {
     margin-left: 0.5rem;
 
     .button-menu {
-      display: none;
+      display: flex;
       flex-direction: column;
       position: absolute;
       top: 2rem;
@@ -188,6 +132,10 @@ window.onclick = function (event) {
       z-index: 1;
       cursor: pointer;
       overflow: hidden;
+
+      @media (max-width: $breakpoint-s) {
+        right: -4.5rem;
+      }
 
       .dropdown-title {
         padding: 0.5rem;
@@ -209,9 +157,6 @@ window.onclick = function (event) {
           color: $text-color;
         }
       }
-    }
-    .show {
-      display: flex;
     }
   }
 
