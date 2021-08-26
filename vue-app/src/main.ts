@@ -12,7 +12,6 @@ Vue.use(Meta)
 Vue.use(VModal, {
   dynamicDefaults: {
     adaptive: true,
-    clickToClose: false,
     height: '100%',
     width: 450,
   },

@@ -671,7 +671,11 @@ export default class Cart extends Vue {
         ? ContributionModal
         : ReallocationModal,
       { votes },
-      { width: 500 }
+      {
+        width: 500,
+        clickToClose:
+          this.contribution.isZero() || !this.$store.getters.hasUserVoted,
+      }
     )
     this.$store.commit(TOGGLE_EDIT_SELECTION, false)
   }

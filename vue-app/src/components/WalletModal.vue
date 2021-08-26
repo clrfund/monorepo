@@ -7,24 +7,26 @@
     <div v-else class="modal-body">
       <div class="top">
         <p>Connect to a wallet</p>
-        <img class="pointer" src="@/assets/close.svg" @click="$emit('close')" />
+        <button class="close-button" @click="$emit('close')">
+          <img class="pointer" src="@/assets/close.svg" />
+        </button>
       </div>
-      <div
+      <button
         v-if="windowEthereum"
         class="option"
         @click="connectWallet('metamask')"
       >
         <p>MetaMask</p>
         <img height="24px" width="24px" src="@/assets/metamask.png" />
-      </div>
-      <div v-else class="option" @click="redirectToMetamaskWebsite()">
+      </button>
+      <button v-else class="option" @click="redirectToMetamaskWebsite()">
         <p>Install MetaMask</p>
         <img height="24px" width="24px" src="@/assets/metamask.png" />
-      </div>
-      <div class="option" @click="connectWallet('walletconnect')">
+      </button>
+      <button class="option" @click="connectWallet('walletconnect')">
         <p>WalletConnect</p>
         <img height="24px" width="24px" src="@/assets/walletConnectIcon.svg" />
-      </div>
+      </button>
       <div v-if="error" class="error">{{ error }}</div>
     </div>
   </div>
@@ -108,6 +110,8 @@ export default class WalletModal extends Vue {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 16px;
+  color: $text-color;
   &:hover {
     cursor: pointer;
     border-color: $clr-green;
@@ -116,5 +120,10 @@ export default class WalletModal extends Vue {
   .btn-margin {
     margin-top: 16px;
   }
+}
+
+.close-button {
+  background: transparent;
+  border: none;
 }
 </style>
