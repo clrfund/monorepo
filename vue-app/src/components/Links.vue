@@ -51,7 +51,6 @@ export default class extends Vue {
     content: '↗';
     transition: all 0.1s ease-in-out;
     font-style: normal;
-    /* color: white; */
   }
   &:hover {
     &:after {
