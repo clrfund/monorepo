@@ -40,24 +40,31 @@
       />
       <div class="balances-section">
         <div class="flex-row">
-          <h2>Optimism balances</h2>
-          <img src="@/assets/info.svg" />
+          <h2>{{ chainInfo.label }} balances</h2>
+          <div
+            v-tooltip="{
+              content: `Balance of wallet on ${chainInfo.label} chain`,
+              trigger: 'hover click',
+            }"
+          >
+            <img src="@/assets/info.svg" />
+          </div>
         </div>
         <div class="balances-card">
           <balance-item :balance="balance" abbrev="DAI">
             <icon-status
               v-bind:custom="true"
               logo="dai.svg"
-              secondaryLogo="optimism.png"
-              bg="red"
+              :secondaryLogo="chainInfo.logo"
+              :bg="balanceBackgroundColor"
             />
           </balance-item>
           <balance-item :balance="etherBalance" abbrev="ETH">
             <icon-status
               v-bind:custom="true"
               logo="eth.svg"
-              secondaryLogo="optimism.png"
-              bg="red"
+              :secondaryLogo="chainInfo.logo"
+              :bg="balanceBackgroundColor"
             />
           </balance-item>
         </div>
@@ -80,8 +87,8 @@ import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
-
 import { userRegistryType, UserRegistryType } from '@/api/core'
+import { CHAIN_INFO, ChainInfo } from '@/plugins/Web3/constants/chains'
 
 @Component({
   components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
@@ -95,6 +102,8 @@ export default class NavBar extends Vue {
   @Prop()
   etherBalance!: string
 
+  balanceBackgroundColor = '#2a374b'
+
   get walletProvider(): any {
     return this.$store.state.currentUser?.walletProvider
   }
@@ -105,6 +114,10 @@ export default class NavBar extends Vue {
 
   get showBrightIdWidget(): boolean {
     return userRegistryType === UserRegistryType.BRIGHT_ID
+  }
+
+  get chainInfo(): ChainInfo {
+    return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
   }
 
   renderUserAddress(digitsToShow?: number): string {

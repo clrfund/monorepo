@@ -14,7 +14,11 @@
           class="secondary-icon"
         />
       </div>
-      <div v-if="custom" class="status-custom" :style="cssVars">
+      <div
+        v-if="custom && secondaryLogo"
+        class="status-custom"
+        :style="cssVars"
+      >
         <img
           :src="require(`@/assets/${secondaryLogo}`)"
           class="secondary-icon"
