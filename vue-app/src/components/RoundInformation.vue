@@ -22,7 +22,6 @@
               </template>
             </v-popover>
           </div>
-          <!-- TODO add logic to status -->
           <div
             class="status"
             v-if="
