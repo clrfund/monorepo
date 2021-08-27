@@ -244,14 +244,16 @@ p.no-margin {
   .container {
     position: absolute;
     right: 0;
+    top: 0;
+    bottom: 0;
     background: $bg-light-color;
-    height: 100%;
     width: clamp(350px, 25%, 500px);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
     z-index: 2;
+    overflow-y: scroll;
 
     .balances-card,
     .setup-card,
