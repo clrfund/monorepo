@@ -1,5 +1,8 @@
 # Running it in a local graph node
 
+- Install Docker from https://docs.docker.com/engine/install/
+- Install Docker Compose from https://docs.docker.com/compose/install/
+
 Follow the official instructions https://thegraph.com/docs/developer/quick-start
 
 ## Adjusts to use it with Hardhat
