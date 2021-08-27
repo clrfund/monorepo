@@ -14,11 +14,25 @@ git checkout v0.9.4
 
 Follow instructions in README.md to install necessary dependencies.
 
-
 ### x32 Circuits
+
 Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) for 'x32' circuits into `circuits/params/` directory and rebuild the keys:
 
 ```
+cd circuits
+./scripts/buildSnarks32.sh
+```
+
+To recompile all the params (with Linux):
+
+```
+# install deps
+sudo apt-get install build-essential libgmp-dev libsodium-dev nasm git
+
+# remove everything from the /params folder
+rm -r circuits/params/*
+
+# recompile binaries (takes time: ~5min to ~10min)
 cd circuits
 ./scripts/buildSnarks32.sh
 ```
@@ -28,6 +42,18 @@ Recompile the contracts:
 ```
 cd ../contracts
 npm run compileSol
+```
+
+Generate proofs:
+
+```
+cd cli
+node build/index.js genProofs \
+    --eth-provider <ETH_HOSTNAME> \
+    --contract <MACI_CONTRACT_ADDR> \
+    --privkey <COORDINATOR_PRIVKEY> \
+    --output proofs.json \
+    --tally-file tally.json
 ```
 
 Download the tally file and verify it:
