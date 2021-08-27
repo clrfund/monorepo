@@ -69,9 +69,38 @@
           </balance-item>
         </div>
       </div>
-      <div class="projects-section">
+      <div v-if="projects.length > 0" class="projects-section">
         <h2>Projects</h2>
-        <!-- <div class="project-item" v-for=" eacah project user owns " /> -->
+        <div class="project-list">
+          <div
+            class="project-item"
+            v-for="{
+              id,
+              name,
+              thumbnailImageUrl,
+              isHidden,
+              isLocked,
+            } of projects"
+            :key="id"
+          >
+            <img
+              :src="thumbnailImageUrl"
+              :alt="alt + ' thumbnail'"
+              class="project-thumbnail"
+            />
+            <div class="project-details">
+              <div class="project-name">
+                {{ name }}
+                <span v-if="isLocked">🔒</span>
+              </div>
+              <div v-if="isHidden" class="project-hidden">Under review</div>
+            </div>
+            <button class="btn-secondary" @click="navigateToProject(id)">
+              {{ isLocked ? 'Preview' : 'View' }}
+            </button>
+          </div>
+          <loader v-if="isLoading" />
+        </div>
       </div>
     </div>
   </div>
@@ -88,21 +117,26 @@ import CopyButton from '@/components/CopyButton.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
 import { userRegistryType, UserRegistryType } from '@/api/core'
+import { Project, getProjects } from '@/api/projects'
 import { CHAIN_INFO, ChainInfo } from '@/plugins/Web3/constants/chains'
+import { isSameAddress } from '@/utils/accounts'
 
 @Component({
   components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
 })
 export default class NavBar extends Vue {
   @Prop() toggleProfile
-
-  @Prop()
-  balance!: string
-
-  @Prop()
-  etherBalance!: string
-
+  @Prop() balance!: string
+  @Prop() etherBalance!: string
+  projects: Project[] = []
   balanceBackgroundColor = '#2a374b'
+  isLoading = true
+
+  async created() {
+    this.isLoading = true
+    await this.loadProjects()
+    this.isLoading = false
+  }
 
   get walletProvider(): any {
     return this.$store.state.currentUser?.walletProvider
@@ -145,6 +179,25 @@ export default class NavBar extends Vue {
       this.$store.dispatch(LOGOUT_USER)
       this.toggleProfile()
     }
+  }
+
+  private async loadProjects(): Promise<void> {
+    const { recipientRegistryAddress, currentRound, currentUser } =
+      this.$store.state
+    const projects: Project[] = await getProjects(
+      recipientRegistryAddress,
+      currentRound?.startTime.toSeconds(),
+      currentRound?.votingDeadline.toSeconds()
+    )
+    const userProjects: Project[] = projects.filter(({ address }) =>
+      isSameAddress(address, currentUser?.walletAddress)
+    )
+    this.projects = userProjects
+  }
+
+  navigateToProject(id: string): void {
+    this.$emit('close')
+    this.$router.push({ name: 'project', params: { id } })
   }
 }
 </script>
@@ -283,6 +336,29 @@ p.no-margin {
 
     .balances-card {
       padding: 0rem;
+    }
+
+    .project-item {
+      display: flex;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba($highlight-color, 0.5);
+      .project-thumbnail {
+        width: 3rem;
+        aspect-ratio: 1 / 1;
+        object-fit: fill;
+        border-radius: 0.5rem;
+      }
+      .project-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 0 1rem;
+
+        .project-hidden {
+          color: $error-color;
+        }
+      }
     }
   }
 }

@@ -32,6 +32,7 @@
       :toggleProfile="toggleProfile"
       :balance="balance"
       :etherBalance="etherBalance"
+      @close="toggleProfile"
     />
   </div>
 </template>
