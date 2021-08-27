@@ -247,8 +247,9 @@ p.no-margin {
     top: 0;
     bottom: 0;
     background: $bg-light-color;
-    width: clamp(350px, 25%, 500px);
     padding: 1.5rem;
+    box-sizing: border-box;
+    width: clamp(min(414px, 100%), 25%, 500px);
     display: flex;
     flex-direction: column;
     gap: 1rem;
