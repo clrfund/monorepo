@@ -1,9 +1,9 @@
 <template>
   <div class="wrapper">
-    <div class="modal-background" @click="toggleProfile" />
+    <div class="modal-background" @click="$emit('close')" />
     <div class="container">
       <div class="flex-row" style="justify-content: flex-end">
-        <div class="close-btn" @click="toggleProfile()">
+        <div class="close-btn" @click="$emit('close')">
           <p class="no-margin">Close</p>
           <img src="@/assets/close.svg" />
         </div>
@@ -36,7 +36,7 @@
       <bright-id-widget
         v-if="showBrightIdWidget"
         :isProjectCard="false"
-        :toggleProfile="toggleProfile"
+        @close="$emit('close')"
       />
       <div class="balances-section">
         <div class="flex-row">
@@ -125,7 +125,6 @@ import { isSameAddress } from '@/utils/accounts'
   components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
 })
 export default class NavBar extends Vue {
-  @Prop() toggleProfile
   @Prop() balance!: string
   @Prop() etherBalance!: string
   projects: Project[] = []
@@ -177,7 +176,7 @@ export default class NavBar extends Vue {
       // Log out user
       this.$web3.disconnectWallet()
       this.$store.dispatch(LOGOUT_USER)
-      this.toggleProfile()
+      this.$emit('close')
     }
   }
 
