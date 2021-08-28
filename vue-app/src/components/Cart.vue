@@ -774,6 +774,7 @@ h2 {
   }
   @media (max-width: $breakpoint-s) {
     padding: 1rem 0rem;
+    margin-bottom: 3rem;
   }
 }
 
@@ -1059,7 +1060,6 @@ h2 {
     padding-left: 0;
     padding-right: 0;
     width: 100%;
-    margin-bottom: 1rem;
   }
 }
 
