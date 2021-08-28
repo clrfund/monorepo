@@ -37,8 +37,8 @@
       <div class="row">
         <div v-if="isLinked">
           <div v-if="isRegistered">
-            <a href="/#/projects"
-              >Start contributing
+            <a href="/#/projects" @click="$emit('close')>
+              Start contributing
               <span role="img" aria-label="party emoji">🎉</span></a
             >
           </div>
