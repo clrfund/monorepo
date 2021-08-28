@@ -814,6 +814,7 @@ h2 {
   align-items: flex-end;
   justify-content: space-between;
   width: 100%;
+  margin-top: 1rem;
 }
 
 .time-left-read-only {
