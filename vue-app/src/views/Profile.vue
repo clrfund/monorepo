@@ -12,7 +12,7 @@
         <h2 class="no-margin">Your wallet</h2>
       </div>
       <div class="address-card">
-        <h2 class="address">{{ renderUserAddress(16) }}</h2>
+        <h2 class="address">{{ displayAddress }}</h2>
         <div class="action-row" v-if="currentUser">
           <copy-button
             :value="currentUser.walletAddress"
@@ -20,7 +20,9 @@
             myClass="profile"
             class="copy"
           />
-          <div class="address">{{ renderUserAddress(20) }}</div>
+          <div class="address">
+            {{ ens ? currentUser.walletAddress : null }}
+          </div>
           <div
             v-tooltip="{
               content: 'Disconnect wallet',
@@ -119,7 +121,7 @@ import { User } from '@/api/user'
 import { userRegistryType, UserRegistryType } from '@/api/core'
 import { Project, getProjects } from '@/api/projects'
 import { CHAIN_INFO, ChainInfo } from '@/plugins/Web3/constants/chains'
-import { isSameAddress } from '@/utils/accounts'
+import { isSameAddress, ensLookup } from '@/utils/accounts'
 
 @Component({
   components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
@@ -130,10 +132,14 @@ export default class NavBar extends Vue {
   projects: Project[] = []
   balanceBackgroundColor = '#2a374b'
   isLoading = true
+  ens: string | null = null
 
   async created() {
     this.isLoading = true
     await this.loadProjects()
+    if (this.currentUser) {
+      this.ens = await ensLookup(this.currentUser.walletAddress)
+    }
     this.isLoading = false
   }
 
@@ -153,22 +159,9 @@ export default class NavBar extends Vue {
     return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
   }
 
-  renderUserAddress(digitsToShow?: number): string {
-    if (this.$store.state.currentUser?.walletAddress) {
-      const address: string = this.$store.state.currentUser.walletAddress
-      if (digitsToShow) {
-        const beginDigits: number = Math.ceil(digitsToShow / 2)
-        const endDigits: number = Math.floor(digitsToShow / 2)
-        const begin: string = address.substr(0, 2 + beginDigits)
-        const end: string = address.substr(
-          address.length - endDigits,
-          endDigits
-        )
-        return `${begin}…${end}`
-      }
-      return address
-    }
-    return ''
+  get displayAddress(): string | null {
+    if (!this.currentUser) return null
+    return this.ens ?? this.currentUser.walletAddress
   }
 
   async disconnect(): Promise<void> {
@@ -270,6 +263,8 @@ p.no-margin {
       .address {
         margin: 0;
         text-transform: uppercase;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .action-row {
@@ -283,8 +278,10 @@ p.no-margin {
         }
         .address {
           grid-area: address;
-          display: flex;
           align-items: center;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          align-self: center;
         }
         .disconnect {
           grid-area: disconnect;
