@@ -306,11 +306,9 @@
                     round.
                   </p>
                   <input
-                    required
                     id="team-email"
                     placeholder="example: doge@goodboi.com"
-                    v-model="form.team.email"
-                    @blur="$v.form.team.email.$touch()"
+                    v-model.lazy="$v.form.team.email.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.team.email.$error,
@@ -381,8 +379,7 @@
                     id="links-github"
                     type="link"
                     placeholder="example: https://github.com/ethereum/clrfund"
-                    class="input"
-                    v-model="$v.form.links.github.$model"
+                    v-model.lazy="$v.form.links.github.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.github.$error,
@@ -404,8 +401,7 @@
                     id="links-radicle"
                     type="link"
                     placeholder="example: https://radicle.com/ethereum/clrfund"
-                    class="input"
-                    v-model="$v.form.links.radicle.$model"
+                    v-model.lazy="$v.form.links.radicle.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.radicle.$error,
@@ -426,8 +422,7 @@
                     id="links-website"
                     type="link"
                     placeholder="example: https://ethereum.foundation"
-                    class="input"
-                    v-model="$v.form.links.website.$model"
+                    v-model.lazy="$v.form.links.website.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.website.$error,
@@ -448,8 +443,7 @@
                     id="links-twitter"
                     type="link"
                     placeholder="example: https://twitter.com/ethereum"
-                    class="input"
-                    v-model="$v.form.links.twitter.$model"
+                    v-model.lazy="$v.form.links.twitter.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.twitter.$error,
@@ -471,7 +465,7 @@
                     type="link"
                     placeholder="example: https://discord.gg/5Prub9zbGz"
                     class="input"
-                    v-model="$v.form.links.discord.$model"
+                    v-model.lazy="$v.form.links.discord.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.discord.$error,
