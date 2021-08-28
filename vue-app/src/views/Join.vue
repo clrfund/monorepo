@@ -243,19 +243,20 @@
                   <input
                     id="fund-address"
                     placeholder="example: 0x123..."
-                    v-model="$v.form.fund.address.$model"
+                    v-model.lazy="$v.form.fund.addressName.$model"
+                    @blur="checkEns"
                     :class="{
                       input: true,
-                      invalid: $v.form.fund.address.$error,
+                      invalid: $v.form.fund.addressName.$error,
                     }"
                   />
                   <p
                     :class="{
                       error: true,
-                      hidden: !$v.form.fund.address.$error,
+                      hidden: !$v.form.fund.addressName.$error,
                     }"
                   >
-                    Enter a valid Ethereum 0x address
+                    Enter a valid ENS or Ethereum 0x address
                   </p>
                   <!-- TODO: only validate after user removes focus on input -->
                 </div>
@@ -565,7 +566,7 @@
                 <div class="summary">
                   <h4 class="read-only-title">Ethereum address</h4>
                   <div class="data break-all">
-                    {{ form.fund.address }}
+                    {{ form.fund.addressName }}
                     <links :to="blockExplorerUrl" class="no-break">
                       View on Etherscan
                     </links>
@@ -742,6 +743,7 @@ import { validationMixin } from 'vuelidate'
 import { required, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
+import { isValidEns, resolveEns } from '@/utils/accounts'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
@@ -791,10 +793,11 @@ import { blockExplorer } from '@/api/core'
         problemSpace: { required },
       },
       fund: {
-        address: {
+        addressName: {
           required,
-          validEthAddress: isAddress,
+          validEthAddress: (e) => isAddress(e) || isValidEns(e),
         },
+        resolvedAddress: {},
         plans: { required },
       },
       team: {
@@ -835,7 +838,8 @@ export default class JoinView extends mixins(validationMixin) {
       problemSpace: '',
     },
     fund: {
-      address: '',
+      addressName: '',
+      resolvedAddress: '',
       plans: '',
     },
     team: {
@@ -1020,7 +1024,15 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/address/${this.form.fund.address}`
+    return `${blockExplorer}/address/${this.form.fund.resolvedAddress}`
+  }
+
+  async checkEns(): Promise<void> {
+    const { addressName } = this.form?.fund
+    if (addressName) {
+      const res = await resolveEns(addressName)
+      this.form.fund.resolvedAddress = res ? res : addressName
+    }
   }
 }
 </script>
