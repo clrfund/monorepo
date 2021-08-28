@@ -68,6 +68,20 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   )
     public
   {
+    init(
+      _nativeToken,
+      _userRegistry,
+      _recipientRegistry,
+      _coordinator
+    );
+  }
+
+  function init(
+    ERC20 _nativeToken,
+    IUserRegistry _userRegistry,
+    IRecipientRegistry _recipientRegistry,
+    address _coordinator 
+  ) public {
     nativeToken = _nativeToken;
     voiceCreditFactor = (MAX_CONTRIBUTION_AMOUNT * uint256(10) ** nativeToken.decimals()) / MAX_VOICE_CREDITS;
     voiceCreditFactor = voiceCreditFactor > 0 ? voiceCreditFactor : 1;
