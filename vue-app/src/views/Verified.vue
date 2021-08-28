@@ -15,7 +15,7 @@
               <div class="etherscan-btn">
                 <img
                   class="icon"
-                  style="width: 16px"
+                  width="16px"
                   src="@/assets/etherscan.svg"
                 />Etherscan
               </div>
@@ -26,7 +26,7 @@
             – you’ll never have to do that again.
           </div>
           <p>You can now start contributing to your favourite projects.</p>
-          <div class="btn-container" style="margin-top: 2rem">
+          <div class="mt2">
             <links to="/projects" class="btn-primary">View projects</links>
             <links to="/" class="btn-secondary">Go home</links>
           </div>
