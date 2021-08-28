@@ -52,7 +52,7 @@
         The current round is no longer accepting new contributions. You can
         still get BrightID verified to prepare for next time.
       </div>
-      <div class="btn-container">
+      <div class="btn-container mt2">
         <wallet-widget v-if="!currentUser" :isActionButton="true" />
         <links v-if="currentUser" to="/verify/connect" class="btn-primary">
           I have BrightID installed
@@ -221,10 +221,6 @@ ul {
       position: relative;
       right: 0;
     }
-  }
-
-  .btn-container {
-    margin-top: 2rem;
   }
 }
 

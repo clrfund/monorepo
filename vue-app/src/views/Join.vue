@@ -524,7 +524,6 @@
             <div v-if="!showSummaryPreview">
               <h2 class="step-title">Review your information</h2>
               <warning
-                style="margin-bottom: 1rem"
                 message="This information will be stored in a smart contract and cannot be edited, so please review carefully."
               />
               <div class="form-background">

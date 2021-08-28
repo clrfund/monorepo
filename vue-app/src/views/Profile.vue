@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="modal-background" @click="toggleProfile" />
     <div class="container">
-      <div class="flex-row" style="justify-content: flex-end">
+      <div class="flex-row flex-end">
         <div class="close-btn" @click="toggleProfile()">
           <p class="no-margin">Close</p>
           <img src="@/assets/close.svg" />
@@ -174,6 +174,11 @@ p.no-margin {
   justify-content: space-between;
   align-items: center;
 }
+
+.flex-end {
+  justify-content: flex-end;
+}
+
 .wrapper {
   position: fixed;
   top: 0;

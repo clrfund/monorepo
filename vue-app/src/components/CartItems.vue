@@ -41,11 +41,7 @@
       </div>
       <form v-if="isEditMode" class="contribution-form">
         <div class="input-button">
-          <img
-            style="margin-left: 0.5rem"
-            height="24px"
-            src="@/assets/dai.svg"
-          />
+          <img class="token-icon" height="24px" src="@/assets/dai.svg" />
           <input
             :value="item.amount"
             @input="updateAmount(item, $event.target.value)"
