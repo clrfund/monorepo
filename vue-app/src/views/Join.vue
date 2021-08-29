@@ -565,6 +565,13 @@
                       View on Etherscan
                     </links>
                   </div>
+                  <div
+                    class="resolved-address"
+                    v-if="form.fund.addressName"
+                    title="Resolved ENS address"
+                  >
+                    {{ form.hasEns ? form.fund.resolvedAddress : null }}
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Funding plans</h4>
@@ -736,8 +743,7 @@ import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
 import { required, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
-import { isAddress } from '@ethersproject/address'
-import { isValidEns, resolveEns } from '@/utils/accounts'
+import { isValidEthAddress, resolveEns } from '@/utils/accounts'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
@@ -789,7 +795,7 @@ import { blockExplorer } from '@/api/core'
       fund: {
         addressName: {
           required,
-          validEthAddress: (e) => isAddress(e) || isValidEns(e),
+          validEthAddress: isValidEthAddress,
         },
         resolvedAddress: {},
         plans: { required },
@@ -853,6 +859,7 @@ export default class JoinView extends mixins(validationMixin) {
       thumbnailHash: '',
     },
     furthestStep: 0,
+    hasEns: false,
   }
   currentStep = 0
   steps: string[] = []
@@ -1024,7 +1031,8 @@ export default class JoinView extends mixins(validationMixin) {
   async checkEns(): Promise<void> {
     const { addressName } = this.form?.fund
     if (addressName) {
-      const res = await resolveEns(addressName)
+      const res: string | null = await resolveEns(addressName)
+      this.form.hasEns = !!res
       this.form.fund.resolvedAddress = res ? res : addressName
     }
   }
@@ -1529,5 +1537,14 @@ export default class JoinView extends mixins(validationMixin) {
 
 .no-break {
   white-space: nowrap;
+}
+
+.resolved-address {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.5;
+  word-break: keep-all;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 </style>

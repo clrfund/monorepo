@@ -91,6 +91,7 @@ export interface RecipientApplicationData {
     thumbnailHash: string
   }
   furthestStep: number
+  hasEns: boolean
 }
 
 export function formToProjectInterface(
