@@ -37,10 +37,10 @@
       <div class="row">
         <div v-if="isLinked">
           <div v-if="isRegistered">
-            <a href="/#/projects" @click="$emit('close')>
+            <a href="/#/projects" @click="$emit('close')">
               Start contributing
-              <span role="img" aria-label="party emoji">🎉</span></a
-            >
+              <span role="img" aria-label="party emoji">🎉</span>
+            </a>
           </div>
           <div v-else>
             <a href="/#/verify/" @click="$emit('close')">Continue setup</a>
