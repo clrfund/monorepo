@@ -11,7 +11,7 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Ready to contribute!</h1>
-            <links v-if="txHash" :to="blockExplorerUrl">
+            <links v-if="$route.params.hash" :to="blockExplorerUrl">
               <div class="etherscan-btn">
                 <img
                   class="icon"
@@ -48,12 +48,8 @@ import { blockExplorer } from '@/api/core'
 
 @Component({ components: { ProgressBar, RoundStatusBanner, Links } })
 export default class Verified extends Vue {
-  // TODO: Retrieve hash of transaction.
-  // We route to this component, pass hash as queryParam after submission?
-  txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
-
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/tx/${this.txHash}`
+    return `${blockExplorer}/tx/${this.$route.params.hash}`
   }
 
   formatDuration(value: number): string {
