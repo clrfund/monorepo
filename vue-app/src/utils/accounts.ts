@@ -1,11 +1,32 @@
 import { ethers } from 'ethers'
 import { mainnetProvider } from '@/api/core'
+import { isAddress } from '@ethersproject/address'
 
 export function isSameAddress(address1: string, address2: string): boolean {
   return ethers.utils.getAddress(address1) === ethers.utils.getAddress(address2)
 }
 
 export async function ensLookup(address: string): Promise<string | null> {
-  const ens = await mainnetProvider.lookupAddress(address)
-  return ens
+  // Looks up possible ENS for given 0x address
+  const name: string | null = await mainnetProvider.lookupAddress(address)
+  return name
+}
+
+export async function resolveEns(name: string): Promise<string | null> {
+  // Returns null if the name passed is a 0x address
+  if (isAddress(name)) return null
+  // If name is valid ENS returns 0x address, else returns null
+  return await mainnetProvider.resolveName(name)
+}
+
+export async function isValidEns(name: string): Promise<boolean> {
+  // Only returns true if name is valid ENS (not 0x address)
+  const address: string | null = await resolveEns(name)
+  return !!address
+}
+
+export async function isValidEthAddress(address: string): Promise<boolean> {
+  // Returns true if address is valid ENS or 0x address
+  const resolved = await mainnetProvider.resolveName(address)
+  return !!resolved
 }

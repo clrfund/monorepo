@@ -243,19 +243,20 @@
                   <input
                     id="fund-address"
                     placeholder="example: 0x123..."
-                    v-model="$v.form.fund.address.$model"
+                    v-model.lazy="$v.form.fund.addressName.$model"
+                    @blur="checkEns"
                     :class="{
                       input: true,
-                      invalid: $v.form.fund.address.$error,
+                      invalid: $v.form.fund.addressName.$error,
                     }"
                   />
                   <p
                     :class="{
                       error: true,
-                      hidden: !$v.form.fund.address.$error,
+                      hidden: !$v.form.fund.addressName.$error,
                     }"
                   >
-                    Enter a valid Ethereum 0x address
+                    Enter a valid ENS or Ethereum 0x address
                   </p>
                   <!-- TODO: only validate after user removes focus on input -->
                 </div>
@@ -305,11 +306,9 @@
                     round.
                   </p>
                   <input
-                    required
                     id="team-email"
                     placeholder="example: doge@goodboi.com"
-                    v-model="form.team.email"
-                    @blur="$v.form.team.email.$touch()"
+                    v-model.lazy="$v.form.team.email.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.team.email.$error,
@@ -380,8 +379,7 @@
                     id="links-github"
                     type="link"
                     placeholder="example: https://github.com/ethereum/clrfund"
-                    class="input"
-                    v-model="$v.form.links.github.$model"
+                    v-model.lazy="$v.form.links.github.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.github.$error,
@@ -403,8 +401,7 @@
                     id="links-radicle"
                     type="link"
                     placeholder="example: https://radicle.com/ethereum/clrfund"
-                    class="input"
-                    v-model="$v.form.links.radicle.$model"
+                    v-model.lazy="$v.form.links.radicle.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.radicle.$error,
@@ -425,8 +422,7 @@
                     id="links-website"
                     type="link"
                     placeholder="example: https://ethereum.foundation"
-                    class="input"
-                    v-model="$v.form.links.website.$model"
+                    v-model.lazy="$v.form.links.website.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.website.$error,
@@ -447,8 +443,7 @@
                     id="links-twitter"
                     type="link"
                     placeholder="example: https://twitter.com/ethereum"
-                    class="input"
-                    v-model="$v.form.links.twitter.$model"
+                    v-model.lazy="$v.form.links.twitter.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.twitter.$error,
@@ -470,7 +465,7 @@
                     type="link"
                     placeholder="example: https://discord.gg/5Prub9zbGz"
                     class="input"
-                    v-model="$v.form.links.discord.$model"
+                    v-model.lazy="$v.form.links.discord.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.discord.$error,
@@ -564,10 +559,17 @@
                 <div class="summary">
                   <h4 class="read-only-title">Ethereum address</h4>
                   <div class="data break-all">
-                    {{ form.fund.address }}
+                    {{ form.fund.addressName }}
                     <links :to="blockExplorerUrl" class="no-break">
                       View on Etherscan
                     </links>
+                  </div>
+                  <div
+                    class="resolved-address"
+                    v-if="form.fund.addressName"
+                    title="Resolved ENS address"
+                  >
+                    {{ form.hasEns ? form.fund.resolvedAddress : null }}
                   </div>
                 </div>
                 <div class="summary">
@@ -740,7 +742,7 @@ import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
 import { required, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
-import { isAddress } from '@ethersproject/address'
+import { isValidEthAddress, resolveEns } from '@/utils/accounts'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
@@ -790,10 +792,11 @@ import { blockExplorer } from '@/api/core'
         problemSpace: { required },
       },
       fund: {
-        address: {
+        addressName: {
           required,
-          validEthAddress: isAddress,
+          validEthAddress: isValidEthAddress,
         },
+        resolvedAddress: {},
         plans: { required },
       },
       team: {
@@ -834,7 +837,8 @@ export default class JoinView extends mixins(validationMixin) {
       problemSpace: '',
     },
     fund: {
-      address: '',
+      addressName: '',
+      resolvedAddress: '',
       plans: '',
     },
     team: {
@@ -854,6 +858,7 @@ export default class JoinView extends mixins(validationMixin) {
       thumbnailHash: '',
     },
     furthestStep: 0,
+    hasEns: false,
   }
   currentStep = 0
   steps: string[] = []
@@ -1019,7 +1024,16 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/address/${this.form.fund.address}`
+    return `${blockExplorer}/address/${this.form.fund.resolvedAddress}`
+  }
+
+  async checkEns(): Promise<void> {
+    const { addressName } = this.form?.fund
+    if (addressName) {
+      const res: string | null = await resolveEns(addressName)
+      this.form.hasEns = !!res
+      this.form.fund.resolvedAddress = res ? res : addressName
+    }
   }
 }
 </script>
@@ -1522,5 +1536,14 @@ export default class JoinView extends mixins(validationMixin) {
 
 .no-break {
   white-space: nowrap;
+}
+
+.resolved-address {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.5;
+  word-break: keep-all;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 </style>
