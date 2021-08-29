@@ -219,6 +219,11 @@ p.no-margin {
   justify-content: space-between;
   align-items: center;
 }
+
+.flex-end {
+  justify-content: flex-end;
+}
+
 .wrapper {
   position: fixed;
   top: 0;

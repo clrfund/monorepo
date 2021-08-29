@@ -27,7 +27,7 @@
               criteria, we'll let you know by email and return your deposit.
             </li>
           </ul>
-          <div class="btn-container" style="margin-top: 2rem">
+          <div class="mt2">
             <links to="/projects" class="btn-primary">View projects</links>
             <links to="/" class="btn-secondary">Go home</links>
           </div>

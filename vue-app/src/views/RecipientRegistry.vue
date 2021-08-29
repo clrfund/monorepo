@@ -127,7 +127,7 @@
       </div>
     </div>
     <div v-else>
-      <div style="font-size: 64px" aria-label="hand">🤚</div>
+      <div class="big-emoji" aria-label="hand">🤚</div>
       <h2>
         You must be the recipient registry contract owner to access this page
       </h2>
