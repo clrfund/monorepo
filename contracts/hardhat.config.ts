@@ -11,7 +11,7 @@ dotenv.config()
 
 const GAS_LIMIT = 20000000
 const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC || ''
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || ''
+const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || undefined
 
 const config: HardhatUserConfig = {
   networks: {
@@ -32,7 +32,7 @@ const config: HardhatUserConfig = {
     } as any,
     rinkeby: {
       url: process.env.RINKEBY_JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
-      accounts: [WALLET_PRIVATE_KEY],
+      accounts: WALLET_PRIVATE_KEY ? [WALLET_PRIVATE_KEY] : 'remote',
     },
     xdai: {
       url: process.env.XDAI_JSONRPC_HTTP_URL || 'https://rpc.xdaichain.com',
