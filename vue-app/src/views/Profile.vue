@@ -21,7 +21,7 @@
             class="copy"
           />
           <div class="address">
-            {{ ens ? currentUser.walletAddress : null }}
+            {{ currentUser.ensName ? currentUser.walletAddress : null }}
           </div>
           <div
             v-tooltip="{
@@ -137,9 +137,9 @@ export default class NavBar extends Vue {
   async created() {
     this.isLoading = true
     await this.loadProjects()
-    if (this.currentUser) {
-      this.ens = await ensLookup(this.currentUser.walletAddress)
-    }
+    // if (this.currentUser) {
+    //   this.ens = await ensLookup(this.currentUser.walletAddress)
+    // }
     this.isLoading = false
   }
 
@@ -161,7 +161,7 @@ export default class NavBar extends Vue {
 
   get displayAddress(): string | null {
     if (!this.currentUser) return null
-    return this.ens ?? this.currentUser.walletAddress
+    return this.currentUser.ensName ?? this.currentUser.walletAddress
   }
 
   async disconnect(): Promise<void> {
