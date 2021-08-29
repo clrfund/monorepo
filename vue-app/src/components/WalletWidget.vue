@@ -21,7 +21,7 @@
         <div v-if="showEth" class="balance">{{ etherBalance }}</div>
       </div>
       <div class="profile-name">
-        {{ renderUserAddress(7) }}
+        {{ displayAddress }}
       </div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl" />
@@ -122,23 +122,9 @@ export default class WalletWidget extends Vue {
     }
   }
 
-  // TODO: Extract into a shared function
-  renderUserAddress(digitsToShow?: number): string {
-    if (this.currentUser?.walletAddress) {
-      const address: string = this.currentUser.walletAddress
-      if (digitsToShow) {
-        const beginDigits: number = Math.ceil(digitsToShow / 2)
-        const endDigits: number = Math.floor(digitsToShow / 2)
-        const begin: string = address.substr(0, 2 + beginDigits)
-        const end: string = address.substr(
-          address.length - endDigits,
-          endDigits
-        )
-        return `${begin}…${end}`
-      }
-      return address
-    }
-    return ''
+  get displayAddress(): string | null {
+    if (!this.currentUser) return null
+    return this.currentUser.ensName ?? this.currentUser.walletAddress
   }
 }
 </script>
@@ -165,6 +151,9 @@ export default class WalletWidget extends Vue {
   .profile-name {
     font-size: 14px;
     opacity: 0.8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: min(20vw, 14ch);
   }
 
   .balance {
