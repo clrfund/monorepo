@@ -17,7 +17,6 @@ import {
   serializeContributorData,
   deserializeContributorData,
   getContributionAmount,
-  isContributionWithdrawn,
   hasContributorVoted,
 } from '@/api/contributions'
 import { loginUser, logoutUser } from '@/api/gun'
@@ -304,27 +303,18 @@ const actions = {
       )
       let contribution = state.contribution
       if (!contribution || contribution.isZero()) {
-        let isWithdrawn = false
-        if (state.currentRound.status === RoundStatus.Cancelled) {
-          isWithdrawn = await isContributionWithdrawn(
-            state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress
-          )
-        }
-        if (isWithdrawn) {
-          commit(SET_CONTRIBUTION, BigNumber.from(0))
-        } else {
-          contribution = await getContributionAmount(
-            state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress
-          )
-          const hasVoted = await hasContributorVoted(
-            state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress
-          )
-          commit(SET_CONTRIBUTION, contribution)
-          commit(SET_HAS_VOTED, hasVoted)
-        }
+        contribution = await getContributionAmount(
+          state.currentRound.fundingRoundAddress,
+          state.currentUser.walletAddress
+        )
+
+        const hasVoted = await hasContributorVoted(
+          state.currentRound.fundingRoundAddress,
+          state.currentUser.walletAddress
+        )
+
+        commit(SET_CONTRIBUTION, contribution)
+        commit(SET_HAS_VOTED, hasVoted)
       }
 
       commit(SET_CURRENT_USER, {
