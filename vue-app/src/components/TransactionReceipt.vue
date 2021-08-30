@@ -26,7 +26,7 @@
         :value="hash"
         text="hash"
         v-on:copied="updateIsCopied"
-        myClass="tx-receipt"
+        myClass="icon"
       />
     </div>
   </div>

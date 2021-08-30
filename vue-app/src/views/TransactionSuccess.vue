@@ -5,54 +5,56 @@
       <img class="money" src="@/assets/money.gif" />
       <img class="money" src="@/assets/confetti.gif" />
     </div>
-    <div class="content">
-      <span class="contributed-icon">🎉</span>
-      <p
-        v-if="$route.params.type === 'reallocation'"
-        class="contributed-header"
-      >
-        {{ formatContribution() }}
-        {{ currentRound.nativeTokenSymbol }} reallocated!
-      </p>
-      <p
-        v-else-if="$route.params.type === 'contribution'"
-        class="contributed-header"
-      >
-        You just contributed!
-      </p>
-      <div>
+    <div class="dropshadow">
+      <div class="content">
+        <span class="contributed-icon">🎉</span>
         <p
           v-if="$route.params.type === 'reallocation'"
-          class="contributed-content"
+          class="contributed-header"
         >
-          Your choices have been updated! You can update your choices again any
-          time in the next
-          <time-left
-            valueClass="contributed-content-bold"
-            unitClass="contributed-content-bold"
-            :date="currentRound.votingDeadline"
-          />.
+          {{ formatContribution() }}
+          {{ currentRound.nativeTokenSymbol }} reallocated!
         </p>
         <p
           v-else-if="$route.params.type === 'contribution'"
-          class="contributed-content"
+          class="contributed-header"
         >
-          Thanks for contributing to the Eth2 ecosystem. If you change your
-          mind, you have
-          <time-left
-            valueClass="contributed-content-bold"
-            unitClass="contributed-content-bold"
-            :date="currentRound.votingDeadline"
-          />
-          to reallocate your contributions.
+          You just contributed!
         </p>
-        <div class="receipt" v-if="$route.params.hash">
-          <transaction-receipt :hash="`${$route.params.hash}`" />
-        </div>
-        <div class="input-button">
-          <button class="contributed-button" @click="redirectToProjects()">
-            <span>OK</span>
-          </button>
+        <div>
+          <p
+            v-if="$route.params.type === 'reallocation'"
+            class="contributed-content"
+          >
+            Your choices have been updated! You can update your choices again
+            any time in the next
+            <time-left
+              valueClass="contributed-content-bold"
+              unitClass="contributed-content-bold"
+              :date="currentRound.votingDeadline"
+            />.
+          </p>
+          <p
+            v-else-if="$route.params.type === 'contribution'"
+            class="contributed-content"
+          >
+            Thanks for contributing to the Eth2 ecosystem. If you change your
+            mind, you have
+            <time-left
+              valueClass="contributed-content-bold"
+              unitClass="contributed-content-bold"
+              :date="currentRound.votingDeadline"
+            />
+            to reallocate your contributions.
+          </p>
+          <div class="receipt" v-if="$route.params.hash">
+            <transaction-receipt :hash="`${$route.params.hash}`" />
+          </div>
+          <div class="input-button">
+            <button class="contributed-button" @click="redirectToProjects()">
+              <span>OK</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -129,23 +131,23 @@ export default class TransactionSuccess extends Vue {
   mix-blend-mode: exclusion;
 }
 
-.content {
+.dropshadow {
   position: relative;
+  background: linear-gradient(
+    171.34deg,
+    rgba(0, 0, 0, 0.4) 56.5%,
+    rgba(196, 196, 196, 0) 75.75%
+  );
+}
+
+.content {
   padding-top: 4rem;
   width: 500px;
   margin: 0 2.5rem;
-  @media (max-width: $breakpoint-m) {
-    padding: 4rem 2.5rem;
-    width: 90%;
-    margin: auto;
-    background: linear-gradient(
-      171.34deg,
-      rgba(0, 0, 0, 0.4) 56.5%,
-      rgba(196, 196, 196, 0) 78.75%
-    );
-  }
+
   @media (max-width: $breakpoint-s) {
-    width: 80%;
+    margin: auto;
+    width: 300px;
   }
 }
 
