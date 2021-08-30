@@ -1,4 +1,5 @@
-import { factory, ipfsGatewayUrl, extraRounds } from './core'
+import { ipfsGatewayUrl, extraRounds, SUBGRAPH_ENDPOINT } from './core'
+import { request, gql } from 'graphql-request'
 
 export interface Round {
   index: number
@@ -7,18 +8,25 @@ export interface Round {
 }
 
 export async function getRounds(): Promise<Round[]> {
-  const eventFilter = factory.filters.RoundStarted()
-  const events = await factory.queryFilter(eventFilter, 0)
+  const query = gql`
+    query {
+      fundingRounds {
+        id
+      }
+    }
+  `
+
+  const data = await request(SUBGRAPH_ENDPOINT, query)
+
   const rounds: Round[] = extraRounds.map((ipfsHash: string, index): Round => {
     return { index, address: '', url: `${ipfsGatewayUrl}/ipfs/${ipfsHash}` }
   })
-  for (const event of events) {
-    if (event.args) {
-      rounds.push({
-        index: rounds.length,
-        address: event.args._round,
-      })
-    }
+
+  for (const fundingRound of data.fundingRounds) {
+    rounds.push({
+      index: rounds.length,
+      address: fundingRound.id,
+    })
   }
   return rounds
 }

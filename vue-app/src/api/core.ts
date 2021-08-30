@@ -41,3 +41,5 @@ export const recipientRegistryPolicy =
 export const extraRounds: string[] = process.env.VUE_APP_EXTRA_ROUNDS
   ? process.env.VUE_APP_EXTRA_ROUNDS.split(',')
   : []
+
+export const SUBGRAPH_ENDPOINT = process.env.VUE_APP_SUBGRAPH_URL || ''
