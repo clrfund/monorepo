@@ -7,6 +7,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/SafeERC20.sol';
 import '@openzeppelin/contracts/utils/EnumerableSet.sol';
+import "@openzeppelin/contracts/utils/Create2.sol";
 
 import 'maci-contracts/sol/MACI.sol';
 import 'maci-contracts/sol/MACISharedObjs.sol';
@@ -17,6 +18,7 @@ import './userRegistry/IUserRegistry.sol';
 import './recipientRegistry/IRecipientRegistry.sol';
 import './MACIFactory.sol';
 import './FundingRound.sol';
+import './proxies/FundingRoundProxy.sol';
 
 contract FundingRoundFactory is Ownable, MACISharedObjs {
   using EnumerableSet for EnumerableSet.AddressSet;
@@ -30,9 +32,11 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   IUserRegistry public userRegistry;
   IRecipientRegistry public recipientRegistry;
   PubKey public coordinatorPubKey;
+  FundingRound singleton;
+
 
   EnumerableSet.AddressSet private fundingSources;
-  FundingRound[] private rounds;
+  address[] private rounds;
 
   // Events
   event FundingSourceAdded(address _source);
@@ -43,11 +47,13 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   event CoordinatorChanged(address _coordinator);
 
   constructor(
-    MACIFactory _maciFactory
+    MACIFactory _maciFactory,
+    FundingRound _singleton
   )
     public
   {
     maciFactory = _maciFactory;
+    singleton = _singleton;
   }
 
   /**
@@ -103,10 +109,10 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   function getCurrentRound()
     public
     view
-    returns (FundingRound _currentRound)
+    returns (address _currentRound)
   {
     if (rounds.length == 0) {
-      return FundingRound(address(0));
+      return address(0);
     }
     return rounds[rounds.length - 1];
   }
@@ -150,30 +156,42 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     require(address(recipientRegistry) != address(0), 'Factory: Recipient registry is not set');
     require(address(nativeToken) != address(0), 'Factory: Native token is not set');
     require(coordinator != address(0), 'Factory: No coordinator');
-    FundingRound currentRound = getCurrentRound();
+    address currentRound = getCurrentRound();
+    (bool success, bytes memory result) = currentRound.call(abi.encodeWithSignature("isFinalized()"));
+    require(success, "Factory: Delegate Proxy Call Failed");
     require(
-      address(currentRound) == address(0) || currentRound.isFinalized(),
+      address(currentRound) == address(0) || abi.decode(result, (bool)),
       'Factory: Current round is not finalized'
     );
     // Make sure that the max number of recipients is set correctly
     (,, uint256 maxVoteOptions) = maciFactory.maxValues();
     recipientRegistry.setMaxRecipients(maxVoteOptions);
     // Deploy funding round and MACI contracts
-    FundingRound newRound = new FundingRound(
-      nativeToken,
-      userRegistry,
-      recipientRegistry,
-      coordinator
+    // If the initializer changes the proxy address should change too. Hashing the initializer data is cheaper than just concatinating it
+    bytes memory deploymentData = abi.encodePacked(type(FundingRoundProxy).creationCode, abi.encode(address(singleton), owner()));
+    // solhint-disable-next-line no-inline-assembly
+    address minimalProxy = Create2.deploy(
+            0,
+            keccak256(abi.encodePacked(block.timestamp)),
+            deploymentData
     );
-    rounds.push(newRound);
+    rounds.push(minimalProxy);
+    (success, ) = minimalProxy.call(abi.encodeWithSignature(
+                "init(ERC20 _nativeToken, IUserRegistry _userRegistry, IRecipientRegistry _recipientRegistry,address _coordinator)",
+                nativeToken,
+                userRegistry,
+                recipientRegistry,
+                coordinator
+      ));
+    require(success, "Factory: Delegate Proxy Call Failed");
     MACI maci = maciFactory.deployMaci(
-      SignUpGatekeeper(newRound),
-      InitialVoiceCreditProxy(newRound),
+      SignUpGatekeeper(singleton),
+      InitialVoiceCreditProxy(singleton),
       coordinator,
       coordinatorPubKey
     );
-    newRound.setMaci(maci);
-    emit RoundStarted(address(newRound));
+    singleton.setMaci(maci);
+    emit RoundStarted(address(singleton));
   }
 
   /**
@@ -207,9 +225,10 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     external
     onlyOwner
   {
-    FundingRound currentRound = getCurrentRound();
+    address currentRound = getCurrentRound();
     require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
-    ERC20 roundToken = currentRound.nativeToken();
+    (bool success, bytes memory result) = currentRound.call(abi.encodeWithSignature("nativeToken()"));
+    ERC20 roundToken = ERC20(abi.decode(result, (address)));
     // Factory contract is the default funding source
     uint256 matchingPoolSize = roundToken.balanceOf(address(this));
     if (matchingPoolSize > 0) {
@@ -225,7 +244,8 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
         roundToken.safeTransferFrom(fundingSource, address(currentRound), contribution);
       }
     }
-    currentRound.finalize(_totalSpent, _totalSpentSalt);
+    (success, ) = currentRound.call(abi.encodeWithSignature("finalize(uint256, uint256)", _totalSpent, _totalSpentSalt));
+    require(success, "Factory: Delegate Proxy Call Failed");
     emit RoundFinalized(address(currentRound));
   }
 
@@ -236,10 +256,13 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     external
     onlyOwner
   {
-    FundingRound currentRound = getCurrentRound();
+    address currentRound = getCurrentRound();
     require(address(currentRound) != address(0), 'Factory: Funding round has not been deployed');
-    require(!currentRound.isFinalized(), 'Factory: Current round is finalized');
-    currentRound.cancel();
+    (bool success, bytes memory result) = currentRound.call(abi.encodeWithSignature("isFinalized()"));
+    require(success, "Factory: Delegate Proxy Call Failed");
+    require(!abi.decode(result, (bool)), 'Factory: Current round is finalized');
+    (success ,) = currentRound.call(abi.encodeWithSignature("cancel()"));
+    require(success, "Factory: Delegate Proxy Call Failed");
     emit RoundFinalized(address(currentRound));
   }
 
@@ -280,9 +303,12 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     // the address being 0x0
     coordinator = address(0);
     coordinatorPubKey = PubKey(0, 0);
-    FundingRound currentRound = getCurrentRound();
-    if (address(currentRound) != address(0) && !currentRound.isFinalized()) {
-      currentRound.cancel();
+    address currentRound = getCurrentRound();
+    (bool success, bytes memory result) = currentRound.call(abi.encodeWithSignature("isFinalized()"));
+    require(success, "Factory: Delegate Proxy Call Failed");
+    if (address(currentRound) != address(0) && !abi.decode(result, (bool))) {
+      (success, ) = currentRound.call(abi.encodeWithSignature("cancel()"));
+      require(success, "Factory: Delegate Proxy Call Failed");
       emit RoundFinalized(address(currentRound));
     }
     emit CoordinatorChanged(address(0));
