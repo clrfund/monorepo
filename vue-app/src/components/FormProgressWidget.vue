@@ -149,7 +149,7 @@ export default class FormProgressWidget extends Vue {
     z-index: 1;
 
     .padding {
-      padding: 2rem 1rem;
+      padding: 2rem 1rem 1rem 1rem;
     }
     .row {
       margin-top: 1.5rem;
