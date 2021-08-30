@@ -49,7 +49,7 @@
                   <input
                     id="project-name"
                     type="text"
-                    placeholder="example: clr.fund"
+                    placeholder="ex: clr.fund"
                     v-model="$v.form.project.name.$model"
                     :class="{
                       input: true,
@@ -74,7 +74,7 @@
                   </p>
                   <textarea
                     id="project-tagline"
-                    placeholder="example: A quadratic funding protocol"
+                    placeholder="ex: A quadratic funding protocol"
                     v-model="$v.form.project.tagline.$model"
                     :class="{
                       input: true,
@@ -110,7 +110,7 @@
                   </label>
                   <textarea
                     id="project-description"
-                    placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                    placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
                     v-model="$v.form.project.description.$model"
                     :class="{
                       input: true,
@@ -207,7 +207,7 @@
                   </p>
                   <textarea
                     id="project-problem-space"
-                    placeholder="example: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
+                    placeholder="ex: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
                     v-model="$v.form.project.problemSpace.$model"
                     :class="{
                       input: true,
@@ -242,7 +242,7 @@
                   </p>
                   <input
                     id="fund-address"
-                    placeholder="example: 0x123..."
+                    placeholder="ex: 0x123..."
                     v-model="$v.form.fund.address.$model"
                     :class="{
                       input: true,
@@ -269,7 +269,7 @@
                   </p>
                   <textarea
                     id="fund-plans"
-                    placeholder="example: on our roadmap..."
+                    placeholder="ex: on our roadmap..."
                     v-model="$v.form.fund.plans.$model"
                     :class="{
                       input: true,
@@ -307,7 +307,7 @@
                   <input
                     required
                     id="team-email"
-                    placeholder="example: doge@goodboi.com"
+                    placeholder="ex: doge@goodboi.com"
                     v-model="form.team.email"
                     @blur="$v.form.team.email.$touch()"
                     :class="{
@@ -336,7 +336,7 @@
                   <input
                     id="team-name"
                     type="email"
-                    placeholder="example: clr.fund"
+                    placeholder="ex: clr.fund"
                     v-model="$v.form.team.name.$model"
                     :class="{
                       input: true,
@@ -353,7 +353,7 @@
                   </p>
                   <textarea
                     id="team-desc"
-                    placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                    placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
                     v-model="$v.form.team.description.$model"
                     :class="{
                       input: true,
@@ -379,7 +379,7 @@
                   <input
                     id="links-github"
                     type="link"
-                    placeholder="example: https://github.com/ethereum/clrfund"
+                    placeholder="ex: https://github.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.github.$model"
                     :class="{
@@ -402,7 +402,7 @@
                   <input
                     id="links-radicle"
                     type="link"
-                    placeholder="example: https://radicle.com/ethereum/clrfund"
+                    placeholder="ex: https://radicle.com/ethereum/clrfund"
                     class="input"
                     v-model="$v.form.links.radicle.$model"
                     :class="{
@@ -424,7 +424,7 @@
                   <input
                     id="links-website"
                     type="link"
-                    placeholder="example: https://ethereum.foundation"
+                    placeholder="ex: https://ethereum.foundation"
                     class="input"
                     v-model="$v.form.links.website.$model"
                     :class="{
@@ -446,7 +446,7 @@
                   <input
                     id="links-twitter"
                     type="link"
-                    placeholder="example: https://twitter.com/ethereum"
+                    placeholder="ex: https://twitter.com/ethereum"
                     class="input"
                     v-model="$v.form.links.twitter.$model"
                     :class="{
@@ -468,7 +468,7 @@
                   <input
                     id="links-discord"
                     type="link"
-                    placeholder="example: https://discord.gg/5Prub9zbGz"
+                    placeholder="ex: https://discord.gg/5Prub9zbGz"
                     class="input"
                     v-model="$v.form.links.discord.$model"
                     :class="{
