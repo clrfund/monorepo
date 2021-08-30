@@ -19,26 +19,6 @@
         {{ currentStep === 5 ? 'Finish' : 'Next' }}
       </button>
     </div>
-    <div class="btn-row" v-if="!isJoin">
-      <button
-        v-if="currentStep > 0"
-        @click="handleStepNav(currentStep - 1)"
-        class="btn-secondary"
-        :disabled="isNavDisabled"
-      >
-        Previous
-      </button>
-      <links v-if="currentStep === 3" to="/verify/success" class="btn-primary">
-        Finish
-      </links>
-      <button
-        v-else-if="currentStep < 3"
-        @click="handleStepNav(currentStep + 1)"
-        class="btn-primary"
-      >
-        Next
-      </button>
-    </div>
   </div>
 </template>
 
@@ -46,9 +26,8 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import Links from '@/components/Links.vue'
 
-@Component({ components: { Links } })
+@Component
 export default class FormNavigation extends Vue {
   @Prop() currentStep!: number
   @Prop() steps!: string[]
@@ -85,8 +64,5 @@ export default class FormNavigation extends Vue {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  @media (max-width: $breakpoint-m) {
-    bottom: 0;
-  }
 }
 </style>

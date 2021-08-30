@@ -1071,7 +1071,7 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   @media (max-width: $breakpoint-m) {
-    margin-top: 2rem;
+    margin-top: 6rem;
     padding-bottom: 0;
     padding-left: 1rem;
     font-size: 14px;
@@ -1105,14 +1105,12 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .nav-bar {
-  display: inherit;
-  position: sticky;
+  position: fixed;
   bottom: 0;
   right: 0;
   left: 0;
   padding: 1.5rem;
   background: $bg-primary-color;
-  border-radius: 32px 32px 0 0;
   box-shadow: $box-shadow;
 }
 
