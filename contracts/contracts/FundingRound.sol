@@ -34,8 +34,9 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   uint256 public matchingPoolSize;
   uint256 public totalSpent;
   uint256 public totalVotes;
-  bool public isFinalized = false;
-  bool public isCancelled = false;
+  bool public isFinalized;
+  bool public isCancelled;
+  bool private initialized;
 
   address public coordinator;
   MACI public maci;
@@ -52,7 +53,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   event ContributionWithdrawn(address indexed _contributor);
   event FundsClaimed(uint256 indexed _voteOptionIndex, address indexed _recipient, uint256 _amount);
   event TallyPublished(string _tallyHash);
-
+  
   /**
     * @dev Set round parameters.
     * @param _nativeToken Address of a token which will be accepted for contributions.
@@ -76,18 +77,23 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     );
   }
 
+
   function init(
     ERC20 _nativeToken,
     IUserRegistry _userRegistry,
     IRecipientRegistry _recipientRegistry,
     address _coordinator 
   ) public {
+    require(!initialized, "Contract instance has already been initialized");
+    initialized = true;
     nativeToken = _nativeToken;
     voiceCreditFactor = (MAX_CONTRIBUTION_AMOUNT * uint256(10) ** nativeToken.decimals()) / MAX_VOICE_CREDITS;
     voiceCreditFactor = voiceCreditFactor > 0 ? voiceCreditFactor : 1;
     userRegistry = _userRegistry;
     recipientRegistry = _recipientRegistry;
     coordinator = _coordinator;
+    isFinalized = false;
+    isCancelled = false;
   }
 
   /**
