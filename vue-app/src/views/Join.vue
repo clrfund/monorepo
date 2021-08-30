@@ -1516,6 +1516,10 @@ export default class JoinView extends mixins(validationMixin) {
 
 .break-all {
   word-break: break-all;
+
+  @media (max-width: $breakpoint-s) {
+    display: block;
+  }
 }
 
 .no-break {
