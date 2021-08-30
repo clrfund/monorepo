@@ -4,12 +4,18 @@ import {
   TransactionReceipt,
 } from '@ethersproject/abstract-provider'
 import { isHexString } from '@ethersproject/bytes'
+import request, { gql } from 'graphql-request'
 import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
 import { getNetworkToken } from '@/utils/networks'
 
 import { OptimisticRecipientRegistry } from './abi'
-import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
+import {
+  provider,
+  ipfsGatewayUrl,
+  recipientRegistryPolicy,
+  SUBGRAPH_ENDPOINT,
+} from './core'
 import { Project } from './projects'
 
 export interface RegistryInfo {
@@ -275,6 +281,19 @@ export function formToRecipientData(
   }
 }
 
+interface Recipient {
+  id: string
+  requestType: '0' | '1'
+  requester: string
+  submissionTime: string
+  deposit: number
+  recipientMetadata: string
+  recipientAddress: string
+  rejected: boolean
+  verified: boolean
+  createdAt: string
+}
+
 export async function addRecipient(
   registryAddress: string,
   recipientApplicationData: RecipientApplicationData,
@@ -304,19 +323,15 @@ export function getRequestId(
   return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
-function decodeProject(requestSubmittedEvent: Event): Project {
-  const args = requestSubmittedEvent.args as any
-  if (args._type !== RequestTypeCode.Registration) {
-    throw new Error('not a registration request')
-  }
-  const metadata = JSON.parse(args._metadata)
+function decodeProject(recipient: Recipient): Project {
+  const metadata = JSON.parse(recipient.recipientMetadata)
 
   // imageUrl is the legacy form property - fall back to this if bannerImageHash or thumbnailImageHash don't exist
   const imageUrl = `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`
 
   return {
-    id: args._recipientId,
-    address: args._recipient,
+    id: recipient.id,
+    address: recipient.recipientAddress || '',
     name: metadata.name,
     description: metadata.description,
     imageUrl,
@@ -325,7 +340,7 @@ function decodeProject(requestSubmittedEvent: Event): Project {
     isHidden: false,
     isLocked: false,
     extra: {
-      submissionTime: args._timestamp.toNumber(),
+      submissionTime: +recipient.submissionTime,
     },
     tagline: metadata.tagline,
     category: metadata.category,
@@ -352,6 +367,25 @@ export async function getProjects(
   startTime?: number,
   endTime?: number
 ): Promise<Project[]> {
+  const query = gql`
+    query {
+      recipientRegistry(id: "${registryAddress.toLowerCase()}") {
+        recipients {
+          id
+          requestType
+          recipientAddress
+          recipientMetadata
+          submissionTime
+          rejected
+          verified
+        }
+      }
+    }
+  `
+
+  const data = await request(SUBGRAPH_ENDPOINT, query)
+  const recipients: Array<Recipient> = data.recipientRegistry.recipients
+
   const registry = new Contract(
     registryAddress,
     OptimisticRecipientRegistry,
@@ -361,81 +395,56 @@ export async function getProjects(
   const challengePeriodDuration = (
     await registry.challengePeriodDuration()
   ).toNumber()
-  const requestSubmittedFilter = registry.filters.RequestSubmitted()
-  const requestSubmittedEvents = await registry.queryFilter(
-    requestSubmittedFilter,
-    0
-  )
-  const requestResolvedFilter = registry.filters.RequestResolved()
-  const requestResolvedEvents = await registry.queryFilter(
-    requestResolvedFilter,
-    0
-  )
-  const projects: Project[] = []
-  for (const event of requestSubmittedEvents) {
-    let project: Project
-    try {
-      project = decodeProject(event)
-    } catch {
-      // Invalid metadata or not a registration request
-      continue
-    }
-    if (project.extra.submissionTime + challengePeriodDuration >= now) {
-      // Challenge period is not over yet
-      continue
-    }
-    // Find corresponding registration event
-    const registration = requestResolvedEvents.find((event) => {
-      const args = event.args as any
-      return (
-        args._recipientId === project.id &&
-        args._type === RequestTypeCode.Registration
-      )
-    })
-    // Unregistered recipients are always visible,
-    // even if request is submitted after the end of round.
-    if (registration) {
-      const isRejected = (registration.args as any)._rejected
-      if (isRejected) {
-        continue
-      } else {
-        const addedAt = (registration.args as any)._timestamp.toNumber()
-        if (endTime && addedAt >= endTime) {
-          // Hide recipient if it is added after the end of round
-          project.isHidden = true
+
+  const projects: Project[] = recipients
+    .map((recipient) => {
+      let project
+      try {
+        project = decodeProject(recipient)
+      } catch (err) {
+        return
+      }
+
+      if (+recipient.submissionTime + challengePeriodDuration >= now) {
+        // Challenge period is not over yet
+        return
+      }
+
+      if (recipient.rejected) {
+        return
+      }
+
+      if (+recipient.requestType === RequestTypeCode.Registration) {
+        if (recipient.verified) {
+          const addedAt = +recipient.submissionTime
+          if (endTime && addedAt >= endTime) {
+            // Hide recipient if it is added after the end of round
+            project.isHidden = true
+          }
+          // project.index = recipient._recipientIndex.toNumber()
+          project.index = recipients.indexOf(recipient)
+          return project
+        } else {
+          return
         }
-        project.index = (registration.args as any)._recipientIndex.toNumber()
       }
-    }
 
-    // If project is unregistered then set its visibility and locked to true
-    if (!registration) {
-      project.isHidden = true
-      project.isLocked = true
-    }
+      if (+recipient.requestType === RequestTypeCode.Removal) {
+        const removedAt = +recipient.submissionTime
+        if (!startTime || removedAt <= startTime) {
+          // Start time not specified
+          // or recipient had been removed before start time
+          project.isHidden = true
+        } else {
+          // Disallow contributions to removed recipient, but don't hide it
+          project.isLocked = true
+        }
+      }
 
-    // Find corresponding removal event
-    const removed = requestResolvedEvents.find((event) => {
-      const args = event.args as any
-      return (
-        args._recipientId === project.id &&
-        args._type === RequestTypeCode.Removal &&
-        args._rejected === false
-      )
+      return project
     })
-    if (removed) {
-      const removedAt = (removed.args as any)._timestamp.toNumber()
-      if (!startTime || removedAt <= startTime) {
-        // Start time not specified
-        // or recipient had been removed before start time
-        project.isHidden = true
-      } else {
-        // Disallow contributions to removed recipient, but don't hide it
-        project.isLocked = true
-      }
-    }
-    projects.push(project)
-  }
+    .filter(Boolean)
+
   return projects
 }
 
