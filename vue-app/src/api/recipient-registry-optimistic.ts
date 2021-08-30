@@ -464,22 +464,34 @@ export async function getProject(
   const challengePeriodDuration = (
     await registry.challengePeriodDuration()
   ).toNumber()
-  const requestSubmittedFilter = registry.filters.RequestSubmitted(recipientId)
-  const requestSubmittedEvents = await registry.queryFilter(
-    requestSubmittedFilter,
-    0
-  )
-  // Find registration request
-  const requestSubmittedEvent = requestSubmittedEvents.find((event) => {
-    return (event.args as any)._type === RequestTypeCode.Registration
-  })
-  if (!requestSubmittedEvent) {
+
+  const query = gql`
+    query {
+      recipientRegistry(id: "${registryAddress.toLowerCase()}") {
+        recipients(where: { id: "${recipientId}" }) {
+          id
+          requestType
+          recipientAddress
+          recipientMetadata
+          submissionTime
+          rejected
+          verified
+        }
+      }
+    }
+  `
+
+  const data = await request(SUBGRAPH_ENDPOINT, query)
+  const recipient: Recipient = data.recipientRegistry.recipients[0]
+
+  if (!recipient) {
     // Project does not exist
     return null
   }
+
   let project: Project
   try {
-    project = decodeProject(requestSubmittedEvent)
+    project = decodeProject(recipient)
   } catch {
     // Invalid metadata
     return null
@@ -488,29 +500,20 @@ export async function getProject(
     // Challenge period is not over yet
     return null
   }
-  // Find corresponding RequestResolved event
-  const requestResolvedFilter = registry.filters.RequestResolved(recipientId)
-  const requestResolvedEvents = await registry.queryFilter(
-    requestResolvedFilter,
-    0
-  )
-  const registration = requestResolvedEvents.find((event) => {
-    return (event.args as any)._type === RequestTypeCode.Registration
-  })
-  if (registration) {
-    const isRejected = (registration.args as any)._rejected
-    if (isRejected) {
-      return null
+
+  if (+recipient.requestType === RequestTypeCode.Registration) {
+    if (recipient.verified) {
+      // TODO: subgraph is not storing the recipient index
+      project.index = 0
     } else {
-      project.index = (registration.args as any)._recipientIndex.toNumber()
+      return null
     }
   }
-  // Find corresponding removal event
-  const removed = requestResolvedEvents.find((event) => {
-    const args = event.args as any
-    return args._type === RequestTypeCode.Removal && args._rejected === false
-  })
-  if (removed) {
+
+  if (
+    +recipient.requestType === RequestTypeCode.Removal &&
+    recipient.verified
+  ) {
     // Disallow contributions to removed recipient
     project.isLocked = true
   }
