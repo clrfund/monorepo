@@ -1,5 +1,5 @@
 overwrite: true
-schema: 'http://localhost:8000/subgraphs/id/Qmd6bb77ykv6mp2mRKB9gjgcPxrwa7DX3tfDYYkba7MLE9'
+schema: 'http://localhost:8000/subgraphs/name/daodesigner/clrfund'
 documents: 'vue-app/src/graphql/**/*.graphql'
 generates:
   vue-app/src/graphql/API.ts:
