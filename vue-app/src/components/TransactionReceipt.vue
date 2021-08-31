@@ -42,6 +42,7 @@ import CopyButton from '@/components/CopyButton.vue'
 import Links from '@/components/Links.vue'
 import { blockExplorer } from '@/api/core'
 import { isTransactionMined } from '@/utils/contracts'
+import { renderAddressOrHash } from '@/utils/renderAddressOrHash'
 
 @Component({
   components: { Loader, CopyButton, Links },
@@ -61,7 +62,7 @@ export default class TransactionReceipt extends Vue {
   }
 
   get renderCopiedOrHash(): string {
-    return this.isCopied ? 'Copied!' : this.renderHash(16)
+    return this.isCopied ? 'Copied!' : renderAddressOrHash(this.hash, 16)
   }
 
   async checkTxStatus(): Promise<void> {
@@ -70,17 +71,6 @@ export default class TransactionReceipt extends Vue {
       const isMined = await isTransactionMined(this.hash)
       this.isPending = !isMined
     }
-  }
-
-  renderHash(digitsToShow?: number): string {
-    if (digitsToShow) {
-      const beginDigits = Math.ceil(digitsToShow / 2)
-      const endDigits = Math.floor(digitsToShow / 2)
-      const begin = this.hash.substr(0, 2 + beginDigits)
-      const end = this.hash.substr(this.hash.length - endDigits, endDigits)
-      return `${begin}…${end}`
-    }
-    return this.hash
   }
 
   get blockExplorerUrl(): string {

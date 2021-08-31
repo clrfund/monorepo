@@ -46,6 +46,7 @@ import { User, getProfileImageUrl } from '@/api/user'
 import WalletModal from '@/components/WalletModal.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import Profile from '@/views/Profile.vue'
+import { renderAddressOrHash } from '@/utils/renderAddressOrHash'
 
 @Component({ components: { Profile, WalletModal } })
 export default class WalletWidget extends Vue {
@@ -124,21 +125,9 @@ export default class WalletWidget extends Vue {
     }
   }
 
-  // TODO: Extract into a shared function
   renderUserAddress(digitsToShow?: number): string {
     if (this.currentUser?.walletAddress) {
-      const address: string = this.currentUser.walletAddress
-      if (digitsToShow) {
-        const beginDigits: number = Math.ceil(digitsToShow / 2)
-        const endDigits: number = Math.floor(digitsToShow / 2)
-        const begin: string = address.substr(0, 2 + beginDigits)
-        const end: string = address.substr(
-          address.length - endDigits,
-          endDigits
-        )
-        return `${begin}…${end}`
-      }
-      return address
+      return renderAddressOrHash(this.currentUser.walletAddress, digitsToShow)
     }
     return ''
   }

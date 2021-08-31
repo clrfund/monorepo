@@ -564,7 +564,7 @@
                 <div class="summary">
                   <h4 class="read-only-title">Ethereum address</h4>
                   <div class="data break-all">
-                    <p>{{ form.fund.address }}</p>
+                    <p>{{ renderAddressOrHash(form.fund.address, 16) }}</p>
                     <links :to="blockExplorerUrl" class="no-break">
                       View on Etherscan
                     </links>
@@ -762,6 +762,8 @@ import {
 import { Project } from '@/api/projects'
 import { blockExplorer } from '@/api/core'
 
+import { renderAddressOrHash } from '@/utils/renderAddressOrHash'
+
 @Component({
   components: {
     LayoutSteps,
@@ -776,6 +778,9 @@ import { blockExplorer } from '@/api/core'
     RecipientSubmissionWidget,
     Warning,
     Links,
+  },
+  methods: {
+    renderAddressOrHash,
   },
   validations: {
     form: {

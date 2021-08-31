@@ -89,7 +89,7 @@
         <div>
           <div class="address-label">Recipient address</div>
           <div class="address">
-            {{ project.address }}
+            {{ renderAddressOrHash(project.address, 16) }}
           </div>
         </div>
         <div class="copy-div">
@@ -143,8 +143,12 @@ import { ADD_CART_ITEM } from '@/store/mutation-types'
 import ClaimModal from '@/components/ClaimModal.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import Links from '@/components/Links.vue'
+import { renderAddressOrHash } from '@/utils/renderAddressOrHash'
 
-@Component({ components: { Markdown, Info, LinkBox, CopyButton, Links } })
+@Component({
+  components: { Markdown, Info, LinkBox, CopyButton, Links },
+  methods: { renderAddressOrHash },
+})
 export default class ProjectProfile extends Vue {
   allocatedAmount: FixedNumber | null = null
   contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
