@@ -7,6 +7,9 @@ import { getEventArg } from '../utils/contracts'
 import { MaciParameters } from '../utils/maci'
 
 async function main() {
+  console.log('*******************')
+  console.log('Deploying a new clr.fund instance of contracts!')
+  console.log('*******************')
   const [deployer] = await ethers.getSigners()
   console.log('deployer.address: ', deployer.address)
 
@@ -212,6 +215,9 @@ async function main() {
     )
     const executeRequest2 = await recipientRegistry.executeRequest(recipient2Id)
     await executeRequest2.wait()
+    console.log('*******************')
+    console.log('Deploy complete!')
+    console.log('*******************')
   }
 }
 
