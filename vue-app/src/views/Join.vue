@@ -564,7 +564,7 @@
                 <div class="summary">
                   <h4 class="read-only-title">Ethereum address</h4>
                   <div class="data break-all">
-                    {{ form.fund.address }}
+                    <p>{{ form.fund.address }}</p>
                     <links :to="blockExplorerUrl" class="no-break">
                       View on Etherscan
                     </links>
@@ -898,9 +898,11 @@ export default class JoinView extends mixins(validationMixin) {
     //     project: {
     //       name: 'CLR.Fund',
     //       tagline: 'A quadratic funding protocol',
-    //       description: '**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...\n# Derp\n\nasdfasdfasdf\n\n## Derp\n\nasdfsdasdfsdf\n### Derp\n\nasdfasdfsdaf\n#### Derp\nasdfasdf\n##### Derp',
+    //       description:
+    //         '**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...\n# Derp\n\nasdfasdfasdf\n\n## Derp\n\nasdfsdasdfsdf\n### Derp\n\nasdfasdfsdaf\n#### Derp\nasdfasdf\n##### Derp',
     //       category: 'research',
-    //       problemSpace: 'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
+    //       problemSpace:
+    //         'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
     //     },
     //     fund: {
     //       address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
@@ -1515,10 +1517,13 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .break-all {
-  word-break: break-all;
-
   @media (max-width: $breakpoint-s) {
     display: block;
+  }
+
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
