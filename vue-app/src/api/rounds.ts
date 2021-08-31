@@ -1,5 +1,5 @@
-import { ipfsGatewayUrl, extraRounds, SUBGRAPH_ENDPOINT } from './core'
-import { request, gql } from 'graphql-request'
+import sdk from '@/graphql/sdk'
+import { ipfsGatewayUrl, extraRounds } from './core'
 
 export interface Round {
   index: number
@@ -8,15 +8,7 @@ export interface Round {
 }
 
 export async function getRounds(): Promise<Round[]> {
-  const query = gql`
-    query {
-      fundingRounds {
-        id
-      }
-    }
-  `
-
-  const data = await request(SUBGRAPH_ENDPOINT, query)
+  const data = await sdk.GetRounds()
 
   const rounds: Round[] = extraRounds.map((ipfsHash: string, index): Round => {
     return { index, address: '', url: `${ipfsGatewayUrl}/ipfs/${ipfsHash}` }

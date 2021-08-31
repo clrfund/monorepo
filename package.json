@@ -26,6 +26,7 @@
     "start:node": "yarn workspace @clrfund/contracts run node",
     "start:web": "yarn workspace @clrfund/vue-app run serve",
     "start:gun": "yarn workspace @clrfund/vue-app run gun",
+    "codegen": "graphql-codegen --config codegen.yml",
     "test": "yarn workspaces run test",
     "test:contracts": "yarn workspace @clrfund/contracts run test",
     "test:web": "yarn workspace @clrfund/vue-app run test",
@@ -42,6 +43,10 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "2.1.1",
+    "@graphql-codegen/typescript": "^2.1.2",
+    "@graphql-codegen/typescript-graphql-request": "^4.1.2",
+    "@graphql-codegen/typescript-operations": "^2.1.2",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.1"

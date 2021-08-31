@@ -1,11 +1,10 @@
 import { BigNumber, Contract, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Keypair, PrivKey } from 'maci-domainobjs'
-import { request, gql } from 'graphql-request'
 
 import { FundingRound } from './abi'
-import { SUBGRAPH_ENDPOINT } from './core'
 import { Project } from './projects'
+import sdk from '@/graphql/sdk'
 
 export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
@@ -70,21 +69,12 @@ export async function getContributionAmount(
   fundingRoundAddress: string,
   contributorAddress: string
 ): Promise<BigNumber> {
-  const query = gql`
-    query {
-      fundingRound(id: "${fundingRoundAddress}") {
-        contributors(where: { id: "${contributorAddress}" }) {
-          contributions(first: 1) {
-            amount
-          }
-        }
-      }
-    }
-  `
+  const data = await sdk.GetContributionsAmount({
+    fundingRoundAddress,
+    contributorAddress,
+  })
 
-  const data = await request(SUBGRAPH_ENDPOINT, query)
-
-  if (!data.fundingRound?.contributors.length) {
+  if (!data.fundingRound?.contributors?.[0].contributions?.length) {
     return BigNumber.from(0)
   }
 
@@ -94,28 +84,20 @@ export async function getContributionAmount(
 export async function getTotalContributed(
   fundingRoundAddress: string
 ): Promise<{ count: number; amount: BigNumber }> {
-  const query = gql`
-    query {
-      fundingRound(id: "${fundingRoundAddress}") {
-        contributorCount
-        contributors {
-          contributions {
-            amount
-          }
-        }
-      }
-    }
-  `
+  const data = await sdk.GetTotalContributed({ fundingRoundAddress })
 
-  const data = await request(SUBGRAPH_ENDPOINT, query)
-
-  if (!data.fundingRound) {
+  if (!data.fundingRound?.contributors) {
     return { count: 0, amount: BigNumber.from(0) }
   }
 
   const count = parseInt(data.fundingRound.contributorCount)
 
+  // TODO: lets see if we can add this total amount into the subgraph itself
   const amount = data.fundingRound.contributors.reduce((total, contributor) => {
+    if (!contributor.contributions?.length) {
+      return total
+    }
+
     const subtotal = contributor.contributions.reduce((total, contribution) => {
       return total.add(contribution.amount)
     }, BigNumber.from(0))

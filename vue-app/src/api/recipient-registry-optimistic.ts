@@ -1,22 +1,18 @@
-import { BigNumber, Contract, Event, Signer } from 'ethers'
+import { BigNumber, Contract, Signer } from 'ethers'
 import {
   TransactionResponse,
   TransactionReceipt,
 } from '@ethersproject/abstract-provider'
 import { isHexString } from '@ethersproject/bytes'
-import request, { gql } from 'graphql-request'
 import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
 import { getNetworkToken } from '@/utils/networks'
 
 import { OptimisticRecipientRegistry } from './abi'
-import {
-  provider,
-  ipfsGatewayUrl,
-  recipientRegistryPolicy,
-  SUBGRAPH_ENDPOINT,
-} from './core'
+import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
 import { Project } from './projects'
+import sdk from '@/graphql/sdk'
+import { Recipient } from '@/graphql/API'
 
 export interface RegistryInfo {
   deposit: BigNumber
@@ -281,19 +277,6 @@ export function formToRecipientData(
   }
 }
 
-interface Recipient {
-  id: string
-  requestType: '0' | '1'
-  requester: string
-  submissionTime: string
-  deposit: number
-  recipientMetadata: string
-  recipientAddress: string
-  rejected: boolean
-  verified: boolean
-  createdAt: string
-}
-
 export async function addRecipient(
   registryAddress: string,
   recipientApplicationData: RecipientApplicationData,
@@ -323,14 +306,14 @@ export function getRequestId(
   return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
-function decodeProject(recipient: Recipient): Project {
-  const metadata = JSON.parse(recipient.recipientMetadata)
+function decodeProject(recipient: Partial<Recipient>): Project {
+  const metadata = JSON.parse(recipient.recipientMetadata!)
 
   // imageUrl is the legacy form property - fall back to this if bannerImageHash or thumbnailImageHash don't exist
   const imageUrl = `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`
 
   return {
-    id: recipient.id,
+    id: recipient.id!,
     address: recipient.recipientAddress || '',
     name: metadata.name,
     description: metadata.description,
@@ -340,7 +323,7 @@ function decodeProject(recipient: Recipient): Project {
     isHidden: false,
     isLocked: false,
     extra: {
-      submissionTime: +recipient.submissionTime,
+      submissionTime: Number(recipient.submissionTime),
     },
     tagline: metadata.tagline,
     category: metadata.category,
@@ -367,24 +350,15 @@ export async function getProjects(
   startTime?: number,
   endTime?: number
 ): Promise<Project[]> {
-  const query = gql`
-    query {
-      recipientRegistry(id: "${registryAddress.toLowerCase()}") {
-        recipients {
-          id
-          requestType
-          recipientAddress
-          recipientMetadata
-          submissionTime
-          rejected
-          verified
-        }
-      }
-    }
-  `
+  const data = await sdk.GetRecipients({
+    registryAddress: registryAddress.toLowerCase(),
+  })
 
-  const data = await request(SUBGRAPH_ENDPOINT, query)
-  const recipients: Array<Recipient> = data.recipientRegistry.recipients
+  if (!data.recipientRegistry?.recipients?.length) {
+    return []
+  }
+
+  const recipients = data.recipientRegistry?.recipients
 
   const registry = new Contract(
     registryAddress,
@@ -405,7 +379,8 @@ export async function getProjects(
         return
       }
 
-      if (+recipient.submissionTime + challengePeriodDuration >= now) {
+      const submissionTime = Number(recipient.submissionTime)
+      if (submissionTime + challengePeriodDuration >= now) {
         // Challenge period is not over yet
         return
       }
@@ -414,9 +389,10 @@ export async function getProjects(
         return
       }
 
-      if (+recipient.requestType === RequestTypeCode.Registration) {
+      const requestType = Number(recipient.requestType)
+      if (requestType === RequestTypeCode.Registration) {
         if (recipient.verified) {
-          const addedAt = +recipient.submissionTime
+          const addedAt = submissionTime
           if (endTime && addedAt >= endTime) {
             // Hide recipient if it is added after the end of round
             project.isHidden = true
@@ -429,8 +405,8 @@ export async function getProjects(
         }
       }
 
-      if (+recipient.requestType === RequestTypeCode.Removal) {
-        const removedAt = +recipient.submissionTime
+      if (requestType === RequestTypeCode.Removal) {
+        const removedAt = submissionTime
         if (!startTime || removedAt <= startTime) {
           // Start time not specified
           // or recipient had been removed before start time
@@ -465,29 +441,17 @@ export async function getProject(
     await registry.challengePeriodDuration()
   ).toNumber()
 
-  const query = gql`
-    query {
-      recipientRegistry(id: "${registryAddress.toLowerCase()}") {
-        recipients(where: { id: "${recipientId}" }) {
-          id
-          requestType
-          recipientAddress
-          recipientMetadata
-          submissionTime
-          rejected
-          verified
-        }
-      }
-    }
-  `
+  const data = await sdk.GetProject({
+    registryAddress: registryAddress.toLowerCase(),
+    recipientId,
+  })
 
-  const data = await request(SUBGRAPH_ENDPOINT, query)
-  const recipient: Recipient = data.recipientRegistry.recipients[0]
-
-  if (!recipient) {
+  if (!data.recipientRegistry?.recipients?.length) {
     // Project does not exist
     return null
   }
+
+  const recipient = data.recipientRegistry?.recipients?.[0]
 
   let project: Project
   try {
@@ -501,7 +465,8 @@ export async function getProject(
     return null
   }
 
-  if (+recipient.requestType === RequestTypeCode.Registration) {
+  const requestType = Number(recipient.requestType)
+  if (requestType === RequestTypeCode.Registration) {
     if (recipient.verified) {
       // TODO: subgraph is not storing the recipient index
       project.index = 0
@@ -510,10 +475,7 @@ export async function getProject(
     }
   }
 
-  if (
-    +recipient.requestType === RequestTypeCode.Removal &&
-    recipient.verified
-  ) {
+  if (requestType === RequestTypeCode.Removal && recipient.verified) {
     // Disallow contributions to removed recipient
     project.isLocked = true
   }
