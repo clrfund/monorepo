@@ -363,7 +363,7 @@ p.no-margin {
         flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: center;
         padding: 0 1rem;
 
         .project-hidden {
