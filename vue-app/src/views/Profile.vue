@@ -121,7 +121,7 @@ import { User } from '@/api/user'
 import { userRegistryType, UserRegistryType } from '@/api/core'
 import { Project, getProjects } from '@/api/projects'
 import { CHAIN_INFO, ChainInfo } from '@/plugins/Web3/constants/chains'
-import { isSameAddress, ensLookup } from '@/utils/accounts'
+import { isSameAddress } from '@/utils/accounts'
 
 @Component({
   components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
@@ -132,14 +132,10 @@ export default class NavBar extends Vue {
   projects: Project[] = []
   balanceBackgroundColor = '#2a374b'
   isLoading = true
-  ens: string | null = null
 
   async created() {
     this.isLoading = true
     await this.loadProjects()
-    // if (this.currentUser) {
-    //   this.ens = await ensLookup(this.currentUser.walletAddress)
-    // }
     this.isLoading = false
   }
 
