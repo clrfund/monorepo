@@ -5,18 +5,18 @@
       <button
         v-if="currentStep > 0"
         @click="handleStepNav(currentStep - 1)"
-        class="btn-secondary"
+        class="btn-secondary float-left"
         :disabled="isNavDisabled"
       >
         Previous
       </button>
       <button
-        v-if="currentStep < 6"
+        v-if="currentStep < steps.length - 1"
         @click="handleNext"
-        class="btn-primary"
+        class="btn-primary float-right"
         :disabled="!isStepValid"
       >
-        {{ currentStep === 5 ? 'Finish' : 'Next' }}
+        {{ currentStep === steps.length - 2 ? 'Finish' : 'Next' }}
       </button>
     </div>
   </div>
@@ -61,8 +61,15 @@ export default class FormNavigation extends Vue {
 @import '../styles/vars';
 
 .btn-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: block;
+  height: 2.75rem;
+}
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
 }
 </style>
