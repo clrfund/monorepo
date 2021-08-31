@@ -5,6 +5,7 @@ build
 node_modules
 snark-params
 vue-app/gundata/
+vue-app/src/graphql/API.ts
 yarn.lock
 
 # local config
