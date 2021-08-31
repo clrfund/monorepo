@@ -48,6 +48,7 @@ const maciFactory = await deployMaciFactory(deployer, 'medium')
 ```
 
 The `deployMaciFactory` function deploys MACI factory and other contracts required by it:
+
 - Poseidon T3 library
 - Poseidon T6 library
 - State tree batch update verifier contract
@@ -122,6 +123,17 @@ or to deploy Kleros GTCR adapter:
 ```js
 const KlerosGTCRAdapter = await ethers.getContractFactory('KlerosGTCRAdapter', deployer)
 const recipientRegistry = await KlerosGTCRAdapter.deploy('<kleros-gtcr-address>', factory.address)
+```
+
+#### Transferring registry ownership
+
+If registry contracts inherit from [OpenZeppelin's Ownable contract](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol), you can transfer ownership after you deploy:
+
+```js
+const factory = await ethers.getContractAt('FundingRoundFactory', factory.address)
+const recipientRegistryAddress = await factory.recipientRegistry()
+const registry = await ethers.getContractAt('OptimisticRecipientRegistry', recipientRegistryAddress)
+const transferTx = await registry.transferOwnership('<new-owner-address>')
 ```
 
 ## Configuration
@@ -201,6 +213,7 @@ await factory.deployNewRound()
 ```
 
 Info to keep track of:
+
 ```
 deployer.address
 maciFactory.address
