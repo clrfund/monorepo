@@ -31,25 +31,15 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import * as humanizeDuration from 'humanize-duration'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import Links from '@/components/Links.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
-import { blockExplorer } from '@/api/core'
 
 @Component({
   components: { ProgressBar, RoundStatusBanner, Links, TransactionReceipt },
 })
-export default class Verified extends Vue {
-  get blockExplorerUrl(): string {
-    return `${blockExplorer}/tx/${this.$route.params.hash}`
-  }
-
-  formatDuration(value: number): string {
-    return humanizeDuration(value * 1000, { largest: 1 })
-  }
-}
+export default class Verified extends Vue {}
 </script>
 
 <style scoped lang="scss">
