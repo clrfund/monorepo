@@ -3,6 +3,7 @@ query GetRecipients($registryAddress: ID!) {
     recipients {
       id
       requestType
+      requester
       recipientAddress
       recipientMetadata
       submissionTime

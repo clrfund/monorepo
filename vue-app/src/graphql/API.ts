@@ -1926,6 +1926,7 @@ export type GetRecipientsQuery = {
         __typename?: 'Recipient'
         id: string
         requestType: Maybe<string>
+        requester: Maybe<string>
         recipientAddress: Maybe<any>
         recipientMetadata: Maybe<string>
         submissionTime: Maybe<string>
@@ -2013,6 +2014,7 @@ export const GetRecipientsDocument = gql`
       recipients {
         id
         requestType
+        requester
         recipientAddress
         recipientMetadata
         submissionTime

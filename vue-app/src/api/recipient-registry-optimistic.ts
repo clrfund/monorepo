@@ -143,85 +143,53 @@ export async function getRequests(
   registryAddress: string,
   registryInfo: RegistryInfo
 ): Promise<Request[]> {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider
-  )
-  const requestSubmittedFilter = registry.filters.RequestSubmitted()
-  const requestSubmittedEvents = await registry.queryFilter(
-    requestSubmittedFilter,
-    0
-  )
-  const requestResolvedFilter = registry.filters.RequestResolved()
-  const requestResolvedEvents = await registry.queryFilter(
-    requestResolvedFilter,
-    0
-  )
+  const data = await sdk.GetRecipients({
+    registryAddress: registryAddress.toLowerCase(),
+  })
+
+  if (!data.recipientRegistry?.recipients?.length) {
+    return []
+  }
+
+  const recipients = data.recipientRegistry?.recipients
+
   const requests: Record<string, Request> = {}
-  for (const event of requestSubmittedEvents) {
-    const eventArgs = event.args as any
-    let type: RequestType
-    let metadata: RecipientMetadata
-    if (eventArgs._type === RequestTypeCode.Removal) {
-      // Removal request
-      type = RequestType.Removal
-      // Find corresponding registration request and update metadata
-      const registrationRequest = requests[eventArgs._recipientId]
-      if (!registrationRequest) {
-        throw new Error('registration request not found')
-      }
-      metadata = registrationRequest.metadata
-    } else {
+  for (const recipient of recipients) {
+    let metadata = JSON.parse(recipient.recipientMetadata || '{}')
+
+    const requestType = Number(recipient.requestType)
+    if (requestType === RequestTypeCode.Registration) {
       // Registration request
-      type = RequestType.Registration
-      const { name, description, imageHash } = JSON.parse(eventArgs._metadata)
+      const { name, description, imageHash } = metadata
       metadata = {
         name,
         description,
         imageUrl: `${ipfsGatewayUrl}/ipfs/${imageHash}`,
       }
     }
+
+    const submissionTime = Number(recipient.submissionTime)
     const acceptanceDate = DateTime.fromSeconds(
-      eventArgs._timestamp.toNumber() + registryInfo.challengePeriodDuration
+      submissionTime + registryInfo.challengePeriodDuration
     )
     const request: Request = {
-      transactionHash: event.transactionHash,
-      type,
+      transactionHash: '', // TODO: `event.transactionHash` to be added into the subgraph
+      type: RequestType[requestType],
       status: RequestStatus.Submitted,
       acceptanceDate,
-      recipientId: eventArgs._recipientId,
-      recipient: eventArgs._recipient,
+      recipientId: recipient.id,
+      recipient: recipient.recipientAddress,
       metadata,
-      requester: eventArgs._requester,
+      requester: recipient.requester!,
     }
-    // Find corresponding RequestResolved event
-    const resolved = requestResolvedEvents.find((event) => {
-      const args = event.args as any
-      if (request.type === RequestType.Registration) {
-        return (
-          args._recipientId === request.recipientId &&
-          args._type === RequestTypeCode.Registration
-        )
-      } else {
-        return (
-          args._recipientId === request.recipientId &&
-          args._type === RequestTypeCode.Removal
-        )
-      }
-    })
-    if (resolved) {
-      const isRejected = (resolved.args as any)._rejected
-      const type = (resolved.args as any)._type
 
-      if (isRejected) {
-        request.status = RequestStatus.Rejected
-      } else {
-        request.status =
-          type === RequestTypeCode.Removal
-            ? RequestStatus.Removed
-            : RequestStatus.Executed
-      }
+    if (recipient.rejected) {
+      request.status = RequestStatus.Rejected
+    } else {
+      request.status =
+        requestType === RequestTypeCode.Removal
+          ? RequestStatus.Removed
+          : RequestStatus.Executed
     }
 
     // In case there are two requests submissions events, we always prioritize
