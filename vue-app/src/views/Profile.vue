@@ -188,8 +188,10 @@ export default class NavBar extends Vue {
       currentRound?.startTime.toSeconds(),
       currentRound?.votingDeadline.toSeconds()
     )
-    const userProjects: Project[] = projects.filter(({ address }) =>
-      isSameAddress(address, currentUser?.walletAddress)
+    const userProjects: Project[] = projects.filter(
+      ({ address, requester }) =>
+        isSameAddress(address, currentUser?.walletAddress) ||
+        isSameAddress(requester as string, currentUser?.walletAddress)
     )
     this.projects = userProjects
   }
