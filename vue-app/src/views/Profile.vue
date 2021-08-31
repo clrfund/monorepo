@@ -69,9 +69,9 @@
           </balance-item>
         </div>
       </div>
-      <div v-if="projects.length > 0" class="projects-section">
+      <div class="projects-section">
         <h2>Projects</h2>
-        <div class="project-list">
+        <div v-if="projects.length > 0" class="project-list">
           <div
             class="project-item"
             v-for="{
@@ -99,8 +99,11 @@
               {{ isLocked ? 'Preview' : 'View' }}
             </button>
           </div>
-          <loader v-if="isLoading" />
         </div>
+        <div v-if="!isLoading && projects.length === 0">
+          You haven't submitted any projects
+        </div>
+        <loader v-if="isLoading" />
       </div>
     </div>
   </div>
