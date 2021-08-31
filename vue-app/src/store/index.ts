@@ -329,9 +329,7 @@ const actions = {
       }
 
       let ensName: string | null = state.currentUser.ensName
-      if (isAddress(state.currentUser.walletAddress)) {
-        ensName = await ensLookup(state.currentUser.walletAddress)
-      }
+      ensName = await ensLookup(state.currentUser.walletAddress)
 
       commit(SET_CURRENT_USER, {
         ...state.currentUser,
