@@ -167,6 +167,9 @@ export default class WalletWidget extends Vue {
   .profile-name {
     font-size: 14px;
     opacity: 0.8;
+    @media (max-width: $breakpoint-s) {
+      display: none;
+    }
   }
 
   .balance {
