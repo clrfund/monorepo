@@ -47,7 +47,7 @@
           to reallocate your contributions.
         </p>
         <div class="receipt" v-if="$route.params.hash">
-          <transaction-receipt :hash="`${$route.params.hash}`" />
+          <transaction-receipt :hash="$route.params.hash" />
         </div>
         <div class="input-button">
           <button class="contributed-button" @click="redirectToProjects()">

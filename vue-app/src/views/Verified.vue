@@ -11,15 +11,7 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Ready to contribute!</h1>
-            <links v-if="$route.params.hash" :to="blockExplorerUrl">
-              <div class="etherscan-btn">
-                <img
-                  class="icon"
-                  width="16px"
-                  src="@/assets/etherscan.svg"
-                />Etherscan
-              </div>
-            </links>
+            <transaction-receipt :hash="$route.params.hash" />
           </div>
           <div class="subtitle">
             You’re on board this funding round! And fully verified for BrightID
@@ -43,10 +35,12 @@ import * as humanizeDuration from 'humanize-duration'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import Links from '@/components/Links.vue'
-
+import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import { blockExplorer } from '@/api/core'
 
-@Component({ components: { ProgressBar, RoundStatusBanner, Links } })
+@Component({
+  components: { ProgressBar, RoundStatusBanner, Links, TransactionReceipt },
+})
 export default class Verified extends Vue {
   get blockExplorerUrl(): string {
     return `${blockExplorer}/tx/${this.$route.params.hash}`
