@@ -12,7 +12,7 @@
         <h2 class="no-margin">Your wallet</h2>
       </div>
       <div class="address-card">
-        <h2 class="address">{{ renderUserAddress(16) }}</h2>
+        <h2 class="address">{{ displayAddress }}</h2>
         <div class="action-row" v-if="currentUser">
           <copy-button
             :value="currentUser.walletAddress"
@@ -20,7 +20,9 @@
             myClass="profile"
             class="copy"
           />
-          <div class="address">{{ renderUserAddress(20) }}</div>
+          <div class="address">
+            {{ currentUser.ensName ? currentUser.walletAddress : null }}
+          </div>
           <div
             v-tooltip="{
               content: 'Disconnect wallet',
@@ -158,22 +160,9 @@ export default class NavBar extends Vue {
     return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
   }
 
-  renderUserAddress(digitsToShow?: number): string {
-    if (this.$store.state.currentUser?.walletAddress) {
-      const address: string = this.$store.state.currentUser.walletAddress
-      if (digitsToShow) {
-        const beginDigits: number = Math.ceil(digitsToShow / 2)
-        const endDigits: number = Math.floor(digitsToShow / 2)
-        const begin: string = address.substr(0, 2 + beginDigits)
-        const end: string = address.substr(
-          address.length - endDigits,
-          endDigits
-        )
-        return `${begin}…${end}`
-      }
-      return address
-    }
-    return ''
+  get displayAddress(): string | null {
+    if (!this.currentUser) return null
+    return this.currentUser.ensName ?? this.currentUser.walletAddress
   }
 
   async disconnect(): Promise<void> {
@@ -259,8 +248,9 @@ p.no-margin {
     top: 0;
     bottom: 0;
     background: $bg-light-color;
-    width: clamp(350px, 25%, 500px);
     padding: 1.5rem;
+    box-sizing: border-box;
+    width: clamp(min(414px, 100%), 35%, 500px);
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -281,6 +271,8 @@ p.no-margin {
       .address {
         margin: 0;
         text-transform: uppercase;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .action-row {
@@ -294,8 +286,10 @@ p.no-margin {
         }
         .address {
           grid-area: address;
-          display: flex;
           align-items: center;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          align-self: center;
         }
         .disconnect {
           grid-area: disconnect;

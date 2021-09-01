@@ -78,10 +78,11 @@ import {
 } from './mutation-types'
 
 // Utils
-import { isSameAddress } from '@/utils/accounts'
+import { isSameAddress, ensLookup } from '@/utils/accounts'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
+import { isAddress } from 'ethers/lib/utils'
 
 Vue.use(Vuex)
 
@@ -327,11 +328,15 @@ const actions = {
         }
       }
 
+      let ensName: string | null = state.currentUser.ensName
+      ensName = await ensLookup(state.currentUser.walletAddress)
+
       commit(SET_CURRENT_USER, {
         ...state.currentUser,
         isRegistered,
         balance,
         etherBalance,
+        ensName,
       })
     }
   },
