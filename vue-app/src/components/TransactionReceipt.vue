@@ -42,7 +42,7 @@ import CopyButton from '@/components/CopyButton.vue'
 import Links from '@/components/Links.vue'
 import { blockExplorer } from '@/api/core'
 import { isTransactionMined } from '@/utils/contracts'
-import { renderAddressOrHash } from '@/utils/renderAddressOrHash'
+import { renderAddressOrHash } from '@/utils/accounts'
 
 @Component({
   components: { Loader, CopyButton, Links },
