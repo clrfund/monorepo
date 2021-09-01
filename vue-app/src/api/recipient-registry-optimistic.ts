@@ -173,7 +173,7 @@ export async function getRequests(
       submissionTime + registryInfo.challengePeriodDuration
     )
     const request: Request = {
-      transactionHash: '', // TODO: `event.transactionHash` to be added into the subgraph
+      transactionHash: recipient.id, // TODO: `event.transactionHash` to be added into the subgraph. Leaving recipientId to avoid errors
       type: RequestType[requestType],
       status: RequestStatus.Submitted,
       acceptanceDate,
