@@ -29,9 +29,9 @@
     </div>
     <profile
       v-if="showProfilePanel"
-      :toggleProfile="toggleProfile"
       :balance="balance"
       :etherBalance="etherBalance"
+      @close="toggleProfile"
     />
   </div>
 </template>
@@ -52,7 +52,6 @@ export default class WalletWidget extends Vue {
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
   @Prop() showEth!: boolean
-
   // Boolean to only show Connect button, styled like an action button,
   // which hides the widget that would otherwise display after connecting
   @Prop() isActionButton!: boolean
@@ -87,7 +86,6 @@ export default class WalletWidget extends Vue {
 
   async mounted() {
     this.showProfilePanel = false
-
     this.$web3.$on('disconnect', () => {
       this.$store.dispatch(LOGOUT_USER)
     })

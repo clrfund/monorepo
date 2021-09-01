@@ -1,9 +1,9 @@
 <template>
   <div class="wrapper">
-    <div class="modal-background" @click="toggleProfile" />
+    <div class="modal-background" @click="$emit('close')" />
     <div class="container">
-      <div class="flex-row flex-end">
-        <div class="close-btn" @click="toggleProfile()">
+      <div class="flex-row" style="justify-content: flex-end">
+        <div class="close-btn" @click="$emit('close')">
           <p class="no-margin">Close</p>
           <img src="@/assets/close.svg" />
         </div>
@@ -36,7 +36,7 @@
       <bright-id-widget
         v-if="showBrightIdWidget"
         :isProjectCard="false"
-        :toggleProfile="toggleProfile"
+        @close="$emit('close')"
       />
       <div class="balances-section">
         <div class="flex-row">
@@ -71,7 +71,39 @@
       </div>
       <div class="projects-section">
         <h2>Projects</h2>
-        <!-- <div class="project-item" v-for=" eacah project user owns " /> -->
+        <div v-if="projects.length > 0" class="project-list">
+          <div
+            class="project-item"
+            v-for="{
+              id,
+              name,
+              thumbnailImageUrl,
+              isHidden,
+              isLocked,
+            } of projects"
+            :key="id"
+          >
+            <img
+              :src="thumbnailImageUrl"
+              :alt="alt + ' thumbnail'"
+              class="project-thumbnail"
+            />
+            <div class="project-details">
+              <div class="project-name">
+                {{ name }}
+                <span v-if="isLocked">🔒</span>
+              </div>
+              <div v-if="isHidden" class="project-hidden">Under review</div>
+            </div>
+            <button class="btn-secondary" @click="navigateToProject(id)">
+              {{ isLocked ? 'Preview' : 'View' }}
+            </button>
+          </div>
+        </div>
+        <div v-if="!isLoading && projects.length === 0">
+          You haven't submitted any projects
+        </div>
+        <loader v-if="isLoading" />
       </div>
     </div>
   </div>
@@ -85,24 +117,30 @@ import BalanceItem from '@/components/BalanceItem.vue'
 import IconStatus from '@/components/IconStatus.vue'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import CopyButton from '@/components/CopyButton.vue'
+import Loader from '@/components/Loader.vue'
+
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
 import { userRegistryType, UserRegistryType } from '@/api/core'
+import { Project, getProjects } from '@/api/projects'
 import { CHAIN_INFO, ChainInfo } from '@/plugins/Web3/constants/chains'
+import { isSameAddress } from '@/utils/accounts'
 
 @Component({
-  components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
+  components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton, Loader },
 })
 export default class NavBar extends Vue {
-  @Prop() toggleProfile
-
-  @Prop()
-  balance!: string
-
-  @Prop()
-  etherBalance!: string
-
+  @Prop() balance!: string
+  @Prop() etherBalance!: string
+  projects: Project[] = []
   balanceBackgroundColor = '#2a374b'
+  isLoading = true
+
+  async created() {
+    this.isLoading = true
+    await this.loadProjects()
+    this.isLoading = false
+  }
 
   get walletProvider(): any {
     return this.$store.state.currentUser?.walletProvider
@@ -143,8 +181,29 @@ export default class NavBar extends Vue {
       // Log out user
       this.$web3.disconnectWallet()
       this.$store.dispatch(LOGOUT_USER)
-      this.toggleProfile()
+      this.$emit('close')
     }
+  }
+
+  private async loadProjects(): Promise<void> {
+    const { recipientRegistryAddress, currentRound, currentUser } =
+      this.$store.state
+    const projects: Project[] = await getProjects(
+      recipientRegistryAddress,
+      currentRound?.startTime.toSeconds(),
+      currentRound?.votingDeadline.toSeconds()
+    )
+    const userProjects: Project[] = projects.filter(
+      ({ address, requester }) =>
+        isSameAddress(address, currentUser?.walletAddress) ||
+        isSameAddress(requester as string, currentUser?.walletAddress)
+    )
+    this.projects = userProjects
+  }
+
+  navigateToProject(id: string): void {
+    this.$emit('close')
+    this.$router.push({ name: 'project', params: { id } })
   }
 }
 </script>
@@ -197,14 +256,16 @@ p.no-margin {
   .container {
     position: absolute;
     right: 0;
+    top: 0;
+    bottom: 0;
     background: $bg-light-color;
-    height: 100%;
     width: clamp(350px, 25%, 500px);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
     z-index: 2;
+    overflow-y: scroll;
 
     .balances-card,
     .setup-card,
@@ -288,6 +349,29 @@ p.no-margin {
 
     .balances-card {
       padding: 0rem;
+    }
+
+    .project-item {
+      display: flex;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba($highlight-color, 0.5);
+      .project-thumbnail {
+        width: 3rem;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 0.5rem;
+      }
+      .project-details {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 1rem;
+
+        .project-hidden {
+          color: $error-color;
+        }
+      }
     }
   }
 }

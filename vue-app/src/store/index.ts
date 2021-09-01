@@ -458,6 +458,7 @@ const actions = {
 }
 
 const getters = {
+  // TODO generalize - this assumes optimistic registry
   recipientJoinDeadline: (state: RootState): DateTime | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
       return null

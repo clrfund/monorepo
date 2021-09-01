@@ -317,6 +317,7 @@ function decodeProject(requestSubmittedEvent: Event): Project {
   return {
     id: args._recipientId,
     address: args._recipient,
+    requester: args._requester,
     name: metadata.name,
     description: metadata.description,
     imageUrl,
