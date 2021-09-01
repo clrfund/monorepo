@@ -21,7 +21,7 @@
         <div v-if="showEth" class="balance">{{ etherBalance }}</div>
       </div>
       <div class="profile-name">
-        {{ renderUserAddress(7) }}
+        {{ displayAddress }}
       </div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl" />
@@ -29,9 +29,9 @@
     </div>
     <profile
       v-if="showProfilePanel"
-      :toggleProfile="toggleProfile"
       :balance="balance"
       :etherBalance="etherBalance"
+      @close="toggleProfile"
     />
   </div>
 </template>
@@ -46,14 +46,12 @@ import { User, getProfileImageUrl } from '@/api/user'
 import WalletModal from '@/components/WalletModal.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import Profile from '@/views/Profile.vue'
-import { renderAddressOrHash } from '@/utils/renderAddressOrHash'
 
 @Component({ components: { Profile, WalletModal } })
 export default class WalletWidget extends Vue {
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
   @Prop() showEth!: boolean
-
   // Boolean to only show Connect button, styled like an action button,
   // which hides the widget that would otherwise display after connecting
   @Prop() isActionButton!: boolean
@@ -88,7 +86,6 @@ export default class WalletWidget extends Vue {
 
   async mounted() {
     this.showProfilePanel = false
-
     this.$web3.$on('disconnect', () => {
       this.$store.dispatch(LOGOUT_USER)
     })
@@ -125,11 +122,9 @@ export default class WalletWidget extends Vue {
     }
   }
 
-  renderUserAddress(digitsToShow?: number): string {
-    if (this.currentUser?.walletAddress) {
-      return renderAddressOrHash(this.currentUser.walletAddress, digitsToShow)
-    }
-    return ''
+  get displayAddress(): string | null {
+    if (!this.currentUser) return null
+    return this.currentUser.ensName ?? this.currentUser.walletAddress
   }
 }
 </script>
@@ -156,6 +151,9 @@ export default class WalletWidget extends Vue {
   .profile-name {
     font-size: 14px;
     opacity: 0.8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: min(20vw, 14ch);
   }
 
   .balance {

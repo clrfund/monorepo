@@ -209,6 +209,14 @@ ul {
     padding-bottom: 35vw;
   }
 
+  @media (max-width: $breakpoint-s) {
+    background: linear-gradient(
+      171.34deg,
+      rgba(0, 0, 0, 0.8) 63.5%,
+      rgba(196, 196, 196, 0) 78.75%
+    );
+  }
+
   .flex-title {
     display: flex;
     gap: 0.5rem;
