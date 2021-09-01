@@ -117,6 +117,8 @@ import BalanceItem from '@/components/BalanceItem.vue'
 import IconStatus from '@/components/IconStatus.vue'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import CopyButton from '@/components/CopyButton.vue'
+import Loader from '@/components/Loader.vue'
+
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
 import { userRegistryType, UserRegistryType } from '@/api/core'
@@ -125,7 +127,7 @@ import { CHAIN_INFO, ChainInfo } from '@/plugins/Web3/constants/chains'
 import { isSameAddress } from '@/utils/accounts'
 
 @Component({
-  components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton },
+  components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton, Loader },
 })
 export default class NavBar extends Vue {
   @Prop() balance!: string
