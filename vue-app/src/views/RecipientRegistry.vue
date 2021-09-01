@@ -234,46 +234,49 @@ export default class RecipientRegistryView extends Vue {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
-    try {
-      await waitForTransaction(
-        registerProject(recipientRegistryAddress, request.recipientId, signer)
-      )
-      await this.loadRequests()
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn(error.message)
-    }
+    await this.waitForTransactionAndLoad(
+      registerProject(recipientRegistryAddress, request.recipientId, signer)
+    )
   }
 
   async reject(request: Request): Promise<void> {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
-    try {
-      await waitForTransaction(
-        rejectProject(
-          recipientRegistryAddress,
-          request.recipientId,
-          request.requester,
-          signer
-        )
+    await this.waitForTransactionAndLoad(
+      rejectProject(
+        recipientRegistryAddress,
+        request.recipientId,
+        request.requester,
+        signer
       )
-      await this.loadRequests()
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn(error.message)
-    }
+    )
   }
 
   async remove(request: Request): Promise<void> {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
+    await this.waitForTransactionAndLoad(
+      removeProject(recipientRegistryAddress, request.recipientId, signer)
+    )
+  }
+
+  async waitForTransactionAndLoad(transaction) {
     try {
-      await waitForTransaction(
-        removeProject(recipientRegistryAddress, request.recipientId, signer)
-      )
-      await this.loadRequests()
+      await waitForTransaction(transaction)
+
+      // TODO: this is not ideal. Leaving as is, just because it is an admin
+      // page where no end user is using. We are forcing this 2s time to give
+      // time the subgraph to index the new state from the tx. Perhaps we could
+      // avoid querying the subgraph and query directly the chain to get the
+      // request state.
+      await new Promise((resolve) => {
+        setTimeout(async () => {
+          await this.loadRequests()
+          resolve()
+        }, 2000)
+      })
     } catch (error) {
       /* eslint-disable-next-line no-console */
       console.warn(error.message)

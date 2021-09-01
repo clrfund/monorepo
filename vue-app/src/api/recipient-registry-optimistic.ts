@@ -185,7 +185,9 @@ export async function getRequests(
 
     if (recipient.rejected) {
       request.status = RequestStatus.Rejected
-    } else {
+    }
+
+    if (recipient.verified) {
       request.status =
         requestType === RequestTypeCode.Removal
           ? RequestStatus.Removed
