@@ -725,9 +725,9 @@
     </div>
     <div class="mobile nav-bar">
       <form-navigation
-        :isJoin="true"
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
+        :finalStep="steps.length - 2"
         :currentStep="currentStep"
         :callback="saveFormData"
         :handleStepNav="handleStepNav"

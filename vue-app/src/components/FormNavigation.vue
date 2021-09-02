@@ -1,7 +1,6 @@
 <template>
-  <!-- TODO: refactor this to something more generalized -->
   <div>
-    <div class="btn-row" v-if="isJoin">
+    <div class="btn-row">
       <button
         v-if="currentStep > 0"
         @click="handleStepNav(currentStep - 1)"
@@ -11,12 +10,12 @@
         Previous
       </button>
       <button
-        v-if="currentStep < steps.length - 1"
+        v-if="currentStep < finalStep"
         @click="handleNext"
         class="btn-primary float-right"
         :disabled="!isStepValid"
       >
-        {{ currentStep === steps.length - 2 ? 'Finish' : 'Next' }}
+        {{ currentStep === finalStep - 1 ? 'Finish' : 'Next' }}
       </button>
     </div>
   </div>
@@ -30,11 +29,11 @@ import { Prop } from 'vue-property-decorator'
 @Component
 export default class FormNavigation extends Vue {
   @Prop() currentStep!: number
+  @Prop() finalStep!: number
   @Prop() steps!: string[]
   @Prop() isStepValid!: boolean
   @Prop() callback!: (updateFurthest?: boolean) => void
   @Prop() handleStepNav!: () => void
-  @Prop() isJoin!: boolean
   @Prop() isNavDisabled!: boolean
 
   // TODO is this needed? Why do we pass `callback` & `handleStepNav`?
