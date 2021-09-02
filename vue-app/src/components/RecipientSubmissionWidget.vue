@@ -288,7 +288,7 @@ export default class RecipientSubmissionWidget extends Vue {
       this.$router.push({
         name: 'project-added',
         params: {
-          txHash: this.txHash,
+          hash: this.txHash,
         },
       })
     }

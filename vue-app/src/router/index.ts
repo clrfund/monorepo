@@ -151,7 +151,7 @@ const routes = [
     },
   },
   {
-    path: '/join/success',
+    path: '/join/success/:hash',
     name: 'project-added',
     component: ProjectAdded,
     meta: {
