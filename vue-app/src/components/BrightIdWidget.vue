@@ -37,16 +37,16 @@
       <div class="row">
         <div v-if="isLinked">
           <div v-if="isRegistered">
-            <a href="/#/projects"
-              >Start contributing
-              <span role="img" aria-label="party emoji">🎉</span></a
-            >
+            <a href="/#/projects" @click="$emit('close')">
+              Start contributing
+              <span role="img" aria-label="party emoji">🎉</span>
+            </a>
           </div>
           <div v-else>
-            <a href="/#/verify/" @click="toggleProfile">Continue setup</a>
+            <a href="/#/verify/" @click="$emit('close')">Continue setup</a>
           </div>
         </div>
-        <a href="/#/verify/" @click="toggleProfile" v-else>Start setup</a>
+        <a href="/#/verify/" @click="$emit('close')" v-else>Start setup</a>
         <p
           v-tooltip="{
             content: isVerified
@@ -77,7 +77,6 @@ export default class BrightIdWidget extends Vue {
   @Prop() abbrev!: string
   @Prop() balance!: string
   @Prop() isProjectCard!: boolean
-  @Prop() toggleProfile!: void
 
   get isLinked(): boolean {
     return (
