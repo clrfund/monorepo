@@ -154,6 +154,9 @@ export default class WalletWidget extends Vue {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: min(20vw, 14ch);
+    @media (max-width: $breakpoint-s) {
+      display: none;
+    }
   }
 
   .balance {
