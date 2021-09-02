@@ -15,6 +15,7 @@
     "@kleros/gtcr-encoder": "^1.4.0",
     "@openfonts/inter_all": "^1.0.2",
     "@walletconnect/web3-provider": "^1.5.1",
+    "approximate-number": "^2.1.0",
     "core-js": "^3.6.4",
     "crypto-js": "^4.0.0",
     "ethereum-blockies-base64": "^1.0.2",
