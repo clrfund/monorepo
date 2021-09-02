@@ -226,10 +226,7 @@
 
             <div class="round-info-value">
               <div class="value">
-                {{ formatIntegerPart(currentRound.matchingPool) }}
-              </div>
-              <div class="value">
-                {{ formatFractionalPart(currentRound.matchingPool) }}
+                {{ formatAmount(currentRound.matchingPool) }}
               </div>
               <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
             </div>
@@ -239,10 +236,7 @@
               <div class="round-info-title">Contributions total</div>
               <div class="round-info-value">
                 <div class="value">
-                  {{ formatIntegerPart(currentRound.contributions) }}
-                </div>
-                <div class="value">
-                  {{ formatFractionalPart(currentRound.contributions) }}
+                  {{ formatAmount(currentRound.contributions) }}
                 </div>
                 <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
               </div>
@@ -420,8 +414,8 @@ export default class RoundInformation extends Vue {
   }
 
   formatAmount(value: BigNumber): string {
-    const decimals = this.$store.state.currentRound.nativeTokenDecimals
-    return formatAmount(value, decimals)
+    const { nativeTokenDecimals } = this.$store.state.currentRound
+    return formatAmount(value, nativeTokenDecimals, 4)
   }
 
   addMatchingFunds(): void {
