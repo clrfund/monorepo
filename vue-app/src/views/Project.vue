@@ -375,15 +375,6 @@ export default class ProjectView extends Vue {
   }
 }
 
-.tag {
-  padding: 0.5rem 0.75rem;
-  background: $bg-light-color;
-  color: $button-disabled-text-color;
-  font-family: 'Glacial Indifference', sans-serif;
-  width: fit-content;
-  border-radius: 4px;
-}
-
 .contribute-btn,
 .in-cart,
 .claim-btn {

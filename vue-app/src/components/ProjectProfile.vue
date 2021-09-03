@@ -331,15 +331,6 @@ export default class ProjectProfile extends Vue {
         margin-bottom: 2rem;
       }
 
-      .tag {
-        padding: 0.5rem 0.75rem;
-        background: $bg-light-color;
-        color: $button-disabled-text-color;
-        font-family: 'Glacial Indifference', sans-serif;
-        width: fit-content;
-        border-radius: 0.25rem;
-      }
-
       .team-byline {
         line-height: 150%;
       }
