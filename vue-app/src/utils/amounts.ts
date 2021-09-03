@@ -1,9 +1,9 @@
-import { BigNumber, BigNumberish } from 'ethers'
-import { commify, formatUnits, parseEther } from '@ethersproject/units'
+import { BigNumber, BigNumberish, FixedNumber } from 'ethers'
+import { commify, formatUnits } from '@ethersproject/units'
 import approx from 'approximate-number'
 
 export function formatAmount(
-  _value: BigNumber | string,
+  _value: BigNumber | FixedNumber | string,
   units: BigNumberish = 18,
   approxPrecision?: number | null,
   maxDecimals?: number | null
@@ -11,7 +11,9 @@ export function formatAmount(
   // If _value is already in string form, assign to formattedValue
   // Otherwise, convert BigNumber (really large integers) to whole AOE balance (human readable floats)
   const formattedValue: string =
-    typeof _value === 'string' ? _value : formatUnits(_value, units).toString()
+    typeof _value === 'string'
+      ? _value
+      : formatUnits(_value as BigNumber, units).toString()
   let result: number = parseFloat(formattedValue)
   if (maxDecimals) {
     // Fix to maxDecimals, then parse again to remove any trailing zeros
