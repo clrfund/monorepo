@@ -193,9 +193,7 @@ export default class JoinLanding extends Vue {
   }
 
   formatAmount(value: BigNumber): string {
-    if (!value) {
-      return ''
-    }
+    if (!value) return ''
     return formatAmount(value, 18)
   }
 }
