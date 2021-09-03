@@ -75,14 +75,14 @@ export default class WalletWidget extends Vue {
     if (etherBalance === null || typeof etherBalance === 'undefined') {
       return null
     }
-    return formatAmount(etherBalance, 'ether', 3)
+    return formatAmount(etherBalance, 'ether', 4)
   }
 
   get balance(): string | null {
     const balance: BigNumber | null | undefined = this.currentUser?.balance
     if (balance === null || typeof balance === 'undefined') return null
     const { nativeTokenDecimals } = this.$store.state.currentRound
-    return formatAmount(balance, nativeTokenDecimals, 3)
+    return formatAmount(balance, nativeTokenDecimals, 4)
   }
 
   async mounted() {
