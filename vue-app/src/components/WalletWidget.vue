@@ -40,6 +40,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop, Watch } from 'vue-property-decorator'
+import { BigNumber } from 'ethers'
 
 import { formatAmount } from '@/utils/amounts'
 import { User, getProfileImageUrl } from '@/api/user'
