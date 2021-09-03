@@ -1,21 +1,41 @@
 import { ethers } from 'hardhat'
 import { Contract } from 'ethers'
-
+import { Keypair } from 'maci-domainobjs'
 import { UNIT } from '../utils/constants'
 import { deployMaciFactory } from '../utils/deployment'
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
+  const [deployer, coordinator] = await ethers.getSigners();
   const maciFactory = await deployMaciFactory(deployer);
+  // Deploy ERC20 token contract
+  const Token = await ethers.getContractFactory(
+    'AnyOldERC20Token',
+    deployer,
+  );
+  const tokenInitialSupply = UNIT.mul(1000)
+  const token = await Token.deploy(tokenInitialSupply)
+  const FundingRoundSingleton = await ethers.getContractFactory(
+    'FundingRound',
+    deployer,
+  );
 
   const FundingRoundFactory = await ethers.getContractFactory(
     'FundingRoundFactory',
     deployer,
   );
+  const fundingRoundSingleton = await FundingRoundSingleton.deploy();
   const fundingRoundFactory = await FundingRoundFactory.deploy(
     maciFactory.address,
+    fundingRoundSingleton.address
   );
   await fundingRoundFactory.deployed();
+  await fundingRoundFactory.setToken(token.address);
+  const coordinatorKeyPair = new Keypair()
+
+  await fundingRoundFactory.setCoordinator(
+    coordinator.getAddress(),
+    coordinatorKeyPair.pubKey.asContractParam(),
+  )
   await maciFactory.transferOwnership(fundingRoundFactory.address);
 
   const SimpleUserRegistry = await ethers.getContractFactory(
@@ -49,7 +69,9 @@ async function main() {
     throw new Error('unsupported recipient registry type')
   }
   await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
-
+  await fundingRoundFactory.deployNewRound();
+  const fundingRoundAddress = await fundingRoundFactory.getCurrentRound()
+  console.log(`Funding round deployed: ${fundingRoundAddress}`)
   console.log(`Factory deployed: ${fundingRoundFactory.address}`)
 }
 

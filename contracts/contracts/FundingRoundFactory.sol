@@ -168,7 +168,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     recipientRegistry.setMaxRecipients(maxVoteOptions);
     // Deploy funding round and MACI contracts
     // If the initializer changes the proxy address should change too. Hashing the initializer data is cheaper than just concatinating it
-    bytes memory deploymentData = abi.encodePacked(type(FundingRoundProxy).creationCode, abi.encode(address(singleton), owner()));
+    bytes memory deploymentData = abi.encodePacked(type(FundingRoundProxy).creationCode, abi.encode(address(singleton)));
     // solhint-disable-next-line no-inline-assembly
     address minimalProxy = Create2.deploy(
             0,
@@ -177,11 +177,11 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     );
     rounds.push(minimalProxy);
     (success, ) = minimalProxy.call(abi.encodeWithSignature(
-                "init(ERC20 _nativeToken, IUserRegistry _userRegistry, IRecipientRegistry _recipientRegistry,address _coordinator)",
-                nativeToken,
-                userRegistry,
-                recipientRegistry,
-                coordinator
+                "init(address)",
+                address(nativeToken),
+                address(userRegistry),
+                address(recipientRegistry),
+                address(coordinator)
       ));
     require(success, "Factory: Delegate Proxy Call Failed");
     MACI maci = maciFactory.deployMaci(

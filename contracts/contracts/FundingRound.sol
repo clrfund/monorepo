@@ -54,46 +54,50 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   event FundsClaimed(uint256 indexed _voteOptionIndex, address indexed _recipient, uint256 _amount);
   event TallyPublished(string _tallyHash);
   
-  /**
-    * @dev Set round parameters.
-    * @param _nativeToken Address of a token which will be accepted for contributions.
-    * @param _userRegistry Address of the registry of verified users.
-    * @param _recipientRegistry Address of the recipient registry.
-    * @param _coordinator Address of the coordinator.
-    */
-  constructor(
-    ERC20 _nativeToken,
-    IUserRegistry _userRegistry,
-    IRecipientRegistry _recipientRegistry,
-    address _coordinator
-  )
-    public
-  {
-    init(
-      _nativeToken,
-      _userRegistry,
-      _recipientRegistry,
-      _coordinator
-    );
-  }
+  // /**
+  //   * @dev Set round parameters.
+  //   * @param _nativeToken Address of a token which will be accepted for contributions.
+  //   * @param _userRegistry Address of the registry of verified users.
+  //   * @param _recipientRegistry Address of the recipient registry.
+  //   * @param _coordinator Address of the coordinator.
+  //   */
+  // constructor(
+  //   ERC20 _nativeToken,
+  //   IUserRegistry _userRegistry,
+  //   IRecipientRegistry _recipientRegistry,
+  //   address _coordinator
+  // )
+  //   public
+  // {
+  //   init(
+  //     _nativeToken,
+  //     _userRegistry,
+  //     _recipientRegistry,
+  //     _coordinator
+  //   );
+  // }
 
 
   function init(
-    ERC20 _nativeToken,
-    IUserRegistry _userRegistry,
-    IRecipientRegistry _recipientRegistry,
+    address _nativeToken,
+    address _userRegistry,
+    address _recipientRegistry,
     address _coordinator 
   ) public {
     require(!initialized, "Contract instance has already been initialized");
     initialized = true;
-    nativeToken = _nativeToken;
+    nativeToken = ERC20(_nativeToken);
     voiceCreditFactor = (MAX_CONTRIBUTION_AMOUNT * uint256(10) ** nativeToken.decimals()) / MAX_VOICE_CREDITS;
     voiceCreditFactor = voiceCreditFactor > 0 ? voiceCreditFactor : 1;
-    userRegistry = _userRegistry;
-    recipientRegistry = _recipientRegistry;
+    userRegistry = IUserRegistry(_userRegistry);
+    recipientRegistry = IRecipientRegistry(_recipientRegistry);
     coordinator = _coordinator;
     isFinalized = false;
     isCancelled = false;
+  }
+
+  function getuser() external view returns(address) {
+    return coordinator;
   }
 
   /**
@@ -103,7 +107,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     MACI _maci
   )
     external
-    onlyOwner
   {
     require(address(maci) == address(0), 'FundingRound: Already linked to MACI instance');
     require(

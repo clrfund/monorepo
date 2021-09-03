@@ -13,5 +13,8 @@
     "typescriptreact"
   ],
   "solidity.compileUsingRemoteVersion": "0.6.4+commit.1dca32f3",
-  "solidity.packageDefaultDependenciesContractsDirectory": ""
+  "solidity.packageDefaultDependenciesContractsDirectory": "",
+  "[solidity]": {
+    "editor.defaultFormatter": "JuanBlanco.solidity"
+  }
 }
