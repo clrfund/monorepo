@@ -490,18 +490,6 @@ export default class ProjectProfile extends Vue {
     z-index: 1;
   }
 
-  .input-button {
-    background: #f7f7f7;
-    border-radius: 2rem;
-    border: 2px solid $bg-primary-color;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: black;
-    padding: 0.125rem;
-    z-index: 100;
-  }
-
   .input {
     background: none;
     border: none;

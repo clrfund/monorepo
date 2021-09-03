@@ -390,18 +390,6 @@ export default class ProjectView extends Vue {
   width: 100%;
 }
 
-.input-button {
-  background: #f7f7f7;
-  border-radius: 2rem;
-  border: 2px solid $bg-primary-color;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: black;
-  padding: 0.125rem;
-  z-index: 100;
-}
-
 .donate-btn {
   padding: 0.5rem 1rem;
   background: $bg-primary-color;
@@ -427,18 +415,6 @@ export default class ProjectView extends Vue {
   text-align: center;
   box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
   z-index: 1;
-}
-
-.input-button {
-  background: #f7f7f7;
-  border-radius: 2rem;
-  border: 2px solid $bg-primary-color;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: black;
-  padding: 0.125rem;
-  z-index: 100;
 }
 
 .input {
