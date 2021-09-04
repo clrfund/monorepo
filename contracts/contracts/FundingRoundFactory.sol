@@ -177,7 +177,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
     );
     rounds.push(minimalProxy);
     (success, ) = minimalProxy.call(abi.encodeWithSignature(
-                "init(address)",
+                "init(address,address,address,address)",
                 address(nativeToken),
                 address(userRegistry),
                 address(recipientRegistry),
