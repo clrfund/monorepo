@@ -114,7 +114,7 @@ export default class WalletWidget extends Vue {
     this.$modal.show(WalletModal, {}, { width: 400, top: 20 })
   }
 
-  @Watch('currentUser')
+  @Watch('$web3.user')
   async updateProfileImage(currentUser: User): Promise<void> {
     if (currentUser) {
       const url = await getProfileImageUrl(currentUser.walletAddress)

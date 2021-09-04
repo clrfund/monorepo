@@ -118,7 +118,6 @@ export default class App extends Vue {
     if (this.$store.state.currentRound) {
       // Load cart & contributor data for current round
       await this.$store.dispatch(LOAD_USER_INFO)
-      await this.$store.dispatch(LOAD_BRIGHT_ID)
       this.$store.dispatch(LOAD_CART)
       this.$store.dispatch(LOAD_COMMITTED_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
