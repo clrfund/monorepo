@@ -297,12 +297,10 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
-import { Network } from '@ethersproject/networks'
 import { parseFixed } from '@ethersproject/bignumber'
 import { commify, formatUnits } from '@ethersproject/units'
 import { DateTime } from 'luxon'
 import WalletWidget from '@/components/WalletWidget.vue'
-import BrightIdModal from '@/components/BrightIdModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
@@ -325,7 +323,6 @@ import {
   TOGGLE_SHOW_CART_PANEL,
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
-import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
 @Component({
@@ -651,10 +648,6 @@ export default class Cart extends Vue {
       this.errorMessage !== null &&
       this.errorMessage.startsWith('Your balance is')
     )
-  }
-
-  registerWithBrightId(): void {
-    this.$modal.show(BrightIdModal, {}, { width: 500 })
   }
 
   submitCart(event) {

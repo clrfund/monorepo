@@ -23,16 +23,6 @@ export interface Verification {
   app: string
 }
 
-export async function isSponsoredUser(
-  registryAddress: string,
-  userAddress: string
-): Promise<boolean> {
-  const registry = new Contract(registryAddress, BrightIdUserRegistry, provider)
-  const eventFilter = registry.filters.Sponsor(userAddress)
-  const events = await registry.queryFilter(eventFilter, 0)
-  return events.length > 0
-}
-
 export async function selfSponsor(
   registryAddress: string,
   signer: Signer
