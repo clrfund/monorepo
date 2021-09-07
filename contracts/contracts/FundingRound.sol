@@ -54,6 +54,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   event FundsClaimed(uint256 indexed _voteOptionIndex, address indexed _recipient, uint256 _amount);
   event TallyPublished(string _tallyHash);
   
+  // Need to decide on this because if we have the constructor and use the proxy then we will have to call the init function twice and remove the initialized check
   // /**
   //   * @dev Set round parameters.
   //   * @param _nativeToken Address of a token which will be accepted for contributions.
@@ -77,7 +78,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   //   );
   // }
 
-
+  //   * @dev Init function called by FundingRoundFactory to be called by the proxy.
   function init(
     address _nativeToken,
     address _userRegistry,
