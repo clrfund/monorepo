@@ -70,7 +70,7 @@
               {{
                 isManuallyVerified
                   ? "You're BrightID verified! Complete the remaining steps to start contributing."
-                  : 'Follow the instructions below to get verified. It’s not immediate so feel free to click the below button when you’re ready.'
+                  : "Follow the instructions below to get verified in BrightID. Confirmation doesn't happen immediately so feel free to check by clicking the button below once you're verified."
               }}
             </p>
             <div class="actions">
@@ -95,6 +95,11 @@
             <p>
               First you need to connect your BrightID account with your wallet
               address.
+            </p>
+            <p>
+              Once the app is linked in your BrightID app, wait a few moments
+              for us to verify the connection. We'll automatically transition
+              you to the next step.
             </p>
             <div class="qr">
               <div class="instructions">
@@ -124,7 +129,7 @@
             </div>
           </div>
           <div v-if="currentStep === 1">
-            <h2 class="step-title">Sponsorship</h2>
+            <h2 class="step-title">Get sponsored</h2>
             <p>
               You need a sponsorship token to become BrightID verified. This
               helps support BrightID as a decentralized platform. You’ll only
@@ -155,7 +160,7 @@
               BrightID verification helps prove that you’re a unique human. To
               get verified, you need enough people to confirm they've met you
               and you're a real person. There are a few different ways to do
-              this...
+              this:
             </p>
             <accordion
               tag="🚀 Fastest"
@@ -183,7 +188,7 @@
             />
           </div>
           <div v-if="currentStep === 3">
-            <h2 class="step-title">Get registered</h2>
+            <h2 class="step-title">Register</h2>
             <p>
               To protect the round from bribery and fraud, you need to add your
               wallet address to a smart contract register. Once you’re done, you
