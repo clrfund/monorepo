@@ -193,7 +193,13 @@ export default class IpfsImageUpload extends Vue {
 
 .btn-warning {
   @media (max-width: $breakpoint-m) {
-    margin: 1rem;
+    width: 100%;
+  }
+}
+
+.btn-primary {
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
   }
 }
 

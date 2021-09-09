@@ -49,7 +49,7 @@
                   <input
                     id="project-name"
                     type="text"
-                    placeholder="example: clr.fund"
+                    placeholder="ex: clr.fund"
                     v-model="$v.form.project.name.$model"
                     :class="{
                       input: true,
@@ -74,7 +74,7 @@
                   </p>
                   <textarea
                     id="project-tagline"
-                    placeholder="example: A quadratic funding protocol"
+                    placeholder="ex: A quadratic funding protocol"
                     v-model="$v.form.project.tagline.$model"
                     :class="{
                       input: true,
@@ -110,7 +110,7 @@
                   </label>
                   <textarea
                     id="project-description"
-                    placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                    placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
                     v-model="$v.form.project.description.$model"
                     :class="{
                       input: true,
@@ -207,7 +207,7 @@
                   </p>
                   <textarea
                     id="project-problem-space"
-                    placeholder="example: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
+                    placeholder="ex: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
                     v-model="$v.form.project.problemSpace.$model"
                     :class="{
                       input: true,
@@ -270,7 +270,7 @@
                   </p>
                   <textarea
                     id="fund-plans"
-                    placeholder="example: on our roadmap..."
+                    placeholder="ex: on our roadmap..."
                     v-model="$v.form.fund.plans.$model"
                     :class="{
                       input: true,
@@ -335,7 +335,7 @@
                   <input
                     id="team-name"
                     type="email"
-                    placeholder="example: clr.fund"
+                    placeholder="ex: clr.fund"
                     v-model="$v.form.team.name.$model"
                     :class="{
                       input: true,
@@ -352,7 +352,7 @@
                   </p>
                   <textarea
                     id="team-desc"
-                    placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                    placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
                     v-model="$v.form.team.description.$model"
                     :class="{
                       input: true,
@@ -463,7 +463,7 @@
                   <input
                     id="links-discord"
                     type="link"
-                    placeholder="example: https://discord.gg/5Prub9zbGz"
+                    placeholder="ex: https://discord.gg/5Prub9zbGz"
                     class="input"
                     v-model.lazy="$v.form.links.discord.$model"
                     :class="{
@@ -725,9 +725,9 @@
     </div>
     <div class="mobile nav-bar">
       <form-navigation
-        :isJoin="true"
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
+        :finalStep="steps.length - 2"
         :currentStep="currentStep"
         :callback="saveFormData"
         :handleStepNav="handleStepNav"
@@ -903,9 +903,11 @@ export default class JoinView extends mixins(validationMixin) {
     //     project: {
     //       name: 'CLR.Fund',
     //       tagline: 'A quadratic funding protocol',
-    //       description: '**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...\n# Derp\n\nasdfasdfasdf\n\n## Derp\n\nasdfsdasdfsdf\n### Derp\n\nasdfasdfsdaf\n#### Derp\nasdfasdf\n##### Derp',
+    //       description:
+    //         '**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...\n# Derp\n\nasdfasdfasdf\n\n## Derp\n\nasdfsdasdfsdf\n### Derp\n\nasdfasdfsdaf\n#### Derp\nasdfasdf\n##### Derp',
     //       category: 'research',
-    //       problemSpace: 'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
+    //       problemSpace:
+    //         'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
     //     },
     //     fund: {
     //       address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
@@ -1085,7 +1087,7 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   @media (max-width: $breakpoint-m) {
-    margin-top: 2rem;
+    margin-top: 6rem;
     padding-bottom: 0;
     padding-left: 1rem;
     font-size: 14px;
@@ -1119,14 +1121,12 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .nav-bar {
-  display: inherit;
-  position: sticky;
+  position: fixed;
   bottom: 0;
   right: 0;
   left: 0;
   padding: 1.5rem;
   background: $bg-primary-color;
-  border-radius: 32px 32px 0 0;
   box-shadow: $box-shadow;
 }
 
@@ -1531,7 +1531,14 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .break-all {
-  word-break: break-all;
+  @media (max-width: $breakpoint-s) {
+    display: block;
+  }
+
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .no-break {
