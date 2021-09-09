@@ -9,7 +9,7 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Project submitted!</h1>
-            <transaction-receipt :hash="txHash" />
+            <transaction-receipt :hash="$route.params.hash" />
           </div>
           <div class="subtitle">You’re almost on board this funding round</div>
           <ul>
@@ -62,10 +62,8 @@ import { blockExplorer } from '@/api/core'
 })
 export default class ProjectAdded extends Vue {
   challengePeriodDuration: number | null = null
-  txHash = ''
 
   async created() {
-    this.txHash = this.$route.params.txHash
     this.challengePeriodDuration = this.registryInfo.challengePeriodDuration
   }
 
@@ -74,7 +72,7 @@ export default class ProjectAdded extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/tx/${this.txHash}`
+    return `${blockExplorer}/tx/${this.$route.params.txHash}`
   }
 
   formatDuration(seconds: number): string {
