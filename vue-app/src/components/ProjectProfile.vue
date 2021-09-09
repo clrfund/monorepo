@@ -14,7 +14,7 @@
     <div class="about">
       <h1
         class="project-name"
-        :title="project.address"
+        :title="addressName"
         :project-index="project.index"
       >
         <links v-if="klerosCurateUrl" :to="klerosCurateUrl">{{
@@ -76,7 +76,7 @@
         <div>
           <div class="address-label">Recipient address</div>
           <div class="address">
-            {{ project.address }}
+            {{ addressName }}
           </div>
         </div>
         <div class="copy-div">
@@ -117,14 +117,16 @@ import { Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 import { FixedNumber } from 'ethers'
 import { Project } from '@/api/projects'
-import Info from '@/components/Info.vue'
-import Markdown from '@/components/Markdown.vue'
-import CopyButton from '@/components/CopyButton.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
 import { blockExplorer } from '@/api/core'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
+import { ensLookup } from '@/utils/accounts'
+import Info from '@/components/Info.vue'
+import Markdown from '@/components/Markdown.vue'
+import CopyButton from '@/components/CopyButton.vue'
+import ClaimModal from '@/components/ClaimModal.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import Links from '@/components/Links.vue'
 
@@ -134,6 +136,13 @@ export default class ProjectProfile extends Vue {
   @Prop() project!: Project
   @Prop() klerosCurateUrl!: string | null
   @Prop() previewMode!: boolean
+  ens: string | null = null
+
+  async mounted() {
+    if (this.project.address) {
+      this.ens = await ensLookup(this.project.address)
+    }
+  }
 
   get inCart(): boolean {
     const project = this.project
@@ -180,6 +189,10 @@ export default class ProjectProfile extends Vue {
 
   get blockExplorerUrl(): string {
     return `${blockExplorer}/address/${this.project.address}`
+  }
+
+  get addressName(): string {
+    return this.ens || this.project.address
   }
 }
 </script>

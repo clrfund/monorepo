@@ -22,6 +22,7 @@ export default class Transaction extends Vue {
 
 <style scoped lang="scss">
 .markdown {
+  overflow-wrap: break-word;
   ::v-deep {
     h1,
     h2,
