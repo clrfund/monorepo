@@ -18,10 +18,10 @@
     "lint:js": "eslint 'src/*.ts'",
     "lint": "yarn lint:js",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ daodesigner/clrfund-xdai",
-    "create-local": "graph create --node http://localhost:8020/ daodesigner/clrfund-xdai",
-    "remove-local": "graph remove --node http://localhost:8020/ daodesigner/clrfund-xdai",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 daodesigner/clrfund-xdai"
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ daodesigner/clrfund",
+    "create-local": "graph create --node http://localhost:8020/ daodesigner/clrfund",
+    "remove-local": "graph remove --node http://localhost:8020/ daodesigner/clrfund",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 daodesigner/clrfund"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.21.0",
