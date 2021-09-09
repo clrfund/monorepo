@@ -18,7 +18,7 @@
             – you’ll never have to do that again.
           </div>
           <p>You can now start contributing to your favourite projects.</p>
-          <div class="mt2">
+          <div class="mt2 button-spacing">
             <links to="/projects" class="btn-primary">View projects</links>
             <links to="/" class="btn-secondary">Go home</links>
           </div>
@@ -155,5 +155,12 @@ ul {
   width: 1rem;
   height: 1rem;
   position: relative;
+}
+
+.button-spacing {
+  height: 6.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 </style>

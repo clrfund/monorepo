@@ -27,7 +27,7 @@
               criteria, we'll let you know by email and return your deposit.
             </li>
           </ul>
-          <div class="mt2">
+          <div class="mt2 button-spacing">
             <links to="/projects" class="btn-primary">View projects</links>
             <links to="/" class="btn-secondary">Go home</links>
           </div>
@@ -194,5 +194,12 @@ ul {
   width: 1rem;
   height: 1rem;
   position: relative;
+}
+
+.button-spacing {
+  height: 6.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 </style>
