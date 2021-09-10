@@ -110,7 +110,7 @@ export function handleRoundStarted(event: RoundStarted): void {
 
   let contributorRegistryAddress = fundingRoundFactoryContract.userRegistry()
   let contributorRegistryId = contributorRegistryAddress.toHexString()
-  let contributorRegistry = ContributorRegistry.load(recipientRegistryId)
+  let contributorRegistry = ContributorRegistry.load(contributorRegistryId)
 
   //NOTE: If the contracts aren't being tracked initialize them
   if (recipientRegistry == null) {
