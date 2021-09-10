@@ -223,14 +223,6 @@ export function handleTallyPublished(event: TallyPublished): void {
   fundingRound.tallyHash = event.params._tallyHash
   fundingRound.lastUpdatedAt = timestamp
 }
-
-//TODO: Need library to decode ABI in subgraph, or an additional event fired here.
-//NOTE: Contributors must first be verified in the Registry contract before they can register for a particular funding round
-export function handleRegister(call: RegisterCall): void {
-  log.info('handleRegister' + call.inputs._data.toString(), [])
-  // let fundingRoundId = call.to.toHexString();
-  // let timestamp = call.block.timestamp.toString();
-}
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
   log.info('handleOwnershipTransferred- Funding Round', [])
 }
