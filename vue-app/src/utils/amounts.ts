@@ -1,11 +1,10 @@
 import { BigNumber, BigNumberish, FixedNumber } from 'ethers'
 import { commify, formatUnits } from '@ethersproject/units'
-import approx from 'approximate-number'
 
 export function formatAmount(
   _value: BigNumber | FixedNumber | string,
   units: BigNumberish = 18,
-  approxPrecision?: number | null,
+  maximumSignificantDigits?: number | null,
   maxDecimals?: number | null
 ): string {
   // If _value is already in string form, assign to formattedValue
@@ -15,14 +14,18 @@ export function formatAmount(
       ? _value
       : formatUnits(_value as BigNumber, units).toString()
   let result: number = parseFloat(formattedValue)
+  // If `maxDecimals` passed, fix/truncate to string and parse back to number
   if (maxDecimals) {
-    // Fix to maxDecimals, then parse again to remove any trailing zeros
     result = parseFloat(result.toFixed(maxDecimals))
   }
-  // If `precision` passed, return approximate-number to given precision
-  if (approxPrecision) {
-    return approx(result, { precision: approxPrecision })
+  // If `maximumSignificantDigits` passed, return compact human-readable form to specified digits
+  if (maximumSignificantDigits) {
+    return new Intl.NumberFormat('en', {
+      /* @ts-ignore */ // TODO: Remove `@ts-ignore` when codebase upgrades to typescript ^4.1.0
+      notation: 'compact',
+      maximumSignificantDigits,
+    }).format(result)
   }
-  // Otherwise, return "commified" result for human readability
+  // Else, return commified result
   return commify(result)
 }

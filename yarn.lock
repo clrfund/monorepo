@@ -3726,11 +3726,6 @@ anymatch@~3.1.2:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-approximate-number@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/approximate-number/-/approximate-number-2.1.0.tgz#8dbb27957f4f230e386b57258f8f0c75f32313c8"
-  integrity sha512-EioK6nto/hEnwaJ7d/TG1WOZ9o0zTyIFVP4Lk7zzR/3I4O7ivkBNo7EvLC2Xh2j2HD/cb9sUqXHdexfGXCXYDA==
-
 aproba@^1.1.1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-1.2.0.tgz#6802e6264efd18c790a1b0d517f0f2627bf2c94a"
