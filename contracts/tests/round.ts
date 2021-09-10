@@ -226,7 +226,7 @@ describe('Funding Round', () => {
       await fundingRound.setMaci(maci.address)
       await expect(
         fundingRoundAsContributor.contribute(userPubKey, contributionAmount)
-      ).to.be.revertedWith('revert ERC20: transfer amount exceeds allowance')
+      ).to.be.revertedWith('ERC20: transfer amount exceeds allowance')
     })
 
     it('rejects contributions from unverified users', async () => {
@@ -313,7 +313,7 @@ describe('Funding Round', () => {
       )
       await expect(messagePublished).to.emit(maci, 'PublishMessage')
       const publishTx = await messagePublished
-      expect(await getGasUsage(publishTx)).lessThan(2100000)
+      expect(await getGasUsage(publishTx)).lessThan(2135000)
     })
 
     it('submits a key-changing message', async () => {

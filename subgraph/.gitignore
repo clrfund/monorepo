@@ -1,0 +1,4 @@
+/node_modules
+/build
+/packages/*/node_modules
+.DS_Store

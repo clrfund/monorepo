@@ -598,8 +598,7 @@ describe('Optimistic recipient registry', () => {
           RequestType.Registration,
           recipientAddress,
           metadata,
-          currentTime,
-          requester.address
+          currentTime
         )
       expect(await provider.getBalance(registry.address)).to.equal(baseDeposit)
     })
@@ -844,8 +843,7 @@ describe('Optimistic recipient registry', () => {
           RequestType.Removal,
           ZERO_ADDRESS,
           '',
-          currentTime,
-          deployer.address
+          currentTime
         )
     })
 
