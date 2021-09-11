@@ -11,22 +11,14 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Ready to contribute!</h1>
-            <links v-if="txHash" :to="blockExplorerUrl">
-              <div class="etherscan-btn">
-                <img
-                  class="icon"
-                  width="16px"
-                  src="@/assets/etherscan.svg"
-                />Etherscan
-              </div>
-            </links>
+            <transaction-receipt :hash="$route.params.hash" />
           </div>
           <div class="subtitle">
             You’re on board this funding round! And fully verified for BrightID
             – you’ll never have to do that again.
           </div>
           <p>You can now start contributing to your favourite projects.</p>
-          <div class="mt2">
+          <div class="mt2 button-spacing">
             <links to="/projects" class="btn-primary">View projects</links>
             <links to="/" class="btn-secondary">Go home</links>
           </div>
@@ -39,27 +31,15 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import * as humanizeDuration from 'humanize-duration'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import Links from '@/components/Links.vue'
+import TransactionReceipt from '@/components/TransactionReceipt.vue'
 
-import { blockExplorer } from '@/api/core'
-
-@Component({ components: { ProgressBar, RoundStatusBanner, Links } })
-export default class Verified extends Vue {
-  // TODO: Retrieve hash of transaction.
-  // We route to this component, pass hash as queryParam after submission?
-  txHash = '0xfakehashf7261d65be24e7f5cabefba4a659e1e2e13685cc03ad87233ee2713d'
-
-  get blockExplorerUrl(): string {
-    return `${blockExplorer}/tx/${this.txHash}`
-  }
-
-  formatDuration(value: number): string {
-    return humanizeDuration(value * 1000, { largest: 1 })
-  }
-}
+@Component({
+  components: { ProgressBar, RoundStatusBanner, Links, TransactionReceipt },
+})
+export default class Verified extends Vue {}
 </script>
 
 <style scoped lang="scss">
@@ -175,5 +155,12 @@ ul {
   width: 1rem;
   height: 1rem;
   position: relative;
+}
+
+.button-spacing {
+  height: 6.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 </style>

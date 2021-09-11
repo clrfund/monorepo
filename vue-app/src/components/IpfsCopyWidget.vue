@@ -63,6 +63,9 @@ export default class IpfsCopyWidget extends Vue {
   max-width: 100%;
   font-weight: 500;
   width: fit-content;
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+  }
 }
 
 .hash {

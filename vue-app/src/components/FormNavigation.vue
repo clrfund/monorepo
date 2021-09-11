@@ -1,42 +1,21 @@
 <template>
-  <!-- TODO: refactor this to something more generalized -->
   <div>
-    <div class="btn-row" v-if="isJoin">
+    <div class="btn-row">
       <button
         v-if="currentStep > 0"
         @click="handleStepNav(currentStep - 1)"
-        class="btn-secondary"
+        class="btn-secondary float-left"
         :disabled="isNavDisabled"
       >
         Previous
       </button>
       <button
-        v-if="currentStep < 6"
+        v-if="currentStep < finalStep"
         @click="handleNext"
-        class="btn-primary"
+        class="btn-primary float-right"
         :disabled="!isStepValid"
       >
-        {{ currentStep === 5 ? 'Finish' : 'Next' }}
-      </button>
-    </div>
-    <div class="btn-row" v-if="!isJoin">
-      <button
-        v-if="currentStep > 0"
-        @click="handleStepNav(currentStep - 1)"
-        class="btn-secondary"
-        :disabled="isNavDisabled"
-      >
-        Previous
-      </button>
-      <links v-if="currentStep === 3" to="/verify/success" class="btn-primary">
-        Finish
-      </links>
-      <button
-        v-else-if="currentStep < 3"
-        @click="handleStepNav(currentStep + 1)"
-        class="btn-primary"
-      >
-        Next
+        {{ currentStep === finalStep - 1 ? 'Finish' : 'Next' }}
       </button>
     </div>
   </div>
@@ -46,16 +25,15 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import Links from '@/components/Links.vue'
 
-@Component({ components: { Links } })
+@Component
 export default class FormNavigation extends Vue {
   @Prop() currentStep!: number
+  @Prop() finalStep!: number
   @Prop() steps!: string[]
   @Prop() isStepValid!: boolean
   @Prop() callback!: (updateFurthest?: boolean) => void
   @Prop() handleStepNav!: () => void
-  @Prop() isJoin!: boolean
   @Prop() isNavDisabled!: boolean
 
   // TODO is this needed? Why do we pass `callback` & `handleStepNav`?
@@ -82,11 +60,15 @@ export default class FormNavigation extends Vue {
 @import '../styles/vars';
 
 .btn-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  @media (max-width: $breakpoint-m) {
-    bottom: 0;
-  }
+  display: block;
+  height: 2.75rem;
+}
+
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
 }
 </style>

@@ -134,8 +134,7 @@ export default class RecipientSubmissionWidget extends Vue {
   isLoading = true
   isWaiting = false // TODO add logic
   isPending = false // TODO add logic
-  isWrongNetwork = false // TODO remove? WalletWidget can handle this?
-  isTxRejected = false // TODO add logic
+  isTxRejected = false
   txHash = ''
   txError = ''
   ethPrice: EthPrice | null = null
@@ -256,6 +255,11 @@ export default class RecipientSubmissionWidget extends Vue {
     // TODO where to make `isPending` vs. `isWaiting`? In `waitForTransaction`?
     // Check out Launchpad repo to view transaction states
     this.isWaiting = true
+
+    // Reset errors when submitting
+    this.txError = ''
+    this.isTxRejected = false
+
     if (
       recipientRegistryAddress &&
       recipient &&
@@ -293,7 +297,7 @@ export default class RecipientSubmissionWidget extends Vue {
       this.$router.push({
         name: 'project-added',
         params: {
-          txHash: this.txHash,
+          hash: this.txHash,
         },
       })
     }

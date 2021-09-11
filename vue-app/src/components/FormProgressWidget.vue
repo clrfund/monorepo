@@ -34,9 +34,9 @@
         </div>
       </div>
       <form-navigation
-        :isJoin="true"
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
+        :finalStep="steps.length - 2"
         :currentStep="currentStep"
         :callback="saveFormData"
         :handleStepNav="handleStepNav"
@@ -45,10 +45,15 @@
       />
     </div>
     <div class="mobile">
-      <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-      <div class="row">
-        <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-        <links class="cancel-link" to="/join"> Cancel </links>
+      <div class="padding">
+        <progress-bar
+          :currentStep="currentStep + 1"
+          :totalSteps="steps.length"
+        />
+        <div class="row">
+          <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
+          <links class="cancel-link" to="/join"> Cancel </links>
+        </div>
       </div>
     </div>
   </div>
@@ -136,9 +141,15 @@ export default class FormProgressWidget extends Vue {
   }
 
   .mobile {
-    margin: 2rem 1rem;
     margin-bottom: 0;
+    position: fixed;
+    width: 100%;
+    background: $bg-secondary-color;
+    z-index: 1;
 
+    .padding {
+      padding: 2rem 1rem 1rem 1rem;
+    }
     .row {
       margin-top: 1.5rem;
 

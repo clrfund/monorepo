@@ -276,7 +276,7 @@ export default class ProjectView extends Vue {
 .sticky-column {
   grid-area: actions;
   position: sticky;
-  top: 2rem;
+  top: 6rem;
   display: flex;
   flex-direction: column;
   align-self: start;

@@ -98,7 +98,7 @@ export default class VerifyLanding extends Vue {
   get isRoundFullOrOver(): boolean {
     const currentRound = this.$store.state.currentRound
     if (!currentRound) {
-      return true
+      return false
     }
     const hasHitMaxContributors =
       currentRound.maxContributors <= currentRound.contributors
@@ -207,6 +207,14 @@ ul {
     width: 100%;
     margin: 0;
     padding-bottom: 35vw;
+  }
+
+  @media (max-width: $breakpoint-s) {
+    background: linear-gradient(
+      171.34deg,
+      rgba(0, 0, 0, 0.8) 63.5%,
+      rgba(196, 196, 196, 0) 78.75%
+    );
   }
 
   .flex-title {
