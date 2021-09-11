@@ -40,7 +40,13 @@
       </div>
       <div class="form-area">
         <div class="application">
-          <form>
+          <form
+            @submit="
+              (e) => {
+                e.preventDefault()
+              }
+            "
+          >
             <div v-if="currentStep === 0">
               <h2 class="step-title">About the project</h2>
               <div class="inputs">

@@ -5,7 +5,14 @@
         Contribute {{ tokenSymbol }} to the
         {{ isRoundFinished() ? 'next' : 'current' }} round
       </h3>
-      <form class="contribution-form">
+      <form
+        @submit="
+          (e) => {
+            e.preventDefault()
+          }
+        "
+        class="contribution-form"
+      >
         <div class="input-button">
           <img class="token-icon" height="24px" src="@/assets/dai.svg" />
           <input
