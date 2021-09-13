@@ -53,7 +53,11 @@
         still get BrightID verified to prepare for next time.
       </div>
       <div class="btn-container mt2">
-        <wallet-widget v-if="!currentUser" :isActionButton="true" />
+        <wallet-widget
+          v-if="!currentUser"
+          :isActionButton="true"
+          :fullWidthMobile="true"
+        />
         <links v-if="currentUser" to="/verify/connect" class="btn-primary">
           I have BrightID installed
         </links>
