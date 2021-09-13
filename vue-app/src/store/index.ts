@@ -82,7 +82,6 @@ import { isSameAddress, ensLookup } from '@/utils/accounts'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
-import { isAddress } from 'ethers/lib/utils'
 
 Vue.use(Vuex)
 
@@ -489,10 +488,6 @@ const getters = {
       !hasDateElapsed(state.currentRound.startTime)
     )
   },
-  hasStartTimeElapsed: (state: RootState): boolean => {
-    if (!state.currentRound) return true
-    return hasDateElapsed(state.currentRound.startTime)
-  },
   recipientSpacesRemaining: (state: RootState): number | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
       return null
@@ -586,6 +581,12 @@ const getters = {
     return (
       !!state.currentRound &&
       state.currentRound.maxMessages <= state.currentRound.messages
+    )
+  },
+  isRoundContributorLimitReached: (state: RootState): boolean => {
+    return (
+      !!state.currentRound &&
+      state.currentRound.maxContributors <= state.currentRound.contributors
     )
   },
 }
