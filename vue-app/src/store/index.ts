@@ -542,14 +542,18 @@ const getters = {
       state.currentRound.status === RoundStatus.Finalized
     )
   },
-  hasContributionPhaseEnded: (state: RootState): boolean => {
+  hasContributionPhaseEnded: (state: RootState, getters): boolean => {
     return (
-      !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
+      !!state.currentRound &&
+      (hasDateElapsed(state.currentRound.signUpDeadline) ||
+        getters.isRoundContributorLimitReached)
     )
   },
-  hasReallocationPhaseEnded: (state: RootState): boolean => {
+  hasReallocationPhaseEnded: (state: RootState, getters): boolean => {
     return (
-      !!state.currentRound && hasDateElapsed(state.currentRound.votingDeadline)
+      !!state.currentRound &&
+      (hasDateElapsed(state.currentRound.votingDeadline) ||
+        getters.isMessageLimitReached)
     )
   },
   hasUserContributed: (state: RootState): boolean => {
