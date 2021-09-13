@@ -569,7 +569,9 @@ export default class Cart extends Vue {
   get errorMessage(): string | null {
     const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
-    if (!currentUser) {
+    if (currentRound.messages >= currentRound.maxMessages) {
+      return 'The limit on the number of votes has been reached'
+    } else if (!currentUser) {
       return 'Please connect your wallet'
     } else if (!this.isCorrectNetwork()) {
       return `Please change network to ${this.networkName} network.`
@@ -587,7 +589,7 @@ export default class Cart extends Vue {
       currentRound.messages + this.cart.length >=
       currentRound.maxMessages
     ) {
-      return 'The limit on the number of votes has been reached'
+      return 'Cart changes will exceed voting capacity of this round'
     } else {
       const total = this.getTotal()
       if (this.contribution.isZero()) {
@@ -595,7 +597,7 @@ export default class Cart extends Vue {
         if (DateTime.local() >= currentRound.signUpDeadline) {
           return 'Contributions are over for this funding round.'
           // the above error might not be necessary now we have our cart states in the HTML above
-        } else if (currentRound.contributors >= currentRound.maxContributors) {
+        } else if (this.$store.getters.isRoundContributorLimitReached) {
           return 'The limit on the number of contributors has been reached'
         } else if (total.eq(BigNumber.from(0)) && !this.isCartEmpty) {
           return `Your total must be more then 0 ${currentRound.nativeTokenSymbol}`
@@ -615,7 +617,7 @@ export default class Cart extends Vue {
       } else {
         // Reallocating funds
         if (!this.$store.state.contributor) {
-          return 'Contributor key is not found'
+          return "Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with"
         } else if (this.isGreaterThanInitialContribution()) {
           return `Your new total can't be more than your original ${this.formatAmount(
             this.contribution
