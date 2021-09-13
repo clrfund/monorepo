@@ -56,7 +56,7 @@
         <wallet-widget
           v-if="!currentUser"
           :isActionButton="true"
-          :fullWidth="true"
+          :fullWidthMobile="true"
         />
         <links v-if="currentUser" to="/verify/connect" class="btn-primary">
           I have BrightID installed

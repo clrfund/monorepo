@@ -5,7 +5,7 @@
       :class="{
         'btn-action': isActionButton,
         'app-btn': !isActionButton,
-        'full-width': fullWidth,
+        'full-width-mobile': fullWidthMobile,
       }"
       @click="showModal()"
     >
@@ -60,7 +60,7 @@ export default class WalletWidget extends Vue {
   // which hides the widget that would otherwise display after connecting
   @Prop() isActionButton!: boolean
   // Boolean to allow connect button to be full width
-  @Prop() fullWidth!: boolean
+  @Prop() fullWidthMobile!: boolean
 
   toggleProfile(): void {
     this.showProfilePanel = !this.showProfilePanel
@@ -209,7 +209,7 @@ export default class WalletWidget extends Vue {
   }
 }
 
-.full-width {
+.full-width-mobile {
   @media (max-width: $breakpoint-m) {
     width: 100%;
   }
