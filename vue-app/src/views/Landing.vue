@@ -23,8 +23,9 @@
           <div
             class="apply-callout"
             v-if="
-              $store.state.currentRound &&
-              $store.getters.isRoundJoinPhase &&
+              (($store.state.currentRound &&
+                $store.getters.isRoundContributionPhase) ||
+                $store.getters.isRoundJoinPhase) &&
               !$store.getters.isRecipientRegistryFull
             "
           >
@@ -35,7 +36,9 @@
                 anything related to Eth2, you can join in.
               </p>
               <div class="button-group">
-                <links to="/join" class="btn-primary w100">Join round</links>
+                <links to="/join" class="btn-primary w100">{{
+                  joinButtonText
+                }}</links>
                 <div v-if="signUpDeadline">
                   <time-left unitClass="none" :date="signUpDeadline" />
                   to join
@@ -189,6 +192,12 @@ import Links from '@/components/Links.vue'
 export default class Landing extends Vue {
   get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
+  }
+
+  get joinButtonText(): string {
+    return this.$store.getters.isRoundContributionPhase
+      ? 'Join Round'
+      : 'Join Next Round'
   }
 
   scrollToHowItWorks() {
