@@ -24,13 +24,7 @@
         <div v-if="isWaiting" class="tx-notice">
           Check your wallet for a prompt...
         </div>
-        <div
-          v-if="hasTxError || isTxRejected"
-          class="warning-text"
-          style="font-size: 24px; margin-bottom: 0"
-        >
-          ⚠️
-        </div>
+        <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
           Something failed: {{ txError }}<br />
           Check your wallet or Etherscan for more info.
@@ -38,9 +32,8 @@
         <div v-if="isTxRejected" class="warning-text">
           You rejected the transaction in your wallet
         </div>
-        <!-- TODO update -->
         <div v-if="isWrongNetwork" class="warning-text">
-          We're on Optimism Network.<br />
+          We're on {{ chainLabel }}.<br />
           Switch over to the right network in your wallet.
         </div>
         <div v-if="isPending">
@@ -126,6 +119,7 @@ import WalletWidget from '@/components/WalletWidget.vue'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction } from '@/utils/contracts'
 import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
+import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
 @Component({
   components: {
@@ -140,8 +134,7 @@ export default class RecipientSubmissionWidget extends Vue {
   isLoading = true
   isWaiting = false // TODO add logic
   isPending = false // TODO add logic
-  isWrongNetwork = false // TODO remove? WalletWidget can handle this?
-  isTxRejected = false // TODO add logic
+  isTxRejected = false
   txHash = ''
   txError = ''
   ethPrice: EthPrice | null = null
@@ -216,6 +209,11 @@ export default class RecipientSubmissionWidget extends Vue {
     return '-'
   }
 
+  get chainLabel(): string {
+    const chain = CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+    return chain.label
+  }
+
   // TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
   // private async getEstimatedGasFee(): Promise<BigNumber> {
   //   const { recipient, recipientRegistryAddress, recipientRegistryInfo } =
@@ -257,6 +255,11 @@ export default class RecipientSubmissionWidget extends Vue {
     // TODO where to make `isPending` vs. `isWaiting`? In `waitForTransaction`?
     // Check out Launchpad repo to view transaction states
     this.isWaiting = true
+
+    // Reset errors when submitting
+    this.txError = ''
+    this.isTxRejected = false
+
     if (
       recipientRegistryAddress &&
       recipient &&
@@ -294,7 +297,7 @@ export default class RecipientSubmissionWidget extends Vue {
       this.$router.push({
         name: 'project-added',
         params: {
-          txHash: this.txHash,
+          hash: this.txHash,
         },
       })
     }
@@ -464,15 +467,19 @@ export default class RecipientSubmissionWidget extends Vue {
   cursor: not-allowed;
 }
 
+.warning-icon {
+  font-size: 24px;
+}
+
 .warning-text {
-  margin-top: 0.25rem;
   font-size: 14px;
-  font-family: Inter;
-  margin-bottom: 2rem;
+}
+
+.warning-text,
+.warning-icon {
   line-height: 150%;
   color: $warning-color;
   text-transform: uppercase;
-  font-weight: 500;
   text-align: center;
 }
 </style>

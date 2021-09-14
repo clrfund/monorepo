@@ -127,7 +127,7 @@ const routes = [
     },
   },
   {
-    path: '/verify/success',
+    path: '/verify/success/:hash',
     name: 'verified',
     component: Verified,
     meta: {
@@ -151,7 +151,7 @@ const routes = [
     },
   },
   {
-    path: '/join/success',
+    path: '/join/success/:hash',
     name: 'project-added',
     component: ProjectAdded,
     meta: {

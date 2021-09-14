@@ -52,8 +52,12 @@
         The current round is no longer accepting new contributions. You can
         still get BrightID verified to prepare for next time.
       </div>
-      <div class="btn-container">
-        <wallet-widget v-if="!currentUser" :isActionButton="true" />
+      <div class="btn-container mt2">
+        <wallet-widget
+          v-if="!currentUser"
+          :isActionButton="true"
+          :fullWidthMobile="true"
+        />
         <links v-if="currentUser" to="/verify/connect" class="btn-primary">
           I have BrightID installed
         </links>
@@ -98,7 +102,7 @@ export default class VerifyLanding extends Vue {
   get isRoundFullOrOver(): boolean {
     const currentRound = this.$store.state.currentRound
     if (!currentRound) {
-      return true
+      return false
     }
     const hasHitMaxContributors =
       currentRound.maxContributors <= currentRound.contributors
@@ -209,6 +213,14 @@ ul {
     padding-bottom: 35vw;
   }
 
+  @media (max-width: $breakpoint-s) {
+    background: linear-gradient(
+      171.34deg,
+      rgba(0, 0, 0, 0.8) 63.5%,
+      rgba(196, 196, 196, 0) 78.75%
+    );
+  }
+
   .flex-title {
     display: flex;
     gap: 0.5rem;
@@ -221,10 +233,6 @@ ul {
       position: relative;
       right: 0;
     }
-  }
-
-  .btn-container {
-    margin-top: 2rem;
   }
 }
 

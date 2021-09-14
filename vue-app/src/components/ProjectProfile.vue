@@ -2,7 +2,7 @@
   <div v-if="project" class="project-page">
     <info
       v-if="previewMode"
-      style="margin-bottom: 1.5rem"
+      class="info"
       message="This is what your contributors will see when they visit your project page."
     />
     <img
@@ -14,7 +14,7 @@
     <div class="about">
       <h1
         class="project-name"
-        :title="project.address"
+        :title="addressName"
         :project-index="project.index"
       >
         <links v-if="klerosCurateUrl" :to="klerosCurateUrl">{{
@@ -31,11 +31,7 @@
       </div>
       <div class="mobile mb2">
         <div class="input-button" v-if="hasContributeBtn() && !inCart">
-          <img
-            style="margin-left: 0.5rem"
-            height="24px"
-            src="@/assets/dai.svg"
-          />
+          <img class="token-icon" height="24px" src="@/assets/dai.svg" />
           <input
             v-model="contributionAmount"
             class="input"
@@ -57,20 +53,7 @@
             <span>In cart 🎉</span>
           </button>
         </div>
-        <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
-        <button
-          v-if="hasClaimBtn()"
-          class="btn-primary"
-          :disabled="!canClaim()"
-          @click="claim()"
-        >
-          <template v-if="claimed">
-            Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-          </template>
-          <template v-else>
-            Claim {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-          </template>
-        </button>
+        <claim-button :project="project" />
       </div>
       <div class="project-section">
         <h2>About the project</h2>
@@ -93,7 +76,7 @@
         <div>
           <div class="address-label">Recipient address</div>
           <div class="address">
-            {{ project.address }}
+            {{ addressName }}
           </div>
         </div>
         <div class="copy-div">
@@ -133,50 +116,32 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 import { FixedNumber } from 'ethers'
-import { Tally } from '@/api/tally'
-import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { Project } from '@/api/projects'
-import Info from '@/components/Info.vue'
-import Markdown from '@/components/Markdown.vue'
-import CopyButton from '@/components/CopyButton.vue'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
 import { blockExplorer } from '@/api/core'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
+import { ensLookup } from '@/utils/accounts'
+import Info from '@/components/Info.vue'
+import Markdown from '@/components/Markdown.vue'
+import CopyButton from '@/components/CopyButton.vue'
 import ClaimModal from '@/components/ClaimModal.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import Links from '@/components/Links.vue'
 
 @Component({ components: { Markdown, Info, LinkBox, CopyButton, Links } })
 export default class ProjectProfile extends Vue {
-  allocatedAmount: FixedNumber | null = null
   contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
-  claimed: boolean | null = null
   @Prop() project!: Project
   @Prop() klerosCurateUrl!: string | null
   @Prop() previewMode!: boolean
+  ens: string | null = null
 
-  private async checkAllocation(tally: Tally | null) {
-    const currentRound = this.$store.state.currentRound
-    if (
-      !this.project ||
-      !currentRound ||
-      currentRound.status !== RoundStatus.Finalized ||
-      !tally
-    ) {
-      return
+  async mounted() {
+    if (this.project.address) {
+      this.ens = await ensLookup(this.project.address)
     }
-    this.allocatedAmount = await getAllocatedAmount(
-      currentRound.fundingRoundAddress,
-      currentRound.nativeTokenDecimals,
-      tally.results.tally[this.project.index],
-      tally.totalVoiceCreditsPerVoteOption.tally[this.project.index]
-    )
-    this.claimed = await isFundsClaimed(
-      currentRound.fundingRoundAddress,
-      this.project.id
-    )
   }
 
   get inCart(): boolean {
@@ -222,47 +187,12 @@ export default class ProjectProfile extends Vue {
     this.$store.dispatch(SAVE_CART)
   }
 
-  hasClaimBtn(): boolean {
-    const currentRound = this.$store.state.currentRound
-    return (
-      currentRound &&
-      currentRound.status === RoundStatus.Finalized &&
-      this.project !== null &&
-      this.project.index !== 0 &&
-      this.project.isHidden === false &&
-      this.allocatedAmount !== null &&
-      this.claimed !== null
-    )
-  }
-
-  canClaim(): boolean {
-    return (
-      this.hasClaimBtn() &&
-      this.$store.state.currentUser &&
-      this.claimed === false
-    )
-  }
-
-  formatAmount(value: FixedNumber | null): string {
-    const decimals = 6
-    return value ? value.toUnsafeFloat().toFixed(decimals) : ''
-  }
-
-  claim() {
-    this.$modal.show(
-      ClaimModal,
-      { project: this.project },
-      {},
-      {
-        closed: () => {
-          this.checkAllocation(this.$store.state.tally)
-        },
-      }
-    )
-  }
-
   get blockExplorerUrl(): string {
     return `${blockExplorer}/address/${this.project.address}`
+  }
+
+  get addressName(): string {
+    return this.ens || this.project.address
   }
 }
 </script>
@@ -280,6 +210,10 @@ export default class ProjectProfile extends Vue {
     border: 0;
     border-bottom: 0.5px solid $button-disabled-text-color;
     margin-bottom: 3rem;
+  }
+
+  .info {
+    margin-bottom: 1.5rem;
   }
 
   .project-image {
@@ -329,15 +263,6 @@ export default class ProjectProfile extends Vue {
         align-items: flex-start;
         gap: 1rem;
         margin-bottom: 2rem;
-      }
-
-      .tag {
-        padding: 0.5rem 0.75rem;
-        background: $bg-light-color;
-        color: $button-disabled-text-color;
-        font-family: 'Glacial Indifference', sans-serif;
-        width: fit-content;
-        border-radius: 0.25rem;
       }
 
       .team-byline {
@@ -490,31 +415,11 @@ export default class ProjectProfile extends Vue {
     z-index: 1;
   }
 
-  .input-button {
-    background: #f7f7f7;
-    border-radius: 2rem;
-    border: 2px solid $bg-primary-color;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: black;
-    padding: 0.125rem;
-    z-index: 100;
-  }
-
   .input {
     background: none;
     border: none;
     color: $bg-primary-color;
     width: 100%;
-  }
-
-  .mb2 {
-    margin-bottom: 2rem;
-  }
-
-  .mt2 {
-    margin-top: 2rem;
   }
 }
 </style>

@@ -8,18 +8,8 @@
         </div>
       </links>
       <div class="project-info">
-        <div
-          style="
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-          "
-        >
-          <links
-            class="project-name"
-            :to="{ name: 'project', params: { id: project.id } }"
-          >
+        <div class="project-name">
+          <links :to="{ name: 'project', params: { id: project.id } }">
             {{ project.name }}
           </links>
         </div>
@@ -176,7 +166,6 @@ export default class ProjectListItem extends Vue {
 }
 
 .project-image {
-  /* margin: 2rem 3rem; */
   margin-bottom: 1rem;
   border-radius: 8px 8px 0 0;
   height: 8rem;
@@ -188,7 +177,6 @@ export default class ProjectListItem extends Vue {
   position: relative;
 
   img {
-    /* width: 100%; */
     border-radius: 8px;
     flex-shrink: 0;
     min-width: 100%;
@@ -212,11 +200,14 @@ export default class ProjectListItem extends Vue {
 }
 
 .project-name {
-  color: #f7f7f7;
-  font-size: 20px;
+  display: flex;
+  align-items: flex-start;
   font-weight: 700;
-  font-family: Inter;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 20px;
+  * {
+    color: #f7f7f7;
+  }
 }
 
 .project-description {
@@ -224,8 +215,6 @@ export default class ProjectListItem extends Vue {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   font-size: 16px;
-  /*   height: 60px;
-  max-height: 60px; */
   overflow: hidden;
   margin-bottom: 1rem;
   color: #f7f7f7;
@@ -237,17 +226,9 @@ export default class ProjectListItem extends Vue {
 }
 
 .tag {
-  padding: 0.5rem 0.75rem;
-  background: $bg-light-color;
-  box-shadow: $box-shadow;
-  color: $button-disabled-text-color;
-  font-family: 'Glacial Indifference', sans-serif;
-  width: fit-content;
-  border-radius: 4px;
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
+  box-shadow: $box-shadow;
 }
-
-//TODO: make tag component?
 </style>

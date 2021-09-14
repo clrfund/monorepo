@@ -23,6 +23,7 @@ export interface User {
   balance?: BigNumber | null
   etherBalance?: BigNumber | null
   contribution?: BigNumber | null
+  ensName?: string | null
 }
 
 export async function getProfileImageUrl(

@@ -1,4 +1,4 @@
-import { BigNumber, Contract, Signer } from 'ethers'
+import { BigNumber, Contract, Event, Signer } from 'ethers'
 import {
   TransactionResponse,
   TransactionReceipt,
@@ -72,7 +72,8 @@ export interface RecipientApplicationData {
     problemSpace: string
   }
   fund: {
-    address: string
+    addressName: string
+    resolvedAddress: string
     plans: string
   }
   team: {
@@ -92,6 +93,7 @@ export interface RecipientApplicationData {
     thumbnailHash: string
   }
   furthestStep: number
+  hasEns: boolean
 }
 
 export function formToProjectInterface(
@@ -99,8 +101,8 @@ export function formToProjectInterface(
 ): Project {
   const { project, fund, team, links, image } = data
   return {
-    id: fund.address,
-    address: fund.address,
+    id: fund.resolvedAddress,
+    address: fund.resolvedAddress,
     name: project.name,
     tagline: project.tagline,
     description: project.description,
@@ -229,7 +231,7 @@ export function formToRecipientData(
 ): RecipientData {
   const { project, fund, team, links, image } = data
   return {
-    address: fund.address,
+    address: fund.resolvedAddress,
     name: project.name,
     tagline: project.tagline,
     description: project.description,
@@ -286,6 +288,7 @@ function decodeProject(recipient: Partial<Recipient>): Project {
   return {
     id: recipient.id!,
     address: recipient.recipientAddress || '',
+    requester: recipient.requester,
     name: metadata.name,
     description: metadata.description,
     imageUrl,

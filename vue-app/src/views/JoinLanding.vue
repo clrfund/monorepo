@@ -15,12 +15,12 @@
     </div>
 
     <div class="content" v-else-if="$store.getters.hasContributionPhaseEnded">
-      <div style="font-size: 64px">☹</div>
+      <div class="big-emoji">☹</div>
       <h1>Sorry, it's too late to join</h1>
       <div id="subtitle" class="subtitle">
         The round is closed for new projects. It's now too late to get on board.
       </div>
-      <div class="subtitle" id="subtitle" style="margin-top: 2rem">
+      <div class="subtitle mt2" id="subtitle">
         Check out these
         <links to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
@@ -33,14 +33,14 @@
     </div>
 
     <div class="content" v-else-if="isRoundFull">
-      <div style="font-size: 64px">☹</div>
+      <div class="big-emoji">☹</div>
       <h1>Sorry, the round is full</h1>
       <div id="subtitle" class="subtitle">
         The tech we use to protect you from bribery and collusion, MACI, limits
         the number of projects right now. Unfortunately we've hit the cap and
         there's no more room on board.
       </div>
-      <div class="subtitle" id="subtitle" style="margin-top: 2rem">
+      <div class="subtitle mt2" id="subtitle">
         Check out these
         <links to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
@@ -76,9 +76,7 @@
           <div class="countdown caps">15 minutes (ish)</div>
         </div>
         <div v-if="isRoundFillingUp" class="apply-callout-warning">
-          <div
-            style="display: flex; justify-content: space-between; align-items: flex-start;f"
-          >
+          <div class="filling-up-container">
             <div class="countdown caps">
               {{ spacesRemainingString }} left, hurry!
             </div>
@@ -91,7 +89,7 @@
               </div>
             </div>
           </div>
-          <p class="warning-text" style="margin-bottom: 0">
+          <p class="warning-text">
             You will get your deposit back if you don’t make it into the round
             this time.
           </p>
@@ -195,9 +193,7 @@ export default class JoinLanding extends Vue {
   }
 
   formatAmount(value: BigNumber): string {
-    if (!value) {
-      return ''
-    }
+    if (!value) return ''
     return formatAmount(value, 18)
   }
 }
@@ -315,6 +311,16 @@ h1 {
   border-radius: 8px;
   padding: 1rem;
   margin-top: 1rem;
+}
+
+.filling-up-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.warning-text {
+  margin-bottom: 0;
 }
 
 .info-boxes {

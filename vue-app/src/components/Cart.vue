@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%">
+  <div class="h100">
     <div v-if="!currentUser" class="empty-cart">
       <div class="moon-emoji">🌚</div>
       <h3>Connect to see your cart</h3>
@@ -482,8 +482,8 @@ export default class Cart extends Vue {
   }
 
   formatAmount(value: BigNumber): string {
-    const decimals = this.$store.state.currentRound.nativeTokenDecimals
-    return formatAmount(value, decimals)
+    const { nativeTokenDecimals } = this.$store.state.currentRound
+    return formatAmount(value, nativeTokenDecimals)
   }
 
   isAmountValid(value: string): boolean {
@@ -767,6 +767,7 @@ h2 {
   }
   @media (max-width: $breakpoint-s) {
     padding: 1rem 0rem;
+    margin-bottom: 3rem;
   }
 }
 
@@ -806,6 +807,7 @@ h2 {
   align-items: flex-end;
   justify-content: space-between;
   width: 100%;
+  margin-top: 1rem;
 }
 
 .time-left-read-only {
@@ -1052,8 +1054,11 @@ h2 {
     padding-left: 0;
     padding-right: 0;
     width: 100%;
-    margin-bottom: 1rem;
   }
+}
+
+.h100 {
+  height: 100%;
 }
 
 .p1 {

@@ -1,5 +1,4 @@
 import { DateTime } from 'luxon'
-import * as humanizeDuration from 'humanize-duration'
 import { TimeLeft } from '@/api/round'
 
 export function formatDate(date: DateTime): string {
@@ -32,17 +31,4 @@ export function getTimeLeft(date: DateTime): TimeLeft {
     .split(' ')
     .map(Number)
   return { days, hours, minutes, seconds }
-}
-
-// TODO handle dates in the past (difference < 0, returns '0 seconds')
-export function formatDateFromNow(date: DateTime): string {
-  if (!date) {
-    return '...' //  TODO best place to do this?
-  }
-  const difference = getMillisecondsFromNow(date)
-  return humanizeDuration(difference, {
-    largest: 1,
-    units: ['mo', 'w', 'd', 'h', 'm', 's'],
-    round: true,
-  })
 }

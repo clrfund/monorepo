@@ -9,7 +9,7 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Project submitted!</h1>
-            <transaction-receipt :hash="txHash" />
+            <transaction-receipt :hash="$route.params.hash" />
           </div>
           <div class="subtitle">You’re almost on board this funding round</div>
           <ul>
@@ -27,7 +27,7 @@
               criteria, we'll let you know by email and return your deposit.
             </li>
           </ul>
-          <div class="btn-container" style="margin-top: 2rem">
+          <div class="mt2 button-spacing">
             <links to="/projects" class="btn-primary">View projects</links>
             <links to="/" class="btn-secondary">Go home</links>
           </div>
@@ -62,10 +62,8 @@ import { blockExplorer } from '@/api/core'
 })
 export default class ProjectAdded extends Vue {
   challengePeriodDuration: number | null = null
-  txHash = ''
 
   async created() {
-    this.txHash = this.$route.params.txHash
     this.challengePeriodDuration = this.registryInfo.challengePeriodDuration
   }
 
@@ -74,7 +72,7 @@ export default class ProjectAdded extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/tx/${this.txHash}`
+    return `${blockExplorer}/tx/${this.$route.params.txHash}`
   }
 
   formatDuration(seconds: number): string {
@@ -196,5 +194,12 @@ ul {
   width: 1rem;
   height: 1rem;
   position: relative;
+}
+
+.button-spacing {
+  height: 6.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 </style>

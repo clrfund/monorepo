@@ -49,7 +49,7 @@
                   <input
                     id="project-name"
                     type="text"
-                    placeholder="example: clr.fund"
+                    placeholder="ex: clr.fund"
                     v-model="$v.form.project.name.$model"
                     :class="{
                       input: true,
@@ -74,7 +74,7 @@
                   </p>
                   <textarea
                     id="project-tagline"
-                    placeholder="example: A quadratic funding protocol"
+                    placeholder="ex: A quadratic funding protocol"
                     v-model="$v.form.project.tagline.$model"
                     :class="{
                       input: true,
@@ -110,7 +110,7 @@
                   </label>
                   <textarea
                     id="project-description"
-                    placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                    placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
                     v-model="$v.form.project.description.$model"
                     :class="{
                       input: true,
@@ -207,7 +207,7 @@
                   </p>
                   <textarea
                     id="project-problem-space"
-                    placeholder="example: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
+                    placeholder="ex: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
                     v-model="$v.form.project.problemSpace.$model"
                     :class="{
                       input: true,
@@ -243,19 +243,20 @@
                   <input
                     id="fund-address"
                     placeholder="example: 0x123..."
-                    v-model="$v.form.fund.address.$model"
+                    v-model.lazy="$v.form.fund.addressName.$model"
+                    @blur="checkEns"
                     :class="{
                       input: true,
-                      invalid: $v.form.fund.address.$error,
+                      invalid: $v.form.fund.addressName.$error,
                     }"
                   />
                   <p
                     :class="{
                       error: true,
-                      hidden: !$v.form.fund.address.$error,
+                      hidden: !$v.form.fund.addressName.$error,
                     }"
                   >
-                    Enter a valid Ethereum 0x address
+                    Enter a valid ENS or Ethereum 0x address
                   </p>
                   <!-- TODO: only validate after user removes focus on input -->
                 </div>
@@ -269,7 +270,7 @@
                   </p>
                   <textarea
                     id="fund-plans"
-                    placeholder="example: on our roadmap..."
+                    placeholder="ex: on our roadmap..."
                     v-model="$v.form.fund.plans.$model"
                     :class="{
                       input: true,
@@ -305,11 +306,9 @@
                     round.
                   </p>
                   <input
-                    required
                     id="team-email"
                     placeholder="example: doge@goodboi.com"
-                    v-model="form.team.email"
-                    @blur="$v.form.team.email.$touch()"
+                    v-model.lazy="$v.form.team.email.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.team.email.$error,
@@ -336,7 +335,7 @@
                   <input
                     id="team-name"
                     type="email"
-                    placeholder="example: clr.fund"
+                    placeholder="ex: clr.fund"
                     v-model="$v.form.team.name.$model"
                     :class="{
                       input: true,
@@ -353,7 +352,7 @@
                   </p>
                   <textarea
                     id="team-desc"
-                    placeholder="example: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                    placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
                     v-model="$v.form.team.description.$model"
                     :class="{
                       input: true,
@@ -380,8 +379,7 @@
                     id="links-github"
                     type="link"
                     placeholder="example: https://github.com/ethereum/clrfund"
-                    class="input"
-                    v-model="$v.form.links.github.$model"
+                    v-model.lazy="$v.form.links.github.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.github.$error,
@@ -403,8 +401,7 @@
                     id="links-radicle"
                     type="link"
                     placeholder="example: https://radicle.com/ethereum/clrfund"
-                    class="input"
-                    v-model="$v.form.links.radicle.$model"
+                    v-model.lazy="$v.form.links.radicle.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.radicle.$error,
@@ -425,8 +422,7 @@
                     id="links-website"
                     type="link"
                     placeholder="example: https://ethereum.foundation"
-                    class="input"
-                    v-model="$v.form.links.website.$model"
+                    v-model.lazy="$v.form.links.website.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.website.$error,
@@ -447,8 +443,7 @@
                     id="links-twitter"
                     type="link"
                     placeholder="example: https://twitter.com/ethereum"
-                    class="input"
-                    v-model="$v.form.links.twitter.$model"
+                    v-model.lazy="$v.form.links.twitter.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.twitter.$error,
@@ -468,9 +463,9 @@
                   <input
                     id="links-discord"
                     type="link"
-                    placeholder="example: https://discord.gg/5Prub9zbGz"
+                    placeholder="ex: https://discord.gg/5Prub9zbGz"
                     class="input"
-                    v-model="$v.form.links.discord.$model"
+                    v-model.lazy="$v.form.links.discord.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.links.discord.$error,
@@ -524,7 +519,6 @@
             <div v-if="!showSummaryPreview">
               <h2 class="step-title">Review your information</h2>
               <warning
-                style="margin-bottom: 1rem"
                 message="This information will be stored in a smart contract and cannot be edited, so please review carefully."
               />
               <div class="form-background">
@@ -565,10 +559,17 @@
                 <div class="summary">
                   <h4 class="read-only-title">Ethereum address</h4>
                   <div class="data break-all">
-                    {{ form.fund.address }}
+                    {{ form.fund.addressName }}
                     <links :to="blockExplorerUrl" class="no-break">
                       View on Etherscan
                     </links>
+                  </div>
+                  <div
+                    class="resolved-address"
+                    v-if="form.fund.addressName"
+                    title="Resolved ENS address"
+                  >
+                    {{ form.hasEns ? form.fund.resolvedAddress : null }}
                   </div>
                 </div>
                 <div class="summary">
@@ -724,9 +725,9 @@
     </div>
     <div class="mobile nav-bar">
       <form-navigation
-        :isJoin="true"
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
+        :finalStep="steps.length - 2"
         :currentStep="currentStep"
         :callback="saveFormData"
         :handleStepNav="handleStepNav"
@@ -741,7 +742,7 @@ import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
 import { required, maxLength, url, email } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
-import { isAddress } from '@ethersproject/address'
+import { isValidEthAddress, resolveEns } from '@/utils/accounts'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
@@ -791,10 +792,11 @@ import { blockExplorer } from '@/api/core'
         problemSpace: { required },
       },
       fund: {
-        address: {
+        addressName: {
           required,
-          validEthAddress: isAddress,
+          validEthAddress: isValidEthAddress,
         },
+        resolvedAddress: {},
         plans: { required },
       },
       team: {
@@ -835,7 +837,8 @@ export default class JoinView extends mixins(validationMixin) {
       problemSpace: '',
     },
     fund: {
-      address: '',
+      addressName: '',
+      resolvedAddress: '',
       plans: '',
     },
     team: {
@@ -855,6 +858,7 @@ export default class JoinView extends mixins(validationMixin) {
       thumbnailHash: '',
     },
     furthestStep: 0,
+    hasEns: false,
   }
   currentStep = 0
   steps: string[] = []
@@ -899,9 +903,11 @@ export default class JoinView extends mixins(validationMixin) {
     //     project: {
     //       name: 'CLR.Fund',
     //       tagline: 'A quadratic funding protocol',
-    //       description: '**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...\n# Derp\n\nasdfasdfasdf\n\n## Derp\n\nasdfsdasdfsdf\n### Derp\n\nasdfasdfsdaf\n#### Derp\nasdfasdf\n##### Derp',
+    //       description:
+    //         '**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...\n# Derp\n\nasdfasdfasdf\n\n## Derp\n\nasdfsdasdfsdf\n### Derp\n\nasdfasdfsdaf\n#### Derp\nasdfasdf\n##### Derp',
     //       category: 'research',
-    //       problemSpace: 'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
+    //       problemSpace:
+    //         'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
     //     },
     //     fund: {
     //       address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
@@ -1020,7 +1026,16 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/address/${this.form.fund.address}`
+    return `${blockExplorer}/address/${this.form.fund.resolvedAddress}`
+  }
+
+  async checkEns(): Promise<void> {
+    const { addressName } = this.form?.fund
+    if (addressName) {
+      const res: string | null = await resolveEns(addressName)
+      this.form.hasEns = !!res
+      this.form.fund.resolvedAddress = res ? res : addressName
+    }
   }
 }
 </script>
@@ -1072,7 +1087,7 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   @media (max-width: $breakpoint-m) {
-    margin-top: 2rem;
+    margin-top: 6rem;
     padding-bottom: 0;
     padding-left: 1rem;
     font-size: 14px;
@@ -1106,14 +1121,12 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .nav-bar {
-  display: inherit;
-  position: sticky;
+  position: fixed;
   bottom: 0;
   right: 0;
   left: 0;
   padding: 1.5rem;
   background: $bg-primary-color;
-  border-radius: 32px 32px 0 0;
   box-shadow: $box-shadow;
 }
 
@@ -1518,10 +1531,26 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .break-all {
-  word-break: break-all;
+  @media (max-width: $breakpoint-s) {
+    display: block;
+  }
+
+  p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .no-break {
   white-space: nowrap;
+}
+
+.resolved-address {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.5;
+  word-break: keep-all;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 </style>

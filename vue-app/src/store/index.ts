@@ -77,10 +77,11 @@ import {
 } from './mutation-types'
 
 // Utils
-import { isSameAddress } from '@/utils/accounts'
+import { isSameAddress, ensLookup } from '@/utils/accounts'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
+import { isAddress } from 'ethers/lib/utils'
 
 Vue.use(Vuex)
 
@@ -317,11 +318,15 @@ const actions = {
         commit(SET_HAS_VOTED, hasVoted)
       }
 
+      let ensName: string | null = state.currentUser.ensName
+      ensName = await ensLookup(state.currentUser.walletAddress)
+
       commit(SET_CURRENT_USER, {
         ...state.currentUser,
         isRegistered,
         balance,
         etherBalance,
+        ensName,
       })
     }
   },
@@ -430,11 +435,12 @@ const actions = {
       getContributorStorageKey(state.currentRound.fundingRoundAddress)
     )
   },
-  async [LOGIN_USER]({ state }) {
+  async [LOGIN_USER]({ state, dispatch }) {
     await loginUser(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey
     )
+    dispatch(LOAD_BRIGHT_ID)
   },
   [LOGOUT_USER]({ commit, dispatch }) {
     dispatch(UNWATCH_CART)
@@ -448,6 +454,7 @@ const actions = {
 }
 
 const getters = {
+  // TODO generalize - this assumes optimistic registry
   recipientJoinDeadline: (state: RootState): DateTime | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
       return null

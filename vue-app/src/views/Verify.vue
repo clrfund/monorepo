@@ -353,7 +353,10 @@ export default class VerifyView extends Vue {
           (hash) => (this.registrationTxHash = hash)
         )
         this.loadingTx = false
-        this.$router.push({ name: 'verified' })
+        this.$router.push({
+          name: 'verified',
+          params: { hash: this.registrationTxHash },
+        })
       } catch (error) {
         this.registrationTxError = error.message
         return

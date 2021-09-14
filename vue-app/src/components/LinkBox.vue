@@ -38,6 +38,7 @@ export default class extends Vue {
   padding: 1.5rem;
   border-radius: 1rem;
   box-shadow: $box-shadow;
+  overflow-wrap: anywhere;
 
   .link-title {
     font-size: 1.5rem;

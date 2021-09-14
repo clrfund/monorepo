@@ -124,3 +124,28 @@
     background: $bg-hover;
   }
 }
+
+.tag {
+  font-family: 'Glacial Indifference', sans-serif;
+  padding: 0.5rem 0.75rem;
+  background: $bg-light-color;
+  color: $button-disabled-text-color;
+  width: fit-content;
+  border-radius: 4px;
+}
+
+.token-icon {
+  margin-left: 0.5rem;
+}
+
+.big-emoji {
+  font-size: 4rem;
+}
+
+.mb2 {
+  margin-bottom: 2rem;
+}
+
+.mt2 {
+  margin-top: 2rem;
+}

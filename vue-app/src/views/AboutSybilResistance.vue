@@ -2,7 +2,7 @@
   <div class="about">
     <h1 class="content-heading">About Sybil Resistance</h1>
 
-    <h2>What is sybil resistance?</h2>
+    <h2>What is Sybil resistance?</h2>
     <p>
       Clr.fund is a protocol for efficiently allocating funds to public goods
       that benefit the Ethereum Network according to the preferences of the

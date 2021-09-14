@@ -2,7 +2,11 @@
   <div :class="{ container: !isActionButton }">
     <button
       v-if="!currentUser"
-      :class="isActionButton ? 'btn-action' : 'app-btn'"
+      :class="{
+        'btn-action': isActionButton,
+        'app-btn': !isActionButton,
+        'full-width-mobile': fullWidthMobile,
+      }"
       @click="showModal()"
     >
       Connect
@@ -21,7 +25,7 @@
         <div v-if="showEth" class="balance">{{ etherBalance }}</div>
       </div>
       <div class="profile-name">
-        {{ renderUserAddress(7) }}
+        {{ displayAddress }}
       </div>
       <div class="profile-image">
         <img v-if="profileImageUrl" :src="profileImageUrl" />
@@ -29,9 +33,9 @@
     </div>
     <profile
       v-if="showProfilePanel"
-      :toggleProfile="toggleProfile"
       :balance="balance"
       :etherBalance="etherBalance"
+      @close="toggleProfile"
     />
   </div>
 </template>
@@ -40,8 +44,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop, Watch } from 'vue-property-decorator'
-import { commify, formatUnits } from '@ethersproject/units'
+import { BigNumber } from 'ethers'
 
+import { formatAmount } from '@/utils/amounts'
 import { User, getProfileImageUrl } from '@/api/user'
 import WalletModal from '@/components/WalletModal.vue'
 import { LOGOUT_USER } from '@/store/action-types'
@@ -52,10 +57,11 @@ export default class WalletWidget extends Vue {
   private showProfilePanel: boolean | null = null
   profileImageUrl: string | null = null
   @Prop() showEth!: boolean
-
   // Boolean to only show Connect button, styled like an action button,
   // which hides the widget that would otherwise display after connecting
   @Prop() isActionButton!: boolean
+  // Boolean to allow connect button to be full width
+  @Prop() fullWidthMobile!: boolean
 
   toggleProfile(): void {
     this.showProfilePanel = !this.showProfilePanel
@@ -74,20 +80,18 @@ export default class WalletWidget extends Vue {
     if (etherBalance === null || typeof etherBalance === 'undefined') {
       return null
     }
-    return commify(formatUnits(etherBalance, 'ether'))
+    return formatAmount(etherBalance, 'ether', 4)
   }
 
   get balance(): string | null {
-    const balance = this.currentUser?.balance
-    if (balance === null || typeof balance === 'undefined') {
-      return null
-    }
-    return commify(formatUnits(balance, 18))
+    const balance: BigNumber | null | undefined = this.currentUser?.balance
+    if (balance === null || typeof balance === 'undefined') return null
+    const { nativeTokenDecimals } = this.$store.state.currentRound
+    return formatAmount(balance, nativeTokenDecimals, 4)
   }
 
   async mounted() {
     this.showProfilePanel = false
-
     this.$web3.$on('disconnect', () => {
       this.$store.dispatch(LOGOUT_USER)
     })
@@ -116,7 +120,7 @@ export default class WalletWidget extends Vue {
     this.$modal.show(WalletModal, {}, { width: 400, top: 20 })
   }
 
-  @Watch('currentUser')
+  @Watch('$web3.user')
   async updateProfileImage(currentUser: User): Promise<void> {
     if (currentUser) {
       const url = await getProfileImageUrl(currentUser.walletAddress)
@@ -124,23 +128,9 @@ export default class WalletWidget extends Vue {
     }
   }
 
-  // TODO: Extract into a shared function
-  renderUserAddress(digitsToShow?: number): string {
-    if (this.currentUser?.walletAddress) {
-      const address: string = this.currentUser.walletAddress
-      if (digitsToShow) {
-        const beginDigits: number = Math.ceil(digitsToShow / 2)
-        const endDigits: number = Math.floor(digitsToShow / 2)
-        const begin: string = address.substr(0, 2 + beginDigits)
-        const end: string = address.substr(
-          address.length - endDigits,
-          endDigits
-        )
-        return `${begin}…${end}`
-      }
-      return address
-    }
-    return ''
+  get displayAddress(): string | null {
+    if (!this.currentUser) return null
+    return this.currentUser.ensName ?? this.currentUser.walletAddress
   }
 }
 </script>
@@ -167,6 +157,12 @@ export default class WalletWidget extends Vue {
   .profile-name {
     font-size: 14px;
     opacity: 0.8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: min(20vw, 14ch);
+    @media (max-width: $breakpoint-s) {
+      display: none;
+    }
   }
 
   .balance {
@@ -213,7 +209,9 @@ export default class WalletWidget extends Vue {
   }
 }
 
-.full-width {
-  width: 100%;
+.full-width-mobile {
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+  }
 }
 </style>

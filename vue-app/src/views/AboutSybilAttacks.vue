@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">Sybil resistance and BrightID</h1>
+    <h1 class="content-heading">Sybil attacks and BrightID</h1>
 
     <h2>What is BrightID?</h2>
     <p>
@@ -77,7 +77,7 @@
         <links to="/about-maci">MACI, our anti-bribery tech</links>.
       </li>
     </ul>
-    <h2>More</h2>
+    <links to="/about-sybil-resistance" class="link-font">More</links>
   </div>
 </template>
 
@@ -99,6 +99,13 @@ export default class AboutSybilAttacks extends Vue {}
 
 .content-heading {
   border-bottom: $border;
+}
+
+.link-font {
+  font-family: 'Glacial Indifference', sans-serif;
+  font-weight: bold;
+  font-size: 32px;
+  letter-spacing: -0.015em;
 }
 
 h2 {

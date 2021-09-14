@@ -2,21 +2,18 @@
   <div class="modal-body">
     <div v-if="step === 0">
       <h2>
-        Confirm {{ formatAmount(getTotal()) }}
+        Confirm {{ renderTotal }}
         {{ currentRound.nativeTokenSymbol }} contribution
       </h2>
       <p>
         Your
-        <b
-          >{{ formatAmount(getTotal()) }}
-          {{ currentRound.nativeTokenSymbol }}</b
-        >
+        <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>
         contribution total is final. You won't be able to increase this amount.
         Make sure this is the maximum you might want to spend on contributions.
       </p>
       <!-- TODO: if you get 1/3 of the way through these transactions and come back, you shouldn't get this warning again. This warning should only appear if you haven't already signed 'approve' transaction -->
       <!-- <p>
-        <em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
+        <em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
       </p> -->
       <div class="btn-row">
         <button class="btn-secondary" @click="$emit('close')">Cancel</button>
@@ -26,13 +23,13 @@
     <div v-if="step === 1">
       <progress-bar :currentStep="1" :totalSteps="3" />
       <h2>
-        Approve {{ formatAmount(getTotal()) }}
+        Approve {{ renderTotal }}
         {{ currentRound.nativeTokenSymbol }}
       </h2>
       <p>
         This gives this app permission to withdraw
-        {{ formatAmount(getTotal()) }} {{ currentRound.nativeTokenSymbol }} from
-        your wallet for your contribution.
+        {{ renderTotal }} {{ currentRound.nativeTokenSymbol }} from your wallet
+        for your contribution.
       </p>
       <transaction
         :hash="approvalTxHash"
@@ -43,11 +40,10 @@
     <div v-if="step === 2">
       <progress-bar :currentStep="2" :totalSteps="3" />
       <h2>
-        Send {{ formatAmount(getTotal()) }}
-        {{ currentRound.nativeTokenSymbol }} contribution
+        Send {{ renderTotal }} {{ currentRound.nativeTokenSymbol }} contribution
       </h2>
       <p>
-        This transaction sends out your {{ formatAmount(getTotal()) }}
+        This transaction sends out your {{ renderTotal }}
         {{ currentRound.nativeTokenSymbol }} contribution to your chosen
         projects.
       </p>
@@ -146,19 +142,20 @@ export default class ContributionModal extends Vue {
     return new Contract(fundingRoundAddress, FundingRound, this.signer)
   }
 
-  formatAmount(value: BigNumber): string {
-    return formatAmount(value, this.currentRound.nativeTokenDecimals)
-  }
-
-  formatDate(value: DateTime): string {
-    return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
-  }
-
-  getTotal(): BigNumber {
+  get total(): BigNumber {
     const { voiceCreditFactor } = this.currentRound
     return this.votes.reduce((total: BigNumber, [, voiceCredits]) => {
       return total.add(voiceCredits.mul(voiceCreditFactor))
     }, BigNumber.from(0))
+  }
+
+  get renderTotal(): string {
+    const { nativeTokenDecimals } = this.currentRound
+    return formatAmount(this.total, nativeTokenDecimals)
+  }
+
+  formatDate(value: DateTime): string {
+    return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
   }
 
   async contribute() {
@@ -170,7 +167,7 @@ export default class ContributionModal extends Vue {
         maciAddress,
         fundingRoundAddress,
       } = this.currentRound
-      const total = this.getTotal()
+      const total = this.total
       const token = new Contract(nativeTokenAddress, ERC20, this.signer)
       // Approve transfer (step 1)
       const allowance = await token.allowance(
