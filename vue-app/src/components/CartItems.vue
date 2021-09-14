@@ -39,15 +39,7 @@
           {{ item.amount }} {{ tokenSymbol }}
         </div>
       </div>
-      <form
-        @submit="
-          (e) => {
-            e.preventDefault()
-          }
-        "
-        v-if="isEditMode"
-        class="contribution-form"
-      >
+      <div v-if="isEditMode" class="contribution-form">
         <div class="input-button">
           <img class="token-icon" height="24px" src="@/assets/dai.svg" />
           <input
@@ -60,7 +52,7 @@
             placeholder="Amount"
           />
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </template>

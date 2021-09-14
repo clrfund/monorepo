@@ -40,481 +40,468 @@
       </div>
       <div class="form-area">
         <div class="application">
-          <form
-            @submit="
-              (e) => {
-                e.preventDefault()
-              }
-            "
-          >
-            <div v-if="currentStep === 0">
-              <h2 class="step-title">About the project</h2>
-              <div class="inputs">
-                <div class="form-background">
-                  <label for="project-name" class="input-label">Name</label>
+          <div v-if="currentStep === 0">
+            <h2 class="step-title">About the project</h2>
+            <div class="inputs">
+              <div class="form-background">
+                <label for="project-name" class="input-label">Name</label>
+                <input
+                  id="project-name"
+                  type="text"
+                  placeholder="ex: clr.fund"
+                  v-model="$v.form.project.name.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.project.name.$error,
+                  }"
+                />
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.project.name.$error,
+                  }"
+                >
+                  Your project needs a name
+                </p>
+              </div>
+              <div class="form-background">
+                <label for="project-tagline" class="input-label">Tagline</label>
+                <p class="input-description">
+                  Describe your project in a sentence. Max characters: 140
+                </p>
+                <textarea
+                  id="project-tagline"
+                  placeholder="ex: A quadratic funding protocol"
+                  v-model="$v.form.project.tagline.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.project.tagline.$error,
+                  }"
+                />
+                <p
+                  :class="{
+                    error: true,
+                    hidden:
+                      !$v.form.project.tagline.$error ||
+                      $v.form.project.tagline.maxLength,
+                  }"
+                >
+                  This tagline is too long. Be brief for potential contributors
+                </p>
+                <p
+                  :class="{
+                    error: true,
+                    hidden:
+                      !$v.form.project.tagline.$error ||
+                      !$v.form.project.tagline.maxLength,
+                  }"
+                >
+                  Your project needs a tagline
+                </p>
+              </div>
+              <div class="form-background">
+                <label for="project-description" class="input-label">
+                  Description
+                  <p class="input-description">Markdown supported.</p>
+                </label>
+                <textarea
+                  id="project-description"
+                  placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                  v-model="$v.form.project.description.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.project.description.$error,
+                  }"
+                />
+                <p v-if="form.project.description" class="input-label pt-1">
+                  Preview:
+                </p>
+                <markdown :raw="form.project.description" />
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.project.description.$error,
+                  }"
+                >
+                  Your project needs a description. What are you raising money
+                  for?
+                </p>
+              </div>
+              <div class="form-background">
+                <label for="project-category" class="input-label"
+                  >Category
+                  <p class="input-description">Choose the best fit.</p>
+                </label>
+                <form class="radio-row" id="category-radio">
                   <input
-                    id="project-name"
-                    type="text"
-                    placeholder="ex: clr.fund"
-                    v-model="$v.form.project.name.$model"
+                    id="category-content"
+                    type="radio"
+                    name="project-category"
+                    value="Content"
+                    v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.project.name.$error,
+                      invalid: $v.form.project.category.$error,
                     }"
                   />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.project.name.$error,
-                    }"
+                  <label for="category-content" class="radio-btn"
+                    >Content</label
                   >
-                    Your project needs a name
-                  </p>
-                </div>
-                <div class="form-background">
-                  <label for="project-tagline" class="input-label"
-                    >Tagline</label
-                  >
-                  <p class="input-description">
-                    Describe your project in a sentence. Max characters: 140
-                  </p>
-                  <textarea
-                    id="project-tagline"
-                    placeholder="ex: A quadratic funding protocol"
-                    v-model="$v.form.project.tagline.$model"
+                  <input
+                    id="research"
+                    type="radio"
+                    name="project-category"
+                    value="Research"
+                    v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.project.tagline.$error,
+                      invalid: $v.form.project.category.$error,
                     }"
                   />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden:
-                        !$v.form.project.tagline.$error ||
-                        $v.form.project.tagline.maxLength,
-                    }"
-                  >
-                    This tagline is too long. Be brief for potential
-                    contributors
-                  </p>
-                  <p
-                    :class="{
-                      error: true,
-                      hidden:
-                        !$v.form.project.tagline.$error ||
-                        !$v.form.project.tagline.maxLength,
-                    }"
-                  >
-                    Your project needs a tagline
-                  </p>
-                </div>
-                <div class="form-background">
-                  <label for="project-description" class="input-label">
-                    Description
-                    <p class="input-description">Markdown supported.</p>
-                  </label>
-                  <textarea
-                    id="project-description"
-                    placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
-                    v-model="$v.form.project.description.$model"
+                  <label for="research" class="radio-btn">Research</label>
+                  <input
+                    id="tooling"
+                    type="radio"
+                    name="project-category"
+                    value="Tooling"
+                    v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.project.description.$error,
+                      invalid: $v.form.project.category.$error,
                     }"
                   />
-                  <p v-if="form.project.description" class="input-label pt-1">
-                    Preview:
-                  </p>
-                  <markdown :raw="form.project.description" />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.project.description.$error,
-                    }"
-                  >
-                    Your project needs a description. What are you raising money
-                    for?
-                  </p>
-                </div>
-                <div class="form-background">
-                  <label for="project-category" class="input-label"
-                    >Category
-                    <p class="input-description">Choose the best fit.</p>
-                  </label>
-                  <form class="radio-row" id="category-radio">
-                    <input
-                      id="category-content"
-                      type="radio"
-                      name="project-category"
-                      value="Content"
-                      v-model="$v.form.project.category.$model"
-                      :class="{
-                        input: true,
-                        invalid: $v.form.project.category.$error,
-                      }"
-                    />
-                    <label for="category-content" class="radio-btn"
-                      >Content</label
-                    >
-                    <input
-                      id="research"
-                      type="radio"
-                      name="project-category"
-                      value="Research"
-                      v-model="$v.form.project.category.$model"
-                      :class="{
-                        input: true,
-                        invalid: $v.form.project.category.$error,
-                      }"
-                    />
-                    <label for="research" class="radio-btn">Research</label>
-                    <input
-                      id="tooling"
-                      type="radio"
-                      name="project-category"
-                      value="Tooling"
-                      v-model="$v.form.project.category.$model"
-                      :class="{
-                        input: true,
-                        invalid: $v.form.project.category.$error,
-                      }"
-                    />
-                    <label for="tooling" class="radio-btn">Tooling</label>
-                    <input
-                      id="data"
-                      type="radio"
-                      name="project-category"
-                      value="Data"
-                      v-model="$v.form.project.category.$model"
-                      :class="{
-                        input: true,
-                        invalid: $v.form.project.category.$error,
-                      }"
-                    />
-                    <label for="data" class="radio-btn">Data</label>
-                  </form>
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.project.category.$error,
-                    }"
-                  >
-                    You need to choose a category
-                  </p>
-                </div>
-                <div class="form-background">
-                  <label for="project-problem-space" class="input-label"
-                    >Problem space</label
-                  >
-                  <p class="input-description">
-                    Explain the problems you're trying to solve. Markdown
-                    supported.
-                  </p>
-                  <textarea
-                    id="project-problem-space"
-                    placeholder="ex: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
-                    v-model="$v.form.project.problemSpace.$model"
+                  <label for="tooling" class="radio-btn">Tooling</label>
+                  <input
+                    id="data"
+                    type="radio"
+                    name="project-category"
+                    value="Data"
+                    v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
-                      invalid: $v.form.project.problemSpace.$error,
+                      invalid: $v.form.project.category.$error,
                     }"
                   />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.project.problemSpace.$error,
-                    }"
-                  >
-                    Explain the problem your project solves
-                  </p>
-                  <p v-if="form.project.description" class="input-label pt-1">
-                    Preview:
-                  </p>
-                  <markdown :raw="form.project.problemSpace" />
-                </div>
+                  <label for="data" class="radio-btn">Data</label>
+                </form>
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.project.category.$error,
+                  }"
+                >
+                  You need to choose a category
+                </p>
+              </div>
+              <div class="form-background">
+                <label for="project-problem-space" class="input-label"
+                  >Problem space</label
+                >
+                <p class="input-description">
+                  Explain the problems you're trying to solve. Markdown
+                  supported.
+                </p>
+                <textarea
+                  id="project-problem-space"
+                  placeholder="ex: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
+                  v-model="$v.form.project.problemSpace.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.project.problemSpace.$error,
+                  }"
+                />
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.project.problemSpace.$error,
+                  }"
+                >
+                  Explain the problem your project solves
+                </p>
+                <p v-if="form.project.description" class="input-label pt-1">
+                  Preview:
+                </p>
+                <markdown :raw="form.project.problemSpace" />
               </div>
             </div>
-            <div v-if="currentStep === 1">
-              <h2 class="step-title">Donation details</h2>
-              <div class="inputs">
-                <div class="form-background">
-                  <label for="fund-address" class="input-label"
-                    >Ethereum address</label
-                  >
-                  <p class="input-description">
-                    This doesn’t have to be the same address as the one you use
-                    to send your application.
-                  </p>
-                  <input
-                    id="fund-address"
-                    placeholder="example: 0x123..."
-                    v-model.lazy="$v.form.fund.addressName.$model"
-                    @blur="checkEns"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.fund.addressName.$error,
-                    }"
-                  />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.fund.addressName.$error,
-                    }"
-                  >
-                    Enter a valid ENS or Ethereum 0x address
-                  </p>
-                  <!-- TODO: only validate after user removes focus on input -->
-                </div>
-                <div class="form-background">
-                  <label for="fund-plans" class="input-label"
-                    >How will you spend your funding?</label
-                  >
-                  <p class="input-description">
-                    Potential contributors might convert based on your specific
-                    funding plans. Markdown supported.
-                  </p>
-                  <textarea
-                    id="fund-plans"
-                    placeholder="ex: on our roadmap..."
-                    v-model="$v.form.fund.plans.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.fund.plans.$error,
-                    }"
-                  />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.fund.plans.$error,
-                    }"
-                  >
-                    Let potential contributors know what plans you have for
-                    their donations.
-                  </p>
-                  <p v-if="form.fund.plans" class="input-label pt-1">
-                    Preview:
-                  </p>
-                  <markdown :raw="form.fund.plans" />
-                </div>
+          </div>
+          <div v-if="currentStep === 1">
+            <h2 class="step-title">Donation details</h2>
+            <div class="inputs">
+              <div class="form-background">
+                <label for="fund-address" class="input-label"
+                  >Ethereum address</label
+                >
+                <p class="input-description">
+                  This doesn’t have to be the same address as the one you use to
+                  send your application.
+                </p>
+                <input
+                  id="fund-address"
+                  placeholder="example: 0x123..."
+                  v-model.lazy="$v.form.fund.addressName.$model"
+                  @blur="checkEns"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.fund.addressName.$error,
+                  }"
+                />
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.fund.addressName.$error,
+                  }"
+                >
+                  Enter a valid ENS or Ethereum 0x address
+                </p>
+                <!-- TODO: only validate after user removes focus on input -->
+              </div>
+              <div class="form-background">
+                <label for="fund-plans" class="input-label"
+                  >How will you spend your funding?</label
+                >
+                <p class="input-description">
+                  Potential contributors might convert based on your specific
+                  funding plans. Markdown supported.
+                </p>
+                <textarea
+                  id="fund-plans"
+                  placeholder="ex: on our roadmap..."
+                  v-model="$v.form.fund.plans.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.fund.plans.$error,
+                  }"
+                />
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.fund.plans.$error,
+                  }"
+                >
+                  Let potential contributors know what plans you have for their
+                  donations.
+                </p>
+                <p v-if="form.fund.plans" class="input-label pt-1">Preview:</p>
+                <markdown :raw="form.fund.plans" />
               </div>
             </div>
-            <div v-if="currentStep === 2">
-              <h2 class="step-title">Team details</h2>
-              <p>Tell us about the folks behind your project.</p>
-              <div class="inputs">
-                <div class="form-background">
-                  <label for="team-email" class="input-label"
-                    >Contact email</label
-                  >
-                  <p class="input-description">
-                    For important updates about your project and the funding
-                    round.
-                  </p>
-                  <input
-                    id="team-email"
-                    placeholder="example: doge@goodboi.com"
-                    v-model.lazy="$v.form.team.email.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.team.email.$error,
-                    }"
-                  />
-                  <p class="input-notice">
-                    We won't display this publicly or add it to the on-chain
-                    registry.
-                  </p>
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.team.email.$error,
-                    }"
-                  >
-                    This doesn't look like an email.
-                  </p>
-                </div>
-                <div class="form-background">
-                  <label for="team-name" class="input-label"
-                    >Team name (optional)</label
-                  >
-                  <p class="input-description">If different to project name.</p>
-                  <input
-                    id="team-name"
-                    type="email"
-                    placeholder="ex: clr.fund"
-                    v-model="$v.form.team.name.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.team.name.$error,
-                    }"
-                  />
-                </div>
-                <div class="form-background">
-                  <label for="team-desc" class="input-label"
-                    >Description (optional)</label
-                  >
-                  <p class="input-description">
-                    If different to project description. Markdown supported.
-                  </p>
-                  <textarea
-                    id="team-desc"
-                    placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
-                    v-model="$v.form.team.description.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.team.description.$error,
-                    }"
-                  />
-                  <p v-if="form.team.description" class="input-label pt-1">
-                    Preview:
-                  </p>
-                  <markdown :raw="form.team.description" />
-                </div>
+          </div>
+          <div v-if="currentStep === 2">
+            <h2 class="step-title">Team details</h2>
+            <p>Tell us about the folks behind your project.</p>
+            <div class="inputs">
+              <div class="form-background">
+                <label for="team-email" class="input-label"
+                  >Contact email</label
+                >
+                <p class="input-description">
+                  For important updates about your project and the funding
+                  round.
+                </p>
+                <input
+                  id="team-email"
+                  placeholder="example: doge@goodboi.com"
+                  v-model.lazy="$v.form.team.email.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.team.email.$error,
+                  }"
+                />
+                <p class="input-notice">
+                  We won't display this publicly or add it to the on-chain
+                  registry.
+                </p>
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.team.email.$error,
+                  }"
+                >
+                  This doesn't look like an email.
+                </p>
+              </div>
+              <div class="form-background">
+                <label for="team-name" class="input-label"
+                  >Team name (optional)</label
+                >
+                <p class="input-description">If different to project name.</p>
+                <input
+                  id="team-name"
+                  type="email"
+                  placeholder="ex: clr.fund"
+                  v-model="$v.form.team.name.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.team.name.$error,
+                  }"
+                />
+              </div>
+              <div class="form-background">
+                <label for="team-desc" class="input-label"
+                  >Description (optional)</label
+                >
+                <p class="input-description">
+                  If different to project description. Markdown supported.
+                </p>
+                <textarea
+                  id="team-desc"
+                  placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                  v-model="$v.form.team.description.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.team.description.$error,
+                  }"
+                />
+                <p v-if="form.team.description" class="input-label pt-1">
+                  Preview:
+                </p>
+                <markdown :raw="form.team.description" />
               </div>
             </div>
-            <div v-if="currentStep === 3">
-              <h2 class="step-title">Links</h2>
-              <p>
-                Give contributors some links to check out to learn more about
-                your project. Provide at least one.
-              </p>
-              <div class="inputs">
-                <div class="form-background">
-                  <label for="links-github" class="input-label">GitHub</label>
-                  <input
-                    id="links-github"
-                    type="link"
-                    placeholder="example: https://github.com/ethereum/clrfund"
-                    v-model.lazy="$v.form.links.github.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.links.github.$error,
-                    }"
-                  />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.links.github.$error,
-                    }"
-                  >
-                    This doesn't look like a valid URL
-                  </p>
-                  <!-- TODO: only validate after user removes focus on input -->
-                </div>
-                <div class="form-background">
-                  <label for="links-radicle" class="input-label">Radicle</label>
-                  <input
-                    id="links-radicle"
-                    type="link"
-                    placeholder="example: https://radicle.com/ethereum/clrfund"
-                    v-model.lazy="$v.form.links.radicle.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.links.radicle.$error,
-                    }"
-                  />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.links.radicle.$error,
-                    }"
-                  >
-                    This doesn't look like a valid URL
-                  </p>
-                </div>
-                <div class="form-background">
-                  <label for="links-website" class="input-label">Website</label>
-                  <input
-                    id="links-website"
-                    type="link"
-                    placeholder="example: https://ethereum.foundation"
-                    v-model.lazy="$v.form.links.website.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.links.website.$error,
-                    }"
-                  />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.links.website.$error,
-                    }"
-                  >
-                    This doesn't look like a valid URL
-                  </p>
-                </div>
-                <div class="form-background">
-                  <label for="links-twitter" class="input-label">Twitter</label>
-                  <input
-                    id="links-twitter"
-                    type="link"
-                    placeholder="example: https://twitter.com/ethereum"
-                    v-model.lazy="$v.form.links.twitter.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.links.twitter.$error,
-                    }"
-                  />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.links.twitter.$error,
-                    }"
-                  >
-                    This doesn't look like a valid URL
-                  </p>
-                </div>
-                <div class="form-background">
-                  <label for="links-discord" class="input-label">Discord</label>
-                  <input
-                    id="links-discord"
-                    type="link"
-                    placeholder="ex: https://discord.gg/5Prub9zbGz"
-                    class="input"
-                    v-model.lazy="$v.form.links.discord.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.links.discord.$error,
-                    }"
-                  />
-                  <p
-                    :class="{
-                      error: true,
-                      hidden: !$v.form.links.discord.$error,
-                    }"
-                  >
-                    This doesn't look like a valid URL
-                  </p>
-                </div>
+          </div>
+          <div v-if="currentStep === 3">
+            <h2 class="step-title">Links</h2>
+            <p>
+              Give contributors some links to check out to learn more about your
+              project. Provide at least one.
+            </p>
+            <div class="inputs">
+              <div class="form-background">
+                <label for="links-github" class="input-label">GitHub</label>
+                <input
+                  id="links-github"
+                  type="link"
+                  placeholder="example: https://github.com/ethereum/clrfund"
+                  v-model.lazy="$v.form.links.github.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.links.github.$error,
+                  }"
+                />
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.links.github.$error,
+                  }"
+                >
+                  This doesn't look like a valid URL
+                </p>
+                <!-- TODO: only validate after user removes focus on input -->
+              </div>
+              <div class="form-background">
+                <label for="links-radicle" class="input-label">Radicle</label>
+                <input
+                  id="links-radicle"
+                  type="link"
+                  placeholder="example: https://radicle.com/ethereum/clrfund"
+                  v-model.lazy="$v.form.links.radicle.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.links.radicle.$error,
+                  }"
+                />
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.links.radicle.$error,
+                  }"
+                >
+                  This doesn't look like a valid URL
+                </p>
+              </div>
+              <div class="form-background">
+                <label for="links-website" class="input-label">Website</label>
+                <input
+                  id="links-website"
+                  type="link"
+                  placeholder="example: https://ethereum.foundation"
+                  v-model.lazy="$v.form.links.website.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.links.website.$error,
+                  }"
+                />
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.links.website.$error,
+                  }"
+                >
+                  This doesn't look like a valid URL
+                </p>
+              </div>
+              <div class="form-background">
+                <label for="links-twitter" class="input-label">Twitter</label>
+                <input
+                  id="links-twitter"
+                  type="link"
+                  placeholder="example: https://twitter.com/ethereum"
+                  v-model.lazy="$v.form.links.twitter.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.links.twitter.$error,
+                  }"
+                />
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.links.twitter.$error,
+                  }"
+                >
+                  This doesn't look like a valid URL
+                </p>
+              </div>
+              <div class="form-background">
+                <label for="links-discord" class="input-label">Discord</label>
+                <input
+                  id="links-discord"
+                  type="link"
+                  placeholder="ex: https://discord.gg/5Prub9zbGz"
+                  class="input"
+                  v-model.lazy="$v.form.links.discord.$model"
+                  :class="{
+                    input: true,
+                    invalid: $v.form.links.discord.$error,
+                  }"
+                />
+                <p
+                  :class="{
+                    error: true,
+                    hidden: !$v.form.links.discord.$error,
+                  }"
+                >
+                  This doesn't look like a valid URL
+                </p>
               </div>
             </div>
-            <div v-if="currentStep === 4">
-              <h2 class="step-title">Images</h2>
-              <p>
-                We'll upload your images to IPFS, a decentralized storage
-                platform.
-                <links to="https://ipfs.io/#how">More on IPFS</links>
-              </p>
-              <div class="inputs">
-                <div class="form-background">
-                  <ipfs-image-upload
-                    label="Banner image"
-                    description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF"
-                    :onUpload="handleUpload"
-                    formProp="bannerHash"
-                  />
-                </div>
-                <div class="form-background">
-                  <ipfs-image-upload
-                    label="Thumbnail image"
-                    description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF"
-                    :onUpload="handleUpload"
-                    formProp="thumbnailHash"
-                  />
-                </div>
+          </div>
+          <div v-if="currentStep === 4">
+            <h2 class="step-title">Images</h2>
+            <p>
+              We'll upload your images to IPFS, a decentralized storage
+              platform.
+              <links to="https://ipfs.io/#how">More on IPFS</links>
+            </p>
+            <div class="inputs">
+              <div class="form-background">
+                <ipfs-image-upload
+                  label="Banner image"
+                  description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF"
+                  :onUpload="handleUpload"
+                  formProp="bannerHash"
+                />
+              </div>
+              <div class="form-background">
+                <ipfs-image-upload
+                  label="Thumbnail image"
+                  description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF"
+                  :onUpload="handleUpload"
+                  formProp="thumbnailHash"
+                />
               </div>
             </div>
-          </form>
+          </div>
           <div v-if="currentStep === 5" id="summary">
             <project-profile
               v-if="showSummaryPreview"
