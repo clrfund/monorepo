@@ -485,8 +485,8 @@ export default class Cart extends Vue {
   }
 
   formatAmount(value: BigNumber): string {
-    const decimals = this.$store.state.currentRound.nativeTokenDecimals
-    return formatAmount(value, decimals)
+    const { nativeTokenDecimals } = this.$store.state.currentRound
+    return formatAmount(value, nativeTokenDecimals)
   }
 
   isAmountValid(value: string): boolean {

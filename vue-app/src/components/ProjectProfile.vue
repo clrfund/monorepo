@@ -53,20 +53,7 @@
             <span>In cart 🎉</span>
           </button>
         </div>
-        <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
-        <button
-          v-if="hasClaimBtn()"
-          class="btn-primary"
-          :disabled="!canClaim()"
-          @click="claim()"
-        >
-          <template v-if="claimed">
-            Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-          </template>
-          <template v-else>
-            Claim {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-          </template>
-        </button>
+        <claim-button :project="project" />
       </div>
       <div class="project-section">
         <h2>About the project</h2>
@@ -129,8 +116,6 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 import { FixedNumber } from 'ethers'
-import { Tally } from '@/api/tally'
-import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { Project } from '@/api/projects'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
@@ -147,9 +132,7 @@ import Links from '@/components/Links.vue'
 
 @Component({ components: { Markdown, Info, LinkBox, CopyButton, Links } })
 export default class ProjectProfile extends Vue {
-  allocatedAmount: FixedNumber | null = null
   contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
-  claimed: boolean | null = null
   @Prop() project!: Project
   @Prop() klerosCurateUrl!: string | null
   @Prop() previewMode!: boolean
@@ -159,28 +142,6 @@ export default class ProjectProfile extends Vue {
     if (this.project.address) {
       this.ens = await ensLookup(this.project.address)
     }
-  }
-
-  private async checkAllocation(tally: Tally | null) {
-    const currentRound = this.$store.state.currentRound
-    if (
-      !this.project ||
-      !currentRound ||
-      currentRound.status !== RoundStatus.Finalized ||
-      !tally
-    ) {
-      return
-    }
-    this.allocatedAmount = await getAllocatedAmount(
-      currentRound.fundingRoundAddress,
-      currentRound.nativeTokenDecimals,
-      tally.results.tally[this.project.index],
-      tally.totalVoiceCreditsPerVoteOption.tally[this.project.index]
-    )
-    this.claimed = await isFundsClaimed(
-      currentRound.fundingRoundAddress,
-      this.project.index
-    )
   }
 
   get inCart(): boolean {
@@ -224,45 +185,6 @@ export default class ProjectProfile extends Vue {
       isCleared: false,
     })
     this.$store.dispatch(SAVE_CART)
-  }
-
-  hasClaimBtn(): boolean {
-    const currentRound = this.$store.state.currentRound
-    return (
-      currentRound &&
-      currentRound.status === RoundStatus.Finalized &&
-      this.project !== null &&
-      this.project.index !== 0 &&
-      this.project.isHidden === false &&
-      this.allocatedAmount !== null &&
-      this.claimed !== null
-    )
-  }
-
-  canClaim(): boolean {
-    return (
-      this.hasClaimBtn() &&
-      this.$store.state.currentUser &&
-      this.claimed === false
-    )
-  }
-
-  formatAmount(value: FixedNumber | null): string {
-    const decimals = 6
-    return value ? value.toUnsafeFloat().toFixed(decimals) : ''
-  }
-
-  claim() {
-    this.$modal.show(
-      ClaimModal,
-      { project: this.project },
-      {},
-      {
-        closed: () => {
-          this.checkAllocation(this.$store.state.tally)
-        },
-      }
-    )
   }
 
   get blockExplorerUrl(): string {

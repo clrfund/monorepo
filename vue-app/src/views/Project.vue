@@ -15,21 +15,7 @@
           v-if="shouldShowCartInput && hasContributeBtn()"
           :project="project"
         />
-
-        <!-- TODO: EXTRACT INTO COMPONENT: INPUT BUTTON -->
-        <button
-          v-if="hasClaimBtn()"
-          class="btn-primary"
-          :disabled="!canClaim()"
-          @click="claim()"
-        >
-          <template v-if="claimed">
-            Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-          </template>
-          <template v-else>
-            Claim {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-          </template>
-        </button>
+        <claim-button :project="project" />
         <button
           class="donate-btn-full"
           v-if="
@@ -50,20 +36,17 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 
-import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
-import { recipientRegistryType } from '@/api/core'
 import {
   Project,
   getRecipientRegistryAddress,
   getProject,
 } from '@/api/projects'
-import { RoundStatus, getCurrentRound } from '@/api/round'
-import { Tally } from '@/api/tally'
-import ClaimModal from '@/components/ClaimModal.vue'
+import { getCurrentRound } from '@/api/round'
 import Loader from '@/components/Loader.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import LinkBox from '@/components/LinkBox.vue'
+import ClaimButton from '@/components/ClaimButton.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -79,35 +62,13 @@ import { markdown } from '@/utils/markdown'
   metaInfo() {
     return { title: (this as any).project?.name || '' }
   },
-  components: { Loader, ProjectProfile, AddToCartButton, LinkBox },
+  components: { Loader, ProjectProfile, AddToCartButton, LinkBox, ClaimButton },
 })
 export default class ProjectView extends Vue {
   project: Project | null = null
   allocatedAmount: FixedNumber | null = null
   claimed: boolean | null = null
   isLoading = true
-
-  private async checkAllocation(tally: Tally | null) {
-    const currentRound = this.$store.state.currentRound
-    if (
-      !this.project ||
-      !currentRound ||
-      currentRound.status !== RoundStatus.Finalized ||
-      !tally
-    ) {
-      return
-    }
-    this.allocatedAmount = await getAllocatedAmount(
-      currentRound.fundingRoundAddress,
-      currentRound.nativeTokenDecimals,
-      tally.results.tally[this.project.index],
-      tally.totalVoiceCreditsPerVoteOption.tally[this.project.index]
-    )
-    this.claimed = await isFundsClaimed(
-      currentRound.fundingRoundAddress,
-      this.project.index
-    )
-  }
 
   async created() {
     const roundAddress =
@@ -146,31 +107,7 @@ export default class ProjectView extends Vue {
     } else {
       this.project = project
     }
-    // Wait for tally to load and get claim status
-    this.$store.watch((state) => state.tally, this.checkAllocation)
-    this.checkAllocation(this.$store.state.tally)
     this.isLoading = false
-  }
-
-  goBackToList(): void {
-    const roundAddress = this.$store.state.currentRound?.fundingRoundAddress
-    if (roundAddress) {
-      this.$router.push({ name: 'round', params: { address: roundAddress } })
-    } else {
-      this.$router.push({ name: 'projects' })
-    }
-  }
-
-  get klerosCurateUrl(): string | null {
-    if (recipientRegistryType === 'kleros') {
-      return this.project?.extra?.tcrItemUrl || null
-    }
-    return null
-  }
-
-  get tokenSymbol(): string {
-    const currentRound = this.$store.state.currentRound
-    return currentRound ? currentRound.nativeTokenSymbol : ''
   }
 
   get isCartToggledOpen(): boolean {
@@ -187,45 +124,6 @@ export default class ProjectView extends Vue {
       this.$store.state.currentRound &&
       this.project !== null &&
       this.project.index !== 0
-    )
-  }
-
-  hasClaimBtn(): boolean {
-    const currentRound = this.$store.state.currentRound
-    return (
-      currentRound &&
-      currentRound.status === RoundStatus.Finalized &&
-      this.project !== null &&
-      this.project.index !== 0 &&
-      this.project.isHidden === false &&
-      this.allocatedAmount !== null &&
-      this.claimed !== null
-    )
-  }
-
-  canClaim(): boolean {
-    return (
-      this.hasClaimBtn() &&
-      this.$store.state.currentUser &&
-      this.claimed === false
-    )
-  }
-
-  formatAmount(value: FixedNumber | null): string {
-    const decimals = 6
-    return value ? value.toUnsafeFloat().toFixed(decimals) : ''
-  }
-
-  claim() {
-    this.$modal.show(
-      ClaimModal,
-      { project: this.project },
-      {},
-      {
-        closed: () => {
-          this.checkAllocation(this.$store.state.tally)
-        },
-      }
     )
   }
 

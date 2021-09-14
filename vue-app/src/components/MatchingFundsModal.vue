@@ -21,7 +21,8 @@
         </div>
       </form>
       <div v-if="!isBalanceSufficient" class="balance-check-warning">
-        ⚠️ You only have {{ renderBalance }} {{ tokenSymbol }}
+        ⚠️ You only have {{ renderBalance }}
+        {{ tokenSymbol }}
       </div>
       <div class="btn-row">
         <button class="btn-secondary" @click="$emit('close')">Cancel</button>
@@ -36,7 +37,7 @@
     </div>
     <div v-if="step === 2">
       <h3>
-        Contribute {{ amount }} {{ tokenSymbol }} to the
+        Contribute {{ renderContributionAmount }} {{ tokenSymbol }} to the
         {{ isRoundFinished() ? 'next' : 'current' }} round
       </h3>
       <transaction
@@ -47,7 +48,10 @@
     </div>
     <div v-if="step === 3">
       <div class="big-emoji">💦</div>
-      <h3>You just topped up the pool by {{ amount }} {{ tokenSymbol }}!</h3>
+      <h3>
+        You just topped up the pool by {{ renderContributionAmount }}
+        {{ tokenSymbol }}!
+      </h3>
       <div class="mb2">Thanks for helping out all our projects.</div>
       <button class="btn-primary" @click="$emit('close')">Done</button>
     </div>
@@ -61,7 +65,8 @@ import { BigNumber, Contract, Signer } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
-import { commify, formatUnits } from '@ethersproject/units'
+import { formatAmount } from '@/utils/amounts'
+import { formatUnits } from '@ethersproject/units'
 
 import { User } from '@/api/user'
 import { ERC20 } from '@/api/abi'
@@ -99,8 +104,15 @@ export default class MatchingFundsModal extends Vue {
   }
 
   get renderBalance(): string | null {
-    if (this.balance === null) return null
-    return commify(this.balance)
+    const balance: BigNumber | null | undefined = this.currentUser?.balance
+    if (balance === null || typeof balance === 'undefined') return null
+    const { nativeTokenDecimals } = this.$store.state.currentRound
+    return formatAmount(balance, nativeTokenDecimals, null, 5)
+  }
+
+  get renderContributionAmount(): string | null {
+    const { nativeTokenDecimals } = this.$store.state.currentRound
+    return formatAmount(this.amount, nativeTokenDecimals, null, null)
   }
 
   get isBalanceSufficient(): boolean {
@@ -148,6 +160,12 @@ export default class MatchingFundsModal extends Vue {
       )
     } catch (error) {
       this.transferTxError = error.message
+      if (
+        error.message.indexOf('Nonce too high') >= 0 &&
+        process.env.NODE_ENV === 'development'
+      ) {
+        this.transferTxError = 'Have you been buidling?? Reset your nonce! 🪄'
+      }
       return
     }
     this.step += 1
