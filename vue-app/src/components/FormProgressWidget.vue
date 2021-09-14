@@ -68,7 +68,6 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
 import Links from '@/components/Links.vue'
 
-// TODO make `furthestStep` logic optional (not used in BrightID flow)
 @Component({
   components: {
     FormNavigation,

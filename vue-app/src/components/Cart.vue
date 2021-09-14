@@ -297,7 +297,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
-import { Network } from '@ethersproject/networks'
 import { parseFixed } from '@ethersproject/bignumber'
 import { commify, formatUnits } from '@ethersproject/units'
 import { DateTime } from 'luxon'
@@ -325,7 +324,6 @@ import {
   TOGGLE_SHOW_CART_PANEL,
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
-import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
 @Component({

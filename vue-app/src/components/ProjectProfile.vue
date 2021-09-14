@@ -265,15 +265,6 @@ export default class ProjectProfile extends Vue {
         margin-bottom: 2rem;
       }
 
-      .tag {
-        padding: 0.5rem 0.75rem;
-        background: $bg-light-color;
-        color: $button-disabled-text-color;
-        font-family: 'Glacial Indifference', sans-serif;
-        width: fit-content;
-        border-radius: 0.25rem;
-      }
-
       .team-byline {
         line-height: 150%;
       }
@@ -422,18 +413,6 @@ export default class ProjectProfile extends Vue {
     text-align: center;
     box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
     z-index: 1;
-  }
-
-  .input-button {
-    background: #f7f7f7;
-    border-radius: 2rem;
-    border: 2px solid $bg-primary-color;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: black;
-    padding: 0.125rem;
-    z-index: 100;
   }
 
   .input {

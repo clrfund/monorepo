@@ -32,9 +32,8 @@
         <div v-if="isTxRejected" class="warning-text">
           You rejected the transaction in your wallet
         </div>
-        <!-- TODO update -->
         <div v-if="isWrongNetwork" class="warning-text">
-          We're on Optimism Network.<br />
+          We're on {{ chainLabel }}.<br />
           Switch over to the right network in your wallet.
         </div>
         <div v-if="isPending">
@@ -120,6 +119,7 @@ import WalletWidget from '@/components/WalletWidget.vue'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction } from '@/utils/contracts'
 import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
+import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
 @Component({
   components: {
@@ -207,6 +207,11 @@ export default class RecipientSubmissionWidget extends Vue {
       ).toFixed(2)
     }
     return '-'
+  }
+
+  get chainLabel(): string {
+    const chain = CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+    return chain.label
   }
 
   // TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
