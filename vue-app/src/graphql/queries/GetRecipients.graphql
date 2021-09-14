@@ -6,6 +6,8 @@ query GetRecipients($registryAddress: ID!) {
       requester
       recipientAddress
       recipientMetadata
+      requestSubmittedHash
+      requestResolvedHash
       submissionTime
       rejected
       verified

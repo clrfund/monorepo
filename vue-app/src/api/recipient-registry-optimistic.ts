@@ -173,7 +173,8 @@ export async function getRequests(
       submissionTime + registryInfo.challengePeriodDuration
     )
     const request: Request = {
-      transactionHash: recipient.id, // TODO: `event.transactionHash` to be added into the subgraph. Leaving recipientId to avoid errors
+      transactionHash:
+        recipient.requestResolvedHash || recipient.requestSubmittedHash,
       type: RequestType[requestType],
       status: RequestStatus.Submitted,
       acceptanceDate,
@@ -438,8 +439,7 @@ export async function getProject(
   const requestType = Number(recipient.requestType)
   if (requestType === RequestTypeCode.Registration) {
     if (recipient.verified) {
-      // TODO: subgraph is not storing the recipient index
-      project.index = 0
+      project.index = recipient.recipientIndex
     } else {
       return null
     }

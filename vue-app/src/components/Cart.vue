@@ -595,7 +595,7 @@ export default class Cart extends Vue {
         } else if (currentRound.contributors >= currentRound.maxContributors) {
           return 'The limit on the number of contributors has been reached'
         } else if (total.eq(BigNumber.from(0)) && !this.isCartEmpty) {
-          return `Your total must be more then 0 ${currentRound.nativeTokenSymbol}`
+          return `Your total must be more than 0 ${currentRound.nativeTokenSymbol}`
         } else if (currentUser.balance === null) {
           return '' // No error: waiting for balance
         } else if (total.gt(currentUser.balance)) {

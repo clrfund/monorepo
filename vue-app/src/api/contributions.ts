@@ -70,21 +70,25 @@ export async function getContributionAmount(
   contributorAddress: string
 ): Promise<BigNumber> {
   const data = await sdk.GetContributionsAmount({
-    fundingRoundAddress,
+    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     contributorAddress,
   })
 
-  if (!data.fundingRound?.contributors?.[0].contributions?.length) {
+  if (!data.fundingRound?.contributors?.[0]?.contributions?.length) {
     return BigNumber.from(0)
   }
 
-  return data.fundingRound.contributors[0].contributions[0].amount
+  return BigNumber.from(
+    data.fundingRound.contributors[0].contributions[0].amount
+  )
 }
 
 export async function getTotalContributed(
   fundingRoundAddress: string
 ): Promise<{ count: number; amount: BigNumber }> {
-  const data = await sdk.GetTotalContributed({ fundingRoundAddress })
+  const data = await sdk.GetTotalContributed({
+    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+  })
 
   if (!data.fundingRound?.contributors) {
     return { count: 0, amount: BigNumber.from(0) }
@@ -92,7 +96,6 @@ export async function getTotalContributed(
 
   const count = parseInt(data.fundingRound.contributorCount)
 
-  // TODO: lets see if we can add this total amount into the subgraph itself
   const amount = data.fundingRound.contributors.reduce((total, contributor) => {
     if (!contributor.contributions?.length) {
       return total
@@ -121,11 +124,9 @@ export async function hasContributorVoted(
   fundingRoundAddress: string,
   contributorAddress: string
 ): Promise<boolean> {
-  // TODO: handle this event in the subgraph.
-
-  // const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
-  // const filter = fundingRound.filters.Voted(contributorAddress)
-  // const events = await fundingRound.queryFilter(filter, 0)
-  // return events.length > 0
-  return false
+  const data = await sdk.GetContributorVotes({
+    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+    contributorAddress,
+  })
+  return !!data.fundingRound?.contributors?.[0]?.votes?.length
 }

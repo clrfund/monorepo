@@ -175,7 +175,7 @@ export default class ProjectProfile extends Vue {
     )
     this.claimed = await isFundsClaimed(
       currentRound.fundingRoundAddress,
-      this.project.index
+      this.project.id
     )
   }
 
