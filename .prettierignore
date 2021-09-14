@@ -5,8 +5,11 @@ build
 node_modules
 snark-params
 vue-app/gundata/
-vue-app/src/graphql/API.ts
 yarn.lock
+
+# auto-generated files
+vue-app/src/graphql/API.ts
+subgraph/generated
 
 # local config
 vetur.config.js

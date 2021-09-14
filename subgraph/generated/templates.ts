@@ -3,47 +3,47 @@
 import {
   Address,
   DataSourceTemplate,
-  DataSourceContext,
-} from '@graphprotocol/graph-ts'
+  DataSourceContext
+} from "@graphprotocol/graph-ts";
 
 export class FundingRound extends DataSourceTemplate {
   static create(address: Address): void {
-    DataSourceTemplate.create('FundingRound', [address.toHex()])
+    DataSourceTemplate.create("FundingRound", [address.toHex()]);
   }
 
   static createWithContext(address: Address, context: DataSourceContext): void {
     DataSourceTemplate.createWithContext(
-      'FundingRound',
+      "FundingRound",
       [address.toHex()],
       context
-    )
+    );
   }
 }
 
 export class OptimisticRecipientRegistry extends DataSourceTemplate {
   static create(address: Address): void {
-    DataSourceTemplate.create('OptimisticRecipientRegistry', [address.toHex()])
+    DataSourceTemplate.create("OptimisticRecipientRegistry", [address.toHex()]);
   }
 
   static createWithContext(address: Address, context: DataSourceContext): void {
     DataSourceTemplate.createWithContext(
-      'OptimisticRecipientRegistry',
+      "OptimisticRecipientRegistry",
       [address.toHex()],
       context
-    )
+    );
   }
 }
 
 export class BrightIdUserRegistry extends DataSourceTemplate {
   static create(address: Address): void {
-    DataSourceTemplate.create('BrightIdUserRegistry', [address.toHex()])
+    DataSourceTemplate.create("BrightIdUserRegistry", [address.toHex()]);
   }
 
   static createWithContext(address: Address, context: DataSourceContext): void {
     DataSourceTemplate.createWithContext(
-      'BrightIdUserRegistry',
+      "BrightIdUserRegistry",
       [address.toHex()],
       context
-    )
+    );
   }
 }

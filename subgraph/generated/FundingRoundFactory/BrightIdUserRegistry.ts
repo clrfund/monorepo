@@ -7,410 +7,410 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt,
-} from '@graphprotocol/graph-ts'
+  BigInt
+} from "@graphprotocol/graph-ts";
 
 export class OwnershipTransferred extends ethereum.Event {
   get params(): OwnershipTransferred__Params {
-    return new OwnershipTransferred__Params(this)
+    return new OwnershipTransferred__Params(this);
   }
 }
 
 export class OwnershipTransferred__Params {
-  _event: OwnershipTransferred
+  _event: OwnershipTransferred;
 
   constructor(event: OwnershipTransferred) {
-    this._event = event
+    this._event = event;
   }
 
   get previousOwner(): Address {
-    return this._event.parameters[0].value.toAddress()
+    return this._event.parameters[0].value.toAddress();
   }
 
   get newOwner(): Address {
-    return this._event.parameters[1].value.toAddress()
+    return this._event.parameters[1].value.toAddress();
   }
 }
 
 export class SetBrightIdSettings extends ethereum.Event {
   get params(): SetBrightIdSettings__Params {
-    return new SetBrightIdSettings__Params(this)
+    return new SetBrightIdSettings__Params(this);
   }
 }
 
 export class SetBrightIdSettings__Params {
-  _event: SetBrightIdSettings
+  _event: SetBrightIdSettings;
 
   constructor(event: SetBrightIdSettings) {
-    this._event = event
+    this._event = event;
   }
 
   get context(): Bytes {
-    return this._event.parameters[0].value.toBytes()
+    return this._event.parameters[0].value.toBytes();
   }
 
   get verifier(): Address {
-    return this._event.parameters[1].value.toAddress()
+    return this._event.parameters[1].value.toAddress();
   }
 }
 
 export class Sponsor extends ethereum.Event {
   get params(): Sponsor__Params {
-    return new Sponsor__Params(this)
+    return new Sponsor__Params(this);
   }
 }
 
 export class Sponsor__Params {
-  _event: Sponsor
+  _event: Sponsor;
 
   constructor(event: Sponsor) {
-    this._event = event
+    this._event = event;
   }
 
   get addr(): Address {
-    return this._event.parameters[0].value.toAddress()
+    return this._event.parameters[0].value.toAddress();
   }
 }
 
 export class BrightIdUserRegistry__verificationsResult {
-  value0: BigInt
-  value1: boolean
+  value0: BigInt;
+  value1: boolean;
 
   constructor(value0: BigInt, value1: boolean) {
-    this.value0 = value0
-    this.value1 = value1
+    this.value0 = value0;
+    this.value1 = value1;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>()
-    map.set('value0', ethereum.Value.fromUnsignedBigInt(this.value0))
-    map.set('value1', ethereum.Value.fromBoolean(this.value1))
-    return map
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
+    map.set("value1", ethereum.Value.fromBoolean(this.value1));
+    return map;
   }
 }
 
 export class BrightIdUserRegistry extends ethereum.SmartContract {
   static bind(address: Address): BrightIdUserRegistry {
-    return new BrightIdUserRegistry('BrightIdUserRegistry', address)
+    return new BrightIdUserRegistry("BrightIdUserRegistry", address);
   }
 
   context(): Bytes {
-    let result = super.call('context', 'context():(bytes32)', [])
+    let result = super.call("context", "context():(bytes32)", []);
 
-    return result[0].toBytes()
+    return result[0].toBytes();
   }
 
   try_context(): ethereum.CallResult<Bytes> {
-    let result = super.tryCall('context', 'context():(bytes32)', [])
+    let result = super.tryCall("context", "context():(bytes32)", []);
     if (result.reverted) {
-      return new ethereum.CallResult()
+      return new ethereum.CallResult();
     }
-    let value = result.value
-    return ethereum.CallResult.fromValue(value[0].toBytes())
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
   isOwner(): boolean {
-    let result = super.call('isOwner', 'isOwner():(bool)', [])
+    let result = super.call("isOwner", "isOwner():(bool)", []);
 
-    return result[0].toBoolean()
+    return result[0].toBoolean();
   }
 
   try_isOwner(): ethereum.CallResult<boolean> {
-    let result = super.tryCall('isOwner', 'isOwner():(bool)', [])
+    let result = super.tryCall("isOwner", "isOwner():(bool)", []);
     if (result.reverted) {
-      return new ethereum.CallResult()
+      return new ethereum.CallResult();
     }
-    let value = result.value
-    return ethereum.CallResult.fromValue(value[0].toBoolean())
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   isVerifiedUser(_user: Address): boolean {
     let result = super.call(
-      'isVerifiedUser',
-      'isVerifiedUser(address):(bool)',
+      "isVerifiedUser",
+      "isVerifiedUser(address):(bool)",
       [ethereum.Value.fromAddress(_user)]
-    )
+    );
 
-    return result[0].toBoolean()
+    return result[0].toBoolean();
   }
 
   try_isVerifiedUser(_user: Address): ethereum.CallResult<boolean> {
     let result = super.tryCall(
-      'isVerifiedUser',
-      'isVerifiedUser(address):(bool)',
+      "isVerifiedUser",
+      "isVerifiedUser(address):(bool)",
       [ethereum.Value.fromAddress(_user)]
-    )
+    );
     if (result.reverted) {
-      return new ethereum.CallResult()
+      return new ethereum.CallResult();
     }
-    let value = result.value
-    return ethereum.CallResult.fromValue(value[0].toBoolean())
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   owner(): Address {
-    let result = super.call('owner', 'owner():(address)', [])
+    let result = super.call("owner", "owner():(address)", []);
 
-    return result[0].toAddress()
+    return result[0].toAddress();
   }
 
   try_owner(): ethereum.CallResult<Address> {
-    let result = super.tryCall('owner', 'owner():(address)', [])
+    let result = super.tryCall("owner", "owner():(address)", []);
     if (result.reverted) {
-      return new ethereum.CallResult()
+      return new ethereum.CallResult();
     }
-    let value = result.value
-    return ethereum.CallResult.fromValue(value[0].toAddress())
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
   verifications(param0: Address): BrightIdUserRegistry__verificationsResult {
     let result = super.call(
-      'verifications',
-      'verifications(address):(uint256,bool)',
+      "verifications",
+      "verifications(address):(uint256,bool)",
       [ethereum.Value.fromAddress(param0)]
-    )
+    );
 
     return new BrightIdUserRegistry__verificationsResult(
       result[0].toBigInt(),
       result[1].toBoolean()
-    )
+    );
   }
 
   try_verifications(
     param0: Address
   ): ethereum.CallResult<BrightIdUserRegistry__verificationsResult> {
     let result = super.tryCall(
-      'verifications',
-      'verifications(address):(uint256,bool)',
+      "verifications",
+      "verifications(address):(uint256,bool)",
       [ethereum.Value.fromAddress(param0)]
-    )
+    );
     if (result.reverted) {
-      return new ethereum.CallResult()
+      return new ethereum.CallResult();
     }
-    let value = result.value
+    let value = result.value;
     return ethereum.CallResult.fromValue(
       new BrightIdUserRegistry__verificationsResult(
         value[0].toBigInt(),
         value[1].toBoolean()
       )
-    )
+    );
   }
 
   verifier(): Address {
-    let result = super.call('verifier', 'verifier():(address)', [])
+    let result = super.call("verifier", "verifier():(address)", []);
 
-    return result[0].toAddress()
+    return result[0].toAddress();
   }
 
   try_verifier(): ethereum.CallResult<Address> {
-    let result = super.tryCall('verifier', 'verifier():(address)', [])
+    let result = super.tryCall("verifier", "verifier():(address)", []);
     if (result.reverted) {
-      return new ethereum.CallResult()
+      return new ethereum.CallResult();
     }
-    let value = result.value
-    return ethereum.CallResult.fromValue(value[0].toAddress())
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 }
 
 export class ConstructorCall extends ethereum.Call {
   get inputs(): ConstructorCall__Inputs {
-    return new ConstructorCall__Inputs(this)
+    return new ConstructorCall__Inputs(this);
   }
 
   get outputs(): ConstructorCall__Outputs {
-    return new ConstructorCall__Outputs(this)
+    return new ConstructorCall__Outputs(this);
   }
 }
 
 export class ConstructorCall__Inputs {
-  _call: ConstructorCall
+  _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
-    this._call = call
+    this._call = call;
   }
 
   get _context(): Bytes {
-    return this._call.inputValues[0].value.toBytes()
+    return this._call.inputValues[0].value.toBytes();
   }
 
   get _verifier(): Address {
-    return this._call.inputValues[1].value.toAddress()
+    return this._call.inputValues[1].value.toAddress();
   }
 }
 
 export class ConstructorCall__Outputs {
-  _call: ConstructorCall
+  _call: ConstructorCall;
 
   constructor(call: ConstructorCall) {
-    this._call = call
+    this._call = call;
   }
 }
 
 export class RegisterCall extends ethereum.Call {
   get inputs(): RegisterCall__Inputs {
-    return new RegisterCall__Inputs(this)
+    return new RegisterCall__Inputs(this);
   }
 
   get outputs(): RegisterCall__Outputs {
-    return new RegisterCall__Outputs(this)
+    return new RegisterCall__Outputs(this);
   }
 }
 
 export class RegisterCall__Inputs {
-  _call: RegisterCall
+  _call: RegisterCall;
 
   constructor(call: RegisterCall) {
-    this._call = call
+    this._call = call;
   }
 
   get _context(): Bytes {
-    return this._call.inputValues[0].value.toBytes()
+    return this._call.inputValues[0].value.toBytes();
   }
 
   get _addrs(): Array<Address> {
-    return this._call.inputValues[1].value.toAddressArray()
+    return this._call.inputValues[1].value.toAddressArray();
   }
 
   get _timestamp(): BigInt {
-    return this._call.inputValues[2].value.toBigInt()
+    return this._call.inputValues[2].value.toBigInt();
   }
 
   get _v(): i32 {
-    return this._call.inputValues[3].value.toI32()
+    return this._call.inputValues[3].value.toI32();
   }
 
   get _r(): Bytes {
-    return this._call.inputValues[4].value.toBytes()
+    return this._call.inputValues[4].value.toBytes();
   }
 
   get _s(): Bytes {
-    return this._call.inputValues[5].value.toBytes()
+    return this._call.inputValues[5].value.toBytes();
   }
 }
 
 export class RegisterCall__Outputs {
-  _call: RegisterCall
+  _call: RegisterCall;
 
   constructor(call: RegisterCall) {
-    this._call = call
+    this._call = call;
   }
 }
 
 export class RenounceOwnershipCall extends ethereum.Call {
   get inputs(): RenounceOwnershipCall__Inputs {
-    return new RenounceOwnershipCall__Inputs(this)
+    return new RenounceOwnershipCall__Inputs(this);
   }
 
   get outputs(): RenounceOwnershipCall__Outputs {
-    return new RenounceOwnershipCall__Outputs(this)
+    return new RenounceOwnershipCall__Outputs(this);
   }
 }
 
 export class RenounceOwnershipCall__Inputs {
-  _call: RenounceOwnershipCall
+  _call: RenounceOwnershipCall;
 
   constructor(call: RenounceOwnershipCall) {
-    this._call = call
+    this._call = call;
   }
 }
 
 export class RenounceOwnershipCall__Outputs {
-  _call: RenounceOwnershipCall
+  _call: RenounceOwnershipCall;
 
   constructor(call: RenounceOwnershipCall) {
-    this._call = call
+    this._call = call;
   }
 }
 
 export class SetSettingsCall extends ethereum.Call {
   get inputs(): SetSettingsCall__Inputs {
-    return new SetSettingsCall__Inputs(this)
+    return new SetSettingsCall__Inputs(this);
   }
 
   get outputs(): SetSettingsCall__Outputs {
-    return new SetSettingsCall__Outputs(this)
+    return new SetSettingsCall__Outputs(this);
   }
 }
 
 export class SetSettingsCall__Inputs {
-  _call: SetSettingsCall
+  _call: SetSettingsCall;
 
   constructor(call: SetSettingsCall) {
-    this._call = call
+    this._call = call;
   }
 
   get _context(): Bytes {
-    return this._call.inputValues[0].value.toBytes()
+    return this._call.inputValues[0].value.toBytes();
   }
 
   get _verifier(): Address {
-    return this._call.inputValues[1].value.toAddress()
+    return this._call.inputValues[1].value.toAddress();
   }
 }
 
 export class SetSettingsCall__Outputs {
-  _call: SetSettingsCall
+  _call: SetSettingsCall;
 
   constructor(call: SetSettingsCall) {
-    this._call = call
+    this._call = call;
   }
 }
 
 export class SponsorCall extends ethereum.Call {
   get inputs(): SponsorCall__Inputs {
-    return new SponsorCall__Inputs(this)
+    return new SponsorCall__Inputs(this);
   }
 
   get outputs(): SponsorCall__Outputs {
-    return new SponsorCall__Outputs(this)
+    return new SponsorCall__Outputs(this);
   }
 }
 
 export class SponsorCall__Inputs {
-  _call: SponsorCall
+  _call: SponsorCall;
 
   constructor(call: SponsorCall) {
-    this._call = call
+    this._call = call;
   }
 
   get addr(): Address {
-    return this._call.inputValues[0].value.toAddress()
+    return this._call.inputValues[0].value.toAddress();
   }
 }
 
 export class SponsorCall__Outputs {
-  _call: SponsorCall
+  _call: SponsorCall;
 
   constructor(call: SponsorCall) {
-    this._call = call
+    this._call = call;
   }
 }
 
 export class TransferOwnershipCall extends ethereum.Call {
   get inputs(): TransferOwnershipCall__Inputs {
-    return new TransferOwnershipCall__Inputs(this)
+    return new TransferOwnershipCall__Inputs(this);
   }
 
   get outputs(): TransferOwnershipCall__Outputs {
-    return new TransferOwnershipCall__Outputs(this)
+    return new TransferOwnershipCall__Outputs(this);
   }
 }
 
 export class TransferOwnershipCall__Inputs {
-  _call: TransferOwnershipCall
+  _call: TransferOwnershipCall;
 
   constructor(call: TransferOwnershipCall) {
-    this._call = call
+    this._call = call;
   }
 
   get newOwner(): Address {
-    return this._call.inputValues[0].value.toAddress()
+    return this._call.inputValues[0].value.toAddress();
   }
 }
 
 export class TransferOwnershipCall__Outputs {
-  _call: TransferOwnershipCall
+  _call: TransferOwnershipCall;
 
   constructor(call: TransferOwnershipCall) {
-    this._call = call
+    this._call = call;
   }
 }
