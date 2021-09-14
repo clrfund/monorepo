@@ -1,4 +1,4 @@
-import { BigNumber, Contract, Event, Signer } from 'ethers'
+import { BigNumber, Contract, Signer } from 'ethers'
 import {
   TransactionResponse,
   TransactionReceipt,
@@ -174,6 +174,12 @@ export async function getRequests(
     const acceptanceDate = DateTime.fromSeconds(
       submissionTime + registryInfo.challengePeriodDuration
     )
+
+    let requester
+    if (recipient.requester) {
+      requester = recipient.requester
+    }
+
     const request: Request = {
       transactionHash:
         recipient.requestResolvedHash || recipient.requestSubmittedHash,
@@ -183,7 +189,7 @@ export async function getRequests(
       recipientId: recipient.id,
       recipient: recipient.recipientAddress,
       metadata,
-      requester: recipient.requester!,
+      requester,
     }
 
     if (recipient.rejected) {
@@ -280,7 +286,11 @@ export function getRequestId(
 }
 
 function decodeProject(recipient: Partial<Recipient>): Project {
-  const metadata = JSON.parse(recipient.recipientMetadata!)
+  if (!recipient.id) {
+    throw new Error('Incorrect recipient data')
+  }
+
+  const metadata = JSON.parse(recipient.recipientMetadata || '')
 
   // imageUrl is the legacy form property - fall back to this if bannerImageHash or thumbnailImageHash don't exist
   const imageUrl = `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`
@@ -291,7 +301,7 @@ function decodeProject(recipient: Partial<Recipient>): Project {
   }
 
   return {
-    id: recipient.id!,
+    id: recipient.id,
     address: recipient.recipientAddress || '',
     requester,
     name: metadata.name,

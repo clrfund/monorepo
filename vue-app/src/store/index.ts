@@ -81,7 +81,6 @@ import { isSameAddress, ensLookup } from '@/utils/accounts'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
-import { isAddress } from 'ethers/lib/utils'
 
 Vue.use(Vuex)
 

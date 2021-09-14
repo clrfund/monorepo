@@ -3,7 +3,6 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { formatBytes32String } from '@ethersproject/strings'
 
 import { BrightIdUserRegistry } from './abi'
-import { provider } from './core'
 
 const NODE_URL = 'https://app.brightid.org/node/v5'
 const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'

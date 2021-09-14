@@ -29,7 +29,7 @@
     "start:web": "yarn workspace @clrfund/vue-app run serve",
     "start:gun": "yarn workspace @clrfund/vue-app run gun",
     "codegen": "graphql-codegen --config codegen.yml",
-    "test": "yarn workspaces run test",
+    "test": "yarn workspace @clrfund/contracts run test && yarn workspace @clrfund/vue-app run test",
     "test:contracts": "yarn workspace @clrfund/contracts run test",
     "test:web": "yarn workspace @clrfund/vue-app run test",
     "test:format": "yarn prettier --check",
