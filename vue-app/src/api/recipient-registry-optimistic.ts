@@ -285,10 +285,15 @@ function decodeProject(recipient: Partial<Recipient>): Project {
   // imageUrl is the legacy form property - fall back to this if bannerImageHash or thumbnailImageHash don't exist
   const imageUrl = `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`
 
+  let requester
+  if (recipient.requester) {
+    requester = recipient.requester
+  }
+
   return {
     id: recipient.id!,
     address: recipient.recipientAddress || '',
-    requester: recipient.requester,
+    requester,
     name: metadata.name,
     description: metadata.description,
     imageUrl,
