@@ -196,7 +196,7 @@ export default class IpfsImageUpload extends Vue {
 .thumbnail-preview {
   margin-bottom: 1rem;
   img {
-    object-fit: cover;
+    object-fit: contain;
     width: 100%;
     height: 100%;
   }

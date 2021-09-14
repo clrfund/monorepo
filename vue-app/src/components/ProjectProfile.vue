@@ -298,7 +298,7 @@ export default class ProjectProfile extends Vue {
     border-radius: 0.25rem;
     display: block;
     height: 20rem;
-    object-fit: cover;
+    object-fit: contain;
     text-align: center;
     width: 100%;
     margin-bottom: 2rem;
