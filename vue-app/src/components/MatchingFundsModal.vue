@@ -5,14 +5,7 @@
         Contribute {{ tokenSymbol }} to the
         {{ isRoundFinished() ? 'next' : 'current' }} round
       </h3>
-      <form
-        @submit="
-          (e) => {
-            e.preventDefault()
-          }
-        "
-        class="contribution-form"
-      >
+      <div class="contribution-form">
         <div class="input-button">
           <img class="token-icon" height="24px" src="@/assets/dai.svg" />
           <input
@@ -26,7 +19,7 @@
             placeholder="10"
           />
         </div>
-      </form>
+      </div>
       <div v-if="!isBalanceSufficient" class="balance-check-warning">
         ⚠️ You only have {{ renderBalance }} {{ tokenSymbol }}
       </div>
