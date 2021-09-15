@@ -24,6 +24,7 @@ The clr.fund application can use any [EVM-compatible chain](https://ethereum.org
 For more details, see the [sequence diagram](docs/clrfund.svg) and [clr.fund constitution](https://github.com/clrfund/constitution).
 
 Some helpful blogposts to explain the clr.fund project:
+
 - https://blog.clr.fund/clr-fund-explained-pt-1/
 - https://blog.clr.fund/clr-fund-explained-pt-2/
 - https://blog.clr.fund/clr-fund-explained-pt-3/
@@ -54,6 +55,7 @@ In a future version, we plan to address this by routing ETH and token contributi
 - [Providing matching funds](docs/funding-source.md)
 - [How to tally votes](docs/coordinator.md)
 - [How to verify results](docs/trusted-setup.md)
+- [Running the subgraph](docs/subgraph.md)
 
 ## Development
 
@@ -63,7 +65,9 @@ In a future version, we plan to address this by routing ETH and token contributi
 nvm install 12
 nvm use 12
 ```
+
 If using the M1 chip in Apple products, you need to use Node v16.
+
 ```sh
 nvm install 16
 nvm use 16
@@ -79,6 +83,7 @@ husky - Git hooks installed
 ```
 
 ### Copy env for contracts
+
 ```sh
 cp contracts/.env.example contracts/.env    # adjust if necessary
 ```
@@ -101,11 +106,23 @@ yarn test
 yarn start:node
 ```
 
-and in a new terminal
+in a 2nd terminal
 
 ```sh
 cp vue-app/.env.example vue-app/.env    # adjust if necessary
 yarn start:dev
+```
+
+and in a 3rd terminal you will need to run your graph node (more on this
+[here](docs/subgraph.md)) and deploy the subgraph
+
+```sh
+# init the graph node
+cd thegraph/docker
+docker-compose up
+
+# from a diff terminal build and deploy the subgraph
+yarn start:subgraph
 ```
 
 #### Start the frontend sans a local blockchain
