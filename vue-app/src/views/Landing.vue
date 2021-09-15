@@ -166,7 +166,7 @@
           <links to="/about/maci">Learn about MACI</links>
         </div>
         <div class="link-li">
-          <links to="/about-sybil-attacks">Learn about BrightID</links>
+          <links to="/about/sybil-resistance">Learn about BrightID</links>
         </div>
         <div class="link-li">Provide Feedback</div>
       </div>

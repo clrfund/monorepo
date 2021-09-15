@@ -15,7 +15,6 @@ import Verified from '../views/Verified.vue'
 import AboutMaci from '../views/AboutMaci.vue'
 import HowItWorks from '../views/HowItWorks.vue'
 import AboutLayer2 from '../views/AboutLayer2.vue'
-import AboutSybilAttacks from '../views/AboutSybilAttacks.vue'
 import JoinView from '../views/Join.vue'
 import VerifyView from '../views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
@@ -84,14 +83,6 @@ const routes = [
     component: AboutMaci,
     meta: {
       title: 'About MACI',
-    },
-  },
-  {
-    path: '/about/sybil-attacks',
-    name: 'about-sybil-attacks',
-    component: AboutSybilAttacks,
-    meta: {
-      title: 'About Sybil Attacks',
     },
   },
   {

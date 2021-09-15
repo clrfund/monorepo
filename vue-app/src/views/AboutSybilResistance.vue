@@ -4,75 +4,80 @@
 
     <h2>What is Sybil resistance?</h2>
     <p>
-      Clr.fund is a protocol for efficiently allocating funds to public goods
-      that benefit the Ethereum Network according to the preferences of the
-      Ethereum Community. Clr.fund strives for credible neutrality,
-      decentralization, permissionlessness, trustlessness, and pseudonymity.
-    </p>
-
-    <h2>Why is it needed?</h2>
-    <p>
-      Allocating funds towards public goods — commodities or services that
-      deliver a net benefit even when they cannot be sold — is a challenge for
-      any ecosystem, and Ethereum is no exception.
-    </p>
-    <p>
-      Clr.fund’s goal is to enable funds to be allocated towards public goods
-      that benefit the Ethereum Network without relying on centralized entities
-      and in a way that reflects the preferences of the Ethereum Community.
-    </p>
-    <p>
-      See the
-      <links to="https://github.com/clrfund/constitution"
-        >Clr.fund Constitution</links
+      <b
+        >tl;dr: if you want to create loads of accounts to vote for your
+        favourite projects multiple times, you're ngmi (not going to make it)</b
       >
-      for more detail on Clr.fund’s goals and values.
     </p>
-
     <h2>What is BrightID?</h2>
     <p>
-      The clr.fund protocol uses the
-      <links
-        to="https://blogchains.org/wp-content/uploads/sites/4/2019/04/SSRN-id3243656.pdf"
-        >Constrained Liberal Radicalism (CLR)</links
-      >
-      algorithm, commonly called quadratic funding (QF), to facilitate monetary
-      contributions from members of the Ethereum Community towards builders of
-      Ethereum public goods.
-    </p>
-    <p>
-      With its logic encoded into Ethereum smart contracts and other web3
-      technologies, clr.fund requires minimal trust in any individual people or
-      entities to function and is resilient to collusion and bribery.
+      We use BrightID to protect the funding round against sybil attacks. To
+      understand why this is important let's recap quadratic funding...
     </p>
 
+    <h2>Quadratic funding</h2>
     <p>
-      At a high-level, clr.fund consists of a matching pool and a funding round.
-      Philanthropic individuals or organisations contribute to the matching pool
-      so as to have those funds efficiently allocated according to community
-      preference. Users contribute directly to projects they value and, in doing
-      so, earn a share of the matching pool for the projects, along with their
-      contribution. Effectively increasing the value of their contribution.
+      Quadratic funding is a democratic form of funding goods/services. A pot of
+      money, known as the matching pool, is distributed to all the projects
+      based on a formula. In the simplest terms, a project with 10 donations of
+      1 Dai could get more from the matching pool than a project with a single
+      100 Dai donation. The idea is that the projects with the most value to the
+      most amount of people (and not necessarily the wealthiest people) gets the
+      best funding.
     </p>
-
     <p>
-      Under the hood, clr.fund uses zero-knowledge proofs (zk-snarks), courtesy
-      of the
-      <links to="https://github.com/appliedzkp/maci"
-        >Minimal Anti-collusion Infrastructure (MACI)</links
-      >, to keep individual contributions private and limit effectiveness of
-      collusion and bribery.
+      This falls apart if anyone can create multiple accounts and spam-donate to
+      a project. This is known as a sybil attack. To keep things fair we have to
+      be confident that you as an individual only contributed once. And that you
+      didn't create multiple Ethereum wallets and contribute from them all. This
+      is where BrightID steps in.
     </p>
-
+    <h2>How BrightID helps</h2>
     <p>
-      To ensure that every contributor is a unique person clr.fund uses
-      <links to="https://brightid.org">BrightID</links>, and recipients are
-      curated by our
-      <links
-        to="https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398"
-        >Kleros TCR</links
-      >.
+      BrightID is a product we use to increase our confidence that you're only
+      contributing once. Before you contribute, you must link your connected
+      wallet to your BrightID profile on your phone and register for the round
+      via a transaction. You can't link multiple wallets to the same BrightID
+      profile. This prevents you from creating 1000s of Ethereum accounts and
+      distorting the contributions.
     </p>
+    <h2>How to set up BrightID</h2>
+    <p>
+      The app will walk you through getting set up, but here's a quick out line
+      of what you can expect. If you've contributed to a clr.fund round before
+      or used BrightID with Gitcoin grants your experience will be shorter.
+    </p>
+    <ul>
+      <li>
+        Download BrightID for
+        <links to="https://apps.apple.com/us/app/brightid/id1428946820"
+          >iOS</links
+        >
+        or
+        <links to="https://play.google.com/store/apps/details?id=org.brightid"
+          >Android</links
+        >
+      </li>
+      <li>
+        Link your wallet to your BrightID profile, so you can't use multiple
+        wallets to sway voting.
+      </li>
+      <li>
+        Get BrightID verified so BrightID knows you're a human and not a bot.
+      </li>
+      <li>
+        Pay a small transaction fee to cover BrightID's costs, also known as
+        sponsorship.
+        <links
+          to="https://medium.com/brightid/brightid-sponsorships-5327a8d39f1e"
+          >More on BrightID sponsorship</links
+        >
+      </li>
+      <li>
+        Add yourself to the approved user registry. This is a requirement for
+        <links to="/about/maci">MACI, our anti-bribery tech</links>.
+      </li>
+    </ul>
   </div>
 </template>
 

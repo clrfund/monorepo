@@ -116,8 +116,8 @@
     <ul>
       <li><links to="/about/maci">MACI</links> – to protect against bribery</li>
       <li>
-        <links to="/about-sybil-attacks">BrightID</links> – to protect against
-        sybil attacks
+        <links to="/about/sybil-resistance">BrightID</links> – to protect
+        against sybil attacks
       </li>
     </ul>
   </div>
