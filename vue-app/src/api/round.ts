@@ -44,7 +44,7 @@ export enum RoundStatus {
   Finalized = 'Finalized',
   Cancelled = 'Cancelled',
 }
-
+//TODO: update to take factory address as a parameter, default to env. variable
 export async function getCurrentRound(): Promise<string | null> {
   const fundingRoundAddress = await factory.getCurrentRound()
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
@@ -53,6 +53,7 @@ export async function getCurrentRound(): Promise<string | null> {
   return fundingRoundAddress
 }
 
+//TODO: update to take factory address as a parameter, default to env. variable
 export async function getRoundInfo(
   fundingRoundAddress: string
 ): Promise<RoundInfo> {
@@ -130,6 +131,7 @@ export async function getRoundInfo(
       status = RoundStatus.Tallying
     }
     contributions = contributionsInfo.amount
+    //TODO: update to take factory address as a parameter, default to env. variable
     matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
   }
 

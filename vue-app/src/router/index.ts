@@ -24,6 +24,7 @@ import TransactionSuccess from '@/views/TransactionSuccess.vue'
 
 Vue.use(VueRouter)
 
+//TODO: create a new route that kaes funding factory address as a param
 const routes = [
   {
     path: '/',

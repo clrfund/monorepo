@@ -6,8 +6,10 @@ export interface Round {
   address: string
   url?: string
 }
-
+//TODO: update to take factory address as a parameter
 export async function getRounds(): Promise<Round[]> {
+  //TODO: updateto pass factory address as a parameter, default to env. variable
+  //NOTE: why not instantiate the sdk here?
   const data = await sdk.GetRounds()
 
   const rounds: Round[] = extraRounds.map((ipfsHash: string, index): Round => {
