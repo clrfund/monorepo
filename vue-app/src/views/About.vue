@@ -4,17 +4,19 @@
 
     <h2>What is clr.fund?</h2>
     <p>
-      Clr.fund is a protocol for efficiently allocating funds to public goods
-      that benefit the Ethereum Network according to the preferences of the
-      Ethereum Community. Clr.fund strives for credible neutrality,
-      decentralization, permissionlessness, trustlessness, and pseudonymity.
+      Clr.fund, pronounced "Clear Fund", is a protocol for efficiently
+      allocating funds to public goods that benefit the Ethereum Network
+      according to the preferences of the Ethereum Community. Clr.fund strives
+      for credible neutrality, decentralization, permissionlessness,
+      trustlessness, and pseudonymity.
     </p>
 
     <h2>Why does clr.fund exist?</h2>
     <p>
-      Allocating funds towards public goods — commodities or services that
-      deliver a net benefit even when they cannot be sold — is a challenge for
-      any ecosystem, and Ethereum is no exception.
+      Allocating funds towards
+      <links to="/about/public-goods">public goods</links> — commodities or
+      services that deliver a net benefit even when they cannot be sold — is a
+      challenge for any ecosystem, and Ethereum is no exception.
     </p>
     <p>
       Clr.fund’s goal is to enable funds to be allocated towards public goods
@@ -27,6 +29,55 @@
         >Clr.fund Constitution</links
       >
       for more detail on Clr.fund’s goals and values.
+    </p>
+
+    <h2>How is clr.fund unique?</h2>
+    <p>
+      [Clr.fund](http://clr.fund) instances also have a number of other special
+      properties:
+    </p>
+    <ul>
+      <li>
+        <links to="/about/decentralization">Decentralization</links> — Major
+        pieces of clr.fund's infrastructure are built on
+        [Ethereum](https://www.ethereum.org), a programmable blockchain that
+        provides a reliable, censorship-resistant ledger for clr.fund's voting
+        and funding transactions.
+      </li>
+      <li>
+        Scalability — Because using Ethereum can be expensive for users,
+        c[lr.fund](http://clr.fund) uses "layer 2" supplementary networks to get
+        most of the benefits of the main Ethereum network but with faster,
+        cheaper transactions.
+        <links to="/about/layer-2"
+          >Learn more about clr.fund's user of layer 2.</links
+        >
+      </li>
+      <li>
+        Collusion-resistance — Because blockchains like Ethereum publish all
+        data publicly by default, c[lr.fund](http://clr.fund) voters are
+        vulnerable to bribery and other kinds of manipulation. Clr.fund attempts
+        to prevent these attacks using magical math called zero-knowledge
+        proofs.
+        <links to="/about/maci"
+          >Find out about MACI, our Minimal Anti-Collusion
+          Infrastructure.</links
+        >
+      </li>
+      <li>
+        Sybil-resistance — Voting systems that care about the number of
+        individual people voting for a given choice, as quadratic funding does,
+        can be vulnerable to sybil attacks, in which one person sets up many
+        identities in order to vote multiple times. [Clr.fund](http://clr.fund)
+        mitigates this threat with an identity-system called BrightID.
+        <links to="/about/sybil-resistance"
+          >Find out more about BrightID.</links
+        >
+      </li>
+    </ul>
+    <p>
+      clr.fund is also built so anyone can spin up and run their own instance to
+      create a public goods grant program for their particular public.
     </p>
 
     <h2>How does it work?</h2>
@@ -64,6 +115,7 @@
       collusion and bribery.
     </p>
 
+    <!-- TODO update recipient curation information -->
     <p>
       To ensure that every contributor is a unique person clr.fund uses
       <links to="https://brightid.org">BrightID</links>, and recipients are
@@ -86,6 +138,7 @@ export default class About extends Vue {}
 </script>
 
 <style scoped lang="scss">
+/* TODO apply these styles across all About subpages  */
 @import '../styles/vars';
 
 .content-heading {

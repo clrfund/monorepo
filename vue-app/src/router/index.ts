@@ -11,10 +11,13 @@ import RoundInformation from '../views/RoundInformation.vue'
 import VerifyLanding from '../views/VerifyLanding.vue'
 import About from '../views/About.vue'
 import AboutSybilResistance from '../views/AboutSybilResistance.vue'
-import Verified from '../views/Verified.vue'
 import AboutMaci from '../views/AboutMaci.vue'
+import AboutPublicGoods from '../views/AboutPublicGoods.vue'
+import AboutQuadraticFunding from '../views/AboutQuadraticFunding.vue'
+import AboutDecentralization from '../views/AboutDecentralization.vue'
 import HowItWorks from '../views/HowItWorks.vue'
 import AboutLayer2 from '../views/AboutLayer2.vue'
+import Verified from '../views/Verified.vue'
 import JoinView from '../views/Join.vue'
 import VerifyView from '../views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
@@ -107,6 +110,31 @@ const routes = [
     component: HowItWorks,
     meta: {
       title: 'How it works',
+    },
+  },
+  {
+    path: '/about/public-goods',
+    name: 'about-public-goods',
+    component: AboutPublicGoods,
+    component: AboutPublicGoods,
+    meta: {
+      title: 'Public goods',
+    },
+  },
+  {
+    path: '/about/quadratic-funding',
+    name: 'about-quadratic-funding',
+    component: AboutQuadraticFunding,
+    meta: {
+      title: 'Quadratic funding',
+    },
+  },
+  {
+    path: '/about/decentralization',
+    name: 'about-decentralization',
+    component: AboutDecentralization,
+    meta: {
+      title: 'Decentralization',
     },
   },
   {
