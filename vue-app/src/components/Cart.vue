@@ -13,7 +13,7 @@
         You’ve already contributed this round. You can edit your choices and add
         new projects, but your cart total must always equal your original
         contribution amount.
-        <links to="/about-maci" class="message-link">Why?</links>
+        <links to="/about/maci" class="message-link">Why?</links>
       </div>
       <div
         class="reallocation-message"

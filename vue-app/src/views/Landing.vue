@@ -78,7 +78,7 @@
               contributions, <strong>not contribution value</strong>.
             </li>
           </ol>
-          <links class="btn-secondary" to="/how-it-works"
+          <links class="btn-secondary" to="/about/how-it-works"
             >How the round works</links
           >
         </div>
@@ -135,7 +135,7 @@
             how you voted. This drives bribers insane because they have no idea
             whether you actually did what they bribed you to do!
           </p>
-          <links to="/about-maci">About MACI</links>
+          <links to="/about/maci">About MACI</links>
         </div>
         <div id="about-3">
           <h2>Built using the CLR protocol</h2>
@@ -157,13 +157,13 @@
           <links to="https://ethereum.org/eth2/">More on Eth2</links>
         </div>
         <div class="link-li">
-          <links to="/how-it-works">How the round works</links>
+          <links to="/about/how-it-works">How the round works</links>
         </div>
         <div class="link-li">
-          <links to="/about-layer2">Learn about [Layer 2]</links>
+          <links to="/about/layer2">Learn about [Layer 2]</links>
         </div>
         <div class="link-li">
-          <links to="/about-maci">Learn about MACI</links>
+          <links to="/about/maci">Learn about MACI</links>
         </div>
         <div class="link-li">
           <links to="/about-sybil-attacks">Learn about BrightID</links>

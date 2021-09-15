@@ -114,7 +114,7 @@
       actors. You can learn more about them below:
     </p>
     <ul>
-      <li><links to="/about-maci">MACI</links> – to protect against bribery</li>
+      <li><links to="/about/maci">MACI</links> – to protect against bribery</li>
       <li>
         <links to="/about-sybil-attacks">BrightID</links> – to protect against
         sybil attacks

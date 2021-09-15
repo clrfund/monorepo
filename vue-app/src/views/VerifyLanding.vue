@@ -47,7 +47,7 @@
         <li>An Ethereum wallet, with enough gas for two transactions</li>
         <li>Access to Zoom or Google Meet</li>
       </ul>
-      <links to="/about-sybil-resistance/">Why is this important?</links>
+      <links to="/about/sybil-resistance/">Why is this important?</links>
       <div v-if="isRoundFullOrOver" class="warning-message">
         The current round is no longer accepting new contributions. You can
         still get BrightID verified to prepare for next time.

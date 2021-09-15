@@ -85,7 +85,7 @@
               <div id="myTooltip" class="hidden button-menu">
                 MACI, our anti-bribery tech, currently limits the amount of
                 projects allowed per round.
-                <links to="/about-maci">More on MACI</links>
+                <links to="/about/maci">More on MACI</links>
               </div>
             </div>
           </div>

@@ -74,10 +74,10 @@
       </li>
       <li>
         Add yourself to the approved user registry. This is a requirement for
-        <links to="/about-maci">MACI, our anti-bribery tech</links>.
+        <links to="/about/maci">MACI, our anti-bribery tech</links>.
       </li>
     </ul>
-    <links to="/about-sybil-resistance" class="link-font">More</links>
+    <links to="/about/sybil-resistance" class="link-font">More</links>
   </div>
 </template>
 

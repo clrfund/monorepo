@@ -79,7 +79,7 @@ const routes = [
     },
   },
   {
-    path: '/about-maci',
+    path: '/about/maci',
     name: 'about-maci',
     component: AboutMaci,
     meta: {
@@ -87,7 +87,7 @@ const routes = [
     },
   },
   {
-    path: '/about-sybil-attacks',
+    path: '/about/sybil-attacks',
     name: 'about-sybil-attacks',
     component: AboutSybilAttacks,
     meta: {
@@ -95,7 +95,15 @@ const routes = [
     },
   },
   {
-    path: '/about-layer2',
+    path: '/about/sybil-resistance',
+    name: 'about-sybil-resistance',
+    component: AboutSybilResistance,
+    meta: {
+      title: 'About Sybil Resistance',
+    },
+  },
+  {
+    path: '/about/layer2',
     name: 'about-layer-2',
     component: AboutLayer2,
     meta: {
@@ -103,7 +111,7 @@ const routes = [
     },
   },
   {
-    path: '/how-it-works',
+    path: '/about/how-it-works',
     name: 'how-it-works',
     component: HowItWorks,
     meta: {
@@ -166,14 +174,7 @@ const routes = [
       title: 'Recipient Join Form Steps',
     },
   },
-  {
-    path: '/about-sybil-resistance',
-    name: 'about-sybil-resistance',
-    component: AboutSybilResistance,
-    meta: {
-      title: 'About Sybil Resistance',
-    },
-  },
+
   {
     path: '/cart',
     name: 'cart',
