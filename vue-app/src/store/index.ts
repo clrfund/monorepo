@@ -469,8 +469,14 @@ const getters = {
     if (!state.currentRound || !state.recipientRegistryInfo) {
       return null
     }
+
+    const challengePeriodDuration =
+      process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE === 'optimistic'
+        ? state.recipientRegistryInfo.challengePeriodDuration
+        : 0
+
     return state.currentRound.signUpDeadline.minus({
-      seconds: state.recipientRegistryInfo.challengePeriodDuration,
+      seconds: challengePeriodDuration,
     })
   },
   isRoundJoinPhase: (state: RootState, getters): boolean => {
