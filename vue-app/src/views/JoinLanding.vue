@@ -7,7 +7,11 @@
     </div>
 
     <round-status-banner />
-    <back-to-projects :alsoShowOnMobile="true" />
+    <back-link
+      :alsoShowOnMobile="true"
+      to="/projects"
+      text="← Back to projects"
+    />
 
     <div class="content" v-if="!$store.state.currentRound">
       <h1>Fetching round data...</h1>
@@ -118,7 +122,7 @@ import { formatAmount } from '@/utils/amounts'
 import Loader from '@/components/Loader.vue'
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
-import BackToProjects from '@/components/BackToProjects.vue'
+import BackLink from '@/components/BackLink.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 
@@ -127,7 +131,7 @@ import TimeLeft from '@/components/TimeLeft.vue'
     RoundStatusBanner,
     CriteriaModal,
     Loader,
-    BackToProjects,
+    BackLink,
     Links,
     TimeLeft,
   },

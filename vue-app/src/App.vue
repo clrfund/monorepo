@@ -17,7 +17,11 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <back-to-projects v-if="showProjectsLink" />
+        <back-link
+          v-if="showBackLink"
+          :to="backLinkRoute"
+          :text="backLinkText"
+        />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -44,7 +48,7 @@ import NavBar from '@/components/NavBar.vue'
 import CartWidget from '@/components/CartWidget.vue'
 import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
-import BackToProjects from '@/components/BackToProjects.vue'
+import BackLink from '@/components/BackLink.vue'
 
 import {
   LOAD_USER_INFO,
@@ -77,7 +81,7 @@ import { SET_CURRENT_USER } from '@/store/mutation-types'
     Cart,
     MobileTabs,
     CartWidget,
-    BackToProjects,
+    BackLink,
   },
 })
 export default class App extends Vue {
@@ -172,7 +176,17 @@ export default class App extends Vue {
     return routes.includes(this.$route.name || '')
   }
 
-  get showProjectsLink(): boolean {
+  get backLinkRoute(): string {
+    const route = this.$route.name || ''
+    return route.includes('about-') ? '/about' : '/projects'
+  }
+
+  get backLinkText(): string {
+    const route = this.$route.name || ''
+    return route.includes('about-') ? '← Back to About' : '← Back to projects'
+  }
+
+  get showBackLink(): boolean {
     const excludedRoutes = [
       'landing',
       'project-added',

@@ -103,7 +103,7 @@ const routes = [
   },
   {
     path: '/about/how-it-works',
-    name: 'how-it-works',
+    name: 'about-how-it-works',
     component: HowItWorks,
     meta: {
       title: 'How it works',
