@@ -15,7 +15,7 @@ import AboutMaci from '../views/AboutMaci.vue'
 import AboutPublicGoods from '../views/AboutPublicGoods.vue'
 import AboutQuadraticFunding from '../views/AboutQuadraticFunding.vue'
 import AboutDecentralization from '../views/AboutDecentralization.vue'
-import HowItWorks from '../views/HowItWorks.vue'
+import AboutHowItWorks from '../views/AboutHowItWorks.vue'
 import AboutLayer2 from '../views/AboutLayer2.vue'
 import Verified from '../views/Verified.vue'
 import JoinView from '../views/Join.vue'
@@ -107,7 +107,7 @@ const routes = [
   {
     path: '/about/how-it-works',
     name: 'about-how-it-works',
-    component: HowItWorks,
+    component: AboutHowItWorks,
     meta: {
       title: 'How it works',
     },
@@ -116,9 +116,8 @@ const routes = [
     path: '/about/public-goods',
     name: 'about-public-goods',
     component: AboutPublicGoods,
-    component: AboutPublicGoods,
     meta: {
-      title: 'Public goods',
+      title: 'About public goods',
     },
   },
   {
@@ -126,7 +125,7 @@ const routes = [
     name: 'about-quadratic-funding',
     component: AboutQuadraticFunding,
     meta: {
-      title: 'Quadratic funding',
+      title: 'About quadratic funding',
     },
   },
   {
@@ -134,7 +133,7 @@ const routes = [
     name: 'about-decentralization',
     component: AboutDecentralization,
     meta: {
-      title: 'Decentralization',
+      title: 'About decentralization',
     },
   },
   {

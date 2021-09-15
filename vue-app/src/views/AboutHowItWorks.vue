@@ -130,7 +130,7 @@ import Links from '@/components/Links.vue'
 
 // TODO connect with state to add durations to content
 @Component({ components: { Links } })
-export default class HowItWorks extends Vue {}
+export default class AboutHowItWorks extends Vue {}
 </script>
 
 <style scoped lang="scss">

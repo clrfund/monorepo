@@ -87,9 +87,10 @@
         to="https://blogchains.org/wp-content/uploads/sites/4/2019/04/SSRN-id3243656.pdf"
         >Constrained Liberal Radicalism (CLR)</links
       >
-      algorithm, commonly called quadratic funding (QF), to facilitate monetary
-      contributions from members of the Ethereum Community towards builders of
-      Ethereum public goods.
+      algorithm, commonly called
+      <links to="/about/quadratic-funding">quadratic funding</links> (QF), to
+      facilitate monetary contributions from members of the Ethereum Community
+      towards builders of Ethereum public goods.
     </p>
     <p>
       With its logic encoded into Ethereum smart contracts and other web3
@@ -125,6 +126,7 @@
         >Kleros TCR</links
       >.
     </p>
+    <p>More on <links to="/about/how-it-works">how clr.fund works</links>.</p>
   </div>
 </template>
 
