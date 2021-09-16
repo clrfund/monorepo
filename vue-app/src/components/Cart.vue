@@ -142,10 +142,11 @@
           {{ formatAmount(this.contribution) }} {{ tokenSymbol }}
         </div>
         <div
-          :class="{
-            'reallocation-row': !this.isGreaterThanInitialContribution(),
-            'reallocation-row-warning': this.isGreaterThanInitialContribution(),
-          }"
+          :class="
+            this.isGreaterThanInitialContribution()
+              ? 'reallocation-row-warning'
+              : 'reallocation-row'
+          "
         >
           <span>Your cart</span>
           <div class="reallocation-warning">
@@ -569,65 +570,52 @@ export default class Cart extends Vue {
   get errorMessage(): string | null {
     const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
-    if (currentRound.messages >= currentRound.maxMessages) {
+    if (currentRound.messages >= currentRound.maxMessages)
       return 'The limit on the number of votes has been reached'
-    } else if (!currentUser) {
-      return 'Please connect your wallet'
-    } else if (!this.isCorrectNetwork()) {
+    if (!currentUser) return 'Please connect your wallet'
+    if (!this.isCorrectNetwork())
       return `Please change network to ${this.networkName} network.`
-    } else if (this.isBrightIdRequired) {
+    if (this.isBrightIdRequired)
       return 'To contribute, you need to set up BrightID.'
-    } else if (!this.isFormValid()) {
-      return 'Include valid contribution amount.'
-    } else if (this.cart.length > MAX_CART_SIZE) {
+    if (!this.isFormValid()) return 'Include valid contribution amount.'
+    if (this.cart.length > MAX_CART_SIZE)
       return `Your cart can't include over ${MAX_CART_SIZE} projects.`
-    } else if (currentRound.status === RoundStatus.Cancelled) {
+    if (currentRound.status === RoundStatus.Cancelled)
       return "Sorry, we've had to cancel this funding round."
-    } else if (DateTime.local() >= currentRound.votingDeadline) {
+    if (this.$store.getters.hasReallocationPhaseEnded)
       return 'The funding round has ended.'
-    } else if (
-      currentRound.messages + this.cart.length >=
-      currentRound.maxMessages
-    ) {
+    if (currentRound.messages + this.cart.length >= currentRound.maxMessages)
       return 'Cart changes will exceed voting capacity of this round'
-    } else {
-      const total = this.getTotal()
-      if (this.contribution.isZero()) {
-        // Contributing
-        if (DateTime.local() >= currentRound.signUpDeadline) {
-          return 'Contributions are over for this funding round.'
-          // the above error might not be necessary now we have our cart states in the HTML above
-        } else if (this.$store.getters.isRoundContributorLimitReached) {
-          return 'The limit on the number of contributors has been reached'
-        } else if (total.eq(BigNumber.from(0)) && !this.isCartEmpty) {
-          return `Your total must be more then 0 ${currentRound.nativeTokenSymbol}`
-        } else if (currentUser.balance === null) {
-          return '' // No error: waiting for balance
-        } else if (total.gt(currentUser.balance)) {
-          const balanceDisplay = formatAmount(
-            currentUser.balance,
-            currentRound.nativeTokenDecimals
-          )
-          return `Not enough funds. Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}.`
-        } else if (this.isGreaterThanMax()) {
-          return `Your contribution is too generous. The max contribution is ${MAX_CONTRIBUTION_AMOUNT} ${currentRound.nativeTokenSymbol}.`
-        } else {
-          return null
-        }
-      } else {
-        // Reallocating funds
-        if (!this.$store.state.contributor) {
-          return "Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with"
-        } else if (this.isGreaterThanInitialContribution()) {
-          return `Your new total can't be more than your original ${this.formatAmount(
-            this.contribution
-          )} contribution.`
-          // TODO: need to turn this into a small number
-        } else {
-          return null
-        }
+
+    const total = this.getTotal()
+    // Contributing
+    if (this.contribution.isZero()) {
+      if (this.$store.getters.hasContributionPhaseEnded)
+        return 'Contributions are over for this funding round.'
+      if (this.$store.getters.isRoundContributorLimitReached)
+        return 'The limit on the number of contributors has been reached'
+      if (total.eq(BigNumber.from(0)) && !this.isCartEmpty)
+        return `Your total must be more then 0 ${currentRound.nativeTokenSymbol}`
+      if (currentUser.balance === null) return null // No error: waiting for balance
+      if (total.gt(currentUser.balance)) {
+        const balanceDisplay = formatAmount(
+          currentUser.balance,
+          currentRound.nativeTokenDecimals
+        )
+        return `Not enough funds. Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}.`
       }
+      if (this.isGreaterThanMax())
+        return `Your contribution is too generous. The max contribution is ${MAX_CONTRIBUTION_AMOUNT} ${currentRound.nativeTokenSymbol}.`
+      return null
     }
+    // Reallocating funds
+    if (!this.$store.state.contributor)
+      return "Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with"
+    if (this.isGreaterThanInitialContribution())
+      return `Your new total can't be more than your original ${this.formatAmount(
+        this.contribution
+      )} contribution.`
+    return null
   }
 
   hasUnallocatedFunds(): boolean {
