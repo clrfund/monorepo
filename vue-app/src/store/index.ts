@@ -546,7 +546,8 @@ const getters = {
     return (
       !!state.currentRound &&
       (hasDateElapsed(state.currentRound.signUpDeadline) ||
-        getters.isRoundContributorLimitReached)
+        getters.isRoundContributorLimitReached ||
+        getters.isMessageLimitReached)
     )
   },
   hasReallocationPhaseEnded: (state: RootState, getters): boolean => {
