@@ -9,7 +9,7 @@
     <round-status-banner />
     <back-to-projects :alsoShowOnMobile="true" />
 
-    <div class="content" v-if="!$store.state.currentRound">
+    <div class="content" v-if="loading">
       <h1>Fetching round data...</h1>
       <loader />
     </div>
@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <div class="content" v-else>
+    <div class="content" v-else-if="$store.state.currentRound">
       <h1>Join the funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project and a
@@ -103,6 +103,27 @@
       </div>
     </div>
 
+    <div class="content" v-else-if="$store.getters.isRoundJoinPhase">
+      <h1>Join the next funding round</h1>
+      <div class="subtitle">
+        We’ll need some information about your project and a
+        <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
+        deposit.
+      </div>
+      <div class="info-boxes">
+        <div class="apply-callout">
+          <div class="countdown-label caps">Time to complete</div>
+          <div class="countdown caps">15 minutes (ish)</div>
+        </div>
+      </div>
+      <div class="btn-container">
+        <button class="btn-secondary" @click="toggleCriteria">
+          See round criteria
+        </button>
+        <links to="/join/project" class="btn-primary">Add project</links>
+      </div>
+    </div>
+
     <criteria-modal v-if="showCriteriaPanel" :toggleCriteria="toggleCriteria" />
   </div>
 </template>
@@ -114,13 +135,16 @@ import { DateTime } from 'luxon'
 import { BigNumber } from 'ethers'
 
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
-import { formatAmount } from '@/utils/amounts'
-import Loader from '@/components/Loader.vue'
-import CriteriaModal from '@/components/CriteriaModal.vue'
-import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
+import { getCurrentRound } from '@/api/round'
+
 import BackToProjects from '@/components/BackToProjects.vue'
+import CriteriaModal from '@/components/CriteriaModal.vue'
+import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
+import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
+
+import { formatAmount } from '@/utils/amounts'
 
 @Component({
   components: {
@@ -133,7 +157,14 @@ import TimeLeft from '@/components/TimeLeft.vue'
   },
 })
 export default class JoinLanding extends Vue {
+  currentRound: string | null = null
+  loading = true
   showCriteriaPanel = false
+
+  async created() {
+    this.currentRound = await getCurrentRound()
+    this.loading = false
+  }
 
   get registryInfo(): RegistryInfo {
     return this.$store.state.recipientRegistryInfo
@@ -156,6 +187,9 @@ export default class JoinLanding extends Vue {
   }
 
   get spacesRemaining(): number | null {
+    if (!this.$store.state.currentRound) {
+      return null
+    }
     return (
       this.$store.state.currentRound.maxRecipients -
       this.registryInfo.recipientCount
