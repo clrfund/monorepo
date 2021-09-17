@@ -23,7 +23,7 @@
           <div
             class="apply-callout"
             v-if="
-              ($store.state.currentRound || $store.getters.isRoundJoinPhase) &&
+              $store.getters.isRoundJoinPhase &&
               !$store.getters.isRecipientRegistryFull
             "
           >
