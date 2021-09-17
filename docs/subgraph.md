@@ -57,3 +57,7 @@ yarn start:subgraph
 ## Common errors
 
 - **Error `trace_filter RPC call failed`**: any `callHandlers` or `blockHandlers` definition in the `subgraph.yaml` file won't work with Hardhat since it doesn't have trace support.
+
+- **M1 Macbook Error**: When using docker with the M1 Apple products you will need to use a different image in the docker-compose. Fix found here: https://github.com/graphprotocol/graph-node/issues/2325. To implement fix, go to `docker-compose.yml` in `cd graph-node/docker` and change the `image` to: `image: graphprotocol/graph-node:2c23cce` for the graph-node service
+
+- **Subgraph Queries returning null**: Check that your .env is setup properly with the right VUE_APP_SUBGRAPH_URL. If locally developing use: VUE_APP_SUBGRAPH_URL=http://localhost:8000/subgraphs/name/daodesigner/clrfund
