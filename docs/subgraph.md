@@ -13,9 +13,15 @@ Official instructions: https://thegraph.com/docs/developer/quick-start
 git clone https://github.com/graphprotocol/graph-node/
 ```
 
-## Adjusts to use it with Hardhat
+## Adjust to use it with Hardhat
 
-Inside the graph node folder:
+Note: before running the graph node, ensure your local Hardhat node is running. Inside the clr.fund repo:
+
+```sh
+yarn start:node
+```
+
+Inside the graph node repo:
 
 ```sh
 cd graph-node/docker
