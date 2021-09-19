@@ -7,7 +7,7 @@ import { MaciParameters } from './maci'
 
 export function linkBytecode(
   bytecode: string,
-  libraries: {[name: string]: string},
+  libraries: { [name: string]: string }
 ): string {
   // Workarounds for https://github.com/nomiclabs/buidler/issues/611
   const linkable = { evm: { bytecode: { object: bytecode } } }
@@ -17,33 +17,49 @@ export function linkBytecode(
   return linkable.evm.bytecode.object
 }
 
-const CIRCUITS: {[name: string]: any} = {
+const CIRCUITS: { [name: string]: any } = {
   test: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifier',
     qvtVerifier: 'QuadVoteTallyVerifier',
-    treeDepths: { stateTreeDepth: 4, messageTreeDepth: 4, voteOptionTreeDepth: 2 },
+    treeDepths: {
+      stateTreeDepth: 4,
+      messageTreeDepth: 4,
+      voteOptionTreeDepth: 2,
+    },
   },
   small: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifierSmall',
     qvtVerifier: 'QuadVoteTallyVerifierSmall',
-    treeDepths: { stateTreeDepth: 8, messageTreeDepth: 11, voteOptionTreeDepth: 3 },
+    treeDepths: {
+      stateTreeDepth: 8,
+      messageTreeDepth: 11,
+      voteOptionTreeDepth: 3,
+    },
   },
   medium: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifierMedium',
     qvtVerifier: 'QuadVoteTallyVerifierMedium',
-    treeDepths: { stateTreeDepth: 9, messageTreeDepth: 13, voteOptionTreeDepth: 3 },
+    treeDepths: {
+      stateTreeDepth: 9,
+      messageTreeDepth: 13,
+      voteOptionTreeDepth: 3,
+    },
   },
   x32: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifier32',
     qvtVerifier: 'QuadVoteTallyVerifier32',
-    treeDepths: { stateTreeDepth: 32, messageTreeDepth: 32, voteOptionTreeDepth: 3 },
+    treeDepths: {
+      stateTreeDepth: 32,
+      messageTreeDepth: 32,
+      voteOptionTreeDepth: 3,
+    },
   },
 }
 
 export async function deployContract(
   account: Signer,
   contractName: string,
-  contractArgs: any[] = [],
+  contractArgs: any[] = []
 ): Promise<Contract> {
   const contractFactory = await ethers.getContractFactory(contractName, account)
   const contract = await contractFactory.deploy(...contractArgs)
@@ -51,16 +67,21 @@ export async function deployContract(
 }
 
 interface MaciFactoryDependencies {
-  poseidonT3?: Contract;
-  poseidonT6?: Contract;
-  batchUstVerifier?: Contract,
-  qvtVerifier?: Contract,
+  poseidonT3?: Contract
+  poseidonT6?: Contract
+  batchUstVerifier?: Contract
+  qvtVerifier?: Contract
 }
 
 export async function deployMaciFactory(
   account: Signer,
   circuit = 'x32',
-  { poseidonT3, poseidonT6, batchUstVerifier, qvtVerifier }: MaciFactoryDependencies = {},
+  {
+    poseidonT3,
+    poseidonT6,
+    batchUstVerifier,
+    qvtVerifier,
+  }: MaciFactoryDependencies = {}
 ): Promise<Contract> {
   if (!poseidonT3) {
     const PoseidonT3 = await ethers.getContractFactory(':PoseidonT3', account)
@@ -71,11 +92,17 @@ export async function deployMaciFactory(
     poseidonT6 = await PoseidonT6.deploy()
   }
   if (!batchUstVerifier) {
-    const BatchUstVerifier = await ethers.getContractFactory(CIRCUITS[circuit].batchUstVerifier, account)
+    const BatchUstVerifier = await ethers.getContractFactory(
+      CIRCUITS[circuit].batchUstVerifier,
+      account
+    )
     batchUstVerifier = await BatchUstVerifier.deploy()
   }
   if (!qvtVerifier) {
-    const QvtVerifier = await ethers.getContractFactory(CIRCUITS[circuit].qvtVerifier, account)
+    const QvtVerifier = await ethers.getContractFactory(
+      CIRCUITS[circuit].qvtVerifier,
+      account
+    )
     qvtVerifier = await QvtVerifier.deploy()
   }
 
@@ -84,13 +111,10 @@ export async function deployMaciFactory(
     'maci-contracts/sol/Poseidon.sol:PoseidonT6': poseidonT6.address,
   }
 
-  const MACIFactory = await ethers.getContractFactory(
-    'MACIFactory',
-    {
-      signer: account,
-      libraries: maciLibraries,
-    },
-  )
+  const MACIFactory = await ethers.getContractFactory('MACIFactory', {
+    signer: account,
+    libraries: maciLibraries,
+  })
   const maciParameters = new MaciParameters({
     batchUstVerifier: batchUstVerifier.address,
     qvtVerifier: qvtVerifier.address,
@@ -98,6 +122,7 @@ export async function deployMaciFactory(
   })
 
   const maciFactory = await MACIFactory.deploy(...maciParameters.values())
-  await maciFactory.deployed()
+  await maciFactory.deployTransaction.wait()
+
   return maciFactory
 }

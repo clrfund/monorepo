@@ -2,16 +2,27 @@
   <div class="transaction">
     <template v-if="error">
       <div class="error">{{ error }}</div>
-      <button class="btn close-btn" @click="$emit('close')">OK</button>
+      <button
+        v-if="displayCloseBtn"
+        class="btn-secondary close-btn"
+        @click="$emit('close')"
+      >
+        Close
+      </button>
     </template>
     <template v-else>
-      <div v-if="!hash">
-        Please approve transaction in your wallet
-      </div>
+      <div v-if="!hash">Please approve transaction in your wallet</div>
       <div v-if="hash">
-        Waiting for <a :href="getBlockExplorerUrl(hash)" target="_blank">transaction</a> to confirm...
+        Waiting for
+        <links :to="getBlockExplorerUrl(hash)">transaction</links> to confirm...
       </div>
-      <div class="loader"></div>
+      <loader />
+      <div v-if="displayWarning">
+        <small class="warning-text">
+          If you have been waiting a while, consider refreshing your browser and
+          reconnecting your wallet.
+        </small>
+      </div>
     </template>
   </div>
 </template>
@@ -20,11 +31,35 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
+import Loader from '@/components/Loader.vue'
+import Links from '@/components/Links.vue'
 
 import { blockExplorer } from '@/api/core'
 
-@Component
+@Component({
+  components: {
+    Loader,
+    Links,
+  },
+  watch: {
+    hash: {
+      handler: function () {
+        // Every time the hash changes, restart the timer to display the warning
+        // message to the user
+        clearTimeout(this.$data.waitingWarningTimeout)
+        this.$data.displayWarning = false
+
+        this.$data.waitingWarningTimeout = setTimeout(() => {
+          this.$data.displayWarning = true
+        }, 30000)
+      },
+      immediate: true,
+    },
+  },
+})
 export default class Transaction extends Vue {
+  waitingWarningTimeout
+  displayWarning = false
 
   @Prop()
   hash!: string
@@ -32,8 +67,11 @@ export default class Transaction extends Vue {
   @Prop()
   error!: string
 
+  @Prop({ default: true })
+  displayCloseBtn!: boolean
+
   getBlockExplorerUrl(transactionHash: string): string {
-    return `${blockExplorer}${transactionHash}`
+    return `${blockExplorer}/tx/${transactionHash}`
   }
 }
 </script>

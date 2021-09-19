@@ -12,7 +12,7 @@ function bnSqrt(a: BigNumber): BigNumber {
   let x1 = a.div(2)
   do {
     x = x1
-    x1 = (x.add(a.div(x))).div(2)
+    x1 = x.add(a.div(x)).div(2)
   } while (!x.eq(x1))
   return x
 }
@@ -25,7 +25,7 @@ export function createMessage(
   voteOptionIndex: number | null,
   voiceCredits: BigNumber | null,
   nonce: number,
-  salt?: BigInt,
+  salt?: BigInt
 ): [Message, PubKey] {
   const encKeypair = new Keypair()
   if (!salt) {
@@ -38,40 +38,40 @@ export function createMessage(
     BigInt(voteOptionIndex || 0),
     BigInt(quadraticVoteWeight),
     BigInt(nonce),
-    BigInt(salt),
+    BigInt(salt)
   )
   const signature = command.sign(userKeypair.privKey)
   const message = command.encrypt(
     signature,
-    Keypair.genEcdhSharedKey(encKeypair.privKey, coordinatorPubKey),
+    Keypair.genEcdhSharedKey(encKeypair.privKey, coordinatorPubKey)
   )
   return [message, encKeypair.pubKey]
 }
 
 export interface Tally {
-  provider: string;
-  maci: string;
+  provider: string
+  maci: string
   results: {
-    commitment: string;
-    tally: string[];
-    salt: string;
-  };
+    commitment: string
+    tally: string[]
+    salt: string
+  }
   totalVoiceCredits: {
-    spent: string;
-    commitment: string;
-    salt: string;
-  };
+    spent: string
+    commitment: string
+    salt: string
+  }
   totalVoiceCreditsPerVoteOption: {
-    commitment: string;
-    tally: string[];
-    salt: string;
-  };
+    commitment: string
+    tally: string[]
+    salt: string
+  }
 }
 
 export function getRecipientClaimData(
   recipientIndex: number,
   recipientTreeDepth: number,
-  tally: Tally,
+  tally: Tally
 ): any[] {
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]

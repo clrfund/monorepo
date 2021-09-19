@@ -1,0 +1,13 @@
+query GetRecipient($registryAddress: ID!, $recipientId: ID!) {
+  recipientRegistry(id: $registryAddress) {
+    recipients(where: { id: $recipientId }) {
+      id
+      requestType
+      recipientAddress
+      recipientMetadata
+      submissionTime
+      rejected
+      verified
+    }
+  }
+}

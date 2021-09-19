@@ -10,7 +10,10 @@
     </div>
     <div v-if="step === 2">
       <h3>Success!</h3>
-      <div>{{ formatAmount(amount) }} {{ currentRound.nativeTokenSymbol }} has been sent to <code>{{ recipientAddress }}</code></div>
+      <div>
+        {{ formatAmount(amount) }} {{ currentRound.nativeTokenSymbol }} has been
+        sent to <code>{{ recipientAddress }}</code>
+      </div>
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
   </div>
@@ -30,15 +33,9 @@ import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
 
-@Component({
-  components: {
-    Transaction,
-  },
-})
+@Component({ components: { Transaction } })
 export default class ClaimModal extends Vue {
-
-  @Prop()
-  project!: Project
+  @Prop() project!: Project
 
   step = 1
   claimTxHash = ''
@@ -51,7 +48,8 @@ export default class ClaimModal extends Vue {
   }
 
   formatAmount(value: BigNumber): string {
-    return formatAmount(value, this.currentRound.nativeTokenDecimals)
+    const { nativeTokenDecimals } = this.currentRound
+    return formatAmount(value, nativeTokenDecimals)
   }
 
   mounted() {
@@ -59,26 +57,37 @@ export default class ClaimModal extends Vue {
   }
 
   private async claim() {
-    const signer: Signer = this.$store.state.currentUser.walletProvider.getSigner()
+    const signer: Signer =
+      this.$store.state.currentUser.walletProvider.getSigner()
     const { fundingRoundAddress, recipientTreeDepth } = this.currentRound
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
     const recipientClaimData = getRecipientClaimData(
       this.project.index,
       recipientTreeDepth,
-      this.$store.state.tally,
+      this.$store.state.tally
     )
     let claimTxReceipt
     try {
       claimTxReceipt = await waitForTransaction(
         fundingRound.claimFunds(...recipientClaimData),
-        (hash) => this.claimTxHash = hash,
+        (hash) => (this.claimTxHash = hash)
       )
     } catch (error) {
       this.claimTxError = error.message
       return
     }
-    this.amount = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount')
-    this.recipientAddress = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_recipient')
+    this.amount = getEventArg(
+      claimTxReceipt,
+      fundingRound,
+      'FundsClaimed',
+      '_amount'
+    )
+    this.recipientAddress = getEventArg(
+      claimTxReceipt,
+      fundingRound,
+      'FundsClaimed',
+      '_recipient'
+    )
     this.step += 1
   }
 }

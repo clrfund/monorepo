@@ -1,13 +1,17 @@
-## Description 
+## Description
+
 This is a contract to register verified users context ids by BrightID node's verification data, and be able to query a user verification.
 This contract consist of:
--  Set BrightID settings  <br />`function setSettings(bytes32 _context, address _verifier) external onlyOwner;`
-- Check a user is verified or not  <br />`function isVerifiedUser(address _user) override external view returns (bool);`
+
+- Set BrightID settings <br />`function setSettings(bytes32 _context, address _verifier) external onlyOwner;`
+- Check a user is verified or not <br />`function isVerifiedUser(address _user) override external view returns (bool);`
 - Register a user by BrightID node's verification data <br />`function register(bytes32 _context, address[] calldata _addrs, uint _timestamp, uint8 _v, bytes32 _r, bytes32 _s external;`
 
 ## Demonstration
+
 [Demo contract on the Rinkeby](https://rinkeby.etherscan.io/address/0xf99e2173db1f341a947ce9bd7779af2245309f91)
 Sample of Registered Data:
+
 ```
 {
   "data": {
@@ -28,15 +32,19 @@ Sample of Registered Data:
   }
 }
 ```
+
 You can see the contract settings [here](https://rinkeby.etherscan.io/address/0xf99e2173db1f341a947ce9bd7779af2245309f91#readContract)
 
 You can update the BrightID settings and test register [here](https://rinkeby.etherscan.io/address/0xf99e2173db1f341a947ce9bd7779af2245309f91#writeContract)
 
- ## Deploy contract
-This contract needs tow constructor arguments
+## Deploy contract
+
+This contract needs two constructor arguments
+
 - `context bytes32` <br /> BrightID context used for verifying users.
 
 - `verifier address` <br /> BrightID verifier address that signs BrightID verifications.
 
 ## Points
+
 We can simply use an ERC20 token as authorization for the verifiers to be able have multiple verifiers.

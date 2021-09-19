@@ -1,18 +1,17 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
 import dotenv from 'dotenv'
 
 import { HardhatUserConfig, task } from 'hardhat/config'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ganache'
-import 'hardhat-contract-sizer';
-
+import 'hardhat-contract-sizer'
 
 dotenv.config()
 
-
 const GAS_LIMIT = 20000000
-const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC || '';
+const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC || ''
+const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || undefined
 
 const config: HardhatUserConfig = {
   networks: {
@@ -33,11 +32,15 @@ const config: HardhatUserConfig = {
     } as any,
     rinkeby: {
       url: process.env.RINKEBY_JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
-      accounts: { mnemonic: WALLET_MNEMONIC },
+      accounts: WALLET_PRIVATE_KEY ? [WALLET_PRIVATE_KEY] : 'remote',
     },
     xdai: {
       url: process.env.XDAI_JSONRPC_HTTP_URL || 'https://rpc.xdaichain.com',
       timeout: 60000,
+      accounts: { mnemonic: WALLET_MNEMONIC },
+    },
+    rinkarby: {
+      url: process.env.RINKARBY_JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
       accounts: { mnemonic: WALLET_MNEMONIC },
     },
   },
@@ -59,8 +62,8 @@ const config: HardhatUserConfig = {
       },
     },
     overrides: {
-      "contracts/FundingRoundFactory.sol": {
-        version: "0.6.12",
+      'contracts/FundingRoundFactory.sol': {
+        version: '0.6.12',
         settings: {
           optimizer: {
             enabled: true,
@@ -68,8 +71,8 @@ const config: HardhatUserConfig = {
           },
         },
       },
-      "contracts/FundingRound.sol": {
-        version: "0.6.12",
+      'contracts/FundingRound.sol': {
+        version: '0.6.12',
         settings: {
           optimizer: {
             enabled: true,
@@ -77,8 +80,8 @@ const config: HardhatUserConfig = {
           },
         },
       },
-      "contracts/snarkVerifiers/BatchUpdateStateTreeVerifier32.sol": {
-        version: "0.6.12",
+      'contracts/snarkVerifiers/BatchUpdateStateTreeVerifier32.sol': {
+        version: '0.6.12',
         settings: {
           optimizer: {
             enabled: true,
@@ -86,8 +89,8 @@ const config: HardhatUserConfig = {
           },
         },
       },
-      "contracts/snarkVerifiers/QuadVoteTallyVerifier32.sol": {
-        version: "0.6.12",
+      'contracts/snarkVerifiers/QuadVoteTallyVerifier32.sol': {
+        version: '0.6.12',
         settings: {
           optimizer: {
             enabled: true,
@@ -95,8 +98,8 @@ const config: HardhatUserConfig = {
           },
         },
       },
-      "contracts/recipientRegistry/OptimisticRecipientRegistry.sol": {
-        version: "0.6.12",
+      'contracts/recipientRegistry/OptimisticRecipientRegistry.sol': {
+        version: '0.6.12',
         settings: {
           optimizer: {
             enabled: true,
@@ -104,8 +107,8 @@ const config: HardhatUserConfig = {
           },
         },
       },
-      "contracts/userRegistry/SimpleUserRegistry.sol": {
-        version: "0.6.12",
+      'contracts/userRegistry/SimpleUserRegistry.sol': {
+        version: '0.6.12',
         settings: {
           optimizer: {
             enabled: true,
@@ -113,31 +116,40 @@ const config: HardhatUserConfig = {
           },
         },
       },
-      "contracts/userRegistry/BrightIdUserRegistry.sol": {
-        version: "0.6.12",
+      'contracts/userRegistry/BrightIdUserRegistry.sol': {
+        version: '0.6.12',
         settings: {
           optimizer: {
             enabled: true,
             runs: 1000000,
           },
         },
-      }
-    }
+      },
+    },
   },
-  
-};
+}
 
-task('compile', 'Compiles the entire project, building all artifacts', async (_, { config }, runSuper) => {
-  await runSuper();
-  // Copy Poseidon artifacts
-  const poseidons = ['PoseidonT3', 'PoseidonT6']
-  for (const contractName of poseidons) {
-    const artifact = JSON.parse(fs.readFileSync(`../node_modules/maci-contracts/compiled/${contractName}.json`).toString())
-    fs.writeFileSync(
-      path.join(config.paths.artifacts, `${contractName}.json`),
-      JSON.stringify({ ...artifact, linkReferences: {} }),
-    )
+task(
+  'compile',
+  'Compiles the entire project, building all artifacts',
+  async (_, { config }, runSuper) => {
+    await runSuper()
+    // Copy Poseidon artifacts
+    const poseidons = ['PoseidonT3', 'PoseidonT6']
+    for (const contractName of poseidons) {
+      const artifact = JSON.parse(
+        fs
+          .readFileSync(
+            `../node_modules/maci-contracts/compiled/${contractName}.json`
+          )
+          .toString()
+      )
+      fs.writeFileSync(
+        path.join(config.paths.artifacts, `${contractName}.json`),
+        JSON.stringify({ ...artifact, linkReferences: {} })
+      )
+    }
   }
-});
+)
 
 export default config

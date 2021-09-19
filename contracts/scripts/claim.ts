@@ -5,11 +5,14 @@ import { getEventArg } from '../utils/contracts'
 import { getRecipientClaimData } from '../utils/maci'
 
 async function main() {
-  const [,,, recipient1, recipient2] = await ethers.getSigners()
+  const [, , , recipient1, recipient2] = await ethers.getSigners()
   const state = JSON.parse(fs.readFileSync('state.json').toString())
   const tally = JSON.parse(fs.readFileSync('tally.json').toString())
 
-  const fundingRound = await ethers.getContractAt('FundingRound', state.fundingRound)
+  const fundingRound = await ethers.getContractAt(
+    'FundingRound',
+    state.fundingRound
+  )
   const maciAddress = await fundingRound.maci()
   const maci = await ethers.getContractAt('MACI', maciAddress)
   const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
@@ -20,18 +23,25 @@ async function main() {
     const recipientClaimData = getRecipientClaimData(
       recipientIndex,
       recipientTreeDepth,
-      tally,
+      tally
     )
     const fundingRoundAsRecipient = fundingRound.connect(recipient)
-    const claimTx = await fundingRoundAsRecipient.claimFunds(...recipientClaimData)
-    const claimedAmount = await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_amount')
+    const claimTx = await fundingRoundAsRecipient.claimFunds(
+      ...recipientClaimData
+    )
+    const claimedAmount = await getEventArg(
+      claimTx,
+      fundingRound,
+      'FundsClaimed',
+      '_amount'
+    )
     console.log(`Recipient ${recipientIndex} claimed ${claimedAmount} tokens.`)
   }
 }
 
 main()
   .then(() => process.exit(0))
-  .catch(error => {
+  .catch((error) => {
     console.error(error)
     process.exit(1)
   })

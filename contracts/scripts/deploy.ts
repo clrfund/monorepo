@@ -1,61 +1,97 @@
 import { ethers } from 'hardhat'
-import { Contract } from 'ethers'
+import { Contract, utils } from 'ethers'
 
 import { UNIT } from '../utils/constants'
 import { deployMaciFactory } from '../utils/deployment'
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
-  const maciFactory = await deployMaciFactory(deployer);
+  const [deployer] = await ethers.getSigners()
+  console.log(`Deploying from address: ${deployer.address}`)
+
+  const maciFactory = await deployMaciFactory(deployer)
+  await maciFactory.deployTransaction.wait()
+  console.log(`MACIFactory deployed: ${maciFactory.address}`)
 
   const FundingRoundFactory = await ethers.getContractFactory(
     'FundingRoundFactory',
-    deployer,
-  );
-  const fundingRoundFactory = await FundingRoundFactory.deploy(
-    maciFactory.address,
-  );
-  await fundingRoundFactory.deployed();
-  await maciFactory.transferOwnership(fundingRoundFactory.address);
-
-  const SimpleUserRegistry = await ethers.getContractFactory(
-    'SimpleUserRegistry',
-    deployer,
+    deployer
   )
-  const userRegistry = await SimpleUserRegistry.deploy()
-  await fundingRoundFactory.setUserRegistry(userRegistry.address)
+  const fundingRoundFactory = await FundingRoundFactory.deploy(
+    maciFactory.address
+  )
+  await fundingRoundFactory.deployTransaction.wait()
+  console.log(`FundingRoundFactory deployed: ${fundingRoundFactory.address}`)
+
+  const transferOwnershipTx = await maciFactory.transferOwnership(
+    fundingRoundFactory.address
+  )
+  await transferOwnershipTx.wait()
+
+  const userRegistryType = process.env.USER_REGISTRY_TYPE || 'simple'
+  let userRegistry: Contract
+  if (userRegistryType === 'simple') {
+    const SimpleUserRegistry = await ethers.getContractFactory(
+      'SimpleUserRegistry',
+      deployer
+    )
+    userRegistry = await SimpleUserRegistry.deploy()
+  } else if (userRegistryType === 'brightid') {
+    const BrightIdUserRegistry = await ethers.getContractFactory(
+      'BrightIdUserRegistry',
+      deployer
+    )
+
+    userRegistry = await BrightIdUserRegistry.deploy(
+      utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
+      process.env.BRIGHTID_VERIFIER_ADDR
+    )
+  } else {
+    throw new Error('unsupported user registry type')
+  }
+  await userRegistry.deployTransaction.wait()
+  console.log(`User registry deployed: ${userRegistry.address}`)
+
+  const setUserRegistryTx = await fundingRoundFactory.setUserRegistry(
+    userRegistry.address
+  )
+  await setUserRegistryTx.wait()
 
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
   let recipientRegistry: Contract
   if (recipientRegistryType === 'simple') {
     const SimpleRecipientRegistry = await ethers.getContractFactory(
       'SimpleRecipientRegistry',
-      deployer,
+      deployer
     )
     recipientRegistry = await SimpleRecipientRegistry.deploy(
-      fundingRoundFactory.address,
+      fundingRoundFactory.address
     )
   } else if (recipientRegistryType === 'optimistic') {
     const OptimisticRecipientRegistry = await ethers.getContractFactory(
       'OptimisticRecipientRegistry',
-      deployer,
+      deployer
     )
     recipientRegistry = await OptimisticRecipientRegistry.deploy(
       UNIT.div(1000),
       0,
-      fundingRoundFactory.address,
+      fundingRoundFactory.address
     )
   } else {
     throw new Error('unsupported recipient registry type')
   }
-  await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
+  await recipientRegistry.deployTransaction.wait()
+  console.log(`Recipient registry deployed: ${recipientRegistry.address}`)
 
-  console.log(`Factory deployed: ${fundingRoundFactory.address}`)
+  const setRecipientRegistryTx = await fundingRoundFactory.setRecipientRegistry(
+    recipientRegistry.address
+  )
+  await setRecipientRegistryTx.wait()
+  console.log(`Deployment complete!`)
 }
 
 main()
   .then(() => process.exit(0))
-  .catch(error => {
-    console.error(error);
-    process.exit(1);
-  });
+  .catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })
