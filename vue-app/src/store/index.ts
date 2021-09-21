@@ -19,6 +19,7 @@ import {
   getContributionAmount,
   hasContributorVoted,
 } from '@/api/contributions'
+import { recipientRegistryType } from '@/api/core'
 import { loginUser, logoutUser } from '@/api/gun'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
@@ -457,13 +458,18 @@ const actions = {
 }
 
 const getters = {
-  // TODO generalize - this assumes optimistic registry
   recipientJoinDeadline: (state: RootState): DateTime | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
       return null
     }
+
+    const challengePeriodDuration =
+      recipientRegistryType === 'optimistic'
+        ? state.recipientRegistryInfo.challengePeriodDuration
+        : 0
+
     return state.currentRound.signUpDeadline.minus({
-      seconds: state.recipientRegistryInfo.challengePeriodDuration,
+      seconds: challengePeriodDuration,
     })
   },
   isRoundJoinPhase: (state: RootState, getters): boolean => {
