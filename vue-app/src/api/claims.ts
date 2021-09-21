@@ -1,4 +1,5 @@
 import { Contract, FixedNumber } from 'ethers'
+import sdk from '@/graphql/sdk'
 
 import { FundingRound } from './abi'
 import { provider } from './core'
@@ -16,10 +17,13 @@ export async function getAllocatedAmount(
 
 export async function isFundsClaimed(
   fundingRoundAddress: string,
-  recipientIndex: number
+  recipientAddress: string
 ): Promise<boolean> {
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
-  const eventFilter = fundingRound.filters.FundsClaimed(recipientIndex)
-  const events = await fundingRound.queryFilter(eventFilter, 0)
-  return events.length > 0
+  const data = await sdk.GetRecipientDonations({
+    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+    recipientAddress,
+  })
+
+  return !!data.fundingRound?.recipientRegistry?.recipients?.[0]?.donations
+    ?.length
 }

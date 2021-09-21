@@ -7,6 +7,10 @@ snark-params
 vue-app/gundata/
 yarn.lock
 
+# auto-generated files
+vue-app/src/graphql/API.ts
+subgraph/generated
+
 # local config
 vetur.config.js
 

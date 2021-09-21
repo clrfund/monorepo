@@ -3,12 +3,11 @@ import { DateTime } from 'luxon'
 import { PubKey } from 'maci-domainobjs'
 
 import { FundingRound, MACI, ERC20 } from './abi'
-import { provider, factory, extraRounds } from './core'
+import { provider, factory } from './core'
 import { getTotalContributed } from './contributions'
 
 export interface RoundInfo {
   fundingRoundAddress: string
-  roundNumber: number
   userRegistryAddress: string
   maciAddress: string
   recipientTreeDepth: number
@@ -45,7 +44,7 @@ export enum RoundStatus {
   Finalized = 'Finalized',
   Cancelled = 'Cancelled',
 }
-
+//TODO: update to take factory address as a parameter, default to env. variable
 export async function getCurrentRound(): Promise<string | null> {
   const fundingRoundAddress = await factory.getCurrentRound()
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
@@ -54,23 +53,10 @@ export async function getCurrentRound(): Promise<string | null> {
   return fundingRoundAddress
 }
 
-async function getRoundNumber(roundAddress: string): Promise<number> {
-  const eventFilter = factory.filters.RoundStarted()
-  const events = await factory.queryFilter(eventFilter, 0)
-  const roundIndex = events.findIndex((event) => {
-    const args = event.args as any
-    return args._round.toLowerCase() === roundAddress.toLowerCase()
-  })
-  if (roundIndex === -1) {
-    throw new Error('round does not exist')
-  }
-  return roundIndex + extraRounds.length
-}
-
+//TODO: update to take factory address as a parameter, default to env. variable
 export async function getRoundInfo(
   fundingRoundAddress: string
 ): Promise<RoundInfo> {
-  const roundNumber = await getRoundNumber(fundingRoundAddress)
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const [
     maciAddress,
@@ -145,6 +131,7 @@ export async function getRoundInfo(
       status = RoundStatus.Tallying
     }
     contributions = contributionsInfo.amount
+    //TODO: update to take factory address as a parameter, default to env. variable
     matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
   }
 
@@ -152,7 +139,6 @@ export async function getRoundInfo(
 
   return {
     fundingRoundAddress,
-    roundNumber,
     userRegistryAddress,
     maciAddress,
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,

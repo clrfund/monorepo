@@ -301,7 +301,6 @@ import { parseFixed } from '@ethersproject/bignumber'
 import { commify, formatUnits } from '@ethersproject/units'
 import { DateTime } from 'luxon'
 import WalletWidget from '@/components/WalletWidget.vue'
-import BrightIdModal from '@/components/BrightIdModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
@@ -596,7 +595,7 @@ export default class Cart extends Vue {
         } else if (currentRound.contributors >= currentRound.maxContributors) {
           return 'The limit on the number of contributors has been reached'
         } else if (total.eq(BigNumber.from(0)) && !this.isCartEmpty) {
-          return `Your total must be more then 0 ${currentRound.nativeTokenSymbol}`
+          return `Your total must be more than 0 ${currentRound.nativeTokenSymbol}`
         } else if (currentUser.balance === null) {
           return '' // No error: waiting for balance
         } else if (total.gt(currentUser.balance)) {
@@ -649,10 +648,6 @@ export default class Cart extends Vue {
       this.errorMessage !== null &&
       this.errorMessage.startsWith('Your balance is')
     )
-  }
-
-  registerWithBrightId(): void {
-    this.$modal.show(BrightIdModal, {}, { width: 500 })
   }
 
   submitCart(event) {

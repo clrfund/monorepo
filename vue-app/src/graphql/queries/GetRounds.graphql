@@ -1,0 +1,5 @@
+query GetRounds {
+  fundingRounds {
+    id
+  }
+}

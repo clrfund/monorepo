@@ -155,6 +155,7 @@ export default class MatchingFundsModal extends Vue {
     const amount = parseFixed(this.amount, nativeTokenDecimals)
     try {
       await waitForTransaction(
+        //TODO: update to take factory address as a parameter from the route props, default to env. variable
         token.transfer(factory.address, amount),
         (hash) => (this.transferTxHash = hash)
       )
