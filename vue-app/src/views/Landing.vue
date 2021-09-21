@@ -154,13 +154,13 @@
           <links to="https://github.com/ethereum/clrfund/">GitHub</links>
         </div>
         <div class="link-li">
-          <links to="https://ethereum.org/eth2/">More on Eth2</links>
+          <links to="https://ethereum.org/en/eth2/">More on Eth2</links>
         </div>
         <div class="link-li">
           <links to="/about/how-it-works">How the round works</links>
         </div>
         <div class="link-li">
-          <links to="/about/layer2">Learn about [Layer 2]</links>
+          <links to="/about/layer-2">Learn about Arbitrum</links>
         </div>
         <div class="link-li">
           <links to="/about/maci">Learn about MACI</links>
@@ -168,6 +168,7 @@
         <div class="link-li">
           <links to="/about/sybil-resistance">Learn about BrightID</links>
         </div>
+        <!-- TODO add link - where are we sending people? clr.fund Discord? -->
         <div class="link-li">Provide Feedback</div>
       </div>
     </div>

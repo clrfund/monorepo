@@ -97,7 +97,7 @@ const routes = [
     },
   },
   {
-    path: '/about/layer2',
+    path: '/about/layer-2',
     name: 'about-layer-2',
     component: AboutLayer2,
     meta: {

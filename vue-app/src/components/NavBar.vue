@@ -70,7 +70,7 @@ export default class NavBar extends Vue {
     { to: '/about/how-it-works', text: 'How it works', emoji: '⚙️' },
     { to: '/about/maci', text: 'Bribery protection', emoji: '🤑' },
     { to: '/about/sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
-    { to: '/about/layer2', text: 'About [layer 2]', emoji: '🚀' },
+    { to: '/about/layer-2', text: 'About Layer 2', emoji: '🚀' },
     {
       to: 'https://github.com/clrfund/monorepo/',
       text: 'Code',

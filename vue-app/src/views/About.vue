@@ -15,8 +15,8 @@
     <p>
       Allocating funds towards
       <links to="/about/public-goods">public goods</links> — commodities or
-      services that deliver a net benefit even when they cannot be sold — is a
-      challenge for any ecosystem, and Ethereum is no exception.
+      services that are neither excludable nor subtractable — is a challenge for
+      any ecosystem, and Ethereum is no exception.
     </p>
     <p>
       Clr.fund’s goal is to enable funds to be allocated towards public goods
@@ -28,27 +28,27 @@
       <links to="https://github.com/clrfund/constitution"
         >Clr.fund Constitution</links
       >
-      for more detail on Clr.fund’s goals and values.
+      for more detail on clr.fund’s goals and values.
     </p>
 
     <h2>How is clr.fund unique?</h2>
-    <p>
-      [Clr.fund](http://clr.fund) instances also have a number of other special
-      properties:
-    </p>
+    <p>Clr.fund instances also have a number of other special properties:</p>
     <ul>
       <li>
-        <links to="/about/decentralization">Decentralization</links> — Major
-        pieces of clr.fund's infrastructure are built on
-        [Ethereum](https://www.ethereum.org), a programmable blockchain that
-        provides a reliable, censorship-resistant ledger for clr.fund's voting
-        and funding transactions.
+        Decentralization — Major pieces of clr.fund's infrastructure are built
+        on
+        <links to="https://ethereum.org/en/what-is-ethereum/">Ethereum</links>,
+        a programmable blockchain that provides a reliable, censorship-resistant
+        ledger for clr.fund's voting and funding transactions.
+        <links to="/about/decentralization"
+          >Read more on clr.fund's decentralization</links
+        >.
       </li>
       <li>
         Scalability — Because using Ethereum can be expensive for users,
-        c[lr.fund](http://clr.fund) uses "layer 2" supplementary networks to get
-        most of the benefits of the main Ethereum network but with faster,
-        cheaper transactions.
+        clr.fund uses "layer 2" supplementary networks to get most of the
+        benefits of the main Ethereum network but with faster, cheaper
+        transactions.
         <links to="/about/layer-2"
           >Learn more about clr.fund's user of layer 2.</links
         >
