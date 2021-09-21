@@ -54,11 +54,10 @@
         >
       </li>
       <li>
-        Collusion-resistance — Because blockchains like Ethereum publish all
-        data publicly by default, c[lr.fund](http://clr.fund) voters are
-        vulnerable to bribery and other kinds of manipulation. Clr.fund attempts
-        to prevent these attacks using magical math called zero-knowledge
-        proofs.
+        Collusion-resistance — Since blockchains like Ethereum publish all data
+        publicly by default, clr.fund contributors are vulnerable to bribery and
+        other kinds of manipulation. Clr.fund helps prevent these attacks using
+        magical math called zero-knowledge proofs.
         <links to="/about/maci"
           >Find out about MACI, our Minimal Anti-Collusion
           Infrastructure.</links
@@ -68,15 +67,14 @@
         Sybil-resistance — Voting systems that care about the number of
         individual people voting for a given choice, as quadratic funding does,
         can be vulnerable to sybil attacks, in which one person sets up many
-        identities in order to vote multiple times. [Clr.fund](http://clr.fund)
-        mitigates this threat with an identity-system called BrightID.
-        <links to="/about/sybil-resistance"
-          >Find out more about BrightID.</links
-        >
+        identities in order to vote multiple times. Clr.fund mitigates this
+        threat with an identity-system called BrightID.
+        <links to="/about/sybil-resistance">Find out more about BrightID</links
+        >.
       </li>
     </ul>
     <p>
-      clr.fund is also built so anyone can spin up and run their own instance to
+      Clr.fund is also built so anyone can spin up and run their own instance to
       create a public goods grant program for their particular public.
     </p>
 
