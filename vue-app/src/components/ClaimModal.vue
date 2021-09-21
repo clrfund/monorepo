@@ -33,14 +33,9 @@ import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
 
-@Component({
-  components: {
-    Transaction,
-  },
-})
+@Component({ components: { Transaction } })
 export default class ClaimModal extends Vue {
-  @Prop()
-  project!: Project
+  @Prop() project!: Project
 
   step = 1
   claimTxHash = ''
@@ -53,7 +48,8 @@ export default class ClaimModal extends Vue {
   }
 
   formatAmount(value: BigNumber): string {
-    return formatAmount(value, this.currentRound.nativeTokenDecimals)
+    const { nativeTokenDecimals } = this.currentRound
+    return formatAmount(value, nativeTokenDecimals)
   }
 
   mounted() {

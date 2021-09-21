@@ -276,6 +276,18 @@ async function main() {
     thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
   }
 
+  // Deploy new funding round and MACI
+  const deployNewRoundTx = await factory.deployNewRound()
+  await deployNewRoundTx.wait()
+  const fundingRoundAddress = await factory.getCurrentRound()
+  console.log(`Funding round deployed: ${fundingRoundAddress}`)
+  const fundingRound = await ethers.getContractAt(
+    'FundingRound',
+    fundingRoundAddress
+  )
+  const maciAddress = await fundingRound.maci()
+  console.log(`MACI address: ${maciAddress}`)
+
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
   const recipientRegistryAddress = await factory.recipientRegistry()
   if (recipientRegistryType === 'simple') {
@@ -348,18 +360,6 @@ async function main() {
     )
     recipient3Added.wait()
   }
-
-  // Deploy new funding round and MACI
-  const deployNewRoundTx = await factory.deployNewRound()
-  await deployNewRoundTx.wait()
-  const fundingRoundAddress = await factory.getCurrentRound()
-  console.log(`Funding round deployed: ${fundingRoundAddress}`)
-  const fundingRound = await ethers.getContractAt(
-    'FundingRound',
-    fundingRoundAddress
-  )
-  const maciAddress = await fundingRound.maci()
-  console.log(`MACI address: ${maciAddress}`)
 
   // Save the current state of the round
   fs.writeFileSync(

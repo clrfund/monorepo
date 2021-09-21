@@ -55,7 +55,6 @@ import {
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
   LOGIN_USER,
-  LOAD_BRIGHT_ID,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 
@@ -83,6 +82,7 @@ import { SET_CURRENT_USER } from '@/store/mutation-types'
 export default class App extends Vue {
   intervals: { [key: string]: any } = {}
 
+  //NOTE: why are all these called on the landing page? makes it heavy to load
   created() {
     this.intervals.round = setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
@@ -95,7 +95,10 @@ export default class App extends Vue {
     }, 60 * 1000)
   }
 
+  //NOTE: why are all these called on the landing page?
   async mounted() {
+    //TODO: update to take factory address as a parameter, default to env. variable
+    //TODO: SELECT_ROUND action also commits SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
     const roundAddress =
       this.$store.state.currentRoundAddress || (await getCurrentRound())
     await this.$store.dispatch(SELECT_ROUND, roundAddress)

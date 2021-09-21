@@ -17,7 +17,6 @@ import {
   serializeContributorData,
   deserializeContributorData,
   getContributionAmount,
-  isContributionWithdrawn,
   hasContributorVoted,
 } from '@/api/contributions'
 import { loginUser, logoutUser } from '@/api/gun'
@@ -137,6 +136,7 @@ export const mutations = {
   [SET_CURRENT_USER](state, user: User | null) {
     state.currentUser = user
   },
+  //TODO: also dispatch SET_CURRENT_FACTORY_ADDRESS mutation when ever this fires
   [SET_CURRENT_ROUND_ADDRESS](state, address: string) {
     state.currentRoundAddress = address
   },
@@ -247,6 +247,7 @@ export const mutations = {
 }
 
 const actions = {
+  //TODO: also commit SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
   [SELECT_ROUND]({ commit, dispatch, state }, roundAddress: string) {
     if (state.currentRoundAddress) {
       // Reset everything that depends on round
@@ -267,6 +268,7 @@ const actions = {
       commit(SET_CURRENT_ROUND, null)
       return
     }
+    //TODO: update to take factory address as a parameter, default to env. variable
     const round = await getRoundInfo(roundAddress)
     commit(SET_CURRENT_ROUND, round)
     if (round && round.status === RoundStatus.Finalized) {
@@ -275,6 +277,7 @@ const actions = {
     }
   },
   async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
+    //TODO: update call to getRecipientRegistryAddress to take factory address as a parameter
     const recipientRegistryAddress =
       state.recipientRegistryAddress ||
       (await getRecipientRegistryAddress(state.currentRoundAddress))
@@ -304,27 +307,18 @@ const actions = {
       )
       let contribution = state.contribution
       if (!contribution || contribution.isZero()) {
-        let isWithdrawn = false
-        if (state.currentRound.status === RoundStatus.Cancelled) {
-          isWithdrawn = await isContributionWithdrawn(
-            state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress
-          )
-        }
-        if (isWithdrawn) {
-          commit(SET_CONTRIBUTION, BigNumber.from(0))
-        } else {
-          contribution = await getContributionAmount(
-            state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress
-          )
-          const hasVoted = await hasContributorVoted(
-            state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress
-          )
-          commit(SET_CONTRIBUTION, contribution)
-          commit(SET_HAS_VOTED, hasVoted)
-        }
+        contribution = await getContributionAmount(
+          state.currentRound.fundingRoundAddress,
+          state.currentUser.walletAddress
+        )
+
+        const hasVoted = await hasContributorVoted(
+          state.currentRound.fundingRoundAddress,
+          state.currentUser.walletAddress
+        )
+
+        commit(SET_CONTRIBUTION, contribution)
+        commit(SET_HAS_VOTED, hasVoted)
       }
 
       let ensName: string | null = state.currentUser.ensName

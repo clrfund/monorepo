@@ -30,4 +30,5 @@ module.exports = {
       },
     },
   ],
+  ignorePatterns: ['src/graphql/API.ts'],
 }

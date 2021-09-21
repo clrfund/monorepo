@@ -147,6 +147,7 @@ export default class ProjectList extends Vue {
   }
 
   async created() {
+    //TODO: update to take factory address as a parameter, default to env. variable
     const roundAddress =
       this.$route.params.address ||
       this.$store.state.currentRoundAddress ||
@@ -156,6 +157,7 @@ export default class ProjectList extends Vue {
       roundAddress !== this.$store.state.currentRoundAddress
     ) {
       // Select round and (re)load round info
+      //TODO: SELECT_ROUND action also commits SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
       this.$store.dispatch(SELECT_ROUND, roundAddress)
       await this.$store.dispatch(LOAD_ROUND_INFO)
       if (this.$store.state.currentUser) {

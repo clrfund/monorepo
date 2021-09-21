@@ -298,12 +298,10 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
-import { Network } from '@ethersproject/networks'
 import { parseFixed } from '@ethersproject/bignumber'
 import { commify, formatUnits } from '@ethersproject/units'
 import { DateTime } from 'luxon'
 import WalletWidget from '@/components/WalletWidget.vue'
-import BrightIdModal from '@/components/BrightIdModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
@@ -326,7 +324,6 @@ import {
   TOGGLE_SHOW_CART_PANEL,
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
-import { formatDateFromNow, getTimeLeft } from '@/utils/dates'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
 @Component({
@@ -486,8 +483,8 @@ export default class Cart extends Vue {
   }
 
   formatAmount(value: BigNumber): string {
-    const decimals = this.$store.state.currentRound.nativeTokenDecimals
-    return formatAmount(value, decimals)
+    const { nativeTokenDecimals } = this.$store.state.currentRound
+    return formatAmount(value, nativeTokenDecimals)
   }
 
   isAmountValid(value: string): boolean {
@@ -586,23 +583,47 @@ export default class Cart extends Vue {
       return 'The funding round has ended.'
     if (currentRound.messages + this.cart.length >= currentRound.maxMessages)
       return 'Cart changes will exceed voting capacity of this round'
-
-    const total = this.getTotal()
-    // Contributing
-    if (this.contribution.isZero()) {
-      if (this.$store.getters.hasContributionPhaseEnded)
-        return 'Contributions are over for this funding round.'
-      if (this.$store.getters.isRoundContributorLimitReached)
-        return 'The limit on the number of contributors has been reached'
-      if (total.eq(BigNumber.from(0)) && !this.isCartEmpty)
-        return `Your total must be more then 0 ${currentRound.nativeTokenSymbol}`
-      if (currentUser.balance === null) return null // No error: waiting for balance
-      if (total.gt(currentUser.balance)) {
-        const balanceDisplay = formatAmount(
-          currentUser.balance,
-          currentRound.nativeTokenDecimals
-        )
-        return `Not enough funds. Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}.`
+    } else if (
+      currentRound.messages + this.cart.length >=
+      currentRound.maxMessages
+    ) {
+      return 'The limit on the number of votes has been reached'
+    } else {
+      const total = this.getTotal()
+      if (this.contribution.isZero()) {
+        // Contributing
+        if (DateTime.local() >= currentRound.signUpDeadline) {
+          return 'Contributions are over for this funding round.'
+          // the above error might not be necessary now we have our cart states in the HTML above
+        } else if (currentRound.contributors >= currentRound.maxContributors) {
+          return 'The limit on the number of contributors has been reached'
+        } else if (total.eq(BigNumber.from(0)) && !this.isCartEmpty) {
+          return `Your total must be more than 0 ${currentRound.nativeTokenSymbol}`
+        } else if (currentUser.balance === null) {
+          return '' // No error: waiting for balance
+        } else if (total.gt(currentUser.balance)) {
+          const balanceDisplay = formatAmount(
+            currentUser.balance,
+            currentRound.nativeTokenDecimals
+          )
+          return `Not enough funds. Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}.`
+        } else if (this.isGreaterThanMax()) {
+          return `Your contribution is too generous. The max contribution is ${MAX_CONTRIBUTION_AMOUNT} ${currentRound.nativeTokenSymbol}.`
+        } else {
+          return null
+        }
+      } else {
+        // Reallocating funds
+        if (!this.$store.state.contributor) {
+          return 'Contributor key is not found'
+        } else if (this.isGreaterThanInitialContribution()) {
+          return `Your new total can't be more than your original ${this.formatAmount(
+            this.contribution
+          )} contribution.`
+          // TODO: need to turn this into a small number
+        } else {
+          return null
+        }
       }
       if (this.isGreaterThanMax())
         return `Your contribution is too generous. The max contribution is ${MAX_CONTRIBUTION_AMOUNT} ${currentRound.nativeTokenSymbol}.`
@@ -641,10 +662,6 @@ export default class Cart extends Vue {
       this.errorMessage !== null &&
       this.errorMessage.startsWith('Your balance is')
     )
-  }
-
-  registerWithBrightId(): void {
-    this.$modal.show(BrightIdModal, {}, { width: 500 })
   }
 
   submitCart(event) {

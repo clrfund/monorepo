@@ -83,14 +83,10 @@ export default class Accordion extends Vue {
 }
 
 .tag {
-  /* background: #fff9; */
-  border-radius: 2rem;
-  font-family: 'Glacial Indifference', sans-serif;
   padding: 0.25rem 0.5rem;
+  border-radius: 2rem;
   padding-left: 0;
-  /* color: $bg-primary-color; */
   font-size: 16px;
   text-transform: uppercase;
-  width: fit-content;
 }
 </style>

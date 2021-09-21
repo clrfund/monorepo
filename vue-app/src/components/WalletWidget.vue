@@ -2,7 +2,11 @@
   <div :class="{ container: !isActionButton }">
     <button
       v-if="!currentUser"
-      :class="isActionButton ? 'btn-action' : 'app-btn'"
+      :class="{
+        'btn-action': isActionButton,
+        'app-btn': !isActionButton,
+        'full-width-mobile': fullWidthMobile,
+      }"
       @click="showModal()"
     >
       Connect
@@ -40,8 +44,9 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop, Watch } from 'vue-property-decorator'
-import { commify, formatUnits } from '@ethersproject/units'
+import { BigNumber } from 'ethers'
 
+import { formatAmount } from '@/utils/amounts'
 import { User, getProfileImageUrl } from '@/api/user'
 import WalletModal from '@/components/WalletModal.vue'
 import { LOGOUT_USER } from '@/store/action-types'
@@ -55,6 +60,8 @@ export default class WalletWidget extends Vue {
   // Boolean to only show Connect button, styled like an action button,
   // which hides the widget that would otherwise display after connecting
   @Prop() isActionButton!: boolean
+  // Boolean to allow connect button to be full width
+  @Prop() fullWidthMobile!: boolean
 
   toggleProfile(): void {
     this.showProfilePanel = !this.showProfilePanel
@@ -73,15 +80,14 @@ export default class WalletWidget extends Vue {
     if (etherBalance === null || typeof etherBalance === 'undefined') {
       return null
     }
-    return commify(formatUnits(etherBalance, 'ether'))
+    return formatAmount(etherBalance, 'ether', 4)
   }
 
   get balance(): string | null {
-    const balance = this.currentUser?.balance
-    if (balance === null || typeof balance === 'undefined') {
-      return null
-    }
-    return commify(formatUnits(balance, 18))
+    const balance: BigNumber | null | undefined = this.currentUser?.balance
+    if (balance === null || typeof balance === 'undefined') return null
+    const { nativeTokenDecimals } = this.$store.state.currentRound
+    return formatAmount(balance, nativeTokenDecimals, 4)
   }
 
   async mounted() {
@@ -203,7 +209,9 @@ export default class WalletWidget extends Vue {
   }
 }
 
-.full-width {
-  width: 100%;
+.full-width-mobile {
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+  }
 }
 </style>

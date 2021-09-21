@@ -6,6 +6,7 @@ import { UserRegistry, ERC20 } from './abi'
 import { factory, ipfsGatewayUrl, provider } from './core'
 import { BrightId } from './bright-id'
 
+//TODO: update anywhere this is called to take factory address as a parameter, default to env. variable
 export const LOGIN_MESSAGE = `Welcome to clr.fund!
 
 To get logged in, sign this message to prove you have access to this wallet. This does not cost any ether.

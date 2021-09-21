@@ -2,62 +2,80 @@
 <template>
   <div>
     <round-status-banner />
-    <div class="gradient">
-      <img src="@/assets/moon.png" class="moon" />
-      <div class="hero">
-        <img src="@/assets/newrings.png" />
+    <loader v-if="loading" />
+    <div v-if="!loading">
+      <div class="gradient">
+        <img src="@/assets/moon.png" class="moon" />
+        <div class="hero">
+          <img src="@/assets/newrings.png" />
+        </div>
       </div>
-    </div>
-    <div class="content">
-      <div class="flex-title">
-        <h1>Prove you’re only using one account</h1>
-      </div>
-      <div class="subtitle">
-        We use BrightID to stop bots and cheaters, and make our funding more
-        democratic.
-      </div>
-      <h2>
-        What you'll need
-        <img
-          v-tooltip="{
-            content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
-            trigger: 'hover click',
-          }"
-          width="16px"
-          src="@/assets/info.svg"
-          class="info-icon"
-        />
-      </h2>
-      <ul>
-        <li>
-          BrightID – available on
-          <a
-            href="https://apps.apple.com/us/app/brightid/id1428946820"
-            target="_blank"
-          >
-            iOS</a
-          >
-          or
-          <a
-            href="https://play.google.com/store/apps/details?id=org.brightid"
-            target="_blank"
-            >Android</a
-          >
-        </li>
-        <li>An Ethereum wallet, with enough gas for two transactions</li>
-        <li>Access to Zoom or Google Meet</li>
-      </ul>
-      <links to="/about-sybil-resistance/">Why is this important?</links>
-      <div v-if="isRoundFullOrOver" class="warning-message">
-        The current round is no longer accepting new contributions. You can
-        still get BrightID verified to prepare for next time.
-      </div>
-      <div class="btn-container mt2">
-        <wallet-widget v-if="!currentUser" :isActionButton="true" />
-        <links v-if="currentUser" to="/verify/connect" class="btn-primary">
-          I have BrightID installed
-        </links>
-        <links to="/projects" class="btn-secondary">Go back</links>
+      <div class="content">
+        <div class="flex-title">
+          <h1>Prove you’re only using one account</h1>
+        </div>
+        <div class="subtitle">
+          We use BrightID to stop bots and cheaters, and make our funding more
+          democratic.
+        </div>
+        <h2>
+          What you'll need
+          <img
+            v-tooltip="{
+              content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
+              trigger: 'hover click',
+            }"
+            width="16px"
+            src="@/assets/info.svg"
+            class="info-icon"
+          />
+        </h2>
+        <ul>
+          <li>
+            BrightID – available on
+            <a
+              href="https://apps.apple.com/us/app/brightid/id1428946820"
+              target="_blank"
+            >
+              iOS</a
+            >
+            or
+            <a
+              href="https://play.google.com/store/apps/details?id=org.brightid"
+              target="_blank"
+              >Android</a
+            >
+          </li>
+          <li>An Ethereum wallet, with enough gas for two transactions</li>
+          <li>Access to Zoom or Google Meet</li>
+        </ul>
+        <links to="/about-sybil-resistance/">Why is this important?</links>
+        <div
+          v-if="
+            $store.getters.isRoundJoinPhase &&
+            !currentRound &&
+            !isRoundFullOrOver
+          "
+          class="join-message"
+        >
+          There's not yet an open funding round. Get prepared now so you're
+          ready for when the next one begins!
+        </div>
+        <div v-if="isRoundFullOrOver" class="warning-message">
+          The current round is no longer accepting new contributions. You can
+          still get BrightID verified to prepare for next time.
+        </div>
+        <div class="btn-container mt2">
+          <wallet-widget
+            v-if="!currentUser"
+            :isActionButton="true"
+            :fullWidthMobile="true"
+          />
+          <links v-if="currentUser" to="/verify/connect" class="btn-primary">
+            I have BrightID installed
+          </links>
+          <links to="/projects" class="btn-secondary">Go back</links>
+        </div>
       </div>
     </div>
   </div>
@@ -67,22 +85,35 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import * as humanizeDuration from 'humanize-duration'
+import { commify, formatUnits } from '@ethersproject/units'
+
+import { getCurrentRound } from '@/api/round'
 import { User } from '@/api/user'
+
+import Links from '@/components/Links.vue'
+import Loader from '@/components/Loader.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
-import { commify, formatUnits } from '@ethersproject/units'
 import WalletWidget from '@/components/WalletWidget.vue'
-import Links from '@/components/Links.vue'
 
 @Component({
   components: {
+    Links,
+    Loader,
     ProgressBar,
     RoundStatusBanner,
     WalletWidget,
-    Links,
   },
 })
 export default class VerifyLanding extends Vue {
+  loading = true
+  currentRound: string | null = null
+
+  async created() {
+    this.currentRound = await getCurrentRound()
+    this.loading = false
+  }
+
   get currentUser(): User | null {
     return this.$store.state.currentUser
   }
@@ -241,6 +272,16 @@ ul {
   width: 1rem;
   height: 1rem;
   position: relative;
+}
+
+.join-message {
+  border: 1px solid $clr-green;
+  background: $bg-primary-color;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin: 1rem 0 0;
+  color: $clr-green;
+  font-size: 14px;
 }
 
 .warning-message {

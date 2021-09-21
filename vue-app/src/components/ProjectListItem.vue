@@ -179,8 +179,9 @@ export default class ProjectListItem extends Vue {
   img {
     border-radius: 8px;
     flex-shrink: 0;
-    min-width: 100%;
-    min-height: 100%;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -226,17 +227,9 @@ export default class ProjectListItem extends Vue {
 }
 
 .tag {
-  padding: 0.5rem 0.75rem;
-  background: $bg-light-color;
-  box-shadow: $box-shadow;
-  color: $button-disabled-text-color;
-  font-family: 'Glacial Indifference', sans-serif;
-  width: fit-content;
-  border-radius: 4px;
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
+  box-shadow: $box-shadow;
 }
-
-//TODO: make tag component?
 </style>
