@@ -352,7 +352,7 @@ p.no-margin {
       .project-thumbnail {
         width: 3rem;
         aspect-ratio: 1 / 1;
-        object-fit: contain;
+        object-fit: cover;
         border-radius: 0.5rem;
       }
       .project-details {

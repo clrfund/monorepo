@@ -306,7 +306,7 @@ export default class ProjectView extends Vue {
   border-radius: 4px;
   display: block;
   height: 320px;
-  object-fit: contain;
+  object-fit: cover;
   text-align: center;
   width: 100%;
 }
