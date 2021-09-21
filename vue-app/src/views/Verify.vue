@@ -70,19 +70,26 @@
               {{
                 isManuallyVerified
                   ? "You're BrightID verified! Complete the remaining steps to start contributing."
-                  : "Follow the instructions below to get verified in BrightID. Confirmation doesn't happen immediately so feel free to check by clicking the button below once you're verified."
+                  : 'Follow the instructions below to get verified in BrightID.'
               }}
             </p>
-            <div class="actions">
-              <button
-                v-if="!isManuallyVerified"
-                @click="handleIsVerifiedClick"
-                class="btn-primary"
-                :disabled="loadingManualVerify"
-              >
-                Check if you are verified
-              </button>
-              <loader v-if="loadingManualVerify" />
+            <div v-if="!isManuallyVerified">
+              <p>
+                Once you're verified in BrightID, verification confirmation
+                doesn't happen immediately so feel free to check by clicking the
+                button below.
+              </p>
+              <div class="actions">
+                <button
+                  v-if="!isManuallyVerified"
+                  @click="handleIsVerifiedClick"
+                  class="btn-primary"
+                  :disabled="loadingManualVerify"
+                >
+                  Check if you are verified
+                </button>
+                <loader v-if="loadingManualVerify" />
+              </div>
             </div>
           </div>
           <div :class="isManuallyVerified ? 'success' : 'unverified'">
@@ -191,8 +198,8 @@
             <h2 class="step-title">Register</h2>
             <p>
               To protect the round from bribery and fraud, you need to add your
-              wallet address to a smart contract register. Once you’re done, you
-              can join the funding round!
+              wallet address to a smart contract registery. Once you’re done,
+              you can join the funding round!
             </p>
             <div class="transaction">
               <button
