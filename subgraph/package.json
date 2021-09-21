@@ -15,6 +15,7 @@
   "private": true,
   "scripts": {
     "prepare:hardhat": "mustache config/hardhat.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:arbitrum": "mustache config/arbitrum.json subgraph.template.yaml > subgraph.yaml",
     "prepare:xdai": "mustache config/xdai.json subgraph.template.yaml > subgraph.yaml",
     "codegen": "graph codegen",
     "lint:js": "eslint 'src/*.ts'",

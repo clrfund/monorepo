@@ -1,5 +1,6 @@
 {
   "network": "xdai",
   "address": "0x549F91A93c94358C5f5380D7ABF23E1340CfF2db",
-  "startBlock": 15217676
+  "factoryStartBlock": 15217676,
+  "recipientRegistryStartBlock": 0
 }

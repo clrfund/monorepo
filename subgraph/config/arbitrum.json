@@ -1,0 +1,6 @@
+{
+  "network": "arbitrum",
+  "address": "0xD6443BE8536809D02c2cA91b9db4112156cEA27c",
+  "factoryStartBlock": 4711510,
+  "recipientRegistryStartBlock": 4711510
+}

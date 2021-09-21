@@ -10,7 +10,7 @@ dataSources:
     source:
       address: '{{address}}'
       abi: FundingRoundFactory
-      startBlock: {{startBlock}}
+      startBlock: {{factoryStartBlock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -52,7 +52,7 @@ dataSources:
     network: {{network}}
     source:
       abi: OptimisticRecipientRegistry
-      startBlock: 0
+      startBlock: {{recipientRegistryStartBlock}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
