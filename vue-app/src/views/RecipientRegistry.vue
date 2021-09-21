@@ -25,10 +25,10 @@
             >
               <td>
                 <div class="project-name">
-                  <links :to="request.metadata.imageUrl">
+                  <links :to="request.metadata.thumbnailImageUrl">
                     <img
                       class="project-image"
-                      :src="request.metadata.imageUrl"
+                      :src="request.metadata.thumbnailImageUrl"
                     />
                   </links>
                   {{ request.metadata.name }}
