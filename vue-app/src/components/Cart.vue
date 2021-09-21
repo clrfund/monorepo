@@ -570,7 +570,7 @@ export default class Cart extends Vue {
   get errorMessage(): string | null {
     const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
-    if (currentRound.messages >= currentRound.maxMessages)
+    if (this.$store.getters.isMessageLimitReached)
       return 'The limit on the number of votes has been reached'
     if (!currentUser) return 'Please connect your wallet'
     if (!this.isCorrectNetwork())
