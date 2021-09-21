@@ -166,8 +166,7 @@
             <p>
               BrightID verification helps prove that you’re a unique human. To
               get verified, you need enough people to confirm they've met you
-              and you're a real person. There are a few different ways to do
-              this:
+              and you're a real person. There are a couple of ways to do this:
             </p>
             <accordion
               tag="🚀 Fastest"
@@ -179,12 +178,6 @@
                 link: 'https://meet.brightid.org/#/',
                 text: 'View party schedule',
               }"
-            />
-            <accordion
-              tag="💡 Most interesting"
-              header="Join us at “The consensus layer bonanza – an evening with
-                    the eth2 researchers”"
-              content="Information to come"
             />
             <accordion
               tag="🎰 Luckiest"
