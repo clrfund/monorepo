@@ -186,8 +186,8 @@
             <h2 class="step-title">Get registered</h2>
             <p>
               To protect the round from bribery and fraud, you need to add your
-              wallet address to a smart contract register. Once you’re done, you
-              can join the funding round!
+              wallet address to a smart contract registery. Once you’re done,
+              you can join the funding round!
             </p>
             <div class="transaction">
               <button
@@ -993,11 +993,14 @@ export default class VerifyView extends Vue {
 }
 
 .transaction {
-  background: $bg-primary-color;
-  border: 1px solid #000;
-  padding: 1.5rem;
+  padding: 2rem;
   border-radius: 1rem;
   width: auto;
+
+  button {
+    max-width: 250px;
+    margin: auto;
+  }
 }
 
 .checkout-row {
