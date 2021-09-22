@@ -179,8 +179,9 @@ export default class ProjectListItem extends Vue {
   img {
     border-radius: 8px;
     flex-shrink: 0;
-    min-width: 100%;
-    min-height: 100%;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
   }
 }
 

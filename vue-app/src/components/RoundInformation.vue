@@ -335,6 +335,7 @@ export default class RoundInformation extends Vue {
   isLoading = true
 
   async created() {
+    //TODO: update to take factory address as a parameter, default to env. variable
     const roundAddress =
       this.$route.params.address ||
       this.$store.state.currentRoundAddress ||

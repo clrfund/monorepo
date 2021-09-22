@@ -142,10 +142,11 @@
           {{ formatAmount(this.contribution) }} {{ tokenSymbol }}
         </div>
         <div
-          :class="{
-            'reallocation-row': !this.isGreaterThanInitialContribution(),
-            'reallocation-row-warning': this.isGreaterThanInitialContribution(),
-          }"
+          :class="
+            this.isGreaterThanInitialContribution()
+              ? 'reallocation-row-warning'
+              : 'reallocation-row'
+          "
         >
           <span>Your cart</span>
           <div class="reallocation-warning">
@@ -301,7 +302,6 @@ import { parseFixed } from '@ethersproject/bignumber'
 import { commify, formatUnits } from '@ethersproject/units'
 import { DateTime } from 'luxon'
 import WalletWidget from '@/components/WalletWidget.vue'
-import BrightIdModal from '@/components/BrightIdModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
@@ -567,21 +567,23 @@ export default class Cart extends Vue {
   get errorMessage(): string | null {
     const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
-    if (!currentUser) {
-      return 'Please connect your wallet'
-    } else if (!this.isCorrectNetwork()) {
+    if (this.$store.getters.isMessageLimitReached)
+      return 'The limit on the number of votes has been reached'
+    if (!currentUser) return 'Please connect your wallet'
+    if (!this.isCorrectNetwork())
       return `Please change network to ${this.networkName} network.`
-    } else if (this.isBrightIdRequired) {
+    if (this.isBrightIdRequired)
       return 'To contribute, you need to set up BrightID.'
-    } else if (!this.isFormValid()) {
-      return 'Include valid contribution amount.'
-    } else if (this.cart.length > MAX_CART_SIZE) {
+    if (!this.isFormValid()) return 'Include valid contribution amount.'
+    if (this.cart.length > MAX_CART_SIZE)
       return `Your cart can't include over ${MAX_CART_SIZE} projects.`
-    } else if (currentRound.status === RoundStatus.Cancelled) {
+    if (currentRound.status === RoundStatus.Cancelled)
       return "Sorry, we've had to cancel this funding round."
-    } else if (DateTime.local() >= currentRound.votingDeadline) {
+    if (this.$store.getters.hasReallocationPhaseEnded)
       return 'The funding round has ended.'
-    } else if (
+    if (currentRound.messages + this.cart.length >= currentRound.maxMessages)
+      return 'Cart changes will exceed voting capacity of this round'
+    else if (
       currentRound.messages + this.cart.length >=
       currentRound.maxMessages
     ) {
@@ -596,7 +598,7 @@ export default class Cart extends Vue {
         } else if (currentRound.contributors >= currentRound.maxContributors) {
           return 'The limit on the number of contributors has been reached'
         } else if (total.eq(BigNumber.from(0)) && !this.isCartEmpty) {
-          return `Your total must be more then 0 ${currentRound.nativeTokenSymbol}`
+          return `Your total must be more than 0 ${currentRound.nativeTokenSymbol}`
         } else if (currentUser.balance === null) {
           return '' // No error: waiting for balance
         } else if (total.gt(currentUser.balance)) {
@@ -613,7 +615,7 @@ export default class Cart extends Vue {
       } else {
         // Reallocating funds
         if (!this.$store.state.contributor) {
-          return 'Contributor key is not found'
+          return "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with."
         } else if (this.isGreaterThanInitialContribution()) {
           return `Your new total can't be more than your original ${this.formatAmount(
             this.contribution
@@ -649,10 +651,6 @@ export default class Cart extends Vue {
       this.errorMessage !== null &&
       this.errorMessage.startsWith('Your balance is')
     )
-  }
-
-  registerWithBrightId(): void {
-    this.$modal.show(BrightIdModal, {}, { width: 500 })
   }
 
   submitCart(event) {

@@ -3,7 +3,6 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { formatBytes32String } from '@ethersproject/strings'
 
 import { BrightIdUserRegistry } from './abi'
-import { provider } from './core'
 
 const NODE_URL = 'https://app.brightid.org/node/v5'
 const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
@@ -21,16 +20,6 @@ export interface Verification {
   sig: { r: string; s: string; v: number }
   timestamp: number
   app: string
-}
-
-export async function isSponsoredUser(
-  registryAddress: string,
-  userAddress: string
-): Promise<boolean> {
-  const registry = new Contract(registryAddress, BrightIdUserRegistry, provider)
-  const eventFilter = registry.filters.Sponsor(userAddress)
-  const events = await registry.queryFilter(eventFilter, 0)
-  return events.length > 0
 }
 
 export async function selfSponsor(

@@ -17,9 +17,9 @@ import {
   serializeContributorData,
   deserializeContributorData,
   getContributionAmount,
-  isContributionWithdrawn,
   hasContributorVoted,
 } from '@/api/contributions'
+import { recipientRegistryType } from '@/api/core'
 import { loginUser, logoutUser } from '@/api/gun'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
@@ -82,7 +82,6 @@ import { isSameAddress, ensLookup } from '@/utils/accounts'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
-import { isAddress } from 'ethers/lib/utils'
 
 Vue.use(Vuex)
 
@@ -138,6 +137,7 @@ export const mutations = {
   [SET_CURRENT_USER](state, user: User | null) {
     state.currentUser = user
   },
+  //TODO: also dispatch SET_CURRENT_FACTORY_ADDRESS mutation when ever this fires
   [SET_CURRENT_ROUND_ADDRESS](state, address: string) {
     state.currentRoundAddress = address
   },
@@ -248,6 +248,7 @@ export const mutations = {
 }
 
 const actions = {
+  //TODO: also commit SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
   [SELECT_ROUND]({ commit, dispatch, state }, roundAddress: string) {
     if (state.currentRoundAddress) {
       // Reset everything that depends on round
@@ -268,6 +269,7 @@ const actions = {
       commit(SET_CURRENT_ROUND, null)
       return
     }
+    //TODO: update to take factory address as a parameter, default to env. variable
     const round = await getRoundInfo(roundAddress)
     commit(SET_CURRENT_ROUND, round)
     if (round && round.status === RoundStatus.Finalized) {
@@ -276,6 +278,7 @@ const actions = {
     }
   },
   async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
+    //TODO: update call to getRecipientRegistryAddress to take factory address as a parameter
     const recipientRegistryAddress =
       state.recipientRegistryAddress ||
       (await getRecipientRegistryAddress(state.currentRoundAddress))
@@ -305,27 +308,18 @@ const actions = {
       )
       let contribution = state.contribution
       if (!contribution || contribution.isZero()) {
-        let isWithdrawn = false
-        if (state.currentRound.status === RoundStatus.Cancelled) {
-          isWithdrawn = await isContributionWithdrawn(
-            state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress
-          )
-        }
-        if (isWithdrawn) {
-          commit(SET_CONTRIBUTION, BigNumber.from(0))
-        } else {
-          contribution = await getContributionAmount(
-            state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress
-          )
-          const hasVoted = await hasContributorVoted(
-            state.currentRound.fundingRoundAddress,
-            state.currentUser.walletAddress
-          )
-          commit(SET_CONTRIBUTION, contribution)
-          commit(SET_HAS_VOTED, hasVoted)
-        }
+        contribution = await getContributionAmount(
+          state.currentRound.fundingRoundAddress,
+          state.currentUser.walletAddress
+        )
+
+        const hasVoted = await hasContributorVoted(
+          state.currentRound.fundingRoundAddress,
+          state.currentUser.walletAddress
+        )
+
+        commit(SET_CONTRIBUTION, contribution)
+        commit(SET_HAS_VOTED, hasVoted)
       }
 
       let ensName: string | null = state.currentUser.ensName
@@ -464,13 +458,18 @@ const actions = {
 }
 
 const getters = {
-  // TODO generalize - this assumes optimistic registry
   recipientJoinDeadline: (state: RootState): DateTime | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
       return null
     }
+
+    const challengePeriodDuration =
+      recipientRegistryType === 'optimistic'
+        ? state.recipientRegistryInfo.challengePeriodDuration
+        : 0
+
     return state.currentRound.signUpDeadline.minus({
-      seconds: state.recipientRegistryInfo.challengePeriodDuration,
+      seconds: challengePeriodDuration,
     })
   },
   isRoundJoinPhase: (state: RootState, getters): boolean => {
@@ -488,10 +487,6 @@ const getters = {
       getters.isRoundJoinPhase &&
       !hasDateElapsed(state.currentRound.startTime)
     )
-  },
-  hasStartTimeElapsed: (state: RootState): boolean => {
-    if (!state.currentRound) return true
-    return hasDateElapsed(state.currentRound.startTime)
   },
   recipientSpacesRemaining: (state: RootState): number | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
@@ -547,14 +542,19 @@ const getters = {
       state.currentRound.status === RoundStatus.Finalized
     )
   },
-  hasContributionPhaseEnded: (state: RootState): boolean => {
+  hasContributionPhaseEnded: (state: RootState, getters): boolean => {
     return (
-      !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
+      !!state.currentRound &&
+      (hasDateElapsed(state.currentRound.signUpDeadline) ||
+        getters.isRoundContributorLimitReached ||
+        getters.isMessageLimitReached)
     )
   },
-  hasReallocationPhaseEnded: (state: RootState): boolean => {
+  hasReallocationPhaseEnded: (state: RootState, getters): boolean => {
     return (
-      !!state.currentRound && hasDateElapsed(state.currentRound.votingDeadline)
+      !!state.currentRound &&
+      (hasDateElapsed(state.currentRound.votingDeadline) ||
+        getters.isMessageLimitReached)
     )
   },
   hasUserContributed: (state: RootState): boolean => {
@@ -586,6 +586,12 @@ const getters = {
     return (
       !!state.currentRound &&
       state.currentRound.maxMessages <= state.currentRound.messages
+    )
+  },
+  isRoundContributorLimitReached: (state: RootState): boolean => {
+    return (
+      !!state.currentRound &&
+      state.currentRound.maxContributors <= state.currentRound.contributors
     )
   },
 }

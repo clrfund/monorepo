@@ -39,7 +39,7 @@
           {{ item.amount }} {{ tokenSymbol }}
         </div>
       </div>
-      <form v-if="isEditMode" class="contribution-form">
+      <div v-if="isEditMode" class="contribution-form">
         <div class="input-button">
           <img class="token-icon" height="24px" src="@/assets/dai.svg" />
           <input
@@ -52,7 +52,7 @@
             placeholder="Amount"
           />
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </template>
@@ -168,7 +168,7 @@ export default class extends Vue {
     display: block;
     height: 2.5rem;
     margin-right: 15px;
-    min-width: 2.5rem;
+    width: 2.5rem;
     object-fit: cover;
     width: 2.5rem;
     &:hover {

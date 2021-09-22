@@ -5,7 +5,7 @@
         Contribute {{ tokenSymbol }} to the
         {{ isRoundFinished() ? 'next' : 'current' }} round
       </h3>
-      <form class="contribution-form">
+      <div class="contribution-form">
         <div class="input-button">
           <img class="token-icon" height="24px" src="@/assets/dai.svg" />
           <input
@@ -19,7 +19,7 @@
             placeholder="10"
           />
         </div>
-      </form>
+      </div>
       <div v-if="!isBalanceSufficient" class="balance-check-warning">
         ⚠️ You only have {{ renderBalance }}
         {{ tokenSymbol }}
@@ -155,6 +155,7 @@ export default class MatchingFundsModal extends Vue {
     const amount = parseFixed(this.amount, nativeTokenDecimals)
     try {
       await waitForTransaction(
+        //TODO: update to take factory address as a parameter from the route props, default to env. variable
         token.transfer(factory.address, amount),
         (hash) => (this.transferTxHash = hash)
       )

@@ -1,0 +1,180 @@
+[
+  {
+    "type": "constructor",
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "inputs": [
+      { "type": "bytes32", "name": "_context", "internalType": "bytes32" },
+      { "type": "address", "name": "_verifier", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "OwnershipTransferred",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "previousOwner",
+        "internalType": "address",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "newOwner",
+        "internalType": "address",
+        "indexed": true
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SetBrightIdSettings",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "context",
+        "internalType": "bytes32",
+        "indexed": false
+      },
+      {
+        "type": "address",
+        "name": "verifier",
+        "internalType": "address",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Sponsor",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "addr",
+        "internalType": "address",
+        "indexed": true
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "payable": false,
+    "outputs": [{ "type": "bytes32", "name": "", "internalType": "bytes32" }],
+    "name": "context",
+    "inputs": [],
+    "constant": true
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "payable": false,
+    "outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
+    "name": "isOwner",
+    "inputs": [],
+    "constant": true
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "payable": false,
+    "outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
+    "name": "isVerifiedUser",
+    "inputs": [
+      { "type": "address", "name": "_user", "internalType": "address" }
+    ],
+    "constant": true
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "payable": false,
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "owner",
+    "inputs": [],
+    "constant": true
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "outputs": [],
+    "name": "register",
+    "inputs": [
+      { "type": "bytes32", "name": "_context", "internalType": "bytes32" },
+      { "type": "address[]", "name": "_addrs", "internalType": "address[]" },
+      { "type": "uint256", "name": "_timestamp", "internalType": "uint256" },
+      { "type": "uint8", "name": "_v", "internalType": "uint8" },
+      { "type": "bytes32", "name": "_r", "internalType": "bytes32" },
+      { "type": "bytes32", "name": "_s", "internalType": "bytes32" }
+    ],
+    "constant": false
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "outputs": [],
+    "name": "renounceOwnership",
+    "inputs": [],
+    "constant": false
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "outputs": [],
+    "name": "setSettings",
+    "inputs": [
+      { "type": "bytes32", "name": "_context", "internalType": "bytes32" },
+      { "type": "address", "name": "_verifier", "internalType": "address" }
+    ],
+    "constant": false
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "outputs": [],
+    "name": "sponsor",
+    "inputs": [
+      { "type": "address", "name": "addr", "internalType": "address" }
+    ],
+    "constant": false
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "payable": false,
+    "outputs": [],
+    "name": "transferOwnership",
+    "inputs": [
+      { "type": "address", "name": "newOwner", "internalType": "address" }
+    ],
+    "constant": false
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "payable": false,
+    "outputs": [
+      { "type": "uint256", "name": "time", "internalType": "uint256" },
+      { "type": "bool", "name": "isVerified", "internalType": "bool" }
+    ],
+    "name": "verifications",
+    "inputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "constant": true
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "payable": false,
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "verifier",
+    "inputs": [],
+    "constant": true
+  }
+]

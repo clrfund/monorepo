@@ -3,8 +3,8 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Keypair, PrivKey } from 'maci-domainobjs'
 
 import { FundingRound } from './abi'
-import { provider } from './core'
 import { Project } from './projects'
+import sdk from '@/graphql/sdk'
 
 export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
@@ -69,40 +69,46 @@ export async function getContributionAmount(
   fundingRoundAddress: string,
   contributorAddress: string
 ): Promise<BigNumber> {
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
-  const filter = fundingRound.filters.Contribution(contributorAddress)
-  const events = await fundingRound.queryFilter(filter, 0)
-  const event = events[0]
-  if (!event || !event.args) {
+  const data = await sdk.GetContributionsAmount({
+    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+    contributorAddress,
+  })
+
+  if (!data.fundingRound?.contributors?.[0]?.contributions?.length) {
     return BigNumber.from(0)
   }
-  return event.args._amount
-}
 
-export async function isContributionWithdrawn(
-  roundAddress: string,
-  contributorAddress: string
-): Promise<boolean> {
-  const fundingRound = new Contract(roundAddress, FundingRound, provider)
-  const filter = fundingRound.filters.ContributionWithdrawn(contributorAddress)
-  const events = await fundingRound.queryFilter(filter, 0)
-  return events.length > 0
+  return BigNumber.from(
+    data.fundingRound.contributors[0].contributions[0].amount
+  )
 }
 
 export async function getTotalContributed(
   fundingRoundAddress: string
 ): Promise<{ count: number; amount: BigNumber }> {
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
-  const filter = fundingRound.filters.Contribution()
-  const events = await fundingRound.queryFilter(filter, 0)
-  let amount = BigNumber.from(0)
-  events.forEach((event) => {
-    if (!event.args) {
-      return
-    }
-    amount = amount.add(event.args._amount)
+  const data = await sdk.GetTotalContributed({
+    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
   })
-  return { count: events.length, amount }
+
+  if (!data.fundingRound?.contributors) {
+    return { count: 0, amount: BigNumber.from(0) }
+  }
+
+  const count = parseInt(data.fundingRound.contributorCount)
+
+  const amount = data.fundingRound.contributors.reduce((total, contributor) => {
+    if (!contributor.contributions?.length) {
+      return total
+    }
+
+    const subtotal = contributor.contributions.reduce((total, contribution) => {
+      return total.add(contribution.amount)
+    }, BigNumber.from(0))
+
+    return total.add(subtotal)
+  }, BigNumber.from(0))
+
+  return { count, amount }
 }
 
 export async function withdrawContribution(
@@ -118,8 +124,9 @@ export async function hasContributorVoted(
   fundingRoundAddress: string,
   contributorAddress: string
 ): Promise<boolean> {
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
-  const filter = fundingRound.filters.Voted(contributorAddress)
-  const events = await fundingRound.queryFilter(filter, 0)
-  return events.length > 0
+  const data = await sdk.GetContributorVotes({
+    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+    contributorAddress,
+  })
+  return !!data.fundingRound?.contributors?.[0]?.votes?.length
 }

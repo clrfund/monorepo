@@ -71,6 +71,7 @@ export default class ProjectView extends Vue {
   isLoading = true
 
   async created() {
+    //TODO: update to take factory address as a parameter, default to env. variable
     const roundAddress =
       this.$store.state.currentRoundAddress || (await getCurrentRound())
     if (
@@ -78,6 +79,7 @@ export default class ProjectView extends Vue {
       roundAddress !== this.$store.state.currentRoundAddress
     ) {
       // Select round
+      //TODO: SELECT_ROUND action also commits SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
       this.$store.dispatch(SELECT_ROUND, roundAddress)
       // Don't wait for round info to improve loading time
       ;(async () => {

@@ -70,19 +70,26 @@
               {{
                 isManuallyVerified
                   ? "You're BrightID verified! Complete the remaining steps to start contributing."
-                  : 'Follow the instructions below to get verified. It’s not immediate so feel free to click the below button when you’re ready.'
+                  : 'Follow the instructions below to get verified in BrightID.'
               }}
             </p>
-            <div class="actions">
-              <button
-                v-if="!isManuallyVerified"
-                @click="handleIsVerifiedClick"
-                class="btn-primary"
-                :disabled="loadingManualVerify"
-              >
-                Check if you are verified
-              </button>
-              <loader v-if="loadingManualVerify" />
+            <div v-if="!isManuallyVerified">
+              <p>
+                Once you're verified in BrightID, verification confirmation
+                doesn't happen immediately so feel free to check by clicking the
+                button below.
+              </p>
+              <div class="actions">
+                <button
+                  v-if="!isManuallyVerified"
+                  @click="handleIsVerifiedClick"
+                  class="btn-primary"
+                  :disabled="loadingManualVerify"
+                >
+                  Check if you are verified
+                </button>
+                <loader v-if="loadingManualVerify" />
+              </div>
             </div>
           </div>
           <div :class="isManuallyVerified ? 'success' : 'unverified'">
@@ -95,6 +102,11 @@
             <p>
               First you need to connect your BrightID account with your wallet
               address.
+            </p>
+            <p>
+              Once the app is linked in your BrightID app, wait a few moments
+              for us to verify the connection. We'll automatically transition
+              you to the next step.
             </p>
             <div class="qr">
               <div class="instructions">
@@ -124,7 +136,7 @@
             </div>
           </div>
           <div v-if="currentStep === 1">
-            <h2 class="step-title">Sponsorship</h2>
+            <h2 class="step-title">Get sponsored</h2>
             <p>
               You need a sponsorship token to become BrightID verified. This
               helps support BrightID as a decentralized platform. You’ll only
@@ -154,8 +166,7 @@
             <p>
               BrightID verification helps prove that you’re a unique human. To
               get verified, you need enough people to confirm they've met you
-              and you're a real person. There are a few different ways to do
-              this...
+              and you're a real person. There are a couple of ways to do this:
             </p>
             <accordion
               tag="🚀 Fastest"
@@ -169,12 +180,6 @@
               }"
             />
             <accordion
-              tag="💡 Most interesting"
-              header="Join us at “The consensus layer bonanza – an evening with
-                    the eth2 researchers”"
-              content="Information to come"
-            />
-            <accordion
               tag="🎰 Luckiest"
               header="Connect with 2 verified humans"
               content="Know anyone that's contributed to Gitcoin Grants or clr.fund
@@ -183,11 +188,11 @@
             />
           </div>
           <div v-if="currentStep === 3">
-            <h2 class="step-title">Get registered</h2>
+            <h2 class="step-title">Register</h2>
             <p>
               To protect the round from bribery and fraud, you need to add your
-              wallet address to a smart contract register. Once you’re done, you
-              can join the funding round!
+              wallet address to a smart contract registry. Once you’re done,
+              you can join the funding round!
             </p>
             <div class="transaction">
               <button

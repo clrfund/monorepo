@@ -103,7 +103,7 @@ describe('MACI factory', () => {
     await expect(maciDeployed).to.emit(maciFactory, 'MaciDeployed')
 
     const deployTx = await maciDeployed
-    expect(await getGasUsage(deployTx)).lessThan(9000000)
+    expect(await getGasUsage(deployTx)).lessThan(9020000)
   })
 
   it('allows only owner to deploy MACI', async () => {

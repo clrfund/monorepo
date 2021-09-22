@@ -33,6 +33,8 @@ export interface Project {
   extra?: any // Registry-specific data
 }
 
+//TODO: update anywhere this is called to take factory address as a parameter
+//NOTE: why isn't this included in the vuex state schema?
 export async function getRecipientRegistryAddress(
   roundAddress: string | null
 ): Promise<string> {
@@ -40,6 +42,7 @@ export async function getRecipientRegistryAddress(
     const fundingRound = new Contract(roundAddress, FundingRound, provider)
     return await fundingRound.recipientRegistry()
   } else {
+    //TODO: upgrade factory to take it's address as a parameter
     return await factory.recipientRegistry()
   }
 }

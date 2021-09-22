@@ -19,6 +19,8 @@
     "crypto-js": "^4.0.0",
     "ethereum-blockies-base64": "^1.0.2",
     "ethers": "^5.4.1",
+    "graphql": "^15.5.1",
+    "graphql-request": "^3.5.0",
     "gun": "https://github.com/amark/gun",
     "humanize-duration": "^3.25.1",
     "ipfs-mini": "^1.1.5",

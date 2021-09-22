@@ -3,12 +3,11 @@ import { DateTime } from 'luxon'
 import { PubKey } from 'maci-domainobjs'
 
 import { FundingRound, MACI, ERC20 } from './abi'
-import { provider, factory, extraRounds } from './core'
+import { provider, factory } from './core'
 import { getTotalContributed } from './contributions'
 
 export interface RoundInfo {
   fundingRoundAddress: string
-  roundNumber: number
   userRegistryAddress: string
   maciAddress: string
   recipientTreeDepth: number
@@ -45,7 +44,7 @@ export enum RoundStatus {
   Finalized = 'Finalized',
   Cancelled = 'Cancelled',
 }
-
+//TODO: update to take factory address as a parameter, default to env. variable
 export async function getCurrentRound(): Promise<string | null> {
   const fundingRoundAddress = await factory.getCurrentRound()
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
@@ -54,23 +53,10 @@ export async function getCurrentRound(): Promise<string | null> {
   return fundingRoundAddress
 }
 
-async function getRoundNumber(roundAddress: string): Promise<number> {
-  const eventFilter = factory.filters.RoundStarted()
-  const events = await factory.queryFilter(eventFilter, 0)
-  const roundIndex = events.findIndex((event) => {
-    const args = event.args as any
-    return args._round.toLowerCase() === roundAddress.toLowerCase()
-  })
-  if (roundIndex === -1) {
-    throw new Error('round does not exist')
-  }
-  return roundIndex + extraRounds.length
-}
-
+//TODO: update to take factory address as a parameter, default to env. variable
 export async function getRoundInfo(
   fundingRoundAddress: string
 ): Promise<RoundInfo> {
-  const roundNumber = await getRoundNumber(fundingRoundAddress)
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const [
     maciAddress,
@@ -123,8 +109,11 @@ export async function getRoundInfo(
   const nativeTokenSymbol = await nativeToken.symbol()
   const nativeTokenDecimals = await nativeToken.decimals()
 
+  const maxContributors = 2 ** maciTreeDepths.stateTreeDepth - 1
+  const maxMessages = 2 ** maciTreeDepths.messageTreeDepth - 1
   const now = DateTime.local()
   const contributionsInfo = await getTotalContributed(fundingRoundAddress)
+  const contributors = contributionsInfo.count
   let status: string
   let contributions: BigNumber
   let matchingPool: BigNumber
@@ -136,8 +125,12 @@ export async function getRoundInfo(
     status = RoundStatus.Finalized
     contributions = (await fundingRound.totalSpent()).mul(voiceCreditFactor)
     matchingPool = await fundingRound.matchingPoolSize()
+  } else if (messages >= maxMessages) {
+    status = RoundStatus.Tallying
+    contributions = contributionsInfo.amount
+    matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
   } else {
-    if (now < signUpDeadline) {
+    if (now < signUpDeadline && contributors < maxContributors) {
       status = RoundStatus.Contributing
     } else if (now < votingDeadline) {
       status = RoundStatus.Reallocating
@@ -145,6 +138,7 @@ export async function getRoundInfo(
       status = RoundStatus.Tallying
     }
     contributions = contributionsInfo.amount
+    //TODO: update to take factory address as a parameter, default to env. variable
     matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
   }
 
@@ -152,13 +146,12 @@ export async function getRoundInfo(
 
   return {
     fundingRoundAddress,
-    roundNumber,
     userRegistryAddress,
     maciAddress,
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
-    maxContributors: 2 ** maciTreeDepths.stateTreeDepth - 1,
+    maxContributors,
     maxRecipients: 5 ** maciTreeDepths.voteOptionTreeDepth - 1,
-    maxMessages: 2 ** maciTreeDepths.messageTreeDepth - 1,
+    maxMessages,
     coordinatorPubKey,
     nativeTokenAddress,
     nativeTokenSymbol,
@@ -171,7 +164,7 @@ export async function getRoundInfo(
     totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),
     matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),
     contributions: FixedNumber.fromValue(contributions, nativeTokenDecimals),
-    contributors: contributionsInfo.count,
+    contributors,
     messages: messages.toNumber(),
   }
 }

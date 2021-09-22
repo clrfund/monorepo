@@ -40,8 +40,6 @@
             banner: formProp === 'bannerHash',
             thumbnail: formProp === 'thumbnailHash',
           }"
-          height="100%"
-          width="100%"
         />
       </div>
       <div>
@@ -88,6 +86,8 @@ export default class IpfsImageUpload extends Vue {
   hash = ''
   loading = false
   loadedImageData = ''
+  loadedImageHeight: number | null = null
+  loadedImageWidth: number | null = null
   error = ''
 
   created() {
@@ -102,6 +102,7 @@ export default class IpfsImageUpload extends Vue {
   handleLoadFile(event) {
     this.error = ''
     const data = event.target.files[0]
+
     if (!data) return
     if (!data.type.match('image/*')) {
       this.error = 'Upload a JPG, PNG, or GIF'
@@ -115,6 +116,12 @@ export default class IpfsImageUpload extends Vue {
     const reader = new FileReader()
     reader.onload = (() => (e) => {
       this.loadedImageData = e.target.result
+      const img = new Image()
+      img.src = this.loadedImageData
+      img.onload = () => {
+        this.loadedImageHeight = img.height
+        this.loadedImageWidth = img.width
+      }
     })()
     reader.readAsDataURL(data)
   }
@@ -124,8 +131,12 @@ export default class IpfsImageUpload extends Vue {
     event.preventDefault()
     // Work-around: Raw image data can be loaded through an SVG
     // https://github.com/SilentCicero/ipfs-mini/issues/4#issuecomment-792351498
-    const fileContents = `<svg xmlns="http://www.w3.org/2000/svg"><image href="${this.loadedImageData}" /></svg>`
-    if (this.loadedImageData !== '') {
+    const fileContents = `<svg x="0" y="0" width="${this.loadedImageWidth}" height="${this.loadedImageHeight}" viewBox="0 0 ${this.loadedImageWidth} ${this.loadedImageHeight}" xmlns="http://www.w3.org/2000/svg"><image href="${this.loadedImageData}" /></svg>`
+    if (
+      this.loadedImageData !== '' &&
+      this.loadedImageHeight &&
+      this.loadedImageWidth
+    ) {
       this.loading = true
       this.ipfs
         .add(fileContents)
