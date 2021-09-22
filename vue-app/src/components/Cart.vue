@@ -583,7 +583,7 @@ export default class Cart extends Vue {
       return 'The funding round has ended.'
     if (currentRound.messages + this.cart.length >= currentRound.maxMessages)
       return 'Cart changes will exceed voting capacity of this round'
-    } else if (
+    else if (
       currentRound.messages + this.cart.length >=
       currentRound.maxMessages
     ) {
@@ -615,7 +615,7 @@ export default class Cart extends Vue {
       } else {
         // Reallocating funds
         if (!this.$store.state.contributor) {
-          return 'Contributor key is not found'
+          return "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with."
         } else if (this.isGreaterThanInitialContribution()) {
           return `Your new total can't be more than your original ${this.formatAmount(
             this.contribution
@@ -625,18 +625,7 @@ export default class Cart extends Vue {
           return null
         }
       }
-      if (this.isGreaterThanMax())
-        return `Your contribution is too generous. The max contribution is ${MAX_CONTRIBUTION_AMOUNT} ${currentRound.nativeTokenSymbol}.`
-      return null
     }
-    // Reallocating funds
-    if (!this.$store.state.contributor)
-      return "Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with"
-    if (this.isGreaterThanInitialContribution())
-      return `Your new total can't be more than your original ${this.formatAmount(
-        this.contribution
-      )} contribution.`
-    return null
   }
 
   hasUnallocatedFunds(): boolean {
