@@ -55,16 +55,18 @@
         Secure voting — Because of Ethereum's strong security guarantees, anyone
         submitting a message can be extremely confident that their message will
         be processed as expected by the system. There are still security
-        dangers, of course, such as sybil attacks or vote manipulation, but the
-        kind of "vote hacking" typically feared in digital voting is highly
-        unlikely here.
+        dangers, of course, such as
+        <links to="/about/sybil-resistance">sybil attacks</links> or
+        <links to="/about/maci">vote manipulation</links>, but the kind of "vote
+        hacking" typically feared in digital voting is highly unlikely here.
       </li>
       <li>
         Public good — Everything on Ethereum is open source and permissionless,
         which means the code for clr.fund's decentralized infrastructure acts as
         a public good: anyone can deploy their own version of the system to
-        create their own quadratic funding system, with the same decentralized
-        benefits of the original.
+        create their own
+        <links to="/about/quadratic-funding">quadratic funding</links> system,
+        with the same decentralized benefits of the original.
       </li>
     </ol>
   </div>

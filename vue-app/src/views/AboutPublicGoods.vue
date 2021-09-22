@@ -4,9 +4,9 @@
     <h2>What are public goods?</h2>
     <p>
       The first thing to understand about 'public goods' is that fundamentally,
-      they are fully non-excludable and non-subtractable goods— a public good
-      can be from the intangibles (ie knowledge) to the tangible social public
-      goods (ie street lighting).
+      they are fully non-excludable and non-subtractable goods — a public good
+      can be from the intangibles (i.e. knowledge) to the tangible social public
+      goods (i.e. street lighting).
     </p>
     <p>In economics, public goods are goods that are both:</p>
     <ol>
@@ -25,7 +25,10 @@
       important for clr.fund.
     </p>
     <p>
-      Check [wikipedia](https://en.wikipedia.org/wiki/Public_good_(economics))
+      Check
+      <links to="https://en.wikipedia.org/wiki/Public_good_(economics)"
+        >Wikipedia</links
+      >
       for a more specific description and context.
     </p>
     <h2>Why create new funding mechanisms for public goods?</h2>
@@ -42,13 +45,13 @@
       popular software products today.
     </p>
     <p>
-      [Clr.fund](http://clr.fund) is an attempt to address the free rider
-      problem for the Ethereum community, with the hope that this infrastructure
-      may be useful for other publics in the future. By design, the funding
-      rounds on [clr.fund](http://clr.fund) seek to involve members of the
-      public from inception, and are allocating both decision making power and
-      the exponential power to increase funding via the quadratic funding
-      mechanism.
+      Clr.fund is an attempt to address the free rider problem for the Ethereum
+      community, with the hope that this infrastructure may be useful for other
+      publics in the future. By design, the funding rounds on clr.fund seek to
+      involve members of the public from inception, and are allocating both
+      decision making power and the exponential power to increase funding via
+      the
+      <links to="/about/quadratic-funding">quadratic funding mechanism</links>.
     </p>
   </div>
 </template>

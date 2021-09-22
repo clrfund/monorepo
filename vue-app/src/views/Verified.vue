@@ -17,7 +17,7 @@
             You’re on board this funding round! And fully verified for BrightID
             – you’ll never have to do that again.
           </div>
-          <p>You can now start contributing to your favourite projects.</p>
+          <p>You can now start contributing to your favorite projects.</p>
           <div class="mt2 button-spacing">
             <links to="/projects" class="btn-primary">View projects</links>
             <links to="/" class="btn-secondary">Go home</links>

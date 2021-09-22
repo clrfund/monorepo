@@ -37,7 +37,7 @@
             valueClass="none"
             :date="$store.state.currentRound.signUpDeadline"
           />
-          left to contribute to your favourite projects
+          left to contribute to your favorite projects
         </span>
       </div>
       <div v-if="$store.getters.isRoundReallocationPhase" class="messsage">

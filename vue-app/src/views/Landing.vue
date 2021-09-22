@@ -9,7 +9,7 @@
         </div>
         <div>
           <div class="hero-content">
-            <h1>Send your favourite Eth2 projects to the moon!</h1>
+            <h1>Send your favorite Eth2 projects to the moon!</h1>
             <div id="subtitle" class="subtitle">
               Every project you contribute to gets a portion of extra funding.
             </div>
@@ -70,7 +70,7 @@
               matching pool smart contract.
             </li>
             <li>
-              The round begins and you can donate to your favourite projects.
+              The round begins and you can donate to your favorite projects.
             </li>
             <li>
               Once the round finishes, the smart contract distributes the

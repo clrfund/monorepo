@@ -60,7 +60,7 @@
               <img
                 v-tooltip="{
                   content:
-                    'During this phase, you can contribute to your favourite projects.',
+                    'During this phase, you can contribute to your favorite projects.',
                   trigger: 'hover click',
                 }"
                 width="16px"

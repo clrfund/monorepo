@@ -58,7 +58,7 @@
       <h2>Matching pool magic ✨</h2>
       <p>
         This transaction lets the matching pool know how much
-        {{ currentRound.nativeTokenSymbol }} to send to your favourite projects
+        {{ currentRound.nativeTokenSymbol }} to send to your favorite projects
         based on your contributions.
       </p>
       <transaction

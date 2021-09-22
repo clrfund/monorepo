@@ -10,7 +10,7 @@
           to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/"
           >Ethereum Layer 2 rollups</links
         >
-        to help save you time and money when contributing to your favourite
+        to help save you time and money when contributing to your favorite
         projects. You'll need a wallet with funds on Arbitrum to interact with
         this application.
       </b>
