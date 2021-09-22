@@ -69,7 +69,6 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import IconStatus from '@/components/IconStatus.vue'
 
-// TODO clean up this component
 @Component({
   components: { IconStatus },
 })
