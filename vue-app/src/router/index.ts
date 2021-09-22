@@ -16,6 +16,8 @@ import AboutPublicGoods from '../views/AboutPublicGoods.vue'
 import AboutQuadraticFunding from '../views/AboutQuadraticFunding.vue'
 import AboutDecentralization from '../views/AboutDecentralization.vue'
 import AboutHowItWorks from '../views/AboutHowItWorks.vue'
+import AboutContributors from '../views/AboutContributors.vue'
+import AboutRecipients from '../views/AboutRecipients.vue'
 import AboutLayer2 from '../views/AboutLayer2.vue'
 import Verified from '../views/Verified.vue'
 import JoinView from '../views/Join.vue'
@@ -110,6 +112,22 @@ const routes = [
     component: AboutHowItWorks,
     meta: {
       title: 'How it works',
+    },
+  },
+  {
+    path: '/about/how-it-works/contributors',
+    name: 'about-how-it-works-contributors',
+    component: AboutContributors,
+    meta: {
+      title: 'Contributors Guide',
+    },
+  },
+  {
+    path: '/about/how-it-works/recipients',
+    name: 'about-how-it-works-recipients',
+    component: AboutRecipients,
+    meta: {
+      title: 'Recipients Guide',
     },
   },
   {
