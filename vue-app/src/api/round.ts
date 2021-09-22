@@ -109,8 +109,11 @@ export async function getRoundInfo(
   const nativeTokenSymbol = await nativeToken.symbol()
   const nativeTokenDecimals = await nativeToken.decimals()
 
+  const maxContributors = 2 ** maciTreeDepths.stateTreeDepth - 1
+  const maxMessages = 2 ** maciTreeDepths.messageTreeDepth - 1
   const now = DateTime.local()
   const contributionsInfo = await getTotalContributed(fundingRoundAddress)
+  const contributors = contributionsInfo.count
   let status: string
   let contributions: BigNumber
   let matchingPool: BigNumber
@@ -122,8 +125,12 @@ export async function getRoundInfo(
     status = RoundStatus.Finalized
     contributions = (await fundingRound.totalSpent()).mul(voiceCreditFactor)
     matchingPool = await fundingRound.matchingPoolSize()
+  } else if (messages >= maxMessages) {
+    status = RoundStatus.Tallying
+    contributions = contributionsInfo.amount
+    matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
   } else {
-    if (now < signUpDeadline) {
+    if (now < signUpDeadline && contributors < maxContributors) {
       status = RoundStatus.Contributing
     } else if (now < votingDeadline) {
       status = RoundStatus.Reallocating
@@ -142,9 +149,9 @@ export async function getRoundInfo(
     userRegistryAddress,
     maciAddress,
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
-    maxContributors: 2 ** maciTreeDepths.stateTreeDepth - 1,
+    maxContributors,
     maxRecipients: 5 ** maciTreeDepths.voteOptionTreeDepth - 1,
-    maxMessages: 2 ** maciTreeDepths.messageTreeDepth - 1,
+    maxMessages,
     coordinatorPubKey,
     nativeTokenAddress,
     nativeTokenSymbol,
@@ -157,7 +164,7 @@ export async function getRoundInfo(
     totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),
     matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),
     contributions: FixedNumber.fromValue(contributions, nativeTokenDecimals),
-    contributors: contributionsInfo.count,
+    contributors,
     messages: messages.toNumber(),
   }
 }
