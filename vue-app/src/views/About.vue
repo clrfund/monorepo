@@ -80,11 +80,7 @@
 
     <h2>How does it work?</h2>
     <p>
-      The clr.fund protocol uses the
-      <links
-        to="https://blogchains.org/wp-content/uploads/sites/4/2019/04/SSRN-id3243656.pdf"
-        >Constrained Liberal Radicalism (CLR)</links
-      >
+      The clr.fund protocol uses the Constrained Liberal Radicalism (CLR)
       algorithm, commonly called
       <links to="/about/quadratic-funding">quadratic funding</links> (QF), to
       facilitate monetary contributions from members of the Ethereum Community
@@ -98,7 +94,7 @@
 
     <p>
       At a high-level, clr.fund consists of a matching pool and a funding round.
-      Philanthropic individuals or organisations contribute to the matching pool
+      Philanthropic individuals or organizations contribute to the matching pool
       so as to have those funds efficiently allocated according to community
       preference. Users contribute directly to projects they value and, in doing
       so, earn a share of the matching pool for the projects, along with their
@@ -106,25 +102,21 @@
     </p>
 
     <p>
-      Under the hood, clr.fund uses zero-knowledge proofs (zk-snarks), courtesy
+      Under the hood, clr.fund uses zero-knowledge proofs (ZK-SNARKS), courtesy
       of the
-      <links to="https://github.com/appliedzkp/maci"
+      <links to="/about/maci"
         >Minimal Anti-collusion Infrastructure (MACI)</links
       >, to keep individual contributions private and limit effectiveness of
       collusion and bribery.
     </p>
-
-    <!-- TODO update recipient curation information -->
     <p>
       To ensure that every contributor is a unique person clr.fund uses
-      <links to="https://brightid.org">BrightID</links>, and recipients are
-      curated by our
-      <links
-        to="https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398"
-        >Kleros TCR</links
-      >.
+      <links to="/about/sybil-resistance">BrightID</links>.
     </p>
-    <p>More on <links to="/about/how-it-works">how clr.fund works</links>.</p>
+    <p>
+      Still curious? Read more on
+      <links to="/about/how-it-works">how clr.fund works</links>.
+    </p>
   </div>
 </template>
 
