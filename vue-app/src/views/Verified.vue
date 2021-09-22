@@ -135,13 +135,7 @@ ul {
         margin-bottom: 3rem;
         margin-top: 1.5rem;
         flex-wrap: wrap;
-
-        img {
-          width: 1rem;
-          height: 1rem;
-          position: relative;
-          right: 0;
-        }
+        max-width: 600px; // Max width to allow for flex wrap
       }
     }
   }

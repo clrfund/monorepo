@@ -19,6 +19,7 @@ import {
   getContributionAmount,
   hasContributorVoted,
 } from '@/api/contributions'
+import { recipientRegistryType } from '@/api/core'
 import { loginUser, logoutUser } from '@/api/gun'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
@@ -457,13 +458,18 @@ const actions = {
 }
 
 const getters = {
-  // TODO generalize - this assumes optimistic registry
   recipientJoinDeadline: (state: RootState): DateTime | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
       return null
     }
+
+    const challengePeriodDuration =
+      recipientRegistryType === 'optimistic'
+        ? state.recipientRegistryInfo.challengePeriodDuration
+        : 0
+
     return state.currentRound.signUpDeadline.minus({
-      seconds: state.recipientRegistryInfo.challengePeriodDuration,
+      seconds: challengePeriodDuration,
     })
   },
   isRoundJoinPhase: (state: RootState, getters): boolean => {
@@ -481,10 +487,6 @@ const getters = {
       getters.isRoundJoinPhase &&
       !hasDateElapsed(state.currentRound.startTime)
     )
-  },
-  hasStartTimeElapsed: (state: RootState): boolean => {
-    if (!state.currentRound) return true
-    return hasDateElapsed(state.currentRound.startTime)
   },
   recipientSpacesRemaining: (state: RootState): number | null => {
     if (!state.currentRound || !state.recipientRegistryInfo) {
@@ -540,14 +542,19 @@ const getters = {
       state.currentRound.status === RoundStatus.Finalized
     )
   },
-  hasContributionPhaseEnded: (state: RootState): boolean => {
+  hasContributionPhaseEnded: (state: RootState, getters): boolean => {
     return (
-      !!state.currentRound && hasDateElapsed(state.currentRound.signUpDeadline)
+      !!state.currentRound &&
+      (hasDateElapsed(state.currentRound.signUpDeadline) ||
+        getters.isRoundContributorLimitReached ||
+        getters.isMessageLimitReached)
     )
   },
-  hasReallocationPhaseEnded: (state: RootState): boolean => {
+  hasReallocationPhaseEnded: (state: RootState, getters): boolean => {
     return (
-      !!state.currentRound && hasDateElapsed(state.currentRound.votingDeadline)
+      !!state.currentRound &&
+      (hasDateElapsed(state.currentRound.votingDeadline) ||
+        getters.isMessageLimitReached)
     )
   },
   hasUserContributed: (state: RootState): boolean => {
@@ -579,6 +586,12 @@ const getters = {
     return (
       !!state.currentRound &&
       state.currentRound.maxMessages <= state.currentRound.messages
+    )
+  },
+  isRoundContributorLimitReached: (state: RootState): boolean => {
+    return (
+      !!state.currentRound &&
+      state.currentRound.maxContributors <= state.currentRound.contributors
     )
   },
 }

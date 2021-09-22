@@ -168,7 +168,7 @@ export default class extends Vue {
     display: block;
     height: 2.5rem;
     margin-right: 15px;
-    min-width: 2.5rem;
+    width: 2.5rem;
     object-fit: cover;
     width: 2.5rem;
     &:hover {
