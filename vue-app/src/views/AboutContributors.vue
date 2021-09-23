@@ -22,15 +22,14 @@
         helps clr.fund
         <links to="/about/sybil-resistance">resist sybil attacks</links>!
       </li>
-      <!-- TODO replace 'DAI' with native token variable & Arbitrum for the network variable -->
       <li>
-        Make sure you have DAI in your BrightID-verified wallet on the Arbitrum
-        network
+        Make sure you have {{ nativeTokenSymbol }} in your BrightID-verified
+        wallet on the {{ chainLabel }} network
       </li>
-      <!-- TODO replace 'DAI' with native token variable -->
       <li>
         <links to="/projects">Browse projects</links> and add some to your cart,
-        adjusting your contributions to the amount of DAI you want.
+        adjusting your contributions to the amount of
+        {{ nativeTokenSymbol }} you want.
       </li>
       <li>
         When you're ready, open your cart, click contribute, and confirm the
@@ -59,15 +58,16 @@
       <links to="/about/quadratic-funding">quadratic funding</links> results
     </p>
     <ol>
-      <!-- TODO replace 'DAI' with native token variable & Arbitrum for the network variable -->
       <li>
-        First make sure the wallet you are using holds DAI on Aritrum. DAI can
+        First make sure the wallet you are using holds
+        {{ nativeTokenSymbol }} on {{ chainLabel }}. {{ nativeTokenSymbol }} can
         be easily purchased on any major Ethereum-focused exchange.
       </li>
       <li>
-        Once you have the desired amount of DAI in your wallet, select "Add
-        Funds" on the <links to="/projects">Projects page</links> and confirm
-        the transactions.
+        Once you have the desired amount of {{ nativeTokenSymbol }} in your
+        wallet, select "Add Funds" on the
+        <links to="/projects">Projects page</links> and confirm the
+        transactions.
       </li>
     </ol>
     <p></p>
@@ -84,8 +84,20 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
 
+import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
+
 @Component({ components: { Links } })
-export default class AboutContributors extends Vue {}
+export default class AboutContributors extends Vue {
+  get nativeTokenSymbol(): string {
+    const { nativeTokenSymbol } = this.$store.state.currentRound
+    return nativeTokenSymbol || 'DAI'
+  }
+
+  get chainLabel(): string {
+    const chain = CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+    return chain.label
+  }
+}
 </script>
 
 <style scoped lang="scss">
