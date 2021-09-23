@@ -2104,7 +2104,7 @@ export type GetRecipientsQueryVariables = Exact<{
 }>;
 
 
-export type GetRecipientsQuery = { __typename?: 'Query', recipientRegistry: Maybe<{ __typename?: 'RecipientRegistry', recipients: Maybe<Array<{ __typename?: 'Recipient', id: string, requestType: Maybe<string>, requester: Maybe<string>, recipientAddress: Maybe<any>, recipientMetadata: Maybe<string>, requestSubmittedHash: Maybe<any>, requestResolvedHash: Maybe<any>, submissionTime: Maybe<string>, rejected: Maybe<boolean>, verified: Maybe<boolean> }>> }> };
+export type GetRecipientsQuery = { __typename?: 'Query', recipientRegistry: Maybe<{ __typename?: 'RecipientRegistry', recipients: Maybe<Array<{ __typename?: 'Recipient', id: string, recipientIndex: Maybe<any>, requestType: Maybe<string>, requester: Maybe<string>, recipientAddress: Maybe<any>, recipientMetadata: Maybe<string>, requestSubmittedHash: Maybe<any>, requestResolvedHash: Maybe<any>, submissionTime: Maybe<string>, rejected: Maybe<boolean>, verified: Maybe<boolean> }>> }> };
 
 export type GetRoundsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2191,6 +2191,7 @@ export const GetRecipientsDocument = gql`
   recipientRegistry(id: $registryAddress) {
     recipients {
       id
+      recipientIndex
       requestType
       requester
       recipientAddress
