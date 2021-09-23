@@ -121,4 +121,9 @@ p {
   font-size: 16px;
   line-height: 30px;
 }
+
+li {
+  font-size: 16px;
+  line-height: 150%;
+}
 </style>
