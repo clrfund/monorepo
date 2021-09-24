@@ -191,8 +191,8 @@
             <h2 class="step-title">Register</h2>
             <p>
               To protect the round from bribery and fraud, you need to add your
-              wallet address to a smart contract registry. Once you’re done,
-              you can join the funding round!
+              wallet address to a smart contract registry. Once you’re done, you
+              can join the funding round!
             </p>
             <div class="transaction">
               <button
@@ -227,8 +227,8 @@ import {
   selfSponsor,
   registerUser,
   BrightId,
-  getVerification,
   BrightIdError,
+  getBrightId,
 } from '@/api/bright-id'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
@@ -374,17 +374,14 @@ export default class VerifyView extends Vue {
     this.loadingManualVerify = true
 
     try {
-      const verification = await getVerification(this.currentUser.walletAddress)
+      const brightId = await getBrightId(this.currentUser.walletAddress)
 
-      if (verification.unique) {
+      if (brightId.isVerified) {
         this.isManuallyVerified = true
         setTimeout(() => {
           this.$store.commit(SET_CURRENT_USER, {
             ...this.currentUser,
-            brightId: {
-              ...this.currentUser.brightId,
-              isVerified: true,
-            },
+            brightId,
           })
         }, 5000)
       }
