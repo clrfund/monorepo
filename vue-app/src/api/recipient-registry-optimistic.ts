@@ -389,8 +389,7 @@ export async function getProjects(
             // Hide recipient if it is added after the end of round
             project.isHidden = true
           }
-          // project.index = recipient._recipientIndex.toNumber()
-          project.index = recipients.indexOf(recipient)
+          project.index = recipient.recipientIndex
           return project
         } else {
           return
