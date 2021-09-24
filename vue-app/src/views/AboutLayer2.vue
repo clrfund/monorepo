@@ -5,7 +5,7 @@
     <h2>Clr.fund on Layer 2</h2>
     <p>
       <b>
-        tl;dr: clr.fund runds on
+        tl;dr: clr.fund runs on
         <links
           to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/"
           >Ethereum Layer 2 rollups</links
@@ -33,13 +33,13 @@
 
     <h2>Layer 2s for Scalability</h2>
     <p>
-      The main Ethereum blockchain, "layer 1," may be upgraded to reduce costs
+      The main Ethereum blockchain, "layer 1", may be upgraded to reduce costs
       in the future (this is one of the goals of Eth2, which this clr.fund round
       is helping realize!).
     </p>
     <p>
       In the immediate term, though, "layer 2" solutions are already helping
-      dramatically reduce costs. Most layer 2s are "rollups," blockchain-esque
+      dramatically reduce costs. Most layer 2s are "rollups", blockchain-esque
       systems that are maintained, like Ethereum, by a decentralized group of
       nodes. Rollups periodically "roll up" all their recent transactions into a
       single transaction that is recorded on layer 1, Ethereum, allowing them to

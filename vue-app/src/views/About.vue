@@ -50,7 +50,7 @@
         benefits of the main Ethereum network but with faster, cheaper
         transactions.
         <links to="/about/layer-2"
-          >Learn more about clr.fund's user of layer 2.</links
+          >Learn more about clr.fund's use of layer 2.</links
         >
       </li>
       <li>

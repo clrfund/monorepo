@@ -37,7 +37,7 @@
     </ul>
     <p>
       Each of these pieces exists in an Ethereum smart contract (see the code
-      here), meaning its functionality is maintained by Ethereum miners, a
+      <links to="https://github.com/clrfund/monorepo">here</links>), meaning its functionality is maintained by Ethereum miners, a
       decentralized group.
     </p>
     <h2>Why is clr.fund decentralized?</h2>
