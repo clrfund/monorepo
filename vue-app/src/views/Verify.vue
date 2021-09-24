@@ -191,8 +191,8 @@
             <h2 class="step-title">Register</h2>
             <p>
               To protect the round from bribery and fraud, you need to add your
-              wallet address to a smart contract registry. Once you’re done,
-              you can join the funding round!
+              wallet address to a smart contract registry. Once you’re done, you
+              can join the funding round!
             </p>
             <div class="transaction">
               <button
