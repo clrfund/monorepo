@@ -7,17 +7,33 @@
       This is an overview of how everything works behind the scenes so you can
       learn what to expect throughout the duration of the round.
     </p>
+    <p>
+      Looking for a guides on how to partipate? Check out our guides
+      specifically for contributing and joining as a project.
+    </p>
+    <ul>
+      <li>
+        <links to="/about/how-it-works/contributors"
+          >Guide for contributors</links
+        >
+      </li>
+      <li>
+        <links to="/about/how-it-works/recipients">Guide for recipients</links>
+      </li>
+    </ul>
 
     <h2>Quick recap on quadratic funding</h2>
     <p>
-      In this ETH2 CLR, projects will receive funding from individual
-      contributions and the matching pool, supplied by the Ethereum Foundation.
-      When you contribute to your favourite projects, your contribution also
-      acts as a vote. The more contributions a project receives, the more votes.
-      And the more votes a project gets, the more they'll receive from the
-      matching pool. Although a higher individual contribution will equal a
-      larger vote weighting, it's far more important to receive a large volume
-      of votes than just high value contributions.
+      As outlined in our
+      <links to="/about/quadratic-funding">overview on quadratic funding</links
+      >, projects will receive funding from individual contributions as well as
+      the matching pool. When you contribute to your favorite projects, your
+      contribution also acts as a vote. The more contributions a project
+      receives, the more votes. And the more votes a project gets, the more
+      they'll receive from the matching pool. Although a higher individual
+      contribution will equal a larger vote weighting, it's far more important
+      to receive a large volume of unique contributions than just a few high
+      value contributions.
     </p>
     <p>
       As the funding round is also a public vote, it needs deadlines. The round
@@ -25,16 +41,19 @@
       made, they can be counted and confirmed before the final matching pool
       distribution.
     </p>
-    <h2>Join phase</h2>
+    <h2>Funding round phases</h2>
+    <h3>Join phase</h3>
     <p>
       To kick things off, projects will be invited to
       <links to="/join">join the round</links>. If you're an eager contributor,
       you'll be able to browse the projects and add them to your cart but you
       won't be able to contribute just yet.
     </p>
-    <h3>Need to know</h3>
+    <h4>Need to know</h4>
     <ul>
+      <!-- TODO pull in variable here -->
       <li>This phase will last xxx days.</li>
+      <!-- TODO update with relevant info -->
       <li>There will be a maximum of 125 projects in the round.</li>
       <li>Projects must meet <links to="/join">round criteria</links>.</li>
       <li>
@@ -42,25 +61,23 @@
         <links to="/verify">set up to contribute</links>.
       </li>
     </ul>
-    <h2>Contribution phase</h2>
+    <h3>Contribution phase</h3>
     <p>
-      Once the join phase is complete, the contribution phase will start shortly
-      afterwards. This is the time for you to add your favourite projects to
-      your cart and contribute.
+      The launch of the contribution phase follows the join phase and marks the
+      official start of the funding round. This is the time for you to add your
+      favorite projects to your cart and contribute.
     </p>
-    <h3>Need to know</h3>
+    <h4>Need to know</h4>
     <ul>
+      <!-- TODO pull in variable here -->
+
       <li>This phase will last xxx days.</li>
       <li>
         You will need to go through some
         <links to="/verify">setup</links> before you can contribute.
       </li>
-      <li>You can contribute to a maximum of 13 projects in the round.</li>
-      <li>
-        Your contribution will include a mandatory donation to the matching pool
-        to protect the round against spam.
-      </li>
-      <li>The maximum contribution amount is 10000 Dai.</li>
+      <!-- TODO pull in variables here: max amount & native token -->
+      <li>The maximum contribution amount is 10000 DAI.</li>
       <li>
         Your total contribution amount is final. You can't increase it by
         contributing an additional time.
@@ -72,14 +89,15 @@
       you once this phase ends.
     </p>
 
-    <h2>Reallocation phase</h2>
+    <h3>Reallocation phase</h3>
     <p>
-      If you've contributed, you will have time to change your mind. You can
-      change your contribution amounts or add/remove projects but your total
-      must equal that of your original contribution.
+      During this phase, if you've contributed, you will have time to change
+      your mind. You can edit your contribution amounts or add/remove projects
+      but your total must equal that of your original contribution.
     </p>
-    <h3>Need to know</h3>
+    <h4>Need to know</h4>
     <ul>
+      <!-- TODO pull in variable here -->
       <li>
         This phase will last xxx days after the end of the contribution phase.
       </li>
@@ -87,37 +105,37 @@
         If you remove projects, you must reallocate the funds to other projects
         or it will go to the matching pool.
       </li>
-      <li>You can't exceed your original total when reallocating funding.</li>
+      <li>
+        You can't exceed your original contribution total when reallocating
+        funds.
+      </li>
     </ul>
-    <h2>Tallying phase</h2>
+    <h3>Tallying phase</h3>
     <p>
-      Contributions are now set so votes need to be counted. MACI and the smart
-      contracts can now calculate how much of the matching pool each project
-      will get.
+      At this point, all contributions are final, and can now be counted. The
+      round coordinator triggers
+      <links to="/about/maci">MACI</links>
+      and the smart contracts to calculate how much of the matching pool each
+      project will get.
     </p>
-    <h3>Need to know</h3>
-    <ul>
-      <li>This phase will last xxx days.</li>
-    </ul>
-    <h2>Finalized phase</h2>
+    <h3>Finalized phase</h3>
     <p>
-      All the calculations are done. Project owners can come and claim their
-      funding!
+      Once the tallying calculations are complete, the round is finalized.
+      Project owners can come and claim their funding!
     </p>
-    <h3>Need to know</h3>
-    <ul>
-      <li>This phase will last xxx days.</li>
-    </ul>
     <h2>More</h2>
     <p>
       We use different tech to keep the round fair and free from malicious
       actors. You can learn more about them below:
     </p>
     <ul>
-      <li><links to="/about-maci">MACI</links> – to protect against bribery</li>
       <li>
-        <links to="/about-sybil-attacks">BrightID</links> – to protect against
-        sybil attacks
+        <links to="/about/maci">MACI</links> – to protect against bribery and
+        tally round results
+      </li>
+      <li>
+        <links to="/about/sybil-resistance">BrightID</links> – to protect
+        against sybil attacks
       </li>
     </ul>
   </div>
@@ -130,7 +148,7 @@ import Links from '@/components/Links.vue'
 
 // TODO connect with state to add durations to content
 @Component({ components: { Links } })
-export default class HowItWorks extends Vue {}
+export default class AboutHowItWorks extends Vue {}
 </script>
 
 <style scoped lang="scss">

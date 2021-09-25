@@ -11,11 +11,15 @@ import RoundInformation from '../views/RoundInformation.vue'
 import VerifyLanding from '../views/VerifyLanding.vue'
 import About from '../views/About.vue'
 import AboutSybilResistance from '../views/AboutSybilResistance.vue'
-import Verified from '../views/Verified.vue'
 import AboutMaci from '../views/AboutMaci.vue'
-import HowItWorks from '../views/HowItWorks.vue'
+import AboutPublicGoods from '../views/AboutPublicGoods.vue'
+import AboutQuadraticFunding from '../views/AboutQuadraticFunding.vue'
+import AboutDecentralization from '../views/AboutDecentralization.vue'
+import AboutHowItWorks from '../views/AboutHowItWorks.vue'
+import AboutContributors from '../views/AboutContributors.vue'
+import AboutRecipients from '../views/AboutRecipients.vue'
 import AboutLayer2 from '../views/AboutLayer2.vue'
-import AboutSybilAttacks from '../views/AboutSybilAttacks.vue'
+import Verified from '../views/Verified.vue'
 import JoinView from '../views/Join.vue'
 import VerifyView from '../views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
@@ -80,7 +84,7 @@ const routes = [
     },
   },
   {
-    path: '/about-maci',
+    path: '/about/maci',
     name: 'about-maci',
     component: AboutMaci,
     meta: {
@@ -88,15 +92,15 @@ const routes = [
     },
   },
   {
-    path: '/about-sybil-attacks',
-    name: 'about-sybil-attacks',
-    component: AboutSybilAttacks,
+    path: '/about/sybil-resistance',
+    name: 'about-sybil-resistance',
+    component: AboutSybilResistance,
     meta: {
-      title: 'About Sybil Attacks',
+      title: 'About Sybil Resistance',
     },
   },
   {
-    path: '/about-layer2',
+    path: '/about/layer-2',
     name: 'about-layer-2',
     component: AboutLayer2,
     meta: {
@@ -104,11 +108,51 @@ const routes = [
     },
   },
   {
-    path: '/how-it-works',
-    name: 'how-it-works',
-    component: HowItWorks,
+    path: '/about/how-it-works',
+    name: 'about-how-it-works',
+    component: AboutHowItWorks,
     meta: {
       title: 'How it works',
+    },
+  },
+  {
+    path: '/about/how-it-works/contributors',
+    name: 'about-how-it-works-contributors',
+    component: AboutContributors,
+    meta: {
+      title: 'Contributors Guide',
+    },
+  },
+  {
+    path: '/about/how-it-works/recipients',
+    name: 'about-how-it-works-recipients',
+    component: AboutRecipients,
+    meta: {
+      title: 'Recipients Guide',
+    },
+  },
+  {
+    path: '/about/public-goods',
+    name: 'about-public-goods',
+    component: AboutPublicGoods,
+    meta: {
+      title: 'About public goods',
+    },
+  },
+  {
+    path: '/about/quadratic-funding',
+    name: 'about-quadratic-funding',
+    component: AboutQuadraticFunding,
+    meta: {
+      title: 'About quadratic funding',
+    },
+  },
+  {
+    path: '/about/decentralization',
+    name: 'about-decentralization',
+    component: AboutDecentralization,
+    meta: {
+      title: 'About decentralization',
     },
   },
   {
@@ -167,14 +211,7 @@ const routes = [
       title: 'Recipient Join Form Steps',
     },
   },
-  {
-    path: '/about-sybil-resistance',
-    name: 'about-sybil-resistance',
-    component: AboutSybilResistance,
-    meta: {
-      title: 'About Sybil Resistance',
-    },
-  },
+
   {
     path: '/cart',
     name: 'cart',

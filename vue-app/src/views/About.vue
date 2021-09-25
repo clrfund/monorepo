@@ -4,16 +4,18 @@
 
     <h2>What is clr.fund?</h2>
     <p>
-      Clr.fund is a protocol for efficiently allocating funds to public goods
-      that benefit the Ethereum Network according to the preferences of the
-      Ethereum Community. Clr.fund strives for credible neutrality,
-      decentralization, permissionlessness, trustlessness, and pseudonymity.
+      Clr.fund, pronounced "Clear Fund", is a protocol for efficiently
+      allocating funds to public goods that benefit the Ethereum Network
+      according to the preferences of the Ethereum Community. Clr.fund strives
+      for credible neutrality, decentralization, permissionlessness,
+      trustlessness, and pseudonymity.
     </p>
 
     <h2>Why does clr.fund exist?</h2>
     <p>
-      Allocating funds towards public goods — commodities or services that
-      deliver a net benefit even when they cannot be sold — is a challenge for
+      Allocating funds towards
+      <links to="/about/public-goods">public goods</links> — commodities or
+      services that are neither excludable nor subtractable — is a challenge for
       any ecosystem, and Ethereum is no exception.
     </p>
     <p>
@@ -26,19 +28,63 @@
       <links to="https://github.com/clrfund/constitution"
         >Clr.fund Constitution</links
       >
-      for more detail on Clr.fund’s goals and values.
+      for more detail on clr.fund’s goals and values.
+    </p>
+
+    <h2>How is clr.fund unique?</h2>
+    <p>Clr.fund instances also have a number of other special properties:</p>
+    <ul>
+      <li>
+        Decentralization — Major pieces of clr.fund's infrastructure are built
+        on
+        <links to="https://ethereum.org/en/what-is-ethereum/">Ethereum</links>,
+        a programmable blockchain that provides a reliable, censorship-resistant
+        ledger for clr.fund's voting and funding transactions.
+        <links to="/about/decentralization"
+          >Read more on clr.fund's decentralization</links
+        >.
+      </li>
+      <li>
+        Scalability — Because using Ethereum can be expensive for users,
+        clr.fund uses "layer 2" supplementary networks to get most of the
+        benefits of the main Ethereum network but with faster, cheaper
+        transactions.
+        <links to="/about/layer-2"
+          >Learn more about clr.fund's use of layer 2.</links
+        >
+      </li>
+      <li>
+        Collusion-resistance — Since blockchains like Ethereum publish all data
+        publicly by default, clr.fund contributors are vulnerable to bribery and
+        other kinds of manipulation. Clr.fund helps prevent these attacks using
+        magical math called zero-knowledge proofs.
+        <links to="/about/maci"
+          >Find out about MACI, our Minimal Anti-Collusion
+          Infrastructure.</links
+        >
+      </li>
+      <li>
+        Sybil-resistance — Voting systems that care about the number of
+        individual people voting for a given choice, as quadratic funding does,
+        can be vulnerable to sybil attacks, in which one person sets up many
+        identities in order to vote multiple times. Clr.fund mitigates this
+        threat with an identity-system called BrightID.
+        <links to="/about/sybil-resistance">Find out more about BrightID</links
+        >.
+      </li>
+    </ul>
+    <p>
+      Clr.fund is also built so anyone can spin up and run their own instance to
+      create a public goods grant program for their particular public.
     </p>
 
     <h2>How does it work?</h2>
     <p>
-      The clr.fund protocol uses the
-      <links
-        to="https://blogchains.org/wp-content/uploads/sites/4/2019/04/SSRN-id3243656.pdf"
-        >Constrained Liberal Radicalism (CLR)</links
-      >
-      algorithm, commonly called quadratic funding (QF), to facilitate monetary
-      contributions from members of the Ethereum Community towards builders of
-      Ethereum public goods.
+      The clr.fund protocol uses the Constrained Liberal Radicalism (CLR)
+      algorithm, commonly called
+      <links to="/about/quadratic-funding">quadratic funding</links> (QF), to
+      facilitate monetary contributions from members of the Ethereum Community
+      towards builders of Ethereum public goods.
     </p>
     <p>
       With its logic encoded into Ethereum smart contracts and other web3
@@ -48,7 +94,7 @@
 
     <p>
       At a high-level, clr.fund consists of a matching pool and a funding round.
-      Philanthropic individuals or organisations contribute to the matching pool
+      Philanthropic individuals or organizations contribute to the matching pool
       so as to have those funds efficiently allocated according to community
       preference. Users contribute directly to projects they value and, in doing
       so, earn a share of the matching pool for the projects, along with their
@@ -56,22 +102,20 @@
     </p>
 
     <p>
-      Under the hood, clr.fund uses zero-knowledge proofs (zk-snarks), courtesy
+      Under the hood, clr.fund uses zero-knowledge proofs (ZK-SNARKS), courtesy
       of the
-      <links to="https://github.com/appliedzkp/maci"
+      <links to="/about/maci"
         >Minimal Anti-collusion Infrastructure (MACI)</links
       >, to keep individual contributions private and limit effectiveness of
       collusion and bribery.
     </p>
-
     <p>
       To ensure that every contributor is a unique person clr.fund uses
-      <links to="https://brightid.org">BrightID</links>, and recipients are
-      curated by our
-      <links
-        to="https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398"
-        >Kleros TCR</links
-      >.
+      <links to="/about/sybil-resistance">BrightID</links>.
+    </p>
+    <p>
+      Still curious? Read more on
+      <links to="/about/how-it-works">how clr.fund works</links>.
     </p>
   </div>
 </template>
@@ -86,6 +130,7 @@ export default class About extends Vue {}
 </script>
 
 <style scoped lang="scss">
+/* TODO apply these styles across all About subpages  */
 @import '../styles/vars';
 
 .content-heading {
@@ -102,5 +147,10 @@ h2 {
 p {
   font-size: 16px;
   line-height: 30px;
+}
+
+li {
+  font-size: 16px;
+  line-height: 150%;
 }
 </style>

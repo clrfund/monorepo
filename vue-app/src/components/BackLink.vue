@@ -1,11 +1,11 @@
 <template>
   <links
-    to="/projects"
+    :to="to"
     :class="{
       back: true,
       desktop: !alsoShowOnMobile,
     }"
-    >← Back to projects</links
+    >{{ text }}</links
   >
 </template>
 
@@ -18,6 +18,8 @@ import Links from '@/components/Links.vue'
 @Component({ components: { Links } })
 export default class extends Vue {
   @Prop() alsoShowOnMobile!: boolean
+  @Prop() to!: string
+  @Prop() text!: string
 }
 </script>
 

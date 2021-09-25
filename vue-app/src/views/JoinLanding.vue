@@ -7,7 +7,11 @@
     </div>
 
     <round-status-banner />
-    <back-to-projects :alsoShowOnMobile="true" />
+    <back-link
+      :alsoShowOnMobile="true"
+      to="/projects"
+      text="← Back to projects"
+    />
 
     <div class="content" v-if="loading">
       <h1>Fetching round data...</h1>
@@ -85,7 +89,7 @@
               <div id="myTooltip" class="hidden button-menu">
                 MACI, our anti-bribery tech, currently limits the amount of
                 projects allowed per round.
-                <links to="/about-maci">More on MACI</links>
+                <links to="/about/maci">More on MACI</links>
               </div>
             </div>
           </div>
@@ -135,15 +139,14 @@ import { DateTime } from 'luxon'
 import { BigNumber } from 'ethers'
 
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
-import { getCurrentRound } from '@/api/round'
-
-import BackToProjects from '@/components/BackToProjects.vue'
-import CriteriaModal from '@/components/CriteriaModal.vue'
 import Loader from '@/components/Loader.vue'
+import CriteriaModal from '@/components/CriteriaModal.vue'
+import BackLink from '@/components/BackLink.vue'
 import Links from '@/components/Links.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 
+import { getCurrentRound } from '@/api/round'
 import { formatAmount } from '@/utils/amounts'
 
 @Component({
@@ -151,7 +154,7 @@ import { formatAmount } from '@/utils/amounts'
     RoundStatusBanner,
     CriteriaModal,
     Loader,
-    BackToProjects,
+    BackLink,
     Links,
     TimeLeft,
   },

@@ -1,43 +1,90 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">[Layer 2]</h1>
+    <h1 class="content-heading">About Layer 2</h1>
 
-    <h2>Layer 2</h2>
+    <h2>Clr.fund on Layer 2</h2>
     <p>
-      <b
-        >tl;dr: if you want to create loads of accounts to vote for your
-        favourite projects multiple times, you're ngmi (not going to make it)</b
-      >
-    </p>
-    <p>
-      This funding round is on Layer 2 to help save you time and money when
-      contributing to your favourite projects.
+      <b>
+        tl;dr: clr.fund runs on
+        <links
+          to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/"
+          >Ethereum Layer 2 rollups</links
+        >
+        to help save you time and money when contributing to your favorite
+        projects. You'll need a wallet with funds on Arbitrum to interact with
+        this application.
+      </b>
     </p>
 
-    <h2>Why Layer2?</h2>
+    <h2>Ethereum Transaction Costs</h2>
     <p>
-      As a decentralized funding product, you'll need to submit a few
-      transactions on the way to contributing to your favourite Eth2 projects.
-      On mainnet, this would lead to quite a bill of transaction fees. We've
-      opted to use [layer 2 solution], so your transaction fees are at a
-      fraction of the cost and a lot quicker too.
+      Ethereum, the blockchain that houses much of clr.fund's infrastructure,
+      requires users to pay transaction costs when interacting with it, and
+      these costs are going up. Transaction fees compensate the decentralized
+      community of Ethereum miners for processing and maintaining the
+      blockchain's state securely. As usage of Ethereum has gone up, so has the
+      price of getting miner's to include your transaction on the blockchain.
     </p>
+    <p>
+      So, the increasing cost of using Ethereum demonstrates that it's useful,
+      which is great, but it also presents a problem for end users who don't
+      want to pay fees in the 10s or 100s of dollars.
+    </p>
+
+    <h2>Layer 2s for Scalability</h2>
+    <p>
+      The main Ethereum blockchain, "layer 1", may be upgraded to reduce costs
+      in the future (this is one of the goals of Eth2, which this clr.fund round
+      is helping realize!).
+    </p>
+    <p>
+      In the immediate term, though, "layer 2" solutions are already helping
+      dramatically reduce costs. Most layer 2s are "rollups", blockchain-esque
+      systems that are maintained, like Ethereum, by a decentralized group of
+      nodes. Rollups periodically "roll up" all their recent transactions into a
+      single transaction that is recorded on layer 1, Ethereum, allowing them to
+      inherit much of Ethereum's security.
+    </p>
+    <p>
+      Transactions on layer 2s are orders of magnitude cheaper than on layer 1,
+      since rollups can process a high rate of transactions and transaction
+      traffic is now diluted across the many layer 2 options.
+    </p>
+    <p>
+      Read more on
+      <links
+        to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/"
+        >Ethereum Layer 2 technologies</links
+      >.
+    </p>
+
+    <h2>Arbitrum</h2>
+    <p>
+      There are many variations on the layer 2 rollup approach. This current
+      clr.fund round uses Arbitrum, an "optimistic"-style rollup.
+      <links to="https://developer.offchainlabs.com/docs/rollup_basics"
+        >Learn more in the Arbitrum docs</links
+      >.
+    </p>
+
     <h2>What you'll need</h2>
     <ul>
-      <li>a wallet that support [layer 2 solution]</li>
-      <li>a wallet that support [layer 2 solution]</li>
+      <li>A wallet that supports Arbitrum</li>
+      <li>Funds on Abritrum</li>
     </ul>
-    <h2>How to get L2 funds</h2>
-    <p>tbc</p>
-    <h2>More</h2>
+    <h3>How to find wallet that supports Arbitrum</h3>
+    <p>TODO</p>
+    <h3>How to get funds on Arbitrum</h3>
+    <p>TODO</p>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import Links from '@/components/Links.vue'
 
-@Component
+@Component({ components: { Links } })
 export default class AboutLayer2 extends Vue {}
 </script>
 
