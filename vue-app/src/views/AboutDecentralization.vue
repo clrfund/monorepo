@@ -37,8 +37,8 @@
     </ul>
     <p>
       Each of these pieces exists in an Ethereum smart contract (see the code
-      <links to="https://github.com/clrfund/monorepo">here</links>), meaning its functionality is maintained by Ethereum miners, a
-      decentralized group.
+      <links to="https://github.com/clrfund/monorepo">here</links>), meaning its
+      functionality is maintained by Ethereum miners, a decentralized group.
     </p>
     <h2>Why is clr.fund decentralized?</h2>
     <p>
@@ -83,29 +83,5 @@ export default class AboutDecentralization extends Vue {}
 
 <style scoped lang="scss">
 @import '../styles/vars';
-
-.about {
-  padding-bottom: 4rem;
-}
-
-.content-heading {
-  border-bottom: $border;
-}
-
-h2 {
-  font-family: 'Glacial Indifference', sans-serif;
-  font-weight: bold;
-  font-size: 32px;
-  letter-spacing: -0.015em;
-}
-
-p {
-  font-size: 16px;
-  line-height: 150%;
-}
-
-li {
-  font-size: 16px;
-  line-height: 150%;
-}
+@import '../styles/theme';
 </style>

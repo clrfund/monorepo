@@ -132,25 +132,5 @@ export default class About extends Vue {}
 <style scoped lang="scss">
 /* TODO apply these styles across all About subpages  */
 @import '../styles/vars';
-
-.content-heading {
-  border-bottom: $border;
-}
-
-h2 {
-  font-family: 'Glacial Indifference', sans-serif;
-  font-weight: bold;
-  font-size: 32px;
-  letter-spacing: -0.015em;
-}
-
-p {
-  font-size: 16px;
-  line-height: 30px;
-}
-
-li {
-  font-size: 16px;
-  line-height: 150%;
-}
+@import '../styles/theme';
 </style>

@@ -192,9 +192,9 @@
         know that it's for the integrity of the round.
       </li>
       <li>
-        You can only contribute once per round. Once you have
-        contributed, you can add/remove projects and reallocate your funds but
-        you can't increase your total contribution amount.
+        You can only contribute once per round. Once you have contributed, you
+        can add/remove projects and reallocate your funds but you can't increase
+        your total contribution amount.
       </li>
     </ul>
     <h2>More</h2>
@@ -243,29 +243,5 @@ export default class AboutMaci extends Vue {}
 
 <style scoped lang="scss">
 @import '../styles/vars';
-
-.about {
-  padding-bottom: 4rem;
-}
-
-.content-heading {
-  border-bottom: $border;
-}
-
-h2 {
-  font-family: 'Glacial Indifference', sans-serif;
-  font-weight: bold;
-  font-size: 32px;
-  letter-spacing: -0.015em;
-}
-
-p {
-  font-size: 16px;
-  line-height: 150%;
-}
-
-li {
-  font-size: 16px;
-  line-height: 150%;
-}
+@import '../styles/theme';
 </style>
