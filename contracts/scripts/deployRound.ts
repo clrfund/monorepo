@@ -215,6 +215,17 @@ async function main() {
     )
     const executeRequest2 = await recipientRegistry.executeRequest(recipient2Id)
     await executeRequest2.wait()
+
+    const fundingRoundAddress = await fundingRoundFactory.getCurrentRound()
+    console.log('fundingRound.address: ', fundingRoundAddress)
+
+    const fundingRound = await ethers.getContractAt(
+      'FundingRound',
+      fundingRoundAddress
+    )
+    const maciAddress = await fundingRound.maci()
+    console.log('maci.address: ', maciAddress)
+
     console.log('*******************')
     console.log('Deploy complete!')
     console.log('*******************')
