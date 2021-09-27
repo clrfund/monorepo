@@ -192,9 +192,9 @@
         know that it's for the integrity of the round.
       </li>
       <li>
-        You can only contribute once per round. Once you have
-        contributed, you can add/remove projects and reallocate your funds but
-        you can't increase your total contribution amount.
+        You can only contribute once per round. Once you have contributed, you
+        can add/remove projects and reallocate your funds but you can't increase
+        your total contribution amount.
       </li>
     </ul>
     <h2>More</h2>
