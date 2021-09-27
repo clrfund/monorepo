@@ -77,7 +77,7 @@
         <links to="/verify">setup</links> before you can contribute.
       </li>
       <!-- TODO pull in variables here: max amount & native token -->
-      <li>The maximum contribution amount is 10000 DAI.</li>
+      <li>The maximum contribution amount is 10000 {{ nativeTokenSymbol }}.</li>
       <li>
         Your total contribution amount is final. You can't increase it by
         contributing an additional time.
@@ -148,7 +148,12 @@ import Links from '@/components/Links.vue'
 
 // TODO connect with state to add durations to content
 @Component({ components: { Links } })
-export default class AboutHowItWorks extends Vue {}
+export default class AboutHowItWorks extends Vue {
+  get nativeTokenSymbol(): string {
+    const { nativeTokenSymbol } = this.$store.state.currentRound
+    return nativeTokenSymbol || 'DAI'
+  }
+}
 </script>
 
 <style scoped lang="scss">
