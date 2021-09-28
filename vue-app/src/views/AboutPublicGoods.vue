@@ -64,8 +64,3 @@ import Links from '@/components/Links.vue'
 @Component({ components: { Links } })
 export default class AboutPublicGoods extends Vue {}
 </script>
-
-<style scoped lang="scss">
-@import '../styles/vars';
-@import '../styles/theme';
-</style>

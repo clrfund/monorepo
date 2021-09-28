@@ -99,8 +99,3 @@ export default class AboutContributors extends Vue {
   }
 }
 </script>
-
-<style scoped lang="scss">
-@import '../styles/vars';
-@import '../styles/theme';
-</style>

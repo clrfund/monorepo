@@ -128,9 +128,3 @@ import Links from '@/components/Links.vue'
 @Component({ components: { Links } })
 export default class About extends Vue {}
 </script>
-
-<style scoped lang="scss">
-/* TODO apply these styles across all About subpages  */
-@import '../styles/vars';
-@import '../styles/theme';
-</style>
