@@ -67,10 +67,12 @@ export default class CallToActionCard extends Vue {
   }
 
   get showUserVerification(): boolean {
+    const { currentUser } = this.$store.state
+
     return (
       userRegistryType === UserRegistryType.BRIGHT_ID &&
-      this.$store.state.currentUser &&
-      !this.$store.state.currentUser.isRegistered
+      typeof currentUser?.isRegistered === 'boolean' &&
+      !currentUser?.isRegistered
     )
   }
 
