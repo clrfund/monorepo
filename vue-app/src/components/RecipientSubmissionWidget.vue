@@ -2,7 +2,7 @@
   <div class="tx-container">
     <div
       :class="
-        isWaiting || isPending
+        isWaiting
           ? 'recipient-submission-widget shine'
           : 'recipient-submission-widget'
       "
@@ -12,15 +12,12 @@
       <div
         v-if="currentUser"
         :class="
-          isWaiting || isPending || txError
+          isWaiting || txError
             ? 'tx-progress-area'
             : 'tx-progress-area-no-notice'
         "
       >
-        <loader
-          class="button-loader"
-          v-if="isWaiting || isPending || isWrongNetwork"
-        />
+        <loader class="button-loader" v-if="isWaiting" />
         <div v-if="isWaiting" class="tx-notice">
           Check your wallet for a prompt...
         </div>
@@ -31,15 +28,6 @@
         </div>
         <div v-if="isTxRejected" class="warning-text">
           You rejected the transaction in your wallet
-        </div>
-        <div v-if="isWrongNetwork" class="warning-text">
-          We're on {{ chainLabel }}.<br />
-          Switch over to the right network in your wallet.
-        </div>
-        <div v-if="isPending">
-          <div class="tx-notice">{{ pending }}</div>
-          <transaction-receipt :hash="txHash" />
-          <!-- This will hopefully appear once we remove immediate direction to project-added -->
         </div>
       </div>
       <div class="connected" v-if="currentUser">
@@ -74,24 +62,13 @@
             >
           </p>
         </div>
-        <!-- TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate -->
-        <!-- <div class="checkout-row">
-          <p class="m05"><b>Est. transaction fee</b></p>
-          <p class="m05">
-            {{ gasFeeAmount }} {{ depositToken }}
-            <span class="o5"
-              >({{ fiatSign
-              }}{{ calculateFiatFee(this.estimatedGasFee) }})</span
-            >
-          </p>
-        </div> -->
         <div class="cta">
           <button
             @click="handleSubmit"
             class="btn-action"
-            :disabled="!canSubmit || isWaiting || isPending || hasLowFunds"
+            :disabled="!canSubmit || isWaiting || hasLowFunds"
           >
-            <div v-if="isWaiting || isPending">
+            <div v-if="isWaiting">
               <loader class="button-loader" />
             </div>
             <div v-else>{{ cta }}</div>
@@ -132,19 +109,16 @@ export default class RecipientSubmissionWidget extends Vue {
   @Prop() cta!: string
   @Prop() pending!: string
   isLoading = true
-  isWaiting = false // TODO add logic
-  isPending = false // TODO add logic
+  isWaiting = false
   isTxRejected = false
   txHash = ''
   txError = ''
   ethPrice: EthPrice | null = null
   fiatFee = '-'
   fiatSign = '$'
-  // estimatedGasFee: BigNumber = BigNumber.from(0) TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
 
   async created() {
     this.ethPrice = await fetchCurrentEthPrice()
-    // this.estimatedGasFee = await this.getEstimatedGasFee() TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
     this.isLoading = false
   }
 
@@ -187,11 +161,6 @@ export default class RecipientSubmissionWidget extends Vue {
     return false
   }
 
-  // TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
-  // get gasFeeAmount(): string {
-  //   return this.estimatedGasFee ? formatAmount(this.estimatedGasFee, 18) : '-'
-  // }
-
   get depositToken(): string {
     return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
   }
@@ -214,36 +183,6 @@ export default class RecipientSubmissionWidget extends Vue {
     return chain.label
   }
 
-  // TODO: Once either EIP-1559 or Arbitrum stuff is sorted, come back and finish gas estimate
-  // private async getEstimatedGasFee(): Promise<BigNumber> {
-  //   const { recipient, recipientRegistryAddress, recipientRegistryInfo } =
-  //     this.$store.state
-
-  //   if (
-  //     recipientRegistryInfo &&
-  //     this.ethPrice &&
-  //     this.walletProvider &&
-  //     recipientRegistryAddress &&
-  //     recipient
-  //   ) {
-  //     const registry = new Contract(
-  //       recipientRegistryAddress,
-  //       OptimisticRecipientRegistry,
-  //       this.walletProvider
-  //     )
-
-  //     const recipientData = formToRecipientData(recipient)
-  //     const { address, ...metadata } = recipientData
-
-  //     return await registry.estimateGas.addRecipient(
-  //       recipient.fund.address,
-  //       JSON.stringify(metadata),
-  //       { value: recipientRegistryInfo.deposit }
-  //     )
-  //   }
-  //   return BigNumber.from(0)
-  // }
-
   private async addRecipient() {
     const {
       currentUser,
@@ -252,8 +191,6 @@ export default class RecipientSubmissionWidget extends Vue {
       recipientRegistryInfo,
     } = this.$store.state
 
-    // TODO where to make `isPending` vs. `isWaiting`? In `waitForTransaction`?
-    // Check out Launchpad repo to view transaction states
     this.isWaiting = true
 
     // Reset errors when submitting
