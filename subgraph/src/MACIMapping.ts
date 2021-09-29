@@ -76,6 +76,9 @@ export function handleSignUp(event: SignUp): void {
     const publicKey = new PublicKey(publicKeyId)
     publicKey.x = event.params._userPubKey.x
     publicKey.y = event.params._userPubKey.y
+    publicKey.stateIndex = event.params._stateIndex
+
+    publicKey.voiceCreditBalance = event.params._voiceCreditBalance
 
     publicKey.save()
   }

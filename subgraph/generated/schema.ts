@@ -515,21 +515,13 @@ export class Message extends Entity {
     }
   }
 
-  get iv(): BigInt | null {
+  get iv(): BigInt {
     let value = this.get("iv");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
+    return value.toBigInt();
   }
 
-  set iv(value: BigInt | null) {
-    if (value === null) {
-      this.unset("iv");
-    } else {
-      this.set("iv", Value.fromBigInt(value as BigInt));
-    }
+  set iv(value: BigInt) {
+    this.set("iv", Value.fromBigInt(value));
   }
 
   get publicKey(): string | null {
@@ -648,25 +640,26 @@ export class PublicKey extends Entity {
     }
   }
 
-  get x(): BigInt | null {
+  get x(): BigInt {
     let value = this.get("x");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
+    return value.toBigInt();
   }
 
-  set x(value: BigInt | null) {
-    if (value === null) {
-      this.unset("x");
-    } else {
-      this.set("x", Value.fromBigInt(value as BigInt));
-    }
+  set x(value: BigInt) {
+    this.set("x", Value.fromBigInt(value));
   }
 
-  get y(): BigInt | null {
+  get y(): BigInt {
     let value = this.get("y");
+    return value.toBigInt();
+  }
+
+  set y(value: BigInt) {
+    this.set("y", Value.fromBigInt(value));
+  }
+
+  get stateIndex(): BigInt | null {
+    let value = this.get("stateIndex");
     if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -674,11 +667,28 @@ export class PublicKey extends Entity {
     }
   }
 
-  set y(value: BigInt | null) {
+  set stateIndex(value: BigInt | null) {
     if (value === null) {
-      this.unset("y");
+      this.unset("stateIndex");
     } else {
-      this.set("y", Value.fromBigInt(value as BigInt));
+      this.set("stateIndex", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get voiceCreditBalance(): BigInt | null {
+    let value = this.get("voiceCreditBalance");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set voiceCreditBalance(value: BigInt | null) {
+    if (value === null) {
+      this.unset("voiceCreditBalance");
+    } else {
+      this.set("voiceCreditBalance", Value.fromBigInt(value as BigInt));
     }
   }
 }

@@ -46,6 +46,8 @@ type PublicKey @entity {
   messages: [Message!] @derivedFrom(field: "publicKey")
   x: BigInt!
   y: BigInt!
+  stateIndex: BigInt
+  voiceCreditBalance: BigInt
 }
 
 type FundingRound @entity {
