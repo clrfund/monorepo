@@ -51,8 +51,6 @@
     </p>
     <h4>Need to know</h4>
     <ul>
-      <!-- TODO pull in variable here -->
-      <li>This phase will last xxx days.</li>
       <li>
         There will be a maximum of {{ maxRecipients }} projects in the round.
       </li>
