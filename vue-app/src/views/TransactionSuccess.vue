@@ -134,7 +134,7 @@ export default class TransactionSuccess extends Vue {
 .dropshadow {
   position: relative;
   background: linear-gradient(
-    171.34deg,
+    175deg,
     rgba(0, 0, 0, 0.4) 56.5%,
     rgba(196, 196, 196, 0) 75.75%
   );
