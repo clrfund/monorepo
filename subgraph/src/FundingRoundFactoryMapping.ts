@@ -18,6 +18,7 @@ import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../gen
 import {
   FundingRound as FundingRoundTemplate,
   OptimisticRecipientRegistry as recipientRegistryTemplate,
+  MACI as MACITemplate,
 } from '../generated/templates'
 import {
   FundingRoundFactory,
@@ -94,6 +95,8 @@ export function handleRoundStarted(event: RoundStarted): void {
   let voiceCreditFactor = fundingRoundContract.voiceCreditFactor()
   let contributorCount = fundingRoundContract.contributorCount()
   let matchingPoolSize = fundingRoundContract.matchingPoolSize()
+
+  MACITemplate.create(maci)
 
   fundingRound.fundingRoundFactory = fundingRoundFactoryId
   fundingRound.nativeToken = nativeToken

@@ -47,3 +47,13 @@ export class BrightIdUserRegistry extends DataSourceTemplate {
     );
   }
 }
+
+export class MACI extends DataSourceTemplate {
+  static create(address: Address): void {
+    DataSourceTemplate.create("MACI", [address.toHex()]);
+  }
+
+  static createWithContext(address: Address, context: DataSourceContext): void {
+    DataSourceTemplate.createWithContext("MACI", [address.toHex()], context);
+  }
+}
