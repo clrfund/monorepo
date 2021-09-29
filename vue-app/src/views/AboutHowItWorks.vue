@@ -148,7 +148,6 @@ import { MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
 
 import Links from '@/components/Links.vue'
 
-// TODO connect with state to add durations to content
 @Component({ components: { Links } })
 export default class AboutHowItWorks extends Vue {
   get contributionPhaseDays(): number | string {
