@@ -31,9 +31,30 @@ type FundingRoundFactory @entity {
   lastUpdatedAt: String
 }
 
+type Message @entity {
+  id: ID!
+  data: [BigInt!]
+  iv: BigInt!
+  publicKey: PublicKey
+  fundingRound: FundingRound 
+  timestamp: String
+}
+
+type PublicKey @entity {
+  id: ID!
+  fundingRound: FundingRound
+  messages: [Message!] @derivedFrom(field: "publicKey")
+  x: BigInt!
+  y: BigInt!
+  stateIndex: BigInt
+  voiceCreditBalance: BigInt
+}
+
 type FundingRound @entity {
   id: ID!
   fundingRoundFactory: FundingRoundFactory
+  maci: Bytes
+  messages: [Message!] @derivedFrom(field: "fundingRound")
   recipientRegistry: RecipientRegistry
   recipientRegistryAddress: Bytes
   contributorRegistry: ContributorRegistry
@@ -44,7 +65,7 @@ type FundingRound @entity {
   votingDeadline: BigInt
 
   coordinator: Bytes
-  maci: Bytes
+ 
   voiceCreditFactor: BigInt
   contributorCount: BigInt!
   recipientCount: BigInt!
@@ -174,3 +195,4 @@ type Token @entity {
   createdAt: String
   lastUpdatedAt: String
 }
+

@@ -468,6 +468,231 @@ export class FundingRoundFactory extends Entity {
   }
 }
 
+export class Message extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Message entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Message entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Message", id.toString(), this);
+  }
+
+  static load(id: string): Message | null {
+    return store.get("Message", id) as Message | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get data(): Array<BigInt> | null {
+    let value = this.get("data");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigIntArray();
+    }
+  }
+
+  set data(value: Array<BigInt> | null) {
+    if (value === null) {
+      this.unset("data");
+    } else {
+      this.set("data", Value.fromBigIntArray(value as Array<BigInt>));
+    }
+  }
+
+  get iv(): BigInt {
+    let value = this.get("iv");
+    return value.toBigInt();
+  }
+
+  set iv(value: BigInt) {
+    this.set("iv", Value.fromBigInt(value));
+  }
+
+  get publicKey(): string | null {
+    let value = this.get("publicKey");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set publicKey(value: string | null) {
+    if (value === null) {
+      this.unset("publicKey");
+    } else {
+      this.set("publicKey", Value.fromString(value as string));
+    }
+  }
+
+  get fundingRound(): string | null {
+    let value = this.get("fundingRound");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set fundingRound(value: string | null) {
+    if (value === null) {
+      this.unset("fundingRound");
+    } else {
+      this.set("fundingRound", Value.fromString(value as string));
+    }
+  }
+
+  get timestamp(): string | null {
+    let value = this.get("timestamp");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set timestamp(value: string | null) {
+    if (value === null) {
+      this.unset("timestamp");
+    } else {
+      this.set("timestamp", Value.fromString(value as string));
+    }
+  }
+}
+
+export class PublicKey extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save PublicKey entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save PublicKey entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("PublicKey", id.toString(), this);
+  }
+
+  static load(id: string): PublicKey | null {
+    return store.get("PublicKey", id) as PublicKey | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get fundingRound(): string | null {
+    let value = this.get("fundingRound");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set fundingRound(value: string | null) {
+    if (value === null) {
+      this.unset("fundingRound");
+    } else {
+      this.set("fundingRound", Value.fromString(value as string));
+    }
+  }
+
+  get messages(): Array<string> | null {
+    let value = this.get("messages");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set messages(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("messages");
+    } else {
+      this.set("messages", Value.fromStringArray(value as Array<string>));
+    }
+  }
+
+  get x(): BigInt {
+    let value = this.get("x");
+    return value.toBigInt();
+  }
+
+  set x(value: BigInt) {
+    this.set("x", Value.fromBigInt(value));
+  }
+
+  get y(): BigInt {
+    let value = this.get("y");
+    return value.toBigInt();
+  }
+
+  set y(value: BigInt) {
+    this.set("y", Value.fromBigInt(value));
+  }
+
+  get stateIndex(): BigInt | null {
+    let value = this.get("stateIndex");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set stateIndex(value: BigInt | null) {
+    if (value === null) {
+      this.unset("stateIndex");
+    } else {
+      this.set("stateIndex", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get voiceCreditBalance(): BigInt | null {
+    let value = this.get("voiceCreditBalance");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set voiceCreditBalance(value: BigInt | null) {
+    if (value === null) {
+      this.unset("voiceCreditBalance");
+    } else {
+      this.set("voiceCreditBalance", Value.fromBigInt(value as BigInt));
+    }
+  }
+}
+
 export class FundingRound extends Entity {
   constructor(id: string) {
     super();
@@ -512,6 +737,40 @@ export class FundingRound extends Entity {
       this.unset("fundingRoundFactory");
     } else {
       this.set("fundingRoundFactory", Value.fromString(value as string));
+    }
+  }
+
+  get maci(): Bytes | null {
+    let value = this.get("maci");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set maci(value: Bytes | null) {
+    if (value === null) {
+      this.unset("maci");
+    } else {
+      this.set("maci", Value.fromBytes(value as Bytes));
+    }
+  }
+
+  get messages(): Array<string> | null {
+    let value = this.get("messages");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set messages(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("messages");
+    } else {
+      this.set("messages", Value.fromStringArray(value as Array<string>));
     }
   }
 
@@ -665,23 +924,6 @@ export class FundingRound extends Entity {
       this.unset("coordinator");
     } else {
       this.set("coordinator", Value.fromBytes(value as Bytes));
-    }
-  }
-
-  get maci(): Bytes | null {
-    let value = this.get("maci");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBytes();
-    }
-  }
-
-  set maci(value: Bytes | null) {
-    if (value === null) {
-      this.unset("maci");
-    } else {
-      this.set("maci", Value.fromBytes(value as Bytes));
     }
   }
 

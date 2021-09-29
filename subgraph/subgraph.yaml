@@ -20,6 +20,7 @@ dataSources:
         - RecipientRegistry
         - ContributorRegistry
         - FundingRound
+        - MACI
       abis:
         - name: FundingRoundFactory
           file: ./abis/FundingRoundFactory.json
@@ -31,6 +32,8 @@ dataSources:
           file: ./abis/OptimisticRecipientRegistry.json
         - name: BrightIdUserRegistry
           file: ./abis/BrightIdUserRegistry.json
+        - name: MACI
+          file: ./abis/MACI.json
       eventHandlers:
         - event: CoordinatorChanged(address)
           handler: handleCoordinatorChanged
@@ -52,7 +55,7 @@ dataSources:
     network: xdai
     source:
       abi: OptimisticRecipientRegistry
-      startBlock: 0
+      startBlock: 15217676
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -154,3 +157,26 @@ templates:
         - event: Sponsor(indexed address)
           handler: handleSponsor
       file: ./src/BrightIdUserRegistryMapping.ts
+  - name: MACI
+    kind: ethereum/contract
+    network: xdai
+    source:
+      abi: MACI
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - MACI
+        - FundingRound
+      abis:
+        - name: MACI
+          file: ./abis/MACI.json
+        - name: FundingRound
+          file: ./abis/FundingRound.json
+      eventHandlers:
+        - event: PublishMessage((uint256,uint256[10]),(uint256,uint256))
+          handler: handlePublishMessage
+        - event: SignUp((uint256,uint256),uint256,uint256)
+          handler: handleSignUp
+      file: ./src/MACIMapping.ts
