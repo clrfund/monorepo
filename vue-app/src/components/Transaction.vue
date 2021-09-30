@@ -15,7 +15,7 @@
       <div v-else>
         <transaction-receipt :hash="hash" />
       </div>
-      <loader />
+      <loader v-if="!hash" />
       <div v-if="displayWarning">
         <small class="warning-text">
           If you have been waiting a while, consider refreshing your browser and
