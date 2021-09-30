@@ -142,18 +142,15 @@ export interface Request {
 }
 
 export async function getRequests(
-  registryAddress: string,
   registryInfo: RegistryInfo
 ): Promise<Request[]> {
-  const data = await sdk.GetRecipients({
-    registryAddress: registryAddress.toLowerCase(),
-  })
+  const data = await sdk.GetRecipients()
 
-  if (!data.recipientRegistry?.recipients?.length) {
+  if (!data.recipients?.length) {
     return []
   }
 
-  const recipients = data.recipientRegistry?.recipients
+  const recipients = data.recipients
 
   const requests: Record<string, Request> = {}
   for (const recipient of recipients) {
@@ -342,15 +339,13 @@ export async function getProjects(
   startTime?: number,
   endTime?: number
 ): Promise<Project[]> {
-  const data = await sdk.GetRecipients({
-    registryAddress: registryAddress.toLowerCase(),
-  })
+  const data = await sdk.GetRecipients()
 
-  if (!data.recipientRegistry?.recipients?.length) {
+  if (!data.recipients?.length) {
     return []
   }
 
-  const recipients = data.recipientRegistry?.recipients
+  const recipients = data.recipients
 
   const registry = new Contract(
     registryAddress,

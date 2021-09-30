@@ -1,17 +1,15 @@
-query GetRecipients($registryAddress: ID!) {
-  recipientRegistry(id: $registryAddress) {
-    recipients {
-      id
-      recipientIndex
-      requestType
-      requester
-      recipientAddress
-      recipientMetadata
-      requestSubmittedHash
-      requestResolvedHash
-      submissionTime
-      rejected
-      verified
-    }
+query GetRecipients {
+  recipients {
+    id
+    recipientIndex
+    requestType
+    requester
+    recipientAddress
+    recipientMetadata
+    requestSubmittedHash
+    requestResolvedHash
+    submissionTime
+    rejected
+    verified
   }
 }
