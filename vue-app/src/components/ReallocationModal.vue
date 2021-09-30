@@ -6,6 +6,13 @@
         :hash="voteTxHash"
         :error="voteTxError"
         @close="$emit('close')"
+        :retryMethod="
+          () => {
+            this.voteTxError = ''
+            vote()
+          }
+        "
+        :displayRetryBtn="true"
       ></transaction>
     </div>
   </div>
