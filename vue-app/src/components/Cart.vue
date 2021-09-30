@@ -286,7 +286,7 @@
         </div>
       </div>
       <div
-        v-if="$store.getters.isRoundJoinOnlyPhase && $stores.state.currentRound"
+        v-if="$store.getters.isRoundJoinOnlyPhase"
         class="reallocation-section"
       >
         Round opens for contributing in
@@ -295,7 +295,9 @@
           >Get verified with BrightID while you wait.</span
         >
       </div>
-      <div v-else class="reallocation-section">No current round</div>
+      <div v-if="!$store.state.currentRound" class="reallocation-section">
+        No current round
+      </div>
     </div>
   </div>
 </template>
