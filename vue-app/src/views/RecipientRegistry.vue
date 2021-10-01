@@ -183,12 +183,8 @@ export default class RecipientRegistryView extends Vue {
   }
 
   async loadRequests() {
-    const { recipientRegistryAddress, recipientRegistryInfo } =
-      this.$store.state
-    this.requests = await getRequests(
-      recipientRegistryAddress,
-      recipientRegistryInfo
-    )
+    const { recipientRegistryInfo } = this.$store.state
+    this.requests = await getRequests(recipientRegistryInfo)
   }
 
   get registryInfo(): RegistryInfo {
