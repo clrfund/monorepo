@@ -2,7 +2,19 @@
   <div class="projects">
     <div class="round-info">
       <div class="image-wrapper">
-        <img src="@/assets/docking.png" height="100%" />
+        <img
+          src="@/assets/docking/docking.png"
+          sizes="(max-width: 1440px) 100vw, 1440px"
+          srcset="
+            ../assets/docking/docking_w360.png   360w,
+            ../assets/docking/docking_w720.png   720w,
+            ../assets/docking/docking_w1080.png 1080w,
+            ../assets/docking/docking_w1440.png 1440w,
+            ../assets/docking/docking_w2160.png 2160w,
+            ../assets/docking/docking_w2880.png 2880w
+          "
+          height="100%"
+        />
       </div>
       <template v-if="currentRound">
         <div class="round">

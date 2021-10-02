@@ -5,7 +5,18 @@
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
-          <img src="@/assets/docking.png" />
+          <img
+            src="@/assets/docking/docking.png"
+            sizes="(max-width: 1440px) 100vw, 1440px"
+            srcset="
+              ../assets/docking/docking_w360.png   360w,
+              ../assets/docking/docking_w720.png   720w,
+              ../assets/docking/docking_w1080.png 1080w,
+              ../assets/docking/docking_w1440.png 1440w,
+              ../assets/docking/docking_w2160.png 2160w,
+              ../assets/docking/docking_w2880.png 2880w
+            "
+          />
         </div>
         <div>
           <div class="hero-content">
@@ -49,9 +60,18 @@
       <div id="section-how-it-works">
         <div class="wormhole-wrapper desktop-l">
           <img
-            src="@/assets/wormhole.png"
-            alt="Image of spaceships funneling through a wormhole and getting bigger"
+            sizes="(max-width: 1440px) 100vw, 1440px"
+            srcset="
+              ../assets/wormhole/wormhole_w360.png   360w,
+              ../assets/wormhole/wormhole_w720.png   720w,
+              ../assets/wormhole/wormhole_w1080.png 1080w,
+              ../assets/wormhole/wormhole_w1440.png 1440w,
+              ../assets/wormhole/wormhole_w2160.png 2160w,
+              ../assets/wormhole/wormhole_w2880.png 2880w
+            "
+            src="@/assets/wormhole/wormhole.png"
             class="wormhole"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
         </div>
         <div id="how-it-works-content">
@@ -61,7 +81,15 @@
             just those with the wealthiest backers.
           </p>
           <img
-            src="@/assets/wormhole.png"
+            sizes="(max-width: 1440px) 100vw, 1440px"
+            srcset="
+              ../assets/wormhole/wormhole_w360.png   360w,
+              ../assets/wormhole/wormhole_w720.png   720w,
+              ../assets/wormhole/wormhole_w1440.png 1440w,
+              ../assets/wormhole/wormhole_w2160.png 2160w,
+              ../assets/wormhole/wormhole_w2880.png 2880w
+            "
+            src="@/assets/wormhole/wormhole.png"
             alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
           <h2>How it works</h2>

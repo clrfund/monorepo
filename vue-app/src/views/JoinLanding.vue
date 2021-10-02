@@ -2,7 +2,18 @@
   <div>
     <div class="gradient">
       <div class="hero">
-        <img src="@/assets/core.png" />
+        <img
+          src="@/assets/core/core.png"
+          sizes="(max-width: 1440px) 100vw, 1440px"
+          srcset="
+            ../assets/core/core_w360.png   360w,
+            ../assets/core/core_w720.png   720w,
+            ../assets/core/core_w1080.png 1080w,
+            ../assets/core/core_w1440.png 1440w,
+            ../assets/core/core_w2160.png 2160w,
+            ../assets/core/core_w2880.png 2880w
+          "
+        />
       </div>
     </div>
 
