@@ -60,6 +60,7 @@
       <div id="section-how-it-works">
         <div class="wormhole-wrapper desktop-l">
           <img
+            src="@/assets/wormhole/wormhole.png"
             sizes="(max-width: 1440px) 100vw, 1440px"
             srcset="
               ../assets/wormhole/wormhole_w360.png   360w,
@@ -69,7 +70,6 @@
               ../assets/wormhole/wormhole_w2160.png 2160w,
               ../assets/wormhole/wormhole_w2880.png 2880w
             "
-            src="@/assets/wormhole/wormhole.png"
             class="wormhole"
             alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
@@ -81,6 +81,7 @@
             just those with the wealthiest backers.
           </p>
           <img
+            src="@/assets/wormhole/wormhole.png"
             sizes="(max-width: 1440px) 100vw, 1440px"
             srcset="
               ../assets/wormhole/wormhole_w360.png   360w,
@@ -90,7 +91,6 @@
               ../assets/wormhole/wormhole_w2160.png 2160w,
               ../assets/wormhole/wormhole_w2880.png 2880w
             "
-            src="@/assets/wormhole/wormhole.png"
             alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
           <h2>How it works</h2>
