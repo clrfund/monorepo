@@ -160,6 +160,13 @@
                   :error="sponsorTxError"
                 />
               </div>
+              <div v-if="sponsorTxHash">
+                <loader />
+                <p>
+                  Waiting for sponsorship verification from BrightID, please
+                  wait. This shouldn't take more than a couple of minutes.
+                </p>
+              </div>
             </div>
           </div>
           <div v-if="currentStep === 2">
