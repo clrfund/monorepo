@@ -6,7 +6,7 @@
         :hash="voteTxHash"
         :error="voteTxError"
         @close="$emit('close')"
-        :retryMethod="
+        @retry="
           () => {
             this.voteTxError = ''
             vote()

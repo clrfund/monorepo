@@ -13,7 +13,7 @@
         <button
           v-if="displayRetryBtn"
           class="btn-primary close-btn"
-          @click="retryMethod()"
+          @click="$emit('retry')"
         >
           Retry
         </button>
@@ -79,8 +79,6 @@ export default class Transaction extends Vue {
   displayCloseBtn!: boolean
 
   @Prop({ default: false }) displayRetryBtn!: boolean
-
-  @Prop() retryMethod!: void
 }
 </script>
 

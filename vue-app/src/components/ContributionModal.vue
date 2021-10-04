@@ -35,7 +35,7 @@
         :hash="approvalTxHash"
         :error="approvalTxError || error"
         @close="$emit('close')"
-        :retryMethod="
+        @retry="
           () => {
             this.step = 0
             this.approvalTxError = ''
@@ -59,7 +59,7 @@
         :hash="contributionTxHash"
         :error="contributionTxError || error"
         @close="$emit('close')"
-        :retryMethod="
+        @retry="
           () => {
             this.step = 0
             this.contributionTxError = ''
@@ -81,7 +81,7 @@
         :hash="voteTxHash"
         :error="voteTxError || error"
         @close="$emit('close')"
-        :retryMethod="
+        @retry="
           () => {
             this.voteTxError = ''
             sendVotes()
