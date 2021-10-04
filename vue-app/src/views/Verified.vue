@@ -11,7 +11,10 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Ready to contribute!</h1>
-            <transaction-receipt :hash="$route.params.hash" />
+            <transaction-receipt
+              v-if="$route.params.hash"
+              :hash="$route.params.hash"
+            />
           </div>
           <div class="subtitle">
             You’re on board this funding round! And fully verified for BrightID
