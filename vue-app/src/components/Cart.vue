@@ -568,7 +568,7 @@ export default class Cart extends Vue {
     const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
     if (this.$store.getters.isMessageLimitReached)
-      return 'The limit on the number of votes has been reached'
+      return 'The limit on the number of contributions has been reached'
     if (!currentUser) return 'Please connect your wallet'
     if (!this.isCorrectNetwork())
       return `Please change network to ${this.networkName} network.`
@@ -582,12 +582,12 @@ export default class Cart extends Vue {
     if (this.$store.getters.hasReallocationPhaseEnded)
       return 'The funding round has ended.'
     if (currentRound.messages + this.cart.length >= currentRound.maxMessages)
-      return 'Cart changes will exceed voting capacity of this round'
+      return 'Cart changes will exceed contribution capacity of this round'
     else if (
       currentRound.messages + this.cart.length >=
       currentRound.maxMessages
     ) {
-      return 'The limit on the number of votes has been reached'
+      return 'The limit on the number of contributions has been reached'
     } else {
       const total = this.getTotal()
       if (this.contribution.isZero()) {
