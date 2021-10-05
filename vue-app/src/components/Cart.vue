@@ -285,18 +285,11 @@
           {{ tokenSymbol }}
         </div>
       </div>
-      <div
-        v-if="$store.getters.isRoundJoinOnlyPhase"
-        class="reallocation-section"
-      >
-        Round opens for contributing in
-        <time-left :date="$store.state.currentRound.startTime" />.
-        <span v-if="canRegisterWithBrightId"
-          >Get verified with BrightID while you wait.</span
-        >
-      </div>
       <div v-if="!$store.state.currentRound" class="reallocation-section">
-        No current round
+        No current round.
+        <links v-if="isBrightIdRequired" to="/verify">
+          Verify with BrightID while you wait</links
+        >
       </div>
     </div>
   </div>
