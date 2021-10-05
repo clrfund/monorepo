@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { BigNumber } from 'ethers'
 
 import { MAX_CART_SIZE, CartItem } from '@/api/contributions'
-import { mutations } from '@/store'
+import mutations from '@/store/mutations'
 import {
   ADD_CART_ITEM,
   UPDATE_CART_ITEM,
