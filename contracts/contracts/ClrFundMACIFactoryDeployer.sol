@@ -31,6 +31,7 @@ contract ClrFundMACIFactoryDeployer is CloneFactory {
     uint clrFundMaciFactoryId = 0;
     ClrFundMACIFactory private clrFundMACIFactory; // funding factory contract
     constructor(address _template) public {
+        require(_template != address(0), 'ClrFundMACIFactoryDeployer: invalid address');
         template = _template;
     }
     
@@ -48,9 +49,9 @@ contract ClrFundMACIFactoryDeployer is CloneFactory {
     uint256 _signUpDuration,
     uint256 _votingDuration
     ) public returns (address) {
-        ClrFundMACIFactory clrFundMACIFactory = ClrFundMACIFactory(createClone(template));
+        ClrFundMACIFactory clrFundMACIFactoryInstance = ClrFundMACIFactory(createClone(template));
         
-        clrFundMACIFactory.init(
+        clrFundMACIFactoryInstance.init(
             _stateTreeDepth,
             _messageTreeDepth,
             _voteOptionTreeDepth,
@@ -62,9 +63,9 @@ contract ClrFundMACIFactoryDeployer is CloneFactory {
             _votingDuration
         );
        
-        emit NewInstance(address(clrFundMACIFactory));
+        emit NewInstance(address(clrFundMACIFactoryInstance));
         
-        return address(clrFundMACIFactory);
+        return address(clrFundMACIFactoryInstance);
     }
 
         // added this because it was added in the funding round deployer too

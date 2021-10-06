@@ -44,10 +44,16 @@ contract ClrFund is OwnableUpgradeable, MACISharedObjs {
   event TokenChanged(address _token);
   event CoordinatorChanged(address _coordinator);
 
+   // constructor to prevent anyone anonymous getting the ownership
+  constructor(MACIFactory _maciFactory) public {
+    require(address(_maciFactory) != address(0), "ClrFund: invalid address");
+    init(_maciFactory);
+  }
+
   function init(
     MACIFactory _maciFactory
   ) 
-    external
+    public
   {
     __Ownable_init();
     maciFactory = _maciFactory;

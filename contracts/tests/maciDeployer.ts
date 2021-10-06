@@ -43,14 +43,17 @@ describe('CLR Fund MACI Factory Deployer', () => {
       signer: deployer,
       libraries: maciLibraries,
     })
-    factoryTemplate = await MACIFactory.deploy()
+    maciParameters = await getMACIFcatoryDeploymentParams(deployer)
+
+    // deploying the  singleton by passing  the values for the constructor
+    factoryTemplate = await MACIFactory.deploy(...maciParameters.values())
 
     expect(factoryTemplate.address).to.properAddress
-    expect(await getGasUsage(factoryTemplate.deployTransaction)).lessThan(
-      5100000
-    )
 
-    maciParameters = await getMACIFcatoryDeploymentParams(deployer)
+    // since the singleton deployment now has init() and there are 9 params called in the constructor so the gas cost has increased
+    expect(await getGasUsage(factoryTemplate.deployTransaction)).lessThan(
+      5327100
+    )
 
     clrFundMACIFactoryDeployer = await deployContract(
       deployer,
@@ -93,6 +96,15 @@ describe('CLR Fund MACI Factory Deployer', () => {
       deployer,
       InitialVoiceCreditProxyArtifact.abi
     )
+  })
+
+  it('makes sure the init function was called when singleton was deployed', async () => {
+    const { maxUsers, maxMessages, maxVoteOptions } = await factory.maxValues()
+    expect(maxUsers).to.equal(4294967295)
+    expect(maxMessages).to.equal(4294967295)
+    expect(maxVoteOptions).to.equal(124)
+    expect(await factory.signUpDuration()).to.equal(604800)
+    expect(await factory.votingDuration()).to.equal(604800)
   })
 
   it('can only be initialized once', async () => {

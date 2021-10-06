@@ -29,6 +29,34 @@ contract ClrFundMACIFactory is OwnableUpgradeable, MACIParameters, MACISharedObj
   event MaciParametersChanged();
   event MaciDeployed(address _maci);
 
+
+   // constructor to prevent anyone anonymous getting the ownership
+   constructor(
+    uint8 _stateTreeDepth,
+    uint8 _messageTreeDepth,
+    uint8 _voteOptionTreeDepth,
+    uint8 _tallyBatchSize,
+    uint8 _messageBatchSize,
+    SnarkVerifier _batchUstVerifier,
+    SnarkVerifier _qvtVerifier,
+    uint256 _signUpDuration,
+    uint256 _votingDuration
+   ) public {
+    require(address(_batchUstVerifier) != address(0), "ClrFundMACIFactory: invalid address");
+    require(address(_qvtVerifier) != address(0), "ClrFundMACIFactory: invalid address");
+    init(
+    _stateTreeDepth,
+    _messageTreeDepth,
+    _voteOptionTreeDepth,
+    _tallyBatchSize,
+    _messageBatchSize,
+    _batchUstVerifier,
+    _qvtVerifier,
+    _signUpDuration,
+    _votingDuration
+    );
+  }
+
   function init(
     uint8 _stateTreeDepth,
     uint8 _messageTreeDepth,

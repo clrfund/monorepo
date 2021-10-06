@@ -32,6 +32,7 @@ contract ClrFundDeployer is CloneFactory {
     ClrFund private clrfund; // funding factory contract
     
     constructor(address _template) public {
+        require(_template != address(0), 'ClrFundDeployer: invalid address');
         template = _template;
     }
     
@@ -41,15 +42,15 @@ contract ClrFundDeployer is CloneFactory {
     function deployFund(
       MACIFactory _maciFactory
     ) public returns (address) {
-        ClrFund clrfund = ClrFund(createClone(template));
+        ClrFund clrfundInstance = ClrFund(createClone(template));
         
-        clrfund.init(
+        clrfundInstance.init(
             _maciFactory
         );
        
-        emit NewInstance(address(clrfund));
+        emit NewInstance(address(clrfundInstance));
         
-        return address(clrfund);
+        return address(clrfundInstance);
     }
     
     function registerInstance(

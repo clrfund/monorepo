@@ -30,7 +30,10 @@ describe('Clr fund deployer', () => {
     maciFactory = await deployMaciFactory(deployer)
     maciParameters = await MaciParameters.read(maciFactory)
 
-    factoryTemplate = await deployContract(deployer, 'ClrFund')
+    // deploying the  singleton by passing  the values for the constructor
+    factoryTemplate = await deployContract(deployer, 'ClrFund', [
+      maciFactory.address,
+    ])
 
     expect(factoryTemplate.address).to.properAddress
     expect(await getGasUsage(factoryTemplate.deployTransaction)).lessThan(
@@ -76,6 +79,14 @@ describe('Clr fund deployer', () => {
     token = await Token.deploy(tokenInitialSupply)
     expect(token.address).to.properAddress
     await token.transfer(contributor.address, tokenInitialSupply)
+  })
+
+  it('makes sure the init function was called when singleton was deployed', async () => {
+    expect(await factoryTemplate.coordinator()).to.equal(ZERO_ADDRESS)
+    expect(await factoryTemplate.nativeToken()).to.equal(ZERO_ADDRESS)
+    expect(await factoryTemplate.maciFactory()).to.equal(maciFactory.address)
+    expect(await factoryTemplate.userRegistry()).to.equal(ZERO_ADDRESS)
+    expect(await factoryTemplate.recipientRegistry()).to.equal(ZERO_ADDRESS)
   })
 
   it('can only be initialized once', async () => {

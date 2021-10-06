@@ -68,7 +68,7 @@ abstract contract ContextUpgradeable is Initializable {
         return tx.origin;
     }
 
-    function _msgData() internal view virtual returns (bytes calldata) {
+    function _msgData() internal pure virtual returns (bytes calldata) {
         return msg.data;
     }
     uint256[50] private __gap;
