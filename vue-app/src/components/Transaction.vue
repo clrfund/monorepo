@@ -24,8 +24,8 @@
       <div v-else>
         <transaction-receipt :hash="hash" />
       </div>
-      <loader />
-      <div v-if="displayWarning">
+      <loader v-if="!hash" />
+      <div v-if="displayWarning && !hash">
         <small class="warning-text">
           If you have been waiting a while, consider refreshing your browser and
           reconnecting your wallet.
