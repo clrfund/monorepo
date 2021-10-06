@@ -6,7 +6,7 @@
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
           <img
-            src="@/assets/docking/docking.png"
+            src="@/assets/docking/docking_w1080.png"
             sizes="(max-width: 1440px) 100vw, 1440px"
             srcset="
               ../assets/docking/docking_w360.png   360w,
@@ -60,7 +60,7 @@
       <div id="section-how-it-works">
         <div class="wormhole-wrapper desktop-l">
           <img
-            src="@/assets/wormhole/wormhole.png"
+            src="@/assets/wormhole/wormhole_w1080.png"
             sizes="(max-width: 1440px) 100vw, 1440px"
             srcset="
               ../assets/wormhole/wormhole_w360.png   360w,
@@ -81,7 +81,7 @@
             just those with the wealthiest backers.
           </p>
           <img
-            src="@/assets/wormhole/wormhole.png"
+            src="@/assets/wormhole/wormhole_w1080.png"
             sizes="(max-width: 1440px) 100vw, 1440px"
             srcset="
               ../assets/wormhole/wormhole_w360.png   360w,

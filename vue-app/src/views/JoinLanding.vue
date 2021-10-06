@@ -3,7 +3,7 @@
     <div class="gradient">
       <div class="hero">
         <img
-          src="@/assets/core/core.png"
+          src="@/assets/core/core_w1080.png"
           sizes="(max-width: 1440px) 100vw, 1440px"
           srcset="
             ../assets/core/core_w360.png   360w,

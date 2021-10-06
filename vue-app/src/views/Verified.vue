@@ -7,7 +7,7 @@
       <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
         <img
-          src="@/assets/newrings/newrings.png"
+          src="@/assets/newrings/newrings_w1080.png"
           sizes="(max-width: 1440px) 100vw, 1440px"
           srcset="
             ../assets/newrings/newrings_w360.png   360w,

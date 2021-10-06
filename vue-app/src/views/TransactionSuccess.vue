@@ -2,7 +2,7 @@
   <div class="container">
     <div class="image-wrapper">
       <img
-        src="@/assets/docking/docking.png"
+        src="@/assets/docking/docking_w1080.png"
         sizes="(max-width: 1440px) 100vw, 1440px"
         srcset="
           ../assets/docking/docking_w360.png   360w,
