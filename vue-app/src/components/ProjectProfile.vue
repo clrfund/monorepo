@@ -111,9 +111,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 import { Project } from '@/api/projects'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
@@ -127,13 +125,17 @@ import Markdown from '@/components/Markdown.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import Links from '@/components/Links.vue'
+import ClaimButton from '@/components/ClaimButton.vue'
 
-@Component({ components: { Markdown, Info, LinkBox, CopyButton, Links } })
+@Component({
+  components: { Markdown, Info, LinkBox, CopyButton, Links, ClaimButton },
+})
 export default class ProjectProfile extends Vue {
-  contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
   @Prop() project!: Project
   @Prop() klerosCurateUrl!: string | null
   @Prop() previewMode!: boolean
+
+  contributionAmount: number | null = DEFAULT_CONTRIBUTION_AMOUNT
   ens: string | null = null
 
   async mounted() {

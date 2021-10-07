@@ -15,8 +15,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { FixedNumber } from 'ethers'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
@@ -27,8 +26,10 @@ import ClaimModal from '@/components/ClaimModal.vue'
 import { markdown } from '@/utils/markdown'
 import { formatAmount } from '@/utils/amounts'
 
+@Component
 export default class ClaimButton extends Vue {
   @Prop() project!: Project
+
   allocatedAmount: FixedNumber | null = null
   claimed: boolean | null = null
   isLoading = true
