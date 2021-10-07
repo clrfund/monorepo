@@ -11,10 +11,17 @@
           >Ethereum Layer 2 rollups</links
         >
         to help save you time and money when contributing to your favorite
-        projects. You'll need a wallet with funds on Arbitrum to interact with
-        this application.
+        projects. You'll need a wallet with funds on {{ chainLabel }} to
+        interact with this application.
       </b>
     </p>
+    <button
+      v-if="chainLabel.includes('Arbitrum')"
+      class="btn-secondary"
+      @click="scrollToId('arbitrum-bridge')"
+    >
+      Bridge Funds
+    </button>
 
     <h2>Ethereum Transaction Costs</h2>
     <p>
@@ -57,33 +64,161 @@
         >Ethereum Layer 2 technologies</links
       >.
     </p>
+    <!-- If chain is Arbitrum, display bridge information: -->
+    <div
+      v-if="chainLabel.includes('Arbitrum')"
+      class="chain-details"
+      id="arbitrum-bridge"
+    >
+      <div class="divider" />
+      <h2>{{ chainLabel }}</h2>
+      <p>
+        There are many variations on the layer 2 rollup approach. This current
+        clr.fund round uses {{ chainLabel }}, an "optimistic"-style rollup.
+        <links to="https://developer.offchainlabs.com/docs/rollup_basics"
+          >Learn more in the {{ chainLabel }} docs</links
+        >.
+      </p>
 
-    <h2>Arbitrum</h2>
-    <p>
-      There are many variations on the layer 2 rollup approach. This current
-      clr.fund round uses Arbitrum, an "optimistic"-style rollup.
-      <links to="https://developer.offchainlabs.com/docs/rollup_basics"
-        >Learn more in the Arbitrum docs</links
-      >.
-    </p>
-
-    <h2>What you'll need</h2>
-    <ul>
-      <li>A wallet that supports Arbitrum</li>
-      <li>Funds on Abritrum</li>
-    </ul>
-    <h3>How to find wallet that supports Arbitrum</h3>
-    <p>TODO</p>
-    <h3>How to get funds on Arbitrum</h3>
-    <p>TODO</p>
+      <h2>What you'll need</h2>
+      <ul>
+        <li>A wallet that supports {{ chainLabel }}</li>
+        <li>Funds on {{ chainLabel }}</li>
+      </ul>
+      <h3>How to find wallet that supports {{ chainLabel }}</h3>
+      <p>TODO</p>
+      <h3>💰 How to get funds on {{ chainLabel }}</h3>
+      <p>
+        <links :to="chainBridge" :hideArrow="true">
+          <button class="btn-action">Official {{ chainLabel }} Bridge</button>
+        </links>
+      </p>
+      <p>
+        Follow the steps below, or use the
+        <links to="https://arbitrum.io/bridge-tutorial/"
+          >official tutorial</links
+        >
+        as a guide at any time.
+      </p>
+      <ol>
+        <li>Click above to go to the official {{ chainLabel }} bridge</li>
+        <li>
+          Connect your {{ chainLabel }} supporting wallet using
+          <strong>Mainnet</strong>
+        </li>
+        <li>
+          Select currency (some ETH first for gas, and some
+          {{ nativeToken.symbol }} for contributing)
+          <p>
+            For {{ nativeToken.symbol }}, click "Token" menu, search for
+            {{ nativeToken.symbol }}
+            and select token.
+          </p>
+        </li>
+        <li>Enter amount & click "Deposit"</li>
+        <li>Confirm on your wallet</li>
+      </ol>
+      <p>
+        Once you have bridged your {{ nativeToken.symbol }} to {{ chainLabel }},
+        you may want to add the <links :to="blockExplorerUrl">token</links> to
+        your wallet e.g. in MetaMask.
+      </p>
+      <button
+        v-if="currentUser"
+        class="btn-secondary"
+        @click="addTokenToWallet"
+      >
+        Add {{ chainLabel }} {{ nativeToken.symbol }} to wallet
+      </button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
+import { User } from '@/api/user'
 import Links from '@/components/Links.vue'
+import WalletWidget from '@/components/WalletWidget.vue'
 
-@Component({ components: { Links } })
-export default class AboutLayer2 extends Vue {}
+@Component({ components: { Links, WalletWidget } })
+export default class AboutLayer2 extends Vue {
+  scrollToId(id: string): void {
+    const element = document.getElementById(id)
+    if (!element) return
+    const navBarOffset = 80
+    const elementPosition = element.getBoundingClientRect().top
+    const top = elementPosition - navBarOffset
+    window.scrollTo({ top, behavior: 'smooth' })
+  }
+
+  get windowEthereum(): any {
+    return (window as any).ethereum
+  }
+
+  async addTokenToWallet() {
+    try {
+      if (this.windowEthereum) {
+        await this.windowEthereum.request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: this.nativeToken.address,
+              symbol: this.nativeToken.symbol,
+              decimals: this.nativeToken.decimals,
+            },
+          },
+        })
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  get currentUser(): User | null {
+    return this.$store.state.currentUser
+  }
+
+  get chain(): any {
+    return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+  }
+
+  get chainLabel(): string {
+    return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)].label
+  }
+
+  get chainBridge(): string | null {
+    const { bridge } =
+      CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+    return bridge || null
+  }
+
+  get nativeToken(): { [key: string]: any } {
+    const {
+      nativeTokenSymbol: symbol,
+      nativeTokenAddress: address,
+      nativeTokenDecimals: decimals,
+    } = this.$store.state.currentRound
+    return { symbol, address, decimals }
+  }
+
+  get blockExplorerUrl(): string {
+    return `${this.chain.explorer}address/${this.nativeToken.address}`
+  }
+}
 </script>
+
+<style scoped lang="scss">
+@import '../styles/vars';
+@import '../styles/theme';
+
+button {
+  margin: 2rem 0;
+
+  @media (max-width: $breakpoint-s) {
+    width: 100%;
+  }
+}
+</style>
