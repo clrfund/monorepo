@@ -70,6 +70,19 @@
             />
           </balance-item>
         </div>
+        <div class="warning" v-if="needsFunds">
+          You need L2 funds!
+
+          <p v-if="!!singleTokenNeeded">
+            ⚠️ You need both some ETH for gas, and {{ nativeTokenSymbol }} to
+            contribute
+          </p>
+          <p @click="$emit('close')">
+            <links to="/about/layer-2"
+              >Get help bridging {{ singleTokenNeeded }} to Layer 2</links
+            >
+          </p>
+        </div>
       </div>
       <div class="projects-section">
         <h2>Projects</h2>
@@ -120,6 +133,7 @@ import IconStatus from '@/components/IconStatus.vue'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Loader from '@/components/Loader.vue'
+import Links from '@/components/Links.vue'
 
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
@@ -129,7 +143,14 @@ import { CHAIN_INFO, ChainInfo } from '@/plugins/Web3/constants/chains'
 import { isSameAddress } from '@/utils/accounts'
 
 @Component({
-  components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton, Loader },
+  components: {
+    BalanceItem,
+    BrightIdWidget,
+    IconStatus,
+    CopyButton,
+    Loader,
+    Links,
+  },
 })
 export default class NavBar extends Vue {
   @Prop() balance!: string
@@ -163,6 +184,24 @@ export default class NavBar extends Vue {
   get displayAddress(): string | null {
     if (!this.currentUser) return null
     return this.currentUser.ensName ?? this.currentUser.walletAddress
+  }
+
+  get needsFunds(): boolean {
+    return parseFloat(this.balance) === 0 || parseFloat(this.etherBalance) === 0
+  }
+
+  get nativeTokenSymbol(): string {
+    const { nativeTokenSymbol } = this.$store.state.currentRound
+    return nativeTokenSymbol
+  }
+
+  get singleTokenNeeded(): string {
+    const tokenNeeded = parseFloat(this.balance) === 0
+    const etherNeeded = parseFloat(this.etherBalance) === 0
+    if (tokenNeeded === etherNeeded) return ''
+    // Only return string if either ETH or ERC-20 is zero balance, not both
+    if (tokenNeeded) return this.nativeTokenSymbol
+    return 'ETH'
   }
 
   async disconnect(): Promise<void> {
@@ -367,6 +406,18 @@ p.no-margin {
         }
       }
     }
+  }
+}
+
+.warning {
+  border: 1px solid $warning-color;
+  background: $bg-primary-color;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin: 1rem 1rem 0;
+  color: $warning-color;
+  @media (max-width: $breakpoint-s) {
+    margin: 1rem 0 0;
   }
 }
 </style>
