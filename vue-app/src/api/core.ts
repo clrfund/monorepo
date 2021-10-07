@@ -10,8 +10,7 @@ export const provider = new ethers.providers.StaticJsonRpcProvider(
   process.env.VUE_APP_ETHEREUM_API_URL
 )
 export const blockExplorer =
-  process.env.VUE_APP_BLOCK_EXPLORER ||
-  CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+  CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)].explorer
 export const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
 export const gunPeers: string[] = process.env.VUE_APP_GUN_PEERS
   ? process.env.VUE_APP_GUN_PEERS.split(',')
