@@ -11,12 +11,12 @@
           >Ethereum Layer 2 rollups</links
         >
         to help save you time and money when contributing to your favorite
-        projects. You'll need a wallet with funds on {{ chainLabel }} to
+        projects. You'll need a wallet with funds on {{ chain.label }} to
         interact with this application.
       </b>
     </p>
     <button
-      v-if="chainLabel.includes('Arbitrum')"
+      v-if="chain.label.includes('Arbitrum')"
       class="btn-secondary"
       @click="scrollToId('arbitrum-bridge')"
     >
@@ -66,31 +66,31 @@
     </p>
     <!-- If chain is Arbitrum, display bridge information: -->
     <div
-      v-if="chainLabel.includes('Arbitrum')"
+      v-if="chain.label.includes('Arbitrum')"
       class="chain-details"
       id="arbitrum-bridge"
     >
       <div class="divider" />
-      <h2>{{ chainLabel }}</h2>
+      <h2>{{ chain.label }}</h2>
       <p>
         There are many variations on the layer 2 rollup approach. This current
-        clr.fund round uses {{ chainLabel }}, an "optimistic"-style rollup.
+        clr.fund round uses {{ chain.label }}, an "optimistic"-style rollup.
         <links to="https://developer.offchainlabs.com/docs/rollup_basics"
-          >Learn more in the {{ chainLabel }} docs</links
+          >Learn more in the {{ chain.label }} docs</links
         >.
       </p>
 
       <h2>What you'll need</h2>
       <ul>
-        <li>A wallet that supports {{ chainLabel }}</li>
-        <li>Funds on {{ chainLabel }}</li>
+        <li>A wallet that supports {{ chain.label }}</li>
+        <li>Funds on {{ chain.label }}</li>
       </ul>
-      <h3>How to find wallet that supports {{ chainLabel }}</h3>
+      <h3>How to find wallet that supports {{ chain.label }}</h3>
       <p>TODO</p>
-      <h3>💰 How to get funds on {{ chainLabel }}</h3>
+      <h3>💰 How to get funds on {{ chain.label }}</h3>
       <p>
         <links :to="chainBridge" :hideArrow="true">
-          <button class="btn-action">Official {{ chainLabel }} Bridge</button>
+          <button class="btn-action">Official {{ chain.label }} Bridge</button>
         </links>
       </p>
       <p>
@@ -101,9 +101,9 @@
         as a guide at any time.
       </p>
       <ol>
-        <li>Click above to go to the official {{ chainLabel }} bridge</li>
+        <li>Click above to go to the official {{ chain.label }} bridge</li>
         <li>
-          Connect your {{ chainLabel }} supporting wallet using
+          Connect your {{ chain.label }} supporting wallet using
           <strong>Mainnet</strong>
         </li>
         <li>
@@ -119,16 +119,17 @@
         <li>Confirm on your wallet</li>
       </ol>
       <p>
-        Once you have bridged your {{ nativeToken.symbol }} to {{ chainLabel }},
-        you may want to add the <links :to="blockExplorerUrl">token</links> to
-        your wallet e.g. in MetaMask.
+        Once you have bridged your {{ nativeToken.symbol }} to
+        {{ chain.label }}, you may want to add the
+        <links :to="blockExplorerUrl">token</links> to your wallet e.g. in
+        MetaMask.
       </p>
       <button
         v-if="currentUser"
         class="btn-secondary"
         @click="addTokenToWallet"
       >
-        Add {{ chainLabel }} {{ nativeToken.symbol }} to wallet
+        Add {{ chain.label }} {{ nativeToken.symbol }} to wallet
       </button>
     </div>
   </div>
@@ -186,13 +187,9 @@ export default class AboutLayer2 extends Vue {
     return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
   }
 
-  get chainLabel(): string {
-    return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)].label
-  }
-
   get chainBridge(): string | null {
-    const { bridge } =
-      CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+    if (!this.chain) return ''
+    const { bridge } = this.chain
     return bridge || null
   }
 
