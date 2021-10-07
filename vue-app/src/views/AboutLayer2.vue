@@ -173,6 +173,7 @@ export default class AboutLayer2 extends Vue {
         })
       }
     } catch (error) {
+      /* eslint-disable-next-line no-console */
       console.log(error)
     }
   }
