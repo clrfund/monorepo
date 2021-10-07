@@ -18,31 +18,31 @@ export interface ChainInfo {
 
 export const CHAIN_INFO: ChainInfo = {
   [ChainId.MAINNET]: {
-    explorer: 'https://etherscan.io/',
+    explorer: 'https://etherscan.io',
     label: 'Mainnet',
     logo: 'eth.svg',
   },
   [ChainId.RINKEBY]: {
-    explorer: 'https://rinkeby.etherscan.io/',
+    explorer: 'https://rinkeby.etherscan.io',
     label: 'Rinkeby',
     logo: 'eth.svg',
   },
   [ChainId.HARDHAT]: {
-    explorer: 'https://rinkeby.etherscan.io/',
+    explorer: 'https://rinkeby.etherscan.io',
     label: 'Hardhat',
     logo: 'eth.svg',
   },
   [ChainId.ARBITRUM_ONE]: {
-    explorer: 'https://explorer.arbitrum.io/',
+    explorer: 'https://explorer.arbitrum.io',
     label: 'Arbitrum',
     logo: 'arbitrum.png',
-    bridge: 'https://bridge.arbitrum.io/',
+    bridge: 'https://bridge.arbitrum.io',
   },
   [ChainId.ARBITRUM_RINKEBY]: {
-    explorer: 'https://rinkeby-explorer.arbitrum.io/',
+    explorer: 'https://rinkeby-explorer.arbitrum.io',
     rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     label: 'Arbitrum Rinkeby',
     logo: 'arbitrum.png',
-    bridge: 'https://bridge.arbitrum.io/',
+    bridge: 'https://bridge.arbitrum.io',
   },
 }
