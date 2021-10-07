@@ -12,6 +12,7 @@ export interface ChainInfo {
     label: string
     rpcUrl?: string
     logo?: string
+    bridge?: string
   }
 }
 
@@ -35,11 +36,13 @@ export const CHAIN_INFO: ChainInfo = {
     explorer: 'https://explorer.arbitrum.io/',
     label: 'Arbitrum',
     logo: 'arbitrum.png',
+    bridge: 'https://bridge.arbitrum.io/',
   },
   [ChainId.ARBITRUM_RINKEBY]: {
-    explorer: 'https://rinkeby-explorer.arbitrum.io/#/',
+    explorer: 'https://rinkeby-explorer.arbitrum.io/',
     rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     label: 'Arbitrum Rinkeby',
     logo: 'arbitrum.png',
+    bridge: 'https://bridge.arbitrum.io/',
   },
 }
