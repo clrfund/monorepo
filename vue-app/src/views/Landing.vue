@@ -88,14 +88,19 @@
         <h2>What you'll need</h2>
       </div>
       <div id="what-you-will-need">
-        <div class="pre-req" id="arbitrum">
+        <div class="pre-req">
           <div class="icon-row">
-            <img src="@/assets/arbitrum.png" id="arbitrum-icon" />
-            <p><b>Arbitrum for fast and cheap transaction fees</b></p>
+            <img :src="require(`@/assets/${chain.logo}`)" id="chain-icon" />
+            <p>
+              <b>{{ chain.label }} for fast and cheap transaction fees</b>
+            </p>
           </div>
-          <links to="https://bridge.arbitrum.io/" class="btn-action"
-            >Get Arbitrum funds</links
+          <links
+            :to="chain.isLayer2 ? '/about/layer-2' : chain.bridge"
+            class="btn-action"
           >
+            Get {{ chain.label }} funds
+          </links>
         </div>
         <div class="pre-req" id="bright-id">
           <div class="icon-row">
@@ -161,7 +166,7 @@
           <links to="/about/how-it-works">How the round works</links>
         </div>
         <div class="link-li">
-          <links to="/about/layer-2">Learn about Arbitrum</links>
+          <links to="/about/layer-2">Learn about {{ chain.label }}</links>
         </div>
         <div class="link-li">
           <links to="/about/maci">Learn about MACI</links>
@@ -181,6 +186,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 
+import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
@@ -203,6 +209,16 @@ export default class Landing extends Vue {
     document
       .getElementById('section-how-it-works')
       ?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  get chain(): any {
+    return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+  }
+
+  get chainBridge(): string | null {
+    if (!this.chain) return ''
+    const { bridge } = this.chain
+    return bridge || null
   }
 }
 </script>
@@ -309,15 +325,11 @@ ol li::before {
   font-size: 16px;
 }
 
-#arbitrum {
-  background: $clr-pink-dark-gradient-bg;
-}
-
 #bright-id {
   background: $clr-blue-gradient-bg;
 }
 
-#arbitrum-icon,
+#chain-icon,
 #bright-id-icon {
   box-sizing: border-box;
   height: 4rem;
@@ -444,7 +456,7 @@ ol li::before {
   justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
-
+  background: $clr-pink-dark-gradient-bg;
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }
