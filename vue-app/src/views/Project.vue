@@ -16,15 +16,15 @@
           :project="project"
         />
         <claim-button :project="project" />
-        <button
-          class="donate-btn-full"
+        <div
+          class="contributed-text"
           v-if="
             $store.getters.hasUserContributed &&
             !$store.getters.canUserReallocate
           "
         >
-          <span>Contributed!</span>
-        </button>
+          <span>✔️ You have contributed to this project!</span>
+        </div>
       </div>
       <link-box :project="project" />
     </div>
@@ -184,6 +184,10 @@ export default class ProjectView extends Vue {
   @media (max-width: $breakpoint-l) {
     margin-bottom: 3rem;
   }
+}
+
+.contributed-text {
+  margin-top: 1rem;
 }
 
 .back-button {

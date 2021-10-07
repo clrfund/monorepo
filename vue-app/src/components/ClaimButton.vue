@@ -1,7 +1,7 @@
 <template>
   <button
     v-if="hasClaimBtn()"
-    class="btn-primary"
+    class="btn-action"
     :disabled="!canClaim()"
     @click="claim()"
   >

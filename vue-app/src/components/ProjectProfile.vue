@@ -30,30 +30,20 @@
         </div>
       </div>
       <div class="mobile mb2">
-        <div class="input-button" v-if="hasContributeBtn() && !inCart">
-          <img class="token-icon" height="24px" src="@/assets/dai.svg" />
-          <input
-            v-model="contributionAmount"
-            class="input"
-            name="contributionAmount"
-            placeholder="5"
-            autocomplete="on"
-            onfocus="this.value=''"
-          />
-          <input
-            type="submit"
-            class="donate-btn"
-            :disabled="!canContribute()"
-            @click="contribute()"
-            value="Add to cart"
-          />
-        </div>
-        <div class="input-button" v-if="hasContributeBtn() && inCart">
-          <button class="donate-btn-full">
-            <span>In cart 🎉</span>
-          </button>
-        </div>
+        <add-to-cart-button
+          v-if="shouldShowCartInput && hasContributeBtn()"
+          :project="project"
+        />
         <claim-button :project="project" />
+        <div
+          class="contributed-text"
+          v-if="
+            $store.getters.hasUserContributed &&
+            !$store.getters.canUserReallocate
+          "
+        >
+          <span>✔️ You have contributed to this project!</span>
+        </div>
       </div>
       <div class="project-section">
         <h2>About the project</h2>
@@ -125,10 +115,19 @@ import Markdown from '@/components/Markdown.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import Links from '@/components/Links.vue'
+import AddToCartButton from '@/components/AddToCartButton.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
 
 @Component({
-  components: { Markdown, Info, LinkBox, CopyButton, Links, ClaimButton },
+  components: {
+    Markdown,
+    Info,
+    LinkBox,
+    CopyButton,
+    Links,
+    AddToCartButton,
+    ClaimButton,
+  },
 })
 export default class ProjectProfile extends Vue {
   @Prop() project!: Project
@@ -193,6 +192,11 @@ export default class ProjectProfile extends Vue {
 
   get addressName(): string {
     return this.ens || this.project.address
+  }
+
+  get shouldShowCartInput(): boolean {
+    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
+    return isRoundContributionPhase || canUserReallocate
   }
 }
 </script>
@@ -359,6 +363,10 @@ export default class ProjectProfile extends Vue {
       width: 100%;
       justify-content: center;
     }
+  }
+
+  .contributed-text {
+    margin-top: 1rem;
   }
 
   .copy-div {
