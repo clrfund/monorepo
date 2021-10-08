@@ -115,7 +115,7 @@
             and select token.
           </p>
         </li>
-        <li>Enter amount & click "Deposit"</li>
+        <li>Enter amount and click "Deposit"</li>
         <li>Confirm on your wallet</li>
       </ol>
       <p>

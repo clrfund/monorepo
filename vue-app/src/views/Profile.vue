@@ -152,7 +152,7 @@ import { isSameAddress } from '@/utils/accounts'
     Links,
   },
 })
-export default class NavBar extends Vue {
+export default class Profile extends Vue {
   @Prop() balance!: string
   @Prop() etherBalance!: string
   projects: Project[] = []
