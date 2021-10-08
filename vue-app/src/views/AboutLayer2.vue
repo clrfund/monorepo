@@ -164,6 +164,13 @@ export default class AboutLayer2 extends Vue {
     window.scrollTo({ top, behavior: 'smooth' })
   }
 
+  mounted() {
+    const { section: id } = this.$route.params
+    if (id) {
+      this.scrollToId(id)
+    }
+  }
+
   get windowEthereum(): any {
     return (window as any).ethereum
   }
