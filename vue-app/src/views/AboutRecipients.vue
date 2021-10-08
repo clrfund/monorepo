@@ -1,19 +1,36 @@
 <template>
   <div class="about">
     <h1 class="content-heading">Recipient guide</h1>
-    <h2>Get funds on Arbitrum</h2>
-    <p>
-      You'll need some ETH on Arbitrum in order to submit transactions to the
-      clr.fund smart contracts. Follow
-      <links to="https://arbitrum.io/bridge-tutorial/">this tutorial</links> to
-      bridge your funds to Arbitrum
-    </p>
-    <p>
-      Confused on what Arbitrum is?
-      <links to="/about/layer-2"
-        >Read our explanation on how clr.fund uses layer 2 on Ethereum.</links
-      >
-    </p>
+    <div v-if="chain.bridge">
+      <h2>Get funds on {{ chain.label }}</h2>
+      <p>
+        You'll need some {{ chain.currency }} on {{ chain.label }} in order to
+        submit transactions to the clr.fund smart contracts.
+        <span v-if="chain.isLayer2">
+          Follow
+          <links
+            :to="{
+              name: 'about-layer-2',
+              params: {
+                section: 'bridge',
+              },
+            }"
+          >
+            these steps
+          </links>
+          to bridge your funds to {{ chain.label }}
+        </span>
+        <span v-else>
+          <links :to="chain.bridge">Bridge your funds here</links>
+        </span>
+      </p>
+      <p v-if="chain.isLayer2">
+        Confused on what {{ chain.label }} is?
+        <links to="about/layer-2">
+          Read our explanation on how clr.fund uses layer 2 on Ethereum.
+        </links>
+      </p>
+    </div>
     <h2>Register your project</h2>
     <ol>
       <li>Head over to the <links to="/join">Join page</links>.</li>
@@ -58,7 +75,12 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
+import { chain } from '@/api/core'
 
 @Component({ components: { Links } })
-export default class AboutRecipients extends Vue {}
+export default class AboutRecipients extends Vue {
+  get chain() {
+    return chain
+  }
+}
 </script>
