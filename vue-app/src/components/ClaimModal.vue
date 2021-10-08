@@ -14,7 +14,7 @@
         {{ formatAmount(amount) }} {{ currentRound.nativeTokenSymbol }} has been
         sent to <code>{{ recipientAddress }}</code>
       </div>
-      <button class="btn close-btn" @click="$emit('close')">OK</button>
+      <button class="btn-secondary" @click="$emit('close')">OK</button>
     </div>
   </div>
 </template>
@@ -96,7 +96,11 @@ export default class ClaimModal extends Vue {
 <style scoped lang="scss">
 @import '../styles/vars';
 
-.close-btn {
-  margin-top: $modal-space;
+.modal-body {
+  text-align: left;
+  background: $bg-secondary-color;
+  border-radius: 1rem;
+  box-shadow: $box-shadow;
+  padding: 1.5rem;
 }
 </style>
