@@ -1,7 +1,7 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h3>Claim funds</h3>
+      <h2>Claim funds</h2>
       <transaction
         :hash="claimTxHash"
         :error="claimTxError"
@@ -9,12 +9,23 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <h3>Success!</h3>
-      <div>
-        {{ formatAmount(amount) }} {{ currentRound.nativeTokenSymbol }} has been
-        sent to <code>{{ recipientAddress }}</code>
+      <h2>Funds were claimed!</h2>
+      <p>
+        <strong
+          >{{ formatAmount(amount) }}
+          {{ currentRound.nativeTokenSymbol }}</strong
+        >
+        has been sent to
+      </p>
+      <div class="address-box">
+        <div>
+          <div class="address-label">Recipient address</div>
+          <div class="address">
+            {{ recipientAddress }}
+          </div>
+        </div>
       </div>
-      <button class="btn-secondary" @click="$emit('close')">OK</button>
+      <button class="btn-primary" @click="$emit('close')">Done</button>
     </div>
   </div>
 </template>
@@ -102,5 +113,40 @@ export default class ClaimModal extends Vue {
   border-radius: 1rem;
   box-shadow: $box-shadow;
   padding: 1.5rem;
+}
+
+.address-box {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: $box-shadow;
+  background: $clr-blue-gradient;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .address-label {
+    font-size: 14px;
+    margin: 0;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  .address {
+    display: flex;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-weight: 600;
+    border-radius: 8px;
+    align-items: center;
+    gap: 0.5rem;
+    word-break: break-all;
+  }
 }
 </style>
