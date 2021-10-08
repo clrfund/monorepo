@@ -16,9 +16,9 @@
       </b>
     </p>
     <button
-      v-if="chain.label.includes('Arbitrum')"
+      v-if="chain.bridge"
       class="btn-secondary"
-      @click="scrollToId('arbitrum-bridge')"
+      @click="scrollToId('bridge')"
     >
       Bridge Funds
     </button>
@@ -64,13 +64,9 @@
         >Ethereum Layer 2 technologies</links
       >.
     </p>
+    <div v-if="chain.bridge" class="divider" id="bridge" />
     <!-- If chain is Arbitrum, display bridge information: -->
-    <div
-      v-if="chain.label.includes('Arbitrum')"
-      class="chain-details"
-      id="arbitrum-bridge"
-    >
-      <div class="divider" />
+    <div v-if="chain.label.includes('Arbitrum')" class="chain-details">
       <h2>{{ chain.label }}</h2>
       <p>
         There are many variations on the layer 2 rollup approach. This current
@@ -131,6 +127,20 @@
       >
         Add {{ chain.label }} {{ nativeToken.symbol }} to wallet
       </button>
+    </div>
+    <div v-else-if="chain.bridge">
+      <h2>{{ chain.label }}</h2>
+      <h2>What you'll need</h2>
+      <ul>
+        <li>A wallet that supports {{ chain.label }}</li>
+        <li>Funds on {{ chain.label }}</li>
+      </ul>
+      <h2>💰 Bridge your funds to {{ chain.label }}</h2>
+      <p>
+        <links :to="chain.bridge" :hideArrow="true">
+          <button class="btn-action">{{ chain.label }} Bridge</button>
+        </links>
+      </p>
     </div>
   </div>
 </template>
