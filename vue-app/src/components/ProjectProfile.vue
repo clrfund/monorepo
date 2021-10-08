@@ -118,7 +118,7 @@ import { DateTime } from 'luxon'
 import { Project } from '@/api/projects'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
-import { blockExplorer } from '@/api/core'
+import { chain } from '@/api/core'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 import { ensLookup } from '@/utils/accounts'
@@ -186,7 +186,7 @@ export default class ProjectProfile extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/address/${this.project.address}`
+    return `${chain.explorer}/address/${this.project.address}`
   }
 
   get addressName(): string {

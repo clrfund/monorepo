@@ -284,7 +284,7 @@ import {
   getRecipientRegistryAddress,
   getProjects,
 } from '@/api/projects'
-import { blockExplorer } from '@/api/core'
+import { chain } from '@/api/core'
 
 import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
@@ -455,7 +455,7 @@ export default class RoundInformation extends Vue {
     if (!this.currentRound) {
       return ''
     }
-    return `${blockExplorer}/address/${this.currentRound.fundingRoundAddress}`
+    return `${chain.explorer}/address/${this.currentRound.fundingRoundAddress}`
   }
 }
 </script>

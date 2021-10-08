@@ -9,8 +9,9 @@ export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(
 export const provider = new ethers.providers.StaticJsonRpcProvider(
   process.env.VUE_APP_ETHEREUM_API_URL
 )
-export const blockExplorer =
-  CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)].explorer
+export const chain =
+  CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+if (!chain) throw new Error('invalid chain id')
 export const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
 export const gunPeers: string[] = process.env.VUE_APP_GUN_PEERS
   ? process.env.VUE_APP_GUN_PEERS.split(',')

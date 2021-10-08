@@ -755,7 +755,7 @@ import {
   formToProjectInterface,
 } from '@/api/recipient-registry-optimistic'
 import { Project } from '@/api/projects'
-import { blockExplorer } from '@/api/core'
+import { chain } from '@/api/core'
 
 @Component({
   components: {
@@ -1019,7 +1019,7 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/address/${this.form.fund.resolvedAddress}`
+    return `${chain.explorer}/address/${this.form.fund.resolvedAddress}`
   }
 
   async checkEns(): Promise<void> {

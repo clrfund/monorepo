@@ -89,7 +89,7 @@
       <p>TODO</p>
       <h3>💰 How to get funds on {{ chain.label }}</h3>
       <p>
-        <links :to="chainBridge" :hideArrow="true">
+        <links :to="chain.bridge" :hideArrow="true">
           <button class="btn-action">Official {{ chain.label }} Bridge</button>
         </links>
       </p>
@@ -138,8 +138,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 import { User } from '@/api/user'
+import { chain } from '@/api/core'
 import Links from '@/components/Links.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 
@@ -183,14 +183,8 @@ export default class AboutLayer2 extends Vue {
     return this.$store.state.currentUser
   }
 
-  get chain(): any {
-    return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
-  }
-
-  get chainBridge(): string | null {
-    if (!this.chain) return ''
-    const { bridge } = this.chain
-    return bridge || null
+  get chain() {
+    return chain
   }
 
   get nativeToken(): { [key: string]: any } {
@@ -203,7 +197,7 @@ export default class AboutLayer2 extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${this.chain.explorer}address/${this.nativeToken.address}`
+    return `${chain.explorer}address/${this.nativeToken.address}`
   }
 }
 </script>
