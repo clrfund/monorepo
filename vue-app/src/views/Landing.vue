@@ -186,7 +186,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
+import { chain } from '@/api/core'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
@@ -212,7 +212,7 @@ export default class Landing extends Vue {
   }
 
   get chain(): any {
-    return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+    return chain
   }
 
   get chainBridge(): string | null {

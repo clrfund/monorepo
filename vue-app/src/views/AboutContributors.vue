@@ -24,7 +24,7 @@
       </li>
       <li>
         Make sure you have {{ nativeTokenSymbol }} in your BrightID-verified
-        wallet on the {{ chainLabel }} network
+        wallet on the {{ chain.label }} network
       </li>
       <li>
         <links to="/projects">Browse projects</links> and add some to your cart,
@@ -60,8 +60,9 @@
     <ol>
       <li>
         First make sure the wallet you are using holds
-        {{ nativeTokenSymbol }} on {{ chainLabel }}. {{ nativeTokenSymbol }} can
-        be easily purchased on any major Ethereum-focused exchange.
+        {{ nativeTokenSymbol }} on {{ chain.label }}.
+        {{ nativeTokenSymbol }} can be easily purchased on any major
+        Ethereum-focused exchange.
       </li>
       <li>
         Once you have the desired amount of {{ nativeTokenSymbol }} in your
@@ -83,8 +84,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
-
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
+import { chain } from '@/api/core'
 
 @Component({ components: { Links } })
 export default class AboutContributors extends Vue {
@@ -93,9 +93,8 @@ export default class AboutContributors extends Vue {
     return nativeTokenSymbol || 'DAI'
   }
 
-  get chainLabel(): string {
-    const chain = CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
-    return chain.label
+  get chain() {
+    return chain
   }
 }
 </script>

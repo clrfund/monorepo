@@ -42,10 +42,10 @@
       />
       <div class="balances-section">
         <div class="flex-row">
-          <h2>{{ chainInfo.label }} balances</h2>
+          <h2>{{ chain.label }} balances</h2>
           <div
             v-tooltip="{
-              content: `Balance of wallet on ${chainInfo.label} chain`,
+              content: `Balance of wallet on ${chain.label} chain`,
               trigger: 'hover click',
             }"
           >
@@ -57,7 +57,7 @@
             <icon-status
               v-bind:custom="true"
               logo="dai.svg"
-              :secondaryLogo="chainInfo.logo"
+              :secondaryLogo="chain.logo"
               :bg="balanceBackgroundColor"
             />
           </balance-item>
@@ -65,7 +65,7 @@
             <icon-status
               v-bind:custom="true"
               logo="eth.svg"
-              :secondaryLogo="chainInfo.logo"
+              :secondaryLogo="chain.logo"
               :bg="balanceBackgroundColor"
             />
           </balance-item>
@@ -137,9 +137,8 @@ import Links from '@/components/Links.vue'
 
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
-import { userRegistryType, UserRegistryType } from '@/api/core'
+import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { Project, getProjects } from '@/api/projects'
-import { CHAIN_INFO, ChainInfo } from '@/plugins/Web3/constants/chains'
 import { isSameAddress } from '@/utils/accounts'
 
 @Component({
@@ -177,8 +176,8 @@ export default class Profile extends Vue {
     return userRegistryType === UserRegistryType.BRIGHT_ID
   }
 
-  get chainInfo(): ChainInfo {
-    return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+  get chain() {
+    return chain
   }
 
   get displayAddress(): string | null {

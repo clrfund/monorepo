@@ -314,7 +314,7 @@ import {
   MAX_CART_SIZE,
   CartItem,
 } from '@/api/contributions'
-import { userRegistryType, UserRegistryType } from '@/api/core'
+import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { LOGOUT_USER, SAVE_CART } from '@/store/action-types'
 import { User } from '@/api/user'
@@ -324,7 +324,6 @@ import {
   TOGGLE_SHOW_CART_PANEL,
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
 @Component({
   components: {
@@ -424,10 +423,6 @@ export default class Cart extends Vue {
 
   get supportedChainId(): number {
     return Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
-  }
-
-  get networkName(): string {
-    return CHAIN_INFO[this.supportedChainId].label
   }
 
   isCorrectNetwork(): boolean {
@@ -571,7 +566,7 @@ export default class Cart extends Vue {
       return 'The limit on the number of votes has been reached'
     if (!currentUser) return 'Please connect your wallet'
     if (!this.isCorrectNetwork())
-      return `Please change network to ${this.networkName} network.`
+      return `Please change network to ${chain.label} network.`
     if (this.isBrightIdRequired)
       return 'To contribute, you need to set up BrightID.'
     if (!this.isFormValid()) return 'Include valid contribution amount.'
