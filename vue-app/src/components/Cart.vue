@@ -237,7 +237,7 @@
           </template>
           <template v-else> Reallocate contribution </template>
         </button>
-        <funds-needed-warning :onNavigate="toggleCart" />
+        <funds-needed-warning :onNavigate="toggleCart" :isCompact="true" />
         <div
           class="time-left"
           v-if="$store.getters.canUserReallocate && isEditMode"

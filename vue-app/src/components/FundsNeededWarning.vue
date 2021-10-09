@@ -1,6 +1,6 @@
 <template>
-  <div class="warning" v-if="needsFunds">
-    You need L2 funds!
+  <div :class="!isCompact && 'warning'" v-if="needsFunds">
+    <span v-if="!isCompact">You need L2 funds!</span>
     <p v-if="!!singleTokenNeeded">
       ⚠️ You need both some ETH for gas, and {{ nativeTokenSymbol }} to
       contribute
@@ -38,6 +38,7 @@ import Links from '@/components/Links.vue'
 @Component({ components: { Links } })
 export default class FundsNeededWarning extends Vue {
   @Prop() onNavigate!: () => void
+  @Prop() isCompact!: boolean
 
   get currentUser(): User | null {
     return this.$store.state.currentUser
