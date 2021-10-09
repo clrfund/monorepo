@@ -47,6 +47,7 @@ import { getRecipientClaimData } from '@/utils/maci'
 @Component({ components: { Transaction } })
 export default class ClaimModal extends Vue {
   @Prop() project!: Project
+  @Prop() claimed!: Function
 
   step = 1
   claimTxHash = ''
@@ -99,6 +100,8 @@ export default class ClaimModal extends Vue {
       'FundsClaimed',
       '_recipient'
     )
+
+    this.claimed()
     this.step += 1
   }
 }

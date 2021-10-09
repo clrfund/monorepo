@@ -94,14 +94,14 @@ export default class ClaimButton extends Vue {
   claim() {
     this.$modal.show(
       ClaimModal,
-      { project: this.project },
-      {},
       {
-        closed: () => {
+        project: this.project,
+        claimed: () => {
           // Optimistically update the claimed state
           this.claimed = true
         },
-      }
+      },
+      {}
     )
   }
 
