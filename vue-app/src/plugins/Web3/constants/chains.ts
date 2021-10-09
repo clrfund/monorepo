@@ -11,81 +11,83 @@ export enum ChainId {
 
 export interface ChainInfo {
   [chainId: number]: {
-    explorer: string
     label: string
     currency: string
+    logo: string
     isLayer2: boolean
+    explorer: string
     rpcUrl?: string
-    logo?: string
     bridge?: string
   }
 }
 
 export const CHAIN_INFO: ChainInfo = {
   [ChainId.MAINNET]: {
-    explorer: 'https://etherscan.io',
     label: 'Mainnet',
     currency: 'ETH',
-    isLayer2: false,
     logo: 'eth.svg',
+    isLayer2: false,
+    explorer: 'https://etherscan.io',
   },
   [ChainId.RINKEBY]: {
-    explorer: 'https://rinkeby.etherscan.io',
     label: 'Rinkeby',
     currency: 'ETH',
-    isLayer2: false,
     logo: 'eth.svg',
+    isLayer2: false,
+    explorer: 'https://rinkeby.etherscan.io',
   },
   [ChainId.HARDHAT]: {
-    explorer: 'https://rinkeby.etherscan.io',
     label: 'Hardhat',
     currency: 'ETH',
-    isLayer2: false,
-    logo: 'eth.svg',
+    logo: 'arbitrum.svg',
+    isLayer2: true,
+    explorer: 'https://testnet.arbiscan.io/',
+    rpcUrl: 'http://localhost:18545',
+    bridge: 'https://bridge.arbitrum.io',
   },
   [ChainId.ARBITRUM_ONE]: {
-    explorer: 'https://arbiscan.io/',
     label: 'Arbitrum',
     currency: 'ETH',
-    isLayer2: true,
-    rpcUrl: 'https://arb1.arbitrum.io/rpc',
     logo: 'arbitrum.png',
+    isLayer2: true,
+    explorer: 'https://arbiscan.io/',
+    rpcUrl: 'https://arb1.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
   },
   [ChainId.ARBITRUM_RINKEBY]: {
-    explorer: 'https://testnet.arbiscan.io/',
     label: 'Arbitrum Rinkeby',
     currency: 'ETH',
-    isLayer2: true,
-    rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     logo: 'arbitrum.png',
+    isLayer2: true,
+    explorer: 'https://testnet.arbiscan.io/',
+    rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
   },
   [ChainId.OPTIMISM]: {
-    explorer: 'https://optimistic.etherscan.io',
     label: 'Optimism',
     currency: 'ETH',
-    isLayer2: true,
-    rpcUrl: 'https://mainnet.optimism.io',
     logo: 'optimism.png',
+    isLayer2: true,
+    explorer: 'https://optimistic.etherscan.io',
+    rpcUrl: 'https://mainnet.optimism.io',
     bridge: 'https://gateway.optimism.io/',
   },
   [ChainId.XDAI]: {
-    explorer: 'https://blockscout.com/poa/xdai/',
     label: 'xDai',
     currency: 'xDai',
-    isLayer2: false,
-    rpcUrl: 'https://rpc.xdaichain.com/',
     logo: 'xdai.svg',
+    isLayer2: false,
+    explorer: 'https://blockscout.com/poa/xdai/',
+    rpcUrl: 'https://rpc.xdaichain.com/',
     bridge: 'https://bridge.xdaichain.com/',
   },
   [ChainId.POLYGON]: {
-    explorer: 'https://polygonscan.com/',
     label: 'Polygon',
     currency: 'MATIC',
-    isLayer2: false,
-    rpcUrl: 'https://rpc-mainnet.matic.network',
     logo: 'polygon.svg',
+    isLayer2: false,
+    explorer: 'https://polygonscan.com/',
+    rpcUrl: 'https://rpc-mainnet.matic.network',
     bridge: 'https://wallet.polygon.technology/',
   },
 }

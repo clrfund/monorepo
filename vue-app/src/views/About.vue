@@ -126,10 +126,11 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
 import { chain } from '@/api/core'
+import { ChainInfo } from '@/plugins/Web3/constants/chains'
 
 @Component({ components: { Links } })
 export default class About extends Vue {
-  get chain() {
+  get chain(): ChainInfo {
     return chain
   }
 }

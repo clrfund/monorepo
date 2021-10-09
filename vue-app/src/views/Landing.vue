@@ -187,6 +187,7 @@ import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 
 import { chain } from '@/api/core'
+import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
@@ -211,14 +212,8 @@ export default class Landing extends Vue {
       ?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  get chain(): any {
+  get chain(): ChainInfo {
     return chain
-  }
-
-  get chainBridge(): string | null {
-    if (!this.chain) return ''
-    const { bridge } = this.chain
-    return bridge || null
   }
 }
 </script>

@@ -150,6 +150,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { User } from '@/api/user'
 import { chain } from '@/api/core'
+import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import Links from '@/components/Links.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 
@@ -200,7 +201,7 @@ export default class AboutLayer2 extends Vue {
     return this.$store.state.currentUser
   }
 
-  get chain() {
+  get chain(): ChainInfo {
     return chain
   }
 
