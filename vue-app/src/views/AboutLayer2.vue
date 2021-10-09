@@ -219,7 +219,7 @@ export default class AboutLayer2 extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${chain.explorer}address/${this.nativeToken.address}`
+    return `${chain.explorer}/address/${this.nativeToken.address}`
   }
 }
 </script>
