@@ -121,11 +121,11 @@
         MetaMask.
       </p>
       <button
-        v-if="currentUser"
+        v-if="currentUser && isMetaMask"
         class="btn-secondary"
         @click="addTokenToWallet"
       >
-        Add {{ chain.label }} {{ nativeToken.symbol }} to wallet
+        Add {{ chain.label }} {{ nativeToken.symbol }} to MetaMask
       </button>
     </div>
     <div v-else-if="chain.bridge">
@@ -176,9 +176,13 @@ export default class AboutLayer2 extends Vue {
     return (window as any).ethereum
   }
 
+  get isMetaMask(): boolean {
+    return this.windowEthereum.isMetaMask
+  }
+
   async addTokenToWallet() {
     try {
-      if (this.windowEthereum) {
+      if (this.windowEthereum && this.isMetaMask) {
         await this.windowEthereum.request({
           method: 'wallet_watchAsset',
           params: {
