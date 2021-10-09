@@ -16,15 +16,14 @@
           :project="project"
         />
         <claim-button :project="project" />
-        <div
-          class="contributed-text"
+        <p
           v-if="
             $store.getters.hasUserContributed &&
             !$store.getters.canUserReallocate
           "
         >
-          <span>✔️ You have contributed to this project!</span>
-        </div>
+          ✔️ You have contributed to this project!
+        </p>
       </div>
       <link-box :project="project" />
     </div>
@@ -184,10 +183,6 @@ export default class ProjectView extends Vue {
   @media (max-width: $breakpoint-l) {
     margin-bottom: 3rem;
   }
-}
-
-.contributed-text {
-  margin-top: 1rem;
 }
 
 .back-button {

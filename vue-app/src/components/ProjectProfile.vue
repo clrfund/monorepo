@@ -35,15 +35,14 @@
           :project="project"
         />
         <claim-button :project="project" />
-        <div
-          class="contributed-text"
+        <p
           v-if="
             $store.getters.hasUserContributed &&
             !$store.getters.canUserReallocate
           "
         >
-          <span>✔️ You have contributed to this project!</span>
-        </div>
+          ✔️ You have contributed to this project!
+        </p>
       </div>
       <div class="project-section">
         <h2>About the project</h2>
@@ -363,10 +362,6 @@ export default class ProjectProfile extends Vue {
       width: 100%;
       justify-content: center;
     }
-  }
-
-  .contributed-text {
-    margin-top: 1rem;
   }
 
   .copy-div {
