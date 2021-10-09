@@ -33,9 +33,14 @@ describe('Clr fund deployer', () => {
     // deploying the  singleton by passing  the values for the constructor
     factoryTemplate = await deployContract(deployer, 'ClrFund', [
       maciFactory.address,
+      deployer.address,
     ])
 
+    const templateOwner = await factoryTemplate.owner()
+    expect(templateOwner).to.equal(deployer.address)
+
     expect(factoryTemplate.address).to.properAddress
+
     expect(await getGasUsage(factoryTemplate.deployTransaction)).lessThan(
       5100000
     )
@@ -49,7 +54,10 @@ describe('Clr fund deployer', () => {
       5100000
     )
 
-    const newInstanceTx = await clrFundDeployer.deployFund(maciFactory.address)
+    const newInstanceTx = await clrFundDeployer.deployFund(
+      maciFactory.address,
+      deployer.address
+    )
     const instanceAddress = await getEventArg(
       newInstanceTx,
       clrFundDeployer,
@@ -90,9 +98,9 @@ describe('Clr fund deployer', () => {
   })
 
   it('can only be initialized once', async () => {
-    await expect(factory.init(maciFactory.address)).to.be.revertedWith(
-      'Initializable: contract is already initialized'
-    )
+    await expect(
+      factory.init(maciFactory.address, deployer.address)
+    ).to.be.revertedWith('Initializable: contract is already initialized')
   })
 
   it('can register with the subgraph', async () => {

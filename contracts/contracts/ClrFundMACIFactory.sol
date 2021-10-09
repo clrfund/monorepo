@@ -40,10 +40,9 @@ contract ClrFundMACIFactory is OwnableUpgradeable, MACIParameters, MACISharedObj
     SnarkVerifier _batchUstVerifier,
     SnarkVerifier _qvtVerifier,
     uint256 _signUpDuration,
-    uint256 _votingDuration
+    uint256 _votingDuration,
+    address _owner
    ) public {
-    require(address(_batchUstVerifier) != address(0), "ClrFundMACIFactory: invalid address");
-    require(address(_qvtVerifier) != address(0), "ClrFundMACIFactory: invalid address");
     init(
     _stateTreeDepth,
     _messageTreeDepth,
@@ -53,7 +52,8 @@ contract ClrFundMACIFactory is OwnableUpgradeable, MACIParameters, MACISharedObj
     _batchUstVerifier,
     _qvtVerifier,
     _signUpDuration,
-    _votingDuration
+    _votingDuration,
+    _owner
     );
   }
 
@@ -66,11 +66,14 @@ contract ClrFundMACIFactory is OwnableUpgradeable, MACIParameters, MACISharedObj
     SnarkVerifier _batchUstVerifier,
     SnarkVerifier _qvtVerifier,
     uint256 _signUpDuration,
-    uint256 _votingDuration
+    uint256 _votingDuration,
+    address _owner
   )
     public
   {
+    // initial ownership set is msg.sender so the ownership needs to be transferred in the init method
     __Ownable_init();
+    transferOwnership(_owner);
     _setMaciParameters(
       _stateTreeDepth,
       _messageTreeDepth,

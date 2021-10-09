@@ -47,7 +47,8 @@ contract ClrFundMACIFactoryDeployer is CloneFactory {
     SnarkVerifier _batchUstVerifier,
     SnarkVerifier _qvtVerifier,
     uint256 _signUpDuration,
-    uint256 _votingDuration
+    uint256 _votingDuration,
+    address _owner
     ) public returns (address) {
         ClrFundMACIFactory clrFundMACIFactoryInstance = ClrFundMACIFactory(createClone(template));
         
@@ -60,7 +61,8 @@ contract ClrFundMACIFactoryDeployer is CloneFactory {
             _batchUstVerifier,
             _qvtVerifier,
             _signUpDuration,
-            _votingDuration
+            _votingDuration,
+            _owner
         );
        
         emit NewInstance(address(clrFundMACIFactoryInstance));

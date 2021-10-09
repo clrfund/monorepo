@@ -40,12 +40,13 @@ contract ClrFundDeployer is CloneFactory {
     event Register(address indexed clrfund, string metadata);
      
     function deployFund(
-      MACIFactory _maciFactory
+      MACIFactory _maciFactory,
+      address _owner
     ) public returns (address) {
         ClrFund clrfundInstance = ClrFund(createClone(template));
         
         clrfundInstance.init(
-            _maciFactory
+            _maciFactory, _owner
         );
        
         emit NewInstance(address(clrfundInstance));

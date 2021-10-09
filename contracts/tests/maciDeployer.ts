@@ -20,6 +20,7 @@ describe('CLR Fund MACI Factory Deployer', () => {
 
   let factoryTemplate: Contract
   let factory: Contract
+  let params: any[]
   let clrFundMACIFactoryDeployer: Contract
   let poseidonT3: Contract
   let poseidonT6: Contract
@@ -45,14 +46,20 @@ describe('CLR Fund MACI Factory Deployer', () => {
     })
     maciParameters = await getMACIFcatoryDeploymentParams(deployer)
 
-    // deploying the  singleton by passing  the values for the constructor
-    factoryTemplate = await MACIFactory.deploy(...maciParameters.values())
+    // pushing a additional owner address to maci parameter array
+    params = maciParameters.values()
+    params.push(deployer.address)
 
+    // deploying the  singleton by passing  the values for the constructor
+    factoryTemplate = await MACIFactory.deploy(...params)
     expect(factoryTemplate.address).to.properAddress
 
-    // since the singleton deployment now has init() and there are 9 params called in the constructor so the gas cost has increased
+    const templateOwner = await factoryTemplate.owner()
+    expect(templateOwner).to.equal(deployer.address)
+
+    // since the singleton deployment now has init() and there are 10 params called in the constructor so the gas cost has increased
     expect(await getGasUsage(factoryTemplate.deployTransaction)).lessThan(
-      5327100
+      5376000
     )
 
     clrFundMACIFactoryDeployer = await deployContract(
@@ -67,7 +74,7 @@ describe('CLR Fund MACI Factory Deployer', () => {
     ).lessThan(5100000)
 
     const newInstanceTx = await clrFundMACIFactoryDeployer.deployMACIFactory(
-      ...maciParameters.values()
+      ...params
     )
     const instanceAddress = await getEventArg(
       newInstanceTx,
@@ -108,7 +115,7 @@ describe('CLR Fund MACI Factory Deployer', () => {
   })
 
   it('can only be initialized once', async () => {
-    await expect(factory.init(...maciParameters.values())).to.be.revertedWith(
+    await expect(factory.init(...params)).to.be.revertedWith(
       'Initializable: contract is already initialized'
     )
   })
