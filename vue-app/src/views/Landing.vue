@@ -86,7 +86,7 @@
             srcset="
               ../assets/wormhole/wormhole_w360.png   360w,
               ../assets/wormhole/wormhole_w720.png   720w,
-              ../assets/docking/docking_w1080.png   1080w,
+              ../assets/wormhole/wormhole_w1080.png 1080w,
               ../assets/wormhole/wormhole_w1440.png 1440w,
               ../assets/wormhole/wormhole_w2160.png 2160w,
               ../assets/wormhole/wormhole_w2880.png 2880w
