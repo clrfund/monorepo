@@ -1,17 +1,17 @@
 <template>
-  <button
-    v-if="hasClaimBtn()"
-    class="btn-action"
-    :disabled="!canClaim()"
-    @click="claim()"
-  >
-    <template v-if="claimed">
-      Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-    </template>
-    <template v-else>
+  <div>
+    <p v-if="claimed">
+      ✔️ {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }} claimed
+    </p>
+    <button
+      v-if="hasClaimBtn() && !claimed"
+      class="btn-action"
+      :disabled="!canClaim()"
+      @click="claim()"
+    >
       Claim {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-    </template>
-  </button>
+    </button>
+  </div>
 </template>
 
 <script lang="ts">
@@ -59,7 +59,7 @@ export default class ClaimButton extends Vue {
     )
     this.claimed = await isFundsClaimed(
       currentRound.fundingRoundAddress,
-      this.project.id
+      this.project.address
     )
   }
 
@@ -98,7 +98,8 @@ export default class ClaimButton extends Vue {
       {},
       {
         closed: () => {
-          this.checkAllocation(this.$store.state.tally)
+          // Optimistically update the claimed state
+          this.claimed = true
         },
       }
     )
