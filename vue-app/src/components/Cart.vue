@@ -237,6 +237,7 @@
           </template>
           <template v-else> Reallocate contribution </template>
         </button>
+        <funds-needed-warning :onNavigate="toggleCart" />
         <div
           class="time-left"
           v-if="$store.getters.canUserReallocate && isEditMode"
@@ -324,6 +325,7 @@ import {
   TOGGLE_SHOW_CART_PANEL,
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
+import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 
 @Component({
   components: {
@@ -331,6 +333,7 @@ import { formatAmount } from '@/utils/amounts'
     CartItems,
     Links,
     TimeLeft,
+    FundsNeededWarning,
   },
 })
 export default class Cart extends Vue {
@@ -604,6 +607,8 @@ export default class Cart extends Vue {
           return `Not enough funds. Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}.`
         } else if (this.isGreaterThanMax()) {
           return `Your contribution is too generous. The max contribution is ${MAX_CONTRIBUTION_AMOUNT} ${currentRound.nativeTokenSymbol}.`
+        } else if (parseInt(currentUser.etherBalance) === 0) {
+          return `You need some ETH to pay for gas`
         } else {
           return null
         }
@@ -639,14 +644,6 @@ export default class Cart extends Vue {
   }
   // TODO: Check that we are pre-reallocation phase
   // Double check logic with Contribute button
-
-  canBuyWxdai(): boolean {
-    return (
-      this.$store.state.currentRound?.nativeTokenSymbol === 'WXDAI' &&
-      this.errorMessage !== null &&
-      this.errorMessage.startsWith('Your balance is')
-    )
-  }
 
   submitCart(event) {
     event.preventDefault()
