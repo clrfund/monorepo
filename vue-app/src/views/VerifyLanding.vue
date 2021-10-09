@@ -7,18 +7,7 @@
       <div class="gradient">
         <img src="@/assets/moon.png" class="moon" />
         <div class="hero">
-          <img
-            src="@/assets/newrings/newrings_w1080.png"
-            sizes="(max-width: 1440px) 100vw, 1440px"
-            srcset="
-              ../assets/newrings/newrings_w360.png   360w,
-              ../assets/newrings/newrings_w720.png   720w,
-              ../assets/newrings/newrings_w1080.png 1080w,
-              ../assets/newrings/newrings_w1440.png 1440w,
-              ../assets/newrings/newrings_w2160.png 2160w,
-              ../assets/newrings/newrings_w2880.png 2880w
-            "
-          />
+          <image-responsive title="newrings" />
         </div>
       </div>
       <div class="content">
@@ -106,6 +95,7 @@ import Loader from '@/components/Loader.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
   components: {
@@ -114,6 +104,7 @@ import WalletWidget from '@/components/WalletWidget.vue'
     ProgressBar,
     RoundStatusBanner,
     WalletWidget,
+    ImageResponsive,
   },
 })
 export default class VerifyLanding extends Vue {

@@ -2,19 +2,7 @@
   <div class="projects">
     <div class="round-info">
       <div class="image-wrapper">
-        <img
-          src="../assets/docking/docking_w1080.png"
-          sizes="(max-width: 1440px) 100vw, 1440px"
-          srcset="
-            ../assets/docking/docking_w360.png   360w,
-            ../assets/docking/docking_w720.png   720w,
-            ../assets/docking/docking_w1080.png 1080w,
-            ../assets/docking/docking_w1440.png 1440w,
-            ../assets/docking/docking_w2160.png 2160w,
-            ../assets/docking/docking_w2880.png 2880w
-          "
-          height="100%"
-        />
+        <image-responsive title="docking" height="100%" />
       </div>
       <template v-if="currentRound">
         <div class="round">
@@ -305,6 +293,7 @@ import Loader from '@/components/Loader.vue'
 import WalletModal from '@/components/WalletModal.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -339,6 +328,7 @@ function shuffleArray(array: any[]) {
     WalletModal,
     TimeLeft,
     Links,
+    ImageResponsive,
   },
 })
 export default class RoundInformation extends Vue {

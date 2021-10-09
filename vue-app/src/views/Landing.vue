@@ -5,18 +5,7 @@
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
-          <img
-            src="@/assets/docking/docking_w1080.png"
-            sizes="(max-width: 1440px) 100vw, 1440px"
-            srcset="
-              ../assets/docking/docking_w360.png   360w,
-              ../assets/docking/docking_w720.png   720w,
-              ../assets/docking/docking_w1080.png 1080w,
-              ../assets/docking/docking_w1440.png 1440w,
-              ../assets/docking/docking_w2160.png 2160w,
-              ../assets/docking/docking_w2880.png 2880w
-            "
-          />
+          <image-responsive title="docking" />
         </div>
         <div>
           <div class="hero-content">
@@ -59,17 +48,8 @@
       </div>
       <div id="section-how-it-works">
         <div class="wormhole-wrapper desktop-l">
-          <img
-            src="@/assets/wormhole/wormhole_w1080.png"
-            sizes="(max-width: 1440px) 100vw, 1440px"
-            srcset="
-              ../assets/wormhole/wormhole_w360.png   360w,
-              ../assets/wormhole/wormhole_w720.png   720w,
-              ../assets/wormhole/wormhole_w1080.png 1080w,
-              ../assets/wormhole/wormhole_w1440.png 1440w,
-              ../assets/wormhole/wormhole_w2160.png 2160w,
-              ../assets/wormhole/wormhole_w2880.png 2880w
-            "
+          <image-responsive
+            title="wormhole"
             class="wormhole"
             alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
@@ -80,17 +60,8 @@
             This fundraiser rewards projects with the most unique demand, not
             just those with the wealthiest backers.
           </p>
-          <img
-            src="@/assets/wormhole/wormhole_w1080.png"
-            sizes="(max-width: 1440px) 100vw, 1440px"
-            srcset="
-              ../assets/wormhole/wormhole_w360.png   360w,
-              ../assets/wormhole/wormhole_w720.png   720w,
-              ../assets/wormhole/wormhole_w1080.png 1080w,
-              ../assets/wormhole/wormhole_w1440.png 1440w,
-              ../assets/wormhole/wormhole_w2160.png 2160w,
-              ../assets/wormhole/wormhole_w2880.png 2880w
-            "
+          <image-responsive
+            title="wormhole"
             alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
           <h2>How it works</h2>
@@ -213,9 +184,10 @@ import { DateTime } from 'luxon'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
-  components: { RoundStatusBanner, TimeLeft, Links },
+  components: { RoundStatusBanner, TimeLeft, Links, ImageResponsive },
 })
 export default class Landing extends Vue {
   get signUpDeadline(): DateTime {

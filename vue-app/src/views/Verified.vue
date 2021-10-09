@@ -6,18 +6,7 @@
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
-        <img
-          src="@/assets/newrings/newrings_w1080.png"
-          sizes="(max-width: 1440px) 100vw, 1440px"
-          srcset="
-            ../assets/newrings/newrings_w360.png   360w,
-            ../assets/newrings/newrings_w720.png   720w,
-            ../assets/newrings/newrings_w1080.png 1080w,
-            ../assets/newrings/newrings_w1440.png 1440w,
-            ../assets/newrings/newrings_w2160.png 2160w,
-            ../assets/newrings/newrings_w2880.png 2880w
-          "
-        />
+        <image-responsive title="newrings" />
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
@@ -46,9 +35,16 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import Links from '@/components/Links.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
-  components: { ProgressBar, RoundStatusBanner, Links, TransactionReceipt },
+  components: {
+    ProgressBar,
+    RoundStatusBanner,
+    Links,
+    TransactionReceipt,
+    ImageResponsive,
+  },
 })
 export default class Verified extends Vue {}
 </script>

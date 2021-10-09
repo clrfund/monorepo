@@ -1,18 +1,7 @@
 <template>
   <div class="container">
     <div class="image-wrapper">
-      <img
-        src="@/assets/docking/docking_w1080.png"
-        sizes="(max-width: 1440px) 100vw, 1440px"
-        srcset="
-          ../assets/docking/docking_w360.png   360w,
-          ../assets/docking/docking_w720.png   720w,
-          ../assets/docking/docking_w1080.png 1080w,
-          ../assets/docking/docking_w1440.png 1440w,
-          ../assets/docking/docking_w2160.png 2160w,
-          ../assets/docking/docking_w2880.png 2880w
-        "
-      />
+      <image-responsive title="docking" />
       <img class="money" src="@/assets/money.gif" />
       <img class="money" src="@/assets/confetti.gif" />
     </div>
@@ -84,12 +73,13 @@ import { RoundInfo } from '@/api/round'
 // Components
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
 
 @Component({
-  components: { TransactionReceipt, TimeLeft },
+  components: { TransactionReceipt, TimeLeft, ImageResponsive },
 })
 export default class TransactionSuccess extends Vue {
   get contribution(): BigNumber | null {

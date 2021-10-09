@@ -2,18 +2,7 @@
   <div>
     <div class="gradient">
       <div class="hero">
-        <img
-          src="@/assets/core/core_w1080.png"
-          sizes="(max-width: 1440px) 100vw, 1440px"
-          srcset="
-            ../assets/core/core_w360.png   360w,
-            ../assets/core/core_w720.png   720w,
-            ../assets/core/core_w1080.png 1080w,
-            ../assets/core/core_w1440.png 1440w,
-            ../assets/core/core_w2160.png 2160w,
-            ../assets/core/core_w2880.png 2880w
-          "
-        />
+        <image-responsive title="core" />
       </div>
     </div>
 
@@ -156,6 +145,7 @@ import BackLink from '@/components/BackLink.vue'
 import Links from '@/components/Links.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { getCurrentRound } from '@/api/round'
 import { formatAmount } from '@/utils/amounts'
@@ -168,6 +158,7 @@ import { formatAmount } from '@/utils/amounts'
     BackLink,
     Links,
     TimeLeft,
+    ImageResponsive,
   },
 })
 export default class JoinLanding extends Vue {

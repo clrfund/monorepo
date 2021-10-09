@@ -4,18 +4,7 @@
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
-        <img
-          src="@/assets/newrings/newrings_w1080.png"
-          sizes="(max-width: 1440px) 100vw, 1440px"
-          srcset="
-            ../assets/newrings/newrings_w360.png   360w,
-            ../assets/newrings/newrings_w720.png   720w,
-            ../assets/newrings/newrings_w1080.png 1080w,
-            ../assets/newrings/newrings_w1440.png 1440w,
-            ../assets/newrings/newrings_w2160.png 2160w,
-            ../assets/newrings/newrings_w2880.png 2880w
-          "
-        />
+        <image-responsive title="newrings" />
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
@@ -58,6 +47,7 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { blockExplorer } from '@/api/core'
@@ -69,6 +59,7 @@ import { blockExplorer } from '@/api/core'
     TransactionReceipt,
     Warning,
     Links,
+    ImageResponsive,
   },
 })
 export default class ProjectAdded extends Vue {
