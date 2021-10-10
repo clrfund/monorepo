@@ -56,7 +56,7 @@
           <balance-item :balance="balance" :abbrev="nativeTokenSymbol">
             <icon-status
               :custom="true"
-              :logo="token.logo"
+              :logo="tokenLogo"
               :secondaryLogo="chain.logo"
               :bg="balanceBackgroundColor"
             />
@@ -129,8 +129,8 @@ import { User } from '@/api/user'
 import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { Project, getProjects } from '@/api/projects'
 import { ChainInfo } from '@/plugins/Web3/constants/chains'
-import { TOKEN_INFO, Token } from '@/plugins/Web3/constants/tokens'
 import { isSameAddress } from '@/utils/accounts'
+import { getTokenLogo } from '@/utils/tokens'
 
 @Component({
   components: {
@@ -177,10 +177,8 @@ export default class Profile extends Vue {
     return nativeTokenSymbol
   }
 
-  get token(): Token {
-    const token: Token = TOKEN_INFO[this.nativeTokenSymbol.toUpperCase()]
-    if (!token) return { label: 'token', logo: 'eth.svg' }
-    return token
+  get tokenLogo(): string {
+    return getTokenLogo(this.nativeTokenSymbol)
   }
 
   get displayAddress(): string | null {
