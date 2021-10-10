@@ -46,7 +46,6 @@ import { criteria, Criterion } from '@/plugins/round/criteria'
 @Component({ components: { Links } })
 export default class CriteriaModal extends Vue {
   get criteria(): Criterion[] {
-    console.log(criteria)
     return criteria
   }
 }
