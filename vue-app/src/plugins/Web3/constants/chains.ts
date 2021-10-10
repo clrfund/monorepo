@@ -16,6 +16,8 @@ export interface ChainInfo {
     logo: string
     isLayer2: boolean
     explorer: string
+    explorerLogo: string
+    explorerLabel: string
     rpcUrl?: string
     bridge?: string
   }
@@ -28,6 +30,8 @@ export const CHAIN_INFO: ChainInfo = {
     logo: 'eth.svg',
     isLayer2: false,
     explorer: 'https://etherscan.io',
+    explorerLogo: 'etherscan.svg',
+    explorerLabel: 'Etherscan',
   },
   [ChainId.RINKEBY]: {
     label: 'Rinkeby',
@@ -35,40 +39,50 @@ export const CHAIN_INFO: ChainInfo = {
     logo: 'eth.svg',
     isLayer2: false,
     explorer: 'https://rinkeby.etherscan.io',
+    explorerLogo: 'etherscan.svg',
+    explorerLabel: 'Etherscan',
   },
   [ChainId.HARDHAT]: {
     label: 'Arbitrum Hardhat',
     currency: 'ETH',
-    logo: 'arbitrum.png',
+    logo: 'arbitrum.svg',
     isLayer2: true,
     explorer: 'https://testnet.arbiscan.io',
+    explorerLogo: 'arbitrum.svg',
+    explorerLabel: 'Arbiscan',
     rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
   },
   [ChainId.ARBITRUM_ONE]: {
     label: 'Arbitrum',
     currency: 'ETH',
-    logo: 'arbitrum.png',
+    logo: 'arbitrum.svg',
     isLayer2: true,
     explorer: 'https://arbiscan.io',
+    explorerLogo: 'arbitrum.svg',
+    explorerLabel: 'Arbiscan',
     rpcUrl: 'https://arb1.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
   },
   [ChainId.ARBITRUM_RINKEBY]: {
     label: 'Arbitrum Rinkeby',
     currency: 'ETH',
-    logo: 'arbitrum.png',
+    logo: 'arbitrum.svg',
     isLayer2: true,
     explorer: 'https://testnet.arbiscan.io',
+    explorerLogo: 'arbitrum.svg',
+    explorerLabel: 'Arbiscan',
     rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
   },
   [ChainId.OPTIMISM]: {
     label: 'Optimism',
     currency: 'ETH',
-    logo: 'optimism.png',
+    logo: 'optimism.svg',
     isLayer2: true,
     explorer: 'https://optimistic.etherscan.io',
+    explorerLogo: 'optimism.svg',
+    explorerLabel: 'Etherscan',
     rpcUrl: 'https://mainnet.optimism.io',
     bridge: 'https://gateway.optimism.io',
   },
@@ -78,6 +92,8 @@ export const CHAIN_INFO: ChainInfo = {
     logo: 'xdai.svg',
     isLayer2: false,
     explorer: 'https://blockscout.com/poa/xdai',
+    explorerLogo: 'xdai-explorer.svg',
+    explorerLabel: 'Blockscout',
     rpcUrl: 'https://rpc.xdaichain.com/',
     bridge: 'https://bridge.xdaichain.com',
   },
@@ -87,6 +103,8 @@ export const CHAIN_INFO: ChainInfo = {
     logo: 'polygon.svg',
     isLayer2: false,
     explorer: 'https://polygonscan.com/',
+    explorerLogo: 'polygon.svg',
+    explorerLabel: 'Polygonscan',
     rpcUrl: 'https://rpc-mainnet.matic.network',
     bridge: 'https://wallet.polygon.technology',
   },
