@@ -37,12 +37,12 @@ export const CHAIN_INFO: ChainInfo = {
     explorer: 'https://rinkeby.etherscan.io',
   },
   [ChainId.HARDHAT]: {
-    label: 'Hardhat',
+    label: 'Arbitrum Hardhat',
     currency: 'ETH',
-    logo: 'arbitrum.svg',
+    logo: 'arbitrum.png',
     isLayer2: true,
     explorer: 'https://testnet.arbiscan.io',
-    rpcUrl: 'http://localhost:18545',
+    rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
   },
   [ChainId.ARBITRUM_ONE]: {
