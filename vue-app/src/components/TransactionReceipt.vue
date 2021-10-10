@@ -1,5 +1,5 @@
 <template>
-  <div class="etherscan-btn tx-receipt">
+  <div class="explorer-btn tx-receipt">
     <div class="status-label-address">
       <loader
         v-if="isPending"
@@ -18,10 +18,11 @@
       <links
         class="explorerLink"
         :to="blockExplorerUrl"
-        v-tooltip="'View on Etherscan'"
+        v-tooltip="`View on ${blockExplorer.label}`"
         :hideArrow="true"
-        ><img class="icon" src="@/assets/etherscan.svg"
-      /></links>
+      >
+        <img class="icon" :src="require(`@/assets/${blockExplorer.logo}`)" />
+      </links>
       <copy-button
         :value="hash"
         text="hash"
@@ -73,8 +74,12 @@ export default class TransactionReceipt extends Vue {
     }
   }
 
-  get blockExplorerUrl(): string {
-    return `${chain.explorer}/tx/${this.hash}`
+  get blockExplorer(): { label: string; url: string; logo: string } {
+    return {
+      label: chain.explorerLabel,
+      url: `${chain.explorer}/tx/${this.hash}`,
+      logo: chain.explorerLogo,
+    }
   }
 }
 </script>

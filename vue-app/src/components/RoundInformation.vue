@@ -17,7 +17,9 @@
                   <div class="contract-address">
                     {{ currentRound.fundingRoundAddress }}
                   </div>
-                  <links :to="blockExplorerUrl">View on Etherscan</links>
+                  <links :to="blockExplorer.url"
+                    >View on {{ blockExplorer.label }}</links
+                  >
                 </div>
               </template>
             </v-popover>
@@ -451,11 +453,11 @@ export default class RoundInformation extends Vue {
     )
   }
 
-  get blockExplorerUrl(): string {
-    if (!this.currentRound) {
-      return ''
+  get blockExplorer(): { label: string; url: string } {
+    return {
+      label: chain.explorerLabel,
+      url: `${chain.explorer}/address/${this.currentRound?.fundingRoundAddress}`,
     }
-    return `${chain.explorer}/address/${this.currentRound.fundingRoundAddress}`
   }
 }
 </script>

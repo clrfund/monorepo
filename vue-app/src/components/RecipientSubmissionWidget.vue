@@ -24,7 +24,7 @@
         <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
           Something failed: {{ txError }}<br />
-          Check your wallet or Etherscan for more info.
+          Check your wallet or {{ blockExplorerLabel }} for more info.
         </div>
         <div v-if="isTxRejected" class="warning-text">
           You rejected the transaction in your wallet
@@ -84,10 +84,11 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber } from 'ethers'
+import { Web3Provider } from '@ethersproject/providers'
 import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import { addRecipient } from '@/api/recipient-registry-optimistic'
 import { User } from '@/api/user'
-import { Web3Provider } from '@ethersproject/providers'
+import { chain } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
@@ -129,6 +130,9 @@ export default class RecipientSubmissionWidget extends Vue {
     return this.$web3.provider
   }
 
+  get blockExplorerLabel(): string {
+    return chain.explorerLabel
+  }
   get canSubmit(): boolean {
     return (
       !!this.currentUser &&

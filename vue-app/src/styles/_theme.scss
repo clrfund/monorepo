@@ -47,7 +47,7 @@
   @include button($clr-green, none, 2px solid $clr-green);
 }
 
-.etherscan-btn {
+.explorer-btn {
   @include button(
     white,
     $clr-pink-light-gradient-inactive,
