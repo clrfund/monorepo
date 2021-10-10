@@ -165,7 +165,7 @@
         <div class="link-li">
           <links to="/about/how-it-works">How the round works</links>
         </div>
-        <div class="link-li">
+        <div class="link-li" v-if="chain.isLayer2">
           <links to="/about/layer-2">Learn about {{ chain.label }}</links>
         </div>
         <div class="link-li">

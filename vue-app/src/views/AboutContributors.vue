@@ -1,18 +1,26 @@
 <template>
   <div class="about">
     <h1 class="content-heading">Contributor guide</h1>
-    <h2>Get funds on Arbitrum</h2>
+    <h2>Get funds on {{ chain.label }}</h2>
     <p>
-      You'll need some ETH on Arbitrum in order to submit transactions to the
-      clr.fund smart contracts. Follow
-      <links to="https://arbitrum.io/bridge-tutorial/">this tutorial</links> to
-      bridge your funds to Arbitrum
+      You'll need some {{ chain.currency }} on {{ chain.label }} in order to
+      submit transactions to the clr.fund smart contracts.
+      <span v-if="chain.label.includes('Arbitrum')">
+        Follow
+        <links to="https://arbitrum.io/bridge-tutorial/">this tutorial</links>
+        to bridge your funds to {{ chain.label }}
+      </span>
+      <span v-else-if="chain.bridge">
+        Use the
+        <links :to="chain.bridge">{{ chain.label }} bridge</links>
+        to transfer some funds.
+      </span>
     </p>
-    <p>
-      Confused on what Arbitrum is?
-      <links to="/about/layer-2"
-        >Read our explanation on how clr.fund uses layer 2 on Ethereum.</links
-      >
+    <p v-if="chain.isLayer2">
+      Confused on what {{ chain.label }} is?
+      <links to="/about/layer-2">
+        Read our explanation on how clr.fund uses layer 2 on Ethereum.
+      </links>
     </p>
     <h2>Contributing to specific projects</h2>
     <ol>
