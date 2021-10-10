@@ -38,8 +38,8 @@
             v-else-if="$route.params.type === 'contribution'"
             class="contributed-content"
           >
-            Thanks for contributing to the Eth2 ecosystem. If you change your
-            mind, you have
+            Thanks for contributing to the Ethereum ecosystem. If you change
+            your mind, you have
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"

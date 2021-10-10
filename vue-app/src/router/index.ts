@@ -35,7 +35,7 @@ const routes = [
     name: 'landing',
     component: Landing,
     meta: {
-      title: 'Eth2 clr.fund',
+      title: 'Clr.fund',
     },
   },
   {

@@ -7,7 +7,7 @@
       <template v-if="currentRound">
         <div class="round">
           <div class="round-title-bar">
-            <h2 class="round-title">Eth2 CLR</h2>
+            <h2 class="round-title">CLR.fund</h2>
             <v-popover class="verified-container">
               <div class="verified">
                 <img src="@/assets/verified.svg" />
