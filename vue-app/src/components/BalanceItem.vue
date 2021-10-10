@@ -7,7 +7,6 @@
       <div v-if="abbrev" class="token-abbrev">
         {{ abbrev }}
       </div>
-      <!-- <p class="description"></p> -->
     </div>
     <div class="amount">
       {{ balance }}
@@ -27,8 +26,6 @@ import IconStatus from '@/components/IconStatus.vue'
 export default class BalanceItem extends Vue {
   @Prop() abbrev!: string
   @Prop() balance!: string
-  @Prop() image!: string
-  // TODO: Need token icon, currently hard coded to dai.svg
 }
 </script>
 

@@ -91,7 +91,7 @@ import { ChainInfo } from '@/plugins/Web3/constants/chains'
 export default class AboutContributors extends Vue {
   get nativeTokenSymbol(): string {
     const { nativeTokenSymbol } = this.$store.state.currentRound
-    return nativeTokenSymbol || 'DAI'
+    return nativeTokenSymbol
   }
 
   get chain(): ChainInfo {

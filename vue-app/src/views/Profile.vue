@@ -53,17 +53,17 @@
           </div>
         </div>
         <div class="balances-card">
-          <balance-item :balance="balance" abbrev="DAI">
+          <balance-item :balance="balance" :abbrev="nativeTokenSymbol">
             <icon-status
-              v-bind:custom="true"
-              logo="dai.svg"
+              :custom="true"
+              :logo="token.logo"
               :secondaryLogo="chain.logo"
               :bg="balanceBackgroundColor"
             />
           </balance-item>
-          <balance-item :balance="etherBalance" abbrev="ETH">
+          <balance-item :balance="etherBalance" :abbrev="chain.currency">
             <icon-status
-              v-bind:custom="true"
+              :custom="true"
               logo="eth.svg"
               :secondaryLogo="chain.logo"
               :bg="balanceBackgroundColor"
@@ -129,6 +129,7 @@ import { User } from '@/api/user'
 import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { Project, getProjects } from '@/api/projects'
 import { ChainInfo } from '@/plugins/Web3/constants/chains'
+import { TOKEN_INFO, Token } from '@/plugins/Web3/constants/tokens'
 import { isSameAddress } from '@/utils/accounts'
 
 @Component({
@@ -171,22 +172,20 @@ export default class Profile extends Vue {
     return chain
   }
 
+  get nativeTokenSymbol(): string {
+    const { nativeTokenSymbol } = this.$store.state.currentRound
+    return nativeTokenSymbol
+  }
+
+  get token(): Token {
+    const token: Token = TOKEN_INFO[this.nativeTokenSymbol.toUpperCase()]
+    if (!token) return { label: 'token', logo: 'eth.svg' }
+    return token
+  }
+
   get displayAddress(): string | null {
     if (!this.currentUser) return null
     return this.currentUser.ensName ?? this.currentUser.walletAddress
-  }
-
-  onNavigateToBridge(): void {
-    this.$emit('close')
-  }
-
-  async disconnect(): Promise<void> {
-    if (this.currentUser && this.walletProvider) {
-      // Log out user
-      this.$web3.disconnectWallet()
-      this.$store.dispatch(LOGOUT_USER)
-      this.$emit('close')
-    }
   }
 
   private async loadProjects(): Promise<void> {
@@ -208,6 +207,19 @@ export default class Profile extends Vue {
   navigateToProject(id: string): void {
     this.$emit('close')
     this.$router.push({ name: 'project', params: { id } })
+  }
+
+  onNavigateToBridge(): void {
+    this.$emit('close')
+  }
+
+  async disconnect(): Promise<void> {
+    if (this.currentUser && this.walletProvider) {
+      // Log out user
+      this.$web3.disconnectWallet()
+      this.$store.dispatch(LOGOUT_USER)
+      this.$emit('close')
+    }
   }
 }
 </script>
