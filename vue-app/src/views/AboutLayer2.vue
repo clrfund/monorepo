@@ -81,8 +81,35 @@
         <li>A wallet that supports {{ chain.label }}</li>
         <li>Funds on {{ chain.label }}</li>
       </ul>
-      <h3>How to find wallet that supports {{ chain.label }}</h3>
-      <p>TODO</p>
+      <h3>
+        💼 How to find wallet that supports {{ chain.label }}
+        <img
+          v-tooltip="{
+            content:
+              'Wallet resources are provided as a convenience and do not represent endorsement of any of the projects or services therein. Always DYOR.',
+            trigger: 'hover click',
+          }"
+          width="16px"
+          src="@/assets/info.svg"
+        />
+      </h3>
+      <ul>
+        <li>
+          Visit the official
+          <links to="https://portal.arbitrum.one/">
+            {{ chain.label }} portal
+          </links>
+          and filter by "Wallets" to view some of the wallets that currently
+          support the {{ chain.label }} network.
+        </li>
+        <li>
+          Double-check that any wallet you consider
+          <links to="https://registry.walletconnect.org/wallets">
+            also supports WalletConnect
+          </links>
+          to ensure you're able to connect to the app.
+        </li>
+      </ul>
       <h3>💰 How to get funds on {{ chain.label }}</h3>
       <p>
         <links :to="chain.bridge" :hideArrow="true">
@@ -91,9 +118,9 @@
       </p>
       <p>
         Follow the steps below, or use the
-        <links to="https://arbitrum.io/bridge-tutorial/"
-          >official tutorial</links
-        >
+        <links to="https://arbitrum.io/bridge-tutorial/">
+          official tutorial
+        </links>
         as a guide at any time.
       </p>
       <ol>
@@ -128,6 +155,7 @@
         Add {{ chain.label }} {{ nativeToken.symbol }} to MetaMask
       </button>
     </div>
+    <!-- If chain isn't Arbitrum, but still has a bridge URL, display its information: -->
     <div v-else-if="chain.bridge">
       <h2>{{ chain.label }}</h2>
       <h2>What you'll need</h2>
