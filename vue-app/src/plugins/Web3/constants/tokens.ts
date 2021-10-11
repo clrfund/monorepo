@@ -11,6 +11,9 @@ export const TOKEN_INFO: { [key: string]: Token } = {
   DAI: {
     logo: 'dai.svg',
   },
+  WXDAI: {
+    logo: 'wxdai.svg',
+  },
   USDC: {
     logo: 'usdc.svg',
   },
