@@ -50,20 +50,20 @@
           <li>Access to Zoom or Google Meet</li>
         </ul>
         <links to="/about-sybil-resistance/">Why is this important?</links>
-        <div
-          v-if="
-            $store.getters.isRoundJoinPhase &&
-            !currentRound &&
-            !isRoundFullOrOver
-          "
-          class="join-message"
-        >
+        <div v-if="isRoundNotStarted" class="join-message">
           There's not yet an open funding round. Get prepared now so you're
           ready for when the next one begins!
         </div>
-        <div v-if="isRoundFullOrOver" class="warning-message">
+        <div v-else-if="isRoundOver" class="warning-message">
           The current round is no longer accepting new contributions. You can
           still get BrightID verified to prepare for next time.
+        </div>
+        <div v-else-if="isRoundFull" class="warning-message">
+          Contributions closed early – you can no longer donate! Due to the
+          community's generosity and some technical constraints we had to close
+          the round earlier than expected. If you already contributed, you still
+          have time to reallocate if you need to. If you didn't get a chance to
+          contribute, you can still help by donating to the matching pool
         </div>
         <div class="btn-container mt2">
           <wallet-widget
@@ -128,18 +128,16 @@ export default class VerifyLanding extends Vue {
     return commify(formatUnits(balance, 18))
   }
 
-  get isRoundFullOrOver(): boolean {
-    const currentRound = this.$store.state.currentRound
-    if (!currentRound) {
-      return false
-    }
-    const hasHitMaxContributors =
-      currentRound.maxContributors <= currentRound.contributors
-    return (
-      this.$store.getters.hasContributionPhaseEnded ||
-      this.$store.getters.isMessageLimitReached ||
-      hasHitMaxContributors
-    )
+  get isRoundNotStarted(): boolean {
+    return this.$store.getters.isRoundJoinPhase
+  }
+
+  get isRoundFull(): boolean {
+    return this.$store.getters.isRoundContributorLimitReached
+  }
+
+  get isRoundOver(): boolean {
+    return this.$store.getters.hasContributionPhaseEnded
   }
 
   formatDuration(value: number): string {
