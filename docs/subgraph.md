@@ -72,9 +72,9 @@ yarn start:subgraph
 
 # Deployment
 
-Currently, we are using the Hosted Service. Check the official instructions to authenicate using the Graph CLI https://thegraph.com/docs/legacyexplorer/deploy-subgraph-hosted
+Currently, we are using the Hosted Service. First, check out the official instructions to authenicate using the Graph CLI https://thegraph.com/docs/legacyexplorer/deploy-subgraph-hosted
 
 1. Prepare the `subgraph.yaml` with the correct network data
-    - Update the JSON file, located in `/subgraph/config`, with the network you will use
+    - Update the JSON file that you want to use, located in `/subgraph/config`
     - Inside the `/subgraph` folder, run `yarn prepare:{network}`
 2. Run `yarn deploy:subgraph`
