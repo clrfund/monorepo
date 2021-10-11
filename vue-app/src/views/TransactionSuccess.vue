@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="image-wrapper">
-      <img class="docking" src="@/assets/docking.png" />
+      <image-responsive title="docking" />
       <img class="money" src="@/assets/money.gif" />
       <img class="money" src="@/assets/confetti.gif" />
     </div>
@@ -73,12 +73,13 @@ import { RoundInfo } from '@/api/round'
 // Components
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
 
 @Component({
-  components: { TransactionReceipt, TimeLeft },
+  components: { TransactionReceipt, TimeLeft, ImageResponsive },
 })
 export default class TransactionSuccess extends Vue {
   get contribution(): BigNumber | null {

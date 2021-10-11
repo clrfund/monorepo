@@ -5,7 +5,7 @@
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
-          <img src="@/assets/docking.png" />
+          <image-responsive title="docking" />
         </div>
         <div>
           <div class="hero-content">
@@ -48,10 +48,10 @@
       </div>
       <div id="section-how-it-works">
         <div class="wormhole-wrapper desktop-l">
-          <img
-            src="@/assets/wormhole.png"
-            alt="Image of spaceships funneling through a wormhole and getting bigger"
+          <image-responsive
+            title="wormhole"
             class="wormhole"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
         </div>
         <div id="how-it-works-content">
@@ -60,8 +60,8 @@
             This fundraiser rewards projects with the most unique demand, not
             just those with the wealthiest backers.
           </p>
-          <img
-            src="@/assets/wormhole.png"
+          <image-responsive
+            title="wormhole"
             alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
           <h2>How it works</h2>
@@ -184,9 +184,10 @@ import { DateTime } from 'luxon'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
-  components: { RoundStatusBanner, TimeLeft, Links },
+  components: { RoundStatusBanner, TimeLeft, Links, ImageResponsive },
 })
 export default class Landing extends Vue {
   get signUpDeadline(): DateTime {
