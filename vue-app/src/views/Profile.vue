@@ -352,10 +352,6 @@ p.no-margin {
       }
     }
 
-    /* .setup-card {
-      background: $bg-primary-color;
-    } */
-
     .balances-card {
       padding: 0rem;
     }
@@ -384,16 +380,4 @@ p.no-margin {
     }
   }
 }
-
-/* .warning {
-  border: 1px solid $warning-color;
-  background: $bg-primary-color;
-  border-radius: 1rem;
-  padding: 1rem;
-  margin: 1rem 1rem 0;
-  color: $warning-color;
-  @media (max-width: $breakpoint-s) {
-    margin: 1rem 0 0;
-  }
-} */
 </style>
