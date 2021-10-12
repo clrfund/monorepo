@@ -1,6 +1,8 @@
 <template>
   <div :class="!isCompact && 'warning'" v-if="needsFunds">
-    <span v-if="!isCompact">You need L2 funds!</span>
+    <span v-if="!isCompact">
+      You need {{ chain.isLayer2 ? 'L2' : chain.label }} funds!
+    </span>
     <p v-if="!!singleTokenNeeded">
       ⚠️ You need both some ETH for gas, and {{ nativeTokenSymbol }} to
       contribute
@@ -18,7 +20,7 @@
         Get help bridging {{ singleTokenNeeded }} to Layer 2
       </links>
       <links v-else :to="chain.bridge">
-        Bridge {{ singleTokenNeeded }} to Layer 2
+        Bridge {{ singleTokenNeeded }} to {{ chain.label }}
       </links>
     </p>
   </div>
