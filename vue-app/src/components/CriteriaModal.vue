@@ -48,6 +48,7 @@ import { criteria, Criterion } from '@/plugins/round/criteria'
 export default class CriteriaModal extends Vue {
   get criteria(): Criterion[] {
     return criteria
+  }
 
   get operator(): string {
     return operator
