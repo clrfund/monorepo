@@ -67,8 +67,8 @@
           <h2>How it works</h2>
           <ol>
             <li>
-              The Ethereum Foundation and other donors send funds to the
-              matching pool smart contract.
+              The {{ operator }} and other donors send funds to the matching
+              pool smart contract.
             </li>
             <li>
               The round begins and you can donate to your favorite projects.
@@ -186,6 +186,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 
+import { operator } from '@/api/core'
 import { chain } from '@/api/core'
 import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
@@ -205,6 +206,10 @@ export default class Landing extends Vue {
     return this.$store.getters.isRoundContributionPhase
       ? 'Join Round'
       : 'Join Next Round'
+  }
+
+  get operator(): string {
+    return operator
   }
 
   scrollToHowItWorks() {

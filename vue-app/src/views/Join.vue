@@ -415,7 +415,7 @@
                 <input
                   id="links-website"
                   type="link"
-                  placeholder="example: https://ethereum.foundation"
+                  placeholder="example: https://clr.fund"
                   v-model.lazy="$v.form.links.website.$model"
                   :class="{
                     input: true,
