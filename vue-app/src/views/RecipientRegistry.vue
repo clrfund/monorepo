@@ -1,111 +1,112 @@
 <template>
   <div class="recipients">
-    <div v-if="$store.getters.isRecipientRegistryOwner">
-      <div class="title">
-        <div class="header">
-          <h2>Recipient registry</h2>
-        </div>
-        <div class="hr" />
+    <div class="title">
+      <div class="header">
+        <h2>Recipient registry</h2>
       </div>
-      <loader v-if="isLoading" />
-      <div v-else>
-        <table class="requests">
-          <thead>
-            <tr>
-              <th>Project</th>
-              <th>Request type</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="request in requests.slice().reverse()"
-              :key="request.transactionHash"
-            >
-              <td>
-                <div class="project-name">
-                  <links :to="request.metadata.thumbnailImageUrl">
-                    <img
-                      class="project-image"
-                      :src="request.metadata.thumbnailImageUrl"
-                    />
-                  </links>
-                  {{ request.metadata.name }}
-                  <links
-                    v-if="hasProjectLink(request)"
-                    :to="{
-                      name: 'project',
-                      params: { id: request.recipientId },
-                    }"
-                    >-></links
-                  >
-                </div>
-                <details class="project-details">
-                  <summary>More</summary>
-
-                  <div>
-                    <span
-                      >Transaction hash
-                      <button
-                        class="button-copy"
-                        @click="copyAddress(request.transactionHash)"
-                      >
-                        <img src="@/assets/copy.svg" />
-                      </button>
-                    </span>
-                    <code>{{ request.transactionHash }}</code>
-                  </div>
-                  <div>
-                    <span
-                      >Project ID
-                      <button
-                        class="button-copy"
-                        @click="copyAddress(request.recipientId)"
-                      >
-                        <img src="@/assets/copy.svg" />
-                      </button>
-                    </span>
-                    <code>{{ request.recipientId }}</code>
-                  </div>
-                  <div>
-                    <span
-                      >Recipient address
-                      <button
-                        class="button-copy"
-                        @click="copyAddress(request.recipient)"
-                      >
-                        <img src="@/assets/copy.svg" />
-                      </button>
-                    </span>
-                    <code>{{ request.recipient }}</code>
-                  </div>
-                </details>
-              </td>
-              <td>{{ request.type }}</td>
-              <td>
-                <template v-if="hasProjectLink(request)">
-                  <links
-                    :to="{
-                      name: 'project',
-                      params: { id: request.recipientId },
-                    }"
-                  >
-                    {{ request.status }}
-                  </links>
-                </template>
-                <template v-else>
-                  {{ request.status }}
-                </template>
-              </td>
-              <td class="actions">
-                <div
-                  class="btn-warning"
-                  @click="remove(request)"
-                  v-if="isExecuted(request)"
+      <div class="hr" />
+    </div>
+    <loader v-if="isLoading" />
+    <div v-else>
+      <table class="requests">
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Request type</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="request in requests.slice().reverse()"
+            :key="request.transactionHash"
+          >
+            <td>
+              <div class="project-name">
+                <links :to="request.metadata.thumbnailImageUrl">
+                  <img
+                    class="project-image"
+                    :src="request.metadata.thumbnailImageUrl"
+                  />
+                </links>
+                {{ request.metadata.name }}
+                <links
+                  v-if="hasProjectLink(request)"
+                  :to="{
+                    name: 'project',
+                    params: { id: request.recipientId },
+                  }"
+                  >-></links
                 >
-                  Remove
+              </div>
+              <details class="project-details">
+                <summary>More</summary>
+
+                <div>
+                  <span
+                    >Transaction hash
+                    <button
+                      class="button-copy"
+                      @click="copyAddress(request.transactionHash)"
+                    >
+                      <img src="@/assets/copy.svg" />
+                    </button>
+                  </span>
+                  <code>{{ request.transactionHash }}</code>
                 </div>
+                <div>
+                  <span
+                    >Project ID
+                    <button
+                      class="button-copy"
+                      @click="copyAddress(request.recipientId)"
+                    >
+                      <img src="@/assets/copy.svg" />
+                    </button>
+                  </span>
+                  <code>{{ request.recipientId }}</code>
+                </div>
+                <div>
+                  <span
+                    >Recipient address
+                    <button
+                      class="button-copy"
+                      @click="copyAddress(request.recipient)"
+                    >
+                      <img src="@/assets/copy.svg" />
+                    </button>
+                  </span>
+                  <code>{{ request.recipient }}</code>
+                </div>
+              </details>
+            </td>
+            <td>{{ request.type }}</td>
+            <td>
+              <template v-if="hasProjectLink(request)">
+                <links
+                  :to="{
+                    name: 'project',
+                    params: { id: request.recipientId },
+                  }"
+                >
+                  {{ request.status }}
+                </links>
+              </template>
+              <template v-else>
+                {{ request.status }}
+              </template>
+            </td>
+            <td>
+              <div class="actions" v-if="isUserConnected">
+                <!-- TODO: to implement this feature, it requires to send a baseDeposit (see contract)
+              <div
+                class="btn-warning"
+                @click="remove(request)"
+                v-if="isExecuted(request)"
+              >
+                Remove
+              </div> -->
                 <div
                   class="icon-btn-approve"
                   @click="approve(request)"
@@ -120,20 +121,11 @@
                 >
                   <img src="@/assets/close.svg" />
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div v-else>
-      <div class="big-emoji" aria-label="hand">🤚</div>
-      <h2>
-        You must be the recipient registry contract owner to access this page
-      </h2>
-      <div v-if="!isUserConnected">
-        <h2>Please connect your wallet.</h2>
-      </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -349,7 +341,7 @@ export default class RecipientRegistryView extends Vue {
       word-wrap: break-word;
     }
 
-    &.actions {
+    .actions {
       display: flex;
     }
 
