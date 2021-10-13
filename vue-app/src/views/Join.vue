@@ -553,8 +553,8 @@
                   <h4 class="read-only-title">Ethereum address</h4>
                   <div class="data break-all">
                     {{ form.fund.addressName }}
-                    <links :to="blockExplorerUrl" class="no-break">
-                      View on Etherscan
+                    <links :to="blockExplorer.url" class="no-break">
+                      View on {{ blockExplorer.label }}
                     </links>
                   </div>
                   <div
@@ -1020,8 +1020,11 @@ export default class JoinView extends mixins(validationMixin) {
     return this.form.furthestStep
   }
 
-  get blockExplorerUrl(): string {
-    return `${chain.explorer}/address/${this.form.fund.resolvedAddress}`
+  get blockExplorer(): { label: string; url: string } {
+    return {
+      label: chain.explorerLabel,
+      url: `${chain.explorer}/address/${this.form.fund.resolvedAddress}`,
+    }
   }
 
   async checkEns(): Promise<void> {

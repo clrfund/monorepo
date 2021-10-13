@@ -92,11 +92,14 @@
           />
           <links
             class="explorerLink"
-            :to="blockExplorerUrl"
-            title="View on Etherscan"
+            :to="blockExplorer.url"
+            :title="`View on ${blockExplorer.label}`"
             :hideArrow="true"
           >
-            <img class="icon" src="@/assets/etherscan.svg" />
+            <img
+              class="icon"
+              :src="require(`@/assets/${blockExplorer.logo}`)"
+            />
           </links>
         </div>
       </div>
@@ -190,8 +193,12 @@ export default class ProjectProfile extends Vue {
     this.$store.dispatch(SAVE_CART)
   }
 
-  get blockExplorerUrl(): string {
-    return `${chain.explorer}/address/${this.project.address}`
+  get blockExplorer(): { label: string; url: string; logo: string } {
+    return {
+      label: chain.explorerLabel,
+      url: `${chain.explorer}/address/${this.project.address}`,
+      logo: chain.explorerLogo,
+    }
   }
 
   get addressName(): string {

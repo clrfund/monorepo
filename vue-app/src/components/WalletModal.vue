@@ -17,11 +17,11 @@
         @click="connectWallet('metamask')"
       >
         <p>MetaMask</p>
-        <img height="24px" width="24px" src="@/assets/metamask.png" />
+        <img height="24px" width="24px" src="@/assets/metamask.svg" />
       </button>
       <button v-else class="option" @click="redirectToMetamaskWebsite()">
         <p>Install MetaMask</p>
-        <img height="24px" width="24px" src="@/assets/metamask.png" />
+        <img height="24px" width="24px" src="@/assets/metamask.svg" />
       </button>
       <button class="option" @click="connectWallet('walletconnect')">
         <p>WalletConnect</p>
