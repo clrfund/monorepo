@@ -124,12 +124,12 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     */
   function removeRecipient(bytes32 _recipientId)
     external
-    onlyOwner
     payable
   {
     require(recipients[_recipientId].index != 0, 'RecipientRegistry: Recipient is not in the registry');
     require(recipients[_recipientId].removedAt == 0, 'RecipientRegistry: Recipient already removed');
     require(requests[_recipientId].submissionTime == 0, 'RecipientRegistry: Request already submitted');
+    require(msg.value == baseDeposit, 'RecipientRegistry: Incorrect deposit amount');
     requests[_recipientId] = Request(
       RequestType.Removal,
       msg.sender,
