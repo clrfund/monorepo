@@ -1,6 +1,6 @@
 <template>
   <nav id="nav-bar">
-    <links :to="inApp ? '/projects' : '/'">
+    <links to="/">
       <img class="clr-logo" alt="clr fund" src="@/assets/clr.svg" />
     </links>
     <div class="btn-row">
@@ -31,7 +31,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="desktop"><cart-widget v-if="inApp" /></div> -->
       <wallet-widget class="wallet-widget" v-if="inApp" />
       <links v-if="!inApp" to="/projects" class="app-btn">App</links>
     </div>
