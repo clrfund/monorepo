@@ -149,15 +149,23 @@
                   type="button"
                   class="btn-action btn-block"
                   @click="sponsor"
+                  :disabled="sponsorTxHash.length !== 0"
                 >
                   Get sponsored
                 </button>
                 <transaction
-                  v-if="loadingTx || sponsorTxError"
+                  v-if="sponsorTxHash || loadingTx || sponsorTxError"
                   :display-close-btn="false"
                   :hash="sponsorTxHash"
                   :error="sponsorTxError"
                 />
+              </div>
+              <div v-if="sponsorTxHash">
+                <loader />
+                <p>
+                  Waiting for sponsorship verification from BrightID, please
+                  wait. This shouldn't take more than a couple of minutes.
+                </p>
               </div>
             </div>
           </div>
@@ -199,11 +207,12 @@
                 type="button"
                 class="btn-action btn-block"
                 @click="register"
+                :disabled="registrationTxHash.length !== 0"
               >
                 Become a contributor
               </button>
               <transaction
-                v-if="loadingTx || registrationTxError"
+                v-if="registrationTxHash || loadingTx || registrationTxError"
                 :display-close-btn="false"
                 :hash="registrationTxHash"
                 :error="registrationTxError"

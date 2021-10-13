@@ -41,8 +41,8 @@
     <h2>Layer 2s for Scalability</h2>
     <p>
       The main Ethereum blockchain, "layer 1", may be upgraded to reduce costs
-      in the future (this is one of the goals of Eth2, which this clr.fund round
-      is helping realize!).
+      in the future (this is one of the goals for the future of Ethereum, which
+      clr.fund is helping realize!).
     </p>
     <p>
       In the immediate term, though, "layer 2" solutions are already helping

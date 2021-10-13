@@ -85,6 +85,7 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
+import { DateTime } from 'luxon'
 import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import { addRecipient } from '@/api/recipient-registry-optimistic'
 import { User } from '@/api/user'
@@ -183,6 +184,7 @@ export default class RecipientSubmissionWidget extends Vue {
 
   private async addRecipient() {
     const {
+      currentRound,
       currentUser,
       recipient,
       recipientRegistryAddress,
@@ -202,6 +204,13 @@ export default class RecipientSubmissionWidget extends Vue {
       currentUser
     ) {
       try {
+        if (DateTime.now() >= currentRound.votingDeadline) {
+          this.$router.push({
+            name: 'join',
+          })
+          throw { message: 'round over' }
+        }
+
         await waitForTransaction(
           addRecipient(
             recipientRegistryAddress,

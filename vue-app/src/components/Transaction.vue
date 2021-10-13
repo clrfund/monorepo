@@ -2,21 +2,30 @@
   <div class="transaction">
     <template v-if="error">
       <div class="error">{{ error }}</div>
-      <button
-        v-if="displayCloseBtn"
-        class="btn-secondary close-btn"
-        @click="$emit('close')"
-      >
-        Close
-      </button>
+      <div class="btn-row">
+        <button
+          v-if="displayCloseBtn"
+          class="btn-secondary close-btn"
+          @click="$emit('close')"
+        >
+          Close
+        </button>
+        <button
+          v-if="displayRetryBtn"
+          class="btn-primary close-btn"
+          @click="$emit('retry')"
+        >
+          Retry
+        </button>
+      </div>
     </template>
     <template v-else>
       <div v-if="!hash">Please approve transaction in your wallet</div>
       <div v-else>
         <transaction-receipt :hash="hash" />
       </div>
-      <loader />
-      <div v-if="displayWarning">
+      <loader v-if="!hash" />
+      <div v-if="displayWarning && !hash">
         <small class="warning-text">
           If you have been waiting a while, consider refreshing your browser and
           reconnecting your wallet.
@@ -68,6 +77,8 @@ export default class Transaction extends Vue {
 
   @Prop({ default: true })
   displayCloseBtn!: boolean
+
+  @Prop({ default: false }) displayRetryBtn!: boolean
 }
 </script>
 
@@ -82,5 +93,14 @@ export default class Transaction extends Vue {
 
 .close-btn {
   margin-top: 20px;
+}
+
+.btn-row {
+  display: flex;
+  margin: 1rem 0;
+  margin-top: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 </style>

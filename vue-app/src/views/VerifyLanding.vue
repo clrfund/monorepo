@@ -7,7 +7,7 @@
       <div class="gradient">
         <img src="@/assets/moon.png" class="moon" />
         <div class="hero">
-          <img src="@/assets/newrings.png" />
+          <image-responsive title="newrings" />
         </div>
       </div>
       <div class="content">
@@ -95,6 +95,7 @@ import Loader from '@/components/Loader.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
   components: {
@@ -103,6 +104,7 @@ import WalletWidget from '@/components/WalletWidget.vue'
     ProgressBar,
     RoundStatusBanner,
     WalletWidget,
+    ImageResponsive,
   },
 })
 export default class VerifyLanding extends Vue {

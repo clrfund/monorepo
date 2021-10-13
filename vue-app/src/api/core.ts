@@ -44,7 +44,7 @@ if (
 }
 export const recipientRegistryPolicy =
   process.env.VUE_APP_RECIPIENT_REGISTRY_POLICY
-
+export const operator: string = process.env.VUE_APP_OPERATOR || 'Clr.fund team'
 export const extraRounds: string[] = process.env.VUE_APP_EXTRA_ROUNDS
   ? process.env.VUE_APP_EXTRA_ROUNDS.split(',')
   : []

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="image-wrapper">
-      <img class="docking" src="@/assets/docking.png" />
+      <image-responsive title="docking" />
       <img class="money" src="@/assets/money.gif" />
       <img class="money" src="@/assets/confetti.gif" />
     </div>
@@ -38,8 +38,8 @@
             v-else-if="$route.params.type === 'contribution'"
             class="contributed-content"
           >
-            Thanks for contributing to the Eth2 ecosystem. If you change your
-            mind, you have
+            Thanks for contributing to the Ethereum ecosystem. If you change
+            your mind, you have
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
@@ -73,12 +73,13 @@ import { RoundInfo } from '@/api/round'
 // Components
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
 
 @Component({
-  components: { TransactionReceipt, TimeLeft },
+  components: { TransactionReceipt, TimeLeft, ImageResponsive },
 })
 export default class TransactionSuccess extends Vue {
   get contribution(): BigNumber | null {
@@ -134,10 +135,11 @@ export default class TransactionSuccess extends Vue {
 .dropshadow {
   position: relative;
   background: linear-gradient(
-    171.34deg,
+    180deg,
     rgba(0, 0, 0, 0.4) 56.5%,
     rgba(196, 196, 196, 0) 75.75%
   );
+  height: 80vh;
 }
 
 .content {
