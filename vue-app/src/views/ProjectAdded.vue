@@ -50,7 +50,7 @@ import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
-import { blockExplorer } from '@/api/core'
+import { chain } from '@/api/core'
 
 @Component({
   components: {
@@ -74,7 +74,7 @@ export default class ProjectAdded extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/tx/${this.$route.params.txHash}`
+    return `${chain.explorer}/tx/${this.$route.params.txHash}`
   }
 
   formatDuration(seconds: number): string {

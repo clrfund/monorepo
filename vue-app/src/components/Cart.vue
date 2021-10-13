@@ -233,6 +233,7 @@
           </template>
           <template v-else> Reallocate contribution </template>
         </button>
+        <funds-needed-warning :onNavigate="toggleCart" :isCompact="true" />
         <div
           class="time-left"
           v-if="$store.getters.canUserReallocate && isEditMode"
@@ -314,7 +315,7 @@ import {
   MAX_CART_SIZE,
   CartItem,
 } from '@/api/contributions'
-import { userRegistryType, UserRegistryType } from '@/api/core'
+import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { LOGOUT_USER, SAVE_CART } from '@/store/action-types'
 import { User } from '@/api/user'
@@ -324,7 +325,7 @@ import {
   TOGGLE_SHOW_CART_PANEL,
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
+import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 
 @Component({
   components: {
@@ -332,6 +333,7 @@ import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
     CartItems,
     Links,
     TimeLeft,
+    FundsNeededWarning,
   },
 })
 export default class Cart extends Vue {
@@ -420,10 +422,6 @@ export default class Cart extends Vue {
 
   get supportedChainId(): number {
     return Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
-  }
-
-  get networkName(): string {
-    return CHAIN_INFO[this.supportedChainId].label
   }
 
   isCorrectNetwork(): boolean {
@@ -561,7 +559,7 @@ export default class Cart extends Vue {
       return 'The limit on the number of contributions has been reached'
     if (!currentUser) return 'Please connect your wallet'
     if (!this.isCorrectNetwork())
-      return `Please change network to ${this.networkName} network.`
+      return `Please change network to ${chain.label} network.`
     if (this.isBrightIdRequired)
       return 'To contribute, you need to set up BrightID.'
     if (!this.isFormValid()) return 'Include valid contribution amount.'
@@ -599,6 +597,8 @@ export default class Cart extends Vue {
           return `Not enough funds. Your balance is ${balanceDisplay} ${currentRound.nativeTokenSymbol}.`
         } else if (this.isGreaterThanMax()) {
           return `Your contribution is too generous. The max contribution is ${MAX_CONTRIBUTION_AMOUNT} ${currentRound.nativeTokenSymbol}.`
+        } else if (parseInt(currentUser.etherBalance) === 0) {
+          return `You need some ETH to pay for gas`
         } else {
           return null
         }

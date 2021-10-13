@@ -40,7 +40,7 @@ import { Prop } from 'vue-property-decorator'
 import Loader from '@/components/Loader.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Links from '@/components/Links.vue'
-import { blockExplorer } from '@/api/core'
+import { chain } from '@/api/core'
 import { isTransactionMined } from '@/utils/contracts'
 import { renderAddressOrHash } from '@/utils/accounts'
 
@@ -74,7 +74,7 @@ export default class TransactionReceipt extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/tx/${this.hash}`
+    return `${chain.explorer}/tx/${this.hash}`
   }
 }
 </script>

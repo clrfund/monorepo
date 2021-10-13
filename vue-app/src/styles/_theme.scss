@@ -175,3 +175,11 @@
     margin-bottom: 15px;
   }
 }
+
+.divider {
+  margin: 3rem 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 1px;
+  background: $clr-pink-dark-gradient-bg;
+}

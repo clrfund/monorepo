@@ -98,7 +98,6 @@ import WalletWidget from '@/components/WalletWidget.vue'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction } from '@/utils/contracts'
 import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
 @Component({
   components: {
@@ -178,11 +177,6 @@ export default class RecipientSubmissionWidget extends Vue {
       ).toFixed(2)
     }
     return '-'
-  }
-
-  get chainLabel(): string {
-    const chain = CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
-    return chain.label
   }
 
   private async addRecipient() {
