@@ -1,18 +1,7 @@
 <template>
   <nav id="nav-bar">
-    <links v-if="!inApp" to="/">
-      <img
-        class="ef-logo"
-        alt="ethereum foundation"
-        src="@/assets/eth-diamond-rainbow.svg"
-      />
-    </links>
-    <links v-else to="/projects">
-      <img
-        class="ef-logo"
-        alt="ethereum foundation"
-        src="@/assets/eth-diamond-rainbow.svg"
-      />
+    <links to="/">
+      <img class="clr-logo" alt="clr fund" src="@/assets/clr.svg" />
     </links>
     <div class="btn-row">
       <a
@@ -42,7 +31,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="desktop"><cart-widget v-if="inApp" /></div> -->
       <wallet-widget class="wallet-widget" v-if="inApp" />
       <links v-if="!inApp" to="/projects" class="app-btn">App</links>
     </div>
@@ -176,7 +164,7 @@ export default class NavBar extends Vue {
     font-size: 16px;
   }
 
-  .ef-logo {
+  .clr-logo {
     margin: 0;
     height: 2.25rem;
     vertical-align: middle;
