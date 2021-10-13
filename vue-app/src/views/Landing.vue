@@ -5,7 +5,7 @@
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
-          <img src="@/assets/docking.png" />
+          <image-responsive title="docking" />
         </div>
         <div>
           <div class="hero-content">
@@ -48,10 +48,10 @@
       </div>
       <div id="section-how-it-works">
         <div class="wormhole-wrapper desktop-l">
-          <img
-            src="@/assets/wormhole.png"
-            alt="Image of spaceships funneling through a wormhole and getting bigger"
+          <image-responsive
+            title="wormhole"
             class="wormhole"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
         </div>
         <div id="how-it-works-content">
@@ -60,15 +60,15 @@
             This fundraiser rewards projects with the most unique demand, not
             just those with the wealthiest backers.
           </p>
-          <img
-            src="@/assets/wormhole.png"
+          <image-responsive
+            title="wormhole"
             alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
           <h2>How it works</h2>
           <ol>
             <li>
-              The Ethereum Foundation and other donors send funds to the
-              matching pool smart contract.
+              The {{ operator }} and other donors send funds to the matching
+              pool smart contract.
             </li>
             <li>
               The round begins and you can donate to your favorite projects.
@@ -88,14 +88,19 @@
         <h2>What you'll need</h2>
       </div>
       <div id="what-you-will-need">
-        <div class="pre-req" id="arbitrum">
+        <div class="pre-req">
           <div class="icon-row">
-            <img src="@/assets/arbitrum.png" id="arbitrum-icon" />
-            <p><b>Arbitrum for fast and cheap transaction fees</b></p>
+            <img :src="require(`@/assets/${chain.logo}`)" id="chain-icon" />
+            <p>
+              <b>{{ chain.label }} for fast and cheap transaction fees</b>
+            </p>
           </div>
-          <links to="https://bridge.arbitrum.io/" class="btn-action"
-            >Get Arbitrum funds</links
+          <links
+            :to="chain.isLayer2 ? '/about/layer-2' : chain.bridge"
+            class="btn-action"
           >
+            Get {{ chain.label }} funds
+          </links>
         </div>
         <div class="pre-req" id="bright-id">
           <div class="icon-row">
@@ -116,10 +121,10 @@
         <div id="about-1">
           <h2>It's not about how much...</h2>
           <p>
-            Using quadratic funding, your donation counts as a vote. Projects
-            with the most votes at the end of the round get the highest amount
-            from the matching pool. That means even a small donation can have a
-            massive impact.
+            Using quadratic funding, your contribution counts as a vote.
+            Projects with the most votes at the end of the round get the highest
+            amount from the matching pool. That means even a small donation can
+            have a massive impact.
           </p>
           <p>
             To learn more about the technology behind this fundraiser, check out
@@ -133,8 +138,8 @@
           <h2>Protect against bribery</h2>
           <p>
             Using MACI, a zero-knowledge technology, it's impossible to prove
-            how you voted. This drives bribers insane because they have no idea
-            whether you actually did what they bribed you to do!
+            how you contributed. This drives bribers insane because they have no
+            idea whether you actually did what they bribed you to do!
           </p>
           <links to="/about/maci">About MACI</links>
         </div>
@@ -160,8 +165,8 @@
         <div class="link-li">
           <links to="/about/how-it-works">How the round works</links>
         </div>
-        <div class="link-li">
-          <links to="/about/layer-2">Learn about Arbitrum</links>
+        <div class="link-li" v-if="chain.isLayer2">
+          <links to="/about/layer-2">Learn about {{ chain.label }}</links>
         </div>
         <div class="link-li">
           <links to="/about/maci">Learn about MACI</links>
@@ -181,12 +186,16 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 
+import { operator } from '@/api/core'
+import { chain } from '@/api/core'
+import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
-  components: { RoundStatusBanner, TimeLeft, Links },
+  components: { RoundStatusBanner, TimeLeft, Links, ImageResponsive },
 })
 export default class Landing extends Vue {
   get signUpDeadline(): DateTime {
@@ -199,10 +208,18 @@ export default class Landing extends Vue {
       : 'Join Next Round'
   }
 
+  get operator(): string {
+    return operator
+  }
+
   scrollToHowItWorks() {
     document
       .getElementById('section-how-it-works')
       ?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  get chain(): ChainInfo {
+    return chain
   }
 }
 </script>
@@ -309,15 +326,11 @@ ol li::before {
   font-size: 16px;
 }
 
-#arbitrum {
-  background: $clr-pink-dark-gradient-bg;
-}
-
 #bright-id {
   background: $clr-blue-gradient-bg;
 }
 
-#arbitrum-icon,
+#chain-icon,
 #bright-id-icon {
   box-sizing: border-box;
   height: 4rem;
@@ -444,7 +457,7 @@ ol li::before {
   justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
-
+  background: $clr-pink-dark-gradient-bg;
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }

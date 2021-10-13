@@ -7,7 +7,11 @@
       </h3>
       <div class="contribution-form">
         <div class="input-button">
-          <img class="token-icon" height="24px" src="@/assets/dai.svg" />
+          <img
+            class="token-icon"
+            height="24px"
+            :src="require(`@/assets/${tokenLogo}`)"
+          />
           <input
             v-model="amount"
             class="input"
@@ -66,6 +70,7 @@ import { parseFixed } from '@ethersproject/bignumber'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 import { formatAmount } from '@/utils/amounts'
+import { getTokenLogo } from '@/utils/tokens'
 import { formatUnits } from '@ethersproject/units'
 
 import { User } from '@/api/user'
@@ -144,6 +149,10 @@ export default class MatchingFundsModal extends Vue {
 
   get tokenSymbol(): string {
     return this.$store.state.currentRound.nativeTokenSymbol
+  }
+
+  get tokenLogo(): string {
+    return getTokenLogo(this.tokenSymbol)
   }
 
   async contributeMatchingFunds() {

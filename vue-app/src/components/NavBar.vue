@@ -1,18 +1,7 @@
 <template>
   <nav id="nav-bar">
-    <links v-if="!inApp" to="/">
-      <img
-        class="ef-logo"
-        alt="ethereum foundation"
-        src="@/assets/eth-diamond-rainbow.svg"
-      />
-    </links>
-    <links v-else to="/projects">
-      <img
-        class="ef-logo"
-        alt="ethereum foundation"
-        src="@/assets/eth-diamond-rainbow.svg"
-      />
+    <links to="/">
+      <img class="clr-logo" alt="clr fund" src="@/assets/clr.svg" />
     </links>
     <div class="btn-row">
       <a
@@ -42,7 +31,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="desktop"><cart-widget v-if="inApp" /></div> -->
       <wallet-widget class="wallet-widget" v-if="inApp" />
       <links v-if="!inApp" to="/projects" class="app-btn">App</links>
     </div>
@@ -57,6 +45,7 @@ import { Prop } from 'vue-property-decorator'
 import WalletWidget from './WalletWidget.vue'
 import CartWidget from './CartWidget.vue'
 import Links from './Links.vue'
+import { chain } from '@/api/core'
 
 @Component({
   components: { WalletWidget, CartWidget, Links },
@@ -70,13 +59,21 @@ export default class NavBar extends Vue {
     { to: '/about/how-it-works', text: 'How it works', emoji: '⚙️' },
     { to: '/about/maci', text: 'Bribery protection', emoji: '🤑' },
     { to: '/about/sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
-    { to: '/about/layer-2', text: 'Layer 2', emoji: '🚀' },
     {
       to: 'https://github.com/clrfund/monorepo/',
       text: 'Code',
       emoji: '👾',
     },
   ]
+  created() {
+    if (chain.isLayer2) {
+      this.dropdownItems.splice(-1, 0, {
+        to: '/about/layer-2',
+        text: 'Layer 2',
+        emoji: '🚀',
+      })
+    }
+  }
 
   toggleHelpDropdown(): void {
     this.showHelpDowndown = !this.showHelpDowndown
@@ -167,7 +164,7 @@ export default class NavBar extends Vue {
     font-size: 16px;
   }
 
-  .ef-logo {
+  .clr-logo {
     margin: 0;
     height: 2.25rem;
     vertical-align: middle;

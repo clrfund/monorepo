@@ -11,10 +11,9 @@
           </div>
         </div>
         <p>
-          For this pilot round, Ethereum Foundation team members will remove any
-          projects that don't meet the round criteria. So read carefully! In
-          later rounds we're hoping that this review process can be done by the
-          community.
+          For this pilot round, {{ operator }} members will remove any projects
+          that don't meet the round criteria. So read carefully! In later rounds
+          we're hoping that this review process can be done by the community.
         </p>
         <div class="content">
           <div
@@ -41,12 +40,17 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
+
+import { operator } from '@/api/core'
 import { criteria, Criterion } from '@/plugins/round/criteria'
 
 @Component({ components: { Links } })
 export default class CriteriaModal extends Vue {
   get criteria(): Criterion[] {
     return criteria
+
+  get operator(): string {
+    return operator
   }
 }
 </script>

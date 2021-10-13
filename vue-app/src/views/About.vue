@@ -46,12 +46,13 @@
       </li>
       <li>
         Scalability — Because using Ethereum can be expensive for users,
-        clr.fund uses "layer 2" supplementary networks to get most of the
-        benefits of the main Ethereum network but with faster, cheaper
-        transactions.
-        <links to="/about/layer-2"
-          >Learn more about clr.fund's use of layer 2.</links
-        >
+        clr.fund uses
+        {{ chain.isLayer2 ? `"layer 2"` : `"sidechain"` }} supplementary
+        networks to get most of the benefits of the main Ethereum network but
+        with faster, cheaper transactions.
+        <links v-if="chain.isLayer2" to="/about/layer-2">
+          Learn more about clr.fund's use of layer 2.
+        </links>
       </li>
       <li>
         Collusion-resistance — Since blockchains like Ethereum publish all data
@@ -124,7 +125,13 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
+import { chain } from '@/api/core'
+import { ChainInfo } from '@/plugins/Web3/constants/chains'
 
 @Component({ components: { Links } })
-export default class About extends Vue {}
+export default class About extends Vue {
+  get chain(): ChainInfo {
+    return chain
+  }
+}
 </script>

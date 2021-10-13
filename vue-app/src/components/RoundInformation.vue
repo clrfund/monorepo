@@ -2,7 +2,7 @@
   <div class="projects">
     <div class="round-info">
       <div class="image-wrapper">
-        <img src="@/assets/docking.png" height="100%" />
+        <image-responsive title="docking" height="100%" />
       </div>
       <template v-if="currentRound">
         <div class="round">
@@ -284,7 +284,7 @@ import {
   getRecipientRegistryAddress,
   getProjects,
 } from '@/api/projects'
-import { blockExplorer } from '@/api/core'
+import { chain } from '@/api/core'
 
 import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
@@ -293,6 +293,7 @@ import Loader from '@/components/Loader.vue'
 import WalletModal from '@/components/WalletModal.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -327,6 +328,7 @@ function shuffleArray(array: any[]) {
     WalletModal,
     TimeLeft,
     Links,
+    ImageResponsive,
   },
 })
 export default class RoundInformation extends Vue {
@@ -455,7 +457,7 @@ export default class RoundInformation extends Vue {
     if (!this.currentRound) {
       return ''
     }
-    return `${blockExplorer}/address/${this.currentRound.fundingRoundAddress}`
+    return `${chain.explorer}/address/${this.currentRound.fundingRoundAddress}`
   }
 }
 </script>
