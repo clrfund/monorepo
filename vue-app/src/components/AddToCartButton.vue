@@ -2,7 +2,11 @@
   <div>
     <form action="#" v-if="!inCart && canContribute()">
       <div class="input-button">
-        <img class="token-icon" height="24px" src="@/assets/dai.svg" />
+        <img
+          class="token-icon"
+          height="24px"
+          :src="require(`@/assets/${tokenLogo}`)"
+        />
         <input
           class="input"
           name="amount"
@@ -44,7 +48,8 @@ import { User } from '@/api/user'
 import { Project } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { CartItem } from '@/api/contributions'
-import WalletModal from './WalletModal.vue'
+import { getTokenLogo } from '@/utils/tokens'
+import WalletModal from '@/components/WalletModal.vue'
 
 @Component({
   components: {
@@ -54,8 +59,7 @@ import WalletModal from './WalletModal.vue'
 export default class AddToCartButton extends Vue {
   amount = DEFAULT_CONTRIBUTION_AMOUNT
 
-  @Prop()
-  project!: Project
+  @Prop() project!: Project
 
   get currentUser(): User | null {
     return this.$store.state.currentUser
@@ -134,6 +138,11 @@ export default class AddToCartButton extends Vue {
 
   toggleCartPanel() {
     this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
+  }
+
+  get tokenLogo(): string {
+    const { nativeTokenSymbol } = this.$store.state.currentRound
+    return getTokenLogo(nativeTokenSymbol)
   }
 }
 </script>
