@@ -6,12 +6,15 @@
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
-        <img src="@/assets/newrings.png" />
+        <image-responsive title="newrings" />
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>Ready to contribute!</h1>
-            <transaction-receipt :hash="$route.params.hash" />
+            <transaction-receipt
+              v-if="$route.params.hash"
+              :hash="$route.params.hash"
+            />
           </div>
           <div class="subtitle">
             You’re on board this funding round! And fully verified for BrightID
@@ -35,9 +38,16 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import Links from '@/components/Links.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
-  components: { ProgressBar, RoundStatusBanner, Links, TransactionReceipt },
+  components: {
+    ProgressBar,
+    RoundStatusBanner,
+    Links,
+    TransactionReceipt,
+    ImageResponsive,
+  },
 })
 export default class Verified extends Vue {}
 </script>

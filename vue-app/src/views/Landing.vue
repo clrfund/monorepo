@@ -5,7 +5,7 @@
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
-          <img src="@/assets/docking.png" />
+          <image-responsive title="docking" />
         </div>
         <div>
           <div class="hero-content">
@@ -48,10 +48,10 @@
       </div>
       <div id="section-how-it-works">
         <div class="wormhole-wrapper desktop-l">
-          <img
-            src="@/assets/wormhole.png"
-            alt="Image of spaceships funneling through a wormhole and getting bigger"
+          <image-responsive
+            title="wormhole"
             class="wormhole"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
         </div>
         <div id="how-it-works-content">
@@ -60,8 +60,8 @@
             This fundraiser rewards projects with the most unique demand, not
             just those with the wealthiest backers.
           </p>
-          <img
-            src="@/assets/wormhole.png"
+          <image-responsive
+            title="wormhole"
             alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
           <h2>How it works</h2>
@@ -121,10 +121,10 @@
         <div id="about-1">
           <h2>It's not about how much...</h2>
           <p>
-            Using quadratic funding, your donation counts as a vote. Projects
-            with the most votes at the end of the round get the highest amount
-            from the matching pool. That means even a small donation can have a
-            massive impact.
+            Using quadratic funding, your contribution counts as a vote.
+            Projects with the most votes at the end of the round get the highest
+            amount from the matching pool. That means even a small donation can
+            have a massive impact.
           </p>
           <p>
             To learn more about the technology behind this fundraiser, check out
@@ -138,8 +138,8 @@
           <h2>Protect against bribery</h2>
           <p>
             Using MACI, a zero-knowledge technology, it's impossible to prove
-            how you voted. This drives bribers insane because they have no idea
-            whether you actually did what they bribed you to do!
+            how you contributed. This drives bribers insane because they have no
+            idea whether you actually did what they bribed you to do!
           </p>
           <links to="/about/maci">About MACI</links>
         </div>
@@ -191,9 +191,10 @@ import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
-  components: { RoundStatusBanner, TimeLeft, Links },
+  components: { RoundStatusBanner, TimeLeft, Links, ImageResponsive },
 })
 export default class Landing extends Vue {
   get signUpDeadline(): DateTime {

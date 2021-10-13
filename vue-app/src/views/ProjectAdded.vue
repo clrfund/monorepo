@@ -4,7 +4,7 @@
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
-        <img src="@/assets/newrings.png" />
+        <image-responsive title="newrings" />
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
@@ -47,6 +47,7 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { chain } from '@/api/core'
@@ -58,6 +59,7 @@ import { chain } from '@/api/core'
     TransactionReceipt,
     Warning,
     Links,
+    ImageResponsive,
   },
 })
 export default class ProjectAdded extends Vue {

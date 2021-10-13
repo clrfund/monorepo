@@ -172,7 +172,7 @@ const routes = [
     },
   },
   {
-    path: '/verify/success/:hash',
+    path: '/verify/success/:hash?',
     name: 'verified',
     component: Verified,
     meta: {
