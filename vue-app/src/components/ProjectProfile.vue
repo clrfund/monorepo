@@ -31,7 +31,11 @@
       </div>
       <div class="mobile mb2">
         <div class="input-button" v-if="hasContributeBtn() && !inCart">
-          <img class="token-icon" height="24px" src="@/assets/dai.svg" />
+          <img
+            class="token-icon"
+            height="24px"
+            :src="require(`@/assets/${tokenLogo}`)"
+          />
           <input
             v-model="contributionAmount"
             class="input"
@@ -118,10 +122,11 @@ import { DateTime } from 'luxon'
 import { Project } from '@/api/projects'
 import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
-import { blockExplorer } from '@/api/core'
+import { chain } from '@/api/core'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 import { ensLookup } from '@/utils/accounts'
+import { getTokenLogo } from '@/utils/tokens'
 import Info from '@/components/Info.vue'
 import Markdown from '@/components/Markdown.vue'
 import CopyButton from '@/components/CopyButton.vue'
@@ -186,11 +191,16 @@ export default class ProjectProfile extends Vue {
   }
 
   get blockExplorerUrl(): string {
-    return `${blockExplorer}/address/${this.project.address}`
+    return `${chain.explorer}/address/${this.project.address}`
   }
 
   get addressName(): string {
     return this.ens || this.project.address
+  }
+
+  get tokenLogo(): string {
+    const { nativeTokenSymbol } = this.$store.state.currentRound
+    return getTokenLogo(nativeTokenSymbol)
   }
 }
 </script>

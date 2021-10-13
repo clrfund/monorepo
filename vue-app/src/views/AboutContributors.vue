@@ -1,18 +1,26 @@
 <template>
   <div class="about">
     <h1 class="content-heading">Contributor guide</h1>
-    <h2>Get funds on Arbitrum</h2>
+    <h2>Get funds on {{ chain.label }}</h2>
     <p>
-      You'll need some ETH on Arbitrum in order to submit transactions to the
-      clr.fund smart contracts. Follow
-      <links to="https://arbitrum.io/bridge-tutorial/">this tutorial</links> to
-      bridge your funds to Arbitrum
+      You'll need some {{ chain.currency }} on {{ chain.label }} in order to
+      submit transactions to the clr.fund smart contracts.
+      <span v-if="chain.label.includes('Arbitrum')">
+        Follow
+        <links to="https://arbitrum.io/bridge-tutorial/">this tutorial</links>
+        to bridge your funds to {{ chain.label }}
+      </span>
+      <span v-else-if="chain.bridge">
+        Use the
+        <links :to="chain.bridge">{{ chain.label }} bridge</links>
+        to transfer some funds.
+      </span>
     </p>
-    <p>
-      Confused on what Arbitrum is?
-      <links to="/about/layer-2"
-        >Read our explanation on how clr.fund uses layer 2 on Ethereum.</links
-      >
+    <p v-if="chain.isLayer2">
+      Confused on what {{ chain.label }} is?
+      <links to="/about/layer-2">
+        Read our explanation on how clr.fund uses layer 2 on Ethereum.
+      </links>
     </p>
     <h2>Contributing to specific projects</h2>
     <ol>
@@ -24,7 +32,7 @@
       </li>
       <li>
         Make sure you have {{ nativeTokenSymbol }} in your BrightID-verified
-        wallet on the {{ chainLabel }} network
+        wallet on the {{ chain.label }} network
       </li>
       <li>
         <links to="/projects">Browse projects</links> and add some to your cart,
@@ -60,8 +68,9 @@
     <ol>
       <li>
         First make sure the wallet you are using holds
-        {{ nativeTokenSymbol }} on {{ chainLabel }}. {{ nativeTokenSymbol }} can
-        be easily purchased on any major Ethereum-focused exchange.
+        {{ nativeTokenSymbol }} on {{ chain.label }}.
+        {{ nativeTokenSymbol }} can be easily purchased on any major
+        Ethereum-focused exchange.
       </li>
       <li>
         Once you have the desired amount of {{ nativeTokenSymbol }} in your
@@ -83,19 +92,18 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
-
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
+import { chain } from '@/api/core'
+import { ChainInfo } from '@/plugins/Web3/constants/chains'
 
 @Component({ components: { Links } })
 export default class AboutContributors extends Vue {
   get nativeTokenSymbol(): string {
     const { nativeTokenSymbol } = this.$store.state.currentRound
-    return nativeTokenSymbol || 'DAI'
+    return nativeTokenSymbol
   }
 
-  get chainLabel(): string {
-    const chain = CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
-    return chain.label
+  get chain(): ChainInfo {
+    return chain
   }
 }
 </script>

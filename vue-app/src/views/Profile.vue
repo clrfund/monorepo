@@ -42,10 +42,10 @@
       />
       <div class="balances-section">
         <div class="flex-row">
-          <h2>{{ chainInfo.label }} balances</h2>
+          <h2>{{ chain.label }} balances</h2>
           <div
             v-tooltip="{
-              content: `Balance of wallet on ${chainInfo.label} chain`,
+              content: `Balance of wallet on ${chain.label} chain`,
               trigger: 'hover click',
             }"
           >
@@ -53,23 +53,24 @@
           </div>
         </div>
         <div class="balances-card">
-          <balance-item :balance="balance" abbrev="DAI">
+          <balance-item :balance="balance" :abbrev="nativeTokenSymbol">
             <icon-status
-              v-bind:custom="true"
-              logo="dai.svg"
-              :secondaryLogo="chainInfo.logo"
+              :custom="true"
+              :logo="tokenLogo"
+              :secondaryLogo="chain.logo"
               :bg="balanceBackgroundColor"
             />
           </balance-item>
-          <balance-item :balance="etherBalance" abbrev="ETH">
+          <balance-item :balance="etherBalance" :abbrev="chain.currency">
             <icon-status
-              v-bind:custom="true"
+              :custom="true"
               logo="eth.svg"
-              :secondaryLogo="chainInfo.logo"
+              :secondaryLogo="chain.logo"
               :bg="balanceBackgroundColor"
             />
           </balance-item>
         </div>
+        <funds-needed-warning :onNavigate="onNavigateToBridge" />
       </div>
       <div class="projects-section">
         <h2>Projects</h2>
@@ -120,18 +121,29 @@ import IconStatus from '@/components/IconStatus.vue'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Loader from '@/components/Loader.vue'
+import Links from '@/components/Links.vue'
+import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 
 import { LOGOUT_USER } from '@/store/action-types'
 import { User } from '@/api/user'
-import { userRegistryType, UserRegistryType } from '@/api/core'
+import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { Project, getProjects } from '@/api/projects'
-import { CHAIN_INFO, ChainInfo } from '@/plugins/Web3/constants/chains'
+import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import { isSameAddress } from '@/utils/accounts'
+import { getTokenLogo } from '@/utils/tokens'
 
 @Component({
-  components: { BalanceItem, BrightIdWidget, IconStatus, CopyButton, Loader },
+  components: {
+    BalanceItem,
+    BrightIdWidget,
+    IconStatus,
+    CopyButton,
+    Loader,
+    Links,
+    FundsNeededWarning,
+  },
 })
-export default class NavBar extends Vue {
+export default class Profile extends Vue {
   @Prop() balance!: string
   @Prop() etherBalance!: string
   projects: Project[] = []
@@ -156,22 +168,22 @@ export default class NavBar extends Vue {
     return userRegistryType === UserRegistryType.BRIGHT_ID
   }
 
-  get chainInfo(): ChainInfo {
-    return CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+  get chain(): ChainInfo {
+    return chain
+  }
+
+  get nativeTokenSymbol(): string {
+    const { nativeTokenSymbol } = this.$store.state.currentRound
+    return nativeTokenSymbol
+  }
+
+  get tokenLogo(): string {
+    return getTokenLogo(this.nativeTokenSymbol)
   }
 
   get displayAddress(): string | null {
     if (!this.currentUser) return null
     return this.currentUser.ensName ?? this.currentUser.walletAddress
-  }
-
-  async disconnect(): Promise<void> {
-    if (this.currentUser && this.walletProvider) {
-      // Log out user
-      this.$web3.disconnectWallet()
-      this.$store.dispatch(LOGOUT_USER)
-      this.$emit('close')
-    }
   }
 
   private async loadProjects(): Promise<void> {
@@ -193,6 +205,19 @@ export default class NavBar extends Vue {
   navigateToProject(id: string): void {
     this.$emit('close')
     this.$router.push({ name: 'project', params: { id } })
+  }
+
+  onNavigateToBridge(): void {
+    this.$emit('close')
+  }
+
+  async disconnect(): Promise<void> {
+    if (this.currentUser && this.walletProvider) {
+      // Log out user
+      this.$web3.disconnectWallet()
+      this.$store.dispatch(LOGOUT_USER)
+      this.$emit('close')
+    }
   }
 }
 </script>
@@ -336,10 +361,6 @@ p.no-margin {
         transform: scale(1.01);
       }
     }
-
-    /* .setup-card {
-      background: $bg-primary-color;
-    } */
 
     .balances-card {
       padding: 0rem;
