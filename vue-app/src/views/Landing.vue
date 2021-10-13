@@ -9,7 +9,7 @@
         </div>
         <div>
           <div class="hero-content">
-            <h1>Send your favorite Eth2 projects to the moon!</h1>
+            <h1>Send your favorite projects to the moon!</h1>
             <div id="subtitle" class="subtitle">
               Every project you contribute to gets a portion of extra funding.
             </div>
@@ -31,7 +31,7 @@
               <h2>Join the funding round</h2>
               <p>
                 Add your project to the next funding round. If you're working on
-                anything related to Eth2, you can join in.
+                anything related to public goods, you can join in.
               </p>
               <div class="button-group">
                 <links to="/join" class="btn-primary w100">{{
@@ -157,10 +157,10 @@
       <div id="footer">
         <h2>More</h2>
         <div class="link-li">
-          <links to="https://github.com/ethereum/clrfund/">GitHub</links>
+          <links to="https://github.com/clrfund/monorepo/">GitHub</links>
         </div>
         <div class="link-li">
-          <links to="https://ethereum.org/en/eth2/">More on Eth2</links>
+          <links to="https://ethereum.org/">More on Ethereum</links>
         </div>
         <div class="link-li">
           <links to="/about/how-it-works">How the round works</links>

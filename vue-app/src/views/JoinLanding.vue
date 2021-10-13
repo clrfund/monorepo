@@ -128,7 +128,7 @@
       </div>
     </div>
 
-    <criteria-modal v-if="showCriteriaPanel" :toggleCriteria="toggleCriteria" />
+    <criteria-modal v-if="showCriteriaPanel" @close="toggleCriteria" />
   </div>
 </template>
 
