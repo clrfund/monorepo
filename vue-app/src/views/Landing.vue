@@ -116,10 +116,10 @@
         <div id="about-1">
           <h2>It's not about how much...</h2>
           <p>
-            Using quadratic funding, your donation counts as a vote. Projects
-            with the most votes at the end of the round get the highest amount
-            from the matching pool. That means even a small donation can have a
-            massive impact.
+            Using quadratic funding, your contribution counts as a vote.
+            Projects with the most votes at the end of the round get the highest
+            amount from the matching pool. That means even a small donation can
+            have a massive impact.
           </p>
           <p>
             To learn more about the technology behind this fundraiser, check out
@@ -133,8 +133,8 @@
           <h2>Protect against bribery</h2>
           <p>
             Using MACI, a zero-knowledge technology, it's impossible to prove
-            how you voted. This drives bribers insane because they have no idea
-            whether you actually did what they bribed you to do!
+            how you contributed. This drives bribers insane because they have no
+            idea whether you actually did what they bribed you to do!
           </p>
           <links to="/about/maci">About MACI</links>
         </div>
