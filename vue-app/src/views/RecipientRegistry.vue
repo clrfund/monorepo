@@ -109,15 +109,18 @@
               </div> -->
                 <div
                   class="icon-btn-approve"
+                  v-if="
+                    (isOwner || (!isOwner && !isChallengePeriod)) &&
+                    isPending(request)
+                  "
                   @click="approve(request)"
-                  v-if="isPending(request)"
                 >
                   <img src="@/assets/checkmark.svg" />
                 </div>
                 <div
                   class="icon-btn-reject"
+                  v-if="isOwner && isPending(request)"
                   @click="reject(request)"
-                  v-if="isPending(request)"
                 >
                   <img src="@/assets/close.svg" />
                 </div>
@@ -151,7 +154,6 @@ import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
 import { formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
-import { waitForTransaction } from '@/utils/contracts'
 import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import TransactionModal from '@/components/TransactionModal.vue'
@@ -169,6 +171,14 @@ export default class RecipientRegistryView extends Vue {
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
     await this.loadRequests()
     this.isLoading = false
+  }
+
+  get isOwner() {
+    return this.$store.getters.isRecipientRegistryOwner
+  }
+
+  get isChallengePeriod() {
+    return this.$store.getters.isChallengePeriod
   }
 
   get isUserConnected(): boolean {
