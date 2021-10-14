@@ -154,6 +154,7 @@ import { markdown } from '@/utils/markdown'
 import { waitForTransaction } from '@/utils/contracts'
 import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import TransactionModal from '@/components/TransactionModal.vue'
 
 @Component({ components: { Loader, Links } })
 export default class RecipientRegistryView extends Vue {
@@ -251,24 +252,27 @@ export default class RecipientRegistryView extends Vue {
   }
 
   async waitForTransactionAndLoad(transaction) {
-    try {
-      await waitForTransaction(transaction)
-
-      // TODO: this is not ideal. Leaving as is, just because it is an admin
-      // page where no end user is using. We are forcing this 2s time to give
-      // time the subgraph to index the new state from the tx. Perhaps we could
-      // avoid querying the subgraph and query directly the chain to get the
-      // request state.
-      await new Promise((resolve) => {
-        setTimeout(async () => {
-          await this.loadRequests()
-          resolve()
-        }, 2000)
-      })
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.warn(error.message)
-    }
+    this.$modal.show(
+      TransactionModal,
+      {
+        transactionFn: () => transaction,
+        onTxSuccess: async () => {
+          // TODO: this is not ideal. Leaving as is, just because it is an admin
+          // page where no end user is using. We are forcing this 2s time to give
+          // time the subgraph to index the new state from the tx. Perhaps we could
+          // avoid querying the subgraph and query directly the chain to get the
+          // request state.
+          await new Promise((resolve) => {
+            setTimeout(async () => {
+              await this.loadRequests()
+              resolve()
+            }, 2000)
+          })
+        },
+      },
+      {},
+      {}
+    )
   }
 
   async copyAddress(text: string): Promise<void> {
