@@ -126,3 +126,44 @@ export async function deployMaciFactory(
 
   return maciFactory
 }
+
+export async function getMACIFcatoryDeploymentParams(
+  account: Signer,
+  circuit = 'x32',
+  {
+    poseidonT3,
+    poseidonT6,
+    batchUstVerifier,
+    qvtVerifier,
+  }: MaciFactoryDependencies = {}
+): Promise<MaciParameters> {
+  if (!poseidonT3) {
+    const PoseidonT3 = await ethers.getContractFactory(':PoseidonT3', account)
+    poseidonT3 = await PoseidonT3.deploy()
+  }
+  if (!poseidonT6) {
+    const PoseidonT6 = await ethers.getContractFactory(':PoseidonT6', account)
+    poseidonT6 = await PoseidonT6.deploy()
+  }
+  if (!batchUstVerifier) {
+    const BatchUstVerifier = await ethers.getContractFactory(
+      CIRCUITS[circuit].batchUstVerifier,
+      account
+    )
+    batchUstVerifier = await BatchUstVerifier.deploy()
+  }
+  if (!qvtVerifier) {
+    const QvtVerifier = await ethers.getContractFactory(
+      CIRCUITS[circuit].qvtVerifier,
+      account
+    )
+    qvtVerifier = await QvtVerifier.deploy()
+  }
+
+  const maciParameters = new MaciParameters({
+    batchUstVerifier: batchUstVerifier.address,
+    qvtVerifier: qvtVerifier.address,
+    ...CIRCUITS[circuit].treeDepths,
+  })
+  return maciParameters
+}
