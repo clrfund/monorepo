@@ -107,7 +107,7 @@ In a 2nd terminal you will need to run your graph node (more on this
 
 ```sh
 # go to the thegraph repo directory and init the node
-cd thegraph/docker
+cd graph-node/docker
 docker-compose up
 ```
 
