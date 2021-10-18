@@ -890,44 +890,6 @@ export default class JoinView extends mixins(validationMixin) {
         params: { step: steps[this.form.furthestStep] },
       })
     }
-
-    // if (process.env.NODE_ENV === 'development') {
-    //   this.form = {
-    //     project: {
-    //       name: 'CLR.Fund',
-    //       tagline: 'A quadratic funding protocol',
-    //       description:
-    //         '**CLR.fund** is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...\n# Derp\n\nasdfasdfasdf\n\n## Derp\n\nasdfsdasdfsdf\n### Derp\n\nasdfasdfsdaf\n#### Derp\nasdfasdf\n##### Derp',
-    //       category: 'research',
-    //       problemSpace:
-    //         'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
-    //     },
-    //     fund: {
-    //       addressName: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
-    //       plans: 'Create much wow, when lambo?',
-    //       resolvedAddress: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
-    //     },
-    //     team: {
-    //       name: 'clr.fund',
-    //       description: 'clr.fund team **rules**',
-    //       email: 'doge@goodboi.com',
-    //     },
-    //     links: {
-    //       github: '',
-    //       radicle: '',
-    //       website: 'https://clr.fund',
-    //       twitter: '',
-    //       discord: '',
-    //     },
-    //     image: {
-    //       bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    //       thumbnailHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    //     },
-    //     furthestStep: 6,
-    //     hasEns: false,
-    //   }
-    //   this.saveFormData()
-    // }
   }
 
   handleToggleTab(event): void {
