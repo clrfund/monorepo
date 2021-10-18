@@ -122,16 +122,12 @@
           <h2>It's not about how much...</h2>
           <p>
             Using quadratic funding, your contribution counts as a vote.
-            Projects with the most votes at the end of the round get the highest
-            amount from the matching pool. That means even a small donation can
-            have a massive impact.
+            Projects with the most contributions at the end of the round get the
+            highest amount from the matching pool. That means even a small
+            donation can have a massive impact.
           </p>
           <p>
-            To learn more about the technology behind this fundraiser, check out
-            this primer.
-          </p>
-          <p>
-            <links to="https://wtfisqf.com/">WTF is QF?</links>
+            <links to="/about/quadratic-funding">About quadratic funding</links>
           </p>
         </div>
         <div id="about-2">
@@ -150,32 +146,38 @@
             goods that benefit the Ethereum Network according to the prefences
             of the Ethereum Community.
           </p>
-          <p><!-- Discussion icon --><links to="#">clr.fund forum</links></p>
-          <p><!-- GitHub icon --><links to="#">Fork your own CLR</links></p>
+          <links to="/about">About clr.fund</links>
         </div>
       </div>
       <div id="footer">
         <h2>More</h2>
         <div class="link-li">
-          <links to="https://github.com/clrfund/monorepo/">GitHub</links>
-        </div>
-        <div class="link-li">
-          <links to="https://ethereum.org/">More on Ethereum</links>
+          <links to="/about">About clr.fund</links>
         </div>
         <div class="link-li">
           <links to="/about/how-it-works">How the round works</links>
         </div>
         <div class="link-li" v-if="chain.isLayer2">
-          <links to="/about/layer-2">Learn about {{ chain.label }}</links>
+          <links to="/about/layer-2">About {{ chain.label }}</links>
         </div>
         <div class="link-li">
-          <links to="/about/maci">Learn about MACI</links>
+          <links to="/about/maci">About MACI</links>
         </div>
         <div class="link-li">
-          <links to="/about/sybil-resistance">Learn about BrightID</links>
+          <links to="/about/sybil-resistance">About BrightID</links>
         </div>
-        <!-- TODO add link - where are we sending people? clr.fund Discord? -->
-        <div class="link-li">Provide Feedback</div>
+        <div class="link-li">
+          <links to="https://github.com/clrfund/monorepo/">GitHub</links>
+        </div>
+        <div class="link-li">
+          <links to="https://discord.gg/ZnsYPV6dCv">Discord</links>
+        </div>
+        <div class="link-li">
+          <links to="https://forum.clr.fund/">Forum</links>
+        </div>
+        <div class="link-li">
+          <links to="https://ethereum.org/">More on Ethereum</links>
+        </div>
       </div>
     </div>
   </div>
