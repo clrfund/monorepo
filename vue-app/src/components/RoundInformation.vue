@@ -2,12 +2,12 @@
   <div class="projects">
     <div class="round-info">
       <div class="image-wrapper">
-        <img src="@/assets/docking.png" height="100%" />
+        <image-responsive title="docking" height="100%" />
       </div>
       <template v-if="currentRound">
         <div class="round">
           <div class="round-title-bar">
-            <h2 class="round-title">Eth2 CLR</h2>
+            <h2 class="round-title">CLR.fund</h2>
             <v-popover class="verified-container">
               <div class="verified">
                 <img src="@/assets/verified.svg" />
@@ -17,7 +17,9 @@
                   <div class="contract-address">
                     {{ currentRound.fundingRoundAddress }}
                   </div>
-                  <links :to="blockExplorerUrl">View on Etherscan</links>
+                  <links :to="blockExplorer.url"
+                    >View on {{ blockExplorer.label }}</links
+                  >
                 </div>
               </template>
             </v-popover>
@@ -36,6 +38,18 @@
             <div class="circle closed" />
             Closed
           </div>
+        </div>
+        <div v-if="isMaxMessagesReached" class="round-notice hidden">
+          <span class="bold-all-caps">
+            <p>The round is officially closed</p>
+          </span>
+          <p>
+            It's now too late to contribute or reallocate your donations! Due to
+            the community's generosity and some technical constraints we had to
+            close the round earlier than expected. You can still help by
+            donating to the matching pool.
+          </p>
+          <div class="dismiss-btn" @click="toggleNotice">Great!</div>
         </div>
         <div class="round-info-item" v-if="$store.getters.isRoundJoinOnlyPhase">
           <div class="full-width">
@@ -284,8 +298,9 @@ import {
   getRecipientRegistryAddress,
   getProjects,
 } from '@/api/projects'
-import { blockExplorer } from '@/api/core'
+import { chain } from '@/api/core'
 
+import { lsGet, lsSet } from '@/utils/localStorage'
 import { formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
@@ -293,6 +308,7 @@ import Loader from '@/components/Loader.vue'
 import WalletModal from '@/components/WalletModal.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
+import ImageResponsive from '@/components/ImageResponsive.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -327,6 +343,7 @@ function shuffleArray(array: any[]) {
     WalletModal,
     TimeLeft,
     Links,
+    ImageResponsive,
   },
 })
 export default class RoundInformation extends Vue {
@@ -360,6 +377,13 @@ export default class RoundInformation extends Vue {
       this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
     }
     await this.loadProjects()
+
+    // Message cap notice defaults with `hidden` class
+    // If it hasn't been dismissed yet, this class is toggled off until dismissed
+    const showNotice = !lsGet(this.lsIsNoticeHiddenKey, false)
+    if (showNotice) {
+      this.toggleNotice()
+    }
     this.isLoading = false
   }
 
@@ -378,6 +402,24 @@ export default class RoundInformation extends Vue {
 
   get currentRound(): RoundInfo | null {
     return this.$store.state.currentRound
+  }
+
+  get isMaxMessagesReached(): boolean {
+    return this.$store.getters.isMessageLimitReached
+  }
+
+  // Gets local storage key to look up if user has dismissed round notice (if message cap exceeded)
+  // Key specific to each round via round address
+  get lsIsNoticeHiddenKey(): string {
+    return `${this.currentRound?.fundingRoundAddress}.is-notice-hidden`
+  }
+
+  toggleNotice() {
+    const elements = document.getElementsByClassName('round-notice')
+    for (let i = 0; i < elements.length; i++) {
+      elements[i].classList.toggle('hidden')
+    }
+    lsSet(this.lsIsNoticeHiddenKey, !lsGet(this.lsIsNoticeHiddenKey))
   }
 
   get formatTotalInRound(): string {
@@ -451,11 +493,11 @@ export default class RoundInformation extends Vue {
     )
   }
 
-  get blockExplorerUrl(): string {
-    if (!this.currentRound) {
-      return ''
+  get blockExplorer(): { label: string; url: string } {
+    return {
+      label: chain.explorerLabel,
+      url: `${chain.explorer}/address/${this.currentRound?.fundingRoundAddress}`,
     }
-    return `${blockExplorer}/address/${this.currentRound.fundingRoundAddress}`
   }
 }
 </script>
@@ -763,5 +805,30 @@ export default class RoundInformation extends Vue {
 
 .full-width {
   width: 100%;
+}
+
+.round-notice {
+  background: $warning-color-bg;
+  border: 1px solid $warning-color;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem 1rem;
+  color: $warning-color;
+  font-size: 14px;
+  line-height: 150%;
+  font-weight: 500;
+  .bold-all-caps {
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .dismiss-btn {
+    @include button($warning-color, none, 1px solid $warning-color);
+    margin: 0 auto;
+    width: fit-content;
+    padding: 0.25rem 1.25rem;
+  }
+}
+
+.hidden {
+  display: none;
 }
 </style>

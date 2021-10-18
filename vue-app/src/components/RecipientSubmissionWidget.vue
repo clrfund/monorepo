@@ -24,7 +24,7 @@
         <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
           Something failed: {{ txError }}<br />
-          Check your wallet or Etherscan for more info.
+          Check your wallet or {{ blockExplorerLabel }} for more info.
         </div>
         <div v-if="isTxRejected" class="warning-text">
           You rejected the transaction in your wallet
@@ -84,10 +84,12 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber } from 'ethers'
+import { Web3Provider } from '@ethersproject/providers'
+import { DateTime } from 'luxon'
 import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import { addRecipient } from '@/api/recipient-registry-optimistic'
 import { User } from '@/api/user'
-import { Web3Provider } from '@ethersproject/providers'
+import { chain } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
@@ -96,7 +98,6 @@ import WalletWidget from '@/components/WalletWidget.vue'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction } from '@/utils/contracts'
 import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
 @Component({
   components: {
@@ -130,6 +131,9 @@ export default class RecipientSubmissionWidget extends Vue {
     return this.$web3.provider
   }
 
+  get blockExplorerLabel(): string {
+    return chain.explorerLabel
+  }
   get canSubmit(): boolean {
     return (
       !!this.currentUser &&
@@ -178,13 +182,9 @@ export default class RecipientSubmissionWidget extends Vue {
     return '-'
   }
 
-  get chainLabel(): string {
-    const chain = CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
-    return chain.label
-  }
-
   private async addRecipient() {
     const {
+      currentRound,
       currentUser,
       recipient,
       recipientRegistryAddress,
@@ -204,6 +204,13 @@ export default class RecipientSubmissionWidget extends Vue {
       currentUser
     ) {
       try {
+        if (DateTime.now() >= currentRound.votingDeadline) {
+          this.$router.push({
+            name: 'join',
+          })
+          throw { message: 'round over' }
+        }
+
         await waitForTransaction(
           addRecipient(
             recipientRegistryAddress,

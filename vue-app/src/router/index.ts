@@ -35,7 +35,7 @@ const routes = [
     name: 'landing',
     component: Landing,
     meta: {
-      title: 'Eth2 clr.fund',
+      title: 'Clr.fund',
     },
   },
   {
@@ -172,7 +172,7 @@ const routes = [
     },
   },
   {
-    path: '/verify/success/:hash',
+    path: '/verify/success/:hash?',
     name: 'verified',
     component: Verified,
     meta: {

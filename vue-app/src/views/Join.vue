@@ -415,7 +415,7 @@
                 <input
                   id="links-website"
                   type="link"
-                  placeholder="example: https://ethereum.foundation"
+                  placeholder="example: https://clr.fund"
                   v-model.lazy="$v.form.links.website.$model"
                   :class="{
                     input: true,
@@ -553,8 +553,8 @@
                   <h4 class="read-only-title">Ethereum address</h4>
                   <div class="data break-all">
                     {{ form.fund.addressName }}
-                    <links :to="blockExplorerUrl" class="no-break">
-                      View on Etherscan
+                    <links :to="blockExplorer.url" class="no-break">
+                      View on {{ blockExplorer.label }}
                     </links>
                   </div>
                   <div
@@ -755,7 +755,7 @@ import {
   formToProjectInterface,
 } from '@/api/recipient-registry-optimistic'
 import { Project } from '@/api/projects'
-import { blockExplorer } from '@/api/core'
+import { chain } from '@/api/core'
 
 @Component({
   components: {
@@ -903,8 +903,9 @@ export default class JoinView extends mixins(validationMixin) {
     //         'There is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.',
     //     },
     //     fund: {
-    //       address: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
+    //       addressName: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
     //       plans: 'Create much wow, when lambo?',
+    //       resolvedAddress: '0x4351f1F0eEe77F0102fF70D5197cCa7aa6c91EA2',
     //     },
     //     team: {
     //       name: 'clr.fund',
@@ -922,7 +923,8 @@ export default class JoinView extends mixins(validationMixin) {
     //       bannerHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
     //       thumbnailHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
     //     },
-    //     furthestStep: 5,
+    //     furthestStep: 6,
+    //     hasEns: false,
     //   }
     //   this.saveFormData()
     // }
@@ -1018,8 +1020,11 @@ export default class JoinView extends mixins(validationMixin) {
     return this.form.furthestStep
   }
 
-  get blockExplorerUrl(): string {
-    return `${blockExplorer}/address/${this.form.fund.resolvedAddress}`
+  get blockExplorer(): { label: string; url: string } {
+    return {
+      label: chain.explorerLabel,
+      url: `${chain.explorer}/address/${this.form.fund.resolvedAddress}`,
+    }
   }
 
   async checkEns(): Promise<void> {

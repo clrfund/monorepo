@@ -41,7 +41,11 @@
       </div>
       <div v-if="isEditMode" class="contribution-form">
         <div class="input-button">
-          <img class="token-icon" height="24px" src="@/assets/dai.svg" />
+          <img
+            class="token-icon"
+            height="24px"
+            :src="require(`@/assets/${tokenLogo}`)"
+          />
           <input
             :value="item.amount"
             @input="updateAmount(item, $event.target.value)"
@@ -64,6 +68,7 @@ import { Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
 import { CartItem, MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
+import { getTokenLogo } from '@/utils/tokens'
 import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { SAVE_CART } from '@/store/action-types'
 import Links from '@/components/Links.vue'
@@ -128,8 +133,12 @@ export default class extends Vue {
   }
 
   get tokenSymbol(): string {
-    const currentRound = this.$store.state.currentRound
-    return currentRound ? currentRound.nativeTokenSymbol : ''
+    const { nativeTokenSymbol } = this.$store.state.currentRound
+    return nativeTokenSymbol
+  }
+
+  get tokenLogo(): string {
+    return getTokenLogo(this.tokenSymbol)
   }
 }
 </script>

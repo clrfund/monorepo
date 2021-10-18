@@ -1,30 +1,29 @@
 <template>
   <div class="wrapper">
-    <div class="modal-background" @click="toggleCriteria" />
+    <div class="modal-background" @click="$emit('close')" />
     <div class="container">
       <div>
         <div class="flex-row">
           <h2>Round criteria</h2>
-          <div class="close-btn" @click="toggleCriteria">
+          <div class="close-btn" @click="$emit('close')">
             <p class="no-margin">Close</p>
             <img src="@/assets/close.svg" />
           </div>
         </div>
         <p>
-          For this pilot round, Ethereum Foundation team members will remove any
-          projects that don't meet the round criteria. So read carefully! In
-          later rounds we're hoping that this review process can be done by the
-          community.
+          For this pilot round, {{ operator }} members will remove any projects
+          that don't meet the round criteria. So read carefully! In later rounds
+          we're hoping that this review process can be done by the community.
         </p>
         <div class="content">
           <div
-            v-for="({ emoji, criteria, description }, idx) in criterion"
+            v-for="({ emoji, criterion, description }, idx) in criteria"
             :key="idx"
-            class="criteria-point"
+            class="criterion-point"
           >
             <div class="emoji" aria-hidden="true">{{ emoji }}</div>
             <div>
-              <h3 class="no-margin">{{ criteria }}</h3>
+              <h3 class="no-margin">{{ criterion }}</h3>
               <p class="no-margin">{{ description }}</p>
             </div>
           </div>
@@ -40,50 +39,20 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
 import Links from '@/components/Links.vue'
+
+import { operator } from '@/api/core'
+import { criteria, Criterion } from '@/plugins/round/criteria'
 
 @Component({ components: { Links } })
 export default class CriteriaModal extends Vue {
-  @Prop() toggleCriteria!: () => void
+  get criteria(): Criterion[] {
+    return criteria
+  }
 
-  criterion = [
-    {
-      emoji: '💰',
-      criteria: 'Related to Eth2 and staking',
-      description: 'Your project must support Ethereum staking/validating.',
-    },
-    {
-      emoji: '🤲',
-      criteria: 'Free and open source',
-      description:
-        'Your project code must be available to anyone to use under an open source license.',
-    },
-    {
-      emoji: '👺',
-      criteria: 'No scams',
-      description:
-        "Obviously, your project must not put anyone's funds or information at risk.",
-    },
-    {
-      emoji: '👯‍♀️',
-      criteria: 'No clones',
-      description:
-        "If you've forked code, you must provide additional, unique value to the ecosystem.",
-    },
-    {
-      emoji: '🙋‍♀️',
-      criteria: 'Project ownership',
-      description:
-        'The project must be yours or you must have permission from the project owner.',
-    },
-    {
-      emoji: '💻',
-      criteria: 'No clients',
-      description:
-        'Client teams are so important but this round of funding is focused on supporting other parts of the ecosystem.',
-    },
-  ]
+  get operator(): string {
+    return operator
+  }
 }
 </script>
 
@@ -162,7 +131,7 @@ export default class CriteriaModal extends Vue {
     }
   }
 
-  .criteria-point {
+  .criterion-point {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
