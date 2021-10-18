@@ -336,15 +336,4 @@ export default class ContributionModal extends Vue {
   box-shadow: $box-shadow;
   padding: 1.5rem;
 }
-
-.close-btn {
-  margin-top: $modal-space;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
 </style>

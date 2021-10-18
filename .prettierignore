@@ -16,6 +16,8 @@ vetur.config.js
 
 # local generated file
 contracts/state.json
+contracts/tally.json
+contracts/proofs.json
 
 # local env files
 .env

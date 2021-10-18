@@ -16,15 +16,14 @@
           :project="project"
         />
         <claim-button :project="project" />
-        <button
-          class="donate-btn-full"
+        <p
           v-if="
             $store.getters.hasUserContributed &&
             !$store.getters.canUserReallocate
           "
         >
-          <span>Contributed!</span>
-        </button>
+          ✔️ You have contributed to this project!
+        </p>
       </div>
       <link-box :project="project" />
     </div>

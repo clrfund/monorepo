@@ -24,6 +24,5 @@ export async function isFundsClaimed(
     recipientAddress,
   })
 
-  return !!data.fundingRound?.recipientRegistry?.recipients?.[0]?.donations
-    ?.length
+  return !!data.donations.length
 }

@@ -1,22 +1,21 @@
 <template>
-  <button
-    v-if="hasClaimBtn()"
-    class="btn-primary"
-    :disabled="!canClaim()"
-    @click="claim()"
-  >
-    <template v-if="claimed">
-      Received {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-    </template>
-    <template v-else>
+  <div>
+    <p v-if="claimed">
+      ✔️ {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }} claimed
+    </p>
+    <button
+      v-if="hasClaimBtn() && !claimed"
+      class="btn-action"
+      :disabled="!canClaim()"
+      @click="claim()"
+    >
       Claim {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
-    </template>
-  </button>
+    </button>
+  </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { FixedNumber } from 'ethers'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
@@ -27,8 +26,10 @@ import ClaimModal from '@/components/ClaimModal.vue'
 import { markdown } from '@/utils/markdown'
 import { formatAmount } from '@/utils/amounts'
 
+@Component
 export default class ClaimButton extends Vue {
   @Prop() project!: Project
+
   allocatedAmount: FixedNumber | null = null
   claimed: boolean | null = null
   isLoading = true
@@ -58,7 +59,7 @@ export default class ClaimButton extends Vue {
     )
     this.claimed = await isFundsClaimed(
       currentRound.fundingRoundAddress,
-      this.project.id
+      this.project.address
     )
   }
 
@@ -93,13 +94,14 @@ export default class ClaimButton extends Vue {
   claim() {
     this.$modal.show(
       ClaimModal,
-      { project: this.project },
-      {},
       {
-        closed: () => {
-          this.checkAllocation(this.$store.state.tally)
+        project: this.project,
+        claimed: () => {
+          // Optimistically update the claimed state
+          this.claimed = true
         },
-      }
+      },
+      {}
     )
   }
 

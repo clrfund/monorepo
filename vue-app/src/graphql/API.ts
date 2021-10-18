@@ -2346,14 +2346,16 @@ export type GetRecipientQueryVariables = Exact<{
 export type GetRecipientQuery = { __typename?: 'Query', recipientRegistry: Maybe<{ __typename?: 'RecipientRegistry', recipients: Maybe<Array<{ __typename?: 'Recipient', id: string, requestType: Maybe<string>, recipientAddress: Maybe<any>, recipientMetadata: Maybe<string>, submissionTime: Maybe<string>, rejected: Maybe<boolean>, verified: Maybe<boolean> }>> }> };
 
 export type GetRecipientDonationsQueryVariables = Exact<{
-  fundingRoundAddress: Scalars['ID'];
-  recipientAddress: Scalars['ID'];
+  fundingRoundAddress: Scalars['String'];
+  recipientAddress: Scalars['String'];
 }>;
 
 
-export type GetRecipientDonationsQuery = { __typename?: 'Query', fundingRound: Maybe<{ __typename?: 'FundingRound', recipientRegistry: Maybe<{ __typename?: 'RecipientRegistry', recipients: Maybe<Array<{ __typename?: 'Recipient', donations: Maybe<Array<{ __typename?: 'Donation', id: string }>> }>> }> }> };
+export type GetRecipientDonationsQuery = { __typename?: 'Query', donations: Array<{ __typename?: 'Donation', id: string }> };
 
-export type GetRecipientsQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetRecipientsQueryVariables = Exact<{
+  registryAddress: Scalars['String'];
+}>;
 
 
 export type GetRecipientsQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, recipientIndex: Maybe<any>, requestType: Maybe<string>, requester: Maybe<string>, recipientAddress: Maybe<any>, recipientMetadata: Maybe<string>, requestSubmittedHash: Maybe<any>, requestResolvedHash: Maybe<any>, submissionTime: Maybe<string>, rejected: Maybe<boolean>, verified: Maybe<boolean> }> };
@@ -2426,21 +2428,17 @@ export const GetRecipientDocument = gql`
 }
     `;
 export const GetRecipientDonationsDocument = gql`
-    query GetRecipientDonations($fundingRoundAddress: ID!, $recipientAddress: ID!) {
-  fundingRound(id: $fundingRoundAddress) {
-    recipientRegistry {
-      recipients(where: {id: $recipientAddress}) {
-        donations {
-          id
-        }
-      }
-    }
+    query GetRecipientDonations($fundingRoundAddress: String!, $recipientAddress: String!) {
+  donations(
+    where: {fundingRound: $fundingRoundAddress, recipient: $recipientAddress}
+  ) {
+    id
   }
 }
     `;
 export const GetRecipientsDocument = gql`
-    query GetRecipients {
-  recipients {
+    query GetRecipients($registryAddress: String!) {
+  recipients(where: {recipientRegistry: $registryAddress}) {
     id
     recipientIndex
     requestType
@@ -2497,7 +2495,7 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     GetRecipientDonations(variables: GetRecipientDonationsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientDonationsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientDonationsQuery>(GetRecipientDonationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientDonations');
     },
-    GetRecipients(variables?: GetRecipientsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientsQuery> {
+    GetRecipients(variables: GetRecipientsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientsQuery>(GetRecipientsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipients');
     },
     GetRounds(variables?: GetRoundsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRoundsQuery> {

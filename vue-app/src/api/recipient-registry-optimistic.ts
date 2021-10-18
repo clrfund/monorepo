@@ -142,9 +142,12 @@ export interface Request {
 }
 
 export async function getRequests(
-  registryInfo: RegistryInfo
+  registryInfo: RegistryInfo,
+  registryAddress: string
 ): Promise<Request[]> {
-  const data = await sdk.GetRecipients()
+  const data = await sdk.GetRecipients({
+    registryAddress: registryAddress.toLowerCase(),
+  })
 
   if (!data.recipients?.length) {
     return []
@@ -339,7 +342,9 @@ export async function getProjects(
   startTime?: number,
   endTime?: number
 ): Promise<Project[]> {
-  const data = await sdk.GetRecipients()
+  const data = await sdk.GetRecipients({
+    registryAddress: registryAddress.toLowerCase(),
+  })
 
   if (!data.recipients?.length) {
     return []
