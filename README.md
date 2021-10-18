@@ -88,6 +88,38 @@ husky - Git hooks installed
 cp contracts/.env.example contracts/.env    # adjust if necessary
 ```
 
+### Copy env for the webapp
+
+```sh
+cp vue-app/.env.example vue-app/.env    # adjust if necessary
+```
+
+## Start the frontend app in development mode (hot-code reloading, error reporting, etc.)
+
+In one terminal, init the hardhat node
+
+```sh
+yarn start:node
+```
+
+In a 2nd terminal you will need to run your graph node (more on this
+[here](docs/subgraph.md))
+
+```sh
+# go to the thegraph repo directory and init the node
+cd graph-node/docker
+docker-compose up
+```
+
+And finally, in a 3rd terminal
+
+```sh
+# this will complie and deploy the contracts + deploy the subgraph + build and run the vue app
+yarn start:dev
+```
+
+## Other useful scripts
+
 #### Compile the contracts
 
 ```sh
@@ -98,31 +130,6 @@ yarn build:contracts
 
 ```sh
 yarn test
-```
-
-#### Start the frontend app in development mode (hot-code reloading, error reporting, etc.)
-
-```sh
-yarn start:node
-```
-
-in a 2nd terminal
-
-```sh
-cp vue-app/.env.example vue-app/.env    # adjust if necessary
-yarn start:dev
-```
-
-and in a 3rd terminal you will need to run your graph node (more on this
-[here](docs/subgraph.md)) and deploy the subgraph
-
-```sh
-# init the graph node
-cd thegraph/docker
-docker-compose up
-
-# from a diff terminal build and deploy the subgraph
-yarn start:subgraph
 ```
 
 #### Start the frontend sans a local blockchain
@@ -137,7 +144,7 @@ yarn start:web
 yarn lint
 ```
 
-### Git hooks
+## Git hooks
 
 #### Pre-commit
 
