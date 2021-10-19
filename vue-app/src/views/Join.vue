@@ -291,10 +291,10 @@
             <h2 class="step-title">Team details</h2>
             <p>Tell us about the folks behind your project.</p>
             <div class="inputs">
-              <div class="form-background">
-                <label for="team-email" class="input-label"
-                  >Contact email</label
-                >
+              <div v-if="isEmailRequired" class="form-background">
+                <label for="team-email" class="input-label">
+                  Contact email
+                </label>
                 <p class="input-description">
                   For important updates about your project and the funding
                   round.
@@ -577,7 +577,7 @@
                     >Edit <img width="16px" src="@/assets/edit.svg"
                   /></links>
                 </div>
-                <div class="summary">
+                <div v-if="isEmailRequired" class="summary">
                   <h4 class="read-only-title">Contact email</h4>
                   <div class="data">{{ form.team.email }}</div>
                   <div class="input-notice">
@@ -797,7 +797,9 @@ import { chain } from '@/api/core'
         description: {},
         email: {
           email,
-          required,
+          required: process.env.VUE_APP_GOOGLE_SPREADSHEET_ID
+            ? required
+            : () => true,
         },
       },
       links: {
@@ -890,6 +892,10 @@ export default class JoinView extends mixins(validationMixin) {
         params: { step: steps[this.form.furthestStep] },
       })
     }
+  }
+
+  get isEmailRequired(): boolean {
+    return !!process.env.VUE_APP_GOOGLE_SPREADSHEET_ID
   }
 
   handleToggleTab(event): void {

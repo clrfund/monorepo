@@ -222,13 +222,15 @@ export default class RecipientSubmissionWidget extends Vue {
         )
 
         // Send application data to a Google Spreadsheet
-        await fetch('/.netlify/functions/recipient', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(recipient),
-        })
+        if (process.env.VUE_APP_GOOGLE_SPREADSHEET_ID) {
+          await fetch('/.netlify/functions/recipient', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(recipient),
+          })
+        }
 
         this.$store.commit(RESET_RECIPIENT_DATA)
       } catch (error) {

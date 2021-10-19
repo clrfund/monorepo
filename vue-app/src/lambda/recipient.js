@@ -48,7 +48,7 @@ exports.handler = async function (event) {
     const recipient = JSON.parse(event.body)
 
     const creds = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS)
-    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
+    const doc = new GoogleSpreadsheet(process.env.VUE_APP_GOOGLE_SPREADSHEET_ID)
     await doc.useServiceAccountAuth(creds)
 
     await doc.loadInfo()
