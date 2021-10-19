@@ -110,7 +110,7 @@
                 <div
                   class="icon-btn-approve"
                   v-if="
-                    (isOwner || (!isOwner && !isChallengePeriod)) &&
+                    (isOwner || (!isOwner && isChallengePeriodOver(request))) &&
                     isPending(request)
                   "
                   @click="approve(request)"
@@ -177,10 +177,6 @@ export default class RecipientRegistryView extends Vue {
     return this.$store.getters.isRecipientRegistryOwner
   }
 
-  get isChallengePeriod() {
-    return this.$store.getters.isChallengePeriod
-  }
-
   get isUserConnected(): boolean {
     return !!this.$store.state.currentUser
   }
@@ -227,6 +223,10 @@ export default class RecipientRegistryView extends Vue {
       request.type === RequestType.Registration &&
       request.status === RequestStatus.Executed
     )
+  }
+
+  isChallengePeriodOver(request: Request): boolean {
+    return Date.now() > request.acceptanceDate.toMillis()
   }
 
   async approve(request: Request): Promise<void> {
