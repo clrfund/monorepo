@@ -186,7 +186,7 @@ export async function getRequests(
     const request: Request = {
       transactionHash:
         recipient.requestResolvedHash || recipient.requestSubmittedHash,
-      type: RequestType[requestType],
+      type: RequestType[RequestTypeCode[requestType]],
       status: RequestStatus.Submitted,
       acceptanceDate,
       recipientId: recipient.id,
