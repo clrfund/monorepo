@@ -6,16 +6,16 @@ import { gtcrDecode } from '@kleros/gtcr-encoder'
 const ipfsGatewayUrl = 'https://ipfs.io/'
 
 interface Project {
-  id: string;
-  name: string;
-  index: number;
-  result?: number;
-  spent?: number;
+  id: string
+  name: string
+  index: number
+  result?: number
+  spent?: number
 }
 
 interface TcrColumn {
-  label: string;
-  type: string;
+  label: string
+  type: string
 }
 
 function decodeRecipientAdded(event: Event, columns: TcrColumn[]): Project {
@@ -35,24 +35,21 @@ function decodeRecipientAdded(event: Event, columns: TcrColumn[]): Project {
 async function main() {
   const fundingRound = await ethers.getContractAt(
     'FundingRound',
-    process.env.ROUND_ADDRESS as string,
+    process.env.ROUND_ADDRESS as string
   )
   const startBlock = await fundingRound.startBlock()
   const maci = await ethers.getContractAt('MACI', await fundingRound.maci())
   const signUpDuration = await maci.signUpDurationSeconds()
   const votingDuration = await maci.votingDurationSeconds()
-  const endBlock = startBlock.add((signUpDuration.add(votingDuration)).div(15))
+  const endBlock = startBlock.add(signUpDuration.add(votingDuration).div(15))
   const tallyHash = await fundingRound.tallyHash()
   const tallyResponse = await fetch(`${ipfsGatewayUrl}/ipfs/${tallyHash}`)
   const tally = await tallyResponse.json()
   const registry = await ethers.getContractAt(
     'KlerosGTCRAdapter',
-    await fundingRound.recipientRegistry(),
+    await fundingRound.recipientRegistry()
   )
-  const tcr = await ethers.getContractAt(
-    'KlerosGTCRMock',
-    await registry.tcr(),
-  )
+  const tcr = await ethers.getContractAt('KlerosGTCRMock', await registry.tcr())
   const metaEvidenceFilter = tcr.filters.MetaEvidence()
   const metaEvidenceEvents = await tcr.queryFilter(metaEvidenceFilter, 0)
   const regMetaEvidenceEvent = metaEvidenceEvents[metaEvidenceEvents.length - 2]
@@ -61,9 +58,15 @@ async function main() {
   const tcrData = await tcrDataResponse.json()
   const tcrColumns = tcrData.metadata.columns
   const recipientAddedFilter = registry.filters.RecipientAdded()
-  const recipientAddedEvents = await registry.queryFilter(recipientAddedFilter, 0)
+  const recipientAddedEvents = await registry.queryFilter(
+    recipientAddedFilter,
+    0
+  )
   const recipientRemovedFilter = registry.filters.RecipientRemoved()
-  const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
+  const recipientRemovedEvents = await registry.queryFilter(
+    recipientRemovedFilter,
+    0
+  )
   const projects: Project[] = []
   for (const event of recipientAddedEvents) {
     const project = decodeRecipientAdded(event, tcrColumns)
@@ -77,7 +80,9 @@ async function main() {
       continue
     }
     project.result = parseInt(tally.results.tally[project.index])
-    project.spent = parseInt(tally.totalVoiceCreditsPerVoteOption.tally[project.index])
+    project.spent = parseInt(
+      tally.totalVoiceCreditsPerVoteOption.tally[project.index]
+    )
     projects.push(project)
   }
   console.log(JSON.stringify(projects))
@@ -85,7 +90,7 @@ async function main() {
 
 main()
   .then(() => process.exit(0))
-  .catch(error => {
+  .catch((error) => {
     console.error(error)
     process.exit(1)
   })

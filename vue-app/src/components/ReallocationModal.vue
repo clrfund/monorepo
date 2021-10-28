@@ -6,12 +6,14 @@
         :hash="voteTxHash"
         :error="voteTxError"
         @close="$emit('close')"
+        @retry="
+          () => {
+            this.voteTxError = ''
+            vote()
+          }
+        "
+        :displayRetryBtn="true"
       ></transaction>
-    </div>
-    <div v-if="step === 2">
-      <h3>Success!</h3>
-      <div>Contributed funds have been successfully reallocated.</div>
-      <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
   </div>
 </template>
@@ -24,6 +26,7 @@ import { BigNumber, Contract } from 'ethers'
 import { PubKey, Message } from 'maci-domainobjs'
 
 import Transaction from '@/components/Transaction.vue'
+import { SAVE_COMMITTED_CART_DISPATCH } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
@@ -35,7 +38,6 @@ import { FundingRound } from '@/api/abi'
   },
 })
 export default class ReallocationModal extends Vue {
-
   @Prop()
   votes!: [number, BigNumber][]
 
@@ -51,7 +53,8 @@ export default class ReallocationModal extends Vue {
   private async vote() {
     const signer = this.$store.state.currentUser.walletProvider.getSigner()
     const contributor = this.$store.state.contributor
-    const { coordinatorPubKey, fundingRoundAddress } = this.$store.state.currentRound
+    const { coordinatorPubKey, fundingRoundAddress } =
+      this.$store.state.currentRound
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
     const messages: Message[] = []
     const encPubKeys: PubKey[] = []
@@ -59,9 +62,12 @@ export default class ReallocationModal extends Vue {
     for (const [recipientIndex, voiceCredits] of this.votes) {
       const [message, encPubKey] = createMessage(
         contributor.stateIndex,
-        contributor.keypair, null,
+        contributor.keypair,
+        null,
         coordinatorPubKey,
-        recipientIndex, voiceCredits, nonce,
+        recipientIndex,
+        voiceCredits,
+        nonce
       )
       messages.push(message)
       encPubKeys.push(encPubKey)
@@ -71,10 +77,19 @@ export default class ReallocationModal extends Vue {
       await waitForTransaction(
         fundingRound.submitMessageBatch(
           messages.reverse().map((msg) => msg.asContractParam()),
-          encPubKeys.reverse().map((key) => key.asContractParam()),
+          encPubKeys.reverse().map((key) => key.asContractParam())
         ),
-        (hash) => this.voteTxHash = hash,
+        (hash) => (this.voteTxHash = hash)
       )
+      this.$store.dispatch(SAVE_COMMITTED_CART_DISPATCH)
+      this.$emit('close')
+      this.$router.push({
+        name: `transaction-success`,
+        params: {
+          type: 'reallocation',
+          hash: this.voteTxHash,
+        },
+      })
     } catch (error) {
       this.voteTxError = error.message
       return

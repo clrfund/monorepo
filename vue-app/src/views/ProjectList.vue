@@ -1,88 +1,72 @@
 <template>
-  <div class="projects">
-    <h1 class="content-heading">Projects</h1>
-    <div v-if="currentRound" class="round-info">
-      <div class="round-info-item">
-        <div class="round-info-title">Round</div>
-        <div class="round-info-value" :data-round-address="currentRound.fundingRoundAddress">
-          <div class="value large">{{ currentRound.roundNumber }}</div>
-          <div class="unit">{{ currentRound.status }}</div>
-        </div>
-      </div>
-      <div class="round-info-item">
-        <div class="round-info-title">
-          Matching pool
-          <a
-            @click="addMatchingFunds()"
-            class="add-matching-funds-btn"
-            title="Add matching funds"
-          >
-            <img src="@/assets/add.svg" >
-          </a>
-        </div>
-        <div class="round-info-value">
-          <div class="value large">{{ formatIntegerPart(currentRound.matchingPool) }}</div>
-          <div class="value large extra">{{ formatFractionalPart(currentRound.matchingPool) }}</div>
-          <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
-        </div>
-      </div>
-      <div class="round-info-item">
-        <div class="round-info-title">Contributions</div>
-        <div class="round-info-value">
-          <div class="value">{{ formatIntegerPart(currentRound.contributions) }}</div>
-          <div class="value extra">{{ formatFractionalPart(currentRound.contributions) }}</div>
-          <div class="unit">{{ currentRound.nativeTokenSymbol }}</div>
-          <div class="value">{{ currentRound.contributors }}</div>
-          <div class="unit">contributors</div>
-        </div>
-      </div>
-      <div v-if="currentRound.status === 'Contributing'" class="round-info-item">
-        <div class="round-info-title">Time left to contribute</div>
-        <div
-          class="round-info-value"
-          :title="'Contribution Deadline: ' + formatDate(currentRound.signUpDeadline)"
-        >
-          <div class="value" v-if="contributionTimeLeft.days > 0">{{ contributionTimeLeft.days }}</div>
-          <div class="unit" v-if="contributionTimeLeft.days > 0">days</div>
-          <div class="value">{{ contributionTimeLeft.hours }}</div>
-          <div class="unit">hours</div>
-          <div class="value" v-if="contributionTimeLeft.days === 0">{{ contributionTimeLeft.minutes }}</div>
-          <div class="unit" v-if="contributionTimeLeft.days === 0">minutes</div>
-        </div>
-      </div>
-      <div v-if="currentRound.status === 'Reallocating' || currentRound.status === 'Tallying'" class="round-info-item">
-        <div class="round-info-title">Time left to reallocate</div>
-        <div
-          class="round-info-value"
-          :title="'Reallocation Deadline: ' + formatDate(currentRound.votingDeadline)"
-        >
-          <div class="value" v-if="reallocationTimeLeft.days > 0">{{ reallocationTimeLeft.days }}</div>
-          <div class="unit" v-if="reallocationTimeLeft.days > 0">days</div>
-          <div class="value">{{ reallocationTimeLeft.hours }}</div>
-          <div class="unit">hours</div>
-          <div class="value" v-if="reallocationTimeLeft.days === 0">{{ reallocationTimeLeft.minutes }}</div>
-          <div class="unit" v-if="reallocationTimeLeft.days === 0">minutes</div>
-        </div>
-      </div>
-    </div>
-    <div v-if="isLoading" class="loader"></div>
-    <div v-if="projects.length > 0" class="project-search">
-      <img src="@/assets/search.svg">
-      <input
-        v-model="search"
-        class="input"
-        name="search"
-        placeholder="Search projects"
-        autocomplete="off"
+  <div class="project-container">
+    <div class="projects">
+      <div
+        :class="{
+          title: true,
+          'title-with-cart-closed':
+            !!$store.state.currentUser && !$store.state.showCartPanel,
+          'title-with-cart-open':
+            !!$store.state.currentUser && $store.state.showCartPanel,
+        }"
       >
-    </div>
-    <div class="project-list">
-      <project-list-item
-        v-for="project in filteredProjects"
-        :project="project"
-        :key="project.id"
+        <div class="header">
+          <h2>Projects</h2>
+        </div>
+
+        <filter-dropdown
+          :categories="categories"
+          :selectedCategories="selectedCategories"
+          @change="handleFilterClick"
+        />
+
+        <div v-if="projects.length > 0" class="project-search">
+          <img src="@/assets/search.svg" />
+          <input
+            v-model="search"
+            class="input"
+            name="search"
+            placeholder="Search projects"
+            autocomplete="on"
+            onfocus="this.value=''"
+          />
+          <img
+            v-if="search.length > 0"
+            @click="clearSearch"
+            src="@/assets/close.svg"
+            height="20"
+            class="pointer"
+          />
+        </div>
+        <div class="add-project">
+          <links to="/join" class="btn-primary">Add project</links>
+        </div>
+        <div class="hr" />
+      </div>
+
+      <div class="project-list">
+        <call-to-action-card
+          v-if="!this.search && this.selectedCategories.length === 0"
+        />
+        <project-list-item
+          v-for="project in filteredProjects"
+          :project="project"
+          :key="project.id"
+        >
+        </project-list-item>
+      </div>
+      <div class="empty-search" v-if="filteredProjects == 0">
+        <div>
+          😢 No projects match your search. Try using the filter to narrow down
+          what you're looking for.
+        </div>
+      </div>
+      <div
+        v-if="!!$store.state.currentUser && $store.state.showCartPanel"
+        class="round-info-container"
       >
-      </project-list-item>
+        <round-information />
+      </div>
     </div>
   </div>
 </template>
@@ -93,21 +77,30 @@ import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { RoundInfo, getCurrentRound } from '@/api/round'
-import { Project, getRecipientRegistryAddress, getProjects } from '@/api/projects'
+import { RoundInfo, getCurrentRound, TimeLeft } from '@/api/round'
+import {
+  Project,
+  getRecipientRegistryAddress,
+  getProjects,
+} from '@/api/projects'
 
+import { getTimeLeft } from '@/utils/dates'
+
+import CallToActionCard from '@/components/CallToActionCard.vue'
+import CartWidget from '@/components/CartWidget.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
-import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
+import RoundInformation from '@/components/RoundInformation.vue'
+import FilterDropdown from '@/components/FilterDropdown.vue'
+import Links from '@/components/Links.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
   LOAD_CART,
+  LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
-import {
-  SET_RECIPIENT_REGISTRY_ADDRESS,
-} from '@/store/mutation-types'
+import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 
@@ -126,44 +119,52 @@ function shuffleArray(array: any[]) {
   }
 }
 
-interface TimeLeft {
-  days: number;
-  hours: number;
-  minutes: number;
-}
-
-function timeLeft(date: DateTime): TimeLeft {
-  const now = DateTime.local()
-  if (now >= date) {
-    return { days: 0, hours: 0, minutes: 0 }
-  }
-  const { days, hours, minutes } = date.diff(now, ['days', 'hours', 'minutes'])
-  return { days, hours, minutes: Math.ceil(minutes) }
-}
-
 @Component({
-  name: 'project-list',
-  metaInfo: { title: 'Projects' },
   components: {
+    CallToActionCard,
+    CartWidget,
     ProjectListItem,
+    RoundInformation,
+    FilterDropdown,
+    Links,
   },
 })
 export default class ProjectList extends Vue {
-
   projects: Project[] = []
   search = ''
   isLoading = true
+  categories: string[] = ['content', 'research', 'tooling', 'data']
+  selectedCategories: string[] = []
+
+  get projectsByCategoriesSelected(): Project[] {
+    return this.selectedCategories.length === 0
+      ? this.projects
+      : this.projects.filter((project) =>
+          this.selectedCategories.includes(
+            ((project.category as string) || '').toLowerCase()
+          )
+        )
+  }
 
   async created() {
-    const roundAddress = this.$route.params.address || this.$store.state.currentRoundAddress || await getCurrentRound()
-    if (roundAddress && roundAddress !== this.$store.state.currentRoundAddress) {
+    //TODO: update to take factory address as a parameter, default to env. variable
+    const roundAddress =
+      this.$route.params.address ||
+      this.$store.state.currentRoundAddress ||
+      (await getCurrentRound())
+    if (
+      roundAddress &&
+      roundAddress !== this.$store.state.currentRoundAddress
+    ) {
       // Select round and (re)load round info
+      //TODO: SELECT_ROUND action also commits SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
       this.$store.dispatch(SELECT_ROUND, roundAddress)
       await this.$store.dispatch(LOAD_ROUND_INFO)
       if (this.$store.state.currentUser) {
         // Load user data if already logged in
         this.$store.dispatch(LOAD_USER_INFO)
         this.$store.dispatch(LOAD_CART)
+        this.$store.dispatch(LOAD_COMMITTED_CART)
         this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
       }
     }
@@ -179,10 +180,10 @@ export default class ProjectList extends Vue {
     const projects = await getProjects(
       this.$store.state.recipientRegistryAddress,
       this.currentRound?.startTime.toSeconds(),
-      this.currentRound?.votingDeadline.toSeconds(),
+      this.currentRound?.votingDeadline.toSeconds()
     )
-    const visibleProjects = projects.filter(project => {
-      return (!project.isHidden && !project.isLocked)
+    const visibleProjects = projects.filter((project) => {
+      return !project.isHidden && !project.isLocked
     })
     shuffleArray(visibleProjects)
     this.projects = visibleProjects
@@ -209,136 +210,197 @@ export default class ProjectList extends Vue {
   }
 
   get contributionTimeLeft(): TimeLeft {
-    return timeLeft(this.$store.state.currentRound.signUpDeadline)
+    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
   }
 
   get reallocationTimeLeft(): TimeLeft {
-    return timeLeft(this.$store.state.currentRound.votingDeadline)
-  }
-
-  addMatchingFunds(): void {
-    if (!this.$store.state.currentUser) {
-      return
-    }
-    this.$modal.show(
-      MatchingFundsModal,
-      { },
-      { },
-      {
-        closed: () => {
-          // Reload matching pool size
-          this.$store.dispatch(LOAD_ROUND_INFO)
-        },
-      },
-    )
+    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   get filteredProjects(): Project[] {
-    return this.projects.filter((project: Project) => {
+    return this.projectsByCategoriesSelected.filter((project: Project) => {
       if (!this.search) {
         return true
       }
       return project.name.toLowerCase().includes(this.search.toLowerCase())
     })
   }
+
+  handleFilterClick(selection: string): void {
+    if (this.selectedCategories.includes(selection)) {
+      this.selectedCategories = this.selectedCategories.filter(
+        (category) => category !== selection
+      )
+    } else {
+      this.selectedCategories.push(selection)
+    }
+  }
+
+  clearSearch(): void {
+    this.search = ''
+  }
 }
 </script>
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
 
-.round-info {
-  border-bottom: $border;
-  border-top: $border;
+.project-container {
   display: flex;
-  flex-wrap: wrap;
-  margin: 0 (-$content-space);
-  padding: 20px $content-space;
-  gap: $content-space;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column-reverse;
+    padding-bottom: 4rem;
+  }
 }
 
-.round-info-item {
-  display: flex;
-  flex: 1 0 10%;
-  flex-direction: column;
-  justify-content: space-between;
+.round-info-container {
+  /* Shows <round-information/> at the bottom if cart open, and screen between $breakpoint-m
+     and $breakpoint-l (while the left sidebar would be hidden, and no mobile tabs yet) */
+  display: none;
+  @media (max-width: $breakpoint-l) {
+    display: flex;
+    margin: 0 (-$content-space);
+    padding: 20px $content-space;
+  }
+  @media (max-width: $breakpoint-m - 1px) {
+    display: none;
+  }
 }
 
-.round-info-title {
-  color: $text-secondary-color;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 20px;
-  margin-bottom: $content-space;
-  text-transform: uppercase;
-  white-space: nowrap;
+.projects {
+  flex: 1;
 }
 
-.round-info-value {
-  align-items: baseline;
-  display: flex;
-  flex-direction: row;
-  line-height: 30px;
+/* Project grid layouts by breakpoints */
+/* For use with .title, .title-with-cart-closed, .title-with-cart-open classes */
+@mixin project-grid-defaults {
+  grid-template-columns: 1fr repeat(3, auto);
+  grid-template-areas: 'header filter search add' 'hr hr hr hr';
+}
+@mixin project-grid-xl {
+  grid-template-columns: auto 1fr 1.5fr auto;
+  grid-template-areas: 'header . . add' 'hr hr hr hr' 'filter . search search';
+}
+@mixin project-grid-l {
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: 'header . add' 'hr hr hr' 'search search search' 'filter filter filter';
+}
+@mixin project-grid-m {
+  grid-template-columns: 1fr;
+  grid-template-areas: 'header' 'hr' 'search' 'filter' 'add';
+}
 
-  .value {
-    font-size: 32px;
+.title {
+  display: grid;
+  @include project-grid-defaults();
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
 
-    &.large {
-      font-size: 44px;
+  /* Default breakpoints when user is not logged in, thus no cart */
+  /* See below for adjustments when cart is present */
+  @media (max-width: $breakpoint-xl) {
+    @include project-grid-xl();
+  }
+  @media (max-width: $breakpoint-l) {
+    @include project-grid-l();
+  }
+  @media (max-width: $breakpoint-m) {
+    @include project-grid-m();
+  }
+
+  .header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: auto;
+    @media (max-width: $breakpoint-m) {
+      h2 {
+        margin-bottom: 1rem;
+      }
+    }
+    h2 {
+      line-height: 130%;
+      margin: 0;
+    }
+  }
+
+  .add-project {
+    grid-area: add;
+  }
+
+  .project-search {
+    grid-area: search;
+    border-radius: 16px;
+    border: 2px solid $button-color;
+    background-color: $bg-secondary-color;
+    padding: 0.5rem 1rem;
+    display: flex;
+    font-size: 16px;
+    font-family: Inter;
+    font-weight: 400;
+    line-height: 24px;
+    letter-spacing: 0em;
+    @media (max-width: $breakpoint-m) {
+      margin-top: 0.5rem;
+    }
+    width: auto;
+    img {
+      margin-right: 10px;
     }
 
-    &.extra {
-      color: $text-secondary-color;
+    input {
+      background-color: transparent;
+      border: none;
+      font-size: 14px;
+      padding: 0;
+      width: 100%;
+
+      &::placeholder {
+        opacity: 1;
+      }
     }
   }
 
-  .unit {
-    color: #91A4C8;
-    font-size: 12px;
-    font-weight: 600;
-    margin: 0 10px;
-    text-transform: uppercase;
-
-    &:last-child {
-      margin-right: 0;
-    }
-  }
-}
-
-.add-matching-funds-btn {
-  display: inline-block;
-  margin-left: 5px;
-
-  img {
-    height: 1.8em;
-    vertical-align: middle;
-  }
-}
-
-.project-search {
-  border: $border;
-  border-radius: 30px;
-  box-sizing: border-box;
-  display: flex;
-  margin: 20px 0;
-  min-width: 300px;
-  padding: 8px 15px;
-  width: 33%;
-
-  img {
-    margin-right: 10px;
-  }
-
-  input {
-    background-color: transparent;
-    border: none;
-    font-size: 14px;
-    padding: 0;
+  .hr {
+    grid-area: hr;
     width: 100%;
+    border-bottom: 1px solid rgba(115, 117, 166, 1);
+  }
+}
 
-    &::placeholder {
-      opacity: 1;
-    }
+.title-with-cart-closed {
+  /* Nudges right edge of "title bar" inward when the cart
+  toggle button is present. Only as issue when cart is closed,
+  AND the user is logged in. */
+  @media (min-width: $breakpoint-m + 1px) {
+    // Desktop only
+    margin-right: 1rem;
+  }
+  /* Adjusts breakpoints for when cart is present but closed */
+  @media (max-width: $breakpoint-xl + $cart-width-closed) {
+    @include project-grid-xl();
+  }
+  @media (max-width: $breakpoint-l + $cart-width-closed) {
+    @include project-grid-l();
+  }
+  @media (max-width: $breakpoint-m + $cart-width-closed) {
+    @include project-grid-m();
+  }
+}
+
+.title-with-cart-open {
+  /* Adjusts breakpoints for when cart is present and open */
+  @media (max-width: $breakpoint-xl + $cart-width-open) {
+    @include project-grid-xl();
+  }
+  @media (max-width: $breakpoint-l + $cart-width-open) {
+    @include project-grid-l();
+  }
+  @media (max-width: $breakpoint-m + $cart-width-open) {
+    @include project-grid-m();
   }
 }
 
@@ -346,6 +408,49 @@ export default class ProjectList extends Vue {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: $content-space;
+  z-index: 0;
+  padding-bottom: 4rem;
+}
+
+.empty-search {
+  background: $bg-secondary-color;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.get-prepared {
+  background: $bg-secondary-color;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  justify-content: space-between;
+}
+
+.prep-title {
+  font-family: 'Glacial Indifference', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.prep-title-continue {
+  font-family: 'Glacial Indifference', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.prep-text {
+  font-family: Inter;
+  font-size: 16px;
+  line-height: 150%;
+}
+
+.emoji {
+  font-size: 32px;
 }
 
 @media (max-width: 1500px) {

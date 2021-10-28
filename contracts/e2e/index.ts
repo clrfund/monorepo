@@ -10,7 +10,11 @@ import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
 import { deployContract, deployMaciFactory } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
-import { MaciParameters, createMessage, getRecipientClaimData } from '../utils/maci'
+import {
+  MaciParameters,
+  createMessage,
+  getRecipientClaimData,
+} from '../utils/maci'
 
 use(solidity)
 
@@ -42,7 +46,7 @@ describe('End-to-end Tests', function () {
   let coordinatorKeypair: Keypair
 
   beforeEach(async () => {
-    [
+    ;[
       deployer,
       poolContributor1,
       poolContributor2,
@@ -54,27 +58,47 @@ describe('End-to-end Tests', function () {
 
     // Workaround for https://github.com/nomiclabs/buidler/issues/759
     coordinator = Wallet.createRandom().connect(provider)
-    await deployer.sendTransaction({ to: coordinator.address, value: UNIT.mul(10) })
+    await deployer.sendTransaction({
+      to: coordinator.address,
+      value: UNIT.mul(10),
+    })
 
     // Deploy funding round factory
     const poseidonT3 = await deployContract(deployer, ':PoseidonT3')
     const poseidonT6 = await deployContract(deployer, ':PoseidonT6')
-    const batchUstVerifier = await deployContract(deployer, 'BatchUpdateStateTreeVerifier32')
-    const qvtVerifier = await deployContract(deployer, 'QuadVoteTallyVerifier32')
+    const batchUstVerifier = await deployContract(
+      deployer,
+      'BatchUpdateStateTreeVerifier32'
+    )
+    const qvtVerifier = await deployContract(
+      deployer,
+      'QuadVoteTallyVerifier32'
+    )
     const maciFactory = await deployMaciFactory(deployer, 'x32', {
       poseidonT3,
       poseidonT6,
       batchUstVerifier,
       qvtVerifier,
     })
-    const FundingRoundFactory = await ethers.getContractFactory('FundingRoundFactory', deployer)
+    const FundingRoundFactory = await ethers.getContractFactory(
+      'FundingRoundFactory',
+      deployer
+    )
     fundingRoundFactory = await FundingRoundFactory.deploy(maciFactory.address)
     await maciFactory.transferOwnership(fundingRoundFactory.address)
-    const SimpleUserRegistry = await ethers.getContractFactory('SimpleUserRegistry', deployer)
+    const SimpleUserRegistry = await ethers.getContractFactory(
+      'SimpleUserRegistry',
+      deployer
+    )
     userRegistry = await SimpleUserRegistry.deploy()
     await fundingRoundFactory.setUserRegistry(userRegistry.address)
-    const SimpleRecipientRegistry = await ethers.getContractFactory('SimpleRecipientRegistry', deployer)
-    recipientRegistry = await SimpleRecipientRegistry.deploy(fundingRoundFactory.address)
+    const SimpleRecipientRegistry = await ethers.getContractFactory(
+      'SimpleRecipientRegistry',
+      deployer
+    )
+    recipientRegistry = await SimpleRecipientRegistry.deploy(
+      fundingRoundFactory.address
+    )
     await fundingRoundFactory.setRecipientRegistry(recipientRegistry.address)
     maciParameters = await MaciParameters.read(maciFactory)
 
@@ -93,36 +117,48 @@ describe('End-to-end Tests', function () {
     coordinatorKeypair = new Keypair()
     await fundingRoundFactory.setCoordinator(
       coordinator.address,
-      coordinatorKeypair.pubKey.asContractParam(),
+      coordinatorKeypair.pubKey.asContractParam()
     )
     await fundingRoundFactory.setMaciParameters(...maciParameters.values())
 
     // Add funds to matching pool
     const poolContributionAmount = UNIT.mul(5)
-    await token.connect(poolContributor1).transfer(
-      fundingRoundFactory.address,
-      poolContributionAmount,
-    )
+    await token
+      .connect(poolContributor1)
+      .transfer(fundingRoundFactory.address, poolContributionAmount)
 
     // Add additional funding source
-    await fundingRoundFactory.addFundingSource(await poolContributor2.getAddress())
-    await token.connect(poolContributor2).approve(
-      fundingRoundFactory.address,
-      poolContributionAmount,
+    await fundingRoundFactory.addFundingSource(
+      await poolContributor2.getAddress()
     )
+    await token
+      .connect(poolContributor2)
+      .approve(fundingRoundFactory.address, poolContributionAmount)
 
     // Add recipients
     await recipientRegistry.addRecipient(
       await recipient1.getAddress(),
-      JSON.stringify({ name: 'Project 1', description: 'Project 1', imageHash: '' }),
+      JSON.stringify({
+        name: 'Project 1',
+        description: 'Project 1',
+        imageHash: '',
+      })
     )
     await recipientRegistry.addRecipient(
       await recipient2.getAddress(),
-      JSON.stringify({ name: 'Project 2', description: 'Project 2', imageHash: '' }),
+      JSON.stringify({
+        name: 'Project 2',
+        description: 'Project 2',
+        imageHash: '',
+      })
     )
     await recipientRegistry.addRecipient(
       await recipient3.getAddress(),
-      JSON.stringify({ name: 'Project 3', description: 'Project 3', imageHash: '' }),
+      JSON.stringify({
+        name: 'Project 3',
+        description: 'Project 3',
+        imageHash: '',
+      })
     )
 
     // Deploy new funding round and MACI
@@ -130,14 +166,14 @@ describe('End-to-end Tests', function () {
     const fundingRoundAddress = await fundingRoundFactory.getCurrentRound()
     fundingRound = await ethers.getContractAt(
       'FundingRound',
-      fundingRoundAddress,
+      fundingRoundAddress
     )
     const maciAddress = await fundingRound.maci()
     maci = await ethers.getContractAt('MACI', maciAddress)
   })
 
   async function makeContributions(amounts: BigNumber[]) {
-    const contributions: {[key: string]: any}[] = []
+    const contributions: { [key: string]: any }[] = []
     for (let index = 0; index < contributors.length; index++) {
       const contributionAmount = amounts[index]
       if (!contributionAmount) {
@@ -148,18 +184,29 @@ describe('End-to-end Tests', function () {
       const contributorAddress = await contributor.getAddress()
       await userRegistry.addUser(contributorAddress)
       // Approve transfer
-      await token.connect(contributor).approve(
-        fundingRound.address,
-        contributionAmount,
-      )
+      await token
+        .connect(contributor)
+        .approve(fundingRound.address, contributionAmount)
       // Contribute
       const contributorKeypair = new Keypair()
-      const contributionTx = await fundingRound.connect(contributor).contribute(
-        contributorKeypair.pubKey.asContractParam(),
-        contributionAmount,
+      const contributionTx = await fundingRound
+        .connect(contributor)
+        .contribute(
+          contributorKeypair.pubKey.asContractParam(),
+          contributionAmount
+        )
+      const stateIndex = await getEventArg(
+        contributionTx,
+        maci,
+        'SignUp',
+        '_stateIndex'
       )
-      const stateIndex = await getEventArg(contributionTx, maci, 'SignUp', '_stateIndex')
-      const voiceCredits = await getEventArg(contributionTx, maci, 'SignUp', '_voiceCreditBalance')
+      const voiceCredits = await getEventArg(
+        contributionTx,
+        maci,
+        'SignUp',
+        '_voiceCreditBalance'
+      )
       contributions.push({
         signer: contributor,
         keypair: contributorKeypair,
@@ -199,7 +246,7 @@ describe('End-to-end Tests', function () {
     // Finalize round
     await fundingRoundFactory.transferMatchingFunds(
       tally.totalVoiceCredits.spent,
-      tally.totalVoiceCredits.salt,
+      tally.totalVoiceCredits.salt
     )
 
     // Claim funds
@@ -210,10 +257,17 @@ describe('End-to-end Tests', function () {
       const recipientClaimData = getRecipientClaimData(
         recipientIndex,
         recipientTreeDepth,
-        tally,
+        tally
       )
-      const claimTx = await fundingRound.connect(recipient).claimFunds(...recipientClaimData)
-      const claimedAmount = await getEventArg(claimTx, fundingRound, 'FundsClaimed', '_amount')
+      const claimTx = await fundingRound
+        .connect(recipient)
+        .claimFunds(...recipientClaimData)
+      const claimedAmount = await getEventArg(
+        claimTx,
+        fundingRound,
+        'FundsClaimed',
+        '_amount'
+      )
       claims[recipientIndex] = claimedAmount
     }
     return { tally, claims }
@@ -236,9 +290,12 @@ describe('End-to-end Tests', function () {
       const newContributorKeypair = new Keypair()
       const [message, encPubKey] = createMessage(
         contribution.stateIndex,
-        contribution.keypair, newContributorKeypair,
+        contribution.keypair,
+        newContributorKeypair,
         coordinatorKeypair.pubKey,
-        null, null, nonce,
+        null,
+        null,
+        nonce
       )
       messages.push(message)
       encPubKeys.push(encPubKey)
@@ -249,9 +306,12 @@ describe('End-to-end Tests', function () {
         const voiceCredits = contribution.voiceCredits.div(2)
         const [message, encPubKey] = createMessage(
           contribution.stateIndex,
-          newContributorKeypair, null,
+          newContributorKeypair,
+          null,
           coordinatorKeypair.pubKey,
-          recipientIndex, voiceCredits, nonce,
+          recipientIndex,
+          voiceCredits,
+          nonce
         )
         messages.push(message)
         encPubKeys.push(encPubKey)
@@ -260,7 +320,7 @@ describe('End-to-end Tests', function () {
 
       await fundingRound.connect(contributor).submitMessageBatch(
         messages.reverse().map((msg) => msg.asContractParam()),
-        encPubKeys.reverse().map((key) => key.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam())
       )
     }
 
@@ -285,14 +345,19 @@ describe('End-to-end Tests', function () {
       const nonce = 1
       const [message, encPubKey] = createMessage(
         contribution.stateIndex,
-        contribution.keypair, null,
+        contribution.keypair,
+        null,
         coordinatorKeypair.pubKey,
-        recipientIndex, voiceCredits, nonce,
+        recipientIndex,
+        voiceCredits,
+        nonce
       )
-      await fundingRound.connect(contributor).submitMessageBatch(
-        [message.asContractParam()],
-        [encPubKey.asContractParam()],
-      )
+      await fundingRound
+        .connect(contributor)
+        .submitMessageBatch(
+          [message.asContractParam()],
+          [encPubKey.asContractParam()]
+        )
     }
 
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
@@ -317,9 +382,12 @@ describe('End-to-end Tests', function () {
     for (const [recipientIndex, voiceCredits] of votes) {
       const [message, encPubKey] = createMessage(
         contribution.stateIndex,
-        contribution.keypair, null,
+        contribution.keypair,
+        null,
         coordinatorKeypair.pubKey,
-        recipientIndex, voiceCredits, nonce,
+        recipientIndex,
+        voiceCredits,
+        nonce
       )
       nonce += 1
       messages.push(message)
@@ -327,7 +395,7 @@ describe('End-to-end Tests', function () {
     }
     await fundingRound.connect(contributor).submitMessageBatch(
       messages.reverse().map((msg) => msg.asContractParam()),
-      encPubKeys.reverse().map((key) => key.asContractParam()),
+      encPubKeys.reverse().map((key) => key.asContractParam())
     )
 
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
@@ -355,9 +423,12 @@ describe('End-to-end Tests', function () {
     for (const [recipientIndex, voiceCredits] of votes) {
       const [message, encPubKey] = createMessage(
         contribution.stateIndex,
-        contribution.keypair, null,
+        contribution.keypair,
+        null,
         coordinatorKeypair.pubKey,
-        recipientIndex, voiceCredits, nonce,
+        recipientIndex,
+        voiceCredits,
+        nonce
       )
       nonce += 1
       messages.push(message)
@@ -365,7 +436,7 @@ describe('End-to-end Tests', function () {
     }
     await fundingRound.connect(contributor).submitMessageBatch(
       messages.reverse().map((msg) => msg.asContractParam()),
-      encPubKeys.reverse().map((key) => key.asContractParam()),
+      encPubKeys.reverse().map((key) => key.asContractParam())
     )
 
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
@@ -381,15 +452,18 @@ describe('End-to-end Tests', function () {
   it('should overwrite previous batch of votes', async () => {
     const [contribution] = await makeContributions([UNIT.mul(8).div(10)])
     const contributor = contribution.signer
-    const votes = [[
-      [1, contribution.voiceCredits.div(3)],
-      [2, contribution.voiceCredits.div(3)],
-      [3, contribution.voiceCredits.div(3)],
-    ], [
-      [1, contribution.voiceCredits.div(2)],
-      [2, contribution.voiceCredits.div(2)],
-      [3, ZERO],
-    ]]
+    const votes = [
+      [
+        [1, contribution.voiceCredits.div(3)],
+        [2, contribution.voiceCredits.div(3)],
+        [3, contribution.voiceCredits.div(3)],
+      ],
+      [
+        [1, contribution.voiceCredits.div(2)],
+        [2, contribution.voiceCredits.div(2)],
+        [3, ZERO],
+      ],
+    ]
     for (const batch of votes) {
       const messages = []
       const encPubKeys = []
@@ -397,9 +471,12 @@ describe('End-to-end Tests', function () {
       for (const [recipientIndex, voiceCredits] of batch) {
         const [message, encPubKey] = createMessage(
           contribution.stateIndex,
-          contribution.keypair, null,
+          contribution.keypair,
+          null,
           coordinatorKeypair.pubKey,
-          recipientIndex, voiceCredits, nonce,
+          recipientIndex,
+          voiceCredits,
+          nonce
         )
         nonce += 1
         messages.push(message)
@@ -407,7 +484,7 @@ describe('End-to-end Tests', function () {
       }
       await fundingRound.connect(contributor).submitMessageBatch(
         messages.reverse().map((msg) => msg.asContractParam()),
-        encPubKeys.reverse().map((key) => key.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam())
       )
     }
 
@@ -421,42 +498,40 @@ describe('End-to-end Tests', function () {
   })
 
   it('should invalidate votes in case of bribe', async () => {
-    const [contribution] = await makeContributions([
-      UNIT.mul(4).div(10),
-    ])
+    const [contribution] = await makeContributions([UNIT.mul(4).div(10)])
     const contributor = contribution.signer
     let message
     let encPubKey
 
     // Vote for recipient 1 for a bribe immediately after signup
     const messageBatch1 = []
-    const encPubKeyBatch1 = [];
-    [message, encPubKey] = createMessage(
+    const encPubKeyBatch1 = []
+    ;[message, encPubKey] = createMessage(
       contribution.stateIndex,
       contribution.keypair,
       null,
       coordinatorKeypair.pubKey,
       1,
       contribution.voiceCredits,
-      1,
+      1
     )
     messageBatch1.push(message)
-    encPubKeyBatch1.push(encPubKey);
+    encPubKeyBatch1.push(encPubKey)
     // Change key to invalid key
-    [message, encPubKey] = createMessage(
+    ;[message, encPubKey] = createMessage(
       contribution.stateIndex,
       contribution.keypair,
       new Keypair(),
       coordinatorKeypair.pubKey,
       null,
       null,
-      2,
+      2
     )
     messageBatch1.push(message)
     encPubKeyBatch1.push(encPubKey)
     await fundingRound.connect(contributor).submitMessageBatch(
       messageBatch1.reverse().map((msg) => msg.asContractParam()),
-      encPubKeyBatch1.reverse().map((key) => key.asContractParam()),
+      encPubKeyBatch1.reverse().map((key) => key.asContractParam())
     )
 
     // Wait for signup period to end to override votes
@@ -464,45 +539,45 @@ describe('End-to-end Tests', function () {
     const messageBatch2 = []
     const encPubKeyBatch2 = []
     // Change key
-    const newContributorKeypair = new Keypair();
-    [message, encPubKey] = createMessage(
+    const newContributorKeypair = new Keypair()
+    ;[message, encPubKey] = createMessage(
       contribution.stateIndex,
       contribution.keypair,
       newContributorKeypair,
       coordinatorKeypair.pubKey,
       null,
       null,
-      1,
+      1
     )
     messageBatch2.push(message)
-    encPubKeyBatch2.push(encPubKey);
+    encPubKeyBatch2.push(encPubKey)
     // Vote for recipient 1
-    [message, encPubKey] = createMessage(
+    ;[message, encPubKey] = createMessage(
       contribution.stateIndex,
       newContributorKeypair,
       null,
       coordinatorKeypair.pubKey,
       1,
       BigNumber.from(0),
-      2,
+      2
     )
     messageBatch2.push(message)
-    encPubKeyBatch2.push(encPubKey);
+    encPubKeyBatch2.push(encPubKey)
     // Vote for recipient 2
-    [message, encPubKey] = createMessage(
+    ;[message, encPubKey] = createMessage(
       contribution.stateIndex,
       newContributorKeypair,
       null,
       coordinatorKeypair.pubKey,
       2,
       contribution.voiceCredits,
-      3,
+      3
     )
     messageBatch2.push(message)
     encPubKeyBatch2.push(encPubKey)
     await fundingRound.connect(contributor).submitMessageBatch(
       messageBatch2.reverse().map((msg) => msg.asContractParam()),
-      encPubKeyBatch2.reverse().map((key) => key.asContractParam()),
+      encPubKeyBatch2.reverse().map((key) => key.asContractParam())
     )
 
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])

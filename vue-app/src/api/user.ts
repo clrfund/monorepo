@@ -4,18 +4,32 @@ import { Web3Provider } from '@ethersproject/providers'
 
 import { UserRegistry, ERC20 } from './abi'
 import { factory, ipfsGatewayUrl, provider } from './core'
+import { BrightId } from './bright-id'
 
-export const LOGIN_MESSAGE = `Sign this message to access clr.fund at ${factory.address.toLowerCase()}.`
+//TODO: update anywhere this is called to take factory address as a parameter, default to env. variable
+export const LOGIN_MESSAGE = `Welcome to clr.fund!
+
+To get logged in, sign this message to prove you have access to this wallet. This does not cost any ether.
+
+You will be asked to sign each time you load the app.
+
+Contract address: ${factory.address.toLowerCase()}.`
 
 export interface User {
-  walletAddress: string;
-  walletProvider: Web3Provider;
-  encryptionKey: string;
-  isVerified: boolean | null;
-  balance: BigNumber | null;
+  walletAddress: string
+  walletProvider: Web3Provider
+  encryptionKey: string
+  brightId?: BrightId
+  isRegistered: boolean // If is in user registry
+  balance?: BigNumber | null
+  etherBalance?: BigNumber | null
+  contribution?: BigNumber | null
+  ensName?: string | null
 }
 
-export async function getProfileImageUrl(walletAddress: string): Promise<string | null> {
+export async function getProfileImageUrl(
+  walletAddress: string
+): Promise<string | null> {
   const threeBoxProfileUrl = `https://ipfs.3box.io/profile?address=${walletAddress}`
   let profileImageHash: string
   try {
@@ -30,7 +44,7 @@ export async function getProfileImageUrl(walletAddress: string): Promise<string 
 
 export async function isVerifiedUser(
   userRegistryAddress: string,
-  walletAddress: string,
+  walletAddress: string
 ): Promise<boolean> {
   const registry = new Contract(userRegistryAddress, UserRegistry, provider)
   return await registry.isVerifiedUser(walletAddress)
@@ -38,8 +52,14 @@ export async function isVerifiedUser(
 
 export async function getTokenBalance(
   tokenAddress: string,
-  walletAddress: string,
+  walletAddress: string
 ): Promise<BigNumber> {
   const token = new Contract(tokenAddress, ERC20, provider)
   return await token.balanceOf(walletAddress)
+}
+
+export async function getEtherBalance(
+  walletAddress: string
+): Promise<BigNumber> {
+  return await provider.getBalance(walletAddress)
 }

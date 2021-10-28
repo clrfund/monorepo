@@ -8,7 +8,7 @@ import { LOGIN_MESSAGE } from './user'
 import { md5 } from '@/utils/crypto'
 
 interface GunSchema {
-  data: { [key: string]: string };
+  data: { [key: string]: string }
 }
 
 const db = Gun<GunSchema>({
@@ -18,7 +18,7 @@ const user = db.user() as any
 
 export async function loginUser(
   accountId: string,
-  encryptionKey: string,
+  encryptionKey: string
 ): Promise<void> {
   // GunDB needs username and password to create a key pair.
   // The user name is md5 hash of account ID and login message
@@ -56,19 +56,25 @@ export function setValue(key: string, value: string): void {
 export async function getValue(key: string): Promise<string | null> {
   return await new Promise<string | null>((resolve) => {
     // WARNING: once() may not work correctly after on() and off()
-    user.get('data').get(key).once((value) => {
-      resolve(value)
-    })
+    user
+      .get('data')
+      .get(key)
+      .once((value) => {
+        resolve(value)
+      })
   })
 }
 
 export function watch(
   key: string,
-  callback: (value: string | null) => any,
+  callback: (value: string | null) => any
 ): void {
-  user.get('data').get(key).on((value) => {
-    callback(value)
-  })
+  user
+    .get('data')
+    .get(key)
+    .on((value) => {
+      callback(value)
+    })
 }
 
 export function unwatch(key: string): void {

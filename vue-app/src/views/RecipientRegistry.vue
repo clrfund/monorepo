@@ -1,64 +1,135 @@
 <template>
   <div class="recipients">
-    <h1 class="content-heading">Recipient registry</h1>
-    <div v-if="registryInfo" class="submit-project">
-      <div class="submit-project-info">
-        In order to become a recipient of funding, a project must go through a review process.
-        <br>
-        It takes {{ formatDuration(registryInfo.challengePeriodDuration) }} and requires a {{ formatAmount(registryInfo.deposit) }} {{ registryInfo.depositToken }} security deposit.
+    <div class="title">
+      <div class="header">
+        <h2>Recipient registry</h2>
       </div>
-      <button
-        class="btn"
-        @click="submitProject()"
-        :disabled="!canSubmitProject()"
-      >
-        Submit project
-      </button>
+      <div class="hr" />
     </div>
-    <div v-if="isLoading" class="loader"></div>
-    <h2 v-if="requests.length > 0">Recent changes</h2>
-    <table v-if="requests.length > 0" class="requests">
-      <thead>
-        <tr>
-          <th>Project</th>
-          <th>Request type</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
-          <td>
-            <div class="project-name">
-              <a :href="request.metadata.imageUrl" target="_blank" rel="noopener">
-                <img class="project-image" :src="request.metadata.imageUrl">
-              </a>
-              {{ request.metadata.name }}
-            </div>
-            <div class="project-description" v-html="renderDescription(request)"></div>
-            <details class="project-details">
-              <summary>Additional info</summary>
-              <div>Transaction: <code>{{ request.transactionHash }}</code></div>
-              <div>Project ID: <code>{{ request.recipientId }}</code></div>
-              <div>Recipient address: <code>{{ request.recipient }}</code></div>
-              <div v-if="isPending(request)">Acceptance date: {{ formatDate(request.acceptanceDate) }}</div>
-            </details>
-          </td>
-          <td>{{ request.type }}</td>
-          <td>
-            <template v-if="hasProjectLink(request)">
-              <router-link
-                :to="{ name: 'project', params: { id: request.recipientId }}"
-              >
+    <loader v-if="isLoading" />
+    <div v-else>
+      <table class="requests">
+        <thead>
+          <tr>
+            <th>Project</th>
+            <th>Request type</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="request in requests.slice().reverse()"
+            :key="request.transactionHash"
+          >
+            <td>
+              <div class="project-name">
+                <links :to="request.metadata.thumbnailImageUrl">
+                  <img
+                    class="project-image"
+                    :src="request.metadata.thumbnailImageUrl"
+                  />
+                </links>
+                {{ request.metadata.name }}
+                <links
+                  v-if="hasProjectLink(request)"
+                  :to="{
+                    name: 'project',
+                    params: { id: request.recipientId },
+                  }"
+                  >-></links
+                >
+              </div>
+              <details class="project-details">
+                <summary>More</summary>
+
+                <div>
+                  <span
+                    >Transaction hash
+                    <button
+                      class="button-copy"
+                      @click="copyAddress(request.transactionHash)"
+                    >
+                      <img src="@/assets/copy.svg" />
+                    </button>
+                  </span>
+                  <code>{{ request.transactionHash }}</code>
+                </div>
+                <div>
+                  <span
+                    >Project ID
+                    <button
+                      class="button-copy"
+                      @click="copyAddress(request.recipientId)"
+                    >
+                      <img src="@/assets/copy.svg" />
+                    </button>
+                  </span>
+                  <code>{{ request.recipientId }}</code>
+                </div>
+                <div>
+                  <span
+                    >Recipient address
+                    <button
+                      class="button-copy"
+                      @click="copyAddress(request.recipient)"
+                    >
+                      <img src="@/assets/copy.svg" />
+                    </button>
+                  </span>
+                  <code>{{ request.recipient }}</code>
+                </div>
+              </details>
+            </td>
+            <td>{{ request.type }}</td>
+            <td>
+              <template v-if="hasProjectLink(request)">
+                <links
+                  :to="{
+                    name: 'project',
+                    params: { id: request.recipientId },
+                  }"
+                >
+                  {{ request.status }}
+                </links>
+              </template>
+              <template v-else>
                 {{ request.status }}
-              </router-link>
-            </template>
-            <template v-else>
-              {{ request.status }}
-            </template>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+              </template>
+            </td>
+            <td>
+              <div class="actions" v-if="isUserConnected">
+                <!-- TODO: to implement this feature, it requires to send a baseDeposit (see contract)
+              <div
+                class="btn-warning"
+                @click="remove(request)"
+                v-if="isExecuted(request)"
+              >
+                Remove
+              </div> -->
+                <div
+                  class="icon-btn-approve"
+                  v-if="
+                    (isOwner || (!isOwner && isChallengePeriodOver(request))) &&
+                    isPending(request)
+                  "
+                  @click="approve(request)"
+                >
+                  <img src="@/assets/checkmark.svg" />
+                </div>
+                <div
+                  class="icon-btn-reject"
+                  v-if="isOwner && isPending(request)"
+                  @click="reject(request)"
+                >
+                  <img src="@/assets/close.svg" />
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -70,30 +141,25 @@ import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 
 import { recipientRegistryType } from '@/api/core'
-import { getRecipientRegistryAddress } from '@/api/projects'
 import {
-  RegistryInfo,
   RequestType,
   RequestStatus,
   Request,
-  getRegistryInfo,
   getRequests,
+  registerProject,
+  rejectProject,
+  removeProject,
 } from '@/api/recipient-registry-optimistic'
-import { getCurrentRound } from '@/api/round'
-import RecipientSubmissionModal from '@/components/RecipientSubmissionModal.vue'
-import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
+import Loader from '@/components/Loader.vue'
+import Links from '@/components/Links.vue'
 import { formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
+import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
+import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import TransactionModal from '@/components/TransactionModal.vue'
 
-@Component({
-  name: 'recipient-registry',
-  metaInfo() {
-    return { title: 'Recipient registry' }
-  },
-})
+@Component({ components: { Loader, Links } })
 export default class RecipientRegistryView extends Vue {
-
-  registryInfo: RegistryInfo | null = null
   requests: Request[] = []
   isLoading = true
 
@@ -101,22 +167,39 @@ export default class RecipientRegistryView extends Vue {
     if (recipientRegistryType !== 'optimistic') {
       return
     }
-    if (this.$store.state.recipientRegistryAddress === null) {
-      const roundAddress = this.$store.state.currentRoundAddress || await getCurrentRound()
-      const registryAddress = await getRecipientRegistryAddress(roundAddress)
-      this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
-    }
-    this.registryInfo = await getRegistryInfo(this.$store.state.recipientRegistryAddress)
-    this.requests = await getRequests(this.$store.state.recipientRegistryAddress,  this.registryInfo)
+
+    await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
+    await this.loadRequests()
     this.isLoading = false
+  }
+
+  get isOwner() {
+    return this.$store.getters.isRecipientRegistryOwner
+  }
+
+  get isUserConnected(): boolean {
+    return !!this.$store.state.currentUser
+  }
+
+  async loadRequests() {
+    const { recipientRegistryInfo, recipientRegistryAddress } =
+      this.$store.state
+    this.requests = await getRequests(
+      recipientRegistryInfo,
+      recipientRegistryAddress
+    )
+  }
+
+  get registryInfo(): RegistryInfo {
+    return this.$store.state.recipientRegistryInfo
   }
 
   formatAmount(value: BigNumber): string {
     return formatAmount(value, 18)
   }
 
-  formatDuration(value: number): string {
-    return humanizeDuration(value * 1000)
+  formatDuration(seconds: number): string {
+    return humanizeDuration(seconds * 1000)
   }
 
   formatDate(date: DateTime): string {
@@ -131,74 +214,131 @@ export default class RecipientRegistryView extends Vue {
     return request.status === RequestStatus.Submitted
   }
 
+  isRejected(request: Request): boolean {
+    return request.status === RequestStatus.Rejected
+  }
+
+  isExecuted(request: Request): boolean {
+    return request.status === RequestStatus.Executed
+  }
+
   hasProjectLink(request: Request): boolean {
     return (
       request.type === RequestType.Registration &&
-      [RequestStatus.Executed, RequestStatus.Accepted].includes(request.status)
+      request.status === RequestStatus.Executed
     )
   }
 
-  canSubmitProject(): boolean {
-    return this.registryInfo !== null && this.$store.state.currentUser !== null
+  isChallengePeriodOver(request: Request): boolean {
+    return Date.now() > request.acceptanceDate.toMillis()
   }
 
-  submitProject(): void {
+  async approve(request: Request): Promise<void> {
+    const { recipientRegistryAddress, currentUser } = this.$store.state
+    const signer = currentUser.walletProvider.getSigner()
+
+    await this.waitForTransactionAndLoad(
+      registerProject(recipientRegistryAddress, request.recipientId, signer)
+    )
+  }
+
+  async reject(request: Request): Promise<void> {
+    const { recipientRegistryAddress, currentUser } = this.$store.state
+    const signer = currentUser.walletProvider.getSigner()
+
+    await this.waitForTransactionAndLoad(
+      rejectProject(
+        recipientRegistryAddress,
+        request.recipientId,
+        request.requester,
+        signer
+      )
+    )
+  }
+
+  async remove(request: Request): Promise<void> {
+    const { recipientRegistryAddress, currentUser } = this.$store.state
+    const signer = currentUser.walletProvider.getSigner()
+
+    await this.waitForTransactionAndLoad(
+      removeProject(recipientRegistryAddress, request.recipientId, signer)
+    )
+  }
+
+  async waitForTransactionAndLoad(transaction) {
     this.$modal.show(
-      RecipientSubmissionModal,
+      TransactionModal,
       {
-        registryAddress: this.$store.state.recipientRegistryAddress,
-        registryInfo: this.registryInfo,
-      },
-      { width: 500 },
-      {
-        closed: async () => {
-          if (this.registryInfo) {
-            this.requests = await getRequests(
-              this.$store.state.recipientRegistryAddress,
-              this.registryInfo,
-            )
-          }
+        transactionFn: () => transaction,
+        onTxSuccess: async () => {
+          // TODO: this is not ideal. Leaving as is, just because it is an admin
+          // page where no end user is using. We are forcing this 2s time to give
+          // time the subgraph to index the new state from the tx. Perhaps we could
+          // avoid querying the subgraph and query directly the chain to get the
+          // request state.
+          await new Promise((resolve) => {
+            setTimeout(async () => {
+              await this.loadRequests()
+              resolve()
+            }, 2000)
+          })
         },
       },
+      {},
+      {}
     )
+  }
+
+  async copyAddress(text: string): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch (error) {
+      /* eslint-disable-next-line no-console */
+      console.warn('Error in copying text: ', error)
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/theme';
 
-.submit-project {
-  border-bottom: $border;
-  border-top: $border;
-  font-size: 16px;
-  line-height: 150%;
-  padding: $content-space * 1.5;
-  text-align: center;
+.title {
+  display: grid;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
 
-  .submit-project-info {
-    margin: 0 auto;
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: auto;
+    h2 {
+      line-height: 130%;
+      margin: 0;
+    }
   }
 
-  button {
-    margin: $content-space auto 0;
+  .hr {
+    width: 100%;
+    border-bottom: 1px solid rgba(115, 117, 166, 1);
   }
-}
-
-h2 {
-  font-weight: 400;
-  margin: $content-space 0;
 }
 
 .requests {
-  border: $border;
+  border: 1px solid #000;
+  border-radius: 0.5rem;
   border-spacing: 0;
   line-height: 150%;
   table-layout: fixed;
   width: 100%;
+  background-color: $bg-light-color;
 
   thead {
-    background-color: $bg-light-color;
+    background-color: $bg-primary-color;
+    border-radius: 6px;
   }
 
   tr {
@@ -207,41 +347,97 @@ h2 {
     }
   }
 
-  th, td {
+  th,
+  td {
     overflow: hidden;
     padding: $content-space / 2;
     text-align: left;
     text-overflow: ellipsis;
 
     &:nth-child(1) {
-      width: auto;
+      width: 25%;
       word-wrap: break-word;
     }
 
-    &:nth-child(n + 2) {
-      width: 100px;
+    .actions {
+      display: flex;
     }
 
     .project-name {
       font-weight: 600;
-      margin-bottom: 10px;
+      margin-bottom: 0.5rem;
     }
 
     .project-image {
-      height: 1.2em;
-      margin-right: 5px;
+      height: 1rem;
+      margin-right: 0.25rem;
       vertical-align: middle;
     }
 
-    .project-description ::v-deep {
-      p, ul, ol {
-        margin: 10px 0;
+    .project-details {
+      margin-top: 0.5rem;
+      font-size: 14px;
+      margin-left: 0.5rem;
+
+      div {
+        margin: 0.5rem 0;
+        font-weight: 500;
+        margin-left: 1rem;
       }
     }
+  }
 
-    .project-details {
-      margin-top: 10px;
+  .icon-btn-approve {
+    line-height: 0;
+    margin: 0;
+    border-radius: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $bg-light-color;
+    background: $clr-green-bg600;
+    cursor: pointer;
+    &:hover {
+      transform: scale(1.1);
+      opacity: 0.8;
     }
+  }
+
+  .icon-btn-reject {
+    line-height: 0;
+    margin: 0;
+    border-radius: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $bg-light-color;
+    background: $error-color;
+    cursor: pointer;
+    &:hover {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+.button-copy {
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+
+  img {
+    width: 16px;
   }
 }
 
