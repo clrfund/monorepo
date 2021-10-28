@@ -29,6 +29,10 @@ VUE_APP_BRIGHTID_CONTEXT={CONTEXT}
 BRIGHTID_CONTEXT={CONTEXT}
 ```
 
+Note: the BrightID context is specific to the BrightID network - it's independent from the Ethereum network you choose to run the app on. It refers to the BrightID app context where you want to burn sponsorship tokens. For instance, you could use the production `clr.fund` context on xDAI or Arbitrum (or any network).
+
+[Learn more about context in the BrightID docs](https://dev.brightid.org/docs/guides/ZG9jOjQxNTE1NDU-basic-integration).
+
 ## Testing
 
 The following tool provided by BrightID is used for manual linking, sponsoring, and verifying a contextId (in our case, the user wallet address).
