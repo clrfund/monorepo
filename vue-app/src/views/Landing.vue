@@ -9,14 +9,14 @@
         </div>
         <div>
           <div class="hero-content">
-            <h1>Send your favorite projects to the moon!</h1>
+            <h1>Manda tu proyecto de BUIDL favorito hasta la luna!</h1>
             <div id="subtitle" class="subtitle">
-              Every project you contribute to gets a portion of extra funding.
+              Cada proyecto al que contribuyas obtiene una porción extra de financiamiento.
             </div>
             <div class="btn-group">
-              <links to="/projects" class="btn-action">Go to app</links>
+              <links to="/projects" class="btn-action">Ir al app</links>
               <div class="btn-white" @click="scrollToHowItWorks">
-                How it works
+                Así Funciona
               </div>
             </div>
           </div>
@@ -28,10 +28,11 @@
             "
           >
             <div class="column">
-              <h2>Join the funding round</h2>
+              <h2>Unete a la ronda de financiamiento</h2>
               <p>
-                Add your project to the next funding round. If you're working on
-                anything related to public goods, you can join in.
+                Agrega tu proyecto a la siguiente ronda de financiamiento.
+                Si estás trabajando algo relacionado a fondos públicos,
+                puedes unirte.
               </p>
               <div class="button-group">
                 <links to="/join" class="btn-primary w100">{{
@@ -39,7 +40,7 @@
                 }}</links>
                 <div v-if="signUpDeadline">
                   <time-left unitClass="none" :date="signUpDeadline" />
-                  to join
+                  para unirte
                 </div>
               </div>
             </div>
@@ -55,44 +56,41 @@
           />
         </div>
         <div id="how-it-works-content">
-          <h2>Every donation is amplified by the matching pool.</h2>
+          <h2>Cada donación se amplifica con contrapartida.</h2>
           <p>
-            This fundraiser rewards projects with the most unique demand, not
-            just those with the wealthiest backers.
+            Esta recaudación de fondos recompensa los proyectos con la mayor demanda de usuarios, no solo aquellos con los patrocinadores más ricos.
           </p>
           <image-responsive
             title="wormhole"
             alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
-          <h2>How it works</h2>
+          <h2>Así Funciona</h2>
           <ol>
             <li>
-              The {{ operator }} and other donors send funds to the matching
-              pool smart contract.
+              {{ operator }}  y otros donantes envían fondos a un contract de pool de donaciones.
             </li>
             <li>
-              The round begins and you can donate to your favorite projects.
+              La ronda de financiamiento incia y puedes donar a cuantos proyectos quieras.
             </li>
             <li>
-              Once the round finishes, the smart contract distributes the
               matching pool funds to projects based primarily on number of
-              contributions, <strong>not contribution value</strong>.
+              contributions, <strong>not contribution value</strong>Una vez termina la ronda, el contrato inteligente distribuye los dondos del pool de donaciones a los proyectos basado en el número de contribuyentes y <strong>no en la cantidad donada</strong>.
             </li>
           </ol>
           <links class="btn-secondary" to="/about/how-it-works"
-            >How the round works</links
+            >Cómo funciona la ronda</links
           >
         </div>
       </div>
       <div class="section-header">
-        <h2>What you'll need</h2>
+        <h2>Lo que necesitas</h2>
       </div>
       <div id="what-you-will-need">
         <div class="pre-req">
           <div class="icon-row">
             <img :src="require(`@/assets/${chain.logo}`)" id="chain-icon" />
             <p>
-              <b>{{ chain.label }} for fast and cheap transaction fees</b>
+              <b>{{ chain.label }} para transacciones rápidas y baratas</b>
             </p>
           </div>
           <links

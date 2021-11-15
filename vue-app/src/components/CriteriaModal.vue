@@ -4,16 +4,15 @@
     <div class="container">
       <div>
         <div class="flex-row">
-          <h2>Round criteria</h2>
+          <h2>Criterios de la Ronda </h2>
           <div class="close-btn" @click="$emit('close')">
-            <p class="no-margin">Close</p>
+            <p class="no-margin">Cerrar</p>
             <img src="@/assets/close.svg" />
           </div>
         </div>
-        <p>
-          For this pilot round, {{ operator }} members will remove any projects
-          that don't meet the round criteria. So read carefully! In later rounds
-          we're hoping that this review process can be done by the community.
+        <p>los administradores van a remover cualquier proyecto que no cumplan
+          con los criterios. Lee cuidadosamente! Esperamos que en futuras rondas la revision sea por
+          parte de la comuniodad.
         </p>
         <div class="content">
           <div
@@ -30,7 +29,7 @@
         </div>
       </div>
       <links to="/join/project" class="btn-primary fit-content"
-        >Add project</links
+        >Agregar proyecto</links
       >
     </div>
   </div>
