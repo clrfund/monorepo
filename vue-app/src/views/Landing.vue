@@ -73,8 +73,7 @@
               La ronda de financiamiento incia y puedes donar a cuantos proyectos quieras.
             </li>
             <li>
-              matching pool funds to projects based primarily on number of
-              contributions, <strong>not contribution value</strong>Una vez termina la ronda, el contrato inteligente distribuye los dondos del pool de donaciones a los proyectos basado en el número de contribuyentes y <strong>no en la cantidad donada</strong>.
+             Una vez termina la ronda, el contrato inteligente distribuye los dondos del pool de donaciones a los proyectos basado en el número de contribuyentes y <strong>no en la cantidad donada</strong>.
             </li>
           </ol>
           <links class="btn-secondary" to="/about/how-it-works"
