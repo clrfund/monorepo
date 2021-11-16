@@ -2,7 +2,7 @@
   <div>
     <round-status-banner />
     <div id="page">
-      <div id="hero">
+      <div id="hero" v-bind:class="{ 'light-theme': $store.state.lightTheme }">
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
           <image-responsive title="docking" />
@@ -22,6 +22,7 @@
           </div>
           <div
             class="apply-callout"
+            v-bind:class="{ 'light-theme': $store.state.lightTheme }"
             v-if="
               $store.getters.isRoundJoinPhase &&
               !$store.getters.isRecipientRegistryFull
@@ -381,6 +382,11 @@ ol li::before {
     flex-flow: column;
   }
 
+  &.light-theme {
+    background: $light-bg-pink;
+    color: $light-text-color;
+  }
+
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
@@ -446,6 +452,12 @@ ol li::before {
     .column {
       flex: 1;
     }
+
+    &.light-theme {
+      background: $light-bg-pink;
+      color: $light-text-color;
+    }
+
     @media (max-width: $breakpoint-m) {
       display: flex;
       gap: 0.5rem;

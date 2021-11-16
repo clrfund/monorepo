@@ -33,6 +33,7 @@ import {
   UPDATE_CART_ITEM,
   TOGGLE_EDIT_SELECTION,
   SET_HAS_VOTED,
+  TOGGLE_THEME,
 } from './mutation-types'
 
 const mutations = {
@@ -151,6 +152,14 @@ const mutations = {
       state.showCartPanel = isOpen
     } else {
       state.showCartPanel = !state.showCartPanel
+    }
+  },
+  [TOGGLE_THEME](state, lightTheme: boolean | undefined) {
+    // Handle the case of both null and undefined
+    if (lightTheme != null) {
+      state.lightTheme = lightTheme
+    } else {
+      state.lightTheme = !state.lightTheme
     }
   },
   [RESTORE_COMMITTED_CART_TO_LOCAL_CART](state) {

@@ -11,10 +11,17 @@
       >
         Manage Recipients
       </a>
+      <div>
+        <img
+          @click="toggleTheme()"
+          class="navbar-btn"
+          :src="require(`@/assets/${themeIcon}`)"
+        />
+      </div>
       <div class="help-dropdown" v-if="inApp">
         <img
           @click="toggleHelpDropdown()"
-          class="dropdown-btn"
+          class="navbar-btn"
           src="@/assets/help.svg"
         />
         <div id="myHelpDropdown" class="button-menu" v-if="showHelpDowndown">
@@ -46,6 +53,8 @@ import WalletWidget from './WalletWidget.vue'
 import CartWidget from './CartWidget.vue'
 import Links from './Links.vue'
 import { chain } from '@/api/core'
+import { TOGGLE_THEME } from '@/store/mutation-types'
+import { lsGet, lsSet } from '@/utils/localStorage'
 
 @Component({
   components: { WalletWidget, CartWidget, Links },
@@ -73,10 +82,24 @@ export default class NavBar extends Vue {
         emoji: '🚀',
       })
     }
+    this.$store.commit(TOGGLE_THEME, !!lsGet(this.lsLightThemeKey))
   }
 
   toggleHelpDropdown(): void {
     this.showHelpDowndown = !this.showHelpDowndown
+  }
+
+  get lsLightThemeKey(): string {
+    return 'light-theme'
+  }
+
+  toggleTheme(): void {
+    this.$store.commit(TOGGLE_THEME)
+    lsSet(this.lsLightThemeKey, !lsGet(this.lsLightThemeKey))
+  }
+
+  get themeIcon(): string {
+    return this.$store.state.lightTheme ? 'half-moon.svg' : 'sun.svg'
   }
 }
 </script>
