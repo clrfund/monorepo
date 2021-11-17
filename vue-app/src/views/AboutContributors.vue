@@ -1,89 +1,84 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">Contributor guide</h1>
-    <h2>Get funds on {{ chain.label }}</h2>
+    <h1 class="content-heading">Guía del contribuidor </h1>
+    <h2>Obtenga fondos en {{ chain.label }}</h2>
     <p>
-      You'll need some {{ chain.currency }} on {{ chain.label }} in order to
-      submit transactions to the clr.fund smart contracts.
+      Necesitarás un poco de {{ chain.currency }} en la red de {{ chain.label }} para poder crear
+      una transacción en los smart contracts de clr.fund.
       <span v-if="chain.label.includes('Arbitrum')">
-        Follow
-        <links to="https://arbitrum.io/bridge-tutorial/">this tutorial</links>
-        to bridge your funds to {{ chain.label }}
+        Sigue
+        <links to="https://arbitrum.io/bridge-tutorial/">este tutorial</links>
+        para pasar tus fondos a {{ chain.label }}
       </span>
       <span v-else-if="chain.bridge">
-        Use the
-        <links :to="chain.bridge">{{ chain.label }} bridge</links>
-        to transfer some funds.
+        Usa el
+        <links :to="chain.bridge">{{ chain.label }} puente</links>
+        para transferir algunos fondos.
       </span>
     </p>
     <p v-if="chain.isLayer2">
-      Confused on what {{ chain.label }} is?
+      Confundido en lo que {{ chain.label }} es?
       <links to="/about/layer-2">
-        Read our explanation on how clr.fund uses layer 2 on Ethereum.
+        Lee nuestra explicación sobre cómo clr.fund usa la capa 2 en Ethereum.
       </links>
     </p>
-    <h2>Contributing to specific projects</h2>
+    <h2>Contribuyendo a proyectos específicos</h2>
     <ol>
       <li>
-        Before contributing to specific projects, you will need to
-        <links to="/verify">verify that you're a unique human</links>. This
-        helps clr.fund
-        <links to="/about/sybil-resistance">resist sybil attacks</links>!
+        Antes de contribuir a proyectos específicos, deberás
+        <links to="/verify">verificar que eres un humano único</links>. Esto ayuda
+        a clr.fund
+        <links to="/about/sybil-resistance">resistir sybil attacks</links>!
       </li>
       <li>
-        Make sure you have {{ nativeTokenSymbol }} in your BrightID-verified
-        wallet on the {{ chain.label }} network
+        Asegúrate de tener {{nativeTokenSymbol}} en tu wallet verificada por BrightIDen la red de {{ chain.label }}
       </li>
       <li>
-        <links to="/projects">Browse projects</links> and add some to your cart,
-        adjusting your contributions to the amount of
-        {{ nativeTokenSymbol }} you want.
+        <links to="/projects">Revisa los proyectos</links> y agrega algunos a tu carreta,
+       ajustando tus contribuciones a la cantidad de
+        {{ nativeTokenSymbol }} que deseas.
       </li>
       <li>
-        When you're ready, open your cart, click contribute, and confirm the
-        transactions to complete your contributions!
+        Cuando estés listo, abre tu carrito, haz clic en contribuir y confirma las
+        transacciones para completar tus contribuciones!
       </li>
     </ol>
     <p>
-      Note: you can only contribute once. After submitting your contributions,
-      you can reallocate them as much as you would like before the end of the
-      reallocation phase but you cannot add more funds to your total
-      contribution amount.
+      Nota: solo puedes contribuir una vez. Después de enviar tus contribuciones,
+      puedes reasignarlas tanto como desees antes de que finalice la fase de reasignación,
+      pero no puedes agregar más fondos al monto total de tu contribución.
     </p>
     <ol>
-      <li>You can add and remove projects.</li>
+      <li>Puedes agregar y eliminar proyectos.</li>
       <li>
-        Your reallocation total must be less than or equal to the original total
-        (if it's less, the rest will go to the matching pool).
+        El total de reasignación debe ser menor o igual que el total original.
+        (si es menos, el resto irá al grupo correspondiente).
       </li>
     </ol>
-    <h2>Contributing to the matching pool</h2>
+    <h2>Contribuir al grupo correspondiente</h2>
     <p>
-      Not sure which specific to contribute to? Contributions to the matching
-      pool will be distributed to all projects that receive project-specific
-      contributions during that round. The weighting of this distribution is
-      determined by the
-      <links to="/about/quadratic-funding">quadratic funding</links> results
+      ¿No estás seguro de a qué proyecto en específico contribuir? Las contribuciones al fondo de contrapartida se distribuirán
+      a todos los proyectos que reciban contribuciones específicas del proyecto durante esa ronda.
+      La ponderación de esta distribución está determinada por los resultados de
+      <links to="/about/quadratic-funding">financiamiento cuadratico</links>
     </p>
     <ol>
       <li>
-        First make sure the wallet you are using holds
-        {{ nativeTokenSymbol }} on {{ chain.label }}.
-        {{ nativeTokenSymbol }} can be easily purchased on any major
-        Ethereum-focused exchange.
+        Primero asegúrate de que la billetera que estás usando mantenga
+        {{ nativeTokenSymbol }} en {{ chain.label }}.
+        {{ nativeTokenSymbol }} se puede comprar fácilmente en cualquier exchange centrado en Ethereum.
       </li>
       <li>
-        Once you have the desired amount of {{ nativeTokenSymbol }} in your
-        wallet, select "Add Funds" on the
-        <links to="/projects">Projects page</links> and confirm the
-        transactions.
+        Una vez que tengas la cantidad deseada de {{ nativeTokenSymbol }} en tu
+        billetera, selecciona "Agregar Fondos" en la
+        <links to="/projects">Página de Proyectos</links> y confirma las transacciones.
       </li>
     </ol>
     <p></p>
-    <h2>How does clr.fund work?</h2>
+    <h2>Cómo funciona clr.fund?</h2>
     <p>
-      Looking for a more general overview?
-      <links to="/about/how-it-works">Check out our "How It Works" page</links>.
+      Buscas una descripción más general?
+      <links to="/about/how-it-works">Consulta nuestra página de "Cómo funciona"</links>.
     </p>
   </div>
 </template>
