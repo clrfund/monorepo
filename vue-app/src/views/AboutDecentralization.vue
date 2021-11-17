@@ -1,72 +1,66 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">Decentralization in Clr.fund</h1>
-    <h2>What is Decentralization?</h2>
+    <h1 class="content-heading">Descentralización en Clr.fund</h1>
+    <h2>¿Qué es la descentralización?</h2>
     <p>
-      Cuando hablamos sobre "descentralización" en CLR.Fund y la Web3 When we say something is "decentralized" in clr.fund and in web3 broadly,
-      we mean that no single person, company, or other entity is solely
-      responsible for running or maintaining it. Instead, a decentralized system
-      is run or maintained by a large group of independent entities, coordinated
-      by a set of rules each opts into, like miners in Ethereum or peers in
-      BitTorrent.
+      Cuando decimos que algo está "descentralizado" en clr.fund y en web3 en general,
+      nos referimos a que ninguna persona, empresa u otra entidad es únicamente responsable 
+      de ejecutarlo o brindarle mantenimiento. En cambio, un sistema descentralizado está dirigido o 
+      mantenido por un gran grupo de entidades independientes, coordinadas por un conjunto 
+      de reglas en las que cada uno opta, como los mineros en Ethereum o sus pares en BitTorrent.
     </p>
 
-    <h2>Which pieces of clr.fund are decentralized?</h2>
+    <h2>¿Qué piezas de clr.fund están descentralizadas?</h2>
     <p>
-      Much of clr.fund's infrastructure is built on Ethereum, a decentralized
-      blockchain:
+      Gran parte de la infraestructura de clr.fund se basa en Ethereum, una blockchain descentralizada:
     </p>
     <ul>
       <li>
-        the registry of projects qualified for funding (and, potentially, the
-        curation mechanism for choosing these projects)
+        el registro de proyectos calificados para financiamiento (y, potencialmente, 
+        el mecanismo de curaduría para elegir estos proyectos)
       </li>
-      <li>the matching pool of funds</li>
+      <li>el fondo común de fondos</li>
       <li>
-        the sybil-resistant registry of users qualified to contribute to
-        individual projects
+       el registro de sybil-resistant calificados para contribuir a proyectos individuales.
       </li>
       <li>
         the funds from and encrypted information about contributions to
         individual projects
       </li>
       <li>
-        the mechanism for distributing funds once a round's results are
-        finalized
+        los fondos y la información encriptada sobre las contribuciones a proyectos individuales
       </li>
     </ul>
     <p>
-      Each of these pieces exists in an Ethereum smart contract (see the code
-      <links to="https://github.com/clrfund/monorepo">here</links>), meaning its
-      functionality is maintained by Ethereum miners, a decentralized group.
+      Cada una de estas piezas existe en un contrato inteligente de Ethereum (consulte el código 
+      <links to = "https://github.com/clrfund/monorepo"> aquí </links>), lo que significa que su 
+      funcionalidad es mantenida por los mineros de Ethereum, un grupo descentralizado.
     </p>
-    <h2>Why is clr.fund decentralized?</h2>
+    <h2>¿Por qué está descentralizado clr.fund?</h2>
     <p>
-      Ethereum's decentralization provides clr.fund with three main benefits:
+      La descentralización de Ethereum proporciona a clr.fund tres beneficios principales:
     </p>
     <ol>
       <li>
-        Transparent process — All of the decentralized pieces of clr.fund are
-        publicly verifiable. Anyone can look at the code for the smart contracts
-        and observe its inputs and outputs, with very little possibility that
-        anything is being hidden or changed secretly.
+        Proceso transparente: todas las piezas descentralizadas de clr.fund son verificables públicamente.
+        Cualquiera puede mirar el código de los contratos inteligentes y observar sus entradas y salidas, 
+        con muy pocas posibilidades de que algo se oculte o cambie en secreto.
       </li>
       <li>
-        Secure voting — Because of Ethereum's strong security guarantees, anyone
-        submitting a message can be extremely confident that their message will
-        be processed as expected by the system. There are still security
-        dangers, of course, such as
-        <links to="/about/sybil-resistance">sybil attacks</links> or
-        <links to="/about/maci">vote manipulation</links>, but the kind of "vote
-        hacking" typically feared in digital voting is highly unlikely here.
+        Votación segura: debido a las sólidas garantías de seguridad de Ethereum, 
+        cualquiera que envíe un mensaje puede estar extremadamente seguro de que su
+        mensaje será procesado según lo esperado por el sistema. Todavía existen 
+        peligros de seguridad, por supuesto, como <links to = "/ about / sybil -istance"> 
+        ataques de sybil, </links> o <links to = "/ about / maci"> manipulación de votos
+        </links>, pero el tipo de "piratería de votos" que normalmente se teme en la 
+        votación digital es muy poco probable aquí.
       </li>
       <li>
-        Public good — Everything on Ethereum is open source and permissionless,
-        which means the code for clr.fund's decentralized infrastructure acts as
-        a public good: anyone can deploy their own version of the system to
-        create their own
-        <links to="/about/quadratic-funding">quadratic funding</links> system,
-        with the same decentralized benefits of the original.
+        Bien público: todo en Ethereum es de código abierto y sin permiso, lo que significa
+        que el código de la infraestructura descentralizada de clr.fund actúa como un bien 
+        público: cualquiera puede implementar su propia versión del sistema para crear su 
+        propio <links to = "/ about / quadratic -funding "> sistema de financiación cuadrática
+        </links>, con los mismos beneficios descentralizados del original.
       </li>
     </ol>
   </div>
