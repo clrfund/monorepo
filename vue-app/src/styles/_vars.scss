@@ -6,17 +6,17 @@ $bg-primary-color: #191623;
 $bg-secondary-color: #211e2b;
 $bg-light-color: #2c2938;
 $border-color: #2b364b;
-$highlight-color: #9789c4; /* #6cf4d5 */
+$highlight-color: #9789c4; /* #9789c4 */
 $button-color: #7375a6;
 $button-disabled-color: #56567a;
 $button-disabled-text-color: #aaa9af;
 $error-color: #bd6b5e;
 $warning-color: #fdfe6a;
 $warning-color-bg: rgba(253, 254, 106, 0.05);
-$clr-green: #16c8b5;
+$clr-green: #6FBDFF; //#16c8b5
 $clr-green-bg: rgba(22, 200, 181, 0.2);
 $clr-green-bg600: rgba(22, 200, 181, 0.6);
-$clr-pink: #6FBDFF;
+$clr-pink: #6FBDFF; // #c72ab9
 $clr-blue: #252a77;
 $clr-pink-light-gradient: linear-gradient(
   109.01deg,
@@ -31,6 +31,7 @@ $clr-blue-gradient: linear-gradient(
   #292447 53.48%,
   #2c3f45 99.55%
 );
+
 $box-shadow: 0px -4px 16px rgba(255, 255, 255, 0.05);
 
 // when using gradients as backgrounds – 60% opacity
