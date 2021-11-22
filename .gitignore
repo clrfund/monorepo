@@ -4,3 +4,4 @@ vue-app/gundata/
 vetur.config.js
 # Local Netlify folder
 .netlify
+vue-app/.env.*

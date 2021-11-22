@@ -1,5 +1,9 @@
 <template>
-  <div id="app" class="wrapper">
+  <div
+    id="app"
+    class="wrapper"
+    v-bind:class="{ 'light-theme': $store.state.lightTheme }"
+  >
     <nav-bar :in-app="isInApp" />
     <div id="content-container">
       <div

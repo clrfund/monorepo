@@ -1,0 +1,206 @@
+.light-theme {
+  background-color: $clr-white;
+  color: $clr-black;
+
+  /* landing page */
+  .btn-action {
+    @include button(white, $clr-purple, none);
+  }
+
+  .btn-white {
+    @include button($clr-black, white, 2px solid white);
+  }
+
+  .btn-secondary {
+    @include button($clr-black, $clr-light-green, none);
+  }
+
+  .app-btn {
+    @include button(white, $clr-purple, none);
+    padding: 0.25rem 1.25rem;
+    border-radius: 1rem;
+  }
+
+  #hero {
+    background: $clr-white;
+    color: $clr-black;
+
+    .apply-callout {
+      background: $clr-white;
+      color: $clr-black;
+    }
+  }
+
+  #banner {
+    @include banner($clr-black, $clr-white);
+  }
+
+  #page {
+    background: $clr-white;
+  }
+
+  #section-how-it-works {
+    background: $clr-white;
+
+    #how-it-works-content {
+      background: $clr-white;
+      color: $clr-black;
+      ol li::before {
+        background: $clr-light-green;
+        color: $clr-dark-gray;
+        border-color: $clr-green-border;
+      }
+    }
+  }
+
+  #what-you-will-need {
+    .btn-action {
+      @include button(white, $clr-green-border, none);
+    }
+    .pre-req {
+      background: $clr-light-pink;
+    }
+
+    #bright-id.pre-req {
+      background: $clr-light-green;
+      .btn-primary {
+        @include button(white, $clr-green-border, none);
+      }
+    }
+
+    #bright-id-icon {
+      background: $clr-light-green;
+    }
+  }
+
+  #about-1,
+  #about-2,
+  #about-3 {
+    background: $clr-white;
+    padding: 0 $content-space;
+  }
+
+  #about-section {
+    a {
+      color: $clr-green-border;
+    }
+    padding: 0 4rem;
+  }
+
+  /* projects */
+  #content-container,
+  .back,
+  .round-info-item,
+  .round-info-sub-item,
+  .empty-search {
+    background: $clr-white;
+    color: $clr-black;
+
+    #sidebar {
+      background: $clr-white;
+    }
+  }
+
+  #content-container {
+    .content,
+    .hero {
+      background: $clr-white;
+    }
+  }
+
+  .image-wrapper {
+    background: $clr-light-pink;
+  }
+
+  .category-filter {
+    .selector-wrapper {
+      .category-btn {
+        background: $clr-white;
+        &:hover {
+          background: $clr-light-pink;
+        }
+      }
+      .category-btn-selected {
+        background: $clr-light-pink;
+      }
+    }
+  }
+
+  .round-info-title,
+  .message {
+    color: $clr-black;
+  }
+
+  .round-info-value {
+    .value {
+      color: $clr-black;
+    }
+
+    .unit {
+      color: $clr-black;
+    }
+  }
+
+  .round-value-info-item {
+    background: $clr-white;
+    color: $clr-black;
+
+    .unit {
+      color: $clr-black;
+    }
+  }
+
+  .category-filter {
+    .filter-btn {
+      border: none;
+    }
+  }
+
+  .get-prepared {
+    background: $clr-white;
+    border: none;
+  }
+
+  .project-item {
+    background: $clr-white;
+  }
+
+  .more-btn {
+    background: $clr-purple;
+    &:hover {
+      background: $clr-white;
+      color: $clr-black;
+      border: solid 1px $clr-black;
+    }
+  }
+
+  .project-info,
+  .project-description {
+    color: $clr-black;
+  }
+
+  .project-name {
+    * {
+      color: $clr-black;
+    }
+  }
+
+  .title {
+    .project-search {
+      background: $clr-white;
+    }
+  }
+
+  .tag,
+  .link-box {
+    background: $clr-white;
+  }
+
+  .project-page .about .address-box {
+    background: $clr-white;
+  }
+
+  #team {
+    background: $clr-white;
+  }
+}

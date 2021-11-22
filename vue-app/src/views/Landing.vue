@@ -2,7 +2,7 @@
   <div>
     <round-status-banner />
     <div id="page">
-      <div id="hero" v-bind:class="{ 'light-theme': $store.state.lightTheme }">
+      <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
           <image-responsive title="docking" />
@@ -22,7 +22,6 @@
           </div>
           <div
             class="apply-callout"
-            v-bind:class="{ 'light-theme': $store.state.lightTheme }"
             v-if="
               $store.getters.isRoundJoinPhase &&
               !$store.getters.isRecipientRegistryFull
@@ -231,10 +230,6 @@ export default class Landing extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-#page {
-  background: $bg-primary-color;
-}
-
 #page > div {
   padding: $content-space (2 * $content-space);
   @media (max-width: $breakpoint-m) {
@@ -382,11 +377,6 @@ ol li::before {
     flex-flow: column;
   }
 
-  &.light-theme {
-    background: $light-bg-pink;
-    color: $light-text-color;
-  }
-
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
@@ -451,11 +441,6 @@ ol li::before {
     gap: 1rem;
     .column {
       flex: 1;
-    }
-
-    &.light-theme {
-      background: $light-bg-pink;
-      color: $light-text-color;
     }
 
     @media (max-width: $breakpoint-m) {
