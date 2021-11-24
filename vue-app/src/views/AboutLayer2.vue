@@ -1,8 +1,8 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">About Layer 2</h1>
+    <h1 class="content-heading" Sobre Layer 2</h1>
 
-    <h2>Clr.fund on Layer 2</h2>
+    <h2>Clr.fund en Layer 2</h2>
     <p>
       <b>
         tl;dr: clr.fund runs on
@@ -10,9 +10,9 @@
           to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/"
           >Ethereum Layer 2 rollups</links
         >
-        to help save you time and money when contributing to your favorite
-        projects. You'll need a wallet with funds on {{ chain.label }} to
-        interact with this application.
+        para ayudarlo a ahorrar tiempo y dinero al contribuir con sus proyectos 
+        favoritos. Necesitará una billetera con fondos en {{chain.label}} para 
+        interactuar con esta aplicación.
       </b>
     </p>
     <button
@@ -23,45 +23,45 @@
       Bridge Funds
     </button>
 
-    <h2>Ethereum Transaction Costs</h2>
+    <h2>Costos de transacción de Ethereum</h2>
     <p>
-      Ethereum, the blockchain that houses much of clr.fund's infrastructure,
-      requires users to pay transaction costs when interacting with it, and
-      these costs are going up. Transaction fees compensate the decentralized
-      community of Ethereum miners for processing and maintaining the
-      blockchain's state securely. As usage of Ethereum has gone up, so has the
-      price of getting miner's to include your transaction on the blockchain.
+      Ethereum, el blockchain que alberga gran parte de la infraestructura
+      de clr.fund, requiere que los usuarios paguen los costos de transacción 
+      cuando interactúan con ella, y estos costos están aumentando. Las tarifas 
+      de transacción compensan a la comunidad descentralizada de mineros de Ethereum
+      por procesar y mantener el estado del blockchain de forma segura. A medida que 
+      el uso de Ethereum ha aumentado, también lo ha hecho el precio de conseguir que
+      los mineros incluyan su transacción en el blockchain.
     </p>
     <p>
-      So, the increasing cost of using Ethereum demonstrates that it's useful,
-      which is great, but it also presents a problem for end users who don't
-      want to pay fees in the 10s or 100s of dollars.
+      Entonces, el costo creciente de usar Ethereum demuestra 
+      que es útil, lo cual es genial, pero también presenta un 
+      problema para los usuarios finales que no quieren pagar tarifas
+      de 10 o 100 dólares.
     </p>
 
-    <h2>Layer 2s for Scalability</h2>
+    <h2>Layer 2 para Escalabilidad</h2>
     <p>
-      The main Ethereum blockchain, "layer 1", may be upgraded to reduce costs
-      in the future (this is one of the goals for the future of Ethereum, which
-      clr.fund is helping realize!).
+      El blockchain principal de Ethereum, "layer 1", puede 
+      actualizarse para reducir costos en el futuro (¡Este es uno de 
+      los objetivos para el futuro de Ethereum, que clr.fund está ayudando a realizar!).
     </p>
     <p>
-      In the immediate term, though, "layer 2" solutions are already helping
-      dramatically reduce costs. Most layer 2s are "rollups", blockchain-esque
-      systems that are maintained, like Ethereum, by a decentralized group of
-      nodes. Rollups periodically "roll up" all their recent transactions into a
-      single transaction that is recorded on layer 1, Ethereum, allowing them to
-      inherit much of Ethereum's security.
+      Sin embargo, a corto plazo, las soluciones de "layer 2" ya están ayudando a reducir
+      drásticamente los costos. La mayoría de las layer 2 son "acumulaciones", sistemas 
+      tipo blockchain que se mantienen, como Ethereum, por un grupo descentralizado de nodos. 
+      Los rollups periódicamente "acumulan" todas sus transacciones recientes en una sola 
+      transacción que se registra en la layer 1, Ethereum, lo que les permite heredar gran 
+      parte de la seguridad de Ethereum.
     </p>
     <p>
-      Transactions on layer 2s are orders of magnitude cheaper than on layer 1,
-      since rollups can process a high rate of transactions and transaction
-      traffic is now diluted across the many layer 2 options.
+      Las transacciones en las layer 2s son órdenes de magnitud más baratas que en la layer 1, 
+      ya que los paquetes acumulados pueden procesar una alta tasa de transacciones y el tráfico
+      de transacciones ahora se diluye en las muchas opciones de la layer 2.
     </p>
     <p>
-      Read more on
-      <links
-        to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/"
-        >Ethereum Layer 2 technologies</links
+      Leer más en <links to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/">
+      Tecnologías Ethereum Layer 2</ links
       >.
     </p>
     <div v-if="chain.bridge" class="divider" id="bridge" />
@@ -69,20 +69,20 @@
     <div v-if="chain.label.includes('Arbitrum')" class="chain-details">
       <h2>{{ chain.label }}</h2>
       <p>
-        There are many variations on the layer 2 rollup approach. This current
-        clr.fund round uses {{ chain.label }}, an "optimistic"-style rollup.
-        <links to="https://developer.offchainlabs.com/docs/rollup_basics"
-          >Learn more in the {{ chain.label }} docs</links
+        Hay muchas variaciones en el enfoque de acumulación de capa 2. Esta ronda actual de 
+        clr.fund utiliza {{chain.label}}, un resumen de estilo "optimista". 
+        <links o = "https://developer.offchainlabs.com/docs/rollup_basics"> Obtenga más información 
+        en los {{chain.label}} documentos</links
         >.
       </p>
 
-      <h2>What you'll need</h2>
+      <h2>Lo que necesitarás</h2>
       <ul>
-        <li>A wallet that supports {{ chain.label }}</li>
-        <li>Funds on {{ chain.label }}</li>
+        <li>Una billetera que admite {{ chain.label }}</li>
+        <li>Fondos en {{ chain.label }}</li>
       </ul>
       <h3>
-        💼 How to find wallet that supports {{ chain.label }}
+        💼 Cómo encontrar una billetera que admita {{ chain.label }}
         <img
           v-tooltip="{
             content:
