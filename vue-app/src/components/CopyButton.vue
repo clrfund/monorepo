@@ -74,4 +74,8 @@ export default class CopyButton extends Vue {
 .border {
   border: 1px solid $text-color;
 }
+
+svg {
+  fill: currentColor;
+}
 </style>

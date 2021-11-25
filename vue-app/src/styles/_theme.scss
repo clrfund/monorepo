@@ -2,3 +2,115 @@
 @import './mixins';
 @import './dark-theme';
 @import './light-theme';
+
+.explorer-btn {
+  @include button(
+    white,
+    $clr-pink-light-gradient-inactive,
+    1px solid $bg-light-color
+  );
+  box-shadow: $box-shadow;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  font-size: 14px;
+  font-weight: 500;
+  &:hover {
+    opacity: 1;
+    transform: scale(1);
+    cursor: default;
+  }
+}
+
+.navbar-btn,
+.dropdown-btn {
+  @include button(white, $bg-light-color, 1px solid rgba(115, 117, 166, 0.3));
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  margin-right: 0.5rem;
+  display: flex;
+}
+
+.warning-text {
+  font-size: 12px;
+  font-family: Inter;
+  line-height: 150%;
+  color: $warning-color;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.button-loader {
+  margin: 0.25rem;
+  padding: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.button-loader:after {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  border-color: #fff transparent #fff transparent;
+}
+
+.tag {
+  font-family: 'Glacial Indifference', sans-serif;
+  padding: 0.5rem 0.75rem;
+  background: $bg-light-color;
+  color: $button-disabled-text-color;
+  width: fit-content;
+  border-radius: 4px;
+}
+
+.token-icon {
+  margin-left: 0.5rem;
+}
+
+.big-emoji {
+  font-size: 4rem;
+}
+
+.mb2 {
+  margin-bottom: 2rem;
+}
+
+.mt2 {
+  margin-top: 2rem;
+}
+
+.about {
+  padding-bottom: 4rem;
+
+  .content-heading {
+    border-bottom: $border;
+  }
+
+  h2 {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-weight: bold;
+    font-size: 32px;
+    letter-spacing: -0.015em;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 150%;
+  }
+
+  li {
+    font-size: 16px;
+    line-height: 150%;
+    margin-bottom: 15px;
+  }
+}
+
+.divider {
+  margin: 3rem 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 1px;
+  background: $clr-pink-dark-gradient-bg;
+}

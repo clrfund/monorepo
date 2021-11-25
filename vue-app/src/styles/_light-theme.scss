@@ -17,8 +17,6 @@
 
   .app-btn {
     @include button(white, $clr-purple, none);
-    padding: 0.25rem 1.25rem;
-    border-radius: 1rem;
   }
 
   #hero {
@@ -161,7 +159,8 @@
     border: none;
   }
 
-  .project-item {
+  .project-item,
+  .tag {
     background: $clr-white;
   }
 
@@ -188,19 +187,50 @@
   .title {
     .project-search {
       background: $clr-white;
+
+      input {
+        color: $clr-black;
+      }
     }
   }
 
-  .tag,
-  .link-box {
-    background: $clr-white;
+  // project profile
+  .project-page {
+    #team,
+    .about > .address-box {
+      background: $clr-white;
+    }
+
+    .about {
+      .project-section {
+        color: $clr-black;
+      }
+    }
+
+    .project-profile {
+      color: $clr-black;
+    }
+
+    .copy-div {
+      .project-profile {
+        background: $button-color;
+
+        &:hover {
+          background-color: $bg-light-color;
+        }
+      }
+
+      .explorerLink {
+        .icon {
+          background: $button-color;
+        }
+      }
+    }
   }
 
-  .project-page .about .address-box {
-    background: $clr-white;
-  }
-
-  #team {
-    background: $clr-white;
+  .sticky-column {
+    .link-box {
+      background: $clr-white;
+    }
   }
 }
