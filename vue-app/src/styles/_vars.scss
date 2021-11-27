@@ -18,12 +18,19 @@ $clr-green-bg: rgba(22, 200, 181, 0.2);
 $clr-green-bg600: rgba(22, 200, 181, 0.6);
 $clr-pink: #6FBDFF; // #c72ab9
 $clr-blue: #252a77;
+//$clr-pink-light-gradient: linear-gradient(
+//  109.01deg,
+//  #9789c4 6.45%,
+//  #c72ab9 99.55%
+//);
 $clr-pink-light-gradient: linear-gradient(
-  109.01deg,
-  #9789c4 6.45%,
-  #c72ab9 99.55%
+    109.01deg,
+    #253E5A 6.45%,
+    #253E5A 99.55%
 );
-$clr-pink-dark-gradient: linear-gradient(315deg, #c72ab9 0%, #252a77 100%);
+$clr-pink-dark-gradient: linear-gradient(315deg, #6FBDFF 0%, #252a77 100%);
+
+//$clr-pink-dark-gradient: linear-gradient(315deg, #c72ab9 0%, #252a77 100%);
 $clr-green-gradient: linear-gradient(315deg, #2b364b 0%, #6cf4d5 100%);
 $clr-blue-gradient: linear-gradient(
   109.01deg,
@@ -46,19 +53,27 @@ $clr-blue-gradient-bg: linear-gradient(
   rgba(41, 36, 71, 0.6) 53.48%,
   rgba(44, 63, 69, 0.6) 99.55%
 );
+
 $clr-purple-gradient-bg: linear-gradient(
     135deg,
-    rgba(41, 36, 71, 0.2),
-    rgba(199, 42, 185, 0.2) 30%,
+    rgba(41, 36, 71, 0),
+    rgba(199, 42, 185, 0) 30%,
     rgba(41, 36, 71, 0.2) 100%
-  ),
-  #191623;
+),
+#201E2A;
+//$clr-purple-gradient-bg: linear-gradient(
+//    135deg,
+//    rgba(41, 36, 71, 0.2),
+//    rgba(199, 42, 185, 0.2) 30%,
+//    rgba(41, 36, 71, 0.2) 100%
+//  ),
+//  #191623;
 
 // inactive - 20% opacity
 $clr-pink-light-gradient-inactive: linear-gradient(
-  109.01deg,
-  rgba(151, 137, 196, 0.2) 6.45%,
-  rgba(199, 42, 185, 0.2) 99.55%
+    109.01deg,
+    rgba(151, 137, 196, 0.2) 6.45%,
+    rgba(199, 42, 185, 0.2) 99.55%
 );
 
 // 1rem = 16px at default text zoom size
