@@ -8,7 +8,7 @@
       que puedas aprender qué esperar durante la duración de la ronda.
     </p>
     <p>
-      ¿Buscas guías sobre cómo participar? Consulta nuestras guías específicamente 
+      ¿Buscas guías sobre cómo participar? Consulta nuestras guías específicamente
       para contribuir y unirte como proyecto.
     </p>
     <ul>
@@ -24,21 +24,21 @@
 
     <h2>Resumen rápido sobre la financiación cuadrática</h2>
     <p>
-      Como se describe en nuestra <links to = "/ about / quadratic-finance"> 
-      Descripción General sobre el Financiamiento Cuadrático </ links>, los 
-      proyectos recibirán financiamiento de contribuciones individuales, así 
-      como del fondo de contrapartida. Cuando contribuyes a tus proyectos 
-      favoritos, tu contribución también actúa como un voto. Cuantas más 
-      contribuciones reciba un proyecto, más votos. Y cuantos más votos obtenga 
-      un proyecto, más recibirán del grupo correspondiente. Aunque una mayor 
-      contribución individual equivaldrá a una mayor ponderación de votos, 
-      es mucho más importante recibir un gran volumen de contribuciones únicas 
+      Como se describe en nuestra <links to = "/ about / quadratic-finance">
+      Descripción General sobre el Financiamiento Cuadrático </ links>, los
+      proyectos recibirán financiamiento de contribuciones individuales, así
+      como del fondo de contrapartida. Cuando contribuyes a tus proyectos
+      favoritos, tu contribución también actúa como un voto. Cuantas más
+      contribuciones reciba un proyecto, más votos. Y cuantos más votos obtenga
+      un proyecto, más recibirán del grupo correspondiente. Aunque una mayor
+      contribución individual equivaldrá a una mayor ponderación de votos,
+      es mucho más importante recibir un gran volumen de contribuciones únicas
       que solo unas pocas contribuciones de alto valor.
     </p>
     <p>
-      Dado que la ronda de financiación también es un voto público, necesita 
-      plazos. La ronda se divide en varias fases para que, una vez realizadas 
-      todas las contribuciones o los votos, puedan contarse y confirmarse antes 
+      Dado que la ronda de financiación también es un voto público, necesita
+      plazos. La ronda se divide en varias fases para que, una vez realizadas
+      todas las contribuciones o los votos, puedan contarse y confirmarse antes
       de la distribución final del grupo de contrapartida.
     </p>
     <h2>Fases de la Ronda de Financiación</h2>
@@ -61,13 +61,13 @@
     </ul>
     <h3>Fase de Contribución</h3>
     <p>
-      El lanzamiento de la fase de contribución sigue a la fase de unión y marca el inicio 
+      El lanzamiento de la fase de contribución sigue a la fase de unión y marca el inicio
       oficial de la ronda de financiación. Este es el momento para que agregues tus proyectos
       favoritos a su carrito y contribuyas.
     </p>
     <h4>Need to know</h4>
     <ul>
-      <li>Esta fase durará {{día de la fase de contribución}} días. </li>
+      <li>Esta fase durará {{contributionPhaseDays}} días. </li>
       <li>
         Deberás pasar por algunos <links to = "/ verify"> setup </links> antes de poder contribuir.
       </li>
@@ -75,7 +75,7 @@
         La cantidad máxima de contribución es {{maxContributionAmount}} {{nativeTokenSymbol}}.
       </li>
       <li>
-        El monto total de su contribución es definitivo. No puede aumentarlo contribuyendo con un 
+        El monto total de su contribución es definitivo. No puede aumentarlo contribuyendo con un
         tiempo adicional.
       </li>
     </ul>
@@ -86,14 +86,14 @@
 
     <h3>Fase de Reasignación</h3>
     <p>
-      Durante esta fase, si has contribuido, tendrás tiempo para cambiar de opinión. Puedes editar los montos 
+      Durante esta fase, si has contribuido, tendrás tiempo para cambiar de opinión. Puedes editar los montos
       de tu contribución o agregar / eliminar proyectos, pero tu total debe ser igual al de tu contribución original.
-      
+
     </p>
     <h4>Need to know</h4>
     <ul>
       <li>
-        Esta fase durará {{días de la fase de reasignación}} días después del final de la Fase de Contribución.
+        Esta fase durará {{reallocationPhaseDays}} días después del final de la Fase de Contribución.
       </li>
       <li>
         Si eliminas proyectos, debes reasignar los fondos a otros proyectos o se destinarán al fondo común.
@@ -105,12 +105,12 @@
     <h3>Fase de Conteo</h3>
     <p>
       En este punto, todas las contribuciones son definitivas y ahora se pueden contabilizar. El coordinador de la ronda
-      activa <links to = "/ about / maci"> MACI </links> y los contratos inteligentes para calcular la cantidad del grupo 
+      activa <links to = "/about/maci">MACI </links> y los contratos inteligentes para calcular la cantidad del grupo
       correspondiente que obtendrá cada proyecto.
     </p>
     <h3>Fase Finalizada</h3>
     <p>
-      Una vez que se completan los cálculos de recuento, se finaliza la ronda. ¡Los propietarios de proyectos pueden venir 
+      Una vez que se completan los cálculos de recuento, se finaliza la ronda. ¡Los propietarios de proyectos pueden venir
       y reclamar su financiación!
     </p>
     <h2>Más</h2>
