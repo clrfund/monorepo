@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div id="criteria-modal" class="wrapper">
     <div class="modal-background" @click="$emit('close')" />
     <div class="container">
       <div>

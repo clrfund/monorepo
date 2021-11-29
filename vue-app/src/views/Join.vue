@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div id="join-the-round" class="container">
     <div class="grid">
       <form-progress-widget
         :currentStep="currentStep"

@@ -23,14 +23,15 @@
     @include button(white, $clr-purple, none);
   }
 
+  .apply-callout {
+    background: $clr-white;
+    color: $clr-black;
+    border: none;
+  }
+
   #hero {
     background: $clr-white;
     color: $clr-black;
-
-    .apply-callout {
-      background: $clr-white;
-      color: $clr-black;
-    }
   }
 
   #banner {
@@ -245,6 +246,71 @@
   .sticky-column {
     .link-box {
       background: $clr-white;
+    }
+  }
+
+  // add project criteria modal
+  #criteria-modal {
+    .container {
+      background: $clr-white;
+    }
+
+    .content {
+      background: $clr-purple;
+      color: $clr-white;
+    }
+  }
+
+  // join the round
+  #join-the-round {
+    .application,
+    .form-background {
+      background: $clr-white;
+    }
+
+    .form-background {
+      input[type='text'],
+      textarea,
+      label,
+      .input {
+        background: $clr-white;
+        color: $clr-black;
+      }
+    }
+
+    .progress-container {
+      background: $clr-white;
+
+      .progress-step {
+        img {
+          filter: invert(0.4);
+        }
+        p {
+          color: $clr-black;
+        }
+      }
+    }
+
+    #category-radio {
+      input[type='radio']:checked + label {
+        background: $clr-pink;
+        color: $clr-white;
+      }
+      .radio-btn {
+        &:hover {
+          background: $clr-pink;
+          color: $clr-white;
+        }
+        &:active {
+          background: $clr-pink;
+          color: $clr-white;
+        }
+      }
+    }
+
+    .recipient-submission-widget {
+      background-color: $clr-white;
+      border: none;
     }
   }
 }
