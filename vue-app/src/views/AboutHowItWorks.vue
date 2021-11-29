@@ -24,8 +24,8 @@
 
     <h2>Resumen rápido sobre la financiación cuadrática</h2>
     <p>
-      Como se describe en nuestra <links to = "/ about / quadratic-finance">
-      Descripción General sobre el Financiamiento Cuadrático </ links>, los
+      Como se describe en nuestra <links to="/about/quadratic-finance">
+      Descripción General sobre el Financiamiento Cuadrático </links>, los
       proyectos recibirán financiamiento de contribuciones individuales, así
       como del fondo de contrapartida. Cuando contribuyes a tus proyectos
       favoritos, tu contribución también actúa como un voto. Cuantas más
