@@ -19,7 +19,7 @@
           democratic.
         </div>
         <h2>
-          What you'll need
+          Lo que necesitarás
           <img
             v-tooltip="{
               content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
@@ -32,38 +32,38 @@
         </h2>
         <ul>
           <li>
-            BrightID – available on
+            BrightID – disponible en
             <a
               href="https://apps.apple.com/us/app/brightid/id1428946820"
               target="_blank"
             >
               iOS</a
             >
-            or
+            o
             <a
               href="https://play.google.com/store/apps/details?id=org.brightid"
               target="_blank"
               >Android</a
             >
           </li>
-          <li>An Ethereum wallet, with enough gas for two transactions</li>
-          <li>Access to Zoom or Google Meet</li>
+          <li>Una billetera Ethereum, con suficiente gasolina para dos transacciones</li>
+          <li>Acceso a Zoom o Google Meet</li>
         </ul>
-        <links to="/about-sybil-resistance/">Why is this important?</links>
+        <links to="/about-sybil-resistance/">¿Porque es esto importante?</links>
         <div v-if="isRoundNotStarted" class="join-message">
-          There's not yet an open funding round. Get prepared now so you're
-          ready for when the next one begins!
+          Todavía no hay una ronda de financiamiento abierta. ¡Prepárate ahora 
+          para estar listo para cuando comience el próximo!
         </div>
         <div v-else-if="isRoundOver" class="warning-message">
-          The current round is no longer accepting new contributions. You can
-          still get BrightID verified to prepare for next time.
+          La ronda actual ya no acepta nuevas contribuciones. Aún puede obtener
+          la verificación BrightID para prepararse para la próxima vez.
         </div>
         <div v-else-if="isRoundFull" class="warning-message">
-          Contributions closed early – you can no longer donate! Due to the
-          community's generosity and some technical constraints we had to close
-          the round earlier than expected. If you already contributed, you still
-          have time to reallocate if you need to. If you didn't get a chance to
-          contribute, you can still help by donating to the matching pool
+          Contribuciones cerradas temprano - ¡ya no puedes donar! Debido a la 
+          generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que
+          cerrar la ronda antes de lo esperado. Si ya contribuiste, todavía tienes
+          tiempo para reasignarlo si es necesario. Si no tuviste la oportunidad de 
+          contribuir, aún puedes ayudar donando al grupo correspondiente
         </div>
         <div class="btn-container mt2">
           <wallet-widget
