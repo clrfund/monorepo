@@ -13,7 +13,7 @@
         :saveFormData="saveFormData"
       />
       <div class="title-area">
-        <h1>Join the round</h1>
+        <h1>Únete a la ronda</h1>
         <div v-if="currentStep === 5">
           <div class="toggle-tabs-desktop">
             <p
@@ -22,7 +22,7 @@
               :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'"
               @click="handleToggleTab"
             >
-              Review info
+              Revisar información
             </p>
             <p
               class="tab"
@@ -30,7 +30,7 @@
               :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'"
               @click="handleToggleTab"
             >
-              Preview project
+             Vista previa del proyecto
             </p>
           </div>
         </div>
@@ -61,7 +61,7 @@
                     hidden: !$v.form.project.name.$error,
                   }"
                 >
-                  Your project needs a name
+                  Tu proyecto necesita un nombre
                 </p>
               </div>
               <div class="form-background">
@@ -86,7 +86,7 @@
                       $v.form.project.tagline.maxLength,
                   }"
                 >
-                  This tagline is too long. Be brief for potential contributors
+                  Este eslogan es demasiado largo. Sé breve para los posibles contribuyentes
                 </p>
                 <p
                   :class="{
@@ -96,12 +96,12 @@
                       !$v.form.project.tagline.maxLength,
                   }"
                 >
-                  Your project needs a tagline
+                  Tu proyecto necesita un lema
                 </p>
               </div>
               <div class="form-background">
                 <label for="project-description" class="input-label">
-                  Description
+                  Descripción
                   <p class="input-description">Markdown supported.</p>
                 </label>
                 <textarea
@@ -114,7 +114,7 @@
                   }"
                 />
                 <p v-if="form.project.description" class="input-label pt-1">
-                  Preview:
+                  Avance:
                 </p>
                 <markdown :raw="form.project.description" />
                 <p
@@ -123,8 +123,7 @@
                     hidden: !$v.form.project.description.$error,
                   }"
                 >
-                  Your project needs a description. What are you raising money
-                  for?
+                  Tu proyecto necesita una descripción. ¿Para qué estás recaudando dinero?
                 </p>
               </div>
               <div class="form-background">
@@ -190,16 +189,15 @@
                     hidden: !$v.form.project.category.$error,
                   }"
                 >
-                  You need to choose a category
+                  Debes elegir una categoría
                 </p>
               </div>
               <div class="form-background">
                 <label for="project-problem-space" class="input-label"
-                  >Problem space</label
+                  >Espacio de problemas</label
                 >
                 <p class="input-description">
-                  Explain the problems you're trying to solve. Markdown
-                  supported.
+                  Explica los problemas que estás tratando de resolver. Markdown soportado.
                 </p>
                 <textarea
                   id="project-problem-space"
@@ -216,10 +214,10 @@
                     hidden: !$v.form.project.problemSpace.$error,
                   }"
                 >
-                  Explain the problem your project solves
+                  Explica el problema que resuelve tu proyecto.
                 </p>
                 <p v-if="form.project.description" class="input-label pt-1">
-                  Preview:
+                  Avance:
                 </p>
                 <markdown :raw="form.project.problemSpace" />
               </div>
@@ -230,11 +228,10 @@
             <div class="inputs">
               <div class="form-background">
                 <label for="fund-address" class="input-label"
-                  >Ethereum address</label
+                  >Billetera de Ethereum</label
                 >
                 <p class="input-description">
-                  This doesn’t have to be the same address as the one you use to
-                  send your application.
+                  No es necesario que sea la misma dirección que utilizas para enviar su solicitud.
                 </p>
                 <input
                   id="fund-address"
@@ -252,17 +249,17 @@
                     hidden: !$v.form.fund.addressName.$error,
                   }"
                 >
-                  Enter a valid ENS or Ethereum 0x address
+                  Ingresa una dirección ENS o Ethereum 0x válida
                 </p>
                 <!-- TODO: only validate after user removes focus on input -->
               </div>
               <div class="form-background">
                 <label for="fund-plans" class="input-label"
-                  >How will you spend your funding?</label
+                  >¿Cómo gastarás el financiamiento recibido?</label
                 >
                 <p class="input-description">
-                  Potential contributors might convert based on your specific
-                  funding plans. Markdown supported.
+                  Los posibles contribuyentes pueden realizar conversiones en 
+                  función de sus planes de financiamiento específicos. Markdown apoyado.
                 </p>
                 <textarea
                   id="fund-plans"
@@ -279,8 +276,7 @@
                     hidden: !$v.form.fund.plans.$error,
                   }"
                 >
-                  Let potential contributors know what plans you have for their
-                  donations.
+                  Informa a los posibles contribuyentes qué planes tiene para sus donaciones.
                 </p>
                 <p v-if="form.fund.plans" class="input-label pt-1">Preview:</p>
                 <markdown :raw="form.fund.plans" />
@@ -288,16 +284,15 @@
             </div>
           </div>
           <div v-if="currentStep === 2">
-            <h2 class="step-title">Team details</h2>
-            <p>Tell us about the folks behind your project.</p>
+            <h2 class="step-title">Detalles del Equipo</h2>
+            <p>Cuéntanos sobre la gente detrás de tu proyecto..</p>
             <div class="inputs">
               <div v-if="isEmailRequired" class="form-background">
                 <label for="team-email" class="input-label">
-                  Contact email
+                  Email de contacto
                 </label>
                 <p class="input-description">
-                  For important updates about your project and the funding
-                  round.
+                  Para obtener actualizaciones importantes sobre tu proyecto y la ronda de financiación.
                 </p>
                 <input
                   id="team-email"
@@ -309,8 +304,7 @@
                   }"
                 />
                 <p class="input-notice">
-                  We won't display this publicly or add it to the on-chain
-                  registry.
+                  No mostraremos esto públicamente ni lo agregaremos al blockchain.
                 </p>
                 <p
                   :class="{
@@ -318,14 +312,14 @@
                     hidden: !$v.form.team.email.$error,
                   }"
                 >
-                  This doesn't look like an email.
+                  Esto no parece un correo electrónico.
                 </p>
               </div>
               <div class="form-background">
                 <label for="team-name" class="input-label"
-                  >Team name (optional)</label
+                  >Nombre del Equipo(optional)</label
                 >
-                <p class="input-description">If different to project name.</p>
+                <p class="input-description">Si es diferente al nombre del proyecto.</p>
                 <input
                   id="team-name"
                   type="email"
@@ -339,10 +333,10 @@
               </div>
               <div class="form-background">
                 <label for="team-desc" class="input-label"
-                  >Description (optional)</label
+                  >Descripción (optional)</label
                 >
                 <p class="input-description">
-                  If different to project description. Markdown supported.
+                  Si es diferente a la descripción del proyecto. Markdown soportado.
                 </p>
                 <textarea
                   id="team-desc"
@@ -354,7 +348,7 @@
                   }"
                 />
                 <p v-if="form.team.description" class="input-label pt-1">
-                  Preview:
+                  Avance:
                 </p>
                 <markdown :raw="form.team.description" />
               </div>
@@ -363,8 +357,8 @@
           <div v-if="currentStep === 3">
             <h2 class="step-title">Links</h2>
             <p>
-              Give contributors some links to check out to learn more about your
-              project. Provide at least one.
+              Proporciona a los colaboradores algunos enlaces para que consulten 
+              y obtengan más información sobre tu proyecto. Proporciona al menos uno.
             </p>
             <div class="inputs">
               <div class="form-background">
@@ -385,7 +379,7 @@
                     hidden: !$v.form.links.github.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  Esta no parece una URL válida
                 </p>
                 <!-- TODO: only validate after user removes focus on input -->
               </div>
@@ -407,7 +401,7 @@
                     hidden: !$v.form.links.radicle.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  Esta no parece una URL válida
                 </p>
               </div>
               <div class="form-background">
@@ -428,7 +422,7 @@
                     hidden: !$v.form.links.website.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  Esta no parece una URL válida
                 </p>
               </div>
               <div class="form-background">
@@ -449,7 +443,7 @@
                     hidden: !$v.form.links.twitter.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  Esta no parece una URL válida
                 </p>
               </div>
               <div class="form-background">
@@ -471,7 +465,7 @@
                     hidden: !$v.form.links.discord.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  Esta no parece una URL válida
                 </p>
               </div>
             </div>
@@ -479,8 +473,8 @@
           <div v-if="currentStep === 4">
             <h2 class="step-title">Images</h2>
             <p>
-              We'll upload your images to IPFS, a decentralized storage
-              platform.
+              Subiremos sus imágenes a IPFS, una plataforma de 
+              almacenamiento descentralizada.
               <links to="https://ipfs.io/#how">More on IPFS</links>
             </p>
             <div class="inputs">
@@ -554,7 +548,7 @@
                   <div class="data break-all">
                     {{ form.fund.addressName }}
                     <links :to="blockExplorer.url" class="no-break">
-                      View on {{ blockExplorer.label }}
+                      Ver en{{ blockExplorer.label }}
                     </links>
                   </div>
                   <div
@@ -644,7 +638,7 @@
                     /></links>
                   </div>
                   <div class="data" v-if="!form.links.website">
-                    Not provided
+                    No provisto
                   </div>
                 </div>
                 <div class="summary">
@@ -659,7 +653,7 @@
                     /></links>
                   </div>
                   <div class="data" v-if="!form.links.discord">
-                    Not provided
+                    No provisto
                   </div>
                 </div>
                 <div class="summary">
@@ -674,7 +668,7 @@
                     /></links>
                   </div>
                   <div class="data" v-if="!form.links.radicle">
-                    Not provided
+                    No provisto
                   </div>
                 </div>
               </div>
@@ -701,10 +695,10 @@
             </div>
           </div>
           <div v-if="currentStep === 6">
-            <h2 class="step-title">Submit project</h2>
+            <h2 class="step-title">Enviar proyecto</h2>
             <p>
-              This is a blockchain transaction that will add your project
-              information to the funding round.
+              Esta es una transacción de blockchain que agregará la
+              información de tu proyecto a la ronda de financiamiento.
             </p>
             <div class="inputs">
               <recipient-submission-widget
