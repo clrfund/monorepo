@@ -1,13 +1,13 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">Recipient guide</h1>
+    <h1 class="content-heading">Guía del Destinatario</h1>
     <div v-if="chain.bridge">
-      <h2>Get funds on {{ chain.label }}</h2>
+      <h2>Obtenga fondos en {{ chain.label }}</h2>
       <p>
-        You'll need some {{ chain.currency }} on {{ chain.label }} in order to
-        submit transactions to the clr.fund smart contracts.
+        Necesitará algo de{{ chain.currency }} en {{ chain.label }} 
+        para enviar transacciones a los contratos inteligentes de clr.fund.
         <span v-if="chain.isLayer2">
-          Follow
+          Sigue
           <links
             :to="{
               name: 'about-layer-2',
@@ -16,7 +16,7 @@
               },
             }"
           >
-            these steps
+            estos pasos
           </links>
           to bridge your funds to {{ chain.label }}
         </span>
