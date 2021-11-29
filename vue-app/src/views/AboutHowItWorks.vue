@@ -105,7 +105,7 @@
     <h3>Fase de Conteo</h3>
     <p>
       En este punto, todas las contribuciones son definitivas y ahora se pueden contabilizar. El coordinador de la ronda
-      activa <links to = "/about/maci">MACI </links> y los contratos inteligentes para calcular la cantidad del grupo
+      activa <links to="/about/maci">MACI </links> y los contratos inteligentes para calcular la cantidad del grupo
       correspondiente que obtendrá cada proyecto.
     </p>
     <h3>Fase Finalizada</h3>
