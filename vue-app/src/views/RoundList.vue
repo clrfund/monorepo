@@ -7,7 +7,7 @@
         class="round-name"
         :to="{ name: 'round', params: { address: round.address } }"
       >
-        Round {{ round.index }}
+        Ronda {{ round.index }}
       </links>
       <links v-else :to="round.url"> Round {{ round.index }} </links>
     </div>
