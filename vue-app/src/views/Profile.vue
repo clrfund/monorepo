@@ -96,7 +96,7 @@
                 {{ name }}
                 <span v-if="isLocked">🔒</span>
               </div>
-              <div v-if="isHidden" class="project-hidden">Under review</div>
+              <div v-if="isHidden" class="project-hidden">Bajo revisión</div>
             </div>
             <button class="btn-secondary" @click="navigateToProject(id)">
               {{ isLocked ? 'Preview' : 'View' }}
@@ -104,7 +104,7 @@
           </div>
         </div>
         <div v-if="!isLoading && projects.length === 0">
-          You haven't submitted any projects
+          No has enviado ningún proyecto.
         </div>
         <loader v-if="isLoading" />
       </div>

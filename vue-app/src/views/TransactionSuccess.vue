@@ -13,21 +13,21 @@
           class="contributed-header"
         >
           {{ formatContribution() }}
-          {{ currentRound.nativeTokenSymbol }} reallocated!
+          {{ currentRound.nativeTokenSymbol }} reasignado!
         </p>
         <p
           v-else-if="$route.params.type === 'contribution'"
           class="contributed-header"
         >
-          You just contributed!
+          ¡Acabas de contribuir!
         </p>
         <div>
           <p
             v-if="$route.params.type === 'reallocation'"
             class="contributed-content"
           >
-            Your choices have been updated! You can update your choices again
-            any time in the next
+            ¡Tus opciones han sido actualizadas! Puedes actualizar 
+            tus opciones nuevamente en cualquier momento en el próximo
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
@@ -38,14 +38,14 @@
             v-else-if="$route.params.type === 'contribution'"
             class="contributed-content"
           >
-            Thanks for contributing to the Ethereum ecosystem. If you change
-            your mind, you have
+            Gracias por contribuir al ecosistema Ethereum. Si
+            cambias de opinión, tienes
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
               :date="currentRound.votingDeadline"
             />
-            to reallocate your contributions.
+            para reasignar tus contribuciones.
           </p>
           <div class="receipt" v-if="$route.params.hash">
             <transaction-receipt :hash="$route.params.hash" />

@@ -17,10 +17,10 @@
             />
           </div>
           <div class="subtitle">
-            You’re on board this funding round! And fully verified for BrightID
-            – you’ll never have to do that again.
+            ¡Estás a bordo de esta ronda de financiaciamiento! Y 
+            completamente verificado para BrightID: nunca más tendrás que volver a hacerlo.
           </div>
-          <p>You can now start contributing to your favorite projects.</p>
+          <p>Ahora puedes comenzar a contribuir a tus proyectos favoritos.</p>
           <div class="mt2 button-spacing">
             <links to="/projects" class="btn-primary">View projects</links>
             <links to="/" class="btn-secondary">Go home</links>

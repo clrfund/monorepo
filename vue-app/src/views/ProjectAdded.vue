@@ -11,11 +11,11 @@
             <h1>Project submitted!</h1>
             <transaction-receipt :hash="$route.params.hash" />
           </div>
-          <div class="subtitle">You’re almost on board this funding round</div>
+          <div class="subtitle">Casi estás a bordo de esta ronda de financiamiento</div>
           <ul>
             <li>
-              Your project just needs to go through some final checks. If
-              everything is ok, your project will go live within
+              Tu proyecto solo necesita pasar por algunas verificaciones finales. 
+              Si todo está bien, tu proyecto se pondrá en marcha dentro
               {{
                 challengePeriodDuration === null
                   ? '...'
@@ -23,8 +23,8 @@
               }}.
             </li>
             <li>
-              If your project fails the checks because it doesn't meet the round
-              criteria, we'll let you know by email and return your deposit.
+              Si tu proyecto no pasa las comprobaciones porque no cumple con los criterios de
+              ronda, te lo haremos saber por correo electrónico y te devolveremos tu depósito.
             </li>
           </ul>
           <div class="mt2 button-spacing">

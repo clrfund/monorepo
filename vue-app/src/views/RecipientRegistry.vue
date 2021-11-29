@@ -105,7 +105,7 @@
                 @click="remove(request)"
                 v-if="isExecuted(request)"
               >
-                Remove
+                Remover
               </div> -->
                 <div
                   class="icon-btn-approve"
