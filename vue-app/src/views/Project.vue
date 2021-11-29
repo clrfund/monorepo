@@ -22,7 +22,7 @@
             !$store.getters.canUserReallocate
           "
         >
-          ✔️ You have contributed to this project!
+          ✔️ ¡Has contribuido a este proyecto!
         </p>
       </div>
       <link-box :project="project" />
