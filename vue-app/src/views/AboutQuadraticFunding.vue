@@ -125,7 +125,7 @@
       </li>
       <li>
         <links to="https://www.radicalxchange.org/concepts/quadratic-voting/"
-          >Quadratic Payments: A Primer</links
+          >Pagos Cuadráticos: Una introducción</links
         >
       </li>
       <li>
