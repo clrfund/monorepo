@@ -11,6 +11,10 @@
     @include button($clr-black, white, 2px solid white);
   }
 
+  .btn-primary {
+    @include button(white, $clr-green-secondary, none);
+  }
+
   .btn-secondary {
     @include button($clr-black, $clr-light-green, none);
   }
@@ -46,14 +50,14 @@
       ol li::before {
         background: $clr-light-green;
         color: $clr-dark-gray;
-        border-color: $clr-green-border;
+        border-color: $clr-green-secondary;
       }
     }
   }
 
   #what-you-will-need {
     .btn-action {
-      @include button(white, $clr-green-border, none);
+      @include button(white, $clr-green-secondary, none);
     }
     .pre-req {
       background: $clr-light-pink;
@@ -61,9 +65,6 @@
 
     #bright-id.pre-req {
       background: $clr-light-green;
-      .btn-primary {
-        @include button(white, $clr-green-border, none);
-      }
     }
 
     #bright-id-icon {
@@ -80,7 +81,7 @@
 
   #about-section {
     a {
-      color: $clr-green-border;
+      color: $clr-green-secondary;
     }
     padding: 0 4rem;
   }
@@ -148,6 +149,16 @@
     }
   }
 
+  .round-info {
+    .has-tooltip {
+      filter: invert(0.6);
+    }
+    .verified {
+      filter: invert(0.3);
+      color: $clr-white;
+    }
+  }
+
   .category-filter {
     .filter-btn {
       border: none;
@@ -159,17 +170,20 @@
     border: none;
   }
 
-  .project-item,
-  .tag {
+  .project-item {
     background: $clr-white;
+  }
+
+  .tag {
+    background: $clr-purple;
+    color: $clr-black;
   }
 
   .more-btn {
     background: $clr-purple;
     &:hover {
-      background: $clr-white;
-      color: $clr-black;
-      border: solid 1px $clr-black;
+      opacity: 0.8;
+      background: $clr-purple;
     }
   }
 
