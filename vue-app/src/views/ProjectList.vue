@@ -39,7 +39,7 @@
           />
         </div>
         <div class="add-project">
-          <links to="/join" class="btn-primary">Add project</links>
+          <links to="/join" class="btn-primary">Agrergar proyecto</links>
         </div>
         <div class="hr" />
       </div>
@@ -57,8 +57,8 @@
       </div>
       <div class="empty-search" v-if="filteredProjects == 0">
         <div>
-          😢 No projects match your search. Try using the filter to narrow down
-          what you're looking for.
+          😢 Ningún proyecto coincide con tu búsqueda. Intenta usar
+          el filtro para delimitar lo que estás buscando.
         </div>
       </div>
       <div
