@@ -28,7 +28,7 @@
             "
           >
             <div class="column">
-              <h2>Unete a la ronda de financiamiento</h2>
+              <h2>Únete a la ronda de financiamiento</h2>
               <p>
                 Agrega tu proyecto a la siguiente ronda de financiamiento.
                 Si estás trabajando algo relacionado a fondos públicos,
