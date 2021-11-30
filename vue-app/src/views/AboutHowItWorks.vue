@@ -22,7 +22,7 @@
       </li>
     </ul>
 
-    <h2>Resumen rápido sobre la financiación cuadrática</h2>
+    <h2>Resumen rápido sobre el Financiamiento Cuadrático</h2>
     <p>
       Como se describe en nuestra <links to = "/ about / quadratic-finance"> 
       Descripción General sobre el Financiamiento Cuadrático </ links>, los 
@@ -41,7 +41,7 @@
       todas las contribuciones o los votos, puedan contarse y confirmarse antes 
       de la distribución final del grupo de contrapartida.
     </p>
-    <h2>Fases de la Ronda de Financiación</h2>
+    <h2>Fases de la Ronda de Financiamiento</h2>
     <h3>Join phase</h3>
     <p>
       Para comenzar, se invitará a los proyectos a <links to = "/ join"> unirse
@@ -55,7 +55,7 @@
       </li>
       <li>Los proyectos deben cumplir <links to = "/ join"> criterios de ronda</links>.</li>
       <li>
-        Si desea contribuir, este es un momento perfecto para obtener <links to = "/ verify">
+        Si deseas contribuir, este es un momento perfecto para obtener <links to = "/ verify">
         configuración para contribuir </links>.
       </li>
     </ul>
