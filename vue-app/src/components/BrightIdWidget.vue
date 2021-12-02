@@ -20,7 +20,7 @@
           secondaryLogo="close-black.svg"
         />
       </div>
-      <h2>BrightID setup</h2>
+      <h2>Configura tu BrightID</h2>
       <p>{{ getCurrentStep }} / 4</p>
     </div>
     <div class="progress">
@@ -43,7 +43,7 @@
             </a>
           </div>
           <div v-else>
-            <a href="/#/verify/" @click="$emit('close')">Continue setup</a>
+            <a href="/#/verify/" @click="$emit('close')">Continuar con la configuración</a>
           </div>
         </div>
         <a href="/#/verify/" @click="$emit('close')" v-else>Start setup</a>
@@ -51,7 +51,7 @@
           v-tooltip="{
             content: isVerified
               ? 'You\'re a verified human on BrightID!'
-              : 'Your BrightID profile still needs to be verified.',
+              : 'Tu perfil de BrightID aún necesita ser verificado.',
             trigger: 'hover click',
           }"
           :class="isVerified ? 'brightid-verified' : 'unverified'"
