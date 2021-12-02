@@ -43,7 +43,7 @@ const routes = [
     name: 'projects',
     component: ProjectList,
     meta: {
-      title: 'Project List',
+      title: 'Lista de proyectos',
     },
   },
   {
@@ -56,7 +56,7 @@ const routes = [
     name: 'round-information',
     component: RoundInformation,
     meta: {
-      title: 'Round Information',
+      title: 'Información de la ronda',
     },
   },
   {
@@ -64,7 +64,7 @@ const routes = [
     name: 'rounds',
     component: RoundList,
     meta: {
-      title: 'Rounds',
+      title: 'Rondas',
     },
   },
   {
@@ -72,7 +72,7 @@ const routes = [
     name: 'round',
     component: ProjectList,
     meta: {
-      title: 'Project List for Round',
+      title: 'Lista de proyectos para la ronda',
     },
   },
   {
@@ -80,7 +80,7 @@ const routes = [
     name: 'about',
     component: About,
     meta: {
-      title: 'About',
+      title: 'Sobre',
     },
   },
   {
@@ -88,7 +88,7 @@ const routes = [
     name: 'about-maci',
     component: AboutMaci,
     meta: {
-      title: 'About MACI',
+      title: 'Sobre MACI',
     },
   },
   {
@@ -96,7 +96,7 @@ const routes = [
     name: 'about-sybil-resistance',
     component: AboutSybilResistance,
     meta: {
-      title: 'About Sybil Resistance',
+      title: 'Acerca de Sybil Resistance',
     },
   },
   {
@@ -104,7 +104,7 @@ const routes = [
     name: 'about-layer-2',
     component: AboutLayer2,
     meta: {
-      title: 'About Layer 2',
+      title: 'Acerca Layer 2',
     },
   },
   {
@@ -112,7 +112,7 @@ const routes = [
     name: 'about-how-it-works',
     component: AboutHowItWorks,
     meta: {
-      title: 'How it works',
+      title: '¿Cómo funciona?',
     },
   },
   {
@@ -120,7 +120,7 @@ const routes = [
     name: 'about-how-it-works-contributors',
     component: AboutContributors,
     meta: {
-      title: 'Contributors Guide',
+      title: 'Guía de colaboradores',
     },
   },
   {
@@ -128,7 +128,7 @@ const routes = [
     name: 'about-how-it-works-recipients',
     component: AboutRecipients,
     meta: {
-      title: 'Recipients Guide',
+      title: 'Guía de destinatarios',
     },
   },
   {
@@ -136,7 +136,7 @@ const routes = [
     name: 'about-public-goods',
     component: AboutPublicGoods,
     meta: {
-      title: 'About public goods',
+      title: 'Acerca de Bienes Públicos',
     },
   },
   {
@@ -144,7 +144,7 @@ const routes = [
     name: 'about-quadratic-funding',
     component: AboutQuadraticFunding,
     meta: {
-      title: 'About quadratic funding',
+      title: 'Acerca de Financiación Cuadrático',
     },
   },
   {
@@ -152,7 +152,7 @@ const routes = [
     name: 'about-decentralization',
     component: AboutDecentralization,
     meta: {
-      title: 'About decentralization',
+      title: 'Acerca de Descentralización',
     },
   },
   {
@@ -160,7 +160,7 @@ const routes = [
     name: 'recipients',
     component: RecipientRegistryView,
     meta: {
-      title: 'Recipient registry',
+      title: 'Registro de Destinatarios',
     },
   },
   {
@@ -168,7 +168,7 @@ const routes = [
     name: 'verify',
     component: VerifyLanding,
     meta: {
-      title: 'BrightID Verify Landing',
+      title: 'BrightID Landing de Verificación',
     },
   },
   {
@@ -176,7 +176,7 @@ const routes = [
     name: 'verified',
     component: Verified,
     meta: {
-      title: 'Verified',
+      title: 'Verificado',
     },
   },
   {
@@ -184,7 +184,7 @@ const routes = [
     name: 'verify-step',
     component: VerifyView,
     meta: {
-      title: 'Verification Steps',
+      title: 'Pasos de Verificación',
     },
   },
   {
@@ -192,7 +192,7 @@ const routes = [
     name: 'join',
     component: JoinLanding,
     meta: {
-      title: 'Recipient Join Form Landing',
+      title: 'Landing de Formulario de registro de destinatarios',
     },
   },
   {
@@ -200,7 +200,7 @@ const routes = [
     name: 'project-added',
     component: ProjectAdded,
     meta: {
-      title: 'Recipient Join Form Success',
+      title: 'Formulario de Registro de Destinatarios Exitoso',
     },
   },
   {
@@ -208,7 +208,7 @@ const routes = [
     name: 'join-step',
     component: JoinView,
     meta: {
-      title: 'Recipient Join Form Steps',
+      title: 'Pasos del Formulario de Inscripción de Destinatarios',
     },
   },
 
@@ -217,7 +217,7 @@ const routes = [
     name: 'cart',
     component: CartView,
     meta: {
-      title: 'Cart',
+      title: 'Carrito',
     },
   },
   {
