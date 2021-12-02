@@ -24,9 +24,9 @@
   }
 
   .apply-callout {
-    background: $clr-white;
+    background: transparent !important;
     color: $clr-black;
-    border: none;
+    border: none !important;
   }
 
   #hero {
@@ -104,7 +104,7 @@
   #content-container {
     .content,
     .hero {
-      background: $clr-white;
+      background: transparent;
     }
   }
 
@@ -311,6 +311,12 @@
     .recipient-submission-widget {
       background-color: $clr-white;
       border: none;
+    }
+  }
+
+  #join-landing {
+    .gradient {
+      background: transparent;
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="join-landing">
     <div class="gradient">
       <div class="hero">
         <image-responsive title="core" />
