@@ -4,13 +4,13 @@
       <div v-if="$store.getters.isJoinOnlyPhase" class="messsage">
         <span class="label">Funding starts 🗓 {{ startDate }}.</span>
         <span v-if="$store.getters.isRecipientRegistryFull" class="label">
-          Project applications are closed.</span
+          Las solicitudes de proyectos están cerradas.</span
         >
         <span v-if="$store.getters.isRecipientRegistryFillingUp" class="label">
-          Hurry, only {{ recipientSpacesRemainingString }} left!
+          ¡Apúrtate, solo quedan {{ recipientSpacesRemainingString }}!
         </span>
         <span v-if="!$store.getters.isRecipientRegistryFull" class="label">
-          Time left to add a project:
+          Tiempo restante para agregar un proyecto:
           <time-left
             unitClass="none"
             valueClass="none"
@@ -23,44 +23,44 @@
           v-if="$store.getters.isRoundContributionPhaseEnding"
           class="label"
         >
-          ⌛️ The round will close in
+          ⌛️ La ronda se cerrará en
           <time-left
             unitClass="none"
             valueClass="none"
             :date="$store.state.currentRound.signUpDeadline"
-          />. Get your contributions in now!
+          />. ¡Recibe tus contribuciones ahora!
         </span>
         <span v-else class="label"
-          >🎉 The round is open!
+          >🎉 ¡La ronda está abierta!
           <time-left
             unitClass="none"
             valueClass="none"
             :date="$store.state.currentRound.signUpDeadline"
           />
-          left to contribute to your favorite projects
+          queda para contribuir a tus proyectos favoritos
         </span>
       </div>
       <div v-if="$store.getters.isRoundReallocationPhase" class="messsage">
         <span class="label">
-          Funding is closed! If you contributed, you have
+          ¡Financiamiento cerrado! Si contribuiste, tienes
           <time-left
             unitClass="none"
             valueClass="none"
             :date="$store.state.currentRound.votingDeadline"
           />
-          left to change your mind
+          te queda para cambiar de opinión
         </span>
       </div>
       <div v-if="$store.getters.isRoundTallying" class="messsage">
         <span class="label"
-          >🎉 Funding is closed! Our smart contracts are busy tallying
-          contributions...
+          >🎉 ¡Financiamiento cerrado! Nuestros contratos inteligentes
+          están ocupados contando contribuciones ...
         </span>
       </div>
       <div v-if="$store.getters.isRoundFinalized" class="messsage">
         <span class="label"
-          >Funding is closed! Contributions are ready to claim. Head to your
-          project page to claim your funds.
+          >¡Financiamiento cerrado! Las contribuciones están listas 
+          para reclamar. Dirígete a la página de tu proyecto para reclamar tus fondos.
           <links to="/projects">View projects</links></span
         >
       </div>
