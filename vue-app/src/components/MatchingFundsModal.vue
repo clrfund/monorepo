@@ -2,8 +2,8 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>
-        Contribute {{ tokenSymbol }} to the
-        {{ isRoundFinished() ? 'next' : 'current' }} round
+        Contribuye {{ tokenSymbol }} a la
+        {{ isRoundFinished() ? 'next' : 'current' }} ronda
       </h3>
       <div class="contribution-form">
         <div class="input-button">
@@ -25,7 +25,7 @@
         </div>
       </div>
       <div v-if="!isBalanceSufficient" class="balance-check-warning">
-        ⚠️ You only have {{ renderBalance }}
+        ⚠️ Solamente tienes {{ renderBalance }}
         {{ tokenSymbol }}
       </div>
       <div class="btn-row">
@@ -35,14 +35,14 @@
           :disabled="!isAmountValid()"
           @click="contributeMatchingFunds()"
         >
-          Contribute
+          Contribuir
         </button>
       </div>
     </div>
     <div v-if="step === 2">
       <h3>
-        Contribute {{ renderContributionAmount }} {{ tokenSymbol }} to the
-        {{ isRoundFinished() ? 'next' : 'current' }} round
+        Contribuye {{ renderContributionAmount }} {{ tokenSymbol }} a la
+        {{ isRoundFinished() ? 'next' : 'current' }} ronda
       </h3>
       <transaction
         :hash="transferTxHash"
@@ -53,11 +53,11 @@
     <div v-if="step === 3">
       <div class="big-emoji">💦</div>
       <h3>
-        You just topped up the pool by {{ renderContributionAmount }}
+        Acabas de recargar el pool con {{ renderContributionAmount }}
         {{ tokenSymbol }}!
       </h3>
-      <div class="mb2">Thanks for helping out all our projects.</div>
-      <button class="btn-primary" @click="$emit('close')">Done</button>
+      <div class="mb2">Gracias por ayudarnos en todos nuestros proyectos.</div>
+      <button class="btn-primary" @click="$emit('close')">Hecho</button>
     </div>
   </div>
 </template>
