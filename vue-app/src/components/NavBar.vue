@@ -9,7 +9,7 @@
         v-if="$store.getters.isRecipientRegistryOwner"
         class="btn-primary margin-right"
       >
-        Manage Recipients
+        Administrar Destinatarios
       </a>
       <div class="help-dropdown" v-if="inApp">
         <img
