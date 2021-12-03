@@ -2,7 +2,7 @@
   <div id="banner" class="caps">
     <div class="marquee-content">
       <div v-if="$store.getters.isJoinOnlyPhase" class="messsage">
-        <span class="label">Funding starts 🗓 {{ startDate }}.</span>
+        <span class="label">Comienza el financiamiento 🗓 {{ startDate }}.</span>
         <span v-if="$store.getters.isRecipientRegistryFull" class="label">
           Las solicitudes de proyectos están cerradas.</span
         >
