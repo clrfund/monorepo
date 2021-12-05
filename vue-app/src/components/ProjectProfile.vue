@@ -3,7 +3,7 @@
     <info
       v-if="previewMode"
       class="info"
-      message="This is what your contributors will see when they visit your project page."
+      message="Esto es lo que verán tus colaboradores cuando visiten la página de tu proyecto."
     />
     <img
       v-if="previewMode"
@@ -41,7 +41,7 @@
             !$store.getters.canUserReallocate
           "
         >
-          ✔️ You have contributed to this project!
+          ✔️ ¡Has contribuido a este proyecto!
         </p>
       </div>
       <div class="project-section">

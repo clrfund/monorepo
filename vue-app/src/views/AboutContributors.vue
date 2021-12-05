@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <h1 class="content-heading">Guía del contribuidor </h1>
-    <h2>Obtenga fondos en {{ chain.label }}</h2>
+    <h2>Obtén fondos en {{ chain.label }}</h2>
     <p>
       Necesitarás un poco de {{ chain.currency }} en la red de {{ chain.label }} para poder crear
       una transacción en los smart contracts de clr.fund.

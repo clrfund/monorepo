@@ -1,7 +1,7 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h2>Claim funds</h2>
+      <h2>Reclamar fondos</h2>
       <transaction
         :hash="claimTxHash"
         :error="claimTxError"
@@ -9,13 +9,13 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <h2>Funds were claimed!</h2>
+      <h2>¡Se reclamaron los fondos!</h2>
       <p>
         <strong
           >{{ formatAmount(amount) }}
           {{ currentRound.nativeTokenSymbol }}</strong
         >
-        has been sent to
+        ha sido enviado a
       </p>
       <div class="address-box">
         <div>

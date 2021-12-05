@@ -2,7 +2,7 @@
   <div>
     <div v-if="connectingWallet" class="modal-body loading">
       <loader />
-      <p>Connecting wallet</p>
+      <p>Conectando wallet</p>
     </div>
     <div v-else class="modal-body">
       <div class="top">
@@ -20,7 +20,7 @@
         <img height="24px" width="24px" src="@/assets/metamask.svg" />
       </button>
       <button v-else class="option" @click="redirectToMetamaskWebsite()">
-        <p>Install MetaMask</p>
+        <p>Instala MetaMask</p>
         <img height="24px" width="24px" src="@/assets/metamask.svg" />
       </button>
       <button class="option" @click="connectWallet('walletconnect')">

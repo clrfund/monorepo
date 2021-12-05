@@ -25,7 +25,7 @@
       FOSS el más importante para clr.fund.
     </p>
     <p>
-      Busque
+      Busca
       <links to="https://en.wikipedia.org/wiki/Public_good_(economics)"
         >Wikipedia</links
       >

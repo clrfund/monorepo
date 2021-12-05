@@ -32,29 +32,28 @@
             "
           >
             <div class="circle open-pulse" />
-            Open
+            Abierto
           </div>
           <div v-else class="status">
             <div class="circle closed" />
-            Closed
+            Cerrado
           </div>
         </div>
         <div v-if="isMaxMessagesReached" class="round-notice hidden">
           <span class="bold-all-caps">
-            <p>The round is officially closed</p>
+            <p>La ronda está oficialmente cerrada</p>
           </span>
           <p>
-            It's now too late to contribute or reallocate your donations! Due to
-            the community's generosity and some technical constraints we had to
-            close the round earlier than expected. You can still help by
-            donating to the matching pool.
+            ¡Ahora es demasiado tarde para contribuir o reasignar tus donaciones! Debido a la 
+            generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar 
+            la ronda antes de lo esperado. Aún puedes ayudar donando al grupo correspondiente.
           </p>
           <div class="dismiss-btn" @click="toggleNotice">Great!</div>
         </div>
         <div class="round-info-item" v-if="$store.getters.isRoundJoinOnlyPhase">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">⏱️ Round opening</div>
+              <div class="round-info-title">⏱️ Apertura de la Ronda</div>
             </div>
           </div>
           <div class="round-info-value">
@@ -137,7 +136,7 @@
               />
             </div>
             <div class="message" v-if="!$store.getters.hasUserContributed">
-              Closed for contributions
+              Cerrado para contribuciones
             </div>
             <div
               v-else
@@ -188,7 +187,7 @@
               />
             </div>
             <div class="round-info-value">
-              <div class="message">Contributions are ready to claim 🎉</div>
+              <div class="message">Las contribuciones están listas para ser reclamadas🎉</div>
             </div>
           </div>
         </div>
@@ -273,11 +272,11 @@
         <div class="round-info-item">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">No scheduled round</div>
+              <div class="round-info-title">Sin ronda programada</div>
             </div>
           </div>
           <div class="round-info-value">
-            We haven't yet scheduled a funding round. Stay tuned!
+            Aún no hemos programado una ronda de financiamiento. Stay tuned!
           </div>
         </div>
       </template>
