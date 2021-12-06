@@ -18,7 +18,7 @@
           src="@/assets/help.svg"
         />
         <div id="myHelpDropdown" class="button-menu" v-if="showHelpDowndown">
-          <div class="dropdown-title">Help</div>
+          <div class="dropdown-title">Ayuda</div>
           <div
             v-for="({ to, text, emoji }, idx) of dropdownItems"
             :key="idx"
@@ -32,7 +32,7 @@
         </div>
       </div>
       <wallet-widget class="wallet-widget" v-if="inApp" />
-      <links v-if="!inApp" to="/projects" class="app-btn">App</links>
+      <links v-if="!inApp" to="/projects" class="app-btn">Ver proyectos</links>
     </div>
   </nav>
 </template>

@@ -5,7 +5,7 @@
     <h2>Clr.fund en Layer 2</h2>
     <p>
       <b>
-        tl;dr: clr.fund runs on
+        tl;dr: clr.fund corre en
         <links
           to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/"
           >Ethereum Layer 2 rollups</links
@@ -20,7 +20,7 @@
       class="btn-secondary"
       @click="scrollToId('bridge')"
     >
-      Bridge Funds
+      Bridge tus Fondos
     </button>
 
     <h2>Costos de transacción de Ethereum</h2>
@@ -85,7 +85,7 @@
         <img
           v-tooltip="{
             content:
-              'Wallet resources are provided as a convenience and do not represent endorsement of any of the projects or services therein. Always DYOR.',
+              'Los recursos de Wallet se proporcionan para su conveniencia y no representan el respaldo de ninguno de los proyectos o servicios incluidos en el mismo. Siempre DYOR.',
             trigger: 'hover click',
           }"
           width="16px"
@@ -94,51 +94,47 @@
       </h3>
       <ul>
         <li>
-          Visit the official
+          Visita el portal
           <links to="https://portal.arbitrum.one/">
-            {{ chain.label }} portal
+            {{ chain.label }} Oficial
           </links>
-          and filter by "Wallets" to view some of the wallets that currently
-          support the {{ chain.label }} network.
+          y filtra por "Wallets" para ver algunas de las carteras que actualmente son compatibles con la red {{chain.label}}.
         </li>
         <li>
-          Double-check that any wallet you consider
+          Verifica que cualquier billetera que consideres
           <links to="https://registry.walletconnect.org/wallets">
-            also supports WalletConnect
+            soporta WalletConnect
           </links>
-          to ensure you're able to connect to the app.
+          para asegurarse de que pueda conectarse a la aplicación.
         </li>
       </ul>
-      <h3>💰 How to get funds on {{ chain.label }}</h3>
+      <h3>💰 Como obtener fondos en {{ chain.label }}</h3>
       <p>
         <links :to="chain.bridge" :hideArrow="true">
-          <button class="btn-action">Official {{ chain.label }} Bridge</button>
+          <button class="btn-action">Puente de {{ chain.label }} Oficial</button>
         </links>
       </p>
       <p>
-        Follow the steps below, or use the
+        Sigue los pasos a continuación o utiliza el
         <links to="https://arbitrum.io/bridge-tutorial/">
-          official tutorial
+          tutorial oficial
         </links>
-        as a guide at any time.
+        como guía en cualquier momento.
       </p>
       <ol>
-        <li>Click above to go to the official {{ chain.label }} bridge</li>
+        <li>Haz click arriba para ir al puente{{ chain.label }} oficial</li>
         <li>
-          Connect your {{ chain.label }} supporting wallet using
+          Conecta tu wallet que soporta {{ chain.label }} usando
           <strong>Mainnet</strong>
         </li>
         <li>
-          Select currency (some ETH first for gas, and some
-          {{ nativeToken.symbol }} for contributing)
+          Seleccione la moneda (algo de ETH primero para gas y algo de {{nativeToken.symbol}} para contribuir)
           <p>
-            For {{ nativeToken.symbol }}, click "Token" menu, search for
-            {{ nativeToken.symbol }}
-            and select token.
+          Para {{nativeToken.symbol}}, haz clic en el menú "Token", busca {{nativeToken.symbol}} y selecciona el token.
           </p>
         </li>
-        <li>Enter amount and click "Deposit"</li>
-        <li>Confirm on your wallet</li>
+        <li>Ingresa la cantidad y haz clic en "Depositar"</li>
+        <li>Confirma en tu billetera</li>
       </ol>
       <p>
         Once you have bridged your {{ nativeToken.symbol }} to

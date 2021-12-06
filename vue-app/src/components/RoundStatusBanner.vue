@@ -7,7 +7,7 @@
           Las solicitudes de proyectos están cerradas.</span
         >
         <span v-if="$store.getters.isRecipientRegistryFillingUp" class="label">
-          ¡Apúrtate, solo quedan {{ recipientSpacesRemainingString }}!
+          ¡Apúrate, solo quedan {{ recipientSpacesRemainingString }}!
         </span>
         <span v-if="!$store.getters.isRecipientRegistryFull" class="label">
           Tiempo restante para agregar un proyecto:
@@ -59,7 +59,7 @@
       </div>
       <div v-if="$store.getters.isRoundFinalized" class="messsage">
         <span class="label"
-          >¡Financiamiento cerrado! Las contribuciones están listas 
+          >¡Financiamiento cerrado! Las contribuciones están listas
           para reclamar. Dirígete a la página de tu proyecto para reclamar tus fondos.
           <links to="/projects">View projects</links></span
         >

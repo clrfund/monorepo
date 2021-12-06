@@ -42,7 +42,7 @@
       </li>
       <li>
         Escalabilidad: debido a que usar Ethereum puede ser costoso para los usuarios, clr.fund usa
-        {{ chain.isLayer2 ? `"capa 2"` : `"sidechain"` }} redes complementarias para obtener la mayoría de los beneficios de la red principal de Ethereum pero con transacciones más rápidas y económicas.
+        {{ chain.isLayer2 ? `"layer 2"` : `"sidechain"` }} redes complementarias para obtener la mayoría de los beneficios de la red principal de Ethereum pero con transacciones más rápidas y económicas.
         <links v-if="chain.isLayer2" to="/about/layer-2">
           Obtén más información sobre el uso de la capa 2 por parte de clr.fund.
         </links>
@@ -62,7 +62,7 @@
         como lo hace la financiación cuadrática, pueden ser vulnerables
         a los sybil attacks, en los que una persona establece muchas identidades
         para votar varias veces. Clr.fund mitiga esta amenaza con un sistema de identidad llamado BrightID.
-        <links to="/about/sybil-resistance">Find out more about BrightID</links
+        <links to="/about/sybil-resistance">Averigua mas acerca de BrightID</links
         >.
       </li>
     </ul>
@@ -74,13 +74,11 @@
 
     <h2>Cómo funciona?</h2>
     <p>
-      El protocolo de clr.fund usa el algoritmo Constrained Liberal Radicalism (CLR), communmente llamado
+      El protocolo de clr.fund usa el algoritmo Constrained Liberal Radicalism (CLR), comúnmente llamado
       <links to="/about/quadratic-funding">financiamiento cuadrático</links> (QF), para facilitar las contribuciones
       monetarias de los miembros de la Comunidad Ethereum hacia los constructores de bienes públicos Ethereum.
     </p>
     <p>
-      205 / 5000
-      Translation results
       Con su lógica codificada en contratos inteligentes Ethereum y otras tecnologías web3,
       clr.fund requiere una confianza mínima en cualquier persona o entidad individual
       para funcionar y es resistente a la colusión y el soborno.

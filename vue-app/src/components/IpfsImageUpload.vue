@@ -53,7 +53,7 @@
       </div>
       <div class="hash-area">
         <ipfs-copy-widget :hash="hash" />
-        <div @click="handleRemoveImage" class="btn-warning">Remove image</div>
+        <div @click="handleRemoveImage" class="btn-warning">Remover imagen</div>
       </div>
     </div>
     <p v-if="error" class="error">{{ error }}</p>

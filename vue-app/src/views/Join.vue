@@ -114,7 +114,7 @@
                   }"
                 />
                 <p v-if="form.project.description" class="input-label pt-1">
-                  Avance:
+                  Vista Previa:
                 </p>
                 <markdown :raw="form.project.description" />
                 <p
@@ -217,7 +217,7 @@
                   Explica el problema que resuelve tu proyecto.
                 </p>
                 <p v-if="form.project.description" class="input-label pt-1">
-                  Avance:
+                  Vista Previa:
                 </p>
                 <markdown :raw="form.project.problemSpace" />
               </div>
@@ -258,7 +258,7 @@
                   >¿Cómo gastarás el financiamiento recibido?</label
                 >
                 <p class="input-description">
-                  Los posibles contribuyentes pueden realizar conversiones en 
+                  Los posibles contribuyentes pueden realizar conversiones en
                   función de sus planes de financiamiento específicos. Markdown apoyado.
                 </p>
                 <textarea
@@ -348,7 +348,7 @@
                   }"
                 />
                 <p v-if="form.team.description" class="input-label pt-1">
-                  Avance:
+                  Vista Previa:
                 </p>
                 <markdown :raw="form.team.description" />
               </div>
@@ -357,7 +357,7 @@
           <div v-if="currentStep === 3">
             <h2 class="step-title">Links</h2>
             <p>
-              Proporciona a los colaboradores algunos enlaces para que consulten 
+              Proporciona a los colaboradores algunos enlaces para que consulten
               y obtengan más información sobre tu proyecto. Proporciona al menos uno.
             </p>
             <div class="inputs">
@@ -473,7 +473,7 @@
           <div v-if="currentStep === 4">
             <h2 class="step-title">Images</h2>
             <p>
-              Subiremos sus imágenes a IPFS, una plataforma de 
+              Subiremos sus imágenes a IPFS, una plataforma de
               almacenamiento descentralizada.
               <links to="https://ipfs.io/#how">More on IPFS</links>
             </p>
