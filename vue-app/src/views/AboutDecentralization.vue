@@ -29,7 +29,7 @@
     </ul>
     <p>
       Cada una de estas piezas existe en un contrato inteligente de Ethereum (consulte el código
-      <links to = "https://github.com/clrfund/monorepo"> aquí </links>), lo que significa que su
+      <links to="https://github.com/clrfund/monorepo"> aquí </links>), lo que significa que su
       funcionalidad es mantenida por los mineros de Ethereum, un grupo descentralizado.
     </p>
     <h2>¿Por qué está descentralizado clr.fund?</h2>
@@ -46,8 +46,8 @@
         Votación segura: debido a las sólidas garantías de seguridad de Ethereum,
         cualquiera que envíe un mensaje puede estar extremadamente seguro de que su
         mensaje será procesado según lo esperado por el sistema. Todavía existen
-        peligros de seguridad, por supuesto, como <links to = "/about/sybil-resistance">
-        ataques de sybil, </links> o <links to = "/about/maci"> manipulación de votos
+        peligros de seguridad, por supuesto, como <links to="/about/sybil-resistance">
+        ataques de sybil, </links> o <links to="/about/maci"> manipulación de votos
         </links>, pero el tipo de "piratería de votos" que normalmente se teme en la
         votación digital es muy poco probable aquí.
       </li>
@@ -55,7 +55,7 @@
         Bien público: todo en Ethereum es de código abierto y sin permiso, lo que significa
         que el código de la infraestructura descentralizada de clr.fund actúa como un bien
         público: cualquiera puede implementar su propia versión del sistema para crear su
-        propio <links to = "/about/quadratic-funding "> sistema de financiación cuadrática
+        propio <links to="/about/quadratic-funding "> sistema de financiación cuadrática
         </links>, con los mismos beneficios descentralizados del original.
       </li>
     </ol>
