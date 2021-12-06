@@ -31,7 +31,7 @@
         <links to="/about/sybil-resistance">resistir sybil attacks</links>!
       </li>
       <li>
-        Asegúrate de tener {{nativeTokenSymbol}} en tu wallet verificada por BrightIDen la red de {{ chain.label }}
+        Asegúrate de tener {{nativeTokenSymbol}} en tu wallet verificada por BrightID en la red de {{ chain.label }}
       </li>
       <li>
         <links to="/projects">Revisa los proyectos</links> y agrega algunos a tu carreta,
@@ -60,7 +60,7 @@
       ¿No estás seguro de a qué proyecto en específico contribuir? Las contribuciones al fondo de contrapartida se distribuirán
       a todos los proyectos que reciban contribuciones específicas del proyecto durante esa ronda.
       La ponderación de esta distribución está determinada por los resultados de
-      <links to="/about/quadratic-funding">financiamiento cuadratico</links>
+      <links to="/about/quadratic-funding">financiamiento cuadrático</links>
     </p>
     <ol>
       <li>

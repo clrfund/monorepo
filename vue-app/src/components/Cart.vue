@@ -13,7 +13,7 @@
         Ya contribuiste en esta ronda. Puedes editar tus opciones y agregar nuevos
         proyectos, pero el total de tu carrito siempre debe ser igual al monto de tu
         contribución original.
-        <links to="/about/maci" class="message-link">Why?</links>
+        <links to="/about/maci" class="message-link">¿Por qué?</links>
       </div>
       <div
         class="reallocation-message"
@@ -128,7 +128,7 @@
           "
           class="time-left-read-only"
         >
-          <div class="caps">Time left:</div>
+          <div class="caps">Tiempo restante:</div>
           <time-left :date="timeLeftDate" />
         </div>
       </div>
@@ -137,7 +137,7 @@
         v-if="$store.getters.canUserReallocate && isEditMode"
       >
         <div class="reallocation-row">
-          <span>Original contribution</span>
+          <span>Contribución original</span>
           {{ formatAmount(this.contribution) }} {{ tokenSymbol }}
         </div>
         <div
@@ -159,7 +159,7 @@
           class="reallocation-row-matching-pool"
         >
           <div>
-            <div><b>Matching pool</b></div>
+            <div><b>Pool de contrapartida</b></div>
             <div>Los fondos restantes se destinan al fondo común</div>
           </div>
           + {{ formatAmount(this.contribution) - formatAmount(getTotal()) }}
@@ -172,8 +172,8 @@
             this.isGreaterThanInitialContribution() || hasUnallocatedFunds()
           "
         >
-          <img src="@/assets/split.svg" /> Split
-          {{ formatAmount(this.contribution) }} {{ tokenSymbol }} evenly
+          <img src="@/assets/split.svg" /> Dividir
+          {{ formatAmount(this.contribution) }} {{ tokenSymbol }} equitativamente
         </div>
       </div>
       <div
@@ -237,7 +237,7 @@
           class="time-left"
           v-if="$store.getters.canUserReallocate && isEditMode"
         >
-          <div class="caps">Time left:</div>
+          <div class="caps">Tiempo restante:</div>
           <time-left :date="timeLeftDate" />
         </div>
       </div>

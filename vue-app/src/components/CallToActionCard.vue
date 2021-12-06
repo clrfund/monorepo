@@ -37,7 +37,7 @@
     <links v-if="!hasStartedVerification" to="/verify" class="btn-action"
       >¡Comienza a prepararte!</links
     >
-    <links v-else to="/verify/connect" class="btn-action">Continue setup</links>
+    <links v-else to="/verify/connect" class="btn-action">Continuar la configuración</links>
   </div>
 </template>
 

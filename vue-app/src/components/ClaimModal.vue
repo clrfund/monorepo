@@ -15,17 +15,17 @@
           >{{ formatAmount(amount) }}
           {{ currentRound.nativeTokenSymbol }}</strong
         >
-        ha sido enviado a
+        ha sido enviado a el
       </p>
       <div class="address-box">
         <div>
-          <div class="address-label">Recipient address</div>
+          <div class="address-label">address del recipiente</div>
           <div class="address">
             {{ recipientAddress }}
           </div>
         </div>
       </div>
-      <button class="btn-primary" @click="$emit('close')">Done</button>
+      <button class="btn-primary" @click="$emit('close')">Terminar</button>
     </div>
   </div>
 </template>

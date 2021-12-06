@@ -3,7 +3,7 @@
     <div v-if="step === 1">
       <h3>
         Contribuye {{ tokenSymbol }} a la
-        {{ isRoundFinished() ? 'next' : 'current' }} ronda
+        {{ isRoundFinished() ? 'siguiente' : 'actual' }} ronda
       </h3>
       <div class="contribution-form">
         <div class="input-button">
@@ -29,7 +29,7 @@
         {{ tokenSymbol }}
       </div>
       <div class="btn-row">
-        <button class="btn-secondary" @click="$emit('close')">Cancel</button>
+        <button class="btn-secondary" @click="$emit('close')">Cancelar</button>
         <button
           class="btn-action"
           :disabled="!isAmountValid()"
@@ -42,7 +42,7 @@
     <div v-if="step === 2">
       <h3>
         Contribuye {{ renderContributionAmount }} {{ tokenSymbol }} a la
-        {{ isRoundFinished() ? 'next' : 'current' }} ronda
+        {{ isRoundFinished() ? 'siguiente' : 'actual' }} ronda
       </h3>
       <transaction
         :hash="transferTxHash"

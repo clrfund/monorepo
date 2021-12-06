@@ -38,7 +38,7 @@
         <div v-if="isLinked">
           <div v-if="isRegistered">
             <a href="/#/projects" @click="$emit('close')">
-              Start contributing
+              Comienza a contribuir
               <span role="img" aria-label="party emoji">🎉</span>
             </a>
           </div>
@@ -46,7 +46,7 @@
             <a href="/#/verify/" @click="$emit('close')">Continuar con la configuración</a>
           </div>
         </div>
-        <a href="/#/verify/" @click="$emit('close')" v-else>Start setup</a>
+        <a href="/#/verify/" @click="$emit('close')" v-else>Comienza la configuración</a>
         <p
           v-tooltip="{
             content: isVerified

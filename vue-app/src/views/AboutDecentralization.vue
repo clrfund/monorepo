@@ -24,10 +24,6 @@
        el registro de sybil-resistant calificados para contribuir a proyectos individuales.
       </li>
       <li>
-        the funds from and encrypted information about contributions to
-        individual projects
-      </li>
-      <li>
         los fondos y la información encriptada sobre las contribuciones a proyectos individuales
       </li>
     </ul>

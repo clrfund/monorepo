@@ -23,7 +23,7 @@
         </div>
         <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
-          Something failed: {{ txError }}<br />
+          Algo fallo: {{ txError }}<br />
           Revisa tu wallet o {{ blockExplorerLabel }} para más información.
         </div>
         <div v-if="isTxRejected" class="warning-text">
@@ -51,7 +51,7 @@
           Recarga o conecta una wallet diferente.
         </div>
         <div v-if="txHasDeposit" class="checkout-row">
-          <p class="m05"><b>Security deposit</b></p>
+          <p class="m05"><b>Deposito de seguridad</b></p>
           <p class="m05">
             {{ depositAmount }} {{ depositToken }}
             <span class="o5"

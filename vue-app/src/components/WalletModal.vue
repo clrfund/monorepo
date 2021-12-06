@@ -6,7 +6,7 @@
     </div>
     <div v-else class="modal-body">
       <div class="top">
-        <p>Connect to a wallet</p>
+        <p>Conectar una wallet</p>
         <button class="close-button" @click="$emit('close')">
           <img class="pointer" src="@/assets/close.svg" />
         </button>

@@ -2,7 +2,7 @@
   <div class="about">
     <h1 class="content-heading">¿Cómo funciona la ronda?</h1>
 
-    <h2>CLR walkthrough</h2>
+    <h2>CLR tutorial</h2>
     <p>
       Esta es una descripción general de cómo funciona todo detrás de escena para
       que puedas aprender qué esperar durante la duración de la ronda.
@@ -42,20 +42,20 @@
       de la distribución final del grupo de contrapartida.
     </p>
     <h2>Fases de la Ronda de Financiamiento</h2>
-    <h3>Join phase</h3>
+    <h3>Fase de inscripción phase</h3>
     <p>
-      Para comenzar, se invitará a los proyectos a <links to = "/ join"> unirse
+      Para comenzar, se invitará a los proyectos a <links to="/join"> unirse
       a la ronda </links>. Si eres un colaborador entusiasta, podrás explorar los
       proyectos y agregarlos a tu carrito, pero todavía no podrás contribuir.
     </p>
-    <h4>Need to know</h4>
+    <h4>Necesitas saber</h4>
     <ul>
       <li>
         Habrá un máximo de {{maxRecipients}} proyectos en la ronda.
       </li>
-      <li>Los proyectos deben cumplir <links to = "/ join"> criterios de ronda</links>.</li>
+      <li>Los proyectos deben cumplir <links to="/join"> criterios de ronda</links>.</li>
       <li>
-        Si deseas contribuir, este es un momento perfecto para obtener <links to = "/ verify">
+        Si deseas contribuir, este es un momento perfecto para obtener <links to="/verify">
         configuración para contribuir </links>.
       </li>
     </ul>
@@ -65,11 +65,11 @@
       oficial de la ronda de financiación. Este es el momento para que agregues tus proyectos
       favoritos a su carrito y contribuyas.
     </p>
-    <h4>Need to know</h4>
+    <h4>Necesitas saber</h4>
     <ul>
       <li>Esta fase durará {{contributionPhaseDays}} días. </li>
       <li>
-        Deberás pasar por algunos <links to = "/ verify"> setup </links> antes de poder contribuir.
+        Deberás pasar por algunos <links to ="/verify"> verificación </links> antes de poder contribuir.
       </li>
       <li>
         La cantidad máxima de contribución es {{maxContributionAmount}} {{nativeTokenSymbol}}.
@@ -105,7 +105,7 @@
     <h3>Fase de Conteo</h3>
     <p>
       En este punto, todas las contribuciones son definitivas y ahora se pueden contabilizar. El coordinador de la ronda
-      activa <links to="/about/maci">MACI </links> y los contratos inteligentes para calcular la cantidad del grupo
+      activa <links to="/about/maci"> MACI </links> y los contratos inteligentes para calcular la cantidad del grupo
       correspondiente que obtendrá cada proyecto.
     </p>
     <h3>Fase Finalizada</h3>

@@ -18,7 +18,7 @@
                     {{ currentRound.fundingRoundAddress }}
                   </div>
                   <links :to="blockExplorer.url"
-                    >View on {{ blockExplorer.label }}</links
+                    >Ver en {{ blockExplorer.label }}</links
                   >
                 </div>
               </template>
@@ -44,8 +44,8 @@
             <p>La ronda está oficialmente cerrada</p>
           </span>
           <p>
-            ¡Ahora es demasiado tarde para contribuir o reasignar tus donaciones! Debido a la 
-            generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar 
+            ¡Ahora es demasiado tarde para contribuir o reasignar tus donaciones! Debido a la
+            generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar
             la ronda antes de lo esperado. Aún puedes ayudar donando al grupo correspondiente.
           </p>
           <div class="dismiss-btn" @click="toggleNotice">Great!</div>
@@ -69,7 +69,7 @@
         >
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">Time left to contribute</div>
+              <div class="round-info-title">Tiempo restante para contribuir</div>
               <img
                 v-tooltip="{
                   content:
@@ -155,7 +155,7 @@
         <div v-else-if="$store.getters.isRoundTallying" class="round-info-item">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">Round status</div>
+              <div class="round-info-title">Estado de la ronda</div>
               <img
                 v-tooltip="{
                   content: `Our smart contracts are busy figuring out final contribution amounts.`,
@@ -166,7 +166,7 @@
               />
             </div>
             <div class="round-info-value">
-              <div class="message">Tallying all contributions</div>
+              <div class="message">Contando todas las contribuciones</div>
             </div>
           </div>
         </div>
@@ -176,7 +176,7 @@
         >
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">Round status</div>
+              <div class="round-info-title">Estado de la ronda</div>
               <img
                 v-tooltip="{
                   content: `If you're a project owner you can now claim your funds!`,
@@ -195,7 +195,7 @@
           <div class="round-value-info-item">
             <div class="full-width">
               <div class="round-info-item-top">
-                <div class="round-info-title">Total in round</div>
+                <div class="round-info-title">Total en la ronda</div>
                 <img
                   v-tooltip="{
                     content: `This total includes the funds in the matching pool and all contributions from the community.`,
@@ -213,7 +213,7 @@
           </div>
           <div class="round-info-sub-item">
             <div class="round-info-item-top">
-              <div class="round-info-title">Matching pool</div>
+              <div class="round-info-title">Pool de Contrapartida</div>
               <img
                 v-tooltip="{
                   content:

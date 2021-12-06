@@ -51,8 +51,8 @@
           :totalSteps="steps.length"
         />
         <div class="row">
-          <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-          <links class="cancel-link" to="/join"> Cancel </links>
+          <p>Paso {{ currentStep + 1 }} de {{ steps.length }}</p>
+          <links class="cancel-link" to="/join"> Cancelar </links>
         </div>
       </div>
     </div>
