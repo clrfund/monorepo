@@ -50,7 +50,7 @@
         <p
           v-tooltip="{
             content: isVerified
-              ? 'You\'re a verified human on BrightID!'
+              ? '¡Eres una persona verificado en BrightID!'
               : 'Tu perfil de BrightID aún necesita ser verificado.',
             trigger: 'hover click',
           }"
@@ -76,6 +76,8 @@ export default class BrightIdWidget extends Vue {
   @Prop() abbrev!: string
   @Prop() balance!: string
   @Prop() isProjectCard!: boolean
+  
+  
 
   get isLinked(): boolean {
     return (
