@@ -36,7 +36,7 @@
           <img
             v-tooltip="{
               content:
-                'Estimate – this total may be slightly different in your wallet.',
+                'Estimación - este total puede ser ligeramente diferente en tu wallet.',
               trigger: 'hover click',
             }"
             src="@/assets/info.svg"

@@ -73,7 +73,7 @@
               <img
                 v-tooltip="{
                   content:
-                    'During this phase, you can contribute to your favorite projects.',
+                    'Durante esta fase, puedes contribuir a tus proyectos favoritos.',
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -110,7 +110,8 @@
               <img
                 v-if="$store.getters.hasUserContributed"
                 v-tooltip="{
-                  content: `During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.`,
+                  content: `Durante esta fase, puedes agregar / eliminar proyectos y cambiar los montos de tus
+                  contribuciones. No puedes hacer una contribución o aumentar su total general.`,
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -119,7 +120,7 @@
               <img
                 v-else-if="!this.$store.state.currentUser"
                 v-tooltip="{
-                  content: `If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.`,
+                  content: `Si has contribuido, puedes agregar / eliminar proyectos y cambiar los montos de su contribución. Conecta tu wallet.`,
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -128,7 +129,7 @@
               <img
                 v-else
                 v-tooltip="{
-                  content: `This round has closed for new contributions.`,
+                  content: `Esta ronda se ha cerrado para nuevas contribuciones.`,
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -158,7 +159,7 @@
               <div class="round-info-title">Estado de la ronda</div>
               <img
                 v-tooltip="{
-                  content: `Our smart contracts are busy figuring out final contribution amounts.`,
+                  content: `Nuestros contratos inteligentes están ocupados calculando los montos finales de las contribuciones.`,
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -179,7 +180,7 @@
               <div class="round-info-title">Estado de la ronda</div>
               <img
                 v-tooltip="{
-                  content: `If you're a project owner you can now claim your funds!`,
+                  content: `Si eres propietario de un proyecto, ¡Ahora puedes reclamar tus fondos!`,
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -198,7 +199,7 @@
                 <div class="round-info-title">Total en la ronda</div>
                 <img
                   v-tooltip="{
-                    content: `This total includes the funds in the matching pool and all contributions from the community.`,
+                    content: `Este total incluye los fondos del fondo de contrapartida y todas las contribuciones de la comunidad.`,
                     trigger: 'hover click',
                   }"
                   width="16px"
@@ -217,7 +218,7 @@
               <img
                 v-tooltip="{
                   content:
-                    'These are the funds that will be distributed to all the projects based on the contributions they receive from the community.',
+                    'Estos son los fondos que se distribuirán a todos los proyectos en función de los aportes que reciban de la comunidad.',
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -228,7 +229,7 @@
                   !$store.getters.isRoundFinalized &&
                   !$store.getters.isRoundTallying
                 "
-                v-tooltip="'Add matching funds'"
+                v-tooltip="'Agregar fondos de contrapartida'"
                 class="add-link"
                 @click="addMatchingFunds"
               >

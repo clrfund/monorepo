@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <h1 class="content-heading"> Sobre Layer 2</h1>
+    <h1 class="content-heading"> Acerca de Layer 2</h1>
 
     <h2>Clr.fund en Layer 2</h2>
     <p>
@@ -77,15 +77,15 @@
 
       <h2>Lo que necesitarás</h2>
       <ul>
-        <li>Una billetera que admite {{ chain.label }}</li>
+        <li>Una wallet que admite {{ chain.label }}</li>
         <li>Fondos en {{ chain.label }}</li>
       </ul>
       <h3>
-        💼 Cómo encontrar una billetera que admita {{ chain.label }}
+        💼 Cómo encontrar una wallet que admita {{ chain.label }}
         <img
           v-tooltip="{
             content:
-              'Los recursos de Wallet se proporcionan para su conveniencia y no representan el respaldo de ninguno de los proyectos o servicios incluidos en el mismo. Siempre DYOR.',
+              'Los recursos de una Wallet se proporcionan para su conveniencia y no representan el respaldo de ninguno de los proyectos o servicios incluidos en el mismo. Siempre DYOR.',
             trigger: 'hover click',
           }"
           width="16px"
@@ -101,14 +101,14 @@
           y filtra por "Wallets" para ver algunas de las carteras que actualmente son compatibles con la red {{chain.label}}.
         </li>
         <li>
-          Verifica que cualquier billetera que consideres
+          Verifica que cualquier wallet que consideres
           <links to="https://registry.walletconnect.org/wallets">
             soporta WalletConnect
           </links>
           para asegurarse de que pueda conectarse a la aplicación.
         </li>
       </ul>
-      <h3>💰 Como obtener fondos en {{ chain.label }}</h3>
+      <h3>💰 ¿Cómo obtener fondos en {{ chain.label }}?</h3>
       <p>
         <links :to="chain.bridge" :hideArrow="true">
           <button class="btn-action">Puente de {{ chain.label }} Oficial</button>
@@ -134,12 +134,12 @@
           </p>
         </li>
         <li>Ingresa la cantidad y haz clic en "Depositar"</li>
-        <li>Confirma en tu billetera</li>
+        <li>Confirma en tu wallet</li>
       </ol>
       <p>
-        Once you have bridged your {{ nativeToken.symbol }} to
-        {{ chain.label }}, you may want to add the
-        <links :to="blockExplorerUrl">token</links> to your wallet e.g. in
+        Una vez que hayas vinculado tu {{ nativeToken.symbol }} a
+        {{ chain.label }}, es posible que desees agregarel
+        <links :to="blockExplorerUrl">token</links> a tu wallet e.g. en
         MetaMask.
       </p>
       <button
@@ -147,18 +147,18 @@
         class="btn-secondary"
         @click="addTokenToWallet"
       >
-        Add {{ chain.label }} {{ nativeToken.symbol }} to MetaMask
+        Agrega {{ chain.label }} {{ nativeToken.symbol }} a MetaMask
       </button>
     </div>
     <!-- If chain isn't Arbitrum, but still has a bridge URL, display its information: -->
     <div v-else-if="chain.bridge">
       <h2>{{ chain.label }}</h2>
-      <h2>What you'll need</h2>
+      <h2>¿Qué necesitarás?</h2>
       <ul>
-        <li>A wallet that supports {{ chain.label }}</li>
-        <li>Funds on {{ chain.label }}</li>
+        <li>Una wallet que soporte {{ chain.label }}</li>
+        <li>Fondos en {{ chain.label }}</li>
       </ul>
-      <h2>💰 Bridge your funds to {{ chain.label }}</h2>
+      <h2>💰 Vincula tus fondos a {{ chain.label }}</h2>
       <p>
         <links :to="chain.bridge" :hideArrow="true">
           <button class="btn-action">{{ chain.label }} Bridge</button>
