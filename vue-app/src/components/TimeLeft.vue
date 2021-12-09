@@ -58,14 +58,14 @@ export default class extends Vue {
 
   get units(): string[] {
     if (this.timeLeft.days > 0)
-      return [this.unitPlurality('days'), this.unitPlurality('hours')]
+      return [this.unitPlurality('días'), this.unitPlurality('horas')]
     if (this.timeLeft.hours > 0)
-      return [this.unitPlurality('hours'), this.unitPlurality('minutes')]
+      return [this.unitPlurality('horas'), this.unitPlurality('minutos')]
     if (this.timeLeft.minutes > 5) return [this.unitPlurality('minutes'), '']
     if (this.timeLeft.minutes > 0)
-      return [this.unitPlurality('minutes'), this.unitPlurality('seconds')]
-    if (this.timeLeft.seconds > 0) return [this.unitPlurality('seconds'), '']
-    return [this.unitPlurality('days'), this.unitPlurality('hours')]
+      return [this.unitPlurality('minutos'), this.unitPlurality('segundos')]
+    if (this.timeLeft.seconds > 0) return [this.unitPlurality('segundos'), '']
+    return [this.unitPlurality('días'), this.unitPlurality('horas')]
   }
 
   unitPlurality(pluralUnit: string): string {
