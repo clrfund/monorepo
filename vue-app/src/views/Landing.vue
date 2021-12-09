@@ -96,7 +96,7 @@
             :to="chain.isLayer2 ? '/about/layer-2' : chain.bridge"
             class="btn-action"
           >
-            Get {{ chain.label }} funds
+            Obtén {{ chain.label }}
           </links>
         </div>
 <!--        <div class="pre-req" id="bright-id">-->
