@@ -8,7 +8,7 @@
       <p>
         El total de tu contribución de
         <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>
-        es definitivo. No podrás aumentar esta cantidad. Asegúrate de 
+        es definitivo. No podrás aumentar esta cantidad. Asegúrate de
         que este sea el monto máximo que podrías querer gastar en contribuciones.
       </p>
       <!-- TODO: if you get 1/3 of the way through these transactions and come back, you shouldn't get this warning again. This warning should only appear if you haven't already signed 'approve' transaction -->
@@ -16,8 +16,8 @@
         <em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
       </p> -->
       <div class="btn-row">
-        <button class="btn-secondary" @click="$emit('close')">Cancel</button>
-        <button class="btn-primary" @click="contribute()">Continue</button>
+        <button class="btn-secondary" @click="$emit('close')">Cancelar</button>
+        <button class="btn-primary" @click="contribute()">Continuar</button>
       </div>
     </div>
     <div v-if="step === 1">
@@ -28,7 +28,7 @@
       </h2>
       <p>
         Esto le da permiso a esta aplicación para retirar
-        {{ renderTotal }} {{ currentRound.nativeTokenSymbol }} de tu billetera 
+        {{ renderTotal }} {{ currentRound.nativeTokenSymbol }} de tu billetera
         para tu contribución.
       </p>
       <transaction
@@ -73,7 +73,7 @@
       <h2>Magia del Pool de Contrapartida ✨</h2>
       <p>
         Esta transacción le permite al grupo coincidente saber cuánto
-        {{ currentRound.nativeTokenSymbol }} enviar a sus proyectos 
+        {{ currentRound.nativeTokenSymbol }} enviar a sus proyectos
         favoritos según tus contribuciones.
       </p>
       <transaction

@@ -2,7 +2,7 @@
   <div class="progress-area">
     <div class="desktop progress-container">
       <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-      <p class="subtitle">Step {{ currentStep + 1 }} of {{ steps.length }}</p>
+      <p class="subtitle">Paso {{ currentStep + 1 }} de {{ steps.length }}</p>
       <div class="progress-steps">
         <div
           v-for="(name, step) in stepNames"

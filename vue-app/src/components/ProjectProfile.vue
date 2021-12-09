@@ -78,7 +78,7 @@
           <links
             class="explorerLink"
             :to="blockExplorer.url"
-            :title="`View on ${blockExplorer.label}`"
+            :title="`Ver en ${blockExplorer.label}`"
             :hideArrow="true"
           >
             <img

@@ -44,7 +44,7 @@ const ADDITIONAL_CRITERION: Criterion[] = [
   {
     emoji: '💰',
     criterion: 'Basado en Ethereum y con integrantes Hondureños',
-    description: 'Querémos que los fondos tengan un impacto en la comunidad local o sus integrantes.',
+    description: 'Queremos que los fondos tengan un impacto en la comunidad local o sus integrantes.',
   }
 ]
 

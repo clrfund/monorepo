@@ -23,7 +23,7 @@
         </div>
         <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
-          Algo fallo: {{ txError }}<br />
+          Algo falló: {{ txError }}<br />
           Revisa tu wallet o {{ blockExplorerLabel }} para más información.
         </div>
         <div v-if="isTxRejected" class="warning-text">

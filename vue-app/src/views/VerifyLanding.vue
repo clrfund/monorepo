@@ -12,11 +12,10 @@
       </div>
       <div class="content">
         <div class="flex-title">
-          <h1>Prove you’re only using one account</h1>
+          <h1>Demuestra que solo estás usando una cuenta</h1>
         </div>
         <div class="subtitle">
-          We use BrightID to stop bots and cheaters, and make our funding more
-          democratic.
+          Usamos BrightID para detener bots y tramposos, y hacer que nuestra financiación sea más democrática.
         </div>
         <h2>
           Lo que necesitarás
@@ -51,7 +50,7 @@
         </ul>
         <links to="/about-sybil-resistance/">¿Porque es esto importante?</links>
         <div v-if="isRoundNotStarted" class="join-message">
-          Todavía no hay una ronda de financiamiento abierta. ¡Prepárate ahora 
+          Todavía no hay una ronda de financiamiento abierta. ¡Prepárate ahora
           para estar listo para cuando comience el próximo!
         </div>
         <div v-else-if="isRoundOver" class="warning-message">
@@ -59,10 +58,10 @@
           la verificación BrightID para prepararse para la próxima vez.
         </div>
         <div v-else-if="isRoundFull" class="warning-message">
-          Contribuciones cerradas temprano - ¡ya no puedes donar! Debido a la 
+          Contribuciones cerradas temprano - ¡ya no puedes donar! Debido a la
           generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que
           cerrar la ronda antes de lo esperado. Si ya contribuiste, todavía tienes
-          tiempo para reasignarlo si es necesario. Si no tuviste la oportunidad de 
+          tiempo para reasignarlo si es necesario. Si no tuviste la oportunidad de
           contribuir, aún puedes ayudar donando al grupo correspondiente
         </div>
         <div class="btn-container mt2">
@@ -72,9 +71,9 @@
             :fullWidthMobile="true"
           />
           <links v-if="currentUser" to="/verify/connect" class="btn-primary">
-            I have BrightID installed
+            Tengo BrightID instalado
           </links>
-          <links to="/projects" class="btn-secondary">Go back</links>
+          <links to="/projects" class="btn-secondary">Regresar</links>
         </div>
       </div>
     </div>

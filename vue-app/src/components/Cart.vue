@@ -30,7 +30,7 @@
           <img alt="cart" width="16px" src="@/assets/cart.svg" />
           <img alt="close" width="16px" src="@/assets/chevron-right.svg" />
         </div>
-        <h2>{{ isEditMode ? 'Edit cart' : 'Your cart' }}</h2>
+        <h2>{{ isEditMode ? 'Editar carrito' : 'Tu carrito' }}</h2>
         <div
           v-if="
             ($store.getters.isRoundContributionPhase ||
@@ -93,11 +93,11 @@
           <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
             <div class="flex-row-reallocation">
               <div class="semi-bold">
-                {{ isEditMode ? 'Edit contributions' : 'Your contributions' }}
+                {{ isEditMode ? 'Editar contribuciones' : 'Tus contribuciones' }}
               </div>
               <div class="semi-bold" v-if="$store.getters.canUserReallocate">
                 <button @click="handleEditState" class="pointer">
-                  {{ isEditMode ? 'Cancel' : 'Edit' }}
+                  {{ isEditMode ? 'Cancelar' : 'Editar' }}
                 </button>
               </div>
             </div>
@@ -203,7 +203,7 @@
           {{ formatAmount(this.contribution) }} {{ tokenSymbol }} donación original.
         </div>
         <div class="p1" v-if="isBrightIdRequired">
-          <links to="/verify" class="btn-primary"> Verificar con BrightID </links>
+          <links to="/verify" class="btn-primary">Verificar con BrightID </links>
         </div>
         <button
           v-if="canWithdrawContribution()"

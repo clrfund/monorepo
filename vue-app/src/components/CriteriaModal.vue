@@ -12,7 +12,7 @@
         </div>
         <p>los administradores van a remover cualquier proyecto que no cumplan
           con los criterios. Lee cuidadosamente! Esperamos que en futuras rondas la revision sea por
-          parte de la comuniodad.
+          parte de la comunidad.
         </p>
         <div class="content">
           <div

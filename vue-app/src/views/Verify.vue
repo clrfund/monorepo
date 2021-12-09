@@ -52,20 +52,20 @@
           :totalSteps="steps.length"
         />
         <div class="row">
-          <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-          <links class="cancel-link" to="/verify"> Cancel </links>
+          <p>Paso {{ currentStep + 1 }} de {{ steps.length }}</p>
+          <links class="cancel-link" to="/verify"> Cancelar </links>
         </div>
       </div>
       <div class="title-area">
-        <h1>Set up BrightID</h1>
+        <h1>Configurar BrightID</h1>
       </div>
       <div class="cancel-area desktop">
-        <links class="cancel-link" to="/verify"> Cancel </links>
+        <links class="cancel-link" to="/verify"> Cancelar </links>
       </div>
       <div class="form-area">
         <div class="verification-status" v-if="currentStep === 2">
           <div>
-            <h2>Verification status</h2>
+            <h2>Estado de verificación</h2>
             <p>
               {{
                 isManuallyVerified
@@ -97,13 +97,13 @@
         </div>
         <div class="application">
           <div v-if="currentStep === 0">
-            <h2 class="step-title">Connect</h2>
+            <h2 class="step-title">Conectar</h2>
             <p>
               Primero debes conectar tu cuenta BrightID con la dirección de tu billetera.
             </p>
             <p>
               Una vez que la aplicación esté vinculada en tu aplicación BrightID,
-              espere unos momentos para que verifiquemos la conexión. Pasaremos 
+              espere unos momentos para que verifiquemos la conexión. Pasaremos
               automáticamente al siguiente paso.
             </p>
             <div class="qr">
@@ -123,8 +123,8 @@
                 </links>
                 <p class="mobile">
                   <em>
-                    Este enlace puede parecer aterrador, pero solo establece una conexión 
-                    entre la dirección de tu billetera conectada, nuestra aplicación y 
+                    Este enlace puede parecer aterrador, pero solo establece una conexión
+                    entre la dirección de tu billetera conectada, nuestra aplicación y
                     BrightID. Asegúrate de que tu dirección se vea correcta.
                   </em>
                 </p>
@@ -134,9 +134,9 @@
             </div>
           </div>
           <div v-if="currentStep === 1">
-            <h2 class="step-title">Get sponsored</h2>
+            <h2 class="step-title">Obten patrocinio</h2>
             <p>
-              Necesitas un token de patrocinio para obtener la verificación de BrightID. 
+              Necesitas un token de patrocinio para obtener la verificación de BrightID.
               Esto ayuda a admitir BrightID como plataforma descentralizada. Solo necesitarás
               hacer esto una vez y lo cubre para cualquier otra aplicación que funcione con BrightID.
             </p>
@@ -160,42 +160,38 @@
               <div v-if="sponsorTxHash">
                 <loader />
                 <p>
-                  Esperando la verificación de patrocinio de BrightID, espera. 
+                  Esperando la verificación de patrocinio de BrightID, espera.
                   Esto no debería tomar más de un par de minutos.
                 </p>
               </div>
             </div>
           </div>
           <div v-if="currentStep === 2">
-            <h2 class="step-title">Get verified</h2>
+            <h2 class="step-title">Verifícate</h2>
             <p>
               La verificación BrightID ayuda a demostrar que eres un ser humano único.
               Para ser verificado, necesitas suficientes personas para confirmar que te
               conocieron y que eres una persona real. Hay un par de formas de hacer esto:
             </p>
             <accordion
-              tag="🚀 Fastest"
-              header="Join a BrightId party"
-              content="BrightID run verification parties regularly. Join the call,
-            meet other new users, and they'll verify you’re a human and not a
-            bot. Quick and painless, even for you introverts out there."
+              tag="🚀 Rapido"
+              header="Únete a una fiesta BrightId"
+              content="BrightID organiza fiestas de verificación con regularidad. Únase a la llamada, conozca a otros usuarios nuevos y ellos verificarán que es un humano y no un bot. Rápido e indoloro, incluso para los introvertidos."
               :linkButton="{
                 link: 'https://meet.brightid.org/#/',
-                text: 'View party schedule',
+                text: 'Ver el horario de la fiesta',
               }"
             />
             <accordion
-              tag="🎰 Luckiest"
-              header="Connect with 2 verified humans"
-              content="Know anyone that's contributed to Gitcoin Grants or clr.fund
-                rounds? They may already be verified. Hit them up and see if
-                they can verify you!"
+              tag="🎰 Más afortunado"
+              header="Conéctate con 2 humanos verificados"
+              content="¿Conoces a alguien que haya contribuido a las subvenciones de Gitcoin o las rondas de fondos de clr.fund? Es posible que ya estén verificados. ¡Escríbeles y ve si pueden verificarte!"
             />
           </div>
           <div v-if="currentStep === 3">
             <h2 class="step-title">Registrarse</h2>
             <p>
-              Para proteger la ronda del soborno y el fraude, 
+              Para proteger la ronda del soborno y el fraude,
               debes agregar la dirección de tu billetera a un registro de
               contrato inteligente. Una vez que hayas terminado, puedes unirte
               a la ronda de financiamiento.

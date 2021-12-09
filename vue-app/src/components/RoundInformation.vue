@@ -7,7 +7,7 @@
       <template v-if="currentRound">
         <div class="round">
           <div class="round-title-bar">
-            <h2 class="round-title">CLR.fund</h2>
+            <h2 class="round-title">BUIDL Honduras CLR.fund</h2>
             <v-popover class="verified-container">
               <div class="verified">
                 <img src="@/assets/verified.svg" />
@@ -84,7 +84,7 @@
           <div
             class="round-info-value"
             :title="
-              'Contribution Deadline: ' +
+              'Fecha limite de Contribución: ' +
               formatDate(currentRound.signUpDeadline)
             "
           >
@@ -103,8 +103,8 @@
               <div class="round-info-title">
                 {{
                   $store.getters.hasUserContributed
-                    ? 'Time left to reallocate'
-                    : 'Round status'
+                    ? 'Tiempo restante para reasignar'
+                    : 'Estado de la ronda'
                 }}
               </div>
               <img
@@ -143,7 +143,7 @@
               v-else
               class="round-info-value"
               :title="
-                'Reallocation Deadline: ' +
+                'Fecha límite para reasignar: ' +
                 formatDate(currentRound.votingDeadline)
               "
             >
@@ -234,7 +234,7 @@
                 @click="addMatchingFunds"
               >
                 <img src="@/assets/add.svg" width="16px" />
-                <span class="add-funds-link">Add funds</span>
+                <span class="add-funds-link">Agregar fondos</span>
               </div>
             </div>
 
@@ -247,7 +247,7 @@
           </div>
           <div class="round-info-sub-item">
             <div>
-              <div class="round-info-title">Contributions total</div>
+              <div class="round-info-title">Total de Contribuciones</div>
               <div class="round-info-value">
                 <div class="value">
                   {{ formatAmount(currentRound.contributions) }}
@@ -258,11 +258,11 @@
           </div>
           <div class="round-info-sub-item">
             <div>
-              <div class="round-info-title">Contributors</div>
+              <div class="round-info-title">Contribuyentes</div>
               <div class="round-info-value">
                 <div class="value">{{ currentRound.contributors }}</div>
                 <div class="unit">
-                  legend{{ currentRound.contributors !== 1 ? 's' : '' }}
+                  buidler{{ currentRound.contributors !== 1 ? 's' : '' }}
                 </div>
               </div>
             </div>

@@ -11,7 +11,7 @@
         }"
       >
         <div class="header">
-          <h2>Projects</h2>
+          <h2>Proyectos</h2>
         </div>
 
         <filter-dropdown
@@ -39,7 +39,7 @@
           />
         </div>
         <div class="add-project">
-          <links to="/join" class="btn-primary">Agrergar proyecto</links>
+          <links to="/join" class="btn-primary">Agregar proyecto</links>
         </div>
         <div class="hr" />
       </div>

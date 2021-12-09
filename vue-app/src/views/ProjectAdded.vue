@@ -8,13 +8,13 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>Project submitted!</h1>
+            <h1>Project enviado!</h1>
             <transaction-receipt :hash="$route.params.hash" />
           </div>
           <div class="subtitle">Casi estás a bordo de esta ronda de financiamiento</div>
           <ul>
             <li>
-              Tu proyecto solo necesita pasar por algunas verificaciones finales. 
+              Tu proyecto solo necesita pasar por algunas verificaciones finales.
               Si todo está bien, tu proyecto se pondrá en marcha dentro
               {{
                 challengePeriodDuration === null
@@ -28,8 +28,8 @@
             </li>
           </ul>
           <div class="mt2 button-spacing">
-            <links to="/projects" class="btn-primary">View projects</links>
-            <links to="/" class="btn-secondary">Go home</links>
+            <links to="/projects" class="btn-primary">Ver proyectos</links>
+            <links to="/" class="btn-secondary">Ir al home</links>
           </div>
         </div>
       </div>

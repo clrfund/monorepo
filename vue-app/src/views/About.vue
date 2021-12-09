@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">About</h1>
+    <h1 class="content-heading">Acerca</h1>
 
     <h2>Qué es clr.fund?</h2>
     <p>

@@ -186,7 +186,7 @@ export default class App extends Vue {
 
   get backLinkText(): string {
     const route = this.$route.name || ''
-    return route.includes('about-') ? '← Back to About' : '← Back to projects'
+    return route.includes('about-') ? '← Regresar a acerca' : '← Regresar a proyectos'
   }
 
   get showBackLink(): boolean {

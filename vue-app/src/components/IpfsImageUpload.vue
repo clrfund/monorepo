@@ -18,7 +18,7 @@
       <button
         primary="true"
         type="submit"
-        label="Upload"
+        label="Subir"
         class="btn-primary"
         :disabled="loading || error || !loadedImageData"
       >

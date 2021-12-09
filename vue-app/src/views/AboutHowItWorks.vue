@@ -18,7 +18,7 @@
         >
       </li>
       <li>
-        <links to="/about/how-it-works/recipients">Guide for recipients</links>
+        <links to="/about/how-it-works/recipients">Guía para recipientes</links>
       </li>
     </ul>
 
@@ -90,7 +90,7 @@
       de tu contribución o agregar / eliminar proyectos, pero tu total debe ser igual al de tu contribución original.
 
     </p>
-    <h4>Need to know</h4>
+    <h4>Necesitas saber</h4>
     <ul>
       <li>
         Esta fase durará {{reallocationPhaseDays}} días después del final de la Fase de Contribución.

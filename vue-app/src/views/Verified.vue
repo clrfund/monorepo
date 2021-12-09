@@ -10,20 +10,20 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>Ready to contribute!</h1>
+            <h1>Listo para contribuir!</h1>
             <transaction-receipt
               v-if="$route.params.hash"
               :hash="$route.params.hash"
             />
           </div>
           <div class="subtitle">
-            ¡Estás a bordo de esta ronda de financiaciamiento! Y 
+            ¡Estás a bordo de esta ronda de financiaciamiento! Y
             completamente verificado para BrightID: nunca más tendrás que volver a hacerlo.
           </div>
           <p>Ahora puedes comenzar a contribuir a tus proyectos favoritos.</p>
           <div class="mt2 button-spacing">
-            <links to="/projects" class="btn-primary">View projects</links>
-            <links to="/" class="btn-secondary">Go home</links>
+            <links to="/projects" class="btn-primary">Ver proyectos</links>
+            <links to="/" class="btn-secondary">Ir al home</links>
           </div>
         </div>
       </div>
