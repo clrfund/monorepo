@@ -8,6 +8,7 @@ import { recipientRegistryType } from '@/api/core'
 import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
+import { Factory } from '@/api/factory'
 import {
   RecipientApplicationData,
   RegistryInfo,
@@ -32,6 +33,7 @@ export interface RootState {
   recipientRegistryInfo: RegistryInfo | null
   showCartPanel: boolean
   tally: Tally | null
+  factory: Factory | null
 }
 
 const getters = {

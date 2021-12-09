@@ -134,7 +134,18 @@ export default class WalletWidget extends Vue {
   }
 
   get tokenLogo(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
+    const { currentRound, factory } = this.$store.state
+
+    let nativeTokenSymbol = ''
+
+    if (factory) {
+      nativeTokenSymbol = factory.nativeTokenSymbol
+    }
+
+    if (currentRound) {
+      nativeTokenSymbol = currentRound.nativeTokenSymbol
+    }
+
     return getTokenLogo(nativeTokenSymbol)
   }
 

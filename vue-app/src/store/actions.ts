@@ -27,6 +27,7 @@ import {
   LOAD_CART,
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
+  LOAD_FACTORY_INFO,
   LOAD_RECIPIENT_REGISTRY_INFO,
   LOAD_ROUND_INFO,
   LOAD_USER_INFO,
@@ -53,12 +54,14 @@ import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_RECIPIENT_REGISTRY_INFO,
   SET_HAS_VOTED,
+  SET_FACTORY,
 } from './mutation-types'
 
 // Utils
 import { ensLookup } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
+import { getFactoryInfo } from '@/api/factory'
 
 const actions = {
   //TODO: also commit SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
@@ -75,6 +78,10 @@ const actions = {
       commit(SET_CURRENT_ROUND, null)
     }
     commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
+  },
+  async [LOAD_FACTORY_INFO]({ commit }) {
+    const factory = await getFactoryInfo()
+    commit(SET_FACTORY, factory)
   },
   async [LOAD_ROUND_INFO]({ commit, state }) {
     const roundAddress = state.currentRoundAddress
