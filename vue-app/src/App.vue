@@ -124,9 +124,9 @@ export default class App extends Vue {
 
     this.$store.commit(SET_CURRENT_USER, this.$web3.user)
     await this.$store.dispatch(LOGIN_USER)
+    this.$store.dispatch(LOAD_USER_INFO)
     if (this.$store.state.currentRound) {
       // Load cart & contributor data for current round
-      await this.$store.dispatch(LOAD_USER_INFO)
       this.$store.dispatch(LOAD_CART)
       this.$store.dispatch(LOAD_COMMITTED_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)

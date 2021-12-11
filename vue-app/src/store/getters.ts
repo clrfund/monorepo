@@ -173,6 +173,36 @@ const getters = {
       state.currentRound.maxContributors <= state.currentRound.contributors
     )
   },
+  nativeTokenSymbol: (state: RootState): string => {
+    const { currentRound, factory } = state
+
+    let nativeTokenSymbol = ''
+
+    if (factory) {
+      nativeTokenSymbol = factory.nativeTokenSymbol
+    }
+
+    if (currentRound) {
+      nativeTokenSymbol = currentRound.nativeTokenSymbol
+    }
+
+    return nativeTokenSymbol
+  },
+  nativeTokenDecimals: (state: RootState): number | undefined => {
+    const { currentRound, factory } = state
+
+    let nativeTokenDecimals
+
+    if (factory) {
+      nativeTokenDecimals = factory.nativeTokenDecimals
+    }
+
+    if (currentRound) {
+      nativeTokenDecimals = currentRound.nativeTokenDecimals
+    }
+
+    return nativeTokenDecimals
+  },
 }
 
 export default getters

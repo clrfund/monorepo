@@ -112,20 +112,25 @@ const actions = {
     }
   },
   async [LOAD_USER_INFO]({ commit, state }) {
-    if (state.currentRound && state.currentUser) {
+    if (!state.currentUser) {
+      return
+    }
+
+    let nativeTokenAddress, isRegistered, balance
+
+    if (state.factory) {
+      nativeTokenAddress = state.factory.nativeTokenAddress
+    }
+
+    if (state.currentRound) {
+      nativeTokenAddress = state.currentRound.nativeTokenAddress
+
       // Check if this user is in our user registry
-      const isRegistered = await isVerifiedUser(
+      isRegistered = await isVerifiedUser(
         state.currentRound.userRegistryAddress,
         state.currentUser.walletAddress
       )
 
-      const etherBalance = await getEtherBalance(
-        state.currentUser.walletAddress
-      )
-      const balance = await getTokenBalance(
-        state.currentRound.nativeTokenAddress,
-        state.currentUser.walletAddress
-      )
       let contribution = state.contribution
       if (!contribution || contribution.isZero()) {
         contribution = await getContributionAmount(
@@ -141,18 +146,26 @@ const actions = {
         commit(SET_CONTRIBUTION, contribution)
         commit(SET_HAS_VOTED, hasVoted)
       }
-
-      let ensName: string | null = state.currentUser.ensName
-      ensName = await ensLookup(state.currentUser.walletAddress)
-
-      commit(SET_CURRENT_USER, {
-        ...state.currentUser,
-        isRegistered,
-        balance,
-        etherBalance,
-        ensName,
-      })
     }
+
+    if (nativeTokenAddress) {
+      balance = await getTokenBalance(
+        nativeTokenAddress,
+        state.currentUser.walletAddress
+      )
+    }
+
+    const etherBalance = await getEtherBalance(state.currentUser.walletAddress)
+    let ensName: string | null = state.currentUser.ensName
+    ensName = await ensLookup(state.currentUser.walletAddress)
+
+    commit(SET_CURRENT_USER, {
+      ...state.currentUser,
+      isRegistered,
+      balance,
+      etherBalance,
+      ensName,
+    })
   },
   async [LOAD_BRIGHT_ID]({ commit, state }) {
     if (state.currentUser && userRegistryType === UserRegistryType.BRIGHT_ID) {
