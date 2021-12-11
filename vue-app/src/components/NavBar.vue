@@ -11,7 +11,7 @@
       >
         Manage Recipients
       </a>
-      <div class="help-dropdown" v-if="inApp">
+      <div class="help-dropdown">
         <img
           @click="toggleHelpDropdown()"
           class="dropdown-btn"
@@ -55,6 +55,7 @@ export default class NavBar extends Vue {
   showHelpDowndown = false
   profileImageUrl: string | null = null
   dropdownItems: { to?: string; text: string; emoji: string }[] = [
+    { to: '/', text: 'Home', emoji: '🏠' },
     { to: '/about', text: 'About', emoji: 'ℹ️' },
     { to: '/about/how-it-works', text: 'How it works', emoji: '⚙️' },
     { to: '/about/maci', text: 'Bribery protection', emoji: '🤑' },
