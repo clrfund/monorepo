@@ -401,25 +401,21 @@ export async function getProjects(
   return projects
 }
 
-export async function getProject(
-  registryAddress: string,
-  recipientId: string
-): Promise<Project | null> {
+export async function getProject(recipientId: string): Promise<Project | null> {
   if (!isHexString(recipientId, 32)) {
     return null
   }
 
   const data = await sdk.GetProject({
-    registryAddress: registryAddress.toLowerCase(),
     recipientId,
   })
 
-  if (!data.recipientRegistry?.recipients?.length) {
+  if (!data.recipients?.length) {
     // Project does not exist
     return null
   }
 
-  const recipient = data.recipientRegistry?.recipients?.[0]
+  const recipient = data.recipients?.[0]
 
   let project: Project
   try {
