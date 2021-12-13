@@ -11,11 +11,7 @@
       >
         Manage Recipients
       </a>
-      <div
-        class="help-dropdown"
-        v-if="inApp"
-        v-click-outside="closeHelpDropdown"
-      >
+      <div class="help-dropdown" v-click-outside="closeHelpDropdown">
         <img
           @click="toggleHelpDropdown()"
           class="dropdown-btn"
