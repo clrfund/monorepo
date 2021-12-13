@@ -204,7 +204,7 @@ export default class RecipientSubmissionWidget extends Vue {
       currentUser
     ) {
       try {
-        if (DateTime.now() >= currentRound.votingDeadline) {
+        if (currentRound && DateTime.now() >= currentRound.votingDeadline) {
           this.$router.push({
             name: 'join',
           })

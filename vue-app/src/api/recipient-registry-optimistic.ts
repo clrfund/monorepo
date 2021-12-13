@@ -352,16 +352,6 @@ export async function getProjects(
 
   const recipients = data.recipients
 
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider
-  )
-  const now = DateTime.now().toSeconds()
-  const challengePeriodDuration = (
-    await registry.challengePeriodDuration()
-  ).toNumber()
-
   const projects: Project[] = recipients
     .map((recipient) => {
       let project
@@ -372,10 +362,6 @@ export async function getProjects(
       }
 
       const submissionTime = Number(recipient.submissionTime)
-      if (submissionTime + challengePeriodDuration >= now) {
-        // Challenge period is not over yet
-        return
-      }
 
       if (recipient.rejected) {
         return
@@ -422,15 +408,6 @@ export async function getProject(
   if (!isHexString(recipientId, 32)) {
     return null
   }
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider
-  )
-  const now = DateTime.now().toSeconds()
-  const challengePeriodDuration = (
-    await registry.challengePeriodDuration()
-  ).toNumber()
 
   const data = await sdk.GetProject({
     registryAddress: registryAddress.toLowerCase(),
@@ -449,10 +426,6 @@ export async function getProject(
     project = decodeProject(recipient)
   } catch {
     // Invalid metadata
-    return null
-  }
-  if (project.extra.submissionTime + challengePeriodDuration >= now) {
-    // Challenge period is not over yet
     return null
   }
 
