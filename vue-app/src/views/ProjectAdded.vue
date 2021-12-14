@@ -1,6 +1,6 @@
 <template>
   <div>
-    <round-status-banner />
+    <round-status-banner v-if="$store.state.currentRound" />
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
