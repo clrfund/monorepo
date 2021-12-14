@@ -43,6 +43,11 @@ const config: HardhatUserConfig = {
       url: process.env.RINKARBY_JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
       accounts: { mnemonic: WALLET_MNEMONIC },
     },
+    arbitrum: {
+      url:
+        process.env.ARBITRUM_JSONRPC_HTTP_URL || 'https://arb1.arbitrum.io/rpc',
+      accounts: { mnemonic: WALLET_MNEMONIC },
+    },
   },
   paths: {
     artifacts: 'build/contracts',
