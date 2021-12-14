@@ -7,11 +7,10 @@
     </div>
 
     <round-status-banner />
-    <back-link
-      :alsoShowOnMobile="true"
-      to="/projects"
-      text="← Back to projects"
-    />
+
+    <div class="breadcrumbs">
+      <breadcrumbs :links="links" />
+    </div>
 
     <div class="content" v-if="loading">
       <h1>Fetching round data...</h1>
@@ -141,7 +140,7 @@ import { BigNumber } from 'ethers'
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import Loader from '@/components/Loader.vue'
 import CriteriaModal from '@/components/CriteriaModal.vue'
-import BackLink from '@/components/BackLink.vue'
+import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Links from '@/components/Links.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
@@ -155,16 +154,20 @@ import { formatAmount } from '@/utils/amounts'
     RoundStatusBanner,
     CriteriaModal,
     Loader,
-    BackLink,
     Links,
     TimeLeft,
     ImageResponsive,
+    Breadcrumbs,
   },
 })
 export default class JoinLanding extends Vue {
   currentRound: string | null = null
   loading = true
   showCriteriaPanel = false
+
+  get links(): Array<{ link: string; url: string }> {
+    return [{ link: 'join', url: '/join' }]
+  }
 
   async created() {
     this.currentRound = await getCurrentRound()
@@ -288,6 +291,15 @@ h1 {
       }
     }
   }
+}
+
+.breadcrumbs {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  padding-left: $content-space;
+  margin-left: 2rem;
+  width: min(100%, 512px);
 }
 
 .content {
