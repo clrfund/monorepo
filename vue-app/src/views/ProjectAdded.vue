@@ -172,10 +172,11 @@ ul {
       .flex-title {
         display: flex;
         gap: 0.5rem;
-        align-items: center;
+        align-items: left;
         margin-bottom: 3rem;
         margin-top: 1.5rem;
         flex-wrap: wrap;
+        flex-direction: column;
 
         img {
           width: 1rem;
