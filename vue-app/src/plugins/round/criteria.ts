@@ -47,10 +47,10 @@ const ADDITIONAL_CRITERION: Criterion[] = [
     description: 'Your project must support Ethereum staking/validating.',
   },
   {
-    emoji: '💻',
-    criterion: 'No clients',
+    emoji: '🆔',
+    criterion: 'KYC',
     description:
-      'Client teams are so important but this round of funding is focused on supporting other parts of the ecosystem.',
+      "You'll be contacted by the registry admin and must complete some basic KYC/AML requirements.",
   },
 ]
 
