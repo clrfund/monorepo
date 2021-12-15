@@ -1,14 +1,26 @@
 import fs from 'fs'
-import { ethers } from 'hardhat'
+import { Wallet } from 'ethers'
+import { ethers, network } from 'hardhat'
 
 async function main() {
-  const [deployer] = await ethers.getSigners()
-  const state = JSON.parse(fs.readFileSync('state.json').toString())
+  let fundingRoundAddress, coordinator
+  if (network.name === 'localhost') {
+    const state = JSON.parse(fs.readFileSync('state.json').toString())
+    fundingRoundAddress = state.factory
+
+    const signers = await ethers.getSigners()
+    coordinator = signers[1]
+  } else {
+    fundingRoundAddress = process.env.ROUND_ADDRESS || ''
+    const coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || ''
+    coordinator = new Wallet(coordinatorEthPrivKey, ethers.provider)
+  }
+
   const tally = JSON.parse(fs.readFileSync('tally.json').toString())
   const factory = await ethers.getContractAt(
     'FundingRoundFactory',
-    state.factory,
-    deployer
+    fundingRoundAddress,
+    coordinator
   )
   const totalSpent = parseInt(tally.totalVoiceCredits.spent)
   const totalSpentSalt = tally.totalVoiceCredits.salt
