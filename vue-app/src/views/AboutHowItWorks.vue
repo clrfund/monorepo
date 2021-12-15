@@ -1,14 +1,13 @@
 <template>
   <div class="about">
     <h1 class="content-heading">How the round works</h1>
-
     <h2>CLR walkthrough</h2>
     <p>
       This is an overview of how everything works behind the scenes so you can
       learn what to expect throughout the duration of the round.
     </p>
     <p>
-      Looking for a guides on how to partipate? Check out our guides
+      Looking for a guide on how to participate? Check out our guides
       specifically for contributing and joining as a project.
     </p>
     <ul>

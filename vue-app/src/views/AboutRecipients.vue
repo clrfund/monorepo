@@ -47,13 +47,17 @@
         With the forms finished, you can finish your submission by:
         <ol>
           <li>connecting to the right network via your wallet of choice</li>
-          <li>sending a deposit of 0.1 ETH to the registry contract.</li>
+          <li>
+            sending a deposit of {{ depositAmount }} {{ depositToken }} to the
+            registry contract.
+          </li>
         </ol>
         Projects are accepted by default, but the registry admin may remove
-        projects that don't meet the criteria. Either way, your ETH will be
-        returned once your application has been either accepted or denied. Note
-        that metadata pointing to all your project information (but not contact
-        information) will be stored publicly on-chain.
+        projects that don't meet the criteria. Either way, your
+        {{ depositToken }} will be returned once your application has been
+        either accepted or denied. Note that metadata pointing to all your
+        project information (but not contact information) will be stored
+        publicly on-chain.
       </li>
     </ol>
     <h2>Claim your funds</h2>
@@ -77,11 +81,22 @@ import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
 import { chain } from '@/api/core'
 import { ChainInfo } from '@/plugins/Web3/constants/chains'
+import { formatAmount } from '@/utils/amounts'
 
 @Component({ components: { Links } })
 export default class AboutRecipients extends Vue {
   get chain(): ChainInfo {
     return chain
+  }
+
+  get depositAmount(): string {
+    return this.$store.state.recipientRegistryInfo
+      ? formatAmount(this.$store.state.recipientRegistryInfo.deposit, 18)
+      : '...'
+  }
+
+  get depositToken(): string {
+    return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
   }
 }
 </script>
