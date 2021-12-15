@@ -1,6 +1,6 @@
 <template>
   <div>
-    <round-status-banner />
+    <round-status-banner v-if="$store.state.currentRound" />
     <div id="page">
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />

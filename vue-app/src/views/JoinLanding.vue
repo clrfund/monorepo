@@ -6,7 +6,7 @@
       </div>
     </div>
 
-    <round-status-banner />
+    <round-status-banner v-if="$store.state.currentRound" />
     <back-link
       :alsoShowOnMobile="true"
       to="/projects"
