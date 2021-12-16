@@ -1,7 +1,7 @@
 <template>
   <div
     v-tooltip="{
-      content: isCopied ? 'Copied!' : `Copy${text && ` ${text}`}`,
+      content: isCopied ? '¡Copiado!' : `Copiar${text && ` ${text}`}`,
       hideOnTargetClick: false,
       trigger: 'hover click',
     }"

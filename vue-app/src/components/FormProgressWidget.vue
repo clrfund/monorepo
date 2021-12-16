@@ -2,7 +2,7 @@
   <div class="progress-area">
     <div class="desktop progress-container">
       <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-      <p class="subtitle">Step {{ currentStep + 1 }} of {{ steps.length }}</p>
+      <p class="subtitle">Paso {{ currentStep + 1 }} de {{ steps.length }}</p>
       <div class="progress-steps">
         <div
           v-for="(name, step) in stepNames"
@@ -51,8 +51,8 @@
           :totalSteps="steps.length"
         />
         <div class="row">
-          <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-          <links class="cancel-link" to="/join"> Cancel </links>
+          <p>Paso {{ currentStep + 1 }} de {{ steps.length }}</p>
+          <links class="cancel-link" to="/join"> Cancelar </links>
         </div>
       </div>
     </div>

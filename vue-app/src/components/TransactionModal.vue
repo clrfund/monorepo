@@ -17,7 +17,7 @@
       class="btn-secondary close-btn"
       @click="$emit('close')"
     >
-      Close
+      Cerrar
     </button>
   </div>
 </template>

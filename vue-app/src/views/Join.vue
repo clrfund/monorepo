@@ -13,7 +13,7 @@
         :saveFormData="saveFormData"
       />
       <div class="title-area">
-        <h1>Join the round</h1>
+        <h1>Únete a la ronda</h1>
         <div v-if="currentStep === 5">
           <div class="toggle-tabs-desktop">
             <p
@@ -22,7 +22,7 @@
               :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'"
               @click="handleToggleTab"
             >
-              Review info
+              Revisar información
             </p>
             <p
               class="tab"
@@ -30,21 +30,21 @@
               :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'"
               @click="handleToggleTab"
             >
-              Preview project
+              Vista previa del proyecto
             </p>
           </div>
         </div>
       </div>
       <div class="cancel-area desktop">
-        <links class="cancel-link" to="/join"> Cancel </links>
+        <links class="cancel-link" to="/join"> Cancelar </links>
       </div>
       <div class="form-area">
         <div class="application">
           <div v-if="currentStep === 0">
-            <h2 class="step-title">About the project</h2>
+            <h2 class="step-title">Acerca el proyecto</h2>
             <div class="inputs">
               <div class="form-background">
-                <label for="project-name" class="input-label">Name</label>
+                <label for="project-name" class="input-label">Nombre</label>
                 <input
                   id="project-name"
                   type="text"
@@ -61,17 +61,17 @@
                     hidden: !$v.form.project.name.$error,
                   }"
                 >
-                  Your project needs a name
+                  Tu proyecto necesita un nombre
                 </p>
               </div>
               <div class="form-background">
-                <label for="project-tagline" class="input-label">Tagline</label>
+                <label for="project-tagline" class="input-label">Eslogan</label>
                 <p class="input-description">
-                  Describe your project in a sentence. Max characters: 140
+                  Describe tu proyecto en una oración. Caracteres máximos: 140
                 </p>
                 <textarea
                   id="project-tagline"
-                  placeholder="ex: A quadratic funding protocol"
+                  placeholder="ej .: un protocolo de financiación cuadrático"
                   v-model="$v.form.project.tagline.$model"
                   :class="{
                     input: true,
@@ -86,7 +86,8 @@
                       $v.form.project.tagline.maxLength,
                   }"
                 >
-                  This tagline is too long. Be brief for potential contributors
+                  Este eslogan es demasiado largo. Sé breve para los posibles
+                  contribuyentes
                 </p>
                 <p
                   :class="{
@@ -96,17 +97,17 @@
                       !$v.form.project.tagline.maxLength,
                   }"
                 >
-                  Your project needs a tagline
+                  Tu proyecto necesita un eslogan
                 </p>
               </div>
               <div class="form-background">
                 <label for="project-description" class="input-label">
-                  Description
-                  <p class="input-description">Markdown supported.</p>
+                  Descripción
+                  <p class="input-description">Markdown soportado.</p>
                 </label>
                 <textarea
                   id="project-description"
-                  placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                  placeholder="ej .: CLR.fund es un protocolo de financiación cuadrática que tiene como objetivo facilitar al máximo la configuración, la gestión y la participación en rondas de financiación cuadrática ..."
                   v-model="$v.form.project.description.$model"
                   :class="{
                     input: true,
@@ -114,7 +115,7 @@
                   }"
                 />
                 <p v-if="form.project.description" class="input-label pt-1">
-                  Preview:
+                  Vista Previa:
                 </p>
                 <markdown :raw="form.project.description" />
                 <p
@@ -123,21 +124,21 @@
                     hidden: !$v.form.project.description.$error,
                   }"
                 >
-                  Your project needs a description. What are you raising money
-                  for?
+                  Tu proyecto necesita una descripción. ¿Para qué estás
+                  recaudando dinero?
                 </p>
               </div>
               <div class="form-background">
                 <label for="project-category" class="input-label"
                   >Category
-                  <p class="input-description">Choose the best fit.</p>
+                  <p class="input-description">Elija el que mejor se adapte.</p>
                 </label>
                 <form class="radio-row" id="category-radio">
                   <input
                     id="category-content"
                     type="radio"
                     name="project-category"
-                    value="Content"
+                    value="Contenido"
                     v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
@@ -145,20 +146,20 @@
                     }"
                   />
                   <label for="category-content" class="radio-btn"
-                    >Content</label
+                    >Contenido</label
                   >
                   <input
                     id="research"
                     type="radio"
                     name="project-category"
-                    value="Research"
+                    value="Investigación"
                     v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.project.category.$error,
                     }"
                   />
-                  <label for="research" class="radio-btn">Research</label>
+                  <label for="research" class="radio-btn">Investigación</label>
                   <input
                     id="tooling"
                     type="radio"
@@ -183,6 +184,31 @@
                     }"
                   />
                   <label for="data" class="radio-btn">Data</label>
+
+                  <input
+                    id="educación"
+                    type="radio"
+                    name="project-category"
+                    value="Educación"
+                    v-model="$v.form.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: $v.form.project.category.$error,
+                    }"
+                  />
+                  <label for="educación" class="radio-btn">Educación</label>
+                  <input
+                    id="otro"
+                    type="radio"
+                    name="project-category"
+                    value="Otro"
+                    v-model="$v.form.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: $v.form.project.category.$error,
+                    }"
+                  />
+                  <label for="otro" class="radio-btn">Otro</label>
                 </form>
                 <p
                   :class="{
@@ -190,16 +216,16 @@
                     hidden: !$v.form.project.category.$error,
                   }"
                 >
-                  You need to choose a category
+                  Debes elegir una categoría
                 </p>
               </div>
               <div class="form-background">
                 <label for="project-problem-space" class="input-label"
-                  >Problem space</label
+                  >Espacio de problemas</label
                 >
                 <p class="input-description">
-                  Explain the problems you're trying to solve. Markdown
-                  supported.
+                  Explica los problemas que estás tratando de resolver. Markdown
+                  soportado.
                 </p>
                 <textarea
                   id="project-problem-space"
@@ -216,29 +242,29 @@
                     hidden: !$v.form.project.problemSpace.$error,
                   }"
                 >
-                  Explain the problem your project solves
+                  Explica el problema que resuelve tu proyecto.
                 </p>
                 <p v-if="form.project.description" class="input-label pt-1">
-                  Preview:
+                  Vista Previa:
                 </p>
                 <markdown :raw="form.project.problemSpace" />
               </div>
             </div>
           </div>
           <div v-if="currentStep === 1">
-            <h2 class="step-title">Donation details</h2>
+            <h2 class="step-title">Detalles de donación</h2>
             <div class="inputs">
               <div class="form-background">
                 <label for="fund-address" class="input-label"
-                  >Ethereum address</label
+                  >Wallet de Ethereum</label
                 >
                 <p class="input-description">
-                  This doesn’t have to be the same address as the one you use to
-                  send your application.
+                  No es necesario que sea la misma dirección que utilizas para
+                  enviar su solicitud.
                 </p>
                 <input
                   id="fund-address"
-                  placeholder="example: 0x123..."
+                  placeholder="Ejemplo: 0x123..."
                   v-model.lazy="$v.form.fund.addressName.$model"
                   @blur="checkEns"
                   :class="{
@@ -252,21 +278,22 @@
                     hidden: !$v.form.fund.addressName.$error,
                   }"
                 >
-                  Enter a valid ENS or Ethereum 0x address
+                  Ingresa una dirección ENS o Ethereum 0x válida
                 </p>
                 <!-- TODO: only validate after user removes focus on input -->
               </div>
               <div class="form-background">
                 <label for="fund-plans" class="input-label"
-                  >How will you spend your funding?</label
+                  >¿Cómo gastarás el financiamiento recibido?</label
                 >
                 <p class="input-description">
-                  Potential contributors might convert based on your specific
-                  funding plans. Markdown supported.
+                  Los posibles contribuyentes pueden realizar conversiones en
+                  función de sus planes de financiamiento específicos. Markdown
+                  apoyado.
                 </p>
                 <textarea
                   id="fund-plans"
-                  placeholder="ex: on our roadmap..."
+                  placeholder="ej: en nuestro roadmap..."
                   v-model="$v.form.fund.plans.$model"
                   :class="{
                     input: true,
@@ -279,29 +306,31 @@
                     hidden: !$v.form.fund.plans.$error,
                   }"
                 >
-                  Let potential contributors know what plans you have for their
-                  donations.
+                  Informa a los posibles contribuyentes qué planes tiene para
+                  sus donaciones.
                 </p>
-                <p v-if="form.fund.plans" class="input-label pt-1">Preview:</p>
+                <p v-if="form.fund.plans" class="input-label pt-1">
+                  Vista Previa:
+                </p>
                 <markdown :raw="form.fund.plans" />
               </div>
             </div>
           </div>
           <div v-if="currentStep === 2">
-            <h2 class="step-title">Team details</h2>
-            <p>Tell us about the folks behind your project.</p>
+            <h2 class="step-title">Detalles del Equipo</h2>
+            <p>Cuéntanos sobre la gente detrás de tu proyecto..</p>
             <div class="inputs">
               <div v-if="isEmailRequired" class="form-background">
                 <label for="team-email" class="input-label">
-                  Contact email
+                  Email de contacto
                 </label>
                 <p class="input-description">
-                  For important updates about your project and the funding
-                  round.
+                  Para obtener actualizaciones importantes sobre tu proyecto y
+                  la ronda de financiación.
                 </p>
                 <input
                   id="team-email"
-                  placeholder="example: doge@goodboi.com"
+                  placeholder="Ejemplo: doge@goodboi.com"
                   v-model.lazy="$v.form.team.email.$model"
                   :class="{
                     input: true,
@@ -309,8 +338,8 @@
                   }"
                 />
                 <p class="input-notice">
-                  We won't display this publicly or add it to the on-chain
-                  registry.
+                  No mostraremos esto públicamente ni lo agregaremos al
+                  blockchain.
                 </p>
                 <p
                   :class="{
@@ -318,18 +347,20 @@
                     hidden: !$v.form.team.email.$error,
                   }"
                 >
-                  This doesn't look like an email.
+                  Esto no parece un correo electrónico.
                 </p>
               </div>
               <div class="form-background">
                 <label for="team-name" class="input-label"
-                  >Team name (optional)</label
+                  >Nombre del Equipo (Opcional)</label
                 >
-                <p class="input-description">If different to project name.</p>
+                <p class="input-description">
+                  Si es diferente al nombre del proyecto.
+                </p>
                 <input
                   id="team-name"
                   type="email"
-                  placeholder="ex: clr.fund"
+                  placeholder="ej: clr.fund"
                   v-model="$v.form.team.name.$model"
                   :class="{
                     input: true,
@@ -339,14 +370,15 @@
               </div>
               <div class="form-background">
                 <label for="team-desc" class="input-label"
-                  >Description (optional)</label
+                  >Descripción (opcional)</label
                 >
                 <p class="input-description">
-                  If different to project description. Markdown supported.
+                  Si es diferente a la descripción del proyecto. Markdown
+                  soportado.
                 </p>
                 <textarea
                   id="team-desc"
-                  placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                  placeholder="ej .: CLR.fund es un protocolo de financiación cuadrática que tiene como objetivo facilitar al máximo la configuración, la gestión y la participación en rondas de financiación cuadrática ..."
                   v-model="$v.form.team.description.$model"
                   :class="{
                     input: true,
@@ -354,7 +386,7 @@
                   }"
                 />
                 <p v-if="form.team.description" class="input-label pt-1">
-                  Preview:
+                  Vista Previa:
                 </p>
                 <markdown :raw="form.team.description" />
               </div>
@@ -363,8 +395,9 @@
           <div v-if="currentStep === 3">
             <h2 class="step-title">Links</h2>
             <p>
-              Give contributors some links to check out to learn more about your
-              project. Provide at least one.
+              Proporciona a los colaboradores algunos enlaces para que consulten
+              y obtengan más información sobre tu proyecto. Proporciona al menos
+              uno.
             </p>
             <div class="inputs">
               <div class="form-background">
@@ -372,7 +405,7 @@
                 <input
                   id="links-github"
                   type="link"
-                  placeholder="example: https://github.com/ethereum/clrfund"
+                  placeholder="ejemplo: https://github.com/ethereum/clrfund"
                   v-model.lazy="$v.form.links.github.$model"
                   :class="{
                     input: true,
@@ -385,7 +418,7 @@
                     hidden: !$v.form.links.github.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  Esta no parece una URL válida
                 </p>
                 <!-- TODO: only validate after user removes focus on input -->
               </div>
@@ -394,7 +427,7 @@
                 <input
                   id="links-radicle"
                   type="link"
-                  placeholder="example: https://radicle.com/ethereum/clrfund"
+                  placeholder="ejemplo: https://radicle.com/ethereum/clrfund"
                   v-model.lazy="$v.form.links.radicle.$model"
                   :class="{
                     input: true,
@@ -407,7 +440,7 @@
                     hidden: !$v.form.links.radicle.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  Esta no parece una URL válida
                 </p>
               </div>
               <div class="form-background">
@@ -415,7 +448,7 @@
                 <input
                   id="links-website"
                   type="link"
-                  placeholder="example: https://clr.fund"
+                  placeholder="ejemplo: https://clr.fund"
                   v-model.lazy="$v.form.links.website.$model"
                   :class="{
                     input: true,
@@ -428,7 +461,7 @@
                     hidden: !$v.form.links.website.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  Esta no parece una URL válida
                 </p>
               </div>
               <div class="form-background">
@@ -436,7 +469,7 @@
                 <input
                   id="links-twitter"
                   type="link"
-                  placeholder="example: https://twitter.com/ethereum"
+                  placeholder="ejemplo: https://twitter.com/ethereum"
                   v-model.lazy="$v.form.links.twitter.$model"
                   :class="{
                     input: true,
@@ -449,7 +482,7 @@
                     hidden: !$v.form.links.twitter.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  Esta no parece una URL válida
                 </p>
               </div>
               <div class="form-background">
@@ -457,7 +490,7 @@
                 <input
                   id="links-discord"
                   type="link"
-                  placeholder="ex: https://discord.gg/5Prub9zbGz"
+                  placeholder="ej: https://discord.gg/5Prub9zbGz"
                   class="input"
                   v-model.lazy="$v.form.links.discord.$model"
                   :class="{
@@ -471,31 +504,31 @@
                     hidden: !$v.form.links.discord.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  Esta no parece una URL válida
                 </p>
               </div>
             </div>
           </div>
           <div v-if="currentStep === 4">
-            <h2 class="step-title">Images</h2>
+            <h2 class="step-title">Imágenes</h2>
             <p>
-              We'll upload your images to IPFS, a decentralized storage
-              platform.
-              <links to="https://ipfs.io/#how">More on IPFS</links>
+              Subiremos sus imágenes a IPFS, una plataforma de almacenamiento
+              descentralizada.
+              <links to="https://ipfs.io/#how">Más sobre IPFS</links>
             </p>
             <div class="inputs">
               <div class="form-background">
                 <ipfs-image-upload
-                  label="Banner image"
-                  description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF"
+                  label="Imagen de banner"
+                  description="Relación de aspecto recomendada: 16 x 9 • Tamaño máximo de archivo: 512 kB • JPG, PNG o GIF"
                   :onUpload="handleUpload"
                   formProp="bannerHash"
                 />
               </div>
               <div class="form-background">
                 <ipfs-image-upload
-                  label="Thumbnail image"
-                  description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF"
+                  label="Imagen de Thumbnail"
+                  description="Relación de aspecto recomendada: 1x1 (cuadrado) • Tamaño máximo de archivo: 512 kB • JPG, PNG o GIF"
                   :onUpload="handleUpload"
                   formProp="thumbnailHash"
                 />
@@ -510,43 +543,43 @@
               class="project-details"
             />
             <div v-if="!showSummaryPreview">
-              <h2 class="step-title">Review your information</h2>
+              <h2 class="step-title">Revisa tu información</h2>
               <warning
-                message="This information will be stored in a smart contract and cannot be edited, so please review carefully."
+                message="Esta información se almacenará en un contrato inteligente y no se puede editar, así que revísela detenidamente."
               />
               <div class="form-background">
                 <div class="summary-section-header">
-                  <h3 class="step-subtitle">About the project</h3>
+                  <h3 class="step-subtitle">Acerca del proyecto</h3>
                   <links to="/join/project" class="edit-button"
-                    >Edit <img width="16px" src="@/assets/edit.svg"
+                    >Editar <img width="16px" src="@/assets/edit.svg"
                   /></links>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Name</h4>
+                  <h4 class="read-only-title">Nombre</h4>
                   <div class="data">{{ form.project.name }}</div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Tagline</h4>
+                  <h4 class="read-only-title">Lema</h4>
                   <div class="data">{{ form.project.tagline }}</div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Description</h4>
+                  <h4 class="read-only-title">Descripción</h4>
                   <div class="data">{{ form.project.description }}</div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Category</h4>
+                  <h4 class="read-only-title">Categoría</h4>
                   <div class="data">{{ form.project.category }}</div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Problem space</h4>
+                  <h4 class="read-only-title">Problema que resuelve</h4>
                   <div class="data">{{ form.project.problemSpace }}</div>
                 </div>
               </div>
               <div class="form-background">
                 <div class="summary-section-header">
-                  <h3 class="step-subtitle">Funding details</h3>
+                  <h3 class="step-subtitle">Detalles de Financiamiento</h3>
                   <links to="/join/fund" class="edit-button"
-                    >Edit <img width="16px" src="@/assets/edit.svg"
+                    >Editar <img width="16px" src="@/assets/edit.svg"
                   /></links>
                 </div>
                 <div class="summary">
@@ -554,7 +587,7 @@
                   <div class="data break-all">
                     {{ form.fund.addressName }}
                     <links :to="blockExplorer.url" class="no-break">
-                      View on {{ blockExplorer.label }}
+                      Ver en{{ blockExplorer.label }}
                     </links>
                   </div>
                   <div
@@ -566,34 +599,34 @@
                   </div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Funding plans</h4>
+                  <h4 class="read-only-title">Planes de Financiamiento</h4>
                   <div class="data">{{ form.fund.plans }}</div>
                 </div>
               </div>
               <div class="form-background">
                 <div class="summary-section-header">
-                  <h3 class="step-subtitle">Team details</h3>
+                  <h3 class="step-subtitle">Detalles de Equipo</h3>
                   <links to="/join/team" class="edit-button"
-                    >Edit <img width="16px" src="@/assets/edit.svg"
+                    >Editar <img width="16px" src="@/assets/edit.svg"
                   /></links>
                 </div>
                 <div v-if="isEmailRequired" class="summary">
-                  <h4 class="read-only-title">Contact email</h4>
+                  <h4 class="read-only-title">Email de Contacto</h4>
                   <div class="data">{{ form.team.email }}</div>
                   <div class="input-notice">
-                    This information won't be added to the smart contract.
+                    Esta información no se agregará al blockchain.
                   </div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Team name</h4>
+                  <h4 class="read-only-title">Nombre del equipo</h4>
                   <div class="data">{{ form.team.name }}</div>
-                  <div class="data" v-if="!form.team.name">Not provided</div>
+                  <div class="data" v-if="!form.team.name">No provisto</div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Team description</h4>
+                  <h4 class="read-only-title">Descripción del equipo</h4>
                   <div class="data">{{ form.team.description }}</div>
                   <div class="data" v-if="!form.team.description">
-                    Not provided
+                    No provisto
                   </div>
                 </div>
               </div>
@@ -601,7 +634,7 @@
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Links</h3>
                   <links to="/join/links" class="edit-button"
-                    >Edit <img width="16px" src="@/assets/edit.svg"
+                    >Editar <img width="16px" src="@/assets/edit.svg"
                   /></links>
                 </div>
                 <div class="summary">
@@ -615,7 +648,7 @@
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.github">Not provided</div>
+                  <div class="data" v-if="!form.links.github">No provisto</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Twitter</h4>
@@ -628,9 +661,7 @@
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.twitter">
-                    Not provided
-                  </div>
+                  <div class="data" v-if="!form.links.twitter">No provisto</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Website</h4>
@@ -643,9 +674,7 @@
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.website">
-                    Not provided
-                  </div>
+                  <div class="data" v-if="!form.links.website">No provisto</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Discord</h4>
@@ -658,9 +687,7 @@
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.discord">
-                    Not provided
-                  </div>
+                  <div class="data" v-if="!form.links.discord">No provisto</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Radicle</h4>
@@ -673,16 +700,14 @@
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.radicle">
-                    Not provided
-                  </div>
+                  <div class="data" v-if="!form.links.radicle">No provisto</div>
                 </div>
               </div>
               <div class="form-background">
                 <div class="summary-section-header">
-                  <h3 class="step-subtitle">Images</h3>
+                  <h3 class="step-subtitle">Imágenes</h3>
                   <links to="/join/image" class="edit-button"
-                    >Edit <img width="16px" src="@/assets/edit.svg"
+                    >Editar <img width="16px" src="@/assets/edit.svg"
                   /></links>
                 </div>
                 <div class="summary">
@@ -701,15 +726,15 @@
             </div>
           </div>
           <div v-if="currentStep === 6">
-            <h2 class="step-title">Submit project</h2>
+            <h2 class="step-title">Enviar proyecto</h2>
             <p>
-              This is a blockchain transaction that will add your project
-              information to the funding round.
+              Esta es una transacción de blockchain que agregará la información
+              de tu proyecto a la ronda de financiamiento.
             </p>
             <div class="inputs">
               <recipient-submission-widget
-                cta="Submit project"
-                pending="Sending deposit..."
+                cta="Enviar proyecto"
+                pending="Enviando deposito..."
               />
             </div>
           </div>
@@ -866,13 +891,13 @@ export default class JoinView extends mixins(validationMixin) {
 
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
-      'About the project',
-      'Donation details',
-      'Team details',
+      'Acerca del proyecto',
+      'Detalles de donación',
+      'Detalles del equipo',
       'Links',
-      'Images',
-      'Review',
-      'Submit',
+      'Imágenes',
+      'Resume',
+      'Enviar',
     ]
     this.steps = steps
     this.currentStep = currentStep

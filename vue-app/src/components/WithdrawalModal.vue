@@ -1,7 +1,7 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h3>Withdraw funds</h3>
+      <h3>Retirar Fondos</h3>
       <transaction
         :hash="withdrawalTxHash"
         :error="withdrawalTxError"
@@ -9,8 +9,8 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <h3>Success!</h3>
-      <div>You have successfully withdrawn your contribution.</div>
+      <h3>¡Éxito!</h3>
+      <div>Has retirado con éxito tu contribución.</div>
       <button class="btn close-btn" @click="$emit('close')">OK</button>
     </div>
   </div>

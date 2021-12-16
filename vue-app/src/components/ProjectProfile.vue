@@ -3,7 +3,7 @@
     <info
       v-if="previewMode"
       class="info"
-      message="This is what your contributors will see when they visit your project page."
+      message="Esto es lo que verán tus colaboradores cuando visiten la página de tu proyecto."
     />
     <img
       v-if="previewMode"
@@ -26,7 +26,7 @@
       <div class="subtitle">
         <div class="tag">{{ project.category }} tag</div>
         <div class="team-byline">
-          Team: <links to="#team"> {{ project.teamName }}</links>
+          Equipo: <links to="#team"> {{ project.teamName }}</links>
         </div>
       </div>
       <div class="mobile mb2">
@@ -41,19 +41,19 @@
             !$store.getters.canUserReallocate
           "
         >
-          ✔️ You have contributed to this project!
+          ✔️ ¡Has contribuido a este proyecto!
         </p>
       </div>
       <div class="project-section">
-        <h2>About the project</h2>
+        <h2>Acerca del proyecto</h2>
         <markdown :raw="project.description" />
       </div>
       <div class="project-section">
-        <h2>The problem it solves</h2>
+        <h2>El problema que resuelve</h2>
         <markdown :raw="project.problemSpace" />
       </div>
       <div class="project-section">
-        <h2>Funding plans</h2>
+        <h2>Planes de financiamiento</h2>
         <markdown :raw="project.plans" />
       </div>
       <div
@@ -63,7 +63,7 @@
         }"
       >
         <div>
-          <div class="address-label">Recipient address</div>
+          <div class="address-label">Address del recipiente</div>
           <div class="address">
             {{ addressName }}
           </div>
@@ -78,7 +78,7 @@
           <links
             class="explorerLink"
             :to="blockExplorer.url"
-            :title="`View on ${blockExplorer.label}`"
+            :title="`Ver en ${blockExplorer.label}`"
             :hideArrow="true"
           >
             <img
@@ -94,7 +94,7 @@
         v-if="project.teamName || project.teamDescription"
         class="team"
       >
-        <h2>Team: {{ project.teamName }}</h2>
+        <h2>Equipo: {{ project.teamName }}</h2>
         <markdown :raw="project.teamDescription" />
       </div>
     </div>

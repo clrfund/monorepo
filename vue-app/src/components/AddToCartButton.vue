@@ -26,7 +26,7 @@
     </form>
     <div class="input-button" v-if="inCart && canContribute()">
       <button class="donate-btn-full" @click="toggleCartPanel()">
-        <span>In cart 🎉</span>
+        <span>En el carrito 🎉</span>
       </button>
     </div>
   </div>

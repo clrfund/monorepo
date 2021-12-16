@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 description: clr.fund sandbox
-repository: https://github.com/daodesigner/clrfund-deployer
+repository: https://github.com/BuidlHonduras/monorepo.git
 schema:
   file: ./schema.graphql
 dataSources:
@@ -8,9 +8,9 @@ dataSources:
     name: FundingRoundFactory
     network: xdai
     source:
-      address: '0x549F91A93c94358C5f5380D7ABF23E1340CfF2db'
+      address: '0x3674EcC2A12A5C3230729268139A53eB0E587EFF'
       abi: FundingRoundFactory
-      startBlock: 15217676
+      startBlock: 18639996
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -54,8 +54,9 @@ dataSources:
     name: OptimisticRecipientRegistry
     network: xdai
     source:
+      address: '0x3e5ed8ec264930d9826cbcda194bcd2850e0dc50'
       abi: OptimisticRecipientRegistry
-      startBlock: 15217676
+      startBlock: 18639996
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

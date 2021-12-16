@@ -1,57 +1,64 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">About Public Goods</h1>
-    <h2>What are public goods?</h2>
+    <h1 class="content-heading">Acerca de los Bienes Públicos</h1>
+    <h2>¿Qué son los Bienes Públicos?</h2>
     <p>
-      The first thing to understand about 'public goods' is that fundamentally,
-      they are fully non-excludable and non-subtractable goods — a public good
-      can be from the intangibles (i.e. knowledge) to the tangible social public
-      goods (i.e. street lighting).
+      Lo primero que hay que entender sobre los 'bienes públicos' es que,
+      fundamentalmente, son bienes totalmente no excluibles ni sustraíbles: un
+      bien público puede ser desde los intangibles (es decir, el conocimiento)
+      hasta los bienes públicos sociales tangibles (es decir, el alumbrado
+      público).
     </p>
-    <p>In economics, public goods are goods that are both:</p>
+    <p>En economía, los bienes públicos son bienes que son a la vez:</p>
     <ol>
       <li>
-        Non-excludable — no one (who is a member of the "public") can be
-        prevented from using the good, for any reason.
+        No excluible: nadie (que sea miembro del "público") puede ser impedido
+        de usar el bien, por ningún motivo.
       </li>
       <li>
-        Non-rivalrous — one person using the good does not reduce anyone else's
-        ability to use it.
+        Sin rivalidad: una persona que usa el bien no reduce la capacidad de
+        nadie para usarlo.
       </li>
     </ol>
     <p>
-      Clean air, national security (for a given country), and free, open-source
-      software (FOSS) are all examples of public goods, with FOSS being the most
-      important for clr.fund.
+      El aire limpio, la seguridad nacional (para un país determinado) y el
+      software de código abierto gratuito (FOSS) son ejemplos de bienes
+      públicos, siendo el FOSS el más importante para clr.fund.
     </p>
     <p>
-      Check
+      Busca
       <links to="https://en.wikipedia.org/wiki/Public_good_(economics)"
         >Wikipedia</links
       >
-      for a more specific description and context.
+      una descripción y un contexto más específicos.
     </p>
-    <h2>Why create new funding mechanisms for public goods?</h2>
+    <h2>
+      ¿Por qué crear nuevos mecanismos de financiación para los bienes públicos?
+    </h2>
     <p>
-      Public goods are often underfunded because of something called the free
-      rider problem: since public goods are always free and accessible for
-      members of the public, people have little reason to contribute to their
-      creation and maintenance. Instead, they can choose to be "free riders":
-      using the public good but depending on others to build and maintain it.
-    </p>
-    <p>
-      The free rider problem is quite present in open-source software, which is
-      chronically underfunded despite being a core component of nearly all
-      popular software products today.
+      Los bienes públicos a menudo no cuentan con fondos suficientes debido a
+      algo llamado el problema del aprovechamiento gratuito: dado que los bienes
+      públicos son siempre gratuitos y accesibles para los miembros del público,
+      las personas tienen pocas razones para contribuir a su creación y
+      mantenimiento. En cambio, pueden optar por ser "oportunistas": utilizar el
+      bien público pero depender de otros para construirlo y mantenerlo.
     </p>
     <p>
-      Clr.fund is an attempt to address the free rider problem for the Ethereum
-      community, with the hope that this infrastructure may be useful for other
-      publics in the future. By design, the funding rounds on clr.fund seek to
-      involve members of the public from inception, and are allocating both
-      decision making power and the exponential power to increase funding via
-      the
-      <links to="/about/quadratic-funding">quadratic funding mechanism</links>.
+      El problema del free rider está bastante presente en el software de código
+      abierto, que crónicamente carece de fondos suficientes a pesar de ser un
+      componente central de casi todos los productos de software populares en la
+      actualidad.
+    </p>
+    <p>
+      Clr.fund es un intento de abordar el problema del usuario gratuito para la
+      comunidad Ethereum, con la esperanza de que esta infraestructura pueda ser
+      útil para otros públicos en el futuro. Por diseño, las rondas de
+      financiación de clr.fund buscan involucrar a miembros del público desde el
+      inicio, y están asignando tanto el poder de toma de decisiones como el
+      poder exponencial para aumentar la financiación a través del
+      <links to="/ about / quadratic-finance"
+        >mecanismo de financiación cuadrática</links
+      >.
     </p>
   </div>
 </template>

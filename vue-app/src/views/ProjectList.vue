@@ -11,7 +11,7 @@
         }"
       >
         <div class="header">
-          <h2>Projects</h2>
+          <h2>Proyectos</h2>
         </div>
 
         <filter-dropdown
@@ -39,7 +39,7 @@
           />
         </div>
         <div class="add-project">
-          <links to="/join" class="btn-primary">Add project</links>
+          <links to="/join" class="btn-primary">Agregar proyecto</links>
         </div>
         <div class="hr" />
       </div>
@@ -57,8 +57,8 @@
       </div>
       <div class="empty-search" v-if="filteredProjects == 0">
         <div>
-          😢 No projects match your search. Try using the filter to narrow down
-          what you're looking for.
+          😢 Ningún proyecto coincide con tu búsqueda. Intenta usar el filtro
+          para delimitar lo que estás buscando.
         </div>
       </div>
       <div
@@ -133,7 +133,14 @@ export default class ProjectList extends Vue {
   projects: Project[] = []
   search = ''
   isLoading = true
-  categories: string[] = ['content', 'research', 'tooling', 'data']
+  categories: string[] = [
+    'Contenido',
+    'Investigación',
+    'Tooling',
+    'Data',
+    'Educación',
+    'Otro',
+  ]
   selectedCategories: string[] = []
 
   get projectsByCategoriesSelected(): Project[] {

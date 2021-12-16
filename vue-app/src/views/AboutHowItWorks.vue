@@ -1,140 +1,142 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">How the round works</h1>
+    <h1 class="content-heading">¿Cómo funciona la ronda?</h1>
 
-    <h2>CLR walkthrough</h2>
+    <h2>CLR tutorial</h2>
     <p>
-      This is an overview of how everything works behind the scenes so you can
-      learn what to expect throughout the duration of the round.
+      Esta es una descripción general de cómo funciona todo detrás de escena
+      para que puedas aprender qué esperar durante la duración de la ronda.
     </p>
     <p>
-      Looking for a guides on how to partipate? Check out our guides
-      specifically for contributing and joining as a project.
+      ¿Buscas guías sobre cómo participar? Consulta nuestras guías
+      específicamente para contribuir y unirte como proyecto.
     </p>
     <ul>
       <li>
         <links to="/about/how-it-works/contributors"
-          >Guide for contributors</links
+          >Guía para colaboradores</links
         >
       </li>
       <li>
-        <links to="/about/how-it-works/recipients">Guide for recipients</links>
+        <links to="/about/how-it-works/recipients">Guía para recipientes</links>
       </li>
     </ul>
 
-    <h2>Quick recap on quadratic funding</h2>
+    <h2>Resumen rápido sobre el Financiamiento Cuadrático</h2>
     <p>
-      As outlined in our
-      <links to="/about/quadratic-funding">overview on quadratic funding</links
-      >, projects will receive funding from individual contributions as well as
-      the matching pool. When you contribute to your favorite projects, your
-      contribution also acts as a vote. The more contributions a project
-      receives, the more votes. And the more votes a project gets, the more
-      they'll receive from the matching pool. Although a higher individual
-      contribution will equal a larger vote weighting, it's far more important
-      to receive a large volume of unique contributions than just a few high
-      value contributions.
+      Como se describe en nuestra
+      <links to="/about/quadratic-finance">
+        Descripción General sobre el Financiamiento Cuadrático </links
+      >, los proyectos recibirán financiamiento de contribuciones individuales,
+      así como del fondo de contrapartida. Cuando contribuyes a tus proyectos
+      favoritos, tu contribución también actúa como un voto. Cuantas más
+      contribuciones reciba un proyecto, más votos. Y cuantos más votos obtenga
+      un proyecto, más recibirán del grupo correspondiente. Aunque una mayor
+      contribución individual equivaldrá a una mayor ponderación de votos, es
+      mucho más importante recibir un gran volumen de contribuciones únicas que
+      solo unas pocas contribuciones de alto valor.
     </p>
     <p>
-      As the funding round is also a public vote, it needs deadlines. The round
-      is split into multiple phases so that after all contributions or votes are
-      made, they can be counted and confirmed before the final matching pool
-      distribution.
+      Dado que la ronda de financiación también es un voto público, necesita
+      plazos. La ronda se divide en varias fases para que, una vez realizadas
+      todas las contribuciones o los votos, puedan contarse y confirmarse antes
+      de la distribución final del grupo de contrapartida.
     </p>
-    <h2>Funding round phases</h2>
-    <h3>Join phase</h3>
+    <h2>Fases de la Ronda de Financiamiento</h2>
+    <h3>Fase de inscripción phase</h3>
     <p>
-      To kick things off, projects will be invited to
-      <links to="/join">join the round</links>. If you're an eager contributor,
-      you'll be able to browse the projects and add them to your cart but you
-      won't be able to contribute just yet.
+      Para comenzar, se invitará a los proyectos a
+      <links to="/join"> unirse a la ronda </links>. Si eres un colaborador
+      entusiasta, podrás explorar los proyectos y agregarlos a tu carrito, pero
+      todavía no podrás contribuir.
     </p>
-    <h4>Need to know</h4>
+    <h4>Necesitas saber</h4>
     <ul>
+      <li>Habrá un máximo de {{ maxRecipients }} proyectos en la ronda.</li>
       <li>
-        There will be a maximum of {{ maxRecipients }} projects in the round.
+        Los proyectos deben cumplir
+        <links to="/join"> criterios de ronda</links>.
       </li>
-      <li>Projects must meet <links to="/join">round criteria</links>.</li>
       <li>
-        If you want to contribute, this is a perfect time to get
-        <links to="/verify">set up to contribute</links>.
+        Si deseas contribuir, este es un momento perfecto para obtener
+        <links to="/verify"> configuración para contribuir </links>.
       </li>
     </ul>
-    <h3>Contribution phase</h3>
+    <h3>Fase de Contribución</h3>
     <p>
-      The launch of the contribution phase follows the join phase and marks the
-      official start of the funding round. This is the time for you to add your
-      favorite projects to your cart and contribute.
+      El lanzamiento de la fase de contribución sigue a la fase de unión y marca
+      el inicio oficial de la ronda de financiación. Este es el momento para que
+      agregues tus proyectos favoritos a su carrito y contribuyas.
     </p>
-    <h4>Need to know</h4>
+    <h4>Necesitas saber</h4>
     <ul>
-      <li>This phase will last {{ contributionPhaseDays }} days.</li>
+      <li>Esta fase durará {{ contributionPhaseDays }} días.</li>
       <li>
-        You will need to go through some
-        <links to="/verify">setup</links> before you can contribute.
+        Deberás pasar por algunos
+        <links to="/verify"> verificación </links> antes de poder contribuir.
       </li>
       <li>
-        The maximum contribution amount is {{ maxContributionAmount }}
+        La cantidad máxima de contribución es {{ maxContributionAmount }}
         {{ nativeTokenSymbol }}.
       </li>
       <li>
-        Your total contribution amount is final. You can't increase it by
-        contributing an additional time.
+        El monto total de su contribución es definitivo. No puede aumentarlo
+        contribuyendo con un tiempo adicional.
       </li>
     </ul>
 
     <p>
-      If you dont contribute in the contribution phase, the round is over for
-      you once this phase ends.
+      Si no contribuye en la fase de contribución, la ronda termina para usted
+      una vez que finaliza esta fase.
     </p>
 
-    <h3>Reallocation phase</h3>
+    <h3>Fase de Reasignación</h3>
     <p>
-      During this phase, if you've contributed, you will have time to change
-      your mind. You can edit your contribution amounts or add/remove projects
-      but your total must equal that of your original contribution.
+      Durante esta fase, si has contribuido, tendrás tiempo para cambiar de
+      opinión. Puedes editar los montos de tu contribución o agregar / eliminar
+      proyectos, pero tu total debe ser igual al de tu contribución original.
     </p>
-    <h4>Need to know</h4>
+    <h4>Necesitas saber</h4>
     <ul>
       <li>
-        This phase will last {{ reallocationPhaseDays }} days after the end of
-        the contribution phase.
+        Esta fase durará {{ reallocationPhaseDays }} días después del final de
+        la Fase de Contribución.
       </li>
       <li>
-        If you remove projects, you must reallocate the funds to other projects
-        or it will go to the matching pool.
+        Si eliminas proyectos, debes reasignar los fondos a otros proyectos o se
+        destinarán al fondo común.
       </li>
       <li>
-        You can't exceed your original contribution total when reallocating
-        funds.
+        No puedes exceder el total de tu contribución original al asignar
+        fondos.
       </li>
     </ul>
-    <h3>Tallying phase</h3>
+    <h3>Fase de Conteo</h3>
     <p>
-      At this point, all contributions are final, and can now be counted. The
-      round coordinator triggers
-      <links to="/about/maci">MACI</links>
-      and the smart contracts to calculate how much of the matching pool each
-      project will get.
+      En este punto, todas las contribuciones son definitivas y ahora se pueden
+      contabilizar. El coordinador de la ronda activa
+      <links to="/about/maci"> MACI </links> y los contratos inteligentes para
+      calcular la cantidad del grupo correspondiente que obtendrá cada proyecto.
     </p>
-    <h3>Finalized phase</h3>
+    <h3>Fase Finalizada</h3>
     <p>
-      Once the tallying calculations are complete, the round is finalized.
-      Project owners can come and claim their funding!
+      Una vez que se completan los cálculos de recuento, se finaliza la ronda.
+      ¡Los propietarios de proyectos pueden venir y reclamar su financiación!
     </p>
-    <h2>More</h2>
+    <h2>Más</h2>
     <p>
-      We use different tech to keep the round fair and free from malicious
-      actors. You can learn more about them below:
+      Usamos diferentes tecnologías para mantener la ronda justa y libre de
+      actores maliciosos. A continuación, puedes obtener más información sobre
+      ellos:
     </p>
     <ul>
       <li>
-        <links to="/about/maci">MACI</links> – to protect against bribery and
-        tally round results
+        <links to="/about/maci">MACI</links> – para protegerse contra el soborno
+        y el conteo de resultados de la Ronda.
       </li>
       <li>
-        <links to="/about/sybil-resistance">BrightID</links> – to protect
-        against sybil attacks
+        <links to="/about/sybil-resistance">BrightID</links> – para protegerse
+        contra los ataques de sybil
       </li>
     </ul>
   </div>

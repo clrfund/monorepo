@@ -9,14 +9,15 @@
         </div>
         <div>
           <div class="hero-content">
-            <h1>Send your favorite projects to the moon!</h1>
+            <h1>Manda tu proyecto de BUIDL favorito hasta la luna!</h1>
             <div id="subtitle" class="subtitle">
-              Every project you contribute to gets a portion of extra funding.
+              Cada proyecto al que contribuyas obtiene una porción extra de
+              financiamiento.
             </div>
             <div class="btn-group">
-              <links to="/projects" class="btn-action">Go to app</links>
+              <links to="/projects" class="btn-action">Ir al app</links>
               <div class="btn-white" @click="scrollToHowItWorks">
-                How it works
+                Así Funciona
               </div>
             </div>
           </div>
@@ -28,10 +29,11 @@
             "
           >
             <div class="column">
-              <h2>Join the funding round</h2>
+              <h2>Únete a la ronda de financiamiento</h2>
               <p>
-                Add your project to the next funding round. If you're working on
-                anything related to public goods, you can join in.
+                Agrega tu proyecto a la siguiente ronda de financiamiento. Si
+                estás trabajando algo relacionado a fondos públicos, puedes
+                unirte.
               </p>
               <div class="button-group">
                 <links to="/join" class="btn-primary w100">{{
@@ -39,7 +41,7 @@
                 }}</links>
                 <div v-if="signUpDeadline">
                   <time-left unitClass="none" :date="signUpDeadline" />
-                  to join
+                  para unirte
                 </div>
               </div>
             </div>
@@ -55,117 +57,123 @@
           />
         </div>
         <div id="how-it-works-content">
-          <h2>Every donation is amplified by the matching pool.</h2>
+          <h2>Cada donación se amplifica con contrapartida.</h2>
           <p>
-            This fundraiser rewards projects with the most unique demand, not
-            just those with the wealthiest backers.
+            Esta recaudación de fondos recompensa los proyectos con la mayor
+            demanda de usuarios, no solo aquellos con los patrocinadores más
+            ricos.
           </p>
           <image-responsive
             title="wormhole"
             alt="Image of spaceships funneling through a wormhole and getting bigger"
           />
-          <h2>How it works</h2>
+          <h2>Así Funciona</h2>
           <ol>
             <li>
-              The {{ operator }} and other donors send funds to the matching
-              pool smart contract.
+              {{ operator }} y otros donantes envían fondos a un contract de
+              pool de donaciones.
             </li>
             <li>
-              The round begins and you can donate to your favorite projects.
+              La ronda de financiamiento inicia y puedes donar a cuantos
+              proyectos quieras.
             </li>
             <li>
-              Once the round finishes, the smart contract distributes the
-              matching pool funds to projects based primarily on number of
-              contributions, <strong>not contribution value</strong>.
+              Una vez termina la ronda, el contrato inteligente distribuye los
+              fondos del pool de donaciones a los proyectos basado en el número
+              de contribuyentes y <strong>no en la cantidad donada</strong>.
             </li>
           </ol>
           <links class="btn-secondary" to="/about/how-it-works"
-            >How the round works</links
+            >Cómo funciona la ronda</links
           >
         </div>
       </div>
       <div class="section-header">
-        <h2>What you'll need</h2>
+        <h2>Lo que necesitas</h2>
       </div>
       <div id="what-you-will-need">
         <div class="pre-req">
           <div class="icon-row">
             <img :src="require(`@/assets/${chain.logo}`)" id="chain-icon" />
             <p>
-              <b>{{ chain.label }} for fast and cheap transaction fees</b>
+              <b>{{ chain.label }} para transacciones rápidas y baratas</b>
             </p>
           </div>
           <links
             :to="chain.isLayer2 ? '/about/layer-2' : chain.bridge"
             class="btn-action"
           >
-            Get {{ chain.label }} funds
+            Obtén {{ chain.label }}
           </links>
         </div>
-        <div class="pre-req" id="bright-id">
-          <div class="icon-row">
-            <img src="@/assets/bright-id.png" id="bright-id-icon" />
-            <p>
-              <b>BrightID for private, decentralized identity verification</b>
-            </p>
-          </div>
-          <links to="https://brightid.org" class="btn-primary"
-            >Download BrightID</links
-          >
-        </div>
+        <!--        <div class="pre-req" id="bright-id">-->
+        <!--          <div class="icon-row">-->
+        <!--            <img src="@/assets/bright-id.png" id="bright-id-icon" />-->
+        <!--            <p>-->
+        <!--              <b>BrightID for private, decentralized identity verification</b>-->
+        <!--            </p>-->
+        <!--          </div>-->
+        <!--          <links to="https://brightid.org" class="btn-primary"-->
+        <!--            >Download BrightID</links-->
+        <!--          >-->
+        <!--        </div>-->
       </div>
       <div class="section-header">
-        <h2>About</h2>
+        <h2>Acerca</h2>
       </div>
       <div id="about-section">
         <div id="about-1">
-          <h2>It's not about how much...</h2>
+          <h2>No se trata de cuanto...</h2>
           <p>
-            Using quadratic funding, your contribution counts as a vote.
-            Projects with the most contributions at the end of the round get the
-            highest amount from the matching pool. That means even a small
-            donation can have a massive impact.
+            Usando financiamiento cuadráticos, tu contribución cuenta como un
+            voto. Los proyectos con la mayor cantidad de contribuciones al final
+            de la ronda obtienen la mayor cantidad del fondo de contrapartida.
+            Eso significa que incluso una pequeña donación puede tener un
+            impacto enorme.
           </p>
           <p>
-            <links to="/about/quadratic-funding">About quadratic funding</links>
+            <links to="/about/quadratic-funding"
+              >Acerca de financiamiento cuadrático</links
+            >
           </p>
         </div>
         <div id="about-2">
-          <h2>Protect against bribery</h2>
+          <h2>Protégete contra el soborno</h2>
           <p>
-            Using MACI, a zero-knowledge technology, it's impossible to prove
-            how you contributed. This drives bribers insane because they have no
-            idea whether you actually did what they bribed you to do!
+            Con MACI, una tecnología de conocimiento cero, es imposible
+            demostrar cómo una persona contribuyó. ¡Esto vuelve locos a los
+            sobornadores porque no tienen idea de si realmente hiciste lo que te
+            sobornaron para que hicieras!
           </p>
-          <links to="/about/maci">About MACI</links>
+          <links to="/about/maci">Acerca de MACI</links>
         </div>
         <div id="about-3">
-          <h2>Built using the CLR protocol</h2>
+          <h2>Construido usando el protocolo CLR</h2>
           <p>
-            clr.fund is a protocol for efficiently allocating funds to public
-            goods that benefit the Ethereum Network according to the prefences
-            of the Ethereum Community.
+            clr.fund es un protocolo para la asignación eficiente de fondos a
+            bienes públicos que benefician a la Red Ethereum de acuerdo con las
+            preferencias de la Comunidad Ethereum.
           </p>
-          <links to="/about">About clr.fund</links>
+          <links to="/about">Acerca de clr.fund</links>
         </div>
       </div>
       <div id="footer">
-        <h2>More</h2>
+        <h2>Más</h2>
         <div class="link-li">
-          <links to="/about">About clr.fund</links>
+          <links to="/about">Acerca de clr.fund</links>
         </div>
         <div class="link-li">
-          <links to="/about/how-it-works">How the round works</links>
+          <links to="/about/how-it-works">Como funciona la ronda</links>
         </div>
         <div class="link-li" v-if="chain.isLayer2">
-          <links to="/about/layer-2">About {{ chain.label }}</links>
+          <links to="/about/layer-2">Acerca de {{ chain.label }}</links>
         </div>
         <div class="link-li">
-          <links to="/about/maci">About MACI</links>
+          <links to="/about/maci">Acerca de MACI</links>
         </div>
-        <div class="link-li">
-          <links to="/about/sybil-resistance">About BrightID</links>
-        </div>
+        <!--        <div class="link-li">-->
+        <!--          <links to="/about/sybil-resistance">Acerca de BrightID</links>-->
+        <!--        </div>-->
         <div class="link-li">
           <links to="https://github.com/clrfund/monorepo/">GitHub</links>
         </div>
@@ -173,10 +181,10 @@
           <links to="https://discord.gg/ZnsYPV6dCv">Discord</links>
         </div>
         <div class="link-li">
-          <links to="https://forum.clr.fund/">Forum</links>
+          <links to="https://forum.clr.fund/">Foro</links>
         </div>
         <div class="link-li">
-          <links to="https://ethereum.org/">More on Ethereum</links>
+          <links to="https://ethereum.org/">Más sobre Ethereum</links>
         </div>
       </div>
     </div>

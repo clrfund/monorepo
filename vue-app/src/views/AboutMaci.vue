@@ -1,204 +1,217 @@
 <template>
   <div class="about">
     <h1 class="content-heading">
-      About MACI (Minimal Anti-Collusion Infrastructure)
+      Acerca de MACI (Infraestructura Mínima Anticolusión)
     </h1>
 
-    <h2>What is MACI?</h2>
+    <h2>¿Qué es MACI?</h2>
     <p><b>tl;dr: bribers are ngmi (not going to make it)</b></p>
     <p>
-      Clr.fund uses MACI, Minimum Anti-Collusion Infrastructure, to help prevent
-      vote manipulation like bribery or collusion. To understand why this is
-      important let's recap quadratic funding...
+      Clr.fund utiliza MACI, Infraestructura mínima anticolusión, para ayudar a
+      prevenir la manipulación de votos como el soborno o la colusión. Para
+      entender por qué esto es importante, recapitulemos la financiación
+      cuadrática ...
     </p>
-    <h2>Quadratic funding</h2>
+    <h2>Financiamiento Cuadrático</h2>
     <p>
-      This is the mechanism clr.fund uses in our funding rounds. When you
-      contribute to a project you're not just sending them money, you're voting
-      for them. At the end, the matching pool funds are distributed to projects
-      based on number of votes at the end of the round.
-    </p>
-    <p>
-      Read more on
-      <links to="/about/quadratic-funding">quadratic funding</links>.
+      Este es el mecanismo que utiliza clr.fund en nuestras rondas de
+      financiación. Cuando contribuyes a un proyecto, no solo les envías dinero,
+      sino que les estás votando. Al final, los fondos del fondo común de
+      contrapartida se distribuyen a los proyectos en función del número de
+      votos al final de la ronda.
     </p>
     <p>
-      This mechanism is great for democratic funding but poses some risks. It
-      could be cost-effective for a project owner to bribe users to vote for
-      their project as their eventual matching pool amount could be really high.
-      This type of fraud puts the entire concept at risk as it is no longer
-      about which projects offer the most value to the most amount of people.
+      Lee más en
+      <links to="/about/quadratic-funding">Financiación Cuadrática</links>.
+    </p>
+    <p>
+      Este mecanismo es excelente para la financiación democrática, pero
+      presenta algunos riesgos. Podría ser rentable para el propietario de un
+      proyecto sobornar a los usuarios para que voten por su proyecto, ya que el
+      monto de su fondo de contrapartida final podría ser realmente alto. Este
+      tipo de fraude pone en riesgo todo el concepto, ya que ya no se trata de
+      qué proyectos ofrecen el mayor valor a la mayor cantidad de personas.
     </p>
 
     <h2>Background</h2>
-    <h3>Vote Manipulation</h3>
+    <h3>Manipulación de Fondos</h3>
     <p>
-      Vote manipulation involves maliciously changing the incentives of a voting
-      system, and it comes in many flavors, including:
+      Manipulación de Votos implica cambiar maliciosamente los incentivos de un
+      sistema de votación, y se presenta en muchas formas, que incluyen:
     </p>
     <ul>
       <li>
-        Bribery — when a person or entity offers to pay others to vote for an
-        outcome they otherwise might not have, e.g. paying a football team to
-        throw a match
+        Soborno: cuando una persona o entidad ofrece pagar a otros para que
+        voten por un resultado que de otro modo no obtendrían, p. Ej. pagar a un
+        equipo de fútbol para lanzar un partido
       </li>
       <li>
-        Coercion — when a person or entity threatens to punish others in some
-        way if they don't vote for a particular outcome, e.g. blackmail
+        Coerción: cuando una persona o entidad amenaza con castigar a otros de
+        alguna manera si no votan por un resultado en particular, p. chantaje
       </li>
     </ul>
     <p>
-      These kinds of manipulation break voting systems by diverting them from
-      their intended goal. Voting systems are generally designed to discover a
-      group's preference between a number of specified outcomes. Each voter is
-      expected to choose how to vote based on which outcomes they prefer and how
-      their vote can effect the result.
+      Este tipo de manipulación rompe los sistemas de votación al desviarlos de
+      su objetivo previsto. Los sistemas de votación generalmente están
+      diseñados para descubrir la preferencia de un grupo entre una serie de
+      resultados específicos. Se espera que cada votante elija cómo votar en
+      función de los resultados que prefiera y cómo su voto puede afectar el
+      resultado.
     </p>
     <p>
-      In an election where the outcomes are 1) Alice wins and 2) Bob wins, if I
-      prefer Alice winning and believe my vote has a high enough chance of
-      influencing the result to be worth the effort, I'll vote for Alice. Now,
-      let's say Charlie offers me $1,000,000 to vote for Bob instead. For me,
-      the possible outcomes of the election now shift to 1) Alice wins and 2)
-      Bob wins and I get $1,000,000. In that scenario, I might vote for Bob even
-      though I prefer Alice, and the election result will no longer reflect my
-      preference between Bob and Alice, as was intended. If enough people are
-      successfully bribed this way, the election will be a sham.
+      En una elección en la que los resultados son 1) Alice gana y 2) Bob gana,
+      si prefiero que Alice gane y creo que mi voto tiene una probabilidad
+      suficientemente alta de influir en el resultado para que valga la pena el
+      esfuerzo, votaré por Alice. Ahora, digamos que Charlie me ofrece $
+      1,000,000 para votar por Bob. Para mí, los posibles resultados de la
+      elección ahora cambian a 1) Alice gana y 2) Bob gana y yo obtengo $
+      1,000,000. En ese escenario, podría votar por Bob aunque prefiero a Alice,
+      y el resultado de la elección ya no reflejará mi preferencia entre Bob y
+      Alice, como estaba previsto. Si se soborna a suficientes personas de esta
+      manera, la elección será una farsa.
     </p>
-    <h3>Vulnerability of Public Voting Systems</h3>
+    <h3>Vulnerabilidad de los Sistemas de Votación Públicos</h3>
     <p>
-      In order to manipulate the outcomes for a particular voter, the
-      manipulator needs to know that voter's eventual choices: If Charlie offers
-      to pay me $1,000,000 to vote for Bob, he needs to know that I'll actually
-      vote for Bob before paying me. Otherwise, I can vote for Alice, tell
-      Charlie I voted for Bob to get the $1,000,000, and the bribe has failed.
+      Para manipular los resultados de un votante en particular, el manipulador
+      necesita saber las opciones eventuales de ese votante: si Charlie se
+      ofrece a pagarme $ 1,000,000 para votar por Bob, necesita saber que en
+      realidad votaré por Bob antes de pagarme. De lo contrario, puedo votar por
+      Alice, decirle a Charlie que voté por Bob para obtener los $ 1,000,000 y
+      el soborno ha fallado.
     </p>
     <p>
-      In traditional elections, votes are secret, making it difficult to
-      manipulate voters. But there aren't any secrets on public blockchains like
-      Ethereum! In most existing voting systems on Ethereum, votes are public,
-      which means manipulation is a serious threat.
+      En las elecciones tradicionales, los votos son secretos, lo que dificulta
+      la manipulación de los votantes. ¡Pero no hay secretos en los blockchain
+      como Ethereum! En la mayoría de los sistemas de votación existentes en
+      Ethereum, los votos son públicos, lo que significa que la manipulación es
+      una seria amenaza.
     </p>
-    <h2>Why MACI?</h2>
+    <h2>¿Por Qué MACI?</h2>
     <p>
-      Ethereum is a core part of clr.fund and other quadratic funding solutions
-      like Gitcoin Grants, because:
+      Ethereum es una parte fundamental de clr.fund y otras soluciones de
+      financiación cuadrática como Gitcoin Grants, porque:
     </p>
     <ul>
       <li>
-        Ethereum has a great combination of low infrastructure costs and high
-        security (i.e. hard to hack) compared to other electronic voting
-        solutions
+        Ethereum tiene una gran combinación de bajos costos de infraestructura y
+        alta seguridad (es decir, difícil de piratear) en comparación con otras
+        soluciones de votación electrónica.
       </li>
       <li>
-        Ethereum offers seamless interoperability with a large and growing
-        ecosystem of communities and tools that both enhance and benefit from
-        quadratic funding, such as DAOs and identity systems like BrightID
+        Ethereum ofrece una interoperabilidad perfecta con un ecosistema grande
+        y en crecimiento de comunidades y herramientas que mejoran y se
+        benefician de la financiación cuadrática, como DAO y sistemas de
+        identidad como BrightID.
       </li>
-      <li>clr.fund was built by and for the Ethereum community</li>
+      <li>Clr.fund fue creado por y para la comunidad Ethereum</li>
     </ul>
     <p>
-      While moving away from the public-ness of Ethereum isn't an attractive
-      option, building Ethereum-based tools to resist vote manipulation is,
-      which brings us to MACI.
+      Si bien alejarse de la publicidad de Ethereum no es una opción atractiva,
+      crear herramientas basadas en Ethereum para resistir la manipulación de
+      votos sí lo es, lo que nos lleva a MACI.
     </p>
-    <h2>How MACI helps</h2>
+    <h2>¿Cómo ayuda MACI?</h2>
     <p>
-      Bribery only works if the briber can confirm that the person they're
-      paying actually goes through with the conditions of the bribe. This is
-      where MACI comes in. With MACI, it's impossible to prove how you voted, so
-      bribers will never know if you did what they paid you to do.
+      El soborno solo funciona si el soborno puede confirmar que la persona a la
+      que está pagando realmente cumple con las condiciones del soborno. Aquí es
+      donde entra en juego MACI. Con MACI, es imposible probar cómo votó, por lo
+      que los sobornadores nunca sabrán si hizo lo que le pagaron por hacer.
     </p>
-    <h2>MACI — Minimum Anti-Collusion Infrastructure</h2>
+    <h2>MACI - Infraestructura mínima anticolusión</h2>
     <p>
-      MACI is a set of Ethereum smart contracts and supplementary scripts that
-      effectively transforms public voting systems into private ones, in which
-      1) participation in a vote and correct vote tabulation are publicly
-      verifiable, but 2) specific voting information is not public, making vote
-      manipulation much more difficult.
+      MACI es un conjunto de contratos inteligentes de Ethereum y scripts
+      complementarios que transforma de manera efectiva los sistemas de votación
+      públicos en privados, en los que 1) la participación en una votación y la
+      tabulación correcta de la votación son verificables públicamente, pero 2)
+      la información específica de la votación no es pública, lo que hace que la
+      manipulación de la votación mucho mas difícil.
     </p>
-    <h3>How it works</h3>
+    <h3>¿Cómo funciona?</h3>
     <p>
-      When you contribute to a project on clr.fund you register an identity with
-      the round coordinator. But at any time before the end of the round, you
-      can invalidate your identity by secretly changing the public key
-      associated with your identity before casting the vote. You can then use a
-      different key pair to sign the vote (which renders the vote invalid, but
-      it's impossible to see if the vote is invalid).
-    </p>
-    <p>
-      MACI does all this using zero-knowledge proofs. These mathematically prove
-      the authenticity of votes without providing any of the details. So bribers
-      can’t tell what actions the people they bribed took.
+      Cuando contribuyes a un proyecto en Clr.fund, registras una identidad con
+      el coordinador de la ronda. Pero en cualquier momento antes del final de
+      la ronda, puedes invalidar tu identidad cambiando en secreto la clave
+      pública asociada con tu identidad antes de emitir el voto. Luego puedes
+      usar un par de claves diferentes para firmar el voto (lo que invalida el
+      voto, pero es imposible ver si el voto es inválido).
     </p>
     <p>
-      From
+      MACI hace todo esto utilizando pruebas de conocimiento cero (Zero
+      Knowledge Proofs). Estos prueban matemáticamente la autenticidad de los
+      votos sin proporcionar ninguno de los detalles. Entonces, los sobornadores
+      no pueden saber qué acciones tomaron las personas a las que sobornaron.
+    </p>
+    <p>
+      De
       <links
         to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md"
-        >MACI's introduction documentation</links
+        >Introducción a la documentación de MACI</links
       >:
     </p>
     <blockquote>
       <p>
-        Whitelisted voters named Alice, Bob, and Charlie register to vote by
-        sending their public key to a smart contract. Additionally, there is a
-        central coordinator Dave, whose public key is known to all.
+        Los votantes de la lista blanca llamados Alice, Bob y Charlie se
+        registran para votar enviando su clave pública a un contrato
+        inteligente. Además, hay un coordinador central, Dave, cuya clave
+        pública es conocida por todos.
       </p>
       <p>
-        When Alice casts her vote, she signs her vote with her private key,
-        encrypts her signature with Dave's public key, and submits the result to
-        the smart contract.
-      </p>
-
-      <p>
-        Each voter may change her keypair at any time. To do this, she creates
-        and signs a key-change command, encrypts it, and sends it to the smart
-        contract. This makes it impossible for a briber to ever be sure that
-        their bribe has any effect on the bribee's vote.
+        Cuando Alice emite su voto, firma su voto con su clave privada, cifra su
+        firma con la clave pública de Dave y envía el resultado al contrato
+        inteligente.
       </p>
 
       <p>
-        If Bob, for instance, bribes Alice to vote a certain way, she can simply
-        use the first public key she had registered ⁠— which is now void ⁠— to
-        cast a vote. Since said vote is encrypted, as was the key-changing
-        message which Alice had previously sent to Dave, Bob has no way to tell
-        if Alice had indeed voted the way he wanted her to.
+        Cada votante puede cambiar su par de claves en cualquier momento. Para
+        hacer esto, crea y firma un comando de cambio de clave, lo encripta y lo
+        envía al contrato inteligente. Esto hace que sea imposible para un
+        sobornador estar seguro de que su soborno tiene algún efecto sobre el
+        voto del sobornado.
       </p>
 
       <p>
-        Even if Alice reveals the cleartext of her vote to Bob, she just needs
-        to not show him the updated key command that she previously used to
-        invalidate that key. In short, as long as she had submitted a single
-        encrypted command before her vote, there is no way to tell if said vote
-        is valid or not.
+        Si Bob, por ejemplo, soborna a Alice para que vote de cierta forma, ella
+        puede simplemente usar la primera clave pública que haya registrado ⁠
+        —que ahora es nula ⁠— para emitir un voto. Dado que dicho voto está
+        encriptado, al igual que el mensaje de cambio de clave que Alice le
+        había enviado previamente a Dave, Bob no tiene forma de saber si Alice
+        efectivamente votó de la manera que él quería.
+      </p>
+
+      <p>
+        Incluso si Alice revela el texto claro de su voto a Bob, solo necesita
+        no mostrarle el comando de teclado actualizado que usó anteriormente
+        para invalidar esa clave. En resumen, siempre que haya enviado un solo
+        comando encriptado antes de su voto, no hay forma de saber si dicho voto
+        es válido o no.
       </p>
     </blockquote>
 
     <p>
       <links to="https://github.com/appliedzkp/maci/tree/master/specs"
-        >Read more on the technical details of MACI here</links
+        >Lea más sobre los detalles técnicos de MACI aquí</links
       >. >
     </p>
 
-    <h3>MACI's constraints</h3>
+    <h3>Limitaciones de MACI</h3>
     <p>
-      This is cutting-edge technology and comes with a few constraints right
-      now.
+      Esta es una tecnología de vanguardia y viene con algunas limitaciones en
+      este momento.
     </p>
     <ul>
       <li>
-        There are limits on the number of projects, contributors, and
-        contributions. This means you may miss out if a round hits capacity but
-        know that it's for the integrity of the round.
+        Hay límites en la cantidad de proyectos, contribuyentes y
+        contribuciones. Esto significa que puede perderse si una ronda alcanza
+        su capacidad, pero sepa que es por la integridad de la ronda.
       </li>
       <li>
-        You can only contribute once per round. Once you have contributed, you
-        can add/remove projects and reallocate your funds but you can't increase
-        your total contribution amount.
+        Solo puedes contribuir una vez por ronda. Una vez que haya contribuido,
+        puede agregar / eliminar proyectos y reasignar sus fondos, pero no puede
+        aumentar el monto total de su contribución.
       </li>
     </ul>
-    <h2>More</h2>
-    <h3>Further reading</h3>
+    <h2>Más</h2>
+    <h3>Otras lecturas</h3>
     <ul>
       <li>
         <links
@@ -207,12 +220,12 @@
         >
       </li>
       <li>
-        <links to="https://github.com/appliedzkp/maci">The MACI repo</links>
+        <links to="https://github.com/appliedzkp/maci">El repo de MACI </links>
       </li>
       <li>
         <links
           to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md"
-          >The technical spec</links
+          >La especificación técnica</links
         >
       </li>
     </ul>
@@ -225,7 +238,7 @@
       </li>
       <li>
         <links to="https://www.youtube.com/watch?v=sKuNj_IQVYI"
-          >MACI technical intro</links
+          >MACI introducción técnica</links
         >
       </li>
     </ul>

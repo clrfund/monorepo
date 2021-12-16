@@ -1,15 +1,15 @@
 <template>
   <div class="rounds">
-    <h1 class="content-heading">Rounds</h1>
+    <h1 class="content-heading">Rondas</h1>
     <div class="round" v-for="round in rounds" :key="round.index">
       <links
         v-if="round.address"
         class="round-name"
         :to="{ name: 'round', params: { address: round.address } }"
       >
-        Round {{ round.index }}
+        Ronda {{ round.index }}
       </links>
-      <links v-else :to="round.url"> Round {{ round.index }} </links>
+      <links v-else :to="round.url"> Ronda {{ round.index }} </links>
     </div>
   </div>
 </template>
