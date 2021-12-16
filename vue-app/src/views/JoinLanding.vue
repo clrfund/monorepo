@@ -29,7 +29,7 @@
         <links to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <links to="https://twitter.com/ethdotorg">@ethdotorg</links>
+        <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
         <links to="/" class="btn-primary">Home</links>
@@ -49,7 +49,7 @@
         <links to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <links to="https://twitter.com/ethdotorg">@ethdotorg</links>
+        <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
         <links to="/" class="btn-primary">Home</links>
