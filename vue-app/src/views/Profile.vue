@@ -173,8 +173,7 @@ export default class Profile extends Vue {
   }
 
   get nativeTokenSymbol(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return nativeTokenSymbol
+    return this.$store.getters.nativeTokenSymbol
   }
 
   get tokenLogo(): string {
