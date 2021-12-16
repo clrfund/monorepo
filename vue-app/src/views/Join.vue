@@ -30,7 +30,7 @@
               :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'"
               @click="handleToggleTab"
             >
-             Vista previa del proyecto
+              Vista previa del proyecto
             </p>
           </div>
         </div>
@@ -86,7 +86,8 @@
                       $v.form.project.tagline.maxLength,
                   }"
                 >
-                  Este eslogan es demasiado largo. Sé breve para los posibles contribuyentes
+                  Este eslogan es demasiado largo. Sé breve para los posibles
+                  contribuyentes
                 </p>
                 <p
                   :class="{
@@ -123,7 +124,8 @@
                     hidden: !$v.form.project.description.$error,
                   }"
                 >
-                  Tu proyecto necesita una descripción. ¿Para qué estás recaudando dinero?
+                  Tu proyecto necesita una descripción. ¿Para qué estás
+                  recaudando dinero?
                 </p>
               </div>
               <div class="form-background">
@@ -136,7 +138,7 @@
                     id="category-content"
                     type="radio"
                     name="project-category"
-                    value="Content"
+                    value="Contenido"
                     v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
@@ -144,20 +146,20 @@
                     }"
                   />
                   <label for="category-content" class="radio-btn"
-                    >Content</label
+                    >Contenido</label
                   >
                   <input
                     id="research"
                     type="radio"
                     name="project-category"
-                    value="Research"
+                    value="Investigación"
                     v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
                       invalid: $v.form.project.category.$error,
                     }"
                   />
-                  <label for="research" class="radio-btn">Research</label>
+                  <label for="research" class="radio-btn">Investigación</label>
                   <input
                     id="tooling"
                     type="radio"
@@ -182,6 +184,31 @@
                     }"
                   />
                   <label for="data" class="radio-btn">Data</label>
+
+                  <input
+                    id="educación"
+                    type="radio"
+                    name="project-category"
+                    value="Educación"
+                    v-model="$v.form.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: $v.form.project.category.$error,
+                    }"
+                  />
+                  <label for="educación" class="radio-btn">Educación</label>
+                  <input
+                    id="otro"
+                    type="radio"
+                    name="project-category"
+                    value="Otro"
+                    v-model="$v.form.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: $v.form.project.category.$error,
+                    }"
+                  />
+                  <label for="otro" class="radio-btn">Otro</label>
                 </form>
                 <p
                   :class="{
@@ -197,7 +224,8 @@
                   >Espacio de problemas</label
                 >
                 <p class="input-description">
-                  Explica los problemas que estás tratando de resolver. Markdown soportado.
+                  Explica los problemas que estás tratando de resolver. Markdown
+                  soportado.
                 </p>
                 <textarea
                   id="project-problem-space"
@@ -231,7 +259,8 @@
                   >Wallet de Ethereum</label
                 >
                 <p class="input-description">
-                  No es necesario que sea la misma dirección que utilizas para enviar su solicitud.
+                  No es necesario que sea la misma dirección que utilizas para
+                  enviar su solicitud.
                 </p>
                 <input
                   id="fund-address"
@@ -259,7 +288,8 @@
                 >
                 <p class="input-description">
                   Los posibles contribuyentes pueden realizar conversiones en
-                  función de sus planes de financiamiento específicos. Markdown apoyado.
+                  función de sus planes de financiamiento específicos. Markdown
+                  apoyado.
                 </p>
                 <textarea
                   id="fund-plans"
@@ -276,9 +306,12 @@
                     hidden: !$v.form.fund.plans.$error,
                   }"
                 >
-                  Informa a los posibles contribuyentes qué planes tiene para sus donaciones.
+                  Informa a los posibles contribuyentes qué planes tiene para
+                  sus donaciones.
                 </p>
-                <p v-if="form.fund.plans" class="input-label pt-1">Vista Previa:</p>
+                <p v-if="form.fund.plans" class="input-label pt-1">
+                  Vista Previa:
+                </p>
                 <markdown :raw="form.fund.plans" />
               </div>
             </div>
@@ -292,7 +325,8 @@
                   Email de contacto
                 </label>
                 <p class="input-description">
-                  Para obtener actualizaciones importantes sobre tu proyecto y la ronda de financiación.
+                  Para obtener actualizaciones importantes sobre tu proyecto y
+                  la ronda de financiación.
                 </p>
                 <input
                   id="team-email"
@@ -304,7 +338,8 @@
                   }"
                 />
                 <p class="input-notice">
-                  No mostraremos esto públicamente ni lo agregaremos al blockchain.
+                  No mostraremos esto públicamente ni lo agregaremos al
+                  blockchain.
                 </p>
                 <p
                   :class="{
@@ -319,7 +354,9 @@
                 <label for="team-name" class="input-label"
                   >Nombre del Equipo (Opcional)</label
                 >
-                <p class="input-description">Si es diferente al nombre del proyecto.</p>
+                <p class="input-description">
+                  Si es diferente al nombre del proyecto.
+                </p>
                 <input
                   id="team-name"
                   type="email"
@@ -336,7 +373,8 @@
                   >Descripción (opcional)</label
                 >
                 <p class="input-description">
-                  Si es diferente a la descripción del proyecto. Markdown soportado.
+                  Si es diferente a la descripción del proyecto. Markdown
+                  soportado.
                 </p>
                 <textarea
                   id="team-desc"
@@ -358,7 +396,8 @@
             <h2 class="step-title">Links</h2>
             <p>
               Proporciona a los colaboradores algunos enlaces para que consulten
-              y obtengan más información sobre tu proyecto. Proporciona al menos uno.
+              y obtengan más información sobre tu proyecto. Proporciona al menos
+              uno.
             </p>
             <div class="inputs">
               <div class="form-background">
@@ -473,8 +512,8 @@
           <div v-if="currentStep === 4">
             <h2 class="step-title">Imágenes</h2>
             <p>
-              Subiremos sus imágenes a IPFS, una plataforma de
-              almacenamiento descentralizada.
+              Subiremos sus imágenes a IPFS, una plataforma de almacenamiento
+              descentralizada.
               <links to="https://ipfs.io/#how">Más sobre IPFS</links>
             </p>
             <div class="inputs">
@@ -622,9 +661,7 @@
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.twitter">
-                    No provisto
-                  </div>
+                  <div class="data" v-if="!form.links.twitter">No provisto</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Website</h4>
@@ -637,9 +674,7 @@
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.website">
-                    No provisto
-                  </div>
+                  <div class="data" v-if="!form.links.website">No provisto</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Discord</h4>
@@ -652,9 +687,7 @@
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.discord">
-                    No provisto
-                  </div>
+                  <div class="data" v-if="!form.links.discord">No provisto</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Radicle</h4>
@@ -667,9 +700,7 @@
                       ><img width="16px" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.radicle">
-                    No provisto
-                  </div>
+                  <div class="data" v-if="!form.links.radicle">No provisto</div>
                 </div>
               </div>
               <div class="form-background">
@@ -697,8 +728,8 @@
           <div v-if="currentStep === 6">
             <h2 class="step-title">Enviar proyecto</h2>
             <p>
-              Esta es una transacción de blockchain que agregará la
-              información de tu proyecto a la ronda de financiamiento.
+              Esta es una transacción de blockchain que agregará la información
+              de tu proyecto a la ronda de financiamiento.
             </p>
             <div class="inputs">
               <recipient-submission-widget
