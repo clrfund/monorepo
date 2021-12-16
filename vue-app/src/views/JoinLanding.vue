@@ -22,13 +22,15 @@
       <div class="big-emoji">☹</div>
       <h1>Lo sentimos, es demasiado tarde para unirse</h1>
       <div id="subtitle" class="subtitle">
-        La ronda está cerrada por nuevos proyectos. Ahora es demasiado tarde para subir a bordo.
+        La ronda está cerrada por nuevos proyectos. Ahora es demasiado tarde
+        para subir a bordo.
       </div>
       <div class="subtitle mt2" id="subtitle">
         Mira estas
         <links to="https://ethereum.org/en/community/grants/"
           >otras formas de obtener financiación</links
-        >. O síguenos en Twitter para recibir actualizaciones sobre rondas futuras :
+        >. O síguenos en Twitter para recibir actualizaciones sobre rondas
+        futuras :
         <links to="https://twitter.com/EthereumTGU">@EthereumTGU</links>
       </div>
       <div class="btn-container">
@@ -40,15 +42,17 @@
       <div class="big-emoji">☹</div>
       <h1>Lo sentimos, la ronda está llena</h1>
       <div id="subtitle" class="subtitle">
-        La tecnología que utilizamos para protegerlo del soborno y
-        la colusión, MACI, limita la cantidad de proyectos en este momento.
-        Desafortunadamente, hemos llegado al límite y no hay más espacio a bordo.
+        La tecnología que utilizamos para protegerlo del soborno y la colusión,
+        MACI, limita la cantidad de proyectos en este momento.
+        Desafortunadamente, hemos llegado al límite y no hay más espacio a
+        bordo.
       </div>
       <div class="subtitle mt2" id="subtitle">
         Mira estas
         <links to="https://ethereum.org/en/community/grants/"
-        >otras formas de obtener financiación</links
-        >. O síguenos en Twitter para recibir actualizaciones sobre rondas futuras :
+          >otras formas de obtener financiación</links
+        >. O síguenos en Twitter para recibir actualizaciones sobre rondas
+        futuras :
         <links to="https://twitter.com/EthereumTGU">@EthereumTGU</links>
       </div>
       <div class="btn-container">

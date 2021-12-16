@@ -11,7 +11,8 @@
           <div class="hero-content">
             <h1>Manda tu proyecto de BUIDL favorito hasta la luna!</h1>
             <div id="subtitle" class="subtitle">
-              Cada proyecto al que contribuyas obtiene una porción extra de financiamiento.
+              Cada proyecto al que contribuyas obtiene una porción extra de
+              financiamiento.
             </div>
             <div class="btn-group">
               <links to="/projects" class="btn-action">Ir al app</links>
@@ -30,9 +31,9 @@
             <div class="column">
               <h2>Únete a la ronda de financiamiento</h2>
               <p>
-                Agrega tu proyecto a la siguiente ronda de financiamiento.
-                Si estás trabajando algo relacionado a fondos públicos,
-                puedes unirte.
+                Agrega tu proyecto a la siguiente ronda de financiamiento. Si
+                estás trabajando algo relacionado a fondos públicos, puedes
+                unirte.
               </p>
               <div class="button-group">
                 <links to="/join" class="btn-primary w100">{{
@@ -58,7 +59,9 @@
         <div id="how-it-works-content">
           <h2>Cada donación se amplifica con contrapartida.</h2>
           <p>
-            Esta recaudación de fondos recompensa los proyectos con la mayor demanda de usuarios, no solo aquellos con los patrocinadores más ricos.
+            Esta recaudación de fondos recompensa los proyectos con la mayor
+            demanda de usuarios, no solo aquellos con los patrocinadores más
+            ricos.
           </p>
           <image-responsive
             title="wormhole"
@@ -67,13 +70,17 @@
           <h2>Así Funciona</h2>
           <ol>
             <li>
-              {{ operator }}  y otros donantes envían fondos a un contract de pool de donaciones.
+              {{ operator }} y otros donantes envían fondos a un contract de
+              pool de donaciones.
             </li>
             <li>
-              La ronda de financiamiento inicia y puedes donar a cuantos proyectos quieras.
+              La ronda de financiamiento inicia y puedes donar a cuantos
+              proyectos quieras.
             </li>
             <li>
-             Una vez termina la ronda, el contrato inteligente distribuye los fondos del pool de donaciones a los proyectos basado en el número de contribuyentes y <strong>no en la cantidad donada</strong>.
+              Una vez termina la ronda, el contrato inteligente distribuye los
+              fondos del pool de donaciones a los proyectos basado en el número
+              de contribuyentes y <strong>no en la cantidad donada</strong>.
             </li>
           </ol>
           <links class="btn-secondary" to="/about/how-it-works"
@@ -99,17 +106,17 @@
             Obtén {{ chain.label }}
           </links>
         </div>
-<!--        <div class="pre-req" id="bright-id">-->
-<!--          <div class="icon-row">-->
-<!--            <img src="@/assets/bright-id.png" id="bright-id-icon" />-->
-<!--            <p>-->
-<!--              <b>BrightID for private, decentralized identity verification</b>-->
-<!--            </p>-->
-<!--          </div>-->
-<!--          <links to="https://brightid.org" class="btn-primary"-->
-<!--            >Download BrightID</links-->
-<!--          >-->
-<!--        </div>-->
+        <!--        <div class="pre-req" id="bright-id">-->
+        <!--          <div class="icon-row">-->
+        <!--            <img src="@/assets/bright-id.png" id="bright-id-icon" />-->
+        <!--            <p>-->
+        <!--              <b>BrightID for private, decentralized identity verification</b>-->
+        <!--            </p>-->
+        <!--          </div>-->
+        <!--          <links to="https://brightid.org" class="btn-primary"-->
+        <!--            >Download BrightID</links-->
+        <!--          >-->
+        <!--        </div>-->
       </div>
       <div class="section-header">
         <h2>Acerca</h2>
@@ -118,23 +125,34 @@
         <div id="about-1">
           <h2>No se trata de cuanto...</h2>
           <p>
-            Usando financiamiento cuadráticos, tu contribución cuenta como un voto. Los proyectos con la mayor cantidad de contribuciones al final de la ronda obtienen la mayor cantidad del fondo de contrapartida. Eso significa que incluso una pequeña donación puede tener un impacto enorme.
+            Usando financiamiento cuadráticos, tu contribución cuenta como un
+            voto. Los proyectos con la mayor cantidad de contribuciones al final
+            de la ronda obtienen la mayor cantidad del fondo de contrapartida.
+            Eso significa que incluso una pequeña donación puede tener un
+            impacto enorme.
           </p>
           <p>
-            <links to="/about/quadratic-funding">Acerca de financiamiento cuadrático</links>
+            <links to="/about/quadratic-funding"
+              >Acerca de financiamiento cuadrático</links
+            >
           </p>
         </div>
         <div id="about-2">
           <h2>Protégete contra el soborno</h2>
           <p>
-            Con MACI, una tecnología de conocimiento cero, es imposible demostrar cómo una persona contribuyó. ¡Esto vuelve locos a los sobornadores porque no tienen idea de si realmente hiciste lo que te sobornaron para que hicieras!
+            Con MACI, una tecnología de conocimiento cero, es imposible
+            demostrar cómo una persona contribuyó. ¡Esto vuelve locos a los
+            sobornadores porque no tienen idea de si realmente hiciste lo que te
+            sobornaron para que hicieras!
           </p>
           <links to="/about/maci">Acerca de MACI</links>
         </div>
         <div id="about-3">
           <h2>Construido usando el protocolo CLR</h2>
           <p>
-            clr.fund es un protocolo para la asignación eficiente de fondos a bienes públicos que benefician a la Red Ethereum de acuerdo con las preferencias de la Comunidad Ethereum.
+            clr.fund es un protocolo para la asignación eficiente de fondos a
+            bienes públicos que benefician a la Red Ethereum de acuerdo con las
+            preferencias de la Comunidad Ethereum.
           </p>
           <links to="/about">Acerca de clr.fund</links>
         </div>
@@ -153,9 +171,9 @@
         <div class="link-li">
           <links to="/about/maci">Acerca de MACI</links>
         </div>
-<!--        <div class="link-li">-->
-<!--          <links to="/about/sybil-resistance">Acerca de BrightID</links>-->
-<!--        </div>-->
+        <!--        <div class="link-li">-->
+        <!--          <links to="/about/sybil-resistance">Acerca de BrightID</links>-->
+        <!--        </div>-->
         <div class="link-li">
           <links to="https://github.com/clrfund/monorepo/">GitHub</links>
         </div>

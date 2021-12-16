@@ -44,9 +44,10 @@
             <p>La ronda está oficialmente cerrada</p>
           </span>
           <p>
-            ¡Ahora es demasiado tarde para contribuir o reasignar tus donaciones! Debido a la
-            generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que cerrar
-            la ronda antes de lo esperado. Aún puedes ayudar donando al grupo correspondiente.
+            ¡Ahora es demasiado tarde para contribuir o reasignar tus
+            donaciones! Debido a la generosidad de la comunidad y algunas
+            limitaciones técnicas, tuvimos que cerrar la ronda antes de lo
+            esperado. Aún puedes ayudar donando al grupo correspondiente.
           </p>
           <div class="dismiss-btn" @click="toggleNotice">Great!</div>
         </div>
@@ -69,7 +70,9 @@
         >
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">Tiempo restante para contribuir</div>
+              <div class="round-info-title">
+                Tiempo restante para contribuir
+              </div>
               <img
                 v-tooltip="{
                   content:
@@ -188,7 +191,9 @@
               />
             </div>
             <div class="round-info-value">
-              <div class="message">Las contribuciones están listas para ser reclamadas🎉</div>
+              <div class="message">
+                Las contribuciones están listas para ser reclamadas🎉
+              </div>
             </div>
           </div>
         </div>

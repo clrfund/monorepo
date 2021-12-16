@@ -8,7 +8,7 @@
             :totalSteps="steps.length"
           />
           <p class="subtitle">
-              Paso {{ currentStep + 1 }} de {{ steps.length }}
+            Paso {{ currentStep + 1 }} de {{ steps.length }}
           </p>
           <div class="progress-steps">
             <div
@@ -75,8 +75,9 @@
             </p>
             <div v-if="!isManuallyVerified">
               <p>
-                Una vez que estés verificado en BrightID, la confirmación de la verificación no ocurre
-                de inmediato, así que no dudes en verificar haciendo clic en el botón a continuación.
+                Una vez que estés verificado en BrightID, la confirmación de la
+                verificación no ocurre de inmediato, así que no dudes en
+                verificar haciendo clic en el botón a continuación.
               </p>
               <div class="actions">
                 <button
@@ -99,12 +100,13 @@
           <div v-if="currentStep === 0">
             <h2 class="step-title">Conectar</h2>
             <p>
-              Primero debes conectar tu cuenta BrightID con la dirección de tu billetera.
+              Primero debes conectar tu cuenta BrightID con la dirección de tu
+              billetera.
             </p>
             <p>
-              Una vez que la aplicación esté vinculada en tu aplicación BrightID,
-              espere unos momentos para que verifiquemos la conexión. Pasaremos
-              automáticamente al siguiente paso.
+              Una vez que la aplicación esté vinculada en tu aplicación
+              BrightID, espere unos momentos para que verifiquemos la conexión.
+              Pasaremos automáticamente al siguiente paso.
             </p>
             <div class="qr">
               <div class="instructions">
@@ -113,7 +115,8 @@
                 </p>
                 <img :src="appLinkQrCode" class="desktop qr-code" />
                 <p class="mobile">
-                  Siga este enlace para conectar tu billetera a tu aplicación BrightID
+                  Siga este enlace para conectar tu billetera a tu aplicación
+                  BrightID
                 </p>
                 <links class="mobile" :to="appLink">
                   <div class="icon">
@@ -123,9 +126,10 @@
                 </links>
                 <p class="mobile">
                   <em>
-                    Este enlace puede parecer aterrador, pero solo establece una conexión
-                    entre la dirección de tu billetera conectada, nuestra aplicación y
-                    BrightID. Asegúrate de que tu dirección se vea correcta.
+                    Este enlace puede parecer aterrador, pero solo establece una
+                    conexión entre la dirección de tu billetera conectada,
+                    nuestra aplicación y BrightID. Asegúrate de que tu dirección
+                    se vea correcta.
                   </em>
                 </p>
               </div>
@@ -136,9 +140,10 @@
           <div v-if="currentStep === 1">
             <h2 class="step-title">Obten patrocinio</h2>
             <p>
-              Necesitas un token de patrocinio para obtener la verificación de BrightID.
-              Esto ayuda a admitir BrightID como plataforma descentralizada. Solo necesitarás
-              hacer esto una vez y lo cubre para cualquier otra aplicación que funcione con BrightID.
+              Necesitas un token de patrocinio para obtener la verificación de
+              BrightID. Esto ayuda a admitir BrightID como plataforma
+              descentralizada. Solo necesitarás hacer esto una vez y lo cubre
+              para cualquier otra aplicación que funcione con BrightID.
             </p>
             <div class="transaction">
               <div>
@@ -169,9 +174,10 @@
           <div v-if="currentStep === 2">
             <h2 class="step-title">Verifícate</h2>
             <p>
-              La verificación BrightID ayuda a demostrar que eres un ser humano único.
-              Para ser verificado, necesitas suficientes personas para confirmar que te
-              conocieron y que eres una persona real. Hay un par de formas de hacer esto:
+              La verificación BrightID ayuda a demostrar que eres un ser humano
+              único. Para ser verificado, necesitas suficientes personas para
+              confirmar que te conocieron y que eres una persona real. Hay un
+              par de formas de hacer esto:
             </p>
             <accordion
               tag="🚀 Rapido"
@@ -191,10 +197,10 @@
           <div v-if="currentStep === 3">
             <h2 class="step-title">Registrarse</h2>
             <p>
-              Para proteger la ronda del soborno y el fraude,
-              debes agregar la dirección de tu billetera a un registro de
-              contrato inteligente. Una vez que hayas terminado, puedes unirte
-              a la ronda de financiamiento.
+              Para proteger la ronda del soborno y el fraude, debes agregar la
+              dirección de tu billetera a un registro de contrato inteligente.
+              Una vez que hayas terminado, puedes unirte a la ronda de
+              financiamiento.
             </p>
             <div class="transaction">
               <button

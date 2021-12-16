@@ -45,10 +45,9 @@
       <div>
         <p class="input-label">IPFS hash</p>
         <p class="input-description">
-          Tu imagen ahora está almacenada en una red
-          descentralizada en el siguiente hash. No es
-          necesario que hagas nada con él, pero es posible que
-          desees conservarlo para usarlo en el futuro.
+          Tu imagen ahora está almacenada en una red descentralizada en el
+          siguiente hash. No es necesario que hagas nada con él, pero es posible
+          que desees conservarlo para usarlo en el futuro.
         </p>
       </div>
       <div class="hash-area">

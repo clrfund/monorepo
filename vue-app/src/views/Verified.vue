@@ -17,8 +17,8 @@
             />
           </div>
           <div class="subtitle">
-            ¡Estás a bordo de esta ronda de financiaciamiento! Y
-            completamente verificado para BrightID: nunca más tendrás que volver a hacerlo.
+            ¡Estás a bordo de esta ronda de financiaciamiento! Y completamente
+            verificado para BrightID: nunca más tendrás que volver a hacerlo.
           </div>
           <p>Ahora puedes comenzar a contribuir a tus proyectos favoritos.</p>
           <div class="mt2 button-spacing">

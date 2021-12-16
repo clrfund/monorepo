@@ -4,15 +4,16 @@
     <div class="container">
       <div>
         <div class="flex-row">
-          <h2>Criterios de la Ronda </h2>
+          <h2>Criterios de la Ronda</h2>
           <div class="close-btn" @click="$emit('close')">
             <p class="no-margin">Cerrar</p>
             <img src="@/assets/close.svg" />
           </div>
         </div>
-        <p>los administradores van a remover cualquier proyecto que no cumplan
-          con los criterios. Lee cuidadosamente! Esperamos que en futuras rondas la revision sea por
-          parte de la comunidad.
+        <p>
+          los administradores van a remover cualquier proyecto que no cumplan
+          con los criterios. Lee cuidadosamente! Esperamos que en futuras rondas
+          la revision sea por parte de la comunidad.
         </p>
         <div class="content">
           <div

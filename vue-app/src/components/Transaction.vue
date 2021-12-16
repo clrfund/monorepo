@@ -27,7 +27,8 @@
       <loader v-if="!hash" />
       <div v-if="displayWarning && !hash">
         <small class="warning-text">
-          Si has estado esperando un tiempo, considera actualizar tu navegador y volver a conectar tu wallet.
+          Si has estado esperando un tiempo, considera actualizar tu navegador y
+          volver a conectar tu wallet.
         </small>
       </div>
     </template>
