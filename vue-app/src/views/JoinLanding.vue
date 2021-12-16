@@ -176,15 +176,15 @@ export default class JoinLanding extends Vue {
   }
 
   get deposit(): BigNumber | null {
-    return this.registryInfo.deposit
+    return this.registryInfo?.deposit
   }
 
   get depositToken(): string | null {
-    return this.registryInfo.depositToken
+    return this.registryInfo?.depositToken
   }
 
   get recipientCount(): number | null {
-    return this.registryInfo.recipientCount
+    return this.registryInfo?.recipientCount
   }
 
   private get signUpDeadline(): DateTime {
@@ -192,7 +192,7 @@ export default class JoinLanding extends Vue {
   }
 
   get spacesRemaining(): number | null {
-    if (!this.$store.state.currentRound) {
+    if (!this.$store.state.currentRound || !this.registryInfo) {
       return null
     }
     return (
