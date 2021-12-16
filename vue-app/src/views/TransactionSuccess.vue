@@ -26,8 +26,8 @@
             v-if="$route.params.type === 'reallocation'"
             class="contributed-content"
           >
-            ¡Tus opciones han sido actualizadas! Puedes actualizar 
-            tus opciones nuevamente en cualquier momento en el próximo
+            ¡Tus opciones han sido actualizadas! Puedes actualizar tus opciones
+            nuevamente en cualquier momento en el próximo
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
@@ -38,8 +38,8 @@
             v-else-if="$route.params.type === 'contribution'"
             class="contributed-content"
           >
-            Gracias por contribuir al ecosistema Ethereum. Si
-            cambias de opinión, tienes
+            Gracias por contribuir al ecosistema Ethereum. Si cambias de
+            opinión, tienes
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"

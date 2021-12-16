@@ -15,19 +15,18 @@ const baseCriterion: Criterion[] = [
     emoji: '👺',
     criterion: 'No scams, Pirámides o Multiniveles',
     description:
-      "Obviamente, tu proyecto no debe poner los fondos o información de nadie en riesgo.",
+      'Obviamente, tu proyecto no debe poner los fondos o información de nadie en riesgo.',
   },
   {
     emoji: '👯‍♀️',
     criterion: 'No clones',
     description:
-      "Si copiaste código, debes proveer un valor adicional y único al ecosistema.",
+      'Si copiaste código, debes proveer un valor adicional y único al ecosistema.',
   },
   {
     emoji: '🤓',
     criterion: 'Ser Dueño del Proyecto',
-    description:
-      'El proyecto debe ser tuyo o debes tener permiso del dueño.',
+    description: 'El proyecto debe ser tuyo o debes tener permiso del dueño.',
   },
   {
     emoji: '💻',
@@ -44,8 +43,9 @@ const ADDITIONAL_CRITERION: Criterion[] = [
   {
     emoji: '💰',
     criterion: 'Basado en Ethereum y con integrantes Hondureños',
-    description: 'Queremos que los fondos tengan un impacto en la comunidad local o sus integrantes.',
-  }
+    description:
+      'Queremos que los fondos tengan un impacto en la comunidad local o sus integrantes.',
+  },
 ]
 
 export const criteria: Criterion[] = [...baseCriterion, ...ADDITIONAL_CRITERION]

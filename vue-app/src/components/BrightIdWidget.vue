@@ -43,10 +43,14 @@
             </a>
           </div>
           <div v-else>
-            <a href="/#/verify/" @click="$emit('close')">Continuar con la configuración</a>
+            <a href="/#/verify/" @click="$emit('close')"
+              >Continuar con la configuración</a
+            >
           </div>
         </div>
-        <a href="/#/verify/" @click="$emit('close')" v-else>Comienza la configuración</a>
+        <a href="/#/verify/" @click="$emit('close')" v-else
+          >Comienza la configuración</a
+        >
         <p
           v-tooltip="{
             content: isVerified
@@ -76,8 +80,6 @@ export default class BrightIdWidget extends Vue {
   @Prop() abbrev!: string
   @Prop() balance!: string
   @Prop() isProjectCard!: boolean
-  
-  
 
   get isLinked(): boolean {
     return (

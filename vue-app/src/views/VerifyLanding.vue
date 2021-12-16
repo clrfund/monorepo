@@ -15,7 +15,8 @@
           <h1>Demuestra que solo estás usando una cuenta</h1>
         </div>
         <div class="subtitle">
-          Usamos BrightID para detener bots y tramposos, y hacer que nuestra financiación sea más democrática.
+          Usamos BrightID para detener bots y tramposos, y hacer que nuestra
+          financiación sea más democrática.
         </div>
         <h2>
           Lo que necesitarás
@@ -45,7 +46,10 @@
               >Android</a
             >
           </li>
-          <li>Una billetera Ethereum, con suficiente gasolina para dos transacciones</li>
+          <li>
+            Una billetera Ethereum, con suficiente gasolina para dos
+            transacciones
+          </li>
           <li>Acceso a Zoom o Google Meet</li>
         </ul>
         <links to="/about-sybil-resistance/">¿Porque es esto importante?</links>
@@ -59,10 +63,11 @@
         </div>
         <div v-else-if="isRoundFull" class="warning-message">
           Contribuciones cerradas temprano - ¡ya no puedes donar! Debido a la
-          generosidad de la comunidad y algunas limitaciones técnicas, tuvimos que
-          cerrar la ronda antes de lo esperado. Si ya contribuiste, todavía tienes
-          tiempo para reasignarlo si es necesario. Si no tuviste la oportunidad de
-          contribuir, aún puedes ayudar donando al grupo correspondiente
+          generosidad de la comunidad y algunas limitaciones técnicas, tuvimos
+          que cerrar la ronda antes de lo esperado. Si ya contribuiste, todavía
+          tienes tiempo para reasignarlo si es necesario. Si no tuviste la
+          oportunidad de contribuir, aún puedes ayudar donando al grupo
+          correspondiente
         </div>
         <div class="btn-container mt2">
           <wallet-widget

@@ -8,8 +8,8 @@
       <p>
         El total de tu contribución de
         <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>
-        es definitivo. No podrás aumentar esta cantidad. Asegúrate de
-        que este sea el monto máximo que podrías querer gastar en contribuciones.
+        es definitivo. No podrás aumentar esta cantidad. Asegúrate de que este
+        sea el monto máximo que podrías querer gastar en contribuciones.
       </p>
       <!-- TODO: if you get 1/3 of the way through these transactions and come back, you shouldn't get this warning again. This warning should only appear if you haven't already signed 'approve' transaction -->
       <!-- <p>
@@ -48,7 +48,8 @@
     <div v-if="step === 2">
       <progress-bar :currentStep="2" :totalSteps="3" />
       <h2>
-        Enviar {{ renderTotal }} {{ currentRound.nativeTokenSymbol }} contribución
+        Enviar {{ renderTotal }}
+        {{ currentRound.nativeTokenSymbol }} contribución
       </h2>
       <p>
         Esta transacción envía tu contribución de {{ renderTotal }}
@@ -73,8 +74,8 @@
       <h2>Magia del Pool de Contrapartida ✨</h2>
       <p>
         Esta transacción le permite al grupo coincidente saber cuánto
-        {{ currentRound.nativeTokenSymbol }} enviar a sus proyectos
-        favoritos según tus contribuciones.
+        {{ currentRound.nativeTokenSymbol }} enviar a sus proyectos favoritos
+        según tus contribuciones.
       </p>
       <transaction
         :hash="voteTxHash"

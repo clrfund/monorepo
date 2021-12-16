@@ -4,7 +4,8 @@
       ¡Necesitas {{ chain.isLayer2 ? 'L2' : chain.label }} fondos!
     </span>
     <p v-if="!!singleTokenNeeded">
-      ⚠️ Necesitas algo de xDAI para el gas y {{ nativeTokenSymbol }} para contribuir
+      ⚠️ Necesitas algo de xDAI para el gas y {{ nativeTokenSymbol }} para
+      contribuir
     </p>
     <p @click="onNavigate" class="message">
       <links

@@ -53,15 +53,15 @@
       </div>
       <div v-if="$store.getters.isRoundTallying" class="messsage">
         <span class="label"
-          >🎉 ¡Financiamiento cerrado! Nuestros contratos inteligentes
-          están ocupados contando contribuciones ...
+          >🎉 ¡Financiamiento cerrado! Nuestros contratos inteligentes están
+          ocupados contando contribuciones ...
         </span>
       </div>
       <div v-if="$store.getters.isRoundFinalized" class="messsage">
         <span class="label"
-          >¡Financiamiento cerrado! Las contribuciones están listas
-          para reclamar. Dirígete a la página de tu proyecto para reclamar tus fondos.
-          <links to="/projects">View projects</links></span
+          >¡Financiamiento cerrado! Las contribuciones están listas para
+          reclamar. Dirígete a la página de tu proyecto para reclamar tus
+          fondos. <links to="/projects">View projects</links></span
         >
       </div>
     </div>

@@ -10,16 +10,17 @@
         class="reallocation-message"
         v-if="$store.getters.canUserReallocate && $store.getters.hasUserVoted"
       >
-        Ya contribuiste en esta ronda. Puedes editar tus opciones y agregar nuevos
-        proyectos, pero el total de tu carrito siempre debe ser igual al monto de tu
-        contribución original.
+        Ya contribuiste en esta ronda. Puedes editar tus opciones y agregar
+        nuevos proyectos, pero el total de tu carrito siempre debe ser igual al
+        monto de tu contribución original.
         <links to="/about/maci" class="message-link">¿Por qué?</links>
       </div>
       <div
         class="reallocation-message"
         v-if="$store.getters.canUserReallocate && !$store.getters.hasUserVoted"
       >
-        ¡Casi terminas! Debes enviar una transacción más para completar tu contribución.
+        ¡Casi terminas! Debes enviar una transacción más para completar tu
+        contribución.
       </div>
       <div class="flex cart-title-bar">
         <div
@@ -93,7 +94,9 @@
           <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
             <div class="flex-row-reallocation">
               <div class="semi-bold">
-                {{ isEditMode ? 'Editar contribuciones' : 'Tus contribuciones' }}
+                {{
+                  isEditMode ? 'Editar contribuciones' : 'Tus contribuciones'
+                }}
               </div>
               <div class="semi-bold" v-if="$store.getters.canUserReallocate">
                 <button @click="handleEditState" class="pointer">
@@ -173,7 +176,8 @@
           "
         >
           <img src="@/assets/split.svg" /> Dividir
-          {{ formatAmount(this.contribution) }} {{ tokenSymbol }} equitativamente
+          {{ formatAmount(this.contribution) }}
+          {{ tokenSymbol }} equitativamente
         </div>
       </div>
       <div
@@ -198,12 +202,14 @@
           Los fondos que no contribuyas a los proyectos ({{
             formatAmount(this.contribution) - formatAmount(getTotal())
           }}
-          {{ tokenSymbol }}) se enviarán al fondo común al final de la ronda.
-          Su carrito debe coincidir con su
-          {{ formatAmount(this.contribution) }} {{ tokenSymbol }} donación original.
+          {{ tokenSymbol }}) se enviarán al fondo común al final de la ronda. Su
+          carrito debe coincidir con su {{ formatAmount(this.contribution) }}
+          {{ tokenSymbol }} donación original.
         </div>
         <div class="p1" v-if="isBrightIdRequired">
-          <links to="/verify" class="btn-primary">Verificar con BrightID </links>
+          <links to="/verify" class="btn-primary"
+            >Verificar con BrightID
+          </links>
         </div>
         <button
           v-if="canWithdrawContribution()"

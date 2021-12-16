@@ -57,8 +57,8 @@
       </div>
       <div class="empty-search" v-if="filteredProjects == 0">
         <div>
-          😢 Ningún proyecto coincide con tu búsqueda. Intenta usar
-          el filtro para delimitar lo que estás buscando.
+          😢 Ningún proyecto coincide con tu búsqueda. Intenta usar el filtro
+          para delimitar lo que estás buscando.
         </div>
       </div>
       <div
@@ -133,7 +133,14 @@ export default class ProjectList extends Vue {
   projects: Project[] = []
   search = ''
   isLoading = true
-  categories: string[] = ['content', 'research', 'tooling', 'data']
+  categories: string[] = [
+    'Contenido',
+    'Investigación',
+    'Tooling',
+    'Data',
+    'Educación',
+    'Otro',
+  ]
   selectedCategories: string[] = []
 
   get projectsByCategoriesSelected(): Project[] {
