@@ -42,6 +42,10 @@
       transaction) then complete KYC requirements to verify your project is
       legitimate.
     </p>
+    <p>
+      Note: all application data (except contact email address) will be publicly
+      stored on-chain.
+    </p>
     <h3>Submit your application</h3>
     <ol>
       <li>Head over to the <links to="/join">Join page</links>.</li>
@@ -69,10 +73,12 @@
     <p>
       You'll submit a contact email address as part of your project's
       application. The email address will not be stored on-chain (with the rest
-      of the application data) but it will be sent to the registry admin. The
-      registry admin will use this to contact you and verify information about
-      your project. The registry admin may reject projects that don't meet the
-      round criteria or pass KYC/AML requirements.
+      of the application data) but it will be sent to the registry admin (the
+      clr.fund team) and the Ethereum Foundation for the purposes of completing
+      your KYC. The Ethereum Foundation will use this email address to contact
+      you and verify information about your project. The registry admin may
+      reject projects that don't meet the round criteria or pass KYC/AML
+      requirements.
     </p>
     <p>
       In any case, your
