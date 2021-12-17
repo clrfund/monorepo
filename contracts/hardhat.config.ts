@@ -13,9 +13,13 @@ const GAS_LIMIT = 20000000
 const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY
 
-const accounts = WALLET_MNEMONIC
-  ? { mnemonic: WALLET_MNEMONIC }
-  : [WALLET_PRIVATE_KEY!]
+let accounts
+if (WALLET_MNEMONIC) {
+  accounts = { mnemonic: WALLET_MNEMONIC }
+}
+if (WALLET_PRIVATE_KEY) {
+  accounts = [WALLET_PRIVATE_KEY]
+}
 
 const config: HardhatUserConfig = {
   networks: {
