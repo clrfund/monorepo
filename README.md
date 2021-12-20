@@ -144,6 +144,42 @@ yarn start:web
 yarn lint
 ```
 
+#### Sitemap
+
+```
+/
+├─── /projects
+├─── /project/:id
+├─── /round-information
+├─── /rounds
+├─── /round/:address
+├─── /about
+├─── /about/maci
+├─── /about/sybil-resistance
+├─── /about/layer-2
+├─── /about/how-it-works
+├─── /about/how-it-works/contributors
+├─── /about/how-it-works/recipients
+├─── /about/public-goods
+├─── /about/quadratic-funding
+├─── /about/decentralization
+├─── /recipients
+├─── /verify
+├─── /verify/success/:hash?
+├─── /verify/connect
+├─── /join
+├─── /join/success/:hash
+├─── /join/project
+├─── /join/fund
+├─── /join/team
+├─── /join/links
+├─── /join/image
+├─── /join/furthestStep
+├─── /join/summary
+├─── /cart
+├─── /transaction-success/:type/:hash?
+```
+
 ## Git hooks
 
 #### Pre-commit
