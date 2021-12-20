@@ -49,7 +49,7 @@
           <li>An Ethereum wallet, with enough gas for two transactions</li>
           <li>Access to Zoom or Google Meet</li>
         </ul>
-        <links to="/about-sybil-resistance/">Why is this important?</links>
+        <links to="/about/sybil-resistance/">Why is this important?</links>
         <div v-if="isRoundNotStarted" class="join-message">
           There's not yet an open funding round. Get prepared now so you're
           ready for when the next one begins!
