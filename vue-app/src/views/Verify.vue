@@ -22,6 +22,7 @@
                   class="progress-steps-loader"
                 />
                 <img
+                  class="current-step"
                   v-else
                   src="@/assets/current-step.svg"
                   alt="current step"
@@ -39,7 +40,11 @@
                 <p v-text="step.name" class="step" />
               </template>
               <template v-else>
-                <img src="@/assets/step-remaining.svg" alt="step remaining" />
+                <img
+                  class="remaining-step"
+                  src="@/assets/step-remaining.svg"
+                  alt="step remaining"
+                />
                 <p v-text="step.name" class="step" />
               </template>
             </div>
@@ -502,7 +507,6 @@ export default class VerifyView extends Vue {
     top: 5rem;
     align-self: start;
     padding: 1.5rem 1rem;
-    background: $bg-primary-color;
     border-radius: 16px;
     /* width: 320px; */
     box-shadow: $box-shadow;
@@ -850,35 +854,7 @@ export default class VerifyView extends Vue {
 }
 
 .loader {
-  display: block;
-  height: 40px;
-  margin: $content-space auto;
-  width: 40px;
-}
-
-.loader:after {
-  content: ' ';
-  display: block;
-  width: 32px;
-  height: 32px;
-  margin: 4px;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: loader 1.2s linear infinite;
-}
-
-.loader {
   margin: $modal-space auto;
-}
-
-@keyframes loader {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .error {
@@ -1078,7 +1054,6 @@ export default class VerifyView extends Vue {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: $bg-primary-color;
   border-radius: 1rem;
   margin-top: 2rem;
   padding: 2rem;

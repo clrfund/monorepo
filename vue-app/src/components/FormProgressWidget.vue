@@ -16,7 +16,11 @@
           @click="handleStepNav(step)"
         >
           <template v-if="step === currentStep">
-            <img src="@/assets/current-step.svg" alt="current step" />
+            <img
+              class="current-step"
+              src="@/assets/current-step.svg"
+              alt="current step"
+            />
             <p v-text="name" class="active step" />
           </template>
           <template v-else-if="step === furthestStep">
@@ -100,7 +104,6 @@ export default class FormProgressWidget extends Vue {
     top: 5rem;
     align-self: start;
     padding: 1.5rem 1rem;
-    background: $bg-primary-color;
     border-radius: 16px;
     box-shadow: $box-shadow;
 

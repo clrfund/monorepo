@@ -21,17 +21,18 @@
 
   .app-btn {
     @include button(white, $clr-purple, none);
-  }
-
-  .apply-callout {
-    background: transparent !important;
-    color: $clr-black;
-    border: none !important;
+    padding: 0.25rem 1.25rem;
+    border-radius: 1rem;
   }
 
   #hero {
     background: $clr-white;
     color: $clr-black;
+
+    .apply-callout {
+      background: $clr-white;
+      border: $clr-purple 2px solid;
+    }
   }
 
   #banner {
@@ -104,7 +105,7 @@
   #content-container {
     .content,
     .hero {
-      background: transparent;
+      background: $clr-white;
     }
   }
 
@@ -132,10 +133,7 @@
   }
 
   .round-info-value {
-    .value {
-      color: $clr-black;
-    }
-
+    .value,
     .unit {
       color: $clr-black;
     }
@@ -151,9 +149,6 @@
   }
 
   .round-info {
-    .has-tooltip {
-      filter: invert(0.6);
-    }
     .verified {
       filter: invert(0.3);
       color: $clr-white;
@@ -310,7 +305,22 @@
 
     .recipient-submission-widget {
       background-color: $clr-white;
-      border: none;
+      border-color: $clr-light-gray;
+    }
+
+    .shine {
+      background: inherit;
+      background-image: none;
+    }
+
+    .info {
+      background-color: inherit;
+    }
+
+    .address-box-no-team,
+    .link-box {
+      background: inherit;
+      border: $clr-light-gray 1px solid;
     }
   }
 
@@ -318,5 +328,163 @@
     .gradient {
       background: transparent;
     }
+
+    .apply-callout {
+      background: transparent;
+      color: $clr-black;
+      border: none;
+    }
+  }
+
+  // rounds
+  .rounds {
+    .round {
+      background: $clr-white;
+      border-color: $clr-light-gray;
+
+      a {
+        color: $clr-black;
+      }
+    }
+  }
+
+  // recipients
+  .recipients {
+    .requests {
+      background-color: $clr-white;
+      border: none;
+
+      thead {
+        background-color: $clr-light-gray;
+      }
+
+      tr {
+        &:nth-child(2n) {
+          background-color: $clr-light-gray;
+        }
+      }
+    }
+  }
+
+  // cart
+  .empty-cart {
+    div {
+      color: $clr-black;
+    }
+  }
+
+  .cart-btn,
+  .toggle-btn {
+    background: inherit;
+    border: 1px solid $clr-light-gray;
+    img {
+      filter: invert(0.3);
+    }
+  }
+
+  .cart-btn:hover,
+  .toggle-btn:hover {
+    background: inherit;
+  }
+
+  // wallet widget
+  .wallet-widget {
+    .wrapper {
+      .container {
+        background-color: $clr-white;
+        .balances-card {
+          background-color: inherit;
+        }
+
+        .address-card {
+          background: inherit;
+        }
+
+        .bright-id-widget-container {
+          background-color: inherit;
+          .setup-container {
+            background-color: inherit;
+          }
+        }
+
+        .unverified {
+          color: $error-color;
+        }
+      }
+    }
+  }
+
+  .warning-message {
+    background-color: $clr-white;
+  }
+
+  .warning {
+    color: $error-color;
+    border-color: $error-color;
+  }
+
+  .warning-text,
+  .warning-icon {
+    color: $error-color;
+  }
+
+  .total-title {
+    background-color: inherit;
+    color: inherit;
+  }
+
+  .disconnect.btn,
+  .close-btn {
+    filter: invert(0.3);
+  }
+
+  .copy.profile {
+    filter: invert(0.6);
+  }
+
+  // join and verify form
+  .form-area {
+    .application {
+      background-color: $clr-white;
+    }
+  }
+
+  // loader
+  .loader:after {
+    border-color: $clr-dark-gray transparent $clr-dark-gray transparent;
+  }
+
+  // progress widget
+  .progress-area.desktop,
+  .progress-area.mobile {
+    .progress-container {
+      .progress-step {
+        .step {
+          color: $clr-black;
+        }
+      }
+    }
+  }
+
+  img.current-step,
+  img.remaining-step {
+    filter: invert(0.3);
+  }
+
+  .has-tooltip {
+    filter: invert(0.3);
+  }
+
+  .collapsed-cart {
+    background-color: inherit;
+  }
+
+  .hash {
+    color: inherit;
+  }
+
+  .copy {
+    background-color: inherit;
+    border: $clr-light-gray 1px solid;
   }
 }

@@ -736,7 +736,6 @@ h2 {
 .cart-container {
   box-sizing: border-box;
   position: relative;
-  background: $bg-primary-color;
   gap: 1rem;
   height: 100%;
   padding: 1rem 0rem;
@@ -803,7 +802,6 @@ h2 {
   position: sticky;
   padding: 1rem;
   top: 0;
-  background: $bg-primary-color;
   z-index: 1;
   @media (max-width: $breakpoint-m) {
     justify-content: space-between;
@@ -884,7 +882,6 @@ h2 {
   display: flex;
   flex-direction: column;
   width: 100%;
-  background: $bg-primary-color;
 }
 
 .empty-cart {
@@ -892,7 +889,6 @@ h2 {
   font-weight: 400;
   margin: 1rem;
   padding: 1.5rem 1.5rem;
-  background: $bg-primary-color;
 
   img {
     height: 70px;
@@ -936,7 +932,6 @@ h2 {
   bottom: 0;
   padding: 1rem;
   justify-content: space-between;
-  background: $bg-primary-color;
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
   font-family: 'Inter';
