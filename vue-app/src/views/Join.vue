@@ -1074,7 +1074,7 @@ export default class JoinView extends mixins(validationMixin) {
 
 .form-area {
   grid-area: form;
-  overflow: scroll;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   gap: 1rem;
