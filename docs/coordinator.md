@@ -126,10 +126,33 @@ Set the path to downloaded parameter files and also the path to `zkutil` binary 
 export NODE_CONFIG='{"snarkParamsPath": "../../../contracts/snark-params/", "zkutil_bin": "/usr/bin/zkutil"}'
 ```
 
+Set the following env vars in `.env`:
+
+```
+ROUND_ADDRESS=<funding-round-address>
+COORDINATOR_PK=<coordinator-private-key>
+COORDINATOR_ETH_PK=<eth-private-key>
+```
+
 Decrypt messages and tally the votes:
 
 ```
-COORDINATOR_PK=<coordinator-private-key> COORDINATOR_ETH_PK=<eth-private-key> ROUND_ADDRESS=<funding-round-address> yarn hardhat run --network xdai scripts/tally.ts
+yarn hardhat run --network {network} scripts/tally.ts
 ```
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
+
+### Finalize round
+
+Make sure you have the following env vars in `.env`. Ignore this if you are running a local test round in `localhost`, the script will know these values itself.
+
+```
+ROUND_ADDRESS=<funding-round-address>
+COORDINATOR_ETH_PK=<eth-private-key>
+```
+
+Once you have the `tally.json` from the tally script, run:
+
+```
+yarn hardhat run --network {network} scripts/finalize.ts
+```
