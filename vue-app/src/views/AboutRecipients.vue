@@ -87,7 +87,36 @@
       information (but not contact information) will be stored publicly
       on-chain.
     </p>
-
+    <h4>Required documents</h4>
+    <p style="text-decoration: underline">For individuals</p>
+    <ol>
+      <li>Scanned copy of passport</li>
+      <li>
+        Proof of address, such as bank statement, utility bill or telecom
+        subscription
+      </li>
+    </ol>
+    <p style="text-decoration: underline">For organizations</p>
+    <ol>
+      <li>Certificate of Incorporation</li>
+      <li>
+        Proof of address, such as bank statement, utility bill or telecom
+        subscription
+      </li>
+      <li>
+        Shareholders' and Directors' registers / Members' register (for
+        organization without shareholdings)
+      </li>
+      <li>
+        For each director, officer and individual shareholder (more than 10%),
+        please provide (i) scan copy of passport, and (ii) copy of proof of
+        address
+      </li>
+      <li>
+        If the shareholder is an organization and holds more than 10%, please
+        provide 1 through 4
+      </li>
+    </ol>
     <h2>Claim your funds</h2>
     <p>
       After a clr.fund round is finished, it's simple to claim your project's
