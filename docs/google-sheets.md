@@ -10,8 +10,8 @@ If you'd like to use this feature, you must add the Google Sheet environment var
 
 Two new env variables must be added:
 
-- `GOOGLE_APPLICATION_CREDENTIALS`: service account credentials in a json string
-- `GOOGLE_SPREADSHEET_ID`: the spreadsheet id that is going to be used
+- `GOOGLE_APPLICATION_CREDENTIALS`: service account credentials in a json string (something in this form: `{"type": "...", "private_key": "...", ...}`)
+- `VUE_APP_GOOGLE_SPREADSHEET_ID`: the spreadsheet id that is going to be used
 
 [Learn more about setting up Google authentication credentials](https://cloud.google.com/docs/authentication/getting-started).
 
@@ -25,7 +25,8 @@ In order to test it, you need to install the Netlify CLI (https://docs.netlify.c
 
 1. install everything by running `yarn`
 2. run `yarn start:node` in one terminal
-3. run `yarn deploy:local` in a different terminal
-4. run `netlify dev` in a different terminal in the vue-app folder
+3. build and deploy the subgraph locally (check instructions [here](./subgraph.md))
+4. run `yarn deploy:local` in a different terminal
+5. run `netlify dev` in a different terminal in the vue-app folder
 
 With that, you will have the lambda functions in `/.netlify/functions/{function}`.
