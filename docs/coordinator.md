@@ -147,7 +147,7 @@ Result will be saved to `tally.json` file, which must then be published via IPFS
 Make sure you have the following env vars in `.env`. Ignore this if you are running a local test round in `localhost`, the script will know these values itself.
 
 ```
-ROUND_ADDRESS=<funding-round-address>
+FACTORY_ADDRESS=<funding-round-factory-address>
 COORDINATOR_ETH_PK=<eth-private-key>
 ```
 

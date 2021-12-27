@@ -3,15 +3,15 @@ import { Wallet } from 'ethers'
 import { ethers, network } from 'hardhat'
 
 async function main() {
-  let fundingRoundAddress, coordinator
+  let factoryAddress, coordinator
   if (network.name === 'localhost') {
     const state = JSON.parse(fs.readFileSync('state.json').toString())
-    fundingRoundAddress = state.factory
+    factoryAddress = state.factory
 
     const signers = await ethers.getSigners()
     coordinator = signers[1]
   } else {
-    fundingRoundAddress = process.env.ROUND_ADDRESS || ''
+    factoryAddress = process.env.FACTORY_ADDRESS || ''
     const coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || ''
     coordinator = new Wallet(coordinatorEthPrivKey, ethers.provider)
   }
@@ -19,12 +19,13 @@ async function main() {
   const tally = JSON.parse(fs.readFileSync('tally.json').toString())
   const factory = await ethers.getContractAt(
     'FundingRoundFactory',
-    fundingRoundAddress,
+    factoryAddress,
     coordinator
   )
   const totalSpent = parseInt(tally.totalVoiceCredits.spent)
   const totalSpentSalt = tally.totalVoiceCredits.salt
-  await factory.transferMatchingFunds(totalSpent, totalSpentSalt)
+  const tx = await factory.transferMatchingFunds(totalSpent, totalSpentSalt)
+  await tx.wait()
   console.log('Round finalized, totals verified.')
 }
 
