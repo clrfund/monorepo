@@ -93,6 +93,38 @@ Finally, the [CID](https://ipfs.io/ipns/docs.ipfs.io/concepts/content-addressing
 await fundingRound.publishTallyHash('<CID>')
 ```
 
+## Coordinate using Docker
+
+In case you are in a different OS than Linux, you can run all the previous MACI CLI commands by running the Docker image located in the MACI repo.
+
+**Note:** the [x32 params](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) have been tested using Ubuntu 21.04 + Node 15.8.0.
+
+### Use the docker image
+
+First, install [docker](https://docs.docker.com/engine/install/) and [docker-componse](https://docs.docker.com/compose/install/)
+
+Inside the maci repo, run:
+
+```
+docker-componse up
+```
+
+Once the container is built, in a different terminal, grab the container id:
+
+```
+docker container ls
+```
+
+Get inside the container and execute the scripts you want:
+
+```
+docker exec -it {CONTAINER_ID} bash
+
+# inside the container
+cd cli/
+node build/index.js genProofs ...
+```
+
 ## Coordinate using clrfund scripts
 
 ### Generate coordinator key
