@@ -142,6 +142,16 @@ yarn hardhat run --network {network} scripts/tally.ts
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
 
+**Using [command line](https://docs.ipfs.io/reference/cli/)**
+
+```
+# start ipfs daemon in one terminal
+ipfs daemon
+
+# in a diff terminal, go to `/contracts` (or where you have the file) and publish the file
+ipfs add tally.json
+```
+
 ### Finalize round
 
 Make sure you have the following env vars in `.env`. Ignore this if you are running a local test round in `localhost`, the script will know these values itself.
