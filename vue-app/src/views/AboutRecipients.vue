@@ -92,16 +92,16 @@
     <ol>
       <li>Scanned copy of passport</li>
       <li>
-        Proof of address, such as bank statement, utility bill or telecom
-        subscription
+        Proof of address from within the last 3 months, such as bank statement,
+        utility bill or telecom subscription
       </li>
     </ol>
     <p style="text-decoration: underline">For organizations</p>
     <ol>
       <li>Certificate of Incorporation</li>
       <li>
-        Proof of address, such as bank statement, utility bill or telecom
-        subscription
+        Proof of address from within the last 3 months, such as bank statement,
+        utility bill or telecom subscription
       </li>
       <li>
         Shareholders' and Directors' registers / Members' register (for
