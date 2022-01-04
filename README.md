@@ -144,7 +144,7 @@ yarn start:web
 yarn lint
 ```
 
-#### Sitemap
+## Sitemap
 
 ```
 /
@@ -177,7 +177,8 @@ yarn lint
 ├─── /join/furthestStep
 ├─── /join/summary
 ├─── /cart
-├─── /transaction-success/:type/:hash?
+├─── /transaction-success/reallocation/:hash?
+├─── /transaction-success/contribution/:hash?
 ```
 
 ## Git hooks
