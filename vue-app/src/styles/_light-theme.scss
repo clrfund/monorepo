@@ -105,7 +105,7 @@
   #content-container {
     .content,
     .hero {
-      background: $clr-white;
+      background: transparent;
     }
   }
 
@@ -325,10 +325,6 @@
   }
 
   #join-landing {
-    .gradient {
-      background: transparent;
-    }
-
     .apply-callout {
       background: transparent;
       color: $clr-black;
@@ -385,6 +381,12 @@
   .cart-btn:hover,
   .toggle-btn:hover {
     background: inherit;
+  }
+
+  .semi-bold {
+    button {
+      color: inherit;
+    }
   }
 
   // wallet widget
@@ -449,6 +451,11 @@
     }
   }
 
+  // verify
+  .gradient {
+    background: transparent;
+  }
+
   // loader
   .loader:after {
     border-color: $clr-dark-gray transparent $clr-dark-gray transparent;
@@ -486,5 +493,19 @@
   .copy {
     background-color: inherit;
     border: $clr-light-gray 1px solid;
+  }
+
+  // transaction success
+  .contributed-header {
+    color: inherit;
+  }
+
+  .contributed-button {
+    background: $clr-purple;
+  }
+
+  .contributed-button:hover {
+    opacity: 0.8;
+    background: $clr-purple;
   }
 }
