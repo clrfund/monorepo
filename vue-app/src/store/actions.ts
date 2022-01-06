@@ -30,6 +30,7 @@ import {
   LOAD_FACTORY_INFO,
   LOAD_RECIPIENT_REGISTRY_INFO,
   LOAD_ROUND_INFO,
+  LOAD_TALLY,
   LOAD_USER_INFO,
   LOGIN_USER,
   LOGOUT_USER,
@@ -92,8 +93,11 @@ const actions = {
     //TODO: update to take factory address as a parameter, default to env. variable
     const round = await getRoundInfo(roundAddress)
     commit(SET_CURRENT_ROUND, round)
-    if (round && round.status === RoundStatus.Finalized) {
-      const tally = await getTally(roundAddress)
+  },
+  async [LOAD_TALLY]({ commit, state }) {
+    const currentRound = state.currentRound
+    if (currentRound && currentRound.status === RoundStatus.Finalized) {
+      const tally = await getTally(state.currentRoundAddress)
       commit(SET_TALLY, tally)
     }
   },
