@@ -31,12 +31,13 @@ export default class Breadcrumbs extends Vue {
   position: relative;
   display: flex;
   flex: 1 0 auto;
+  flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
   padding: 1rem 0;
   z-index: 1;
   p {
-    margin-right: 5px;
+    margin: 0 5px 0 0;
   }
 }
 
