@@ -143,9 +143,10 @@ export default class App extends Vue {
     const links = url
       .split('/')
       .splice(1)
+      .filter((link) => !link.includes('0x')) // Filter out address hash
       .map((link) => {
         return {
-          link,
+          link: link === 'project' ? 'projects' : link,
           url: url.split(link)[0] + (link === 'project' ? 'projects' : link), // No way back to projects, and in the case of breadcrumbs makes sense to go back to projects if on a project detail page
         }
       })
