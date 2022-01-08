@@ -9,7 +9,7 @@
         </div>
         <div>
           <div class="hero-content">
-            <h1>Send your favorite staking projects to the moon!</h1>
+            <h1>Send your favorite Ethereum staking projects to the moon!</h1>
             <div id="subtitle" class="subtitle">
               Every project you contribute to gets a portion of extra funding.
             </div>

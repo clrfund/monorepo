@@ -35,7 +35,7 @@ const routes = [
     name: 'landing',
     component: Landing,
     meta: {
-      title: 'Staking CLR',
+      title: 'Ethereum Staking CLR',
     },
   },
   {
