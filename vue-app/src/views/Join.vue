@@ -13,7 +13,7 @@
         :saveFormData="saveFormData"
       />
       <div class="title-area">
-        <h1>Join the round</h1>
+        <h1>Join the staking round</h1>
         <div v-if="currentStep === 5">
           <div class="toggle-tabs-desktop">
             <p

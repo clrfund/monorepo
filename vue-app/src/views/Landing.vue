@@ -28,7 +28,7 @@
             "
           >
             <div class="column">
-              <h2>Join the funding round</h2>
+              <h2>Join the staking funding round</h2>
               <p>
                 Add your project to the next funding round. If you're working on
                 anything related to staking, you can join in.
@@ -55,8 +55,8 @@
         <div id="how-it-works-content">
           <h2>Every donation is amplified by the matching pool.</h2>
           <p>
-            This fundraiser rewards projects with the most unique demand, not
-            just those with the wealthiest backers.
+            This fundraiser rewards staking projects with the most unique
+            demand, not just those with the wealthiest backers.
           </p>
           <image-responsive
             title="wormhole"
