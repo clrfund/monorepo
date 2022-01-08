@@ -4,7 +4,7 @@ export interface Criterion {
   description: string
 }
 
-const baseCriterion: Criterion[] = [
+const BASE_CRITERION: Criterion[] = [
   {
     emoji: '🤲',
     criterion: 'Free and open source',
@@ -54,4 +54,7 @@ const ADDITIONAL_CRITERION: Criterion[] = [
   },
 ]
 
-export const criteria: Criterion[] = [...baseCriterion, ...ADDITIONAL_CRITERION]
+export const criteria: Criterion[] = [
+  ...BASE_CRITERION,
+  ...ADDITIONAL_CRITERION,
+]
