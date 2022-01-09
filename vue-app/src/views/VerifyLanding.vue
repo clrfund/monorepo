@@ -11,6 +11,7 @@
         </div>
       </div>
       <div class="content">
+        <breadcrumbs :links="links" />
         <div class="flex-title">
           <h1>Prove you’re only using one account</h1>
         </div>
@@ -90,6 +91,7 @@ import { commify, formatUnits } from '@ethersproject/units'
 import { getCurrentRound } from '@/api/round'
 import { User } from '@/api/user'
 
+import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Links from '@/components/Links.vue'
 import Loader from '@/components/Loader.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
@@ -99,6 +101,7 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
   components: {
+    Breadcrumbs,
     Links,
     Loader,
     ProgressBar,
@@ -138,6 +141,23 @@ export default class VerifyLanding extends Vue {
 
   get isRoundOver(): boolean {
     return this.$store.getters.hasContributionPhaseEnded
+  }
+
+  get links(): Array<{ link: string; url: string }> {
+    const url = `${this.$route.path}`
+
+    const links = url
+      .split('/')
+      .splice(1)
+      .filter((link) => !link.includes('0x')) // Filter out address hash
+      .map((link) => {
+        return {
+          link: link === 'project' ? 'projects' : link,
+          url: url.split(link)[0] + (link === 'project' ? 'projects' : link), // No way back to projects, and in the case of breadcrumbs makes sense to go back to projects if on a project detail page
+        }
+      })
+
+    return links
   }
 
   formatDuration(value: number): string {

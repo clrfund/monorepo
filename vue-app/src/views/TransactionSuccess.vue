@@ -7,6 +7,7 @@
     </div>
     <div class="dropshadow">
       <div class="content">
+        <breadcrumbs :links="links" />
         <span class="contributed-icon">🎉</span>
         <p
           v-if="$route.params.type === 'reallocation'"
@@ -74,12 +75,13 @@ import { RoundInfo } from '@/api/round'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
+import Breadcrumbs from '@/components/Breadcrumbs.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
 
 @Component({
-  components: { TransactionReceipt, TimeLeft, ImageResponsive },
+  components: { TransactionReceipt, TimeLeft, ImageResponsive, Breadcrumbs },
 })
 export default class TransactionSuccess extends Vue {
   get contribution(): BigNumber | null {
@@ -88,6 +90,23 @@ export default class TransactionSuccess extends Vue {
 
   get currentRound(): RoundInfo | null {
     return this.$store.state.currentRound
+  }
+
+  get links(): Array<{ link: string; url: string }> {
+    const url = `${this.$route.path}`
+
+    const links = url
+      .split('/')
+      .splice(1)
+      .filter((link) => !link.includes('0x')) // Filter out address hash
+      .map((link) => {
+        return {
+          link: link === 'project' ? 'projects' : link,
+          url: url.split(link)[0] + (link === 'project' ? 'projects' : link), // No way back to projects, and in the case of breadcrumbs makes sense to go back to projects if on a project detail page
+        }
+      })
+
+    return links
   }
 
   formatContribution() {

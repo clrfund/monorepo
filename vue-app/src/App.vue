@@ -17,7 +17,7 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <breadcrumbs v-if="showBackLink" :links="links" />
+        <breadcrumbs v-if="showBreadCrumb" :links="links" />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -194,8 +194,8 @@ export default class App extends Vue {
     return routes.includes(this.$route.name || '')
   }
 
-  get showBackLink(): boolean {
-    const excludedRoutes = ['landing', 'join']
+  get showBreadCrumb(): boolean {
+    const excludedRoutes = ['landing', 'join', 'transaction-success', 'verify']
     return !excludedRoutes.includes(this.$route.name || '')
   }
 
