@@ -100,7 +100,6 @@ export default class App extends Vue {
     this.intervals.user = setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)
-    console.log(this)
   }
 
   //NOTE: why are all these called on the landing page?
