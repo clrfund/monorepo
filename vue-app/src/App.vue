@@ -17,7 +17,7 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <breadcrumbs v-if="showBreadCrumb" :links="links" />
+        <breadcrumbs v-if="showBreadCrumb" :path="path" />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -137,21 +137,8 @@ export default class App extends Vue {
     return this.$route.name !== 'landing'
   }
 
-  get links(): Array<{ link: string; url: string }> {
-    const url = `${this.$route.path}`
-
-    const links = url
-      .split('/')
-      .splice(1)
-      .filter((link) => !link.includes('0x')) // Filter out address hash
-      .map((link) => {
-        return {
-          link: link === 'project' ? 'projects' : link,
-          url: url.split(link)[0] + (link === 'project' ? 'projects' : link), // No way back to projects, and in the case of breadcrumbs makes sense to go back to projects if on a project detail page
-        }
-      })
-
-    return links
+  get path(): string {
+    return this.$route.path
   }
 
   get isSidebarShown(): boolean {

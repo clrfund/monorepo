@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="content">
-        <breadcrumbs :links="links" />
+        <breadcrumbs :path="path" />
         <div class="flex-title">
           <h1>Prove you’re only using one account</h1>
         </div>
@@ -143,21 +143,8 @@ export default class VerifyLanding extends Vue {
     return this.$store.getters.hasContributionPhaseEnded
   }
 
-  get links(): Array<{ link: string; url: string }> {
-    const url = `${this.$route.path}`
-
-    const links = url
-      .split('/')
-      .splice(1)
-      .filter((link) => !link.includes('0x')) // Filter out address hash
-      .map((link) => {
-        return {
-          link: link === 'project' ? 'projects' : link,
-          url: url.split(link)[0] + (link === 'project' ? 'projects' : link), // No way back to projects, and in the case of breadcrumbs makes sense to go back to projects if on a project detail page
-        }
-      })
-
-    return links
+  get path(): string {
+    return this.$route.path
   }
 
   formatDuration(value: number): string {

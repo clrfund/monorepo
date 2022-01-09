@@ -7,7 +7,7 @@
     </div>
     <div class="dropshadow">
       <div class="content">
-        <breadcrumbs :links="links" />
+        <breadcrumbs :path="path" />
         <span class="contributed-icon">🎉</span>
         <p
           v-if="$route.params.type === 'reallocation'"
@@ -92,21 +92,8 @@ export default class TransactionSuccess extends Vue {
     return this.$store.state.currentRound
   }
 
-  get links(): Array<{ link: string; url: string }> {
-    const url = `${this.$route.path}`
-
-    const links = url
-      .split('/')
-      .splice(1)
-      .filter((link) => !link.includes('0x')) // Filter out address hash
-      .map((link) => {
-        return {
-          link: link === 'project' ? 'projects' : link,
-          url: url.split(link)[0] + (link === 'project' ? 'projects' : link), // No way back to projects, and in the case of breadcrumbs makes sense to go back to projects if on a project detail page
-        }
-      })
-
-    return links
+  get path(): string {
+    return this.$route.path
   }
 
   formatContribution() {
