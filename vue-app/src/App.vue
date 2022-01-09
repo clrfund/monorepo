@@ -65,15 +65,17 @@ import { SET_CURRENT_USER } from '@/store/mutation-types'
 
 @Component({
   name: 'clr.fund',
-  metaInfo: {
-    title: 'clr.fund',
-    titleTemplate: 'clr.fund - %s',
-    meta: [
-      {
-        name: 'git-commit',
-        content: process.env.VUE_APP_GIT_COMMIT || '',
-      },
-    ],
+  metaInfo() {
+    return {
+      title: this.$route.meta.title,
+      titleTemplate: 'clr.fund - %s',
+      meta: [
+        {
+          name: 'git-commit',
+          content: process.env.VUE_APP_GIT_COMMIT || '',
+        },
+      ],
+    }
   },
   components: {
     RoundInformation,
@@ -98,6 +100,7 @@ export default class App extends Vue {
     this.intervals.user = setInterval(() => {
       this.$store.dispatch(LOAD_USER_INFO)
     }, 60 * 1000)
+    console.log(this)
   }
 
   //NOTE: why are all these called on the landing page?
