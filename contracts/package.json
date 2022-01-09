@@ -7,6 +7,7 @@
     "build": "hardhat compile",
     "node": "hardhat node --port 18545 --hostname 0.0.0.0",
     "deploy:local": "yarn clean && yarn build && hardhat run --network localhost scripts/deploy.ts",
+    "deploy:arbitrum": "hardhat run --network arbitrum scripts/deployRound.ts",
     "deployTestRound:local": "hardhat run --network localhost scripts/deployTestRound.ts",
     "contribute:local": "hardhat run --network localhost scripts/contribute.ts",
     "vote:local": "hardhat run --network localhost scripts/vote.ts",

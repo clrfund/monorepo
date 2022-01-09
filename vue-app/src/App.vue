@@ -56,6 +56,7 @@ import {
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
   LOGIN_USER,
+  LOAD_FACTORY_INFO,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 
@@ -105,6 +106,7 @@ export default class App extends Vue {
       this.$store.state.currentRoundAddress || (await getCurrentRound())
     await this.$store.dispatch(SELECT_ROUND, roundAddress)
     this.$store.dispatch(LOAD_ROUND_INFO)
+    this.$store.dispatch(LOAD_FACTORY_INFO)
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
   }
 
@@ -120,9 +122,9 @@ export default class App extends Vue {
 
     this.$store.commit(SET_CURRENT_USER, this.$web3.user)
     await this.$store.dispatch(LOGIN_USER)
+    this.$store.dispatch(LOAD_USER_INFO)
     if (this.$store.state.currentRound) {
       // Load cart & contributor data for current round
-      await this.$store.dispatch(LOAD_USER_INFO)
       this.$store.dispatch(LOAD_CART)
       this.$store.dispatch(LOAD_COMMITTED_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)

@@ -56,6 +56,7 @@ In a future version, we plan to address this by routing ETH and token contributi
 - [How to tally votes](docs/coordinator.md)
 - [How to verify results](docs/trusted-setup.md)
 - [Running the subgraph](docs/subgraph.md)
+- [Deployment](docs/deployment.md)
 
 ## Development
 
