@@ -9,7 +9,7 @@
     <round-status-banner />
 
     <div class="breadcrumbs">
-      <breadcrumbs :path="path" />
+      <breadcrumbs />
     </div>
     <div class="content" v-if="loading">
       <h1>Fetching round data...</h1>
@@ -166,10 +166,6 @@ export default class JoinLanding extends Vue {
 
   get links(): Array<{ link: string; url: string }> {
     return [{ link: 'join', url: '/join' }]
-  }
-
-  get path(): string {
-    return this.$route.path
   }
 
   async created() {

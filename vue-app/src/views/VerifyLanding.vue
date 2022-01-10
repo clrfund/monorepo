@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="content">
-        <breadcrumbs :path="path" />
+        <breadcrumbs />
         <div class="flex-title">
           <h1>Prove you’re only using one account</h1>
         </div>
@@ -141,10 +141,6 @@ export default class VerifyLanding extends Vue {
 
   get isRoundOver(): boolean {
     return this.$store.getters.hasContributionPhaseEnded
-  }
-
-  get path(): string {
-    return this.$route.path
   }
 
   formatDuration(value: number): string {

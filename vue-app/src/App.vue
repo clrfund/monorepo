@@ -17,7 +17,7 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <breadcrumbs v-if="showBreadCrumb" :path="path" />
+        <breadcrumbs v-if="showBreadCrumb" />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -137,10 +137,6 @@ export default class App extends Vue {
 
   get isInApp(): boolean {
     return this.$route.name !== 'landing'
-  }
-
-  get path(): string {
-    return this.$route.path
   }
 
   get isSidebarShown(): boolean {

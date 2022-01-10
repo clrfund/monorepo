@@ -25,7 +25,7 @@ export default class Breadcrumbs extends Vue {
   @Prop() path!: string
 
   get links(): Array<{ link: string; url: string }> {
-    const url = this.path
+    const url = this.$route.path
 
     const links = url
       .split('/')
