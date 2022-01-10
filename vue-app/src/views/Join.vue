@@ -44,7 +44,9 @@
             <h2 class="step-title">About the project</h2>
             <div class="inputs">
               <div class="form-background">
-                <label for="project-name" class="input-label">Name</label>
+                <label for="project-name" class="input-label"
+                  >Project name</label
+                >
                 <input
                   id="project-name"
                   type="text"
