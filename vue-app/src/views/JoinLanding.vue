@@ -62,6 +62,10 @@
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
         deposit.
       </div>
+      <div class="subtitle mt2">
+        The round only accepts a total of {{ maxRecipients }} projects, so apply
+        now while there’s still room!
+      </div>
       <div class="info-boxes">
         <div class="apply-callout">
           <div class="countdown-label caps">Time left to join</div>
@@ -111,6 +115,10 @@
         We’ll need some information about your project and a
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
         deposit.
+      </div>
+      <div class="subtitle mt2">
+        The round only accepts a total of {{ maxRecipients }} projects, so apply
+        now while there’s still room!
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
@@ -191,6 +199,10 @@ export default class JoinLanding extends Vue {
 
   private get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
+  }
+
+  get maxRecipients(): number | null {
+    return this.$store.state?.currentRound?.maxRecipients || 124 // TODO fix hardcode
   }
 
   get spacesRemaining(): number | null {
