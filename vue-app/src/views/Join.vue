@@ -394,7 +394,7 @@
                 <input
                   id="links-radicle"
                   type="link"
-                  placeholder="example: https://radicle.com/ethereum/clrfund"
+                  placeholder="example: https://radicle.xyz/ethereum/clrfund"
                   v-model.lazy="$v.form.links.radicle.$model"
                   :class="{
                     input: true,
