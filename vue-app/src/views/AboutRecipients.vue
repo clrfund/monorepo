@@ -43,6 +43,12 @@
       legitimate.
     </p>
     <p>
+      MACI, our anti-bribery tech, currently limits the amount of projects
+      allowed per round.
+      <links to="/about/maci">More on MACI</links>. The round only accepts a
+      total of {{ maxRecipients }} projects, so we encourage you to apply early.
+    </p>
+    <p>
       Note: all application data (except contact email address) will be publicly
       stored on-chain.
     </p>
@@ -154,6 +160,10 @@ export default class AboutRecipients extends Vue {
 
   get depositToken(): string {
     return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
+  }
+
+  get maxRecipients(): number | null {
+    return this.$store.state?.currentRound?.maxRecipients || 124 // TODO fix hardcode
   }
 }
 </script>
