@@ -13,7 +13,7 @@
         :saveFormData="saveFormData"
       />
       <div class="title-area">
-        <h1>Join the round</h1>
+        <h1>Join the staking round</h1>
         <div v-if="currentStep === 5">
           <div class="toggle-tabs-desktop">
             <p
@@ -134,6 +134,18 @@
                 </label>
                 <form class="radio-row" id="category-radio">
                   <input
+                    id="tooling"
+                    type="radio"
+                    name="project-category"
+                    value="Tooling"
+                    v-model="$v.form.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: $v.form.project.category.$error,
+                    }"
+                  />
+                  <label for="tooling" class="radio-btn">Tools</label>
+                  <input
                     id="category-content"
                     type="radio"
                     name="project-category"
@@ -159,18 +171,7 @@
                     }"
                   />
                   <label for="research" class="radio-btn">Research</label>
-                  <input
-                    id="tooling"
-                    type="radio"
-                    name="project-category"
-                    value="Tooling"
-                    v-model="$v.form.project.category.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.project.category.$error,
-                    }"
-                  />
-                  <label for="tooling" class="radio-btn">Tooling</label>
+
                   <input
                     id="data"
                     type="radio"
@@ -233,8 +234,9 @@
                   >Ethereum address</label
                 >
                 <p class="input-description">
-                  This doesn’t have to be the same address as the one you use to
-                  send your application.
+                  The destination address for donations, which you'll use to
+                  claim funds. This doesn't have to be the same address as the
+                  one you use to send your application transaction.
                 </p>
                 <input
                   id="fund-address"
@@ -339,7 +341,7 @@
               </div>
               <div class="form-background">
                 <label for="team-desc" class="input-label"
-                  >Description (optional)</label
+                  >Team description (optional)</label
                 >
                 <p class="input-description">
                   If different to project description. Markdown supported.
@@ -394,7 +396,7 @@
                 <input
                   id="links-radicle"
                   type="link"
-                  placeholder="example: https://radicle.com/ethereum/clrfund"
+                  placeholder="example: https://radicle.xyz/ethereum/clrfund"
                   v-model.lazy="$v.form.links.radicle.$model"
                   :class="{
                     input: true,
@@ -453,7 +455,7 @@
                 </p>
               </div>
               <div class="form-background">
-                <label for="links-discord" class="input-label">Discord</label>
+                <label for="links-discord" class="input-label">Chat</label>
                 <input
                   id="links-discord"
                   type="link"
@@ -522,7 +524,7 @@
                   /></links>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Name</h4>
+                  <h4 class="read-only-title">Project name</h4>
                   <div class="data">{{ form.project.name }}</div>
                 </div>
                 <div class="summary">

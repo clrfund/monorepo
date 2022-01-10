@@ -29,7 +29,7 @@
         <links to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <links to="https://twitter.com/ethdotorg">@ethdotorg</links>
+        <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
         <links to="/" class="btn-primary">Home</links>
@@ -49,7 +49,7 @@
         <links to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <links to="https://twitter.com/ethdotorg">@ethdotorg</links>
+        <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
         <links to="/" class="btn-primary">Home</links>
@@ -58,7 +58,7 @@
     </div>
 
     <div class="content" v-else-if="$store.state.currentRound">
-      <h1>Join the funding round</h1>
+      <h1>Join the staking funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project and a
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
@@ -108,7 +108,7 @@
     </div>
 
     <div class="content" v-else-if="$store.getters.isRoundJoinPhase">
-      <h1>Join the next funding round</h1>
+      <h1>Join the next staking funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project and a
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security

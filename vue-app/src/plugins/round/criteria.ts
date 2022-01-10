@@ -4,7 +4,7 @@ export interface Criterion {
   description: string
 }
 
-const baseCriterion: Criterion[] = [
+const BASE_CRITERION: Criterion[] = [
   {
     emoji: '🤲',
     criterion: 'Free and open source',
@@ -29,12 +29,6 @@ const baseCriterion: Criterion[] = [
     description:
       'The project must be yours or you must have permission from the project owner.',
   },
-  {
-    emoji: '💻',
-    criterion: 'No clients',
-    description:
-      'Client teams are so important but this round of funding is focused on supporting other parts of the ecosystem.',
-  },
 ]
 
 /**
@@ -43,7 +37,7 @@ const baseCriterion: Criterion[] = [
 const ADDITIONAL_CRITERION: Criterion[] = [
   {
     emoji: '💰',
-    criterion: 'Related to Ethereum upgrades and staking',
+    criterion: 'Related to Ethereum staking',
     description: 'Your project must support Ethereum staking/validating.',
   },
   {
@@ -52,6 +46,21 @@ const ADDITIONAL_CRITERION: Criterion[] = [
     description:
       'Client teams are so important but this round of funding is focused on supporting other parts of the ecosystem.',
   },
+  {
+    emoji: '💦',
+    criterion: 'No pools',
+    description:
+      'No pools directly, but useful infrastructure and tooling built by pools can be supported.',
+  },
+  {
+    emoji: '🆔',
+    criterion: 'KYC',
+    description:
+      "You'll be contacted by the registry admin and must complete some basic KYC/AML requirements.",
+  },
 ]
 
-export const criteria: Criterion[] = [...baseCriterion, ...ADDITIONAL_CRITERION]
+export const criteria: Criterion[] = [
+  ...BASE_CRITERION,
+  ...ADDITIONAL_CRITERION,
+]
