@@ -6,7 +6,7 @@ import {
 import { isHexString } from '@ethersproject/bytes'
 import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
-import { getNetworkToken } from '@/utils/networks'
+import { chain } from '@/api/core'
 
 import { OptimisticRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
@@ -33,12 +33,11 @@ export async function getRegistryInfo(
   )
   const deposit = await registry.baseDeposit()
   const challengePeriodDuration = await registry.challengePeriodDuration()
-  const network = await provider.getNetwork()
   const recipientCount = await registry.getRecipientCount()
   const owner = await registry.owner()
   return {
     deposit,
-    depositToken: getNetworkToken(network),
+    depositToken: chain.currency,
     challengePeriodDuration: challengePeriodDuration.toNumber(),
     listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
     recipientCount: recipientCount.toNumber(),
@@ -352,16 +351,6 @@ export async function getProjects(
 
   const recipients = data.recipients
 
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider
-  )
-  const now = DateTime.now().toSeconds()
-  const challengePeriodDuration = (
-    await registry.challengePeriodDuration()
-  ).toNumber()
-
   const projects: Project[] = recipients
     .map((recipient) => {
       let project
@@ -372,10 +361,6 @@ export async function getProjects(
       }
 
       const submissionTime = Number(recipient.submissionTime)
-      if (submissionTime + challengePeriodDuration >= now) {
-        // Challenge period is not over yet
-        return
-      }
 
       if (recipient.rejected) {
         return
@@ -415,44 +400,27 @@ export async function getProjects(
   return projects
 }
 
-export async function getProject(
-  registryAddress: string,
-  recipientId: string
-): Promise<Project | null> {
+export async function getProject(recipientId: string): Promise<Project | null> {
   if (!isHexString(recipientId, 32)) {
     return null
   }
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider
-  )
-  const now = DateTime.now().toSeconds()
-  const challengePeriodDuration = (
-    await registry.challengePeriodDuration()
-  ).toNumber()
 
   const data = await sdk.GetProject({
-    registryAddress: registryAddress.toLowerCase(),
     recipientId,
   })
 
-  if (!data.recipientRegistry?.recipients?.length) {
+  if (!data.recipients?.length) {
     // Project does not exist
     return null
   }
 
-  const recipient = data.recipientRegistry?.recipients?.[0]
+  const recipient = data.recipients?.[0]
 
   let project: Project
   try {
     project = decodeProject(recipient)
   } catch {
     // Invalid metadata
-    return null
-  }
-  if (project.extra.submissionTime + challengePeriodDuration >= now) {
-    // Challenge period is not over yet
     return null
   }
 

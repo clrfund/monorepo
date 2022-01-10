@@ -10,8 +10,16 @@ import 'hardhat-contract-sizer'
 dotenv.config()
 
 const GAS_LIMIT = 20000000
-const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC || ''
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || undefined
+const WALLET_MNEMONIC = process.env.WALLET_MNEMONIC
+const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY
+
+let accounts
+if (WALLET_MNEMONIC) {
+  accounts = { mnemonic: WALLET_MNEMONIC }
+}
+if (WALLET_PRIVATE_KEY) {
+  accounts = [WALLET_PRIVATE_KEY]
+}
 
 const config: HardhatUserConfig = {
   networks: {
@@ -31,17 +39,21 @@ const config: HardhatUserConfig = {
       gasLimit: GAS_LIMIT,
     } as any,
     rinkeby: {
-      url: process.env.RINKEBY_JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
-      accounts: WALLET_PRIVATE_KEY ? [WALLET_PRIVATE_KEY] : 'remote',
+      url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
+      accounts,
     },
     xdai: {
-      url: process.env.XDAI_JSONRPC_HTTP_URL || 'https://rpc.xdaichain.com',
+      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.xdaichain.com',
       timeout: 60000,
-      accounts: { mnemonic: WALLET_MNEMONIC },
+      accounts,
     },
     rinkarby: {
-      url: process.env.RINKARBY_JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
-      accounts: { mnemonic: WALLET_MNEMONIC },
+      url: process.env.JSONRPC_HTTP_URL || 'https://rinkeby.arbitrum.io/rpc',
+      accounts,
+    },
+    arbitrum: {
+      url: process.env.JSONRPC_HTTP_URL || 'https://arb1.arbitrum.io/rpc',
+      accounts,
     },
   },
   paths: {

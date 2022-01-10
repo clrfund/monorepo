@@ -17,7 +17,7 @@
     <div class="actions">
       <links
         class="explorerLink"
-        :to="blockExplorerUrl"
+        :to="blockExplorer.url"
         v-tooltip="`View on ${blockExplorer.label}`"
         :hideArrow="true"
       >

@@ -1,14 +1,12 @@
-query GetProject($registryAddress: ID!, $recipientId: ID!) {
-  recipientRegistry(id: $registryAddress) {
-    recipients(where: { id: $recipientId }) {
-      id
-      requestType
-      recipientAddress
-      recipientMetadata
-      recipientIndex
-      submissionTime
-      rejected
-      verified
-    }
+query GetProject($recipientId: ID!) {
+  recipients(where: { id: $recipientId }) {
+    id
+    requestType
+    recipientAddress
+    recipientMetadata
+    recipientIndex
+    submissionTime
+    rejected
+    verified
   }
 }

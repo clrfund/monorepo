@@ -1,6 +1,6 @@
 <template>
   <div>
-    <round-status-banner />
+    <round-status-banner v-if="$store.state.currentRound" />
     <div id="page">
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
@@ -14,7 +14,7 @@
               Every project you contribute to gets a portion of extra funding.
             </div>
             <div class="btn-group">
-              <links to="/projects" class="btn-action">Go to app</links>
+              <links to="/projects" class="btn-action">Get started</links>
               <div class="btn-white" @click="scrollToHowItWorks">
                 How it works
               </div>
@@ -34,9 +34,7 @@
                 anything related to public goods, you can join in.
               </p>
               <div class="button-group">
-                <links to="/join" class="btn-primary w100">{{
-                  joinButtonText
-                }}</links>
+                <links to="/join" class="btn-primary w100">Add project</links>
                 <div v-if="signUpDeadline">
                   <time-left unitClass="none" :date="signUpDeadline" />
                   to join
@@ -109,8 +107,8 @@
               <b>BrightID for private, decentralized identity verification</b>
             </p>
           </div>
-          <links to="https://brightid.org" class="btn-primary"
-            >Download BrightID</links
+          <links to="/about/sybil-resistance" class="btn-primary"
+            >Set up BrightID</links
           >
         </div>
       </div>
@@ -202,12 +200,6 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 export default class Landing extends Vue {
   get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
-  }
-
-  get joinButtonText(): string {
-    return this.$store.getters.isRoundContributionPhase
-      ? 'Join Round'
-      : 'Join Next Round'
   }
 
   get operator(): string {

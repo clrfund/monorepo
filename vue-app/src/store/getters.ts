@@ -8,6 +8,7 @@ import { recipientRegistryType } from '@/api/core'
 import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
+import { Factory } from '@/api/factory'
 import {
   RecipientApplicationData,
   RegistryInfo,
@@ -32,6 +33,7 @@ export interface RootState {
   recipientRegistryInfo: RegistryInfo | null
   showCartPanel: boolean
   tally: Tally | null
+  factory: Factory | null
 }
 
 const getters = {
@@ -170,6 +172,36 @@ const getters = {
       !!state.currentRound &&
       state.currentRound.maxContributors <= state.currentRound.contributors
     )
+  },
+  nativeTokenSymbol: (state: RootState): string => {
+    const { currentRound, factory } = state
+
+    let nativeTokenSymbol = ''
+
+    if (factory) {
+      nativeTokenSymbol = factory.nativeTokenSymbol
+    }
+
+    if (currentRound) {
+      nativeTokenSymbol = currentRound.nativeTokenSymbol
+    }
+
+    return nativeTokenSymbol
+  },
+  nativeTokenDecimals: (state: RootState): number | undefined => {
+    const { currentRound, factory } = state
+
+    let nativeTokenDecimals
+
+    if (factory) {
+      nativeTokenDecimals = factory.nativeTokenDecimals
+    }
+
+    if (currentRound) {
+      nativeTokenDecimals = currentRound.nativeTokenDecimals
+    }
+
+    return nativeTokenDecimals
   },
 }
 

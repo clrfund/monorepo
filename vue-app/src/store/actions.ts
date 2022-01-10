@@ -27,8 +27,10 @@ import {
   LOAD_CART,
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
+  LOAD_FACTORY_INFO,
   LOAD_RECIPIENT_REGISTRY_INFO,
   LOAD_ROUND_INFO,
+  LOAD_TALLY,
   LOAD_USER_INFO,
   LOGIN_USER,
   LOGOUT_USER,
@@ -53,12 +55,14 @@ import {
   SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_RECIPIENT_REGISTRY_INFO,
   SET_HAS_VOTED,
+  SET_FACTORY,
 } from './mutation-types'
 
 // Utils
 import { ensLookup } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
+import { getFactoryInfo } from '@/api/factory'
 
 const actions = {
   //TODO: also commit SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
@@ -76,6 +80,10 @@ const actions = {
     }
     commit(SET_CURRENT_ROUND_ADDRESS, roundAddress)
   },
+  async [LOAD_FACTORY_INFO]({ commit }) {
+    const factory = await getFactoryInfo()
+    commit(SET_FACTORY, factory)
+  },
   async [LOAD_ROUND_INFO]({ commit, state }) {
     const roundAddress = state.currentRoundAddress
     if (roundAddress === null) {
@@ -85,8 +93,11 @@ const actions = {
     //TODO: update to take factory address as a parameter, default to env. variable
     const round = await getRoundInfo(roundAddress)
     commit(SET_CURRENT_ROUND, round)
-    if (round && round.status === RoundStatus.Finalized) {
-      const tally = await getTally(roundAddress)
+  },
+  async [LOAD_TALLY]({ commit, state }) {
+    const currentRound = state.currentRound
+    if (currentRound && currentRound.status === RoundStatus.Finalized) {
+      const tally = await getTally(state.currentRoundAddress)
       commit(SET_TALLY, tally)
     }
   },
@@ -105,20 +116,25 @@ const actions = {
     }
   },
   async [LOAD_USER_INFO]({ commit, state }) {
-    if (state.currentRound && state.currentUser) {
+    if (!state.currentUser) {
+      return
+    }
+
+    let nativeTokenAddress, isRegistered, balance
+
+    if (state.factory) {
+      nativeTokenAddress = state.factory.nativeTokenAddress
+    }
+
+    if (state.currentRound) {
+      nativeTokenAddress = state.currentRound.nativeTokenAddress
+
       // Check if this user is in our user registry
-      const isRegistered = await isVerifiedUser(
+      isRegistered = await isVerifiedUser(
         state.currentRound.userRegistryAddress,
         state.currentUser.walletAddress
       )
 
-      const etherBalance = await getEtherBalance(
-        state.currentUser.walletAddress
-      )
-      const balance = await getTokenBalance(
-        state.currentRound.nativeTokenAddress,
-        state.currentUser.walletAddress
-      )
       let contribution = state.contribution
       if (!contribution || contribution.isZero()) {
         contribution = await getContributionAmount(
@@ -134,18 +150,26 @@ const actions = {
         commit(SET_CONTRIBUTION, contribution)
         commit(SET_HAS_VOTED, hasVoted)
       }
-
-      let ensName: string | null = state.currentUser.ensName
-      ensName = await ensLookup(state.currentUser.walletAddress)
-
-      commit(SET_CURRENT_USER, {
-        ...state.currentUser,
-        isRegistered,
-        balance,
-        etherBalance,
-        ensName,
-      })
     }
+
+    if (nativeTokenAddress) {
+      balance = await getTokenBalance(
+        nativeTokenAddress,
+        state.currentUser.walletAddress
+      )
+    }
+
+    const etherBalance = await getEtherBalance(state.currentUser.walletAddress)
+    let ensName: string | null = state.currentUser.ensName
+    ensName = await ensLookup(state.currentUser.walletAddress)
+
+    commit(SET_CURRENT_USER, {
+      ...state.currentUser,
+      isRegistered,
+      balance,
+      etherBalance,
+      ensName,
+    })
   },
   async [LOAD_BRIGHT_ID]({ commit, state }) {
     if (state.currentUser && userRegistryType === UserRegistryType.BRIGHT_ID) {
