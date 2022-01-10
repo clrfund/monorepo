@@ -149,6 +149,7 @@ import Links from '@/components/Links.vue'
 
 @Component({ components: { Links } })
 export default class AboutHowItWorks extends Vue {
+  // TODO: should we hardcode defaults instead of TBD for our round?
   get contributionPhaseDays(): number | string {
     if (this.$store.state.currentRound) {
       const { signUpDeadline, startTime } = this.$store.state.currentRound
@@ -161,6 +162,7 @@ export default class AboutHowItWorks extends Vue {
     return MAX_CONTRIBUTION_AMOUNT
   }
 
+  // TODO: should we hardcode defaults instead of TBD for our round?
   get maxRecipients(): number | string {
     return this.$store.state?.currentRound?.maxRecipients || 'TBD'
   }
@@ -169,6 +171,7 @@ export default class AboutHowItWorks extends Vue {
     return this.$store.state?.currentRound?.nativeTokenSymbol
   }
 
+  // TODO: should we hardcode defaults instead of TBD for our round?
   get reallocationPhaseDays(): number | string {
     if (this.$store.state.currentRound) {
       const { signUpDeadline, votingDeadline } = this.$store.state.currentRound
