@@ -2,7 +2,7 @@
   <div class="recipients">
     <div class="title">
       <div class="header">
-        <h2>Recipient registry</h2>
+        <h2>Registro de recipiente</h2>
       </div>
       <div class="hr" />
     </div>
@@ -11,10 +11,10 @@
       <table class="requests">
         <thead>
           <tr>
-            <th>Project</th>
-            <th>Request type</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>Proyecto</th>
+            <th>Tipo de solicitud</th>
+            <th>Estado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -41,11 +41,11 @@
                 >
               </div>
               <details class="project-details">
-                <summary>More</summary>
+                <summary>Más</summary>
 
                 <div>
                   <span
-                    >Transaction hash
+                    >Hash de transacción
                     <button
                       class="button-copy"
                       @click="copyAddress(request.transactionHash)"
@@ -57,7 +57,7 @@
                 </div>
                 <div>
                   <span
-                    >Project ID
+                    >ID del proyecto
                     <button
                       class="button-copy"
                       @click="copyAddress(request.recipientId)"
@@ -69,7 +69,7 @@
                 </div>
                 <div>
                   <span
-                    >Recipient address
+                    >Address del recipiente
                     <button
                       class="button-copy"
                       @click="copyAddress(request.recipient)"
@@ -105,7 +105,7 @@
                 @click="remove(request)"
                 v-if="isExecuted(request)"
               >
-                Remove
+                Remover
               </div> -->
                 <div
                   class="icon-btn-approve"

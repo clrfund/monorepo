@@ -2,7 +2,7 @@
   <div class="h100">
     <div v-if="!currentUser" class="empty-cart">
       <div class="moon-emoji">🌚</div>
-      <h3>Connect to see your cart</h3>
+      <h3>Conéctate para ver tu carrito</h3>
       <wallet-widget :isActionButton="true" />
     </div>
     <div v-else class="cart-container">
@@ -10,17 +10,17 @@
         class="reallocation-message"
         v-if="$store.getters.canUserReallocate && $store.getters.hasUserVoted"
       >
-        You’ve already contributed this round. You can edit your choices and add
-        new projects, but your cart total must always equal your original
-        contribution amount.
-        <links to="/about/maci" class="message-link">Why?</links>
+        Ya contribuiste en esta ronda. Puedes editar tus opciones y agregar
+        nuevos proyectos, pero el total de tu carrito siempre debe ser igual al
+        monto de tu contribución original.
+        <links to="/about/maci" class="message-link">¿Por qué?</links>
       </div>
       <div
         class="reallocation-message"
         v-if="$store.getters.canUserReallocate && !$store.getters.hasUserVoted"
       >
-        Almost done! You must submit one more transaction to complete your
-        contribution.
+        ¡Casi terminas! Debes enviar una transacción más para completar tu
+        contribución.
       </div>
       <div class="flex cart-title-bar">
         <div
@@ -31,7 +31,7 @@
           <img alt="cart" width="16px" src="@/assets/cart.svg" />
           <img alt="close" width="16px" src="@/assets/chevron-right.svg" />
         </div>
-        <h2>{{ isEditMode ? 'Edit cart' : 'Your cart' }}</h2>
+        <h2>{{ isEditMode ? 'Editar carrito' : 'Tu carrito' }}</h2>
         <div
           v-if="
             ($store.getters.isRoundContributionPhase ||
@@ -66,7 +66,7 @@
             $store.getters.hasReallocationPhaseEnded
           "
         >
-          This round is over. Here’s how you contributed. Thanks!
+          Esta ronda ha terminado. Así es como contribuiste. ¡Gracias!
         </div>
         <div class="cart">
           <div
@@ -77,28 +77,30 @@
             class="empty-cart"
           >
             <div class="moon-emoji">🌚</div>
-            <h3>Too late to donate</h3>
-            <div>Sorry, the deadline for donating has passed.</div>
+            <h3>Demasiado tarde para donar</h3>
+            <div>Lo sentimos, la fecha límite para donar ha pasado.</div>
           </div>
           <div
             v-else-if="isCartEmpty && $store.getters.isRoundContributionPhase"
             class="empty-cart"
           >
             <div class="moon-emoji">🌚</div>
-            <h3>Your cart is empty</h3>
-            <div>Choose some projects that you want to contribute to...</div>
+            <h3>Tu carrito esta vacío</h3>
+            <div>Elige algunos proyectos en los que quieras contribuir...</div>
             <links to="/projects" class="btn-secondary mobile mt1"
-              >See projects</links
+              >Ver proyectos</links
             >
           </div>
           <div v-else-if="$store.getters.canUserReallocate && !isCartEmpty">
             <div class="flex-row-reallocation">
               <div class="semi-bold">
-                {{ isEditMode ? 'Edit contributions' : 'Your contributions' }}
+                {{
+                  isEditMode ? 'Editar contribuciones' : 'Tus contribuciones'
+                }}
               </div>
               <div class="semi-bold" v-if="$store.getters.canUserReallocate">
                 <button @click="handleEditState" class="pointer">
-                  {{ isEditMode ? 'Cancel' : 'Edit' }}
+                  {{ isEditMode ? 'Cancelar' : 'Editar' }}
                 </button>
               </div>
             </div>
@@ -109,7 +111,7 @@
             id="readOnly"
           >
             <!-- Round is finalized -->
-            <div>Your contributions</div>
+            <div>Tus contribuciones</div>
           </div>
           <cart-items
             v-if="
@@ -129,7 +131,7 @@
           "
           class="time-left-read-only"
         >
-          <div class="caps">Time left:</div>
+          <div class="caps">Tiempo restante:</div>
           <time-left :date="timeLeftDate" />
         </div>
       </div>
@@ -138,7 +140,7 @@
         v-if="$store.getters.canUserReallocate && isEditMode"
       >
         <div class="reallocation-row">
-          <span>Original contribution</span>
+          <span>Contribución original</span>
           {{ formatAmount(this.contribution) }} {{ tokenSymbol }}
         </div>
         <div
@@ -148,7 +150,7 @@
               : 'reallocation-row'
           "
         >
-          <span>Your cart</span>
+          <span>Tu carrito</span>
           <div class="reallocation-warning">
             <span v-if="this.isGreaterThanInitialContribution()">⚠️</span
             >{{ formatAmount(getCartTotal(this.$store.state.cart)) }}
@@ -160,8 +162,8 @@
           class="reallocation-row-matching-pool"
         >
           <div>
-            <div><b>Matching pool</b></div>
-            <div>Remaining funds go to matching pool</div>
+            <div><b>Pool de contrapartida</b></div>
+            <div>Los fondos restantes se destinan al fondo común</div>
           </div>
           + {{ formatAmount(this.contribution) - formatAmount(getTotal()) }}
           {{ tokenSymbol }}
@@ -173,8 +175,9 @@
             this.isGreaterThanInitialContribution() || hasUnallocatedFunds()
           "
         >
-          <img src="@/assets/split.svg" /> Split
-          {{ formatAmount(this.contribution) }} {{ tokenSymbol }} evenly
+          <img src="@/assets/split.svg" /> Dividir
+          {{ formatAmount(this.contribution) }}
+          {{ tokenSymbol }} equitativamente
         </div>
       </div>
       <div
@@ -188,30 +191,32 @@
         "
       >
         <div v-if="errorMessage" class="error-title">
-          Can't
-          <span v-if="$store.getters.canUserReallocate">reallocate</span>
-          <span v-else>contribute</span>
+          No se puede
+          <span v-if="$store.getters.canUserReallocate">reasignar</span>
+          <span v-else>contribuir</span>
         </div>
         <div v-if="errorMessage" class="submit-error">
           {{ errorMessage }}
         </div>
         <div class="p1" v-if="hasUnallocatedFunds()">
-          Funds you don't contribute to projects ({{
+          Los fondos que no contribuyas a los proyectos ({{
             formatAmount(this.contribution) - formatAmount(getTotal())
           }}
-          {{ tokenSymbol }}) will be sent to the matching pool at the end of the
-          round. Your cart must add up to your original
-          {{ formatAmount(this.contribution) }} {{ tokenSymbol }} donation.
+          {{ tokenSymbol }}) se enviarán al fondo común al final de la ronda. Su
+          carrito debe coincidir con su {{ formatAmount(this.contribution) }}
+          {{ tokenSymbol }} donación original.
         </div>
         <div class="p1" v-if="isBrightIdRequired">
-          <links to="/verify" class="btn-primary"> Verify with BrightID </links>
+          <links to="/verify" class="btn-primary"
+            >Verificar con BrightID
+          </links>
         </div>
         <button
           v-if="canWithdrawContribution()"
           class="btn-action"
           @click="withdrawContribution()"
         >
-          Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
+          Retirar {{ formatAmount(contribution) }} {{ tokenSymbol }}
         </button>
         <button
           v-if="!isCartEmpty"
@@ -225,20 +230,20 @@
           "
         >
           <template v-if="contribution.isZero()">
-            Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to
-            {{ cart.length }} projects
+            Contribuye {{ formatAmount(getTotal()) }} {{ tokenSymbol }} a
+            {{ cart.length }} proyectos
           </template>
           <template v-else-if="!$store.getters.hasUserVoted">
-            Finish contribution
+            Finalizar contribución
           </template>
-          <template v-else> Reallocate contribution </template>
+          <template v-else> Reasignar contribución </template>
         </button>
         <funds-needed-warning :onNavigate="toggleCart" :isCompact="true" />
         <div
           class="time-left"
           v-if="$store.getters.canUserReallocate && isEditMode"
         >
-          <div class="caps">Time left:</div>
+          <div class="caps">Tiempo restante:</div>
           <time-left :date="timeLeftDate" />
         </div>
       </div>
@@ -247,7 +252,7 @@
         v-if="$store.getters.hasUserContributed && !isEditMode"
       >
         <div class="line-item">
-          <span>Projects</span>
+          <span>Proyectos</span>
           <div>
             <span
               >{{ formatAmount(getCartTotal($store.state.committedCart)) }}
@@ -256,7 +261,7 @@
           </div>
         </div>
         <div class="line-item">
-          <span>Matching Pool</span>
+          <span>Pool de Contrapartida</span>
           <div>
             <span>{{ getCartMatchingPoolTotal() }} {{ tokenSymbol }}</span>
           </div>
@@ -287,9 +292,9 @@
         </div>
       </div>
       <div v-if="!$store.state.currentRound" class="reallocation-section">
-        No current round.
+        No hay ronda actual.
         <links v-if="isBrightIdRequired" to="/verify">
-          Verify with BrightID while you wait</links
+          Verifica con BrightID mientras esperas</links
         >
       </div>
     </div>

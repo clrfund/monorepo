@@ -2,7 +2,7 @@
   <div>
     <loader v-if="isLoading" />
     <p v-if="claimed">
-      ✔️ {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }} claimed
+      ✔️ {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }} reclamado
     </p>
     <button
       v-if="hasClaimBtn() && !claimed"
@@ -10,7 +10,7 @@
       :disabled="!canClaim()"
       @click="claim()"
     >
-      Claim {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
+      Reclamar {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}
     </button>
   </div>
 </template>

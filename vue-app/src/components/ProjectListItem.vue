@@ -21,7 +21,7 @@
     <div class="buttons">
       <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
       <links :to="{ name: 'project', params: { id: project.id } }">
-        <button class="more-btn">More</button>
+        <button class="more-btn">Más</button>
       </links>
     </div>
   </div>

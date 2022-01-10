@@ -1,13 +1,13 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">Recipient guide</h1>
+    <h1 class="content-heading">Guía del Destinatario</h1>
     <div v-if="chain.bridge">
-      <h2>Get funds on {{ chain.label }}</h2>
+      <h2>Obtenga fondos en {{ chain.label }}</h2>
       <p>
-        You'll need some {{ chain.currency }} on {{ chain.label }} in order to
-        submit transactions to the clr.fund smart contracts.
+        Necesitará algo de{{ chain.currency }} en {{ chain.label }}
+        para enviar transacciones a los contratos inteligentes de clr.fund.
         <span v-if="chain.isLayer2">
-          Follow
+          Sigue
           <links
             :to="{
               name: 'about-layer-2',
@@ -16,60 +16,63 @@
               },
             }"
           >
-            these steps
+            estos pasos
           </links>
-          to bridge your funds to {{ chain.label }}
+          para unir sus fondos a {{ chain.label }}
         </span>
         <span v-else>
           <links :to="chain.bridge">Bridge your funds here</links>
         </span>
       </p>
       <p v-if="chain.isLayer2">
-        Confused on what {{ chain.label }} is?
+        ¿Confundido en lo que {{ chain.label }} es?
         <links to="about/layer-2">
-          Read our explanation on how clr.fund uses layer 2 on Ethereum.
+          Lee nuestra explicación sobre cómo clr.fund usa la layer 2 en
+          Ethereum.
         </links>
       </p>
     </div>
-    <h2>Register your project</h2>
+    <h2>Registra tyu proyecto</h2>
     <ol>
-      <li>Head over to the <links to="/join">Join page</links>.</li>
+      <li>Dirígete a la <links to="/join">página de ingreso </links>.</li>
       <li>
-        Click "See round criteria" and familiarize yourself with the criteria
-        for projects.
+        Haz clic en "Ver criterios de ronda" y conoce cuáles son los criterios
+        para que inscribas tu proyecto.
       </li>
       <li>
-        Once you're familiar with the criteria and you're sure your project
-        meets them, click "Add project." You'll see a series of forms to fill
-        out asking for more information about your project.
+        Una vez que estés familiarizado con los criterios y estés seguro de que
+        tu proyecto los cumple, haga clic en "Agregar proyecto". Verás una serie
+        de formularios para completar solicitando más información sobre tu
+        proyecto.
       </li>
       <li>
-        With the forms finished, you can finish your submission by:
+        Una vez finalizados los formularios, puede finalizar su envío de la
+        siguiente manera:
         <ol>
-          <li>connecting to the right network via your wallet of choice</li>
           <li>
-            sending a deposit of {{ depositAmount }} {{ depositToken }} to the
-            registry contract.
+            conectarse a la red correcta a través de su billetera de elección
           </li>
+          <li>enviando un depósito de 0.1 ETH al contrato de registro.</li>
         </ol>
-        Projects are accepted by default, but the registry admin may remove
-        projects that don't meet the criteria. Either way, your
-        {{ depositToken }} will be returned once your application has been
-        either accepted or denied. Note that metadata pointing to all your
-        project information (but not contact information) will be stored
-        publicly on-chain.
+        Los proyectos se aceptan de forma predeterminada, pero el administrador
+        del registro puede eliminar los proyectos que no cumplan con los
+        criterios. De cualquier manera, se le devolverá su ETH una vez que su
+        solicitud haya sido aceptada o rechazada. Tenga en cuenta que los
+        metadatos que apuntan a toda la información de su proyecto (pero no a la
+        información de contacto) se almacenarán públicamente en blockchain.
       </li>
     </ol>
-    <h2>Claim your funds</h2>
+    <h2>Reclama tus fondos</h2>
     <p>
-      After a clr.fund round is finished, it's simple to claim your project's
-      share of the funding. Return to your project's page: you will see a "claim
-      funds" button if your project received contributions during the round.
-      Submit the claim transaction to receive your funds.
+      Una vez finalizada una ronda de fondos públicos, es sencillo reclamar la
+      parte de los fondos que le corresponden a tu proyecto. Regresa a la página
+      de tu proyecto: verás un botón "reclamar fondos" si tu proyecto recibió
+      contribuciones durante la ronda. Envía la transacción de reclamo para
+      recibir tus fondos.
     </p>
-    <h2>How does clr.fund work?</h2>
+    <h2>¿Cómo funciona Clr.fund?</h2>
     <p>
-      Looking for a more general overview?
+      ¿Buscas una descripción más general?
       <links to="/about/how-it-works">Check out our "How It Works" page</links>.
     </p>
   </div>

@@ -8,27 +8,27 @@
           class="btn-secondary close-btn"
           @click="$emit('close')"
         >
-          Close
+          Cerrado
         </button>
         <button
           v-if="displayRetryBtn"
           class="btn-primary close-btn"
           @click="$emit('retry')"
         >
-          Retry
+          Intentalo de nuevo
         </button>
       </div>
     </template>
     <template v-else>
-      <div v-if="!hash">Please approve transaction in your wallet</div>
+      <div v-if="!hash">Aprueba la transacción en tu wallet</div>
       <div v-else>
         <transaction-receipt :hash="hash" />
       </div>
       <loader v-if="!hash" />
       <div v-if="displayWarning && !hash">
         <small class="warning-text">
-          If you have been waiting a while, consider refreshing your browser and
-          reconnecting your wallet.
+          Si has estado esperando un tiempo, considera actualizar tu navegador y
+          volver a conectar tu wallet.
         </small>
       </div>
     </template>

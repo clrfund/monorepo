@@ -2,7 +2,7 @@
   <div class="category-filter" v-click-outside="closeDropdown">
     <div class="filter-btn" @click="toggleDropdown">
       <span class="filter-text">
-        Filter
+        Filtrar
         <span v-if="selectedCategories.length"
           >({{ selectedCategories.length }})</span
         >

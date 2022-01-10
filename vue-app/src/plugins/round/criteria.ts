@@ -6,34 +6,33 @@ export interface Criterion {
 
 const baseCriterion: Criterion[] = [
   {
-    emoji: '🤲',
-    criterion: 'Free and open source',
+    emoji: '😺',
+    criterion: 'Gratis, Open Source o Bien Público',
     description:
-      'Your project code must be available to anyone to use under an open source license.',
+      'El código de tu proyecto debe estar disponible para cualquiera bajo una licencia de código abierto, ser gratis o tener algún bien público.',
   },
   {
     emoji: '👺',
-    criterion: 'No scams',
+    criterion: 'No scams, Pirámides o Multiniveles',
     description:
-      "Obviously, your project must not put anyone's funds or information at risk.",
+      'Obviamente, tu proyecto no debe poner los fondos o información de nadie en riesgo.',
   },
   {
     emoji: '👯‍♀️',
     criterion: 'No clones',
     description:
-      "If you've forked code, you must provide additional, unique value to the ecosystem.",
+      'Si copiaste código, debes proveer un valor adicional y único al ecosistema.',
   },
   {
-    emoji: '🙋‍♀️',
-    criterion: 'Project ownership',
-    description:
-      'The project must be yours or you must have permission from the project owner.',
+    emoji: '🤓',
+    criterion: 'Ser Dueño del Proyecto',
+    description: 'El proyecto debe ser tuyo o debes tener permiso del dueño.',
   },
   {
     emoji: '💻',
-    criterion: 'No clients',
+    criterion: 'No ICOs o ventas de tokens',
     description:
-      'Client teams are so important but this round of funding is focused on supporting other parts of the ecosystem.',
+      'El proyecto no debe estar vendiendo ningún token a inversionistas o usuarios.',
   },
 ]
 
@@ -43,14 +42,9 @@ const baseCriterion: Criterion[] = [
 const ADDITIONAL_CRITERION: Criterion[] = [
   {
     emoji: '💰',
-    criterion: 'Related to Ethereum upgrades and staking',
-    description: 'Your project must support Ethereum staking/validating.',
-  },
-  {
-    emoji: '💻',
-    criterion: 'No clients',
+    criterion: 'Basado en Ethereum y con integrantes Hondureños',
     description:
-      'Client teams are so important but this round of funding is focused on supporting other parts of the ecosystem.',
+      'Queremos que los fondos tengan un impacto en la comunidad local o sus integrantes.',
   },
 ]
 

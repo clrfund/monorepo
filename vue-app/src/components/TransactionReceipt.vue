@@ -3,12 +3,12 @@
     <div class="status-label-address">
       <loader
         v-if="isPending"
-        v-tooltip="'Awaiting transaction confirmation'"
+        v-tooltip="'Esperando confirmación de transacción'"
         class="pending"
       />
       <img
         class="success"
-        v-tooltip="'Transaction confirmed'"
+        v-tooltip="'Transacción confirmada'"
         v-if="!isPending"
         src="@/assets/checkmark.svg"
       />
@@ -17,8 +17,8 @@
     <div class="actions">
       <links
         class="explorerLink"
-        :to="blockExplorer.url"
-        v-tooltip="`View on ${blockExplorer.label}`"
+        :to="blockExplorerUrl"
+        v-tooltip="`Ver en ${blockExplorer.label}`"
         :hideArrow="true"
       >
         <img class="icon" :src="require(`@/assets/${blockExplorer.logo}`)" />

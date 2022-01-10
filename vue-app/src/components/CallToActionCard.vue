@@ -3,11 +3,11 @@
   <div class="get-prepared" v-if="$store.getters.canUserReallocate">
     <span aria-label="thinking face" class="emoji">🤔</span>
     <div>
-      <h2 class="prep-title">Changed your mind?</h2>
+      <h2 class="prep-title">¿Cambiaste de opinión?</h2>
       <p class="prep-text">
-        You still have time to reallocate your contributions.
+        Aún tienes tiempo para reasignar tus contribuciones.
       </p>
-      <div class="btn-action" @click="toggleCartPanel()">Open cart</div>
+      <div class="btn-action" @click="toggleCartPanel()">Carrito abierto</div>
     </div>
   </div>
   <!-- Round is over notification -->
@@ -17,9 +17,9 @@
   >
     <span aria-label="hand" class="emoji">🤚</span>
     <div>
-      <h2 class="prep-title">Round over for contributions</h2>
+      <h2 class="prep-title">Redondeo para contribuciones</h2>
       <p class="prep-text">
-        You can no longer make any contributions this round.
+        Ya no puedes realizar contribuciones en esta ronda.
       </p>
     </div>
   </div>
@@ -28,16 +28,18 @@
     <bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
     <span v-else aria-label="rocket" class="emoji">🚀</span>
     <div>
-      <h2 class="prep-title">Get prepared</h2>
+      <h2 class="prep-title">¡Prepárate!</h2>
       <p class="prep-text">
-        You’ll need to set up a few things before you contribute. You can do
-        this any time before or during the funding round.
+        Deberás configurar algunas cosas antes de contribuir. Puedes hacer esto
+        en cualquier momento antes o durante la ronda de financiamiento.
       </p>
     </div>
     <links v-if="!hasStartedVerification" to="/verify" class="btn-action"
-      >Start prep</links
+      >¡Comienza a prepararte!</links
     >
-    <links v-else to="/verify/connect" class="btn-action">Continue setup</links>
+    <links v-else to="/verify/connect" class="btn-action"
+      >Continuar la configuración</links
+    >
   </div>
 </template>
 

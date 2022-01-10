@@ -1,124 +1,135 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">About Quadratic Funding</h1>
+    <h1 class="content-heading">Acerca del Financiamiento Cuadrático</h1>
 
-    <h2>Quadratic Funding on clr.fund</h2>
+    <h2>Financiamiento Cuadrático en Clr.fund</h2>
     <p>
-      Clr.fund is an implementation of quadratic funding, also called CLR
-      (Capital-constrained Liberal Radicalism). Quadratic funding is made up of:
+      Clr.fund es una implementación de financiamiento cuadrático, también
+      llamado CLR (Radicalismo Liberal Restringido por Capital). La financiación
+      cuadrática está compuesta por:
     </p>
     <ol>
-      <li>a pool of funds to be distributed</li>
-      <li>a voting system for distributing those funds</li>
+      <li>un fondo común de fondos para distribuir</li>
+      <li>un sistema de votación para distribuir esos fondos</li>
     </ol>
     <p>
-      Two common voting systems you may have used are 1-person-1-vote and
-      1-dollar-1-vote. Quadratic funding is a best-of-both-worlds solution where
-      users vote with the <b>square root</b> of the money they spend — read on
-      to learn more.
+      Dos sistemas de votación comunes que puede haber utilizado son
+      1-persona-1-voto y 1-dólar-1-voto. El financiamiento cuadrático es la
+      mejor solución de ambos mundos en la que los usuarios votan con la
+      <b> raíz cuadrada </b> del dinero que gastan. Siga leyendo para obtener
+      más información.
     </p>
-    <h2>Problems with Existing Funding Mechanisms</h2>
+    <h2>Problemas con los mecanismos de financiamiento existentes</h2>
     <p>
-      The common fund-distribution systems of today all have pluses and minuses:
+      Todos los sistemas comunes de distribución de fondos de hoy tienen
+      ventajas y desventajas:
     </p>
-    <h3>Markets</h3>
+    <h3>Mercados</h3>
     <p>
-      Markets can be thought of as fund-distributors: sellers are the fund
-      recipients, and buyers are the voters deciding what will be funded. In
-      this case, the "voting system" is 1-dollar-1-vote: each buyer has exactly
-      as much potential influence over where funds go as they have money to
-      spend. This is also the case for traditional crowdfunding platforms like
-      Kickstarter.
-    </p>
-    <p>
-      An advantage of this system is that each voter's influence is directly
-      proportional to their need (at least, if we ignore wealth inequality). The
-      more Alice needs pizza, the more pizza she'll buy, and the more funding
-      will go to pizzerias.
+      Se puede pensar en los mercados como distribuidores de fondos: los
+      vendedores son los receptores de los fondos y los compradores son los
+      votantes que deciden qué se financiará. En este caso, el "sistema de
+      votación" es 1 dólar-1-voto: cada comprador tiene exactamente tanta
+      influencia potencial sobre el destino de los fondos como dinero para
+      gastar. Este también es el caso de las plataformas tradicionales de
+      financiamiento colectiva como Kickstarter.
     </p>
     <p>
-      The disadvantage is that rich voters have an outsize influence on what
-      gets funded. Alice may need pizza exactly as much as Bob needs movie
-      tickets, but if Bob is twice as wealthy as Alice, he has twice as many
-      "votes" to spend on going to the movies.
-    </p>
-    <h3>Private Grant-Givers</h3>
-    <p>
-      Privately-owned grant-giving institutions, like non-profit foundations,
-      are quite common, but they don't have voting systems. Instead, grants
-      committees and the like solicit grant proposals and then choose which
-      applicants will receive funding internally.
+      Una ventaja de este sistema es que la influencia de cada votante es
+      directamente proporcional a su necesidad (al menos, si ignoramos la
+      desigualdad de riqueza). Mientras más pizza necesite Alice, más pizza
+      comprará y más fondos se destinarán a las pizzerías.
     </p>
     <p>
-      An advantage of non-profits is that their non-profit status binds them to
-      **act in the interest of some public mission**, rather than seeking profit
-      above all.
+      La desventaja es que los votantes ricos tienen una influencia enorme en lo
+      que se financia. Alice puede necesitar pizza tanto como Bob necesita
+      entradas para el cine, pero si Bob es dos veces más rico que Alice, tiene
+      el doble de "votos" para gastar en ir al cine.
+    </p>
+    <h3>Donantes Privados de Subvenciones</h3>
+    <p>
+      Las instituciones que otorgan subvenciones de propiedad privada, como las
+      fundaciones sin fines de lucro, son bastante comunes, pero no tienen
+      sistemas de votación. En cambio, los comités de subvenciones y similares
+      solicitan propuestas de subvenciones y luego eligen qué solicitantes
+      recibirán financiación internamente.
     </p>
     <p>
-      On the other hand, the small, private interests that control these
-      organizations lack the tools and incentives to effectively serve large
-      publics.
-    </p>
-    <h3>Democratic Governments</h3>
-    <p>
-      Government grants are another common fund-distribution mechanism, and in
-      democracies, these are usually controlled by voting citizens using
-      1-person-1-vote policies (with elected representatives and other middlemen
-      in between).
+      Una ventaja de las organizaciones sin fines de lucro es que su condición
+      de organización sin fines de lucro las obliga a ** actuar en interés de
+      alguna misión pública **, en lugar de buscar ganancias sobre todo.
     </p>
     <p>
-      On the good side, these systems are much less oligarchical than markets—if
-      we ignore the ability to convert money into influence via the media, among
-      other complications.
+      Por otro lado, los pequeños intereses privados que controlan estas
+      organizaciones carecen de las herramientas y los incentivos para atender
+      eficazmente a los grandes públicos.
+    </p>
+    <h3>Gobiernos Democráticos</h3>
+    <p>
+      Las subvenciones del gobierno son otro mecanismo común de distribución de
+      fondos, y en las democracias, estos generalmente son controlados por
+      ciudadanos votantes que utilizan políticas de 1 persona, 1 voto (con
+      representantes electos y otros intermediarios en el medio).
     </p>
     <p>
-      In exchange for less oligarchy, though, influence also poorly reflects
-      need in 1-person-1-vote systems. A half-time Florida resident has the same
-      voting power in Florida elections as a full-time resident, as long as both
-      qualify to vote, even though the full-time resident may have twice as much
-      riding on the result.
-    </p>
-    <h2>Quadratic Funding: a better balance?</h2>
-    <p>
-      Quadratic funding is a compromise between 1-dollar-1-vote and
-      1-person-1-vote. Participants vote on how to distribute pooled funds by
-      making individual donations, but each person's influence, rather than
-      being the amount of money they spend, is the square root of that amount.
+      En el lado bueno, estos sistemas son mucho menos oligárquicos que los
+      mercados, si ignoramos la capacidad de convertir el dinero en influencia a
+      través de los medios, entre otras complicaciones.
     </p>
     <p>
-      Compared to 1-dollar-1-vote in the market, quadratic funding makes it
-      exponentially easier for the influence of many poorer people to outweigh
-      that of a single rich person:
+      Sin embargo, a cambio de menos oligarquía, la influencia también refleja
+      pobremente la necesidad en los sistemas de 1 persona y 1 voto. Un
+      residente de Florida de medio tiempo tiene el mismo poder de voto en las
+      elecciones de Florida que un residente de tiempo completo, siempre y
+      cuando ambos califiquen para votar, aunque el residente de tiempo completo
+      puede tener el doble en juego en el resultado.
+    </p>
+    <h2>Financiamiento cuadrático: ¿un mejor equilibrio?</h2>
+    <p>
+      El Financiamiento cuadrático es un compromiso entre 1 dólar 1 voto y 1
+      persona 1 voto. Los participantes votan sobre cómo distribuir los fondos
+      mancomunados haciendo donaciones individuales, pero la influencia de cada
+      persona, en lugar de ser la cantidad de dinero que gastan, es la raíz
+      cuadrada de esa cantidad.
+    </p>
+    <p>
+      En comparación con 1 dólar-1 voto en el mercado, el financiamiento
+      cuadrático hace que sea exponencialmente más fácil que la influencia de
+      muchas personas más pobres supere a la de una sola persona rica:
     </p>
     <ul>
       <li>
-        1-dollar-1-vote: 1 person paying $10,000 has the same influence as 100
-        people paying $100
+        1-dólar-1-voto: 1 persona que paga $ 10,000 tiene la misma influencia
+        que 100 personas que pagan $ 100
       </li>
       <li>
-        Quadratic funding: 1 person paying $10,000 has the same influence as 100
-        people paying $1 or 10 people paying $100
+        Financiamiento cuadrático: una persona que paga $ 10,000 tiene la misma
+        influencia que 100 personas que pagan $ 1 o 10 personas que pagan $ 100
       </li>
     </ul>
     <p>
-      Compared to 1-person-1-vote, quadratic funding lets the person who lives
-      in Florida full-time, and cares twice as much about the vote's outcome
-      than the person who lives in Florida half-time, have more influence:
+      En comparación con 1-persona-1-voto, el financiamiento cuadrático permite
+      que la persona que vive en Florida a tiempo completo y se preocupa el
+      doble por el resultado de la votación que la persona que vive en Florida a
+      medio tiempo, tenga más influencia:
     </p>
     <ul>
-      <li>1-person-1-vote: the two Florida voters have equal influence</li>
       <li>
-        Quadratic funding: the full-time Florida resident, who cares twice as
-        much, pays twice as much, and as a result gets 2^(1/2) times the
-        influence of the half-time resident
+        1-persona-1-voto: los dos votantes de Florida tienen la misma influencia
+      </li>
+      <li>
+        Financiamiento cuadrático: el residente de Florida a tiempo completo,
+        que se preocupa el doble, paga el doble y, como resultado, obtiene 2 ^
+        (1/2) veces la influencia del residente de medio tiempo.
       </li>
     </ul>
     <p>
-      (It's important to note that while these example are a good demonstration
-      of the argument for quadratic funding, they do over-simplify these
-      situations, which are as sociological as they are mathematical.)
+      (Es importante señalar que, si bien estos ejemplos son una buena
+      demostración del argumento a favor del financiamiento cuadrático,
+      simplifican demasiado estas situaciones, que son tan sociológicas como
+      matemáticas).
     </p>
-    <h2>Quadratic Funding Resources</h2>
+    <h2>Recursos de financiamiento cuadrático</h2>
     <ul>
       <li>
         <links to="https://vitalik.ca/general/2019/12/07/quadratic.html"
@@ -133,7 +144,7 @@
       </li>
       <li>
         <links to="https://www.radicalxchange.org/concepts/quadratic-voting/"
-          >Quadratic Payments: A Primer</links
+          >Pagos Cuadráticos: Una introducción</links
         >
       </li>
       <li>

@@ -7,7 +7,7 @@
       <template v-if="currentRound">
         <div class="round">
           <div class="round-title-bar">
-            <h2 class="round-title">CLR.fund</h2>
+            <h2 class="round-title">BUIDL Honduras CLR.fund</h2>
             <v-popover class="verified-container">
               <div class="verified">
                 <img src="@/assets/verified.svg" />
@@ -18,7 +18,7 @@
                     {{ currentRound.fundingRoundAddress }}
                   </div>
                   <links :to="blockExplorer.url"
-                    >View on {{ blockExplorer.label }}</links
+                    >Ver en {{ blockExplorer.label }}</links
                   >
                 </div>
               </template>
@@ -32,29 +32,29 @@
             "
           >
             <div class="circle open-pulse" />
-            Open
+            Abierto
           </div>
           <div v-else class="status">
             <div class="circle closed" />
-            Closed
+            Cerrado
           </div>
         </div>
         <div v-if="isMaxMessagesReached" class="round-notice hidden">
           <span class="bold-all-caps">
-            <p>The round is officially closed</p>
+            <p>La ronda está oficialmente cerrada</p>
           </span>
           <p>
-            It's now too late to contribute or reallocate your donations! Due to
-            the community's generosity and some technical constraints we had to
-            close the round earlier than expected. You can still help by
-            donating to the matching pool.
+            ¡Ahora es demasiado tarde para contribuir o reasignar tus
+            donaciones! Debido a la generosidad de la comunidad y algunas
+            limitaciones técnicas, tuvimos que cerrar la ronda antes de lo
+            esperado. Aún puedes ayudar donando al grupo correspondiente.
           </p>
           <div class="dismiss-btn" @click="toggleNotice">Great!</div>
         </div>
         <div class="round-info-item" v-if="$store.getters.isRoundJoinOnlyPhase">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">⏱️ Round opening</div>
+              <div class="round-info-title">⏱️ Apertura de la Ronda</div>
             </div>
           </div>
           <div class="round-info-value">
@@ -70,11 +70,13 @@
         >
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">Time left to contribute</div>
+              <div class="round-info-title">
+                Tiempo restante para contribuir
+              </div>
               <img
                 v-tooltip="{
                   content:
-                    'During this phase, you can contribute to your favorite projects.',
+                    'Durante esta fase, puedes contribuir a tus proyectos favoritos.',
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -85,7 +87,7 @@
           <div
             class="round-info-value"
             :title="
-              'Contribution Deadline: ' +
+              'Fecha limite de Contribución: ' +
               formatDate(currentRound.signUpDeadline)
             "
           >
@@ -104,14 +106,15 @@
               <div class="round-info-title">
                 {{
                   $store.getters.hasUserContributed
-                    ? 'Time left to reallocate'
-                    : 'Round status'
+                    ? 'Tiempo restante para reasignar'
+                    : 'Estado de la ronda'
                 }}
               </div>
               <img
                 v-if="$store.getters.hasUserContributed"
                 v-tooltip="{
-                  content: `During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.`,
+                  content: `Durante esta fase, puedes agregar / eliminar proyectos y cambiar los montos de tus
+                  contribuciones. No puedes hacer una contribución o aumentar su total general.`,
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -120,7 +123,7 @@
               <img
                 v-else-if="!this.$store.state.currentUser"
                 v-tooltip="{
-                  content: `If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.`,
+                  content: `Si has contribuido, puedes agregar / eliminar proyectos y cambiar los montos de su contribución. Conecta tu wallet.`,
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -129,7 +132,7 @@
               <img
                 v-else
                 v-tooltip="{
-                  content: `This round has closed for new contributions.`,
+                  content: `Esta ronda se ha cerrado para nuevas contribuciones.`,
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -137,13 +140,13 @@
               />
             </div>
             <div class="message" v-if="!$store.getters.hasUserContributed">
-              Closed for contributions
+              Cerrado para contribuciones
             </div>
             <div
               v-else
               class="round-info-value"
               :title="
-                'Reallocation Deadline: ' +
+                'Fecha límite para reasignar: ' +
                 formatDate(currentRound.votingDeadline)
               "
             >
@@ -156,10 +159,10 @@
         <div v-else-if="$store.getters.isRoundTallying" class="round-info-item">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">Round status</div>
+              <div class="round-info-title">Estado de la ronda</div>
               <img
                 v-tooltip="{
-                  content: `Our smart contracts are busy figuring out final contribution amounts.`,
+                  content: `Nuestros contratos inteligentes están ocupados calculando los montos finales de las contribuciones.`,
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -167,7 +170,7 @@
               />
             </div>
             <div class="round-info-value">
-              <div class="message">Tallying all contributions</div>
+              <div class="message">Contando todas las contribuciones</div>
             </div>
           </div>
         </div>
@@ -177,10 +180,10 @@
         >
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">Round status</div>
+              <div class="round-info-title">Estado de la ronda</div>
               <img
                 v-tooltip="{
-                  content: `If you're a project owner you can now claim your funds!`,
+                  content: `Si eres propietario de un proyecto, ¡Ahora puedes reclamar tus fondos!`,
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -188,7 +191,9 @@
               />
             </div>
             <div class="round-info-value">
-              <div class="message">Contributions are ready to claim 🎉</div>
+              <div class="message">
+                Las contribuciones están listas para ser reclamadas🎉
+              </div>
             </div>
           </div>
         </div>
@@ -196,10 +201,10 @@
           <div class="round-value-info-item">
             <div class="full-width">
               <div class="round-info-item-top">
-                <div class="round-info-title">Total in round</div>
+                <div class="round-info-title">Total en la ronda</div>
                 <img
                   v-tooltip="{
-                    content: `This total includes the funds in the matching pool and all contributions from the community.`,
+                    content: `Este total incluye los fondos del fondo de contrapartida y todas las contribuciones de la comunidad.`,
                     trigger: 'hover click',
                   }"
                   width="16px"
@@ -214,11 +219,11 @@
           </div>
           <div class="round-info-sub-item">
             <div class="round-info-item-top">
-              <div class="round-info-title">Matching pool</div>
+              <div class="round-info-title">Pool de Contrapartida</div>
               <img
                 v-tooltip="{
                   content:
-                    'These are the funds that will be distributed to all the projects based on the contributions they receive from the community.',
+                    'Estos son los fondos que se distribuirán a todos los proyectos en función de los aportes que reciban de la comunidad.',
                   trigger: 'hover click',
                 }"
                 width="16px"
@@ -229,12 +234,12 @@
                   !$store.getters.isRoundFinalized &&
                   !$store.getters.isRoundTallying
                 "
-                v-tooltip="'Add matching funds'"
+                v-tooltip="'Agregar fondos de contrapartida'"
                 class="add-link"
                 @click="addMatchingFunds"
               >
                 <img src="@/assets/add.svg" width="16px" />
-                <span class="add-funds-link">Add funds</span>
+                <span class="add-funds-link">Agregar fondos</span>
               </div>
             </div>
 
@@ -247,7 +252,7 @@
           </div>
           <div class="round-info-sub-item">
             <div>
-              <div class="round-info-title">Contributions total</div>
+              <div class="round-info-title">Total de Contribuciones</div>
               <div class="round-info-value">
                 <div class="value">
                   {{ formatAmount(currentRound.contributions) }}
@@ -258,11 +263,11 @@
           </div>
           <div class="round-info-sub-item">
             <div>
-              <div class="round-info-title">Contributors</div>
+              <div class="round-info-title">Contribuyentes</div>
               <div class="round-info-value">
                 <div class="value">{{ currentRound.contributors }}</div>
                 <div class="unit">
-                  legend{{ currentRound.contributors !== 1 ? 's' : '' }}
+                  buidler{{ currentRound.contributors !== 1 ? 's' : '' }}
                 </div>
               </div>
             </div>
@@ -273,11 +278,11 @@
         <div class="round-info-item">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">No scheduled round</div>
+              <div class="round-info-title">Sin ronda programada</div>
             </div>
           </div>
           <div class="round-info-value">
-            We haven't yet scheduled a funding round. Stay tuned!
+            Aún no hemos programado una ronda de financiamiento. Stay tuned!
           </div>
         </div>
       </template>

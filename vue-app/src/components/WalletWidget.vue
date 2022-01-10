@@ -9,7 +9,7 @@
       }"
       @click="showModal()"
     >
-      Connect
+      Conectar
     </button>
     <div
       v-else-if="currentUser && !isActionButton"

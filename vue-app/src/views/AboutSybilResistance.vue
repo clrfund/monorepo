@@ -2,94 +2,105 @@
   <div class="about">
     <h1 class="content-heading">About Sybil Resistance</h1>
 
-    <h2>What are Sybil attacks?</h2>
+    <h2>¿Qué son los Sybil attacks?</h2>
     <p>
-      A "sybil attack" is when one person pretends to be many people in order to
-      subvert a system's rules. The more a system depends on each participant
-      being a single, unique person, the more potentially vulnerable it is to
-      sybil attacks. Social media is somewhat vulnerable: bots creating email
-      spam and fake follows or likes are examples of relatively toothless sybil
-      attacks. Digital voting systems are more vulnerable: if an attacker can
-      create enough fake users to swing a vote, there can be significant and
-      concrete consequences. Since clr.fund uses
-      <links to="/about/quadratic-funding">quadratic funding</links>, which is
-      essentially a voting system, sybil attacks are a serious threat.
+      A "sybil attack" es cuando una persona finge ser muchas personas con e l
+      fin de subvertir las reglas de un sistema. Cuanto más depende un sistema
+      de que cada participante sea una sola persona, más vulnerable es a los
+      sybil attack. Las redes sociales son algo vulnerables: los bots que crean
+      correos electrónicos no deseados y seguidores o "likes" falsos son
+      ejemplos de ybil attack relativamente ineficaces. Los sistemas de votación
+      digital son más vulnerables: si un atacante puede crear suficientes
+      usuarios falsos para emitir un voto, puede haber consecuencias
+      significativas y concretas. Dado que clr.fund utiliza
+      <links to="/about/quadratic-funding">quadratic funding</links>, que es
+      esencialmente un sistema de votación, los sybil attack son una seria
+      amenaza.
     </p>
     <p>
-      In the physical world, sybil attacks are hard to pull off. It's pretty
-      difficult to pretend to be someone else for long, especially when most
-      governments issue and check photo IDs and ID numbers. On the internet,
-      though, nobody knows you're a dog. People don't want to share their
-      personal information online and government IDs are impractical for
-      borderless web services, so historically, we haven't had strong methods to
-      stop online sybil attacks.
-    </p>
-
-    <h2>Sybil Resistance and BrightID</h2>
-    <p>
-      BrightID is a platform we use to increase our confidence that you're only
-      contributing once. BrightID is one of a new class of digital identity
-      solutions for use cases like clr.fund that require digital sybil
-      resistance.
-    </p>
-    <p>
-      BrightID works using a web-of-trust model: users connect their BrightID
-      accounts with people they trust to be unique humans (generally because
-      they know them personally) and form groups. These connections are public,
-      but users' personal data aren't. If you connect your BrightID to an app,
-      the app can analyze your connections and decide whether or not to allow
-      you access based on how likely you are to be a unique person. The graph of
-      BrightID connections can be analyzed with any method, but generally, the
-      more connections an ID has with other trustworthy-looking IDs, the more
-      trustworthy it is.
-    </p>
-    <p>
-      To contribute to projects in a clr.fund round, you must connect a verified
-      BrightID with the clr.fund app. This prevents you from creating 1000s of
-      Ethereum accounts and distorting the contributions.
-    </p>
-    <p>
-      <links to="/verify">Get verified by following the directions here</links>.
+      En el mundo físico, los sybil attack son difíciles de realizar. Es
+      bastante difícil pretender ser otra persona durante mucho tiempo,
+      especialmente cuando la mayoría de los gobiernos emiten y verifican
+      identificaciones con foto y números de identificación. En Internet, sin
+      embargo, nadie sabe que eres un perro. La gente no quiere compartir su
+      información personal en línea y las identificaciones gubernamentales no
+      son prácticas para los servicios web sin fronteras, por lo que,
+      históricamente, no hemos tenido métodos sólidos para detener los sybil
+      attack en línea.
     </p>
 
-    <h2>How to set up BrightID</h2>
+    <h2>Resistencia Sybil y BrightID</h2>
     <p>
-      The app walks you through <links to="/verify">getting set up</links>, but
-      here's a quick look at what you can expect:
+      BrightID es una plataforma que utilizamos para aumentar nuestra confianza
+      en que solo está contribuyendo una vez. BrightID es una de una nueva clase
+      de soluciones de identidad digital para casos de uso como clr.fund que
+      requieren resistencia digital sybil.
+    </p>
+    <p>
+      BrightID funciona utilizando un modelo de red de confianza: los usuarios
+      conectan sus cuentas de BrightID con personas en las que confían como
+      seres humanos únicos (generalmente porque los conocen personalmente) y
+      forman grupos. Estas conexiones son públicas, pero los datos personales de
+      los usuarios no lo son. Si conecta su BrightID a una aplicación, la
+      aplicación puede analizar sus conexiones y decidir si le permite o no el
+      acceso en función de la probabilidad de que sea una persona única. El
+      gráfico de conexiones BrightID se puede analizar con cualquier método,
+      pero en general, cuantas más conexiones tenga una ID con otras ID de
+      aspecto confiable, más confiable será.
+    </p>
+    <p>
+      Para contribuir a proyectos en una ronda de clr.fund, debe conectar un
+      BrightID verificado con la aplicación clr.fund. Esto le impide crear miles
+      de cuentas de Ethereum y distorsionar las contribuciones.
+    </p>
+    <p>
+      <links to="/verify"
+        >Obtenga la verificación siguiendo las instrucciones aquí</links
+      >.
+    </p>
+
+    <h2>Cómo configurar BrightID</h2>
+    <p>
+      La aplicación lo guía a través de<links to="/verify">getting set up</links
+      >, pero aquí hay un vistazo rápido a lo que puede esperar:
     </p>
     <ol>
       <li>
-        Download BrightID for
+        Descarga BrightID para
         <links to="https://apps.apple.com/us/app/brightid/id1428946820"
           >iOS</links
         >
-        or
+        o
         <links to="https://play.google.com/store/apps/details?id=org.brightid"
           >Android</links
         >
       </li>
       <li>
-        Link your wallet to your BrightID profile, so you can't use multiple
-        Ethereum addresses to sway voting.
+        Vincula tu billetera a tu perfil de BrightID, de modo que no puedas usar
+        varias direcciones de Ethereum para influir en la votación.
       </li>
-      <li>Get verified in BrightID so we know you're a human and not a bot.</li>
       <li>
-        Submit a transaction for clr.fund to sponsor you in BrightID
+        Obtén la verificación en BrightID para que sepamos que es un humano y no
+        un bot.
+      </li>
+      <li>
+        Envía una transacción para que clr.fund lo patrocine en BrightID
         <links
           to="https://medium.com/brightid/brightid-sponsorships-5327a8d39f1e"
-          >More on BrightID sponsorship</links
+          >Más sobre el patrocinio de BrightID</links
         >
       </li>
       <li>
-        Add yourself to the clr.fund user registry. This is a requirement for
-        <links to="/about/maci">MACI, our anti-bribery tech</links>.
+        Agrégate al registro de usuarios de clr.fund. Este es un requisito para
+        <links to="/about/maci">MACI, nuestra tecnología anti-soborno</links>.
       </li>
     </ol>
     <p>
-      Note that you should only link one Ethereum address to your BrightID
-      profile. If you repeat our verification process and add another Ethereum
-      address, all contributions from you previous address will be ignored by
-      the matching pool. This is again to avoid sybil attacks.
+      Ten en cuenta que solo debe vincular una dirección de Ethereum a tu perfil
+      de BrightID. Si repites nuestro proceso de verificación y agregas otra
+      dirección de Ethereum, todas las contribuciones de tu dirección anterior
+      serán ignoradas por el grupo correspondiente. De nuevo, esto es para
+      evitar sybil attacks.
     </p>
   </div>
 </template>

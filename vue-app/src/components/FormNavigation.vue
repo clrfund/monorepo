@@ -7,7 +7,7 @@
         class="btn-secondary float-left"
         :disabled="isNavDisabled"
       >
-        Previous
+        Anterior
       </button>
       <button
         v-if="currentStep < finalStep"
@@ -15,7 +15,7 @@
         class="btn-primary float-right"
         :disabled="!isStepValid"
       >
-        {{ currentStep === finalStep - 1 ? 'Finish' : 'Next' }}
+        {{ currentStep === finalStep - 1 ? 'Finalizar' : 'Siguiente' }}
       </button>
     </div>
   </div>

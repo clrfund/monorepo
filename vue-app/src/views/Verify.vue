@@ -8,7 +8,7 @@
             :totalSteps="steps.length"
           />
           <p class="subtitle">
-            Step {{ currentStep + 1 }} of {{ steps.length }}
+            Paso {{ currentStep + 1 }} de {{ steps.length }}
           </p>
           <div class="progress-steps">
             <div
@@ -52,20 +52,20 @@
           :totalSteps="steps.length"
         />
         <div class="row">
-          <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-          <links class="cancel-link" to="/verify"> Cancel </links>
+          <p>Paso {{ currentStep + 1 }} de {{ steps.length }}</p>
+          <links class="cancel-link" to="/verify"> Cancelar </links>
         </div>
       </div>
       <div class="title-area">
-        <h1>Set up BrightID</h1>
+        <h1>Configurar BrightID</h1>
       </div>
       <div class="cancel-area desktop">
-        <links class="cancel-link" to="/verify"> Cancel </links>
+        <links class="cancel-link" to="/verify"> Cancelar </links>
       </div>
       <div class="form-area">
         <div class="verification-status" v-if="currentStep === 2">
           <div>
-            <h2>Verification status</h2>
+            <h2>Estado de verificación</h2>
             <p>
               {{
                 isManuallyVerified
@@ -75,9 +75,9 @@
             </p>
             <div v-if="!isManuallyVerified">
               <p>
-                Once you're verified in BrightID, verification confirmation
-                doesn't happen immediately so feel free to check by clicking the
-                button below.
+                Una vez que estés verificado en BrightID, la confirmación de la
+                verificación no ocurre de inmediato, así que no dudes en
+                verificar haciendo clic en el botón a continuación.
               </p>
               <div class="actions">
                 <button
@@ -86,7 +86,7 @@
                   class="btn-primary"
                   :disabled="loadingManualVerify"
                 >
-                  Check if you are verified
+                  Comprueba si estás verificado
                 </button>
                 <loader v-if="loadingManualVerify" />
               </div>
@@ -98,24 +98,25 @@
         </div>
         <div class="application">
           <div v-if="currentStep === 0">
-            <h2 class="step-title">Connect</h2>
+            <h2 class="step-title">Conectar</h2>
             <p>
-              First you need to connect your BrightID account with your wallet
-              address.
+              Primero debes conectar tu cuenta BrightID con la dirección de tu
+              billetera.
             </p>
             <p>
-              Once this app is linked in your BrightID app, we'll automatically
-              transition you to the next step. It may take a minute for us to
-              verify the connection - please wait.
+              Una vez que la aplicación esté vinculada en tu aplicación
+              BrightID, espere unos momentos para que verifiquemos la conexión.
+              Pasaremos automáticamente al siguiente paso.
             </p>
             <div class="qr">
               <div class="instructions">
                 <p class="desktop" v-if="appLinkQrCode">
-                  Scan this QR code with your BrightID app
+                  Escanee este código QR con tu aplicación BrightID
                 </p>
                 <img :src="appLinkQrCode" class="desktop qr-code" />
                 <p class="mobile">
-                  Follow this link to connect your wallet to your BrightID app
+                  Siga este enlace para conectar tu billetera a tu aplicación
+                  BrightID
                 </p>
                 <links class="mobile" :to="appLink">
                   <div class="icon">
@@ -125,9 +126,10 @@
                 </links>
                 <p class="mobile">
                   <em>
-                    This link might look scary but it just makes a connection
-                    between your connected wallet address, our app, and
-                    BrightID. Make sure your address looks correct.
+                    Este enlace puede parecer aterrador, pero solo establece una
+                    conexión entre la dirección de tu billetera conectada,
+                    nuestra aplicación y BrightID. Asegúrate de que tu dirección
+                    se vea correcta.
                   </em>
                 </p>
               </div>
@@ -136,12 +138,12 @@
             </div>
           </div>
           <div v-if="currentStep === 1">
-            <h2 class="step-title">Get sponsored</h2>
+            <h2 class="step-title">Obten patrocinio</h2>
             <p>
-              You need a sponsorship token to become BrightID verified. This
-              helps support BrightID as a decentralized platform. You’ll only
-              ever need to do this once and it covers you for any other app that
-              works with BrightID.
+              Necesitas un token de patrocinio para obtener la verificación de
+              BrightID. Esto ayuda a admitir BrightID como plataforma
+              descentralizada. Solo necesitarás hacer esto una vez y lo cubre
+              para cualquier otra aplicación que funcione con BrightID.
             </p>
             <div class="transaction">
               <div>
@@ -151,7 +153,7 @@
                   @click="sponsor"
                   :disabled="sponsorTxHash.length !== 0"
                 >
-                  Get sponsored
+                  Ser patrocinado
                 </button>
                 <transaction
                   v-if="sponsorTxHash || loadingTx || sponsorTxError"
@@ -163,44 +165,42 @@
               <div v-if="sponsorTxHash">
                 <loader />
                 <p>
-                  Waiting for sponsorship verification from BrightID, please
-                  wait. This shouldn't take more than a couple of minutes.
+                  Esperando la verificación de patrocinio de BrightID, espera.
+                  Esto no debería tomar más de un par de minutos.
                 </p>
               </div>
             </div>
           </div>
           <div v-if="currentStep === 2">
-            <h2 class="step-title">Get verified</h2>
+            <h2 class="step-title">Verifícate</h2>
             <p>
-              BrightID verification helps prove that you’re a unique human. To
-              get verified, you need enough people to confirm they've met you
-              and you're a real person. There are a couple of ways to do this:
+              La verificación BrightID ayuda a demostrar que eres un ser humano
+              único. Para ser verificado, necesitas suficientes personas para
+              confirmar que te conocieron y que eres una persona real. Hay un
+              par de formas de hacer esto:
             </p>
             <accordion
-              tag="🚀 Fastest"
-              header="Join a BrightId party"
-              content="BrightID run verification parties regularly. Join the call,
-            meet other new users, and they'll verify you’re a human and not a
-            bot. Quick and painless, even for you introverts out there."
+              tag="🚀 Rapido"
+              header="Únete a una fiesta BrightId"
+              content="BrightID organiza fiestas de verificación con regularidad. Únase a la llamada, conozca a otros usuarios nuevos y ellos verificarán que es un humano y no un bot. Rápido e indoloro, incluso para los introvertidos."
               :linkButton="{
                 link: 'https://meet.brightid.org/#/',
-                text: 'View party schedule',
+                text: 'Ver el horario de la fiesta',
               }"
             />
             <accordion
-              tag="🎰 Luckiest"
-              header="Connect with 2 verified humans"
-              content="Know anyone that's contributed to Gitcoin Grants or clr.fund
-                rounds? They may already be verified. Hit them up and see if
-                they can verify you!"
+              tag="🎰 Más afortunado"
+              header="Conéctate con 2 humanos verificados"
+              content="¿Conoces a alguien que haya contribuido a las subvenciones de Gitcoin o las rondas de fondos de clr.fund? Es posible que ya estén verificados. ¡Escríbeles y ve si pueden verificarte!"
             />
           </div>
           <div v-if="currentStep === 3">
-            <h2 class="step-title">Register</h2>
+            <h2 class="step-title">Registrarse</h2>
             <p>
-              To protect the round from bribery and fraud, you need to add your
-              wallet address to a smart contract registry. Once you’re done, you
-              can join the funding round!
+              Para proteger la ronda del soborno y el fraude, debes agregar la
+              dirección de tu billetera a un registro de contrato inteligente.
+              Una vez que hayas terminado, puedes unirte a la ronda de
+              financiamiento.
             </p>
             <div class="transaction">
               <button
@@ -209,7 +209,7 @@
                 @click="register"
                 :disabled="registrationTxHash.length !== 0"
               >
-                Become a contributor
+                Conviértete en colaborador
               </button>
               <transaction
                 v-if="registrationTxHash || loadingTx || registrationTxError"

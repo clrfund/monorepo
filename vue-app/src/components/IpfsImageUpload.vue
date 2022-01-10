@@ -18,7 +18,7 @@
       <button
         primary="true"
         type="submit"
-        label="Upload"
+        label="Subir"
         class="btn-primary"
         :disabled="loading || error || !loadedImageData"
       >
@@ -45,14 +45,14 @@
       <div>
         <p class="input-label">IPFS hash</p>
         <p class="input-description">
-          Your image is now stored on a decentralized network at the following
-          hash. You don't need to do anything with it but you may want to keep
-          it for future use.
+          Tu imagen ahora está almacenada en una red descentralizada en el
+          siguiente hash. No es necesario que hagas nada con él, pero es posible
+          que desees conservarlo para usarlo en el futuro.
         </p>
       </div>
       <div class="hash-area">
         <ipfs-copy-widget :hash="hash" />
-        <div @click="handleRemoveImage" class="btn-warning">Remove image</div>
+        <div @click="handleRemoveImage" class="btn-warning">Remover imagen</div>
       </div>
     </div>
     <p v-if="error" class="error">{{ error }}</p>

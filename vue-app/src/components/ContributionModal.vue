@@ -2,34 +2,34 @@
   <div class="modal-body">
     <div v-if="step === 0">
       <h2>
-        Confirm {{ renderTotal }}
-        {{ currentRound.nativeTokenSymbol }} contribution
+        Confirmar {{ renderTotal }}
+        {{ currentRound.nativeTokenSymbol }} contribución
       </h2>
       <p>
-        Your
+        El total de tu contribución de
         <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>
-        contribution total is final. You won't be able to increase this amount.
-        Make sure this is the maximum you might want to spend on contributions.
+        es definitivo. No podrás aumentar esta cantidad. Asegúrate de que este
+        sea el monto máximo que podrías querer gastar en contribuciones.
       </p>
       <!-- TODO: if you get 1/3 of the way through these transactions and come back, you shouldn't get this warning again. This warning should only appear if you haven't already signed 'approve' transaction -->
       <!-- <p>
         <em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
       </p> -->
       <div class="btn-row">
-        <button class="btn-secondary" @click="$emit('close')">Cancel</button>
-        <button class="btn-primary" @click="contribute()">Continue</button>
+        <button class="btn-secondary" @click="$emit('close')">Cancelar</button>
+        <button class="btn-primary" @click="contribute()">Continuar</button>
       </div>
     </div>
     <div v-if="step === 1">
       <progress-bar :currentStep="1" :totalSteps="3" />
       <h2>
-        Approve {{ renderTotal }}
+        Aprobado {{ renderTotal }}
         {{ currentRound.nativeTokenSymbol }}
       </h2>
       <p>
-        This gives this app permission to withdraw
-        {{ renderTotal }} {{ currentRound.nativeTokenSymbol }} from your wallet
-        for your contribution.
+        Esto le da permiso a esta aplicación para retirar
+        {{ renderTotal }} {{ currentRound.nativeTokenSymbol }} de tu billetera
+        para tu contribución.
       </p>
       <transaction
         :hash="approvalTxHash"
@@ -48,12 +48,12 @@
     <div v-if="step === 2">
       <progress-bar :currentStep="2" :totalSteps="3" />
       <h2>
-        Send {{ renderTotal }} {{ currentRound.nativeTokenSymbol }} contribution
+        Enviar {{ renderTotal }}
+        {{ currentRound.nativeTokenSymbol }} contribución
       </h2>
       <p>
-        This transaction sends out your {{ renderTotal }}
-        {{ currentRound.nativeTokenSymbol }} contribution to your chosen
-        projects.
+        Esta transacción envía tu contribución de {{ renderTotal }}
+        {{ currentRound.nativeTokenSymbol }} a tus proyectos elegidos
       </p>
       <transaction
         :hash="contributionTxHash"
@@ -71,11 +71,11 @@
     </div>
     <div v-if="step === 3">
       <progress-bar :currentStep="3" :totalSteps="3" />
-      <h2>Matching pool magic ✨</h2>
+      <h2>Magia del Pool de Contrapartida ✨</h2>
       <p>
-        This transaction lets the matching pool know how much
-        {{ currentRound.nativeTokenSymbol }} to send to your favorite projects
-        based on your contributions.
+        Esta transacción le permite al grupo coincidente saber cuánto
+        {{ currentRound.nativeTokenSymbol }} enviar a sus proyectos favoritos
+        según tus contribuciones.
       </p>
       <transaction
         :hash="voteTxHash"

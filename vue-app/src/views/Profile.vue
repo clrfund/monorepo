@@ -4,12 +4,12 @@
     <div class="container">
       <div class="flex-row" style="justify-content: flex-end">
         <div class="close-btn" @click="$emit('close')">
-          <p class="no-margin">Close</p>
+          <p class="no-margin">Cerrar</p>
           <img src="@/assets/close.svg" />
         </div>
       </div>
       <div class="flex-row">
-        <h2 class="no-margin">Your wallet</h2>
+        <h2 class="no-margin">Tu wallet</h2>
       </div>
       <div class="address-card">
         <h2 class="address">{{ displayAddress }}</h2>
@@ -45,7 +45,7 @@
           <h2>{{ chain.label }} balances</h2>
           <div
             v-tooltip="{
-              content: `Balance of wallet on ${chain.label} chain`,
+              content: `Balance de wallet en ${chain.label} chain`,
               trigger: 'hover click',
             }"
           >
@@ -73,7 +73,7 @@
         <funds-needed-warning :onNavigate="onNavigateToBridge" />
       </div>
       <div class="projects-section">
-        <h2>Projects</h2>
+        <h2>Proyectos</h2>
         <div v-if="projects.length > 0" class="project-list">
           <div
             class="project-item"
@@ -96,15 +96,15 @@
                 {{ name }}
                 <span v-if="isLocked">🔒</span>
               </div>
-              <div v-if="isHidden" class="project-hidden">Under review</div>
+              <div v-if="isHidden" class="project-hidden">Bajo revisión</div>
             </div>
             <button class="btn-secondary" @click="navigateToProject(id)">
-              {{ isLocked ? 'Preview' : 'View' }}
+              {{ isLocked ? 'Vista Previa' : 'Ver' }}
             </button>
           </div>
         </div>
         <div v-if="!isLoading && projects.length === 0">
-          You haven't submitted any projects
+          No has enviado ningún proyecto.
         </div>
         <loader v-if="isLoading" />
       </div>

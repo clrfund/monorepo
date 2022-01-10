@@ -1,11 +1,11 @@
 <template>
   <div :class="!isCompact && 'warning'" v-if="needsFunds">
     <span v-if="!isCompact">
-      You need {{ chain.isLayer2 ? 'L2' : chain.label }} funds!
+      ¡Necesitas {{ chain.isLayer2 ? 'L2' : chain.label }} fondos!
     </span>
     <p v-if="!!singleTokenNeeded">
-      ⚠️ You need both some ETH for gas, and {{ nativeTokenSymbol }} to
-      contribute
+      ⚠️ Necesitas algo de xDAI para el gas y {{ nativeTokenSymbol }} para
+      contribuir
     </p>
     <p @click="onNavigate" class="message">
       <links
@@ -17,10 +17,10 @@
           },
         }"
       >
-        Get help bridging {{ singleTokenNeeded }} to Layer 2
+        Obtén ayuda para vincular {{ singleTokenNeeded }} a Layer 2
       </links>
       <links v-else :to="chain.bridge">
-        Bridge {{ singleTokenNeeded }} to {{ chain.label }}
+        Vincula {{ singleTokenNeeded }} a {{ chain.label }}
       </links>
     </p>
   </div>

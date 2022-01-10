@@ -19,24 +19,24 @@
       >
         <loader class="button-loader" v-if="isWaiting" />
         <div v-if="isWaiting" class="tx-notice">
-          Check your wallet for a prompt...
+          Revisa tu billetera para obtener un aviso ...
         </div>
         <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
-          Something failed: {{ txError }}<br />
-          Check your wallet or {{ blockExplorerLabel }} for more info.
+          Algo falló: {{ txError }}<br />
+          Revisa tu wallet o {{ blockExplorerLabel }} para más información.
         </div>
         <div v-if="isTxRejected" class="warning-text">
-          You rejected the transaction in your wallet
+          Rechazaste la transacción en tu wallet
         </div>
       </div>
       <div class="connected" v-if="currentUser">
         <div class="total-title">
-          Total to submit
+          Total para enviar
           <img
             v-tooltip="{
               content:
-                'Estimate – this total may be slightly different in your wallet.',
+                'Estimación - este total puede ser ligeramente diferente en tu wallet.',
               trigger: 'hover click',
             }"
             src="@/assets/info.svg"
@@ -47,11 +47,11 @@
           <span class="total-currency"> {{ depositToken }}</span>
         </div>
         <div class="warning-text" v-if="hasLowFunds">
-          Not enough {{ depositToken }} in your wallet.<br />
-          Top up or connect a different wallet.
+          No hay suficientes {{ depositToken }} en tu wallet.<br />
+          Recarga o conecta una wallet diferente.
         </div>
         <div v-if="txHasDeposit" class="checkout-row">
-          <p class="m05"><b>Security deposit</b></p>
+          <p class="m05"><b>Deposito de seguridad</b></p>
           <p class="m05">
             {{ depositAmount }} {{ depositToken }}
             <span class="o5"

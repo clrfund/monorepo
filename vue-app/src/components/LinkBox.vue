@@ -1,6 +1,6 @@
 <template>
   <div class="link-box">
-    <h2 class="link-title">Check them out</h2>
+    <h2 class="link-title">Échales un vistazo</h2>
     <div v-if="project.githubUrl" class="link-row">
       <img src="@/assets/GitHub.svg" />
       <links :to="project.githubUrl">GitHub repo</links>
