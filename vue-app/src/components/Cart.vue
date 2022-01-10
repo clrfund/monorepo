@@ -494,7 +494,7 @@ export default class Cart extends Vue {
     } catch {
       return false
     }
-    if (amount.lt(BigNumber.from(0))) {
+    if (amount.lte(BigNumber.from(0))) {
       return false
     }
     const normalizedValue = FixedNumber.fromValue(

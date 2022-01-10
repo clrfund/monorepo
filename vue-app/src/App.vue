@@ -65,15 +65,17 @@ import { SET_CURRENT_USER } from '@/store/mutation-types'
 
 @Component({
   name: 'clr.fund',
-  metaInfo: {
-    title: 'clr.fund',
-    titleTemplate: 'clr.fund - %s',
-    meta: [
-      {
-        name: 'git-commit',
-        content: process.env.VUE_APP_GIT_COMMIT || '',
-      },
-    ],
+  metaInfo() {
+    return {
+      title: this.$route.meta.title,
+      titleTemplate: 'clr.fund - %s',
+      meta: [
+        {
+          name: 'git-commit',
+          content: process.env.VUE_APP_GIT_COMMIT || '',
+        },
+      ],
+    }
   },
   components: {
     RoundInformation,

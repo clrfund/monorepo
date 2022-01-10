@@ -6,7 +6,7 @@ import {
 import { isHexString } from '@ethersproject/bytes'
 import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
-import { getNetworkToken } from '@/utils/networks'
+import { chain } from '@/api/core'
 
 import { OptimisticRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
@@ -33,12 +33,11 @@ export async function getRegistryInfo(
   )
   const deposit = await registry.baseDeposit()
   const challengePeriodDuration = await registry.challengePeriodDuration()
-  const network = await provider.getNetwork()
   const recipientCount = await registry.getRecipientCount()
   const owner = await registry.owner()
   return {
     deposit,
-    depositToken: getNetworkToken(network),
+    depositToken: chain.currency,
     challengePeriodDuration: challengePeriodDuration.toNumber(),
     listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
     recipientCount: recipientCount.toNumber(),
