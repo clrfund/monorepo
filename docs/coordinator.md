@@ -2,24 +2,27 @@
 
 ## Coordinate using MACI CLI
 
-Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.9.4:
+Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.10.1:
 
 ```
 git clone https://github.com/appliedzkp/maci.git
 cd maci/
-git checkout v0.9.4
+git checkout v0.10.1
 ```
 
 Follow instructions in README.md to install necessary dependencies.
 
 ### Medium Circuits
+
 Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits into `circuits/params/` directory and rebuild the keys:
 
 ```
 cd circuits
 ./scripts/buildSnarksMedium.sh
 ```
+
 ### x32 Circuits
+
 Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) for 'x32' circuits into `circuits/params/` directory and rebuild the keys:
 
 ```
@@ -45,14 +48,25 @@ A single key can be used to coordinate multiple rounds.
 
 ### Tally votes
 
-Decrypt messages and tally the votes:
+Download the logs:
 
 ```
 cd ../cli
-node build/index.js genProofs \
-    --eth-provider <json-rpc-api-url> \
-    --contract <maci-address> \
-    --privkey <coordinator-private-key> \
+node build/index.js fetchLogs \
+    --eth-provider <ETH_HOSTNAME> \
+    --contract <MACI_CONTRACT_ADDR> \
+    --start-block <BLOCK_NUMBER> \
+    --num-blocks-per-request <BLOCKS_PER_REQ> \
+    --output logs
+```
+
+Decrypt messages and tally the votes:
+
+```
+node build/index.js proveOnChain \
+    --eth-provider <ETH_HOSTNAME> \
+    --contract <MACI_CONTRACT_ADDR> \
+    --privkey <COORDINATOR_PRIVKEY> \
     --output proofs.json \
     --tally-file tally.json
 ```
@@ -77,6 +91,38 @@ Finally, the [CID](https://ipfs.io/ipns/docs.ipfs.io/concepts/content-addressing
 
 ```
 await fundingRound.publishTallyHash('<CID>')
+```
+
+## Coordinate using Docker
+
+In case you are in a different OS than Linux, you can run all the previous MACI CLI commands by running the Docker image located in the MACI repo.
+
+**Note:** the [x32 params](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) have been tested using Ubuntu 21.04 + Node 15.8.0.
+
+### Use the docker image
+
+First, install [docker](https://docs.docker.com/engine/install/) and [docker-componse](https://docs.docker.com/compose/install/)
+
+Inside the maci repo, run:
+
+```
+docker-componse up
+```
+
+Once the container is built, in a different terminal, grab the container id:
+
+```
+docker container ls
+```
+
+Get inside the container and execute the scripts you want:
+
+```
+docker exec -it {CONTAINER_ID} bash
+
+# inside the container
+cd cli/
+node build/index.js genProofs ...
 ```
 
 ## Coordinate using clrfund scripts
@@ -112,10 +158,43 @@ Set the path to downloaded parameter files and also the path to `zkutil` binary 
 export NODE_CONFIG='{"snarkParamsPath": "../../../contracts/snark-params/", "zkutil_bin": "/usr/bin/zkutil"}'
 ```
 
+Set the following env vars in `.env`:
+
+```
+ROUND_ADDRESS=<funding-round-address>
+COORDINATOR_PK=<coordinator-private-key>
+COORDINATOR_ETH_PK=<eth-private-key>
+```
+
 Decrypt messages and tally the votes:
 
 ```
-COORDINATOR_PK=<coordinator-private-key> COORDINATOR_ETH_PK=<eth-private-key> ROUND_ADDRESS=<funding-round-address> yarn hardhat run --network xdai scripts/tally.ts
+yarn hardhat run --network {network} scripts/tally.ts
 ```
 
 Result will be saved to `tally.json` file, which must then be published via IPFS.
+
+**Using [command line](https://docs.ipfs.io/reference/cli/)**
+
+```
+# start ipfs daemon in one terminal
+ipfs daemon
+
+# in a diff terminal, go to `/contracts` (or where you have the file) and publish the file
+ipfs add tally.json
+```
+
+### Finalize round
+
+Make sure you have the following env vars in `.env`. Ignore this if you are running a local test round in `localhost`, the script will know these values itself.
+
+```
+FACTORY_ADDRESS=<funding-round-factory-address>
+COORDINATOR_ETH_PK=<eth-private-key>
+```
+
+Once you have the `tally.json` from the tally script, run:
+
+```
+yarn hardhat run --network {network} scripts/finalize.ts
+```

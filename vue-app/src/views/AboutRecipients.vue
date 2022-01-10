@@ -84,11 +84,22 @@ import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
 import { chain } from '@/api/core'
 import { ChainInfo } from '@/plugins/Web3/constants/chains'
+import { formatAmount } from '@/utils/amounts'
 
 @Component({ components: { Links } })
 export default class AboutRecipients extends Vue {
   get chain(): ChainInfo {
     return chain
+  }
+
+  get depositAmount(): string {
+    return this.$store.state.recipientRegistryInfo
+      ? formatAmount(this.$store.state.recipientRegistryInfo.deposit, 18)
+      : '...'
+  }
+
+  get depositToken(): string {
+    return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
   }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <round-status-banner />
+    <round-status-banner v-if="$store.state.currentRound" />
     <div id="page">
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
@@ -36,9 +36,7 @@
                 unirte.
               </p>
               <div class="button-group">
-                <links to="/join" class="btn-primary w100">{{
-                  joinButtonText
-                }}</links>
+                <links to="/join" class="btn-primary w100">Add project</links>
                 <div v-if="signUpDeadline">
                   <time-left unitClass="none" :date="signUpDeadline" />
                   para unirte
@@ -106,6 +104,7 @@
             Obtén {{ chain.label }}
           </links>
         </div>
+
         <!--        <div class="pre-req" id="bright-id">-->
         <!--          <div class="icon-row">-->
         <!--            <img src="@/assets/bright-id.png" id="bright-id-icon" />-->
@@ -117,6 +116,7 @@
         <!--            >Download BrightID</links-->
         <!--          >-->
         <!--        </div>-->
+
       </div>
       <div class="section-header">
         <h2>Acerca</h2>
@@ -210,12 +210,6 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 export default class Landing extends Vue {
   get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
-  }
-
-  get joinButtonText(): string {
-    return this.$store.getters.isRoundContributionPhase
-      ? 'Join Round'
-      : 'Join Next Round'
   }
 
   get operator(): string {

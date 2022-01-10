@@ -51,13 +51,11 @@ export default class FundsNeededWarning extends Vue {
   }
 
   get nativeTokenSymbol(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return nativeTokenSymbol
+    return this.$store.getters.nativeTokenSymbol
   }
 
-  get nativeTokenDecimals(): string {
-    const { nativeTokenDecimals } = this.$store.state.currentRound
-    return nativeTokenDecimals
+  get nativeTokenDecimals(): number | undefined {
+    return this.$store.getters.nativeTokenDecimals
   }
 
   get tokenBalance(): number | null {

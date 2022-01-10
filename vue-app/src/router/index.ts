@@ -28,7 +28,7 @@ import TransactionSuccess from '@/views/TransactionSuccess.vue'
 
 Vue.use(VueRouter)
 
-//TODO: create a new route that kaes funding factory address as a param
+// TODO: create a new route that takes funding factory address as a param
 const routes = [
   {
     path: '/',
@@ -224,6 +224,9 @@ const routes = [
     path: '/transaction-success/:type/:hash?',
     name: 'transaction-success',
     component: TransactionSuccess,
+    meta: {
+      title: 'Transaction Success',
+    },
   },
 ]
 const router = new VueRouter({

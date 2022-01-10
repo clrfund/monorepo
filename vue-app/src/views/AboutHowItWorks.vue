@@ -1,7 +1,6 @@
 <template>
   <div class="about">
     <h1 class="content-heading">¿Cómo funciona la ronda?</h1>
-
     <h2>CLR tutorial</h2>
     <p>
       Esta es una descripción general de cómo funciona todo detrás de escena
