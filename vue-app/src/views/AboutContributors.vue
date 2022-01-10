@@ -1,6 +1,10 @@
 <template>
   <div class="about">
     <h1 class="content-heading">Contributor guide</h1>
+    <p>
+      An overview of how things work as a contributor so you can learn what to
+      expect throughout the duration of a funding round.
+    </p>
     <h2>Get funds on {{ chain.label }}</h2>
     <p>
       You'll need some {{ chain.currency }} on {{ chain.label }} in order to
