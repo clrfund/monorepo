@@ -18,7 +18,6 @@
           src="@/assets/help.svg"
         />
         <div id="myHelpDropdown" class="button-menu" v-if="showHelpDowndown">
-          <div class="dropdown-title">Help</div>
           <div
             v-for="({ to, text, emoji }, idx) of dropdownItems"
             :key="idx"
