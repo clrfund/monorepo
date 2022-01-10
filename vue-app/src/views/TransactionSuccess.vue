@@ -7,7 +7,6 @@
     </div>
     <div class="dropshadow">
       <div class="content">
-        <breadcrumbs :path="path" />
         <span class="contributed-icon">🎉</span>
         <p
           v-if="$route.params.type === 'reallocation'"
@@ -75,13 +74,12 @@ import { RoundInfo } from '@/api/round'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import Breadcrumbs from '@/components/Breadcrumbs.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
 
 @Component({
-  components: { TransactionReceipt, TimeLeft, ImageResponsive, Breadcrumbs },
+  components: { TransactionReceipt, TimeLeft, ImageResponsive },
 })
 export default class TransactionSuccess extends Vue {
   get contribution(): BigNumber | null {
@@ -90,10 +88,6 @@ export default class TransactionSuccess extends Vue {
 
   get currentRound(): RoundInfo | null {
     return this.$store.state.currentRound
-  }
-
-  get path(): string {
-    return this.$route.path
   }
 
   formatContribution() {

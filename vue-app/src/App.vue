@@ -184,7 +184,14 @@ export default class App extends Vue {
   }
 
   get showBreadCrumb(): boolean {
-    const excludedRoutes = ['landing', 'join', 'transaction-success', 'verify']
+    const excludedRoutes = [
+      'landing',
+      'join',
+      'transaction-success',
+      'verify',
+      'project-added',
+      'verified',
+    ]
     return !excludedRoutes.includes(this.$route.name || '')
   }
 
