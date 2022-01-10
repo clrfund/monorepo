@@ -65,15 +65,15 @@
           <h2>How it works</h2>
           <ol>
             <li>
-              The {{ operator }} and other donors send funds to the matching
-              pool smart contract.
+              {{ operator }} and other donors send funds to the matching pool
+              smart contract.
             </li>
             <li>
               The round begins and you can donate to your favorite projects.
             </li>
             <li>
               Once the round finishes, the smart contract distributes the
-              matching pool funds to projects based primarily on number of
+              matching pool funds to projects weighted primarily by number of
               contributions, <strong>not contribution value</strong>.
             </li>
           </ol>
