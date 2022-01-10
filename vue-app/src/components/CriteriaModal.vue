@@ -11,8 +11,8 @@
           </div>
         </div>
         <p>
-          For this pilot round, {{ operator }} members will remove any projects
-          that don't meet the round criteria. So read carefully! In later rounds
+          The registry admin ({{ operator }}) will remove any projects that
+          don't meet the round criteria. So read carefully! In later rounds
           we're hoping that this review process can be done by the community.
         </p>
         <div class="content">

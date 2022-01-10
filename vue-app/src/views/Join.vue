@@ -44,7 +44,9 @@
             <h2 class="step-title">About the project</h2>
             <div class="inputs">
               <div class="form-background">
-                <label for="project-name" class="input-label">Name</label>
+                <label for="project-name" class="input-label"
+                  >Project name</label
+                >
                 <input
                   id="project-name"
                   type="text"
@@ -233,8 +235,9 @@
                   >Ethereum address</label
                 >
                 <p class="input-description">
-                  This doesn’t have to be the same address as the one you use to
-                  send your application.
+                  The destination address for donations, which you'll use to
+                  claim funds. This doesn't have to be the same address as the
+                  one you use to send your application transaction.
                 </p>
                 <input
                   id="fund-address"
@@ -339,7 +342,7 @@
               </div>
               <div class="form-background">
                 <label for="team-desc" class="input-label"
-                  >Description (optional)</label
+                  >Team description (optional)</label
                 >
                 <p class="input-description">
                   If different to project description. Markdown supported.
@@ -394,7 +397,7 @@
                 <input
                   id="links-radicle"
                   type="link"
-                  placeholder="example: https://radicle.com/ethereum/clrfund"
+                  placeholder="example: https://radicle.xyz/ethereum/clrfund"
                   v-model.lazy="$v.form.links.radicle.$model"
                   :class="{
                     input: true,

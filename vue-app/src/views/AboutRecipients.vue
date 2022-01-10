@@ -1,6 +1,10 @@
 <template>
   <div class="about">
     <h1 class="content-heading">Recipient guide</h1>
+    <p>
+      An overview of how things work as a recipient so you can learn what to
+      expect throughout the duration of a funding round.
+    </p>
     <div v-if="chain.bridge">
       <h2>Get funds on {{ chain.label }}</h2>
       <p>
