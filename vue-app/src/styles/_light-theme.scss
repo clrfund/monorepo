@@ -25,6 +25,14 @@
     border-radius: 1rem;
   }
 
+  .donate-btn-full {
+    background: $clr-purple;
+    &:hover {
+      background: $clr-purple;
+      opacity: 0.8;
+    }
+  }
+
   #hero {
     background: $clr-white;
     color: $clr-black;
@@ -102,6 +110,13 @@
     }
   }
 
+  .bright-id-widget-container {
+    background-color: inherit;
+    .setup-container {
+      background-color: inherit;
+    }
+  }
+
   #content-container {
     .content,
     .hero {
@@ -115,6 +130,7 @@
 
   .category-filter {
     .selector-wrapper {
+      border-color: $clr-light-gray;
       .category-btn {
         background: $clr-white;
         &:hover {
@@ -157,7 +173,10 @@
 
   .category-filter {
     .filter-btn {
-      border: none;
+      border: 1px solid $clr-light-gray;
+      img {
+        filter: invert(0.3);
+      }
     }
   }
 
@@ -189,6 +208,8 @@
   }
 
   .project-name {
+    color: $clr-black;
+
     * {
       color: $clr-black;
     }
@@ -379,8 +400,34 @@
   }
 
   .cart-btn:hover,
-  .toggle-btn:hover {
+  .toggle-btn:hover,
+  .submit-btn-wrapper,
+  .cart-item {
     background: inherit;
+  }
+
+  .submit-btn-wrapper {
+    .error-title {
+      color: $highlight-color;
+    }
+  }
+
+  #cart-dropdown {
+    background: $clr-white;
+    .dropdown-item {
+      color: $clr-black;
+      img {
+        filter: invert(0.3);
+      }
+
+      &:hover {
+        background: $clr-light-gray;
+      }
+    }
+  }
+
+  .dropdown-btn {
+    filter: invert(0.9);
   }
 
   .semi-bold {
@@ -389,8 +436,26 @@
     }
   }
 
+  .project {
+    .project-name {
+      color: $clr-black;
+    }
+  }
+
+  .remove-cart-item {
+    .remove-icon-background {
+      &:hover {
+        background: inherit;
+      }
+    }
+  }
+
   // wallet widget
   .wallet-widget {
+    .profile-info {
+      color: $clr-white;
+    }
+
     .wrapper {
       .container {
         background-color: $clr-white;
@@ -400,13 +465,6 @@
 
         .address-card {
           background: inherit;
-        }
-
-        .bright-id-widget-container {
-          background-color: inherit;
-          .setup-container {
-            background-color: inherit;
-          }
         }
 
         .unverified {
@@ -454,6 +512,12 @@
   // verify
   .gradient {
     background: transparent;
+  }
+
+  .join-message {
+    background: $clr-white;
+    border: 1px solid $highlight-color;
+    color: $highlight-color;
   }
 
   // loader
