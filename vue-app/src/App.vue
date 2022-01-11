@@ -185,6 +185,7 @@ export default class App extends Vue {
     const excludedRoutes = [
       'landing',
       'join',
+      'join-step',
       'transaction-success',
       'verify',
       'project-added',
