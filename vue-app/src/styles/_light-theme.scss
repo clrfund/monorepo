@@ -480,7 +480,8 @@
 
   .warning {
     color: $error-color;
-    border-color: $error-color;
+    border: 1px solid $clr-light-gray;
+    background-color: inherit;
   }
 
   .warning-text,
