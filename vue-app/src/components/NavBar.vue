@@ -17,8 +17,7 @@
           class="dropdown-btn"
           src="@/assets/help.svg"
         />
-        <div id="myHelpDropdown" class="button-menu" v-if="showHelpDowndown">
-          <div class="dropdown-title">Help</div>
+        <div id="myHelpDropdown" class="button-menu" v-if="showHelpDropdown">
           <div
             v-for="({ to, text, emoji }, idx) of dropdownItems"
             :key="idx"
@@ -57,7 +56,7 @@ import ClickOutside from '@/directives/ClickOutside'
 })
 export default class NavBar extends Vue {
   @Prop() inApp
-  showHelpDowndown = false
+  showHelpDropdown = false
   profileImageUrl: string | null = null
   dropdownItems: { to?: string; text: string; emoji: string }[] = [
     { to: '/', text: 'Home', emoji: '🏠' },
@@ -83,11 +82,11 @@ export default class NavBar extends Vue {
   }
 
   closeHelpDropdown(): void {
-    this.showHelpDowndown = false
+    this.showHelpDropdown = false
   }
 
   toggleHelpDropdown(): void {
-    this.showHelpDowndown = !this.showHelpDowndown
+    this.showHelpDropdown = !this.showHelpDropdown
   }
 }
 </script>
