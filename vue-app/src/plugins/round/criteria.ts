@@ -4,7 +4,12 @@ export interface Criterion {
   description: string
 }
 
-const BASE_CRITERION: Criterion[] = [
+const CRITERIA: Criterion[] = [
+  {
+    emoji: '💰',
+    criterion: 'Related to Ethereum staking',
+    description: 'Your project must support Ethereum staking/validating.',
+  },
   {
     emoji: '🤲',
     criterion: 'Free and open source',
@@ -12,27 +17,10 @@ const BASE_CRITERION: Criterion[] = [
       'Your project code must be available to anyone to use under a free and open source license.',
   },
   {
-    emoji: '👺',
-    criterion: 'No scams',
-    description:
-      "Obviously, your project must not put anyone's funds or information at risk.",
-  },
-  {
     emoji: '🙋‍♀️',
     criterion: 'Project ownership',
     description:
       'The project must be yours or you must have permission from the project owner.',
-  },
-]
-
-/**
- * Add any round-specific criteria here
- */
-const ADDITIONAL_CRITERION: Criterion[] = [
-  {
-    emoji: '💰',
-    criterion: 'Related to Ethereum staking',
-    description: 'Your project must support Ethereum staking/validating.',
   },
   {
     emoji: '🆔',
@@ -40,9 +28,12 @@ const ADDITIONAL_CRITERION: Criterion[] = [
     description:
       "You'll be contacted by the registry admin and must complete some basic KYC/AML requirements.",
   },
+  {
+    emoji: '👺',
+    criterion: 'No scams',
+    description:
+      "Obviously, your project must not put anyone's funds or information at risk.",
+  },
 ]
 
-export const criteria: Criterion[] = [
-  ...BASE_CRITERION,
-  ...ADDITIONAL_CRITERION,
-]
+export const criteria: Criterion[] = [...CRITERIA]
