@@ -56,6 +56,8 @@ In a future version, we plan to address this by routing ETH and token contributi
 - [How to tally votes](docs/coordinator.md)
 - [How to verify results](docs/trusted-setup.md)
 - [Running the subgraph](docs/subgraph.md)
+- [Sitemap](docs/sitemap.md)
+- [Theme](docs/theme.md)
 
 ## Development
 
@@ -142,43 +144,6 @@ yarn start:web
 
 ```sh
 yarn lint
-```
-
-## Sitemap
-
-```
-/
-├─── /projects
-├─── /project/:id
-├─── /round-information
-├─── /rounds
-├─── /round/:address
-├─── /about
-├─── /about/maci
-├─── /about/sybil-resistance
-├─── /about/layer-2
-├─── /about/how-it-works
-├─── /about/how-it-works/contributors
-├─── /about/how-it-works/recipients
-├─── /about/public-goods
-├─── /about/quadratic-funding
-├─── /about/decentralization
-├─── /recipients
-├─── /verify
-├─── /verify/success/:hash?
-├─── /verify/connect
-├─── /join
-├─── /join/success/:hash
-├─── /join/project
-├─── /join/fund
-├─── /join/team
-├─── /join/links
-├─── /join/image
-├─── /join/furthestStep
-├─── /join/summary
-├─── /cart
-├─── /transaction-success/reallocation/:hash?
-├─── /transaction-success/contribution/:hash?
 ```
 
 ## Git hooks
