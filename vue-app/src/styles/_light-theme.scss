@@ -47,10 +47,6 @@
     @include banner($clr-black, $clr-white);
   }
 
-  #page {
-    background: $clr-white;
-  }
-
   #section-how-it-works {
     background: $clr-white;
 
@@ -69,6 +65,7 @@
     .btn-action {
       @include button(white, $clr-green-secondary, none);
     }
+
     .pre-req {
       background: $clr-light-pink;
     }
@@ -124,6 +121,7 @@
     }
   }
 
+  // used in transaction success, round information and landing
   .image-wrapper {
     background: $clr-light-pink;
   }
@@ -225,7 +223,7 @@
     }
   }
 
-  // project profile
+  // project profile (i.e. /project/:id)
   .project-page {
     #team,
     .about > .address-box {
@@ -235,6 +233,10 @@
     .about {
       .project-section {
         color: $clr-black;
+      }
+
+      .address-box-no-team {
+        @include borderColor($clr-light-gray);
       }
     }
 
@@ -338,10 +340,9 @@
       background-color: inherit;
     }
 
-    .address-box-no-team,
-    .link-box {
-      background: inherit;
-      border: $clr-light-gray 1px solid;
+    .link-box,
+    .address-box-no-team {
+      @include borderColor($clr-light-gray);
     }
   }
 
@@ -402,7 +403,8 @@
   .cart-btn:hover,
   .toggle-btn:hover,
   .submit-btn-wrapper,
-  .cart-item {
+  .cart-item,
+  .line-item-bar {
     background: inherit;
   }
 
@@ -511,8 +513,10 @@
   }
 
   // verify
+  // need to use gradient to make the moon background blend in with
+  // the parent's background
   .gradient {
-    background: transparent;
+    background: linear-gradient(315deg, #f2f2f2 0%, #f2f2f2 100%);
   }
 
   .join-message {

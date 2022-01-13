@@ -53,3 +53,8 @@
   overflow: hidden;
   white-space: nowrap;
 }
+
+@mixin borderColor($color) {
+  background: inherit;
+  border: 1px solid $color;
+}

@@ -31,7 +31,3 @@
 #banner {
   @include banner(white, $bg-primary-color);
 }
-
-#page {
-  background: $bg-primary-color;
-}
