@@ -17,7 +17,7 @@
           <copy-button
             :value="currentUser.walletAddress"
             text="address"
-            myClass="profile"
+            myClass="profile copy-icon"
             class="copy"
           />
           <div class="address">

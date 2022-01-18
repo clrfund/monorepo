@@ -2,6 +2,13 @@
   background-color: $clr-white;
   color: $clr-black;
 
+  /* used in CopyButton.vue */
+  .copy-icon {
+    img {
+      filter: invert(0.6);
+    }
+  }
+
   /* landing page */
   .btn-action {
     @include button(white, $clr-purple, none);
@@ -499,10 +506,6 @@
   .disconnect.btn,
   .close-btn {
     filter: invert(0.3);
-  }
-
-  .copy.profile {
-    filter: invert(0.6);
   }
 
   // join and verify form

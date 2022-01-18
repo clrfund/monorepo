@@ -44,39 +44,36 @@
                 <summary>More</summary>
 
                 <div>
-                  <span
-                    >Transaction hash
-                    <button
-                      class="button-copy"
-                      @click="copyAddress(request.transactionHash)"
-                    >
-                      <img src="@/assets/copy.svg" />
-                    </button>
-                  </span>
+                  <div class="btn-row">
+                    Transaction hash
+                    <copy-button
+                      :value="request.transactionHash"
+                      text="hash"
+                      myClass="inline copy-icon"
+                    />
+                  </div>
                   <code>{{ request.transactionHash }}</code>
                 </div>
                 <div>
-                  <span
-                    >Project ID
-                    <button
-                      class="button-copy"
-                      @click="copyAddress(request.recipientId)"
-                    >
-                      <img src="@/assets/copy.svg" />
-                    </button>
-                  </span>
+                  <div class="btn-row">
+                    Project ID
+                    <copy-button
+                      :value="request.recipientId"
+                      text="id"
+                      myClass="inline copy-icon"
+                    />
+                  </div>
                   <code>{{ request.recipientId }}</code>
                 </div>
                 <div>
-                  <span
-                    >Recipient address
-                    <button
-                      class="button-copy"
-                      @click="copyAddress(request.recipient)"
-                    >
-                      <img src="@/assets/copy.svg" />
-                    </button>
-                  </span>
+                  <div class="btn-row">
+                    Recipient address
+                    <copy-button
+                      :value="request.recipient"
+                      text="address"
+                      myClass="copy-icon"
+                    />
+                  </div>
                   <code>{{ request.recipient }}</code>
                 </div>
               </details>
@@ -139,6 +136,7 @@ import Component from 'vue-class-component'
 import { BigNumber } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
+import CopyButton from '@/components/CopyButton.vue'
 
 import { recipientRegistryType } from '@/api/core'
 import {
@@ -158,7 +156,7 @@ import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import TransactionModal from '@/components/TransactionModal.vue'
 
-@Component({ components: { Loader, Links } })
+@Component({ components: { CopyButton, Loader, Links } })
 export default class RecipientRegistryView extends Vue {
   requests: Request[] = []
   isLoading = true
@@ -383,6 +381,9 @@ export default class RecipientRegistryView extends Vue {
         margin: 0.5rem 0;
         font-weight: 500;
         margin-left: 1rem;
+        div {
+          margin: 0;
+        }
       }
     }
   }
@@ -428,16 +429,6 @@ export default class RecipientRegistryView extends Vue {
   .btn-row {
     display: flex;
     gap: 0.5rem;
-  }
-}
-
-.button-copy {
-  border: 0;
-  background-color: transparent;
-  cursor: pointer;
-
-  img {
-    width: 16px;
   }
 }
 
