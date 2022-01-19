@@ -162,8 +162,8 @@ export default class AboutRecipients extends Vue {
     return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
   }
 
-  get maxRecipients(): number | null {
-    return this.$store.state?.currentRound?.maxRecipients || 124 // TODO fix hardcode
+  get maxRecipients(): number | undefined {
+    return this.$store.getters.maxRecipients
   }
 }
 </script>
