@@ -269,7 +269,7 @@ export default class RecipientRegistryView extends Vue {
     this.$modal.show(
       TransactionModal,
       {
-        transactionFn: () => transaction,
+        transaction,
         onTxSuccess: async () => {
           // TODO: this is not ideal. Leaving as is, just because it is an admin
           // page where no end user is using. We are forcing this 2s time to give
