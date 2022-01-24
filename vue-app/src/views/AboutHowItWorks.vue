@@ -167,7 +167,7 @@ export default class AboutHowItWorks extends Vue {
   }
 
   get nativeTokenSymbol(): string {
-    return this.$store.state?.currentRound?.nativeTokenSymbol
+    return this.$store.getters.nativeTokenSymbol
   }
 
   // TODO: should we hardcode defaults instead of TBD for our round?

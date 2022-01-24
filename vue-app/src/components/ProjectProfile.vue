@@ -205,11 +205,6 @@ export default class ProjectProfile extends Vue {
     const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
     return isRoundContributionPhase || canUserReallocate
   }
-
-  get tokenLogo(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return getTokenLogo(nativeTokenSymbol)
-  }
 }
 </script>
 
