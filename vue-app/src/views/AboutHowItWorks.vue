@@ -166,7 +166,7 @@ export default class AboutHowItWorks extends Vue {
   }
 
   get nativeTokenSymbol(): string {
-    return this.$store.state?.currentRound?.nativeTokenSymbol
+    return this.$store.getters.nativeTokenSymbol
   }
 
   get reallocationPhaseDays(): number | string {

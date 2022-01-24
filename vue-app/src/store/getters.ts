@@ -173,6 +173,21 @@ const getters = {
       state.currentRound.maxContributors <= state.currentRound.contributors
     )
   },
+  nativeTokenAddress: (state: RootState): string => {
+    const { currentRound, factory } = state
+
+    let nativeTokenAddress = ''
+
+    if (factory) {
+      nativeTokenAddress = factory.nativeTokenAddress
+    }
+
+    if (currentRound) {
+      nativeTokenAddress = currentRound.nativeTokenAddress
+    }
+
+    return nativeTokenAddress
+  },
   nativeTokenSymbol: (state: RootState): string => {
     const { currentRound, factory } = state
 
