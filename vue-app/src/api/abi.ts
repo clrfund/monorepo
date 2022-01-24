@@ -1,6 +1,7 @@
 import { abi as ERC20 } from '../../../contracts/build/contracts/@openzeppelin/contracts/token/ERC20/ERC20.sol/ERC20.json'
 import { abi as FundingRoundFactory } from '../../../contracts/build/contracts/contracts/FundingRoundFactory.sol/FundingRoundFactory.json'
 import { abi as FundingRound } from '../../../contracts/build/contracts/contracts/FundingRound.sol/FundingRound.json'
+import { abi as MACIFactory } from '../../../contracts/build/contracts/contracts/MACIFactory.sol/MACIFactory.json'
 import { abi as MACI } from '../../../contracts/build/contracts/maci-contracts/sol/MACI.sol/MACI.json'
 import { abi as UserRegistry } from '../../../contracts/build/contracts/contracts/userRegistry/IUserRegistry.sol/IUserRegistry.json'
 import { abi as BrightIdUserRegistry } from '../../../contracts/build/contracts/contracts/userRegistry/BrightIdUserRegistry.sol/BrightIdUserRegistry.json'
@@ -13,6 +14,7 @@ export {
   ERC20,
   FundingRoundFactory,
   FundingRound,
+  MACIFactory,
   MACI,
   UserRegistry,
   BrightIdUserRegistry,

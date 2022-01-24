@@ -161,8 +161,8 @@ export default class AboutHowItWorks extends Vue {
     return MAX_CONTRIBUTION_AMOUNT
   }
 
-  get maxRecipients(): number | string {
-    return this.$store.state?.currentRound?.maxRecipients || 'TBD'
+  get maxRecipients(): number | undefined {
+    return this.$store.getters.maxRecipients
   }
 
   get nativeTokenSymbol(): string {

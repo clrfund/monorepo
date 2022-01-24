@@ -57,6 +57,7 @@ import {
   LOAD_CONTRIBUTOR_DATA,
   LOGIN_USER,
   LOAD_FACTORY_INFO,
+  LOAD_MACI_FACTORY_INFO,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 
@@ -109,6 +110,7 @@ export default class App extends Vue {
     await this.$store.dispatch(SELECT_ROUND, roundAddress)
     this.$store.dispatch(LOAD_ROUND_INFO)
     this.$store.dispatch(LOAD_FACTORY_INFO)
+    this.$store.dispatch(LOAD_MACI_FACTORY_INFO)
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
   }
 

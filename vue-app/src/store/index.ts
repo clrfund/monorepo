@@ -32,6 +32,7 @@ const state: RootState = {
   showCartPanel: false,
   tally: null,
   factory: null,
+  maciFactory: null,
 }
 
 const store: StoreOptions<RootState> = {
