@@ -3,7 +3,7 @@ import { Libraries } from 'hardhat/types/runtime'
 import { Signer, Contract } from 'ethers'
 import { link } from 'ethereum-waffle'
 
-import { MaciParameters } from './maci'
+import { MaciParameters, ProdMaciParameters } from './maci'
 
 export function linkBytecode(
   bytecode: string,
@@ -54,6 +54,35 @@ const CIRCUITS: { [name: string]: any } = {
       voteOptionTreeDepth: 3,
     },
   },
+  prod: {
+    batchUstVerifier: 'BatchUpdateStateTreeVerifier32Batch16',
+    qvtVerifier: 'QuadVoteTallyVerifier32Batch16',
+    treeDepths: {
+      stateTreeDepth: 32,
+      messageTreeDepth: 32,
+      voteOptionTreeDepth: 3,
+    },
+  },
+}
+const PARAMS = (
+  circuit: string,
+  batchUstVerifier: string,
+  qvtVerifier: string
+) => {
+  switch (circuit) {
+    case 'prod':
+      return new ProdMaciParameters({
+        batchUstVerifier,
+        qvtVerifier,
+        ...CIRCUITS[circuit].treeDepths,
+      })
+    default:
+      return new MaciParameters({
+        batchUstVerifier,
+        qvtVerifier,
+        ...CIRCUITS[circuit].treeDepths,
+      })
+  }
 }
 
 export async function deployContract(
@@ -83,6 +112,7 @@ export async function deployMaciFactory(
     qvtVerifier,
   }: MaciFactoryDependencies = {}
 ): Promise<Contract> {
+  let maciParameters: MaciParameters | ProdMaciParameters
   if (!poseidonT3) {
     const PoseidonT3 = await ethers.getContractFactory(':PoseidonT3', account)
     poseidonT3 = await PoseidonT3.deploy()
@@ -115,11 +145,12 @@ export async function deployMaciFactory(
     signer: account,
     libraries: maciLibraries,
   })
-  const maciParameters = new MaciParameters({
-    batchUstVerifier: batchUstVerifier.address,
-    qvtVerifier: qvtVerifier.address,
-    ...CIRCUITS[circuit].treeDepths,
-  })
+
+  maciParameters = PARAMS(
+    circuit,
+    batchUstVerifier.address,
+    qvtVerifier.address
+  )
 
   const maciFactory = await MACIFactory.deploy(...maciParameters.values())
   await maciFactory.deployTransaction.wait()
