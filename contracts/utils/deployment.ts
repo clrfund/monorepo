@@ -55,8 +55,8 @@ const CIRCUITS: { [name: string]: any } = {
     },
   },
   prod: {
-    batchUstVerifier: 'BatchUpdateStateTreeVerifier32Batch16',
-    qvtVerifier: 'QuadVoteTallyVerifier32Batch16',
+    batchUstVerifier: 'BatchUpdateStateTreeVerifierCustom',
+    qvtVerifier: 'QuadVoteTallyVerifierCustom',
     treeDepths: {
       stateTreeDepth: 32,
       messageTreeDepth: 32,
