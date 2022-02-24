@@ -2,14 +2,14 @@
   <a
     v-if="isExternal"
     :class="{ 'external-link': !hideArrow }"
-    :href="to"
+    :href="destination"
     :aria-label="ariaLabel"
     target="_blank"
     rel="noopener"
   >
     <slot />
   </a>
-  <router-link v-else :to="to" :aria-label="ariaLabel">
+  <router-link v-else :to="destination" :aria-label="ariaLabel">
     <slot />
   </router-link>
 </template>
@@ -26,14 +26,18 @@ export default class extends Vue {
   @Prop() hideArrow!: boolean
   @Prop() ariaLabel!: string
 
-  isExternal = false
+  get destination(): string | { [key: string]: any } {
+    return this.href ?? this.to
+  }
 
-  mounted() {
-    if (this.href) {
-      this.to = this.href
-    }
-    if (typeof this.to === 'string') {
-      this.isExternal = this.to.includes('http') || this.to.includes('mailto:')
+  get isExternal(): boolean {
+    if (typeof this.destination === 'string') {
+      return (
+        this.destination.includes('http') ||
+        this.destination.includes('mailto:')
+      )
+    } else {
+      return false
     }
   }
 }
