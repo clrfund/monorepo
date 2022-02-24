@@ -55,12 +55,12 @@
         >
         </project-list-item>
       </div>
-      <div class="empty-search" v-if="filteredProjects == 0">
+      <panel v-if="filteredProjects == 0">
         <div>
           😢 No projects match your search. Try using the filter to narrow down
           what you're looking for.
         </div>
-      </div>
+      </panel>
       <div
         v-if="!!$store.state.currentUser && $store.state.showCartPanel"
         class="round-info-container"
@@ -92,6 +92,7 @@ import ProjectListItem from '@/components/ProjectListItem.vue'
 import RoundInformation from '@/components/RoundInformation.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'
+import Panel from '@/components/Panel.vue'
 import {
   SELECT_ROUND,
   LOAD_ROUND_INFO,
@@ -127,6 +128,7 @@ function shuffleArray(array: any[]) {
     RoundInformation,
     FilterDropdown,
     Links,
+    Panel,
   },
 })
 export default class ProjectList extends Vue {
@@ -410,15 +412,6 @@ export default class ProjectList extends Vue {
   gap: $content-space;
   z-index: 0;
   padding-bottom: 4rem;
-}
-
-.empty-search {
-  background: $bg-secondary-color;
-  border-radius: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
 }
 
 .get-prepared {
