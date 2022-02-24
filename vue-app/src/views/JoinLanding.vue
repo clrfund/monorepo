@@ -101,7 +101,7 @@
         <button class="btn-secondary" @click="toggleCriteria">
           See round criteria
         </button>
-        <links to="/join/project" class="btn-primary">Add project</links>
+        <links to="/join/metadata" class="btn-primary">Add project</links>
       </div>
     </div>
 
@@ -122,7 +122,7 @@
         <button class="btn-secondary" @click="toggleCriteria">
           See round criteria
         </button>
-        <links to="/join/project" class="btn-primary">Add project</links>
+        <links to="/join/metadata" class="btn-primary">Add project</links>
       </div>
     </div>
 

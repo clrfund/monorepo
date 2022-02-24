@@ -20,6 +20,8 @@ export interface ChainInfo {
     explorerLabel: string
     rpcUrl?: string
     bridge?: string
+    shortName: string
+    subgraphNetwork: string
   }
 }
 
@@ -32,6 +34,8 @@ export const CHAIN_INFO: ChainInfo = {
     explorer: 'https://etherscan.io',
     explorerLogo: 'etherscan.svg',
     explorerLabel: 'Etherscan',
+    shortName: 'eth',
+    subgraphNetwork: 'mainnet',
   },
   [ChainId.RINKEBY]: {
     label: 'Rinkeby',
@@ -41,6 +45,8 @@ export const CHAIN_INFO: ChainInfo = {
     explorer: 'https://rinkeby.etherscan.io',
     explorerLogo: 'etherscan.svg',
     explorerLabel: 'Etherscan',
+    shortName: 'rin',
+    subgraphNetwork: 'rinkeby',
   },
   [ChainId.HARDHAT]: {
     label: 'Arbitrum Hardhat',
@@ -52,6 +58,8 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLabel: 'Arbiscan',
     rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
+    shortName: 'got',
+    subgraphNetwork: 'arbitrum-rinkeby',
   },
   [ChainId.ARBITRUM_ONE]: {
     label: 'Arbitrum',
@@ -63,6 +71,8 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLabel: 'Arbiscan',
     rpcUrl: 'https://arb1.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
+    shortName: 'arb1',
+    subgraphNetwork: 'arbitrum-one',
   },
   [ChainId.ARBITRUM_RINKEBY]: {
     label: 'Arbitrum Rinkeby',
@@ -74,6 +84,8 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLabel: 'Arbiscan',
     rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
+    shortName: 'arb-rinkeby',
+    subgraphNetwork: 'arbitrum-rinkeby',
   },
   [ChainId.OPTIMISM]: {
     label: 'Optimism',
@@ -85,6 +97,8 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLabel: 'Etherscan',
     rpcUrl: 'https://mainnet.optimism.io',
     bridge: 'https://gateway.optimism.io',
+    shortName: 'oeth',
+    subgraphNetwork: 'optimism',
   },
   [ChainId.XDAI]: {
     label: 'xDai',
@@ -96,6 +110,8 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLabel: 'Blockscout',
     rpcUrl: 'https://rpc.xdaichain.com/',
     bridge: 'https://bridge.xdaichain.com',
+    shortName: 'gno',
+    subgraphNetwork: 'xdai',
   },
   [ChainId.POLYGON]: {
     label: 'Polygon',
@@ -107,5 +123,7 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLabel: 'Polygonscan',
     rpcUrl: 'https://rpc-mainnet.matic.network',
     bridge: 'https://wallet.polygon.technology',
+    shortName: 'MATIC',
+    subgraphNetwork: 'matic',
   },
 }

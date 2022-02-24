@@ -33,7 +33,7 @@ export default class FormNavigation extends Vue {
   @Prop() steps!: string[]
   @Prop() isStepValid!: boolean
   @Prop() callback!: (updateFurthest?: boolean) => void
-  @Prop() handleStepNav!: () => void
+  @Prop() handleStepNav!: (step: number) => void
   @Prop() isNavDisabled!: boolean
 
   // TODO is this needed? Why do we pass `callback` & `handleStepNav`?
@@ -41,12 +41,7 @@ export default class FormNavigation extends Vue {
     // Save form data (first saves when user hits Next after first step)
     this.callback(true) // "true" checks to update furthest step
     // Navigate forward
-    this.$router.push({
-      name: 'join-step',
-      params: {
-        step: this.steps[this.currentStep + 1],
-      },
-    })
+    this.handleStepNav(this.currentStep + 1)
   }
 
   handlePrev(): void {

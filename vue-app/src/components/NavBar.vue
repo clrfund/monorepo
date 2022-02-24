@@ -69,6 +69,11 @@ export default class NavBar extends Vue {
       text: 'Code',
       emoji: '👾',
     },
+    {
+      to: '/metadata',
+      text: 'Manage metadata',
+      emoji: '📃',
+    },
   ]
 
   created() {

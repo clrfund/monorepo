@@ -8,10 +8,8 @@ import { RoundInfo } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
-import {
-  RecipientApplicationData,
-  RegistryInfo,
-} from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { RecipientApplicationData } from '@/api/recipient'
 
 // Constants
 import {
@@ -137,15 +135,9 @@ const mutations = {
     state,
     payload: {
       updatedData: RecipientApplicationData
-      step: string
-      stepNumber: number
     }
   ) {
-    if (!state.recipient) {
-      state.recipient = payload.updatedData
-    } else {
-      state.recipient[payload.step] = payload.updatedData[payload.step]
-    }
+    state.recipient = payload.updatedData
   },
   [RESET_RECIPIENT_DATA](state) {
     state.recipient = null

@@ -52,3 +52,12 @@ export const extraRounds: string[] = process.env.VUE_APP_EXTRA_ROUNDS
 export const SUBGRAPH_ENDPOINT =
   process.env.VUE_APP_SUBGRAPH_URL ||
   'https://api.thegraph.com/subgraphs/name/daodesigner/clrfund'
+
+export const METADATA_SUBGRAPH_URL_PREFIX = process.env
+  .VUE_APP_METADATA_SUBGRAPH_URL_PREFIX
+  ? process.env.VUE_APP_METADATA_SUBGRAPH_URL_PREFIX
+  : 'https://api.thegraph.com/subgraphs/name/yuetloo/metadata-'
+
+export const METADATA_NETWORKS = process.env.VUE_APP_METADATA_NETWORKS
+  ? process.env.VUE_APP_METADATA_NETWORKS.split(',')
+  : ['rinkeby']

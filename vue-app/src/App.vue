@@ -152,6 +152,10 @@ export default class App extends Vue {
       'verify',
       'verify-step',
       'verified',
+      'metadata',
+      'metadata-registry',
+      'metadata-edit',
+      'metadata-new',
     ]
     return !excludedRoutes.includes(this.$route.name || '')
   }
@@ -166,6 +170,10 @@ export default class App extends Vue {
       'verify',
       'verify-step',
       'verified',
+      'metadata',
+      'metadata-registry',
+      'metadata-edit',
+      'metadata-new',
     ]
     return !excludedRoutes.includes(this.$route.name || '')
   }
