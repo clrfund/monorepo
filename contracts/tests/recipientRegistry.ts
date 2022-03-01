@@ -1,7 +1,7 @@
 import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
-import { BigNumber, Contract, Wallet } from 'ethers'
+import { BigNumber, Contract } from 'ethers'
 import { keccak256 } from '@ethersproject/solidity'
 import { gtcrEncode } from '@kleros/gtcr-encoder'
 
@@ -523,14 +523,7 @@ describe('Kleros GTCR adapter', () => {
 })
 
 describe('Optimistic recipient registry', () => {
-  const [
-    ,
-    deployer,
-    controller,
-    recipient,
-    requester,
-    challenger,
-  ] = provider.getWallets()
+  const [, deployer, controller, recipient, requester] = provider.getWallets()
   let registry: Contract
 
   const baseDeposit = UNIT.div(10) // 0.1 ETH
@@ -703,8 +696,8 @@ describe('Optimistic recipient registry', () => {
         .addRecipient(recipientAddress, metadata, { value: baseDeposit })
       await expect(
         registry
-          .connect(challenger)
-          .challengeRequest(recipientId, challenger.address)
+          .connect(requester)
+          .challengeRequest(recipientId, requester.address)
       ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
