@@ -11,9 +11,9 @@
           </div>
         </div>
         <p>
-          The registry admin ({{ operator }}) will remove any projects that
-          don't meet the round criteria. So read carefully! In later rounds
-          we're hoping that this review process can be done by the community.
+          The registry admin will remove any projects that don't meet the round
+          criteria. So read carefully! In later rounds we're hoping that this
+          review process can be done by the community.
         </p>
         <p>
           Learn more about the project application process in our
