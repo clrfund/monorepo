@@ -1,13 +1,15 @@
 name: Build and test contracts
 
-on: push
+on:
+  push:
+    paths:
+      - 'contracts/**'
 
 env:
   NODE_VERSION: 12.x
 
 jobs:
-
-  build:
+  test-contracts:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
