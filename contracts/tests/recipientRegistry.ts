@@ -866,9 +866,7 @@ describe('Optimistic recipient registry', () => {
     })
 
     it('should not accept removal request if recipient is not in registry', async () => {
-      await expect(
-        registry.removeRecipient(recipientId, { value: baseDeposit })
-      ).to.be.revertedWith(
+      await expect(registry.removeRecipient(recipientId)).to.be.revertedWith(
         'RecipientRegistry: Recipient is not in the registry'
       )
     })
