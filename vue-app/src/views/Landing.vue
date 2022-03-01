@@ -65,8 +65,8 @@
           <h2>How it works</h2>
           <ol>
             <li>
-              {{ operator }} and other donors send funds to the matching pool
-              smart contract.
+              The Ethereum Foundation, clr.fund, {{ operator }}, and other
+              donors send funds to the matching pool smart contract.
             </li>
             <li>
               The round begins and you can donate to your favorite projects.

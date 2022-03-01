@@ -1,7 +1,11 @@
 <template>
   <nav id="nav-bar">
     <links to="/">
-      <img class="clr-logo" alt="clr fund" src="@/assets/clr.svg" />
+      <img
+        class="clr-logo"
+        alt="clr fund"
+        src="@/assets/ES-long-w-no-padding.svg"
+      />
     </links>
     <div class="btn-row">
       <a
