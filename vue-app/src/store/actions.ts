@@ -28,6 +28,7 @@ import {
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
   LOAD_FACTORY_INFO,
+  LOAD_MACI_FACTORY_INFO,
   LOAD_RECIPIENT_REGISTRY_INFO,
   LOAD_ROUND_INFO,
   LOAD_TALLY,
@@ -56,6 +57,7 @@ import {
   SET_RECIPIENT_REGISTRY_INFO,
   SET_HAS_VOTED,
   SET_FACTORY,
+  SET_MACI_FACTORY,
 } from './mutation-types'
 
 // Utils
@@ -63,6 +65,7 @@ import { ensLookup } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
 import { getFactoryInfo } from '@/api/factory'
+import { getMACIFactoryInfo } from '@/api/maci-factory'
 
 const actions = {
   //TODO: also commit SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
@@ -83,6 +86,10 @@ const actions = {
   async [LOAD_FACTORY_INFO]({ commit }) {
     const factory = await getFactoryInfo()
     commit(SET_FACTORY, factory)
+  },
+  async [LOAD_MACI_FACTORY_INFO]({ commit }) {
+    const factory = await getMACIFactoryInfo()
+    commit(SET_MACI_FACTORY, factory)
   },
   async [LOAD_ROUND_INFO]({ commit, state }) {
     const roundAddress = state.currentRoundAddress

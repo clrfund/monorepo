@@ -17,11 +17,7 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <back-link
-          v-if="showBackLink"
-          :to="backLinkRoute"
-          :text="backLinkText"
-        />
+        <breadcrumbs v-if="showBreadCrumb" />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -49,6 +45,7 @@ import CartWidget from '@/components/CartWidget.vue'
 import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
 import BackLink from '@/components/BackLink.vue'
+import Breadcrumbs from '@/components/Breadcrumbs.vue'
 
 import {
   LOAD_USER_INFO,
@@ -60,6 +57,7 @@ import {
   LOAD_CONTRIBUTOR_DATA,
   LOGIN_USER,
   LOAD_FACTORY_INFO,
+  LOAD_MACI_FACTORY_INFO,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 
@@ -84,6 +82,7 @@ import { SET_CURRENT_USER } from '@/store/mutation-types'
     MobileTabs,
     CartWidget,
     BackLink,
+    Breadcrumbs,
   },
 })
 export default class App extends Vue {
@@ -111,6 +110,7 @@ export default class App extends Vue {
     await this.$store.dispatch(SELECT_ROUND, roundAddress)
     this.$store.dispatch(LOAD_ROUND_INFO)
     this.$store.dispatch(LOAD_FACTORY_INFO)
+    this.$store.dispatch(LOAD_MACI_FACTORY_INFO)
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
   }
 
@@ -183,26 +183,14 @@ export default class App extends Vue {
     return routes.includes(this.$route.name || '')
   }
 
-  get backLinkRoute(): string {
-    const route = this.$route.name || ''
-    return route.includes('about-') ? '/about' : '/projects'
-  }
-
-  get backLinkText(): string {
-    const route = this.$route.name || ''
-    return route.includes('about-') ? '← Back to About' : '← Back to projects'
-  }
-
-  get showBackLink(): boolean {
+  get showBreadCrumb(): boolean {
     const excludedRoutes = [
       'landing',
-      'project-added',
       'join',
       'join-step',
-      'projects',
       'transaction-success',
       'verify',
-      'verify-step',
+      'project-added',
       'verified',
     ]
     return !excludedRoutes.includes(this.$route.name || '')

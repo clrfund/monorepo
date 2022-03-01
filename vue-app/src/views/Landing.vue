@@ -73,7 +73,7 @@
             </li>
             <li>
               Once the round finishes, the smart contract distributes the
-              matching pool funds to projects based primarily on number of
+              matching pool funds to projects weighted primarily by number of
               contributions, <strong>not contribution value</strong>.
             </li>
           </ol>

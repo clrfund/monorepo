@@ -162,13 +162,12 @@ export default class AboutHowItWorks extends Vue {
     return MAX_CONTRIBUTION_AMOUNT
   }
 
-  // TODO: should we hardcode defaults instead of TBD for our round?
-  get maxRecipients(): number | string {
-    return this.$store.state?.currentRound?.maxRecipients || 'TBD'
+  get maxRecipients(): number | undefined {
+    return this.$store.getters.maxRecipients
   }
 
   get nativeTokenSymbol(): string {
-    return this.$store.state?.currentRound?.nativeTokenSymbol
+    return this.$store.getters.nativeTokenSymbol
   }
 
   // TODO: should we hardcode defaults instead of TBD for our round?

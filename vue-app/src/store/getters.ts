@@ -9,6 +9,7 @@ import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
+import { MACIFactory } from '@/api/maci-factory'
 import {
   RecipientApplicationData,
   RegistryInfo,
@@ -34,6 +35,7 @@ export interface RootState {
   showCartPanel: boolean
   tally: Tally | null
   factory: Factory | null
+  maciFactory: MACIFactory | null
 }
 
 const getters = {
@@ -173,6 +175,21 @@ const getters = {
       state.currentRound.maxContributors <= state.currentRound.contributors
     )
   },
+  nativeTokenAddress: (state: RootState): string => {
+    const { currentRound, factory } = state
+
+    let nativeTokenAddress = ''
+
+    if (factory) {
+      nativeTokenAddress = factory.nativeTokenAddress
+    }
+
+    if (currentRound) {
+      nativeTokenAddress = currentRound.nativeTokenAddress
+    }
+
+    return nativeTokenAddress
+  },
   nativeTokenSymbol: (state: RootState): string => {
     const { currentRound, factory } = state
 
@@ -202,6 +219,17 @@ const getters = {
     }
 
     return nativeTokenDecimals
+  },
+  maxRecipients: (state: RootState): number | undefined => {
+    const { currentRound, maciFactory } = state
+
+    if (currentRound) {
+      return currentRound.maxRecipients
+    }
+
+    if (maciFactory) {
+      return maciFactory.maxRecipients
+    }
   },
 }
 
