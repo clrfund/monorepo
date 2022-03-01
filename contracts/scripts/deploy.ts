@@ -3,6 +3,7 @@ import { Contract, utils } from 'ethers'
 
 import { UNIT } from '../utils/constants'
 import { deployMaciFactory } from '../utils/deployment'
+import { RecipientRegistryFactory } from '../utils/recipient-registry-factory'
 
 async function main() {
   const [deployer] = await ethers.getSigners()
@@ -57,30 +58,18 @@ async function main() {
   await setUserRegistryTx.wait()
 
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
-  let recipientRegistry: Contract
-  if (recipientRegistryType === 'simple') {
-    const SimpleRecipientRegistry = await ethers.getContractFactory(
-      'SimpleRecipientRegistry',
-      deployer
-    )
-    recipientRegistry = await SimpleRecipientRegistry.deploy(
-      fundingRoundFactory.address
-    )
-  } else if (recipientRegistryType === 'optimistic') {
-    const OptimisticRecipientRegistry = await ethers.getContractFactory(
-      'OptimisticRecipientRegistry',
-      deployer
-    )
-    recipientRegistry = await OptimisticRecipientRegistry.deploy(
-      UNIT.div(1000),
-      0,
-      fundingRoundFactory.address
-    )
-  } else {
-    throw new Error('unsupported recipient registry type')
-  }
-  await recipientRegistry.deployTransaction.wait()
-  console.log(`Recipient registry deployed: ${recipientRegistry.address}`)
+  const recipientRegistry = await RecipientRegistryFactory.deploy(
+    recipientRegistryType,
+    {
+      controller: fundingRoundFactory.address,
+      baseDeposit: UNIT.div(1000),
+      challengePeriodDuration: 0,
+    },
+    deployer
+  )
+  console.log(
+    `${recipientRegistryType} recipient registry deployed: ${recipientRegistry.address}`
+  )
 
   const setRecipientRegistryTx = await fundingRoundFactory.setRecipientRegistry(
     recipientRegistry.address

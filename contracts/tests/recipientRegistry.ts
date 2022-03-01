@@ -1,7 +1,7 @@
 import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
-import { BigNumber, Contract } from 'ethers'
+import { BigNumber, Contract, Wallet } from 'ethers'
 import { keccak256 } from '@ethersproject/solidity'
 import { gtcrEncode } from '@kleros/gtcr-encoder'
 
@@ -523,7 +523,14 @@ describe('Kleros GTCR adapter', () => {
 })
 
 describe('Optimistic recipient registry', () => {
-  const [, deployer, controller, recipient, requester] = provider.getWallets()
+  const [
+    ,
+    deployer,
+    controller,
+    recipient,
+    requester,
+    challenger,
+  ] = provider.getWallets()
   let registry: Contract
 
   const baseDeposit = UNIT.div(10) // 0.1 ETH
@@ -696,8 +703,8 @@ describe('Optimistic recipient registry', () => {
         .addRecipient(recipientAddress, metadata, { value: baseDeposit })
       await expect(
         registry
-          .connect(requester)
-          .challengeRequest(recipientId, requester.address)
+          .connect(challenger)
+          .challengeRequest(recipientId, challenger.address)
       ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
@@ -866,7 +873,9 @@ describe('Optimistic recipient registry', () => {
     })
 
     it('should not accept removal request if recipient is not in registry', async () => {
-      await expect(registry.removeRecipient(recipientId)).to.be.revertedWith(
+      await expect(
+        registry.removeRecipient(recipientId, { value: baseDeposit })
+      ).to.be.revertedWith(
         'RecipientRegistry: Recipient is not in the registry'
       )
     })
