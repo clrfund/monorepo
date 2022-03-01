@@ -71,6 +71,30 @@ dataSources:
         - event: RequestSubmitted(indexed bytes32,indexed uint8,address,string,uint256)
           handler: handleRequestSubmitted
       file: ./src/OptimisticRecipientRegistryMapping.ts
+  - kind: ethereum/contract
+    name: UniversalRecipientRegistry
+    network: {{network}}
+    source:
+      abi: UniversalRecipientRegistry
+      startBlock: {{universalRecipientRegistryStartBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - RecipientRegistry
+        - Recipient
+      abis:
+        - name: UniversalRecipientRegistry
+          file: ./abis/UniversalRecipientRegistry.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RequestResolved(indexed bytes32,indexed uint8,indexed bool,uint256,uint256)
+          handler: handleRequestResolved
+        - event: RequestSubmitted(indexed bytes32,indexed uint8,address,string,uint256)
+          handler: handleRequestSubmitted
+      file: ./src/UniversalRecipientRegistryMapping.ts
 templates:
   - name: FundingRound
     kind: ethereum/contract

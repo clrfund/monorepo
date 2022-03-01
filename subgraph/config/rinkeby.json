@@ -2,5 +2,6 @@
   "network": "rinkeby",
   "address": "0x93A990D939Ca592cD8cCa47b7a0c3F590A598F9d",
   "factoryStartBlock": 9969110,
-  "recipientRegistryStartBlock": 9969130
+  "recipientRegistryStartBlock": 9969130,
+  "universalRecipientRegistryStartBlock": 10255005
 }

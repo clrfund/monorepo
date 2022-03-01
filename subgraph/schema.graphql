@@ -108,6 +108,7 @@ type Recipient @entity {
   deposit: BigInt
   recipientAddress: Bytes
   recipientMetadata: String
+  recipientMetadataId: String
   rejected: Boolean
   verified: Boolean
   voteOptionIndex: BigInt
