@@ -1,9 +1,6 @@
 name: Build and test contracts
 
-on: 
-  push:
-    paths:
-      - 'contracts/**'
+on: push
 
 env:
   NODE_VERSION: 12.x
