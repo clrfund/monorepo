@@ -25,6 +25,10 @@ import VerifyView from '../views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 import CartView from '@/views/Cart.vue'
 import TransactionSuccess from '@/views/TransactionSuccess.vue'
+import MetadataDetail from '@/views/Metadata.vue'
+import MetadataRegistry from '@/views/MetadataRegistry.vue'
+import MetadataFormAdd from '@/views/MetadataFormAdd.vue'
+import MetadataFormEdit from '@/views/MetadataFormEdit.vue'
 
 Vue.use(VueRouter)
 
@@ -204,7 +208,7 @@ const routes = [
     },
   },
   {
-    path: '/join/:step',
+    path: '/join/:step/:id?',
     name: 'join-step',
     component: JoinView,
     meta: {
@@ -226,6 +230,38 @@ const routes = [
     component: TransactionSuccess,
     meta: {
       title: 'Transaction Success',
+    },
+  },
+  {
+    path: '/metadata',
+    name: 'metadata-registry',
+    component: MetadataRegistry,
+    meta: {
+      title: 'Metadata Registry',
+    },
+  },
+  {
+    path: '/metadata/:id',
+    name: 'metadata',
+    component: MetadataDetail,
+    meta: {
+      title: 'Metadata Detail',
+    },
+  },
+  {
+    path: '/metadata/:id/edit/:step',
+    name: 'metadata-edit',
+    component: MetadataFormEdit,
+    meta: {
+      title: 'Edit Metadata',
+    },
+  },
+  {
+    path: '/metadata/new/:step',
+    name: 'metadata-new',
+    component: MetadataFormAdd,
+    meta: {
+      title: 'Add Metadata',
     },
   },
 ]
