@@ -17,7 +17,7 @@ export class OptimisticRecipientRegistryLoader {
       )
       await recipientAdded.wait()
 
-      if (!recipient.skipExecution) {
+      if (!!recipient.skipExecution) {
         const recipientId = await getEventArg(
           recipientAdded,
           registry,
