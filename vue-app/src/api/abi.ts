@@ -6,6 +6,7 @@ import { abi as UserRegistry } from '../../../contracts/build/contracts/contract
 import { abi as BrightIdUserRegistry } from '../../../contracts/build/contracts/contracts/userRegistry/BrightIdUserRegistry.sol/BrightIdUserRegistry.json'
 import { abi as SimpleRecipientRegistry } from '../../../contracts/build/contracts/contracts/recipientRegistry/SimpleRecipientRegistry.sol/SimpleRecipientRegistry.json'
 import { abi as OptimisticRecipientRegistry } from '../../../contracts/build/contracts/contracts/recipientRegistry/OptimisticRecipientRegistry.sol/OptimisticRecipientRegistry.json'
+import { abi as UniversalRecipientRegistry } from '../../../contracts/build/contracts/contracts/recipientRegistry/UniversalRecipientRegistry.sol/UniversalRecipientRegistry.json'
 import { abi as KlerosGTCR } from '../../../contracts/build/contracts/contracts/recipientRegistry/IKlerosGTCR.sol/IKlerosGTCR.json'
 import { abi as KlerosGTCRAdapter } from '../../../contracts/build/contracts/contracts/recipientRegistry/KlerosGTCRAdapter.sol/KlerosGTCRAdapter.json'
 
@@ -18,6 +19,7 @@ export {
   BrightIdUserRegistry,
   SimpleRecipientRegistry,
   OptimisticRecipientRegistry,
+  UniversalRecipientRegistry,
   KlerosGTCR,
   KlerosGTCRAdapter,
 }
