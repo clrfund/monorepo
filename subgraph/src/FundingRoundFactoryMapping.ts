@@ -122,17 +122,21 @@ export function handleRoundStarted(event: RoundStarted): void {
     let recipientRegistryContract = RecipientRegistryContract.bind(
       recipientRegistryAddress
     )
-    let baseDeposit = recipientRegistryContract.baseDeposit()
+    let baseDeposit = recipientRegistryContract.try_baseDeposit()
     let challengePeriodDuration =
-      recipientRegistryContract.challengePeriodDuration()
+      recipientRegistryContract.try_challengePeriodDuration()
     let controller = recipientRegistryContract.controller()
     let maxRecipients = recipientRegistryContract.maxRecipients()
     let owner = recipientRegistryContract.owner()
 
     let recipientRegistry = new RecipientRegistry(recipientRegistryId)
 
-    recipientRegistry.baseDeposit = baseDeposit
-    recipientRegistry.challengePeriodDuration = challengePeriodDuration
+    if( !baseDeposit.reverted ) {
+      recipientRegistry.baseDeposit = baseDeposit.value
+    }
+    if( !challengePeriodDuration.reverted ) {
+      recipientRegistry.challengePeriodDuration = challengePeriodDuration.value
+    }
     recipientRegistry.controller = controller
     recipientRegistry.maxRecipients = maxRecipients
     recipientRegistry.owner = owner
