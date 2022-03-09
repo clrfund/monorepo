@@ -58,7 +58,7 @@ export async function getCurrentRound(): Promise<string | null> {
     isSameAddress(round.address, fundingRoundAddress)
   )
 
-  if (roundIndex >= Number(process.env.VUE_APP_FIRST_ROUND)) {
+  if (roundIndex >= Number(process.env.VUE_APP_FIRST_ROUND || 0)) {
     return fundingRoundAddress
   }
   return null
