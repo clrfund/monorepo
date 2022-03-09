@@ -2505,7 +2505,7 @@ export const GetRecipientsDocument = gql`
     `;
 export const GetRoundsDocument = gql`
     query GetRounds {
-  fundingRounds {
+  fundingRounds(orderBy: startTime, orderDirection: asc) {
     id
   }
 }
