@@ -29,6 +29,10 @@ dataSources:
           file: ./abis/MACIFactory.json
         - name: OptimisticRecipientRegistry
           file: ./abis/OptimisticRecipientRegistry.json
+        - name: SimpleRecipientRegistry
+          file: ./abis/SimpleRecipientRegistry.json
+        - name: KlerosRecipientRegistry
+          file: ./abis/KlerosRecipientRegistry.json
         - name: BrightIdUserRegistry
           file: ./abis/BrightIdUserRegistry.json
       eventHandlers:

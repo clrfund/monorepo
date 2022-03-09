@@ -12,12 +12,10 @@ import {
 
 import { MACIFactory as MACIFactoryContract } from '../generated/FundingRoundFactory/MACIFactory'
 import { FundingRound as FundingRoundContract } from '../generated/FundingRoundFactory/FundingRound'
-
-import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/FundingRoundFactory/OptimisticRecipientRegistry'
-
+import { RecipientRegistryTemplate } from './recipientRegistry/RecipientRegistryTemplate'
+import { RecipientRegistryFactory } from './recipientRegistry/RecipientRegistryFactory'
 import {
   FundingRound as FundingRoundTemplate,
-  OptimisticRecipientRegistry as recipientRegistryTemplate,
   MACI as MACITemplate,
 } from '../generated/templates'
 import {
@@ -26,6 +24,7 @@ import {
   RecipientRegistry,
   ContributorRegistry,
 } from '../generated/schema'
+
 
 export function handleCoordinatorChanged(event: CoordinatorChanged): void {
   log.info('handleCoordinatorChanged', [])
@@ -118,29 +117,14 @@ export function handleRoundStarted(event: RoundStarted): void {
   //NOTE: If the contracts aren't being tracked initialize them
   if (recipientRegistry == null) {
     log.info('New recipientRegistry', [])
-    recipientRegistryTemplate.create(recipientRegistryAddress)
-    let recipientRegistryContract = RecipientRegistryContract.bind(
-      recipientRegistryAddress
-    )
-    let baseDeposit = recipientRegistryContract.try_baseDeposit()
-    let challengePeriodDuration =
-      recipientRegistryContract.try_challengePeriodDuration()
-    let controller = recipientRegistryContract.controller()
-    let maxRecipients = recipientRegistryContract.maxRecipients()
-    let owner = recipientRegistryContract.owner()
+    RecipientRegistryTemplate.create(recipientRegistryAddress)
 
-    let recipientRegistry = new RecipientRegistry(recipientRegistryId)
-
-    if( !baseDeposit.reverted ) {
-      recipientRegistry.baseDeposit = baseDeposit.value
-    }
-    if( !challengePeriodDuration.reverted ) {
-      recipientRegistry.challengePeriodDuration = challengePeriodDuration.value
-    }
-    recipientRegistry.controller = controller
-    recipientRegistry.maxRecipients = maxRecipients
-    recipientRegistry.owner = owner
-    recipientRegistry.fundingRoundFactory = fundingRoundFactoryId
+    let createdAt = event.block.timestamp.toString()
+    let recipientRegistry = RecipientRegistryFactory.create({
+      recipientRegistryAddress,
+      fundingRoundFactoryId,
+      createdAt
+    })
     recipientRegistry.save()
   }
 
