@@ -8,19 +8,19 @@ const CRITERIA: Criterion[] = [
   {
     emoji: '💰',
     criterion: 'Related to Ethereum staking',
-    description: 'Your project must support Ethereum staking/validating.',
+    description: 'Your project must support staking on Ethereum.',
   },
   {
     emoji: '🤲',
     criterion: 'Free and open source',
     description:
-      'Your project code must be available to anyone to use under a free and open source license.',
+      'Your project must be free to use and any code associated with your project should be available to anyone under an open source license.',
   },
   {
     emoji: '🙋‍♀️',
     criterion: 'Project ownership',
     description:
-      'The project must be yours or you must have permission from the project owner.',
+      'The project you submit must be yours or you must have permission from the project owner.',
   },
   {
     emoji: '🆔',
