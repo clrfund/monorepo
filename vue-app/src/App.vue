@@ -152,6 +152,7 @@ export default class App extends Vue {
       'verify',
       'verify-step',
       'verified',
+      'not-found',
     ]
     return !excludedRoutes.includes(this.$route.name || '')
   }
@@ -166,6 +167,7 @@ export default class App extends Vue {
       'verify',
       'verify-step',
       'verified',
+      'not-found',
     ]
     return !excludedRoutes.includes(this.$route.name || '')
   }
@@ -189,6 +191,7 @@ export default class App extends Vue {
       'verify',
       'project-added',
       'verified',
+      'not-found',
     ]
     return !excludedRoutes.includes(this.$route.name || '')
   }

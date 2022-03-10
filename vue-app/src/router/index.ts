@@ -25,6 +25,7 @@ import VerifyView from '../views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 import CartView from '@/views/Cart.vue'
 import TransactionSuccess from '@/views/TransactionSuccess.vue'
+import NotFound from '@/views/NotFound.vue'
 
 Vue.use(VueRouter)
 
@@ -227,6 +228,18 @@ const routes = [
     meta: {
       title: 'Transaction Success',
     },
+  },
+  {
+    path: '/not-found',
+    name: 'not-found',
+    component: NotFound,
+    meta: {
+      title: 'Page Not Found',
+    },
+  },
+  {
+    path: '*',
+    redirect: '/not-found',
   },
 ]
 const router = new VueRouter({

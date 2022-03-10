@@ -6,44 +6,13 @@ import {
 import { isHexString } from '@ethersproject/bytes'
 import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
-import { chain } from '@/api/core'
 
 import { OptimisticRecipientRegistry } from './abi'
-import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
+import { ipfsGatewayUrl } from './core'
 import { Project } from './projects'
 import sdk from '@/graphql/sdk'
 import { Recipient } from '@/graphql/API'
-
-export interface RegistryInfo {
-  deposit: BigNumber
-  depositToken: string
-  challengePeriodDuration: number
-  listingPolicyUrl: string
-  recipientCount: number
-  owner: string
-}
-
-export async function getRegistryInfo(
-  registryAddress: string
-): Promise<RegistryInfo> {
-  const registry = new Contract(
-    registryAddress,
-    OptimisticRecipientRegistry,
-    provider
-  )
-  const deposit = await registry.baseDeposit()
-  const challengePeriodDuration = await registry.challengePeriodDuration()
-  const recipientCount = await registry.getRecipientCount()
-  const owner = await registry.owner()
-  return {
-    deposit,
-    depositToken: chain.currency,
-    challengePeriodDuration: challengePeriodDuration.toNumber(),
-    listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
-    recipientCount: recipientCount.toNumber(),
-    owner,
-  }
-}
+import { RegistryInfo } from './recipient-registry'
 
 export enum RequestType {
   Registration = 'Registration',

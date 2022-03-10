@@ -42,27 +42,29 @@
         Click "See round criteria" and familiarize yourself with the criteria
         for projects.
       </li>
-      <li>
-        Once you're familiar with the criteria and you're sure your project
-        meets them, click "Add project." You'll see a series of forms to fill
-        out asking for more information about your project.
-      </li>
-      <li>
-        With the forms finished, you can finish your submission by:
-        <ol>
-          <li>connecting to the right network via your wallet of choice</li>
-          <li>
-            sending a deposit of {{ depositAmount }} {{ depositToken }} to the
-            registry contract.
-          </li>
-        </ol>
-        Projects are accepted by default, but the registry admin may remove
-        projects that don't meet the criteria. Either way, your
-        {{ depositToken }} will be returned once your application has been
-        either accepted or denied. Note that metadata pointing to all your
-        project information (but not contact information) will be stored
-        publicly on-chain.
-      </li>
+      <template v-if="requireDeposit">
+        <li>
+          Once you're familiar with the criteria and you're sure your project
+          meets them, click "Add project." You'll see a series of forms to fill
+          out asking for more information about your project.
+        </li>
+        <li>
+          With the forms finished, you can finish your submission by:
+          <ol>
+            <li>connecting to the right network via your wallet of choice</li>
+            <li>
+              sending a deposit of {{ depositAmount }} {{ depositToken }} to the
+              registry contract.
+            </li>
+          </ol>
+          Projects are accepted by default, but the registry admin may remove
+          projects that don't meet the criteria. Either way, your
+          {{ depositToken }} will be returned once your application has been
+          either accepted or denied. Note that metadata pointing to all your
+          project information (but not contact information) will be stored
+          publicly on-chain.
+        </li>
+      </template>
     </ol>
     <h2>Claim your funds</h2>
     <p>
@@ -80,15 +82,16 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+import Component, { mixins } from 'vue-class-component'
 import Links from '@/components/Links.vue'
 import { chain } from '@/api/core'
 import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import { formatAmount } from '@/utils/amounts'
 
+import { RecipientRegistryPlugin } from '@/plugins/registry/RecipientRegistryPlugin'
+
 @Component({ components: { Links } })
-export default class AboutRecipients extends Vue {
+export default class AboutRecipients extends mixins(RecipientRegistryPlugin) {
   get chain(): ChainInfo {
     return chain
   }

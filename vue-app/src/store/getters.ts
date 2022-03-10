@@ -9,10 +9,8 @@ import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
-import {
-  RecipientApplicationData,
-  RegistryInfo,
-} from '@/api/recipient-registry-optimistic'
+import { RecipientApplicationData } from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/recipient-registry'
 
 // Utils
 import { isSameAddress } from '@/utils/accounts'

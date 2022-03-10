@@ -751,6 +751,7 @@ import ProjectProfile from '@/components/ProjectProfile.vue'
 import RecipientSubmissionWidget from '@/components/RecipientSubmissionWidget.vue'
 import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
+import { RecipientRegistryPlugin } from '@/plugins/registry/RecipientRegistryPlugin'
 
 import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import {
@@ -825,7 +826,10 @@ import { chain } from '@/api/core'
     },
   },
 })
-export default class JoinView extends mixins(validationMixin) {
+export default class JoinView extends mixins(
+  validationMixin,
+  RecipientRegistryPlugin
+) {
   form: RecipientApplicationData = {
     project: {
       name: '',
@@ -864,6 +868,11 @@ export default class JoinView extends mixins(validationMixin) {
   showSummaryPreview = false
 
   created() {
+    if (!this.supportRegistration) {
+      this.$router.push({ name: 'not-found' })
+      return
+    }
+
     const steps = Object.keys(this.form)
     steps.splice(steps.length - 1, 1, 'summary', 'submit')
 

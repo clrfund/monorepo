@@ -29,7 +29,10 @@
           </div>
         </div>
       </div>
-      <links to="/join/project" class="btn-primary fit-content"
+      <links
+        v-if="supportRegistration"
+        to="/join/project"
+        class="btn-primary fit-content"
         >Add project</links
       >
     </div>
@@ -37,15 +40,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+import Component, { mixins } from 'vue-class-component'
 import Links from '@/components/Links.vue'
 
 import { operator } from '@/api/core'
 import { criteria, Criterion } from '@/plugins/round/criteria'
+import { RecipientRegistryPlugin } from '@/plugins/registry/RecipientRegistryPlugin'
 
 @Component({ components: { Links } })
-export default class CriteriaModal extends Vue {
+export default class CriteriaModal extends mixins(RecipientRegistryPlugin) {
   get criteria(): Criterion[] {
     return criteria
   }

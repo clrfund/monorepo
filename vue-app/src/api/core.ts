@@ -36,9 +36,16 @@ if (
 ) {
   throw new Error('invalid user registry type')
 }
+export enum RecipientRegistryType {
+  SIMPLE = 'simple',
+  OPTIMISTIC = 'optimistic',
+  KLEROS = 'kleros',
+}
 export const recipientRegistryType = process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE
 if (
-  !['simple', 'optimistic', 'kleros'].includes(recipientRegistryType as string)
+  !Object.values(RecipientRegistryType).includes(
+    recipientRegistryType as RecipientRegistryType
+  )
 ) {
   throw new Error('invalid recipient registry type')
 }

@@ -1,0 +1,10 @@
+query GetRecipientRegistry($registryAddress: ID!) {
+  recipientRegistry(id: $registryAddress) {
+    id
+    baseDeposit
+    challengePeriodDuration
+    owner
+    controller
+    maxRecipients
+  }
+}
