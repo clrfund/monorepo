@@ -3,21 +3,20 @@ import { isHexString } from '@ethersproject/bytes'
 
 import { SimpleRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
-import { Project } from './projects'
+import { Project, toProjectInterface } from './projects'
 
 function decodeRecipientAdded(event: Event): Project {
   const args = event.args as any
   const metadata = JSON.parse(args._metadata)
-  return {
+  return toProjectInterface({
+    ...metadata,
     id: args._recipientId,
     address: args._recipient,
-    name: metadata.name,
-    description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
     index: args._index.toNumber(),
     isHidden: false,
     isLocked: false,
-  }
+  })
 }
 
 export async function getProjects(

@@ -4,7 +4,7 @@ import { gtcrDecode } from '@kleros/gtcr-encoder'
 
 import { KlerosGTCR, KlerosGTCRAdapter } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
-import { Project } from './projects'
+import { Project, toProjectInterface } from './projects'
 
 const KLEROS_CURATE_URL =
   'https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398'
@@ -58,13 +58,13 @@ function decodeTcrItemData(
 
 function decodeRecipientAdded(event: Event, columns: TcrColumn[]): Project {
   const args = event.args as any
-  return {
+  return toProjectInterface({
     id: args._tcrItemId,
     ...decodeTcrItemData(columns, args._metadata),
     index: args._index.toNumber(),
     isHidden: false,
     isLocked: false,
-  }
+  })
 }
 
 export async function getProjects(

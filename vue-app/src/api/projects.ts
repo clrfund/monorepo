@@ -2,6 +2,7 @@ import { Contract, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { FundingRound } from './abi'
 import { factory, provider, recipientRegistryType } from './core'
+import { ipfsGatewayUrl } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
@@ -101,5 +102,22 @@ export async function registerProject(
     )
   } else {
     throw new Error('invalid recipient registry type')
+  }
+}
+
+export function toProjectInterface(metadata: any): Project {
+  const imageUrl = metadata.imageUrl
+  const bannerImageUrl = metadata.bannerImageHash
+    ? `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`
+    : imageUrl
+
+  const thumbnailImageUrl = metadata.thumbnailImageHash
+    ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`
+    : imageUrl
+
+  return {
+    ...metadata,
+    bannerImageUrl,
+    thumbnailImageUrl,
   }
 }
