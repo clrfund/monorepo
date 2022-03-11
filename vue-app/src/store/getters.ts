@@ -151,7 +151,13 @@ const getters = {
     )
   },
   isRecipientRegistryOwner: (state: RootState): boolean => {
-    if (!state.currentUser || !state.recipientRegistryInfo) {
+    if (
+      !state.currentUser ||
+      !state.recipientRegistryInfo ||
+      !state.recipientRegistryInfo.owner
+    ) {
+      // return false if no owner or logged in user information
+      // e.g. the kleros recipient registry does not have a owner
       return false
     }
     return isSameAddress(
