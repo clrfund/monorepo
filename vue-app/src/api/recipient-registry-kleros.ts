@@ -129,7 +129,7 @@ export async function getProjects(
     if (tcrItemStatus.toNumber() !== TcrItemStatus.Registered) {
       continue
     }
-    const project: Project = {
+    const project: Project = toProjectInterface({
       id: tcrItemId,
       ...decodeTcrItemData(tcrColumns, tcrItemData),
       // Only unregistered project can have invalid index 0
@@ -140,7 +140,7 @@ export async function getProjects(
         tcrItemStatus: TcrItemStatus.Registered,
         tcrItemUrl: `${KLEROS_CURATE_URL}/${tcrItemId}`,
       },
-    }
+    })
     projects.push(project)
   }
   return projects
@@ -159,7 +159,7 @@ export async function getProject(
     // Item is not in TCR
     return null
   }
-  const project: Project = {
+  const project: Project = toProjectInterface({
     id: recipientId,
     ...decodeTcrItemData(tcrColumns, tcrItemData),
     // Only unregistered project can have invalid index 0
@@ -170,7 +170,7 @@ export async function getProject(
       tcrItemStatus: tcrItemStatus.toNumber(),
       tcrItemUrl: `${KLEROS_CURATE_URL}/${recipientId}`,
     },
-  }
+  })
   const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
   const recipientAddedEvents = await registry.queryFilter(
     recipientAddedFilter,
