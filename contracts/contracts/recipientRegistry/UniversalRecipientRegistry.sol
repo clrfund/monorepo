@@ -27,6 +27,9 @@ contract UniversalRecipientRegistry is Ownable, BaseRecipientRegistry {
     string recipientId;  // this is also the metadataId
   }
 
+  // constant
+  string public registryType = 'universal';
+
   // State
   uint256 public baseDeposit;
   uint256 public challengePeriodDuration;
