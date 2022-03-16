@@ -36,9 +36,18 @@ if (
 ) {
   throw new Error('invalid user registry type')
 }
-export const recipientRegistryType = process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE
+export enum RecipientRegistryType {
+  SIMPLE = 'simple',
+  OPTIMISTIC = 'optimistic',
+  KLEROS = 'kleros',
+  UNIVERSAL = 'universal',
+}
+export const recipientRegistryType =
+  process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE || ''
 if (
-  !['simple', 'optimistic', 'kleros'].includes(recipientRegistryType as string)
+  !Object.values(RecipientRegistryType).includes(
+    recipientRegistryType as RecipientRegistryType
+  )
 ) {
   throw new Error('invalid recipient registry type')
 }
@@ -61,3 +70,15 @@ export const METADATA_SUBGRAPH_URL_PREFIX = process.env
 export const METADATA_NETWORKS = process.env.VUE_APP_METADATA_NETWORKS
   ? process.env.VUE_APP_METADATA_NETWORKS.split(',')
   : ['rinkeby']
+
+export interface RecipientRegistryInterface {
+  addRecipient: Function
+  isRegistrationOpen?: boolean
+  requireRegistrationDeposit?: boolean
+}
+
+// recipient registration request type
+export enum RequestTypeCode {
+  Registration = 0,
+  Removal = 1,
+}

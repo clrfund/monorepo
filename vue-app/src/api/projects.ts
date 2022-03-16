@@ -2,10 +2,12 @@ import { Contract, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { FundingRound } from './abi'
 import { factory, provider, recipientRegistryType } from './core'
+import { ipfsGatewayUrl } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
+import RecipientRegistry from './recipient-registry'
 
 export interface Project {
   id: string // Address or another ID depending on registry implementation
@@ -54,16 +56,14 @@ export async function getProjects(
 ): Promise<Project[]> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)
-  } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProjects(
+  } else if (recipientRegistryType === 'kleros') {
+    return await KlerosRegistry.getProjects(registryAddress, startTime, endTime)
+  } else {
+    return await RecipientRegistry.getProjects(
       registryAddress,
       startTime,
       endTime
     )
-  } else if (recipientRegistryType === 'kleros') {
-    return await KlerosRegistry.getProjects(registryAddress, startTime, endTime)
-  } else {
-    throw new Error('invalid recipient registry type')
   }
 }
 
@@ -73,12 +73,10 @@ export async function getProject(
 ): Promise<Project | null> {
   if (recipientRegistryType === 'simple') {
     return await SimpleRegistry.getProject(registryAddress, recipientId)
-  } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProject(recipientId)
   } else if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProject(registryAddress, recipientId)
   } else {
-    throw new Error('invalid recipient registry type')
+    return await RecipientRegistry.getProject(recipientId)
   }
 }
 
@@ -101,5 +99,22 @@ export async function registerProject(
     )
   } else {
     throw new Error('invalid recipient registry type')
+  }
+}
+
+export function toProjectInterface(metadata: any): Project {
+  const imageUrl = metadata.imageUrl
+  const bannerImageUrl = metadata.bannerImageHash
+    ? `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`
+    : imageUrl
+
+  const thumbnailImageUrl = metadata.thumbnailImageHash
+    ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`
+    : imageUrl
+
+  return {
+    ...metadata,
+    bannerImageUrl,
+    thumbnailImageUrl,
   }
 }

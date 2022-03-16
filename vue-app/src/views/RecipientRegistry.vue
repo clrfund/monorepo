@@ -140,7 +140,7 @@ import { BigNumber } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 
-import { recipientRegistryType } from '@/api/core'
+import { recipientRegistryType, RecipientRegistryType } from '@/api/core'
 import {
   RequestType,
   RequestStatus,
@@ -155,7 +155,7 @@ import Links from '@/components/Links.vue'
 import { formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
 import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/recipient-registry'
 import TransactionModal from '@/components/TransactionModal.vue'
 
 @Component({ components: { Loader, Links } })
@@ -164,7 +164,8 @@ export default class RecipientRegistryView extends Vue {
   isLoading = true
 
   async created() {
-    if (recipientRegistryType !== 'optimistic') {
+    if (recipientRegistryType !== RecipientRegistryType.OPTIMISTIC) {
+      this.$router.push({ name: 'not-found' })
       return
     }
 

@@ -1,19 +1,7 @@
-import { Contract, BigNumber, Signer, ContractTransaction } from 'ethers'
+import { Contract, BigNumber, Signer } from 'ethers'
 import { UniversalRecipientRegistry } from './abi'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { Project } from './projects'
-
-export async function getProjects(
-  registryAddress: string,
-  startTime?: number,
-  endTime?: number
-): Promise<Project[]> {
-  return []
-}
-
-export async function getProject(): Promise<Project | null> {
-  return null
-}
+import { RecipientRegistryInterface } from './core'
 
 export async function addRecipient(
   registryAddress: string,
@@ -34,3 +22,13 @@ export async function addRecipient(
   )
   return transaction
 }
+
+export function create(): RecipientRegistryInterface {
+  return {
+    addRecipient,
+    isRegistrationOpen: true,
+    requireRegistrationDeposit: true,
+  }
+}
+
+export default { addRecipient, create }

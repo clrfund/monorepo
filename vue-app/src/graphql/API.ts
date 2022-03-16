@@ -22,9 +22,19 @@ export type Scalars = {
 
 
 
+/** The block at which the query should be executed. */
 export type Block_Height = {
+  /** Value containing a block hash */
   hash: Maybe<Scalars['Bytes']>;
+  /** Value containing a block number */
   number: Maybe<Scalars['Int']>;
+  /**
+   * Value containing the minimum block number.
+   * In the case of `number_gte`, the query will be executed on the latest block only if
+   * the subgraph has progressed to or past the minimum block number.
+   * Defaults to the latest block when omitted.
+   *
+   */
   number_gte: Maybe<Scalars['Int']>;
 };
 
@@ -1199,6 +1209,7 @@ export enum Message_OrderBy {
   Timestamp = 'timestamp'
 }
 
+/** Defines the order direction, either ascending or descending */
 export enum OrderDirection {
   Asc = 'asc',
   Desc = 'desc'
@@ -2405,6 +2416,13 @@ export type GetRecipientDonationsQueryVariables = Exact<{
 
 export type GetRecipientDonationsQuery = { __typename?: 'Query', donations: Array<{ __typename?: 'Donation', id: string }> };
 
+export type GetRecipientRegistryQueryVariables = Exact<{
+  registryAddress: Scalars['ID'];
+}>;
+
+
+export type GetRecipientRegistryQuery = { __typename?: 'Query', recipientRegistry: Maybe<{ __typename?: 'RecipientRegistry', id: string, baseDeposit: Maybe<any>, challengePeriodDuration: Maybe<any>, owner: Maybe<any>, controller: Maybe<any>, maxRecipients: Maybe<any> }> };
+
 export type GetRecipientsQueryVariables = Exact<{
   registryAddress: Scalars['String'];
 }>;
@@ -2486,6 +2504,18 @@ export const GetRecipientDonationsDocument = gql`
   }
 }
     `;
+export const GetRecipientRegistryDocument = gql`
+    query GetRecipientRegistry($registryAddress: ID!) {
+  recipientRegistry(id: $registryAddress) {
+    id
+    baseDeposit
+    challengePeriodDuration
+    owner
+    controller
+    maxRecipients
+  }
+}
+    `;
 export const GetRecipientsDocument = gql`
     query GetRecipients($registryAddress: String!) {
   recipients(where: {recipientRegistry: $registryAddress}) {
@@ -2544,6 +2574,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetRecipientDonations(variables: GetRecipientDonationsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientDonationsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientDonationsQuery>(GetRecipientDonationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientDonations');
+    },
+    GetRecipientRegistry(variables: GetRecipientRegistryQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientRegistryQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientRegistryQuery>(GetRecipientRegistryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientRegistry');
     },
     GetRecipients(variables: GetRecipientsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientsQuery>(GetRecipientsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipients');

@@ -4,12 +4,12 @@ import { DateTime } from 'luxon'
 
 // API
 import { CartItem, Contributor } from '@/api/contributions'
-import { recipientRegistryType } from '@/api/core'
+import { recipientRegistryType, RecipientRegistryType } from '@/api/core'
 import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/recipient-registry'
 import { RecipientApplicationData } from '@/api/recipient'
 
 // Utils
@@ -41,9 +41,7 @@ const getters = {
     }
 
     const challengePeriodDuration =
-      recipientRegistryType === 'optimistic'
-        ? state.recipientRegistryInfo.challengePeriodDuration
-        : 0
+      state.recipientRegistryInfo.challengePeriodDuration
 
     return state.currentRound.signUpDeadline.minus({
       seconds: challengePeriodDuration,
@@ -151,7 +149,13 @@ const getters = {
     )
   },
   isRecipientRegistryOwner: (state: RootState): boolean => {
-    if (!state.currentUser || !state.recipientRegistryInfo) {
+    if (
+      !state.currentUser ||
+      !state.recipientRegistryInfo ||
+      !state.recipientRegistryInfo.owner
+    ) {
+      // return false if no owner or logged in user information
+      // e.g. the kleros recipient registry does not have a owner
       return false
     }
     return isSameAddress(
@@ -200,6 +204,20 @@ const getters = {
     }
 
     return nativeTokenDecimals
+  },
+  isRecipientRegistrationOpen: (state: RootState): boolean => {
+    return !!state.recipientRegistryInfo?.isRegistrationOpen
+  },
+  requireRegistrationDeposit: (state: RootState): boolean => {
+    return !!state.recipientRegistryInfo?.requireRegistrationDeposit
+  },
+  addProjectUrl: (_state: RootState): string => {
+    switch (recipientRegistryType) {
+      case RecipientRegistryType.UNIVERSAL:
+        return '/join/metadata'
+      default:
+        return '/join/project'
+    }
   },
 }
 

@@ -19,7 +19,7 @@ import { RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { getTally } from '@/api/tally'
 import { getEtherBalance, getTokenBalance, isVerifiedUser } from '@/api/user'
-import { getRegistryInfo } from '@/api/recipient-registry-optimistic'
+import { getRegistryInfo } from '@/api/recipient-registry'
 
 // Constants
 import {

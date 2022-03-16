@@ -58,9 +58,13 @@
     <div class="content" v-else-if="$store.state.currentRound">
       <h1>Join the funding round</h1>
       <div class="subtitle">
-        We’ll need some information about your project and a
-        <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
-        deposit.
+        We’ll need some information about your project<span
+          v-if="$store.state.requireRegistrationDeposit"
+        >
+          and a
+          <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong>
+          security deposit</span
+        >.
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
@@ -101,16 +105,25 @@
         <button class="btn-secondary" @click="toggleCriteria">
           See round criteria
         </button>
-        <links to="/join/metadata" class="btn-primary">Add project</links>
+        <links
+          v-if="$store.getters.isRecipientRegistrationOpen"
+          :to="$store.getters.addProjectUrl"
+          class="btn-primary"
+          >Add project</links
+        >
       </div>
     </div>
 
     <div class="content" v-else-if="$store.getters.isRoundJoinPhase">
       <h1>Join the next funding round</h1>
       <div class="subtitle">
-        We’ll need some information about your project and a
-        <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
-        deposit.
+        We’ll need some information about your project<span
+          v-if="$store.state.requireRegistrationDeposit"
+        >
+          and a
+          <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong>
+          security deposit</span
+        >.
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
@@ -122,7 +135,12 @@
         <button class="btn-secondary" @click="toggleCriteria">
           See round criteria
         </button>
-        <links to="/join/metadata" class="btn-primary">Add project</links>
+        <links
+          v-if="$store.getters.isRecipientRegistrationOpen"
+          :to="$store.getters.addProjectUrl"
+          class="btn-primary"
+          >Add project</links
+        >
       </div>
     </div>
 
@@ -136,7 +154,7 @@ import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 import { BigNumber } from 'ethers'
 
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/recipient-registry'
 import Loader from '@/components/Loader.vue'
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'

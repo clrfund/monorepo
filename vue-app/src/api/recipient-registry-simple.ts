@@ -1,23 +1,23 @@
-import { Contract, Event } from 'ethers'
+import { BigNumber, Contract, Event, Signer } from 'ethers'
+import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { isHexString } from '@ethersproject/bytes'
 
 import { SimpleRecipientRegistry } from './abi'
-import { provider, ipfsGatewayUrl } from './core'
-import { Project } from './projects'
+import { provider, ipfsGatewayUrl, RecipientRegistryInterface } from './core'
+import { Project, toProjectInterface } from './projects'
 
 function decodeRecipientAdded(event: Event): Project {
   const args = event.args as any
   const metadata = JSON.parse(args._metadata)
-  return {
+  return toProjectInterface({
+    ...metadata,
     id: args._recipientId,
     address: args._recipient,
-    name: metadata.name,
-    description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
     index: args._index.toNumber(),
     isHidden: false,
     isLocked: false,
-  }
+  })
 }
 
 export async function getProjects(
@@ -116,4 +116,26 @@ export async function getProject(
   return project
 }
 
-export default { getProjects, getProject }
+export function addRecipient(
+  registryAddress: string,
+  recipientData: any,
+  _deposit: BigNumber,
+  signer: Signer
+): Promise<TransactionResponse> {
+  const registry = new Contract(
+    registryAddress,
+    SimpleRecipientRegistry,
+    signer
+  )
+  return registry.addRecipient(recipientData.id)
+}
+
+export function create(): RecipientRegistryInterface {
+  return {
+    addRecipient,
+    isRegistrationOpen: false,
+    requireRegistrationDeposit: false,
+  }
+}
+
+export default { getProjects, getProject, create }

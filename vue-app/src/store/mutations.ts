@@ -8,8 +8,8 @@ import { RoundInfo } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { RecipientApplicationData } from '@/api/recipient'
+import { RegistryInfo } from '@/api/recipient-registry'
 
 // Constants
 import {

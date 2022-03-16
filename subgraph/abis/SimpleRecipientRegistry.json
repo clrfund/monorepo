@@ -2,16 +2,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_baseDeposit",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_challengePeriodDuration",
-        "type": "uint256"
-      },
-      {
         "internalType": "address",
         "name": "_controller",
         "type": "address"
@@ -49,21 +39,21 @@
         "type": "bytes32"
       },
       {
-        "indexed": true,
-        "internalType": "enum UniversalRecipientRegistry.RequestType",
-        "name": "_type",
-        "type": "uint8"
+        "indexed": false,
+        "internalType": "address",
+        "name": "_recipient",
+        "type": "address"
       },
       {
-        "indexed": true,
-        "internalType": "bool",
-        "name": "_rejected",
-        "type": "bool"
+        "indexed": false,
+        "internalType": "string",
+        "name": "_metadata",
+        "type": "string"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_recipientIndex",
+        "name": "_index",
         "type": "uint256"
       },
       {
@@ -73,7 +63,7 @@
         "type": "uint256"
       }
     ],
-    "name": "RequestResolved",
+    "name": "RecipientAdded",
     "type": "event"
   },
   {
@@ -86,31 +76,13 @@
         "type": "bytes32"
       },
       {
-        "indexed": true,
-        "internalType": "enum UniversalRecipientRegistry.RequestType",
-        "name": "_type",
-        "type": "uint8"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "_recipient",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "_metadataId",
-        "type": "string"
-      },
-      {
         "indexed": false,
         "internalType": "uint256",
         "name": "_timestamp",
         "type": "uint256"
       }
     ],
-    "name": "RequestSubmitted",
+    "name": "RecipientRemoved",
     "type": "event"
   },
   {
@@ -122,62 +94,12 @@
       },
       {
         "internalType": "string",
-        "name": "_metadataId",
+        "name": "_metadata",
         "type": "string"
       }
     ],
     "name": "addRecipient",
     "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "baseDeposit",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "challengePeriodDuration",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_recipientId",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address payable",
-        "name": "_beneficiary",
-        "type": "address"
-      }
-    ],
-    "name": "challengeRequest",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -192,25 +114,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "_recipientId",
-        "type": "bytes32"
-      }
-    ],
-    "name": "executeRequest",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -282,19 +185,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "registryType",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "bytes32",
@@ -304,38 +194,12 @@
     ],
     "name": "removeRecipient",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_baseDeposit",
-        "type": "uint256"
-      }
-    ],
-    "name": "setBaseDeposit",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_challengePeriodDuration",
-        "type": "uint256"
-      }
-    ],
-    "name": "setChallengePeriodDuration",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

@@ -12,12 +12,10 @@ import {
 
 import { MACIFactory as MACIFactoryContract } from '../generated/FundingRoundFactory/MACIFactory'
 import { FundingRound as FundingRoundContract } from '../generated/FundingRoundFactory/FundingRound'
-
-import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/FundingRoundFactory/OptimisticRecipientRegistry'
-
+import { RecipientRegistryTemplate } from './recipientRegistry/RecipientRegistryTemplate'
+import { RecipientRegistryFactory } from './recipientRegistry/RecipientRegistryFactory'
 import {
   FundingRound as FundingRoundTemplate,
-  OptimisticRecipientRegistry as recipientRegistryTemplate,
   MACI as MACITemplate,
 } from '../generated/templates'
 import {
@@ -118,26 +116,23 @@ export function handleRoundStarted(event: RoundStarted): void {
   //NOTE: If the contracts aren't being tracked initialize them
   if (recipientRegistry == null) {
     log.info('New recipientRegistry', [])
-    recipientRegistryTemplate.create(recipientRegistryAddress)
-    let recipientRegistryContract = RecipientRegistryContract.bind(
-      recipientRegistryAddress
-    )
-    let baseDeposit = recipientRegistryContract.baseDeposit()
-    let challengePeriodDuration =
-      recipientRegistryContract.challengePeriodDuration()
-    let controller = recipientRegistryContract.controller()
-    let maxRecipients = recipientRegistryContract.maxRecipients()
-    let owner = recipientRegistryContract.owner()
+    RecipientRegistryTemplate.create(recipientRegistryAddress)
 
-    let recipientRegistry = new RecipientRegistry(recipientRegistryId)
+    let createdAt = event.block.timestamp.toString()
+    let recipientRegistry = RecipientRegistryFactory.create({
+      recipientRegistryAddress,
+      fundingRoundFactoryId,
+      createdAt,
+    })
 
-    recipientRegistry.baseDeposit = baseDeposit
-    recipientRegistry.challengePeriodDuration = challengePeriodDuration
-    recipientRegistry.controller = controller
-    recipientRegistry.maxRecipients = maxRecipients
-    recipientRegistry.owner = owner
-    recipientRegistry.fundingRoundFactory = fundingRoundFactoryId
-    recipientRegistry.save()
+    if (recipientRegistry) {
+      recipientRegistry.save()
+    } else {
+      log.error(
+        'Error creating recipient registry {}, see previous error for details',
+        [recipientRegistryAddress.toHex()]
+      )
+    }
   }
 
   if (contributorRegistry == null) {

@@ -87,9 +87,9 @@ import { BigNumber } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 import { DateTime } from 'luxon'
 import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
-import { addRecipient } from '@/api/recipient-registry-optimistic'
+import { RecipientRegistry } from '@/api/recipient-registry'
 import { User } from '@/api/user'
-import { chain } from '@/api/core'
+import { chain, recipientRegistryType } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
@@ -211,8 +211,9 @@ export default class RecipientSubmissionWidget extends Vue {
           throw { message: 'round over' }
         }
 
+        const registry = RecipientRegistry.create(recipientRegistryType)
         await waitForTransaction(
-          addRecipient(
+          registry.addRecipient(
             recipientRegistryAddress,
             recipient,
             recipientRegistryInfo.deposit,

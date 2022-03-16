@@ -29,7 +29,10 @@
           </div>
         </div>
       </div>
-      <links to="/join/project" class="btn-primary fit-content"
+      <links
+        v-if="$store.getters.isRecipientRegistrationOpen"
+        :to="$store.getters.addProjectUrl"
+        class="btn-primary fit-content"
         >Add project</links
       >
     </div>

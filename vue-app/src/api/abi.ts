@@ -9,6 +9,7 @@ import { abi as OptimisticRecipientRegistry } from '../../../contracts/build/con
 import { abi as UniversalRecipientRegistry } from '../../../contracts/build/contracts/contracts/recipientRegistry/UniversalRecipientRegistry.sol/UniversalRecipientRegistry.json'
 import { abi as KlerosGTCR } from '../../../contracts/build/contracts/contracts/recipientRegistry/IKlerosGTCR.sol/IKlerosGTCR.json'
 import { abi as KlerosGTCRAdapter } from '../../../contracts/build/contracts/contracts/recipientRegistry/KlerosGTCRAdapter.sol/KlerosGTCRAdapter.json'
+import { abi as BaseRecipientRegistry } from '../../../contracts/build/contracts/contracts/recipientRegistry/BaseRecipientRegistry.sol/BaseRecipientRegistry.json'
 
 export {
   ERC20,
@@ -22,4 +23,5 @@ export {
   UniversalRecipientRegistry,
   KlerosGTCR,
   KlerosGTCRAdapter,
+  BaseRecipientRegistry,
 }

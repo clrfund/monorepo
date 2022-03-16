@@ -29,6 +29,7 @@ import MetadataDetail from '@/views/Metadata.vue'
 import MetadataRegistry from '@/views/MetadataRegistry.vue'
 import MetadataFormAdd from '@/views/MetadataFormAdd.vue'
 import MetadataFormEdit from '@/views/MetadataFormEdit.vue'
+import NotFound from '@/views/NotFound.vue'
 
 Vue.use(VueRouter)
 
@@ -215,7 +216,6 @@ const routes = [
       title: 'Project Application',
     },
   },
-
   {
     path: '/cart',
     name: 'cart',
@@ -263,6 +263,18 @@ const routes = [
     meta: {
       title: 'Add Metadata',
     },
+  },
+  {
+    path: '/not-found',
+    name: 'not-found',
+    component: NotFound,
+    meta: {
+      title: 'Page Not Found',
+    },
+  },
+  {
+    path: '*',
+    redirect: '/not-found',
   },
 ]
 const router = new VueRouter({

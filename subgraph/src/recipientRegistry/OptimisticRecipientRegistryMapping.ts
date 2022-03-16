@@ -3,12 +3,31 @@ import {
   OwnershipTransferred,
   RequestResolved,
   RequestSubmitted,
-} from '../generated/UniversalRecipientRegistry/UniversalRecipientRegistry'
+} from '../../generated/OptimisticRecipientRegistry/OptimisticRecipientRegistry'
 
-import { Recipient } from '../generated/schema'
+import { Recipient } from '../../generated/schema'
+
+// It is also possible to access smart contracts from mappings. For
+// example, the contract that has emitted the event can be connected to
+// with:
+//
+// let contract = Contract.bind(event.address)
+//
+// The following functions can then be called on this contract to access
+// state variables and other data:
+//
+// - contract.baseDeposit(...)
+// - contract.challengePeriodDuration(...)
+// - contract.challengeRequest(...)
+// - contract.controller(...)
+// - contract.executeRequest(...)
+// - contract.getRecipientAddress(...)
+// - contract.maxRecipients(...)
+// - contract.owner(...)
+// - contract.setMaxRecipients(...)
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
-  log.info('handleOwnershipTransferred - universal recipient registry', [])
+  log.info('handleOwnershipTransferred - recipient registry', [])
 }
 
 export function handleRequestResolved(event: RequestResolved): void {
@@ -41,11 +60,11 @@ export function handleRequestSubmitted(event: RequestSubmitted): void {
 
   recipient.recipientRegistry = recipientRegistryId
   recipient.recipientAddress = event.params._recipient
-  recipient.recipientMetadataId = event.params._metadataId
   recipient.requestType = BigInt.fromI32(event.params._type).toString()
   recipient.requester = event.transaction.from.toHexString()
   recipient.submissionTime = event.params._timestamp.toString()
   recipient.deposit = event.transaction.value
+  recipient.recipientMetadata = event.params._metadata
   recipient.verified = false
   recipient.requestSubmittedHash = event.transaction.hash
 

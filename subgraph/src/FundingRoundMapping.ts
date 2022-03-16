@@ -9,7 +9,6 @@ import {
   Voted,
   FundingRound as FundingRoundContract,
 } from '../generated/templates/FundingRound/FundingRound'
-import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/templates/FundingRound/OptimisticRecipientRegistry'
 
 import {
   Recipient,

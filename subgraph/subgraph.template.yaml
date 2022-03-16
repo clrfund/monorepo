@@ -29,6 +29,12 @@ dataSources:
           file: ./abis/MACIFactory.json
         - name: OptimisticRecipientRegistry
           file: ./abis/OptimisticRecipientRegistry.json
+        - name: SimpleRecipientRegistry
+          file: ./abis/SimpleRecipientRegistry.json
+        - name: KlerosRecipientRegistry
+          file: ./abis/KlerosRecipientRegistry.json
+        - name: UniversalRecipientRegistry
+          file: ./abis/UniversalRecipientRegistry.json
         - name: BrightIdUserRegistry
           file: ./abis/BrightIdUserRegistry.json
       eventHandlers:
@@ -70,31 +76,7 @@ dataSources:
           handler: handleRequestResolved
         - event: RequestSubmitted(indexed bytes32,indexed uint8,address,string,uint256)
           handler: handleRequestSubmitted
-      file: ./src/OptimisticRecipientRegistryMapping.ts
-  - kind: ethereum/contract
-    name: UniversalRecipientRegistry
-    network: {{network}}
-    source:
-      abi: UniversalRecipientRegistry
-      startBlock: {{universalRecipientRegistryStartBlock}}
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - RecipientRegistry
-        - Recipient
-      abis:
-        - name: UniversalRecipientRegistry
-          file: ./abis/UniversalRecipientRegistry.json
-      eventHandlers:
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: RequestResolved(indexed bytes32,indexed uint8,indexed bool,uint256,uint256)
-          handler: handleRequestResolved
-        - event: RequestSubmitted(indexed bytes32,indexed uint8,address,string,uint256)
-          handler: handleRequestSubmitted
-      file: ./src/UniversalRecipientRegistryMapping.ts
+      file: ./src/recipientRegistry/OptimisticRecipientRegistryMapping.ts
 templates:
   - name: FundingRound
     kind: ethereum/contract
@@ -154,7 +136,74 @@ templates:
           handler: handleRequestResolved
         - event: RequestSubmitted(indexed bytes32,indexed uint8,address,string,uint256)
           handler: handleRequestSubmitted
-      file: ./src/OptimisticRecipientRegistryMapping.ts
+      file: ./src/recipientRegistry/OptimisticRecipientRegistryMapping.ts
+  - name: SimpleRecipientRegistry
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: SimpleRecipientRegistry
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - RecipientRegistry
+        - Recipient
+      abis:
+        - name: SimpleRecipientRegistry
+          file: ./abis/SimpleRecipientRegistry.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RecipientAdded(indexed bytes32,address,string,uint256,uint256)
+          handler: handleRecipientAdded
+        - event: RecipientRemoved(indexed bytes32,uint256)
+          handler: handleRecipientRemoved
+      file: ./src/recipientRegistry/SimpleRecipientRegistryMapping.ts
+  - name: KlerosRecipientRegistry
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: KlerosRecipientRegistry
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - RecipientRegistry
+        - Recipient
+      abis:
+        - name: KlerosRecipientRegistry
+          file: ./abis/KlerosRecipientRegistry.json
+      eventHandlers:
+        - event: RecipientAdded(indexed bytes32,bytes,uint256,uint256)
+          handler: handleRecipientAdded
+        - event: RecipientRemoved(indexed bytes32,uint256)
+          handler: handleRecipientRemoved
+      file: ./src/recipientRegistry/KlerosRecipientRegistryMapping.ts
+  - name: UniversalRecipientRegistry
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: UniversalRecipientRegistry
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - RecipientRegistry
+        - Recipient
+      abis:
+        - name: UniversalRecipientRegistry
+          file: ./abis/UniversalRecipientRegistry.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RequestResolved(indexed bytes32,indexed uint8,indexed bool,uint256,uint256)
+          handler: handleRequestResolved
+        - event: RequestSubmitted(indexed bytes32,indexed uint8,address,string,uint256)
+          handler: handleRequestSubmitted
+      file: ./src/recipientRegistry/UniversalRecipientRegistryMapping.ts
   - name: BrightIdUserRegistry
     kind: ethereum/contract
     network: {{network}}
