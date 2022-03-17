@@ -1,11 +1,9 @@
-import { Contract, Signer } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Contract } from 'ethers'
 import { FundingRound } from './abi'
 import { factory, provider, recipientRegistryType } from './core'
 import { ipfsGatewayUrl } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
-import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
 import RecipientRegistry from './recipient-registry'
 

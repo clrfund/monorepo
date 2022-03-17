@@ -1,11 +1,7 @@
 import { Contract, BigNumber, Signer } from 'ethers'
+import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { UniversalRecipientRegistry } from './abi'
-import {
-  TransactionResponse,
-  TransactionReceipt,
-} from '@ethersproject/abstract-provider'
 import { RecipientRegistryInterface } from './types'
-import { getEventArg } from '@/utils/contracts'
 
 export async function addRecipient(
   registryAddress: string,
@@ -31,25 +27,6 @@ export async function addRecipient(
     value: deposit,
   })
   return transaction
-}
-
-export function create(): RecipientRegistryInterface {
-  return {
-    addRecipient,
-    removeProject,
-    registerProject,
-    rejectProject,
-    isRegistrationOpen: true,
-    requireRegistrationDeposit: true,
-  }
-}
-
-export function getRequestId(
-  receipt: TransactionReceipt,
-  registryAddress: string
-): string {
-  const registry = new Contract(registryAddress, UniversalRecipientRegistry)
-  return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
 export async function registerProject(
@@ -99,6 +76,17 @@ export async function removeProject(
   const transaction = await registry.executeRequest(recipientId)
 
   return transaction
+}
+
+export function create(): RecipientRegistryInterface {
+  return {
+    addRecipient,
+    removeProject,
+    registerProject,
+    rejectProject,
+    isRegistrationOpen: true,
+    requireRegistrationDeposit: true,
+  }
 }
 
 export default { create }

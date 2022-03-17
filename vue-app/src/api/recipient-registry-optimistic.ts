@@ -3,21 +3,11 @@ import {
   TransactionResponse,
   TransactionReceipt,
 } from '@ethersproject/abstract-provider'
-import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
 
 import { OptimisticRecipientRegistry } from './abi'
-import { ipfsGatewayUrl } from './core'
-import {
-  RecipientRegistryRequestTypeCode as RequestTypeCode,
-  RecipientRegistryRequestType as RequestType,
-  RecipientRegistryRequestStatus as RequestStatus,
-  RecipientRegistryInterface,
-  RecipientRegistryRequest as Request,
-  RegistryInfo,
-} from './types'
-import sdk from '@/graphql/sdk'
 import { RecipientApplicationData } from './recipient'
+import { RecipientRegistryInterface } from './types'
 
 // TODO merge this with `Project` inteface
 export interface RecipientData {
