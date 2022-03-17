@@ -1584,6 +1584,7 @@ export type Recipient = {
   deposit: Maybe<Scalars['BigInt']>;
   recipientAddress: Maybe<Scalars['Bytes']>;
   recipientMetadata: Maybe<Scalars['String']>;
+  recipientMetadataId: Maybe<Scalars['String']>;
   rejected: Maybe<Scalars['Boolean']>;
   verified: Maybe<Scalars['Boolean']>;
   voteOptionIndex: Maybe<Scalars['BigInt']>;
@@ -1839,6 +1840,20 @@ export type Recipient_Filter = {
   recipientMetadata_not_starts_with: Maybe<Scalars['String']>;
   recipientMetadata_ends_with: Maybe<Scalars['String']>;
   recipientMetadata_not_ends_with: Maybe<Scalars['String']>;
+  recipientMetadataId: Maybe<Scalars['String']>;
+  recipientMetadataId_not: Maybe<Scalars['String']>;
+  recipientMetadataId_gt: Maybe<Scalars['String']>;
+  recipientMetadataId_lt: Maybe<Scalars['String']>;
+  recipientMetadataId_gte: Maybe<Scalars['String']>;
+  recipientMetadataId_lte: Maybe<Scalars['String']>;
+  recipientMetadataId_in: Maybe<Array<Scalars['String']>>;
+  recipientMetadataId_not_in: Maybe<Array<Scalars['String']>>;
+  recipientMetadataId_contains: Maybe<Scalars['String']>;
+  recipientMetadataId_not_contains: Maybe<Scalars['String']>;
+  recipientMetadataId_starts_with: Maybe<Scalars['String']>;
+  recipientMetadataId_not_starts_with: Maybe<Scalars['String']>;
+  recipientMetadataId_ends_with: Maybe<Scalars['String']>;
+  recipientMetadataId_not_ends_with: Maybe<Scalars['String']>;
   rejected: Maybe<Scalars['Boolean']>;
   rejected_not: Maybe<Scalars['Boolean']>;
   rejected_in: Maybe<Array<Scalars['Boolean']>>;
@@ -1911,6 +1926,7 @@ export enum Recipient_OrderBy {
   Deposit = 'deposit',
   RecipientAddress = 'recipientAddress',
   RecipientMetadata = 'recipientMetadata',
+  RecipientMetadataId = 'recipientMetadataId',
   Rejected = 'rejected',
   Verified = 'verified',
   VoteOptionIndex = 'voteOptionIndex',
@@ -2398,7 +2414,7 @@ export type GetProjectQueryVariables = Exact<{
 }>;
 
 
-export type GetProjectQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, requestType: Maybe<string>, recipientAddress: Maybe<any>, recipientMetadata: Maybe<string>, recipientIndex: Maybe<any>, submissionTime: Maybe<string>, rejected: Maybe<boolean>, verified: Maybe<boolean> }> };
+export type GetProjectQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, requestType: Maybe<string>, recipientAddress: Maybe<any>, recipientMetadata: Maybe<string>, recipientMetadataId: Maybe<string>, recipientIndex: Maybe<any>, submissionTime: Maybe<string>, rejected: Maybe<boolean>, verified: Maybe<boolean> }> };
 
 export type GetRecipientQueryVariables = Exact<{
   registryAddress: Scalars['ID'];
@@ -2428,7 +2444,7 @@ export type GetRecipientsQueryVariables = Exact<{
 }>;
 
 
-export type GetRecipientsQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, recipientIndex: Maybe<any>, requestType: Maybe<string>, requester: Maybe<string>, recipientAddress: Maybe<any>, recipientMetadata: Maybe<string>, requestSubmittedHash: Maybe<any>, requestResolvedHash: Maybe<any>, submissionTime: Maybe<string>, rejected: Maybe<boolean>, verified: Maybe<boolean> }> };
+export type GetRecipientsQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, recipientIndex: Maybe<any>, requestType: Maybe<string>, requester: Maybe<string>, recipientAddress: Maybe<any>, recipientMetadata: Maybe<string>, recipientMetadataId: Maybe<string>, requestSubmittedHash: Maybe<any>, requestResolvedHash: Maybe<any>, submissionTime: Maybe<string>, rejected: Maybe<boolean>, verified: Maybe<boolean> }> };
 
 export type GetRoundsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2473,6 +2489,7 @@ export const GetProjectDocument = gql`
     requestType
     recipientAddress
     recipientMetadata
+    recipientMetadataId
     recipientIndex
     submissionTime
     rejected
@@ -2525,6 +2542,7 @@ export const GetRecipientsDocument = gql`
     requester
     recipientAddress
     recipientMetadata
+    recipientMetadataId
     requestSubmittedHash
     requestResolvedHash
     submissionTime

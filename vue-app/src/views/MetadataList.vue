@@ -34,9 +34,10 @@
           </div>
         </clickable-card>
       </div>
-      <panel v-if="filteredMetadata == 0">
+      <panel v-if="filteredMetadata === 0 && !loading">
         😢 No metadata match your search. Try again or add a new metadata.
       </panel>
+      <loader v-if="loading" />
     </div>
   </div>
 </template>
@@ -50,6 +51,7 @@ import ClickableCard from '@/components/ClickableCard.vue'
 import { Metadata } from '@/api/metadata'
 import Links from '@/components/Links.vue'
 import Panel from '@/components/Panel.vue'
+import Loader from '@/components/Loader.vue'
 import { Ipfs } from '@/api/ipfs'
 import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
 
@@ -59,15 +61,18 @@ import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
     SearchInput,
     Links,
     Panel,
+    Loader,
   },
 })
 export default class MetadataList extends Vue {
   @Prop() onClick!: (metadata: Metadata) => void
   filteredMetadata: Metadata[] = []
   search = ''
+  loading = true
 
   async created() {
     await this.loadMetadata()
+    this.loading = false
   }
 
   @Watch('search')

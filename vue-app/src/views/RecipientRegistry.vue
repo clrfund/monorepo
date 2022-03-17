@@ -142,21 +142,24 @@ import { DateTime } from 'luxon'
 
 import { recipientRegistryType, RecipientRegistryType } from '@/api/core'
 import {
-  RequestType,
-  RequestStatus,
-  Request,
-  getRequests,
-  registerProject,
-  rejectProject,
-  removeProject,
-} from '@/api/recipient-registry-optimistic'
+  RecipientRegistryRequestType as RequestType,
+  RecipientRegistryRequestStatus as RequestStatus,
+  RecipientRegistryRequest as Request,
+} from '@/api/types'
+import { RecipientRegistry, getRequests } from '@/api/recipient-registry'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
 import { formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
 import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
-import { RegistryInfo } from '@/api/recipient-registry'
+import { RegistryInfo } from '@/api/types'
 import TransactionModal from '@/components/TransactionModal.vue'
+
+// currently only show the registry view for these types
+const showList = [
+  RecipientRegistryType.OPTIMISTIC,
+  RecipientRegistryType.UNIVERSAL,
+]
 
 @Component({ components: { Loader, Links } })
 export default class RecipientRegistryView extends Vue {
@@ -164,7 +167,7 @@ export default class RecipientRegistryView extends Vue {
   isLoading = true
 
   async created() {
-    if (recipientRegistryType !== RecipientRegistryType.OPTIMISTIC) {
+    if (!showList.includes(recipientRegistryType as RecipientRegistryType)) {
       this.$router.push({ name: 'not-found' })
       return
     }
@@ -238,8 +241,13 @@ export default class RecipientRegistryView extends Vue {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
+    const registry = RecipientRegistry.create(recipientRegistryType)
     await this.waitForTransactionAndLoad(
-      registerProject(recipientRegistryAddress, request.recipientId, signer)
+      registry.registerProject(
+        recipientRegistryAddress,
+        request.recipientId,
+        signer
+      )
     )
   }
 
@@ -247,8 +255,9 @@ export default class RecipientRegistryView extends Vue {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
+    const registry = RecipientRegistry.create(recipientRegistryType)
     await this.waitForTransactionAndLoad(
-      rejectProject(
+      registry.rejectProject(
         recipientRegistryAddress,
         request.recipientId,
         request.requester,
@@ -261,8 +270,13 @@ export default class RecipientRegistryView extends Vue {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
+    const registry = RecipientRegistry.create(recipientRegistryType)
     await this.waitForTransactionAndLoad(
-      removeProject(recipientRegistryAddress, request.recipientId, signer)
+      registry.removeProject(
+        recipientRegistryAddress,
+        request.recipientId,
+        signer
+      )
     )
   }
 

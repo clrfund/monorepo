@@ -7,8 +7,16 @@ import {
   recipientRegistryPolicy,
   RecipientRegistryType,
   recipientRegistryType,
+  chain,
+  QUERY_BATCH_SIZE,
 } from './core'
-import { chain, RequestTypeCode } from '@/api/core'
+import {
+  RegistryInfo,
+  RecipientRegistryRequestTypeCode as RequestTypeCode,
+  RecipientRegistryRequestStatus as RequestStatus,
+  RecipientRegistryRequest as Request,
+  RecipientRegistryRequestType as RequestType,
+} from '@/api/types'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import SimpleRegistry from './recipient-registry-simple'
 import UniversalRegistry from './recipient-registry-universal'
@@ -16,17 +24,8 @@ import KlerosRegistry from './recipient-registry-kleros'
 import { isHexString } from '@ethersproject/bytes'
 import { Recipient } from '@/graphql/API'
 import { Project } from './projects'
-
-export interface RegistryInfo {
-  deposit: BigNumber
-  depositToken: string
-  challengePeriodDuration: number
-  listingPolicyUrl: string
-  recipientCount: number
-  owner: string
-  isRegistrationOpen: boolean
-  requireRegistrationDeposit: boolean
-}
+import { Metadata } from './metadata'
+import { DateTime } from 'luxon'
 
 const registryLookup: Record<RecipientRegistryType, Function> = {
   [RecipientRegistryType.OPTIMISTIC]: OptimisticRegistry.create,
@@ -131,6 +130,67 @@ function decodeProject(recipient: Partial<Recipient>): Project {
   }
 }
 
+/**
+ * Returns the metadata id if available
+ * @param recipient a recipient structure
+ * @returns metadata id or an empty string
+ */
+function metadataId(recipient: Partial<Recipient>): string {
+  return recipient.recipientMetadataId || ''
+}
+
+/**
+ * Build a map to lookup metadata by id
+ * Retrieve metadata in batches to avoid hitting server too often
+ * @param ids a list of metadata id
+ * @returns a key value map of id and metadata
+ */
+async function buildMetadataMap(
+  ids: string[]
+): Promise<Record<string, string>> {
+  const batches: string[][] = []
+  const batchSize = QUERY_BATCH_SIZE
+  for (let i = 0; i < ids.length; i += batchSize) {
+    batches.push(ids.slice(i, batchSize + i))
+  }
+
+  const metadataBatches = await Promise.all(
+    batches.map((aBatch) => Metadata.getBatch(aBatch))
+  )
+
+  const map = metadataBatches.reduce((res, batch) => {
+    for (let i = 0; i < batch.length; i++) {
+      const { id, metadata } = batch[i] || {}
+      if (id) {
+        res[id] = metadata
+      }
+    }
+    return res
+  }, {})
+
+  return map
+}
+
+/**
+ * Add metadata to recipients if it's missing;
+ * @param recipients list of recipients to patch the metadata
+ * @returns recipients with metadata
+ */
+async function normalizeRecipients(
+  recipients: Partial<Recipient>[]
+): Promise<Partial<Recipient>[]> {
+  const metadataIds = recipients.map(metadataId).filter(Boolean)
+  const metadataMap = await buildMetadataMap(metadataIds)
+
+  return recipients.map((recipient) => {
+    const metadata = metadataMap[metadataId(recipient)]
+    if (metadata) {
+      recipient.recipientMetadata = metadata
+    }
+    return recipient
+  })
+}
+
 export async function getProjects(
   registryAddress: string,
   startTime?: number,
@@ -144,8 +204,7 @@ export async function getProjects(
     return []
   }
 
-  const recipients = data.recipients
-
+  const recipients = await normalizeRecipients(data.recipients)
   const projects: Project[] = recipients
     .map((recipient) => {
       let project
@@ -209,8 +268,7 @@ export async function getProject(recipientId: string): Promise<Project | null> {
     return null
   }
 
-  const recipient = data.recipients?.[0]
-
+  const [recipient] = await normalizeRecipients(data.recipients)
   let project: Project
   try {
     project = decodeProject(recipient)
@@ -233,6 +291,78 @@ export async function getProject(recipientId: string): Promise<Project | null> {
     project.isLocked = true
   }
   return project
+}
+
+export async function getRequests(
+  registryInfo: RegistryInfo,
+  registryAddress: string
+): Promise<Request[]> {
+  const data = await sdk.GetRecipients({
+    registryAddress: registryAddress.toLowerCase(),
+  })
+
+  if (!data.recipients?.length) {
+    return []
+  }
+
+  const recipients = await normalizeRecipients(data.recipients)
+
+  const requests: Record<string, Request> = {}
+  for (const recipient of recipients) {
+    let metadata = JSON.parse(recipient.recipientMetadata || '{}')
+
+    const requestType = Number(recipient.requestType)
+    if (requestType === RequestTypeCode.Registration) {
+      // Registration request
+      const { name, description, imageHash, thumbnailImageHash } = metadata
+      metadata = {
+        name,
+        description,
+        imageUrl: `${ipfsGatewayUrl}/ipfs/${imageHash}`,
+        thumbnailImageUrl: thumbnailImageHash
+          ? `${ipfsGatewayUrl}/ipfs/${thumbnailImageHash}`
+          : `${ipfsGatewayUrl}/ipfs/${imageHash}`,
+      }
+    }
+
+    const submissionTime = Number(recipient.submissionTime)
+    const acceptanceDate = DateTime.fromSeconds(
+      submissionTime + registryInfo.challengePeriodDuration
+    )
+
+    let requester
+    if (recipient.requester) {
+      requester = recipient.requester
+    }
+
+    const request: Request = {
+      transactionHash:
+        recipient.requestResolvedHash || recipient.requestSubmittedHash,
+      type: RequestType[RequestTypeCode[requestType]],
+      status: RequestStatus.Submitted,
+      acceptanceDate,
+      recipientId: recipient.id || '',
+      recipient: recipient.recipientAddress,
+      metadata,
+      requester,
+    }
+
+    if (recipient.rejected) {
+      request.status = RequestStatus.Rejected
+    }
+
+    if (recipient.verified) {
+      request.status =
+        requestType === RequestTypeCode.Removal
+          ? RequestStatus.Removed
+          : RequestStatus.Executed
+    }
+
+    // In case there are two requests submissions events, we always prioritize
+    // the last one since you can only have one request per recipient
+    requests[request.recipientId] = request
+  }
+  return Object.keys(requests).map((recipientId) => requests[recipientId])
 }
 
 export default { getProject, getProjects }

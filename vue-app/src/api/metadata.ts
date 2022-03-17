@@ -12,6 +12,15 @@ const urls = METADATA_NETWORKS.map(
 
 const composer = new MetadataComposer(urls)
 
+const GET_METADATA_BATCH_QUERY = `
+  query($ids: [String]) {
+    metadataEntries(where: { id_in: $ids }) {
+      id
+      metadata
+    }
+  }
+`
+
 /**
  * Extract address for the given chain
  * @param receivingAddresses array of EIP-3770 addresses, i.e. eth:0x11111...
@@ -164,6 +173,20 @@ export class Metadata {
 
     const arg = await populateAddresses(data)
     return new Metadata({ ...arg })
+  }
+
+  /**
+   * get metadata given an array of metadata ids
+   * @param ids array of metadata id
+   * @returns a list of metadata
+   */
+  static async getBatch(ids: string[]): Promise<any[]> {
+    const result = await composer.query(GET_METADATA_BATCH_QUERY, { ids })
+    if (result.error) {
+      throw new Error(result.error)
+    }
+
+    return result.data?.metadataEntries || []
   }
 
   /**

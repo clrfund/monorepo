@@ -4,6 +4,7 @@ query GetProject($recipientId: ID!) {
     requestType
     recipientAddress
     recipientMetadata
+    recipientMetadataId
     recipientIndex
     submissionTime
     rejected

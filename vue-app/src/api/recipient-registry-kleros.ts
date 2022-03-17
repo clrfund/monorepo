@@ -3,7 +3,8 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { gtcrDecode } from '@kleros/gtcr-encoder'
 
 import { KlerosGTCR, KlerosGTCRAdapter } from './abi'
-import { provider, ipfsGatewayUrl, RecipientRegistryInterface } from './core'
+import { provider, ipfsGatewayUrl } from './core'
+import { RecipientRegistryInterface } from './types'
 import { Project, toProjectInterface } from './projects'
 
 const KLEROS_CURATE_URL =
@@ -211,9 +212,20 @@ export function addRecipient(
   return registerProject(registryAddress, recipientData.id, signer)
 }
 
+function removeProject() {
+  throw new Error('removeProject Not implemented')
+}
+
+function rejectProject() {
+  throw new Error('rejectProject Not implemented')
+}
+
 export function create(): RecipientRegistryInterface {
   return {
     addRecipient,
+    removeProject,
+    registerProject,
+    rejectProject,
     isRegistrationOpen: true,
     requireRegistrationDeposit: true,
   }

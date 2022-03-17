@@ -80,28 +80,6 @@ export async function getProject(
   }
 }
 
-export async function registerProject(
-  registryAddress: string,
-  recipientId: string,
-  signer: Signer
-): Promise<TransactionResponse> {
-  if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.registerProject(
-      registryAddress,
-      recipientId,
-      signer
-    )
-  } else if (recipientRegistryType === 'kleros') {
-    return await KlerosRegistry.registerProject(
-      registryAddress,
-      recipientId,
-      signer
-    )
-  } else {
-    throw new Error('invalid recipient registry type')
-  }
-}
-
 export function toProjectInterface(metadata: any): Project {
   const imageUrl = metadata.imageUrl
   const bannerImageUrl = metadata.bannerImageHash

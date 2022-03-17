@@ -71,14 +71,4 @@ export const METADATA_NETWORKS = process.env.VUE_APP_METADATA_NETWORKS
   ? process.env.VUE_APP_METADATA_NETWORKS.split(',')
   : ['rinkeby']
 
-export interface RecipientRegistryInterface {
-  addRecipient: Function
-  isRegistrationOpen?: boolean
-  requireRegistrationDeposit?: boolean
-}
-
-// recipient registration request type
-export enum RequestTypeCode {
-  Registration = 0,
-  Removal = 1,
-}
+export const QUERY_BATCH_SIZE = Number(process.env.QUERY_BATCH_SIZE) || 30

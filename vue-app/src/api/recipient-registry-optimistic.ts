@@ -7,115 +7,17 @@ import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
 
 import { OptimisticRecipientRegistry } from './abi'
+import { ipfsGatewayUrl } from './core'
 import {
-  ipfsGatewayUrl,
-  RequestTypeCode,
+  RecipientRegistryRequestTypeCode as RequestTypeCode,
+  RecipientRegistryRequestType as RequestType,
+  RecipientRegistryRequestStatus as RequestStatus,
   RecipientRegistryInterface,
-} from './core'
+  RecipientRegistryRequest as Request,
+  RegistryInfo,
+} from './types'
 import sdk from '@/graphql/sdk'
-import { RegistryInfo } from './recipient-registry'
 import { RecipientApplicationData } from './recipient'
-
-export enum RequestType {
-  Registration = 'Registration',
-  Removal = 'Removal',
-}
-
-export enum RequestStatus {
-  Submitted = 'Needs review',
-  Rejected = 'Rejected',
-  Executed = 'Live',
-  Removed = 'Removed',
-}
-
-interface RecipientMetadata {
-  name: string
-  description: string
-  imageUrl: string
-}
-
-export interface Request {
-  transactionHash: string
-  type: RequestType
-  status: RequestStatus
-  acceptanceDate: DateTime
-  recipientId: string
-  recipient: string
-  metadata: RecipientMetadata
-  requester: string
-}
-
-export async function getRequests(
-  registryInfo: RegistryInfo,
-  registryAddress: string
-): Promise<Request[]> {
-  const data = await sdk.GetRecipients({
-    registryAddress: registryAddress.toLowerCase(),
-  })
-
-  if (!data.recipients?.length) {
-    return []
-  }
-
-  const recipients = data.recipients
-
-  const requests: Record<string, Request> = {}
-  for (const recipient of recipients) {
-    let metadata = JSON.parse(recipient.recipientMetadata || '{}')
-
-    const requestType = Number(recipient.requestType)
-    if (requestType === RequestTypeCode.Registration) {
-      // Registration request
-      const { name, description, imageHash, thumbnailImageHash } = metadata
-      metadata = {
-        name,
-        description,
-        imageUrl: `${ipfsGatewayUrl}/ipfs/${imageHash}`,
-        thumbnailImageUrl: thumbnailImageHash
-          ? `${ipfsGatewayUrl}/ipfs/${thumbnailImageHash}`
-          : `${ipfsGatewayUrl}/ipfs/${imageHash}`,
-      }
-    }
-
-    const submissionTime = Number(recipient.submissionTime)
-    const acceptanceDate = DateTime.fromSeconds(
-      submissionTime + registryInfo.challengePeriodDuration
-    )
-
-    let requester
-    if (recipient.requester) {
-      requester = recipient.requester
-    }
-
-    const request: Request = {
-      transactionHash:
-        recipient.requestResolvedHash || recipient.requestSubmittedHash,
-      type: RequestType[RequestTypeCode[requestType]],
-      status: RequestStatus.Submitted,
-      acceptanceDate,
-      recipientId: recipient.id,
-      recipient: recipient.recipientAddress,
-      metadata,
-      requester,
-    }
-
-    if (recipient.rejected) {
-      request.status = RequestStatus.Rejected
-    }
-
-    if (recipient.verified) {
-      request.status =
-        requestType === RequestTypeCode.Removal
-          ? RequestStatus.Removed
-          : RequestStatus.Executed
-    }
-
-    // In case there are two requests submissions events, we always prioritize
-    // the last one since you can only have one request per recipient
-    requests[request.recipientId] = request
-  }
-  return Object.keys(requests).map((recipientId) => requests[recipientId])
-}
 
 // TODO merge this with `Project` inteface
 export interface RecipientData {
@@ -244,13 +146,12 @@ export async function removeProject(
 export function create(): RecipientRegistryInterface {
   return {
     addRecipient,
+    registerProject,
+    removeProject,
+    rejectProject,
     isRegistrationOpen: true,
     requireRegistrationDeposit: true,
   }
 }
 
-export default {
-  registerProject,
-  addRecipient,
-  create,
-}
+export default { create }

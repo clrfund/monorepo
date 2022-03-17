@@ -9,7 +9,7 @@ import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
-import { RegistryInfo } from '@/api/recipient-registry'
+import { RegistryInfo } from '@/api/types'
 import { RecipientApplicationData } from '@/api/recipient'
 
 // Utils

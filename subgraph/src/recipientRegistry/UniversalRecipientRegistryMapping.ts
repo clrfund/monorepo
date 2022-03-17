@@ -41,6 +41,7 @@ export function handleRequestSubmitted(event: RequestSubmitted): void {
 
   recipient.recipientRegistry = recipientRegistryId
   recipient.recipientAddress = event.params._recipient
+  recipient.recipientMetadata = null
   recipient.recipientMetadataId = event.params._metadataId
   recipient.requestType = BigInt.fromI32(event.params._type).toString()
   recipient.requester = event.transaction.from.toHexString()

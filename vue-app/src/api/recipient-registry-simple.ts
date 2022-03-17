@@ -3,7 +3,8 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { isHexString } from '@ethersproject/bytes'
 
 import { SimpleRecipientRegistry } from './abi'
-import { provider, ipfsGatewayUrl, RecipientRegistryInterface } from './core'
+import { provider, ipfsGatewayUrl } from './core'
+import { RecipientRegistryInterface } from './types'
 import { Project, toProjectInterface } from './projects'
 
 function decodeRecipientAdded(event: Event): Project {
@@ -127,12 +128,28 @@ export function addRecipient(
     SimpleRecipientRegistry,
     signer
   )
-  return registry.addRecipient(recipientData.id)
+  const { address, ...metadata } = recipientData
+  return registry.addRecipient(address, JSON.stringify(metadata))
+}
+
+function removeProject() {
+  throw new Error('removeProject not implemented')
+}
+
+function rejectProject() {
+  throw new Error('removeProject not implemented')
+}
+
+function registerProject() {
+  throw new Error('removeProject not implemented')
 }
 
 export function create(): RecipientRegistryInterface {
   return {
     addRecipient,
+    removeProject,
+    registerProject,
+    rejectProject,
     isRegistrationOpen: false,
     requireRegistrationDeposit: false,
   }

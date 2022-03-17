@@ -154,7 +154,7 @@ import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 import { BigNumber } from 'ethers'
 
-import { RegistryInfo } from '@/api/recipient-registry'
+import { RegistryInfo } from '@/api/types'
 import Loader from '@/components/Loader.vue'
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
