@@ -151,8 +151,7 @@ export class Metadata {
     }
 
     const { data = [] } = result
-    const ensResult = await Promise.all(data.map(populateAddresses))
-    return ensResult.map((entry) => new Metadata(entry))
+    return data.map((entry) => new Metadata(entry))
   }
 
   /**
