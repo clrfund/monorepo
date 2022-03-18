@@ -54,6 +54,10 @@ import Panel from '@/components/Panel.vue'
 import Loader from '@/components/Loader.vue'
 import { Ipfs } from '@/api/ipfs'
 import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
+import sdk from '@/graphql/sdk'
+import { RecipientRegistryRequestTypeCode as RequestTypeCode } from '@/api/types'
+import { getRecipientRegistryAddress } from '@/api/projects'
+import { getCurrentRound } from '@/api/round'
 
 @Component({
   components: {
@@ -66,6 +70,7 @@ import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
 })
 export default class MetadataList extends Vue {
   @Prop() onClick!: (metadata: Metadata) => void
+  @Prop({ default: false }) excludeRecipients!: boolean
   filteredMetadata: Metadata[] = []
   search = ''
   loading = true
@@ -77,9 +82,52 @@ export default class MetadataList extends Vue {
 
   @Watch('search')
   async loadMetadata(): Promise<void> {
-    this.filteredMetadata = await Metadata.search(this.search, {
+    const metadata = await Metadata.search(this.search, {
       activeOnly: true,
     })
+
+    if (this.excludeRecipients) {
+      const exclusion = await this.loadExclusion()
+      this.filteredMetadata = metadata.filter(
+        ({ id }) => !(id && exclusion.has(id))
+      )
+    } else {
+      this.filteredMetadata = metadata
+    }
+  }
+
+  private async loadExclusion(): Promise<Set<string>> {
+    const roundAddress = await getCurrentRound()
+    const recipientRegistryAddress = await getRecipientRegistryAddress(
+      roundAddress
+    )
+    const data = await sdk.GetRecipients({
+      registryAddress: recipientRegistryAddress.toLowerCase(),
+    })
+
+    if (!data.recipients?.length) {
+      return new Set([])
+    }
+
+    const recipients = data.recipients
+
+    return new Set(
+      recipients
+        .map(({ recipientMetadataId, rejected, verified, requestType }) => {
+          let id = recipientMetadataId || ''
+          if (
+            rejected ||
+            !verified ||
+            Number(requestType) === RequestTypeCode.Removal
+          ) {
+            // show metadata if it's not longer a recipient so it can be added again
+            id = ''
+          }
+
+          return id
+        })
+        .filter(Boolean)
+    )
   }
 
   handleAdd(): void {
