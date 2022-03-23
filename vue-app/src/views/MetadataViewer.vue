@@ -65,12 +65,16 @@
               /></links>
             </div>
             <div class="summary">
-              <h4 class="read-only-title">Ethereum address</h4>
-              <div class="data break-all">
-                {{ metadata.addressName }}
-                <links :to="blockExplorer.url" class="no-break">
-                  View on {{ blockExplorer.label }}
-                </links>
+              <h4 class="read-only-title">Ethereum addresses</h4>
+              <div
+                v-for="({ address, url }, index) in receivingAddresses"
+                :key="index"
+              >
+                <div key="index" class="data break-all">
+                  <links :hideArrow="true" :to="url" class="no-break link">
+                    {{ address }}
+                  </links>
+                </div>
               </div>
               <div
                 class="resolved-address"
@@ -233,7 +237,7 @@ import Box from '@/components/Box.vue'
 import { Metadata } from '@/api/metadata'
 import { Project } from '@/api/projects'
 
-import { chain } from '@/api/core'
+import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 import { ContractTransaction } from 'ethers'
 
 @Component({
@@ -282,11 +286,28 @@ export default class MetadataViewer extends mixins(validationMixin) {
     })
   }
 
-  get blockExplorer(): { label: string; url: string } {
-    return {
-      label: chain.explorerLabel,
-      url: `${chain.explorer}/address/${this.metadata.resolvedAddress}`,
-    }
+  getChainExplorer(name: string): { label: string; explorer: string } {
+    const chain: any = Object.values(CHAIN_INFO).find(
+      ({ shortName }) => shortName === name
+    )
+    const { explorer = '', explorerLabel = '' } = chain || {}
+
+    return { explorer, label: explorerLabel }
+  }
+
+  get receivingAddresses(): { address: string; label: string; url: string }[] {
+    const addresses = this.metadata.receivingAddresses || []
+
+    return addresses.map((addr) => {
+      const [shortName, address] = addr.split(':')
+      const chain = this.getChainExplorer(shortName)
+
+      return {
+        address: addr,
+        label: chain.label,
+        url: `${chain.explorer}/address/${address}`,
+      }
+    })
   }
 
   get isEmailRequired(): boolean {

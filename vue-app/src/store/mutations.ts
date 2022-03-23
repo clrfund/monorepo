@@ -26,6 +26,8 @@ import {
   SET_CURRENT_USER,
   SET_RECIPIENT_DATA,
   RESET_RECIPIENT_DATA,
+  SET_METADATA,
+  RESET_METADATA,
   SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_RECIPIENT_REGISTRY_INFO,
   TOGGLE_SHOW_CART_PANEL,
@@ -141,6 +143,17 @@ const mutations = {
   },
   [RESET_RECIPIENT_DATA](state) {
     state.recipient = null
+  },
+  [SET_METADATA](
+    state,
+    payload: {
+      updatedData: RecipientApplicationData
+    }
+  ) {
+    state.metadata = payload.updatedData
+  },
+  [RESET_METADATA](state) {
+    state.metadata = null
   },
   [TOGGLE_SHOW_CART_PANEL](state, isOpen: boolean | undefined) {
     // Handle the case of both null and undefined

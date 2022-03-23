@@ -14,7 +14,7 @@ import Component from 'vue-class-component'
 import { Metadata } from '@/api/metadata'
 import MetadataForm from '@/views/MetadataForm.vue'
 import Links from '@/components/Links.vue'
-import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
+import { SET_METADATA } from '@/store/mutation-types'
 import { ContractTransaction, ContractReceipt } from 'ethers'
 
 @Component({
@@ -27,8 +27,8 @@ export default class MetadataFormAdd extends Vue {
   async loadFormData(): Promise<void> {
     if (!this.$store.state.recipient) {
       const metadata = new Metadata({})
-      this.$store.commit(SET_RECIPIENT_DATA, {
-        updatedData: metadata.toRecipient(),
+      this.$store.commit(SET_METADATA, {
+        updatedData: metadata.toFormData(),
       })
     }
     await Promise.resolve()

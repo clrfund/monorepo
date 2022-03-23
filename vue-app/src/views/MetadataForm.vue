@@ -219,25 +219,60 @@
                 <p class="input-description">
                   The destination address for donations, which you'll use to
                   claim funds. This doesn't have to be the same address as the
-                  one you use to send your application transaction.
+                  one you use to send your metadata transaction.
                 </p>
-                <input
-                  id="fund-address"
-                  placeholder="example: 0x123..."
-                  v-model.lazy="$v.form.fund.addressName.$model"
-                  @blur="checkEns"
-                  :class="{
-                    input: true,
-                    invalid: $v.form.fund.addressName.$error,
-                  }"
-                />
+                <div
+                  v-for="(address, index) in form.fund.receivingAddresses"
+                  :key="index"
+                >
+                  <div key="index" class="address-container">
+                    <img
+                      src="@/assets/remove.svg"
+                      alt="remove"
+                      class="remove-icon"
+                      @click="removeAddress(index)"
+                    />
+                    <span class="input-description">
+                      {{ address }}
+                    </span>
+                  </div>
+                </div>
+                <div class="input-row">
+                  <dropdown
+                    :options="sortedNetworks"
+                    :selected="selectedNetwork"
+                    @change="handleDropdownClick"
+                  />
+                  <input
+                    id="fund-address"
+                    placeholder="address, ex: 0x123456789..."
+                    v-model.lazy="$v.addressName.$model"
+                    @focus="$v.addressName.$reset"
+                    :class="{
+                      input: true,
+                      invalid: $v.addressName.$error,
+                    }"
+                  />
+                  <button
+                    @click="
+                      addAddress({
+                        network: selectedNetwork,
+                        address: addressName,
+                      })
+                    "
+                    class="btn-secondary"
+                    :disabled="$v.addressName.$invalid || !selectedNetwork"
+                  >
+                    Add
+                  </button>
+                </div>
                 <p
                   :class="{
                     error: true,
-                    hidden: !$v.form.fund.addressName.$error,
+                    hidden: !$v.addressName.$error,
                   }"
                 >
-                  Enter a valid ENS or Ethereum 0x address
+                  Enter a valid Ethereum 0x address
                 </p>
                 <!-- TODO: only validate after user removes focus on input -->
               </div>
@@ -464,7 +499,7 @@
           <div v-if="currentStep === 4">
             <h2 class="step-title">Images</h2>
             <p>
-              We'll upload your images to IPFS, a decentralized storage
+              Uploaded images will be stored on IPFS, a decentralized storage
               platform.
               <links to="https://ipfs.io/#how">More on IPFS</links>
             </p>
@@ -475,6 +510,7 @@
                   description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF"
                   :onUpload="handleUpload"
                   formProp="bannerHash"
+                  :hash="form.image.bannerHash"
                 />
               </div>
               <div class="form-background">
@@ -483,6 +519,7 @@
                   description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF"
                   :onUpload="handleUpload"
                   formProp="thumbnailHash"
+                  :hash="form.image.thumbnailHash"
                 />
               </div>
             </div>
@@ -535,9 +572,15 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, maxLength, url, email } from 'vuelidate/lib/validators'
+import {
+  required,
+  minLength,
+  maxLength,
+  url,
+  email,
+} from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
-import { isValidEthAddress, resolveEns } from '@/utils/accounts'
+import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
@@ -552,17 +595,23 @@ import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
 import MetadataList from '@/views/MetadataList.vue'
 import MetadataViewer from '@/views/MetadataViewer.vue'
+import Dropdown from '@/components/Dropdown.vue'
 import { Metadata } from '@/api/metadata'
 import { Prop } from 'vue-property-decorator'
 
-import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
+import { SET_METADATA } from '@/store/mutation-types'
 import {
   RecipientApplicationData,
   formToProjectInterface,
 } from '@/api/recipient'
 import { Project } from '@/api/projects'
-import { chain } from '@/api/core'
+import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 import { ContractReceipt, ContractTransaction } from 'ethers'
+
+type RecievingAddress = {
+  network: string
+  address: string
+}
 
 @Component({
   components: {
@@ -574,6 +623,7 @@ import { ContractReceipt, ContractTransaction } from 'ethers'
     IpfsCopyWidget,
     Loader,
     Markdown,
+    Dropdown,
     ProjectProfile,
     MetadataSubmissionWidget,
     Warning,
@@ -582,6 +632,7 @@ import { ContractReceipt, ContractTransaction } from 'ethers'
     MetadataViewer,
   },
   validations: {
+    addressName: { required, validEthAddress: isAddress },
     form: {
       project: {
         name: { required },
@@ -594,9 +645,9 @@ import { ContractReceipt, ContractTransaction } from 'ethers'
         problemSpace: { required },
       },
       fund: {
-        addressName: {
+        receivingAddresses: {
           required,
-          validEthAddress: isValidEthAddress,
+          minLength: minLength(1),
         },
         resolvedAddress: {},
         plans: { required },
@@ -641,12 +692,15 @@ export default class MetadataForm extends mixins(validationMixin) {
     provider: any
   ) => Promise<ContractTransaction>
 
-  form: RecipientApplicationData = new Metadata({}).toRecipient()
+  form: RecipientApplicationData = new Metadata({}).toFormData()
+  addressName = ''
   currentStep = 0
   steps: string[] = []
   stepNames: string[] = []
   showSummaryPreview = false
   loading = true
+  networks: string[] = []
+  selectedNetwork = ''
 
   async created() {
     const steps = [
@@ -672,8 +726,9 @@ export default class MetadataForm extends mixins(validationMixin) {
     this.stepNames = stepNames
     this.currentStep = currentStep
     await this.loadFormData()
-    this.form = this.$store.state.recipient
+    this.form = this.$store.state.metadata
     this.loading = false
+    this.loadNetworks()
 
     // go to first step if step doesn't exist
     if (this.currentStep < 0) {
@@ -689,6 +744,45 @@ export default class MetadataForm extends mixins(validationMixin) {
 
   get isEmailRequired(): boolean {
     return !!process.env.VUE_APP_GOOGLE_SPREADSHEET_ID
+  }
+
+  get sortedNetworks(): string[] {
+    return this.networks.sort()
+  }
+
+  handleDropdownClick(selection: string): void {
+    this.selectedNetwork = selection
+  }
+
+  addAddress({ network, address }: RecievingAddress): void {
+    this.$v.addressName.$touch()
+
+    if (!this.$v.addressName.$invalid && this.selectedNetwork) {
+      this.form.fund.receivingAddresses.push(`${network}:${address}`)
+      this.networks = this.networks.filter((net) => net !== network)
+      this.selectedNetwork = this.networks[0]
+    }
+  }
+
+  loadNetworks(): void {
+    const exclusion = new Set(
+      this.form.fund.receivingAddresses.map((addr) => {
+        const [network] = addr.split(':')
+        return network
+      })
+    )
+    // filter out the networks already in the receiving list
+    this.networks = Object.values(CHAIN_INFO)
+      .map(({ shortName }) => shortName)
+      .filter((name) => {
+        return !exclusion.has(name)
+      })
+    this.selectedNetwork = this.networks[0] || ''
+  }
+
+  removeAddress(index): void {
+    this.form.fund.receivingAddresses.splice(index, 1)
+    this.loadNetworks()
   }
 
   handleToggleTab(event): void {
@@ -737,7 +831,7 @@ export default class MetadataForm extends mixins(validationMixin) {
       this.form.furthestStep = this.currentStep + 1
     }
     if (typeof this.currentStep !== 'number') return
-    this.$store.commit(SET_RECIPIENT_DATA, {
+    this.$store.commit(SET_METADATA, {
       updatedData: this.form,
       step: this.steps[this.currentStep],
       stepNumber: this.currentStep,
@@ -769,6 +863,7 @@ export default class MetadataForm extends mixins(validationMixin) {
   }
 
   get metadataInterface(): Metadata {
+    console.log('metadataInterface', this.form)
     return Metadata.fromFormData(this.form)
   }
 
@@ -778,22 +873,6 @@ export default class MetadataForm extends mixins(validationMixin) {
 
   get furthestStep() {
     return this.form.furthestStep
-  }
-
-  get blockExplorer(): { label: string; url: string } {
-    return {
-      label: chain.explorerLabel,
-      url: `${chain.explorer}/address/${this.form.fund.resolvedAddress}`,
-    }
-  }
-
-  async checkEns(): Promise<void> {
-    const { addressName } = this.form?.fund
-    if (addressName) {
-      const res: string | null = await resolveEns(addressName)
-      this.form.hasEns = !!res
-      this.form.fund.resolvedAddress = res ? res : addressName
-    }
   }
 }
 </script>
@@ -828,6 +907,19 @@ export default class MetadataForm extends mixins(validationMixin) {
       'title'
       'form';
     gap: 0;
+  }
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: 130px 2fr auto;
+  column-gap: 10px;
+  & > * {
+    margin: 8px 0;
+  }
+
+  @media (max-width: $breakpoint-m) {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -959,6 +1051,28 @@ export default class MetadataForm extends mixins(validationMixin) {
     &:first-of-type {
       margin-top: 0;
     }
+  }
+}
+
+.address-container {
+  display: flex;
+  align-items: center;
+
+  .input-description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.remove-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+  margin: 0.5rem;
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
   }
 }
 

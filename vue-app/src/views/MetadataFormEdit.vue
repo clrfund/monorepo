@@ -15,7 +15,7 @@ import MetadataForm from '@/views/MetadataForm.vue'
 import Links from '@/components/Links.vue'
 import { Metadata } from '@/api/metadata'
 import { ContractTransaction } from 'ethers'
-import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
+import { SET_METADATA } from '@/store/mutation-types'
 
 @Component({
   components: {
@@ -26,12 +26,12 @@ import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 export default class MetadataFormEdit extends Vue {
   async loadFormData(): Promise<void> {
     const id = this.$route.params.id
-    const savedRecipient = this.$store.state.recipient
-    if (!savedRecipient || savedRecipient.id !== id) {
+    const savedMetadata = this.$store.state.metadata
+    if (!savedMetadata || savedMetadata.id !== id) {
       const metadata = await Metadata.get(id)
       if (metadata) {
-        this.$store.commit(SET_RECIPIENT_DATA, {
-          updatedData: metadata.toRecipient(),
+        this.$store.commit(SET_METADATA, {
+          updatedData: metadata.toFormData(),
         })
       }
     }
@@ -42,7 +42,7 @@ export default class MetadataFormEdit extends Vue {
   }
 
   get id(): string {
-    return this.$store.state.recipient.id
+    return this.$store.state.metadata.id
   }
 
   gotoStep(step: string): void {

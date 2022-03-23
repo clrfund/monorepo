@@ -53,7 +53,7 @@ import Links from '@/components/Links.vue'
 import Panel from '@/components/Panel.vue'
 import Loader from '@/components/Loader.vue'
 import { Ipfs } from '@/api/ipfs'
-import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
+import { RESET_METADATA } from '@/store/mutation-types'
 
 @Component({
   components: {
@@ -83,7 +83,7 @@ export default class MetadataList extends Vue {
   }
 
   handleAdd(): void {
-    this.$store.commit(RESET_RECIPIENT_DATA)
+    this.$store.commit(RESET_METADATA)
     this.$router.push({
       name: 'metadata-new',
       params: { step: 'project' },

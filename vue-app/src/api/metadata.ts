@@ -74,15 +74,6 @@ async function populateAddresses(data: any): Promise<Metadata> {
 }
 
 /**
- * format the address according to EIP3770 format, i.e. eth:0x123...
- * @param address address to format
- * @returns EIP3770 format address
- */
-function toEIP3770Address(address: string): string {
-  return `${chain.shortName}:${address}`
-}
-
-/**
  * Metadata class
  */
 export class Metadata {
@@ -100,6 +91,7 @@ export class Metadata {
   plans?: string
   teamName?: string
   teamDescription?: string
+  teamEmail?: string
   githubUrl?: string
   radicleUrl?: string
   websiteUrl?: string
@@ -113,8 +105,6 @@ export class Metadata {
     this.id = data.id
     this.name = data.name
     this.owner = data.owner
-    this.addressName = data.addressName
-    this.resolvedAddress = data.resolvedAddress
     this.receivingAddresses = data.receivingAddresses
     this.hasEns = !!data.hasEns
     this.tagline = data.tagline
@@ -124,6 +114,7 @@ export class Metadata {
     this.plans = data.plans
     this.teamName = data.teamName
     this.teamDescription = data.teamDescription
+    this.teamEmail = data.teamEmail
     this.githubUrl = data.githubUrl
     this.radicleUrl = data.radicleUrl
     this.websiteUrl = data.websiteUrl
@@ -151,8 +142,7 @@ export class Metadata {
     }
 
     const { data = [] } = result
-    const ensResult = await Promise.all(data.map(populateAddresses))
-    return ensResult.map((entry) => new Metadata(entry))
+    return data.map((entry) => new Metadata(entry))
   }
 
   /**
@@ -190,13 +180,28 @@ export class Metadata {
   }
 
   /**
+   * get the receiving address of the current chain
+   * @param addresses list of EIP3770 addresses
+   * @returns the address of the current chain
+   */
+  getCurrentChainAddress(addresses: string[] = []): string {
+    const chainPrefix = chain.shortName + ':'
+    const chainAddress = addresses.find((addr) => {
+      return addr.startsWith(chainPrefix)
+    })
+
+    return chainAddress ? chainAddress.substring(chainPrefix.length) : ''
+  }
+
+  /**
    * Convert metadata to project interface
    * @returns project
    */
   toProject(): Project {
+    const address = this.getCurrentChainAddress(this.receivingAddresses)
     return {
       id: this.id || '',
-      address: this.resolvedAddress || '',
+      address,
       name: this.name || '',
       tagline: this.tagline,
       description: this.description || '',
@@ -220,10 +225,10 @@ export class Metadata {
   }
 
   /**
-   * Convert metadata to recipient application form data
+   * Convert metadata to form data
    * @returns recipient application form data
    */
-  toRecipient(): RecipientApplicationData {
+  toFormData(): RecipientApplicationData {
     return {
       project: {
         name: this.name || '',
@@ -233,14 +238,15 @@ export class Metadata {
         problemSpace: this.problemSpace || '',
       },
       fund: {
-        addressName: this.addressName || '',
-        resolvedAddress: this.resolvedAddress || '',
+        receivingAddresses: this.receivingAddresses || [],
+        addressName: '',
+        resolvedAddress: '',
         plans: this.plans || '',
       },
       team: {
         name: this.teamName || '',
         description: this.teamDescription || '',
-        email: '', // TODO: populate this
+        email: this.teamEmail || '',
       },
       links: {
         github: this.githubUrl || '',
@@ -274,11 +280,10 @@ export class Metadata {
       category: project.category,
       problemSpace: project.problemSpace,
       plans: fund.plans,
-      receivingAddresses: [toEIP3770Address(fund.resolvedAddress)],
-      addressName: fund.addressName,
-      resolvedAddress: fund.resolvedAddress,
+      receivingAddresses: fund.receivingAddresses,
       teamName: team.name,
       teamDescription: team.description,
+      teamEmail: team.email,
       githubUrl: links.github,
       radicleUrl: links.radicle,
       websiteUrl: links.website,
