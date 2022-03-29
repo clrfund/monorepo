@@ -127,3 +127,13 @@ export const CHAIN_INFO: ChainInfo = {
     subgraphNetwork: 'matic',
   },
 }
+
+// Map of chain.subgraphNetwork to chainId
+export const CHAIN_ID: Record<string, ChainId> = Object.keys(CHAIN_INFO).reduce(
+  (ids, chainId) => {
+    const chain = CHAIN_INFO[chainId]
+    ids[chain.subgraphNetwork] = Number(chainId)
+    return ids
+  },
+  {}
+)

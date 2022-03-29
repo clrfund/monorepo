@@ -553,7 +553,7 @@
               />
               <metadata-submission-widget
                 v-else
-                :metadata="updatedMetadata"
+                :metadata="form"
                 :onSuccess="onSuccess"
                 :onSubmit="onSubmit"
               />
@@ -694,7 +694,7 @@ export default class MetadataForm extends mixins(validationMixin) {
   @Prop() cancelUrl!: string
   @Prop() gotoStep!: (step: string) => void
   @Prop() onSubmit!: (
-    metadata: Metadata,
+    form: MetadataFormData,
     provider: any
   ) => Promise<ContractTransaction>
 
@@ -901,13 +901,7 @@ export default class MetadataForm extends mixins(validationMixin) {
   }
 
   get metadataInterface(): Metadata {
-    const dirtyOnly = false
-    return Metadata.fromFormData(this.form, dirtyOnly)
-  }
-
-  get updatedMetadata(): Metadata {
-    const dirtyOnly = true
-    return Metadata.fromFormData(this.form, dirtyOnly)
+    return Metadata.fromFormData(this.form)
   }
 
   get redirectButtons(): LinkInfo[] {

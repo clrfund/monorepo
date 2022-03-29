@@ -12,9 +12,9 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import MetadataForm from '@/views/MetadataForm.vue'
 import Links from '@/components/Links.vue'
-import { Metadata } from '@/api/metadata'
+import { Metadata, MetadataFormData } from '@/api/metadata'
 import { isSameAddress } from '@/utils/accounts'
-import { ContractTransaction, ContractReceipt } from 'ethers'
+import { ContractTransaction } from 'ethers'
 import { SET_METADATA } from '@/store/mutation-types'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
@@ -55,11 +55,11 @@ export default class MetadataFormEdit extends Vue {
   }
 
   async onSubmit(
-    metadata: Metadata,
+    form: MetadataFormData,
     provider: any
   ): Promise<ContractTransaction> {
-    const { owner, network } = this.$store.state.metadata
-    const { chainId } = await provider.getNetwork()
+    const { owner, network } = form
+    const { chainId } = this.$web3
     const signer = await provider.getSigner()
     const signerAddress = await signer.getAddress()
 
@@ -82,6 +82,9 @@ export default class MetadataFormEdit extends Vue {
     if (!isSameAddress(owner, signerAddress)) {
       throw new Error('Not authorized to update metadata.')
     }
+
+    const dirtyOnly = true
+    const metadata = Metadata.fromFormData(form, dirtyOnly)
     return metadata.update(provider)
   }
 }

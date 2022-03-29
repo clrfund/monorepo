@@ -231,7 +231,7 @@
             <box>
               <div class="delete-title">Delete metadata</div>
               <metadata-submission-widget
-                :metadata="metadata"
+                :form="formData"
                 :onSubmit="onDeleteSubmit"
                 :onSuccess="onDeleteSuccess"
               />
@@ -254,7 +254,7 @@ import ProjectProfile from '@/components/ProjectProfile.vue'
 import Links from '@/components/Links.vue'
 import MetadataSubmissionWidget from '@/components/MetadataSubmissionWidget.vue'
 import Box from '@/components/Box.vue'
-import { Metadata } from '@/api/metadata'
+import { Metadata, MetadataFormData } from '@/api/metadata'
 import { Project } from '@/api/projects'
 import { isSameAddress } from '@/utils/accounts'
 
@@ -320,10 +320,16 @@ export default class MetadataViewer extends mixins(validationMixin) {
     this.showSummaryPreview = !this.showSummaryPreview
   }
 
+  get formData(): MetadataFormData {
+    const form = this.metadata.toFormData()
+    return form
+  }
+
   onDeleteSubmit(
-    metadata: Metadata,
+    form: MetadataFormData,
     provider: any
   ): Promise<ContractTransaction> {
+    const metadata = new Metadata({ id: form.id })
     return metadata.delete(provider)
   }
 

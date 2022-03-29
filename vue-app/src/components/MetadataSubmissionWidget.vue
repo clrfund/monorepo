@@ -2,10 +2,9 @@
   <div class="tx-container">
     <div>
       <loader v-if="isLoading" />
-      <wallet-widget class="m2" v-if="!currentUser" />
+      <wallet-widget :chainId="chainId" class="m2" v-if="!currentUser" />
       <div v-if="currentUser">
-        <loader class="button-loader" v-if="isWaiting" />
-        <div v-if="isWaiting" class="tx-notice">
+        <div v-if="isWaiting" class="mt2">
           Check your wallet for a prompt...
         </div>
         <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
@@ -40,9 +39,10 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { Web3Provider } from '@ethersproject/providers'
-import { Metadata } from '@/api/metadata'
+import { MetadataFormData, Metadata } from '@/api/metadata'
 import { User } from '@/api/user'
 import { chain } from '@/api/core'
+import { CHAIN_ID } from '@/plugins/Web3/constants/chains'
 
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
@@ -60,9 +60,9 @@ import { ContractTransaction, ContractReceipt } from '@ethersproject/contracts'
 })
 export default class MetadataSubmissionWidget extends Vue {
   @Prop() buttonLabel!: string
-  @Prop() metadata!: Metadata
+  @Prop() form!: MetadataFormData
   @Prop() onSubmit!: (
-    metadata: Metadata,
+    form: MetadataFormData,
     provider: any
   ) => Promise<ContractTransaction>
   @Prop() onSuccess!: (receipt: ContractReceipt, chainId: number) => void
@@ -96,6 +96,13 @@ export default class MetadataSubmissionWidget extends Vue {
     return !!this.txError
   }
 
+  get chainId(): number | undefined {
+    const { network } = this.form
+    return network !== chain.subgraphNetwork
+      ? CHAIN_ID[network || '']
+      : undefined
+  }
+
   async handleSubmit(): Promise<void> {
     const { currentUser } = this.$store.state
 
@@ -106,7 +113,7 @@ export default class MetadataSubmissionWidget extends Vue {
       const { walletProvider } = currentUser
       try {
         this.isWaiting = true
-        const transaction = this.onSubmit(this.metadata, walletProvider)
+        const transaction = this.onSubmit(this.form, walletProvider)
         const receipt = await waitForTransaction(
           transaction,
           (hash) => (this.txHash = hash)
@@ -116,8 +123,7 @@ export default class MetadataSubmissionWidget extends Vue {
         this.isWaiting = false
 
         if (this.onSuccess) {
-          const { chainId } = await walletProvider.getNetwork()
-          this.onSuccess(receipt, chainId)
+          this.onSuccess(receipt, this.$web3.chainId)
         }
       } catch (error) {
         this.isWaiting = false

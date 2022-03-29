@@ -1,7 +1,6 @@
 import { CHAIN_INFO } from '../constants/chains'
 
-async function setupNetwork(provider): Promise<void> {
-  const chainId = parseInt(process.env.VUE_APP_ETHEREUM_API_CHAINID || '1', 10)
+async function setupNetwork(provider, chainId: number): Promise<void> {
   const hexChainId = `0x${chainId.toString(16)}`
 
   // Recommended usage of these methods
@@ -45,7 +44,7 @@ async function setupNetwork(provider): Promise<void> {
 
 export default {
   // TODO: add better return type
-  connect: async (): Promise<any | undefined> => {
+  connect: async (chainId: number): Promise<any | undefined> => {
     const provider =
       (window as any).ethereum ||
       ((window as any).web3 && (window as any).web3.currentProvider)
@@ -58,14 +57,14 @@ export default {
     }
 
     // Prompt the user to add or switch to our supported network
-    await setupNetwork(provider)
+    await setupNetwork(provider, chainId)
 
-    let accounts, chainId
+    let accounts, connectedChainId
     try {
       accounts = await provider.request({
         method: 'eth_requestAccounts',
       })
-      chainId = await provider.request({ method: 'eth_chainId' })
+      connectedChainId = await provider.request({ method: 'eth_chainId' })
     } catch (err) {
       if (err.code === 4001) {
         // EIP-1193 userRejectedRequest error
@@ -90,7 +89,7 @@ export default {
     return {
       provider,
       accounts,
-      chainId: Number(chainId),
+      chainId: Number(connectedChainId),
     }
   },
 }

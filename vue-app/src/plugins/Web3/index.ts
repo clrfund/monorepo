@@ -34,7 +34,10 @@ export default {
       },
     })
 
-    plugin.connectWallet = async (wallet: Wallet): Promise<void> => {
+    plugin.connectWallet = async (
+      wallet: Wallet,
+      chainId?: number
+    ): Promise<void> => {
       if (!wallet || typeof wallet !== 'string') {
         throw new Error(
           'Please provide a wallet to facilitate a web3 connection.'
@@ -47,7 +50,9 @@ export default {
         throw new Error(`Wallet [${wallet}] is not supported yet.`)
       }
 
-      const conn = await connector.connect()
+      // connect to app's chainId if chainId is not provided
+      const appChainId = Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
+      const conn = await connector.connect(chainId || appChainId)
       const account = conn.accounts[0]
 
       const signature = await conn.provider.request({
@@ -59,20 +64,21 @@ export default {
       lsSet(CONNECTED_PROVIDER, wallet)
 
       // Check if user is using the supported chain id
-      const supportedChainId = Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
-      if (conn.chainId !== supportedChainId) {
-        if (conn.provider instanceof WalletConnectProvider) {
-          // Close walletconnect session
-          await conn.provider.disconnect()
-        }
+      if (!chainId) {
+        if (conn.chainId !== appChainId) {
+          if (conn.provider instanceof WalletConnectProvider) {
+            // Close walletconnect session
+            await conn.provider.disconnect()
+          }
 
-        /* eslint-disable-next-line no-console */
-        console.error(
-          `Unsupported chain id: ${conn.chainId}. Supported chain id is: ${supportedChainId}`
-        )
-        throw new Error(
-          `Wrong Network. Please connect to the ${CHAIN_INFO[supportedChainId].label} Ethereum network.`
-        )
+          /* eslint-disable-next-line no-console */
+          console.error(
+            `Unsupported chain id: ${conn.chainId}. Supported chain id is: ${appChainId}`
+          )
+          throw new Error(
+            `Wrong Network. Please connect to the ${CHAIN_INFO[appChainId].label} Ethereum network.`
+          )
+        }
       }
 
       // Populate the plugin with the initial data
