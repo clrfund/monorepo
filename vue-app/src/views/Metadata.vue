@@ -3,7 +3,7 @@
     <loader v-if="this.loading" />
     <div v-else>
       <h1 class="title">Metadata</h1>
-      <metadata-viewer :metadata="metadata" displayDeleteBtn="true" />
+      <metadata-viewer :metadata="metadata" :displayDeleteBtn="true" />
     </div>
   </div>
 </template>

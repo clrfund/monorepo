@@ -31,14 +31,29 @@
         <div v-if="!showSummaryPreview">
           <div class="form-background">
             <div class="summary-section-header">
-              <h3 class="step-subtitle">About the project</h3>
-              <links :to="editLink('project')" class="edit-button"
+              <h3 class="step-subtitle">About the metadata</h3>
+              <links
+                v-if="isAuthorized"
+                :to="editLink('project')"
+                class="edit-button"
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Name</h4>
               <div class="data">{{ metadata.name }}</div>
+            </div>
+            <div class="summary" v-if="isDeleted">
+              <h4 class="read-only-title">Deleted</h4>
+              <div class="data">Yes</div>
+            </div>
+            <div class="summary">
+              <h4 class="read-only-title">Owner</h4>
+              <div class="data">{{ metadata.owner }}</div>
+            </div>
+            <div class="summary">
+              <h4 class="read-only-title">Network</h4>
+              <div class="data">{{ metadata.network }}</div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Tagline</h4>
@@ -60,7 +75,10 @@
           <div class="form-background">
             <div class="summary-section-header">
               <h3 class="step-subtitle">Funding details</h3>
-              <links :to="editLink('fund')" class="edit-button"
+              <links
+                v-if="isAuthorized"
+                :to="editLink('fund')"
+                class="edit-button"
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
@@ -85,7 +103,10 @@
           <div class="form-background">
             <div class="summary-section-header">
               <h3 class="step-subtitle">Team details</h3>
-              <links :to="editLink('team')" class="edit-button"
+              <links
+                v-if="isAuthorized"
+                :to="editLink('team')"
+                class="edit-button"
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
@@ -110,7 +131,10 @@
           <div class="form-background">
             <div class="summary-section-header">
               <h3 class="step-subtitle">Links</h3>
-              <links :to="editLink('links')" class="edit-button"
+              <links
+                v-if="isAuthorized"
+                :to="editLink('links')"
+                class="edit-button"
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
@@ -183,7 +207,10 @@
           <div class="form-background">
             <div class="summary-section-header">
               <h3 class="step-subtitle">Images</h3>
-              <links :to="editLink('image')" class="edit-button"
+              <links
+                v-if="isAuthorized"
+                :to="editLink('image')"
+                class="edit-button"
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
@@ -200,7 +227,7 @@
               </div>
             </div>
           </div>
-          <div v-if="displayDeleteBtn">
+          <div v-if="displayDeleteBtn && isAuthorized && !isDeleted">
             <box>
               <div class="delete-title">Delete metadata</div>
               <metadata-submission-widget
@@ -229,9 +256,10 @@ import MetadataSubmissionWidget from '@/components/MetadataSubmissionWidget.vue'
 import Box from '@/components/Box.vue'
 import { Metadata } from '@/api/metadata'
 import { Project } from '@/api/projects'
+import { isSameAddress } from '@/utils/accounts'
 
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
-import { ContractTransaction, ContractReceipt } from 'ethers'
+import { ContractTransaction } from 'ethers'
 import { RESET_METADATA } from '@/store/mutation-types'
 
 @Component({
@@ -251,6 +279,8 @@ export default class MetadataViewer extends mixins(validationMixin) {
   showSummaryPreview = false
 
   created() {
+    // reset the cached modified metadata to ensure the edit view
+    // will show the same data as this view
     this.$store.commit(RESET_METADATA)
   }
 
@@ -258,9 +288,25 @@ export default class MetadataViewer extends mixins(validationMixin) {
     return this.metadata.toProject()
   }
 
+  get isDeleted(): boolean {
+    return this.metadata.deletedAt === null
+  }
+
   editLink(step: string): string {
     const { id } = this.metadata || {}
     return `/metadata/${id}/edit/${step}`
+  }
+
+  get isAuthorized(): boolean {
+    const { currentUser } = this.$store.state
+    const { owner } = this.metadata || {}
+    const walletAddress = currentUser?.walletAddress
+
+    if (!owner || !walletAddress) {
+      return false
+    }
+
+    return isSameAddress(owner, currentUser.walletAddress)
   }
 
   handleToggleTab(event): void {
@@ -281,14 +327,9 @@ export default class MetadataViewer extends mixins(validationMixin) {
     return metadata.delete(provider)
   }
 
-  onDeleteSuccess(receipt: ContractReceipt): void {
-    const { transactionHash: hash } = receipt
-    const id = this.metadata.id || ''
-    const action = 'delete'
-
+  onDeleteSuccess(): void {
     this.$router.push({
-      name: 'metadata-result',
-      params: { id, hash, action },
+      name: 'metadata-registry',
     })
   }
 

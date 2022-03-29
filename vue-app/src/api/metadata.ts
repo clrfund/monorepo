@@ -61,6 +61,8 @@ export interface MetadataFormData {
   dirtyFields: Set<string>
   furthestStep: number
   id?: string
+  network?: string
+  owner?: string
 }
 
 /**
@@ -130,6 +132,7 @@ export class Metadata {
   id?: string
   name?: string
   owner?: string
+  network?: string
   receivingAddresses?: string[]
   addressName?: string
   resolvedAddress?: string
@@ -155,6 +158,7 @@ export class Metadata {
     this.id = data.id
     this.name = data.name
     this.owner = data.owner
+    this.network = data.network
     this.receivingAddresses = data.receivingAddresses
     this.tagline = data.tagline
     this.description = data.description
@@ -309,6 +313,8 @@ export class Metadata {
       dirtyFields: new Set(),
       furthestStep: 0,
       id: this.id,
+      owner: this.owner,
+      network: this.network,
     }
   }
 

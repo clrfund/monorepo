@@ -65,7 +65,7 @@ export default class MetadataSubmissionWidget extends Vue {
     metadata: Metadata,
     provider: any
   ) => Promise<ContractTransaction>
-  @Prop() onSuccess!: (receipt: ContractReceipt, metadata: Metadata) => void
+  @Prop() onSuccess!: (receipt: ContractReceipt, chainId: number) => void
 
   isLoading = true
   isWaiting = false
@@ -103,7 +103,7 @@ export default class MetadataSubmissionWidget extends Vue {
     this.txError = ''
     this.isTxRejected = false
     if (currentUser) {
-      const { walletProvider, walletAddress } = currentUser
+      const { walletProvider } = currentUser
       try {
         this.isWaiting = true
         const transaction = this.onSubmit(this.metadata, walletProvider)
@@ -116,7 +116,8 @@ export default class MetadataSubmissionWidget extends Vue {
         this.isWaiting = false
 
         if (this.onSuccess) {
-          this.onSuccess(receipt, this.metadata)
+          const { chainId } = await walletProvider.getNetwork()
+          this.onSuccess(receipt, chainId)
         }
       } catch (error) {
         this.isWaiting = false

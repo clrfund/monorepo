@@ -29,7 +29,6 @@ import MetadataDetail from '@/views/Metadata.vue'
 import MetadataRegistry from '@/views/MetadataRegistry.vue'
 import MetadataFormAdd from '@/views/MetadataFormAdd.vue'
 import MetadataFormEdit from '@/views/MetadataFormEdit.vue'
-import MetadataResult from '@/views/MetadataResult.vue'
 import NotFound from '@/views/NotFound.vue'
 
 Vue.use(VueRouter)
@@ -263,14 +262,6 @@ const routes = [
     component: MetadataFormAdd,
     meta: {
       title: 'Add Metadata',
-    },
-  },
-  {
-    path: '/metadata-result/:id/:hash/:action',
-    name: 'metadata-result',
-    component: MetadataResult,
-    meta: {
-      title: 'Metadata transaction result',
     },
   },
   {

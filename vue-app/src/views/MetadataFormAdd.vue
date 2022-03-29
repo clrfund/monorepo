@@ -4,7 +4,6 @@
     :cancelUrl="cancelUrl"
     :gotoStep="gotoStep"
     :onSubmit="onSubmit"
-    :onSuccess="onSuccess"
   />
 </template>
 
@@ -15,7 +14,7 @@ import { Metadata } from '@/api/metadata'
 import MetadataForm from '@/views/MetadataForm.vue'
 import Links from '@/components/Links.vue'
 import { SET_METADATA } from '@/store/mutation-types'
-import { ContractTransaction, ContractReceipt } from 'ethers'
+import { ContractTransaction } from 'ethers'
 
 @Component({
   components: {
@@ -57,18 +56,6 @@ export default class MetadataFormAdd extends Vue {
       throw new Error('Metadata ' + id + ' already exits')
     }
     return metadata.create(provider)
-  }
-
-  onSuccess(receipt: ContractReceipt, metadata: Metadata): void {
-    const name = metadata.name || ''
-    const id = Metadata.makeMetadataId(name, receipt.from)
-    const { transactionHash: hash } = receipt
-    const action = 'add'
-
-    this.$router.push({
-      name: 'metadata-result',
-      params: { id, hash, action },
-    })
   }
 }
 </script>

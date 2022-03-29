@@ -55,3 +55,8 @@ export interface RecipientRegistryRequest {
   metadata: RecipientMetadata
   requester: string
 }
+
+export interface LinkInfo {
+  url: string
+  text: string
+}

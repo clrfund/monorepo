@@ -541,11 +541,18 @@
           <div v-if="currentStep === 6">
             <h2 class="step-title">Submit metadata</h2>
             <p>
-              This is a transaction that will add your project metadata to the
+              This is a transaction that will add your metadata to the
               blockchain.
             </p>
             <div class="inputs">
+              <transaction-result
+                v-if="receipt"
+                :hash="receipt.hash"
+                :chainId="receipt.chainId"
+                :buttons="redirectButtons"
+              />
               <metadata-submission-widget
+                v-else
                 :metadata="updatedMetadata"
                 :onSuccess="onSuccess"
                 :onSubmit="onSubmit"
@@ -559,7 +566,7 @@
       <form-navigation
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
-        :finalStep="steps.length - 2"
+        :finalStep="steps.length - 1"
         :currentStep="currentStep"
         :callback="saveFormData"
         :handleStepNav="handleStepNav"
@@ -593,10 +600,12 @@ import ProjectProfile from '@/components/ProjectProfile.vue'
 import MetadataSubmissionWidget from '@/components/MetadataSubmissionWidget.vue'
 import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
+import TransactionResult from '@/components/TransactionResult.vue'
 import MetadataList from '@/views/MetadataList.vue'
 import MetadataViewer from '@/views/MetadataViewer.vue'
 import Dropdown from '@/components/Dropdown.vue'
 import { Metadata } from '@/api/metadata'
+import { LinkInfo } from '@/api/types'
 import { Prop } from 'vue-property-decorator'
 
 import { SET_METADATA } from '@/store/mutation-types'
@@ -627,6 +636,7 @@ type RecievingAddress = {
     Links,
     MetadataList,
     MetadataViewer,
+    TransactionResult,
   },
   validations: {
     addressName: { required, validEthAddress: isAddress },
@@ -683,7 +693,6 @@ export default class MetadataForm extends mixins(validationMixin) {
   @Prop() loadFormData!: () => Promise<void>
   @Prop() cancelUrl!: string
   @Prop() gotoStep!: (step: string) => void
-  @Prop() onSuccess!: (receipt: ContractReceipt, metadata: Metadata) => void
   @Prop() onSubmit!: (
     metadata: Metadata,
     provider: any
@@ -698,6 +707,7 @@ export default class MetadataForm extends mixins(validationMixin) {
   loading = true
   networks: string[] = []
   selectedNetwork = ''
+  receipt: { hash: string; chainId: number; id: string } | null = null
 
   async created() {
     const steps = [
@@ -879,6 +889,17 @@ export default class MetadataForm extends mixins(validationMixin) {
     }
   }
 
+  onSuccess(txReceipt: ContractReceipt, chainId: number): void {
+    const { transactionHash: hash, from: owner } = txReceipt
+    let id = this.form.id
+    if (!id) {
+      const name = this.form.project.name || ''
+      id = Metadata.makeMetadataId(name, owner)
+    }
+
+    this.receipt = { hash, id, chainId }
+  }
+
   get metadataInterface(): Metadata {
     const dirtyOnly = false
     return Metadata.fromFormData(this.form, dirtyOnly)
@@ -887,6 +908,19 @@ export default class MetadataForm extends mixins(validationMixin) {
   get updatedMetadata(): Metadata {
     const dirtyOnly = true
     return Metadata.fromFormData(this.form, dirtyOnly)
+  }
+
+  get redirectButtons(): LinkInfo[] {
+    return [
+      {
+        url: `/join/summary/${this.form.id}`,
+        text: 'Add project',
+      },
+      {
+        url: `/metadata/${this.form.id}`,
+        text: 'View metadata',
+      },
+    ]
   }
 
   get projectInterface(): Project {
