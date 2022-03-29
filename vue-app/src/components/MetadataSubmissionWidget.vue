@@ -98,9 +98,7 @@ export default class MetadataSubmissionWidget extends Vue {
 
   get chainId(): number | undefined {
     const { network } = this.form
-    return network !== chain.subgraphNetwork
-      ? CHAIN_ID[network || '']
-      : undefined
+    return network !== chain.name ? CHAIN_ID[network || ''] : undefined
   }
 
   async handleSubmit(): Promise<void> {

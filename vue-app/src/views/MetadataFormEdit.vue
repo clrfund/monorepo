@@ -67,7 +67,7 @@ export default class MetadataFormEdit extends Vue {
       throw new Error('Missing metadata network.')
     }
 
-    if (CHAIN_INFO[chainId].subgraphNetwork !== network) {
+    if (CHAIN_INFO[chainId].name !== network) {
       throw new Error(`Please switch network to ${network}.`)
     }
 

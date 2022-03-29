@@ -423,7 +423,7 @@ export class Metadata {
    * @returns metadata id
    */
   static makeMetadataId(name: string, owner: string): string {
-    const networkHash = utils.id(chain.subgraphNetwork)
+    const networkHash = utils.id(chain.name)
     const nameHash = utils.id(name)
     const hashes = utils.hexConcat([networkHash, owner, nameHash])
     const id = utils.keccak256(hashes)

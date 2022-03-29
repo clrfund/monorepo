@@ -21,7 +21,7 @@ export interface ChainInfo {
     rpcUrl?: string
     bridge?: string
     shortName: string
-    subgraphNetwork: string
+    name: string
   }
 }
 
@@ -35,7 +35,7 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLogo: 'etherscan.svg',
     explorerLabel: 'Etherscan',
     shortName: 'eth',
-    subgraphNetwork: 'mainnet',
+    name: 'mainnet',
   },
   [ChainId.RINKEBY]: {
     label: 'Rinkeby',
@@ -46,7 +46,7 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLogo: 'etherscan.svg',
     explorerLabel: 'Etherscan',
     shortName: 'rin',
-    subgraphNetwork: 'rinkeby',
+    name: 'rinkeby',
   },
   [ChainId.HARDHAT]: {
     label: 'Arbitrum Hardhat',
@@ -59,7 +59,7 @@ export const CHAIN_INFO: ChainInfo = {
     rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
     shortName: 'got',
-    subgraphNetwork: 'arbitrum-rinkeby',
+    name: 'arbitrum-rinkeby',
   },
   [ChainId.ARBITRUM_ONE]: {
     label: 'Arbitrum',
@@ -72,7 +72,7 @@ export const CHAIN_INFO: ChainInfo = {
     rpcUrl: 'https://arb1.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
     shortName: 'arb1',
-    subgraphNetwork: 'arbitrum-one',
+    name: 'arbitrum-one',
   },
   [ChainId.ARBITRUM_RINKEBY]: {
     label: 'Arbitrum Rinkeby',
@@ -85,7 +85,7 @@ export const CHAIN_INFO: ChainInfo = {
     rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
     shortName: 'arb-rinkeby',
-    subgraphNetwork: 'arbitrum-rinkeby',
+    name: 'arbitrum-rinkeby',
   },
   [ChainId.OPTIMISM]: {
     label: 'Optimism',
@@ -98,7 +98,7 @@ export const CHAIN_INFO: ChainInfo = {
     rpcUrl: 'https://mainnet.optimism.io',
     bridge: 'https://gateway.optimism.io',
     shortName: 'oeth',
-    subgraphNetwork: 'optimism',
+    name: 'optimism',
   },
   [ChainId.XDAI]: {
     label: 'xDai',
@@ -111,7 +111,7 @@ export const CHAIN_INFO: ChainInfo = {
     rpcUrl: 'https://rpc.xdaichain.com/',
     bridge: 'https://bridge.xdaichain.com',
     shortName: 'gno',
-    subgraphNetwork: 'xdai',
+    name: 'xdai',
   },
   [ChainId.POLYGON]: {
     label: 'Polygon',
@@ -124,15 +124,15 @@ export const CHAIN_INFO: ChainInfo = {
     rpcUrl: 'https://rpc-mainnet.matic.network',
     bridge: 'https://wallet.polygon.technology',
     shortName: 'MATIC',
-    subgraphNetwork: 'matic',
+    name: 'matic',
   },
 }
 
-// Map of chain.subgraphNetwork to chainId
+// Map of chain.name to chainId
 export const CHAIN_ID: Record<string, ChainId> = Object.keys(CHAIN_INFO).reduce(
   (ids, chainId) => {
     const chain = CHAIN_INFO[chainId]
-    ids[chain.subgraphNetwork] = Number(chainId)
+    ids[chain.name] = Number(chainId)
     return ids
   },
   {}
