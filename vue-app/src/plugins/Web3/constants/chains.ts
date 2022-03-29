@@ -21,6 +21,8 @@ export interface ChainInfo {
     rpcUrl?: string
     bridge?: string
     shortName: string
+    // The subgraph network name from:
+    // https://thegraph.com/docs/en/developer/create-subgraph-hosted/#supported-networks
     name: string
   }
 }
