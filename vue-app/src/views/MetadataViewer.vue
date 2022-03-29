@@ -76,13 +76,6 @@
                   </links>
                 </div>
               </div>
-              <div
-                class="resolved-address"
-                v-if="metadata.addressName"
-                title="Resolved ENS address"
-              >
-                {{ metadata.hasEns ? metadata.resolvedAddress : null }}
-              </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Funding plans</h4>
@@ -212,8 +205,8 @@
               <div class="delete-title">Delete metadata</div>
               <metadata-submission-widget
                 :metadata="metadata"
-                :onSubmit="onSubmit"
-                :onSuccess="onSuccess"
+                :onSubmit="onDeleteSubmit"
+                :onSuccess="onDeleteSuccess"
               />
             </box>
           </div>
@@ -238,7 +231,8 @@ import { Metadata } from '@/api/metadata'
 import { Project } from '@/api/projects'
 
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
-import { ContractTransaction } from 'ethers'
+import { ContractTransaction, ContractReceipt } from 'ethers'
+import { RESET_METADATA } from '@/store/mutation-types'
 
 @Component({
   components: {
@@ -255,6 +249,10 @@ export default class MetadataViewer extends mixins(validationMixin) {
   @Prop() metadata!: Metadata
   @Prop() displayDeleteBtn!: boolean
   showSummaryPreview = false
+
+  created() {
+    this.$store.commit(RESET_METADATA)
+  }
 
   get projectInterface(): Project {
     return this.metadata.toProject()
@@ -276,13 +274,21 @@ export default class MetadataViewer extends mixins(validationMixin) {
     this.showSummaryPreview = !this.showSummaryPreview
   }
 
-  onSubmit(metadata: Metadata, provider: any): Promise<ContractTransaction> {
+  onDeleteSubmit(
+    metadata: Metadata,
+    provider: any
+  ): Promise<ContractTransaction> {
     return metadata.delete(provider)
   }
 
-  onSuccess(): void {
+  onDeleteSuccess(receipt: ContractReceipt): void {
+    const { transactionHash: hash } = receipt
+    const id = this.metadata.id || ''
+    const action = 'delete'
+
     this.$router.push({
-      name: 'metadata-registry',
+      name: 'metadata-result',
+      params: { id, hash, action },
     })
   }
 

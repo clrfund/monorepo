@@ -534,7 +534,7 @@
             <div v-if="!showSummaryPreview">
               <metadata-viewer
                 :metadata="metadataInterface"
-                displayDeleteBtn="false"
+                :displayDeleteBtn="false"
               ></metadata-viewer>
             </div>
           </div>
@@ -546,7 +546,7 @@
             </p>
             <div class="inputs">
               <metadata-submission-widget
-                :metadata="metadataInterface"
+                :metadata="updatedMetadata"
                 :onSuccess="onSuccess"
                 :onSubmit="onSubmit"
               />
@@ -600,10 +600,7 @@ import { Metadata } from '@/api/metadata'
 import { Prop } from 'vue-property-decorator'
 
 import { SET_METADATA } from '@/store/mutation-types'
-import {
-  RecipientApplicationData,
-  formToProjectInterface,
-} from '@/api/recipient'
+import { MetadataFormData } from '@/api/metadata'
 import { Project } from '@/api/projects'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 import { ContractReceipt, ContractTransaction } from 'ethers'
@@ -686,13 +683,13 @@ export default class MetadataForm extends mixins(validationMixin) {
   @Prop() loadFormData!: () => Promise<void>
   @Prop() cancelUrl!: string
   @Prop() gotoStep!: (step: string) => void
-  @Prop() onSuccess!: (receipt: ContractReceipt) => void
+  @Prop() onSuccess!: (receipt: ContractReceipt, metadata: Metadata) => void
   @Prop() onSubmit!: (
     metadata: Metadata,
     provider: any
   ) => Promise<ContractTransaction>
 
-  form: RecipientApplicationData = new Metadata({}).toFormData()
+  form: MetadataFormData = new Metadata({}).toFormData()
   addressName = ''
   currentStep = 0
   steps: string[] = []
@@ -759,6 +756,7 @@ export default class MetadataForm extends mixins(validationMixin) {
 
     if (!this.$v.addressName.$invalid && this.selectedNetwork) {
       this.form.fund.receivingAddresses.push(`${network}:${address}`)
+      this.$v.form.fund?.receivingAddresses.$touch()
       this.networks = this.networks.filter((net) => net !== network)
       this.selectedNetwork = this.networks[0]
     }
@@ -782,6 +780,7 @@ export default class MetadataForm extends mixins(validationMixin) {
 
   removeAddress(index): void {
     this.form.fund.receivingAddresses.splice(index, 1)
+    this.$v.form.fund?.receivingAddresses.$touch()
     this.loadNetworks()
   }
 
@@ -831,16 +830,33 @@ export default class MetadataForm extends mixins(validationMixin) {
       this.form.furthestStep = this.currentStep + 1
     }
     if (typeof this.currentStep !== 'number') return
+
+    this.updateDirtyFlags()
+
     this.$store.commit(SET_METADATA, {
       updatedData: this.form,
-      step: this.steps[this.currentStep],
-      stepNumber: this.currentStep,
     })
+  }
+
+  updateDirtyFlags(): void {
+    // it's important to only check the current step dirty flag
+    // because the flag for other steps are reset on load
+    const stepName = this.steps[this.currentStep]
+    if (!this.$v.form[stepName]) {
+      // no validation field
+      return
+    }
+    for (const field of Object.keys(this.form[stepName])) {
+      if (this.$v.form[stepName]?.[field].$dirty) {
+        this.form.dirtyFields.add(`${stepName}.${field}`)
+      }
+    }
   }
 
   // Callback from IpfsImageUpload component
   handleUpload(key, value) {
     this.form.image[key] = value
+    this.$v.form.image?.[key]?.$touch()
     this.saveFormData(false)
   }
 
@@ -854,6 +870,7 @@ export default class MetadataForm extends mixins(validationMixin) {
   handleStepNav(step): void {
     // If isNavDisabled => disable quick-links
     if (this.isNavDisabled) return
+
     // Save form data
     this.saveFormData()
     // Navigate
@@ -863,12 +880,17 @@ export default class MetadataForm extends mixins(validationMixin) {
   }
 
   get metadataInterface(): Metadata {
-    console.log('metadataInterface', this.form)
-    return Metadata.fromFormData(this.form)
+    const dirtyOnly = false
+    return Metadata.fromFormData(this.form, dirtyOnly)
+  }
+
+  get updatedMetadata(): Metadata {
+    const dirtyOnly = true
+    return Metadata.fromFormData(this.form, dirtyOnly)
   }
 
   get projectInterface(): Project {
-    return formToProjectInterface(this.form)
+    return this.metadataInterface.toProject()
   }
 
   get furthestStep() {

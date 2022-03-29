@@ -9,6 +9,7 @@ import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
 import { RecipientApplicationData } from '@/api/recipient'
+import { MetadataFormData } from '@/api/metadata'
 import { RegistryInfo } from '@/api/types'
 
 // Constants
@@ -147,7 +148,7 @@ const mutations = {
   [SET_METADATA](
     state,
     payload: {
-      updatedData: RecipientApplicationData
+      updatedData: MetadataFormData
     }
   ) {
     state.metadata = payload.updatedData

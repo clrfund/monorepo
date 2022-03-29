@@ -49,7 +49,7 @@ import Transaction from '@/components/Transaction.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 
 import { waitForTransaction } from '@/utils/contracts'
-import { ContractReceipt, ContractTransaction } from '@ethersproject/contracts'
+import { ContractTransaction, ContractReceipt } from '@ethersproject/contracts'
 
 @Component({
   components: {
@@ -65,7 +65,7 @@ export default class MetadataSubmissionWidget extends Vue {
     metadata: Metadata,
     provider: any
   ) => Promise<ContractTransaction>
-  @Prop() onSuccess!: (receipt: ContractReceipt) => void
+  @Prop() onSuccess!: (receipt: ContractReceipt, metadata: Metadata) => void
 
   isLoading = true
   isWaiting = false
@@ -102,25 +102,26 @@ export default class MetadataSubmissionWidget extends Vue {
     // Reset errors when submitting
     this.txError = ''
     this.isTxRejected = false
-    let receipt
     if (currentUser) {
+      const { walletProvider, walletAddress } = currentUser
       try {
         this.isWaiting = true
-        const { walletProvider } = currentUser
         const transaction = this.onSubmit(this.metadata, walletProvider)
-
-        receipt = await waitForTransaction(
+        const receipt = await waitForTransaction(
           transaction,
           (hash) => (this.txHash = hash)
         )
+
+        await Metadata.waitForBlock(receipt.blockNumber)
+        this.isWaiting = false
+
+        if (this.onSuccess) {
+          this.onSuccess(receipt, this.metadata)
+        }
       } catch (error) {
         this.isWaiting = false
         this.txError = error.message
         return
-      }
-      this.isWaiting = false
-      if (this.onSuccess) {
-        this.onSuccess(receipt)
       }
     }
   }

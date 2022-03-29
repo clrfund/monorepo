@@ -14,7 +14,7 @@ import Component from 'vue-class-component'
 import MetadataForm from '@/views/MetadataForm.vue'
 import Links from '@/components/Links.vue'
 import { Metadata } from '@/api/metadata'
-import { ContractTransaction } from 'ethers'
+import { ContractTransaction, ContractReceipt } from 'ethers'
 import { SET_METADATA } from '@/store/mutation-types'
 
 @Component({
@@ -29,11 +29,11 @@ export default class MetadataFormEdit extends Vue {
     const savedMetadata = this.$store.state.metadata
     if (!savedMetadata || savedMetadata.id !== id) {
       const metadata = await Metadata.get(id)
-      if (metadata) {
-        this.$store.commit(SET_METADATA, {
-          updatedData: metadata.toFormData(),
-        })
-      }
+      // if we can't find the id, clear the form
+      const updatedData = metadata ? metadata.toFormData() : new Metadata({})
+      this.$store.commit(SET_METADATA, {
+        updatedData,
+      })
     }
   }
 
@@ -56,10 +56,14 @@ export default class MetadataFormEdit extends Vue {
     return metadata.update(provider)
   }
 
-  onSuccess(): void {
+  onSuccess(receipt: ContractReceipt): void {
+    const { transactionHash: hash } = receipt
+    const id = this.id
+    const action = 'edit'
+
     this.$router.push({
-      name: 'metadata',
-      params: { id: this.id },
+      name: 'metadata-result',
+      params: { id, hash, action },
     })
   }
 }

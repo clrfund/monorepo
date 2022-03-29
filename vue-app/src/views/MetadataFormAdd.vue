@@ -25,7 +25,7 @@ import { ContractTransaction, ContractReceipt } from 'ethers'
 })
 export default class MetadataFormAdd extends Vue {
   async loadFormData(): Promise<void> {
-    if (!this.$store.state.recipient) {
+    if (!this.$store.state.metadata) {
       const metadata = new Metadata({})
       this.$store.commit(SET_METADATA, {
         updatedData: metadata.toFormData(),
@@ -45,15 +45,29 @@ export default class MetadataFormAdd extends Vue {
     })
   }
 
-  onSubmit(metadata: Metadata, provider: any): Promise<ContractTransaction> {
+  async onSubmit(
+    metadata: Metadata,
+    provider: any
+  ): Promise<ContractTransaction> {
+    const name = metadata.name || ''
+    const signer = await provider.getSigner()
+    const id = Metadata.makeMetadataId(name, signer.address)
+    const exists = await Metadata.get(id)
+    if (exists) {
+      throw new Error('Metadata ' + id + ' already exits')
+    }
     return metadata.create(provider)
   }
 
-  onSuccess(receipt: ContractReceipt): void {
-    const id = Metadata.getMetadataId(receipt)
+  onSuccess(receipt: ContractReceipt, metadata: Metadata): void {
+    const name = metadata.name || ''
+    const id = Metadata.makeMetadataId(name, receipt.from)
+    const { transactionHash: hash } = receipt
+    const action = 'add'
+
     this.$router.push({
-      name: 'metadata',
-      params: { id },
+      name: 'metadata-result',
+      params: { id, hash, action },
     })
   }
 }

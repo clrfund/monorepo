@@ -14,7 +14,6 @@ import Component from 'vue-class-component'
 import Loader from '@/components/Loader.vue'
 import MetadataViewer from '@/views/MetadataViewer.vue'
 import { Metadata } from '@/api/metadata'
-import { ContractTransaction } from 'ethers'
 
 @Component({
   components: {
@@ -34,10 +33,6 @@ export default class MetadataView extends Vue {
       this.metadata = loadedMetadata
     }
     this.loading = false
-  }
-
-  onSubmit(metadata: Metadata, provider: any): Promise<ContractTransaction> {
-    return metadata.delete(provider)
   }
 
   onSuccess(): void {
