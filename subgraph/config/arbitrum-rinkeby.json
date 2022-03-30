@@ -1,7 +1,7 @@
 {
   "network": "arbitrum-rinkeby",
-  "address": "0xC032e80a413Be959d9a9B6e5CadE53c870074d37",
-  "factoryStartBlock": 4806990,
-  "recipientRegistryStartBlock": 4806990,
-  "universalRecipientRegistryStartBlock": 4806990
+  "address": "0x006f39E6a6D15323334Be1db34C73088550BB20a",
+  "factoryStartBlock": 10689401,
+  "recipientRegistryStartBlock": 10689401,
+  "universalRecipientRegistryStartBlock": 10689401
 }

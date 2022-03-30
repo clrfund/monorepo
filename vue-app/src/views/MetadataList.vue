@@ -34,7 +34,7 @@
           </div>
         </clickable-card>
       </div>
-      <panel v-if="filteredMetadata === 0 && !loading">
+      <panel v-if="filteredMetadata.length === 0 && !loading">
         😢 No metadata match your search. Try again or add a new metadata.
       </panel>
       <loader v-if="loading" />

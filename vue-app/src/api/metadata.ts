@@ -205,12 +205,9 @@ export class Metadata {
    */
   static async get(id: string): Promise<Metadata | null> {
     const result = await composer.get(id)
-    if (result.error) {
-      throw new Error(result.error)
-    }
-
-    const { data } = result
+    const { data, error } = result
     if (!data) {
+      // id not found
       return null
     }
 
@@ -401,7 +398,7 @@ export class Metadata {
     if (!this.id) {
       throw new Error('Unable to update metadata, id missing')
     }
-    const metadata = { ...this, target: this.id }
+    const metadata = { ...this }
     return composer.update(metadata, web3.provider)
   }
 

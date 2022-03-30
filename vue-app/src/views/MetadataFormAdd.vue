@@ -50,7 +50,8 @@ export default class MetadataFormAdd extends Vue {
   ): Promise<ContractTransaction> {
     const name = form.project.name || ''
     const signer = await provider.getSigner()
-    const id = Metadata.makeMetadataId(name, signer.address)
+    const signerAddress = await signer.getAddress()
+    const id = Metadata.makeMetadataId(name, signerAddress)
     const exists = await Metadata.get(id)
     if (exists) {
       throw new Error('Metadata ' + id + ' already exits')

@@ -553,7 +553,7 @@
               />
               <metadata-submission-widget
                 v-else
-                :metadata="form"
+                :form="form"
                 :onSuccess="onSuccess"
                 :onSubmit="onSubmit"
               />

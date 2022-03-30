@@ -28,9 +28,16 @@ export default class MetadataView extends Vue {
 
   async created() {
     const id = this.$route.params.id
-    const loadedMetadata = await Metadata.get(id)
-    if (loadedMetadata) {
-      this.metadata = loadedMetadata
+    try {
+      const loadedMetadata = await Metadata.get(id)
+      if (loadedMetadata) {
+        this.metadata = loadedMetadata
+      }
+    } catch {
+      // display a blank page instead so user can fix the data
+    }
+    if (!this.metadata) {
+      this.metadata = new Metadata({ id })
     }
     this.loading = false
   }
