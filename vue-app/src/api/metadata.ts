@@ -205,7 +205,7 @@ export class Metadata {
    */
   static async get(id: string): Promise<Metadata | null> {
     const result = await composer.get(id)
-    const { data, error } = result
+    const { data } = result
     if (!data) {
       // id not found
       return null
