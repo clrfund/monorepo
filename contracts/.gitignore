@@ -6,3 +6,4 @@ state.json
 proofs.json
 tally.json
 .env
+.env.*
