@@ -905,13 +905,14 @@ export default class MetadataForm extends mixins(validationMixin) {
   }
 
   get redirectButtons(): LinkInfo[] {
+    const { id } = this.receipt || {}
     return [
       {
-        url: `/join/summary/${this.form.id}`,
+        url: `/join/summary/${id}`,
         text: 'Add project',
       },
       {
-        url: `/metadata/${this.form.id}`,
+        url: `/metadata/${id}`,
         text: 'View metadata',
       },
     ]

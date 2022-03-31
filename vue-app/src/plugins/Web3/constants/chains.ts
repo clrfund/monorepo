@@ -129,13 +129,3 @@ export const CHAIN_INFO: ChainInfo = {
     name: 'matic',
   },
 }
-
-// Map of chain.name to chainId
-export const CHAIN_ID: Record<string, ChainId> = Object.keys(CHAIN_INFO).reduce(
-  (ids, chainId) => {
-    const chain = CHAIN_INFO[chainId]
-    ids[chain.name] = Number(chainId)
-    return ids
-  },
-  {}
-)

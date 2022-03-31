@@ -2,7 +2,7 @@
   <div class="tx-container">
     <div>
       <loader v-if="isLoading" />
-      <wallet-widget :chainId="chainId" class="m2" v-if="!currentUser" />
+      <wallet-widget class="m2" v-if="!currentUser" />
       <div v-if="currentUser">
         <div v-if="isWaiting" class="mt2">
           Check your wallet for a prompt...
@@ -42,7 +42,6 @@ import { Web3Provider } from '@ethersproject/providers'
 import { MetadataFormData, Metadata } from '@/api/metadata'
 import { User } from '@/api/user'
 import { chain } from '@/api/core'
-import { CHAIN_ID } from '@/plugins/Web3/constants/chains'
 
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
@@ -94,11 +93,6 @@ export default class MetadataSubmissionWidget extends Vue {
 
   get hasTxError(): boolean {
     return !!this.txError
-  }
-
-  get chainId(): number | undefined {
-    const { network } = this.form
-    return network !== chain.name ? CHAIN_ID[network || ''] : undefined
   }
 
   async handleSubmit(): Promise<void> {

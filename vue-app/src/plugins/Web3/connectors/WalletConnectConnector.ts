@@ -1,25 +1,20 @@
 import WalletConnectProvider from '@walletconnect/web3-provider'
-import { CHAIN_INFO } from '../constants/chains'
 
 export default {
   // TODO: add better return type
-  connect: async (chainId: number): Promise<any | undefined> => {
-    const chain = CHAIN_INFO[chainId]
-    if (!chain || !chain.rpcUrl) {
-      throw new Error('Missing chain configuration for chainId ' + chainId)
-    }
-
+  connect: async (): Promise<any | undefined> => {
     const provider = new WalletConnectProvider({
       infuraId: process.env.VUE_APP_INFURA_ID,
       rpc: {
-        [chainId]: chain.rpcUrl,
+        [process.env.VUE_APP_ETHEREUM_API_CHAINID!]:
+          process.env.VUE_APP_ETHEREUM_API_URL!,
       },
     })
 
-    let accounts, connectedChainId
+    let accounts, chainId
     try {
       accounts = await provider.enable()
-      connectedChainId = await provider.request({ method: 'eth_chainId' })
+      chainId = await provider.request({ method: 'eth_chainId' })
     } catch (err) {
       if (err.code === 4001) {
         // EIP-1193 userRejectedRequest error
@@ -36,7 +31,7 @@ export default {
     return {
       provider,
       accounts,
-      chainId: Number(connectedChainId),
+      chainId: Number(chainId),
     }
   },
 }

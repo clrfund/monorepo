@@ -230,7 +230,14 @@
           <div v-if="displayDeleteBtn && isAuthorized && !isDeleted">
             <box>
               <div class="delete-title">Delete metadata</div>
+              <transaction-result
+                v-if="deleteHash"
+                :hash="deleteHash"
+                :chainId="deleteChainId"
+                :buttons="metadataRegistryButton"
+              />
               <metadata-submission-widget
+                v-else
                 :form="formData"
                 :onSubmit="onDeleteSubmit"
                 :onSuccess="onDeleteSuccess"
@@ -254,12 +261,15 @@ import ProjectProfile from '@/components/ProjectProfile.vue'
 import Links from '@/components/Links.vue'
 import MetadataSubmissionWidget from '@/components/MetadataSubmissionWidget.vue'
 import Box from '@/components/Box.vue'
+import TransactionResult from '@/components/TransactionResult.vue'
 import { Metadata, MetadataFormData } from '@/api/metadata'
 import { Project } from '@/api/projects'
+import { chain } from '@/api/core'
+import { LinkInfo } from '@/api/types'
 import { isSameAddress } from '@/utils/accounts'
 
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
-import { ContractTransaction } from 'ethers'
+import { ContractTransaction, ContractReceipt } from 'ethers'
 import { RESET_METADATA } from '@/store/mutation-types'
 
 @Component({
@@ -270,6 +280,7 @@ import { RESET_METADATA } from '@/store/mutation-types'
     IpfsCopyWidget,
     Links,
     MetadataSubmissionWidget,
+    TransactionResult,
     Box,
   },
 })
@@ -277,6 +288,8 @@ export default class MetadataViewer extends mixins(validationMixin) {
   @Prop() metadata!: Metadata
   @Prop() displayDeleteBtn!: boolean
   showSummaryPreview = false
+  deleteHash = ''
+  deleteChainId = 0
 
   created() {
     // reset the cached modified metadata to ensure the edit view
@@ -299,14 +312,16 @@ export default class MetadataViewer extends mixins(validationMixin) {
 
   get isAuthorized(): boolean {
     const { currentUser } = this.$store.state
-    const { owner } = this.metadata || {}
+    const { owner, network } = this.metadata || {}
     const walletAddress = currentUser?.walletAddress
 
-    if (!owner || !walletAddress) {
+    if (!currentUser || !owner || !walletAddress) {
       return false
     }
 
-    return isSameAddress(owner, currentUser.walletAddress)
+    return (
+      network === chain.name && isSameAddress(owner, currentUser.walletAddress)
+    )
   }
 
   handleToggleTab(event): void {
@@ -329,14 +344,29 @@ export default class MetadataViewer extends mixins(validationMixin) {
     form: MetadataFormData,
     provider: any
   ): Promise<ContractTransaction> {
+    const { network } = form
+    const { chainId } = this.$web3
+
+    if (CHAIN_INFO[chainId].name !== network) {
+      throw new Error(`Deleting metadata on ${network} is not supported.`)
+    }
+
     const metadata = new Metadata({ id: form.id })
     return metadata.delete(provider)
   }
 
-  onDeleteSuccess(): void {
-    this.$router.push({
-      name: 'metadata-registry',
-    })
+  onDeleteSuccess(receipt: ContractReceipt, chainId: number): void {
+    this.deleteHash = receipt.transactionHash
+    this.deleteChainId = chainId
+  }
+
+  get metadataRegistryButton(): LinkInfo[] {
+    return [
+      {
+        url: `/metadata`,
+        text: 'Goto metadata registry',
+      },
+    ]
   }
 
   getChainExplorer(name: string): { label: string; explorer: string } {

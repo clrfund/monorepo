@@ -36,7 +36,6 @@
 // Libraries
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
 
 // Components
 import Loader from '@/components/Loader.vue'
@@ -47,8 +46,6 @@ import Loader from '@/components/Loader.vue'
   },
 })
 export default class WalletModal extends Vue {
-  @Prop() chainId!: number
-
   connectingWallet = false
   error = ''
 
@@ -60,7 +57,7 @@ export default class WalletModal extends Vue {
     this.error = ''
     this.connectingWallet = true
     try {
-      await this.$web3.connectWallet(walletType, this.chainId)
+      await this.$web3.connectWallet(walletType)
       this.$emit('close')
     } catch (error) {
       this.error = error.message

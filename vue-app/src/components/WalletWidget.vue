@@ -48,7 +48,6 @@ import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { User, getProfileImageUrl } from '@/api/user'
 import { chain } from '@/api/core'
-import { ChainId } from '@/plugins/Web3/constants/chains'
 import WalletModal from '@/components/WalletModal.vue'
 import { LOGOUT_USER } from '@/store/action-types'
 import Profile from '@/views/Profile.vue'
@@ -63,7 +62,6 @@ export default class WalletWidget extends Vue {
   @Prop() isActionButton!: boolean
   // Boolean to allow connect button to be full width
   @Prop() fullWidthMobile!: boolean
-  @Prop() chainId!: ChainId
 
   toggleProfile(): void {
     this.showProfilePanel = !this.showProfilePanel
@@ -126,11 +124,7 @@ export default class WalletWidget extends Vue {
   }
 
   async showModal(): Promise<void> {
-    this.$modal.show(
-      WalletModal,
-      { chainId: this.chainId },
-      { width: 400, top: 20 }
-    )
+    this.$modal.show(WalletModal, {}, { width: 400, top: 20 })
   }
 
   @Watch('$web3.user')

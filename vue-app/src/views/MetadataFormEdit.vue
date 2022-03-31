@@ -68,7 +68,7 @@ export default class MetadataFormEdit extends Vue {
     }
 
     if (CHAIN_INFO[chainId].name !== network) {
-      throw new Error(`Please switch network to ${network}.`)
+      throw new Error(`Updating metadata on ${network} is not supported.`)
     }
 
     if (!owner) {
