@@ -737,6 +737,7 @@ export default class MetadataForm extends mixins(validationMixin) {
     this.form = this.$store.state.metadata
     this.loading = false
     this.loadNetworks()
+    this.initFurthestStep()
 
     // go to first step if step doesn't exist
     if (this.currentStep < 0) {
@@ -793,6 +794,16 @@ export default class MetadataForm extends mixins(validationMixin) {
     this.form.fund.receivingAddresses.splice(index, 1)
     this.$v.form.fund?.receivingAddresses.$touch()
     this.loadNetworks()
+  }
+
+  initFurthestStep(): void {
+    let step = 0
+    for (; step < this.steps.length; step++) {
+      if (!this.isStepValid(step)) {
+        break
+      }
+    }
+    this.form.furthestStep = step
   }
 
   handleToggleTab(event): void {

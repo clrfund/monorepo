@@ -6,7 +6,7 @@
       <div v-if="currentUser">
         <div v-if="isWaiting" class="mt2">
           <div v-if="progress">
-            Waiting for block {{ progress.latest }} / {{ progress.total }}...
+            Waiting for block {{ progress.latest }} of {{ progress.total }}...
           </div>
           <div v-else>Check your wallet for a prompt...</div>
         </div>
