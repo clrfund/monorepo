@@ -23,7 +23,10 @@
       <div v-if="!loading" class="form-area">
         <div class="application">
           <div v-if="currentStep === 0">
-            <metadata-list :onClick="handleMetadataSelected"></metadata-list>
+            <metadata-list
+              :onClick="handleMetadataSelected"
+              :excludeRecipients="true"
+            ></metadata-list>
           </div>
           <div v-if="currentStep === 1" id="summary">
             <metadata-viewer :metadata="metadata"></metadata-viewer>
