@@ -737,7 +737,10 @@ export default class MetadataForm extends mixins(validationMixin) {
     this.form = this.$store.state.metadata
     this.loading = false
     this.loadNetworks()
-    this.initFurthestStep()
+    if (this.form.furthestStep === 0) {
+      // only initialize the furthestStep if it's not set
+      this.initFurthestStep()
+    }
 
     // go to first step if step doesn't exist
     if (this.currentStep < 0) {

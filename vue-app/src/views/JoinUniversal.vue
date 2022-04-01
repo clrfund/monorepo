@@ -134,7 +134,7 @@ export default class JoinView extends Vue {
 
   saveFormData(): void {
     this.$store.commit(SET_RECIPIENT_DATA, {
-      updatedData: this.metadata.toProject(),
+      updatedData: this.metadata.toFormData(),
     })
   }
 

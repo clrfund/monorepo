@@ -2,6 +2,8 @@ import { Contract, BigNumber, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { UniversalRecipientRegistry } from './abi'
 import { RecipientRegistryInterface } from './types'
+import { Metadata } from './metadata'
+import { chain } from './core'
 
 export async function addRecipient(
   registryAddress: string,
@@ -14,13 +16,14 @@ export async function addRecipient(
     UniversalRecipientRegistry,
     signer
   )
-  const { address, id } = recipientData
+  const metadata = Metadata.fromFormData(recipientData)
+  const { id, address } = metadata.toProject()
   if (!id) {
     throw new Error('Missing metadata id')
   }
 
   if (!address) {
-    throw new Error('Metadata missing recipient address')
+    throw new Error(`Missing recipient address for the ${chain.name} network`)
   }
 
   const transaction = await registry.addRecipient(address, id, {
