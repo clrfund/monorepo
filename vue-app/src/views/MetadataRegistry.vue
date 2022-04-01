@@ -1,5 +1,5 @@
 <template>
-  <metadata-list :onClick="handleClick" />
+  <metadata-list :onClick="handleClick" :excludeRecipients="false" />
 </template>
 
 <script lang="ts">
