@@ -1,6 +1,7 @@
 <template>
   <metadata-form
     :loadFormData="loadFormData"
+    :toMetadata="toMetadata"
     :cancelUrl="cancelUrl"
     :gotoStep="gotoStep"
     :onSubmit="onSubmit"
@@ -15,6 +16,7 @@ import MetadataForm from '@/views/MetadataForm.vue'
 import Links from '@/components/Links.vue'
 import { SET_METADATA } from '@/store/mutation-types'
 import { ContractTransaction } from 'ethers'
+import { chain } from '@/api/core'
 
 @Component({
   components: {
@@ -42,6 +44,13 @@ export default class MetadataFormAdd extends Vue {
       name: 'metadata-new',
       params: { step },
     })
+  }
+
+  toMetadata(form: MetadataFormData): Metadata {
+    const { currentUser } = this.$store.state
+    const owner = currentUser ? currentUser.walletAddress : undefined
+    const network = chain.name
+    return Metadata.fromFormData({ ...form, owner, network })
   }
 
   async onSubmit(

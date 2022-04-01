@@ -5,11 +5,10 @@ import { Project } from './projects'
 import { Ipfs } from './ipfs'
 import { MAX_RETRIES } from './core'
 
-const urls = METADATA_NETWORKS.map(
-  (network) => `${METADATA_SUBGRAPH_URL_PREFIX}${network}`
-)
+const subgraphUrl = (network: string): string =>
+  `${METADATA_SUBGRAPH_URL_PREFIX}${network}`
 
-const composer = new MetadataComposer(urls)
+const urls = METADATA_NETWORKS.map((network) => subgraphUrl(network))
 
 const GET_METADATA_BATCH_QUERY = `
   query($ids: [String]) {
@@ -88,8 +87,10 @@ function getAddressForChain(
  * Get the latest block from subgraph
  * @returns block number
  */
-async function getLatestBlock(): Promise<number> {
-  const composer = new MetadataComposer(urls)
+async function getLatestBlock(network: string): Promise<number> {
+  // only interested in the latest block from the specified network
+  const url = subgraphUrl(network)
+  const composer = new MetadataComposer([url])
   const result = await composer.query(GET_LATEST_BLOCK_QUERY)
   if (result.error) {
     throw new Error('Failed to get latest block. ' + result.error)
@@ -189,6 +190,7 @@ export class Metadata {
     searchText: string,
     options: SearchOptions
   ): Promise<Metadata[]> {
+    const composer = new MetadataComposer(urls)
     const result = await composer.search(searchText, options)
     if (result.error) {
       throw new Error(result.error)
@@ -204,6 +206,7 @@ export class Metadata {
    * @returns metadata
    */
   static async get(id: string): Promise<Metadata | null> {
+    const composer = new MetadataComposer(urls)
     const result = await composer.get(id)
     const { data } = result
     if (!data) {
@@ -221,6 +224,7 @@ export class Metadata {
    * @returns a list of metadata
    */
   static async getBatch(ids: string[]): Promise<any[]> {
+    const composer = new MetadataComposer(urls)
     const result = await composer.query(GET_METADATA_BATCH_QUERY, { ids })
     if (result.error) {
       throw new Error(result.error)
@@ -376,6 +380,10 @@ export class Metadata {
     if (!dirtyOnly || data.dirtyFields.has('image.thumbnailHash')) {
       metadata.thumbnailImageHash = image.thumbnailHash
     }
+    if (!dirtyOnly) {
+      metadata.network = data.network
+      metadata.owner = data.owner
+    }
 
     return metadata
   }
@@ -386,6 +394,7 @@ export class Metadata {
    * @returns transaction handle
    */
   async create(web3: providers.Web3Provider): Promise<ContractTransaction> {
+    const composer = new MetadataComposer(urls)
     return composer.create(this, web3.provider)
   }
 
@@ -399,6 +408,7 @@ export class Metadata {
       throw new Error('Unable to update metadata, id missing')
     }
     const metadata = { ...this }
+    const composer = new MetadataComposer(urls)
     return composer.update(metadata, web3.provider)
   }
 
@@ -411,6 +421,7 @@ export class Metadata {
     if (!this.id) {
       throw new Error('Unable to delete metadata, id missing')
     }
+    const composer = new MetadataComposer(urls)
     return composer.delete(this.id, web3.provider)
   }
 
@@ -427,14 +438,20 @@ export class Metadata {
     return id
   }
 
-  static async waitForBlock(blockNumber: number, depth = 0): Promise<number> {
-    const latestBlock = await getLatestBlock()
+  static async waitForBlock(
+    blockNumber: number,
+    network: string,
+    depth = 0,
+    callback: (latest: number, total: number) => void
+  ): Promise<number> {
+    const latestBlock = await getLatestBlock(network)
+    callback(latestBlock, blockNumber)
     if (latestBlock < blockNumber) {
       if (depth > MAX_RETRIES) {
         throw new Error('Waited too long for block ' + blockNumber)
       }
       await sleep(depth)
-      return Metadata.waitForBlock(blockNumber, depth + 1)
+      return Metadata.waitForBlock(blockNumber, network, depth + 1, callback)
     } else {
       return latestBlock
     }

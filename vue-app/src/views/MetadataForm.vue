@@ -691,6 +691,7 @@ type RecievingAddress = {
 })
 export default class MetadataForm extends mixins(validationMixin) {
   @Prop() loadFormData!: () => Promise<void>
+  @Prop() toMetadata!: (form: MetadataFormData) => Metadata
   @Prop() cancelUrl!: string
   @Prop() gotoStep!: (step: string) => void
   @Prop() onSubmit!: (
@@ -901,7 +902,7 @@ export default class MetadataForm extends mixins(validationMixin) {
   }
 
   get metadataInterface(): Metadata {
-    return Metadata.fromFormData(this.form)
+    return this.toMetadata(this.form)
   }
 
   get redirectButtons(): LinkInfo[] {

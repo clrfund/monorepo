@@ -1,6 +1,7 @@
 <template>
   <metadata-form
     :loadFormData="loadFormData"
+    :toMetadata="toMetadata"
     :cancelUrl="cancelUrl"
     :gotoStep="gotoStep"
     :onSubmit="onSubmit"
@@ -86,6 +87,10 @@ export default class MetadataFormEdit extends Vue {
     const dirtyOnly = true
     const metadata = Metadata.fromFormData(form, dirtyOnly)
     return metadata.update(provider)
+  }
+
+  toMetadata(form: MetadataFormData): Metadata {
+    return Metadata.fromFormData(form)
   }
 }
 </script>

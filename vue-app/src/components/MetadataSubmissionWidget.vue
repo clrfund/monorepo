@@ -5,7 +5,10 @@
       <wallet-widget class="m2" v-if="!currentUser" />
       <div v-if="currentUser">
         <div v-if="isWaiting" class="mt2">
-          Check your wallet for a prompt...
+          <div v-if="progress">
+            Waiting for block {{ progress.latest }} / {{ progress.total }}...
+          </div>
+          <div v-else>Check your wallet for a prompt...</div>
         </div>
         <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
@@ -50,6 +53,11 @@ import WalletWidget from '@/components/WalletWidget.vue'
 import { waitForTransaction } from '@/utils/contracts'
 import { ContractTransaction, ContractReceipt } from '@ethersproject/contracts'
 
+type Progress = {
+  latest: number
+  total: number
+}
+
 @Component({
   components: {
     Loader,
@@ -71,6 +79,7 @@ export default class MetadataSubmissionWidget extends Vue {
   isTxRejected = false
   txHash = ''
   txError = ''
+  progress: Progress | null = null
 
   async created() {
     this.isLoading = false
@@ -95,6 +104,11 @@ export default class MetadataSubmissionWidget extends Vue {
     return !!this.txError
   }
 
+  updateProgress(latest: number, total: number): void {
+    console.log('updating progress....', latest, total)
+    this.progress = { latest, total }
+  }
+
   async handleSubmit(): Promise<void> {
     const { currentUser } = this.$store.state
 
@@ -111,7 +125,12 @@ export default class MetadataSubmissionWidget extends Vue {
           (hash) => (this.txHash = hash)
         )
 
-        await Metadata.waitForBlock(receipt.blockNumber)
+        await Metadata.waitForBlock(
+          receipt.blockNumber,
+          chain.name,
+          0,
+          this.updateProgress
+        )
         this.isWaiting = false
 
         if (this.onSuccess) {
