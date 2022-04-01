@@ -798,7 +798,8 @@ export default class MetadataForm extends mixins(validationMixin) {
 
   initFurthestStep(): void {
     let step = 0
-    for (; step < this.steps.length; step++) {
+    const validations = Object.keys(this.$v.form.$params)
+    for (; step < validations.length; step++) {
       if (!this.isStepValid(step)) {
         break
       }
@@ -836,10 +837,10 @@ export default class MetadataForm extends mixins(validationMixin) {
   }
 
   isStepValid(step: number): boolean {
-    if (step === 4) {
+    const stepName: string = this.steps[step]
+    if (stepName === 'links') {
       return this.isLinkStepValid()
     }
-    const stepName: string = this.steps[step]
     return !this.$v.form[stepName]?.$invalid
   }
 

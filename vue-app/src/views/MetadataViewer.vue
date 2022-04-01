@@ -217,13 +217,21 @@
             <div class="summary">
               <h4 class="read-only-title">Banner</h4>
               <div class="data">
-                <ipfs-copy-widget :hash="metadata.bannerImageHash" />
+                <ipfs-copy-widget
+                  v-if="metadata.bannerImageHash"
+                  :hash="metadata.bannerImageHash"
+                />
+                <div class="data" v-else>Not provided</div>
               </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Thumbnail</h4>
               <div class="data">
-                <ipfs-copy-widget :hash="metadata.thumbnailImageHash" />
+                <ipfs-copy-widget
+                  v-if="metadata.thumbnailImageHash"
+                  :hash="metadata.thumbnailImageHash"
+                />
+                <div class="data" v-else>Not provided</div>
               </div>
             </div>
           </div>
