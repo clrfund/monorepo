@@ -34,7 +34,7 @@
           </div>
         </clickable-card>
       </div>
-      <panel v-if="filteredMetadata === 0 && !loading">
+      <panel v-if="filteredMetadata.length === 0 && !loading">
         😢 No metadata match your search. Try again or add a new metadata.
       </panel>
       <loader v-if="loading" />
@@ -53,7 +53,7 @@ import Links from '@/components/Links.vue'
 import Panel from '@/components/Panel.vue'
 import Loader from '@/components/Loader.vue'
 import { Ipfs } from '@/api/ipfs'
-import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
+import { RESET_METADATA } from '@/store/mutation-types'
 import sdk from '@/graphql/sdk'
 import { RecipientRegistryRequestTypeCode as RequestTypeCode } from '@/api/types'
 import { getRecipientRegistryAddress } from '@/api/projects'
@@ -131,7 +131,7 @@ export default class MetadataList extends Vue {
   }
 
   handleAdd(): void {
-    this.$store.commit(RESET_RECIPIENT_DATA)
+    this.$store.commit(RESET_METADATA)
     this.$router.push({
       name: 'metadata-new',
       params: { step: 'project' },

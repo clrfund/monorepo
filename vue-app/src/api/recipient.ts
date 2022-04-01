@@ -10,6 +10,7 @@ export interface RecipientApplicationData {
     problemSpace: string
   }
   fund: {
+    receivingAddresses: string[]
     addressName: string
     resolvedAddress: string
     plans: string

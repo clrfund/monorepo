@@ -3,7 +3,7 @@
     <loader v-if="this.loading" />
     <div v-else>
       <h1 class="title">Metadata</h1>
-      <metadata-viewer :metadata="metadata" displayDeleteBtn="true" />
+      <metadata-viewer :metadata="metadata" :displayDeleteBtn="true" />
     </div>
   </div>
 </template>
@@ -14,7 +14,6 @@ import Component from 'vue-class-component'
 import Loader from '@/components/Loader.vue'
 import MetadataViewer from '@/views/MetadataViewer.vue'
 import { Metadata } from '@/api/metadata'
-import { ContractTransaction } from 'ethers'
 
 @Component({
   components: {
@@ -29,15 +28,18 @@ export default class MetadataView extends Vue {
 
   async created() {
     const id = this.$route.params.id
-    const loadedMetadata = await Metadata.get(id)
-    if (loadedMetadata) {
-      this.metadata = loadedMetadata
+    try {
+      const loadedMetadata = await Metadata.get(id)
+      if (loadedMetadata) {
+        this.metadata = loadedMetadata
+      }
+    } catch {
+      // display a blank page instead so user can fix the data
+    }
+    if (!this.metadata) {
+      this.metadata = new Metadata({ id })
     }
     this.loading = false
-  }
-
-  onSubmit(metadata: Metadata, provider: any): Promise<ContractTransaction> {
-    return metadata.delete(provider)
   }
 
   onSuccess(): void {

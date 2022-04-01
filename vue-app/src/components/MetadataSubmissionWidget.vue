@@ -4,9 +4,11 @@
       <loader v-if="isLoading" />
       <wallet-widget class="m2" v-if="!currentUser" />
       <div v-if="currentUser">
-        <loader class="button-loader" v-if="isWaiting" />
-        <div v-if="isWaiting" class="tx-notice">
-          Check your wallet for a prompt...
+        <div v-if="isWaiting" class="mt2">
+          <div v-if="progress">
+            Waiting for block {{ progress.latest }} of {{ progress.total }}...
+          </div>
+          <div v-else>Check your wallet for a prompt...</div>
         </div>
         <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
@@ -40,7 +42,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { Web3Provider } from '@ethersproject/providers'
-import { Metadata } from '@/api/metadata'
+import { MetadataFormData, Metadata } from '@/api/metadata'
 import { User } from '@/api/user'
 import { chain } from '@/api/core'
 
@@ -49,7 +51,12 @@ import Transaction from '@/components/Transaction.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 
 import { waitForTransaction } from '@/utils/contracts'
-import { ContractReceipt, ContractTransaction } from '@ethersproject/contracts'
+import { ContractTransaction, ContractReceipt } from '@ethersproject/contracts'
+
+type Progress = {
+  latest: number
+  total: number
+}
 
 @Component({
   components: {
@@ -60,18 +67,19 @@ import { ContractReceipt, ContractTransaction } from '@ethersproject/contracts'
 })
 export default class MetadataSubmissionWidget extends Vue {
   @Prop() buttonLabel!: string
-  @Prop() metadata!: Metadata
+  @Prop() form!: MetadataFormData
   @Prop() onSubmit!: (
-    metadata: Metadata,
+    form: MetadataFormData,
     provider: any
   ) => Promise<ContractTransaction>
-  @Prop() onSuccess!: (receipt: ContractReceipt) => void
+  @Prop() onSuccess!: (receipt: ContractReceipt, chainId: number) => void
 
   isLoading = true
   isWaiting = false
   isTxRejected = false
   txHash = ''
   txError = ''
+  progress: Progress | null = null
 
   async created() {
     this.isLoading = false
@@ -96,31 +104,42 @@ export default class MetadataSubmissionWidget extends Vue {
     return !!this.txError
   }
 
+  updateProgress(latest: number, total: number): void {
+    console.log('updating progress....', latest, total)
+    this.progress = { latest, total }
+  }
+
   async handleSubmit(): Promise<void> {
     const { currentUser } = this.$store.state
 
     // Reset errors when submitting
     this.txError = ''
     this.isTxRejected = false
-    let receipt
     if (currentUser) {
+      const { walletProvider } = currentUser
       try {
         this.isWaiting = true
-        const { walletProvider } = currentUser
-        const transaction = this.onSubmit(this.metadata, walletProvider)
-
-        receipt = await waitForTransaction(
+        const transaction = this.onSubmit(this.form, walletProvider)
+        const receipt = await waitForTransaction(
           transaction,
           (hash) => (this.txHash = hash)
         )
+
+        await Metadata.waitForBlock(
+          receipt.blockNumber,
+          chain.name,
+          0,
+          this.updateProgress
+        )
+        this.isWaiting = false
+
+        if (this.onSuccess) {
+          this.onSuccess(receipt, this.$web3.chainId)
+        }
       } catch (error) {
         this.isWaiting = false
         this.txError = error.message
         return
-      }
-      this.isWaiting = false
-      if (this.onSuccess) {
-        this.onSuccess(receipt)
       }
     }
   }

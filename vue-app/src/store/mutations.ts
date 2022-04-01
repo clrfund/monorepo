@@ -9,6 +9,7 @@ import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
 import { RecipientApplicationData } from '@/api/recipient'
+import { MetadataFormData } from '@/api/metadata'
 import { RegistryInfo } from '@/api/types'
 
 // Constants
@@ -26,6 +27,8 @@ import {
   SET_CURRENT_USER,
   SET_RECIPIENT_DATA,
   RESET_RECIPIENT_DATA,
+  SET_METADATA,
+  RESET_METADATA,
   SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_RECIPIENT_REGISTRY_INFO,
   TOGGLE_SHOW_CART_PANEL,
@@ -141,6 +144,17 @@ const mutations = {
   },
   [RESET_RECIPIENT_DATA](state) {
     state.recipient = null
+  },
+  [SET_METADATA](
+    state,
+    payload: {
+      updatedData: MetadataFormData
+    }
+  ) {
+    state.metadata = payload.updatedData
+  },
+  [RESET_METADATA](state) {
+    state.metadata = null
   },
   [TOGGLE_SHOW_CART_PANEL](state, isOpen: boolean | undefined) {
     // Handle the case of both null and undefined

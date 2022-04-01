@@ -493,6 +493,7 @@
                   description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF"
                   :onUpload="handleUpload"
                   formProp="bannerHash"
+                  :hash="form.image.bannerHash"
                 />
               </div>
               <div class="form-background">
@@ -501,6 +502,7 @@
                   description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF"
                   :onUpload="handleUpload"
                   formProp="thumbnailHash"
+                  :hash="form.image.thumbnailHash"
                 />
               </div>
             </div>
@@ -835,6 +837,7 @@ export default class JoinView extends mixins(validationMixin) {
       problemSpace: '',
     },
     fund: {
+      receivingAddresses: [],
       addressName: '',
       resolvedAddress: '',
       plans: '',

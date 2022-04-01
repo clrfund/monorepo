@@ -41,9 +41,15 @@ import { Prop } from 'vue-property-decorator'
 import Loader from '@/components/Loader.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Links from '@/components/Links.vue'
-import { chain } from '@/api/core'
+import { chain as defaultChain } from '@/api/core'
 import { isTransactionMined } from '@/utils/contracts'
 import { renderAddressOrHash } from '@/utils/accounts'
+
+interface ChainInterface {
+  explorer: string
+  explorerLabel: string
+  explorerLogo: string
+}
 
 @Component({
   components: { Loader, CopyButton, Links },
@@ -53,6 +59,7 @@ export default class TransactionReceipt extends Vue {
   isCopied = false
 
   @Prop() hash!: string
+  @Prop() chain!: ChainInterface
 
   updateIsCopied(value: boolean): void {
     this.isCopied = value
@@ -75,10 +82,11 @@ export default class TransactionReceipt extends Vue {
   }
 
   get blockExplorer(): { label: string; url: string; logo: string } {
+    const chainInfo = this.chain ?? defaultChain
     return {
-      label: chain.explorerLabel,
-      url: `${chain.explorer}/tx/${this.hash}`,
-      logo: chain.explorerLogo,
+      label: chainInfo.explorerLabel,
+      url: `${chainInfo.explorer}/tx/${this.hash}`,
+      logo: chainInfo.explorerLogo,
     }
   }
 }

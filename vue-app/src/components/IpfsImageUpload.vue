@@ -6,24 +6,26 @@
     name="image"
   >
     <p class="input-label">{{ label }}</p>
-    <p class="input-description">{{ description }}</p>
-    <div class="input-row">
-      <input
-        type="file"
-        class="input"
-        @change="handleLoadFile"
-        name="image"
-        :id="`${formProp}-input`"
-      />
-      <button
-        primary="true"
-        type="submit"
-        label="Upload"
-        class="btn-primary"
-        :disabled="loading || error || !loadedImageData"
-      >
-        {{ loading ? 'Uploading...' : 'Upload' }}
-      </button>
+    <div v-if="hash.length === 0">
+      <p class="input-description">{{ description }}</p>
+      <div class="input-row">
+        <input
+          type="file"
+          class="input"
+          @change="handleLoadFile"
+          name="image"
+          :id="`${formProp}-input`"
+        />
+        <button
+          primary="true"
+          type="submit"
+          label="Upload"
+          class="btn-primary"
+          :disabled="loading || error || !loadedImageData"
+        >
+          {{ loading ? 'Uploading...' : 'Upload' }}
+        </button>
+      </div>
     </div>
     <loader v-if="loading" />
     <div v-if="hash">
@@ -81,9 +83,9 @@ export default class IpfsImageUpload extends Vue {
   @Prop() description!: string
   @Prop() formProp!: string
   @Prop() onUpload!: (key: string, value: string) => void
+  @Prop() hash!: string
 
   ipfs: any = null
-  hash = ''
   loading = false
   loadedImageData = ''
   loadedImageHeight: number | null = null
@@ -141,7 +143,6 @@ export default class IpfsImageUpload extends Vue {
       this.ipfs
         .add(fileContents)
         .then((hash) => {
-          this.hash = hash
           /* eslint-disable-next-line no-console */
           console.log(`Uploaded file hash: ${hash}`)
           this.onUpload(this.formProp, hash)
@@ -157,7 +158,6 @@ export default class IpfsImageUpload extends Vue {
   }
 
   handleRemoveImage(): void {
-    this.hash = ''
     this.loading = false
     this.loadedImageData = ''
     this.error = ''

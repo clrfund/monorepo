@@ -1,16 +1,14 @@
 import { MetadataComposer, SearchOptions } from '@yuetloo/metadata-composer'
-import { ContractTransaction, providers, ContractReceipt } from 'ethers'
+import { ContractTransaction, providers, utils } from 'ethers'
 import { METADATA_NETWORKS, METADATA_SUBGRAPH_URL_PREFIX, chain } from './core'
 import { Project } from './projects'
 import { Ipfs } from './ipfs'
-import { resolveEns } from '@/utils/accounts'
-import { RecipientApplicationData } from './recipient'
+import { MAX_RETRIES } from './core'
 
-const urls = METADATA_NETWORKS.map(
-  (network) => `${METADATA_SUBGRAPH_URL_PREFIX}${network}`
-)
+const subgraphUrl = (network: string): string =>
+  `${METADATA_SUBGRAPH_URL_PREFIX}${network}`
 
-const composer = new MetadataComposer(urls)
+const urls = METADATA_NETWORKS.map((network) => subgraphUrl(network))
 
 const GET_METADATA_BATCH_QUERY = `
   query($ids: [String]) {
@@ -20,6 +18,51 @@ const GET_METADATA_BATCH_QUERY = `
     }
   }
 `
+
+const GET_LATEST_BLOCK_QUERY = `
+{
+  _meta {
+    block {
+      number
+    }
+  }
+}
+`
+
+export interface MetadataFormData {
+  project: {
+    name: string
+    tagline: string
+    description: string
+    category: string
+    problemSpace: string
+  }
+  fund: {
+    receivingAddresses: string[]
+    plans: string
+  }
+  team: {
+    name: string
+    description: string
+    email: string
+  }
+  links: {
+    github: string
+    radicle: string
+    website: string
+    twitter: string
+    discord: string
+  }
+  image: {
+    bannerHash: string
+    thumbnailHash: string
+  }
+  dirtyFields: Set<string>
+  furthestStep: number
+  id?: string
+  network?: string
+  owner?: string
+}
 
 /**
  * Extract address for the given chain
@@ -41,6 +84,27 @@ function getAddressForChain(
 }
 
 /**
+ * Get the latest block from subgraph
+ * @returns block number
+ */
+async function getLatestBlock(network: string): Promise<number> {
+  // only interested in the latest block from the specified network
+  const url = subgraphUrl(network)
+  const composer = new MetadataComposer([url])
+  const result = await composer.query(GET_LATEST_BLOCK_QUERY)
+  if (result.error) {
+    throw new Error('Failed to get latest block. ' + result.error)
+  }
+
+  const [meta] = result.data._meta
+  if (!meta) {
+    throw new Error('Missing block information')
+  }
+
+  return meta.block.number
+}
+
+/**
  * Parse and populate receiving addresses
  * @param data data containing receivingAddresses
  * @returns metadata populated with resolvedAddress and addressName
@@ -51,35 +115,15 @@ async function populateAddresses(data: any): Promise<Metadata> {
     chain.shortName
   )
 
-  let hasEns = false
-  let resolvedAddress = addressName
-  if (addressName) {
-    let res: string | null = null
-    try {
-      res = await resolveEns(addressName)
-    } catch {
-      // ignore error, the application should
-      // flag this as missing required field
-    }
-    hasEns = !!res
-    resolvedAddress = res ? res : addressName
-  }
-
   return {
     ...data,
-    hasEns,
     addressName,
-    resolvedAddress,
   }
 }
 
-/**
- * format the address according to EIP3770 format, i.e. eth:0x123...
- * @param address address to format
- * @returns EIP3770 format address
- */
-function toEIP3770Address(address: string): string {
-  return `${chain.shortName}:${address}`
+function sleep(factor: number): Promise<void> {
+  const timeout = factor ** 2 * 1000
+  return new Promise((resolve) => setTimeout(resolve, timeout))
 }
 
 /**
@@ -89,10 +133,10 @@ export class Metadata {
   id?: string
   name?: string
   owner?: string
+  network?: string
   receivingAddresses?: string[]
   addressName?: string
   resolvedAddress?: string
-  hasEns: boolean
   tagline?: string
   description?: string
   category?: string
@@ -100,6 +144,7 @@ export class Metadata {
   plans?: string
   teamName?: string
   teamDescription?: string
+  teamEmail?: string
   githubUrl?: string
   radicleUrl?: string
   websiteUrl?: string
@@ -108,15 +153,14 @@ export class Metadata {
   bannerImageHash?: string
   thumbnailImageHash?: string
   imageHash?: string
+  deletedAt?: number
 
   constructor(data: any) {
     this.id = data.id
     this.name = data.name
     this.owner = data.owner
-    this.addressName = data.addressName
-    this.resolvedAddress = data.resolvedAddress
+    this.network = data.network
     this.receivingAddresses = data.receivingAddresses
-    this.hasEns = !!data.hasEns
     this.tagline = data.tagline
     this.description = data.description
     this.category = data.category
@@ -124,6 +168,7 @@ export class Metadata {
     this.plans = data.plans
     this.teamName = data.teamName
     this.teamDescription = data.teamDescription
+    this.teamEmail = data.teamEmail
     this.githubUrl = data.githubUrl
     this.radicleUrl = data.radicleUrl
     this.websiteUrl = data.websiteUrl
@@ -145,6 +190,7 @@ export class Metadata {
     searchText: string,
     options: SearchOptions
   ): Promise<Metadata[]> {
+    const composer = new MetadataComposer(urls)
     const result = await composer.search(searchText, options)
     if (result.error) {
       throw new Error(result.error)
@@ -160,13 +206,11 @@ export class Metadata {
    * @returns metadata
    */
   static async get(id: string): Promise<Metadata | null> {
+    const composer = new MetadataComposer(urls)
     const result = await composer.get(id)
-    if (result.error) {
-      throw new Error(result.error)
-    }
-
     const { data } = result
     if (!data) {
+      // id not found
       return null
     }
 
@@ -180,6 +224,7 @@ export class Metadata {
    * @returns a list of metadata
    */
   static async getBatch(ids: string[]): Promise<any[]> {
+    const composer = new MetadataComposer(urls)
     const result = await composer.query(GET_METADATA_BATCH_QUERY, { ids })
     if (result.error) {
       throw new Error(result.error)
@@ -189,13 +234,28 @@ export class Metadata {
   }
 
   /**
+   * get the receiving address of the current chain
+   * @param addresses list of EIP3770 addresses
+   * @returns the address of the current chain
+   */
+  getCurrentChainAddress(addresses: string[] = []): string {
+    const chainPrefix = chain.shortName + ':'
+    const chainAddress = addresses.find((addr) => {
+      return addr.startsWith(chainPrefix)
+    })
+
+    return chainAddress ? chainAddress.substring(chainPrefix.length) : ''
+  }
+
+  /**
    * Convert metadata to project interface
    * @returns project
    */
   toProject(): Project {
+    const address = this.getCurrentChainAddress(this.receivingAddresses)
     return {
       id: this.id || '',
-      address: this.resolvedAddress || '',
+      address,
       name: this.name || '',
       tagline: this.tagline,
       description: this.description || '',
@@ -219,10 +279,10 @@ export class Metadata {
   }
 
   /**
-   * Convert metadata to recipient application form data
+   * Convert metadata to form data
    * @returns recipient application form data
    */
-  toRecipient(): RecipientApplicationData {
+  toFormData(): MetadataFormData {
     return {
       project: {
         name: this.name || '',
@@ -232,14 +292,13 @@ export class Metadata {
         problemSpace: this.problemSpace || '',
       },
       fund: {
-        addressName: this.addressName || '',
-        resolvedAddress: this.resolvedAddress || '',
+        receivingAddresses: this.receivingAddresses || [],
         plans: this.plans || '',
       },
       team: {
         name: this.teamName || '',
         description: this.teamDescription || '',
-        email: '', // TODO: populate this
+        email: this.teamEmail || '',
       },
       links: {
         github: this.githubUrl || '',
@@ -252,40 +311,81 @@ export class Metadata {
         bannerHash: this.bannerImageHash || '',
         thumbnailHash: this.thumbnailImageHash || '',
       },
+      dirtyFields: new Set(),
       furthestStep: 0,
-      hasEns: this.hasEns || false,
       id: this.id,
+      owner: this.owner,
+      network: this.network,
     }
   }
 
   /**
-   * Convert recipient form data to Metadata
-   * @param data recipient application form data
+   * Convert form data to Metadata
+   * @param data form data
+   * @param dirtyOnly only set the field in metadata if it's changed
    * @returns Metadata
    */
-  static fromFormData(data: RecipientApplicationData): Metadata {
+  static fromFormData(data: MetadataFormData, dirtyOnly = false): Metadata {
     const { id, project, fund, team, links, image } = data
-    return new Metadata({
-      id,
-      name: project.name,
-      tagline: project.tagline,
-      description: project.description,
-      category: project.category,
-      problemSpace: project.problemSpace,
-      plans: fund.plans,
-      receivingAddresses: [toEIP3770Address(fund.resolvedAddress)],
-      addressName: fund.addressName,
-      resolvedAddress: fund.resolvedAddress,
-      teamName: team.name,
-      teamDescription: team.description,
-      githubUrl: links.github,
-      radicleUrl: links.radicle,
-      websiteUrl: links.website,
-      twitterUrl: links.twitter,
-      discordUrl: links.discord,
-      bannerImageHash: image.bannerHash,
-      thumbnailImageHash: image.thumbnailHash,
-    })
+    const metadata = new Metadata({ id })
+
+    if (!dirtyOnly || data.dirtyFields.has('project.name')) {
+      metadata.name = project.name
+    }
+    if (!dirtyOnly || data.dirtyFields.has('project.tagline')) {
+      metadata.tagline = project.tagline
+    }
+    if (!dirtyOnly || data.dirtyFields.has('project.description')) {
+      metadata.description = project.description
+    }
+    if (!dirtyOnly || data.dirtyFields.has('project.category')) {
+      metadata.category = project.category
+    }
+    if (!dirtyOnly || data.dirtyFields.has('project.problemSpace')) {
+      metadata.problemSpace = project.problemSpace
+    }
+    if (!dirtyOnly || data.dirtyFields.has('fund.plans')) {
+      metadata.plans = fund.plans
+    }
+    if (!dirtyOnly || data.dirtyFields.has('fund.receivingAddresses')) {
+      metadata.receivingAddresses = fund.receivingAddresses
+    }
+    if (!dirtyOnly || data.dirtyFields.has('team.name')) {
+      metadata.teamName = team.name
+    }
+    if (!dirtyOnly || data.dirtyFields.has('team.description')) {
+      metadata.teamDescription = team.description
+    }
+    if (!dirtyOnly || data.dirtyFields.has('team.email')) {
+      metadata.teamEmail = team.email
+    }
+    if (!dirtyOnly || data.dirtyFields.has('links.github')) {
+      metadata.githubUrl = links.github
+    }
+    if (!dirtyOnly || data.dirtyFields.has('links.radicle')) {
+      metadata.radicleUrl = links.radicle
+    }
+    if (!dirtyOnly || data.dirtyFields.has('links.website')) {
+      metadata.websiteUrl = links.website
+    }
+    if (!dirtyOnly || data.dirtyFields.has('links.twitter')) {
+      metadata.twitterUrl = links.twitter
+    }
+    if (!dirtyOnly || data.dirtyFields.has('links.discord')) {
+      metadata.discordUrl = links.discord
+    }
+    if (!dirtyOnly || data.dirtyFields.has('image.bannerHash')) {
+      metadata.bannerImageHash = image.bannerHash
+    }
+    if (!dirtyOnly || data.dirtyFields.has('image.thumbnailHash')) {
+      metadata.thumbnailImageHash = image.thumbnailHash
+    }
+    if (!dirtyOnly) {
+      metadata.network = data.network
+      metadata.owner = data.owner
+    }
+
+    return metadata
   }
 
   /**
@@ -294,6 +394,7 @@ export class Metadata {
    * @returns transaction handle
    */
   async create(web3: providers.Web3Provider): Promise<ContractTransaction> {
+    const composer = new MetadataComposer(urls)
     return composer.create(this, web3.provider)
   }
 
@@ -306,7 +407,8 @@ export class Metadata {
     if (!this.id) {
       throw new Error('Unable to update metadata, id missing')
     }
-    const metadata = { ...this, target: this.id }
+    const metadata = { ...this }
+    const composer = new MetadataComposer(urls)
     return composer.update(metadata, web3.provider)
   }
 
@@ -319,6 +421,7 @@ export class Metadata {
     if (!this.id) {
       throw new Error('Unable to delete metadata, id missing')
     }
+    const composer = new MetadataComposer(urls)
     return composer.delete(this.id, web3.provider)
   }
 
@@ -327,8 +430,30 @@ export class Metadata {
    * @param receipt receipt containing the metadata transaction
    * @returns metadata id
    */
-  static getMetadataId(receipt: ContractReceipt): string {
-    const event = (receipt.events || []).find((e) => e.event === 'NewPost')
-    return `${chain.subgraphNetwork}-${receipt.transactionHash}-${event?.logIndex}`
+  static makeMetadataId(name: string, owner: string): string {
+    const networkHash = utils.id(chain.name)
+    const nameHash = utils.id(name)
+    const hashes = utils.hexConcat([networkHash, owner, nameHash])
+    const id = utils.keccak256(hashes)
+    return id
+  }
+
+  static async waitForBlock(
+    blockNumber: number,
+    network: string,
+    depth = 0,
+    callback: (latest: number, total: number) => void
+  ): Promise<number> {
+    const latestBlock = await getLatestBlock(network)
+    callback(latestBlock, blockNumber)
+    if (latestBlock < blockNumber) {
+      if (depth > MAX_RETRIES) {
+        throw new Error('Waited too long for block ' + blockNumber)
+      }
+      await sleep(depth)
+      return Metadata.waitForBlock(blockNumber, network, depth + 1, callback)
+    } else {
+      return latestBlock
+    }
   }
 }

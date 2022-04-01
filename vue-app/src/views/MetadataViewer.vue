@@ -31,14 +31,29 @@
         <div v-if="!showSummaryPreview">
           <div class="form-background">
             <div class="summary-section-header">
-              <h3 class="step-subtitle">About the project</h3>
-              <links :to="editLink('project')" class="edit-button"
+              <h3 class="step-subtitle">About the metadata</h3>
+              <links
+                v-if="isAuthorized"
+                :to="editLink('project')"
+                class="edit-button"
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Name</h4>
               <div class="data">{{ metadata.name }}</div>
+            </div>
+            <div class="summary" v-if="isDeleted">
+              <h4 class="read-only-title">Deleted</h4>
+              <div class="data">Yes</div>
+            </div>
+            <div class="summary">
+              <h4 class="read-only-title">Owner</h4>
+              <div class="data">{{ metadata.owner }}</div>
+            </div>
+            <div class="summary">
+              <h4 class="read-only-title">Network</h4>
+              <div class="data">{{ metadata.network }}</div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Tagline</h4>
@@ -60,24 +75,24 @@
           <div class="form-background">
             <div class="summary-section-header">
               <h3 class="step-subtitle">Funding details</h3>
-              <links :to="editLink('fund')" class="edit-button"
+              <links
+                v-if="isAuthorized"
+                :to="editLink('fund')"
+                class="edit-button"
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
             <div class="summary">
-              <h4 class="read-only-title">Ethereum address</h4>
-              <div class="data break-all">
-                {{ metadata.addressName }}
-                <links :to="blockExplorer.url" class="no-break">
-                  View on {{ blockExplorer.label }}
-                </links>
-              </div>
+              <h4 class="read-only-title">Ethereum addresses</h4>
               <div
-                class="resolved-address"
-                v-if="metadata.addressName"
-                title="Resolved ENS address"
+                v-for="({ address, url }, index) in receivingAddresses"
+                :key="index"
               >
-                {{ metadata.hasEns ? metadata.resolvedAddress : null }}
+                <div key="index" class="data break-all">
+                  <links :hideArrow="true" :to="url" class="no-break link">
+                    {{ address }}
+                  </links>
+                </div>
               </div>
             </div>
             <div class="summary">
@@ -88,7 +103,10 @@
           <div class="form-background">
             <div class="summary-section-header">
               <h3 class="step-subtitle">Team details</h3>
-              <links :to="editLink('team')" class="edit-button"
+              <links
+                v-if="isAuthorized"
+                :to="editLink('team')"
+                class="edit-button"
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
@@ -113,7 +131,10 @@
           <div class="form-background">
             <div class="summary-section-header">
               <h3 class="step-subtitle">Links</h3>
-              <links :to="editLink('links')" class="edit-button"
+              <links
+                v-if="isAuthorized"
+                :to="editLink('links')"
+                class="edit-button"
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
@@ -186,7 +207,10 @@
           <div class="form-background">
             <div class="summary-section-header">
               <h3 class="step-subtitle">Images</h3>
-              <links :to="editLink('image')" class="edit-button"
+              <links
+                v-if="isAuthorized"
+                :to="editLink('image')"
+                class="edit-button"
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
@@ -203,13 +227,20 @@
               </div>
             </div>
           </div>
-          <div v-if="displayDeleteBtn">
+          <div v-if="displayDeleteBtn && isAuthorized && !isDeleted">
             <box>
               <div class="delete-title">Delete metadata</div>
+              <transaction-result
+                v-if="deleteHash"
+                :hash="deleteHash"
+                :chainId="deleteChainId"
+                :buttons="metadataRegistryButton"
+              />
               <metadata-submission-widget
-                :metadata="metadata"
-                :onSubmit="onSubmit"
-                :onSuccess="onSuccess"
+                v-else
+                :form="formData"
+                :onSubmit="onDeleteSubmit"
+                :onSuccess="onDeleteSuccess"
               />
             </box>
           </div>
@@ -230,11 +261,16 @@ import ProjectProfile from '@/components/ProjectProfile.vue'
 import Links from '@/components/Links.vue'
 import MetadataSubmissionWidget from '@/components/MetadataSubmissionWidget.vue'
 import Box from '@/components/Box.vue'
-import { Metadata } from '@/api/metadata'
+import TransactionResult from '@/components/TransactionResult.vue'
+import { Metadata, MetadataFormData } from '@/api/metadata'
 import { Project } from '@/api/projects'
-
 import { chain } from '@/api/core'
-import { ContractTransaction } from 'ethers'
+import { LinkInfo } from '@/api/types'
+import { isSameAddress } from '@/utils/accounts'
+
+import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
+import { ContractTransaction, ContractReceipt } from 'ethers'
+import { RESET_METADATA } from '@/store/mutation-types'
 
 @Component({
   components: {
@@ -244,6 +280,7 @@ import { ContractTransaction } from 'ethers'
     IpfsCopyWidget,
     Links,
     MetadataSubmissionWidget,
+    TransactionResult,
     Box,
   },
 })
@@ -251,14 +288,40 @@ export default class MetadataViewer extends mixins(validationMixin) {
   @Prop() metadata!: Metadata
   @Prop() displayDeleteBtn!: boolean
   showSummaryPreview = false
+  deleteHash = ''
+  deleteChainId = 0
+
+  created() {
+    // reset the cached modified metadata to ensure the edit view
+    // will show the same data as this view
+    this.$store.commit(RESET_METADATA)
+  }
 
   get projectInterface(): Project {
     return this.metadata.toProject()
   }
 
+  get isDeleted(): boolean {
+    return this.metadata.deletedAt === null
+  }
+
   editLink(step: string): string {
     const { id } = this.metadata || {}
     return `/metadata/${id}/edit/${step}`
+  }
+
+  get isAuthorized(): boolean {
+    const { currentUser } = this.$store.state
+    const { owner, network } = this.metadata || {}
+    const walletAddress = currentUser?.walletAddress
+
+    if (!currentUser || !owner || !walletAddress) {
+      return false
+    }
+
+    return (
+      network === chain.name && isSameAddress(owner, currentUser.walletAddress)
+    )
   }
 
   handleToggleTab(event): void {
@@ -272,21 +335,62 @@ export default class MetadataViewer extends mixins(validationMixin) {
     this.showSummaryPreview = !this.showSummaryPreview
   }
 
-  onSubmit(metadata: Metadata, provider: any): Promise<ContractTransaction> {
+  get formData(): MetadataFormData {
+    const form = this.metadata.toFormData()
+    return form
+  }
+
+  onDeleteSubmit(
+    form: MetadataFormData,
+    provider: any
+  ): Promise<ContractTransaction> {
+    const { network } = form
+    const { chainId } = this.$web3
+
+    if (CHAIN_INFO[chainId].name !== network) {
+      throw new Error(`Deleting metadata on ${network} is not supported.`)
+    }
+
+    const metadata = new Metadata({ id: form.id })
     return metadata.delete(provider)
   }
 
-  onSuccess(): void {
-    this.$router.push({
-      name: 'metadata-registry',
-    })
+  onDeleteSuccess(receipt: ContractReceipt, chainId: number): void {
+    this.deleteHash = receipt.transactionHash
+    this.deleteChainId = chainId
   }
 
-  get blockExplorer(): { label: string; url: string } {
-    return {
-      label: chain.explorerLabel,
-      url: `${chain.explorer}/address/${this.metadata.resolvedAddress}`,
-    }
+  get metadataRegistryButton(): LinkInfo[] {
+    return [
+      {
+        url: `/metadata`,
+        text: 'Goto metadata registry',
+      },
+    ]
+  }
+
+  getChainExplorer(name: string): { label: string; explorer: string } {
+    const chain: any = Object.values(CHAIN_INFO).find(
+      ({ shortName }) => shortName === name
+    )
+    const { explorer = '', explorerLabel = '' } = chain || {}
+
+    return { explorer, label: explorerLabel }
+  }
+
+  get receivingAddresses(): { address: string; label: string; url: string }[] {
+    const addresses = this.metadata.receivingAddresses || []
+
+    return addresses.map((addr) => {
+      const [shortName, address] = addr.split(':')
+      const chain = this.getChainExplorer(shortName)
+
+      return {
+        address: addr,
+        label: chain.label,
+        url: `${chain.explorer}/address/${address}`,
+      }
+    })
   }
 
   get isEmailRequired(): boolean {
