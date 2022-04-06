@@ -105,7 +105,6 @@ export default class MetadataSubmissionWidget extends Vue {
   }
 
   updateProgress(latest: number, total: number): void {
-    console.log('updating progress....', latest, total)
     this.progress = { latest, total }
   }
 
