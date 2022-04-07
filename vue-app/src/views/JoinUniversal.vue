@@ -51,7 +51,7 @@
       <form-navigation
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
-        :finalStep="steps.length - 2"
+        :finalStep="steps.length - 1"
         :currentStep="currentStep"
         :callback="saveFormData"
         :handleStepNav="handleStepNav"
