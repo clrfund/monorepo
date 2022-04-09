@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="grid">
-      <div class="title-area">
+      <div class="tabs-area">
         <div class="toggle-tabs-desktop">
           <p
             class="tab"
@@ -21,7 +21,7 @@
           </p>
         </div>
       </div>
-      <div id="summary">
+      <div class="summary-area">
         <project-profile
           v-if="showSummaryPreview"
           :project="projectInterface"
@@ -89,7 +89,7 @@
                 :key="index"
               >
                 <div key="index" class="data break-all">
-                  <links :hideArrow="true" :to="url" class="no-break link">
+                  <links :hideArrow="true" :to="url" class="link">
                     {{ address }}
                   </links>
                 </div>
@@ -421,8 +421,55 @@ export default class MetadataViewer extends mixins(validationMixin) {
 
 .grid {
   display: grid;
-  gap: 0 2rem;
-  padding: 0 2rem;
+  grid-template-areas:
+    'tabs'
+    'summary';
+}
+
+.tabs-area {
+  grid-area: tabs;
+  padding: 1rem;
+  padding-left: 0rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-direction: column;
+
+  @media (max-width: $breakpoint-m) {
+    padding-bottom: 0;
+    padding-left: 1rem;
+    font-size: 14px;
+    font-weight: normal;
+  }
+}
+
+.summary-area {
+  grid-area: summary;
+  overflow: auto;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  height: 100%;
+  @media (min-width: $breakpoint-m) {
+    padding: 0;
+    width: 100%;
+  }
+}
+
+.form-background {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: $bg-light-color;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  &:last-of-type {
+    margin-bottom: 2rem;
+  }
+  @media (max-width: $breakpoint-m) {
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
 }
 
 .link {
