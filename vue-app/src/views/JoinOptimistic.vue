@@ -556,18 +556,18 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Ethereum address</h4>
-                  <div class="data break-all">
+                  <div v-if="form.hasEns" class="data break-all">
                     {{ form.fund.addressName }}
-                    <links :to="blockExplorer.url" class="no-break">
-                      View on {{ blockExplorer.label }}
-                    </links>
                   </div>
                   <div
-                    class="resolved-address"
+                    class="data"
                     v-if="form.fund.addressName"
                     title="Resolved ENS address"
                   >
-                    {{ form.hasEns ? form.fund.resolvedAddress : null }}
+                    <address-widget
+                      :address="form.fund.resolvedAddress"
+                      :chainId="chainId"
+                    />
                   </div>
                 </div>
                 <div class="summary">
@@ -747,6 +747,7 @@ import FormNavigation from '@/components/FormNavigation.vue'
 import FormProgressWidget from '@/components/FormProgressWidget.vue'
 import IpfsImageUpload from '@/components/IpfsImageUpload.vue'
 import IpfsCopyWidget from '@/components/IpfsCopyWidget.vue'
+import AddressWidget from '@/components/AddressWidget.vue'
 import Loader from '@/components/Loader.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
@@ -761,6 +762,7 @@ import {
 } from '@/api/recipient'
 import { Project } from '@/api/projects'
 import { chain } from '@/api/core'
+import { CHAIN_ID } from '@/plugins/Web3/constants/chains'
 
 @Component({
   components: {
@@ -770,6 +772,7 @@ import { chain } from '@/api/core'
     FormProgressWidget,
     IpfsImageUpload,
     IpfsCopyWidget,
+    AddressWidget,
     Loader,
     Markdown,
     ProjectProfile,
@@ -994,13 +997,6 @@ export default class JoinView extends mixins(validationMixin) {
     return this.form.furthestStep
   }
 
-  get blockExplorer(): { label: string; url: string } {
-    return {
-      label: chain.explorerLabel,
-      url: `${chain.explorer}/address/${this.form.fund.resolvedAddress}`,
-    }
-  }
-
   async checkEns(): Promise<void> {
     const { addressName } = this.form?.fund
     if (addressName) {
@@ -1008,6 +1004,10 @@ export default class JoinView extends mixins(validationMixin) {
       this.form.hasEns = !!res
       this.form.fund.resolvedAddress = res ? res : addressName
     }
+  }
+
+  get chainId(): number | undefined {
+    return CHAIN_ID[chain.name]
   }
 }
 </script>
@@ -1511,18 +1511,5 @@ export default class JoinView extends mixins(validationMixin) {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-}
-
-.no-break {
-  white-space: nowrap;
-}
-
-.resolved-address {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  opacity: 0.5;
-  word-break: keep-all;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
 }
 </style>
