@@ -129,3 +129,12 @@ export const CHAIN_INFO: ChainInfo = {
     name: 'matic',
   },
 }
+
+// a lookup table for chain id
+export const CHAIN_ID: Record<string, number> = Object.entries(
+  CHAIN_INFO
+).reduce((ids, [id, chain]) => {
+  ids[chain.name] = id
+  ids[chain.shortName] = id
+  return ids
+}, {})

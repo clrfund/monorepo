@@ -49,7 +49,14 @@
             </div>
             <div class="summary">
               <h4 class="read-only-title">Owner</h4>
-              <div class="data">{{ metadata.owner }}</div>
+              <div class="data">
+                <address-widget
+                  v-if="metadata.owner"
+                  :address="metadata.owner"
+                  :chainId="getChainId(metadata.network)"
+                />
+                <div class="data" v-else>Not provided</div>
+              </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Network</h4>
@@ -85,13 +92,11 @@
             <div class="summary">
               <h4 class="read-only-title">Ethereum addresses</h4>
               <div
-                v-for="({ address, url }, index) in receivingAddresses"
+                v-for="({ address, chainId }, index) in receivingAddresses"
                 :key="index"
               >
-                <div key="index" class="data break-all">
-                  <links :hideArrow="true" :to="url" class="link">
-                    {{ address }}
-                  </links>
+                <div key="index" class="data">
+                  <address-widget :address="address" :chainId="chainId" />
                 </div>
               </div>
             </div>
@@ -263,6 +268,7 @@ import Component, { mixins } from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { validationMixin } from 'vuelidate'
 import IpfsCopyWidget from '@/components/IpfsCopyWidget.vue'
+import AddressWidget from '@/components/AddressWidget.vue'
 import Loader from '@/components/Loader.vue'
 import Markdown from '@/components/Markdown.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
@@ -276,7 +282,7 @@ import { chain } from '@/api/core'
 import { LinkInfo } from '@/api/types'
 import { isSameAddress } from '@/utils/accounts'
 
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
+import { CHAIN_INFO, CHAIN_ID } from '@/plugins/Web3/constants/chains'
 import { ContractTransaction, ContractReceipt } from 'ethers'
 import { RESET_METADATA } from '@/store/mutation-types'
 
@@ -286,6 +292,7 @@ import { RESET_METADATA } from '@/store/mutation-types'
     Markdown,
     ProjectProfile,
     IpfsCopyWidget,
+    AddressWidget,
     Links,
     MetadataSubmissionWidget,
     TransactionResult,
@@ -377,26 +384,20 @@ export default class MetadataViewer extends mixins(validationMixin) {
     ]
   }
 
-  getChainExplorer(name: string): { label: string; explorer: string } {
-    const chain: any = Object.values(CHAIN_INFO).find(
-      ({ shortName }) => shortName === name
-    )
-    const { explorer = '', explorerLabel = '' } = chain || {}
-
-    return { explorer, label: explorerLabel }
+  getChainId(network: string): number | undefined {
+    return CHAIN_ID[network]
   }
 
-  get receivingAddresses(): { address: string; label: string; url: string }[] {
+  get receivingAddresses(): { address: string; chainId: number }[] {
     const addresses = this.metadata.receivingAddresses || []
 
     return addresses.map((addr) => {
       const [shortName, address] = addr.split(':')
-      const chain = this.getChainExplorer(shortName)
+      const chainId = CHAIN_ID[shortName]
 
       return {
-        address: addr,
-        label: chain.label,
-        url: `${chain.explorer}/address/${address}`,
+        address,
+        chainId,
       }
     })
   }
