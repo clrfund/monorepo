@@ -310,7 +310,14 @@ export async function getRequests(
 
   const requests: Record<string, Request> = {}
   for (const recipient of recipients) {
-    let metadata = JSON.parse(recipient.recipientMetadata || '{}')
+    let metadata: any = {}
+    try {
+      metadata = JSON.parse(recipient.recipientMetadata || '{}')
+    } catch {
+      // instead of throwing error, let it flow throw so
+      // we can investigate the issue from the subgraph
+      metadata.name = 'N/A'
+    }
 
     const requestType = Number(recipient.requestType)
     if (requestType === RequestTypeCode.Registration) {
