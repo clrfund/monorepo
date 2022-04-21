@@ -158,7 +158,7 @@ export default class WalletWidget extends Vue {
   gap: 0.5rem;
   align-items: center;
   cursor: pointer;
-  background: $clr-pink-dark-gradient;
+  background: var(--bg-gradient);
   border-radius: 32px;
   padding-right: 0.5rem;
   width: fit-content;
@@ -169,6 +169,7 @@ export default class WalletWidget extends Vue {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: min(20vw, 14ch);
+    color: var(--text-color);
     @media (max-width: $breakpoint-s) {
       display: none;
     }
@@ -205,11 +206,12 @@ export default class WalletWidget extends Vue {
     gap: 0.5rem;
     align-items: center;
     cursor: pointer;
-    background: $bg-primary-color;
+    background: var(--bg-primary-color);
     padding: 0.5rem 0.5rem;
     border-radius: 32px;
     margin: 0.25rem;
     margin-right: 0;
+    color: var(--text-color);
   }
 
   .profile-info-balance img {

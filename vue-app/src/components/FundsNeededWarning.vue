@@ -98,15 +98,15 @@ export default class FundsNeededWarning extends Vue {
 .warning {
   width: 100%;
   box-sizing: border-box;
-  background: $bg-primary-color;
+  background: var(--warning-background);
   border-radius: 1rem;
   padding: 1rem;
   margin: 1rem 0 0;
-  color: $warning-color;
+  color: var(--warning-color);
 }
 
 .message {
   margin: 1.25rem 0 0;
-  color: $text-color;
+  color: var(--text-color);
 }
 </style>

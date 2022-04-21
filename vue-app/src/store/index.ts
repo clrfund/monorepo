@@ -31,7 +31,7 @@ const state: RootState = {
   recipientRegistryInfo: null,
   showCartPanel: false,
   tally: null,
-  lightTheme: false,
+  theme: null,
 }
 
 const store: StoreOptions<RootState> = {

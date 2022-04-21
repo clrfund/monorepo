@@ -1,5 +1,3 @@
-@import './vars';
-
 @mixin disabledAttribute() {
   &[disabled],
   &[disabled]:hover {
@@ -57,4 +55,12 @@
 @mixin borderColor($color) {
   background: inherit;
   border: 1px solid $color;
+}
+
+@mixin gradientBackground($angle, $rgba1, $percent1, $rgba2, $percent2) {
+  background: linear-gradient($angle, $rgba1 $percent1, $rgba2 $percent2);
+}
+
+@mixin stepColor($color) {
+  color: rgba($color, 0.6);
 }

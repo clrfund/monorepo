@@ -35,6 +35,7 @@ import {
   SET_HAS_VOTED,
   TOGGLE_THEME,
 } from './mutation-types'
+import { ThemeMode } from '@/api/core'
 
 const mutations = {
   [TOGGLE_EDIT_SELECTION](state, isOpen: boolean | undefined) {
@@ -154,12 +155,12 @@ const mutations = {
       state.showCartPanel = !state.showCartPanel
     }
   },
-  [TOGGLE_THEME](state, lightTheme: boolean | undefined) {
-    // Handle the case of both null and undefined
-    if (lightTheme != null) {
-      state.lightTheme = lightTheme
+  [TOGGLE_THEME](state, theme: string | undefined) {
+    if (theme) {
+      state.theme = theme
     } else {
-      state.lightTheme = !state.lightTheme
+      state.theme =
+        state.theme === ThemeMode.LIGHT ? ThemeMode.DARK : ThemeMode.LIGHT
     }
   },
   [RESTORE_COMMITTED_CART_TO_LOCAL_CART](state) {

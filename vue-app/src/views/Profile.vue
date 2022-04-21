@@ -272,7 +272,7 @@ p.no-margin {
     right: 0;
     top: 0;
     bottom: 0;
-    background: $bg-light-color;
+    background: var(--bg-light-color);
     padding: 1.5rem;
     box-sizing: border-box;
     width: clamp(min(414px, 100%), 35%, 500px);
@@ -282,16 +282,22 @@ p.no-margin {
     z-index: 2;
     overflow-y: scroll;
 
+    .balances-section {
+      img {
+        filter: var(--img-filter, invert(0.7));
+      }
+    }
+
     .balances-card,
     .setup-card,
     .address-card {
       padding: 1rem;
       border-radius: 0.5rem;
-      background: $bg-primary-color;
+      background: var(--bg-primary-color);
       gap: 1rem;
     }
     .address-card {
-      background: $clr-pink-dark-gradient;
+      background: var(--bg-gradient);
 
       .address {
         margin: 0;
@@ -324,7 +330,7 @@ p.no-margin {
           display: flex;
           justify-content: center;
           align-items: center;
-          border: 1px solid $text-color;
+          border: 1px solid var(--border-color);
           padding: 0.5rem;
           height: 2rem;
           width: 2rem;
@@ -337,13 +343,14 @@ p.no-margin {
 
           img {
             margin: 0;
+            filter: var(--img-filter, invert(1));
           }
         }
       }
     }
 
     .complete-link {
-      color: white;
+      color: var(--text-color);
       text-decoration: underline;
       margin: 1rem 0;
       cursor: pointer;
@@ -359,6 +366,10 @@ p.no-margin {
       cursor: pointer;
       &:hover {
         transform: scale(1.01);
+      }
+
+      img {
+        filter: var(--img-filter, invert(1));
       }
     }
 
@@ -384,7 +395,7 @@ p.no-margin {
         padding: 0 1rem;
 
         .project-hidden {
-          color: $error-color;
+          color: var(--error-color);
         }
       }
     }

@@ -80,7 +80,7 @@ export default class FilterDropdown extends Vue {
   .filter-btn {
     background: none;
     cursor: pointer;
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     display: flex;
     justify-content: space-between;
@@ -98,6 +98,9 @@ export default class FilterDropdown extends Vue {
     @media (max-width: $breakpoint-m) {
       width: auto;
     }
+    img {
+      filter: var(--img-filter, invert(1));
+    }
   }
 
   .selector-wrapper {
@@ -106,7 +109,7 @@ export default class FilterDropdown extends Vue {
     top: 110%;
     right: 0;
     grid-template-columns: repeat(1, 4fr);
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     overflow: hidden;
     justify-content: space-between;
@@ -117,11 +120,11 @@ export default class FilterDropdown extends Vue {
       place-items: left;
       cursor: pointer;
       padding: 0.5rem;
-      background: $bg-primary-color;
+      background: var(--bg-primary-color);
       text-transform: capitalize;
       line-height: 24px;
       &:hover {
-        background: $bg-secondary-color;
+        background: var(--bg-secondary-highlight);
       }
     }
     .category-btn-selected {
@@ -133,23 +136,19 @@ export default class FilterDropdown extends Vue {
       margin: 0;
       justify-content: space-between;
       line-height: 24px;
-
-      &:hover {
-        background: $clr-pink;
-      }
     }
     @media (max-width: $breakpoint-s) {
       .category-btn {
         border: none;
         &:nth-child(1) {
-          border-right: 1px solid $border-color;
-          border-bottom: 1px solid $border-color;
+          border-right: 1px solid var(--border-color);
+          border-bottom: 1px solid var(--border-color);
         }
         &:nth-child(2) {
-          border-bottom: 1px solid $border-color;
+          border-bottom: 1px solid var(--border-color);
         }
         &:nth-child(3) {
-          border-right: 1px solid $border-color;
+          border-right: 1px solid var(--border-color);
         }
       }
     }

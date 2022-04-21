@@ -152,13 +152,12 @@ export default class AddToCartButton extends Vue {
 @import '../styles/theme';
 
 .input-button {
-  background: #f7f7f7;
+  background: var(--text-body);
   border-radius: 2rem;
-  border: 2px solid $bg-primary-color;
+  border: 2px solid var(--bg-primary-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: black;
   padding: 0.125rem;
   margin-bottom: 1rem;
   z-index: 100;
@@ -167,14 +166,20 @@ export default class AddToCartButton extends Vue {
 .input {
   background: none;
   border: none;
-  color: $bg-primary-color;
+  color: var(--bg-primary-color);
   width: 100%;
+}
+
+/* Change Autocomplete styles in Chrome*/
+input:-webkit-autofill {
+  box-shadow: 0 0 0 30px var(--text-body) inset !important;
+  -webkit-text-fill-color: var(--bg-primary-color) !important;
 }
 
 .donate-btn {
   padding: 0.5rem 1rem;
-  background: $bg-primary-color;
-  color: white;
+  background: var(--bg-primary-color);
+  color: var(--text-color);
   border-radius: 32px;
   font-size: 16px;
   font-family: Inter;
@@ -184,8 +189,8 @@ export default class AddToCartButton extends Vue {
 }
 
 .donate-btn-full {
-  background: $bg-primary-color;
-  color: white;
+  background: var(--bg-primary-color);
+  color: var(--text-color);
   border-radius: 32px;
   padding: 0.5rem 1rem;
   font-size: 16px;
@@ -198,7 +203,7 @@ export default class AddToCartButton extends Vue {
   z-index: 1;
   cursor: pointer;
   &:hover {
-    background: $bg-light-color;
+    background: var(--bg-light-color);
   }
 }
 </style>

@@ -1,15 +1,45 @@
 @import './vars';
 @import './mixins';
-@import './dark-theme';
-@import './light-theme';
+
+.btn-primary {
+  @include button(white, var(--brand-secondary), none);
+}
+
+.btn-action {
+  @include button(white, var(--button-action), none);
+}
+
+.btn-secondary {
+  @include button(
+    var(--button-secondary-color),
+    var(--button-secondary-bg),
+    2px solid var(--button-secondary-border)
+  );
+}
+
+.btn-info {
+  @include button(
+    var(--text-color),
+    var(--bg-primary-color),
+    2px solid var(--loader-color)
+  );
+}
+
+.btn-warning {
+  @include button(var(--error-color), none, 2px solid var(--error-color));
+}
+
+.app-btn {
+  @include button(white, var(--brand-primary), none);
+}
+
+#banner {
+  @include banner(var(--text-color), var(--bg-primary-color));
+}
 
 .explorer-btn {
-  @include button(
-    white,
-    $clr-pink-light-gradient-inactive,
-    1px solid $bg-light-color
-  );
-  box-shadow: $box-shadow;
+  @include button(white, var(--bg-inactive), none);
+  box-shadow: var(--box-shadow);
   display: flex;
   gap: 0.5rem;
   padding: 0.5rem;
@@ -24,18 +54,25 @@
 
 .navbar-btn,
 .dropdown-btn {
-  @include button(white, $bg-light-color, 1px solid rgba(115, 117, 166, 0.3));
+  @include button(white, #2c2938, 1px solid rgba(115, 117, 166, 0.3));
   padding: 0.25rem 0.5rem;
   border-radius: 8px;
   margin-right: 0.5rem;
   display: flex;
 }
 
+#nav-bar {
+  .app-btn {
+    padding: 0.25rem 1.25rem;
+    border-radius: 1rem;
+  }
+}
+
 .warning-text {
   font-size: 12px;
   font-family: Inter;
   line-height: 150%;
-  color: $warning-color;
+  color: var(--attention-color);
   text-transform: uppercase;
   font-weight: 500;
 }
@@ -52,14 +89,14 @@
   height: 0.75rem;
   margin: 0;
   border-radius: 50%;
-  border: 2px solid #fff;
-  border-color: #fff transparent #fff transparent;
+  border: 2px solid var(--loader-color);
+  border-color: var(--loader-color) transparent var(--loader-color) transparent;
 }
 
 .tag {
   font-family: 'Glacial Indifference', sans-serif;
   padding: 0.5rem 0.75rem;
-  background: $bg-light-color;
+  background: var(--bg-light-accent);
   color: $button-disabled-text-color;
   width: fit-content;
   border-radius: 4px;
@@ -85,7 +122,7 @@
   padding-bottom: 4rem;
 
   .content-heading {
-    border-bottom: $border;
+    border-bottom: 2px solid var(--border-color);
   }
 
   h2 {
@@ -112,5 +149,5 @@
   width: 100%;
   height: 3px;
   border-radius: 1px;
-  background: $clr-pink-dark-gradient-bg;
+  background: var(--brand-tertiary);
 }

@@ -321,27 +321,27 @@ export default class RecipientRegistryView extends Vue {
 
   .hr {
     width: 100%;
-    border-bottom: 1px solid rgba(115, 117, 166, 1);
+    border-bottom: 1px solid $border-light;
   }
 }
 
 .requests {
-  border: 1px solid #000;
+  border: 1px solid var(--border-strong);
   border-radius: 0.5rem;
   border-spacing: 0;
   line-height: 150%;
   table-layout: fixed;
   width: 100%;
-  background-color: $bg-light-color;
+  background-color: var(--bg-light-color);
 
   thead {
-    background-color: $bg-primary-color;
+    background-color: var(--bg-primary-color);
     border-radius: 6px;
   }
 
   tr {
     &:nth-child(2n) {
-      background-color: $bg-secondary-color;
+      background-color: var(--bg-secondary-color);
     }
   }
 
@@ -398,8 +398,8 @@ export default class RecipientRegistryView extends Vue {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid $bg-light-color;
-    background: $clr-green-bg600;
+    border: 1px solid var(--bg-light-color);
+    background: rgba($clr-green, 0.6);
     cursor: pointer;
     &:hover {
       transform: scale(1.1);
@@ -417,8 +417,8 @@ export default class RecipientRegistryView extends Vue {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid $bg-light-color;
-    background: $error-color;
+    border: 1px solid var(--bg-light-color);
+    background: var(--error-color);
     cursor: pointer;
     &:hover {
       transform: scale(1.1);

@@ -149,8 +149,8 @@ export default class extends Vue {
 
 .cart-item {
   padding: 1rem;
-  background: $bg-light-color;
-  border-bottom: 1px solid #000000;
+  background: var(--bg-light-color);
+  border-bottom: 1px solid #000;
   &:last-of-type {
     border-bottom: none;
   }
@@ -158,8 +158,8 @@ export default class extends Vue {
 
 .new-cart-item {
   padding: 1rem;
-  background: $clr-green-bg;
-  border-bottom: 1px solid #000000;
+  background: rgba($clr-green, 0.2);
+  border-bottom: 1px solid #000;
   &:last-of-type {
     border-bottom: none;
   }
@@ -188,7 +188,7 @@ export default class extends Vue {
 
   .project-name {
     align-self: center;
-    color: $text-color;
+    color: var(--text-color);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -219,9 +219,9 @@ export default class extends Vue {
   }
 
   .input-button {
-    background: #f7f7f7;
+    background: var(--text-body);
     border-radius: 2rem;
-    border: 2px solid $bg-primary-color;
+    border: 2px solid var(--bg-primary-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -233,7 +233,7 @@ export default class extends Vue {
   .input {
     background: none;
     border: none;
-    color: $bg-primary-color;
+    color: var(--bg-primary-color);
     width: 100%;
   }
 }
@@ -254,7 +254,7 @@ export default class extends Vue {
   .remove-icon-background {
     padding: 0.5rem;
     &:hover {
-      background: $bg-secondary-color;
+      background: var(--bg-secondary-color);
       border-radius: 0.5rem;
     }
     cursor: pointer;

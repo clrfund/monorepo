@@ -214,9 +214,9 @@ export default class MatchingFundsModal extends Vue {
 }
 
 .modal-body {
-  background-color: $bg-primary-color;
+  background-color: var(--bg-primary-color);
   padding: $modal-space;
-  box-shadow: $box-shadow;
+  box-shadow: var(--box-shadow);
   text-align: left;
 
   .loader {
@@ -225,12 +225,12 @@ export default class MatchingFundsModal extends Vue {
 }
 
 .input-button {
-  background: #f7f7f7;
+  background: var(--text-body);
   border-radius: 2rem;
-  border: 2px solid $bg-primary-color;
+  border: 2px solid var(--bg-primary-color);
   display: flex;
   align-items: center;
-  color: black;
+  color: var(--text-color);
   padding: 0.125rem;
   z-index: 100;
   width: 100%;
@@ -239,7 +239,7 @@ export default class MatchingFundsModal extends Vue {
 .input {
   background: none;
   border: none;
-  color: $bg-primary-color;
+  color: var(--bg-primary-color);
   width: 100%;
 }
 
@@ -254,7 +254,7 @@ export default class MatchingFundsModal extends Vue {
   text-transform: uppercase;
   font-weight: 500;
   margin-top: 0.5rem;
-  color: $warning-color;
+  color: var(--attention-color);
 }
 
 .transaction-fee {

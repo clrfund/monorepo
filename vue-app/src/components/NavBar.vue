@@ -52,9 +52,10 @@ import { Prop } from 'vue-property-decorator'
 import WalletWidget from './WalletWidget.vue'
 import CartWidget from './CartWidget.vue'
 import Links from './Links.vue'
-import { chain } from '@/api/core'
+import { chain, ThemeMode } from '@/api/core'
 import { TOGGLE_THEME } from '@/store/mutation-types'
 import { lsGet, lsSet } from '@/utils/localStorage'
+import { isValidTheme, getOsColorScheme } from '@/utils/theme'
 
 @Component({
   components: { WalletWidget, CartWidget, Links },
@@ -75,6 +76,10 @@ export default class NavBar extends Vue {
     },
   ]
   created() {
+    const savedTheme = lsGet(this.themeKey)
+    const theme = isValidTheme(savedTheme) ? savedTheme : getOsColorScheme()
+    this.$store.commit(TOGGLE_THEME, theme)
+
     if (chain.isLayer2) {
       this.dropdownItems.splice(-1, 0, {
         to: '/about/layer-2',
@@ -82,24 +87,25 @@ export default class NavBar extends Vue {
         emoji: '🚀',
       })
     }
-    this.$store.commit(TOGGLE_THEME, !!lsGet(this.lsLightThemeKey))
   }
 
   toggleHelpDropdown(): void {
     this.showHelpDowndown = !this.showHelpDowndown
   }
 
-  get lsLightThemeKey(): string {
-    return 'light-theme'
-  }
-
   toggleTheme(): void {
     this.$store.commit(TOGGLE_THEME)
-    lsSet(this.lsLightThemeKey, !lsGet(this.lsLightThemeKey))
+    lsSet(this.themeKey, this.$store.state.theme)
   }
 
   get themeIcon(): string {
-    return this.$store.state.lightTheme ? 'half-moon.svg' : 'sun.svg'
+    return this.$store.state.theme === ThemeMode.LIGHT
+      ? 'half-moon.svg'
+      : 'sun.svg'
+  }
+
+  get themeKey(): string {
+    return 'theme'
   }
 }
 </script>
@@ -117,8 +123,8 @@ export default class NavBar extends Vue {
   height: 64px;
   justify-content: space-between;
   align-items: center;
-  background: $bg-secondary-color;
-  box-shadow: $box-shadow;
+  background: $clr-black;
+  box-shadow: $box-shadow-nav-bar;
   @media (max-width: $breakpoint-m) {
     padding: 0 1rem;
   }
@@ -144,8 +150,8 @@ export default class NavBar extends Vue {
       position: absolute;
       top: 2rem;
       right: 0.5rem;
-      background: $bg-secondary-color;
-      border: 1px solid rgba(115, 117, 166, 0.3);
+      background: var(--bg-secondary-color);
+      border: 1px solid rgba($border-light, 0.3);
       border-radius: 0.5rem;
       min-width: 160px;
       box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
@@ -169,15 +175,15 @@ export default class NavBar extends Vue {
         gap: 0.5rem;
         width: 176px;
         &:after {
-          color: $text-color;
+          color: var(--text-color);
         }
         &:hover {
-          background: $bg-light-color;
+          background: var(--bg-light-color);
         }
 
         .item-text {
           margin: 0;
-          color: $text-color;
+          color: var(--text-color);
         }
       }
     }

@@ -226,9 +226,10 @@ export default class IpfsImageUpload extends Vue {
 
 .input {
   flex: 1;
+  color: var(--text-color);
   border-radius: 16px;
   border: 2px solid $button-color;
-  background-color: $bg-secondary-color;
+  background-color: var(--bg-secondary-color);
   margin: 0.5rem 0;
   padding: 0.5rem 1rem;
   font-size: 16px;
@@ -241,13 +242,13 @@ export default class IpfsImageUpload extends Vue {
     border: 2px solid $clr-green;
   }
   &:hover {
-    background: $bg-primary-color;
+    background: var(--bg-primary-color);
     border: 2px solid $highlight-color;
     box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
   }
   &:optional {
     border: 2px solid $button-color;
-    background-color: $bg-secondary-color;
+    background-color: var(--bg-secondary-color);
   }
 }
 

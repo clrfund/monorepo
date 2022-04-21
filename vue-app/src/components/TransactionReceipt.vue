@@ -17,7 +17,7 @@
     <div class="actions">
       <links
         class="explorerLink"
-        :to="blockExplorerUrl"
+        :to="blockExplorer.url"
         v-tooltip="`View on ${blockExplorer.label}`"
         :hideArrow="true"
       >
@@ -99,13 +99,13 @@ export default class TransactionReceipt extends Vue {
   padding: 0.25rem;
   cursor: pointer;
   &:hover {
-    background: $clr-pink-light-gradient;
+    background: var(--brand-primary);
     border-radius: 16px;
   }
 }
 
 .hash {
-  color: #fff;
+  color: var(--text-color);
   margin: 0;
   font-size: 14px;
   text-transform: uppercase;
@@ -117,8 +117,9 @@ export default class TransactionReceipt extends Vue {
   height: 0.75rem;
   padding: 0.25rem;
   margin-right: 0.25rem;
-  background: $clr-pink-light-gradient;
+  background: $gradient-highlight;
   border-radius: 2rem;
+  filter: var(--img-filter, invert(1));
 }
 
 .actions {

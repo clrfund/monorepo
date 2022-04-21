@@ -28,7 +28,11 @@
             <p v-text="name" class="active step" />
           </template>
           <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
-            <img src="@/assets/green-tick.svg" alt="step complete" />
+            <img
+              class="completed-step"
+              src="@/assets/green-tick.svg"
+              alt="step complete"
+            />
             <p v-text="name" class="step" />
           </template>
           <template v-else>
@@ -94,6 +98,7 @@ export default class FormProgressWidget extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
+@import '../styles/mixins';
 
 .progress-area {
   grid-area: progress;
@@ -105,7 +110,7 @@ export default class FormProgressWidget extends Vue {
     align-self: start;
     padding: 1.5rem 1rem;
     border-radius: 16px;
-    box-shadow: $box-shadow;
+    box-shadow: var(--box-shadow);
 
     .progress-steps {
       margin-bottom: 1rem;
@@ -117,14 +122,19 @@ export default class FormProgressWidget extends Vue {
       img {
         margin-right: 1rem;
       }
+
+      img:not(.completed-step) {
+        filter: var(--img-filter, invert(0.3));
+      }
+
       p {
         margin: 0.5rem 0;
       }
       .step {
-        color: #fff9;
+        @include stepColor(var(--text-color-rgb));
       }
       .active {
-        color: white;
+        color: var(--text-color);
         font-weight: 600;
         font-size: 1rem;
       }
@@ -147,7 +157,7 @@ export default class FormProgressWidget extends Vue {
     margin-bottom: 0;
     position: fixed;
     width: 100%;
-    background: $bg-secondary-color;
+    background: var(--bg-secondary-color);
     z-index: 1;
 
     .padding {
@@ -171,7 +181,7 @@ export default class FormProgressWidget extends Vue {
 .cancel-link {
   position: sticky;
   top: 0px;
-  color: $error-color;
+  color: var(--error-color);
   text-decoration: underline;
 }
 
