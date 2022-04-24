@@ -231,6 +231,17 @@ const getters = {
       return maciFactory.maxRecipients
     }
   },
+  userRegistryAddress: (state: RootState): string | undefined => {
+    const { currentRound, factory } = state
+
+    if (currentRound) {
+      return currentRound.userRegistryAddress
+    }
+
+    if (factory) {
+      return factory.userRegistryAddress
+    }
+  },
 }
 
 export default getters

@@ -127,20 +127,16 @@ const actions = {
       return
     }
 
-    let nativeTokenAddress, isRegistered, balance
+    let nativeTokenAddress, userRegistryAddress, balance
 
     if (state.factory) {
       nativeTokenAddress = state.factory.nativeTokenAddress
+      userRegistryAddress = state.factory.userRegistryAddress
     }
 
     if (state.currentRound) {
       nativeTokenAddress = state.currentRound.nativeTokenAddress
-
-      // Check if this user is in our user registry
-      isRegistered = await isVerifiedUser(
-        state.currentRound.userRegistryAddress,
-        state.currentUser.walletAddress
-      )
+      userRegistryAddress = state.currentRound.userRegistryAddress
 
       let contribution = state.contribution
       if (!contribution || contribution.isZero()) {
@@ -158,6 +154,12 @@ const actions = {
         commit(SET_HAS_VOTED, hasVoted)
       }
     }
+
+    // Check if this user is in our user registry
+    const isRegistered = await isVerifiedUser(
+      userRegistryAddress,
+      state.currentUser.walletAddress
+    )
 
     if (nativeTokenAddress) {
       balance = await getTokenBalance(

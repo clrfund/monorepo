@@ -336,7 +336,7 @@ export default class VerifyView extends Vue {
   }
 
   async sponsor() {
-    const { userRegistryAddress } = this.$store.state.currentRound
+    const { userRegistryAddress } = this.$store.getters
     const signer = this.currentUser.walletProvider.getSigner()
 
     this.loadingTx = true
@@ -355,7 +355,7 @@ export default class VerifyView extends Vue {
   }
 
   async register() {
-    const { userRegistryAddress } = this.$store.state.currentRound
+    const { userRegistryAddress } = this.$store.getters
     const signer = this.currentUser.walletProvider.getSigner()
 
     if (this.brightId?.verification) {
