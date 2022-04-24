@@ -7,6 +7,7 @@ export interface Factory {
   nativeTokenAddress: string
   nativeTokenSymbol: string
   nativeTokenDecimals: number
+  userRegistryAddress: string
 }
 
 export async function getFactoryInfo() {
@@ -16,10 +17,13 @@ export async function getFactoryInfo() {
   const nativeTokenSymbol = await nativeToken.symbol()
   const nativeTokenDecimals = await nativeToken.decimals()
 
+  const userRegistryAddress = await factory.userRegistry()
+
   return {
     fundingRoundAddress: factory.address,
     nativeTokenAddress,
     nativeTokenSymbol,
     nativeTokenDecimals,
+    userRegistryAddress,
   }
 }
