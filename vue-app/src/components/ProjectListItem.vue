@@ -145,6 +145,7 @@ export default class ProjectListItem extends Vue {
 .buttons {
   display: flex;
   flex-direction: column;
+  row-gap: 1rem;
   padding: 0 1.5rem;
   padding-bottom: 1.5rem;
 }

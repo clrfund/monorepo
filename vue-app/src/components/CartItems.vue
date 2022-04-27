@@ -40,22 +40,16 @@
         </div>
       </div>
       <div v-if="isEditMode" class="contribution-form">
-        <div class="input-button">
-          <img
-            class="token-icon"
-            height="24px"
-            :src="require(`@/assets/${tokenLogo}`)"
-          />
-          <input
-            :value="item.amount"
-            @input="updateAmount(item, $event.target.value)"
-            class="input contribution-amount"
-            :class="{ invalid: !isAmountValid(item.amount) }"
-            :disabled="!canUpdateAmount()"
-            name="amount"
-            placeholder="Amount"
-          />
-        </div>
+        <input-button
+          :value="item.amount"
+          :input="{
+            placeholder: 'Amount',
+            class: { invalid: !isAmountValid },
+            disabled: !canUpdateAmount(),
+          }"
+          @input="updateAmount(item, $event.target.value)"
+          class="contribution-amount"
+        />
       </div>
     </div>
   </div>
@@ -72,8 +66,9 @@ import { getTokenLogo } from '@/utils/tokens'
 import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { SAVE_CART } from '@/store/action-types'
 import Links from '@/components/Links.vue'
+import InputButton from '@/components/InputButton.vue'
 
-@Component({ components: { Links } })
+@Component({ components: { Links, InputButton } })
 export default class extends Vue {
   @Prop() cartList!: CartItem[]
   @Prop() isEditMode!: boolean
@@ -213,29 +208,6 @@ export default class extends Vue {
   margin-top: 0.5rem;
   gap: 0.5rem;
   flex-shrink: 0;
-
-  img {
-    width: 1rem;
-  }
-
-  .input-button {
-    background: var(--text-body);
-    border-radius: 2rem;
-    border: 2px solid var(--bg-primary-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: black;
-    padding: 0.125rem;
-    width: 100%;
-  }
-
-  .input {
-    background: none;
-    border: none;
-    color: var(--bg-primary-color);
-    width: 100%;
-  }
 }
 
 .remove-cart-item {

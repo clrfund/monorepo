@@ -1,34 +1,26 @@
 <template>
   <div>
-    <form action="#" v-if="!inCart && canContribute()">
-      <div class="input-button">
-        <img
-          class="token-icon"
-          height="24px"
-          :src="require(`@/assets/${tokenLogo}`)"
-        />
-        <input
-          class="input"
-          name="amount"
-          autocomplete="on"
-          onfocus="this.value=''"
-          :placeholder="defaultAmount"
-          v-model="amount"
-        />
-        <input
-          type="submit"
-          class="donate-btn"
-          value="Add to cart"
-          :disabled="!canContribute()"
-          @click.prevent="handleSubmit"
-        />
-      </div>
-    </form>
-    <div class="input-button" v-if="inCart && canContribute()">
-      <button class="donate-btn-full" @click="toggleCartPanel()">
-        <span>In cart 🎉</span>
-      </button>
-    </div>
+    <input-button
+      v-if="!inCart && canContribute()"
+      v-model="amount"
+      :input="{
+        placeholder: defaultAmount,
+        class: { invalid: !isAmountValid },
+      }"
+      :button="{
+        text: 'Add to cart',
+        disabled: !isAmountValid,
+      }"
+      @click="handleSubmit"
+    />
+    <input-button
+      v-if="inCart && canContribute()"
+      :button="{
+        wide: true,
+        text: 'In cart 🎉',
+      }"
+      @click="toggleCartPanel()"
+    />
   </div>
 </template>
 
@@ -48,12 +40,13 @@ import { User } from '@/api/user'
 import { Project } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { CartItem } from '@/api/contributions'
-import { getTokenLogo } from '@/utils/tokens'
 import WalletModal from '@/components/WalletModal.vue'
+import InputButton from '@/components/InputButton.vue'
 
 @Component({
   components: {
     WalletModal,
+    InputButton,
   },
 })
 export default class AddToCartButton extends Vue {
@@ -108,6 +101,10 @@ export default class AddToCartButton extends Vue {
     this.$store.commit(TOGGLE_EDIT_SELECTION, true)
   }
 
+  get isAmountValid(): boolean {
+    return this.amount > 0
+  }
+
   handleSubmit(): void {
     if (this.hasContributeBtn() && this.currentUser) {
       this.contribute()
@@ -139,71 +136,5 @@ export default class AddToCartButton extends Vue {
   toggleCartPanel() {
     this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
   }
-
-  get tokenLogo(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return getTokenLogo(nativeTokenSymbol)
-  }
 }
 </script>
-
-<style scoped lang="scss">
-@import '../styles/vars';
-@import '../styles/theme';
-
-.input-button {
-  background: var(--text-body);
-  border-radius: 2rem;
-  border: 2px solid var(--bg-primary-color);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.125rem;
-  margin-bottom: 1rem;
-  z-index: 100;
-}
-
-.input {
-  background: none;
-  border: none;
-  color: var(--bg-primary-color);
-  width: 100%;
-}
-
-/* Change Autocomplete styles in Chrome*/
-input:-webkit-autofill {
-  box-shadow: 0 0 0 30px var(--text-body) inset !important;
-  -webkit-text-fill-color: var(--bg-primary-color) !important;
-}
-
-.donate-btn {
-  padding: 0.5rem 1rem;
-  background: var(--bg-primary-color);
-  color: var(--text-color);
-  border-radius: 32px;
-  font-size: 16px;
-  font-family: Inter;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
-}
-
-.donate-btn-full {
-  background: var(--bg-primary-color);
-  color: var(--text-color);
-  border-radius: 32px;
-  padding: 0.5rem 1rem;
-  font-size: 16px;
-  font-family: Inter;
-  line-height: 150%;
-  border: none;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
-  z-index: 1;
-  cursor: pointer;
-  &:hover {
-    background: var(--bg-light-color);
-  }
-}
-</style>
