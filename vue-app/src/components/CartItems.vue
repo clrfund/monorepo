@@ -47,7 +47,7 @@
             class: { invalid: !isAmountValid },
             disabled: !canUpdateAmount(),
           }"
-          @input="updateAmount(item, $event.target.value)"
+          @input="(newAmount) => updateAmount(item, newAmount)"
           class="contribution-amount"
         />
       </div>
