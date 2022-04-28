@@ -10,8 +10,6 @@
       v-if="input"
       class="input"
       type="number"
-      name="amount"
-      id="amount"
       :class="input.class"
       :value="value"
       :required="input.required"
@@ -76,7 +74,6 @@ export default class InputButton extends Vue {
   justify-content: space-between;
   align-items: center;
   padding: 0.125rem;
-  z-index: 100;
   width: 100%;
   box-sizing: border-box;
 }

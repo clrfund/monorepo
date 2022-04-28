@@ -57,7 +57,7 @@ In a future version, we plan to address this by routing ETH and token contributi
 - [How to verify results](docs/trusted-setup.md)
 - [Running the subgraph](docs/subgraph.md)
 - [Sitemap](docs/sitemap.md)
-- [Theme](docs/theme.md)
+- [Website theme and customization](docs/theme.md)
 
 ## Development
 

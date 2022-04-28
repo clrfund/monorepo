@@ -1,7 +1,7 @@
 # Light Theme
 ## Landing
 
-![landing](screenshots/light/landing.png?raw=true)
+![landing](screenshots/light/landing.jpeg?raw=true)
 
 ## About
 
@@ -23,7 +23,7 @@
 
 /about/how-it-works/recipients
 
-![about recipients](screenshots/light/about-how-recipients.png?raw=true)
+![about recipients](screenshots/light/about-how-recipients.jpeg?raw=true)
 
 /about/layer-2
 
@@ -155,11 +155,11 @@ Round Criteria
 
 /transaction-success/contribution/:hash
 
-![contribution](screenshots/light/transaction-contribution.png?raw=true)
+![contribution](screenshots/light/transaction-contribution.jpeg?raw=true)
 
 /transaction-success/reallocation/:hash
 
-![reallocation](screenshots/light/transaction-realloc.png?raw=true)
+![reallocation](screenshots/light/transaction-realloc.jpeg?raw=true)
 
 ![reallocate-fund-modal-signed](screenshots/light/reallocate-fund-modal-signed.png?raw=true)
 
