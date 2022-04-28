@@ -32,6 +32,7 @@ const state: RootState = {
   showCartPanel: false,
   tally: null,
   theme: null,
+  factory: null,
 }
 
 const store: StoreOptions<RootState> = {

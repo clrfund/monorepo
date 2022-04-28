@@ -18,18 +18,18 @@
           :src="require(`@/assets/${themeIcon}`)"
         />
       </div>
-      <div class="help-dropdown" v-if="inApp">
+      <div class="help-dropdown" v-click-outside="closeHelpDropdown">
         <img
           @click="toggleHelpDropdown()"
           class="navbar-btn"
           src="@/assets/help.svg"
         />
-        <div id="myHelpDropdown" class="button-menu" v-if="showHelpDowndown">
-          <div class="dropdown-title">Help</div>
+        <div id="myHelpDropdown" class="button-menu" v-if="showHelpDropdown">
           <div
             v-for="({ to, text, emoji }, idx) of dropdownItems"
             :key="idx"
             class="dropdown-item"
+            @click="closeHelpDropdown"
           >
             <links :to="to">
               <div class="emoji-wrapper">{{ emoji }}</div>
@@ -56,15 +56,20 @@ import { chain, ThemeMode } from '@/api/core'
 import { TOGGLE_THEME } from '@/store/mutation-types'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { isValidTheme, getOsColorScheme } from '@/utils/theme'
+import ClickOutside from '@/directives/ClickOutside'
 
 @Component({
   components: { WalletWidget, CartWidget, Links },
+  directives: {
+    ClickOutside,
+  },
 })
 export default class NavBar extends Vue {
   @Prop() inApp
-  showHelpDowndown = false
+  showHelpDropdown = false
   profileImageUrl: string | null = null
   dropdownItems: { to?: string; text: string; emoji: string }[] = [
+    { to: '/', text: 'Home', emoji: '🏠' },
     { to: '/about', text: 'About', emoji: 'ℹ️' },
     { to: '/about/how-it-works', text: 'How it works', emoji: '⚙️' },
     { to: '/about/maci', text: 'Bribery protection', emoji: '🤑' },
@@ -75,6 +80,7 @@ export default class NavBar extends Vue {
       emoji: '👾',
     },
   ]
+
   created() {
     const savedTheme = lsGet(this.themeKey)
     const theme = isValidTheme(savedTheme) ? savedTheme : getOsColorScheme()
@@ -89,8 +95,12 @@ export default class NavBar extends Vue {
     }
   }
 
+  closeHelpDropdown(): void {
+    this.showHelpDropdown = false
+  }
+
   toggleHelpDropdown(): void {
-    this.showHelpDowndown = !this.showHelpDowndown
+    this.showHelpDropdown = !this.showHelpDropdown
   }
 
   toggleTheme(): void {

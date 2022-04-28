@@ -1,7 +1,7 @@
 @ -0,0 +1,36 @@
 <template>
   <div>
-    <round-status-banner />
+    <round-status-banner v-if="$store.state.currentRound" />
     <!-- TODO: add confetti -->
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon" />

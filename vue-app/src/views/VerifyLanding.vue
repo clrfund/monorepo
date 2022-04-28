@@ -1,7 +1,7 @@
 @ -0,0 +1,36 @@
 <template>
   <div>
-    <round-status-banner />
+    <round-status-banner v-if="$store.state.currentRound" />
     <loader v-if="loading" />
     <div v-if="!loading">
       <div class="gradient">
@@ -11,6 +11,7 @@
         </div>
       </div>
       <div class="content">
+        <breadcrumbs />
         <div class="flex-title">
           <h1>Prove you’re only using one account</h1>
         </div>
@@ -90,6 +91,7 @@ import { commify, formatUnits } from '@ethersproject/units'
 import { getCurrentRound } from '@/api/round'
 import { User } from '@/api/user'
 
+import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Links from '@/components/Links.vue'
 import Loader from '@/components/Loader.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
@@ -99,6 +101,7 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
   components: {
+    Breadcrumbs,
     Links,
     Loader,
     ProgressBar,

@@ -109,9 +109,9 @@
               address.
             </p>
             <p>
-              Once the app is linked in your BrightID app, wait a few moments
-              for us to verify the connection. We'll automatically transition
-              you to the next step.
+              Once this app is linked in your BrightID app, we'll automatically
+              transition you to the next step. It may take a minute for us to
+              verify the connection - please wait.
             </p>
             <div class="qr">
               <div class="instructions">

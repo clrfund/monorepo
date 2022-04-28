@@ -17,11 +17,7 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <back-link
-          v-if="showBackLink"
-          :to="backLinkRoute"
-          :text="backLinkText"
-        />
+        <breadcrumbs v-if="showBreadCrumb" />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -50,6 +46,7 @@ import CartWidget from '@/components/CartWidget.vue'
 import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
 import BackLink from '@/components/BackLink.vue'
+import Breadcrumbs from '@/components/Breadcrumbs.vue'
 
 import {
   LOAD_USER_INFO,
@@ -60,20 +57,23 @@ import {
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
   LOGIN_USER,
+  LOAD_FACTORY_INFO,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 
 @Component({
   name: 'clr.fund',
-  metaInfo: {
-    title: 'clr.fund',
-    titleTemplate: 'clr.fund - %s',
-    meta: [
-      {
-        name: 'git-commit',
-        content: process.env.VUE_APP_GIT_COMMIT || '',
-      },
-    ],
+  metaInfo() {
+    return {
+      title: this.$route.meta.title,
+      titleTemplate: 'clr.fund - %s',
+      meta: [
+        {
+          name: 'git-commit',
+          content: process.env.VUE_APP_GIT_COMMIT || '',
+        },
+      ],
+    }
   },
   components: {
     RoundInformation,
@@ -82,6 +82,7 @@ import { SET_CURRENT_USER } from '@/store/mutation-types'
     MobileTabs,
     CartWidget,
     BackLink,
+    Breadcrumbs,
   },
 })
 export default class App extends Vue {
@@ -109,6 +110,7 @@ export default class App extends Vue {
       this.$store.state.currentRoundAddress || (await getCurrentRound())
     await this.$store.dispatch(SELECT_ROUND, roundAddress)
     this.$store.dispatch(LOAD_ROUND_INFO)
+    this.$store.dispatch(LOAD_FACTORY_INFO)
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
   }
 
@@ -124,9 +126,9 @@ export default class App extends Vue {
 
     this.$store.commit(SET_CURRENT_USER, this.$web3.user)
     await this.$store.dispatch(LOGIN_USER)
+    this.$store.dispatch(LOAD_USER_INFO)
     if (this.$store.state.currentRound) {
       // Load cart & contributor data for current round
-      await this.$store.dispatch(LOAD_USER_INFO)
       this.$store.dispatch(LOAD_CART)
       this.$store.dispatch(LOAD_COMMITTED_CART)
       this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
@@ -188,26 +190,13 @@ export default class App extends Vue {
     return routes.includes(this.$route.name || '')
   }
 
-  get backLinkRoute(): string {
-    const route = this.$route.name || ''
-    return route.includes('about-') ? '/about' : '/projects'
-  }
-
-  get backLinkText(): string {
-    const route = this.$route.name || ''
-    return route.includes('about-') ? '← Back to About' : '← Back to projects'
-  }
-
-  get showBackLink(): boolean {
+  get showBreadCrumb(): boolean {
     const excludedRoutes = [
       'landing',
-      'project-added',
       'join',
-      'join-step',
-      'projects',
       'transaction-success',
       'verify',
-      'verify-step',
+      'project-added',
       'verified',
     ]
     return !excludedRoutes.includes(this.$route.name || '')
