@@ -35,7 +35,10 @@ import {
   TOGGLE_SHOW_CART_PANEL,
   TOGGLE_EDIT_SELECTION,
 } from '@/store/mutation-types'
-import { DEFAULT_CONTRIBUTION_AMOUNT } from '@/api/contributions'
+import {
+  DEFAULT_CONTRIBUTION_AMOUNT,
+  isContributionAmountValid,
+} from '@/api/contributions'
 import { User } from '@/api/user'
 import { Project } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
@@ -102,7 +105,8 @@ export default class AddToCartButton extends Vue {
   }
 
   get isAmountValid(): boolean {
-    return this.amount > 0
+    const currentRound = this.$store.state.currentRound
+    return isContributionAmountValid(this.amount.toString(), currentRound)
   }
 
   handleSubmit(): void {

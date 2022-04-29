@@ -318,6 +318,7 @@ import {
   MAX_CONTRIBUTION_AMOUNT,
   MAX_CART_SIZE,
   CartItem,
+  isContributionAmountValid,
 } from '@/api/contributions'
 import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { RoundStatus } from '@/api/round'
@@ -492,32 +493,12 @@ export default class Cart extends Vue {
 
   isAmountValid(value: string): boolean {
     const currentRound = this.$store.state.currentRound
-    if (!currentRound) {
-      // Skip validation
-      return true
-    }
-    const { nativeTokenDecimals, voiceCreditFactor } = currentRound
-    let amount
-    try {
-      amount = parseFixed(value, nativeTokenDecimals)
-    } catch {
-      return false
-    }
-    if (amount.lte(BigNumber.from(0))) {
-      return false
-    }
-    const normalizedValue = FixedNumber.fromValue(
-      amount.div(voiceCreditFactor).mul(voiceCreditFactor),
-      nativeTokenDecimals
-    )
-      .toUnsafeFloat()
-      .toString()
-    return normalizedValue === value
+    return isContributionAmountValid(value, currentRound)
   }
 
   private isFormValid(): boolean {
     const invalidCount = this.cart.filter((item) => {
-      return this.isAmountValid(item.amount) === false
+      return !item.isCleared && this.isAmountValid(item.amount) === false
     }).length
     return invalidCount === 0
   }

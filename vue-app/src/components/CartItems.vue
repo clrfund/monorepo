@@ -44,7 +44,7 @@
           :value="item.amount"
           :input="{
             placeholder: 'Amount',
-            class: { invalid: !isAmountValid },
+            class: { invalid: !isAmountValid(item.amount) },
             disabled: !canUpdateAmount(),
           }"
           @input="(newAmount) => updateAmount(item, newAmount)"
@@ -72,7 +72,7 @@ import InputButton from '@/components/InputButton.vue'
 export default class extends Vue {
   @Prop() cartList!: CartItem[]
   @Prop() isEditMode!: boolean
-  @Prop() isAmountValid!: () => boolean
+  @Prop() isAmountValid!: (value: string) => boolean
 
   canUpdateAmount(): boolean {
     const currentRound = this.$store.state.currentRound
