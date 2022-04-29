@@ -303,7 +303,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { BigNumber, FixedNumber } from 'ethers'
+import { BigNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
 import WalletWidget from '@/components/WalletWidget.vue'
