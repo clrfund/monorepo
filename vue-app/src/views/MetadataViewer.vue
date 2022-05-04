@@ -115,22 +115,17 @@
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
-            <div v-if="isEmailRequired" class="summary">
-              <h4 class="read-only-title">Contact email</h4>
-              <div class="data">{{ metadata.email }}</div>
-              <div class="input-notice">
-                This information won't be added to the smart contract.
-              </div>
-            </div>
             <div class="summary">
               <h4 class="read-only-title">Team name</h4>
-              <div class="data">{{ metadata.name }}</div>
-              <div class="data" v-if="!metadata.name">Not provided</div>
+              <div class="data">{{ metadata.teamName }}</div>
+              <div class="data" v-if="!metadata.teamName">Not provided</div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Team description</h4>
-              <div class="data">{{ metadata.description }}</div>
-              <div class="data" v-if="!metadata.description">Not provided</div>
+              <div class="data">{{ metadata.teamDescription }}</div>
+              <div class="data" v-if="!metadata.teamDescription">
+                Not provided
+              </div>
             </div>
           </div>
           <div class="form-background">
@@ -284,7 +279,7 @@ import { isSameAddress } from '@/utils/accounts'
 
 import { CHAIN_INFO, CHAIN_ID } from '@/plugins/Web3/constants/chains'
 import { ContractTransaction, ContractReceipt } from 'ethers'
-import { RESET_METADATA } from '@/store/mutation-types'
+import { SET_METADATA } from '@/store/mutation-types'
 
 @Component({
   components: {
@@ -307,9 +302,11 @@ export default class MetadataViewer extends mixins(validationMixin) {
   deleteChainId = 0
 
   created() {
-    // reset the cached modified metadata to ensure the edit view
-    // will show the same data as this view
-    this.$store.commit(RESET_METADATA)
+    // make sure the edit form display the same data as the viewer
+    const updatedData = this.metadata?.toFormData()
+    this.$store.commit(SET_METADATA, {
+      updatedData,
+    })
   }
 
   get projectInterface(): Project {

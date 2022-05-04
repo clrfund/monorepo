@@ -44,7 +44,6 @@ export interface MetadataFormData {
   team: {
     name: string
     description: string
-    email: string
   }
   links: {
     github: string
@@ -93,7 +92,7 @@ async function getLatestBlock(network: string): Promise<number> {
   const composer = new MetadataComposer([url])
   const result = await composer.query(GET_LATEST_BLOCK_QUERY)
   if (result.error) {
-    throw new Error('Failed to get latest block. ' + result.error)
+    throw new Error('Failed to get latest block from subgraph. ' + result.error)
   }
 
   const [meta] = result.data._meta
@@ -144,7 +143,6 @@ export class Metadata {
   plans?: string
   teamName?: string
   teamDescription?: string
-  teamEmail?: string
   githubUrl?: string
   radicleUrl?: string
   websiteUrl?: string
@@ -168,7 +166,6 @@ export class Metadata {
     this.plans = data.plans
     this.teamName = data.teamName
     this.teamDescription = data.teamDescription
-    this.teamEmail = data.teamEmail
     this.githubUrl = data.githubUrl
     this.radicleUrl = data.radicleUrl
     this.websiteUrl = data.websiteUrl
@@ -298,7 +295,6 @@ export class Metadata {
       team: {
         name: this.teamName || '',
         description: this.teamDescription || '',
-        email: this.teamEmail || '',
       },
       links: {
         github: this.githubUrl || '',
@@ -355,9 +351,6 @@ export class Metadata {
     }
     if (!dirtyOnly || data.dirtyFields.has('team.description')) {
       metadata.teamDescription = team.description
-    }
-    if (!dirtyOnly || data.dirtyFields.has('team.email')) {
-      metadata.teamEmail = team.email
     }
     if (!dirtyOnly || data.dirtyFields.has('links.github')) {
       metadata.githubUrl = links.github

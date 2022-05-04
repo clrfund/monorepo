@@ -304,6 +304,7 @@
                 </p>
                 <input
                   id="team-email"
+                  type="email"
                   placeholder="example: doge@goodboi.com"
                   v-model.lazy="$v.form.team.email.$model"
                   :class="{
@@ -331,7 +332,6 @@
                 <p class="input-description">If different to project name.</p>
                 <input
                   id="team-name"
-                  type="email"
                   placeholder="ex: clr.fund"
                   v-model="$v.form.team.name.$model"
                   :class="{
