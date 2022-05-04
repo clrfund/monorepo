@@ -211,7 +211,7 @@ const getters = {
   requireRegistrationDeposit: (state: RootState): boolean => {
     return !!state.recipientRegistryInfo?.requireRegistrationDeposit
   },
-  addProjectUrl: (_state: RootState): string => {
+  addProjectUrl: (): string => {
     switch (recipientRegistryType) {
       case RecipientRegistryType.UNIVERSAL:
         return '/join/metadata'
