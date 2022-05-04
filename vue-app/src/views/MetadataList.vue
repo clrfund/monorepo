@@ -113,13 +113,9 @@ export default class MetadataList extends Vue {
 
     return new Set(
       recipients
-        .map(({ recipientMetadataId, rejected, verified, requestType }) => {
+        .map(({ recipientMetadataId, verified, requestType }) => {
           let id = recipientMetadataId || ''
-          if (
-            rejected ||
-            !verified ||
-            Number(requestType) === RequestTypeCode.Removal
-          ) {
+          if (Number(requestType) === RequestTypeCode.Removal && verified) {
             // show metadata if it's not longer a recipient so it can be added again
             id = ''
           }

@@ -311,36 +311,6 @@
             <h2 class="step-title">Team details</h2>
             <p>Tell us about the folks behind your project.</p>
             <div class="inputs">
-              <div v-if="isEmailRequired" class="form-background">
-                <label for="team-email" class="input-label">
-                  Contact email
-                </label>
-                <p class="input-description">
-                  For important updates about your project and the funding
-                  round.
-                </p>
-                <input
-                  id="team-email"
-                  placeholder="example: doge@goodboi.com"
-                  v-model.lazy="$v.form.team.email.$model"
-                  :class="{
-                    input: true,
-                    invalid: $v.form.team.email.$error,
-                  }"
-                />
-                <p class="input-notice">
-                  We won't display this publicly or add it to the on-chain
-                  registry.
-                </p>
-                <p
-                  :class="{
-                    error: true,
-                    hidden: !$v.form.team.email.$error,
-                  }"
-                >
-                  This doesn't look like an email.
-                </p>
-              </div>
               <div class="form-background">
                 <label for="team-name" class="input-label"
                   >Team name (optional)</label
@@ -348,7 +318,6 @@
                 <p class="input-description">If different to project name.</p>
                 <input
                   id="team-name"
-                  type="email"
                   placeholder="ex: clr.fund"
                   v-model="$v.form.team.name.$model"
                   :class="{
@@ -579,13 +548,7 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import {
-  required,
-  minLength,
-  maxLength,
-  url,
-  email,
-} from 'vuelidate/lib/validators'
+import { required, minLength, maxLength, url } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
 import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
@@ -604,13 +567,12 @@ import TransactionResult from '@/components/TransactionResult.vue'
 import MetadataList from '@/views/MetadataList.vue'
 import MetadataViewer from '@/views/MetadataViewer.vue'
 import Dropdown from '@/components/Dropdown.vue'
-import { Metadata } from '@/api/metadata'
+import { Metadata, MetadataFormData } from '@/api/metadata'
 import { LinkInfo } from '@/api/types'
 import { Prop } from 'vue-property-decorator'
 
 import { SET_METADATA } from '@/store/mutation-types'
-import { MetadataFormData } from '@/api/metadata'
-import { Project } from '@/api/projects'
+import { Project, projectExists } from '@/api/projects'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 import { ContractReceipt, ContractTransaction } from 'ethers'
 
@@ -662,12 +624,6 @@ type RecievingAddress = {
       team: {
         name: {},
         description: {},
-        email: {
-          email,
-          required: process.env.VUE_APP_GOOGLE_SPREADSHEET_ID
-            ? required
-            : () => true,
-        },
       },
       links: {
         github: { url },
@@ -700,6 +656,7 @@ export default class MetadataForm extends mixins(validationMixin) {
   ) => Promise<ContractTransaction>
 
   form: MetadataFormData = new Metadata({}).toFormData()
+  projectExists = false
   addressName = ''
   currentStep = 0
   steps: string[] = []
@@ -737,6 +694,13 @@ export default class MetadataForm extends mixins(validationMixin) {
     this.form = this.$store.state.metadata
     this.loading = false
     this.loadNetworks()
+
+    // check if project exists so we can display add/view
+    // project button after successfully submitting the metadata transaction
+    if (this.form?.id) {
+      this.projectExists = await projectExists(this.form.id)
+    }
+
     if (this.form.furthestStep === 0) {
       // only initialize the furthestStep if it's not set
       this.initFurthestStep()
@@ -752,10 +716,6 @@ export default class MetadataForm extends mixins(validationMixin) {
     if (this.currentStep > this.form.furthestStep) {
       this.gotoStep(this.steps[this.form.furthestStep])
     }
-  }
-
-  get isEmailRequired(): boolean {
-    return !!process.env.VUE_APP_GOOGLE_SPREADSHEET_ID
   }
 
   get sortedNetworks(): string[] {
@@ -921,17 +881,22 @@ export default class MetadataForm extends mixins(validationMixin) {
   }
 
   get redirectButtons(): LinkInfo[] {
-    const { id } = this.receipt || {}
-    return [
-      {
+    const id = this.receipt?.id || ''
+    const links: Array<{ url: string; text: string }> = []
+
+    if (!this.projectExists) {
+      links.push({
         url: `/join/summary/${id}`,
         text: 'Add project',
-      },
-      {
-        url: `/metadata/${id}`,
-        text: 'View metadata',
-      },
-    ]
+      })
+    }
+
+    links.push({
+      url: `/metadata/${id}`,
+      text: 'View metadata',
+    })
+
+    return links
   }
 
   get projectInterface(): Project {

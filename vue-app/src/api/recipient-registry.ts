@@ -255,6 +255,29 @@ export async function getProjects(
   return projects
 }
 
+export async function projectExists(recipientId: string): Promise<boolean> {
+  if (!isHexString(recipientId, 32)) {
+    return false
+  }
+
+  const data = await sdk.GetProject({
+    recipientId,
+  })
+
+  if (!data.recipients?.length) {
+    // Project does not exist
+    return false
+  }
+
+  const [recipient] = data.recipients
+  const requestType = Number(recipient.requestType)
+  if (requestType === RequestTypeCode.Removal && recipient.verified) {
+    return false
+  }
+
+  return true
+}
+
 export async function getProject(recipientId: string): Promise<Project | null> {
   if (!isHexString(recipientId, 32)) {
     return null
@@ -373,4 +396,4 @@ export async function getRequests(
   return Object.keys(requests).map((recipientId) => requests[recipientId])
 }
 
-export default { getProject, getProjects }
+export default { getProject, getProjects, projectExists }

@@ -1,7 +1,11 @@
 import { Contract } from 'ethers'
 import { FundingRound } from './abi'
-import { factory, provider, recipientRegistryType } from './core'
-import { ipfsGatewayUrl } from './core'
+import {
+  factory,
+  provider,
+  ipfsGatewayUrl,
+  recipientRegistryType,
+} from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
 import KlerosRegistry from './recipient-registry-kleros'
@@ -77,6 +81,10 @@ export async function getProject(
   } else {
     return await RecipientRegistry.getProject(recipientId)
   }
+}
+
+export async function projectExists(recipientId: string): Promise<boolean> {
+  return RecipientRegistry.projectExists(recipientId)
 }
 
 export function toProjectInterface(metadata: any): Project {

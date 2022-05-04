@@ -201,7 +201,7 @@ templates:
           handler: handleOwnershipTransferred
         - event: RequestResolved(indexed bytes32,indexed uint8,indexed bool,uint256,uint256)
           handler: handleRequestResolved
-        - event: RequestSubmitted(indexed bytes32,indexed uint8,address,string,uint256)
+        - event: RequestSubmitted(indexed bytes32,indexed uint8,address,uint256)
           handler: handleRequestSubmitted
       file: ./src/recipientRegistry/UniversalRecipientRegistryMapping.ts
   - name: BrightIdUserRegistry

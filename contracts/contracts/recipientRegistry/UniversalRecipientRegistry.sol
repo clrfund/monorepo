@@ -24,7 +24,6 @@ contract UniversalRecipientRegistry is Ownable, BaseRecipientRegistry {
     uint256 submissionTime;
     uint256 deposit;
     address recipientAddress; // Only for registration requests
-    string recipientId;  // this is also the metadataId
   }
 
   // constant
@@ -40,7 +39,6 @@ contract UniversalRecipientRegistry is Ownable, BaseRecipientRegistry {
     bytes32 indexed _recipientId,
     RequestType indexed _type,
     address _recipient,
-    string _metadataId,
     uint256 _timestamp
   );
   event RequestResolved(
@@ -92,31 +90,28 @@ contract UniversalRecipientRegistry is Ownable, BaseRecipientRegistry {
   /**
     * @dev Submit recipient registration request.
     * @param _recipient The address that receives funds.
-    * @param _metadataId The id of the recipient metadata that is stored externally.
+    * @param _metadataId The id of the recipient metadata that is stored externally
+    *                    which is used as the recipient id in this registry
     */
-  function addRecipient(address _recipient, string calldata _metadataId)
+  function addRecipient(address _recipient, bytes32 _metadataId)
     external
     payable
   {
     require(_recipient != address(0), 'RecipientRegistry: Recipient address is zero');
-    require(bytes(_metadataId).length != 0, 'RecipientRegistry: Metadata Id is empty string');
-    bytes32 recipientId = keccak256(abi.encodePacked(_recipient, _metadataId));
-    require(recipients[recipientId].index == 0, 'RecipientRegistry: Recipient already registered');
-    require(requests[recipientId].submissionTime == 0, 'RecipientRegistry: Request already submitted');
+    require(recipients[_metadataId].index == 0, 'RecipientRegistry: Recipient already registered');
+    require(requests[_metadataId].submissionTime == 0, 'RecipientRegistry: Request already submitted');
     require(msg.value == baseDeposit, 'RecipientRegistry: Incorrect deposit amount');
-    requests[recipientId] = Request(
+    requests[_metadataId] = Request(
       RequestType.Registration,
       msg.sender,
       block.timestamp,
       msg.value,
-      _recipient,
-      _metadataId
+      _recipient
     );
     emit RequestSubmitted(
-      recipientId,
+      _metadataId,
       RequestType.Registration,
       _recipient,
-      _metadataId,
       block.timestamp
     );
   }
@@ -138,14 +133,12 @@ contract UniversalRecipientRegistry is Ownable, BaseRecipientRegistry {
       msg.sender,
       block.timestamp,
       msg.value,
-      address(0),
-      ''
+      address(0)
     );
     emit RequestSubmitted(
       _recipientId,
       RequestType.Removal,
       address(0),
-      '',
       block.timestamp
     );
   }

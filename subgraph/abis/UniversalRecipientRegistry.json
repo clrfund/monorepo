@@ -99,12 +99,6 @@
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "_metadataId",
-        "type": "string"
-      },
-      {
-        "indexed": false,
         "internalType": "uint256",
         "name": "_timestamp",
         "type": "uint256"
@@ -121,9 +115,9 @@
         "type": "address"
       },
       {
-        "internalType": "string",
+        "internalType": "bytes32",
         "name": "_metadataId",
-        "type": "string"
+        "type": "bytes32"
       }
     ],
     "name": "addRecipient",
