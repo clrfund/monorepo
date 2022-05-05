@@ -8,6 +8,7 @@ import { getTotalContributed } from './contributions'
 import { getRounds } from './rounds'
 
 import { isSameAddress } from '@/utils/accounts'
+import { getTokenBalance } from '@/api/user'
 
 export interface RoundInfo {
   fundingRoundAddress: string
@@ -151,6 +152,14 @@ export async function getRoundInfo(
     contributions = contributionsInfo.amount
     //TODO: update to take factory address as a parameter, default to env. variable
     matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
+  }
+
+  // Hack to overwrite matching pool amount using designated address
+  if (nativeTokenAddress && process.env.VUE_APP_MATCHING_POOL_ADDRESS) {
+    matchingPool = await getTokenBalance(
+      nativeTokenAddress,
+      process.env.VUE_APP_MATCHING_POOL_ADDRESS
+    )
   }
 
   const totalFunds = matchingPool.add(contributions)
