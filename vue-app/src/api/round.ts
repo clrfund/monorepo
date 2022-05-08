@@ -8,7 +8,6 @@ import { getTotalContributed } from './contributions'
 import { getRounds } from './rounds'
 
 import { isSameAddress } from '@/utils/accounts'
-import { getTokenBalance } from '@/api/user'
 
 export interface RoundInfo {
   fundingRoundAddress: string
