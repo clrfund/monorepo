@@ -154,14 +154,6 @@ export async function getRoundInfo(
     matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
   }
 
-  // Hack to overwrite matching pool amount using designated address
-  if (nativeTokenAddress && process.env.VUE_APP_MATCHING_POOL_ADDRESS) {
-    matchingPool = await getTokenBalance(
-      nativeTokenAddress,
-      process.env.VUE_APP_MATCHING_POOL_ADDRESS
-    )
-  }
-
   const totalFunds = matchingPool.add(contributions)
 
   return {
