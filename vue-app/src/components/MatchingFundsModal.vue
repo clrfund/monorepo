@@ -162,10 +162,15 @@ export default class MatchingFundsModal extends Vue {
       this.$store.state.currentRound
     const token = new Contract(nativeTokenAddress, ERC20, this.signer)
     const amount = parseFixed(this.amount, nativeTokenDecimals)
+
+    // TODO: update to take factory address as a parameter from the route props, default to env. variable
+    const matchingPoolAddress = process.env.VUE_APP_MATCHING_POOL_ADDRESS
+      ? process.env.VUE_APP_MATCHING_POOL_ADDRESS
+      : factory.address
+
     try {
       await waitForTransaction(
-        //TODO: update to take factory address as a parameter from the route props, default to env. variable
-        token.transfer(factory.address, amount),
+        token.transfer(matchingPoolAddress, amount),
         (hash) => (this.transferTxHash = hash)
       )
     } catch (error) {
