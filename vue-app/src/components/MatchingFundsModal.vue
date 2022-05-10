@@ -6,23 +6,14 @@
         {{ isRoundFinished() ? 'next' : 'current' }} round
       </h3>
       <div class="contribution-form">
-        <div class="input-button">
-          <img
-            class="token-icon"
-            height="24px"
-            :src="require(`@/assets/${tokenLogo}`)"
-          />
-          <input
-            v-model="amount"
-            class="input"
-            id="input"
-            :class="{ invalid: !isAmountValid() }"
-            name="amount"
-            type="number"
-            required
-            placeholder="10"
-          />
-        </div>
+        <input-button
+          v-model="amount"
+          :input="{
+            placeholder: 10,
+            class: { invalid: !isAmountValid },
+            required: true,
+          }"
+        />
       </div>
       <div v-if="!isBalanceSufficient" class="balance-check-warning">
         ⚠️ You only have {{ renderBalance }}
@@ -68,6 +59,7 @@ import Component from 'vue-class-component'
 import { BigNumber, Contract, Signer } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import Transaction from '@/components/Transaction.vue'
+import InputButton from '@/components/InputButton.vue'
 import { waitForTransaction } from '@/utils/contracts'
 import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
@@ -81,6 +73,7 @@ import { RoundStatus } from '@/api/round'
 @Component({
   components: {
     Transaction,
+    InputButton,
   },
 })
 export default class MatchingFundsModal extends Vue {
@@ -192,10 +185,6 @@ export default class MatchingFundsModal extends Vue {
   display: flex;
   flex-direction: row;
   margin-top: $modal-space;
-
-  input {
-    width: 100%;
-  }
 }
 
 .btn-row {
@@ -214,33 +203,14 @@ export default class MatchingFundsModal extends Vue {
 }
 
 .modal-body {
-  background-color: $bg-primary-color;
+  background-color: var(--bg-primary-color);
   padding: $modal-space;
-  box-shadow: $box-shadow;
+  box-shadow: var(--box-shadow);
   text-align: left;
 
   .loader {
     margin: $modal-space auto;
   }
-}
-
-.input-button {
-  background: #f7f7f7;
-  border-radius: 2rem;
-  border: 2px solid $bg-primary-color;
-  display: flex;
-  align-items: center;
-  color: black;
-  padding: 0.125rem;
-  z-index: 100;
-  width: 100%;
-}
-
-.input {
-  background: none;
-  border: none;
-  color: $bg-primary-color;
-  width: 100%;
 }
 
 .balance-check {
@@ -254,7 +224,7 @@ export default class MatchingFundsModal extends Vue {
   text-transform: uppercase;
   font-weight: 500;
   margin-top: 0.5rem;
-  color: $warning-color;
+  color: var(--attention-color);
 }
 
 .transaction-fee {

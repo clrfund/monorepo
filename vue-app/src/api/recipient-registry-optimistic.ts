@@ -156,8 +156,12 @@ export async function getRequests(
 
   const requests: Record<string, Request> = {}
   for (const recipient of recipients) {
-    let metadata = JSON.parse(recipient.recipientMetadata || '{}')
-
+    let metadata: any
+    try {
+      metadata = JSON.parse(recipient.recipientMetadata || '{}')
+    } catch {
+      metadata = {}
+    }
     const requestType = Number(recipient.requestType)
     if (requestType === RequestTypeCode.Registration) {
       // Registration request

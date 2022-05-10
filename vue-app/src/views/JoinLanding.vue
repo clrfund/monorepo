@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="join-landing">
     <div class="gradient">
       <div class="hero">
         <image-responsive title="core" />
@@ -258,7 +258,7 @@ h1 {
   right: 0;
   height: 100%;
   width: 100%;
-  background: $clr-pink-dark-gradient;
+  background: var(--bg-gradient);
 
   .hero {
     position: fixed;
@@ -266,11 +266,7 @@ h1 {
     right: 0;
     height: 100%;
     width: 100%;
-    background: linear-gradient(
-      286.78deg,
-      rgba(173, 131, 218, 0) -32.78%,
-      #191623 78.66%
-    );
+    background: var(--bg-gradient-hero);
     @media (max-width: $breakpoint-m) {
       width: 100%;
       padding-bottom: 0rem;
@@ -338,8 +334,8 @@ h1 {
 }
 
 .apply-callout {
-  background: $bg-transparent;
-  border: 2px solid #9789c4;
+  background: var(--bg-transparent);
+  border: 2px solid var(--border-highlight);
   box-sizing: border-box;
   border-radius: 8px;
   padding: 1rem;
@@ -352,11 +348,12 @@ h1 {
 .icon {
   width: 16px;
   height: 16px;
+  filter: var(--img-filter, invert(0.7));
 }
 
 .apply-callout-warning {
-  background: $warning-color-bg;
-  border: 2px solid $warning-color;
+  background: var(--warning-background);
+  border: 2px solid var(--warning-border);
   box-sizing: border-box;
   border-radius: 8px;
   padding: 1rem;
@@ -371,17 +368,11 @@ h1 {
 
 .warning-text {
   margin-bottom: 0;
+  color: var(--warning-color);
 }
 
 .info-boxes {
   margin-bottom: 2rem;
-}
-
-.icon-btn {
-  padding: 0.5rem;
-  &:hover {
-    background: $bg-secondary-color;
-  }
 }
 
 .button-menu {
@@ -389,8 +380,8 @@ h1 {
   position: absolute;
   top: 2rem;
   right: 0.5rem;
-  background: $bg-secondary-color;
-  border: 1px solid rgba(115, 117, 166, 0.3);
+  background: var(--bg-secondary-color);
+  border: 1px solid rgba($border-light, 0.3);
   border-radius: 0.5rem;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);

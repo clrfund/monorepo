@@ -1,0 +1,58 @@
+[data-theme='light'] {
+  color-scheme: light;
+  --text-color: #212529;
+  --text-body: #212529;
+  --text-secondary: #808094;
+  // workaround for using css variables with sass mixins
+  --text-color-rgb: 33, 37, 41;
+
+  --brand-primary: #6f3ff5;
+  --brand-secondary: #00e3a1;
+  --brand-tertiary: #f3d2f9;
+
+  --error-color: #bd6b5e;
+  --warning-color: var(--text-color);
+  --warning-background: rgb(255, 248, 197);
+  --warning-border: rgba(212, 167, 44, 0.4);
+  --attention-color: #bd6b5e;
+  --link-color: #00e3a1;
+  --loader-color: #d0d7de;
+
+  --border-color: #d0d7de;
+  --border-strong: #d0d7de;
+  --border-highlight: none;
+
+  --shadow-light-rgb: 196, 196, 196;
+  --shadow-dark-rgb: 249, 243, 243;
+
+  --bg-primary-color: #fff;
+  --bg-secondary-color: #fff;
+  --bg-light-color: #fff;
+
+  // alternative mapping for secondary and light background
+  --bg-secondary-highlight: #f5f2ff;
+  --bg-secondary-accent: #9789c4;
+  --bg-light-highlight: #f5f2ff;
+  --bg-light-accent: #6f3ff5;
+
+  --bg-transparent: #fff;
+  --bg-gradient: white;
+  --bg-gradient-hero: transparent;
+  --bg-address-box: #f3d2f9;
+  --bg-how-it-works: var(--bg-primary-color);
+  --bg-inactive: #9789c4;
+  --bg-circle: #d2fff6;
+
+  --button-secondary-color: #212529;
+  --button-secondary-bg: #d2fff6;
+  --button-secondary-border: none;
+  --button-action: #00e3a1;
+
+  --explorer-border: var(--border-color);
+  --explorer-hover: none;
+
+  --bright-id-bg: #d2fff6;
+  --bright-id-icon-bg: transparent;
+
+  --box-shadow: 0px -4px 16px rgba(14, 13, 13, 0.05);
+}

@@ -44,39 +44,36 @@
                 <summary>More</summary>
 
                 <div>
-                  <span
-                    >Transaction hash
-                    <button
-                      class="button-copy"
-                      @click="copyAddress(request.transactionHash)"
-                    >
-                      <img src="@/assets/copy.svg" />
-                    </button>
-                  </span>
+                  <div class="btn-row">
+                    Transaction hash
+                    <copy-button
+                      :value="request.transactionHash"
+                      text="hash"
+                      myClass="inline copy-icon"
+                    />
+                  </div>
                   <code>{{ request.transactionHash }}</code>
                 </div>
                 <div>
-                  <span
-                    >Project ID
-                    <button
-                      class="button-copy"
-                      @click="copyAddress(request.recipientId)"
-                    >
-                      <img src="@/assets/copy.svg" />
-                    </button>
-                  </span>
+                  <div class="btn-row">
+                    Project ID
+                    <copy-button
+                      :value="request.recipientId"
+                      text="id"
+                      myClass="inline copy-icon"
+                    />
+                  </div>
                   <code>{{ request.recipientId }}</code>
                 </div>
                 <div>
-                  <span
-                    >Recipient address
-                    <button
-                      class="button-copy"
-                      @click="copyAddress(request.recipient)"
-                    >
-                      <img src="@/assets/copy.svg" />
-                    </button>
-                  </span>
+                  <div class="btn-row">
+                    Recipient address
+                    <copy-button
+                      :value="request.recipient"
+                      text="address"
+                      myClass="copy-icon"
+                    />
+                  </div>
                   <code>{{ request.recipient }}</code>
                 </div>
               </details>
@@ -139,6 +136,7 @@ import Component from 'vue-class-component'
 import { BigNumber } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
+import CopyButton from '@/components/CopyButton.vue'
 
 import { recipientRegistryType } from '@/api/core'
 import {
@@ -158,7 +156,7 @@ import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import TransactionModal from '@/components/TransactionModal.vue'
 
-@Component({ components: { Loader, Links } })
+@Component({ components: { CopyButton, Loader, Links } })
 export default class RecipientRegistryView extends Vue {
   requests: Request[] = []
   isLoading = true
@@ -323,27 +321,27 @@ export default class RecipientRegistryView extends Vue {
 
   .hr {
     width: 100%;
-    border-bottom: 1px solid rgba(115, 117, 166, 1);
+    border-bottom: 1px solid $border-light;
   }
 }
 
 .requests {
-  border: 1px solid #000;
+  border: 1px solid var(--border-strong);
   border-radius: 0.5rem;
   border-spacing: 0;
   line-height: 150%;
   table-layout: fixed;
   width: 100%;
-  background-color: $bg-light-color;
+  background-color: var(--bg-light-color);
 
   thead {
-    background-color: $bg-primary-color;
+    background-color: var(--bg-primary-color);
     border-radius: 6px;
   }
 
   tr {
     &:nth-child(2n) {
-      background-color: $bg-secondary-color;
+      background-color: var(--bg-secondary-color);
     }
   }
 
@@ -383,6 +381,9 @@ export default class RecipientRegistryView extends Vue {
         margin: 0.5rem 0;
         font-weight: 500;
         margin-left: 1rem;
+        div {
+          margin: 0;
+        }
       }
     }
   }
@@ -397,8 +398,8 @@ export default class RecipientRegistryView extends Vue {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid $bg-light-color;
-    background: $clr-green-bg600;
+    border: 1px solid var(--bg-light-color);
+    background: rgba($clr-green, 0.6);
     cursor: pointer;
     &:hover {
       transform: scale(1.1);
@@ -416,8 +417,8 @@ export default class RecipientRegistryView extends Vue {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid $bg-light-color;
-    background: $error-color;
+    border: 1px solid var(--bg-light-color);
+    background: var(--error-color);
     cursor: pointer;
     &:hover {
       transform: scale(1.1);
@@ -428,16 +429,6 @@ export default class RecipientRegistryView extends Vue {
   .btn-row {
     display: flex;
     gap: 0.5rem;
-  }
-}
-
-.button-copy {
-  border: 0;
-  background-color: transparent;
-  cursor: pointer;
-
-  img {
-    width: 16px;
   }
 }
 

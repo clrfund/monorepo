@@ -81,7 +81,7 @@ export default class ProjectListItem extends Vue {
 @import '../styles/theme';
 
 .project-item {
-  background-color: $bg-secondary-color;
+  background-color: var(--bg-secondary-color);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -93,59 +93,8 @@ export default class ProjectListItem extends Vue {
   }
 }
 
-.input-button {
-  background: #f7f7f7;
-  border-radius: 2rem;
-  border: 2px solid $bg-primary-color;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: black;
-  padding: 0.125rem;
-  margin-bottom: 1rem;
-  z-index: 100;
-}
-
-.input {
-  background: none;
-  border: none;
-  color: $bg-primary-color;
-  width: 100%;
-}
-
-.donate-btn {
-  padding: 0.5rem 1rem;
-  background: $bg-primary-color;
-  color: white;
-  border-radius: 32px;
-  font-size: 16px;
-  font-family: Inter;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
-}
-
-.donate-btn-full {
-  background: $bg-primary-color;
-  color: white;
-  border-radius: 32px;
-  padding: 0.5rem 1rem;
-  font-size: 16px;
-  font-family: Inter;
-  line-height: 150%;
-  border: none;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
-  z-index: 1;
-  cursor: pointer;
-  &:hover {
-    background: $bg-light-color;
-  }
-}
-
 .more-btn {
-  background: $bg-light-color;
+  background: var(--bg-light-accent);
   border-radius: 32px;
   padding: 0.5rem;
   box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
@@ -161,7 +110,7 @@ export default class ProjectListItem extends Vue {
   border: none;
   cursor: pointer;
   &:hover {
-    background: $bg-secondary-color;
+    background: var(--bg-secondary-accent);
   }
 }
 
@@ -196,6 +145,7 @@ export default class ProjectListItem extends Vue {
 .buttons {
   display: flex;
   flex-direction: column;
+  row-gap: 1rem;
   padding: 0 1.5rem;
   padding-bottom: 1.5rem;
 }
@@ -207,7 +157,7 @@ export default class ProjectListItem extends Vue {
   margin-bottom: 1.5rem;
   font-size: 20px;
   * {
-    color: #f7f7f7;
+    color: var(--text-body);
   }
 }
 
@@ -218,7 +168,7 @@ export default class ProjectListItem extends Vue {
   font-size: 16px;
   overflow: hidden;
   margin-bottom: 1rem;
-  color: #f7f7f7;
+  color: var(--text-body);
   opacity: 0.8;
 }
 
@@ -230,6 +180,6 @@ export default class ProjectListItem extends Vue {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  box-shadow: $box-shadow;
+  box-shadow: var(--box-shadow);
 }
 </style>

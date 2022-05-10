@@ -264,9 +264,9 @@ export default class RecipientSubmissionWidget extends Vue {
 .recipient-submission-widget {
   display: flex;
   flex-direction: column;
-  background: $bg-primary-color;
+  background: var(--bg-primary-color);
   border-radius: 1rem;
-  border: 1px solid #000;
+  border: 1px solid var(--border-color);
   align-items: center;
   justify-content: center;
   width: 75%;
@@ -278,13 +278,13 @@ export default class RecipientSubmissionWidget extends Vue {
 }
 
 .shine {
-  background: $bg-primary-color;
+  background: var(--bg-primary-color);
   background-image: linear-gradient(
     to right,
-    $bg-primary-color 0%,
-    $bg-secondary-color 10%,
-    $bg-primary-color 40%,
-    $bg-primary-color 100%
+    var(--bg-primary-color) 0%,
+    var(--bg-secondary-color) 10%,
+    var(--bg-primary-color) 40%,
+    var(--bg-primary-color) 100%
   );
   background-repeat: repeat;
   position: relative;
@@ -314,7 +314,7 @@ export default class RecipientSubmissionWidget extends Vue {
 }
 
 .tx-progress-area {
-  background: $clr-pink-light-gradient-inactive;
+  background: var(--bg-inactive);
   text-align: center;
   border-radius: calc(1rem - 1px) calc(1rem - 1px) 0 0;
   padding: 1.5rem;
@@ -328,7 +328,7 @@ export default class RecipientSubmissionWidget extends Vue {
 }
 
 .tx-progress-area-no-notice {
-  background: $clr-pink-light-gradient-inactive;
+  background: var(--bg-inactive);
   text-align: center;
   border-radius: calc(3rem - 1px) calc(3rem - 1px) 0 0;
   width: -webkit-fill-available;
@@ -386,7 +386,7 @@ export default class RecipientSubmissionWidget extends Vue {
 }
 
 .total-title {
-  color: white;
+  color: var(--text-color);
   font-size: 16px;
   font-weight: 400;
   line-height: 100%;
@@ -396,7 +396,7 @@ export default class RecipientSubmissionWidget extends Vue {
   display: flex;
   width: fit-content;
   padding: 0.5rem;
-  background: $bg-light-color;
+  background: var(--bg-light-color);
   border-radius: 2rem;
   gap: 0.25rem;
   margin-bottom: 0.5rem;
@@ -404,13 +404,8 @@ export default class RecipientSubmissionWidget extends Vue {
   img {
     width: 16px;
     height: 16px;
+    filter: var(--img-filter, invert(0.3));
   }
-}
-
-.btn-action-disabled {
-  @include button(white, $clr-pink-light-gradient, none);
-  opacity: 0.4;
-  cursor: not-allowed;
 }
 
 .warning-icon {
@@ -424,7 +419,7 @@ export default class RecipientSubmissionWidget extends Vue {
 .warning-text,
 .warning-icon {
   line-height: 150%;
-  color: $warning-color;
+  color: var(--attention-color);
   text-transform: uppercase;
   text-align: center;
 }

@@ -1,0 +1,95 @@
+[data-theme='dark'] {
+  color-scheme: dark;
+  --text-color: #ffffff;
+  --text-body: #f7f7f7;
+  --text-secondary: #ffffff;
+  // workaround for using css variables with sass mixins
+  --text-color-rgb: 255, 255, 255;
+
+  --brand-primary: linear-gradient(
+    109.01deg,
+    rgb(151, 137, 196) 6.45%,
+    rgb(199, 42, 185) 99.55%
+  );
+  --brand-secondary: #16c8b5;
+  --brand-tertiary: linear-gradient(
+    315deg,
+    rgba(199, 42, 185, 0.6) 0%,
+    rgba(37, 43, 121, 0.6) 100%
+  );
+
+  --error-color: #bd6b5e;
+  --warning-color: rgb(253, 254, 106);
+  --warning-background: rgba(253, 254, 106, 0.05);
+  --warning-border: var(--border-color);
+  --attention-color: rgb(253, 254, 106);
+  --link-color: #9789c4;
+  --loader-color: #fff;
+
+  --border-color: #2b364b;
+  --border-strong: #000000;
+  --border-highlight: #7375a6;
+
+  --shadow-light-rgb: 196, 196, 196;
+  --shadow-dark-rgb: 0, 0, 0;
+
+  // no filter for dark mode, image specific filter for light mode
+  --img-filter: none;
+
+  --bg-primary-color: #191623;
+  --bg-secondary-color: #211e2b;
+  --bg-light-color: #2c2938;
+
+  // alternative background colors for light and dark modes
+  --bg-secondary-highlight: #211e2b;
+  --bg-secondary-accent: #211e2b;
+  --bg-light-highlight: #2c2938;
+  --bg-light-accent: #2c2938;
+
+  --bg-transparent: rgba(25, 22, 35, 0.902);
+  --bg-gradient: linear-gradient(315deg, #c72ab9 0%, #252a77 100%);
+  --bg-gradient-hero: linear-gradient(
+    286.78deg,
+    rgba(173, 131, 218, 0) -32.78%,
+    #191623 78.66%
+  );
+  --bg-address-box: linear-gradient(
+    109.01deg,
+    rgb(37, 42, 119) 6.45%,
+    rgb(41, 36, 71) 53.48%,
+    rgb(44, 63, 69) 99.55%
+  );
+  --bg-how-it-works: linear-gradient(
+    135deg,
+    rgba(41, 36, 71, 0.2),
+    rgba(199, 42, 185, 0.2) 30%,
+    rgba(41, 36, 71, 0.2) 100%
+  );
+  --bg-inactive: linear-gradient(
+    109.01deg,
+    rgba(151, 137, 196, 0.2) 6.45%,
+    rgba(199, 42, 185, 0.2) 99.55%
+  );
+  --bg-circle: #2a2736;
+
+  --button-secondary-color: #16c8b5;
+  --button-secondary-bg: none;
+  --button-secondary-border: #16c8b5;
+  --button-action: linear-gradient(
+    109.01deg,
+    rgb(151, 137, 196) 6.45%,
+    rgb(199, 42, 185) 99.55%
+  );
+
+  --explorer-border: var(--text-color);
+  --explorer-hover: var(--bg-light-color);
+
+  --bright-id-bg: linear-gradient(
+    109.01deg,
+    rgba(37, 42, 119, 0.6) 6.45%,
+    rgba(41, 36, 71, 0.6) 53.48%,
+    rgba(44, 63, 69, 0.6) 99.55%
+  );
+  --bright-id-icon-bg: black;
+  --box-shadow: 0px -4px 16px rgba(255, 255, 255, 0.05);
+}
