@@ -9,6 +9,12 @@ Download the [zkSNARK contracts](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK
 - `BatchUpdateStateTreeVerifier32.sol`
 - `QuadVoteTallyVerifier32.sol`
 
+### Prod Circuits
+
+Download the zkSNARK contracts for 'prod' circuits and copy them into `/contracts/contracts/snarkVerifiers`.
+
+- [64 batch size](https://gateway.pinata.cloud/ipfs/QmQhEEFwGdcKGr9jz7ezuDwz8JDtNag27trmZgAFbbxcAT
+
 ### Edit the `/contracts/.env` file
 
 E.g.
