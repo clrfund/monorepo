@@ -219,7 +219,7 @@ describe('End-to-end Tests', function () {
   }
 
   async function finalizeRound(): Promise<any> {
-    const providerUrl = (provider as any)._hardhatNetwork.config.url
+    const providerUrl = (provider as any).connection.url
 
     // Process messages and tally votes
     const results = await genProofs({
@@ -278,7 +278,6 @@ describe('End-to-end Tests', function () {
       UNIT.mul(8).div(10),
       UNIT.mul(8).div(10),
     ])
-
     // Submit messages
     for (const contribution of contributions) {
       const contributor = contribution.signer
