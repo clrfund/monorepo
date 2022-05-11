@@ -17,7 +17,8 @@ export function linkBytecode(
   return linkable.evm.bytecode.object
 }
 
-const CIRCUITS: { [name: string]: any } = {
+// export for use in testing
+export const CIRCUITS: { [name: string]: any } = {
   test: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifier',
     qvtVerifier: 'QuadVoteTallyVerifier',
@@ -52,6 +53,19 @@ const CIRCUITS: { [name: string]: any } = {
       stateTreeDepth: 32,
       messageTreeDepth: 32,
       voteOptionTreeDepth: 3,
+    },
+  },
+  prod: {
+    batchUstVerifier: 'BatchUpdateStateTreeVerifierBatch64',
+    qvtVerifier: 'QuadVoteTallyVerifierBatch64',
+    treeDepths: {
+      stateTreeDepth: 32,
+      messageTreeDepth: 32,
+      voteOptionTreeDepth: 3,
+    },
+    batchSizes: {
+      tallyBatchSize: 64,
+      messageBatchSize: 64,
     },
   },
 }
@@ -119,6 +133,7 @@ export async function deployMaciFactory(
     batchUstVerifier: batchUstVerifier.address,
     qvtVerifier: qvtVerifier.address,
     ...CIRCUITS[circuit].treeDepths,
+    ...CIRCUITS[circuit].batchSizes,
   })
 
   const maciFactory = await MACIFactory.deploy(...maciParameters.values())

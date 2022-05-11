@@ -143,7 +143,7 @@ library Pairing {
     }
 }
 
-contract BatchUpdateStateTreeVerifierCustom {
+contract BatchUpdateStateTreeVerifierBatch64 {
 
     using Pairing for *;
 

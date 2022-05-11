@@ -143,7 +143,7 @@ library Pairing {
     }
 }
 
-contract QuadVoteTallyVerifierCustom {
+contract QuadVoteTallyVerifierBatch64 {
 
     using Pairing for *;
 
