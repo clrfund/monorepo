@@ -38,6 +38,14 @@ export default class Transaction extends Vue {
     p {
       line-height: 150%;
     }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    pre {
+      white-space: pre-wrap;
+    }
   }
 }
 </style>
