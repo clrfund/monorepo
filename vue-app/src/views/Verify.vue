@@ -109,7 +109,7 @@
               verify the connection - please wait.
             </p>
             <div class="qr">
-              <div class="instructions">
+              <div class="instructions" v-if="appLink">
                 <p class="desktop" v-if="appLinkQrCode">
                   Scan this QR code with your BrightID app
                 </p>
