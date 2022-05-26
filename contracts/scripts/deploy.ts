@@ -8,7 +8,8 @@ async function main() {
   const [deployer] = await ethers.getSigners()
   console.log(`Deploying from address: ${deployer.address}`)
 
-  const maciFactory = await deployMaciFactory(deployer)
+  const circuit = 'prod'
+  const maciFactory = await deployMaciFactory(deployer, circuit)
   await maciFactory.deployTransaction.wait()
   console.log(`MACIFactory deployed: ${maciFactory.address}`)
 

@@ -17,7 +17,9 @@ export function linkBytecode(
   return linkable.evm.bytecode.object
 }
 
-// export for use in testing
+// custom configuration for MACI parameters.
+// If tally and message batch sizes are not configured here,
+// they will take the default size of 8
 export const CIRCUITS: { [name: string]: any } = {
   test: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifier',

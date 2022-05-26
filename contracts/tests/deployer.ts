@@ -27,7 +27,8 @@ describe('Clr fund deployer', () => {
   const coordinatorPubKey = new Keypair().pubKey.asContractParam()
 
   beforeEach(async () => {
-    maciFactory = await deployMaciFactory(deployer)
+    const circuit = 'prod'
+    maciFactory = await deployMaciFactory(deployer, circuit)
     maciParameters = await MaciParameters.read(maciFactory)
 
     factoryTemplate = await deployContract(deployer, 'ClrFund')

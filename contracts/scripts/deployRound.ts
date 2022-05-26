@@ -13,7 +13,8 @@ async function main() {
   const [deployer] = await ethers.getSigners()
   console.log('deployer.address: ', deployer.address)
 
-  let maciFactory = await deployMaciFactory(deployer)
+  const circuit = 'prod'
+  let maciFactory = await deployMaciFactory(deployer, circuit)
   await maciFactory.deployTransaction.wait()
   console.log('maciFactory.address: ', maciFactory.address)
 

@@ -22,7 +22,8 @@ describe('MACI factory', () => {
   const coordinatorPubKey = new Keypair().pubKey.asContractParam()
 
   beforeEach(async () => {
-    maciFactory = await deployMaciFactory(deployer)
+    const circuit = 'prod'
+    maciFactory = await deployMaciFactory(deployer, circuit)
     expect(await getGasUsage(maciFactory.deployTransaction)).lessThan(5600000)
     maciParameters = await MaciParameters.read(maciFactory)
 

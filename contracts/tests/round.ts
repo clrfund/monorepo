@@ -79,7 +79,8 @@ describe('Funding Round', () => {
       recipientRegistry.address,
       coordinator.address
     )
-    const maciFactory = await deployMaciFactory(deployer)
+    const circuit = 'prod'
+    const maciFactory = await deployMaciFactory(deployer, circuit)
     const maciDeployed = await maciFactory.deployMaci(
       fundingRound.address,
       fundingRound.address,
