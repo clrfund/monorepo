@@ -285,12 +285,8 @@ const actions = {
       getContributorStorageKey(state.currentRound.fundingRoundAddress)
     )
   },
-  async [LOGIN_USER]({ state, dispatch }) {
-    await loginUser(
-      state.currentUser.walletAddress,
-      state.currentUser.encryptionKey
-    )
-    dispatch(LOAD_BRIGHT_ID)
+  async [LOGIN_USER](_, { walletAddress, encryptionKey }) {
+    await loginUser(walletAddress, encryptionKey)
   },
   [LOGOUT_USER]({ commit, dispatch }) {
     dispatch(UNWATCH_CART)

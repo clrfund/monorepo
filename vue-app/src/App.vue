@@ -58,6 +58,7 @@ import {
   LOGIN_USER,
   LOAD_FACTORY_INFO,
   LOAD_MACI_FACTORY_INFO,
+  LOAD_BRIGHT_ID,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 
@@ -124,15 +125,30 @@ export default class App extends Vue {
   loginUser = async () => {
     if (!this.$web3.user) return
 
+    // Connect & auth to gun db
+    await this.$store.dispatch(LOGIN_USER, this.$web3.user)
+
     this.$store.commit(SET_CURRENT_USER, this.$web3.user)
-    await this.$store.dispatch(LOGIN_USER)
     this.$store.dispatch(LOAD_USER_INFO)
-    if (this.$store.state.currentRound) {
-      // Load cart & contributor data for current round
-      this.$store.dispatch(LOAD_CART)
-      this.$store.dispatch(LOAD_COMMITTED_CART)
-      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    this.$store.dispatch(LOAD_BRIGHT_ID)
+  }
+
+  @Watch('isUserAndRoundLoaded')
+  loadUserRoundData = async () => {
+    if (!this.isUserAndRoundLoaded) {
+      return
     }
+
+    this.$store.dispatch(LOAD_USER_INFO)
+
+    // Load cart & contributor data for current round
+    this.$store.dispatch(LOAD_CART)
+    this.$store.dispatch(LOAD_COMMITTED_CART)
+    this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+  }
+
+  get isUserAndRoundLoaded(): boolean {
+    return !!this.currentUser && !!this.$store.state.currentRound
   }
 
   private get currentUser(): User {
