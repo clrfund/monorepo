@@ -37,6 +37,16 @@ cd ../contracts
 npm run compileSol
 ```
 
+### Batch 64 Circuits
+
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy) for 'batch 64' circuits into `circuits/params/` directory
+
+Change the permission of the c binaries to be executable:
+```
+chmod u+x qvt32 batchUst32
+```
+
+
 ### Generate coordinator key
 
 ```
@@ -146,10 +156,16 @@ Switch to `contracts` directory:
 cd contracts/
 ```
 
-Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits to `snark-params` directory. Example:
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy) for 'batch 64' circuits to `snark-params` directory. Example:
 
 ```
-ipfs get --output snark-params QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD
+ipfs get --output snark-params QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy
+```
+
+Change the permission of the c binaries to be executable:
+```
+cd snark-params
+chmod u+x qvt32 batchUst32
 ```
 
 Set the path to downloaded parameter files and also the path to `zkutil` binary (if needed):
