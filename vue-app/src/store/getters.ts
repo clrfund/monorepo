@@ -49,17 +49,13 @@ const getters = {
         ? state.recipientRegistryInfo.challengePeriodDuration
         : 0
 
-    return state.currentRound.signUpDeadline.minus({
+    const deadline = state.currentRound.signUpDeadline.minus({
       seconds: challengePeriodDuration,
     })
+
+    return deadline.isValid ? deadline : null
   },
   isRoundJoinPhase: (state: RootState, getters): boolean => {
-    if (!state.currentRound) {
-      return true
-    }
-    if (!state.recipientRegistryInfo) {
-      return false
-    }
     return !hasDateElapsed(getters.recipientJoinDeadline)
   },
   isRoundJoinOnlyPhase: (state: RootState, getters): boolean => {
