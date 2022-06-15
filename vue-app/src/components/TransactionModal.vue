@@ -68,9 +68,9 @@ export default class TransactionModal extends Vue {
 
 .modal-body {
   text-align: left;
-  background: $bg-secondary-color;
+  background: var(--bg-secondary-color);
   border-radius: 1rem;
-  box-shadow: $box-shadow;
+  box-shadow: var(--box-shadow);
   padding: 1.5rem;
 }
 

@@ -15,7 +15,7 @@ export default class Panel extends Vue {}
 @import '../styles/theme';
 
 .panel-background {
-  background: $bg-secondary-color;
+  background: var(--bg-secondary-color);
   border-radius: 0.5rem;
   display: flex;
   justify-content: center;

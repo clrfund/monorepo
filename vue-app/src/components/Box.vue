@@ -28,7 +28,7 @@ export default class Box extends Vue {}
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: $bg-secondary-color;
+  background: var(--bg-secondary-color);
   padding-top: 20px;
   width: 400px;
   margin: 20px 0;

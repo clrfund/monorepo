@@ -456,7 +456,7 @@ export default class MetadataViewer extends mixins(validationMixin) {
 .form-background {
   border-radius: 0.5rem;
   padding: 1rem;
-  background: $bg-light-color;
+  background: var(--bg-light-color);
   margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -531,7 +531,7 @@ export default class MetadataViewer extends mixins(validationMixin) {
   padding: 0.25rem;
   margin-top: 0.25rem;
   &:hover {
-    background: $bg-primary-color;
+    background: var(--bg-primary-color);
     border-radius: 4px;
   }
 }

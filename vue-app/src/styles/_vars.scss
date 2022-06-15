@@ -1,67 +1,31 @@
-// colors
-$text-color: #ffffff;
-$text-secondary-color: #91a4c8;
-$bg-transparent: rgba(44, 41, 56, 0.9);
-$bg-primary-color: #191623;
-$bg-secondary-color: #211e2b;
-$bg-light-color: #2c2938;
-$border-color: #2b364b;
-$highlight-color: #9789c4; /* #6cf4d5 */
+@import './vars-dark';
+@import './vars-light';
+
+$clr-green: #16c8b5; //rgb(22, 200, 181)
+$clr-pink: #c72ab9;
+$clr-black: #211e2b;
+$idle-color: #191623;
 $button-color: #7375a6;
+$border-light: #7375a6;
+$icon-hover: #2c2938;
+$highlight-color: #9789c4;
 $button-disabled-color: #56567a;
 $button-disabled-text-color: #aaa9af;
-$error-color: #bd6b5e;
-$warning-color: #fdfe6a;
-$warning-color-bg: rgba(253, 254, 106, 0.05);
-$clr-green: #16c8b5;
-$clr-green-bg: rgba(22, 200, 181, 0.2);
-$clr-green-bg600: rgba(22, 200, 181, 0.6);
-$clr-pink: #c72ab9;
-$clr-blue: #252a77;
-$clr-pink-light-gradient: linear-gradient(
-  109.01deg,
-  #9789c4 6.45%,
-  #c72ab9 99.55%
-);
-$clr-pink-dark-gradient: linear-gradient(315deg, #c72ab9 0%, #252a77 100%);
-$clr-green-gradient: linear-gradient(315deg, #2b364b 0%, #6cf4d5 100%);
-$clr-blue-gradient: linear-gradient(
-  109.01deg,
-  #252a77 6.45%,
-  #292447 53.48%,
-  #2c3f45 99.55%
-);
-$box-shadow: 0px -4px 16px rgba(255, 255, 255, 0.05);
+$box-shadow-nav-bar: 0px -4px 16px rgba(255, 255, 255, 0.05);
 
-// when using gradients as backgrounds – 60% opacity
-$clr-pink-dark-gradient-bg: linear-gradient(
-  315deg,
-  rgba(199, 42, 185, 0.6) 0%,
-  rgba(37, 42, 119, 0.6) 100%
-);
-$clr-blue-gradient-bg: linear-gradient(
+$gradient-highlight: linear-gradient(
   109.01deg,
-  rgba(37, 42, 119, 0.6) 6.45%,
-  rgba(41, 36, 71, 0.6) 53.48%,
-  rgba(44, 63, 69, 0.6) 99.55%
+  $highlight-color 6.45%,
+  $clr-pink 99.55%
 );
-$clr-purple-gradient-bg: linear-gradient(
-    135deg,
-    rgba(41, 36, 71, 0.2),
-    rgba(199, 42, 185, 0.2) 30%,
-    rgba(41, 36, 71, 0.2) 100%
-  ),
-  #191623;
 
 // inactive - 20% opacity
-$clr-pink-light-gradient-inactive: linear-gradient(
+$gradient-inactive: linear-gradient(
   109.01deg,
-  rgba(151, 137, 196, 0.2) 6.45%,
-  rgba(199, 42, 185, 0.2) 99.55%
+  rgba($highlight-color, 0.2) 6.45%,
+  rgba($clr-pink, 0.2) 99.55%
 );
 
-// 1rem = 16px at default text zoom size
-$border: 2px solid $border-color;
 $content-space: 2rem;
 $modal-space: 1.5rem;
 

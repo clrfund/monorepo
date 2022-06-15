@@ -223,7 +223,7 @@ export default class JoinView extends Vue {
   margin: 0 auto;
   @media (max-width: $breakpoint-m) {
     width: 100%;
-    background: $bg-secondary-color;
+    background: var(--bg-secondary-color);
   }
 }
 
@@ -300,8 +300,8 @@ export default class JoinView extends Vue {
   right: 0;
   left: 0;
   padding: 1.5rem;
-  background: $bg-primary-color;
-  box-shadow: $box-shadow;
+  background: var(--bg-primary-color);
+  box-shadow: var(--box-shadow);
 }
 
 .step-title {
@@ -321,7 +321,7 @@ export default class JoinView extends Vue {
   margin-bottom: 2rem;
   overflow: none;
   @media (min-width: $breakpoint-m) {
-    background: $bg-secondary-color;
+    background: var(--bg-secondary-color);
     padding: 1.5rem;
     border-radius: 1rem;
     margin-bottom: 4rem;
@@ -331,7 +331,7 @@ export default class JoinView extends Vue {
 .cancel-link {
   position: sticky;
   top: 0px;
-  color: $error-color;
+  color: var(--error-color);
   text-decoration: underline;
 }
 

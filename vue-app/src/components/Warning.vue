@@ -21,11 +21,11 @@ export default class Warning extends Vue {
 @import '../styles/theme';
 
 .warning {
-  background: $warning-color-bg;
-  border: 1px solid $warning-color;
+  background: var(--warning-background);
+  border: 1px solid var(--warning-border);
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
-  color: $warning-color;
+  color: var(--warning-color);
   font-size: 14px;
   font-family: Inter;
   line-height: 150%;

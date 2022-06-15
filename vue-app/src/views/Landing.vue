@@ -15,7 +15,7 @@
             </div>
             <div class="btn-group">
               <links to="/projects" class="btn-action">Get started</links>
-              <div class="btn-white" @click="scrollToHowItWorks">
+              <div class="btn-info" @click="scrollToHowItWorks">
                 How it works
               </div>
             </div>
@@ -223,7 +223,7 @@ export default class Landing extends Vue {
 @import '../styles/theme';
 
 #page {
-  background: $bg-primary-color;
+  background: var(--bg-primary-color);
 }
 
 #page > div {
@@ -279,9 +279,9 @@ ol li::before {
   font-size: 16px;
   line-height: 100%;
   border-radius: 50%;
-  color: white;
-  background: #2a2736;
-  border: 2px solid #9789c4;
+  color: var(--text-secondary);
+  background: var(--bg-circle);
+  border: 2px solid var(--link-color);
   box-sizing: border-box;
   text-align: center;
   padding-top: 0.375rem;
@@ -301,27 +301,14 @@ ol li::before {
   }
 }
 
-.btn-hero-primary {
-  background: linear-gradient(109.01deg, #9789c4 6.45%, #c72ab9 99.55%);
-}
-
-.btn-primary {
-  background: #16c8b5;
-}
-
-.link-primary {
-  color: #16c8b5;
-}
-
 .link-li {
-  color: white;
   text-decoration: underline;
   margin-bottom: 1rem;
   font-size: 16px;
 }
 
 #bright-id {
-  background: $clr-blue-gradient-bg;
+  background: var(--bright-id-bg);
 }
 
 #chain-icon,
@@ -334,7 +321,7 @@ ol li::before {
 
 #bright-id-icon {
   padding: 0.5rem;
-  background: black;
+  background: var(--bright-id-icon-bg);
 }
 
 .pre-req,
@@ -363,7 +350,7 @@ ol li::before {
 #hero {
   position: relative;
   overflow: hidden;
-  background: $clr-pink-dark-gradient;
+  background: var(--bg-gradient);
   padding: 0;
   min-height: 639px; /* This is the height when adding in the callout */
   display: flex;
@@ -400,10 +387,12 @@ ol li::before {
       max-width: 880px;
       margin: -2rem;
       padding: 2rem;
-      background: linear-gradient(
+      @include gradientBackground(
         182.34deg,
-        rgba(0, 0, 0, 0.4) 81%,
-        rgba(196, 196, 196, 0) 89.75%
+        rgba(var(--shadow-dark-rgb), 0.4),
+        81%,
+        rgba(var(--shadow-light-rgb), 0),
+        89.75%
       );
     }
   }
@@ -424,8 +413,8 @@ ol li::before {
   }
 
   .apply-callout {
-    background: #191623e6;
-    border: 2px solid #9789c4;
+    background: var(--bg-transparent);
+    border: 2px solid $highlight-color;
     box-sizing: border-box;
     border-radius: 8px;
     padding: 1rem;
@@ -438,6 +427,7 @@ ol li::before {
     .column {
       flex: 1;
     }
+
     @media (max-width: $breakpoint-m) {
       display: flex;
       gap: 0.5rem;
@@ -451,7 +441,7 @@ ol li::before {
   justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
-  background: $clr-pink-dark-gradient-bg;
+  background: var(--brand-tertiary);
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }
@@ -483,10 +473,13 @@ ol li::before {
 #about-1,
 #about-2,
 #about-3 {
-  background: $bg-light-color;
+  background: var(--bg-light-color);
   border-radius: 0.5rem;
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
+  }
+  a {
+    color: var(--link-color);
   }
 }
 
@@ -498,13 +491,13 @@ ol li::before {
 
 #about-2 {
   @media (max-width: $breakpoint-l) {
-    background: $bg-secondary-color;
+    background: var(--bg-secondary-color);
   }
 }
 
 #about-3 {
   @media (max-width: $breakpoint-l) {
-    background: $bg-light-color;
+    background: var(--bg-light-color);
   }
 }
 
@@ -514,7 +507,7 @@ ol li::before {
 }
 
 #section-how-it-works {
-  background: $clr-purple-gradient-bg;
+  background: var(--bg-how-it-works);
   display: grid;
   grid-template-columns: 3fr 2fr;
   grid-template-rows: repeat(2, auto);
@@ -539,7 +532,7 @@ ol li::before {
     position: relative;
     display: flex;
     flex-direction: column;
-    background: $bg-light-color;
+    background: var(--bg-light-color);
     /* width: 40%; */
     border-radius: 1rem;
     padding: 2rem;

@@ -34,10 +34,10 @@ export default class extends Vue {
 @import '../styles/theme';
 
 .link-box {
-  background: $bg-primary-color;
+  background: var(--bg-primary-color);
   padding: 1.5rem;
   border-radius: 1rem;
-  box-shadow: $box-shadow;
+  box-shadow: var(--box-shadow);
   overflow-wrap: anywhere;
 
   .link-title {

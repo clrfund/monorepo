@@ -24,7 +24,7 @@ export default class ClickableCard extends Vue {
 @import '../styles/theme';
 
 .card-container {
-  background-color: $bg-secondary-color;
+  background-color: var(--bg-secondary-color);
   border-radius: 8px;
   display: flex;
   flex-direction: column;

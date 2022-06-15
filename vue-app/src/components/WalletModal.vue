@@ -83,7 +83,7 @@ export default class WalletModal extends Vue {
 .modal-body {
   margin-top: $modal-space;
   text-align: left;
-  background: $bg-secondary-color;
+  background: var(--bg-secondary-color);
   border-radius: 1rem;
   display: grid;
   grid-gap: 10px;
@@ -102,16 +102,16 @@ export default class WalletModal extends Vue {
 }
 
 .option {
-  background: $bg-light-color;
+  background: var(--bg-light-color);
   padding: 0 1rem;
   border-radius: 1rem;
   border: 1px solid;
-  border-color: #ffffff66;
+  border-color: var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 16px;
-  color: $text-color;
+  color: var(--text-color);
   &:hover {
     cursor: pointer;
     border-color: $clr-green;
@@ -125,5 +125,8 @@ export default class WalletModal extends Vue {
 .close-button {
   background: transparent;
   border: none;
+  img {
+    filter: var(--img-filter, invert(0.3));
+  }
 }
 </style>

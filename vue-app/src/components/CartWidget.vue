@@ -132,10 +132,10 @@ export default class CartWidget extends Vue {
 
 .cart-indicator {
   border-radius: 2rem;
-  background: $clr-pink-light-gradient;
+  background: $gradient-highlight;
   padding: 0.25rem;
   font-size: 10px;
-  color: #fff;
+  color: var(--text-color);
   line-height: 100%;
   width: 8px;
   height: 8px;
@@ -156,7 +156,7 @@ export default class CartWidget extends Vue {
 
 @keyframes pulse-animation {
   0% {
-    box-shadow: 0 0 0 0px $bg-primary-color;
+    box-shadow: 0 0 0 0px $idle-color;
   }
 
   100% {
@@ -178,7 +178,7 @@ export default class CartWidget extends Vue {
   right: 0;
   height: 100%;
   width: $cart-width-closed;
-  background: $bg-secondary-color;
+  background: var(--bg-secondary-color);
   z-index: 0;
 }
 
@@ -197,77 +197,21 @@ export default class CartWidget extends Vue {
   cursor: pointer;
   gap: 0.5rem;
   padding: 0.75rem 0.5rem;
-  color: white;
-  background: rgba(44, 41, 56, 1);
-  border: 1px solid rgba(115, 117, 166, 0.3);
+  color: var(--text-color);
+  background: var(--bg-cart);
+  border: 1px solid rgba($border-light, 0.3);
   border-right: none;
   &:hover {
-    background: $bg-secondary-color;
+    background: var(--bg-secondary-color);
     gap: 0.75rem;
+  }
+
+  img {
+    filter: var(--img-filter, invert(0.7));
   }
 }
 
 .provider-error {
   text-align: center;
-}
-
-.profile-info {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  cursor: pointer;
-  background: $clr-pink-dark-gradient;
-  border-radius: 32px;
-  padding-right: 0.5rem;
-
-  .profile-name {
-    font-size: 14px;
-    opacity: 0.8;
-  }
-
-  .balance {
-    font-size: 14px;
-    font-weight: 600;
-    font-family: 'Glacial Indifference', sans-serif;
-  }
-
-  .profile-image {
-    border-radius: 50%;
-    box-sizing: border-box;
-    height: $profile-image-size;
-    overflow: hidden;
-    width: $profile-image-size;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-    img {
-      height: 100%;
-      width: 100%;
-    }
-  }
-
-  .profile-info-balance {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    cursor: pointer;
-    background: $bg-primary-color;
-    padding: 0.5rem 0.5rem;
-    border-radius: 32px;
-    margin: 0.25rem;
-    margin-right: 0;
-  }
-
-  .profile-info-balance img {
-    height: 16px;
-    width: 16px;
-  }
-
-  .cart-component {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
 }
 </style>

@@ -47,7 +47,7 @@ export default class Accordion extends Vue {
 @import '../styles/theme';
 
 .option {
-  background: $bg-light-color;
+  background: var(--bg-light-color);
   padding: 1rem;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
@@ -56,8 +56,9 @@ export default class Accordion extends Vue {
     margin: 0.5rem;
     padding: 0.5rem;
     cursor: pointer;
+    filter: var(--img-filter, invert(1));
     &:hover {
-      background: $bg-secondary-color;
+      background: $clr-black;
       border-radius: 0.5rem;
     }
   }

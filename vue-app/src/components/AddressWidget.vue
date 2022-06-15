@@ -70,7 +70,7 @@ export default class AddressWidget extends Vue {
 @import '../styles/theme';
 
 .copy {
-  background: $bg-primary-color;
+  background: var(--bg-primary-color);
   justify-content: space-between;
   align-items: center;
   display: flex;
@@ -117,6 +117,6 @@ export default class AddressWidget extends Vue {
 }
 
 .icon {
-  @include icon(none, $bg-light-color);
+  @include icon(none, var(--bg-light-color));
 }
 </style>

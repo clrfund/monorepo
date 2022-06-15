@@ -50,7 +50,7 @@
           <li>An Ethereum wallet, with enough gas for two transactions</li>
           <li>Access to Zoom or Google Meet</li>
         </ul>
-        <links to="/about-sybil-resistance/">Why is this important?</links>
+        <links to="/about/sybil-resistance/">Why is this important?</links>
         <div v-if="isRoundNotStarted" class="join-message">
           There's not yet an open funding round. Get prepared now so you're
           ready for when the next one begins!
@@ -187,7 +187,7 @@ ul {
 }
 
 .gradient {
-  background: $clr-pink-dark-gradient;
+  background: var(--bg-gradient);
   position: fixed;
   top: 0;
   right: 0;
@@ -207,11 +207,7 @@ ul {
     right: 0;
     height: 100%;
     width: 100%;
-    background: linear-gradient(
-      286.78deg,
-      rgba(173, 131, 218, 0) -32.78%,
-      #191623 78.66%
-    );
+    background: var(--bg-gradient-hero);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
       padding-bottom: 0rem;
@@ -244,10 +240,12 @@ ul {
   }
 
   @media (max-width: $breakpoint-s) {
-    background: linear-gradient(
+    @include gradientBackground(
       171.34deg,
-      rgba(0, 0, 0, 0.8) 63.5%,
-      rgba(196, 196, 196, 0) 78.75%
+      rgba(var(--shadow-dark-rgb), 0.8),
+      63.5%,
+      rgba(var(--shadow-light-rgb), 0),
+      78.75%
     );
   }
 
@@ -279,7 +277,7 @@ ul {
 
 .join-message {
   border: 1px solid $clr-green;
-  background: $bg-primary-color;
+  background: var(--bg-primary-color);
   border-radius: 1rem;
   padding: 1rem;
   margin: 1rem 0 0;
@@ -288,12 +286,12 @@ ul {
 }
 
 .warning-message {
-  border: 1px solid $error-color;
-  background: $bg-primary-color;
+  border: 1px solid var(--error-color);
+  background: var(--bg-primary-color);
   border-radius: 1rem;
   padding: 1rem;
   margin: 1rem 0 0;
-  color: $error-color;
+  color: var(--error-color);
   font-size: 14px;
 }
 

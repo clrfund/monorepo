@@ -40,7 +40,7 @@ export default class SearchInput extends Vue {
 @import '../styles/theme';
 
 .search-container {
-  background-color: $bg-secondary-color;
+  background-color: var(--bg-secondary-color);
   padding: 0.5rem 1rem;
   border: 2px solid $button-color;
   border-radius: 16px;

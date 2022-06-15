@@ -68,7 +68,7 @@ export default class Dropdown extends Vue {
   .button {
     background: none;
     cursor: pointer;
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     display: flex;
     justify-content: space-between;
@@ -99,7 +99,7 @@ export default class Dropdown extends Vue {
     top: 110%;
     right: 0;
     grid-template-columns: repeat(1, 4fr);
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     overflow: hidden;
     justify-content: space-between;
@@ -111,9 +111,9 @@ export default class Dropdown extends Vue {
       cursor: pointer;
       padding: 0.5rem;
       line-height: 24px;
-      background: $bg-primary-color;
+      background: var(--bg-primary-color);
       &:hover {
-        background: $bg-secondary-color;
+        background: var(--bg-light-accent);
       }
     }
   }
