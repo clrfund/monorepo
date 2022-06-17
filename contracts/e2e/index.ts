@@ -15,6 +15,7 @@ import {
   createMessage,
   getRecipientClaimData,
 } from '../utils/maci'
+import { CIRCUITS } from '../utils/deployment'
 
 use(solidity)
 
@@ -66,15 +67,14 @@ describe('End-to-end Tests', function () {
     // Deploy funding round factory
     const poseidonT3 = await deployContract(deployer, ':PoseidonT3')
     const poseidonT6 = await deployContract(deployer, ':PoseidonT6')
+    const circuit = 'prod'
+    const params = CIRCUITS[circuit]
     const batchUstVerifier = await deployContract(
       deployer,
-      'BatchUpdateStateTreeVerifier32'
+      params.batchUstVerifier
     )
-    const qvtVerifier = await deployContract(
-      deployer,
-      'QuadVoteTallyVerifier32'
-    )
-    const maciFactory = await deployMaciFactory(deployer, 'x32', {
+    const qvtVerifier = await deployContract(deployer, params.qvtVerifier)
+    const maciFactory = await deployMaciFactory(deployer, circuit, {
       poseidonT3,
       poseidonT6,
       batchUstVerifier,
@@ -278,7 +278,6 @@ describe('End-to-end Tests', function () {
       UNIT.mul(8).div(10),
       UNIT.mul(8).div(10),
     ])
-
     // Submit messages
     for (const contribution of contributions) {
       const contributor = contribution.signer
