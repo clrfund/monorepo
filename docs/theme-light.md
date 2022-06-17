@@ -23,7 +23,7 @@
 
 /about/how-it-works/recipients
 
-![about recipients](screenshots/light/about-how-recipients.jpeg?raw=true)
+![about recipients](screenshots/light/about-how-recipients.png?raw=true)
 
 /about/layer-2
 
