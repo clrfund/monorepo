@@ -93,10 +93,7 @@
               <b>{{ chain.label }} for fast and cheap transaction fees</b>
             </p>
           </div>
-          <links
-            :to="chain.isLayer2 ? '/about/layer-2' : chain.bridge"
-            class="btn-action"
-          >
+          <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-action">
             Get {{ chain.label }} funds
           </links>
         </div>
