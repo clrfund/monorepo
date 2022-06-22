@@ -3,4 +3,3 @@
 /packages/*/node_modules
 .DS_Store
 /generated
-subgraph.yaml
