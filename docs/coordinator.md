@@ -12,40 +12,27 @@ git checkout v0.10.1
 
 Follow instructions in README.md to install necessary dependencies.
 
-### Medium Circuits
+### Download circuits parameters
 
-Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits into `circuits/params/` directory and rebuild the keys:
-
-```
-cd circuits
-./scripts/buildSnarksMedium.sh
-```
-
-### x32 Circuits
-
-Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) for 'x32' circuits into `circuits/params/` directory and rebuild the keys:
-
-```
-cd circuits
-./scripts/buildSnarks32.sh
-```
-
-Recompile the contracts:
-
-```
-cd ../contracts
-npm run compileSol
-```
-
-### Batch 64 Circuits
-
-Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy) for 'batch 64' circuits into `circuits/params/` directory
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy) for 'batch 64' circuits into `circuits/params/` directory.
 
 Change the permission of the c binaries to be executable:
 ```
 chmod u+x qvt32 batchUst32
 ```
 
+The contract deployment scripts currently use the `batch 64` circuits, if you want to use a smaller size circuits, you can use smaller size circuits from [here](../contracts/contracts/snarkVerifiers/README.md). You will need to update the deploy script to call `deployMaciFactory()` with your circuit and redeploy the contracts.
+
+```
+   const maciFactory = await deployMaciFactory(deployer, circuit)
+```
+
+### Recompile the contracts:
+
+```
+cd ../contracts
+npm run compileSol
+```
 
 ### Generate coordinator key
 
