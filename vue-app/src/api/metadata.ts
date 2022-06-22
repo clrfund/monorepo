@@ -1,4 +1,4 @@
-import { MetadataComposer, SearchOptions } from '@yuetloo/metadata-composer'
+import { MetadataComposer, SearchOptions } from '@clrfund/metadata-composer'
 import { ContractTransaction, providers, utils } from 'ethers'
 import { METADATA_NETWORKS, METADATA_SUBGRAPH_URL_PREFIX, chain } from './core'
 import { Project } from './projects'

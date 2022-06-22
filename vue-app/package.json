@@ -12,10 +12,10 @@
     "test:lint": "vue-cli-service lint --no-fix"
   },
   "dependencies": {
+    "@clrfund/metadata-composer": "^0.0.1",
     "@kleros/gtcr-encoder": "^1.4.0",
     "@openfonts/inter_all": "^1.0.2",
     "@walletconnect/web3-provider": "^1.5.1",
-    "@yuetloo/metadata-composer": "^1.0.18",
     "core-js": "^3.6.4",
     "crypto-js": "^4.0.0",
     "ethereum-blockies-base64": "^1.0.2",
