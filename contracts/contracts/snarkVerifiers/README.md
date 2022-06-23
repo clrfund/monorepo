@@ -8,7 +8,7 @@ Trusted setup:
 - 'batch64' circuits: https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy
 
 
-Instead of downloading the above circuits from the ipfs, they can be generated using the MACI scripts.  For example, to build the x32 circuits:
+Instead of downloading the above circuits from the ipfs, they can be generated using the MACI scripts.  For example, to build the x32 circuits on linux Ubuntu 22.04 + Node v16.13.2:
 
 ```
 # Clone the MACI repo and switch to version v0.10.1:
