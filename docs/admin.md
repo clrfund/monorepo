@@ -254,15 +254,14 @@ The clrfund web app uses subgraph to index contract event data. You can set up a
 3) generate subgraph.yaml
 ```
 npx mustache config/goerli.json subgraph.template.yaml > subgraph.yaml
-``
+```
+
 4) deploy subgraph
 ```
 npm run codegen
 npm run build
 npx graph auth --product hosted-service <ACCESS_TOKEN>
 npx graph deploy --product hosted-service <yourname>/clrfund
-```
-
 ```
 
 ## GUN
