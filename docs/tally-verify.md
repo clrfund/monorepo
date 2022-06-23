@@ -105,12 +105,12 @@ In case you are in a different OS than Linux, you can run all the previous MACI 
 
 ### Use the docker image
 
-First, install [docker](https://docs.docker.com/engine/install/) and [docker-componse](https://docs.docker.com/compose/install/)
+First, install [docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/)
 
 Inside the maci repo, run:
 
 ```
-docker-componse up
+docker-compose up
 ```
 
 Once the container is built, in a different terminal, grab the container id:
