@@ -8,7 +8,7 @@ dataSources:
     name: FundingRoundFactory
     network: xdai
     source:
-      address: '0x549F91A93c94358C5f5380D7ABF23E1340CfF2db'
+      address: '0x4ede8f30d9c2dc96a9d6787e9c4a478424fb960a'
       abi: FundingRoundFactory
       startBlock: 15217676
     mapping:
@@ -20,7 +20,6 @@ dataSources:
         - RecipientRegistry
         - ContributorRegistry
         - FundingRound
-        - MACI
       abis:
         - name: FundingRoundFactory
           file: ./abis/FundingRoundFactory.json
@@ -32,8 +31,6 @@ dataSources:
           file: ./abis/OptimisticRecipientRegistry.json
         - name: BrightIdUserRegistry
           file: ./abis/BrightIdUserRegistry.json
-        - name: MACI
-          file: ./abis/MACI.json
       eventHandlers:
         - event: CoordinatorChanged(address)
           handler: handleCoordinatorChanged
