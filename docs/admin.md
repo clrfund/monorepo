@@ -1,12 +1,16 @@
-# Running clr.fund instance on Rinkeby
+# Running clr.fund instance on Goerli
 
 This document describes deployment and administration of clr.fund contracts using [hardhat console](https://hardhat.org/guides/hardhat-console.html).
 
-For example, to start console configured for Rinkeby network:
+For example, to start a hardhat console configured for the Goerli network:
+
+**Prepare .env file**
+
+You will need to set up an RPC provider for the `JSONRPC_HTTP_URL` variable. Can use infura, pocket, alchemy, etc.
 
 **Prepare wallet**
 
-Update `contracts/.env`
+Update `contracts/.env`. See [.env.example](../contracts/.env.example) for details.
 
 ```bash
 # Connect using mnemonic
@@ -16,24 +20,13 @@ WALLET_MNEMONIC={{mnemonic-phrase}}
 WALLET_PRIVATE_KEY={{deployer-private-key}}
 ```
 
-If using single private key, update `hardhat.config.ts`:
-
-```ts
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY || ''
-
-// Change Rinkeby to: 
-  accounts: [ `0x${WALLET_PRIVATE_KEY}` ],
-```
-
-Open hardhat console
+**Open hardhat console**
 
 ```
 cd contracts/
-yarn hardhat console --network rinkeby
+yarn hardhat console --network goerli
 ```
 
-**Prepare .env file**
-You will need to set up an RPC provider for the `RINKEBY_JSONRPC_HTTP_URL` variable. Can use infura, pocket, alchemy, etc.
 
 ## Deployment
 
@@ -44,7 +37,7 @@ Deploy MACI factory:
 ```js
 const [deployer] = await ethers.getSigners()
 const { deployMaciFactory } = require('./utils/deployment')
-const maciFactory = await deployMaciFactory(deployer, 'medium')
+const maciFactory = await deployMaciFactory(deployer, 'prod')
 ```
 
 The `deployMaciFactory` function deploys MACI factory and other contracts required by it:
@@ -147,8 +140,9 @@ await factory.setRecipientRegistry(recipientRegistry.address)
 Set native token:
 
 ```js
-const rinkebyDaiAddress = '0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea'
-await factory.setToken(rinkebyDaiAddress)
+// this can be any ERC20 compatible token address
+const tokenAddress = '0x4f38007de2adba1ba6467d4b82e8de59c2298a3e'
+await factory.setToken(tokenAddress)
 ```
 
 If a [coordinator](./coordinator.md) key has not yet been created. Make sure you save your keys in a file as they will not be displayed again, and you're private key is needed to generate the proofs at the end, and tally the votes:
@@ -241,11 +235,55 @@ Cancel current round:
 await factory.cancelCurrentRound()
 ```
 
+## Contract deployment script
+There is a new deployRound script that has been created that automates the above process (minus taking the new factory address and injecting it into the UI). To run this, first change directory to the contracts folder, configure the `.env` file (make sure the parameters JSONRPC_HTTP_URL, WALLET_PRIVATE_KEY or WALLET_MNEMONIC, and NATIVE_TOKEN_ADDRESS are set). Then, run the following:
+
+```
+npx hardhat run --network {network-name} scripts/deployRound.ts
+```
+
+## Subgraph
+The clrfund web app uses subgraph to index contract event data. You can set up a local instance of subgraph following this [guide](./subgraph.md) or create a hosted instance with [theGraph](https://thegraph.com/hosted-service/) and deploy the subgraphs like this:
+
+1) change directory to subgraph
+2) update the config/goerli.json
+ - set `address` to your funding round factory address
+ - set the `factoryStartBlock` to the block before your funding round factory was created
+ - set the `recipientRegistryStartBlock` to the block before your recipient registry was created
+
+3) generate subgraph.yaml
+```
+npx mustache config/goerli.json subgraph.template.yaml > subgraph.yaml
+``
+4) deploy subgraph
+```
+npm run codegen
+npm run build
+npx graph auth --product hosted-service <ACCESS_TOKEN>
+npx graph deploy --product hosted-service <yourname>/clrfund
+```
+
+```
+
+## GUN
+The clrfund web app stores data in the gundb. To ensure the service is available, start a gundb peer using docker like this:
+
+```
+docker run -p 8765:8765 gundb/gun
+```
+
+See https://github.com/amark/gun for more details about GUN
+
 ## User interface
 
 User interface can be configured using environment variables. See [.env file example](../vue-app/.env.example) for details.
 
-> If following along with Rinkeby, make sure to update `VUE_APP_CLRFUND_FACTORY_ADDRESS` with your Rinkeby funding factory address, and update `VUE_APP_ETHEREUM_API_URL` with a Rinkeby provider (ie. Infura or Alchemy). Double check you are using the same user and recipient registry types as used during deployment above.
+If following along with Goerli,
+  1) make sure to update `VUE_APP_CLRFUND_FACTORY_ADDRESS` with your Goerli funding factory address
+  2) update `VUE_APP_ETHEREUM_API_URL` with a Goerli provider (ie. Infura or Alchemy)
+  3) update `VUE_APP_ETHEREUM_API_CHAINID` to 5 (Goerli chain id)
+  4) update `VUE_APP_SUBGRAPH_URL` with your subgraph url
+  5) double check you are using the same user and recipient registry types as used during deployment above.
 
 Build the dApp for production:
 
@@ -263,9 +301,3 @@ ipfs add -r vue-app/dist/
 yarn start:web
 ```
 
-## deployRound Script
-There is a new deployRound script that has been created that automates the above process (minus taking the new factory address and injecting it into the UI). To run this, first change directories to the contracts folder, run the following:
-
-```
-npx hardhat run --network {network-name} scripts/deployRound.ts
-```
