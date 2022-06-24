@@ -145,7 +145,7 @@ const tokenAddress = '0x4f38007de2adba1ba6467d4b82e8de59c2298a3e'
 await factory.setToken(tokenAddress)
 ```
 
-If a [coordinator](./coordinator.md) key has not yet been created. Make sure you save your keys in a file as they will not be displayed again, and you're private key is needed to generate the proofs at the end, and tally the votes:
+If a [coordinator](./tally-verify.md) key has not yet been created. Make sure you save your keys in a file as they will not be displayed again, and you're private key is needed to generate the proofs at the end, and tally the votes:
 
 ```js
 // Generate coordinator key
@@ -224,7 +224,7 @@ Finalize current round and transfer matching funds to the pool:
 await factory.transferMatchingFunds('<total-spent>', '<total-spent-salt>')
 ```
 
-The arguments for `transferMatchingFunds` method should be taken from `tally.json` file published by the [coordinator](./coordinator.md):
+The arguments for `transferMatchingFunds` method should be taken from `tally.json` file published by the [coordinator](./tally-verify.md):
 
 - `total-spent` value can be found by key `totalVoiceCredits.spent`.
 - `total-spent-salt` value can be found by key `totalVoiceCredits.salt`.
