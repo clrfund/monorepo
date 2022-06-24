@@ -236,7 +236,15 @@ await factory.cancelCurrentRound()
 ```
 
 ## Contract deployment script
-There is a new deployRound script that has been created that automates the above process (minus taking the new factory address and injecting it into the UI). To run this, first change directory to the contracts folder, configure the `.env` file (make sure the parameters JSONRPC_HTTP_URL, WALLET_PRIVATE_KEY or WALLET_MNEMONIC, and NATIVE_TOKEN_ADDRESS are set). Then, run the following:
+There is a new deployRound script that has been created that automates the above process (minus taking the new factory address and injecting it into the UI). To run this, first change directory to the contracts folder, configure the `.env` file.
+
+Make sure the following parameters are set:
+
+- JSONRPC_HTTP_URL
+- WALLET_PRIVATE_KEY or WALLET_MNEMONIC
+- NATIVE_TOKEN_ADDRESS
+
+Then, run the following:
 
 ```
 npx hardhat run --network {network-name} scripts/deployRound.ts
