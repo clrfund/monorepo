@@ -228,3 +228,7 @@ From the clrfund contracts folder, run the following command to verify the resul
 ```
 yarn ts-node scripts/verify.ts tally.json
 ```
+
+
+## Troubleshooting
+If you encountered `core dumped` while running the genProofs script as seen in this [issue](https://github.com/clrfund/monorepo/issues/383), make sure the files are not corrupted due to disk space issue, e.g. check file sizes, checksum, and missing files.
