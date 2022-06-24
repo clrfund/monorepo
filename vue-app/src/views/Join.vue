@@ -534,7 +534,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Description</h4>
-                  <div class="data">{{ form.project.description }}</div>
+                  <markdown :raw="form.project.description" />
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Category</h4>
@@ -542,7 +542,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Problem space</h4>
-                  <div class="data">{{ form.project.problemSpace }}</div>
+                  <markdown :raw="form.project.problemSpace" />
                 </div>
               </div>
               <div class="form-background">
@@ -570,7 +570,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Funding plans</h4>
-                  <div class="data">{{ form.fund.plans }}</div>
+                  <markdown :raw="form.fund.plans" />
                 </div>
               </div>
               <div class="form-background">
@@ -594,7 +594,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Team description</h4>
-                  <div class="data">{{ form.team.description }}</div>
+                  <markdown :raw="form.team.description" />
                   <div class="data" v-if="!form.team.description">
                     Not provided
                   </div>
