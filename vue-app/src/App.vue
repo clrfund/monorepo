@@ -17,7 +17,7 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <breadcrumbs v-if="showBreadCrumb" />
+        <breadcrumbs class="breadcrumbs" v-if="showBreadCrumb" />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -456,6 +456,10 @@ summary:focus {
 #content {
   flex: 1;
   padding-bottom: 4rem;
+
+  .breadcrumbs {
+    padding-left: 1.5rem;
+  }
 
   .content-heading {
     display: block;
