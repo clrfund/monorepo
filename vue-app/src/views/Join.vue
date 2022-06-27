@@ -1296,6 +1296,19 @@ export default class JoinView extends mixins(validationMixin) {
 
 .summary {
   margin-bottom: 1rem;
+  ::v-deep {
+    .markdown {
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p {
+        margin: 0.25rem 0;
+      }
+    }
+  }
 }
 
 .summary-section-header {
