@@ -19,7 +19,8 @@
       >
         <loader class="button-loader" v-if="isWaiting" />
         <div v-if="isWaiting" class="tx-notice">
-          Check your wallet for a prompt...
+          <div v-if="!!txHash">Waiting for transaction to be mined...</div>
+          <div v-else>Check your wallet for a prompt...</div>
         </div>
         <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
