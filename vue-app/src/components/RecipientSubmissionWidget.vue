@@ -1,5 +1,5 @@
 <template>
-  <div class="tx-container" v-if="currentUser">
+  <div class="tx-container">
     <div
       :class="
         isWaiting
@@ -9,7 +9,6 @@
     >
       <loader v-if="isLoading" />
       <div
-        v-if="currentUser"
         :class="
           isWaiting || txError
             ? 'tx-progress-area'
@@ -26,7 +25,7 @@
           Check your wallet or {{ blockExplorerLabel }} for more info.
         </div>
       </div>
-      <div class="connected" v-if="currentUser">
+      <div class="connected">
         <div class="total-title">
           Total to submit
           <img
@@ -98,23 +97,8 @@ export default class RecipientSubmissionWidget extends Vue {
     this.isLoading = false
   }
 
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
-
-  get walletProvider(): Web3Provider | undefined {
-    return this.$web3.provider
-  }
-
   get blockExplorerLabel(): string {
     return chain.explorerLabel
-  }
-  get canSubmit(): boolean {
-    return (
-      !!this.currentUser &&
-      !!this.walletProvider &&
-      !!this.$store.state.recipientRegistryInfo
-    )
   }
 
   get hasTxError(): boolean {
