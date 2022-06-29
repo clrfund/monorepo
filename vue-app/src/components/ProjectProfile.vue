@@ -25,7 +25,7 @@
       <p class="tagline">{{ project.tagline }}</p>
       <div class="subtitle">
         <div class="tag">{{ project.category }} tag</div>
-        <div class="team-byline">
+        <div class="team-byline" v-if="!!project.teamName">
           Team: <links to="#team"> {{ project.teamName }}</links>
         </div>
       </div>
