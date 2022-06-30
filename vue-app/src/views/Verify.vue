@@ -443,6 +443,8 @@ export default class VerifyView extends Vue {
       }`
     }
 
+    // delay status update so that users can see the UI
+    // transitions from loading to displaying verification result
     setTimeout(() => {
       this.loadingManualVerify = false
       this.showVerificationResult = true
