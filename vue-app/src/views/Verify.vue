@@ -91,14 +91,34 @@
                   class="btn-primary"
                   :disabled="loadingManualVerify"
                 >
-                  Check if you are verified
+                  <loader v-if="loadingManualVerify" class="button-loader" />
+                  <span v-else>Check if you are verified</span>
                 </button>
-                <loader v-if="loadingManualVerify" />
+                <div v-if="showVerificationResult" class="error">
+                  <span v-if="errorMessage">{{ errorMessage }}</span>
+                  <span v-else-if="!!differentVerifiedAccount">
+                    <span
+                      >A different verified account was found. Please use
+                    </span>
+                    <span
+                      ><Links :to="differentVerifiedAccountExplorerUrl">{{
+                        differentVerifiedAccountShortAddress
+                      }}</Links></span
+                    >
+                    <span> or a new account.</span>
+                  </span>
+                  <span v-else-if="!isManuallyVerified"
+                    >Account is not verified</span
+                  >
+                </div>
               </div>
             </div>
           </div>
-          <div :class="isManuallyVerified ? 'success' : 'unverified'">
-            {{ isManuallyVerified ? 'Ready!' : 'Unverified' }}
+          <div class="verification-result">
+            <loader v-if="loadingManualVerify" class="button-loader" />
+            <div v-else :class="isManuallyVerified ? 'success' : 'unverified'">
+              {{ isManuallyVerified ? 'Ready!' : 'Unverified' }}
+            </div>
           </div>
         </div>
         <div class="application">
@@ -245,6 +265,8 @@ import {
   getBrightId,
 } from '@/api/bright-id'
 import { User } from '@/api/user'
+import { chain } from '@/api/core'
+import { renderAddressOrHash } from '@/utils/accounts'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
@@ -286,6 +308,9 @@ export default class VerifyView extends Vue {
 
   isManuallyVerified = false
   loadingManualVerify = false
+  showVerificationResult = false
+  errorMessage = ''
+  differentVerifiedAccount = ''
 
   get currentUser(): User {
     return this.$store.state.currentUser
@@ -386,10 +411,12 @@ export default class VerifyView extends Vue {
 
   async handleIsVerifiedClick() {
     this.loadingManualVerify = true
+    this.errorMessage = ''
+    this.differentVerifiedAccount = ''
+    this.showVerificationResult = false
 
     try {
       const brightId = await getBrightId(this.currentUser.walletAddress)
-
       if (brightId.isVerified) {
         this.isManuallyVerified = true
         setTimeout(() => {
@@ -398,15 +425,30 @@ export default class VerifyView extends Vue {
             brightId,
           })
         }, 5000)
+      } else {
+        if (brightId.verification) {
+          if (!brightId.verification.unique) {
+            this.differentVerifiedAccount =
+              brightId.verification?.contextIds[0] || ''
+          }
+        }
       }
     } catch (error) {
       if (!(error instanceof BrightIdError)) {
         /* eslint-disable-next-line no-console */
         console.warn('Error while fetching bright id verification', error)
       }
+      this.errorMessage = `Bright id verification error: ${
+        (error as Error).message
+      }`
     }
 
-    this.loadingManualVerify = false
+    // delay status update so that users can see the UI
+    // transitions from loading to displaying verification result
+    setTimeout(() => {
+      this.loadingManualVerify = false
+      this.showVerificationResult = true
+    }, 1000)
   }
 
   /**
@@ -461,6 +503,14 @@ export default class VerifyView extends Vue {
         return false
     }
   }
+
+  get differentVerifiedAccountExplorerUrl(): string {
+    return `${chain.explorer}/address/${this.differentVerifiedAccount}`
+  }
+
+  get differentVerifiedAccountShortAddress(): string {
+    return renderAddressOrHash(this.differentVerifiedAccount, 8)
+  }
 }
 </script>
 
@@ -475,6 +525,32 @@ export default class VerifyView extends Vue {
     width: 100%;
     background: var(--bg-secondary-color);
   }
+}
+
+.verification-result {
+  width: 200px;
+  display: grid;
+
+  .loader {
+    margin: 0 auto;
+  }
+
+  @media (max-width: $breakpoint-m) {
+    .loader {
+      margin: 0 0.5rem 1rem;
+    }
+  }
+}
+
+.button-loader {
+  display: inline-flex;
+  border-color: $clr-pink;
+  width: 1.5rem;
+}
+
+.button-loader::after {
+  border: 2px solid $clr-pink;
+  border-color: $clr-pink transparent $clr-pink transparent;
 }
 
 .grid {
@@ -746,6 +822,10 @@ export default class VerifyView extends Vue {
     padding: 1rem;
     margin-bottom: 1.5rem;
   }
+
+  .error {
+    margin-top: 1rem;
+  }
 }
 
 .verification-status h2 {
@@ -766,6 +846,15 @@ export default class VerifyView extends Vue {
 
 .verification-status .actions {
   margin-top: 1rem;
+
+  .loader {
+    margin: 0 auto;
+  }
+
+  button {
+    width: 250px;
+  }
+
   @media (max-width: $breakpoint-m) {
     button {
       width: 100%;
