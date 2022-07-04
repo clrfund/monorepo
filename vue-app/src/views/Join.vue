@@ -941,6 +941,10 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   isStepValid(step: number): boolean {
+    if (this.isWaiting) {
+      return !this.isWaiting
+    }
+
     if (step === 3) {
       return this.isLinkStepValid()
     }
