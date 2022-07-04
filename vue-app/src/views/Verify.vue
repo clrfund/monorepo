@@ -22,6 +22,7 @@
                   class="progress-steps-loader"
                 />
                 <img
+                  class="current-step"
                   v-else
                   src="@/assets/current-step.svg"
                   alt="current step"
@@ -39,7 +40,11 @@
                 <p v-text="step.name" class="step" />
               </template>
               <template v-else>
-                <img src="@/assets/step-remaining.svg" alt="step remaining" />
+                <img
+                  class="remaining-step"
+                  src="@/assets/step-remaining.svg"
+                  alt="step remaining"
+                />
                 <p v-text="step.name" class="step" />
               </template>
             </div>
@@ -86,14 +91,34 @@
                   class="btn-primary"
                   :disabled="loadingManualVerify"
                 >
-                  Check if you are verified
+                  <loader v-if="loadingManualVerify" class="button-loader" />
+                  <span v-else>Check if you are verified</span>
                 </button>
-                <loader v-if="loadingManualVerify" />
+                <div v-if="showVerificationResult" class="error">
+                  <span v-if="errorMessage">{{ errorMessage }}</span>
+                  <span v-else-if="!!differentVerifiedAccount">
+                    <span
+                      >A different verified account was found. Please use
+                    </span>
+                    <span
+                      ><Links :to="differentVerifiedAccountExplorerUrl">{{
+                        differentVerifiedAccountShortAddress
+                      }}</Links></span
+                    >
+                    <span> or a new account.</span>
+                  </span>
+                  <span v-else-if="!isManuallyVerified"
+                    >Account is not verified</span
+                  >
+                </div>
               </div>
             </div>
           </div>
-          <div :class="isManuallyVerified ? 'success' : 'unverified'">
-            {{ isManuallyVerified ? 'Ready!' : 'Unverified' }}
+          <div class="verification-result">
+            <loader v-if="loadingManualVerify" class="button-loader" />
+            <div v-else :class="isManuallyVerified ? 'success' : 'unverified'">
+              {{ isManuallyVerified ? 'Ready!' : 'Unverified' }}
+            </div>
           </div>
         </div>
         <div class="application">
@@ -240,6 +265,8 @@ import {
   getBrightId,
 } from '@/api/bright-id'
 import { User } from '@/api/user'
+import { chain } from '@/api/core'
+import { renderAddressOrHash } from '@/utils/accounts'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
@@ -281,6 +308,9 @@ export default class VerifyView extends Vue {
 
   isManuallyVerified = false
   loadingManualVerify = false
+  showVerificationResult = false
+  errorMessage = ''
+  differentVerifiedAccount = ''
 
   get currentUser(): User {
     return this.$store.state.currentUser
@@ -381,10 +411,12 @@ export default class VerifyView extends Vue {
 
   async handleIsVerifiedClick() {
     this.loadingManualVerify = true
+    this.errorMessage = ''
+    this.differentVerifiedAccount = ''
+    this.showVerificationResult = false
 
     try {
       const brightId = await getBrightId(this.currentUser.walletAddress)
-
       if (brightId.isVerified) {
         this.isManuallyVerified = true
         setTimeout(() => {
@@ -393,15 +425,30 @@ export default class VerifyView extends Vue {
             brightId,
           })
         }, 5000)
+      } else {
+        if (brightId.verification) {
+          if (!brightId.verification.unique) {
+            this.differentVerifiedAccount =
+              brightId.verification?.contextIds[0] || ''
+          }
+        }
       }
     } catch (error) {
       if (!(error instanceof BrightIdError)) {
         /* eslint-disable-next-line no-console */
         console.warn('Error while fetching bright id verification', error)
       }
+      this.errorMessage = `Bright id verification error: ${
+        (error as Error).message
+      }`
     }
 
-    this.loadingManualVerify = false
+    // delay status update so that users can see the UI
+    // transitions from loading to displaying verification result
+    setTimeout(() => {
+      this.loadingManualVerify = false
+      this.showVerificationResult = true
+    }, 1000)
   }
 
   /**
@@ -456,6 +503,14 @@ export default class VerifyView extends Vue {
         return false
     }
   }
+
+  get differentVerifiedAccountExplorerUrl(): string {
+    return `${chain.explorer}/address/${this.differentVerifiedAccount}`
+  }
+
+  get differentVerifiedAccountShortAddress(): string {
+    return renderAddressOrHash(this.differentVerifiedAccount, 8)
+  }
 }
 </script>
 
@@ -468,8 +523,34 @@ export default class VerifyView extends Vue {
   margin: 0 auto;
   @media (max-width: $breakpoint-m) {
     width: 100%;
-    background: $bg-secondary-color;
+    background: var(--bg-secondary-color);
   }
+}
+
+.verification-result {
+  width: 200px;
+  display: grid;
+
+  .loader {
+    margin: 0 auto;
+  }
+
+  @media (max-width: $breakpoint-m) {
+    .loader {
+      margin: 0 0.5rem 1rem;
+    }
+  }
+}
+
+.button-loader {
+  display: inline-flex;
+  border-color: $clr-pink;
+  width: 1.5rem;
+}
+
+.button-loader::after {
+  border: 2px solid $clr-pink;
+  border-color: $clr-pink transparent $clr-pink transparent;
 }
 
 .grid {
@@ -482,13 +563,12 @@ export default class VerifyView extends Vue {
   height: calc(100vh - var($nav-header-height));
   gap: 0 2rem;
   @media (max-width: $breakpoint-m) {
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-rows: auto auto 1fr;
     grid-template-columns: 1fr;
     grid-template-areas:
       'progress'
       'title'
-      'form'
-      'navi';
+      'form';
     gap: 0;
   }
 }
@@ -502,10 +582,9 @@ export default class VerifyView extends Vue {
     top: 5rem;
     align-self: start;
     padding: 1.5rem 1rem;
-    background: $bg-primary-color;
     border-radius: 16px;
     /* width: 320px; */
-    box-shadow: $box-shadow;
+    box-shadow: var(--box-shadow);
 
     .progress-steps {
       margin-bottom: 1rem;
@@ -535,14 +614,19 @@ export default class VerifyView extends Vue {
       img {
         margin-right: 1rem;
       }
+
+      img.current-step {
+        filter: var(--img-filter, invert(0.3));
+      }
+
       p {
         margin: 0.5rem 0;
       }
       .step {
-        color: #fff9;
+        @include stepColor(var(--text-color-rgb));
       }
       .active {
-        color: white;
+        color: var(--text-color);
         font-weight: 600;
         font-size: 1rem;
       }
@@ -613,20 +697,6 @@ export default class VerifyView extends Vue {
   gap: 0.5rem;
 }
 
-.checkmark {
-  background: $clr-green;
-  border-radius: 2rem;
-  padding: 0.5rem;
-  width: fit-content;
-  display: flex;
-  align-items: center;
-}
-
-.checkmark img {
-  width: 1rem;
-  height: 1rem;
-}
-
 .form-area {
   grid-area: form;
   overflow: auto;
@@ -643,22 +713,6 @@ export default class VerifyView extends Vue {
 
 .form-area p {
   line-height: 150%;
-}
-
-.nav-area {
-  grid-area: navi;
-}
-
-.nav-bar {
-  display: inherit;
-  position: sticky;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  padding: 1.5rem;
-  background: $bg-primary-color;
-  border-radius: 32px 32px 0 0;
-  box-shadow: $box-shadow;
 }
 
 .layout-steps {
@@ -694,7 +748,7 @@ export default class VerifyView extends Vue {
   justify-content: space-between;
   margin-bottom: 2rem;
   @media (min-width: $breakpoint-m) {
-    background: $bg-secondary-color;
+    background: var(--bg-secondary-color);
     padding: 1.5rem;
     border-radius: 1rem;
     margin-bottom: 4rem;
@@ -710,18 +764,14 @@ export default class VerifyView extends Vue {
 .cancel-link {
   position: sticky;
   top: 0px;
-  color: $error-color;
+  color: var(--error-color);
   text-decoration: underline;
-}
-
-.inputs {
-  margin: 1.5rem 0;
 }
 
 .form-background {
   border-radius: 0.5rem;
   padding: 1rem;
-  background: $bg-light-color;
+  background: var(--bg-light-color);
   margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -735,154 +785,12 @@ export default class VerifyView extends Vue {
   }
 }
 
-.input {
-  border-radius: 16px;
-  border: 2px solid $button-color;
-  background-color: $bg-secondary-color;
-  margin: 0.5rem 0;
-  padding: 0.5rem 1rem;
-  font-size: 16px;
-  font-family: Inter;
-  font-weight: 400;
-  line-height: 24px;
-  letter-spacing: 0em;
-  &:valid {
-    border: 2px solid $clr-green;
-  }
-  &:hover {
-    background: $bg-primary-color;
-    border: 2px solid $highlight-color;
-    box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
-  }
-  &:optional {
-    border: 2px solid $button-color;
-    background-color: $bg-secondary-color;
-  }
-}
-
-.input.invalid {
-  border: 2px solid $error-color;
-}
-
-.input-description {
-  margin-top: 0.25rem;
-  font-size: 14px;
-  font-family: Inter;
-  margin-bottom: 0.5rem;
-  line-height: 150%;
-}
-
-.input-notice {
-  margin-top: 0.25rem;
-  font-size: 12px;
-  font-family: Inter;
-  margin-bottom: 0.5rem;
-  line-height: 150%;
-  color: $warning-color;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-
-.input-label {
-  font-family: Inter;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24px;
-  letter-spacing: 0em;
-  text-align: left;
-  margin: 0;
-}
-
-.radio-row {
-  display: flex;
-  margin-top: 1rem;
-  box-sizing: border-box;
-  border: 2px solid $button-color;
-  border-radius: 1rem;
-  overflow: hidden;
-  width: fit-content;
-  input {
-    position: fixed;
-    opacity: 0;
-    pointer-events: none;
-  }
-  input[type='radio']:checked + label {
-    background: $clr-pink;
-    font-weight: 600;
-  }
-  @media (max-width: $breakpoint-m) {
-    width: 100%;
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-.radio-btn {
-  box-sizing: border-box;
-  color: white;
-  font-size: 16px;
-  line-height: 24px;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  margin-left: -1px;
-
-  border-right: 2px solid $button-color;
-  border-bottom: none;
-  @media (max-width: $breakpoint-m) {
-    border-right: none;
-    border-bottom: 2px solid $button-color;
-  }
-  &:last-of-type {
-    border-right: none;
-    border-bottom: none;
-  }
-
-  &:hover {
-    opacity: 0.8;
-    background: $bg-secondary-color;
-    transform: scale(1.04);
-    cursor: pointer;
-  }
-  &:active {
-    background: $bg-secondary-color;
-  }
-}
-
-.loader {
-  display: block;
-  height: 40px;
-  margin: $content-space auto;
-  width: 40px;
-}
-
-.loader:after {
-  content: ' ';
-  display: block;
-  width: 32px;
-  height: 32px;
-  margin: 4px;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: loader 1.2s linear infinite;
-}
-
 .loader {
   margin: $modal-space auto;
 }
 
-@keyframes loader {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 .error {
-  color: $error-color;
+  color: var(--error-color);
   margin-bottom: 0;
   margin-top: 0.5rem;
   font-size: 14px;
@@ -902,50 +810,8 @@ export default class VerifyView extends Vue {
   }
 }
 
-.summary {
-  margin-bottom: 1rem;
-}
-
-.summary-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid $highlight-color;
-  padding-bottom: 0.5rem;
-}
-
-.toggle-tabs-desktop {
-  display: flex;
-  gap: 2rem;
-  font-family: 'Inter';
-  @media (max-width: $breakpoint-m) {
-    /* flex-direction: column;
-    gap: 0;
-    margin-left: 0rem; */
-    /* display: none; */
-  }
-  .active-tab {
-    padding-bottom: 0.5rem;
-    border-bottom: 4px solid $clr-green;
-    border-radius: 4px;
-    font-weight: 600;
-    /* text-decoration: underline; */
-  }
-  .inactive-tab {
-    padding-bottom: 0.5rem;
-    cursor: pointer;
-    &:hover {
-      opacity: 0.8;
-      border-bottom: 4px solid #fff7;
-      border-radius: 4px;
-    }
-    /* text-decoration: underline; */
-  }
-}
-
 .verification-status {
-  background: $bg-light-color;
+  background: var(--bg-light-color);
   padding: 1.5rem 2rem;
   border-radius: 1rem;
   display: flex;
@@ -955,6 +821,10 @@ export default class VerifyView extends Vue {
     flex-direction: column-reverse;
     padding: 1rem;
     margin-bottom: 1.5rem;
+  }
+
+  .error {
+    margin-top: 1rem;
   }
 }
 
@@ -976,6 +846,15 @@ export default class VerifyView extends Vue {
 
 .verification-status .actions {
   margin-top: 1rem;
+
+  .loader {
+    margin: 0 auto;
+  }
+
+  button {
+    width: 250px;
+  }
+
   @media (max-width: $breakpoint-m) {
     button {
       width: 100%;
@@ -994,7 +873,7 @@ export default class VerifyView extends Vue {
 }
 
 .unverified {
-  color: $error-color;
+  color: var(--error-color);
   font-weight: 600;
   margin-left: 1rem;
   @media (max-width: $breakpoint-m) {
@@ -1014,71 +893,11 @@ export default class VerifyView extends Vue {
   }
 }
 
-.checkout-row {
-  display: flex;
-  justify-content: space-between;
-  margin: 2rem 0;
-  @media (max-width: $breakpoint-m) {
-    flex-direction: column;
-    justify-content: flex-start;
-    margin: 1rem 0;
-  }
-}
-
-.toggle-tabs-mobile {
-  display: flex;
-  gap: 2rem;
-  @media (min-width: $breakpoint-m) {
-    /* flex-direction: column;
-    gap: 0;
-    margin-left: 0rem; */
-    display: none;
-  }
-  .active-tab {
-    padding-bottom: 0.5rem;
-    border-bottom: 4px solid $clr-green;
-    border-radius: 4px;
-    font-weight: 600;
-    /* text-decoration: underline; */
-  }
-  .inactive-tab {
-    padding-bottom: 0.5rem;
-    cursor: pointer;
-    &:hover {
-      opacity: 0.8;
-      transform: scale(1.02);
-    }
-    /* text-decoration: underline; */
-  }
-}
-
-.step-subtitle {
-  margin: 0.5rem 0;
-  font-family: 'Glacial Indifference', sans-serif;
-  font-size: 1.5rem;
-}
-
-.edit-button {
-  font-family: 'Inter';
-  font-weight: 500;
-  font-size: 16px;
-  color: $clr-green;
-}
-
-.data {
-  opacity: 0.8;
-  margin-top: 0.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .qr {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: $bg-primary-color;
   border-radius: 1rem;
   margin-top: 2rem;
   padding: 2rem;
@@ -1100,15 +919,6 @@ export default class VerifyView extends Vue {
 .qr-code {
   width: 320px;
   margin: 2rem;
-}
-
-.data img {
-  padding: 0.25rem;
-  margin-top: 0.25rem;
-  &:hover {
-    background: $bg-primary-color;
-    border-radius: 4px;
-  }
 }
 
 .pt-1 {
@@ -1140,5 +950,9 @@ export default class VerifyView extends Vue {
 .btn-block {
   display: block;
   width: 100%;
+}
+
+.remaining-step {
+  filter: var(--img-filter, invert(0.3));
 }
 </style>

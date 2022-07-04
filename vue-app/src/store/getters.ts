@@ -34,6 +34,7 @@ export interface RootState {
   recipientRegistryInfo: RegistryInfo | null
   showCartPanel: boolean
   tally: Tally | null
+  theme: string | null
   factory: Factory | null
   maciFactory: MACIFactory | null
 }

@@ -304,7 +304,7 @@ export default class ProjectList extends Vue {
     grid-area: search;
     border-radius: 16px;
     border: 2px solid $button-color;
-    background-color: $bg-secondary-color;
+    background-color: var(--bg-secondary-color);
     padding: 0.5rem 1rem;
     display: flex;
     font-size: 16px;
@@ -318,6 +318,7 @@ export default class ProjectList extends Vue {
     width: auto;
     img {
       margin-right: 10px;
+      filter: var(--img-filter, invert(1));
     }
 
     input {
@@ -336,7 +337,7 @@ export default class ProjectList extends Vue {
   .hr {
     grid-area: hr;
     width: 100%;
-    border-bottom: 1px solid rgba(115, 117, 166, 1);
+    border-bottom: 1px solid $border-light;
   }
 }
 
@@ -382,22 +383,12 @@ export default class ProjectList extends Vue {
 }
 
 .empty-search {
-  background: $bg-secondary-color;
+  background: var(--bg-secondary-color);
   border-radius: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
-}
-
-.get-prepared {
-  background: $bg-secondary-color;
-  border: 1px solid #000000;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem;
-  justify-content: space-between;
 }
 
 .prep-title {

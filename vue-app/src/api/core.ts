@@ -52,3 +52,9 @@ export const extraRounds: string[] = process.env.VUE_APP_EXTRA_ROUNDS
 export const SUBGRAPH_ENDPOINT =
   process.env.VUE_APP_SUBGRAPH_URL ||
   'https://api.thegraph.com/subgraphs/name/daodesigner/clrfund'
+
+// application theme
+export enum ThemeMode {
+  LIGHT = 'light',
+  DARK = 'dark',
+}

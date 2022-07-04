@@ -40,22 +40,16 @@
         </div>
       </div>
       <div v-if="isEditMode" class="contribution-form">
-        <div class="input-button">
-          <img
-            class="token-icon"
-            height="24px"
-            :src="require(`@/assets/${tokenLogo}`)"
-          />
-          <input
-            :value="item.amount"
-            @input="updateAmount(item, $event.target.value)"
-            class="input contribution-amount"
-            :class="{ invalid: !isAmountValid(item.amount) }"
-            :disabled="!canUpdateAmount()"
-            name="amount"
-            placeholder="Amount"
-          />
-        </div>
+        <input-button
+          :value="item.amount"
+          :input="{
+            placeholder: 'Amount',
+            class: { invalid: !isAmountValid(item.amount) },
+            disabled: !canUpdateAmount(),
+          }"
+          @input="(newAmount) => updateAmount(item, newAmount)"
+          class="contribution-amount"
+        />
       </div>
     </div>
   </div>
@@ -72,12 +66,13 @@ import { getTokenLogo } from '@/utils/tokens'
 import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
 import { SAVE_CART } from '@/store/action-types'
 import Links from '@/components/Links.vue'
+import InputButton from '@/components/InputButton.vue'
 
-@Component({ components: { Links } })
+@Component({ components: { Links, InputButton } })
 export default class extends Vue {
   @Prop() cartList!: CartItem[]
   @Prop() isEditMode!: boolean
-  @Prop() isAmountValid!: () => boolean
+  @Prop() isAmountValid!: (value: string) => boolean
 
   canUpdateAmount(): boolean {
     const currentRound = this.$store.state.currentRound
@@ -149,8 +144,8 @@ export default class extends Vue {
 
 .cart-item {
   padding: 1rem;
-  background: $bg-light-color;
-  border-bottom: 1px solid #000000;
+  background: var(--bg-light-color);
+  border-bottom: 1px solid #000;
   &:last-of-type {
     border-bottom: none;
   }
@@ -158,8 +153,8 @@ export default class extends Vue {
 
 .new-cart-item {
   padding: 1rem;
-  background: $clr-green-bg;
-  border-bottom: 1px solid #000000;
+  background: rgba($clr-green, 0.2);
+  border-bottom: 1px solid #000;
   &:last-of-type {
     border-bottom: none;
   }
@@ -188,7 +183,7 @@ export default class extends Vue {
 
   .project-name {
     align-self: center;
-    color: $text-color;
+    color: var(--text-color);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -213,29 +208,6 @@ export default class extends Vue {
   margin-top: 0.5rem;
   gap: 0.5rem;
   flex-shrink: 0;
-
-  img {
-    width: 1rem;
-  }
-
-  .input-button {
-    background: #f7f7f7;
-    border-radius: 2rem;
-    border: 2px solid $bg-primary-color;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: black;
-    padding: 0.125rem;
-    width: 100%;
-  }
-
-  .input {
-    background: none;
-    border: none;
-    color: $bg-primary-color;
-    width: 100%;
-  }
 }
 
 .remove-cart-item {
@@ -254,7 +226,7 @@ export default class extends Vue {
   .remove-icon-background {
     padding: 0.5rem;
     &:hover {
-      background: $bg-secondary-color;
+      background: var(--bg-secondary-color);
       border-radius: 0.5rem;
     }
     cursor: pointer;

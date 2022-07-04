@@ -73,13 +73,17 @@ export default class FundsNeededWarning extends Vue {
     return parseFloat(formatAmount(this.currentUser.etherBalance as BigNumber))
   }
 
+  get needsTokens(): boolean {
+    return !this.$store.getters.hasUserContributed && this.tokenBalance === 0
+  }
+
   get needsFunds(): boolean {
-    return this.etherBalance === 0 || this.tokenBalance === 0
+    return this.etherBalance === 0 || this.needsTokens
   }
 
   get singleTokenNeeded(): string {
     if (!this.currentUser) return ''
-    const tokenNeeded = this.tokenBalance === 0
+    const tokenNeeded = this.needsTokens
     const etherNeeded = this.etherBalance === 0
     if (tokenNeeded === etherNeeded) return ''
     // Only return string if either ETH or ERC-20 is zero balance, not both
@@ -96,15 +100,15 @@ export default class FundsNeededWarning extends Vue {
 .warning {
   width: 100%;
   box-sizing: border-box;
-  background: $bg-primary-color;
+  background: var(--warning-background);
   border-radius: 1rem;
   padding: 1rem;
   margin: 1rem 0 0;
-  color: $warning-color;
+  color: var(--warning-color);
 }
 
 .message {
   margin: 1.25rem 0 0;
-  color: $text-color;
+  color: var(--text-color);
 }
 </style>

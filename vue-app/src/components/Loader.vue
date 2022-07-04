@@ -28,8 +28,8 @@ export default class Loader extends Vue {}
   height: 32px;
   margin: 4px;
   border-radius: 50%;
-  border: 6px solid #fff;
-  border-color: #fff transparent #fff transparent;
+  border: 6px solid var(--loader-color);
+  border-color: var(--loader-color) transparent var(--loader-color) transparent;
   animation: loader 1.2s linear infinite;
 }
 

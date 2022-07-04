@@ -86,7 +86,7 @@ export default class Transaction extends Vue {
 @import '../styles/vars';
 
 .error {
-  color: $error-color;
+  color: var(--error-color);
   overflow: hidden;
   text-overflow: ellipsis;
 }
