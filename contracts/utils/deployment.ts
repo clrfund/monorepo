@@ -3,7 +3,7 @@ import { Libraries } from 'hardhat/types/runtime'
 import { Signer, Contract } from 'ethers'
 import { link } from 'ethereum-waffle'
 
-import { MaciParameters, ProdMaciParameters } from './maci'
+import { MaciParameters } from './maci'
 
 export function linkBytecode(
   bytecode: string,
