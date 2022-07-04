@@ -7,7 +7,7 @@
       <template v-if="currentRound">
         <div class="round">
           <div class="round-title-bar">
-            <h2 class="round-title">Ethereum Staking CLR</h2>
+            <h2 class="round-title">CLR.fund</h2>
             <v-popover class="verified-container">
               <div class="verified">
                 <img src="@/assets/verified.svg" />
@@ -273,21 +273,11 @@
         <div class="round-info-item">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">Round not yet active</div>
+              <div class="round-info-title">No scheduled round</div>
             </div>
           </div>
           <div class="round-announcement-info">
-            The funding round will open for contributions on May 6th!
-            <p>
-              <links to="https://blog.clr.fund/350k-eth-staking-qf-round/"
-                >Read the announcement post</links
-              >
-            </p>
-            <p>
-              <links to="/about/how-it-works/contributors"
-                >Prepare to contribute</links
-              >
-            </p>
+            We haven't yet scheduled a funding round. Stay tuned!
           </div>
         </div>
       </template>

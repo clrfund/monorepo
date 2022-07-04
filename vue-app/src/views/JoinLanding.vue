@@ -56,7 +56,7 @@
     </div>
 
     <div class="content" v-else-if="$store.state.currentRound">
-      <h1>Join the staking funding round</h1>
+      <h1>Join the funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project and a
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
@@ -110,7 +110,7 @@
     </div>
 
     <div class="content" v-else-if="$store.getters.isRoundJoinPhase">
-      <h1>Join the next staking funding round</h1>
+      <h1>Join the next funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project and a
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security

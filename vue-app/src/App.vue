@@ -68,7 +68,7 @@ import { SET_CURRENT_USER } from '@/store/mutation-types'
   metaInfo() {
     return {
       title: this.$route.meta.title,
-      titleTemplate: 'ETHStaker - %s',
+      titleTemplate: 'clr.fund - %s',
       meta: [
         {
           name: 'git-commit',
