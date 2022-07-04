@@ -9,6 +9,8 @@ This contract consist of:
 
 ## Demonstration
 
+> TODO: update the following with a goerli contract
+
 [Demo contract on the Rinkeby](https://rinkeby.etherscan.io/address/0xf99e2173db1f341a947ce9bd7779af2245309f91)
 Sample of Registered Data:
 

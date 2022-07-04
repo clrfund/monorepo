@@ -1,51 +1,43 @@
-# Coordinator manual
+# How to tally votes
 
-## Coordinate using MACI CLI
+A funding round coordinator can tally votes using the MACI CLI, Docker or clrfund scripts.
 
-Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.10.1:
+## Using MACI CLI
+
+### Clone the [MACI repo](https://github.com/privacy-scaling-explorations/maci) and switch to version v0.10.1:
 
 ```
-git clone https://github.com/appliedzkp/maci.git
+git clone https://github.com/privacy-scaling-explorations/maci.git
 cd maci/
 git checkout v0.10.1
 ```
 
 Follow instructions in README.md to install necessary dependencies.
 
-### Medium Circuits
+### Download circuits parameters
 
-Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits into `circuits/params/` directory and rebuild the keys:
+Download the [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy) for 'batch 64' circuits into the `circuits/params/` directory.
 
+Change the permission of the c binaries to be executable:
 ```
-cd circuits
-./scripts/buildSnarksMedium.sh
-```
-
-### x32 Circuits
-
-Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) for 'x32' circuits into `circuits/params/` directory and rebuild the keys:
-
-```
-cd circuits
-./scripts/buildSnarks32.sh
+cd circuits/params
+chmod u+x qvt32 batchUst32
 ```
 
-Recompile the contracts:
+The contract deployment scripts, `deploy*.ts` in the [clrfund repository](https://github.com/clrfund/monorepo/tree/develop/contracts/scripts) currently use the `batch 64` circuits, if you want to use a smaller size circuits, you can find them [here](../contracts/contracts/snarkVerifiers/README.md). You will need to update the deploy script to call `deployMaciFactory()` with your circuit and redeploy the contracts.
+
+```
+   // e.g. to use the x32 circuits
+   const circuit = 'x32' // defined in contracts/utils/deployment.ts
+   const maciFactory = await deployMaciFactory(deployer, circuit)
+```
+
+### Recompile the contracts:
 
 ```
 cd ../contracts
 npm run compileSol
 ```
-
-### Batch 64 Circuits
-
-Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy) for 'batch 64' circuits into `circuits/params/` directory
-
-Change the permission of the c binaries to be executable:
-```
-chmod u+x qvt32 batchUst32
-```
-
 
 ### Generate coordinator key
 
@@ -58,7 +50,9 @@ A single key can be used to coordinate multiple rounds.
 
 ### Tally votes
 
-Download the logs:
+Download the logs to be fed to the `proveOnChain` step. This step is useful
+especially to avoid hitting rating limiting from the node. Make sure to run this
+step againts a node that has archiving enabled, e.g. could use the alchemy node:
 
 ```
 cd ../cli
@@ -103,20 +97,20 @@ Finally, the [CID](https://ipfs.io/ipns/docs.ipfs.io/concepts/content-addressing
 await fundingRound.publishTallyHash('<CID>')
 ```
 
-## Coordinate using Docker
+## Using Docker
 
 In case you are in a different OS than Linux, you can run all the previous MACI CLI commands by running the Docker image located in the MACI repo.
 
-**Note:** the [x32 params](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) have been tested using Ubuntu 21.04 + Node 15.8.0.
+**Note:** the batch 64 zkSNARK parameters have been tested using Ubuntu 22.04 + Node v16.13.2
 
 ### Use the docker image
 
-First, install [docker](https://docs.docker.com/engine/install/) and [docker-componse](https://docs.docker.com/compose/install/)
+First, install [docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/)
 
 Inside the maci repo, run:
 
 ```
-docker-componse up
+docker-compose up
 ```
 
 Once the container is built, in a different terminal, grab the container id:
@@ -135,7 +129,7 @@ cd cli/
 node build/index.js genProofs ...
 ```
 
-## Coordinate using clrfund scripts
+## Using clrfund scripts
 
 ### Generate coordinator key
 
@@ -214,3 +208,27 @@ Once you have the `tally.json` from the tally script, run:
 ```
 yarn hardhat run --network {network} scripts/finalize.ts
 ```
+
+# How to verify the tally results
+
+Anyone can verify the tally results using the MACI cli or clrfund scripts.
+
+### Using MACI CLI
+
+Follow the steps in tallying votes to get the MACI cli, circuit parameters, and tally file, and verify using the following command:
+
+```
+node build/index.js verify -t tally.json
+```
+
+### Using clrfund scripts
+
+From the clrfund contracts folder, run the following command to verify the result:
+
+```
+yarn ts-node scripts/verify.ts tally.json
+```
+
+
+## Troubleshooting
+If you encountered `core dumped` while running the genProofs script as seen in this [issue](https://github.com/clrfund/monorepo/issues/383), make sure the files are not corrupted due to disk space issue, e.g. check file sizes, checksum, and missing files.

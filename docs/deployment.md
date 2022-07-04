@@ -2,22 +2,13 @@
 
 ## Using the deployment scripts
 
-### x32 Circuits
-
-Download the [zkSNARK contracts](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) for 'x32' circuits and copy them into `/contracts/contracts/snarkVerifiers`.
-
-- `BatchUpdateStateTreeVerifier32.sol`
-- `QuadVoteTallyVerifier32.sol`
-
 ### Edit the `/contracts/.env` file
 
 E.g.
 
 ```
 RECIPIENT_REGISTRY_TYPE=simple
-USER_REGISTRY_TYPE=brightid
-BRIGHTID_CONTEXT=clr.fund.test
-BRIGHTID_VERIFIER_ADDR=0xb1d71F62bEe34E9Fc349234C201090c33BCdF6DB
+USER_REGISTRY_TYPE=simple
 JSONRPC_HTTP_URL=https://NETWORK.alchemyapi.io/v2/ADD_API_KEY
 WALLET_PRIVATE_KEY=
 NATIVE_TOKEN_ADDRESS=
@@ -30,7 +21,7 @@ NATIVE_TOKEN_ADDRESS=
 
 ### Deploy the subgraph
 
-Currently, we are using the [Hosted Service](https://thegraph.com/docs/en/hosted-service/what-is-hosted-service/). First, check out the official instructions to authenicate using the Graph CLI https://thegraph.com/docs/legacyexplorer/deploy-subgraph-hosted and create a new subgraph.
+Currently, we are using the [Hosted Service](https://thegraph.com/docs/en/hosted-service/what-is-hosted-service/). First, check out the official instructions to authenicate using the Graph CLI https://thegraph.com/docs/en/hosted-service/deploy-subgraph-hosted/ and create a new subgraph.
 
 Inside `/subgraph`:
 
