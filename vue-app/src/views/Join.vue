@@ -711,8 +711,9 @@
             </p>
             <div class="inputs">
               <recipient-submission-widget
-                cta="Submit project"
-                pending="Sending deposit..."
+                :isWaiting="isWaiting"
+                :txHash="txHash"
+                :txError="txError"
               />
             </div>
           </div>
@@ -751,8 +752,14 @@ import ProjectProfile from '@/components/ProjectProfile.vue'
 import RecipientSubmissionWidget from '@/components/RecipientSubmissionWidget.vue'
 import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
+import { DateTime } from 'luxon'
+import { addRecipient } from '@/api/recipient-registry-optimistic'
+import { waitForTransaction } from '@/utils/contracts'
 
-import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
+import {
+  RESET_RECIPIENT_DATA,
+  SET_RECIPIENT_DATA,
+} from '@/store/mutation-types'
 import {
   RecipientApplicationData,
   formToProjectInterface,
@@ -862,6 +869,9 @@ export default class JoinView extends mixins(validationMixin) {
   steps: string[] = []
   stepNames: string[] = []
   showSummaryPreview = false
+  isWaiting = false
+  txHash = ''
+  txError = ''
 
   created() {
     const steps = Object.keys(this.form)
@@ -967,19 +977,23 @@ export default class JoinView extends mixins(validationMixin) {
     )
   }
 
-  handleStepNav(step): void {
+  handleStepNav(step: number, updateFurthest?: boolean): void {
     // If isNavDisabled => disable quick-links
     if (this.isNavDisabled) return
     // Save form data
-    this.saveFormData()
+    this.saveFormData(updateFurthest)
     // Navigate
-    if (this.isStepUnlocked(step)) {
-      this.$router.push({
-        name: 'join-step',
-        params: {
-          step: this.steps[step],
-        },
-      })
+    if (this.steps[step] === 'submit') {
+      this.addRecipient()
+    } else {
+      if (this.isStepUnlocked(step)) {
+        this.$router.push({
+          name: 'join-step',
+          params: {
+            step: this.steps[step],
+          },
+        })
+      }
     }
   }
 
@@ -1004,6 +1018,72 @@ export default class JoinView extends mixins(validationMixin) {
       const res: string | null = await resolveEns(addressName)
       this.form.hasEns = !!res
       this.form.fund.resolvedAddress = res ? res : addressName
+    }
+  }
+
+  private async addRecipient() {
+    const {
+      currentRound,
+      currentUser,
+      recipient,
+      recipientRegistryAddress,
+      recipientRegistryInfo,
+    } = this.$store.state
+
+    this.isWaiting = true
+
+    // Reset errors when submitting
+    this.txError = ''
+
+    if (
+      recipientRegistryAddress &&
+      recipient &&
+      recipientRegistryInfo &&
+      currentUser
+    ) {
+      try {
+        if (currentRound && DateTime.now() >= currentRound.votingDeadline) {
+          this.$router.push({
+            name: 'join',
+          })
+          throw { message: 'round over' }
+        }
+
+        await waitForTransaction(
+          addRecipient(
+            recipientRegistryAddress,
+            recipient,
+            recipientRegistryInfo.deposit,
+            currentUser.walletProvider.getSigner()
+          ),
+          (hash) => (this.txHash = hash)
+        )
+
+        // Send application data to a Google Spreadsheet
+        if (process.env.VUE_APP_GOOGLE_SPREADSHEET_ID) {
+          await fetch('/.netlify/functions/recipient', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(recipient),
+          })
+        }
+
+        this.$store.commit(RESET_RECIPIENT_DATA)
+      } catch (error) {
+        this.isWaiting = false
+        this.txError = error.message
+        return
+      }
+      this.isWaiting = false
+
+      this.$router.push({
+        name: 'project-added',
+        params: {
+          hash: this.txHash,
+        },
+      })
     }
   }
 }

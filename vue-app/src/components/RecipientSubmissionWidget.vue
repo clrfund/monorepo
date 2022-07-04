@@ -8,9 +8,7 @@
       "
     >
       <loader v-if="isLoading" />
-      <wallet-widget class="m2" v-if="!currentUser" />
       <div
-        v-if="currentUser"
         :class="
           isWaiting || txError
             ? 'tx-progress-area'
@@ -22,16 +20,13 @@
           <div v-if="!!txHash">Waiting for transaction to be mined...</div>
           <div v-else>Check your wallet for a prompt...</div>
         </div>
-        <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
+        <div v-if="hasTxError" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
           Something failed: {{ txError }}<br />
           Check your wallet or {{ blockExplorerLabel }} for more info.
         </div>
-        <div v-if="isTxRejected" class="warning-text">
-          You rejected the transaction in your wallet
-        </div>
       </div>
-      <div class="connected" v-if="currentUser">
+      <div class="connected">
         <div class="total-title">
           Total to submit
           <img
@@ -63,18 +58,6 @@
             >
           </p>
         </div>
-        <div class="cta">
-          <button
-            @click="handleSubmit"
-            class="btn-action"
-            :disabled="!canSubmit || isWaiting || hasLowFunds"
-          >
-            <div v-if="isWaiting">
-              <loader class="button-loader" />
-            </div>
-            <div v-else>{{ cta }}</div>
-          </button>
-        </div>
       </div>
     </div>
   </div>
@@ -86,35 +69,26 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
-import { DateTime } from 'luxon'
 import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
-import { addRecipient } from '@/api/recipient-registry-optimistic'
 import { User } from '@/api/user'
 import { chain } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
-import WalletWidget from '@/components/WalletWidget.vue'
 
 import { formatAmount } from '@/utils/amounts'
-import { waitForTransaction } from '@/utils/contracts'
-import { RESET_RECIPIENT_DATA } from '@/store/mutation-types'
 
 @Component({
   components: {
     Loader,
     Transaction,
-    WalletWidget,
   },
 })
 export default class RecipientSubmissionWidget extends Vue {
-  @Prop() cta!: string
-  @Prop() pending!: string
+  @Prop() isWaiting!: boolean
+  @Prop() txHash!: string
+  @Prop() txError!: string
   isLoading = true
-  isWaiting = false
-  isTxRejected = false
-  txHash = ''
-  txError = ''
   ethPrice: EthPrice | null = null
   fiatFee = '-'
   fiatSign = '$'
@@ -124,23 +98,8 @@ export default class RecipientSubmissionWidget extends Vue {
     this.isLoading = false
   }
 
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
-
-  get walletProvider(): Web3Provider | undefined {
-    return this.$web3.provider
-  }
-
   get blockExplorerLabel(): string {
     return chain.explorerLabel
-  }
-  get canSubmit(): boolean {
-    return (
-      !!this.currentUser &&
-      !!this.walletProvider &&
-      !!this.$store.state.recipientRegistryInfo
-    )
   }
 
   get hasTxError(): boolean {
@@ -170,10 +129,6 @@ export default class RecipientSubmissionWidget extends Vue {
     return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
   }
 
-  handleSubmit(): void {
-    this.addRecipient()
-  }
-
   public calculateFiatFee(ethAmount: BigNumber): string {
     if (this.$store.state.recipientRegistryInfo && this.ethPrice) {
       return Number(
@@ -181,73 +136,6 @@ export default class RecipientSubmissionWidget extends Vue {
       ).toFixed(2)
     }
     return '-'
-  }
-
-  private async addRecipient() {
-    const {
-      currentRound,
-      currentUser,
-      recipient,
-      recipientRegistryAddress,
-      recipientRegistryInfo,
-    } = this.$store.state
-
-    this.isWaiting = true
-
-    // Reset errors when submitting
-    this.txError = ''
-    this.isTxRejected = false
-
-    if (
-      recipientRegistryAddress &&
-      recipient &&
-      recipientRegistryInfo &&
-      currentUser
-    ) {
-      try {
-        if (currentRound && DateTime.now() >= currentRound.votingDeadline) {
-          this.$router.push({
-            name: 'join',
-          })
-          throw { message: 'round over' }
-        }
-
-        await waitForTransaction(
-          addRecipient(
-            recipientRegistryAddress,
-            recipient,
-            recipientRegistryInfo.deposit,
-            currentUser.walletProvider.getSigner()
-          ),
-          (hash) => (this.txHash = hash)
-        )
-
-        // Send application data to a Google Spreadsheet
-        if (process.env.VUE_APP_GOOGLE_SPREADSHEET_ID) {
-          await fetch('/.netlify/functions/recipient', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(recipient),
-          })
-        }
-
-        this.$store.commit(RESET_RECIPIENT_DATA)
-      } catch (error) {
-        this.isWaiting = false
-        this.txError = error.message
-        return
-      }
-      this.isWaiting = false
-
-      this.$router.push({
-        name: 'project-added',
-        params: {
-          hash: this.txHash,
-        },
-      })
-    }
   }
 }
 </script>
@@ -312,6 +200,7 @@ export default class RecipientSubmissionWidget extends Vue {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 2rem;
 }
 
 .tx-progress-area {
@@ -375,11 +264,6 @@ export default class RecipientSubmissionWidget extends Vue {
 
 .o5 {
   opacity: 0.5;
-}
-
-.cta {
-  margin: 2rem 0rem;
-  margin-bottom: 2rem;
 }
 
 .total-currency {
