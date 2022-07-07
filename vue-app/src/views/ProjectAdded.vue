@@ -15,7 +15,7 @@
           <ul>
             <li>
               Your project just needs to go through some final checks to ensure
-              it meets round criteria. You can
+              it meets round criteria and KYC/AML requirements. You can
               <links to="/about/how-it-works/recipients"
                 >learn more about the registration process here</links
               >.
