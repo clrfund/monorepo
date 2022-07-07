@@ -7,6 +7,7 @@ import ProjectList from '../views/ProjectList.vue'
 import ProjectView from '../views/Project.vue'
 import ProjectAdded from '../views/ProjectAdded.vue'
 import RoundInformation from '../views/RoundInformation.vue'
+import RoundList from '../views/RoundList.vue'
 import VerifyLanding from '../views/VerifyLanding.vue'
 import About from '../views/About.vue'
 import AboutSybilResistance from '../views/AboutSybilResistance.vue'
@@ -64,6 +65,14 @@ const routes = [
     component: ProjectList,
     meta: {
       title: 'Project List',
+    },
+  },
+  {
+    path: '/rounds',
+    name: 'rounds',
+    component: RoundList,
+    meta: {
+      title: 'Round List',
     },
   },
   {
