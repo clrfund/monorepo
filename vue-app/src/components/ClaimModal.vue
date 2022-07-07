@@ -112,9 +112,9 @@ export default class ClaimModal extends Vue {
 
 .modal-body {
   text-align: left;
-  background: var(--bg-secondary-color);
+  background: $bg-secondary-color;
   border-radius: 1rem;
-  box-shadow: var(--box-shadow);
+  box-shadow: $box-shadow;
   padding: 1.5rem;
 }
 
@@ -122,8 +122,8 @@ export default class ClaimModal extends Vue {
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 0.5rem;
-  box-shadow: var(--box-shadow);
-  background: var(--bg-address-box);
+  box-shadow: $box-shadow;
+  background: $clr-blue-gradient;
   display: flex;
   align-items: center;
   justify-content: space-between;

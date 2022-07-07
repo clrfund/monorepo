@@ -33,15 +33,7 @@ export async function getRegistryInfo(
   )
   const deposit = await registry.baseDeposit()
   const challengePeriodDuration = await registry.challengePeriodDuration()
-  let recipientCount
-  try {
-    recipientCount = await registry.getRecipientCount()
-  } catch {
-    // older BaseRecipientRegistry contract did not have recipientCount
-    // set it to zero as this information is only
-    // used during current round for space calculation
-    recipientCount = BigNumber.from(0)
-  }
+  const recipientCount = await registry.getRecipientCount()
   const owner = await registry.owner()
   return {
     deposit,
@@ -164,12 +156,8 @@ export async function getRequests(
 
   const requests: Record<string, Request> = {}
   for (const recipient of recipients) {
-    let metadata: any
-    try {
-      metadata = JSON.parse(recipient.recipientMetadata || '{}')
-    } catch {
-      metadata = {}
-    }
+    let metadata = JSON.parse(recipient.recipientMetadata || '{}')
+
     const requestType = Number(recipient.requestType)
     if (requestType === RequestTypeCode.Registration) {
       // Registration request

@@ -37,13 +37,13 @@ export default class Transaction extends Vue {
 }
 
 .step {
-  background: $gradient-highlight;
+  background: $clr-pink-light-gradient;
   height: 8px;
   width: 100%;
   border-radius: 32px;
 }
 
 .inactive {
-  background: var(--bg-inactive);
+  background: $clr-pink-light-gradient-inactive;
 }
 </style>

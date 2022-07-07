@@ -9,13 +9,13 @@
         </div>
         <div>
           <div class="hero-content">
-            <h1>Send your favorite projects to the moon!</h1>
+            <h1>Send your favorite Ethereum staking projects to the moon!</h1>
             <div id="subtitle" class="subtitle">
               Every project you contribute to gets a portion of extra funding.
             </div>
             <div class="btn-group">
               <links to="/projects" class="btn-action">Get started</links>
-              <div class="btn-info" @click="scrollToHowItWorks">
+              <div class="btn-white" @click="scrollToHowItWorks">
                 How it works
               </div>
             </div>
@@ -28,10 +28,10 @@
             "
           >
             <div class="column">
-              <h2>Join the funding round</h2>
+              <h2>Join the staking funding round</h2>
               <p>
                 Add your project to the next funding round. If you're working on
-                anything related to public goods, you can join in.
+                anything related to staking, you can join in.
               </p>
               <div class="button-group">
                 <links to="/join" class="btn-primary w100">Add project</links>
@@ -55,8 +55,8 @@
         <div id="how-it-works-content">
           <h2>Every donation is amplified by the matching pool.</h2>
           <p>
-            This fundraiser rewards projects with the most unique demand, not
-            just those with the wealthiest backers.
+            This fundraiser rewards staking projects with the most unique
+            demand, not just those with the wealthiest backers.
           </p>
           <image-responsive
             title="wormhole"
@@ -65,15 +65,15 @@
           <h2>How it works</h2>
           <ol>
             <li>
-              The {{ operator }} and other donors send funds to the matching
-              pool smart contract.
+              The Ethereum Foundation, clr.fund, {{ operator }}, and other
+              donors send funds to the matching pool smart contract.
             </li>
             <li>
               The round begins and you can donate to your favorite projects.
             </li>
             <li>
               Once the round finishes, the smart contract distributes the
-              matching pool funds to projects based primarily on number of
+              matching pool funds to projects weighted primarily by number of
               contributions, <strong>not contribution value</strong>.
             </li>
           </ol>
@@ -93,7 +93,10 @@
               <b>{{ chain.label }} for fast and cheap transaction fees</b>
             </p>
           </div>
-          <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-action">
+          <links
+            :to="chain.isLayer2 ? '/about/layer-2' : chain.bridge"
+            class="btn-action"
+          >
             Get {{ chain.label }} funds
           </links>
         </div>
@@ -220,7 +223,7 @@ export default class Landing extends Vue {
 @import '../styles/theme';
 
 #page {
-  background: var(--bg-primary-color);
+  background: $bg-primary-color;
 }
 
 #page > div {
@@ -276,9 +279,9 @@ ol li::before {
   font-size: 16px;
   line-height: 100%;
   border-radius: 50%;
-  color: var(--text-secondary);
-  background: var(--bg-circle);
-  border: 2px solid var(--link-color);
+  color: white;
+  background: #2a2736;
+  border: 2px solid #9789c4;
   box-sizing: border-box;
   text-align: center;
   padding-top: 0.375rem;
@@ -298,14 +301,27 @@ ol li::before {
   }
 }
 
+.btn-hero-primary {
+  background: linear-gradient(109.01deg, #9789c4 6.45%, #c72ab9 99.55%);
+}
+
+.btn-primary {
+  background: #16c8b5;
+}
+
+.link-primary {
+  color: #16c8b5;
+}
+
 .link-li {
+  color: white;
   text-decoration: underline;
   margin-bottom: 1rem;
   font-size: 16px;
 }
 
 #bright-id {
-  background: var(--bright-id-bg);
+  background: $clr-blue-gradient-bg;
 }
 
 #chain-icon,
@@ -318,7 +334,7 @@ ol li::before {
 
 #bright-id-icon {
   padding: 0.5rem;
-  background: var(--bright-id-icon-bg);
+  background: black;
 }
 
 .pre-req,
@@ -347,7 +363,7 @@ ol li::before {
 #hero {
   position: relative;
   overflow: hidden;
-  background: var(--bg-gradient);
+  background: $clr-pink-dark-gradient;
   padding: 0;
   min-height: 639px; /* This is the height when adding in the callout */
   display: flex;
@@ -384,12 +400,10 @@ ol li::before {
       max-width: 880px;
       margin: -2rem;
       padding: 2rem;
-      @include gradientBackground(
+      background: linear-gradient(
         182.34deg,
-        rgba(var(--shadow-dark-rgb), 0.4),
-        81%,
-        rgba(var(--shadow-light-rgb), 0),
-        89.75%
+        rgba(0, 0, 0, 0.4) 81%,
+        rgba(196, 196, 196, 0) 89.75%
       );
     }
   }
@@ -410,8 +424,8 @@ ol li::before {
   }
 
   .apply-callout {
-    background: var(--bg-transparent);
-    border: 2px solid $highlight-color;
+    background: #191623e6;
+    border: 2px solid #9789c4;
     box-sizing: border-box;
     border-radius: 8px;
     padding: 1rem;
@@ -424,7 +438,6 @@ ol li::before {
     .column {
       flex: 1;
     }
-
     @media (max-width: $breakpoint-m) {
       display: flex;
       gap: 0.5rem;
@@ -438,7 +451,7 @@ ol li::before {
   justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
-  background: var(--brand-tertiary);
+  background: $clr-pink-dark-gradient-bg;
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }
@@ -470,13 +483,10 @@ ol li::before {
 #about-1,
 #about-2,
 #about-3 {
-  background: var(--bg-light-color);
+  background: $bg-light-color;
   border-radius: 0.5rem;
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
-  }
-  a {
-    color: var(--link-color);
   }
 }
 
@@ -488,13 +498,13 @@ ol li::before {
 
 #about-2 {
   @media (max-width: $breakpoint-l) {
-    background: var(--bg-secondary-color);
+    background: $bg-secondary-color;
   }
 }
 
 #about-3 {
   @media (max-width: $breakpoint-l) {
-    background: var(--bg-light-color);
+    background: $bg-light-color;
   }
 }
 
@@ -504,7 +514,7 @@ ol li::before {
 }
 
 #section-how-it-works {
-  background: var(--bg-how-it-works);
+  background: $clr-purple-gradient-bg;
   display: grid;
   grid-template-columns: 3fr 2fr;
   grid-template-rows: repeat(2, auto);
@@ -529,7 +539,7 @@ ol li::before {
     position: relative;
     display: flex;
     flex-direction: column;
-    background: var(--bg-light-color);
+    background: $bg-light-color;
     /* width: 40%; */
     border-radius: 1rem;
     padding: 2rem;

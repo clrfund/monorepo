@@ -11,20 +11,19 @@
             <h1>Project submitted!</h1>
             <transaction-receipt :hash="$route.params.hash" />
           </div>
-          <div class="subtitle">You’re almost on board this funding round</div>
+          <div class="subtitle">You’re almost on board this funding round.</div>
           <ul>
             <li>
-              Your project just needs to go through some final checks. If
-              everything is ok, your project will go live within
-              {{
-                challengePeriodDuration === null
-                  ? '...'
-                  : formatDuration(challengePeriodDuration)
-              }}.
+              Your project just needs to go through some final checks to ensure
+              it meets round criteria and KYC/AML requirements. You can
+              <links to="/about/how-it-works/recipients"
+                >learn more about the registration process here</links
+              >.
             </li>
+            <li>Once that's complete, your project page will go live.</li>
             <li>
-              If your project fails the checks because it doesn't meet the round
-              criteria, we'll let you know by email and return your deposit.
+              If your project fails any checks, we'll let you know by email and
+              return your deposit.
             </li>
           </ul>
           <div class="mt2 button-spacing">
@@ -122,7 +121,7 @@ ul {
 }
 
 .gradient {
-  background: var(--bg-gradient);
+  background: $clr-pink-dark-gradient;
   position: relative;
 
   .moon {
@@ -134,7 +133,11 @@ ul {
   .hero {
     bottom: 0;
     display: flex;
-    background: var(--bg-gradient-hero);
+    background: linear-gradient(
+      286.78deg,
+      rgba(173, 131, 218, 0) -32.78%,
+      #191623 78.66%
+    );
     height: calc(100vh - 113px);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;

@@ -31,8 +31,8 @@ const state: RootState = {
   recipientRegistryInfo: null,
   showCartPanel: false,
   tally: null,
-  theme: null,
   factory: null,
+  maciFactory: null,
 }
 
 const store: StoreOptions<RootState> = {

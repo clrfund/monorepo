@@ -36,6 +36,23 @@
       </p>
     </div>
     <h2>Register your project</h2>
+    <p>
+      In order to participate in a funding round as a project, you'll need to
+      submit an application to join the recipient registry (via an on-chain
+      transaction) then complete KYC requirements to verify your project is
+      legitimate.
+    </p>
+    <p>
+      MACI, our anti-bribery tech, currently limits the amount of projects
+      allowed per round.
+      <links to="/about/maci">More on MACI</links>. The round only accepts a
+      total of {{ maxRecipients }} projects, so we encourage you to apply early.
+    </p>
+    <p>
+      Note: all application data (except contact email address) will be publicly
+      stored on-chain.
+    </p>
+    <h3>Submit your application</h3>
     <ol>
       <li>Head over to the <links to="/join">Join page</links>.</li>
       <li>
@@ -48,20 +65,62 @@
         out asking for more information about your project.
       </li>
       <li>
-        With the forms finished, you can finish your submission by:
+        With the forms finished, you can finish your submission:
         <ol>
-          <li>connecting to the right network via your wallet of choice</li>
+          <li>Connect to the right network via your wallet of choice.</li>
           <li>
-            sending a deposit of {{ depositAmount }} {{ depositToken }} to the
-            registry contract.
+            Send a transaction (with a deposit of {{ depositAmount }}
+            {{ depositToken }}) to the registry contract.
           </li>
         </ol>
-        Projects are accepted by default, but the registry admin may remove
-        projects that don't meet the criteria. Either way, your
-        {{ depositToken }} will be returned once your application has been
-        either accepted or denied. Note that metadata pointing to all your
-        project information (but not contact information) will be stored
-        publicly on-chain.
+      </li>
+    </ol>
+    <h3>Complete KYC</h3>
+    <p>
+      You'll submit a contact email address as part of your project's
+      application. The email address will not be stored on-chain (with the rest
+      of the application data) but it will be sent to the registry admin (the
+      clr.fund team) and the Ethereum Foundation for the purposes of completing
+      your KYC. The Ethereum Foundation will use this email address to contact
+      you and verify information about your project. The registry admin may
+      reject projects that don't meet the round criteria or pass KYC/AML
+      requirements.
+    </p>
+    <p>
+      In any case, your
+      {{ depositToken }} will be returned once your application has been either
+      accepted or denied. Note that metadata pointing to all your project
+      information (but not contact information) will be stored publicly
+      on-chain.
+    </p>
+    <h4>Required documents</h4>
+    <p style="text-decoration: underline">For individuals</p>
+    <ol>
+      <li>Scanned copy of passport</li>
+      <li>
+        Proof of address from within the last 3 months, such as bank statement,
+        utility bill or telecom subscription
+      </li>
+    </ol>
+    <p style="text-decoration: underline">For organizations</p>
+    <ol>
+      <li>Certificate of Incorporation</li>
+      <li>
+        Proof of address from within the last 3 months, such as bank statement,
+        utility bill or telecom subscription
+      </li>
+      <li>
+        Shareholders' and Directors' registers / Members' register (for
+        organization without shareholdings)
+      </li>
+      <li>
+        For each director, officer and individual shareholder (more than 10%),
+        please provide (i) scan copy of passport, and (ii) copy of proof of
+        address
+      </li>
+      <li>
+        If the shareholder is an organization and holds more than 10%, please
+        provide 1 through 4
       </li>
     </ol>
     <h2>Claim your funds</h2>
@@ -101,6 +160,10 @@ export default class AboutRecipients extends Vue {
 
   get depositToken(): string {
     return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
+  }
+
+  get maxRecipients(): number | undefined {
+    return this.$store.getters.maxRecipients
   }
 }
 </script>

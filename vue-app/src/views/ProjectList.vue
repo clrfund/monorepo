@@ -61,12 +61,6 @@
           what you're looking for.
         </div>
       </div>
-      <div
-        v-if="!!$store.state.currentUser && $store.state.showCartPanel"
-        class="round-info-container"
-      >
-        <round-information />
-      </div>
     </div>
   </div>
 </template>
@@ -89,17 +83,8 @@ import { getTimeLeft } from '@/utils/dates'
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import CartWidget from '@/components/CartWidget.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
-import RoundInformation from '@/components/RoundInformation.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'
-import {
-  SELECT_ROUND,
-  LOAD_ROUND_INFO,
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-} from '@/store/action-types'
 import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
@@ -124,7 +109,6 @@ function shuffleArray(array: any[]) {
     CallToActionCard,
     CartWidget,
     ProjectListItem,
-    RoundInformation,
     FilterDropdown,
     Links,
   },
@@ -152,22 +136,7 @@ export default class ProjectList extends Vue {
       this.$route.params.address ||
       this.$store.state.currentRoundAddress ||
       (await getCurrentRound())
-    if (
-      roundAddress &&
-      roundAddress !== this.$store.state.currentRoundAddress
-    ) {
-      // Select round and (re)load round info
-      //TODO: SELECT_ROUND action also commits SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
-      this.$store.dispatch(SELECT_ROUND, roundAddress)
-      await this.$store.dispatch(LOAD_ROUND_INFO)
-      if (this.$store.state.currentUser) {
-        // Load user data if already logged in
-        this.$store.dispatch(LOAD_USER_INFO)
-        this.$store.dispatch(LOAD_CART)
-        this.$store.dispatch(LOAD_COMMITTED_CART)
-        this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-      }
-    }
+
     if (this.$store.state.recipientRegistryAddress === null) {
       const registryAddress = await getRecipientRegistryAddress(roundAddress)
       this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
@@ -335,7 +304,7 @@ export default class ProjectList extends Vue {
     grid-area: search;
     border-radius: 16px;
     border: 2px solid $button-color;
-    background-color: var(--bg-secondary-color);
+    background-color: $bg-secondary-color;
     padding: 0.5rem 1rem;
     display: flex;
     font-size: 16px;
@@ -349,7 +318,6 @@ export default class ProjectList extends Vue {
     width: auto;
     img {
       margin-right: 10px;
-      filter: var(--img-filter, invert(1));
     }
 
     input {
@@ -368,7 +336,7 @@ export default class ProjectList extends Vue {
   .hr {
     grid-area: hr;
     width: 100%;
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid rgba(115, 117, 166, 1);
   }
 }
 
@@ -414,12 +382,22 @@ export default class ProjectList extends Vue {
 }
 
 .empty-search {
-  background: var(--bg-secondary-color);
+  background: $bg-secondary-color;
   border-radius: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
+}
+
+.get-prepared {
+  background: $bg-secondary-color;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  justify-content: space-between;
 }
 
 .prep-title {

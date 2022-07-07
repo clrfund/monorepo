@@ -7,7 +7,7 @@
       <template v-if="currentRound">
         <div class="round">
           <div class="round-title-bar">
-            <h2 class="round-title">CLR.fund</h2>
+            <h2 class="round-title">Ethereum Staking CLR</h2>
             <v-popover class="verified-container">
               <div class="verified">
                 <img src="@/assets/verified.svg" />
@@ -273,11 +273,21 @@
         <div class="round-info-item">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">No scheduled round</div>
+              <div class="round-info-title">Round not yet active</div>
             </div>
           </div>
-          <div class="round-info-value">
-            We haven't yet scheduled a funding round. Stay tuned!
+          <div class="round-announcement-info">
+            The funding round will open for contributions on May 6th!
+            <p>
+              <links to="https://blog.clr.fund/350k-eth-staking-qf-round/"
+                >Read the announcement post</links
+              >
+            </p>
+            <p>
+              <links to="/about/how-it-works/contributors"
+                >Prepare to contribute</links
+              >
+            </p>
           </div>
         </div>
       </template>
@@ -293,11 +303,7 @@ import { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { RoundInfo, getCurrentRound } from '@/api/round'
-import {
-  Project,
-  getRecipientRegistryAddress,
-  getProjects,
-} from '@/api/projects'
+import { Project, getRecipientRegistryAddress } from '@/api/projects'
 import { chain } from '@/api/core'
 
 import { lsGet, lsSet } from '@/utils/localStorage'
@@ -309,32 +315,9 @@ import WalletModal from '@/components/WalletModal.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import {
-  SELECT_ROUND,
-  LOAD_ROUND_INFO,
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-} from '@/store/action-types'
+import { LOAD_ROUND_INFO } from '@/store/action-types'
 import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
-
-const SHUFFLE_RANDOM_SEED = Math.random()
-
-function random(seed: number, i: number): number {
-  // Like Math.random() but seedable
-  const s = Math.sin(seed * i) * 10000
-  return s - Math.floor(s)
-}
-
-function shuffleArray(array: any[]) {
-  // Shuffle array using the Durstenfeld algo
-  // More info: https://stackoverflow.com/a/12646864/1868395
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(random(SHUFFLE_RANDOM_SEED, i) * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
-  }
-}
+import { Watch } from 'vue-property-decorator'
 
 @Component({
   components: {
@@ -357,26 +340,11 @@ export default class RoundInformation extends Vue {
       this.$route.params.address ||
       this.$store.state.currentRoundAddress ||
       (await getCurrentRound())
-    if (
-      roundAddress &&
-      roundAddress !== this.$store.state.currentRoundAddress
-    ) {
-      // Select round and (re)load round info
-      this.$store.dispatch(SELECT_ROUND, roundAddress)
-      await this.$store.dispatch(LOAD_ROUND_INFO)
-      if (this.$store.state.currentUser) {
-        // Load user data if already logged in
-        this.$store.dispatch(LOAD_USER_INFO)
-        this.$store.dispatch(LOAD_CART)
-        this.$store.dispatch(LOAD_COMMITTED_CART)
-        this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-      }
-    }
+
     if (this.$store.state.recipientRegistryAddress === null) {
       const registryAddress = await getRecipientRegistryAddress(roundAddress)
       this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
     }
-    await this.loadProjects()
 
     // Message cap notice defaults with `hidden` class
     // If it hasn't been dismissed yet, this class is toggled off until dismissed
@@ -384,20 +352,11 @@ export default class RoundInformation extends Vue {
     if (showNotice) {
       this.toggleNotice()
     }
-    this.isLoading = false
   }
 
-  private async loadProjects() {
-    const projects = await getProjects(
-      this.$store.state.recipientRegistryAddress,
-      this.currentRound?.startTime.toSeconds(),
-      this.currentRound?.votingDeadline.toSeconds()
-    )
-    const visibleProjects = projects.filter((project) => {
-      return !project.isHidden && !project.isLocked
-    })
-    shuffleArray(visibleProjects)
-    this.projects = visibleProjects
+  @Watch('currentRound')
+  stopLoading() {
+    this.isLoading = false
   }
 
   get currentRound(): RoundInfo | null {
@@ -429,15 +388,6 @@ export default class RoundInformation extends Vue {
     )
 
     return this.formatAmount(totalInRound)
-  }
-
-  get filteredProjects(): Project[] {
-    return this.projects.filter((project: Project) => {
-      if (!this.search) {
-        return true
-      }
-      return project.name.toLowerCase().includes(this.search.toLowerCase())
-    })
   }
 
   formatIntegerPart(value: FixedNumber): string {
@@ -508,7 +458,7 @@ export default class RoundInformation extends Vue {
 
 .image-wrapper {
   border-radius: 8px;
-  background: var(--bg-gradient);
+  background: $clr-pink-dark-gradient;
   height: 160px;
   width: 100%;
   display: flex;
@@ -540,12 +490,6 @@ export default class RoundInformation extends Vue {
   align-self: flex-end;
 }
 
-.verified {
-  img {
-    filter: var(--img-filter, invert(0.3));
-  }
-}
-
 .contract-address {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -563,7 +507,7 @@ export default class RoundInformation extends Vue {
 .closed {
   width: 12px;
   height: 12px;
-  background: var(--bg-light-color);
+  background: $bg-light-color;
 }
 
 .open-pulse {
@@ -573,7 +517,7 @@ export default class RoundInformation extends Vue {
 
 @keyframes pulse-animation {
   0% {
-    box-shadow: 0 0 0 0px $idle-color;
+    box-shadow: 0 0 0 0px $bg-primary-color;
   }
 
   50% {
@@ -631,7 +575,7 @@ export default class RoundInformation extends Vue {
   flex: 1 0 auto;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-light-highlight);
+  background: $bg-light-color;
   padding: 1rem;
 }
 
@@ -641,7 +585,7 @@ export default class RoundInformation extends Vue {
   flex: 1 0 auto;
   justify-content: space-between;
   align-items: flex-start;
-  background: var(--bg-light-highlight);
+  background: $bg-light-color;
   padding: 1rem;
   border-radius: 0.5rem;
   box-sizing: border-box;
@@ -661,7 +605,7 @@ export default class RoundInformation extends Vue {
 
 .round-info-sub-item {
   flex: 1 0 10%;
-  background: var(--bg-secondary-highlight);
+  background: $bg-secondary-color;
   padding: 1rem;
 
   img {
@@ -670,7 +614,7 @@ export default class RoundInformation extends Vue {
 }
 
 .round-info-title {
-  color: var(--text-color);
+  color: white;
   font-size: 14px;
   font-weight: 400;
   line-height: 120%;
@@ -690,7 +634,7 @@ export default class RoundInformation extends Vue {
   .value {
     font-size: 24px;
     font-family: 'Glacial Indifference', sans-serif;
-    color: var(--text-color);
+    color: white;
     font-weight: 700;
     line-height: 120%;
 
@@ -702,13 +646,49 @@ export default class RoundInformation extends Vue {
     &.extra {
       font-size: 32px;
       font-family: 'Glacial Indifference', sans-serif;
-      color: var(--text-color);
+      color: white;
       line-height: 120%;
     }
   }
 
   .unit {
-    color: var(--text-color);
+    color: white;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    line-height: 150%;
+    margin: 0 0.5rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.round-announcement-info {
+  .value {
+    font-size: 24px;
+    font-family: 'Glacial Indifference', sans-serif;
+    color: white;
+    font-weight: 700;
+    line-height: 120%;
+
+    &.large {
+      font-size: 32px;
+      line-height: 120%;
+    }
+
+    &.extra {
+      font-size: 32px;
+      font-family: 'Glacial Indifference', sans-serif;
+      color: white;
+      line-height: 120%;
+    }
+  }
+
+  .unit {
+    color: white;
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 16px;
     font-weight: 600;
@@ -723,7 +703,7 @@ export default class RoundInformation extends Vue {
 }
 
 .message {
-  color: var(--text-color);
+  color: white;
   font-family: 'Glacial Indifference', sans-serif;
   font-size: 16px;
   font-weight: 600;
@@ -738,6 +718,33 @@ export default class RoundInformation extends Vue {
   img {
     height: 1.8em;
     vertical-align: middle;
+  }
+}
+
+.project-search {
+  border: $border;
+  border-radius: 30px;
+  box-sizing: border-box;
+  display: flex;
+  margin: 20px 0;
+  min-width: 300px;
+  padding: 8px 15px;
+  width: 33%;
+
+  img {
+    margin-right: 10px;
+  }
+
+  input {
+    background-color: transparent;
+    border: none;
+    font-size: 14px;
+    padding: 0;
+    width: 100%;
+
+    &::placeholder {
+      opacity: 1;
+    }
   }
 }
 
@@ -787,11 +794,11 @@ export default class RoundInformation extends Vue {
 }
 
 .round-notice {
-  background: var(--warning-background);
-  border: 1px solid var(--warning-border);
+  background: $warning-color-bg;
+  border: 1px solid $warning-color;
   border-radius: 0.5rem;
   padding: 0.5rem 1rem 1rem;
-  color: var(--warning-color);
+  color: $warning-color;
   font-size: 14px;
   line-height: 150%;
   font-weight: 500;
@@ -800,7 +807,7 @@ export default class RoundInformation extends Vue {
     font-weight: 600;
   }
   .dismiss-btn {
-    @include button(var(--warning-color), none, 1px solid var(--warning-color));
+    @include button($warning-color, none, 1px solid $warning-color);
     margin: 0 auto;
     width: fit-content;
     padding: 0.25rem 1.25rem;
@@ -809,9 +816,5 @@ export default class RoundInformation extends Vue {
 
 .hidden {
   display: none;
-}
-
-.has-tooltip {
-  filter: var(--img-filter, invert(0.7));
 }
 </style>

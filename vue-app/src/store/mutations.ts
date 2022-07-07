@@ -8,6 +8,7 @@ import { RoundInfo } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
+import { MACIFactory } from '@/api/maci-factory'
 import {
   RecipientApplicationData,
   RegistryInfo,
@@ -34,10 +35,9 @@ import {
   UPDATE_CART_ITEM,
   TOGGLE_EDIT_SELECTION,
   SET_HAS_VOTED,
-  TOGGLE_THEME,
   SET_FACTORY,
+  SET_MACI_FACTORY,
 } from './mutation-types'
-import { ThemeMode } from '@/api/core'
 
 const mutations = {
   [TOGGLE_EDIT_SELECTION](state, isOpen: boolean | undefined) {
@@ -59,6 +59,9 @@ const mutations = {
   },
   [SET_FACTORY](state, factory: Factory) {
     state.factory = factory
+  },
+  [SET_MACI_FACTORY](state, factory: MACIFactory) {
+    state.maciFactory = factory
   },
   //TODO: also dispatch SET_CURRENT_FACTORY_ADDRESS mutation when ever this fires
   [SET_CURRENT_ROUND_ADDRESS](state, address: string) {
@@ -158,14 +161,6 @@ const mutations = {
       state.showCartPanel = isOpen
     } else {
       state.showCartPanel = !state.showCartPanel
-    }
-  },
-  [TOGGLE_THEME](state, theme: string | undefined) {
-    if (theme) {
-      state.theme = theme
-    } else {
-      state.theme =
-        state.theme === ThemeMode.LIGHT ? ThemeMode.DARK : ThemeMode.LIGHT
     }
   },
   [RESTORE_COMMITTED_CART_TO_LOCAL_CART](state) {

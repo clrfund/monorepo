@@ -1,5 +1,5 @@
 <template>
-  <div id="criteria-modal" class="wrapper">
+  <div class="wrapper">
     <div class="modal-background" @click="$emit('close')" />
     <div class="container">
       <div>
@@ -11,9 +11,13 @@
           </div>
         </div>
         <p>
-          The registry admin ({{ operator }}) will remove any projects that
-          don't meet the round criteria. So read carefully! In later rounds
-          we're hoping that this review process can be done by the community.
+          The registry admin will remove any projects that don't meet the round
+          criteria. So read carefully! In later rounds we're hoping that this
+          review process can be done by the community.
+        </p>
+        <p>
+          Learn more about the project application process in our
+          <links to="/about/how-it-works/recipients">recipient guide</links>.
         </p>
         <div class="content">
           <div
@@ -63,17 +67,13 @@ export default class CriteriaModal extends Vue {
 .close-btn {
   display: flex;
   gap: 0.5rem;
-  color: var(--text-color);
+  color: white;
   text-decoration: underline;
   font-size: 1rem;
   cursor: pointer;
   &:hover {
     transform: scale(1.01);
     opacity: 0.8;
-  }
-
-  img {
-    filter: var(--img-filter, invert(1));
   }
 }
 
@@ -104,7 +104,7 @@ export default class CriteriaModal extends Vue {
     flex-direction: column;
     padding: 3rem 2rem;
     overflow: scroll;
-    background: var(--bg-secondary-color);
+    background: $bg-secondary-color;
     @media (max-width: $breakpoint-m) {
       box-sizing: border-box;
       width: 100%;
@@ -126,8 +126,7 @@ export default class CriteriaModal extends Vue {
     font-size: 14px;
     line-height: 150%;
     border-radius: 16px;
-    color: white;
-    background: var(--bg-light-accent);
+    background: $bg-light-color;
     padding: 1.5rem 1rem;
     margin-bottom: 3rem;
     margin-top: 2rem;

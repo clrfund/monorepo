@@ -46,14 +46,6 @@ import ProjectProfile from '@/components/ProjectProfile.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
-import {
-  SELECT_ROUND,
-  LOAD_ROUND_INFO,
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-} from '@/store/action-types'
 import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
@@ -73,25 +65,7 @@ export default class ProjectView extends Vue {
     //TODO: update to take factory address as a parameter, default to env. variable
     const roundAddress =
       this.$store.state.currentRoundAddress || (await getCurrentRound())
-    if (
-      roundAddress &&
-      roundAddress !== this.$store.state.currentRoundAddress
-    ) {
-      // Select round
-      //TODO: SELECT_ROUND action also commits SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
-      this.$store.dispatch(SELECT_ROUND, roundAddress)
-      // Don't wait for round info to improve loading time
-      ;(async () => {
-        await this.$store.dispatch(LOAD_ROUND_INFO)
-        if (this.$store.state.currentUser) {
-          // Load user data if already logged in
-          this.$store.dispatch(LOAD_USER_INFO)
-          this.$store.dispatch(LOAD_CART)
-          this.$store.dispatch(LOAD_COMMITTED_CART)
-          this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-        }
-      })()
-    }
+
     if (this.$store.state.recipientRegistryAddress === null) {
       const registryAddress = await getRecipientRegistryAddress(roundAddress)
       this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
@@ -185,6 +159,22 @@ export default class ProjectView extends Vue {
   }
 }
 
+.back-button {
+  color: $text-color;
+  text-decoration: underline;
+  &:hover {
+    transform: scale(1.01);
+  }
+}
+
+.tagline {
+  font-size: 1.5rem;
+  line-height: 150%;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+  font-family: 'Glacial Indifference', sans-serif;
+}
+
 .project-image {
   border-radius: 4px;
   display: block;
@@ -198,5 +188,162 @@ export default class ProjectView extends Vue {
   display: flex;
   gap: 3rem;
   margin-top: 4rem;
+}
+
+.project-section {
+  margin-bottom: 3rem;
+  color: #f7f7f7;
+}
+
+.team {
+  padding: 1rem;
+  margin-bottom: 3rem;
+  border-radius: 0.25rem;
+  background: $bg-secondary-color;
+}
+
+.team h2 {
+  font-size: 16px;
+  font-weight: 400;
+  font-family: 'Glacial Indifference', sans-serif;
+}
+
+.address-box {
+  padding: 1rem;
+  margin-bottom: 3rem;
+  border-radius: 0.5rem;
+  box-shadow: $box-shadow;
+  background: $clr-blue-gradient;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  @media (max-width: $breakpoint-l) {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+}
+
+.team-byline {
+  line-height: 150%;
+}
+
+.admin-box {
+  background: $bg-primary-color;
+  padding: 1.5rem;
+  min-width: 320px;
+  border-radius: 16px;
+  border: 1px solid $error-color;
+}
+
+.project-name {
+  font-family: 'Glacial Indifference', sans-serif;
+  font-weight: bold;
+  font-size: 2.5rem;
+  letter-spacing: -0.015em;
+  margin: 0;
+
+  a {
+    color: $text-color;
+  }
+}
+
+.contribute-btn,
+.in-cart,
+.claim-btn {
+  width: 100%;
+}
+
+.donate-btn {
+  padding: 0.5rem 1rem;
+  background: $bg-primary-color;
+  color: white;
+  border-radius: 32px;
+  font-size: 16px;
+  font-family: Inter;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+}
+
+.donate-btn-full {
+  background: $bg-primary-color;
+  color: white;
+  border-radius: 32px;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  font-family: Inter;
+  line-height: 150%;
+  border: none;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  z-index: 1;
+}
+
+.input {
+  background: none;
+  border: none;
+  color: $bg-primary-color;
+  width: 100%;
+}
+
+.project-description {
+  font-size: 1rem;
+  line-height: 150%;
+  word-wrap: break-word;
+
+  ::v-deep {
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+.address {
+  font-family: 'Glacial Indifference', sans-serif;
+  /*   padding: 1rem;
+  background: $bg-secondary-color; */
+  /* border: 1px solid #000; */
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.address-label {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 400;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.nav-area {
+  grid-area: navi;
+}
+
+.nav-bar {
+  display: inherit;
+  position: sticky;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  padding: 1.5rem;
+  background: $bg-primary-color;
+  border-radius: 32px 32px 0 0;
+  box-shadow: $box-shadow;
+}
+
+.project-page h2 {
+  font-size: 20px;
+}
+
+.project-page hr {
+  border: 0;
+  border-bottom: 0.5px solid $button-disabled-text-color;
+  margin-bottom: 3rem;
 }
 </style>

@@ -5,7 +5,6 @@ import Landing from '../views/Landing.vue'
 import JoinLanding from '../views/JoinLanding.vue'
 import ProjectList from '../views/ProjectList.vue'
 import ProjectView from '../views/Project.vue'
-import RoundList from '../views/RoundList.vue'
 import ProjectAdded from '../views/ProjectAdded.vue'
 import RoundInformation from '../views/RoundInformation.vue'
 import VerifyLanding from '../views/VerifyLanding.vue'
@@ -35,7 +34,7 @@ const routes = [
     name: 'landing',
     component: Landing,
     meta: {
-      title: 'Clr.fund',
+      title: 'Ethereum Staking CLR',
     },
   },
   {
@@ -57,14 +56,6 @@ const routes = [
     component: RoundInformation,
     meta: {
       title: 'Round Information',
-    },
-  },
-  {
-    path: '/rounds',
-    name: 'rounds',
-    component: RoundList,
-    meta: {
-      title: 'Rounds',
     },
   },
   {

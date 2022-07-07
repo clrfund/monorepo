@@ -25,7 +25,7 @@
       <p class="tagline">{{ project.tagline }}</p>
       <div class="subtitle">
         <div class="tag">{{ project.category }} tag</div>
-        <div class="team-byline" v-if="!!project.teamName">
+        <div class="team-byline">
           Team: <links to="#team"> {{ project.teamName }}</links>
         </div>
       </div>
@@ -205,11 +205,6 @@ export default class ProjectProfile extends Vue {
     const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
     return isRoundContributionPhase || canUserReallocate
   }
-
-  get tokenLogo(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return getTokenLogo(nativeTokenSymbol)
-  }
 }
 </script>
 
@@ -257,7 +252,7 @@ export default class ProjectProfile extends Vue {
       margin: 0;
 
       a {
-        color: var(--text-color);
+        color: $text-color;
       }
     }
 
@@ -288,15 +283,15 @@ export default class ProjectProfile extends Vue {
 
     .project-section {
       margin-bottom: 3rem;
-      color: var(--text-body);
+      color: #f7f7f7;
     }
 
     .address-box {
       padding: 1rem;
       margin-bottom: 3rem;
       border-radius: 0.5rem;
-      box-shadow: var(--box-shadow);
-      background: var(--bg-address-box);
+      box-shadow: $box-shadow;
+      background: $clr-blue-gradient;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -329,8 +324,8 @@ export default class ProjectProfile extends Vue {
     .address-box-no-team {
       padding: 1rem;
       border-radius: 0.5rem;
-      box-shadow: var(--box-shadow);
-      background: var(--bg-address-box);
+      box-shadow: $box-shadow;
+      background: $clr-blue-gradient;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -346,7 +341,7 @@ export default class ProjectProfile extends Vue {
       padding: 1rem;
       margin-bottom: 3rem;
       border-radius: 0.25rem;
-      background: var(--bg-secondary-color);
+      background: $bg-secondary-color;
       @media (max-width: $breakpoint-l) {
         margin-bottom: 0;
       }
@@ -385,11 +380,57 @@ export default class ProjectProfile extends Vue {
       margin: 0;
       padding: 0;
       .icon {
-        @include icon(none, var(--explorer-hover));
-        border: 1px solid var(--explorer-border);
-        filter: var(--img-filter, invert(0.7));
+        @include icon(none, $bg-light-color);
+        border: 1px solid $text-color;
       }
     }
+  }
+
+  .input-button {
+    background: #f7f7f7;
+    border-radius: 2rem;
+    border: 2px solid $bg-primary-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: black;
+    padding: 0.125rem;
+    z-index: 100;
+  }
+
+  .donate-btn {
+    padding: 0.5rem 1rem;
+    background: $bg-primary-color;
+    color: white;
+    border-radius: 32px;
+    font-size: 16px;
+    font-family: Inter;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+    @include disabledAttribute;
+  }
+
+  .donate-btn-full {
+    background: $bg-primary-color;
+    color: white;
+    border-radius: 32px;
+    padding: 0.5rem 1rem;
+    font-size: 16px;
+    font-family: Inter;
+    line-height: 150%;
+    border: none;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+    z-index: 1;
+  }
+
+  .input {
+    background: none;
+    border: none;
+    color: $bg-primary-color;
+    width: 100%;
   }
 }
 </style>

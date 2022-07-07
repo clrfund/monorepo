@@ -5,7 +5,7 @@
       hideOnTargetClick: false,
       trigger: 'hover click',
     }"
-    :class="`${myClass || 'copy-icon'} ${hasBorder && 'border'}`"
+    :class="`${myClass || 'default'} ${hasBorder && 'border'}`"
     @click="copyToClipboard"
   >
     <img width="16px" src="@/assets/copy.svg" />
@@ -53,13 +53,17 @@ export default class CopyButton extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.copy-icon {
+.default {
   @include icon(none, none);
+}
+
+.tx-receipt {
+  @include icon(none, $clr-pink-light-gradient);
 }
 
 .ipfs-copy-widget,
 .project-profile {
-  @include icon(none, var(--bg-light-color));
+  @include icon(none, $bg-light-color);
 }
 
 .profile {
@@ -68,10 +72,6 @@ export default class CopyButton extends Vue {
 }
 
 .border {
-  border: 1px solid var(--text-color);
-}
-
-img {
-  filter: var(--img-filter, invert(0.7));
+  border: 1px solid $text-color;
 }
 </style>

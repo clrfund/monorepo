@@ -1,5 +1,5 @@
 <template>
-  <div id="join-the-round" class="container">
+  <div class="container">
     <div class="grid">
       <form-progress-widget
         :currentStep="currentStep"
@@ -13,7 +13,7 @@
         :saveFormData="saveFormData"
       />
       <div class="title-area">
-        <h1>Join the round</h1>
+        <h1>Join the staking round</h1>
         <div v-if="currentStep === 5">
           <div class="toggle-tabs-desktop">
             <p
@@ -136,6 +136,18 @@
                 </label>
                 <form class="radio-row" id="category-radio">
                   <input
+                    id="tooling"
+                    type="radio"
+                    name="project-category"
+                    value="Tooling"
+                    v-model="$v.form.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: $v.form.project.category.$error,
+                    }"
+                  />
+                  <label for="tooling" class="radio-btn">Tools</label>
+                  <input
                     id="category-content"
                     type="radio"
                     name="project-category"
@@ -161,18 +173,7 @@
                     }"
                   />
                   <label for="research" class="radio-btn">Research</label>
-                  <input
-                    id="tooling"
-                    type="radio"
-                    name="project-category"
-                    value="Tooling"
-                    v-model="$v.form.project.category.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.project.category.$error,
-                    }"
-                  />
-                  <label for="tooling" class="radio-btn">Tooling</label>
+
                   <input
                     id="data"
                     type="radio"
@@ -456,7 +457,7 @@
                 </p>
               </div>
               <div class="form-background">
-                <label for="links-discord" class="input-label">Discord</label>
+                <label for="links-discord" class="input-label">Chat</label>
                 <input
                   id="links-discord"
                   type="link"
@@ -525,7 +526,7 @@
                   /></links>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Name</h4>
+                  <h4 class="read-only-title">Project name</h4>
                   <div class="data">{{ form.project.name }}</div>
                 </div>
                 <div class="summary">
@@ -534,7 +535,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Description</h4>
-                  <markdown :raw="form.project.description" />
+                  <div class="data">{{ form.project.description }}</div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Category</h4>
@@ -542,7 +543,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Problem space</h4>
-                  <markdown :raw="form.project.problemSpace" />
+                  <div class="data">{{ form.project.problemSpace }}</div>
                 </div>
               </div>
               <div class="form-background">
@@ -570,7 +571,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Funding plans</h4>
-                  <markdown :raw="form.fund.plans" />
+                  <div class="data">{{ form.fund.plans }}</div>
                 </div>
               </div>
               <div class="form-background">
@@ -594,7 +595,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Team description</h4>
-                  <markdown :raw="form.team.description" />
+                  <div class="data">{{ form.team.description }}</div>
                   <div class="data" v-if="!form.team.description">
                     Not provided
                   </div>
@@ -711,9 +712,8 @@
             </p>
             <div class="inputs">
               <recipient-submission-widget
-                :isWaiting="isWaiting"
-                :txHash="txHash"
-                :txError="txError"
+                cta="Submit project"
+                pending="Sending deposit..."
               />
             </div>
           </div>
@@ -752,14 +752,8 @@ import ProjectProfile from '@/components/ProjectProfile.vue'
 import RecipientSubmissionWidget from '@/components/RecipientSubmissionWidget.vue'
 import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
-import { DateTime } from 'luxon'
-import { addRecipient } from '@/api/recipient-registry-optimistic'
-import { waitForTransaction } from '@/utils/contracts'
 
-import {
-  RESET_RECIPIENT_DATA,
-  SET_RECIPIENT_DATA,
-} from '@/store/mutation-types'
+import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
 import {
   RecipientApplicationData,
   formToProjectInterface,
@@ -869,9 +863,6 @@ export default class JoinView extends mixins(validationMixin) {
   steps: string[] = []
   stepNames: string[] = []
   showSummaryPreview = false
-  isWaiting = false
-  txHash = ''
-  txError = ''
 
   created() {
     const steps = Object.keys(this.form)
@@ -981,23 +972,19 @@ export default class JoinView extends mixins(validationMixin) {
     )
   }
 
-  handleStepNav(step: number, updateFurthest?: boolean): void {
+  handleStepNav(step): void {
     // If isNavDisabled => disable quick-links
     if (this.isNavDisabled) return
     // Save form data
-    this.saveFormData(updateFurthest)
+    this.saveFormData()
     // Navigate
-    if (this.steps[step] === 'submit') {
-      this.addRecipient()
-    } else {
-      if (this.isStepUnlocked(step)) {
-        this.$router.push({
-          name: 'join-step',
-          params: {
-            step: this.steps[step],
-          },
-        })
-      }
+    if (this.isStepUnlocked(step)) {
+      this.$router.push({
+        name: 'join-step',
+        params: {
+          step: this.steps[step],
+        },
+      })
     }
   }
 
@@ -1024,72 +1011,6 @@ export default class JoinView extends mixins(validationMixin) {
       this.form.fund.resolvedAddress = res ? res : addressName
     }
   }
-
-  private async addRecipient() {
-    const {
-      currentRound,
-      currentUser,
-      recipient,
-      recipientRegistryAddress,
-      recipientRegistryInfo,
-    } = this.$store.state
-
-    this.isWaiting = true
-
-    // Reset errors when submitting
-    this.txError = ''
-
-    if (
-      recipientRegistryAddress &&
-      recipient &&
-      recipientRegistryInfo &&
-      currentUser
-    ) {
-      try {
-        if (currentRound && DateTime.now() >= currentRound.votingDeadline) {
-          this.$router.push({
-            name: 'join',
-          })
-          throw { message: 'round over' }
-        }
-
-        await waitForTransaction(
-          addRecipient(
-            recipientRegistryAddress,
-            recipient,
-            recipientRegistryInfo.deposit,
-            currentUser.walletProvider.getSigner()
-          ),
-          (hash) => (this.txHash = hash)
-        )
-
-        // Send application data to a Google Spreadsheet
-        if (process.env.VUE_APP_GOOGLE_SPREADSHEET_ID) {
-          await fetch('/.netlify/functions/recipient', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(recipient),
-          })
-        }
-
-        this.$store.commit(RESET_RECIPIENT_DATA)
-      } catch (error) {
-        this.isWaiting = false
-        this.txError = error.message
-        return
-      }
-      this.isWaiting = false
-
-      this.$router.push({
-        name: 'project-added',
-        params: {
-          hash: this.txHash,
-        },
-      })
-    }
-  }
 }
 </script>
 
@@ -1102,7 +1023,7 @@ export default class JoinView extends mixins(validationMixin) {
   margin: 0 auto;
   @media (max-width: $breakpoint-m) {
     width: 100%;
-    background: var(--bg-secondary-color);
+    background: $bg-secondary-color;
   }
 }
 
@@ -1179,8 +1100,8 @@ export default class JoinView extends mixins(validationMixin) {
   right: 0;
   left: 0;
   padding: 1.5rem;
-  background: var(--bg-primary-color);
-  box-shadow: var(--box-shadow);
+  background: $bg-primary-color;
+  box-shadow: $box-shadow;
 }
 
 .layout-steps {
@@ -1211,7 +1132,7 @@ export default class JoinView extends mixins(validationMixin) {
   margin-bottom: 2rem;
   overflow: none;
   @media (min-width: $breakpoint-m) {
-    background: var(--bg-secondary-color);
+    background: $bg-secondary-color;
     padding: 1.5rem;
     border-radius: 1rem;
     margin-bottom: 4rem;
@@ -1227,7 +1148,7 @@ export default class JoinView extends mixins(validationMixin) {
 .cancel-link {
   position: sticky;
   top: 0px;
-  color: var(--error-color);
+  color: $error-color;
   text-decoration: underline;
 }
 
@@ -1238,7 +1159,7 @@ export default class JoinView extends mixins(validationMixin) {
 .form-background {
   border-radius: 0.5rem;
   padding: 1rem;
-  background: var(--bg-light-color);
+  background: $bg-light-color;
   margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -1253,10 +1174,9 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .input {
-  color: var(--text-color);
   border-radius: 16px;
-  border: 2px solid var(-button-color);
-  background-color: var(--bg-secondary-color);
+  border: 2px solid $button-color;
+  background-color: $bg-secondary-color;
   margin: 0.5rem 0;
   padding: 0.5rem 1rem;
   font-size: 16px;
@@ -1268,18 +1188,18 @@ export default class JoinView extends mixins(validationMixin) {
     border: 2px solid $clr-green;
   }
   &:hover {
-    background: var(--bg-primary-color);
+    background: $bg-primary-color;
     border: 2px solid $highlight-color;
     box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
   }
   &:optional {
     border: 2px solid $button-color;
-    background-color: var(--bg-secondary-color);
+    background-color: $bg-secondary-color;
   }
 }
 
 .input.invalid {
-  border: 2px solid var(--error-color);
+  border: 2px solid $error-color;
 }
 
 .input-description {
@@ -1296,7 +1216,7 @@ export default class JoinView extends mixins(validationMixin) {
   font-family: Inter;
   margin-bottom: 0.5rem;
   line-height: 150%;
-  color: var(--attention-color);
+  color: $warning-color;
   text-transform: uppercase;
   font-weight: 500;
 }
@@ -1338,7 +1258,7 @@ export default class JoinView extends mixins(validationMixin) {
 
 .radio-btn {
   box-sizing: border-box;
-  color: var(--text-color);
+  color: white;
   font-size: 16px;
   line-height: 24px;
   align-items: center;
@@ -1358,12 +1278,44 @@ export default class JoinView extends mixins(validationMixin) {
 
   &:hover {
     opacity: 0.8;
-    background: var(--bg-secondary-highlight);
+    background: $bg-secondary-color;
     transform: scale(1.04);
     cursor: pointer;
   }
   &:active {
-    background: var(--bg-secondary-highlight);
+    background: $bg-secondary-color;
+  }
+}
+
+.loader {
+  display: block;
+  height: 40px;
+  margin: $content-space auto;
+  width: 40px;
+}
+
+.loader:after {
+  content: ' ';
+  display: block;
+  width: 32px;
+  height: 32px;
+  margin: 4px;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: loader 1.2s linear infinite;
+}
+
+.loader {
+  margin: $modal-space auto;
+}
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
@@ -1380,19 +1332,6 @@ export default class JoinView extends mixins(validationMixin) {
 
 .summary {
   margin-bottom: 1rem;
-  ::v-deep {
-    .markdown {
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6,
-      p {
-        margin: 0.25rem 0;
-      }
-    }
-  }
 }
 
 .summary-section-header {
@@ -1426,7 +1365,7 @@ export default class JoinView extends mixins(validationMixin) {
     cursor: pointer;
     &:hover {
       opacity: 0.8;
-      border-bottom: 4px solid rgba(var(--text-color-rgb), 0.467);
+      border-bottom: 4px solid #fff7;
       border-radius: 4px;
     }
     /* text-decoration: underline; */
@@ -1485,13 +1424,43 @@ export default class JoinView extends mixins(validationMixin) {
   padding: 0.25rem;
   margin-top: 0.25rem;
   &:hover {
-    background: var(--bg-primary-color);
+    background: $bg-primary-color;
     border-radius: 4px;
   }
 }
 
 .pt-1 {
   padding-top: 1rem;
+}
+
+.tx-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
+
+.tx-row-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  font-weight: 600;
+  font-size: 20px;
+  font-family: 'Glacial Indifference', sans-serif;
+  background: $bg-secondary-color;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-top: 1.5rem;
+}
+
+.tx-item {
+  font-size: 14px;
+  font-family: Inter;
+  line-height: 150%;
+  text-transform: uppercase;
+  font-weight: 500;
 }
 
 /* .hr {

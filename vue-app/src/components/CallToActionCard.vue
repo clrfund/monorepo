@@ -87,8 +87,8 @@ export default class CallToActionCard extends Vue {
 @import '../styles/theme';
 
 .get-prepared {
-  background: var(--bg-secondary-color);
-  border: 1px solid var(--border-strong);
+  background: $bg-secondary-color;
+  border: 1px solid #000000;
   border-radius: 8px;
   display: flex;
   flex-direction: column;

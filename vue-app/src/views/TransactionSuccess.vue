@@ -38,8 +38,8 @@
             v-else-if="$route.params.type === 'contribution'"
             class="contributed-content"
           >
-            Thanks for contributing to the Ethereum ecosystem. If you change
-            your mind, you have
+            Thanks for contributing to the Ethereum staking ecosystem. If you
+            change your mind, you have
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
@@ -50,7 +50,11 @@
           <div class="receipt" v-if="$route.params.hash">
             <transaction-receipt :hash="$route.params.hash" />
           </div>
-          <div class="btn-info" @click="redirectToProjects()">OK</div>
+          <div class="input-button">
+            <button class="contributed-button" @click="redirectToProjects()">
+              <span>OK</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -107,7 +111,7 @@ export default class TransactionSuccess extends Vue {
 .image-wrapper {
   position: fixed;
   height: 100vh;
-  background: var(--bg-gradient);
+  background: $clr-pink-dark-gradient;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -130,12 +134,10 @@ export default class TransactionSuccess extends Vue {
 
 .dropshadow {
   position: relative;
-  @include gradientBackground(
+  background: linear-gradient(
     180deg,
-    rgba(var(--shadow-dark-rgb), 0.4),
-    56.5%,
-    rgba(var(--shadow-light-rgb), 0),
-    75.75%
+    rgba(0, 0, 0, 0.4) 56.5%,
+    rgba(196, 196, 196, 0) 75.75%
   );
   height: 80vh;
 }
@@ -165,7 +167,7 @@ export default class TransactionSuccess extends Vue {
   font-weight: 700;
   line-height: 120%;
   margin-right: 0.5rem;
-  color: var(--text-color);
+  color: $text-color;
 }
 
 .contributed-content {
@@ -181,5 +183,37 @@ export default class TransactionSuccess extends Vue {
 
 .receipt {
   margin: 16px 0;
+}
+
+.input-button {
+  background: #f7f7f7;
+  border-radius: 2rem;
+  border: 2px solid $bg-primary-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: black;
+  padding: 0.125rem;
+  margin-bottom: 1rem;
+  z-index: 100;
+}
+
+.contributed-button {
+  background: $bg-primary-color;
+  color: white;
+  border-radius: 32px;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  font-family: Inter;
+  line-height: 150%;
+  border: none;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  z-index: 1;
+  cursor: pointer;
+  &:hover {
+    background: $bg-light-color;
+  }
 }
 </style>

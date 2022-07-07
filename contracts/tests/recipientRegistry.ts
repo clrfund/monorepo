@@ -834,9 +834,7 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      const requestSubmitted = await registry.removeRecipient(recipientId, {
-        value: baseDeposit,
-      })
+      const requestSubmitted = await registry.removeRecipient(recipientId)
       const currentTime = await getCurrentTime()
       expect(requestSubmitted)
         .to.emit(registry, 'RequestSubmitted')
@@ -849,20 +847,16 @@ describe('Optimistic recipient registry', () => {
         )
     })
 
-    it('allows only owner to execute removal request during challenge period', async () => {
+    it('allows only owner to submit removal request', async () => {
       await registry.addRecipient(recipientAddress, metadata, {
         value: baseDeposit,
       })
+      await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      const registryAsRequester = registry.connect(requester)
-      await registryAsRequester.removeRecipient(recipientId, {
-        value: baseDeposit,
-      })
-
       await expect(
-        registryAsRequester.executeRequest(recipientId)
-      ).to.be.revertedWith('RecipientRegistry: Challenge period is not over')
+        registry.connect(requester).removeRecipient(recipientId)
+      ).to.be.revertedWith('Ownable: caller is not the owner')
     })
 
     it('should not accept removal request if recipient is not in registry', async () => {
@@ -878,7 +872,7 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await registry.removeRecipient(recipientId, { value: baseDeposit })
+      await registry.removeRecipient(recipientId)
       await provider.send('evm_increaseTime', [86400])
       await registry.connect(requester).executeRequest(recipientId)
 
@@ -894,7 +888,7 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await registry.removeRecipient(recipientId, { value: baseDeposit })
+      await registry.removeRecipient(recipientId)
       await expect(registry.removeRecipient(recipientId)).to.be.revertedWith(
         'RecipientRegistry: Request already submitted'
       )
@@ -907,7 +901,7 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await registry.removeRecipient(recipientId, { value: baseDeposit })
+      await registry.removeRecipient(recipientId)
       const requestRejected = await registry.challengeRequest(
         recipientId,
         requester.address
@@ -934,7 +928,7 @@ describe('Optimistic recipient registry', () => {
       await provider.send('evm_increaseTime', [86400])
       await registry.executeRequest(recipientId)
 
-      await registry.removeRecipient(recipientId, { value: baseDeposit })
+      await registry.removeRecipient(recipientId)
       await provider.send('evm_increaseTime', [86400])
 
       const requestExecuted = await registry

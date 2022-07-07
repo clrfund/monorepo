@@ -83,6 +83,7 @@ export default class extends Vue {
 .value {
   font-size: 24px;
   font-family: 'Glacial Indifference', sans-serif;
+  color: white;
   font-weight: 700;
   line-height: 120%;
 
@@ -100,6 +101,7 @@ export default class extends Vue {
 }
 
 .unit {
+  color: white;
   font-family: 'Glacial Indifference', sans-serif;
   font-size: 16px;
   font-weight: 600;

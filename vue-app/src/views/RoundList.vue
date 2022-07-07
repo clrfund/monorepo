@@ -35,19 +35,19 @@ export default class RoundList extends Vue {
 @import '../styles/vars';
 
 .content-heading {
-  border-bottom: 2px solid var(--border-color);
+  border-bottom: $border;
 }
 
 .round {
-  background-color: var(--bg-secondary-color);
-  border: 2px solid var(--border-color);
+  background-color: $bg-secondary-color;
+  border: $border;
   border-radius: 20px;
   box-sizing: border-box;
   margin-top: $content-space;
   padding: $content-space;
 
   a {
-    color: var(--text-color);
+    color: $text-color;
     font-size: 16px;
   }
 }

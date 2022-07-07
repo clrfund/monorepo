@@ -99,13 +99,13 @@ export default class TransactionReceipt extends Vue {
   padding: 0.25rem;
   cursor: pointer;
   &:hover {
-    background: var(--brand-primary);
+    background: $clr-pink-light-gradient;
     border-radius: 16px;
   }
 }
 
 .hash {
-  color: var(--text-color);
+  color: #fff;
   margin: 0;
   font-size: 14px;
   text-transform: uppercase;
@@ -117,9 +117,8 @@ export default class TransactionReceipt extends Vue {
   height: 0.75rem;
   padding: 0.25rem;
   margin-right: 0.25rem;
-  background: $gradient-highlight;
+  background: $clr-pink-light-gradient;
   border-radius: 2rem;
-  filter: var(--img-filter, invert(1));
 }
 
 .actions {

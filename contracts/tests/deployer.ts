@@ -1,7 +1,7 @@
 import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
-import { Contract } from 'ethers'
+import { Contract, ContractReceipt } from 'ethers'
 import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from 'maci-domainobjs'
 

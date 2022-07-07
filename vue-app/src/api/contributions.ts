@@ -1,11 +1,9 @@
-import { BigNumber, Contract, Signer, FixedNumber } from 'ethers'
-import { parseFixed } from '@ethersproject/bignumber'
-
+import { BigNumber, Contract, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Keypair, PrivKey } from 'maci-domainobjs'
 
-import { RoundInfo } from './round'
-import { FundingRound } from './abi'
+import { FundingRound, ERC20 } from './abi'
+import { factory, provider } from './core'
 import { Project } from './projects'
 import sdk from '@/graphql/sdk'
 
@@ -13,7 +11,7 @@ export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
 
 // The batch of maximum size will burn 9100000 gas at 700000 gas per message
-export const MAX_CART_SIZE = 13
+export const MAX_CART_SIZE = 8
 
 export interface CartItem extends Project {
   amount: string
@@ -89,29 +87,21 @@ export async function getContributionAmount(
 export async function getTotalContributed(
   fundingRoundAddress: string
 ): Promise<{ count: number; amount: BigNumber }> {
+  const nativeTokenAddress = await factory.nativeToken()
+  const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
+  const balance = await nativeToken.balanceOf(fundingRoundAddress)
+
   const data = await sdk.GetTotalContributed({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
   })
 
-  if (!data.fundingRound?.contributors) {
+  if (!data.fundingRound?.contributorCount) {
     return { count: 0, amount: BigNumber.from(0) }
   }
 
   const count = parseInt(data.fundingRound.contributorCount)
 
-  const amount = data.fundingRound.contributors.reduce((total, contributor) => {
-    if (!contributor.contributions?.length) {
-      return total
-    }
-
-    const subtotal = contributor.contributions.reduce((total, contribution) => {
-      return total.add(contribution.amount)
-    }, BigNumber.from(0))
-
-    return total.add(subtotal)
-  }, BigNumber.from(0))
-
-  return { count, amount }
+  return { count, amount: balance }
 }
 
 export async function withdrawContribution(
@@ -132,31 +122,4 @@ export async function hasContributorVoted(
     contributorAddress,
   })
   return !!data.fundingRound?.contributors?.[0]?.votes?.length
-}
-
-export function isContributionAmountValid(
-  value: string,
-  currentRound: RoundInfo
-): boolean {
-  if (!currentRound) {
-    // Skip validation
-    return true
-  }
-  const { nativeTokenDecimals, voiceCreditFactor } = currentRound
-  let amount
-  try {
-    amount = parseFixed(value, nativeTokenDecimals)
-  } catch {
-    return false
-  }
-  if (amount.lte(BigNumber.from(0))) {
-    return false
-  }
-  const normalizedValue = FixedNumber.fromValue(
-    amount.div(voiceCreditFactor).mul(voiceCreditFactor),
-    nativeTokenDecimals
-  )
-    .toUnsafeFloat()
-    .toString()
-  return normalizedValue === value
 }

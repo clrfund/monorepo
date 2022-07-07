@@ -37,7 +37,7 @@ import { waitForTransaction } from '@/utils/contracts'
   },
 })
 export default class TransactionModal extends Vue {
-  @Prop() transactionFn!: () => Promise<TransactionResponse>
+  @Prop() transaction!: Promise<TransactionResponse>
   @Prop() onTxSuccess!: (txHash) => void
 
   txHash = ''
@@ -49,10 +49,7 @@ export default class TransactionModal extends Vue {
 
   private async executeTx() {
     try {
-      await waitForTransaction(
-        this.transactionFn(),
-        (hash) => (this.txHash = hash)
-      )
+      await waitForTransaction(this.transaction, (hash) => (this.txHash = hash))
 
       this.onTxSuccess(this.txHash)
     } catch (error) {
@@ -68,9 +65,9 @@ export default class TransactionModal extends Vue {
 
 .modal-body {
   text-align: left;
-  background: var(--bg-secondary-color);
+  background: $bg-secondary-color;
   border-radius: 1rem;
-  box-shadow: var(--box-shadow);
+  box-shadow: $box-shadow;
   padding: 1.5rem;
 }
 

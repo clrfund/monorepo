@@ -1,5 +1,5 @@
 <template>
-  <div id="join-landing">
+  <div>
     <div class="gradient">
       <div class="hero">
         <image-responsive title="core" />
@@ -27,7 +27,7 @@
         <links to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <links to="https://twitter.com/ethdotorg">@ethdotorg</links>
+        <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
         <links to="/" class="btn-primary">Home</links>
@@ -47,7 +47,7 @@
         <links to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <links to="https://twitter.com/ethdotorg">@ethdotorg</links>
+        <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
         <links to="/" class="btn-primary">Home</links>
@@ -56,11 +56,15 @@
     </div>
 
     <div class="content" v-else-if="$store.state.currentRound">
-      <h1>Join the funding round</h1>
+      <h1>Join the staking funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project and a
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
         deposit.
+      </div>
+      <div class="subtitle mt2">
+        The round only accepts a total of {{ maxRecipients }} projects, so apply
+        now while there’s still room!
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
@@ -106,11 +110,15 @@
     </div>
 
     <div class="content" v-else-if="$store.getters.isRoundJoinPhase">
-      <h1>Join the next funding round</h1>
+      <h1>Join the next staking funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project and a
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
         deposit.
+      </div>
+      <div class="subtitle mt2">
+        The round only accepts a total of {{ maxRecipients }} projects, so apply
+        now while there’s still room!
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
@@ -193,6 +201,10 @@ export default class JoinLanding extends Vue {
     return this.$store.state.currentRound?.signUpDeadline
   }
 
+  get maxRecipients(): number | undefined {
+    return this.$store.getters.maxRecipients
+  }
+
   get spacesRemaining(): number | null {
     if (!this.$store.state.currentRound || !this.registryInfo) {
       return null
@@ -258,7 +270,7 @@ h1 {
   right: 0;
   height: 100%;
   width: 100%;
-  background: var(--bg-gradient);
+  background: $clr-pink-dark-gradient;
 
   .hero {
     position: fixed;
@@ -266,7 +278,11 @@ h1 {
     right: 0;
     height: 100%;
     width: 100%;
-    background: var(--bg-gradient-hero);
+    background: linear-gradient(
+      286.78deg,
+      rgba(173, 131, 218, 0) -32.78%,
+      #191623 78.66%
+    );
     @media (max-width: $breakpoint-m) {
       width: 100%;
       padding-bottom: 0rem;
@@ -334,8 +350,8 @@ h1 {
 }
 
 .apply-callout {
-  background: var(--bg-transparent);
-  border: 2px solid var(--border-highlight);
+  background: $bg-transparent;
+  border: 2px solid #9789c4;
   box-sizing: border-box;
   border-radius: 8px;
   padding: 1rem;
@@ -348,12 +364,11 @@ h1 {
 .icon {
   width: 16px;
   height: 16px;
-  filter: var(--img-filter, invert(0.7));
 }
 
 .apply-callout-warning {
-  background: var(--warning-background);
-  border: 2px solid var(--warning-border);
+  background: $warning-color-bg;
+  border: 2px solid $warning-color;
   box-sizing: border-box;
   border-radius: 8px;
   padding: 1rem;
@@ -368,11 +383,17 @@ h1 {
 
 .warning-text {
   margin-bottom: 0;
-  color: var(--warning-color);
 }
 
 .info-boxes {
   margin-bottom: 2rem;
+}
+
+.icon-btn {
+  padding: 0.5rem;
+  &:hover {
+    background: $bg-secondary-color;
+  }
 }
 
 .button-menu {
@@ -380,8 +401,8 @@ h1 {
   position: absolute;
   top: 2rem;
   right: 0.5rem;
-  background: var(--bg-secondary-color);
-  border: 1px solid rgba($border-light, 0.3);
+  background: $bg-secondary-color;
+  border: 1px solid rgba(115, 117, 166, 0.3);
   border-radius: 0.5rem;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
