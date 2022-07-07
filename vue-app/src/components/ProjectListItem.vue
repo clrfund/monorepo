@@ -35,7 +35,9 @@ import AddToCartButton from '@/components/AddToCartButton.vue'
 import Links from '@/components/Links.vue'
 import { CartItem } from '@/api/contributions'
 import { Project } from '@/api/projects'
+import { getCurrentRound } from '@/api/round'
 import { markdown } from '@/utils/markdown'
+import { isSameAddress } from '@/utils/accounts'
 
 @Component({
   components: {
@@ -46,6 +48,14 @@ import { markdown } from '@/utils/markdown'
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project
+  @Prop({ default: '' }) roundAddress!: string
+
+  currentRoundAddress = ''
+
+  async created() {
+    this.currentRoundAddress =
+      this.$store.state.currentRoundAddress || (await getCurrentRound())
+  }
 
   get descriptionHtml(): string {
     return markdown.renderInline(this.project.description)
@@ -69,9 +79,21 @@ export default class ProjectListItem extends Vue {
     return index !== -1
   }
 
+  get isCurrentRound(): boolean {
+    const roundAddress = this.roundAddress || this.currentRoundAddress
+
+    return (
+      !!roundAddress &&
+      !!this.currentRoundAddress &&
+      isSameAddress(roundAddress, this.currentRoundAddress)
+    )
+  }
+
   get shouldShowCartInput(): boolean {
     const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
-    return isRoundContributionPhase || canUserReallocate
+    return (
+      this.isCurrentRound && (isRoundContributionPhase || canUserReallocate)
+    )
   }
 }
 </script>
