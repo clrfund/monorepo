@@ -16,11 +16,7 @@
           @click="handleStepNav(step)"
         >
           <template v-if="step === currentStep">
-            <img
-              class="current-step"
-              src="@/assets/current-step.svg"
-              alt="current step"
-            />
+            <img src="@/assets/current-step.svg" alt="current step" />
             <p v-text="name" class="active step" />
           </template>
           <template v-else-if="step === furthestStep">
@@ -28,11 +24,7 @@
             <p v-text="name" class="active step" />
           </template>
           <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
-            <img
-              class="completed-step"
-              src="@/assets/green-tick.svg"
-              alt="step complete"
-            />
+            <img src="@/assets/green-tick.svg" alt="step complete" />
             <p v-text="name" class="step" />
           </template>
           <template v-else>
@@ -98,7 +90,6 @@ export default class FormProgressWidget extends Vue {
 
 <style scoped lang="scss">
 @import '../styles/vars';
-@import '../styles/mixins';
 
 .progress-area {
   grid-area: progress;
@@ -109,8 +100,9 @@ export default class FormProgressWidget extends Vue {
     top: 5rem;
     align-self: start;
     padding: 1.5rem 1rem;
+    background: $bg-primary-color;
     border-radius: 16px;
-    box-shadow: var(--box-shadow);
+    box-shadow: $box-shadow;
 
     .progress-steps {
       margin-bottom: 1rem;
@@ -122,19 +114,14 @@ export default class FormProgressWidget extends Vue {
       img {
         margin-right: 1rem;
       }
-
-      img:not(.completed-step) {
-        filter: var(--img-filter, invert(0.3));
-      }
-
       p {
         margin: 0.5rem 0;
       }
       .step {
-        @include stepColor(var(--text-color-rgb));
+        color: #fff9;
       }
       .active {
-        color: var(--text-color);
+        color: white;
         font-weight: 600;
         font-size: 1rem;
       }
@@ -157,7 +144,7 @@ export default class FormProgressWidget extends Vue {
     margin-bottom: 0;
     position: fixed;
     width: 100%;
-    background: var(--bg-secondary-color);
+    background: $bg-secondary-color;
     z-index: 1;
 
     .padding {
@@ -181,7 +168,7 @@ export default class FormProgressWidget extends Vue {
 .cancel-link {
   position: sticky;
   top: 0px;
-  color: var(--error-color);
+  color: $error-color;
   text-decoration: underline;
 }
 

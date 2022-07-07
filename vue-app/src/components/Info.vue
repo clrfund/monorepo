@@ -21,7 +21,7 @@ export default class Info extends Vue {
 @import '../styles/theme';
 
 .info {
-  background-color: var(--bg-transparent);
+  background: $bg-transparent;
   border: 1px solid $highlight-color;
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;

@@ -47,16 +47,12 @@
           />
           <div id="cart-dropdown" class="button-menu">
             <div
-              v-for="({ callback, text, icon, cssClass }, idx) of dropdownItems"
+              v-for="({ callback, text, icon }, idx) of dropdownItems"
               :key="idx"
               class="dropdown-item"
               @click="callback"
             >
-              <img
-                width="16px"
-                :class="cssClass"
-                :src="require(`@/assets/${icon}`)"
-              />
+              <img width="16px" :src="require(`@/assets/${icon}`)" />
               <p>{{ text }}</p>
             </div>
           </div>
@@ -303,7 +299,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { BigNumber } from 'ethers'
+import { BigNumber, FixedNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
 import WalletWidget from '@/components/WalletWidget.vue'
@@ -318,7 +314,6 @@ import {
   MAX_CONTRIBUTION_AMOUNT,
   MAX_CART_SIZE,
   CartItem,
-  isContributionAmountValid,
 } from '@/api/contributions'
 import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { RoundStatus } from '@/api/round'
@@ -350,24 +345,19 @@ export default class Cart extends Vue {
     this.$store.commit(TOGGLE_EDIT_SELECTION, true)
   }
 
-  dropdownItems: {
-    callback: () => void | null
-    text: string
-    icon: string
-    cssClass?: string
-  }[] = [
-    {
-      callback: this.removeAll,
-      text: 'Remove all',
-      icon: 'remove.svg',
-    },
-    {
-      callback: this.splitContributionsEvenly,
-      text: 'Split evenly',
-      icon: 'split.svg',
-      cssClass: 'split-image',
-    },
-  ]
+  dropdownItems: { callback: () => void | null; text: string; icon: string }[] =
+    [
+      {
+        callback: this.removeAll,
+        text: 'Remove all',
+        icon: 'remove.svg',
+      },
+      {
+        callback: this.splitContributionsEvenly,
+        text: 'Split evenly',
+        icon: 'split.svg',
+      },
+    ]
 
   get isEditMode(): boolean {
     const {
@@ -493,12 +483,32 @@ export default class Cart extends Vue {
 
   isAmountValid(value: string): boolean {
     const currentRound = this.$store.state.currentRound
-    return isContributionAmountValid(value, currentRound)
+    if (!currentRound) {
+      // Skip validation
+      return true
+    }
+    const { nativeTokenDecimals, voiceCreditFactor } = currentRound
+    let amount
+    try {
+      amount = parseFixed(value, nativeTokenDecimals)
+    } catch {
+      return false
+    }
+    if (amount.lte(BigNumber.from(0))) {
+      return false
+    }
+    const normalizedValue = FixedNumber.fromValue(
+      amount.div(voiceCreditFactor).mul(voiceCreditFactor),
+      nativeTokenDecimals
+    )
+      .toUnsafeFloat()
+      .toString()
+    return normalizedValue === value
   }
 
   private isFormValid(): boolean {
     const invalidCount = this.cart.filter((item) => {
-      return !item.isCleared && this.isAmountValid(item.amount) === false
+      return this.isAmountValid(item.amount) === false
     }).length
     return invalidCount === 0
   }
@@ -726,6 +736,7 @@ h2 {
 .cart-container {
   box-sizing: border-box;
   position: relative;
+  background: $bg-primary-color;
   gap: 1rem;
   height: 100%;
   padding: 1rem 0rem;
@@ -792,6 +803,7 @@ h2 {
   position: sticky;
   padding: 1rem;
   top: 0;
+  background: $bg-primary-color;
   z-index: 1;
   @media (max-width: $breakpoint-m) {
     justify-content: space-between;
@@ -820,7 +832,7 @@ h2 {
     font-family: 'Inter';
     font-weight: 500;
     font-size: 14px;
-    color: var(--text-color);
+    color: $text-color;
     border: 0;
     background: none;
     text-decoration: underline;
@@ -853,12 +865,8 @@ h2 {
 }
 
 .cart-btn {
-  @include button(
-    white,
-    var(--bg-light-color),
-    1px solid rgba($border-light, 0.3)
-  );
-  border: 0px solid var(--text-color);
+  @include button(white, $bg-light-color, 1px solid rgba(115, 117, 166, 0.3));
+  border: 0px solid #fff;
   background: transparent;
   padding: 0.75rem 0.5rem;
   border-radius: 0.5rem;
@@ -866,13 +874,9 @@ h2 {
   gap: 0.5rem;
   margin-right: -0.5rem;
   &:hover {
-    background: var(--bg-secondary-color);
+    background: $bg-secondary-color;
     gap: 0.75rem;
     margin-right: -0.75rem;
-  }
-
-  img {
-    filter: var(--img-filter, invert(0.7));
   }
 }
 
@@ -880,6 +884,7 @@ h2 {
   display: flex;
   flex-direction: column;
   width: 100%;
+  background: $bg-primary-color;
 }
 
 .empty-cart {
@@ -887,6 +892,7 @@ h2 {
   font-weight: 400;
   margin: 1rem;
   padding: 1.5rem 1.5rem;
+  background: $bg-primary-color;
 
   img {
     height: 70px;
@@ -899,7 +905,7 @@ h2 {
   }
 
   div {
-    color: var(--text-color-cart);
+    color: #d5d4d7;
   }
 }
 
@@ -908,7 +914,7 @@ h2 {
   flex-grow: 1;
   flex-direction: column;
   padding: 1rem 0;
-  background: var(--bg-primary-color);
+  background: $bg-primary-color;
   font-family: 'Inter';
   font-size: 1rem;
   line-height: 0;
@@ -930,6 +936,7 @@ h2 {
   bottom: 0;
   padding: 1rem;
   justify-content: space-between;
+  background: $bg-primary-color;
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
   font-family: 'Inter';
@@ -972,13 +979,13 @@ h2 {
 }
 
 .message-link {
-  color: var(--text-color);
+  color: #fff;
   text-decoration: underline;
 }
 
 .balance {
   padding: 1rem;
-  background: var(--bg-primary-color);
+  background: $bg-primary-color;
   border-bottom: 1px solid #000000;
   border-top: 1px solid #000000;
   display: flex;
@@ -998,6 +1005,7 @@ h2 {
 .submit-btn-wrapper {
   align-self: flex-end;
   box-sizing: border-box;
+  background: $bg-primary-color;
   border-top: 1px solid #000000;
   text-align: left;
   gap: 0.5rem;
@@ -1007,14 +1015,14 @@ h2 {
   align-items: flex-start;
   padding: 1rem;
   position: relative;
-  background: var(--bg-secondary-color);
+  background: $bg-secondary-color;
   @media (max-width: $breakpoint-m) {
     padding: 2rem;
   }
 
   .error-title {
     text-align: left;
-    color: var(--attention-color);
+    color: $warning-color;
     :after {
       content: ' ⚠️';
     }
@@ -1071,17 +1079,17 @@ h2 {
   align-items: center;
   font-weight: 600;
   font-size: 16px;
-  color: var(--attention-color);
+  color: $warning-color;
   span {
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-color);
+    color: #fff;
   }
 }
 
 .reallocation-warning {
   span {
-    color: var(--attention-color);
+    color: $warning-color;
     margin-right: 0.25rem;
   }
 }
@@ -1096,10 +1104,6 @@ h2 {
   &:hover {
     opacity: 0.8;
     transform: scale(1.01);
-  }
-
-  img {
-    filter: var(--img-filter, invert(1));
   }
 }
 
@@ -1126,13 +1130,38 @@ h2 {
   border-top: 1px solid #000;
 }
 
+.reallocation-bar {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 2rem;
+  background: $button-color;
+}
+
+.reallocation-bar-warning {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 2rem;
+  background: $warning-color;
+}
+
+.reallocation-bar-happy {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 2rem;
+  background: $clr-green;
+}
+
+.reallocation-bar-container {
+  display: flex;
+  padding: 1rem;
+}
+
 .dropdown {
   position: relative;
   display: inline-block;
 
   img.dropdown-btn {
     margin: 0;
-    filter: var(--img-filter, invert(1));
   }
 
   .button-menu {
@@ -1141,8 +1170,8 @@ h2 {
     position: absolute;
     top: 2rem;
     right: 0.5rem;
-    background: var(--bg-secondary-color);
-    border: 1px solid rgba($border-light, 0.3);
+    background: $bg-secondary-color;
+    border: 1px solid rgba(115, 117, 166, 0.3);
     border-radius: 0.5rem;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
@@ -1156,18 +1185,14 @@ h2 {
       padding: 0.25rem;
       padding-left: 1rem;
       gap: 0.5rem;
-      color: var(--text-color);
+      color: #fff;
       &:hover {
-        background: var(--bg-light-color);
+        background: $bg-light-color;
       }
 
       .item-text {
         margin: 0;
-        color: var(--text-color);
-      }
-
-      .split-image {
-        filter: var(--img-filter, invert(1));
+        color: #fff;
       }
     }
   }

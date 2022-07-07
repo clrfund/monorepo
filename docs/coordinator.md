@@ -1,38 +1,36 @@
-# How to tally votes
+# Coordinator manual
 
-A funding round coordinator can tally votes using the MACI CLI, Docker or clrfund scripts.
+## Coordinate using MACI CLI
 
-## Using MACI CLI
-
-### Clone the [MACI repo](https://github.com/privacy-scaling-explorations/maci) and switch to version v0.10.1:
+Clone the [MACI repo](https://github.com/appliedzkp/maci/) and switch to version v0.10.1:
 
 ```
-git clone https://github.com/privacy-scaling-explorations/maci.git
+git clone https://github.com/appliedzkp/maci.git
 cd maci/
 git checkout v0.10.1
 ```
 
 Follow instructions in README.md to install necessary dependencies.
 
-### Download circuits parameters
+### Medium Circuits
 
-Download the [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy) for 'batch 64' circuits into the `circuits/params/` directory.
-
-Change the permission of the c binaries to be executable:
-```
-cd circuits/params
-chmod u+x qvt32 batchUst32
-```
-
-The contract deployment scripts, `deploy*.ts` in the [clrfund repository](https://github.com/clrfund/monorepo/tree/develop/contracts/scripts) currently use the `batch 64` circuits, if you want to use a smaller size circuits, you can find them [here](../contracts/contracts/snarkVerifiers/README.md). You will need to update the deploy script to call `deployMaciFactory()` with your circuit and redeploy the contracts.
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits into `circuits/params/` directory and rebuild the keys:
 
 ```
-   // e.g. to use the x32 circuits
-   const circuit = 'x32' // defined in contracts/utils/deployment.ts
-   const maciFactory = await deployMaciFactory(deployer, circuit)
+cd circuits
+./scripts/buildSnarksMedium.sh
 ```
 
-### Recompile the contracts:
+### x32 Circuits
+
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) for 'x32' circuits into `circuits/params/` directory and rebuild the keys:
+
+```
+cd circuits
+./scripts/buildSnarks32.sh
+```
+
+Recompile the contracts:
 
 ```
 cd ../contracts
@@ -50,9 +48,7 @@ A single key can be used to coordinate multiple rounds.
 
 ### Tally votes
 
-Download the logs to be fed to the `proveOnChain` step. This step is useful
-especially to avoid hitting rating limiting from the node. Make sure to run this
-step againts a node that has archiving enabled, e.g. could use the alchemy node:
+Download the logs:
 
 ```
 cd ../cli
@@ -97,20 +93,20 @@ Finally, the [CID](https://ipfs.io/ipns/docs.ipfs.io/concepts/content-addressing
 await fundingRound.publishTallyHash('<CID>')
 ```
 
-## Using Docker
+## Coordinate using Docker
 
 In case you are in a different OS than Linux, you can run all the previous MACI CLI commands by running the Docker image located in the MACI repo.
 
-**Note:** the batch 64 zkSNARK parameters have been tested using Ubuntu 22.04 + Node v16.13.2
+**Note:** the [x32 params](https://gateway.pinata.cloud/ipfs/QmWSxPBNYDtsK23KwYdMtcDaJg3gWS3LBsqMnENrVG6nmc) have been tested using Ubuntu 21.04 + Node 15.8.0.
 
 ### Use the docker image
 
-First, install [docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/)
+First, install [docker](https://docs.docker.com/engine/install/) and [docker-componse](https://docs.docker.com/compose/install/)
 
 Inside the maci repo, run:
 
 ```
-docker-compose up
+docker-componse up
 ```
 
 Once the container is built, in a different terminal, grab the container id:
@@ -129,7 +125,7 @@ cd cli/
 node build/index.js genProofs ...
 ```
 
-## Using clrfund scripts
+## Coordinate using clrfund scripts
 
 ### Generate coordinator key
 
@@ -150,16 +146,10 @@ Switch to `contracts` directory:
 cd contracts/
 ```
 
-Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy) for 'batch 64' circuits to `snark-params` directory. Example:
+Download [zkSNARK parameters](https://gateway.pinata.cloud/ipfs/QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD) for 'medium' circuits to `snark-params` directory. Example:
 
 ```
-ipfs get --output snark-params QmbVzVWqNTjEv5S3Vvyq7NkLVkpqWuA9DGMRibZYJXKJqy
-```
-
-Change the permission of the c binaries to be executable:
-```
-cd snark-params
-chmod u+x qvt32 batchUst32
+ipfs get --output snark-params QmRzp3vkFPNHPpXiu7iKpPqVnZB97wq7gyih2mp6pa5bmD
 ```
 
 Set the path to downloaded parameter files and also the path to `zkutil` binary (if needed):
@@ -208,27 +198,3 @@ Once you have the `tally.json` from the tally script, run:
 ```
 yarn hardhat run --network {network} scripts/finalize.ts
 ```
-
-# How to verify the tally results
-
-Anyone can verify the tally results using the MACI cli or clrfund scripts.
-
-### Using MACI CLI
-
-Follow the steps in tallying votes to get the MACI cli, circuit parameters, and tally file, and verify using the following command:
-
-```
-node build/index.js verify -t tally.json
-```
-
-### Using clrfund scripts
-
-From the clrfund contracts folder, run the following command to verify the result:
-
-```
-yarn ts-node scripts/verify.ts tally.json
-```
-
-
-## Troubleshooting
-If you encountered `core dumped` while running the genProofs script as seen in this [issue](https://github.com/clrfund/monorepo/issues/383), make sure the files are not corrupted due to disk space issue, e.g. check file sizes, checksum, and missing files.

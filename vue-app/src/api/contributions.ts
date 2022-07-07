@@ -1,10 +1,7 @@
-import { BigNumber, Contract, Signer, FixedNumber } from 'ethers'
-import { parseFixed } from '@ethersproject/bignumber'
-
+import { BigNumber, Contract, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Keypair, PrivKey } from 'maci-domainobjs'
 
-import { RoundInfo } from './round'
 import { FundingRound, ERC20 } from './abi'
 import { factory, provider } from './core'
 import { Project } from './projects'
@@ -125,31 +122,4 @@ export async function hasContributorVoted(
     contributorAddress,
   })
   return !!data.fundingRound?.contributors?.[0]?.votes?.length
-}
-
-export function isContributionAmountValid(
-  value: string,
-  currentRound: RoundInfo
-): boolean {
-  if (!currentRound) {
-    // Skip validation
-    return true
-  }
-  const { nativeTokenDecimals, voiceCreditFactor } = currentRound
-  let amount
-  try {
-    amount = parseFixed(value, nativeTokenDecimals)
-  } catch {
-    return false
-  }
-  if (amount.lte(BigNumber.from(0))) {
-    return false
-  }
-  const normalizedValue = FixedNumber.fromValue(
-    amount.div(voiceCreditFactor).mul(voiceCreditFactor),
-    nativeTokenDecimals
-  )
-    .toUnsafeFloat()
-    .toString()
-  return normalizedValue === value
 }

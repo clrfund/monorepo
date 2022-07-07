@@ -7,7 +7,6 @@ import { deployMaciFactory } from '../utils/deployment'
 async function main() {
   const [deployer] = await ethers.getSigners()
   console.log(`Deploying from address: ${deployer.address}`)
-
   const circuit = 'prod'
   const maciFactory = await deployMaciFactory(deployer, circuit)
   await maciFactory.deployTransaction.wait()

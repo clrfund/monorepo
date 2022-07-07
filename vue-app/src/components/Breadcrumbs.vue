@@ -59,7 +59,7 @@ export default class Breadcrumbs extends Vue {
 }
 
 .link {
-  color: var(--text-color);
+  color: #fff;
   &:hover {
     opacity: 0.8;
   }

@@ -17,7 +17,7 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <breadcrumbs class="breadcrumbs" v-if="showBreadCrumb" />
+        <breadcrumbs v-if="showBreadCrumb" />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -36,7 +36,6 @@
 import Vue from 'vue'
 import { Component, Watch } from 'vue-property-decorator'
 
-import { getOsColorScheme } from '@/utils/theme'
 import { getCurrentRound } from '@/api/round'
 import { User } from '@/api/user'
 
@@ -92,7 +91,6 @@ export default class App extends Vue {
 
   //NOTE: why are all these called on the landing page? makes it heavy to load
   created() {
-    this.setAppTheme()
     this.intervals.round = setInterval(() => {
       this.$store.dispatch(LOAD_ROUND_INFO)
     }, 60 * 1000)
@@ -151,13 +149,6 @@ export default class App extends Vue {
 
   get isUserAndRoundLoaded(): boolean {
     return !!this.currentUser && !!this.$store.state.currentRound
-  }
-
-  @Watch('$store.state.theme')
-  setAppTheme = () => {
-    const savedTheme = this.$store.state.theme
-    const theme = savedTheme || getOsColorScheme()
-    document.documentElement.setAttribute('data-theme', theme)
   }
 
   private get currentUser(): User {
@@ -242,14 +233,14 @@ body {
 }
 
 html {
-  background-color: var(--bg-primary-color);
-  color: var(--text-color);
+  background-color: $bg-primary-color;
+  color: $text-color;
   font-family: Inter, sans-serif;
   font-size: 16px;
 }
 
 a {
-  color: var(--link-color);
+  color: $highlight-color;
   cursor: pointer;
   text-decoration: none;
 }
@@ -305,17 +296,17 @@ summary:focus {
 }
 
 .input {
-  background-color: var(--bg-light-color);
+  background-color: $bg-light-color;
   border: 2px solid $button-color;
   border-radius: 2px;
   box-sizing: border-box;
-  color: var(--text-color);
+  color: $text-color;
   font-family: Inter, sans-serif;
   font-size: 16px;
   padding: 7px;
 
   &.invalid {
-    border-color: var(--error-color);
+    border-color: $error-color;
   }
 
   &::placeholder {
@@ -331,7 +322,7 @@ summary:focus {
   background-color: $button-color;
   border: none;
   border-radius: 20px;
-  color: var(--text-color);
+  color: $text-color;
   cursor: pointer;
   font-weight: bold;
   line-height: 22px;
@@ -345,13 +336,13 @@ summary:focus {
 
   &:hover {
     background-color: $highlight-color;
-    color: var(--bg-secondary-color);
+    color: $bg-secondary-color;
   }
 
   &[disabled],
   &[disabled]:hover {
     background-color: $button-disabled-color !important;
-    color: $button-disabled-color !important;
+    color: $button-disabled-text-color !important;
     cursor: not-allowed;
   }
 }
@@ -378,20 +369,25 @@ summary:focus {
   display: flex;
   /* height: calc(100vh - 61.5px); */
   height: 100%;
-  background: var(--bg-primary-color);
+  background: $bg-primary-color;
   overflow-x: clip;
   /* overflow-y: scroll; */
 }
 
 #sidebar {
   box-sizing: border-box;
-  background-color: var(--bg-primary-color);
+  background-color: $bg-primary-color;
   flex-shrink: 0;
   padding: 1.5rem;
   width: $cart-width-open;
   height: 100%;
   position: sticky;
   top: 1.5rem;
+
+  .master {
+    color: black;
+    float: right;
+  }
 
   .status {
     font-size: 16px;
@@ -400,7 +396,7 @@ summary:focus {
   }
 
   .round-info-div {
-    background: var(--bg-light-color);
+    background: $bg-light-color;
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 2rem;
@@ -440,7 +436,7 @@ summary:focus {
   padding: 50px 5% 0; */
 
   a {
-    color: var(--text-color);
+    color: $text-color;
     display: block;
     font-size: 16px;
     margin-bottom: $content-space;
@@ -475,10 +471,6 @@ summary:focus {
 #content {
   flex: 1;
   padding-bottom: 4rem;
-
-  .breadcrumbs {
-    padding-left: 1.5rem;
-  }
 
   .content-heading {
     display: block;
@@ -516,7 +508,7 @@ summary:focus {
 }
 
 .verified {
-  background: $gradient-highlight;
+  background: $clr-pink-light-gradient;
   height: 16px;
   width: 16px;
   border-radius: 50%;
@@ -537,10 +529,10 @@ summary:focus {
 }
 
 .modal-body {
-  background-color: var(--bg-light-color);
+  background-color: $bg-light-color;
   padding: $modal-space;
   text-align: center;
-  box-shadow: var(--box-shadow);
+  box-shadow: $box-shadow;
 
   .loader {
     margin: $modal-space auto;
@@ -556,7 +548,7 @@ summary:focus {
 }
 
 .error {
-  color: var(--error-color);
+  color: $error-color;
   margin-bottom: 0;
   margin-top: 0.5rem;
   font-size: 14px;
@@ -625,8 +617,8 @@ summary:focus {
   z-index: 10000;
 
   .tooltip-inner {
-    background: var(--bg-primary-color);
-    color: var(--text-color);
+    background: $bg-primary-color;
+    color: white;
     font-family: Inter;
     line-height: 150%;
     font-size: 14px;
@@ -709,8 +701,8 @@ summary:focus {
 
   &.popover {
     .popover-inner {
-      background: var(--bg-primary-color);
-      color: var(--text-color);
+      background: $bg-primary-color;
+      color: white;
       padding: 1rem;
       margin: 0.5rem;
       border-radius: 5px;
@@ -718,7 +710,7 @@ summary:focus {
     }
 
     .popover-arrow {
-      border-color: var(--bg-primary-color);
+      border-color: $bg-primary-color;
     }
   }
 

@@ -1,6 +1,6 @@
 export enum ChainId {
   MAINNET = 1,
-  GOERLI = 5,
+  RINKEBY = 4,
   HARDHAT = 31337,
   ARBITRUM_ONE = 42161,
   ARBITRUM_RINKEBY = 421611,
@@ -33,12 +33,12 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLogo: 'etherscan.svg',
     explorerLabel: 'Etherscan',
   },
-  [ChainId.GOERLI]: {
-    label: 'Goerli',
+  [ChainId.RINKEBY]: {
+    label: 'Rinkeby',
     currency: 'ETH',
     logo: 'eth.svg',
     isLayer2: false,
-    explorer: 'https://goerli.etherscan.io',
+    explorer: 'https://rinkeby.etherscan.io',
     explorerLogo: 'etherscan.svg',
     explorerLabel: 'Etherscan',
   },

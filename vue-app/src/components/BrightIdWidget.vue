@@ -132,7 +132,7 @@ export default class BrightIdWidget extends Vue {
 @import '../styles/theme';
 
 .setup-container {
-  background: var(--bg-secondary-color);
+  background: $bg-secondary-color;
   border-radius: 0.5rem;
   padding: 0.5rem 0;
   width: auto;
@@ -160,7 +160,7 @@ export default class BrightIdWidget extends Vue {
     line-height: 0;
   }
   .unverified {
-    color: var(--warning-color);
+    color: $warning-color;
   }
   .brightid-verified {
     color: $clr-green;
@@ -188,7 +188,7 @@ export default class BrightIdWidget extends Vue {
 }
 
 .bright-id-widget-container {
-  background: var(--bg-secondary-color);
+  background: $bg-secondary-color;
   border-radius: 0.5rem;
 
   width: auto;
@@ -220,7 +220,7 @@ export default class BrightIdWidget extends Vue {
     line-height: 0;
   }
   .unverified {
-    color: var(--warning-color);
+    color: $warning-color;
   }
   .brightid-verified {
     color: $clr-green;
@@ -251,30 +251,30 @@ export default class BrightIdWidget extends Vue {
   width: 100%;
   border-radius: 2rem;
   height: 0.5rem;
-  background: $gradient-inactive;
+  background: $clr-pink-light-gradient-inactive;
   margin: 1rem 0rem;
 
   .quarter {
     width: 25%;
-    background: $gradient-highlight;
+    background: $clr-pink-light-gradient;
     height: 0.5rem;
     border-radius: 2rem;
   }
   .half {
     width: 50%;
-    background: $gradient-highlight;
+    background: $clr-pink-light-gradient;
     height: 0.5rem;
     border-radius: 2rem;
   }
   .three-quarters {
     width: 75%;
-    background: $gradient-highlight;
+    background: $clr-pink-light-gradient;
     height: 0.5rem;
     border-radius: 2rem;
   }
   .full {
     width: 100%;
-    background: $gradient-highlight;
+    background: $clr-pink-light-gradient;
     height: 0.5rem;
     border-radius: 2rem;
   }

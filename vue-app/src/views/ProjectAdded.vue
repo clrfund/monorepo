@@ -121,7 +121,7 @@ ul {
 }
 
 .gradient {
-  background: var(--bg-gradient);
+  background: $clr-pink-dark-gradient;
   position: relative;
 
   .moon {
@@ -133,7 +133,11 @@ ul {
   .hero {
     bottom: 0;
     display: flex;
-    background: var(--bg-gradient-hero);
+    background: linear-gradient(
+      286.78deg,
+      rgba(173, 131, 218, 0) -32.78%,
+      #191623 78.66%
+    );
     height: calc(100vh - 113px);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;

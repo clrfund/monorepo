@@ -31,7 +31,7 @@ export default class extends Vue {
   justify-content: flex-start;
   align-items: center;
   padding: 1rem;
-  color: var(--text-color);
+  color: #fff;
   &:hover {
     opacity: 0.8;
   }

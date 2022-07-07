@@ -9,18 +9,13 @@
       >
         Previous
       </button>
-      <wallet-widget
-        class="float-right"
-        v-if="!currentUser && currentStep === finalStep"
-        :isActionButton="true"
-      />
       <button
-        v-else
-        @click="handleStepNav(currentStep + 1, true)"
+        v-if="currentStep < finalStep"
+        @click="handleNext"
         class="btn-primary float-right"
         :disabled="!isStepValid"
       >
-        {{ currentStep === finalStep ? 'Confirm' : 'Next' }}
+        {{ currentStep === finalStep - 1 ? 'Finish' : 'Next' }}
       </button>
     </div>
   </div>
@@ -30,25 +25,32 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { User } from '@/api/user'
-import WalletWidget from '@/components/WalletWidget.vue'
 
-@Component({
-  components: {
-    WalletWidget,
-  },
-})
+@Component
 export default class FormNavigation extends Vue {
   @Prop() currentStep!: number
   @Prop() finalStep!: number
   @Prop() steps!: string[]
   @Prop() isStepValid!: boolean
   @Prop() callback!: (updateFurthest?: boolean) => void
-  @Prop() handleStepNav!: (step: number, updateFurthest?: boolean) => void
+  @Prop() handleStepNav!: () => void
   @Prop() isNavDisabled!: boolean
 
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
+  // TODO is this needed? Why do we pass `callback` & `handleStepNav`?
+  handleNext(): void {
+    // Save form data (first saves when user hits Next after first step)
+    this.callback(true) // "true" checks to update furthest step
+    // Navigate forward
+    this.$router.push({
+      name: 'join-step',
+      params: {
+        step: this.steps[this.currentStep + 1],
+      },
+    })
+  }
+
+  handlePrev(): void {
+    this.callback()
   }
 }
 </script>

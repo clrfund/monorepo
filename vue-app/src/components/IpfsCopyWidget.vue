@@ -51,8 +51,7 @@ export default class IpfsCopyWidget extends Vue {
 @import '../styles/theme';
 
 .copy {
-  background: var(--bg-primary-color);
-  border: 1px solid var(--border-color);
+  background: $bg-primary-color;
   justify-content: space-between;
   align-items: center;
   display: flex;
@@ -87,6 +86,21 @@ export default class IpfsCopyWidget extends Vue {
   }
 }
 
+.hash-loader {
+  margin: 0.25rem;
+  padding: 0;
+  width: 1rem;
+  height: 1rem;
+}
+.hash-loader:after {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  border-color: #fff transparent #fff transparent;
+}
+
 .icons {
   display: flex;
   align-items: center;
@@ -99,7 +113,6 @@ export default class IpfsCopyWidget extends Vue {
 }
 
 .icon {
-  @include icon(none, $icon-hover);
-  filter: var(--img-filter, invert(1));
+  @include icon(none, $bg-light-color);
 }
 </style>

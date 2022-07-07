@@ -103,7 +103,7 @@ export default class MobileTabs extends Vue {
   bottom: 0;
   width: 100%;
   height: 4rem;
-  background: var(--bg-light-color);
+  background: #2c2938;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
@@ -123,15 +123,15 @@ export default class MobileTabs extends Vue {
   margin-top: -0.75rem;
   font-size: 14px;
   text-transform: uppercase;
-  color: var(--text-color);
+  color: #fff;
 }
 
 .cart-indicator {
   border-radius: 2rem;
-  background: $gradient-highlight;
+  background: $clr-pink-light-gradient;
   padding: 0.25rem;
   font-size: 10px;
-  color: var(--text-color);
+  color: #fff;
   line-height: 100%;
   width: 8px;
   height: 8px;
@@ -146,8 +146,8 @@ export default class MobileTabs extends Vue {
 }
 
 .active {
-  background: var(--bg-secondary-color);
-  box-shadow: inset 0px 2px 0px $border-light;
+  background: #211e2b;
+  box-shadow: inset 0px 2px 0px #7375a6;
 }
 
 .circle {
@@ -163,7 +163,7 @@ export default class MobileTabs extends Vue {
 
 @keyframes pulse-animation {
   0% {
-    box-shadow: 0 0 0 0px $idle-color;
+    box-shadow: 0 0 0 0px $bg-primary-color;
   }
 
   100% {

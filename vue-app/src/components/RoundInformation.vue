@@ -458,7 +458,7 @@ export default class RoundInformation extends Vue {
 
 .image-wrapper {
   border-radius: 8px;
-  background: var(--bg-gradient);
+  background: $clr-pink-dark-gradient;
   height: 160px;
   width: 100%;
   display: flex;
@@ -490,12 +490,6 @@ export default class RoundInformation extends Vue {
   align-self: flex-end;
 }
 
-.verified {
-  img {
-    filter: var(--img-filter, invert(0.3));
-  }
-}
-
 .contract-address {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -513,7 +507,7 @@ export default class RoundInformation extends Vue {
 .closed {
   width: 12px;
   height: 12px;
-  background: var(--bg-light-color);
+  background: $bg-light-color;
 }
 
 .open-pulse {
@@ -523,7 +517,7 @@ export default class RoundInformation extends Vue {
 
 @keyframes pulse-animation {
   0% {
-    box-shadow: 0 0 0 0px $idle-color;
+    box-shadow: 0 0 0 0px $bg-primary-color;
   }
 
   50% {
@@ -581,7 +575,7 @@ export default class RoundInformation extends Vue {
   flex: 1 0 auto;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-light-highlight);
+  background: $bg-light-color;
   padding: 1rem;
 }
 
@@ -591,7 +585,7 @@ export default class RoundInformation extends Vue {
   flex: 1 0 auto;
   justify-content: space-between;
   align-items: flex-start;
-  background: var(--bg-light-highlight);
+  background: $bg-light-color;
   padding: 1rem;
   border-radius: 0.5rem;
   box-sizing: border-box;
@@ -611,7 +605,7 @@ export default class RoundInformation extends Vue {
 
 .round-info-sub-item {
   flex: 1 0 10%;
-  background: var(--bg-secondary-highlight);
+  background: $bg-secondary-color;
   padding: 1rem;
 
   img {
@@ -620,7 +614,7 @@ export default class RoundInformation extends Vue {
 }
 
 .round-info-title {
-  color: var(--text-color);
+  color: white;
   font-size: 14px;
   font-weight: 400;
   line-height: 120%;
@@ -640,7 +634,7 @@ export default class RoundInformation extends Vue {
   .value {
     font-size: 24px;
     font-family: 'Glacial Indifference', sans-serif;
-    color: var(--text-color);
+    color: white;
     font-weight: 700;
     line-height: 120%;
 
@@ -652,13 +646,13 @@ export default class RoundInformation extends Vue {
     &.extra {
       font-size: 32px;
       font-family: 'Glacial Indifference', sans-serif;
-      color: var(--text-color);
+      color: white;
       line-height: 120%;
     }
   }
 
   .unit {
-    color: var(--text-color);
+    color: white;
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 16px;
     font-weight: 600;
@@ -709,7 +703,7 @@ export default class RoundInformation extends Vue {
 }
 
 .message {
-  color: var(--text-color);
+  color: white;
   font-family: 'Glacial Indifference', sans-serif;
   font-size: 16px;
   font-weight: 600;
@@ -724,6 +718,33 @@ export default class RoundInformation extends Vue {
   img {
     height: 1.8em;
     vertical-align: middle;
+  }
+}
+
+.project-search {
+  border: $border;
+  border-radius: 30px;
+  box-sizing: border-box;
+  display: flex;
+  margin: 20px 0;
+  min-width: 300px;
+  padding: 8px 15px;
+  width: 33%;
+
+  img {
+    margin-right: 10px;
+  }
+
+  input {
+    background-color: transparent;
+    border: none;
+    font-size: 14px;
+    padding: 0;
+    width: 100%;
+
+    &::placeholder {
+      opacity: 1;
+    }
   }
 }
 
@@ -773,11 +794,11 @@ export default class RoundInformation extends Vue {
 }
 
 .round-notice {
-  background: var(--warning-background);
-  border: 1px solid var(--warning-border);
+  background: $warning-color-bg;
+  border: 1px solid $warning-color;
   border-radius: 0.5rem;
   padding: 0.5rem 1rem 1rem;
-  color: var(--warning-color);
+  color: $warning-color;
   font-size: 14px;
   line-height: 150%;
   font-weight: 500;
@@ -786,7 +807,7 @@ export default class RoundInformation extends Vue {
     font-weight: 600;
   }
   .dismiss-btn {
-    @include button(var(--warning-color), none, 1px solid var(--warning-color));
+    @include button($warning-color, none, 1px solid $warning-color);
     margin: 0 auto;
     width: fit-content;
     padding: 0.25rem 1.25rem;
@@ -795,9 +816,5 @@ export default class RoundInformation extends Vue {
 
 .hidden {
   display: none;
-}
-
-.has-tooltip {
-  filter: var(--img-filter, invert(0.7));
 }
 </style>
