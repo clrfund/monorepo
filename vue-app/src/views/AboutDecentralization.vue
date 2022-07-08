@@ -3,7 +3,7 @@
     <h1 class="content-heading">Decentralization in Clr.fund</h1>
     <h2>What is Decentralization?</h2>
     <p>
-      When we say something is "decentralized" in clr.fund and in web3 broadly,
+      When we say something is "decentralized" in clr.fund, and in web3 broadly,
       we mean that no single person, company, or other entity is solely
       responsible for running or maintaining it. Instead, a decentralized system
       is run or maintained by a large group of independent entities, coordinated

@@ -65,8 +65,8 @@
           <h2>How it works</h2>
           <ol>
             <li>
-              The {{ operator }}, clr.fund and other donors send funds to the
-              matching pool smart contract.
+              The {{ operator }} and other donors send funds to the matching
+              pool smart contract.
             </li>
             <li>
               The round begins and you can donate to your favorite projects.
