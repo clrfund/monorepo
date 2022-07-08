@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 
 // API
 import { CartItem, Contributor } from '@/api/contributions'
-import { recipientRegistryType } from '@/api/core'
+import { recipientRegistryType, operator } from '@/api/core'
 import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
@@ -238,6 +238,9 @@ const getters = {
     if (factory) {
       return factory.userRegistryAddress
     }
+  },
+  operator: (): string => {
+    return operator
   },
 }
 

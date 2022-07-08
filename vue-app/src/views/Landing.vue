@@ -65,8 +65,8 @@
           <h2>How it works</h2>
           <ol>
             <li>
-              The {{ operator }} and other donors send funds to the matching
-              pool smart contract.
+              The {{ $store.getters.operator }} and other donors send funds to
+              the matching pool smart contract.
             </li>
             <li>
               The round begins and you can donate to your favorite projects.
@@ -183,7 +183,6 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { DateTime } from 'luxon'
 
-import { operator } from '@/api/core'
 import { chain } from '@/api/core'
 import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
@@ -197,10 +196,6 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 export default class Landing extends Vue {
   get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
-  }
-
-  get operator(): string {
-    return operator
   }
 
   scrollToHowItWorks() {

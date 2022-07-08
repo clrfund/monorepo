@@ -70,7 +70,8 @@
       <h2>{{ chain.label }}</h2>
       <p>
         There are many variations on the layer 2 rollup approach. This current
-        clr.fund round uses {{ chain.label }}, an "optimistic"-style rollup.
+        {{ $store.getters.operator }} round uses {{ chain.label }}, an
+        "optimistic"-style rollup.
         <links to="https://developer.offchainlabs.com/docs/rollup_basics"
           >Learn more in the {{ chain.label }} docs</links
         >.

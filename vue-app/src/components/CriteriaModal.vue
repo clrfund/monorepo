@@ -45,17 +45,12 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
 
-import { operator } from '@/api/core'
 import { criteria, Criterion } from '@/plugins/round/criteria'
 
 @Component({ components: { Links } })
 export default class CriteriaModal extends Vue {
   get criteria(): Criterion[] {
     return criteria
-  }
-
-  get operator(): string {
-    return operator
   }
 }
 </script>

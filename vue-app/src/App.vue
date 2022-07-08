@@ -62,13 +62,14 @@ import {
   LOAD_BRIGHT_ID,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
+import { operator } from '@/api/core'
 
 @Component({
   name: 'clr.fund',
   metaInfo() {
     return {
       title: this.$route.meta.title,
-      titleTemplate: 'clr.fund - %s',
+      titleTemplate: `${operator} - %s`,
       meta: [
         {
           name: 'git-commit',
