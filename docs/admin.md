@@ -1,6 +1,6 @@
 # Running clr.fund instance on Goerli
 
-This document describes deployment and administration of clr.fund contracts using [hardhat console](https://hardhat.org/guides/hardhat-console.html).
+This document describes deployment and administration of clr.fund contracts using [hardhat console](https://hardhat.org/guides/hardhat-console.html) on the Linux platform.
 
 For example, to start a hardhat console configured for the Goerli network:
 
