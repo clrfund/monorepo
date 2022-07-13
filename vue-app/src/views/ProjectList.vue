@@ -73,11 +73,7 @@ import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
-import {
-  Project,
-  getRecipientRegistryAddress,
-  getProjects,
-} from '@/api/projects'
+import { Project, getProjects } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import CartWidget from '@/components/CartWidget.vue'
