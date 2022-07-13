@@ -12,6 +12,7 @@ import { isSameAddress } from '@/utils/accounts'
 export interface RoundInfo {
   fundingRoundAddress: string
   userRegistryAddress: string
+  recipientRegistryAddress: string
   maciAddress: string
   recipientTreeDepth: number
   maxContributors: number
@@ -54,10 +55,8 @@ export async function getCurrentRound(): Promise<string | null> {
     return null
   }
   const rounds = await getRounds()
-  // round.address is empty if the round is configured in VUE_APP_EXTRA_ROUNDS
-  const roundIndex = rounds.findIndex(
-    (round) =>
-      !!round.address && isSameAddress(round.address, fundingRoundAddress)
+  const roundIndex = rounds.findIndex((round) =>
+    isSameAddress(round.address, fundingRoundAddress)
   )
 
   if (roundIndex >= Number(process.env.VUE_APP_FIRST_ROUND || 0)) {
@@ -68,12 +67,22 @@ export async function getCurrentRound(): Promise<string | null> {
 
 //TODO: update to take factory address as a parameter, default to env. variable
 export async function getRoundInfo(
-  fundingRoundAddress: string
+  fundingRoundAddress: string,
+  cachedRound?: RoundInfo
 ): Promise<RoundInfo> {
+  if (
+    cachedRound &&
+    isSameAddress(fundingRoundAddress, cachedRound.fundingRoundAddress)
+  ) {
+    // the requested round matches the cached round, quick return
+    return cachedRound
+  }
+
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const [
     maciAddress,
     nativeTokenAddress,
+    recipientRegistryAddress,
     userRegistryAddress,
     voiceCreditFactor,
     isFinalized,
@@ -81,6 +90,7 @@ export async function getRoundInfo(
   ] = await Promise.all([
     fundingRound.maci(),
     fundingRound.nativeToken(),
+    fundingRound.recipientRegistry(),
     fundingRound.userRegistry(),
     fundingRound.voiceCreditFactor(),
     fundingRound.isFinalized(),
@@ -159,6 +169,7 @@ export async function getRoundInfo(
 
   return {
     fundingRoundAddress,
+    recipientRegistryAddress,
     userRegistryAddress,
     maciAddress,
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,

@@ -248,11 +248,8 @@ const getters = {
   isCurrentRound:
     (state: RootState) =>
     (roundAddress: string): boolean => {
-      return (
-        !!roundAddress &&
-        !!state.currentRoundAddress &&
-        isSameAddress(roundAddress, state.currentRoundAddress)
-      )
+      const currentRoundAddress = state.currentRoundAddress || ''
+      return isSameAddress(roundAddress, currentRoundAddress)
     },
 }
 

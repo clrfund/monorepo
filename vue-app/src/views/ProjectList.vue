@@ -141,12 +141,12 @@ export default class ProjectList extends Vue {
   }
 
   private async loadProjects(roundAddress: string) {
-    const round = await getRoundInfo(roundAddress)
-    const recipientRegistryAddress = await getRecipientRegistryAddress(
-      roundAddress
+    const round = await getRoundInfo(
+      roundAddress,
+      this.$store.state.currentRound
     )
     const projects = await getProjects(
-      recipientRegistryAddress,
+      round.recipientRegistryAddress,
       round.startTime.toSeconds(),
       round.votingDeadline.toSeconds()
     )
