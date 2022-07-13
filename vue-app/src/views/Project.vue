@@ -46,7 +46,6 @@ import ProjectProfile from '@/components/ProjectProfile.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
-import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 import { markdown } from '@/utils/markdown'
 
 @Component({
@@ -62,19 +61,20 @@ export default class ProjectView extends Vue {
   isLoading = true
 
   async created() {
-    //TODO: update to take factory address as a parameter, default to env. variable
-    const roundAddress =
-      this.$store.state.currentRoundAddress || (await getCurrentRound())
-
-    if (this.$store.state.recipientRegistryAddress === null) {
-      const registryAddress = await getRecipientRegistryAddress(roundAddress)
-      this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
+    if (!!this.$route.params.address && !this.$route.params.id) {
+      // missing project id, redirect back to rounds
+      this.$router.push({ name: 'rounds', params: this.$route.params })
+      return
     }
 
-    const project = await getProject(
-      this.$store.state.recipientRegistryAddress,
-      this.$route.params.id
-    )
+    //TODO: update to take factory address as a parameter, default to env. variable
+    const currentRoundAddress =
+      this.$store.state.currentRoundAddress || (await getCurrentRound())
+
+    const roundAddress = this.$route.params.address || currentRoundAddress
+
+    const registryAddress = await getRecipientRegistryAddress(roundAddress)
+    const project = await getProject(registryAddress, this.$route.params.id)
     if (project === null || project.isHidden) {
       // Project not found
       this.$router.push({ name: 'projects' })
@@ -89,16 +89,22 @@ export default class ProjectView extends Vue {
     return this.$store.state.showCartPanel
   }
 
+  get isCurrentRound(): boolean {
+    const { currentRoundAddress } = this.$store.state
+    const roundAddress = this.$route.params.address || currentRoundAddress
+    return this.$store.getters.isCurrentRound(roundAddress)
+  }
+
   get shouldShowCartInput(): boolean {
     const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
-    return isRoundContributionPhase || canUserReallocate
+    return (
+      (this.isCurrentRound && isRoundContributionPhase) || canUserReallocate
+    )
   }
 
   hasContributeBtn(): boolean {
     return (
-      this.$store.state.currentRound &&
-      this.project !== null &&
-      this.project.index !== 0
+      this.isCurrentRound && this.project !== null && this.project.index !== 0
     )
   }
 

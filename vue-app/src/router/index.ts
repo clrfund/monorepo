@@ -47,8 +47,13 @@ const routes = [
     },
   },
   {
-    path: '/project/:id',
+    path: '/projects/:id',
     name: 'project',
+    component: ProjectView,
+  },
+  {
+    path: '/rounds/:address/projects/:id?',
+    name: 'round-project',
     component: ProjectView,
   },
   {
@@ -60,7 +65,7 @@ const routes = [
     },
   },
   {
-    path: '/round/:address',
+    path: '/rounds/:address',
     name: 'round',
     component: ProjectList,
     meta: {

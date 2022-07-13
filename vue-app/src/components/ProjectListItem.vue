@@ -1,7 +1,7 @@
 <template>
   <div class="project-item">
     <div>
-      <links :to="{ name: 'project', params: { id: project.id } }">
+      <links :to="projectRoute">
         <div class="project-image">
           <img :src="projectImageUrl" :alt="project.name" />
           <div class="tag">{{ project.category }}</div>
@@ -9,18 +9,18 @@
       </links>
       <div class="project-info">
         <div class="project-name">
-          <links :to="{ name: 'project', params: { id: project.id } }">
+          <links :to="projectRoute">
             {{ project.name }}
           </links>
         </div>
-        <links :to="{ name: 'project', params: { id: project.id } }">
+        <links :to="projectRoute">
           <div class="project-description">{{ project.tagline }}</div>
         </links>
       </div>
     </div>
     <div class="buttons">
       <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
-      <links :to="{ name: 'project', params: { id: project.id } }">
+      <links :to="projectRoute">
         <button class="more-btn">More</button>
       </links>
     </div>
@@ -35,9 +35,8 @@ import AddToCartButton from '@/components/AddToCartButton.vue'
 import Links from '@/components/Links.vue'
 import { CartItem } from '@/api/contributions'
 import { Project } from '@/api/projects'
-import { getCurrentRound } from '@/api/round'
 import { markdown } from '@/utils/markdown'
-import { isSameAddress } from '@/utils/accounts'
+import { Route } from 'vue-router'
 
 @Component({
   components: {
@@ -49,13 +48,6 @@ export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project
   @Prop({ default: '' }) roundAddress!: string
-
-  currentRoundAddress = ''
-
-  async created() {
-    this.currentRoundAddress =
-      this.$store.state.currentRoundAddress || (await getCurrentRound())
-  }
 
   get descriptionHtml(): string {
     return markdown.renderInline(this.project.description)
@@ -80,13 +72,9 @@ export default class ProjectListItem extends Vue {
   }
 
   get isCurrentRound(): boolean {
-    const roundAddress = this.roundAddress || this.currentRoundAddress
-
-    return (
-      !!roundAddress &&
-      !!this.currentRoundAddress &&
-      isSameAddress(roundAddress, this.currentRoundAddress)
-    )
+    const { currentRoundAddress } = this.$store.state
+    const roundAddress = this.roundAddress || currentRoundAddress
+    return this.$store.getters.isCurrentRound(roundAddress)
   }
 
   get shouldShowCartInput(): boolean {
@@ -94,6 +82,15 @@ export default class ProjectListItem extends Vue {
     return (
       this.isCurrentRound && (isRoundContributionPhase || canUserReallocate)
     )
+  }
+
+  get projectRoute(): Partial<Route> {
+    return this.$route.name === 'round'
+      ? {
+          name: 'round-project',
+          params: { address: this.roundAddress, id: this.project.id },
+        }
+      : { name: 'project', params: { id: this.project.id } }
   }
 }
 </script>
