@@ -12,12 +12,12 @@
       <div
         id="content"
         :class="{
-          padded: isSidebarShown && !isCartPadding,
+          padded: isVerifyStep || (isSidebarShown && !isCartPadding),
           'mr-cart-open': isCartToggledOpen && isSideCartShown,
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <breadcrumbs class="breadcrumbs" v-if="showBreadCrumb" />
+        <breadcrumbs v-if="showBreadCrumb" />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -167,6 +167,10 @@ export default class App extends Vue {
 
   get isInApp(): boolean {
     return this.$route.name !== 'landing'
+  }
+
+  get isVerifyStep(): boolean {
+    return this.$route.name === 'verify-step'
   }
 
   get isSidebarShown(): boolean {
@@ -476,10 +480,6 @@ summary:focus {
 #content {
   flex: 1;
   padding-bottom: 4rem;
-
-  .breadcrumbs {
-    padding-left: 1.5rem;
-  }
 
   .content-heading {
     display: block;
