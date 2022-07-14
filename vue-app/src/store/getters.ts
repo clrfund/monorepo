@@ -120,6 +120,12 @@ const getters = {
       state.currentRound.status === RoundStatus.Finalized
     )
   },
+  isRoundCancelled:
+    (state: RootState) =>
+    (roundInfo?: RoundInfo): boolean => {
+      const round = roundInfo || state.currentRound
+      return !!round && round.status === RoundStatus.Cancelled
+    },
   hasContributionPhaseEnded: (state: RootState, getters): boolean => {
     return (
       !!state.currentRound &&
@@ -239,6 +245,12 @@ const getters = {
       return factory.userRegistryAddress
     }
   },
+  isCurrentRound:
+    (state: RootState) =>
+    (roundAddress: string): boolean => {
+      const currentRoundAddress = state.currentRoundAddress || ''
+      return isSameAddress(roundAddress, currentRoundAddress)
+    },
   operator: (): string => {
     return operator
   },

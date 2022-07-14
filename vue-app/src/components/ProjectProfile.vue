@@ -159,6 +159,7 @@ export default class ProjectProfile extends Vue {
 
   hasContributeBtn(): boolean {
     return (
+      this.isCurrentRound &&
       this.$store.state.currentRound &&
       this.project !== null &&
       this.project.index !== 0
@@ -200,9 +201,17 @@ export default class ProjectProfile extends Vue {
     return this.ens || this.project.address
   }
 
+  get isCurrentRound(): boolean {
+    const roundAddress =
+      this.$route.params.address || this.$store.state.currentRoundAddress
+    return this.$store.getters.isCurrentRound(roundAddress)
+  }
+
   get shouldShowCartInput(): boolean {
     const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
-    return isRoundContributionPhase || canUserReallocate
+    return (
+      this.isCurrentRound && (isRoundContributionPhase || canUserReallocate)
+    )
   }
 }
 </script>

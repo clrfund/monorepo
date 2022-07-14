@@ -3,7 +3,12 @@ import { mainnetProvider } from '@/api/core'
 import { isAddress } from '@ethersproject/address'
 
 export function isSameAddress(address1: string, address2: string): boolean {
-  return ethers.utils.getAddress(address1) === ethers.utils.getAddress(address2)
+  // check for empty address to avoid getAddress() from throwing
+  return (
+    !!address1 &&
+    !!address2 &&
+    ethers.utils.getAddress(address1) === ethers.utils.getAddress(address2)
+  )
 }
 
 // Looks up possible ENS for given 0x address
