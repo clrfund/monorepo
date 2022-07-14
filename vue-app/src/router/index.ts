@@ -5,9 +5,9 @@ import Landing from '../views/Landing.vue'
 import JoinLanding from '../views/JoinLanding.vue'
 import ProjectList from '../views/ProjectList.vue'
 import ProjectView from '../views/Project.vue'
-import RoundList from '../views/RoundList.vue'
 import ProjectAdded from '../views/ProjectAdded.vue'
 import RoundInformation from '../views/RoundInformation.vue'
+import RoundList from '../views/RoundList.vue'
 import VerifyLanding from '../views/VerifyLanding.vue'
 import About from '../views/About.vue'
 import AboutSybilResistance from '../views/AboutSybilResistance.vue'
@@ -52,8 +52,13 @@ const routes = [
     },
   },
   {
-    path: '/project/:id',
+    path: '/projects/:id',
     name: 'project',
+    component: ProjectView,
+  },
+  {
+    path: '/rounds/:address/projects/:id?',
+    name: 'round-project',
     component: ProjectView,
   },
   {
@@ -65,19 +70,19 @@ const routes = [
     },
   },
   {
-    path: '/rounds',
-    name: 'rounds',
-    component: RoundList,
-    meta: {
-      title: 'Rounds',
-    },
-  },
-  {
-    path: '/round/:address',
+    path: '/rounds/:address',
     name: 'round',
     component: ProjectList,
     meta: {
       title: 'Project List',
+    },
+  },
+  {
+    path: '/rounds',
+    name: 'rounds',
+    component: RoundList,
+    meta: {
+      title: 'Round List',
     },
   },
   {

@@ -36,6 +36,22 @@
       </p>
     </div>
     <h2>Register your project</h2>
+    <p>
+      In order to participate in a funding round as a project, you'll need to
+      submit an application to join the recipient registry (via an on-chain
+      transaction).
+    </p>
+    <p>
+      MACI, our anti-bribery tech, currently limits the amount of projects
+      allowed per round.
+      <links to="/about/maci">More on MACI</links>. The round only accepts a
+      total of {{ maxRecipients }} projects, so we encourage you to apply early.
+    </p>
+    <p>
+      Note: all application data (except contact email address) will be publicly
+      stored on-chain.
+    </p>
+    <h3>Submit your application</h3>
     <ol>
       <li>Head over to the <links to="/join">Join page</links>.</li>
       <li>
@@ -49,23 +65,31 @@
           out asking for more information about your project.
         </li>
         <li>
-          With the forms finished, you can finish your submission by:
+          With the forms finished, you can finish your submission:
           <ol>
-            <li>connecting to the right network via your wallet of choice</li>
+            <li>Connect to the right network via your wallet of choice.</li>
             <li>
-              sending a deposit of {{ depositAmount }} {{ depositToken }} to the
-              registry contract.
+              Send a transaction (with a deposit of {{ depositAmount }}
+              {{ depositToken }}) to the registry contract.
             </li>
           </ol>
-          Projects are accepted by default, but the registry admin may remove
-          projects that don't meet the criteria. Either way, your
-          {{ depositToken }} will be returned once your application has been
-          either accepted or denied. Note that metadata pointing to all your
-          project information (but not contact information) will be stored
-          publicly on-chain.
         </li>
       </template>
     </ol>
+
+    <template v-if="$store.getters.requireRegistrationDeposit">
+      <p>
+        Projects are accepted by default, but the registry admin may remove
+        projects that don't meet the criteria.
+      </p>
+      <p>
+        In any case, your
+        {{ depositToken }} will be returned once your application has been
+        either accepted or denied. Note that metadata pointing to all your
+        project information (but not contact information) will be stored
+        publicly on-chain.
+      </p>
+    </template>
     <h2>Claim your funds</h2>
     <p>
       After a clr.fund round is finished, it's simple to claim your project's
@@ -103,6 +127,10 @@ export default class AboutRecipients extends Vue {
 
   get depositToken(): string {
     return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
+  }
+
+  get maxRecipients(): number | undefined {
+    return this.$store.getters.maxRecipients
   }
 }
 </script>

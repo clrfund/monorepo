@@ -1,7 +1,7 @@
 import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
-import { Contract, ContractReceipt } from 'ethers'
+import { Contract } from 'ethers'
 import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from 'maci-domainobjs'
 
@@ -27,7 +27,8 @@ describe('Clr fund deployer', () => {
   const coordinatorPubKey = new Keypair().pubKey.asContractParam()
 
   beforeEach(async () => {
-    maciFactory = await deployMaciFactory(deployer)
+    const circuit = 'prod'
+    maciFactory = await deployMaciFactory(deployer, circuit)
     maciParameters = await MaciParameters.read(maciFactory)
 
     factoryTemplate = await deployContract(deployer, 'ClrFund')

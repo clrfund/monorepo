@@ -11,6 +11,7 @@
         :isStepValid="isStepValid"
         :handleStepNav="handleStepNav"
         :saveFormData="saveFormData"
+        cancelRedirectUrl="/join"
       />
       <div class="title-area">
         <h1>Join the round</h1>

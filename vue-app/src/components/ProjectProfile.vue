@@ -25,7 +25,7 @@
       <p class="tagline">{{ project.tagline }}</p>
       <div class="subtitle">
         <div class="tag">{{ project.category }} tag</div>
-        <div class="team-byline">
+        <div class="team-byline" v-if="!!project.teamName">
           Team: <links to="#team"> {{ project.teamName }}</links>
         </div>
       </div>
@@ -112,7 +112,6 @@ import { chain } from '@/api/core'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 import { ensLookup } from '@/utils/accounts'
-import { getTokenLogo } from '@/utils/tokens'
 import Info from '@/components/Info.vue'
 import Markdown from '@/components/Markdown.vue'
 import CopyButton from '@/components/CopyButton.vue'
@@ -160,6 +159,7 @@ export default class ProjectProfile extends Vue {
 
   hasContributeBtn(): boolean {
     return (
+      this.isCurrentRound &&
       this.$store.state.currentRound &&
       this.project !== null &&
       this.project.index !== 0
@@ -201,14 +201,17 @@ export default class ProjectProfile extends Vue {
     return this.ens || this.project.address
   }
 
-  get shouldShowCartInput(): boolean {
-    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
-    return isRoundContributionPhase || canUserReallocate
+  get isCurrentRound(): boolean {
+    const roundAddress =
+      this.$route.params.address || this.$store.state.currentRoundAddress
+    return this.$store.getters.isCurrentRound(roundAddress)
   }
 
-  get tokenLogo(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return getTokenLogo(nativeTokenSymbol)
+  get shouldShowCartInput(): boolean {
+    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
+    return (
+      this.isCurrentRound && (isRoundContributionPhase || canUserReallocate)
+    )
   }
 }
 </script>

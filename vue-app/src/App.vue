@@ -17,7 +17,7 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <breadcrumbs v-if="showBreadCrumb" />
+        <breadcrumbs class="breadcrumbs" v-if="showBreadCrumb" />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -58,15 +58,18 @@ import {
   LOAD_CONTRIBUTOR_DATA,
   LOGIN_USER,
   LOAD_FACTORY_INFO,
+  LOAD_MACI_FACTORY_INFO,
+  LOAD_BRIGHT_ID,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
+import { operator } from '@/api/core'
 
 @Component({
   name: 'clr.fund',
   metaInfo() {
     return {
       title: this.$route.meta.title,
-      titleTemplate: 'clr.fund - %s',
+      titleTemplate: `${operator} - %s`,
       meta: [
         {
           name: 'git-commit',
@@ -111,6 +114,7 @@ export default class App extends Vue {
     await this.$store.dispatch(SELECT_ROUND, roundAddress)
     this.$store.dispatch(LOAD_ROUND_INFO)
     this.$store.dispatch(LOAD_FACTORY_INFO)
+    this.$store.dispatch(LOAD_MACI_FACTORY_INFO)
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
   }
 
@@ -124,15 +128,30 @@ export default class App extends Vue {
   loginUser = async () => {
     if (!this.$web3.user) return
 
+    // Connect & auth to gun db
+    await this.$store.dispatch(LOGIN_USER, this.$web3.user)
+
     this.$store.commit(SET_CURRENT_USER, this.$web3.user)
-    await this.$store.dispatch(LOGIN_USER)
     this.$store.dispatch(LOAD_USER_INFO)
-    if (this.$store.state.currentRound) {
-      // Load cart & contributor data for current round
-      this.$store.dispatch(LOAD_CART)
-      this.$store.dispatch(LOAD_COMMITTED_CART)
-      this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    this.$store.dispatch(LOAD_BRIGHT_ID)
+  }
+
+  @Watch('isUserAndRoundLoaded')
+  loadUserRoundData = async () => {
+    if (!this.isUserAndRoundLoaded) {
+      return
     }
+
+    this.$store.dispatch(LOAD_USER_INFO)
+
+    // Load cart & contributor data for current round
+    this.$store.dispatch(LOAD_CART)
+    this.$store.dispatch(LOAD_COMMITTED_CART)
+    this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+  }
+
+  get isUserAndRoundLoaded(): boolean {
+    return !!this.currentUser && !!this.$store.state.currentRound
   }
 
   @Watch('$store.state.theme')
@@ -204,6 +223,7 @@ export default class App extends Vue {
     const excludedRoutes = [
       'landing',
       'join',
+      'join-step',
       'transaction-success',
       'verify',
       'project-added',
@@ -467,6 +487,10 @@ summary:focus {
 #content {
   flex: 1;
   padding-bottom: 4rem;
+
+  .breadcrumbs {
+    padding-left: 1.5rem;
+  }
 
   .content-heading {
     display: block;

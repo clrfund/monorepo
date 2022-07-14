@@ -70,7 +70,8 @@
       <h2>{{ chain.label }}</h2>
       <p>
         There are many variations on the layer 2 rollup approach. This current
-        clr.fund round uses {{ chain.label }}, an "optimistic"-style rollup.
+        {{ $store.getters.operator }} round uses {{ chain.label }}, an
+        "optimistic"-style rollup.
         <links to="https://developer.offchainlabs.com/docs/rollup_basics"
           >Learn more in the {{ chain.label }} docs</links
         >.
@@ -131,10 +132,10 @@
         </li>
         <li>
           Select currency (some ETH first for gas, and some
-          {{ nativeToken.symbol }} for contributing)
+          {{ nativeTokenSymbol }} for contributing)
           <p>
-            For {{ nativeToken.symbol }}, click "Token" menu, search for
-            {{ nativeToken.symbol }}
+            For {{ nativeTokenSymbol }}, click "Token" menu, search for
+            {{ nativeTokenSymbol }}
             and select token.
           </p>
         </li>
@@ -142,17 +143,16 @@
         <li>Confirm on your wallet</li>
       </ol>
       <p>
-        Once you have bridged your {{ nativeToken.symbol }} to
-        {{ chain.label }}, you may want to add the
-        <links :to="blockExplorerUrl">token</links> to your wallet e.g. in
-        MetaMask.
+        Once you have bridged your {{ nativeTokenSymbol }} to {{ chain.label }},
+        you may want to add the <links :to="blockExplorerUrl">token</links> to
+        your wallet e.g. in MetaMask.
       </p>
       <button
         v-if="currentUser && isMetaMask"
         class="btn-secondary"
         @click="addTokenToWallet"
       >
-        Add {{ chain.label }} {{ nativeToken.symbol }} to MetaMask
+        Add {{ chain.label }} {{ nativeTokenSymbol }} to MetaMask
       </button>
     </div>
     <!-- If chain isn't Arbitrum, but still has a bridge URL, display its information: -->
@@ -216,9 +216,9 @@ export default class AboutLayer2 extends Vue {
           params: {
             type: 'ERC20',
             options: {
-              address: this.nativeToken.address,
-              symbol: this.nativeToken.symbol,
-              decimals: this.nativeToken.decimals,
+              address: this.nativeTokenAddress,
+              symbol: this.nativeTokenSymbol,
+              decimals: this.nativeTokenDecimals,
             },
           },
         })
@@ -237,17 +237,20 @@ export default class AboutLayer2 extends Vue {
     return chain
   }
 
-  get nativeToken(): { [key: string]: any } {
-    const {
-      nativeTokenSymbol: symbol,
-      nativeTokenAddress: address,
-      nativeTokenDecimals: decimals,
-    } = this.$store.state.currentRound
-    return { symbol, address, decimals }
+  get nativeTokenAddress(): string {
+    return this.$store.getters.nativeTokenAddress
+  }
+
+  get nativeTokenSymbol(): string {
+    return this.$store.getters.nativeTokenSymbol
+  }
+
+  get nativeTokenDecimals(): number | undefined {
+    return this.$store.getters.nativeTokenDecimals
   }
 
   get blockExplorerUrl(): string {
-    return `${chain.explorer}/address/${this.nativeToken.address}`
+    return `${chain.explorer}/address/${this.nativeTokenAddress}`
   }
 }
 </script>

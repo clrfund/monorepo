@@ -53,14 +53,14 @@ if (
 }
 export const recipientRegistryPolicy =
   process.env.VUE_APP_RECIPIENT_REGISTRY_POLICY
-export const operator: string = process.env.VUE_APP_OPERATOR || 'Clr.fund team'
+export const operator: string = process.env.VUE_APP_OPERATOR || 'Clr.fund'
 export const extraRounds: string[] = process.env.VUE_APP_EXTRA_ROUNDS
   ? process.env.VUE_APP_EXTRA_ROUNDS.split(',')
   : []
 
 export const SUBGRAPH_ENDPOINT =
   process.env.VUE_APP_SUBGRAPH_URL ||
-  'https://api.thegraph.com/subgraphs/name/daodesigner/clrfund'
+  'https://api.thegraph.com/subgraphs/name/clrfund/clrfund'
 
 export const METADATA_SUBGRAPH_URL_PREFIX = process.env
   .VUE_APP_METADATA_SUBGRAPH_URL_PREFIX

@@ -1,6 +1,6 @@
 export enum ChainId {
   MAINNET = 1,
-  RINKEBY = 4,
+  GOERLI = 5,
   HARDHAT = 31337,
   ARBITRUM_ONE = 42161,
   ARBITRUM_RINKEBY = 421611,
@@ -39,12 +39,12 @@ export const CHAIN_INFO: ChainInfo = {
     shortName: 'eth',
     name: 'mainnet',
   },
-  [ChainId.RINKEBY]: {
-    label: 'Rinkeby',
+  [ChainId.GOERLI]: {
+    label: 'Goerli',
     currency: 'ETH',
     logo: 'eth.svg',
     isLayer2: false,
-    explorer: 'https://rinkeby.etherscan.io',
+    explorer: 'https://goerli.etherscan.io',
     explorerLogo: 'etherscan.svg',
     explorerLabel: 'Etherscan',
     shortName: 'rin',
@@ -52,7 +52,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.HARDHAT]: {
     label: 'Arbitrum Hardhat',
-    currency: 'ETH',
+    currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
     explorer: 'https://testnet.arbiscan.io',
@@ -65,7 +65,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.ARBITRUM_ONE]: {
     label: 'Arbitrum',
-    currency: 'ETH',
+    currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
     explorer: 'https://arbiscan.io',
@@ -78,7 +78,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.ARBITRUM_RINKEBY]: {
     label: 'Arbitrum Rinkeby',
-    currency: 'ETH',
+    currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
     explorer: 'https://testnet.arbiscan.io',
@@ -91,7 +91,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.OPTIMISM]: {
     label: 'Optimism',
-    currency: 'ETH',
+    currency: 'OETH',
     logo: 'optimism.svg',
     isLayer2: true,
     explorer: 'https://optimistic.etherscan.io',

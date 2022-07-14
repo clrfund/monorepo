@@ -5,10 +5,14 @@ import { PubKey } from 'maci-domainobjs'
 import { FundingRound, MACI, ERC20 } from './abi'
 import { provider, factory } from './core'
 import { getTotalContributed } from './contributions'
+import { getRounds } from './rounds'
+
+import { isSameAddress } from '@/utils/accounts'
 
 export interface RoundInfo {
   fundingRoundAddress: string
   userRegistryAddress: string
+  recipientRegistryAddress: string
   maciAddress: string
   recipientTreeDepth: number
   maxContributors: number
@@ -50,17 +54,35 @@ export async function getCurrentRound(): Promise<string | null> {
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
     return null
   }
-  return fundingRoundAddress
+  const rounds = await getRounds()
+  const roundIndex = rounds.findIndex((round) =>
+    isSameAddress(round.address, fundingRoundAddress)
+  )
+
+  if (roundIndex >= Number(process.env.VUE_APP_FIRST_ROUND || 0)) {
+    return fundingRoundAddress
+  }
+  return null
 }
 
 //TODO: update to take factory address as a parameter, default to env. variable
 export async function getRoundInfo(
-  fundingRoundAddress: string
+  fundingRoundAddress: string,
+  cachedRound?: RoundInfo
 ): Promise<RoundInfo> {
+  if (
+    cachedRound &&
+    isSameAddress(fundingRoundAddress, cachedRound.fundingRoundAddress)
+  ) {
+    // the requested round matches the cached round, quick return
+    return cachedRound
+  }
+
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const [
     maciAddress,
     nativeTokenAddress,
+    recipientRegistryAddress,
     userRegistryAddress,
     voiceCreditFactor,
     isFinalized,
@@ -68,6 +90,7 @@ export async function getRoundInfo(
   ] = await Promise.all([
     fundingRound.maci(),
     fundingRound.nativeToken(),
+    fundingRound.recipientRegistry(),
     fundingRound.userRegistry(),
     fundingRound.voiceCreditFactor(),
     fundingRound.isFinalized(),
@@ -146,6 +169,7 @@ export async function getRoundInfo(
 
   return {
     fundingRoundAddress,
+    recipientRegistryAddress,
     userRegistryAddress,
     maciAddress,
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,

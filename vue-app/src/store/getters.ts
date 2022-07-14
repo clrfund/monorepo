@@ -4,11 +4,16 @@ import { DateTime } from 'luxon'
 
 // API
 import { CartItem, Contributor } from '@/api/contributions'
-import { recipientRegistryType, RecipientRegistryType } from '@/api/core'
+import {
+  recipientRegistryType,
+  RecipientRegistryType,
+  operator,
+} from '@/api/core'
 import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
+import { MACIFactory } from '@/api/maci-factory'
 import { RegistryInfo } from '@/api/types'
 import { RecipientApplicationData } from '@/api/recipient'
 
@@ -33,6 +38,7 @@ export interface RootState {
   tally: Tally | null
   theme: string | null
   factory: Factory | null
+  maciFactory: MACIFactory | null
 }
 
 const getters = {
@@ -44,17 +50,13 @@ const getters = {
     const challengePeriodDuration =
       state.recipientRegistryInfo.challengePeriodDuration
 
-    return state.currentRound.signUpDeadline.minus({
+    const deadline = state.currentRound.signUpDeadline.minus({
       seconds: challengePeriodDuration,
     })
+
+    return deadline.isValid ? deadline : null
   },
   isRoundJoinPhase: (state: RootState, getters): boolean => {
-    if (!state.currentRound) {
-      return true
-    }
-    if (!state.recipientRegistryInfo) {
-      return false
-    }
     return !hasDateElapsed(getters.recipientJoinDeadline)
   },
   isRoundJoinOnlyPhase: (state: RootState, getters): boolean => {
@@ -118,6 +120,12 @@ const getters = {
       state.currentRound.status === RoundStatus.Finalized
     )
   },
+  isRoundCancelled:
+    (state: RootState) =>
+    (roundInfo?: RoundInfo): boolean => {
+      const round = roundInfo || state.currentRound
+      return !!round && round.status === RoundStatus.Cancelled
+    },
   hasContributionPhaseEnded: (state: RootState, getters): boolean => {
     return (
       !!state.currentRound &&
@@ -176,6 +184,21 @@ const getters = {
       state.currentRound.maxContributors <= state.currentRound.contributors
     )
   },
+  nativeTokenAddress: (state: RootState): string => {
+    const { currentRound, factory } = state
+
+    let nativeTokenAddress = ''
+
+    if (factory) {
+      nativeTokenAddress = factory.nativeTokenAddress
+    }
+
+    if (currentRound) {
+      nativeTokenAddress = currentRound.nativeTokenAddress
+    }
+
+    return nativeTokenAddress
+  },
   nativeTokenSymbol: (state: RootState): string => {
     const { currentRound, factory } = state
 
@@ -213,12 +236,39 @@ const getters = {
     return !!state.recipientRegistryInfo?.requireRegistrationDeposit
   },
   addProjectUrl: (): string => {
-    switch (recipientRegistryType) {
-      case RecipientRegistryType.UNIVERSAL:
-        return '/join/metadata'
-      default:
-        return '/join/project'
+    return recipientRegistryType === RecipientRegistryType.UNIVERSAL
+      ? '/join/metadata'
+      : '/join/project'
+  },
+  maxRecipients: (state: RootState): number | undefined => {
+    const { currentRound, maciFactory } = state
+    if (currentRound) {
+      return currentRound.maxRecipients
     }
+
+    if (maciFactory) {
+      return maciFactory.maxRecipients
+    }
+  },
+  userRegistryAddress: (state: RootState): string | undefined => {
+    const { currentRound, factory } = state
+
+    if (currentRound) {
+      return currentRound.userRegistryAddress
+    }
+
+    if (factory) {
+      return factory.userRegistryAddress
+    }
+  },
+  isCurrentRound:
+    (state: RootState) =>
+    (roundAddress: string): boolean => {
+      const currentRoundAddress = state.currentRoundAddress || ''
+      return isSameAddress(roundAddress, currentRoundAddress)
+    },
+  operator: (): string => {
+    return operator
   },
 }
 

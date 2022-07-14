@@ -1,7 +1,7 @@
 <template>
   <div class="project-item">
     <div>
-      <links :to="{ name: 'project', params: { id: project.id } }">
+      <links :to="projectRoute">
         <div class="project-image">
           <img :src="projectImageUrl" :alt="project.name" />
           <div class="tag">{{ project.category }}</div>
@@ -9,18 +9,18 @@
       </links>
       <div class="project-info">
         <div class="project-name">
-          <links :to="{ name: 'project', params: { id: project.id } }">
+          <links :to="projectRoute">
             {{ project.name }}
           </links>
         </div>
-        <links :to="{ name: 'project', params: { id: project.id } }">
+        <links :to="projectRoute">
           <div class="project-description">{{ project.tagline }}</div>
         </links>
       </div>
     </div>
     <div class="buttons">
       <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
-      <links :to="{ name: 'project', params: { id: project.id } }">
+      <links :to="projectRoute">
         <button class="more-btn">More</button>
       </links>
     </div>
@@ -36,6 +36,7 @@ import Links from '@/components/Links.vue'
 import { CartItem } from '@/api/contributions'
 import { Project } from '@/api/projects'
 import { markdown } from '@/utils/markdown'
+import { Route } from 'vue-router'
 
 @Component({
   components: {
@@ -46,6 +47,7 @@ import { markdown } from '@/utils/markdown'
 export default class ProjectListItem extends Vue {
   @Prop()
   project!: Project
+  @Prop({ default: '' }) roundAddress!: string
 
   get descriptionHtml(): string {
     return markdown.renderInline(this.project.description)
@@ -69,9 +71,26 @@ export default class ProjectListItem extends Vue {
     return index !== -1
   }
 
+  get isCurrentRound(): boolean {
+    const { currentRoundAddress } = this.$store.state
+    const roundAddress = this.roundAddress || currentRoundAddress
+    return this.$store.getters.isCurrentRound(roundAddress)
+  }
+
   get shouldShowCartInput(): boolean {
     const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
-    return isRoundContributionPhase || canUserReallocate
+    return (
+      this.isCurrentRound && (isRoundContributionPhase || canUserReallocate)
+    )
+  }
+
+  get projectRoute(): Partial<Route> {
+    return this.$route.name === 'round'
+      ? {
+          name: 'round-project',
+          params: { address: this.roundAddress, id: this.project.id },
+        }
+      : { name: 'project', params: { id: this.project.id } }
   }
 }
 </script>

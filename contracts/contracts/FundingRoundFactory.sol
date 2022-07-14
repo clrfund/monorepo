@@ -32,7 +32,7 @@ contract FundingRoundFactory is Ownable, MACISharedObjs {
   PubKey public coordinatorPubKey;
 
   EnumerableSet.AddressSet private fundingSources;
-  FundingRound[] private rounds;
+  FundingRound[] public rounds;
 
   // Events
   event FundingSourceAdded(address _source);

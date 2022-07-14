@@ -38,7 +38,7 @@ const config: HardhatUserConfig = {
       url: 'http://127.0.0.1:8555',
       gasLimit: GAS_LIMIT,
     } as any,
-    rinkeby: {
+    goerli: {
       url: process.env.JSONRPC_HTTP_URL || 'http://127.0.0.1:8545',
       accounts,
     },

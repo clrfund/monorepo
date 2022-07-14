@@ -52,10 +52,11 @@
           v-for="project in filteredProjects"
           :project="project"
           :key="project.id"
+          :roundAddress="roundAddress"
         >
         </project-list-item>
       </div>
-      <panel v-if="filteredProjects == 0">
+      <panel v-if="filteredProjects.length == 0">
         <div>
           😢 No projects match your search. Try using the filter to narrow down
           what you're looking for.
@@ -77,14 +78,8 @@ import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { RoundInfo, getCurrentRound, TimeLeft } from '@/api/round'
-import {
-  Project,
-  getRecipientRegistryAddress,
-  getProjects,
-} from '@/api/projects'
-
-import { getTimeLeft } from '@/utils/dates'
+import { getCurrentRound, getRoundInfo } from '@/api/round'
+import { Project, getProjects } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import CartWidget from '@/components/CartWidget.vue'
@@ -93,15 +88,6 @@ import RoundInformation from '@/components/RoundInformation.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'
 import Panel from '@/components/Panel.vue'
-import {
-  SELECT_ROUND,
-  LOAD_ROUND_INFO,
-  LOAD_USER_INFO,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-} from '@/store/action-types'
-import { SET_RECIPIENT_REGISTRY_ADDRESS } from '@/store/mutation-types'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 
@@ -137,6 +123,7 @@ export default class ProjectList extends Vue {
   isLoading = true
   categories: string[] = ['content', 'research', 'tooling', 'data']
   selectedCategories: string[] = []
+  roundAddress = ''
 
   get projectsByCategoriesSelected(): Project[] {
     return this.selectedCategories.length === 0
@@ -150,49 +137,30 @@ export default class ProjectList extends Vue {
 
   async created() {
     //TODO: update to take factory address as a parameter, default to env. variable
-    const roundAddress =
+    this.roundAddress =
       this.$route.params.address ||
       this.$store.state.currentRoundAddress ||
       (await getCurrentRound())
-    if (
-      roundAddress &&
-      roundAddress !== this.$store.state.currentRoundAddress
-    ) {
-      // Select round and (re)load round info
-      //TODO: SELECT_ROUND action also commits SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
-      this.$store.dispatch(SELECT_ROUND, roundAddress)
-      await this.$store.dispatch(LOAD_ROUND_INFO)
-      if (this.$store.state.currentUser) {
-        // Load user data if already logged in
-        this.$store.dispatch(LOAD_USER_INFO)
-        this.$store.dispatch(LOAD_CART)
-        this.$store.dispatch(LOAD_COMMITTED_CART)
-        this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-      }
-    }
-    if (this.$store.state.recipientRegistryAddress === null) {
-      const registryAddress = await getRecipientRegistryAddress(roundAddress)
-      this.$store.commit(SET_RECIPIENT_REGISTRY_ADDRESS, registryAddress)
-    }
-    await this.loadProjects()
+
+    await this.loadProjects(this.roundAddress)
     this.isLoading = false
   }
 
-  private async loadProjects() {
+  private async loadProjects(roundAddress: string) {
+    const round = await getRoundInfo(
+      roundAddress,
+      this.$store.state.currentRound
+    )
     const projects = await getProjects(
-      this.$store.state.recipientRegistryAddress,
-      this.currentRound?.startTime.toSeconds(),
-      this.currentRound?.votingDeadline.toSeconds()
+      round.recipientRegistryAddress,
+      round.startTime.toSeconds(),
+      round.votingDeadline.toSeconds()
     )
     const visibleProjects = projects.filter((project) => {
       return !project.isHidden && !project.isLocked
     })
     shuffleArray(visibleProjects)
     this.projects = visibleProjects
-  }
-
-  get currentRound(): RoundInfo | null {
-    return this.$store.state.currentRound
   }
 
   formatIntegerPart(value: FixedNumber): string {
@@ -209,14 +177,6 @@ export default class ProjectList extends Vue {
 
   formatDate(value: DateTime): string {
     return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
-  }
-
-  get contributionTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.signUpDeadline)
-  }
-
-  get reallocationTimeLeft(): TimeLeft {
-    return getTimeLeft(this.$store.state.currentRound.votingDeadline)
   }
 
   get filteredProjects(): Project[] {
