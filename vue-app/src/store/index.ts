@@ -33,6 +33,7 @@ const state: RootState = {
   tally: null,
   theme: null,
   factory: null,
+  maciFactory: null,
 }
 
 const store: StoreOptions<RootState> = {

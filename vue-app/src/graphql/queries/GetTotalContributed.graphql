@@ -1,10 +1,5 @@
 query GetTotalContributed($fundingRoundAddress: ID!) {
   fundingRound(id: $fundingRoundAddress) {
     contributorCount
-    contributors {
-      contributions {
-        amount
-      }
-    }
   }
 }

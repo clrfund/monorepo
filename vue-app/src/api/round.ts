@@ -5,6 +5,9 @@ import { PubKey } from 'maci-domainobjs'
 import { FundingRound, MACI, ERC20 } from './abi'
 import { provider, factory } from './core'
 import { getTotalContributed } from './contributions'
+import { getRounds } from './rounds'
+
+import { isSameAddress } from '@/utils/accounts'
 
 export interface RoundInfo {
   fundingRoundAddress: string
@@ -50,7 +53,17 @@ export async function getCurrentRound(): Promise<string | null> {
   if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
     return null
   }
-  return fundingRoundAddress
+  const rounds = await getRounds()
+  // round.address is empty if the round is configured in VUE_APP_EXTRA_ROUNDS
+  const roundIndex = rounds.findIndex(
+    (round) =>
+      !!round.address && isSameAddress(round.address, fundingRoundAddress)
+  )
+
+  if (roundIndex >= Number(process.env.VUE_APP_FIRST_ROUND || 0)) {
+    return fundingRoundAddress
+  }
+  return null
 }
 
 //TODO: update to take factory address as a parameter, default to env. variable

@@ -136,6 +136,18 @@
                 </label>
                 <form class="radio-row" id="category-radio">
                   <input
+                    id="tooling"
+                    type="radio"
+                    name="project-category"
+                    value="Tooling"
+                    v-model="$v.form.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: $v.form.project.category.$error,
+                    }"
+                  />
+                  <label for="tooling" class="radio-btn">Tools</label>
+                  <input
                     id="category-content"
                     type="radio"
                     name="project-category"
@@ -161,18 +173,7 @@
                     }"
                   />
                   <label for="research" class="radio-btn">Research</label>
-                  <input
-                    id="tooling"
-                    type="radio"
-                    name="project-category"
-                    value="Tooling"
-                    v-model="$v.form.project.category.$model"
-                    :class="{
-                      input: true,
-                      invalid: $v.form.project.category.$error,
-                    }"
-                  />
-                  <label for="tooling" class="radio-btn">Tooling</label>
+
                   <input
                     id="data"
                     type="radio"
@@ -456,7 +457,7 @@
                 </p>
               </div>
               <div class="form-background">
-                <label for="links-discord" class="input-label">Discord</label>
+                <label for="links-discord" class="input-label">Chat</label>
                 <input
                   id="links-discord"
                   type="link"
@@ -525,7 +526,7 @@
                   /></links>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Name</h4>
+                  <h4 class="read-only-title">Project name</h4>
                   <div class="data">{{ form.project.name }}</div>
                 </div>
                 <div class="summary">

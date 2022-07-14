@@ -27,7 +27,7 @@
         <links to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <links to="https://twitter.com/ethdotorg">@ethdotorg</links>
+        <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
         <links to="/" class="btn-primary">Home</links>
@@ -47,7 +47,7 @@
         <links to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <links to="https://twitter.com/ethdotorg">@ethdotorg</links>
+        <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
         <links to="/" class="btn-primary">Home</links>
@@ -61,6 +61,10 @@
         We’ll need some information about your project and a
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
         deposit.
+      </div>
+      <div class="subtitle mt2">
+        The round only accepts a total of {{ maxRecipients }} projects, so apply
+        now while there’s still room!
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
@@ -111,6 +115,10 @@
         We’ll need some information about your project and a
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
         deposit.
+      </div>
+      <div class="subtitle mt2">
+        The round only accepts a total of {{ maxRecipients }} projects, so apply
+        now while there’s still room!
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
@@ -191,6 +199,10 @@ export default class JoinLanding extends Vue {
 
   private get signUpDeadline(): DateTime {
     return this.$store.state.currentRound?.signUpDeadline
+  }
+
+  get maxRecipients(): number | undefined {
+    return this.$store.getters.maxRecipients
   }
 
   get spacesRemaining(): number | null {

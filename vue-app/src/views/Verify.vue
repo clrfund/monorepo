@@ -134,7 +134,7 @@
               verify the connection - please wait.
             </p>
             <div class="qr">
-              <div class="instructions">
+              <div class="instructions" v-if="appLink">
                 <p class="desktop" v-if="appLinkQrCode">
                   Scan this QR code with your BrightID app
                 </p>
@@ -366,7 +366,7 @@ export default class VerifyView extends Vue {
   }
 
   async sponsor() {
-    const { userRegistryAddress } = this.$store.state.currentRound
+    const { userRegistryAddress } = this.$store.getters
     const signer = this.currentUser.walletProvider.getSigner()
 
     this.loadingTx = true
@@ -385,7 +385,7 @@ export default class VerifyView extends Vue {
   }
 
   async register() {
-    const { userRegistryAddress } = this.$store.state.currentRound
+    const { userRegistryAddress } = this.$store.getters
     const signer = this.currentUser.walletProvider.getSigner()
 
     if (this.brightId?.verification) {

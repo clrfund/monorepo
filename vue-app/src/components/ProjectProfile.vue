@@ -112,7 +112,6 @@ import { chain } from '@/api/core'
 import { SAVE_CART } from '@/store/action-types'
 import { ADD_CART_ITEM } from '@/store/mutation-types'
 import { ensLookup } from '@/utils/accounts'
-import { getTokenLogo } from '@/utils/tokens'
 import Info from '@/components/Info.vue'
 import Markdown from '@/components/Markdown.vue'
 import CopyButton from '@/components/CopyButton.vue'
@@ -204,11 +203,6 @@ export default class ProjectProfile extends Vue {
   get shouldShowCartInput(): boolean {
     const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
     return isRoundContributionPhase || canUserReallocate
-  }
-
-  get tokenLogo(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return getTokenLogo(nativeTokenSymbol)
   }
 }
 </script>

@@ -8,6 +8,7 @@ import { RoundInfo } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
+import { MACIFactory } from '@/api/maci-factory'
 import {
   RecipientApplicationData,
   RegistryInfo,
@@ -36,6 +37,7 @@ import {
   SET_HAS_VOTED,
   TOGGLE_THEME,
   SET_FACTORY,
+  SET_MACI_FACTORY,
 } from './mutation-types'
 import { ThemeMode } from '@/api/core'
 
@@ -59,6 +61,9 @@ const mutations = {
   },
   [SET_FACTORY](state, factory: Factory) {
     state.factory = factory
+  },
+  [SET_MACI_FACTORY](state, factory: MACIFactory) {
+    state.maciFactory = factory
   },
   //TODO: also dispatch SET_CURRENT_FACTORY_ADDRESS mutation when ever this fires
   [SET_CURRENT_ROUND_ADDRESS](state, address: string) {

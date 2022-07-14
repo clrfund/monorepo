@@ -4,11 +4,12 @@ import { DateTime } from 'luxon'
 
 // API
 import { CartItem, Contributor } from '@/api/contributions'
-import { recipientRegistryType } from '@/api/core'
+import { recipientRegistryType, operator } from '@/api/core'
 import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
+import { MACIFactory } from '@/api/maci-factory'
 import {
   RecipientApplicationData,
   RegistryInfo,
@@ -35,6 +36,7 @@ export interface RootState {
   tally: Tally | null
   theme: string | null
   factory: Factory | null
+  maciFactory: MACIFactory | null
 }
 
 const getters = {
@@ -48,17 +50,13 @@ const getters = {
         ? state.recipientRegistryInfo.challengePeriodDuration
         : 0
 
-    return state.currentRound.signUpDeadline.minus({
+    const deadline = state.currentRound.signUpDeadline.minus({
       seconds: challengePeriodDuration,
     })
+
+    return deadline.isValid ? deadline : null
   },
   isRoundJoinPhase: (state: RootState, getters): boolean => {
-    if (!state.currentRound) {
-      return true
-    }
-    if (!state.recipientRegistryInfo) {
-      return false
-    }
     return !hasDateElapsed(getters.recipientJoinDeadline)
   },
   isRoundJoinOnlyPhase: (state: RootState, getters): boolean => {
@@ -174,6 +172,21 @@ const getters = {
       state.currentRound.maxContributors <= state.currentRound.contributors
     )
   },
+  nativeTokenAddress: (state: RootState): string => {
+    const { currentRound, factory } = state
+
+    let nativeTokenAddress = ''
+
+    if (factory) {
+      nativeTokenAddress = factory.nativeTokenAddress
+    }
+
+    if (currentRound) {
+      nativeTokenAddress = currentRound.nativeTokenAddress
+    }
+
+    return nativeTokenAddress
+  },
   nativeTokenSymbol: (state: RootState): string => {
     const { currentRound, factory } = state
 
@@ -203,6 +216,31 @@ const getters = {
     }
 
     return nativeTokenDecimals
+  },
+  maxRecipients: (state: RootState): number | undefined => {
+    const { currentRound, maciFactory } = state
+
+    if (currentRound) {
+      return currentRound.maxRecipients
+    }
+
+    if (maciFactory) {
+      return maciFactory.maxRecipients
+    }
+  },
+  userRegistryAddress: (state: RootState): string | undefined => {
+    const { currentRound, factory } = state
+
+    if (currentRound) {
+      return currentRound.userRegistryAddress
+    }
+
+    if (factory) {
+      return factory.userRegistryAddress
+    }
+  },
+  operator: (): string => {
+    return operator
   },
 }
 

@@ -44,7 +44,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.HARDHAT]: {
     label: 'Arbitrum Hardhat',
-    currency: 'ETH',
+    currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
     explorer: 'https://testnet.arbiscan.io',
@@ -55,7 +55,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.ARBITRUM_ONE]: {
     label: 'Arbitrum',
-    currency: 'ETH',
+    currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
     explorer: 'https://arbiscan.io',
@@ -66,7 +66,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.ARBITRUM_RINKEBY]: {
     label: 'Arbitrum Rinkeby',
-    currency: 'ETH',
+    currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
     explorer: 'https://testnet.arbiscan.io',
@@ -77,7 +77,7 @@ export const CHAIN_INFO: ChainInfo = {
   },
   [ChainId.OPTIMISM]: {
     label: 'Optimism',
-    currency: 'ETH',
+    currency: 'OETH',
     logo: 'optimism.svg',
     isLayer2: true,
     explorer: 'https://optimistic.etherscan.io',
