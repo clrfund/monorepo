@@ -80,3 +80,10 @@ export enum ThemeMode {
   LIGHT = 'light',
   DARK = 'dark',
 }
+
+// transaction progress reported as the current block seen
+// and the last block the transaction is expected to be in
+export type TransactionProgress = {
+  current: number
+  last: number
+}

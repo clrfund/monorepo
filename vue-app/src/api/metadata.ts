@@ -152,6 +152,8 @@ export class Metadata {
   thumbnailImageHash?: string
   imageHash?: string
   deletedAt?: number
+  furthestStep?: number
+  email?: string
 
   constructor(data: any) {
     this.id = data.id
@@ -174,6 +176,8 @@ export class Metadata {
     this.bannerImageHash = data.bannerImageHash
     this.thumbnailImageHash = data.thumbnailImageHash
     this.imageHash = data.imageHash
+    this.furthestStep = data.furthestStep
+    this.email = data.email
   }
 
   /**

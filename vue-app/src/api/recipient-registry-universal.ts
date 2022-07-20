@@ -1,6 +1,6 @@
 import { Contract, BigNumber, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { UniversalRecipientRegistry } from './abi'
+import { OptimisticRecipientRegistry } from './abi'
 import { RecipientRegistryInterface } from './types'
 import { Metadata } from './metadata'
 import { chain } from './core'
@@ -13,7 +13,7 @@ export async function addRecipient(
 ): Promise<TransactionResponse> {
   const registry = new Contract(
     registryAddress,
-    UniversalRecipientRegistry,
+    OptimisticRecipientRegistry,
     signer
   )
   const metadata = Metadata.fromFormData(recipientData)
@@ -26,9 +26,14 @@ export async function addRecipient(
     throw new Error(`Missing recipient address for the ${chain.name} network`)
   }
 
-  const transaction = await registry.addRecipient(address, id, {
-    value: deposit,
-  })
+  const json = { id }
+  const transaction = await registry.addRecipient(
+    address,
+    JSON.stringify(json),
+    {
+      value: deposit,
+    }
+  )
   return transaction
 }
 
@@ -39,7 +44,7 @@ export async function registerProject(
 ): Promise<TransactionResponse> {
   const registry = new Contract(
     registryAddress,
-    UniversalRecipientRegistry,
+    OptimisticRecipientRegistry,
     signer
   )
   const transaction = await registry.executeRequest(recipientId)
@@ -54,7 +59,7 @@ export async function rejectProject(
 ) {
   const registry = new Contract(
     registryAddress,
-    UniversalRecipientRegistry,
+    OptimisticRecipientRegistry,
     signer
   )
   const transaction = await registry.challengeRequest(
@@ -71,7 +76,7 @@ export async function removeProject(
 ) {
   const registry = new Contract(
     registryAddress,
-    UniversalRecipientRegistry,
+    OptimisticRecipientRegistry,
     signer
   )
 

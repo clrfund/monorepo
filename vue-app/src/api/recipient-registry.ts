@@ -180,11 +180,19 @@ async function buildMetadataMap(
 async function normalizeRecipients(
   recipients: Partial<Recipient>[]
 ): Promise<Partial<Recipient>[]> {
-  const metadataIds = recipients.map(metadataId).filter(Boolean)
-  const metadataMap = await buildMetadataMap(metadataIds)
+  const metadataIds = recipients.map(({ recipientMetadata }) => {
+    try {
+      const json = JSON.parse(recipientMetadata || '')
+      return json.id
+    } catch {
+      return null
+    }
+  })
 
-  return recipients.map((recipient) => {
-    const metadata = metadataMap[metadataId(recipient)]
+  const metadataMap = await buildMetadataMap(metadataIds.filter(Boolean))
+
+  return recipients.map((recipient, index) => {
+    const metadata = metadataMap[metadataIds[index]]
     if (metadata) {
       recipient.recipientMetadata = metadata
     }
@@ -337,7 +345,7 @@ export async function getRequests(
     try {
       metadata = JSON.parse(recipient.recipientMetadata || '{}')
     } catch {
-      // instead of throwing error, let it flow throw so
+      // instead of throwing error, let it flow through so
       // we can investigate the issue from the subgraph
       metadata.name = 'N/A'
     }
