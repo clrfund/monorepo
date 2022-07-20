@@ -4,11 +4,7 @@ import { DateTime } from 'luxon'
 
 // API
 import { CartItem, Contributor } from '@/api/contributions'
-import {
-  recipientRegistryType,
-  RecipientRegistryType,
-  operator,
-} from '@/api/core'
+import { operator } from '@/api/core'
 import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
