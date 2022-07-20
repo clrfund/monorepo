@@ -87,16 +87,16 @@ export default class MetadataList extends Vue {
     })
 
     if (this.excludeRecipients) {
-      const exclusion = await this.loadExclusion()
+      const recipients = await this.getRecipients()
       this.filteredMetadata = metadata.filter(
-        ({ id }) => !(id && exclusion.has(id))
+        ({ id }) => !(id && recipients.has(id))
       )
     } else {
       this.filteredMetadata = metadata
     }
   }
 
-  private async loadExclusion(): Promise<Set<string>> {
+  private async getRecipients(): Promise<Set<string>> {
     const roundAddress = await getCurrentRound()
     const recipientRegistryAddress = await getRecipientRegistryAddress(
       roundAddress
@@ -113,8 +113,15 @@ export default class MetadataList extends Vue {
 
     return new Set(
       recipients
-        .map(({ recipientMetadataId, verified, requestType }) => {
-          let id = recipientMetadataId || ''
+        .map(({ recipientMetadata, verified, requestType }) => {
+          let metadata: Metadata
+          try {
+            metadata = JSON.parse(recipientMetadata || '')
+          } catch {
+            metadata = new Metadata({})
+          }
+
+          let id = metadata.id || ''
           if (Number(requestType) === RequestTypeCode.Removal && verified) {
             // show metadata if it's not longer a recipient so it can be added again
             id = ''
