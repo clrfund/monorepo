@@ -47,8 +47,8 @@ export const CHAIN_INFO: ChainInfo = {
     explorer: 'https://goerli.etherscan.io',
     explorerLogo: 'etherscan.svg',
     explorerLabel: 'Etherscan',
-    shortName: 'rin',
-    name: 'rinkeby',
+    shortName: 'gor',
+    name: 'goerli',
   },
   [ChainId.HARDHAT]: {
     label: 'Arbitrum Hardhat',
@@ -60,7 +60,7 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLabel: 'Arbiscan',
     rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
-    shortName: 'got',
+    shortName: 'arb-rinkeby',
     name: 'arbitrum-rinkeby',
   },
   [ChainId.ARBITRUM_ONE]: {
