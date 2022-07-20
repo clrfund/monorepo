@@ -22,16 +22,48 @@
       <loader v-if="loading" />
       <div v-if="!loading" class="form-area">
         <div class="application">
-          <div v-if="currentStep === 0">
+          <div v-if="steps[currentStep] === 'metadata'">
             <metadata-list
               :onClick="handleMetadataSelected"
               :excludeRecipients="true"
             ></metadata-list>
           </div>
-          <div v-if="currentStep === 1" id="summary">
+          <div v-if="steps[currentStep] === 'summary'" id="summary">
             <metadata-viewer :metadata="metadata"></metadata-viewer>
           </div>
-          <div v-if="currentStep === 2">
+          <div v-if="steps[currentStep] === 'email'">
+            <div class="inputs">
+              <div class="heading">
+                <h2>Contact email</h2>
+              </div>
+              <p class="input-description">
+                For important updates about your project and the funding round.
+              </p>
+              <input
+                id="team-email"
+                type="email"
+                placeholder="example: doge@goodboi.com"
+                v-model.lazy="$v.metadata.email.$model"
+                :class="{
+                  input: true,
+                  invalid: $v.metadata.email.$error,
+                }"
+              />
+              <p class="input-notice">
+                We won't display this publicly or add it to the on-chain
+                registry.
+              </p>
+              <p
+                :class="{
+                  error: true,
+                  hidden: !$v.metadata.email.$error,
+                }"
+              >
+                This doesn't look like an email.
+              </p>
+            </div>
+          </div>
+          <div v-if="steps[currentStep] === 'submit'">
             <h2 class="step-title">Submit project</h2>
             <p>
               This is a blockchain transaction that will add your project
@@ -39,8 +71,9 @@
             </p>
             <div class="inputs">
               <recipient-submission-widget
-                cta="Submit project"
-                pending="Sending deposit..."
+                :isWaiting="isWaiting"
+                :txHash="txHash"
+                :txError="txError"
               />
             </div>
           </div>
@@ -62,8 +95,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+import Component, { mixins } from 'vue-class-component'
+import { validationMixin } from 'vuelidate'
+import { required, email } from 'vuelidate/lib/validators'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
@@ -74,10 +108,16 @@ import MetadataViewer from '@/views/MetadataViewer.vue'
 import Links from '@/components/Links.vue'
 import Loader from '@/components/Loader.vue'
 
-import { SET_RECIPIENT_DATA } from '@/store/mutation-types'
+import {
+  SET_RECIPIENT_DATA,
+  RESET_RECIPIENT_DATA,
+} from '@/store/mutation-types'
 
 import { Project } from '@/api/projects'
 import { Metadata } from '@/api/metadata'
+import { DateTime } from 'luxon'
+import { addRecipient } from '@/api/recipient-registry-universal'
+import { waitForTransaction } from '@/utils/contracts'
 
 @Component({
   components: {
@@ -91,19 +131,34 @@ import { Metadata } from '@/api/metadata'
     Links,
     Loader,
   },
+  validations: {
+    metadata: {
+      email: {
+        email,
+        required,
+      },
+    },
+  },
 })
-export default class JoinView extends Vue {
+export default class JoinView extends mixins(validationMixin) {
   currentStep = 0
-  steps = ['metadata', 'summary', 'submit']
-  stepNames = ['Select a project metadata', 'Review', 'Submit']
+  steps = this.isEmailRequired
+    ? ['metadata', 'summary', 'email', 'submit']
+    : ['metadata', 'summary', 'submit']
+  stepNames = this.isEmailRequired
+    ? ['Select a project metadata', 'Review', 'Email', 'Submit']
+    : ['Select a project metadata', 'Review', 'Submit']
   metadata = new Metadata({})
   loading = true
+  isWaiting = false
+  txHash = ''
+  txError = ''
 
   async created() {
     const currentStep = this.steps.indexOf(this.$route.params.step)
     this.currentStep = currentStep
 
-    // redirect to /join/ if step doesn't exist
+    // redirect to /join if step doesn't exist
     if (this.currentStep < 0) {
       this.$router.push({ name: 'join' })
     }
@@ -134,8 +189,12 @@ export default class JoinView extends Vue {
 
   saveFormData(): void {
     this.$store.commit(SET_RECIPIENT_DATA, {
-      updatedData: this.metadata.toFormData(),
+      updatedData: this.metadata,
     })
+  }
+
+  get isEmailRequired(): boolean {
+    return !!process.env.VUE_APP_GOOGLE_SPREADSHEET_ID
   }
 
   get isNavDisabled(): boolean {
@@ -160,6 +219,12 @@ export default class JoinView extends Vue {
       furthest++
       if (this.isMetadataValid) {
         furthest++
+        if (
+          process.env.VUE_APP_GOOGLE_SPREADSHEET_ID &&
+          !this.$v.metadata.email?.$invalid
+        ) {
+          furthest++
+        }
       }
     }
     return furthest
@@ -174,21 +239,26 @@ export default class JoinView extends Vue {
     })
   }
 
-  handleStepNav(step): void {
+  async handleStepNav(step: number): Promise<void> {
     // If isNavDisabled => disable quick-links
     if (this.isNavDisabled) return
     // Save form data
     this.saveFormData()
-    // Navigate
-    if (this.isStepUnlocked(step)) {
-      const id = this.metadata.id || ''
-      this.$router.push({
-        name: 'join-step',
-        params: {
-          step: this.steps[step],
-          id,
-        },
-      })
+
+    if (step >= this.steps.length) {
+      await this.addRecipient()
+    } else {
+      // Navigate
+      if (this.isStepUnlocked(step)) {
+        const id = this.metadata.id || ''
+        this.$router.push({
+          name: 'join-step',
+          params: {
+            step: this.steps[step],
+            id,
+          },
+        })
+      }
     }
   }
 
@@ -196,20 +266,83 @@ export default class JoinView extends Vue {
     const id = this.$route.params.id
 
     if (id) {
-      try {
-        const metadata = await Metadata.get(id)
-        if (metadata) {
-          this.metadata = metadata
-          this.saveFormData()
+      if (id === this.$store.state.recipient?.id) {
+        this.metadata = new Metadata(this.$store.state.recipient)
+      } else {
+        try {
+          const metadata = await Metadata.get(id)
+          if (metadata) {
+            this.metadata = metadata
+            this.saveFormData()
+          }
+        } catch (err) {
+          // TODO display the error
         }
-      } catch (err) {
-        // TODO display the error
       }
     }
   }
 
   get projectInterface(): Project {
     return this.metadata.toProject()
+  }
+
+  private async addRecipient() {
+    const {
+      currentRound,
+      currentUser,
+      recipient,
+      recipientRegistryAddress,
+      recipientRegistryInfo,
+    } = this.$store.state
+    this.isWaiting = true
+    // Reset errors when submitting
+    this.txError = ''
+    if (
+      recipientRegistryAddress &&
+      recipient &&
+      recipientRegistryInfo &&
+      currentUser
+    ) {
+      try {
+        if (currentRound && DateTime.now() >= currentRound.votingDeadline) {
+          this.$router.push({
+            name: 'join',
+          })
+          throw { message: 'round over' }
+        }
+        await waitForTransaction(
+          addRecipient(
+            recipientRegistryAddress,
+            new Metadata(recipient).toFormData(),
+            recipientRegistryInfo.deposit,
+            currentUser.walletProvider.getSigner()
+          ),
+          (hash) => (this.txHash = hash)
+        )
+        // Send application data to a Google Spreadsheet
+        if (process.env.VUE_APP_GOOGLE_SPREADSHEET_ID) {
+          await fetch('/.netlify/functions/recipient', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(recipient),
+          })
+        }
+        this.$store.commit(RESET_RECIPIENT_DATA)
+      } catch (error) {
+        this.isWaiting = false
+        this.txError = (error as any).message
+        return
+      }
+      this.isWaiting = false
+      this.$router.push({
+        name: 'project-added',
+        params: {
+          hash: this.txHash,
+        },
+      })
+    }
   }
 }
 </script>
@@ -337,5 +470,35 @@ export default class JoinView extends Vue {
 
 .inputs {
   margin: 1.5rem 0;
+}
+
+.input {
+  border-radius: 16px;
+  border: 2px solid $button-color;
+  background-color: var(--bg-secondary-color);
+  margin: 0.5rem 0;
+  padding: 0.5rem 1rem;
+  font-size: 16px;
+  font-family: Inter;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0em;
+  width: 100%;
+  &:valid {
+    border: 2px solid $clr-green;
+  }
+  &:hover {
+    background: var(--bg-primary-color);
+    border: 2px solid $highlight-color;
+    box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
+  }
+  &:optional {
+    border: 2px solid $button-color;
+    background-color: var(--bg-secondary-color);
+  }
+}
+
+.input.invalid {
+  border: 2px solid var(--error-color);
 }
 </style>
