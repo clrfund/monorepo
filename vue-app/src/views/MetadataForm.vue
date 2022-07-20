@@ -525,6 +525,10 @@
                 :form="form"
                 :onSuccess="onSuccess"
                 :onSubmit="onSubmit"
+                :txHash="txHash"
+                :isWaiting="isWaiting"
+                :progress="progress"
+                :txError="txError"
               />
             </div>
           </div>
@@ -569,12 +573,14 @@ import MetadataViewer from '@/views/MetadataViewer.vue'
 import Dropdown from '@/components/Dropdown.vue'
 import { Metadata, MetadataFormData } from '@/api/metadata'
 import { LinkInfo } from '@/api/types'
-import { Prop } from 'vue-property-decorator'
+import { Prop, Watch } from 'vue-property-decorator'
+import { chain, TransactionProgress } from '@/api/core'
 
 import { SET_METADATA } from '@/store/mutation-types'
 import { Project, projectExists } from '@/api/projects'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 import { ContractReceipt, ContractTransaction } from 'ethers'
+import { waitForTransaction } from '@/utils/contracts'
 
 type RecievingAddress = {
   network: string
@@ -667,6 +673,11 @@ export default class MetadataForm extends mixins(validationMixin) {
   selectedNetwork = ''
   receipt: { hash: string; chainId: number; id: string } | null = null
 
+  progress: TransactionProgress | null = null
+  isWaiting = false
+  txError = ''
+  txHash = ''
+
   async created() {
     const steps = [
       'project',
@@ -720,6 +731,11 @@ export default class MetadataForm extends mixins(validationMixin) {
 
   get sortedNetworks(): string[] {
     return this.networks.sort()
+  }
+
+  @Watch('$web3.user')
+  resetError(): void {
+    this.txError = ''
   }
 
   handleDropdownClick(selection: string): void {
@@ -853,15 +869,59 @@ export default class MetadataForm extends mixins(validationMixin) {
     )
   }
 
-  handleStepNav(step): void {
+  updateProgress(current: number, last: number): void {
+    this.progress = { current, last }
+  }
+
+  async addMetadata(): Promise<void> {
+    const { currentUser } = this.$store.state
+
+    // Reset errors when submitting
+    this.txError = ''
+    if (currentUser) {
+      const { walletProvider } = currentUser
+      try {
+        this.isWaiting = true
+        const transaction = this.onSubmit(this.form, walletProvider)
+        const receipt = await waitForTransaction(
+          transaction,
+          (hash) => (this.txHash = hash)
+        )
+
+        await Metadata.waitForBlock(
+          receipt.blockNumber,
+          chain.name,
+          0,
+          this.updateProgress
+        )
+        this.isWaiting = false
+
+        if (this.onSuccess) {
+          this.onSuccess(receipt, this.$web3.chainId)
+        }
+      } catch (error) {
+        this.isWaiting = false
+        this.txError = error.message
+        return
+      }
+    }
+  }
+
+  handleStepNav(step: number, updateFurthest?: boolean): void {
     // If isNavDisabled => disable quick-links
     if (this.isNavDisabled) return
 
     // Save form data
-    this.saveFormData()
-    // Navigate
-    if (this.isStepUnlocked(step)) {
-      this.gotoStep(this.steps[step])
+    this.saveFormData(updateFurthest)
+
+    if (step >= this.steps.length) {
+      // submit metadata
+      this.addMetadata()
+    } else {
+      // Navigate
+      if (this.isStepUnlocked(step)) {
+        this.gotoStep(this.steps[step])
+      }
     }
   }
 
