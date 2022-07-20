@@ -154,10 +154,7 @@ import { RegistryInfo } from '@/api/types'
 import TransactionModal from '@/components/TransactionModal.vue'
 
 // currently only show the registry view for these types
-const showList = [
-  RecipientRegistryType.OPTIMISTIC,
-  RecipientRegistryType.UNIVERSAL,
-]
+const showList = [RecipientRegistryType.OPTIMISTIC]
 
 @Component({ components: { CopyButton, Loader, Links } })
 export default class RecipientRegistryView extends Vue {

@@ -6,7 +6,7 @@ import { RecipientRegistryFactory } from '../utils/recipient-registry-factory'
  * Deploy a new recipient registry.
  * The following environment variables must be set to run the script
  *
- * RECIPIENT_REGISTRY_TYPE - default is simple, values can be simple, optimistic, universal
+ * RECIPIENT_REGISTRY_TYPE - default is simple, values can be simple, optimistic
  * FUNDING_ROUND_FACTORY_ADDRESS - address of the funding round factory
  * WALLET_PRIVATE_KEY - private key of the account that will fund this transaction
  * JSONRPC_HTTP_URL - URL to connect to the node

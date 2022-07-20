@@ -2,6 +2,5 @@
   "network": "hardhat",
   "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
   "factoryStartBlock": 0,
-  "recipientRegistryStartBlock": 0,
-  "universalRecipientRegistryStartBlock": 0
+  "recipientRegistryStartBlock": 0
 }

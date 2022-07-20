@@ -8,6 +8,8 @@ import { getEventArg } from '@/utils/contracts'
 import { OptimisticRecipientRegistry } from './abi'
 import { RecipientApplicationData } from './recipient'
 import { RecipientRegistryInterface } from './types'
+import { Metadata } from './metadata'
+import { chain } from './core'
 
 // TODO merge this with `Project` inteface
 export interface RecipientData {
@@ -57,7 +59,7 @@ export function formToRecipientData(
 
 export async function addRecipient(
   registryAddress: string,
-  recipientApplicationData: RecipientApplicationData,
+  recipientData: any,
   deposit: BigNumber,
   signer: Signer
 ): Promise<TransactionResponse> {
@@ -66,12 +68,23 @@ export async function addRecipient(
     OptimisticRecipientRegistry,
     signer
   )
-  const recipientData = formToRecipientData(recipientApplicationData)
-  const { address, ...metadata } = recipientData
+  const metadata = Metadata.fromFormData(recipientData)
+  const { id, address } = metadata.toProject()
+  if (!id) {
+    throw new Error('Missing metadata id')
+  }
+
+  if (!address) {
+    throw new Error(`Missing recipient address for the ${chain.name} network`)
+  }
+
+  const json = { id }
   const transaction = await registry.addRecipient(
     address,
-    JSON.stringify(metadata),
-    { value: deposit }
+    JSON.stringify(json),
+    {
+      value: deposit,
+    }
   )
   return transaction
 }

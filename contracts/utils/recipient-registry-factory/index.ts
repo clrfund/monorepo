@@ -1,14 +1,12 @@
 import { Contract, Signer } from 'ethers'
 import { SimpleRecipientRegistryFactory } from './simple'
 import { OptimisticRecipientRegistryFactory } from './optimistic'
-import { UniversalRecipientRegistryFactory } from './universal'
 import { RecipientRegistryConstructorArgs } from './types'
 
 // Map of recipient registry type to the deployment function
 const RegistryFactoryMap: Record<string, Function> = {
   simple: SimpleRecipientRegistryFactory.deploy,
   optimistic: OptimisticRecipientRegistryFactory.deploy,
-  universal: UniversalRecipientRegistryFactory.deploy,
 }
 
 /**

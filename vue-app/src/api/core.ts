@@ -40,7 +40,6 @@ export enum RecipientRegistryType {
   SIMPLE = 'simple',
   OPTIMISTIC = 'optimistic',
   KLEROS = 'kleros',
-  UNIVERSAL = 'universal',
 }
 export const recipientRegistryType =
   process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE || ''

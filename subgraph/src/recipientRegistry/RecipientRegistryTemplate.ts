@@ -7,7 +7,6 @@ import {
   OptimisticRecipientRegistry as OptimisticRecipientRegistryTemplate,
   SimpleRecipientRegistry as SimpleRecipientRegistryTemplate,
   KlerosRecipientRegistry as KlerosRecipientRegistryTemplate,
-  UniversalRecipientRegistry as UniversalRecipientRegistryTemplate,
 } from '../../generated/templates'
 
 export class RecipientRegistryTemplate {
@@ -19,9 +18,6 @@ export class RecipientRegistryTemplate {
         break
       case RecipientRegistryType.Optimistic:
         OptimisticRecipientRegistryTemplate.create(registryAddress)
-        break
-      case RecipientRegistryType.Universal:
-        UniversalRecipientRegistryTemplate.create(registryAddress)
         break
       case RecipientRegistryType.Simple:
         SimpleRecipientRegistryTemplate.create(registryAddress)

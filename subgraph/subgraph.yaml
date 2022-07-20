@@ -33,8 +33,6 @@ dataSources:
           file: ./abis/SimpleRecipientRegistry.json
         - name: KlerosRecipientRegistry
           file: ./abis/KlerosRecipientRegistry.json
-        - name: UniversalRecipientRegistry
-          file: ./abis/UniversalRecipientRegistry.json
         - name: BrightIdUserRegistry
           file: ./abis/BrightIdUserRegistry.json
       eventHandlers:
@@ -58,7 +56,7 @@ dataSources:
     network: xdai
     source:
       abi: OptimisticRecipientRegistry
-      startBlock: 0
+      startBlock: 15217676
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -181,29 +179,6 @@ templates:
         - event: RecipientRemoved(indexed bytes32,uint256)
           handler: handleRecipientRemoved
       file: ./src/recipientRegistry/KlerosRecipientRegistryMapping.ts
-  - name: UniversalRecipientRegistry
-    kind: ethereum/contract
-    network: xdai
-    source:
-      abi: UniversalRecipientRegistry
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - RecipientRegistry
-        - Recipient
-      abis:
-        - name: UniversalRecipientRegistry
-          file: ./abis/UniversalRecipientRegistry.json
-      eventHandlers:
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
-        - event: RequestResolved(indexed bytes32,indexed uint8,indexed bool,uint256,uint256)
-          handler: handleRequestResolved
-        - event: RequestSubmitted(indexed bytes32,indexed uint8,address,uint256)
-          handler: handleRequestSubmitted
-      file: ./src/recipientRegistry/UniversalRecipientRegistryMapping.ts
   - name: BrightIdUserRegistry
     kind: ethereum/contract
     network: xdai

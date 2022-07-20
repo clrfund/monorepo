@@ -19,7 +19,6 @@ import {
 } from '@/api/types'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import SimpleRegistry from './recipient-registry-simple'
-import UniversalRegistry from './recipient-registry-universal'
 import KlerosRegistry from './recipient-registry-kleros'
 import { isHexString } from '@ethersproject/bytes'
 import { Recipient } from '@/graphql/API'
@@ -29,7 +28,6 @@ import { DateTime } from 'luxon'
 
 const registryLookup: Record<RecipientRegistryType, Function> = {
   [RecipientRegistryType.OPTIMISTIC]: OptimisticRegistry.create,
-  [RecipientRegistryType.UNIVERSAL]: UniversalRegistry.create,
   [RecipientRegistryType.SIMPLE]: SimpleRegistry.create,
   [RecipientRegistryType.KLEROS]: KlerosRegistry.create,
 }

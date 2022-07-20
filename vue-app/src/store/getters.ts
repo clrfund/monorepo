@@ -236,9 +236,7 @@ const getters = {
     return !!state.recipientRegistryInfo?.requireRegistrationDeposit
   },
   addProjectUrl: (): string => {
-    return recipientRegistryType === RecipientRegistryType.UNIVERSAL
-      ? '/join/metadata'
-      : '/join/project'
+    return '/join/metadata'
   },
   maxRecipients: (state: RootState): number | undefined => {
     const { currentRound, maciFactory } = state
