@@ -1,36 +1,24 @@
 <template>
   <div class="tx-container">
-    <div>
-      <loader v-if="isLoading" />
-      <wallet-widget class="m2" v-if="!currentUser" />
-      <div v-if="currentUser">
+    <div v-if="currentUser">
+      <div>
         <div v-if="isWaiting" class="mt2">
           <div v-if="progress">
-            Waiting for block {{ progress.latest }} of {{ progress.total }}...
+            Waiting for block {{ progress.current }} of {{ progress.last }}...
           </div>
           <div v-else>Check your wallet for a prompt...</div>
         </div>
-        <div v-if="hasTxError || isTxRejected" class="warning-icon">⚠️</div>
+        <div v-if="hasTxError" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
           Something failed: {{ txError }}<br />
           Check your wallet or {{ blockExplorerLabel }} for more info.
         </div>
-        <div v-if="isTxRejected" class="warning-text">
-          You rejected the transaction in your wallet
-        </div>
       </div>
-      <div class="connected" v-if="currentUser">
+      <div class="connected">
         <div class="cta">
-          <button
-            @click="handleSubmit"
-            class="btn-action"
-            :disabled="!canSubmit || isWaiting"
-          >
-            <div v-if="isWaiting">
-              <loader class="button-loader" />
-            </div>
-            <div v-else>Submit</div>
-          </button>
+          <div v-if="isWaiting">
+            <loader class="button-loader" />
+          </div>
         </div>
       </div>
     </div>
@@ -41,22 +29,15 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { Web3Provider } from '@ethersproject/providers'
-import { MetadataFormData, Metadata } from '@/api/metadata'
+import { MetadataFormData } from '@/api/metadata'
 import { User } from '@/api/user'
-import { chain } from '@/api/core'
+import { chain, TransactionProgress } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 
-import { waitForTransaction } from '@/utils/contracts'
 import { ContractTransaction, ContractReceipt } from '@ethersproject/contracts'
-
-type Progress = {
-  latest: number
-  total: number
-}
 
 @Component({
   components: {
@@ -73,74 +54,21 @@ export default class MetadataSubmissionWidget extends Vue {
     provider: any
   ) => Promise<ContractTransaction>
   @Prop() onSuccess!: (receipt: ContractReceipt, chainId: number) => void
-
-  isLoading = true
-  isWaiting = false
-  isTxRejected = false
-  txHash = ''
-  txError = ''
-  progress: Progress | null = null
-
-  async created() {
-    this.isLoading = false
-  }
+  @Prop() isWaiting!: boolean
+  @Prop({ default: null }) progress!: TransactionProgress | null
+  @Prop({ default: '' }) txHash!: string
+  @Prop({ default: '' }) txError!: string
 
   get currentUser(): User | null {
     return this.$store.state.currentUser
   }
 
-  get walletProvider(): Web3Provider | undefined {
-    return this.$web3.provider
-  }
-
   get blockExplorerLabel(): string {
     return chain.explorerLabel
-  }
-  get canSubmit(): boolean {
-    return !!this.currentUser && !!this.walletProvider
   }
 
   get hasTxError(): boolean {
     return !!this.txError
-  }
-
-  updateProgress(latest: number, total: number): void {
-    this.progress = { latest, total }
-  }
-
-  async handleSubmit(): Promise<void> {
-    const { currentUser } = this.$store.state
-
-    // Reset errors when submitting
-    this.txError = ''
-    this.isTxRejected = false
-    if (currentUser) {
-      const { walletProvider } = currentUser
-      try {
-        this.isWaiting = true
-        const transaction = this.onSubmit(this.form, walletProvider)
-        const receipt = await waitForTransaction(
-          transaction,
-          (hash) => (this.txHash = hash)
-        )
-
-        await Metadata.waitForBlock(
-          receipt.blockNumber,
-          chain.name,
-          0,
-          this.updateProgress
-        )
-        this.isWaiting = false
-
-        if (this.onSuccess) {
-          this.onSuccess(receipt, this.$web3.chainId)
-        }
-      } catch (error) {
-        this.isWaiting = false
-        this.txError = error.message
-        return
-      }
-    }
   }
 }
 </script>
