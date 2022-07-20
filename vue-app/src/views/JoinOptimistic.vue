@@ -974,11 +974,11 @@ export default class JoinView extends mixins(validationMixin) {
     )
   }
 
-  handleStepNav(step): void {
+  handleStepNav(step: number, updateFurthest?: boolean): void {
     // If isNavDisabled => disable quick-links
     if (this.isNavDisabled) return
     // Save form data
-    this.saveFormData()
+    this.saveFormData(updateFurthest)
     // Navigate
     if (this.isStepUnlocked(step)) {
       this.$router.push({
