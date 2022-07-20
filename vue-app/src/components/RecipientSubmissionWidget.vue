@@ -297,6 +297,8 @@ export default class RecipientSubmissionWidget extends Vue {
 
 .warning-text {
   font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .warning-text,
