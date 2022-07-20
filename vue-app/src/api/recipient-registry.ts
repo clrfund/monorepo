@@ -132,15 +132,6 @@ function decodeProject(recipient: Partial<Recipient>): Project {
 }
 
 /**
- * Returns the metadata id if available
- * @param recipient a recipient structure
- * @returns metadata id or an empty string
- */
-function metadataId(recipient: Partial<Recipient>): string {
-  return recipient.recipientMetadataId || ''
-}
-
-/**
  * Build a map to lookup metadata by id
  * Retrieve metadata in batches to avoid hitting server too often
  * @param ids a list of metadata id
