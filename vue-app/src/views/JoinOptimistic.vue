@@ -300,7 +300,7 @@ export default class JoinView extends mixins(validationMixin) {
           const metadata = await Metadata.get(id)
           if (metadata) {
             this.metadata = metadata
-            this.saveFormData()
+            this.saveFormData(true)
           }
         } catch (err) {
           // TODO display the error
