@@ -106,17 +106,14 @@
               </div> -->
                 <div
                   class="icon-btn-approve"
-                  v-if="
-                    (isOwner || (!isOwner && isChallengePeriodOver(request))) &&
-                    isPending(request)
-                  "
+                  v-if="(isOwner && isPending(request)) || isAccepted(request)"
                   @click="approve(request)"
                 >
                   <img src="@/assets/checkmark.svg" />
                 </div>
                 <div
                   class="icon-btn-reject"
-                  v-if="isOwner && isPending(request)"
+                  v-if="isOwner && (isPending(request) || isAccepted(request))"
                   @click="reject(request)"
                 >
                   <img src="@/assets/close.svg" />
@@ -212,6 +209,10 @@ export default class RecipientRegistryView extends Vue {
     return request.status === RequestStatus.Submitted
   }
 
+  isAccepted(request: Request): boolean {
+    return request.status === RequestStatus.Accepted
+  }
+
   isRejected(request: Request): boolean {
     return request.status === RequestStatus.Rejected
   }
@@ -225,10 +226,6 @@ export default class RecipientRegistryView extends Vue {
       request.type === RequestType.Registration &&
       request.status === RequestStatus.Executed
     )
-  }
-
-  isChallengePeriodOver(request: Request): boolean {
-    return Date.now() > request.acceptanceDate.toMillis()
   }
 
   async approve(request: Request): Promise<void> {
