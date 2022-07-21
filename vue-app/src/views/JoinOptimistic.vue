@@ -22,7 +22,7 @@
       <loader v-if="loading" />
       <div v-if="!loading" class="form-area">
         <div class="application">
-          <div v-if="steps[currentStep] === 'metadata'">
+          <div v-if="currentStep === 0">
             <metadata-list
               :onClick="handleMetadataSelected"
               :excludeRecipients="true"
@@ -43,10 +43,10 @@
                 id="team-email"
                 type="email"
                 placeholder="example: doge@goodboi.com"
-                v-model.lazy="$v.metadata.email.$model"
+                v-model.lazy="$v.email.$model"
                 :class="{
                   input: true,
-                  invalid: $v.metadata.email.$error,
+                  invalid: $v.email.$error,
                 }"
               />
               <p class="input-notice">
@@ -56,7 +56,7 @@
               <p
                 :class="{
                   error: true,
-                  hidden: !$v.metadata.email.$error,
+                  hidden: !$v.email.$error,
                 }"
               >
                 This doesn't look like an email.
@@ -97,7 +97,6 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, email } from 'vuelidate/lib/validators'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
@@ -114,10 +113,11 @@ import {
 } from '@/store/mutation-types'
 
 import { Project } from '@/api/projects'
-import { Metadata } from '@/api/metadata'
+import { Metadata, MetadataValidations } from '@/api/metadata'
 import { DateTime } from 'luxon'
 import { addRecipient } from '@/api/recipient-registry-optimistic'
 import { waitForTransaction } from '@/utils/contracts'
+import { required, email } from 'vuelidate/lib/validators'
 
 @Component({
   components: {
@@ -132,23 +132,25 @@ import { waitForTransaction } from '@/utils/contracts'
     Loader,
   },
   validations: {
-    metadata: {
-      email: {
-        email,
-        required,
-      },
+    metadata: MetadataValidations,
+    email: {
+      email,
+      required: process.env.VUE_APP_GOOGLE_SPREADSHEET_ID
+        ? required
+        : () => true,
     },
   },
 })
 export default class JoinView extends mixins(validationMixin) {
   currentStep = 0
   steps = this.isEmailRequired
-    ? ['metadata', 'summary', 'email', 'submit']
-    : ['metadata', 'summary', 'submit']
+    ? ['project', 'summary', 'email', 'submit']
+    : ['project', 'summary', 'submit']
   stepNames = this.isEmailRequired
     ? ['Select a project metadata', 'Review', 'Email', 'Submit']
     : ['Select a project metadata', 'Review', 'Submit']
-  metadata = new Metadata({})
+  metadata = new Metadata({ furtherstep: 0 })
+  email = ''
   loading = true
   isWaiting = false
   txHash = ''
@@ -177,20 +179,55 @@ export default class JoinView extends mixins(validationMixin) {
     }
   }
 
+  isLinkStepValid(): boolean {
+    let isValid = false
+    const links = [
+      this.$v.metadata.githubUrl,
+      this.$v.metadata.radicleUrl,
+      this.$v.metadata.websiteUrl,
+      this.$v.metadata.twitterUrl,
+      this.$v.metadata.discordUrl,
+    ]
+
+    for (const link of links.filter(Boolean)) {
+      const isInvalid = link?.$invalid
+      const isEmpty = link?.$model && link?.$model.length === 0
+      if (isInvalid) {
+        return false
+      } else if (!isEmpty) {
+        isValid = true
+      }
+    }
+    return isValid
+  }
+
   isStepValid(step: number): boolean {
-    return this.steps[step] === 'metadata'
-      ? this.hasMetadata
-      : this.hasMetadata && this.isMetadataValid
+    let isValid = true
+    const stepName = this.steps[step]
+    if (stepName === 'summary') {
+      isValid = this.isLinkStepValid() && !this.$v.metadata.$invalid
+    } else if (stepName === 'email') {
+      isValid = !this.$v.email.$invalid
+    }
+
+    return isValid
   }
 
   isStepUnlocked(step: number): boolean {
     return step <= this.furthestStep
   }
 
-  saveFormData(): void {
+  saveFormData(updateFurthest?: boolean): void {
+    if (updateFurthest && this.currentStep + 1 > this.furthestStep) {
+      this.metadata.furthestStep = this.currentStep + 1
+    }
     this.$store.commit(SET_RECIPIENT_DATA, {
       updatedData: this.metadata,
     })
+  }
+
+  get furthestStep(): number {
+    return this.metadata.furthestStep || 0
   }
 
   get isEmailRequired(): boolean {
@@ -200,7 +237,7 @@ export default class JoinView extends mixins(validationMixin) {
   get isNavDisabled(): boolean {
     return (
       !this.isStepValid(this.currentStep) &&
-      this.currentStep !== this.furthestStep
+      this.currentStep !== this.metadata.furthestStep
     )
   }
 
@@ -208,42 +245,28 @@ export default class JoinView extends mixins(validationMixin) {
     return !!this.metadata.id
   }
 
-  get isMetadataValid(): boolean {
-    // TODO validate metadata
-    return true
-  }
-
-  get furthestStep(): number {
-    let furthest = 0
-    if (this.hasMetadata) {
-      furthest++
-      if (this.isMetadataValid) {
-        furthest++
-        if (
-          process.env.VUE_APP_GOOGLE_SPREADSHEET_ID &&
-          !this.$v.metadata.email?.$invalid
-        ) {
-          furthest++
-        }
-      }
-    }
-    return furthest
-  }
-
   handleMetadataSelected(metadata: Metadata): void {
     this.metadata = metadata
     const id = this.metadata.id || ''
+    this.saveFormData(true)
     this.$router.push({
       name: 'join-step',
       params: { step: 'summary', id },
     })
   }
 
-  async handleStepNav(step: number): Promise<void> {
+  async handleStepNav(step: number, updateFurthest?: boolean): Promise<void> {
     // If isNavDisabled => disable quick-links
     if (this.isNavDisabled) return
+
+    if (this.steps[step] === 'email') {
+      // save the email in metadata for later use
+      this.metadata.email = this.email
+      this.$v.metadata.$touch()
+    }
+
     // Save form data
-    this.saveFormData()
+    this.saveFormData(updateFurthest)
 
     if (step >= this.steps.length) {
       await this.addRecipient()
@@ -268,6 +291,10 @@ export default class JoinView extends mixins(validationMixin) {
     if (id) {
       if (id === this.$store.state.recipient?.id) {
         this.metadata = new Metadata(this.$store.state.recipient)
+        if (this.metadata.email) {
+          this.email = this.metadata.email
+          this.$v.email.$touch()
+        }
       } else {
         try {
           const metadata = await Metadata.get(id)
@@ -313,7 +340,7 @@ export default class JoinView extends mixins(validationMixin) {
         await waitForTransaction(
           addRecipient(
             recipientRegistryAddress,
-            new Metadata(recipient).toFormData(),
+            recipient,
             recipientRegistryInfo.deposit,
             currentUser.walletProvider.getSigner()
           ),
@@ -326,7 +353,7 @@ export default class JoinView extends mixins(validationMixin) {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(recipient),
+            body: JSON.stringify(recipient.toFormData()),
           })
         }
         this.$store.commit(RESET_RECIPIENT_DATA)

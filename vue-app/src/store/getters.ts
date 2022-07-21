@@ -232,7 +232,7 @@ const getters = {
     return !!state.recipientRegistryInfo?.requireRegistrationDeposit
   },
   addProjectUrl: (): string => {
-    return '/join/metadata'
+    return '/join/project'
   },
   maxRecipients: (state: RootState): number | undefined => {
     const { currentRound, maciFactory } = state

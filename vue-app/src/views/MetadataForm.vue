@@ -849,7 +849,7 @@ export default class MetadataForm extends mixins(validationMixin) {
       return
     }
     for (const field of Object.keys(this.form[stepName])) {
-      if (this.$v.form[stepName]?.[field].$dirty) {
+      if (this.$v.form[stepName]?.[field]?.$dirty) {
         this.form.dirtyFields.add(`${stepName}.${field}`)
       }
     }

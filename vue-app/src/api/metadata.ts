@@ -4,6 +4,7 @@ import { METADATA_NETWORKS, METADATA_SUBGRAPH_URL_PREFIX, chain } from './core'
 import { Project } from './projects'
 import { Ipfs } from './ipfs'
 import { MAX_RETRIES } from './core'
+import { required, url } from 'vuelidate/lib/validators'
 
 const subgraphUrl = (network: string): string =>
   `${METADATA_SUBGRAPH_URL_PREFIX}${network}`
@@ -44,6 +45,7 @@ export interface MetadataFormData {
   team: {
     name: string
     description: string
+    email: string
   }
   links: {
     github: string
@@ -61,6 +63,22 @@ export interface MetadataFormData {
   id?: string
   network?: string
   owner?: string
+}
+
+export const MetadataValidations = {
+  id: { required },
+  name: { required },
+  tagline: { required },
+  description: { required },
+  category: { required },
+  problemSpace: { required },
+  githubUrl: { url },
+  radicleUrl: { url },
+  websiteUrl: { url },
+  twitterUrl: { url },
+  discordUrl: { url },
+  bannerImageHash: { required },
+  thumbnailImageHash: { required },
 }
 
 /**
@@ -299,6 +317,7 @@ export class Metadata {
       team: {
         name: this.teamName || '',
         description: this.teamDescription || '',
+        email: this.email || '',
       },
       links: {
         github: this.githubUrl || '',

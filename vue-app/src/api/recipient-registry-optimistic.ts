@@ -59,7 +59,7 @@ export function formToRecipientData(
 
 export async function addRecipient(
   registryAddress: string,
-  recipientData: any,
+  recipientMetadata: Metadata,
   deposit: BigNumber,
   signer: Signer
 ): Promise<TransactionResponse> {
@@ -68,8 +68,7 @@ export async function addRecipient(
     OptimisticRecipientRegistry,
     signer
   )
-  const metadata = Metadata.fromFormData(recipientData)
-  const { id, address } = metadata.toProject()
+  const { id, address } = recipientMetadata.toProject()
   if (!id) {
     throw new Error('Missing metadata id')
   }
