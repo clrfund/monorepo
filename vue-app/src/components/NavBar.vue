@@ -8,13 +8,6 @@
       />
     </links>
     <div class="btn-row">
-      <a
-        href="/#/recipients"
-        v-if="$store.getters.isRecipientRegistryOwner"
-        class="btn-primary margin-right"
-      >
-        Manage Recipients
-      </a>
       <div>
         <img
           @click="toggleTheme()"
@@ -84,8 +77,13 @@ export default class NavBar extends Vue {
       emoji: '👾',
     },
     {
+      to: '/recipients',
+      text: 'Recipients',
+      emoji: '🚀',
+    },
+    {
       to: '/metadata',
-      text: 'Manage metadata',
+      text: 'Metadata',
       emoji: '📃',
     },
   ]
