@@ -221,60 +221,26 @@
                   claim funds. This doesn't have to be the same address as the
                   one you use to send your metadata transaction.
                 </p>
-                <div
-                  v-for="(address, index) in form.fund.receivingAddresses"
-                  :key="index"
-                >
-                  <div key="index" class="address-container">
-                    <img
-                      src="@/assets/remove.svg"
-                      alt="remove"
-                      class="remove-icon"
-                      @click="removeAddress(index)"
-                    />
-                    <span class="input-description">
-                      {{ address }}
-                    </span>
-                  </div>
-                </div>
                 <div class="input-row">
-                  <dropdown
-                    :options="sortedNetworks"
-                    :selected="selectedNetwork"
-                    @change="handleDropdownClick"
-                  />
                   <input
                     id="fund-address"
                     placeholder="address, ex: 0x123456789..."
-                    v-model.lazy="$v.addressName.$model"
-                    @focus="$v.addressName.$reset"
+                    v-model.lazy="$v.receivingAddress.$model"
+                    @focus="$v.receivingAddress.$reset"
                     :class="{
                       input: true,
-                      invalid: $v.addressName.$error,
+                      invalid: $v.receivingAddress.$error,
                     }"
                   />
-                  <button
-                    @click="
-                      addAddress({
-                        network: selectedNetwork,
-                        address: addressName,
-                      })
-                    "
-                    class="btn-secondary"
-                    :disabled="$v.addressName.$invalid || !selectedNetwork"
-                  >
-                    Add
-                  </button>
                 </div>
                 <p
                   :class="{
                     error: true,
-                    hidden: !$v.addressName.$error,
+                    hidden: !$v.receivingAddress.$error,
                   }"
                 >
                   Enter a valid Ethereum 0x address
                 </p>
-                <!-- TODO: only validate after user removes focus on input -->
               </div>
               <div class="form-background">
                 <label for="fund-plans" class="input-label"
@@ -573,19 +539,14 @@ import MetadataViewer from '@/views/MetadataViewer.vue'
 import Dropdown from '@/components/Dropdown.vue'
 import { Metadata, MetadataFormData } from '@/api/metadata'
 import { LinkInfo } from '@/api/types'
+import { ReceivingAddress } from '@/api/receiving-address'
 import { Prop, Watch } from 'vue-property-decorator'
 import { chain, TransactionProgress } from '@/api/core'
 
 import { SET_METADATA } from '@/store/mutation-types'
 import { Project, projectExists } from '@/api/projects'
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 import { ContractReceipt, ContractTransaction } from 'ethers'
 import { waitForTransaction } from '@/utils/contracts'
-
-type RecievingAddress = {
-  network: string
-  address: string
-}
 
 @Component({
   components: {
@@ -607,7 +568,7 @@ type RecievingAddress = {
     TransactionResult,
   },
   validations: {
-    addressName: { required, validEthAddress: isAddress },
+    receivingAddress: { required, validEthAddress: isAddress },
     form: {
       project: {
         name: { required },
@@ -663,14 +624,12 @@ export default class MetadataForm extends mixins(validationMixin) {
 
   form: MetadataFormData = new Metadata({}).toFormData()
   projectExists = false
-  addressName = ''
+  receivingAddress = ''
   currentStep = 0
   steps: string[] = []
   stepNames: string[] = []
   showSummaryPreview = false
   loading = true
-  networks: string[] = []
-  selectedNetwork = ''
   receipt: { hash: string; chainId: number; id: string } | null = null
 
   progress: TransactionProgress | null = null
@@ -703,8 +662,8 @@ export default class MetadataForm extends mixins(validationMixin) {
     this.currentStep = currentStep
     await this.loadFormData()
     this.form = this.$store.state.metadata
+    this.loadReceivingAddress(this.form)
     this.loading = false
-    this.loadNetworks()
 
     // check if project exists so we can display add/view
     // project button after successfully submitting the metadata transaction
@@ -729,50 +688,38 @@ export default class MetadataForm extends mixins(validationMixin) {
     }
   }
 
-  get sortedNetworks(): string[] {
-    return this.networks.sort()
-  }
-
   @Watch('$web3.user')
   resetError(): void {
     this.txError = ''
   }
 
-  handleDropdownClick(selection: string): void {
-    this.selectedNetwork = selection
-  }
-
-  addAddress({ network, address }: RecievingAddress): void {
-    this.$v.addressName.$touch()
-
-    if (!this.$v.addressName.$invalid && this.selectedNetwork) {
-      this.form.fund.receivingAddresses.push(`${network}:${address}`)
+  updateFundReceivingAddress(): void {
+    if (!this.$v.receivingAddress.$invalid) {
+      const addresses = ReceivingAddress.fromArray(
+        this.form.fund.receivingAddresses
+      )
+      addresses[chain.shortName] = this.receivingAddress
+      this.form.fund.receivingAddresses = ReceivingAddress.toArray(addresses)
       this.$v.form.fund?.receivingAddresses.$touch()
-      this.networks = this.networks.filter((net) => net !== network)
-      this.selectedNetwork = this.networks[0]
     }
   }
 
-  loadNetworks(): void {
-    const exclusion = new Set(
-      this.form.fund.receivingAddresses.map((addr) => {
-        const [network] = addr.split(':')
-        return network
-      })
+  loadReceivingAddress(formData: MetadataFormData): void {
+    const fundingAddresses = formData.fund.receivingAddresses.reduce(
+      (addresses, chainAddressString) => {
+        const chainAddress = chainAddressString.split(':')
+        if (chainAddress.length == 2) {
+          addresses[chainAddress[0]] = chainAddress[1]
+        }
+        return addresses
+      },
+      {}
     )
-    // filter out the networks already in the receiving list
-    this.networks = Object.values(CHAIN_INFO)
-      .map(({ shortName }) => shortName)
-      .filter((name) => {
-        return !exclusion.has(name)
-      })
-    this.selectedNetwork = this.networks[0] || ''
-  }
 
-  removeAddress(index): void {
-    this.form.fund.receivingAddresses.splice(index, 1)
-    this.$v.form.fund?.receivingAddresses.$touch()
-    this.loadNetworks()
+    if (fundingAddresses[chain.shortName]) {
+      this.receivingAddress = fundingAddresses[chain.shortName]
+      this.$v.receivingAddress.$touch()
+    }
   }
 
   initFurthestStep(): void {
@@ -832,6 +779,8 @@ export default class MetadataForm extends mixins(validationMixin) {
       this.form.furthestStep = this.currentStep + 1
     }
     if (typeof this.currentStep !== 'number') return
+
+    this.updateFundReceivingAddress()
 
     this.updateDirtyFlags()
 
@@ -1004,7 +953,7 @@ export default class MetadataForm extends mixins(validationMixin) {
 
 .input-row {
   display: grid;
-  grid-template-columns: 130px 2fr auto;
+  grid-template-columns: 2fr auto;
   column-gap: 10px;
   & > * {
     margin: 8px 0;
