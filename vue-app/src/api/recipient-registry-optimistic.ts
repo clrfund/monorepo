@@ -13,6 +13,7 @@ import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
 import { Project } from './projects'
 import sdk from '@/graphql/sdk'
 import { Recipient } from '@/graphql/API'
+import { hasDateElapsed } from '@/utils/dates'
 
 export interface RegistryInfo {
   deposit: BigNumber
@@ -65,6 +66,7 @@ enum RequestTypeCode {
 
 export enum RequestStatus {
   Submitted = 'Needs review',
+  Accepted = 'Accepted',
   Rejected = 'Rejected',
   Executed = 'Live',
   Removed = 'Removed',
@@ -198,7 +200,9 @@ export async function getRequests(
       transactionHash:
         recipient.requestResolvedHash || recipient.requestSubmittedHash,
       type: RequestType[RequestTypeCode[requestType]],
-      status: RequestStatus.Submitted,
+      status: hasDateElapsed(acceptanceDate)
+        ? RequestStatus.Accepted
+        : RequestStatus.Submitted,
       acceptanceDate,
       recipientId: recipient.id,
       recipient: recipient.recipientAddress,
