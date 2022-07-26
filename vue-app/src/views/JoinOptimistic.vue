@@ -113,7 +113,7 @@ import {
 } from '@/store/mutation-types'
 
 import { Project } from '@/api/projects'
-import { Metadata, MetadataValidations } from '@/api/metadata'
+import { Metadata, MetadataFormValidations } from '@/api/metadata'
 import { DateTime } from 'luxon'
 import { addRecipient } from '@/api/recipient-registry-optimistic'
 import { waitForTransaction } from '@/utils/contracts'
@@ -132,7 +132,7 @@ import { required, email } from 'vuelidate/lib/validators'
     Loader,
   },
   validations: {
-    metadata: MetadataValidations,
+    form: MetadataFormValidations,
     email: {
       email,
       required: process.env.VUE_APP_GOOGLE_SPREADSHEET_ID
@@ -149,7 +149,7 @@ export default class JoinView extends mixins(validationMixin) {
   stepNames = this.isEmailRequired
     ? ['Select a project metadata', 'Review', 'Email', 'Submit']
     : ['Select a project metadata', 'Review', 'Submit']
-  metadata = new Metadata({ furtherstep: 0 })
+  form = new Metadata({ furtherstep: 0 }).toFormData()
   email = ''
   loading = true
   isWaiting = false
@@ -179,19 +179,19 @@ export default class JoinView extends mixins(validationMixin) {
     }
   }
 
+  get metadata(): Metadata {
+    return Metadata.fromFormData(this.form)
+  }
+
+  // Check that at least one link is not empty && no links are invalid
   isLinkStepValid(): boolean {
     let isValid = false
-    const links = [
-      this.$v.metadata.githubUrl,
-      this.$v.metadata.radicleUrl,
-      this.$v.metadata.websiteUrl,
-      this.$v.metadata.twitterUrl,
-      this.$v.metadata.discordUrl,
-    ]
-
-    for (const link of links.filter(Boolean)) {
-      const isInvalid = link?.$invalid
-      const isEmpty = link?.$model && link?.$model.length === 0
+    const links = Object.keys(this.form.links)
+    for (const link of links) {
+      const linkData = this.$v.form.links?.[link]
+      if (!linkData) return false
+      const isInvalid = linkData.$invalid
+      const isEmpty = linkData.$model.length === 0
       if (isInvalid) {
         return false
       } else if (!isEmpty) {
@@ -202,10 +202,14 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   isStepValid(step: number): boolean {
+    if (this.isWaiting) {
+      return false
+    }
+
     let isValid = true
     const stepName = this.steps[step]
     if (stepName === 'summary') {
-      isValid = this.isLinkStepValid() && !this.$v.metadata.$invalid
+      isValid = this.isLinkStepValid() && !this.$v.form.$invalid
     } else if (stepName === 'email') {
       isValid = !this.$v.email.$invalid
     }
@@ -219,15 +223,15 @@ export default class JoinView extends mixins(validationMixin) {
 
   saveFormData(updateFurthest?: boolean): void {
     if (updateFurthest && this.currentStep + 1 > this.furthestStep) {
-      this.metadata.furthestStep = this.currentStep + 1
+      this.form.furthestStep = this.currentStep + 1
     }
     this.$store.commit(SET_RECIPIENT_DATA, {
-      updatedData: this.metadata,
+      updatedData: this.form,
     })
   }
 
   get furthestStep(): number {
-    return this.metadata.furthestStep || 0
+    return this.form.furthestStep || 0
   }
 
   get isEmailRequired(): boolean {
@@ -237,17 +241,17 @@ export default class JoinView extends mixins(validationMixin) {
   get isNavDisabled(): boolean {
     return (
       !this.isStepValid(this.currentStep) &&
-      this.currentStep !== this.metadata.furthestStep
+      this.currentStep !== this.form.furthestStep
     )
   }
 
   get hasMetadata(): boolean {
-    return !!this.metadata.id
+    return !!this.form.id
   }
 
   handleMetadataSelected(metadata: Metadata): void {
-    this.metadata = metadata
-    const id = this.metadata.id || ''
+    this.form = metadata.toFormData()
+    const id = metadata.id || ''
     this.saveFormData(true)
     this.$router.push({
       name: 'join-step',
@@ -261,8 +265,8 @@ export default class JoinView extends mixins(validationMixin) {
 
     if (this.steps[step] === 'email') {
       // save the email in metadata for later use
-      this.metadata.email = this.email
-      this.$v.metadata.$touch()
+      this.form.team.email = this.email
+      this.$v.form.$touch()
     }
 
     // Save form data
@@ -273,7 +277,7 @@ export default class JoinView extends mixins(validationMixin) {
     } else {
       // Navigate
       if (this.isStepUnlocked(step)) {
-        const id = this.metadata.id || ''
+        const id = this.form.id || ''
         this.$router.push({
           name: 'join-step',
           params: {
@@ -290,16 +294,16 @@ export default class JoinView extends mixins(validationMixin) {
 
     if (id) {
       if (id === this.$store.state.recipient?.id) {
-        this.metadata = new Metadata(this.$store.state.recipient)
-        if (this.metadata.email) {
-          this.email = this.metadata.email
+        this.form = this.$store.state.recipient
+        if (this.form.team.email) {
+          this.email = this.form.team.email
           this.$v.email.$touch()
         }
       } else {
         try {
           const metadata = await Metadata.get(id)
           if (metadata) {
-            this.metadata = metadata
+            this.form = metadata.toFormData()
             this.saveFormData(true)
           }
         } catch (err) {
@@ -353,7 +357,7 @@ export default class JoinView extends mixins(validationMixin) {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(recipient.toFormData()),
+            body: JSON.stringify(recipient),
           })
         }
         this.$store.commit(RESET_RECIPIENT_DATA)

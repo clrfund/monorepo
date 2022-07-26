@@ -3,8 +3,11 @@
     <div v-if="currentUser">
       <div>
         <div v-if="isWaiting" class="mt2">
-          <div v-if="progress">
-            Waiting for block {{ progress.current }} of {{ progress.last }}...
+          <div v-if="txHash">
+            <template v-if="progress">
+              Waiting for block {{ progress.current }} of {{ progress.last }}...
+            </template>
+            <template v-else> Waiting for transaction to be mined... </template>
           </div>
           <div v-else>Check your wallet for a prompt...</div>
         </div>
@@ -16,12 +19,27 @@
       </div>
       <div class="connected">
         <div class="cta">
-          <div v-if="isWaiting">
-            <loader class="button-loader" />
-          </div>
+          <template v-if="showButton">
+            <button
+              @click="buttonHandler()"
+              class="btn-action"
+              :disabled="isWaiting"
+            >
+              <div v-if="isWaiting">
+                <loader class="button-loader" />
+              </div>
+              <div v-else>Submit</div>
+            </button>
+          </template>
+          <template v-else>
+            <div v-if="isWaiting">
+              <loader class="button-loader" />
+            </div>
+          </template>
         </div>
       </div>
     </div>
+    <wallet-widget class="m2" v-if="!currentUser && showButton" />
   </div>
 </template>
 
@@ -29,15 +47,12 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { MetadataFormData } from '@/api/metadata'
 import { User } from '@/api/user'
 import { chain, TransactionProgress } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
-
-import { ContractTransaction, ContractReceipt } from '@ethersproject/contracts'
 
 @Component({
   components: {
@@ -47,17 +62,12 @@ import { ContractTransaction, ContractReceipt } from '@ethersproject/contracts'
   },
 })
 export default class MetadataSubmissionWidget extends Vue {
-  @Prop() buttonLabel!: string
-  @Prop() form!: MetadataFormData
-  @Prop() onSubmit!: (
-    form: MetadataFormData,
-    provider: any
-  ) => Promise<ContractTransaction>
-  @Prop() onSuccess!: (receipt: ContractReceipt, chainId: number) => void
   @Prop() isWaiting!: boolean
   @Prop({ default: null }) progress!: TransactionProgress | null
   @Prop({ default: '' }) txHash!: string
   @Prop({ default: '' }) txError!: string
+  @Prop({ default: null }) buttonHandler!: () => void
+  @Prop({ default: false }) disableButton!: boolean
 
   get currentUser(): User | null {
     return this.$store.state.currentUser
@@ -69,6 +79,9 @@ export default class MetadataSubmissionWidget extends Vue {
 
   get hasTxError(): boolean {
     return !!this.txError
+  }
+  get showButton(): boolean {
+    return !!this.buttonHandler
   }
 }
 </script>

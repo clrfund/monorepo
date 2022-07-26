@@ -225,18 +225,20 @@
                   <input
                     id="fund-address"
                     placeholder="address, ex: 0x123456789..."
-                    v-model.lazy="$v.receivingAddress.$model"
-                    @focus="$v.receivingAddress.$reset"
+                    v-model.lazy="
+                      $v.form.fund.currentChainReceivingAddress.$model
+                    "
+                    @focus="$v.form.fund.currentChainReceivingAddress.$reset"
                     :class="{
                       input: true,
-                      invalid: $v.receivingAddress.$error,
+                      invalid: $v.form.fund.currentChainReceivingAddress.$error,
                     }"
                   />
                 </div>
                 <p
                   :class="{
                     error: true,
-                    hidden: !$v.receivingAddress.$error,
+                    hidden: !$v.form.fund.currentChainReceivingAddress.$error,
                   }"
                 >
                   Enter a valid Ethereum 0x address
@@ -480,17 +482,7 @@
               blockchain.
             </p>
             <div class="inputs">
-              <transaction-result
-                v-if="receipt"
-                :hash="receipt.hash"
-                :chainId="receipt.chainId"
-                :buttons="redirectButtons"
-              />
               <metadata-submission-widget
-                v-else
-                :form="form"
-                :onSuccess="onSuccess"
-                :onSubmit="onSubmit"
                 :txHash="txHash"
                 :isWaiting="isWaiting"
                 :progress="progress"
@@ -518,9 +510,6 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, minLength, maxLength, url } from 'vuelidate/lib/validators'
-import * as isIPFS from 'is-ipfs'
-import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
@@ -537,15 +526,19 @@ import TransactionResult from '@/components/TransactionResult.vue'
 import MetadataList from '@/views/MetadataList.vue'
 import MetadataViewer from '@/views/MetadataViewer.vue'
 import Dropdown from '@/components/Dropdown.vue'
-import { Metadata, MetadataFormData } from '@/api/metadata'
+import {
+  Metadata,
+  MetadataFormData,
+  MetadataFormValidations,
+} from '@/api/metadata'
 import { LinkInfo } from '@/api/types'
 import { ReceivingAddress } from '@/api/receiving-address'
 import { Prop, Watch } from 'vue-property-decorator'
 import { chain, TransactionProgress } from '@/api/core'
 
-import { SET_METADATA } from '@/store/mutation-types'
+import { SET_METADATA, RESET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { Project, projectExists } from '@/api/projects'
-import { ContractReceipt, ContractTransaction } from 'ethers'
+import { ContractTransaction } from 'ethers'
 import { waitForTransaction } from '@/utils/contracts'
 
 @Component({
@@ -568,48 +561,7 @@ import { waitForTransaction } from '@/utils/contracts'
     TransactionResult,
   },
   validations: {
-    receivingAddress: { required, validEthAddress: isAddress },
-    form: {
-      project: {
-        name: { required },
-        tagline: {
-          required,
-          maxLength: maxLength(140),
-        },
-        description: { required },
-        category: { required },
-        problemSpace: { required },
-      },
-      fund: {
-        receivingAddresses: {
-          required,
-          minLength: minLength(1),
-        },
-        resolvedAddress: {},
-        plans: { required },
-      },
-      team: {
-        name: {},
-        description: {},
-      },
-      links: {
-        github: { url },
-        radicle: { url },
-        website: { url },
-        twitter: { url },
-        discord: { url },
-      },
-      image: {
-        bannerHash: {
-          required,
-          validIpfsHash: isIPFS.cid,
-        },
-        thumbnailHash: {
-          required,
-          validIpfsHash: isIPFS.cid,
-        },
-      },
-    },
+    form: MetadataFormValidations,
   },
 })
 export default class MetadataForm extends mixins(validationMixin) {
@@ -622,7 +574,7 @@ export default class MetadataForm extends mixins(validationMixin) {
     provider: any
   ) => Promise<ContractTransaction>
 
-  form: MetadataFormData = new Metadata({}).toFormData()
+  form = new Metadata({}).toFormData()
   projectExists = false
   receivingAddress = ''
   currentStep = 0
@@ -660,9 +612,7 @@ export default class MetadataForm extends mixins(validationMixin) {
     this.steps = steps
     this.stepNames = stepNames
     this.currentStep = currentStep
-    await this.loadFormData()
-    this.form = this.$store.state.metadata
-    this.loadReceivingAddress(this.form)
+    await this.populateForm()
     this.loading = false
 
     // check if project exists so we can display add/view
@@ -693,32 +643,19 @@ export default class MetadataForm extends mixins(validationMixin) {
     this.txError = ''
   }
 
+  async populateForm(): Promise<void> {
+    await this.loadFormData()
+    this.form = this.$store.state.metadata
+  }
+
   updateFundReceivingAddress(): void {
-    if (!this.$v.receivingAddress.$invalid) {
+    if (!this.$v.form.fund?.$invalid) {
       const addresses = ReceivingAddress.fromArray(
         this.form.fund.receivingAddresses
       )
-      addresses[chain.shortName] = this.receivingAddress
+      addresses[chain.shortName] = this.form.fund.currentChainReceivingAddress
       this.form.fund.receivingAddresses = ReceivingAddress.toArray(addresses)
       this.$v.form.fund?.receivingAddresses.$touch()
-    }
-  }
-
-  loadReceivingAddress(formData: MetadataFormData): void {
-    const fundingAddresses = formData.fund.receivingAddresses.reduce(
-      (addresses, chainAddressString) => {
-        const chainAddress = chainAddressString.split(':')
-        if (chainAddress.length == 2) {
-          addresses[chainAddress[0]] = chainAddress[1]
-        }
-        return addresses
-      },
-      {}
-    )
-
-    if (fundingAddresses[chain.shortName]) {
-      this.receivingAddress = fundingAddresses[chain.shortName]
-      this.$v.receivingAddress.$touch()
     }
   }
 
@@ -763,6 +700,10 @@ export default class MetadataForm extends mixins(validationMixin) {
   }
 
   isStepValid(step: number): boolean {
+    if (this.isWaiting) {
+      return false
+    }
+
     const stepName: string = this.steps[step]
     if (stepName === 'links') {
       return this.isLinkStepValid()
@@ -832,25 +773,29 @@ export default class MetadataForm extends mixins(validationMixin) {
       try {
         this.isWaiting = true
         const transaction = this.onSubmit(this.form, walletProvider)
-        const receipt = await waitForTransaction(
-          transaction,
-          (hash) => (this.txHash = hash)
-        )
+        this.txHash = (await transaction).hash
+        const receipt = await waitForTransaction(transaction)
 
+        this.updateProgress(0, receipt.blockNumber)
         await Metadata.waitForBlock(
           receipt.blockNumber,
           chain.name,
           0,
           this.updateProgress
         )
+
         this.isWaiting = false
 
-        if (this.onSuccess) {
-          this.onSuccess(receipt, this.$web3.chainId)
-        }
+        // reset so that add project will pick up the latest metadata
+        this.$store.commit(RESET_RECIPIENT_DATA)
+
+        this.$router.push({
+          name: 'metadata-success',
+          params: { hash: this.txHash, id: this.metadataId },
+        })
       } catch (error) {
         this.isWaiting = false
-        this.txError = error.message
+        this.txError = (error as Error).message
         return
       }
     }
@@ -874,15 +819,10 @@ export default class MetadataForm extends mixins(validationMixin) {
     }
   }
 
-  onSuccess(txReceipt: ContractReceipt, chainId: number): void {
-    const { transactionHash: hash, from: owner } = txReceipt
-    let id = this.form.id
-    if (!id) {
-      const name = this.form.project.name || ''
-      id = Metadata.makeMetadataId(name, owner)
-    }
-
-    this.receipt = { hash, id, chainId }
+  get metadataId(): string {
+    const projectName = this.form.project.name || ''
+    const owner = this.form.owner || ''
+    return this.form.id || Metadata.makeMetadataId(projectName, owner)
   }
 
   get metadataInterface(): Metadata {

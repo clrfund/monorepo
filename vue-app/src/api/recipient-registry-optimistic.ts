@@ -6,9 +6,8 @@ import {
 import { getEventArg } from '@/utils/contracts'
 
 import { OptimisticRecipientRegistry } from './abi'
-import { RecipientApplicationData } from './recipient'
 import { RecipientRegistryInterface } from './types'
-import { Metadata } from './metadata'
+import { MetadataFormData } from './metadata'
 import { chain } from './core'
 
 // TODO merge this with `Project` inteface
@@ -33,33 +32,9 @@ export interface RecipientData {
   thumbnailImageHash?: string
 }
 
-export function formToRecipientData(
-  data: RecipientApplicationData
-): RecipientData {
-  const { project, fund, team, links, image } = data
-  return {
-    address: fund.resolvedAddress,
-    name: project.name,
-    tagline: project.tagline,
-    description: project.description,
-    category: project.category,
-    problemSpace: project.problemSpace,
-    plans: fund.plans,
-    teamName: team.name,
-    teamDescription: team.description,
-    githubUrl: links.github,
-    radicleUrl: links.radicle,
-    websiteUrl: links.website,
-    twitterUrl: links.twitter,
-    discordUrl: links.discord,
-    bannerImageHash: image.bannerHash,
-    thumbnailImageHash: image.thumbnailHash,
-  }
-}
-
 export async function addRecipient(
   registryAddress: string,
-  recipientMetadata: Metadata,
+  recipientMetadata: MetadataFormData,
   deposit: BigNumber,
   signer: Signer
 ): Promise<TransactionResponse> {
@@ -68,11 +43,12 @@ export async function addRecipient(
     OptimisticRecipientRegistry,
     signer
   )
-  const { id, address } = recipientMetadata.toProject()
+  const { id, fund } = recipientMetadata
   if (!id) {
     throw new Error('Missing metadata id')
   }
 
+  const { currentChainReceivingAddress: address } = fund
   if (!address) {
     throw new Error(`Missing recipient address for the ${chain.name} network`)
   }

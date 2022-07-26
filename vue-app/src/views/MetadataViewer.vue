@@ -31,7 +31,7 @@
         <div v-if="!showSummaryPreview">
           <div class="form-background">
             <div class="summary-section-header">
-              <h3 class="step-subtitle">About the metadata</h3>
+              <h3 class="step-subtitle">About the project</h3>
               <links
                 v-if="isAuthorized"
                 :to="editLink('project')"
@@ -41,7 +41,10 @@
             </div>
             <div class="summary">
               <h4 class="read-only-title">Name</h4>
-              <div class="data">{{ metadata.name }}</div>
+              <div class="data">{{ form.project.name }}</div>
+              <div v-if="$v.form.project.name.$invalid" class="error">
+                Project name is required.
+              </div>
             </div>
             <div class="summary" v-if="isDeleted">
               <h4 class="read-only-title">Deleted</h4>
@@ -53,7 +56,7 @@
                 <address-widget
                   v-if="metadata.owner"
                   :address="metadata.owner"
-                  :chainId="getChainId(metadata.network)"
+                  :chainId="currentChainId"
                 />
                 <div class="data" v-else>Not provided</div>
               </div>
@@ -64,19 +67,36 @@
             </div>
             <div class="summary">
               <h4 class="read-only-title">Tagline</h4>
-              <div class="data">{{ metadata.tagline }}</div>
+              <div class="data">{{ form.project.tagline }}</div>
+              <div v-if="$v.form.project.tagline.$invalid">
+                <div v-if="!$v.form.project.tagline.required" class="error">
+                  Tagline is required.
+                </div>
+                <div v-else class="error">
+                  Project tagline must be less than 140 characters.
+                </div>
+              </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Description</h4>
-              <div class="data">{{ metadata.description }}</div>
+              <div class="data">{{ form.project.description }}</div>
+              <div v-if="!$v.form.project.description.required" class="error">
+                Description is required.
+              </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Category</h4>
-              <div class="data">{{ metadata.category }}</div>
+              <div class="data">{{ form.project.category }}</div>
+              <div v-if="!$v.form.project.category.required" class="error">
+                Category is required.
+              </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Problem space</h4>
-              <div class="data">{{ metadata.problemSpace }}</div>
+              <div class="data">{{ form.project.problemSpace }}</div>
+              <div v-if="!$v.form.project.problemSpace.required" class="error">
+                Problem space is required.
+              </div>
             </div>
           </div>
           <div class="form-background">
@@ -90,19 +110,29 @@
               /></links>
             </div>
             <div class="summary">
-              <h4 class="read-only-title">Ethereum addresses</h4>
-              <div
-                v-for="({ address, chainId }, index) in receivingAddresses"
-                :key="index"
-              >
-                <div key="index" class="data">
-                  <address-widget :address="address" :chainId="chainId" />
+              <h4 class="read-only-title">Receiving address</h4>
+              <div key="index" class="data">
+                <address-widget
+                  :address="form.fund.currentChainReceivingAddress"
+                  :chainId="currentChainId"
+                />
+              </div>
+              <div v-if="$v.form.fund.currentChainReceivingAddress.$invalid">
+                <div
+                  v-if="!$v.form.fund.currentChainReceivingAddress.required"
+                  class="error"
+                >
+                  Receiving address is required.
                 </div>
+                <div v-else class="error">Invalid Ethereum 0x address</div>
               </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Funding plans</h4>
-              <div class="data">{{ metadata.plans }}</div>
+              <div class="data">{{ form.fund.plans }}</div>
+              <div v-if="!$v.form.fund.plans.required" class="error">
+                Funding plans is required.
+              </div>
             </div>
           </div>
           <div class="form-background">
@@ -117,15 +147,13 @@
             </div>
             <div class="summary">
               <h4 class="read-only-title">Team name</h4>
-              <div class="data">{{ metadata.teamName }}</div>
-              <div class="data" v-if="!metadata.teamName">Not provided</div>
+              <div class="data">{{ form.team.name }}</div>
+              <div class="data" v-if="!form.team.name">Not provided</div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Team description</h4>
-              <div class="data">{{ metadata.teamDescription }}</div>
-              <div class="data" v-if="!metadata.teamDescription">
-                Not provided
-              </div>
+              <div class="data">{{ form.team.description }}</div>
+              <div class="data" v-if="!form.team.description">Not provided</div>
             </div>
           </div>
           <div class="form-background">
@@ -138,70 +166,88 @@
                 >Edit <img width="16px" src="@/assets/edit.svg"
               /></links>
             </div>
+            <div class="error" v-if="noLinkProvided">
+              At least one link is required.
+            </div>
             <div class="summary">
               <h4 class="read-only-title">GitHub</h4>
               <div class="data">
-                {{ metadata.githubUrl }}
+                {{ form.links.github }}
                 <links
-                  v-if="metadata.githubUrl"
-                  :to="metadata.githubUrl"
+                  v-if="form.links.github"
+                  :to="form.links.github"
                   :hideArrow="true"
                   ><img width="16px" src="@/assets/link.svg"
                 /></links>
               </div>
-              <div class="data" v-if="!metadata.githubUrl">Not provided</div>
+              <div class="data" v-if="!form.links.github">Not provided</div>
+              <div class="error" v-if="$v.form.links.github.$invalid">
+                This doesn't look like a valid URL.
+              </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Twitter</h4>
               <div class="data">
-                {{ metadata.twitterUrl }}
+                {{ form.links.twitter }}
                 <links
-                  v-if="metadata.twitterUrl"
-                  :to="metadata.twitterUrl"
+                  v-if="form.links.twitter"
+                  :to="form.links.twitter"
                   :hideArrow="true"
                   ><img width="16px" src="@/assets/link.svg"
                 /></links>
               </div>
-              <div class="data" v-if="!metadata.twitterUrl">Not provided</div>
+              <div class="data" v-if="!form.links.twitter">Not provided</div>
+              <div class="error" v-if="$v.form.links.twitter.$invalid">
+                This doesn't look like a valid URL.
+              </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Website</h4>
               <div class="data" key="">
-                {{ metadata.websiteUrl }}
+                {{ form.links.website }}
                 <links
-                  v-if="metadata.websiteUrl"
-                  :to="metadata.websiteUrl"
+                  v-if="form.links.website"
+                  :to="form.links.website"
                   :hideArrow="true"
                   ><img width="16px" src="@/assets/link.svg"
                 /></links>
               </div>
-              <div class="data" v-if="!metadata.websiteUrl">Not provided</div>
+              <div class="data" v-if="!form.links.website">Not provided</div>
+              <div class="error" v-if="$v.form.links.twitter.$invalid">
+                This doesn't look like a valid URL.
+              </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Discord</h4>
               <div class="data">
-                {{ metadata.discordUrl }}
+                {{ form.links.discord }}
                 <links
-                  v-if="metadata.discordUrl"
-                  :to="metadata.discordUrl"
+                  v-if="form.links.discord"
+                  :to="form.links.discord"
                   :hideArrow="true"
                   ><img width="16px" src="@/assets/link.svg"
                 /></links>
               </div>
-              <div class="data" v-if="!metadata.discordUrl">Not provided</div>
+              <div class="data" v-if="!form.links.discord">Not provided</div>
+              <div class="error" v-if="$v.form.links.discord.$invalid">
+                This doesn't look like a valid URL.
+              </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Radicle</h4>
               <div class="data">
-                {{ metadata.radicleUrl }}
+                {{ form.links.radicle }}
                 <links
-                  v-if="metadata.radicleUrl"
-                  :to="metadata.radicleUrl"
+                  v-if="form.links.radicle"
+                  :to="form.links.radicle"
                   :hideArrow="true"
                   ><img width="16px" src="@/assets/link.svg"
                 /></links>
               </div>
               <div class="data" v-if="!metadata.radicleUrl">Not provided</div>
+              <div class="error" v-if="$v.form.links.radicle.$invalid">
+                This doesn't look like a valid URL.
+              </div>
             </div>
           </div>
           <div class="form-background">
@@ -218,20 +264,36 @@
               <h4 class="read-only-title">Banner</h4>
               <div class="data">
                 <ipfs-copy-widget
-                  v-if="metadata.bannerImageHash"
-                  :hash="metadata.bannerImageHash"
+                  v-if="form.image.bannerHash"
+                  :hash="form.image.bannerHash"
                 />
                 <div class="data" v-else>Not provided</div>
+              </div>
+              <div v-if="$v.form.image.bannerHash.$invalid">
+                <div class="error" v-if="!$v.form.image.bannerHash.required">
+                  Banner image is required.
+                </div>
+                <div class="error" v-else>
+                  This doesn't look like a valid IPFS hash.
+                </div>
               </div>
             </div>
             <div class="summary">
               <h4 class="read-only-title">Thumbnail</h4>
               <div class="data">
                 <ipfs-copy-widget
-                  v-if="metadata.thumbnailImageHash"
-                  :hash="metadata.thumbnailImageHash"
+                  v-if="form.image.thumbnailHash"
+                  :hash="form.image.thumbnailHash"
                 />
                 <div class="data" v-else>Not provided</div>
+              </div>
+              <div v-if="$v.form.image.thumbnailHash.$invalid">
+                <div class="error" v-if="!$v.form.image.thumbnailHash.required">
+                  Thumbnail image is required.
+                </div>
+                <div class="error" v-else>
+                  This doesn't look like a valid IPFS hash.
+                </div>
               </div>
             </div>
           </div>
@@ -239,16 +301,18 @@
             <box>
               <div class="delete-title">Delete metadata</div>
               <transaction-result
-                v-if="deleteHash"
-                :hash="deleteHash"
-                :chainId="deleteChainId"
+                v-if="!!txHash && !isWaiting"
+                :hash="txHash"
                 :buttons="metadataRegistryButton"
               />
               <metadata-submission-widget
                 v-else
-                :form="formData"
-                :onSubmit="onDeleteSubmit"
-                :onSuccess="onDeleteSuccess"
+                :buttonHandler="handleDelete"
+                :txHash="txHash"
+                :isWaiting="isWaiting"
+                :progress="progress"
+                :txError="txError"
+                :disableButton="isWaiting"
               />
             </box>
           </div>
@@ -271,14 +335,18 @@ import Links from '@/components/Links.vue'
 import MetadataSubmissionWidget from '@/components/MetadataSubmissionWidget.vue'
 import Box from '@/components/Box.vue'
 import TransactionResult from '@/components/TransactionResult.vue'
-import { Metadata, MetadataFormData } from '@/api/metadata'
+import {
+  Metadata,
+  MetadataFormData,
+  MetadataFormValidations,
+} from '@/api/metadata'
 import { Project } from '@/api/projects'
-import { chain } from '@/api/core'
+import { chain, TransactionProgress } from '@/api/core'
 import { LinkInfo } from '@/api/types'
 import { isSameAddress } from '@/utils/accounts'
+import { waitForTransaction } from '@/utils/contracts'
 
 import { CHAIN_INFO, CHAIN_ID } from '@/plugins/Web3/constants/chains'
-import { ContractTransaction, ContractReceipt } from 'ethers'
 import { SET_METADATA } from '@/store/mutation-types'
 
 @Component({
@@ -293,19 +361,27 @@ import { SET_METADATA } from '@/store/mutation-types'
     TransactionResult,
     Box,
   },
+  validations: {
+    form: MetadataFormValidations,
+  },
 })
 export default class MetadataViewer extends mixins(validationMixin) {
   @Prop() metadata!: Metadata
   @Prop() displayDeleteBtn!: boolean
   showSummaryPreview = false
-  deleteHash = ''
   deleteChainId = 0
+  txHash = ''
+  isWaiting = false
+  progress: TransactionProgress | null = null
+  txError = ''
+  form: MetadataFormData = new Metadata({}).toFormData()
 
   created() {
     // make sure the edit form display the same data as the viewer
-    const updatedData = this.metadata?.toFormData()
+    this.form = this.metadata.toFormData()
+    this.$v.form.$touch()
     this.$store.commit(SET_METADATA, {
-      updatedData,
+      updatedData: this.form,
     })
   }
 
@@ -318,13 +394,17 @@ export default class MetadataViewer extends mixins(validationMixin) {
   }
 
   editLink(step: string): string {
-    const { id } = this.metadata || {}
+    const { id } = this.form || {}
     return `/metadata/${id}/edit/${step}`
+  }
+
+  get noLinkProvided(): boolean {
+    return !Object.values(this.form?.links || []).some(Boolean)
   }
 
   get isAuthorized(): boolean {
     const { currentUser } = this.$store.state
-    const { owner, network } = this.metadata || {}
+    const { owner, network } = this.form || {}
     const walletAddress = currentUser?.walletAddress
 
     if (!currentUser || !owner || !walletAddress) {
@@ -347,29 +427,37 @@ export default class MetadataViewer extends mixins(validationMixin) {
     this.showSummaryPreview = !this.showSummaryPreview
   }
 
-  get formData(): MetadataFormData {
-    const form = this.metadata.toFormData()
-    return form
-  }
-
-  onDeleteSubmit(
-    form: MetadataFormData,
-    provider: any
-  ): Promise<ContractTransaction> {
-    const { network } = form
+  async handleDelete(): Promise<void> {
+    const { network, id } = this.form
     const { chainId } = this.$web3
+    const { walletProvider } = this.$store.state.currentUser
+
+    this.txError = ''
 
     if (CHAIN_INFO[chainId].name !== network) {
       throw new Error(`Deleting metadata on ${network} is not supported.`)
     }
 
-    const metadata = new Metadata({ id: form.id })
-    return metadata.delete(provider)
-  }
+    const metadata = new Metadata({ id })
+    try {
+      this.isWaiting = true
+      const transaction = metadata.delete(walletProvider)
+      const receipt = await waitForTransaction(
+        transaction,
+        (hash) => (this.txHash = hash)
+      )
 
-  onDeleteSuccess(receipt: ContractReceipt, chainId: number): void {
-    this.deleteHash = receipt.transactionHash
-    this.deleteChainId = chainId
+      await Metadata.waitForBlock(
+        receipt.blockNumber,
+        chain.name,
+        0,
+        (current, last) => (this.progress = { current, last })
+      )
+      this.isWaiting = false
+    } catch (error) {
+      this.txError = (error as Error).message
+      this.isWaiting = false
+    }
   }
 
   get metadataRegistryButton(): LinkInfo[] {
@@ -381,26 +469,8 @@ export default class MetadataViewer extends mixins(validationMixin) {
     ]
   }
 
-  getChainId(network: string): number | undefined {
-    return CHAIN_ID[network]
-  }
-
-  get receivingAddresses(): { address: string; chainId: number }[] {
-    const addresses = this.metadata.receivingAddresses || []
-
-    return addresses.map((addr) => {
-      const [shortName, address] = addr.split(':')
-      const chainId = CHAIN_ID[shortName]
-
-      return {
-        address,
-        chainId,
-      }
-    })
-  }
-
-  get isEmailRequired(): boolean {
-    return !!process.env.VUE_APP_GOOGLE_SPREADSHEET_ID
+  get currentChainId(): number {
+    return CHAIN_ID[chain.name]
   }
 }
 </script>
@@ -549,22 +619,5 @@ export default class MetadataViewer extends mixins(validationMixin) {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-}
-
-.no-break {
-  white-space: nowrap;
-}
-
-.resolved-address {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  opacity: 0.5;
-  word-break: keep-all;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-.delete-title {
-  font-size: 1.5rem;
 }
 </style>

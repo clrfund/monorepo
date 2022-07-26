@@ -20,8 +20,9 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
-import { ChainInfo, CHAIN_INFO, ChainId } from '@/plugins/Web3/constants/chains'
+import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import { LinkInfo } from '@/api/types'
+import { chain } from '@/api/core'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
@@ -35,11 +36,10 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 })
 export default class TransactionResult extends Vue {
   @Prop() hash!: string
-  @Prop() chainId!: ChainId
   @Prop() buttons!: LinkInfo[]
 
   get chain(): ChainInfo {
-    return CHAIN_INFO[this.chainId]
+    return chain
   }
 }
 </script>

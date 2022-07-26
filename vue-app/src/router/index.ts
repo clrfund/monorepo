@@ -29,6 +29,7 @@ import MetadataDetail from '@/views/Metadata.vue'
 import MetadataRegistry from '@/views/MetadataRegistry.vue'
 import MetadataFormAdd from '@/views/MetadataFormAdd.vue'
 import MetadataFormEdit from '@/views/MetadataFormEdit.vue'
+import MetadataTransactionSuccess from '@/views/MetadataTransactionSuccess.vue'
 import NotFound from '@/views/NotFound.vue'
 
 Vue.use(VueRouter)
@@ -235,6 +236,14 @@ const routes = [
     component: TransactionSuccess,
     meta: {
       title: 'Transaction Success',
+    },
+  },
+  {
+    path: '/metadata-success/:hash/:id',
+    name: 'metadata-success',
+    component: MetadataTransactionSuccess,
+    meta: {
+      title: 'Metadata Transaction Success',
     },
   },
   {
