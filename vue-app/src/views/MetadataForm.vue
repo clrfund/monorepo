@@ -531,7 +531,6 @@ import {
   MetadataFormData,
   MetadataFormValidations,
 } from '@/api/metadata'
-import { LinkInfo } from '@/api/types'
 import { ReceivingAddress } from '@/api/receiving-address'
 import { Prop, Watch } from 'vue-property-decorator'
 import { chain, TransactionProgress } from '@/api/core'

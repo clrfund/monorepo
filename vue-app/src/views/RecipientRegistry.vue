@@ -138,7 +138,7 @@ import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 import CopyButton from '@/components/CopyButton.vue'
 
-import { recipientRegistryType, RecipientRegistryType } from '@/api/core'
+import { recipientRegistryType } from '@/api/core'
 import {
   RecipientRegistryRequestType as RequestType,
   RecipientRegistryRequestStatus as RequestStatus,
