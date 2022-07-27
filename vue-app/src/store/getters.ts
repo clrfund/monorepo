@@ -231,9 +231,15 @@ const getters = {
   requireRegistrationDeposit: (state: RootState): boolean => {
     return !!state.recipientRegistryInfo?.requireRegistrationDeposit
   },
-  addProjectUrl: (): string => {
-    return '/join/project'
+  canAddProject: (_, getters): boolean => {
+    const { requireRegistrationDeposit, isRecipientRegistryOwner } = getters
+    return requireRegistrationDeposit || isRecipientRegistryOwner
   },
+  joinFormUrl:
+    () =>
+    (metadataId?: string): string => {
+      return metadataId ? `/join/metadata/${metadataId}` : '/join/project'
+    },
   maxRecipients: (state: RootState): number | undefined => {
     const { currentRound, maciFactory } = state
     if (currentRound) {

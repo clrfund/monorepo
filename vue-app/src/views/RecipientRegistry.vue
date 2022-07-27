@@ -153,20 +153,12 @@ import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 import { RegistryInfo } from '@/api/types'
 import TransactionModal from '@/components/TransactionModal.vue'
 
-// currently only show the registry view for these types
-const showList = [RecipientRegistryType.OPTIMISTIC]
-
 @Component({ components: { CopyButton, Loader, Links } })
 export default class RecipientRegistryView extends Vue {
   requests: Request[] = []
   isLoading = true
 
   async created() {
-    if (!showList.includes(recipientRegistryType as RecipientRegistryType)) {
-      this.$router.push({ name: 'not-found' })
-      return
-    }
-
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
     await this.loadRequests()
     this.isLoading = false

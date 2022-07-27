@@ -38,8 +38,8 @@
             class="pointer"
           />
         </div>
-        <div class="add-project">
-          <links to="/join" class="btn-primary">Add project</links>
+        <div v-if="$store.getters.canAddProject" class="add-project">
+          <links :to="addProjectUrl" class="btn-primary">Add project</links>
         </div>
         <div class="hr" />
       </div>
@@ -200,6 +200,17 @@ export default class ProjectList extends Vue {
 
   clearSearch(): void {
     this.search = ''
+  }
+
+  get showAddProjectButton(): boolean {
+    const { requireRegistrationDeposit, isRecipientRegistryOwner } =
+      this.$store.getters
+    return requireRegistrationDeposit || isRecipientRegistryOwner
+  }
+
+  get addProjectUrl(): string {
+    const { requireRegistrationDeposit } = this.$store.getters
+    return requireRegistrationDeposit ? '/join' : '/join/project'
   }
 }
 </script>

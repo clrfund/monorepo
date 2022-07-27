@@ -11,13 +11,13 @@
         :isStepValid="isStepValid"
         :handleStepNav="handleStepNav"
         :saveFormData="saveFormData"
-        cancelRedirectUrl="/join"
+        cancelRedirectUrl="/projects"
       />
       <div class="title-area">
         <h1>Join the round</h1>
       </div>
       <div class="cancel-area desktop">
-        <links class="cancel-link" to="/join"> Cancel </links>
+        <links class="cancel-link" to="/projects"> Cancel </links>
       </div>
       <loader v-if="loading" />
       <div v-if="!loading" class="form-area">

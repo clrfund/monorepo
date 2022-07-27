@@ -1,5 +1,6 @@
 <template>
-  <div id="join-landing">
+  <not-found id="not-found" v-if="!$store.getters.canAddProject" />
+  <div v-else id="join-landing">
     <div class="gradient">
       <div class="hero">
         <image-responsive title="core" />
@@ -11,6 +12,7 @@
     <div class="breadcrumbs">
       <breadcrumbs />
     </div>
+
     <div class="content" v-if="loading">
       <h1>Fetching round data...</h1>
       <loader />
@@ -111,7 +113,7 @@
         </button>
         <links
           v-if="$store.getters.isRecipientRegistrationOpen"
-          :to="$store.getters.addProjectUrl"
+          :to="$store.getters.joinFormUrl()"
           class="btn-primary"
           >Add project</links
         >
@@ -145,7 +147,7 @@
         </button>
         <links
           v-if="$store.getters.isRecipientRegistrationOpen"
-          :to="$store.getters.addProjectUrl"
+          :to="$store.getters.joinFormUrl()"
           class="btn-primary"
           >Add project</links
         >
@@ -173,6 +175,7 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { getCurrentRound } from '@/api/round'
 import { formatAmount } from '@/utils/amounts'
+import NotFound from '@/views/NotFound.vue'
 
 @Component({
   components: {
@@ -183,6 +186,7 @@ import { formatAmount } from '@/utils/amounts'
     TimeLeft,
     ImageResponsive,
     Breadcrumbs,
+    NotFound,
   },
 })
 export default class JoinLanding extends Vue {
@@ -432,5 +436,9 @@ h1 {
 
 .btn-container {
   margin-top: 2.5rem;
+}
+
+#not-found {
+  width: 100%;
 }
 </style>

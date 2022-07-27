@@ -829,25 +829,6 @@ export default class MetadataForm extends mixins(validationMixin) {
     return this.toMetadata(this.form)
   }
 
-  get redirectButtons(): LinkInfo[] {
-    const id = this.receipt?.id || ''
-    const links: Array<{ url: string; text: string }> = []
-
-    if (!this.projectExists) {
-      links.push({
-        url: `/join/summary/${id}`,
-        text: 'Add project',
-      })
-    }
-
-    links.push({
-      url: `/metadata/${id}`,
-      text: 'View metadata',
-    })
-
-    return links
-  }
-
   get projectInterface(): Project {
     return this.metadataInterface.toProject()
   }

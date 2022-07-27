@@ -9,18 +9,25 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>Ready to add project!</h1>
+            <h1>Congratulations!</h1>
             <transaction-receipt
               v-if="$route.params.hash"
               :hash="$route.params.hash"
             />
           </div>
           <div class="subtitle">
-            Your project metadata has been added successfully.
+            The project metadata has been added successfully.
           </div>
-          <p>You can now add your project as a grant recipient.</p>
+          <p v-if="$store.getters.canAddProject">
+            The project can now be added as a grant recipient.
+          </p>
           <div class="mt2 button-spacing">
-            <links :to="addProjectUrl" class="btn-primary">Add project</links>
+            <links
+              v-if="$store.getters.canAddProject"
+              :to="$store.getters.joinFormUrl($route.params.id)"
+              class="btn-primary"
+              >Add project</links
+            >
             <links :to="metadataUrl" class="btn-secondary">View metadata</links>
           </div>
         </div>
@@ -50,12 +57,6 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 export default class Verified extends Vue {
   get metadataUrl(): string {
     return `/metadata/${this.$route.params.id}`
-  }
-
-  get addProjectUrl(): string {
-    return this.$route.params.id
-      ? `/join/summary/${this.$route.params.id}`
-      : '/join/project'
   }
 }
 </script>

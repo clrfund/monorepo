@@ -1,6 +1,6 @@
 <template>
   <div>
-    <join-optimistic v-if="isOptimisticRegistry" />
+    <join-optimistic v-if="$store.getters.canAddProject" />
     <not-found v-else />
   </div>
 </template>
@@ -10,7 +10,6 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import NotFound from '@/views/NotFound.vue'
 import JoinOptimistic from '@/views/JoinOptimistic.vue'
-import { recipientRegistryType, RecipientRegistryType } from '@/api/core'
 
 @Component({
   components: {
@@ -18,9 +17,5 @@ import { recipientRegistryType, RecipientRegistryType } from '@/api/core'
     NotFound,
   },
 })
-export default class JoinView extends Vue {
-  get isOptimisticRegistry(): boolean {
-    return recipientRegistryType === RecipientRegistryType.OPTIMISTIC
-  }
-}
+export default class JoinView extends Vue {}
 </script>
