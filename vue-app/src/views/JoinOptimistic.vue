@@ -115,7 +115,7 @@ import {
 import { Project } from '@/api/projects'
 import { Metadata, MetadataFormValidations } from '@/api/metadata'
 import { DateTime } from 'luxon'
-import { addRecipient } from '@/api/recipient-registry-optimistic'
+import { addRecipient } from '@/api/recipient-registry'
 import { waitForTransaction } from '@/utils/contracts'
 import { required, email } from 'vuelidate/lib/validators'
 
@@ -225,6 +225,12 @@ export default class JoinView extends mixins(validationMixin) {
     if (updateFurthest && this.currentStep + 1 > this.furthestStep) {
       this.form.furthestStep = this.currentStep + 1
     }
+
+    if (this.steps[this.currentStep] === 'email') {
+      // save the email for sending application data to google spreadsheet
+      this.form.team.email = this.email
+    }
+
     this.$store.commit(SET_RECIPIENT_DATA, {
       updatedData: this.form,
     })
@@ -262,12 +268,6 @@ export default class JoinView extends mixins(validationMixin) {
   async handleStepNav(step: number, updateFurthest?: boolean): Promise<void> {
     // If isNavDisabled => disable quick-links
     if (this.isNavDisabled) return
-
-    if (this.steps[step] === 'email') {
-      // save the email in metadata for later use
-      this.form.team.email = this.email
-      this.$v.form.$touch()
-    }
 
     // Save form data
     this.saveFormData(updateFurthest)

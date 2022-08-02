@@ -3,7 +3,7 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { isHexString } from '@ethersproject/bytes'
 
 import { SimpleRecipientRegistry } from './abi'
-import { provider, ipfsGatewayUrl } from './core'
+import { provider, ipfsGatewayUrl, chain } from './core'
 import { RecipientRegistryInterface } from './types'
 import { Project, toProjectInterface } from './projects'
 
@@ -128,8 +128,18 @@ export function addRecipient(
     SimpleRecipientRegistry,
     signer
   )
-  const { address, ...metadata } = recipientData
-  return registry.addRecipient(address, JSON.stringify(metadata))
+  const { id, fund } = recipientData
+  if (!id) {
+    throw new Error('Missing metadata id')
+  }
+
+  const { currentChainReceivingAddress: address } = fund
+  if (!address) {
+    throw new Error(`Missing recipient address for the ${chain.name} network`)
+  }
+
+  const json = { id }
+  return registry.addRecipient(address, JSON.stringify(json))
 }
 
 function removeProject() {

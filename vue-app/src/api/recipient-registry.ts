@@ -1,4 +1,4 @@
-import { BigNumber, Contract } from 'ethers'
+import { BigNumber, Contract, Signer } from 'ethers'
 import sdk from '@/graphql/sdk'
 import { BaseRecipientRegistry } from './abi'
 import {
@@ -23,7 +23,7 @@ import KlerosRegistry from './recipient-registry-kleros'
 import { isHexString } from '@ethersproject/bytes'
 import { Recipient } from '@/graphql/API'
 import { Project } from './projects'
-import { Metadata } from './metadata'
+import { Metadata, MetadataFormData } from './metadata'
 import { DateTime } from 'luxon'
 
 const registryLookup: Record<RecipientRegistryType, Function> = {
@@ -393,4 +393,19 @@ export async function getRequests(
   return Object.keys(requests).map((recipientId) => requests[recipientId])
 }
 
-export default { getProject, getProjects, projectExists }
+export async function addRecipient(
+  registryAddress: string,
+  recipientMetadata: MetadataFormData,
+  deposit: BigNumber,
+  signer: Signer
+) {
+  const registry = RecipientRegistry.create(recipientRegistryType)
+  return registry.addRecipient(
+    registryAddress,
+    recipientMetadata,
+    deposit,
+    signer
+  )
+}
+
+export default { addRecipient, getProject, getProjects, projectExists }

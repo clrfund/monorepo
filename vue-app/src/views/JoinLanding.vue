@@ -111,10 +111,7 @@
         <button class="btn-secondary" @click="toggleCriteria">
           See round criteria
         </button>
-        <links
-          v-if="$store.getters.isRecipientRegistrationOpen"
-          :to="$store.getters.joinFormUrl()"
-          class="btn-primary"
+        <links :to="$store.getters.joinFormUrl()" class="btn-primary"
           >Add project</links
         >
       </div>
@@ -145,10 +142,7 @@
         <button class="btn-secondary" @click="toggleCriteria">
           See round criteria
         </button>
-        <links
-          v-if="$store.getters.isRecipientRegistrationOpen"
-          :to="$store.getters.joinFormUrl()"
-          class="btn-primary"
+        <links :to="$store.getters.joinFormUrl()" class="btn-primary"
           >Add project</links
         >
       </div>
