@@ -1,5 +1,5 @@
 <template>
-  <div class="tx-container">
+  <div class="tx-container" v-if="visible">
     <div
       :class="
         isWaiting
@@ -8,13 +8,7 @@
       "
     >
       <loader v-if="isLoading" />
-      <div
-        :class="
-          isWaiting || txError
-            ? 'tx-progress-area'
-            : 'tx-progress-area-no-notice'
-        "
-      >
+      <div :class="progressClass">
         <loader class="button-loader" v-if="isWaiting" />
         <div v-if="isWaiting" class="tx-notice">
           <div v-if="!!txHash">Waiting for transaction to be mined...</div>
@@ -26,7 +20,7 @@
           Check your wallet or {{ blockExplorerLabel }} for more info.
         </div>
       </div>
-      <div class="connected">
+      <div class="connected" v-if="$store.getters.requireRegistrationDeposit">
         <div class="total-title">
           Total to submit
           <img
@@ -92,7 +86,9 @@ export default class RecipientSubmissionWidget extends Vue {
   fiatSign = '$'
 
   async created() {
-    this.ethPrice = await fetchCurrentEthPrice()
+    if (this.$store.getters.requireRegistrationDeposit) {
+      this.ethPrice = await fetchCurrentEthPrice()
+    }
     this.isLoading = false
   }
 
@@ -106,6 +102,14 @@ export default class RecipientSubmissionWidget extends Vue {
 
   get txHasDeposit(): boolean {
     return !!this.$store.state.recipientRegistryInfo?.deposit
+  }
+
+  get visible(): boolean {
+    return (
+      this.$store.getters.requireRegistrationDeposit ||
+      this.hasTxError ||
+      this.isWaiting
+    )
   }
 
   get depositAmount(): string {
@@ -134,6 +138,21 @@ export default class RecipientSubmissionWidget extends Vue {
       ).toFixed(2)
     }
     return '-'
+  }
+
+  get progressClass(): string {
+    const { requireRegistrationDeposit } = this.$store.getters
+    const classes = ['tx-progress-area']
+
+    if (requireRegistrationDeposit && (this.isWaiting || this.txError)) {
+      classes.push('error-and-info')
+    } else if (requireRegistrationDeposit) {
+      classes.push('info-only')
+    } else {
+      classes.push('error-only')
+    }
+
+    return classes.join(' ')
   }
 }
 </script>
@@ -201,13 +220,16 @@ export default class RecipientSubmissionWidget extends Vue {
   padding-bottom: 2rem;
 }
 
+.no-deposit {
+  border-radius: calc(1rem - 1px);
+  margin-bottom: 0rem;
+}
+
 .tx-progress-area {
   background: var(--bg-inactive);
   text-align: center;
-  border-radius: calc(1rem - 1px) calc(1rem - 1px) 0 0;
   padding: 1.5rem;
   width: -webkit-fill-available;
-  margin-bottom: 2rem;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -215,17 +237,18 @@ export default class RecipientSubmissionWidget extends Vue {
   font-weight: 500;
 }
 
-.tx-progress-area-no-notice {
-  background: var(--bg-inactive);
-  text-align: center;
-  border-radius: calc(3rem - 1px) calc(3rem - 1px) 0 0;
-  width: -webkit-fill-available;
+.error-only {
+  border-radius: calc(1rem - 1px);
+}
+
+.error-and-info {
+  border-radius: calc(1rem - 1px) calc(1rem - 1px) 0 0;
   margin-bottom: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  justify-content: center;
-  font-weight: 500;
+}
+
+.info-only {
+  border-radius: calc(3rem - 1px) calc(3rem - 1px) 0 0;
+  margin-bottom: 2rem;
   height: 1rem;
 }
 
