@@ -11,7 +11,7 @@ export enum RecipientRegistryType {
 
 let registryTypeMap = new TypedMap<string, RecipientRegistryType>()
 registryTypeMap.set('simple', RecipientRegistryType.Simple)
-registryTypeMap.set('klerso', RecipientRegistryType.Kleros)
+registryTypeMap.set('kleros', RecipientRegistryType.Kleros)
 registryTypeMap.set('optimistic', RecipientRegistryType.Optimistic)
 
 /**
