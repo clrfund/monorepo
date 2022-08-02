@@ -7,7 +7,6 @@ import {
   recipientRegistryType,
 } from './core'
 
-import SimpleRegistry from './recipient-registry-simple'
 import KlerosRegistry from './recipient-registry-kleros'
 import RecipientRegistry from './recipient-registry'
 
