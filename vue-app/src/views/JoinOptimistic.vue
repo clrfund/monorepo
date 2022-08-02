@@ -206,7 +206,7 @@ export default class JoinView extends mixins(validationMixin) {
       return false
     }
 
-    let isValid = true
+    let isValid = this.hasMetadata
     const stepName = this.steps[step]
     if (stepName === 'summary') {
       isValid = this.isLinkStepValid() && !this.$v.form.$invalid
