@@ -228,7 +228,6 @@ export default class RecipientSubmissionWidget extends Vue {
 .tx-progress-area {
   background: var(--bg-inactive);
   text-align: center;
-  padding: 1.5rem;
   width: -webkit-fill-available;
   display: flex;
   align-items: center;
@@ -239,11 +238,13 @@ export default class RecipientSubmissionWidget extends Vue {
 
 .error-only {
   border-radius: calc(1rem - 1px);
+  padding: 1.5rem;
 }
 
 .error-and-info {
   border-radius: calc(1rem - 1px) calc(1rem - 1px) 0 0;
   margin-bottom: 2rem;
+  padding: 1.5rem;
 }
 
 .info-only {
