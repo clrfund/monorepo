@@ -2,6 +2,10 @@ import { ethers } from 'hardhat'
 import { UNIT } from '../utils/constants'
 import { RecipientRegistryFactory } from '../utils/recipient-registry-factory'
 
+function isSimpleRegistry(registryType: string): boolean {
+  return registryType === 'simple'
+}
+
 /*
  * Deploy a new recipient registry.
  * The following environment variables must be set to run the script
@@ -19,8 +23,12 @@ import { RecipientRegistryFactory } from '../utils/recipient-registry-factory'
 async function main() {
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
   const fundingRoundFactoryAddress = process.env.FUNDING_ROUND_FACTORY_ADDRESS
-  const challengePeriodDuration = process.env.CHALLENGE_PERIOD_IN_SECONDS || 300
-  const baseDeposit = process.env.BASE_DEPOSIT || UNIT.div(10).toString()
+  const challengePeriodDuration = isSimpleRegistry(recipientRegistryType)
+    ? 0
+    : process.env.CHALLENGE_PERIOD_IN_SECONDS || 300
+  const baseDeposit = isSimpleRegistry(recipientRegistryType)
+    ? 0
+    : process.env.BASE_DEPOSIT || UNIT.div(10).toString()
 
   if (!fundingRoundFactoryAddress) {
     console.log('Environment variable FUNDING_ROUND_FACTORY_ADDRESS not set')
