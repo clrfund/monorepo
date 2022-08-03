@@ -243,7 +243,7 @@ export default class MetadataList extends Vue {
   margin: 1.5rem 10px;
   font-size: 20px;
   * {
-    color: #f7f7f7;
+    color: var(--text-body);
   }
 }
 
