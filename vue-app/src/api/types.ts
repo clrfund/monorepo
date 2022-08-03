@@ -8,7 +8,7 @@ export interface RegistryInfo {
   listingPolicyUrl: string
   recipientCount: number
   owner: string
-  isRegistrationOpen: boolean
+  isSelfRegistration: boolean
   requireRegistrationDeposit: boolean
 }
 
@@ -17,7 +17,7 @@ export interface RecipientRegistryInterface {
   registerProject: Function
   rejectProject: Function
   removeProject: Function
-  isRegistrationOpen?: boolean
+  isSelfRegistration?: boolean
   requireRegistrationDeposit?: boolean
 }
 

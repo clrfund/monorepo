@@ -141,7 +141,7 @@ import { required, email } from 'vuelidate/lib/validators'
     },
   },
 })
-export default class JoinView extends mixins(validationMixin) {
+export default class JoinForm extends mixins(validationMixin) {
   currentStep = 0
   steps = this.isEmailRequired
     ? ['project', 'summary', 'email', 'submit']

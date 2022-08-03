@@ -160,7 +160,7 @@ export function create(): RecipientRegistryInterface {
     removeProject,
     registerProject,
     rejectProject,
-    isRegistrationOpen: false,
+    isSelfRegistration: false,
     requireRegistrationDeposit: false,
   }
 }

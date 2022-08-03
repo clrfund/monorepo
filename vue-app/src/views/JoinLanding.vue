@@ -1,6 +1,5 @@
 <template>
-  <not-found id="not-found" v-if="!$store.getters.canAddProject" />
-  <div v-else id="join-landing">
+  <div id="join-landing">
     <div class="gradient">
       <div class="hero">
         <image-responsive title="core" />
@@ -15,6 +14,11 @@
 
     <div class="content" v-if="loading">
       <h1>Fetching round data...</h1>
+      <loader />
+    </div>
+
+    <div class="content" v-else-if="!registryInfo">
+      <h1>Fetching recipient registry data...</h1>
       <loader />
     </div>
 
@@ -61,12 +65,15 @@
       <h1>Join the funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project<span
-          v-if="$store.state.requireRegistrationDeposit"
+          v-if="$store.getters.requireRegistrationDeposit"
         >
           and a
           <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong>
           security deposit</span
         >.
+        <span v-if="!$store.getters.isSelfRegistration"
+          >Contact the round coordinator to submit your application.</span
+        >
       </div>
       <div class="subtitle mt2">
         The round only accepts a total of {{ maxRecipients }} projects, so apply
@@ -111,7 +118,10 @@
         <button class="btn-secondary" @click="toggleCriteria">
           See round criteria
         </button>
-        <links :to="$store.getters.joinFormUrl()" class="btn-primary"
+        <links
+          v-if="$store.getters.canAddProject"
+          :to="$store.getters.joinFormUrl()"
+          class="btn-primary"
           >Add project</links
         >
       </div>
@@ -121,7 +131,7 @@
       <h1>Join the next funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project<span
-          v-if="$store.state.requireRegistrationDeposit"
+          v-if="$store.getters.requireRegistrationDeposit"
         >
           and a
           <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong>
@@ -142,7 +152,10 @@
         <button class="btn-secondary" @click="toggleCriteria">
           See round criteria
         </button>
-        <links :to="$store.getters.joinFormUrl()" class="btn-primary"
+        <links
+          v-if="$store.getters.canAddProject"
+          :to="$store.getters.joinFormUrl()"
+          class="btn-primary"
           >Add project</links
         >
       </div>
@@ -169,7 +182,6 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { getCurrentRound } from '@/api/round'
 import { formatAmount } from '@/utils/amounts'
-import NotFound from '@/views/NotFound.vue'
 
 @Component({
   components: {
@@ -180,7 +192,6 @@ import NotFound from '@/views/NotFound.vue'
     TimeLeft,
     ImageResponsive,
     Breadcrumbs,
-    NotFound,
   },
 })
 export default class JoinLanding extends Vue {

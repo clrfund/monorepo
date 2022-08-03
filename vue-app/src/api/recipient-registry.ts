@@ -74,7 +74,7 @@ export async function getRegistryInfo(
     listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
     recipientCount: recipientCount.toNumber(),
     owner,
-    isRegistrationOpen: registry.isRegistrationOpen,
+    isSelfRegistration: registry.isSelfRegistration,
     requireRegistrationDeposit: registry.requireRegistrationDeposit,
   }
 }
