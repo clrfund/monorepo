@@ -342,11 +342,19 @@ export async function getRequests(
     const requestType = Number(recipient.requestType)
     if (requestType === RequestTypeCode.Registration) {
       // Registration request
-      const { name, description, imageHash, thumbnailImageHash } = metadata
+      const {
+        name,
+        description,
+        imageHash,
+        bannerImageHash,
+        thumbnailImageHash,
+      } = metadata
+
       metadata = {
         name,
         description,
         imageUrl: `${ipfsGatewayUrl}/ipfs/${imageHash}`,
+        bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${bannerImageHash}`,
         thumbnailImageUrl: thumbnailImageHash
           ? `${ipfsGatewayUrl}/ipfs/${thumbnailImageHash}`
           : `${ipfsGatewayUrl}/ipfs/${imageHash}`,
