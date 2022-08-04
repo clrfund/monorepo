@@ -96,14 +96,15 @@
             </td>
             <td>
               <div class="actions" v-if="isUserConnected">
-                <!-- TODO: to implement this feature, it requires to send a baseDeposit (see contract)
-              <div
-                class="btn-warning"
-                @click="remove(request)"
-                v-if="isExecuted(request)"
-              >
-                Remove
-              </div> -->
+                <!-- TODO: to implement remove for optimistic registry, it requires to send a baseDeposit (see contract)-->
+                <!-- Only implement remove for simple registry -->
+                <div
+                  class="btn-warning"
+                  @click="remove(request)"
+                  v-if="isOwner && canRemove && isExecuted(request)"
+                >
+                  Remove
+                </div>
                 <div
                   class="icon-btn-approve"
                   v-if="
@@ -179,6 +180,11 @@ export default class RecipientRegistryView extends Vue {
       recipientRegistryInfo,
       recipientRegistryAddress
     )
+  }
+
+  get canRemove(): boolean {
+    // only allow remove for simple recipient registry
+    return this.registryInfo && !this.registryInfo.isSelfRegistration
   }
 
   get registryInfo(): RegistryInfo {

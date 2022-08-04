@@ -1,5 +1,6 @@
 import { BigNumber, Contract, Event, Signer } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { ContractTransaction } from '@ethersproject/contracts'
+
 import { isHexString } from '@ethersproject/bytes'
 
 import { SimpleRecipientRegistry } from './abi'
@@ -122,7 +123,7 @@ export function addRecipient(
   recipientData: any,
   _deposit: BigNumber,
   signer: Signer
-): Promise<TransactionResponse> {
+): Promise<ContractTransaction> {
   const registry = new Contract(
     registryAddress,
     SimpleRecipientRegistry,
@@ -142,8 +143,17 @@ export function addRecipient(
   return registry.addRecipient(address, JSON.stringify(json))
 }
 
-function removeProject() {
-  throw new Error('removeProject not implemented')
+function removeProject(
+  registryAddress: string,
+  recipientId: string,
+  signer: Signer
+): Promise<ContractTransaction> {
+  const registry = new Contract(
+    registryAddress,
+    SimpleRecipientRegistry,
+    signer
+  )
+  return registry.removeRecipient(recipientId)
 }
 
 function rejectProject() {
