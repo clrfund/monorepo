@@ -70,7 +70,8 @@ export const METADATA_NETWORKS = process.env.VUE_APP_METADATA_NETWORKS
   ? process.env.VUE_APP_METADATA_NETWORKS.split(',')
   : ['rinkeby']
 
-export const QUERY_BATCH_SIZE = Number(process.env.QUERY_BATCH_SIZE) || 30
+export const QUERY_BATCH_SIZE =
+  Number(process.env.VUE_APP_QUERY_BATCH_SIZE) || 30
 
 export const MAX_RETRIES = Number(process.env.VUE_APP_MAX_RETRIES) || 10
 
