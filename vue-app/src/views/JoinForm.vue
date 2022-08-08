@@ -11,13 +11,13 @@
         :isStepValid="isStepValid"
         :handleStepNav="handleStepNav"
         :saveFormData="saveFormData"
-        cancelRedirectUrl="/join"
+        cancelRedirectUrl="/projects"
       />
       <div class="title-area">
         <h1>Join the round</h1>
       </div>
       <div class="cancel-area desktop">
-        <links class="cancel-link" to="/join"> Cancel </links>
+        <links class="cancel-link" to="/projects"> Cancel </links>
       </div>
       <loader v-if="loading" />
       <div v-if="!loading" class="form-area">
@@ -115,7 +115,7 @@ import {
 import { Project } from '@/api/projects'
 import { Metadata, MetadataFormValidations } from '@/api/metadata'
 import { DateTime } from 'luxon'
-import { addRecipient } from '@/api/recipient-registry-optimistic'
+import { addRecipient } from '@/api/recipient-registry'
 import { waitForTransaction } from '@/utils/contracts'
 import { required, email } from 'vuelidate/lib/validators'
 
@@ -141,7 +141,7 @@ import { required, email } from 'vuelidate/lib/validators'
     },
   },
 })
-export default class JoinView extends mixins(validationMixin) {
+export default class JoinForm extends mixins(validationMixin) {
   currentStep = 0
   steps = this.isEmailRequired
     ? ['project', 'summary', 'email', 'submit']
@@ -206,7 +206,7 @@ export default class JoinView extends mixins(validationMixin) {
       return false
     }
 
-    let isValid = true
+    let isValid = this.hasMetadata
     const stepName = this.steps[step]
     if (stepName === 'summary') {
       isValid = this.isLinkStepValid() && !this.$v.form.$invalid
@@ -225,6 +225,12 @@ export default class JoinView extends mixins(validationMixin) {
     if (updateFurthest && this.currentStep + 1 > this.furthestStep) {
       this.form.furthestStep = this.currentStep + 1
     }
+
+    if (this.steps[this.currentStep] === 'email') {
+      // save the email for sending application data to google spreadsheet
+      this.form.team.email = this.email
+    }
+
     this.$store.commit(SET_RECIPIENT_DATA, {
       updatedData: this.form,
     })
@@ -262,12 +268,6 @@ export default class JoinView extends mixins(validationMixin) {
   async handleStepNav(step: number, updateFurthest?: boolean): Promise<void> {
     // If isNavDisabled => disable quick-links
     if (this.isNavDisabled) return
-
-    if (this.steps[step] === 'email') {
-      // save the email in metadata for later use
-      this.form.team.email = this.email
-      this.$v.form.$touch()
-    }
 
     // Save form data
     this.saveFormData(updateFurthest)
@@ -383,7 +383,7 @@ export default class JoinView extends mixins(validationMixin) {
 @import '../styles/theme';
 
 .container {
-  width: clamp(calc(800px - 4rem), calc(100% - 4rem), 1100px);
+  width: clamp(calc(500px - 4rem), calc(100% - 4rem), 1100px);
   margin: 0 auto;
   @media (max-width: $breakpoint-m) {
     width: 100%;

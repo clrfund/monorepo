@@ -37,9 +37,14 @@
     </div>
     <h2>Register your project</h2>
     <p>
-      In order to participate in a funding round as a project, you'll need to
-      submit an application to join the recipient registry (via an on-chain
-      transaction).
+      In order to participate in a funding round as a project,
+      <span v-if="$store.getters.isSelfRegistration"
+        >you'll need to submit an application to join the recipient registry
+        (via an on-chain transaction)</span
+      ><span v-else
+        >you'll need to contact the round coordinator to submit an
+        application</span
+      >.
     </p>
     <p>
       MACI, our anti-bribery tech, currently limits the amount of projects
@@ -58,12 +63,19 @@
         Click "See round criteria" and familiarize yourself with the criteria
         for projects.
       </li>
+      <li>
+        Once you're familiar with the criteria and you're sure your project
+        meets them,
+        <span v-if="$store.getters.selfRegistration"
+          >click "Add project." You'll see a series of forms to fill out asking
+          for more information about your project</span
+        >
+        <span v-else
+          >contact the round coordinator to add your project to the recipient
+          registry.</span
+        >
+      </li>
       <template v-if="$store.getters.requireRegistrationDeposit">
-        <li>
-          Once you're familiar with the criteria and you're sure your project
-          meets them, click "Add project." You'll see a series of forms to fill
-          out asking for more information about your project.
-        </li>
         <li>
           With the forms finished, you can finish your submission:
           <ol>

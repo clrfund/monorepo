@@ -35,7 +35,7 @@
       </div>
       <links
         v-if="$store.getters.isRecipientRegistrationOpen"
-        :to="$store.getters.addProjectUrl"
+        :to="$store.getters.joinFormUrl()"
         class="btn-primary fit-content"
         >Add project</links
       >

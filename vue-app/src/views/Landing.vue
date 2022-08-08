@@ -24,7 +24,8 @@
             class="apply-callout"
             v-if="
               $store.getters.isRoundJoinPhase &&
-              !$store.getters.isRecipientRegistryFull
+              !$store.getters.isRecipientRegistryFull &&
+              $store.getters.requireRegistrationDeposit
             "
           >
             <div class="column">

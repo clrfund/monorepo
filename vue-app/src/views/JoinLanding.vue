@@ -11,8 +11,14 @@
     <div class="breadcrumbs">
       <breadcrumbs />
     </div>
+
     <div class="content" v-if="loading">
       <h1>Fetching round data...</h1>
+      <loader />
+    </div>
+
+    <div class="content" v-else-if="!registryInfo">
+      <h1>Fetching recipient registry data...</h1>
       <loader />
     </div>
 
@@ -59,12 +65,15 @@
       <h1>Join the funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project<span
-          v-if="$store.state.requireRegistrationDeposit"
+          v-if="$store.getters.requireRegistrationDeposit"
         >
           and a
           <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong>
           security deposit</span
         >.
+        <span v-if="!$store.getters.isSelfRegistration"
+          >Contact the round coordinator to submit your application.</span
+        >
       </div>
       <div class="subtitle mt2">
         The round only accepts a total of {{ maxRecipients }} projects, so apply
@@ -110,8 +119,8 @@
           See round criteria
         </button>
         <links
-          v-if="$store.getters.isRecipientRegistrationOpen"
-          :to="$store.getters.addProjectUrl"
+          v-if="$store.getters.canAddProject"
+          :to="$store.getters.joinFormUrl()"
           class="btn-primary"
           >Add project</links
         >
@@ -122,7 +131,7 @@
       <h1>Join the next funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project<span
-          v-if="$store.state.requireRegistrationDeposit"
+          v-if="$store.getters.requireRegistrationDeposit"
         >
           and a
           <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong>
@@ -144,8 +153,8 @@
           See round criteria
         </button>
         <links
-          v-if="$store.getters.isRecipientRegistrationOpen"
-          :to="$store.getters.addProjectUrl"
+          v-if="$store.getters.canAddProject"
+          :to="$store.getters.joinFormUrl()"
           class="btn-primary"
           >Add project</links
         >
@@ -432,5 +441,9 @@ h1 {
 
 .btn-container {
   margin-top: 2.5rem;
+}
+
+#not-found {
+  width: 100%;
 }
 </style>

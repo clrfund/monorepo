@@ -79,13 +79,6 @@ const getters = {
       getters.recipientSpacesRemaining < 20
     )
   },
-  isRoundBufferPhase: (state: RootState, getters): boolean => {
-    return (
-      !!state.currentRound &&
-      !getters.isJoinPhase &&
-      !hasDateElapsed(state.currentRound.signUpDeadline)
-    )
-  },
   isRoundContributionPhase: (state: RootState): boolean => {
     return (
       !!state.currentRound &&
@@ -225,15 +218,31 @@ const getters = {
 
     return nativeTokenDecimals
   },
-  isRecipientRegistrationOpen: (state: RootState): boolean => {
-    return !!state.recipientRegistryInfo?.isRegistrationOpen
+  isSelfRegistration: (state: RootState): boolean => {
+    return !!state.recipientRegistryInfo?.isSelfRegistration
   },
   requireRegistrationDeposit: (state: RootState): boolean => {
     return !!state.recipientRegistryInfo?.requireRegistrationDeposit
   },
-  addProjectUrl: (): string => {
-    return '/join/project'
+  canAddProject: (_, getters): boolean => {
+    const {
+      requireRegistrationDeposit,
+      isRecipientRegistryOwner,
+      isRecipientRegistryFull,
+      isRoundJoinPhase,
+    } = getters
+
+    return (
+      (requireRegistrationDeposit || isRecipientRegistryOwner) &&
+      !isRecipientRegistryFull &&
+      isRoundJoinPhase
+    )
   },
+  joinFormUrl:
+    () =>
+    (metadataId?: string): string => {
+      return metadataId ? `/join/metadata/${metadataId}` : '/join/project'
+    },
   maxRecipients: (state: RootState): number | undefined => {
     const { currentRound, maciFactory } = state
     if (currentRound) {

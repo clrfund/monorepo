@@ -1,6 +1,7 @@
 <template>
   <div class="project-container">
-    <div class="projects">
+    <loader v-if="isLoading" />
+    <div v-else class="projects">
       <div
         :class="{
           title: true,
@@ -38,7 +39,7 @@
             class="pointer"
           />
         </div>
-        <div class="add-project">
+        <div v-if="canAddProject" class="add-project">
           <links to="/join" class="btn-primary">Add project</links>
         </div>
         <div class="hr" />
@@ -88,6 +89,7 @@ import RoundInformation from '@/components/RoundInformation.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'
 import Panel from '@/components/Panel.vue'
+import Loader from '@/components/Loader.vue'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 
@@ -115,6 +117,7 @@ function shuffleArray(array: any[]) {
     FilterDropdown,
     Links,
     Panel,
+    Loader,
   },
 })
 export default class ProjectList extends Vue {
@@ -200,6 +203,18 @@ export default class ProjectList extends Vue {
 
   clearSearch(): void {
     this.search = ''
+  }
+
+  get canAddProject(): boolean {
+    const { isCurrentRound, isRecipientRegistryOwner, isSelfRegistration } =
+      this.$store.getters
+
+    // do minimal checks here and redirect users to the join landing page
+    // to do more checks and give reasons if the round is not open for registration
+    return (
+      isCurrentRound(this.roundAddress) &&
+      (isSelfRegistration || isRecipientRegistryOwner)
+    )
   }
 }
 </script>

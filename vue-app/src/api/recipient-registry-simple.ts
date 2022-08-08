@@ -1,9 +1,10 @@
 import { BigNumber, Contract, Event, Signer } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { ContractTransaction } from '@ethersproject/contracts'
+
 import { isHexString } from '@ethersproject/bytes'
 
 import { SimpleRecipientRegistry } from './abi'
-import { provider, ipfsGatewayUrl } from './core'
+import { provider, ipfsGatewayUrl, chain } from './core'
 import { RecipientRegistryInterface } from './types'
 import { Project, toProjectInterface } from './projects'
 
@@ -122,18 +123,37 @@ export function addRecipient(
   recipientData: any,
   _deposit: BigNumber,
   signer: Signer
-): Promise<TransactionResponse> {
+): Promise<ContractTransaction> {
   const registry = new Contract(
     registryAddress,
     SimpleRecipientRegistry,
     signer
   )
-  const { address, ...metadata } = recipientData
-  return registry.addRecipient(address, JSON.stringify(metadata))
+  const { id, fund } = recipientData
+  if (!id) {
+    throw new Error('Missing metadata id')
+  }
+
+  const { currentChainReceivingAddress: address } = fund
+  if (!address) {
+    throw new Error(`Missing recipient address for the ${chain.name} network`)
+  }
+
+  const json = { id }
+  return registry.addRecipient(address, JSON.stringify(json))
 }
 
-function removeProject() {
-  throw new Error('removeProject not implemented')
+function removeProject(
+  registryAddress: string,
+  recipientId: string,
+  signer: Signer
+): Promise<ContractTransaction> {
+  const registry = new Contract(
+    registryAddress,
+    SimpleRecipientRegistry,
+    signer
+  )
+  return registry.removeRecipient(recipientId)
 }
 
 function rejectProject() {
@@ -150,7 +170,7 @@ export function create(): RecipientRegistryInterface {
     removeProject,
     registerProject,
     rejectProject,
-    isRegistrationOpen: false,
+    isSelfRegistration: false,
     requireRegistrationDeposit: false,
   }
 }

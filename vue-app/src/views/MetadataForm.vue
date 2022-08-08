@@ -531,7 +531,6 @@ import {
   MetadataFormData,
   MetadataFormValidations,
 } from '@/api/metadata'
-import { LinkInfo } from '@/api/types'
 import { ReceivingAddress } from '@/api/receiving-address'
 import { Prop, Watch } from 'vue-property-decorator'
 import { chain, TransactionProgress } from '@/api/core'
@@ -827,25 +826,6 @@ export default class MetadataForm extends mixins(validationMixin) {
 
   get metadataInterface(): Metadata {
     return this.toMetadata(this.form)
-  }
-
-  get redirectButtons(): LinkInfo[] {
-    const id = this.receipt?.id || ''
-    const links: Array<{ url: string; text: string }> = []
-
-    if (!this.projectExists) {
-      links.push({
-        url: `/join/summary/${id}`,
-        text: 'Add project',
-      })
-    }
-
-    links.push({
-      url: `/metadata/${id}`,
-      text: 'View metadata',
-    })
-
-    return links
   }
 
   get projectInterface(): Project {

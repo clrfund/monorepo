@@ -226,8 +226,8 @@ export function create(): RecipientRegistryInterface {
     removeProject,
     registerProject,
     rejectProject,
-    isRegistrationOpen: true,
-    requireRegistrationDeposit: true,
+    isSelfRegistration: false, //TODO: add support for self registration
+    requireRegistrationDeposit: false,
   }
 }
 
