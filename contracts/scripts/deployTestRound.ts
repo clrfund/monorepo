@@ -113,7 +113,6 @@ async function main() {
   const RecipientRegistryName: Record<string, string> = {
     simple: 'SimpleRecipientRegistry',
     optimistic: 'OptimisticRecipientRegistry',
-    universal: 'UniversalRecipientRegistry',
   }
   const recipientRegistryAddress = await factory.recipientRegistry()
   const recipientRegistryName = RecipientRegistryName[recipientRegistryType]

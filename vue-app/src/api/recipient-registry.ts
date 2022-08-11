@@ -1,4 +1,4 @@
-import { BigNumber, Contract } from 'ethers'
+import { BigNumber, Contract, Signer } from 'ethers'
 import sdk from '@/graphql/sdk'
 import { BaseRecipientRegistry } from './abi'
 import {
@@ -19,17 +19,15 @@ import {
 } from '@/api/types'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import SimpleRegistry from './recipient-registry-simple'
-import UniversalRegistry from './recipient-registry-universal'
 import KlerosRegistry from './recipient-registry-kleros'
 import { isHexString } from '@ethersproject/bytes'
 import { Recipient } from '@/graphql/API'
 import { Project } from './projects'
-import { Metadata } from './metadata'
+import { Metadata, MetadataFormData } from './metadata'
 import { DateTime } from 'luxon'
 
 const registryLookup: Record<RecipientRegistryType, Function> = {
   [RecipientRegistryType.OPTIMISTIC]: OptimisticRegistry.create,
-  [RecipientRegistryType.UNIVERSAL]: UniversalRegistry.create,
   [RecipientRegistryType.SIMPLE]: SimpleRegistry.create,
   [RecipientRegistryType.KLEROS]: KlerosRegistry.create,
 }
@@ -76,7 +74,7 @@ export async function getRegistryInfo(
     listingPolicyUrl: `${ipfsGatewayUrl}/ipfs/${recipientRegistryPolicy}`,
     recipientCount: recipientCount.toNumber(),
     owner,
-    isRegistrationOpen: registry.isRegistrationOpen,
+    isSelfRegistration: registry.isSelfRegistration,
     requireRegistrationDeposit: registry.requireRegistrationDeposit,
   }
 }
@@ -132,15 +130,6 @@ function decodeProject(recipient: Partial<Recipient>): Project {
 }
 
 /**
- * Returns the metadata id if available
- * @param recipient a recipient structure
- * @returns metadata id or an empty string
- */
-function metadataId(recipient: Partial<Recipient>): string {
-  return recipient.recipientMetadataId || ''
-}
-
-/**
  * Build a map to lookup metadata by id
  * Retrieve metadata in batches to avoid hitting server too often
  * @param ids a list of metadata id
@@ -180,11 +169,19 @@ async function buildMetadataMap(
 async function normalizeRecipients(
   recipients: Partial<Recipient>[]
 ): Promise<Partial<Recipient>[]> {
-  const metadataIds = recipients.map(metadataId).filter(Boolean)
-  const metadataMap = await buildMetadataMap(metadataIds)
+  const metadataIds = recipients.map(({ recipientMetadata }) => {
+    try {
+      const json = JSON.parse(recipientMetadata || '')
+      return json.id
+    } catch {
+      return null
+    }
+  })
 
-  return recipients.map((recipient) => {
-    const metadata = metadataMap[metadataId(recipient)]
+  const metadataMap = await buildMetadataMap(metadataIds.filter(Boolean))
+
+  return recipients.map((recipient, index) => {
+    const metadata = metadataMap[metadataIds[index]]
     if (metadata) {
       recipient.recipientMetadata = metadata
     }
@@ -337,7 +334,7 @@ export async function getRequests(
     try {
       metadata = JSON.parse(recipient.recipientMetadata || '{}')
     } catch {
-      // instead of throwing error, let it flow throw so
+      // instead of throwing error, let it flow through so
       // we can investigate the issue from the subgraph
       metadata.name = 'N/A'
     }
@@ -345,11 +342,19 @@ export async function getRequests(
     const requestType = Number(recipient.requestType)
     if (requestType === RequestTypeCode.Registration) {
       // Registration request
-      const { name, description, imageHash, thumbnailImageHash } = metadata
+      const {
+        name,
+        description,
+        imageHash,
+        bannerImageHash,
+        thumbnailImageHash,
+      } = metadata
+
       metadata = {
         name,
         description,
         imageUrl: `${ipfsGatewayUrl}/ipfs/${imageHash}`,
+        bannerImageUrl: `${ipfsGatewayUrl}/ipfs/${bannerImageHash}`,
         thumbnailImageUrl: thumbnailImageHash
           ? `${ipfsGatewayUrl}/ipfs/${thumbnailImageHash}`
           : `${ipfsGatewayUrl}/ipfs/${imageHash}`,
@@ -396,4 +401,19 @@ export async function getRequests(
   return Object.keys(requests).map((recipientId) => requests[recipientId])
 }
 
-export default { getProject, getProjects, projectExists }
+export async function addRecipient(
+  registryAddress: string,
+  recipientMetadata: MetadataFormData,
+  deposit: BigNumber,
+  signer: Signer
+) {
+  const registry = RecipientRegistry.create(recipientRegistryType)
+  return registry.addRecipient(
+    registryAddress,
+    recipientMetadata,
+    deposit,
+    signer
+  )
+}
+
+export default { addRecipient, getProject, getProjects, projectExists }

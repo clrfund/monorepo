@@ -177,6 +177,7 @@ export default class App extends Vue {
       'join-step',
       'round-information',
       'transaction-success',
+      'metadata-success',
       'verify',
       'verify-step',
       'verified',

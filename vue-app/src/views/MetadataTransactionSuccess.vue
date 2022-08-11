@@ -1,3 +1,4 @@
+@ -0,0 +1,36 @@
 <template>
   <div>
     <round-status-banner v-if="$store.state.currentRound" />
@@ -8,32 +9,26 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>Project submitted!</h1>
-            <transaction-receipt :hash="$route.params.hash" />
+            <h1>Congratulations!</h1>
+            <transaction-receipt
+              v-if="$route.params.hash"
+              :hash="$route.params.hash"
+            />
           </div>
-          <div
-            v-if="$store.getters.requireRegistrationDeposit"
-            class="subtitle"
-          >
-            You’re almost on board this funding round.
+          <div class="subtitle">
+            The project metadata has been added successfully.
           </div>
-          <ul v-if="$store.getters.requireRegistrationDeposit">
-            <li>
-              Your project just needs to go through some final checks to ensure
-              it meets round criteria. You can
-              <links to="/about/how-it-works/recipients"
-                >learn more about the registration process here</links
-              >.
-            </li>
-            <li>Once that's complete, your project page will go live.</li>
-            <li>
-              If your project fails any checks, we'll let you know by email and
-              return your deposit.
-            </li>
-          </ul>
+          <p v-if="$store.getters.canAddProject">
+            The project can now be added as a grant recipient.
+          </p>
           <div class="mt2 button-spacing">
-            <links to="/projects" class="btn-primary">View projects</links>
-            <links to="/" class="btn-secondary">Go home</links>
+            <links
+              v-if="$store.getters.canAddProject"
+              :to="$store.getters.joinFormUrl($route.params.id)"
+              class="btn-primary"
+              >Add project</links
+            >
+            <links :to="metadataUrl" class="btn-secondary">View metadata</links>
           </div>
         </div>
       </div>
@@ -44,45 +39,24 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import * as humanizeDuration from 'humanize-duration'
-
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
-import TransactionReceipt from '@/components/TransactionReceipt.vue'
-import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
+import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-
-import { RegistryInfo } from '@/api/types'
-import { chain } from '@/api/core'
 
 @Component({
   components: {
     ProgressBar,
     RoundStatusBanner,
-    TransactionReceipt,
-    Warning,
     Links,
+    TransactionReceipt,
     ImageResponsive,
   },
 })
-export default class ProjectAdded extends Vue {
-  challengePeriodDuration: number | null = null
-
-  async created() {
-    this.challengePeriodDuration = this.registryInfo.challengePeriodDuration
-  }
-
-  get registryInfo(): RegistryInfo {
-    return this.$store.state.recipientRegistryInfo
-  }
-
-  get blockExplorerUrl(): string {
-    return `${chain.explorer}/tx/${this.$route.params.txHash}`
-  }
-
-  formatDuration(seconds: number): string {
-    return humanizeDuration(seconds * 1000, { largest: 1 })
+export default class Verified extends Vue {
+  get metadataUrl(): string {
+    return `/metadata/${this.$route.params.id}`
   }
 }
 </script>
@@ -172,18 +146,11 @@ ul {
       .flex-title {
         display: flex;
         gap: 0.5rem;
-        align-items: left;
+        align-items: center;
         margin-bottom: 3rem;
         margin-top: 1.5rem;
         flex-wrap: wrap;
-        flex-direction: column;
-
-        img {
-          width: 1rem;
-          height: 1rem;
-          position: relative;
-          right: 0;
-        }
+        max-width: 600px; // Max width to allow for flex wrap
       }
     }
   }

@@ -96,14 +96,15 @@
             </td>
             <td>
               <div class="actions" v-if="isUserConnected">
-                <!-- TODO: to implement this feature, it requires to send a baseDeposit (see contract)
-              <div
-                class="btn-warning"
-                @click="remove(request)"
-                v-if="isExecuted(request)"
-              >
-                Remove
-              </div> -->
+                <!-- TODO: to implement remove for optimistic registry, it requires to send a baseDeposit (see contract)-->
+                <!-- Only implement remove for simple registry -->
+                <div
+                  class="btn-warning"
+                  @click="remove(request)"
+                  v-if="isOwner && canRemove && isExecuted(request)"
+                >
+                  Remove
+                </div>
                 <div
                   class="icon-btn-approve"
                   v-if="
@@ -138,7 +139,7 @@ import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 import CopyButton from '@/components/CopyButton.vue'
 
-import { recipientRegistryType, RecipientRegistryType } from '@/api/core'
+import { recipientRegistryType } from '@/api/core'
 import {
   RecipientRegistryRequestType as RequestType,
   RecipientRegistryRequestStatus as RequestStatus,
@@ -153,23 +154,12 @@ import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 import { RegistryInfo } from '@/api/types'
 import TransactionModal from '@/components/TransactionModal.vue'
 
-// currently only show the registry view for these types
-const showList = [
-  RecipientRegistryType.OPTIMISTIC,
-  RecipientRegistryType.UNIVERSAL,
-]
-
 @Component({ components: { CopyButton, Loader, Links } })
 export default class RecipientRegistryView extends Vue {
   requests: Request[] = []
   isLoading = true
 
   async created() {
-    if (!showList.includes(recipientRegistryType as RecipientRegistryType)) {
-      this.$router.push({ name: 'not-found' })
-      return
-    }
-
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
     await this.loadRequests()
     this.isLoading = false
@@ -190,6 +180,11 @@ export default class RecipientRegistryView extends Vue {
       recipientRegistryInfo,
       recipientRegistryAddress
     )
+  }
+
+  get canRemove(): boolean {
+    // only allow remove for simple recipient registry
+    return this.registryInfo && !this.registryInfo.isSelfRegistration
   }
 
   get registryInfo(): RegistryInfo {

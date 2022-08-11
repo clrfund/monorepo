@@ -221,60 +221,28 @@
                   claim funds. This doesn't have to be the same address as the
                   one you use to send your metadata transaction.
                 </p>
-                <div
-                  v-for="(address, index) in form.fund.receivingAddresses"
-                  :key="index"
-                >
-                  <div key="index" class="address-container">
-                    <img
-                      src="@/assets/remove.svg"
-                      alt="remove"
-                      class="remove-icon"
-                      @click="removeAddress(index)"
-                    />
-                    <span class="input-description">
-                      {{ address }}
-                    </span>
-                  </div>
-                </div>
                 <div class="input-row">
-                  <dropdown
-                    :options="sortedNetworks"
-                    :selected="selectedNetwork"
-                    @change="handleDropdownClick"
-                  />
                   <input
                     id="fund-address"
                     placeholder="address, ex: 0x123456789..."
-                    v-model.lazy="$v.addressName.$model"
-                    @focus="$v.addressName.$reset"
+                    v-model.lazy="
+                      $v.form.fund.currentChainReceivingAddress.$model
+                    "
+                    @focus="$v.form.fund.currentChainReceivingAddress.$reset"
                     :class="{
                       input: true,
-                      invalid: $v.addressName.$error,
+                      invalid: $v.form.fund.currentChainReceivingAddress.$error,
                     }"
                   />
-                  <button
-                    @click="
-                      addAddress({
-                        network: selectedNetwork,
-                        address: addressName,
-                      })
-                    "
-                    class="btn-secondary"
-                    :disabled="$v.addressName.$invalid || !selectedNetwork"
-                  >
-                    Add
-                  </button>
                 </div>
                 <p
                   :class="{
                     error: true,
-                    hidden: !$v.addressName.$error,
+                    hidden: !$v.form.fund.currentChainReceivingAddress.$error,
                   }"
                 >
                   Enter a valid Ethereum 0x address
                 </p>
-                <!-- TODO: only validate after user removes focus on input -->
               </div>
               <div class="form-background">
                 <label for="fund-plans" class="input-label"
@@ -514,17 +482,11 @@
               blockchain.
             </p>
             <div class="inputs">
-              <transaction-result
-                v-if="receipt"
-                :hash="receipt.hash"
-                :chainId="receipt.chainId"
-                :buttons="redirectButtons"
-              />
               <metadata-submission-widget
-                v-else
-                :form="form"
-                :onSuccess="onSuccess"
-                :onSubmit="onSubmit"
+                :txHash="txHash"
+                :isWaiting="isWaiting"
+                :progress="progress"
+                :txError="txError"
               />
             </div>
           </div>
@@ -548,9 +510,6 @@
 <script lang="ts">
 import Component, { mixins } from 'vue-class-component'
 import { validationMixin } from 'vuelidate'
-import { required, minLength, maxLength, url } from 'vuelidate/lib/validators'
-import * as isIPFS from 'is-ipfs'
-import { isAddress } from '@ethersproject/address'
 import LayoutSteps from '@/components/LayoutSteps.vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
@@ -567,19 +526,19 @@ import TransactionResult from '@/components/TransactionResult.vue'
 import MetadataList from '@/views/MetadataList.vue'
 import MetadataViewer from '@/views/MetadataViewer.vue'
 import Dropdown from '@/components/Dropdown.vue'
-import { Metadata, MetadataFormData } from '@/api/metadata'
-import { LinkInfo } from '@/api/types'
-import { Prop } from 'vue-property-decorator'
+import {
+  Metadata,
+  MetadataFormData,
+  MetadataFormValidations,
+} from '@/api/metadata'
+import { ReceivingAddress } from '@/api/receiving-address'
+import { Prop, Watch } from 'vue-property-decorator'
+import { chain, TransactionProgress } from '@/api/core'
 
-import { SET_METADATA } from '@/store/mutation-types'
+import { SET_METADATA, RESET_RECIPIENT_DATA } from '@/store/mutation-types'
 import { Project, projectExists } from '@/api/projects'
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
-import { ContractReceipt, ContractTransaction } from 'ethers'
-
-type RecievingAddress = {
-  network: string
-  address: string
-}
+import { ContractTransaction } from 'ethers'
+import { waitForTransaction } from '@/utils/contracts'
 
 @Component({
   components: {
@@ -601,48 +560,7 @@ type RecievingAddress = {
     TransactionResult,
   },
   validations: {
-    addressName: { required, validEthAddress: isAddress },
-    form: {
-      project: {
-        name: { required },
-        tagline: {
-          required,
-          maxLength: maxLength(140),
-        },
-        description: { required },
-        category: { required },
-        problemSpace: { required },
-      },
-      fund: {
-        receivingAddresses: {
-          required,
-          minLength: minLength(1),
-        },
-        resolvedAddress: {},
-        plans: { required },
-      },
-      team: {
-        name: {},
-        description: {},
-      },
-      links: {
-        github: { url },
-        radicle: { url },
-        website: { url },
-        twitter: { url },
-        discord: { url },
-      },
-      image: {
-        bannerHash: {
-          required,
-          validIpfsHash: isIPFS.cid,
-        },
-        thumbnailHash: {
-          required,
-          validIpfsHash: isIPFS.cid,
-        },
-      },
-    },
+    form: MetadataFormValidations,
   },
 })
 export default class MetadataForm extends mixins(validationMixin) {
@@ -655,17 +573,20 @@ export default class MetadataForm extends mixins(validationMixin) {
     provider: any
   ) => Promise<ContractTransaction>
 
-  form: MetadataFormData = new Metadata({}).toFormData()
+  form = new Metadata({}).toFormData()
   projectExists = false
-  addressName = ''
+  receivingAddress = ''
   currentStep = 0
   steps: string[] = []
   stepNames: string[] = []
   showSummaryPreview = false
   loading = true
-  networks: string[] = []
-  selectedNetwork = ''
   receipt: { hash: string; chainId: number; id: string } | null = null
+
+  progress: TransactionProgress | null = null
+  isWaiting = false
+  txError = ''
+  txHash = ''
 
   async created() {
     const steps = [
@@ -690,10 +611,8 @@ export default class MetadataForm extends mixins(validationMixin) {
     this.steps = steps
     this.stepNames = stepNames
     this.currentStep = currentStep
-    await this.loadFormData()
-    this.form = this.$store.state.metadata
+    await this.populateForm()
     this.loading = false
-    this.loadNetworks()
 
     // check if project exists so we can display add/view
     // project button after successfully submitting the metadata transaction
@@ -718,45 +637,25 @@ export default class MetadataForm extends mixins(validationMixin) {
     }
   }
 
-  get sortedNetworks(): string[] {
-    return this.networks.sort()
+  @Watch('$web3.user')
+  resetError(): void {
+    this.txError = ''
   }
 
-  handleDropdownClick(selection: string): void {
-    this.selectedNetwork = selection
+  async populateForm(): Promise<void> {
+    await this.loadFormData()
+    this.form = this.$store.state.metadata
   }
 
-  addAddress({ network, address }: RecievingAddress): void {
-    this.$v.addressName.$touch()
-
-    if (!this.$v.addressName.$invalid && this.selectedNetwork) {
-      this.form.fund.receivingAddresses.push(`${network}:${address}`)
+  updateFundReceivingAddress(): void {
+    if (!this.$v.form.fund?.$invalid) {
+      const addresses = ReceivingAddress.fromArray(
+        this.form.fund.receivingAddresses
+      )
+      addresses[chain.shortName] = this.form.fund.currentChainReceivingAddress
+      this.form.fund.receivingAddresses = ReceivingAddress.toArray(addresses)
       this.$v.form.fund?.receivingAddresses.$touch()
-      this.networks = this.networks.filter((net) => net !== network)
-      this.selectedNetwork = this.networks[0]
     }
-  }
-
-  loadNetworks(): void {
-    const exclusion = new Set(
-      this.form.fund.receivingAddresses.map((addr) => {
-        const [network] = addr.split(':')
-        return network
-      })
-    )
-    // filter out the networks already in the receiving list
-    this.networks = Object.values(CHAIN_INFO)
-      .map(({ shortName }) => shortName)
-      .filter((name) => {
-        return !exclusion.has(name)
-      })
-    this.selectedNetwork = this.networks[0] || ''
-  }
-
-  removeAddress(index): void {
-    this.form.fund.receivingAddresses.splice(index, 1)
-    this.$v.form.fund?.receivingAddresses.$touch()
-    this.loadNetworks()
   }
 
   initFurthestStep(): void {
@@ -800,6 +699,10 @@ export default class MetadataForm extends mixins(validationMixin) {
   }
 
   isStepValid(step: number): boolean {
+    if (this.isWaiting) {
+      return false
+    }
+
     const stepName: string = this.steps[step]
     if (stepName === 'links') {
       return this.isLinkStepValid()
@@ -817,6 +720,8 @@ export default class MetadataForm extends mixins(validationMixin) {
     }
     if (typeof this.currentStep !== 'number') return
 
+    this.updateFundReceivingAddress()
+
     this.updateDirtyFlags()
 
     this.$store.commit(SET_METADATA, {
@@ -833,7 +738,7 @@ export default class MetadataForm extends mixins(validationMixin) {
       return
     }
     for (const field of Object.keys(this.form[stepName])) {
-      if (this.$v.form[stepName]?.[field].$dirty) {
+      if (this.$v.form[stepName]?.[field]?.$dirty) {
         this.form.dirtyFields.add(`${stepName}.${field}`)
       }
     }
@@ -853,50 +758,74 @@ export default class MetadataForm extends mixins(validationMixin) {
     )
   }
 
-  handleStepNav(step): void {
+  updateProgress(current: number, last: number): void {
+    this.progress = { current, last }
+  }
+
+  async addMetadata(): Promise<void> {
+    const { currentUser } = this.$store.state
+
+    // Reset errors when submitting
+    this.txError = ''
+    if (currentUser) {
+      const { walletProvider } = currentUser
+      try {
+        this.isWaiting = true
+        const transaction = this.onSubmit(this.form, walletProvider)
+        this.txHash = (await transaction).hash
+        const receipt = await waitForTransaction(transaction)
+
+        this.updateProgress(0, receipt.blockNumber)
+        await Metadata.waitForBlock(
+          receipt.blockNumber,
+          chain.name,
+          0,
+          this.updateProgress
+        )
+
+        this.isWaiting = false
+
+        // reset so that add project will pick up the latest metadata
+        this.$store.commit(RESET_RECIPIENT_DATA)
+
+        this.$router.push({
+          name: 'metadata-success',
+          params: { hash: this.txHash, id: this.metadataId },
+        })
+      } catch (error) {
+        this.isWaiting = false
+        this.txError = (error as Error).message
+        return
+      }
+    }
+  }
+
+  handleStepNav(step: number, updateFurthest?: boolean): void {
     // If isNavDisabled => disable quick-links
     if (this.isNavDisabled) return
 
     // Save form data
-    this.saveFormData()
-    // Navigate
-    if (this.isStepUnlocked(step)) {
-      this.gotoStep(this.steps[step])
+    this.saveFormData(updateFurthest)
+
+    if (step >= this.steps.length) {
+      // submit metadata
+      this.addMetadata()
+    } else {
+      // Navigate
+      if (this.isStepUnlocked(step)) {
+        this.gotoStep(this.steps[step])
+      }
     }
   }
 
-  onSuccess(txReceipt: ContractReceipt, chainId: number): void {
-    const { transactionHash: hash, from: owner } = txReceipt
-    let id = this.form.id
-    if (!id) {
-      const name = this.form.project.name || ''
-      id = Metadata.makeMetadataId(name, owner)
-    }
-
-    this.receipt = { hash, id, chainId }
+  get metadataId(): string {
+    const projectName = this.form.project.name || ''
+    const owner = this.form.owner || ''
+    return this.form.id || Metadata.makeMetadataId(projectName, owner)
   }
 
   get metadataInterface(): Metadata {
     return this.toMetadata(this.form)
-  }
-
-  get redirectButtons(): LinkInfo[] {
-    const id = this.receipt?.id || ''
-    const links: Array<{ url: string; text: string }> = []
-
-    if (!this.projectExists) {
-      links.push({
-        url: `/join/summary/${id}`,
-        text: 'Add project',
-      })
-    }
-
-    links.push({
-      url: `/metadata/${id}`,
-      text: 'View metadata',
-    })
-
-    return links
   }
 
   get projectInterface(): Project {
@@ -944,7 +873,7 @@ export default class MetadataForm extends mixins(validationMixin) {
 
 .input-row {
   display: grid;
-  grid-template-columns: 130px 2fr auto;
+  grid-template-columns: 2fr auto;
   column-gap: 10px;
   & > * {
     margin: 8px 0;

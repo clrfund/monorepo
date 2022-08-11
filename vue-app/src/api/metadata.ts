@@ -4,6 +4,9 @@ import { METADATA_NETWORKS, METADATA_SUBGRAPH_URL_PREFIX, chain } from './core'
 import { Project } from './projects'
 import { Ipfs } from './ipfs'
 import { MAX_RETRIES } from './core'
+import { required, url, maxLength } from 'vuelidate/lib/validators'
+import * as isIPFS from 'is-ipfs'
+import { ReceivingAddress } from '@/api/receiving-address'
 
 const subgraphUrl = (network: string): string =>
   `${METADATA_SUBGRAPH_URL_PREFIX}${network}`
@@ -39,11 +42,13 @@ export interface MetadataFormData {
   }
   fund: {
     receivingAddresses: string[]
+    currentChainReceivingAddress: string
     plans: string
   }
   team: {
     name: string
     description: string
+    email: string
   }
   links: {
     github: string
@@ -63,23 +68,56 @@ export interface MetadataFormData {
   owner?: string
 }
 
-/**
- * Extract address for the given chain
- * @param receivingAddresses array of EIP-3770 addresses, i.e. eth:0x11111...
- * @param chainShortName chain short name
- * @returns address for the chain
- */
-function getAddressForChain(
-  receivingAddresses: string[] = [],
-  chainShortName: string
-): string {
-  const chainAddresses = receivingAddresses.reduce((addresses, data) => {
-    const [chainName, address] = data.split(':')
-    addresses[chainName] = address
-    return addresses
-  }, {})
+export const MetadataFormValidations = {
+  project: {
+    name: { required },
+    tagline: {
+      required,
+      maxLength: maxLength(140),
+    },
+    description: { required },
+    category: { required },
+    problemSpace: { required },
+  },
+  fund: {
+    receivingAddresses: {},
+    currentChainReceivingAddress: {
+      required,
+      validEthAddress: utils.isAddress,
+    },
+    plans: { required },
+  },
+  team: {
+    name: {},
+    description: {},
+  },
+  links: {
+    github: { url },
+    radicle: { url },
+    website: { url },
+    twitter: { url },
+    discord: { url },
+  },
+  image: {
+    bannerHash: {
+      required,
+      validIpfsHash: isIPFS.cid,
+    },
+    thumbnailHash: {
+      required,
+      validIpfsHash: isIPFS.cid,
+    },
+  },
+}
 
-  return chainAddresses[chainShortName]
+/**
+ * Extract address for the current chain from the fund receiving addresses
+ * @param receivingAddresses array of EIP-3770 addresses, i.e. eth:0x11111...
+ * @returns address for the current chain
+ */
+function getAddressForCurrentChain(receivingAddresses: string[] = []): string {
+  const addresses = ReceivingAddress.fromArray(receivingAddresses)
+  return addresses[chain.shortName]
 }
 
 /**
@@ -103,23 +141,6 @@ async function getLatestBlock(network: string): Promise<number> {
   return meta.block.number
 }
 
-/**
- * Parse and populate receiving addresses
- * @param data data containing receivingAddresses
- * @returns metadata populated with resolvedAddress and addressName
- */
-async function populateAddresses(data: any): Promise<Metadata> {
-  const addressName = getAddressForChain(
-    data.receivingAddresses,
-    chain.shortName
-  )
-
-  return {
-    ...data,
-    addressName,
-  }
-}
-
 function sleep(factor: number): Promise<void> {
   const timeout = factor ** 2 * 1000
   return new Promise((resolve) => setTimeout(resolve, timeout))
@@ -134,8 +155,7 @@ export class Metadata {
   owner?: string
   network?: string
   receivingAddresses?: string[]
-  addressName?: string
-  resolvedAddress?: string
+  currentChainReceivingAddress?: string
   tagline?: string
   description?: string
   category?: string
@@ -152,6 +172,8 @@ export class Metadata {
   thumbnailImageHash?: string
   imageHash?: string
   deletedAt?: number
+  furthestStep?: number
+  email?: string
 
   constructor(data: any) {
     this.id = data.id
@@ -159,6 +181,9 @@ export class Metadata {
     this.owner = data.owner
     this.network = data.network
     this.receivingAddresses = data.receivingAddresses
+    this.currentChainReceivingAddress = getAddressForCurrentChain(
+      data.receivingAddresses
+    )
     this.tagline = data.tagline
     this.description = data.description
     this.category = data.category
@@ -174,6 +199,8 @@ export class Metadata {
     this.bannerImageHash = data.bannerImageHash
     this.thumbnailImageHash = data.thumbnailImageHash
     this.imageHash = data.imageHash
+    this.furthestStep = data.furthestStep
+    this.email = data.email
   }
 
   /**
@@ -211,8 +238,7 @@ export class Metadata {
       return null
     }
 
-    const arg = await populateAddresses(data)
-    return new Metadata({ ...arg })
+    return new Metadata({ ...data })
   }
 
   /**
@@ -231,28 +257,13 @@ export class Metadata {
   }
 
   /**
-   * get the receiving address of the current chain
-   * @param addresses list of EIP3770 addresses
-   * @returns the address of the current chain
-   */
-  getCurrentChainAddress(addresses: string[] = []): string {
-    const chainPrefix = chain.shortName + ':'
-    const chainAddress = addresses.find((addr) => {
-      return addr.startsWith(chainPrefix)
-    })
-
-    return chainAddress ? chainAddress.substring(chainPrefix.length) : ''
-  }
-
-  /**
    * Convert metadata to project interface
    * @returns project
    */
   toProject(): Project {
-    const address = this.getCurrentChainAddress(this.receivingAddresses)
     return {
       id: this.id || '',
-      address,
+      address: this.currentChainReceivingAddress || '',
       name: this.name || '',
       tagline: this.tagline,
       description: this.description || '',
@@ -290,11 +301,14 @@ export class Metadata {
       },
       fund: {
         receivingAddresses: this.receivingAddresses || [],
+        currentChainReceivingAddress:
+          getAddressForCurrentChain(this.receivingAddresses) || '',
         plans: this.plans || '',
       },
       team: {
         name: this.teamName || '',
         description: this.teamDescription || '',
+        email: this.email || '',
       },
       links: {
         github: this.githubUrl || '',

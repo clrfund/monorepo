@@ -1,32 +1,24 @@
 <template>
-  <div>
-    <join-universal v-if="isUniversalRegistry" />
-    <join-optimistic v-else-if="isOptimisticRegistry" />
-    <not-found v-else />
+  <div v-if="$store.state.currentRound && $store.state.recipientRegistryInfo">
+    <join-form v-if="$store.getters.canAddProject" />
+    <join-landing v-else />
   </div>
+  <loader v-else />
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import JoinOptimistic from '@/views/JoinOptimistic.vue'
-import JoinUniversal from '@/views/JoinUniversal.vue'
-import NotFound from '@/views/NotFound.vue'
-import { recipientRegistryType, RecipientRegistryType } from '@/api/core'
+import JoinLanding from '@/views/JoinLanding.vue'
+import JoinForm from '@/views/JoinForm.vue'
+import Loader from '@/components/Loader.vue'
 
 @Component({
   components: {
-    JoinOptimistic,
-    JoinUniversal,
-    NotFound,
+    JoinForm,
+    JoinLanding,
+    Loader,
   },
 })
-export default class JoinView extends Vue {
-  get isOptimisticRegistry(): boolean {
-    return recipientRegistryType === RecipientRegistryType.OPTIMISTIC
-  }
-  get isUniversalRegistry(): boolean {
-    return recipientRegistryType === RecipientRegistryType.UNIVERSAL
-  }
-}
+export default class JoinView extends Vue {}
 </script>

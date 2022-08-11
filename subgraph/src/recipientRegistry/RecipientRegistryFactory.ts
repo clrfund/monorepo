@@ -2,7 +2,6 @@ import { Address } from '@graphprotocol/graph-ts'
 import { OptimisticRecipientRegistry as OptimisticRecipientRegistryContract } from '../../generated/FundingRoundFactory/OptimisticRecipientRegistry'
 import { SimpleRecipientRegistry as SimpleRecipientRegistryContract } from '../../generated/FundingRoundFactory/SimpleRecipientRegistry'
 import { KlerosRecipientRegistry as KlerosRecipientRegistryContract } from '../../generated/FundingRoundFactory/KlerosRecipientRegistry'
-import { UniversalRecipientRegistry as UniversalRecipientRegistryContract } from '../../generated/FundingRoundFactory/UniversalRecipientRegistry'
 
 import { RecipientRegistry } from '../../generated/schema'
 import {
@@ -31,28 +30,6 @@ class RecipientRegistryFactoryOptimistic {
 
     recipientRegistry.controller = optimisticRegistry.controller()
     recipientRegistry.maxRecipients = optimisticRegistry.maxRecipients()
-    recipientRegistry.fundingRoundFactory = params.fundingRoundFactoryId
-    recipientRegistry.createdAt = params.createdAt
-
-    return recipientRegistry
-  }
-}
-
-class RecipientRegistryFactoryUniversal {
-  static create(params: RecipientRegistryCreateParams): RecipientRegistry {
-    let recipientRegistryId = params.recipientRegistryAddress.toHexString()
-    let recipientRegistry = new RecipientRegistry(recipientRegistryId)
-
-    let registry = UniversalRecipientRegistryContract.bind(
-      params.recipientRegistryAddress
-    )
-    recipientRegistry.baseDeposit = registry.baseDeposit()
-    recipientRegistry.challengePeriodDuration =
-      registry.challengePeriodDuration()
-    recipientRegistry.owner = registry.owner()
-
-    recipientRegistry.controller = registry.controller()
-    recipientRegistry.maxRecipients = registry.maxRecipients()
     recipientRegistry.fundingRoundFactory = params.fundingRoundFactoryId
     recipientRegistry.createdAt = params.createdAt
 
@@ -105,8 +82,6 @@ export class RecipientRegistryFactory {
         return RecipientRegistryFactoryOptimistic.create(params)
       case RecipientRegistryType.Kleros:
         return RecipientRegistryFactoryKleros.create(params)
-      case RecipientRegistryType.Universal:
-        return RecipientRegistryFactoryUniversal.create(params)
       case RecipientRegistryType.Simple:
         return RecipientRegistryFactorySimple.create(params)
       default:
