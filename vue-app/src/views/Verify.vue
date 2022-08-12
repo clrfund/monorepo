@@ -254,8 +254,6 @@ import {
   getBrightId,
 } from '@/api/bright-id'
 import { User } from '@/api/user'
-import { chain } from '@/api/core'
-import { renderAddressOrHash } from '@/utils/accounts'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
