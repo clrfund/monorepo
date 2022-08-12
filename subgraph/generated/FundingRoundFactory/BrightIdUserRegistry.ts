@@ -32,6 +32,32 @@ export class OwnershipTransferred__Params {
   }
 }
 
+export class Registered extends ethereum.Event {
+  get params(): Registered__Params {
+    return new Registered__Params(this);
+  }
+}
+
+export class Registered__Params {
+  _event: Registered;
+
+  constructor(event: Registered) {
+    this._event = event;
+  }
+
+  get addr(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get timestamp(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+
+  get isVerified(): boolean {
+    return this._event.parameters[2].value.toBoolean();
+  }
+}
+
 export class SetBrightIdSettings extends ethereum.Event {
   get params(): SetBrightIdSettings__Params {
     return new SetBrightIdSettings__Params(this);
@@ -52,23 +78,9 @@ export class SetBrightIdSettings__Params {
   get verifier(): Address {
     return this._event.parameters[1].value.toAddress();
   }
-}
 
-export class Sponsor extends ethereum.Event {
-  get params(): Sponsor__Params {
-    return new Sponsor__Params(this);
-  }
-}
-
-export class Sponsor__Params {
-  _event: Sponsor;
-
-  constructor(event: Sponsor) {
-    this._event = event;
-  }
-
-  get addr(): Address {
-    return this._event.parameters[0].value.toAddress();
+  get sponsor(): Address {
+    return this._event.parameters[2].value.toAddress();
   }
 }
 
@@ -94,6 +106,29 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     return new BrightIdUserRegistry("BrightIdUserRegistry", address);
   }
 
+  brightIdSponsor(): Address {
+    let result = super.call(
+      "brightIdSponsor",
+      "brightIdSponsor():(address)",
+      []
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_brightIdSponsor(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "brightIdSponsor",
+      "brightIdSponsor():(address)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
   context(): Bytes {
     let result = super.call("context", "context():(bytes32)", []);
 
@@ -107,21 +142,6 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  isOwner(): boolean {
-    let result = super.call("isOwner", "isOwner():(bool)", []);
-
-    return result[0].toBoolean();
-  }
-
-  try_isOwner(): ethereum.CallResult<boolean> {
-    let result = super.tryCall("isOwner", "isOwner():(bool)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   isVerifiedUser(_user: Address): boolean {
@@ -235,6 +255,10 @@ export class ConstructorCall__Inputs {
   get _verifier(): Address {
     return this._call.inputValues[1].value.toAddress();
   }
+
+  get _sponsor(): Address {
+    return this._call.inputValues[2].value.toAddress();
+  }
 }
 
 export class ConstructorCall__Outputs {
@@ -266,24 +290,28 @@ export class RegisterCall__Inputs {
     return this._call.inputValues[0].value.toBytes();
   }
 
-  get _addrs(): Array<Address> {
-    return this._call.inputValues[1].value.toAddressArray();
+  get _addr(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get _verificationHash(): Bytes {
+    return this._call.inputValues[2].value.toBytes();
   }
 
   get _timestamp(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
+    return this._call.inputValues[3].value.toBigInt();
   }
 
   get _v(): i32 {
-    return this._call.inputValues[3].value.toI32();
+    return this._call.inputValues[4].value.toI32();
   }
 
   get _r(): Bytes {
-    return this._call.inputValues[4].value.toBytes();
+    return this._call.inputValues[5].value.toBytes();
   }
 
   get _s(): Bytes {
-    return this._call.inputValues[5].value.toBytes();
+    return this._call.inputValues[6].value.toBytes();
   }
 }
 
@@ -344,6 +372,10 @@ export class SetSettingsCall__Inputs {
 
   get _verifier(): Address {
     return this._call.inputValues[1].value.toAddress();
+  }
+
+  get _sponsor(): Address {
+    return this._call.inputValues[2].value.toAddress();
   }
 }
 

@@ -2,7 +2,7 @@ import { log } from '@graphprotocol/graph-ts'
 import {
   OwnershipTransferred,
   SetBrightIdSettings,
-  Sponsor,
+  Registered,
 } from '../generated/templates/BrightIdUserRegistry/BrightIdUserRegistry'
 
 import { BrightIdUserRegistry as BrightIdUserRegistryContract } from '../generated/templates/BrightIdUserRegistry/BrightIdUserRegistry'
@@ -33,24 +33,13 @@ export function handleSetBrightIdSettings(event: SetBrightIdSettings): void {
   log.info('handleSetBrightIdSettings', [])
 }
 
-export function handleSponsor(event: Sponsor): void {
-  log.info('handleSponsor', [])
-
-  //TODO: create contributorRegistry entity here if it does not exist.
+export function handleRegister(event: Registered): void {
+  log.info('handleRegister', [])
 
   let contributorId = event.params.addr.toHexString()
-  let brightIdUserRegistryContract = BrightIdUserRegistryContract.bind(
-    event.address
-  )
-
-  //DEBT: Retroactively register here as there are no events emitted in registration function
   let contributor = new Contributor(contributorId)
-  contributor.verified = brightIdUserRegistryContract.verifications(
-    event.params.addr
-  ).value1
-  contributor.verifiedTimeStamp = brightIdUserRegistryContract
-    .verifications(event.params.addr)
-    .value0.toString()
+  contributor.verified = event.params.isVerified
+  contributor.verifiedTimeStamp = event.params.timestamp.toString()
   contributor.contributorAddress = event.params.addr
   contributor.contributorRegistry = event.address.toHexString()
   contributor.save()

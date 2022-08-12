@@ -149,10 +149,8 @@ templates:
       eventHandlers:
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
-        - event: SetBrightIdSettings(bytes32,address)
+        - event: SetBrightIdSettings(bytes32,address,address)
           handler: handleSetBrightIdSettings
-        - event: Sponsor(indexed address)
-          handler: handleSponsor
       file: ./src/BrightIdUserRegistryMapping.ts
   - name: MACI
     kind: ethereum/contract
