@@ -96,17 +96,6 @@
                 </button>
                 <div v-if="showVerificationResult" class="error">
                   <span v-if="errorMessage">{{ errorMessage }}</span>
-                  <span v-else-if="!!differentVerifiedAccount">
-                    <span
-                      >A different verified account was found. Please use
-                    </span>
-                    <span
-                      ><Links :to="differentVerifiedAccountExplorerUrl">{{
-                        differentVerifiedAccountShortAddress
-                      }}</Links></span
-                    >
-                    <span> or a new account.</span>
-                  </span>
                   <span v-else-if="!isManuallyVerified"
                     >Account is not verified</span
                   >
@@ -265,8 +254,6 @@ import {
   getBrightId,
 } from '@/api/bright-id'
 import { User } from '@/api/user'
-import { chain } from '@/api/core'
-import { renderAddressOrHash } from '@/utils/accounts'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
@@ -310,7 +297,6 @@ export default class VerifyView extends Vue {
   loadingManualVerify = false
   showVerificationResult = false
   errorMessage = ''
-  differentVerifiedAccount = ''
 
   get currentUser(): User {
     return this.$store.state.currentUser
@@ -412,7 +398,6 @@ export default class VerifyView extends Vue {
   async handleIsVerifiedClick() {
     this.loadingManualVerify = true
     this.errorMessage = ''
-    this.differentVerifiedAccount = ''
     this.showVerificationResult = false
 
     try {
@@ -425,13 +410,6 @@ export default class VerifyView extends Vue {
             brightId,
           })
         }, 5000)
-      } else {
-        if (brightId.verification) {
-          if (!brightId.verification.unique) {
-            this.differentVerifiedAccount =
-              brightId.verification?.contextIds[0] || ''
-          }
-        }
       }
     } catch (error) {
       if (!(error instanceof BrightIdError)) {
@@ -502,14 +480,6 @@ export default class VerifyView extends Vue {
       default:
         return false
     }
-  }
-
-  get differentVerifiedAccountExplorerUrl(): string {
-    return `${chain.explorer}/address/${this.differentVerifiedAccount}`
-  }
-
-  get differentVerifiedAccountShortAddress(): string {
-    return renderAddressOrHash(this.differentVerifiedAccount, 8)
   }
 }
 </script>

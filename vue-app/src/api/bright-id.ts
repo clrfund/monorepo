@@ -4,7 +4,7 @@ import { formatBytes32String } from '@ethersproject/strings'
 
 import { BrightIdUserRegistry } from './abi'
 
-const NODE_URL = 'https://app.brightid.org/node/v5'
+const NODE_URL = 'https://app.brightid.org/node/v6'
 const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
 
 export interface BrightId {
@@ -16,7 +16,8 @@ export interface BrightId {
 
 export interface Verification {
   unique: boolean
-  contextIds: string[]
+  appUserId: string
+  verificationHash: string
   sig: { r: string; s: string; v: number }
   timestamp: number
   app: string
@@ -33,8 +34,7 @@ export async function selfSponsor(
 }
 
 export function getBrightIdLink(userAddress: string): string {
-  const nodeUrl = 'http:%2f%2fnode.brightid.org'
-  const deepLink = `brightid://link-verification/${nodeUrl}/${CONTEXT}/${userAddress}`
+  const deepLink = `brightid://link-verification/${CONTEXT}/${userAddress}`
   return deepLink
 }
 
@@ -56,10 +56,11 @@ export async function getVerification(
   const apiUrl = `${NODE_URL}/verifications/${CONTEXT}/${userAddress}?signed=eth&timestamp=seconds`
   const response = await fetch(apiUrl)
   const data = await response.json()
+
   if (data['error']) {
     throw new BrightIdError(data['errorNum'])
   } else {
-    return data['data']
+    return data['data'][0]
   }
 }
 
@@ -71,7 +72,8 @@ export async function registerUser(
   const registry = new Contract(registryAddress, BrightIdUserRegistry, signer)
   const transaction = await registry.register(
     formatBytes32String(CONTEXT),
-    verification.contextIds,
+    verification.appUserId,
+    '0x' + verification.verificationHash,
     verification.timestamp,
     verification.sig.v,
     '0x' + verification.sig.r,
