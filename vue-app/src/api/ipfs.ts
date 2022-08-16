@@ -1,5 +1,4 @@
 import { ipfsPinningUrl, ipfsPinningJwt } from './core'
-import axios from 'axios'
 
 export class IPFS {
   url: string
@@ -10,19 +9,20 @@ export class IPFS {
     this.jwt = ipfsPinningJwt || ''
   }
 
-  async add(file: Blob): Promise<string> {
+  async add(file: File): Promise<string> {
     const data = new FormData()
     data.append('file', file)
 
     const options = {
       method: 'POST',
-      url: this.url,
       headers: {
         Authorization: `Bearer ${this.jwt}`,
       },
-      data,
+      body: data,
     }
-    const response = await axios(options)
-    return response.data.IpfsHash
+
+    const result = await fetch(this.url, options)
+    const json = await result.json()
+    return json.IpfsHash
   }
 }

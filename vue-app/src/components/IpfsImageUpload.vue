@@ -20,7 +20,7 @@
         type="submit"
         label="Upload"
         class="btn-primary"
-        :disabled="loading || error || !loadedImageHeight"
+        :disabled="loading || error || !loadedImageFile"
       >
         {{ loading ? 'Uploading...' : 'Upload' }}
       </button>
@@ -82,7 +82,7 @@ export default class IpfsImageUpload extends Vue {
   @Prop() formProp!: string
   @Prop() onUpload!: (key: string, value: string) => void
 
-  ipfs: any = null
+  ipfs: IPFS | null = null
   hash = ''
   loading = false
   loadedImageFile: File | null = null
@@ -126,6 +126,7 @@ export default class IpfsImageUpload extends Vue {
   handleUploadToIPFS(event) {
     event.preventDefault()
     if (
+      this.ipfs &&
       this.loadedImageFile &&
       this.loadedImageHeight &&
       this.loadedImageWidth
@@ -153,6 +154,7 @@ export default class IpfsImageUpload extends Vue {
     this.hash = ''
     this.loading = false
     this.error = ''
+    this.loadedImageFile = null
     this.onUpload(this.formProp, '')
 
     // Clear file selector input
