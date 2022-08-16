@@ -65,7 +65,7 @@
         <h1>Set up BrightID</h1>
       </div>
       <div class="cancel-area desktop">
-        <links class="cancel-link" to="/verify"> Cancel </links>
+        <links class="text-link" to="/verify"> Cancel </links>
       </div>
       <div class="form-area">
         <div class="verification-status" v-if="currentStep === 2">
