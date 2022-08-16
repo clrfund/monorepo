@@ -14,6 +14,7 @@
   "dependencies": {
     "@kleros/gtcr-encoder": "^1.4.0",
     "@openfonts/inter_all": "^1.0.2",
+    "@openfonts/work-sans_all": "^1.0.1",
     "@walletconnect/web3-provider": "^1.5.1",
     "core-js": "^3.6.4",
     "crypto-js": "^4.0.0",
