@@ -2,6 +2,5 @@
 export type Recipient = {
   address: string
   metadata?: any
-  metadataId?: string
   skipExecution?: boolean
 }

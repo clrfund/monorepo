@@ -98,7 +98,6 @@ function decodeProject(recipient: Partial<Recipient>): Project {
     id: recipient.id,
     address: recipient.recipientAddress || '',
     requester,
-    metadataId: recipient.recipientMetadataId || '',
     name: metadata.name,
     description: metadata.description,
     imageUrl,

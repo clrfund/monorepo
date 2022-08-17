@@ -1501,23 +1501,6 @@ export class Recipient extends Entity {
     }
   }
 
-  get recipientMetadataId(): string | null {
-    let value = this.get("recipientMetadataId");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set recipientMetadataId(value: string | null) {
-    if (value === null) {
-      this.unset("recipientMetadataId");
-    } else {
-      this.set("recipientMetadataId", Value.fromString(value as string));
-    }
-  }
-
   get rejected(): boolean {
     let value = this.get("rejected");
     return value.toBoolean();

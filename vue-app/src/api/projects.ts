@@ -15,7 +15,6 @@ export interface Project {
   address: string
   requester?: string
   name: string
-  metadataId?: string
   tagline?: string
   description: string
   category?: string

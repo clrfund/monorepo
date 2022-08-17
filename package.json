@@ -19,7 +19,7 @@
     ]
   },
   "scripts": {
-    "build": "yarn workspaces run build",
+    "build": "yarn workspace @clrfund/subgraph run codegen && yarn workspaces run build",
     "build:contracts": "yarn workspace @clrfund/contracts run build",
     "build:web": "yarn workspace @clrfund/vue-app run build",
     "build:subgraph": "yarn workspace @clrfund/subgraph run codegen && yarn workspace @clrfund/subgraph run build",

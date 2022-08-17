@@ -1,9 +1,5 @@
 import { BigNumber, Contract, Signer } from 'ethers'
-import {
-  TransactionResponse,
-  TransactionReceipt,
-} from '@ethersproject/abstract-provider'
-import { getEventArg } from '@/utils/contracts'
+import { TransactionResponse } from '@ethersproject/abstract-provider'
 
 import { OptimisticRecipientRegistry } from './abi'
 import { RecipientRegistryInterface } from './types'
@@ -62,14 +58,6 @@ export async function addRecipient(
     }
   )
   return transaction
-}
-
-export function getRequestId(
-  receipt: TransactionReceipt,
-  registryAddress: string
-): string {
-  const registry = new Contract(registryAddress, OptimisticRecipientRegistry)
-  return getEventArg(receipt, registry, 'RequestSubmitted', '_recipientId')
 }
 
 export async function registerProject(

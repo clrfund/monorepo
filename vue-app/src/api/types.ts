@@ -34,6 +34,7 @@ export enum RecipientRegistryRequestType {
 
 export enum RecipientRegistryRequestStatus {
   Submitted = 'Needs review',
+  Accepted = 'Accepted',
   Rejected = 'Rejected',
   Executed = 'Live',
   Removed = 'Removed',
