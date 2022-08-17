@@ -129,7 +129,13 @@ export default class App extends Vue {
     if (!this.$web3.user) return
 
     // Connect & auth to gun db
-    await this.$store.dispatch(LOGIN_USER, this.$web3.user)
+    try {
+      await this.$store.dispatch(LOGIN_USER, this.$web3.user)
+    } catch (error) {
+      /* eslint-disable-next-line no-console */
+      console.error(error)
+      return
+    }
 
     this.$store.commit(SET_CURRENT_USER, this.$web3.user)
     this.$store.dispatch(LOAD_USER_INFO)
