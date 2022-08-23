@@ -12,83 +12,82 @@
       :alt="project.name"
     />
     <div class="about">
-      <h1
-        class="project-name"
-        :title="addressName"
-        :project-index="project.index"
-      >
-        <links v-if="klerosCurateUrl" :to="klerosCurateUrl">{{
-          project.name
-        }}</links>
-        <span v-else> {{ project.name }} </span>
-      </h1>
-      <p class="tagline">{{ project.tagline }}</p>
-      <div class="subtitle">
-        <div class="tag">{{ project.category }} tag</div>
-        <div class="team-byline" v-if="!!project.teamName">
-          Team: <links to="#team"> {{ project.teamName }}</links>
-        </div>
-      </div>
-      <div class="mobile mb2">
-        <add-to-cart-button
-          v-if="shouldShowCartInput && hasContributeBtn()"
-          :project="project"
-        />
-        <claim-button :project="project" />
-        <p
-          v-if="
-            $store.getters.hasUserContributed &&
-            !$store.getters.canUserReallocate
-          "
-        >
-          ✔️ You have contributed to this project!
-        </p>
-      </div>
-      <div class="project-section">
-        <h2>About the project</h2>
-        <markdown :raw="project.description" />
-      </div>
-      <div class="project-section">
-        <h2>The problem it solves</h2>
-        <markdown :raw="project.problemSpace" />
-      </div>
-      <div class="project-section">
-        <h2>Funding plans</h2>
-        <markdown :raw="project.plans" />
-      </div>
-      <div
-        :class="{
-          'address-box': project.teamName || project.teamDescription,
-          'address-box-no-team': !project.teamName && !project.teamDescription,
-        }"
-      >
+      <div class="title-container">
         <div>
-          <div class="address-label">Recipient address</div>
-          <div class="address">
-            {{ addressName }}
+          <h1
+            class="project-name"
+            :title="addressName"
+            :project-index="project.index"
+          >
+            <links v-if="klerosCurateUrl" :to="klerosCurateUrl">{{
+              project.name
+            }}</links>
+            <span v-else> {{ project.name }} </span>
+          </h1>
+          <p class="text-base tagline">{{ project.tagline }}</p>
+          <div class="subtitle">
+            <div class="text-body tag">{{ project.category }}</div>
+            <div class="text-base team-byline" v-if="!!project.teamName">
+              Team: <links to="#team"> {{ project.teamName }}</links>
+            </div>
           </div>
         </div>
-        <div class="copy-div">
-          <copy-button
-            :value="project.address"
-            text="address"
-            myClass="project-profile"
-            :hasBorder="true"
+        <div v-if="!previewMode" class="actions-container">
+          <add-to-cart-button
+            v-if="shouldShowCartInput && hasContributeBtn()"
+            :project="project"
           />
-          <links
-            class="explorerLink"
-            :to="blockExplorer.url"
-            :title="`View on ${blockExplorer.label}`"
-            :hideArrow="true"
+          <claim-button :project="project" />
+          <p
+            v-if="
+              $store.getters.hasUserContributed &&
+              !$store.getters.canUserReallocate
+            "
           >
-            <img
-              class="icon"
-              :src="require(`@/assets/${blockExplorer.logo}`)"
-            />
-          </links>
+            ✔️ You have contributed to this project!
+          </p>
         </div>
       </div>
-      <hr v-if="project.teamName || project.teamDescription" />
+      <div class="project-section-container">
+        <div class="project-section">
+          <p class="text-body">About the project</p>
+          <markdown :raw="project.description" />
+        </div>
+        <div class="project-section">
+          <p class="text-body">The problem it solves</p>
+          <markdown :raw="project.problemSpace" />
+        </div>
+        <div class="project-section">
+          <p class="text-body">Funding plans</p>
+          <markdown :raw="project.plans" />
+        </div>
+        <div class="project-section">
+          <p class="text-body">Recipient address</p>
+          <div class="address-container">
+            <span>{{ addressName }}</span>
+            <div class="copy-div">
+              <copy-button
+                :value="project.address"
+                text="address"
+                myClass="project-profile"
+                :fixedColor="false"
+              />
+              <links
+                class="explorerLink"
+                :to="blockExplorer.url"
+                :title="`View on ${blockExplorer.label}`"
+                :hideArrow="true"
+              >
+                <img
+                  class="icon"
+                  :src="require(`@/assets/${blockExplorer.logo}`)"
+                />
+              </links>
+            </div>
+          </div>
+        </div>
+
+        <!-- <hr v-if="project.teamName || project.teamDescription" />
       <div
         id="team"
         v-if="project.teamName || project.teamDescription"
@@ -96,9 +95,10 @@
       >
         <h2>Team: {{ project.teamName }}</h2>
         <markdown :raw="project.teamDescription" />
+      </div> -->
       </div>
+      <link-box v-if="previewMode" :project="project" class="mt2" />
     </div>
-    <link-box v-if="previewMode" :project="project" class="mt2" />
   </div>
 </template>
 
@@ -252,11 +252,31 @@ export default class ProjectProfile extends Vue {
   }
 
   .about {
+    padding-bottom: 0;
+
+    .title-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+
+      @media (max-width: $breakpoint-xl) {
+        flex-direction: column;
+        margin-bottom: 3rem;
+      }
+
+      .actions-container {
+        max-width: 320px;
+        width: 100%;
+
+        @media (max-width: $breakpoint-xl) {
+          max-width: calc(100vw - 1.5rem);
+        }
+      }
+    }
+
     .project-name {
-      font-family: 'Glacial Indifference', sans-serif;
       font-weight: bold;
-      font-size: 2.5rem;
-      letter-spacing: -0.015em;
       margin: 0;
 
       a {
@@ -265,11 +285,9 @@ export default class ProjectProfile extends Vue {
     }
 
     .tagline {
-      font-size: 1.5rem;
-      line-height: 150%;
       margin-top: 0.25rem;
       margin-bottom: 1rem;
-      font-family: 'Glacial Indifference', sans-serif;
+      font-size: 1.125rem;
     }
 
     .subtitle {
@@ -284,14 +302,61 @@ export default class ProjectProfile extends Vue {
         margin-bottom: 2rem;
       }
 
+      .tag {
+        color: $clr-white;
+        background: $clr-purple;
+        border-radius: 4px;
+        padding: 0.25rem 0.75rem;
+        font-size: 18px;
+      }
+
       .team-byline {
-        line-height: 150%;
+        font-size: 18px;
+
+        a {
+          color: $clr-purple;
+        }
       }
     }
 
+    .project-section-container {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
     .project-section {
-      margin-bottom: 3rem;
-      color: var(--text-body);
+      border: 1px solid $clr-dark-gray;
+      border-radius: 20px;
+      padding: 2rem 2.5rem;
+
+      p {
+        color: $clr-dark-white;
+      }
+
+      .markdown {
+        background: transparent;
+        color: var(--text-color);
+
+        ::v-deep {
+          h1,
+          h2,
+          h3,
+          h4,
+          h5,
+          h6 {
+            padding: 0;
+          }
+          p {
+            padding: 0;
+            font-family: 'Work Sans';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 140%;
+          }
+        }
+      }
     }
 
     .address-box {
@@ -316,16 +381,6 @@ export default class ProjectProfile extends Vue {
         font-weight: 400;
         margin-bottom: 0.25rem;
         text-transform: uppercase;
-      }
-
-      .address {
-        display: flex;
-        font-family: 'Glacial Indifference', sans-serif;
-        font-weight: 600;
-        border-radius: 8px;
-        align-items: center;
-        gap: 0.5rem;
-        word-break: break-all;
       }
     }
 
@@ -380,6 +435,19 @@ export default class ProjectProfile extends Vue {
     }
   }
 
+  .address-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: var(--text-color);
+    padding: 0;
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 140%;
+  }
+
   .copy-div {
     display: flex;
     gap: 0.5rem;
@@ -389,7 +457,6 @@ export default class ProjectProfile extends Vue {
       padding: 0;
       .icon {
         @include icon(none, var(--explorer-hover));
-        border: 1px solid var(--explorer-border);
         filter: var(--img-filter, invert(0.7));
       }
     }
