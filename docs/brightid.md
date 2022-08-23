@@ -18,7 +18,7 @@ USER_REGISTRY_TYPE=brightid
 
 Available envs:
 
-| Network/Env | Context | sponsor contract |
+| Network/Env | Context | Sponsor Contract |
 | ----------- | ------- | ---------------- |
 | goerli | clrfund-goerli | 0xF045234A776C87060DEEc5689056455A24a59c08 |
 | xdai | clrfund-gnosis-chain ||
@@ -34,6 +34,8 @@ BRIGHTID_CONTEXT={CONTEXT}
 ```
 
 Note: the BrightID context is specific to the BrightID network - it's independent from the Ethereum network you choose to run the app on. It refers to the BrightID app context where you want to burn sponsorship tokens.
+The `Sponsor Contract` is the contract set up in the BrightID node to track the sponsorship event.
+
 
 [Learn more about context in the BrightID docs](https://dev.brightid.org/docs/guides/ZG9jOjQxNTE1NDU-basic-integration).
 
