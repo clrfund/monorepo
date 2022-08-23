@@ -6,61 +6,34 @@
       <wallet-widget :isActionButton="true" />
     </div>
     <div v-else class="cart-container">
-      <div
-        class="reallocation-message"
-        v-if="$store.getters.canUserReallocate && $store.getters.hasUserVoted"
-      >
-        You’ve already contributed this round. You can edit your choices and add
-        new projects, but your cart total must always equal your original
-        contribution amount.
-        <links to="/about/maci" class="message-link">Why?</links>
-      </div>
-      <div
-        class="reallocation-message"
-        v-if="$store.getters.canUserReallocate && !$store.getters.hasUserVoted"
-      >
-        Almost done! You must submit one more transaction to complete your
-        contribution.
-      </div>
       <div class="flex cart-title-bar">
+        <h4>Your cart</h4>
         <div
           v-if="showCollapseCart"
           @click="toggleCart"
           class="absolute-left cart-btn"
         >
-          <img alt="cart" width="16px" src="@/assets/cart.svg" />
-          <img alt="close" width="16px" src="@/assets/chevron-right.svg" />
+          <span>Collapse</span>
+          <!-- <img alt="cart" width="16px" src="@/assets/cart.svg" /> -->
+          <img alt="close" width="16px" src="@/assets/arrow-right.svg" />
         </div>
-        <h2>{{ isEditMode ? 'Edit cart' : 'Your cart' }}</h2>
-        <div
-          v-if="
-            ($store.getters.isRoundContributionPhase ||
-              $store.getters.canUserReallocate) &&
-            !isCartEmpty
-          "
-          class="absolute-right dropdown"
-        >
-          <img
-            @click="openDropdown"
-            class="dropdown-btn"
-            src="@/assets/more.svg"
-          />
-          <div id="cart-dropdown" class="button-menu">
-            <div
-              v-for="({ callback, text, icon, cssClass }, idx) of dropdownItems"
-              :key="idx"
-              class="dropdown-item"
-              @click="callback"
-            >
-              <img
-                width="16px"
-                :class="cssClass"
-                :src="require(`@/assets/${icon}`)"
-              />
-              <p>{{ text }}</p>
-            </div>
-          </div>
-        </div>
+        <!-- <h2>{{ isEditMode ? 'Edit cart' : 'Your cart' }}</h2> -->
+      </div>
+      <div
+        class="reallocation-message text-base"
+        v-if="$store.getters.canUserReallocate && $store.getters.hasUserVoted"
+      >
+        You’ve already contributed this round. You can edit your choices and new
+        projects, but your cart total must always equal your original
+        contribution amount.
+        <links to="/about/maci" class="message-link">Why?</links>
+      </div>
+      <div
+        class="reallocation-message text-base"
+        v-if="$store.getters.canUserReallocate && !$store.getters.hasUserVoted"
+      >
+        Almost done! You must submit one more transaction to complete your
+        contribution.
       </div>
       <div class="messages-and-cart-items">
         <div
@@ -133,8 +106,12 @@
           "
           class="time-left-read-only"
         >
-          <div class="caps">Time left:</div>
-          <time-left :date="timeLeftDate" />
+          <div class="text-base">Time left:</div>
+          <time-left
+            :date="timeLeftDate"
+            valueClass="cart-time-value"
+            unitClass="cart-time-unit"
+          />
         </div>
       </div>
       <div
@@ -142,7 +119,7 @@
         v-if="$store.getters.canUserReallocate && isEditMode"
       >
         <div class="reallocation-row">
-          <span>Original contribution</span>
+          <span className="text-body">Original contribution</span>
           {{ formatAmount(this.contribution) }} {{ tokenSymbol }}
         </div>
         <div
@@ -152,7 +129,7 @@
               : 'reallocation-row'
           "
         >
-          <span>Your cart</span>
+          <span className="text-body">Your cart</span>
           <div class="reallocation-warning">
             <span v-if="this.isGreaterThanInitialContribution()">⚠️</span
             >{{ formatAmount(getCartTotal(this.$store.state.cart)) }}
@@ -181,8 +158,53 @@
           {{ formatAmount(this.contribution) }} {{ tokenSymbol }} evenly
         </div>
       </div>
+
       <div
-        class="submit-btn-wrapper"
+        class="line-item-bar"
+        v-if="$store.getters.hasUserContributed && !isEditMode"
+      >
+        <div class="line-item">
+          <span>Projects</span>
+          <div>
+            <span
+              >{{ formatAmount(getCartTotal($store.state.committedCart)) }}
+              {{ tokenSymbol }}</span
+            >
+          </div>
+        </div>
+        <div class="line-item">
+          <span>Matching Pool</span>
+          <div>
+            <span>{{ getCartMatchingPoolTotal() }} {{ tokenSymbol }}</span>
+          </div>
+        </div>
+      </div>
+      <div
+        class="total-bar"
+        v-if="
+          $store.getters.isRoundContributionPhase ||
+          ($store.getters.hasUserContributed &&
+            $store.getters.hasContributionPhaseEnded)
+        "
+      >
+        <h4 class="total-text">Total</h4>
+        <div>
+          <div
+            v-if="
+              this.isGreaterThanInitialContribution() &&
+              $store.getters.hasUserContributed
+            "
+          >
+            {{ formatAmount(getCartTotal(this.$store.state.cart)) }} /
+            <h4>{{ formatAmount(contribution) }}</h4>
+          </div>
+          <h4 class="total-amount" v-else>
+            {{ formatAmount(getTotal()) }} {{ tokenSymbol }}
+          </h4>
+        </div>
+      </div>
+      <div
+        class="submit-btn-wrapper text-base"
         v-if="
           (($store.getters.canUserReallocate && isEditMode) ||
             (!$store.getters.canUserReallocate &&
@@ -242,52 +264,12 @@
           class="time-left"
           v-if="$store.getters.canUserReallocate && isEditMode"
         >
-          <div class="caps">Time left:</div>
-          <time-left :date="timeLeftDate" />
-        </div>
-      </div>
-      <div
-        class="line-item-bar"
-        v-if="$store.getters.hasUserContributed && !isEditMode"
-      >
-        <div class="line-item">
-          <span>Projects</span>
-          <div>
-            <span
-              >{{ formatAmount(getCartTotal($store.state.committedCart)) }}
-              {{ tokenSymbol }}</span
-            >
-          </div>
-        </div>
-        <div class="line-item">
-          <span>Matching Pool</span>
-          <div>
-            <span>{{ getCartMatchingPoolTotal() }} {{ tokenSymbol }}</span>
-          </div>
-        </div>
-      </div>
-      <div
-        class="total-bar"
-        v-if="
-          $store.getters.isRoundContributionPhase ||
-          ($store.getters.hasUserContributed &&
-            $store.getters.hasContributionPhaseEnded)
-        "
-      >
-        <span class="total-label">Total</span>
-        <div>
-          <span
-            v-if="
-              this.isGreaterThanInitialContribution() &&
-              $store.getters.hasUserContributed
-            "
-            >{{ formatAmount(getCartTotal(this.$store.state.cart)) }} /
-            <span class="total-reallocation">{{
-              formatAmount(contribution)
-            }}</span>
-          </span>
-          <span v-else>{{ formatAmount(getTotal()) }}</span>
-          {{ tokenSymbol }}
+          <div class="text-base">Time left:</div>
+          <time-left
+            :date="timeLeftDate"
+            valueClass="cart-time-value"
+            unitClass="cart-time-unit"
+          />
         </div>
       </div>
       <div v-if="!$store.state.currentRound" class="reallocation-section">
@@ -719,19 +701,20 @@ window.onclick = function (event) {
 @import '../styles/vars';
 @import '../styles/theme';
 
-h2 {
-  line-height: 130%;
+.h100 {
+  min-height: 100%;
+  background: var(--bg-cart-color);
 }
 
 .cart-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   box-sizing: border-box;
   position: relative;
-  gap: 1rem;
   height: 100%;
-  padding: 1rem 0rem;
-  padding-top: 0rem;
   width: 100%;
-  border-left: 1px solid #000;
+  background: var(--bg-cart-color);
 
   @media (max-width: $breakpoint-m) {
     padding: 0rem;
@@ -779,20 +762,36 @@ h2 {
   justify-content: space-between;
   width: 100%;
   margin-top: 1rem;
+
+  div {
+    text-transform: uppercase;
+  }
 }
 
 .time-left-read-only {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 1rem 3.5rem;
+  border-bottom: 1px solid $clr-violet;
+
+  div {
+    text-transform: uppercase;
+  }
+
+  span > h2 {
+    font-size: 28px !important;
+  }
 }
 
 .cart-title-bar {
+  background: var(--bg-cart-color);
+  justify-content: space-between;
   position: sticky;
-  padding: 1rem;
+  padding: 3rem 3.5rem 2rem 3.5rem;
   top: 0;
   z-index: 1;
+  border-bottom: 1px solid $clr-violet;
   @media (max-width: $breakpoint-m) {
     justify-content: space-between;
   }
@@ -841,12 +840,6 @@ h2 {
   margin: 1rem 0;
 }
 
-.absolute-left {
-  /* position: absolute;
-  left: 0; */
-  /* margin-left: 1rem; */
-}
-
 .absolute-right {
   position: absolute;
   right: 1rem;
@@ -854,21 +847,19 @@ h2 {
 
 .cart-btn {
   @include button(
-    white,
-    var(--bg-light-color),
+    var(--text-color),
+    transparent,
     1px solid rgba($border-light, 0.3)
   );
   border: 0px solid var(--text-color);
   background: transparent;
-  padding: 0.75rem 0.5rem;
+  padding: 0.75rem;
   border-radius: 0.5rem;
   display: flex;
   gap: 0.5rem;
   margin-right: -0.5rem;
   &:hover {
-    background: var(--bg-secondary-color);
-    gap: 0.75rem;
-    margin-right: -0.75rem;
+    background: var(--bg-landing-hiw-card);
   }
 
   img {
@@ -885,17 +876,20 @@ h2 {
 .empty-cart {
   font-size: 16px;
   font-weight: 400;
-  margin: 1rem;
   padding: 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  gap: 0.5rem;
+  text-align: center;
+  border-bottom: 1px solid $clr-violet;
 
   img {
     height: 70px;
   }
 
   h3 {
-    font-family: 'Glacial Indifference', sans-serif;
-    font-size: 25px;
-    font-weight: 700;
+    margin: 0;
   }
 
   div {
@@ -923,20 +917,21 @@ h2 {
 }
 
 .total-bar {
+  background: var(--bg-cart-color);
   box-sizing: border-box;
   display: flex;
   align-items: center;
   position: sticky;
   bottom: 0;
-  padding: 1rem;
+  padding: 1rem 3.5rem;
   justify-content: space-between;
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid $clr-violet;
   font-family: 'Inter';
   font-size: 1rem;
   line-height: 0;
   font-weight: 400;
   height: 60px;
+
   @media (max-width: $breakpoint-m) {
     position: fixed;
     bottom: 4rem;
@@ -950,6 +945,17 @@ h2 {
   }
 }
 
+.total-text {
+  font-size: 28px;
+  line-height: 33px;
+  margin: 0;
+}
+
+.total-amount {
+  font-weight: 400;
+  margin: 0;
+}
+
 .total-reallocation {
   font-family: 'Inter';
   font-size: 1rem;
@@ -957,18 +963,11 @@ h2 {
   font-weight: 700;
 }
 
-.total-label {
-  font-family: 'Glacial Indifference', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 0;
-  margin-right: 0.5rem;
-}
-
 .reallocation-message {
-  padding: 1rem;
-  background: $highlight-color;
-  font-size: 14px;
+  padding: 1.5rem 2rem;
+  margin: 3rem 3.5rem 2rem 3.5rem;
+  border: 1px solid $clr-purple;
+  border-radius: 20px;
 }
 
 .message-link {
@@ -979,8 +978,6 @@ h2 {
 .balance {
   padding: 1rem;
   background: var(--bg-primary-color);
-  border-bottom: 1px solid #000000;
-  border-top: 1px solid #000000;
   display: flex;
   justify-content: space-between;
 }
@@ -998,16 +995,15 @@ h2 {
 .submit-btn-wrapper {
   align-self: flex-end;
   box-sizing: border-box;
-  border-top: 1px solid #000000;
   text-align: left;
   gap: 0.5rem;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 1rem;
+  padding: 1rem 3.5rem;
   position: relative;
-  background: var(--bg-secondary-color);
+
   @media (max-width: $breakpoint-m) {
     padding: 2rem;
   }
@@ -1029,10 +1025,6 @@ h2 {
     padding-right: 0;
     width: 100%;
   }
-}
-
-.h100 {
-  height: 100%;
 }
 
 .p1 {
@@ -1123,7 +1115,7 @@ h2 {
   flex-direction: column;
   gap: 0.5rem;
   padding: 1rem;
-  border-top: 1px solid #000;
+  border-bottom: 1px solid $clr-violet;
 }
 
 .dropdown {
