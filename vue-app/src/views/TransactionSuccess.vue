@@ -1,7 +1,53 @@
 <template>
-  <div class="container">
+  <div>
+    <div class="gradient">
+      <div class="hero">
+        <image-responsive title="robot" />
+      </div>
+      <div class="content">
+        <span class="emoji">🎉</span>
+        <div class="flex-title">
+          <h1 v-if="$route.params.type === 'reallocation'">
+            {{ formatContribution() }}
+            {{ currentRound.nativeTokenSymbol }} reallocated!
+          </h1>
+
+          <h1 v-else-if="$route.params.type === 'contribution'">
+            You just contributed!
+          </h1>
+        </div>
+        <p v-if="$route.params.type === 'reallocation'" class="subtitle">
+          Your choices have been updated! You can update your choices again any
+          time in the next
+          <time-left
+            valueClass="subtitle"
+            unitClass="subtitle"
+            :date="currentRound.votingDeadline"
+          />.
+        </p>
+        <p v-else-if="$route.params.type === 'contribution'" class="subtitle">
+          Thanks for contributing to the Ethereum ecosystem. If you change your
+          mind, you have
+          <time-left
+            valueClass="subtitle"
+            unitClass="subtitle"
+            :date="currentRound.votingDeadline"
+          />
+          to reallocate your contributions.
+        </p>
+        <transaction-receipt
+          v-if="$route.params.hash"
+          :hash="$route.params.hash"
+        />
+        <div class="button-spacing">
+          <div class="btn-action" @click="redirectToProjects()">OK</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="container">
     <div class="image-wrapper">
-      <image-responsive title="docking" />
+      <image-responsive title="robot" />
       <img class="money" src="@/assets/money.gif" />
       <img class="money" src="@/assets/confetti.gif" />
     </div>
@@ -54,7 +100,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
@@ -100,86 +146,95 @@ export default class TransactionSuccess extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.container {
-  position: relative;
+.emoji {
+  font-size: 7rem;
 }
 
-.image-wrapper {
+h1 {
+  margin-top: 1.5rem;
+}
+
+.gradient {
   position: fixed;
-  height: 100vh;
-  background: var(--bg-gradient);
+  top: 0;
+  right: 0;
+  height: 100%;
   width: 100%;
-  display: flex;
-  justify-content: center;
-}
+  background: $clr-green;
 
-.image-wrapper .docking {
-  height: 95%;
-  mix-blend-mode: exclusion;
-  transform: rotate(15deg);
-  @media (max-width: $breakpoint-m) {
-    transform: translateX(-6em) translateY(3em) rotate(15deg);
+  .hero {
+    position: fixed;
+    bottom: -4rem;
+    right: -12rem;
+    height: 100%;
+    width: 100%;
+    mix-blend-mode: luminosity;
+
+    @media (max-width: $breakpoint-m) {
+      width: 100%;
+      padding-bottom: 0rem;
+    }
+
+    img {
+      position: absolute;
+      bottom: 0;
+      right: calc(-700px + 50vw);
+      mix-blend-mode: luminosity;
+      max-width: 88%;
+      max-height: 100%;
+
+      @media (max-width: $breakpoint-m) {
+        right: 1rem;
+        width: 100%;
+      }
+    }
   }
-}
-
-.image-wrapper .money {
-  position: fixed;
-  width: 100%;
-  mix-blend-mode: exclusion;
-}
-
-.dropshadow {
-  position: relative;
-  @include gradientBackground(
-    180deg,
-    rgba(var(--shadow-dark-rgb), 0.4),
-    56.5%,
-    rgba(var(--shadow-light-rgb), 0),
-    75.75%
-  );
-  height: 80vh;
 }
 
 .content {
-  padding-top: 4rem;
-  width: 500px;
-  margin: 0 2.5rem;
+  position: relative;
+  z-index: 1;
+  padding: $content-space;
+  width: min(100%, 512px);
+  margin-left: 2rem;
+  margin-top: 6rem;
+  color: $clr-white;
 
-  @media (max-width: $breakpoint-s) {
-    margin: auto;
-    width: 300px;
+  @media (max-width: $breakpoint-m) {
+    width: 100%;
+    margin: 0;
+  }
+
+  .flex-title {
+    display: flex;
+    gap: 0.5rem;
+    align-items: left;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+    img {
+      width: 1rem;
+      height: 1rem;
+      position: relative;
+      right: 0;
+    }
   }
 }
 
-.contributed-icon {
-  font-family: Glacial Indifference;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 80px;
-  line-height: 120%;
+.icon {
+  width: 1rem;
+  height: 1rem;
+  position: relative;
 }
 
-.contributed-header {
-  font-family: 'Glacial Indifference', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 120%;
-  margin-right: 0.5rem;
-  color: var(--text-color);
-}
+.button-spacing {
+  margin-top: 3rem;
+  max-width: 120px;
+  gap: 1rem;
 
-.contributed-content {
-  font-family: 'Inter', 'sans-serif';
-  font-style: normal;
-  font-weight: normal;
-  line-height: 150%;
-}
-
-.contributed-content-bold {
-  font-weight: bold;
-}
-
-.receipt {
-  margin: 16px 0;
+  a {
+    width: 100%;
+  }
 }
 </style>
