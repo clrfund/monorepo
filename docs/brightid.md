@@ -18,8 +18,12 @@ USER_REGISTRY_TYPE=brightid
 
 Available envs:
 
-- Testing: `CLRFundTest`
-- Production: `clr.fund`
+| Network/Env | Context | sponsor contract |
+| ----------- | ------- | ---------------- |
+| goerli | clrfund-goerli | 0xF045234A776C87060DEEc5689056455A24a59c08 |
+| xdai | clrfund-gnosis-chain ||
+| Arbitrum | clrfund-arbitrum ||
+
 
 ```.sh
 # /vue-app/.env
@@ -29,23 +33,9 @@ VUE_APP_BRIGHTID_CONTEXT={CONTEXT}
 BRIGHTID_CONTEXT={CONTEXT}
 ```
 
-Note: the BrightID context is specific to the BrightID network - it's independent from the Ethereum network you choose to run the app on. It refers to the BrightID app context where you want to burn sponsorship tokens. For instance, you could use the production `clr.fund` context on xDAI or Arbitrum (or any network).
+Note: the BrightID context is specific to the BrightID network - it's independent from the Ethereum network you choose to run the app on. It refers to the BrightID app context where you want to burn sponsorship tokens.
 
 [Learn more about context in the BrightID docs](https://dev.brightid.org/docs/guides/ZG9jOjQxNTE1NDU-basic-integration).
-
-## Testing
-
-The following tool provided by BrightID is used for manual linking, sponsoring, and verifying a contextId (in our case, the user wallet address).
-
-https://acolytec3.github.io/brightid_test_app/
-
-Required fields:
-
-- Context: `CLRFundTest`
-- Testing key: `55HhFtQvaHB0BJeR`
-- ContextId: `{walletAddress}` you want to test
-
-Note: this tool is only going to work with **testing** contexts, like `CLRFundTest`. Production contexts like `clr.fund` are not going to work.
 
 ## Resources
 
