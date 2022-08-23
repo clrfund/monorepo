@@ -2,7 +2,9 @@
   <div class="progress-area">
     <div class="desktop progress-container">
       <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-      <p class="subtitle">Step {{ currentStep + 1 }} of {{ steps.length }}</p>
+      <h4 id="progress-title">
+        Step {{ currentStep + 1 }} of {{ steps.length }}
+      </h4>
       <div class="progress-steps">
         <div
           v-for="(name, step) in stepNames"
@@ -18,13 +20,13 @@
           <template v-if="step === currentStep">
             <img
               class="current-step"
-              src="@/assets/current-step.svg"
+              src="@/assets/green-tick.svg"
               alt="current step"
             />
             <p v-text="name" class="active step" />
           </template>
           <template v-else-if="step === furthestStep">
-            <img src="@/assets/furthest-step.svg" alt="current step" />
+            <img src="@/assets/next-step.svg" alt="furthest step" />
             <p v-text="name" class="active step" />
           </template>
           <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
@@ -36,7 +38,7 @@
             <p v-text="name" class="step" />
           </template>
           <template v-else>
-            <img src="@/assets/step-remaining.svg" alt="step remaining" />
+            <img src="@/assets/next-step.svg" alt="step remaining" />
             <p v-text="name" class="step" />
           </template>
         </div>
@@ -108,12 +110,19 @@ export default class FormProgressWidget extends Vue {
     position: sticky;
     top: 5rem;
     align-self: start;
-    padding: 1.5rem 1rem;
+    padding: 2.5rem;
     border-radius: 16px;
-    box-shadow: var(--box-shadow);
+    border: 1px solid #505053;
+    background: var(--bg-progress-forms);
+
+    #progress-title {
+      margin: 1rem 0;
+      color: var(--text-color);
+    }
 
     .progress-steps {
       margin-bottom: 1rem;
+      color: var(--text-color);
     }
 
     .progress-step {
@@ -123,16 +132,14 @@ export default class FormProgressWidget extends Vue {
         margin-right: 1rem;
       }
 
-      img:not(.completed-step) {
-        filter: var(--img-filter, invert(0.3));
+      img:not(.completed-step, .current-step) {
+        filter: var(--img-filter, invert(1));
       }
 
       p {
         margin: 0.5rem 0;
       }
-      .step {
-        @include stepColor(var(--text-color-rgb));
-      }
+
       .active {
         color: var(--text-color);
         font-weight: 600;
@@ -146,14 +153,10 @@ export default class FormProgressWidget extends Vue {
         transform: scale(1.02);
       }
     }
-
-    .subtitle {
-      font-weight: 500;
-      opacity: 0.8;
-    }
   }
 
   .mobile {
+    top: 64px;
     margin-bottom: 0;
     position: fixed;
     width: 100%;
@@ -176,6 +179,15 @@ export default class FormProgressWidget extends Vue {
       }
     }
   }
+}
+
+.current-step {
+  background: white;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  justify-self: center;
+  align-self: center;
 }
 
 .cancel-link {

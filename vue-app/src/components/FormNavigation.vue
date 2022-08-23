@@ -4,7 +4,7 @@
       <button
         v-if="currentStep > 0"
         @click="handleStepNav(currentStep - 1)"
-        class="btn-secondary float-left"
+        class="btn-action float-left"
         :disabled="isNavDisabled"
       >
         Previous
@@ -17,7 +17,7 @@
       <button
         v-else
         @click="handleStepNav(currentStep + 1, true)"
-        class="btn-primary float-right"
+        class="btn-action float-right"
         :disabled="!isStepValid"
       >
         {{ currentStep === finalStep ? 'Confirm' : 'Next' }}

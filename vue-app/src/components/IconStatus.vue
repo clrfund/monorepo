@@ -85,7 +85,7 @@ export default class IconStatus extends Vue {
 }
 
 .status-sad {
-  background: var(--attention-color);
+  background: $clr-error;
   padding: 0.125rem;
   border-radius: 2rem;
   height: 0.5rem;
@@ -95,7 +95,7 @@ export default class IconStatus extends Vue {
 }
 
 .status-custom {
-  background: var(--bg);
+  background: $clr-white;
   border-radius: 2rem;
   padding: 0.125rem;
   height: 0.5rem;
@@ -108,7 +108,7 @@ export default class IconStatus extends Vue {
   position: relative;
   top: -0.5rem;
   right: -0.5rem;
-  background: var(--bg-secondary-color);
+  background: $clr-white;
   padding: 2px;
   border-radius: 2rem;
 }

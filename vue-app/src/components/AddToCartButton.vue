@@ -17,7 +17,7 @@
       v-if="inCart && canContribute()"
       :button="{
         wide: true,
-        text: 'In cart 🎉',
+        text: 'In cart',
       }"
       @click="toggleCartPanel()"
     />

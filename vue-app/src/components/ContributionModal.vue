@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-body">
+  <div class="modal-body text-base">
     <div v-if="step === 0">
       <h2>
         Confirm {{ renderTotal }}
@@ -16,8 +16,10 @@
         <em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
       </p> -->
       <div class="btn-row">
-        <button class="btn-secondary" @click="$emit('close')">Cancel</button>
-        <button class="btn-primary" @click="contribute()">Continue</button>
+        <button class="btn-secondary-new" @click="$emit('close')">
+          Cancel
+        </button>
+        <button class="btn-action" @click="contribute()">Continue</button>
       </div>
     </div>
     <div v-if="step === 1">
