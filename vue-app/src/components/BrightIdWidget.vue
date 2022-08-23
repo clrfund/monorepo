@@ -17,11 +17,11 @@
         <icon-status
           v-bind:sad="true"
           logo="brightid.svg"
-          secondaryLogo="close-black.svg"
+          secondaryLogo="close-white.svg"
         />
       </div>
-      <h2>BrightID setup</h2>
-      <p>{{ getCurrentStep }} / 4</p>
+      <div class="text-base text-small">BrightID setup</div>
+      <div class="ml-auto text-base text-small">{{ getCurrentStep }} / 4</div>
     </div>
     <div class="progress">
       <div
@@ -36,7 +36,7 @@
     <div v-if="!isProjectCard" class="setup-container">
       <div class="row">
         <div v-if="isLinked">
-          <div v-if="isRegistered">
+          <div class="text-base text-xsmall" v-if="isRegistered">
             <a href="/#/projects" @click="$emit('close')">
               Start contributing
               <span role="img" aria-label="party emoji">🎉</span>
@@ -46,18 +46,29 @@
             <a href="/#/verify/" @click="$emit('close')">Continue setup</a>
           </div>
         </div>
-        <a href="/#/verify/" @click="$emit('close')" v-else>Start setup</a>
-        <p
+        <a
+          class="text-base text-xsmall"
+          href="/#/verify/"
+          @click="$emit('close')"
+          v-else
+        >
+          Start setup
+        </a>
+        <div
           v-tooltip="{
             content: isVerified
               ? 'You\'re a verified human on BrightID!'
               : 'Your BrightID profile still needs to be verified.',
             trigger: 'hover click',
           }"
-          :class="isVerified ? 'brightid-verified' : 'unverified'"
+          :class="
+            isVerified
+              ? 'ml-auto text-base text-xsmall brightid-verified'
+              : 'ml-auto text-base text-xsmall unverified'
+          "
         >
           {{ isVerified ? 'Verified' : 'Unverified' }}
-        </p>
+        </div>
       </div>
     </div>
   </div>
@@ -131,36 +142,29 @@ export default class BrightIdWidget extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.setup-container {
-  background: var(--bg-secondary-color);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0;
-  width: auto;
-  height: auto;
+.text-small {
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 600;
+}
 
-  h2 {
-    font-size: 20px;
-    font-family: 'Glacial Indifference', sans-serif;
-    margin: 0;
-  }
+.text-xsmall {
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 600;
 }
 
 .row {
   display: flex;
-  justify-content: space-between;
+  gap: 0.5rem;
   align-items: center;
   width: 100%;
-
-  p {
-    margin: 0;
-    font-weight: 600;
-  }
   a {
     margin: 0;
     line-height: 0;
   }
   .unverified {
-    color: var(--warning-color);
+    color: $clr-error;
   }
   .brightid-verified {
     color: $clr-green;
@@ -187,64 +191,21 @@ export default class BrightIdWidget extends Vue {
   }
 }
 
+.ml-auto {
+  margin-left: auto;
+}
+
 .bright-id-widget-container {
-  background: var(--bg-secondary-color);
-  border-radius: 0.5rem;
+  color: #16161a;
+  background: var(--bg-bright-id-widget);
+  border-radius: 20px;
 
   width: auto;
   height: auto;
-
-  h2 {
-    font-size: 20px;
-    font-family: 'Glacial Indifference', sans-serif;
-    margin: 0;
-  }
 }
 
 .bright-id-profile-widget {
   padding: 1rem;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-
-  p {
-    margin: 0;
-    font-weight: 600;
-  }
-  a {
-    margin: 0;
-    line-height: 0;
-  }
-  .unverified {
-    color: var(--warning-color);
-  }
-  .brightid-verified {
-    color: $clr-green;
-  }
-
-  .step0:before {
-    content: '0';
-  }
-  .step1:before {
-    content: '1';
-  }
-  .step2:before {
-    content: '2';
-  }
-  .step3:before {
-    content: '3';
-  }
-  .step4:before {
-    content: '4';
-  }
-  .span {
-    margin: 0;
-    line-height: 0;
-  }
 }
 
 .progress {
