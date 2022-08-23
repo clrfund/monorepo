@@ -1,18 +1,18 @@
 <template>
-  <span>
-    <span :class="valueClass || 'value'">
+  <span class="flex round-info-value">
+    <h2 :class="valueClass || ''">
       {{ values[0] }}
-    </span>
-    <span :class="unitClass || 'unit'">
-      {{ units[0] }}
-    </span>
+      <h4 :class="unitClass || ''">
+        {{ units[0] }}
+      </h4>
+    </h2>
     <span v-if="units[1].length > 0">
-      <span :class="valueClass || 'value'">
+      <h2 :class="valueClass || ''">
         {{ values[1] }}
-      </span>
-      <span :class="unitClass || 'unit'">
-        {{ units[1] }}
-      </span>
+        <h4 :class="unitClass || ''">
+          {{ units[1] }}
+        </h4>
+      </h2>
     </span>
   </span>
 </template>
@@ -80,40 +80,19 @@ export default class extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.value {
-  font-size: 24px;
-  font-family: 'Glacial Indifference', sans-serif;
-  font-weight: 700;
-  line-height: 120%;
-
-  &.large {
-    font-size: 32px;
-    line-height: 120%;
+.round-info-value {
+  h2 {
+    margin: 0;
   }
 
-  &.extra {
-    font-size: 32px;
-    font-family: 'Glacial Indifference', sans-serif;
-    color: white;
-    line-height: 120%;
-  }
-}
-
-.unit {
-  font-family: 'Glacial Indifference', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  text-transform: uppercase;
-  line-height: 150%;
-  margin: 0 0.25rem;
-
-  &:last-child {
-    margin-right: 0;
+  h4 {
+    margin: 0;
+    display: inline;
   }
 }
 
 .flex {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
 }
