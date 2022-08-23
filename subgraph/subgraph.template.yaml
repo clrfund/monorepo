@@ -1,6 +1,6 @@
 specVersion: 0.0.2
-description: clr.fund sandbox
-repository: https://github.com/daodesigner/clrfund-deployer
+description: clr.fund
+repository: https://github.com/clrfund/monorepo
 schema:
   file: ./schema.graphql
 dataSources:
@@ -149,7 +149,7 @@ templates:
       eventHandlers:
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleOwnershipTransferred
-        - event: SetBrightIdSettings(bytes32,address,address)
+        - event: SetBrightIdSettings(bytes32,address)
           handler: handleSetBrightIdSettings
       file: ./src/BrightIdUserRegistryMapping.ts
   - name: MACI

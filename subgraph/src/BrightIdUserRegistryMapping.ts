@@ -38,7 +38,6 @@ export function handleRegister(event: Registered): void {
 
   let contributorId = event.params.addr.toHexString()
   let contributor = new Contributor(contributorId)
-  contributor.verified = event.params.isVerified
   contributor.verifiedTimeStamp = event.params.timestamp.toString()
   contributor.contributorAddress = event.params.addr
   contributor.contributorRegistry = event.address.toHexString()

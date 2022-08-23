@@ -288,6 +288,23 @@ async function main() {
   const maciAddress = await fundingRound.maci()
   console.log(`MACI address: ${maciAddress}`)
 
+  if (userRegistryType === 'brightid') {
+    const userRegistryAddress = await fundingRound.userRegistry()
+    const userRegistry = await ethers.getContractAt(
+      'BrightIdUserRegistry',
+      userRegistryAddress
+    )
+    const maci = await ethers.getContractAt('MACI', maciAddress)
+    const startTime = await maci.signUpTimestamp()
+    const endTime = await maci.calcSignUpDeadline()
+    const periodTx = await userRegistry.setRegistrationPeriod(
+      startTime,
+      endTime
+    )
+    console.log('Set user registration period', periodTx.hash)
+    await periodTx.wait()
+  }
+
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
   const recipientRegistryAddress = await factory.recipientRegistry()
   if (recipientRegistryType === 'simple') {

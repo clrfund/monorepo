@@ -161,6 +161,10 @@ const actions = {
       state.currentUser.walletAddress
     )
 
+    // if users are registered, they are also verified
+    const brightId = state.currentUser.brightid || {}
+    brightId.isVerified = isRegistered ? true : brightId.isVerified || false
+
     if (nativeTokenAddress) {
       balance = await getTokenBalance(
         nativeTokenAddress,
@@ -177,6 +181,7 @@ const actions = {
       isRegistered,
       balance,
       etherBalance,
+      brightId,
       ensName,
     })
   },
@@ -184,8 +189,6 @@ const actions = {
     if (state.currentUser && userRegistryType === UserRegistryType.BRIGHT_ID) {
       // If the user is registered, we assume all brightId steps as done
       let brightId: BrightId = {
-        isLinked: true,
-        isSponsored: true,
         isVerified: true,
       }
 

@@ -165,7 +165,10 @@ export default class Profile extends Vue {
   }
 
   get showBrightIdWidget(): boolean {
-    return userRegistryType === UserRegistryType.BRIGHT_ID
+    return (
+      userRegistryType === UserRegistryType.BRIGHT_ID &&
+      !this.$store.getters.hasContributionPhaseEnded
+    )
   }
 
   get chain(): ChainInfo {

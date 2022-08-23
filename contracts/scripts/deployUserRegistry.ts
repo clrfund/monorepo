@@ -35,19 +35,20 @@ async function main() {
       'BrightIdUserRegistry',
       deployer
     )
+
     userRegistry = await BrightIdUserRegistry.deploy(
-      utils.formatBytes32String(process.env.BRIGHTID_CONTEXT),
+      utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
       process.env.BRIGHTID_VERIFIER_ADDR,
       process.env.BRIGHTID_SPONSOR
     )
+    console.log('transaction hash', userRegistry.deployTransaction.hash)
   } else {
     throw new Error('unsupported user registry type')
   }
-  const receipt = await userRegistry.deployTransaction.wait()
+  await userRegistry.deployTransaction.wait()
   console.log(
     `Deployed ${userRegistryType} user registry at ${userRegistry.address}`
   )
-  console.log('transaction hash', receipt.transactionHash)
 
   const setUserRegistryTx = await fundingRoundFactory.setUserRegistry(
     userRegistry.address

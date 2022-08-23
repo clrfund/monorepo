@@ -46,18 +46,21 @@
               target="_blank"
               >Android</a
             >
+            <ul>
+              <li><links to="/brightid/sponsor">Get sponsored</links></li>
+              <li><links to="/brightid">Get verified</links></li>
+            </ul>
           </li>
           <li>An Ethereum wallet, with enough gas for two transactions</li>
           <li>Access to Zoom or Google Meet</li>
         </ul>
         <links to="/about/sybil-resistance">Why is this important?</links>
         <div v-if="!hasRoundStarted" class="join-message">
-          There's not yet an open funding round. Get prepared now so you're
-          ready for when the next one begins!
+          There's not yet an open funding round. Please check back later.
         </div>
         <div v-else-if="isRoundOver" class="warning-message">
-          The current round is no longer accepting new contributions. You can
-          still get BrightID verified to prepare for next time.
+          The current round is no longer accepting new contributions. Please try
+          again next round.
         </div>
         <div v-else-if="isRoundFull" class="warning-message">
           Contributions closed early – you can no longer donate! Due to the
@@ -67,14 +70,16 @@
           contribute, you can still help by donating to the matching pool
         </div>
         <div class="btn-container mt2">
-          <wallet-widget
-            v-if="!currentUser"
-            :isActionButton="true"
-            :fullWidthMobile="true"
-          />
-          <links v-if="currentUser" to="/verify/connect" class="btn-primary">
-            I have BrightID installed
-          </links>
+          <div v-if="!isRoundOver">
+            <wallet-widget
+              v-if="!currentUser"
+              :isActionButton="true"
+              :fullWidthMobile="true"
+            />
+            <links v-if="currentUser" to="/verify/connect" class="btn-primary">
+              I have BrightID installed
+            </links>
+          </div>
           <links to="/projects" class="btn-secondary">Go back</links>
         </div>
       </div>

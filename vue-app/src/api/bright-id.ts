@@ -8,8 +8,6 @@ const NODE_URL = 'https://app.brightid.org/node/v6'
 const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
 
 export interface BrightId {
-  isLinked: boolean
-  isSponsored: boolean
   isVerified: boolean // If is verified in BrightID
   verification?: Verification
 }
@@ -21,6 +19,13 @@ export interface Verification {
   sig: { r: string; s: string; v: number }
   timestamp: number
   app: string
+}
+
+export interface Sponsorship {
+  timestamp: number
+  app: string
+  appHasAuthorized: boolean
+  spendRequested: boolean
 }
 
 export async function selfSponsor(
@@ -47,6 +52,20 @@ export class BrightIdError extends Error {
     // https://github.com/Microsoft/TypeScript/issues/13965#issuecomment-388605613
     Object.setPrototypeOf(this, BrightIdError.prototype)
     this.code = code
+  }
+}
+
+export async function getSponsorship(
+  userAddress: string
+): Promise<Sponsorship> {
+  const apiUrl = `${NODE_URL}/sponsorships/${userAddress}`
+  const response = await fetch(apiUrl)
+  const data = await response.json()
+
+  if (data['error']) {
+    throw new BrightIdError(data['errorNum'])
+  } else {
+    return data['data']
   }
 }
 
@@ -84,15 +103,11 @@ export async function registerUser(
 
 export async function getBrightId(contextId: string): Promise<BrightId> {
   const brightId: BrightId = {
-    isLinked: false,
-    isSponsored: false,
     isVerified: false,
   }
 
   try {
     const verification = await getVerification(contextId)
-    brightId.isLinked = true
-    brightId.isSponsored = true
     // the `unique` field tell us if the user is a verified user
     brightId.isVerified = !!verification?.unique
     brightId.verification = verification
@@ -101,18 +116,6 @@ export async function getBrightId(contextId: string): Promise<BrightId> {
       /* eslint-disable-next-line no-console */
       console.error(error)
     }
-
-    // Not verified user
-    if (error.code === 3) {
-      brightId.isLinked = true
-      brightId.isSponsored = true
-    }
-
-    // Not sponsored user
-    if (error.code === 4) {
-      brightId.isLinked = true
-    }
   }
-
   return brightId
 }

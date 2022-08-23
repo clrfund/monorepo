@@ -53,15 +53,28 @@
         "internalType": "uint256",
         "name": "timestamp",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "bool",
-        "name": "isVerified",
-        "type": "bool"
       }
     ],
     "name": "Registered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "startTime",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "deadline",
+        "type": "uint256"
+      }
+    ],
+    "name": "RegistrationPeriodChanged",
     "type": "event"
   },
   {
@@ -78,7 +91,14 @@
         "internalType": "address",
         "name": "verifier",
         "type": "address"
-      },
+      }
+    ],
+    "name": "SetBrightIdSettings",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": false,
         "internalType": "address",
@@ -86,7 +106,7 @@
         "type": "address"
       }
     ],
-    "name": "SetBrightIdSettings",
+    "name": "SponsorChanged",
     "type": "event"
   },
   {
@@ -97,6 +117,25 @@
         "internalType": "contract BrightIdSponsor",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "canRegister",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -192,7 +231,51 @@
   },
   {
     "inputs": [],
+    "name": "registrationDeadline",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "registrationStartTime",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_startTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_deadline",
+        "type": "uint256"
+      }
+    ],
+    "name": "setRegistrationPeriod",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -208,14 +291,22 @@
         "internalType": "address",
         "name": "_verifier",
         "type": "address"
-      },
+      }
+    ],
+    "name": "setSettings",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "internalType": "address",
         "name": "_sponsor",
         "type": "address"
       }
     ],
-    "name": "setSettings",
+    "name": "setSponsor",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -260,11 +351,6 @@
         "internalType": "uint256",
         "name": "time",
         "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "isVerified",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
