@@ -153,6 +153,9 @@ export default class Profile extends Vue {
   async created() {
     this.isLoading = true
     await this.loadProjects()
+    if (this.showBrightIdWidget) {
+      await this.$store.dispatch('LOAD_BRIGHT_ID')
+    }
     this.isLoading = false
   }
 

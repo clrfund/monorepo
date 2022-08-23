@@ -76,7 +76,11 @@
               :isActionButton="true"
               :fullWidthMobile="true"
             />
-            <links v-if="currentUser" to="/verify/connect" class="btn-primary">
+            <links
+              v-if="showBrightIdButton"
+              to="/verify/connect"
+              class="btn-primary"
+            >
               I have BrightID installed
             </links>
           </div>
@@ -146,6 +150,10 @@ export default class VerifyLanding extends Vue {
 
   get isRoundOver(): boolean {
     return this.$store.getters.hasContributionPhaseEnded
+  }
+
+  get showBrightIdButton(): boolean {
+    return this.currentUser?.isRegistered === false
   }
 
   formatDuration(value: number): string {

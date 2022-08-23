@@ -199,13 +199,16 @@ export default class VerifyView extends Vue {
     return -1
   }
 
-  created() {
+  async created() {
     if (
       !this.currentUser?.walletAddress ||
       this.$store.getters.hasContributionPhaseEnded
     ) {
       this.$router.replace({ name: 'verify' })
     }
+
+    // make sure BrightId status is availabel before page load
+    await this.loadBrightId()
 
     // redirect to the verify success page if the user is registered
     if (this.currentStep < 0) {
