@@ -1,5 +1,5 @@
 <template>
-  <div class="recipients">
+  <div class="recipients text-base">
     <div class="title">
       <div class="header">
         <h2>Recipient registry</h2>
@@ -7,7 +7,7 @@
       <div class="hr" />
     </div>
     <loader v-if="isLoading" />
-    <div v-else>
+    <div class="request-table" v-else>
       <table class="requests">
         <thead>
           <tr>
@@ -17,19 +17,20 @@
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="table-rows-container">
           <tr
-            v-for="request in requests.slice().reverse()"
+            v-for="(request, index) in requests.slice().reverse()"
             :key="request.transactionHash"
+            :class="`table-row ${index % 2 ? 'odd' : 'even'}`"
           >
             <td>
               <div class="project-name">
-                <links :to="request.metadata.thumbnailImageUrl">
+                <!-- <links :to="request.metadata.thumbnailImageUrl">
                   <img
                     class="project-image"
                     :src="request.metadata.thumbnailImageUrl"
                   />
-                </links>
+                </links> -->
                 {{ request.metadata.name }}
                 <links
                   v-if="hasProjectLink(request)"
@@ -40,11 +41,11 @@
                   >-></links
                 >
               </div>
-              <details class="project-details">
+              <details class="project-details text-base">
                 <summary>More</summary>
 
                 <div>
-                  <div class="btn-row">
+                  <div class="btn-row text-body">
                     Transaction hash
                     <copy-button
                       :value="request.transactionHash"
@@ -55,7 +56,7 @@
                   <code>{{ request.transactionHash }}</code>
                 </div>
                 <div>
-                  <div class="btn-row">
+                  <div class="btn-row text-body">
                     Project ID
                     <copy-button
                       :value="request.recipientId"
@@ -66,7 +67,7 @@
                   <code>{{ request.recipientId }}</code>
                 </div>
                 <div>
-                  <div class="btn-row">
+                  <div class="btn-row text-body">
                     Recipient address
                     <copy-button
                       :value="request.recipient"
@@ -322,23 +323,41 @@ export default class RecipientRegistryView extends Vue {
   }
 }
 
+.even {
+  background: var(--bg-even-request-table);
+}
+
+.odd {
+  background: var(--bg-odd-request-table);
+}
+
+.request-table {
+  padding-right: 1rem;
+}
+
 .requests {
-  border: 1px solid var(--border-strong);
-  border-radius: 0.5rem;
   border-spacing: 0;
   line-height: 150%;
   table-layout: fixed;
   width: 100%;
-  background-color: var(--bg-light-color);
 
   thead {
-    background-color: var(--bg-primary-color);
-    border-radius: 6px;
-  }
+    th:first-child {
+      border: 1px solid $clr-dark-white;
+      border-right: 0px;
+      border-radius: 10px 0px 0px 0px;
+    }
 
-  tr {
-    &:nth-child(2n) {
-      background-color: var(--bg-secondary-color);
+    th:not(:first-child):not(:last-child) {
+      border: 1px solid $clr-dark-white;
+      border-left: 0px;
+      border-right: 0px;
+    }
+
+    th:last-child {
+      border: 1px solid $clr-dark-white;
+      border-left: 0px;
+      border-radius: 0px 10px 0px 0px;
     }
   }
 
@@ -376,7 +395,6 @@ export default class RecipientRegistryView extends Vue {
 
       div {
         margin: 0.5rem 0;
-        font-weight: 500;
         margin-left: 1rem;
         div {
           margin: 0;

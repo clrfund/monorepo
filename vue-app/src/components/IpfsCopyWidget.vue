@@ -1,6 +1,6 @@
 <template>
   <div class="copy">
-    <div class="hash">
+    <div class="hash text-base">
       {{ renderCopiedOrHash }}
     </div>
     <div class="icons">
@@ -71,9 +71,7 @@ export default class IpfsCopyWidget extends Vue {
 
 .hash {
   padding: 0.5rem;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 150%;
+  font-size: 16px;
   align-items: center;
   gap: 1rem;
   width: 100%;

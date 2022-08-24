@@ -3,7 +3,7 @@
     <h1 class="content-heading">About Layer 2</h1>
 
     <h2>Clr.fund on Layer 2</h2>
-    <p>
+    <p class="text-body">
       <b>
         tl;dr: clr.fund runs on
         <links
@@ -24,7 +24,7 @@
     </button>
 
     <h2>Ethereum Transaction Costs</h2>
-    <p>
+    <p class="text-body">
       Ethereum, the blockchain that houses much of clr.fund's infrastructure,
       requires users to pay transaction costs when interacting with it, and
       these costs are going up. Transaction fees compensate the decentralized
@@ -32,19 +32,19 @@
       blockchain's state securely. As usage of Ethereum has gone up, so has the
       price of getting miner's to include your transaction on the blockchain.
     </p>
-    <p>
+    <p class="text-body">
       So, the increasing cost of using Ethereum demonstrates that it's useful,
       which is great, but it also presents a problem for end users who don't
       want to pay fees in the 10s or 100s of dollars.
     </p>
 
     <h2>Layer 2s for Scalability</h2>
-    <p>
+    <p class="text-body">
       The main Ethereum blockchain, "layer 1", may be upgraded to reduce costs
       in the future (this is one of the goals for the future of Ethereum, which
       clr.fund is helping realize!).
     </p>
-    <p>
+    <p class="text-body">
       In the immediate term, though, "layer 2" solutions are already helping
       dramatically reduce costs. Most layer 2s are "rollups", blockchain-esque
       systems that are maintained, like Ethereum, by a decentralized group of
@@ -52,12 +52,12 @@
       single transaction that is recorded on layer 1, Ethereum, allowing them to
       inherit much of Ethereum's security.
     </p>
-    <p>
+    <p class="text-body">
       Transactions on layer 2s are orders of magnitude cheaper than on layer 1,
       since rollups can process a high rate of transactions and transaction
       traffic is now diluted across the many layer 2 options.
     </p>
-    <p>
+    <p class="text-body">
       Read more on
       <links
         to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/"
@@ -68,7 +68,7 @@
     <!-- If chain is Arbitrum, display bridge information: -->
     <div v-if="chain.label.includes('Arbitrum')" class="chain-details">
       <h2>{{ chain.label }}</h2>
-      <p>
+      <p class="text-body">
         There are many variations on the layer 2 rollup approach. This current
         {{ $store.getters.operator }} round uses {{ chain.label }}, an
         "optimistic"-style rollup.
@@ -112,12 +112,12 @@
         </li>
       </ul>
       <h3>💰 How to get funds on {{ chain.label }}</h3>
-      <p>
+      <p class="text-body">
         <links :to="chain.bridge" :hideArrow="true">
           <button class="btn-action">Official {{ chain.label }} Bridge</button>
         </links>
       </p>
-      <p>
+      <p class="text-body">
         Follow the steps below, or use the
         <links to="https://arbitrum.io/bridge-tutorial/">
           official tutorial
@@ -133,7 +133,7 @@
         <li>
           Select currency (some ETH first for gas, and some
           {{ nativeTokenSymbol }} for contributing)
-          <p>
+          <p class="text-body">
             For {{ nativeTokenSymbol }}, click "Token" menu, search for
             {{ nativeTokenSymbol }}
             and select token.
@@ -142,7 +142,7 @@
         <li>Enter amount and click "Deposit"</li>
         <li>Confirm on your wallet</li>
       </ol>
-      <p>
+      <p class="text-body">
         Once you have bridged your {{ nativeTokenSymbol }} to {{ chain.label }},
         you may want to add the <links :to="blockExplorerUrl">token</links> to
         your wallet e.g. in MetaMask.
@@ -164,7 +164,7 @@
         <li>Funds on {{ chain.label }}</li>
       </ul>
       <h2>💰 Bridge your funds to {{ chain.label }}</h2>
-      <p>
+      <p class="text-body">
         <links :to="chain.bridge" :hideArrow="true">
           <button class="btn-action">{{ chain.label }} Bridge</button>
         </links>

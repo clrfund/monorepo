@@ -1,13 +1,14 @@
 <template>
-  <div :class="!isCompact && 'warning'" v-if="needsFunds">
+  <div :class="!isCompact && 'warning text-base'" v-if="needsFunds">
     <span v-if="!isCompact">
       You need {{ chain.isLayer2 ? 'L2' : chain.label }} funds!
     </span>
-    <p v-if="!!singleTokenNeeded">
-      ⚠️ You need both some ETH for gas, and {{ nativeTokenSymbol }} to
-      contribute
-    </p>
-    <p @click="onNavigate" class="message">
+    <div v-if="!!singleTokenNeeded">
+      <img src="@/assets/warning.svg" alt="Warning icon" />
+
+      You need both some ETH for gas, and {{ nativeTokenSymbol }} to contribute
+    </div>
+    <div @click="onNavigate" class="message">
       <links
         v-if="chain.isLayer2"
         :to="{
@@ -22,7 +23,7 @@
       <links v-else :to="chain.bridge">
         Bridge {{ singleTokenNeeded }} to {{ chain.label }}
       </links>
-    </p>
+    </div>
   </div>
 </template>
 
@@ -98,17 +99,16 @@ export default class FundsNeededWarning extends Vue {
 @import '../styles/theme';
 
 .warning {
+  border: 1px solid $clr-error;
   width: 100%;
   box-sizing: border-box;
-  background: var(--warning-background);
-  border-radius: 1rem;
-  padding: 1rem;
-  margin: 1rem 0 0;
-  color: var(--warning-color);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  color: $clr-error;
+  text-align: center;
 }
 
 .message {
-  margin: 1.25rem 0 0;
   color: var(--text-color);
 }
 </style>

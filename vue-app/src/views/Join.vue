@@ -1,5 +1,13 @@
 <template>
-  <div id="join-the-round" class="container">
+  <div class="container">
+    <div class="title-area">
+      <div class="title-container">
+        <h1>Join the round</h1>
+        <div class="cancel-area desktop">
+          <links class="cancel-link" to="/join"> Cancel </links>
+        </div>
+      </div>
+    </div>
     <div class="grid">
       <form-progress-widget
         :currentStep="currentStep"
@@ -12,37 +20,12 @@
         :handleStepNav="handleStepNav"
         :saveFormData="saveFormData"
       />
-      <div class="title-area">
-        <h1>Join the round</h1>
-        <div v-if="currentStep === 5">
-          <div class="toggle-tabs-desktop">
-            <p
-              class="tab"
-              id="review"
-              :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'"
-              @click="handleToggleTab"
-            >
-              Review info
-            </p>
-            <p
-              class="tab"
-              id="preview"
-              :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'"
-              @click="handleToggleTab"
-            >
-              Preview project
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="cancel-area desktop">
-        <links class="cancel-link" to="/join"> Cancel </links>
-      </div>
+
       <div class="form-area">
         <div class="application">
-          <div v-if="currentStep === 0">
+          <div class="step-content" v-if="currentStep === 0">
             <h2 class="step-title">About the project</h2>
-            <div class="inputs">
+            <div class="inputs text-base">
               <div class="form-background">
                 <label for="project-name" class="input-label"
                   >Project name</label
@@ -68,7 +51,7 @@
               </div>
               <div class="form-background">
                 <label for="project-tagline" class="input-label">Tagline</label>
-                <p class="input-description">
+                <p class="input-description text-base">
                   Describe your project in a sentence. Max characters: 140
                 </p>
                 <textarea
@@ -104,7 +87,7 @@
               <div class="form-background">
                 <label for="project-description" class="input-label">
                   Description
-                  <p class="input-description">Markdown supported.</p>
+                  <p class="input-description text-base">Markdown supported.</p>
                 </label>
                 <textarea
                   id="project-description"
@@ -132,7 +115,9 @@
               <div class="form-background">
                 <label for="project-category" class="input-label"
                   >Category
-                  <p class="input-description">Choose the best fit.</p>
+                  <p class="input-description text-base">
+                    Choose the best fit.
+                  </p>
                 </label>
                 <form class="radio-row" id="category-radio">
                   <input
@@ -146,7 +131,7 @@
                       invalid: $v.form.project.category.$error,
                     }"
                   />
-                  <label for="tooling" class="radio-btn">Tools</label>
+                  <label for="tooling" class="radio-btn text-body">Tools</label>
                   <input
                     id="category-content"
                     type="radio"
@@ -158,7 +143,7 @@
                       invalid: $v.form.project.category.$error,
                     }"
                   />
-                  <label for="category-content" class="radio-btn"
+                  <label for="category-content" class="radio-btn text-body"
                     >Content</label
                   >
                   <input
@@ -172,7 +157,9 @@
                       invalid: $v.form.project.category.$error,
                     }"
                   />
-                  <label for="research" class="radio-btn">Research</label>
+                  <label for="research" class="radio-btn text-body"
+                    >Research</label
+                  >
 
                   <input
                     id="data"
@@ -185,7 +172,7 @@
                       invalid: $v.form.project.category.$error,
                     }"
                   />
-                  <label for="data" class="radio-btn">Data</label>
+                  <label for="data" class="radio-btn text-body">Data</label>
                 </form>
                 <p
                   :class="{
@@ -200,7 +187,7 @@
                 <label for="project-problem-space" class="input-label"
                   >Problem space</label
                 >
-                <p class="input-description">
+                <p class="input-description text-base">
                   Explain the problems you're trying to solve. Markdown
                   supported.
                 </p>
@@ -235,7 +222,7 @@
                 <label for="fund-address" class="input-label"
                   >Ethereum address</label
                 >
-                <p class="input-description">
+                <p class="input-description text-base">
                   The destination address for donations, which you'll use to
                   claim funds. This doesn't have to be the same address as the
                   one you use to send your application transaction.
@@ -264,7 +251,7 @@
                 <label for="fund-plans" class="input-label"
                   >How will you spend your funding?</label
                 >
-                <p class="input-description">
+                <p class="input-description text-base">
                   Potential contributors might convert based on your specific
                   funding plans. Markdown supported.
                 </p>
@@ -299,7 +286,7 @@
                 <label for="team-email" class="input-label">
                   Contact email
                 </label>
-                <p class="input-description">
+                <p class="input-description text-base">
                   For important updates about your project and the funding
                   round.
                 </p>
@@ -329,7 +316,9 @@
                 <label for="team-name" class="input-label"
                   >Team name (optional)</label
                 >
-                <p class="input-description">If different to project name.</p>
+                <p class="input-description text-base">
+                  If different to project name.
+                </p>
                 <input
                   id="team-name"
                   type="email"
@@ -345,7 +334,7 @@
                 <label for="team-desc" class="input-label"
                   >Team description (optional)</label
                 >
-                <p class="input-description">
+                <p class="input-description text-base">
                   If different to project description. Markdown supported.
                 </p>
                 <textarea
@@ -507,18 +496,36 @@
             </div>
           </div>
           <div v-if="currentStep === 5" id="summary">
+            <div class="toggle-tabs-desktop">
+              <p
+                class="tab"
+                id="review"
+                :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'"
+                @click="handleToggleTab"
+              >
+                Review info
+              </p>
+              <p
+                class="tab"
+                id="preview"
+                :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'"
+                @click="handleToggleTab"
+              >
+                Preview project
+              </p>
+            </div>
             <project-profile
               v-if="showSummaryPreview"
               :project="projectInterface"
               :previewMode="true"
               class="project-details"
             />
-            <div v-if="!showSummaryPreview">
+            <div v-if="!showSummaryPreview" class="form-review">
               <h2 class="step-title">Review your information</h2>
               <warning
                 message="This information will be stored in a smart contract and cannot be edited, so please review carefully."
               />
-              <div class="form-background">
+              <div class="form-review-container">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">About the project</h3>
                   <links to="/join/project" class="edit-button"
@@ -546,7 +553,7 @@
                   <markdown :raw="form.project.problemSpace" />
                 </div>
               </div>
-              <div class="form-background">
+              <div class="form-review-container">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Funding details</h3>
                   <links to="/join/fund" class="edit-button"
@@ -574,7 +581,7 @@
                   <markdown :raw="form.fund.plans" />
                 </div>
               </div>
-              <div class="form-background">
+              <div class="form-review-container">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Team details</h3>
                   <links to="/join/team" class="edit-button"
@@ -601,7 +608,7 @@
                   </div>
                 </div>
               </div>
-              <div class="form-background">
+              <div class="form-review-container">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Links</h3>
                   <links to="/join/links" class="edit-button"
@@ -682,7 +689,7 @@
                   </div>
                 </div>
               </div>
-              <div class="form-background">
+              <div class="form-review-container">
                 <div class="summary-section-header">
                   <h3 class="step-subtitle">Images</h3>
                   <links to="/join/image" class="edit-button"
@@ -705,8 +712,8 @@
             </div>
           </div>
           <div v-if="currentStep === 6">
-            <h2 class="step-title">Submit project</h2>
-            <p>
+            <h2>Submit project</h2>
+            <p class="text-base">
               This is a blockchain transaction that will add your project
               information to the funding round.
             </p>
@@ -1099,8 +1106,10 @@ export default class JoinView extends mixins(validationMixin) {
 @import '../styles/theme';
 
 .container {
-  width: clamp(calc(800px - 4rem), calc(100% - 4rem), 1100px);
+  width: 100%;
   margin: 0 auto;
+  background: var(--bg-navbar);
+
   @media (max-width: $breakpoint-m) {
     width: 100%;
     background: var(--bg-secondary-color);
@@ -1108,12 +1117,14 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .grid {
+  max-width: 1280px;
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr clamp(250px, 25%, 360px);
+  grid-template-columns: clamp(250px, 35%, 460px) 1fr;
   grid-template-rows: auto 1fr;
   grid-template-areas:
-    'title cancel'
-    'form progress';
+    'title title'
+    'progress form';
   height: calc(100vh - var($nav-header-height));
   gap: 0 2rem;
   @media (max-width: $breakpoint-m) {
@@ -1128,20 +1139,12 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .title-area {
-  grid-area: title;
   display: flex;
-  padding: 1rem;
-  padding-left: 0rem;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: column;
-
-  h1 {
-    font-family: 'Glacial Indifference', sans-serif;
-  }
+  margin-bottom: 4rem;
 
   @media (max-width: $breakpoint-m) {
     margin-top: 6rem;
+    margin-bottom: 0rem;
     padding-bottom: 0;
     padding-left: 1rem;
     font-size: 14px;
@@ -1149,8 +1152,16 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
+.title-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .cancel-area {
-  grid-area: cancel;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -1175,12 +1186,12 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .nav-bar {
+  background: var(--bg-primary-color);
   position: fixed;
-  bottom: 0;
+  bottom: -5px;
   right: 0;
   left: 0;
   padding: 1.5rem;
-  background: var(--bg-primary-color);
   box-shadow: var(--box-shadow);
 }
 
@@ -1196,7 +1207,6 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .step-title {
-  font-size: 1.5rem;
   margin-top: 1rem;
   font-weight: 600;
   &:first-of-type {
@@ -1208,11 +1218,10 @@ export default class JoinView extends mixins(validationMixin) {
   /* height: 100%; */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 2rem;
   margin-bottom: 2rem;
   overflow: none;
   @media (min-width: $breakpoint-m) {
-    background: var(--bg-secondary-color);
     padding: 1.5rem;
     border-radius: 1rem;
     margin-bottom: 4rem;
@@ -1220,7 +1229,6 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .link {
-  font-family: Inter;
   font-size: 16px;
   text-decoration: underline;
 }
@@ -1234,13 +1242,55 @@ export default class JoinView extends mixins(validationMixin) {
 
 .inputs {
   margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  input,
+  textarea {
+    margin-top: 0.75rem;
+    background: var(--bg-input-forms);
+    border: 1px solid var(--border-input-forms);
+
+    &:focus {
+      border: 1px solid $clr-purple;
+    }
+  }
+
+  input {
+    border-radius: 30px;
+    padding-left: 1.75rem;
+    height: 50px;
+  }
+
+  textarea {
+    border-radius: 30px;
+    padding: 1rem 1.75rem;
+    height: 125px;
+    resize: none;
+  }
+
+  .invalid {
+    border: 1px solid $clr-error;
+  }
+
+  .error {
+    margin-top: 2rem;
+    color: $clr-error;
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 26px;
+  }
+  .error:before {
+    content: url('~@/assets/warning.svg');
+    margin-right: 0.5rem;
+  }
 }
 
 .form-background {
   border-radius: 0.5rem;
-  padding: 1rem;
-  background: var(--bg-light-color);
-  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
   &:last-of-type {
@@ -1253,48 +1303,17 @@ export default class JoinView extends mixins(validationMixin) {
   }
 }
 
-.input {
-  color: var(--text-color);
-  border-radius: 16px;
-  border: 2px solid var(-button-color);
-  background-color: var(--bg-secondary-color);
-  margin: 0.5rem 0;
-  padding: 0.5rem 1rem;
-  font-size: 16px;
-  font-family: Inter;
-  font-weight: 400;
-  line-height: 24px;
-  letter-spacing: 0em;
-  &:valid {
-    border: 2px solid $clr-green;
-  }
-  &:hover {
-    background: var(--bg-primary-color);
-    border: 2px solid $highlight-color;
-    box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
-  }
-  &:optional {
-    border: 2px solid $button-color;
-    background-color: var(--bg-secondary-color);
-  }
-}
-
-.input.invalid {
-  border: 2px solid var(--error-color);
-}
-
 .input-description {
+  color: var(--text-color);
   margin-top: 0.25rem;
+  margin-bottom: 0;
   font-size: 14px;
-  font-family: Inter;
-  margin-bottom: 0.5rem;
   line-height: 150%;
 }
 
 .input-notice {
   margin-top: 0.25rem;
   font-size: 12px;
-  font-family: Inter;
   margin-bottom: 0.5rem;
   line-height: 150%;
   color: var(--attention-color);
@@ -1303,22 +1322,17 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .input-label {
-  font-family: Inter;
-  font-size: 16px;
-  font-style: normal;
+  color: $clr-gray;
   font-weight: 500;
-  line-height: 24px;
-  letter-spacing: 0em;
   text-align: left;
   margin: 0;
 }
 
 .radio-row {
   display: flex;
+  gap: 1rem;
   margin-top: 1rem;
   box-sizing: border-box;
-  border: 2px solid $button-color;
-  border-radius: 1rem;
   overflow: hidden;
   width: fit-content;
   input {
@@ -1329,6 +1343,8 @@ export default class JoinView extends mixins(validationMixin) {
   input[type='radio']:checked + label {
     background: $clr-pink;
     font-weight: 600;
+    color: $clr-white;
+    border-radius: 2rem;
   }
   @media (max-width: $breakpoint-m) {
     width: 100%;
@@ -1339,29 +1355,24 @@ export default class JoinView extends mixins(validationMixin) {
 
 .radio-btn {
   box-sizing: border-box;
-  color: var(--text-color);
+  color: $clr-purple;
   font-size: 16px;
   line-height: 24px;
   align-items: center;
   padding: 0.5rem 1rem;
-  margin-left: -1px;
+  border: 1px solid $clr-purple;
+  border-radius: 2rem;
 
-  border-right: 2px solid $button-color;
-  border-bottom: none;
   @media (max-width: $breakpoint-m) {
     border-right: none;
     border-bottom: 2px solid $button-color;
-  }
-  &:last-of-type {
-    border-right: none;
-    border-bottom: none;
   }
 
   &:hover {
     opacity: 0.8;
     background: var(--bg-secondary-highlight);
-    transform: scale(1.04);
     cursor: pointer;
+    border-radius: 2rem;
   }
   &:active {
     background: var(--bg-secondary-highlight);
@@ -1401,14 +1412,12 @@ export default class JoinView extends mixins(validationMixin) {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid $highlight-color;
   padding-bottom: 0.5rem;
 }
 
 .toggle-tabs-desktop {
   display: flex;
   gap: 2rem;
-  font-family: 'Inter';
   @media (max-width: $breakpoint-m) {
     /* flex-direction: column;
     gap: 0;
@@ -1463,12 +1472,10 @@ export default class JoinView extends mixins(validationMixin) {
 
 .step-subtitle {
   margin: 0.5rem 0;
-  font-family: 'Glacial Indifference', sans-serif;
   font-size: 1.5rem;
 }
 
 .edit-button {
-  font-family: 'Inter';
   font-weight: 500;
   font-size: 16px;
   color: $clr-green;
@@ -1529,7 +1536,6 @@ export default class JoinView extends mixins(validationMixin) {
 .tx-notice {
   margin-top: 0.25rem;
   font-size: 12px;
-  font-family: Inter;
   margin-bottom: 0.5rem;
   line-height: 150%;
   text-transform: uppercase;
@@ -1558,5 +1564,56 @@ export default class JoinView extends mixins(validationMixin) {
   word-break: keep-all;
   font-size: 0.875rem;
   margin-top: 0.25rem;
+}
+
+.form-review {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.form-review-container {
+  background: var(--bg-input-forms);
+  border: 1px solid #505053;
+  border-radius: 20px;
+  padding: 3rem 4rem;
+
+  .read-only-title {
+    color: #afb9c5;
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 140%;
+  }
+
+  .data {
+    font-family: 'Work Sans';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 140%;
+  }
+
+  .markdown {
+    ::v-deep {
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        padding: 0;
+      }
+      p {
+        padding: 0;
+        font-family: 'Work Sans';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 140%;
+      }
+    }
+  }
 }
 </style>

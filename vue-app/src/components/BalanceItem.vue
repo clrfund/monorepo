@@ -36,8 +36,6 @@ export default class BalanceItem extends Vue {
 .item {
   display: flex;
   align-items: center;
-  padding: 1rem;
-  border: 1px solid #000000;
   margin-top: -1px;
   &:first-of-type {
     margin-top: 0px;

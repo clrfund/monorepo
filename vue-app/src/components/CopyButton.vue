@@ -8,7 +8,15 @@
     :class="`${myClass || 'copy-icon'} ${hasBorder && 'border'}`"
     @click="copyToClipboard"
   >
-    <img width="16px" src="@/assets/copy.svg" />
+    <img
+      :class="`${!fixedColor && 'invert'}`"
+      width="16px"
+      :src="`${
+        fixedColor
+          ? require('@/assets/copy-black.svg')
+          : require('@/assets/copy.svg')
+      }`"
+    />
   </div>
 </template>
 
@@ -24,6 +32,7 @@ export default class CopyButton extends Vue {
   @Prop() position!: string // Optional: Position of tooltip (default "bottom")
   @Prop() myClass!: string // Optional class override for custom styling
   @Prop() hasBorder!: boolean
+  @Prop() fixedColor!: boolean
 
   isLoading = false
   isCopied = false
@@ -71,7 +80,7 @@ export default class CopyButton extends Vue {
   border: 1px solid var(--text-color);
 }
 
-img {
+.invert {
   filter: var(--img-filter, invert(0.7));
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <div class="warning">
-    <span class="icon" aria-label="warning icon">⚠️</span>
+  <div class="text-error warning">
+    <img class="icon" src="@/assets/warning.svg" alt="Warning icon" />
     {{ message }}
   </div>
 </template>
@@ -21,16 +21,11 @@ export default class Warning extends Vue {
 @import '../styles/theme';
 
 .warning {
-  background: var(--warning-background);
-  border: 1px solid var(--warning-border);
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  color: var(--warning-color);
-  font-size: 14px;
-  font-family: Inter;
-  line-height: 150%;
-  text-transform: uppercase;
-  font-weight: 500;
+  background: transparent;
+  color: $clr-error;
+  border: 1px solid $clr-error;
+  border-radius: 1.25rem;
+  padding: 2rem 2.5rem;
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
@@ -41,10 +36,7 @@ export default class Warning extends Vue {
 }
 
 .icon {
-  font-size: 24px;
-  padding: 0.5rem;
-  @media (max-width: $breakpoint-m) {
-    padding: 0.5rem 0rem;
-  }
+  width: 24px;
+  height: 24px;
 }
 </style>

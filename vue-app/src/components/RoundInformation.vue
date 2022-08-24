@@ -2,7 +2,7 @@
   <div class="projects">
     <div class="round-info">
       <div class="image-wrapper">
-        <image-responsive title="docking" height="100%" />
+        <image-responsive title="hero" height="80%" />
       </div>
       <template v-if="roundInfo">
         <div class="round">
@@ -76,16 +76,7 @@
           >
             <div class="full-width">
               <div class="round-info-item-top">
-                <div class="round-info-title">Time left to contribute</div>
-                <img
-                  v-tooltip="{
-                    content:
-                      'During this phase, you can contribute to your favorite projects.',
-                    trigger: 'hover click',
-                  }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
+                <div class="round-info-title">Time left to donate</div>
               </div>
             </div>
             <div
@@ -216,8 +207,10 @@
                 />
               </div>
               <div class="round-info-value">
-                <div class="value large">{{ formatTotalInRound }}</div>
-                <div class="unit">{{ roundInfo.nativeTokenSymbol }}</div>
+                <h2>
+                  {{ formatTotalInRound }}
+                  <h4>{{ roundInfo.nativeTokenSymbol }}</h4>
+                </h2>
               </div>
             </div>
           </div>
@@ -244,26 +237,25 @@
                 class="add-link"
                 @click="addMatchingFunds"
               >
-                <img src="@/assets/add.svg" width="16px" />
-                <span class="add-funds-link">Add funds</span>
+                <a class="text-link" id="link-position">Add Funds</a>
               </div>
             </div>
 
             <div class="round-info-value">
-              <div class="value">
+              <h2>
                 {{ formatAmount(roundInfo.matchingPool) }}
-              </div>
-              <div class="unit">{{ roundInfo.nativeTokenSymbol }}</div>
+                <h4>{{ roundInfo.nativeTokenSymbol }}</h4>
+              </h2>
             </div>
           </div>
           <div class="round-info-sub-item">
             <div>
               <div class="round-info-title">Contributions total</div>
               <div class="round-info-value">
-                <div class="value">
+                <h2>
                   {{ formatAmount(roundInfo.contributions) }}
-                </div>
-                <div class="unit">{{ roundInfo.nativeTokenSymbol }}</div>
+                  <h4>{{ roundInfo.nativeTokenSymbol }}</h4>
+                </h2>
               </div>
             </div>
           </div>
@@ -271,10 +263,10 @@
             <div>
               <div class="round-info-title">Contributors</div>
               <div class="round-info-value">
-                <div class="value">{{ roundInfo.contributors }}</div>
-                <div class="unit">
-                  legend{{ roundInfo.contributors !== 1 ? 's' : '' }}
-                </div>
+                <h2>
+                  {{ roundInfo.contributors }}
+                  <h4>Legend{{ roundInfo.contributors !== 1 ? 's' : '' }}</h4>
+                </h2>
               </div>
             </div>
           </div>
@@ -473,16 +465,16 @@ export default class RoundInformation extends Vue {
 
 .image-wrapper {
   border-radius: 8px;
-  background: var(--bg-gradient);
-  height: 160px;
+  background: $clr-purple;
+  height: 200px;
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .image-wrapper img {
-  mix-blend-mode: exclusion;
-  transform: rotate(15deg);
+  mix-blend-mode: luminosity;
 }
 
 .round {
@@ -596,7 +588,7 @@ export default class RoundInformation extends Vue {
   flex: 1 0 auto;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-light-highlight);
+  background: var(--bg-round-info-body);
   padding: 1rem;
 }
 
@@ -606,7 +598,8 @@ export default class RoundInformation extends Vue {
   flex: 1 0 auto;
   justify-content: space-between;
   align-items: flex-start;
-  background: var(--bg-light-highlight);
+  background: var(--bg-round-info-header);
+  border: 2px solid $clr-dark;
   padding: 1rem;
   border-radius: 0.5rem;
   box-sizing: border-box;
@@ -626,7 +619,7 @@ export default class RoundInformation extends Vue {
 
 .round-info-sub-item {
   flex: 1 0 10%;
-  background: var(--bg-secondary-highlight);
+  background: var(--bg-round-info-body);
   padding: 1rem;
 
   img {
@@ -648,42 +641,13 @@ export default class RoundInformation extends Vue {
 }
 
 .round-info-value {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-
-  .value {
-    font-size: 24px;
-    font-family: 'Glacial Indifference', sans-serif;
-    color: var(--text-color);
-    font-weight: 700;
-    line-height: 120%;
-
-    &.large {
-      font-size: 32px;
-      line-height: 120%;
-    }
-
-    &.extra {
-      font-size: 32px;
-      font-family: 'Glacial Indifference', sans-serif;
-      color: var(--text-color);
-      line-height: 120%;
-    }
+  h2 {
+    margin: 0;
   }
 
-  .unit {
-    color: var(--text-color);
-    font-family: 'Glacial Indifference', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-    line-height: 150%;
-    margin: 0 0.5rem;
-
-    &:last-child {
-      margin-right: 0;
-    }
+  h4 {
+    margin: 0;
+    display: inline;
   }
 }
 
@@ -763,9 +727,9 @@ export default class RoundInformation extends Vue {
 } */
 
 .add-link {
+  position: relative;
   display: flex;
   gap: 0.25rem;
-  color: $clr-green;
   margin-left: auto;
   cursor: pointer;
   &:hover {
@@ -773,8 +737,11 @@ export default class RoundInformation extends Vue {
   }
 }
 
-.add-funds-link {
-  font-size: 14px;
+#link-position {
+  position: relative;
+  width: max-content;
+  right: 20px;
+  top: 26px;
 }
 
 .status {
