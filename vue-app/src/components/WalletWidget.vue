@@ -17,16 +17,21 @@
       @click="toggleProfile"
     >
       <div class="profile-info-balance">
-        <img v-if="showEth" :src="require(`@/assets/${chainCurrencyLogo}`)" />
-        <img v-else :src="require(`@/assets/${tokenLogo}`)" />
+        <img
+          v-if="showEth"
+          :src="require(`@/assets/${chainCurrencyLogo}`)"
+          class="balance-currency"
+        />
+        <img
+          v-else
+          :src="require(`@/assets/${tokenLogo}`)"
+          class="balance-currency"
+        />
         <div v-if="showEth" class="balance">{{ etherBalance }}</div>
         <div v-else class="balance">{{ balance }}</div>
       </div>
       <div class="profile-name">
         {{ displayAddress }}
-      </div>
-      <div class="profile-image">
-        <img v-if="profileImageUrl" :src="profileImageUrl" />
       </div>
     </div>
     <profile
@@ -164,27 +169,35 @@ export default class WalletWidget extends Vue {
   gap: 0.5rem;
   align-items: center;
   cursor: pointer;
-  background: var(--bg-gradient);
+  background: $clr-purple;
   border-radius: 32px;
   padding-right: 0.5rem;
   width: fit-content;
+  font-family: 'Work Sans';
+  font-style: normal;
+  padding: 0.75rem 1rem;
 
   .profile-name {
     font-size: 14px;
+    font-weight: 600;
     opacity: 0.8;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: min(20vw, 14ch);
-    color: var(--text-color);
+    color: $clr-white;
     @media (max-width: $breakpoint-s) {
       display: none;
     }
+  }
+  .balance-currency {
+    max-width: 0.75rem;
+    height: auto;
   }
 
   .balance {
     font-size: 14px;
     font-weight: 600;
-    font-family: 'Glacial Indifference', sans-serif;
+    color: $clr-dark;
   }
 
   .profile-image {
@@ -209,13 +222,14 @@ export default class WalletWidget extends Vue {
 
   .profile-info-balance {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
+    justify-content: center;
     align-items: center;
     cursor: pointer;
-    background: var(--bg-primary-color);
-    padding: 0.5rem 0.5rem;
+    background: $clr-white;
+    padding: 0.125rem 0.5rem;
     border-radius: 32px;
-    margin: 0.25rem;
+    border: 1px solid $clr-dark;
     margin-right: 0;
     color: var(--text-color);
   }

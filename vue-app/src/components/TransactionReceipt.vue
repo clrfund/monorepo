@@ -1,35 +1,24 @@
 <template>
-  <div class="explorer-btn tx-receipt">
-    <div class="status-label-address">
-      <loader
-        v-if="isPending"
-        v-tooltip="'Awaiting transaction confirmation'"
-        class="pending"
-      />
-      <img
-        class="success"
-        v-tooltip="'Transaction confirmed'"
-        v-if="!isPending"
-        src="@/assets/checkmark.svg"
-      />
-      <p class="hash">{{ renderCopiedOrHash }}</p>
-    </div>
-    <div class="actions">
-      <links
-        class="explorerLink"
-        :to="blockExplorer.url"
-        v-tooltip="`View on ${blockExplorer.label}`"
-        :hideArrow="true"
-      >
-        <img class="icon" :src="require(`@/assets/${blockExplorer.logo}`)" />
-      </links>
-      <copy-button
-        :value="hash"
-        text="hash"
-        v-on:copied="updateIsCopied"
-        myClass="icon"
-      />
-    </div>
+  <div class="tx-receipt">
+    <loader
+      v-if="isPending"
+      v-tooltip="'Awaiting transaction confirmation'"
+      class="pending"
+    />
+    <img
+      class="success"
+      v-tooltip="'Transaction confirmed'"
+      v-if="!isPending"
+      src="@/assets/checkmark.svg"
+    />
+    <p class="subtitle hash">{{ renderCopiedOrHash }}</p>
+    <copy-button
+      :value="hash"
+      text="hash"
+      v-on:copied="updateIsCopied"
+      myClass="icon"
+      :fixedColor="true"
+    />
   </div>
 </template>
 
@@ -91,6 +80,11 @@ export default class TransactionReceipt extends Vue {
 .tx-receipt {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  max-width: 370px;
+  background: $clr-light-violet;
+  padding: 1.5rem 2rem;
+  border-radius: 50px;
 }
 
 .icon {
@@ -105,11 +99,9 @@ export default class TransactionReceipt extends Vue {
 }
 
 .hash {
-  color: var(--text-color);
+  color: $clr-dark;
   margin: 0;
-  font-size: 14px;
   text-transform: uppercase;
-  font-weight: 500;
 }
 
 .success {
@@ -117,9 +109,8 @@ export default class TransactionReceipt extends Vue {
   height: 0.75rem;
   padding: 0.25rem;
   margin-right: 0.25rem;
-  background: $gradient-highlight;
+  background: $clr-green;
   border-radius: 2rem;
-  filter: var(--img-filter, invert(1));
 }
 
 .actions {

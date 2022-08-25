@@ -1,37 +1,23 @@
 @ -0,0 +1,36 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
     <loader v-if="loading" />
     <div v-if="!loading">
       <div class="gradient">
-        <img src="@/assets/moon.png" class="moon" />
         <div class="hero">
-          <image-responsive title="newrings" />
+          <image-responsive title="robot" />
         </div>
       </div>
       <div class="content">
-        <breadcrumbs />
         <div class="flex-title">
           <h1>Prove you’re only using one account</h1>
+          <h4 class="content-subtitle">
+            We use BrightID to stop bots and cheaters, and make our funding more
+            democratic.
+          </h4>
         </div>
-        <div class="subtitle">
-          We use BrightID to stop bots and cheaters, and make our funding more
-          democratic.
-        </div>
-        <h2>
-          What you'll need
-          <img
-            v-tooltip="{
-              content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
-              trigger: 'hover click',
-            }"
-            width="16px"
-            src="@/assets/info.svg"
-            class="info-icon"
-          />
-        </h2>
-        <ul>
+        <h4>What you'll need</h4>
+        <ul class="text-base list">
           <li>
             BrightID – available on
             <a
@@ -50,32 +36,34 @@
           <li>An Ethereum wallet, with enough gas for two transactions</li>
           <li>Access to Zoom or Google Meet</li>
         </ul>
-        <links to="/about/sybil-resistance">Why is this important?</links>
-        <div v-if="!hasRoundStarted" class="join-message">
+        <links to="/about/sybil-resistance">
+          <h4>Why is this important?</h4>
+        </links>
+        <div v-if="!hasRoundStarted" class="warning-container text-base">
           There's not yet an open funding round. Get prepared now so you're
           ready for when the next one begins!
         </div>
-        <div v-else-if="isRoundOver" class="warning-message">
+        <div v-else-if="isRoundOver" class="warning-container text-base">
           The current round is no longer accepting new contributions. You can
           still get BrightID verified to prepare for next time.
         </div>
-        <div v-else-if="isRoundFull" class="warning-message">
+        <div v-else-if="isRoundFull" class="warning-container text-base">
           Contributions closed early – you can no longer donate! Due to the
           community's generosity and some technical constraints we had to close
           the round earlier than expected. If you already contributed, you still
           have time to reallocate if you need to. If you didn't get a chance to
           contribute, you can still help by donating to the matching pool
         </div>
-        <div class="btn-container mt2">
+        <div class="button-spacing">
           <wallet-widget
             v-if="!currentUser"
             :isActionButton="true"
             :fullWidthMobile="true"
           />
-          <links v-if="currentUser" to="/verify/connect" class="btn-primary">
-            I have BrightID installed
+          <links v-if="currentUser" to="/verify/connect" class="btn-action">
+            Connect
           </links>
-          <links to="/projects" class="btn-secondary">Go back</links>
+          <links to="/projects" class="btn-link">Go back</links>
         </div>
       </div>
     </div>
@@ -153,107 +141,68 @@ export default class VerifyLanding extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.emoji {
-  font-size: 40px;
-}
-
 h1 {
-  font-family: Glacial Indifference;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 40px;
-  line-height: 120%;
-}
-
-h2 {
-  font-family: 'Glacial Indifference', sans-serif;
-  font-weight: bold;
-  font-size: 24px;
-  letter-spacing: -0.015em;
-}
-
-p {
-  font-size: 16px;
-  line-height: 30px;
-}
-
-li {
-  font-size: 16px;
-  line-height: 30px;
-}
-
-ul {
-  padding-left: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .gradient {
-  background: var(--bg-gradient);
   position: fixed;
   top: 0;
   right: 0;
   height: 100%;
   width: 100%;
+  background: $clr-green;
 
-  .moon {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    mix-blend-mode: exclusion;
-  }
   .hero {
-    display: flex;
     position: fixed;
-    top: 0;
-    right: 0;
+    bottom: -4rem;
+    right: -12rem;
     height: 100%;
     width: 100%;
-    background: var(--bg-gradient-hero);
+    mix-blend-mode: luminosity;
+
     @media (max-width: $breakpoint-m) {
-      padding: 2rem 0rem;
+      width: 100%;
       padding-bottom: 0rem;
     }
 
     img {
       position: absolute;
       bottom: 0;
-      right: 0;
-      mix-blend-mode: exclusion;
-      width: 66%;
+      right: calc(-700px + 50vw);
+      mix-blend-mode: luminosity;
+      max-width: 88%;
+      max-height: 100%;
+
       @media (max-width: $breakpoint-m) {
-        right: 0;
+        right: 1rem;
         width: 100%;
       }
     }
   }
 }
+
 .content {
   position: relative;
   z-index: 1;
   padding: $content-space;
-  width: min(100%, 512px);
-  margin: 2rem;
-  box-sizing: border-box;
+  width: min(100%, 578px);
+  margin-left: 2rem;
+  margin-top: 6rem;
+  color: $clr-white;
+
   @media (max-width: $breakpoint-m) {
     width: 100%;
     margin: 0;
-    padding-bottom: 35vw;
-  }
-
-  @media (max-width: $breakpoint-s) {
-    @include gradientBackground(
-      171.34deg,
-      rgba(var(--shadow-dark-rgb), 0.8),
-      63.5%,
-      rgba(var(--shadow-light-rgb), 0),
-      78.75%
-    );
   }
 
   .flex-title {
     display: flex;
     gap: 0.5rem;
-    align-items: center;
+    align-items: left;
+    margin-bottom: 1rem;
     flex-wrap: wrap;
+    flex-direction: column;
 
     img {
       width: 1rem;
@@ -261,12 +210,21 @@ ul {
       position: relative;
       right: 0;
     }
+
+    h4 {
+      font-weight: 400;
+    }
   }
 }
 
-.subtitle {
-  font-size: 1.25rem;
-  margin-bottom: 1.5rem;
+.list {
+  a {
+    color: $clr-white;
+  }
+}
+
+a {
+  color: $clr-white;
 }
 
 .icon {
@@ -275,27 +233,23 @@ ul {
   position: relative;
 }
 
-.join-message {
-  border: 1px solid $clr-green;
-  background: var(--bg-primary-color);
-  border-radius: 1rem;
-  padding: 1rem;
-  margin: 1rem 0 0;
-  color: $clr-green;
-  font-size: 14px;
+.button-spacing {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+
+  a {
+    width: 100%;
+  }
 }
 
-.warning-message {
-  border: 1px solid var(--error-color);
-  background: var(--bg-primary-color);
-  border-radius: 1rem;
-  padding: 1rem;
-  margin: 1rem 0 0;
-  color: var(--error-color);
-  font-size: 14px;
-}
-
-.info-icon {
-  margin-left: 0.5rem;
+.warning-container {
+  margin-top: 1rem;
+  background: transparent;
+  color: $clr-error;
+  border: 2px solid $clr-error;
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
 }
 </style>

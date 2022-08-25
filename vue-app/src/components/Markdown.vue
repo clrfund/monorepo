@@ -22,6 +22,9 @@ export default class Transaction extends Vue {
 
 <style scoped lang="scss">
 .markdown {
+  margin-top: 0.75rem;
+  background: var(--bg-markdown);
+  border-radius: 20px;
   overflow-wrap: break-word;
   ::v-deep {
     h1,
@@ -34,9 +37,11 @@ export default class Transaction extends Vue {
       font-weight: 600;
       margin: 1.5rem 0;
       line-height: 150%;
+      padding: 1rem 1.75rem;
     }
     p {
       line-height: 150%;
+      padding: 1rem 1.75rem;
     }
     img {
       display: block;

@@ -1,21 +1,25 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
     <div id="page">
       <div id="hero">
-        <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
-          <image-responsive title="docking" />
+          <image-responsive title="hero" />
         </div>
         <div>
           <div class="hero-content">
-            <h1>Send your favorite projects to the moon!</h1>
-            <div id="subtitle" class="subtitle">
+            <h1>Send your favorite buidl projects to the moon!</h1>
+            <p class="subtitle">
               Every project you contribute to gets a portion of extra funding.
-            </div>
+            </p>
             <div class="btn-group">
-              <links to="/projects" class="btn-action">Get started</links>
-              <div class="btn-info" @click="scrollToHowItWorks">
+              <links class="btn-template" id="purple-button" to="/projects"
+                >Get started</links
+              >
+              <div
+                class="btn-template"
+                id="border-button"
+                @click="scrollToHowItWorks"
+              >
                 How it works
               </div>
             </div>
@@ -28,16 +32,16 @@
             "
           >
             <div class="column">
-              <h2>Join the funding round</h2>
-              <p>
+              <h2 id="banner-title">Join the funding round</h2>
+              <p class="text-body">
                 Add your project to the next funding round. If you're working on
                 anything related to public goods, you can join in.
               </p>
               <div class="button-group">
                 <links to="/join" class="btn-primary w100">Add project</links>
-                <div v-if="signUpDeadline">
+                <div class="banner-time-frame" v-if="signUpDeadline">
                   <time-left unitClass="none" :date="signUpDeadline" />
-                  to join
+                  <h4>to join</h4>
                 </div>
               </div>
             </div>
@@ -45,36 +49,33 @@
         </div>
       </div>
       <div id="section-how-it-works">
-        <div class="wormhole-wrapper desktop-l">
+        <div class="bridge-wrapper desktop-l">
           <image-responsive
-            title="wormhole"
-            class="wormhole"
-            alt="Image of spaceships funneling through a wormhole and getting bigger"
+            title="bridge"
+            class="bridge"
+            alt="Image of spaceships funneling through a bridge and getting bigger"
           />
         </div>
         <div id="how-it-works-content">
           <h2>Every donation is amplified by the matching pool.</h2>
-          <p>
+          <p class="subtitle">
             This fundraiser rewards projects with the most unique demand, not
             just those with the wealthiest backers.
           </p>
-          <image-responsive
-            title="wormhole"
-            alt="Image of spaceships funneling through a wormhole and getting bigger"
-          />
           <h2>How it works</h2>
-          <ol>
+          <ol class="text-body">
             <li>
               The {{ $store.getters.operator }} and other donors send funds to
               the matching pool smart contract.
             </li>
             <li>
-              The round begins and you can donate to your favorite projects.
+              The round begins and you can donate to as many projects as you
+              like.
             </li>
             <li>
               Once the round finishes, the smart contract distributes the
-              matching pool funds to projects weighted primarily by number of
-              contributions, <strong>not contribution value</strong>.
+              matching pool funds to projects based primarily on number of
+              contributions not contribution value.
             </li>
           </ol>
           <links class="btn-secondary" to="/about/how-it-works"
@@ -83,95 +84,110 @@
         </div>
       </div>
       <div class="section-header">
-        <h2>What you'll need</h2>
+        <h1>What you'll need</h1>
       </div>
       <div id="what-you-will-need">
         <div class="pre-req">
           <div class="icon-row">
             <img :src="require(`@/assets/${chain.logo}`)" id="chain-icon" />
-            <p>
-              <b>{{ chain.label }} for fast and cheap transaction fees</b>
-            </p>
+            <h3>{{ chain.label }} for fast and cheap transaction fees</h3>
           </div>
-          <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-action">
-            Get {{ chain.label }} funds
+          <links
+            v-if="chain.isLayer2"
+            to="/about/layer-2"
+            class="btn-template"
+            id="btn-chain-id"
+          >
+            <h4>Get {{ chain.label }} funds</h4>
           </links>
         </div>
         <div class="pre-req" id="bright-id">
           <div class="icon-row">
             <img src="@/assets/bright-id.png" id="bright-id-icon" />
-            <p>
-              <b>BrightID for private, decentralized identity verification</b>
-            </p>
+            <h3>BrightID for private, decentralized identity</h3>
           </div>
-          <links to="/about/sybil-resistance" class="btn-primary"
-            >Set up BrightID</links
+          <links
+            to="/about/sybil-resistance"
+            class="btn-template"
+            id="btn-bright-id"
           >
+            <h4>Set up BrightID</h4>
+          </links>
         </div>
       </div>
       <div class="section-header">
-        <h2>About</h2>
+        <h1>About</h1>
       </div>
       <div id="about-section">
-        <div id="about-1">
+        <div class="about">
           <h2>It's not about how much...</h2>
-          <p>
+          <p class="text-body">
             Using quadratic funding, your contribution counts as a vote.
             Projects with the most contributions at the end of the round get the
             highest amount from the matching pool. That means even a small
             donation can have a massive impact.
           </p>
-          <p>
-            <links to="/about/quadratic-funding">About quadratic funding</links>
+          <p class="text-body">
+            To learn more about the technology behind this fundraiser, check out
+            this primer.
+          </p>
+          <p class="text-body">
+            <links to="/about/quadratic-funding">WTF is QF? ↗</links>
           </p>
         </div>
-        <div id="about-2">
+        <div class="about">
           <h2>Protect against bribery</h2>
-          <p>
+          <p class="text-body">
             Using MACI, a zero-knowledge technology, it's impossible to prove
             how you contributed. This drives bribers insane because they have no
             idea whether you actually did what they bribed you to do!
           </p>
-          <links to="/about/maci">About MACI</links>
         </div>
-        <div id="about-3">
+        <div class="about">
           <h2>Built using the CLR protocol</h2>
-          <p>
+          <p class="text-body">
             clr.fund is a protocol for efficiently allocating funds to public
             goods that benefit the Ethereum Network according to the prefences
             of the Ethereum Community.
           </p>
-          <links to="/about">About clr.fund</links>
+          <p class="text-body">
+            <links to="/about">clr.fund forum ↗</links>
+          </p>
+          <p class="text-body">
+            <links to="/about">Fork your own CLR ↗</links>
+          </p>
         </div>
       </div>
       <div id="footer">
         <h2>More</h2>
-        <div class="link-li">
-          <links to="/about">About clr.fund</links>
-        </div>
-        <div class="link-li">
-          <links to="/about/how-it-works">How the round works</links>
-        </div>
-        <div class="link-li" v-if="chain.isLayer2">
-          <links to="/about/layer-2">About {{ chain.label }}</links>
-        </div>
-        <div class="link-li">
-          <links to="/about/maci">About MACI</links>
-        </div>
-        <div class="link-li">
-          <links to="/about/sybil-resistance">About BrightID</links>
-        </div>
-        <div class="link-li">
-          <links to="https://github.com/clrfund/monorepo/">GitHub</links>
-        </div>
-        <div class="link-li">
-          <links to="https://discord.gg/ZnsYPV6dCv">Discord</links>
-        </div>
-        <div class="link-li">
-          <links to="https://forum.clr.fund/">Forum</links>
-        </div>
-        <div class="link-li">
-          <links to="https://ethereum.org/">More on Ethereum</links>
+        <div id="footer-content">
+          <div class="link-li text-base">
+            <links to="/about">About clr.fund</links>
+          </div>
+          <div class="link-li text-base">
+            <links to="/about/how-it-works">How the round works</links>
+          </div>
+          <div class="link-li text-base" v-if="chain.isLayer2">
+            <links to="/about/layer-2">About {{ chain.label }}</links>
+          </div>
+          <div class="link-li text-base">
+            <links to="/about/maci">About MACI</links>
+          </div>
+          <div class="link-li text-base">
+            <links to="/about/sybil-resistance">About BrightID</links>
+          </div>
+          <div class="link-li text-base">
+            <links to="https://github.com/clrfund/monorepo/">GitHub</links>
+          </div>
+          <div class="link-li text-base">
+            <links to="https://discord.gg/ZnsYPV6dCv">Discord</links>
+          </div>
+          <div class="link-li text-base">
+            <links to="https://forum.clr.fund/">Forum</links>
+          </div>
+          <div class="link-li text-base">
+            <links to="https://ethereum.org/">More on Ethereum</links>
+          </div>
         </div>
       </div>
     </div>
@@ -225,27 +241,6 @@ export default class Landing extends Vue {
   }
 }
 
-h1 {
-  font-family: Glacial Indifference;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 40px;
-  line-height: 120%;
-}
-
-h2 {
-  font-family: 'Glacial Indifference', sans-serif;
-  font-weight: bold;
-  font-size: 24px;
-  letter-spacing: -0.015em;
-  margin: 1rem 0;
-}
-
-p {
-  font-size: 16px;
-  line-height: 30px;
-}
-
 ol {
   list-style: none;
   counter-reset: li-counter;
@@ -293,35 +288,42 @@ ol li::before {
   }
 }
 
+.banner-time-frame {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
 .link-li {
   text-decoration: underline;
   margin-bottom: 1rem;
-  font-size: 16px;
+}
+
+.link-li > a {
+  color: $clr-purple !important;
 }
 
 #bright-id {
-  background: var(--bright-id-bg);
+  background: $clr-green;
 }
 
 #chain-icon,
 #bright-id-icon {
   box-sizing: border-box;
-  height: 4rem;
+  height: 6rem;
   width: auto;
   border-radius: 1rem;
 }
 
-#bright-id-icon {
-  padding: 0.5rem;
-  background: var(--bright-id-icon-bg);
-}
-
 .pre-req,
-#about-1,
-#about-2,
-#about-3 {
+.about {
   padding: $content-space;
   flex: 1;
+  color: $clr-white;
+}
+
+.about > p > a {
+  text-decoration: underline;
 }
 
 #page > #what-you-will-need,
@@ -333,16 +335,17 @@ ol li::before {
     padding: 0rem;
     gap: 0;
   }
+  background: var(--bg-landing-about);
 }
 
 #page > .section-header {
-  padding-bottom: 0;
+  background: var(--bg-landing-about);
 }
 
 #hero {
   position: relative;
   overflow: hidden;
-  background: var(--bg-gradient);
+  background: var(--bg-landing-banner);
   padding: 0;
   min-height: 639px; /* This is the height when adding in the callout */
   display: flex;
@@ -354,13 +357,13 @@ ol li::before {
 
   .image-wrapper img {
     position: absolute;
-    mix-blend-mode: exclusion;
-    width: 70%;
-    max-width: 880px;
+    mix-blend-mode: luminosity;
+    width: 80%;
+    max-width: 960px;
     height: auto;
-    transform: rotate(15deg);
-    /* top: -20px; */
-    right: 0;
+    transform: rotate(25deg);
+    top: 120px;
+    right: -120px;
     @media (max-width: $breakpoint-m) {
       width: auto;
       height: 100%;
@@ -370,7 +373,7 @@ ol li::before {
 
   .hero-content {
     position: relative;
-    max-width: 40%;
+    max-width: 50%;
     min-height: 400px;
     display: flex;
     flex-direction: column;
@@ -398,18 +401,31 @@ ol li::before {
 
   .btn-group {
     display: flex;
+    justify-content: space-between;
     gap: 1rem;
+    width: 100%;
     @media (max-width: $breakpoint-l) {
       flex-direction: column;
     }
   }
 
+  #purple-button {
+    background: $clr-purple;
+    width: 100%;
+  }
+
+  #border-button {
+    background: $clr-dark-violet;
+    border: 2px solid $clr-white;
+    width: 100%;
+  }
+
   .apply-callout {
     background: var(--bg-transparent);
-    border: 2px solid $highlight-color;
+    border: 2px solid var(--bg-btn-primary);
     box-sizing: border-box;
     border-radius: 8px;
-    padding: 1rem;
+    padding: 1.75rem;
     margin: 3rem 0;
     position: relative;
     display: flex;
@@ -418,6 +434,10 @@ ol li::before {
     gap: 1rem;
     .column {
       flex: 1;
+    }
+
+    #banner-title {
+      margin: 0;
     }
 
     @media (max-width: $breakpoint-m) {
@@ -433,14 +453,23 @@ ol li::before {
   justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
-  background: var(--brand-tertiary);
+  background: $clr-purple;
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }
 }
 
+#btn-chain-id {
+  background: $clr-green;
+}
+
+#btn-bright-id {
+  background: $clr-dark-violet;
+}
+
 .icon-row {
   display: flex;
+  align-items: center;
   gap: $content-space;
 }
 
@@ -462,10 +491,8 @@ ol li::before {
   margin-top: 0.5rem;
 }
 
-#about-1,
-#about-2,
-#about-3 {
-  background: var(--bg-light-color);
+.about {
+  background: $clr-dark-violet;
   border-radius: 0.5rem;
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
@@ -499,7 +526,7 @@ ol li::before {
 }
 
 #section-how-it-works {
-  background: var(--bg-how-it-works);
+  background: var(--bg-landing-hiw);
   display: grid;
   grid-template-columns: 3fr 2fr;
   grid-template-rows: repeat(2, auto);
@@ -507,24 +534,26 @@ ol li::before {
   @media (max-width: $breakpoint-l) {
     display: flex;
   }
-  .wormhole-wrapper {
+  .bridge-wrapper {
     grid-area: image;
     position: relative;
-    display: flex;
     width: 100%;
     align-items: center;
-    .wormhole {
-      width: 100%;
+    .bridge {
+      position: absolute;
+      width: calc(95vw - 8rem);
       height: auto;
       aspect-ratio: 16/9;
-      mix-blend-mode: exclusion;
+      mix-blend-mode: luminosity;
     }
   }
   #how-it-works-content {
+    min-width: 546px;
     position: relative;
     display: flex;
     flex-direction: column;
-    background: var(--bg-light-color);
+    background: var(--bg-landing-hiw-card);
+    border: 1px solid $clr-gray;
     /* width: 40%; */
     border-radius: 1rem;
     padding: 2rem;
@@ -561,9 +590,16 @@ ol li::before {
 
 #footer {
   max-width: 100vw;
+  max-height: 320px;
+  background: var(--bg-footer);
   padding: $content-space;
   > li {
     list-style-type: none;
   }
+}
+
+#footer-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
 </style>

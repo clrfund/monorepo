@@ -3,6 +3,7 @@
 pragma solidity ^0.6.12;
 
 import './IUserRegistry.sol';
+import './BrightIdSponsor.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
 contract BrightIdUserRegistry is Ownable, IUserRegistry {
@@ -13,6 +14,8 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
 
     bytes32 public context;
     address public verifier;
+    BrightIdSponsor public brightIdSponsor;
+
 
     struct Verification {
         uint256 time;
@@ -20,19 +23,20 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
     }
     mapping(address => Verification) public verifications;
 
-    event SetBrightIdSettings(bytes32 context, address verifier);
-    event Sponsor(address indexed addr);
+    event SetBrightIdSettings(bytes32 context, address verifier, address sponsor);
+    event Registered(address indexed addr, uint256 timestamp, bool isVerified);
 
     /**
      * @param _context BrightID context used for verifying users
      * @param _verifier BrightID verifier address that signs BrightID verifications
      */
-    constructor(bytes32 _context, address _verifier) public {
+    constructor(bytes32 _context, address _verifier, address _sponsor) public {
         // ecrecover returns zero on error
         require(_verifier != address(0), ERROR_INVALID_VERIFIER);
 
         context = _context;
         verifier = _verifier;
+        brightIdSponsor = BrightIdSponsor(_sponsor);
     }
 
     /**
@@ -40,7 +44,7 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
      * @param addr BrightID context id
      */
     function sponsor(address addr) public {
-        emit Sponsor(addr);
+        brightIdSponsor.sponsor(addr);
     }
 
     /**
@@ -48,13 +52,14 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
      * @param _context BrightID context used for verifying users
      * @param _verifier BrightID verifier address that signs BrightID verifications
      */
-    function setSettings(bytes32 _context, address _verifier) external onlyOwner {
+    function setSettings(bytes32 _context, address _verifier, address _sponsor) external onlyOwner {
         // ecrecover returns zero on error
         require(_verifier != address(0), ERROR_INVALID_VERIFIER);
 
         context = _context;
         verifier = _verifier;
-        emit SetBrightIdSettings(_context, _verifier);
+        brightIdSponsor = BrightIdSponsor(_sponsor);
+        emit SetBrightIdSettings(_context, _verifier, _sponsor);
     }
 
     /**
@@ -74,7 +79,8 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
     /**
      * @notice Register a user by BrightID verification
      * @param _context The context used in the users verification
-     * @param _addrs The history of addresses used by this user in this context
+     * @param _addr The address used by this user in this context
+     * @param _verificationHash sha256 of the verification expression
      * @param _timestamp The BrightID node's verification timestamp
      * @param _v Component of signature
      * @param _r Component of signature
@@ -82,26 +88,23 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
      */
     function register(
         bytes32 _context,
-        address[] calldata _addrs,
+        address _addr,
+        bytes32 _verificationHash,
         uint _timestamp,
         uint8 _v,
         bytes32 _r,
         bytes32 _s
     ) external {
         require(context == _context, ERROR_INVALID_CONTEXT);
-        require(verifications[_addrs[0]].time < _timestamp, ERROR_NEWER_VERIFICATION);
+        require(verifications[_addr].time < _timestamp, ERROR_NEWER_VERIFICATION);
 
-        bytes32 message = keccak256(abi.encodePacked(_context, _addrs, _timestamp));
+        bytes32 message = keccak256(abi.encodePacked(_context, _addr, _verificationHash, _timestamp));
         address signer = ecrecover(message, _v, _r, _s);
         require(verifier == signer, ERROR_NOT_AUTHORIZED);
 
-        verifications[_addrs[0]].time = _timestamp;
-        verifications[_addrs[0]].isVerified = true;
-        for(uint i = 1; i < _addrs.length; i++) {
-            // update time of all previous context ids to be sure no one can use old verifications again
-            verifications[_addrs[i]].time = _timestamp;
-            // set old verifications unverified
-            verifications[_addrs[i]].isVerified = false;
-        }
+        verifications[_addr].time = _timestamp;
+        verifications[_addr].isVerified = true;
+
+        emit Registered(_addr, _timestamp, true);
     }
 }

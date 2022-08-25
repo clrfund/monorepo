@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="cartList.length && 'cart-item-container'">
     <div
       v-for="item in cartList"
       class="cart-item"
@@ -21,8 +21,26 @@
           class="project-name"
           :to="{ name: 'project', params: { id: item.id } }"
         >
-          {{ item.name }}
+          <h4>{{ item.name }}</h4>
         </links>
+        <div
+          class="contribution-form"
+          v-if="$store.getters.hasUserContributed && !isEditMode"
+        >
+          {{ item.amount }} {{ tokenSymbol }}
+        </div>
+        <div v-if="isEditMode" class="contribution-form">
+          <input-button
+            :value="item.amount"
+            :input="{
+              placeholder: 'Amount',
+              class: { invalid: !isAmountValid(item.amount) },
+              disabled: !canUpdateAmount(),
+            }"
+            @input="(newAmount) => updateAmount(item, newAmount)"
+            class="contribution-amount"
+          />
+        </div>
         <div class="remove-cart-item" @click="removeItem(item)">
           <div v-if="isEditMode" class="remove-icon-background">
             <img
@@ -32,24 +50,6 @@
             />
           </div>
         </div>
-        <div
-          class="contribution-form"
-          v-if="$store.getters.hasUserContributed && !isEditMode"
-        >
-          {{ item.amount }} {{ tokenSymbol }}
-        </div>
-      </div>
-      <div v-if="isEditMode" class="contribution-form">
-        <input-button
-          :value="item.amount"
-          :input="{
-            placeholder: 'Amount',
-            class: { invalid: !isAmountValid(item.amount) },
-            disabled: !canUpdateAmount(),
-          }"
-          @input="(newAmount) => updateAmount(item, newAmount)"
-          class="contribution-amount"
-        />
       </div>
     </div>
   </div>
@@ -142,9 +142,13 @@ export default class extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
+.cart-item-container {
+  border-bottom: 1px solid $clr-violet;
+  padding-bottom: 2rem;
+}
+
 .cart-item {
-  padding: 1rem;
-  background: var(--bg-light-color);
+  padding: 1rem 3.5rem;
   border-bottom: 1px solid #000;
   &:last-of-type {
     border-bottom: none;
@@ -162,19 +166,19 @@ export default class extends Vue {
 
 .project {
   display: flex;
-  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   cursor: pointer;
 
   .project-image {
-    border-radius: 10px;
+    border-radius: 50%;
     box-sizing: border-box;
     display: block;
-    height: 2.5rem;
-    margin-right: 15px;
-    width: 2.5rem;
+    height: 4.25rem;
+    width: 4.25rem;
     object-fit: cover;
-    width: 2.5rem;
+    border: 1px solid $clr-dark-white;
+
     &:hover {
       opacity: 0.8;
       transform: scale(1.01);
@@ -189,6 +193,7 @@ export default class extends Vue {
     -webkit-box-orient: vertical;
     flex-grow: 1;
     max-height: 2.5rem;
+    max-width: fit-content;
     overflow: hidden;
     font-weight: 600;
     text-overflow: ellipsis;
@@ -200,18 +205,23 @@ export default class extends Vue {
 }
 
 .contribution-form {
-  align-items: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
   font-size: 16px;
-  padding-left: 3.5rem;
-  margin-top: 0.5rem;
   gap: 0.5rem;
   flex-shrink: 0;
 }
 
+.contribution-amount {
+  display: grid;
+  grid-template-columns: 2rem 2rem;
+}
+
 .remove-cart-item {
   cursor: pointer;
+  height: 1.25rem;
+  width: 1.25rem;
 
   &:hover {
     opacity: 0.8;
@@ -219,12 +229,11 @@ export default class extends Vue {
   }
 
   .remove-icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   .remove-icon-background {
-    padding: 0.5rem;
     &:hover {
       background: var(--bg-secondary-color);
       border-radius: 0.5rem;

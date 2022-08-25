@@ -1,13 +1,13 @@
 <template>
   <div class="about">
     <h1 class="content-heading">Recipient guide</h1>
-    <p>
+    <p class="text-body">
       An overview of how things work as a recipient so you can learn what to
       expect throughout the duration of a funding round.
     </p>
     <div v-if="chain.bridge">
       <h2>Get funds on {{ chain.label }}</h2>
-      <p>
+      <p class="text-body">
         You'll need some {{ chain.currency }} on {{ chain.label }} in order to
         submit transactions to the clr.fund smart contracts.
         <span v-if="chain.isLayer2">
@@ -36,18 +36,18 @@
       </p>
     </div>
     <h2>Register your project</h2>
-    <p>
+    <p class="text-body">
       In order to participate in a funding round as a project, you'll need to
       submit an application to join the recipient registry (via an on-chain
       transaction).
     </p>
-    <p>
+    <p class="text-body">
       MACI, our anti-bribery tech, currently limits the amount of projects
       allowed per round.
       <links to="/about/maci">More on MACI</links>. The round only accepts a
       total of {{ maxRecipients }} projects, so we encourage you to apply early.
     </p>
-    <p>
+    <p class="text-body">
       Note: all application data (except contact email address) will be publicly
       stored on-chain.
     </p>
@@ -75,11 +75,11 @@
       </li>
     </ol>
 
-    <p>
+    <p class="text-body">
       Projects are accepted by default, but the registry admin may remove
       projects that don't meet the criteria.
     </p>
-    <p>
+    <p class="text-body">
       In any case, your
       {{ depositToken }} will be returned once your application has been either
       accepted or denied. Note that metadata pointing to all your project
@@ -87,14 +87,14 @@
       on-chain.
     </p>
     <h2>Claim your funds</h2>
-    <p>
+    <p class="text-body">
       After a clr.fund round is finished, it's simple to claim your project's
       share of the funding. Return to your project's page: you will see a "claim
       funds" button if your project received contributions during the round.
       Submit the claim transaction to receive your funds.
     </p>
     <h2>How does clr.fund work?</h2>
-    <p>
+    <p class="text-body">
       Looking for a more general overview?
       <links to="/about/how-it-works">Check out our "How It Works" page</links>.
     </p>

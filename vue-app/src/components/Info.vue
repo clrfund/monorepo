@@ -1,7 +1,7 @@
 <template>
   <div class="info">
     <span class="icon" aria-label="info icon">ℹ</span>
-    {{ message }}
+    <h4>{{ message }}</h4>
   </div>
 </template>
 
@@ -21,10 +21,9 @@ export default class Info extends Vue {
 @import '../styles/theme';
 
 .info {
-  background-color: var(--bg-transparent);
-  border: 1px solid $highlight-color;
+  border: 1px solid var(--text-color);
   border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
+  padding: 2rem 1.5rem;
   font-size: 16px;
   font-family: Inter;
   line-height: 150%;

@@ -3,7 +3,7 @@
     <h1 class="content-heading">About</h1>
 
     <h2>What is clr.fund?</h2>
-    <p>
+    <p class="text-body">
       Clr.fund, pronounced "Clear Fund", is a protocol for efficiently
       allocating funds to public goods that benefit the Ethereum Network
       according to the preferences of the Ethereum Community. Clr.fund strives
@@ -12,7 +12,7 @@
     </p>
 
     <h2>Why does clr.fund exist?</h2>
-    <p>
+    <p class="text-body">
       Allocating funds towards
       <links to="/about/public-goods">public goods</links> — commodities or
       services that are neither excludable nor subtractable — is a challenge for
@@ -23,7 +23,7 @@
       that benefit the Ethereum Network without relying on centralized entities
       and in a way that reflects the preferences of the Ethereum Community.
     </p>
-    <p>
+    <p class="text-body">
       See the
       <links to="https://github.com/clrfund/constitution"
         >Clr.fund Constitution</links
@@ -32,68 +32,65 @@
     </p>
 
     <h2>How is clr.fund unique?</h2>
-    <p>Clr.fund instances also have a number of other special properties:</p>
-    <ul>
-      <li>
-        Decentralization — Major pieces of clr.fund's infrastructure are built
-        on
-        <links to="https://ethereum.org/en/what-is-ethereum/">Ethereum</links>,
-        a programmable blockchain that provides a reliable, censorship-resistant
-        ledger for clr.fund's voting and funding transactions.
-        <links to="/about/decentralization"
-          >Read more on clr.fund's decentralization</links
-        >.
-      </li>
-      <li>
-        Scalability — Because using Ethereum can be expensive for users,
-        clr.fund uses
-        {{ chain.isLayer2 ? `"layer 2"` : `"sidechain"` }} supplementary
-        networks to get most of the benefits of the main Ethereum network but
-        with faster, cheaper transactions.
-        <links v-if="chain.isLayer2" to="/about/layer-2">
-          Learn more about clr.fund's use of layer 2.
-        </links>
-      </li>
-      <li>
-        Collusion-resistance — Since blockchains like Ethereum publish all data
-        publicly by default, clr.fund contributors are vulnerable to bribery and
-        other kinds of manipulation. Clr.fund helps prevent these attacks using
-        magical math called zero-knowledge proofs.
-        <links to="/about/maci"
-          >Find out about MACI, our Minimal Anti-Collusion
-          Infrastructure.</links
-        >
-      </li>
-      <li>
-        Sybil-resistance — Voting systems that care about the number of
-        individual people voting for a given choice, as quadratic funding does,
-        can be vulnerable to sybil attacks, in which one person sets up many
-        identities in order to vote multiple times. Clr.fund mitigates this
-        threat with an identity-system called BrightID.
-        <links to="/about/sybil-resistance">Find out more about BrightID</links
-        >.
-      </li>
-    </ul>
-    <p>
+    <p class="text-body">
+      Clr.fund instances also have a number of other special properties:
+    </p>
+    <p class="text-body">
+      Decentralization — Major pieces of clr.fund's infrastructure are built on
+      <links to="https://ethereum.org/en/what-is-ethereum/">Ethereum</links>, a
+      programmable blockchain that provides a reliable, censorship-resistant
+      ledger for clr.fund's voting and funding transactions.
+      <links to="/about/decentralization"
+        >Read more on clr.fund's decentralization</links
+      >.
+    </p>
+    <p class="text-body">
+      Scalability — Because using Ethereum can be expensive for users, clr.fund
+      uses
+      {{ chain.isLayer2 ? `"layer 2"` : `"sidechain"` }} supplementary networks
+      to get most of the benefits of the main Ethereum network but with faster,
+      cheaper transactions.
+      <links v-if="chain.isLayer2" to="/about/layer-2">
+        Learn more about clr.fund's use of layer 2.
+      </links>
+    </p>
+    <p class="text-body">
+      Collusion-resistance — Since blockchains like Ethereum publish all data
+      publicly by default, clr.fund contributors are vulnerable to bribery and
+      other kinds of manipulation. Clr.fund helps prevent these attacks using
+      magical math called zero-knowledge proofs.
+      <links to="/about/maci"
+        >Find out about MACI, our Minimal Anti-Collusion Infrastructure.</links
+      >
+    </p>
+    <p class="text-body">
+      Sybil-resistance — Voting systems that care about the number of individual
+      people voting for a given choice, as quadratic funding does, can be
+      vulnerable to sybil attacks, in which one person sets up many identities
+      in order to vote multiple times. Clr.fund mitigates this threat with an
+      identity-system called BrightID.
+      <links to="/about/sybil-resistance">Find out more about BrightID</links>.
+    </p>
+    <p class="text-body">
       Clr.fund is also built so anyone can spin up and run their own instance to
       create a public goods grant program for their particular public.
     </p>
 
     <h2>How does it work?</h2>
-    <p>
+    <p class="text-body">
       The clr.fund protocol uses the Constrained Liberal Radicalism (CLR)
       algorithm, commonly called
       <links to="/about/quadratic-funding">quadratic funding</links> (QF), to
       facilitate monetary contributions from members of the Ethereum Community
       towards builders of Ethereum public goods.
     </p>
-    <p>
+    <p class="text-body">
       With its logic encoded into Ethereum smart contracts and other web3
       technologies, clr.fund requires minimal trust in any individual people or
       entities to function and is resilient to collusion and bribery.
     </p>
 
-    <p>
+    <p class="text-body">
       At a high-level, clr.fund consists of a matching pool and a funding round.
       Philanthropic individuals or organizations contribute to the matching pool
       so as to have those funds efficiently allocated according to community
@@ -102,7 +99,7 @@
       contribution. Effectively increasing the value of their contribution.
     </p>
 
-    <p>
+    <p class="text-body">
       Under the hood, clr.fund uses zero-knowledge proofs (ZK-SNARKS), courtesy
       of the
       <links to="/about/maci"
@@ -110,11 +107,11 @@
       >, to keep individual contributions private and limit effectiveness of
       collusion and bribery.
     </p>
-    <p>
+    <p class="text-body">
       To ensure that every contributor is a unique person clr.fund uses
       <links to="/about/sybil-resistance">BrightID</links>.
     </p>
-    <p>
+    <p class="text-body">
       Still curious? Read more on
       <links to="/about/how-it-works">how clr.fund works</links>.
     </p>

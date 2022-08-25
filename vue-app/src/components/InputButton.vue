@@ -8,7 +8,7 @@
     />
     <input
       v-if="input"
-      class="input"
+      class="text-body input"
       type="number"
       :class="input.class"
       :value="value"
@@ -66,10 +66,14 @@ export default class InputButton extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
+.token-icon {
+  margin-left: 0.25rem;
+}
+
 .input-button {
-  background: var(--text-body);
+  background: var(--bg-cart-input);
   border-radius: 2rem;
-  border: 2px solid var(--bg-primary-color);
+  border: 1px solid $clr-dark;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -81,7 +85,7 @@ export default class InputButton extends Vue {
 .input {
   background: none;
   border: none;
-  color: var(--bg-primary-color);
+  color: $clr-dark;
   width: 100%;
 }
 
@@ -94,17 +98,13 @@ input[type='number'] {
 }
 
 .button {
-  padding: 0.5rem 1rem;
-  background: var(--bg-primary-color);
-  color: var(--text-color);
-  border-radius: 32px;
-  font-size: 16px;
-  font-family: Inter;
-  text-align: center;
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-  box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  @include button(white, $clr-dark, none);
+  height: 2rem;
+  font-size: 14px;
+  line-height: 16.42px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 0 0.25rem;
 
   &[disabled],
   &[disabled]:hover {
@@ -113,7 +113,8 @@ input[type='number'] {
 }
 
 .wide {
-  line-height: 150%;
+  background: transparent !important;
+  color: $clr-dark !important;
   width: 100%;
   z-index: 1;
   &:hover {

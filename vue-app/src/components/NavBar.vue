@@ -1,11 +1,14 @@
 <template>
   <nav id="nav-bar">
     <links to="/">
-      <img
-        class="clr-logo"
-        :alt="$store.getters.operator"
-        src="@/assets/clr.svg"
-      />
+      <div class="logo-container">
+        <img
+          class="clr-logo"
+          :alt="$store.getters.operator"
+          :src="require(`@/assets/${clrIcon}`)"
+        />
+        <div class="text-body">clr.fund</div>
+      </div>
     </links>
     <div class="btn-row">
       <div>
@@ -19,7 +22,7 @@
         <img
           @click="toggleHelpDropdown()"
           class="navbar-btn"
-          src="@/assets/help.svg"
+          :src="require(`@/assets/${helpIcon}`)"
         />
         <div id="myHelpDropdown" class="button-menu" v-if="showHelpDropdown">
           <div
@@ -116,6 +119,18 @@ export default class NavBar extends Vue {
       : 'sun.svg'
   }
 
+  get helpIcon(): string {
+    return this.$store.state.theme === ThemeMode.LIGHT
+      ? 'help-dark.svg'
+      : 'help-light.svg'
+  }
+
+  get clrIcon(): string {
+    return this.$store.state.theme === ThemeMode.LIGHT
+      ? 'clr-dark.svg'
+      : 'clr-light.svg'
+  }
+
   get themeKey(): string {
     return 'theme'
   }
@@ -135,7 +150,7 @@ export default class NavBar extends Vue {
   height: 64px;
   justify-content: space-between;
   align-items: center;
-  background: $clr-black;
+  background-color: var(--bg-navbar);
   box-shadow: $box-shadow-nav-bar;
   @media (max-width: $breakpoint-m) {
     padding: 0 1rem;
@@ -205,9 +220,17 @@ export default class NavBar extends Vue {
     font-size: 16px;
   }
 
+  .logo-container {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+  }
+
   .clr-logo {
     margin: 0;
-    height: 2.25rem;
+    height: 1.5rem;
     vertical-align: middle;
   }
 

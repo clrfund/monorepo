@@ -1,21 +1,45 @@
 [data-theme='light'] {
   color-scheme: light;
-  --text-color: #212529;
-  --text-body: #212529;
+  --text-color: #16161A;
+  --secondary-text-color: #201E2A;
+  --text-body: #16161A;
   --text-secondary: #808094;
   // workaround for using css variables with sass mixins
   --text-color-rgb: 33, 37, 41;
-
-  --brand-primary: #6f3ff5;
-  --brand-secondary: #00e3a1;
-  --brand-tertiary: #f3d2f9;
+  --bg-primary-color: #FFFFFE;
+  --bg-primary-transparent: #FFFFFE90;
+  --bg-navbar: #FFFFFE;
+  --bg-btn-navbar: transparent;
+  --border-btn-navbar: #16161A;
+  --bg-landing-banner: #DFD6FB;
+  --bg-landing-hiw: #FFFFFE;
+  --bg-landing-hiw-card: #E4E7EC;
+  --bg-landing-about: #E4E7EC;
+  --link-color: #41BD8A;
+  --bg-circle: #DFD6FB;
+  --bg-btn-primary: #8C6BF2;
+  --bg-btn-secondary: var(--bg-primary-color);
+  --border-btn-secondary: var(--text-color);
+  --color-btn-secondary: var(--text-color);
+  --bg-footer: #FFFFFE;
+  --bg-round-info-header: transparent;
+  --bg-round-info-body: #E4E7EC;
+  --bg-cart-color: #F7F7F7;
+  --bg-cart-input: #F7F7F7;
+  --bg-criteria-modal: #DFD6FB;
+  --bg-progress-forms: transparent;
+  --bg-input-forms: transparent;
+  --border-input-forms: #232629;
+  --bg-markdown: #F7F7F7;
+  --bg-bright-id-widget: #F5F5F5;
+  --bg-even-request-table: #E4E7EC;
+  --bg-odd-request-table: #F9F9F9;
 
   --error-color: #bd6b5e;
   --warning-color: var(--text-color);
   --warning-background: rgb(255, 248, 197);
   --warning-border: rgba(212, 167, 44, 0.4);
   --attention-color: #bd6b5e;
-  --link-color: #00e3a1;
   --loader-color: #d0d7de;
 
   --border-color: #d0d7de;
@@ -25,7 +49,6 @@
   --shadow-light-rgb: 196, 196, 196;
   --shadow-dark-rgb: 249, 243, 243;
 
-  --bg-primary-color: #fff;
   --bg-secondary-color: #fff;
   --bg-light-color: #fff;
 
@@ -41,7 +64,6 @@
   --bg-address-box: #f3d2f9;
   --bg-how-it-works: var(--bg-primary-color);
   --bg-inactive: #9789c4;
-  --bg-circle: #d2fff6;
 
   --button-secondary-color: #212529;
   --button-secondary-bg: #d2fff6;

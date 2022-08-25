@@ -2,34 +2,26 @@
   <div class="wrapper">
     <div class="modal-background" @click="$emit('close')" />
     <div class="container">
-      <div class="flex-row" style="justify-content: flex-end">
+      <div class="flex-row">
+        <h4 class="no-margin">Your wallet</h4>
         <div class="close-btn" @click="$emit('close')">
-          <p class="no-margin">Close</p>
-          <img src="@/assets/close.svg" />
+          <p class="no-margin text-body">Collapse</p>
+          <img alt="close" width="16px" src="@/assets/arrow-right.svg" />
         </div>
       </div>
-      <div class="flex-row">
-        <h2 class="no-margin">Your wallet</h2>
-      </div>
-      <div class="address-card">
-        <h2 class="address">{{ displayAddress }}</h2>
-        <div class="action-row" v-if="currentUser">
-          <copy-button
-            :value="currentUser.walletAddress"
-            text="address"
-            myClass="profile copy-icon"
-            class="copy"
-          />
-          <div class="address">
-            {{ currentUser.ensName ? currentUser.walletAddress : null }}
-          </div>
+
+      <div class="content-container">
+        <div class="text-body container-title">Address</div>
+        <div class="address-container">
+          <span class="text-body address">{{ displayAddress }}</span>
+          <copy-button :value="currentUser.walletAddress" text="address" />
           <div
             v-tooltip="{
               content: 'Disconnect wallet',
               trigger: 'hover click',
             }"
-            class="disconnect btn"
             @click="disconnect"
+            class="icon-btn"
           >
             <img src="@/assets/disconnect.svg" />
           </div>
@@ -40,40 +32,29 @@
         :isProjectCard="false"
         @close="$emit('close')"
       />
-      <div class="balances-section">
-        <div class="flex-row">
-          <h2>{{ chain.label }} balances</h2>
-          <div
-            v-tooltip="{
-              content: `Balance of wallet on ${chain.label} chain`,
-              trigger: 'hover click',
-            }"
-          >
-            <img src="@/assets/info.svg" />
-          </div>
-        </div>
-        <div class="balances-card">
-          <balance-item :balance="balance" :abbrev="nativeTokenSymbol">
-            <icon-status
-              :custom="true"
-              :logo="tokenLogo"
-              :secondaryLogo="chain.logo"
-              :bg="balanceBackgroundColor"
-            />
-          </balance-item>
-          <balance-item :balance="etherBalance" :abbrev="chain.currency">
-            <icon-status
-              :custom="true"
-              logo="eth.svg"
-              :secondaryLogo="chain.logo"
-              :bg="balanceBackgroundColor"
-            />
-          </balance-item>
-        </div>
-        <funds-needed-warning :onNavigate="onNavigateToBridge" />
+      <h4>{{ chain.label }} balances</h4>
+      <div class="content-container items-flex">
+        <balance-item :balance="balance" :abbrev="nativeTokenSymbol">
+          <icon-status
+            :custom="true"
+            :logo="tokenLogo"
+            :secondaryLogo="chain.logo"
+            :bg="balanceBackgroundColor"
+          />
+        </balance-item>
+        <balance-item :balance="etherBalance" :abbrev="chain.currency">
+          <icon-status
+            :custom="true"
+            logo="eth.svg"
+            :secondaryLogo="chain.logo"
+            :bg="balanceBackgroundColor"
+          />
+        </balance-item>
       </div>
+      <funds-needed-warning :onNavigate="onNavigateToBridge" />
+      <h4>Projects</h4>
+
       <div class="projects-section">
-        <h2>Projects</h2>
         <div v-if="projects.length > 0" class="project-list">
           <div
             class="project-item"
@@ -103,7 +84,7 @@
             </button>
           </div>
         </div>
-        <div v-if="!isLoading && projects.length === 0">
+        <div class="text-base" v-if="!isLoading && projects.length === 0">
           You haven't submitted any projects
         </div>
         <loader v-if="isLoading" />
@@ -225,15 +206,43 @@ export default class Profile extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-h2 {
-  font-family: Glacial Indifference;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 150%;
+.content-container {
+  border: 1px solid $clr-dark-gray;
+  border-radius: 20px;
+  padding: 2.25rem 1.75rem;
 }
 
-h2.no-margin {
+.container-title {
+  color: $clr-dark-white;
+}
+
+.address {
+  max-width: 85%;
+  overflow: hidden;
+}
+
+.address-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon-btn {
+  cursor: pointer;
+  width: 20px;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.items-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+h4.no-margin {
   margin: 0;
 }
 
@@ -311,9 +320,6 @@ p.no-margin {
         grid-template-columns: auto 1fr auto;
         grid-template-areas: 'copy address disconnect';
 
-        .copy {
-          grid-area: copy;
-        }
         .address {
           grid-area: address;
           align-items: center;
