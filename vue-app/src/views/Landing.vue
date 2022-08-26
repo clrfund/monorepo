@@ -585,7 +585,8 @@ ol li::before {
 }
 
 .button-margin {
-  margin: 1rem 0;
+  padding: 0;
+  margin: 0;
 }
 
 .w100 {

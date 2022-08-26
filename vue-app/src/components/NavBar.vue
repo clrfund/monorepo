@@ -11,35 +11,41 @@
       </div>
     </links>
     <div class="btn-row">
-      <div>
-        <img
-          @click="toggleTheme()"
-          class="navbar-btn"
-          :src="require(`@/assets/${themeIcon}`)"
-        />
-      </div>
-      <div class="help-dropdown" v-click-outside="closeHelpDropdown">
-        <img
-          @click="toggleHelpDropdown()"
-          class="navbar-btn"
-          :src="require(`@/assets/${helpIcon}`)"
-        />
-        <div id="myHelpDropdown" class="button-menu" v-if="showHelpDropdown">
-          <div
-            v-for="({ to, text, emoji }, idx) of dropdownItems"
-            :key="idx"
-            class="dropdown-item"
-            @click="closeHelpDropdown"
-          >
-            <links :to="to">
-              <div class="emoji-wrapper">{{ emoji }}</div>
-              <p class="item-text">{{ text }}</p>
-            </links>
+      <div class="toggl-help">
+        <div class="nav-btn">
+          <img
+            @click="toggleTheme()"
+            class="navbar-btn"
+            :src="require(`@/assets/${themeIcon}`)"
+          />
+        </div>
+        <div class="help-dropdown nav-btn" v-click-outside="closeHelpDropdown">
+          <img
+            @click="toggleHelpDropdown()"
+            class="navbar-btn"
+            :src="require(`@/assets/${helpIcon}`)"
+          />
+          <div id="myHelpDropdown" class="button-menu" v-if="showHelpDropdown">
+            <div
+              v-for="({ to, text, emoji }, idx) of dropdownItems"
+              :key="idx"
+              class="dropdown-item"
+              @click="closeHelpDropdown"
+            >
+              <links :to="to">
+                <div class="emoji-wrapper">{{ emoji }}</div>
+                <p class="item-text">{{ text }}</p>
+              </links>
+            </div>
           </div>
         </div>
       </div>
-      <wallet-widget class="wallet-widget" v-if="inApp" />
-      <links v-if="!inApp" to="/projects" class="app-btn">App</links>
+      <div class="mobile-nav">
+        <wallet-widget class="wallet-widget" v-if="inApp" />
+        <links v-if="!inApp" to="/projects" class="app-btn btn-mobile"
+          >App</links
+        >
+      </div>
     </div>
   </nav>
 </template>
@@ -154,16 +160,26 @@ export default class NavBar extends Vue {
   box-shadow: $box-shadow-nav-bar;
   @media (max-width: $breakpoint-m) {
     padding: 0 1rem;
+    height: 120px;
   }
 
   .wallet-widget {
-    margin-left: 0.5rem;
+    margin-left: 0;
   }
 
   .btn-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    @media (max-width: $breakpoint-m) {
+      grid-template-columns: 1fr;
+      align-items: center;
+    }
+    width: fit-content;
+  }
+  .toggl-help {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: center;
   }
 
   .help-dropdown {
@@ -218,6 +234,21 @@ export default class NavBar extends Vue {
 
   .button-menu links {
     font-size: 16px;
+  }
+  .btn-mobile {
+    @media (max-width: $breakpoint-m) {
+      margin: 0;
+    }
+  }
+
+  .mobile-nav {
+    @media (max-width: $breakpoint-m) {
+      margin: 0.5rem 0 0 0;
+    }
+  }
+
+  .nav-btn {
+    width: fit-content;
   }
 
   .logo-container {

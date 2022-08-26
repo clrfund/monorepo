@@ -4,7 +4,7 @@
       v-if="!currentUser"
       :class="{
         'btn-action': isActionButton,
-        'app-btn': !isActionButton,
+        'app-btn mobile-text': !isActionButton,
         'full-width-mobile': fullWidthMobile,
       }"
       @click="showModal()"
@@ -160,7 +160,7 @@ export default class WalletWidget extends Vue {
 @import '../styles/theme';
 
 .container {
-  margin-left: 0.5rem;
+  display: flex;
   width: fit-content;
 }
 
@@ -237,6 +237,12 @@ export default class WalletWidget extends Vue {
   .profile-info-balance img {
     height: 16px;
     width: 16px;
+  }
+}
+
+.mobile-text {
+  @media (max-width: $breakpoint-m) {
+    margin: 0;
   }
 }
 
