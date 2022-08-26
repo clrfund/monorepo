@@ -479,7 +479,6 @@ summary:focus {
 
 #content {
   flex: 1;
-  padding-left: 1rem;
 
   .content-heading {
     display: block;

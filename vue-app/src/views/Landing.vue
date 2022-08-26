@@ -78,8 +78,8 @@
               contributions not contribution value.
             </li>
           </ol>
-          <links class="btn-secondary" to="/about/how-it-works"
-            >How the round works</links
+          <links class="btn-secondary" to="/about/how-it-works">
+            <p class="button-margin">How the round works</p></links
           >
         </div>
       </div>
@@ -241,6 +241,11 @@ export default class Landing extends Vue {
   }
 }
 
+.home-content {
+  display: flex;
+  flex-direction: column;
+}
+
 ol {
   list-style: none;
   counter-reset: li-counter;
@@ -292,6 +297,9 @@ ol li::before {
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+  }
 }
 
 .link-li {
@@ -471,6 +479,9 @@ ol li::before {
   display: flex;
   align-items: center;
   gap: $content-space;
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
+  }
 }
 
 #countdown {
@@ -561,9 +572,8 @@ ol li::before {
       display: none;
     }
     @media (max-width: $breakpoint-l) {
+      min-width: 100px;
       width: 100%;
-      border-radius: 0;
-      padding: 0;
       background: none;
       & > img {
         display: inline-block;
@@ -572,6 +582,10 @@ ol li::before {
       }
     }
   }
+}
+
+.button-margin {
+  margin: 1rem 0;
 }
 
 .w100 {

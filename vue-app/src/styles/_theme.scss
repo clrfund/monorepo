@@ -10,7 +10,7 @@
 }
 
 .btn-secondary-new {
-  @include button($clr-dark, $clr-light-violet, none)
+  @include button($clr-dark, $clr-light-violet, none);
 }
 
 .btn-link {
@@ -38,7 +38,7 @@
 }
 
 .btn-warning {
-  @include button(#D54679, none, 2px solid #D54679);
+  @include button(#d54679, none, 2px solid #d54679);
 }
 
 .app-btn {
@@ -67,7 +67,11 @@
 
 .navbar-btn,
 .dropdown-btn {
-  @include button(white, var(--bg-btn-navbar), 1px solid var(--border-btn-navbar));
+  @include button(
+    white,
+    var(--bg-btn-navbar),
+    1px solid var(--border-btn-navbar)
+  );
   padding: 0.75rem;
   border-radius: 8px;
   margin-right: 0.5rem;
@@ -171,7 +175,7 @@
   font-size: 16px;
   line-height: 19px;
   text-decoration-line: underline;
-  color: var(--link-color)
+  color: var(--link-color);
 }
 
 .subtitle {
@@ -237,4 +241,3 @@ h4 {
   letter-spacing: -0.02em;
   margin: 0;
 }
-

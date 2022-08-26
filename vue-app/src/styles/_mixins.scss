@@ -8,7 +8,7 @@
 }
 
 @mixin button($color, $background, $border) {
-  height: 2.75rem;
+  min-height: 2.75rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,12 +20,10 @@
   font-size: 1rem;
   font-weight: 700;
   line-height: 150%;
-  max-height: 2.75rem;
   text-align: center;
   color: $color;
   background: $background;
   border: $border;
-  white-space: nowrap;
   &:hover {
     opacity: 0.8;
     transform: scale(1.02);
