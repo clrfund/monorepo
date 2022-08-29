@@ -32,6 +32,50 @@ export class OwnershipTransferred__Params {
   }
 }
 
+export class Registered extends ethereum.Event {
+  get params(): Registered__Params {
+    return new Registered__Params(this);
+  }
+}
+
+export class Registered__Params {
+  _event: Registered;
+
+  constructor(event: Registered) {
+    this._event = event;
+  }
+
+  get addr(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get timestamp(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class RegistrationPeriodChanged extends ethereum.Event {
+  get params(): RegistrationPeriodChanged__Params {
+    return new RegistrationPeriodChanged__Params(this);
+  }
+}
+
+export class RegistrationPeriodChanged__Params {
+  _event: RegistrationPeriodChanged;
+
+  constructor(event: RegistrationPeriodChanged) {
+    this._event = event;
+  }
+
+  get startTime(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get deadline(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
 export class SetBrightIdSettings extends ethereum.Event {
   get params(): SetBrightIdSettings__Params {
     return new SetBrightIdSettings__Params(this);
@@ -54,44 +98,69 @@ export class SetBrightIdSettings__Params {
   }
 }
 
-export class Sponsor extends ethereum.Event {
-  get params(): Sponsor__Params {
-    return new Sponsor__Params(this);
+export class SponsorChanged extends ethereum.Event {
+  get params(): SponsorChanged__Params {
+    return new SponsorChanged__Params(this);
   }
 }
 
-export class Sponsor__Params {
-  _event: Sponsor;
+export class SponsorChanged__Params {
+  _event: SponsorChanged;
 
-  constructor(event: Sponsor) {
+  constructor(event: SponsorChanged) {
     this._event = event;
   }
 
-  get addr(): Address {
+  get sponsor(): Address {
     return this._event.parameters[0].value.toAddress();
-  }
-}
-
-export class BrightIdUserRegistry__verificationsResult {
-  value0: BigInt;
-  value1: boolean;
-
-  constructor(value0: BigInt, value1: boolean) {
-    this.value0 = value0;
-    this.value1 = value1;
-  }
-
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromUnsignedBigInt(this.value0));
-    map.set("value1", ethereum.Value.fromBoolean(this.value1));
-    return map;
   }
 }
 
 export class BrightIdUserRegistry extends ethereum.SmartContract {
   static bind(address: Address): BrightIdUserRegistry {
     return new BrightIdUserRegistry("BrightIdUserRegistry", address);
+  }
+
+  brightIdSponsor(): Address {
+    let result = super.call(
+      "brightIdSponsor",
+      "brightIdSponsor():(address)",
+      []
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_brightIdSponsor(): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "brightIdSponsor",
+      "brightIdSponsor():(address)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  canRegister(_timestamp: BigInt): boolean {
+    let result = super.call("canRegister", "canRegister(uint256):(bool)", [
+      ethereum.Value.fromUnsignedBigInt(_timestamp)
+    ]);
+
+    return result[0].toBoolean();
+  }
+
+  try_canRegister(_timestamp: BigInt): ethereum.CallResult<boolean> {
+    let result = super.tryCall("canRegister", "canRegister(uint256):(bool)", [
+      ethereum.Value.fromUnsignedBigInt(_timestamp)
+    ]);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   context(): Bytes {
@@ -107,21 +176,6 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBytes());
-  }
-
-  isOwner(): boolean {
-    let result = super.call("isOwner", "isOwner():(bool)", []);
-
-    return result[0].toBoolean();
-  }
-
-  try_isOwner(): ethereum.CallResult<boolean> {
-    let result = super.tryCall("isOwner", "isOwner():(bool)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   isVerifiedUser(_user: Address): boolean {
@@ -162,37 +216,73 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  verifications(param0: Address): BrightIdUserRegistry__verificationsResult {
+  registrationDeadline(): BigInt {
+    let result = super.call(
+      "registrationDeadline",
+      "registrationDeadline():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_registrationDeadline(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "registrationDeadline",
+      "registrationDeadline():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  registrationStartTime(): BigInt {
+    let result = super.call(
+      "registrationStartTime",
+      "registrationStartTime():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_registrationStartTime(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "registrationStartTime",
+      "registrationStartTime():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  verifications(param0: Address): BigInt {
     let result = super.call(
       "verifications",
-      "verifications(address):(uint256,bool)",
+      "verifications(address):(uint256)",
       [ethereum.Value.fromAddress(param0)]
     );
 
-    return new BrightIdUserRegistry__verificationsResult(
-      result[0].toBigInt(),
-      result[1].toBoolean()
-    );
+    return result[0].toBigInt();
   }
 
-  try_verifications(
-    param0: Address
-  ): ethereum.CallResult<BrightIdUserRegistry__verificationsResult> {
+  try_verifications(param0: Address): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "verifications",
-      "verifications(address):(uint256,bool)",
+      "verifications(address):(uint256)",
       [ethereum.Value.fromAddress(param0)]
     );
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(
-      new BrightIdUserRegistry__verificationsResult(
-        value[0].toBigInt(),
-        value[1].toBoolean()
-      )
-    );
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   verifier(): Address {
@@ -235,6 +325,10 @@ export class ConstructorCall__Inputs {
   get _verifier(): Address {
     return this._call.inputValues[1].value.toAddress();
   }
+
+  get _sponsor(): Address {
+    return this._call.inputValues[2].value.toAddress();
+  }
 }
 
 export class ConstructorCall__Outputs {
@@ -266,24 +360,28 @@ export class RegisterCall__Inputs {
     return this._call.inputValues[0].value.toBytes();
   }
 
-  get _addrs(): Array<Address> {
-    return this._call.inputValues[1].value.toAddressArray();
+  get _addr(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get _verificationHash(): Bytes {
+    return this._call.inputValues[2].value.toBytes();
   }
 
   get _timestamp(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
+    return this._call.inputValues[3].value.toBigInt();
   }
 
   get _v(): i32 {
-    return this._call.inputValues[3].value.toI32();
+    return this._call.inputValues[4].value.toI32();
   }
 
   get _r(): Bytes {
-    return this._call.inputValues[4].value.toBytes();
+    return this._call.inputValues[5].value.toBytes();
   }
 
   get _s(): Bytes {
-    return this._call.inputValues[5].value.toBytes();
+    return this._call.inputValues[6].value.toBytes();
   }
 }
 
@@ -321,6 +419,40 @@ export class RenounceOwnershipCall__Outputs {
   }
 }
 
+export class SetRegistrationPeriodCall extends ethereum.Call {
+  get inputs(): SetRegistrationPeriodCall__Inputs {
+    return new SetRegistrationPeriodCall__Inputs(this);
+  }
+
+  get outputs(): SetRegistrationPeriodCall__Outputs {
+    return new SetRegistrationPeriodCall__Outputs(this);
+  }
+}
+
+export class SetRegistrationPeriodCall__Inputs {
+  _call: SetRegistrationPeriodCall;
+
+  constructor(call: SetRegistrationPeriodCall) {
+    this._call = call;
+  }
+
+  get _startTime(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get _deadline(): BigInt {
+    return this._call.inputValues[1].value.toBigInt();
+  }
+}
+
+export class SetRegistrationPeriodCall__Outputs {
+  _call: SetRegistrationPeriodCall;
+
+  constructor(call: SetRegistrationPeriodCall) {
+    this._call = call;
+  }
+}
+
 export class SetSettingsCall extends ethereum.Call {
   get inputs(): SetSettingsCall__Inputs {
     return new SetSettingsCall__Inputs(this);
@@ -351,6 +483,36 @@ export class SetSettingsCall__Outputs {
   _call: SetSettingsCall;
 
   constructor(call: SetSettingsCall) {
+    this._call = call;
+  }
+}
+
+export class SetSponsorCall extends ethereum.Call {
+  get inputs(): SetSponsorCall__Inputs {
+    return new SetSponsorCall__Inputs(this);
+  }
+
+  get outputs(): SetSponsorCall__Outputs {
+    return new SetSponsorCall__Outputs(this);
+  }
+}
+
+export class SetSponsorCall__Inputs {
+  _call: SetSponsorCall;
+
+  constructor(call: SetSponsorCall) {
+    this._call = call;
+  }
+
+  get _sponsor(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetSponsorCall__Outputs {
+  _call: SetSponsorCall;
+
+  constructor(call: SetSponsorCall) {
     this._call = call;
   }
 }

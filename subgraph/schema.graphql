@@ -137,7 +137,6 @@ type Contributor @entity {
   contributorRegistry: ContributorRegistry!
   votes: [Vote!] @derivedFrom(field: "contributor")
 
-  verified: Boolean
   verifiedTimeStamp: String
   # sponsors: [Bytes]
   contributorAddress: Bytes

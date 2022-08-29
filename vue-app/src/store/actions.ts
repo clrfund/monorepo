@@ -184,8 +184,6 @@ const actions = {
     if (state.currentUser && userRegistryType === UserRegistryType.BRIGHT_ID) {
       // If the user is registered, we assume all brightId steps as done
       let brightId: BrightId = {
-        isLinked: true,
-        isSponsored: true,
         isVerified: true,
       }
 

@@ -1820,15 +1820,6 @@ export class Contributor extends Entity {
     }
   }
 
-  get verified(): boolean {
-    let value = this.get("verified");
-    return value.toBoolean();
-  }
-
-  set verified(value: boolean) {
-    this.set("verified", Value.fromBoolean(value));
-  }
-
   get verifiedTimeStamp(): string | null {
     let value = this.get("verifiedTimeStamp");
     if (value === null || value.kind == ValueKind.NULL) {

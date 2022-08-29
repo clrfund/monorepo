@@ -21,21 +21,19 @@
         />
       </div>
       <h2>BrightID setup</h2>
-      <p>{{ getCurrentStep }} / 4</p>
+      <p>{{ getCurrentStep }} / 2</p>
     </div>
     <div class="progress">
       <div
         :class="{
-          half: isVerified || isSponsored,
-          quarter: isLinked,
-          'three-quarters': isVerified && isSponsored,
+          half: isVerified,
           full: isRegistered,
         }"
       />
     </div>
     <div v-if="!isProjectCard" class="setup-container">
       <div class="row">
-        <div v-if="isLinked">
+        <div v-if="isVerified">
           <div v-if="isRegistered">
             <a href="/#/projects" @click="$emit('close')">
               Start contributing
@@ -77,24 +75,10 @@ export default class BrightIdWidget extends Vue {
   @Prop() balance!: string
   @Prop() isProjectCard!: boolean
 
-  get isLinked(): boolean {
-    return (
-      this.$store.state.currentUser &&
-      this.$store.state.currentUser.brightId.isLinked
-    )
-  }
-
   get isVerified(): boolean {
     return (
       this.$store.state.currentUser &&
       this.$store.state.currentUser.brightId.isVerified
-    )
-  }
-
-  get isSponsored(): boolean {
-    return (
-      this.$store.state.currentUser &&
-      this.$store.state.currentUser.brightId.isSponsored
     )
   }
 
@@ -106,23 +90,15 @@ export default class BrightIdWidget extends Vue {
   }
 
   get getCurrentStep(): number {
-    if (!this.isLinked) {
+    if (!this.isVerified) {
       return 0
     }
 
-    if (!this.isSponsored) {
+    if (!this.isRegistered) {
       return 1
     }
 
-    if (!this.isVerified) {
-      return 2
-    }
-
-    if (!this.isRegistered) {
-      return 3
-    }
-
-    return 4
+    return 2
   }
 }
 </script>

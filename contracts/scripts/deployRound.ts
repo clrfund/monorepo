@@ -48,7 +48,8 @@ async function main() {
     )
     userRegistry = await BrightIdUserRegistry.deploy(
       utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
-      process.env.BRIGHTID_VERIFIER_ADDR
+      process.env.BRIGHTID_VERIFIER_ADDR,
+      process.env.BRIGHTID_SPONSOR
     )
   } else {
     throw new Error('unsupported user registry type')
@@ -166,6 +167,7 @@ async function main() {
     deployer.address
   )
   await addFundingSourceTx.wait()
+  console.log('Added funding source', addFundingSourceTx.hash)
 
   const deployNewRoundTx = await fundingRoundFactory.deployNewRound()
   await deployNewRoundTx.wait()
@@ -226,6 +228,18 @@ async function main() {
     )
     const maciAddress = await fundingRound.maci()
     console.log('maci.address: ', maciAddress)
+
+    if (userRegistryType === 'brightid') {
+      const maci = await ethers.getContractAt('MACI', maciAddress)
+      const startTime = await maci.signUpTimestamp()
+      const endTime = await maci.calcSignUpDeadline()
+      const periodTx = await userRegistry.setRegistrationPeriod(
+        startTime,
+        endTime
+      )
+      console.log('Set user registration period', periodTx.hash)
+      await periodTx.wait()
+    }
 
     console.log('*******************')
     console.log('Deploy complete!')

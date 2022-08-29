@@ -117,22 +117,27 @@ export function handleRoundStarted(event: RoundStarted): void {
 
   //NOTE: If the contracts aren't being tracked initialize them
   if (recipientRegistry == null) {
-    log.info('New recipientRegistry', [])
+    log.info('New recipientRegistry {}', [recipientRegistryAddress.toHex()])
+    let recipientRegistry = new RecipientRegistry(recipientRegistryId)
+
     recipientRegistryTemplate.create(recipientRegistryAddress)
     let recipientRegistryContract = RecipientRegistryContract.bind(
       recipientRegistryAddress
     )
-    let baseDeposit = recipientRegistryContract.baseDeposit()
-    let challengePeriodDuration =
-      recipientRegistryContract.challengePeriodDuration()
+    let baseDeposit = recipientRegistryContract.try_baseDeposit()
+    if (baseDeposit.reverted) {
+      recipientRegistry.baseDeposit = BigInt.fromI32(0)
+      recipientRegistry.challengePeriodDuration = BigInt.fromI32(0)
+    } else {
+      recipientRegistry.baseDeposit = baseDeposit.value
+      let challengePeriodDuration =
+        recipientRegistryContract.challengePeriodDuration()
+      recipientRegistry.challengePeriodDuration = challengePeriodDuration
+    }
     let controller = recipientRegistryContract.controller()
     let maxRecipients = recipientRegistryContract.maxRecipients()
     let owner = recipientRegistryContract.owner()
 
-    let recipientRegistry = new RecipientRegistry(recipientRegistryId)
-
-    recipientRegistry.baseDeposit = baseDeposit
-    recipientRegistry.challengePeriodDuration = challengePeriodDuration
     recipientRegistry.controller = controller
     recipientRegistry.maxRecipients = maxRecipients
     recipientRegistry.owner = owner
