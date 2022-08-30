@@ -2,7 +2,7 @@ import { MetadataComposer, SearchOptions } from '@clrfund/metadata-composer'
 import { ContractTransaction, providers, utils } from 'ethers'
 import { METADATA_NETWORKS, METADATA_SUBGRAPH_URL_PREFIX, chain } from './core'
 import { Project } from './projects'
-import { Ipfs } from './ipfs'
+import { IPFS } from './ipfs'
 import { MAX_RETRIES } from './core'
 import { required, url, maxLength } from 'vuelidate/lib/validators'
 import * as isIPFS from 'is-ipfs'
@@ -277,9 +277,9 @@ export class Metadata {
       websiteUrl: this.websiteUrl,
       twitterUrl: this.twitterUrl,
       discordUrl: this.discordUrl,
-      bannerImageUrl: Ipfs.toUrl(this.bannerImageHash),
-      thumbnailImageUrl: Ipfs.toUrl(this.thumbnailImageHash),
-      imageUrl: Ipfs.toUrl(this.imageHash),
+      bannerImageUrl: IPFS.toUrl(this.bannerImageHash),
+      thumbnailImageUrl: IPFS.toUrl(this.thumbnailImageHash),
+      imageUrl: IPFS.toUrl(this.imageHash),
       index: 0,
       isHidden: false,
       isLocked: false,

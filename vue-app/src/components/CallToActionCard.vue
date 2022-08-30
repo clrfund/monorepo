@@ -62,7 +62,7 @@ export default class CallToActionCard extends Vue {
     return (
       this.$store.state.currentUser &&
       this.$store.state.currentUser.brightId &&
-      this.$store.state.currentUser.brightId.isLinked
+      this.$store.state.currentUser.brightId.isVerified
     )
   }
 

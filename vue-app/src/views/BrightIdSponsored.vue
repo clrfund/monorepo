@@ -10,19 +10,19 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>Ready to contribute!</h1>
+            <h1>You're sponsored!</h1>
             <transaction-receipt
               v-if="$route.params.hash"
               :hash="$route.params.hash"
             />
           </div>
           <div class="subtitle">
-            You’re on board this funding round! And fully verified for BrightID
-            for this funding round.
+            You’re almost ready to contribute to your favorite projects! If
+            you're verified for BrightID, link your wallet to your BrightID
+            profile and start contributing.
           </div>
-          <p>You can now start contributing to your favorite projects.</p>
           <div class="mt2 button-spacing">
-            <links to="/projects" class="btn-primary">View projects</links>
+            <links to="/verify" class="btn-primary">Link BrightId</links>
             <links to="/" class="btn-secondary">Go home</links>
           </div>
         </div>
@@ -49,7 +49,7 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
     ImageResponsive,
   },
 })
-export default class Verified extends Vue {}
+export default class Sponsored extends Vue {}
 </script>
 
 <style scoped lang="scss">

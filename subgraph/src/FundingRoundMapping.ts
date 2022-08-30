@@ -73,7 +73,6 @@ export function handleContribution(event: Contribution): void {
     contributor.fundingRounds = _fundingRounds
 
     contributor.contributorRegistry = contributorRegistryId
-    contributor.verified = true
     contributor.contributorAddress = contributorAddress
     contributor.verifiedTimeStamp = event.block.timestamp.toString()
 
@@ -89,7 +88,6 @@ export function handleContribution(event: Contribution): void {
     }
 
     contributor.contributorRegistry = contributorRegistryId
-    contributor.verified = true
     contributor.contributorAddress = contributorAddress
     contributor.verifiedTimeStamp = event.block.timestamp.toString()
 

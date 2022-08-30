@@ -52,7 +52,7 @@ import { Metadata } from '@/api/metadata'
 import Links from '@/components/Links.vue'
 import Panel from '@/components/Panel.vue'
 import Loader from '@/components/Loader.vue'
-import { Ipfs } from '@/api/ipfs'
+import { IPFS } from '@/api/ipfs'
 import { RESET_METADATA } from '@/store/mutation-types'
 import sdk from '@/graphql/sdk'
 import { RecipientRegistryRequestTypeCode as RequestTypeCode } from '@/api/types'
@@ -142,7 +142,7 @@ export default class MetadataList extends Vue {
   }
 
   toUrl(hash: string): string {
-    return Ipfs.toUrl(hash) || ''
+    return IPFS.toUrl(hash) || ''
   }
 }
 </script>

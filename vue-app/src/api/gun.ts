@@ -7,6 +7,11 @@ import { gunPeers } from './core'
 import { LOGIN_MESSAGE } from './user'
 import { md5 } from '@/utils/crypto'
 
+const GUN_WARNINGS = new Set([
+  'User already created!',
+  'User is already being created or authenticated!',
+])
+
 interface GunSchema {
   data: { [key: string]: string }
 }
@@ -26,19 +31,19 @@ export async function loginUser(
   const password = encryptionKey
   await new Promise((resolve, reject) => {
     user.create(username, password, (ack) => {
-      if (ack.ok === 0 || ack.err === 'User already created!') {
-        resolve()
+      if (ack.ok === 0 || GUN_WARNINGS.has(ack.err)) {
+        resolve(0)
       } else {
-        reject()
+        reject('Error creating user in GunDB.')
       }
     })
   })
   await new Promise((resolve, reject) => {
     user.auth(username, password, (ack) => {
       if (ack.err) {
-        reject()
+        reject('Error authenticating user in GunDB.')
       } else {
-        resolve()
+        resolve(0)
       }
     })
   })

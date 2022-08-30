@@ -153,6 +153,9 @@ export default class Profile extends Vue {
   async created() {
     this.isLoading = true
     await this.loadProjects()
+    if (this.showBrightIdWidget) {
+      await this.$store.dispatch('LOAD_BRIGHT_ID')
+    }
     this.isLoading = false
   }
 
@@ -165,7 +168,10 @@ export default class Profile extends Vue {
   }
 
   get showBrightIdWidget(): boolean {
-    return userRegistryType === UserRegistryType.BRIGHT_ID
+    return (
+      userRegistryType === UserRegistryType.BRIGHT_ID &&
+      !this.$store.getters.hasContributionPhaseEnded
+    )
   }
 
   get chain(): ChainInfo {

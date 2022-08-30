@@ -52,7 +52,7 @@
       <links to="/verify">Get verified by following the directions here</links>.
     </p>
 
-    <h2>How to set up BrightID</h2>
+    <h2 id="howto-brightid">How to set up BrightID</h2>
     <p>
       The app walks you through <links to="/verify">getting set up</links>, but
       here's a quick look at what you can expect:
@@ -68,17 +68,17 @@
           >Android</links
         >
       </li>
-      <li>
-        Link your wallet to your BrightID profile, so you can't use multiple
-        Ethereum addresses to sway voting.
-      </li>
       <li>Get verified in BrightID so we know you're a human and not a bot.</li>
       <li>
-        Submit a transaction for clr.fund to sponsor you in BrightID
+        Submit a transaction for clr.fund to sponsor you in BrightID.
         <links
           to="https://medium.com/brightid/brightid-sponsorships-5327a8d39f1e"
           >More on BrightID sponsorship</links
         >
+      </li>
+      <li>
+        Link your wallet to your BrightID profile, so you can't use multiple
+        Ethereum addresses to sway voting.
       </li>
       <li>
         Add yourself to the clr.fund user registry. This is a requirement for
@@ -100,5 +100,12 @@ import Component from 'vue-class-component'
 import Links from '@/components/Links.vue'
 
 @Component({ components: { Links } })
-export default class AboutSybilResistance extends Vue {}
+export default class AboutSybilResistance extends Vue {
+  mounted() {
+    if (this.$route.hash) {
+      const hash = this.$route.hash.replace('#', '')
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+}
 </script>

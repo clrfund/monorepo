@@ -31,6 +31,9 @@ import MetadataFormAdd from '@/views/MetadataFormAdd.vue'
 import MetadataFormEdit from '@/views/MetadataFormEdit.vue'
 import MetadataTransactionSuccess from '@/views/MetadataTransactionSuccess.vue'
 import NotFound from '@/views/NotFound.vue'
+import BrightIdGuide from '@/views/BrightIdGuide.vue'
+import BrightIdSponsor from '@/views/BrightIdSponsor.vue'
+import BrightIdSponsored from '@/views/BrightIdSponsored.vue'
 
 Vue.use(VueRouter)
 
@@ -276,6 +279,30 @@ const routes = [
     component: MetadataFormAdd,
     meta: {
       title: 'Add Metadata',
+    },
+  },
+  {
+    path: '/brightid',
+    name: 'brightid',
+    component: BrightIdGuide,
+    meta: {
+      title: 'BrightId',
+    },
+  },
+  {
+    path: '/brightid/sponsor',
+    name: 'brightid-sponsor',
+    component: BrightIdSponsor,
+    meta: {
+      title: 'BrightId Sponsor',
+    },
+  },
+  {
+    path: '/brightid/sponsored/:hash',
+    name: 'sponsored',
+    component: BrightIdSponsored,
+    meta: {
+      title: 'Sponsored',
     },
   },
   {

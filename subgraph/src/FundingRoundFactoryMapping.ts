@@ -12,8 +12,10 @@ import {
 
 import { MACIFactory as MACIFactoryContract } from '../generated/FundingRoundFactory/MACIFactory'
 import { FundingRound as FundingRoundContract } from '../generated/FundingRoundFactory/FundingRound'
+
+import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/FundingRoundFactory/OptimisticRecipientRegistry'
+
 import { RecipientRegistryTemplate } from './recipientRegistry/RecipientRegistryTemplate'
-import { RecipientRegistryFactory } from './recipientRegistry/RecipientRegistryFactory'
 import {
   FundingRound as FundingRoundTemplate,
   MACI as MACITemplate,
@@ -115,24 +117,32 @@ export function handleRoundStarted(event: RoundStarted): void {
 
   //NOTE: If the contracts aren't being tracked initialize them
   if (recipientRegistry == null) {
-    log.info('New recipientRegistry', [])
+    log.info('New recipientRegistry {}', [recipientRegistryAddress.toHex()])
+    let recipientRegistry = new RecipientRegistry(recipientRegistryId)
+
     RecipientRegistryTemplate.create(recipientRegistryAddress)
-
-    let createdAt = event.block.timestamp.toString()
-    let recipientRegistry = RecipientRegistryFactory.create({
-      recipientRegistryAddress,
-      fundingRoundFactoryId,
-      createdAt,
-    })
-
-    if (recipientRegistry) {
-      recipientRegistry.save()
+    let recipientRegistryContract = RecipientRegistryContract.bind(
+      recipientRegistryAddress
+    )
+    let baseDeposit = recipientRegistryContract.try_baseDeposit()
+    if (baseDeposit.reverted) {
+      recipientRegistry.baseDeposit = BigInt.fromI32(0)
+      recipientRegistry.challengePeriodDuration = BigInt.fromI32(0)
     } else {
-      log.error(
-        'Error creating recipient registry {}, see previous error for details',
-        [recipientRegistryAddress.toHex()]
-      )
+      recipientRegistry.baseDeposit = baseDeposit.value
+      let challengePeriodDuration =
+        recipientRegistryContract.challengePeriodDuration()
+      recipientRegistry.challengePeriodDuration = challengePeriodDuration
     }
+    let controller = recipientRegistryContract.controller()
+    let maxRecipients = recipientRegistryContract.maxRecipients()
+    let owner = recipientRegistryContract.owner()
+
+    recipientRegistry.controller = controller
+    recipientRegistry.maxRecipients = maxRecipients
+    recipientRegistry.owner = owner
+    recipientRegistry.fundingRoundFactory = fundingRoundFactoryId
+    recipientRegistry.save()
   }
 
   if (contributorRegistry == null) {
