@@ -2,4 +2,3 @@
 /build
 /packages/*/node_modules
 .DS_Store
-/generated
