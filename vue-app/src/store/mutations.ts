@@ -9,10 +9,9 @@ import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
 import { MACIFactory } from '@/api/maci-factory'
-import {
-  RecipientApplicationData,
-  RegistryInfo,
-} from '@/api/recipient-registry-optimistic'
+import { RecipientApplicationData } from '@/api/recipient'
+import { MetadataFormData } from '@/api/metadata'
+import { RegistryInfo } from '@/api/types'
 
 // Constants
 import {
@@ -29,6 +28,8 @@ import {
   SET_CURRENT_USER,
   SET_RECIPIENT_DATA,
   RESET_RECIPIENT_DATA,
+  SET_METADATA,
+  RESET_METADATA,
   SET_RECIPIENT_REGISTRY_ADDRESS,
   SET_RECIPIENT_REGISTRY_INFO,
   TOGGLE_SHOW_CART_PANEL,
@@ -144,18 +145,23 @@ const mutations = {
     state,
     payload: {
       updatedData: RecipientApplicationData
-      step: string
-      stepNumber: number
     }
   ) {
-    if (!state.recipient) {
-      state.recipient = payload.updatedData
-    } else {
-      state.recipient[payload.step] = payload.updatedData[payload.step]
-    }
+    state.recipient = payload.updatedData
   },
   [RESET_RECIPIENT_DATA](state) {
     state.recipient = null
+  },
+  [SET_METADATA](
+    state,
+    payload: {
+      updatedData: MetadataFormData
+    }
+  ) {
+    state.metadata = payload.updatedData
+  },
+  [RESET_METADATA](state) {
+    state.metadata = null
   },
   [TOGGLE_SHOW_CART_PANEL](state, isOpen: boolean | undefined) {
     // Handle the case of both null and undefined

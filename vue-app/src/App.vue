@@ -187,9 +187,15 @@ export default class App extends Vue {
       'join-step',
       'round-information',
       'transaction-success',
+      'metadata-success',
       'verify',
       'verify-step',
       'verified',
+      'metadata',
+      'metadata-registry',
+      'metadata-edit',
+      'metadata-new',
+      'not-found',
       'sponsored',
     ]
     return !excludedRoutes.includes(this.$route.name || '')
@@ -205,6 +211,11 @@ export default class App extends Vue {
       'verify',
       'verify-step',
       'verified',
+      'metadata',
+      'metadata-registry',
+      'metadata-edit',
+      'metadata-new',
+      'not-found',
       'sponsored',
     ]
     return !excludedRoutes.includes(this.$route.name || '')
@@ -230,6 +241,7 @@ export default class App extends Vue {
       'verify',
       'project-added',
       'verified',
+      'not-found',
     ]
     return !excludedRoutes.includes(this.$route.name || '')
   }

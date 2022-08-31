@@ -15,9 +15,9 @@ import { FundingRound as FundingRoundContract } from '../generated/FundingRoundF
 
 import { OptimisticRecipientRegistry as RecipientRegistryContract } from '../generated/FundingRoundFactory/OptimisticRecipientRegistry'
 
+import { RecipientRegistryTemplate } from './recipientRegistry/RecipientRegistryTemplate'
 import {
   FundingRound as FundingRoundTemplate,
-  OptimisticRecipientRegistry as recipientRegistryTemplate,
   MACI as MACITemplate,
 } from '../generated/templates'
 import {
@@ -120,7 +120,7 @@ export function handleRoundStarted(event: RoundStarted): void {
     log.info('New recipientRegistry {}', [recipientRegistryAddress.toHex()])
     let recipientRegistry = new RecipientRegistry(recipientRegistryId)
 
-    recipientRegistryTemplate.create(recipientRegistryAddress)
+    RecipientRegistryTemplate.create(recipientRegistryAddress)
     let recipientRegistryContract = RecipientRegistryContract.bind(
       recipientRegistryAddress
     )

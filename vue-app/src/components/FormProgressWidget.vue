@@ -44,7 +44,7 @@
       <form-navigation
         :isStepValid="isStepValid(currentStep)"
         :steps="steps"
-        :finalStep="steps.length - 2"
+        :finalStep="steps.length - 1"
         :currentStep="currentStep"
         :callback="saveFormData"
         :handleStepNav="handleStepNav"
@@ -60,7 +60,7 @@
         />
         <div class="row">
           <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-          <links class="cancel-link" to="/join"> Cancel </links>
+          <links class="cancel-link" :to="cancelRedirectUrl"> Cancel </links>
         </div>
       </div>
     </div>
@@ -91,8 +91,9 @@ export default class FormProgressWidget extends Vue {
   @Prop() isNavDisabled!: boolean
   @Prop() isStepUnlocked!: (step: number) => boolean
   @Prop() isStepValid!: (step: number) => boolean
-  @Prop() handleStepNav!: () => void
+  @Prop() handleStepNav!: (step: number) => void
   @Prop() saveFormData!: (updateFurthest?: boolean) => void
+  @Prop() cancelRedirectUrl!: string
 }
 </script>
 

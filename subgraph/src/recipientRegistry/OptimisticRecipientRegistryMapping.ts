@@ -3,9 +3,9 @@ import {
   OwnershipTransferred,
   RequestResolved,
   RequestSubmitted,
-} from '../generated/OptimisticRecipientRegistry/OptimisticRecipientRegistry'
+} from '../../generated/OptimisticRecipientRegistry/OptimisticRecipientRegistry'
 
-import { Recipient } from '../generated/schema'
+import { Recipient } from '../../generated/schema'
 
 // It is also possible to access smart contracts from mappings. For
 // example, the contract that has emitted the event can be connected to

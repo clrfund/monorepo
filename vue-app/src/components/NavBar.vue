@@ -71,6 +71,7 @@ export default class NavBar extends Vue {
     { to: '/about/how-it-works', text: 'How it works', emoji: '⚙️' },
     { to: '/about/maci', text: 'Bribery protection', emoji: '🤑' },
     { to: '/about/sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
+    { to: '/about/layer-2', text: 'Layer 2', emoji: '🚀' },
     {
       to: 'https://github.com/clrfund/monorepo/',
       text: 'Code',
@@ -79,22 +80,21 @@ export default class NavBar extends Vue {
     {
       to: '/recipients',
       text: 'Recipients',
-      emoji: '🚀',
+      emoji: '💎',
     },
-  ]
+    {
+      to: '/metadata',
+      text: 'Metadata',
+      emoji: '📃',
+    },
+  ].filter((item) => {
+    return chain.isLayer2 || item.text !== 'Layer 2'
+  })
 
   created() {
     const savedTheme = lsGet(this.themeKey)
     const theme = isValidTheme(savedTheme) ? savedTheme : getOsColorScheme()
     this.$store.commit(TOGGLE_THEME, theme)
-
-    if (chain.isLayer2) {
-      this.dropdownItems.splice(-1, 0, {
-        to: '/about/layer-2',
-        text: 'Layer 2',
-        emoji: '🚀',
-      })
-    }
   }
 
   closeHelpDropdown(): void {

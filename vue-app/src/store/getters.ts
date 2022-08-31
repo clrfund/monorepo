@@ -4,16 +4,14 @@ import { DateTime } from 'luxon'
 
 // API
 import { CartItem, Contributor } from '@/api/contributions'
-import { recipientRegistryType, operator } from '@/api/core'
+import { operator } from '@/api/core'
 import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
 import { Factory } from '@/api/factory'
 import { MACIFactory } from '@/api/maci-factory'
-import {
-  RecipientApplicationData,
-  RegistryInfo,
-} from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/types'
+import { RecipientApplicationData } from '@/api/recipient'
 
 // Utils
 import { isSameAddress } from '@/utils/accounts'
@@ -46,9 +44,7 @@ const getters = {
     }
 
     const challengePeriodDuration =
-      recipientRegistryType === 'optimistic'
-        ? state.recipientRegistryInfo.challengePeriodDuration
-        : 0
+      state.recipientRegistryInfo.challengePeriodDuration
 
     const deadline = state.currentRound.signUpDeadline.minus({
       seconds: challengePeriodDuration,
@@ -81,13 +77,6 @@ const getters = {
     return (
       getters.recipientSpacesRemaining !== null &&
       getters.recipientSpacesRemaining < 20
-    )
-  },
-  isRoundBufferPhase: (state: RootState, getters): boolean => {
-    return (
-      !!state.currentRound &&
-      !getters.isJoinPhase &&
-      !hasDateElapsed(state.currentRound.signUpDeadline)
     )
   },
   isRoundContributionPhase: (state: RootState): boolean => {
@@ -158,7 +147,13 @@ const getters = {
     )
   },
   isRecipientRegistryOwner: (state: RootState): boolean => {
-    if (!state.currentUser || !state.recipientRegistryInfo) {
+    if (
+      !state.currentUser ||
+      !state.recipientRegistryInfo ||
+      !state.recipientRegistryInfo.owner
+    ) {
+      // return false if no owner or logged in user information
+      // e.g. the kleros recipient registry does not have a owner
       return false
     }
     return isSameAddress(
@@ -223,9 +218,33 @@ const getters = {
 
     return nativeTokenDecimals
   },
+  isSelfRegistration: (state: RootState): boolean => {
+    return !!state.recipientRegistryInfo?.isSelfRegistration
+  },
+  requireRegistrationDeposit: (state: RootState): boolean => {
+    return !!state.recipientRegistryInfo?.requireRegistrationDeposit
+  },
+  canAddProject: (_, getters): boolean => {
+    const {
+      requireRegistrationDeposit,
+      isRecipientRegistryOwner,
+      isRecipientRegistryFull,
+      isRoundJoinPhase,
+    } = getters
+
+    return (
+      (requireRegistrationDeposit || isRecipientRegistryOwner) &&
+      !isRecipientRegistryFull &&
+      isRoundJoinPhase
+    )
+  },
+  joinFormUrl:
+    () =>
+    (metadataId?: string): string => {
+      return metadataId ? `/join/metadata/${metadataId}` : '/join/project'
+    },
   maxRecipients: (state: RootState): number | undefined => {
     const { currentRound, maciFactory } = state
-
     if (currentRound) {
       return currentRound.maxRecipients
     }

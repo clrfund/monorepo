@@ -124,7 +124,7 @@ export default class FilterDropdown extends Vue {
       text-transform: capitalize;
       line-height: 24px;
       &:hover {
-        background: var(--bg-secondary-highlight);
+        background: var(--bg-secondary-accent);
       }
     }
     .category-btn-selected {

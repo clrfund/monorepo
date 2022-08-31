@@ -12,13 +12,15 @@
         }
       "
     ></transaction>
-    <button
-      v-if="txHash"
-      class="btn-secondary close-btn"
-      @click="$emit('close')"
-    >
-      Close
-    </button>
+    <div class="btn-row">
+      <button
+        v-if="txHash"
+        class="btn-secondary close-btn"
+        @click="$emit('close')"
+      >
+        Close
+      </button>
+    </div>
   </div>
 </template>
 
@@ -69,6 +71,11 @@ export default class TransactionModal extends Vue {
   border-radius: 1rem;
   box-shadow: var(--box-shadow);
   padding: 1.5rem;
+}
+
+.btn-row {
+  display: flex;
+  justify-content: center;
 }
 
 .close-btn {

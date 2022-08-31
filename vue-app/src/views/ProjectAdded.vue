@@ -11,8 +11,13 @@
             <h1>Project submitted!</h1>
             <transaction-receipt :hash="$route.params.hash" />
           </div>
-          <div class="subtitle">You’re almost on board this funding round.</div>
-          <ul>
+          <div
+            v-if="$store.getters.requireRegistrationDeposit"
+            class="subtitle"
+          >
+            You’re almost on board this funding round.
+          </div>
+          <ul v-if="$store.getters.requireRegistrationDeposit">
             <li>
               Your project just needs to go through some final checks to ensure
               it meets round criteria. You can
@@ -48,7 +53,7 @@ import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/types'
 import { chain } from '@/api/core'
 
 @Component({

@@ -1,23 +1,25 @@
-import { Contract, Event } from 'ethers'
+import { BigNumber, Contract, Event, Signer } from 'ethers'
+import { ContractTransaction } from '@ethersproject/contracts'
+
 import { isHexString } from '@ethersproject/bytes'
 
 import { SimpleRecipientRegistry } from './abi'
-import { provider, ipfsGatewayUrl } from './core'
-import { Project } from './projects'
+import { provider, ipfsGatewayUrl, chain } from './core'
+import { RecipientRegistryInterface } from './types'
+import { Project, toProjectInterface } from './projects'
 
 function decodeRecipientAdded(event: Event): Project {
   const args = event.args as any
   const metadata = JSON.parse(args._metadata)
-  return {
+  return toProjectInterface({
+    ...metadata,
     id: args._recipientId,
     address: args._recipient,
-    name: metadata.name,
-    description: metadata.description,
     imageUrl: `${ipfsGatewayUrl}/ipfs/${metadata.imageHash}`,
     index: args._index.toNumber(),
     isHidden: false,
     isLocked: false,
-  }
+  })
 }
 
 export async function getProjects(
@@ -116,4 +118,61 @@ export async function getProject(
   return project
 }
 
-export default { getProjects, getProject }
+export function addRecipient(
+  registryAddress: string,
+  recipientData: any,
+  _deposit: BigNumber,
+  signer: Signer
+): Promise<ContractTransaction> {
+  const registry = new Contract(
+    registryAddress,
+    SimpleRecipientRegistry,
+    signer
+  )
+  const { id, fund } = recipientData
+  if (!id) {
+    throw new Error('Missing metadata id')
+  }
+
+  const { currentChainReceivingAddress: address } = fund
+  if (!address) {
+    throw new Error(`Missing recipient address for the ${chain.name} network`)
+  }
+
+  const json = { id }
+  return registry.addRecipient(address, JSON.stringify(json))
+}
+
+function removeProject(
+  registryAddress: string,
+  recipientId: string,
+  signer: Signer
+): Promise<ContractTransaction> {
+  const registry = new Contract(
+    registryAddress,
+    SimpleRecipientRegistry,
+    signer
+  )
+  return registry.removeRecipient(recipientId)
+}
+
+function rejectProject() {
+  throw new Error('removeProject not implemented')
+}
+
+function registerProject() {
+  throw new Error('removeProject not implemented')
+}
+
+export function create(): RecipientRegistryInterface {
+  return {
+    addRecipient,
+    removeProject,
+    registerProject,
+    rejectProject,
+    isSelfRegistration: false,
+    requireRegistrationDeposit: false,
+  }
+}
+
+export default { getProjects, getProject, create }

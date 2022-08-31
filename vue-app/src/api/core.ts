@@ -41,9 +41,17 @@ if (
 ) {
   throw new Error('invalid user registry type')
 }
-export const recipientRegistryType = process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE
+export enum RecipientRegistryType {
+  SIMPLE = 'simple',
+  OPTIMISTIC = 'optimistic',
+  KLEROS = 'kleros',
+}
+export const recipientRegistryType =
+  process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE || ''
 if (
-  !['simple', 'optimistic', 'kleros'].includes(recipientRegistryType as string)
+  !Object.values(RecipientRegistryType).includes(
+    recipientRegistryType as RecipientRegistryType
+  )
 ) {
   throw new Error('invalid recipient registry type')
 }
@@ -58,8 +66,29 @@ export const SUBGRAPH_ENDPOINT =
   process.env.VUE_APP_SUBGRAPH_URL ||
   'https://api.thegraph.com/subgraphs/name/clrfund/clrfund'
 
+export const METADATA_SUBGRAPH_URL_PREFIX = process.env
+  .VUE_APP_METADATA_SUBGRAPH_URL_PREFIX
+  ? process.env.VUE_APP_METADATA_SUBGRAPH_URL_PREFIX
+  : 'https://api.thegraph.com/subgraphs/name/yuetloo/metadata-'
+
+export const METADATA_NETWORKS = process.env.VUE_APP_METADATA_NETWORKS
+  ? process.env.VUE_APP_METADATA_NETWORKS.split(',')
+  : ['rinkeby']
+
+export const QUERY_BATCH_SIZE =
+  Number(process.env.VUE_APP_QUERY_BATCH_SIZE) || 30
+
+export const MAX_RETRIES = Number(process.env.VUE_APP_MAX_RETRIES) || 10
+
 // application theme
 export enum ThemeMode {
   LIGHT = 'light',
   DARK = 'dark',
+}
+
+// transaction progress reported as the current block seen
+// and the last block the transaction is expected to be in
+export type TransactionProgress = {
+  current: number
+  last: number
 }

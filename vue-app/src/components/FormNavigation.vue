@@ -30,8 +30,8 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
-import { User } from '@/api/user'
 import WalletWidget from '@/components/WalletWidget.vue'
+import { User } from '@/api/user'
 
 @Component({
   components: {

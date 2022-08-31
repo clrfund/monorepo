@@ -81,9 +81,9 @@ export default class IpfsImageUpload extends Vue {
   @Prop() description!: string
   @Prop() formProp!: string
   @Prop() onUpload!: (key: string, value: string) => void
+  @Prop() hash!: string
 
   ipfs: IPFS | null = null
-  hash = ''
   loading = false
   loadedImageFile: File | null = null
   loadedImageHeight: number | null = null
@@ -135,7 +135,6 @@ export default class IpfsImageUpload extends Vue {
       this.ipfs
         .add(this.loadedImageFile)
         .then((hash) => {
-          this.hash = hash
           /* eslint-disable-next-line no-console */
           console.log(`Uploaded file hash:`, hash)
           this.onUpload(this.formProp, hash)
@@ -151,7 +150,6 @@ export default class IpfsImageUpload extends Vue {
   }
 
   handleRemoveImage(): void {
-    this.hash = ''
     this.loading = false
     this.error = ''
     this.loadedImageFile = null

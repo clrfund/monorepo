@@ -37,9 +37,14 @@
     </div>
     <h2>Register your project</h2>
     <p>
-      In order to participate in a funding round as a project, you'll need to
-      submit an application to join the recipient registry (via an on-chain
-      transaction).
+      In order to participate in a funding round as a project,
+      <span v-if="$store.getters.isSelfRegistration"
+        >you'll need to submit an application to join the recipient registry
+        (via an on-chain transaction)</span
+      ><span v-else
+        >you'll need to contact the round coordinator to submit an
+        application</span
+      >.
     </p>
     <p>
       MACI, our anti-bribery tech, currently limits the amount of projects
@@ -60,32 +65,43 @@
       </li>
       <li>
         Once you're familiar with the criteria and you're sure your project
-        meets them, click "Add project." You'll see a series of forms to fill
-        out asking for more information about your project.
+        meets them,
+        <span v-if="$store.getters.selfRegistration"
+          >click "Add project." You'll see a series of forms to fill out asking
+          for more information about your project</span
+        >
+        <span v-else
+          >contact the round coordinator to add your project to the recipient
+          registry.</span
+        >
       </li>
-      <li>
-        With the forms finished, you can finish your submission:
-        <ol>
-          <li>Connect to the right network via your wallet of choice.</li>
-          <li>
-            Send a transaction (with a deposit of {{ depositAmount }}
-            {{ depositToken }}) to the registry contract.
-          </li>
-        </ol>
-      </li>
+      <template v-if="$store.getters.requireRegistrationDeposit">
+        <li>
+          With the forms finished, you can finish your submission:
+          <ol>
+            <li>Connect to the right network via your wallet of choice.</li>
+            <li>
+              Send a transaction (with a deposit of {{ depositAmount }}
+              {{ depositToken }}) to the registry contract.
+            </li>
+          </ol>
+        </li>
+      </template>
     </ol>
 
-    <p>
-      Projects are accepted by default, but the registry admin may remove
-      projects that don't meet the criteria.
-    </p>
-    <p>
-      In any case, your
-      {{ depositToken }} will be returned once your application has been either
-      accepted or denied. Note that metadata pointing to all your project
-      information (but not contact information) will be stored publicly
-      on-chain.
-    </p>
+    <template v-if="$store.getters.requireRegistrationDeposit">
+      <p>
+        Projects are accepted by default, but the registry admin may remove
+        projects that don't meet the criteria.
+      </p>
+      <p>
+        In any case, your
+        {{ depositToken }} will be returned once your application has been
+        either accepted or denied. Note that metadata pointing to all your
+        project information (but not contact information) will be stored
+        publicly on-chain.
+      </p>
+    </template>
     <h2>Claim your funds</h2>
     <p>
       After a clr.fund round is finished, it's simple to claim your project's

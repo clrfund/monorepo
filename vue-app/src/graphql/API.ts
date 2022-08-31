@@ -72,6 +72,7 @@ export type Contribution_Filter = {
   contributor_ends_with_nocase: Maybe<Scalars['String']>;
   contributor_not_ends_with: Maybe<Scalars['String']>;
   contributor_not_ends_with_nocase: Maybe<Scalars['String']>;
+  contributor_: Maybe<Contributor_Filter>;
   fundingRound: Maybe<Scalars['String']>;
   fundingRound_not: Maybe<Scalars['String']>;
   fundingRound_gt: Maybe<Scalars['String']>;
@@ -92,6 +93,7 @@ export type Contribution_Filter = {
   fundingRound_ends_with_nocase: Maybe<Scalars['String']>;
   fundingRound_not_ends_with: Maybe<Scalars['String']>;
   fundingRound_not_ends_with_nocase: Maybe<Scalars['String']>;
+  fundingRound_: Maybe<FundingRound_Filter>;
   amount: Maybe<Scalars['BigInt']>;
   amount_not: Maybe<Scalars['BigInt']>;
   amount_gt: Maybe<Scalars['BigInt']>;
@@ -231,6 +233,7 @@ export type ContributorRegistry_Filter = {
   fundingRoundFactory_ends_with_nocase: Maybe<Scalars['String']>;
   fundingRoundFactory_not_ends_with: Maybe<Scalars['String']>;
   fundingRoundFactory_not_ends_with_nocase: Maybe<Scalars['String']>;
+  fundingRoundFactory_: Maybe<FundingRoundFactory_Filter>;
   context: Maybe<Scalars['String']>;
   context_not: Maybe<Scalars['String']>;
   context_gt: Maybe<Scalars['String']>;
@@ -257,6 +260,7 @@ export type ContributorRegistry_Filter = {
   owner_not_in: Maybe<Array<Scalars['Bytes']>>;
   owner_contains: Maybe<Scalars['Bytes']>;
   owner_not_contains: Maybe<Scalars['Bytes']>;
+  contributors_: Maybe<Contributor_Filter>;
   createdAt: Maybe<Scalars['String']>;
   createdAt_not: Maybe<Scalars['String']>;
   createdAt_gt: Maybe<Scalars['String']>;
@@ -340,6 +344,8 @@ export type Contributor_Filter = {
   contributorRegistry_ends_with_nocase: Maybe<Scalars['String']>;
   contributorRegistry_not_ends_with: Maybe<Scalars['String']>;
   contributorRegistry_not_ends_with_nocase: Maybe<Scalars['String']>;
+  contributorRegistry_: Maybe<ContributorRegistry_Filter>;
+  votes_: Maybe<Vote_Filter>;
   verified: Maybe<Scalars['Boolean']>;
   verified_not: Maybe<Scalars['Boolean']>;
   verified_in: Maybe<Array<Scalars['Boolean']>>;
@@ -376,6 +382,8 @@ export type Contributor_Filter = {
   fundingRounds_contains_nocase: Maybe<Array<Scalars['String']>>;
   fundingRounds_not_contains: Maybe<Array<Scalars['String']>>;
   fundingRounds_not_contains_nocase: Maybe<Array<Scalars['String']>>;
+  fundingRounds_: Maybe<FundingRound_Filter>;
+  contributions_: Maybe<Contribution_Filter>;
   createdAt: Maybe<Scalars['String']>;
   createdAt_not: Maybe<Scalars['String']>;
   createdAt_gt: Maybe<Scalars['String']>;
@@ -560,6 +568,7 @@ export type Donation_Filter = {
   recipient_ends_with_nocase: Maybe<Scalars['String']>;
   recipient_not_ends_with: Maybe<Scalars['String']>;
   recipient_not_ends_with_nocase: Maybe<Scalars['String']>;
+  recipient_: Maybe<Recipient_Filter>;
   fundingRound: Maybe<Scalars['String']>;
   fundingRound_not: Maybe<Scalars['String']>;
   fundingRound_gt: Maybe<Scalars['String']>;
@@ -580,6 +589,7 @@ export type Donation_Filter = {
   fundingRound_ends_with_nocase: Maybe<Scalars['String']>;
   fundingRound_not_ends_with: Maybe<Scalars['String']>;
   fundingRound_not_ends_with_nocase: Maybe<Scalars['String']>;
+  fundingRound_: Maybe<FundingRound_Filter>;
   amount: Maybe<Scalars['BigInt']>;
   amount_not: Maybe<Scalars['BigInt']>;
   amount_gt: Maybe<Scalars['BigInt']>;
@@ -792,6 +802,7 @@ export type FundingRoundFactory_Filter = {
   contributorRegistry_ends_with_nocase: Maybe<Scalars['String']>;
   contributorRegistry_not_ends_with: Maybe<Scalars['String']>;
   contributorRegistry_not_ends_with_nocase: Maybe<Scalars['String']>;
+  contributorRegistry_: Maybe<ContributorRegistry_Filter>;
   contributorRegistryAddress: Maybe<Scalars['Bytes']>;
   contributorRegistryAddress_not: Maybe<Scalars['Bytes']>;
   contributorRegistryAddress_in: Maybe<Array<Scalars['Bytes']>>;
@@ -818,6 +829,7 @@ export type FundingRoundFactory_Filter = {
   recipientRegistry_ends_with_nocase: Maybe<Scalars['String']>;
   recipientRegistry_not_ends_with: Maybe<Scalars['String']>;
   recipientRegistry_not_ends_with_nocase: Maybe<Scalars['String']>;
+  recipientRegistry_: Maybe<RecipientRegistry_Filter>;
   recipientRegistryAddress: Maybe<Scalars['Bytes']>;
   recipientRegistryAddress_not: Maybe<Scalars['Bytes']>;
   recipientRegistryAddress_in: Maybe<Array<Scalars['Bytes']>>;
@@ -844,6 +856,7 @@ export type FundingRoundFactory_Filter = {
   currentRound_ends_with_nocase: Maybe<Scalars['String']>;
   currentRound_not_ends_with: Maybe<Scalars['String']>;
   currentRound_not_ends_with_nocase: Maybe<Scalars['String']>;
+  currentRound_: Maybe<FundingRound_Filter>;
   maciFactory: Maybe<Scalars['Bytes']>;
   maciFactory_not: Maybe<Scalars['Bytes']>;
   maciFactory_in: Maybe<Array<Scalars['Bytes']>>;
@@ -962,6 +975,7 @@ export type FundingRoundFactory_Filter = {
   maxVoteOptions_lte: Maybe<Scalars['BigInt']>;
   maxVoteOptions_in: Maybe<Array<Scalars['BigInt']>>;
   maxVoteOptions_not_in: Maybe<Array<Scalars['BigInt']>>;
+  fundingRounds_: Maybe<FundingRound_Filter>;
   createdAt: Maybe<Scalars['String']>;
   createdAt_not: Maybe<Scalars['String']>;
   createdAt_gt: Maybe<Scalars['String']>;
@@ -1064,12 +1078,14 @@ export type FundingRound_Filter = {
   fundingRoundFactory_ends_with_nocase: Maybe<Scalars['String']>;
   fundingRoundFactory_not_ends_with: Maybe<Scalars['String']>;
   fundingRoundFactory_not_ends_with_nocase: Maybe<Scalars['String']>;
+  fundingRoundFactory_: Maybe<FundingRoundFactory_Filter>;
   maci: Maybe<Scalars['Bytes']>;
   maci_not: Maybe<Scalars['Bytes']>;
   maci_in: Maybe<Array<Scalars['Bytes']>>;
   maci_not_in: Maybe<Array<Scalars['Bytes']>>;
   maci_contains: Maybe<Scalars['Bytes']>;
   maci_not_contains: Maybe<Scalars['Bytes']>;
+  messages_: Maybe<Message_Filter>;
   recipientRegistry: Maybe<Scalars['String']>;
   recipientRegistry_not: Maybe<Scalars['String']>;
   recipientRegistry_gt: Maybe<Scalars['String']>;
@@ -1090,6 +1106,7 @@ export type FundingRound_Filter = {
   recipientRegistry_ends_with_nocase: Maybe<Scalars['String']>;
   recipientRegistry_not_ends_with: Maybe<Scalars['String']>;
   recipientRegistry_not_ends_with_nocase: Maybe<Scalars['String']>;
+  recipientRegistry_: Maybe<RecipientRegistry_Filter>;
   recipientRegistryAddress: Maybe<Scalars['Bytes']>;
   recipientRegistryAddress_not: Maybe<Scalars['Bytes']>;
   recipientRegistryAddress_in: Maybe<Array<Scalars['Bytes']>>;
@@ -1116,6 +1133,7 @@ export type FundingRound_Filter = {
   contributorRegistry_ends_with_nocase: Maybe<Scalars['String']>;
   contributorRegistry_not_ends_with: Maybe<Scalars['String']>;
   contributorRegistry_not_ends_with_nocase: Maybe<Scalars['String']>;
+  contributorRegistry_: Maybe<ContributorRegistry_Filter>;
   contributorRegistryAddress: Maybe<Scalars['Bytes']>;
   contributorRegistryAddress_not: Maybe<Scalars['Bytes']>;
   contributorRegistryAddress_in: Maybe<Array<Scalars['Bytes']>>;
@@ -1234,6 +1252,10 @@ export type FundingRound_Filter = {
   tallyHash_ends_with_nocase: Maybe<Scalars['String']>;
   tallyHash_not_ends_with: Maybe<Scalars['String']>;
   tallyHash_not_ends_with_nocase: Maybe<Scalars['String']>;
+  recipients_: Maybe<Recipient_Filter>;
+  contributors_: Maybe<Contributor_Filter>;
+  contributions_: Maybe<Contribution_Filter>;
+  votes_: Maybe<Vote_Filter>;
   createdAt: Maybe<Scalars['String']>;
   createdAt_not: Maybe<Scalars['String']>;
   createdAt_gt: Maybe<Scalars['String']>;
@@ -1362,6 +1384,7 @@ export type Message_Filter = {
   publicKey_ends_with_nocase: Maybe<Scalars['String']>;
   publicKey_not_ends_with: Maybe<Scalars['String']>;
   publicKey_not_ends_with_nocase: Maybe<Scalars['String']>;
+  publicKey_: Maybe<PublicKey_Filter>;
   fundingRound: Maybe<Scalars['String']>;
   fundingRound_not: Maybe<Scalars['String']>;
   fundingRound_gt: Maybe<Scalars['String']>;
@@ -1382,6 +1405,7 @@ export type Message_Filter = {
   fundingRound_ends_with_nocase: Maybe<Scalars['String']>;
   fundingRound_not_ends_with: Maybe<Scalars['String']>;
   fundingRound_not_ends_with_nocase: Maybe<Scalars['String']>;
+  fundingRound_: Maybe<FundingRound_Filter>;
   timestamp: Maybe<Scalars['String']>;
   timestamp_not: Maybe<Scalars['String']>;
   timestamp_gt: Maybe<Scalars['String']>;
@@ -1470,6 +1494,8 @@ export type PublicKey_Filter = {
   fundingRound_ends_with_nocase: Maybe<Scalars['String']>;
   fundingRound_not_ends_with: Maybe<Scalars['String']>;
   fundingRound_not_ends_with_nocase: Maybe<Scalars['String']>;
+  fundingRound_: Maybe<FundingRound_Filter>;
+  messages_: Maybe<Message_Filter>;
   x: Maybe<Scalars['BigInt']>;
   x_not: Maybe<Scalars['BigInt']>;
   x_gt: Maybe<Scalars['BigInt']>;
@@ -1879,6 +1905,7 @@ export type RecipientRegistry_Filter = {
   fundingRoundFactory_ends_with_nocase: Maybe<Scalars['String']>;
   fundingRoundFactory_not_ends_with: Maybe<Scalars['String']>;
   fundingRoundFactory_not_ends_with_nocase: Maybe<Scalars['String']>;
+  fundingRoundFactory_: Maybe<FundingRoundFactory_Filter>;
   baseDeposit: Maybe<Scalars['BigInt']>;
   baseDeposit_not: Maybe<Scalars['BigInt']>;
   baseDeposit_gt: Maybe<Scalars['BigInt']>;
@@ -1915,6 +1942,7 @@ export type RecipientRegistry_Filter = {
   owner_not_in: Maybe<Array<Scalars['Bytes']>>;
   owner_contains: Maybe<Scalars['Bytes']>;
   owner_not_contains: Maybe<Scalars['Bytes']>;
+  recipients_: Maybe<Recipient_Filter>;
   createdAt: Maybe<Scalars['String']>;
   createdAt_not: Maybe<Scalars['String']>;
   createdAt_gt: Maybe<Scalars['String']>;
@@ -2001,6 +2029,7 @@ export type Recipient_Filter = {
   recipientRegistry_ends_with_nocase: Maybe<Scalars['String']>;
   recipientRegistry_not_ends_with: Maybe<Scalars['String']>;
   recipientRegistry_not_ends_with_nocase: Maybe<Scalars['String']>;
+  recipientRegistry_: Maybe<RecipientRegistry_Filter>;
   recipientIndex: Maybe<Scalars['BigInt']>;
   recipientIndex_not: Maybe<Scalars['BigInt']>;
   recipientIndex_gt: Maybe<Scalars['BigInt']>;
@@ -2137,6 +2166,8 @@ export type Recipient_Filter = {
   fundingRounds_contains_nocase: Maybe<Array<Scalars['String']>>;
   fundingRounds_not_contains: Maybe<Array<Scalars['String']>>;
   fundingRounds_not_contains_nocase: Maybe<Array<Scalars['String']>>;
+  fundingRounds_: Maybe<FundingRound_Filter>;
+  donations_: Maybe<Donation_Filter>;
   createdAt: Maybe<Scalars['String']>;
   createdAt_not: Maybe<Scalars['String']>;
   createdAt_gt: Maybe<Scalars['String']>;
@@ -2617,6 +2648,7 @@ export type Vote_Filter = {
   contributor_ends_with_nocase: Maybe<Scalars['String']>;
   contributor_not_ends_with: Maybe<Scalars['String']>;
   contributor_not_ends_with_nocase: Maybe<Scalars['String']>;
+  contributor_: Maybe<Contributor_Filter>;
   fundingRound: Maybe<Scalars['String']>;
   fundingRound_not: Maybe<Scalars['String']>;
   fundingRound_gt: Maybe<Scalars['String']>;
@@ -2637,6 +2669,7 @@ export type Vote_Filter = {
   fundingRound_ends_with_nocase: Maybe<Scalars['String']>;
   fundingRound_not_ends_with: Maybe<Scalars['String']>;
   fundingRound_not_ends_with_nocase: Maybe<Scalars['String']>;
+  fundingRound_: Maybe<FundingRound_Filter>;
   voterAddress: Maybe<Scalars['Bytes']>;
   voterAddress_not: Maybe<Scalars['Bytes']>;
   voterAddress_in: Maybe<Array<Scalars['Bytes']>>;
@@ -2730,6 +2763,13 @@ export type GetRecipientDonationsQueryVariables = Exact<{
 
 export type GetRecipientDonationsQuery = { __typename?: 'Query', donations: Array<{ __typename?: 'Donation', id: string }> };
 
+export type GetRecipientRegistryQueryVariables = Exact<{
+  registryAddress: Scalars['ID'];
+}>;
+
+
+export type GetRecipientRegistryQuery = { __typename?: 'Query', recipientRegistry: Maybe<{ __typename?: 'RecipientRegistry', id: string, baseDeposit: Maybe<any>, challengePeriodDuration: Maybe<any>, owner: Maybe<any>, controller: Maybe<any>, maxRecipients: Maybe<any> }> };
+
 export type GetRecipientsQueryVariables = Exact<{
   registryAddress: Scalars['String'];
 }>;
@@ -2811,6 +2851,18 @@ export const GetRecipientDonationsDocument = gql`
   }
 }
     `;
+export const GetRecipientRegistryDocument = gql`
+    query GetRecipientRegistry($registryAddress: ID!) {
+  recipientRegistry(id: $registryAddress) {
+    id
+    baseDeposit
+    challengePeriodDuration
+    owner
+    controller
+    maxRecipients
+  }
+}
+    `;
 export const GetRecipientsDocument = gql`
     query GetRecipients($registryAddress: String!) {
   recipients(where: {recipientRegistry: $registryAddress}) {
@@ -2864,6 +2916,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetRecipientDonations(variables: GetRecipientDonationsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientDonationsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientDonationsQuery>(GetRecipientDonationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientDonations');
+    },
+    GetRecipientRegistry(variables: GetRecipientRegistryQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientRegistryQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientRegistryQuery>(GetRecipientRegistryDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientRegistry');
     },
     GetRecipients(variables: GetRecipientsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientsQuery>(GetRecipientsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipients');

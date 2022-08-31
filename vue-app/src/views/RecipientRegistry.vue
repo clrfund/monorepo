@@ -96,14 +96,15 @@
             </td>
             <td>
               <div class="actions" v-if="isUserConnected">
-                <!-- TODO: to implement this feature, it requires to send a baseDeposit (see contract)
-              <div
-                class="btn-warning"
-                @click="remove(request)"
-                v-if="isExecuted(request)"
-              >
-                Remove
-              </div> -->
+                <!-- TODO: to implement remove for optimistic registry, it requires to send a baseDeposit (see contract)-->
+                <!-- Only implement remove for simple registry -->
+                <div
+                  class="btn-warning"
+                  @click="remove(request)"
+                  v-if="isOwner && canRemove && isExecuted(request)"
+                >
+                  Remove
+                </div>
                 <div
                   class="icon-btn-approve"
                   v-if="(isOwner && isPending(request)) || isAccepted(request)"
@@ -137,20 +138,17 @@ import CopyButton from '@/components/CopyButton.vue'
 
 import { recipientRegistryType } from '@/api/core'
 import {
-  RequestType,
-  RequestStatus,
-  Request,
-  getRequests,
-  registerProject,
-  rejectProject,
-  removeProject,
-} from '@/api/recipient-registry-optimistic'
+  RecipientRegistryRequestType as RequestType,
+  RecipientRegistryRequestStatus as RequestStatus,
+  RecipientRegistryRequest as Request,
+} from '@/api/types'
+import { RecipientRegistry, getRequests } from '@/api/recipient-registry'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
 import { formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
 import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { RegistryInfo } from '@/api/types'
 import TransactionModal from '@/components/TransactionModal.vue'
 
 @Component({ components: { CopyButton, Loader, Links } })
@@ -159,10 +157,6 @@ export default class RecipientRegistryView extends Vue {
   isLoading = true
 
   async created() {
-    if (recipientRegistryType !== 'optimistic') {
-      return
-    }
-
     await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
     await this.loadRequests()
     this.isLoading = false
@@ -183,6 +177,11 @@ export default class RecipientRegistryView extends Vue {
       recipientRegistryInfo,
       recipientRegistryAddress
     )
+  }
+
+  get canRemove(): boolean {
+    // only allow remove for simple recipient registry
+    return this.registryInfo && !this.registryInfo.isSelfRegistration
   }
 
   get registryInfo(): RegistryInfo {
@@ -232,8 +231,13 @@ export default class RecipientRegistryView extends Vue {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
+    const registry = RecipientRegistry.create(recipientRegistryType)
     await this.waitForTransactionAndLoad(
-      registerProject(recipientRegistryAddress, request.recipientId, signer)
+      registry.registerProject(
+        recipientRegistryAddress,
+        request.recipientId,
+        signer
+      )
     )
   }
 
@@ -241,8 +245,9 @@ export default class RecipientRegistryView extends Vue {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
+    const registry = RecipientRegistry.create(recipientRegistryType)
     await this.waitForTransactionAndLoad(
-      rejectProject(
+      registry.rejectProject(
         recipientRegistryAddress,
         request.recipientId,
         request.requester,
@@ -255,8 +260,13 @@ export default class RecipientRegistryView extends Vue {
     const { recipientRegistryAddress, currentUser } = this.$store.state
     const signer = currentUser.walletProvider.getSigner()
 
+    const registry = RecipientRegistry.create(recipientRegistryType)
     await this.waitForTransactionAndLoad(
-      removeProject(recipientRegistryAddress, request.recipientId, signer)
+      registry.removeProject(
+        recipientRegistryAddress,
+        request.recipientId,
+        signer
+      )
     )
   }
 

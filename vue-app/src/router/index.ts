@@ -25,6 +25,12 @@ import VerifyView from '../views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 import CartView from '@/views/Cart.vue'
 import TransactionSuccess from '@/views/TransactionSuccess.vue'
+import MetadataDetail from '@/views/Metadata.vue'
+import MetadataRegistry from '@/views/MetadataRegistry.vue'
+import MetadataFormAdd from '@/views/MetadataFormAdd.vue'
+import MetadataFormEdit from '@/views/MetadataFormEdit.vue'
+import MetadataTransactionSuccess from '@/views/MetadataTransactionSuccess.vue'
+import NotFound from '@/views/NotFound.vue'
 import BrightIdGuide from '@/views/BrightIdGuide.vue'
 import BrightIdSponsor from '@/views/BrightIdSponsor.vue'
 import BrightIdSponsored from '@/views/BrightIdSponsored.vue'
@@ -212,14 +218,13 @@ const routes = [
     },
   },
   {
-    path: '/join/:step',
+    path: '/join/:step/:id?',
     name: 'join-step',
     component: JoinView,
     meta: {
       title: 'Project Application',
     },
   },
-
   {
     path: '/cart',
     name: 'cart',
@@ -234,6 +239,46 @@ const routes = [
     component: TransactionSuccess,
     meta: {
       title: 'Transaction Success',
+    },
+  },
+  {
+    path: '/metadata-success/:hash/:id',
+    name: 'metadata-success',
+    component: MetadataTransactionSuccess,
+    meta: {
+      title: 'Metadata Transaction Success',
+    },
+  },
+  {
+    path: '/metadata',
+    name: 'metadata-registry',
+    component: MetadataRegistry,
+    meta: {
+      title: 'Metadata Registry',
+    },
+  },
+  {
+    path: '/metadata/:id',
+    name: 'metadata',
+    component: MetadataDetail,
+    meta: {
+      title: 'Metadata Detail',
+    },
+  },
+  {
+    path: '/metadata/:id/edit/:step',
+    name: 'metadata-edit',
+    component: MetadataFormEdit,
+    meta: {
+      title: 'Edit Metadata',
+    },
+  },
+  {
+    path: '/metadata/new/:step',
+    name: 'metadata-new',
+    component: MetadataFormAdd,
+    meta: {
+      title: 'Add Metadata',
     },
   },
   {
@@ -259,6 +304,18 @@ const routes = [
     meta: {
       title: 'Sponsored',
     },
+  },
+  {
+    path: '/not-found',
+    name: 'not-found',
+    component: NotFound,
+    meta: {
+      title: 'Page Not Found',
+    },
+  },
+  {
+    path: '*',
+    redirect: '/not-found',
   },
 ]
 const router = new VueRouter({

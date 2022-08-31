@@ -3,8 +3,8 @@ import { ethers } from 'hardhat'
 import { Keypair } from 'maci-domainobjs'
 
 import { UNIT } from '../utils/constants'
-import { getEventArg } from '../utils/contracts'
 import { MaciParameters } from '../utils/maci'
+import { RecipientRegistryLoader } from '../utils/recipient-registry-loader'
 
 async function main() {
   // We're hardcoding factory address due to a buidler limitation:
@@ -57,6 +57,7 @@ async function main() {
 
   // Configure MACI factory
   const maciFactoryAddress = await factory.maciFactory()
+  console.log('MACIFactory', maciFactoryAddress)
   const maciFactory = await ethers.getContractAt(
     'MACIFactory',
     maciFactoryAddress
@@ -96,186 +97,6 @@ async function main() {
     }
   }
 
-  // Add dummy recipients
-  // TODO add better dummy data
-  const metadataRecipient1 = {
-    name: 'Commons Simulator',
-    description:
-      'Funding open-source projects & other public goods is the killer app of blockchain tech. Giveth & BlockScience are joining forces to build the Commons Stack: a modular library of well engineered components that can be used to create economic models for projects that are creating value, yet have trouble finding sustainable business models.',
-    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    tagline: 'Modeling Sustainable Funding for Public Good',
-    category: 'Data',
-    problemSpace: 'metadata.problemSpace',
-    plans: 'metadata.plans',
-    teamName: 'metadata.teamName',
-    teamDescription: 'metadata.teamDescription',
-    githubUrl: 'https://github.com/',
-    radicleUrl: 'https://radicle.xyz/',
-    websiteUrl: 'https://website.com/',
-    twitterUrl: 'https://twitter.com/',
-    discordUrl: 'https://discord.com/',
-    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-  }
-
-  const metadataRecipient2 = {
-    name: 'Synthereum',
-    description:
-      'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
-    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    tagline:
-      'Synthetic assets with liquidity pools to bridge traditional and digital finance.',
-    category: 'Content',
-    problemSpace: 'metadata.problemSpace',
-    plans: 'metadata.plans',
-    teamName: 'metadata.teamName',
-    teamDescription: 'metadata.teamDescription',
-    githubUrl: 'https://github.com/',
-    radicleUrl: 'https://radicle.xyz/',
-    websiteUrl: 'https://website.com/',
-    twitterUrl: 'https://twitter.com/',
-    discordUrl: 'https://discord.com/',
-    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-  }
-
-  const metadataRecipient3 = {
-    name: 'Commons Simulator',
-    description:
-      'Funding open-source projects & other public goods is the killer app of blockchain tech. Giveth & BlockScience are joining forces to build the Commons Stack: a modular library of well engineered components that can be used to create economic models for projects that are creating value, yet have trouble finding sustainable business models.',
-    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    tagline: 'Modeling Sustainable Funding for Public Good',
-    category: 'Data',
-    problemSpace: 'metadata.problemSpace',
-    plans: 'metadata.plans',
-    teamName: 'metadata.teamName',
-    teamDescription: 'metadata.teamDescription',
-    githubUrl: 'https://github.com/',
-    radicleUrl: 'https://radicle.xyz/',
-    websiteUrl: 'https://website.com/',
-    twitterUrl: 'https://twitter.com/',
-    discordUrl: 'https://discord.com/',
-    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-  }
-  const metadataRecipient4 = {
-    name: 'Synthereum',
-    description:
-      'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
-    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    tagline:
-      'Synthetic assets with liquidity pools to bridge traditional and digital finance.',
-    category: 'Content',
-    problemSpace: 'metadata.problemSpace',
-    plans: 'metadata.plans',
-    teamName: 'metadata.teamName',
-    teamDescription: 'metadata.teamDescription',
-    githubUrl: 'https://github.com/',
-    radicleUrl: 'https://radicle.xyz/',
-    websiteUrl: 'https://website.com/',
-    twitterUrl: 'https://twitter.com/',
-    discordUrl: 'https://discord.com/',
-    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-  }
-  const metadataRecipient5 = {
-    name: 'Commons Simulator',
-    description:
-      'Funding open-source projects & other public goods is the killer app of blockchain tech. Giveth & BlockScience are joining forces to build the Commons Stack: a modular library of well engineered components that can be used to create economic models for projects that are creating value, yet have trouble finding sustainable business models.',
-    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    tagline: 'Modeling Sustainable Funding for Public Good',
-    category: 'Data',
-    problemSpace: 'metadata.problemSpace',
-    plans: 'metadata.plans',
-    teamName: 'metadata.teamName',
-    teamDescription: 'metadata.teamDescription',
-    githubUrl: 'https://github.com/',
-    radicleUrl: 'https://radicle.xyz/',
-    websiteUrl: 'https://website.com/',
-    twitterUrl: 'https://twitter.com/',
-    discordUrl: 'https://discord.com/',
-    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-  }
-  const metadataRecipient6 = {
-    name: 'Synthereum',
-    description:
-      'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
-    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    tagline:
-      'Synthetic assets with liquidity pools to bridge traditional and digital finance.',
-    category: 'Content',
-    problemSpace: 'metadata.problemSpace',
-    plans: 'metadata.plans',
-    teamName: 'metadata.teamName',
-    teamDescription: 'metadata.teamDescription',
-    githubUrl: 'https://github.com/',
-    radicleUrl: 'https://radicle.xyz/',
-    websiteUrl: 'https://website.com/',
-    twitterUrl: 'https://twitter.com/',
-    discordUrl: 'https://discord.com/',
-    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-  }
-  const metadataRecipient7 = {
-    name: 'Commons Simulator',
-    description:
-      'Funding open-source projects & other public goods is the killer app of blockchain tech. Giveth & BlockScience are joining forces to build the Commons Stack: a modular library of well engineered components that can be used to create economic models for projects that are creating value, yet have trouble finding sustainable business models.',
-    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    tagline: 'Modeling Sustainable Funding for Public Good',
-    category: 'Data',
-    problemSpace: 'metadata.problemSpace',
-    plans: 'metadata.plans',
-    teamName: 'metadata.teamName',
-    teamDescription: 'metadata.teamDescription',
-    githubUrl: 'https://github.com/',
-    radicleUrl: 'https://radicle.xyz/',
-    websiteUrl: 'https://website.com/',
-    twitterUrl: 'https://twitter.com/',
-    discordUrl: 'https://discord.com/',
-    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-  }
-  const metadataRecipient8 = {
-    name: 'Synthereum',
-    description:
-      'The aim of our synthetic assets is to help creating fiat-based wallet and applications on any local currencies, and help to create stock, commodities portfolio in order to bring more traditional users within the DeFi ecosystem.',
-    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    tagline:
-      'Synthetic assets with liquidity pools to bridge traditional and digital finance.',
-    category: 'Content',
-    problemSpace: 'metadata.problemSpace',
-    plans: 'metadata.plans',
-    teamName: 'metadata.teamName',
-    teamDescription: 'metadata.teamDescription',
-    githubUrl: 'https://github.com/',
-    radicleUrl: 'https://radicle.xyz/',
-    websiteUrl: 'https://website.com/',
-    twitterUrl: 'https://twitter.com/',
-    discordUrl: 'https://discord.com/',
-    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-  }
-  const metadataRecipient9 = {
-    name: 'Commons Simulator',
-    description:
-      'Funding open-source projects & other public goods is the killer app of blockchain tech. Giveth & BlockScience are joining forces to build the Commons Stack: a modular library of well engineered components that can be used to create economic models for projects that are creating value, yet have trouble finding sustainable business models.',
-    imageHash: 'QmbMP2fMiy6ek5uQZaxG3bzT9gSqMWxpdCUcQg1iSeEFMU',
-    tagline: 'Modeling Sustainable Funding for Public Good',
-    category: 'Data',
-    problemSpace: 'metadata.problemSpace',
-    plans: 'metadata.plans',
-    teamName: 'metadata.teamName',
-    teamDescription: 'metadata.teamDescription',
-    githubUrl: 'https://github.com/',
-    radicleUrl: 'https://radicle.xyz/',
-    websiteUrl: 'https://website.com/',
-    twitterUrl: 'https://twitter.com/',
-    discordUrl: 'https://discord.com/',
-    bannerImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-    thumbnailImageHash: 'QmaDy75RkRVtZcbYeqMDLcCK8dDvahfik68zP7FbpxvD2F',
-  }
-
   // Deploy new funding round and MACI
   const deployNewRoundTx = await factory.deployNewRound()
   await deployNewRoundTx.wait()
@@ -306,77 +127,51 @@ async function main() {
   }
 
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
+  const RecipientRegistryName: Record<string, string> = {
+    simple: 'SimpleRecipientRegistry',
+    optimistic: 'OptimisticRecipientRegistry',
+  }
   const recipientRegistryAddress = await factory.recipientRegistry()
+  const recipientRegistryName = RecipientRegistryName[recipientRegistryType]
+  if (!recipientRegistryName) {
+    throw new Error(
+      `unsupported recipient registry type: ${recipientRegistryType}`
+    )
+  }
+  const recipientRegistry = await ethers.getContractAt(
+    recipientRegistryName,
+    recipientRegistryAddress
+  )
+
+  // Add dummy recipients
+  let recipients
   if (recipientRegistryType === 'simple') {
-    const recipientRegistry = await ethers.getContractAt(
-      'SimpleRecipientRegistry',
-      recipientRegistryAddress
-    )
-    const recipients = [
-      { account: recipient1, metadata: metadataRecipient1 },
-      { account: recipient2, metadata: metadataRecipient2 },
-      { account: recipient3, metadata: metadataRecipient3 },
-      { account: recipient4, metadata: metadataRecipient4 },
-      { account: recipient5, metadata: metadataRecipient5 },
-      { account: recipient6, metadata: metadataRecipient6 },
-      { account: recipient7, metadata: metadataRecipient7 },
-      { account: recipient8, metadata: metadataRecipient8 },
-      { account: recipient9, metadata: metadataRecipient9 },
-    ]
-    let addRecipientTx
-    for (const recipient of recipients) {
-      addRecipientTx = await recipientRegistry.addRecipient(
-        recipient.account.getAddress(),
-        JSON.stringify(recipient.metadata)
-      )
-      addRecipientTx.wait()
-    }
-  } else if (recipientRegistryType === 'optimistic') {
-    const recipientRegistry = await ethers.getContractAt(
-      'OptimisticRecipientRegistry',
-      recipientRegistryAddress
-    )
-    const deposit = await recipientRegistry.baseDeposit()
-    const recipient1Added = await recipientRegistry.addRecipient(
-      recipient1.getAddress(),
-      JSON.stringify(metadataRecipient1),
-      { value: deposit }
-    )
-    await recipient1Added.wait()
-
-    const recipient1Id = await getEventArg(
-      recipient1Added,
-      recipientRegistry,
-      'RequestSubmitted',
-      '_recipientId'
-    )
-    const executeRequest1 = await recipientRegistry.executeRequest(recipient1Id)
-    await executeRequest1.wait()
-
-    const recipient2Added = await recipientRegistry.addRecipient(
-      recipient2.getAddress(),
-      JSON.stringify(metadataRecipient2),
-      { value: deposit }
-    )
-    await recipient2Added.wait()
-
-    const recipient2Id = await getEventArg(
-      recipient2Added,
-      recipientRegistry,
-      'RequestSubmitted',
-      '_recipientId'
-    )
-    const executeRequest2 = await recipientRegistry.executeRequest(recipient2Id)
-    await executeRequest2.wait()
+    recipients = RecipientRegistryLoader.buildStubRecipients([
+      recipient1.address,
+      recipient2.address,
+      recipient3.address,
+      recipient4.address,
+      recipient5.address,
+      recipient6.address,
+      recipient7.address,
+      recipient8.address,
+      recipient9.address,
+    ])
+  } else {
+    recipients = RecipientRegistryLoader.buildStubRecipients([
+      recipient1.address,
+      recipient2.address,
+      recipient3.address,
+    ])
 
     // Add recipient without executing
-    const recipient3Added = await recipientRegistry.addRecipient(
-      recipient3.getAddress(),
-      JSON.stringify(metadataRecipient3),
-      { value: deposit }
-    )
-    recipient3Added.wait()
+    recipients[2].skipExecution = true
   }
+  await RecipientRegistryLoader.load(
+    recipientRegistryType,
+    recipientRegistry,
+    recipients
+  )
 
   // Save the current state of the round
   fs.writeFileSync(

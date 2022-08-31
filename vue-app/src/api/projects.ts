@@ -1,11 +1,14 @@
-import { Contract, Signer } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Contract } from 'ethers'
 import { FundingRound } from './abi'
-import { factory, provider, recipientRegistryType } from './core'
+import {
+  factory,
+  provider,
+  ipfsGatewayUrl,
+  recipientRegistryType,
+} from './core'
 
-import SimpleRegistry from './recipient-registry-simple'
-import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
+import RecipientRegistry from './recipient-registry'
 
 export interface Project {
   id: string // Address or another ID depending on registry implementation
@@ -52,18 +55,14 @@ export async function getProjects(
   startTime?: number,
   endTime?: number
 ): Promise<Project[]> {
-  if (recipientRegistryType === 'simple') {
-    return await SimpleRegistry.getProjects(registryAddress, startTime, endTime)
-  } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProjects(
+  if (recipientRegistryType === 'kleros') {
+    return await KlerosRegistry.getProjects(registryAddress, startTime, endTime)
+  } else {
+    return await RecipientRegistry.getProjects(
       registryAddress,
       startTime,
       endTime
     )
-  } else if (recipientRegistryType === 'kleros') {
-    return await KlerosRegistry.getProjects(registryAddress, startTime, endTime)
-  } else {
-    throw new Error('invalid recipient registry type')
   }
 }
 
@@ -71,35 +70,30 @@ export async function getProject(
   registryAddress: string,
   recipientId: string
 ): Promise<Project | null> {
-  if (recipientRegistryType === 'simple') {
-    return await SimpleRegistry.getProject(registryAddress, recipientId)
-  } else if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.getProject(recipientId)
-  } else if (recipientRegistryType === 'kleros') {
+  if (recipientRegistryType === 'kleros') {
     return await KlerosRegistry.getProject(registryAddress, recipientId)
   } else {
-    throw new Error('invalid recipient registry type')
+    return await RecipientRegistry.getProject(recipientId)
   }
 }
 
-export async function registerProject(
-  registryAddress: string,
-  recipientId: string,
-  signer: Signer
-): Promise<TransactionResponse> {
-  if (recipientRegistryType === 'optimistic') {
-    return await OptimisticRegistry.registerProject(
-      registryAddress,
-      recipientId,
-      signer
-    )
-  } else if (recipientRegistryType === 'kleros') {
-    return await KlerosRegistry.registerProject(
-      registryAddress,
-      recipientId,
-      signer
-    )
-  } else {
-    throw new Error('invalid recipient registry type')
+export async function projectExists(recipientId: string): Promise<boolean> {
+  return RecipientRegistry.projectExists(recipientId)
+}
+
+export function toProjectInterface(metadata: any): Project {
+  const imageUrl = metadata.imageUrl
+  const bannerImageUrl = metadata.bannerImageHash
+    ? `${ipfsGatewayUrl}/ipfs/${metadata.bannerImageHash}`
+    : imageUrl
+
+  const thumbnailImageUrl = metadata.thumbnailImageHash
+    ? `${ipfsGatewayUrl}/ipfs/${metadata.thumbnailImageHash}`
+    : imageUrl
+
+  return {
+    ...metadata,
+    bannerImageUrl,
+    thumbnailImageUrl,
   }
 }

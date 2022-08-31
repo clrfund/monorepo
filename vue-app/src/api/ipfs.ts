@@ -1,3 +1,4 @@
+import { ipfsGatewayUrl } from './core'
 import { ipfsPinningUrl, ipfsPinningJwt } from './core'
 
 export class IPFS {
@@ -24,5 +25,14 @@ export class IPFS {
     const result = await fetch(this.url, options)
     const json = await result.json()
     return json.IpfsHash
+  }
+
+  static toUrl(hash: string | undefined): string | undefined {
+    if (!hash) {
+      return
+    }
+
+    const base = ipfsGatewayUrl || ''
+    return new URL(`/ipfs/${hash}`, base).toString()
   }
 }

@@ -1,10 +1,11 @@
-import { Contract, Event, Signer } from 'ethers'
+import { BigNumber, Contract, Event, Signer } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { gtcrDecode } from '@kleros/gtcr-encoder'
 
 import { KlerosGTCR, KlerosGTCRAdapter } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
-import { Project } from './projects'
+import { RecipientRegistryInterface } from './types'
+import { Project, toProjectInterface } from './projects'
 
 const KLEROS_CURATE_URL =
   'https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398'
@@ -58,13 +59,13 @@ function decodeTcrItemData(
 
 function decodeRecipientAdded(event: Event, columns: TcrColumn[]): Project {
   const args = event.args as any
-  return {
+  return toProjectInterface({
     id: args._tcrItemId,
     ...decodeTcrItemData(columns, args._metadata),
     index: args._index.toNumber(),
     isHidden: false,
     isLocked: false,
-  }
+  })
 }
 
 export async function getProjects(
@@ -129,7 +130,7 @@ export async function getProjects(
     if (tcrItemStatus.toNumber() !== TcrItemStatus.Registered) {
       continue
     }
-    const project: Project = {
+    const project: Project = toProjectInterface({
       id: tcrItemId,
       ...decodeTcrItemData(tcrColumns, tcrItemData),
       // Only unregistered project can have invalid index 0
@@ -140,7 +141,7 @@ export async function getProjects(
         tcrItemStatus: TcrItemStatus.Registered,
         tcrItemUrl: `${KLEROS_CURATE_URL}/${tcrItemId}`,
       },
-    }
+    })
     projects.push(project)
   }
   return projects
@@ -159,7 +160,7 @@ export async function getProject(
     // Item is not in TCR
     return null
   }
-  const project: Project = {
+  const project: Project = toProjectInterface({
     id: recipientId,
     ...decodeTcrItemData(tcrColumns, tcrItemData),
     // Only unregistered project can have invalid index 0
@@ -170,7 +171,7 @@ export async function getProject(
       tcrItemStatus: tcrItemStatus.toNumber(),
       tcrItemUrl: `${KLEROS_CURATE_URL}/${recipientId}`,
     },
-  }
+  })
   const recipientAddedFilter = registry.filters.RecipientAdded(recipientId)
   const recipientAddedEvents = await registry.queryFilter(
     recipientAddedFilter,
@@ -202,4 +203,32 @@ export async function registerProject(
   return transaction
 }
 
-export default { getProjects, getProject, registerProject }
+export function addRecipient(
+  registryAddress: string,
+  recipientData: any,
+  _deposit: BigNumber,
+  signer: Signer
+): Promise<TransactionResponse> {
+  return registerProject(registryAddress, recipientData.id, signer)
+}
+
+function removeProject() {
+  throw new Error('removeProject Not implemented')
+}
+
+function rejectProject() {
+  throw new Error('rejectProject Not implemented')
+}
+
+export function create(): RecipientRegistryInterface {
+  return {
+    addRecipient,
+    removeProject,
+    registerProject,
+    rejectProject,
+    isSelfRegistration: false, //TODO: add support for self registration
+    requireRegistrationDeposit: false,
+  }
+}
+
+export default { getProjects, getProject, registerProject, create }

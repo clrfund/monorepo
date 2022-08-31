@@ -65,10 +65,10 @@
         <div>
           <div class="address-label">Recipient address</div>
           <div class="address">
-            {{ addressName }}
+            {{ addressName || 'N/A' }}
           </div>
         </div>
-        <div class="copy-div">
+        <div class="copy-div" v-if="project.address">
           <copy-button
             :value="project.address"
             text="address"

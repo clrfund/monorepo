@@ -83,7 +83,7 @@
     </ul>
 
     <p>
-      If you dont contribute in the contribution phase, the round is over for
+      If you don't contribute in the contribution phase, the round is over for
       you once this phase ends.
     </p>
 
