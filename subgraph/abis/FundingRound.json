@@ -519,7 +519,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_contributors",
+        "type": "address[]"
+      }
+    ],
     "name": "withdrawContribution",
     "outputs": [],
     "stateMutability": "nonpayable",
