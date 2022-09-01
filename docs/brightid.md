@@ -21,8 +21,8 @@ Available envs:
 | Network/Env | Context | Sponsor Contract |
 | ----------- | ------- | ---------------- |
 | goerli | clrfund-goerli | 0xF045234A776C87060DEEc5689056455A24a59c08 |
-| xdai | clrfund-gnosis-chain ||
-| Arbitrum | clrfund-arbitrum ||
+| xdai | clrfund-gnosis-chain |0x669A55Dd17a2f9F4dacC37C7eeB5Ed3e13f474f9|
+| arbitrum | clrfund-arbitrum |0x669A55Dd17a2f9F4dacC37C7eeB5Ed3e13f474f9|
 
 
 ```.sh
