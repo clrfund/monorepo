@@ -44,8 +44,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   IRecipientRegistry public recipientRegistry;
   string public tallyHash;
 
-  mapping(uint256 => bool) private recipients;
-  mapping(address => ContributorStatus) private contributors;
+  mapping(uint256 => bool) public recipients;
+  mapping(address => ContributorStatus) public contributors;
 
   // Events
   event Contribution(address indexed _sender, uint256 _amount);
@@ -184,18 +184,41 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   }
 
   /**
-    * @dev Withdraw contributed funds from the pool if the round has been cancelled.
+    * @dev Withdraw contributed funds for a list of contributors if the round has been cancelled.
+    */
+  function withdrawContributions(address[] memory _contributors)
+    public
+    returns (bool[] memory result)
+  {
+    require(isCancelled, 'FundingRound: Round not cancelled');
+
+    result = new bool[](_contributors.length);
+    // Reconstruction of exact contribution amount from VCs may not be possible due to a loss of precision
+    for (uint256 i = 0; i < _contributors.length; i++) {
+      address contributor = _contributors[i];
+      uint256 amount = contributors[contributor].voiceCredits * voiceCreditFactor;
+      if (amount > 0) {
+        contributors[contributor].voiceCredits = 0;
+        nativeToken.safeTransfer(contributor, amount);
+        emit ContributionWithdrawn(contributor);
+        result[i] = true;
+      } else {
+        result[i] = false;
+      }
+    }
+  }
+
+  /**
+    * @dev Withdraw contributed funds by the caller.
     */
   function withdrawContribution()
     external
   {
-    require(isCancelled, 'FundingRound: Round not cancelled');
-    // Reconstruction of exact contribution amount from VCs may not be possible due to a loss of precision
-    uint256 amount = contributors[msg.sender].voiceCredits * voiceCreditFactor;
-    require(amount > 0, 'FundingRound: Nothing to withdraw');
-    contributors[msg.sender].voiceCredits = 0;
-    nativeToken.safeTransfer(msg.sender, amount);
-    emit ContributionWithdrawn(msg.sender);
+    address[] memory msgSender = new address[](1);
+    msgSender[0] = msg.sender;
+
+    bool[] memory results = withdrawContributions(msgSender);
+    require(results[0], 'FundingRound: Nothing to withdraw');
   }
 
   /**
