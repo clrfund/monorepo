@@ -728,6 +728,41 @@ describe('Funding Round', () => {
         fundingRound.connect(contributor).withdrawContribution()
       ).to.be.revertedWith('FundingRound: Nothing to withdraw')
     })
+
+    it('allows anyone to withdraw multiple contributions', async () => {
+      await fundingRound
+        .connect(contributor)
+        .contribute(userPubKey, contributionAmount)
+      await fundingRound
+        .connect(anotherContributor)
+        .contribute(anotherUserPubKey, contributionAmount)
+      await fundingRound.cancel()
+
+      const tx = await fundingRound
+        .connect(coordinator)
+        .withdrawContributions([
+          contributor.address,
+          anotherContributor.address,
+        ])
+      await tx.wait()
+      expect(await token.balanceOf(fundingRound.address)).to.equal(0)
+    })
+
+    it('allows transaction to complete even if some contributions fail to withdraw', async () => {
+      await fundingRound
+        .connect(contributor)
+        .contribute(userPubKey, contributionAmount)
+      await fundingRound.cancel()
+
+      const tx = await fundingRound
+        .connect(coordinator)
+        .withdrawContributions([
+          contributor.address,
+          anotherContributor.address,
+        ])
+      await tx.wait()
+      expect(await token.balanceOf(fundingRound.address)).to.equal(0)
+    })
   })
 
   describe('claiming funds', () => {
