@@ -4,7 +4,7 @@
     <div class="container">
       <div>
         <div class="flex-row">
-          <h2>Buidl Round criteria</h2>
+          <h2>Buidl round criteria</h2>
         </div>
         <p>
           For this pilot round, admins will remove any projects that don’t meet

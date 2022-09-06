@@ -2,7 +2,7 @@
   <div class="tx-container">
     <div class="recipient-submission-widget">
       <loader v-if="isLoading" />
-      <!-- <div
+      <div
         :class="
           isWaiting || txError
             ? 'tx-progress-area'
@@ -19,7 +19,7 @@
           Something failed: {{ txError }}<br />
           Check your wallet or {{ blockExplorerLabel }} for more info.
         </div>
-      </div> -->
+      </div>
       <div class="connected">
         <div
           class="text-base total-title"

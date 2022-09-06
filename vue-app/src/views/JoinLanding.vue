@@ -18,13 +18,15 @@
       </div>
       <div class="subtitle mt2" id="subtitle">
         Check out these
-        <links to="https://ethereum.org/en/community/grants/"
+        <links class="link-join" to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <links to="https://twitter.com/clrfund">@clrfund</links>
+        <links class="link-join" to="https://twitter.com/clrfund"
+          >@clrfund</links
+        >
       </div>
       <div class="btn-container">
-        <links to="/" class="btn-primary">Home</links>
+        <links to="/" class="btn-primary button-join">Home</links>
       </div>
     </div>
 
@@ -269,6 +271,10 @@ export default class JoinLanding extends Vue {
     width: 100%;
     mix-blend-mode: luminosity;
 
+    @media (max-width: $breakpoint-l) {
+      right: 0;
+    }
+
     @media (max-width: $breakpoint-m) {
       width: 100%;
       padding-bottom: 0rem;
@@ -288,6 +294,14 @@ export default class JoinLanding extends Vue {
       }
     }
   }
+}
+
+.link-join {
+  color: var(--text-color);
+}
+
+.button-join {
+  background-color: $clr-purple;
 }
 
 .breadcrumbs {

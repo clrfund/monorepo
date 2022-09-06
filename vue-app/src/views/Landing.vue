@@ -151,10 +151,12 @@
             of the Ethereum Community.
           </p>
           <p class="text-body">
-            <links to="/about">clr.fund forum ↗</links>
+            <links to="https://forum.clr.fund/">clr.fund forum</links>
           </p>
           <p class="text-body">
-            <links to="/about">Fork your own CLR ↗</links>
+            <links to="https://github.com/clrfund/monorepo/"
+              >Fork your own CLR</links
+            >
           </p>
         </div>
       </div>
@@ -551,6 +553,8 @@ ol li::before {
     width: 100%;
     align-items: center;
     .bridge {
+      max-height: 830px;
+      max-width: 1550px;
       position: absolute;
       width: calc(95vw - 8rem);
       height: auto;
