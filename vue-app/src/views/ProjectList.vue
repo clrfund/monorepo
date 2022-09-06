@@ -253,6 +253,7 @@ export default class ProjectList extends Vue {
   align-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
+  justify-items: center;
 
   /* Default breakpoints when user is not logged in, thus no cart */
   /* See below for adjustments when cart is present */
@@ -284,8 +285,12 @@ export default class ProjectList extends Vue {
   }
 
   .add-project {
+    justify-self: end;
     grid-area: add;
-    padding-right: 6rem;
+    @media (max-width: $breakpoint-m) {
+      padding-right: 0;
+      justify-self: center;
+    }
   }
 
   .project-search {
@@ -300,9 +305,10 @@ export default class ProjectList extends Vue {
     font-weight: 400;
     line-height: 24px;
     letter-spacing: 0em;
-    margin-right: 6rem;
+    justify-self: end;
     @media (max-width: $breakpoint-m) {
       margin-top: 0.5rem;
+      justify-self: center;
     }
     width: auto;
     img {
@@ -366,6 +372,7 @@ export default class ProjectList extends Vue {
   gap: $content-space;
   z-index: 0;
   padding-bottom: 4rem;
+  justify-content: center;
 }
 
 .empty-search {

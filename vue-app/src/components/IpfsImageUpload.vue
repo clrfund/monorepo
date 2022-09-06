@@ -269,8 +269,8 @@ input[type='file'] {
 
 .btn-file {
   @include button($clr-dark, #e4e7ec, none);
-  height: 34px;
-  max-width: 128px;
+  max-height: 34px;
+  min-height: 0;
 }
 
 .file-name {

@@ -491,6 +491,7 @@ export default class RoundInformation extends Vue {
 .round-title {
   line-height: 120%;
   margin: 0;
+  font-size: 32px;
 }
 
 .verified-container {

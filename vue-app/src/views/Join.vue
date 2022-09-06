@@ -1119,6 +1119,7 @@ export default class JoinView extends mixins(validationMixin) {
 .grid {
   max-width: 1280px;
   margin: 0 auto;
+  padding: 0 2rem;
   display: grid;
   grid-template-columns: clamp(250px, 35%, 460px) 1fr;
   grid-template-rows: auto 1fr;
@@ -1128,6 +1129,7 @@ export default class JoinView extends mixins(validationMixin) {
   height: calc(100vh - var($nav-header-height));
   gap: 0 2rem;
   @media (max-width: $breakpoint-m) {
+    padding: 0;
     grid-template-rows: auto auto 1fr auto;
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -1141,6 +1143,7 @@ export default class JoinView extends mixins(validationMixin) {
 .title-area {
   display: flex;
   margin-bottom: 4rem;
+  padding: 0 2rem;
 
   @media (max-width: $breakpoint-m) {
     margin-top: 6rem;

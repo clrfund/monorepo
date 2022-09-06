@@ -76,6 +76,12 @@ export default class FilterDropdown extends Vue {
   width: 140px;
   grid-area: filter;
   position: relative;
+  @media (max-width: $breakpoint-xl) {
+    padding-left: 2rem;
+  }
+  @media (max-width: $breakpoint-m) {
+    padding-left: 0;
+  }
 
   .filter-btn {
     background: none;

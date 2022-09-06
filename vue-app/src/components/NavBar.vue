@@ -203,7 +203,8 @@ export default class NavBar extends Vue {
       overflow: hidden;
 
       @media (max-width: $breakpoint-s) {
-        right: -4.5rem;
+        right: -0.1rem;
+        top: 3rem;
       }
 
       .dropdown-title {
