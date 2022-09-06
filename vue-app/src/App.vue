@@ -498,7 +498,10 @@ summary:focus {
 }
 
 #content.padded {
-  padding: $content-space 0 $content-space 1rem;
+  padding: $content-space 1rem $content-space 1rem;
+  @media (max-width: $breakpoint-m) {
+    padding: $content-space 0 $content-space 0;
+  }
 }
 
 #content.mr-cart-open {
