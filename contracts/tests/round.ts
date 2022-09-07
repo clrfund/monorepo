@@ -6,11 +6,13 @@ import { Contract } from 'ethers'
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { genRandomSalt } from 'maci-crypto'
 import { Keypair } from 'maci-domainobjs'
+import tallyTestData from './data/testTally.json'
+import claimAmounts from './data/claimAmounts.json'
 
 import { ZERO_ADDRESS, UNIT, VOICE_CREDIT_FACTOR } from '../utils/constants'
 import { getEventArg, getGasUsage } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
-import { bnSqrt, createMessage } from '../utils/maci'
+import { bnSqrt, createMessage, getRecipientClaimData } from '../utils/maci'
 
 use(solidity)
 
@@ -25,6 +27,11 @@ describe('Funding Round', () => {
   const userKeypair = new Keypair()
   const contributionAmount = UNIT.mul(10)
   const tallyHash = 'test'
+
+  // ethStaker test vectors for Quadratic Funding with alpha
+  const budget = ethers.utils.parseEther('440274')
+  const expectedTotalVotes = '8202951014814'
+  const expectedAlpha = '4583670112189981'
 
   let token: Contract
   let userRegistry: Contract
@@ -52,7 +59,7 @@ describe('Funding Round', () => {
   beforeEach(async () => {
     const tokenInitialSupply = UNIT.mul(1000000)
     const Token = await ethers.getContractFactory('AnyOldERC20Token', deployer)
-    token = await Token.deploy(tokenInitialSupply)
+    token = await Token.deploy(tokenInitialSupply.add(budget))
     await token.transfer(contributor.address, tokenInitialSupply.div(4))
     await token.transfer(anotherContributor.address, tokenInitialSupply.div(4))
     await token.transfer(coordinator.address, tokenInitialSupply.div(4))
@@ -69,10 +76,9 @@ describe('Funding Round', () => {
       IRecipientRegistryArtifact.abi
     )
 
-    const FundingRound = await ethers.getContractFactory(
-      'FundingRound',
-      deployer
-    )
+    const FundingRound = await ethers.getContractFactory('FundingRound', {
+      signer: deployer,
+    })
     fundingRound = await FundingRound.deploy(
       token.address,
       userRegistry.address,
@@ -892,6 +898,107 @@ describe('Funding Round', () => {
       ).to.be.revertedWith(
         'FundingRound: Incorrect amount of spent voice credits'
       )
+    })
+  })
+
+  describe.only('finalizing with alpha', () => {
+    const depth = 3
+
+    async function addTallyResults() {
+      const { tally } = tallyTestData.results
+
+      for (let i = 0; i < tally.length; i++) {
+        if (Number(tally[i]) > 0) {
+          const tallyData = getRecipientClaimData(i, depth, tallyTestData)
+          const tx = await fundingRound.addTallyResults(...tallyData)
+          await tx.wait()
+        }
+      }
+    }
+
+    beforeEach(async () => {
+      maci = await deployMaciMock()
+      await maci.mock.hasUntalliedStateLeaves.returns(false)
+      await maci.mock.totalVotes.returns(11382064)
+      await maci.mock.verifySpentVoiceCredits.returns(true)
+      await maci.mock.verifyTallyResult.returns(true)
+      await maci.mock.verifyPerVOSpentVoiceCredits.returns(true)
+      await maci.mock.treeDepths.returns(10, 10, depth)
+
+      await recipientRegistry.mock.getRecipientAddress.returns(
+        recipient.address
+      )
+
+      await token.transfer(fundingRound.address, budget)
+
+      await fundingRound.setMaci(maci.address)
+
+      const fundingRoundAsCoordinator = fundingRound.connect(coordinator)
+      await fundingRoundAsCoordinator.publishTallyHash(tallyHash)
+
+      await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
+    })
+
+    it('adds and verifies tally results', async () => {
+      await addTallyResults()
+
+      const totalResults = await fundingRound.totalTallyResults()
+      expect(totalResults.toNumber()).to.eq(20, 'total verified mismatch')
+
+      const totalSquares = await fundingRound.totalVotesSquares()
+      expect(totalSquares.toString()).to.eq(
+        expectedTotalVotes,
+        'sum of squares mismatch'
+      )
+    })
+
+    it('calculates alpha correctly', async () => {
+      await addTallyResults()
+
+      const totalVotes = await fundingRound.totalVotesSquares()
+      const { spent: totalSpent } = tallyTestData.totalVoiceCredits
+      const calculatedAlpha = await fundingRound.calcAlpha(
+        budget,
+        totalVotes,
+        totalSpent
+      )
+      expect(calculatedAlpha.toString()).to.eq(expectedAlpha, 'alpha mismatch')
+    })
+
+    it('finalizes successfully', async () => {
+      await addTallyResults()
+      const { spent, salt } = tallyTestData.totalVoiceCredits
+      await fundingRound.finalize(spent, salt)
+
+      const alpha = await fundingRound.alpha()
+      expect(alpha.toString()).to.eq(
+        expectedAlpha.toString(),
+        'invalid funding round alpha'
+      )
+    })
+
+    it('calculates claim funds correctly', async () => {
+      await addTallyResults()
+      const { spent, salt } = tallyTestData.totalVoiceCredits
+      await fundingRound.finalize(spent, salt)
+
+      const { tally } = tallyTestData.results
+      const { tally: spents } = tallyTestData.totalVoiceCreditsPerVoteOption
+
+      for (let i = 0; i < tally.length; i++) {
+        const tallyResult = tally[i]
+        if (tallyResult !== '0') {
+          const amount = await fundingRound.getAllocatedAmount(
+            tallyResult,
+            spents[i]
+          )
+          const expectedClaimAmount = claimAmounts.amount[i]
+          expect(amount.toString()).to.eq(expectedClaimAmount, 'bad amount')
+          await expect(fundingRound.claimFunds(i))
+            .to.emit(fundingRound, 'FundsClaimed')
+            .withArgs(i, recipient.address, expectedClaimAmount)
+        }
+      }
     })
   })
 })

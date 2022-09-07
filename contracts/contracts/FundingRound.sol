@@ -21,11 +21,23 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   // Constants
   uint256 private constant MAX_VOICE_CREDITS = 10 ** 9;  // MACI allows 2 ** 32 voice credits max
   uint256 private constant MAX_CONTRIBUTION_AMOUNT = 10 ** 4;  // In tokens
+  uint256 private constant ALPHA_PRECISION = 10 ** 18; // to account for loss of precision in division
 
   // Structs
   struct ContributorStatus {
     uint256 voiceCredits;
     bool isRegistered;
+  }
+
+  struct RecipientStatus {
+    // Has the recipient claimed funds?
+    bool fundsClaimed;
+    // Are the tally result and spent verified
+    bool resultsVerified;
+    // Tally result
+    uint256 tallyResult;
+    // total voice credits spent on the recipient
+    uint256 spent;
   }
 
   // State
@@ -44,8 +56,14 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   IRecipientRegistry public recipientRegistry;
   string public tallyHash;
 
-  mapping(uint256 => bool) private recipients;
-  mapping(address => ContributorStatus) private contributors;
+  // The alpha used in quadratic funding formula
+  uint256 public alpha = 0;
+
+  // Total number of tally results verified, should match total recipients before finalize
+  uint256 public totalTallyResults = 0;
+  uint256 public totalVotesSquares = 0;
+  mapping(uint256 => RecipientStatus) public recipients;
+  mapping(address => ContributorStatus) public contributors;
 
   // Events
   event Contribution(address indexed _sender, uint256 _amount);
@@ -213,8 +231,29 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   }
 
   /**
+    * @dev Calculate the alpha for the capital constrained quadratic formula
+    *  in page 17 of https://arxiv.org/pdf/1809.06421.pdf
+    * @param _budget Total budget of the round to be distributed
+    * @param _totalVotes Total of the squares of votes
+    * @param _totalSpent Total voice credits spent
+   */
+  function calcAlpha(
+    uint256 _budget,
+    uint256 _totalVotes,
+    uint256 _totalSpent
+  )
+    public
+    view
+    returns (uint256 _alpha)
+  {
+    return  (_budget - (_totalSpent * voiceCreditFactor)) * ALPHA_PRECISION /
+            (voiceCreditFactor * (_totalVotes - _totalSpent));
+  }
+
+  /**
     * @dev Get the total amount of votes from MACI,
     * verify the total amount of spent voice credits across all recipients,
+    * calculate the quadratic alpha value,
     * and allow recipients to claim funds.
     * @param _totalSpent Total amount of spent voice credits.
     * @param _totalSpentSalt The salt.
@@ -231,6 +270,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(maci.calcVotingDeadline() < block.timestamp, 'FundingRound: Voting has not been finished');
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes has not been tallied');
     require(bytes(tallyHash).length != 0, 'FundingRound: Tally hash has not been published');
+
     totalVotes = maci.totalVotes();
     // If nobody voted, the round should be cancelled to avoid locking of matching funds
     require(totalVotes > 0, 'FundingRound: No votes');
@@ -240,7 +280,12 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     // Total amount of spent voice credits is the size of the pool of direct rewards.
     // Everything else, including unspent voice credits and downscaling error,
     // is considered a part of the matching pool
-    matchingPoolSize = nativeToken.balanceOf(address(this)) - totalSpent * voiceCreditFactor;
+    uint256 budget = nativeToken.balanceOf(address(this));
+    matchingPoolSize = budget - totalSpent * voiceCreditFactor;
+
+    // TODO: need to check/verify totalVotesSquares
+    alpha = calcAlpha(budget, totalVotesSquares, _totalSpent);
+
     isFinalized = true;
   }
 
@@ -269,53 +314,26 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     view
     returns (uint256)
   {
-    return matchingPoolSize * _tallyResult / totalVotes + _spent * voiceCreditFactor;
+    // amount = ( alpha * (quadratic votes)^2 + (precision - alpha) * totalSpent ) / precision
+    uint256 quadratic = alpha * voiceCreditFactor * _tallyResult * _tallyResult;
+    uint256 linear = (ALPHA_PRECISION - alpha) * voiceCreditFactor * _spent;
+    return (quadratic + linear) / ALPHA_PRECISION;
   }
 
   /**
     * @dev Claim allocated tokens.
     * @param _voteOptionIndex Vote option index.
-    * @param _tallyResult The result of vote tally for the recipient.
-    * @param _tallyResultProof Proof of correctness of the vote tally.
-    * @param _tallyResultSalt Salt.
-    * @param _spent The amount of voice credits spent on the recipient.
-    * @param _spentProof Proof of correctness for the amount of spent credits.
-    * @param _spentSalt Salt.
     */
   function claimFunds(
-    uint256 _voteOptionIndex,
-    uint256 _tallyResult,
-    uint256[][] calldata _tallyResultProof,
-    uint256 _tallyResultSalt,
-    uint256 _spent,
-    uint256[][] calldata _spentProof,
-    uint256 _spentSalt
+    uint256 _voteOptionIndex
   )
     external
   {
     require(isFinalized, 'FundingRound: Round not finalized');
     require(!isCancelled, 'FundingRound: Round has been cancelled');
-    require(!recipients[_voteOptionIndex], 'FundingRound: Funds already claimed');
-    { // create scope to avoid 'stack too deep' error
-      (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
-      bool resultVerified = maci.verifyTallyResult(
-        voteOptionTreeDepth,
-        _voteOptionIndex,
-        _tallyResult,
-        _tallyResultProof,
-        _tallyResultSalt
-      );
-      require(resultVerified, 'FundingRound: Incorrect tally result');
-      bool spentVerified = maci.verifyPerVOSpentVoiceCredits(
-        voteOptionTreeDepth,
-        _voteOptionIndex,
-        _spent,
-        _spentProof,
-        _spentSalt
-      );
-      require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
-    }
-    recipients[_voteOptionIndex] = true;
+    require(!recipients[_voteOptionIndex].fundsClaimed, 'FundingRound: Funds already claimed');
+    recipients[_voteOptionIndex].fundsClaimed = true;
+
     uint256 startTime = maci.signUpTimestamp();
     address recipient = recipientRegistry.getRecipientAddress(
       _voteOptionIndex,
@@ -326,8 +344,66 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
       // Send funds back to the matching pool
       recipient = owner();
     }
-    uint256 allocatedAmount = getAllocatedAmount(_tallyResult, _spent);
+    uint256 tallyResult = recipients[_voteOptionIndex].tallyResult;
+    uint256 spent = recipients[_voteOptionIndex].spent;
+    uint256 allocatedAmount = getAllocatedAmount(tallyResult, spent);
     nativeToken.safeTransfer(recipient, allocatedAmount);
     emit FundsClaimed(_voteOptionIndex, recipient, allocatedAmount);
+  }
+
+  /**
+    * @dev Add and verify tally votes and calculate sum of tally squares for alpha calculation.
+    * @param _voteOptionIndex Vote option index.
+    * @param _tallyResult The results of vote tally for the recipients.
+    * @param _tallyResultProof Proofs of correctness of the vote tally results.
+    * @param _tallyResultSalt Salt.
+    * @param _spent The amount of voice credits spent on the recipients.
+    * @param _spentProof Proof of correctness for the amount of spent credits.
+    * @param _spentSalt Salt.
+    */
+  function addTallyResults(
+    uint256 _voteOptionIndex,
+    uint256 _tallyResult,
+    uint256[][] calldata _tallyResultProof,
+    uint256 _tallyResultSalt,
+    uint256 _spent,
+    uint256[][] calldata _spentProof,
+    uint256 _spentSalt
+  )
+    external
+    onlyOwner
+  {
+    require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes have not been tallied');
+
+    RecipientStatus storage recipient = recipients[_voteOptionIndex];
+    require(!recipient.resultsVerified, 'FundingRound: Vote results already verified');
+
+    {
+      // create scope to avoid 'stack too deep' error
+      (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
+      bool resultVerified = maci.verifyTallyResult(
+        voteOptionTreeDepth,
+        _voteOptionIndex,
+        _tallyResult,
+        _tallyResultProof,
+        _tallyResultSalt
+      );
+      require(resultVerified, 'FundingRound: Incorrect tally result');
+
+      bool spentVerified = maci.verifyPerVOSpentVoiceCredits(
+        voteOptionTreeDepth,
+        _voteOptionIndex,
+        _spent,
+        _spentProof,
+        _spentSalt
+      );
+      require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
+    }
+
+    recipient.resultsVerified = true;
+    recipient.tallyResult = _tallyResult;
+    recipient.spent = _spent;
+    totalVotesSquares = totalVotesSquares + _tallyResult * _tallyResult;
+    totalTallyResults++;
   }
 }
