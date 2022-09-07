@@ -8,12 +8,10 @@ async function main() {
   const [deployer] = await ethers.getSigners()
   console.log('deployer.address: ', deployer.address)
 
-  const fundingRoundFactoryAddress = process.env.FUNDING_ROUND_FACTORY_ADDRESS
+  const fundingRoundFactoryAddress = process.env.FACTORY_ADDRESS
 
   if (!fundingRoundFactoryAddress) {
-    throw new Error(
-      'Environment variable FUNDING_ROUND_FACTORY_ADDRESS is not setup'
-    )
+    throw new Error('Environment variable FACTORY_ADDRESS is not setup')
   }
   const fundingRoundFactory = await ethers.getContractAt(
     'FundingRoundFactory',

@@ -7,13 +7,11 @@ async function main() {
   const [deployer] = await ethers.getSigners()
   console.log('deployer.address: ', deployer.address)
 
-  const fundingRoundFactoryAddress = process.env.FUNDING_ROUND_FACTORY_ADDRESS
+  const fundingRoundFactoryAddress = process.env.FACTORY_ADDRESS
   const userRegistryType = process.env.USER_REGISTRY_TYPE
 
   if (!fundingRoundFactoryAddress) {
-    throw new Error(
-      'Environment variable FUNDING_ROUND_FACTORY_ADDRESS is not setup'
-    )
+    throw new Error('Environment variable FACTORY_ADDRESS is not setup')
   }
   if (!userRegistryType) {
     throw new Error('Environment variable USER_REGISTRY_TYPE is not setup')
