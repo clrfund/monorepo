@@ -4,27 +4,27 @@
       <div class="hero">
         <image-responsive title="robot" />
       </div>
-      <div class="content">
-        <span class="emoji">🎉</span>
-        <div class="flex-title">
-          <h1>Project submitted!</h1>
-          <transaction-receipt :hash="$route.params.hash" />
-        </div>
-        <h4>You’re almost on board this funding round.</h4>
-        <ul class="text-base list">
-          <li>
-            Your project just needs to go through some final checks. If
-            everything is ok, your project will go live within 5 minutes.
-          </li>
-          <li>
-            If your project fails any checks, we'll let you know by email and
-            return your deposit.
-          </li>
-        </ul>
-        <div class="button-spacing">
-          <links to="/projects" class="btn-action">View projects</links>
-          <links to="/" class="btn-link">Go home</links>
-        </div>
+    </div>
+    <div class="sucess-content">
+      <span class="emoji">🎉</span>
+      <div class="flex-title">
+        <h1>Project submitted!</h1>
+        <transaction-receipt :hash="$route.params.hash" />
+      </div>
+      <h4>You’re almost on board this funding round.</h4>
+      <ul class="text-base list">
+        <li>
+          Your project just needs to go through some final checks. If everything
+          is ok, your project will go live within 5 minutes.
+        </li>
+        <li>
+          If your project fails any checks, we'll let you know by email and
+          return your deposit.
+        </li>
+      </ul>
+      <div class="button-spacing">
+        <links to="/projects" class="btn-action">View projects</links>
+        <links to="/" class="btn-link">Go home</links>
       </div>
     </div>
   </div>
@@ -98,15 +98,14 @@ h1 {
 
   .hero {
     position: fixed;
-    bottom: -4rem;
+    bottom: -4em;
     right: -12rem;
     height: 100%;
     width: 100%;
     mix-blend-mode: luminosity;
 
     @media (max-width: $breakpoint-m) {
-      width: 100%;
-      padding-bottom: 0rem;
+      visibility: hidden;
     }
 
     img {
@@ -125,18 +124,22 @@ h1 {
   }
 }
 
-.content {
+.sucess-content {
   position: relative;
   z-index: 1;
   padding: $content-space;
   width: min(100%, 512px);
-  margin-left: 2rem;
-  margin-top: 6rem;
   color: $clr-white;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
 
   @media (max-width: $breakpoint-m) {
-    width: 100%;
+    max-width: 100%;
     margin: 0;
+    width: 90%;
+    justify-content: center;
+    padding: $content-space - 1rem;
   }
 
   .flex-title {
@@ -175,6 +178,9 @@ h1 {
 
   a {
     width: 100%;
+  }
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
   }
 }
 </style>
