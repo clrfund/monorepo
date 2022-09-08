@@ -35,7 +35,7 @@ describe('Clr fund deployer', () => {
 
     expect(factoryTemplate.address).to.properAddress
     expect(await getGasUsage(factoryTemplate.deployTransaction)).lessThan(
-      5100000
+      5200000
     )
 
     clrFundDeployer = await deployContract(deployer, 'ClrFundDeployer', [
@@ -44,7 +44,7 @@ describe('Clr fund deployer', () => {
 
     expect(clrFundDeployer.address).to.properAddress
     expect(await getGasUsage(clrFundDeployer.deployTransaction)).lessThan(
-      5100000
+      5200000
     )
 
     const newInstanceTx = await clrFundDeployer.deployFund(maciFactory.address)
@@ -267,7 +267,7 @@ describe('Clr fund deployer', () => {
       const deployed = factory.deployNewRound()
       await expect(deployed).to.emit(factory, 'RoundStarted')
       const deployTx = await deployed
-      expect(await getGasUsage(deployTx)).lessThan(11500000)
+      expect(await getGasUsage(deployTx)).lessThan(12000000)
 
       const fundingRoundAddress = await factory.getCurrentRound()
       expect(fundingRoundAddress).to.properAddress

@@ -138,3 +138,73 @@ export function getRecipientClaimData(
     spentSalt,
   ]
 }
+
+export function getRecipientClaimDataBatch(
+  recipientStartIndex: number,
+  recipientTreeDepth: number,
+  tally: any,
+  batchSize: number
+): any[] {
+  if (recipientStartIndex >= tally.length) {
+    throw new Error('Recipient index out of bound')
+  }
+
+  const claimData = []
+  const lastIndex =
+    recipientStartIndex + batchSize > tally.results.tally.length
+      ? tally.results.tally.length
+      : recipientStartIndex + batchSize
+  for (let i = recipientStartIndex; i < lastIndex; i++) {
+    claimData.push(getRecipientClaimData(i, recipientTreeDepth, tally))
+  }
+
+  return [
+    claimData.map((item) => item[0]),
+    claimData.map((item) => item[1]),
+    claimData.map((item) => item[2]),
+    claimData[0][3],
+    claimData.map((item) => item[4]),
+    claimData.map((item) => item[5]),
+    claimData[0][6],
+  ]
+}
+
+export async function addTallyResults(
+  fundingRound: Contract,
+  recipientTreeDepth: number,
+  tallyData: any,
+  // this is just a shortcut used to speed up testing
+  // not for production use
+  skipZero?: boolean
+) {
+  const { tally } = tallyData.results
+
+  for (let i = 0; i < tally.length; i++) {
+    if (skipZero && Number(tally[i]) === 0) {
+      continue
+    }
+    const claimData = getRecipientClaimData(i, recipientTreeDepth, tallyData)
+    const tx = await fundingRound.addTallyResults(...claimData)
+    await tx.wait()
+  }
+}
+
+export async function addTallyResultsBatch(
+  fundingRound: Contract,
+  recipientTreeDepth: number,
+  tallyData: any,
+  batchSize: number
+) {
+  const { tally } = tallyData.results
+  for (let i = 0; i < tally.length; i = i + batchSize) {
+    const data = getRecipientClaimDataBatch(
+      i,
+      recipientTreeDepth,
+      tallyData,
+      batchSize
+    )
+
+    const tx = await fundingRound.addTallyResultsBatch(...data)
+    await tx.wait()
+  }
+}

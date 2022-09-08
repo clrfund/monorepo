@@ -13,7 +13,7 @@ import { getIpfsHash } from '../utils/ipfs'
 import {
   MaciParameters,
   createMessage,
-  getRecipientClaimData,
+  addTallyResultsBatch,
 } from '../utils/maci'
 import { CIRCUITS } from '../utils/deployment'
 
@@ -243,6 +243,16 @@ describe('End-to-end Tests', function () {
     const tallyHash = await getIpfsHash(tally)
     await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
 
+    // add tally results to funding round
+    const batchSize = Number(process.env.TALLY_BATCH_SIZE) || 20
+    const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
+    await addTallyResultsBatch(
+      fundingRound,
+      recipientTreeDepth,
+      tally,
+      batchSize
+    )
+
     // Finalize round
     await fundingRoundFactory.transferMatchingFunds(
       tally.totalVoiceCredits.spent,
@@ -251,17 +261,11 @@ describe('End-to-end Tests', function () {
 
     // Claim funds
     const claims: { [index: number]: BigNumber } = {}
-    const recipientTreeDepth = (await maci.treeDepths()).voteOptionTreeDepth
     for (const recipientIndex of [1, 2]) {
       const recipient = recipientIndex === 1 ? recipient1 : recipient2
-      const recipientClaimData = getRecipientClaimData(
-        recipientIndex,
-        recipientTreeDepth,
-        tally
-      )
       const claimTx = await fundingRound
         .connect(recipient)
-        .claimFunds(...recipientClaimData)
+        .claimFunds(recipientIndex)
       const claimedAmount = await getEventArg(
         claimTx,
         fundingRound,
