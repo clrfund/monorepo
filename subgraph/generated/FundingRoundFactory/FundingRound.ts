@@ -810,6 +810,10 @@ export class WithdrawContributionCall__Inputs {
   constructor(call: WithdrawContributionCall) {
     this._call = call;
   }
+
+  get _contributors(): Array<Address> {
+    return this._call.inputValues[0].value.toAddressArray();
+  }
 }
 
 export class WithdrawContributionCall__Outputs {
