@@ -183,6 +183,14 @@
       </div>
       <div
         class="submit-btn-wrapper"
+        v-if="canWithdrawContribution && cart.length >= 1"
+      >
+        <button class="btn-action" @click="withdrawContribution()">
+          Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
+        </button>
+      </div>
+      <div
+        class="submit-btn-wrapper"
         v-if="
           (($store.getters.canUserReallocate && isEditMode) ||
             (!$store.getters.canUserReallocate &&
@@ -210,13 +218,6 @@
         <div class="p1" v-if="isBrightIdRequired">
           <links to="/verify" class="btn-primary"> Verify with BrightID </links>
         </div>
-        <button
-          v-if="canWithdrawContribution()"
-          class="btn-action"
-          @click="withdrawContribution()"
-        >
-          Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
-        </button>
         <button
           v-if="!isCartEmpty"
           class="btn-action"
@@ -645,7 +646,7 @@ export default class Cart extends Vue {
     this.$store.commit(TOGGLE_EDIT_SELECTION, false)
   }
 
-  canWithdrawContribution(): boolean {
+  get canWithdrawContribution(): boolean {
     return (
       this.$store.state.currentRound?.status === RoundStatus.Cancelled &&
       !this.contribution.isZero()
