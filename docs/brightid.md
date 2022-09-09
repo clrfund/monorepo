@@ -20,10 +20,10 @@ Available envs:
 
 | Network/Env | Context | Sponsor Contract |
 | ----------- | ------- | ---------------- |
-| goerli | clrfund-goerli | 0xF045234A776C87060DEEc5689056455A24a59c08 |
-| xdai | clrfund-gnosis-chain |0x669A55Dd17a2f9F4dacC37C7eeB5Ed3e13f474f9|
 | arbitrum | clrfund-arbitrum |0x669A55Dd17a2f9F4dacC37C7eeB5Ed3e13f474f9|
-
+| arbitrum rinkeby | clrfund-arbitrum-rinkeby | 0xC7c81634Dac2de4E7f2Ba407B638ff003ce4534C |
+| goerli | clrfund-goerli | 0xF045234A776C87060DEEc5689056455A24a59c08 |
+| xdai | clrfund-gnosischain |0x669A55Dd17a2f9F4dacC37C7eeB5Ed3e13f474f9|
 
 ```.sh
 # /vue-app/.env
