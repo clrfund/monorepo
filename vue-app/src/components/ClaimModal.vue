@@ -71,12 +71,17 @@ export default class ClaimModal extends Vue {
   private async claim() {
     const signer: Signer =
       this.$store.state.currentUser.walletProvider.getSigner()
-    const { fundingRoundAddress } = this.currentRound
+    const { fundingRoundAddress, recipientTreeDepth } = this.currentRound
     const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
+    const recipientClaimData = getRecipientClaimData(
+      this.project.index,
+      recipientTreeDepth,
+      this.$store.state.tally
+    )
     let claimTxReceipt
     try {
       claimTxReceipt = await waitForTransaction(
-        fundingRound.claimFunds(this.project.index),
+        fundingRound.claimFunds(...recipientClaimData),
         (hash) => (this.claimTxHash = hash)
       )
     } catch (error) {

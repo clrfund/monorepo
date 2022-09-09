@@ -106,7 +106,7 @@ export function createMessage(
   return [message, encKeypair.pubKey]
 }
 
-export function getRecipientClaimData(
+export function getRecipientTallyResults(
   recipientIndex: number,
   recipientTreeDepth: number,
   tally: any
@@ -119,6 +119,20 @@ export function getRecipientClaimData(
     resultTree.insert(leaf)
   }
   const resultProof = resultTree.genMerklePath(recipientIndex)
+
+  return [
+    recipientIndex,
+    result,
+    resultProof.pathElements.map((x) => x.map((y) => y.toString())),
+    resultSalt,
+  ]
+}
+
+export function getRecipientClaimData(
+  recipientIndex: number,
+  recipientTreeDepth: number,
+  tally: any
+): any[] {
   // Create proof for total amount of spent voice credits
   const spent = tally.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
   const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
@@ -130,16 +144,13 @@ export function getRecipientClaimData(
 
   return [
     recipientIndex,
-    result,
-    resultProof.pathElements.map((x) => x.map((y) => y.toString())),
-    resultSalt,
     spent,
     spentProof.pathElements.map((x) => x.map((y) => y.toString())),
     spentSalt,
   ]
 }
 
-export function getRecipientClaimDataBatch(
+export function getRecipientTallyResultsBatch(
   recipientStartIndex: number,
   recipientTreeDepth: number,
   tally: any,
@@ -155,7 +166,7 @@ export function getRecipientClaimDataBatch(
       ? tally.results.tally.length
       : recipientStartIndex + batchSize
   for (let i = recipientStartIndex; i < lastIndex; i++) {
-    claimData.push(getRecipientClaimData(i, recipientTreeDepth, tally))
+    claimData.push(getRecipientTallyResults(i, recipientTreeDepth, tally))
   }
 
   return [
@@ -163,9 +174,6 @@ export function getRecipientClaimDataBatch(
     claimData.map((item) => item[1]),
     claimData.map((item) => item[2]),
     claimData[0][3],
-    claimData.map((item) => item[4]),
-    claimData.map((item) => item[5]),
-    claimData[0][6],
   ]
 }
 
@@ -183,8 +191,8 @@ export async function addTallyResults(
     if (skipZero && Number(tally[i]) === 0) {
       continue
     }
-    const claimData = getRecipientClaimData(i, recipientTreeDepth, tallyData)
-    const tx = await fundingRound.addTallyResults(...claimData)
+    const result = getRecipientTallyResults(i, recipientTreeDepth, tallyData)
+    const tx = await fundingRound.addTallyResults(...result)
     await tx.wait()
   }
 }
@@ -197,7 +205,7 @@ export async function addTallyResultsBatch(
 ) {
   const { tally } = tallyData.results
   for (let i = 0; i < tally.length; i = i + batchSize) {
-    const data = getRecipientClaimDataBatch(
+    const data = getRecipientTallyResultsBatch(
       i,
       recipientTreeDepth,
       tallyData,

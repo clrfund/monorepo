@@ -15,12 +15,12 @@ import {
   createMessage,
   addTallyResults,
   addTallyResultsBatch,
+  getRecipientClaimData,
 } from '../utils/maci'
 
 use(solidity)
 
 // ethStaker test vectors for Quadratic Funding with alpha
-import tallyTestData from './data/testTally.json'
 import smallTallyTestData from './data/testTallySmall.json'
 import claimAmounts from './data/claimAmounts.json'
 const budget = ethers.utils.parseEther('440274')
@@ -839,7 +839,7 @@ describe('Funding Round', () => {
       )
       await fundingRound.finalize(totalSpent, totalSpentSalt)
 
-      const { results, totalVoiceCreditsPerVoteOption } = tallyTestData
+      const { results, totalVoiceCreditsPerVoteOption } = smallTallyTestData
       expect(
         await fundingRound.getAllocatedAmount(
           results.tally[recipientIndex],
@@ -847,7 +847,12 @@ describe('Funding Round', () => {
         )
       ).to.equal(expectedAllocatedAmount, 'mismatch allocated amount')
 
-      await expect(fundingRoundAsRecipient.claimFunds(recipientIndex))
+      const claimData = getRecipientClaimData(
+        recipientIndex,
+        tallyTreeDepth,
+        smallTallyTestData
+      )
+      await expect(fundingRoundAsRecipient.claimFunds(...claimData))
         .to.emit(fundingRound, 'FundsClaimed')
         .withArgs(recipientIndex, recipient.address, expectedAllocatedAmount)
       expect(await token.balanceOf(recipient.address)).to.equal(
@@ -866,7 +871,12 @@ describe('Funding Round', () => {
       )
       await fundingRound.finalize(totalSpent, totalSpentSalt)
 
-      await expect(fundingRoundAsContributor.claimFunds(recipientIndex))
+      const claimData = getRecipientClaimData(
+        recipientIndex,
+        tallyTreeDepth,
+        smallTallyTestData
+      )
+      await expect(fundingRoundAsContributor.claimFunds(...claimData))
         .to.emit(fundingRound, 'FundsClaimed')
         .withArgs(recipientIndex, recipient.address, expectedAllocatedAmount)
       expect(await token.balanceOf(recipient.address)).to.equal(
@@ -885,7 +895,13 @@ describe('Funding Round', () => {
       await fundingRound.finalize(totalSpent, totalSpentSalt)
 
       const recipientWithZeroFunds = 2
-      await expect(fundingRoundAsRecipient.claimFunds(recipientWithZeroFunds))
+      const claimData = getRecipientClaimData(
+        recipientWithZeroFunds,
+        tallyTreeDepth,
+        smallTallyTestData
+      )
+
+      await expect(fundingRoundAsRecipient.claimFunds(...claimData))
         .to.emit(fundingRound, 'FundsClaimed')
         .withArgs(recipientWithZeroFunds, recipient.address, 0)
     })
@@ -905,7 +921,13 @@ describe('Funding Round', () => {
       const expectedWithoutMatching = ethers.BigNumber.from(contributions)
         .mul(VOICE_CREDIT_FACTOR)
         .toString()
-      await expect(fundingRoundAsRecipient.claimFunds(recipientIndex))
+
+      const claimData = getRecipientClaimData(
+        recipientIndex,
+        tallyTreeDepth,
+        smallTallyTestData
+      )
+      await expect(fundingRoundAsRecipient.claimFunds(...claimData))
         .to.emit(fundingRound, 'FundsClaimed')
         .withArgs(recipientIndex, recipient.address, expectedWithoutMatching)
     })
@@ -913,8 +935,13 @@ describe('Funding Round', () => {
     it('should not allow recipient to claim funds if round has not been finalized', async () => {
       await token.transfer(fundingRound.address, budget)
 
+      const claimData = getRecipientClaimData(
+        recipientIndex,
+        tallyTreeDepth,
+        smallTallyTestData
+      )
       await expect(
-        fundingRoundAsRecipient.claimFunds(recipientIndex)
+        fundingRoundAsRecipient.claimFunds(...claimData)
       ).to.be.revertedWith('FundingRound: Round not finalized')
     })
 
@@ -922,8 +949,13 @@ describe('Funding Round', () => {
       await token.transfer(fundingRound.address, budget)
       await fundingRound.cancel()
 
+      const claimData = getRecipientClaimData(
+        recipientIndex,
+        tallyTreeDepth,
+        smallTallyTestData
+      )
       await expect(
-        fundingRoundAsRecipient.claimFunds(recipientIndex)
+        fundingRoundAsRecipient.claimFunds(...claimData)
       ).to.be.revertedWith('FundingRound: Round has been cancelled')
     })
 
@@ -938,8 +970,13 @@ describe('Funding Round', () => {
       await fundingRound.finalize(totalSpent, totalSpentSalt)
       await recipientRegistry.mock.getRecipientAddress.returns(ZERO_ADDRESS)
 
+      const claimData = getRecipientClaimData(
+        recipientIndex,
+        tallyTreeDepth,
+        smallTallyTestData
+      )
       const initialDeployerBalance = await token.balanceOf(deployer.address)
-      await expect(fundingRoundAsRecipient.claimFunds(recipientIndex))
+      await expect(fundingRoundAsRecipient.claimFunds(...claimData))
         .to.emit(fundingRound, 'FundsClaimed')
         .withArgs(recipientIndex, deployer.address, expectedAllocatedAmount)
       expect(await token.balanceOf(deployer.address)).to.equal(
@@ -957,9 +994,14 @@ describe('Funding Round', () => {
       )
       await fundingRound.finalize(totalSpent, totalSpentSalt)
 
-      await fundingRoundAsRecipient.claimFunds(recipientIndex)
+      const claimData = getRecipientClaimData(
+        recipientIndex,
+        tallyTreeDepth,
+        smallTallyTestData
+      )
+      await fundingRoundAsRecipient.claimFunds(...claimData)
       await expect(
-        fundingRoundAsRecipient.claimFunds(recipientIndex)
+        fundingRoundAsRecipient.claimFunds(...claimData)
       ).to.be.revertedWith('FundingRound: Funds already claimed')
     })
 
@@ -980,13 +1022,22 @@ describe('Funding Round', () => {
     it('should verify that amount of spent voice credits is correct', async () => {
       await token.transfer(fundingRound.address, budget)
       await maci.mock.verifyPerVOSpentVoiceCredits.returns(false)
+
+      await addTallyResultsBatch(
+        fundingRound,
+        tallyTreeDepth,
+        smallTallyTestData,
+        3
+      )
+      await fundingRound.finalize(totalSpent, totalSpentSalt)
+
+      const claimData = getRecipientClaimData(
+        recipientIndex,
+        tallyTreeDepth,
+        smallTallyTestData
+      )
       await expect(
-        addTallyResultsBatch(
-          fundingRound,
-          tallyTreeDepth,
-          smallTallyTestData,
-          3
-        )
+        fundingRoundAsRecipient.claimFunds(...claimData)
       ).to.be.revertedWith(
         'FundingRound: Incorrect amount of spent voice credits'
       )
@@ -995,7 +1046,7 @@ describe('Funding Round', () => {
 
   describe('finalizing with alpha', function () {
     this.timeout(2 * 60 * 1000)
-    const treeDepth = 3
+    const treeDepth = 2
     const totalVotes = 11382064
     beforeEach(async () => {
       maci = await deployMaciMock()
@@ -1021,8 +1072,14 @@ describe('Funding Round', () => {
     })
 
     it('adds and verifies tally results', async function () {
+      this.timeout(2 * 60 * 1000)
       const skipZero = true
-      await addTallyResults(fundingRound, treeDepth, tallyTestData, skipZero)
+      await addTallyResults(
+        fundingRound,
+        treeDepth,
+        smallTallyTestData,
+        skipZero
+      )
 
       const totalResults = await fundingRound.totalTallyResults()
       expect(totalResults.toNumber()).to.eq(20, 'total verified mismatch')
@@ -1034,12 +1091,18 @@ describe('Funding Round', () => {
       )
     })
 
-    it('calculates alpha correctly', async () => {
+    it('calculates alpha correctly', async function () {
+      this.timeout(2 * 60 * 1000)
       const skipZero = true
-      await addTallyResults(fundingRound, treeDepth, tallyTestData, skipZero)
+      await addTallyResults(
+        fundingRound,
+        treeDepth,
+        smallTallyTestData,
+        skipZero
+      )
 
       const totalVotes = await fundingRound.totalVotesSquares()
-      const { spent: totalSpent } = tallyTestData.totalVoiceCredits
+      const { spent: totalSpent } = smallTallyTestData.totalVoiceCredits
       const calculatedAlpha = await fundingRound.calcAlpha(
         budget,
         totalVotes,
@@ -1049,8 +1112,8 @@ describe('Funding Round', () => {
     })
 
     it('finalizes successfully', async function () {
-      await addTallyResultsBatch(fundingRound, treeDepth, tallyTestData, 3)
-      const { spent, salt } = tallyTestData.totalVoiceCredits
+      await addTallyResultsBatch(fundingRound, treeDepth, smallTallyTestData, 3)
+      const { spent, salt } = smallTallyTestData.totalVoiceCredits
       await fundingRound.finalize(spent, salt)
 
       const alpha = await fundingRound.alpha()
@@ -1061,12 +1124,18 @@ describe('Funding Round', () => {
     })
 
     it('calculates claim funds correctly', async function () {
-      await addTallyResultsBatch(fundingRound, treeDepth, tallyTestData, 20)
-      const { spent, salt } = tallyTestData.totalVoiceCredits
+      await addTallyResultsBatch(
+        fundingRound,
+        treeDepth,
+        smallTallyTestData,
+        20
+      )
+      const { spent, salt } = smallTallyTestData.totalVoiceCredits
       await fundingRound.finalize(spent, salt)
 
-      const { tally } = tallyTestData.results
-      const { tally: spents } = tallyTestData.totalVoiceCreditsPerVoteOption
+      const { tally } = smallTallyTestData.results
+      const { tally: spents } =
+        smallTallyTestData.totalVoiceCreditsPerVoteOption
 
       for (let i = 0; i < tally.length; i++) {
         const tallyResult = tally[i]
@@ -1077,7 +1146,14 @@ describe('Funding Round', () => {
           )
           const expectedClaimAmount = claimAmounts.amount[i]
           expect(amount.toString()).to.eq(expectedClaimAmount, 'bad amount')
-          await expect(fundingRound.claimFunds(i))
+
+          const claimData = getRecipientClaimData(
+            i,
+            treeDepth,
+            smallTallyTestData
+          )
+
+          await expect(fundingRound.claimFunds(...claimData))
             .to.emit(fundingRound, 'FundsClaimed')
             .withArgs(i, recipient.address, expectedClaimAmount)
         }

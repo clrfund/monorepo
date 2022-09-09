@@ -14,6 +14,7 @@ import {
   MaciParameters,
   createMessage,
   addTallyResultsBatch,
+  getRecipientClaimData,
 } from '../utils/maci'
 import { CIRCUITS } from '../utils/deployment'
 
@@ -263,9 +264,15 @@ describe('End-to-end Tests', function () {
     const claims: { [index: number]: BigNumber } = {}
     for (const recipientIndex of [1, 2]) {
       const recipient = recipientIndex === 1 ? recipient1 : recipient2
+
+      const claimData = getRecipientClaimData(
+        recipientIndex,
+        recipientTreeDepth,
+        tally
+      )
       const claimTx = await fundingRound
         .connect(recipient)
-        .claimFunds(recipientIndex)
+        .claimFunds(...claimData)
       const claimedAmount = await getEventArg(
         claimTx,
         fundingRound,

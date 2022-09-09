@@ -37,8 +37,6 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     bool resultsVerified;
     // Tally result
     uint256 tallyResult;
-    // total voice credits spent on the recipient
-    uint256 spent;
   }
 
   // State
@@ -72,7 +70,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   event FundsClaimed(uint256 indexed _voteOptionIndex, address indexed _recipient, uint256 _amount);
   event TallyPublished(string _tallyHash);
   event Voted(address indexed _contributor);
-  event TallyResultsAdded(uint256 indexed _voteOptionIndex, uint256 _tally, uint256 _spent);
+  event TallyResultsAdded(uint256 indexed _voteOptionIndex, uint256 _tally);
 
   /**
     * @dev Set round parameters.
@@ -337,9 +335,15 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   /**
     * @dev Claim allocated tokens.
     * @param _voteOptionIndex Vote option index.
+    * @param _spent The amount of voice credits spent on the recipients.
+    * @param _spentProof Proof of correctness for the amount of spent credits.
+    * @param _spentSalt Salt.
     */
   function claimFunds(
-    uint256 _voteOptionIndex
+    uint256 _voteOptionIndex,
+    uint256 _spent,
+    uint256[][] calldata _spentProof,
+    uint256 _spentSalt
   )
     external
   {
@@ -347,6 +351,19 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     require(!isCancelled, 'FundingRound: Round has been cancelled');
     require(!recipients[_voteOptionIndex].fundsClaimed, 'FundingRound: Funds already claimed');
     recipients[_voteOptionIndex].fundsClaimed = true;
+
+    {
+      // create scope to avoid 'stack too deep' error
+      (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
+      bool spentVerified = maci.verifyPerVOSpentVoiceCredits(
+        voteOptionTreeDepth,
+        _voteOptionIndex,
+        _spent,
+        _spentProof,
+        _spentSalt
+      );
+      require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
+    }
 
     uint256 startTime = maci.signUpTimestamp();
     address recipient = recipientRegistry.getRecipientAddress(
@@ -359,8 +376,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
       recipient = owner();
     }
     uint256 tallyResult = recipients[_voteOptionIndex].tallyResult;
-    uint256 spent = recipients[_voteOptionIndex].spent;
-    uint256 allocatedAmount = getAllocatedAmount(tallyResult, spent);
+    uint256 allocatedAmount = getAllocatedAmount(tallyResult, _spent);
     nativeToken.safeTransfer(recipient, allocatedAmount);
     emit FundsClaimed(_voteOptionIndex, recipient, allocatedAmount);
   }
@@ -371,18 +387,12 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @param _tallyResult The results of vote tally for the recipients.
     * @param _tallyResultProof Proofs of correctness of the vote tally results.
     * @param _tallyResultSalt Salt.
-    * @param _spent The amount of voice credits spent on the recipients.
-    * @param _spentProof Proof of correctness for the amount of spent credits.
-    * @param _spentSalt Salt.
     */
   function _addTallyResults(
     uint256 _voteOptionIndex,
     uint256 _tallyResult,
     uint256[][] calldata _tallyResultProof,
-    uint256 _tallyResultSalt,
-    uint256 _spent,
-    uint256[][] calldata _spentProof,
-    uint256 _spentSalt
+    uint256 _tallyResultSalt
   )
     internal
   {
@@ -400,23 +410,13 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
         _tallyResultSalt
       );
       require(resultVerified, 'FundingRound: Incorrect tally result');
-
-      bool spentVerified = maci.verifyPerVOSpentVoiceCredits(
-        voteOptionTreeDepth,
-        _voteOptionIndex,
-        _spent,
-        _spentProof,
-        _spentSalt
-      );
-      require(spentVerified, 'FundingRound: Incorrect amount of spent voice credits');
     }
 
     recipient.resultsVerified = true;
     recipient.tallyResult = _tallyResult;
-    recipient.spent = _spent;
     totalVotesSquares = totalVotesSquares + _tallyResult * _tallyResult;
     totalTallyResults++;
-    emit TallyResultsAdded(_voteOptionIndex, _tallyResult, _spent);
+    emit TallyResultsAdded(_voteOptionIndex, _tallyResult);
   }
 
   /**
@@ -425,18 +425,12 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @param _tallyResult The results of vote tally for the recipients.
     * @param _tallyResultProof Proofs of correctness of the vote tally results.
     * @param _tallyResultSalt Salt.
-    * @param _spent The amount of voice credits spent on the recipients.
-    * @param _spentProof Proof of correctness for the amount of spent credits.
-    * @param _spentSalt Salt.
     */
   function addTallyResults(
     uint256 _voteOptionIndex,
     uint256 _tallyResult,
     uint256[][] calldata _tallyResultProof,
-    uint256 _tallyResultSalt,
-    uint256 _spent,
-    uint256[][] calldata _spentProof,
-    uint256 _spentSalt
+    uint256 _tallyResultSalt
   )
     external
     onlyOwner
@@ -447,10 +441,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
       _voteOptionIndex,
       _tallyResult,
       _tallyResultProof,
-      _tallyResultSalt,
-      _spent,
-      _spentProof,
-      _spentSalt
+      _tallyResultSalt
     );
 }
 
@@ -460,18 +451,12 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @param _tallyResults The results of vote tally for the recipients.
     * @param _tallyResultProofs Proofs of correctness of the vote tally results.
     * @param _tallyResultSalt Salt.
-    * @param _spents The amount of voice credits spent on the recipients.
-    * @param _spentProofs Proofs of correctness for the amount of spent credits.
-    * @param _spentSalt Salt.
     */
   function addTallyResultsBatch(
     uint256[] calldata _voteOptionIndices,
     uint256[] calldata _tallyResults,
     uint256[][][] calldata _tallyResultProofs,
-    uint256 _tallyResultSalt,
-    uint256[] calldata _spents,
-    uint256[][][] calldata _spentProofs,
-    uint256 _spentSalt
+    uint256 _tallyResultSalt
   )
     external
     onlyOwner
@@ -484,10 +469,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
         _voteOptionIndices[i],
         _tallyResults[i],
         _tallyResultProofs[i],
-        _tallyResultSalt,
-        _spents[i],
-        _spentProofs[i],
-        _spentSalt
+        _tallyResultSalt
       );
     }
   }
