@@ -1167,13 +1167,6 @@ describe('Funding Round', () => {
       )
     })
 
-    it('prevents finalize if tally results not completely received', async function () {
-      const { spent, salt } = smallTallyTestData.totalVoiceCredits
-      await expect(fundingRound.finalize(spent, salt)).to.be.revertedWith(
-        'FundingRound: Incomplete tally results'
-      )
-    })
-
     it('allows only owner to add tally results', async function () {
       const fundingRoundAsContributor = fundingRound.connect(contributor)
       await expect(
