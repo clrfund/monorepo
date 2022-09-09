@@ -1,5 +1,5 @@
-import { ethers, network } from 'hardhat'
-import { Contract, utils } from 'ethers'
+import { ethers } from 'hardhat'
+import { utils, constants } from 'ethers'
 
 async function main() {
   console.log('*******************')
@@ -10,6 +10,8 @@ async function main() {
 
   const fundingRoundFactoryAddress = process.env.FACTORY_ADDRESS
   const userRegistryType = process.env.USER_REGISTRY_TYPE
+  const brightIdSponsor = process.env.BRIGHTID_SPONSOR
+  const brightIdVerifier = process.env.BRIGHTID_VERIFIER_ADDR
 
   if (!fundingRoundFactoryAddress) {
     throw new Error('Environment variable FACTORY_ADDRESS is not setup')
@@ -17,6 +19,17 @@ async function main() {
 
   if (!userRegistryType) {
     throw new Error('Environment variable USER_REGISTRY_TYPE is not setup')
+  }
+
+  if (userRegistryType === 'brightid') {
+    if (!brightIdSponsor) {
+      throw new Error('Environment variable BRIGHTID_SPONSOR is not setup')
+    }
+    if (!brightIdVerifier) {
+      throw new Error(
+        'Environment variable BRIGHTID_VERIFIER_ADDR is not setup'
+      )
+    }
   }
 
   const factory = await ethers.getContractAt(
@@ -27,15 +40,17 @@ async function main() {
 
   // check if the current round is finalized before starting a new round to avoid revert
   const currentRoundAddress = await factory.getCurrentRound()
-  const currentRound = await ethers.getContractAt(
-    'FundingRound',
-    currentRoundAddress
-  )
-  const isFinalized = await currentRound.isFinalized()
-  if (!isFinalized) {
-    throw new Error(
-      'Cannot start a new round as the current round is not finalized'
+  if (currentRoundAddress !== constants.AddressZero) {
+    const currentRound = await ethers.getContractAt(
+      'FundingRound',
+      currentRoundAddress
     )
+    const isFinalized = await currentRound.isFinalized()
+    if (!isFinalized) {
+      throw new Error(
+        'Cannot start a new round as the current round is not finalized'
+      )
+    }
   }
 
   // deploy a new BrightId user registry for each new round
@@ -46,8 +61,8 @@ async function main() {
     )
     const userRegistry = await BrightIdUserRegistry.deploy(
       utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
-      process.env.BRIGHTID_VERIFIER_ADDR,
-      process.env.BRIGHTID_SPONSOR
+      brightIdVerifier,
+      brightIdSponsor
     )
     console.log('BrightId user registry address: ', userRegistry.address)
     await userRegistry.deployTransaction.wait()
