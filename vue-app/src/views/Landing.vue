@@ -142,6 +142,9 @@
             how you contributed. This drives bribers insane because they have no
             idea whether you actually did what they bribed you to do!
           </p>
+          <p class="text-body">
+            <links to="/about/maci">About MACI ↗</links>
+          </p>
         </div>
         <div class="about">
           <h2>Built using the CLR protocol</h2>

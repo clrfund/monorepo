@@ -61,7 +61,7 @@
             :fullWidthMobile="true"
           />
           <links v-if="currentUser" to="/verify/connect" class="btn-action">
-            Connect
+            I have BrightID installed
           </links>
           <links to="/projects" class="btn-link">Go back</links>
         </div>
