@@ -192,8 +192,9 @@ h1 {
   color: $clr-white;
 
   @media (max-width: $breakpoint-m) {
-    width: 100%;
+    max-width: 100%;
     margin: 0;
+    width: 90%;
   }
 
   .flex-title {
@@ -241,6 +242,15 @@ a {
 
   a {
     width: 100%;
+  }
+  div {
+    width: 100%;
+    .button {
+      margin: 0 !important;
+    }
+  }
+  @media (max-width: $breakpoint-m) {
+    flex-direction: column;
   }
 }
 

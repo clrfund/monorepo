@@ -247,8 +247,6 @@ export default class WalletWidget extends Vue {
 }
 
 .full-width-mobile {
-  @media (max-width: $breakpoint-m) {
-    width: 100%;
-  }
+  width: 100%;
 }
 </style>
