@@ -993,7 +993,8 @@ describe('Funding Round', () => {
     })
   })
 
-  describe('finalizing with alpha', () => {
+  describe('finalizing with alpha', function () {
+    this.timeout(2 * 60 * 1000)
     const treeDepth = 3
     const totalVotes = 11382064
     beforeEach(async () => {
@@ -1019,7 +1020,7 @@ describe('Funding Round', () => {
       await provider.send('evm_increaseTime', [signUpDuration + votingDuration])
     })
 
-    it('adds and verifies tally results', async () => {
+    it('adds and verifies tally results', async function () {
       const skipZero = true
       await addTallyResults(fundingRound, treeDepth, tallyTestData, skipZero)
 
@@ -1048,7 +1049,6 @@ describe('Funding Round', () => {
     })
 
     it('finalizes successfully', async function () {
-      this.timeout(2 * 60 * 1000)
       await addTallyResultsBatch(fundingRound, treeDepth, tallyTestData, 3)
       const { spent, salt } = tallyTestData.totalVoiceCredits
       await fundingRound.finalize(spent, salt)
@@ -1061,7 +1061,6 @@ describe('Funding Round', () => {
     })
 
     it('calculates claim funds correctly', async function () {
-      this.timeout(2 * 60 * 1000)
       await addTallyResultsBatch(fundingRound, treeDepth, tallyTestData, 20)
       const { spent, salt } = tallyTestData.totalVoiceCredits
       await fundingRound.finalize(spent, salt)
