@@ -34,7 +34,7 @@ describe('Funding Round Factory', () => {
     ])
 
     expect(factory.address).to.properAddress
-    expect(await getGasUsage(factory.deployTransaction)).lessThan(5100000)
+    expect(await getGasUsage(factory.deployTransaction)).lessThan(5400000)
 
     await maciFactory.transferOwnership(factory.address)
 

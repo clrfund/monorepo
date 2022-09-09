@@ -35,7 +35,7 @@ describe('Clr fund deployer', () => {
 
     expect(factoryTemplate.address).to.properAddress
     expect(await getGasUsage(factoryTemplate.deployTransaction)).lessThan(
-      5200000
+      5400000
     )
 
     clrFundDeployer = await deployContract(deployer, 'ClrFundDeployer', [
@@ -44,7 +44,7 @@ describe('Clr fund deployer', () => {
 
     expect(clrFundDeployer.address).to.properAddress
     expect(await getGasUsage(clrFundDeployer.deployTransaction)).lessThan(
-      5200000
+      5400000
     )
 
     const newInstanceTx = await clrFundDeployer.deployFund(maciFactory.address)
