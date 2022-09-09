@@ -267,7 +267,7 @@ describe('Clr fund deployer', () => {
       const deployed = factory.deployNewRound()
       await expect(deployed).to.emit(factory, 'RoundStarted')
       const deployTx = await deployed
-      expect(await getGasUsage(deployTx)).lessThan(12000000)
+      expect(await getGasUsage(deployTx)).lessThan(13000000)
 
       const fundingRoundAddress = await factory.getCurrentRound()
       expect(fundingRoundAddress).to.properAddress
