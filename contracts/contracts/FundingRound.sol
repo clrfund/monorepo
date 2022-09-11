@@ -417,7 +417,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     uint256[][] calldata _tallyResultProof,
     uint256 _tallyResultSalt
   )
-    internal
+    private
   {
     RecipientStatus storage recipient = recipients[_voteOptionIndex];
     require(!recipient.resultsVerified, 'FundingRound: Vote results already verified');
@@ -456,8 +456,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     uint256 _tallyResultSalt
   )
     external
-    onlyOwner
   {
+    require(msg.sender == coordinator, 'FundingRound: Sender is not the coordinator');
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes have not been tallied');
     require(!isFinalized, 'FundingRound: Already finalized');
     _addTallyResults(
@@ -482,8 +482,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     uint256 _tallyResultSalt
   )
     external
-    onlyOwner
   {
+    require(msg.sender == coordinator, 'FundingRound: Sender is not the coordinator');
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes have not been tallied');
     require(!isFinalized, 'FundingRound: Already finalized');
 

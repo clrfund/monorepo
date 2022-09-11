@@ -492,7 +492,7 @@ describe('Funding Round', () => {
       await token.transfer(fundingRound.address, matchingPoolSize)
 
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         5
@@ -514,7 +514,7 @@ describe('Funding Round', () => {
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
 
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         5
@@ -538,7 +538,7 @@ describe('Funding Round', () => {
         .transfer(fundingRound.address, contributionAmount)
 
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         5
@@ -558,7 +558,7 @@ describe('Funding Round', () => {
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         5
@@ -625,7 +625,7 @@ describe('Funding Round', () => {
       await maci.mock.totalVotes.returns(0)
 
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         5
@@ -646,7 +646,7 @@ describe('Funding Round', () => {
       await maci.mock.verifySpentVoiceCredits.returns(false)
 
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         5
@@ -706,7 +706,7 @@ describe('Funding Round', () => {
       await fundingRound.connect(coordinator).publishTallyHash(tallyHash)
       await token.transfer(fundingRound.address, matchingPoolSize)
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -867,7 +867,7 @@ describe('Funding Round', () => {
     it('allows recipient to claim allocated funds', async () => {
       await token.transfer(fundingRound.address, budget)
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -899,7 +899,7 @@ describe('Funding Round', () => {
     it('allows address different than recipient to claim allocated funds', async () => {
       await token.transfer(fundingRound.address, budget)
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -922,7 +922,7 @@ describe('Funding Round', () => {
     it('allows recipient to claim zero amount', async () => {
       await token.transfer(fundingRound.address, budget)
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -946,7 +946,7 @@ describe('Funding Round', () => {
         ethers.BigNumber.from(totalSpent).mul(VOICE_CREDIT_FACTOR)
       await token.transfer(fundingRound.address, totalContributions)
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -997,7 +997,7 @@ describe('Funding Round', () => {
     it('sends funds allocated to unverified recipients back to matching pool', async () => {
       await token.transfer(fundingRound.address, budget)
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -1022,7 +1022,7 @@ describe('Funding Round', () => {
     it('allows recipient to claim allocated funds only once', async () => {
       await token.transfer(fundingRound.address, budget)
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -1046,7 +1046,7 @@ describe('Funding Round', () => {
       await maci.mock.verifyTallyResult.returns(false)
       await expect(
         addTallyResultsBatch(
-          fundingRound,
+          fundingRound.connect(coordinator),
           tallyTreeDepth,
           smallTallyTestData,
           3
@@ -1059,7 +1059,7 @@ describe('Funding Round', () => {
       await maci.mock.verifyPerVOSpentVoiceCredits.returns(false)
 
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         3
@@ -1110,7 +1110,7 @@ describe('Funding Round', () => {
       this.timeout(2 * 60 * 1000)
       const skipZero = true
       await addTallyResults(
-        fundingRound,
+        fundingRound.connect(coordinator),
         treeDepth,
         smallTallyTestData,
         skipZero
@@ -1130,7 +1130,7 @@ describe('Funding Round', () => {
       this.timeout(2 * 60 * 1000)
       const skipZero = true
       await addTallyResults(
-        fundingRound,
+        fundingRound.connect(coordinator),
         treeDepth,
         smallTallyTestData,
         skipZero
@@ -1147,7 +1147,12 @@ describe('Funding Round', () => {
     })
 
     it('finalizes successfully', async function () {
-      await addTallyResultsBatch(fundingRound, treeDepth, smallTallyTestData, 3)
+      await addTallyResultsBatch(
+        fundingRound.connect(coordinator),
+        treeDepth,
+        smallTallyTestData,
+        3
+      )
       const { spent, salt } = smallTallyTestData.totalVoiceCredits
       await fundingRound.finalize(spent, salt)
 
@@ -1160,7 +1165,7 @@ describe('Funding Round', () => {
 
     it('calculates claim funds correctly', async function () {
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         treeDepth,
         smallTallyTestData,
         20
@@ -1202,7 +1207,7 @@ describe('Funding Round', () => {
       )
     })
 
-    it('allows only owner to add tally results', async function () {
+    it('allows only coordinator to add tally results', async function () {
       const fundingRoundAsContributor = fundingRound.connect(contributor)
       await expect(
         addTallyResults(
@@ -1211,10 +1216,10 @@ describe('Funding Round', () => {
           smallTallyTestData,
           true
         )
-      ).to.be.revertedWith('Ownable: caller is not the owner')
+      ).to.be.revertedWith('FundingRound: Sender is not the coordinator')
     })
 
-    it('allows only owner to add tally results in batches', async function () {
+    it('allows only coordinator to add tally results in batches', async function () {
       const fundingRoundAsContributor = fundingRound.connect(contributor)
       await expect(
         addTallyResultsBatch(
@@ -1223,14 +1228,19 @@ describe('Funding Round', () => {
           smallTallyTestData,
           5
         )
-      ).to.be.revertedWith('Ownable: caller is not the owner')
+      ).to.be.revertedWith('FundingRound: Sender is not the coordinator')
     })
 
     it('prevents adding tally results if maci has not completed tallying', async function () {
       await maci.mock.hasUntalliedStateLeaves.returns(true)
 
       await expect(
-        addTallyResults(fundingRound, tallyTreeDepth, smallTallyTestData, true)
+        addTallyResults(
+          fundingRound.connect(coordinator),
+          tallyTreeDepth,
+          smallTallyTestData,
+          true
+        )
       ).to.be.revertedWith('FundingRound: Votes have not been tallied')
     })
 
@@ -1239,7 +1249,7 @@ describe('Funding Round', () => {
 
       await expect(
         addTallyResultsBatch(
-          fundingRound,
+          fundingRound.connect(coordinator),
           tallyTreeDepth,
           smallTallyTestData,
           5
@@ -1251,7 +1261,7 @@ describe('Funding Round', () => {
       await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
 
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         5
@@ -1261,7 +1271,7 @@ describe('Funding Round', () => {
       await fundingRound.finalize(spent, salt)
       await expect(
         addTallyResultsBatch(
-          fundingRound,
+          fundingRound.connect(coordinator),
           tallyTreeDepth,
           smallTallyTestData,
           5
@@ -1271,14 +1281,14 @@ describe('Funding Round', () => {
 
     it('prevents adding tally results that were already verified', async function () {
       await addTallyResultsBatch(
-        fundingRound,
+        fundingRound.connect(coordinator),
         tallyTreeDepth,
         smallTallyTestData,
         5
       )
       await expect(
         addTallyResultsBatch(
-          fundingRound,
+          fundingRound.connect(coordinator),
           tallyTreeDepth,
           smallTallyTestData,
           5
