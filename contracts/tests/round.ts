@@ -1163,6 +1163,42 @@ describe('Funding Round', () => {
       )
     })
 
+    it('fails to finalize if all projects only have 1 contributor', async function () {
+      const tallyTreeDepth = 1
+      await maci.mock.treeDepths.returns(10, 10, tallyTreeDepth)
+      const tallyWith1Contributor = {
+        results: {
+          commitment:
+            '0x2f44c97ce649078012fd686eaf996fc6b8d817e11ab574f0d0a0d750ee1ec101',
+          tally: [0, 200, 200, 0, 0],
+          salt: '0xa1f71f9e48a5f2ec55020051a190f079ca43d66457879972554c3c2e8a07ea0',
+        },
+        totalVoiceCredits: {
+          spent: '80000',
+          commitment:
+            '0x18b52cbe2a91777772d10c80d1b883cdc98e0f19475bcd907c693fddd6c675b8',
+          salt: '0x2013aa4e350542684f78adbf3e716c3bcf96e12c64b8e8ef3d962e3568132778',
+        },
+        totalVoiceCreditsPerVoteOption: {
+          commitment:
+            '0x26e6ae35c82006eff6408b713d477307b2da16c7a1ff15fb46c0762ee308e88a',
+          tally: ['0', '40000', '40000', '0', '0'],
+        },
+        salt: '0x63c80f2b0319790c19b3b17ecd7b00fc1dc7398198601d0dfb30253306ecb34',
+      }
+      const batchSize = 3
+      await addTallyResultsBatch(
+        fundingRound.connect(coordinator),
+        tallyTreeDepth,
+        tallyWith1Contributor,
+        batchSize
+      )
+      const { spent, salt } = smallTallyTestData.totalVoiceCredits
+      await expect(fundingRound.finalize(spent, salt)).to.be.revertedWith(
+        'FundingRound: Invalid tally results'
+      )
+    })
+
     it('calculates claim funds correctly', async function () {
       await addTallyResultsBatch(
         fundingRound.connect(coordinator),
