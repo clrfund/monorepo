@@ -254,11 +254,15 @@ describe('End-to-end Tests', function () {
       batchSize
     )
 
+    const votesSquares = await fundingRound.totalVotesSquares()
+    const totalTallyResults = await fundingRound.totalTallyResults()
+
     // Finalize round
     await fundingRoundFactory.transferMatchingFunds(
       tally.totalVoiceCredits.spent,
       tally.totalVoiceCredits.salt
     )
+    const budget = await token.balanceOf(fundingRound.address)
 
     // Claim funds
     const claims: { [index: number]: BigNumber } = {}
@@ -348,43 +352,52 @@ describe('End-to-end Tests', function () {
       UNIT.mul(8).div(10),
     ])
 
+    // 2 contirbutors, divide their contributions into 4 parts, only contribute 2 parts to 2 projects
     for (const contribution of contributions) {
       const contributor = contribution.signer
-      const recipientIndex = contributions.indexOf(contribution) + 1
-      const voiceCredits = contribution.voiceCredits.div(2)
-      const nonce = 1
-      const [message, encPubKey] = createMessage(
-        contribution.stateIndex,
-        contribution.keypair,
-        null,
-        coordinatorKeypair.pubKey,
-        recipientIndex,
-        voiceCredits,
-        nonce
-      )
-      await fundingRound
-        .connect(contributor)
-        .submitMessageBatch(
-          [message.asContractParam()],
-          [encPubKey.asContractParam()]
+      const voiceCredits = contribution.voiceCredits.div(4)
+      let nonce = 1
+      const messages = []
+      const encPubKeys = []
+
+      for (const recipientIndex of [1, 2]) {
+        const [message, encPubKey] = createMessage(
+          contribution.stateIndex,
+          contribution.keypair,
+          null,
+          coordinatorKeypair.pubKey,
+          recipientIndex,
+          voiceCredits,
+          nonce
         )
+        messages.push(message)
+        encPubKeys.push(encPubKey)
+        nonce += 1
+      }
+      await fundingRound.connect(contributor).submitMessageBatch(
+        messages.reverse().map((msg) => msg.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam())
+      )
     }
 
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
     const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('80000')
-    expect(claims[1]).to.equal(UNIT.mul(58).div(10))
-    expect(claims[2]).to.equal(UNIT.mul(58).div(10))
+    expect(tally.totalVoiceCredits.spent).to.equal('79524')
+    expect(claims[1].toString()).to.equal('5799999999999999999')
+    expect(claims[2].toString()).to.equal('5799999999999999999')
   })
 
   it('should overwrite votes 1', async () => {
-    const [contribution] = await makeContributions([UNIT.mul(5).div(10)])
+    const [contribution, contribution2] = await makeContributions([
+      UNIT.mul(8).div(10),
+      UNIT.mul(4).div(10),
+    ])
     const contributor = contribution.signer
     const votes = [
-      [1, contribution.voiceCredits.div(5)],
-      [2, contribution.voiceCredits.div(5)],
-      [1, contribution.voiceCredits.div(5).mul(4)],
+      [1, contribution.voiceCredits.div(8)],
+      [2, contribution.voiceCredits.div(2)],
+      [1, contribution.voiceCredits.div(2)],
     ]
     const messages = []
     const encPubKeys = []
@@ -407,19 +420,37 @@ describe('End-to-end Tests', function () {
       messages.reverse().map((msg) => msg.asContractParam()),
       encPubKeys.reverse().map((key) => key.asContractParam())
     )
+    const [message, encPubKey] = createMessage(
+      contribution2.stateIndex,
+      contribution2.keypair,
+      null,
+      coordinatorKeypair.pubKey,
+      2,
+      contribution2.voiceCredits,
+      1
+    )
+    await fundingRound
+      .connect(contribution2.signer)
+      .submitMessageBatch(
+        [message.asContractParam()],
+        [encPubKey.asContractParam()]
+      )
 
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
     const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('50000')
+    expect(tally.totalVoiceCredits.spent).to.equal('120000')
     expect(tally.results.tally[1]).to.equal('200')
-    expect(tally.results.tally[2]).to.equal('100')
-    expect(claims[1].toString()).to.equal('7066666666666666666')
-    expect(claims[2].toString()).to.equal('3433333333333333333')
+    expect(tally.results.tally[2]).to.equal('400')
+    expect(claims[1].toString()).to.equal('400000000000000000')
+    expect(claims[2].toString()).to.equal('10800000000000000000')
   })
 
   it('should overwrite votes 2', async () => {
-    const [contribution] = await makeContributions([UNIT.mul(16).div(10)])
+    const [contribution, contribution2] = await makeContributions([
+      UNIT.mul(4).div(10),
+      UNIT.mul(4).div(10),
+    ])
     const contributor = contribution.signer
     const votes = [
       [1, contribution.voiceCredits.div(2)],
@@ -449,18 +480,38 @@ describe('End-to-end Tests', function () {
       encPubKeys.reverse().map((key) => key.asContractParam())
     )
 
+    // contribution 2
+    const [message, encPubKey] = createMessage(
+      contribution2.stateIndex,
+      contribution2.keypair,
+      null,
+      coordinatorKeypair.pubKey,
+      2,
+      contribution2.voiceCredits,
+      1
+    )
+    await fundingRound
+      .connect(contribution2.signer)
+      .submitMessageBatch(
+        [message.asContractParam()],
+        [encPubKey.asContractParam()]
+      )
+
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
     const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('160000')
+    expect(tally.totalVoiceCredits.spent).to.equal('80000')
     expect(tally.results.tally[1]).to.equal('0')
     expect(tally.results.tally[2]).to.equal('400')
     expect(claims[1]).to.equal(ZERO)
-    expect(claims[2]).to.equal(UNIT.mul(116).div(10))
+    expect(claims[2]).to.equal(UNIT.mul(108).div(10))
   })
 
   it('should overwrite previous batch of votes', async () => {
-    const [contribution] = await makeContributions([UNIT.mul(8).div(10)])
+    const [contribution, contribution2] = await makeContributions([
+      UNIT.mul(8).div(10),
+      UNIT.mul(4).div(10),
+    ])
     const contributor = contribution.signer
     const votes = [
       [
@@ -498,17 +549,39 @@ describe('End-to-end Tests', function () {
       )
     }
 
+    // contribution 2
+    const [message, encPubKey] = createMessage(
+      contribution2.stateIndex,
+      contribution2.keypair,
+      null,
+      coordinatorKeypair.pubKey,
+      2,
+      contribution2.voiceCredits,
+      1
+    )
+    await fundingRound
+      .connect(contribution2.signer)
+      .submitMessageBatch(
+        [message.asContractParam()],
+        [encPubKey.asContractParam()]
+      )
+
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
-    const { tally } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('80000')
+    const { tally, claims } = await finalizeRound()
+    expect(tally.totalVoiceCredits.spent).to.equal('120000')
     expect(tally.results.tally[1]).to.equal('200')
-    expect(tally.results.tally[2]).to.equal('200')
+    expect(tally.results.tally[2]).to.equal('400')
     expect(tally.results.tally[3]).to.equal('0')
+    expect(claims[1]).to.equal(UNIT.mul(4).div(10))
+    expect(claims[2]).to.equal(UNIT.mul(108).div(10))
   })
 
-  it('should invalidate votes in case of bribe', async () => {
-    const [contribution] = await makeContributions([UNIT.mul(4).div(10)])
+  it.only('should invalidate votes in case of bribe', async () => {
+    const [contribution, contribution2] = await makeContributions([
+      UNIT.mul(4).div(10),
+      UNIT.mul(4).div(10),
+    ])
     const contributor = contribution.signer
     let message
     let encPubKey
@@ -590,10 +663,27 @@ describe('End-to-end Tests', function () {
       encPubKeyBatch2.reverse().map((key) => key.asContractParam())
     )
 
+    // contribution 2
+    ;[message, encPubKey] = createMessage(
+      contribution2.stateIndex,
+      contribution2.keypair,
+      null,
+      coordinatorKeypair.pubKey,
+      2,
+      contribution2.voiceCredits,
+      1
+    )
+    await fundingRound
+      .connect(contribution2.signer)
+      .submitMessageBatch(
+        [message.asContractParam()],
+        [encPubKey.asContractParam()]
+      )
+
     await provider.send('evm_increaseTime', [maciParameters.votingDuration])
     const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('40000')
+    expect(tally.totalVoiceCredits.spent).to.equal('80000')
     expect(claims[1]).to.equal(BigNumber.from(0))
-    expect(claims[2]).to.equal(UNIT.mul(104).div(10))
+    expect(claims[2]).to.equal(UNIT.mul(108).div(10))
   })
 })
