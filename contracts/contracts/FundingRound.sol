@@ -258,7 +258,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     *  in page 17 of https://arxiv.org/pdf/1809.06421.pdf
     * @param _budget Total budget of the round to be distributed
     * @param _totalVotesSquares Total of the squares of votes
-    * @param _totalSpent Total voice credits spent
+    * @param _totalSpent Total amount of spent voice credits
    */
   function calcAlpha(
     uint256 _budget,
@@ -273,8 +273,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     uint256 contributions = _totalSpent * voiceCreditFactor;
     require(_budget >= contributions, 'FundingRound: Invalid budget');
 
-    // guard against division by zero
-    require(_totalVotesSquares > _totalSpent, 'FundingRound: Invalid tally results');
+    // guard against division by zero when fewer than 1 contributor for each project
+    require(_totalVotesSquares > _totalSpent, "FundingRound: Total quadratic votes must be greater than total spent voice credits");
 
     return  (_budget - contributions) * ALPHA_PRECISION /
             (voiceCreditFactor * (_totalVotesSquares - _totalSpent));
@@ -437,13 +437,13 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
 
     recipient.resultsVerified = true;
     recipient.tallyResult = _tallyResult;
-    totalVotesSquares = totalVotesSquares + _tallyResult * _tallyResult;
+    totalVotesSquares = totalVotesSquares + (_tallyResult * _tallyResult);
     totalTallyResults++;
     emit TallyResultsAdded(_voteOptionIndex, _tallyResult);
   }
 
   /**
-    * @dev Add and verify a tally result and spent voice credit.
+    * @dev Add and verify a tally result.
     * @param _voteOptionIndex Vote option index.
     * @param _tallyResult The results of vote tally for the recipients.
     * @param _tallyResultProof Proofs of correctness of the vote tally results.

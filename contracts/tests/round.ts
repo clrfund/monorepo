@@ -1195,7 +1195,7 @@ describe('Funding Round', () => {
       )
       const { spent, salt } = smallTallyTestData.totalVoiceCredits
       await expect(fundingRound.finalize(spent, salt)).to.be.revertedWith(
-        'FundingRound: Invalid tally results'
+        'FundingRound: Total quadratic votes must be greater than total spent voice credits'
       )
     })
 
@@ -1349,7 +1349,9 @@ describe('Funding Round', () => {
       const totalSpent = 100
       await expect(
         fundingRound.calcAlpha(totalBudget, totalVotesSquares, totalSpent)
-      ).to.be.revertedWith('FundingRound: Invalid tally results')
+      ).to.be.revertedWith(
+        'FundingRound: Total quadratic votes must be greater than total spent voice credits'
+      )
     })
   })
 })
