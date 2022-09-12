@@ -185,7 +185,7 @@ export default class CartWidget extends Vue {
 .toggle-btn {
   box-sizing: border-box;
   position: absolute;
-  top: 1.875rem;
+  top: 0;
   right: 0;
   width: fit-content;
   z-index: 1;

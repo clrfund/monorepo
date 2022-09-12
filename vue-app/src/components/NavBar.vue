@@ -169,10 +169,12 @@ export default class NavBar extends Vue {
 
   .btn-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 108px 1fr;
     @media (max-width: $breakpoint-m) {
       grid-template-columns: 1fr;
       align-items: center;
+      justify-content: center;
+      justify-items: center;
     }
     width: fit-content;
   }
@@ -180,6 +182,7 @@ export default class NavBar extends Vue {
     display: grid;
     grid-template-columns: 1fr 1fr;
     justify-items: center;
+    width: fit-content;
   }
 
   .help-dropdown {
