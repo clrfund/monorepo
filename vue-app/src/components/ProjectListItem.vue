@@ -206,7 +206,7 @@ export default class ProjectListItem extends Vue {
   top: 0.5rem;
   right: 0.5rem;
   box-shadow: var(--box-shadow);
-  background: $clr-dark-purple;
-  color: $clr-white;
+  background: var(--bg-secondary-color);
+  color: var(--text-color);
 }
 </style>
