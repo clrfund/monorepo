@@ -577,7 +577,7 @@ describe('End-to-end Tests', function () {
     expect(claims[2]).to.equal(UNIT.mul(108).div(10))
   })
 
-  it.only('should invalidate votes in case of bribe', async () => {
+  it('should invalidate votes in case of bribe', async () => {
     const [contribution, contribution2] = await makeContributions([
       UNIT.mul(4).div(10),
       UNIT.mul(4).div(10),
