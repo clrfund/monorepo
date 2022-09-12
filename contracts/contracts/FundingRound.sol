@@ -33,8 +33,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   struct RecipientStatus {
     // Has the recipient claimed funds?
     bool fundsClaimed;
-    // Are the tally result and spent verified
-    bool resultsVerified;
+    // Is the tally result verified
+    bool tallyVerified;
     // Tally result
     uint256 tallyResult;
   }
@@ -410,12 +410,14 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
 
   /**
     * @dev Add and verify tally votes and calculate sum of tally squares for alpha calculation.
+    * @param _voteOptionTreeDepth Vote option tree depth
     * @param _voteOptionIndex Vote option index.
     * @param _tallyResult The results of vote tally for the recipients.
     * @param _tallyResultProof Proofs of correctness of the vote tally results.
     * @param _tallyResultSalt Salt.
     */
-  function _addTallyResults(
+  function _addTallyResult(
+    uint8 _voteOptionTreeDepth,
     uint256 _voteOptionIndex,
     uint256 _tallyResult,
     uint256[][] calldata _tallyResultProof,
@@ -424,22 +426,18 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     private
   {
     RecipientStatus storage recipient = recipients[_voteOptionIndex];
-    require(!recipient.resultsVerified, 'FundingRound: Vote results already verified');
+    require(!recipient.tallyVerified, 'FundingRound: Vote results already verified');
 
-    {
-      // create scope to avoid 'stack too deep' error
-      (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
-      bool resultVerified = maci.verifyTallyResult(
-        voteOptionTreeDepth,
-        _voteOptionIndex,
-        _tallyResult,
-        _tallyResultProof,
-        _tallyResultSalt
-      );
-      require(resultVerified, 'FundingRound: Incorrect tally result');
-    }
+    bool resultVerified = maci.verifyTallyResult(
+      _voteOptionTreeDepth,
+      _voteOptionIndex,
+      _tallyResult,
+      _tallyResultProof,
+      _tallyResultSalt
+    );
+    require(resultVerified, 'FundingRound: Incorrect tally result');
 
-    recipient.resultsVerified = true;
+    recipient.tallyVerified = true;
     recipient.tallyResult = _tallyResult;
     totalVotesSquares = totalVotesSquares + (_tallyResult * _tallyResult);
     totalTallyResults++;
@@ -453,7 +451,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     * @param _tallyResultProof Proofs of correctness of the vote tally results.
     * @param _tallyResultSalt Salt.
     */
-  function addTallyResults(
+  function addTallyResult(
     uint256 _voteOptionIndex,
     uint256 _tallyResult,
     uint256[][] calldata _tallyResultProof,
@@ -464,7 +462,10 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   {
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes have not been tallied');
     require(!isFinalized, 'FundingRound: Already finalized');
-    _addTallyResults(
+    (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
+
+    _addTallyResult(
+      voteOptionTreeDepth,
       _voteOptionIndex,
       _tallyResult,
       _tallyResultProof,
@@ -490,9 +491,11 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   {
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes have not been tallied');
     require(!isFinalized, 'FundingRound: Already finalized');
+    (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
 
     for (uint256 i = 0; i < _voteOptionIndices.length; i++) {
-      _addTallyResults(
+      _addTallyResult(
+        voteOptionTreeDepth,
         _voteOptionIndices[i],
         _tallyResults[i],
         _tallyResultProofs[i],
