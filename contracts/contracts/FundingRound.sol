@@ -72,6 +72,11 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   event Voted(address indexed _contributor);
   event TallyResultsAdded(uint256 indexed _voteOptionIndex, uint256 _tally);
 
+  modifier onlyCoordinator() {
+    require(msg.sender == coordinator, 'FundingRound: Sender is not the coordinator');
+    _;
+  }
+
   /**
     * @dev Set round parameters.
     * @param _nativeToken Address of a token which will be accepted for contributions.
@@ -245,8 +250,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     */
   function publishTallyHash(string calldata _tallyHash)
     external
+    onlyCoordinator
   {
-    require(msg.sender == coordinator, 'FundingRound: Sender is not the coordinator');
     require(!isFinalized, 'FundingRound: Round finalized');
     require(bytes(_tallyHash).length != 0, 'FundingRound: Tally hash is empty string');
     tallyHash = _tallyHash;
@@ -318,8 +323,7 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     uint256 budget = nativeToken.balanceOf(address(this));
     matchingPoolSize = budget - totalSpent * voiceCreditFactor;
 
-    // TODO: need to check/verify totalVotesSquares
-    alpha = calcAlpha(budget, totalVotesSquares, _totalSpent);
+    alpha = calcAlpha(budget, totalVotesSquares, totalSpent);
 
     isFinalized = true;
   }
@@ -456,8 +460,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     uint256 _tallyResultSalt
   )
     external
+    onlyCoordinator
   {
-    require(msg.sender == coordinator, 'FundingRound: Sender is not the coordinator');
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes have not been tallied');
     require(!isFinalized, 'FundingRound: Already finalized');
     _addTallyResults(
@@ -482,8 +486,8 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
     uint256 _tallyResultSalt
   )
     external
+    onlyCoordinator
   {
-    require(msg.sender == coordinator, 'FundingRound: Sender is not the coordinator');
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes have not been tallied');
     require(!isFinalized, 'FundingRound: Already finalized');
 
