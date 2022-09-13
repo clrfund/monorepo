@@ -254,15 +254,11 @@ describe('End-to-end Tests', function () {
       batchSize
     )
 
-    const votesSquares = await fundingRound.totalVotesSquares()
-    const totalTallyResults = await fundingRound.totalTallyResults()
-
     // Finalize round
     await fundingRoundFactory.transferMatchingFunds(
       tally.totalVoiceCredits.spent,
       tally.totalVoiceCredits.salt
     )
-    const budget = await token.balanceOf(fundingRound.address)
 
     // Claim funds
     const claims: { [index: number]: BigNumber } = {}
