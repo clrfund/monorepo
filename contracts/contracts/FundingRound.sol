@@ -446,12 +446,14 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
 
   /**
     * @dev Add and verify a tally result.
+    * @param _voteOptionTreeDepth Vote option tree depth.
     * @param _voteOptionIndex Vote option index.
     * @param _tallyResult The results of vote tally for the recipients.
     * @param _tallyResultProof Proofs of correctness of the vote tally results.
     * @param _tallyResultSalt Salt.
     */
   function addTallyResult(
+    uint8 _voteOptionTreeDepth,
     uint256 _voteOptionIndex,
     uint256 _tallyResult,
     uint256[][] calldata _tallyResultProof,
@@ -462,10 +464,9 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   {
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes have not been tallied');
     require(!isFinalized, 'FundingRound: Already finalized');
-    (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
 
     _addTallyResult(
-      voteOptionTreeDepth,
+      _voteOptionTreeDepth,
       _voteOptionIndex,
       _tallyResult,
       _tallyResultProof,
@@ -475,12 +476,14 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
 
   /**
     * @dev Add and verify tally results by batch.
+    * @param _voteOptionTreeDepth Vote option tree depth.
     * @param _voteOptionIndices Vote option index.
     * @param _tallyResults The results of vote tally for the recipients.
     * @param _tallyResultProofs Proofs of correctness of the vote tally results.
     * @param _tallyResultSalt Salt.
     */
   function addTallyResultsBatch(
+    uint8 _voteOptionTreeDepth,
     uint256[] calldata _voteOptionIndices,
     uint256[] calldata _tallyResults,
     uint256[][][] calldata _tallyResultProofs,
@@ -491,11 +494,10 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   {
     require(!maci.hasUntalliedStateLeaves(), 'FundingRound: Votes have not been tallied');
     require(!isFinalized, 'FundingRound: Already finalized');
-    (,, uint8 voteOptionTreeDepth) = maci.treeDepths();
 
     for (uint256 i = 0; i < _voteOptionIndices.length; i++) {
       _addTallyResult(
-        voteOptionTreeDepth,
+        _voteOptionTreeDepth,
         _voteOptionIndices[i],
         _tallyResults[i],
         _tallyResultProofs[i],
