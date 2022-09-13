@@ -9,9 +9,17 @@
         </div>
         <div>
           <div class="hero-content">
-            <h1>Send your favorite projects to the moon!</h1>
+            <h1>QUADRATIC FUNDING @DEVCON!</h1>
             <div id="subtitle" class="subtitle">
-              Every project you contribute to gets a portion of extra funding.
+              QF @ Devcon for the LatAm Community! Brought to you by:
+            </div>
+
+            <div class="organizers-wrapper">
+              <image-responsive
+                title="organizers"
+                class="organizers"
+                alt="organizers of QF round."
+              />
             </div>
             <div class="btn-group">
               <links to="/projects" class="btn-action">Get started</links>
@@ -354,7 +362,7 @@ ol li::before {
 
   .image-wrapper img {
     position: absolute;
-    mix-blend-mode: exclusion;
+    padding-top: 2rem;
     width: 70%;
     max-width: 880px;
     height: auto;
@@ -369,8 +377,9 @@ ol li::before {
   }
 
   .hero-content {
+    padding: 2rem;
     position: relative;
-    max-width: 40%;
+    max-width: 60ch;
     min-height: 400px;
     display: flex;
     flex-direction: column;
@@ -378,7 +387,7 @@ ol li::before {
     @media (max-width: $breakpoint-m) {
       max-width: 880px;
       margin: -2rem;
-      padding: 2rem;
+      padding: 4rem;
       @include gradientBackground(
         182.34deg,
         rgba(var(--shadow-dark-rgb), 0.4),
@@ -387,13 +396,29 @@ ol li::before {
         89.75%
       );
     }
+
+    .organizers-wrapper {
+      padding-top: 2rem;
+      padding-bottom: 4rem;
+      grid-area: image;
+      position: relative;
+      display: flex;
+      max-width: 85%;
+
+      align-items: left;
+      .organizers {
+        position: relative;
+        margin: 0;
+        max-width: 100%;
+      }
+    }
   }
 
   #moon {
+    mix-blend-mode: color-dodge;
     position: absolute;
     top: 0;
     right: 0;
-    mix-blend-mode: exclusion;
   }
 
   .btn-group {
@@ -496,6 +521,7 @@ ol li::before {
 #subtitle {
   font-size: 20px;
   margin-bottom: 1.5rem;
+  max-width: 35ch;
 }
 
 #section-how-it-works {
@@ -517,7 +543,6 @@ ol li::before {
       width: 100%;
       height: auto;
       aspect-ratio: 16/9;
-      mix-blend-mode: exclusion;
     }
   }
   #how-it-works-content {

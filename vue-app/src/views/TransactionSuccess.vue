@@ -115,7 +115,6 @@ export default class TransactionSuccess extends Vue {
 
 .image-wrapper .docking {
   height: 95%;
-  mix-blend-mode: exclusion;
   transform: rotate(15deg);
   @media (max-width: $breakpoint-m) {
     transform: translateX(-6em) translateY(3em) rotate(15deg);
@@ -125,7 +124,6 @@ export default class TransactionSuccess extends Vue {
 .image-wrapper .money {
   position: fixed;
   width: 100%;
-  mix-blend-mode: exclusion;
 }
 
 .dropshadow {

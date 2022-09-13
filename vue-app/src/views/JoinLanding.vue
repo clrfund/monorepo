@@ -288,7 +288,7 @@ h1 {
       position: absolute;
       bottom: 0;
       right: calc(-700px + 50vw);
-      mix-blend-mode: exclusion;
+
       max-width: 88%;
       max-height: 100%;
 

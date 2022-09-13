@@ -34,7 +34,7 @@
 }
 
 #banner {
-  @include banner(var(--text-color), var(--bg-primary-color));
+  @include banner(var(--text-color), #edbc00);
 }
 
 .explorer-btn {
@@ -54,17 +54,18 @@
 
 .navbar-btn,
 .dropdown-btn {
-  @include button(white, #2c2938, 1px solid rgba(115, 117, 166, 0.3));
-  padding: 0.25rem 0.5rem;
-  border-radius: 8px;
-  margin-right: 0.5rem;
+  @include button(white, #191623, 1px solid rgba(255, 255, 255, 0.3));
+  padding: 0.5rem 0.5rem;
+  border-radius: 4px;
+  margin-right: 0.25rem;
   display: flex;
 }
 
 #nav-bar {
   .app-btn {
-    padding: 0.25rem 1.25rem;
-    border-radius: 1rem;
+    margin-left: 0.25rem;
+    padding: 0.5rem 2.25rem;
+    border-radius: 4px;
   }
 }
 

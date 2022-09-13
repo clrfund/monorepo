@@ -7,8 +7,8 @@
   --text-color-rgb: 33, 37, 41;
 
   --brand-primary: #6f3ff5;
-  --brand-secondary: #00e3a1;
-  --brand-tertiary: #f3d2f9;
+  --brand-secondary: #6f3ff5;
+  --brand-tertiary: #6f3ff5;
 
   --error-color: #bd6b5e;
   --warning-color: var(--text-color);
@@ -27,7 +27,7 @@
 
   --bg-primary-color: #fff;
   --bg-secondary-color: #fff;
-  --bg-light-color: #fff;
+  --bg-light-color: #8990f2;
 
   // alternative mapping for secondary and light background
   --bg-secondary-highlight: #f5f2ff;
@@ -46,7 +46,7 @@
   --button-secondary-color: #212529;
   --button-secondary-bg: #d2fff6;
   --button-secondary-border: none;
-  --button-action: #00e3a1;
+  --button-action: #6f3ff5;
 
   --explorer-border: var(--border-color);
   --explorer-hover: none;

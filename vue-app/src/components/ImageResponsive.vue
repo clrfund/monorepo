@@ -1,5 +1,5 @@
 <template>
-  <img sizes="(max-width: 1440px) 100vw, 1440px" :src="src" :srcset="srcset" />
+  <img sizes="(max-width: 2880px) 100vw, 2880px" :src="src" :srcset="srcset" />
 </template>
 
 <script lang="ts">
