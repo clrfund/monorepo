@@ -54,28 +54,6 @@ export class Registered__Params {
   }
 }
 
-export class RegistrationPeriodChanged extends ethereum.Event {
-  get params(): RegistrationPeriodChanged__Params {
-    return new RegistrationPeriodChanged__Params(this);
-  }
-}
-
-export class RegistrationPeriodChanged__Params {
-  _event: RegistrationPeriodChanged;
-
-  constructor(event: RegistrationPeriodChanged) {
-    this._event = event;
-  }
-
-  get startTime(): BigInt {
-    return this._event.parameters[0].value.toBigInt();
-  }
-
-  get deadline(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
-  }
-}
-
 export class SetBrightIdSettings extends ethereum.Event {
   get params(): SetBrightIdSettings__Params {
     return new SetBrightIdSettings__Params(this);
@@ -144,25 +122,6 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  canRegister(_timestamp: BigInt): boolean {
-    let result = super.call("canRegister", "canRegister(uint256):(bool)", [
-      ethereum.Value.fromUnsignedBigInt(_timestamp)
-    ]);
-
-    return result[0].toBoolean();
-  }
-
-  try_canRegister(_timestamp: BigInt): ethereum.CallResult<boolean> {
-    let result = super.tryCall("canRegister", "canRegister(uint256):(bool)", [
-      ethereum.Value.fromUnsignedBigInt(_timestamp)
-    ]);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBoolean());
-  }
-
   context(): Bytes {
     let result = super.call("context", "context():(bytes32)", []);
 
@@ -214,52 +173,6 @@ export class BrightIdUserRegistry extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
-  registrationDeadline(): BigInt {
-    let result = super.call(
-      "registrationDeadline",
-      "registrationDeadline():(uint256)",
-      []
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_registrationDeadline(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "registrationDeadline",
-      "registrationDeadline():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  registrationStartTime(): BigInt {
-    let result = super.call(
-      "registrationStartTime",
-      "registrationStartTime():(uint256)",
-      []
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_registrationStartTime(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "registrationStartTime",
-      "registrationStartTime():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   verifications(param0: Address): BigInt {
@@ -415,40 +328,6 @@ export class RenounceOwnershipCall__Outputs {
   _call: RenounceOwnershipCall;
 
   constructor(call: RenounceOwnershipCall) {
-    this._call = call;
-  }
-}
-
-export class SetRegistrationPeriodCall extends ethereum.Call {
-  get inputs(): SetRegistrationPeriodCall__Inputs {
-    return new SetRegistrationPeriodCall__Inputs(this);
-  }
-
-  get outputs(): SetRegistrationPeriodCall__Outputs {
-    return new SetRegistrationPeriodCall__Outputs(this);
-  }
-}
-
-export class SetRegistrationPeriodCall__Inputs {
-  _call: SetRegistrationPeriodCall;
-
-  constructor(call: SetRegistrationPeriodCall) {
-    this._call = call;
-  }
-
-  get _startTime(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get _deadline(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
-  }
-}
-
-export class SetRegistrationPeriodCall__Outputs {
-  _call: SetRegistrationPeriodCall;
-
-  constructor(call: SetRegistrationPeriodCall) {
     this._call = call;
   }
 }

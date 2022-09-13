@@ -90,24 +90,6 @@ describe('BrightId User Registry', () => {
     )
   })
 
-  describe('registration period not set', () => {
-    it('rejects registration', async () => {
-      const timestamp = await getBlockTimestamp(provider)
-      const verification = generateVerification(user.address, timestamp)
-      await expect(register(registry, verification)).to.be.revertedWith(
-        'REGISTRATION CLOSED'
-      )
-    })
-    it('isVerifiedUser returns false', async () => {
-      expect(await registry.isVerifiedUser(deployer.address)).to.equal(false)
-    })
-  })
-
-  it('reject invalid registration period', async () => {
-    await expect(registry.setRegistrationPeriod(3, 2)).to.be.revertedWith(
-      'INVALID REGISTRATION PERIOD'
-    )
-  })
   it('reject invalid verifier', async () => {
     await expect(
       registry.setSettings(context, ZERO_ADDRESS)
@@ -131,38 +113,10 @@ describe('BrightId User Registry', () => {
       .withArgs(sponsor.address)
   })
 
-  it('allows valid registration period', async () => {
-    await expect(registry.setRegistrationPeriod(1, 2))
-      .to.emit(registry, 'RegistrationPeriodChanged')
-      .withArgs(1, 2)
-  })
-
   describe('registration', () => {
     let blockTimestamp: number
-    let invalidTimestamp: number
-    let deadline: number
-
     beforeEach(async () => {
-      const blockNumber = await provider.getBlockNumber()
-      const block = await provider.getBlock(blockNumber)
-      invalidTimestamp = block.timestamp + 1
-      const startTime = block.timestamp + 2
-      blockTimestamp = block.timestamp + 5
-      deadline = startTime + 500
-      const tx = await registry.setRegistrationPeriod(startTime, deadline)
-      await tx.wait()
-    })
-
-    describe('canRegister', () => {
-      it('returns true for valid timestamp', async () => {
-        await expect(await registry.canRegister(blockTimestamp)).to.equal(true)
-      })
-
-      it('returns false for invalid timestamp', async () => {
-        await expect(await registry.canRegister(invalidTimestamp)).to.equal(
-          false
-        )
-      })
+      blockTimestamp = await getBlockTimestamp(provider)
     })
 
     it('allows valid verified user to register', async () => {
@@ -173,6 +127,13 @@ describe('BrightId User Registry', () => {
         .withArgs(user.address, verification.timestamp)
 
       expect(await registry.isVerifiedUser(user.address)).to.equal(true)
+    })
+
+    it('rejects verifications with 0 timestamp', async () => {
+      const verification = generateVerification(user.address, 0)
+      await expect(register(registry, verification)).to.be.revertedWith(
+        'NEWER VERIFICATION REGISTERED BEFORE'
+      )
     })
 
     it('rejects older verifications', async () => {
@@ -198,13 +159,6 @@ describe('BrightId User Registry', () => {
       const verification = generateVerification(user.address, timestamp, signer)
       await expect(register(registry, verification)).to.be.revertedWith(
         'NOT AUTHORIZED'
-      )
-    })
-
-    it('rejects verifications after deadline', async () => {
-      const verification = generateVerification(user.address, deadline + 1)
-      await expect(register(registry, verification)).to.be.revertedWith(
-        'EXPIRED VERIFICATION'
       )
     })
 

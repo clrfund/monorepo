@@ -12,17 +12,10 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
     string private constant ERROR_INVALID_VERIFIER = 'INVALID VERIFIER';
     string private constant ERROR_INVALID_CONTEXT = 'INVALID CONTEXT';
     string private constant ERROR_INVALID_SPONSOR = 'INVALID SPONSOR';
-    string private constant ERROR_INVALID_REGISTRATION_PERIOD = 'INVALID REGISTRATION PERIOD';
-    string private constant ERROR_EXPIRED_VERIFICATION = 'EXPIRED VERIFICATION';
-    string private constant ERROR_REGISTRATION_CLOSED = 'REGISTRATION CLOSED';
 
     bytes32 public context;
     address public verifier;
     BrightIdSponsor public brightIdSponsor;
-
-    // Only register a verified user during this period
-    uint256 public registrationStartTime;
-    uint256 public registrationDeadline;
 
     struct Verification {
         uint256 time;
@@ -32,7 +25,6 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
     event SetBrightIdSettings(bytes32 context, address verifier);
 
     event Registered(address indexed addr, uint256 timestamp);
-    event RegistrationPeriodChanged(uint256 startTime, uint256 deadline);
     event SponsorChanged(address sponsor);
 
     /**
@@ -84,19 +76,6 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
     }
 
     /**
-     * @notice Set the registration period for verified users
-     * @param _startTime Registration start time
-     * @param _deadline Registration deadline
-     */
-    function setRegistrationPeriod(uint256 _startTime, uint256 _deadline) external onlyOwner {
-        require(_startTime <= _deadline, ERROR_INVALID_REGISTRATION_PERIOD);
-
-        registrationStartTime = _startTime;
-        registrationDeadline = _deadline;
-        emit RegistrationPeriodChanged(_startTime, _deadline);
-    }
-
-    /**
      * @notice Check a user is verified or not
      * @param _user BrightID context id used for verifying users
      */
@@ -107,21 +86,7 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
       returns (bool)
     {
         Verification memory verification = verifications[_user];
-        return canRegister(verification.time);
-    }
-
-    /**
-     * @notice check if the registry is open for registration
-     * @param _timestamp timestamp
-     */
-    function canRegister(uint256 _timestamp)
-      public
-      view
-      returns (bool)
-    {
-        return _timestamp > 0
-            && _timestamp >= registrationStartTime
-            && _timestamp < registrationDeadline;
+        return verification.time > 0;
     }
 
     /**
@@ -145,8 +110,6 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
     ) external {
         require(context == _context, ERROR_INVALID_CONTEXT);
         require(verifications[_addr].time < _timestamp, ERROR_NEWER_VERIFICATION);
-        require(canRegister(block.timestamp), ERROR_REGISTRATION_CLOSED);
-        require(canRegister(_timestamp), ERROR_EXPIRED_VERIFICATION);
 
         bytes32 message = keccak256(abi.encodePacked(_context, _addr, _verificationHash, _timestamp));
         address signer = ecrecover(message, _v, _r, _s);
