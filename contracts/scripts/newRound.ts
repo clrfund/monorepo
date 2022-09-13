@@ -1,4 +1,5 @@
 import { ethers } from 'hardhat'
+import { utils, constants } from 'ethers'
 
 async function main() {
   console.log('*******************')
@@ -9,12 +10,26 @@ async function main() {
 
   const fundingRoundFactoryAddress = process.env.FACTORY_ADDRESS
   const userRegistryType = process.env.USER_REGISTRY_TYPE
+  const brightIdSponsor = process.env.BRIGHTID_SPONSOR
+  const brightIdVerifier = process.env.BRIGHTID_VERIFIER_ADDR
 
   if (!fundingRoundFactoryAddress) {
     throw new Error('Environment variable FACTORY_ADDRESS is not setup')
   }
+
   if (!userRegistryType) {
     throw new Error('Environment variable USER_REGISTRY_TYPE is not setup')
+  }
+
+  if (userRegistryType === 'brightid') {
+    if (!brightIdSponsor) {
+      throw new Error('Environment variable BRIGHTID_SPONSOR is not setup')
+    }
+    if (!brightIdVerifier) {
+      throw new Error(
+        'Environment variable BRIGHTID_VERIFIER_ADDR is not setup'
+      )
+    }
   }
 
   const factory = await ethers.getContractAt(
@@ -23,40 +38,46 @@ async function main() {
   )
   console.log('funding round factory address ', factory.address)
 
+  // check if the current round is finalized before starting a new round to avoid revert
+  const currentRoundAddress = await factory.getCurrentRound()
+  if (currentRoundAddress !== constants.AddressZero) {
+    const currentRound = await ethers.getContractAt(
+      'FundingRound',
+      currentRoundAddress
+    )
+    const isFinalized = await currentRound.isFinalized()
+    if (!isFinalized) {
+      throw new Error(
+        'Cannot start a new round as the current round is not finalized'
+      )
+    }
+  }
+
+  // deploy a new BrightId user registry for each new round
+  // to force users to link with BrightId every round
+  if (userRegistryType === 'brightid') {
+    const BrightIdUserRegistry = await ethers.getContractFactory(
+      'BrightIdUserRegistry',
+      deployer
+    )
+    const userRegistry = await BrightIdUserRegistry.deploy(
+      utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
+      brightIdVerifier,
+      brightIdSponsor
+    )
+    console.log('BrightId user registry address: ', userRegistry.address)
+    await userRegistry.deployTransaction.wait()
+
+    const setUserRegistryTx = await factory.setUserRegistry(
+      userRegistry.address
+    )
+    await setUserRegistryTx.wait()
+    console.log('Set user registry in factory', setUserRegistryTx.hash)
+  }
+
   const tx = await factory.deployNewRound()
   console.log('deployNewRound tx hash: ', tx.hash)
   await tx.wait()
-
-  const fundingRoundAddress = await factory.getCurrentRound()
-  console.log('new funding round address: ', fundingRoundAddress)
-
-  // for BrightId user registry, we need to activate the registry
-  // by setting the registration period to match maci signup period
-  if (userRegistryType === 'brightid') {
-    // get maci signup period
-    const fundingRound = await ethers.getContractAt(
-      'FundingRound',
-      fundingRoundAddress
-    )
-    const maciAddress = await fundingRound.maci()
-    console.log('maci address: ', maciAddress)
-    const maci = await ethers.getContractAt('MACI', maciAddress)
-    const startTime = await maci.signUpTimestamp()
-    const endTime = await maci.calcSignUpDeadline()
-
-    // set user registration period
-    const userRegistryAddress = await fundingRound.userRegistry()
-    const userRegistry = await ethers.getContractAt(
-      'BrightIdUserRegistry',
-      userRegistryAddress
-    )
-    const periodTx = await userRegistry.setRegistrationPeriod(
-      startTime,
-      endTime
-    )
-    console.log('User registration period changed at', periodTx.hash)
-    await periodTx.wait()
-  }
 
   console.log('*******************')
   console.log('Script complete!')
