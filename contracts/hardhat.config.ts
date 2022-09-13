@@ -7,6 +7,7 @@ import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ganache'
 import 'hardhat-contract-sizer'
 import '@nomiclabs/hardhat-etherscan'
+import './tasks/verifyMaci'
 
 dotenv.config()
 
