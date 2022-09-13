@@ -10,7 +10,7 @@ async function main() {
     factoryAddress = state.factory
 
     const signers = await ethers.getSigners()
-    coordinator = signers[1]
+    coordinator = signers[0]
   } else {
     factoryAddress = process.env.FACTORY_ADDRESS || ''
     const coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || ''
@@ -23,6 +23,7 @@ async function main() {
     factoryAddress,
     coordinator
   )
+  console.log('Funding round factory address', factory.address)
 
   const currentRoundAddress = await factory.getCurrentRound()
   const fundingRound = await ethers.getContractAt(
@@ -30,24 +31,31 @@ async function main() {
     currentRoundAddress,
     coordinator
   )
+  console.log('Current round', fundingRound.address)
 
   const maciAddress = await fundingRound.maci()
   const maci = await ethers.getContractAt('MACI', maciAddress, coordinator)
   const [, , voteOptionTreeDepth] = await maci.treeDepths()
+  console.log('Vote option tree depth', voteOptionTreeDepth)
 
   const batchSize = Number(process.env.TALLY_BATCH_SIZE) || 20
-  await addTallyResultsBatch(
+  console.log('Adding tally results in batches of', batchSize)
+  const addTallyGas = await addTallyResultsBatch(
     fundingRound,
     voteOptionTreeDepth,
     tally,
     batchSize
   )
+  console.log('Tally results added. Gas used:', addTallyGas.toString())
 
   const totalSpent = parseInt(tally.totalVoiceCredits.spent)
   const totalSpentSalt = tally.totalVoiceCredits.salt
   const tx = await factory.transferMatchingFunds(totalSpent, totalSpentSalt)
-  await tx.wait()
-  console.log('Round finalized, totals verified.')
+  const receipt = await tx.wait()
+  console.log(
+    'Round finalized, totals verified. Gas used:',
+    receipt.gasUsed.toString()
+  )
 }
 
 main()
