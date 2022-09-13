@@ -54,6 +54,7 @@ async function main() {
   }
 
   // deploy a new BrightId user registry for each new round
+  // to force users to link with BrightId every round
   if (userRegistryType === 'brightid') {
     const BrightIdUserRegistry = await ethers.getContractFactory(
       'BrightIdUserRegistry',
