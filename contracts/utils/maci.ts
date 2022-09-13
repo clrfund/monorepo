@@ -121,6 +121,7 @@ export function getRecipientTallyResults(
   const resultProof = resultTree.genMerklePath(recipientIndex)
 
   return [
+    recipientTreeDepth,
     recipientIndex,
     result,
     resultProof.pathElements.map((x) => x.map((y) => y.toString())),
@@ -160,20 +161,21 @@ export function getRecipientTallyResultsBatch(
     throw new Error('Recipient index out of bound')
   }
 
-  const claimData = []
+  const tallyData = []
   const lastIndex =
     recipientStartIndex + batchSize > tally.results.tally.length
       ? tally.results.tally.length
       : recipientStartIndex + batchSize
   for (let i = recipientStartIndex; i < lastIndex; i++) {
-    claimData.push(getRecipientTallyResults(i, recipientTreeDepth, tally))
+    tallyData.push(getRecipientTallyResults(i, recipientTreeDepth, tally))
   }
 
   return [
-    claimData.map((item) => item[0]),
-    claimData.map((item) => item[1]),
-    claimData.map((item) => item[2]),
-    claimData[0][3],
+    recipientTreeDepth,
+    tallyData.map((item) => item[1]),
+    tallyData.map((item) => item[2]),
+    tallyData.map((item) => item[3]),
+    tallyData[0][4],
   ]
 }
 
@@ -184,17 +186,20 @@ export async function addTallyResults(
   // this is just a shortcut used to speed up testing
   // not for production use
   skipZero?: boolean
-) {
+): Promise<BigNumber> {
   const { tally } = tallyData.results
+  let totalGasUsed = BigNumber.from(0)
 
   for (let i = 0; i < tally.length; i++) {
     if (skipZero && Number(tally[i]) === 0) {
       continue
     }
     const result = getRecipientTallyResults(i, recipientTreeDepth, tallyData)
-    const tx = await fundingRound.addTallyResults(...result)
-    await tx.wait()
+    const tx = await fundingRound.addTallyResult(...result)
+    const receipt = await tx.wait()
+    totalGasUsed = totalGasUsed.add(receipt.gasUsed)
   }
+  return totalGasUsed
 }
 
 export async function addTallyResultsBatch(
@@ -202,7 +207,8 @@ export async function addTallyResultsBatch(
   recipientTreeDepth: number,
   tallyData: any,
   batchSize: number
-) {
+): Promise<BigNumber> {
+  let totalGasUsed = BigNumber.from(0)
   const { tally } = tallyData.results
   for (let i = 0; i < tally.length; i = i + batchSize) {
     const data = getRecipientTallyResultsBatch(
@@ -213,6 +219,8 @@ export async function addTallyResultsBatch(
     )
 
     const tx = await fundingRound.addTallyResultsBatch(...data)
-    await tx.wait()
+    const receipt = await tx.wait()
+    totalGasUsed = totalGasUsed.add(receipt.gasUsed)
   }
+  return totalGasUsed
 }
