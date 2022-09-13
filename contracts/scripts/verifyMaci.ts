@@ -1,5 +1,11 @@
 import { ethers, run } from 'hardhat'
 
+/**
+ * Verifies the MACI contract
+ * - it gets the MACI contract address from the MACI_ADDRESS environment variable
+ * - it constructs the constructor arguments by querying the MACI contract
+ * - it calls the etherscan hardhat plugin to verify the contract
+ */
 async function main() {
   const maciAddress = process.env.MACI_ADDRESS
   if (!maciAddress) {
@@ -40,6 +46,7 @@ async function main() {
     coordinatorAddress,
   ]
 
+  console.log('Verifying the MACI contract', maciAddress)
   console.log('Constructor arguments', constructorArguments)
 
   await run('verify:verify', {
