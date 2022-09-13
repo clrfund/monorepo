@@ -13,7 +13,6 @@ import { deployMaciFactory } from '../utils/deployment'
 import {
   bnSqrt,
   createMessage,
-  addTallyResults,
   addTallyResultsBatch,
   getRecipientClaimData,
 } from '../utils/maci'
@@ -1108,16 +1107,15 @@ describe('Funding Round', () => {
 
     it('adds and verifies tally results', async function () {
       this.timeout(2 * 60 * 1000)
-      const skipZero = true
-      await addTallyResults(
+      await addTallyResultsBatch(
         fundingRound.connect(coordinator),
         treeDepth,
         smallTallyTestData,
-        skipZero
+        5
       )
 
       const totalResults = await fundingRound.totalTallyResults()
-      expect(totalResults.toNumber()).to.eq(20, 'total verified mismatch')
+      expect(totalResults.toNumber()).to.eq(25, 'total verified mismatch')
 
       const totalSquares = await fundingRound.totalVotesSquares()
       expect(totalSquares.toString()).to.eq(
@@ -1128,12 +1126,11 @@ describe('Funding Round', () => {
 
     it('calculates alpha correctly', async function () {
       this.timeout(2 * 60 * 1000)
-      const skipZero = true
-      await addTallyResults(
+      await addTallyResultsBatch(
         fundingRound.connect(coordinator),
         treeDepth,
         smallTallyTestData,
-        skipZero
+        5
       )
 
       const totalVotes = await fundingRound.totalVotesSquares()
@@ -1246,11 +1243,11 @@ describe('Funding Round', () => {
     it('allows only coordinator to add tally results', async function () {
       const fundingRoundAsContributor = fundingRound.connect(contributor)
       await expect(
-        addTallyResults(
+        addTallyResultsBatch(
           fundingRoundAsContributor,
           tallyTreeDepth,
           smallTallyTestData,
-          true
+          5
         )
       ).to.be.revertedWith('FundingRound: Sender is not the coordinator')
     })
@@ -1271,11 +1268,11 @@ describe('Funding Round', () => {
       await maci.mock.hasUntalliedStateLeaves.returns(true)
 
       await expect(
-        addTallyResults(
+        addTallyResultsBatch(
           fundingRound.connect(coordinator),
           tallyTreeDepth,
           smallTallyTestData,
-          true
+          5
         )
       ).to.be.revertedWith('FundingRound: Votes have not been tallied')
     })

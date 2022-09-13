@@ -106,7 +106,7 @@ export function createMessage(
   return [message, encKeypair.pubKey]
 }
 
-export function getRecipientTallyResults(
+export function getRecipientTallyResult(
   recipientIndex: number,
   recipientTreeDepth: number,
   tally: any
@@ -167,39 +167,18 @@ export function getRecipientTallyResultsBatch(
       ? tally.results.tally.length
       : recipientStartIndex + batchSize
   for (let i = recipientStartIndex; i < lastIndex; i++) {
-    tallyData.push(getRecipientTallyResults(i, recipientTreeDepth, tally))
+    tallyData.push(getRecipientTallyResult(i, recipientTreeDepth, tally))
   }
 
+  // the salt is the same for all tally results
+  const resultSalt = tallyData[0][4]
   return [
     recipientTreeDepth,
     tallyData.map((item) => item[1]),
     tallyData.map((item) => item[2]),
     tallyData.map((item) => item[3]),
-    tallyData[0][4],
+    resultSalt,
   ]
-}
-
-export async function addTallyResults(
-  fundingRound: Contract,
-  recipientTreeDepth: number,
-  tallyData: any,
-  // this is just a shortcut used to speed up testing
-  // not for production use
-  skipZero?: boolean
-): Promise<BigNumber> {
-  const { tally } = tallyData.results
-  let totalGasUsed = BigNumber.from(0)
-
-  for (let i = 0; i < tally.length; i++) {
-    if (skipZero && Number(tally[i]) === 0) {
-      continue
-    }
-    const result = getRecipientTallyResults(i, recipientTreeDepth, tallyData)
-    const tx = await fundingRound.addTallyResult(...result)
-    const receipt = await tx.wait()
-    totalGasUsed = totalGasUsed.add(receipt.gasUsed)
-  }
-  return totalGasUsed
 }
 
 export async function addTallyResultsBatch(
