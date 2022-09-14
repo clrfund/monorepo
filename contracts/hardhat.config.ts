@@ -6,6 +6,8 @@ import { HardhatUserConfig, task } from 'hardhat/config'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ganache'
 import 'hardhat-contract-sizer'
+import '@nomiclabs/hardhat-etherscan'
+import './tasks/verifyMaci'
 
 dotenv.config()
 
@@ -55,6 +57,9 @@ const config: HardhatUserConfig = {
       url: process.env.JSONRPC_HTTP_URL || 'https://arb1.arbitrum.io/rpc',
       accounts,
     },
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY || 'YOUR_ETHERSCAN_API_KEY',
   },
   paths: {
     artifacts: 'build/contracts',
