@@ -47,7 +47,7 @@ async function main() {
     voteOptionTreeDepth,
     tally,
     batchSize,
-    startIndex,
+    startIndex.toNumber(),
     (processed) => {
       console.log(`Processed ${processed} / ${total}`)
     }
