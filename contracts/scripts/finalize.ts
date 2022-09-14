@@ -39,12 +39,18 @@ async function main() {
   console.log('Vote option tree depth', voteOptionTreeDepth)
 
   const batchSize = Number(process.env.TALLY_BATCH_SIZE) || 20
+  const startIndex = await fundingRound.totalTallyResults()
+  const total = tally.results.tally.length
   console.log('Adding tally results in batches of', batchSize)
   const addTallyGas = await addTallyResultsBatch(
     fundingRound,
     voteOptionTreeDepth,
     tally,
-    batchSize
+    batchSize,
+    startIndex,
+    (processed) => {
+      console.log(`Processed ${processed} / ${total}`)
+    }
   )
   console.log('Tally results added. Gas used:', addTallyGas.toString())
 

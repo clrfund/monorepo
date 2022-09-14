@@ -15,6 +15,7 @@ import {
   createMessage,
   addTallyResultsBatch,
   getRecipientClaimData,
+  getRecipientTallyResultsBatch,
 } from '../utils/maci'
 
 use(solidity)
@@ -1327,6 +1328,45 @@ describe('Funding Round', () => {
           5
         )
       ).to.revertedWith('FundingRound: Vote results already verified')
+    })
+  })
+
+  describe('getRecipientTallyResultsBatch', () => {
+    const treeDepth = 5
+    const batchSize = 5
+    const total = smallTallyTestData.results.tally.length
+    for (const startIndex of [0, Math.floor(total / 2)]) {
+      it(`should pass with startIndex ${startIndex}`, () => {
+        const data = getRecipientTallyResultsBatch(
+          startIndex,
+          treeDepth,
+          smallTallyTestData,
+          batchSize
+        )
+        expect(data).to.have.lengthOf(5)
+        expect(data[1]).to.have.lengthOf(5)
+      })
+    }
+    it(`should pass with startIndex ${total - 1}`, () => {
+      const data = getRecipientTallyResultsBatch(
+        total - 1,
+        treeDepth,
+        smallTallyTestData,
+        batchSize
+      )
+      expect(data).to.have.lengthOf(5)
+      expect(data[1]).to.have.lengthOf(1)
+    })
+    it(`should fail with startIndex ${total}`, () => {
+      const startIndex = total
+      expect(() => {
+        getRecipientTallyResultsBatch(
+          startIndex,
+          treeDepth,
+          smallTallyTestData,
+          batchSize
+        )
+      }).to.throw('Recipient index out of bound')
     })
   })
 
