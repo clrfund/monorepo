@@ -12,7 +12,7 @@ async function main() {
   const factoryAddress = '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707'
   const [
     deployer,
-    coordinator,
+    ,
     poolContributor,
     recipient1,
     recipient2,
@@ -50,7 +50,7 @@ async function main() {
   await setTokenTx.wait()
   const coordinatorKeyPair = new Keypair()
   const setCoordinatorTx = await factory.setCoordinator(
-    coordinator.getAddress(),
+    deployer.getAddress(),
     coordinatorKeyPair.pubKey.asContractParam()
   )
   await setCoordinatorTx.wait()

@@ -73,14 +73,6 @@ export function getRecipientClaimData(
   recipientTreeDepth: number,
   tally: Tally
 ): any[] {
-  // Create proof for tally result
-  const result = tally.results.tally[recipientIndex]
-  const resultSalt = tally.results.salt
-  const resultTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
-  for (const leaf of tally.results.tally) {
-    resultTree.insert(BigInt(leaf))
-  }
-  const resultProof = resultTree.genMerklePath(recipientIndex)
   // Create proof for total amount of spent voice credits
   const spent = tally.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
   const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
@@ -92,9 +84,6 @@ export function getRecipientClaimData(
 
   return [
     recipientIndex,
-    result,
-    resultProof.pathElements.map((x) => x.map((y) => y.toString())),
-    resultSalt,
     spent,
     spentProof.pathElements.map((x) => x.map((y) => y.toString())),
     spentSalt,

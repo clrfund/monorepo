@@ -15,9 +15,7 @@ async function main() {
     const state = JSON.parse(stateStr)
     fundingRoundAddress = state.fundingRound
     coordinatorPrivKey = state.coordinatorPrivKey
-    // Hardhat account #1
-    coordinatorEthPrivKey =
-      '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
+    coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || ''
   } else {
     fundingRoundAddress = process.env.ROUND_ADDRESS || ''
     coordinatorPrivKey = process.env.COORDINATOR_PK || ''
@@ -29,7 +27,9 @@ async function main() {
     fundingRoundAddress,
     coordinator
   )
+  console.log('funding round address', fundingRound.address)
   const maciAddress = await fundingRound.maci()
+  console.log('maci address', maciAddress)
   const providerUrl = (network.config as any).url
 
   // Process messages and tally votes

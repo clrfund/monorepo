@@ -106,7 +106,7 @@ export function createMessage(
   return [message, encKeypair.pubKey]
 }
 
-export function getRecipientClaimData(
+export function getRecipientTallyResult(
   recipientIndex: number,
   recipientTreeDepth: number,
   tally: any
@@ -119,6 +119,21 @@ export function getRecipientClaimData(
     resultTree.insert(leaf)
   }
   const resultProof = resultTree.genMerklePath(recipientIndex)
+
+  return [
+    recipientTreeDepth,
+    recipientIndex,
+    result,
+    resultProof.pathElements.map((x) => x.map((y) => y.toString())),
+    resultSalt,
+  ]
+}
+
+export function getRecipientClaimData(
+  recipientIndex: number,
+  recipientTreeDepth: number,
+  tally: any
+): any[] {
   // Create proof for total amount of spent voice credits
   const spent = tally.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
   const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
@@ -130,11 +145,61 @@ export function getRecipientClaimData(
 
   return [
     recipientIndex,
-    result,
-    resultProof.pathElements.map((x) => x.map((y) => y.toString())),
-    resultSalt,
     spent,
     spentProof.pathElements.map((x) => x.map((y) => y.toString())),
     spentSalt,
   ]
+}
+
+export function getRecipientTallyResultsBatch(
+  recipientStartIndex: number,
+  recipientTreeDepth: number,
+  tally: any,
+  batchSize: number
+): any[] {
+  if (recipientStartIndex >= tally.length) {
+    throw new Error('Recipient index out of bound')
+  }
+
+  const tallyData = []
+  const lastIndex =
+    recipientStartIndex + batchSize > tally.results.tally.length
+      ? tally.results.tally.length
+      : recipientStartIndex + batchSize
+  for (let i = recipientStartIndex; i < lastIndex; i++) {
+    tallyData.push(getRecipientTallyResult(i, recipientTreeDepth, tally))
+  }
+
+  // the salt is the same for all tally results
+  const resultSalt = tallyData[0][4]
+  return [
+    recipientTreeDepth,
+    tallyData.map((item) => item[1]),
+    tallyData.map((item) => item[2]),
+    tallyData.map((item) => item[3]),
+    resultSalt,
+  ]
+}
+
+export async function addTallyResultsBatch(
+  fundingRound: Contract,
+  recipientTreeDepth: number,
+  tallyData: any,
+  batchSize: number
+): Promise<BigNumber> {
+  let totalGasUsed = BigNumber.from(0)
+  const { tally } = tallyData.results
+  for (let i = 0; i < tally.length; i = i + batchSize) {
+    const data = getRecipientTallyResultsBatch(
+      i,
+      recipientTreeDepth,
+      tallyData,
+      batchSize
+    )
+
+    const tx = await fundingRound.addTallyResultsBatch(...data)
+    const receipt = await tx.wait()
+    totalGasUsed = totalGasUsed.add(receipt.gasUsed)
+  }
+  return totalGasUsed
 }

@@ -34,7 +34,7 @@ describe('Funding Round Factory', () => {
     ])
 
     expect(factory.address).to.properAddress
-    expect(await getGasUsage(factory.deployTransaction)).lessThan(5100000)
+    expect(await getGasUsage(factory.deployTransaction)).lessThan(5400000)
 
     await maciFactory.transferOwnership(factory.address)
 
@@ -211,7 +211,7 @@ describe('Funding Round Factory', () => {
       const deployed = factory.deployNewRound()
       await expect(deployed).to.emit(factory, 'RoundStarted')
       const deployTx = await deployed
-      expect(await getGasUsage(deployTx)).lessThan(11700000)
+      expect(await getGasUsage(deployTx)).lessThan(13000000)
 
       const fundingRoundAddress = await factory.getCurrentRound()
       expect(fundingRoundAddress).to.properAddress
