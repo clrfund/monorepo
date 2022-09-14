@@ -76,8 +76,9 @@ async function main() {
   }
 
   const tx = await factory.deployNewRound()
-  console.log('deployNewRound tx hash: ', tx.hash)
+  console.log('Deployed new round, tx hash: ', tx.hash)
   await tx.wait()
+  console.log('New funding round address: ', await factory.getCurrentRound())
 
   console.log('*******************')
   console.log('Script complete!')

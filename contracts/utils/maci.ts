@@ -1,4 +1,4 @@
-import { Contract, BigNumber } from 'ethers'
+import { Contract, BigNumber, ContractReceipt } from 'ethers'
 import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
 import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
 
@@ -157,14 +157,15 @@ export function getRecipientTallyResultsBatch(
   tally: any,
   batchSize: number
 ): any[] {
-  if (recipientStartIndex >= tally.length) {
+  const tallyCount = tally.results.tally.length
+  if (recipientStartIndex >= tallyCount) {
     throw new Error('Recipient index out of bound')
   }
 
   const tallyData = []
   const lastIndex =
-    recipientStartIndex + batchSize > tally.results.tally.length
-      ? tally.results.tally.length
+    recipientStartIndex + batchSize > tallyCount
+      ? tallyCount
       : recipientStartIndex + batchSize
   for (let i = recipientStartIndex; i < lastIndex; i++) {
     tallyData.push(getRecipientTallyResult(i, recipientTreeDepth, tally))
@@ -185,11 +186,13 @@ export async function addTallyResultsBatch(
   fundingRound: Contract,
   recipientTreeDepth: number,
   tallyData: any,
-  batchSize: number
+  batchSize: number,
+  startIndex = 0,
+  callback?: (processed: number, receipt: ContractReceipt) => void
 ): Promise<BigNumber> {
   let totalGasUsed = BigNumber.from(0)
   const { tally } = tallyData.results
-  for (let i = 0; i < tally.length; i = i + batchSize) {
+  for (let i = startIndex; i < tally.length; i = i + batchSize) {
     const data = getRecipientTallyResultsBatch(
       i,
       recipientTreeDepth,
@@ -199,6 +202,9 @@ export async function addTallyResultsBatch(
 
     const tx = await fundingRound.addTallyResultsBatch(...data)
     const receipt = await tx.wait()
+    if (callback) {
+      callback(i + batchSize, receipt)
+    }
     totalGasUsed = totalGasUsed.add(receipt.gasUsed)
   }
   return totalGasUsed
