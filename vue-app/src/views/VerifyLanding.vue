@@ -211,7 +211,6 @@ ul {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    mix-blend-mode: exclusion;
   }
   .hero {
     display: flex;
@@ -230,7 +229,6 @@ ul {
       position: absolute;
       bottom: 0;
       right: 0;
-      mix-blend-mode: exclusion;
       width: 66%;
       @media (max-width: $breakpoint-m) {
         right: 0;

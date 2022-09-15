@@ -4,17 +4,17 @@
       <img
         class="clr-logo"
         :alt="$store.getters.operator"
-        src="@/assets/clr.svg"
+        src="@/assets/ethColombia.svg"
       />
     </links>
     <div class="btn-row">
-      <div>
+      <!-- <div>
         <img
           @click="toggleTheme()"
           class="navbar-btn"
           :src="require(`@/assets/${themeIcon}`)"
         />
-      </div>
+      </div> -->
       <div class="help-dropdown" v-click-outside="closeHelpDropdown">
         <img
           @click="toggleHelpDropdown()"
@@ -157,13 +157,13 @@ export default class NavBar extends Vue {
     margin-left: 0.5rem;
 
     .button-menu {
+      padding: 0.5rem 0.5rem;
       display: flex;
       flex-direction: column;
       position: absolute;
       top: 2rem;
-      right: 0.5rem;
+      right: 4px;
       background: var(--bg-secondary-color);
-      border: 1px solid rgba($border-light, 0.3);
       border-radius: 0.5rem;
       min-width: 160px;
       box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
@@ -183,7 +183,7 @@ export default class NavBar extends Vue {
       .dropdown-item a {
         display: flex;
         align-items: center;
-        padding: 0.5rem;
+        padding: 0.5rem 0.75rem;
         gap: 0.5rem;
         width: 176px;
         &:after {
@@ -207,7 +207,7 @@ export default class NavBar extends Vue {
 
   .clr-logo {
     margin: 0;
-    height: 2.25rem;
+    height: 3.25rem;
     vertical-align: middle;
   }
 
