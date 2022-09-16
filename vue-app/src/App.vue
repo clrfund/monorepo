@@ -47,6 +47,7 @@ import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
 import BackLink from '@/components/BackLink.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
+import { ThemeMode } from '@/api/core'
 
 import {
   LOAD_USER_INFO,
@@ -162,8 +163,7 @@ export default class App extends Vue {
 
   @Watch('$store.state.theme')
   setAppTheme = () => {
-    const savedTheme = this.$store.state.theme
-    const theme = savedTheme || getOsColorScheme()
+    const theme = ThemeMode.DARK
     document.documentElement.setAttribute('data-theme', theme)
   }
 
