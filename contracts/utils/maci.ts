@@ -205,8 +205,8 @@ export async function addTallyResultsBatch(
     if (callback) {
       // the 2nd element in the data array has the array of
       // recipients to be processed for the batch
-      const totalProccessed = i + data[1].length
-      callback(totalProccessed, receipt)
+      const totalProcessed = i + data[1].length
+      callback(totalProcessed, receipt)
     }
     totalGasUsed = totalGasUsed.add(receipt.gasUsed)
   }
