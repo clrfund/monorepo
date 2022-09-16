@@ -79,19 +79,19 @@ node build/index.js genProofs \
     --output proofs.json
 ```
 
-Coordinator private key must be in the MACI key format (starts with `macisk`).
-Ethereum private key can be any private key that controls the necessary amount of ETH to pay for gas.
+The coordinator private key (`COORDINATOR_PRIVKEY`) must be in the MACI key format (starts with `macisk`).  It is used to decrypt messages.
 
-The `genProofs` command will create two files: `proofs.json` and `tally.json`. The `proofs.json` file will be needed to run the next command which submits proofs to MACI contract:
+The `genProofs` command will create two files: `proofs.json` and `tally.json`. The `proofs.json` file will be needed to run the next command, `proveOnChain`, which submits proofs to the MACI contract:
 
 ```
 node build/index.js proveOnChain \
     --eth-provider <json-rpc-api-url> \
     --contract <maci-address> \
-    --privkey <coordinator-private-key> \
     --eth-privkey <eth-private-key> \
     --proof-file proofs.json
 ```
+
+The Ethereum private key (`eth-private-key`) can be any private key that controls the necessary amount of ETH to pay for gas.
 
 The process may take several hours. Results can be found in `tally.json` file, which must then be published via IPFS.
 
