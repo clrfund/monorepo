@@ -49,6 +49,11 @@ const config: HardhatUserConfig = {
       timeout: 60000,
       accounts,
     },
+    'arbitrum-goerli': {
+      url:
+        process.env.JSONRPC_HTTP_URL || 'https://goerli-rollup.arbitrum.io/rpc',
+      accounts,
+    },
     rinkarby: {
       url: process.env.JSONRPC_HTTP_URL || 'https://rinkeby.arbitrum.io/rpc',
       accounts,
