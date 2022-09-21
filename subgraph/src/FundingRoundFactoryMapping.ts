@@ -201,23 +201,6 @@ export function handleFundingSourceRemoved(event: FundingSourceRemoved): void {
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
   log.info('handleOwnershipTransferred', [event.params.newOwner.toHexString()])
   createOrUpdateFundingRoundFactory(event.address)
-
-  /* comment out testing code
-  let fundingRoundFactory = createOrUpdateFundingRoundFactory(event.address)
-  fundingRoundFactory.nativeToken = Address.fromString('0xda10009cbd5d07dd0cecc66161fc93d7c9000da1')
-  fundingRoundFactory.coordinator = Address.fromString('0x7246e313dadaf4083df2d8132801f1bfcad53aeb')
-  fundingRoundFactory.contributorRegistry = '0x631a12430f94207de980d9b6a744aeb4093dcec1'
-  fundingRoundFactory.recipientRegistry = '0x998b330b1424e343b18d83169c19bca4de39153f'
-  fundingRoundFactory.owner = event.params.newOwner
-
-  let contributorRegistryAddress = Address.fromString(fundingRoundFactory.contributorRegistry)
-  let recipientRegistryAddress = Address.fromString(fundingRoundFactory.recipientRegistry)
-  createContributorRegistry(event.address, contributorRegistryAddress)
-  createRecipientRegistry(event.address, recipientRegistryAddress)
-  fundingRoundFactory.contributorRegistryAddress = contributorRegistryAddress
-  fundingRoundFactory.recipientRegistryAddress = recipientRegistryAddress
-  fundingRoundFactory.save()
-  */
 }
 
 export function handleRoundFinalized(event: RoundFinalized): void {
