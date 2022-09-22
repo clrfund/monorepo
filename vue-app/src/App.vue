@@ -36,7 +36,6 @@
 import Vue from 'vue'
 import { Component, Watch } from 'vue-property-decorator'
 
-import { getOsColorScheme } from '@/utils/theme'
 import { getCurrentRound } from '@/api/round'
 import { User } from '@/api/user'
 
