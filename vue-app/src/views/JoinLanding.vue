@@ -109,7 +109,7 @@
       </div>
     </div>
 
-    <div class="content" v-else-if="$store.getters.isRoundJoinPhase">
+    <div class="content" v-else>
       <h1>Join the next funding round</h1>
       <div class="subtitle">
         We’ll need some information about your project and a

@@ -20,7 +20,14 @@ export const gunPeers: string[] = process.env.VUE_APP_GUN_PEERS
 export const ipfsPinningUrl = process.env.VUE_APP_IPFS_PINNING_URL
 if (!ipfsPinningUrl) throw new Error('invalid ipfs pinning url')
 export const ipfsPinningJwt = process.env.VUE_APP_IPFS_PINNING_JWT
-if (!ipfsPinningJwt) throw new Error('invalid ipfs pinning JWT')
+export const ipfsApiKey = process.env.VUE_APP_IPFS_API_KEY
+export const ipfsSecretApiKey = process.env.VUE_APP_IPFS_SECRET_API_KEY
+if (!ipfsPinningJwt && !(ipfsApiKey && ipfsSecretApiKey)) {
+  throw new Error(
+    'Please setup environment variables for ' +
+      'VUE_APP_IPFS_API_KEY and VUE_APP_IPFS_SECRET_API_KEY or VUE_APP_IPFS_PINNING_JWT'
+  )
+}
 
 //TODO: need to be able to pass the factory contract address dynamically, note all places this is used make factory address a parameter that defaults to the env. variable set
 //NOTE: these calls will be replaced by subgraph queries eventually.
