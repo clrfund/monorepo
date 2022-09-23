@@ -84,7 +84,7 @@ export const CHAIN_INFO: ChainInfo = {
     explorer: 'https://goerli-rollup-explorer.arbitrum.io/',
     explorerLogo: 'arbitrum.svg',
     explorerLabel: 'BlockScout',
-    rpcUrl: 'https://rinkeby.arbitrum.io/rpc',
+    rpcUrl: 'https://goerli-rollup.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
   },
   [ChainId.OPTIMISM]: {
