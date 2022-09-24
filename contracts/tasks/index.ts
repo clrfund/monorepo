@@ -1,0 +1,5 @@
+import './verifyMaciFactory'
+import './verifyRoundFactory'
+import './verifyMaci'
+import './verifyRecipientRegistry'
+import './verifyUserRegistry'
