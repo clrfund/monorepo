@@ -1,0 +1,25 @@
+{
+  "lang": {
+    "en": "🇺🇸 English",
+    "es": "🇪🇸 Español",
+    "tw": "🇨🇳 繁體中文"
+  },
+  "landing": {
+    "hero": {
+      "title": "Manda tu proyecto favorito hasta la luna!",
+      "subtitle": "¡Estás listo para aplicar y votar en la segunda convocatoria de 2022! Puedes participar presentando proyectos de bienes públicos y contribuyendo con tu voto para asignar el financiamiento.     "
+    }
+  },
+  "navBar": {
+    "dropdown": {
+      "home": "Hogar",
+      "about": "Acerca",
+      "how": "Como funciona",
+      "maci": "Bribery protection",
+      "sybil": "Sybil resistance",
+      "code": "Código",
+      "recipients": "Recipients",
+      "layer2": "Layer 2"
+    }
+  }
+}

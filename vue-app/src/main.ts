@@ -4,9 +4,12 @@ import router from './router'
 import store from './store'
 import Web3 from './plugins/Web3'
 
+// import i18n from './plugins/i18n'
+
 import Meta from 'vue-meta'
 import VModal from 'vue-js-modal'
 import VTooltip from 'v-tooltip'
+import i18n from './plugins/i18n'
 
 Vue.use(Meta)
 Vue.use(VModal, {
@@ -24,5 +27,6 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
+  i18n,
   render: (h) => h(App),
 }).$mount('#app')

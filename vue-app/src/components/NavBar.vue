@@ -30,13 +30,34 @@
           >
             <links :to="to">
               <div class="emoji-wrapper">{{ emoji }}</div>
-              <p class="item-text">{{ text }}</p>
+              <p class="item-text">{{ $t(text) }}</p>
             </links>
           </div>
         </div>
       </div>
       <wallet-widget class="wallet-widget" v-if="inApp" />
-      <links v-if="!inApp" to="/projects" class="app-btn">App</links>
+      <links v-if="!inApp" to="/projects" class="app-btn">{{
+        $t('app')
+      }}</links>
+      <!-- lang -->
+      <div class="lang-dropdown">
+        <div @click="toggleLangDropdown()" class="dropdown-btn">
+          {{ currentLocale.toUpperCase() }}
+        </div>
+        <div class="button-menu" v-if="showLangDropdown">
+          <div class="dropdown-title">{{ $t('language') }}</div>
+          <div
+            @click="changeLang(lang)"
+            v-for="(lang, idx) of langs"
+            :key="idx"
+            class="dropdown-item"
+          >
+            <p class="item-text">
+              {{ $t('lang.' + lang) }}
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </nav>
 </template>
@@ -50,6 +71,7 @@ import WalletWidget from './WalletWidget.vue'
 import CartWidget from './CartWidget.vue'
 import Links from './Links.vue'
 import { chain, ThemeMode } from '@/api/core'
+import Trans from '@/plugins/i18n/translations'
 import { TOGGLE_THEME } from '@/store/mutation-types'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { isValidTheme, getOsColorScheme } from '@/utils/theme'
@@ -65,23 +87,42 @@ export default class NavBar extends Vue {
   @Prop() inApp
   showHelpDropdown = false
   profileImageUrl: string | null = null
+
   dropdownItems: { to?: string; text: string; emoji: string }[] = [
-    { to: '/', text: 'Home', emoji: '🏠' },
-    { to: '/about', text: 'About', emoji: 'ℹ️' },
-    { to: '/about/how-it-works', text: 'How it works', emoji: '⚙️' },
-    { to: '/about/maci', text: 'Bribery protection', emoji: '🤑' },
-    { to: '/about/sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
+    { to: '/', text: 'navBar.dropdown.home', emoji: '🏠' },
+    {
+      to: '/about',
+      text: 'navBar.dropdown.about',
+      emoji: 'ℹ️',
+    },
+    {
+      to: '/about/how-it-works',
+      text: 'navBar.dropdown.how',
+      emoji: '⚙️',
+    },
+    {
+      to: '/about/maci',
+      text: 'navBar.dropdown.maci',
+      emoji: '🤑',
+    },
+    {
+      to: '/about/sybil-resistance',
+      text: 'navBar.dropdown.sybil',
+      emoji: '👤',
+    },
     {
       to: 'https://github.com/clrfund/monorepo/',
-      text: 'Code',
+      text: 'navBar.dropdown.code',
       emoji: '👾',
     },
     {
       to: '/recipients',
-      text: 'Recipients',
+      text: 'navBar.dropdown.recipients',
       emoji: '🚀',
     },
   ]
+  showLangDropdown = false
+  langs: string[] = Trans.supportedLocales
 
   created() {
     const savedTheme = lsGet(this.themeKey)
@@ -91,7 +132,7 @@ export default class NavBar extends Vue {
     if (chain.isLayer2) {
       this.dropdownItems.splice(-1, 0, {
         to: '/about/layer-2',
-        text: 'Layer 2',
+        text: 'navBar.dropdown.layer2',
         emoji: '🚀',
       })
     }
@@ -118,6 +159,19 @@ export default class NavBar extends Vue {
 
   get themeKey(): string {
     return 'theme'
+  }
+
+  get currentLocale(): string {
+    return Trans.currentLocale
+  }
+
+  toggleLangDropdown(): void {
+    this.showLangDropdown = !this.showLangDropdown
+  }
+
+  changeLang(lang: string): void {
+    Trans.changeLocale(lang)
+    this.showLangDropdown = false
   }
 }
 </script>
@@ -193,6 +247,51 @@ export default class NavBar extends Vue {
           background: var(--bg-light-color);
         }
 
+        .item-text {
+          margin: 0;
+          color: var(--text-color);
+        }
+      }
+    }
+  }
+
+  .lang-dropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: 0.5rem;
+    .button-menu {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 2rem;
+      right: 0.5rem;
+      background: var(--bg-secondary-color);
+      border: 1px solid rgba(115, 117, 166, 0.3);
+      border-radius: 0.5rem;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      cursor: pointer;
+      overflow: hidden;
+      @media (max-width: $breakpoint-s) {
+        right: -4.5rem;
+      }
+      .dropdown-title {
+        padding: 0.5rem;
+        font-weight: 600;
+      }
+      .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        gap: 0.5rem;
+        width: 176px;
+        &:after {
+          color: var(--text-color);
+        }
+        &:hover {
+          background: var(--bg-light-color);
+        }
         .item-text {
           margin: 0;
           color: var(--text-color);

@@ -1,0 +1,25 @@
+{
+  "lang": {
+    "en": "🇺🇸 English",
+    "es": "🇪🇸 Español",
+    "tw": "🇨🇳 繁體中文"
+  },
+  "landing": {
+    "hero": {
+      "title": "送你最愛的專案上月球！",
+      "subtitle": "你貢獻的每個專案都將額外獲得一筆獎金"
+    }
+  },
+  "navBar": {
+    "dropdown": {
+      "home": "Home",
+      "about": "About",
+      "how": "How it works",
+      "maci": "Bribery protection",
+      "sybil": "Sybil resistance",
+      "code": "Code",
+      "recipients": "Recipients",
+      "layer2": "Layer 2"
+    }
+  }
+}
