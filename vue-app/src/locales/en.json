@@ -730,7 +730,7 @@
     "req": {
       "title": "What you'll need",
       "chain": "{chain} for fast and cheap transaction fees",
-      "chain-cta": " Get {chain} funds",
+      "chain-cta": " Get {chain.label} funds",
       "bright": "BrightID for private, decentralized identity verification",
       "bright-cta": "Set up BrightID"
     },
