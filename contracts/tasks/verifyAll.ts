@@ -71,7 +71,7 @@ async function verifyMaci(maciAddress: string, run: any): Promise<string> {
   }
 }
 
-async function verifyBatchUpdateStateTreeVerifier(
+async function verifyStateTreeVerifier(
   maciAddress: string,
   run: any,
   ethers: any
@@ -86,7 +86,7 @@ async function verifyBatchUpdateStateTreeVerifier(
   }
 }
 
-async function verifyQuadVoteTallyVerifier(
+async function verifyTallyVerifier(
   maciAddress: string,
   run: any,
   ethers: any
@@ -144,7 +144,7 @@ task('verify-all', 'Verify all clrfund contracts')
     status = await verifyRecipientRegistry(factory, run)
     results.push({ name: 'Recipient registry', status })
     status = await verifyUserRegistry(factory, run)
-    results.push({ name: 'Funding round factory', status })
+    results.push({ name: 'User factory', status })
 
     const sponsor = await getBrightIdSponsor(factory, ethers)
     if (sponsor) {
@@ -160,24 +160,15 @@ task('verify-all', 'Verify all clrfund contracts')
       status = await verifyMaci(maciAddress, run)
       results.push({ name: 'MACI', status })
 
-      status = await verifyBatchUpdateStateTreeVerifier(
-        maciAddress,
-        run,
-        ethers
-      )
+      status = await verifyStateTreeVerifier(maciAddress, run, ethers)
       results.push({ name: 'BatchUpdateStateTreeVerifier', status })
 
-      status = await verifyQuadVoteTallyVerifier(maciAddress, run, ethers)
+      status = await verifyTallyVerifier(maciAddress, run, ethers)
       results.push({ name: 'QuadVoteTallyVerifier', status })
     }
 
     results.forEach(({ name, status }, i) => {
-      if (status === SUCCESS) {
-        console.log(`${i} ${name}: \x1b[32msuccess\x1b[0m`)
-      } else if (!status) {
-        console.log(`${i} ${name}: N/A`)
-      } else {
-        console.log(`${i} ${name}: \x1b[31m%s\x1b[0m`, status)
-      }
+      const color = status === SUCCESS ? '32' : '31'
+      console.log(`${i} ${name}: \x1b[%sm%s\x1b[0m`, color, status)
     })
   })
