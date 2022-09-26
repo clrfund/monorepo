@@ -4,7 +4,7 @@ async function getConstructorArguments(
   address: string,
   ethers: any
 ): Promise<any[]> {
-  const round = await ethers.getContractAt('BrightIdUserRegistry', address)
+  const round = await ethers.getContractAt('FundingRound', address)
 
   const args = await Promise.all([
     round.nativeToken(),
