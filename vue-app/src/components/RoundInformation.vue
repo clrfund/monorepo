@@ -284,11 +284,15 @@
         <div class="round-info-item">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">No scheduled round</div>
+              <div class="round-info-title">Registration open</div>
             </div>
           </div>
           <div class="round-announcement-info">
-            We haven't yet scheduled a funding round. Stay tuned!
+            The contribution period will start around the same time as Devcon.
+            Contributors should get prepared by connecting their wallet and
+            BrightID, to ensure they are BrightID verified when the round
+            starts. New recipients should hit the "Add project" button to begin
+            the registration process.
           </div>
         </div>
       </template>
