@@ -26,6 +26,37 @@
       "list-3": "Once the round finishes, the smart contract distributes the matching pool funds to projects weighted primarily by number of contributions,",
       "list-3-strong": "not contribution value",
       "action": "How the round works"
+    },
+    "req": {
+      "title": "What you'll need",
+      "chain": "{chain} for fast and cheap transaction fees",
+      "chain-cta": " Get {chain.label} funds",
+      "bright": "BrightID for private, decentralized identity verification",
+      "bright-cta": "Set up BrightID"
+    },
+    "about": {
+      "title": "About",
+      "subtitle-1": "It's not about how much...",
+      "paragraph-1": " Using quadratic funding, your contribution counts as a vote. Projects with the most contributions at the end of the round get the highest amount from the matching pool. That means even a small donation can have a massive impact.",
+      "link-1": "About quadratic funding",
+      "subtitle-2": "Protect against bribery",
+      "paragraph-2": "Using MACI, a zero-knowledge technology, it's impossible to prove how you contributed. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!",
+      "link-2": "About MACI",
+      "subtitle-3": "Built using the CLR protocol",
+      "paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the prefences of the Ethereum Community.",
+      "link-3": "About clr.fund"
+    },
+    "footer": {
+      "title": "More",
+      "link-1": "About clr.fund",
+      "link-2": "How the round works",
+      "link-3": "About {chain}",
+      "link-4": "About MACI",
+      "link-5": "About BrightID",
+      "link-6": "GitHub",
+      "link-7": "Discord",
+      "link-8": "Forum",
+      "link-9": "More on Ethereum"
     }
   },
   "navBar": {
