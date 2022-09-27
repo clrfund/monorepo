@@ -55,10 +55,7 @@
           <li>Access to Zoom or Google Meet</li>
         </ul>
         <links to="/about/sybil-resistance">Why is this important?</links>
-        <div v-if="!hasRoundStarted" class="join-message">
-          There's not yet an open funding round. Please check back later.
-        </div>
-        <div v-else-if="isRoundOver" class="warning-message">
+        <div v-if="isRoundOver" class="warning-message">
           The current round is no longer accepting new contributions. Please try
           again next round.
         </div>

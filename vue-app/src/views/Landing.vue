@@ -22,7 +22,8 @@
               />
             </div>
             <div class="btn-group">
-              <links to="/projects" class="btn-action">Get started</links>
+              <links to="/join" class="btn-action">Add your project</links>
+              <links to="/projects" class="btn-action">Make a donation</links>
               <div class="btn-info" @click="scrollToHowItWorks">
                 How it works
               </div>
