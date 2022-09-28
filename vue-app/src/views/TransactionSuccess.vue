@@ -2,18 +2,19 @@
   <div class="container">
     <div class="image-wrapper">
       <image-responsive title="docking" />
-      <img class="money" src="@/assets/money.gif" />
-      <img class="money" src="@/assets/confetti.gif" />
     </div>
     <div id="banner">
       <div class="banner-content">
         <span class="desktop"
-          >Join us at the Quadratic Funding Community Par-tay</span
+          >Join us at the<links :to="partyUrl">
+            Quadratic Funding Community Par-tay</links
+          ></span
         >
-        <span class="mobile">Join us at the QF Community Par-tay</span>
-        <div class="button-wrapper">
-          <links class="btn-action" :to="partyUrl">YES</links>
-        </div>
+        <span class="mobile"
+          >Join us at the<links :to="partyUrl">
+            QF Community Par-tay</links
+          ></span
+        >
       </div>
     </div>
     <div class="dropshadow">
@@ -130,7 +131,7 @@ export default class TransactionSuccess extends Vue {
 }
 
 .image-wrapper {
-  position: fixed;
+  position: absolute;
   height: 100vh;
   background: var(--bg-gradient);
   width: 100%;
@@ -144,11 +145,6 @@ export default class TransactionSuccess extends Vue {
   @media (max-width: $breakpoint-m) {
     transform: translateX(-6em) translateY(3em) rotate(15deg);
   }
-}
-
-.image-wrapper .money {
-  position: fixed;
-  width: 100%;
 }
 
 .dropshadow {
@@ -167,10 +163,9 @@ export default class TransactionSuccess extends Vue {
   padding-top: 4rem;
   width: 500px;
   margin: 0 2.5rem;
-
-  @media (max-width: $breakpoint-s) {
+  @media (max-width: $breakpoint-m) {
     margin: auto;
-    width: 300px;
+    width: 80%;
   }
 }
 
@@ -211,6 +206,9 @@ export default class TransactionSuccess extends Vue {
   font-size: 16px;
   font-weight: 700;
   text-align: center;
+  .mobile {
+    font-weight: normal;
+  }
 }
 
 .button-wrapper {
