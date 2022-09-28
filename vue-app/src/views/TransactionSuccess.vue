@@ -5,6 +5,17 @@
       <img class="money" src="@/assets/money.gif" />
       <img class="money" src="@/assets/confetti.gif" />
     </div>
+    <div id="banner">
+      <div class="banner-content">
+        <span class="desktop"
+          >Join us at the Quadratic Funding Community Par-tay</span
+        >
+        <span class="mobile">Join us at the QF Community Par-tay</span>
+        <div class="button-wrapper">
+          <links class="btn-action" :to="partyUrl">YES</links>
+        </div>
+      </div>
+    </div>
     <div class="dropshadow">
       <div class="content">
         <span class="contributed-icon">🎉</span>
@@ -13,7 +24,7 @@
           class="contributed-header"
         >
           {{ formatContribution() }}
-          {{ currentRound.nativeTokenSymbol }} reallocated!
+          {{ nativeTokenSymbol }} reallocated!
         </p>
         <p
           v-else-if="$route.params.type === 'contribution'"
@@ -31,7 +42,7 @@
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
-              :date="currentRound.votingDeadline"
+              :date="votingDeadline"
             />.
           </p>
           <p
@@ -43,7 +54,7 @@
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
-              :date="currentRound.votingDeadline"
+              :date="votingDeadline"
             />
             to reallocate your contributions.
           </p>
@@ -70,12 +81,14 @@ import { RoundInfo } from '@/api/round'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
+import Links from '@/components/Links.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
+import { DateTime } from 'luxon'
 
 @Component({
-  components: { TransactionReceipt, TimeLeft, ImageResponsive },
+  components: { TransactionReceipt, TimeLeft, ImageResponsive, Links },
 })
 export default class TransactionSuccess extends Vue {
   get contribution(): BigNumber | null {
@@ -86,12 +99,24 @@ export default class TransactionSuccess extends Vue {
     return this.$store.state.currentRound
   }
 
+  get nativeTokenSymbol(): string {
+    return this.currentRound?.nativeTokenSymbol || ''
+  }
+
+  get votingDeadline(): DateTime | null {
+    return this.currentRound?.votingDeadline || null
+  }
+
   formatContribution() {
     return this.contribution ? formatAmount(this.contribution, 18) : ''
   }
 
   redirectToProjects() {
     this.$router.push({ name: 'projects' })
+  }
+
+  get partyUrl(): string {
+    return 'https://docs.google.com/forms/d/1I1lV0h7p_ygvQOClq_Ipg0B7rY8wGfAtR_Z1Zk_NHaE/viewform?edit_requested=true'
   }
 }
 </script>
@@ -179,5 +204,17 @@ export default class TransactionSuccess extends Vue {
 
 .receipt {
   margin: 16px 0;
+}
+
+.banner-content {
+  padding: 0.5rem;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.button-wrapper {
+  display: inline-block;
+  margin-left: 10px;
 }
 </style>

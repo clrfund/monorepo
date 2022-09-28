@@ -205,6 +205,7 @@ ul {
   width: 100%;
 
   .moon {
+    mix-blend-mode: color-dodge;
     position: absolute;
     top: 1rem;
     right: 1rem;
