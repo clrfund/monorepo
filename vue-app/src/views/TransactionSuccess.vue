@@ -1,8 +1,5 @@
 <template>
   <div class="container">
-    <div class="image-wrapper">
-      <image-responsive title="docking" />
-    </div>
     <div id="banner">
       <div class="banner-content">
         <span class="desktop"
@@ -17,7 +14,8 @@
         >
       </div>
     </div>
-    <div class="dropshadow">
+    <div class="hero">
+      <image-responsive title="docking" />
       <div class="content">
         <span class="contributed-icon">🎉</span>
         <p
@@ -126,45 +124,31 @@ export default class TransactionSuccess extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.container {
-  position: relative;
-}
-
-.image-wrapper {
-  position: absolute;
-  height: 100vh;
-  background: var(--bg-gradient);
-  width: 100%;
+.hero {
+  bottom: 0;
   display: flex;
-  justify-content: center;
-}
+  background: var(--bg-gradient-hero);
+  height: calc(100vh - 113px);
 
-.image-wrapper .docking {
-  height: 95%;
-  transform: rotate(15deg);
-  @media (max-width: $breakpoint-m) {
-    transform: translateX(-6em) translateY(3em) rotate(15deg);
+  img {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 66%;
+    @media (max-width: $breakpoint-m) {
+      right: 0;
+      width: 100%;
+    }
   }
-}
-
-.dropshadow {
-  position: relative;
-  @include gradientBackground(
-    180deg,
-    rgba(var(--shadow-dark-rgb), 0.4),
-    56.5%,
-    rgba(var(--shadow-light-rgb), 0),
-    75.75%
-  );
-  height: 80vh;
 }
 
 .content {
   padding-top: 4rem;
   width: 500px;
   margin: 0 2.5rem;
+  z-index: 1;
   @media (max-width: $breakpoint-m) {
-    margin: auto;
+    margin: 0 auto;
     width: 80%;
   }
 }
@@ -209,10 +193,5 @@ export default class TransactionSuccess extends Vue {
   .mobile {
     font-weight: normal;
   }
-}
-
-.button-wrapper {
-  display: inline-block;
-  margin-left: 10px;
 }
 </style>
