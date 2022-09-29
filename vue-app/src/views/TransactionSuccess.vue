@@ -193,5 +193,9 @@ export default class TransactionSuccess extends Vue {
   .mobile {
     font-weight: normal;
   }
+
+  a {
+    color: #ff641f;
+  }
 }
 </style>
