@@ -56,6 +56,53 @@
       "paragraph-6-link": "how clr.fund works"
     }
   },
+  "contributors": {
+    "heading": {
+      "title": "Contributor guide",
+      "paragraph": "An overview of how things work as a contributor so you can learn what to expect throughout the duration of a funding round."
+    },
+    "funds": {
+      "title": "Get funds on {chain}",
+      "paragraph-1-text-1": "You'll need some {currency} on {chain} in order to submit transactions to the clr.fund smart contracts.",
+      "paragraph-1-text-2": "Follow",
+      "paragraph-1-link-1": "this tutorial",
+      "paragraph-1-text-3": "to bridge your funds to {chain}",
+      "paragraph-2-text-1": "Use the",
+      "paragraph-2-link-1": "{chain} bridge",
+      "paragraph-2-text-2": "to transfer some funds.",
+      "paragraph-3-text-1": "Confused on what {chain} is?",
+      "paragraph-3-link-1": "Read our explanation on how clr.fund uses layer 2 on Ethereum."
+    },
+    "contributing": {
+      "title": "Contributing to specific projects",
+      "li-1-text-1": "Before contributing to specific projects, you will need to",
+      "li-1-link-1": "verify that you're a unique human",
+      "li-1-text-2": ". This helps clr.fund",
+      "li-1-link-2": "resist sybil attacks!",
+      "li-2": "Make sure you have {nativeTokenSymbol} in your BrightID-verified wallet on the {chain} network",
+      "li-3-link": "Browse projects",
+      "li-3-text": " and add some to your cart, adjusting your contributions to the amount of {nativeTokenSymbol} you want.",
+      "li-4": "When you're ready, open your cart, click contribute, and confirm the transactions to complete your contributions!",
+      "paragraph": "Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you would like before of the reallocation phase but you cannot add more funds to your total contribution amount.",
+      "li-5": "You can add and remove projects.",
+      "li-6": " Your reallocation total must be less than or equal to the total (if it's less, the rest will go to the matching pool)."
+    },
+    "matching": {
+      "title": "Contributing to the matching pool",
+      "paragraph-text-1": "Not sure which specific to contribute to? Contributions to the matching pool will be distributed to all projects that receive project-specific contributions during that round. The weighting of this distribution is determined by the",
+      "paragraph-link": "quadratic funding",
+      "paragraph-text-2": " results.",
+      "li-1": " First make sure the wallet you are using holds {nativeTokenSymbol} on {chain}. {nativeTokenSymbol} can be easily purchased on any major Ethereum-focused exchange.",
+      "li-2-text-1": " Once you have the desired amount of {nativeTokenSymbol} in your wallet, select \"Add Funds\" on the",
+      "li-2-link": "Projects page",
+      "li-2-text-2": " and confirm the transactions."
+    },
+    "wow": {
+      "title": "How does clr.fund work",
+      "paragraph": "Looking for a more general overview?",
+      "link": "Check out our \"How It Works\" page"
+    }
+  },
   "landing": {
     "hero": {
       "title": "Send your favorite projects to the moon!",
@@ -82,7 +129,7 @@
     "req": {
       "title": "What you'll need",
       "chain": "{chain} for fast and cheap transaction fees",
-      "chain-cta": " Get {chain.label} funds",
+      "chain-cta": " Get {chain} funds",
       "bright": "BrightID for private, decentralized identity verification",
       "bright-cta": "Set up BrightID"
     },
