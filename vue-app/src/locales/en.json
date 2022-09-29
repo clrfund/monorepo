@@ -135,6 +135,80 @@
       "li-3-text-2": " system, with the same decentralized benefits of the original."
     }
   },
+  "howItWorks": {
+    "heading": {
+      "title": "How the round works",
+      "subtitle": "CLR walkthrough",
+      "paragraph-1": "This is an overview of how everything works behind the scenes so you can learn what to expect throughout the duration of the round.",
+      "paragraph-2": " Looking for a guide on how to participate? Check out our guides specifically for contributing and joining as a project.",
+      "li-1": "Guide for contributors",
+      "li-2": "Guide for recipients"
+    },
+    "quick": {
+      "title": "Quick recap on quadratic funding",
+      "paragraph-1-text-1": "As outlined in our",
+      "link-1": "overview on quadratic funding",
+      "paragraph-1-text-2": ", projects will receive funding from individual contributions as well as the matching pool. When you contribute to your favorite projects, your contribution also acts as a vote. The more contributions a project receives, the more votes. And the more votes a project gets, the more they'll receive from the matching pool. Although a higher individual contribution will equal a larger vote weighting, it's far more important to receive a large volume of unique contributions than just a few high value contributions.",
+      "paragraph-2": "As the funding round is also a public vote, it needs deadlines. The round is split into multiple phases so that after all contributions or votes are made, they can be counted and confirmed before the final matching pool distribution."
+    },
+    "phases": {
+      "title": "Funding round phases",
+      "subtitle": "Join phase",
+      "paragraph-1-text-1": "To kick things off, projects will be invited to",
+      "link-1": "join the round",
+      "paragraph-1-text-2": ". If you're an eager contributor,   you'll be able to browse the projects and add them to your cart but you   won't be able to contribute just yet.",
+      "need": {
+        "title": "Need to know",
+        "li-1": "There will be a maximum of {maxRecipients} projects in the round.",
+        "li-2-text": "Projects must meet ",
+        "li-2-link": "round criteria.",
+        "li-3-text": "If you want to contribute, this is a perfect time to get",
+        "li-3-link": "set up to contribute."
+      }
+    },
+    "contribution": {
+      "title": "Contribution phase",
+      "paragraph-1": "The launch of the contribution phase follows the join phase and marks the   official start of the funding round. This is the time for you to add your   favorite projects to your cart and contribute.",
+      "need": {
+        "title": "Need to know",
+        "li-1": "This phase will last {contributionPhaseDays} days.",
+        "li-2-text-1": "You will need to go through some",
+        "li-2-link": "setup",
+        "li-2-text-2": " before you can contribute.",
+        "li-3": "The maximum contribution amount is {maxContributionAmount} {nativeTokenSymbol}.",
+        "li-4": "Your total contribution amount is final. You can't increase it by contributing an additional time."
+      },
+      "paragraph-2": "If you dont contribute in the contribution phase, the round is over for   you once this phase ends."
+    },
+    "reallocation": {
+      "title": "Reallocation phase",
+      "paragraph": "During this phase, if you've contributed, you will have time to change   your mind. You can edit your contribution amounts or add/remove projects   but your total must equal that of your original contribution.",
+      "need": {
+        "title": "Need to know",
+        "li-1": " This phase will last {reallocationPhaseDays} days after the end of the contribution phase.",
+        "li-2": "If you remove projects, you must reallocate the funds to other projects or it will go to the matching pool.",
+        "li-3": "You can't exceed your original contribution total when reallocating funds."
+      }
+    },
+    "tallying": {
+      "title": "Tallying phase",
+      "paragraph-text-1": "At this point, all contributions are final, and can now be counted. The round coordinator triggers",
+      "link": "MACI",
+      "paragraph-text-2": "and the smart contracts to calculate how much of the matching pool each project will get."
+    },
+    "finalized": {
+      "title": "Finalized phase",
+      "paragraph": "Once the tallying calculations are complete, the round is finalized.   Project owners can come and claim their funding!"
+    },
+    "more": {
+      "title": "More",
+      "paragraph": "We use different tech to keep the round fair and free from malicious   actors. You can learn more about them below:",
+      "li-1-link": "MACI",
+      "li-1-text": " – to protect against bribery and tally round results.",
+      "li-2-link": "BrightID",
+      "li-2-text": " – to protect against sybil attacks."
+    }
+  },
   "landing": {
     "hero": {
       "title": "Send your favorite projects to the moon!",
