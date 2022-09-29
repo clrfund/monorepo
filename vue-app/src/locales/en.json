@@ -103,6 +103,38 @@
       "link": "Check out our \"How It Works\" page"
     }
   },
+  "decentralization": {
+    "heading": {
+      "title": "Decentralization in Clr.fund",
+      "subtitle": "What is Decentralization?",
+      "paragraph": "When we say something is \"decentralized\" in clr.fund, and in web3 broadly, we mean that no single person, company, or other entity is solely responsible for running or maintaining it. Instead, a decentralized system is run or maintained by a large group of independent entities, coordinated by a set of rules each opts into, like miners in Ethereum or peers in BitTorrent."
+    },
+    "which": {
+      "title": "Which pieces of clr.fund are decentralized?",
+      "paragraph-1": "Much of clr.fund's infrastructure is built on Ethereum, a decentralized blockchain:",
+      "li-1": "the registry of projects qualified for funding (and, potentially, the curation mechanism for choosing these projects)",
+      "li-2": "the matching pool of funds",
+      "li-3": "the sybil-resistant registry of users qualified to contribute to individual projects",
+      "li-4": "the funds from and encrypted information about contributions to individual projects",
+      "li-5": "the mechanism for distributing funds once a round's results are finalized",
+      "paragraph-2-text-1": "Each of these pieces exists in an Ethereum smart contract (see the code",
+      "paragraph-link": "here",
+      "paragraph-2-text-2": ", meaning its functionality is maintained by Ethereum miners, a decentralized group."
+    },
+    "why": {
+      "title": "Why is clr.fund decentralized?",
+      "paragraph": "Ethereum's decentralization provides clr.fund with three main benefits:",
+      "li-1": " Transparent process — All of the decentralized pieces of clr.fund are publicly verifiable. Anyone can look at the code for the smart contracts and observe its inputs and outputs, with very little possibility that anything is being hidden or changed secretly.",
+      "li-2-text-1": "Secure voting — Because of Ethereum's strong security guarantees, anyone submitting a message can be extremely confident that their message will be processed as expected by the system. There are still security dangers, of course, such as",
+      "li-2-link-1": "sybil attacks",
+      "li-2-text-2": " or",
+      "li-2-link-2": "vote manipulation",
+      "li-2-text-3": ", but the kind of \"vote hacking\" typically feared in digital voting is highly unlikely here.",
+      "li-3-text-1": "Public good — Everything on Ethereum is open source and permissionless, which means the code for clr.fund's decentralized infrastructure acts as a public good: anyone can deploy their own version of the system to create their own",
+      "li-3-link-2": "quadratic funding",
+      "li-3-text-2": " system, with the same decentralized benefits of the original."
+    }
+  },
   "landing": {
     "hero": {
       "title": "Send your favorite projects to the moon!",
