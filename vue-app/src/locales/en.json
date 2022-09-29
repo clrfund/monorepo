@@ -4,6 +4,105 @@
     "es": "🇪🇸 Español",
     "tw": "🇨🇳 繁體中文"
   },
+  "about": {
+    "heading": {
+      "title": "About"
+    },
+    "what": {
+      "title": "What is clr.fund?",
+      "paragraph": "Clr.fund, pronounced \"Clear Fund\", is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community. Clr.fund strives for credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity."
+    },
+    "why": {
+      "title": "Why does clr.fund exist?",
+      "paragraph-1-text-1": "Allocating funds towards",
+      "paragraph-1-link": "public goods",
+      "paragraph-1-text-2": "— commodities or services that are neither excludable nor subtractable — is a challenge for any ecosystem, and Ethereum is no exception.",
+      "paragraph-2": "Clr.fund’s goal is to enable funds to be allocated towards public goods that benefit the Ethereum Network without relying on centralized entities and in a way that reflects the preferences of the Ethereum Community.",
+      "paragraph-3-text-1": "See the",
+      "paragraph-3-link": "Clr.fund Constitution",
+      "paragraph-3-text-2": "for more detail on clr.fund’s goals and values."
+    },
+    "unique": {
+      "title": "How is clr.fund unique?",
+      "paragraph-1": "Clr.fund instances also have a number of other special properties:",
+      "li-1-text-1": "Decentralization — Major pieces of clr.fund's infrastructure are built on",
+      "li-1-link-1": "Ethereum",
+      "li-1-text-2": "A programmable blockchain that provides a reliable, censorship-resistant ledger for clr.fund's voting and funding transactions.",
+      "li-1-link-2": "Read more on clr.fund's decentralization.",
+      "li-2-text-1": "Scalability — Because using Ethereum can be expensive for users, clr.fund uses",
+      "li-2-layer2-1": "\"layer 2\"",
+      "li-2-layer2-2": "\"sidechain\"",
+      "li-2-text-2": "supplementary networks to get most of the benefits of the main Ethereum network but with faster, cheaper transactions.",
+      "li-2-link-1": "Learn more about clr.fund's use of layer 2.",
+      "li-3-text-1": "Collusion-resistance — Since blockchains like Ethereum publish all data publicly by default, clr.fund contributors are vulnerable to bribery and other kinds of manipulation. Clr.fund helps prevent these attacks using magical math called zero-knowledge proofs.",
+      "li-3-link-1": "Find out about MACI, our Minimal Anti-Collusion Infrastructure.",
+      "li-4-text-1": "Sybil-resistance — Voting systems that care about the number of individual people voting for a given choice, as quadratic funding does, can be vulnerable to sybil attacks, in which one person sets up many identities in order to vote multiple times. Clr.fund mitigates this threat with an identity-system called BrightID.",
+      "li-4-link-1": "Find out more about BrightID.",
+      "paragraph-2": " Clr.fund is also built so anyone can spin up and run their own instance to create a public goods grant program for their particular public."
+    },
+    "how": {
+      "title": "How does it work?",
+      "paragraph-1-text-1": "The clr.fund protocol uses the Constrained Liberal Radicalism (CLR) algorithm, commonly called",
+      "paragraph-1-link-1": "quadratic funding",
+      "paragraph-1-text-2": "(QF), to facilitate monetary contributions from members of the Ethereum Community towards builders of Ethereum public goods.",
+      "paragraph-2": "With its logic encoded into Ethereum smart contracts and other web3 technologies, clr.fund requires minimal trust in any individual people or entities to function and is resilient to collusion and bribery.",
+      "paragraph-3": "  At a high-level, clr.fund consists of a matching pool and a funding round. Philanthropic individuals or organizations contribute to the matching pool so as to have those funds efficiently allocated according to community preference. Users contribute directly to projects they value and, in doing so, earn a share of the matching pool for the projects, along with their contribution. Effectively increasing the value of their contribution.",
+      "paragraph-4-text-1": "  Under the hood, clr.fund uses zero-knowledge proofs (ZK-SNARKS), courtesy of the",
+      "paragraph-4-link-1": "Minimal Anti-collusion Infrastructure (MACI)",
+      "paragraph-4-text-2": ", to keep individual contributions private and limit effectiveness of collusion and bribery",
+      "paragraph-5": "To ensure that every contributor is a unique person clr.fund uses.",
+      "paragraph-5-link": "BrightID.",
+      "paragraph-6": "Still curious? Read more on",
+      "paragraph-6-link": "how clr.fund works"
+    }
+  },
+  "contributors": {
+    "heading": {
+      "title": "Contributor guide",
+      "paragraph": "An overview of how things work as a contributor so you can learn what to expect throughout the duration of a funding round."
+    },
+    "funds": {
+      "title": "Get funds on {chain}",
+      "paragraph-1-text-1": "You'll need some {currency} on {chain} in order to submit transactions to the clr.fund smart contracts.",
+      "paragraph-1-text-2": "Follow",
+      "paragraph-1-link-1": "this tutorial",
+      "paragraph-1-text-3": "to bridge your funds to {chain}",
+      "paragraph-2-text-1": "Use the",
+      "paragraph-2-link-1": "{chain} bridge",
+      "paragraph-2-text-2": "to transfer some funds.",
+      "paragraph-3-text-1": "Confused on what {chain} is?",
+      "paragraph-3-link-1": "Read our explanation on how clr.fund uses layer 2 on Ethereum."
+    },
+    "contributing": {
+      "title": "Contributing to specific projects",
+      "li-1-text-1": "Before contributing to specific projects, you will need to",
+      "li-1-link-1": "verify that you're a unique human",
+      "li-1-text-2": ". This helps clr.fund",
+      "li-1-link-2": "resist sybil attacks!",
+      "li-2": "Make sure you have {nativeTokenSymbol} in your BrightID-verified wallet on the {chain} network",
+      "li-3-link": "Browse projects",
+      "li-3-text": " and add some to your cart, adjusting your contributions to the amount of {nativeTokenSymbol} you want.",
+      "li-4": "When you're ready, open your cart, click contribute, and confirm the transactions to complete your contributions!",
+      "paragraph": "Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you would like before of the reallocation phase but you cannot add more funds to your total contribution amount.",
+      "li-5": "You can add and remove projects.",
+      "li-6": " Your reallocation total must be less than or equal to the total (if it's less, the rest will go to the matching pool)."
+    },
+    "matching": {
+      "title": "Contributing to the matching pool",
+      "paragraph-text-1": "Not sure which specific to contribute to? Contributions to the matching pool will be distributed to all projects that receive project-specific contributions during that round. The weighting of this distribution is determined by the",
+      "paragraph-link": "quadratic funding",
+      "paragraph-text-2": " results.",
+      "li-1": " First make sure the wallet you are using holds {nativeTokenSymbol} on {chain}. {nativeTokenSymbol} can be easily purchased on any major Ethereum-focused exchange.",
+      "li-2-text-1": " Once you have the desired amount of {nativeTokenSymbol} in your wallet, select \"Add Funds\" on the",
+      "li-2-link": "Projects page",
+      "li-2-text-2": " and confirm the transactions."
+    },
+    "wow": {
+      "title": "How does clr.fund work",
+      "paragraph": "Looking for a more general overview?",
+      "link": "Check out our \"How It Works\" page"
+    }
+  },
   "landing": {
     "hero": {
       "title": "Send your favorite projects to the moon!",
@@ -30,7 +129,7 @@
     "req": {
       "title": "What you'll need",
       "chain": "{chain} for fast and cheap transaction fees",
-      "chain-cta": " Get {chain.label} funds",
+      "chain-cta": " Get {chain} funds",
       "bright": "BrightID for private, decentralized identity verification",
       "bright-cta": "Set up BrightID"
     },
