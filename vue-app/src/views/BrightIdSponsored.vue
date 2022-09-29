@@ -1,10 +1,10 @@
 @ -0,0 +1,36 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
-    <!-- TODO: add confetti -->
     <div class="gradient">
-      <img src="@/assets/moon.png" class="moon" />
+      <div class="moon-container">
+        <img src="@/assets/moon.png" class="moon" />
+      </div>
       <div class="hero">
         <image-responsive title="newrings" />
         <div class="content">
@@ -19,10 +19,10 @@
           <div class="subtitle">
             You’re almost ready to contribute to your favorite projects! If
             you're verified for BrightID, link your wallet to your BrightID
-            profile and start contributing.
+            profile and get prepared to contribute during the funding round.
           </div>
           <div class="mt2 button-spacing">
-            <links to="/verify" class="btn-primary">Link BrightId</links>
+            <links to="/verify" class="btn-primary">Link with BrightId</links>
             <links to="/" class="btn-secondary">Go home</links>
           </div>
         </div>
@@ -92,12 +92,16 @@ ul {
 
 .gradient {
   background: var(--bg-gradient);
-  position: relative;
 
-  .moon {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+  .moon-container {
+    position: relative;
+
+    .moon {
+      mix-blend-mode: color-dodge;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
   }
   .hero {
     bottom: 0;

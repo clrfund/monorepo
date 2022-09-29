@@ -1,11 +1,21 @@
 <template>
   <div class="container">
-    <div class="image-wrapper">
-      <image-responsive title="docking" />
-      <img class="money" src="@/assets/money.gif" />
-      <img class="money" src="@/assets/confetti.gif" />
+    <div id="banner">
+      <div class="banner-content">
+        <span class="desktop"
+          >Join us at the<links :to="partyUrl">
+            Quadratic Funding Community Par-tay</links
+          ></span
+        >
+        <span class="mobile"
+          >Join us at the<links :to="partyUrl">
+            QF Community Par-tay</links
+          ></span
+        >
+      </div>
     </div>
-    <div class="dropshadow">
+    <div class="hero">
+      <image-responsive title="docking" />
       <div class="content">
         <span class="contributed-icon">🎉</span>
         <p
@@ -13,7 +23,7 @@
           class="contributed-header"
         >
           {{ formatContribution() }}
-          {{ currentRound.nativeTokenSymbol }} reallocated!
+          {{ nativeTokenSymbol }} reallocated!
         </p>
         <p
           v-else-if="$route.params.type === 'contribution'"
@@ -31,7 +41,7 @@
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
-              :date="currentRound.votingDeadline"
+              :date="votingDeadline"
             />.
           </p>
           <p
@@ -43,7 +53,7 @@
             <time-left
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
-              :date="currentRound.votingDeadline"
+              :date="votingDeadline"
             />
             to reallocate your contributions.
           </p>
@@ -70,12 +80,14 @@ import { RoundInfo } from '@/api/round'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
+import Links from '@/components/Links.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
+import { DateTime } from 'luxon'
 
 @Component({
-  components: { TransactionReceipt, TimeLeft, ImageResponsive },
+  components: { TransactionReceipt, TimeLeft, ImageResponsive, Links },
 })
 export default class TransactionSuccess extends Vue {
   get contribution(): BigNumber | null {
@@ -86,12 +98,24 @@ export default class TransactionSuccess extends Vue {
     return this.$store.state.currentRound
   }
 
+  get nativeTokenSymbol(): string {
+    return this.currentRound?.nativeTokenSymbol || ''
+  }
+
+  get votingDeadline(): DateTime | null {
+    return this.currentRound?.votingDeadline || null
+  }
+
   formatContribution() {
     return this.contribution ? formatAmount(this.contribution, 18) : ''
   }
 
   redirectToProjects() {
     this.$router.push({ name: 'projects' })
+  }
+
+  get partyUrl(): string {
+    return 'https://docs.google.com/forms/d/1I1lV0h7p_ygvQOClq_Ipg0B7rY8wGfAtR_Z1Zk_NHaE/viewform?edit_requested=true'
   }
 }
 </script>
@@ -100,52 +124,32 @@ export default class TransactionSuccess extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-.container {
-  position: relative;
-}
-
-.image-wrapper {
-  position: fixed;
-  height: 100vh;
-  background: var(--bg-gradient);
-  width: 100%;
+.hero {
+  bottom: 0;
   display: flex;
-  justify-content: center;
-}
+  background: var(--bg-gradient-hero);
+  height: calc(100vh - 113px);
 
-.image-wrapper .docking {
-  height: 95%;
-  transform: rotate(15deg);
-  @media (max-width: $breakpoint-m) {
-    transform: translateX(-6em) translateY(3em) rotate(15deg);
+  img {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 66%;
+    @media (max-width: $breakpoint-m) {
+      right: 0;
+      width: 100%;
+    }
   }
-}
-
-.image-wrapper .money {
-  position: fixed;
-  width: 100%;
-}
-
-.dropshadow {
-  position: relative;
-  @include gradientBackground(
-    180deg,
-    rgba(var(--shadow-dark-rgb), 0.4),
-    56.5%,
-    rgba(var(--shadow-light-rgb), 0),
-    75.75%
-  );
-  height: 80vh;
 }
 
 .content {
   padding-top: 4rem;
   width: 500px;
   margin: 0 2.5rem;
-
-  @media (max-width: $breakpoint-s) {
-    margin: auto;
-    width: 300px;
+  z-index: 1;
+  @media (max-width: $breakpoint-m) {
+    margin: 0 auto;
+    width: 80%;
   }
 }
 
@@ -179,5 +183,19 @@ export default class TransactionSuccess extends Vue {
 
 .receipt {
   margin: 16px 0;
+}
+
+.banner-content {
+  padding: 0.5rem;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  .mobile {
+    font-weight: normal;
+  }
+
+  a {
+    color: #ff641f;
+  }
 }
 </style>

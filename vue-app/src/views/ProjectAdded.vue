@@ -2,7 +2,9 @@
   <div>
     <round-status-banner v-if="$store.state.currentRound" />
     <div class="gradient">
-      <img src="@/assets/moon.png" class="moon" />
+      <div class="moon-container">
+        <img src="@/assets/moon.png" class="moon" />
+      </div>
       <div class="hero">
         <image-responsive title="newrings" />
         <div class="content">
@@ -122,12 +124,15 @@ ul {
 
 .gradient {
   background: var(--bg-gradient);
-  position: relative;
 
-  .moon {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+  .moon-container {
+    position: relative;
+    .moon {
+      mix-blend-mode: color-dodge;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
   }
   .hero {
     bottom: 0;

@@ -4,7 +4,9 @@
     <round-status-banner v-if="$store.state.currentRound" />
     <!-- TODO: add confetti -->
     <div class="gradient">
-      <img src="@/assets/moon.png" class="moon" />
+      <div class="moon-container">
+        <img src="@/assets/moon.png" class="moon" />
+      </div>
       <div class="hero">
         <image-responsive title="newrings" />
         <div class="content">
@@ -17,10 +19,12 @@
             />
           </div>
           <div class="subtitle">
-            You’re on board this funding round! And fully verified for BrightID
-            for this funding round.
+            You’re on board and fully verified for BrightID.
           </div>
-          <p>You can now start contributing to your favorite projects.</p>
+          <p>
+            You can now start contributing to your favorite projects during the
+            funding round.
+          </p>
           <div class="mt2 button-spacing">
             <links to="/projects" class="btn-primary">View projects</links>
             <links to="/" class="btn-secondary">Go home</links>
@@ -92,18 +96,24 @@ ul {
 
 .gradient {
   background: var(--bg-gradient);
-  position: relative;
 
-  .moon {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+  .moon-container {
+    position: relative;
+
+    .moon {
+      mix-blend-mode: color-dodge;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
   }
+
   .hero {
     bottom: 0;
     display: flex;
     background: var(--bg-gradient-hero);
     height: calc(100vh - 113px);
+
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
       padding-bottom: 16rem;
