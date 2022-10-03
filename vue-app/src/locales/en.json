@@ -367,6 +367,54 @@
       "link": "quadratic funding mechanism."
     }
   },
+  "quadratic_funding": {
+    "heading": {
+      "h1": "About Quadratic Funding",
+      "h2": "Quadratic Funding on clr.fund",
+      "p1": "Clr.fund is an implementation of quadratic funding, also called CLR (Capital-constrained Liberal Radicalism). Quadratic funding is made up of:",
+      "li1": "a pool of funds to be distributed",
+      "li2": "a voting system for distributing those funds",
+      "p2": "Two common voting systems you may have used are 1-person-1-vote and 1-dollar-1-vote. Quadratic funding is a best-of-both-worlds solution where users vote with the <b>square root</b> of the money they spend — read on to learn more."
+    },
+    "problems": {
+      "h2": "Problems with Existing Funding Mechanisms",
+      "p1": "The common fund-distribution systems of today all have pluses and minuses:",
+      "h3": "Markets",
+      "p2": "Markets can be thought of as fund-distributors: sellers are the fund recipients, and buyers are the voters deciding what will be funded. In this case, the \"voting system\" is 1-dollar-1-vote: each buyer has exactly as much potential influence over where funds go as they have money to spend. This is also the case for traditional crowdfunding platforms like Kickstarter.",
+      "p3": "An advantage of this system is that each voter's influence is directly proportional to their need (at least, if we ignore wealth inequality). The more Alice needs pizza, the more pizza she'll buy, and the more funding will go to pizzerias.",
+      "p4": "The disadvantage is that rich voters have an outsize influence on what gets funded. Alice may need pizza exactly as much as Bob needs movie tickets, but if Bob is twice as wealthy as Alice, he has twice as many \"votes\" to spend on going to the movies."
+    },
+    "private": {
+      "h3": "Private Grant-Givers",
+      "p1": "Privately-owned grant-giving institutions, like non-profit foundations, are quite common, but they don't have voting systems. Instead, grants committees and the like solicit grant proposals and then choose which applicants will receive funding internally.",
+      "p2": "An advantage of non-profits is that their non-profit status binds them to **act in the interest of some public mission**, rather than seeking profit above all.",
+      "p3": "On the other hand, the small, private interests that control these organizations lack the tools and incentives to effectively serve large publics."
+    },
+    "democratic": {
+      "h3": "Democratic Governments",
+      "p1": "Government grants are another common fund-distribution mechanism, and in democracies, these are usually controlled by voting citizens using 1-person-1-vote policies (with elected representatives and other middlemen in between).",
+      "p2": "On the good side, these systems are much less oligarchical than markets—if we ignore the ability to convert money into influence via the media, among other complications.",
+      "p3": "In exchange for less oligarchy, though, influence also poorly reflects need in 1-person-1-vote systems. A half-time Florida resident has the same voting power in Florida elections as a full-time resident, as long as both qualify to vote, even though the full-time resident may have twice as much riding on the result."
+    },
+    "balance": {
+      "h3": "Quadratic Funding: a better balance?",
+      "p1": "Quadratic funding is a compromise between 1-dollar-1-vote and 1-person-1-vote. Participants vote on how to distribute pooled funds by making individual donations, but each person's influence, rather than being the amount of money they spend, is the square root of that amount.",
+      "p2": "Compared to 1-dollar-1-vote in the market, quadratic funding makes it exponentially easier for the influence of many poorer people to outweigh that of a single rich person:",
+      "li1": "1-dollar-1-vote: 1 person paying $10,000 has the same influence as 100 people paying $100",
+      "li2": "Quadratic funding: 1 person paying $10,000 has the same influence as 100 people paying $1 or 10 people paying $100",
+      "p3": "Compared to 1-person-1-vote, quadratic funding lets the person who lives in Florida full-time, and cares twice as much about the vote's outcome than the person who lives in Florida half-time, have more influence:",
+      "li3": "1-person-1-vote: the two Florida voters have equal influence",
+      "li4": "  Quadratic funding: the full-time Florida resident, who cares twice as much, pays twice as much, and as a result gets 2^(1/2) times the influence of the half-time resident",
+      "p4": " (It's important to note that while these example are a good demonstration of the argument for quadratic funding, they do over-simplify these situations, which are as sociological as they are mathematical.)"
+    },
+    "resources": {
+      "h2": "Quadratic Funding Resources",
+      "li1": "Quadratic Payments: A Primer",
+      "li2": "Liberal Radicalism: A Flexible Design For Philanthropic Matching Funds",
+      "li3": "Quadratic Payments: A Primer",
+      "li4": "WTF is QF"
+    }
+  },
   "landing": {
     "hero": {
       "title": "Send your favorite projects to the moon!",
