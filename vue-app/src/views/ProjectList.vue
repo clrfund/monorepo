@@ -111,7 +111,7 @@ export default class ProjectList extends Vue {
   projects: Project[] = []
   search = ''
   isLoading = true
-  categories: string[] = ['content', 'research', 'tooling', 'data']
+  categories: string[] = ['content', 'research', 'tooling', 'data', 'other']
   selectedCategories: string[] = []
   roundAddress = ''
 

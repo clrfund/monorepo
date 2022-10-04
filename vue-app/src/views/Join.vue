@@ -186,6 +186,19 @@
                     }"
                   />
                   <label for="data" class="radio-btn">Data</label>
+
+                  <input
+                    id="other"
+                    type="radio"
+                    name="project-category"
+                    value="Other"
+                    v-model="$v.form.project.category.$model"
+                    :class="{
+                      input: true,
+                      invalid: $v.form.project.category.$error,
+                    }"
+                  />
+                  <label for="other" class="radio-btn">Other</label>
                 </form>
                 <p
                   :class="{
