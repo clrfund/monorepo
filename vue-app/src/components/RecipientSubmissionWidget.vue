@@ -44,7 +44,11 @@
         </div>
         <div class="warning-text" v-if="hasLowFunds">
           Not enough {{ depositToken }} in your wallet.<br />
-          Top up or connect a different wallet.
+          <span v-if="!!chainBridge"
+            >Get funds on
+            <Links :to="chainBridge">{{ chainLabel }}</Links></span
+          >
+          <span v-else>Top up or connect a different wallet.</span>
         </div>
         <div v-if="txHasDeposit" class="checkout-row">
           <p class="m05"><b>Security deposit</b></p>
@@ -73,6 +77,7 @@ import { chain } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
+import Links from '@/components/Links.vue'
 
 import { formatAmount } from '@/utils/amounts'
 
@@ -80,6 +85,7 @@ import { formatAmount } from '@/utils/amounts'
   components: {
     Loader,
     Transaction,
+    Links,
   },
 })
 export default class RecipientSubmissionWidget extends Vue {
@@ -94,6 +100,14 @@ export default class RecipientSubmissionWidget extends Vue {
   async created() {
     this.ethPrice = await fetchCurrentEthPrice()
     this.isLoading = false
+  }
+
+  get chainBridge(): string | null {
+    return chain.bridge || null
+  }
+
+  get chainLabel(): string {
+    return chain.label
   }
 
   get blockExplorerLabel(): string {
