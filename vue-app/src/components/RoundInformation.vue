@@ -289,10 +289,8 @@
           </div>
           <div class="round-announcement-info">
             The contribution period will start around the same time as Devcon.
-            Contributors should get prepared by connecting their wallet and
-            BrightID, to ensure they are BrightID verified when the round
-            starts. New recipients should hit the "Add project" button to begin
-            the registration process.
+            Interested project applicants should hit the "Add project" button to
+            begin the registration process.
           </div>
         </div>
       </template>
