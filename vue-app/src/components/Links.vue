@@ -33,7 +33,10 @@ export default class extends Vue {
       this.to = this.href
     }
     if (typeof this.to === 'string') {
-      this.isExternal = this.to.includes('http') || this.to.includes('mailto:')
+      this.isExternal =
+        this.to.includes('http') ||
+        this.to.includes('mailto:') ||
+        this.to.includes('brightid:')
     }
   }
 }
