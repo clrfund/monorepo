@@ -143,7 +143,12 @@ import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
-import { getBrightIdLink, registerUser, BrightId } from '@/api/bright-id'
+import {
+  getBrightIdLink,
+  getBrightIdUnversalLink,
+  registerUser,
+  BrightId,
+} from '@/api/bright-id'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
@@ -220,7 +225,8 @@ export default class VerifyView extends Vue {
     if (this.currentUser && !this.brightId?.isVerified) {
       // Present app link and QR code
       this.appLink = getBrightIdLink(this.currentUser.walletAddress)
-      QRCode.toDataURL(this.appLink, (error, url: string) => {
+      const qrcodeLink = getBrightIdUnversalLink(this.currentUser.walletAddress)
+      QRCode.toDataURL(qrcodeLink, (error, url: string) => {
         if (!error) {
           this.appLinkQrCode = url
         }
