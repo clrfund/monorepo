@@ -80,11 +80,9 @@ export async function getSponsorship(
 export async function getVerification(
   userAddress: string
 ): Promise<Verification> {
-  // do not cache result so we get the status change sooner
-  const headers = new Headers()
-  headers.append('cache-control', 'no-store')
   const apiUrl = `${NODE_URL}/verifications/${CONTEXT}/${userAddress}?signed=eth&timestamp=seconds`
-  const response = await fetch(apiUrl, { headers })
+  // bypass the cache so we get the status change sooner
+  const response = await fetch(apiUrl, { cache: 'no-store' })
   const data = await response.json()
 
   if (data['error']) {
