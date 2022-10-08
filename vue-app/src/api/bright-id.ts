@@ -46,7 +46,7 @@ export function getBrightIdLink(userAddress: string): string {
 }
 
 // This is for mobile app to launch BrightId app
-export function getBrightIdUnversalLink(userAddress: string): string {
+export function getBrightIdUniversalLink(userAddress: string): string {
   const deepLink = `${BRIGHTID_APP_URL}/link-verification/${CONTEXT}/${userAddress}`
   return deepLink
 }

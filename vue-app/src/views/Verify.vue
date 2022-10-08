@@ -145,7 +145,7 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
 import {
   getBrightIdLink,
-  getBrightIdUnversalLink,
+  getBrightIdUniversalLink,
   registerUser,
   BrightId,
 } from '@/api/bright-id'
@@ -224,8 +224,8 @@ export default class VerifyView extends Vue {
   mounted() {
     if (this.currentUser && !this.brightId?.isVerified) {
       // Present app link and QR code
-      this.appLink = getBrightIdLink(this.currentUser.walletAddress)
-      const qrcodeLink = getBrightIdUnversalLink(this.currentUser.walletAddress)
+      this.appLink = getBrightIdUniversalLink(this.currentUser.walletAddress)
+      const qrcodeLink = getBrightIdLink(this.currentUser.walletAddress)
       QRCode.toDataURL(qrcodeLink, (error, url: string) => {
         if (!error) {
           this.appLinkQrCode = url
