@@ -29,25 +29,21 @@
               </div>
             </div>
           </div>
-          <div
-            class="apply-callout"
-            v-if="
-              $store.getters.isRoundJoinPhase &&
-              !$store.getters.isRecipientRegistryFull
-            "
-          >
+          <div class="apply-callout">
             <div class="column">
-              <h2>Join the funding round</h2>
+              <h2>DEVCON QF Community Party 🥳 😎</h2>
               <p>
-                Add your project to the next funding round. If you're working on
-                anything related to public goods, you can join in.
+                Join us on 14 Oct for a night of connecting with fellow
+                community members! Tickets limited to 200 pax.
               </p>
               <div class="button-group">
-                <links to="/join" class="btn-primary w100">Add project</links>
-                <div v-if="signUpDeadline">
-                  <time-left unitClass="none" :date="signUpDeadline" />
-                  to join
-                </div>
+                <links
+                  :to="partyUrl"
+                  :hideArrow="true"
+                  class="btn-primary w100"
+                >
+                  Sign up
+                </links>
               </div>
             </div>
           </div>
@@ -215,6 +211,10 @@ export default class Landing extends Vue {
 
   get chain(): ChainInfo {
     return chain
+  }
+
+  get partyUrl(): string {
+    return 'https://docs.google.com/forms/d/1I1lV0h7p_ygvQOClq_Ipg0B7rY8wGfAtR_Z1Zk_NHaE/viewform?edit_requested=true'
   }
 }
 </script>

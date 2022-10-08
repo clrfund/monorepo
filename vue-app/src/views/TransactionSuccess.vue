@@ -1,19 +1,5 @@
 <template>
   <div class="container">
-    <div id="banner">
-      <div class="banner-content">
-        <span class="desktop"
-          >Join us at the<links :to="partyUrl">
-            Quadratic Funding Community Par-tay</links
-          ></span
-        >
-        <span class="mobile"
-          >Join us at the<links :to="partyUrl">
-            QF Community Par-tay</links
-          ></span
-        >
-      </div>
-    </div>
     <div class="hero">
       <image-responsive title="docking" />
       <div class="content">
@@ -80,14 +66,13 @@ import { RoundInfo } from '@/api/round'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import Links from '@/components/Links.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
 import { DateTime } from 'luxon'
 
 @Component({
-  components: { TransactionReceipt, TimeLeft, ImageResponsive, Links },
+  components: { TransactionReceipt, TimeLeft, ImageResponsive },
 })
 export default class TransactionSuccess extends Vue {
   get contribution(): BigNumber | null {
@@ -112,10 +97,6 @@ export default class TransactionSuccess extends Vue {
 
   redirectToProjects() {
     this.$router.push({ name: 'projects' })
-  }
-
-  get partyUrl(): string {
-    return 'https://docs.google.com/forms/d/1I1lV0h7p_ygvQOClq_Ipg0B7rY8wGfAtR_Z1Zk_NHaE/viewform?edit_requested=true'
   }
 }
 </script>
