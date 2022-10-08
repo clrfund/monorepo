@@ -4,7 +4,7 @@ import { formatBytes32String } from '@ethersproject/strings'
 
 import { BrightIdUserRegistry } from './abi'
 
-const BRIGHTID_APP_URL = 'https://app.brightid.org/'
+const BRIGHTID_APP_URL = 'https://app.brightid.org'
 const NODE_URL = `${BRIGHTID_APP_URL}/node/v6`
 const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
 
