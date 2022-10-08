@@ -276,17 +276,14 @@ export default class VerifyView extends Vue {
     const checkVerification = async () => {
       await this.loadBrightId()
       isConditionMet = isConditionMetFn()
+
+      if (!isConditionMet) {
+        setTimeout(async () => {
+          await checkVerification()
+        }, intervalTime)
+      }
     }
     await checkVerification()
-
-    if (!isConditionMet) {
-      const intervalId = setInterval(async () => {
-        await checkVerification()
-        if (isConditionMet) {
-          clearInterval(intervalId)
-        }
-      }, intervalTime)
-    }
   }
 
   async loadBrightId() {
