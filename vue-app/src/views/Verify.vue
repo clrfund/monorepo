@@ -99,7 +99,8 @@
                   <em>
                     This link might look scary but it just makes a connection
                     between your connected wallet address, our app, and
-                    BrightID. Make sure your address looks correct.
+                    BrightID. If clicking the link does not open the BrightId
+                    app, try manually copying the link to a browser.
                   </em>
                 </p>
               </div>
@@ -143,7 +144,12 @@ import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
-import { getBrightIdLink, registerUser, BrightId } from '@/api/bright-id'
+import {
+  getBrightIdLink,
+  getBrightIdUniversalLink,
+  registerUser,
+  BrightId,
+} from '@/api/bright-id'
 import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
@@ -219,8 +225,9 @@ export default class VerifyView extends Vue {
   mounted() {
     if (this.currentUser && !this.brightId?.isVerified) {
       // Present app link and QR code
-      this.appLink = getBrightIdLink(this.currentUser.walletAddress)
-      QRCode.toDataURL(this.appLink, (error, url: string) => {
+      this.appLink = getBrightIdUniversalLink(this.currentUser.walletAddress)
+      const qrcodeLink = getBrightIdLink(this.currentUser.walletAddress)
+      QRCode.toDataURL(qrcodeLink, (error, url: string) => {
         if (!error) {
           this.appLinkQrCode = url
         }
@@ -270,17 +277,14 @@ export default class VerifyView extends Vue {
     const checkVerification = async () => {
       await this.loadBrightId()
       isConditionMet = isConditionMetFn()
+
+      if (!isConditionMet) {
+        setTimeout(async () => {
+          await checkVerification()
+        }, intervalTime)
+      }
     }
     await checkVerification()
-
-    if (!isConditionMet) {
-      const intervalId = setInterval(async () => {
-        await checkVerification()
-        if (isConditionMet) {
-          clearInterval(intervalId)
-        }
-      }, intervalTime)
-    }
   }
 
   async loadBrightId() {
