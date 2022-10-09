@@ -4,7 +4,8 @@ import { formatBytes32String } from '@ethersproject/strings'
 
 import { BrightIdUserRegistry } from './abi'
 
-const NODE_URL = 'https://app.brightid.org/node/v6'
+const BRIGHTID_APP_URL = 'https://app.brightid.org'
+const NODE_URL = `${BRIGHTID_APP_URL}/node/v6`
 const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
 
 export interface BrightId {
@@ -38,8 +39,15 @@ export async function selfSponsor(
   return transaction
 }
 
+// This link is for generating QR code
 export function getBrightIdLink(userAddress: string): string {
   const deepLink = `brightid://link-verification/${CONTEXT}/${userAddress}`
+  return deepLink
+}
+
+// This is for mobile app to launch BrightId app
+export function getBrightIdUniversalLink(userAddress: string): string {
+  const deepLink = `${BRIGHTID_APP_URL}/link-verification/${CONTEXT}/${userAddress}`
   return deepLink
 }
 
@@ -72,11 +80,9 @@ export async function getSponsorship(
 export async function getVerification(
   userAddress: string
 ): Promise<Verification> {
-  // do not cache result so we get the status change sooner
-  const headers = new Headers()
-  headers.append('cache-control', 'no-store')
   const apiUrl = `${NODE_URL}/verifications/${CONTEXT}/${userAddress}?signed=eth&timestamp=seconds`
-  const response = await fetch(apiUrl, { headers })
+  // bypass the cache so we get the status change sooner
+  const response = await fetch(apiUrl, { cache: 'no-store' })
   const data = await response.json()
 
   if (data['error']) {
