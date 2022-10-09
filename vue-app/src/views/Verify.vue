@@ -99,7 +99,8 @@
                   <em>
                     This link might look scary but it just makes a connection
                     between your connected wallet address, our app, and
-                    BrightID. Make sure your address looks correct.
+                    BrightID. If clicking the link does not open the BrightId
+                    app, try manually copying the link to a browser.
                   </em>
                 </p>
               </div>
