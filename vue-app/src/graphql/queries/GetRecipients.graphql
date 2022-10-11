@@ -1,5 +1,5 @@
 query GetRecipients($registryAddress: String!) {
-  recipients(where: { recipientRegistry: $registryAddress }) {
+  recipients(first: 300, where: { recipientRegistry: $registryAddress }) {
     id
     recipientIndex
     requestType
