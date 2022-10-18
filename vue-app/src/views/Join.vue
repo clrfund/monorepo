@@ -888,6 +888,11 @@ export default class JoinView extends mixins(validationMixin) {
   txError = ''
 
   created() {
+    if (!this.$store.getters.isRoundJoinPhase) {
+      // redirect to display "no longer accept new application" message
+      this.$router.push({ name: 'join' })
+    }
+
     const steps = Object.keys(this.form)
     steps.splice(steps.length - 1, 1, 'summary', 'submit')
 

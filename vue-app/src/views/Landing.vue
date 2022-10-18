@@ -22,14 +22,13 @@
               />
             </div>
             <div class="btn-group">
-              <links to="/join" class="btn-action">Add your project</links>
               <links to="/projects" class="btn-action">Make a donation</links>
               <div class="btn-info" @click="scrollToHowItWorks">
                 How it works
               </div>
             </div>
           </div>
-          <div class="apply-callout">
+          <div v-if="$store.getters.isRoundJoinPhase" class="apply-callout">
             <div class="column">
               <h2>DEVCON QF Community Party 🥳 😎</h2>
               <p>

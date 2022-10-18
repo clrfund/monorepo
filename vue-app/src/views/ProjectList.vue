@@ -38,7 +38,7 @@
             class="pointer"
           />
         </div>
-        <div class="add-project">
+        <div v-if="$store.getters.isRoundJoinPhase" class="add-project">
           <links to="/join" class="btn-primary">Add project</links>
         </div>
         <div class="hr" />
@@ -74,6 +74,7 @@ import { DateTime } from 'luxon'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
+import { isValidEthAddress } from '@/utils/accounts'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import CartWidget from '@/components/CartWidget.vue'
@@ -137,6 +138,10 @@ export default class ProjectList extends Vue {
   }
 
   private async loadProjects(roundAddress: string) {
+    if (!isValidEthAddress(roundAddress)) {
+      return
+    }
+
     const round = await getRoundInfo(
       roundAddress,
       this.$store.state.currentRound
