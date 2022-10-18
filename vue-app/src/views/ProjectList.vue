@@ -38,7 +38,7 @@
             class="pointer"
           />
         </div>
-        <div class="add-project">
+        <div v-if="$store.getters.isRoundJoinPhase" class="add-project">
           <links to="/join" class="btn-primary">Add project</links>
         </div>
         <div class="hr" />

@@ -16,7 +16,7 @@
       <loader />
     </div>
 
-    <div class="content" v-else-if="$store.getters.hasContributionPhaseEnded">
+    <div class="content" v-else-if="!$store.getters.isRoundJoinPhase">
       <div class="big-emoji">☹</div>
       <h1>Sorry, it's too late to join</h1>
       <div id="subtitle" class="subtitle">

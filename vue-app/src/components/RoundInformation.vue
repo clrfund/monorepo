@@ -284,13 +284,12 @@
         <div class="round-info-item">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">Registration open</div>
+              <div class="round-info-title">Reviewing applications</div>
             </div>
           </div>
           <div class="round-announcement-info">
-            The contribution period will start around the same time as Devcon.
-            Interested project applicants should hit the "Add project" button to
-            begin the registration process.
+            We are currently reviewing project applications. The contribution
+            period will start soon, please check back later.
           </div>
         </div>
       </template>

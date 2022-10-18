@@ -56,8 +56,9 @@ const getters = {
 
     return deadline.isValid ? deadline : null
   },
-  isRoundJoinPhase: (state: RootState, getters): boolean => {
-    return !hasDateElapsed(getters.recipientJoinDeadline)
+  isRoundJoinPhase: (): boolean => {
+    // disallow project submission from the ui
+    return false
   },
   isRoundJoinOnlyPhase: (state: RootState, getters): boolean => {
     return (
