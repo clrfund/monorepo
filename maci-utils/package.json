@@ -1,0 +1,18 @@
+{
+  "name": "@clrfund/maci-utils",
+  "version": "0.0.1",
+  "description": "Utility functions to interact with the MACI library",
+  "main": "src/maci",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint 'src/**/*.ts'"
+  },
+  "keywords": [
+    "MACI"
+  ],
+  "license": "GPL-3.0",
+  "dependencies": {
+    "maci-crypto": "~0.9.1",
+    "maci-domainobjs": "~0.9.1"
+  }
+}

@@ -23,12 +23,11 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract } from 'ethers'
-import { PubKey, Message } from 'maci-domainobjs'
+import { PubKey, Message, createMessage } from '@clrfund/maci-utils'
 
 import Transaction from '@/components/Transaction.vue'
 import { SAVE_COMMITTED_CART_DISPATCH } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
-import { createMessage } from '@/utils/maci'
 
 import { FundingRound } from '@/api/abi'
 

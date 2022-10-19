@@ -4,7 +4,7 @@ import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { BigNumber, Contract, Signer, Wallet } from 'ethers'
 import { genProofs, proveOnChain } from 'maci-cli'
-import { Keypair } from 'maci-domainobjs'
+import { Keypair } from '@clrfund/maci-utils'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'

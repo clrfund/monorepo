@@ -42,7 +42,7 @@ import { RoundInfo } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
-import { getRecipientClaimData } from '@/utils/maci'
+import { getRecipientClaimData } from '@clrfund/maci-utils'
 
 @Component({ components: { Transaction } })
 export default class ClaimModal extends Vue {

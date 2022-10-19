@@ -3,7 +3,7 @@ import { Contract } from 'ethers'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { deployMockContract } from '@ethereum-waffle/mock-contract'
-import { Keypair } from 'maci-domainobjs'
+import { Keypair } from '@clrfund/maci-utils'
 
 import { getGasUsage } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'

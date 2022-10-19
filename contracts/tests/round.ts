@@ -5,7 +5,7 @@ import { deployMockContract } from '@ethereum-waffle/mock-contract'
 import { Contract } from 'ethers'
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { genRandomSalt } from 'maci-crypto'
-import { Keypair } from 'maci-domainobjs'
+import { Keypair } from '@clrfund/maci-utils'
 
 import { ZERO_ADDRESS, UNIT, VOICE_CREDIT_FACTOR } from '../utils/constants'
 import { getEventArg, getGasUsage } from '../utils/contracts'

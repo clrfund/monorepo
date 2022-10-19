@@ -99,7 +99,7 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract, Signer } from 'ethers'
 import { DateTime } from 'luxon'
-import { Keypair, PubKey, Message } from 'maci-domainobjs'
+import { Keypair, PubKey, Message, createMessage } from '@clrfund/maci-utils'
 
 import { RoundInfo } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
@@ -115,7 +115,6 @@ import {
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
-import { createMessage } from '@/utils/maci'
 import ProgressBar from '@/components/ProgressBar.vue'
 
 import { FundingRound, ERC20, MACI } from '@/api/abi'

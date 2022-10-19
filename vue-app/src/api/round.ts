@@ -1,6 +1,6 @@
 import { BigNumber, Contract, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
-import { PubKey } from 'maci-domainobjs'
+import { PubKey } from '@clrfund/maci-utils'
 
 import { FundingRound, MACI, ERC20 } from './abi'
 import { provider, factory } from './core'

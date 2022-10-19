@@ -100,11 +100,17 @@ export async function deployMaciFactory(
   }: MaciFactoryDependencies = {}
 ): Promise<Contract> {
   if (!poseidonT3) {
-    const PoseidonT3 = await ethers.getContractFactory(':PoseidonT3', account)
+    const PoseidonT3 = await ethers.getContractFactory(
+      'maci-contracts/sol/Poseidon.sol:PoseidonT3',
+      account
+    )
     poseidonT3 = await PoseidonT3.deploy()
   }
   if (!poseidonT6) {
-    const PoseidonT6 = await ethers.getContractFactory(':PoseidonT6', account)
+    const PoseidonT6 = await ethers.getContractFactory(
+      'maci-contracts/sol/Poseidon.sol:PoseidonT6',
+      account
+    )
     poseidonT6 = await PoseidonT6.deploy()
   }
   if (!batchUstVerifier) {

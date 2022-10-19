@@ -61,16 +61,13 @@ export default class FundsNeededWarning extends Vue {
   get tokenBalance(): number | null {
     if (!this.currentUser?.balance) return null
     return parseFloat(
-      formatAmount(
-        this.currentUser.balance as BigNumber,
-        this.nativeTokenDecimals
-      )
+      formatAmount(this.currentUser.balance, this.nativeTokenDecimals)
     )
   }
 
   get etherBalance(): number | null {
     if (!this.currentUser?.etherBalance) return null
-    return parseFloat(formatAmount(this.currentUser.etherBalance as BigNumber))
+    return parseFloat(formatAmount(this.currentUser.etherBalance))
   }
 
   get needsTokens(): boolean {

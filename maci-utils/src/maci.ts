@@ -1,8 +1,8 @@
 import { BigNumber } from 'ethers'
 import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
-import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
+import { Keypair, PubKey, PrivKey, Command, Message } from 'maci-domainobjs'
 
-function bnSqrt(a: BigNumber): BigNumber {
+export function bnSqrt(a: BigNumber): BigNumber {
   // Take square root from a big number
   // https://stackoverflow.com/a/52468569/1868395
   if (a.isZero()) {
@@ -89,3 +89,5 @@ export function getRecipientClaimData(
     spentSalt,
   ]
 }
+
+export { Keypair, PrivKey, PubKey, Command, Message }

@@ -2,7 +2,7 @@ import { BigNumber, Contract, Signer, FixedNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { Keypair, PrivKey } from 'maci-domainobjs'
+import { Keypair, PrivKey } from '@clrfund/maci-utils'
 
 import { RoundInfo } from './round'
 import { FundingRound, ERC20 } from './abi'
