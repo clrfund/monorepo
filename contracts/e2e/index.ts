@@ -66,8 +66,14 @@ describe('End-to-end Tests', function () {
     })
 
     // Deploy funding round factory
-    const poseidonT3 = await deployContract(deployer, ':PoseidonT3')
-    const poseidonT6 = await deployContract(deployer, ':PoseidonT6')
+    const poseidonT3 = await deployContract(
+      deployer,
+      'maci-contracts/sol/Poseidon.sol:PoseidonT3'
+    )
+    const poseidonT6 = await deployContract(
+      deployer,
+      'maci-contracts/sol/Poseidon.sol:PoseidonT6'
+    )
     const circuit = 'prod'
     const params = CIRCUITS[circuit]
     const batchUstVerifier = await deployContract(
