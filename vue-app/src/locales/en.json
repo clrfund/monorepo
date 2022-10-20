@@ -415,6 +415,49 @@
       "li4": "WTF is QF"
     }
   },
+  "recipients": {
+    "heading": {
+      "h1": "Recipient guide",
+      "p": "An overview of how things work as a recipient so you can learn what to expect throughout the duration of a funding round."
+    },
+    "funds": {
+      "h2": "Get funds on {chain}",
+      "p1": "You'll need some {currency} on {chain} in order to submit transactions to the clr.fund smart contracts.",
+      "p2_t1": " Follow",
+      "cta": "  these steps",
+      "p2_t2": "to bridge your funds to {chain}",
+      "link1": "Bridge your funds here",
+      "p3": "Confused on what {chain} is?",
+      "link2": " Read our explanation on how clr.fund uses layer 2 on Ethereum."
+    },
+    "register": {
+      "h2": "Register your project",
+      "p1": "In order to participate in a funding round as a project, you'll need to submit an application to join the recipient registry (via an on-chain transaction).",
+      "p2_t1": "MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.",
+      "p2_link": "More on MACI",
+      "p2_t2": ". The round only accepts a total of {maxRecipients} projects, so we encourage you to apply early.",
+      "p3": "Note: all application data (except contact email address) will be publicly stored on-chain.",
+      "h3": "Submit your application",
+      "li1": "Head over to the ",
+      "li1_link": "Join page.",
+      "li2": "Click \"See round criteria\" and familiarize yourself with the criteria for projects.",
+      "li3": "Once you're familiar with the criteria and you're sure your project meets them, click \"Add project.\" You'll see a series of forms to fill out asking for more information about your project.",
+      "li4": "With the forms finished, you can finish your submission:",
+      "li5": "Connect to the right network via your wallet of choice.",
+      "li6": "Send a transaction (with a deposit of {depositAmount} {depositToken}) to the registry contract.",
+      "p4": "Projects are accepted by default, but the registry admin may remove projects that don't meet the criteria.",
+      "p5": "In any case, your {depositToken} will be returned once your application has been either accepted or denied. Note that metadata pointing to all your project information (but not contact information) will be stored publicly on-chain."
+    },
+    "claim": {
+      "h2": "Claim your funds",
+      "p": "After a clr.fund round is finished, it's simple to claim your project's share of the funding. Return to your project's page: you will see a \"claim funds\" button if your project received contributions during the round. Submit the claim transaction to receive your funds."
+    },
+    "how": {
+      "h2": "How does clr.fund work?",
+      "p": "Looking for a more general overview?",
+      "link": "Check out our \"How It Works\" page"
+    }
+  },
   "landing": {
     "hero": {
       "title": "Send your favorite projects to the moon!",
