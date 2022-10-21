@@ -492,6 +492,25 @@
       "p2": "Note that you should only link one Ethereum address to your BrightID profile. If you repeat our verification process and add another Ethereum address, all contributions from you previous address will be ignored by the matching pool. This is again to avoid sybil attacks."
     }
   },
+  "brightIDGuide": {
+    "heading": {
+      "h2": "Get verified",
+      "p": "BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person. There are a couple of ways to do this:"
+    },
+    "accordion": {
+      "fastest": {
+        "tag": "🚀 Fastest",
+        "header": "Join a BrightId party",
+        "content": "BrightID run verification parties regularly. Join the call, meet other new users, and they'll verify you’re a human and not a bot. Quick and painless, even for you introverts out there.",
+        "linkButton": "View party schedule"
+      },
+      "luckiest": {
+        "tag": "🎰 Luckiest",
+        "header": "Connect with 2 verified humans",
+        "content": "Know anyone that's contributed to Gitcoin Grants or clr.fund rounds? may already be verified. Hit them up and see if they can verify you!"
+      }
+    }
+  },
   "landing": {
     "hero": {
       "title": "Send your favorite projects to the moon!",
