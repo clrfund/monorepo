@@ -1,28 +1,22 @@
 <template>
   <div>
-    <h2 class="step-title">Get verified</h2>
+    <h2 class="step-title">{{ $t('brightIDGuide.heading.h2') }}</h2>
     <p>
-      BrightID verification helps prove that you’re a unique human. To get
-      verified, you need enough people to confirm they've met you and you're a
-      real person. There are a couple of ways to do this:
+      {{ $t('brightIDGuide.heading.p') }}
     </p>
     <accordion
-      tag="🚀 Fastest"
-      header="Join a BrightId party"
-      content="BrightID run verification parties regularly. Join the call,
-    meet other new users, and they'll verify you’re a human and not a
-    bot. Quick and painless, even for you introverts out there."
+      :tag="$t('brightIDGuide.accordion.fastest.tag')"
+      :header="$t('brightIDGuide.accordion.fastest.header')"
+      :content="$t('brightIDGuide.accordion.fastest.content')"
       :linkButton="{
         link: 'https://meet.brightid.org/#/',
-        text: 'View party schedule',
+        text: $t('brightIDGuide.accordion.fastest.linkButton'),
       }"
     />
     <accordion
-      tag="🎰 Luckiest"
-      header="Connect with 2 verified humans"
-      content="Know anyone that's contributed to Gitcoin Grants or clr.fund
-        rounds? They may already be verified. Hit them up and see if
-        they can verify you!"
+      :tag="$t('brightIDGuide.accordion.luckiest.tag')"
+      :header="$t('brightIDGuide.accordion.luckiest.header')"
+      :content="$t('brightIDGuide.accordion.luckiest.content')"
     />
   </div>
 </template>
