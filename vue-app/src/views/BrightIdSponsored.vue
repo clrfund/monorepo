@@ -10,20 +10,22 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>You're sponsored!</h1>
+            <h1>{{ $t('brightIDSponsored.h1') }}</h1>
             <transaction-receipt
               v-if="$route.params.hash"
               :hash="$route.params.hash"
             />
           </div>
           <div class="subtitle">
-            You’re almost ready to contribute to your favorite projects! If
-            you're verified for BrightID, link your wallet to your BrightID
-            profile and start contributing.
+            {{ $t('brightIDSponsored.subtitle') }}
           </div>
           <div class="mt2 button-spacing">
-            <links to="/verify" class="btn-primary">Link BrightId</links>
-            <links to="/" class="btn-secondary">Go home</links>
+            <links to="/verify" class="btn-primary">{{
+              $t('brightIDSponsored.link1')
+            }}</links>
+            <links to="/" class="btn-secondary">{{
+              $t('brightIDSponsored.link2')
+            }}</links>
           </div>
         </div>
       </div>

@@ -477,7 +477,7 @@
     "how": {
       "h2": "How to set up BrightID",
       "p1_t1": "The app walks you through ",
-      "p1_link1": "getting set up",
+      "p1_link1": "getting set up ",
       "p1_t2": "here's a quick look at what you can expect:",
       "li1_t1": "Download BrightID for",
       "li1_link1": "iOS",
@@ -510,6 +510,58 @@
         "content": "Know anyone that's contributed to Gitcoin Grants or clr.fund rounds? may already be verified. Hit them up and see if they can verify you!"
       }
     }
+  },
+  "brightIDSponsor": {
+    "h2": "Get sponsored",
+    "p": "You need a sponsorship token to become BrightID verified. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. If you're not, click the button below to submit a sponsorship request.",
+    "cta": "Get sponsored"
+  },
+  "brightIDSponsored": {
+    "h1": "You're sponsored!",
+    "subtitle": "You’re almost ready to contribute to your favorite projects! If you're verified for BrightID, link your wallet to your BrightID profile and start contributing.",
+    "link1": "Link BrightId",
+    "link2": "Go home"
+  },
+  "join": {
+    "title": {
+      "h1": "Join the round",
+      "p1": "Review info",
+      "p2": "Preview project",
+      "link1": "Cancel"
+    },
+    "step0": {
+      "h2": "About the project",
+      "label1": "Project name",
+      "input1": "ex: clr.fund",
+      "error1": "Your project needs a name",
+      "label2": "Tagline",
+      "p1": "Describe your project in a sentence. Max characters: 140",
+      "input2": "ex: A quadratic funding protocol",
+      "error2": "This tagline is too long. Be brief for potential contributors",
+      "error3": "Your project needs a tagline",
+      "label3": "Description",
+      "p2": "Markdown supported.",
+      "input3": "ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...",
+      "p3": "Preview:",
+      "error4": "Your project needs a description. What are you raising money for?",
+      "label4": "Category",
+      "p4": "Choose the best fit.",
+      "input4": "Tooling",
+      "label5": "Tools",
+      "input5": "Content",
+      "label6": "Content",
+      "input6": "Research",
+      "label7": "Research",
+      "input7": "Data",
+      "label8": "Data",
+      "error5": "You need to choose a category",
+      "label9": "Problem space",
+      "p5": "Explain the problems you're trying to solve. Markdown supported.",
+      "input8": "ex: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.",
+      "error6": "Explain the problem your project solves",
+      "p6": " Preview:"
+    },
+    "step1": {}
   },
   "landing": {
     "hero": {
