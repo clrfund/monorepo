@@ -574,6 +574,24 @@ export class Message extends Entity {
       this.set("timestamp", Value.fromString(value as string));
     }
   }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get transactionIndex(): BigInt {
+    let value = this.get("transactionIndex");
+    return value.toBigInt();
+  }
+
+  set transactionIndex(value: BigInt) {
+    this.set("transactionIndex", Value.fromBigInt(value));
+  }
 }
 
 export class PublicKey extends Entity {
