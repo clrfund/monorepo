@@ -9,6 +9,7 @@ import { FundingRound, ERC20 } from './abi'
 import { factory, provider } from './core'
 import { Project } from './projects'
 import sdk from '@/graphql/sdk'
+import { Message } from '@clrfund/maci-utils'
 
 export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
@@ -152,4 +153,62 @@ export function isContributionAmountValid(
     .toUnsafeFloat()
     .toString()
   return normalizedValue === value
+}
+
+/**
+ *  Get the MACI contributor state index
+ * @param fundingRoundAddress Funding round contract address
+ * @param contributorAddress Contributor wallet address
+ * @returns Contributor stateIndex returned from MACI
+ */
+export async function getContributorIndex(
+  fundingRoundAddress: string,
+  contributorAddress: string
+): Promise<number | null> {
+  const data = await sdk.GetContributorIndex({
+    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+    contributorAddress: contributorAddress.toLowerCase(),
+  })
+
+  return data.publicKey?.stateIndex ? Number(data.publicKey?.stateIndex) : null
+}
+
+/**
+ * Get the latest set of vote messages submitted by contributor
+ * TODO: check for key change messages
+ * @param fundingRoundAddress Funding round contract address
+ * @param contributorAddress Contributor wallet address
+ * @returns MACI messages
+ */
+export async function getContributorMessages(
+  fundingRoundAddress: string,
+  contributorAddress: string
+): Promise<Message[]> {
+  const result = await sdk.GetContributorMessages({
+    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+    contributorAddress: contributorAddress.toLowerCase(),
+  })
+
+  if (!(result.publicKey && result.publicKey.messages?.length)) {
+    return []
+  }
+
+  let newest = BigInt(0)
+  const latestMessages = result.publicKey.messages
+    .map((message) => {
+      if (message.blockNumber > newest) {
+        newest = message.blockNumber
+      }
+      return message
+    })
+    .filter((m) => m.blockNumber >= newest)
+
+  if (latestMessages.length <= 0) {
+    return []
+  }
+
+  return latestMessages.map((message) => {
+    const { iv, data } = message
+    return new Message(iv, data as BigInt[])
+  })
 }

@@ -19,7 +19,10 @@ contract FundingRound is Ownable, MACISharedObjs, SignUpGatekeeper, InitialVoice
   using SafeERC20 for ERC20;
 
   // Constants
-  uint256 private constant MAX_VOICE_CREDITS = 10 ** 9;  // MACI allows 2 ** 32 voice credits max
+  // MACI allows 2 ** 32 voice credits max ~~ 10 ** 9
+  // Instead, we use 10 ** 8, a perfect square, to avoid precision loss for amounts that
+  // are perfect squares when calculating quadratic vote weight using square root
+  uint256 private constant MAX_VOICE_CREDITS = 10 ** 8;
   uint256 private constant MAX_CONTRIBUTION_AMOUNT = 10 ** 4;  // In tokens
   uint256 private constant ALPHA_PRECISION = 10 ** 18; // to account for loss of precision in division
   uint8   private constant LEAVES_PER_NODE = 5; // leaves per node of the tally result tree

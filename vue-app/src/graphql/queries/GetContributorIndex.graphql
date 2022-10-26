@@ -1,0 +1,9 @@
+query GetContributorIndex(
+  $fundingRoundAddress: ID!
+  $contributorAddress: ID!
+) {
+   publicKey(id: $contributorAddress) {
+    id
+    stateIndex
+  }
+}

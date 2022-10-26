@@ -12,14 +12,20 @@ import {
   deserializeContributorData,
   getContributionAmount,
   hasContributorVoted,
+  getContributorIndex,
+  Contributor,
+  getContributorMessages,
 } from '@/api/contributions'
 import { loginUser, logoutUser } from '@/api/gun'
-import { getRecipientRegistryAddress } from '@/api/projects'
+import { getRecipientRegistryAddress, getProjectByIndex } from '@/api/projects'
 import { RoundStatus, getRoundInfo } from '@/api/round'
 import { storage } from '@/api/storage'
 import { getTally } from '@/api/tally'
 import { getEtherBalance, getTokenBalance, isVerifiedUser } from '@/api/user'
 import { getRegistryInfo } from '@/api/recipient-registry-optimistic'
+import { Keypair, Command } from '@clrfund/maci-utils'
+import { BigNumber } from 'ethers'
+import { formatAmount } from '@/utils/amounts'
 
 // Constants
 import {
@@ -62,7 +68,7 @@ import {
 
 // Utils
 import { ensLookup } from '@/utils/accounts'
-import { UserRegistryType, userRegistryType } from '@/api/core'
+import { UserRegistryType, userRegistryType, maxDecimals } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
 import { getFactoryInfo } from '@/api/factory'
 import { getMACIFactoryInfo } from '@/api/maci-factory'
@@ -207,7 +213,7 @@ const actions = {
       serializedCart
     )
   },
-  [LOAD_CART]({ commit, state }) {
+  async [LOAD_CART]({ commit, state }) {
     storage.watchItem(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
@@ -240,17 +246,54 @@ const actions = {
       serializedCart
     )
   },
-  [LOAD_COMMITTED_CART]({ commit, state }) {
-    storage.watchItem(
-      state.currentUser.walletAddress,
-      state.currentUser.encryptionKey,
-      getCommittedCartStorageKey(state.currentRound.fundingRoundAddress),
-      (data: string | null) => {
-        const committedCart = deserializeCart(data)
-        Vue.set(state, 'committedCart', committedCart)
-        commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
-      }
+  async [LOAD_COMMITTED_CART]({ commit, state }) {
+    const {
+      coordinatorPubKey,
+      fundingRoundAddress,
+      voiceCreditFactor,
+      nativeTokenDecimals,
+    } = state.currentRound
+    const { encryptionKey, walletAddress } = state.currentUser
+
+    const messages = await getContributorMessages(
+      fundingRoundAddress,
+      walletAddress
     )
+
+    const encKeypair = Keypair.createFromSignatureHash(encryptionKey)
+
+    // Decrypt the message
+    const sharedKey = Keypair.genEcdhSharedKey(
+      encKeypair.privKey,
+      coordinatorPubKey
+    )
+    const registryAddress = await getRecipientRegistryAddress(
+      fundingRoundAddress
+    )
+
+    const cartItems = messages.map(async (message) => {
+      const { command } = Command.decrypt(message, sharedKey)
+      const { voteOptionIndex, newVoteWeight } = command
+
+      const voteWeightString = newVoteWeight.toString()
+      const amount = BigNumber.from(voteWeightString)
+        .mul(voteWeightString)
+        .mul(voiceCreditFactor)
+
+      const project = await getProjectByIndex(
+        registryAddress,
+        Number(voteOptionIndex)
+      )
+      return {
+        amount: formatAmount(amount, nativeTokenDecimals, null, maxDecimals),
+        isCleared: false,
+        ...project,
+      }
+    })
+
+    const committedCart = await Promise.all(cartItems)
+    Vue.set(state, 'committedCart', committedCart)
+    commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
   },
   [SAVE_CONTRIBUTOR_DATA]({ state }) {
     const serializedData = serializeContributorData(state.contributor)
@@ -261,18 +304,28 @@ const actions = {
       serializedData
     )
   },
-  [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
-    storage.watchItem(
-      state.currentUser.walletAddress,
-      state.currentUser.encryptionKey,
-      getContributorStorageKey(state.currentRound.fundingRoundAddress),
-      (data: string | null) => {
-        const contributor = deserializeContributorData(data)
-        if (contributor) {
-          commit(SET_CONTRIBUTOR, contributor)
-        }
-      }
+  async [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
+    const { encryptionKey, walletAddress } = state.currentUser
+    const { fundingRoundAddress } = state.currentRound
+    if (!encryptionKey) {
+      return
+    }
+
+    const stateIndex = await getContributorIndex(
+      fundingRoundAddress,
+      walletAddress
     )
+    if (!stateIndex) {
+      // user has not contributed
+      return
+    }
+
+    const contributorKeypair = Keypair.createFromSignatureHash(encryptionKey)
+    const contributor: Contributor = {
+      keypair: contributorKeypair,
+      stateIndex,
+    }
+    commit(SET_CONTRIBUTOR, contributor)
   },
   [UNWATCH_CONTRIBUTOR_DATA]({ state }) {
     if (!state.currentUser || !state.currentRound) {

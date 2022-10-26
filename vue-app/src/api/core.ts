@@ -70,3 +70,6 @@ export enum ThemeMode {
   LIGHT = 'light',
   DARK = 'dark',
 }
+
+// the maximum significant digits for displaying the contribution amount on cart
+export const maxDecimals = 6

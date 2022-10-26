@@ -159,6 +159,10 @@ export default class ContributionModal extends Vue {
     return this.$store.state.currentUser.walletProvider.getSigner()
   }
 
+  get encryptionKey(): string {
+    return this.$store.state.currentUser.encryptionKey
+  }
+
   get fundingRound(): Contract {
     const { fundingRoundAddress } = this.currentRound
     return new Contract(fundingRoundAddress, FundingRound, this.signer)
@@ -209,7 +213,9 @@ export default class ContributionModal extends Vue {
       }
       this.step += 1
       // Contribute (step 2)
-      const contributorKeypair = new Keypair()
+      const contributorKeypair = Keypair.createFromSignatureHash(
+        this.encryptionKey
+      )
       let contributionTxReceipt
       try {
         contributionTxReceipt = await waitForTransaction(

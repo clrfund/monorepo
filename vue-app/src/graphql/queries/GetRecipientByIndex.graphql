@@ -1,0 +1,8 @@
+query GetRecipientByIndex($registryAddress: String!, $recipientIndex: BigInt!) {
+  recipients(where: { recipientRegistry: $registryAddress, recipientIndex: $recipientIndex }) {
+    id
+    recipientIndex
+    recipientAddress
+    recipientMetadata
+  }
+}

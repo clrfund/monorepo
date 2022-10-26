@@ -1,6 +1,16 @@
-import { BigNumber } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
-import { Keypair, PubKey, PrivKey, Command, Message } from 'maci-domainobjs'
+import {
+  Keypair as MaciKeypair,
+  PubKey,
+  PrivKey,
+  Command,
+  Message,
+} from 'maci-domainobjs'
+
+const SNARK_FIELD_SIZE = BigInt(
+  '21888242871839275222246405745257275088548364400416034343698204186575808495617'
+)
 
 export function bnSqrt(a: BigNumber): BigNumber {
   // Take square root from a big number
@@ -17,6 +27,50 @@ export function bnSqrt(a: BigNumber): BigNumber {
   return x
 }
 
+/**
+ * Returns a BabyJub-compatible value. This function is modified from
+ * the MACI's genRandomBabyJubValue(). Instead of returning random value
+ * for the private key, it derives the private key from the users',
+ * signature hash
+ * @param hash - user's signature hash
+ */
+function genPrivKey(hash: string): PrivKey {
+  // Prevent modulo bias
+  //const lim = BigInt('0x10000000000000000000000000000000000000000000000000000000000000000')
+  //const min = (lim - SNARK_FIELD_SIZE) % SNARK_FIELD_SIZE
+  const min = BigNumber.from(
+    '6350874878119819312338956282401532410528162663560392320966563075034087161851'
+  )
+
+  if (!utils.isBytesLike(hash)) {
+    throw new Error(`Hash must be a hex string: ${hash}`)
+  }
+
+  let hashBN = BigNumber.from(hash)
+  // don't think we'll enter the for loop below, but, just in case
+  for (let counter = 1; min.gte(hashBN); counter++) {
+    const data = utils.concat([utils.hexValue(hashBN), utils.arrayify(counter)])
+    hashBN = BigNumber.from(utils.keccak256(data))
+  }
+
+  const rawPrivKey: BigInt = BigInt(hashBN.toString()) % SNARK_FIELD_SIZE
+  if (rawPrivKey >= SNARK_FIELD_SIZE) {
+    throw new Error(
+      `privKey ${rawPrivKey} must be less than SNARK_FIELD_SIZE ${SNARK_FIELD_SIZE}`
+    )
+  }
+
+  return new PrivKey(rawPrivKey)
+}
+
+export class Keypair extends MaciKeypair {
+  // generate a key pair from a user's signature hash
+  static createFromSignatureHash(hash: string): Keypair {
+    const privKey = genPrivKey(hash.startsWith('0x') ? hash : '0x' + hash)
+    return new Keypair(privKey)
+  }
+}
+
 export function createMessage(
   userStateIndex: number,
   userKeypair: Keypair,
@@ -27,18 +81,22 @@ export function createMessage(
   nonce: number,
   salt?: BigInt
 ): [Message, PubKey] {
-  const encKeypair = new Keypair()
+  const encKeypair = newUserKeypair ? newUserKeypair : userKeypair
   if (!salt) {
     salt = genRandomSalt()
   }
-  const quadraticVoteWeight = voiceCredits ? bnSqrt(voiceCredits) : 0
+
+  const quadraticVoteWeight = voiceCredits
+    ? bnSqrt(voiceCredits)
+    : BigNumber.from(0)
+
   const command = new Command(
     BigInt(userStateIndex),
     newUserKeypair ? newUserKeypair.pubKey : userKeypair.pubKey,
     BigInt(voteOptionIndex || 0),
-    BigInt(quadraticVoteWeight),
+    BigInt(quadraticVoteWeight.toString()),
     BigInt(nonce),
-    BigInt(salt)
+    salt
   )
   const signature = command.sign(userKeypair.privKey)
   const message = command.encrypt(
@@ -90,4 +148,4 @@ export function getRecipientClaimData(
   ]
 }
 
-export { Keypair, PrivKey, PubKey, Command, Message }
+export { PrivKey, PubKey, Command, Message }

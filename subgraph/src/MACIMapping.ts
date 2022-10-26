@@ -37,12 +37,17 @@ export function handlePublishMessage(event: PublishMessage): void {
     return
   }
 
-  const messageID = event.transaction.hash.toHexString()
+  const messageID =
+    event.transaction.hash.toHexString() +
+    '-' +
+    event.transactionLogIndex.toString()
 
   const timestamp = event.block.timestamp.toString()
   const message = new Message(messageID)
   message.data = event.params._message.data
   message.iv = event.params._message.iv
+  message.blockNumber = event.block.number
+  message.transactionIndex = event.transaction.index
 
   const publicKeyId = event.transaction.from.toHexString()
   const publicKey = PublicKey.load(publicKeyId)
