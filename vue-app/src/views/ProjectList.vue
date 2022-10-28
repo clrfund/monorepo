@@ -11,7 +11,7 @@
         }"
       >
         <div class="header">
-          <h2>Projects</h2>
+          <h2>{{ $t('projectList.h2') }}</h2>
         </div>
 
         <filter-dropdown
@@ -26,7 +26,7 @@
             v-model="search"
             class="input"
             name="search"
-            placeholder="Search projects"
+            :placeholder="$t('projectList.input')"
             autocomplete="on"
             onfocus="this.value=''"
           />
@@ -39,7 +39,9 @@
           />
         </div>
         <div class="add-project">
-          <links to="/join" class="btn-primary">Add project</links>
+          <links to="/join" class="btn-primary">{{
+            $t('projectList.link1')
+          }}</links>
         </div>
         <div class="hr" />
       </div>
@@ -58,8 +60,7 @@
       </div>
       <div class="empty-search" v-if="filteredProjects == 0">
         <div>
-          😢 No projects match your search. Try using the filter to narrow down
-          what you're looking for.
+          {{ $t('projectList.div1') }}
         </div>
       </div>
     </div>

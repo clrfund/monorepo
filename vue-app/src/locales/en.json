@@ -759,6 +759,108 @@
       "link-9": "More on Ethereum"
     }
   },
+  "profile": {
+    "p1": "Close",
+    "h2_1": "Your wallet",
+    "btn1": "address",
+    "tooltip1": "Disconnect wallet",
+    "h2_2": "{chain} balances",
+    "tooltip2": "Balance of wallet on {chain} chain",
+    "h2_3": "Projects",
+    "div1": "Under review",
+    "btn2_1": "Preview",
+    "btn2_2": "View",
+    "div2": "You haven't submitted any projects"
+  },
+  "project": {
+    "p": "✔️ You have contributed to this project!"
+  },
+  "projectAdded": {
+    "h1": "Project submitted!",
+    "div1": "You’re almost on board this funding round.",
+    "li1": "Your project just needs to go through some final checks to ensure it meets round criteria. You can",
+    "link1": "learn more about the registration process here.",
+    "li2": "Once that's complete, your project page will go live.",
+    "li3": " If your project fails any checks, we'll let you know by email and return your deposit.",
+    "link2": "View projects",
+    "link3": "Go home"
+  },
+  "projectList": {
+    "h2": "Projects",
+    "input": "Search projects",
+    "link1": "Add project",
+    "div1": "😢 No projects match your search. Try using the filter to narrow down what you're looking for."
+  },
+  "recipientRegistry": {
+    "h2": "Recipient registry",
+    "th1": "Project",
+    "th2": "Request type",
+    "th3": "Status",
+    "th4": "Actions",
+    "summary": "More",
+    "div1": "Transaction hash",
+    "btn1": "hash",
+    "div2": "Project ID",
+    "btn2": "id",
+    "div3": "Recipient address",
+    "btn3": "address"
+  },
+  "roundList": {
+    "h1": "Rounds",
+    "link1": "Round {index}",
+    "link2": "Round {index}"
+  },
+  "transactionSuccess": {
+    "p1": "reallocated!",
+    "p2": "You just contributed!",
+    "p3": "Your choices have been updated! You can update your choices again any time in the next",
+    "p4_t1": "Thanks for contributing to the Ethereum ecosystem. If you change your mind, you have",
+    "p4_t2": " to reallocate your contributions.",
+    "btn": "OK"
+  },
+  "verified": {
+    "h1": "Ready to contribute!",
+    "div1": "You’re on board this funding round! And fully verified for BrightID for this funding round.",
+    "p1": "You can now start contributing to your favorite projects.",
+    "link1": "View projects",
+    "link2": "Go home"
+  },
+  "verify": {
+    "subtitle": " Step {currentStep} of {steps}",
+    "p1": "Step {currentStep} of {steps}",
+    "link1": "Cancel",
+    "h1": "Set up BrightID",
+    "link2": "Cancel",
+    "h2_1": "Connect",
+    "p2": "You need to connect your BrightID account with your wallet address.",
+    "p3": "Once this app is linked in your BrightID app, we'll automatically transition you to the next step. It may take a minute for us to verify the connection - please wait.",
+    "p4": "Scan this QR code with your BrightID app",
+    "p5": "Follow this link to connect your wallet to your BrightID app",
+    "p6": "This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.",
+    "h2_2": "Register",
+    "p7": "To protect the round from bribery and fraud, you need to add your wallet address to a smart contract registry. Once you’re done, you can join the funding round!",
+    "btn": " Become a contributor"
+  },
+  "verifyLanding": {
+    "h1": "Prove you’re only using one account",
+    "subtitle": "We use BrightID to stop bots and cheaters, and make our funding more democratic.",
+    "h2": "What you'll need",
+    "tooltip": "If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps",
+    "li1_t1": "BrightID – available on",
+    "li1_link1": "iOS",
+    "li1_t2": "or",
+    "li1_link2": "Android",
+    "li2": "Get sponsored",
+    "li3": "Get verified",
+    "li4": "An Ethereum wallet, with enough gas for two transactions",
+    "li5": "Access to Zoom or Google Meet",
+    "link1": "Why is this important?",
+    "div1": "There's not yet an open funding round. Please check back later.",
+    "div2": "The current round is no longer accepting new contributions. Please try again next round.",
+    "div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
+    "link2": "I have BrightID installed",
+    "link3": "Go back"
+  },
   "navBar": {
     "language": "Language",
     "app": "App",
