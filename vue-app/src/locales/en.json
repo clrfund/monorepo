@@ -659,6 +659,51 @@
       "p1": "This is a blockchain transaction that will add your project information to the funding round."
     }
   },
+  "joinLanding": {
+    "loading": "Fetching round data...",
+    "closed": {
+      "h1": "Sorry, it's too late to join",
+      "subtitle1": "The round is closed for new projects. It's now too late to get on board.",
+      "subtitle2_t1": "Check out these",
+      "link1": "other ways to source funding",
+      "subtitle2_t2": ". Or follow us on Twitter for updates about future rounds:",
+      "link2": "Home"
+    },
+    "full": {
+      "h1": "Sorry, the round is full",
+      "subtitle1": "The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now. Unfortunately we've hit the cap and there's no more room on board.",
+      "subtitle2_t1": "Check out these",
+      "link1": "other ways to source funding",
+      "subtitle2_t2": ". Or follow us on Twitter for updates about future rounds:",
+      "link2": "Home",
+      "link3": "More on MACI"
+    },
+    "open": {
+      "h1": "Join the funding round",
+      "subtitle1_t1": "We’ll need some information about your project and a",
+      "subtitle1_t2": " security deposit.",
+      "subtitle2": "The round only accepts a total of {maxRecipients} projects, so apply now while there’s still room!",
+      "div1": "Time left to join",
+      "div2": "Time to complete",
+      "div3": "15 minutes (ish)",
+      "div4": " {spacesRemainingString} left, hurry!",
+      "div5": "MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.",
+      "link1": "More on MACI",
+      "p1": "You will get your deposit back if you don’t make it into the round this time.",
+      "button1": "See round criteria",
+      "link2": "Add project"
+    },
+    "join": {
+      "h1": "Join the next funding round",
+      "subtitle1_t1": "We’ll need some information about your project and a",
+      "subtitle1_t2": " security deposit.",
+      "subtitle2": "The round only accepts a total of {maxRecipients} projects, so apply now while there’s still room!",
+      "div1": "Time to complete",
+      "div2": "15 minutes (ish)",
+      "button1": "See round criteria",
+      "link2": "Add project"
+    }
+  },
   "landing": {
     "hero": {
       "title": "Send your favorite projects to the moon!",
