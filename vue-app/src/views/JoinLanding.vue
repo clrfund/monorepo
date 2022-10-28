@@ -12,63 +12,70 @@
       <breadcrumbs />
     </div>
     <div class="content" v-if="loading">
-      <h1>Fetching round data...</h1>
+      <h1>{{ $t('joinLanding.loading') }}</h1>
       <loader />
     </div>
 
     <div class="content" v-else-if="$store.getters.hasContributionPhaseEnded">
       <div class="big-emoji">☹</div>
-      <h1>Sorry, it's too late to join</h1>
+      <h1>{{ $t('joinLanding.closed.h1') }}</h1>
       <div id="subtitle" class="subtitle">
-        The round is closed for new projects. It's now too late to get on board.
+        {{ $t('joinLanding.closed.subtitle1') }}
       </div>
       <div class="subtitle mt2" id="subtitle">
-        Check out these
-        <links to="https://ethereum.org/en/community/grants/"
-          >other ways to source funding</links
-        >. Or follow us on Twitter for updates about future rounds:
+        {{ $t('joinLanding.closed.subtitle2_t1') }}
+        <links to="https://ethereum.org/en/community/grants/">{{
+          $t('joinLanding.closed.link1')
+        }}</links
+        >{{ $t('joinLanding.closed.subtitle2_t2') }}
         <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
-        <links to="/" class="btn-primary">Home</links>
+        <links to="/" class="btn-primary">{{
+          $t('joinLanding.closed.link2')
+        }}</links>
       </div>
     </div>
 
     <div class="content" v-else-if="isRoundFull">
       <div class="big-emoji">☹</div>
-      <h1>Sorry, the round is full</h1>
+      <h1>{{ $t('joinLanding.full.h1') }}</h1>
       <div id="subtitle" class="subtitle">
-        The tech we use to protect you from bribery and collusion, MACI, limits
-        the number of projects right now. Unfortunately we've hit the cap and
-        there's no more room on board.
+        {{ $t('joinLanding.full.subtitle1') }}
       </div>
       <div class="subtitle mt2" id="subtitle">
-        Check out these
-        <links to="https://ethereum.org/en/community/grants/"
-          >other ways to source funding</links
-        >. Or follow us on Twitter for updates about future rounds:
+        {{ $t('joinLanding.full.subtitle2_t1') }}
+        <links to="https://ethereum.org/en/community/grants/">{{
+          $t('joinLanding.full.link1')
+        }}</links
+        >{{ $t('joinLanding.full.subtitle2_t2') }}
         <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
-        <links to="/" class="btn-primary">Home</links>
-        <links to="/about" class="btn-secondary">More on MACI</links>
+        <links to="/" class="btn-primary">{{
+          $t('joinLanding.full.link2')
+        }}</links>
+        <links to="/about" class="btn-secondary">{{
+          $t('joinLanding.full.link3')
+        }}</links>
       </div>
     </div>
 
     <div class="content" v-else-if="$store.state.currentRound">
-      <h1>Join the funding round</h1>
+      <h1>{{ $t('joinLanding.open.h1') }}</h1>
       <div class="subtitle">
-        We’ll need some information about your project and a
-        <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
-        deposit.
+        {{ $t('joinLanding.open.subtitle1_t1') }}
+        <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong
+        >{{ $t('joinLanding.open.subtitle1_t2') }}
       </div>
       <div class="subtitle mt2">
-        The round only accepts a total of {{ maxRecipients }} projects, so apply
-        now while there’s still room!
+        {{ $t('joinLanding.open.subtitle2', { maxRecipients: maxRecipients }) }}
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
-          <div class="countdown-label caps">Time left to join</div>
+          <div class="countdown-label caps">
+            {{ $t('joinLanding.open.div1') }}
+          </div>
           <div class="countdown caps">
             <time-left
               valueClass="none"
@@ -78,59 +85,70 @@
           </div>
         </div>
         <div class="apply-callout">
-          <div class="countdown-label caps">Time to complete</div>
-          <div class="countdown caps">15 minutes (ish)</div>
+          <div class="countdown-label caps">
+            {{ $t('joinLanding.open.div2') }}
+          </div>
+          <div class="countdown caps">{{ $t('joinLanding.open.div3') }}</div>
         </div>
         <div v-if="isRoundFillingUp" class="apply-callout-warning">
           <div class="filling-up-container">
             <div class="countdown caps">
-              {{ spacesRemainingString }} left, hurry!
+              {{
+                $t('joinLanding.open.div4', {
+                  spacesRemainingString: spacesRemainingString,
+                })
+              }}
             </div>
             <div class="dropdown">
               <img class="icon" @click="openTooltip" src="@/assets/info.svg" />
               <div id="myTooltip" class="hidden button-menu">
-                MACI, our anti-bribery tech, currently limits the amount of
-                projects allowed per round.
-                <links to="/about/maci">More on MACI</links>
+                {{ $t('joinLanding.open.div5') }}
+                <links to="/about/maci">{{
+                  $t('joinLanding.open.link1')
+                }}</links>
               </div>
             </div>
           </div>
           <p class="warning-text">
-            You will get your deposit back if you don’t make it into the round
-            this time.
+            {{ $t('joinLanding.open.p1') }}
           </p>
         </div>
       </div>
       <div class="btn-container">
         <button class="btn-secondary" @click="toggleCriteria">
-          See round criteria
+          {{ $t('joinLanding.open.button1') }}
         </button>
-        <links to="/join/project" class="btn-primary">Add project</links>
+        <links to="/join/project" class="btn-primary">{{
+          $t('joinLanding.open.link2')
+        }}</links>
       </div>
     </div>
 
     <div class="content" v-else-if="$store.getters.isRoundJoinPhase">
-      <h1>Join the next funding round</h1>
+      <h1>{{ $t('joinLanding.join.h1') }}</h1>
       <div class="subtitle">
-        We’ll need some information about your project and a
-        <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
-        deposit.
+        {{ $t('joinLanding.join.subtitle1_t1') }}
+        <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong
+        >{{ $t('joinLanding.join.subtitle1_t2') }}
       </div>
       <div class="subtitle mt2">
-        The round only accepts a total of {{ maxRecipients }} projects, so apply
-        now while there’s still room!
+        {{ $t('joinLanding.join.subtitle2', { maxRecipients: maxRecipients }) }}
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
-          <div class="countdown-label caps">Time to complete</div>
-          <div class="countdown caps">15 minutes (ish)</div>
+          <div class="countdown-label caps">
+            {{ $t('joinLanding.join.div1') }}
+          </div>
+          <div class="countdown caps">{{ $t('joinLanding.join.div2') }}</div>
         </div>
       </div>
       <div class="btn-container">
         <button class="btn-secondary" @click="toggleCriteria">
-          See round criteria
+          {{ $t('joinLanding.join.button1') }}
         </button>
-        <links to="/join/project" class="btn-primary">Add project</links>
+        <links to="/join/project" class="btn-primary">{{
+          $t('joinLanding.join.link2')
+        }}</links>
       </div>
     </div>
 
