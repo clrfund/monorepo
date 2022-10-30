@@ -861,6 +861,31 @@
     "link2": "I have BrightID installed",
     "link3": "Go back"
   },
+  "addToCartButton": {
+    "input1": "Add to cart",
+    "input2": "In cart 🎉"
+  },
+  "brightIdWidget": {
+    "h2": "BrightID setup",
+    "link1": "Start contributing",
+    "link2": "Continue setup",
+    "link3": "Start setup",
+    "tooltip1_1": "You're a verified human on BrightID!",
+    "tooltip1_2": "Your BrightID profile still needs to be verified.",
+    "p1_1": "Verified",
+    "p1_2": "Unverified"
+  },
+  "callToActionCard": {
+    "h2_1": "Changed your mind?",
+    "p1": "You still have time to reallocate your contributions.",
+    "div1": "Open cart",
+    "h2_2": "Round over for contributions",
+    "p2": "You can no longer make any contributions this round.",
+    "h2_3": "Get prepared",
+    "p3": "You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.",
+    "link1": "Start prep",
+    "link2": "Continue setup"
+  },
   "navBar": {
     "language": "Language",
     "app": "App",
