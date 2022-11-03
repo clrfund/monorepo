@@ -8,7 +8,7 @@ import { Keypair } from '@clrfund/maci-utils'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
-import { deployContract, deployMaciFactory } from '../utils/deployment'
+import { deployMaciFactory } from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import {
   MaciParameters,
@@ -16,7 +16,6 @@ import {
   addTallyResultsBatch,
   getRecipientClaimData,
 } from '../utils/maci'
-import { CIRCUITS } from '../utils/deployment'
 
 use(solidity)
 
