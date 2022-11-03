@@ -487,12 +487,12 @@ describe('Funding Round', () => {
 
   describe('finalizing round', () => {
     const matchingPoolSize = UNIT.mul(10000)
-    const totalContributions = UNIT.mul(100)
+    const totalContributions = UNIT.mul(1000)
     const totalSpent = totalContributions.div(VOICE_CREDIT_FACTOR)
     const totalSpentSalt = genRandomSalt().toString()
     const totalVotes = bnSqrt(totalSpent)
     const tallyTreeDepth = 2
-    expect(totalVotes.toNumber()).to.equal(1000)
+    expect(totalVotes.toNumber()).to.equal(10000)
 
     beforeEach(async () => {
       maci = await deployMaciMock()
