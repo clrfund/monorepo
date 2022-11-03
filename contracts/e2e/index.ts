@@ -66,27 +66,8 @@ describe('End-to-end Tests', function () {
     })
 
     // Deploy funding round factory
-    const poseidonT3 = await deployContract(
-      deployer,
-      'maci-contracts/sol/Poseidon.sol:PoseidonT3'
-    )
-    const poseidonT6 = await deployContract(
-      deployer,
-      'maci-contracts/sol/Poseidon.sol:PoseidonT6'
-    )
     const circuit = 'prod'
-    const params = CIRCUITS[circuit]
-    const batchUstVerifier = await deployContract(
-      deployer,
-      params.batchUstVerifier
-    )
-    const qvtVerifier = await deployContract(deployer, params.qvtVerifier)
-    const maciFactory = await deployMaciFactory(deployer, circuit, {
-      poseidonT3,
-      poseidonT6,
-      batchUstVerifier,
-      qvtVerifier,
-    })
+    const maciFactory = await deployMaciFactory(deployer, circuit)
     const FundingRoundFactory = await ethers.getContractFactory(
       'FundingRoundFactory',
       deployer
