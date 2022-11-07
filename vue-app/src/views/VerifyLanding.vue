@@ -23,7 +23,7 @@
           What you'll need
           <img
             v-tooltip="{
-              content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
+              content: `If you've previously donated to a CLR round, you can skip the 'Get sponsored' and 'Get verified' steps`,
               trigger: 'hover click',
             }"
             width="16px"
@@ -47,8 +47,14 @@
               >Android</a
             >
             <ul>
-              <li><links to="/brightid/sponsor">Get sponsored</links></li>
               <li><links to="/brightid">Get verified</links></li>
+              <li>
+                Get sponsored (e.g by linking with
+                <links to="https://unitap.app/gas-faucet" hideArrow="true"
+                  >Unitap</links
+                >
+                or any BrightID app)
+              </li>
             </ul>
           </li>
           <li>An Ethereum wallet, with enough gas for two transactions</li>
