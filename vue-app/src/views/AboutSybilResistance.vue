@@ -70,7 +70,9 @@
       </li>
       <li>Get verified in BrightID so we know you're a human and not a bot.</li>
       <li>
-        Submit a transaction for clr.fund to sponsor you in BrightID.
+        Get sponsored by linking with a BrightID app, e.g.
+        <links to="https://unitap.app/gas-faucet" hideArrow="true">Unitap</links
+        >.
         <links
           to="https://medium.com/brightid/brightid-sponsorships-5327a8d39f1e"
           >More on BrightID sponsorship</links
