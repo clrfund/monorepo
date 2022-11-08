@@ -1,10 +1,11 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h3>
-        Contribute {{ tokenSymbol }} to the
-        {{ isRoundFinished() ? 'next' : 'current' }} round
-      </h3>
+      <h3>Contribute {{ tokenSymbol }} to the matching pool</h3>
+      <div>
+        The funds will be distributed to all projects based on the contributions
+        they receive from the community
+      </div>
       <div class="contribution-form">
         <input-button
           v-model="amount"
@@ -33,7 +34,7 @@
     <div v-if="step === 2">
       <h3>
         Contribute {{ renderContributionAmount }} {{ tokenSymbol }} to the
-        {{ isRoundFinished() ? 'next' : 'current' }} round
+        matching pool
       </h3>
       <transaction
         :hash="transferTxHash"
@@ -68,7 +69,6 @@ import { formatUnits } from '@ethersproject/units'
 import { User } from '@/api/user'
 import { ERC20 } from '@/api/abi'
 import { factory } from '@/api/core'
-import { RoundStatus } from '@/api/round'
 
 @Component({
   components: {
@@ -116,11 +116,6 @@ export default class MatchingFundsModal extends Vue {
   get isBalanceSufficient(): boolean {
     if (this.balance === null) return false
     return parseFloat(this.balance) >= parseFloat(this.amount)
-  }
-
-  isRoundFinished(): boolean {
-    const { status } = this.$store.state.currentRound
-    return [RoundStatus.Finalized, RoundStatus.Cancelled].includes(status)
   }
 
   isAmountValid(): boolean {
