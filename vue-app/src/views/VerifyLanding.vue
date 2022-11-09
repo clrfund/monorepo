@@ -57,7 +57,7 @@
               </li>
             </ul>
           </li>
-          <li>An Ethereum wallet, with enough gas for two transactions</li>
+          <li>An Ethereum wallet, with enough gas for one transaction</li>
           <li>Access to Zoom or Google Meet</li>
         </ul>
         <links to="/about/sybil-resistance">Why is this important?</links>
