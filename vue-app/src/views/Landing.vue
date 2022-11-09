@@ -142,7 +142,7 @@
           <h2>Built using the CLR protocol</h2>
           <p>
             clr.fund is a protocol for efficiently allocating funds to public
-            goods that benefit the Ethereum Network according to the prefences
+            goods that benefit the Ethereum Network according to the preferences
             of the Ethereum Community.
           </p>
           <links to="/about">About clr.fund</links>
