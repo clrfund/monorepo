@@ -30,7 +30,8 @@ export default class Accordion extends Vue {
   @Prop() header
   @Prop() content
   @Prop() linkButton!: { link: string; text: string }
-  isOpen = false
+  @Prop({ default: false }) open!: boolean
+  isOpen = Boolean(this.open)
 
   toggleIsOpen() {
     this.isOpen = !this.isOpen
