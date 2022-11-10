@@ -26,6 +26,12 @@ export function formatAmount(
       maximumSignificantDigits,
     }).format(result)
   }
-  // Else, return commified result
-  return commify(result)
+
+  try {
+    // Else, return commified result
+    return commify(result)
+  } catch {
+    // return result without comma if failed to add comma
+    return result.toString(10)
+  }
 }
