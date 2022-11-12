@@ -21,7 +21,16 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ env.NODE_VERSION }}
-    - name: Install
+    - name: Install g++ library dependencies
+      run: |
+        sudo apt update
+        sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+    - name: Install zkutil
+      run: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        cargo install zkutil --version 0.3.2
+        zkutil --help
+    - name: Build MACI
       run: npm i && npm run bootstrap && npm run build
     - name: Build snarks
       run: |
@@ -60,6 +69,10 @@ jobs:
         cp params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
         cp params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
         pwd
+    - name: Install g++ library dependencies
+      run: |
+        sudo apt update
+        sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
     - name: Install zkutil
       run: |
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
