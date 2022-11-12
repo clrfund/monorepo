@@ -69,6 +69,9 @@ jobs:
       run:  |
         cp params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
         cp params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE || '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
+        echo $NODE_CONFIG
+        ls -l $GITHUB_WORKSPACE/params
     - name: Install g++ library dependencies
       run: |
         sudo apt update
@@ -83,5 +86,6 @@ jobs:
     - name: Run tests
       run: |
         export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE || '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
+        echo $NODE_CONFIG
         yarn test:e2e
 
