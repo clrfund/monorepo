@@ -25,9 +25,12 @@ jobs:
       run: |
         sudo apt update
         sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+    - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
     - name: Install zkutil
       run: |
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
         cargo install zkutil --version 0.3.2
         zkutil --help
     - name: Build MACI
@@ -73,9 +76,12 @@ jobs:
       run: |
         sudo apt update
         sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+    - name: Install rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
     - name: Install zkutil
       run: |
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
         cargo install zkutil --version 0.3.2
         zkutil --help
     - name: Run tests
