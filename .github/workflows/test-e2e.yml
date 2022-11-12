@@ -1,8 +1,7 @@
 name: End to end tests
 
 on:
-  pull_request:
-    types: [ labeled ]
+  pull_request
 
 env:
   NODE_VERSION: 12.x
