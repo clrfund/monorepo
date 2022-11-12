@@ -32,7 +32,6 @@ jobs:
     - name: Install zkutil
       run: |
         cargo install zkutil --version 0.3.2
-        zkutil --help
     - name: Build MACI
       run: |
         git config --global url."https://".insteadOf ssh://
@@ -56,6 +55,9 @@ jobs:
         ports:
           - 18545:8545
     steps:
+    - name: Test hardhat-network
+      run: |
+        curl http://localhost:18454 -X POST -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_chainId","params": [],"id":1}'
     - name: Checkout
       uses: actions/checkout@v2
     - name: Use Node.js ${{ env.NODE_VERSION }}
@@ -73,7 +75,6 @@ jobs:
       run:  |
         cp params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
         cp params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
-        pwd
     - name: Install g++ library dependencies
       run: |
         sudo apt update
@@ -85,7 +86,6 @@ jobs:
     - name: Install zkutil
       run: |
         cargo install zkutil --version 0.3.2
-        zkutil --help
     - name: Run tests
       run: yarn test:e2e
 
