@@ -10,7 +10,6 @@ env:
 
 jobs:
   build-snarks:
-    if: ${{ github.event.label.name == 'e2e' }}   
     runs-on: ubuntu-latest
     steps:
     - name: Checkout MACI
