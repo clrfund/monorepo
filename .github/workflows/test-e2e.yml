@@ -6,6 +6,7 @@ on:
 
 env:
   NODE_VERSION: 12.x
+  CIRCUIT_TYPE: small
   NODE_CONFIG: '{"snarkParamsPath": "/home/ubuntu/params"}'
 
 jobs:
