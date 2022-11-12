@@ -1,0 +1,76 @@
+name: End to end tests
+
+on:
+  pull_request:
+    types: [ labeled ]
+
+env:
+  NODE_VERSION: 12.x
+  NODE_CONFIG: '{"snarkParamsPath": "/home/ubuntu/params"}'
+
+jobs:
+  hardhat-network-service:
+    if: ${{ github.event.label.name == 'e2e' }}   
+    runs-on: ubuntu-latest
+    container: node:latest
+    services:
+      hardhat-network:
+        image: smartcontract/hardhat-network
+        ports: 
+          - 18545:8545
+  
+  build-snarks:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'e2e' }}   
+    steps:
+    - name: Checkout MACI
+      uses: actions/checkout@v2
+      with:
+        repository: privacy-scaling-explorations/maci
+        ref: v0.10.1
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Install
+      run: npm i && npm run bootstrap && npm run build
+    - name: Build snarks
+      run: |
+         cd circuits
+         ./scripts/buildSnarksSmall.sh 
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v3
+      with:
+        name: params
+        path: circuits/params/
+
+  test-e2e:
+    runs-on: ubuntu-latest
+    needs: build-snarks
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Install
+      run: yarn && yarn build
+    - name: Download snark params
+      uses: actions/download-artifact@v3
+      with:
+        name: params
+        path: params
+    - name: Copy snark verifier contracts
+      run:  |
+        cp params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        cp params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        pwd
+    - name: Install zkutil
+      run: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        cargo install zkutil --version 0.3.2
+        zkutil --help
+    - name: Run tests
+      run: yarn test:e2e
+
