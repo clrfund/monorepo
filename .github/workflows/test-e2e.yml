@@ -26,9 +26,9 @@ jobs:
         sudo apt update
         sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
     - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-            toolchain: stable
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
     - name: Install zkutil
       run: |
         cargo install zkutil --version 0.3.2
@@ -77,9 +77,9 @@ jobs:
         sudo apt update
         sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
     - name: Install rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-            toolchain: stable
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
     - name: Install zkutil
       run: |
         cargo install zkutil --version 0.3.2
