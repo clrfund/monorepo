@@ -35,12 +35,13 @@ jobs:
         zkutil --help
     - name: Build MACI
       run: |
-      git config --global url."https://".insteadOf ssh://
-      npm i && npm run bootstrap && npm run build
+        git config --global url."https://github.com/".insteadOf git@github.com:
+        git config --global url."https://".insteadOf git://
+        npm i && npm run bootstrap && npm run build
     - name: Build snarks
       run: |
-         cd circuits
-         ./scripts/buildSnarksSmall.sh 
+        cd circuits
+        ./scripts/buildSnarksSmall.sh
     - name: Upload snarks result for e2e tests
       uses: actions/upload-artifact@v3
       with:
