@@ -65,10 +65,13 @@ jobs:
       with:
         name: params
         path: params
-    - name: Copy snark verifier contracts
+    - name: Copy snark verifier contracts and set file permission
       run:  |
         cp params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
         cp params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        ls -l params
+        chmod u+x params/batchUstSmall params/qvtSmall
+        chmod u+r params/*
     - name: Install g++ library dependencies
       run: |
         sudo apt update
