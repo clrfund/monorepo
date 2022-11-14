@@ -37,19 +37,15 @@ jobs:
         git config --global url."https://".insteadOf ssh://
         cd maci
         npm i && npm run bootstrap && npm run build
-        chmod u+x params/batchUstSmall params/qvtSmall
-        chmod u+r params/*
     - name: Build snarks
       run: |
         cd maci/circuits
         ./scripts/buildSnarksSmall.sh
-    - name: Checkout
+        chmod u+x params/batchUstSmall params/qvtSmall
+        chmod u+r params/*
+    - name: Checkout Clrfund
       uses: actions/checkout@v3
-    - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-    - name: Install
+    - name: Install Clrfund
       run: yarn && yarn build
     - name: Start hardhat network
       run: |
