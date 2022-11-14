@@ -43,6 +43,8 @@ jobs:
         ./scripts/buildSnarksSmall.sh
         chmod u+x params/batchUstSmall params/qvtSmall
         chmod u+r params/*
+        pwd
+        ls
     - name: Checkout Clrfund
       uses: actions/checkout@v3
     - name: Install Clrfund
@@ -54,11 +56,11 @@ jobs:
       run:  |
         pwd
         ls
-        cp $GITHUB_WORKSPACE/maci/circuits/params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
-        cp $GITHUB_WORKSPACE/maci/circuits/params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        cp $GITHUB_WORKSPACE/../maci/circuits/params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        cp $GITHUB_WORKSPACE/../maci/circuits/params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
     - name: Run tests
       run: |
-        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/maci/circuits/params'; console.log(JSON.stringify({ snarkParamsPath }));")
+        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/../maci/circuits/params'; console.log(JSON.stringify({ snarkParamsPath }));")
         echo $NODE_CONFIG
         yarn test:e2e
 
