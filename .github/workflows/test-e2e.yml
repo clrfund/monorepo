@@ -52,8 +52,10 @@ jobs:
         yarn start:node &
     - name: Copy snark verifier contracts
       run:  |
-        cp maci/circuits/params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
-        cp maci/circuits/params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        pwd
+        ls
+        cp $GITHUB_WORKSPACE/maci/circuits/params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        cp $GITHUB_WORKSPACE/maci/circuits/params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
     - name: Run tests
       run: |
         export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/maci/circuits/params'; console.log(JSON.stringify({ snarkParamsPath }));")
