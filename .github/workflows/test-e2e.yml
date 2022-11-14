@@ -8,16 +8,17 @@ env:
   CIRCUIT_TYPE: small
 
 jobs:
-  build-snarks:
+  e2e-test:
     runs-on: ubuntu-22.04
     steps:
     - name: Checkout MACI
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: privacy-scaling-explorations/maci
         ref: v0.10.1
+        path: maci
     - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
     - name: Install g++ library dependencies
@@ -34,25 +35,18 @@ jobs:
     - name: Build MACI
       run: |
         git config --global url."https://".insteadOf ssh://
+        cd maci
         npm i && npm run bootstrap && npm run build
+        chmod u+x params/batchUstSmall params/qvtSmall
+        chmod u+r params/*
     - name: Build snarks
       run: |
-        cd circuits
+        cd maci/circuits
         ./scripts/buildSnarksSmall.sh
-    - name: Upload snarks result for e2e tests
-      uses: actions/upload-artifact@v3
-      with:
-        name: params
-        path: circuits/params/
-
-  test-e2e:
-    runs-on: ubuntu-latest
-    needs: build-snarks
-    steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
     - name: Install
@@ -60,32 +54,13 @@ jobs:
     - name: Start hardhat network
       run: |
         yarn start:node &
-    - name: Download snark params
-      uses: actions/download-artifact@v3
-      with:
-        name: params
-        path: params
     - name: Copy snark verifier contracts and set file permission
       run:  |
-        cp params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
-        cp params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
-        ls -l params
-        chmod u+x params/batchUstSmall params/qvtSmall
-        chmod u+r params/*
-    - name: Install g++ library dependencies
-      run: |
-        sudo apt update
-        sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
-    - name: Install rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-    - name: Install zkutil
-      run: |
-        cargo install zkutil --version 0.3.2
+        cp maci/params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        cp maci/params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
     - name: Run tests
       run: |
-        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
+        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/maci/params'; console.log(JSON.stringify({ snarkParamsPath }));")
         echo $NODE_CONFIG
         yarn test:e2e
 
