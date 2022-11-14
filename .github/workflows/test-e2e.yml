@@ -50,13 +50,13 @@ jobs:
     - name: Start hardhat network
       run: |
         yarn start:node &
-    - name: Copy snark verifier contracts and set file permission
+    - name: Copy snark verifier contracts
       run:  |
-        cp maci/params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
-        cp maci/params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        cp maci/circuits/params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        cp maci/circuits/params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
     - name: Run tests
       run: |
-        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/maci/params'; console.log(JSON.stringify({ snarkParamsPath }));")
+        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/maci/circuits/params'; console.log(JSON.stringify({ snarkParamsPath }));")
         echo $NODE_CONFIG
         yarn test:e2e
 
