@@ -34,14 +34,14 @@ export async function loginUser(
       if (ack.ok === 0 || GUN_WARNINGS.has(ack.err)) {
         resolve(0)
       } else {
-        reject('Error creating user in GunDB.')
+        reject('Error creating user in GunDB. ' + ack.err)
       }
     })
   })
   await new Promise((resolve, reject) => {
     user.auth(username, password, (ack) => {
       if (ack.err) {
-        reject('Error authenticating user in GunDB.')
+        reject('Error authenticating user in GunDB. ' + ack.err)
       } else {
         resolve(0)
       }

@@ -46,6 +46,7 @@ import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
 import BackLink from '@/components/BackLink.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
+import ErrorModal from '@/components/ErrorModal.vue'
 import { ThemeMode } from '@/api/core'
 
 import {
@@ -86,6 +87,7 @@ import { operator } from '@/api/core'
     CartWidget,
     BackLink,
     Breadcrumbs,
+    ErrorModal,
   },
 })
 export default class App extends Vue {
@@ -132,7 +134,10 @@ export default class App extends Vue {
     try {
       await this.$store.dispatch(LOGIN_USER, this.$web3.user)
     } catch (error) {
-      /* eslint-disable-next-line no-console */
+      const message = error instanceof Error ? error.message : String(error)
+      this.$modal.show(ErrorModal, {
+        message,
+      })
       console.error(error)
       return
     }
