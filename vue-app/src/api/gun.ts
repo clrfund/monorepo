@@ -7,16 +7,19 @@ import { gunPeers } from './core'
 import { LOGIN_MESSAGE } from './user'
 import { md5 } from '@/utils/crypto'
 
+const USER_IS_BEING_CREATED_OR_AUTHENTICATED =
+  'User is already being created or authenticated!'
+
 const GUN_WARNINGS = new Set([
   'User already created!',
-  'User is already being created or authenticated!',
+  USER_IS_BEING_CREATED_OR_AUTHENTICATED,
 ])
 
 interface GunSchema {
   data: { [key: string]: string }
 }
 
-const db = Gun<GunSchema>({
+const db = Gun<GunSchema | any>({
   peers: gunPeers,
 })
 const user = db.user() as any
@@ -29,19 +32,38 @@ export async function loginUser(
   // The user name is md5 hash of account ID and login message
   const username = md5(`${accountId.toLowerCase()}-${LOGIN_MESSAGE}`)
   const password = encryptionKey
-  await new Promise((resolve, reject) => {
-    user.create(username, password, (ack) => {
-      if (ack.ok === 0 || GUN_WARNINGS.has(ack.err)) {
-        resolve(0)
-      } else {
-        reject('Error creating user in GunDB. ' + ack.err)
+  const alias = `~@${username}`
+
+  let userExists = false
+  await new Promise((resolve) => {
+    db.get(alias).once((data) => {
+      if (data) {
+        userExists = true
       }
+      resolve(0)
     })
   })
+
+  if (!userExists) {
+    await new Promise((resolve, reject) => {
+      user.create(username, password, (ack) => {
+        if (ack.ok === 0 || GUN_WARNINGS.has(ack.err)) {
+          resolve(0)
+        } else {
+          reject('Error creating user in GunDB. ' + ack.err)
+        }
+      })
+    })
+  }
+
   await new Promise((resolve, reject) => {
     user.auth(username, password, (ack) => {
       if (ack.err) {
-        reject('Error authenticating user in GunDB. ' + ack.err)
+        const tryLater =
+          ack.err === USER_IS_BEING_CREATED_OR_AUTHENTICATED
+            ? ' Please try again later.'
+            : ''
+        reject('Error authenticating user in GunDB. ' + ack.err + tryLater)
       } else {
         resolve(0)
       }
