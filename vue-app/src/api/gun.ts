@@ -61,7 +61,7 @@ export async function loginUser(
       if (ack.err) {
         const tryLater =
           ack.err === USER_IS_BEING_CREATED_OR_AUTHENTICATED
-            ? ' Please try again later.'
+            ? ' Please wait and try again later if wallet is not connected.'
             : ''
         reject('Error authenticating user in GunDB. ' + ack.err + tryLater)
       } else {
