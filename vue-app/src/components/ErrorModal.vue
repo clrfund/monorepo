@@ -2,7 +2,7 @@
   <div>
     <div class="modal-body">
       <div class="top">
-        <p>Error</p>
+        <p>{{ title || 'Unexpected error!' }}</p>
         <button class="close-button" @click="$emit('close')">
           <img class="pointer" src="@/assets/close.svg" />
         </button>
@@ -20,6 +20,7 @@ import Component from 'vue-class-component'
 
 @Component
 export default class ErrorModal extends Vue {
+  @Prop() title!: string // title on the modal
   @Prop() message!: string // Required: error message to display
 }
 </script>

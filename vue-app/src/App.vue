@@ -136,6 +136,7 @@ export default class App extends Vue {
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       this.$modal.show(ErrorModal, {
+        title: 'Error connecting wallet!',
         message,
       })
       /* eslint-disable-next-line no-console */
