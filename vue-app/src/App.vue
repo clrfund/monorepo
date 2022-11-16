@@ -138,6 +138,7 @@ export default class App extends Vue {
       this.$modal.show(ErrorModal, {
         message,
       })
+      /* eslint-disable-next-line no-console */
       console.error(error)
       return
     }
