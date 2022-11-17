@@ -18,7 +18,7 @@
             >
               <template v-if="stepIndex === currentStep">
                 <loader
-                  v-if="stepIndex === 0 && !brightId.isVerified"
+                  v-if="stepIndex === 0 && !isVerified"
                   class="progress-steps-loader"
                 />
                 <img
@@ -33,7 +33,7 @@
                 v-else-if="isStepUnlocked(stepIndex) && isStepValid(stepIndex)"
               >
                 <loader
-                  v-if="stepIndex === 0 && !brightId.isVerified"
+                  v-if="stepIndex === 0 && !isVerified"
                   class="progress-steps-loader"
                 />
                 <img v-else src="@/assets/green-tick.svg" alt="step complete" />
@@ -75,10 +75,26 @@
               You need to connect your BrightID account with your wallet
               address.
             </p>
+            <div>
+              Before proceeding to the next steps, make sure that your BrightID
+              account is:
+              <ul>
+                <li>
+                  Verified - get verified at the
+                  <links to="https://meet.brightid.org">BrightID party</links>
+                </li>
+                <li>
+                  Sponsored - get sponsored by linking with BrightID apps such
+                  as
+                  <links to="https://idchain.one/begin">IDChain</links>
+                  and
+                  <links to="https://unitap.app/gas-faucet">Unitap</links>
+                </li>
+              </ul>
+            </div>
             <p>
-              Once this app is linked in your BrightID app, we'll automatically
-              transition you to the next step. It may take a minute for us to
-              verify the connection - please wait.
+              Once this app is linked in your BrightID app, click "Next" to
+              transition to the next step.
             </p>
             <div class="qr">
               <div class="instructions" v-if="appLink">
@@ -89,12 +105,22 @@
                 <p class="mobile">
                   Follow this link to connect your wallet to your BrightID app
                 </p>
-                <links class="mobile" :to="appLink">
-                  <div class="icon">
-                    <img src="@/assets/bright-id.png" />
+                <div class="mobile">
+                  <links :to="appLink" hideArrow="true">
+                    <div class="icon">
+                      <img src="@/assets/bright-id.png" />
+                    </div>
+                    <p class="center">{{ appLink }}</p>
+                  </links>
+                  <div class="copy-container">
+                    <div>Copy link</div>
+                    <copy-button
+                      :value="appLink"
+                      text="link"
+                      myClass="inline copy-icon"
+                    />
                   </div>
-                  {{ appLink }}
-                </links>
+                </div>
                 <p class="mobile">
                   <em>
                     This link might look scary but it just makes a connection
@@ -103,9 +129,19 @@
                     app, try manually copying the link to a browser.
                   </em>
                 </p>
+                <button
+                  type="button"
+                  class="btn-action btn-block btn-next"
+                  @click="checkVerificationStatus"
+                >
+                  Next
+                </button>
+                <div class="warning-text" v-if="showVerificationStatus">
+                  Your wallet address is not linked with BrightID. It may take a
+                  few minutes to verify the connection, please wait and click
+                  the button later to check the status.
+                </div>
               </div>
-
-              <loader />
             </div>
           </div>
           <div v-if="currentStep === 1">
@@ -154,6 +190,7 @@ import { User } from '@/api/user'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
+import CopyButton from '@/components/CopyButton.vue'
 import { LOAD_USER_INFO, LOAD_BRIGHT_ID } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
 
@@ -168,6 +205,7 @@ interface BrightIDStep {
     Transaction,
     Loader,
     Links,
+    CopyButton,
   },
 })
 export default class VerifyView extends Vue {
@@ -182,7 +220,11 @@ export default class VerifyView extends Vue {
   registrationTxHash = ''
   registrationTxError = ''
 
+  showVerificationStatus = false
+
   loadingTx = false
+
+  currentStep = 0
 
   get currentUser(): User {
     return this.$store.state.currentUser
@@ -192,7 +234,7 @@ export default class VerifyView extends Vue {
     return this.currentUser?.brightId
   }
 
-  get currentStep(): number {
+  getCurrentStep(): number {
     if (!this.brightId || !this.brightId.isVerified) {
       return 0
     }
@@ -215,6 +257,7 @@ export default class VerifyView extends Vue {
 
     // make sure BrightId status is availabel before page load
     await this.loadBrightId()
+    this.currentStep = this.getCurrentStep()
 
     // redirect to the verify success page if the user is registered
     if (this.currentStep < 0) {
@@ -232,7 +275,6 @@ export default class VerifyView extends Vue {
           this.appLinkQrCode = url
         }
       })
-      this.waitUntil(() => this.brightId?.isVerified)
     }
   }
 
@@ -268,23 +310,13 @@ export default class VerifyView extends Vue {
     }
   }
 
-  /**
-   * Start polling brightId state until the condition is met
-   */
-  private async waitUntil(isConditionMetFn, intervalTime = 5000) {
-    let isConditionMet = false
-
-    const checkVerification = async () => {
-      await this.loadBrightId()
-      isConditionMet = isConditionMetFn()
-
-      if (!isConditionMet) {
-        setTimeout(async () => {
-          await checkVerification()
-        }, intervalTime)
-      }
+  async checkVerificationStatus() {
+    this.showVerificationStatus = false
+    await this.loadBrightId()
+    this.currentStep = this.getCurrentStep()
+    if (!this.brightId?.isVerified) {
+      this.showVerificationStatus = true
     }
-    await checkVerification()
   }
 
   async loadBrightId() {
@@ -293,6 +325,10 @@ export default class VerifyView extends Vue {
 
   isStepValid(step: number): boolean {
     return !!this.steps[step]
+  }
+
+  get isVerified(): boolean {
+    return Boolean(this.brightId?.isVerified)
   }
 
   isStepUnlocked(step: number): boolean {
@@ -551,6 +587,12 @@ export default class VerifyView extends Vue {
   a {
     overflow-wrap: anywhere;
   }
+
+  .warning-text {
+    overflow-wrap: anywhere;
+    text-align: center;
+    padding: 2rem;
+  }
 }
 
 .qr-code {
@@ -576,7 +618,30 @@ export default class VerifyView extends Vue {
   width: 100%;
 }
 
+.btn-next {
+  width: 250px;
+}
+
 .remaining-step {
   filter: var(--img-filter, invert(0.3));
+}
+
+.copy-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.center {
+  text-align: center;
+}
+
+li {
+  font-size: 16px;
+  line-height: 30px;
+}
+
+ul {
+  padding-left: 1.5rem;
 }
 </style>
