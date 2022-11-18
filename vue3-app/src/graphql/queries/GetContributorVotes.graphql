@@ -1,0 +1,10 @@
+query GetContributorVotes($fundingRoundAddress: ID!, $contributorAddress: ID!) {
+  fundingRound(id: $fundingRoundAddress) {
+    id
+    contributors(where: { id: $contributorAddress }) {
+      votes {
+        id
+      }
+    }
+  }
+}

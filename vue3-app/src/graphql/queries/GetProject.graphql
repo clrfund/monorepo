@@ -1,0 +1,12 @@
+query GetProject($recipientId: ID!) {
+  recipients(where: { id: $recipientId }) {
+    id
+    requestType
+    recipientAddress
+    recipientMetadata
+    recipientIndex
+    submissionTime
+    rejected
+    verified
+  }
+}

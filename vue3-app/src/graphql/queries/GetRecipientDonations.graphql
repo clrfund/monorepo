@@ -1,0 +1,10 @@
+query GetRecipientDonations(
+  $fundingRoundAddress: String!
+  $recipientAddress: String!
+) {
+  donations(
+    where: { fundingRound: $fundingRoundAddress, recipient: $recipientAddress }
+  ) {
+    id
+  }
+}

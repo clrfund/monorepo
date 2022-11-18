@@ -1,0 +1,67 @@
+<template>
+	<div>
+		<div class="btn-row">
+			<button
+				v-if="currentStep > 0"
+				@click="handleStepNav(currentStep - 1)"
+				class="btn-secondary float-left"
+				:disabled="isNavDisabled"
+			>
+				Previous
+			</button>
+			<wallet-widget
+				class="float-right"
+				v-if="!currentUser && currentStep === finalStep"
+				:isActionButton="true"
+			/>
+			<button
+				v-else
+				@click="handleStepNav(currentStep + 1, true)"
+				class="btn-primary float-right"
+				:disabled="!isStepValid"
+			>
+				{{ currentStep === finalStep ? 'Confirm' : 'Next' }}
+			</button>
+		</div>
+	</div>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'
+import { User } from '@/api/user'
+import WalletWidget from '@/components/WalletWidget.vue'
+import { useAppStore } from '@/store/app'
+
+interface Props {
+	currentStep: number
+	finalStep: number
+	steps: string[]
+	isStepValid: boolean
+	callback: (updateFurthest?: boolean) => void
+	handleStepNav: (step: number, updateFurthest?: boolean) => void
+	isNavDisabled: boolean
+}
+
+const appStore = useAppStore()
+const currentUser = computed<User | null>(() => appStore.currentUser)
+
+defineProps<Props>()
+</script>
+
+<style scoped lang="scss">
+@import '../styles/theme';
+@import '../styles/vars';
+
+.btn-row {
+	display: block;
+	height: 2.75rem;
+}
+
+.float-left {
+	float: left;
+}
+
+.float-right {
+	float: right;
+}
+</style>
