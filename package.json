@@ -35,6 +35,7 @@
     "test:e2e": "yarn workspace @clrfund/contracts run e2e",
     "test:web": "yarn workspace @clrfund/vue-app run test",
     "test:format": "yarn prettier --check",
+    "test:local": "yarn workspace @clrfund/contracts run test:local",
     "deploy:subgraph": "yarn workspace @clrfund/subgraph run deploy",
     "deploy:local": "yarn deploy:local-registry && yarn deploy:local-round",
     "deploy:local-registry": "yarn workspace @clrfund/contracts run deploy:local",
