@@ -15,9 +15,9 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { FixedNumber } from 'ethers'
+import type { FixedNumber } from 'ethers'
 
-import { Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
+import { type Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
 import { getCurrentRound } from '@/api/round'
 import Loader from '@/components/Loader.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
@@ -29,7 +29,7 @@ import { markdown } from '@/utils/markdown'
 import { useMeta } from 'vue-meta'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 
 useMeta({ title: (this as any).project?.name || '' })
 

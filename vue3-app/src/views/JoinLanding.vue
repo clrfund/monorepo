@@ -122,9 +122,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { DateTime } from 'luxon'
-import { BigNumber } from 'ethers'
+import type { BigNumber } from 'ethers'
 
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import type { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import Loader from '@/components/Loader.vue'
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
@@ -135,7 +135,7 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { getCurrentRound } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

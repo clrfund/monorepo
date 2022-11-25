@@ -27,6 +27,6 @@ const srcset = computed(() => {
 })
 
 function requirePath(name: string, breakpoint: number) {
-	return require(`../assets/${name}/${name}_w${breakpoint}.png`)
+	return `../assets/${name}/${name}_w${breakpoint}.png`
 }
 </script>

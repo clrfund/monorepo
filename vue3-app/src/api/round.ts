@@ -57,7 +57,7 @@ export async function getCurrentRound(): Promise<string | null> {
 	const rounds = await getRounds()
 	const roundIndex = rounds.findIndex(round => isSameAddress(round.address, fundingRoundAddress))
 
-	if (roundIndex >= Number(process.env.VUE_APP_FIRST_ROUND || 0)) {
+	if (roundIndex >= Number(import.meta.env.VITE_FIRST_ROUND || 0)) {
 		return fundingRoundAddress
 	}
 	return null

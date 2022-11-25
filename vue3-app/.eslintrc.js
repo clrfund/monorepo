@@ -1,27 +1,31 @@
 module.exports = {
-	root: true,
 	env: {
-		'vue/setup-compiler-macros': true,
+		browser: true,
+		es2021: true,
 		node: true,
 	},
-	extends: ['plugin:vue/vue3-essential', 'eslint:recommended', '@vue/typescript/recommended'],
+	parser: 'vue-eslint-parser',
 	parserOptions: {
-		ecmaVersion: 2020,
+		ecmaVersion: 'latest',
+		sourceType: 'module',
+		parser: '@typescript-eslint/parser',
 	},
-	rules: {
-		'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-		'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-		'@typescript-eslint/ban-ts-comment': 'warn',
-		'@typescript-eslint/no-explicit-any': 'off',
-		'vue/multi-word-component-names': 'warn',
-		'no-mixed-spaces-and-tabs': 'warn',
-	},
-	overrides: [
-		{
-			files: ['**/__tests__/*.{j,t}s?(x)', '**/tests/unit/**/*.spec.{j,t}s?(x)'],
-			env: {
-				mocha: true,
-			},
-		},
+	plugins: ['vue', '@typescript-eslint'],
+	extends: [
+		'eslint:recommended',
+		'plugin:vue/vue3-essential',
+		'plugin:@typescript-eslint/recommended',
+		'prettier',
+		'./.eslintrc-auto-import.json',
 	],
+	overrides: [],
+	rules: {
+		'@typescript-eslint/no-explicit-any': 'warn',
+		'@typescript-eslint/ban-ts-comment': 'warn',
+		'vue/multi-word-component-names': 'warn',
+		'prefer-const': 'error',
+		'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+	},
+	ignorePatterns: ['dist', 'src/graphql/API.ts'],
 }

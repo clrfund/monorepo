@@ -1,5 +1,5 @@
 import { BigNumber, Contract, Signer } from 'ethers'
-import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
+import type { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
 import { isHexString } from '@ethersproject/bytes'
 import { DateTime } from 'luxon'
 import { getEventArg } from '@/utils/contracts'
@@ -7,9 +7,9 @@ import { chain } from '@/api/core'
 
 import { OptimisticRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl, recipientRegistryPolicy } from './core'
-import { Project } from './projects'
+import type { Project } from './projects'
 import sdk from '@/graphql/sdk'
-import { Recipient } from '@/graphql/API'
+import type { Recipient } from '@/graphql/API'
 import { hasDateElapsed } from '@/utils/dates'
 
 export interface RegistryInfo {

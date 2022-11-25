@@ -64,7 +64,7 @@ import { factory } from '@/api/core'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
 import { useEthers } from 'vue-dapp'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 
 const { signer } = useEthers()
 const appStore = useAppStore()
@@ -123,15 +123,15 @@ async function contributeMatchingFunds() {
 	const _amount = parseFixed(amount.value, nativeTokenDecimals)
 
 	// TODO: update to take factory address as a parameter from the route props, default to env. variable
-	const matchingPoolAddress = process.env.VUE_APP_MATCHING_POOL_ADDRESS
-		? process.env.VUE_APP_MATCHING_POOL_ADDRESS
+	const matchingPoolAddress = import.meta.env.VITE_MATCHING_POOL_ADDRESS
+		? import.meta.env.VITE_MATCHING_POOL_ADDRESS
 		: factory.address
 
 	try {
 		await waitForTransaction(token.transfer(matchingPoolAddress, _amount), hash => (transferTxHash.value = hash))
 	} catch (error) {
 		transferTxError.value = error.message
-		if (error.message.indexOf('Nonce too high') >= 0 && process.env.NODE_ENV === 'development') {
+		if (error.message.indexOf('Nonce too high') >= 0 && import.meta.NODE === 'development') {
 			transferTxError.value = 'Have you been buidling?? Reset your nonce! 🪄'
 		}
 		return

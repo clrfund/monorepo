@@ -19,10 +19,10 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { DateTime } from 'luxon'
+import type { DateTime } from 'luxon'
 
 import { getTimeLeft } from '@/utils/dates'
-import { TimeLeft } from '@/api/round'
+import type { TimeLeft } from '@/api/round'
 
 interface Props {
 	date: DateTime

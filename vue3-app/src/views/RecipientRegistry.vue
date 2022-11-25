@@ -119,7 +119,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { BigNumber, Transaction } from 'ethers'
+import type { BigNumber, Transaction } from 'ethers'
 import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 import CopyButton from '@/components/CopyButton.vue'
@@ -128,7 +128,7 @@ import { recipientRegistryType } from '@/api/core'
 import {
 	RequestType,
 	RequestStatus,
-	Request,
+	type Request,
 	getRequests,
 	registerProject,
 	rejectProject,
@@ -139,7 +139,7 @@ import Links from '@/components/Links.vue'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
 import TransactionModal from '@/components/TransactionModal.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 import { useEthers } from 'vue-dapp'
 import { $vfm } from 'vue-final-modal'
@@ -304,7 +304,7 @@ async function copyAddress(text: string): Promise<void> {
 	th,
 	td {
 		overflow: hidden;
-		padding: $content-space / 2;
+		padding: calc($content-space / 2);
 		text-align: left;
 		text-overflow: ellipsis;
 

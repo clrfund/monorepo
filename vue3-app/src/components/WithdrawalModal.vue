@@ -20,7 +20,7 @@ import { withdrawContribution } from '@/api/contributions'
 import Transaction from '@/components/Transaction.vue'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { waitForTransaction } from '@/utils/contracts'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 
 const appStore = useAppStore()
 

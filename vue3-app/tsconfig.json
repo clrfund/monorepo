@@ -1,27 +1,28 @@
 {
 	"compilerOptions": {
-		"target": "es5",
+		// https://www.typescriptlang.org/tsconfig
+		"target": "esnext",
+		"useDefineForClassFields": true,
 		"module": "esnext",
+		"moduleResolution": "node",
 		"strict": true,
 		"jsx": "preserve",
-		"importHelpers": true,
-		"moduleResolution": "node",
-		"strictNullChecks": true,
-		"noImplicitAny": false,
-		"noImplicitThis": true,
-		"experimentalDecorators": true,
+		"sourceMap": true,
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"sourceMap": true,
-		"baseUrl": ".",
-		"types": ["webpack-env", "mocha", "chai"],
+		"lib": ["esnext", "dom"],
+		// refer to https://github.com/vuejs/tsconfig/blob/main/tsconfig.json
+		"noImplicitThis": true, // `"noImplicitThis": true` is part of `strict`. Added again here in case some users decide to disable `strict`. This enables stricter inference for data properties on `this`.
+		"isolatedModules": true, // Required in Vite
+		"preserveValueImports": true, // For `<script setup>` See <https://devblogs.microsoft.com/typescript/announcing-typescript-4-5-beta/#preserve-value-imports>
+		"importsNotUsedAsValues": "error", // Enforce using `import type` instead of `import` for types
+		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true, // See <https://github.com/vuejs/vue-cli/pull/5688>
+
 		"paths": {
-			"@/*": ["src/*"]
-		},
-		"lib": ["esnext", "dom", "dom.iterable", "scripthost"],
-		"useUnknownInCatchVariables": false // https://stackoverflow.com/a/69445095
+			"@/*": ["./src/*"]
+		}
 	},
-	"include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx"],
+	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"],
 	"exclude": ["node_modules", "src/graphql/API.ts"]
 }

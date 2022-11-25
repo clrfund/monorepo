@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { TimeLeft } from '@/api/round'
+import type { TimeLeft } from '@/api/round'
 
 export function formatDate(date: DateTime): string {
 	if (!date) {

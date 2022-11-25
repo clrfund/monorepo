@@ -1,9 +1,10 @@
-import { Contract, Event } from 'ethers'
+import { Contract } from 'ethers'
+import type { Event } from 'ethers'
 import { isHexString } from '@ethersproject/bytes'
 
 import { SimpleRecipientRegistry } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
-import { Project } from './projects'
+import type { Project } from './projects'
 
 function decodeRecipientAdded(event: Event): Project {
 	const args = event.args as any

@@ -21,11 +21,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { BigNumber } from '@ethersproject/bignumber'
+import type { BigNumber } from '@ethersproject/bignumber'
 import { chain as _chain } from '@/api/core'
 import { formatAmount } from '@/utils/amounts'
 import Links from '@/components/Links.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

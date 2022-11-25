@@ -32,11 +32,11 @@ import { computed } from 'vue'
 
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import Links from '@/components/Links.vue'
-import { CartItem } from '@/api/contributions'
-import { Project } from '@/api/projects'
+import type { CartItem } from '@/api/contributions'
+import type { Project } from '@/api/projects'
 import { markdown } from '@/utils/markdown'
 import { useRoute } from 'vue-router'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 const route = useRoute()

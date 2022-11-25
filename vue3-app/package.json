@@ -1,60 +1,50 @@
 {
-	"name": "vue3-app",
-	"version": "0.1.0",
-	"private": true,
+	"name": "@clrfund/vue3-app",
+	"version": "0.0.0",
 	"scripts": {
-		"dev": "vue-cli-service serve",
-		"build": "vue-cli-service build",
-		"test:unit": "vue-cli-service test:unit",
-		"lint": "vue-cli-service lint",
-		"prettier": "prettier \"**/*.+(js|ts|json|scss|css|vue)\"",
-		"format": "yarn prettier --write"
+		"dev": "vite",
+		"build": "vite build",
+		"serve": "vite preview",
+		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+		"format": "prettier --ignore-path .gitignore --write \"**/*.+(html|vue|ts|js|json|cjs)\""
+	},
+	"lint-staged": {
+		"**/*.{js,ts,json,scss,css,vue}": [
+			"yarn format"
+		]
 	},
 	"dependencies": {
-		"@types/qrcode": "^1.5.0",
 		"crypto-js": "^4.1.1",
 		"ethers": "^5.7.2",
 		"floating-vue": "^2.0.0-beta.20",
 		"humanize-duration": "^3.27.3",
-		"luxon": "^3.0.4",
 		"markdown-it": "^13.0.1",
 		"markdown-it-link-attributes": "^4.0.1",
-		"pinia": "^2.0.23",
+		"node-stdlib-browser": "^1.2.0",
+		"pinia": "^2.0.26",
 		"qrcode": "^1.5.1",
-		"vue": "^3.2.13",
+		"vue": "^3.2.45",
 		"vue-dapp": "^0.6.2",
-		"vue-final-modal": "^3.4.4",
+		"vue-final-modal": "^3.4.11",
 		"vue-meta": "3.0.0-alpha.7",
-		"vue-router": "^4.0.3"
+		"vue-router": "4"
 	},
 	"devDependencies": {
-		"@types/chai": "^4.2.15",
-		"@types/crypto-js": "^4.1.1",
-		"@types/humanize-duration": "^3.27.1",
-		"@types/markdown-it": "^12.2.3",
-		"@types/markdown-it-link-attributes": "^3.0.1",
-		"@types/mocha": "^8.2.1",
-		"@types/node": "18.8.0",
-		"@typescript-eslint/eslint-plugin": "^5.4.0",
-		"@typescript-eslint/parser": "^5.4.0",
-		"@vue/cli-plugin-eslint": "~5.0.0",
-		"@vue/cli-plugin-router": "~5.0.0",
-		"@vue/cli-plugin-typescript": "~5.0.0",
-		"@vue/cli-plugin-unit-mocha": "~5.0.0",
-		"@vue/cli-service": "~5.0.0",
-		"@vue/eslint-config-typescript": "^9.1.0",
-		"@vue/test-utils": "^2.0.0-0",
-		"chai": "^4.2.0",
-		"eslint": "^7.32.0",
-		"eslint-plugin-vue": "^8.0.3",
-		"lint-staged": "^11.1.2",
-		"node-polyfill-webpack-plugin": "^2.0.1",
-		"prettier": "^2.4.1",
-		"sass": "^1.55.0",
-		"sass-loader": "^13.1.0",
-		"typescript": "~4.5.5"
-	},
-	"gitHooks": {
-		"pre-commit": "lint-staged"
+		"@typescript-eslint/eslint-plugin": "^5.44.0",
+		"@typescript-eslint/parser": "^5.44.0",
+		"@vitejs/plugin-vue": "^3.2.0",
+		"autoprefixer": "^10.4.13",
+		"eslint": "^8.28.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-vue": "^9.8.0",
+		"postcss": "^8.4.19",
+		"prettier": "^2.8.0",
+		"rollup-plugin-polyfill-node": "^0.11.0",
+		"sass": "^1.56.1",
+		"tailwindcss": "^3.2.4",
+		"typescript": "^4.9.3",
+		"unplugin-auto-import": "^0.11.5",
+		"unplugin-vue-components": "^0.22.11",
+		"vite": "^3.2.4"
 	}
 }

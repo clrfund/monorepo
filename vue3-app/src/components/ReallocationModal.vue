@@ -18,18 +18,16 @@
 	</div>
 </template>
 
-<script setup lang="ts">
-import { onMounted, ref, defineProps, defineEmits } from 'vue'
+<script lang="ts" setup>
 import { BigNumber, Contract } from 'ethers'
-import { PubKey, Message } from 'maci-domainobjs'
-
+import type { PubKey, Message } from 'maci-domainobjs'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 
 import { FundingRound } from '@/api/abi'
 import { useEthers } from 'vue-dapp'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { useRouter } from 'vue-router'
 
 interface Props {

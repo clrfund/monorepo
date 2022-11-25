@@ -86,7 +86,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineProps, onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { BigNumber, Contract } from 'ethers'
 import { DateTime } from 'luxon'
 import { Keypair, PubKey, Message } from 'maci-domainobjs'
@@ -98,7 +98,7 @@ import { createMessage } from '@/utils/maci'
 import ProgressBar from '@/components/ProgressBar.vue'
 
 import { FundingRound, ERC20, MACI } from '@/api/abi'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 import { useEthers } from 'vue-dapp'
 import { useRouter } from 'vue-router'

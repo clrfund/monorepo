@@ -32,7 +32,7 @@
 							class="dropdown-item"
 							@click="callback"
 						>
-							<img width="16px" :class="cssClass" :src="require(`@/assets/${icon}`)" />
+							<img width="16px" :class="cssClass" :src="`src/assets/${icon}`" />
 							<p>{{ text }}</p>
 						</div>
 					</div>
@@ -208,12 +208,12 @@ import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import CartItems from '@/components/CartItems.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
-import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, CartItem, isContributionAmountValid } from '@/api/contributions'
+import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, type CartItem, isContributionAmountValid } from '@/api/contributions'
 import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 import { useEthers, useWallet } from 'vue-dapp'
 import { $vfm } from 'vue-final-modal'
@@ -302,7 +302,7 @@ function toggleCart(): void {
 	appStore.toggleShowCartPanel()
 }
 const walletChainId = computed(() => network.value?.chainId)
-const supportedChainId = computed(() => Number(process.env.VUE_APP_ETHEREUM_API_CHAINID))
+const supportedChainId = computed(() => Number(import.meta.env.VITE_ETHEREUM_API_CHAINID))
 
 const isCorrectNetwork = computed(() => supportedChainId.value === walletChainId.value)
 

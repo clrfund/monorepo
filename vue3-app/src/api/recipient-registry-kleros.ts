@@ -1,10 +1,10 @@
-import { Contract, Event, Signer } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { Contract, type Event, Signer } from 'ethers'
+import type { TransactionResponse } from '@ethersproject/abstract-provider'
 import { gtcrDecode } from '@kleros/gtcr-encoder'
 
 import { KlerosGTCR, KlerosGTCRAdapter } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
-import { Project } from './projects'
+import type { Project } from './projects'
 
 const KLEROS_CURATE_URL = 'https://curate.kleros.io/tcr/0x2E3B10aBf091cdc53cC892A50daBDb432e220398'
 

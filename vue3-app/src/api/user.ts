@@ -1,10 +1,10 @@
 import makeBlockie from 'ethereum-blockies-base64'
 import { BigNumber, Contract } from 'ethers'
-import { Web3Provider } from '@ethersproject/providers'
+import type { Web3Provider } from '@ethersproject/providers'
 
 import { UserRegistry, ERC20 } from './abi'
 import { factory, ipfsGatewayUrl, provider, operator } from './core'
-import { BrightId } from './bright-id'
+import type { BrightId } from './bright-id'
 
 //TODO: update anywhere this is called to take factory address as a parameter, default to env. variable
 export const LOGIN_MESSAGE = `Welcome to ${operator}!

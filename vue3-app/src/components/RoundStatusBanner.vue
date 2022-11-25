@@ -15,19 +15,19 @@
 			<div v-if="isRoundContributionPhase" class="messsage">
 				<span v-if="isRoundContributionPhaseEnding" class="label">
 					⌛️ The round will close in
-					<time-left unitClass="none" valueClass="none" :date="$store.state.currentRound.signUpDeadline" />.
-					Get your contributions in now!
+					<time-left unitClass="none" valueClass="none" :date="currentRound!.signUpDeadline" />. Get your
+					contributions in now!
 				</span>
 				<span v-else class="label"
 					>🎉 The round is open!
-					<time-left unitClass="none" valueClass="none" :date="$store.state.currentRound.signUpDeadline" />
+					<time-left unitClass="none" valueClass="none" :date="currentRound!.signUpDeadline" />
 					left to contribute to your favorite projects
 				</span>
 			</div>
 			<div v-if="isRoundReallocationPhase" class="messsage">
 				<span class="label">
 					Funding is closed! If you contributed, you have
-					<time-left unitClass="none" valueClass="none" :date="$store.state.currentRound.votingDeadline" />
+					<time-left unitClass="none" valueClass="none" :date="currentRound!.votingDeadline" />
 					left to change your mind
 				</span>
 			</div>
@@ -50,7 +50,7 @@ import { computed } from 'vue'
 import { formatDate } from '@/utils/dates'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

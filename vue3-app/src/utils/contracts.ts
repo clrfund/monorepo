@@ -1,5 +1,5 @@
-import { Contract } from 'ethers'
-import { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
+import type { Contract } from 'ethers'
+import type { TransactionResponse, TransactionReceipt } from '@ethersproject/abstract-provider'
 import { provider } from '@/api/core'
 
 export async function waitForTransaction(

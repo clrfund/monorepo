@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { CartItem } from '@/api/contributions'
+import type { CartItem } from '@/api/contributions'
 
 export type CartState = {
 	cart: CartItem[]

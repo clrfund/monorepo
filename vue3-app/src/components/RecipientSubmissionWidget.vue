@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { BigNumber } from 'ethers'
+import type { BigNumber } from 'ethers'
 import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import { chain } from '@/api/core'
 
@@ -55,7 +55,7 @@ import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
 
 import { formatAmount } from '@/utils/amounts'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 interface Props {

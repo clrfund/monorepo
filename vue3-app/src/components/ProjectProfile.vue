@@ -55,7 +55,7 @@
 						:title="`View on ${blockExplorer.label}`"
 						:hideArrow="true"
 					>
-						<img class="icon" :src="require(`@/assets/${blockExplorer.logo}`)" />
+						<img class="icon" :src="`src/assets/${blockExplorer.logo}`" />
 					</links>
 				</div>
 			</div>
@@ -72,8 +72,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { DateTime } from 'luxon'
-import { Project } from '@/api/projects'
-import { DEFAULT_CONTRIBUTION_AMOUNT, CartItem } from '@/api/contributions'
+import type { Project } from '@/api/projects'
+import { DEFAULT_CONTRIBUTION_AMOUNT, type CartItem } from '@/api/contributions'
 import { RoundStatus } from '@/api/round'
 import { chain } from '@/api/core'
 import { ensLookup } from '@/utils/accounts'
@@ -84,7 +84,7 @@ import LinkBox from '@/components/LinkBox.vue'
 import Links from '@/components/Links.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 

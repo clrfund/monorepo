@@ -63,11 +63,11 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { FixedNumber } from 'ethers'
+import type { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
-import { Project, getProjects } from '@/api/projects'
+import { type Project, getProjects } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import CartWidget from '@/components/CartWidget.vue'
@@ -75,7 +75,7 @@ import ProjectListItem from '@/components/ProjectListItem.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'
 import { useRoute } from 'vue-router'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
@@ -383,7 +383,7 @@ function clearSearch(): void {
 	}
 
 	.round-info-title {
-		margin-bottom: $content-space / 2;
+		margin-bottom: calc($content-space / 2);
 	}
 }
 </style>

@@ -13,8 +13,8 @@
 		</button>
 		<div v-else-if="currentUser && !isActionButton" class="profile-info" @click="toggleProfile">
 			<div class="profile-info-balance">
-				<img v-if="showEth" :src="require(`@/assets/${chainCurrencyLogo}`)" />
-				<img v-else :src="require(`@/assets/${tokenLogo}`)" />
+				<img v-if="showEth" :src="`src/assets/${chainCurrencyLogo}`" />
+				<img v-else :src="`src/assets/${tokenLogo}`" />
 				<div v-if="showEth" class="balance">{{ etherBalance }}</div>
 				<div v-else class="balance">{{ balance }}</div>
 			</div>
@@ -31,12 +31,12 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
-import { BigNumber } from 'ethers'
+import type { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { chain } from '@/api/core'
 import Profile from '@/views/Profile.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 import { useBoard, useEthers, useWallet } from 'vue-dapp'
 

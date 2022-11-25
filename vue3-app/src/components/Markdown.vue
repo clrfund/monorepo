@@ -18,7 +18,7 @@ const body = computed<string>(() => markdown.render(props.raw))
 <style scoped lang="scss">
 .markdown {
 	overflow-wrap: break-word;
-	::v-deep {
+	:deep() {
 		h1,
 		h2,
 		h3,

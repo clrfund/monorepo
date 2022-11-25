@@ -5,7 +5,7 @@
 		</links>
 		<div class="btn-row">
 			<div>
-				<img @click="toggleTheme()" class="navbar-btn" :src="require(`@/assets/${themeIcon}`)" />
+				<img @click="toggleTheme()" class="navbar-btn" :src="`src/assets/${themeIcon}`" />
 			</div>
 			<div class="help-dropdown" v-click-outside="closeHelpDropdown">
 				<img @click="toggleHelpDropdown()" class="navbar-btn" src="@/assets/help.svg" />
@@ -39,7 +39,7 @@ import { chain, ThemeMode } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { isValidTheme, getOsColorScheme } from '@/utils/theme'
 // import ClickOutside from '@/directives/ClickOutside'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

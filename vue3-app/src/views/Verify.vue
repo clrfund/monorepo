@@ -108,7 +108,7 @@ import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
 import { waitForTransaction } from '@/utils/contracts'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 

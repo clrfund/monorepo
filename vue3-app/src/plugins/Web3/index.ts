@@ -56,7 +56,7 @@ export default {
 			lsSet(CONNECTED_PROVIDER, wallet)
 
 			// Check if user is using the supported chain id
-			const supportedChainId = Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
+			const supportedChainId = Number(import.meta.env.VITE_ETHEREUM_API_CHAINID)
 			if (conn.chainId !== supportedChainId) {
 				if (conn.provider instanceof WalletConnectProvider) {
 					// Close walletconnect session

@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 import Landing from '@/views/Landing.vue'
 import JoinLanding from '@/views/JoinLanding.vue'
 import ProjectList from '@/views/ProjectList.vue'
@@ -159,7 +160,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-	history: createWebHistory(process.env.BASE_URL),
+	history: createWebHistory(),
 	routes,
 })
 

@@ -250,10 +250,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
-import { BigNumber, FixedNumber } from 'ethers'
+import type { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { RoundInfo, getRoundInfo } from '@/api/round'
+import { type RoundInfo, getRoundInfo } from '@/api/round'
 import { chain } from '@/api/core'
 
 import { lsGet, lsSet } from '@/utils/localStorage'
@@ -261,11 +261,10 @@ import { formatAmount as _formatAmount } from '@/utils/amounts'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
-import WalletModal from '@/components/WalletModal.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useBoard } from 'vue-dapp'
@@ -691,7 +690,7 @@ const blockExplorer = computed(() => ({
   }
 
   .round-info-title {
-    margin-bottom: $content-space / 2;
+    margin-bottom: calc($content-space / 2);
     font-size: 14px;
   }
 } */

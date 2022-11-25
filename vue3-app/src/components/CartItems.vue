@@ -43,11 +43,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { DateTime } from 'luxon'
-import { CartItem, MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
+import { type CartItem, MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
 import { getTokenLogo } from '@/utils/tokens'
 import Links from '@/components/Links.vue'
 import InputButton from '@/components/InputButton.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

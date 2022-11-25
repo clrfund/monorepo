@@ -1,15 +1,15 @@
 <template>
 	<div class="icon-container">
-		<img :src="require(`@/assets/${logo}`)" class="logo" />
+		<img :src="`src/assets/${logo}`" class="logo" />
 		<div class="background">
 			<div v-if="happy" class="status-happy">
-				<img :src="require(`@/assets/${secondaryLogo}`)" class="secondary-icon" />
+				<img :src="`src/assets/${secondaryLogo}`" class="secondary-icon" />
 			</div>
 			<div v-if="sad" class="status-sad">
-				<img :src="require(`@/assets/${secondaryLogo}`)" class="secondary-icon" />
+				<img :src="`src/assets/${secondaryLogo}`" class="secondary-icon" />
 			</div>
 			<div v-if="custom && secondaryLogo" class="status-custom" :style="cssVars">
-				<img :src="require(`@/assets/${secondaryLogo}`)" class="secondary-icon" />
+				<img :src="`src/assets/${secondaryLogo}`" class="secondary-icon" />
 			</div>
 		</div>
 	</div>

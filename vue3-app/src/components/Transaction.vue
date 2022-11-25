@@ -23,8 +23,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref, withDefaults, defineProps } from 'vue'
-
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'

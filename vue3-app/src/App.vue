@@ -38,9 +38,9 @@ import { ModalsContainer } from 'vue-final-modal'
 
 import { getOsColorScheme } from '@/utils/theme'
 import { getCurrentRound } from '@/api/round'
-import { LOGIN_MESSAGE, User } from '@/api/user'
+import { LOGIN_MESSAGE, type User } from '@/api/user'
 import { operator } from '@/api/core'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { sha256 } from '@/utils/crypto'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
@@ -50,8 +50,8 @@ import {
 	CoinbaseWalletConnector,
 	useEthersHooks,
 	useWallet,
-	MetaMaskProvider,
-	IWalletConnectProvider,
+	type MetaMaskProvider,
+	type IWalletConnectProvider,
 } from 'vue-dapp'
 import { useMeta } from 'vue-meta'
 
@@ -68,7 +68,7 @@ useMeta({
 	meta: [
 		{
 			name: 'git-commit',
-			content: process.env.VUE_APP_GIT_COMMIT || '',
+			content: import.meta.env.VITE_GIT_COMMIT || '',
 		},
 	],
 })

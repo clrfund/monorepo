@@ -1,5 +1,5 @@
 import { Contract, Signer } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import type { TransactionResponse } from '@ethersproject/abstract-provider'
 import { FundingRound } from './abi'
 import { factory, provider, recipientRegistryType } from './core'
 

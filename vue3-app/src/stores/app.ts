@@ -1,13 +1,13 @@
 import { defineStore } from 'pinia'
 
 // Libraries
-import { BigNumber } from 'ethers'
+import type { BigNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 // API
 import {
-	CartItem,
-	Contributor,
+	type CartItem,
+	type Contributor,
 	deserializeCart,
 	deserializeContributorData,
 	getCartStorageKey,
@@ -20,17 +20,17 @@ import {
 	serializeContributorData,
 } from '@/api/contributions'
 import { recipientRegistryType, operator, userRegistryType, UserRegistryType, ThemeMode } from '@/api/core'
-import { RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
-import { getTally, Tally } from '@/api/tally'
-import { getEtherBalance, getTokenBalance, isVerifiedUser, User } from '@/api/user'
-import { Factory, getFactoryInfo } from '@/api/factory'
-import { getMACIFactoryInfo, MACIFactory } from '@/api/maci-factory'
-import { getRegistryInfo, RecipientApplicationData, RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { type RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
+import { getTally, type Tally } from '@/api/tally'
+import { getEtherBalance, getTokenBalance, isVerifiedUser, type User } from '@/api/user'
+import { type Factory, getFactoryInfo } from '@/api/factory'
+import { getMACIFactoryInfo, type MACIFactory } from '@/api/maci-factory'
+import { getRegistryInfo, type RecipientApplicationData, type RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import { ensLookup, isSameAddress } from '@/utils/accounts'
 import { storage } from '@/api/storage'
 import { loginUser, logoutUser } from '@/api/gun'
-import { BrightId, getBrightId } from '@/api/bright-id'
+import { type BrightId, getBrightId } from '@/api/bright-id'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 
 export type AppState = {

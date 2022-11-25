@@ -72,7 +72,7 @@
 			<div id="what-you-will-need">
 				<div class="pre-req">
 					<div class="icon-row">
-						<img :src="require(`@/assets/${chain.logo}`)" id="chain-icon" />
+						<img :src="`src/assets/${chain.logo}`" id="chain-icon" />
 						<p>
 							<b>{{ chain.label }} for fast and cheap transaction fees</b>
 						</p>
@@ -167,7 +167,7 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

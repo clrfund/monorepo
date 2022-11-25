@@ -25,8 +25,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, onMounted, defineProps } from 'vue'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import type { TransactionResponse } from '@ethersproject/abstract-provider'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
 import Transaction from '@/components/Transaction.vue'

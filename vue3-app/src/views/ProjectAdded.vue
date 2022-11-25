@@ -44,9 +44,9 @@ import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import type { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { chain } from '@/api/core'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 

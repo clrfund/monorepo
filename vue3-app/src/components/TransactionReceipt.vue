@@ -12,7 +12,7 @@
 				v-tooltip="`View on ${blockExplorer.label}`"
 				:hideArrow="true"
 			>
-				<img class="icon" :src="require(`@/assets/${blockExplorer.logo}`)" />
+				<img class="icon" :src="`src/assets/${blockExplorer.logo}`" />
 			</links>
 			<copy-button :value="hash" text="hash" v-on:copied="updateIsCopied" myClass="icon" />
 		</div>

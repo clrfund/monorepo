@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish, FixedNumber } from 'ethers'
+import type { BigNumber, BigNumberish, FixedNumber } from 'ethers'
 import { commify, formatUnits } from '@ethersproject/units'
 
 export function formatAmount(

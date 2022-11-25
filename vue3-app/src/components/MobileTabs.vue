@@ -10,7 +10,7 @@
 			:to="to"
 		>
 			<div class="icon">
-				<img :src="require(`@/assets/${icon}`)" :alt="title" width="16px" />
+				<img :src="`src/assets/${icon}`" :alt="title" width="16px" />
 				<transition name="pulse" mode="out-in">
 					<div
 						:key="cart.length"
@@ -28,9 +28,9 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { CartItem } from '@/api/contributions'
+import type { CartItem } from '@/api/contributions'
 import Links from '@/components/Links.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 

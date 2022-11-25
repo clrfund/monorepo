@@ -27,12 +27,12 @@
 import { ref, onMounted } from 'vue'
 import { Contract, BigNumber, Signer } from 'ethers'
 import { FundingRound } from '@/api/abi'
-import { Project } from '@/api/projects'
+import type { Project } from '@/api/projects'
 import Transaction from '@/components/Transaction.vue'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

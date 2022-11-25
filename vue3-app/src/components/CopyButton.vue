@@ -42,7 +42,7 @@ async function copyToClipboard(): Promise<void> {
 		emit('copied', false)
 	} catch (error) {
 		isLoading.value = false
-		if (process.env.NODE_ENV !== 'production') {
+		if (import.meta.env.MODE !== 'production') {
 			/* eslint-disable-next-line no-console */
 			console.warn('Error in copying text: ', error)
 		}

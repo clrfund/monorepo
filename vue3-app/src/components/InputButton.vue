@@ -1,6 +1,6 @@
 <template>
 	<form action="#" class="input-button">
-		<img v-if="input" class="token-icon" height="24px" :src="require(`@/assets/${tokenLogo}`)" />
+		<img v-if="input" class="token-icon" height="24px" :src="`src/assets/${tokenLogo}`" />
 		<input
 			v-if="input"
 			class="input"
@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getTokenLogo } from '@/utils/tokens'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

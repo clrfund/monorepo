@@ -28,9 +28,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { User } from '@/api/user'
+import type { User } from '@/api/user'
 import WalletWidget from '@/components/WalletWidget.vue'
-import { useAppStore } from '@/store/app'
+import { useAppStore } from '@/stores/app'
 
 interface Props {
 	currentStep: number

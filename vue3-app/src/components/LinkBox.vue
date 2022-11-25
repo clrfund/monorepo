@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { Project } from '@/api/projects'
+import type { Project } from '@/api/projects'
 import Links from '@/components/Links.vue'
 
 interface Props {

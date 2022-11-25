@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { Round, getRounds } from '@/api/rounds'
+import { type Round, getRounds } from '@/api/rounds'
 import Links from '@/components/Links.vue'
 
 const rounds = ref<Round[]>([])

@@ -4,9 +4,9 @@ export default {
 	// TODO: add better return type
 	connect: async (): Promise<any | undefined> => {
 		const provider = new WalletConnectProvider({
-			infuraId: process.env.VUE_APP_INFURA_ID,
+			infuraId: import.meta.env.VITE_INFURA_ID,
 			rpc: {
-				[process.env.VUE_APP_ETHEREUM_API_CHAINID!]: process.env.VUE_APP_ETHEREUM_API_URL!,
+				[import.meta.env.VITE_ETHEREUM_API_CHAINID!]: import.meta.env.VITE_ETHEREUM_API_URL!,
 			},
 		})
 

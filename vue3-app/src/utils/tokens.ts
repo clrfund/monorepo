@@ -1,4 +1,4 @@
-import { TOKEN_INFO, Token } from '@/plugins/Web3/constants/tokens'
+import { TOKEN_INFO, type Token } from '@/plugins/Web3/constants/tokens'
 
 export const getTokenLogo = (symbol: string): string => {
 	const token: Token = TOKEN_INFO[symbol.toUpperCase()]

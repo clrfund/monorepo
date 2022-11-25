@@ -1,7 +1,7 @@
 import { CHAIN_INFO } from '../constants/chains'
 
 async function setupNetwork(provider): Promise<void> {
-	const chainId = parseInt(process.env.VUE_APP_ETHEREUM_API_CHAINID || '1', 10)
+	const chainId = parseInt(import.meta.env.VITE_ETHEREUM_API_CHAINID || '1', 10)
 	const hexChainId = `0x${chainId.toString(16)}`
 
 	// Recommended usage of these methods
