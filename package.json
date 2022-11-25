@@ -57,7 +57,7 @@
     "@graphql-codegen/typescript-operations": "^2.1.2",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
-    "prettier": "^2.3.1",
+    "prettier": "^2.8.0",
     "typechain": "^3.0.0"
   }
 }
