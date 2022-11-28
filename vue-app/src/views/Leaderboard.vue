@@ -89,7 +89,6 @@ export default class Leaderboard extends Vue {
         spent
       )
     } catch (err) {
-      console.error(err)
       return BigNumber.from(0)
     }
   }
@@ -122,7 +121,6 @@ export default class Leaderboard extends Vue {
 
     if (!this.tally) {
       await this.loadTally()
-      console.log('this.tally', this.tally)
     }
 
     const projects = await getProjects(
