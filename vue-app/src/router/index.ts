@@ -28,6 +28,7 @@ import TransactionSuccess from '@/views/TransactionSuccess.vue'
 import BrightIdGuide from '@/views/BrightIdGuide.vue'
 import BrightIdSponsor from '@/views/BrightIdSponsor.vue'
 import BrightIdSponsored from '@/views/BrightIdSponsored.vue'
+import Leaderboard from '@/views/Leaderboard.vue'
 
 Vue.use(VueRouter)
 
@@ -161,6 +162,14 @@ const routes = [
     component: AboutDecentralization,
     meta: {
       title: 'About decentralization',
+    },
+  },
+  {
+    path: '/leaderboard',
+    name: 'leaderboard',
+    component: Leaderboard,
+    meta: {
+      title: 'Leaderboard',
     },
   },
   {
