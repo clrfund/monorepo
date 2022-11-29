@@ -7,7 +7,7 @@
         class="btn-secondary float-left"
         :disabled="isNavDisabled"
       >
-        Previous
+        {{ $t('formNavigation.button1') }}
       </button>
       <wallet-widget
         class="float-right"
@@ -20,7 +20,11 @@
         class="btn-primary float-right"
         :disabled="!isStepValid"
       >
-        {{ currentStep === finalStep ? 'Confirm' : 'Next' }}
+        {{
+          currentStep === finalStep
+            ? $t('formNavigation.button2_1')
+            : $t('formNavigation.button2_2')
+        }}
       </button>
     </div>
   </div>
