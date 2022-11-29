@@ -109,6 +109,8 @@ export default class LeaderboardListItem extends Vue {
   column-gap: 1rem;
   margin-bottom: 10px;
   flex-direction: row;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
 
   @media (max-width: $breakpoint-m) {
     column-gap: 5px;
@@ -141,6 +143,7 @@ export default class LeaderboardListItem extends Vue {
     width: 100%;
     text-align: center;
     line-height: 1.8em;
+    background: transparent;
 
     &.first {
       color: var(--brand-tertiary);
