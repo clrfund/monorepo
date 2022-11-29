@@ -22,7 +22,7 @@
               />
             </div>
             <div class="btn-group">
-              <links to="/projects" class="btn-action">Make a donation</links>
+              <links to="/leaderboard" class="btn-action">View results</links>
               <div class="btn-info" @click="scrollToHowItWorks">
                 How it works
               </div>

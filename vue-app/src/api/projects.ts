@@ -1,4 +1,4 @@
-import { Contract, Signer } from 'ethers'
+import { Contract, Signer, BigNumber } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { FundingRound } from './abi'
 import { factory, provider, recipientRegistryType } from './core'
@@ -31,6 +31,7 @@ export interface Project {
   isHidden: boolean // Hidden from the list (does not participate in round)
   isLocked: boolean // Visible, but contributions are not allowed
   extra?: any // Registry-specific data
+  fundingAmount?: BigNumber
 }
 
 //TODO: update anywhere this is called to take factory address as a parameter

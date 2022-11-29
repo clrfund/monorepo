@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { FixedNumber } from 'ethers'
+import { BigNumber } from 'ethers'
 
 import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
 import { Project } from '@/api/projects'
@@ -37,7 +37,7 @@ import Loader from '@/components/Loader.vue'
 export default class ClaimButton extends Vue {
   @Prop() project!: Project
 
-  allocatedAmount: FixedNumber | null = null
+  allocatedAmount: BigNumber | null = null
   claimed: boolean | null = null
   isLoading = true
 
@@ -81,11 +81,14 @@ export default class ClaimButton extends Vue {
       await this.loadTally()
     }
 
+    const tallyResult = this.tally?.results.tally[this.project.index]
+    const spent =
+      this.tally?.totalVoiceCreditsPerVoteOption.tally[this.project.index]
+
     this.allocatedAmount = await getAllocatedAmount(
       this.currentRound.fundingRoundAddress,
-      this.currentRound.nativeTokenDecimals,
-      this.tally!.results.tally[this.project.index],
-      this.tally!.totalVoiceCreditsPerVoteOption.tally[this.project.index]
+      tallyResult || '0',
+      spent || '0'
     )
     this.claimed = await isFundsClaimed(
       this.currentRound.fundingRoundAddress,
@@ -114,7 +117,11 @@ export default class ClaimButton extends Vue {
     return this.hasClaimBtn() && this.$store.state.currentUser && !this.claimed
   }
 
-  formatAmount(value: FixedNumber): string {
+  formatAmount(value: BigNumber | null): string {
+    if (!value) {
+      return ''
+    }
+
     const maxDecimals = 6
     const { nativeTokenDecimals } = this.currentRound!
     return formatAmount(value, nativeTokenDecimals, null, maxDecimals)
