@@ -21,7 +21,7 @@
     <div class="buttons">
       <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
       <links :to="projectRoute">
-        <button class="more-btn">More</button>
+        <button class="more-btn">{{ $t('projectListItem.button1') }}</button>
       </links>
     </div>
   </div>

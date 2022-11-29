@@ -974,7 +974,45 @@
     "div1": "Step {currentStep} of {steps}",
     "link1": "Cancel"
   },
-  "fundsNeededWarning": {},
+  "fundsNeededWarning": {
+    "span1_t1": "You need",
+    "span1_l2": "L2",
+    "span1_t2": "funds!",
+    "p1": " ⚠️ You need both some ETH for gas, and {nativeTokenSymbol} to contribute",
+    "link1": " Get help bridging { singleTokenNeeded } to Layer 2",
+    "link2": " Bridge {singleTokenNeeded} to { chain}"
+  },
+  "ipfsCopyWidget": {
+    "tooltip1": "'View IPFS link'"
+  },
+  "ipfsImageUpload": {
+    "button1_1": "Uploading...",
+    "button1_2": "Upload",
+    "p1": "IPFS hash",
+    "p2": "Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use.",
+    "div1": "Remove image"
+  },
+  "linkBox": {
+    "h2": "Check them out",
+    "link1": "GitHub repo",
+    "link2": "@Twitter"
+  },
+  "matchigFundsModal": {
+    "h3_1_t1": "Contribute { tokenSymbol } to the",
+    "h3_1_if1": "next",
+    "h3_1_if2": "current",
+    "h3_1_t2": "round",
+    "div1": " ⚠️ You only have { renderBalance } { tokenSymbol }",
+    "button1": "Cancel",
+    "button2": "Contribute",
+    "h3_2_t1": " Contribute { renderContributionAmount } { tokenSymbol } to the",
+    "h3_2_if1": "next",
+    "h3_2_if2": "current",
+    "h3_2_t2": "round",
+    "h3_3": " You just topped up the pool by { renderContributionAmount } { tokenSymbol }!",
+    "div2": "Thanks for helping out all our projects.",
+    "button3": "Done"
+  },
   "navBar": {
     "language": "Language",
     "app": "App",
@@ -988,5 +1026,21 @@
       "recipients": "Recipients",
       "layer2": "Layer 2"
     }
+  },
+  "projectListItem": {
+    "button1": "More"
+  },
+  "projectProfile": {
+    "info1": "This is what your contributors will see when they visit your project page.",
+    "div1": " tag",
+    "div2": "Team: ",
+    "p1": "✔️ You have contributed to this project!",
+    "h2_1": "About the project",
+    "h2_2": "The problem it solves",
+    "h2_3": "Funding plans",
+    "div3": "Recipient address",
+    "button1": "address",
+    "link1": "View on ",
+    "h2_4": "Team: "
   }
 }

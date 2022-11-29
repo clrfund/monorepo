@@ -2,8 +2,13 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>
-        Contribute {{ tokenSymbol }} to the
-        {{ isRoundFinished() ? 'next' : 'current' }} round
+        {{ $t('matchingFundsModal.h3_1_t1', { tokenSymbol: tokenSymbol }) }}
+        {{
+          isRoundFinished()
+            ? $t('matchingFundsModal.h3_1_if1')
+            : $t('matchingFundsModal.h3_1_if2')
+        }}
+        {{ $t('matchingFundsModal.h3_1_t2') }}
       </h3>
       <div class="contribution-form">
         <input-button
@@ -16,24 +21,40 @@
         />
       </div>
       <div v-if="!isBalanceSufficient" class="balance-check-warning">
-        ⚠️ You only have {{ renderBalance }}
-        {{ tokenSymbol }}
+        {{
+          $t('matchingFundsModal.div1', {
+            renderBalance: renderBalance,
+            tokenSymbol: tokenSymbol,
+          })
+        }}
       </div>
       <div class="btn-row">
-        <button class="btn-secondary" @click="$emit('close')">Cancel</button>
+        <button class="btn-secondary" @click="$emit('close')">
+          {{ $t('matchingFundsModal.button1') }}
+        </button>
         <button
           class="btn-action"
           :disabled="!isAmountValid()"
           @click="contributeMatchingFunds()"
         >
-          Contribute
+          {{ $t('matchingFundsModal.button2') }}
         </button>
       </div>
     </div>
     <div v-if="step === 2">
       <h3>
-        Contribute {{ renderContributionAmount }} {{ tokenSymbol }} to the
-        {{ isRoundFinished() ? 'next' : 'current' }} round
+        {{
+          $t('matchingFundsModal.h3_2_t1', {
+            renderContributionAmount: renderContributionAmount,
+            tokenSymbol: tokenSymbol,
+          })
+        }}
+        {{
+          isRoundFinished()
+            ? $t('matchingFundsModal.h3_2_if1')
+            : $t('matchingFundsModal.h3_2_if2')
+        }}
+        {{ $t('matchingFundsModal.h3_2_t2') }}
       </h3>
       <transaction
         :hash="transferTxHash"
@@ -44,11 +65,17 @@
     <div v-if="step === 3">
       <div class="big-emoji">💦</div>
       <h3>
-        You just topped up the pool by {{ renderContributionAmount }}
-        {{ tokenSymbol }}!
+        {{
+          $t('matchingFundsModal.h3_3', {
+            renderContributionAmount: renderContributionAmount,
+            tokenSymbol: tokenSymbol,
+          })
+        }}
       </h3>
-      <div class="mb2">Thanks for helping out all our projects.</div>
-      <button class="btn-primary" @click="$emit('close')">Done</button>
+      <div class="mb2">{{ $t('matchingFundsModal.div2') }}</div>
+      <button class="btn-primary" @click="$emit('close')">
+        {{ $t('matchingFundsModal.button3') }}
+      </button>
     </div>
   </div>
 </template>
