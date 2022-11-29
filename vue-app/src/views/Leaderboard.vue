@@ -36,9 +36,8 @@ import { isValidEthAddress } from '@/utils/accounts'
 import Loader from '@/components/Loader.vue'
 import { RoundInfo } from '@/api/round'
 import { Tally } from '@/api/tally'
-import { LOAD_TALLY, SELECT_ROUND, LOAD_ROUND_INFO } from '@/store/action-types'
-import { getAllocatedAmount } from '@/api/claims'
 import { BigNumber } from 'ethers'
+import * as Funding from '@/api/funding.json'
 
 @Component({
   name: 'leaderboard',
@@ -67,38 +66,13 @@ export default class Leaderboard extends Vue {
     return nativeTokenDecimals ?? 18
   }
 
-  sortByAmount(entry1: Project, entry2: Project): number {
+  sortByAmountDesc(entry1: Project, entry2: Project): number {
     const amount1 = entry1.fundingAmount ?? BigNumber.from(0)
     const amount2 = entry2.fundingAmount ?? BigNumber.from(0)
 
     const diff = amount2.sub(amount1)
 
     return diff.isZero() ? 0 : diff.gt(0) ? 1 : -1
-  }
-
-  private async tryGetAllocatedAmount(
-    projectIndex: number
-  ): Promise<BigNumber> {
-    try {
-      const votes = this.tally?.results.tally[projectIndex] || '0'
-      const spent =
-        this.tally?.totalVoiceCreditsPerVoteOption.tally[projectIndex] || '0'
-      return getAllocatedAmount(
-        this.currentRound.fundingRoundAddress,
-        votes,
-        spent
-      )
-    } catch (err) {
-      return BigNumber.from(0)
-    }
-  }
-
-  private async getAllocatedAmounts(projectIndices: number[]) {
-    return Promise.all(
-      projectIndices.map((projectIndex) =>
-        this.tryGetAllocatedAmount(projectIndex)
-      )
-    )
   }
 
   private async loadProjects(roundAddress: string) {
@@ -115,14 +89,6 @@ export default class Leaderboard extends Vue {
       return
     }
 
-    if (!this.currentRound) {
-      await this.loadRound(roundAddress)
-    }
-
-    if (!this.tally) {
-      await this.loadTally()
-    }
-
     const projects = await getProjects(
       round.recipientRegistryAddress,
       round.startTime.toSeconds(),
@@ -133,33 +99,22 @@ export default class Leaderboard extends Vue {
       return !project.isHidden && !project.isLocked
     })
 
-    const allocatedAmounts = await this.getAllocatedAmounts(
-      visibleProjects.map((project) => project.index)
-    )
-
     this.projects = visibleProjects
-      .map((project, i: number) => {
-        return { ...project, fundingAmount: allocatedAmounts[i] }
+      .map((project) => {
+        return {
+          ...project,
+          fundingAmount: BigNumber.from(Funding.amounts[project.index]),
+        }
       })
-      .sort(this.sortByAmount)
+      .sort(this.sortByAmountDesc)
   }
 
-  async mounted() {
-    //TODO: update to take factory address as a parameter, default to env. variable
+  async created() {
     this.roundAddress =
       this.$store.state.currentRoundAddress || (await getCurrentRound())
 
     await this.loadProjects(this.roundAddress)
     this.isLoading = false
-  }
-
-  async loadTally() {
-    await this.$store.dispatch(LOAD_TALLY)
-  }
-
-  async loadRound(roundAddress: string) {
-    await this.$store.dispatch(SELECT_ROUND, roundAddress)
-    await this.$store.dispatch(LOAD_ROUND_INFO)
   }
 }
 </script>

@@ -22,21 +22,7 @@
               />
             </div>
             <div class="btn-group">
-              <links
-                v-if="$store.getters.isRoundFinalized"
-                to="/leaderboard"
-                class="btn-action"
-                >View results</links
-              >
-              <links
-                v-else-if="$store.getters.isRoundContributionPhase"
-                to="/projects"
-                class="btn-action"
-                >Make a donation</links
-              >
-              <links v-else to="/projects" class="btn-action"
-                >View projects</links
-              >
+              <links to="/leaderboard" class="btn-action">View results</links>
               <div class="btn-info" @click="scrollToHowItWorks">
                 How it works
               </div>

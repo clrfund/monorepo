@@ -1,35 +1,37 @@
 <template>
-  <links :to="projectRoute">
-    <div class="container">
-      <div class="rank">
-        <div v-if="isTop3">
-          <img v-if="isFirst" src="~@/assets/medal/medal-1.svg" />
-          <img v-else-if="isSecond" src="~@/assets/medal/medal-2.svg" />
-          <img v-else src="~@/assets/medal/medal-3.svg" />
+  <div class="content">
+    <links :to="projectRoute">
+      <div class="container">
+        <div class="rank">
+          <div v-if="isTop3">
+            <img v-if="isFirst" src="~@/assets/medal/medal-1.svg" />
+            <img v-else-if="isSecond" src="~@/assets/medal/medal-2.svg" />
+            <img v-else src="~@/assets/medal/medal-3.svg" />
+          </div>
+          <div
+            class="number"
+            :class="{
+              first: isFirst,
+              second: isSecond,
+              third: isThird,
+            }"
+          >
+            {{ rank }}
+          </div>
         </div>
-        <div
-          class="number"
-          :class="{
-            first: isFirst,
-            second: isSecond,
-            third: isThird,
-          }"
-        >
-          {{ rank }}
+        <div class="project-image">
+          <img :src="projectImageUrl" :alt="project.name" />
+        </div>
+        <div class="project-name">
+          {{ project.name }}
+        </div>
+        <div class="funding">
+          <div class="amount">~{{ formatAmount(project.fundingAmount) }}</div>
+          <div class="symbol">{{ tokenSymbol }} funded</div>
         </div>
       </div>
-      <div class="project-image">
-        <img :src="projectImageUrl" :alt="project.name" />
-      </div>
-      <div class="project-name">
-        {{ project.name }}
-      </div>
-      <div class="funding">
-        <div class="amount">{{ formatAmount(project.fundingAmount) }}</div>
-        <div class="symbol">{{ tokenSymbol }} funded</div>
-      </div>
-    </div>
-  </links>
+    </links>
+  </div>
 </template>
 
 <script lang="ts">
@@ -96,16 +98,24 @@ export default class LeaderboardListItem extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
+.content {
+  :hover {
+    background-color: var(--bg-light-highlight);
+  }
+}
+
 .container {
-  display: grid;
+  display: flex;
   column-gap: 1rem;
   margin-bottom: 10px;
-  grid-template-columns: 2rem 2rem 3fr 8rem;
-  grid-template-areas: 'rank image name amount';
+  flex-direction: row;
+
+  @media (max-width: $breakpoint-m) {
+    column-gap: 5px;
+  }
 }
 
 .rank {
-  grid-area: rank;
   position: relative;
   width: 2.5rem;
   font-family: Inter;
@@ -115,6 +125,7 @@ export default class LeaderboardListItem extends Vue {
   color: var(--text-secondary);
   box-sizing: border-box;
   text-align: center;
+  flex: 0 0 auto;
 
   img {
     position: absolute;
@@ -129,7 +140,7 @@ export default class LeaderboardListItem extends Vue {
     left: 0;
     width: 100%;
     text-align: center;
-    line-height: 2em;
+    line-height: 1.8em;
 
     &.first {
       color: var(--brand-tertiary);
@@ -144,13 +155,13 @@ export default class LeaderboardListItem extends Vue {
 }
 
 .project-image {
-  grid-area: image;
   border-radius: 50%;
   width: 2rem;
   height: 2rem;
   overflow: hidden;
   justify-self: center;
   box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
+  flex: 0 0 auto;
 
   img {
     object-fit: cover;
@@ -160,37 +171,38 @@ export default class LeaderboardListItem extends Vue {
 }
 
 .project-name {
-  grid-area: name;
   font-weight: 200;
   overflow-wrap: break-word;
   margin-bottom: 1.5rem;
   font-size: 2vw;
   color: var(--text-secondary);
+  flex: 1 1 auto;
 
   a {
     color: var(--text-body);
   }
 
   @media (max-width: $breakpoint-m) {
-    font-size: 3vw;
+    font-size: 14px;
   }
 }
 
 .funding {
-  grid-area: amount;
   text-align: right;
 
   .amount {
     font-size: 2vw;
+    font-family: 'Lucida Console', 'Courier New', monospace;
     @media (max-width: $breakpoint-m) {
-      font-size: 4vw;
+      font-size: 16px;
     }
   }
 
   .symbol {
     font-size: 1vw;
+    white-space: nowrap;
     @media (max-width: $breakpoint-m) {
-      font-size: 1.5vw;
+      font-size: 10px;
     }
   }
 }
