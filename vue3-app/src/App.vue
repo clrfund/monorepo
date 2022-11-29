@@ -167,10 +167,10 @@ intervals.user = setInterval(async () => {
 
 onMounted(async () => {
 	const roundAddress = appStore.currentRoundAddress || (await getCurrentRound())
-	await appStore.selectRound(roundAddress!)
-	appStore.loadRoundInfo()
-	appStore.loadFactoryInfo()
-	appStore.loadMACIFactoryInfo()
+	appStore.selectRound(roundAddress!)
+	await appStore.loadRoundInfo()
+	await appStore.loadFactoryInfo()
+	await appStore.loadMACIFactoryInfo()
 	await appStore.loadRecipientRegistryInfo()
 })
 

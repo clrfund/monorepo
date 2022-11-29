@@ -23,7 +23,7 @@
 					<img
 						v-tooltip="{
 							content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
-							trigger: 'hover click',
+							triggers: ['hover', 'click'],
 						}"
 						width="16px"
 						src="@/assets/info.svg"
@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
-import * as humanizeDuration from 'humanize-duration'
+import humanizeDuration from 'humanize-duration'
 import { commify, formatUnits } from '@ethersproject/units'
 
 import { getCurrentRound } from '@/api/round'

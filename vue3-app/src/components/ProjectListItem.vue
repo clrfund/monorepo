@@ -35,7 +35,7 @@ import Links from '@/components/Links.vue'
 import type { CartItem } from '@/api/contributions'
 import type { Project } from '@/api/projects'
 import { markdown } from '@/utils/markdown'
-import { useRoute } from 'vue-router'
+import { useRoute, type RouteLocationRaw } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
@@ -82,7 +82,7 @@ const shouldShowCartInput = computed<boolean>(() => {
 	return isCurrentRound.value && (isRoundContributionPhase.value || canUserReallocate.value)
 })
 
-const projectRoute = computed(() => {
+const projectRoute = computed<RouteLocationRaw>(() => {
 	return route.name === 'round'
 		? {
 				name: 'round-project',

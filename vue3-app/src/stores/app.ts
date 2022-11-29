@@ -1,10 +1,5 @@
 import { defineStore } from 'pinia'
-
-// Libraries
 import type { BigNumber } from 'ethers'
-import { DateTime } from 'luxon'
-
-// API
 import {
 	type CartItem,
 	type Contributor,
@@ -197,6 +192,21 @@ export const useAppStore = defineStore('app', {
 
 			return nativeTokenDecimals
 		},
+		nativeTokenAddress: (state): string => {
+			const { currentRound, factory } = state
+
+			let nativeTokenAddress = ''
+
+			if (factory) {
+				nativeTokenAddress = factory.nativeTokenAddress
+			}
+
+			if (currentRound) {
+				nativeTokenAddress = currentRound.nativeTokenAddress
+			}
+
+			return nativeTokenAddress
+		},
 		isRecipientRegistryFull(): boolean {
 			return this.recipientSpacesRemaining === 0
 		},
@@ -260,7 +270,7 @@ export const useAppStore = defineStore('app', {
 			const round = await getRoundInfo(roundAddress)
 			this.currentRound = round
 		},
-		async selectRound(roundAddress: string) {
+		selectRound(roundAddress: string) {
 			if (this.currentRoundAddress) {
 				// Reset everything that depends on round
 				this.unwatchCart()

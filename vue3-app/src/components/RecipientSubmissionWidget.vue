@@ -20,7 +20,7 @@
 					<img
 						v-tooltip="{
 							content: 'Estimate – this total may be slightly different in your wallet.',
-							trigger: 'hover click',
+							triggers: ['hover', 'click'],
 						}"
 						src="@/assets/info.svg"
 					/>

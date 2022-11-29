@@ -8,11 +8,11 @@
 				<div class="round">
 					<div class="round-title-bar">
 						<h2 class="round-title">{{ operator }}</h2>
-						<!-- <v-popover class="verified-container">
+						<VDropdown class="verified-container">
 							<div class="verified">
 								<img src="@/assets/verified.svg" />
 							</div>
-							<template v-slot:popover>
+							<template #popper>
 								<div class="contract-popover">
 									<div class="contract-address">
 										{{ roundInfo.fundingRoundAddress }}
@@ -20,7 +20,7 @@
 									<links :to="blockExplorer.url">View on {{ blockExplorer.label }}</links>
 								</div>
 							</template>
-						</v-popover> -->
+						</VDropdown>
 					</div>
 					<div class="status" v-if="isRoundCancelled">
 						<div class="circle closed" />
@@ -64,7 +64,7 @@
 								<img
 									v-tooltip="{
 										content: 'During this phase, you can contribute to your favorite projects.',
-										trigger: 'hover click',
+										triggers: ['hover', 'click'],
 									}"
 									width="16px"
 									src="@/assets/info.svg"
@@ -88,7 +88,7 @@
 									v-if="hasUserContributed"
 									v-tooltip="{
 										content: `During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.`,
-										trigger: 'hover click',
+										triggers: ['hover', 'click'],
 									}"
 									width="16px"
 									src="@/assets/info.svg"
@@ -97,7 +97,7 @@
 									v-else-if="!currentUser"
 									v-tooltip="{
 										content: `If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.`,
-										trigger: 'hover click',
+										triggers: ['hover', 'click'],
 									}"
 									width="16px"
 									src="@/assets/info.svg"
@@ -106,7 +106,7 @@
 									v-else
 									v-tooltip="{
 										content: `This round has closed for new contributions.`,
-										trigger: 'hover click',
+										triggers: ['hover', 'click'],
 									}"
 									width="16px"
 									src="@/assets/info.svg"
@@ -131,7 +131,7 @@
 								<img
 									v-tooltip="{
 										content: `Our smart contracts are busy figuring out final contribution amounts.`,
-										trigger: 'hover click',
+										triggers: ['hover', 'click'],
 									}"
 									width="16px"
 									src="@/assets/info.svg"
@@ -149,7 +149,7 @@
 								<img
 									v-tooltip="{
 										content: `If you're a project owner you can now claim your funds!`,
-										trigger: 'hover click',
+										triggers: ['hover', 'click'],
 									}"
 									width="16px"
 									src="@/assets/info.svg"
@@ -169,7 +169,7 @@
 								<img
 									v-tooltip="{
 										content: `This total includes the funds in the matching pool and all contributions from the community.`,
-										trigger: 'hover click',
+										triggers: ['hover', 'click'],
 									}"
 									width="16px"
 									src="@/assets/info.svg"
@@ -188,7 +188,7 @@
 								v-tooltip="{
 									content:
 										'These are the funds that will be distributed to all the projects based on the contributions they receive from the community.',
-									trigger: 'hover click',
+									triggers: ['hover', 'click'],
 								}"
 								width="16px"
 								src="@/assets/info.svg"
@@ -252,13 +252,10 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import type { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
-
 import { type RoundInfo, getRoundInfo } from '@/api/round'
 import { chain } from '@/api/core'
-
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
-import ProjectListItem from '@/components/ProjectListItem.vue'
 import MatchingFundsModal from '@/components/MatchingFundsModal.vue'
 import Loader from '@/components/Loader.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
@@ -289,6 +286,7 @@ const {
 	recipientJoinDeadline,
 	isRoundContributionPhase,
 } = storeToRefs(appStore)
+
 const lsIsNoticeHiddenKey = computed(() => `${roundInfo.value?.fundingRoundAddress}.is-notice-hidden`)
 const isRoundCancelled = computed(() => appStore.isRoundCancelled(roundInfo.value))
 const isMaxMessagesReached = computed(() => (!roundInfo.value ? true : false))
@@ -297,8 +295,19 @@ const isCurrentRound = computed(() => {
 	return appStore.isCurrentRound(roundAddress)
 })
 
+const formatTotalInRound = computed(() => {
+	if (!roundInfo.value) {
+		return ''
+	}
+
+	const { contributions, matchingPool } = roundInfo.value
+	const totalInRound = contributions.addUnsafe(matchingPool)
+
+	return formatAmount(totalInRound)
+})
+
 onMounted(async () => {
-	await appStore.loadRoundInfo()
+	await loadRoundInfo()
 
 	// Message cap notice defaults with `hidden` class
 	// If it hasn't been dismissed yet, this class is toggled off until dismissed
@@ -311,15 +320,18 @@ onMounted(async () => {
 // Gets local storage key to look up if user has dismissed round notice (if message cap exceeded)
 // Key specific to each round via round address
 const roundAddress = computed(() => (route.params?.address as string) || currentRoundAddress.value)
-
 watch(roundAddress, async () => {
+	await loadRoundInfo()
+})
+
+async function loadRoundInfo() {
 	roundInfo.value = null
 	isLoading.value = true
 	if (roundAddress.value) {
 		roundInfo.value = await getRoundInfo(roundAddress.value, currentRound.value)
 	}
 	isLoading.value = false
-})
+}
 
 function toggleNotice() {
 	const elements = document.getElementsByClassName('round-notice')
@@ -327,17 +339,6 @@ function toggleNotice() {
 		elements[i].classList.toggle('hidden')
 	}
 	lsSet(lsIsNoticeHiddenKey.value, !lsGet(lsIsNoticeHiddenKey.value))
-}
-
-function formatTotalInRound(): string {
-	if (!roundInfo.value) {
-		return ''
-	}
-
-	const { contributions, matchingPool } = roundInfo.value
-	const totalInRound = contributions.addUnsafe(matchingPool)
-
-	return formatAmount(totalInRound)
 }
 
 const isRoundJoinOnlyPhase = computed(() => isCurrentRound.value && appStore.isRoundJoinOnlyPhase)

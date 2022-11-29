@@ -3,7 +3,7 @@
 		v-tooltip="{
 			content: isCopied ? 'Copied!' : `Copy${text && ` ${text}`}`,
 			hideOnTargetClick: false,
-			trigger: 'hover click',
+			triggers: ['hover', 'click'],
 		}"
 		:class="`${myClass || 'copy-icon'} ${hasBorder && 'border'}`"
 		@click="copyToClipboard"
@@ -17,10 +17,10 @@ import { ref } from 'vue'
 
 interface Props {
 	value: string // Required: Text to copy
-	text: string // Optional: Fills in "Copy ____" in tooltip
-	position: string // Optional: Position of tooltip (default "bottom")
-	myClass: string // Optional class override for custom styling
-	hasBorder: boolean
+	text?: string // Optional: Fills in "Copy ____" in tooltip
+	position?: string // Optional: Position of tooltip (default "bottom")
+	myClass?: string // Optional class override for custom styling
+	hasBorder?: boolean
 }
 
 const props = defineProps<Props>()

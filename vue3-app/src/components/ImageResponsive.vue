@@ -9,6 +9,7 @@ const BREAKPOINTS = [360, 720, 1080, 1440, 2160, 2880]
 
 interface Props {
 	title: string
+	height?: string
 }
 
 const props = defineProps<Props>()
@@ -27,6 +28,6 @@ const srcset = computed(() => {
 })
 
 function requirePath(name: string, breakpoint: number) {
-	return `../assets/${name}/${name}_w${breakpoint}.png`
+	return new URL(`/src/assets/${name}/${name}_w${breakpoint}.png`, import.meta.url).href
 }
 </script>

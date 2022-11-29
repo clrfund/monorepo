@@ -26,7 +26,7 @@
 					<div
 						v-tooltip="{
 							content: 'Disconnect wallet',
-							trigger: 'hover click',
+							triggers: ['hover', 'click'],
 						}"
 						class="disconnect btn"
 						@click="disconnect"
@@ -42,7 +42,7 @@
 					<div
 						v-tooltip="{
 							content: `Balance of wallet on ${chain.label} chain`,
-							trigger: 'hover click',
+							triggers: ['hover', 'click'],
 						}"
 					>
 						<img src="@/assets/info.svg" />
@@ -103,7 +103,6 @@ import IconStatus from '@/components/IconStatus.vue'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Loader from '@/components/Loader.vue'
-import Links from '@/components/Links.vue'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 
 import { userRegistryType, UserRegistryType, chain } from '@/api/core'

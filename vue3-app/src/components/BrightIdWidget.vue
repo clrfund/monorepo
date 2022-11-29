@@ -42,7 +42,7 @@
 						content: isVerified
 							? 'You\'re a verified human on BrightID!'
 							: 'Your BrightID profile still needs to be verified.',
-						trigger: 'hover click',
+						triggers: ['hover', 'click'],
 					}"
 					:class="isVerified ? 'brightid-verified' : 'unverified'"
 				>
@@ -60,8 +60,8 @@ import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
 
 interface Props {
-	abbrev: string
-	balance: string
+	abbrev?: string
+	balance?: string
 	isProjectCard: boolean
 }
 

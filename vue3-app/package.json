@@ -17,6 +17,8 @@
 		"crypto-js": "^4.1.1",
 		"ethers": "^5.7.2",
 		"floating-vue": "^2.0.0-beta.20",
+		"graphql": "^16.6.0",
+		"graphql-request": "^5.0.0",
 		"humanize-duration": "^3.27.3",
 		"markdown-it": "^13.0.1",
 		"markdown-it-link-attributes": "^4.0.1",
@@ -30,6 +32,7 @@
 		"vue-router": "4"
 	},
 	"devDependencies": {
+		"@types/humanize-duration": "^3.27.1",
 		"@typescript-eslint/eslint-plugin": "^5.44.0",
 		"@typescript-eslint/parser": "^5.44.0",
 		"@vitejs/plugin-vue": "^3.2.0",

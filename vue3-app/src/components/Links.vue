@@ -1,6 +1,6 @@
 <template>
 	<a
-		v-if="isExternal"
+		v-if="typeof to === 'string' && isExternal"
 		:class="{ 'external-link': !hideArrow }"
 		:href="to"
 		:aria-label="ariaLabel"
@@ -15,10 +15,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import type { RouteLocationRaw } from 'vue-router'
 
 interface Props {
-	to: string
+	to: RouteLocationRaw
 	hideArrow?: boolean
 	ariaLabel?: string
 }

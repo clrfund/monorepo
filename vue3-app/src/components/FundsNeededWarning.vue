@@ -33,7 +33,7 @@ const { hasUserContributed } = storeToRefs(appStore)
 
 interface Props {
 	onNavigate: () => void
-	isCompact: boolean
+	isCompact?: boolean
 }
 
 const props = defineProps<Props>()
