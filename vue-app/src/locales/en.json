@@ -926,6 +926,55 @@
     "div14": "No current round.",
     "link4": "Verify with BrightID while you wait"
   },
+  "cartItems": {
+    "button1": "Amount"
+  },
+  "claimButton": {
+    "p": "✔️ {allocatedAmount} { tokenSymbol } claimed",
+    "button": "Claim {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}"
+  },
+  "claimModal": {
+    "h2_1": "Claim funds",
+    "h2_2": "Funds were claimed!",
+    "p1": " has been sent to",
+    "div1": "Recipient address",
+    "button1": "Done"
+  },
+  "contributionModal": {
+    "h2_1": " Confirm {renderTotal} {nativeTokenSymbol} contribution",
+    "p1_t1": " Your",
+    "p1_t2": "contribution total is final. You won't be able to increase this amount. Make sure this is the maximum you might want to spend on contributions.",
+    "button1": "Cancel",
+    "button2": "Continue",
+    "h2_2": "Approve {renderTotal} {nativeTokenSymbol}",
+    "p2": " This gives this app permission to withdraw {renderTotal} {nativeTokenSymbol} from your wallet for your contribution.",
+    "h2_3": " Send {renderTotal} {nativeTokenSymbol} contribution",
+    "p3": " This transaction sends out your {renderTotal} {nativeTokenSymbol} contribution to your chosen projects.",
+    "h2_4": "Matching pool magic ✨",
+    "p4": "This transaction lets the matching pool know how much {nativeTokenSymbol } to send to your favorite projects based on your contributions."
+  },
+  "copyButton": {
+    "tooltip1": "Copied!"
+  },
+  "criterialModal": {
+    "h2": "Round criteria",
+    "p1": "Close",
+    "p2": "The registry admin will remove any projects that don't meet the round criteria. So read carefully! In later rounds we're hoping that this review process can be done by the community.",
+    "p3": "Learn more about the project application process in our",
+    "link1": "recipient guide",
+    "link2": "Add project"
+  },
+  "formNavigation": {
+    "button1": "Previous",
+    "button2_1": "Confirm",
+    "button2:_2": "Next"
+  },
+  "formProgressWidget": {
+    "p1": "Step {currentStep} of {steps}",
+    "div1": "Step {currentStep} of {steps}",
+    "link1": "Cancel"
+  },
+  "fundsNeededWarning": {},
   "navBar": {
     "language": "Language",
     "app": "App",
