@@ -10,13 +10,18 @@
 		<div class="transaction">
 			<div>
 				<div>
-					<wallet-widget class="button" v-if="!currentUser" :isActionButton="true" :fullWidthMobile="true" />
+					<wallet-widget
+						v-if="!currentUser"
+						class="button"
+						:is-action-button="true"
+						:full-width-mobile="true"
+					/>
 					<button
 						v-else
 						type="button"
 						class="btn-action button"
-						@click="sponsor"
 						:disabled="sponsorTxHash.length !== 0"
+						@click="sponsor"
 					>
 						Get sponsored
 					</button>

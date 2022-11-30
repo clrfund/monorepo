@@ -5,11 +5,11 @@
 		</links>
 		<div class="btn-row">
 			<div>
-				<img @click="toggleTheme()" class="navbar-btn" :src="`src/assets/${themeIcon}`" />
+				<img class="navbar-btn" :src="`src/assets/${themeIcon}`" @click="toggleTheme()" />
 			</div>
-			<div class="help-dropdown" v-click-outside="closeHelpDropdown">
-				<img @click="toggleHelpDropdown()" class="navbar-btn" src="@/assets/help.svg" />
-				<div id="myHelpDropdown" class="button-menu" v-if="showHelpDropdown">
+			<div v-click-outside="closeHelpDropdown" class="help-dropdown">
+				<img class="navbar-btn" src="@/assets/help.svg" @click="toggleHelpDropdown()" />
+				<div v-if="showHelpDropdown" id="myHelpDropdown" class="button-menu">
 					<div
 						v-for="({ to, text, emoji }, idx) of dropdownItems"
 						:key="idx"
@@ -23,7 +23,7 @@
 					</div>
 				</div>
 			</div>
-			<wallet-widget class="wallet-widget" v-if="inApp" />
+			<wallet-widget v-if="inApp" class="wallet-widget" />
 			<links v-if="!inApp" to="/projects" class="app-btn">App</links>
 		</div>
 	</nav>

@@ -25,7 +25,7 @@
 				<img v-if="profileImageUrl" :src="profileImageUrl" />
 			</div>
 		</div>
-		<profile v-if="showProfilePanel" :balance="balance!" :etherBalance="etherBalance!" @close="toggleProfile" />
+		<profile v-if="showProfilePanel" :balance="balance!" :ether-balance="etherBalance!" @close="toggleProfile" />
 	</div>
 </template>
 

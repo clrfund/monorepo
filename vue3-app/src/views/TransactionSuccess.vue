@@ -19,21 +19,21 @@
 					<p v-if="$route.params.type === 'reallocation'" class="contributed-content">
 						Your choices have been updated! You can update your choices again any time in the next
 						<time-left
-							valueClass="contributed-content-bold"
-							unitClass="contributed-content-bold"
+							value-class="contributed-content-bold"
+							unit-class="contributed-content-bold"
 							:date="currentRound?.votingDeadline"
 						/>.
 					</p>
 					<p v-else-if="$route.params.type === 'contribution'" class="contributed-content">
 						Thanks for contributing to the Ethereum ecosystem. If you change your mind, you have
 						<time-left
-							valueClass="contributed-content-bold"
-							unitClass="contributed-content-bold"
+							value-class="contributed-content-bold"
+							unit-class="contributed-content-bold"
 							:date="currentRound?.votingDeadline"
 						/>
 						to reallocate your contributions.
 					</p>
-					<div class="receipt" v-if="$route.params.hash">
+					<div v-if="$route.params.hash" class="receipt">
 						<transaction-receipt :hash="$route.params.hash" />
 					</div>
 					<div class="btn-info" @click="redirectToProjects()">OK</div>

@@ -3,7 +3,7 @@
 		<div :class="isWaiting ? 'recipient-submission-widget shine' : 'recipient-submission-widget'">
 			<loader v-if="isLoading" />
 			<div :class="isWaiting || txError ? 'tx-progress-area' : 'tx-progress-area-no-notice'">
-				<loader class="button-loader" v-if="isWaiting" />
+				<loader v-if="isWaiting" class="button-loader" />
 				<div v-if="isWaiting" class="tx-notice">
 					<div v-if="!!txHash">Waiting for transaction to be mined...</div>
 					<div v-else>Check your wallet for a prompt...</div>
@@ -29,7 +29,7 @@
 					{{ depositAmount }}
 					<span class="total-currency"> {{ depositToken }}</span>
 				</div>
-				<div class="warning-text" v-if="hasLowFunds">
+				<div v-if="hasLowFunds" class="warning-text">
 					Not enough {{ depositToken }} in your wallet.<br />
 					Top up or connect a different wallet.
 				</div>

@@ -59,7 +59,7 @@
 				</div>
 				<div class="btn-container mt2">
 					<div v-if="!isRoundOver">
-						<wallet-widget v-if="!currentUser" :isActionButton="true" :fullWidthMobile="true" />
+						<wallet-widget v-if="!currentUser" :is-action-button="true" :full-width-mobile="true" />
 						<links v-if="showBrightIdButton" to="/verify/connect" class="btn-primary">
 							I have BrightID installed
 						</links>

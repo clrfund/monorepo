@@ -9,25 +9,25 @@
 				</span>
 				<span v-if="!isRecipientRegistryFull" class="label">
 					Time left to add a project:
-					<time-left unitClass="none" valueClass="none" :date="recipientJoinDeadline" />
+					<time-left unit-class="none" value-class="none" :date="recipientJoinDeadline" />
 				</span>
 			</div>
 			<div v-if="isRoundContributionPhase" class="messsage">
 				<span v-if="isRoundContributionPhaseEnding" class="label">
 					⌛️ The round will close in
-					<time-left unitClass="none" valueClass="none" :date="currentRound!.signUpDeadline" />. Get your
+					<time-left unit-class="none" value-class="none" :date="currentRound!.signUpDeadline" />. Get your
 					contributions in now!
 				</span>
 				<span v-else class="label"
 					>🎉 The round is open!
-					<time-left unitClass="none" valueClass="none" :date="currentRound!.signUpDeadline" />
+					<time-left unit-class="none" value-class="none" :date="currentRound!.signUpDeadline" />
 					left to contribute to your favorite projects
 				</span>
 			</div>
 			<div v-if="isRoundReallocationPhase" class="messsage">
 				<span class="label">
 					Funding is closed! If you contributed, you have
-					<time-left unitClass="none" valueClass="none" :date="currentRound!.votingDeadline" />
+					<time-left unit-class="none" value-class="none" :date="currentRound!.votingDeadline" />
 					left to change your mind
 				</span>
 			</div>

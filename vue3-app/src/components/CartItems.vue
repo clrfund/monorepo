@@ -2,11 +2,11 @@
 	<div>
 		<div
 			v-for="item in cartList"
+			:key="item.id"
 			class="cart-item"
 			:class="{
 				'new-cart-item': isNewOrUpdated(item) && hasUserContributed,
 			}"
-			:key="item.id"
 		>
 			<div class="project">
 				<links :to="`{ name: 'project', params: { id: ${item.id} } }`">
@@ -20,7 +20,7 @@
 						<img class="remove-icon" src="@/assets/remove.svg" aria-label="Remove project" />
 					</div>
 				</div>
-				<div class="contribution-form" v-if="hasUserContributed && !isEditMode">
+				<div v-if="hasUserContributed && !isEditMode" class="contribution-form">
 					{{ item.amount }} {{ tokenSymbol }}
 				</div>
 			</div>
@@ -32,8 +32,8 @@
 						class: `{ invalid: ${!isAmountValid(item.amount)} }`,
 						disabled: !canUpdateAmount(),
 					}"
-					@input="newAmount => updateAmount(item, newAmount)"
 					class="contribution-amount"
+					@input="newAmount => updateAmount(item, newAmount)"
 				/>
 			</div>
 		</div>

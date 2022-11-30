@@ -10,9 +10,9 @@
 			<img alt="open" width="16" src="@/assets/chevron-left.svg" />
 			<transition name="pulse" mode="out-in">
 				<div
+					v-if="!showCartPanel && isCartBadgeShown"
 					:key="cart.length"
 					:class="[cart.length ? 'circle cart-indicator' : 'cart-indicator']"
-					v-if="!showCartPanel && isCartBadgeShown"
 				>
 					{{ cart.length }}
 				</div>

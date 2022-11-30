@@ -14,7 +14,7 @@
 
 				<filter-dropdown
 					:categories="categories"
-					:selectedCategories="selectedCategories"
+					:selected-categories="selectedCategories"
 					@change="handleFilterClick"
 				/>
 
@@ -30,10 +30,10 @@
 					/>
 					<img
 						v-if="search.length > 0"
-						@click="clearSearch"
 						src="@/assets/close.svg"
 						height="20"
 						class="pointer"
+						@click="clearSearch"
 					/>
 				</div>
 				<div class="add-project">
@@ -46,13 +46,13 @@
 				<call-to-action-card v-if="!search && selectedCategories.length === 0" />
 				<project-list-item
 					v-for="project in filteredProjects"
-					:project="project"
 					:key="project.id"
-					:roundAddress="roundAddress"
+					:project="project"
+					:round-address="roundAddress"
 				>
 				</project-list-item>
 			</div>
-			<div class="empty-search" v-if="filteredProjects.length === 0">
+			<div v-if="filteredProjects.length === 0" class="empty-search">
 				<div>
 					😢 No projects match your search. Try using the filter to narrow down what you're looking for.
 				</div>

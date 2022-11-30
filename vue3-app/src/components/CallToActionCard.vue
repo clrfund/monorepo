@@ -1,6 +1,6 @@
 <template>
 	<!-- Reallocate CTA -->
-	<div class="get-prepared" v-if="canUserReallocate">
+	<div v-if="canUserReallocate" class="get-prepared">
 		<span aria-label="thinking face" class="emoji">🤔</span>
 		<div>
 			<h2 class="prep-title">Changed your mind?</h2>
@@ -9,7 +9,7 @@
 		</div>
 	</div>
 	<!-- Round is over notification -->
-	<div class="get-prepared" v-else-if="hasContributionPhaseEnded">
+	<div v-else-if="hasContributionPhaseEnded" class="get-prepared">
 		<span aria-label="hand" class="emoji">🤚</span>
 		<div>
 			<h2 class="prep-title">Round over for contributions</h2>
@@ -17,8 +17,8 @@
 		</div>
 	</div>
 	<!-- Get prepared CTA -->
-	<div class="get-prepared" v-else-if="showUserVerification">
-		<bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
+	<div v-else-if="showUserVerification" class="get-prepared">
+		<bright-id-widget v-if="hasStartedVerification" :is-project-card="true" />
 		<span v-else aria-label="rocket" class="emoji">🚀</span>
 		<div>
 			<h2 class="prep-title">Get prepared</h2>

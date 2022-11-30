@@ -48,7 +48,7 @@
 				>Ethereum Layer 2 technologies</links
 			>.
 		</p>
-		<div v-if="chain.bridge" class="divider" id="bridge" />
+		<div v-if="chain.bridge" id="bridge" class="divider" />
 		<!-- If chain is Arbitrum, display bridge information: -->
 		<div v-if="chain.label.includes('Arbitrum')" class="chain-details">
 			<h2>{{ chain.label }}</h2>
@@ -92,7 +92,7 @@
 			</ul>
 			<h3>💰 How to get funds on {{ chain.label }}</h3>
 			<p>
-				<links :to="chain.bridge!" :hideArrow="true">
+				<links :to="chain.bridge!" :hide-arrow="true">
 					<button class="btn-action">Official {{ chain.label }} Bridge</button>
 				</links>
 			</p>
@@ -137,7 +137,7 @@
 			</ul>
 			<h2>💰 Bridge your funds to {{ chain.label }}</h2>
 			<p>
-				<links :to="chain.bridge" :hideArrow="true">
+				<links :to="chain.bridge" :hide-arrow="true">
 					<button class="btn-action">{{ chain.label }} Bridge</button>
 				</links>
 			</p>

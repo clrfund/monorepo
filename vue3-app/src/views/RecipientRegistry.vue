@@ -43,7 +43,7 @@
 										<copy-button
 											:value="request.transactionHash"
 											text="hash"
-											myClass="inline copy-icon"
+											my-class="inline copy-icon"
 										/>
 									</div>
 									<code>{{ request.transactionHash }}</code>
@@ -54,7 +54,7 @@
 										<copy-button
 											:value="request.recipientId"
 											text="id"
-											myClass="inline copy-icon"
+											my-class="inline copy-icon"
 										/>
 									</div>
 									<code>{{ request.recipientId }}</code>
@@ -62,7 +62,7 @@
 								<div>
 									<div class="btn-row">
 										Recipient address
-										<copy-button :value="request.recipient" text="address" myClass="copy-icon" />
+										<copy-button :value="request.recipient" text="address" my-class="copy-icon" />
 									</div>
 									<code>{{ request.recipient }}</code>
 								</div>
@@ -85,7 +85,7 @@
 							</template>
 						</td>
 						<td>
-							<div class="actions" v-if="isUserConnected">
+							<div v-if="isUserConnected" class="actions">
 								<!-- TODO: to implement this feature, it requires to send a baseDeposit (see contract)
               <div
                 class="btn-warning"
@@ -95,15 +95,15 @@
                 Remove
               </div> -->
 								<div
-									class="icon-btn-approve"
 									v-if="(isOwner && isPending(request)) || isAccepted(request)"
+									class="icon-btn-approve"
 									@click="approve(request)"
 								>
 									<img src="@/assets/checkmark.svg" />
 								</div>
 								<div
-									class="icon-btn-reject"
 									v-if="isOwner && (isPending(request) || isAccepted(request))"
+									class="icon-btn-reject"
 									@click="reject(request)"
 								>
 									<img src="@/assets/close.svg" />

@@ -22,11 +22,11 @@
 							</template>
 						</VDropdown>
 					</div>
-					<div class="status" v-if="isRoundCancelled">
+					<div v-if="isRoundCancelled" class="status">
 						<div class="circle closed" />
 						Cancelled
 					</div>
-					<div class="status" v-else-if="isCurrentRound && !isRoundFinalized && !isRoundTallying">
+					<div v-else-if="isCurrentRound && !isRoundFinalized && !isRoundTallying" class="status">
 						<div class="circle open-pulse" />
 						Open
 					</div>
@@ -47,7 +47,7 @@
 						</p>
 						<div class="dismiss-btn" @click="toggleNotice">Great!</div>
 					</div>
-					<div class="round-info-item" v-if="isRoundJoinOnlyPhase">
+					<div v-if="isRoundJoinOnlyPhase" class="round-info-item">
 						<div class="full-width">
 							<div class="round-info-item-top">
 								<div class="round-info-title">⏱️ Round opening</div>
@@ -112,7 +112,7 @@
 									src="@/assets/info.svg"
 								/>
 							</div>
-							<div class="message" v-if="!hasUserContributed">Closed for contributions</div>
+							<div v-if="!hasUserContributed" class="message">Closed for contributions</div>
 							<div
 								v-else
 								class="round-info-value"

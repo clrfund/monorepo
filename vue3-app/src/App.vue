@@ -1,8 +1,8 @@
 <template>
 	<div id="app" class="wrapper">
 		<nav-bar :in-app="isInApp" />
-		<div id="content-container" v-if="appReady">
-			<div id="sidebar" v-if="isSidebarShown" :class="`${showCartPanel ? 'desktop-l' : 'desktop'}`">
+		<div v-if="appReady" id="content-container">
+			<div v-if="isSidebarShown" id="sidebar" :class="`${showCartPanel ? 'desktop-l' : 'desktop'}`">
 				<round-information />
 			</div>
 			<div
@@ -16,7 +16,7 @@
 				<breadcrumbs v-if="showBreadCrumb" />
 				<router-view :key="$route.path" />
 			</div>
-			<div id="cart" v-if="isSideCartShown" :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`">
+			<div v-if="isSideCartShown" id="cart" :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`">
 				<cart-widget />
 			</div>
 		</div>

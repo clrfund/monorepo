@@ -7,10 +7,10 @@
 	>
 		<div class="row">
 			<div v-if="isVerified">
-				<icon-status :happy="true" logo="brightid.svg" secondaryLogo="checkmark.svg" />
+				<icon-status :happy="true" logo="brightid.svg" secondary-logo="checkmark.svg" />
 			</div>
 			<div v-else>
-				<icon-status :sad="true" logo="brightid.svg" secondaryLogo="close-black.svg" />
+				<icon-status :sad="true" logo="brightid.svg" secondary-logo="close-black.svg" />
 			</div>
 			<h2>BrightID setup</h2>
 			<p>{{ getCurrentStep }} / 2</p>
@@ -36,7 +36,7 @@
 						<a href="/#/verify/" @click="$emit('close')">Continue setup</a>
 					</div>
 				</div>
-				<a href="/#/verify/" @click="$emit('close')" v-else>Start setup</a>
+				<a v-else href="/#/verify/" @click="$emit('close')">Start setup</a>
 				<p
 					v-tooltip="{
 						content: isVerified

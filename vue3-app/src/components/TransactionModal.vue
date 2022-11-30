@@ -4,7 +4,7 @@
 			<transaction
 				:hash="txHash"
 				:error="txError"
-				:displayRetryBtn="true"
+				:display-retry-btn="true"
 				@close="$emit('close')"
 				@retry="
 					() => {

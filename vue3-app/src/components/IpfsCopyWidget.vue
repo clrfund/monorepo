@@ -4,8 +4,8 @@
 			{{ renderCopiedOrHash }}
 		</div>
 		<div class="icons">
-			<copy-button :value="hash" text="hash" v-on:copied="updateIsCopied" myClass="ipfs-copy-widget" />
-			<links v-tooltip="'View IPFS link'" :to="'https://ipfs.io/ipfs/' + hash" :hideArrow="true">
+			<copy-button :value="hash" text="hash" my-class="ipfs-copy-widget" @copied="updateIsCopied" />
+			<links v-tooltip="'View IPFS link'" :to="'https://ipfs.io/ipfs/' + hash" :hide-arrow="true">
 				<img class="icon" src="@/assets/ipfs-white.svg" />
 			</links>
 		</div>

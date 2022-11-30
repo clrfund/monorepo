@@ -7,8 +7,8 @@
 					{{ header }}
 				</h3>
 			</div>
-			<img @click="toggleIsOpen" v-if="isOpen" src="@/assets/chevron-up.svg" />
-			<img @click="toggleIsOpen" v-else src="@/assets/chevron-down.svg" />
+			<img v-if="isOpen" src="@/assets/chevron-up.svg" @click="toggleIsOpen" />
+			<img v-else src="@/assets/chevron-down.svg" @click="toggleIsOpen" />
 		</div>
 		<div v-if="isOpen">
 			<p v-if="isOpen">{{ content }}</p>

@@ -13,9 +13,9 @@
 				<img :src="`src/assets/${icon}`" :alt="title" width="16" />
 				<transition name="pulse" mode="out-in">
 					<div
+						v-if="title === 'Cart' && isCartBadgeShown"
 						:key="cart.length"
 						:class="[cart.length ? 'circle cart-indicator' : 'cart-indicator']"
-						v-if="title === 'Cart' && isCartBadgeShown"
 					>
 						{{ cart.length }}
 					</div>

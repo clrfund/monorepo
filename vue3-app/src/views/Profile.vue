@@ -13,11 +13,11 @@
 			</div>
 			<div class="address-card">
 				<h2 class="address">{{ displayAddress }}</h2>
-				<div class="action-row" v-if="currentUser">
+				<div v-if="currentUser" class="action-row">
 					<copy-button
 						:value="currentUser.walletAddress"
 						text="address"
-						myClass="profile copy-icon"
+						my-class="profile copy-icon"
 						class="copy"
 					/>
 					<div class="address">
@@ -35,7 +35,7 @@
 					</div>
 				</div>
 			</div>
-			<bright-id-widget v-if="showBrightIdWidget" :isProjectCard="false" @close="$emit('close')" />
+			<bright-id-widget v-if="showBrightIdWidget" :is-project-card="false" @close="$emit('close')" />
 			<div class="balances-section">
 				<div class="flex-row">
 					<h2>{{ chain.label }} balances</h2>
@@ -53,7 +53,7 @@
 						<icon-status
 							:custom="true"
 							:logo="tokenLogo"
-							:secondaryLogo="chain.logo"
+							:secondary-logo="chain.logo"
 							:bg="balanceBackgroundColor"
 						/>
 					</balance-item>
@@ -61,20 +61,20 @@
 						<icon-status
 							:custom="true"
 							logo="eth.svg"
-							:secondaryLogo="chain.logo"
+							:secondary-logo="chain.logo"
 							:bg="balanceBackgroundColor"
 						/>
 					</balance-item>
 				</div>
-				<funds-needed-warning :onNavigate="onNavigateToBridge" />
+				<funds-needed-warning :on-navigate="onNavigateToBridge" />
 			</div>
 			<div class="projects-section">
 				<h2>Projects</h2>
 				<div v-if="projects.length > 0" class="project-list">
 					<div
-						class="project-item"
 						v-for="{ id, name, thumbnailImageUrl, isHidden, isLocked } of projects"
 						:key="id"
+						class="project-item"
 					>
 						<img :src="thumbnailImageUrl" alt="thumbnail" class="project-thumbnail" />
 						<div class="project-details">

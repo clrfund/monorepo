@@ -1,9 +1,9 @@
 <template>
-	<form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="image">
+	<form method="POST" enctype="multipart/form-data" name="image" @submit="handleUploadToIPFS">
 		<p class="input-label">{{ label }}</p>
 		<p class="input-description">{{ description }}</p>
 		<div class="input-row">
-			<input type="file" class="input" @change="handleLoadFile" name="image" :id="`${formProp}-input`" />
+			<input :id="`${formProp}-input`" type="file" class="input" name="image" @change="handleLoadFile" />
 			<button
 				primary="true"
 				type="submit"
@@ -40,7 +40,7 @@
 			</div>
 			<div class="hash-area">
 				<ipfs-copy-widget :hash="hash" />
-				<div @click="handleRemoveImage" class="btn-warning">Remove image</div>
+				<div class="btn-warning" @click="handleRemoveImage">Remove image</div>
 			</div>
 		</div>
 		<p v-if="error" class="error">{{ error }}</p>

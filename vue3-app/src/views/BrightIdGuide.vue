@@ -11,7 +11,7 @@
 			content="BrightID run verification parties regularly. Join the call,
     meet other new users, and they'll verify you’re a human and not a
     bot. Quick and painless, even for you introverts out there."
-			:linkButton="{
+			:link-button="{
 				link: 'https://meet.brightid.org/#/',
 				text: 'View party schedule',
 			}"

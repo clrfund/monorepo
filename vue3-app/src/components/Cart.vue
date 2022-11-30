@@ -3,19 +3,19 @@
 		<div v-if="!currentUser" class="empty-cart">
 			<div class="moon-emoji">🌚</div>
 			<h3>Connect to see your cart</h3>
-			<wallet-widget :isActionButton="true" />
+			<wallet-widget :is-action-button="true" />
 		</div>
 		<div v-else class="cart-container">
-			<div class="reallocation-message" v-if="canUserReallocate && hasUserVoted">
+			<div v-if="canUserReallocate && hasUserVoted" class="reallocation-message">
 				You’ve already contributed this round. You can edit your choices and add new projects, but your cart
 				total must always equal your original contribution amount.
 				<links to="/about/maci" class="message-link">Why?</links>
 			</div>
-			<div class="reallocation-message" v-if="canUserReallocate && !hasUserVoted">
+			<div v-if="canUserReallocate && !hasUserVoted" class="reallocation-message">
 				Almost done! You must submit one more transaction to complete your contribution.
 			</div>
 			<div class="flex cart-title-bar">
-				<div v-if="showCollapseCart" @click="toggleCart" class="absolute-left cart-btn">
+				<div v-if="showCollapseCart" class="absolute-left cart-btn" @click="toggleCart">
 					<img alt="cart" width="16" src="@/assets/cart.svg" />
 					<img alt="close" width="16" src="@/assets/chevron-right.svg" />
 				</div>
@@ -24,7 +24,7 @@
 					v-if="(isRoundContributionPhase || canUserReallocate) && !isCartEmpty"
 					class="absolute-right dropdown"
 				>
-					<img @click="openDropdown" class="dropdown-btn" src="@/assets/more.svg" />
+					<img class="dropdown-btn" src="@/assets/more.svg" @click="openDropdown" />
 					<div id="cart-dropdown" class="button-menu">
 						<div
 							v-for="({ callback, text, icon, cssClass }, idx) of dropdownItems"
@@ -39,7 +39,7 @@
 				</div>
 			</div>
 			<div class="messages-and-cart-items">
-				<div class="reallocation-intro" v-if="hasUserContributed && hasReallocationPhaseEnded">
+				<div v-if="hasUserContributed && hasReallocationPhaseEnded" class="reallocation-intro">
 					This round is over. Here’s how you contributed. Thanks!
 				</div>
 				<div class="cart">
@@ -59,22 +59,22 @@
 							<div class="semi-bold">
 								{{ isEditMode ? 'Edit contributions' : 'Your contributions' }}
 							</div>
-							<div class="semi-bold" v-if="canUserReallocate">
-								<button @click="handleEditState" class="pointer">
+							<div v-if="canUserReallocate" class="semi-bold">
+								<button class="pointer" @click="handleEditState">
 									{{ isEditMode ? 'Cancel' : 'Edit' }}
 								</button>
 							</div>
 						</div>
 					</div>
-					<div v-else-if="hasUserContributed" class="flex-row-reallocation" id="readOnly">
+					<div v-else-if="hasUserContributed" id="readOnly" class="flex-row-reallocation">
 						<!-- Round is finalized -->
 						<div>Your contributions</div>
 					</div>
 					<cart-items
 						v-if="hasUserContributed || !hasContributionPhaseEnded"
-						:cartList="filteredCart"
-						:isEditMode="isEditMode"
-						:isAmountValid="isAmountValid"
+						:cart-list="filteredCart"
+						:is-edit-mode="isEditMode"
+						:is-amount-valid="isAmountValid"
 					/>
 				</div>
 				<div
@@ -85,7 +85,7 @@
 					<time-left :date="timeLeftDate" />
 				</div>
 			</div>
-			<div class="reallocation-section" v-if="canUserReallocate && isEditMode">
+			<div v-if="canUserReallocate && isEditMode" class="reallocation-section">
 				<div class="reallocation-row">
 					<span>Original contribution</span>
 					{{ formatAmount(contribution) }} {{ tokenSymbol }}
@@ -106,26 +106,26 @@
 					{{ tokenSymbol }}
 				</div>
 				<div
-					@click="splitContributionsEvenly"
-					class="split-link"
 					v-if="isGreaterThanInitialContribution() || hasUnallocatedFunds()"
+					class="split-link"
+					@click="splitContributionsEvenly"
 				>
 					<img src="@/assets/split.svg" /> Split {{ formatAmount(contribution) }} {{ tokenSymbol }} evenly
 				</div>
 			</div>
-			<div class="submit-btn-wrapper" v-if="canWithdrawContribution() && cart.length >= 1">
+			<div v-if="canWithdrawContribution() && cart.length >= 1" class="submit-btn-wrapper">
 				<button class="btn-action" @click="withdrawContribution()">
 					Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
 				</button>
 			</div>
 			<div
-				class="submit-btn-wrapper"
 				v-if="
 					((canUserReallocate && isEditMode) ||
 						(!canUserReallocate && isRoundContributionPhase) ||
 						!hasUserVoted) &&
 					cart.length >= 1
 				"
+				class="submit-btn-wrapper"
 			>
 				<div v-if="errorMessage" class="error-title">
 					Can't
@@ -135,21 +135,21 @@
 				<div v-if="errorMessage" class="submit-error">
 					{{ errorMessage }}
 				</div>
-				<div class="p1" v-if="hasUnallocatedFunds()">
+				<div v-if="hasUnallocatedFunds()" class="p1">
 					Funds you don't contribute to projects ({{
 						BigInt(formatAmount(contribution)) - BigInt(formatAmount(getTotal()))
 					}}
 					{{ tokenSymbol }}) will be sent to the matching pool at the end of the round. Your cart must add up
 					to your original {{ formatAmount(contribution) }} {{ tokenSymbol }} donation.
 				</div>
-				<div class="p1" v-if="isBrightIdRequired">
+				<div v-if="isBrightIdRequired" class="p1">
 					<links to="/verify" class="btn-primary"> Verify with BrightID </links>
 				</div>
 				<button
 					v-if="!isCartEmpty"
 					class="btn-action"
-					@click="submitCart"
 					:disabled="!!errorMessage || (hasUserContributed && hasUserVoted && !isDirty)"
+					@click="submitCart"
 				>
 					<template v-if="contribution.isZero()">
 						Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
@@ -157,13 +157,13 @@
 					<template v-else-if="!hasUserVoted"> Finish contribution </template>
 					<template v-else> Reallocate contribution </template>
 				</button>
-				<funds-needed-warning :onNavigate="toggleCart" :isCompact="true" />
-				<div class="time-left" v-if="canUserReallocate && isEditMode">
+				<funds-needed-warning :on-navigate="toggleCart" :is-compact="true" />
+				<div v-if="canUserReallocate && isEditMode" class="time-left">
 					<div class="caps">Time left:</div>
 					<time-left :date="timeLeftDate" />
 				</div>
 			</div>
-			<div class="line-item-bar" v-if="hasUserContributed && !isEditMode">
+			<div v-if="hasUserContributed && !isEditMode" class="line-item-bar">
 				<div class="line-item">
 					<span>Projects</span>
 					<div>
@@ -177,7 +177,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="total-bar" v-if="isRoundContributionPhase || (hasUserContributed && hasContributionPhaseEnded)">
+			<div v-if="isRoundContributionPhase || (hasUserContributed && hasContributionPhaseEnded)" class="total-bar">
 				<span class="total-label">Total</span>
 				<div>
 					<span v-if="isGreaterThanInitialContribution() && hasUserContributed"

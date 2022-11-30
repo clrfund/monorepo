@@ -18,7 +18,7 @@
 			</div>
 		</div>
 		<div v-if="step === 1">
-			<progress-bar :currentStep="1" :totalSteps="3" />
+			<progress-bar :current-step="1" :total-steps="3" />
 			<h2>
 				Approve {{ renderTotal }}
 				{{ currentRound?.nativeTokenSymbol }}
@@ -30,6 +30,7 @@
 			<transaction
 				:hash="approvalTxHash"
 				:error="approvalTxError || error"
+				:display-retry-btn="true"
 				@close="$emit('close')"
 				@retry="
 					() => {
@@ -38,11 +39,10 @@
 						contribute()
 					}
 				"
-				:displayRetryBtn="true"
 			></transaction>
 		</div>
 		<div v-if="step === 2">
-			<progress-bar :currentStep="2" :totalSteps="3" />
+			<progress-bar :current-step="2" :total-steps="3" />
 			<h2>Send {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution</h2>
 			<p>
 				This transaction sends out your {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution to
@@ -51,6 +51,7 @@
 			<transaction
 				:hash="contributionTxHash"
 				:error="contributionTxError || error"
+				:display-retry-btn="true"
 				@close="$emit('close')"
 				@retry="
 					() => {
@@ -59,11 +60,10 @@
 						contribute()
 					}
 				"
-				:displayRetryBtn="true"
 			></transaction>
 		</div>
 		<div v-if="step === 3">
-			<progress-bar :currentStep="3" :totalSteps="3" />
+			<progress-bar :current-step="3" :total-steps="3" />
 			<h2>Matching pool magic ✨</h2>
 			<p>
 				This transaction lets the matching pool know how much
@@ -72,6 +72,7 @@
 			<transaction
 				:hash="voteTxHash"
 				:error="voteTxError || error"
+				:display-retry-btn="true"
 				@close="$emit('close')"
 				@retry="
 					() => {
@@ -79,7 +80,6 @@
 						sendVotes()
 					}
 				"
-				:displayRetryBtn="true"
 			></transaction>
 		</div>
 	</div>

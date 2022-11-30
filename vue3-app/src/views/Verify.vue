@@ -3,30 +3,30 @@
 		<div class="grid">
 			<div class="progress-area desktop">
 				<div class="progress-container">
-					<progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+					<progress-bar :current-step="currentStep + 1" :total-steps="steps.length" />
 					<p class="subtitle">Step {{ currentStep + 1 }} of {{ steps.length }}</p>
 					<div class="progress-steps">
 						<div v-for="(step, stepIndex) in steps" :key="step.page" class="progress-step">
 							<template v-if="stepIndex === currentStep">
 								<loader v-if="stepIndex === 0 && !brightId.isVerified" class="progress-steps-loader" />
-								<img class="current-step" v-else src="@/assets/current-step.svg" alt="current step" />
-								<p v-text="step.name" class="active step" />
+								<img v-else class="current-step" src="@/assets/current-step.svg" alt="current step" />
+								<p class="active step" v-text="step.name" />
 							</template>
 							<template v-else-if="isStepUnlocked(stepIndex) && isStepValid(stepIndex)">
 								<loader v-if="stepIndex === 0 && !brightId.isVerified" class="progress-steps-loader" />
 								<img v-else src="@/assets/green-tick.svg" alt="step complete" />
-								<p v-text="step.name" class="step" />
+								<p class="step" v-text="step.name" />
 							</template>
 							<template v-else>
 								<img class="remaining-step" src="@/assets/step-remaining.svg" alt="step remaining" />
-								<p v-text="step.name" class="step" />
+								<p class="step" v-text="step.name" />
 							</template>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="progress-area mobile">
-				<progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+				<progress-bar :current-step="currentStep + 1" :total-steps="steps.length" />
 				<div class="row">
 					<p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
 					<links class="cancel-link" to="/verify"> Cancel </links>
@@ -48,8 +48,8 @@
 							step. It may take a minute for us to verify the connection - please wait.
 						</p>
 						<div class="qr">
-							<div class="instructions" v-if="appLink">
-								<p class="desktop" v-if="appLinkQrCode">Scan this QR code with your BrightID app</p>
+							<div v-if="appLink" class="instructions">
+								<p v-if="appLinkQrCode" class="desktop">Scan this QR code with your BrightID app</p>
 								<img :src="appLinkQrCode" class="desktop qr-code" />
 								<p class="mobile">Follow this link to connect your wallet to your BrightID app</p>
 								<links class="mobile" :to="appLink">
@@ -80,8 +80,8 @@
 							<button
 								type="button"
 								class="btn-action btn-block"
-								@click="register"
 								:disabled="registrationTxHash.length !== 0"
+								@click="register"
 							>
 								Become a contributor
 							</button>

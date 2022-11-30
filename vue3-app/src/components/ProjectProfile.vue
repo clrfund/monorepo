@@ -14,7 +14,7 @@
 			<p class="tagline">{{ project.tagline }}</p>
 			<div class="subtitle">
 				<div class="tag">{{ project.category }} tag</div>
-				<div class="team-byline" v-if="!!project.teamName">
+				<div v-if="!!project.teamName" class="team-byline">
 					Team: <links to="#team"> {{ project.teamName }}</links>
 				</div>
 			</div>
@@ -48,19 +48,24 @@
 					</div>
 				</div>
 				<div class="copy-div">
-					<copy-button :value="project.address" text="address" myClass="project-profile" :hasBorder="true" />
+					<copy-button
+						:value="project.address"
+						text="address"
+						my-class="project-profile"
+						:has-border="true"
+					/>
 					<links
 						class="explorerLink"
 						:to="blockExplorer.url"
 						:title="`View on ${blockExplorer.label}`"
-						:hideArrow="true"
+						:hide-arrow="true"
 					>
 						<img class="icon" :src="`src/assets/${blockExplorer.logo}`" />
 					</links>
 				</div>
 			</div>
 			<hr v-if="project.teamName || project.teamDescription" />
-			<div id="team" v-if="project.teamName || project.teamDescription" class="team">
+			<div v-if="project.teamName || project.teamDescription" id="team" class="team">
 				<h2>Team: {{ project.teamName }}</h2>
 				<markdown :raw="project.teamDescription" />
 			</div>

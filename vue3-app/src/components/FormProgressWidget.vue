@@ -1,7 +1,7 @@
 <template>
 	<div class="progress-area">
 		<div class="desktop progress-container">
-			<progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+			<progress-bar :current-step="currentStep + 1" :total-steps="steps.length" />
 			<p class="subtitle">Step {{ currentStep + 1 }} of {{ steps.length }}</p>
 			<div class="progress-steps">
 				<div
@@ -16,36 +16,36 @@
 				>
 					<template v-if="step === currentStep">
 						<img class="current-step" src="@/assets/current-step.svg" alt="current step" />
-						<p v-text="name" class="active step" />
+						<p class="active step" v-text="name" />
 					</template>
 					<template v-else-if="step === furthestStep">
 						<img src="@/assets/furthest-step.svg" alt="current step" />
-						<p v-text="name" class="active step" />
+						<p class="active step" v-text="name" />
 					</template>
 					<template v-else-if="isStepUnlocked(step) && isStepValid(step)">
 						<img class="completed-step" src="@/assets/green-tick.svg" alt="step complete" />
-						<p v-text="name" class="step" />
+						<p class="step" v-text="name" />
 					</template>
 					<template v-else>
 						<img src="@/assets/step-remaining.svg" alt="step remaining" />
-						<p v-text="name" class="step" />
+						<p class="step" v-text="name" />
 					</template>
 				</div>
 			</div>
 			<form-navigation
-				:isStepValid="isStepValid(currentStep)"
+				:is-step-valid="isStepValid(currentStep)"
 				:steps="steps"
-				:finalStep="steps.length - 2"
-				:currentStep="currentStep"
+				:final-step="steps.length - 2"
+				:current-step="currentStep"
 				:callback="saveFormData"
-				:handleStepNav="handleStepNav"
-				:isNavDisabled="isNavDisabled"
+				:handle-step-nav="handleStepNav"
+				:is-nav-disabled="isNavDisabled"
 				class="desktop"
 			/>
 		</div>
 		<div class="mobile">
 			<div class="padding">
-				<progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+				<progress-bar :current-step="currentStep + 1" :total-steps="steps.length" />
 				<div class="row">
 					<p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
 					<links class="cancel-link" to="/join"> Cancel </links>

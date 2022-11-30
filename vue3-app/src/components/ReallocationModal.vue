@@ -5,6 +5,7 @@
 			<transaction
 				:hash="voteTxHash"
 				:error="voteTxError"
+				:display-retry-btn="true"
 				@close="$emit('close')"
 				@retry="
 					() => {
@@ -12,7 +13,6 @@
 						vote()
 					}
 				"
-				:displayRetryBtn="true"
 			></transaction>
 		</div>
 	</div>

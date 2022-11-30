@@ -2,19 +2,19 @@
 	<div class="explorer-btn tx-receipt">
 		<div class="status-label-address">
 			<loader v-if="isPending" v-tooltip="'Awaiting transaction confirmation'" class="pending" />
-			<img class="success" v-tooltip="'Transaction confirmed'" v-if="!isPending" src="@/assets/checkmark.svg" />
+			<img v-if="!isPending" v-tooltip="'Transaction confirmed'" class="success" src="@/assets/checkmark.svg" />
 			<p class="hash">{{ renderCopiedOrHash }}</p>
 		</div>
 		<div class="actions">
 			<links
+				v-tooltip="`View on ${blockExplorer.label}`"
 				class="explorerLink"
 				:to="blockExplorer.url"
-				v-tooltip="`View on ${blockExplorer.label}`"
-				:hideArrow="true"
+				:hide-arrow="true"
 			>
 				<img class="icon" :src="`src/assets/${blockExplorer.logo}`" />
 			</links>
-			<copy-button :value="hash" text="hash" v-on:copied="updateIsCopied" myClass="icon" />
+			<copy-button :value="hash" text="hash" my-class="icon" @copied="updateIsCopied" />
 		</div>
 	</div>
 </template>

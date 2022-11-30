@@ -3,22 +3,22 @@
 		<div class="btn-row">
 			<button
 				v-if="currentStep > 0"
-				@click="handleStepNav(currentStep - 1)"
 				class="btn-secondary float-left"
 				:disabled="isNavDisabled"
+				@click="handleStepNav(currentStep - 1)"
 			>
 				Previous
 			</button>
 			<wallet-widget
-				class="float-right"
 				v-if="!currentUser && currentStep === finalStep"
-				:isActionButton="true"
+				class="float-right"
+				:is-action-button="true"
 			/>
 			<button
 				v-else
-				@click="handleStepNav(currentStep + 1, true)"
 				class="btn-primary float-right"
 				:disabled="!isStepValid"
+				@click="handleStepNav(currentStep + 1, true)"
 			>
 				{{ currentStep === finalStep ? 'Confirm' : 'Next' }}
 			</button>

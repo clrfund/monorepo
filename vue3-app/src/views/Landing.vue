@@ -3,7 +3,7 @@
 		<round-status-banner v-if="currentRound" />
 		<div id="page">
 			<div id="hero">
-				<img src="@/assets/moon.png" id="moon" />
+				<img id="moon" src="@/assets/moon.png" />
 				<div class="image-wrapper">
 					<image-responsive title="docking" />
 				</div>
@@ -18,7 +18,7 @@
 							<div class="btn-info" @click="scrollToHowItWorks">How it works</div>
 						</div>
 					</div>
-					<div class="apply-callout" v-if="isRoundJoinPhase && !isRecipientRegistryFull">
+					<div v-if="isRoundJoinPhase && !isRecipientRegistryFull" class="apply-callout">
 						<div class="column">
 							<h2>Join the funding round</h2>
 							<p>
@@ -28,7 +28,7 @@
 							<div class="button-group">
 								<links to="/join" class="btn-primary w100">Add project</links>
 								<div v-if="signUpDeadline">
-									<time-left unitClass="none" :date="signUpDeadline" />
+									<time-left unit-class="none" :date="signUpDeadline" />
 									to join
 								</div>
 							</div>
@@ -72,7 +72,7 @@
 			<div id="what-you-will-need">
 				<div class="pre-req">
 					<div class="icon-row">
-						<img :src="`src/assets/${chain.logo}`" id="chain-icon" />
+						<img id="chain-icon" :src="`src/assets/${chain.logo}`" />
 						<p>
 							<b>{{ chain.label }} for fast and cheap transaction fees</b>
 						</p>
@@ -81,9 +81,9 @@
 						Get {{ chain.label }} funds
 					</links>
 				</div>
-				<div class="pre-req" id="bright-id">
+				<div id="bright-id" class="pre-req">
 					<div class="icon-row">
-						<img src="@/assets/bright-id.png" id="bright-id-icon" />
+						<img id="bright-id-icon" src="@/assets/bright-id.png" />
 						<p>
 							<b>BrightID for private, decentralized identity verification</b>
 						</p>
@@ -132,7 +132,7 @@
 				<div class="link-li">
 					<links to="/about/how-it-works">How the round works</links>
 				</div>
-				<div class="link-li" v-if="chain.isLayer2">
+				<div v-if="chain.isLayer2" class="link-li">
 					<links to="/about/layer-2">About {{ chain.label }}</links>
 				</div>
 				<div class="link-li">

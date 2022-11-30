@@ -1,5 +1,5 @@
 <template>
-	<div class="category-filter" v-click-outside="closeDropdown">
+	<div v-click-outside="closeDropdown" class="category-filter">
 		<div class="filter-btn" @click="toggleDropdown">
 			<span class="filter-text">
 				Filter

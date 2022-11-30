@@ -11,18 +11,18 @@
 		<div class="breadcrumbs">
 			<breadcrumbs />
 		</div>
-		<div class="content" v-if="loading">
+		<div v-if="loading" class="content">
 			<h1>Fetching round data...</h1>
 			<loader />
 		</div>
 
-		<div class="content" v-else-if="hasContributionPhaseEnded">
+		<div v-else-if="hasContributionPhaseEnded" class="content">
 			<div class="big-emoji">☹</div>
 			<h1>Sorry, it's too late to join</h1>
 			<div id="subtitle" class="subtitle">
 				The round is closed for new projects. It's now too late to get on board.
 			</div>
-			<div class="subtitle mt2" id="subtitle">
+			<div id="subtitle" class="subtitle mt2">
 				Check out these
 				<links to="https://ethereum.org/en/community/grants/">other ways to source funding</links>. Or follow us
 				on Twitter for updates about future rounds:
@@ -33,14 +33,14 @@
 			</div>
 		</div>
 
-		<div class="content" v-else-if="isRoundFull">
+		<div v-else-if="isRoundFull" class="content">
 			<div class="big-emoji">☹</div>
 			<h1>Sorry, the round is full</h1>
 			<div id="subtitle" class="subtitle">
 				The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right
 				now. Unfortunately we've hit the cap and there's no more room on board.
 			</div>
-			<div class="subtitle mt2" id="subtitle">
+			<div id="subtitle" class="subtitle mt2">
 				Check out these
 				<links to="https://ethereum.org/en/community/grants/">other ways to source funding</links>. Or follow us
 				on Twitter for updates about future rounds:
@@ -52,7 +52,7 @@
 			</div>
 		</div>
 
-		<div class="content" v-else-if="appStore.currentRound">
+		<div v-else-if="appStore.currentRound" class="content">
 			<h1>Join the funding round</h1>
 			<div class="subtitle">
 				We’ll need some information about your project and a
@@ -65,7 +65,7 @@
 				<div class="apply-callout">
 					<div class="countdown-label caps">Time left to join</div>
 					<div class="countdown caps">
-						<time-left valueClass="none" unitClass="none" :date="signUpDeadline" />
+						<time-left value-class="none" unit-class="none" :date="signUpDeadline" />
 					</div>
 				</div>
 				<div class="apply-callout">
@@ -76,7 +76,7 @@
 					<div class="filling-up-container">
 						<div class="countdown caps">{{ spacesRemainingString }} left, hurry!</div>
 						<div class="dropdown">
-							<img class="icon" @click="openTooltip" src="@/assets/info.svg" />
+							<img class="icon" src="@/assets/info.svg" @click="openTooltip" />
 							<div id="myTooltip" class="hidden button-menu">
 								MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.
 								<links to="/about/maci">More on MACI</links>
@@ -94,7 +94,7 @@
 			</div>
 		</div>
 
-		<div class="content" v-else>
+		<div v-else class="content">
 			<h1>Join the next funding round</h1>
 			<div class="subtitle">
 				We’ll need some information about your project and a

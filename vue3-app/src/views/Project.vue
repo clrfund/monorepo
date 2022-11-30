@@ -1,7 +1,7 @@
 <template>
-	<div :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`" v-if="project">
+	<div v-if="project" :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`">
 		<img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name" />
-		<project-profile class="details" :project="project" :previewMode="false" />
+		<project-profile class="details" :project="project" :preview-mode="false" />
 		<div class="sticky-column">
 			<div class="desktop">
 				<add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn" :project="project" />
