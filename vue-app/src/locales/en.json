@@ -931,7 +931,7 @@
   },
   "claimButton": {
     "p": "✔️ {allocatedAmount} { tokenSymbol } claimed",
-    "button": "Claim {{ formatAmount(allocatedAmount) }} {{ tokenSymbol }}"
+    "button": "Claim { allocatedAmount } { tokenSymbol }"
   },
   "claimModal": {
     "h2_1": "Claim funds",
@@ -1042,5 +1042,54 @@
     "button1": "address",
     "link1": "View on ",
     "h2_4": "Team: "
+  },
+  "reallocationModal": {
+    "h3": "Reallocate funds"
+  },
+  "recipientSubmissionWidget": {
+    "div1": "Waiting for transaction to be mined...",
+    "div2": "Check your wallet for a prompt...",
+    "div3_t1": "Something failed: { txError }",
+    "div3_t2": "Check your wallet or { blockExplorerLabel } for more info.",
+    "div4": "Total to submit",
+    "tooltip1": "Estimate – this total may be slightly different in your wallet.",
+    "div5_t1": " Not enough { depositToken } in your wallet.",
+    "div5_t2": "Top up or connect a different wallet.",
+    "p1": "Security deposit"
+  },
+  "roundInfo": {
+    "link1": "View on {blockExplorer}",
+    "div1": "Cancelled",
+    "div2": "Open",
+    "div3": "Closed",
+    "p1": "he round is officially closed",
+    "p2": "It's now too late to contribute or reallocate your donations! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
+    "div4": "Great!",
+    "div5": "⏱️ Round opening",
+    "div6": "Time left to contribute",
+    "tooltip1": "During this phase, you can contribute to your favorite projects.",
+    "div7": "Contribution Deadline: ",
+    "div8_1": "Time left to reallocate",
+    "div8_2": "Round status",
+    "tooltip2": "During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.",
+    "tooltip3": "If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.",
+    "tooltip4": "This round has closed for new contributions.",
+    "div9": "Closed for contributions",
+    "div10": "Reallocation Deadline: ",
+    "div11": "Round status",
+    "tooltip5": "Our smart contracts are busy figuring out final contribution amounts.",
+    "div12": "Tallying all contributions",
+    "div13": "Round status",
+    "tooltip6": "If you're a project owner you can now claim your funds!",
+    "div14": "Contributions are ready to claim 🎉",
+    "div15": "Total in round",
+    "tooltip7": "This total includes the funds in the matching pool and all contributions from the community.",
+    "div16": "Matching pool",
+    "tooltip8": "These are the funds that will be distributed to all the projects based on the contributions they receive from the community.",
+    "tooltip9": "'Add matching funds'",
+    "span1": "Add funds",
+    "div17": "Contributions total",
+    "div18": "Contributors",
+    "div19": "legend"
   }
 }
