@@ -2,9 +2,15 @@ import { ethers } from 'ethers'
 
 import { FundingRoundFactory } from './abi'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
+import { CoinbaseWalletConnector, MetaMaskConnector, WalletConnectConnector } from 'vue-dapp'
+
+export const rpcUrl = import.meta.env.VITE_ETHEREUM_API_URL
+if (!rpcUrl) {
+	throw new Error('Please provide ethereum rpc url for connecting to blockchain')
+}
 
 export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(import.meta.env.VITE_ETHEREUM_MAINNET_API_URL)
-export const provider = new ethers.providers.StaticJsonRpcProvider(import.meta.env.VITE_ETHEREUM_API_URL)
+export const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl)
 export const chain = CHAIN_INFO[Number(import.meta.env.VITE_ETHEREUM_API_CHAINID)]
 if (!chain) throw new Error('invalid chain id')
 export const ipfsGatewayUrl = import.meta.env.VITE_IPFS_GATEWAY_URL
@@ -55,3 +61,18 @@ export enum ThemeMode {
 	LIGHT = 'light',
 	DARK = 'dark',
 }
+
+// vue-dapp
+export const connectors = [
+	new MetaMaskConnector(),
+	new WalletConnectConnector({
+		qrcode: true,
+		rpc: {
+			31337: rpcUrl,
+		},
+	}),
+	new CoinbaseWalletConnector({
+		appName: 'Clr.fund',
+		jsonRpcUrl: rpcUrl,
+	}),
+]

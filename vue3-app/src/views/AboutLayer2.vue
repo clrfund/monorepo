@@ -73,7 +73,7 @@
 							'Wallet resources are provided as a convenience and do not represent endorsement of any of the projects or services therein. Always DYOR.',
 						triggers: ['hover', 'click'],
 					}"
-					width="16px"
+					width="16"
 					src="@/assets/info.svg"
 				/>
 			</h3>

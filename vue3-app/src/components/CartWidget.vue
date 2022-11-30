@@ -7,7 +7,7 @@
 		}"
 	>
 		<div v-if="!showCartPanel" class="toggle-btn desktop" @click="toggleCart">
-			<img alt="open" width="16px" src="@/assets/chevron-left.svg" />
+			<img alt="open" width="16" src="@/assets/chevron-left.svg" />
 			<transition name="pulse" mode="out-in">
 				<div
 					:key="cart.length"
@@ -17,7 +17,7 @@
 					{{ cart.length }}
 				</div>
 			</transition>
-			<img alt="cart" width="16px" src="@/assets/cart.svg" />
+			<img alt="cart" width="16" src="@/assets/cart.svg" />
 		</div>
 		<cart v-if="showCartPanel" class="cart-component" />
 		<div v-if="!showCartPanel" class="collapsed-cart desktop" />

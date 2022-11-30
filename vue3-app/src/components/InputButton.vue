@@ -1,6 +1,6 @@
 <template>
 	<form action="#" class="input-button">
-		<img v-if="input" class="token-icon" height="24px" :src="`src/assets/${tokenLogo}`" />
+		<img v-if="input" class="token-icon" height="24" :src="`src/assets/${tokenLogo}`" />
 		<input
 			v-if="input"
 			class="input"

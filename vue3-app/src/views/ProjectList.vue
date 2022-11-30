@@ -118,7 +118,6 @@ onMounted(async () => {
 	//TODO: update to take factory address as a parameter, default to env. variable
 	roundAddress.value =
 		(route.params.address as string) || currentRoundAddress.value! || (await getCurrentRound()) || ''
-
 	await loadProjects(roundAddress.value)
 	isLoading.value = false
 })

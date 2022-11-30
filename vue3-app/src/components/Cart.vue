@@ -16,8 +16,8 @@
 			</div>
 			<div class="flex cart-title-bar">
 				<div v-if="showCollapseCart" @click="toggleCart" class="absolute-left cart-btn">
-					<img alt="cart" width="16px" src="@/assets/cart.svg" />
-					<img alt="close" width="16px" src="@/assets/chevron-right.svg" />
+					<img alt="cart" width="16" src="@/assets/cart.svg" />
+					<img alt="close" width="16" src="@/assets/chevron-right.svg" />
 				</div>
 				<h2>{{ isEditMode ? 'Edit cart' : 'Your cart' }}</h2>
 				<div
@@ -32,7 +32,7 @@
 							class="dropdown-item"
 							@click="callback"
 						>
-							<img width="16px" :class="cssClass" :src="`src/assets/${icon}`" />
+							<img width="16" :class="cssClass" :src="`src/assets/${icon}`" />
 							<p>{{ text }}</p>
 						</div>
 					</div>
@@ -334,7 +334,7 @@ const contribution = computed(() => appStore.contribution || BigNumber.from(0))
 
 const filteredCart = computed<CartItem[]>(() => {
 	// Once reallocation phase ends, use committedCart for cart items
-	if (hasReallocationPhaseEnded) {
+	if (hasReallocationPhaseEnded.value) {
 		return committedCart.value
 	}
 	// Hide cleared items

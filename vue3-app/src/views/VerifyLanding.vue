@@ -25,7 +25,7 @@
 							content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
 							triggers: ['hover', 'click'],
 						}"
-						width="16px"
+						width="16"
 						src="@/assets/info.svg"
 						class="info-icon"
 					/>

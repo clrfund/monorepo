@@ -29,7 +29,7 @@ export async function getProjects(registryAddress: string, startTime?: number, e
 	const recipientRemovedEvents = await registry.queryFilter(recipientRemovedFilter, 0)
 	const projects: Project[] = []
 	for (const event of recipientAddedEvents) {
-		let project
+		let project: Project
 		try {
 			project = decodeRecipientAdded(event)
 		} catch {

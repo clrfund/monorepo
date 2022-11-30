@@ -10,7 +10,7 @@
 			:to="to"
 		>
 			<div class="icon">
-				<img :src="`src/assets/${icon}`" :alt="title" width="16px" />
+				<img :src="`src/assets/${icon}`" :alt="title" width="16" />
 				<transition name="pulse" mode="out-in">
 					<div
 						:key="cart.length"

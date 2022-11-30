@@ -8,7 +8,7 @@
 		:class="`${myClass || 'copy-icon'} ${hasBorder && 'border'}`"
 		@click="copyToClipboard"
 	>
-		<img width="16px" src="@/assets/copy.svg" />
+		<img width="16" src="@/assets/copy.svg" />
 	</div>
 </template>
 

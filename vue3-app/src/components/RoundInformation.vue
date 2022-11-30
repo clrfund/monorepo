@@ -66,7 +66,7 @@
 										content: 'During this phase, you can contribute to your favorite projects.',
 										triggers: ['hover', 'click'],
 									}"
-									width="16px"
+									width="16"
 									src="@/assets/info.svg"
 								/>
 							</div>
@@ -90,7 +90,7 @@
 										content: `During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.`,
 										triggers: ['hover', 'click'],
 									}"
-									width="16px"
+									width="16"
 									src="@/assets/info.svg"
 								/>
 								<img
@@ -99,7 +99,7 @@
 										content: `If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.`,
 										triggers: ['hover', 'click'],
 									}"
-									width="16px"
+									width="16"
 									src="@/assets/info.svg"
 								/>
 								<img
@@ -108,7 +108,7 @@
 										content: `This round has closed for new contributions.`,
 										triggers: ['hover', 'click'],
 									}"
-									width="16px"
+									width="16"
 									src="@/assets/info.svg"
 								/>
 							</div>
@@ -133,7 +133,7 @@
 										content: `Our smart contracts are busy figuring out final contribution amounts.`,
 										triggers: ['hover', 'click'],
 									}"
-									width="16px"
+									width="16"
 									src="@/assets/info.svg"
 								/>
 							</div>
@@ -151,7 +151,7 @@
 										content: `If you're a project owner you can now claim your funds!`,
 										triggers: ['hover', 'click'],
 									}"
-									width="16px"
+									width="16"
 									src="@/assets/info.svg"
 								/>
 							</div>
@@ -171,7 +171,7 @@
 										content: `This total includes the funds in the matching pool and all contributions from the community.`,
 										triggers: ['hover', 'click'],
 									}"
-									width="16px"
+									width="16"
 									src="@/assets/info.svg"
 								/>
 							</div>
@@ -190,7 +190,7 @@
 										'These are the funds that will be distributed to all the projects based on the contributions they receive from the community.',
 									triggers: ['hover', 'click'],
 								}"
-								width="16px"
+								width="16"
 								src="@/assets/info.svg"
 							/>
 							<div
@@ -199,7 +199,7 @@
 								class="add-link"
 								@click="addMatchingFunds"
 							>
-								<img src="@/assets/add.svg" width="16px" />
+								<img src="@/assets/add.svg" width="16" />
 								<span class="add-funds-link">Add funds</span>
 							</div>
 						</div>

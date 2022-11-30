@@ -1,7 +1,7 @@
 <template>
 	<div id="app" class="wrapper">
 		<nav-bar :in-app="isInApp" />
-		<div id="content-container">
+		<div id="content-container" v-if="appReady">
 			<div id="sidebar" v-if="isSidebarShown" :class="`${showCartPanel ? 'desktop-l' : 'desktop'}`">
 				<round-information />
 			</div>
@@ -22,12 +22,13 @@
 		</div>
 		<mobile-tabs v-if="isMobileTabsShown" />
 	</div>
+	<!-- vue-dapp -->
 	<vd-board :connectors="connectors" dark />
+	<!-- vue-final-modal -->
 	<modals-container></modals-container>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, watch } from 'vue'
 import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
 import CartWidget from '@/components/CartWidget.vue'
@@ -38,8 +39,8 @@ import { ModalsContainer } from 'vue-final-modal'
 
 import { getOsColorScheme } from '@/utils/theme'
 import { getCurrentRound } from '@/api/round'
-import { LOGIN_MESSAGE, type User } from '@/api/user'
-import { operator } from '@/api/core'
+import type { User } from '@/api/user'
+import { operator, provider, connectors } from '@/api/core'
 import { useAppStore } from '@/stores/app'
 import { sha256 } from '@/utils/crypto'
 import { storeToRefs } from 'pinia'
@@ -126,79 +127,79 @@ const showBreadCrumb = computed(() => {
 	return !excludedRoutes.includes(routeName.value)
 })
 
-// web3
-const infuraId = ''
-const connectors = [
-	new MetaMaskConnector({
-		appUrl: 'http://localhost:3000',
-	}),
-	new WalletConnectConnector({
-		qrcode: true,
-		rpc: {
-			1: `https://mainnet.infura.io/v3/${infuraId}`,
-			4: `https://rinkeby.infura.io/v3/${infuraId}`,
-		},
-	}),
-	new CoinbaseWalletConnector({
-		appName: 'Vue Dapp',
-		jsonRpcUrl: `https://mainnet.infura.io/v3/${infuraId}`,
-	}),
-]
-
-const intervals: { [key: string]: any } = {}
-
-const setAppTheme = () => {
+watch(theme, () => {
 	const savedTheme = theme.value
 	document.documentElement.setAttribute('data-theme', savedTheme || getOsColorScheme())
-}
-
-watch(theme, setAppTheme)
-
-setAppTheme()
-intervals.round = setInterval(async () => {
-	await appStore.loadRoundInfo()
-}, 60 * 1000)
-intervals.recipient = setInterval(async () => {
-	await appStore.loadRecipientRegistryInfo()
-}, 60 * 1000)
-intervals.user = setInterval(async () => {
-	await appStore.loadUserInfo()
-}, 60 * 1000)
-
-onMounted(async () => {
-	const roundAddress = appStore.currentRoundAddress || (await getCurrentRound())
-	appStore.selectRound(roundAddress!)
-	await appStore.loadRoundInfo()
-	await appStore.loadFactoryInfo()
-	await appStore.loadMACIFactoryInfo()
-	await appStore.loadRecipientRegistryInfo()
 })
 
-onBeforeUnmount(() => {
-	for (const interval of Object.keys(intervals)) {
-		clearInterval(intervals[interval])
+const appReady = ref(false)
+
+onMounted(async () => {
+	console.log('App mounted')
+
+	// to check provider works
+	try {
+		const network = await Promise.race([
+			provider.getNetwork(),
+			new Promise<void>((_, reject) =>
+				setTimeout(() => {
+					reject('Error: cound not detect network: 3 seconds of timed out')
+				}, 3000),
+			),
+		])
+		console.log(network)
+	} catch (err) {
+		console.error('Failed to detect network', err)
+		return
 	}
+
+	try {
+		const roundAddress = appStore.currentRoundAddress || (await getCurrentRound())
+
+		if (roundAddress) {
+			appStore.selectRound(roundAddress)
+		} else {
+			throw new Error('Failed to get round address')
+		}
+		console.log('roundAddress', roundAddress)
+	} catch (err) {
+		console.error('Failed to get current round', err)
+		return
+	}
+
+	appReady.value = true
+
+	// await appStore.loadUserInfo()
+	try {
+		await appStore.loadRoundInfo()
+	} catch (err) {
+		console.error(err)
+	}
+	// await appStore.loadFactoryInfo()
+	// await appStore.loadMACIFactoryInfo()
+	// await appStore.loadRecipientRegistryInfo()
 })
 
 onActivated(async ({ address, provider }) => {
-	let signature
-	if (!wallet.connector) throw new Error('Failed to activate wallet')
-	if (wallet.connector.name === 'metaMask') {
-		const metamask = wallet.provider as MetaMaskProvider
-		signature = await metamask.request({
-			method: 'personal_sign',
-			params: [LOGIN_MESSAGE, address],
-		})
-	} else if (wallet.connector.name === 'walletConnect') {
-		const walletconnect = wallet.provider as IWalletConnectProvider
-		signature = await walletconnect.send('personal_sign', [LOGIN_MESSAGE, address])
-	} else {
-		throw new Error('Wallet not supported')
-	}
+	console.log('onActivated')
+	// let signature
+	// if (!wallet.connector) throw new Error('Failed to activate wallet')
+	// if (wallet.connector.name === 'metaMask') {
+	// 	const metamask = wallet.provider as MetaMaskProvider
+	// 	signature = await metamask.request({
+	// 		method: 'personal_sign',
+	// 		params: [LOGIN_MESSAGE, address],
+	// 	})
+	// } else if (wallet.connector.name === 'walletConnect') {
+	// 	const walletconnect = wallet.provider as IWalletConnectProvider
+	// 	signature = await walletconnect.send('personal_sign', [LOGIN_MESSAGE, address])
+	// } else {
+	// 	throw new Error('Wallet not supported')
+	// }
 
 	const user: User = {
 		isRegistered: false,
-		encryptionKey: sha256(signature),
+		encryptionKey: sha256('signature'),
 		balance: null,
 		contribution: null,
 		walletProvider: provider,
@@ -206,10 +207,9 @@ onActivated(async ({ address, provider }) => {
 	}
 	// Connect & auth to gun db
 	try {
-		await appStore.loginUser(address, user.encryptionKey)
-	} catch (error) {
-		/* eslint-disable-next-line no-console */
-		console.error(error)
+		// await appStore.loginUser(address, user.encryptionKey)
+	} catch (err) {
+		console.error(err)
 		return
 	}
 	appStore.setCurrentUser(user)
@@ -217,18 +217,18 @@ onActivated(async ({ address, provider }) => {
 	appStore.loadBrightID()
 })
 
-watch(isUserAndRoundLoaded, () => {
-	if (!isUserAndRoundLoaded.value) {
-		return
-	}
+// watch(isUserAndRoundLoaded, () => {
+// 	if (!isUserAndRoundLoaded.value) {
+// 		return
+// 	}
 
-	appStore.loadUserInfo()
+// 	appStore.loadUserInfo()
 
-	// Load cart & contributor data for current round
-	appStore.loadCart()
-	appStore.loadCommittedCart()
-	appStore.loadContributorData()
-})
+// 	// Load cart & contributor data for current round
+// 	appStore.loadCart()
+// 	appStore.loadCommittedCart()
+// 	appStore.loadContributorData()
+// })
 </script>
 
 <style lang="scss">

@@ -7,7 +7,7 @@
 				'app-btn': !isActionButton,
 				'full-width-mobile': fullWidthMobile,
 			}"
-			@click="showModal()"
+			@click="openWalletBoard"
 		>
 			Connect
 		</button>
@@ -55,7 +55,7 @@ withDefaults(defineProps<Props>(), {
 	fullWidthMobile: false,
 })
 
-const { open } = useBoard()
+const { open: openWalletBoard } = useBoard()
 const { onDisconnect, onChainChanged, onAccountsChanged } = useWallet()
 const { network } = useEthers()
 const appStore = useAppStore()
@@ -111,10 +111,6 @@ onAccountsChanged(_accounts => {
 onMounted(() => {
 	showProfilePanel.value = false
 })
-
-async function showModal(): Promise<void> {
-	open()
-}
 
 function toggleProfile(): void {
 	showProfilePanel.value = !showProfilePanel.value
