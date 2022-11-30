@@ -18,6 +18,7 @@
           :project="project"
           :key="project.id"
           :rank="index + 1"
+          :votes="getVotes(project.index)"
           :tokenSymbol="tokenSymbol"
           :tokenDecimals="tokenDecimals"
         ></leaderboard-list-item>
@@ -36,10 +37,12 @@ import { isValidEthAddress } from '@/utils/accounts'
 import Loader from '@/components/Loader.vue'
 import { RoundInfo } from '@/api/round'
 import { Tally } from '@/api/tally'
-import { BigNumber } from 'ethers'
+import { SELECT_ROUND, LOAD_ROUND_INFO, LOAD_TALLY } from '@/store/action-types'
+import { BigNumber, utils } from 'ethers'
 // TODO: replace funding.json by getting funding amount from contract or subgraph
 // funding.json is a temporary solution for ethcolombia.
 import * as Funding from '@/api/funding.json'
+import { formatAmount } from '@/utils/amounts'
 
 @Component({
   name: 'leaderboard',
@@ -115,8 +118,41 @@ export default class Leaderboard extends Vue {
     this.roundAddress =
       this.$store.state.currentRoundAddress || (await getCurrentRound())
 
+    if (!this.currentRound) {
+      await this.loadRound(this.roundAddress)
+    }
+
+    if (!this.tally) {
+      await this.loadTally()
+    }
+
     await this.loadProjects(this.roundAddress)
     this.isLoading = false
+  }
+
+  async loadRound(roundAddress: string) {
+    await this.$store.dispatch(SELECT_ROUND, roundAddress)
+    await this.$store.dispatch(LOAD_ROUND_INFO)
+  }
+
+  async loadTally() {
+    await this.$store.dispatch(LOAD_TALLY)
+  }
+
+  // this is this donation the project received from the community
+  getVotes(projectIndex: number): string {
+    const total =
+      this.tally?.totalVoiceCreditsPerVoteOption.tally[projectIndex] || '0'
+    const adjustedTotal = BigNumber.from(
+      this.currentRound.voiceCreditFactor
+    ).mul(total)
+    const formattedAmount = formatAmount(
+      adjustedTotal,
+      this.tokenDecimals,
+      null,
+      0
+    )
+    return formattedAmount
   }
 }
 </script>

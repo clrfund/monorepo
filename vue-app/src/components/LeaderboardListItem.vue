@@ -26,8 +26,11 @@
           {{ project.name }}
         </div>
         <div class="funding">
-          <div class="amount">~{{ formatAmount(project.fundingAmount) }}</div>
-          <div class="symbol">{{ tokenSymbol }} funded</div>
+          <div class="amount-container">
+            <div class="amount">~{{ formatAmount(project.fundingAmount) }}</div>
+            <img :src="require(`@/assets/${tokenLogo}`)" :alt="tokenSymbol" />
+          </div>
+          <div class="votes">{{ votes }} votes</div>
         </div>
       </div>
     </links>
@@ -43,6 +46,7 @@ import { Project } from '@/api/projects'
 import { Route } from 'vue-router'
 import { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
+import { getTokenLogo } from '@/utils/tokens'
 
 import ClaimButton from '@/components/ClaimButton.vue'
 
@@ -57,6 +61,7 @@ export default class LeaderboardListItem extends Vue {
   @Prop() tokenSymbol!: string
   @Prop() tokenDecimals!: number
   @Prop() rank!: number
+  @Prop() votes!: string
 
   get projectRoute(): Partial<Route> {
     return { name: 'project', params: { id: this.project.id } }
@@ -90,6 +95,10 @@ export default class LeaderboardListItem extends Vue {
       return this.project.imageUrl
     }
     return null
+  }
+
+  get tokenLogo(): string {
+    return getTokenLogo(this.$store.getters.nativeTokenSymbol)
   }
 }
 </script>
@@ -193,15 +202,28 @@ export default class LeaderboardListItem extends Vue {
 .funding {
   text-align: right;
 
-  .amount {
-    font-size: 2vw;
-    font-family: 'Lucida Console', 'Courier New', monospace;
-    @media (max-width: $breakpoint-m) {
-      font-size: 16px;
+  .amount-container {
+    display: flex;
+    align-items: center;
+    column-gap: 3px;
+
+    .amount {
+      white-space: nowrap;
+      font-size: 2vw;
+      font-family: 'Lucida Console', 'Courier New', monospace;
+
+      @media (max-width: $breakpoint-m) {
+        font-size: 16px;
+      }
+    }
+
+    img {
+      height: 16px;
+      width: 16px;
     }
   }
 
-  .symbol {
+  .votes {
     font-size: 1vw;
     white-space: nowrap;
     @media (max-width: $breakpoint-m) {
