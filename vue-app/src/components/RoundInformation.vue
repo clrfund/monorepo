@@ -283,11 +283,11 @@
         <div class="round-info-item">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">No scheduled round</div>
+              <div class="round-info-title">{{ $t('roundInfo.div20') }}</div>
             </div>
           </div>
           <div class="round-announcement-info">
-            We haven't yet scheduled a funding round. Stay tuned!
+            {{ $t('roundInfo.div21') }}
           </div>
         </div>
       </template>

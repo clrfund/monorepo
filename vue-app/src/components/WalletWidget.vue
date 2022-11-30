@@ -9,7 +9,7 @@
       }"
       @click="showModal()"
     >
-      Connect
+      {{ $t('walletWidget.button1') }}
     </button>
     <div
       v-else-if="currentUser && !isActionButton"

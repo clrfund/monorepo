@@ -3,12 +3,12 @@
     <div class="status-label-address">
       <loader
         v-if="isPending"
-        v-tooltip="'Awaiting transaction confirmation'"
+        :v-tooltip="$t('transactionReceipt.tooltip1')"
         class="pending"
       />
       <img
         class="success"
-        v-tooltip="'Transaction confirmed'"
+        :v-tooltip="$t('transactionReceipt.tooltip2')"
         v-if="!isPending"
         src="@/assets/checkmark.svg"
       />
@@ -18,14 +18,18 @@
       <links
         class="explorerLink"
         :to="blockExplorer.url"
-        v-tooltip="`View on ${blockExplorer.label}`"
+        :v-tooltip="
+          $t('transactionReceipt.tooltip3', {
+            blockExplorer: blockExplorer.label,
+          })
+        "
         :hideArrow="true"
       >
         <img class="icon" :src="require(`@/assets/${blockExplorer.logo}`)" />
       </links>
       <copy-button
         :value="hash"
-        text="hash"
+        :text="$t('transactionReceipt.button1')"
         v-on:copied="updateIsCopied"
         myClass="icon"
       />
