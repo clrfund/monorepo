@@ -38,7 +38,7 @@ import Loader from '@/components/Loader.vue'
 import { RoundInfo } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { SELECT_ROUND, LOAD_ROUND_INFO, LOAD_TALLY } from '@/store/action-types'
-import { BigNumber, utils } from 'ethers'
+import { BigNumber } from 'ethers'
 // TODO: replace funding.json by getting funding amount from contract or subgraph
 // funding.json is a temporary solution for ethcolombia.
 import * as Funding from '@/api/funding.json'
