@@ -81,7 +81,9 @@
           <links
             class="explorerLink"
             :to="blockExplorer.url"
-            :title="$t('projectProfile.link1')` ${blockExplorer.label}`"
+            :title="
+              $t('projectProfile.link1', { blockExplorer: blockExplorer.label })
+            "
             :hideArrow="true"
           >
             <img

@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="flex-row">
-        <h2 class="no-margin">{{ $t('profile.h2_1') }}t</h2>
+        <h2 class="no-margin">{{ $t('profile.h2_1') }}</h2>
       </div>
       <div class="address-card">
         <h2 class="address">{{ displayAddress }}</h2>
@@ -42,10 +42,10 @@
       />
       <div class="balances-section">
         <div class="flex-row">
-          <h2>{{ $t('profile.h2_2') }}</h2>
+          <h2>{{ $t('profile.h2_2', { chain: chain.label }) }}</h2>
           <div
             v-tooltip="{
-              content: $t('profile.tooltip2'),
+              content: $t('profile.tooltip2', { chain: chain.label }),
               trigger: 'hover click',
             }"
           >

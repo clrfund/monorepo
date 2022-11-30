@@ -256,7 +256,6 @@ export default class NavBar extends Vue {
   }
 
   .lang-dropdown {
-    position: relative;
     display: inline-block;
     margin-left: 0.5rem;
     .button-menu {
