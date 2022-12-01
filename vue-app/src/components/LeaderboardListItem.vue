@@ -26,11 +26,8 @@
           {{ project.name }}
         </div>
         <div class="funding">
-          <div class="amount-container">
-            <div class="amount">~{{ formatAmount(project.fundingAmount) }}</div>
-            <img :src="require(`@/assets/${tokenLogo}`)" :alt="tokenSymbol" />
-          </div>
-          <div class="votes">{{ votes }} votes</div>
+          <div class="amount">~{{ formatAmount(project.fundingAmount) }}</div>
+          <div class="symbol">{{ tokenSymbol }} funded</div>
         </div>
       </div>
     </links>
@@ -48,12 +45,9 @@ import { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
 
-import ClaimButton from '@/components/ClaimButton.vue'
-
 @Component({
   components: {
     Links,
-    ClaimButton,
   },
 })
 export default class LeaderboardListItem extends Vue {
@@ -202,28 +196,17 @@ export default class LeaderboardListItem extends Vue {
 .funding {
   text-align: right;
 
-  .amount-container {
-    display: flex;
-    align-items: center;
-    column-gap: 3px;
+  .amount {
+    white-space: nowrap;
+    font-size: 2vw;
+    font-family: 'Lucida Console', 'Courier New', monospace;
 
-    .amount {
-      white-space: nowrap;
-      font-size: 2vw;
-      font-family: 'Lucida Console', 'Courier New', monospace;
-
-      @media (max-width: $breakpoint-m) {
-        font-size: 16px;
-      }
-    }
-
-    img {
-      height: 16px;
-      width: 16px;
+    @media (max-width: $breakpoint-m) {
+      font-size: 16px;
     }
   }
 
-  .votes {
+  .symbol {
     font-size: 1vw;
     white-space: nowrap;
     @media (max-width: $breakpoint-m) {

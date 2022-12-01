@@ -10,18 +10,35 @@
       </div>
       <div v-else>
         <div class="header">
-          <h2>Leaderboard</h2>
+          <div><h2>Leaderboard</h2></div>
+          <button class="btn-action" @click="toggleView()">
+            <div v-if="isSimpleView">Show more</div>
+            <div v-else>Show less</div>
+          </button>
         </div>
         <div class="hr" />
-        <leaderboard-list-item
-          v-for="(project, index) in projects"
-          :project="project"
-          :key="project.id"
-          :rank="index + 1"
-          :votes="getVotes(project.index)"
-          :tokenSymbol="tokenSymbol"
-          :tokenDecimals="tokenDecimals"
-        ></leaderboard-list-item>
+        <div class="">
+          <div v-if="isSimpleView">
+            <leaderboard-list-item
+              v-for="(project, index) in projects"
+              :project="project"
+              :key="project.id"
+              :rank="index + 1"
+              :tokenSymbol="tokenSymbol"
+              :tokenDecimals="tokenDecimals"
+            ></leaderboard-list-item>
+          </div>
+          <div v-else>
+            <leaderboard-table
+              :projects="projects"
+              :votes="votes"
+              :donations="donations"
+              :tokenSymbol="tokenSymbol"
+              :tokenDecimals="tokenDecimals"
+              :voiceCreditFactor="voiceCreditFactor"
+            ></leaderboard-table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -31,6 +48,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import LeaderboardListItem from '@/components/LeaderboardListItem.vue'
+import LeaderboardTable from '@/components/LeaderboardTable.vue'
 import { getCurrentRound, getRoundInfo, RoundStatus } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 import { isValidEthAddress } from '@/utils/accounts'
@@ -42,17 +60,20 @@ import { BigNumber } from 'ethers'
 // TODO: replace funding.json by getting funding amount from contract or subgraph
 // funding.json is a temporary solution for ethcolombia.
 import * as Funding from '@/api/funding.json'
-import { formatAmount } from '@/utils/amounts'
+import { TOGGLE_LEADERBOARD_VIEW } from '@/store/mutation-types'
 
 @Component({
   name: 'leaderboard',
-  components: { LeaderboardListItem, Loader },
+  components: { LeaderboardListItem, LeaderboardTable, Loader },
 })
 export default class Leaderboard extends Vue {
   roundAddress = ''
   isLoading = true
   projects: Project[] = []
 
+  get isSimpleView(): boolean {
+    return this.$store.state.showLeaderboardSimple
+  }
   get currentRound(): RoundInfo {
     return this.$store.state.currentRound
   }
@@ -139,20 +160,32 @@ export default class Leaderboard extends Vue {
     await this.$store.dispatch(LOAD_TALLY)
   }
 
-  // this is this donation the project received from the community
-  getVotes(projectIndex: number): string {
-    const total =
-      this.tally?.totalVoiceCreditsPerVoteOption.tally[projectIndex] || '0'
-    const adjustedTotal = BigNumber.from(
-      this.currentRound.voiceCreditFactor
-    ).mul(total)
-    const formattedAmount = formatAmount(
-      adjustedTotal,
-      this.tokenDecimals,
-      null,
-      0
-    )
-    return formattedAmount
+  // this is the sum of square root of all donations to the project
+  get votes(): string[] {
+    if (!this.tally) {
+      return []
+    }
+    return this.tally.results.tally
+  }
+
+  // this is the donation the project received from the community
+  get donations(): string[] {
+    if (!this.tally) {
+      return []
+    }
+    return this.tally.totalVoiceCreditsPerVoteOption.tally
+  }
+
+  get voiceCreditFactor(): BigNumber {
+    if (!this.currentRound) {
+      return BigNumber.from(0)
+    }
+
+    return this.currentRound.voiceCreditFactor
+  }
+
+  toggleView(): void {
+    this.$store.commit(TOGGLE_LEADERBOARD_VIEW)
   }
 }
 </script>
@@ -176,5 +209,11 @@ export default class Leaderboard extends Vue {
   align-items: center;
   padding: 2rem;
   margin-top: 2rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 </style>

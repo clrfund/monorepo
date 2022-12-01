@@ -36,6 +36,7 @@ import {
   TOGGLE_EDIT_SELECTION,
   SET_HAS_VOTED,
   TOGGLE_THEME,
+  TOGGLE_LEADERBOARD_VIEW,
   SET_FACTORY,
   SET_MACI_FACTORY,
 } from './mutation-types'
@@ -172,6 +173,9 @@ const mutations = {
       state.theme =
         state.theme === ThemeMode.LIGHT ? ThemeMode.DARK : ThemeMode.LIGHT
     }
+  },
+  [TOGGLE_LEADERBOARD_VIEW](state) {
+    state.showLeaderboardSimple = !state.showLeaderboardSimple
   },
   [RESTORE_COMMITTED_CART_TO_LOCAL_CART](state) {
     // Spread to avoid reference
