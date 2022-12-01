@@ -70,7 +70,7 @@ const filteredCart = computed(() => {
 
 const truncatedAddress = computed(() => {
 	if (currentUser.value?.walletAddress) {
-		const address: string = currentUser.value?.walletAddress
+		const address: string = currentUser.value.walletAddress
 		const begin: string = address.substr(0, 6)
 		const end: string = address.substr(address.length - 4, 4)
 		const truncatedAddress = `${begin}…${end}`

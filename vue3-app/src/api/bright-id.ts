@@ -111,7 +111,7 @@ export async function getBrightId(contextId: string): Promise<BrightId> {
 	try {
 		const verification = await getVerification(contextId)
 		// the `unique` field tell us if the user is a verified user
-		brightId.isVerified = !!verification?.unique
+		brightId.isVerified = !!verification.unique
 		brightId.verification = verification
 	} catch (error) {
 		if (!(error instanceof BrightIdError)) {

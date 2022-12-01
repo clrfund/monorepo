@@ -149,9 +149,9 @@ const links = computed<Array<{ link: string; url: string }>>(() => [{ link: 'joi
 
 const registryInfo = computed<RegistryInfo>(() => recipientRegistryInfo.value!)
 
-const deposit = computed<BigNumber | null>(() => registryInfo.value?.deposit)
-const depositToken = computed<string | null>(() => registryInfo.value?.depositToken)
-const recipientCount = computed(() => registryInfo.value?.recipientCount)
+const deposit = computed<BigNumber | null>(() => registryInfo.value.deposit)
+const depositToken = computed<string | null>(() => registryInfo.value.depositToken)
+const recipientCount = computed(() => registryInfo.value.recipientCount)
 const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
 const spacesRemaining = computed(() => {
 	if (!appStore.currentRound || !registryInfo.value) {

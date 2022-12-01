@@ -328,6 +328,7 @@ onMounted(() => {
 })
 const tokenSymbol = computed(() => {
 	const _currentRound = currentRound.value
+	// TODO: configure eslint to catch the error below (currentRound should add .value)
 	return currentRound ? _currentRound?.nativeTokenSymbol : ''
 })
 const contribution = computed(() => appStore.contribution || BigNumber.from(0))
@@ -437,7 +438,7 @@ const errorMessage = computed<string | null>(() => {
 				return `Your contribution is too generous. The max contribution is ${MAX_CONTRIBUTION_AMOUNT} ${
 					currentRound.value!.nativeTokenSymbol
 				}.`
-			} else if (parseInt(currentUser.value?.etherBalance!.toString()) === 0) {
+			} else if (parseInt(currentUser.value.etherBalance!.toString()) === 0) {
 				return `You need some ETH to pay for gas`
 			} else {
 				return null

@@ -115,7 +115,7 @@ function removeItem(item: CartItem): void {
 }
 
 function isNewOrUpdated(item: CartItem): boolean {
-	const itemIndex = committedCart.value?.findIndex(i => {
+	const itemIndex = committedCart.value.findIndex(i => {
 		return i.id === item.id && i.amount === item.amount
 	})
 

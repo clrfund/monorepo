@@ -144,7 +144,7 @@ export async function getRequests(registryInfo: RegistryInfo, registryAddress: s
 		registryAddress: registryAddress.toLowerCase(),
 	})
 
-	if (!data.recipients?.length) {
+	if (!data.recipients.length) {
 		return []
 	}
 
@@ -320,7 +320,7 @@ export async function getProjects(registryAddress: string, startTime?: number, e
 		registryAddress: registryAddress.toLowerCase(),
 	})
 
-	if (!data.recipients?.length) {
+	if (!data.recipients.length) {
 		return []
 	}
 
@@ -384,12 +384,12 @@ export async function getProject(recipientId: string): Promise<Project | null> {
 		recipientId,
 	})
 
-	if (!data.recipients?.length) {
+	if (!data.recipients.length) {
 		// Project does not exist
 		return null
 	}
 
-	const recipient = data.recipients?.[0]
+	const recipient = data.recipients[0]
 
 	let project: Project
 	try {

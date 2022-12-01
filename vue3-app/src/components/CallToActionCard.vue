@@ -51,7 +51,7 @@ const showUserVerification = computed(() => {
 	return (
 		userRegistryType === UserRegistryType.BRIGHT_ID &&
 		typeof appStore.currentUser?.isRegistered === 'boolean' &&
-		!appStore.currentUser?.isRegistered
+		!appStore.currentUser.isRegistered
 	)
 })
 

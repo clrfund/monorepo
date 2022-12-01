@@ -71,7 +71,7 @@ const appStore = useAppStore()
 const { currentUser } = storeToRefs(appStore)
 
 const isVerified = computed(() => {
-	return currentUser.value && currentUser.value?.brightId!.isVerified
+	return currentUser.value && currentUser.value.brightId!.isVerified
 })
 
 const isRegistered = computed(() => {

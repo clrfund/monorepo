@@ -319,7 +319,7 @@ onMounted(async () => {
 
 // Gets local storage key to look up if user has dismissed round notice (if message cap exceeded)
 // Key specific to each round via round address
-const roundAddress = computed(() => (route.params?.address as string) || currentRoundAddress.value)
+const roundAddress = computed(() => (route.params.address as string) || currentRoundAddress.value)
 watch(roundAddress, async () => {
 	await loadRoundInfo()
 })
