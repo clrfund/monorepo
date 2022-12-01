@@ -14,7 +14,9 @@
 			>
 				Get help bridging {{ singleTokenNeeded }} to Layer 2
 			</links>
-			<links v-else :to="chain.bridge!"> Bridge {{ singleTokenNeeded }} to {{ chain.label }} </links>
+			<links v-else :to="chain.bridge ? chain.bridge : ''">
+				Bridge {{ singleTokenNeeded }} to {{ chain.label }}
+			</links>
 		</p>
 	</div>
 </template>

@@ -136,6 +136,7 @@ function handleRemoveImage(): void {
 
 	// Clear file selector input
 	const fileSelector = document.getElementById(`${props.formProp}-input`) as HTMLInputElement
+	// eslint-disable-next-line
 	if (fileSelector) {
 		fileSelector.value = ''
 	}

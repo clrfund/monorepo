@@ -8,12 +8,12 @@
 					<div class="progress-steps">
 						<div v-for="(step, stepIndex) in steps" :key="step.page" class="progress-step">
 							<template v-if="stepIndex === currentStep">
-								<loader v-if="stepIndex === 0 && !brightId.isVerified" class="progress-steps-loader" />
+								<loader v-if="stepIndex === 0 && !brightId?.isVerified" class="progress-steps-loader" />
 								<img v-else class="current-step" src="@/assets/current-step.svg" alt="current step" />
 								<p class="active step" v-text="step.name" />
 							</template>
 							<template v-else-if="isStepUnlocked(stepIndex) && isStepValid(stepIndex)">
-								<loader v-if="stepIndex === 0 && !brightId.isVerified" class="progress-steps-loader" />
+								<loader v-if="stepIndex === 0 && !brightId?.isVerified" class="progress-steps-loader" />
 								<img v-else src="@/assets/green-tick.svg" alt="step complete" />
 								<p class="step" v-text="step.name" />
 							</template>
@@ -149,7 +149,7 @@ const currentStep = computed(() => {
 
 onMounted(async () => {
 	// created
-	if (!currentUser.value?.walletAddress || hasContributionPhaseEnded) {
+	if (!currentUser.value?.walletAddress || hasContributionPhaseEnded.value) {
 		router.replace({ name: 'verify' })
 	}
 
@@ -197,7 +197,7 @@ async function register() {
 				name: 'verified',
 				params: { hash: registrationTxHash.value },
 			})
-		} catch (error) {
+		} catch (error: any) {
 			registrationTxError.value = error.message
 			return
 		}

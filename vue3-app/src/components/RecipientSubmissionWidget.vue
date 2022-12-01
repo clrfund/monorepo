@@ -37,7 +37,12 @@
 					<p class="m05"><b>Security deposit</b></p>
 					<p class="m05">
 						{{ depositAmount }} {{ depositToken }}
-						<span class="o5">({{ fiatSign }}{{ calculateFiatFee(recipientRegistryInfo!.deposit) }})</span>
+						<span class="o5"
+							>({{ fiatSign
+							}}{{
+								recipientRegistryInfo?.deposit ? calculateFiatFee(recipientRegistryInfo.deposit) : ''
+							}})</span
+						>
 					</p>
 				</div>
 			</div>
@@ -48,7 +53,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import type { BigNumber } from 'ethers'
-import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
+import { type EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import { chain } from '@/api/core'
 
 import Loader from '@/components/Loader.vue'

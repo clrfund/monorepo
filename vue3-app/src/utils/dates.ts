@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import type { TimeLeft } from '@/api/round'
 
-export function formatDate(date: DateTime): string {
+export function formatDate(date?: DateTime): string {
 	if (!date) {
 		return '...' //  TODO best place to do this?
 	}

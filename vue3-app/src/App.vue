@@ -80,7 +80,7 @@ const routeName = computed(() => route.name?.toString() || '')
 const isUserAndRoundLoaded = computed(() => !!currentUser.value && !!currentRound.value)
 const isInApp = computed(() => routeName.value !== 'landing')
 const isVerifyStep = computed(() => routeName.value === 'verify-step')
-const isSideCartShown = computed(() => !!currentUser.value && isSidebarShown && routeName.value !== 'cart')
+const isSideCartShown = computed(() => !!currentUser.value && isSidebarShown.value && routeName.value !== 'cart')
 const isCartPadding = computed(() => {
 	const routes = ['cart']
 	return routes.includes(routeName.value)

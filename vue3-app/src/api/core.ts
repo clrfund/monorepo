@@ -11,7 +11,7 @@ if (!rpcUrl) {
 
 export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(import.meta.env.VITE_ETHEREUM_MAINNET_API_URL)
 export const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl)
-export const chain = CHAIN_INFO[Number(import.meta.env.VITE_ETHEREUM_API_CHAINID)]
+export const chain: any = CHAIN_INFO[Number(import.meta.env.VITE_ETHEREUM_API_CHAINID)]
 if (!chain) throw new Error('invalid chain id')
 export const ipfsGatewayUrl = import.meta.env.VITE_IPFS_GATEWAY_URL
 export const gunPeers: string[] = import.meta.env.VITE_GUN_PEERS ? import.meta.env.VITE_GUN_PEERS.split(',') : []

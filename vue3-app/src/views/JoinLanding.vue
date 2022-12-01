@@ -65,7 +65,7 @@
 				<div class="apply-callout">
 					<div class="countdown-label caps">Time left to join</div>
 					<div class="countdown caps">
-						<time-left value-class="none" unit-class="none" :date="signUpDeadline" />
+						<time-left value-class="none" unit-class="none" :date="signUpDeadline!" />
 					</div>
 				</div>
 				<div class="apply-callout">
@@ -154,6 +154,7 @@ const depositToken = computed<string | null>(() => registryInfo.value.depositTok
 const recipientCount = computed(() => registryInfo.value.recipientCount)
 const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
 const spacesRemaining = computed(() => {
+	// eslint-disable-next-line
 	if (!appStore.currentRound || !registryInfo.value) {
 		return null
 	}
@@ -191,7 +192,7 @@ function toggleCriteria(): void {
 	showCriteriaPanel.value = !showCriteriaPanel.value
 }
 
-function formatAmount(value: BigNumber): string {
+function formatAmount(value?: BigNumber): string {
 	if (!value) return ''
 	return _formatAmount(value, 18)
 }

@@ -116,10 +116,10 @@ export async function hasContributorVoted(fundingRoundAddress: string, contribut
 }
 
 export function isContributionAmountValid(value: string, currentRound: RoundInfo): boolean {
-	if (!currentRound) {
-		// Skip validation
-		return true
-	}
+	// if (!currentRound) {
+	// 	// Skip validation
+	// 	return true
+	// }
 	const { nativeTokenDecimals, voiceCreditFactor } = currentRound
 	let amount
 	try {

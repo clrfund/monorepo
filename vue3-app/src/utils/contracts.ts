@@ -9,7 +9,7 @@ export async function waitForTransaction(
 	let transaction
 	try {
 		transaction = await pendingTransaction
-	} catch (error) {
+	} catch (error: any) {
 		throw new Error(error.message)
 	}
 	onTransactionHash?.(transaction.hash)
@@ -17,7 +17,7 @@ export async function waitForTransaction(
 	while (!transactionReceipt) {
 		try {
 			transactionReceipt = await transaction.wait()
-		} catch (receiptError) {
+		} catch (receiptError: any) {
 			const errorMessage = receiptError.data?.message || ''
 			if (errorMessage.includes('Block information is incomplete')) {
 				/* eslint-disable-next-line no-console */
@@ -39,11 +39,13 @@ export function getEventArg(
 	eventName: string,
 	argumentName: string,
 ): any {
+	// eslint-disable-next-line
 	for (const log of transactionReceipt.logs || []) {
 		if (log.address != contract.address) {
 			continue
 		}
 		const event = contract.interface.parseLog(log)
+		// eslint-disable-next-line
 		if (event && event.name === eventName) {
 			return event.args[argumentName]
 		}

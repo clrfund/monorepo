@@ -1,9 +1,9 @@
 <template>
 	<div>
 		<loader v-if="isLoading" />
-		<p v-if="claimed">✔️ {{ formatAmount(allocatedAmount!) }} {{ tokenSymbol }} claimed</p>
+		<p v-if="claimed">✔️ {{ allocatedAmount ? formatAmount(allocatedAmount) : '' }} {{ tokenSymbol }} claimed</p>
 		<button v-if="hasClaimBtn() && !claimed" class="btn-action" :disabled="!canClaim()" @click="claim()">
-			Claim {{ formatAmount(allocatedAmount!) }} {{ tokenSymbol }}
+			Claim {{ allocatedAmount ? formatAmount(allocatedAmount) : '' }} {{ tokenSymbol }}
 		</button>
 	</div>
 </template>
@@ -53,6 +53,7 @@ watch(currentRound, () => {
 async function checkAllocation() {
 	// If the current round is not finalized or the allocated amount was already
 	// fetched then don't do anything
+	// eslint-disable-next-line
 	if (!props.project || !currentRound.value || !isRoundFinalized.value || allocatedAmount.value) {
 		isLoading.value = false
 		return
@@ -81,6 +82,7 @@ function hasClaimBtn(): boolean {
 	return (
 		!!currentRound.value &&
 		currentRound.value.status === RoundStatus.Finalized &&
+		// eslint-disable-next-line
 		props.project !== null &&
 		props.project.index !== 0 &&
 		!props.project.isHidden &&

@@ -66,7 +66,8 @@ const isAmountValid = computed(() => {
 })
 
 function hasContributeBtn(): boolean {
-	return !!currentRound.value && props.project !== null && props.project.index !== 0
+	return !!currentRound.value && props.project.index !== 0
+	// return !!currentRound.value && props.project !== null && props.project.index !== 0
 }
 
 function canContribute(): boolean {

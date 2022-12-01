@@ -29,11 +29,11 @@
 			</div>
 			<div class="project-section">
 				<h2>The problem it solves</h2>
-				<markdown :raw="project.problemSpace" />
+				<markdown :raw="project.problemSpace ? project.problemSpace : ''" />
 			</div>
 			<div class="project-section">
 				<h2>Funding plans</h2>
-				<markdown :raw="project.plans" />
+				<markdown :raw="project.plans ? project.plans : ''" />
 			</div>
 			<div
 				:class="{
@@ -67,7 +67,7 @@
 			<hr v-if="project.teamName || project.teamDescription" />
 			<div v-if="project.teamName || project.teamDescription" id="team" class="team">
 				<h2>Team: {{ project.teamName }}</h2>
-				<markdown :raw="project.teamDescription" />
+				<markdown :raw="project.teamDescription ? project.teamDescription : ''" />
 			</div>
 		</div>
 		<link-box v-if="previewMode" :project="project" class="mt2" />
@@ -122,6 +122,7 @@ onMounted(async () => {
 
 const inCart = computed(() => {
 	const project = props.project
+	// eslint-disable-next-line
 	if (project === null) {
 		return false
 	}
@@ -133,15 +134,18 @@ const inCart = computed(() => {
 })
 
 function hasContributeBtn(): boolean {
+	// eslint-disable-next-line
 	return isCurrentRound.value! && currentRound.value! && props.project !== null && props.project.index !== 0
 }
 
 function canContribute(): boolean {
 	return (
 		hasContributeBtn() &&
+		// eslint-disable-next-line
 		currentUser.value! &&
 		DateTime.local() < currentRound.value!.votingDeadline &&
 		currentRound.value!.status !== RoundStatus.Cancelled &&
+		// eslint-disable-next-line
 		props.project !== null &&
 		!props.project.isLocked
 	)

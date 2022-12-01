@@ -33,7 +33,7 @@ export default {
 			},
 		})
 
-		plugin.connectWallet = async (wallet: Wallet): Promise<void> => {
+		plugin.connectWallet = async (wallet?: Wallet): Promise<void> => {
 			if (!wallet || typeof wallet !== 'string') {
 				throw new Error('Please provide a wallet to facilitate a web3 connection.')
 			}

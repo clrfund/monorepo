@@ -9,7 +9,7 @@
 				</span>
 				<span v-if="!isRecipientRegistryFull" class="label">
 					Time left to add a project:
-					<time-left unit-class="none" value-class="none" :date="recipientJoinDeadline" />
+					<time-left unit-class="none" value-class="none" :date="recipientJoinDeadline!" />
 				</span>
 			</div>
 			<div v-if="isRoundContributionPhase" class="messsage">
@@ -57,6 +57,7 @@ const appStore = useAppStore()
 const {
 	currentRound,
 	recipientSpacesRemaining,
+	recipientJoinDeadline,
 	isJoinOnlyPhase,
 	isRecipientRegistryFull,
 	isRecipientRegistryFillingUp,

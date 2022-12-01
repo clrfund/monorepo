@@ -102,6 +102,6 @@ const depositAmount = computed(() => {
 })
 
 const depositToken = computed(() => {
-	return recipientRegistryInfo.value!.depositToken ?? ''
+	return recipientRegistryInfo.value?.depositToken ?? ''
 })
 </script>

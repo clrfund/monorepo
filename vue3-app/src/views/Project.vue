@@ -48,7 +48,9 @@ const isCurrentRound = computed(() => {
 	return appStore.isCurrentRound(roundAddress!)
 })
 
-const shouldShowCartInput = computed(() => (isCurrentRound.value && isRoundContributionPhase) || canUserReallocate)
+const shouldShowCartInput = computed(
+	() => (isCurrentRound.value && isRoundContributionPhase.value) || canUserReallocate,
+)
 const hasContributeBtn = computed(() => isCurrentRound.value && project.value !== null && project.value.index !== 0)
 const descriptionHtml = computed(() => markdown.render(project.value?.description || ''))
 

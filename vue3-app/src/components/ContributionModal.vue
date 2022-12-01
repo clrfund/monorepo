@@ -126,7 +126,7 @@ const voteTxError = ref('')
 const error = ref('')
 
 onMounted(() => {
-	if (hasUserContributed && !hasUserVoted) {
+	if (hasUserContributed.value && !hasUserVoted.value) {
 		// If the user has already contributed but without sending the votes
 		// (final step 3), move automatically to that step
 		step.value = 3
@@ -174,7 +174,7 @@ async function sendVotes() {
 				hash: contributionTxHash.value,
 			},
 		})
-	} catch (error) {
+	} catch (error: any) {
 		voteTxError.value = error.message
 		return
 	}
@@ -215,7 +215,7 @@ async function contribute() {
 					token.approve(fundingRoundAddress, total.value),
 					hash => (approvalTxHash.value = hash),
 				)
-			} catch (error) {
+			} catch (error: any) {
 				approvalTxError.value = error.message
 				return
 			}
@@ -229,7 +229,7 @@ async function contribute() {
 				fundingRound.value.contribute(contributorKeypair.pubKey.asContractParam(), total.value),
 				hash => (contributionTxHash.value = hash),
 			)
-		} catch (error) {
+		} catch (error: any) {
 			contributionTxError.value = error.message
 			return
 		}

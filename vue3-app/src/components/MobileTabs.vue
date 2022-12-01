@@ -70,7 +70,7 @@ const activeTab = computed(() => {
 
 const filteredCart = computed(() => {
 	// Once reallocation phase ends, use committedCart for cart items
-	if (hasReallocationPhaseEnded) {
+	if (hasReallocationPhaseEnded.value) {
 		return committedCart
 	}
 
@@ -83,7 +83,7 @@ const isCartBadgeShown = computed(() => {
 	 * Only show cart badge counter if there are new/changed items present
 	 * and the user is still able to contribute/reallocate these changes.
 	 */
-	return (canUserReallocate || isRoundContributionPhase) && !isCartEmpty.value
+	return (canUserReallocate.value || isRoundContributionPhase.value) && !isCartEmpty.value
 })
 
 const isOnCartOrRoundPage = computed(() => {

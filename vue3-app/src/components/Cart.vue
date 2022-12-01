@@ -267,11 +267,11 @@ function removeAll(): void {
 }
 
 const isEditMode = computed(() => {
-	if (isRoundContributionPhase && !hasUserContributed) {
+	if (isRoundContributionPhase.value && !hasUserContributed.value) {
 		return true
 	}
 
-	if ((isRoundContributionPhase && hasUserContributed) || isRoundReallocationPhase) {
+	if ((isRoundContributionPhase.value && hasUserContributed.value) || isRoundReallocationPhase.value) {
 		return cartEditModeSelected.value
 	}
 
@@ -329,7 +329,7 @@ onMounted(() => {
 const tokenSymbol = computed(() => {
 	const _currentRound = currentRound.value
 	// TODO: configure eslint to catch the error below (currentRound should add .value)
-	return currentRound ? _currentRound?.nativeTokenSymbol : ''
+	return currentRound.value ? _currentRound?.nativeTokenSymbol : ''
 })
 const contribution = computed(() => appStore.contribution || BigNumber.from(0))
 
@@ -345,7 +345,7 @@ const filteredCart = computed<CartItem[]>(() => {
 const isCartEmpty = computed(() => {
 	return (
 		currentUser.value &&
-		contribution.value !== null &&
+		// contribution.value !== null &&
 		contribution.value.isZero() &&
 		filteredCart.value.length === 0
 	)
@@ -445,6 +445,7 @@ const errorMessage = computed<string | null>(() => {
 			}
 		} else {
 			// Reallocating funds
+			// eslint-disable-next-line
 			if (!contribution.value) {
 				return "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with."
 			} else if (isGreaterThanInitialContribution()) {
