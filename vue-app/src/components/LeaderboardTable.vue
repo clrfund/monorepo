@@ -1,14 +1,16 @@
 <template>
   <div>
     <div class="info">
-      <span class="icon" aria-label="info icon">ℹ</span>
-      The funding column below shows the total amount awarded to each project
-      calculated using the quadratic funding formula, &alpha;(V)&sup2; + (1-
-      &alpha;)D; where V is the votes, D is the donations and &alpha; is the
-      quadratic funding ratio calculated based on the matching pool size and
-      total donation amount. Note: for simplicity, votes shown below have not
-      been adjusted by the precision factor and voice credit factor which are
-      used to manage precision loss and MACI limitation.
+      <div class="icon" aria-label="info icon">ℹ</div>
+      <div class="message">
+        The funding column below shows the total amount awarded to each project
+        calculated using the quadratic funding formula, &alpha;(V)&sup2; + (1-
+        &alpha;)D; where V is the votes, D is the donations and &alpha; is the
+        quadratic funding ratio calculated based on the matching pool size and
+        total donation amount. Note: for simplicity, votes shown below have not
+        been adjusted by the precision factor and voice credit factor which are
+        used to manage precision loss and MACI limitation.
+      </div>
     </div>
 
     <table>
@@ -207,13 +209,18 @@ th {
     padding-bottom: 1rem;
     align-items: flex-start;
   }
-}
 
-.icon {
-  font-size: 24px;
-  padding: 0.5rem;
-  @media (max-width: $breakpoint-m) {
-    padding: 0.5rem 0rem;
+  .message {
+    flex: 1 1 auto;
+  }
+
+  .icon {
+    font-size: 24px;
+    padding: 0.5rem;
+    flex: 0 0 auto;
+    @media (max-width: $breakpoint-m) {
+      padding: 0.5rem 0rem;
+    }
   }
 }
 </style>
