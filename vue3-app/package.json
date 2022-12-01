@@ -15,11 +15,13 @@
 	},
 	"dependencies": {
 		"crypto-js": "^4.1.1",
+		"ethereum-blockies-base64": "^1.0.2",
 		"ethers": "^5.7.2",
 		"floating-vue": "^2.0.0-beta.20",
 		"graphql": "^16.6.0",
 		"graphql-request": "^5.0.0",
 		"humanize-duration": "^3.27.3",
+		"luxon": "^3.1.1",
 		"markdown-it": "^13.0.1",
 		"markdown-it-link-attributes": "^4.0.1",
 		"node-stdlib-browser": "^1.2.0",

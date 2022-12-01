@@ -1,89 +1,97 @@
 <template>
-	<div class="modal-body">
-		<div v-if="step === 0">
-			<h2>Confirm {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution</h2>
-			<p>
-				Your
-				<b>{{ renderTotal }} {{ currentRound?.nativeTokenSymbol }}</b>
-				contribution total is final. You won't be able to increase this amount. Make sure this is the maximum
-				you might want to spend on contributions.
-			</p>
-			<!-- TODO: if you get 1/3 of the way through these transactions and come back, you shouldn't get this warning again. This warning should only appear if you haven't already signed 'approve' transaction -->
-			<!-- <p>
-        <em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
-      </p> -->
-			<div class="btn-row">
-				<button class="btn-secondary" @click="$emit('close')">Cancel</button>
-				<button class="btn-primary" @click="contribute()">Continue</button>
+	<vue-final-modal v-slot="{ close }" v-bind="$attrs">
+		<div class="modal-body">
+			<div v-if="step === 0">
+				<h2>Confirm {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution</h2>
+				<p>
+					Your
+					<b>{{ renderTotal }} {{ currentRound?.nativeTokenSymbol }}</b>
+					contribution total is final. You won't be able to increase this amount. Make sure this is the
+					maximum you might want to spend on contributions.
+				</p>
+				<!-- TODO: if you get 1/3 of the way through these transactions and come back, you shouldn't get this warning again. This warning should only appear if you haven't already signed 'approve' transaction -->
+				<!-- <p>
+			<em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
+		  </p> -->
+				<div class="btn-row">
+					<button class="btn-secondary" @click="close">Cancel</button>
+					<button class="btn-primary" @click="contribute()">Continue</button>
+				</div>
+			</div>
+			<div v-if="step === 1">
+				<progress-bar :current-step="1" :total-steps="3" />
+				<h2>
+					Approve {{ renderTotal }}
+					{{ currentRound?.nativeTokenSymbol }}
+				</h2>
+				<p>
+					This gives this app permission to withdraw
+					{{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} from your wallet for your contribution.
+				</p>
+				<transaction
+					:hash="approvalTxHash"
+					:error="approvalTxError || error"
+					:display-retry-btn="true"
+					@close="close"
+					@retry="
+						() => {
+							step = 0
+							approvalTxError = ''
+							contribute()
+						}
+					"
+				></transaction>
+			</div>
+			<div v-if="step === 2">
+				<progress-bar :current-step="2" :total-steps="3" />
+				<h2>Send {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution</h2>
+				<p>
+					This transaction sends out your {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution
+					to your chosen projects.
+				</p>
+				<transaction
+					:hash="contributionTxHash"
+					:error="contributionTxError || error"
+					:display-retry-btn="true"
+					@close="close"
+					@retry="
+						() => {
+							step = 0
+							contributionTxError = ''
+							contribute()
+						}
+					"
+				></transaction>
+			</div>
+			<div v-if="step === 3">
+				<progress-bar :current-step="3" :total-steps="3" />
+				<h2>Matching pool magic ✨</h2>
+				<p>
+					This transaction lets the matching pool know how much
+					{{ currentRound?.nativeTokenSymbol }} to send to your favorite projects based on your contributions.
+				</p>
+				<transaction
+					:hash="voteTxHash"
+					:error="voteTxError || error"
+					:display-retry-btn="true"
+					@close="close"
+					@retry="
+						() => {
+							voteTxError = ''
+							sendVotes()
+						}
+					"
+				></transaction>
 			</div>
 		</div>
-		<div v-if="step === 1">
-			<progress-bar :current-step="1" :total-steps="3" />
-			<h2>
-				Approve {{ renderTotal }}
-				{{ currentRound?.nativeTokenSymbol }}
-			</h2>
-			<p>
-				This gives this app permission to withdraw
-				{{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} from your wallet for your contribution.
-			</p>
-			<transaction
-				:hash="approvalTxHash"
-				:error="approvalTxError || error"
-				:display-retry-btn="true"
-				@close="$emit('close')"
-				@retry="
-					() => {
-						step = 0
-						approvalTxError = ''
-						contribute()
-					}
-				"
-			></transaction>
-		</div>
-		<div v-if="step === 2">
-			<progress-bar :current-step="2" :total-steps="3" />
-			<h2>Send {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution</h2>
-			<p>
-				This transaction sends out your {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution to
-				your chosen projects.
-			</p>
-			<transaction
-				:hash="contributionTxHash"
-				:error="contributionTxError || error"
-				:display-retry-btn="true"
-				@close="$emit('close')"
-				@retry="
-					() => {
-						step = 0
-						contributionTxError = ''
-						contribute()
-					}
-				"
-			></transaction>
-		</div>
-		<div v-if="step === 3">
-			<progress-bar :current-step="3" :total-steps="3" />
-			<h2>Matching pool magic ✨</h2>
-			<p>
-				This transaction lets the matching pool know how much
-				{{ currentRound?.nativeTokenSymbol }} to send to your favorite projects based on your contributions.
-			</p>
-			<transaction
-				:hash="voteTxHash"
-				:error="voteTxError || error"
-				:display-retry-btn="true"
-				@close="$emit('close')"
-				@retry="
-					() => {
-						voteTxError = ''
-						sendVotes()
-					}
-				"
-			></transaction>
-		</div>
-	</div>
+	</vue-final-modal>
 </template>
+
+<script lang="ts">
+export default {
+	inheritAttrs: false,
+}
+</script>
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
@@ -96,7 +104,9 @@ import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 import ProgressBar from '@/components/ProgressBar.vue'
-
+// this line is needed, but ts complain (6133) (1444)
+// @ts-ignore
+import { VueFinalModal } from 'vue-final-modal'
 import { FundingRound, ERC20, MACI } from '@/api/abi'
 import { useAppStore } from '@/stores/app'
 import { storeToRefs } from 'pinia'
@@ -166,6 +176,7 @@ async function sendVotes() {
 		)
 		appStore.setHasVote(true)
 		appStore.saveCommittedCartDispatch()
+		// TODO: how to execute this?
 		emit('close')
 		router.push({
 			name: `transaction-success`,
@@ -285,5 +296,9 @@ async function contribute() {
 	border-radius: 1rem;
 	box-shadow: var(--box-shadow);
 	padding: 1.5rem;
+
+	// 	add for vfm
+	max-width: 500px;
+	margin: auto;
 }
 </style>

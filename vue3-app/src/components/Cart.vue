@@ -145,6 +145,7 @@
 				<div v-if="isBrightIdRequired" class="p1">
 					<links to="/verify" class="btn-primary"> Verify with BrightID </links>
 				</div>
+				<!-- contribute button -->
 				<button
 					v-if="!isCartEmpty"
 					class="btn-action"
@@ -464,6 +465,7 @@ function hasUnallocatedFunds(): boolean {
 }
 
 function submitCart(event: any) {
+	console.log('submitCart')
 	event.preventDefault()
 	const { nativeTokenDecimals, voiceCreditFactor } = currentRound.value!
 	const votes = cart.value.map((item: CartItem) => {
@@ -475,8 +477,12 @@ function submitCart(event: any) {
 	$vfm.show(
 		{
 			component: contribution.value.isZero() || !hasUserVoted.value ? ContributionModal : ReallocationModal,
+			bind: { votes },
 		},
-		{ votes },
+		{
+			width: 500,
+			clickToClose: contribution.value.isZero() || !hasUserVoted.value,
+		},
 	)
 	// this.$modal.show(
 	// 	contribution.value.isZero() || !hasUserVoted.value ? ContributionModal : ReallocationModal,
