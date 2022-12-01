@@ -14,7 +14,7 @@
 				}"
 			>
 				<breadcrumbs v-if="showBreadCrumb" />
-				<router-view :key="$route.path" />
+				<router-view :key="route.path" />
 			</div>
 			<div v-if="isSideCartShown" id="cart" :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`">
 				<cart-widget />
@@ -45,15 +45,7 @@ import { useAppStore } from '@/stores/app'
 import { sha256 } from '@/utils/crypto'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
-import {
-	MetaMaskConnector,
-	WalletConnectConnector,
-	CoinbaseWalletConnector,
-	useEthersHooks,
-	useWallet,
-	type MetaMaskProvider,
-	type IWalletConnectProvider,
-} from 'vue-dapp'
+import { useEthersHooks, useWallet } from 'vue-dapp'
 import { useMeta } from 'vue-meta'
 
 const route = useRoute()

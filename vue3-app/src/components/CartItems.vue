@@ -9,10 +9,10 @@
 			}"
 		>
 			<div class="project">
-				<links :to="`{ name: 'project', params: { id: ${item.id} } }`">
+				<links :to="{ name: 'project', params: { id: item.id } }">
 					<img class="project-image" :src="item.thumbnailImageUrl" :alt="item.name" />
 				</links>
-				<links class="project-name" :to="`{ name: 'project', params: { id: ${item.id} } }`">
+				<links class="project-name" :to="{ name: 'project', params: { id: item.id } }">
 					{{ item.name }}
 				</links>
 				<div class="remove-cart-item" @click="removeItem(item)">
@@ -33,7 +33,7 @@
 						disabled: !canUpdateAmount(),
 					}"
 					class="contribution-amount"
-					@input="newAmount => updateAmount(item, newAmount)"
+					@input="updateAmount(item, $event)"
 				/>
 			</div>
 		</div>
@@ -75,6 +75,7 @@ function canUpdateAmount(): boolean {
 }
 
 function updateAmount(item: CartItem, amount: string): void {
+	console.log('updateAmount', amount)
 	const sanitizedAmount: string = sanitizeAmount(amount)
 	appStore.updateCartItem({ ...item, amount: sanitizedAmount })
 	appStore.saveCart()

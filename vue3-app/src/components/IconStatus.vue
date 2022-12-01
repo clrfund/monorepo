@@ -1,15 +1,15 @@
 <template>
 	<div class="icon-container">
-		<img :src="`src/assets/${logo}`" class="logo" />
+		<img :src="logoImageUrl" class="logo" />
 		<div class="background">
 			<div v-if="happy" class="status-happy">
-				<img :src="`src/assets/${secondaryLogo}`" class="secondary-icon" />
+				<img :src="secondaryIconUrl" class="secondary-icon" />
 			</div>
 			<div v-if="sad" class="status-sad">
-				<img :src="`src/assets/${secondaryLogo}`" class="secondary-icon" />
+				<img :src="secondaryIconUrl" class="secondary-icon" />
 			</div>
 			<div v-if="custom && secondaryLogo" class="status-custom" :style="cssVars">
-				<img :src="`src/assets/${secondaryLogo}`" class="secondary-icon" />
+				<img :src="secondaryIconUrl" class="secondary-icon" />
 			</div>
 		</div>
 	</div>
@@ -35,6 +35,8 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const cssVars = computed(() => ({ background: props.bg }))
+const logoImageUrl = new URL(`/src/assets/${props.logo}`, import.meta.url).href
+const secondaryIconUrl = new URL(`/src/assets/${props.secondaryLogo}`, import.meta.url).href
 </script>
 
 <style scoped lang="scss">

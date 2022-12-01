@@ -31,8 +31,6 @@ import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
 
-useMeta({ title: (this as any).project?.name || '' })
-
 const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
@@ -54,6 +52,10 @@ const shouldShowCartInput = computed(
 const hasContributeBtn = computed(() => isCurrentRound.value && project.value !== null && project.value.index !== 0)
 const descriptionHtml = computed(() => markdown.render(project.value?.description || ''))
 
+useMeta({
+	title: project.value?.name || '',
+})
+
 onMounted(async () => {
 	if (!!route.params.address && !route.params.id) {
 		// missing project id, redirect back to rounds
@@ -62,6 +64,7 @@ onMounted(async () => {
 	}
 
 	//TODO: update to take factory address as a parameter, default to env. variable
+	console.log('Project mounted', appStore.currentRoundAddress)
 	const currentRoundAddress = appStore.currentRoundAddress || (await getCurrentRound())
 
 	const roundAddress = (route.params.address as string) || appStore.currentRoundAddress

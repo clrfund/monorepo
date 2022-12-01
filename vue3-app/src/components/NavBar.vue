@@ -5,7 +5,7 @@
 		</links>
 		<div class="btn-row">
 			<div>
-				<img class="navbar-btn" :src="`src/assets/${themeIcon}`" @click="toggleTheme()" />
+				<img class="navbar-btn" :src="sunImageUrl" @click="toggleTheme()" />
 			</div>
 			<div v-click-outside="closeHelpDropdown" class="help-dropdown">
 				<img class="navbar-btn" src="@/assets/help.svg" @click="toggleHelpDropdown()" />
@@ -56,7 +56,7 @@ const props = defineProps<Props>()
 
 const showHelpDropdown = ref(false)
 const profileImageUrl = ref<string | null>(null)
-const dropdownItems = ref<{ to?: string; text: string; emoji: string }[]>([
+const dropdownItems = ref<{ to: string; text: string; emoji: string }[]>([
 	{ to: '/', text: 'Home', emoji: '🏠' },
 	{ to: '/about', text: 'About', emoji: 'ℹ️' },
 	{ to: '/about/how-it-works', text: 'How it works', emoji: '⚙️' },
@@ -104,6 +104,8 @@ function toggleTheme(): void {
 const themeIcon = computed<string>(() => {
 	return appStore.theme === ThemeMode.LIGHT ? 'half-moon.svg' : 'sun.svg'
 })
+
+const sunImageUrl = new URL(`/src/assets/${themeIcon.value}`, import.meta.url).href
 
 const themeKey = computed<string>(() => 'theme')
 </script>

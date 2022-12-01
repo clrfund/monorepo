@@ -1,7 +1,7 @@
 <template>
 	<div :class="`tab-container ${isOnCartOrRoundPage ? 'mobile-l' : 'mobile'}`">
 		<links
-			v-for="({ icon, title, to }, idx) of tabs"
+			v-for="({ iconUrl, title, to }, idx) of tabs"
 			:key="idx"
 			:class="{
 				'tab-item': true,
@@ -10,7 +10,7 @@
 			:to="to"
 		>
 			<div class="icon">
-				<img :src="`src/assets/${icon}`" :alt="title" width="16" />
+				<img :src="iconUrl" :alt="title" width="16" />
 				<transition name="pulse" mode="out-in">
 					<div
 						v-if="title === 'Cart' && isCartBadgeShown"
@@ -40,17 +40,17 @@ const { hasReallocationPhaseEnded, committedCart, canUserReallocate, isRoundCont
 
 const tabs = ref([
 	{
-		icon: 'timer.svg',
+		iconUrl: new URL('/src/assets/timer.svg', import.meta.url).href,
 		title: 'Round',
 		to: '/round-information',
 	},
 	{
-		icon: 'projects.svg',
+		iconUrl: new URL('/src/assets/projects.svg', import.meta.url).href,
 		title: 'Projects',
 		to: '/projects',
 	},
 	{
-		icon: 'cart.svg',
+		iconUrl: new URL('/src/assets/cart.svg', import.meta.url).href,
 		title: 'Cart',
 		to: '/cart',
 	},

@@ -13,8 +13,8 @@
 		</button>
 		<div v-else-if="currentUser && !isActionButton" class="profile-info" @click="toggleProfile">
 			<div class="profile-info-balance">
-				<img v-if="showEth" :src="`src/assets/${chainCurrencyLogo}`" />
-				<img v-else :src="`src/assets/${tokenLogo}`" />
+				<img v-if="showEth" :src="chainCurrencyLogoUrl" />
+				<img v-else :src="tokenLogoUrl" />
 				<div v-if="showEth" class="balance">{{ etherBalance }}</div>
 				<div v-else class="balance">{{ balance }}</div>
 			</div>
@@ -82,8 +82,8 @@ const displayAddress = computed<string | null>(() => {
 	return currentUser.value.ensName ?? currentUser.value.walletAddress
 })
 
-const tokenLogo = computed(() => getTokenLogo(nativeTokenSymbol.value))
-const chainCurrencyLogo = computed(() => getTokenLogo(chain.currency))
+const tokenLogoUrl = new URL(`/src/assets/${getTokenLogo(nativeTokenSymbol.value)}`, import.meta.url).href
+const chainCurrencyLogoUrl = new URL(`/src/assets/${getTokenLogo(chain.currency)}`, import.meta.url).href
 
 onDisconnect(() => {
 	appStore.logoutUser()

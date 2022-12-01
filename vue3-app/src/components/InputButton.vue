@@ -1,17 +1,17 @@
 <template>
 	<form action="#" class="input-button">
-		<img v-if="input" class="token-icon" height="24" :src="`src/assets/${tokenLogo}`" />
+		<img v-if="input" class="token-icon" height="24" :src="tokenLogoImageUrl" />
 		<input
 			v-if="input"
 			class="input"
 			type="number"
-			:class="input.class"
 			:value="value"
+			:class="input.class"
 			:required="input.required"
 			:placeholder="input.placeholder"
 			:disabled="input.disabled"
-			@input="emit('input', $event.target)"
-			@blur="emit('blur', $event.target)"
+			@input="emit('input', $event.target.value)"
+			@blur="emit('blur', $event.target.value)"
 		/>
 		<input
 			v-if="button"
@@ -53,14 +53,13 @@ interface Props {
 	value?: string
 }
 
-withDefaults(defineProps<Props>(), {
-	button: undefined,
-})
+defineProps<Props>()
+
 const emit = defineEmits(['input', 'blur', 'click'])
 
-const tokenLogo = computed(() => {
+const tokenLogoImageUrl = computed(() => {
 	const { nativeTokenSymbol } = currentRound.value!
-	return getTokenLogo(nativeTokenSymbol)
+	return new URL(`/src/assets/${getTokenLogo(nativeTokenSymbol)}`, import.meta.url).href
 })
 </script>
 

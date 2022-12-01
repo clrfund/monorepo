@@ -95,7 +95,7 @@ import { useRoute } from 'vue-router'
 
 interface Props {
 	project: Project
-	klerosCurateUrl: string | null
+	klerosCurateUrl?: string | null
 	previewMode: boolean
 }
 

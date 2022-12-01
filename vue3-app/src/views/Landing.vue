@@ -72,7 +72,7 @@
 			<div id="what-you-will-need">
 				<div class="pre-req">
 					<div class="icon-row">
-						<img id="chain-icon" :src="`src/assets/${chain.logo}`" />
+						<img id="chain-icon" :src="chainIconUrl" />
 						<p>
 							<b>{{ chain.label }} for fast and cheap transaction fees</b>
 						</p>
@@ -178,6 +178,7 @@ const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
 function scrollToHowItWorks() {
 	document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })
 }
+const chainIconUrl = new URL(`/src/assets/${chain.logo}`, import.meta.url).href
 </script>
 
 <style scoped lang="scss">
