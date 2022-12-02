@@ -37,6 +37,7 @@ export interface RootState {
   theme: string | null
   factory: Factory | null
   maciFactory: MACIFactory | null
+  showLeaderboardSimple: boolean
 }
 
 const getters = {

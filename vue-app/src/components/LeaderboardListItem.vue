@@ -43,13 +43,11 @@ import { Project } from '@/api/projects'
 import { Route } from 'vue-router'
 import { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
-
-import ClaimButton from '@/components/ClaimButton.vue'
+import { getTokenLogo } from '@/utils/tokens'
 
 @Component({
   components: {
     Links,
-    ClaimButton,
   },
 })
 export default class LeaderboardListItem extends Vue {
@@ -57,6 +55,7 @@ export default class LeaderboardListItem extends Vue {
   @Prop() tokenSymbol!: string
   @Prop() tokenDecimals!: number
   @Prop() rank!: number
+  @Prop() votes!: string
 
   get projectRoute(): Partial<Route> {
     return { name: 'project', params: { id: this.project.id } }
@@ -90,6 +89,10 @@ export default class LeaderboardListItem extends Vue {
       return this.project.imageUrl
     }
     return null
+  }
+
+  get tokenLogo(): string {
+    return getTokenLogo(this.$store.getters.nativeTokenSymbol)
   }
 }
 </script>
@@ -194,8 +197,10 @@ export default class LeaderboardListItem extends Vue {
   text-align: right;
 
   .amount {
+    white-space: nowrap;
     font-size: 2vw;
     font-family: 'Lucida Console', 'Courier New', monospace;
+
     @media (max-width: $breakpoint-m) {
       font-size: 16px;
     }
