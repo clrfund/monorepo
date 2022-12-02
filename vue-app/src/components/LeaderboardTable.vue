@@ -3,7 +3,7 @@
     <div class="info">
       <div class="icon" aria-label="info icon">ℹ</div>
       <div class="message">
-        The funding column below shows the total amount awarded to each project
+        The funding amount is the total amount awarded to each project
         calculated using the quadratic funding formula, &alpha;(V)&sup2; + (1-
         &alpha;)D; where V is the votes, D is the donations and &alpha; is the
         quadratic funding ratio calculated based on the matching pool size and
@@ -13,50 +13,67 @@
       </div>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th class="right">#</th>
-          <th class="left">Project</th>
-          <th class="right">Votes</th>
-          <th>
-            <div class="row">
-              <div>Donations</div>
-              <img :src="require(`@/assets/${tokenLogo}`)" :alt="tokenSymbol" />
+    <div class="content">
+      <div class="card desktop">
+        <div class="rank">#</div>
+        <div class="project">Project</div>
+        <div class="votes">Votes</div>
+        <div class="donation heading">
+          <div>Dontaion</div>
+          <div class="desktop symbol">
+            <img :src="require(`@/assets/${tokenLogo}`)" :alt="tokenSymbol" />
+          </div>
+        </div>
+        <div class="funding heading">
+          <div>Funding</div>
+          <div class="desktop symbol">
+            <img :src="require(`@/assets/${tokenLogo}`)" :alt="tokenSymbol" />
+          </div>
+        </div>
+      </div>
+      <div v-for="(project, index) in projects" :key="project.id">
+        <links :to="projectRoute(project.id)">
+          <div
+            class="card"
+            :class="{
+              first: isFirst(index),
+              second: isSecond(index),
+              third: isThird(index),
+            }"
+          >
+            <div class="rank">
+              {{ index + 1 }}
             </div>
-          </th>
-          <th>
-            <div class="row">
-              <div>Funding</div>
-              <img :src="require(`@/assets/${tokenLogo}`)" :alt="tokenSymbol" />
+            <div class="project">
+              {{ project.name }}
             </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          @click="gotoProject(project.id)"
-          v-for="(project, index) in projects"
-          :key="project.id"
-          class="project"
-          :class="{
-            first: isFirst(index),
-            second: isSecond(index),
-            third: isThird(index),
-          }"
-        >
-          <td class="right">
-            {{ index + 1 }}
-          </td>
-          <td class="project-name">
-            {{ project.name }}
-          </td>
-          <td class="right">{{ getVotes(project.index) }}</td>
-          <td class="right">~{{ getDonation(project.index) }}</td>
-          <td class="right">~{{ formatAmount(project.fundingAmount) }}</td>
-        </tr>
-      </tbody>
-    </table>
+            <div class="votes">
+              <span class="mobile">Votes: </span>
+              <span>{{ getVotes(project.index) }}</span>
+            </div>
+            <div class="donation">
+              <span class="mobile">Donation: </span>
+              <span>~{{ getDonation(project.index) }}</span>
+              <div class="mobile symbol">
+                <img
+                  :src="require(`@/assets/${tokenLogo}`)"
+                  :alt="tokenSymbol"
+                />
+              </div>
+            </div>
+            <div class="funding">
+              <span>~{{ formatAmount(project.fundingAmount) }}</span>
+              <div class="mobile symbol">
+                <img
+                  :src="require(`@/assets/${tokenLogo}`)"
+                  :alt="tokenSymbol"
+                />
+              </div>
+            </div>
+          </div>
+        </links>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -70,6 +87,7 @@ import { Project } from '@/api/projects'
 import { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
+import { Route } from 'vue-router'
 
 @Component({
   components: {
@@ -85,8 +103,8 @@ export default class LeaderboardTable extends Vue {
   @Prop() donations!: string[]
   @Prop() voiceCreditFactor!: BigNumber
 
-  gotoProject(id: string): void {
-    this.$router.push({ name: 'project', params: { id } })
+  projectRoute(id: string): Partial<Route> {
+    return { name: 'project', params: { id } }
   }
 
   isFirst(index: number) {
@@ -126,15 +144,8 @@ export default class LeaderboardTable extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-tbody {
-  tr:hover {
-    background-color: var(--bg-light-highlight);
-  }
-  color: var(--text-body);
-}
-.project {
+.content {
   font-weight: normal;
-  font-size: 14px;
   font-weight: 300;
   line-height: 140%;
 }
@@ -147,46 +158,6 @@ tbody {
 }
 .third {
   color: var(--bg-light-color);
-}
-
-.project-name {
-  overflow-wrap: break-word;
-}
-
-.right {
-  text-align: right;
-}
-
-.left {
-  text-align: left;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-td,
-th {
-  padding: 5px;
-  vertical-align: top;
-}
-
-th {
-  img {
-    display: inline;
-    width: 14px;
-  }
-  background-color: var(--bg-light-highlight);
-}
-
-.inline {
-  display: inline-block;
-}
-
-.row {
-  display: flex;
-  column-gap: 5px;
 }
 
 .info {
@@ -221,6 +192,93 @@ th {
     @media (max-width: $breakpoint-m) {
       padding: 0.5rem 0rem;
     }
+  }
+}
+
+a {
+  .card:hover {
+    background: var(--bg-light-highlight);
+  }
+}
+
+.card {
+  display: grid;
+  gap: 1rem;
+  text-align: start;
+  align-content: start;
+  grid-template-columns: auto 3fr 1fr 1fr 1fr;
+  grid-template-areas: 'rank project votes donation funding';
+  padding: 1rem;
+
+  @media (max-width: $breakpoint-m) {
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    grid-template-areas:
+      'rank project funding'
+      '. donation donation'
+      '. votes votes';
+
+    border: 1px solid $highlight-color;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .rank {
+    grid-area: rank;
+    font-size: 1rem;
+
+    @media (max-width: $breakpoint-m) {
+      font-size: 1.5rem;
+    }
+  }
+
+  .project {
+    grid-area: project;
+    font-size: 1rem;
+
+    @media (max-width: $breakpoint-m) {
+      font-size: 1.5rem;
+    }
+  }
+
+  .funding {
+    grid-area: funding;
+    text-align: right;
+    font-size: 1rem;
+    flex: 1 1 auto;
+
+    @media (max-width: $breakpoint-m) {
+      font-size: 2rem;
+    }
+  }
+
+  .donation {
+    grid-area: donation;
+    text-align: right;
+  }
+
+  .votes {
+    grid-area: votes;
+    text-align: right;
+
+    @media (max-width: $breakpoint-m) {
+      margin-right: 18px;
+    }
+  }
+}
+
+.heading {
+  display: flex;
+  justify-content: end;
+  align-content: end;
+  gap: 5px;
+}
+
+.symbol {
+  display: inline;
+  margin-left: 5px;
+  img {
+    width: 14px;
   }
 }
 </style>
