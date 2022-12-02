@@ -305,7 +305,7 @@ import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { RoundInfo, getRoundInfo } from '@/api/round'
+import { RoundInfo } from '@/api/round'
 import { chain } from '@/api/core'
 
 import { lsGet, lsSet } from '@/utils/localStorage'
@@ -317,7 +317,7 @@ import WalletModal from '@/components/WalletModal.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import { LOAD_ROUND_INFO } from '@/store/action-types'
+import { LOAD_ROUNDS, LOAD_ROUND_INFO } from '@/store/action-types'
 
 @Component({
   components: {
@@ -371,10 +371,11 @@ export default class RoundInformation extends Vue {
     this.roundInfo = null
     this.isLoading = true
     if (this.roundAddress) {
-      this.roundInfo = await getRoundInfo(
-        this.roundAddress,
-        this.$store.state.currentRound
-      )
+      if (!this.$store.state.rounds) {
+        await this.$store.dispatch(LOAD_ROUNDS)
+      }
+      const round = await this.$store.state.rounds.getRound(this.roundAddress)
+      this.roundInfo = await round.getRoundInfo(this.$store.state.currentRound)
     }
     this.isLoading = false
   }

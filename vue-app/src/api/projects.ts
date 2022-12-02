@@ -1,4 +1,4 @@
-import { Contract, Signer } from 'ethers'
+import { Contract, Signer, BigNumber } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { FundingRound } from './abi'
 import { factory, provider, recipientRegistryType } from './core'
@@ -6,6 +6,18 @@ import { factory, provider, recipientRegistryType } from './core'
 import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
+
+export interface LeaderboardProject {
+  id: string // Address or another ID depending on registry implementation
+  name: string
+  index: number
+  bannerImageUrl?: string
+  thumbnailImageUrl?: string
+  imageUrl?: string
+  allocatedAmount: BigNumber
+  votes: BigNumber
+  donation: BigNumber
+}
 
 export interface Project {
   id: string // Address or another ID depending on registry implementation

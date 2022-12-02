@@ -32,10 +32,10 @@ export class RequestSubmittedParser extends BaseParser {
 
     // do not update this for removal of record
     let metadata: any
-    let address: string | undefined = undefined
+    let recipientAddress: string | undefined = undefined
     let name: string | undefined = undefined
     if (state === RecipientState.Registered) {
-      address = args._recipient
+      recipientAddress = args._recipient
       try {
         metadata = JSON.parse(args._metadata)
         name = metadata.name
@@ -48,7 +48,7 @@ export class RequestSubmittedParser extends BaseParser {
     return {
       id,
       recipientIndex,
-      address,
+      recipientAddress,
       name,
       state,
       metadata,

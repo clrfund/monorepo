@@ -38,7 +38,7 @@
           v-if="shouldShowCartInput && hasContributeBtn()"
           :project="project"
         />
-        <claim-button :project="project" />
+        <claim-button :project="project" :roundAddress="roundAddress" />
         <p
           v-if="
             $store.getters.hasUserContributed &&
@@ -52,11 +52,11 @@
         <h2>{{ $t('projectProfile.h2_1') }}</h2>
         <markdown :raw="project.description" />
       </div>
-      <div class="project-section">
+      <div v-if="project.problemSpace" class="project-section">
         <h2>{{ $t('projectProfile.h2_2') }}</h2>
         <markdown :raw="project.problemSpace" />
       </div>
-      <div class="project-section">
+      <div v-if="project.plans" class="project-section">
         <h2>{{ $t('projectProfile.h2_3') }}</h2>
         <markdown :raw="project.plans" />
       </div>
@@ -208,9 +208,11 @@ export default class ProjectProfile extends Vue {
   }
 
   get isCurrentRound(): boolean {
-    const roundAddress =
-      this.$route.params.address || this.$store.state.currentRoundAddress
-    return this.$store.getters.isCurrentRound(roundAddress)
+    return this.$store.getters.isCurrentRound(this.roundAddress)
+  }
+
+  get roundAddress(): string {
+    return this.$route.params.address || this.$store.state.currentRoundAddress
   }
 
   get shouldShowCartInput(): boolean {

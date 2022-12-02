@@ -15,7 +15,7 @@ export function formatAmount(
       : formatUnits(_value as BigNumber, units).toString()
   let result: number = parseFloat(formattedValue)
   // If `maxDecimals` passed, fix/truncate to string and parse back to number
-  if (maxDecimals) {
+  if (maxDecimals != null) {
     result = parseFloat(result.toFixed(maxDecimals))
   }
   // If `maximumSignificantDigits` passed, return compact human-readable form to specified digits

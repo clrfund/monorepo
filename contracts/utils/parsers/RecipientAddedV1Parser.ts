@@ -4,7 +4,6 @@ import { BigNumber, utils } from 'ethers'
 import { TOPIC_ABIS } from '../abi'
 import { RecipientState } from '../constants'
 import { BaseParser } from './BaseParser'
-import { toDate } from '../date'
 
 export class RecipientAddedV1Parser extends BaseParser {
   constructor(topic0: string) {
@@ -20,7 +19,7 @@ export class RecipientAddedV1Parser extends BaseParser {
     const { args } = parser.parseLog(log)
     const id = args._recipient
     const recipientIndex = BigNumber.from(args._index).toNumber()
-    const address = args._recipient
+    const recipientAddress = args._recipient
     let metadata: any
     let name: string
     try {
@@ -35,7 +34,7 @@ export class RecipientAddedV1Parser extends BaseParser {
     return {
       id,
       recipientIndex,
-      address,
+      recipientAddress,
       name,
       state,
       metadata,

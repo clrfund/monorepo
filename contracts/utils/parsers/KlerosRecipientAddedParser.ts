@@ -13,7 +13,7 @@ function toUtf8String(hex: string): string | undefined {
   }
 }
 
-function sanitizeIpfsUrl(url: string | undefined): string | undefined {
+function sanitizeImageHash(url: string | undefined): string | undefined {
   if (!url) {
     return url
   }
@@ -29,17 +29,17 @@ function decodeMetadata(rawMetadata: string): any {
     const utf8s = decoded.map(toUtf8String)
 
     const name = utf8s[0]
-    const address = decoded[1]
-    const bannerImageUrl = sanitizeIpfsUrl(utf8s[2])
+    const recipientAddress = decoded[1]
+    const imageHash = sanitizeImageHash(utf8s[2])
     const description = utf8s[3]
     const websiteUrl = utf8s[4]
     const twitterUrl = utf8s[5]
 
     return {
       name,
-      address,
+      recipientAddress,
       description,
-      bannerImageUrl,
+      imageHash,
       websiteUrl,
       twitterUrl,
     }
@@ -67,16 +67,16 @@ export class KlerosRecipientAddedParser extends BaseParser {
     const state = RecipientState.Accepted
     const rawMetadata = args._metadata
     const metadata = decodeMetadata(args._metadata)
-    const address = metadata?.address || constants.AddressZero
+    const recipientAddress = metadata?.recipientAddress || constants.AddressZero
     const name = metadata?.name || '?'
 
     return {
       id,
       recipientIndex,
       state,
-      address,
+      recipientAddress,
       name,
-      metadata: JSON.stringify(metadata),
+      metadata,
       rawMetadata,
     }
   }

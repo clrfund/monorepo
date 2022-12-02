@@ -6,8 +6,9 @@ export enum recipientRegistryType {
 
 export interface Project {
   id: string
+  requester?: string
   recipientIndex?: number
-  address?: string
+  recipientAddress?: string
   name?: string
   state: string
   createdAt?: Date
@@ -15,9 +16,8 @@ export interface Project {
   tallyIndex?: number
   tallyResult?: string
   spentVoiceCredits?: string
-  tallyRecipientAddress?: string
   formattedDonationAmount?: string
-  formattedAllocatedAmount?: string
+  allocatedAmount?: string
   metadata?: any
   rawMetadata?: string
 }
@@ -29,16 +29,19 @@ export interface Token {
 
 export interface Round {
   address: string
+  userRegistryAddress: string
   recipientRegistryAddress: string
   maciAddress: string
-  contributorCount: string
+  contributorCount: number
   totalSpent: string
   matchingPoolSize: string
   voiceCreditFactor: string
   isFinalized: boolean
   isCancelled: boolean
   tallyHash: string
-  nativeToken: Token
+  nativeTokenAddress: string
+  nativeTokenSymbol: string
+  nativeTokenDecimals: number
   startTime: number
   endTime: number
 }

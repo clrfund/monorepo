@@ -73,7 +73,7 @@ import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { getCurrentRound, getRoundInfo } from '@/api/round'
+import { getCurrentRound } from '@/api/round'
 import { Project, getProjects } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
@@ -81,6 +81,7 @@ import CartWidget from '@/components/CartWidget.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'
+import { Rounds } from '@/api/rounds'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 
@@ -138,15 +139,12 @@ export default class ProjectList extends Vue {
   }
 
   private async loadProjects(roundAddress: string) {
-    const round = await getRoundInfo(
-      roundAddress,
-      this.$store.state.currentRound
-    )
-    const projects = await getProjects(
-      round.recipientRegistryAddress,
-      round.startTime.toSeconds(),
-      round.votingDeadline.toSeconds()
-    )
+    if (!this.$store.state.rounds) {
+      await this.$store.dispatch('LOAD_ROUNDS')
+    }
+
+    const round = await this.$store.state.rounds.getRound(roundAddress)
+    const projects = await round.getProjects()
     const visibleProjects = projects.filter((project) => {
       return !project.isHidden && !project.isLocked
     })

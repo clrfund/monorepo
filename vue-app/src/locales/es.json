@@ -762,6 +762,19 @@
     "link1": "Add project",
     "div1": "😢 No projects match your search. Try using the filter to narrow down what you're looking for."
   },
+  "leaderboard": {
+    "no_project": "No projects in this round",
+    "more": "more",
+    "less": "less",
+    "header": "Leaderboard",
+    "heading": {
+      "project": "Project",
+      "votes": "Votes",
+      "donation": "Donation",
+      "funding": "Funding"
+    },
+    "message": "The funding amount is the total amount awarded to each project, calculated using the quadratic funding formula. The donation amount is the community donation. Votes is the sum of square root of each donation, scaled by the MACI voice credit factor and the token decimals."
+  },
   "recipientRegistry": {
     "h2": "Recipient registry",
     "th1": "Project",
@@ -778,8 +791,7 @@
   },
   "roundList": {
     "h1": "Rounds",
-    "link1": "Round {index}",
-    "link2": "Round {index}"
+    "link1": "Round {index}"
   },
   "transactionSuccess": {
     "p1": "reallocated!",

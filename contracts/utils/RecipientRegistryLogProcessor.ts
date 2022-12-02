@@ -44,7 +44,7 @@ export class RecipientRegistryLogProcessor {
     startBlock: number
     endBlock: number
     blocksPerBatch: number
-    etherscanApiKey?: string
+    etherscanApiKey: string
     network: string
   }): Promise<Log[]> {
     // fetch event logs containing project information
@@ -60,7 +60,6 @@ export class RecipientRegistryLogProcessor {
     const logProvider = ProviderFactory.createProvider({
       network,
       etherscanApiKey,
-      provider: this.registry.provider,
     })
 
     let logs: Log[] = []
@@ -106,24 +105,30 @@ export class RecipientRegistryLogProcessor {
     for (let i = 0; i < logs.length; i++) {
       const log = logs[i]
       const parser = ParserFactory.create(log.topics[0])
-      let parsed: any
+      let parsed: Partial<Project> = {}
 
       try {
         parsed = await parser.parse(log)
       } catch (err) {
         console.log('failed to parse', (err as Error).message)
       }
-      const address = parsed.address || constants.AddressZero
+      const address = parsed.recipientAddress || constants.AddressZero
       const id = parsed.id || '0'
-      const block = await this.registry.provider.getBlock(log.blockNumber)
+
+      const [block, transaction] = await Promise.all([
+        this.registry.provider.getBlock(log.blockNumber),
+        this.registry.provider.getTransactionReceipt(log.transactionHash),
+      ])
       const blockTimestamp = toDate(block.timestamp)
       const createdAt = parsed.createdAt || blockTimestamp
+      const requester = transaction.from
 
       if (!recipients[id]) {
         recipients[id] = {
           id,
-          state: RecipientState.Accepted,
-          address,
+          state: RecipientState.Registered,
+          recipientAddress: address,
+          requester,
           name: parsed.name,
           metadata: parsed.metadata,
           createdAt,

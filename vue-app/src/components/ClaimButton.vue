@@ -27,27 +27,29 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { FixedNumber } from 'ethers'
+import { BigNumber } from 'ethers'
 
-import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
+import { isFundsClaimed } from '@/api/claims'
 import { Project } from '@/api/projects'
 import { RoundStatus, RoundInfo } from '@/api/round'
-import { Tally } from '@/api/tally'
+import { Token } from '@/api/token'
 
-import { LOAD_TALLY } from '@/store/action-types'
 import { formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
 
 import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
+import { LOAD_ROUNDS } from '@/store/action-types'
 
 @Component({
   components: { Loader },
 })
 export default class ClaimButton extends Vue {
   @Prop() project!: Project
+  @Prop() roundAddress!: string
 
-  allocatedAmount: FixedNumber | null = null
+  token: Token | null = null
+  allocatedAmount: BigNumber | null = null
   claimed: boolean | null = null
   isLoading = true
 
@@ -55,20 +57,26 @@ export default class ClaimButton extends Vue {
     return this.$store.state.currentRound
   }
 
-  get tally(): Tally | null {
-    return this.$store.state.tally
-  }
-
   get descriptionHtml(): string {
     return markdown.render(this.project?.description || '')
   }
 
   get tokenSymbol(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return nativeTokenSymbol ?? ''
+    return this.token?.symbol ?? ''
   }
 
-  created() {
+  get tokenDecimals(): number {
+    return this.token?.decimals ?? 18
+  }
+
+  get isRoundFinalized(): boolean {
+    return this.$store.state.rounds.isRoundFinalized(this.roundAddress)
+  }
+
+  async created() {
+    if (!this.$store.state.rounds) {
+      await this.$store.dispatch(LOAD_ROUNDS)
+    }
     this.checkAllocation()
   }
 
@@ -79,7 +87,7 @@ export default class ClaimButton extends Vue {
     if (
       !this.project ||
       !this.currentRound ||
-      !this.$store.getters.isRoundFinalized ||
+      !this.$store.state.rounds.isRoundFinalized(this.roundAddress) ||
       this.allocatedAmount
     ) {
       this.isLoading = false
@@ -87,30 +95,25 @@ export default class ClaimButton extends Vue {
     }
 
     this.isLoading = true
-    if (!this.tally) {
-      await this.loadTally()
-    }
 
-    this.allocatedAmount = await getAllocatedAmount(
-      this.currentRound.fundingRoundAddress,
-      this.currentRound.nativeTokenDecimals,
-      this.tally!.results.tally[this.project.index],
-      this.tally!.totalVoiceCreditsPerVoteOption.tally[this.project.index]
+    const selectedRound = await this.$store.state.rounds.getRound(
+      this.roundAddress
     )
-    this.claimed = await isFundsClaimed(
-      this.currentRound.fundingRoundAddress,
-      this.project.address
+    this.token = await selectedRound.getTokenInfo(this.roundAddress)
+    this.allocatedAmount = await selectedRound.getAllocatedAmount(
+      this.project.id
     )
+
+    this.claimed = this.$store.getters.isCurrentRound(this.roundAddress)
+      ? await isFundsClaimed(this.roundAddress, this.project.address)
+      : true
     this.isLoading = false
-  }
-
-  async loadTally() {
-    await this.$store.dispatch(LOAD_TALLY)
   }
 
   hasClaimBtn(): boolean {
     return (
       !!this.currentRound &&
+      this.$store.getters.isCurrentRound(this.roundAddress) &&
       this.currentRound.status === RoundStatus.Finalized &&
       this.project !== null &&
       this.project.index !== 0 &&
@@ -124,10 +127,11 @@ export default class ClaimButton extends Vue {
     return this.hasClaimBtn() && this.$store.state.currentUser && !this.claimed
   }
 
-  formatAmount(value: FixedNumber): string {
+  formatAmount(value: BigNumber | null): string {
     const maxDecimals = 6
-    const { nativeTokenDecimals } = this.currentRound!
-    return formatAmount(value, nativeTokenDecimals, null, maxDecimals)
+    return value
+      ? formatAmount(value, this.tokenDecimals, null, maxDecimals)
+      : '0'
   }
 
   claim() {

@@ -20,7 +20,7 @@ export class RecipientAddedParser extends BaseParser {
     const { args } = parser.parseLog(log)
     const id = args._recipientId
     const recipientIndex = BigNumber.from(args._index).toNumber()
-    const address = args._recipient
+    const recipientAddress = args._recipient
     const addedAt = args._timestamp
     let metadata: any
     let name: string
@@ -37,7 +37,7 @@ export class RecipientAddedParser extends BaseParser {
       id,
       recipientIndex,
       createdAt: toDate(addedAt),
-      address,
+      recipientAddress,
       name,
       state,
       metadata,

@@ -17,10 +17,12 @@ type RoundListEntry = {
   network: string
   address: string
   startTime: number
+  isFinalized: boolean
 }
 
 const toUndefined = () => undefined
 const toString = (val: BigNumber) => BigNumber.from(val).toString()
+const toZero = () => BigNumber.from(0)
 
 function roundFileName(directory: string, address: string): string {
   return path.join(directory, `${address}.json`)
@@ -42,7 +44,6 @@ function roundMapKey(round: RoundListEntry): string {
 
 async function updateRoundList(filePath: string, round: RoundListEntry) {
   const roundMap = new Map<string, RoundListEntry>()
-  roundMap.set(roundMapKey(round), round)
   let json = ''
   try {
     json = fs.readFileSync(filePath, 'utf8')
@@ -54,11 +55,12 @@ async function updateRoundList(filePath: string, round: RoundListEntry) {
     const previous = previousRounds[i]
     roundMap.set(roundMapKey(previous), previous)
   }
+  roundMap.set(roundMapKey(round), round)
 
   const rounds: RoundListEntry[] = Array.from(roundMap.values())
 
-  // sort in descending start time order
-  rounds.sort((round1, round2) => round2.startTime - round1.startTime)
+  // sort in ascending start time order
+  rounds.sort((round1, round2) => round1.startTime - round2.startTime)
   writeToFile(filePath, rounds)
 }
 
@@ -76,14 +78,15 @@ async function mergeRecipientTally({
   tally: any
 }): Promise<Project[]> {
   console.log('Merging projects and tally results...')
-  const { startTime, endTime, voiceCreditFactor } = round
-  const { decimals } = round.nativeToken
+  const { startTime, endTime, voiceCreditFactor, nativeTokenDecimals } = round
+
+  round.totalSpent = round.totalSpent || tally.totalVoiceCredits.spent
 
   const projectAddresses = Object.values(projectRecords).reduce(
-    (addresses: Record<string, Project>, record) => {
-      if (record.address) {
-        const lowerCaseAddress = record.address.toLowerCase()
-        addresses[lowerCaseAddress] = record
+    (addresses: Record<string, Project>, project) => {
+      if (project.recipientAddress) {
+        const lowerCaseAddress = project.recipientAddress.toLowerCase()
+        addresses[lowerCaseAddress] = project
       }
       return addresses
     },
@@ -91,9 +94,9 @@ async function mergeRecipientTally({
   )
 
   const projectIndices = Object.values(projectRecords).reduce(
-    (indices: Record<number, Project>, record) => {
-      if (record.recipientIndex) {
-        indices[record.recipientIndex] = record
+    (indices: Record<number, Project>, project) => {
+      if (project.recipientIndex) {
+        indices[project.recipientIndex] = project
       }
       return indices
     },
@@ -119,28 +122,23 @@ async function mergeRecipientTally({
     const spentVoiceCredits = tally.totalVoiceCreditsPerVoteOption.tally[i]
     const formattedDonationAmount = utils.formatUnits(
       BigNumber.from(spentVoiceCredits).mul(voiceCreditFactor),
-      decimals
+      nativeTokenDecimals
     )
 
-    const allocatedAmount = await roundContract.getAllocatedAmount(
-      tallyResult,
-      spentVoiceCredits
-    )
-    const formattedAllocatedAmount = utils.formatUnits(
-      allocatedAmount,
-      decimals
-    )
+    const allocatedAmount = await roundContract
+      .getAllocatedAmount(tallyResult, spentVoiceCredits)
+      .then(toString)
 
     const project = projectIndices[i] || projectAddresses[address.toLowerCase()]
-    projects.push({
-      ...project,
-      tallyRecipientAddress: address,
-      tallyIndex: i,
-      tallyResult,
-      spentVoiceCredits,
-      formattedDonationAmount,
-      formattedAllocatedAmount,
-    })
+    if (project) {
+      projects.push({
+        ...project,
+        tallyResult,
+        spentVoiceCredits,
+        formattedDonationAmount,
+        allocatedAmount,
+      })
+    }
   }
 
   return projects
@@ -155,50 +153,63 @@ async function getRoundInfo(
   round.nativeTokenAddress = await roundContract
     .nativeToken()
     .catch(toUndefined)
-  if (round.nativeTokenAddress) {
-    const token = await ethers.getContractAt('ERC20', round.nativeTokenAddress)
-    const decimals = await token.decimals()
 
-    const symbol = await token.symbol()
-    round.nativeToken = { symbol, decimals }
-  }
+  const token = await ethers.getContractAt('ERC20', round.nativeTokenAddress)
+  round.nativeTokenDecimals = await token.decimals().catch(toUndefined)
+  round.nativeTokenSymbol = await token.symbol().catch(toUndefined)
+  console.log(
+    'Fetched token data',
+    round.nativeTokenAddress,
+    round.nativeTokenSymbol,
+    round.nativeTokenDecimals
+  )
 
   round.contributorCount = await roundContract
     .contributorCount()
-    .then((val: BigNumber) => BigNumber.from(val).toNumber())
+    .then((val: BigNumber) => val.toNumber())
     .catch(toUndefined)
 
   round.matchingPoolSize = await roundContract
     .matchingPoolSize()
     .then(toString)
     .catch(toUndefined)
+
   round.totalSpent = await roundContract
     .totalSpent()
     .then(toString)
     .catch(toUndefined)
+
   round.voiceCreditFactor = await roundContract
     .voiceCreditFactor()
     .then(toString)
     .catch(toUndefined)
+
   round.isFinalized = await roundContract.isFinalized().catch(toUndefined)
   round.isCancelled = await roundContract.isCancelled().catch(toUndefined)
   round.tallyHash = await roundContract.tallyHash().catch(toUndefined)
 
   round.maciAddress = await roundContract.maci().catch(toUndefined)
-
   if (round.maciAddress) {
     try {
       const maci = await ethers.getContractAt('MACI', round.maciAddress)
-      const startTime = await maci.signUpTimestamp()
+      const startTime = await maci.signUpTimestamp().catch(toZero)
       round.startTime = startTime.toNumber()
-      const signUpDuration = await maci.signUpDurationSeconds()
-      const votingDuration = await maci.votingDurationSeconds()
-      const endTime = startTime.add(signUpDuration).add(votingDuration)
+      const signUpDuration = await maci.signUpDurationSeconds().catch(toZero)
+      const votingDuration = await maci.votingDurationSeconds().catch(toZero)
+      const endTime = startTime
+        .add(round.signUpDuration)
+        .add(round.votingDuration)
       round.endTime = endTime.toNumber()
+      round.signUpDuration = signUpDuration.toNumber()
+      round.votingDuration = votingDuration.toNumber()
     } catch {
-      // ignore error
+      // older MACI may not have all the functions
     }
   }
+
+  round.userRegistryAddress = await roundContract
+    .userRegistry()
+    .catch(toUndefined)
 
   round.recipientRegistryAddress = await roundContract
     .recipientRegistry()
@@ -214,11 +225,9 @@ async function getRoundInfo(
 task('fetch-round', 'Fetch round data')
   .addParam('roundAddress', 'Funding round contract address')
   .addParam('outputDir', 'Output directory')
-  .addOptionalParam(
+  .addParam(
     'etherscanApiKey',
-    'Etherscan API key used to retrieve logs using etherscan API',
-    undefined,
-    types.string
+    'Etherscan API key used to retrieve logs using etherscan API'
   )
   .addOptionalParam(
     'startBlock',
@@ -253,11 +262,12 @@ task('fetch-round', 'Fetch round data')
       console.log('Processing on ', network.name)
       console.log('Funding round address', roundAddress)
 
+      const outputSubDir = path.join(outputDir, network.name)
       try {
-        fs.statSync(outputDir)
+        fs.statSync(outputSubDir)
       } catch {
         // exit script if failed to create directory
-        fs.mkdirSync(outputDir, { recursive: true })
+        fs.mkdirSync(outputSubDir, { recursive: true })
       }
 
       const roundContract = await ethers.getContractAt(
@@ -305,12 +315,13 @@ task('fetch-round', 'Fetch round data')
       }
 
       // write to round file
-      const filename = roundFileName(outputDir, round.address)
-      writeToFile(filename, {
+      const filename = roundFileName(outputSubDir, round.address)
+      const roundData: RoundData = {
         round,
         projects,
         tally,
-      })
+      }
+      writeToFile(filename, roundData)
 
       // update round list
       const listFilename = roundListFileName(outputDir)
@@ -318,6 +329,7 @@ task('fetch-round', 'Fetch round data')
         network: network.name,
         address: round.address,
         startTime: round.startTime,
+        isFinalized: round.isFinalized && !round.isCancelled,
       })
     }
   )
