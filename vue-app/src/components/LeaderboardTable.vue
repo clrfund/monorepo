@@ -62,7 +62,10 @@
               </div>
             </div>
             <div class="funding">
-              <span>~{{ formatAmount(project.fundingAmount) }}</span>
+              <span class="mobile">Funding: </span>
+              <span class="amount">
+                ~{{ formatAmount(project.fundingAmount) }}
+              </span>
               <div class="mobile symbol">
                 <img
                   :src="require(`@/assets/${tokenLogo}`)"
@@ -183,6 +186,7 @@ export default class LeaderboardTable extends Vue {
 
   .message {
     flex: 1 1 auto;
+    text-align: justify;
   }
 
   .icon {
@@ -197,8 +201,9 @@ export default class LeaderboardTable extends Vue {
 
 a {
   .card:hover {
-    background: var(--bg-light-highlight);
+    background: var(--bg-secondary-highlight);
   }
+  color: var(--text-body);
 }
 
 .card {
@@ -210,13 +215,19 @@ a {
   grid-template-areas: 'rank project votes donation funding';
   padding: 1rem;
 
+  &.desktop {
+    background: var(--bg-light-highlight);
+  }
+
   @media (max-width: $breakpoint-m) {
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 1fr;
     gap: 1rem;
     grid-template-areas:
-      'rank project funding'
-      '. donation donation'
-      '. votes votes';
+      'rank'
+      'project'
+      'funding'
+      'donation'
+      'votes';
 
     border: 1px solid $highlight-color;
     border-radius: 0.5rem;
@@ -234,27 +245,25 @@ a {
 
   .project {
     grid-area: project;
-    font-size: 1rem;
-
-    @media (max-width: $breakpoint-m) {
-      font-size: 1.5rem;
-    }
   }
 
   .funding {
     grid-area: funding;
     text-align: right;
-    font-size: 1rem;
     flex: 1 1 auto;
-
     @media (max-width: $breakpoint-m) {
-      font-size: 2rem;
+      .amount {
+        font-size: 1.6rem;
+      }
     }
   }
 
   .donation {
     grid-area: donation;
     text-align: right;
+    img {
+      margin-left: 8px;
+    }
   }
 
   .votes {
@@ -262,7 +271,7 @@ a {
     text-align: right;
 
     @media (max-width: $breakpoint-m) {
-      margin-right: 18px;
+      margin-right: 23px;
     }
   }
 }
@@ -276,7 +285,6 @@ a {
 
 .symbol {
   display: inline;
-  margin-left: 5px;
   img {
     width: 14px;
   }

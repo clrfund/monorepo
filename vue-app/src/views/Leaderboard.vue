@@ -11,9 +11,9 @@
       <div v-else>
         <div class="header">
           <div><h2>Leaderboard</h2></div>
-          <button class="btn-action" @click="toggleView()">
-            <div v-if="isSimpleView">Show more</div>
-            <div v-else>Show less</div>
+          <button class="btn-secondary" @click="toggleView()">
+            <div v-if="isSimpleView">More</div>
+            <div v-else>Less</div>
           </button>
         </div>
         <div class="hr" />
