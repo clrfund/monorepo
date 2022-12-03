@@ -19,7 +19,7 @@
         <div class="project">Project</div>
         <div class="votes">Votes</div>
         <div class="donation heading">
-          <div>Dontaion</div>
+          <div>Donation</div>
           <div class="desktop symbol">
             <img :src="require(`@/assets/${tokenLogo}`)" :alt="tokenSymbol" />
           </div>
@@ -261,8 +261,10 @@ a {
   .donation {
     grid-area: donation;
     text-align: right;
-    img {
-      margin-left: 8px;
+    .mobile {
+      img {
+        margin-left: 8px;
+      }
     }
   }
 
