@@ -1,6 +1,6 @@
 name: Cancel current round
 
-on: push
+on: workflow_dispatch
 
 env:
   NODE_VERSION: 16.x
@@ -8,7 +8,7 @@ env:
   WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
 
 jobs:
-  setup-and-tests:
+  cancel-round:
     runs-on: ubuntu-22.04
     steps:
     - name: Use Node.js ${{ env.NODE_VERSION }}
@@ -20,7 +20,7 @@ jobs:
     - name: Build CLR
       run: |
         yarn && yarn build
-    - name: Run create new round script
+    - name: Run the cancel round script
       run: |
         cd contracts
         yarn hardhat cancel-round --factory ${FACTORY_ADDRESS} --network arbitrum-goerli

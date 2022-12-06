@@ -4,7 +4,7 @@ task('cancel-round', 'Cancel the current round')
   .addParam('factory', 'The funding round factory contract address')
   .setAction(async ({ factory }, { network, ethers }) => {
     const [deployer] = await ethers.getSigners()
-    console.log('caller', deployer)
+    console.log('deployer', deployer.address)
     const fundingRoundFactory = await ethers.getContractAt(
       'FundingRoundFactory',
       factory,
