@@ -14,6 +14,7 @@
     "tally:local": "hardhat run --network localhost scripts/tally.ts",
     "finalize:local": "hardhat run --network localhost scripts/finalize.ts",
     "claim:local": "hardhat run --network localhost scripts/claim.ts",
+    "test:local": "yarn deploy:local && yarn deployTestRound:local && yarn contribute:local && yarn vote:local && yarn tally:local && yarn finalize:local && yarn claim:local",
     "test": "hardhat test",
     "e2e": "NODE_OPTIONS=--max-old-space-size=4096 hardhat test --network localhost e2e/index.ts",
     "lint:js": "eslint '{tests,e2e,scripts}/**/*.ts'",
