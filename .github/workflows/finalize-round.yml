@@ -4,11 +4,11 @@ on: workflow_dispatch
 
 env:
   NODE_VERSION: 16.x
-  FACTORY_ADDRESS: 0xe7b5bc91033861ed521898df744343b3c61b1ee7
-  SUBGRPAH_URL: https://api.thegraph.com/subgraphs/name/yuetloo/clrfund-arbitrum-goerli
+  FACTORY_ADDRESS: 0x62cab00605368834c6adf8e6f53da14d6fa9ded1
+  SUBGRPAH_URL: https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli
   NETWORK: arbitrum-goerli
-  COORDINATOR_ETH_PK: ${{ secrets.COORDINATOR_ETH_PK }}
-  COORDINATOR_PK: ${{ secrets.COORDINATOR_PK }}
+  COORDINATOR_ETH_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
+  COORDINATOR_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_MACI_PRIVATE_KEY }}
 
 jobs:
   setup:

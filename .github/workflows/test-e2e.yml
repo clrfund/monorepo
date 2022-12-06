@@ -1,7 +1,9 @@
 name: End to end tests
 
 on:
-  pull_request
+  push:
+    branches:
+      - 'develop'
 
 env:
   NODE_VERSION: 16.x

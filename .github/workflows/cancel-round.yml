@@ -1,13 +1,11 @@
-name: Hardhat script tests
+name: Create a new test round on arbitrum goerli
 
-on:
-  push:
-    paths:
-      - 'contracts/scripts/**'
-      - '.github/workflows/test-scripts.yml'
+on: workflow_dispatch
 
 env:
   NODE_VERSION: 16.x
+  FACTORY_ADDRESS: 0x62cab00605368834c6adf8e6f53da14d6fa9ded1
+  WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
 
 jobs:
   setup-and-tests:
@@ -17,31 +15,12 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
-    - name: Install g++ library dependencies
-      run: |
-        sudo apt update
-        sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
-    - name: Install rust toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-    - name: Install zkutil
-      run: |
-        cargo install zkutil --version 0.3.2
     - name: Checkout source code
       uses: actions/checkout@v3
-    - name: Download batch 64 params
-      run: |
-        ls -la $GITHUB_WORKSPACE
-        $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
     - name: Build CLR
       run: |
         yarn && yarn build
-    - name: Start hardhat network
+    - name: Run create new round script
       run: |
-        yarn start:node &
-    - name: Run script tests
-      run: |
-        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
-        echo $NODE_CONFIG
-        yarn test:local
+        cd contracts
+        yarn hardhat cancel-round --factory ${FACTORY_ADDRESS} --network arbitrum-goerli
