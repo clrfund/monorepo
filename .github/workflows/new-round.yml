@@ -1,6 +1,6 @@
 name: Create new round
 
-on: push
+on: workflow_dispatch
 
 env:
   NODE_VERSION: 16.x
@@ -11,7 +11,7 @@ env:
   WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
 
 jobs:
-  setup-and-tests:
+  create-new-round:
     runs-on: ubuntu-22.04
     steps:
     - name: Use Node.js ${{ env.NODE_VERSION }}
