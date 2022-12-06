@@ -5,7 +5,7 @@ on:
 
 env:
   NODE_VERSION: 16.x
-  CIRCUIT_TYPE: small
+  CIRCUIT_TYPE: prod
 
 jobs:
   e2e-test:
@@ -32,24 +32,14 @@ jobs:
     - name: Install zkutil
       run: |
         cargo install zkutil --version 0.3.2
-    - name: Build MACI
-      run: |
-        git config --global url."https://".insteadOf ssh://
-        cd maci
-        npm i && npm run bootstrap && npm run build
-    - name: Build snarks
-      run: |
-        cd maci/circuits
-        ./scripts/buildSnarksSmall.sh
-        chmod u+x params/batchUstSmall params/qvtSmall
-        chmod u+r params/*
-        pwd
-        ls
     - name: Checkout Clrfund
       uses: actions/checkout@v3
       with:
         path: monorepo
-    - name: Install Clrfund
+    - name: Download batch 64 zk circuit params
+      run: |
+        $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
+    - name: Build Clrfund
       run: |
         cd monorepo
         yarn && yarn build
@@ -57,18 +47,9 @@ jobs:
       run: |
         cd monorepo
         yarn start:node &
-    - name: Copy snark verifier contracts
-      run:  |
-        pwd
-        echo $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE
-        ls $GITHUB_WORKSPACE/maci
-        cd monorepo
-        cp $GITHUB_WORKSPACE/maci/circuits/params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
-        cp $GITHUB_WORKSPACE/maci/circuits/params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
     - name: Run tests
       run: |
-        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/maci/circuits/params'; console.log(JSON.stringify({ snarkParamsPath }));")
+        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
         echo $NODE_CONFIG
         cd monorepo
         yarn test:e2e
