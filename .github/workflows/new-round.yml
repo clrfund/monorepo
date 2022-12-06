@@ -1,4 +1,4 @@
-name: Create a new test round on arbitrum goerli
+name: Create new round
 
 on: workflow_dispatch
 
