@@ -1,22 +1,18 @@
-name: End to end tests
+name: Hardhat script tests
 
 on:
-  pull_request
+  push:
+    paths:
+      - 'contracts/scripts/**'
+      - '.github/workflows/test-scripts.yml'
 
 env:
   NODE_VERSION: 16.x
-  CIRCUIT_TYPE: prod
 
 jobs:
-  e2e-test:
+  setup-and-tests:
     runs-on: ubuntu-22.04
     steps:
-    - name: Checkout MACI
-      uses: actions/checkout@v3
-      with:
-        repository: privacy-scaling-explorations/maci
-        ref: v0.10.1
-        path: maci
     - name: Use Node.js ${{ env.NODE_VERSION }}
       uses: actions/setup-node@v3
       with:
@@ -32,25 +28,20 @@ jobs:
     - name: Install zkutil
       run: |
         cargo install zkutil --version 0.3.2
-    - name: Checkout Clrfund
+    - name: Checkout source code
       uses: actions/checkout@v3
-      with:
-        path: monorepo
-    - name: Download batch 64 zk circuit params
+    - name: Download batch 64 params
       run: |
-        $GITHUB_WORKSPACE/monorepo/.github/scripts/download-batch64-params.sh
-    - name: Build Clrfund
+        ls -la $GITHUB_WORKSPACE
+        $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
+    - name: Build CLR
       run: |
-        cd monorepo
         yarn && yarn build
     - name: Start hardhat network
       run: |
-        cd monorepo
         yarn start:node &
-    - name: Run tests
+    - name: Run script tests
       run: |
         export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
         echo $NODE_CONFIG
-        cd monorepo
-        yarn test:e2e
-
+        yarn test:local

@@ -10,7 +10,7 @@ env:
   NODE_VERSION: 16.x
 
 jobs:
-  setup-and-tests:
+  script-tests:
     runs-on: ubuntu-22.04
     steps:
     - name: Use Node.js ${{ env.NODE_VERSION }}
@@ -34,7 +34,7 @@ jobs:
         path: monorepo
     - name: Download batch 64 params
       run: |
-        $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
+        $GITHUB_WORKSPACE/monorepo/.github/scripts/download-batch64-params.sh
     - name: Build CLR
       run: |
         cd monorepo
