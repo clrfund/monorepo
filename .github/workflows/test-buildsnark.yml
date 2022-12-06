@@ -1,0 +1,72 @@
+name: Small snark end to end test
+
+on: workflow_dispatch
+
+env:
+  NODE_VERSION: 16.x
+  CIRCUIT_TYPE: small
+
+jobs:
+  small-snark-test:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout MACI
+      uses: actions/checkout@v3
+      with:
+        repository: privacy-scaling-explorations/maci
+        ref: v0.10.1
+        path: maci
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Install g++ library dependencies
+      run: |
+        sudo apt update
+        sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+    - name: Install rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+    - name: Install zkutil
+      run: |
+        cargo install zkutil --version 0.3.2
+    - name: Build MACI
+      run: |
+        git config --global url."https://".insteadOf ssh://
+        cd maci
+        npm i && npm run bootstrap && npm run build
+    - name: Build snarks
+      run: |
+        cd maci/circuits
+        ./scripts/buildSnarksSmall.sh
+        chmod u+x params/batchUstSmall params/qvtSmall
+        chmod u+r params/*
+    - name: Checkout Clrfund
+      uses: actions/checkout@v3
+      with:
+        path: monorepo
+    - name: Install Clrfund
+      run: |
+        cd monorepo
+        yarn && yarn build
+    - name: Start hardhat network
+      run: |
+        cd monorepo
+        yarn start:node &
+    - name: Copy snark verifier contracts
+      run:  |
+        pwd
+        echo $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE/maci
+        cd monorepo
+        cp $GITHUB_WORKSPACE/maci/circuits/params/BatchUpdateStateTreeVerifierSmall.sol contracts/contracts/snarkVerifiers/
+        cp $GITHUB_WORKSPACE/maci/circuits/params/QuadVoteTallyVerifierSmall.sol contracts/contracts/snarkVerifiers/
+    - name: Run tests
+      run: |
+        export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/maci/circuits/params'; console.log(JSON.stringify({ snarkParamsPath }));")
+        echo $NODE_CONFIG
+        cd monorepo
+        yarn test:e2e
+
