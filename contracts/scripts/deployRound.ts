@@ -167,7 +167,7 @@ async function main() {
     deployer.address
   )
   await addFundingSourceTx.wait()
-  console.log('Added funding source', addFundingSourceTx.hash)
+  console.log('Added funding source', deployer.address)
 
   const deployNewRoundTx = await fundingRoundFactory.deployNewRound()
   await deployNewRoundTx.wait()
