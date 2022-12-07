@@ -60,7 +60,7 @@ async function main() {
       'BrightIdUserRegistry',
       deployer
     )
-    /*
+
     const userRegistry = await BrightIdUserRegistry.deploy(
       utils.formatBytes32String(process.env.BRIGHTID_CONTEXT || 'clr.fund'),
       brightIdVerifier,
@@ -74,7 +74,6 @@ async function main() {
     )
     await setUserRegistryTx.wait()
     console.log('Set user registry in factory', setUserRegistryTx.hash)
-*/
   }
 
   const tx = await factory.deployNewRound()
