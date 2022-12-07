@@ -17,7 +17,7 @@ app.use(router)
 app.use(metaManager)
 app.use(FloatingVue)
 app.use(VueDapp, {
-	autoConnect: true,
+	autoConnect: false,
 	networks: {
 		80001: {
 			chainId: ethers.utils.hexValue(80001),

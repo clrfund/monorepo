@@ -118,7 +118,6 @@ const showBreadCrumb = computed(() => {
 	]
 	return !excludedRoutes.includes(routeName.value)
 })
-
 watch(theme, () => {
 	const savedTheme = theme.value
 	document.documentElement.setAttribute('data-theme', savedTheme || getOsColorScheme())
@@ -135,13 +134,14 @@ onMounted(async () => {
 			provider.getNetwork(),
 			new Promise<void>((_, reject) =>
 				setTimeout(() => {
-					reject('Error: cound not detect network: 3 seconds of timed out')
+					reject('time out')
 				}, 3000),
 			),
 		])
+
 		console.log(network)
 	} catch (err) {
-		console.error('Failed to detect network', err)
+		console.error('Failed to detect network:', err)
 		return
 	}
 

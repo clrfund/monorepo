@@ -20,7 +20,7 @@ import AboutContributors from '../views/AboutContributors.vue'
 import AboutRecipients from '../views/AboutRecipients.vue'
 import AboutLayer2 from '../views/AboutLayer2.vue'
 import Verified from '@/views/Verified.vue'
-// import JoinView from '../views/Join.vue'
+import JoinView from '@/views/JoinView.vue'
 import VerifyView from '@/views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 import CartView from '@/views/CartView.vue'
@@ -209,14 +209,14 @@ const routes: Array<RouteRecordRaw> = [
 			title: 'Application Success',
 		},
 	},
-	// {
-	// 	path: '/join/:step',
-	// 	name: 'join-step',
-	// 	component: JoinView,
-	// 	meta: {
-	// 		title: 'Project Application',
-	// 	},
-	// },
+	{
+		path: '/join/:step',
+		name: 'join-step',
+		component: JoinView,
+		meta: {
+			title: 'Project Application',
+		},
+	},
 	{
 		path: '/cart',
 		name: 'cart',

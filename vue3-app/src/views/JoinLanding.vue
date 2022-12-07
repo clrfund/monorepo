@@ -147,11 +147,11 @@ const showCriteriaPanel = ref(false)
 
 const links = computed<Array<{ link: string; url: string }>>(() => [{ link: 'join', url: '/join' }])
 
-const registryInfo = computed<RegistryInfo>(() => recipientRegistryInfo.value!)
+const registryInfo = computed<RegistryInfo | null>(() => recipientRegistryInfo.value)
 
-const deposit = computed<BigNumber | null>(() => registryInfo.value.deposit)
-const depositToken = computed<string | null>(() => registryInfo.value.depositToken)
-const recipientCount = computed(() => registryInfo.value.recipientCount)
+const deposit = computed<BigNumber | null>(() => registryInfo.value?.deposit || null)
+const depositToken = computed<string | null>(() => registryInfo.value?.depositToken || null)
+const recipientCount = computed(() => registryInfo.value?.recipientCount || null)
 const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
 const spacesRemaining = computed(() => {
 	// eslint-disable-next-line
