@@ -47,3 +47,6 @@ jobs:
         cd contracts
         yarn hardhat run --network "${NETWORK}" scripts/tally.ts
         yarn hardhat run --network "${NETWORK}" scripts/finalize.ts
+        curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
+          --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
+          --form 'file=@"tally.json"'
