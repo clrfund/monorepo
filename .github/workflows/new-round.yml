@@ -1,6 +1,6 @@
 name: Create new round
 
-on: push
+on: workflow_dispatch
 
 env:
   NODE_VERSION: 16.x
