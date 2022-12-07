@@ -32,6 +32,7 @@
     "codegen": "graphql-codegen --config codegen.yml",
     "test": "yarn workspace @clrfund/contracts run test && yarn workspace @clrfund/vue-app run test",
     "test:contracts": "yarn workspace @clrfund/contracts run test",
+    "test:e2e": "yarn workspace @clrfund/contracts run e2e",
     "test:web": "yarn workspace @clrfund/vue-app run test",
     "test:format": "yarn prettier --check",
     "deploy:subgraph": "yarn workspace @clrfund/subgraph run deploy",
