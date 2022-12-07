@@ -1,12 +1,12 @@
 name: Finalize a test round
 
-on: workflow_dispatch
+on: push
 
 env:
   NODE_VERSION: 16.x
-  FACTORY_ADDRESS: 0x62cab00605368834c6adf8e6f53da14d6fa9ded1
-  SUBGRPAH_URL: https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli
-  NETWORK: arbitrum-goerli
+  FACTORY_ADDRESS: "0x62cab00605368834c6adf8e6f53da14d6fa9ded1"
+  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli"
+  NETWORK: "arbitrum-goerli"
   COORDINATOR_ETH_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   COORDINATOR_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_MACI_PRIVATE_KEY }}
 
