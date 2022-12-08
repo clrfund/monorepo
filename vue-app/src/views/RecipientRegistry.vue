@@ -159,8 +159,6 @@ import { markdown } from '@/utils/markdown'
 import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import TransactionModal from '@/components/TransactionModal.vue'
-import { OptimisticRecipientRegistry as RecipientRegistryAbi } from '@/api/abi'
-import { Interface } from '@ethersproject/abi'
 
 @Component({ components: { CopyButton, Loader, Links } })
 export default class RecipientRegistryView extends Vue {
@@ -303,8 +301,22 @@ export default class RecipientRegistryView extends Vue {
   }
 
   private challengeRequestAbi(): any {
-    const registryInterface = new Interface(RecipientRegistryAbi)
-    return registryInterface.getFunction('challengeRequest')
+    return {
+      inputs: [
+        {
+          internalType: 'bytes32',
+          name: '_recipientId',
+          type: 'bytes32',
+        },
+        {
+          internalType: 'address payable',
+          name: '_beneficiary',
+          type: 'address',
+        },
+      ],
+      name: 'challengeRequest',
+      payable: false,
+    }
   }
 
   get pendingSubmissions(): string {
