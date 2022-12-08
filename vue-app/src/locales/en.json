@@ -495,7 +495,7 @@
   "brightIDGuide": {
     "heading": {
       "h2": "Get verified",
-      "p": "BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person. There are a couple of ways to do this:"
+      "p": "BrightID verification helps prove that you’re a unique human. To get verified, you need to join a BrightId party where other members can verify you're \"not a bot\"."
     },
     "accordion": {
       "fastest": {
@@ -721,7 +721,7 @@
       "title": "Every donation is amplified by the matching pool.",
       "paragraph": "This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.",
       "subtitle": "How it works",
-      "list-1": "The {operator} and other donors send funds to the matching pool smart contract.",
+      "list-1": "{operator} and other donors send funds to the matching pool smart contract.",
       "list-2": "The round begins and you can donate to your favorite projects.",
       "list-3": "Once the round finishes, the smart contract distributes the matching pool funds to projects weighted primarily by number of contributions,",
       "list-3-strong": "not contribution value",
@@ -743,7 +743,7 @@
       "paragraph-2": "Using MACI, a zero-knowledge technology, it's impossible to prove how you contributed. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!",
       "link-2": "About MACI",
       "subtitle-3": "Built using the CLR protocol",
-      "paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the prefences of the Ethereum Community.",
+      "paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community.",
       "link-3": "About clr.fund"
     },
     "footer": {
@@ -836,7 +836,7 @@
     "p3": "Once this app is linked in your BrightID app, we'll automatically transition you to the next step. It may take a minute for us to verify the connection - please wait.",
     "p4": "Scan this QR code with your BrightID app",
     "p5": "Follow this link to connect your wallet to your BrightID app",
-    "p6": "This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.",
+    "p6": "This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. If clicking the link does not open the BrightId app, try manually copying the link to a browser.",
     "h2_2": "Register",
     "p7": "To protect the round from bribery and fraud, you need to add your wallet address to a smart contract registry. Once you’re done, you can join the funding round!",
     "btn": " Become a contributor"
@@ -998,17 +998,12 @@
     "link2": "@Twitter"
   },
   "matchigFundsModal": {
-    "h3_1_t1": "Contribute { tokenSymbol } to the",
-    "h3_1_if1": "next",
-    "h3_1_if2": "current",
-    "h3_1_t2": "round",
+    "h3_1_t1": "Contribute { tokenSymbol } to the matching pool",
+    "h3_div": "The funds will be distributed to all projects based on the contributions they receive from the community",
     "div1": " ⚠️ You only have { renderBalance } { tokenSymbol }",
     "button1": "Cancel",
     "button2": "Contribute",
-    "h3_2_t1": " Contribute { renderContributionAmount } { tokenSymbol } to the",
-    "h3_2_if1": "next",
-    "h3_2_if2": "current",
-    "h3_2_t2": "round",
+    "h3_2_t1": " Contribute { renderContributionAmount } { tokenSymbol } to the matching pool",
     "h3_3": " You just topped up the pool by { renderContributionAmount } { tokenSymbol }!",
     "div2": "Thanks for helping out all our projects.",
     "button3": "Done"
