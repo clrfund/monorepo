@@ -9,11 +9,7 @@
         </div>
       </div>
       <div class="flex-row">
-        <<<<<<< HEAD
         <h2 class="no-margin">{{ $t('profile.h2_1') }}</h2>
-        =======
-        <h2 class="no-margin">{{ $t('profile.h2_1') }}t</h2>
-        >>>>>>> 29ddfe30 (added all views)
       </div>
       <div class="address-card">
         <h2 class="address">{{ displayAddress }}</h2>
@@ -46,15 +42,18 @@
       />
       <div class="balances-section">
         <div class="flex-row">
-          <<<<<<< HEAD
+          <<<<<<< HEAD <<<<<<< HEAD
           <h2>{{ $t('profile.h2_2', { chain: chain.label }) }}</h2>
           <div v-tooltip="{ content: $t('profile.tooltip2', { chain: chain.label
           }), =======
           <h2>{{ $t('profile.h2_2') }}</h2>
+          <div v-tooltip="{ content: $t('profile.tooltip2'), >>>>>>> 29ddfe30
+          (added all views) =======
+          <h2>{{ $t('profile.h2_2', { chain: chain.label }) }}</h2>
           <div
             v-tooltip="{
-              content: $t('profile.tooltip2'),
->>>>>>> 29ddfe30 (added all views)
+              content: $t('profile.tooltip2', { chain: chain.label }),
+>>>>>>> d0ebe54a (fixed language button)
               trigger: 'hover click',
             }"
           >

@@ -1040,7 +1040,7 @@
     "h2_3": "Funding plans",
     "div3": "Recipient address",
     "button1": "address",
-    "link1": "View on ",
+    "link1": "View on {blockExplorer} ",
     "h2_4": "Team: "
   },
   "reallocationModal": {
