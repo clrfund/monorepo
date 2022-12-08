@@ -70,3 +70,7 @@ export enum ThemeMode {
   LIGHT = 'light',
   DARK = 'dark',
 }
+
+// the number of records per batch in the `pending submissions` export file
+export const exportBatchSize =
+  Number(process.env.VUE_APP_EXPORT_BATCH_SIZE) || 60
