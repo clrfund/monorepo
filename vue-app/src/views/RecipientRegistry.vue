@@ -8,6 +8,14 @@
     </div>
     <loader v-if="isLoading" />
     <div v-else>
+      <a
+        v-if="isOwner"
+        class="btn-secondary desktop btn-export"
+        :href="pendingSubmissions"
+        download="pending-submissions.json"
+      >
+        Export pending submissions
+      </a>
       <table class="requests">
         <thead>
           <tr>
@@ -135,7 +143,7 @@ import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 import CopyButton from '@/components/CopyButton.vue'
 
-import { recipientRegistryType } from '@/api/core'
+import { chainId, recipientRegistryType } from '@/api/core'
 import {
   RequestType,
   RequestStatus,
@@ -152,6 +160,8 @@ import { markdown } from '@/utils/markdown'
 import { LOAD_RECIPIENT_REGISTRY_INFO } from '@/store/action-types'
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import TransactionModal from '@/components/TransactionModal.vue'
+import { OptimisticRecipientRegistry as RecipientRegistryAbi } from '@/api/abi'
+import { Interface } from '@ethersproject/abi'
 
 @Component({ components: { CopyButton, Loader, Links } })
 export default class RecipientRegistryView extends Vue {
@@ -292,6 +302,45 @@ export default class RecipientRegistryView extends Vue {
       console.warn('Error in copying text: ', error)
     }
   }
+
+  private challengeRequestAbi(): any {
+    const registryInterface = new Interface(RecipientRegistryAbi)
+    return registryInterface.getFunction('challengeRequest')
+  }
+
+  get pendingSubmissions(): string {
+    const { recipientRegistryAddress } = this.$store.state
+    const transactions = this.requests
+      .filter((req) => this.isPending(req))
+      .map((req) => {
+        return {
+          to: recipientRegistryAddress,
+          value: '0',
+          data: null,
+          contractMethod: this.challengeRequestAbi(),
+          contractInputsValues: {
+            _recipientId: req.recipientId,
+            _beneficiary: req.requester,
+          },
+        }
+      })
+
+    const data = {
+      version: '1.0',
+      chainId,
+      createdAt: Math.floor(Date.now() / 1000),
+      meta: {
+        name: 'Pending Submissions',
+        txBuilderVersion: '1.11.1',
+      },
+      transactions,
+    }
+
+    return (
+      'data:application/octet-stream,' +
+      encodeURIComponent(JSON.stringify(data))
+    )
+  }
 }
 </script>
 
@@ -304,6 +353,7 @@ export default class RecipientRegistryView extends Vue {
   align-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
+  padding-bottom: 0 !important;
 
   .header {
     display: flex;
@@ -436,5 +486,9 @@ export default class RecipientRegistryView extends Vue {
       width: auto;
     }
   }
+}
+
+.btn-export {
+  max-width: fit-content;
 }
 </style>
