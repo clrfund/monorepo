@@ -9,7 +9,6 @@
     <loader v-if="isLoading" />
     <div v-else>
       <a
-        v-if="isOwner"
         class="btn-secondary desktop btn-export"
         :href="pendingSubmissions"
         download="pending-submissions.json"
