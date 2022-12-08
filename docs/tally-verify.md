@@ -33,6 +33,7 @@ The contract deployment scripts, `deploy*.ts` in the [clrfund repository](https:
 ```
 
 ### Recompile the contracts:
+Compile the contracts to generate the ABI that the MACI command lines use in the next step.
 
 ```
 cd ../contracts
@@ -40,6 +41,7 @@ npm run compileSol
 ```
 
 ### Generate coordinator key
+Generate the coordinator key used to encrypt messages. The key will be used when deploying new round.
 
 ```
 cd ../cli
@@ -64,30 +66,32 @@ node build/index.js fetchLogs \
     --output logs
 ```
 
-Decrypt messages and tally the votes:
+Decrypt messages, tally the votes and generate proofs:
 
 ```
-node build/index.js proveOnChain \
+node build/index.js genProofs \
     --eth-provider <ETH_HOSTNAME> \
     --contract <MACI_CONTRACT_ADDR> \
     --privkey <COORDINATOR_PRIVKEY> \
-    --output proofs.json \
-    --tally-file tally.json
+    --tally-file tally.json \
+    --logs-file logs \
+    --macistate macistate \
+    --output proofs.json
 ```
 
-Coordinator private key must be in MACI key format (starts with `macisk`).
-Ethereum private key can be any private key that controls the necessary amount of ETH to pay for gas.
+The coordinator private key (`COORDINATOR_PRIVKEY`) must be in the MACI key format (starts with `macisk`).  It is used to decrypt messages.
 
-The `genProofs` command will create two files: `proofs.json` and `tally.json`. The `proofs.json` file will be needed to run the next command which submits proofs to MACI contract:
+The `genProofs` command will create two files: `proofs.json` and `tally.json`. The `proofs.json` file will be needed to run the next command, `proveOnChain`, which submits proofs to the MACI contract:
 
 ```
 node build/index.js proveOnChain \
     --eth-provider <json-rpc-api-url> \
     --contract <maci-address> \
-    --privkey <coordinator-private-key> \
     --eth-privkey <eth-private-key> \
     --proof-file proofs.json
 ```
+
+The Ethereum private key (`eth-private-key`) can be any private key that controls the necessary amount of ETH to pay for gas.
 
 The process may take several hours. Results can be found in `tally.json` file, which must then be published via IPFS.
 

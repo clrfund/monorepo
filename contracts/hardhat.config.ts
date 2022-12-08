@@ -7,7 +7,7 @@ import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ganache'
 import 'hardhat-contract-sizer'
 import '@nomiclabs/hardhat-etherscan'
-import './tasks/verifyMaci'
+import './tasks'
 
 dotenv.config()
 
@@ -47,6 +47,11 @@ const config: HardhatUserConfig = {
     xdai: {
       url: process.env.JSONRPC_HTTP_URL || 'https://rpc.xdaichain.com',
       timeout: 60000,
+      accounts,
+    },
+    'arbitrum-goerli': {
+      url:
+        process.env.JSONRPC_HTTP_URL || 'https://goerli-rollup.arbitrum.io/rpc',
       accounts,
     },
     rinkarby: {

@@ -1329,6 +1329,32 @@ describe('Funding Round', () => {
         )
       ).to.revertedWith('FundingRound: Vote results already verified')
     })
+
+    it('returns correct proccessed count in the callback for processing tally results', async () => {
+      const startIndex = 0
+      const batchSize = 10
+      let batchCount = 0
+      const total = smallTallyTestData.results.tally.length
+      const lastBatch = Math.ceil(total / batchSize)
+      await addTallyResultsBatch(
+        fundingRound.connect(coordinator),
+        tallyTreeDepth,
+        smallTallyTestData,
+        batchSize,
+        startIndex,
+        (processed) => {
+          batchCount++
+          if (batchCount === lastBatch) {
+            expect(processed).to.equal(total, 'Incorrect last batch count')
+          } else {
+            expect(processed).to.equal(
+              batchCount * batchSize,
+              'Incorrect proccesed count'
+            )
+          }
+        }
+      )
+    })
   })
 
   describe('getRecipientTallyResultsBatch', () => {

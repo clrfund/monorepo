@@ -1,0 +1,8 @@
+import './verifyMaciFactory'
+import './verifyRoundFactory'
+import './verifyRound'
+import './verifyMaci'
+import './verifyRecipientRegistry'
+import './verifyUserRegistry'
+import './verifyAll'
+import './auditTally'

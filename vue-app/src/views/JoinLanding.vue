@@ -124,7 +124,7 @@
       </div>
     </div>
 
-    <div class="content" v-else-if="$store.getters.isRoundJoinPhase">
+    <div class="content" v-else>
       <h1>{{ $t('joinLanding.join.h1') }}</h1>
       <div class="subtitle">
         {{ $t('joinLanding.join.subtitle1_t1') }}

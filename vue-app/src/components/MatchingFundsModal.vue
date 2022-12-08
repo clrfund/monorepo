@@ -3,13 +3,10 @@
     <div v-if="step === 1">
       <h3>
         {{ $t('matchingFundsModal.h3_1_t1', { tokenSymbol: tokenSymbol }) }}
-        {{
-          isRoundFinished()
-            ? $t('matchingFundsModal.h3_1_if1')
-            : $t('matchingFundsModal.h3_1_if2')
-        }}
-        {{ $t('matchingFundsModal.h3_1_t2') }}
       </h3>
+      <div>
+         {{ $t('matchingFundsModal.h3_div') }}
+      </div>
       <div class="contribution-form">
         <input-button
           v-model="amount"
@@ -49,12 +46,6 @@
             tokenSymbol: tokenSymbol,
           })
         }}
-        {{
-          isRoundFinished()
-            ? $t('matchingFundsModal.h3_2_if1')
-            : $t('matchingFundsModal.h3_2_if2')
-        }}
-        {{ $t('matchingFundsModal.h3_2_t2') }}
       </h3>
       <transaction
         :hash="transferTxHash"
@@ -95,7 +86,6 @@ import { formatUnits } from '@ethersproject/units'
 import { User } from '@/api/user'
 import { ERC20 } from '@/api/abi'
 import { factory } from '@/api/core'
-import { RoundStatus } from '@/api/round'
 
 @Component({
   components: {
@@ -143,11 +133,6 @@ export default class MatchingFundsModal extends Vue {
   get isBalanceSufficient(): boolean {
     if (this.balance === null) return false
     return parseFloat(this.balance) >= parseFloat(this.amount)
-  }
-
-  isRoundFinished(): boolean {
-    const { status } = this.$store.state.currentRound
-    return [RoundStatus.Finalized, RoundStatus.Cancelled].includes(status)
   }
 
   isAmountValid(): boolean {

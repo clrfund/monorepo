@@ -13,11 +13,6 @@
         text: $t('brightIDGuide.accordion.fastest.linkButton'),
       }"
     />
-    <accordion
-      :tag="$t('brightIDGuide.accordion.luckiest.tag')"
-      :header="$t('brightIDGuide.accordion.luckiest.header')"
-      :content="$t('brightIDGuide.accordion.luckiest.content')"
-    />
   </div>
 </template>
 

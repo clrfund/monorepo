@@ -203,7 +203,10 @@ export async function addTallyResultsBatch(
     const tx = await fundingRound.addTallyResultsBatch(...data)
     const receipt = await tx.wait()
     if (callback) {
-      callback(i + batchSize, receipt)
+      // the 2nd element in the data array has the array of
+      // recipients to be processed for the batch
+      const totalProcessed = i + data[1].length
+      callback(totalProcessed, receipt)
     }
     totalGasUsed = totalGasUsed.add(receipt.gasUsed)
   }
