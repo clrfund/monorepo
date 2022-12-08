@@ -42,18 +42,10 @@
       />
       <div class="balances-section">
         <div class="flex-row">
-          <<<<<<< HEAD <<<<<<< HEAD
-          <h2>{{ $t('profile.h2_2', { chain: chain.label }) }}</h2>
-          <div v-tooltip="{ content: $t('profile.tooltip2', { chain: chain.label
-          }), =======
-          <h2>{{ $t('profile.h2_2') }}</h2>
-          <div v-tooltip="{ content: $t('profile.tooltip2'), >>>>>>> 29ddfe30
-          (added all views) =======
           <h2>{{ $t('profile.h2_2', { chain: chain.label }) }}</h2>
           <div
             v-tooltip="{
               content: $t('profile.tooltip2', { chain: chain.label }),
->>>>>>> d0ebe54a (fixed language button)
               trigger: 'hover click',
             }"
           >
