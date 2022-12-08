@@ -336,10 +336,7 @@ export default class RecipientRegistryView extends Vue {
       transactions,
     }
 
-    return (
-      'data:application/octet-stream,' +
-      encodeURIComponent(JSON.stringify(data))
-    )
+    return 'data:application/json,' + encodeURIComponent(JSON.stringify(data))
   }
 }
 </script>
