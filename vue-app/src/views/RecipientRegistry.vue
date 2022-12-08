@@ -195,7 +195,6 @@ export default class RecipientRegistryView extends Vue {
     )
 
     this.requests = requests.filter((req) => Boolean(req.requester))
-    console.log('requests length', this.requests.length, requests.length)
   }
 
   get registryInfo(): RegistryInfo {
