@@ -8,13 +8,13 @@
     </div>
     <loader v-if="isLoading" />
     <div v-else>
-      <a
+      <button
+        v-if="hasPendingRequests"
         class="btn-secondary desktop btn-export"
-        :href="pendingSubmissions"
-        download="pending-submissions.json"
+        @click="handleExport"
       >
         Export pending submissions
-      </a>
+      </button>
       <table class="requests">
         <thead>
           <tr>
@@ -27,11 +27,14 @@
         <tbody>
           <tr
             v-for="request in requests.slice().reverse()"
-            :key="request.transactionHash"
+            :key="request.recipientId"
           >
             <td>
               <div class="project-name">
-                <links :to="request.metadata.thumbnailImageUrl">
+                <links
+                  v-if="request.metadata.thumbnailImageUrl"
+                  :to="request.metadata.thumbnailImageUrl"
+                >
                   <img
                     class="project-image"
                     :src="request.metadata.thumbnailImageUrl"
@@ -142,7 +145,7 @@ import * as humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 import CopyButton from '@/components/CopyButton.vue'
 
-import { chainId, recipientRegistryType } from '@/api/core'
+import { chainId, exportBatchSize, recipientRegistryType } from '@/api/core'
 import {
   RequestType,
   RequestStatus,
@@ -186,10 +189,13 @@ export default class RecipientRegistryView extends Vue {
   async loadRequests() {
     const { recipientRegistryInfo, recipientRegistryAddress } =
       this.$store.state
-    this.requests = await getRequests(
+    const requests = await getRequests(
       recipientRegistryInfo,
       recipientRegistryAddress
     )
+
+    this.requests = requests.filter((req) => Boolean(req.requester))
+    console.log('requests length', this.requests.length, requests.length)
   }
 
   get registryInfo(): RegistryInfo {
@@ -300,7 +306,7 @@ export default class RecipientRegistryView extends Vue {
     }
   }
 
-  private challengeRequestAbi(): any {
+  private get challengeRequestAbi(): any {
     return {
       inputs: [
         {
@@ -319,27 +325,26 @@ export default class RecipientRegistryView extends Vue {
     }
   }
 
-  get pendingSubmissions(): string {
+  private createExportUrl(requests: Request[]): string {
     const { recipientRegistryAddress } = this.$store.state
-    const transactions = this.requests
-      .filter((req) => this.isPending(req))
-      .map((req) => {
-        return {
-          to: recipientRegistryAddress,
-          value: '0',
-          data: null,
-          contractMethod: this.challengeRequestAbi(),
-          contractInputsValues: {
-            _recipientId: req.recipientId,
-            _beneficiary: req.requester,
-          },
-        }
-      })
+
+    const transactions = requests.map((req) => {
+      return {
+        to: recipientRegistryAddress,
+        value: '0',
+        data: null,
+        contractMethod: this.challengeRequestAbi,
+        contractInputsValues: {
+          _recipientId: req.recipientId,
+          _beneficiary: req.requester,
+        },
+      }
+    })
 
     const data = {
       version: '1.0',
       chainId,
-      createdAt: Math.floor(Date.now() / 1000),
+      createdAt: Date.now(),
       meta: {
         name: 'Pending Submissions',
         txBuilderVersion: '1.11.1',
@@ -348,6 +353,34 @@ export default class RecipientRegistryView extends Vue {
     }
 
     return 'data:application/json,' + encodeURIComponent(JSON.stringify(data))
+  }
+
+  private exportFile(url: string, filename: string): void {
+    const anchor = document.createElement('a')
+    anchor.setAttribute('href', url)
+    anchor.setAttribute('download', filename)
+    document.body.appendChild(anchor)
+    anchor.click()
+    document.body.removeChild(anchor)
+  }
+
+  handleExport(): void {
+    const pendingRequests = this.requests.filter((req) => this.isPending(req))
+
+    let count = 1
+    for (let i = 0; i < pendingRequests.length; i = i + exportBatchSize) {
+      const end = i + exportBatchSize
+      const chunk = pendingRequests.slice(i, end)
+      const url = this.createExportUrl(chunk)
+      const filename = `pending-submission-${count}.json`
+      this.exportFile(url, filename)
+      count++
+    }
+  }
+
+  get hasPendingRequests(): boolean {
+    const pendingRequests = this.requests.filter((req) => this.isPending(req))
+    return pendingRequests.length > 0
   }
 }
 </script>
