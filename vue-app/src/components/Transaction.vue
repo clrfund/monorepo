@@ -8,27 +8,26 @@
           class="btn-secondary close-btn"
           @click="$emit('close')"
         >
-          Close
+          {{ $t('transactions.button1') }}
         </button>
         <button
           v-if="displayRetryBtn"
           class="btn-primary close-btn"
           @click="$emit('retry')"
         >
-          Retry
+          {{ $t('transactions.button2') }}
         </button>
       </div>
     </template>
     <template v-else>
-      <div v-if="!hash">Please approve transaction in your wallet</div>
+      <div v-if="!hash">{{ $t('transactions.div1') }}</div>
       <div v-else>
         <transaction-receipt :hash="hash" />
       </div>
       <loader v-if="!hash" />
       <div v-if="displayWarning && !hash">
         <small class="warning-text">
-          If you have been waiting a while, consider refreshing your browser and
-          reconnecting your wallet.
+          {{ $t('transactions.small') }}
         </small>
       </div>
     </template>

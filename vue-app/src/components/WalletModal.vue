@@ -2,11 +2,11 @@
   <div>
     <div v-if="connectingWallet" class="modal-body loading">
       <loader />
-      <p>Connecting wallet</p>
+      <p>{{ $t('walletModal.p1') }}</p>
     </div>
     <div v-else class="modal-body">
       <div class="top">
-        <p>Connect to a wallet</p>
+        <p>{{ $t('walletModal.p2') }}</p>
         <button class="close-button" @click="$emit('close')">
           <img class="pointer" src="@/assets/close.svg" />
         </button>
@@ -16,15 +16,15 @@
         class="option"
         @click="connectWallet('metamask')"
       >
-        <p>MetaMask</p>
+        <p>{{ $t('walletModal.p3') }}</p>
         <img height="24px" width="24px" src="@/assets/metamask.svg" />
       </button>
       <button v-else class="option" @click="redirectToMetamaskWebsite()">
-        <p>Install MetaMask</p>
+        <p>{{ $t('walletModal.p4') }}</p>
         <img height="24px" width="24px" src="@/assets/metamask.svg" />
       </button>
       <button class="option" @click="connectWallet('walletconnect')">
-        <p>WalletConnect</p>
+        <p>{{ $t('walletModal.p5') }}</p>
         <img height="24px" width="24px" src="@/assets/walletConnectIcon.svg" />
       </button>
       <div v-if="error" class="error">{{ error }}</div>

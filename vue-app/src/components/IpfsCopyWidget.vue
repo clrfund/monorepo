@@ -11,7 +11,7 @@
         myClass="ipfs-copy-widget"
       />
       <links
-        v-tooltip="'View IPFS link'"
+        :v-tooltip="$t('ipfsCopyWidget.tooltip1')"
         :href="'https://ipfs.io/ipfs/' + hash"
         :hideArrow="true"
       >

@@ -4,20 +4,21 @@
     <div class="container">
       <div>
         <div class="flex-row">
-          <h2>Round criteria</h2>
+          <h2>{{ $t('criterialModal.h2') }}</h2>
           <div class="close-btn" @click="$emit('close')">
-            <p class="no-margin">Close</p>
+            <p class="no-margin">{{ $t('criterialModal.p1') }}</p>
             <img src="@/assets/close.svg" />
           </div>
         </div>
         <p>
-          The registry admin will remove any projects that don't meet the round
-          criteria. So read carefully! In later rounds we're hoping that this
-          review process can be done by the community.
+          {{ $t('criterialModal.p2') }}
         </p>
         <p>
-          Learn more about the project application process in our
-          <links to="/about/how-it-works/recipients">recipient guide</links>.
+          {{ $t('criterialModal.p3') }}
+          <links to="/about/how-it-works/recipients">{{
+            $t('criterialModal.link1')
+          }}</links
+          >.
         </p>
         <div class="content">
           <div
@@ -33,9 +34,9 @@
           </div>
         </div>
       </div>
-      <links to="/join/project" class="btn-primary fit-content"
-        >Add project</links
-      >
+      <links to="/join/project" class="btn-primary fit-content">{{
+        $t('criterialModal.link2')
+      }}</links>
     </div>
   </div>
 </template>

@@ -22,7 +22,7 @@
             !$store.getters.canUserReallocate
           "
         >
-          ✔️ You have contributed to this project!
+          ✔️ {{ $t('project.p') }}
         </p>
       </div>
       <link-box :project="project" />

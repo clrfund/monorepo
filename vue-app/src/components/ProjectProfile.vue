@@ -3,7 +3,7 @@
     <info
       v-if="previewMode"
       class="info"
-      message="This is what your contributors will see when they visit your project page."
+      :message="$t('projectProfile.info1')"
     />
     <img
       v-if="previewMode"
@@ -24,9 +24,12 @@
       </h1>
       <p class="tagline">{{ project.tagline }}</p>
       <div class="subtitle">
-        <div class="tag">{{ project.category }} tag</div>
+        <div class="tag">
+          {{ project.category }} {{ $t('projectProfile.div1') }}
+        </div>
         <div class="team-byline" v-if="!!project.teamName">
-          Team: <links to="#team"> {{ project.teamName }}</links>
+          {{ $t('projectProfile.div2') }}
+          <links to="#team"> {{ project.teamName }}</links>
         </div>
       </div>
       <div class="mobile mb2">
@@ -41,19 +44,19 @@
             !$store.getters.canUserReallocate
           "
         >
-          ✔️ You have contributed to this project!
+          {{ $t('projectProfile.p1') }}
         </p>
       </div>
       <div class="project-section">
-        <h2>About the project</h2>
+        <h2>{{ $t('projectProfile.h2_1') }}</h2>
         <markdown :raw="project.description" />
       </div>
       <div class="project-section">
-        <h2>The problem it solves</h2>
+        <h2>{{ $t('projectProfile.h2_2') }}</h2>
         <markdown :raw="project.problemSpace" />
       </div>
       <div class="project-section">
-        <h2>Funding plans</h2>
+        <h2>{{ $t('projectProfile.h2_3') }}</h2>
         <markdown :raw="project.plans" />
       </div>
       <div
@@ -63,7 +66,7 @@
         }"
       >
         <div>
-          <div class="address-label">Recipient address</div>
+          <div class="address-label">{{ $t('projectProfile.div3') }}</div>
           <div class="address">
             {{ addressName }}
           </div>
@@ -71,14 +74,16 @@
         <div class="copy-div">
           <copy-button
             :value="project.address"
-            text="address"
+            :text="$t('projectProfile.button1')"
             myClass="project-profile"
             :hasBorder="true"
           />
           <links
             class="explorerLink"
             :to="blockExplorer.url"
-            :title="`View on ${blockExplorer.label}`"
+            :title="
+              $t('projectProfile.link1', { blockExplorer: blockExplorer.label })
+            "
             :hideArrow="true"
           >
             <img
@@ -94,7 +99,7 @@
         v-if="project.teamName || project.teamDescription"
         class="team"
       >
-        <h2>Team: {{ project.teamName }}</h2>
+        <h2>{{ $t('projectProfile.h2_4') }} {{ project.teamName }}</h2>
         <markdown :raw="project.teamDescription" />
       </div>
     </div>

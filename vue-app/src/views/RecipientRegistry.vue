@@ -2,7 +2,7 @@
   <div class="recipients">
     <div class="title">
       <div class="header">
-        <h2>Recipient registry</h2>
+        <h2>{{ $t('recipientRegistry.h2') }}</h2>
       </div>
       <div class="hr" />
     </div>
@@ -11,10 +11,10 @@
       <table class="requests">
         <thead>
           <tr>
-            <th>Project</th>
-            <th>Request type</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>{{ $t('recipientRegistry.th1') }}</th>
+            <th>{{ $t('recipientRegistry.th2') }}</th>
+            <th>{{ $t('recipientRegistry.th3') }}</th>
+            <th>{{ $t('recipientRegistry.th4') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -41,14 +41,14 @@
                 >
               </div>
               <details class="project-details">
-                <summary>More</summary>
+                <summary>{{ $t('recipientRegistry.summary') }}</summary>
 
                 <div>
                   <div class="btn-row">
-                    Transaction hash
+                    {{ $t('recipientRegistry.div1') }}
                     <copy-button
                       :value="request.transactionHash"
-                      text="hash"
+                      :text="$t('recipientRegistry.btn1')"
                       myClass="inline copy-icon"
                     />
                   </div>
@@ -56,21 +56,22 @@
                 </div>
                 <div>
                   <div class="btn-row">
-                    Project ID
+                    {{ $t('recipientRegistry.div2') }}
                     <copy-button
                       :value="request.recipientId"
-                      text="id"
-                      myClass="inline copy-icon"
+                      :text="$t('recipientRegistry.btn2')"
+                      myClass="inline
+                    copy-icon"
                     />
                   </div>
                   <code>{{ request.recipientId }}</code>
                 </div>
                 <div>
                   <div class="btn-row">
-                    Recipient address
+                    {{ $t('recipientRegistry.div3') }}
                     <copy-button
                       :value="request.recipient"
-                      text="address"
+                      :text="$t('recipientRegistry.btn3')"
                       myClass="copy-icon"
                     />
                   </div>

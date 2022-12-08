@@ -1,7 +1,7 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h3>Withdraw funds</h3>
+      <h3>{{ $t('withdrawalModal.h3_1') }}</h3>
       <transaction
         :hash="withdrawalTxHash"
         :error="withdrawalTxError"
@@ -9,9 +9,11 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <h3>Success!</h3>
-      <div>You have successfully withdrawn your contribution.</div>
-      <button class="btn close-btn" @click="$emit('close')">OK</button>
+      <h3>{{ $t('withdrawalModal.h3_2') }}</h3>
+      <div>{{ $t('withdrawalModal.div1') }}</div>
+      <button class="btn close-btn" @click="$emit('close')">
+        {{ $t('withdrawalModal.button1') }}
+      </button>
     </div>
   </div>
 </template>

@@ -20,7 +20,7 @@
           secondaryLogo="close-black.svg"
         />
       </div>
-      <h2>BrightID setup</h2>
+      <h2>{{ $t('brightIdWidget.h2') }}</h2>
       <p>{{ getCurrentStep }} / 2</p>
     </div>
     <div class="progress">
@@ -36,25 +36,31 @@
         <div v-if="isVerified">
           <div v-if="isRegistered">
             <a href="/#/projects" @click="$emit('close')">
-              Start contributing
+              {{ $t('brightIdWidget.link1') }}
               <span role="img" aria-label="party emoji">🎉</span>
             </a>
           </div>
           <div v-else>
-            <a href="/#/verify/" @click="$emit('close')">Continue setup</a>
+            <a href="/#/verify/" @click="$emit('close')">{{
+              $t('brightIdWidget.link2')
+            }}</a>
           </div>
         </div>
-        <a href="/#/verify/" @click="$emit('close')" v-else>Start setup</a>
+        <a href="/#/verify/" @click="$emit('close')" v-else>{{
+          $t('brightIdWidget.link3')
+        }}</a>
         <p
           v-tooltip="{
             content: isVerified
-              ? 'You\'re a verified human on BrightID!'
-              : 'Your BrightID profile still needs to be verified.',
+              ? $t('brightIdWidget.tooltip1_1')
+              : $t('brightIdWidget.tooltip1_2'),
             trigger: 'hover click',
           }"
           :class="isVerified ? 'brightid-verified' : 'unverified'"
         >
-          {{ isVerified ? 'Verified' : 'Unverified' }}
+          {{
+            isVerified ? $t('brightIdWidget.p1_1') : $t('brightIdWidget.p1_2')
+          }}
         </p>
       </div>
     </div>
