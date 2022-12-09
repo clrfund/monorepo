@@ -5,7 +5,7 @@
         {{ $t('matchingFundsModal.h3_1_t1', { tokenSymbol: tokenSymbol }) }}
       </h3>
       <div>
-         {{ $t('matchingFundsModal.h3_div') }}
+        {{ $t('matchingFundsModal.h3_div') }}
       </div>
       <div class="contribution-form">
         <input-button
