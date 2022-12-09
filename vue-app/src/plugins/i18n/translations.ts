@@ -12,8 +12,8 @@ export default {
     return process.env.VUE_APP_I18N_LOCALE
   },
   get supportedLocales() {
-    return ['en', 'es', 'cn']
-    //return ['en']
+    //return ['en', 'es', 'cn']
+    return ['en', 'cn']
   },
   get currentLocale() {
     return i18n.locale
