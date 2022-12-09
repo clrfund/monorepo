@@ -68,7 +68,7 @@ interface Props {
 	isNavDisabled: boolean
 	isStepUnlocked: (step: number) => boolean
 	isStepValid: (step: number) => boolean
-	handleStepNav: (step?: number) => void
+	handleStepNav: (step: number) => void
 	saveFormData: (updateFurthest?: boolean) => void
 }
 

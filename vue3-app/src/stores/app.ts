@@ -560,5 +560,15 @@ export const useAppStore = defineStore('app', {
 				this.tally = tally
 			}
 		},
+		setRecipientData(payload: { updatedData: RecipientApplicationData; step: string; stepNumber: number }) {
+			if (!this.recipient) {
+				this.recipient = payload.updatedData
+			} else {
+				this.recipient[payload.step] = payload.updatedData[payload.step]
+			}
+		},
+		resetRecipientData() {
+			this.recipient = null
+		},
 	},
 })

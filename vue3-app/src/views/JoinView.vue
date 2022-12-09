@@ -1,8 +1,474 @@
 <template>
-	<div id="join-the-round" class="container">JoinView</div>
+	<div id="join-the-round" class="container">
+		<div class="grid">
+			<form-progress-widget
+				:currentStep="currentStep"
+				:furthestStep="form.furthestStep"
+				:steps="steps"
+				:stepNames="stepNames"
+				:isNavDisabled="isNavDisabled"
+				:isStepUnlocked="isStepUnlocked"
+				:isStepValid="isStepValid"
+				:handleStepNav="handleStepNav"
+				:saveFormData="saveFormData"
+			/>
+			<div class="title-area">
+				<h1>Join the round</h1>
+				<div v-if="currentStep === 5">
+					<div class="toggle-tabs-desktop">
+						<p
+							class="tab"
+							id="review"
+							:class="showSummaryPreview ? 'inactive-tab' : 'active-tab'"
+							@click="handleToggleTab"
+						>
+							Review info
+						</p>
+						<p
+							class="tab"
+							id="preview"
+							:class="showSummaryPreview ? 'active-tab' : 'inactive-tab'"
+							@click="handleToggleTab"
+						>
+							Preview project
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="cancel-area desktop">
+				<links class="cancel-link" to="/join"> Cancel </links>
+			</div>
+			<div class="form-area">
+				<div class="application">
+					<div v-if="currentStep === 0">
+						<h2 class="step-title">About the project</h2>
+						<div class="inputs">
+							<div class="form-background">
+								<label for="project-name" class="input-label">Project name</label>
+								<input
+									id="project-name"
+									type="text"
+									placeholder="ex: clr.fund"
+									v-model="v$.project.name.$model"
+									:class="{
+										input: true,
+										invalid: v$.project.name.$error,
+									}"
+								/>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.project.name.$error,
+									}"
+								>
+									Your project needs a name
+								</p>
+							</div>
+							<div class="form-background">
+								<label for="project-tagline" class="input-label">Tagline</label>
+								<p class="input-description">
+									Describe your project in a sentence. Max characters: 140
+								</p>
+								<textarea
+									id="project-tagline"
+									placeholder="ex: A quadratic funding protocol"
+									v-model="v$.project.tagline.$model"
+									:class="{
+										input: true,
+										invalid: v$.project.tagline.$error,
+									}"
+								/>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.project.tagline.$error || v$.project.tagline.maxLength,
+									}"
+								>
+									This tagline is too long. Be brief for potential contributors
+								</p>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.project.tagline.$error || !v$.project.tagline.maxLength,
+									}"
+								>
+									Your project needs a tagline
+								</p>
+							</div>
+							<div class="form-background">
+								<label for="project-description" class="input-label">
+									Description
+									<p class="input-description">Markdown supported.</p>
+								</label>
+								<textarea
+									id="project-description"
+									placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+									v-model="v$.project.description.$model"
+									:class="{
+										input: true,
+										invalid: v$.project.description.$error,
+									}"
+								/>
+								<p v-if="form.project.description" class="input-label pt-1">Preview:</p>
+								<markdown :raw="form.project.description" />
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.project.description.$error,
+									}"
+								>
+									Your project needs a description. What are you raising money for?
+								</p>
+							</div>
+							<div class="form-background">
+								<label for="project-category" class="input-label"
+									>Category
+									<p class="input-description">Choose the best fit.</p>
+								</label>
+								<form class="radio-row" id="category-radio">
+									<input
+										id="tooling"
+										type="radio"
+										name="project-category"
+										value="Tooling"
+										v-model="v$.project.category.$model"
+										:class="{
+											input: true,
+											invalid: v$.project.category.$error,
+										}"
+									/>
+									<label for="tooling" class="radio-btn">Tools</label>
+									<input
+										id="category-content"
+										type="radio"
+										name="project-category"
+										value="Content"
+										v-model="v$.project.category.$model"
+										:class="{
+											input: true,
+											invalid: v$.project.category.$error,
+										}"
+									/>
+									<label for="category-content" class="radio-btn">Content</label>
+									<input
+										id="research"
+										type="radio"
+										name="project-category"
+										value="Research"
+										v-model="v$.project.category.$model"
+										:class="{
+											input: true,
+											invalid: v$.project.category.$error,
+										}"
+									/>
+									<label for="research" class="radio-btn">Research</label>
+
+									<input
+										id="data"
+										type="radio"
+										name="project-category"
+										value="Data"
+										v-model="v$.project.category.$model"
+										:class="{
+											input: true,
+											invalid: v$.project.category.$error,
+										}"
+									/>
+									<label for="data" class="radio-btn">Data</label>
+								</form>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.project.category.$error,
+									}"
+								>
+									You need to choose a category
+								</p>
+							</div>
+							<div class="form-background">
+								<label for="project-problem-space" class="input-label">Problem space</label>
+								<p class="input-description">
+									Explain the problems you're trying to solve. Markdown supported.
+								</p>
+								<textarea
+									id="project-problem-space"
+									placeholder="ex: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
+									v-model="v$.project.problemSpace.$model"
+									:class="{
+										input: true,
+										invalid: v$.project.problemSpace.$error,
+									}"
+								/>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.project.problemSpace.$error,
+									}"
+								>
+									Explain the problem your project solves
+								</p>
+								<p v-if="form.project.description" class="input-label pt-1">Preview:</p>
+								<markdown :raw="form.project.problemSpace" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mobile nav-bar">
+			<form-navigation
+				:isStepValid="isStepValid(currentStep)"
+				:steps="steps"
+				:finalStep="steps.length - 2"
+				:currentStep="currentStep"
+				:callback="saveFormData"
+				:handleStepNav="handleStepNav"
+				:isNavDisabled="isNavDisabled"
+			/>
+		</div>
+	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useVuelidate } from '@vuelidate/core'
+import { required, email, maxLength, url } from '@vuelidate/validators'
+import type { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
+import type { Project } from '@/api/projects'
+import { chain } from '@/api/core'
+import { DateTime } from 'luxon'
+import { useAppStore } from '@/stores/app'
+import { waitForTransaction } from '@/utils/contracts'
+import { addRecipient as _addRecipient } from '@/api/recipient-registry-optimistic'
+import { storeToRefs } from 'pinia'
+import { isValidEthAddress, resolveEns } from '@/utils/accounts'
+import * as isIPFS from 'is-ipfs'
+
+const router = useRouter()
+const appStore = useAppStore()
+
+const form = reactive<RecipientApplicationData>({
+	project: {
+		name: '',
+		tagline: '',
+		description: '',
+		category: '',
+		problemSpace: '',
+	},
+	fund: {
+		addressName: '',
+		resolvedAddress: '',
+		plans: '',
+	},
+	team: {
+		name: '',
+		description: '',
+		email: '',
+	},
+	links: {
+		github: '',
+		radicle: '',
+		website: '',
+		twitter: '',
+		discord: '',
+	},
+	image: {
+		bannerHash: '',
+		thumbnailHash: '',
+	},
+	furthestStep: 0,
+	hasEns: false,
+})
+
+const rules = computed(() => {
+	return {
+		project: {
+			name: { required },
+			tagline: {
+				required,
+				maxLength: maxLength(140),
+			},
+			description: { required },
+			category: { required },
+			problemSpace: { required },
+		},
+		fund: {
+			addressName: {
+				required,
+				validEthAddress: isValidEthAddress,
+			},
+			resolvedAddress: {},
+			plans: { required },
+		},
+		team: {
+			name: {},
+			description: {},
+			email: {
+				email,
+				required: import.meta.env.VITE_GOOGLE_SPREADSHEET_ID ? required : () => true,
+			},
+		},
+		links: {
+			github: { url },
+			radicle: { url },
+			website: { url },
+			twitter: { url },
+			discord: { url },
+		},
+		image: {
+			bannerHash: {
+				required,
+				validIpfsHash: isIPFS.cid,
+			},
+			thumbnailHash: {
+				required,
+				validIpfsHash: isIPFS.cid,
+			},
+		},
+	}
+})
+
+const v$ = useVuelidate(rules, form)
+
+const currentStep = ref(0)
+const steps = ref<string[]>([])
+const stepNames = ref<string[]>([])
+const showSummaryPreview = ref(false)
+const isWaiting = ref(false)
+const txHash = ref('')
+const txError = ref('')
+
+const isNavDisabled = computed<boolean>(
+	() => !isStepValid(currentStep.value) && currentStep.value !== form.furthestStep,
+)
+
+function isStepValid(step: number): boolean {
+	if (isWaiting.value) {
+		return false
+	}
+
+	if (step === 3) {
+		return isLinkStepValid()
+	}
+	const stepName: string = steps.value[step]
+	return !v$.value[stepName]?.$invalid
+}
+
+// Check that at least one link is not empty && no links are invalid
+function isLinkStepValid(): boolean {
+	let isValid = false
+	const links = Object.keys(form.links)
+	for (const link of links) {
+		const linkData = v$.value.links[link]
+		if (!linkData) return false
+		const isInvalid = linkData.$invalid
+		const isEmpty = linkData.$model.length === 0
+		if (isInvalid) {
+			return false
+		} else if (!isEmpty) {
+			isValid = true
+		}
+	}
+	return isValid
+}
+
+function isStepUnlocked(step: number): boolean {
+	return step <= form.furthestStep
+}
+
+function handleToggleTab(event): void {
+	const { id } = event.target
+	// Guard clause:
+	if ((!showSummaryPreview.value && id === 'review') || (showSummaryPreview.value && id === 'preview')) return
+	showSummaryPreview.value = !showSummaryPreview.value
+}
+
+function handleStepNav(step: number, updateFurthest?: boolean): void {
+	// If isNavDisabled => disable quick-links
+	if (isNavDisabled.value) return
+	// Save form data
+	saveFormData(updateFurthest)
+	// Navigate
+	if (steps.value[step] === 'submit') {
+		addRecipient()
+	} else {
+		if (isStepUnlocked(step)) {
+			router.push({
+				name: 'join-step',
+				params: {
+					step: steps.value[step],
+				},
+			})
+		}
+	}
+}
+
+function saveFormData(updateFurthest?: boolean): void {
+	if (updateFurthest && currentStep.value + 1 > form.furthestStep) {
+		form.furthestStep = currentStep.value + 1
+	}
+	if (typeof currentStep.value !== 'number') return
+	appStore.setRecipientData({
+		updatedData: form,
+		step: steps.value[currentStep.value],
+		stepNumber: currentStep.value,
+	})
+}
+
+async function addRecipient() {
+	const { currentRound, currentUser, recipient, recipientRegistryAddress, recipientRegistryInfo } =
+		storeToRefs(appStore)
+
+	isWaiting.value = true
+
+	// Reset errors when submitting
+	txError.value = ''
+
+	if (recipientRegistryAddress.value && recipient.value && recipientRegistryInfo.value && currentUser.value) {
+		try {
+			if (currentRound.value && DateTime.now() >= currentRound.value.votingDeadline) {
+				router.push({
+					name: 'join',
+				})
+				throw { message: 'round over' }
+			}
+
+			await waitForTransaction(
+				_addRecipient(
+					recipientRegistryAddress.value,
+					recipient.value,
+					recipientRegistryInfo.value.deposit,
+					currentUser.value.walletProvider.getSigner(),
+				),
+				hash => (txHash.value = hash),
+			)
+
+			// Send application data to a Google Spreadsheet
+			if (import.meta.env.VITE_GOOGLE_SPREADSHEET_ID) {
+				await fetch('/.netlify/functions/recipient', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(recipient),
+				})
+			}
+			appStore.resetRecipientData()
+		} catch (error: any) {
+			isWaiting.value = false
+			txError.value = error.message
+			return
+		}
+		isWaiting.value = false
+
+		router.push({
+			name: 'project-added',
+			params: {
+				hash: txHash.value,
+			},
+		})
+	}
+}
+</script>
 
 <style scoped lang="scss">
 @import '../styles/vars';
