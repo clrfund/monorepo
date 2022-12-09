@@ -5,50 +5,50 @@
     },
     "what": {
       "title": "什么是 clr.fund?",
-      "paragraph": "Clr.fund, 发音为 \"Clear Fund\", is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community. Clr.fund strives for credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity."
+      "paragraph": "Clr.fund, 发音为 \"Clear Fund\", 是一个协议，旨在根据以太坊社区的偏好，将资金有效地分配给对以太坊网络有益的公共产品。 Clr.fund 致力于可信的中立性、去中心化、无需许可、信任和匿名性。"
     },
     "why": {
       "title": "为什么 clr.fund 存在?",
-      "paragraph-1-text-1": "Allocating funds towards",
-      "paragraph-1-link": "public goods",
-      "paragraph-1-text-2": "— commodities or services that are neither excludable nor subtractable — is a challenge for any ecosystem, and Ethereum is no exception.",
-      "paragraph-2": "Clr.fund’s goal is to enable funds to be allocated towards public goods that benefit the Ethereum Network without relying on centralized entities and in a way that reflects the preferences of the Ethereum Community.",
-      "paragraph-3-text-1": "See the",
-      "paragraph-3-link": "Clr.fund Constitution",
-      "paragraph-3-text-2": "for more detail on clr.fund’s goals and values."
+      "paragraph-1-text-1": "将资金分配给",
+      "paragraph-1-link": "公共商品",
+      "paragraph-1-text-2": "——既不可排除又不可减少的商品或服务——对于任何生态系统来说都是一个挑战，以太坊也不例外。",
+      "paragraph-2": "Clr.fund 的目标是使资金能够分配给对以太坊网络有益的公共商品，而无需依赖中央实体，并且以反映以太坊社区偏好的方式。",
+      "paragraph-3-text-1": "请参阅",
+      "paragraph-3-link": "Clr.fund 宪法",
+      "paragraph-3-text-2": "去了解有关 Clr.fund 的目标和价值观的更多细节"
     },
     "unique": {
-      "title": "clr.fund 有什么独特?",
-      "paragraph-1": "Clr.fund instances also have a number of other special properties:",
-      "li-1-text-1": "Decentralization — Major pieces of clr.fund's infrastructure are built on",
-      "li-1-link-1": "Ethereum",
-      "li-1-text-2": "A programmable blockchain that provides a reliable, censorship-resistant ledger for clr.fund's voting and funding transactions.",
-      "li-1-link-2": "Read more on clr.fund's decentralization.",
-      "li-2-text-1": "Scalability — Because using Ethereum can be expensive for users, clr.fund uses",
-      "li-2-layer2-1": "\"layer 2\"",
-      "li-2-layer2-2": "\"sidechain\"",
-      "li-2-text-2": "supplementary networks to get most of the benefits of the main Ethereum network but with faster, cheaper transactions.",
-      "li-2-link-1": "Learn more about clr.fund's use of layer 2.",
-      "li-3-text-1": "Collusion-resistance — Since blockchains like Ethereum publish all data publicly by default, clr.fund contributors are vulnerable to bribery and other kinds of manipulation. Clr.fund helps prevent these attacks using magical math called zero-knowledge proofs.",
-      "li-3-link-1": "Find out about MACI, our Minimal Anti-Collusion Infrastructure.",
-      "li-4-text-1": "Sybil-resistance — Voting systems that care about the number of individual people voting for a given choice, as quadratic funding does, can be vulnerable to sybil attacks, in which one person sets up many identities in order to vote multiple times. Clr.fund mitigates this threat with an identity-system called BrightID.",
-      "li-4-link-1": "Find out more about BrightID.",
-      "paragraph-2": " Clr.fund is also built so anyone can spin up and run their own instance to create a public goods grant program for their particular public."
+      "title": "clr.fund 有何独特?",
+      "paragraph-1": "Clr.fund 的实例还具有许多其他特殊属性：",
+      "li-1-text-1": "去中心化——Clr.fund 的基础设施的主要部分都建立在",
+      "li-1-link-1": "以太坊",
+      "li-1-text-2": "上，以太坊是一个可编程的区块链，为 Clr.fund 的投票和资金交易提供可靠的、免受审查的分类账。",
+      "li-1-link-2": "请参阅更多关于 Clr.fund 的去中心化。",
+      "li-2-text-1": "可扩展性——由于使用以太坊对用户来说可能很昂贵，因此 Clr.fund 使用",
+      "li-2-layer2-1": "\"第 2 层\"",
+      "li-2-layer2-2": "\"辅助网络\"",
+      "li-2-text-2": "来获得主以太坊网络的大部分优势，但交易更快、更便宜。",
+      "li-2-link-1": "请参阅更多关于 Clr.fund 使用第 2 层的信息。",
+      "li-3-text-1": "防止结盟——由于区块链, 如以太坊, 公开发布所有数据, Clr.fund 的贡献者容易受到贿赂和其他形式的操纵。因此 clr.fund 使用被称为零知识证明的神奇数学来防止这些攻击。",
+      "li-3-link-1": "MACI 是我们的最小反结盟基础设施。",
+      "li-4-text-1": "防止 Sybil 攻击——投票结果有相对利益的投票系统, 如 quadratic funding, 容易受到 sybil 攻击, 即一个人建立许多身份来多次投票。 Clr.fund 通过 BrightID 的身份系统来减轻这种威胁。",
+      "li-4-link-1": "请参阅更多关于 BrightID 的信息。",
+      "paragraph-2": "Clr.fund 也是特别建造，以便任何人都可以启动运行自己公共产品拨款的项目。"
     },
     "how": {
-      "title": "How does it work?",
-      "paragraph-1-text-1": "The clr.fund protocol uses the Constrained Liberal Radicalism (CLR) algorithm, commonly called",
+      "title": "它是如何运作的？",
+      "paragraph-1-text-1": "Clr.fund 使用约束性自由激进主义 (CLR)，通常称为 ",
       "paragraph-1-link-1": "quadratic funding",
-      "paragraph-1-text-2": "(QF), to facilitate monetary contributions from members of the Ethereum Community towards builders of Ethereum public goods.",
-      "paragraph-2": "With its logic encoded into Ethereum smart contracts and other web3 technologies, clr.fund requires minimal trust in any individual people or entities to function and is resilient to collusion and bribery.",
-      "paragraph-3": "  At a high-level, clr.fund consists of a matching pool and a funding round. Philanthropic individuals or organizations contribute to the matching pool so as to have those funds efficiently allocated according to community preference. Users contribute directly to projects they value and, in doing so, earn a share of the matching pool for the projects, along with their contribution. Effectively increasing the value of their contribution.",
-      "paragraph-4-text-1": "  Under the hood, clr.fund uses zero-knowledge proofs (ZK-SNARKS), courtesy of the",
-      "paragraph-4-link-1": "Minimal Anti-collusion Infrastructure (MACI)",
-      "paragraph-4-text-2": ", to keep individual contributions private and limit effectiveness of collusion and bribery",
-      "paragraph-5": "To ensure that every contributor is a unique person clr.fund uses.",
+      "paragraph-1-text-2": "(QF), 以促进社区成员对以太坊公共货物建设者的货币贡献。",
+      "paragraph-2": "凭借以太坊 smart contracts 和其他 web3 技术, clr.fund 对任何个人或实体的信任要求特低，并且对结盟和贿赂具有弹性。",
+      "paragraph-3": "从高层面的视角看, clr.fund 由一个匹配池和一个筹款回合组成。慈善个人或组织贡献匹配池。匹配池的资金是以社区偏好分配。 捐赠者直接捐款于他们重视的项目, 因此为该项目获得一部份匹配池的份额，有效地的增加了捐赠者的贡献价值。",
+      "paragraph-4-text-1": "在底层, clr.fund使用",
+      "paragraph-4-link-1": "MACI",
+      "paragraph-4-text-2": "的零知识证明 (ZK-SNARKS), 以保护个人贡献的隐私，并限制勾结和贿赂的有效性。",
+      "paragraph-5": "为了确保每位贡献者都是独特的, clr.fund使用",
       "paragraph-5-link": "BrightID.",
-      "paragraph-6": "Still curious? Read more on",
-      "paragraph-6-link": "how clr.fund works"
+      "paragraph-6": "还很好奇? 请参阅",
+      "paragraph-6-link": "clr.fund 是如何运作"
     }
   },
   "contributors": {
@@ -132,8 +132,8 @@
   },
   "howItWorks": {
     "heading": {
-      "title": "How the round works",
-      "subtitle": "CLR walkthrough",
+      "title": "这个轮次是如何运作的",
+      "subtitle": "CLR 入门教程",
       "paragraph-1": "This is an overview of how everything works behind the scenes so you can learn what to expect throughout the duration of the round.",
       "paragraph-2": " Looking for a guide on how to participate? Check out our guides specifically for contributing and joining as a project.",
       "li-1": "Guide for contributors",
@@ -196,7 +196,7 @@
       "paragraph": "Once the tallying calculations are complete, the round is finalized.   Project owners can come and claim their funding!"
     },
     "more": {
-      "title": "More",
+      "title": "更多",
       "paragraph": "We use different tech to keep the round fair and free from malicious   actors. You can learn more about them below:",
       "li-1-link": "MACI",
       "li-1-text": " – to protect against bribery and tally round results.",
@@ -311,7 +311,7 @@
       "h2_2": "MACI — Minimum Anti-Collusion Infrastructure",
       "p2": "MACI is a set of Ethereum smart contracts and supplementary scripts that effectively transforms public voting systems into private ones, in which 1) participation in a vote and correct vote tabulation are publicly verifiable, but 2) specific voting information is not public, making vote manipulation much more difficult.",
       "how": {
-        "h3": "How it works",
+        "h3": "如何运作",
         "p1": "When you contribute to a project on clr.fund you register an identity with the round coordinator. But at any time before the end of the round, you can invalidate your identity by secretly changing the public key associated with your identity before casting the vote. You can then use a different key pair to sign the vote (which renders the vote invalid, but it's impossible to see if the vote is invalid).",
         "p2": "MACI does all this using zero-knowledge proofs. These mathematically prove the authenticity of votes without providing any of the details. So bribers can’t tell what actions the people they bribed took.",
         "p3_t1": "From",
@@ -331,7 +331,7 @@
       "li2": "You can only contribute once per round. Once you have contributed, you can add/remove projects and reallocate your funds but you can't increase your total contribution amount."
     },
     "more": {
-      "h2": "More",
+      "h2": "更多",
       "h3_1": "Further reading",
       "l1": "Vitalik Buterin on Minimal anti-collusion infrastructure",
       "l2": "The MACI repo",
@@ -696,57 +696,58 @@
   },
   "landing": {
     "hero": {
-      "title": "Send your favorite projects to the moon!",
-      "subtitle": "Every project you contribute to gets a portion of extra funding.",
-      "action": "Get started",
-      "info": "How it works"
+      "title": "将您最喜欢的项目送往月球！",
+      "subtitle": "您捐赠的每个项目都将获得额外资金。",
+      "action": "开始吧！",
+      "info": "如何运作"
     },
     "callout": {
-      "title": "Join the funding round",
-      "paragraph": "Add your project to the next funding round. If you're working on anything related to public goods, you can join in.",
-      "action": "Add project",
-      "deadline": "to join"
+      "title": "参加资金轮次",
+      "paragraph": "将您的项目添加到下一个资金轮次中。如果您正在从事与公共产品相关的任何工作，您都可以参加。",
+      "action": "添加项目",
+      "deadline": "参加"
     },
     "how": {
-      "title": "Every donation is amplified by the matching pool.",
-      "paragraph": "This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.",
-      "subtitle": "How it works",
-      "list-1": "{operator} and other donors send funds to the matching pool smart contract.",
-      "list-2": "The round begins and you can donate to your favorite projects.",
-      "list-3": "Once the round finishes, the smart contract distributes the matching pool funds to projects weighted primarily by number of contributions,",
-      "list-3-strong": "not contribution value",
-      "action": "How the round works"
+      "title": "每笔捐款都会被匹配池放大。",
+      "paragraph": "这个筹款活动奖励那些拥有最独特社区需求的项目，而不仅仅是那些拥有最富裕支持者的项目。",
+      "subtitle": "如何运作",
+      "list-1": "{operator} 和其他捐赠者向匹配池 smart contract 发送捐款。",
+      "list-2": "轮次开始，您可以向您喜欢的项目捐款。",
+      "list-3": "一旦轮次结束, smart contract 将匹配池基金按照贡献数量的权重分配给项目,",
+      "list-3-strong": "而不是按照贡献价值",
+      "action": "这个轮次是如何运作的"
     },
     "req": {
-      "title": "What you'll need",
-      "chain": "{chain} for fast and cheap transaction fees",
-      "chain-cta": " Get {chain} funds",
-      "bright": "BrightID for private, decentralized identity verification",
-      "bright-cta": "Set up BrightID"
+      "title": "您需要什么",
+      "chain": "{chain} 用于快速和便宜的交易费",
+      "chain-cta": "获取 {chain} 基金",
+      "bright": "BrightID 用于私有，去中心化的身份验证",
+      "bright-cta": "设置 BrightID"
     },
     "about": {
-      "title": "About",
-      "subtitle-1": "It's not about how much...",
-      "paragraph-1": " Using quadratic funding, your contribution counts as a vote. Projects with the most contributions at the end of the round get the highest amount from the matching pool. That means even a small donation can have a massive impact.",
-      "link-1": "About quadratic funding",
-      "subtitle-2": "Protect against bribery",
-      "paragraph-2": "Using MACI, a zero-knowledge technology, it's impossible to prove how you contributed. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!",
-      "link-2": "About MACI",
-      "subtitle-3": "Built using the CLR protocol",
-      "paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the prefences of the Ethereum Community.",
-      "link-3": "About clr.fund"
+      "title": "关于",
+      "subtitle-1": "这不是关于多少...",
+      "paragraph-1": " 在这个筹款活动中，我们使用 quadratic funding 模型来支持项目。这意味着，每当您向某个项目进行捐款时，您的贡献就会被视为对该项目的一票支持。最后，我们将根据每个项目所获得的支持票数来分配匹配池基金。这意味着，即使您的捐款金额很小，也可能对您支持的项目产生重大影响。",
+      "link-1": "关于 quadratic funding",
+      "subtitle-2": "防止贿赂",
+      "paragraph-2": "我们使用一种叫做 MACI 的零知识技术来防止贿赂, 这样可以确保每一笔捐款都是匿名的，无法证明您的贡献。这使贿赂者疯狂，因为他们不知道您是否真的做了他们贿赂您做的事情！",
+      "link-2": "关于 MACI",
+      "subtitle-3": "CLR 协议构建",
+      "paragraph-3": "clr.fund 是一个协议，旨在有效地分配资金给以太坊网络受益的公共商品， 根据以太坊社区的偏好。",
+      "link-3": "关于 clr.fund"
     },
     "footer": {
-      "title": "More",
-      "link-1": "About clr.fund",
-      "link-2": "How the round works",
-      "link-3": "About {chain}",
-      "link-4": "About MACI",
-      "link-5": "About BrightID",
+      "title": "更多",
+      "link-1": "关于 clr.fund",
+      "link-2": "这个轮次是如何运作的",
+      "link-3": "关于 {chain}",
+      "link-4": "关于 MACI",
+      "link-5": "关于 BrightID",
       "link-6": "GitHub",
       "link-7": "Discord",
-      "link-8": "Forum",
-      "link-9": "More on Ethereum"
+      "link-8": "论坛",
+      "link-9": "更多以太坊的信息",
+      "link-blog": "博客"
     }
   },
   "profile": {
@@ -1003,7 +1004,7 @@
     "dropdown": {
       "home": "首页",
       "about": "关于",
-      "how": "如何操作",
+      "how": "如何运作",
       "maci": "贿赂保护",
       "sybil": "Sybil 抗性",
       "code": "代码",
@@ -1090,8 +1091,8 @@
     "span7_t1": "Funding is closed! If you contributed, you have",
     "span7_t2": "left to change your mind",
     "span8": "🎉 Funding is closed! Our smart contracts are busy tallying contributions...",
-    "span9": "Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds.",
-    "link1": "View projects"
+    "span9": "筹款已经结束！您可以开始领取您的捐款了。请前往您的项目页面来领取您的捐款。",
+    "link1": "查看项目"
   },
   "transactions": {
     "button1": "Close",
@@ -1116,7 +1117,7 @@
     "p5": "WalletConnect"
   },
   "walletWidget": {
-    "button1": "Connect"
+    "button1": "连接"
   },
   "withdrawalModal": {
     "h3_1": "Withdraw funds",

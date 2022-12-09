@@ -22,7 +22,7 @@
       "paragraph-1": "Clr.fund instances also have a number of other special properties:",
       "li-1-text-1": "Decentralization — Major pieces of clr.fund's infrastructure are built on",
       "li-1-link-1": "Ethereum",
-      "li-1-text-2": "A programmable blockchain that provides a reliable, censorship-resistant ledger for clr.fund's voting and funding transactions.",
+      "li-1-text-2": ", A programmable blockchain that provides a reliable, censorship-resistant ledger for clr.fund's voting and funding transactions.",
       "li-1-link-2": "Read more on clr.fund's decentralization.",
       "li-2-text-1": "Scalability — Because using Ethereum can be expensive for users, clr.fund uses",
       "li-2-layer2-1": "\"layer 2\"",
@@ -746,7 +746,8 @@
       "link-6": "GitHub",
       "link-7": "Discord",
       "link-8": "Forum",
-      "link-9": "More on Ethereum"
+      "link-9": "More on Ethereum",
+      "link-blog": "Blog"
     }
   },
   "profile": {

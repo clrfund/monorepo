@@ -175,6 +175,14 @@
           }}</links>
         </div>
         <div class="link-li">
+          <links to="https://twitter.com/clrfund">Twitter</links>
+        </div>
+        <div class="link-li">
+          <links to="https://blog.clr.fund/"
+            >{{ $t('landing.footer.link-blog') }}
+          </links>
+        </div>
+        <div class="link-li">
           <links to="https://forum.clr.fund/">{{
             $t('landing.footer.link-8')
           }}</links>
