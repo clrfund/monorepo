@@ -120,7 +120,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import type { BigNumber, Transaction } from 'ethers'
-import * as humanizeDuration from 'humanize-duration'
+import humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 import CopyButton from '@/components/CopyButton.vue'
 
