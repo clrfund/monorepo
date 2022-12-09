@@ -55,7 +55,7 @@
       </div>
       <wallet-widget class="wallet-widget" v-if="inApp" />
       <links v-if="!inApp" to="/projects" class="app-btn">{{
-        $t('app')
+        $t('navBar.app')
       }}</links>
     </div>
   </nav>

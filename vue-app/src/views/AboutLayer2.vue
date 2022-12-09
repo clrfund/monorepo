@@ -152,7 +152,7 @@
         @click="addTokenToWallet"
       >
         {{
-          $t('layer2.arbitrum.funds.button_secondary', {
+          $t('layer2.arbitrum.funds.button_2nd', {
             nativeTokenSymbol: nativeTokenSymbol,
             chain: chain.label,
           })
