@@ -81,7 +81,7 @@ export const CHAIN_INFO: ChainInfo = {
     currency: 'AETH',
     logo: 'arbitrum.svg',
     isLayer2: true,
-    explorer: 'https://goerli-rollup-explorer.arbitrum.io/',
+    explorer: 'https://goerli.arbiscan.io/',
     explorerLogo: 'arbitrum.svg',
     explorerLabel: 'BlockScout',
     rpcUrl: 'https://goerli-rollup.arbitrum.io/rpc',

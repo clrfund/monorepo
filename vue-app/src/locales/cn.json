@@ -657,7 +657,7 @@
       "subtitle2_t1": "Check out these",
       "link1": "other ways to source funding",
       "subtitle2_t2": ". Or follow us on Twitter for updates about future rounds:",
-      "link2": "Home"
+      "link2": "首页"
     },
     "full": {
       "h1": "Sorry, the round is full",
@@ -665,7 +665,7 @@
       "subtitle2_t1": "Check out these",
       "link1": "other ways to source funding",
       "subtitle2_t2": ". Or follow us on Twitter for updates about future rounds:",
-      "link2": "Home",
+      "link2": "首页",
       "link3": "More on MACI"
     },
     "open": {
@@ -681,7 +681,7 @@
       "link1": "More on MACI",
       "p1": "You will get your deposit back if you don’t make it into the round this time.",
       "button1": "See round criteria",
-      "link2": "Add project"
+      "link2": "添加项目"
     },
     "join": {
       "h1": "Join the next funding round",
@@ -691,7 +691,7 @@
       "div1": "Time to complete",
       "div2": "15 minutes (ish)",
       "button1": "See round criteria",
-      "link2": "Add project"
+      "link2": "添加项目"
     }
   },
   "landing": {
@@ -751,17 +751,17 @@
     }
   },
   "profile": {
-    "p1": "Close",
-    "h2_1": "Your wallet",
-    "btn1": "address",
-    "tooltip1": "Disconnect wallet",
-    "h2_2": "{chain} balances",
-    "tooltip2": "Balance of wallet on {chain} chain",
-    "h2_3": "Projects",
-    "div1": "Under review",
-    "btn2_1": "Preview",
-    "btn2_2": "View",
-    "div2": "You haven't submitted any projects"
+    "p1": "关闭",
+    "h2_1": "您的钱包",
+    "btn1": "地址",
+    "tooltip1": "断开钱包",
+    "h2_2": "{chain} 钱包余额",
+    "tooltip2": "{chain} 链上钱包余额",
+    "h2_3": "项目",
+    "div1": "正在审核",
+    "btn2_1": "预览",
+    "btn2_2": "查看",
+    "div2": "您尚未提交任何项目"
   },
   "project": {
     "p": "✔️ You have contributed to this project!"
@@ -783,18 +783,18 @@
     "div1": "😢 No projects match your search. Try using the filter to narrow down what you're looking for."
   },
   "recipientRegistry": {
-    "h2": "Recipient registry",
-    "th1": "Project",
-    "th2": "Request type",
-    "th3": "Status",
-    "th4": "Actions",
-    "summary": "More",
+    "h2": "收款人注册表",
+    "th1": "项目",
+    "th2": "请求类型",
+    "th3": "状态",
+    "th4": "行动",
+    "summary": "更多",
     "div1": "Transaction hash",
     "btn1": "hash",
-    "div2": "Project ID",
+    "div2": "项目 ID",
     "btn2": "id",
-    "div3": "Recipient address",
-    "btn3": "address"
+    "div3": "钱包地址",
+    "btn3": "地址"
   },
   "roundList": {
     "h1": "Rounds",
@@ -1047,7 +1047,7 @@
     "div1": "Cancelled",
     "div2": "Open",
     "div3": "Closed",
-    "p1": "he round is officially closed",
+    "p1": "The round is officially closed",
     "p2": "It's now too late to contribute or reallocate your donations! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
     "div4": "Great!",
     "div5": "⏱️ Round opening",
@@ -1080,17 +1080,17 @@
     "div21": "We haven't yet scheduled a funding round. Stay tuned!"
   },
   "roundStatusBanner": {
-    "span1": "Funding starts 🗓 {startDate}.",
-    "span2": "Project applications are closed.",
-    "span3": "Hurry, only {recipientSpacesRemainingString} left!",
-    "span4": "Time left to add a project:",
-    "span5_t1": "⌛️ The round will close in",
-    "span5_t2": ". Get your contributions in now!",
-    "span6_t1": "🎉 The round is open!",
-    "span6_t2": "left to contribute to your favorite projects",
-    "span7_t1": "Funding is closed! If you contributed, you have",
-    "span7_t2": "left to change your mind",
-    "span8": "🎉 Funding is closed! Our smart contracts are busy tallying contributions...",
+    "span1": "筹款开始 🗓 {startDate}。",
+    "span2": "项目申请已经结束。",
+    "span3": "快，只剩下 {recipientSpacesRemainingString} 个了!",
+    "span4": "剩余申请项目的时间",
+    "span5_t1": "⌛️ 本轮筹款活动即将结束于",
+    "span5_t2": ". 尽快提交您的捐款！",
+    "span6_t1": "🎉 筹款活动已经开始！",
+    "span6_t2": "剩余可以为您喜欢的项目捐款",
+    "span7_t1": "筹款已经结束！ 如果您曾经捐款，您还有",
+    "span7_t2": "的时间改变主意",
+    "span8": "🎉 筹款已经结束！ 我们的 smart contract 正在计算捐款数额……",
     "span9": "筹款已经结束！您可以开始领取您的捐款了。请前往您的项目页面来领取您的捐款。",
     "link1": "查看项目"
   },
@@ -1110,10 +1110,10 @@
     "button1": "hash"
   },
   "walletModal": {
-    "p1": "Connecting wallet",
-    "p2": "Connect to a wallet",
+    "p1": "正在连接钱包",
+    "p2": "连接钱包",
     "p3": "MetaMask",
-    "p4": "Install MetaMask",
+    "p4": "设置 MetaMask",
     "p5": "WalletConnect"
   },
   "walletWidget": {
