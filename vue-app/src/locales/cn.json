@@ -716,7 +716,7 @@
       "title": "Every donation is amplified by the matching pool.",
       "paragraph": "This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.",
       "subtitle": "How it works",
-      "list-1": "The {operator} and other donors send funds to the matching pool smart contract.",
+      "list-1": "{operator} and other donors send funds to the matching pool smart contract.",
       "list-2": "The round begins and you can donate to your favorite projects.",
       "list-3": "Once the round finishes, the smart contract distributes the matching pool funds to projects weighted primarily by number of contributions,",
       "list-3-strong": "not contribution value",
