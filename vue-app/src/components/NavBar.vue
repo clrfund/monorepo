@@ -138,6 +138,11 @@ export default class NavBar extends Vue {
     const theme = isValidTheme(savedTheme) ? savedTheme : getOsColorScheme()
     this.$store.commit(TOGGLE_THEME, theme)
 
+    const savedLanguage = lsGet(this.languageKey)
+    if (Trans.isLocaleSupported(savedLanguage)) {
+      Trans.changeLocale(savedLanguage)
+    }
+
     if (chain.isLayer2) {
       this.dropdownItems.splice(-1, 0, {
         to: '/about/layer-2',
@@ -170,12 +175,17 @@ export default class NavBar extends Vue {
     return 'theme'
   }
 
+  get languageKey(): string {
+    return 'language'
+  }
+
   get currentLocale(): string {
     return Trans.currentLocale
   }
 
   changeLang(lang: string): void {
     Trans.changeLocale(lang)
+    lsSet(this.languageKey, lang)
   }
 
   languageDescription(lang: string): string {
