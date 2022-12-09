@@ -92,10 +92,7 @@
           <div class="icon-row">
             <img :src="require(`@/assets/${chain.logo}`)" id="chain-icon" />
             <p>
-              <b
-                >{{ $t('landing.req.chain', { chain: chain.label }) }}
-                {{ chain.label }}</b
-              >
+              <b>{{ $t('landing.req.chain', { chain: chain.label }) }}</b>
             </p>
           </div>
           <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-action">

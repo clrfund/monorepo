@@ -33,8 +33,7 @@
         {{ $t('about.unique.li-1-text-1') }}
         <links to="https://ethereum.org/en/what-is-ethereum/">{{
           $t('about.unique.li-1-link-1')
-        }}</links
-        >,
+        }}</links>
         {{ $t('about.unique.li-1-text-2') }}
         <links to="/about/decentralization">{{
           $t('about.unique.li-1-link-2')
