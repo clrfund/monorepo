@@ -78,14 +78,14 @@
             <div class="full-width">
               <div class="round-info-item-top">
                 <div class="round-info-title">{{ $t('roundInfo.div6') }}</div>
-                <img
-                  :v-tooltip="{
+                <div
+                  v-tooltip="{
                     content: $t('roundInfo.tooltip1'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
               </div>
             </div>
             <div
@@ -113,33 +113,33 @@
                       : $t('roundInfo.div8_2')
                   }}
                 </div>
-                <img
+                <div
                   v-if="$store.getters.hasUserContributed"
-                  :v-tooltip="{
+                  v-tooltip="{
                     content: $t('roundInfo.tooltip2'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
-                <img
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
+                <div
                   v-else-if="!$store.state.currentUser"
-                  :v-tooltip="{
+                  v-tooltip="{
                     content: $t('roundInfo.tooltip3'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
-                <img
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
+                <div
                   v-else
-                  :v-tooltip="{
+                  v-tooltip="{
                     content: $t('roundInfo.tooltip4'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
               </div>
               <div class="message" v-if="!$store.getters.hasUserContributed">
                 {{ $t('roundInfo.div9') }}
@@ -185,14 +185,14 @@
             <div class="full-width">
               <div class="round-info-item-top">
                 <div class="round-info-title">{{ $t('roundInfo.div13') }}</div>
-                <img
-                  :v-tooltip="{
+                <div
+                  v-tooltip="{
                     content: $t('roundInfo.tooltip6'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
               </div>
               <div class="round-info-value">
                 <div class="message">{{ $t('roundInfo.div14') }}</div>
@@ -205,14 +205,14 @@
             <div class="full-width">
               <div class="round-info-item-top">
                 <div class="round-info-title">{{ $t('roundInfo.div15') }}</div>
-                <img
-                  :v-tooltip="{
+                <div
+                  v-tooltip="{
                     content: $t('roundInfo.tooltip7'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
               </div>
               <div class="round-info-value">
                 <div class="value large">{{ formatTotalInRound }}</div>
@@ -223,14 +223,14 @@
           <div class="round-info-sub-item">
             <div class="round-info-item-top">
               <div class="round-info-title">{{ $t('roundInfo.div16') }}</div>
-              <img
-                :v-tooltip="{
+              <div
+                v-tooltip="{
                   content: $t('roundInfo.tooltip8'),
                   trigger: 'hover click',
                 }"
-                width="16px"
-                src="@/assets/info.svg"
-              />
+              >
+                <img width="16px" src="@/assets/info.svg" />
+              </div>
               <div
                 v-if="
                   isCurrentRound &&
@@ -238,7 +238,7 @@
                   !$store.getters.isRoundTallying &&
                   !isRoundCancelled
                 "
-                :v-tooltip="$t('roundInfo.tooltip9')"
+                v-tooltip="$t('roundInfo.tooltip9')"
                 class="add-link"
                 @click="addMatchingFunds"
               >
@@ -272,7 +272,9 @@
                 <div class="value">{{ roundInfo.contributors }}</div>
                 <div class="unit">
                   {{ $t('roundInfo.div19')
-                  }}{{ roundInfo.contributors !== 1 ? 's' : '' }}
+                  }}{{
+                    roundInfo.contributors > 1 ? $t('roundInfo.pluralism') : ''
+                  }}
                 </div>
               </div>
             </div>
