@@ -27,7 +27,7 @@
     </p>
 
     <h2>{{ $t('about.unique.title') }}</h2>
-    <p>{{ $t('about.unique.paragraph') }}</p>
+    <p>{{ $t('about.unique.paragraph-1') }}</p>
     <ul>
       <li>
         {{ $t('about.unique.li-1-text-1') }}

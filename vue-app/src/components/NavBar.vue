@@ -33,31 +33,30 @@
               <p class="item-text">{{ $t(text) }}</p>
             </links>
           </div>
+          <!-- language -->
+          <div v-if="langs.length > 1">
+            <div class="hr"></div>
+            <div
+              @click="changeLang(lang)"
+              v-for="lang of langs"
+              :key="lang"
+              class="dropdown-item"
+            >
+              <a>
+                <div class="emoji-wrapper">{{ languageEmoji(lang) }}</div>
+                <p class="item-text">
+                  {{ languageDescription(lang) }}
+                </p>
+                <div v-if="currentLocale === lang">✔️</div>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
       <wallet-widget class="wallet-widget" v-if="inApp" />
       <links v-if="!inApp" to="/projects" class="app-btn">{{
         $t('app')
       }}</links>
-      <!-- lang -->
-      <div class="lang-dropdown">
-        <div @click="toggleLangDropdown()" class="dropdown-btn">
-          {{ currentLocale.toUpperCase() }}
-        </div>
-        <div class="button-menu" v-if="showLangDropdown">
-          <div class="dropdown-title">{{ $t('language') }}</div>
-          <div
-            @click="changeLang(lang)"
-            v-for="(lang, idx) of langs"
-            :key="idx"
-            class="dropdown-item"
-          >
-            <p class="item-text">
-              {{ $t('lang.' + lang) }}
-            </p>
-          </div>
-        </div>
-      </div>
     </div>
   </nav>
 </template>
@@ -118,10 +117,9 @@ export default class NavBar extends Vue {
     {
       to: '/recipients',
       text: 'navBar.dropdown.recipients',
-      emoji: '🚀',
+      emoji: '💎',
     },
   ]
-  showLangDropdown = false
   langs: string[] = Trans.supportedLocales
 
   created() {
@@ -171,7 +169,14 @@ export default class NavBar extends Vue {
 
   changeLang(lang: string): void {
     Trans.changeLocale(lang)
-    this.showLangDropdown = false
+  }
+
+  languageDescription(lang: string): string {
+    return Trans.localeDescription(lang)
+  }
+
+  languageEmoji(lang: string): string {
+    return Trans.localeEmoji(lang)
   }
 }
 </script>
@@ -251,6 +256,12 @@ export default class NavBar extends Vue {
           margin: 0;
           color: var(--text-color);
         }
+      }
+
+      .hr {
+        width: 100%;
+        border-bottom: 1px solid rgba($border-light, 0.3);
+        margin: 10px 0;
       }
     }
   }

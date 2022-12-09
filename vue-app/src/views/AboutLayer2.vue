@@ -54,7 +54,7 @@
       <h2>{{ chain.label }}</h2>
       <p>
         {{
-          $t('layer2.arbitrum.p', {
+          $t('layer2.arbitrum.p1', {
             operator: $store.getters.operator,
             chain: chain.label,
           })

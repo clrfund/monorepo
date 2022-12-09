@@ -1,9 +1,4 @@
 {
-  "lang": {
-    "en": "🇺🇸 English",
-    "es": "🇪🇸 Español",
-    "tw": "🇨🇳 繁體中文"
-  },
   "about": {
     "heading": {
       "title": "About"
@@ -227,7 +222,7 @@
       "title": "Layer 2s for Scalability",
       "p1": "The main Ethereum blockchain, \"layer 1\", may be upgraded to reduce costs in the future (this is one of the goals for the future of Ethereum, which clr.fund is helping realize!).",
       "p2": "In the immediate term, though, \"layer 2\" solutions are already helping dramatically reduce costs. Most layer 2s are \"rollups\", blockchain-esque systems that are maintained, like Ethereum, by a decentralized group of nodes. Rollups periodically \"roll up\" all their recent transactions into a single transaction that is recorded on layer 1, Ethereum, allowing them to inherit much of Ethereum's security.",
-      "p3": "Transactions on layer 2s are orders offorge test magnitude cheaper than on layer 1, since rollups can process a high rate of transactions and transaction traffic is now diluted across the many layer 2 options.",
+      "p3": "Transactions on layer 2s are orders of magnitude cheaper than on layer 1, since rollups can process a high rate of transactions and transaction traffic is now diluted across the many layer 2 options.",
       "p4_t1": "Read more on",
       "p4_l1": "Ethereum Layer 2 technologies."
     },
@@ -1014,7 +1009,6 @@
     "button3": "Done"
   },
   "navBar": {
-    "language": "Language",
     "app": "App",
     "dropdown": {
       "home": "Home",

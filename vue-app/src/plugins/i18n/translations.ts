@@ -1,19 +1,31 @@
 import i18n from './index'
 
 // refer to https://github.com/bodrovis-learning/Lokalise-source/blob/master/vue-i18n/src/plugins/Translation.js
+const languages = {
+  en: { emoji: '🇺🇸', description: 'English' },
+  es: { emoji: '🇪🇸', description: 'Español' },
+  cn: { emoji: '🇨🇳', description: '简体中文' },
+}
 
 export default {
   get defaultLocale() {
     return process.env.VUE_APP_I18N_LOCALE
   },
   get supportedLocales() {
-    return ['en', 'es', 'tw']
+    return ['en', 'es', 'cn']
+    //return ['en']
   },
   get currentLocale() {
     return i18n.locale
   },
   set currentLocale(locale) {
     i18n.locale = locale
+  },
+  localeDescription(locale: string): string {
+    return languages[locale].description || `${locale} not supported`
+  },
+  localeEmoji(locale: string): string {
+    return languages[locale].emoji || '🤔'
   },
   changeLocale(locale) {
     if (!this.isLocaleSupported(locale))
@@ -32,7 +44,7 @@ export default {
   },
   setI18nLocaleInServices(locale) {
     this.currentLocale = locale
-    document.querySelector('html')!.setAttribute('lang', locale)
+    document.body.setAttribute('lang', locale)
     return locale
   },
   i18nRoute(to) {
