@@ -3,16 +3,16 @@
     <div v-if="step === 0">
       <h2>
         {{
-          $t('contributionModal.h2_1', {
+          $t('contributionModal.confirm', {
             renderTotal: renderTotal,
             nativeTokenSymbol: currentRound.nativeTokenSymbol,
           })
         }}
       </h2>
       <p>
-        {{ $t('contributionModal.p1_t1') }}
+        {{ $t('contributionModal.your') }}
         <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>
-        {{ $t('contributionModal.p1_t2') }}
+        {{ $t('contributionModal.contribution_final') }}
       </p>
       <!-- TODO: if you get 1/3 of the way through these transactions and come back, you shouldn't get this warning again. This warning should only appear if you haven't already signed 'approve' transaction -->
       <!-- <p>
@@ -20,10 +20,10 @@
       </p> -->
       <div class="btn-row">
         <button class="btn-secondary" @click="$emit('close')">
-          {{ $t('contributionModal.button1') }}
+          {{ $t('contributionModal.btn_cancel') }}
         </button>
         <button class="btn-primary" @click="contribute()">
-          {{ $t('contributionModal.button2') }}
+          {{ $t('contributionModal.btn_continue') }}
         </button>
       </div>
     </div>
@@ -31,7 +31,7 @@
       <progress-bar :currentStep="1" :totalSteps="3" />
       <h2>
         {{
-          $t('contributionModal.h2_2', {
+          $t('contributionModal.approve', {
             renderTotal: renderTotal,
             nativeTokenSymbol: currentRound.nativeTokenSymbol,
           })
@@ -39,7 +39,7 @@
       </h2>
       <p>
         {{
-          $t('contributionModal.p2', {
+          $t('contributionModal.permission', {
             renderTotal: renderTotal,
             nativeTokenSymbol: currentRound.nativeTokenSymbol,
           })
@@ -63,7 +63,7 @@
       <progress-bar :currentStep="2" :totalSteps="3" />
       <h2>
         {{
-          $t('contributionModal.h2_3', {
+          $t('contributionModal.send_contribution', {
             renderTotal: renderTotal,
             nativeTokenSymbol: currentRound.nativeTokenSymbol,
           })
@@ -71,7 +71,7 @@
       </h2>
       <p>
         {{
-          $t('contributionModal.h2_1', {
+          $t('contributionModal.send_tx', {
             renderTotal: renderTotal,
             nativeTokenSymbol: currentRound.nativeTokenSymbol,
           })
@@ -93,10 +93,10 @@
     </div>
     <div v-if="step === 3">
       <progress-bar :currentStep="3" :totalSteps="3" />
-      <h2>{{ $t('contributionModal.h2_4') }}</h2>
+      <h2>{{ $t('contributionModal.magic') }}</h2>
       <p>
         {{
-          $t('contributionModal.p3', {
+          $t('contributionModal.how_much', {
             nativeTokenSymbol: currentRound.nativeTokenSymbol,
           })
         }}

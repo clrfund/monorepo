@@ -112,9 +112,9 @@
       "li-3": "the sybil-resistant registry of users qualified to contribute to individual projects",
       "li-4": "the funds from and encrypted information about contributions to individual projects",
       "li-5": "the mechanism for distributing funds once a round's results are finalized",
-      "paragraph-2-text-1": "Each of these pieces exists in an Ethereum smart contract (see the code",
-      "paragraph-link": "here",
-      "paragraph-2-text-2": ", meaning its functionality is maintained by Ethereum miners, a decentralized group."
+      "exists_in_code": "Each of these pieces exists in an Ethereum smart contract (see the code",
+      "here": "here",
+      "maintained_by_miner": ", meaning its functionality is maintained by Ethereum miners, a decentralized group."
     },
     "why": {
       "title": "Why is clr.fund decentralized?",
@@ -498,11 +498,6 @@
         "header": "Join a BrightId party",
         "content": "BrightID run verification parties regularly. Join the call, meet other new users, and they'll verify you’re a human and not a bot. Quick and painless, even for you introverts out there.",
         "linkButton": "View party schedule"
-      },
-      "luckiest": {
-        "tag": "🎰 Luckiest",
-        "header": "Connect with 2 verified humans",
-        "content": "Know anyone that's contributed to Gitcoin Grants or clr.fund rounds? may already be verified. Hit them up and see if they can verify you!"
       }
     }
   },
@@ -909,7 +904,7 @@
     "div11": "Can't",
     "div11_if2": "reallocate",
     "div11_if3": "contribute",
-    "div12": "Funds you don't contribute to projects ({total} { tokenSymbol}) will be sent to the matching pool at the end of the round. Your cart must add up to your original {contribution} {tokenSymbol} donation.",
+    "div12": "Funds you don't contribute to projects ({total} {tokenSymbol}) will be sent to the matching pool at the end of the round. Your cart must add up to your original {contribution} {tokenSymbol} donation.",
     "link3": "Verify with BrightID",
     "template1": "Contribute {total} {tokenSymbol} to {cart} projects",
     "template2": "Finish contribution",
@@ -925,8 +920,8 @@
     "button1": "Amount"
   },
   "claimButton": {
-    "p": "✔️ {allocatedAmount} { tokenSymbol } claimed",
-    "button": "Claim { allocatedAmount } { tokenSymbol }"
+    "p": "✔️ {allocatedAmount} {tokenSymbol} claimed",
+    "button": "Claim {allocatedAmount} {tokenSymbol}"
   },
   "claimModal": {
     "h2_1": "Claim funds",
@@ -936,17 +931,17 @@
     "button1": "Done"
   },
   "contributionModal": {
-    "h2_1": " Confirm {renderTotal} {nativeTokenSymbol} contribution",
-    "p1_t1": " Your",
-    "p1_t2": "contribution total is final. You won't be able to increase this amount. Make sure this is the maximum you might want to spend on contributions.",
-    "button1": "Cancel",
-    "button2": "Continue",
-    "h2_2": "Approve {renderTotal} {nativeTokenSymbol}",
-    "p2": " This gives this app permission to withdraw {renderTotal} {nativeTokenSymbol} from your wallet for your contribution.",
-    "h2_3": " Send {renderTotal} {nativeTokenSymbol} contribution",
-    "p3": " This transaction sends out your {renderTotal} {nativeTokenSymbol} contribution to your chosen projects.",
-    "h2_4": "Matching pool magic ✨",
-    "p4": "This transaction lets the matching pool know how much {nativeTokenSymbol } to send to your favorite projects based on your contributions."
+    "confirm": " Confirm {renderTotal} {nativeTokenSymbol} contribution",
+    "your": " Your",
+    "contribution_final": "contribution total is final. You won't be able to increase this amount. Make sure this is the maximum you might want to spend on contributions.",
+    "btn_cancel": "Cancel",
+    "btn_continue": "Continue",
+    "approve": "Approve {renderTotal} {nativeTokenSymbol}",
+    "permission": " This gives this app permission to withdraw {renderTotal} {nativeTokenSymbol} from your wallet for your contribution.",
+    "send_contribution": " Send {renderTotal} {nativeTokenSymbol} contribution",
+    "send_tx": " This transaction sends out your {renderTotal} {nativeTokenSymbol} contribution to your chosen projects.",
+    "magic": "Matching pool magic ✨",
+    "how_much": "This transaction lets the matching pool know how much {nativeTokenSymbol} to send to your favorite projects based on your contributions."
   },
   "copyButton": {
     "tooltip1": "Copied!"
@@ -962,7 +957,7 @@
   "formNavigation": {
     "button1": "Previous",
     "button2_1": "Confirm",
-    "button2:_2": "Next"
+    "button2_2": "Next"
   },
   "formProgressWidget": {
     "p1": "Step {currentStep} of {steps}",
@@ -974,8 +969,8 @@
     "span1_l2": "L2",
     "span1_t2": "funds!",
     "p1": " ⚠️ You need both some ETH for gas, and {nativeTokenSymbol} to contribute",
-    "link1": " Get help bridging { singleTokenNeeded } to Layer 2",
-    "link2": " Bridge {singleTokenNeeded} to { chain}"
+    "link1": " Get help bridging {singleTokenNeeded} to Layer 2",
+    "link2": " Bridge {singleTokenNeeded} to {chain}"
   },
   "ipfsCopyWidget": {
     "tooltip1": "'View IPFS link'"
@@ -992,19 +987,14 @@
     "link1": "GitHub repo",
     "link2": "@Twitter"
   },
-  "matchigFundsModal": {
-    "h3_1_t1": "Contribute { tokenSymbol } to the",
-    "h3_1_if1": "next",
-    "h3_1_if2": "current",
-    "h3_1_t2": "round",
-    "div1": " ⚠️ You only have { renderBalance } { tokenSymbol }",
+  "matchingFundsModal": {
+    "title": "Contribute {tokenSymbol} to the matching pool",
+    "div1": " ⚠️ You only have {renderBalance} {tokenSymbol}",
     "button1": "Cancel",
     "button2": "Contribute",
-    "h3_2_t1": " Contribute { renderContributionAmount } { tokenSymbol } to the",
-    "h3_2_if1": "next",
-    "h3_2_if2": "current",
-    "h3_2_t2": "round",
-    "h3_3": " You just topped up the pool by { renderContributionAmount } { tokenSymbol }!",
+    "h3_2_t1": " Contribute {renderContributionAmount} {tokenSymbol} to the matching pool",
+    "h3_3": " You just topped up the pool by {renderContributionAmount} {tokenSymbol}!",
+    "fund_distribution_message": "The funds will be distributed to all projects based on the contributions they receive from the community",
     "div2": "Thanks for helping out all our projects.",
     "button3": "Done"
   },
@@ -1043,11 +1033,11 @@
   "recipientSubmissionWidget": {
     "div1": "Waiting for transaction to be mined...",
     "div2": "Check your wallet for a prompt...",
-    "div3_t1": "Something failed: { txError }",
-    "div3_t2": "Check your wallet or { blockExplorerLabel } for more info.",
+    "div3_t1": "Something failed: {txError}",
+    "div3_t2": "Check your wallet or {blockExplorerLabel} for more info.",
     "div4": "Total to submit",
     "tooltip1": "Estimate – this total may be slightly different in your wallet.",
-    "div5_t1": " Not enough { depositToken } in your wallet.",
+    "div5_t1": " Not enough {depositToken} in your wallet.",
     "div5_t2": "Top up or connect a different wallet.",
     "p1": "Security deposit"
   },
@@ -1089,9 +1079,9 @@
     "div21": "We haven't yet scheduled a funding round. Stay tuned!"
   },
   "roundStatusBanner": {
-    "span1": "Funding starts 🗓 { startDate }.",
+    "span1": "Funding starts 🗓 {startDate}.",
     "span2": "Project applications are closed.",
-    "span3": "Hurry, only { recipientSpacesRemainingString } left!",
+    "span3": "Hurry, only {recipientSpacesRemainingString} left!",
     "span4": "Time left to add a project:",
     "span5_t1": "⌛️ The round will close in",
     "span5_t2": ". Get your contributions in now!",

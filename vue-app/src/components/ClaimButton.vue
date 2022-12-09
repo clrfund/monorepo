@@ -3,7 +3,7 @@
     <loader v-if="isLoading" />
     <p v-if="claimed">
       {{
-        $t('p', {
+        $t('claimButton.p', {
           allocatedAmount: formatAmount(allocatedAmount),
           tokenSymbol: tokenSymbol,
         })
@@ -16,7 +16,7 @@
       @click="claim()"
     >
       {{
-        $t('button', {
+        $t('claimButton.button', {
           allocatedAmount: formatAmount(allocatedAmount),
           tokenSymbol: tokenSymbol,
         })

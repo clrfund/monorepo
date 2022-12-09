@@ -26,11 +26,11 @@
       </li>
     </ul>
     <p>
-      {{ $t('decentralization.which.title') }}
+      {{ $t('decentralization.which.exists_in_code') }}
       <links to="https://github.com/clrfund/monorepo">{{
-        $t('decentralization.which.title')
+        $t('decentralization.which.here')
       }}</links
-      >{{ $t('decentralization.which.title') }}
+      >{{ $t('decentralization.which.maintained_by_miner') }}
     </p>
     <h2>{{ $t('decentralization.why.title') }}</h2>
     <p>

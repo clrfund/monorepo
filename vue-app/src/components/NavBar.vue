@@ -1,4 +1,15 @@
 <template>
+  <!--
+    Tell the vue-i18n-extract the following keys are used
+    $t('navBar.dropdown.home')
+    $t('navBar.dropdown.about')
+    $t('navBar.dropdown.how')
+    $t('navBar.dropdown.maci')
+    $t('navBar.dropdown.sybil')
+    $t('navBar.dropdown.code')
+    $t('navBar.dropdown.layer2')
+    $t('navBar.dropdown.recipients')
+  -->
   <nav id="nav-bar">
     <links to="/">
       <img

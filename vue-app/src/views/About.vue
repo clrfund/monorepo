@@ -47,7 +47,7 @@
             ? $t('about.unique.li-2-layer2-1')
             : $t('about.unique.li-2-layer2-2')
         }}
-        {{ $t('about.unique.li-1-text-1') }}
+        {{ $t('about.unique.li-2-text-2') }}
         <links v-if="chain.isLayer2" to="/about/layer-2">
           {{ $t('about.unique.li-2-link-1') }}
         </links>

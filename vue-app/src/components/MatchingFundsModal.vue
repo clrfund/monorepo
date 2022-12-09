@@ -2,10 +2,10 @@
   <div class="modal-body">
     <div v-if="step === 1">
       <h3>
-        {{ $t('matchingFundsModal.h3_1_t1', { tokenSymbol: tokenSymbol }) }}
+        {{ $t('matchingFundsModal.title', { tokenSymbol }) }}
       </h3>
       <div>
-        {{ $t('matchingFundsModal.h3_div') }}
+        {{ $t('matchingFundsModal.fund_distribution_message') }}
       </div>
       <div class="contribution-form">
         <input-button
@@ -153,7 +153,7 @@ export default class MatchingFundsModal extends Vue {
   }
 
   get tokenSymbol(): string {
-    return this.$store.state.currentRound.nativeTokenSymbol
+    return this.$store.state.currentRound.nativeTokenSymbol || ''
   }
 
   get tokenLogo(): string {
