@@ -703,7 +703,7 @@
     },
     "callout": {
       "title": "参加资金轮次",
-      "paragraph": "将您的项目添加到下一个资金轮次中。如果您正在从事与公共产品相关的任何工作，您都可以参加。",
+      "paragraph": "将您的项目添加到下一个筹款活动。如果您正在从事与公共产品相关的任何工作，您都可以参加。",
       "action": "添加项目",
       "deadline": "参加"
     },
@@ -751,7 +751,7 @@
     }
   },
   "profile": {
-    "p1": "关闭",
+    "p1": "关",
     "h2_1": "您的钱包",
     "btn1": "地址",
     "tooltip1": "断开钱包",
@@ -764,23 +764,23 @@
     "div2": "您尚未提交任何项目"
   },
   "project": {
-    "p": "✔️ You have contributed to this project!"
+    "p": "✔️ 您已经对此项目进行了贡献！"
   },
   "projectAdded": {
-    "h1": "Project submitted!",
+    "h1": "您已经提交了项目！",
     "div1": "You’re almost on board this funding round.",
     "li1": "Your project just needs to go through some final checks to ensure it meets round criteria. You can",
     "link1": "learn more about the registration process here.",
     "li2": "Once that's complete, your project page will go live.",
     "li3": " If your project fails any checks, we'll let you know by email and return your deposit.",
-    "link2": "View projects",
-    "link3": "Go home"
+    "link2": "查看项目",
+    "link3": "回首页"
   },
   "projectList": {
-    "h2": "Projects",
-    "input": "Search projects",
-    "link1": "Add project",
-    "div1": "😢 No projects match your search. Try using the filter to narrow down what you're looking for."
+    "h2": "项目",
+    "input": "搜索项目",
+    "link1": "项目",
+    "div1": "😢 没有找到符合您要求的项目。请尝试使用过滤器来缩小您的搜索范围"
   },
   "recipientRegistry": {
     "h2": "收款人注册表",
@@ -797,9 +797,9 @@
     "btn3": "地址"
   },
   "roundList": {
-    "h1": "Rounds",
-    "link1": "Round {index}",
-    "link2": "Round {index}"
+    "h1": "筹款回合",
+    "link1": "回合 {index}",
+    "link2": "回合 {index}"
   },
   "transactionSuccess": {
     "p1": "reallocated!",
@@ -921,15 +921,15 @@
     "button1": "Amount"
   },
   "claimButton": {
-    "p": "✔️ {allocatedAmount} {tokenSymbol} claimed",
-    "button": "Claim {allocatedAmount} {tokenSymbol}"
+    "p": "✔️ {allocatedAmount} {tokenSymbol} 领取了",
+    "button": "领取 {allocatedAmount} {tokenSymbol}"
   },
   "claimModal": {
     "h2_1": "Claim funds",
     "h2_2": "Funds were claimed!",
     "p1": " has been sent to",
     "div1": "Recipient address",
-    "button1": "Done"
+    "button1": "完成"
   },
   "contributionModal": {
     "confirm": " Confirm {renderTotal} {nativeTokenSymbol} contribution",
@@ -1043,41 +1043,42 @@
     "p1": "Security deposit"
   },
   "roundInfo": {
-    "link1": "View on {blockExplorer}",
-    "div1": "Cancelled",
-    "div2": "Open",
-    "div3": "Closed",
-    "p1": "The round is officially closed",
-    "p2": "It's now too late to contribute or reallocate your donations! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
-    "div4": "Great!",
-    "div5": "⏱️ Round opening",
-    "div6": "Time left to contribute",
-    "tooltip1": "During this phase, you can contribute to your favorite projects.",
-    "div7": "Contribution Deadline: ",
-    "div8_1": "Time left to reallocate",
-    "div8_2": "Round status",
-    "tooltip2": "During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.",
-    "tooltip3": "If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.",
-    "tooltip4": "This round has closed for new contributions.",
-    "div9": "Closed for contributions",
-    "div10": "Reallocation Deadline: ",
-    "div11": "Round status",
-    "tooltip5": "Our smart contracts are busy figuring out final contribution amounts.",
-    "div12": "Tallying all contributions",
-    "div13": "Round status",
-    "tooltip6": "If you're a project owner you can now claim your funds!",
-    "div14": "Contributions are ready to claim 🎉",
-    "div15": "Total in round",
-    "tooltip7": "This total includes the funds in the matching pool and all contributions from the community.",
-    "div16": "Matching pool",
-    "tooltip8": "These are the funds that will be distributed to all the projects based on the contributions they receive from the community.",
-    "tooltip9": "'Add matching funds'",
-    "span1": "Add funds",
-    "div17": "Contributions total",
-    "div18": "Contributors",
-    "div19": "legend",
-    "div20": "No scheduled round",
-    "div21": "We haven't yet scheduled a funding round. Stay tuned!"
+    "link1": "查看 {blockExplorer}",
+    "div1": "取消",
+    "div2": "开放",
+    "div3": "结束",
+    "p1": "本筹款活动正式结束",
+    "p2": "不能再对项目进行贡献或重新分配您的捐款！由于社区的慷慨和一些技术限制，我们不得不提前结束本筹款活动。您仍然可以通过向匹配池捐款来帮助我们。",
+    "div4": "太棒了！",
+    "div5": "⏱️ 筹款开放",
+    "div6": "剩余捐款的时间",
+    "tooltip1": "在这个阶段，您可以向您喜欢的项目进行贡献。",
+    "div7": "捐款期限：",
+    "div8_1": "剩余时间去重新分配您的捐款",
+    "div8_2": "筹款状态",
+    "tooltip2": "在这个阶段，您可以添加/删除项目并更改您的贡献金额。您不能进行贡献或增加您的总额。",
+    "tooltip3": "如果您已经贡献了，您可以添加/删除项目并更改您的贡献金额。请连接您的钱包。",
+    "tooltip4": "此回合已停止接受新的贡献。",
+    "div9": "停止接受贡献",
+    "div10": "调整期限：",
+    "div11": "筹款状态",
+    "tooltip5": "我们的 smart contract 正在计算捐款数额。",
+    "div12": "正在计算捐款数额",
+    "div13": "筹款状态",
+    "tooltip6": "如果您是项目负责人，您可以领取捐款了！",
+    "div14": "可以领取您的捐款了 🎉",
+    "div15": "筹款总金额",
+    "tooltip7": "这个总数包括匹配池和社区的所有捐款。",
+    "div16": "匹配池",
+    "tooltip8": "匹配池的资金将根据社区对各个项目的贡献分配给所有项目。",
+    "tooltip9": "加款匹配池",
+    "span1": "加款",
+    "div17": "捐款数额",
+    "div18": "捐款人",
+    "div19": "传奇人",
+    "div20": "没有安排筹款活动",
+    "div21": "我们还没有安排新的筹款活动。请保持关注！",
+    "pluralism": ""
   },
   "roundStatusBanner": {
     "span1": "筹款开始 🗓 {startDate}。",
