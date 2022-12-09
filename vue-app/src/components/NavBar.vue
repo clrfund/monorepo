@@ -163,10 +163,6 @@ export default class NavBar extends Vue {
     return Trans.currentLocale
   }
 
-  toggleLangDropdown(): void {
-    this.showLangDropdown = !this.showLangDropdown
-  }
-
   changeLang(lang: string): void {
     Trans.changeLocale(lang)
   }
