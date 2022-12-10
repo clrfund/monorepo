@@ -58,8 +58,9 @@
       </li>
       <li>
         {{ $t('sybilResistance.how.li5_t1') }}
-        <links to="/about/maci">{{ $t('sybilResistance.how.li5_link1') }}</links
-        >.
+        <links to="/about/maci">{{
+          $t('sybilResistance.how.li5_link1')
+        }}</links>
       </li>
     </ol>
     <p>
