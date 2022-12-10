@@ -173,7 +173,7 @@
         "li-3": "The maximum contribution amount is {maxContributionAmount} {nativeTokenSymbol}.",
         "li-4": "Your total contribution amount is final. You can't increase it by contributing an additional time."
       },
-      "paragraph-2": "If you dont contribute in the contribution phase, the round is over for   you once this phase ends."
+      "paragraph-2": "If you don't contribute in the contribution phase, the round is over for   you once this phase ends."
     },
     "reallocation": {
       "title": "Reallocation phase",
@@ -478,13 +478,13 @@
       "li1_link1": "iOS",
       "li1_t2": "or",
       "li1_link2": "Android",
-      "li2": "Get verified in BrightID so we know you're a human and not a bot.",
-      "li3_t1": "Submit a transaction for clr.fund to sponsor you in BrightID.",
+      "li2": "Get verified in BrightID so we know you're a human and not a bot",
+      "li3_t1": "Submit a transaction for clr.fund to sponsor you in BrightID",
       "li3_link1": "More on BrightID sponsorship",
-      "li4": "Link your wallet to your BrightID profile, so you can't use multiple Ethereum addresses to sway voting.",
+      "li4": "Link your wallet to your BrightID profile, so you can't use multiple Ethereum addresses to sway voting",
       "li5_t1": "Add yourself to the clr.fund user registry. This is a requirement for",
       "li5_link1": "MACI, our anti-bribery tech",
-      "p2": "Note that you should only link one Ethereum address to your BrightID profile. If you repeat our verification process and add another Ethereum address, all contributions from you previous address will be ignored by the matching pool. This is again to avoid sybil attacks."
+      "p2": ""
     }
   },
   "brightIDGuide": {
@@ -764,7 +764,7 @@
     "div2": "You haven't submitted any projects"
   },
   "project": {
-    "p": "✔️ You have contributed to this project!"
+    "p": "You have contributed to this project!"
   },
   "projectAdded": {
     "h1": "Project submitted!",
@@ -1019,7 +1019,7 @@
     "info1": "This is what your contributors will see when they visit your project page.",
     "div1": " tag",
     "div2": "Team: ",
-    "p1": "✔️ You have contributed to this project!",
+    "p1": "You have contributed to this project!",
     "h2_1": "About the project",
     "h2_2": "The problem it solves",
     "h2_3": "Funding plans",
@@ -1105,7 +1105,7 @@
     "button1": "Close"
   },
   "transactionReceipt": {
-    "tooltip1": "'Awaiting transaction confirmation'",
+    "tooltip1": "Awaiting transaction confirmation",
     "tooltip2": "'Transaction confirmed'",
     "tooltip3": "View on {blockExplorer}",
     "button1": "hash"

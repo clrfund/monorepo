@@ -173,7 +173,7 @@
         "li-3": "The maximum contribution amount is {maxContributionAmount} {nativeTokenSymbol}.",
         "li-4": "Your total contribution amount is final. You can't increase it by contributing an additional time."
       },
-      "paragraph-2": "If you dont contribute in the contribution phase, the round is over for   you once this phase ends."
+      "paragraph-2": "If you don't contribute in the contribution phase, the round is over for   you once this phase ends."
     },
     "reallocation": {
       "title": "Reallocation phase",
@@ -1019,7 +1019,7 @@
     "info1": "This is what your contributors will see when they visit your project page.",
     "div1": " tag",
     "div2": "Team: ",
-    "p1": "✔️ You have contributed to this project!",
+    "p1": "You have contributed to this project!",
     "h2_1": "About the project",
     "h2_2": "The problem it solves",
     "h2_3": "Funding plans",
