@@ -1125,5 +1125,17 @@
     "h3_2": "Success!",
     "div1": "You have successfully withdrawn your contribution.",
     "button1": "OK"
+  },
+  "timeleft": {
+    "unit": {
+      "days": "days",
+      "day": "day",
+      "hours": "hours",
+      "hour": "hour",
+      "minutes": "minutes",
+      "minute": "minute",
+      "seconds": "seconds",
+      "second": "second"
+    }
   }
 }

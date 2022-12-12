@@ -1125,5 +1125,17 @@
     "h3_2": "成功!",
     "div1": "您已成功取回捐款。",
     "button1": "确定"
+  },
+  "timeleft": {
+    "unit": {
+      "days": "天",
+      "day": "天",
+      "hours": "小时",
+      "hour": "小时",
+      "minutes": "分钟",
+      "minute": "分钟",
+      "seconds": "秒",
+      "second": "秒"
+    }
   }
 }
