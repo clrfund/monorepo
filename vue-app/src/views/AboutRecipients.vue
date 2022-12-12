@@ -33,7 +33,11 @@
       </p>
       <p v-if="chain.isLayer2">
         {{ $t('recipients.funds.p3', { chain: chain.label }) }}
-        <links to="about/layer-2">
+        <links
+          :to="{
+            name: 'about-layer-2',
+          }"
+        >
           {{ $t('recipients.funds.link2') }}
         </links>
       </p>
