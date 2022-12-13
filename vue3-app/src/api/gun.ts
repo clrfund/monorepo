@@ -1,5 +1,10 @@
 // Webpack will show warning 'the request of a dependency is an expression'
 // https://github.com/amark/gun/issues/890
+
+// clrfund issue
+// https://github.com/clrfund/monorepo/issues/420
+// https://github.com/clrfund/monorepo/issues/500
+
 import Gun from 'gun/gun'
 import 'gun/sea'
 
@@ -10,13 +15,13 @@ import { md5 } from '@/utils/crypto'
 const GUN_WARNINGS = new Set(['User already created!', 'User is already being created or authenticated!'])
 
 interface GunSchema {
-	data: { [key: string]: string }
+	[data: string]: { [key: string]: string }
 }
 
 const db = Gun<GunSchema>({
 	peers: gunPeers,
 })
-const user = db.user() as any
+const user = db.user()
 
 export async function loginUser(accountId: string, encryptionKey: string): Promise<void> {
 	// GunDB needs username and password to create a key pair.
@@ -24,7 +29,7 @@ export async function loginUser(accountId: string, encryptionKey: string): Promi
 	const username = md5(`${accountId.toLowerCase()}-${LOGIN_MESSAGE}`)
 	const password = encryptionKey
 	await new Promise((resolve, reject) => {
-		user.create(username, password, ack => {
+		user.create(username, password, (ack: any) => {
 			if (ack.ok === 0 || GUN_WARNINGS.has(ack.err)) {
 				resolve(0)
 			} else {
@@ -33,7 +38,7 @@ export async function loginUser(accountId: string, encryptionKey: string): Promi
 		})
 	})
 	await new Promise((resolve, reject) => {
-		user.auth(username, password, ack => {
+		user.auth(username, password, (ack: any) => {
 			if (ack.err) {
 				reject('Error authenticating user in GunDB.')
 			} else {

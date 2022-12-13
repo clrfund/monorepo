@@ -195,7 +195,7 @@ onActivated(async ({ address, provider }) => {
 	}
 	// Connect & auth to gun db
 	try {
-		// await appStore.loginUser(address, user.encryptionKey)
+		await appStore.loginUser(address, user.encryptionKey)
 	} catch (err) {
 		console.error(err)
 		return

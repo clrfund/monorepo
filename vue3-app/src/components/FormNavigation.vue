@@ -1,25 +1,11 @@
 <template>
 	<div>
 		<div class="btn-row">
-			<button
-				v-if="currentStep > 0"
-				class="btn-secondary float-left"
-				:disabled="isNavDisabled"
-				@click="handleStepNav(currentStep - 1)"
-			>
+			<button v-if="currentStep > 0" class="btn-secondary" :disabled="isNavDisabled" @click="onClickPrevious">
 				Previous
 			</button>
-			<wallet-widget
-				v-if="!currentUser && currentStep === finalStep"
-				class="float-right"
-				:is-action-button="true"
-			/>
-			<button
-				v-else
-				class="btn-primary float-right"
-				:disabled="!isStepValid"
-				@click="handleStepNav(currentStep + 1, true)"
-			>
+			<wallet-widget v-if="!currentUser && currentStep === finalStep" class="" :is-action-button="true" />
+			<button v-else class="btn-primary" :disabled="!isStepValid" @click="onClickNextOrConfirm">
 				{{ currentStep === finalStep ? 'Confirm' : 'Next' }}
 			</button>
 		</div>
@@ -41,11 +27,18 @@ interface Props {
 	handleStepNav: (step: number, updateFurthest?: boolean) => void
 	isNavDisabled: boolean
 }
+const props = defineProps<Props>()
 
 const appStore = useAppStore()
 const currentUser = computed<User | null>(() => appStore.currentUser)
 
-defineProps<Props>()
+function onClickPrevious() {
+	props.handleStepNav(props.currentStep - 1)
+}
+
+function onClickNextOrConfirm() {
+	props.handleStepNav(props.currentStep + 1, true)
+}
 </script>
 
 <style scoped lang="scss">
@@ -53,15 +46,8 @@ defineProps<Props>()
 @import '../styles/vars';
 
 .btn-row {
-	display: block;
+	display: flex;
+	justify-content: space-between;
 	height: 2.75rem;
-}
-
-.float-left {
-	float: left;
-}
-
-.float-right {
-	float: right;
 }
 </style>

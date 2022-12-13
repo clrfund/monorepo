@@ -118,6 +118,7 @@
 </template>
 
 <script setup lang="ts">
+// 這個元件根本沒有被使用到！
 import { computed, onMounted, ref } from 'vue'
 import type { BigNumber, Transaction } from 'ethers'
 import humanizeDuration from 'humanize-duration'

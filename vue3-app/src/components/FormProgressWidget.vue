@@ -43,6 +43,7 @@
 				class="desktop"
 			/>
 		</div>
+		<!-- mobile -->
 		<div class="mobile">
 			<div class="padding">
 				<progress-bar :current-step="currentStep + 1" :total-steps="steps.length" />

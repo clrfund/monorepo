@@ -1,6 +1,7 @@
 <template>
 	<div id="join-the-round" class="container">
 		<div class="grid">
+			<!-- web main sidebar -->
 			<form-progress-widget
 				:currentStep="currentStep"
 				:furthestStep="form.furthestStep"
@@ -212,9 +213,454 @@
 							</div>
 						</div>
 					</div>
+					<div v-if="currentStep === 1">
+						<h2 class="step-title">Donation details</h2>
+						<div class="inputs">
+							<div class="form-background">
+								<label for="fund-address" class="input-label">Ethereum address</label>
+								<p class="input-description">
+									The destination address for donations, which you'll use to claim funds. This doesn't
+									have to be the same address as the one you use to send your application transaction.
+								</p>
+								<input
+									id="fund-address"
+									placeholder="example: 0x123..."
+									v-model.lazy="v$.fund.addressName.$model"
+									@blur="checkEns"
+									:class="{
+										input: true,
+										invalid: v$.fund.addressName.$error,
+									}"
+								/>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.fund.addressName.$error,
+									}"
+								>
+									Enter a valid ENS or Ethereum 0x address
+								</p>
+								<!-- TODO: only validate after user removes focus on input -->
+							</div>
+							<div class="form-background">
+								<label for="fund-plans" class="input-label">How will you spend your funding?</label>
+								<p class="input-description">
+									Potential contributors might convert based on your specific funding plans. Markdown
+									supported.
+								</p>
+								<textarea
+									id="fund-plans"
+									placeholder="ex: on our roadmap..."
+									v-model="v$.fund.plans.$model"
+									:class="{
+										input: true,
+										invalid: v$.fund.plans.$error,
+									}"
+								/>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.fund.plans.$error,
+									}"
+								>
+									Let potential contributors know what plans you have for their donations.
+								</p>
+								<p v-if="form.fund.plans" class="input-label pt-1">Preview:</p>
+								<markdown :raw="form.fund.plans" />
+							</div>
+						</div>
+					</div>
+					<div v-if="currentStep === 2">
+						<h2 class="step-title">Team details</h2>
+						<p>Tell us about the folks behind your project.</p>
+						<div class="inputs">
+							<div v-if="isEmailRequired" class="form-background">
+								<label for="team-email" class="input-label"> Contact email </label>
+								<p class="input-description">
+									For important updates about your project and the funding round.
+								</p>
+								<input
+									id="team-email"
+									placeholder="example: doge@goodboi.com"
+									v-model.lazy="v$.team.email.$model"
+									:class="{
+										input: true,
+										invalid: v$.team.email.$error,
+									}"
+								/>
+								<p class="input-notice">
+									We won't display this publicly or add it to the on-chain registry.
+								</p>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.team.email.$error,
+									}"
+								>
+									This doesn't look like an email.
+								</p>
+							</div>
+							<div class="form-background">
+								<label for="team-name" class="input-label">Team name (optional)</label>
+								<p class="input-description">If different to project name.</p>
+								<input
+									id="team-name"
+									type="email"
+									placeholder="ex: clr.fund"
+									v-model="v$.team.name.$model"
+									:class="{
+										input: true,
+										invalid: v$.team.name.$error,
+									}"
+								/>
+							</div>
+							<div class="form-background">
+								<label for="team-desc" class="input-label">Team description (optional)</label>
+								<p class="input-description">
+									If different to project description. Markdown supported.
+								</p>
+								<textarea
+									id="team-desc"
+									placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+									v-model="v$.team.description.$model"
+									:class="{
+										input: true,
+										invalid: v$.team.description.$error,
+									}"
+								/>
+								<p v-if="form.team.description" class="input-label pt-1">Preview:</p>
+								<markdown :raw="form.team.description" />
+							</div>
+						</div>
+					</div>
+					<div v-if="currentStep === 3">
+						<h2 class="step-title">Links</h2>
+						<p>
+							Give contributors some links to check out to learn more about your project. Provide at least
+							one.
+						</p>
+						<div class="inputs">
+							<div class="form-background">
+								<label for="links-github" class="input-label">GitHub</label>
+								<input
+									id="links-github"
+									type="link"
+									placeholder="example: https://github.com/ethereum/clrfund"
+									v-model.lazy="v$.links.github.$model"
+									:class="{
+										input: true,
+										invalid: v$.links.github.$error,
+									}"
+								/>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.links.github.$error,
+									}"
+								>
+									This doesn't look like a valid URL
+								</p>
+								<!-- TODO: only validate after user removes focus on input -->
+							</div>
+							<div class="form-background">
+								<label for="links-radicle" class="input-label">Radicle</label>
+								<input
+									id="links-radicle"
+									type="link"
+									placeholder="example: https://radicle.xyz/ethereum/clrfund"
+									v-model.lazy="v$.links.radicle.$model"
+									:class="{
+										input: true,
+										invalid: v$.links.radicle.$error,
+									}"
+								/>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.links.radicle.$error,
+									}"
+								>
+									This doesn't look like a valid URL
+								</p>
+							</div>
+							<div class="form-background">
+								<label for="links-website" class="input-label">Website</label>
+								<input
+									id="links-website"
+									type="link"
+									placeholder="example: https://clr.fund"
+									v-model.lazy="v$.links.website.$model"
+									:class="{
+										input: true,
+										invalid: v$.links.website.$error,
+									}"
+								/>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.links.website.$error,
+									}"
+								>
+									This doesn't look like a valid URL
+								</p>
+							</div>
+							<div class="form-background">
+								<label for="links-twitter" class="input-label">Twitter</label>
+								<input
+									id="links-twitter"
+									type="link"
+									placeholder="example: https://twitter.com/ethereum"
+									v-model.lazy="v$.links.twitter.$model"
+									:class="{
+										input: true,
+										invalid: v$.links.twitter.$error,
+									}"
+								/>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.links.twitter.$error,
+									}"
+								>
+									This doesn't look like a valid URL
+								</p>
+							</div>
+							<div class="form-background">
+								<label for="links-discord" class="input-label">Chat</label>
+								<input
+									id="links-discord"
+									type="link"
+									placeholder="ex: https://discord.gg/5Prub9zbGz"
+									class="input"
+									v-model.lazy="v$.links.discord.$model"
+									:class="{
+										input: true,
+										invalid: v$.links.discord.$error,
+									}"
+								/>
+								<p
+									:class="{
+										error: true,
+										hidden: !v$.links.discord.$error,
+									}"
+								>
+									This doesn't look like a valid URL
+								</p>
+							</div>
+						</div>
+					</div>
+					<div v-if="currentStep === 4">
+						<h2 class="step-title">Images</h2>
+						<p>
+							We'll upload your images to IPFS, a decentralized storage platform.
+							<links to="https://ipfs.io/#how">More on IPFS</links>
+						</p>
+						<div class="inputs">
+							<div class="form-background">
+								<ipfs-image-upload
+									label="Banner image"
+									description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF"
+									:onUpload="handleUpload"
+									formProp="bannerHash"
+								/>
+							</div>
+							<div class="form-background">
+								<ipfs-image-upload
+									label="Thumbnail image"
+									description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF"
+									:onUpload="handleUpload"
+									formProp="thumbnailHash"
+								/>
+							</div>
+						</div>
+					</div>
+					<div v-if="currentStep === 5" id="summary">
+						<project-profile
+							v-if="showSummaryPreview"
+							:project="projectInterface"
+							:previewMode="true"
+							class="project-details"
+						/>
+						<div v-if="!showSummaryPreview">
+							<h2 class="step-title">Review your information</h2>
+							<warning
+								message="This information will be stored in a smart contract and cannot be edited, so please review carefully."
+							/>
+							<div class="form-background">
+								<div class="summary-section-header">
+									<h3 class="step-subtitle">About the project</h3>
+									<links to="/join/project" class="edit-button"
+										>Edit <img width="16px" src="@/assets/edit.svg"
+									/></links>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Project name</h4>
+									<div class="data">{{ form.project.name }}</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Tagline</h4>
+									<div class="data">{{ form.project.tagline }}</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Description</h4>
+									<markdown :raw="form.project.description" />
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Category</h4>
+									<div class="data">{{ form.project.category }}</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Problem space</h4>
+									<markdown :raw="form.project.problemSpace" />
+								</div>
+							</div>
+							<div class="form-background">
+								<div class="summary-section-header">
+									<h3 class="step-subtitle">Funding details</h3>
+									<links to="/join/fund" class="edit-button"
+										>Edit <img width="16px" src="@/assets/edit.svg"
+									/></links>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Ethereum address</h4>
+									<div class="data break-all">
+										{{ form.fund.addressName }}
+										<links :to="blockExplorer.url" class="no-break">
+											View on {{ blockExplorer.label }}
+										</links>
+									</div>
+									<div
+										class="resolved-address"
+										v-if="form.fund.addressName"
+										title="Resolved ENS address"
+									>
+										{{ form.hasEns ? form.fund.resolvedAddress : null }}
+									</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Funding plans</h4>
+									<markdown :raw="form.fund.plans" />
+								</div>
+							</div>
+							<div class="form-background">
+								<div class="summary-section-header">
+									<h3 class="step-subtitle">Team details</h3>
+									<links to="/join/team" class="edit-button"
+										>Edit <img width="16px" src="@/assets/edit.svg"
+									/></links>
+								</div>
+								<div v-if="isEmailRequired" class="summary">
+									<h4 class="read-only-title">Contact email</h4>
+									<div class="data">{{ form.team.email }}</div>
+									<div class="input-notice">
+										This information won't be added to the smart contract.
+									</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Team name</h4>
+									<div class="data">{{ form.team.name }}</div>
+									<div class="data" v-if="!form.team.name">Not provided</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Team description</h4>
+									<markdown :raw="form.team.description" />
+									<div class="data" v-if="!form.team.description">Not provided</div>
+								</div>
+							</div>
+							<div class="form-background">
+								<div class="summary-section-header">
+									<h3 class="step-subtitle">Links</h3>
+									<links to="/join/links" class="edit-button"
+										>Edit <img width="16px" src="@/assets/edit.svg"
+									/></links>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">GitHub</h4>
+									<div class="data">
+										{{ form.links.github }}
+										<links v-if="form.links.github" :to="form.links.github" :hideArrow="true"
+											><img width="16px" src="@/assets/link.svg"
+										/></links>
+									</div>
+									<div class="data" v-if="!form.links.github">Not provided</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Twitter</h4>
+									<div class="data">
+										{{ form.links.twitter }}
+										<links v-if="form.links.twitter" :to="form.links.twitter" :hideArrow="true"
+											><img width="16px" src="@/assets/link.svg"
+										/></links>
+									</div>
+									<div class="data" v-if="!form.links.twitter">Not provided</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Website</h4>
+									<div class="data" key="">
+										{{ form.links.website }}
+										<links v-if="form.links.website" :to="form.links.website" :hideArrow="true"
+											><img width="16px" src="@/assets/link.svg"
+										/></links>
+									</div>
+									<div class="data" v-if="!form.links.website">Not provided</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Discord</h4>
+									<div class="data">
+										{{ form.links.discord }}
+										<links v-if="form.links.discord" :to="form.links.discord" :hideArrow="true"
+											><img width="16px" src="@/assets/link.svg"
+										/></links>
+									</div>
+									<div class="data" v-if="!form.links.discord">Not provided</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Radicle</h4>
+									<div class="data">
+										{{ form.links.radicle }}
+										<links v-if="form.links.radicle" :to="form.links.radicle" :hideArrow="true"
+											><img width="16px" src="@/assets/link.svg"
+										/></links>
+									</div>
+									<div class="data" v-if="!form.links.radicle">Not provided</div>
+								</div>
+							</div>
+							<div class="form-background">
+								<div class="summary-section-header">
+									<h3 class="step-subtitle">Images</h3>
+									<links to="/join/image" class="edit-button"
+										>Edit <img width="16px" src="@/assets/edit.svg"
+									/></links>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Banner</h4>
+									<div class="data">
+										<ipfs-copy-widget :hash="form.image.bannerHash" />
+									</div>
+								</div>
+								<div class="summary">
+									<h4 class="read-only-title">Thumbnail</h4>
+									<div class="data">
+										<ipfs-copy-widget :hash="form.image.thumbnailHash" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div v-if="currentStep === 6">
+						<h2 class="step-title">Submit project</h2>
+						<p>
+							This is a blockchain transaction that will add your project information to the funding
+							round.
+						</p>
+						<div class="inputs">
+							<recipient-submission-widget :isWaiting="isWaiting" :txHash="txHash" :txError="txError" />
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
+		<!-- mobile -->
 		<div class="mobile nav-bar">
 			<form-navigation
 				:isStepValid="isStepValid(currentStep)"
@@ -230,55 +676,27 @@
 </template>
 
 <script setup lang="ts">
+import type { Ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
 import { required, email, maxLength, url } from '@vuelidate/validators'
-import type { RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
+import { type RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import type { Project } from '@/api/projects'
 import { chain } from '@/api/core'
 import { DateTime } from 'luxon'
-import { useAppStore } from '@/stores/app'
+import { useRecipientStore, useAppStore } from '@/stores'
 import { waitForTransaction } from '@/utils/contracts'
 import { addRecipient as _addRecipient } from '@/api/recipient-registry-optimistic'
-import { storeToRefs } from 'pinia'
 import { isValidEthAddress, resolveEns } from '@/utils/accounts'
 import * as isIPFS from 'is-ipfs'
+import { toReactive } from '@vueuse/core'
 
+const route = useRoute()
 const router = useRouter()
+const recipientStore = useRecipientStore()
 const appStore = useAppStore()
+const { recipient } = storeToRefs(recipientStore)
 
-const form = reactive<RecipientApplicationData>({
-	project: {
-		name: '',
-		tagline: '',
-		description: '',
-		category: '',
-		problemSpace: '',
-	},
-	fund: {
-		addressName: '',
-		resolvedAddress: '',
-		plans: '',
-	},
-	team: {
-		name: '',
-		description: '',
-		email: '',
-	},
-	links: {
-		github: '',
-		radicle: '',
-		website: '',
-		twitter: '',
-		discord: '',
-	},
-	image: {
-		bannerHash: '',
-		thumbnailHash: '',
-	},
-	furthestStep: 0,
-	hasEns: false,
-})
-
+const form = toReactive<RecipientApplicationData>(recipient as Ref<RecipientApplicationData>)
 const rules = computed(() => {
 	return {
 		project: {
@@ -326,12 +744,19 @@ const rules = computed(() => {
 		},
 	}
 })
-
 const v$ = useVuelidate(rules, form)
 
-const currentStep = ref(0)
 const steps = ref<string[]>([])
-const stepNames = ref<string[]>([])
+const currentStep = ref<number>(0)
+const stepNames = ref<string[]>([
+	'About the project',
+	'Donation details',
+	'Team details',
+	'Links',
+	'Images',
+	'Review',
+	'Submit',
+])
 const showSummaryPreview = ref(false)
 const isWaiting = ref(false)
 const txHash = ref('')
@@ -340,6 +765,78 @@ const txError = ref('')
 const isNavDisabled = computed<boolean>(
 	() => !isStepValid(currentStep.value) && currentStep.value !== form.furthestStep,
 )
+const isEmailRequired = computed<boolean>(() => {
+	return !!import.meta.env.VITE_GOOGLE_SPREADSHEET_ID
+})
+const blockExplorer = computed<{ label: string; url: string }>(() => {
+	return {
+		label: chain.explorerLabel,
+		url: `${chain.explorer}/address/${form.fund.resolvedAddress}`,
+	}
+})
+const projectInterface = computed<Project>(() => {
+	return formToProjectInterface(form)
+})
+
+onMounted(() => {
+	const _steps = Object.keys(form)
+	_steps.splice(_steps.length - 1, 1, 'summary', 'submit')
+
+	steps.value = _steps
+	currentStep.value = _steps.indexOf(route.params.step as string)
+
+	// redirect to /join/ if step doesn't exist
+	if (currentStep.value < 0) {
+		router.push({ name: 'join' })
+	}
+	// "Next" button restricts forward navigation via validation, and
+	// eventually updates the `furthestStep` tracker when valid and clicked/tapped.
+	// If URL step is ahead of furthest, navigate back to furthest
+	if (currentStep.value > form.furthestStep) {
+		router.push({
+			name: 'join-step',
+			params: { step: steps.value[form.furthestStep] },
+		})
+	}
+})
+
+function handleStepNav(step: number, updateFurthest?: boolean): void {
+	// If isNavDisabled => disable quick-links
+	if (isNavDisabled.value) return
+	// Save form data
+	saveFormData(updateFurthest)
+	// Navigate
+	if (steps.value[step] === 'submit') {
+		addRecipient() // click confirm button
+	} else {
+		if (isStepUnlocked(step)) {
+			router.push({
+				name: 'join-step',
+				params: {
+					step: steps.value[step],
+				},
+			})
+		}
+	}
+}
+
+function saveFormData(updateFurthest?: boolean): void {
+	if (updateFurthest && currentStep.value + 1 > form.furthestStep) {
+		form.furthestStep = currentStep.value + 1
+	}
+	if (typeof currentStep.value !== 'number') return
+	recipientStore.setRecipientData({
+		updatedData: form,
+		step: steps.value[currentStep.value],
+		stepNumber: currentStep.value,
+	})
+}
+
+// Callback from IpfsImageUpload component
+function handleUpload(key, value) {
+	form.image[key] = value
+	saveFormData(false)
+}
 
 function isStepValid(step: number): boolean {
 	if (isWaiting.value) {
@@ -382,42 +879,9 @@ function handleToggleTab(event): void {
 	showSummaryPreview.value = !showSummaryPreview.value
 }
 
-function handleStepNav(step: number, updateFurthest?: boolean): void {
-	// If isNavDisabled => disable quick-links
-	if (isNavDisabled.value) return
-	// Save form data
-	saveFormData(updateFurthest)
-	// Navigate
-	if (steps.value[step] === 'submit') {
-		addRecipient()
-	} else {
-		if (isStepUnlocked(step)) {
-			router.push({
-				name: 'join-step',
-				params: {
-					step: steps.value[step],
-				},
-			})
-		}
-	}
-}
-
-function saveFormData(updateFurthest?: boolean): void {
-	if (updateFurthest && currentStep.value + 1 > form.furthestStep) {
-		form.furthestStep = currentStep.value + 1
-	}
-	if (typeof currentStep.value !== 'number') return
-	appStore.setRecipientData({
-		updatedData: form,
-		step: steps.value[currentStep.value],
-		stepNumber: currentStep.value,
-	})
-}
-
 async function addRecipient() {
-	const { currentRound, currentUser, recipient, recipientRegistryAddress, recipientRegistryInfo } =
-		storeToRefs(appStore)
-
+	const { recipient, recipientRegistryAddress, recipientRegistryInfo } = storeToRefs(recipientStore)
+	const { currentRound, currentUser } = storeToRefs(appStore)
 	isWaiting.value = true
 
 	// Reset errors when submitting
@@ -452,13 +916,13 @@ async function addRecipient() {
 					body: JSON.stringify(recipient),
 				})
 			}
-			appStore.resetRecipientData()
+			recipientStore.resetRecipientData()
 		} catch (error: any) {
-			isWaiting.value = false
 			txError.value = error.message
 			return
+		} finally {
+			isWaiting.value = false
 		}
-		isWaiting.value = false
 
 		router.push({
 			name: 'project-added',
@@ -466,6 +930,23 @@ async function addRecipient() {
 				hash: txHash.value,
 			},
 		})
+	} else {
+		console.warn({
+			recipientRegistryAddress: recipientRegistryAddress.value,
+			recipient: recipient.value,
+			recipientRegistryInfo: recipientRegistryInfo.value,
+			currentUser: currentUser.value,
+		})
+		txError.value = 'Failed to add recipient'
+	}
+}
+
+async function checkEns(): Promise<void> {
+	const { addressName } = form.fund
+	if (addressName) {
+		const res: string | null = await resolveEns(addressName)
+		form.hasEns = !!res
+		form.fund.resolvedAddress = res ? res : addressName
 	}
 }
 </script>

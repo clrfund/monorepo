@@ -13,7 +13,7 @@ export default defineConfig({
 		// https://github.com/antfu/unplugin-auto-import#configuration
 		AutoImport({
 			dts: 'src/auto-import.d.ts',
-			imports: ['vue', 'vue-router'],
+			imports: ['vue', 'vue-router', 'pinia'],
 			eslintrc: {
 				enabled: true,
 			},

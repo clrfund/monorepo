@@ -38,9 +38,6 @@ export type AppState = {
 	currentRound: RoundInfo | null
 	currentRoundAddress: string | null
 	currentUser: User | null
-	recipient: RecipientApplicationData | null
-	recipientRegistryAddress: string | null
-	recipientRegistryInfo: RegistryInfo | null
 	showCartPanel: boolean
 	tally: Tally | null
 	theme: string | null
@@ -59,9 +56,6 @@ export const useAppStore = defineStore('app', {
 		currentRound: null,
 		currentRoundAddress: null,
 		currentUser: null,
-		recipient: null,
-		recipientRegistryAddress: null,
-		recipientRegistryInfo: null,
 		showCartPanel: false,
 		tally: null,
 		theme: null,
@@ -559,16 +553,6 @@ export const useAppStore = defineStore('app', {
 				const tally = await getTally(this.currentRoundAddress!)
 				this.tally = tally
 			}
-		},
-		setRecipientData(payload: { updatedData: RecipientApplicationData; step: string; stepNumber: number }) {
-			if (!this.recipient) {
-				this.recipient = payload.updatedData
-			} else {
-				this.recipient[payload.step] = payload.updatedData[payload.step]
-			}
-		},
-		resetRecipientData() {
-			this.recipient = null
 		},
 	},
 })
