@@ -1,7 +1,7 @@
 <template>
 	<div id="join-the-round" class="container">
 		<div class="grid">
-			<!-- web main sidebar -->
+			<!-- web sidebar -->
 			<form-progress-widget
 				:currentStep="currentStep"
 				:furthestStep="form.furthestStep"
@@ -678,7 +678,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
-import { required, email, maxLength, url } from '@vuelidate/validators'
+import { required, email, maxLength, url, helpers } from '@vuelidate/validators'
 import { type RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import type { Project } from '@/api/projects'
 import { chain } from '@/api/core'
@@ -697,6 +697,7 @@ const appStore = useAppStore()
 const { recipient } = storeToRefs(recipientStore)
 
 const form = toReactive<RecipientApplicationData>(recipient as Ref<RecipientApplicationData>)
+const { withAsync } = helpers
 const rules = computed(() => {
 	return {
 		project: {
@@ -712,7 +713,7 @@ const rules = computed(() => {
 		fund: {
 			addressName: {
 				required,
-				validEthAddress: isValidEthAddress,
+				validEthAddress: withAsync(isValidEthAddress),
 			},
 			resolvedAddress: {},
 			plans: { required },
@@ -887,6 +888,16 @@ async function addRecipient() {
 	// Reset errors when submitting
 	txError.value = ''
 
+	try {
+		await recipientStore.loadRecipientRegistryInfo()
+	} catch (error: any) {
+		console.warn(error)
+		txError.value = error.message
+		return
+	} finally {
+		isWaiting.value = false
+	}
+
 	if (recipientRegistryAddress.value && recipient.value && recipientRegistryInfo.value && currentUser.value) {
 		try {
 			if (currentRound.value && DateTime.now() >= currentRound.value.votingDeadline) {
@@ -918,6 +929,12 @@ async function addRecipient() {
 			}
 			recipientStore.resetRecipientData()
 		} catch (error: any) {
+			console.warn(error, {
+				recipientRegistryAddress: recipientRegistryAddress.value,
+				recipient: recipient.value,
+				recipientRegistryInfo: recipientRegistryInfo.value.deposit,
+				currentUser: currentUser.value.walletProvider.getSigner(),
+			})
 			txError.value = error.message
 			return
 		} finally {
@@ -931,22 +948,29 @@ async function addRecipient() {
 			},
 		})
 	} else {
-		console.warn({
+		const errorMsg = 'Failed to add recipient'
+		console.warn(errorMsg, {
 			recipientRegistryAddress: recipientRegistryAddress.value,
 			recipient: recipient.value,
 			recipientRegistryInfo: recipientRegistryInfo.value,
 			currentUser: currentUser.value,
 		})
-		txError.value = 'Failed to add recipient'
+
+		txError.value = errorMsg
 	}
 }
 
 async function checkEns(): Promise<void> {
+	console.log('checkEns')
 	const { addressName } = form.fund
-	if (addressName) {
-		const res: string | null = await resolveEns(addressName)
-		form.hasEns = !!res
-		form.fund.resolvedAddress = res ? res : addressName
+	try {
+		if (addressName) {
+			const res: string | null = await resolveEns(addressName)
+			form.hasEns = !!res
+			form.fund.resolvedAddress = res ? res : addressName
+		}
+	} catch (error: any) {
+		console.warn(error)
 	}
 }
 </script>

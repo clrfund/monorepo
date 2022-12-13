@@ -55,13 +55,10 @@ import { computed, onMounted, ref } from 'vue'
 import type { BigNumber } from 'ethers'
 import { type EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import { chain } from '@/api/core'
-
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
-
 import { formatAmount } from '@/utils/amounts'
-import { useAppStore } from '@/stores/app'
-import { storeToRefs } from 'pinia'
+import { useAppStore, useRecipientStore } from '@/stores'
 
 interface Props {
 	isWaiting: boolean
@@ -70,7 +67,9 @@ interface Props {
 }
 
 const appStore = useAppStore()
-const { recipientRegistryInfo, currentUser } = storeToRefs(appStore)
+const recipientStore = useRecipientStore()
+const { currentUser } = storeToRefs(appStore)
+const { recipientRegistryInfo } = storeToRefs(recipientStore)
 const props = defineProps<Props>()
 
 const isLoading = ref(true)

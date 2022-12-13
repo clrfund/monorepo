@@ -22,6 +22,7 @@ export async function resolveEns(name: string): Promise<string | null> {
 
 // Returns true if address is valid ENS or 0x address
 export async function isValidEthAddress(address: string): Promise<boolean> {
+	console.log('isValidEthAddress')
 	const resolved = await mainnetProvider.resolveName(address)
 	return !!resolved
 }
