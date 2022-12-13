@@ -12,7 +12,7 @@
 				:to="blockExplorer.url"
 				:hide-arrow="true"
 			>
-				<img class="icon" :src="`src/assets/${blockExplorer.logo}`" />
+				<img class="icon" :src="logoUrl" />
 			</links>
 			<copy-button :value="hash" text="hash" my-class="icon" @copied="updateIsCopied" />
 		</div>
@@ -41,6 +41,14 @@ const isCopied = ref(false)
 const renderCopiedOrHash = computed<string>(() => {
 	return isCopied.value ? 'Copied!' : renderAddressOrHash(props.hash, 16)
 })
+const blockExplorer = computed<{ label: string; url: string; logo: string }>(() => {
+	return {
+		label: chain.explorerLabel,
+		url: `${chain.explorer}/tx/${props.hash}`,
+		logo: chain.explorerLogo,
+	}
+})
+const logoUrl = new URL(`/src/assets/${blockExplorer.value.logo}`, import.meta.url).href
 
 function updateIsCopied(value: boolean): void {
 	isCopied.value = value
@@ -57,14 +65,6 @@ async function checkTxStatus(): Promise<void> {
 		isPending.value = !isMined
 	}
 }
-
-const blockExplorer = computed<{ label: string; url: string; logo: string }>(() => {
-	return {
-		label: chain.explorerLabel,
-		url: `${chain.explorer}/tx/${props.hash}`,
-		logo: chain.explorerLogo,
-	}
-})
 </script>
 
 <style scoped lang="scss">

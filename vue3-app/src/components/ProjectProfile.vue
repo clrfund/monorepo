@@ -60,7 +60,7 @@
 						:title="`View on ${blockExplorer.label}`"
 						:hide-arrow="true"
 					>
-						<img class="icon" :src="`src/assets/${blockExplorer.logo}`" />
+						<img class="icon" :src="logoUrl" />
 					</links>
 				</div>
 			</div>
@@ -133,6 +133,28 @@ const inCart = computed(() => {
 	return index !== -1
 })
 
+const blockExplorer = computed<{ label: string; url: string; logo: string }>(() => {
+	return {
+		label: chain.explorerLabel,
+		url: `${chain.explorer}/address/${props.project.address}`,
+		logo: chain.explorerLogo,
+	}
+})
+
+const addressName = computed<string>(() => {
+	return ens.value || props.project.address
+})
+
+const isCurrentRound = computed<boolean>(() => {
+	const roundAddress = route.params.address || currentRoundAddress.value
+	return appStore.isCurrentRound(roundAddress as string)
+})
+
+const shouldShowCartInput = computed<boolean>(() => {
+	return isCurrentRound.value && (isRoundContributionPhase.value || canUserReallocate.value)
+})
+const logoUrl = new URL(`/src/assets/${blockExplorer.value.logo}`, import.meta.url).href
+
 function hasContributeBtn(): boolean {
 	// eslint-disable-next-line
 	return isCurrentRound.value! && currentRound.value! && props.project !== null && props.project.index !== 0
@@ -162,27 +184,6 @@ function contribute() {
 	})
 	appStore.saveCart()
 }
-
-const blockExplorer = computed<{ label: string; url: string; logo: string }>(() => {
-	return {
-		label: chain.explorerLabel,
-		url: `${chain.explorer}/address/${props.project.address}`,
-		logo: chain.explorerLogo,
-	}
-})
-
-const addressName = computed<string>(() => {
-	return ens.value || props.project.address
-})
-
-const isCurrentRound = computed<boolean>(() => {
-	const roundAddress = route.params.address || currentRoundAddress.value
-	return appStore.isCurrentRound(roundAddress as string)
-})
-
-const shouldShowCartInput = computed<boolean>(() => {
-	return isCurrentRound.value && (isRoundContributionPhase.value || canUserReallocate.value)
-})
 </script>
 
 <style lang="scss" scoped>

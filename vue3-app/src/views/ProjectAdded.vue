@@ -9,7 +9,7 @@
 					<span class="emoji">🎉</span>
 					<div class="flex-title">
 						<h1>Project submitted!</h1>
-						<transaction-receipt :hash="route.params.hash" />
+						<transaction-receipt :hash="hash" />
 					</div>
 					<div class="subtitle">You’re almost on board this funding round.</div>
 					<ul>
@@ -46,17 +46,18 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import type { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { chain } from '@/api/core'
-import { useAppStore } from '@/stores/app'
+import { useAppStore, useRecipientStore } from '@/stores'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 const route = useRoute()
 const appStore = useAppStore()
+const recipientStore = useRecipientStore()
 const { currentRound } = storeToRefs(appStore)
 const challengePeriodDuration = ref<number | null>(null)
-const registryInfo = computed(() => appStore.recipientRegistryInfo)
+const registryInfo = computed(() => recipientStore.recipientRegistryInfo)
 const blockExplorerUrl = computed(() => `${chain.explorer}/tx/${route.params.txHash}`)
-
+const hash = computed(() => route.params.hash as string)
 challengePeriodDuration.value = registryInfo.value?.challengePeriodDuration || null
 
 function formatDuration(seconds: number): string {

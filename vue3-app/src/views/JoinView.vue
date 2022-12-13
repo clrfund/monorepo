@@ -961,7 +961,6 @@ async function addRecipient() {
 }
 
 async function checkEns(): Promise<void> {
-	console.log('checkEns')
 	const { addressName } = form.fund
 	try {
 		if (addressName) {
