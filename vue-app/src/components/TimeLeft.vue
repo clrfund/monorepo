@@ -4,14 +4,14 @@
       {{ values[0] }}
     </span>
     <span :class="unitClass || 'unit'">
-      {{ $t(`timeleft.unit.${units[0]}`) }}
+      {{ $t(`dynamic.timeleft.unit.${units[0]}`) }}
     </span>
     <span v-if="units[1].length > 0">
       <span :class="valueClass || 'value'">
         {{ values[1] }}
       </span>
       <span :class="unitClass || 'unit'">
-        {{ $t(`timeleft.unit.${units[1]}`) }}
+        {{ $t(`dynamic.timeleft.unit.${units[1]}`) }}
       </span>
     </span>
   </span>

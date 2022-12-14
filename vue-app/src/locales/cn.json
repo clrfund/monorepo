@@ -9,10 +9,10 @@
     },
     "why": {
       "title": "为什么 CLR.fund 存在?",
-      "paragraph-1-text-1": "将资金分配给",
+      "paragraph-1-text-1": "将资金有效地分配给",
       "paragraph-1-link": "公共商品",
-      "paragraph-1-text-2": "——既不可排除又不可减少的商品或服务——对于任何生态系统来说都是一个挑战，以太坊也不例外。",
-      "paragraph-2": "CLR.fund 的目标是使资金能够分配给对以太坊网络有益的公共商品，而无需依赖中央实体，并且以反映以太坊社区偏好的方式。",
+      "paragraph-1-text-2": ", 这一些既不可排除又不可减少的商品或服务, 对于任何生态系统来说都是一个挑战，以太坊也不例外。",
+      "paragraph-2": "CLR.fund 的目标是使资金能够有效地分配给对以太坊网络有益的公共商品，无需依赖中央实体，只需反映以太坊社区偏好。",
       "paragraph-3-text-1": "请参阅",
       "paragraph-3-link": "CLR.fund 宪法",
       "paragraph-3-text-2": "去了解有关 CLR.fund 的目标和价值观的更多细节"
@@ -40,7 +40,7 @@
       "paragraph-1-text-1": "CLR.fund 使用约束性自由激进主义 (CLR)，通常称为 ",
       "paragraph-1-link-1": "quadratic funding",
       "paragraph-1-text-2": "(QF), 以促进社区成员对以太坊公共货物建设者的货币贡献。",
-      "paragraph-2": "凭借以太坊智能合约和其他 web3 技术, CLR.fund 对任何个人或实体的信任要求特低，并且对结盟和贿赂具有弹性。",
+      "paragraph-2": "凭借以太坊智能合约和其他 web3 的技术, CLR.fund 无需信任任何个人或实体，并且对结盟和贿赂具有弹性。",
       "paragraph-3": "从高层面的视角看, CLR.fund 由一个匹配池和一个筹款回合组成。慈善个人或组织贡献匹配池。匹配池的资金是以社区偏好分配。 捐赠者直接捐款于他们重视的项目, 因此为该项目获得一部份匹配池的份额，有效地的增加了捐赠者的贡献价值。",
       "paragraph-4-text-1": "在底层, CLR.fund 使用",
       "paragraph-4-link-1": "MACI",
@@ -692,10 +692,10 @@
       "paragraph": "这个筹款活动奖励那些拥有最独特社区需求的项目，而不仅仅是那些拥有最富裕支持者的项目。",
       "subtitle": "如何运作",
       "list-1": "{operator} 和其他捐赠者向匹配池智能合约发送捐款。",
-      "list-2": "轮次开始，您可以向您喜欢的项目捐款。",
-      "list-3": "一旦轮次结束, 智能合约将匹配池基金按照贡献数量的权重分配给项目,",
-      "list-3-strong": "而不是按照贡献价值",
-      "action": "筹款活动如何运作"
+      "list-2": "筹款开始，您可以向您喜欢的项目捐款了。",
+      "list-3": "筹款结束后, 智能合约将匹配池基金按照社区筹款数量分配给项目,",
+      "list-3-strong": "而不是按照筹款价值",
+      "action": "筹款运作"
     },
     "req": {
       "title": "您需要什么",
@@ -707,27 +707,27 @@
     "about": {
       "title": "关于",
       "subtitle-1": "这不是关于多少...",
-      "paragraph-1": " 在这个筹款活动中，我们使用 quadratic funding 模型来支持项目。这意味着，每当您向某个项目进行捐款时，您的贡献就会被视为对该项目的一票支持。最后，我们将根据每个项目所获得的支持票数来分配匹配池基金。这意味着，即使您的捐款金额很小，也可能对您支持的项目产生重大影响。",
+      "paragraph-1": " 在这个筹款活动中，我们使用了 quadratic funding 的模型。每一份对项目的捐款将成为该项目的支持票。匹配池的基金将根据每个项目所获得的支持票数来分配。所以，即使您的捐款金额很小，也可能对您支持的项目产生重大影响。",
       "link-1": "关于 quadratic funding",
       "subtitle-2": "防止贿赂",
-      "paragraph-2": "我们使用一种叫做 MACI 的零知识技术来防止贿赂, 这样可以确保每一笔捐款都是匿名的，无法证明您的贡献。这使贿赂者疯狂，因为他们不知道您是否真的做了他们贿赂您做的事情！",
+      "paragraph-2": "我们使用一种叫做 MACI 的零知识技术来防止贿赂。 这样可以确保每一笔捐款都是匿名的，无法证明您的贡献。这使贿赂者疯狂，因为他们不知道您是否真的做了他们贿赂您做的事情！",
       "link-2": "关于 MACI",
       "subtitle-3": "CLR 协议构建",
-      "paragraph-3": "CLR.fund 是一个协议，旨在有效地分配资金给以太坊网络受益的公共商品， 根据以太坊社区的偏好。",
+      "paragraph-3": "CLR.fund 是一个协议，旨在有效地分配资金给以太坊网络受益的公共商品。 资金分配是通过社区的投票选举。",
       "link-3": "关于 CLR.fund"
     },
     "footer": {
       "title": "更多",
-      "link-1": "关于 CLR.fund",
-      "link-2": "这个筹款活动是如何运作的",
-      "link-3": "关于 {chain}",
-      "link-4": "关于 MACI",
-      "link-5": "关于 BrightID",
+      "link-1": "CLR.fund",
+      "link-2": "筹款运作",
+      "link-3": "{chain}",
+      "link-4": "MACI",
+      "link-5": "BrightID",
       "link-6": "GitHub",
       "link-7": "Discord",
-      "link-8": "论坛",
-      "link-9": "更多以太坊的信息",
-      "link-blog": "博客"
+      "link-8": "CLR.fund 论坛",
+      "link-9": "以太坊",
+      "link-blog": "CLR.fund 博客"
     }
   },
   "profile": {
@@ -894,30 +894,7 @@
     "span4": "未分配",
     "span5": "总额",
     "div14": "没有当前的筹款活动.",
-    "link4": "在等待期间使用 BrightID 进行验证",
-    "error": {
-      "reached_contribution_limit": "已达到贡献数量的限制",
-      "connect_wallet": "请连接您的钱包",
-      "incorrect_network": "请将网络更改为 {chain} 网络.",
-      "need_to_setup_brightid": "要进行贡献, 您需要设置 BrightID。",
-      "invalid_contribution_amount": "请输入有效的贡献金额",
-      "exceeded_max_cart_size": "您的捐赠车不能超过 {maxCartSize} 个项目",
-      "round_cancelled": "抱歉，我们不得不取消这次筹款活动。",
-      "round_ended": "筹款活动已结束。",
-      "cart_changes_exceed_cap": "您的更改将超出贡献容量",
-      "contributions_over": "捐款活动已经结束。",
-      "reached_contributor_limit": "已达到捐赠者数量的限制",
-      "must_be_gt_zero": "您的总数必须大于 0 {nativeTokenSymbol}",
-      "not_enough_funds": "资金不足. 您的余额是 {balance} {nativeTokenSymbol}.",
-      "too_generous": "您的贡献太大了。最大贡献为 {maxAmount} {nativeTokenSymbol}.",
-      "need_gas_payment": "您需要一些 ETH 来支付交易费",
-      "contributor_key_missing": "找不到贡献者密钥。请刷新并重试，并确保您使用的浏览器/机器与您进行贡献的浏览器/机器相同。",
-      "more_than_original_contribution": "您的新总额不能超过您原本的 {total} {tokenSymbol} 贡献."
-    },
-    "action": {
-      "remove_all": "全部删除",
-      "split_evenly": "平均分配"
-    }
+    "link4": "在等待期间使用 BrightID 进行验证"
   },
   "cartItems": {
     "button1": "捐额"
@@ -957,24 +934,6 @@
     "p3": "了解更多关于项目申请流程的信息： ",
     "link1": "收赠者指南",
     "link2": "添加项目"
-  },
-  "criteria": {
-    "free_open_source": {
-      "tagline": "自由开源",
-      "description": "您的项目必须允许自由使用，与您项目相关的任何代码都应在开源许可下任何人都可获得。"
-    },
-    "no_clones": {
-      "tagline": "无复制",
-      "description": "如果您 fork 了代码，则必须为生态系统提供额外的独特价值。"
-    },
-    "project_ownership": {
-      "tagline": "拥有权",
-      "description": "您提交的项目必须是属于您的，或者您必须获得项目所有者的许可。"
-    },
-    "no_scams": {
-      "tagline": "无欺诈",
-      "description": "显然，您的项目不应欺诈何人的资金或信息."
-    }
   },
   "formNavigation": {
     "button1": "上一步",
@@ -1146,24 +1105,67 @@
     "div1": "您已成功取回捐款。",
     "button1": "确定"
   },
-  "timeleft": {
-    "unit": {
-      "days": "天",
-      "day": "天",
-      "hours": "小时",
-      "hour": "小时",
-      "minutes": "分钟",
-      "minute": "分钟",
-      "seconds": "秒",
-      "second": "秒"
-    }
-  },
   "dynamic": {
     "category": {
       "tooling": "工具",
       "content": "内容",
       "research": "研究",
       "data": "数据"
+    },
+    "timeleft": {
+      "unit": {
+        "days": "天",
+        "day": "天",
+        "hours": "小时",
+        "hour": "小时",
+        "minutes": "分钟",
+        "minute": "分钟",
+        "seconds": "秒",
+        "second": "秒"
+      }
+    },
+    "criteria": {
+      "free_open_source": {
+        "tagline": "自由开源",
+        "description": "您的项目必须允许自由使用，与您项目相关的任何代码都应在开源许可下任何人都可获得。"
+      },
+      "no_clones": {
+        "tagline": "无复制",
+        "description": "如果您 fork 了代码，则必须为生态系统提供额外的独特价值。"
+      },
+      "project_ownership": {
+        "tagline": "拥有权",
+        "description": "您提交的项目必须是属于您的，或者您必须获得项目所有者的许可。"
+      },
+      "no_scams": {
+        "tagline": "无欺诈",
+        "description": "显然，您的项目不应欺诈何人的资金或信息。"
+      }
+    },
+    "cart": {
+      "error": {
+        "reached_contribution_limit": "已达到贡献数量的限制",
+        "connect_wallet": "请连接您的钱包",
+        "incorrect_network": "请将网络更改为 {chain} 网络.",
+        "need_to_setup_brightid": "要进行贡献, 您需要设置 BrightID。",
+        "invalid_contribution_amount": "请输入有效的贡献金额",
+        "exceeded_max_cart_size": "您的捐赠车不能超过 {maxCartSize} 个项目",
+        "round_cancelled": "抱歉，我们不得不取消这次筹款活动。",
+        "round_ended": "筹款活动已结束。",
+        "cart_changes_exceed_cap": "您的更改将超出贡献容量",
+        "contributions_over": "捐款活动已经结束。",
+        "reached_contributor_limit": "已达到捐赠者数量的限制",
+        "must_be_gt_zero": "您的总数必须大于 0 {nativeTokenSymbol}",
+        "not_enough_funds": "资金不足. 您的余额是 {balance} {nativeTokenSymbol}.",
+        "too_generous": "您的贡献太大了。最大贡献为 {maxAmount} {nativeTokenSymbol}.",
+        "need_gas_payment": "您需要一些 ETH 来支付交易费",
+        "contributor_key_missing": "找不到贡献者密钥。请刷新并重试，并确保您使用的浏览器/机器与您进行贡献的浏览器/机器相同。",
+        "more_than_original_contribution": "您的新总额不能超过您原本的 {total} {tokenSymbol} 贡献."
+      },
+      "action": {
+        "remove_all": "全部删除",
+        "split_evenly": "平均分配"
+      }
     }
   },
   "filter": "过滤",

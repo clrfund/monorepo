@@ -380,12 +380,12 @@ export default class Cart extends Vue {
   }[] = [
     {
       callback: this.removeAll,
-      text: this.translate('cart.action.remove_all'),
+      text: this.translate('dynamic.cart.action.remove_all'),
       icon: 'remove.svg',
     },
     {
       callback: this.splitContributionsEvenly,
-      text: this.translate('cart.action.split_evenly'),
+      text: this.translate('dynamic.cart.action.split_evenly'),
       icon: 'split.svg',
       cssClass: 'split-image',
     },
@@ -568,39 +568,40 @@ export default class Cart extends Vue {
     const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
     if (this.$store.getters.isMessageLimitReached)
-      return this.translate('reached_contribution_limit')
-    if (!currentUser) return this.translate('connect_wallet')
+      return this.translate('dynamic.cart.error.reached_contribution_limit')
+    if (!currentUser) return this.translate('dynamic.cart.error.connect_wallet')
     if (!this.isCorrectNetwork())
       return this.translate('incorrect_network', { chain: chain.label })
-    if (this.isBrightIdRequired) return this.translate('need_to_setup_brightid')
+    if (this.isBrightIdRequired)
+      return this.translate('dynamic.cart.error.need_to_setup_brightid')
     if (!this.isFormValid())
-      return this.translate('invalid_contribution_amount')
+      return this.translate('dynamic.cart.error.invalid_contribution_amount')
     if (this.cart.length > MAX_CART_SIZE)
-      return this.translate('exceeded_max_cart_size', {
+      return this.translate('dynamic.cart.error.exceeded_max_cart_size', {
         maxCartSize: MAX_CART_SIZE,
       })
     if (currentRound.status === RoundStatus.Cancelled)
-      return this.translate('round_cancelled')
+      return this.translate('dynamic.cart.error.round_cancelled')
     if (this.$store.getters.hasReallocationPhaseEnded)
-      return this.translate('round_ended')
+      return this.translate('dynamic.cart.error.round_ended')
     if (currentRound.messages + this.cart.length >= currentRound.maxMessages)
-      return this.translate('cart_changes_exceed_cap')
+      return this.translate('dynamic.cart.error.cart_changes_exceed_cap')
     else if (
       currentRound.messages + this.cart.length >=
       currentRound.maxMessages
     ) {
-      return this.translate('reached_contribution_limit')
+      return this.translate('dynamic.cart.error.reached_contribution_limit')
     } else {
       const total = this.getTotal()
       if (this.contribution.isZero()) {
         // Contributing
         if (DateTime.local() >= currentRound.signUpDeadline) {
-          return this.translate('contributions_over')
+          return this.translate('dynamic.cart.error.contributions_over')
           // the above error might not be necessary now we have our cart states in the HTML above
         } else if (currentRound.contributors >= currentRound.maxContributors) {
-          return this.translate('reached_contributor_limit')
+          return this.translate('dynamic.cart.error.reached_contributor_limit')
         } else if (total.eq(BigNumber.from(0)) && !this.isCartEmpty) {
-          return this.translate('must_be_gt_zero', {
+          return this.translate('dynamic.cart.error.must_be_gt_zero', {
             nativeTokenSymbol: currentRound.nativeTokenSymbol,
           })
         } else if (currentUser.balance === null) {
@@ -610,29 +611,32 @@ export default class Cart extends Vue {
             currentUser.balance,
             currentRound.nativeTokenDecimals
           )
-          return this.translate('not_enough_funds', {
+          return this.translate('dynamic.cart.error.not_enough_funds', {
             balance: balanceDisplay,
             nativeTokenSymbol: currentRound.nativeTokenSymbol,
           })
         } else if (this.isGreaterThanMax()) {
-          return this.translate('too_generous', {
+          return this.translate('dynamic.cart.error.too_generous', {
             maxAmount: MAX_CONTRIBUTION_AMOUNT,
             nativeTokenSymbol: currentRound.nativeTokenSymbol,
           })
         } else if (parseInt(currentUser.etherBalance) === 0) {
-          return this.translate('need_gas_payment')
+          return this.translate('dynamic.cart.error.need_gas_payment')
         } else {
           return null
         }
       } else {
         // Reallocating funds
         if (!this.$store.state.contributor) {
-          return this.translate('contributor_key_missing')
+          return this.translate('dynamic.cart.error.contributor_key_missing')
         } else if (this.isGreaterThanInitialContribution()) {
-          return this.translate('cart.error.more_than_original_contribution', {
-            total: this.formatAmount(this.contribution),
-            tokenSymbol: this.tokenSymbol,
-          })
+          return this.translate(
+            'dynamic.cart.error.more_than_original_contribution',
+            {
+              total: this.formatAmount(this.contribution),
+              tokenSymbol: this.tokenSymbol,
+            }
+          )
         } else {
           return null
         }

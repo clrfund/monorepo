@@ -59,11 +59,11 @@ export default class CriteriaModal extends Vue {
   }
 
   getCriterion(key: string): string {
-    return `criteria.${key}.tagline`
+    return `dynamic.criteria.${key}.tagline`
   }
 
   getDescription(key: string): string {
-    return `criteria.${key}.description`
+    return `dynamic.criteria.${key}.description`
   }
 }
 </script>

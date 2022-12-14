@@ -894,30 +894,7 @@
     "span4": "Matching Pool",
     "span5": "Total",
     "div14": "No current round.",
-    "link4": "Verify with BrightID while you wait",
-    "error": {
-      "reached_contribution_limit": "The limit on the number of contributions has been reached",
-      "connect_wallet": "Please connect your wallet",
-      "incorrect_network": "Please change network to {chain} network.",
-      "need_to_setup_brightid": "To contribute, you need to set up BrightID.",
-      "invalid_contribution_amount": "Include valid contribution amount.",
-      "exceeded_max_cart_size": "Your cart can't include over {maxCartSize} projects.",
-      "round_cancelled": "Sorry, we've had to cancel this funding round.",
-      "round_ended": "The funding round has ended.",
-      "cart_changes_exceed_cap": "Cart changes will exceed contribution capacity of this round",
-      "contributions_over": "Contributions are over for this funding round.",
-      "reached_contributor_limit": "The limit on the number of contributors has been reached",
-      "must_be_gt_zero": "Your total must be more than 0 {nativeTokenSymbol}",
-      "not_enough_funds": "Not enough funds. Your balance is {balance} {nativeTokenSymbol}.",
-      "too_generous": "Your contribution is too generous. The max contribution is {maxAmount} {nativeTokenSymbol}.",
-      "need_gas_payment": "You need some ETH to pay for gas",
-      "contributor_key_missing": "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with.",
-      "more_than_original_contribution": "Your new total can't be more than your original {total} {tokenSymbol} contribution"
-    },
-    "action": {
-      "remove_all": "Remove all",
-      "split_evenly": "Split evenly"
-    }
+    "link4": "Verify with BrightID while you wait"
   },
   "cartItems": {
     "button1": "Amount"
@@ -957,24 +934,6 @@
     "p3": "Learn more about the project application process in our",
     "link1": "recipient guide",
     "link2": "Add project"
-  },
-  "criteria": {
-    "free_open_source": {
-      "tagline": "Free and open source",
-      "description": "Your project must be free to use and any code associated with your project should be available to anyone under an open source license."
-    },
-    "no_clones": {
-      "tagline": "No clones",
-      "description": "If you've forked code, you must provide additional, unique value to the ecosystem."
-    },
-    "project_ownership": {
-      "tagline": "Project ownership",
-      "description": "The project you submit must be yours or you must have permission from the project owner."
-    },
-    "no_scams": {
-      "tagline": "No scams",
-      "description": "Obviously, your project must not put anyone's funds or information at risk."
-    }
   },
   "formNavigation": {
     "button1": "Previous",
@@ -1146,24 +1105,67 @@
     "div1": "You have successfully withdrawn your contribution.",
     "button1": "OK"
   },
-  "timeleft": {
-    "unit": {
-      "days": "days",
-      "day": "day",
-      "hours": "hours",
-      "hour": "hour",
-      "minutes": "minutes",
-      "minute": "minute",
-      "seconds": "seconds",
-      "second": "second"
-    }
-  },
   "dynamic": {
     "category": {
       "tooling": "Tools",
       "content": "Content",
       "data": "Data",
       "research": "Research"
+    },
+    "timeleft": {
+      "unit": {
+        "days": "days",
+        "day": "day",
+        "hours": "hours",
+        "hour": "hour",
+        "minutes": "minutes",
+        "minute": "minute",
+        "seconds": "seconds",
+        "second": "second"
+      }
+    },
+    "criteria": {
+      "free_open_source": {
+        "tagline": "Free and open source",
+        "description": "Your project must be free to use and any code associated with your project should be available to anyone under an open source license."
+      },
+      "no_clones": {
+        "tagline": "No clones",
+        "description": "If you've forked code, you must provide additional, unique value to the ecosystem."
+      },
+      "project_ownership": {
+        "tagline": "Project ownership",
+        "description": "The project you submit must be yours or you must have permission from the project owner."
+      },
+      "no_scams": {
+        "tagline": "No scams",
+        "description": "Obviously, your project must not put anyone's funds or information at risk."
+      }
+    },
+    "cart": {
+      "error": {
+        "reached_contribution_limit": "The limit on the number of contributions has been reached",
+        "connect_wallet": "Please connect your wallet",
+        "incorrect_network": "Please change network to {chain} network.",
+        "need_to_setup_brightid": "To contribute, you need to set up BrightID.",
+        "invalid_contribution_amount": "Include valid contribution amount.",
+        "exceeded_max_cart_size": "Your cart can't include over {maxCartSize} projects.",
+        "round_cancelled": "Sorry, we've had to cancel this funding round.",
+        "round_ended": "The funding round has ended.",
+        "cart_changes_exceed_cap": "Cart changes will exceed contribution capacity of this round",
+        "contributions_over": "Contributions are over for this funding round.",
+        "reached_contributor_limit": "The limit on the number of contributors has been reached",
+        "must_be_gt_zero": "Your total must be more than 0 {nativeTokenSymbol}",
+        "not_enough_funds": "Not enough funds. Your balance is {balance} {nativeTokenSymbol}.",
+        "too_generous": "Your contribution is too generous. The max contribution is {maxAmount} {nativeTokenSymbol}.",
+        "need_gas_payment": "You need some ETH to pay for gas",
+        "contributor_key_missing": "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with.",
+        "more_than_original_contribution": "Your new total can't be more than your original {total} {tokenSymbol} contribution"
+      },
+      "action": {
+        "remove_all": "Remove all",
+        "split_evenly": "Split evenly"
+      }
     }
   },
   "filter": "Filter",
