@@ -954,7 +954,7 @@ export default class JoinView extends mixins(validationMixin) {
   }
 
   private translate(key = ''): string {
-    return this.$t('dynamic.join.step.' + key).toString()
+    return this.$t(`dynamic.join.step.${key}`).toString()
   }
 
   // Check that at least one link is not empty && no links are invalid
