@@ -610,7 +610,7 @@
     tslib "^2.4.1"
     webcrypto-core "^1.7.4"
 
-"@rollup/plugin-inject@^5.0.1":
+"@rollup/plugin-inject@^5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-inject/-/plugin-inject-5.0.2.tgz#b26c0e6e73f39c118ffc1cf07cfbfd93459b93a6"
   integrity sha512-zRthPC/sZ2OaQwPh2LvFn0A+3SyMAZR1Vqsp89mWkIuGXKswT8ty1JWj1pf7xdZvft4gHZaCuhdopuiCwjclWg==
@@ -4773,13 +4773,6 @@ rlp@^2.0.0, rlp@^2.2.3, rlp@^2.2.4, rlp@^2.2.5:
   integrity sha512-d5gdPmgQ0Z+AklL2NVXr/IoSjNZFfTVvQWzL/AM2AOcSzYP2xjlb0AC8YyCLc41MSNf6P6QVtjgPdmVtzb+4lQ==
   dependencies:
     bn.js "^5.2.0"
-
-rollup-plugin-polyfill-node@^0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-polyfill-node/-/rollup-plugin-polyfill-node-0.11.0.tgz#34e67409456262ed688c19ba949b201cd5d59bc7"
-  integrity sha512-5t+qhq4LAQKQBgbPOQJEoxxGzU5b+zLfvzpUAGy9u0MCMs8y+mrjUAv8+xrkWdxnwXQwJtjmCMnA9lCflsMzNw==
-  dependencies:
-    "@rollup/plugin-inject" "^5.0.1"
 
 rollup@^2.79.1:
   version "2.79.1"
