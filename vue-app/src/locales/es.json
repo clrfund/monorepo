@@ -1158,11 +1158,13 @@
       "second": "second"
     }
   },
-  "category": {
-    "tooling": "Tools",
-    "content": "Content",
-    "data": "Data",
-    "research": "Research"
+  "dynamic": {
+    "category": {
+      "tooling": "Tools",
+      "content": "Content",
+      "data": "Data",
+      "research": "Research"
+    }
   },
   "filter": "Filter",
   "home": "Home",

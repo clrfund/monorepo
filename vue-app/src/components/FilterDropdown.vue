@@ -23,7 +23,7 @@
         }"
         @click="handleFilterClick(category)"
       >
-        {{ $t(`category.${category}`) }}
+        {{ $t($store.getters.categoryLocaleKey(category)) }}
         <img
           v-if="selectedCategories.includes(category)"
           class="close"

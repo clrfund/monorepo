@@ -5,7 +5,7 @@
         <div class="project-image">
           <img :src="projectImageUrl" :alt="project.name" />
           <div class="tag">
-            {{ $t(`category.${toLowerCase(project.category)}`) }}
+            {{ $t($store.getters.categoryLocaleKey(project.category)) }}
           </div>
         </div>
       </links>
@@ -93,10 +93,6 @@ export default class ProjectListItem extends Vue {
           params: { address: this.roundAddress, id: this.project.id },
         }
       : { name: 'project', params: { id: this.project.id } }
-  }
-
-  toLowerCase(category = ''): string {
-    return category.toLowerCase()
   }
 }
 </script>

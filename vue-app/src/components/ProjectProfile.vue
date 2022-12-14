@@ -25,7 +25,8 @@
       <p class="tagline">{{ project.tagline }}</p>
       <div class="subtitle">
         <div class="tag">
-          {{ project.category }} {{ $t('projectProfile.div1') }}
+          {{ $t($store.getters.categoryLocaleKey(project.category)) }}
+          {{ $t('projectProfile.div1') }}
         </div>
         <div class="team-byline" v-if="!!project.teamName">
           {{ $t('projectProfile.div2') }}
