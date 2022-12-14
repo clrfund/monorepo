@@ -71,7 +71,7 @@
             }}
           </p>
           <links class="cancel-link" to="/verify">
-            {{ $t('verify.link1') }}
+            {{ $t('cancel') }}
           </links>
         </div>
       </div>
@@ -80,7 +80,7 @@
       </div>
       <div class="cancel-area desktop">
         <links class="cancel-link" to="/verify">
-          {{ $t('verify.link2') }}
+          {{ $t('cancel') }}
         </links>
       </div>
       <div class="form-area">

@@ -142,7 +142,7 @@
                     id="tooling"
                     type="radio"
                     name="project-category"
-                    :value="$t('join.step0.input4')"
+                    value="Tooling"
                     v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
@@ -156,7 +156,7 @@
                     id="category-content"
                     type="radio"
                     name="project-category"
-                    :value="$t('join.step0.input5')"
+                    value="Content"
                     v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
@@ -170,7 +170,7 @@
                     id="research"
                     type="radio"
                     name="project-category"
-                    :value="$t('join.step0.input6')"
+                    value="Research"
                     v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
@@ -185,7 +185,7 @@
                     id="data"
                     type="radio"
                     name="project-category"
-                    :value="$t('join.step0.input7')"
+                    value="Data"
                     v-model="$v.form.project.category.$model"
                     :class="{
                       input: true,
@@ -611,14 +611,14 @@
                   <h4 class="read-only-title">{{ $t('join.step5.h4_9') }}</h4>
                   <div class="data">{{ form.team.name }}</div>
                   <div class="data" v-if="!form.team.name">
-                    {{ $t('join.step5.notice2') }}
+                    {{ $t('join.error.not_provided') }}
                   </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">{{ $t('join.step5.h4_10') }}</h4>
                   <markdown :raw="form.team.description" />
                   <div class="data" v-if="!form.team.description">
-                    {{ $t('join.step5.notice3') }}
+                    {{ $t('join.error.not_provided') }}
                   </div>
                 </div>
               </div>
@@ -642,7 +642,7 @@
                     /></links>
                   </div>
                   <div class="data" v-if="!form.links.github">
-                    {{ $t('join.step5.notice4') }}
+                    {{ $t('join.error.not_provided') }}
                   </div>
                 </div>
                 <div class="summary">
@@ -657,7 +657,7 @@
                     /></links>
                   </div>
                   <div class="data" v-if="!form.links.twitter">
-                    {{ $t('join.step5.notice5') }}
+                    {{ $t('join.error.not_provided') }}
                   </div>
                 </div>
                 <div class="summary">
@@ -672,7 +672,7 @@
                     /></links>
                   </div>
                   <div class="data" v-if="!form.links.website">
-                    {{ $t('join.step5.notice6') }}
+                    {{ $t('join.error.not_provided') }}
                   </div>
                 </div>
                 <div class="summary">
@@ -687,7 +687,7 @@
                     /></links>
                   </div>
                   <div class="data" v-if="!form.links.discord">
-                    {{ $t('join.step5.notice7') }}
+                    {{ $t('join.error.not_provided') }}
                   </div>
                 </div>
                 <div class="summary">
@@ -702,7 +702,7 @@
                     /></links>
                   </div>
                   <div class="data" v-if="!form.links.radicle">
-                    {{ $t('join.step5.notice8') }}
+                    {{ $t('join.error.not_provided') }}
                   </div>
                 </div>
               </div>

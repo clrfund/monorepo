@@ -2,7 +2,7 @@
   <div class="category-filter" v-click-outside="closeDropdown">
     <div class="filter-btn" @click="toggleDropdown">
       <span class="filter-text">
-        Filter
+        {{ $t('filter') }}
         <span v-if="selectedCategories.length"
           >({{ selectedCategories.length }})</span
         >
@@ -23,7 +23,7 @@
         }"
         @click="handleFilterClick(category)"
       >
-        {{ category }}
+        {{ $t(`category.${category}`) }}
         <img
           v-if="selectedCategories.includes(category)"
           class="close"

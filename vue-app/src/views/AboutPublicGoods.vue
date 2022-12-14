@@ -36,6 +36,7 @@
       <links to="/about/quadratic-funding">
         {{ $t('public_goods.why.link') }}</links
       >
+      {{ $t('public_goods.why.exponential_power') }}
     </p>
   </div>
 </template>

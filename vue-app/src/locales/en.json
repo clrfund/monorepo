@@ -359,7 +359,8 @@
       "p1": "Public goods are often underfunded because of something called the free rider problem: since public goods are always free and accessible for members of the public, people have little reason to contribute to their creation and maintenance. Instead, they can choose to be \"free riders\": using the public good but depending on others to build and maintain it.",
       "p2": "The free rider problem is quite present in open-source software, which is chronically underfunded despite being a core component of nearly all popular software products today.",
       "p3": "Clr.fund is an attempt to address the free rider problem for the Ethereum community, with the hope that this infrastructure may be useful for other publics in the future. By design, the funding rounds on clr.fund seek to involve members of the public from inception, and are allocating both decision making power and the exponential power to increase funding via the",
-      "link": "quadratic funding mechanism."
+      "link": "quadratic funding mechanism.",
+      "exponential_power": ""
     }
   },
   "quadratic_funding": {
@@ -369,7 +370,9 @@
       "p1": "Clr.fund is an implementation of quadratic funding, also called CLR (Capital-constrained Liberal Radicalism). Quadratic funding is made up of:",
       "li1": "a pool of funds to be distributed",
       "li2": "a voting system for distributing those funds",
-      "p2": "Two common voting systems you may have used are 1-person-1-vote and 1-dollar-1-vote. Quadratic funding is a best-of-both-worlds solution where users vote with the <b>square root</b> of the money they spend — read on to learn more."
+      "p2": "Two common voting systems you may have used are 1-person-1-vote and 1-dollar-1-vote. Quadratic funding is a best-of-both-worlds solution where users vote with the",
+      "sqrt": " square root",
+      "more": " of the money they spend — read on to learn more."
     },
     "problems": {
       "h2": "Problems with Existing Funding Mechanisms",
@@ -406,7 +409,7 @@
       "h2": "Quadratic Funding Resources",
       "li1": "Quadratic Payments: A Primer",
       "li2": "Liberal Radicalism: A Flexible Design For Philanthropic Matching Funds",
-      "li3": "Quadratic Payments: A Primer",
+      "li3": "Plural Voting",
       "li4": "WTF is QF"
     }
   },
@@ -440,7 +443,7 @@
       "li4": "With the forms finished, you can finish your submission:",
       "li5": "Connect to the right network via your wallet of choice.",
       "li6": "Send a transaction (with a deposit of {depositAmount} {depositToken}) to the registry contract.",
-      "p4": "Projects are accepted by default, but the registry admin may remove projects that don't meet the criteria.",
+      "p4": "The registry admin will review project submissions and accept/reject projects according to the criteria.",
       "p5": "In any case, your {depositToken} will be returned once your application has been either accepted or denied. Note that metadata pointing to all your project information (but not contact information) will be stored publicly on-chain."
     },
     "claim": {
@@ -490,7 +493,7 @@
   "brightIDGuide": {
     "heading": {
       "h2": "Get verified",
-      "p": "BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person. There are a couple of ways to do this:"
+      "p": "BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person."
     },
     "accordion": {
       "fastest": {
@@ -628,17 +631,10 @@
       "h4_8": "Contact email",
       "notice1": "This information won't be added to the smart contract.",
       "h4_9": "Team name",
-      "notice2": "Not provided",
       "h4_10": "Team description",
-      "notice3": "Not provided",
       "h3_4": "Links",
       "edit4": "Edit",
-      "notice4": "Not provided",
-      "notice5": "Not provided",
       "h4_12": "Website",
-      "notice6": "Not provided",
-      "notice7": "Not provided",
-      "notice8": "Not provided",
       "h3_5": "Images",
       "edit5": "Edit",
       "h4_13": "Banner",
@@ -647,51 +643,39 @@
     "step6": {
       "h2": "Submit project",
       "p1": "This is a blockchain transaction that will add your project information to the funding round."
+    },
+    "error": {
+      "not_provided": "Not provided"
     }
   },
   "joinLanding": {
     "loading": "Fetching round data...",
+    "check_out_these": "Check out these",
+    "other_ways_to_source_funding": "other ways to source funding",
+    "or_follow_us_on_twitter": ". Or follow us on Twitter for updates about future rounds:",
+    "need_info_about_your_project": "We’ll need some information about your project and a",
+    "security_deposit": " security deposit.",
+    "cap_on_projects": "The round only accepts a total of {maxRecipients} projects, so apply now while there’s still room!",
+    "time_to_complete": "Time to complete",
+    "15_minutes_ish": "15 minutes (ish)",
+    "see_round_criteria": "See round criteria",
     "closed": {
       "h1": "Sorry, it's too late to join",
-      "subtitle1": "The round is closed for new projects. It's now too late to get on board.",
-      "subtitle2_t1": "Check out these",
-      "link1": "other ways to source funding",
-      "subtitle2_t2": ". Or follow us on Twitter for updates about future rounds:",
-      "link2": "Home"
+      "subtitle1": "The round is closed for new projects. It's now too late to get on board."
     },
     "full": {
       "h1": "Sorry, the round is full",
-      "subtitle1": "The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now. Unfortunately we've hit the cap and there's no more room on board.",
-      "subtitle2_t1": "Check out these",
-      "link1": "other ways to source funding",
-      "subtitle2_t2": ". Or follow us on Twitter for updates about future rounds:",
-      "link2": "Home",
-      "link3": "More on MACI"
+      "subtitle1": "The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now. Unfortunately we've hit the cap and there's no more room on board."
     },
     "open": {
       "h1": "Join the funding round",
-      "subtitle1_t1": "We’ll need some information about your project and a",
-      "subtitle1_t2": " security deposit.",
-      "subtitle2": "The round only accepts a total of {maxRecipients} projects, so apply now while there’s still room!",
       "div1": "Time left to join",
-      "div2": "Time to complete",
-      "div3": "15 minutes (ish)",
       "div4": " {spacesRemainingString} left, hurry!",
       "div5": "MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.",
-      "link1": "More on MACI",
-      "p1": "You will get your deposit back if you don’t make it into the round this time.",
-      "button1": "See round criteria",
-      "link2": "Add project"
+      "p1": "You will get your deposit back if you don’t make it into the round this time."
     },
     "join": {
-      "h1": "Join the next funding round",
-      "subtitle1_t1": "We’ll need some information about your project and a",
-      "subtitle1_t2": " security deposit.",
-      "subtitle2": "The round only accepts a total of {maxRecipients} projects, so apply now while there’s still room!",
-      "div1": "Time to complete",
-      "div2": "15 minutes (ish)",
-      "button1": "See round criteria",
-      "link2": "Add project"
+      "h1": "Join the next funding round"
     }
   },
   "landing": {
@@ -805,6 +789,7 @@
     "p1": "reallocated!",
     "p2": "You just contributed!",
     "p3": "Your choices have been updated! You can update your choices again any time in the next",
+    "p4": ".",
     "p4_t1": "Thanks for contributing to the Ethereum ecosystem. If you change your mind, you have",
     "p4_t2": " to reallocate your contributions.",
     "btn": "OK"
@@ -819,9 +804,7 @@
   "verify": {
     "subtitle": " Step {currentStep} of {steps}",
     "p1": "Step {currentStep} of {steps}",
-    "link1": "Cancel",
     "h1": "Set up BrightID",
-    "link2": "Cancel",
     "h2_1": "Connect",
     "p2": "You need to connect your BrightID account with your wallet address.",
     "p3": "Once this app is linked in your BrightID app, we'll automatically transition you to the next step. It may take a minute for us to verify the connection - please wait.",
@@ -915,7 +898,30 @@
     "span4": "Matching Pool",
     "span5": "Total",
     "div14": "No current round.",
-    "link4": "Verify with BrightID while you wait"
+    "link4": "Verify with BrightID while you wait",
+    "error": {
+      "reached_contribution_limit": "The limit on the number of contributions has been reached",
+      "connect_wallet": "Please connect your wallet",
+      "incorrect_network": "Please change network to {chain} network.",
+      "need_to_setup_brightid": "To contribute, you need to set up BrightID.",
+      "invalid_contribution_amount": "Include valid contribution amount.",
+      "exceeded_max_cart_size": "Your cart can't include over {maxCartSize} projects.",
+      "round_cancelled": "Sorry, we've had to cancel this funding round.",
+      "round_ended": "The funding round has ended.",
+      "cart_changes_exceed_cap": "Cart changes will exceed contribution capacity of this round",
+      "contributions_over": "Contributions are over for this funding round.",
+      "reached_contributor_limit": "The limit on the number of contributors has been reached",
+      "must_be_gt_zero": "Your total must be more than 0 {nativeTokenSymbol}",
+      "not_enough_funds": "Not enough funds. Your balance is {balance} {nativeTokenSymbol}.",
+      "too_generous": "Your contribution is too generous. The max contribution is {maxAmount} {nativeTokenSymbol}.",
+      "need_gas_payment": "You need some ETH to pay for gas",
+      "contributor_key_missing": "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with.",
+      "more_than_original_contribution": "Your new total can't be more than your original {total} {tokenSymbol} contribution"
+    },
+    "action": {
+      "remove_all": "Remove all",
+      "split_evenly": "Split evenly"
+    }
   },
   "cartItems": {
     "button1": "Amount"
@@ -945,7 +951,8 @@
     "how_much": "This transaction lets the matching pool know how much {nativeTokenSymbol} to send to your favorite projects based on your contributions."
   },
   "copyButton": {
-    "tooltip1": "Copied!"
+    "tooltip1": "Copied!",
+    "copy": "Copy"
   },
   "criterialModal": {
     "h2": "Round criteria",
@@ -954,6 +961,24 @@
     "p3": "Learn more about the project application process in our",
     "link1": "recipient guide",
     "link2": "Add project"
+  },
+  "criteria": {
+    "free_open_source": {
+      "tagline": "Free and open source",
+      "description": "Your project must be free to use and any code associated with your project should be available to anyone under an open source license."
+    },
+    "no_clones": {
+      "tagline": "No clones",
+      "description": "If you've forked code, you must provide additional, unique value to the ecosystem."
+    },
+    "project_ownership": {
+      "tagline": "Project ownership",
+      "description": "The project you submit must be yours or you must have permission from the project owner."
+    },
+    "no_scams": {
+      "tagline": "No scams",
+      "description": "Obviously, your project must not put anyone's funds or information at risk."
+    }
   },
   "formNavigation": {
     "button1": "Previous",
@@ -974,7 +999,7 @@
     "link2": " Bridge {singleTokenNeeded} to {chain}"
   },
   "ipfsCopyWidget": {
-    "tooltip1": "'View IPFS link'"
+    "tooltip1": "View IPFS link"
   },
   "ipfsImageUpload": {
     "button1_1": "Uploading...",
@@ -991,7 +1016,6 @@
   "matchingFundsModal": {
     "title": "Contribute {tokenSymbol} to the matching pool",
     "div1": " ⚠️ You only have {renderBalance} {tokenSymbol}",
-    "button1": "Cancel",
     "button2": "Contribute",
     "h3_2_t1": " Contribute {renderContributionAmount} {tokenSymbol} to the matching pool",
     "h3_3": " You just topped up the pool by {renderContributionAmount} {tokenSymbol}!",
@@ -1137,5 +1161,17 @@
       "seconds": "seconds",
       "second": "second"
     }
-  }
+  },
+  "category": {
+    "tooling": "Tools",
+    "content": "Content",
+    "data": "Data",
+    "research": "Research"
+  },
+  "filter": "Filter",
+  "home": "Home",
+  "cancel": "Cancel",
+  "copied": "Copied!",
+  "more_on_maci": "More on MACI",
+  "add_project": "Add project"
 }

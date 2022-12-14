@@ -31,7 +31,8 @@
               valueClass="contributed-content-bold"
               unitClass="contributed-content-bold"
               :date="currentRound.votingDeadline"
-            />.
+            />
+            {{ $t('transactionSuccess.p4') }}
           </p>
           <p
             v-else-if="$route.params.type === 'contribution'"

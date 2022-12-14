@@ -12,6 +12,8 @@
     </ol>
     <p>
       {{ $t('quadratic_funding.heading.p2') }}
+      <b>{{ $t('quadratic_funding.heading.sqrt') }}</b>
+      {{ $t('quadratic_funding.heading.more') }}
     </p>
     <h2>{{ $t('quadratic_funding.problems.h2') }}</h2>
     <p>

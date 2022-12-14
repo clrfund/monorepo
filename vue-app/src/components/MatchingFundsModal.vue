@@ -27,7 +27,7 @@
       </div>
       <div class="btn-row">
         <button class="btn-secondary" @click="$emit('close')">
-          {{ $t('matchingFundsModal.button1') }}
+          {{ $t('cancel') }}
         </button>
         <button
           class="btn-action"

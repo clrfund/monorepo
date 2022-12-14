@@ -22,14 +22,18 @@
         </p>
         <div class="content">
           <div
-            v-for="({ emoji, criterion, description }, idx) in criteria"
+            v-for="({ emoji, translationKey }, idx) in criteria"
             :key="idx"
             class="criterion-point"
           >
             <div class="emoji" aria-hidden="true">{{ emoji }}</div>
             <div>
-              <h3 class="no-margin">{{ criterion }}</h3>
-              <p class="no-margin">{{ description }}</p>
+              <h3 class="no-margin">
+                {{ $t(getCriterion(translationKey)) }}
+              </h3>
+              <p class="no-margin">
+                {{ $t(getDescription(translationKey)) }}
+              </p>
             </div>
           </div>
         </div>
@@ -52,6 +56,14 @@ import { criteria, Criterion } from '@/plugins/round/criteria'
 export default class CriteriaModal extends Vue {
   get criteria(): Criterion[] {
     return criteria
+  }
+
+  getCriterion(key: string): string {
+    return `criteria.${key}.tagline`
+  }
+
+  getDescription(key: string): string {
+    return `criteria.${key}.description`
   }
 }
 </script>

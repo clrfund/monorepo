@@ -23,17 +23,15 @@
         {{ $t('joinLanding.closed.subtitle1') }}
       </div>
       <div class="subtitle mt2" id="subtitle">
-        {{ $t('joinLanding.closed.subtitle2_t1') }}
+        {{ $t('joinLanding.check_out_these') }}
         <links to="https://ethereum.org/en/community/grants/">{{
-          $t('joinLanding.closed.link1')
+          $t('joinLanding.other_ways_to_source_funding')
         }}</links
-        >{{ $t('joinLanding.closed.subtitle2_t2') }}
+        >{{ $t('joinLanding.or_follow_us_on_twitter') }}
         <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
-        <links to="/" class="btn-primary">{{
-          $t('joinLanding.closed.link2')
-        }}</links>
+        <links to="/" class="btn-primary">{{ $t('home') }}</links>
       </div>
     </div>
 
@@ -44,19 +42,17 @@
         {{ $t('joinLanding.full.subtitle1') }}
       </div>
       <div class="subtitle mt2" id="subtitle">
-        {{ $t('joinLanding.full.subtitle2_t1') }}
+        {{ $t('joinLanding.check_out_these') }}
         <links to="https://ethereum.org/en/community/grants/">{{
-          $t('joinLanding.full.link1')
+          $t('joinLanding.other_ways_to_source_funding')
         }}</links
-        >{{ $t('joinLanding.full.subtitle2_t2') }}
+        >{{ $t('joinLanding.or_follow_us_on_twitter') }}
         <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
-        <links to="/" class="btn-primary">{{
-          $t('joinLanding.full.link2')
-        }}</links>
+        <links to="/" class="btn-primary">{{ $t('home') }}</links>
         <links to="/about" class="btn-secondary">{{
-          $t('joinLanding.full.link3')
+          $t('more_on_maci')
         }}</links>
       </div>
     </div>
@@ -64,12 +60,16 @@
     <div class="content" v-else-if="$store.state.currentRound">
       <h1>{{ $t('joinLanding.open.h1') }}</h1>
       <div class="subtitle">
-        {{ $t('joinLanding.open.subtitle1_t1') }}
+        {{ $t('joinLanding.need_info_about_your_project') }}
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong
-        >{{ $t('joinLanding.open.subtitle1_t2') }}
+        >{{ $t('joinLanding.security_deposit') }}
       </div>
       <div class="subtitle mt2">
-        {{ $t('joinLanding.open.subtitle2', { maxRecipients: maxRecipients }) }}
+        {{
+          $t('joinLanding.cap_on_projects', {
+            maxRecipients: maxRecipients,
+          })
+        }}
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
@@ -86,9 +86,11 @@
         </div>
         <div class="apply-callout">
           <div class="countdown-label caps">
-            {{ $t('joinLanding.open.div2') }}
+            {{ $t('joinLanding.time_to_complete') }}
           </div>
-          <div class="countdown caps">{{ $t('joinLanding.open.div3') }}</div>
+          <div class="countdown-label caps">
+            {{ $t('joinLanding.15_minutes_ish') }}
+          </div>
         </div>
         <div v-if="isRoundFillingUp" class="apply-callout-warning">
           <div class="filling-up-container">
@@ -103,9 +105,7 @@
               <img class="icon" @click="openTooltip" src="@/assets/info.svg" />
               <div id="myTooltip" class="hidden button-menu">
                 {{ $t('joinLanding.open.div5') }}
-                <links to="/about/maci">{{
-                  $t('joinLanding.open.link1')
-                }}</links>
+                <links to="/about/maci">{{ $t('more_on_maci') }}</links>
               </div>
             </div>
           </div>
@@ -116,10 +116,10 @@
       </div>
       <div class="btn-container">
         <button class="btn-secondary" @click="toggleCriteria">
-          {{ $t('joinLanding.open.button1') }}
+          {{ $t('joinLanding.see_round_criteria') }}
         </button>
         <links to="/join/project" class="btn-primary">{{
-          $t('joinLanding.open.link2')
+          $t('add_project')
         }}</links>
       </div>
     </div>
@@ -127,27 +127,31 @@
     <div class="content" v-else>
       <h1>{{ $t('joinLanding.join.h1') }}</h1>
       <div class="subtitle">
-        {{ $t('joinLanding.join.subtitle1_t1') }}
+        {{ $t('joinLanding.need_info_about_your_project') }}
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong
-        >{{ $t('joinLanding.join.subtitle1_t2') }}
+        >{{ $t('joinLanding.security_deposit') }}
       </div>
       <div class="subtitle mt2">
-        {{ $t('joinLanding.join.subtitle2', { maxRecipients: maxRecipients }) }}
+        {{
+          $t('joinLanding.cap_on_projects', { maxRecipients: maxRecipients })
+        }}
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
           <div class="countdown-label caps">
-            {{ $t('joinLanding.join.div1') }}
+            {{ $t('joinLanding.time_to_complete') }}
           </div>
-          <div class="countdown caps">{{ $t('joinLanding.join.div2') }}</div>
+          <div class="countdown caps">
+            {{ $t('joinLanding.15_minutes_ish') }}
+          </div>
         </div>
       </div>
       <div class="btn-container">
         <button class="btn-secondary" @click="toggleCriteria">
-          {{ $t('joinLanding.join.button1') }}
+          {{ $t('joinLanding.see_round_criteria') }}
         </button>
         <links to="/join/project" class="btn-primary">{{
-          $t('joinLanding.join.link2')
+          $t('add_project')
         }}</links>
       </div>
     </div>

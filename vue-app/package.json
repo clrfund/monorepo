@@ -10,7 +10,7 @@
     "lint": "vue-cli-service lint",
     "test": "yarn test:lint && vue-cli-service test:unit",
     "test:lint": "vue-cli-service lint --no-fix",
-    "test:lint-i18n": "vue-i18n-extract report --vueFiles 'src/**/*.?(vue)' --languageFiles 'src/locales/*.?(json)' --exclude timeleft.unit"
+    "test:lint-i18n": "vue-i18n-extract report --vueFiles 'src/**/*.?(vue)' --languageFiles 'src/locales/*.?(json)' --exclude timeleft.unit --exclude cart.error --exclude cart.action --exclude criteria --exclude category"
   },
   "dependencies": {
     "@kleros/gtcr-encoder": "^1.4.0",

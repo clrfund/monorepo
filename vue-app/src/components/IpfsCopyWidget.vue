@@ -11,8 +11,8 @@
         myClass="ipfs-copy-widget"
       />
       <links
-        :v-tooltip="$t('ipfsCopyWidget.tooltip1')"
-        :href="'https://ipfs.io/ipfs/' + hash"
+        v-tooltip="$t('ipfsCopyWidget.tooltip1')"
+        :href="ipfsUrl"
         :hideArrow="true"
       >
         <img class="icon" src="@/assets/ipfs-white.svg" />
@@ -40,8 +40,12 @@ export default class IpfsCopyWidget extends Vue {
     this.isCopied = isCopied
   }
 
+  get ipfsUrl(): string {
+    return `https://ipfs.io/ipfs/${this.hash}`
+  }
+
   get renderCopiedOrHash(): string {
-    return this.isCopied ? 'Copied!' : this.hash
+    return this.isCopied ? this.$t('copied').toString() : this.hash
   }
 }
 </script>

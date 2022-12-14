@@ -3,7 +3,7 @@
     v-tooltip="{
       content: isCopied
         ? $t('copyButton.tooltip1')
-        : `Copy${text && ` ${text}`}`,
+        : `${$t('copyButton.copy')}${text && ` ${text}`}`,
       hideOnTargetClick: false,
       trigger: 'hover click',
     }"
