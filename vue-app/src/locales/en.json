@@ -1166,6 +1166,23 @@
         "remove_all": "Remove all",
         "split_evenly": "Split evenly"
       }
+    },
+    "verify": {
+      "step": {
+        "connect": "Connect",
+        "get_registered": "Get registered"
+      }
+    },
+    "join": {
+      "step": {
+        "about_the_project": "About the project",
+        "donation_details": "Donation details",
+        "team_details": "Team details",
+        "links": "Links",
+        "images": "Images",
+        "review": "Review",
+        "submit": "Submit"
+      }
     }
   },
   "filter": "Filter",

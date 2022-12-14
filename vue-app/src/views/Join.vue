@@ -552,7 +552,13 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">{{ $t('join.step5.h4_4') }}</h4>
-                  <div class="data">{{ form.project.category }}</div>
+                  <div class="data">
+                    {{
+                      $t(
+                        $store.getters.categoryLocaleKey(form.project.category)
+                      )
+                    }}
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">{{ $t('join.step5.h4_5') }}</h4>
@@ -904,13 +910,13 @@ export default class JoinView extends mixins(validationMixin) {
 
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
-      'About the project',
-      'Donation details',
-      'Team details',
-      'Links',
-      'Images',
-      'Review',
-      'Submit',
+      this.translate('about_the_project'),
+      this.translate('donation_details'),
+      this.translate('team_details'),
+      this.translate('links'),
+      this.translate('images'),
+      this.translate('review'),
+      this.translate('submit'),
     ]
     this.steps = steps
     this.currentStep = currentStep
@@ -945,6 +951,10 @@ export default class JoinView extends mixins(validationMixin) {
     )
       return
     this.showSummaryPreview = !this.showSummaryPreview
+  }
+
+  private translate(key = ''): string {
+    return this.$t('dynamic.join.step.' + key).toString()
   }
 
   // Check that at least one link is not empty && no links are invalid

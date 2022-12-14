@@ -32,7 +32,10 @@
                   src="@/assets/current-step.svg"
                   alt="current step"
                 />
-                <p v-text="step.name" class="active step" />
+                <p
+                  v-text="$t(`dynamic.verify.step.${step.name}`)"
+                  class="active step"
+                />
               </template>
               <template
                 v-else-if="isStepUnlocked(stepIndex) && isStepValid(stepIndex)"
@@ -42,7 +45,10 @@
                   class="progress-steps-loader"
                 />
                 <img v-else src="@/assets/green-tick.svg" alt="step complete" />
-                <p v-text="step.name" class="step" />
+                <p
+                  v-text="$t(`dynamic.verify.step.${step.name}`)"
+                  class="step"
+                />
               </template>
               <template v-else>
                 <img
@@ -50,7 +56,10 @@
                   src="@/assets/step-remaining.svg"
                   alt="step remaining"
                 />
-                <p v-text="step.name" class="step" />
+                <p
+                  v-text="$t(`dynamic.verify.step.${step.name}`)"
+                  class="step"
+                />
               </template>
             </div>
           </div>
