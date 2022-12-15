@@ -803,7 +803,7 @@
     "h1": "设置 BrightID",
     "h2_1": "连接",
     "p2": "您需要将您的 BrightID 账户与钱包地址连接起来。",
-    "p3": "一旦 CLR.fund app 链接上了您的 BrightID app, 我们将自动将您转移到下一步。这可能需要一分钟的时间来验证连接 - 请稍等。",
+    "p3": "链接上后, 我们将自动将您转移到下一步。这可能需要一分钟的时间来验证连接 - 请稍等。",
     "p4": "用您的 BrightID app 扫描此二维码。",
     "p5": "跟随此链接将您的钱包连接到您的 BrightID app。",
     "p6": "这个链接可能看起来很吓人, 但它只是在连接您的钱包地址、CLR.fund app 和 BrightID。请确保您的地址是正确的。",
@@ -832,8 +832,8 @@
     "link3": "返回"
   },
   "addToCartButton": {
-    "input1": "加入捐赠车",
-    "input2": "已在捐赠车 🎉"
+    "input1": "加入捐款车",
+    "input2": "已在捐款车 🎉"
   },
   "brightIdWidget": {
     "h2": "BrightID 设置",
@@ -848,25 +848,25 @@
   "callToActionCard": {
     "h2_1": "改变主意了?",
     "p1": "您仍然有时间重新分配您的捐款。",
-    "div1": "打开捐赠车",
+    "div1": "打开捐款车",
     "h2_2": "筹款结束了",
     "p2": "您不能再做任何捐赠了。",
     "h2_3": "做好准备",
-    "p3": "在您贡献之前，您需要做好一些准备工作。您可以在开始前或在筹款期间这样做",
+    "p3": "在您贡献之前，您需要做好一些准备工作，可以在开始前或在筹款期间做",
     "link1": "开始准备",
     "link2": "继续设置"
   },
   "cart": {
-    "h3_1": "连接查看您的捐赠车",
+    "h3_1": "连接查看您的捐款车",
     "div1": "您已经贡献过了。您可以更改您的选择并添加新的项目，但是您原本的总捐额必需一样。",
     "link1": "为什么?",
     "div2": "几乎完成了！您必须再提交一笔交易才能完成您的贡献。",
-    "h2_1": "编辑捐赠车",
-    "h2_2": "您的赠捐车",
+    "h2_1": "编辑捐款车",
+    "h2_2": "您的捐款车",
     "div3": "这次筹款活动已经结束。这是您的总捐额。谢谢!",
     "h3_2": "现在已经来不及捐赠了。",
     "div4": "抱歉，捐赠的截止日期已过。",
-    "h3_3": "您的捐赠车是空的。",
+    "h3_3": "您的捐款车是空的。",
     "div5": "选择一些您想捐赠的项目...",
     "link2": "查看项目",
     "edit1": "编辑您的捐赠",
@@ -876,7 +876,7 @@
     "div6": "您的捐赠",
     "div7": "剩余时间:",
     "span1": "原本的捐款",
-    "span2": "您的赠捐车",
+    "span2": "您的捐款车",
     "div8": "匹配池",
     "div9": "剩余的将会加入匹配池",
     "div10": "平均分配 {contribution} {tokenSymbol}",
@@ -884,7 +884,7 @@
     "div11": "不可以",
     "div11_if2": "重新分配",
     "div11_if3": "捐赠",
-    "div12": "您没有把资金捐给项目 ({total} {tokenSymbol}) 将在筹款结束时发送到匹配池。您的赠捐车必须相加等于您原来的 {total} {tokenSymbol} 捐款。",
+    "div12": "您没有把资金捐给项目 ({total} {tokenSymbol}) 将在筹款结束时发送到匹配池。您的捐款车必须相加等于您原来的 {total} {tokenSymbol} 捐款。",
     "link3": "BrightID 验证",
     "template1": "捐赠 {total} {tokenSymbol} 给 {cart} 相目",
     "template2": "完成赠捐",
@@ -1149,7 +1149,7 @@
         "incorrect_network": "请将网络更改为 {chain} 网络.",
         "need_to_setup_brightid": "要进行贡献, 您需要设置 BrightID。",
         "invalid_contribution_amount": "请输入有效的贡献金额",
-        "exceeded_max_cart_size": "您的捐赠车不能超过 {maxCartSize} 个项目",
+        "exceeded_max_cart_size": "您的捐款车不能超过 {maxCartSize} 个项目",
         "round_cancelled": "抱歉，我们不得不取消这次筹款活动。",
         "round_ended": "筹款活动已结束。",
         "cart_changes_exceed_cap": "您的更改将超出贡献容量",
@@ -1173,15 +1173,22 @@
         "Get registered": "注册"
       }
     },
-    "join": {
+    "progress": {
       "step": {
-        "about_the_project": "关于项目",
-        "donation_details": "捐款细节",
-        "team_details": "团队",
+        "project": "关于项目",
+        "donation": "捐款细节",
+        "team": "团队",
         "links": "链接",
         "images": "图片",
         "review": "审查",
         "submit": "提交"
+      }
+    },
+    "mobile": {
+      "tab": {
+        "Cart": "捐款车",
+        "Round": "筹款信息",
+        "Projects": "项目"
       }
     }
   },

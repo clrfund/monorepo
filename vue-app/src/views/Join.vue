@@ -910,13 +910,13 @@ export default class JoinView extends mixins(validationMixin) {
 
     const currentStep = steps.indexOf(this.$route.params.step)
     const stepNames = [
-      this.translate('about_the_project'),
-      this.translate('donation_details'),
-      this.translate('team_details'),
-      this.translate('links'),
-      this.translate('images'),
-      this.translate('review'),
-      this.translate('submit'),
+      'project',
+      'donation',
+      'team',
+      'links',
+      'images',
+      'review',
+      'submit',
     ]
     this.steps = steps
     this.currentStep = currentStep
@@ -951,10 +951,6 @@ export default class JoinView extends mixins(validationMixin) {
     )
       return
     this.showSummaryPreview = !this.showSummaryPreview
-  }
-
-  private translate(key = ''): string {
-    return this.$t(`dynamic.join.step.${key}`).toString()
   }
 
   // Check that at least one link is not empty && no links are invalid

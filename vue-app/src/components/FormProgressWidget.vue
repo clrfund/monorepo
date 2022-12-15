@@ -28,7 +28,7 @@
               src="@/assets/current-step.svg"
               alt="current step"
             />
-            <p v-text="name" class="active step" />
+            <p v-text="translate(name)" class="active step" />
           </template>
           <template v-else-if="step === furthestStep">
             <img src="@/assets/furthest-step.svg" alt="current step" />
@@ -40,11 +40,11 @@
               src="@/assets/green-tick.svg"
               alt="step complete"
             />
-            <p v-text="name" class="step" />
+            <p v-text="translate(name)" class="step" />
           </template>
           <template v-else>
             <img src="@/assets/step-remaining.svg" alt="step remaining" />
-            <p v-text="name" class="step" />
+            <p v-text="translate(name)" class="step" />
           </template>
         </div>
       </div>
@@ -109,6 +109,10 @@ export default class FormProgressWidget extends Vue {
   @Prop() isStepValid!: (step: number) => boolean
   @Prop() handleStepNav!: () => void
   @Prop() saveFormData!: (updateFurthest?: boolean) => void
+
+  translate(key = ''): string {
+    return this.$t(`dynamic.progress.step.${key}`).toString()
+  }
 }
 </script>
 

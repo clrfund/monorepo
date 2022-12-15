@@ -1173,15 +1173,22 @@
         "get_registered": "Get registered"
       }
     },
-    "join": {
+    "progress": {
       "step": {
-        "about_the_project": "About the project",
-        "donation_details": "Donation details",
-        "team_details": "Team details",
+        "project": "About the project",
+        "donation": "Donation details",
+        "team": "Team details",
         "links": "Links",
         "images": "Images",
         "review": "Review",
         "submit": "Submit"
+      }
+    },
+    "mobile": {
+      "tab": {
+        "Cart": "Cart",
+        "Round": "Round",
+        "Projects": "Projects"
       }
     }
   },
