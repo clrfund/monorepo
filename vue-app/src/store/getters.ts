@@ -258,7 +258,7 @@ const getters = {
     () =>
     (category = ''): string => {
       try {
-        return `dynamic.category.${category.toLowerCase()}`
+        return category ? `dynamic.category.${category.toLowerCase()}` : ''
       } catch {
         return category
       }

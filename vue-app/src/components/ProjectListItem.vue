@@ -4,7 +4,7 @@
       <links :to="projectRoute">
         <div class="project-image">
           <img :src="projectImageUrl" :alt="project.name" />
-          <div class="tag">
+          <div v-if="project.category" class="tag">
             {{ $t($store.getters.categoryLocaleKey(project.category)) }}
           </div>
         </div>
