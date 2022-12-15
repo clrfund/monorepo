@@ -2,7 +2,14 @@
   <div class="progress-area">
     <div class="desktop progress-container">
       <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
-      <p class="subtitle">Step {{ currentStep + 1 }} of {{ steps.length }}</p>
+      <p class="subtitle">
+        {{
+          $t('formProgressWidget.p1', {
+            currentStep: currentStep + 1,
+            steps: steps.length,
+          })
+        }}
+      </p>
       <div class="progress-steps">
         <div
           v-for="(name, step) in stepNames"
@@ -21,7 +28,7 @@
               src="@/assets/current-step.svg"
               alt="current step"
             />
-            <p v-text="name" class="active step" />
+            <p v-text="translate(name)" class="active step" />
           </template>
           <template v-else-if="step === furthestStep">
             <img src="@/assets/furthest-step.svg" alt="current step" />
@@ -33,11 +40,11 @@
               src="@/assets/green-tick.svg"
               alt="step complete"
             />
-            <p v-text="name" class="step" />
+            <p v-text="translate(name)" class="step" />
           </template>
           <template v-else>
             <img src="@/assets/step-remaining.svg" alt="step remaining" />
-            <p v-text="name" class="step" />
+            <p v-text="translate(name)" class="step" />
           </template>
         </div>
       </div>
@@ -59,8 +66,17 @@
           :totalSteps="steps.length"
         />
         <div class="row">
-          <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-          <links class="cancel-link" to="/join"> Cancel </links>
+          <p>
+            {{
+              $t('formProgressWidget.div1', {
+                currentStep: currentStep + 1,
+                steps: steps.length,
+              })
+            }}
+          </p>
+          <links class="cancel-link" to="/join">
+            {{ $t('formProgressWidget.link1') }}
+          </links>
         </div>
       </div>
     </div>
@@ -93,6 +109,10 @@ export default class FormProgressWidget extends Vue {
   @Prop() isStepValid!: (step: number) => boolean
   @Prop() handleStepNav!: () => void
   @Prop() saveFormData!: (updateFurthest?: boolean) => void
+
+  translate(key = ''): string {
+    return this.$t(`dynamic.progress.step.${key}`).toString()
+  }
 }
 </script>
 

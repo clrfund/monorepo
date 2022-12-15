@@ -17,22 +17,26 @@
       >
         <loader class="button-loader" v-if="isWaiting" />
         <div v-if="isWaiting" class="tx-notice">
-          <div v-if="!!txHash">Waiting for transaction to be mined...</div>
-          <div v-else>Check your wallet for a prompt...</div>
+          <div v-if="!!txHash">{{ $t('recipientSubmissionWidget.div1') }}</div>
+          <div v-else>{{ $t('recipientSubmissionWidget.div2') }}</div>
         </div>
         <div v-if="hasTxError" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
-          Something failed: {{ txError }}<br />
-          Check your wallet or {{ blockExplorerLabel }} for more info.
+          {{ $t('recipientSubmissionWidget.div3_t1', { txError: txError })
+          }}<br />
+          {{
+            $t('recipientSubmissionWidget.div3_t2', {
+              blockExplorerLabel: blockExplorerLabel,
+            })
+          }}
         </div>
       </div>
       <div class="connected">
         <div class="total-title">
-          Total to submit
+          {{ $t('recipientSubmissionWidget.div4') }}
           <img
             v-tooltip="{
-              content:
-                'Estimate – this total may be slightly different in your wallet.',
+              content: $t('recipientSubmissionWidget.tooltip1'),
               trigger: 'hover click',
             }"
             src="@/assets/info.svg"
@@ -43,11 +47,17 @@
           <span class="total-currency"> {{ depositToken }}</span>
         </div>
         <div class="warning-text" v-if="hasLowFunds">
-          Not enough {{ depositToken }} in your wallet.<br />
-          Top up or connect a different wallet.
+          {{
+            $t('recipientSubmissionWidget.div5_t1', {
+              depositToken: depositToken,
+            })
+          }}<br />
+          {{ $t('recipientSubmissionWidget.div5_t2') }}
         </div>
         <div v-if="txHasDeposit" class="checkout-row">
-          <p class="m05"><b>Security deposit</b></p>
+          <p class="m05">
+            <b>{{ $t('recipientSubmissionWidget.p1') }}</b>
+          </p>
           <p class="m05">
             {{ depositAmount }} {{ depositToken }}
             <span class="o5"

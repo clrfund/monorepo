@@ -254,6 +254,15 @@ const getters = {
   operator: (): string => {
     return operator
   },
+  categoryLocaleKey:
+    () =>
+    (category = ''): string => {
+      try {
+        return `dynamic.category.${category.toLowerCase()}`
+      } catch {
+        return category
+      }
+    },
 }
 
 export default getters

@@ -1,13 +1,13 @@
 <template>
   <div class="link-box">
-    <h2 class="link-title">Check them out</h2>
+    <h2 class="link-title">{{ $t('linkBox.h2') }}</h2>
     <div v-if="project.githubUrl" class="link-row">
       <img src="@/assets/GitHub.svg" />
-      <links :to="project.githubUrl">GitHub repo</links>
+      <links :to="project.githubUrl">{{ $t('linkBox.link1') }}</links>
     </div>
     <div v-if="project.twitterUrl" class="link-row">
       <img src="@/assets/Twitter.svg" />
-      <links :to="project.twitterUrl">@Twitter</links>
+      <links :to="project.twitterUrl">{{ $t('linkBox.link2') }}</links>
     </div>
     <div v-if="project.websiteUrl" class="link-row">
       <img src="@/assets/Meridians.svg" />
