@@ -1,8 +1,8 @@
 import { getRegistryInfo, type RecipientApplicationData, type RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import { useAppStore } from './app'
-import { recipientRegistryType } from '@/api/core'
 import { isSameAddress } from '@/utils/accounts'
+import { useUserStore } from './user'
 
 export type RecipientState = {
 	recipient: RecipientApplicationData | null
@@ -18,11 +18,11 @@ export const useRecipientStore = defineStore('recipient', {
 	}),
 	getters: {
 		isRecipientRegistryOwner: (state): boolean => {
-			const appStore = useAppStore()
-			if (!appStore.currentUser || !state.recipientRegistryInfo) {
+			const userStore = useUserStore()
+			if (!userStore.currentUser || !state.recipientRegistryInfo) {
 				return false
 			}
-			return isSameAddress(appStore.currentUser.walletAddress, state.recipientRegistryInfo.owner)
+			return isSameAddress(userStore.currentUser.walletAddress, state.recipientRegistryInfo.owner)
 		},
 	},
 	actions: {

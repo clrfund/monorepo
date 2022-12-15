@@ -108,7 +108,7 @@ import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
 import { waitForTransaction } from '@/utils/contracts'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
@@ -120,7 +120,9 @@ const router = useRouter()
 const appStore = useAppStore()
 
 // state
-const { currentUser, hasContributionPhaseEnded, userRegistryAddress } = storeToRefs(appStore)
+const { hasContributionPhaseEnded, userRegistryAddress } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 const steps = ref<Array<BrightIDStep>>([
 	{ page: 'connect', name: 'Connect' },
@@ -154,7 +156,7 @@ onMounted(async () => {
 	}
 
 	// make sure BrightId status is availabel before page load
-	await appStore.loadBrightID()
+	await userStore.loadBrightID()
 
 	// redirect to the verify success page if the user is registered
 	if (currentStep.value < 0) {
@@ -201,7 +203,7 @@ async function register() {
 			registrationTxError.value = error.message
 			return
 		}
-		appStore.loadUserInfo()
+		userStore.loadUserInfo()
 	}
 }
 
@@ -212,7 +214,7 @@ async function waitUntil(isConditionMetFn: () => boolean, intervalTime = 5000) {
 	let isConditionMet = false
 
 	const checkVerification = async () => {
-		await appStore.loadBrightID()
+		await userStore.loadBrightID()
 		isConditionMet = isConditionMetFn()
 
 		if (!isConditionMet) {

@@ -7,25 +7,21 @@ import {
 	deserializeContributorData,
 	getCartStorageKey,
 	getCommittedCartStorageKey,
-	getContributionAmount,
 	getContributorStorageKey,
-	hasContributorVoted,
 	MAX_CART_SIZE,
 	serializeCart,
 	serializeContributorData,
 } from '@/api/contributions'
-import { operator, userRegistryType, UserRegistryType, ThemeMode, recipientRegistryType } from '@/api/core'
+import { operator, ThemeMode, recipientRegistryType } from '@/api/core'
 import { type RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { getTally, type Tally } from '@/api/tally'
-import { getEtherBalance, getTokenBalance, isVerifiedUser, type User } from '@/api/user'
 import { type Factory, getFactoryInfo } from '@/api/factory'
 import { getMACIFactoryInfo, type MACIFactory } from '@/api/maci-factory'
-import { ensLookup, isSameAddress } from '@/utils/accounts'
+import { isSameAddress } from '@/utils/accounts'
 import { storage } from '@/api/storage'
-import { loginUser, logoutUser } from '@/api/gun'
-import { type BrightId, getBrightId } from '@/api/bright-id'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { useRecipientStore } from './recipient'
+import { useUserStore } from './user'
 
 export type AppState = {
 	cart: CartItem[]
@@ -36,7 +32,6 @@ export type AppState = {
 	hasVoted: boolean
 	currentRound: RoundInfo | null
 	currentRoundAddress: string | null
-	currentUser: User | null
 	showCartPanel: boolean
 	tally: Tally | null
 	theme: string | null
@@ -54,7 +49,6 @@ export const useAppStore = defineStore('app', {
 		hasVoted: false,
 		currentRound: null,
 		currentRoundAddress: null,
-		currentUser: null,
 		showCartPanel: false,
 		tally: null,
 		theme: null,
@@ -136,7 +130,8 @@ export const useAppStore = defineStore('app', {
 			return !!state.currentRound && state.currentRound.maxMessages <= state.currentRound.messages
 		},
 		hasUserContributed: (state): boolean => {
-			return !!state.currentUser && !!state.contribution && !state.contribution.isZero()
+			const userStore = useUserStore()
+			return !!userStore.currentUser && !!state.contribution && !state.contribution.isZero()
 		},
 		operator: (): string => {
 			return operator
@@ -236,21 +231,7 @@ export const useAppStore = defineStore('app', {
 		setHasVote(hasVoted: boolean) {
 			this.hasVoted = hasVoted
 		},
-		async loginUser(walletAddress: string, encryptionKey: string) {
-			await loginUser(walletAddress, encryptionKey)
-		},
-		logoutUser() {
-			this.unwatchCart()
-			this.unwatchContributorData()
-			logoutUser()
-			this.currentUser = null
-			this.contribution = null
-			this.contributor = null
-			this.cart = []
-		},
-		setCurrentUser(user: User) {
-			this.currentUser = user
-		},
+
 		async loadRoundInfo() {
 			const roundAddress = this.currentRoundAddress
 			if (roundAddress === null) {
@@ -277,18 +258,20 @@ export const useAppStore = defineStore('app', {
 			this.currentRoundAddress = roundAddress
 		},
 		unwatchCart() {
-			if (!this.currentUser || !this.currentRound) {
+			const userStore = useUserStore()
+			if (!userStore.currentUser || !this.currentRound) {
 				return
 			}
 			storage.unwatchItem(
-				this.currentUser.walletAddress,
+				userStore.currentUser.walletAddress,
 				getCartStorageKey(this.currentRound.fundingRoundAddress),
 			)
 		},
 		loadCart() {
+			const userStore = useUserStore()
 			storage.watchItem(
-				this.currentUser!.walletAddress,
-				this.currentUser!.encryptionKey,
+				userStore.currentUser!.walletAddress,
+				userStore.currentUser!.encryptionKey,
 				getCartStorageKey(this.currentRound!.fundingRoundAddress),
 				(data: string | null) => {
 					const cart = deserializeCart(data)
@@ -344,20 +327,22 @@ export const useAppStore = defineStore('app', {
 			this.cart = []
 		},
 		saveCart() {
+			const userStore = useUserStore()
 			const serializedCart = serializeCart(this.cart)
 			storage.setItem(
-				this.currentUser?.walletAddress as string,
-				this.currentUser?.encryptionKey as string,
+				userStore.currentUser?.walletAddress as string,
+				userStore.currentUser?.encryptionKey as string,
 				getCartStorageKey(this.currentRound?.fundingRoundAddress as string),
 				serializedCart,
 			)
 		},
 		saveCommittedCartDispatch() {
+			const userStore = useUserStore()
 			this.saveCommittedCart()
 			const serializedCart = serializeCart(this.committedCart)
 			storage.setItem(
-				this.currentUser!.walletAddress,
-				this.currentUser!.encryptionKey,
+				userStore.currentUser!.walletAddress,
+				userStore.currentUser!.encryptionKey,
 				getCommittedCartStorageKey(this.currentRound!.fundingRoundAddress),
 				serializedCart,
 			)
@@ -403,9 +388,10 @@ export const useAppStore = defineStore('app', {
 			}
 		},
 		loadCommittedCart() {
+			const userStore = useUserStore()
 			storage.watchItem(
-				this.currentUser!.walletAddress,
-				this.currentUser!.encryptionKey,
+				userStore.currentUser!.walletAddress,
+				userStore.currentUser!.encryptionKey,
 				getCommittedCartStorageKey(this.currentRound!.fundingRoundAddress),
 				(data: string | null) => {
 					const committedCart = deserializeCart(data)
@@ -422,18 +408,20 @@ export const useAppStore = defineStore('app', {
 			this.contribution = contribution
 		},
 		saveContributorData() {
+			const userStore = useUserStore()
 			const serializedData = serializeContributorData(this.contributor!)
 			storage.setItem(
-				this.currentUser!.walletAddress,
-				this.currentUser!.encryptionKey,
+				userStore.currentUser!.walletAddress,
+				userStore.currentUser!.encryptionKey,
 				getContributorStorageKey(this.currentRound!.fundingRoundAddress),
 				serializedData,
 			)
 		},
 		loadContributorData() {
+			const userStore = useUserStore()
 			storage.watchItem(
-				this.currentUser!.walletAddress,
-				this.currentUser!.encryptionKey,
+				userStore.currentUser!.walletAddress,
+				userStore.currentUser!.encryptionKey,
 				getContributorStorageKey(this.currentRound!.fundingRoundAddress),
 				(data: string | null) => {
 					const contributor = deserializeContributorData(data)
@@ -444,85 +432,14 @@ export const useAppStore = defineStore('app', {
 			)
 		},
 		unwatchContributorData() {
-			if (!this.currentUser || !this.currentRound) {
+			const userStore = useUserStore()
+			if (!userStore.currentUser || !this.currentRound) {
 				return
 			}
 			storage.unwatchItem(
-				this.currentUser.walletAddress,
+				userStore.currentUser.walletAddress,
 				getContributorStorageKey(this.currentRound.fundingRoundAddress),
 			)
-		},
-		async loadUserInfo() {
-			if (!this.currentUser) {
-				return
-			}
-
-			let nativeTokenAddress = ''
-			let userRegistryAddress = ''
-			let balance: BigNumber | null = null
-
-			if (this.factory) {
-				nativeTokenAddress = this.factory.nativeTokenAddress
-				userRegistryAddress = this.factory.userRegistryAddress
-			}
-
-			if (this.currentRound) {
-				nativeTokenAddress = this.currentRound.nativeTokenAddress
-				userRegistryAddress = this.currentRound.userRegistryAddress
-
-				let contribution = this.contribution
-				if (!contribution || contribution.isZero()) {
-					contribution = await getContributionAmount(
-						this.currentRound.fundingRoundAddress,
-						this.currentUser.walletAddress,
-					)
-
-					const hasVoted = await hasContributorVoted(
-						this.currentRound.fundingRoundAddress,
-						this.currentUser.walletAddress,
-					)
-
-					this.contribution = contribution
-					this.hasVoted = hasVoted
-				}
-			}
-
-			// Check if this user is in our user registry
-			const isRegistered = await isVerifiedUser(userRegistryAddress, this.currentUser.walletAddress)
-
-			if (nativeTokenAddress) {
-				balance = await getTokenBalance(nativeTokenAddress, this.currentUser.walletAddress)
-			}
-
-			const etherBalance = await getEtherBalance(this.currentUser.walletAddress)
-			let ensName: string | null | undefined = this.currentUser.ensName
-			ensName = await ensLookup(this.currentUser.walletAddress)
-
-			this.currentUser = {
-				...this.currentUser,
-				isRegistered,
-				balance,
-				etherBalance,
-				ensName,
-			}
-		},
-		async loadBrightID() {
-			if (this.currentUser && userRegistryType === UserRegistryType.BRIGHT_ID) {
-				// If the user is registered, we assume all brightId steps as done
-				let brightId: BrightId = {
-					isVerified: true,
-				}
-
-				if (!this.currentUser.isRegistered) {
-					// If not registered, then fetch brightId data
-					brightId = await getBrightId(this.currentUser.walletAddress)
-				}
-
-				this.setCurrentUser({
-					...this.currentUser,
-					brightId,
-				})
-			}
 		},
 		async loadFactoryInfo() {
 			const factory = await getFactoryInfo()

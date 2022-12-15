@@ -39,19 +39,22 @@ import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import Links from '@/components/Links.vue'
 
 import { userRegistryType, UserRegistryType } from '@/api/core'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
 const { canUserReallocate, hasContributionPhaseEnded } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
 const hasStartedVerification = computed(
-	() => appStore.currentUser && appStore.currentUser.brightId && appStore.currentUser.brightId.isVerified,
+	() => currentUser.value && currentUser.value.brightId && currentUser.value.brightId.isVerified,
 )
 const showUserVerification = computed(() => {
 	return (
 		userRegistryType === UserRegistryType.BRIGHT_ID &&
-		typeof appStore.currentUser?.isRegistered === 'boolean' &&
-		!appStore.currentUser.isRegistered
+		typeof currentUser.value?.isRegistered === 'boolean' &&
+		!currentUser.value.isRegistered
 	)
 })
 

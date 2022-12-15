@@ -15,7 +15,7 @@ async function setupNetwork(provider): Promise<void> {
 				},
 			],
 		})
-	} catch (error) {
+	} catch (error: any) {
 		// This error code indicates that the chain has not been added to MetaMask.
 		if (error.code === 4902 && CHAIN_INFO[chainId].rpcUrl) {
 			try {
@@ -35,7 +35,7 @@ async function setupNetwork(provider): Promise<void> {
 						},
 					],
 				})
-			} catch (error) {
+			} catch (error: any) {
 				/* eslint-disable-next-line no-console */
 				console.warn('Failed to add network information to wallet.')
 			}
@@ -62,7 +62,7 @@ export default {
 				method: 'eth_requestAccounts',
 			})
 			chainId = await provider.request({ method: 'eth_chainId' })
-		} catch (err) {
+		} catch (err: any) {
 			if (err.code === 4001) {
 				// EIP-1193 userRejectedRequest error
 				// If this happens, the user rejected the connection request.

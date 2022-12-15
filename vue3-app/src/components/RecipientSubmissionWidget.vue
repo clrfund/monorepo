@@ -58,7 +58,7 @@ import { chain } from '@/api/core'
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
 import { formatAmount } from '@/utils/amounts'
-import { useAppStore, useRecipientStore } from '@/stores'
+import { useUserStore, useRecipientStore } from '@/stores'
 
 interface Props {
 	isWaiting: boolean
@@ -66,9 +66,9 @@ interface Props {
 	txError: string
 }
 
-const appStore = useAppStore()
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 const recipientStore = useRecipientStore()
-const { currentUser } = storeToRefs(appStore)
 const { recipientRegistryInfo } = storeToRefs(recipientStore)
 const props = defineProps<Props>()
 

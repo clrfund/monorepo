@@ -87,7 +87,7 @@ async function vote() {
 				hash: voteTxHash.value,
 			},
 		})
-	} catch (error) {
+	} catch (error: any) {
 		voteTxError.value = error.message
 		return
 	}

@@ -20,12 +20,14 @@ import { markdown } from '@/utils/markdown'
 
 import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { $vfm } from 'vue-final-modal'
 
 const appStore = useAppStore()
-const { currentRound, tally, currentUser, isRoundFinalized } = storeToRefs(appStore)
+const { currentRound, tally, isRoundFinalized } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 interface Props {
 	project: Project

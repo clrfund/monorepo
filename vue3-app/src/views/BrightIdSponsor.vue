@@ -43,12 +43,14 @@ import { selfSponsor } from '@/api/bright-id'
 import { waitForTransaction } from '@/utils/contracts'
 import WalletWidget from '@/components/WalletWidget.vue'
 import Transaction from '@/components/Transaction.vue'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
 const appStore = useAppStore()
-const { currentUser, userRegistryAddress } = storeToRefs(appStore)
+const { userRegistryAddress } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 const router = useRouter()
 
 const loadingTx = ref(false)

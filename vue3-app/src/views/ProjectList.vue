@@ -75,7 +75,7 @@ import ProjectListItem from '@/components/ProjectListItem.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'
 import { useRoute } from 'vue-router'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
@@ -97,7 +97,9 @@ function shuffleArray(array: any[]) {
 
 const route = useRoute()
 const appStore = useAppStore()
-const { currentRoundAddress, currentRound, currentUser, showCartPanel } = storeToRefs(appStore)
+const { currentRoundAddress, currentRound, showCartPanel } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 const projects = ref<Project[]>([])
 const search = ref('')

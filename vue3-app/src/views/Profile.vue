@@ -109,7 +109,7 @@ import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { type Project, getProjects } from '@/api/projects'
 import { isSameAddress } from '@/utils/accounts'
 import { getTokenLogo } from '@/utils/tokens'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { useWallet } from 'vue-dapp'
@@ -124,8 +124,11 @@ const emit = defineEmits(['close'])
 
 const router = useRouter()
 const appStore = useAppStore()
-const { hasContributionPhaseEnded, nativeTokenSymbol, recipientRegistryAddress, currentRound, currentUser } =
-	storeToRefs(appStore)
+const { hasContributionPhaseEnded, nativeTokenSymbol, currentRound } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+const recipientStore = useRecipientStore()
+const { recipientRegistryAddress } = storeToRefs(recipientStore)
 
 const projects = ref<Project[]>([])
 const balanceBackgroundColor = ref('#2a374b')
@@ -136,7 +139,7 @@ onMounted(async () => {
 	isLoading.value = true
 	await loadProjects()
 	if (showBrightIdWidget.value) {
-		await appStore.loadBrightID()
+		await userStore.loadBrightID()
 	}
 	isLoading.value = false
 })
@@ -178,7 +181,7 @@ async function disconnect(): Promise<void> {
 	if (currentUser.value && walletProvider.value) {
 		// Log out user
 		disconnectWallet()
-		appStore.logoutUser()
+		userStore.logoutUser()
 		emit('close')
 	}
 }

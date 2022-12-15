@@ -64,10 +64,11 @@ import { factory } from '@/api/core'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
 import { useEthers } from 'vue-dapp'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 
 const { signer } = useEthers()
 const appStore = useAppStore()
+const userStore = useUserStore()
 
 // state
 const step = ref(1)
@@ -76,14 +77,14 @@ const transferTxHash = ref('')
 const transferTxError = ref('')
 
 const balance = computed<string | null>(() => {
-	const balance = appStore.currentUser?.balance
+	const balance = userStore.currentUser?.balance
 	if (balance === null || typeof balance === 'undefined') {
 		return null
 	}
 	return formatUnits(balance, 18)
 })
 const renderBalance = computed<string | null>(() => {
-	const balance: BigNumber | null | undefined = appStore.currentUser?.balance
+	const balance: BigNumber | null | undefined = userStore.currentUser?.balance
 	if (balance === null || typeof balance === 'undefined') return null
 	const { nativeTokenDecimals } = appStore.currentRound!
 	return formatAmount(balance, nativeTokenDecimals, null, 5)
@@ -129,9 +130,9 @@ async function contributeMatchingFunds() {
 
 	try {
 		await waitForTransaction(token.transfer(matchingPoolAddress, _amount), hash => (transferTxHash.value = hash))
-	} catch (error) {
+	} catch (error: any) {
 		transferTxError.value = error.message
-		if (error.message.indexOf('Nonce too high') >= 0 && import.meta.NODE === 'development') {
+		if (error.message.indexOf('Nonce too high') >= 0 && import.meta.env.MODE === 'development') {
 			transferTxError.value = 'Have you been buidling?? Reset your nonce! 🪄'
 		}
 		return

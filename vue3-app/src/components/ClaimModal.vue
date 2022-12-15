@@ -32,11 +32,13 @@ import Transaction from '@/components/Transaction.vue'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
-const { currentRound, currentUser, tally } = storeToRefs(appStore)
+const { currentRound, tally } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 interface Props {
 	project: Project
@@ -71,7 +73,7 @@ async function claim() {
 			fundingRound.claimFunds(...recipientClaimData),
 			hash => (claimTxHash.value = hash),
 		)
-	} catch (error) {
+	} catch (error: any) {
 		claimTxError.value = error.message
 		return
 	}

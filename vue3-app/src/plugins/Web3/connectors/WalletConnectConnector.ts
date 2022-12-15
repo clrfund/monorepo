@@ -14,7 +14,7 @@ export default {
 		try {
 			accounts = await provider.enable()
 			chainId = await provider.request({ method: 'eth_chainId' })
-		} catch (err) {
+		} catch (err: any) {
 			if (err.code === 4001) {
 				// EIP-1193 userRejectedRequest error
 				// If this happens, the user rejected the connection request.

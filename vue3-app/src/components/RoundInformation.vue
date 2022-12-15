@@ -261,7 +261,7 @@ import Loader from '@/components/Loader.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useBoard } from 'vue-dapp'
@@ -274,7 +274,6 @@ const { open: openWalletBoard, boardOpen } = useBoard()
 const isLoading = ref(true)
 const roundInfo = ref<RoundInfo | null>(null)
 const {
-	currentUser,
 	operator,
 	currentRoundAddress,
 	currentRound,
@@ -286,6 +285,8 @@ const {
 	recipientJoinDeadline,
 	isRoundContributionPhase,
 } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 const lsIsNoticeHiddenKey = computed(() => `${roundInfo.value?.fundingRoundAddress}.is-notice-hidden`)
 const isRoundCancelled = computed(() => appStore.isRoundCancelled(roundInfo.value))

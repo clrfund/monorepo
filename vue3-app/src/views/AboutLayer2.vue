@@ -148,12 +148,15 @@
 <script setup lang="ts">
 import { chain } from '@/api/core'
 import Links from '@/components/Links.vue'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
 
-const { currentUser, nativeTokenAddress, nativeTokenSymbol, nativeTokenDecimals, operator } = storeToRefs(appStore)
+const { nativeTokenAddress, nativeTokenSymbol, nativeTokenDecimals, operator } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
 const route = useRoute()
 
 const windowEthereum = computed(() => (window as any).ethereum)

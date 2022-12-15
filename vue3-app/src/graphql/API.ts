@@ -1,5 +1,5 @@
-import { GraphQLClient } from 'graphql-request'
-import * as Dom from 'graphql-request/dist/types.dom'
+import type { GraphQLClient } from 'graphql-request'
+import type Dom from 'graphql-request/dist/types.dom'
 import gql from 'graphql-tag'
 export type Maybe<T> = T | null
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] }

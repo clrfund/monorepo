@@ -91,11 +91,13 @@
 import Links from '@/components/Links.vue'
 import { chain } from '@/api/core'
 import { formatAmount } from '@/utils/amounts'
-import { useAppStore } from '@/stores'
+import { useAppStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
-const { maxRecipients, recipientRegistryInfo } = storeToRefs(appStore)
+const { maxRecipients } = storeToRefs(appStore)
+const recipientStore = useRecipientStore()
+const { recipientRegistryInfo } = storeToRefs(recipientStore)
 
 const depositAmount = computed(() => {
 	return recipientRegistryInfo.value ? formatAmount(recipientRegistryInfo.value.deposit, 18) : '...'

@@ -27,20 +27,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import Cart from '@/components/Cart.vue'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useEthers, useWallet } from 'vue-dapp'
 
 const appStore = useAppStore()
-const {
-	cart,
-	currentUser,
-	hasReallocationPhaseEnded,
-	committedCart,
-	showCartPanel,
-	isRoundContributionPhase,
-	canUserReallocate,
-} = storeToRefs(appStore)
+const { cart, hasReallocationPhaseEnded, committedCart, showCartPanel, isRoundContributionPhase, canUserReallocate } =
+	storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 const { provider } = useEthers()
 const { onDisconnect, onChainChanged } = useWallet()
@@ -84,7 +79,7 @@ function toggleCart(): void {
 }
 
 onDisconnect(() => {
-	appStore.logoutUser()
+	userStore.logoutUser()
 })
 
 // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
@@ -93,7 +88,7 @@ onDisconnect(() => {
 onChainChanged(() => {
 	if (currentUser.value) {
 		// Log out user to prevent interactions with incorrect network
-		appStore.logoutUser()
+		userStore.logoutUser()
 	}
 })
 </script>

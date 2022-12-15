@@ -214,7 +214,7 @@ import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useEthers, useWallet } from 'vue-dapp'
 import { $vfm } from 'vue-final-modal'
@@ -229,7 +229,6 @@ const {
 	cartEditModeSelected,
 	committedCart,
 	currentRound,
-	currentUser,
 	isRoundContributionPhase,
 	isRoundReallocationPhase,
 	hasUserContributed,
@@ -239,6 +238,9 @@ const {
 	hasUserVoted,
 	hasContributionPhaseEnded,
 } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
 const profileImageUrl = ref<string | null>(null)
 const dropdownItems = ref<
 	{
@@ -314,7 +316,7 @@ onMounted(() => {
 	onChainChanged(chainId => {
 		if (currentUser.value) {
 			// Log out user to prevent interactions with incorrect network
-			appStore.logoutUser()
+			userStore.logoutUser()
 		}
 	})
 
@@ -322,7 +324,7 @@ onMounted(() => {
 	onAccountsChanged((_accounts: string[]) => {
 		if (_accounts !== accounts) {
 			// Log out user if wallet account changes
-			appStore.logoutUser()
+			userStore.logoutUser()
 		}
 		accounts = _accounts
 	})

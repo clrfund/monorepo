@@ -140,15 +140,16 @@ import Links from '@/components/Links.vue'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
 import TransactionModal from '@/components/TransactionModal.vue'
-import { useAppStore, useRecipientStore } from '@/stores'
+import { useUserStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useEthers } from 'vue-dapp'
 import { $vfm } from 'vue-final-modal'
 
 const { signer } = useEthers()
-const appStore = useAppStore()
 const recipientStore = useRecipientStore()
-const { currentUser } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
 const { isRecipientRegistryOwner, recipientRegistryInfo, recipientRegistryAddress } = storeToRefs(recipientStore)
 const requests = ref<Request[]>([])
 const isLoading = ref(true)

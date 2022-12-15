@@ -135,11 +135,13 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { getCurrentRound } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
-import { useAppStore } from '@/stores'
+import { useAppStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
-const { recipientRegistryInfo, maxRecipients, isMessageLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
+const { maxRecipients, isMessageLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
+const recipientStore = useRecipientStore()
+const { recipientRegistryInfo } = storeToRefs(recipientStore)
 
 const currentRound = ref<string | null>(null)
 const loading = ref(true)

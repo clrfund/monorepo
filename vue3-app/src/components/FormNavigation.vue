@@ -16,7 +16,7 @@
 import { computed } from 'vue'
 import type { User } from '@/api/user'
 import WalletWidget from '@/components/WalletWidget.vue'
-import { useAppStore } from '@/stores'
+import { useUserStore } from '@/stores'
 
 interface Props {
 	currentStep: number
@@ -29,8 +29,8 @@ interface Props {
 }
 const props = defineProps<Props>()
 
-const appStore = useAppStore()
-const currentUser = computed<User | null>(() => appStore.currentUser)
+const userStore = useUserStore()
+const currentUser = computed<User | null>(() => userStore.currentUser)
 
 function onClickPrevious() {
 	props.handleStepNav(props.currentStep - 1)

@@ -34,7 +34,7 @@ import type { Project } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import type { CartItem } from '@/api/contributions'
 import InputButton from '@/components/InputButton.vue'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { $vfm } from 'vue-final-modal'
 import { useBoard } from 'vue-dapp'
@@ -48,7 +48,10 @@ interface Props {
 const props = defineProps<Props>()
 
 const appStore = useAppStore()
-const { currentUser, currentRound, cart } = storeToRefs(appStore)
+const { currentRound, cart } = storeToRefs(appStore)
+
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 const inCart = computed(() => {
 	const index = cart.value.findIndex((item: CartItem) => {

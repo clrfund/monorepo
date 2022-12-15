@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import IconStatus from '@/components/IconStatus.vue'
-import { useAppStore } from '@/stores'
+import { useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 interface Props {
@@ -67,8 +67,8 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const appStore = useAppStore()
-const { currentUser } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 const isVerified = computed(() => {
 	return currentUser.value && currentUser.value.brightId!.isVerified

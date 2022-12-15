@@ -20,9 +20,11 @@ import { withdrawContribution } from '@/api/contributions'
 import Transaction from '@/components/Transaction.vue'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { waitForTransaction } from '@/utils/contracts'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 
 const appStore = useAppStore()
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 const step = ref(1)
 const withdrawalTxHash = ref('')
@@ -38,14 +40,14 @@ function formatAmount(value: BigNumber): string {
 }
 
 async function withdraw() {
-	const signer = appStore.currentUser!.walletProvider.getSigner()
+	const signer = currentUser.value!.walletProvider.getSigner()
 	const { fundingRoundAddress } = appStore.currentRound!
 	try {
 		await waitForTransaction(
 			withdrawContribution(fundingRoundAddress, signer),
 			hash => (withdrawalTxHash.value = hash),
 		)
-	} catch (error) {
+	} catch (error: any) {
 		withdrawalTxError.value = error.message
 		return
 	}

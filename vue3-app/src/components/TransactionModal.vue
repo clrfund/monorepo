@@ -50,7 +50,7 @@ async function executeTx() {
 		await waitForTransaction(props.transaction, hash => (txHash.value = hash))
 
 		props.onTxSuccess(txHash.value)
-	} catch (error) {
+	} catch (error: any) {
 		txError.value = error.message
 		return
 	}

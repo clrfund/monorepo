@@ -89,7 +89,7 @@ import LinkBox from '@/components/LinkBox.vue'
 import Links from '@/components/Links.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 
@@ -102,15 +102,11 @@ interface Props {
 const props = defineProps<Props>()
 const route = useRoute()
 const appStore = useAppStore()
-const {
-	currentRound,
-	currentUser,
-	cart,
-	currentRoundAddress,
-	isRoundContributionPhase,
-	canUserReallocate,
-	hasUserContributed,
-} = storeToRefs(appStore)
+const { currentRound, cart, currentRoundAddress, isRoundContributionPhase, canUserReallocate, hasUserContributed } =
+	storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
 const contributionAmount = ref<number | null>(DEFAULT_CONTRIBUTION_AMOUNT)
 const ens = ref<string | null>(null)
 

@@ -85,11 +85,13 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import { useAppStore } from '@/stores'
-import { storeToRefs } from 'pinia'
+import { useAppStore, useUserStore } from '@/stores'
 
 const appStore = useAppStore()
-const { currentUser, isRoundContributorLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
+const { isRoundContributorLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
 const loading = ref(true)
 const currentRound = ref<string | null>(null)
 

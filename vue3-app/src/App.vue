@@ -41,7 +41,7 @@ import { getOsColorScheme } from '@/utils/theme'
 import { getCurrentRound } from '@/api/round'
 import type { User } from '@/api/user'
 import { operator, provider, connectors } from '@/api/core'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { sha256 } from '@/utils/crypto'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
@@ -50,6 +50,11 @@ import { useMeta } from 'vue-meta'
 
 const route = useRoute()
 const appStore = useAppStore()
+const { theme, isCartToggledOpen, showCartPanel, currentRound } = storeToRefs(appStore)
+
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
 const { wallet } = useWallet()
 const { onActivated } = useEthersHooks()
 
@@ -67,7 +72,6 @@ useMeta({
 })
 
 // state
-const { theme, isCartToggledOpen, showCartPanel, currentUser, currentRound } = storeToRefs(appStore)
 const routeName = computed(() => route.name?.toString() || '')
 const isUserAndRoundLoaded = computed(() => !!currentUser.value && !!currentRound.value)
 const isInApp = computed(() => routeName.value !== 'landing')
@@ -195,14 +199,14 @@ onActivated(async ({ address, provider }) => {
 	}
 	// Connect & auth to gun db
 	try {
-		await appStore.loginUser(address, user.encryptionKey)
+		await userStore.loginUser(address, user.encryptionKey)
 	} catch (err) {
 		console.error(err)
 		return
 	}
-	appStore.setCurrentUser(user)
-	appStore.loadUserInfo()
-	appStore.loadBrightID()
+	userStore.setCurrentUser(user)
+	userStore.loadUserInfo()
+	userStore.loadBrightID()
 })
 
 // watch(isUserAndRoundLoaded, () => {

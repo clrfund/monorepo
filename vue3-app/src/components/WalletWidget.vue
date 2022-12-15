@@ -36,7 +36,7 @@ import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { chain } from '@/api/core'
 import Profile from '@/views/Profile.vue'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useBoard, useEthers, useWallet } from 'vue-dapp'
 
@@ -59,7 +59,9 @@ const { open: openWalletBoard } = useBoard()
 const { onDisconnect, onChainChanged, onAccountsChanged } = useWallet()
 const { network } = useEthers()
 const appStore = useAppStore()
-const { currentUser, nativeTokenSymbol, nativeTokenDecimals } = storeToRefs(appStore)
+const { nativeTokenSymbol, nativeTokenDecimals } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
 const showProfilePanel = ref<boolean | null>(null)
 const profileImageUrl = ref<string | null>(null)
@@ -86,7 +88,7 @@ const tokenLogoUrl = new URL(`/src/assets/${getTokenLogo(nativeTokenSymbol.value
 const chainCurrencyLogoUrl = new URL(`/src/assets/${getTokenLogo(chain.currency)}`, import.meta.url).href
 
 onDisconnect(() => {
-	appStore.logoutUser()
+	userStore.logoutUser()
 })
 
 // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
@@ -95,7 +97,7 @@ onDisconnect(() => {
 onChainChanged(() => {
 	if (currentUser.value) {
 		// Log out user to prevent interactions with incorrect network
-		appStore.logoutUser()
+		userStore.logoutUser()
 	}
 })
 
@@ -103,7 +105,7 @@ let accounts: string[]
 onAccountsChanged(_accounts => {
 	if (_accounts !== accounts) {
 		// Log out user if wallet account changes
-		appStore.logoutUser()
+		userStore.logoutUser()
 	}
 	accounts = _accounts
 })

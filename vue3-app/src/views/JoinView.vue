@@ -683,7 +683,7 @@ import { type RecipientApplicationData, formToProjectInterface } from '@/api/rec
 import type { Project } from '@/api/projects'
 import { chain } from '@/api/core'
 import { DateTime } from 'luxon'
-import { useRecipientStore, useAppStore } from '@/stores'
+import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
 import { waitForTransaction } from '@/utils/contracts'
 import { addRecipient as _addRecipient } from '@/api/recipient-registry-optimistic'
 import { isValidEthAddress, resolveEns } from '@/utils/accounts'
@@ -694,6 +694,8 @@ const route = useRoute()
 const router = useRouter()
 const recipientStore = useRecipientStore()
 const appStore = useAppStore()
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 const { recipient } = storeToRefs(recipientStore)
 
 const form = toReactive<RecipientApplicationData>(recipient as Ref<RecipientApplicationData>)
@@ -882,7 +884,8 @@ function handleToggleTab(event): void {
 
 async function addRecipient() {
 	const { recipient, recipientRegistryAddress, recipientRegistryInfo } = storeToRefs(recipientStore)
-	const { currentRound, currentUser } = storeToRefs(appStore)
+	const { currentRound } = storeToRefs(appStore)
+
 	isWaiting.value = true
 
 	// Reset errors when submitting
