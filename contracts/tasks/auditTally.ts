@@ -103,7 +103,10 @@ async function genProjectRecords({
       )
     }
 
-    if (isRemoval(args._type)) {
+    if (args._rejected) {
+      requests[recipientId].removedAt = args._timestamp.toString()
+      requests[recipientId].state = 'Rejected'
+    } else if (isRemoval(args._type)) {
       requests[recipientId].removedAt = args._timestamp.toString()
       requests[recipientId].state = 'Removed'
     } else {
@@ -170,7 +173,7 @@ task('audit-tally', 'Audit the tally result for a round')
   .addOptionalParam(
     'endBlock',
     'Last block to process from the recipient registry',
-    null,
+    undefined,
     types.int
   )
   .addOptionalParam(
