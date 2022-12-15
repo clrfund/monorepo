@@ -45,7 +45,7 @@ const config: HardhatUserConfig = {
       accounts,
     },
     xdai: {
-      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.xdaichain.com',
+      url: process.env.JSONRPC_HTTP_URL || 'https://rpc.gnosischain.com',
       timeout: 60000,
       accounts,
     },

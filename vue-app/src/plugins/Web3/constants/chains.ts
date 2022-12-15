@@ -106,8 +106,8 @@ export const CHAIN_INFO: ChainInfo = {
     explorer: 'https://blockscout.com/poa/xdai',
     explorerLogo: 'xdai-explorer.svg',
     explorerLabel: 'Blockscout',
-    rpcUrl: 'https://rpc.xdaichain.com/',
-    bridge: 'https://bridge.xdaichain.com',
+    rpcUrl: 'https://rpc.gnosischain.com',
+    bridge: 'https://bridge.gnosischain.com/',
   },
   [ChainId.POLYGON]: {
     label: 'Polygon',
