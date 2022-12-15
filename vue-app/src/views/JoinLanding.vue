@@ -2,14 +2,8 @@
   <div id="join-landing">
     <div class="gradient">
       <div class="hero">
-        <image-responsive title="core" />
+        <image-responsive title="robot" />
       </div>
-    </div>
-
-    <round-status-banner />
-
-    <div class="breadcrumbs">
-      <breadcrumbs />
     </div>
     <div class="content" v-if="loading">
       <h1>Fetching round data...</h1>
@@ -19,25 +13,27 @@
     <div class="content" v-else-if="$store.getters.hasContributionPhaseEnded">
       <div class="big-emoji">☹</div>
       <h1>Sorry, it's too late to join</h1>
-      <div id="subtitle" class="subtitle">
+      <div class="subtitle">
         The round is closed for new projects. It's now too late to get on board.
       </div>
       <div class="subtitle mt2" id="subtitle">
         Check out these
-        <links to="https://ethereum.org/en/community/grants/"
+        <links class="link-join" to="https://ethereum.org/en/community/grants/"
           >other ways to source funding</links
         >. Or follow us on Twitter for updates about future rounds:
-        <links to="https://twitter.com/clrfund">@clrfund</links>
+        <links class="link-join" to="https://twitter.com/clrfund"
+          >@clrfund</links
+        >
       </div>
       <div class="btn-container">
-        <links to="/" class="btn-primary">Home</links>
+        <links to="/" class="btn-primary button-join">Home</links>
       </div>
     </div>
 
     <div class="content" v-else-if="isRoundFull">
       <div class="big-emoji">☹</div>
       <h1>Sorry, the round is full</h1>
-      <div id="subtitle" class="subtitle">
+      <div class="subtitle">
         The tech we use to protect you from bribery and collusion, MACI, limits
         the number of projects right now. Unfortunately we've hit the cap and
         there's no more room on board.
@@ -62,10 +58,6 @@
         <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong> security
         deposit.
       </div>
-      <div class="subtitle mt2">
-        The round only accepts a total of {{ maxRecipients }} projects, so apply
-        now while there’s still room!
-      </div>
       <div class="info-boxes">
         <div class="apply-callout">
           <div class="countdown-label caps">Time left to join</div>
@@ -79,7 +71,10 @@
         </div>
         <div class="apply-callout">
           <div class="countdown-label caps">Time to complete</div>
-          <div class="countdown caps">15 minutes (ish)</div>
+          <div class="countdown caps">
+            <h2>15&nbsp;</h2>
+            <h3>minutes (ish)</h3>
+          </div>
         </div>
         <div v-if="isRoundFillingUp" class="apply-callout-warning">
           <div class="filling-up-container">
@@ -102,10 +97,10 @@
         </div>
       </div>
       <div class="btn-container">
-        <button class="btn-secondary" @click="toggleCriteria">
-          See round criteria
+        <links to="/join/project" class="btn-action w-full">Add project</links>
+        <button class="btn-link w-full" @click="toggleCriteria">
+          See criteria
         </button>
-        <links to="/join/project" class="btn-primary">Add project</links>
       </div>
     </div>
 
@@ -128,7 +123,7 @@
       </div>
       <div class="btn-container">
         <button class="btn-secondary" @click="toggleCriteria">
-          See round criteria
+          See criteria
         </button>
         <links to="/join/project" class="btn-primary">Add project</links>
       </div>
@@ -256,12 +251,8 @@ export default class JoinLanding extends Vue {
 @import '../styles/vars';
 @import '../styles/theme';
 
-h1 {
-  font-family: Glacial Indifference;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 40px;
-  line-height: 120%;
+.w-full {
+  width: 100%;
 }
 
 .gradient {
@@ -270,15 +261,20 @@ h1 {
   right: 0;
   height: 100%;
   width: 100%;
-  background: var(--bg-gradient);
+  background: $clr-green;
 
   .hero {
     position: fixed;
-    top: 0;
-    right: 0;
+    bottom: -4rem;
+    right: -12rem;
     height: 100%;
     width: 100%;
-    background: var(--bg-gradient-hero);
+    mix-blend-mode: luminosity;
+
+    @media (max-width: $breakpoint-l) {
+      right: 0;
+    }
+
     @media (max-width: $breakpoint-m) {
       width: 100%;
       padding-bottom: 0rem;
@@ -288,7 +284,7 @@ h1 {
       position: absolute;
       bottom: 0;
       right: calc(-700px + 50vw);
-      mix-blend-mode: exclusion;
+      mix-blend-mode: luminosity;
       max-width: 88%;
       max-height: 100%;
 
@@ -298,6 +294,14 @@ h1 {
       }
     }
   }
+}
+
+.link-join {
+  color: var(--text-color);
+}
+
+.button-join {
+  background-color: $clr-purple;
 }
 
 .breadcrumbs {
@@ -316,6 +320,7 @@ h1 {
   padding: $content-space;
   margin-left: 2rem;
   width: min(100%, 512px);
+  color: $clr-dark;
   @media (max-width: $breakpoint-m) {
     width: 100%;
     margin: 0;
@@ -328,6 +333,16 @@ h1 {
   font-weight: bold;
   font-size: 24px;
   letter-spacing: -0.015em;
+
+  h2 {
+    margin: 0;
+    display: inline;
+  }
+
+  h3 {
+    margin: 0;
+    display: inline;
+  }
 }
 
 .countdown-label {
@@ -336,7 +351,6 @@ h1 {
   font-style: normal;
   font-weight: 400;
   line-height: 21px;
-  letter-spacing: 6px;
   text-align: left;
   margin-bottom: 0.5rem;
 }
@@ -346,8 +360,8 @@ h1 {
 }
 
 .apply-callout {
-  background: var(--bg-transparent);
-  border: 2px solid var(--border-highlight);
+  background: $clr-dark;
+  color: $clr-white;
   box-sizing: border-box;
   border-radius: 8px;
   padding: 1rem;

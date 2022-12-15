@@ -5,9 +5,15 @@
     @submit="handleUploadToIPFS"
     name="image"
   >
-    <p class="input-label">{{ label }}</p>
-    <p class="input-description">{{ description }}</p>
+    <p class="input-label text-base">{{ label }}</p>
+    <p class="input-description text-base">{{ description }}</p>
     <div class="input-row">
+      <label :for="`${formProp}-input`" class="input">
+        <div class="btn-file">Choose file</div>
+        <span class="text-base file-name" v-if="loadedImageFile">{{
+          loadedImageFile.name
+        }}</span>
+      </label>
       <input
         type="file"
         class="input"
@@ -19,7 +25,7 @@
         primary="true"
         type="submit"
         label="Upload"
-        class="btn-primary"
+        class="btn-action"
         :disabled="loading || error || !loadedImageHeight"
       >
         {{ loading ? 'Uploading...' : 'Upload' }}
@@ -43,8 +49,8 @@
         />
       </div>
       <div>
-        <p class="input-label">IPFS hash</p>
-        <p class="input-description">
+        <p class="input-label text-base">IPFS hash</p>
+        <p class="input-description text-base">
           Your image is now stored on a decentralized network at the following
           hash. You don't need to do anything with it but you may want to keep
           it for future use.
@@ -216,50 +222,67 @@ export default class IpfsImageUpload extends Vue {
   margin: 1rem 0 2rem;
 }
 
-.input {
-  flex: 1;
-  color: var(--text-color);
-  border-radius: 16px;
-  border: 2px solid $button-color;
-  background-color: var(--bg-secondary-color);
-  margin: 0.5rem 0;
-  padding: 0.5rem 1rem;
-  font-size: 16px;
-  font-family: Inter;
-  font-weight: 400;
-  line-height: 24px;
-  letter-spacing: 0em;
-  width: 100%;
-  &:valid {
-    border: 2px solid $clr-green;
-  }
-  &:hover {
-    background: var(--bg-primary-color);
-    border: 2px solid $highlight-color;
-    box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
-  }
-  &:optional {
-    border: 2px solid $button-color;
-    background-color: var(--bg-secondary-color);
-  }
-}
-
 .input-label {
-  font-family: Inter;
-  font-size: 16px;
-  font-style: normal;
+  color: $clr-gray;
   font-weight: 500;
-  line-height: 24px;
-  letter-spacing: 0em;
   text-align: left;
   margin: 0;
 }
 
+input[type='file'] {
+  display: none;
+}
+
+.input {
+  width: 100%;
+  background: var(--bg-input-forms);
+  border: 1px solid var(--border-input-forms);
+  border-radius: 30px;
+  padding: 0.5rem;
+  height: 50px;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  &:focus {
+    border: 1px solid $clr-purple;
+  }
+}
+
+.invalid {
+  border: 1px solid $clr-error;
+}
+
+.error {
+  margin-top: 2rem;
+  color: $clr-error;
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 26px;
+}
+.error:before {
+  content: url('~@/assets/warning.svg');
+  margin-right: 0.5rem;
+}
+
+.btn-file {
+  @include button($clr-dark, #e4e7ec, none);
+  max-height: 34px;
+  min-height: 0;
+}
+
+.file-name {
+  max-width: 320px;
+  overflow: hidden;
+}
+
 .input-description {
+  color: var(--text-color);
   margin-top: 0.25rem;
+  margin-bottom: 0;
   font-size: 14px;
-  font-family: Inter;
-  margin-bottom: 0.5rem;
   line-height: 150%;
 }
 

@@ -8,19 +8,22 @@
 }
 
 @mixin button($color, $background, $border) {
-  display: block;
+  min-height: 2.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   box-sizing: border-box;
   padding: 0.5rem 1.5rem;
   border-radius: 2rem;
+  font-family: 'Work Sans';
+  font-style: normal;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 150%;
-  max-height: 2.75rem;
   text-align: center;
   color: $color;
   background: $background;
   border: $border;
-  white-space: nowrap;
   &:hover {
     opacity: 0.8;
     transform: scale(1.02);

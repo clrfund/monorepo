@@ -17,7 +17,6 @@
           'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
         }"
       >
-        <breadcrumbs v-if="showBreadCrumb" />
         <router-view :key="$route.path" />
       </div>
       <div
@@ -431,13 +430,14 @@ summary:focus {
 }
 
 .open-cart {
-  width: $cart-width-open;
+  width: 100%;
+  max-width: 35vw;
   overflow-y: scroll;
   overflow-x: hidden;
 }
 
 .closed-cart {
-  width: 4rem;
+  width: 0rem;
 }
 
 #nav-menu {
@@ -479,7 +479,6 @@ summary:focus {
 
 #content {
   flex: 1;
-  padding-bottom: 4rem;
 
   .content-heading {
     display: block;
@@ -499,18 +498,19 @@ summary:focus {
 }
 
 #content.padded {
-  padding: $content-space;
+  padding: $content-space 1rem $content-space 1rem;
+  @media (max-width: $breakpoint-m) {
+    padding: $content-space 0 $content-space 0;
+  }
 }
 
 #content.mr-cart-open {
-  margin-right: $cart-width-open;
   @media (max-width: $breakpoint-m) {
     margin-right: 0;
   }
 }
 
 #content.mr-cart-closed {
-  margin-right: $cart-width-closed;
   @media (max-width: $breakpoint-m) {
     margin-right: 0;
   }

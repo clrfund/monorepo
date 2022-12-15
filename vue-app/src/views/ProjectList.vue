@@ -11,7 +11,7 @@
         }"
       >
         <div class="header">
-          <h2>Projects</h2>
+          <h2 class="header-title">Projects</h2>
         </div>
 
         <filter-dropdown
@@ -58,8 +58,11 @@
       </div>
       <div class="empty-search" v-if="filteredProjects == 0">
         <div>
-          😢 No projects match your search. Try using the filter to narrow down
-          what you're looking for.
+          <h1 id="empty-search-icon">😢</h1>
+          <h2>No projects match your search.</h2>
+          <p class="text-body">
+            Try using the filter to narrow down what you're looking for.
+          </p>
         </div>
       </div>
     </div>
@@ -228,6 +231,7 @@ export default class ProjectList extends Vue {
 /* For use with .title, .title-with-cart-closed, .title-with-cart-open classes */
 @mixin project-grid-defaults {
   grid-template-columns: 1fr repeat(3, auto);
+  grid-template-rows: 76px repeat(2, auto);
   grid-template-areas: 'header filter search add' 'hr hr hr hr';
 }
 @mixin project-grid-xl {
@@ -236,7 +240,7 @@ export default class ProjectList extends Vue {
 }
 @mixin project-grid-l {
   grid-template-columns: auto 1fr auto;
-  grid-template-areas: 'header . add' 'hr hr hr' 'search search search' 'filter filter filter';
+  grid-template-areas: 'header . add' 'hr hr hr' 'filter search search';
 }
 @mixin project-grid-m {
   grid-template-columns: 1fr;
@@ -249,6 +253,7 @@ export default class ProjectList extends Vue {
   align-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
+  justify-items: center;
 
   /* Default breakpoints when user is not logged in, thus no cart */
   /* See below for adjustments when cart is present */
@@ -274,13 +279,18 @@ export default class ProjectList extends Vue {
       }
     }
     h2 {
-      line-height: 130%;
       margin: 0;
+      padding-left: 2rem;
     }
   }
 
   .add-project {
+    justify-self: end;
     grid-area: add;
+    @media (max-width: $breakpoint-m) {
+      padding-right: 0;
+      justify-self: center;
+    }
   }
 
   .project-search {
@@ -295,8 +305,10 @@ export default class ProjectList extends Vue {
     font-weight: 400;
     line-height: 24px;
     letter-spacing: 0em;
+    justify-self: end;
     @media (max-width: $breakpoint-m) {
       margin-top: 0.5rem;
+      justify-self: center;
     }
     width: auto;
     img {
@@ -320,7 +332,7 @@ export default class ProjectList extends Vue {
   .hr {
     grid-area: hr;
     width: 100%;
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid $clr-violet;
   }
 }
 
@@ -328,10 +340,7 @@ export default class ProjectList extends Vue {
   /* Nudges right edge of "title bar" inward when the cart
   toggle button is present. Only as issue when cart is closed,
   AND the user is logged in. */
-  @media (min-width: $breakpoint-m + 1px) {
-    // Desktop only
-    margin-right: 1rem;
-  }
+
   /* Adjusts breakpoints for when cart is present but closed */
   @media (max-width: $breakpoint-xl + $cart-width-closed) {
     @include project-grid-xl();
@@ -359,19 +368,34 @@ export default class ProjectList extends Vue {
 
 .project-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, 340px);
   gap: $content-space;
   z-index: 0;
   padding-bottom: 4rem;
+  justify-content: center;
 }
 
 .empty-search {
-  background: var(--bg-secondary-color);
   border-radius: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+
+  h1 {
+    margin: 2rem 0;
+  }
+
+  h2 {
+    margin: 0;
+  }
+}
+
+#empty-search-icon {
+  font-size: 140px;
 }
 
 .prep-title {

@@ -4,24 +4,24 @@
       <links :to="projectRoute">
         <div class="project-image">
           <img :src="projectImageUrl" :alt="project.name" />
-          <div class="tag">{{ project.category }}</div>
+          <div class="text-body tag">{{ project.category }}</div>
         </div>
       </links>
       <div class="project-info">
-        <div class="project-name">
-          <links :to="projectRoute">
+        <h4>
+          <links class="project-title" :to="projectRoute">
             {{ project.name }}
           </links>
-        </div>
+        </h4>
         <links :to="projectRoute">
-          <div class="project-description">{{ project.tagline }}</div>
+          <div class="text-body project-description">{{ project.tagline }}</div>
         </links>
       </div>
     </div>
     <div class="buttons">
       <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
       <links :to="projectRoute">
-        <button class="more-btn">More</button>
+        <button class="btn-more btn-action">More</button>
       </links>
     </div>
   </div>
@@ -105,7 +105,9 @@ export default class ProjectListItem extends Vue {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 1rem;
   z-index: 0;
+  border: 1px solid $clr-dark;
   &:hover {
     transform: scale(1.01);
     box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
@@ -161,6 +163,10 @@ export default class ProjectListItem extends Vue {
   padding-top: 0rem;
 }
 
+.project-title {
+  color: var(--text-color) !important;
+}
+
 .buttons {
   display: flex;
   flex-direction: column;
@@ -181,18 +187,18 @@ export default class ProjectListItem extends Vue {
 }
 
 .project-description {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  font-size: 16px;
-  overflow: hidden;
-  margin-bottom: 1rem;
-  color: var(--text-body);
-  opacity: 0.8;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  color: var(--secondary-text-color) !important;
 }
 
 .btn {
   margin-top: 20px;
+}
+
+.btn-more {
+  width: 100%;
+  text-transform: uppercase;
 }
 
 .tag {
@@ -200,5 +206,7 @@ export default class ProjectListItem extends Vue {
   top: 0.5rem;
   right: 0.5rem;
   box-shadow: var(--box-shadow);
+  background: var(--bg-secondary-color);
+  color: var(--text-color);
 }
 </style>

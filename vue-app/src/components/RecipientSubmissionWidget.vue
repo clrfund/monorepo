@@ -1,12 +1,6 @@
 <template>
   <div class="tx-container">
-    <div
-      :class="
-        isWaiting
-          ? 'recipient-submission-widget shine'
-          : 'recipient-submission-widget'
-      "
-    >
+    <div class="recipient-submission-widget">
       <loader v-if="isLoading" />
       <div
         :class="
@@ -16,7 +10,7 @@
         "
       >
         <loader class="button-loader" v-if="isWaiting" />
-        <div v-if="isWaiting" class="tx-notice">
+        <div class="tx-notice">
           <div v-if="!!txHash">Waiting for transaction to be mined...</div>
           <div v-else>Check your wallet for a prompt...</div>
         </div>
@@ -27,28 +21,27 @@
         </div>
       </div>
       <div class="connected">
-        <div class="total-title">
+        <div
+          class="text-base total-title"
+          v-tooltip="{
+            content:
+              'Estimate – this total may be slightly different in your wallet.',
+            trigger: 'hover click',
+          }"
+        >
           Total to submit
-          <img
-            v-tooltip="{
-              content:
-                'Estimate – this total may be slightly different in your wallet.',
-              trigger: 'hover click',
-            }"
-            src="@/assets/info.svg"
-          />
         </div>
         <div class="total">
           {{ depositAmount }}
           <span class="total-currency"> {{ depositToken }}</span>
         </div>
-        <div class="warning-text" v-if="hasLowFunds">
+        <div class="subtitle warning-container" v-if="hasLowFunds">
           Not enough {{ depositToken }} in your wallet.<br />
           Top up or connect a different wallet.
         </div>
         <div v-if="txHasDeposit" class="checkout-row">
-          <p class="m05"><b>Security deposit</b></p>
-          <p class="m05">
+          <p class="subtitle m05"><b>Security deposit</b></p>
+          <p class="text-base security-amount m05">
             {{ depositAmount }} {{ depositToken }}
             <span class="o5"
               >({{ fiatSign
@@ -151,9 +144,9 @@ export default class RecipientSubmissionWidget extends Vue {
 .recipient-submission-widget {
   display: flex;
   flex-direction: column;
-  background: var(--bg-primary-color);
+  background: transparent;
   border-radius: 1rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid $clr-dark-gray;
   align-items: center;
   justify-content: center;
   width: 75%;
@@ -162,25 +155,6 @@ export default class RecipientSubmissionWidget extends Vue {
     width: 100%;
     margin-top: 0;
   }
-}
-
-.shine {
-  background: var(--bg-primary-color);
-  background-image: linear-gradient(
-    to right,
-    var(--bg-primary-color) 0%,
-    var(--bg-secondary-color) 10%,
-    var(--bg-primary-color) 40%,
-    var(--bg-primary-color) 100%
-  );
-  background-repeat: repeat;
-  position: relative;
-
-  -webkit-animation-duration: 8s;
-  -webkit-animation-fill-mode: forwards;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-name: placeholderShimmer;
-  -webkit-animation-timing-function: linear;
 }
 
 @-webkit-keyframes placeholderShimmer {
@@ -194,11 +168,11 @@ export default class RecipientSubmissionWidget extends Vue {
 }
 
 .connected {
-  width: 75%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 2rem;
+  padding: 2rem 0;
 }
 
 .tx-progress-area {
@@ -230,13 +204,11 @@ export default class RecipientSubmissionWidget extends Vue {
 }
 
 .total {
-  font-size: 64px;
+  font-family: 'Work Sans';
+  font-style: normal;
   font-weight: 700;
-  font-family: 'Glacial Indifference', sans-serif;
-  overflow-wrap: break-word;
-  width: 100%;
-  text-align: center;
-  line-height: 100%;
+  font-size: 52px;
+  line-height: 61px;
   margin-bottom: 1rem;
 }
 
@@ -244,8 +216,14 @@ export default class RecipientSubmissionWidget extends Vue {
   width: 100%;
   text-align: center;
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
+  gap: 3rem;
+  padding: 0.5rem 0;
+  border-color: $clr-violet;
+  border-style: solid;
+  border-width: 1px 0px;
+
   @media (max-width: $breakpoint-m) {
     flex-direction: column;
     justify-content: flex-start;
@@ -254,6 +232,11 @@ export default class RecipientSubmissionWidget extends Vue {
 
 .m05 {
   margin: 0.5rem 0rem;
+}
+
+.security-amount {
+  font-size: 24px;
+  line-height: 28px;
 }
 
 .m2 {
@@ -265,45 +248,38 @@ export default class RecipientSubmissionWidget extends Vue {
 }
 
 .total-currency {
-  font-size: 48px;
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 61px;
 }
 
 .total-title {
+  font-size: 18px;
   color: var(--text-color);
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 100%;
-  text-transform: uppercase;
-  justify-content: flex-start;
-  align-items: center;
-  display: flex;
-  width: fit-content;
-  padding: 0.5rem;
-  background: var(--bg-light-color);
-  border-radius: 2rem;
-  gap: 0.25rem;
   margin-bottom: 0.5rem;
-
-  img {
-    width: 16px;
-    height: 16px;
-    filter: var(--img-filter, invert(0.3));
-  }
 }
 
 .warning-icon {
   font-size: 24px;
 }
 
-.warning-text {
+.warning-container {
   font-size: 14px;
+  color: $clr-error;
+  border: 2px solid $clr-error;
+  border-radius: 20px;
+  padding: 1.25rem 2.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 20px;
+  line-height: 24px;
 }
 
 .warning-text,
 .warning-icon {
   line-height: 150%;
-  color: var(--attention-color);
-  text-transform: uppercase;
   text-align: center;
 }
 </style>

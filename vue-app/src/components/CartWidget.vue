@@ -166,6 +166,7 @@ export default class CartWidget extends Vue {
 
 .collapsed-container {
   height: 100%;
+  width: 0px !important;
 }
 
 .cart {
@@ -178,14 +179,13 @@ export default class CartWidget extends Vue {
   right: 0;
   height: 100%;
   width: $cart-width-closed;
-  background: var(--bg-secondary-color);
   z-index: 0;
 }
 
 .toggle-btn {
   box-sizing: border-box;
   position: absolute;
-  top: 1.875rem;
+  top: 0;
   right: 0;
   width: fit-content;
   z-index: 1;
@@ -203,7 +203,6 @@ export default class CartWidget extends Vue {
   border-right: none;
   &:hover {
     background: var(--bg-secondary-color);
-    gap: 0.75rem;
   }
 
   img {

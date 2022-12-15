@@ -1,29 +1,45 @@
 [data-theme='dark'] {
   color-scheme: dark;
-  --text-color: #ffffff;
-  --text-body: #f7f7f7;
-  --text-secondary: #ffffff;
+  --text-color: #FFFFFE;
+  --secondary-text-color: #9FAABA;
+  --text-body: #F7F7F7;
+  --text-secondary: #FFFFFE;
   // workaround for using css variables with sass mixins
   --text-color-rgb: 255, 255, 255;
-
-  --brand-primary: linear-gradient(
-    109.01deg,
-    rgb(151, 137, 196) 6.45%,
-    rgb(199, 42, 185) 99.55%
-  );
-  --brand-secondary: #16c8b5;
-  --brand-tertiary: linear-gradient(
-    315deg,
-    rgba(199, 42, 185, 0.6) 0%,
-    rgba(37, 43, 121, 0.6) 100%
-  );
+  --bg-primary-color: #181622;
+  --bg-primary-transparent: #18162290;
+  --bg-navbar: #16161A;
+  --bg-btn-navbar: #232629;
+  --border-btn-navbar: #505053;
+  --bg-landing-banner: #212671;
+  --bg-landing-hiw: #232629;
+  --bg-landing-hiw-card: #232629;
+  --bg-landing-about: transparent;
+  --link-color: #41BD8A;
+  --bg-circle: transparent;
+  --bg-btn-primary: #41BD8A;
+  --bg-btn-secondary: transparent;
+  --border-btn-secondary: var(--text-color);
+  --color-btn-secondary: var(--text-color);
+  --bg-footer: #201E2A;
+  --bg-round-info-header: #2B2937;
+  --bg-round-info-body: #2B2937;
+  --bg-cart-color: #201E2A;
+  --bg-cart-input: #FFFFFE;
+  --bg-criteria-modal: #2B2937;
+  --bg-progress-forms: #232629;
+  --bg-input-forms: #232629;
+  --border-input-forms: transparent;
+  --bg-markdown: #232629;
+  --bg-bright-id-widget: #FFFFFE;
+  --bg-even-request-table: #2B2937;
+  --bg-odd-request-table: #232629;
 
   --error-color: #bd6b5e;
   --warning-color: rgb(253, 254, 106);
   --warning-background: rgba(253, 254, 106, 0.05);
   --warning-border: var(--border-color);
   --attention-color: rgb(253, 254, 106);
-  --link-color: #9789c4;
   --loader-color: #fff;
 
   --border-color: #2b364b;
@@ -36,7 +52,6 @@
   // no filter for dark mode, image specific filter for light mode
   --img-filter: none;
 
-  --bg-primary-color: #191623;
   --bg-secondary-color: #211e2b;
   --bg-light-color: #2c2938;
 
@@ -47,7 +62,6 @@
   --bg-light-accent: #2c2938;
 
   --bg-transparent: rgba(25, 22, 35, 0.902);
-  --bg-gradient: linear-gradient(315deg, #c72ab9 0%, #252a77 100%);
   --bg-gradient-hero: linear-gradient(
     286.78deg,
     rgba(173, 131, 218, 0) -32.78%,
@@ -70,7 +84,6 @@
     rgba(151, 137, 196, 0.2) 6.45%,
     rgba(199, 42, 185, 0.2) 99.55%
   );
-  --bg-circle: #2a2736;
 
   --button-secondary-color: #16c8b5;
   --button-secondary-bg: none;

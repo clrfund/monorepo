@@ -1,9 +1,33 @@
 @import './vars-dark';
 @import './vars-light';
 
-$clr-green: #16c8b5; //rgb(22, 200, 181)
-$clr-pink: #c72ab9;
-$clr-black: #211e2b;
+$clr-dark-gray: #505053;
+$clr-gray: #9FAABA;
+$clr-light-gray: #E4E7EC;
+$clr-dark-white: #AFB9C5;
+$clr-white: #FFFFFE;
+
+$clr-dark: #16161A;
+$clr-black: #2D2D31;
+
+
+$clr-dark-purple: #201E2A;
+$clr-purple: #8C6BF2;
+$clr-dark-pink: #2B2937;
+$clr-pink: #8C6BF2;
+
+$clr-dark-violet: #232629;
+$clr-violet: #9789C4;
+$clr-light-violet: #DFD6FB;
+
+$clr-green: #41BD8A;
+$clr-blue: #252A77;
+
+$clr-bg-primary: #181622;
+$clr-error: #D54679;
+
+
+
 $idle-color: #191623;
 $button-color: #7375a6;
 $border-light: #7375a6;

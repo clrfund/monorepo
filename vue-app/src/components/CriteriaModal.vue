@@ -4,20 +4,12 @@
     <div class="container">
       <div>
         <div class="flex-row">
-          <h2>Round criteria</h2>
-          <div class="close-btn" @click="$emit('close')">
-            <p class="no-margin">Close</p>
-            <img src="@/assets/close.svg" />
-          </div>
+          <h2>Buidl round criteria</h2>
         </div>
         <p>
-          The registry admin will remove any projects that don't meet the round
-          criteria. So read carefully! In later rounds we're hoping that this
-          review process can be done by the community.
-        </p>
-        <p>
-          Learn more about the project application process in our
-          <links to="/about/how-it-works/recipients">recipient guide</links>.
+          For this pilot round, admins will remove any projects that don’t meet
+          the round criteria. So read carefully! In later rounds we’re hoping
+          that this review can be done by the community.
         </p>
         <div class="content">
           <div
@@ -27,13 +19,15 @@
           >
             <div class="emoji" aria-hidden="true">{{ emoji }}</div>
             <div>
-              <h3 class="no-margin">{{ criterion }}</h3>
-              <p class="no-margin">{{ description }}</p>
+              <p class="text-body no-margin">
+                {{ criterion }}
+              </p>
+              <p class="text-base no-margin">{{ description }}</p>
             </div>
           </div>
         </div>
       </div>
-      <links to="/join/project" class="btn-primary fit-content"
+      <links to="/join/project" class="btn-action fit-content"
         >Add project</links
       >
     </div>
@@ -125,8 +119,8 @@ export default class CriteriaModal extends Vue {
     font-size: 14px;
     line-height: 150%;
     border-radius: 16px;
-    color: white;
-    background: var(--bg-light-accent);
+    color: var(--text-color);
+    background: var(--bg-criteria-modal);
     padding: 1.5rem 1rem;
     margin-bottom: 3rem;
     margin-top: 2rem;
@@ -137,7 +131,7 @@ export default class CriteriaModal extends Vue {
 
   .criterion-point {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 1rem;
     margin-bottom: 1.5rem;
     &:last-of-type {

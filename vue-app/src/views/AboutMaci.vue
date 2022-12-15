@@ -5,24 +5,26 @@
     </h1>
 
     <h2>What is MACI?</h2>
-    <p><b>tl;dr: bribers are ngmi (not going to make it)</b></p>
-    <p>
+    <p class="text-body">
+      <b>tl;dr: bribers are ngmi (not going to make it)</b>
+    </p>
+    <p class="text-body">
       Clr.fund uses MACI, Minimum Anti-Collusion Infrastructure, to help prevent
       vote manipulation like bribery or collusion. To understand why this is
       important let's recap quadratic funding...
     </p>
     <h2>Quadratic funding</h2>
-    <p>
+    <p class="text-body">
       This is the mechanism clr.fund uses in our funding rounds. When you
       contribute to a project you're not just sending them money, you're voting
       for them. At the end, the matching pool funds are distributed to projects
       based on number of votes at the end of the round.
     </p>
-    <p>
+    <p class="text-body">
       Read more on
       <links to="/about/quadratic-funding">quadratic funding</links>.
     </p>
-    <p>
+    <p class="text-body">
       This mechanism is great for democratic funding but poses some risks. It
       could be cost-effective for a project owner to bribe users to vote for
       their project as their eventual matching pool amount could be really high.
@@ -32,7 +34,7 @@
 
     <h2>Background</h2>
     <h3>Vote Manipulation</h3>
-    <p>
+    <p class="text-body">
       Vote manipulation involves maliciously changing the incentives of a voting
       system, and it comes in many flavors, including:
     </p>
@@ -47,14 +49,14 @@
         way if they don't vote for a particular outcome, e.g. blackmail
       </li>
     </ul>
-    <p>
+    <p class="text-body">
       These kinds of manipulation break voting systems by diverting them from
       their intended goal. Voting systems are generally designed to discover a
       group's preference between a number of specified outcomes. Each voter is
       expected to choose how to vote based on which outcomes they prefer and how
       their vote can effect the result.
     </p>
-    <p>
+    <p class="text-body">
       In an election where the outcomes are 1) Alice wins and 2) Bob wins, if I
       prefer Alice winning and believe my vote has a high enough chance of
       influencing the result to be worth the effort, I'll vote for Alice. Now,
@@ -66,21 +68,21 @@
       successfully bribed this way, the election will be a sham.
     </p>
     <h3>Vulnerability of Public Voting Systems</h3>
-    <p>
+    <p class="text-body">
       In order to manipulate the outcomes for a particular voter, the
       manipulator needs to know that voter's eventual choices: If Charlie offers
       to pay me $1,000,000 to vote for Bob, he needs to know that I'll actually
       vote for Bob before paying me. Otherwise, I can vote for Alice, tell
       Charlie I voted for Bob to get the $1,000,000, and the bribe has failed.
     </p>
-    <p>
+    <p class="text-body">
       In traditional elections, votes are secret, making it difficult to
       manipulate voters. But there aren't any secrets on public blockchains like
       Ethereum! In most existing voting systems on Ethereum, votes are public,
       which means manipulation is a serious threat.
     </p>
     <h2>Why MACI?</h2>
-    <p>
+    <p class="text-body">
       Ethereum is a core part of clr.fund and other quadratic funding solutions
       like Gitcoin Grants, because:
     </p>
@@ -97,20 +99,20 @@
       </li>
       <li>clr.fund was built by and for the Ethereum community</li>
     </ul>
-    <p>
+    <p class="text-body">
       While moving away from the public-ness of Ethereum isn't an attractive
       option, building Ethereum-based tools to resist vote manipulation is,
       which brings us to MACI.
     </p>
     <h2>How MACI helps</h2>
-    <p>
+    <p class="text-body">
       Bribery only works if the briber can confirm that the person they're
       paying actually goes through with the conditions of the bribe. This is
       where MACI comes in. With MACI, it's impossible to prove how you voted, so
       bribers will never know if you did what they paid you to do.
     </p>
     <h2>MACI — Minimum Anti-Collusion Infrastructure</h2>
-    <p>
+    <p class="text-body">
       MACI is a set of Ethereum smart contracts and supplementary scripts that
       effectively transforms public voting systems into private ones, in which
       1) participation in a vote and correct vote tabulation are publicly
@@ -118,7 +120,7 @@
       manipulation much more difficult.
     </p>
     <h3>How it works</h3>
-    <p>
+    <p class="text-body">
       When you contribute to a project on clr.fund you register an identity with
       the round coordinator. But at any time before the end of the round, you
       can invalidate your identity by secretly changing the public key
@@ -126,12 +128,12 @@
       different key pair to sign the vote (which renders the vote invalid, but
       it's impossible to see if the vote is invalid).
     </p>
-    <p>
+    <p class="text-body">
       MACI does all this using zero-knowledge proofs. These mathematically prove
       the authenticity of votes without providing any of the details. So bribers
       can’t tell what actions the people they bribed took.
     </p>
-    <p>
+    <p class="text-body">
       From
       <links
         to="https://github.com/appliedzkp/maci/blob/master/specs/01_introduction.md"
@@ -139,25 +141,25 @@
       >:
     </p>
     <blockquote>
-      <p>
+      <p class="text-body">
         Whitelisted voters named Alice, Bob, and Charlie register to vote by
         sending their public key to a smart contract. Additionally, there is a
         central coordinator Dave, whose public key is known to all.
       </p>
-      <p>
+      <p class="text-body">
         When Alice casts her vote, she signs her vote with her private key,
         encrypts her signature with Dave's public key, and submits the result to
         the smart contract.
       </p>
 
-      <p>
+      <p class="text-body">
         Each voter may change her keypair at any time. To do this, she creates
         and signs a key-change command, encrypts it, and sends it to the smart
         contract. This makes it impossible for a briber to ever be sure that
         their bribe has any effect on the bribee's vote.
       </p>
 
-      <p>
+      <p class="text-body">
         If Bob, for instance, bribes Alice to vote a certain way, she can simply
         use the first public key she had registered ⁠— which is now void ⁠— to
         cast a vote. Since said vote is encrypted, as was the key-changing
@@ -165,7 +167,7 @@
         if Alice had indeed voted the way he wanted her to.
       </p>
 
-      <p>
+      <p class="text-body">
         Even if Alice reveals the cleartext of her vote to Bob, she just needs
         to not show him the updated key command that she previously used to
         invalidate that key. In short, as long as she had submitted a single
@@ -174,14 +176,14 @@
       </p>
     </blockquote>
 
-    <p>
+    <p class="text-body">
       <links to="https://github.com/appliedzkp/maci/tree/master/specs"
         >Read more on the technical details of MACI here</links
       >. >
     </p>
 
     <h3>MACI's constraints</h3>
-    <p>
+    <p class="text-body">
       This is cutting-edge technology and comes with a few constraints right
       now.
     </p>

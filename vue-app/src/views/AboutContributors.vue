@@ -1,12 +1,12 @@
 <template>
   <div class="about">
     <h1 class="content-heading">Contributor guide</h1>
-    <p>
+    <p class="text-body">
       An overview of how things work as a contributor so you can learn what to
       expect throughout the duration of a funding round.
     </p>
     <h2>Get funds on {{ chain.label }}</h2>
-    <p>
+    <p class="text-body">
       You'll need some {{ chain.currency }} on {{ chain.label }} in order to
       submit transactions to the clr.fund smart contracts.
       <span v-if="chain.label.includes('Arbitrum')">
@@ -48,7 +48,7 @@
         transactions to complete your contributions!
       </li>
     </ol>
-    <p>
+    <p class="text-body">
       Note: you can only contribute once. After submitting your contributions,
       you can reallocate them as much as you would like before the end of the
       reallocation phase but you cannot add more funds to your total
@@ -62,7 +62,7 @@
       </li>
     </ol>
     <h2>Contributing to the matching pool</h2>
-    <p>
+    <p class="text-body">
       Not sure which specific to contribute to? Contributions to the matching
       pool will be distributed to all projects that receive project-specific
       contributions during that round. The weighting of this distribution is
@@ -83,9 +83,9 @@
         transactions.
       </li>
     </ol>
-    <p></p>
+    <p class="text-body"></p>
     <h2>How does clr.fund work?</h2>
-    <p>
+    <p class="text-body">
       Looking for a more general overview?
       <links to="/about/how-it-works">Check out our "How It Works" page</links>.
     </p>

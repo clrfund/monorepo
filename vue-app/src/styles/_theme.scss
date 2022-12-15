@@ -1,20 +1,32 @@
 @import './vars';
 @import './mixins';
 
-.btn-primary {
-  @include button(white, var(--brand-secondary), none);
+.btn-template {
+  @include button(white, transparent, none);
 }
 
-.btn-action {
-  @include button(white, var(--button-action), none);
+.btn-primary {
+  @include button(white, var(--bg-btn-primary), none);
+}
+
+.btn-secondary-new {
+  @include button($clr-dark, $clr-light-violet, none);
+}
+
+.btn-link {
+  @include button(white, $clr-dark-violet, none);
 }
 
 .btn-secondary {
   @include button(
-    var(--button-secondary-color),
-    var(--button-secondary-bg),
-    2px solid var(--button-secondary-border)
+    var(--color-btn-secondary),
+    var(--bg-btn-secondary),
+    2px solid var(--border-btn-secondary)
   );
+}
+
+.btn-action {
+  @include button(white, $clr-purple, none);
 }
 
 .btn-info {
@@ -26,11 +38,12 @@
 }
 
 .btn-warning {
-  @include button(var(--error-color), none, 2px solid var(--error-color));
+  @include button(#d54679, none, 2px solid #d54679);
 }
 
 .app-btn {
-  @include button(white, var(--brand-primary), none);
+  @include button(white, $clr-purple, none);
+  margin-left: 0.75rem;
 }
 
 #banner {
@@ -38,7 +51,7 @@
 }
 
 .explorer-btn {
-  @include button(white, var(--bg-inactive), none);
+  @include button(white, $clr-purple, none);
   box-shadow: var(--box-shadow);
   display: flex;
   gap: 0.5rem;
@@ -54,17 +67,21 @@
 
 .navbar-btn,
 .dropdown-btn {
-  @include button(white, #2c2938, 1px solid rgba(115, 117, 166, 0.3));
-  padding: 0.25rem 0.5rem;
+  @include button(
+    white,
+    var(--bg-btn-navbar),
+    1px solid var(--border-btn-navbar)
+  );
+  padding: 0.75rem;
   border-radius: 8px;
-  margin-right: 0.5rem;
   display: flex;
+  width: 40px;
+  height: 40px;
 }
 
 #nav-bar {
   .app-btn {
     padding: 0.25rem 1.25rem;
-    border-radius: 1rem;
   }
 }
 
@@ -93,19 +110,6 @@
   border-color: var(--loader-color) transparent var(--loader-color) transparent;
 }
 
-.tag {
-  font-family: 'Glacial Indifference', sans-serif;
-  padding: 0.5rem 0.75rem;
-  background: var(--bg-light-accent);
-  color: $button-disabled-text-color;
-  width: fit-content;
-  border-radius: 4px;
-}
-
-.token-icon {
-  margin-left: 0.5rem;
-}
-
 .big-emoji {
   font-size: 4rem;
 }
@@ -125,18 +129,6 @@
     border-bottom: 2px solid var(--border-color);
   }
 
-  h2 {
-    font-family: 'Glacial Indifference', sans-serif;
-    font-weight: bold;
-    font-size: 32px;
-    letter-spacing: -0.015em;
-  }
-
-  p {
-    font-size: 16px;
-    line-height: 150%;
-  }
-
   li {
     font-size: 16px;
     line-height: 150%;
@@ -150,4 +142,103 @@
   height: 3px;
   border-radius: 1px;
   background: var(--brand-tertiary);
+}
+
+/* Typography */
+
+.text-base {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.text-body {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 140%;
+}
+
+.text-error {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 26px;
+}
+
+.text-link {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  text-decoration-line: underline;
+  color: var(--link-color);
+}
+
+.subtitle {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 28px;
+}
+
+.cart-time-value {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 33px;
+  letter-spacing: -0.02em;
+}
+
+.cart-time-unit {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 23px;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 56px;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 47px;
+  letter-spacing: -0.02em;
+}
+
+h3 {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 38px;
+  letter-spacing: -0.02em;
+}
+
+h4 {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+  margin: 0;
 }
