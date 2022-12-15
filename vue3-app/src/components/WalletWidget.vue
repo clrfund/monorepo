@@ -36,7 +36,7 @@ import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { chain } from '@/api/core'
 import Profile from '@/views/Profile.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useBoard, useEthers, useWallet } from 'vue-dapp'
 

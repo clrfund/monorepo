@@ -39,7 +39,7 @@ import { chain, ThemeMode } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { isValidTheme, getOsColorScheme } from '@/utils/theme'
 // import ClickOutside from '@/directives/ClickOutside'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

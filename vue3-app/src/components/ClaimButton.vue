@@ -20,7 +20,7 @@ import { markdown } from '@/utils/markdown'
 
 import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { $vfm } from 'vue-final-modal'
 

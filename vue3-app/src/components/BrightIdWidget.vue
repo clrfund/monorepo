@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import IconStatus from '@/components/IconStatus.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 interface Props {

@@ -32,7 +32,7 @@ import Transaction from '@/components/Transaction.vue'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

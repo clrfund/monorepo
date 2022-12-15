@@ -14,19 +14,18 @@ import {
 	serializeCart,
 	serializeContributorData,
 } from '@/api/contributions'
-import { recipientRegistryType, operator, userRegistryType, UserRegistryType, ThemeMode } from '@/api/core'
+import { operator, userRegistryType, UserRegistryType, ThemeMode, recipientRegistryType } from '@/api/core'
 import { type RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { getTally, type Tally } from '@/api/tally'
 import { getEtherBalance, getTokenBalance, isVerifiedUser, type User } from '@/api/user'
 import { type Factory, getFactoryInfo } from '@/api/factory'
 import { getMACIFactoryInfo, type MACIFactory } from '@/api/maci-factory'
-import { getRegistryInfo, type RecipientApplicationData, type RegistryInfo } from '@/api/recipient-registry-optimistic'
-import { getRecipientRegistryAddress } from '@/api/projects'
 import { ensLookup, isSameAddress } from '@/utils/accounts'
 import { storage } from '@/api/storage'
 import { loginUser, logoutUser } from '@/api/gun'
 import { type BrightId, getBrightId } from '@/api/bright-id'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
+import { useRecipientStore } from './recipient'
 
 export type AppState = {
 	cart: CartItem[]
@@ -64,12 +63,15 @@ export const useAppStore = defineStore('app', {
 	}),
 	getters: {
 		recipientJoinDeadline: state => {
-			if (!state.currentRound || !state.recipientRegistryInfo) {
+			const recipientStore = useRecipientStore()
+			if (!state.currentRound || !recipientStore.recipientRegistryInfo) {
 				return null
 			}
 
 			const challengePeriodDuration =
-				recipientRegistryType === 'optimistic' ? state.recipientRegistryInfo.challengePeriodDuration : 0
+				recipientRegistryType === 'optimistic'
+					? recipientStore.recipientRegistryInfo.challengePeriodDuration
+					: 0
 
 			const deadline = state.currentRound.signUpDeadline.minus({
 				seconds: challengePeriodDuration,
@@ -150,12 +152,6 @@ export const useAppStore = defineStore('app', {
 				return factory.userRegistryAddress
 			}
 		},
-		isRecipientRegistryOwner: (state): boolean => {
-			if (!state.currentUser || !state.recipientRegistryInfo) {
-				return false
-			}
-			return isSameAddress(state.currentUser.walletAddress, state.recipientRegistryInfo.owner)
-		},
 		nativeTokenSymbol: (state): string => {
 			const { currentRound, factory } = state
 
@@ -208,11 +204,12 @@ export const useAppStore = defineStore('app', {
 			return this.recipientSpacesRemaining !== null && this.recipientSpacesRemaining < 20
 		},
 		recipientSpacesRemaining: (state): number | null => {
-			if (!state.currentRound || !state.recipientRegistryInfo) {
+			const recipientStore = useRecipientStore()
+			if (!state.currentRound || !recipientStore.recipientRegistryInfo) {
 				return null
 			}
 			const maxRecipients = state.currentRound.maxRecipients
-			const recipientCount = state.recipientRegistryInfo.recipientCount
+			const recipientCount = recipientStore.recipientRegistryInfo.recipientCount
 			return maxRecipients - recipientCount
 		},
 		maxRecipients: (state): number | undefined => {
@@ -266,14 +263,15 @@ export const useAppStore = defineStore('app', {
 		},
 		selectRound(roundAddress: string) {
 			if (this.currentRoundAddress) {
+				const recipientStore = useRecipientStore()
 				// Reset everything that depends on round
 				this.unwatchCart()
 				this.unwatchContributorData()
 				this.contribution = null
 				this.contributor = null
 				this.cart = []
-				this.recipientRegistryAddress = null
-				this.recipientRegistryInfo = null
+				recipientStore.recipientRegistryAddress = null
+				recipientStore.recipientRegistryInfo = null
 				this.currentRound = null
 			}
 			this.currentRoundAddress = roundAddress
@@ -453,19 +451,6 @@ export const useAppStore = defineStore('app', {
 				this.currentUser.walletAddress,
 				getContributorStorageKey(this.currentRound.fundingRoundAddress),
 			)
-		},
-		async loadRecipientRegistryInfo() {
-			//TODO: update call to getRecipientRegistryAddress to take factory address as a parameter
-			const recipientRegistryAddress =
-				this.recipientRegistryAddress || (await getRecipientRegistryAddress(this.currentRoundAddress))
-			this.recipientRegistryAddress = recipientRegistryAddress
-
-			if (recipientRegistryAddress) {
-				const info = await getRegistryInfo(recipientRegistryAddress)
-				this.recipientRegistryInfo = info
-			} else {
-				this.recipientRegistryInfo = null
-			}
 		},
 		async loadUserInfo() {
 			if (!this.currentUser) {

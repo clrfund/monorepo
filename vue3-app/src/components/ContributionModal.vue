@@ -108,7 +108,7 @@ import ProgressBar from '@/components/ProgressBar.vue'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
 import { FundingRound, ERC20, MACI } from '@/api/abi'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useEthers } from 'vue-dapp'
 import { useRouter } from 'vue-router'

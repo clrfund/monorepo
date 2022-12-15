@@ -27,7 +27,7 @@ import { createMessage } from '@/utils/maci'
 
 import { FundingRound } from '@/api/abi'
 import { useEthers } from 'vue-dapp'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { useRouter } from 'vue-router'
 
 interface Props {

@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import Cart from '@/components/Cart.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useEthers, useWallet } from 'vue-dapp'
 

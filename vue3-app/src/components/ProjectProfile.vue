@@ -89,7 +89,7 @@ import LinkBox from '@/components/LinkBox.vue'
 import Links from '@/components/Links.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 

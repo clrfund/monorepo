@@ -32,7 +32,7 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import Links from '@/components/Links.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 

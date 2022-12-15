@@ -47,7 +47,7 @@ import { type CartItem, MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
 import { getTokenLogo } from '@/utils/tokens'
 import Links from '@/components/Links.vue'
 import InputButton from '@/components/InputButton.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

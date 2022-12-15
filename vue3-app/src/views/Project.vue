@@ -29,7 +29,7 @@ import { markdown } from '@/utils/markdown'
 import { useMeta } from 'vue-meta'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 
 const route = useRoute()
 const router = useRouter()

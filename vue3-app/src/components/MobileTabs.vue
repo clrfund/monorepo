@@ -30,7 +30,7 @@
 import { computed, ref } from 'vue'
 import type { CartItem } from '@/api/contributions'
 import Links from '@/components/Links.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 

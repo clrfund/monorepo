@@ -36,7 +36,7 @@ import type { CartItem } from '@/api/contributions'
 import type { Project } from '@/api/projects'
 import { markdown } from '@/utils/markdown'
 import { useRoute, type RouteLocationRaw } from 'vue-router'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const route = useRoute()

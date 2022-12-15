@@ -16,7 +16,7 @@
 import { computed } from 'vue'
 import type { User } from '@/api/user'
 import WalletWidget from '@/components/WalletWidget.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 
 interface Props {
 	currentStep: number

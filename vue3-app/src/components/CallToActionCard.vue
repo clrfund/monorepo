@@ -39,7 +39,7 @@ import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import Links from '@/components/Links.vue'
 
 import { userRegistryType, UserRegistryType } from '@/api/core'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

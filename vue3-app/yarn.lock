@@ -5409,10 +5409,10 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
-vue-dapp@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/vue-dapp/-/vue-dapp-0.6.2.tgz#3f2fb3793c0181dd513c6ff97bd993b55fb5c547"
-  integrity sha512-xQ8qwtEQ7zCZg1Sjp86dzK4IgZ4YB9qblpZI6EH5i7VoTr62qm37btQsZRPtt93tpBQ8S0c+tUp47m0ZatdUow==
+vue-dapp@0.6.3-beta.2:
+  version "0.6.3-beta.2"
+  resolved "https://registry.yarnpkg.com/vue-dapp/-/vue-dapp-0.6.3-beta.2.tgz#5f767e46f597f0d3fd18efd8028ed8ac4dc78048"
+  integrity sha512-UZRyOXnQZl4zWn7vajjZIQzSqn8+MvPtCMULdvfyu0vj4OJVPz+r8/8HKcNKVBWZ6XdJTqB0IhQBIcHK9dlmlQ==
   dependencies:
     "@coinbase/wallet-sdk" "^3.1.0"
     "@gnosis.pm/safe-apps-provider" "^0.14.0"

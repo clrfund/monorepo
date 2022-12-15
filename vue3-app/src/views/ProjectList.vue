@@ -75,7 +75,7 @@ import ProjectListItem from '@/components/ProjectListItem.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'
 import { useRoute } from 'vue-router'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const SHUFFLE_RANDOM_SEED = Math.random()

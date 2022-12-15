@@ -148,7 +148,7 @@
 <script setup lang="ts">
 import { chain } from '@/api/core'
 import Links from '@/components/Links.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

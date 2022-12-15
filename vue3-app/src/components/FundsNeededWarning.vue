@@ -27,7 +27,7 @@ import type { BigNumber } from '@ethersproject/bignumber'
 import { chain as _chain } from '@/api/core'
 import { formatAmount } from '@/utils/amounts'
 import Links from '@/components/Links.vue'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

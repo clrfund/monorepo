@@ -135,7 +135,7 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { getCurrentRound } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()

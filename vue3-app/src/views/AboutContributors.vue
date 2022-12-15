@@ -86,7 +86,7 @@
 <script setup lang="ts">
 import Links from '@/components/Links.vue'
 import { chain } from '@/api/core'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 
 const appStore = useAppStore()
 const nativeTokenSymbol = computed(() => {

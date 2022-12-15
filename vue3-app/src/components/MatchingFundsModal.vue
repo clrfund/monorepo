@@ -64,7 +64,7 @@ import { factory } from '@/api/core'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
 import { useEthers } from 'vue-dapp'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 
 const { signer } = useEthers()
 const appStore = useAppStore()

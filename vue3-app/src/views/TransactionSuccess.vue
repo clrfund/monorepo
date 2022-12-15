@@ -54,7 +54,7 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
-import { useAppStore } from '@/stores/app'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
