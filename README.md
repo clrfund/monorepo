@@ -27,7 +27,7 @@ Some helpful blogposts to explain the clr.fund project:
 
 - https://blog.clr.fund/clr-fund-explained-pt-1/
 - https://blog.clr.fund/clr-fund-explained-pt-2/
-- https://blog.clr.fund/clr-fund-explained-pt-3/
+- https://blog.clr.fund/clr-fund-explained-part-3/
 
 ### Limitations
 
