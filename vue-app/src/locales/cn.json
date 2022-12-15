@@ -274,7 +274,7 @@
     "what": {
       "h2": "什么是 MACI?",
       "p1": "tl;dr: 恐吓或贿赂者无法成功（不会成功）。",
-      "p2": " CLR.fund 采用 MACI (最小反合作基础设施）来防止投票操纵，例如贿赂或合作。要理解为什么这很重要，我们来复习一下 quadratic funding..."
+      "p2": " CLR.fund 采用 MACI (最小反合作基础设施）来防止投票操纵，例如贿赂或共谋。要理解为什么这很重要，我们来复习一下 quadratic funding..."
     },
     "quadratic": {
       "h2": "Quadratic funding",
