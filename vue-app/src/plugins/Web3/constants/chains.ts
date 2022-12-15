@@ -103,7 +103,7 @@ export const CHAIN_INFO: ChainInfo = {
     currency: 'xDai',
     logo: 'xdai.svg',
     isLayer2: false,
-    explorer: 'https://blockscout.com/poa/xdai',
+    explorer: 'https://gnosisscan.io',
     explorerLogo: 'xdai-explorer.svg',
     explorerLabel: 'Blockscout',
     rpcUrl: 'https://rpc.gnosischain.com',
