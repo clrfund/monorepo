@@ -1,159 +1,97 @@
 import { task, types } from 'hardhat/config'
-import { utils, providers, Contract, BigNumber } from 'ethers'
-import { EventFilter, Log } from '@ethersproject/abstract-provider'
+import { utils, Contract, BigNumber } from 'ethers'
 import fs from 'fs'
+import { Ipfs } from '../utils/ipfs'
+import { Project, Round } from '../utils/types'
+import { RecipientRegistryLogProcessor } from '../utils/RecipientRegistryLogProcessor'
+import path from 'path'
 
-interface Project {
-  id: string
-  recipientIndex?: number
+const getRecipientAddressAbi = [
+  `function getRecipientAddress(uint256 _index, uint256 _startTime, uint256 _endTime)` +
+    ` external view returns (address)`,
+  `function tcr() external view returns (address)`,
+]
+
+type RoundData = {
+  round: Round
+  projects: Project[]
+  tally: any
+}
+
+type RoundListEntry = {
   address: string
-  name: string
-  state: string
-  removedAt?: Date
-  tallyIndex?: number
-  tallyVotes?: string
-  tallyVoiceCredits?: string
-  donationAmount?: string
-  fundingAmount?: string
-  metadata?: any
+  network: string
+  startTime: number
 }
 
-function isRemoval(state: number): boolean {
-  return state === 1
+function roundFileName(directory: string, address: string): string {
+  return path.join(directory, `${address}.json`)
 }
 
-async function fetchTally(tallyHash: string): Promise<any> {
-  const url = `https://ipfs.io/ipfs/${tallyHash}`
-  const result = utils.fetchJson(url)
-  return result
+function roundListFileName(directory: string): string {
+  return path.join(directory, 'rounds.json')
 }
 
-function logsFirstBlock(logs: Log[]): number | null {
-  return logs.length > 0 ? logs[0].blockNumber : null
+function writeToFile(filePath: string, roundData: RoundData) {
+  const outputString = JSON.stringify(roundData, null, 2)
+  fs.writeFileSync(filePath, outputString)
+  console.log('Successfully written to ', filePath)
 }
 
-function logsLastBlock(logs: Log[]): number | null {
-  return logs.length > 0 ? logs[logs.length - 1].blockNumber : null
-}
-
-async function fetchLogs({
-  provider,
-  filter,
-  startBlock,
-  lastBlock,
-  blocksPerBatch,
-}: {
-  provider: providers.Provider
-  filter: EventFilter
-  startBlock: number
-  lastBlock: number
-  blocksPerBatch: number
-}): Promise<Log[]> {
-  let eventLogs: Log[] = []
-
-  for (let i = startBlock; i <= lastBlock; i += blocksPerBatch + 1) {
-    const toBlock =
-      i + blocksPerBatch >= lastBlock ? lastBlock : i + blocksPerBatch
-
-    const logs = await provider.getLogs({
-      ...filter,
-      fromBlock: i,
-      toBlock,
-    })
-    eventLogs = eventLogs.concat(logs)
+async function updateRoundList(filePath: string, round: RoundListEntry) {
+  let rounds: RoundListEntry[]
+  try {
+    const json = await fetch(filePath).then((response) => response.json())
+    rounds = Array.isArray(json) ? [...json, round] : [round]
+  } catch {
+    rounds = [round]
   }
 
-  return eventLogs
+  rounds.sort((round1, round2) => round1.startTime - round2.startTime)
+  const outputString = JSON.stringify(rounds, null, 2)
+  fs.appendFileSync(filePath, outputString)
+
+  console.log('Successfully written to ', filePath)
 }
 
-async function genProjectRecords({
-  submitLogs,
-  resolveLogs,
-  recipientRegistry,
-}: {
-  submitLogs: Log[]
-  resolveLogs: Log[]
-  recipientRegistry: Contract
-}): Promise<Record<string, Project>> {
-  const requests: Record<string, Project> = {}
-  submitLogs.forEach((log) => {
-    const { args } = recipientRegistry.interface.parseLog(log)
-
-    const recipientId = args._recipientId
-    const recipientIndex = args._recipientIndex
-    const state = isRemoval(args._type) ? 'Removed' : 'Accepted'
-
-    if (!requests[recipientId]) {
-      let name = ''
-      let metadata
-      try {
-        metadata = JSON.parse(args._metadata)
-        name = metadata.name
-        // eslint-disable-next-line no-empty
-      } catch {}
-
-      requests[recipientId] = {
-        id: recipientId,
-        recipientIndex,
-        address: args._recipient,
-        name,
-        state,
-        metadata,
-      }
-    }
-  })
-
-  resolveLogs.forEach((log) => {
-    const { args } = recipientRegistry.interface.parseLog(log)
-    const recipientId = args._recipientId
-    const recipientIndex = args._recipientIndex.toString()
-
-    if (!requests[recipientId]) {
-      throw new Error(
-        'Missing SubmitRequest logs, make sure startBlock and endBlock is set correctly'
-      )
-    }
-
-    if (args._rejected) {
-      requests[recipientId].removedAt = args._timestamp.toString()
-      requests[recipientId].state = 'Rejected'
-    } else if (isRemoval(args._type)) {
-      requests[recipientId].removedAt = args._timestamp.toString()
-      requests[recipientId].state = 'Removed'
-    } else {
-      requests[recipientId].recipientIndex = recipientIndex
-    }
-  })
-
-  return Object.values(requests).reduce(
-    (records: Record<string, Project>, req) => {
-      records[req.address] = req
-      return records
-    },
-    {}
-  )
-}
-
-async function processFinalizedRound({
+async function mergeRecipientTally({
   round,
+  roundContract,
   recipientRegistry,
   projectRecords,
-  decimals,
-  startTime,
-  endTime,
-  voiceCreditFactor,
   tally,
 }: {
-  round: Contract
+  round: Round
+  roundContract: Contract
   recipientRegistry: Contract
   projectRecords: Record<string, Project>
-  decimals: BigNumber
-  startTime: BigNumber
-  endTime: BigNumber
-  voiceCreditFactor: BigNumber
   tally: any
 }): Promise<Project[]> {
   console.log('Merging projects and tally results...')
+  const { startTime, endTime, voiceCreditFactor } = round
+  const { decimals } = round.nativeToken
+
+  const projectAddresses = Object.values(projectRecords).reduce(
+    (addresses: Record<string, Project>, record) => {
+      if (record.address) {
+        const lowerCaseAddress = record.address.toLowerCase()
+        addresses[lowerCaseAddress] = record
+      }
+      return addresses
+    },
+    {}
+  )
+
+  const projectIndices = Object.values(projectRecords).reduce(
+    (indices: Record<number, Project>, record) => {
+      if (record.recipientIndex) {
+        indices[record.recipientIndex] = record
+      }
+      return indices
+    },
+    {}
+  )
+
   const projects: Project[] = []
   for (let i = 0; i < tally.results.tally.length; i++) {
     const address = await recipientRegistry.getRecipientAddress(
@@ -169,15 +107,15 @@ async function processFinalizedRound({
       decimals
     )
 
-    const fundingAmount = await round.getAllocatedAmount(
+    const fundingAmount = await roundContract.getAllocatedAmount(
       tallyVotes,
       tallyVoiceCredits
     )
 
-    const project = projectRecords[address]
+    const project = projectIndices[i] || projectAddresses[address.toLowerCase()]
     projects.push({
       ...project,
-      address,
+      tallyRecipientAddress: address,
       tallyIndex: i,
       tallyVotes,
       tallyVoiceCredits,
@@ -189,12 +127,65 @@ async function processFinalizedRound({
   return projects
 }
 
+async function getRoundInfo(
+  roundContract: Contract,
+  ethers: any
+): Promise<Round> {
+  console.log('Fetching round data...')
+  const nativeTokenAddress = await roundContract.nativeToken()
+  const token = await ethers.getContractAt('ERC20', nativeTokenAddress)
+  const decimals = await token.decimals()
+  const symbol = await token.symbol()
+  const nativeToken = { symbol, decimals }
+
+  const contributorCount = await roundContract.contributorCount()
+  const matchingPoolSize = await roundContract.matchingPoolSize()
+  const totalSpent = await roundContract.totalSpent()
+  const voiceCreditFactor = await roundContract.voiceCreditFactor()
+  const isFinalized = await roundContract.isFinalized()
+  const isCancelled = await roundContract.isCancelled()
+  const tallyHash = await roundContract.tallyHash()
+
+  const maciAddress = await roundContract.maci()
+  const maci = await ethers.getContractAt('MACI', maciAddress)
+  const startTime = await maci.signUpTimestamp()
+  const signUpDuration = await maci.signUpDurationSeconds()
+  const votingDuration = await maci.votingDurationSeconds()
+  const endTime = startTime.add(signUpDuration).add(votingDuration)
+  const recipientRegistryAddress = await roundContract.recipientRegistry()
+
+  const round = {
+    address: roundContract.address,
+    maciAddress,
+    contributorCount: contributorCount.toString(),
+    totalSpent: totalSpent.toString(),
+    matchingPoolSize: matchingPoolSize.toString(),
+    voiceCreditFactor: voiceCreditFactor.toString(),
+    isFinalized,
+    isCancelled,
+    tallyHash,
+    nativeToken,
+    startTime: BigNumber.from(startTime).toNumber(),
+    endTime: BigNumber.from(endTime).toNumber(),
+    recipientRegistryAddress,
+  }
+
+  console.log('Round', round)
+  return round
+}
+
 /**
- * Audit the tally result for a round
+ * Fetch all the round data for static site
  */
 task('fetch-round', 'Fetch round data')
   .addParam('roundAddress', 'Funding round contract address')
-  .addParam('output', 'Output pathname')
+  .addParam('outputDir', 'Output directory')
+  .addOptionalParam(
+    'etherscanApiKey',
+    'Etherscan API key used to retrieve logs using etherscan API',
+    undefined,
+    types.string
+  )
   .addOptionalParam(
     'startBlock',
     'First block to process from the recipient registry contract',
@@ -215,131 +206,82 @@ task('fetch-round', 'Fetch round data')
   )
   .setAction(
     async (
-      { roundAddress, output, startBlock, endBlock, blocksPerBatch },
+      {
+        roundAddress,
+        outputDir,
+        startBlock,
+        endBlock,
+        blocksPerBatch,
+        etherscanApiKey,
+      },
       { ethers, network }
     ) => {
       console.log('Processing on ', network.name)
       console.log('Funding round address', roundAddress)
 
-      const round = await ethers.getContractAt('FundingRound', roundAddress)
-      const nativeToken = await round.nativeToken()
-      const token = await ethers.getContractAt('ERC20', nativeToken)
-      const decimals = await token.decimals()
-      const symbol = await token.symbol()
-      const contributorCount = await round.contributorCount()
-      const matchingPoolSize = await round.matchingPoolSize()
-      const totalSpent = await round.totalSpent()
-      const voiceCreditFactor = await round.voiceCreditFactor()
-      const isFinalized = await round.isFinalized()
-      const isCancelled = await round.isCancelled()
-      let tallyHash = ''
-      let tally: any
-
-      if (isFinalized && !isCancelled) {
-        tallyHash = await round.tallyHash()
-        tally = await fetchTally(tallyHash)
+      const directoryStats = fs.statSync(outputDir)
+      if (!directoryStats.isDirectory()) {
+        fs.mkdirSync(outputDir, { recursive: true })
       }
 
-      const maciAddress = await round.maci()
-      const maci = await ethers.getContractAt('MACI', maciAddress)
-      const startTime = await maci.signUpTimestamp()
-      const signUpDuration = await maci.signUpDurationSeconds()
-      const votingDuration = await maci.votingDurationSeconds()
-      const endTime = startTime.add(signUpDuration).add(votingDuration)
-
-      const recipientRegistryAddress = await round.recipientRegistry()
-      const recipientRegistry = await ethers.getContractAt(
-        'OptimisticRecipientRegistry',
-        recipientRegistryAddress
+      const roundContract = await ethers.getContractAt(
+        'FundingRound',
+        roundAddress
+      )
+      const round = await getRoundInfo(roundContract, ethers)
+      const recipientRegistry = new Contract(
+        round.recipientRegistryAddress,
+        getRecipientAddressAbi,
+        ethers.provider
       )
 
-      // fetch event logs containing project information
-      const submitFilter = recipientRegistry.filters.RequestSubmitted()
-      const resolveFilter = recipientRegistry.filters.RequestResolved()
-      const lastBlock = endBlock
-        ? endBlock
-        : await ethers.provider.getBlockNumber()
-
-      console.log('Fetching SubmitRequest event logs...')
-      const submitLogs = await fetchLogs({
-        provider: ethers.provider,
-        filter: submitFilter,
-        startBlock,
-        lastBlock,
-        blocksPerBatch,
-      })
-
-      if (submitLogs.length > 0) {
-        console.log(
-          `Fetched ${submitLogs.length} SubmitRequest logs from blocks ${
-            logsFirstBlock(submitLogs) || ''
-          } to ${logsLastBlock(submitLogs) || ''}`
-        )
-      } else {
-        console.log('SubmitRequest logs not found')
-      }
-
-      console.log('Fetching ResolveRequest event logs...')
-      const resolveLogs = await fetchLogs({
-        provider: ethers.provider,
-        filter: resolveFilter,
-        startBlock,
-        lastBlock,
-        blocksPerBatch,
-      })
-      if (resolveLogs.length > 0) {
-        console.log(
-          `Fetched ${resolveLogs.length} ResolvedRequest logs from blocks ${
-            logsFirstBlock(resolveLogs) || ''
-          } to ${logsLastBlock(resolveLogs) || ''}`
-        )
-      } else {
-        console.log('ResolvedRequest logs not found')
-      }
-
-      const projectRecords = await genProjectRecords({
-        submitLogs,
-        resolveLogs,
+      const logProcessor = new RecipientRegistryLogProcessor(recipientRegistry)
+      const logs = await logProcessor.fetchLogs({
         recipientRegistry,
+        startBlock,
+        endBlock,
+        blocksPerBatch,
+        network: network.name,
+        etherscanApiKey,
       })
 
-      const projects =
-        isFinalized && !isCancelled
-          ? processFinalizedRound({
-              round,
-              recipientRegistry,
-              projectRecords,
-              decimals,
-              startTime,
-              endTime,
-              tally,
-              voiceCreditFactor,
-            })
-          : Object.values(projectRecords)
+      console.log('Parsing logs...')
+      const projectRecords = await logProcessor.parseLogs(logs)
 
-      const outputString = JSON.stringify(
-        {
-          round: {
-            address: roundAddress,
-            isFinalized,
-            isCancelled,
-            nativeToken: { symbol, decimals: decimals.toString() },
-            totalSpent: totalSpent.toString(),
-            voiceCreditFactor: voiceCreditFactor.toString(),
-            matchingPoolSize: matchingPoolSize.toString(),
-            contributorCount: contributorCount.toString(),
-            startTime: startTime.toString(),
-            endTime: endTime.toString(),
-            tallyHash,
-          },
-          projects,
+      let tally: any = undefined
+      if (round.isFinalized && !round.isCancelled) {
+        try {
+          tally = await Ipfs.fetchJson(round.tallyHash)
+        } catch (err) {
+          console.log('Failed to get tally file', round.tallyHash, err)
+        }
+      }
+
+      let projects = Object.values(projectRecords)
+      if (round.isFinalized && !round.isCancelled && projects.length > 0) {
+        projects = await mergeRecipientTally({
+          round,
+          roundContract,
+          recipientRegistry,
+          projectRecords,
           tally,
-        },
-        null,
-        2
-      )
+        })
+      }
 
-      fs.writeFileSync(output, outputString)
-      console.log('Finished writing results to', output)
+      // write to round file
+      const filename = roundFileName(outputDir, round.address)
+      writeToFile(filename, {
+        round,
+        projects,
+        tally,
+      })
+
+      // update round list
+      const listFilename = roundListFileName(outputDir)
+      await updateRoundList(listFilename, {
+        network: network.name,
+        address: round.address,
+        startTime: round.startTime,
+      })
     }
   )
