@@ -10,8 +10,8 @@
 			:required="input.required"
 			:placeholder="input.placeholder"
 			:disabled="input.disabled"
-			@input="emit('input', $event.target.value)"
-			@blur="emit('blur', $event.target.value)"
+			@input="emit('input', ($event.target as HTMLInputElement).value)"
+			@blur="emit('blur', ($event.target as HTMLInputElement).value)"
 		/>
 		<input
 			v-if="button"

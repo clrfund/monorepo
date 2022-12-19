@@ -11,7 +11,7 @@
 					<span class="emoji">🎉</span>
 					<div class="flex-title">
 						<h1>You're sponsored!</h1>
-						<transaction-receipt v-if="route.params.hash" :hash="route.params.hash" />
+						<transaction-receipt v-if="hash" :hash="hash" />
 					</div>
 					<div class="subtitle">
 						You’re almost ready to contribute to your favorite projects! If you're verified for BrightID,
@@ -39,6 +39,8 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const appStore = useAppStore()
 const { currentRound } = storeToRefs(appStore)
+
+const hash = computed(() => route.params.hash as string)
 </script>
 
 <style scoped lang="scss">

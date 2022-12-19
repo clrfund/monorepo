@@ -75,7 +75,6 @@ function canUpdateAmount(): boolean {
 }
 
 function updateAmount(item: CartItem, amount: string): void {
-	console.log('updateAmount', amount)
 	const sanitizedAmount: string = sanitizeAmount(amount)
 	appStore.updateCartItem({ ...item, amount: sanitizedAmount })
 	appStore.saveCart()

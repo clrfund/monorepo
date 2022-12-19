@@ -118,7 +118,7 @@ const { nativeTokenSymbol } = storeToRefs(appStore)
 const contributionPhaseDays = computed(() => {
 	if (appStore.currentRound) {
 		const { signUpDeadline, startTime } = appStore.currentRound
-		return Math.ceil((signUpDeadline - startTime) / (24 * 60 * 60 * 1000))
+		return Math.ceil(signUpDeadline.diff(startTime, 'seconds').seconds / (24 * 60 * 60 * 1000))
 	}
 	return 'TBD'
 })
@@ -134,7 +134,7 @@ const maxRecipients = computed(() => {
 const reallocationPhaseDays = computed(() => {
 	if (appStore.currentRound) {
 		const { signUpDeadline, votingDeadline } = appStore.currentRound
-		return Math.ceil((votingDeadline - signUpDeadline) / (24 * 60 * 60 * 1000))
+		return Math.ceil(votingDeadline.diff(signUpDeadline, 'seconds').seconds / (24 * 60 * 60 * 1000))
 	}
 	return 'TBD'
 })

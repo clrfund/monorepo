@@ -27,11 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import Accordion from '@/components/Accordion.vue'
-
-const sponsorTxHash = ref('')
-const sponsorTxError = ref('')
 </script>
 
 <style scoped lang="scss">

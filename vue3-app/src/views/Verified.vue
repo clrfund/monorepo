@@ -11,7 +11,7 @@
 					<span class="emoji">🎉</span>
 					<div class="flex-title">
 						<h1>Ready to contribute!</h1>
-						<transaction-receipt v-if="$route.params.hash" :hash="$route.params.hash" />
+						<transaction-receipt v-if="hash" :hash="hash" />
 					</div>
 					<div class="subtitle">
 						You’re on board this funding round! And fully verified for BrightID for this funding round.
@@ -38,6 +38,9 @@ import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
 const { currentRound } = storeToRefs(appStore)
+
+const route = useRoute()
+const hash = computed(() => route.params.hash as string)
 </script>
 
 <style scoped lang="scss">

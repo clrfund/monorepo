@@ -23,11 +23,11 @@
 import { ref } from 'vue'
 
 interface Props {
-	tag: any
-	header: any
-	content: any
-	linkButton: { link: string; text: string }
-	open: boolean
+	tag: string
+	header: string
+	content: string
+	linkButton?: { link: string; text: string }
+	open?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -43,7 +43,9 @@ function toggleIsOpen() {
 }
 
 function openTab() {
-	window.open(props.linkButton.link, '_blank')
+	if (props.linkButton) {
+		window.open(props.linkButton.link, '_blank')
+	}
 }
 </script>
 

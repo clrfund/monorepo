@@ -33,10 +33,10 @@ export default defineConfig({
 		},
 	],
 	resolve: {
-		// Enable polyfill node used in development to prevent from vite's browser compatibility warning
 		alias: { '@': path.resolve(__dirname, 'src'), ...nodeStdlibBrowser },
 	},
 	optimizeDeps: {
+		include: ['buffer', 'process'], // pre-bundle buffer and process
 		esbuildOptions: {
 			target: 'esnext', // Enable Big integer literals
 		},

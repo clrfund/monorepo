@@ -21,7 +21,7 @@
 						<time-left
 							value-class="contributed-content-bold"
 							unit-class="contributed-content-bold"
-							:date="currentRound?.votingDeadline"
+							:date="currentRound?.votingDeadline!"
 						/>.
 					</p>
 					<p v-else-if="$route.params.type === 'contribution'" class="contributed-content">
@@ -29,12 +29,12 @@
 						<time-left
 							value-class="contributed-content-bold"
 							unit-class="contributed-content-bold"
-							:date="currentRound?.votingDeadline"
+							:date="currentRound?.votingDeadline!"
 						/>
 						to reallocate your contributions.
 					</p>
-					<div v-if="$route.params.hash" class="receipt">
-						<transaction-receipt :hash="$route.params.hash" />
+					<div v-if="hash" class="receipt">
+						<transaction-receipt :hash="hash" />
 					</div>
 					<div class="btn-info" @click="redirectToProjects()">OK</div>
 				</div>
@@ -58,12 +58,13 @@ import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
+const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
 const { contribution, currentRound } = storeToRefs(appStore)
 
 const formatContribution = computed(() => (contribution.value ? formatAmount(contribution.value, 18) : ''))
-
+const hash = computed(() => route.params.hash as string)
 function redirectToProjects() {
 	router.push({ name: 'projects' })
 }

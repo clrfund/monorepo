@@ -5,7 +5,7 @@
 			<links v-if="round.address" class="round-name" :to="{ name: 'round', params: { address: round.address } }">
 				Round {{ round.index }}
 			</links>
-			<links v-else :to="round.url"> Round {{ round.index }} </links>
+			<links v-else :to="round.url ? round.url : ''"> Round {{ round.index }} </links>
 		</div>
 	</div>
 </template>
