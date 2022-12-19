@@ -18,8 +18,26 @@
 					>
 						<links :to="to">
 							<div class="emoji-wrapper">{{ emoji }}</div>
-							<p class="item-text">{{ text }}</p>
+							<p class="item-text">{{ $t(text) }}</p>
 						</links>
+					</div>
+					<!-- language -->
+					<div v-if="supportedLocales.length > 1">
+						<div class="hr"></div>
+						<div
+							@click="onChangeLang(lang)"
+							v-for="lang of supportedLocales"
+							:key="lang"
+							class="dropdown-item"
+						>
+							<a>
+								<div class="emoji-wrapper">{{ languageEmoji(lang) }}</div>
+								<p class="item-text">
+									{{ languageDescription(lang) }}
+								</p>
+								<div v-if="locale === lang">✔️</div>
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -41,6 +59,10 @@ import { isValidTheme, getOsColorScheme } from '@/utils/theme'
 // import ClickOutside from '@/directives/ClickOutside'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import { supportedLocales, languageEmoji, languageDescription } from '@/plugins/i18n/translations'
+import { useI18n } from 'vue-i18n'
+
+const { locale } = useI18n()
 
 const appStore = useAppStore()
 const { operator } = storeToRefs(appStore)
@@ -57,20 +79,36 @@ const props = defineProps<Props>()
 const showHelpDropdown = ref(false)
 const profileImageUrl = ref<string | null>(null)
 const dropdownItems = ref<{ to: string; text: string; emoji: string }[]>([
-	{ to: '/', text: 'Home', emoji: '🏠' },
-	{ to: '/about', text: 'About', emoji: 'ℹ️' },
-	{ to: '/about/how-it-works', text: 'How it works', emoji: '⚙️' },
-	{ to: '/about/maci', text: 'Bribery protection', emoji: '🤑' },
-	{ to: '/about/sybil-resistance', text: 'Sybil resistance', emoji: '👤' },
+	{ to: '/', text: 'navBar.dropdown.home', emoji: '🏠' },
+	{
+		to: '/about',
+		text: 'navBar.dropdown.about',
+		emoji: 'ℹ️',
+	},
+	{
+		to: '/about/how-it-works',
+		text: 'navBar.dropdown.how',
+		emoji: '⚙️',
+	},
+	{
+		to: '/about/maci',
+		text: 'navBar.dropdown.maci',
+		emoji: '🤑',
+	},
+	{
+		to: '/about/sybil-resistance',
+		text: 'navBar.dropdown.sybil',
+		emoji: '👤',
+	},
 	{
 		to: 'https://github.com/clrfund/monorepo/',
-		text: 'Code',
+		text: 'navBar.dropdown.code',
 		emoji: '👾',
 	},
 	{
 		to: '/recipients',
-		text: 'Recipients',
-		emoji: '🚀',
+		text: 'navBar.dropdown.recipients',
+		emoji: '💎',
 	},
 ])
 
@@ -82,11 +120,15 @@ onMounted(() => {
 	if (chain.isLayer2) {
 		dropdownItems.value.splice(-1, 0, {
 			to: '/about/layer-2',
-			text: 'Layer 2',
+			text: 'navBar.dropdown.layer2',
 			emoji: '🚀',
 		})
 	}
 })
+
+function onChangeLang(lang: string) {
+	locale.value = lang
+}
 
 function closeHelpDropdown(): void {
 	showHelpDropdown.value = false
@@ -181,6 +223,55 @@ const themeKey = computed<string>(() => 'theme')
 					background: var(--bg-light-color);
 				}
 
+				.item-text {
+					margin: 0;
+					color: var(--text-color);
+				}
+			}
+			.hr {
+				width: 100%;
+				border-bottom: 1px solid rgba($border-light, 0.3);
+				margin: 10px 0;
+			}
+		}
+	}
+
+	.lang-dropdown {
+		display: inline-block;
+		margin-left: 0.5rem;
+		.button-menu {
+			display: flex;
+			flex-direction: column;
+			position: absolute;
+			top: 2rem;
+			right: 0.5rem;
+			background: var(--bg-secondary-color);
+			border: 1px solid rgba(115, 117, 166, 0.3);
+			border-radius: 0.5rem;
+			min-width: 160px;
+			box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+			z-index: 1;
+			cursor: pointer;
+			overflow: hidden;
+			@media (max-width: $breakpoint-s) {
+				right: -4.5rem;
+			}
+			.dropdown-title {
+				padding: 0.5rem;
+				font-weight: 600;
+			}
+			.dropdown-item {
+				display: flex;
+				align-items: center;
+				padding: 0.5rem;
+				gap: 0.5rem;
+				width: 176px;
+				&:after {
+					color: var(--text-color);
+				}
+				&:hover {
+					background: var(--bg-light-color);
+				}
 				.item-text {
 					margin: 0;
 					color: var(--text-color);

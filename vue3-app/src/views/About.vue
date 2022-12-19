@@ -1,96 +1,81 @@
 <template>
 	<div class="about">
-		<h1 class="content-heading">About</h1>
+		<h1 class="content-heading">{{ $t('about.heading.title') }}</h1>
 
-		<h2>What is clr.fund?</h2>
+		<h2>{{ $t('about.what.title') }}</h2>
 		<p>
-			Clr.fund, pronounced "Clear Fund", is a protocol for efficiently allocating funds to public goods that
-			benefit the Ethereum Network according to the preferences of the Ethereum Community. Clr.fund strives for
-			credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity.
+			{{ $t('about.what.paragraph') }}
 		</p>
 
-		<h2>Why does clr.fund exist?</h2>
+		<h2>{{ $t('about.why.title') }}</h2>
 		<p>
-			Allocating funds towards
-			<links to="/about/public-goods">public goods</links> — commodities or services that are neither excludable
-			nor subtractable — is a challenge for any ecosystem, and Ethereum is no exception.
+			{{ $t('about.why.paragraph-1-text-1') }}
+			<links to="/about/public-goods">{{ $t('about.why.paragraph-1-link') }}</links>
+			{{ $t('about.why.paragraph-1-text-2') }}
 		</p>
 		<p>
-			Clr.fund’s goal is to enable funds to be allocated towards public goods that benefit the Ethereum Network
-			without relying on centralized entities and in a way that reflects the preferences of the Ethereum
-			Community.
+			{{ $t('about.why.paragraph-2') }}
 		</p>
 		<p>
-			See the
-			<links to="https://github.com/clrfund/constitution">Clr.fund Constitution</links>
-			for more detail on clr.fund’s goals and values.
+			{{ $t('about.why.paragraph-3-text-1') }}
+			<links to="https://github.com/clrfund/constitution">{{ $t('about.why.paragraph-3-link') }}</links>
+			{{ $t('about.why.paragraph-3-text-2') }}
 		</p>
 
-		<h2>How is clr.fund unique?</h2>
-		<p>Clr.fund instances also have a number of other special properties:</p>
+		<h2>{{ $t('about.unique.title') }}</h2>
+		<p>{{ $t('about.unique.paragraph-1') }}</p>
 		<ul>
 			<li>
-				Decentralization — Major pieces of clr.fund's infrastructure are built on
-				<links to="https://ethereum.org/en/what-is-ethereum/">Ethereum</links>, a programmable blockchain that
-				provides a reliable, censorship-resistant ledger for clr.fund's voting and funding transactions.
-				<links to="/about/decentralization">Read more on clr.fund's decentralization</links>.
+				{{ $t('about.unique.li-1-text-1') }}
+				<links to="https://ethereum.org/en/what-is-ethereum/">{{ $t('about.unique.li-1-link-1') }}</links>
+				{{ $t('about.unique.li-1-text-2') }}
+				<links to="/about/decentralization">{{ $t('about.unique.li-1-link-2') }}</links>
 			</li>
 			<li>
-				Scalability — Because using Ethereum can be expensive for users, clr.fund uses
-				{{ chain.isLayer2 ? `"layer 2"` : `"sidechain"` }} supplementary networks to get most of the benefits of
-				the main Ethereum network but with faster, cheaper transactions.
-				<links v-if="chain.isLayer2" to="/about/layer-2"> Learn more about clr.fund's use of layer 2. </links>
+				{{ $t('about.unique.li-2-text-1') }}
+				{{ chain.isLayer2 ? $t('about.unique.li-2-layer2-1') : $t('about.unique.li-2-layer2-2') }}
+				{{ $t('about.unique.li-2-text-2') }}
+				<links v-if="chain.isLayer2" to="/about/layer-2">
+					{{ $t('about.unique.li-2-link-1') }}
+				</links>
 			</li>
 			<li>
-				Collusion-resistance — Since blockchains like Ethereum publish all data publicly by default, clr.fund
-				contributors are vulnerable to bribery and other kinds of manipulation. Clr.fund helps prevent these
-				attacks using magical math called zero-knowledge proofs.
-				<links to="/about/maci">Find out about MACI, our Minimal Anti-Collusion Infrastructure.</links>
+				{{ $t('about.unique.li-3-text-1') }}
+				<links to="/about/maci"> {{ $t('about.unique.li-3-link-1') }}</links>
 			</li>
 			<li>
-				Sybil-resistance — Voting systems that care about the number of individual people voting for a given
-				choice, as quadratic funding does, can be vulnerable to sybil attacks, in which one person sets up many
-				identities in order to vote multiple times. Clr.fund mitigates this threat with an identity-system
-				called BrightID.
-				<links to="/about/sybil-resistance">Find out more about BrightID</links>.
+				{{ $t('about.unique.li-4-text-1') }}
+				<links to="/about/sybil-resistance"> {{ $t('about.unique.li-4-link-1') }}</links>
 			</li>
 		</ul>
 		<p>
-			Clr.fund is also built so anyone can spin up and run their own instance to create a public goods grant
-			program for their particular public.
+			{{ $t('about.unique.paragraph-2') }}
 		</p>
-
-		<h2>How does it work?</h2>
+		<h2>{{ $t('about.how.title') }}</h2>
 		<p>
-			The clr.fund protocol uses the Constrained Liberal Radicalism (CLR) algorithm, commonly called
-			<links to="/about/quadratic-funding">quadratic funding</links> (QF), to facilitate monetary contributions
-			from members of the Ethereum Community towards builders of Ethereum public goods.
+			{{ $t('about.how.paragraph-1-text-1') }}
+			<links to="/about/quadratic-funding">{{ $t('about.how.paragraph-1-link-1') }}</links>
+			{{ $t('about.how.paragraph-1-text-2') }}
 		</p>
 		<p>
-			With its logic encoded into Ethereum smart contracts and other web3 technologies, clr.fund requires minimal
-			trust in any individual people or entities to function and is resilient to collusion and bribery.
-		</p>
-
-		<p>
-			At a high-level, clr.fund consists of a matching pool and a funding round. Philanthropic individuals or
-			organizations contribute to the matching pool so as to have those funds efficiently allocated according to
-			community preference. Users contribute directly to projects they value and, in doing so, earn a share of the
-			matching pool for the projects, along with their contribution. Effectively increasing the value of their
-			contribution.
-		</p>
-
-		<p>
-			Under the hood, clr.fund uses zero-knowledge proofs (ZK-SNARKS), courtesy of the
-			<links to="/about/maci">Minimal Anti-collusion Infrastructure (MACI)</links>, to keep individual
-			contributions private and limit effectiveness of collusion and bribery.
+			{{ $t('about.how.paragraph-2') }}
 		</p>
 		<p>
-			To ensure that every contributor is a unique person clr.fund uses
-			<links to="/about/sybil-resistance">BrightID</links>.
+			{{ $t('about.how.paragraph-3') }}
 		</p>
 		<p>
-			Still curious? Read more on
-			<links to="/about/how-it-works">how clr.fund works</links>.
+			{{ $t('about.how.paragraph-4-text-1') }}
+			<links to="/about/maci"> {{ $t('about.how.paragraph-4-link-1') }}</links>
+			{{ $t('about.how.paragraph-4-text-2') }}
+		</p>
+		<p>
+			{{ $t('about.how.paragraph-5') }}
+			<links to="/about/sybil-resistance"> {{ $t('about.how.paragraph-5-link') }}</links>
+		</p>
+		<p>
+			{{ $t('about.how.paragraph-6') }}
+			<links to="/about/how-it-works"> {{ $t('about.how.paragraph-6-link') }}</links
+			>.
 		</p>
 	</div>
 </template>

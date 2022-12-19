@@ -41,5 +41,5 @@ module.exports = {
 		'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
 		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
 	},
-	ignorePatterns: ['dist', 'src/graphql/API.ts', 'package.json', '.eslintrc.js', 'vite.config.ts'],
+	ignorePatterns: ['dist', 'src/graphql/API.ts', 'package.json', '.eslintrc.js', 'vite.config.ts', 'src/locales/*'],
 }
