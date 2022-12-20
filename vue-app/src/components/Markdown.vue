@@ -15,7 +15,7 @@ export default class Transaction extends Vue {
   raw!: string
 
   get body(): string {
-    return markdown.render(this.raw)
+    return this.raw ? markdown.render(this.raw) : ''
   }
 }
 </script>

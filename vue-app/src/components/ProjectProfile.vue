@@ -24,7 +24,7 @@
       </h1>
       <p class="tagline">{{ project.tagline }}</p>
       <div class="subtitle">
-        <div class="tag">
+        <div v-if="project.category" class="tag">
           {{ $t($store.getters.categoryLocaleKey(project.category)) }}
           {{ $t('projectProfile.div1') }}
         </div>
