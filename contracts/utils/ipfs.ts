@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const Hash = require('ipfs-only-hash')
 import { utils } from 'ethers'
 

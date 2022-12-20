@@ -1,7 +1,7 @@
 import { Log } from '../providers/BaseProvider'
 import { Project } from '../types'
 import { utils, BigNumber } from 'ethers'
-import { TOPIC_ABIS } from '../constants'
+import { TOPIC_ABIS } from '../abi'
 import { RecipientState } from '../constants'
 import { BaseParser } from './BaseParser'
 import { toDate } from '../date'
@@ -23,7 +23,7 @@ export class RequestResolvedParser extends BaseParser {
     const timestamp = toDate(args._timestamp)
 
     let state =
-      args._type === '1' ? RecipientState.Removed : RecipientState.Accepted
+      args._type === 1 ? RecipientState.Removed : RecipientState.Accepted
 
     if (args._rejected) {
       state = RecipientState.Rejected

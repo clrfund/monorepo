@@ -6,7 +6,7 @@ import { RecipientState } from '../constants'
 import { BaseParser } from './BaseParser'
 import { toDate } from '../date'
 
-export class RecipientAddedParser extends BaseParser {
+export class RecipientAddedV1Parser extends BaseParser {
   constructor(topic0: string) {
     super(topic0)
   }
@@ -18,10 +18,9 @@ export class RecipientAddedParser extends BaseParser {
     }
     const parser = new utils.Interface([abiInfo.abi])
     const { args } = parser.parseLog(log)
-    const id = args._recipientId
+    const id = args._recipient
     const recipientIndex = BigNumber.from(args._index).toNumber()
     const address = args._recipient
-    const addedAt = args._timestamp
     let metadata: any
     let name: string
     try {
@@ -36,7 +35,6 @@ export class RecipientAddedParser extends BaseParser {
     return {
       id,
       recipientIndex,
-      createdAt: toDate(addedAt),
       address,
       name,
       state,

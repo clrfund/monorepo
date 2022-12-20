@@ -1,10 +1,11 @@
 import { Contract, EventFilter, providers, constants, utils } from 'ethers'
 import { ProviderFactory } from './providers/ProviderFactory'
 import { Project } from './types'
-import { EVENT_ABIS, RecipientState } from './constants'
+import { RecipientState } from './constants'
 import { ParserFactory } from './parsers/ParserFactory'
 import { Log } from './providers/BaseProvider'
 import { toDate } from './date'
+import { EVENT_ABIS } from './abi'
 
 function getFilter(address: string, abi: string): EventFilter {
   const eventInterface = new utils.Interface([abi])
@@ -105,33 +106,40 @@ export class RecipientRegistryLogProcessor {
     for (let i = 0; i < logs.length; i++) {
       const log = logs[i]
       const parser = ParserFactory.create(log.topics[0])
-      const parsed = await parser.parse(log)
+      let parsed: any
+
+      try {
+        parsed = await parser.parse(log)
+      } catch (err) {
+        console.log('failed to parse', (err as Error).message)
+      }
       const address = parsed.address || constants.AddressZero
       const id = parsed.id || '0'
       const block = await this.registry.provider.getBlock(log.blockNumber)
       const blockTimestamp = toDate(block.timestamp)
+      const createdAt = parsed.createdAt || blockTimestamp
 
-      if (parsed.state === RecipientState.Accepted) {
+      if (!recipients[id]) {
         recipients[id] = {
           id,
-          state: parsed.state,
+          state: RecipientState.Accepted,
           address,
-          metadata: parsed.metadata,
           name: parsed.name,
-          createdAt: parsed.createdAt || blockTimestamp,
-          recipientIndex: parsed.recipientIndex,
+          metadata: parsed.metadata,
+          createdAt,
         }
-      } else {
-        // update the record
-        if (parsed.state) {
-          recipients[id].state = parsed.state
-        }
-        if (parsed.recipientIndex) {
-          recipients[id].recipientIndex = parsed.recipientIndex
-        }
-        if (parsed.removedAt) {
-          recipients[id].removedAt = parsed.removedAt
-        }
+      }
+
+      if (parsed.state) {
+        recipients[id].state = parsed.state
+      }
+
+      if (parsed.recipientIndex) {
+        recipients[id].recipientIndex = parsed.recipientIndex
+      }
+
+      if (parsed.removedAt) {
+        recipients[id].removedAt = parsed.removedAt
       }
     }
 

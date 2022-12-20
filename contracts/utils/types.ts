@@ -13,11 +13,11 @@ export interface Project {
   createdAt?: Date
   removedAt?: Date
   tallyIndex?: number
-  tallyVotes?: string
-  tallyVoiceCredits?: string
+  tallyResult?: string
+  spentVoiceCredits?: string
   tallyRecipientAddress?: string
-  donationAmount?: string
-  fundingAmount?: string
+  formattedDonationAmount?: string
+  formattedAllocatedAmount?: string
   metadata?: any
   rawMetadata?: string
 }
@@ -50,6 +50,8 @@ export type EventType =
   | 'KlerosRecipientRemoved'
   | 'RecipientRemoved'
   | 'RecipientAdded'
+  | 'RecipientRemovedV1'
+  | 'RecipientAddedV1'
 
 export type AbiInfo = {
   type: EventType

@@ -1,7 +1,9 @@
 import { BaseParser } from './BaseParser'
-import { TOPIC_ABIS } from '../constants'
+import { TOPIC_ABIS } from '../abi'
 import { RecipientAddedParser } from './RecipientAddedParser'
 import { RecipientRemovedParser } from './RecipientRemovedParser'
+import { RecipientAddedV1Parser } from './RecipientAddedV1Parser'
+import { RecipientRemovedV1Parser } from './RecipientRemovedV1Parser'
 import { KlerosRecipientAddedParser } from './KlerosRecipientAddedParser'
 import { KlerosRecipientRemovedParser } from './KlerosRecipientRemovedParser'
 import { RequestSubmittedParser } from './RequestSubmittedParser'
@@ -18,6 +20,10 @@ export class ParserFactory {
         return new RecipientAddedParser(topic0)
       case 'RecipientRemoved':
         return new RecipientRemovedParser(topic0)
+      case 'RecipientAddedV1':
+        return new RecipientAddedV1Parser(topic0)
+      case 'RecipientRemovedV1':
+        return new RecipientRemovedV1Parser(topic0)
       case 'KlerosRecipientAdded':
         return new KlerosRecipientAddedParser(topic0)
       case 'KlerosRecipientRemoved':
