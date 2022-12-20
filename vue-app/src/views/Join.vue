@@ -552,7 +552,7 @@
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">{{ $t('join.step5.h4_4') }}</h4>
-                  <div class="data">
+                  <div v-if="form.project.category" class="data">
                     {{
                       $t(
                         $store.getters.categoryLocaleKey(form.project.category)
