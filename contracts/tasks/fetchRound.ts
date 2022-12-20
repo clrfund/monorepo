@@ -30,9 +30,9 @@ function roundListFileName(directory: string): string {
   return path.join(directory, 'rounds.json')
 }
 
-function writeToFile(filePath: string, roundData: RoundData) {
-  const outputString = JSON.stringify(roundData, null, 2)
-  fs.writeFileSync(filePath, outputString)
+function writeToFile(filePath: string, data: any) {
+  const outputString = JSON.stringify(data, null, 2)
+  fs.writeFileSync(filePath, outputString + '\n')
   console.log('Successfully written to ', filePath)
 }
 
@@ -43,29 +43,23 @@ function roundMapKey(round: RoundListEntry): string {
 async function updateRoundList(filePath: string, round: RoundListEntry) {
   const roundMap = new Map<string, RoundListEntry>()
   roundMap.set(roundMapKey(round), round)
+  let json = ''
   try {
-    const json = fs.readFileSync(filePath, 'utf8')
-    const previousRounds = JSON.parse(json)
-    for (let i = 0; i < previousRounds.length; i++) {
-      const previous = previousRounds[i]
-      roundMap.set(roundMapKey(previous), previous)
-    }
-  } catch (err) {
-    const error = err as Error
-    if (error.message !== 'ENOENT: no such file or directory') {
-      console.log('error reading round list', error.message)
-      throw err
-    }
+    json = fs.readFileSync(filePath, 'utf8')
+  } catch {
+    json = '[]'
+  }
+  const previousRounds = JSON.parse(json)
+  for (let i = 0; i < previousRounds.length; i++) {
+    const previous = previousRounds[i]
+    roundMap.set(roundMapKey(previous), previous)
   }
 
   const rounds: RoundListEntry[] = Array.from(roundMap.values())
 
   // sort in descending start time order
   rounds.sort((round1, round2) => round2.startTime - round1.startTime)
-  const outputString = JSON.stringify(rounds, null, 2)
-  fs.writeFileSync(filePath, outputString)
-
-  console.log('Successfully written to ', filePath)
+  writeToFile(filePath, rounds)
 }
 
 async function mergeRecipientTally({
@@ -171,7 +165,7 @@ async function getRoundInfo(
 
   round.contributorCount = await roundContract
     .contributorCount()
-    .then(toString)
+    .then((val: BigNumber) => BigNumber.from(val).toNumber())
     .catch(toUndefined)
 
   round.matchingPoolSize = await roundContract
@@ -259,8 +253,10 @@ task('fetch-round', 'Fetch round data')
       console.log('Processing on ', network.name)
       console.log('Funding round address', roundAddress)
 
-      const directoryStats = fs.statSync(outputDir)
-      if (!directoryStats.isDirectory()) {
+      try {
+        fs.statSync(outputDir)
+      } catch {
+        // exit script if failed to create directory
         fs.mkdirSync(outputDir, { recursive: true })
       }
 
