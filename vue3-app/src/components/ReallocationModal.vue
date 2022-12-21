@@ -1,22 +1,30 @@
 <template>
-	<div class="modal-body">
-		<div v-if="step === 1">
-			<h3>Reallocate funds</h3>
-			<transaction
-				:hash="voteTxHash"
-				:error="voteTxError"
-				:display-retry-btn="true"
-				@close="$emit('close')"
-				@retry="
-					() => {
-						voteTxError = ''
-						vote()
-					}
-				"
-			></transaction>
+	<vue-final-modal v-slot="{ close }" v-bind="$attrs">
+		<div class="modal-body">
+			<div v-if="step === 1">
+				<h3>Reallocate funds</h3>
+				<transaction
+					:hash="voteTxHash"
+					:error="voteTxError"
+					:display-retry-btn="true"
+					@close="$emit('close', close)"
+					@retry="
+						() => {
+							voteTxError = ''
+							vote()
+						}
+					"
+				></transaction>
+			</div>
 		</div>
-	</div>
+	</vue-final-modal>
 </template>
+
+<script lang="ts">
+export default {
+	inheritAttrs: false,
+}
+</script>
 
 <script lang="ts" setup>
 import { BigNumber, Contract } from 'ethers'
@@ -24,7 +32,8 @@ import type { PubKey, Message } from 'maci-domainobjs'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
-
+// @ts-ignore
+import { VueFinalModal } from 'vue-final-modal'
 import { FundingRound } from '@/api/abi'
 import { useEthers } from 'vue-dapp'
 import { useAppStore } from '@/stores'

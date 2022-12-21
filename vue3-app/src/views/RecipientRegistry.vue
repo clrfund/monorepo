@@ -87,13 +87,13 @@
 						<td>
 							<div v-if="isUserConnected" class="actions">
 								<!-- TODO: to implement this feature, it requires to send a baseDeposit (see contract)
-              <div
-                class="btn-warning"
-                @click="remove(request)"
-                v-if="isExecuted(request)"
-              >
-                Remove
-              </div> -->
+									<div
+										class="btn-warning"
+										@click="remove(request)"
+										v-if="isExecuted(request)"
+									>
+										Remove
+									</div> -->
 								<div
 									v-if="(isOwner && isPending(request)) || isAccepted(request)"
 									class="icon-btn-approve"
@@ -144,6 +144,7 @@ import { useUserStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useEthers } from 'vue-dapp'
 import { $vfm } from 'vue-final-modal'
+import type { TransactionResponse } from '@ethersproject/abstract-provider'
 
 const { signer } = useEthers()
 const recipientStore = useRecipientStore()
@@ -223,28 +224,26 @@ async function remove(request: Request): Promise<void> {
 	await waitForTransactionAndLoad(removeProject(recipientRegistryAddress.value!, request.recipientId, signer.value!))
 }
 
-async function waitForTransactionAndLoad(transaction: any) {
-	$vfm.show(
-		{
-			component: TransactionModal,
-			bind: {
-				onTxSuccess: async () => {
-					// TODO: this is not ideal. Leaving as is, just because it is an admin
-					// page where no end user is using. We are forcing this 2s time to give
-					// time the subgraph to index the new state from the tx. Perhaps we could
-					// avoid querying the subgraph and query directly the chain to get the
-					// request state.
-					await new Promise(resolve => {
-						setTimeout(async () => {
-							await loadRequests()
-							resolve(true)
-						}, 2000)
-					})
-				},
+async function waitForTransactionAndLoad(transaction: Promise<TransactionResponse>) {
+	$vfm.show({
+		component: TransactionModal,
+		bind: {
+			onTxSuccess: async () => {
+				// TODO: this is not ideal. Leaving as is, just because it is an admin
+				// page where no end user is using. We are forcing this 2s time to give
+				// time the subgraph to index the new state from the tx. Perhaps we could
+				// avoid querying the subgraph and query directly the chain to get the
+				// request state.
+				await new Promise(resolve => {
+					setTimeout(async () => {
+						await loadRequests()
+						resolve(true)
+					}, 2000)
+				})
 			},
+			transaction,
 		},
-		transaction,
-	)
+	})
 }
 
 async function copyAddress(text: string): Promise<void> {

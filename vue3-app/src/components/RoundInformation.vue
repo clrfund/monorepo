@@ -384,7 +384,8 @@ function addMatchingFunds(): void {
 	$vfm.show({
 		component: MatchingFundsModal,
 		on: {
-			close() {
+			close(closeModal) {
+				closeModal()
 				// Reload matching pool size
 				appStore.loadRoundInfo()
 			},

@@ -104,7 +104,6 @@ import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { createMessage } from '@/utils/maci'
 import ProgressBar from '@/components/ProgressBar.vue'
-// this line is needed, but ts complain (6133) (1444)
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
 import { FundingRound, ERC20, MACI } from '@/api/abi'

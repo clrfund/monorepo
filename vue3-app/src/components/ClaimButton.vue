@@ -104,18 +104,16 @@ function formatAmount(value: FixedNumber): string {
 }
 
 function claim() {
-	$vfm.show(
-		{
-			component: ClaimModal,
-		},
-		{
+	$vfm.show({
+		component: ClaimModal,
+		bind: {
 			project: props.project,
 			claimed: () => {
 				// Optimistically update the claimed state
 				claimed.value = true
 			},
 		},
-	)
+	})
 }
 </script>
 

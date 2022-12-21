@@ -476,24 +476,15 @@ function submitCart(event: any) {
 		return [item.index, voiceCredits]
 	})
 
-	$vfm.show(
-		{
-			component: contribution.value.isZero() || !hasUserVoted.value ? ContributionModal : ReallocationModal,
-			bind: { votes },
+	$vfm.show({
+		component: contribution.value.isZero() || !hasUserVoted.value ? ContributionModal : ReallocationModal,
+		bind: { votes, 'click-to-close': contribution.value.isZero() || !hasUserVoted.value },
+		on: {
+			close(closeModal) {
+				closeModal()
+			},
 		},
-		{
-			width: 500,
-			clickToClose: contribution.value.isZero() || !hasUserVoted.value,
-		},
-	)
-	// this.$modal.show(
-	// 	contribution.value.isZero() || !hasUserVoted.value ? ContributionModal : ReallocationModal,
-	// 	{ votes },
-	// 	{
-	// 		width: 500,
-	// 		clickToClose: contribution.value.isZero() || !hasUserVoted.value,
-	// 	},
-	// )
+	})
 
 	appStore.toggleEditSelection(false)
 }

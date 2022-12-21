@@ -1,21 +1,30 @@
 <template>
-	<div class="modal-body">
-		<div v-if="step === 1">
-			<h3>Withdraw funds</h3>
-			<transaction :hash="withdrawalTxHash" :error="withdrawalTxError" @close="$emit('close')"></transaction>
+	<vue-final-modal v-slot="{ close }" v-bind="$attrs">
+		<div class="modal-body">
+			<div v-if="step === 1">
+				<h3>Withdraw funds</h3>
+				<transaction :hash="withdrawalTxHash" :error="withdrawalTxError" @close="close()"></transaction>
+			</div>
+			<div v-if="step === 2">
+				<h3>Success!</h3>
+				<div>You have successfully withdrawn your contribution.</div>
+				<button class="btn close-btn" @click="close()">OK</button>
+			</div>
 		</div>
-		<div v-if="step === 2">
-			<h3>Success!</h3>
-			<div>You have successfully withdrawn your contribution.</div>
-			<button class="btn close-btn" @click="$emit('close')">OK</button>
-		</div>
-	</div>
+	</vue-final-modal>
 </template>
+
+<script lang="ts">
+export default {
+	inheritAttrs: false,
+}
+</script>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { BigNumber } from 'ethers'
-
+// @ts-ignore
+import { VueFinalModal } from 'vue-final-modal'
 import { withdrawContribution } from '@/api/contributions'
 import Transaction from '@/components/Transaction.vue'
 import { formatAmount as _formatAmount } from '@/utils/amounts'

@@ -1,27 +1,35 @@
 <template>
-	<div class="modal-body">
-		<div v-if="step === 1">
-			<h2>Claim funds</h2>
-			<transaction :hash="claimTxHash" :error="claimTxError" @close="$emit('close')"></transaction>
-		</div>
-		<div v-if="step === 2">
-			<h2>Funds were claimed!</h2>
-			<p>
-				<strong>{{ formatAmount(amount) }} {{ currentRound?.nativeTokenSymbol }}</strong>
-				has been sent to
-			</p>
-			<div class="address-box">
-				<div>
-					<div class="address-label">Recipient address</div>
-					<div class="address">
-						{{ recipientAddress }}
+	<vue-final-modal v-slot="{ close }" v-bind="$attrs">
+		<div class="modal-body">
+			<div v-if="step === 1">
+				<h2>Claim funds</h2>
+				<transaction :hash="claimTxHash" :error="claimTxError" @close="$emit('close', close)"></transaction>
+			</div>
+			<div v-if="step === 2">
+				<h2>Funds were claimed!</h2>
+				<p>
+					<strong>{{ formatAmount(amount) }} {{ currentRound?.nativeTokenSymbol }}</strong>
+					has been sent to
+				</p>
+				<div class="address-box">
+					<div>
+						<div class="address-label">Recipient address</div>
+						<div class="address">
+							{{ recipientAddress }}
+						</div>
 					</div>
 				</div>
+				<button class="btn-primary" @click="$emit('close', close)">Done</button>
 			</div>
-			<button class="btn-primary" @click="$emit('close')">Done</button>
 		</div>
-	</div>
+	</vue-final-modal>
 </template>
+
+<script lang="ts">
+export default {
+	inheritAttrs: false,
+}
+</script>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
@@ -29,6 +37,8 @@ import { Contract, BigNumber, Signer } from 'ethers'
 import { FundingRound } from '@/api/abi'
 import type { Project } from '@/api/projects'
 import Transaction from '@/components/Transaction.vue'
+// @ts-ignore
+import { VueFinalModal } from 'vue-final-modal'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'

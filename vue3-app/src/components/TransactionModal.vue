@@ -1,11 +1,11 @@
 <template>
-	<vue-final-modal>
+	<vue-final-modal v-slot="{ close }" v-bind="$attrs">
 		<div class="modal-body">
 			<transaction
 				:hash="txHash"
 				:error="txError"
 				:display-retry-btn="true"
-				@close="$emit('close')"
+				@close="$emit('close', close)"
 				@retry="
 					() => {
 						txError = ''
@@ -13,7 +13,7 @@
 					}
 				"
 			></transaction>
-			<button v-if="txHash" class="btn-secondary close-btn" @click="$emit('close')">Close</button>
+			<button v-if="txHash" class="btn-secondary close-btn" @click="$emit('close', close)">Close</button>
 		</div>
 	</vue-final-modal>
 </template>

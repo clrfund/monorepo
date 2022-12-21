@@ -1,5 +1,5 @@
 <template>
-	<vue-final-modal>
+	<vue-final-modal v-bind="$attrs" v-slot="{ close }">
 		<div class="modal-body">
 			<div v-if="step === 1">
 				<h3>Contribute {{ tokenSymbol }} to the matching pool</h3>
@@ -22,7 +22,7 @@
 					{{ tokenSymbol }}
 				</div>
 				<div class="btn-row">
-					<button class="btn-secondary" @click="$emit('close')">Cancel</button>
+					<button class="btn-secondary" @click="$emit('close', close)">Cancel</button>
 					<button class="btn-action" :disabled="!isAmountValid" @click="contributeMatchingFunds()">
 						Contribute
 					</button>
@@ -30,13 +30,17 @@
 			</div>
 			<div v-if="step === 2">
 				<h3>Contribute {{ renderContributionAmount }} {{ tokenSymbol }} to the matching pool</h3>
-				<transaction :hash="transferTxHash" :error="transferTxError" @close="$emit('close')"></transaction>
+				<transaction
+					:hash="transferTxHash"
+					:error="transferTxError"
+					@close="$emit('close', close)"
+				></transaction>
 			</div>
 			<div v-if="step === 3">
 				<div class="big-emoji">💦</div>
 				<h3>You just topped up the pool by {{ renderContributionAmount }} {{ tokenSymbol }}!</h3>
 				<div class="mb2">Thanks for helping out all our projects.</div>
-				<button class="btn-primary" @click="$emit('close')">Done</button>
+				<button class="btn-primary" @click="$emit('close', close)">Done</button>
 			</div>
 		</div>
 	</vue-final-modal>
@@ -54,6 +58,7 @@ import { BigNumber, Contract } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import Transaction from '@/components/Transaction.vue'
 import InputButton from '@/components/InputButton.vue'
+
 import { waitForTransaction } from '@/utils/contracts'
 import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
