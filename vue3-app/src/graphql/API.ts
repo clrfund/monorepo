@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { GraphQLClient } from 'graphql-request'
 import type Dom from 'graphql-request/dist/types.dom'
 import gql from 'graphql-tag'

@@ -5,6 +5,7 @@ import nodeStdlibBrowser from 'node-stdlib-browser'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import inject from '@rollup/plugin-inject'
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -22,29 +23,30 @@ export default defineConfig({
 		Components({
 			dts: 'src/components.d.ts',
 		}),
-		// https://github.com/niksy/node-stdlib-browser#vite
-		{
-			...inject({
-				global: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'global'],
-				process: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'process'],
-				Buffer: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'Buffer'],
-			}),
-			enforce: 'post',
-		},
+		VueI18nPlugin({}),
 	],
 	resolve: {
 		alias: { '@': path.resolve(__dirname, 'src'), ...nodeStdlibBrowser },
 	},
 	optimizeDeps: {
-		include: ['buffer', 'process'], // pre-bundle buffer and process
 		esbuildOptions: {
-			target: 'esnext', // Enable Big integer literals
+			target: 'esnext', // to enable nable Big integer literals
+			inject: [require.resolve('node-stdlib-browser/helpers/esbuild/shim')],
 		},
 	},
 	build: {
-		target: 'esnext', // Enable Big integer literals
+		target: 'esnext', // to enable Big integer literals
 		commonjsOptions: {
-			transformMixedEsModules: true, // Enable @walletconnect/web3-provider which has some code in CommonJS
+			transformMixedEsModules: true, // to enable @walletconnect/web3-provider which has some code in CommonJS
+		},
+		rollupOptions: {
+			plugins: [
+				inject({
+					global: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'global'],
+					process: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'process'],
+					Buffer: [require.resolve('node-stdlib-browser/helpers/esbuild/shim'), 'Buffer'],
+				}),
+			],
 		},
 	},
 })
