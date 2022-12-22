@@ -19,7 +19,7 @@ module.exports = {
 			js: '@typescript-eslint/parser',
 		},
 		tsconfigRootDir: __dirname,
-		project: ['./tsconfig.json'],
+		project: ['./tsconfig.json', './tsconfig.config.json'],
 		extraFileExtensions: ['.vue'],
 	},
 	overrides: [
@@ -28,6 +28,12 @@ module.exports = {
 			files: ['*.ts', '*.tsx'],
 			parserOptions: {
 				parser: '@typescript-eslint/parser',
+			},
+		},
+		{
+			files: ['*.spec.ts'],
+			rules: {
+				'@typescript-eslint/no-empty-function': 'off',
 			},
 		},
 	],
@@ -41,5 +47,5 @@ module.exports = {
 		'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
 		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
 	},
-	ignorePatterns: ['dist', 'src/graphql/API.ts', 'package.json', '.eslintrc.js', 'vite.config.ts', 'src/locales/*'],
+	ignorePatterns: ['dist', 'src/graphql/API.ts', '.eslintrc.js', 'src/locales/*'],
 }

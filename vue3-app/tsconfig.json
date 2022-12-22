@@ -25,5 +25,10 @@
 		}
 	},
 	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"],
-	"exclude": ["node_modules", "src/graphql/API.ts"]
+	"exclude": ["node_modules", "src/graphql/API.ts"],
+	"references": [
+		{
+			"path": "./tsconfig.config.json"
+		}
+	]
 }
