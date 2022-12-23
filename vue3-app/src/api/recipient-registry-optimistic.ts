@@ -126,6 +126,7 @@ interface RecipientMetadata {
 	name: string
 	description: string
 	imageUrl: string
+	thumbnailImageUrl: string
 }
 
 export interface Request {

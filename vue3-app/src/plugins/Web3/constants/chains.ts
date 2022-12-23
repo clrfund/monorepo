@@ -10,8 +10,8 @@ export enum ChainId {
 	POLYGON = 137,
 }
 
-export interface ChainInfo {
-	[chainId: number]: {
+export type ChainInfo = {
+	[chainId in ChainId]: {
 		label: string
 		currency: string
 		logo: string

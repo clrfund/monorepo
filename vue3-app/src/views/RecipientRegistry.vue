@@ -8,6 +8,9 @@
 		</div>
 		<loader v-if="isLoading" />
 		<div v-else>
+			<button v-if="hasPendingRequests" class="btn-secondary desktop btn-export" @click="handleExport">
+				Export pending submissions
+			</button>
 			<table class="requests">
 				<thead>
 					<tr>
@@ -18,11 +21,14 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="request in requests.slice().reverse()" :key="request.transactionHash">
+					<tr v-for="request in requests.slice().reverse()" :key="request.recipientId">
 						<td>
 							<div class="project-name">
-								<links :to="request.metadata.imageUrl">
-									<img class="project-image" :src="request.metadata.imageUrl" />
+								<links
+									v-if="request.metadata.thumbnailImageUrl"
+									:to="request.metadata.thumbnailImageUrl"
+								>
+									<img class="project-image" :src="request.metadata.thumbnailImageUrl" />
 								</links>
 								{{ request.metadata.name }}
 								<links
@@ -120,12 +126,12 @@
 <script setup lang="ts">
 // 這個元件根本沒有被使用到！
 import { computed, onMounted, ref } from 'vue'
-import type { BigNumber, Transaction } from 'ethers'
+import type { BigNumber } from 'ethers'
 import humanizeDuration from 'humanize-duration'
 import { DateTime } from 'luxon'
 import CopyButton from '@/components/CopyButton.vue'
 
-import { recipientRegistryType } from '@/api/core'
+import { chainId, exportBatchSize, recipientRegistryType } from '@/api/core'
 import {
 	RequestType,
 	RequestStatus,
@@ -157,6 +163,10 @@ const isLoading = ref(true)
 const isOwner = computed(() => isRecipientRegistryOwner.value)
 const registryInfo = computed(() => recipientRegistryInfo.value)
 const isUserConnected = computed(() => !!currentUser.value)
+const hasPendingRequests = computed(() => {
+	const pendingRequests = requests.value.filter(req => isPending(req))
+	return pendingRequests.length > 0
+})
 
 onMounted(async () => {
 	if (recipientRegistryType !== 'optimistic') {
@@ -169,7 +179,8 @@ onMounted(async () => {
 })
 
 async function loadRequests() {
-	requests.value = await getRequests(recipientRegistryInfo.value!, recipientRegistryAddress.value!)
+	const _requests = await getRequests(recipientRegistryInfo.value!, recipientRegistryAddress.value!)
+	requests.value = _requests.filter(req => Boolean(req.requester))
 }
 
 function formatAmount(value: BigNumber): string {
@@ -246,13 +257,74 @@ async function waitForTransactionAndLoad(transaction: Promise<TransactionRespons
 	})
 }
 
-async function copyAddress(text: string): Promise<void> {
-	try {
-		await navigator.clipboard.writeText(text)
-	} catch (error) {
-		/* eslint-disable-next-line no-console */
-		console.warn('Error in copying text: ', error)
+function handleExport(): void {
+	const pendingRequests = requests.value.filter(req => isPending(req))
+
+	let count = 1
+	for (let i = 0; i < pendingRequests.length; i = i + exportBatchSize) {
+		const end = i + exportBatchSize
+		const chunk = pendingRequests.slice(i, end)
+		const url = createExportUrl(chunk)
+		const filename = `pending-submission-${count}.json`
+		exportFile(url, filename)
+		count++
 	}
+}
+
+const challengeRequestAbi = computed(() => {
+	return {
+		inputs: [
+			{
+				internalType: 'bytes32',
+				name: '_recipientId',
+				type: 'bytes32',
+			},
+			{
+				internalType: 'address payable',
+				name: '_beneficiary',
+				type: 'address',
+			},
+		],
+		name: 'challengeRequest',
+		payable: false,
+	}
+})
+
+function createExportUrl(requests: Request[]): string {
+	const transactions = requests.map(req => {
+		return {
+			to: recipientRegistryAddress.value,
+			value: '0',
+			data: null,
+			contractMethod: challengeRequestAbi.value,
+			contractInputsValues: {
+				_recipientId: req.recipientId,
+				_beneficiary: req.requester,
+			},
+		}
+	})
+
+	const data = {
+		version: '1.0',
+		chainId,
+		createdAt: Date.now(),
+		meta: {
+			name: 'Pending Submissions',
+			txBuilderVersion: '1.11.1',
+		},
+		transactions,
+	}
+
+	return 'data:application/json,' + encodeURIComponent(JSON.stringify(data))
+}
+
+function exportFile(url: string, filename: string): void {
+	const anchor = document.createElement('a')
+	anchor.setAttribute('href', url)
+	anchor.setAttribute('download', filename)
+	document.body.appendChild(anchor)
+	anchor.click()
+	document.body.removeChild(anchor)
 }
 </script>
 
@@ -265,6 +337,7 @@ async function copyAddress(text: string): Promise<void> {
 	align-items: center;
 	gap: 1rem;
 	margin-bottom: 2rem;
+	padding-bottom: 0 !important;
 
 	.header {
 		display: flex;
@@ -397,5 +470,9 @@ async function copyAddress(text: string): Promise<void> {
 			width: auto;
 		}
 	}
+}
+
+.btn-export {
+	max-width: fit-content;
 }
 </style>
