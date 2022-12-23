@@ -1,10 +1,6 @@
 <template>
 	<div v-if="project" class="project-page">
-		<info
-			v-if="previewMode"
-			class="info"
-			message="This is what your contributors will see when they visit your project page."
-		/>
+		<info v-if="previewMode" class="info" :message="$t('projectProfile.info1')" />
 		<img v-if="previewMode" class="project-image" :src="project.bannerImageUrl" :alt="project.name" />
 		<div class="about">
 			<h1 class="project-name" :title="addressName" :project-index="project.index">
@@ -13,27 +9,33 @@
 			</h1>
 			<p class="tagline">{{ project.tagline }}</p>
 			<div class="subtitle">
-				<div class="tag">{{ project.category }} tag</div>
-				<div v-if="!!project.teamName" class="team-byline">
-					Team: <links to="#team"> {{ project.teamName }}</links>
+				<div v-if="project.category" class="tag">
+					{{ $t(categoryLocaleKey(project.category)) }}
+					{{ $t('projectProfile.div1') }}
+				</div>
+				<div class="team-byline" v-if="!!project.teamName">
+					{{ $t('projectProfile.div2') }}
+					<links to="#team"> {{ project.teamName }}</links>
 				</div>
 			</div>
 			<div class="mobile mb2">
 				<add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn()" :project="project" />
 				<claim-button :project="project" />
-				<p v-if="hasUserContributed && !canUserReallocate">✔️ You have contributed to this project!</p>
+				<p v-if="hasUserContributed && !canUserReallocate">
+					{{ $t('projectProfile.p1') }}
+				</p>
 			</div>
 			<div class="project-section">
-				<h2>About the project</h2>
+				<h2>{{ $t('projectProfile.h2_1') }}</h2>
 				<markdown :raw="project.description" />
 			</div>
 			<div class="project-section">
-				<h2>The problem it solves</h2>
-				<markdown :raw="project.problemSpace ? project.problemSpace : ''" />
+				<h2>{{ $t('projectProfile.h2_2') }}</h2>
+				<markdown :raw="project.problemSpace || ''" />
 			</div>
 			<div class="project-section">
-				<h2>Funding plans</h2>
-				<markdown :raw="project.plans ? project.plans : ''" />
+				<h2>{{ $t('projectProfile.h2_3') }}</h2>
+				<markdown :raw="project.plans || ''" />
 			</div>
 			<div
 				:class="{
@@ -42,7 +44,7 @@
 				}"
 			>
 				<div>
-					<div class="address-label">Recipient address</div>
+					<div class="address-label">{{ $t('projectProfile.div3') }}</div>
 					<div class="address">
 						{{ addressName }}
 					</div>
@@ -50,24 +52,24 @@
 				<div class="copy-div">
 					<copy-button
 						:value="project.address"
-						text="address"
-						my-class="project-profile"
-						:has-border="true"
+						:text="$t('projectProfile.button1')"
+						myClass="project-profile"
+						:hasBorder="true"
 					/>
 					<links
 						class="explorerLink"
 						:to="blockExplorer.url"
-						:title="`View on ${blockExplorer.label}`"
-						:hide-arrow="true"
+						:title="$t('projectProfile.link1', { blockExplorer: blockExplorer.label })"
+						:hideArrow="true"
 					>
 						<img class="icon" :src="logoUrl" />
 					</links>
 				</div>
 			</div>
 			<hr v-if="project.teamName || project.teamDescription" />
-			<div v-if="project.teamName || project.teamDescription" id="team" class="team">
-				<h2>Team: {{ project.teamName }}</h2>
-				<markdown :raw="project.teamDescription ? project.teamDescription : ''" />
+			<div id="team" v-if="project.teamName || project.teamDescription" class="team">
+				<h2>{{ $t('projectProfile.h2_4') }} {{ project.teamName }}</h2>
+				<markdown :raw="project.teamDescription || ''" />
 			</div>
 		</div>
 		<link-box v-if="previewMode" :project="project" class="mt2" />
@@ -92,6 +94,7 @@ import ClaimButton from '@/components/ClaimButton.vue'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
+import { getAssetsUrl } from '@/utils/url'
 
 interface Props {
 	project: Project
@@ -102,8 +105,15 @@ interface Props {
 const props = defineProps<Props>()
 const route = useRoute()
 const appStore = useAppStore()
-const { currentRound, cart, currentRoundAddress, isRoundContributionPhase, canUserReallocate, hasUserContributed } =
-	storeToRefs(appStore)
+const {
+	currentRound,
+	cart,
+	currentRoundAddress,
+	isRoundContributionPhase,
+	canUserReallocate,
+	hasUserContributed,
+	categoryLocaleKey,
+} = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 
@@ -149,7 +159,7 @@ const isCurrentRound = computed<boolean>(() => {
 const shouldShowCartInput = computed<boolean>(() => {
 	return isCurrentRound.value && (isRoundContributionPhase.value || canUserReallocate.value)
 })
-const logoUrl = new URL(`/src/assets/${blockExplorer.value.logo}`, import.meta.url).href
+const logoUrl = computed(() => getAssetsUrl(blockExplorer.value.logo))
 
 function hasContributeBtn(): boolean {
 	// eslint-disable-next-line

@@ -81,6 +81,5 @@
 </template>
 
 <script setup lang="ts">
-import Links from '@/components/Links.vue'
 import { chain } from '@/api/core'
 </script>

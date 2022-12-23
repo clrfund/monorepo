@@ -1,17 +1,21 @@
 import { createI18n } from 'vue-i18n'
-import zh from '@/locales/zh-TW.json'
+import tw from '@/locales/tw.json'
+import cn from '@/locales/cn.json'
 import en from '@/locales/en.json'
+import es from '@/locales/es.json'
 
-type MessageSchema = typeof zh
+type MessageSchema = typeof tw
 
-const i18n = createI18n<[MessageSchema], 'zh-TW' | 'en'>({
+const i18n = createI18n<[MessageSchema], 'tw' | 'cn' | 'en' | 'es'>({
 	legacy: false,
-	locale: 'zh-TW',
-	fallbackLocale: 'zh-TW',
+	locale: 'tw',
+	fallbackLocale: 'tw',
 	globalInjection: true,
 	messages: {
-		'zh-TW': zh,
-		en: en,
+		tw,
+		cn,
+		en,
+		es,
 	},
 })
 

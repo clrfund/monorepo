@@ -199,7 +199,7 @@ async function register() {
 				name: 'verified',
 				params: { hash: registrationTxHash.value },
 			})
-		} catch (error: any) {
+		} catch (error) {
 			registrationTxError.value = error.message
 			return
 		}

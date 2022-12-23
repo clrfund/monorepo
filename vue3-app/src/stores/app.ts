@@ -226,6 +226,15 @@ export const useAppStore = defineStore('app', {
 		hasUserVoted: (state): boolean => {
 			return state.hasVoted
 		},
+		categoryLocaleKey:
+			() =>
+			(category = ''): string => {
+				try {
+					return category ? `dynamic.category.${category.toLowerCase()}` : ''
+				} catch {
+					return category
+				}
+			},
 	},
 	actions: {
 		setHasVote(hasVoted: boolean) {

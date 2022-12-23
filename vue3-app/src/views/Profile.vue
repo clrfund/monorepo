@@ -85,7 +85,7 @@
 							<div v-if="isHidden" class="project-hidden">Under review</div>
 						</div>
 						<button class="btn-secondary" @click="navigateToProject(id)">
-							{{ isLocked ? 'Preview' : 'View' }}
+							{{ isLocked ? $t('profile.btn2_1') : $t('profile.btn2_2') }}
 						</button>
 					</div>
 				</div>

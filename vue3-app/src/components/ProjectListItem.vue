@@ -4,7 +4,9 @@
 			<links :to="projectRoute">
 				<div class="project-image">
 					<img :src="projectImageUrl || ''" :alt="project.name" />
-					<div class="tag">{{ project.category }}</div>
+					<div v-if="project.category" class="tag">
+						{{ $t(categoryLocaleKey(project.category)) }}
+					</div>
 				</div>
 			</links>
 			<div class="project-info">
@@ -21,17 +23,13 @@
 		<div class="buttons">
 			<add-to-cart-button v-if="shouldShowCartInput" :project="project" />
 			<links :to="projectRoute">
-				<button class="more-btn">More</button>
+				<button class="more-btn">{{ $t('projectListItem.button1') }}</button>
 			</links>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-
-import AddToCartButton from '@/components/AddToCartButton.vue'
-import Links from '@/components/Links.vue'
 import type { CartItem } from '@/api/contributions'
 import type { Project } from '@/api/projects'
 import { markdown } from '@/utils/markdown'
@@ -41,7 +39,7 @@ import { storeToRefs } from 'pinia'
 
 const route = useRoute()
 const appStore = useAppStore()
-const { isRoundContributionPhase, canUserReallocate, currentRoundAddress } = storeToRefs(appStore)
+const { isRoundContributionPhase, canUserReallocate, currentRoundAddress, categoryLocaleKey } = storeToRefs(appStore)
 interface Props {
 	project: Project
 	roundAddress: string

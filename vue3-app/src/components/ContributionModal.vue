@@ -184,7 +184,7 @@ async function sendVotes() {
 				hash: contributionTxHash.value,
 			},
 		})
-	} catch (error: any) {
+	} catch (error) {
 		voteTxError.value = error.message
 		return
 	}
@@ -225,7 +225,7 @@ async function contribute() {
 					token.approve(fundingRoundAddress, total.value),
 					hash => (approvalTxHash.value = hash),
 				)
-			} catch (error: any) {
+			} catch (error) {
 				approvalTxError.value = error.message
 				return
 			}
@@ -239,7 +239,7 @@ async function contribute() {
 				fundingRound.value.contribute(contributorKeypair.pubKey.asContractParam(), total.value),
 				hash => (contributionTxHash.value = hash),
 			)
-		} catch (error: any) {
+		} catch (error) {
 			contributionTxError.value = error.message
 			return
 		}

@@ -4,8 +4,8 @@
 			{{ renderCopiedOrHash }}
 		</div>
 		<div class="icons">
-			<copy-button :value="hash" text="hash" my-class="ipfs-copy-widget" @copied="updateIsCopied" />
-			<links v-tooltip="'View IPFS link'" :to="'https://ipfs.io/ipfs/' + hash" :hide-arrow="true">
+			<copy-button :value="hash" text="hash" v-on:copied="updateIsCopied" myClass="ipfs-copy-widget" />
+			<links v-tooltip="$t('ipfsCopyWidget.tooltip1')" :to="ipfsUrl" :hideArrow="true">
 				<img class="icon" src="@/assets/ipfs-white.svg" />
 			</links>
 		</div>
@@ -14,9 +14,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-import CopyButton from '@/components/CopyButton.vue'
-import Links from '@/components/Links.vue'
+const { t } = useI18n()
 
 interface Props {
 	hash: string
@@ -25,9 +25,10 @@ interface Props {
 const props = defineProps<Props>()
 
 const isCopied = ref(false)
+const ipfsUrl = computed(() => `https://ipfs.io/ipfs/${props.hash}`)
 
 const renderCopiedOrHash = computed(() => {
-	return isCopied.value ? 'Copied!' : props.hash
+	return isCopied.value ? t('copied').toString() : props.hash
 })
 
 function updateIsCopied(_isCopied: boolean): void {

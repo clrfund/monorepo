@@ -12,7 +12,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const body = computed<string>(() => markdown.render(props.raw))
+const body = computed<string>(() => (props.raw ? markdown.render(props.raw) : ''))
 </script>
 
 <style scoped lang="scss">

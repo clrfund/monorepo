@@ -3,33 +3,34 @@
 		<round-status-banner v-if="currentRound" />
 		<div id="page">
 			<div id="hero">
-				<img id="moon" src="@/assets/moon.png" />
+				<img src="@/assets/moon.png" id="moon" />
 				<div class="image-wrapper">
 					<image-responsive title="docking" />
 				</div>
 				<div>
 					<div class="hero-content">
-						<h1>Send your favorite projects to the moon!</h1>
+						<h1>{{ $t('landing.hero.title') }}</h1>
 						<div id="subtitle" class="subtitle">
-							Every project you contribute to gets a portion of extra funding.
+							{{ $t('landing.hero.subtitle') }}
 						</div>
 						<div class="btn-group">
-							<links to="/projects" class="btn-action">Get started</links>
-							<div class="btn-info" @click="scrollToHowItWorks">How it works</div>
+							<links to="/projects" class="btn-action"> {{ $t('landing.hero.action') }}</links>
+							<div class="btn-info" @click="scrollToHowItWorks">
+								{{ $t('landing.hero.info') }}
+							</div>
 						</div>
 					</div>
-					<div v-if="isRoundJoinPhase && !isRecipientRegistryFull" class="apply-callout">
+					<div class="apply-callout" v-if="isRoundJoinPhase && !isRecipientRegistryFull">
 						<div class="column">
-							<h2>Join the funding round</h2>
+							<h2>{{ $t('landing.callout.title') }}</h2>
 							<p>
-								Add your project to the next funding round. If you're working on anything related to
-								public goods, you can join in.
+								{{ $t('landing.callout.paragraph') }}
 							</p>
 							<div class="button-group">
-								<links to="/join" class="btn-primary w100">Add project</links>
+								<links to="/join" class="btn-primary w100">{{ $t('landing.callout.action') }}</links>
 								<div v-if="signUpDeadline">
-									<time-left unit-class="none" :date="signUpDeadline" />
-									to join
+									<time-left unitClass="none" :date="signUpDeadline" />
+									{{ $t('landing.callout.deadline') }}
 								</div>
 							</div>
 						</div>
@@ -45,113 +46,117 @@
 					/>
 				</div>
 				<div id="how-it-works-content">
-					<h2>Every donation is amplified by the matching pool.</h2>
+					<h2>{{ $t('landing.how.title') }}</h2>
 					<p>
-						This fundraiser rewards projects with the most unique demand, not just those with the wealthiest
-						backers.
+						{{ $t('landing.how.paragraph') }}
 					</p>
 					<image-responsive
 						title="wormhole"
 						alt="Image of spaceships funneling through a wormhole and getting bigger"
 					/>
-					<h2>How it works</h2>
+					<h2>{{ $t('landing.how.subtitle') }}</h2>
 					<ol>
-						<li>{{ operator }} and other donors send funds to the matching pool smart contract.</li>
-						<li>The round begins and you can donate to your favorite projects.</li>
 						<li>
-							Once the round finishes, the smart contract distributes the matching pool funds to projects
-							weighted primarily by number of contributions, <strong>not contribution value</strong>.
+							{{ $t('landing.how.list-1', { operator: operator }) }}
+						</li>
+						<li>
+							{{ $t('landing.how.list-2') }}
+						</li>
+						<li>
+							{{ $t('landing.how.list-3') }}
+							<strong>{{ $t('landing.how.list-3-strong') }}.</strong>
 						</li>
 					</ol>
-					<links class="btn-secondary" to="/about/how-it-works">How the round works</links>
+					<links class="btn-secondary" to="/about/how-it-works">{{ $t('landing.how.action') }}</links>
 				</div>
 			</div>
 			<div class="section-header">
-				<h2>What you'll need</h2>
+				<h2>{{ $t('landing.req.title') }}</h2>
 			</div>
 			<div id="what-you-will-need">
 				<div class="pre-req">
 					<div class="icon-row">
-						<img id="chain-icon" :src="chainIconUrl" />
+						<img :src="chainIconUrl" id="chain-icon" />
 						<p>
-							<b>{{ chain.label }} for fast and cheap transaction fees</b>
+							<b>{{ $t('landing.req.chain', { chain: chain.label }) }}</b>
 						</p>
 					</div>
 					<links v-if="chain.isLayer2" to="/about/layer-2" class="btn-action">
-						Get {{ chain.label }} funds
+						{{ $t('landing.req.chain-cta', { chain: chain.label }) }}
 					</links>
 				</div>
-				<div id="bright-id" class="pre-req">
+				<div class="pre-req" id="bright-id">
 					<div class="icon-row">
-						<img id="bright-id-icon" src="@/assets/bright-id.png" />
+						<img src="@/assets/bright-id.png" id="bright-id-icon" />
 						<p>
-							<b>BrightID for private, decentralized identity verification</b>
+							<b>{{ $t('landing.req.bright') }}</b>
 						</p>
 					</div>
-					<links to="/about/sybil-resistance" class="btn-primary">Set up BrightID</links>
+					<links to="/about/sybil-resistance" class="btn-primary">{{ $t('landing.req.bright-cta') }}</links>
 				</div>
 			</div>
 			<div class="section-header">
-				<h2>About</h2>
+				<h2>{{ $t('landing.about.title') }}</h2>
 			</div>
 			<div id="about-section">
 				<div id="about-1">
-					<h2>It's not about how much...</h2>
+					<h2>{{ $t('landing.about.subtitle-1') }}</h2>
 					<p>
-						Using quadratic funding, your contribution counts as a vote. Projects with the most
-						contributions at the end of the round get the highest amount from the matching pool. That means
-						even a small donation can have a massive impact.
+						{{ $t('landing.about.paragraph-1') }}
 					</p>
 					<p>
-						<links to="/about/quadratic-funding">About quadratic funding</links>
+						<links to="/about/quadratic-funding">{{ $t('landing.about.link-1') }}</links>
 					</p>
 				</div>
 				<div id="about-2">
-					<h2>Protect against bribery</h2>
+					<h2>{{ $t('landing.about.subtitle-2') }}</h2>
 					<p>
-						Using MACI, a zero-knowledge technology, it's impossible to prove how you contributed. This
-						drives bribers insane because they have no idea whether you actually did what they bribed you to
-						do!
+						{{ $t('landing.about.paragraph-2') }}
 					</p>
-					<links to="/about/maci">About MACI</links>
+					<links to="/about/maci">{{ $t('landing.about.link-2') }}</links>
 				</div>
 				<div id="about-3">
-					<h2>Built using the CLR protocol</h2>
+					<h2>{{ $t('landing.about.subtitle-3') }}</h2>
 					<p>
-						clr.fund is a protocol for efficiently allocating funds to public goods that benefit the
-						Ethereum Network according to the prefences of the Ethereum Community.
+						{{ $t('landing.about.paragraph-3') }}
 					</p>
-					<links to="/about">About clr.fund</links>
+					<links to="/about">{{ $t('landing.about.link-3') }}</links>
 				</div>
 			</div>
 			<div id="footer">
-				<h2>More</h2>
+				<h2>{{ $t('landing.footer.title') }}</h2>
 				<div class="link-li">
-					<links to="/about">About clr.fund</links>
+					<links to="/about">{{ $t('landing.footer.link-1') }}</links>
 				</div>
 				<div class="link-li">
-					<links to="/about/how-it-works">How the round works</links>
+					<links to="/about/how-it-works">{{ $t('landing.footer.link-2') }}</links>
 				</div>
-				<div v-if="chain.isLayer2" class="link-li">
-					<links to="/about/layer-2">About {{ chain.label }}</links>
-				</div>
-				<div class="link-li">
-					<links to="/about/maci">About MACI</links>
+				<div class="link-li" v-if="chain.isLayer2">
+					<links to="/about/layer-2">{{ $t('landing.footer.link-3', { chain: chain.label }) }}</links>
 				</div>
 				<div class="link-li">
-					<links to="/about/sybil-resistance">About BrightID</links>
+					<links to="/about/maci">{{ $t('landing.footer.link-4') }}</links>
 				</div>
 				<div class="link-li">
-					<links to="https://github.com/clrfund/monorepo/">GitHub</links>
+					<links to="/about/sybil-resistance">{{ $t('landing.footer.link-5') }}</links>
 				</div>
 				<div class="link-li">
-					<links to="https://discord.gg/ZnsYPV6dCv">Discord</links>
+					<links to="https://github.com/clrfund/monorepo/">{{ $t('landing.footer.link-6') }}</links>
 				</div>
 				<div class="link-li">
-					<links to="https://forum.clr.fund/">Forum</links>
+					<links to="https://discord.gg/ZnsYPV6dCv">{{ $t('landing.footer.link-7') }}</links>
 				</div>
 				<div class="link-li">
-					<links to="https://ethereum.org/">More on Ethereum</links>
+					<links to="https://twitter.com/clrfund">Twitter</links>
+				</div>
+				<div class="link-li">
+					<links to="https://blog.clr.fund/">{{ $t('landing.footer.link-blog') }} </links>
+				</div>
+				<div class="link-li">
+					<links to="https://forum.clr.fund/">{{ $t('landing.footer.link-8') }}</links>
+				</div>
+				<div class="link-li">
+					<links to="https://ethereum.org/">{{ $t('landing.footer.link-9') }}</links>
 				</div>
 			</div>
 		</div>
@@ -159,9 +164,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { DateTime } from 'luxon'
-
 import { chain } from '@/api/core'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
@@ -169,6 +171,7 @@ import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import { getAssetsUrl } from '@/utils/url'
 
 const appStore = useAppStore()
 const { operator, isRoundJoinPhase, isRecipientRegistryFull, currentRound } = storeToRefs(appStore)
@@ -178,7 +181,7 @@ const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
 function scrollToHowItWorks() {
 	document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })
 }
-const chainIconUrl = new URL(`/src/assets/${chain.logo}`, import.meta.url).href
+const chainIconUrl = getAssetsUrl(chain.logo)
 </script>
 
 <style scoped lang="scss">

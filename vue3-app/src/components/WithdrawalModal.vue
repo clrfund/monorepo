@@ -56,7 +56,7 @@ async function withdraw() {
 			withdrawContribution(fundingRoundAddress, signer),
 			hash => (withdrawalTxHash.value = hash),
 		)
-	} catch (error: any) {
+	} catch (error) {
 		withdrawalTxError.value = error.message
 		return
 	}

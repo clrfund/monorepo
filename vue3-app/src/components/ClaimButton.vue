@@ -1,9 +1,21 @@
 <template>
 	<div>
 		<loader v-if="isLoading" />
-		<p v-if="claimed">✔️ {{ allocatedAmount ? formatAmount(allocatedAmount) : '' }} {{ tokenSymbol }} claimed</p>
+		<p v-if="claimed">
+			{{
+				$t('claimButton.p', {
+					allocatedAmount: formatAmount(allocatedAmount!),
+					tokenSymbol: tokenSymbol,
+				})
+			}}
+		</p>
 		<button v-if="hasClaimBtn() && !claimed" class="btn-action" :disabled="!canClaim()" @click="claim()">
-			Claim {{ allocatedAmount ? formatAmount(allocatedAmount) : '' }} {{ tokenSymbol }}
+			{{
+				$t('claimButton.button', {
+					allocatedAmount: formatAmount(allocatedAmount!),
+					tokenSymbol: tokenSymbol,
+				})
+			}}
 		</button>
 	</div>
 </template>

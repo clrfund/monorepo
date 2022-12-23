@@ -135,7 +135,7 @@ async function contributeMatchingFunds() {
 
 	try {
 		await waitForTransaction(token.transfer(matchingPoolAddress, _amount), hash => (transferTxHash.value = hash))
-	} catch (error: any) {
+	} catch (error) {
 		transferTxError.value = error.message
 		if (error.message.indexOf('Nonce too high') >= 0 && import.meta.env.MODE === 'development') {
 			transferTxError.value = 'Have you been buidling?? Reset your nonce! 🪄'

@@ -1,4 +1,15 @@
 <template>
+	<!--
+		Tell the vue-i18n-extract the following keys are used
+		$t('navBar.dropdown.home')
+		$t('navBar.dropdown.about')
+		$t('navBar.dropdown.how')
+		$t('navBar.dropdown.maci')
+		$t('navBar.dropdown.sybil')
+		$t('navBar.dropdown.code')
+		$t('navBar.dropdown.layer2')
+		$t('navBar.dropdown.recipients')
+ 	 -->
 	<nav id="nav-bar">
 		<links to="/">
 			<img class="clr-logo" :alt="operator" src="@/assets/clr.svg" />
@@ -42,42 +53,34 @@
 				</div>
 			</div>
 			<wallet-widget v-if="inApp" class="wallet-widget" />
-			<links v-if="!inApp" to="/projects" class="app-btn">App</links>
+			<links v-if="!inApp" to="/projects" class="app-btn">{{ $t('navBar.app') }}</links>
 		</div>
 	</nav>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
-
-import WalletWidget from './WalletWidget.vue'
-import CartWidget from './CartWidget.vue'
-import Links from './Links.vue'
 import { chain, ThemeMode } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'
 import { isValidTheme, getOsColorScheme } from '@/utils/theme'
-// import ClickOutside from '@/directives/ClickOutside'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { supportedLocales, languageEmoji, languageDescription } from '@/plugins/i18n/translations'
 import { useI18n } from 'vue-i18n'
+import { isLocaleSupported } from '@/plugins/i18n/translations'
+import { getAssetsUrl } from '@/utils/url'
 
 const { locale } = useI18n()
 
 const appStore = useAppStore()
 const { operator } = storeToRefs(appStore)
-// directives: {
-// 	ClickOutside,
-// },
 
 interface Props {
 	inApp: any
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 const showHelpDropdown = ref(false)
-const profileImageUrl = ref<string | null>(null)
 const dropdownItems = ref<{ to: string; text: string; emoji: string }[]>([
 	{ to: '/', text: 'navBar.dropdown.home', emoji: '🏠' },
 	{
@@ -111,11 +114,23 @@ const dropdownItems = ref<{ to: string; text: string; emoji: string }[]>([
 		emoji: '💎',
 	},
 ])
+const themeIcon = computed<string>(() => {
+	return appStore.theme === ThemeMode.LIGHT ? 'half-moon.svg' : 'sun.svg'
+})
+const sunImageUrl = computed(() => getAssetsUrl(themeIcon.value))
+const themeKey = computed<string>(() => 'theme')
+const languageKey = 'language'
 
 onMounted(() => {
 	const savedTheme = lsGet(themeKey.value)
 	const theme = isValidTheme(savedTheme) ? savedTheme : getOsColorScheme()
 	appStore.toggleTheme(theme)
+
+	const savedLanguage = lsGet(languageKey)
+	if (isLocaleSupported(savedLanguage)) {
+		locale.value = savedLanguage
+		lsSet(languageKey, locale.value)
+	}
 
 	if (chain.isLayer2) {
 		dropdownItems.value.splice(-1, 0, {
@@ -142,14 +157,6 @@ function toggleTheme(): void {
 	appStore.toggleTheme()
 	lsSet(themeKey.value, appStore.theme)
 }
-
-const themeIcon = computed<string>(() => {
-	return appStore.theme === ThemeMode.LIGHT ? 'half-moon.svg' : 'sun.svg'
-})
-
-const sunImageUrl = new URL(`/src/assets/${themeIcon.value}`, import.meta.url).href
-
-const themeKey = computed<string>(() => 'theme')
 </script>
 
 <style scoped lang="scss">

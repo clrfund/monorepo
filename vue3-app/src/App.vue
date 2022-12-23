@@ -29,7 +29,6 @@
 </template>
 
 <script setup lang="ts">
-import RoundInformation from '@/views/RoundInformation.vue'
 import NavBar from '@/components/NavBar.vue'
 import CartWidget from '@/components/CartWidget.vue'
 import MobileTabs from '@/components/MobileTabs.vue'

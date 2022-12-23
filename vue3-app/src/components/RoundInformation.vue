@@ -63,7 +63,7 @@
 								<div class="round-info-title">Time left to contribute</div>
 								<img
 									v-tooltip="{
-										content: 'During this phase, you can contribute to your favorite projects.',
+										content: $t('roundInfo.tooltip1'),
 										triggers: ['hover', 'click'],
 									}"
 									width="16"
@@ -87,7 +87,7 @@
 								<img
 									v-if="hasUserContributed"
 									v-tooltip="{
-										content: `During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.`,
+										content: $t('roundInfo.tooltip2'),
 										triggers: ['hover', 'click'],
 									}"
 									width="16"
@@ -96,7 +96,7 @@
 								<img
 									v-else-if="!currentUser"
 									v-tooltip="{
-										content: `If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.`,
+										content: $t('roundInfo.tooltip3'),
 										triggers: ['hover', 'click'],
 									}"
 									width="16"
@@ -105,7 +105,7 @@
 								<img
 									v-else
 									v-tooltip="{
-										content: `This round has closed for new contributions.`,
+										content: $t('roundInfo.tooltip4'),
 										triggers: ['hover', 'click'],
 									}"
 									width="16"
@@ -130,7 +130,7 @@
 								<div class="round-info-title">Round status</div>
 								<img
 									v-tooltip="{
-										content: `Our smart contracts are busy figuring out final contribution amounts.`,
+										content: $t('roundInfo.tooltip5'),
 										triggers: ['hover', 'click'],
 									}"
 									width="16"
@@ -148,7 +148,7 @@
 								<div class="round-info-title">Round status</div>
 								<img
 									v-tooltip="{
-										content: `If you're a project owner you can now claim your funds!`,
+										content: $t('roundInfo.tooltip6'),
 										triggers: ['hover', 'click'],
 									}"
 									width="16"
@@ -168,7 +168,7 @@
 								<div class="round-info-title">Total in round</div>
 								<img
 									v-tooltip="{
-										content: `This total includes the funds in the matching pool and all contributions from the community.`,
+										content: $t('roundInfo.tooltip7'),
 										triggers: ['hover', 'click'],
 									}"
 									width="16"
@@ -186,8 +186,7 @@
 							<div class="round-info-title">Matching pool</div>
 							<img
 								v-tooltip="{
-									content:
-										'These are the funds that will be distributed to all the projects based on the contributions they receive from the community.',
+									content: $t('roundInfo.tooltip8'),
 									triggers: ['hover', 'click'],
 								}"
 								width="16"
@@ -195,7 +194,7 @@
 							/>
 							<div
 								v-if="isCurrentRound && !isRoundFinalized && !isRoundTallying && !isRoundCancelled"
-								v-tooltip="'Add matching funds'"
+								v-tooltip="$t('roundInfo.tooltip9')"
 								class="add-link"
 								@click="addMatchingFunds"
 							>

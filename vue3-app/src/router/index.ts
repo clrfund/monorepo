@@ -6,7 +6,7 @@ const JoinLanding = () => import('@/views/JoinLanding.vue')
 const ProjectList = () => import('@/views/ProjectList.vue')
 const ProjectView = () => import('@/views/Project.vue')
 const ProjectAdded = () => import('@/views/ProjectAdded.vue')
-const RoundInformation = () => import('@/views/RoundInformation.vue')
+const RoundInformationView = () => import('@/views/RoundInformationView.vue')
 const RoundList = () => import('@/views/RoundList.vue')
 const VerifyLanding = () => import('@/views/VerifyLanding.vue')
 const About = () => import('@/views/About.vue')
@@ -60,7 +60,7 @@ const routes: Array<RouteRecordRaw> = [
 	{
 		path: '/round-information',
 		name: 'round-information',
-		component: RoundInformation,
+		component: RoundInformationView,
 		meta: {
 			title: 'Round Information',
 		},
