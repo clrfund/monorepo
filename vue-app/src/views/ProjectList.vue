@@ -74,14 +74,13 @@ import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
 import { getCurrentRound } from '@/api/round'
-import { Project, getProjects } from '@/api/projects'
+import { Project } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import CartWidget from '@/components/CartWidget.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'
-import { Rounds } from '@/api/rounds'
 
 const SHUFFLE_RANDOM_SEED = Math.random()
 

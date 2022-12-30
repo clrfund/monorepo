@@ -1,8 +1,8 @@
-import { BigNumber, Contract, FixedNumber } from 'ethers'
+import { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 import { PubKey } from 'maci-domainobjs'
 
-import { factory, provider } from './core'
+import { factory } from './core'
 import { Rounds } from './rounds'
 
 import { Project } from './projects'
