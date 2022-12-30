@@ -210,11 +210,10 @@ export class DynamicRound extends BaseRound {
   async getLeaderboardProjects(): Promise<LeaderboardProject[]> {
     const projects = await this.getProjects()
     let allocations: BigNumber[] = projects.map(() => BigNumber.from(0))
-    let tally: Tally | null = null
+    const tally = this.isFinalized ? await getTally(this.address) : null
 
-    if (this.isFinalized) {
+    if (this.isFinalized && tally) {
       const registryAddress = await getRecipientRegistryAddress(this.address)
-      tally = await getTally(this.address)
       allocations = await Promise.all(
         projects.map(async (project) => {
           const amount = await this.getProjectAllocatedAmount(
