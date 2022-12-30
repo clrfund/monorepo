@@ -2,6 +2,7 @@
   "name": "@clrfund/contracts",
   "version": "2.1.0",
   "license": "GPL-3.0",
+  "description": "clr.fund contract ABI",
   "scripts": {
     "hardhat": "hardhat",
     "build": "hardhat compile",
@@ -21,6 +22,9 @@
     "lint": "yarn lint:solidity && yarn lint:js",
     "clean": "rm -rf cache && rm -rf build"
   },
+  "files": [
+    "build"
+  ],
   "dependencies": {
     "@openzeppelin/contracts": "3.2.0",
     "dotenv": "^8.2.0",
