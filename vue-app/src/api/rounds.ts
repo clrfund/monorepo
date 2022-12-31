@@ -47,6 +47,7 @@ export class Rounds {
       try {
         extraRounds = await utils.fetchJson(url.href)
       } catch (err) {
+        /* eslint-disable-next-line no-console */
         console.error('Error reading', url.href, err)
       }
     }
