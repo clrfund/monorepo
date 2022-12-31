@@ -66,7 +66,12 @@ function toRoundInfo(round: any, tally: Tally | null): RoundInfo {
 }
 
 function mapTwitterUrl(metadata: any = {}): string {
-  let twitter = metadata.twitter || metadata.twitterUrl
+  let twitter = metadata.twitter || metadata.twitterUrl || ''
+
+  if (!twitter) {
+    return ''
+  }
+
   const twitterBaseUrl = 'https://twitter.com/'
 
   if (twitter.startsWith(twitterBaseUrl)) {
@@ -129,8 +134,13 @@ export class StaticRound extends BaseRound {
         return projects
       }, {})
 
+    const BigNumberZero = BigNumber.from(0)
+
     this.allocations = data.projects.reduce((allocations, project) => {
-      allocations[project.id] = BigNumber.from(project.allocatedAmount)
+      allocations[project.id] =
+        this.round.status === RoundStatus.Finalized
+          ? BigNumber.from(project.allocatedAmount || '0')
+          : BigNumberZero
       return allocations
     }, {})
   }
@@ -181,6 +191,10 @@ export class StaticRound extends BaseRound {
    */
   async getProject(projectId: string): Promise<Project | null> {
     return this.projects[projectId] ?? null
+  }
+
+  async getProjects(): Promise<Project[]> {
+    return Object.values(this.projects)
   }
 
   /**

@@ -28,6 +28,7 @@ export abstract class BaseRound {
   abstract getRoundInfo(cachedRound?: RoundInfo): Promise<RoundInfo>
   abstract getLeaderboardProjects(): Promise<LeaderboardProject[]>
   abstract getProject(projectId: string): Promise<Project | null>
+  abstract getProjects(): Promise<Project[]>
   abstract getAllocatedAmount(projectId: string): Promise<BigNumber | null>
   abstract getTally(): Promise<Tally | null>
 }

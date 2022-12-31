@@ -182,7 +182,7 @@ export class DynamicRound extends BaseRound {
     }
   }
 
-  private async getProjects(): Promise<Project[]> {
+  async getProjects(): Promise<Project[]> {
     const fundingRound = new Contract(this.address, FundingRound, provider)
     const [registryAddress, maciAddress] = await Promise.all([
       fundingRound.recipientRegistry(),
