@@ -1,6 +1,6 @@
 import sdk from '@/graphql/sdk'
 import { utils } from 'ethers'
-import { staticRoundsBaseUrl, staticRoundsFilename, provider } from './core'
+import { staticRoundsBaseUrl, staticRoundsFilename } from './core'
 
 import { BaseRound } from './round-base'
 import { DynamicRound } from './round-dynamic'
