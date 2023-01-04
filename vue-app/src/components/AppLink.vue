@@ -15,7 +15,6 @@ import { Prop } from 'vue-property-decorator'
 import Links from './Links.vue'
 import Loader from './Loader.vue'
 import { LOAD_ROUNDS } from '@/store/action-types'
-import { RoundStatus } from '@/api/round'
 
 @Component({ components: { Links, Loader } })
 export default class extends Vue {
