@@ -12,7 +12,8 @@ export async function getTxFee(
   transaction: TransactionResponse
 ): Promise<BigNumber> {
   const receipt = await transaction.wait()
-  return receipt.gasUsed.mul(transaction.gasPrice)
+  // effectiveGasPrice was introduced by EIP1559
+  return receipt.gasUsed.mul(receipt.effectiveGasPrice)
 }
 
 export async function getEventArg(

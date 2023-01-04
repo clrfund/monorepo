@@ -752,17 +752,6 @@ export default class RoundInformation extends Vue {
   gap: $content-space;
 }
 
-/* @media (max-width: 1500px) {
-  .round-info-item:nth-child(2n) {
-    break-after: always;
-  }
-
-  .round-info-title {
-    margin-bottom: $content-space / 2;
-    font-size: 14px;
-  }
-} */
-
 .add-link {
   display: flex;
   gap: 0.25rem;

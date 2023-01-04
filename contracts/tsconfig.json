@@ -7,7 +7,7 @@
     "outDir": "dist",
     "resolveJsonModule": true
   },
-  "include": ["./scripts", "./tests"],
+  "include": ["./scripts", "./tests", "./build/types"],
   "files": [
     "./hardhat.config.ts",
     "./node_modules/@nomiclabs/hardhat-ethers/src/type-extensions.d.ts",
