@@ -999,7 +999,8 @@
       "sybil": "Sybil resistance",
       "code": "Code",
       "recipients": "Recipients",
-      "layer2": "Layer 2"
+      "layer2": "Layer 2",
+      "rounds": "Rounds"
     }
   },
   "projectListItem": {

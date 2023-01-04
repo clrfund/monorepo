@@ -129,6 +129,11 @@ export default class NavBar extends Vue {
       text: 'navBar.dropdown.recipients',
       emoji: '💎',
     },
+    {
+      to: 'rounds',
+      text: 'navBar.dropdown.rounds',
+      emoji: '⏰',
+    },
   ]
   langs: string[] = Trans.supportedLocales
 

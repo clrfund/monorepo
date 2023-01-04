@@ -999,7 +999,8 @@
       "sybil": "Sybil 抗性",
       "code": "代码",
       "recipients": "项目注册表",
-      "layer2": "二层网络"
+      "layer2": "二层网络",
+      "rounds": "筹款回合"
     }
   },
   "projectListItem": {
