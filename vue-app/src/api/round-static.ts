@@ -32,7 +32,7 @@ function toRoundStatus(round: any): RoundStatus {
 function toRoundInfo(round: any, tally: Tally | null): RoundInfo {
   const nativeTokenDecimals = round.nativeTokenDecimals
   const voiceCreditFactor = BigNumber.from(round.voiceCreditFactor)
-  const matchingPool = BigNumber.from(round.matchingPoolSize)
+  const matchingPool = BigNumber.from(round.matchingPoolSize || 0)
 
   const contributions = tally
     ? BigNumber.from(tally.totalVoiceCredits.spent).mul(voiceCreditFactor)
