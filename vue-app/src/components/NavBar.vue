@@ -65,9 +65,7 @@
         </div>
       </div>
       <wallet-widget class="wallet-widget" v-if="inApp" />
-      <links v-if="!inApp" to="/projects" class="app-btn">{{
-        $t('navBar.app')
-      }}</links>
+      <app-link v-if="!inApp" class="app-btn"></app-link>
     </div>
   </nav>
 </template>
@@ -80,6 +78,7 @@ import { Prop } from 'vue-property-decorator'
 import WalletWidget from './WalletWidget.vue'
 import CartWidget from './CartWidget.vue'
 import Links from './Links.vue'
+import AppLink from './AppLink.vue'
 import { chain, ThemeMode } from '@/api/core'
 import Trans from '@/plugins/i18n/translations'
 import { TOGGLE_THEME } from '@/store/mutation-types'
@@ -88,7 +87,7 @@ import { isValidTheme, getOsColorScheme } from '@/utils/theme'
 import ClickOutside from '@/directives/ClickOutside'
 
 @Component({
-  components: { WalletWidget, CartWidget, Links },
+  components: { WalletWidget, CartWidget, Links, AppLink },
   directives: {
     ClickOutside,
   },

@@ -1,0 +1,88 @@
+<template>
+  <div v-if="loading" class="loader" disabled>
+    <loader class="spinner"></loader>
+  </div>
+  <links v-else :to="targetUrl">
+    <span v-if="dynamic">{{ label }}</span>
+    <span v-else>{{ $t('app') }}</span>
+  </links>
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { Prop } from 'vue-property-decorator'
+import Links from './Links.vue'
+import Loader from './Loader.vue'
+import { LOAD_ROUNDS } from '@/store/action-types'
+import { RoundStatus } from '@/api/round'
+
+@Component({ components: { Links, Loader } })
+export default class extends Vue {
+  // if dynamic, show the label text based when round status
+  // otherwise show the static text 'App'
+  @Prop() dynamic!: boolean
+
+  async created() {
+    if (!this.$store.state.rounds) {
+      await this.$store.dispatch(LOAD_ROUNDS)
+    }
+  }
+
+  get loading(): boolean {
+    return (
+      this.dynamic &&
+      !(
+        this.$store.state.rounds &&
+        this.$store.state.currentRoundAddress &&
+        this.$store.state.currentRound
+      )
+    )
+  }
+
+  get isRoundFinalized(): boolean {
+    const roundAddress = this.$store.state.currentRoundAddress
+    const rounds = this.$store.state.rounds
+    return rounds?.isRoundFinalized(roundAddress)
+  }
+
+  get targetUrl(): string {
+    const roundAddress = this.$store.state.currentRoundAddress
+
+    return this.isRoundFinalized
+      ? `/rounds/${roundAddress}/leaderboard`
+      : '/projects'
+  }
+
+  translate(text: string): string {
+    return this.$t(text).toString()
+  }
+
+  get label(): string {
+    return this.isRoundFinalized
+      ? this.translate('dynamic.appLink.leaderboard')
+      : this.translate('dynamic.appLink.getStarted')
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.loader {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  .spinner {
+    margin: 0;
+  }
+
+  .spinner::after {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    border: 5px solid var(--loader-color);
+    border-color: var(--loader-color) transparent var(--loader-color)
+      transparent;
+  }
+}
+</style>

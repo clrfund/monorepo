@@ -678,7 +678,6 @@
     "hero": {
       "title": "Send your favorite projects to the moon!",
       "subtitle": "Every project you contribute to gets a portion of extra funding.",
-      "action": "Get started",
       "info": "How it works"
     },
     "callout": {
@@ -990,8 +989,8 @@
     "div2": "Thanks for helping out all our projects.",
     "button3": "Done"
   },
+  "app": "App",
   "navBar": {
-    "app": "App",
     "dropdown": {
       "home": "Home",
       "about": "About",
@@ -1118,6 +1117,10 @@
     "button1": "OK"
   },
   "dynamic": {
+    "appLink": {
+      "getStarted": "Get Started",
+      "viewResult": "View Results"
+    },
     "category": {
       "tooling": "Tools",
       "content": "Content",
