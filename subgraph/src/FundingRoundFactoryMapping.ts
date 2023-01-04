@@ -215,6 +215,7 @@ export function handleRoundFinalized(event: RoundFinalized): void {
   let totalVotes = fundingRoundContract.totalVotes()
   let tallyHash = fundingRoundContract.tallyHash()
   let isFinalized = fundingRoundContract.isFinalized()
+  let isCancelled = fundingRoundContract.isCancelled()
   let contributorCount = fundingRoundContract.contributorCount()
   let matchingPoolSize = fundingRoundContract.matchingPoolSize()
 
@@ -222,6 +223,7 @@ export function handleRoundFinalized(event: RoundFinalized): void {
   fundingRound.totalVotes = totalVotes
   fundingRound.tallyHash = tallyHash
   fundingRound.isFinalized = isFinalized
+  fundingRound.isCancelled = isCancelled
   fundingRound.contributorCount = contributorCount
   fundingRound.matchingPoolSize = matchingPoolSize
 

@@ -42,7 +42,9 @@ export default class extends Vue {
   get isRoundFinalized(): boolean {
     const roundAddress = this.$store.state.currentRoundAddress
     const rounds = this.$store.state.rounds
-    return rounds?.isRoundFinalized(roundAddress)
+    return roundAddress && rounds
+      ? rounds.isRoundFinalized(roundAddress)
+      : false
   }
 
   get targetUrl(): string {

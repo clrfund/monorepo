@@ -1,8 +1,7 @@
 import sdk from '@/graphql/sdk'
-import { utils, Contract } from 'ethers'
+import { utils } from 'ethers'
 import { staticRoundsBaseUrl, staticRoundsFilename, provider } from './core'
 
-import { FundingRound } from './abi'
 import { BaseRound } from './round-base'
 import { DynamicRound } from './round-dynamic'
 import { StaticRound } from './round-static'
@@ -12,16 +11,6 @@ export interface Round {
   address: string
   isFinalized: boolean
   url?: string
-}
-
-async function isRoundFinalized(fundingRoundAddress: string): Promise<boolean> {
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
-  const [isFinalized, isCancelled] = await Promise.all([
-    fundingRound.isFinalized(),
-    fundingRound.isCancelled(),
-  ])
-
-  return isFinalized && !isCancelled
 }
 
 function formatRoundUrl(address: string, network: string): string {
@@ -64,7 +53,8 @@ export class Rounds {
 
     for (const fundingRound of data.fundingRounds) {
       if (!rounds.has(fundingRound.id)) {
-        const isFinalized = await isRoundFinalized(fundingRound.id)
+        const isFinalized =
+          !!fundingRound.isFinalized && !fundingRound.isCancelled
         rounds.set(fundingRound.id.toLowerCase(), {
           index: rounds.size,
           address: fundingRound.id,
@@ -75,7 +65,7 @@ export class Rounds {
     return new Rounds(rounds)
   }
 
-  private get(roundAddress: string): Round | undefined {
+  private get(roundAddress = ''): Round | undefined {
     return this.rounds.get(roundAddress.toLowerCase())
   }
 

@@ -6,6 +6,7 @@ import { factory } from './core'
 import { Rounds } from './rounds'
 
 import { Project } from './projects'
+import sdk from '@/graphql/sdk'
 
 export interface RoundInfo {
   fundingRoundAddress: string
@@ -49,11 +50,20 @@ export enum RoundStatus {
 }
 //TODO: update to take factory address as a parameter, default to env. variable
 export async function getCurrentRound(): Promise<string | null> {
-  const fundingRoundAddress = await factory.getCurrentRound()
-  if (fundingRoundAddress === '0x0000000000000000000000000000000000000000') {
+  const fundingRoundFactoryAddress = factory.address.toLowerCase()
+  const data = await sdk.GetCurrentRound({
+    fundingRoundFactoryAddress,
+  })
+
+  if (!data) {
     return null
   }
 
+  if (!data.fundingRoundFactory?.currentRound?.id) {
+    return null
+  }
+
+  const fundingRoundAddress = data.fundingRoundFactory?.currentRound?.id
   const rounds = await Rounds.create()
   const index = rounds.getRoundIndex(fundingRoundAddress)
 

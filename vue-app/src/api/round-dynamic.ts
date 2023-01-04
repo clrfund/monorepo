@@ -43,6 +43,10 @@ export class DynamicRound extends BaseRound {
   }
 
   async getAllocatedAmount(projectId: string): Promise<BigNumber | null> {
+    if (!this.isFinalized) {
+      return null
+    }
+
     const registryAddress = await getRecipientRegistryAddress(this.address)
     const tally = await getTally(this.address)
     return this.getProjectAllocatedAmount(registryAddress, projectId, tally)
