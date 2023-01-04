@@ -6,6 +6,7 @@
   yarn hardhat build
 ```
 
-The contract artifacts can be found in the build/contracts folder.
-The typechain types can be found in the build/types folder.
+The contract artifacts can be found in the `build/contracts` folder.
+
+The typechain types can be found in the `build/types` folder.
 
