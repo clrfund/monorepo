@@ -9,6 +9,7 @@
     $t('navBar.dropdown.code')
     $t('navBar.dropdown.layer2')
     $t('navBar.dropdown.recipients')
+    $t('navBar.dropdown.rounds')
   -->
   <nav id="nav-bar">
     <links to="/">
