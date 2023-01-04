@@ -3,7 +3,8 @@ import path from 'path'
 import dotenv from 'dotenv'
 
 import { HardhatUserConfig, task } from 'hardhat/config'
-import '@typechain/hardhat'
+// TODO enable this when we upgrade to typescript 4 as typechain requires ts4
+//import '@typechain/hardhat'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ganache'
 import 'hardhat-contract-sizer'
@@ -71,10 +72,12 @@ const config: HardhatUserConfig = {
     artifacts: 'build/contracts',
     tests: 'tests',
   },
+  /*
   typechain: {
     outDir: 'build/types',
     target: 'ethers-v5',
   },
+*/
   contractSizer: {
     alphaSort: true,
     runOnCompile: true,

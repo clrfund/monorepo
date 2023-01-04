@@ -403,7 +403,7 @@ export default class ProjectList extends Vue {
   }
 
   .round-info-title {
-    margin-bottom: calc($content-space / 2);
+    margin-bottom: $content-space / 2;
   }
 }
 </style>

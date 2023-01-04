@@ -436,7 +436,7 @@ export default class RecipientRegistryView extends Vue {
   th,
   td {
     overflow: hidden;
-    padding: calc($content-space / 2);
+    padding: $content-space / 2;
     text-align: left;
     text-overflow: ellipsis;
 
