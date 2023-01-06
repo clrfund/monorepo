@@ -20,6 +20,7 @@ dataSources:
         - RecipientRegistry
         - ContributorRegistry
         - FundingRound
+        - Token
       abis:
         - name: FundingRoundFactory
           file: ./abis/FundingRoundFactory.json
@@ -31,6 +32,8 @@ dataSources:
           file: ./abis/OptimisticRecipientRegistry.json
         - name: BrightIdUserRegistry
           file: ./abis/BrightIdUserRegistry.json
+        - name: Token
+          file: ./abis/Token.json
       eventHandlers:
         - event: CoordinatorChanged(address)
           handler: handleCoordinatorChanged
