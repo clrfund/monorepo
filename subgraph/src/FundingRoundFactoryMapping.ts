@@ -117,6 +117,7 @@ function createToken(tokenAddress: Address, blockTimestamp: BigInt): Token {
   let timestamp = blockTimestamp.toString()
   token.createdAt = timestamp
   token.lastUpdatedAt = timestamp
+  token.tokenAddress = tokenAddress
   token.save()
 
   return token
