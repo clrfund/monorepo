@@ -1,4 +1,5 @@
 import { task, types } from 'hardhat/config'
+import { HardhatConfig } from 'hardhat/types'
 import { utils, Contract, BigNumber } from 'ethers'
 import fs from 'fs'
 import { Ipfs } from '../utils/ipfs'
@@ -36,6 +37,19 @@ function writeToFile(filePath: string, data: any) {
   const outputString = JSON.stringify(data, null, 2)
   fs.writeFileSync(filePath, outputString + '\n')
   console.log('Successfully written to ', filePath)
+}
+
+function getEtherscanApiKey(config: HardhatConfig, network: string): string {
+  let etherscanApiKey = ''
+  if (config.etherscan.apiKey) {
+    if (typeof config.etherscan.apiKey === 'string') {
+      etherscanApiKey = config.etherscan.apiKey
+    } else {
+      etherscanApiKey = config.etherscan.apiKey[network]
+    }
+  }
+
+  return etherscanApiKey
 }
 
 function roundMapKey(round: RoundListEntry): string {
@@ -152,57 +166,55 @@ async function getRoundInfo(
   const round: any = { address: roundContract.address }
   round.nativeTokenAddress = await roundContract.nativeToken()
 
-  const token = await ethers.getContractAt('ERC20', round.nativeTokenAddress)
-  round.nativeTokenDecimals = await token.decimals().catch(toUndefined)
-  round.nativeTokenSymbol = await token.symbol().catch(toUndefined)
-  console.log(
-    'Fetched token data',
-    round.nativeTokenAddress,
-    round.nativeTokenSymbol,
-    round.nativeTokenDecimals
-  )
+  try {
+    const token = await ethers.getContractAt('ERC20', round.nativeTokenAddress)
+    round.nativeTokenDecimals = await token.decimals().catch(toUndefined)
+    round.nativeTokenSymbol = await token.symbol().catch(toUndefined)
+    console.log(
+      'Fetched token data',
+      round.nativeTokenAddress,
+      round.nativeTokenSymbol,
+      round.nativeTokenDecimals
+    )
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : ''
+    throw new Error(`Failed to fetch token data: ${errorMessage}`)
+  }
 
   round.contributorCount = await roundContract
     .contributorCount()
     .then((val: BigNumber) => val.toNumber())
-    .catch(toUndefined)
+    .catch(toZero)
 
   round.matchingPoolSize = await roundContract
     .matchingPoolSize()
     .then(toString)
-    .catch(toUndefined)
+    .catch(toZero)
 
   round.totalSpent = await roundContract
     .totalSpent()
     .then(toString)
-    .catch(toUndefined)
+    .catch(toZero)
 
-  round.voiceCreditFactor = await roundContract
-    .voiceCreditFactor()
-    .then(toString)
-    .catch(toUndefined)
+  round.voiceCreditFactor = await roundContract.voiceCreditFactor()
+  round.isFinalized = await roundContract.isFinalized()
+  round.isCancelled = await roundContract.isCancelled()
+  round.tallyHash = await roundContract.tallyHash()
 
-  round.isFinalized = await roundContract.isFinalized().catch(toUndefined)
-  round.isCancelled = await roundContract.isCancelled().catch(toUndefined)
-  round.tallyHash = await roundContract.tallyHash().catch(toUndefined)
-
-  round.maciAddress = await roundContract.maci().catch(toUndefined)
-  if (round.maciAddress) {
-    try {
-      const maci = await ethers.getContractAt('MACI', round.maciAddress)
-      const startTime = await maci.signUpTimestamp().catch(toZero)
-      round.startTime = startTime.toNumber()
-      const signUpDuration = await maci.signUpDurationSeconds().catch(toZero)
-      const votingDuration = await maci.votingDurationSeconds().catch(toZero)
-      const endTime = startTime
-        .add(round.signUpDuration)
-        .add(round.votingDuration)
-      round.endTime = endTime.toNumber()
-      round.signUpDuration = signUpDuration.toNumber()
-      round.votingDuration = votingDuration.toNumber()
-    } catch {
-      // older MACI may not have all the functions
-    }
+  try {
+    round.maciAddress = await roundContract.maci().catch(toUndefined)
+    const maci = await ethers.getContractAt('MACI', round.maciAddress)
+    const startTime = await maci.signUpTimestamp().catch(toZero)
+    round.startTime = startTime.toNumber()
+    const signUpDuration = await maci.signUpDurationSeconds().catch(toZero)
+    const votingDuration = await maci.votingDurationSeconds().catch(toZero)
+    const endTime = startTime.add(signUpDuration).add(votingDuration)
+    round.endTime = endTime.toNumber()
+    round.signUpDuration = signUpDuration.toNumber()
+    round.votingDuration = votingDuration.toNumber()
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : ''
+    throw new Error(`Failed to get MACI data ${errorMessage}`)
   }
 
   round.userRegistryAddress = await roundContract
@@ -221,10 +233,6 @@ async function getRoundInfo(
 task('fetch-round', 'Fetch round data')
   .addParam('roundAddress', 'Funding round contract address')
   .addParam('outputDir', 'Output directory')
-  .addParam(
-    'etherscanApiKey',
-    'Etherscan API key used to retrieve logs using etherscan API'
-  )
   .addOptionalParam(
     'startBlock',
     'First block to process from the recipient registry contract',
@@ -245,18 +253,16 @@ task('fetch-round', 'Fetch round data')
   )
   .setAction(
     async (
-      {
-        roundAddress,
-        outputDir,
-        startBlock,
-        endBlock,
-        blocksPerBatch,
-        etherscanApiKey,
-      },
-      { ethers, network }
+      { roundAddress, outputDir, startBlock, endBlock, blocksPerBatch },
+      { ethers, network, config }
     ) => {
       console.log('Processing on ', network.name)
       console.log('Funding round address', roundAddress)
+
+      const etherscanApiKey = getEtherscanApiKey(config, network.name)
+      if (!etherscanApiKey) {
+        throw new Error('Etherscan API key not set')
+      }
 
       const outputSubDir = path.join(outputDir, network.name)
       try {
@@ -292,6 +298,10 @@ task('fetch-round', 'Fetch round data')
 
       let tally: any = undefined
       if (round.isFinalized && !round.isCancelled) {
+        if (!round.tallyHash) {
+          throw new Error('Missing tallyHash')
+        }
+
         try {
           tally = await Ipfs.fetchJson(round.tallyHash)
         } catch (err) {
