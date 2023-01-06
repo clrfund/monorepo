@@ -81,7 +81,9 @@ export default class ProjectView extends Vue {
 
     const rounds = this.$store.state.rounds
     const selectedRound = await rounds.getRound(this.roundAddress)
-    const project = await selectedRound.getProject(this.$route.params.id)
+    const project = selectedRound
+      ? await selectedRound.getProject(this.$route.params.id)
+      : null
 
     if (project === null || project.isHidden) {
       // Project not found

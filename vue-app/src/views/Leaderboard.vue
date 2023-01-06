@@ -2,9 +2,7 @@
   <div>
     <loader v-if="isLoading"></loader>
     <div v-else>
-      <div class="info" v-if="!isRoundFinalized">
-        🤚 The round is not finalized, please check back later
-      </div>
+      <div class="info" v-if="!round">🤚 {{ $t('leaderboard.no_round') }}</div>
       <div class="info" v-else-if="projects.length === 0">
         😢 {{ $t('leaderboard.no_project') }}
       </div>
@@ -72,14 +70,25 @@ export default class Leaderboard extends Vue {
 
     const round = await this.$store.state.rounds.getRound(address)
 
-    this.round = await round.getRoundInfo()
-    this.projects = await round.getLeaderboardProjects()
+    if (round) {
+      this.round = await round.getRoundInfo()
+      const projects = await round.getLeaderboardProjects()
+      if (projects) {
+        this.projects = projects
+      }
+    }
   }
 
   async created() {
     const { address } = this.$route.params
 
     await this.loadRound(address)
+
+    // redirect to projects view if not finalized
+    if (!this.isRoundFinalized) {
+      this.$router.push({ name: 'round-project', params: this.$route.params })
+    }
+
     this.isLoading = false
   }
 

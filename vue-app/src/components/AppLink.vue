@@ -27,6 +27,7 @@ export default class extends Vue {
   // otherwise show the static text 'App'
   @Prop() dynamic!: boolean
 
+  showLeaderboard = false
   loading = true
 
   async created() {
@@ -37,30 +38,31 @@ export default class extends Vue {
     if (!this.$store.state.currentRoundAddress) {
       const currentRoundAddress = await getCurrentRound()
       await this.$store.dispatch(SELECT_ROUND, currentRoundAddress)
-    }
-
-    if (
-      this.$store.state.currentRoundAddress &&
-      !this.$store.state.currentRound
-    ) {
       await this.$store.dispatch(LOAD_ROUND_INFO)
     }
 
+    if (!this.$store.state.currentRound) {
+      await this.$store.dispatch(LOAD_ROUND_INFO)
+    }
+
+    const count = await this.getProjectCount()
+    this.showLeaderboard = count > 0
     this.loading = false
   }
 
-  get isRoundFinalized(): boolean {
+  async getProjectCount(): Promise<number> {
     const roundAddress = this.$store.state.currentRoundAddress
-    const rounds = this.$store.state.rounds
-    return roundAddress && rounds
-      ? rounds.isRoundFinalized(roundAddress)
-      : false
+    const round = await this.$store.state.rounds?.getRound(roundAddress)
+    const projects = round?.getLeaderboardProjects()
+    const count = projects?.length || 0
+
+    return count
   }
 
   get targetUrl(): string {
     const roundAddress = this.$store.state.currentRoundAddress
 
-    return this.isRoundFinalized
+    return this.showLeaderboard
       ? `/rounds/${roundAddress}/leaderboard`
       : '/projects'
   }
@@ -70,7 +72,7 @@ export default class extends Vue {
   }
 
   get label(): string {
-    return this.isRoundFinalized
+    return this.showLeaderboard
       ? this.translate('dynamic.appLink.leaderboard')
       : this.translate('dynamic.appLink.getStarted')
   }

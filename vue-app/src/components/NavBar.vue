@@ -121,19 +121,19 @@ export default class NavBar extends Vue {
       emoji: '👤',
     },
     {
-      to: 'https://github.com/clrfund/monorepo/',
-      text: 'navBar.dropdown.code',
-      emoji: '👾',
-    },
-    {
       to: '/recipients',
       text: 'navBar.dropdown.recipients',
       emoji: '💎',
     },
     {
-      to: 'rounds',
+      to: '/rounds',
       text: 'navBar.dropdown.rounds',
       emoji: '⏰',
+    },
+    {
+      to: 'https://github.com/clrfund/monorepo/',
+      text: 'navBar.dropdown.code',
+      emoji: '👾',
     },
   ]
   langs: string[] = Trans.supportedLocales

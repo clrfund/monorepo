@@ -143,12 +143,14 @@ export default class ProjectList extends Vue {
     }
 
     const round = await this.$store.state.rounds.getRound(roundAddress)
-    const projects = await round.getProjects()
-    const visibleProjects = projects.filter((project) => {
-      return !project.isHidden && !project.isLocked
-    })
-    shuffleArray(visibleProjects)
-    this.projects = visibleProjects
+    if (round) {
+      const projects = await round.getProjects()
+      const visibleProjects = projects.filter((project) => {
+        return !project.isHidden && !project.isLocked
+      })
+      shuffleArray(visibleProjects)
+      this.projects = visibleProjects
+    }
   }
 
   formatIntegerPart(value: FixedNumber): string {

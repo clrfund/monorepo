@@ -65,8 +65,10 @@ export class Rounds {
     return new Rounds(rounds)
   }
 
-  private get(roundAddress = ''): Round | undefined {
-    return this.rounds.get(roundAddress.toLowerCase())
+  private get(roundAddress: string): Round | undefined {
+    return roundAddress
+      ? this.rounds.get(roundAddress.toLowerCase())
+      : undefined
   }
 
   list(): Round[] {
@@ -80,13 +82,17 @@ export class Rounds {
     return round?.index
   }
 
-  async getRound(roundAddress: string): Promise<BaseRound> {
+  async getRound(roundAddress: string): Promise<BaseRound | null> {
     const round = this.get(roundAddress)
-    if (round?.url) {
+    if (!round) {
+      return null
+    }
+
+    if (round.url) {
       const data = await utils.fetchJson(round.url)
       return new StaticRound(data, round.isFinalized)
     } else {
-      return new DynamicRound(roundAddress, Boolean(round?.isFinalized))
+      return new DynamicRound(roundAddress, Boolean(round.isFinalized))
     }
   }
 

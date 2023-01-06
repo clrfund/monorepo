@@ -14,7 +14,6 @@ import {
   hasContributorVoted,
 } from '@/api/contributions'
 import { loginUser, logoutUser } from '@/api/gun'
-import { getRecipientRegistryAddress } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { Rounds } from '@/api/rounds'
 import { storage } from '@/api/storage'
@@ -65,7 +64,7 @@ import {
 
 // Utils
 import { ensLookup } from '@/utils/accounts'
-import { UserRegistryType, userRegistryType } from '@/api/core'
+import { factory, UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
 import { getFactoryInfo } from '@/api/factory'
 import { getMACIFactoryInfo } from '@/api/maci-factory'
@@ -112,8 +111,12 @@ const actions = {
     }
 
     const round = await rounds.getRound(roundAddress)
-    const roundInfo = await round.getRoundInfo()
-    commit(SET_CURRENT_ROUND, roundInfo)
+    if (round) {
+      const roundInfo = await round.getRoundInfo()
+      commit(SET_CURRENT_ROUND, roundInfo)
+    } else {
+      commit(SET_CURRENT_ROUND, null)
+    }
   },
   async [LOAD_TALLY]({ commit, state }) {
     const currentRound = state.currentRound
@@ -123,18 +126,15 @@ const actions = {
     }
   },
   async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
-    //TODO: update call to getRecipientRegistryAddress to take factory address as a parameter
-    const recipientRegistryAddress =
-      state.recipientRegistryAddress ||
-      (await getRecipientRegistryAddress(state.currentRoundAddress))
-    commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
-
-    if (recipientRegistryAddress) {
-      const info = await getRegistryInfo(recipientRegistryAddress)
-      commit(SET_RECIPIENT_REGISTRY_INFO, info)
-    } else {
-      commit(SET_RECIPIENT_REGISTRY_INFO, null)
+    const info = await getRegistryInfo(factory.address)
+    if (!info) {
+      commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
+      return
     }
+
+    const recipientRegistryAddress = info.registryAddress
+    commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
+    commit(SET_RECIPIENT_REGISTRY_INFO, info)
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (!state.currentUser) {

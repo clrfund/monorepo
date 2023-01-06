@@ -99,9 +99,14 @@ export default class ClaimButton extends Vue {
     const selectedRound = await this.$store.state.rounds.getRound(
       this.roundAddress
     )
+    if (!selectedRound) {
+      this.isLoading = false
+      return
+    }
+
     this.token = await selectedRound.getTokenInfo(this.roundAddress)
-    this.allocatedAmount = await selectedRound.getAllocatedAmount(
-      this.project.id
+    this.allocatedAmount = await selectedRound.getAllocatedAmountByProjectIndex(
+      this.project.index
     )
 
     this.claimed = this.$store.getters.isCurrentRound(this.roundAddress)

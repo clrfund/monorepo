@@ -5,18 +5,18 @@ import { Token } from './token'
 import {
   getProject,
   getProjects,
-  getRecipientRegistryAddress,
   LeaderboardProject,
   Project,
 } from './projects'
 import { getAllocatedAmount } from './claims'
-import { FundingRound, ERC20, MACI } from './abi'
+import { FundingRound, MACI } from './abi'
 import { provider, factory } from './core'
 import { BigNumber, Contract, FixedNumber } from 'ethers'
 import { isSameAddress } from '@/utils/accounts'
-import { getTotalContributed } from './contributions'
-import { PubKey } from 'maci-domainobjs'
 import { DateTime } from 'luxon'
+import sdk from '@/graphql/sdk'
+import { getTokenBalance } from './user'
+import { getMaciInfo } from './maci'
 
 /**
  * DynamicRound loads round information from smart contract or subgraph
@@ -26,43 +26,45 @@ export class DynamicRound extends BaseRound {
     super(fundingRoundAddress, isFinalized)
   }
 
-  private async getProjectAllocatedAmount(
-    registryAddress: string,
-    projectId: string,
-    tally: Tally
+  async getAllocatedAmountByProjectIndex(
+    projectIndex: number
   ): Promise<BigNumber | null> {
-    const project = await getProject(registryAddress, projectId)
-    if (!project) {
-      return null
-    }
-
-    const tallyResult = tally.results.tally[project.index]
-    const spent = tally.totalVoiceCreditsPerVoteOption.tally[project.index]
-
-    return getAllocatedAmount(this.address, tallyResult, spent)
-  }
-
-  async getAllocatedAmount(projectId: string): Promise<BigNumber | null> {
     if (!this.isFinalized) {
       return null
     }
 
-    const registryAddress = await getRecipientRegistryAddress(this.address)
-    const tally = await getTally(this.address)
-    return this.getProjectAllocatedAmount(registryAddress, projectId, tally)
+    try {
+      const tally = await getTally(this.address)
+      const tallyResult = tally.results.tally[projectIndex]
+      const spent = tally.totalVoiceCreditsPerVoteOption.tally[projectIndex]
+
+      return getAllocatedAmount(this.address, tallyResult, spent)
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : ''
+      // eslint-disable-next-line no-console
+      console.error('Failed to get allocated amount', errorMessage)
+      return null
+    }
   }
 
   async getTokenInfo(): Promise<Token> {
-    const roundContract = new Contract(this.address, FundingRound, provider)
-    const address = await roundContract.nativeToken()
-    const nativeToken = new Contract(address, ERC20, provider)
-    const symbol = await nativeToken.symbol()
-    const decimals = await nativeToken.decimals()
+    const data = await sdk.GetTokenInfo({
+      fundingRoundAddress: this.address.toLowerCase(),
+    })
+
+    const address = data.fundingRound?.nativeTokenInfo?.tokenAddress || ''
+    const symbol = data.fundingRound?.nativeTokenInfo?.symbol || ''
+    const decimals = data.fundingRound?.nativeTokenInfo?.decimals || 0
 
     return { address, symbol, decimals }
   }
 
-  async getRoundInfo(cachedRound?: RoundInfo): Promise<RoundInfo> {
+  /**
+   * Get round information for round information and leaderboard views
+   * @param cachedRound previously cached round, usually is the current round
+   * @returns round information
+   */
+  async getRoundInfo(cachedRound?: RoundInfo): Promise<RoundInfo | null> {
     if (
       cachedRound &&
       isSameAddress(this.address, cachedRound.fundingRoundAddress)
@@ -71,65 +73,58 @@ export class DynamicRound extends BaseRound {
       return cachedRound
     }
 
-    const fundingRound = new Contract(this.address, FundingRound, provider)
-    const [
-      maciAddress,
-      nativeTokenAddress,
-      recipientRegistryAddress,
-      userRegistryAddress,
-      voiceCreditFactor,
-      isFinalized,
-      isCancelled,
-    ] = await Promise.all([
-      fundingRound.maci(),
-      fundingRound.nativeToken(),
-      fundingRound.recipientRegistry(),
-      fundingRound.userRegistry(),
-      fundingRound.voiceCreditFactor(),
-      fundingRound.isFinalized(),
-      fundingRound.isCancelled(),
-    ])
+    const { fundingRound } = await sdk.GetRoundInfo({
+      fundingRoundAddress: this.address.toLowerCase(),
+    })
+    if (!fundingRound) {
+      return null
+    }
 
-    const maci = new Contract(maciAddress, MACI, provider)
-    const [
-      maciTreeDepths,
-      signUpTimestamp,
-      signUpDurationSeconds,
-      votingDurationSeconds,
-      coordinatorPubKeyRaw,
+    const maciAddress = fundingRound.maci || ''
+    const maciInfo = await getMaciInfo(maciAddress)
+    if (!maciInfo) {
+      // this should not happen as MACI is deployed as part of the round
+      return null
+    }
+
+    const recipientRegistryAddress = fundingRound.recipientRegistryAddress || ''
+    const userRegistryAddress = fundingRound.contributorRegistryAddress
+    const voiceCreditFactor = BigNumber.from(
+      fundingRound.voiceCreditFactor || 0
+    )
+    const isFinalized = fundingRound.isFinalized || false
+    const isCancelled = fundingRound.isCancelled || false
+    const totalSpent = BigNumber.from(fundingRound.totalSpent || 0)
+    const matchingPoolSize = BigNumber.from(fundingRound.matchingPoolSize || 0)
+
+    const nativeTokenAddress = fundingRound.nativeTokenInfo?.tokenAddress || ''
+    const nativeTokenSymbol = fundingRound.nativeTokenInfo?.symbol || ''
+    const nativeTokenDecimals = BigNumber.from(
+      fundingRound.nativeTokenInfo?.decimals || 0
+    ).toNumber()
+
+    const now = DateTime.utc()
+    const {
       messages,
-    ] = await Promise.all([
-      maci.treeDepths(),
-      maci.signUpTimestamp(),
-      maci.signUpDurationSeconds(),
-      maci.votingDurationSeconds(),
-      maci.coordinatorPubKey(),
-      maci.numMessages(),
-    ])
-    const startTime = DateTime.fromSeconds(signUpTimestamp.toNumber())
-    const signUpDeadline = DateTime.fromSeconds(
-      signUpTimestamp.add(signUpDurationSeconds).toNumber()
-    )
-    const votingDeadline = DateTime.fromSeconds(
-      signUpTimestamp
-        .add(signUpDurationSeconds)
-        .add(votingDurationSeconds)
-        .toNumber()
-    )
-    const coordinatorPubKey = new PubKey([
-      BigInt(coordinatorPubKeyRaw.x),
-      BigInt(coordinatorPubKeyRaw.y),
-    ])
+      maxMessages,
+      signUpDeadline,
+      maxContributors,
+      votingDeadline,
+      recipientTreeDepth,
+      maxRecipients,
+      coordinatorPubKey,
+      startTime,
+    } = maciInfo
 
-    const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
-    const nativeTokenSymbol = await nativeToken.symbol()
-    const nativeTokenDecimals = await nativeToken.decimals()
+    const contributors = BigNumber.from(
+      fundingRound?.contributorCount || 0
+    ).toNumber()
 
-    const maxContributors = 2 ** maciTreeDepths.stateTreeDepth - 1
-    const maxMessages = 2 ** maciTreeDepths.messageTreeDepth - 1
-    const now = DateTime.local()
-    const contributionsInfo = await getTotalContributed(this.address)
-    const contributors = contributionsInfo.count
+    const tokenBalance =
+      contributors > 0
+        ? await getTokenBalance(nativeTokenAddress, this.address)
+        : BigNumber.from(0)
+
     let status: string
     let contributions: BigNumber
     let matchingPool: BigNumber
@@ -139,11 +134,11 @@ export class DynamicRound extends BaseRound {
       matchingPool = BigNumber.from(0)
     } else if (isFinalized) {
       status = RoundStatus.Finalized
-      contributions = (await fundingRound.totalSpent()).mul(voiceCreditFactor)
-      matchingPool = await fundingRound.matchingPoolSize()
+      contributions = totalSpent.mul(voiceCreditFactor)
+      matchingPool = matchingPoolSize
     } else if (messages >= maxMessages) {
       status = RoundStatus.Tallying
-      contributions = contributionsInfo.amount
+      contributions = tokenBalance
       matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
     } else {
       if (now < signUpDeadline && contributors < maxContributors) {
@@ -153,7 +148,7 @@ export class DynamicRound extends BaseRound {
       } else {
         status = RoundStatus.Tallying
       }
-      contributions = contributionsInfo.amount
+      contributions = tokenBalance
       //TODO: update to take factory address as a parameter, default to env. variable
       matchingPool = await factory.getMatchingFunds(nativeTokenAddress)
     }
@@ -165,9 +160,9 @@ export class DynamicRound extends BaseRound {
       recipientRegistryAddress,
       userRegistryAddress,
       maciAddress,
-      recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
+      recipientTreeDepth,
       maxContributors,
-      maxRecipients: 5 ** maciTreeDepths.voteOptionTreeDepth - 1,
+      maxRecipients,
       maxMessages,
       coordinatorPubKey,
       nativeTokenAddress,
@@ -182,7 +177,7 @@ export class DynamicRound extends BaseRound {
       matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),
       contributions: FixedNumber.fromValue(contributions, nativeTokenDecimals),
       contributors,
-      messages: messages.toNumber(),
+      messages,
     }
   }
 
@@ -211,40 +206,10 @@ export class DynamicRound extends BaseRound {
     return projects.filter((project) => !project.isHidden && !project.isLocked)
   }
 
-  async getLeaderboardProjects(): Promise<LeaderboardProject[]> {
-    const projects = await this.getProjects()
-    let allocations: BigNumber[] = projects.map(() => BigNumber.from(0))
-    const tally = this.isFinalized ? await getTally(this.address) : null
-
-    if (this.isFinalized && tally) {
-      const registryAddress = await getRecipientRegistryAddress(this.address)
-      allocations = await Promise.all(
-        projects.map(async (project) => {
-          const amount = await this.getProjectAllocatedAmount(
-            registryAddress,
-            project.id,
-            tally
-          )
-          return amount ?? BigNumber.from(0)
-        })
-      )
-    }
-
-    return projects.map((project, idx) => {
-      return {
-        id: project.id,
-        name: project.name,
-        index: project.index,
-        bannerImageUrl: project.bannerImageUrl,
-        thumbnailImageUrl: project.thumbnailImageUrl,
-        imageUrl: project.imageUrl,
-        allocatedAmount: allocations[idx] ?? BigNumber.from(0),
-        donation: BigNumber.from(
-          tally?.totalVoiceCreditsPerVoteOption.tally[project.index] ?? 0
-        ),
-        votes: BigNumber.from(tally?.results.tally[project.index] ?? 0),
-      }
-    })
+  getLeaderboardProjects(): LeaderboardProject[] | null {
+    // return null because we only want to show the leaderboard if we have
+    // the static round tally data
+    return null
   }
 
   async getProject(projectId: string): Promise<Project | null> {

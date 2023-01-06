@@ -25,10 +25,12 @@ export abstract class BaseRound {
   }
 
   abstract getTokenInfo(): Promise<Token>
-  abstract getRoundInfo(cachedRound?: RoundInfo): Promise<RoundInfo>
-  abstract getLeaderboardProjects(): Promise<LeaderboardProject[]>
+  abstract getRoundInfo(cachedRound?: RoundInfo): Promise<RoundInfo | null>
+  abstract getLeaderboardProjects(): LeaderboardProject[] | null
   abstract getProject(projectId: string): Promise<Project | null>
   abstract getProjects(): Promise<Project[]>
-  abstract getAllocatedAmount(projectId: string): Promise<BigNumber | null>
+  abstract getAllocatedAmountByProjectIndex(
+    projectIndex: number
+  ): Promise<BigNumber | null>
   abstract getTally(): Promise<Tally | null>
 }

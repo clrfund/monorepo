@@ -644,6 +644,7 @@ export type FundingRound = {
   contributorRegistry: Maybe<ContributorRegistry>;
   contributorRegistryAddress: Maybe<Scalars['Bytes']>;
   nativeToken: Maybe<Scalars['Bytes']>;
+  nativeTokenInfo: Maybe<Token>;
   startTime: Maybe<Scalars['BigInt']>;
   signUpDeadline: Maybe<Scalars['BigInt']>;
   votingDeadline: Maybe<Scalars['BigInt']>;
@@ -716,6 +717,7 @@ export type FundingRoundFactory = {
   owner: Maybe<Scalars['Bytes']>;
   coordinator: Maybe<Scalars['Bytes']>;
   nativeToken: Maybe<Scalars['Bytes']>;
+  nativeTokenInfo: Maybe<Token>;
   contributorRegistry: Maybe<ContributorRegistry>;
   contributorRegistryAddress: Maybe<Scalars['Bytes']>;
   recipientRegistry: Maybe<RecipientRegistry>;
@@ -776,6 +778,27 @@ export type FundingRoundFactory_Filter = {
   nativeToken_not_in: Maybe<Array<Scalars['Bytes']>>;
   nativeToken_contains: Maybe<Scalars['Bytes']>;
   nativeToken_not_contains: Maybe<Scalars['Bytes']>;
+  nativeTokenInfo: Maybe<Scalars['String']>;
+  nativeTokenInfo_not: Maybe<Scalars['String']>;
+  nativeTokenInfo_gt: Maybe<Scalars['String']>;
+  nativeTokenInfo_lt: Maybe<Scalars['String']>;
+  nativeTokenInfo_gte: Maybe<Scalars['String']>;
+  nativeTokenInfo_lte: Maybe<Scalars['String']>;
+  nativeTokenInfo_in: Maybe<Array<Scalars['String']>>;
+  nativeTokenInfo_not_in: Maybe<Array<Scalars['String']>>;
+  nativeTokenInfo_contains: Maybe<Scalars['String']>;
+  nativeTokenInfo_contains_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_contains: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_contains_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_starts_with: Maybe<Scalars['String']>;
+  nativeTokenInfo_starts_with_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_starts_with: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_starts_with_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_ends_with: Maybe<Scalars['String']>;
+  nativeTokenInfo_ends_with_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_ends_with: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_ends_with_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_: Maybe<Token_Filter>;
   contributorRegistry: Maybe<Scalars['String']>;
   contributorRegistry_not: Maybe<Scalars['String']>;
   contributorRegistry_gt: Maybe<Scalars['String']>;
@@ -1019,6 +1042,7 @@ export enum FundingRoundFactory_OrderBy {
   Owner = 'owner',
   Coordinator = 'coordinator',
   NativeToken = 'nativeToken',
+  NativeTokenInfo = 'nativeTokenInfo',
   ContributorRegistry = 'contributorRegistry',
   ContributorRegistryAddress = 'contributorRegistryAddress',
   RecipientRegistry = 'recipientRegistry',
@@ -1140,6 +1164,27 @@ export type FundingRound_Filter = {
   nativeToken_not_in: Maybe<Array<Scalars['Bytes']>>;
   nativeToken_contains: Maybe<Scalars['Bytes']>;
   nativeToken_not_contains: Maybe<Scalars['Bytes']>;
+  nativeTokenInfo: Maybe<Scalars['String']>;
+  nativeTokenInfo_not: Maybe<Scalars['String']>;
+  nativeTokenInfo_gt: Maybe<Scalars['String']>;
+  nativeTokenInfo_lt: Maybe<Scalars['String']>;
+  nativeTokenInfo_gte: Maybe<Scalars['String']>;
+  nativeTokenInfo_lte: Maybe<Scalars['String']>;
+  nativeTokenInfo_in: Maybe<Array<Scalars['String']>>;
+  nativeTokenInfo_not_in: Maybe<Array<Scalars['String']>>;
+  nativeTokenInfo_contains: Maybe<Scalars['String']>;
+  nativeTokenInfo_contains_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_contains: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_contains_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_starts_with: Maybe<Scalars['String']>;
+  nativeTokenInfo_starts_with_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_starts_with: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_starts_with_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_ends_with: Maybe<Scalars['String']>;
+  nativeTokenInfo_ends_with_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_ends_with: Maybe<Scalars['String']>;
+  nativeTokenInfo_not_ends_with_nocase: Maybe<Scalars['String']>;
+  nativeTokenInfo_: Maybe<Token_Filter>;
   startTime: Maybe<Scalars['BigInt']>;
   startTime_not: Maybe<Scalars['BigInt']>;
   startTime_gt: Maybe<Scalars['BigInt']>;
@@ -1304,6 +1349,7 @@ export enum FundingRound_OrderBy {
   ContributorRegistry = 'contributorRegistry',
   ContributorRegistryAddress = 'contributorRegistryAddress',
   NativeToken = 'nativeToken',
+  NativeTokenInfo = 'nativeTokenInfo',
   StartTime = 'startTime',
   SignUpDeadline = 'signUpDeadline',
   VotingDeadline = 'votingDeadline',
@@ -2743,6 +2789,13 @@ export type GetCurrentRoundQueryVariables = Exact<{
 
 export type GetCurrentRoundQuery = { __typename?: 'Query', fundingRoundFactory: Maybe<{ __typename?: 'FundingRoundFactory', currentRound: Maybe<{ __typename?: 'FundingRound', id: string }> }> };
 
+export type GetFactoryInfoQueryVariables = Exact<{
+  factoryAddress: Scalars['ID'];
+}>;
+
+
+export type GetFactoryInfoQuery = { __typename?: 'Query', fundingRoundFactory: Maybe<{ __typename?: 'FundingRoundFactory', contributorRegistryAddress: Maybe<any>, nativeTokenInfo: Maybe<{ __typename?: 'Token', tokenAddress: Maybe<any>, symbol: Maybe<string>, decimals: Maybe<any> }> }> };
+
 export type GetProjectQueryVariables = Exact<{
   recipientId: Scalars['ID'];
 }>;
@@ -2766,6 +2819,13 @@ export type GetRecipientDonationsQueryVariables = Exact<{
 
 export type GetRecipientDonationsQuery = { __typename?: 'Query', donations: Array<{ __typename?: 'Donation', id: string }> };
 
+export type GetRecipientRegistryInfoQueryVariables = Exact<{
+  factoryAddress: Scalars['ID'];
+}>;
+
+
+export type GetRecipientRegistryInfoQuery = { __typename?: 'Query', fundingRoundFactory: Maybe<{ __typename?: 'FundingRoundFactory', recipientRegistry: Maybe<{ __typename?: 'RecipientRegistry', id: string, owner: Maybe<any>, baseDeposit: Maybe<any>, challengePeriodDuration: Maybe<any> }>, currentRound: Maybe<{ __typename?: 'FundingRound', id: string, recipientRegistry: Maybe<{ __typename?: 'RecipientRegistry', id: string, owner: Maybe<any>, baseDeposit: Maybe<any>, challengePeriodDuration: Maybe<any> }> }> }> };
+
 export type GetRecipientsQueryVariables = Exact<{
   registryAddress: Scalars['String'];
 }>;
@@ -2773,10 +2833,24 @@ export type GetRecipientsQueryVariables = Exact<{
 
 export type GetRecipientsQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, recipientIndex: Maybe<any>, requestType: Maybe<string>, requester: Maybe<string>, recipientAddress: Maybe<any>, recipientMetadata: Maybe<string>, requestSubmittedHash: Maybe<any>, requestResolvedHash: Maybe<any>, submissionTime: Maybe<string>, rejected: Maybe<boolean>, verified: Maybe<boolean> }> };
 
+export type GetRoundInfoQueryVariables = Exact<{
+  fundingRoundAddress: Scalars['ID'];
+}>;
+
+
+export type GetRoundInfoQuery = { __typename?: 'Query', fundingRound: Maybe<{ __typename?: 'FundingRound', id: string, maci: Maybe<any>, recipientRegistryAddress: Maybe<any>, contributorRegistryAddress: Maybe<any>, voiceCreditFactor: Maybe<any>, isFinalized: Maybe<boolean>, isCancelled: Maybe<boolean>, contributorCount: any, totalSpent: Maybe<any>, matchingPoolSize: Maybe<any>, nativeTokenInfo: Maybe<{ __typename?: 'Token', tokenAddress: Maybe<any>, symbol: Maybe<string>, decimals: Maybe<any> }> }> };
+
 export type GetRoundsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetRoundsQuery = { __typename?: 'Query', fundingRounds: Array<{ __typename?: 'FundingRound', id: string, isFinalized: Maybe<boolean>, isCancelled: Maybe<boolean>, startTime: Maybe<any> }> };
+
+export type GetTokenInfoQueryVariables = Exact<{
+  fundingRoundAddress: Scalars['ID'];
+}>;
+
+
+export type GetTokenInfoQuery = { __typename?: 'Query', fundingRound: Maybe<{ __typename?: 'FundingRound', nativeTokenInfo: Maybe<{ __typename?: 'Token', tokenAddress: Maybe<any>, symbol: Maybe<string>, decimals: Maybe<any> }> }> };
 
 export type GetTotalContributedQueryVariables = Exact<{
   fundingRoundAddress: Scalars['ID'];
@@ -2818,6 +2892,18 @@ export const GetCurrentRoundDocument = gql`
   }
 }
     `;
+export const GetFactoryInfoDocument = gql`
+    query GetFactoryInfo($factoryAddress: ID!) {
+  fundingRoundFactory(id: $factoryAddress) {
+    nativeTokenInfo {
+      tokenAddress
+      symbol
+      decimals
+    }
+    contributorRegistryAddress
+  }
+}
+    `;
 export const GetProjectDocument = gql`
     query GetProject($recipientId: ID!) {
   recipients(where: {id: $recipientId}) {
@@ -2856,6 +2942,27 @@ export const GetRecipientDonationsDocument = gql`
   }
 }
     `;
+export const GetRecipientRegistryInfoDocument = gql`
+    query GetRecipientRegistryInfo($factoryAddress: ID!) {
+  fundingRoundFactory(id: $factoryAddress) {
+    recipientRegistry {
+      id
+      owner
+      baseDeposit
+      challengePeriodDuration
+    }
+    currentRound {
+      id
+      recipientRegistry {
+        id
+        owner
+        baseDeposit
+        challengePeriodDuration
+      }
+    }
+  }
+}
+    `;
 export const GetRecipientsDocument = gql`
     query GetRecipients($registryAddress: String!) {
   recipients(where: {recipientRegistry: $registryAddress}) {
@@ -2873,6 +2980,27 @@ export const GetRecipientsDocument = gql`
   }
 }
     `;
+export const GetRoundInfoDocument = gql`
+    query GetRoundInfo($fundingRoundAddress: ID!) {
+  fundingRound(id: $fundingRoundAddress) {
+    id
+    maci
+    nativeTokenInfo {
+      tokenAddress
+      symbol
+      decimals
+    }
+    recipientRegistryAddress
+    contributorRegistryAddress
+    voiceCreditFactor
+    isFinalized
+    isCancelled
+    contributorCount
+    totalSpent
+    matchingPoolSize
+  }
+}
+    `;
 export const GetRoundsDocument = gql`
     query GetRounds {
   fundingRounds(orderBy: startTime, orderDirection: asc) {
@@ -2880,6 +3008,17 @@ export const GetRoundsDocument = gql`
     isFinalized
     isCancelled
     startTime
+  }
+}
+    `;
+export const GetTokenInfoDocument = gql`
+    query GetTokenInfo($fundingRoundAddress: ID!) {
+  fundingRound(id: $fundingRoundAddress) {
+    nativeTokenInfo {
+      tokenAddress
+      symbol
+      decimals
+    }
   }
 }
     `;
@@ -2907,6 +3046,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     GetCurrentRound(variables: GetCurrentRoundQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCurrentRoundQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetCurrentRoundQuery>(GetCurrentRoundDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetCurrentRound');
     },
+    GetFactoryInfo(variables: GetFactoryInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFactoryInfoQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetFactoryInfoQuery>(GetFactoryInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetFactoryInfo');
+    },
     GetProject(variables: GetProjectQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProjectQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProjectQuery>(GetProjectDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetProject');
     },
@@ -2916,11 +3058,20 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     GetRecipientDonations(variables: GetRecipientDonationsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientDonationsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientDonationsQuery>(GetRecipientDonationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientDonations');
     },
+    GetRecipientRegistryInfo(variables: GetRecipientRegistryInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientRegistryInfoQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientRegistryInfoQuery>(GetRecipientRegistryInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientRegistryInfo');
+    },
     GetRecipients(variables: GetRecipientsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientsQuery>(GetRecipientsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipients');
     },
+    GetRoundInfo(variables: GetRoundInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRoundInfoQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRoundInfoQuery>(GetRoundInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRoundInfo');
+    },
     GetRounds(variables?: GetRoundsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRoundsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRoundsQuery>(GetRoundsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRounds');
+    },
+    GetTokenInfo(variables: GetTokenInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTokenInfoQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetTokenInfoQuery>(GetTokenInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetTokenInfo');
     },
     GetTotalContributed(variables: GetTotalContributedQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTotalContributedQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetTotalContributedQuery>(GetTotalContributedDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetTotalContributed');

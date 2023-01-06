@@ -762,6 +762,7 @@
     "div1": "😢 No projects match your search. Try using the filter to narrow down what you're looking for."
   },
   "leaderboard": {
+    "no_round": "Something went wrong! Round information not found. Please report if issue persists.",
     "no_project": "No projects in this round",
     "more": "more",
     "less": "less",
@@ -773,6 +774,9 @@
       "funding": "Funding"
     },
     "message": "The funding amount is the total amount awarded to each project, calculated using the quadratic funding formula. The donation amount is the community donation. Votes is the sum of square root of each donation, scaled by the MACI voice credit factor and the token decimals."
+  },
+  "leaderboardSimpleView": {
+    "funded": "{tokenSymbol} funded"
   },
   "recipientRegistry": {
     "h2": "Recipient registry",

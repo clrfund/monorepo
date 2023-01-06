@@ -11,6 +11,9 @@ import { IPFS } from './ipfs'
 interface StaticProject extends Project {
   allocatedAmount: string
   state: string
+  recipientIndex: number
+  metadata?: any
+  recipientAddress: string
 }
 
 export type StaticRoundData = {
@@ -82,7 +85,7 @@ function mapTwitterUrl(metadata: any = {}): string {
   return new URL(`${twitterBaseUrl}${twitter}`).href
 }
 
-function toProjectInterface(project: any): Project {
+function toProjectInterface(project: StaticProject): Project {
   const imageUrl = IPFS.formatUrl(project.metadata?.imageHash)
   const twitterUrl = mapTwitterUrl(project.metadata)
 
@@ -119,7 +122,7 @@ function toProjectInterface(project: any): Project {
 export class StaticRound extends BaseRound {
   round: RoundInfo
   projects: Record<string, Project>
-  allocations: Record<string, BigNumber>
+  allocations: Record<number, BigNumber>
   tally: Tally | null
 
   constructor(data: StaticRoundData, isFinalized: boolean) {
@@ -137,7 +140,7 @@ export class StaticRound extends BaseRound {
     const BigNumberZero = BigNumber.from(0)
 
     this.allocations = data.projects.reduce((allocations, project) => {
-      allocations[project.id] =
+      allocations[project.recipientIndex] =
         this.round.status === RoundStatus.Finalized
           ? BigNumber.from(project.allocatedAmount || '0')
           : BigNumberZero
@@ -159,14 +162,18 @@ export class StaticRound extends BaseRound {
     }
   }
 
-  async getRoundInfo(): Promise<RoundInfo> {
+  async getRoundInfo(): Promise<RoundInfo | null> {
     return this.round
   }
 
   /**
    * retrieve project information for the leaderboard view
    */
-  async getLeaderboardProjects(): Promise<LeaderboardProject[]> {
+  getLeaderboardProjects(): LeaderboardProject[] | null {
+    if (!this.isFinalized) {
+      return null
+    }
+
     const projects = Object.values(this.projects).map((project) => ({
       id: project.id,
       name: project.name,
@@ -174,7 +181,7 @@ export class StaticRound extends BaseRound {
       bannerImageUrl: project.bannerImageUrl,
       thumbnailImageUrl: project.thumbnailImageUrl,
       imageUrl: project.imageUrl,
-      allocatedAmount: this.allocations[project.id] ?? BigNumber.from(0),
+      allocatedAmount: this.allocations[project.index] ?? BigNumber.from(0),
       donation: BigNumber.from(
         this.tally?.totalVoiceCreditsPerVoteOption.tally[project.index] ?? 0
       ),
@@ -199,12 +206,14 @@ export class StaticRound extends BaseRound {
 
   /**
    * Return the amount allocated to the project
-   * @param projectId project id
+   * @param projectIndex project index used to access the tally result array
    * @returns the amount allocated to a project according to the tally result
    *          NULL if the project is not found or the round is not finalized
    */
-  async getAllocatedAmount(projectId: string): Promise<BigNumber | null> {
-    return this.allocations[projectId] ?? null
+  async getAllocatedAmountByProjectIndex(
+    projectIndex: number
+  ): Promise<BigNumber | null> {
+    return this.allocations[projectIndex] ?? null
   }
 
   /**

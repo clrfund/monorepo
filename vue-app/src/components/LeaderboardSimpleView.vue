@@ -27,7 +27,13 @@
         </div>
         <div class="funding">
           <div class="amount">~{{ formatAmount(project.allocatedAmount) }}</div>
-          <div class="symbol">{{ tokenSymbol }} funded</div>
+          <div class="symbol">
+            {{
+              $t('leaderboardSimpleView.funded', {
+                tokenSymbol,
+              })
+            }}
+          </div>
         </div>
       </div>
     </links>
@@ -99,7 +105,7 @@ export default class LeaderboardSimpleView extends Vue {
   }
 
   get tokenLogo(): string {
-    return getTokenLogo(this.$store.getters.nativeTokenSymbol)
+    return getTokenLogo(this.tokenSymbol)
   }
 }
 </script>

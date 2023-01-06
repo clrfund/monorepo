@@ -374,8 +374,13 @@ export default class RoundInformation extends Vue {
       if (!this.$store.state.rounds) {
         await this.$store.dispatch(LOAD_ROUNDS)
       }
+
       const round = await this.$store.state.rounds.getRound(this.roundAddress)
-      this.roundInfo = await round.getRoundInfo(this.$store.state.currentRound)
+      if (round) {
+        this.roundInfo = await round.getRoundInfo(
+          this.$store.state.currentRound
+        )
+      }
     }
     this.isLoading = false
   }
