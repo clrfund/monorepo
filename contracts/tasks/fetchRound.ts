@@ -150,9 +150,7 @@ async function getRoundInfo(
 ): Promise<Round> {
   console.log('Fetching round data...')
   const round: any = { address: roundContract.address }
-  round.nativeTokenAddress = await roundContract
-    .nativeToken()
-    .catch(toUndefined)
+  round.nativeTokenAddress = await roundContract.nativeToken()
 
   const token = await ethers.getContractAt('ERC20', round.nativeTokenAddress)
   round.nativeTokenDecimals = await token.decimals().catch(toUndefined)
@@ -211,9 +209,7 @@ async function getRoundInfo(
     .userRegistry()
     .catch(toUndefined)
 
-  round.recipientRegistryAddress = await roundContract
-    .recipientRegistry()
-    .catch(toUndefined)
+  round.recipientRegistryAddress = await roundContract.recipientRegistry()
 
   console.log('Round', round)
   return round
@@ -300,6 +296,7 @@ task('fetch-round', 'Fetch round data')
           tally = await Ipfs.fetchJson(round.tallyHash)
         } catch (err) {
           console.log('Failed to get tally file', round.tallyHash, err)
+          throw err
         }
       }
 
