@@ -14,7 +14,12 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import Links from './Links.vue'
 import Loader from './Loader.vue'
-import { LOAD_ROUNDS } from '@/store/action-types'
+import {
+  LOAD_ROUNDS,
+  SELECT_ROUND,
+  LOAD_ROUND_INFO,
+} from '@/store/action-types'
+import { getCurrentRound } from '@/api/round'
 
 @Component({ components: { Links, Loader } })
 export default class extends Vue {
@@ -22,21 +27,26 @@ export default class extends Vue {
   // otherwise show the static text 'App'
   @Prop() dynamic!: boolean
 
+  loading = true
+
   async created() {
     if (!this.$store.state.rounds) {
       await this.$store.dispatch(LOAD_ROUNDS)
     }
-  }
 
-  get loading(): boolean {
-    return (
-      this.dynamic &&
-      !(
-        this.$store.state.rounds &&
-        this.$store.state.currentRoundAddress &&
-        this.$store.state.currentRound
-      )
-    )
+    if (!this.$store.state.currentRoundAddress) {
+      const currentRoundAddress = await getCurrentRound()
+      await this.$store.dispatch(SELECT_ROUND, currentRoundAddress)
+    }
+
+    if (
+      this.$store.state.currentRoundAddress &&
+      !this.$store.state.currentRound
+    ) {
+      await this.$store.dispatch(LOAD_ROUND_INFO)
+    }
+
+    this.loading = false
   }
 
   get isRoundFinalized(): boolean {
