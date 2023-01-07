@@ -20,7 +20,7 @@ export async function isFundsClaimed(
 ): Promise<boolean> {
   const data = await sdk.GetRecipientDonations({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    recipientAddress,
+    recipientAddress: recipientAddress.toLowerCase(),
   })
 
   return !!data.donations.length
