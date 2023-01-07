@@ -88,6 +88,8 @@ function mapTwitterUrl(metadata: any = {}): string {
 function toProjectInterface(project: StaticProject): Project {
   const imageUrl = IPFS.formatUrl(project.metadata?.imageHash)
   const twitterUrl = mapTwitterUrl(project.metadata)
+  const bannerImageUrl = IPFS.formatUrl(project.metadata?.bannerImageHash)
+  const thumbnailImageUrl = IPFS.formatUrl(project.metadata?.thumbnailImageHash)
 
   return {
     id: project.id,
@@ -100,14 +102,15 @@ function toProjectInterface(project: StaticProject): Project {
     problemSpace: project.metadata?.problemSpace,
     plans: project.metadata?.plans,
     teamName: project.metadata?.teamName,
-    // teamDescription?:
-    // githubUrl?: string
-    // radicleUrl?: string
-    // websiteUrl?: string
+    teamDescription: project.metadata?.teamDescription,
+    githubUrl: project.metadata?.githubUrl,
+    radicleUrl: project.metadata?.radicleUrl,
+    websiteUrl: project.metadata?.websiteUrl,
     twitterUrl,
-    // discordUrl?: string
-    bannerImageUrl: project.metadata?.bannerImageUrl || imageUrl,
-    //thumbnailImageUrl?: string
+    discordUrl: project.metadata?.discordUrl,
+    bannerImageUrl:
+      project.metadata?.bannerImageUrl || bannerImageUrl || imageUrl,
+    thumbnailImageUrl: thumbnailImageUrl,
     imageUrl,
     index: project.recipientIndex,
     isHidden: project.state !== 'Accepted',
