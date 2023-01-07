@@ -3,37 +3,39 @@
     <loader v-if="isLoading"></loader>
     <div v-else>
       <div class="info" v-if="!round">🤚 {{ $t('leaderboard.no_round') }}</div>
-      <div class="info" v-else-if="projects.length === 0">
-        😢 {{ $t('leaderboard.no_project') }}
-      </div>
-      <div v-else>
-        <div class="header">
-          <div>
-            <h2>{{ $t('leaderboard.header') }}</h2>
-          </div>
-          <button class="btn-secondary" @click="toggleView()">
-            <div v-if="isSimpleView">{{ $t('leaderboard.more') }}</div>
-            <div v-else>{{ $t('leaderboard.less') }}</div>
-          </button>
+      <div v-else-if="projects">
+        <div class="info" v-if="projects.length === 0">
+          😢 {{ $t('leaderboard.no_project') }}
         </div>
-        <div class="hr" />
-        <div class="">
-          <div v-if="isSimpleView">
-            <leaderboard-simple-view
-              v-for="(project, index) in projects"
-              :project="project"
-              :key="project.id"
-              :rank="index + 1"
-              :round="round"
-            ></leaderboard-simple-view>
+        <template v-else>
+          <div class="header">
+            <div>
+              <h2>{{ $t('leaderboard.header') }}</h2>
+            </div>
+            <button class="btn-secondary" @click="toggleView()">
+              <div v-if="isSimpleView">{{ $t('leaderboard.more') }}</div>
+              <div v-else>{{ $t('leaderboard.less') }}</div>
+            </button>
           </div>
-          <div v-else>
-            <leaderboard-detail-view
-              :projects="projects"
-              :round="round"
-            ></leaderboard-detail-view>
+          <div class="hr" />
+          <div class="">
+            <div v-if="isSimpleView">
+              <leaderboard-simple-view
+                v-for="(project, index) in projects"
+                :project="project"
+                :key="project.id"
+                :rank="index + 1"
+                :round="round"
+              ></leaderboard-simple-view>
+            </div>
+            <div v-else>
+              <leaderboard-detail-view
+                :projects="projects"
+                :round="round"
+              ></leaderboard-detail-view>
+            </div>
           </div>
-        </div>
+        </template>
       </div>
     </div>
   </div>
@@ -57,7 +59,7 @@ import { LOAD_ROUNDS } from '@/store/action-types'
 export default class Leaderboard extends Vue {
   isLoading = true
   round: RoundInfo | null = null
-  projects: LeaderboardProject[] = []
+  projects: LeaderboardProject[] | null = null
 
   get isSimpleView(): boolean {
     return this.$store.state.showSimpleLeaderboard
@@ -72,10 +74,7 @@ export default class Leaderboard extends Vue {
 
     if (round) {
       this.round = await round.getRoundInfo()
-      const projects = await round.getLeaderboardProjects()
-      if (projects) {
-        this.projects = projects
-      }
+      this.projects = await round.getLeaderboardProjects()
     }
   }
 
@@ -84,9 +83,9 @@ export default class Leaderboard extends Vue {
 
     await this.loadRound(address)
 
-    // redirect to projects view if not finalized
-    if (!this.isRoundFinalized) {
-      this.$router.push({ name: 'round-project', params: this.$route.params })
+    // redirect to projects view if not finalized or no static round data for leaderboard
+    if (!this.isRoundFinalized || !this.projects) {
+      this.$router.push({ name: 'round', params: this.$route.params })
     }
 
     this.isLoading = false
