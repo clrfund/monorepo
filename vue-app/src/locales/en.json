@@ -1124,13 +1124,14 @@
   "dynamic": {
     "appLink": {
       "getStarted": "Get Started",
-      "viewResult": "View Results"
+      "leaderboard": "View Results"
     },
     "category": {
       "tooling": "Tools",
       "content": "Content",
       "data": "Data",
-      "research": "Research"
+      "research": "Research",
+      "other": "Other"
     },
     "timeleft": {
       "unit": {
