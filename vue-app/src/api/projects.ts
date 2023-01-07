@@ -1,7 +1,6 @@
-import { Contract, Signer, BigNumber } from 'ethers'
+import { Signer, BigNumber } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { FundingRound } from './abi'
-import { factory, provider, recipientRegistryType } from './core'
+import { recipientRegistryType } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'

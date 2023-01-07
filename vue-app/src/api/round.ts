@@ -67,7 +67,10 @@ export async function getCurrentRound(): Promise<string | null> {
   const rounds = await Rounds.create()
   const index = rounds.getRoundIndex(fundingRoundAddress)
 
-  if (index && index >= Number(process.env.VUE_APP_FIRST_ROUND || 0)) {
+  if (
+    index !== undefined &&
+    index >= Number(process.env.VUE_APP_FIRST_ROUND || 0)
+  ) {
     return fundingRoundAddress
   }
   return null

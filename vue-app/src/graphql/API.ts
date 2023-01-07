@@ -2852,13 +2852,6 @@ export type GetTokenInfoQueryVariables = Exact<{
 
 export type GetTokenInfoQuery = { __typename?: 'Query', fundingRound: Maybe<{ __typename?: 'FundingRound', nativeTokenInfo: Maybe<{ __typename?: 'Token', tokenAddress: Maybe<any>, symbol: Maybe<string>, decimals: Maybe<any> }> }> };
 
-export type GetTotalContributedQueryVariables = Exact<{
-  fundingRoundAddress: Scalars['ID'];
-}>;
-
-
-export type GetTotalContributedQuery = { __typename?: 'Query', fundingRound: Maybe<{ __typename?: 'FundingRound', contributorCount: any }> };
-
 
 export const GetContributionsAmountDocument = gql`
     query GetContributionsAmount($fundingRoundAddress: ID!, $contributorAddress: ID!) {
@@ -3022,13 +3015,6 @@ export const GetTokenInfoDocument = gql`
   }
 }
     `;
-export const GetTotalContributedDocument = gql`
-    query GetTotalContributed($fundingRoundAddress: ID!) {
-  fundingRound(id: $fundingRoundAddress) {
-    contributorCount
-  }
-}
-    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
 
@@ -3072,9 +3058,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetTokenInfo(variables: GetTokenInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTokenInfoQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetTokenInfoQuery>(GetTokenInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetTokenInfo');
-    },
-    GetTotalContributed(variables: GetTotalContributedQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetTotalContributedQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetTotalContributedQuery>(GetTotalContributedDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetTotalContributed');
     }
   };
 }

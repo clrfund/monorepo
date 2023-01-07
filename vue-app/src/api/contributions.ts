@@ -5,8 +5,7 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Keypair, PrivKey } from 'maci-domainobjs'
 
 import { RoundInfo } from './round'
-import { FundingRound, ERC20 } from './abi'
-import { factory, provider } from './core'
+import { FundingRound } from './abi'
 import { Project } from './projects'
 import sdk from '@/graphql/sdk'
 

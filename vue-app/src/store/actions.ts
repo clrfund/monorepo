@@ -125,7 +125,7 @@ const actions = {
       commit(SET_TALLY, tally)
     }
   },
-  async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
+  async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit }) {
     const info = await getRegistryInfo(factory.address)
     if (!info) {
       commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
