@@ -103,7 +103,9 @@ export class DynamicRound extends BaseRound {
       fundingRound.nativeTokenInfo?.decimals || 0
     ).toNumber()
 
-    const now = DateTime.utc()
+    // The signUpDeadline from the maciInfo is also formated in local time
+    // So, lets create a local time here so we can compare the time properly
+    const now = DateTime.local()
     const {
       messages,
       maxMessages,
