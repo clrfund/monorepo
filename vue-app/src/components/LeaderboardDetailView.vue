@@ -154,13 +154,13 @@ export default class LeaderboardDetailView extends Vue {
 }
 
 .first {
-  color: var(--attention-color);
+  color: $rank-1-color;
 }
 .second {
-  color: var(--error-color);
+  color: $rank-2-color;
 }
 .third {
-  color: var(--brand-secondary);
+  color: $rank-3-color;
 }
 
 .info {

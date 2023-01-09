@@ -126,5 +126,6 @@ export default class Leaderboard extends Vue {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 }
 </style>

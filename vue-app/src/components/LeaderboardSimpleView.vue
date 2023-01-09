@@ -127,6 +127,8 @@ export default class LeaderboardSimpleView extends Vue {
   flex-direction: row;
   padding: 0.5rem;
   border-radius: 0.5rem;
+  color: var(--text-body);
+  font-size: 1rem;
 
   @media (max-width: $breakpoint-m) {
     column-gap: 5px;
@@ -162,13 +164,13 @@ export default class LeaderboardSimpleView extends Vue {
     background: transparent;
 
     &.first {
-      color: var(--attention-color);
+      color: $rank-1-color;
     }
     &.second {
-      color: var(--error-color);
+      color: $rank-2-color;
     }
     &.third {
-      color: var(--brand-secondary);
+      color: $rank-3-color;
     }
   }
 }
@@ -181,6 +183,7 @@ export default class LeaderboardSimpleView extends Vue {
   justify-self: center;
   box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
   flex: 0 0 auto;
+  border: 2px solid var(--border-color);
 
   img {
     object-fit: cover;
@@ -191,19 +194,11 @@ export default class LeaderboardSimpleView extends Vue {
 
 .project-name {
   font-weight: 200;
+  font-size: 1.5rem;
   overflow-wrap: break-word;
   margin-bottom: 1.5rem;
-  font-size: 2vw;
   color: var(--text-secondary);
   flex: 1 1 auto;
-
-  a {
-    color: var(--text-body);
-  }
-
-  @media (max-width: $breakpoint-m) {
-    font-size: 14px;
-  }
 }
 
 .funding {
@@ -211,20 +206,13 @@ export default class LeaderboardSimpleView extends Vue {
 
   .amount {
     white-space: nowrap;
-    font-size: 2vw;
     font-family: 'Lucida Console', 'Courier New', monospace;
-
-    @media (max-width: $breakpoint-m) {
-      font-size: 16px;
-    }
+    font-size: 1.5rem;
   }
 
   .symbol {
-    font-size: 1vw;
+    font-size: 0.7rem;
     white-space: nowrap;
-    @media (max-width: $breakpoint-m) {
-      font-size: 10px;
-    }
   }
 }
 </style>
