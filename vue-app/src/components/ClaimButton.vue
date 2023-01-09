@@ -77,6 +77,7 @@ export default class ClaimButton extends Vue {
     if (!this.$store.state.rounds) {
       await this.$store.dispatch(LOAD_ROUNDS)
     }
+
     this.checkAllocation()
   }
 
@@ -129,7 +130,13 @@ export default class ClaimButton extends Vue {
   }
 
   canClaim(): boolean {
-    return this.hasClaimBtn() && this.$store.state.currentUser && !this.claimed
+    return (
+      this.hasClaimBtn() &&
+      this.$store.state.currentUser &&
+      !this.claimed &&
+      this.allocatedAmount !== null &&
+      this.allocatedAmount.gt(0)
+    )
   }
 
   formatAmount(value: BigNumber | null): string {
