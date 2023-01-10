@@ -60,3 +60,18 @@ export type AbiInfo = {
   type: EventType
   abi: string
 }
+
+export type RoundFileContent = {
+  round: Round
+  projects: Project[]
+  tally: any
+}
+
+export type Tally = {
+  results: {
+    tally: string[]
+  }
+  totalVoiceCreditsPerVoteOption: {
+    tally: string[]
+  }
+}

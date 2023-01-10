@@ -1,18 +1,13 @@
 import { task, types } from 'hardhat/config'
 import { HardhatConfig } from 'hardhat/types'
 import { utils, Contract, BigNumber } from 'ethers'
-import fs from 'fs'
 import { Ipfs } from '../utils/ipfs'
-import { Project, Round } from '../utils/types'
+import { Project, Round, RoundFileContent } from '../utils/types'
 import { RecipientRegistryLogProcessor } from '../utils/RecipientRegistryLogProcessor'
 import { getRecipientAddressAbi } from '../utils/abi'
+import { writeToFile } from '../utils/file'
 import path from 'path'
-
-type RoundData = {
-  round: Round
-  projects: Project[]
-  tally: any
-}
+import fs from 'fs'
 
 type RoundListEntry = {
   network: string
@@ -31,12 +26,6 @@ function roundFileName(directory: string, address: string): string {
 
 function roundListFileName(directory: string): string {
   return path.join(directory, 'rounds.json')
-}
-
-function writeToFile(filePath: string, data: any) {
-  const outputString = JSON.stringify(data, null, 2)
-  fs.writeFileSync(filePath, outputString + '\n')
-  console.log('Successfully written to ', filePath)
 }
 
 function getEtherscanApiKey(config: HardhatConfig, network: string): string {
@@ -323,7 +312,7 @@ task('fetch-round', 'Fetch round data')
 
       // write to round file
       const filename = roundFileName(outputSubDir, round.address)
-      const roundData: RoundData = {
+      const roundData: RoundFileContent = {
         round,
         projects,
         tally,
