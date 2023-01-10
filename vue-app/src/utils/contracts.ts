@@ -4,6 +4,7 @@ import {
   TransactionReceipt,
 } from '@ethersproject/abstract-provider'
 import { provider } from '@/api/core'
+import { isSameAddress } from '@/utils/accounts'
 
 export async function waitForTransaction(
   pendingTransaction: Promise<TransactionResponse>,
@@ -43,7 +44,7 @@ export function getEventArg(
   argumentName: string
 ): any {
   for (const log of transactionReceipt.logs || []) {
-    if (log.address != contract.address) {
+    if (!isSameAddress(log.address, contract.address)) {
       continue
     }
     const event = contract.interface.parseLog(log)
