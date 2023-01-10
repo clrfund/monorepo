@@ -3,20 +3,9 @@
     <h1 class="content-heading">{{ $t('roundList.h1') }}</h1>
     <div class="round" v-for="round in rounds" :key="round.index">
       <links
-        v-if="round.isFinalized"
         class="round-name"
         :to="{
           name: 'leaderboard',
-          params: { address: round.address },
-        }"
-      >
-        {{ $t('roundList.link1', { index: round.index }) }}
-      </links>
-      <links
-        v-else
-        class="round-name"
-        :to="{
-          name: 'round',
           params: { address: round.address },
         }"
       >

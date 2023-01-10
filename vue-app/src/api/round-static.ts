@@ -37,9 +37,8 @@ function toRoundInfo(round: any, tally: Tally | null): RoundInfo {
   const voiceCreditFactor = BigNumber.from(round.voiceCreditFactor)
   const matchingPool = BigNumber.from(round.matchingPoolSize || 0)
 
-  const contributions = tally
-    ? BigNumber.from(tally.totalVoiceCredits.spent).mul(voiceCreditFactor)
-    : BigNumber.from(0)
+  const spent = tally?.totalVoiceCredits?.spent || 0
+  const contributions = BigNumber.from(spent).mul(voiceCreditFactor)
   const totalFunds = matchingPool.add(contributions)
 
   return {
@@ -131,7 +130,7 @@ export class StaticRound extends BaseRound {
   constructor(data: StaticRoundData, isFinalized: boolean) {
     super(data.round.address, isFinalized)
 
-    this.tally = isFinalized ? data.tally : null
+    this.tally = data.tally ?? null
     this.round = toRoundInfo(data.round, data.tally)
     this.projects = data.projects
       .filter((project) => project.state === 'Accepted')
@@ -140,13 +139,11 @@ export class StaticRound extends BaseRound {
         return projects
       }, {})
 
-    const BigNumberZero = BigNumber.from(0)
-
     this.allocations = data.projects.reduce((allocations, project) => {
-      allocations[project.recipientIndex] =
-        this.round.status === RoundStatus.Finalized
-          ? BigNumber.from(project.allocatedAmount || '0')
-          : BigNumberZero
+      allocations[project.recipientIndex] = BigNumber.from(
+        project.allocatedAmount || '0'
+      )
+
       return allocations
     }, {})
   }
@@ -173,7 +170,7 @@ export class StaticRound extends BaseRound {
    * retrieve project information for the leaderboard view
    */
   getLeaderboardProjects(): LeaderboardProject[] | null {
-    if (!this.isFinalized) {
+    if (this.tally === null) {
       return null
     }
 

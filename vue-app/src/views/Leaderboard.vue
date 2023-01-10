@@ -84,15 +84,11 @@ export default class Leaderboard extends Vue {
     await this.loadRound(address)
 
     // redirect to projects view if not finalized or no static round data for leaderboard
-    if (!this.isRoundFinalized || !this.projects) {
+    if (!this.projects) {
       this.$router.push({ name: 'round', params: this.$route.params })
     }
 
     this.isLoading = false
-  }
-
-  get isRoundFinalized(): boolean {
-    return this.round?.status === RoundStatus.Finalized
   }
 
   toggleView(): void {
