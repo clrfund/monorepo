@@ -19,7 +19,7 @@
             {{ rank }}
           </div>
         </div>
-        <div class="project-image">
+        <div class="desktop project-image">
           <img :src="projectImageUrl" :alt="project.name" />
         </div>
         <div class="project-name">
