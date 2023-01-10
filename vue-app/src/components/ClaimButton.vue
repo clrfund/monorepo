@@ -73,6 +73,14 @@ export default class ClaimButton extends Vue {
     return this.$store.state.rounds.isRoundFinalized(this.roundAddress)
   }
 
+  get isRoundCancelled(): boolean {
+    return this.$store.state.rounds.isRoundCancelled(this.roundAddress)
+  }
+
+  get isRoundCancelledOrFinalized(): boolean {
+    return this.isRoundFinalized || this.isRoundCancelled
+  }
+
   async created() {
     if (!this.$store.state.rounds) {
       await this.$store.dispatch(LOAD_ROUNDS)
@@ -88,7 +96,7 @@ export default class ClaimButton extends Vue {
     if (
       !this.project ||
       !this.currentRound ||
-      !this.$store.state.rounds.isRoundFinalized(this.roundAddress) ||
+      !this.isRoundCancelledOrFinalized ||
       this.allocatedAmount
     ) {
       this.isLoading = false
@@ -110,9 +118,18 @@ export default class ClaimButton extends Vue {
       this.project.index
     )
 
-    this.claimed = this.$store.getters.isCurrentRound(this.roundAddress)
-      ? await isFundsClaimed(this.roundAddress, this.project.address)
-      : true
+    this.claimed = true
+    if (
+      this.$store.getters.isCurrentRound(this.roundAddress) &&
+      this.isRoundFinalized
+    ) {
+      // make sure it's really claimed
+      this.claimed = await isFundsClaimed(
+        this.roundAddress,
+        this.project.address
+      )
+    }
+
     this.isLoading = false
   }
 

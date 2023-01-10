@@ -1,6 +1,7 @@
 import sdk from '@/graphql/sdk'
 import { utils } from 'ethers'
 import { staticRoundsBaseUrl, staticRoundsFilename } from './core'
+import { RoundStatus } from './round'
 
 import { BaseRound } from './round-base'
 import { DynamicRound } from './round-dynamic'
@@ -9,7 +10,7 @@ import { StaticRound } from './round-static'
 export interface Round {
   index: number
   address: string
-  isFinalized: boolean
+  status: string
   url?: string
 }
 
@@ -43,9 +44,12 @@ export class Rounds {
 
     for (const round of extraRounds) {
       const key = round.address.toLowerCase()
+      const status = round.isFinalized
+        ? RoundStatus.Finalized
+        : RoundStatus.Cancelled
       rounds.set(key, {
         address: round.address,
-        isFinalized: round.isFinalized,
+        status,
         index: rounds.size,
         url: formatRoundUrl(round.address, round.network),
       })
@@ -53,12 +57,17 @@ export class Rounds {
 
     for (const fundingRound of data.fundingRounds) {
       if (!rounds.has(fundingRound.id)) {
-        const isFinalized =
-          !!fundingRound.isFinalized && !fundingRound.isCancelled
+        const isFinalized = !!fundingRound.isFinalized
+        const isCancelled = !!fundingRound.isCancelled
+        const status = isCancelled
+          ? RoundStatus.Cancelled
+          : isFinalized
+          ? RoundStatus.Finalized
+          : 'Active'
         rounds.set(fundingRound.id.toLowerCase(), {
           index: rounds.size,
           address: fundingRound.id,
-          isFinalized,
+          status,
         })
       }
     }
@@ -88,16 +97,30 @@ export class Rounds {
       return null
     }
 
+    const isFinalized = round.status === RoundStatus.Finalized
     if (round.url) {
       const data = await utils.fetchJson(round.url)
-      return new StaticRound(data, round.isFinalized)
+      return new StaticRound(data, isFinalized)
     } else {
-      return new DynamicRound(roundAddress, Boolean(round.isFinalized))
+      return new DynamicRound(roundAddress, isFinalized)
     }
   }
 
   isRoundFinalized(roundAddress: string): boolean {
     const round = this.get(roundAddress)
-    return round?.isFinalized ?? false
+    if (!round) {
+      return false
+    }
+
+    return round.status === RoundStatus.Finalized
+  }
+
+  isRoundCancelled(roundAddress: string): boolean {
+    const round = this.get(roundAddress)
+    if (!round) {
+      return false
+    }
+
+    return round.status === RoundStatus.Cancelled
   }
 }
