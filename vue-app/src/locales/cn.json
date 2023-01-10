@@ -1169,8 +1169,8 @@
     },
     "verify": {
       "step": {
-        "Connect": "连接",
-        "Get registered": "注册"
+        "connect": "连接",
+        "registration": "注册"
       }
     },
     "progress": {
