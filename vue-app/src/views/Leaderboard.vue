@@ -49,7 +49,7 @@ import LeaderboardSimpleView from '@/components/LeaderboardSimpleView.vue'
 import Loader from '@/components/Loader.vue'
 import { TOGGLE_LEADERBOARD_VIEW } from '@/store/mutation-types'
 import { LeaderboardProject } from '@/api/projects'
-import { RoundInfo, RoundStatus } from '@/api/round'
+import { RoundInfo } from '@/api/round'
 import { LOAD_ROUNDS } from '@/store/action-types'
 
 @Component({
