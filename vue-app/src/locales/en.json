@@ -1170,7 +1170,7 @@
     "verify": {
       "step": {
         "connect": "Connect",
-        "get_registered": "Get registered"
+        "registration": "Get registered"
       }
     },
     "progress": {
