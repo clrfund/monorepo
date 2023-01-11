@@ -74,3 +74,10 @@ Claim funds:
 ```
 yarn claim:local
 ```
+
+### Verify all clr.fund contracts
+The following command will verify all clr.fund contracts. It will log a warning if contract already verified or missing.
+
+```
+yarn hardhat verify-all <funding-round-address> --network <network>
+```
