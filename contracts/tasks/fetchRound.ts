@@ -170,20 +170,16 @@ async function getRoundInfo(
     throw new Error(`Failed to fetch token data: ${errorMessage}`)
   }
 
-  round.contributorCount = await roundContract
-    .contributorCount()
-    .then((val: BigNumber) => val.toNumber())
-    .catch(toZero)
+  const contributorCount = await roundContract.contributorCount().catch(toZero)
+  round.contributorCount = contributorCount.toNumber()
 
-  round.matchingPoolSize = await roundContract
-    .matchingPoolSize()
-    .then(toString)
-    .catch(toZero)
+  const matchingPoolSize = await roundContract.matchingPoolSize().catch(toZero)
+  round.matchingPoolSize = matchingPoolSize.toString()
 
   round.totalSpent = await roundContract
     .totalSpent()
     .then(toString)
-    .catch(toZero)
+    .catch(toUndefined)
 
   const voiceCreditFactor = await roundContract.voiceCreditFactor()
   round.voiceCreditFactor = voiceCreditFactor.toString()
@@ -317,6 +313,11 @@ task('fetch-round', 'Fetch round data')
           projectRecords,
           tally,
         })
+      }
+
+      // set totalSpent to 0 if not set
+      if (!round.totalSpent) {
+        round.totalSpent = '0'
       }
 
       // write to round file
