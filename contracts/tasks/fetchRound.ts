@@ -185,7 +185,9 @@ async function getRoundInfo(
     .then(toString)
     .catch(toZero)
 
-  round.voiceCreditFactor = await roundContract.voiceCreditFactor()
+  const voiceCreditFactor = await roundContract.voiceCreditFactor()
+  round.voiceCreditFactor = voiceCreditFactor.toString()
+
   round.isFinalized = await roundContract.isFinalized()
   round.isCancelled = await roundContract.isCancelled()
   round.tallyHash = await roundContract.tallyHash()
@@ -201,6 +203,13 @@ async function getRoundInfo(
     round.endTime = endTime.toNumber()
     round.signUpDuration = signUpDuration.toNumber()
     round.votingDuration = votingDuration.toNumber()
+
+    const maciTreeDepths = await maci.treeDepths()
+    const messages = await maci.numMessages()
+
+    round.messages = messages.toNumber()
+    round.maxMessages = 2 ** maciTreeDepths.messageTreeDepth - 1
+    round.maxRecipients = 5 ** maciTreeDepths.voteOptionTreeDepth - 1
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : ''
     throw new Error(`Failed to get MACI data ${errorMessage}`)

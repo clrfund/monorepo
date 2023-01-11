@@ -56,6 +56,9 @@
           <p>
             {{ $t('roundInfo.p2') }}
           </p>
+          <p v-if="isMaxMessagesReached">
+            {{ $t('roundInfo.max_messages_reached') }}
+          </p>
           <p v-if="blogUrl">
             {{ $t('roundInfo.more') }}
             <links :to="blogUrl">{{ $t('roundInfo.round_review') }}</links>

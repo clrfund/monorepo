@@ -48,8 +48,8 @@ function toRoundInfo(round: any, tally: Tally | null): RoundInfo {
     maciAddress: round.maciAddress,
     recipientTreeDepth: 0,
     maxContributors: 0,
-    maxRecipients: 0,
-    maxMessages: 0,
+    maxRecipients: round.maxRecipients || 0,
+    maxMessages: round.maxMessages || 0,
     coordinatorPubKey: new Keypair().pubKey,
     nativeTokenAddress: round.nativeTokenAddress,
     nativeTokenSymbol: round.nativeTokenSymbol,
@@ -63,7 +63,7 @@ function toRoundInfo(round: any, tally: Tally | null): RoundInfo {
     totalFunds: FixedNumber.fromValue(totalFunds, nativeTokenDecimals),
     matchingPool: FixedNumber.fromValue(matchingPool, nativeTokenDecimals),
     contributions: FixedNumber.fromValue(contributions, nativeTokenDecimals),
-    messages: 0,
+    messages: round.messages || 0,
   }
 }
 
