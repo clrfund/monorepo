@@ -33,7 +33,7 @@
                   alt="current step"
                 />
                 <p
-                  v-text="$t(`dynamic.verify.step.${step.name}`)"
+                  v-text="$t(`dynamic.verify.step.${step.page}`)"
                   class="active step"
                 />
               </template>
@@ -46,7 +46,7 @@
                 />
                 <img v-else src="@/assets/green-tick.svg" alt="step complete" />
                 <p
-                  v-text="$t(`dynamic.verify.step.${step.name}`)"
+                  v-text="$t(`dynamic.verify.step.${step.page}`)"
                   class="step"
                 />
               </template>
@@ -57,7 +57,7 @@
                   alt="step remaining"
                 />
                 <p
-                  v-text="$t(`dynamic.verify.step.${step.name}`)"
+                  v-text="$t(`dynamic.verify.step.${step.page}`)"
                   class="step"
                 />
               </template>

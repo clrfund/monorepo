@@ -1043,7 +1043,7 @@
     "div1": "Cancelled",
     "div2": "Open",
     "div3": "Closed",
-    "p1": "he round is officially closed",
+    "p1": "The round is officially closed",
     "p2": "It's now too late to contribute or reallocate your donations!",
     "max_messages_reached": "Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
     "div4": "Great!",
@@ -1195,7 +1195,7 @@
     "verify": {
       "step": {
         "connect": "Connect",
-        "get_registered": "Get registered"
+        "registration": "Get registered"
       }
     },
     "progress": {
