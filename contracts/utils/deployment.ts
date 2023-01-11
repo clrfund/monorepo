@@ -105,7 +105,7 @@ type PoseidonName = 'PoseidonT3' | 'PoseidonT6'
  * @param contractName PoseidonT3 or PoseidonT6
  * @returns contract object
  */
-async function deployPoseidon(
+export async function deployPoseidon(
   account: Signer,
   contractName: PoseidonName
 ): Promise<Contract> {
