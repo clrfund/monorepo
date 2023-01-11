@@ -42,11 +42,15 @@
               {{ project.name }}
             </div>
             <div class="votes">
-              <span class="mobile">Votes: </span>
+              <span class="mobile"
+                >{{ $t('leaderboard.heading.votes') }}:
+              </span>
               <span>{{ formatVotes(project.votes) }}</span>
             </div>
             <div class="donation">
-              <span class="mobile">Donation: </span>
+              <span class="mobile"
+                >{{ $t('leaderboard.heading.donation') }}:
+              </span>
               <span>~{{ formatDonation(project.donation) }}</span>
               <div class="mobile symbol">
                 <img
@@ -56,7 +60,9 @@
               </div>
             </div>
             <div class="funding">
-              <span class="mobile">Funding: </span>
+              <span class="mobile"
+                >{{ $t('leaderboard.heading.funded') }}:
+              </span>
               <span class="amount">
                 ~{{ formatAmount(project.allocatedAmount) }}
               </span>

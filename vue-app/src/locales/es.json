@@ -770,8 +770,9 @@
     "heading": {
       "project": "Project",
       "votes": "Votes",
-      "donation": "Donation",
-      "funding": "Funding"
+      "donation": "Contributions",
+      "funding": "Funding",
+      "funded": "Funded"
     },
     "message": "The funding amount is the total amount awarded to each project, calculated using the quadratic funding formula. The donation amount is the community donation. Votes is the sum of square root of each donation, scaled by the MACI voice credit factor and the token decimals."
   },
@@ -1073,7 +1074,9 @@
     "div19": "legend",
     "div20": "No scheduled round",
     "div21": "We haven't yet scheduled a funding round. Stay tuned!",
-    "pluralism": "s"
+    "pluralism": "s",
+    "more": "More on",
+    "round_review": "round review"
   },
   "roundStatusBanner": {
     "span1": "Funding starts 🗓 {startDate}.",

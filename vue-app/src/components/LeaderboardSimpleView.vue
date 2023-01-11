@@ -197,7 +197,7 @@ export default class LeaderboardSimpleView extends Vue {
   font-size: 1.5rem;
   overflow-wrap: break-word;
   margin-bottom: 1.5rem;
-  color: var(--text-secondary);
+  color: var(--text-body);
   flex: 1 1 auto;
 }
 

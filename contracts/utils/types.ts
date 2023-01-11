@@ -44,6 +44,7 @@ export interface Round {
   nativeTokenDecimals: number
   startTime: number
   endTime: number
+  blogUrl?: string
 }
 
 export type EventType =

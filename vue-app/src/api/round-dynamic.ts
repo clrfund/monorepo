@@ -23,7 +23,8 @@ import { getMaciInfo } from './maci'
  */
 export class DynamicRound extends BaseRound {
   constructor(fundingRoundAddress: string, isFinalized: boolean) {
-    super(fundingRoundAddress, isFinalized)
+    // blogUrl is only available from static round
+    super({ address: fundingRoundAddress, isFinalized, blogUrl: null })
   }
 
   async getAllocatedAmountByProjectIndex(

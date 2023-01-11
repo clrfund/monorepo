@@ -4,6 +4,12 @@ import { RoundInfo } from './round'
 import { LeaderboardProject, Project } from './projects'
 import { Tally } from './tally'
 
+type BaseRoundConstructorArgs = {
+  address: string
+  isFinalized: boolean
+  blogUrl: string | null
+}
+
 export function sortByAllocatedAmountDesc(
   entry1: LeaderboardProject,
   entry2: LeaderboardProject
@@ -18,10 +24,12 @@ export function sortByAllocatedAmountDesc(
 export abstract class BaseRound {
   address: string
   isFinalized: boolean
+  blogUrl: string | null
 
-  constructor(address: string, isFinalized: boolean) {
+  constructor({ address, isFinalized, blogUrl }: BaseRoundConstructorArgs) {
     this.address = address
     this.isFinalized = isFinalized
+    this.blogUrl = blogUrl
   }
 
   abstract getTokenInfo(): Promise<Token>

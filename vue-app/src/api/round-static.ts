@@ -122,13 +122,14 @@ function toProjectInterface(project: StaticProject): Project {
  * The path of the json file is defined in env. variable VUE_APP_STATIC_ROUNDS_BASE_URL
  */
 export class StaticRound extends BaseRound {
-  round: RoundInfo
-  projects: Record<string, Project>
-  allocations: Record<number, BigNumber>
-  tally: Tally | null
+  private round: RoundInfo
+  private projects: Record<string, Project>
+  private allocations: Record<number, BigNumber>
+  private tally: Tally | null
 
   constructor(data: StaticRoundData, isFinalized: boolean) {
-    super(data.round.address, isFinalized)
+    const blogUrl = data.round?.blogUrl ?? null
+    super({ address: data.round.address, isFinalized, blogUrl })
 
     this.tally = data.tally ?? null
     this.round = toRoundInfo(data.round, data.tally)
