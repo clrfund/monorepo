@@ -58,9 +58,7 @@
           </p>
           <p v-if="blogUrl">
             {{ $t('roundInfo.more') }}
-            <links class="blog-link" :to="blogUrl">{{
-              $t('roundInfo.round_review')
-            }}</links>
+            <links :to="blogUrl">{{ $t('roundInfo.round_review') }}</links>
           </p>
 
           <div class="dismiss-btn" @click="toggleNotice">
@@ -794,10 +792,6 @@ export default class RoundInformation extends Vue {
 
 .add-funds-link {
   font-size: 14px;
-}
-
-.blog-link {
-  color: var(--attention-color);
 }
 
 .status {
