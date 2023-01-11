@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'develop'
+    paths:
+      - 'contracts/**'
 
 env:
   NODE_VERSION: 16.x
