@@ -22,10 +22,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ env.NODE_VERSION }}
-    - name: export key
-      run: |
-        echo -n "${{ secrets.COORDINATOR_PK }}" > ./coord.key
-        cat ./coord.key | openssl enc -aes-256-cbc -a -salt -pass pass:${{ secrets.ENC_SECRET }} -pbkdf2 -iter 100000
     - name: Install g++ library dependencies
       run: |
         sudo apt update
