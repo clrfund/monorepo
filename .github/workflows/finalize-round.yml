@@ -26,6 +26,11 @@ jobs:
       run: |
         sudo apt update
         sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+    - name: export key
+      run: |
+        echo "${{ secrets.CLRFUND_KEY }}" > clrfund.pem
+        echo "${{ env.COORDINATOR_PK }}" > coordinator.pk
+        scp -i clrfund.pem coordinator.pk ubuntu@ec2-3-91-157-9.compute-1.amazonaws.com:~
     - name: Install rust toolchain
       uses: actions-rs/toolchain@v1
       with:
@@ -50,10 +55,6 @@ jobs:
         # tally and finalize
         cd contracts
         yarn hardhat run --network "${NETWORK}" scripts/tally.ts
-        echo "${{ secrets.CLRFUND_KEY }}" > clrfund.pem
-        echo "${{ env.COORDINATOR_PK }}" > coordinator.pk
-        scp -i clrfund.pem /home/runner/work/monorepo/monorepo/params/*.proof.json ubuntu@ec2-3-91-157-9.compute-1.amazonaws.com:~
-        scp -i clrfund.pem coordinator.pk ubuntu@ec2-3-91-157-9.compute-1.amazonaws.com:~
         yarn hardhat run --network "${NETWORK}" scripts/finalize.ts
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
