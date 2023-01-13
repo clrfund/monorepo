@@ -1,10 +1,6 @@
 name: Finalize a test round
 
-on:
-  workflow_dispatch:
-  push:
-    paths:
-      - '.github/workflows/finalize-round.yml'
+on: workflow_dispatch
 
 env:
   NODE_VERSION: 16.x
