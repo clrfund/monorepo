@@ -61,7 +61,7 @@
           </p>
           <p v-if="blogUrl">
             {{ $t('roundInfo.more') }}
-            <links :to="blogUrl">{{ $t('roundInfo.round_review') }}</links>
+            <links :to="blogUrl">{{ blogUrl }}</links>
           </p>
 
           <div class="dismiss-btn" @click="toggleNotice">

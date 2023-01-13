@@ -1076,8 +1076,7 @@
     "div20": "No scheduled round",
     "div21": "We haven't yet scheduled a funding round. Stay tuned!",
     "pluralism": "s",
-    "more": "More on",
-    "round_review": "round review"
+    "more": "More on"
   },
   "roundStatusBanner": {
     "span1": "Funding starts 🗓 {startDate}.",
