@@ -771,8 +771,7 @@
       "project": "项目",
       "votes": "票数",
       "donation": "捐款",
-      "funding": "总额",
-      "funded": "总额"
+      "total": "总额"
     },
     "message": "总额是按照 quadradic funding 公式计算的总拨款金额。捐款是社区捐款。票数是每笔捐款的平方根的总和，并经过 MACI voice credit factor 和代币小数缩放"
   },

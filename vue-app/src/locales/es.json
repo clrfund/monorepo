@@ -771,8 +771,7 @@
       "project": "Project",
       "votes": "Votes",
       "donation": "Contributions",
-      "funding": "Funding",
-      "funded": "Funded"
+      "total": "Total"
     },
     "message": "The funding amount for each project is calculated using the quadratic funding formula and represents the total amount awarded to the project. The contributions to the project come from community donations. The number of votes a project receives is determined by taking the square root of each donation, scaled by the MACI voice credit factor and the token decimal."
   },

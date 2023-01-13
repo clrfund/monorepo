@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="funding heading">
-          <div>{{ $t('leaderboard.heading.funding') }}</div>
+          <div>{{ $t('leaderboard.heading.total') }}</div>
           <div class="desktop symbol">
             <img :src="require(`@/assets/${tokenLogo}`)" :alt="tokenSymbol" />
           </div>
@@ -61,7 +61,7 @@
             </div>
             <div class="funding">
               <span class="mobile"
-                >{{ $t('leaderboard.heading.funded') }}:
+                >{{ $t('leaderboard.heading.total') }}:
               </span>
               <span class="amount">
                 ~{{ formatAmount(project.allocatedAmount) }}
