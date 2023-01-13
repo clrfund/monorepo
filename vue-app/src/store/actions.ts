@@ -14,8 +14,8 @@ import {
   hasContributorVoted,
 } from '@/api/contributions'
 import { loginUser, logoutUser } from '@/api/gun'
-import { getRecipientRegistryAddress } from '@/api/projects'
-import { RoundStatus, getRoundInfo } from '@/api/round'
+import { RoundStatus } from '@/api/round'
+import { Rounds } from '@/api/rounds'
 import { storage } from '@/api/storage'
 import { getTally } from '@/api/tally'
 import { getEtherBalance, getTokenBalance, isVerifiedUser } from '@/api/user'
@@ -31,6 +31,7 @@ import {
   LOAD_MACI_FACTORY_INFO,
   LOAD_RECIPIENT_REGISTRY_INFO,
   LOAD_ROUND_INFO,
+  LOAD_ROUNDS,
   LOAD_TALLY,
   LOAD_USER_INFO,
   LOGIN_USER,
@@ -51,6 +52,7 @@ import {
   SET_CONTRIBUTOR,
   SET_CURRENT_ROUND,
   SET_CURRENT_ROUND_ADDRESS,
+  SET_ROUNDS,
   SET_TALLY,
   SET_CURRENT_USER,
   SET_RECIPIENT_REGISTRY_ADDRESS,
@@ -62,7 +64,7 @@ import {
 
 // Utils
 import { ensLookup } from '@/utils/accounts'
-import { UserRegistryType, userRegistryType } from '@/api/core'
+import { factory, UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
 import { getFactoryInfo } from '@/api/factory'
 import { getMACIFactoryInfo } from '@/api/maci-factory'
@@ -91,15 +93,30 @@ const actions = {
     const factory = await getMACIFactoryInfo()
     commit(SET_MACI_FACTORY, factory)
   },
+  async [LOAD_ROUNDS]({ commit }) {
+    const rounds = await Rounds.create()
+    commit(SET_ROUNDS, rounds)
+  },
   async [LOAD_ROUND_INFO]({ commit, state }) {
     const roundAddress = state.currentRoundAddress
     if (roundAddress === null) {
       commit(SET_CURRENT_ROUND, null)
       return
     }
-    //TODO: update to take factory address as a parameter, default to env. variable
-    const round = await getRoundInfo(roundAddress)
-    commit(SET_CURRENT_ROUND, round)
+
+    let rounds = state.rounds
+    if (rounds === null) {
+      rounds = await Rounds.create()
+      commit(SET_ROUNDS, rounds)
+    }
+
+    const round = await rounds.getRound(roundAddress)
+    if (round) {
+      const roundInfo = await round.getRoundInfo()
+      commit(SET_CURRENT_ROUND, roundInfo)
+    } else {
+      commit(SET_CURRENT_ROUND, null)
+    }
   },
   async [LOAD_TALLY]({ commit, state }) {
     const currentRound = state.currentRound
@@ -108,19 +125,16 @@ const actions = {
       commit(SET_TALLY, tally)
     }
   },
-  async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit, state }) {
-    //TODO: update call to getRecipientRegistryAddress to take factory address as a parameter
-    const recipientRegistryAddress =
-      state.recipientRegistryAddress ||
-      (await getRecipientRegistryAddress(state.currentRoundAddress))
-    commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
-
-    if (recipientRegistryAddress) {
-      const info = await getRegistryInfo(recipientRegistryAddress)
-      commit(SET_RECIPIENT_REGISTRY_INFO, info)
-    } else {
-      commit(SET_RECIPIENT_REGISTRY_INFO, null)
+  async [LOAD_RECIPIENT_REGISTRY_INFO]({ commit }) {
+    const info = await getRegistryInfo(factory.address)
+    if (!info) {
+      commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
+      return
     }
+
+    const recipientRegistryAddress = info.registryAddress
+    commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
+    commit(SET_RECIPIENT_REGISTRY_INFO, info)
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (!state.currentUser) {
@@ -156,10 +170,12 @@ const actions = {
     }
 
     // Check if this user is in our user registry
-    const isRegistered = await isVerifiedUser(
-      userRegistryAddress,
-      state.currentUser.walletAddress
-    )
+    const isRegistered = userRegistryAddress
+      ? await isVerifiedUser(
+          userRegistryAddress,
+          state.currentUser.walletAddress
+        )
+      : false
 
     if (nativeTokenAddress) {
       balance = await getTokenBalance(

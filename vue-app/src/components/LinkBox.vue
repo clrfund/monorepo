@@ -1,5 +1,5 @@
 <template>
-  <div class="link-box">
+  <div v-if="haveLink" class="link-box">
     <h2 class="link-title">{{ $t('linkBox.h2') }}</h2>
     <div v-if="project.githubUrl" class="link-row">
       <img src="@/assets/GitHub.svg" />
@@ -26,6 +26,14 @@ import Links from '@/components/Links.vue'
 @Component({ components: { Links } })
 export default class extends Vue {
   @Prop() project!: Project
+
+  get haveLink(): boolean {
+    return Boolean(
+      this.project.websiteUrl ||
+        this.project.twitterUrl ||
+        this.project.githubUrl
+    )
+  }
 }
 </script>
 

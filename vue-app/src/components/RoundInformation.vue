@@ -46,18 +46,29 @@
             {{ $t('roundInfo.div3') }}
           </div>
         </div>
-        <template v-if="isCurrentRound">
-          <div v-if="isMaxMessagesReached" class="round-notice hidden">
-            <span class="bold-all-caps">
-              <p>{{ $t('roundInfo.p1') }}</p>
-            </span>
-            <p>
-              {{ $t('roundInfo.p2') }}
-            </p>
-            <div class="dismiss-btn" @click="toggleNotice">
-              {{ $t('roundInfo.div4') }}
-            </div>
+        <div
+          :class="{ hidden: !(showNotice && haveNotice) }"
+          class="round-notice"
+        >
+          <span class="bold-all-caps">
+            <p>{{ $t('roundInfo.p1') }}</p>
+          </span>
+          <p>
+            {{ $t('roundInfo.p2') }}
+          </p>
+          <p v-if="isMaxMessagesReached">
+            {{ $t('roundInfo.max_messages_reached') }}
+          </p>
+          <p v-if="blogUrl">
+            {{ $t('roundInfo.more') }}
+            <links :to="blogUrl">{{ blogUrl }}</links>
+          </p>
+
+          <div class="dismiss-btn" @click="toggleNotice">
+            {{ $t('roundInfo.div4') }}
           </div>
+        </div>
+        <template v-if="isCurrentRound">
           <div class="round-info-item" v-if="isRoundJoinOnlyPhase">
             <div class="full-width">
               <div class="round-info-item-top">
@@ -305,7 +316,7 @@ import Component from 'vue-class-component'
 import { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { RoundInfo, getRoundInfo } from '@/api/round'
+import { RoundInfo } from '@/api/round'
 import { chain } from '@/api/core'
 
 import { lsGet, lsSet } from '@/utils/localStorage'
@@ -317,7 +328,7 @@ import WalletModal from '@/components/WalletModal.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
-import { LOAD_ROUND_INFO } from '@/store/action-types'
+import { LOAD_ROUNDS, LOAD_ROUND_INFO } from '@/store/action-types'
 
 @Component({
   components: {
@@ -332,16 +343,11 @@ import { LOAD_ROUND_INFO } from '@/store/action-types'
 export default class RoundInformation extends Vue {
   isLoading = true
   roundInfo: RoundInfo | null = null
+  blogUrl: string | null = null
+  showNotice = false
 
   async created() {
     await this.loadRoundInfo()
-
-    // Message cap notice defaults with `hidden` class
-    // If it hasn't been dismissed yet, this class is toggled off until dismissed
-    const showNotice = !lsGet(this.lsIsNoticeHiddenKey, false)
-    if (showNotice) {
-      this.toggleNotice()
-    }
   }
 
   get isRoundCancelled(): boolean {
@@ -350,10 +356,17 @@ export default class RoundInformation extends Vue {
 
   get isMaxMessagesReached(): boolean {
     if (!this.roundInfo) {
-      return true
+      return false
     }
 
     return this.roundInfo.maxMessages <= this.roundInfo.messages
+  }
+
+  get haveNotice(): boolean {
+    return (
+      (this.isCurrentRound && this.isMaxMessagesReached) ||
+      this.blogUrl !== null
+    )
   }
 
   // Gets local storage key to look up if user has dismissed round notice (if message cap exceeded)
@@ -371,20 +384,26 @@ export default class RoundInformation extends Vue {
     this.roundInfo = null
     this.isLoading = true
     if (this.roundAddress) {
-      this.roundInfo = await getRoundInfo(
-        this.roundAddress,
-        this.$store.state.currentRound
-      )
+      if (!this.$store.state.rounds) {
+        await this.$store.dispatch(LOAD_ROUNDS)
+      }
+
+      const round = await this.$store.state.rounds.getRound(this.roundAddress)
+      if (round) {
+        this.roundInfo = await round.getRoundInfo(
+          this.$store.state.currentRound
+        )
+
+        this.blogUrl = round.blogUrl
+        this.showNotice = !lsGet(this.lsIsNoticeHiddenKey, false)
+      }
     }
     this.isLoading = false
   }
 
   toggleNotice() {
-    const elements = document.getElementsByClassName('round-notice')
-    for (let i = 0; i < elements.length; i++) {
-      elements[i].classList.toggle('hidden')
-    }
-    lsSet(this.lsIsNoticeHiddenKey, !lsGet(this.lsIsNoticeHiddenKey))
+    this.showNotice = !this.showNotice
+    lsSet(this.lsIsNoticeHiddenKey, !this.showNotice)
   }
 
   get formatTotalInRound(): string {

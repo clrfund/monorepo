@@ -678,7 +678,6 @@
     "hero": {
       "title": "Send your favorite projects to the moon!",
       "subtitle": "Every project you contribute to gets a portion of extra funding.",
-      "action": "Get started",
       "info": "How it works"
     },
     "callout": {
@@ -762,6 +761,23 @@
     "link1": "Add project",
     "div1": "😢 No projects match your search. Try using the filter to narrow down what you're looking for."
   },
+  "leaderboard": {
+    "no_round": "Something went wrong! Round information not found. Please report if issue persists.",
+    "no_project": "No projects in this round",
+    "more": "more",
+    "less": "less",
+    "header": "Leaderboard",
+    "heading": {
+      "project": "Project",
+      "votes": "Votes",
+      "donation": "Contributions",
+      "total": "Total"
+    },
+    "message": "The funding amount for each project is calculated using the quadratic funding formula and represents the total amount awarded to the project. The contributions to the project come from the community donations. The number of votes a project receives is determined by taking the sum of the square root of each donation, scaled by the MACI voice credit factor and the token decimal."
+  },
+  "leaderboardSimpleView": {
+    "funded": "{tokenSymbol} funded"
+  },
   "recipientRegistry": {
     "h2": "Recipient registry",
     "th1": "Project",
@@ -778,8 +794,7 @@
   },
   "roundList": {
     "h1": "Rounds",
-    "link1": "Round {index}",
-    "link2": "Round {index}"
+    "link1": "Round {index}"
   },
   "transactionSuccess": {
     "p1": "reallocated!",
@@ -978,8 +993,8 @@
     "div2": "Thanks for helping out all our projects.",
     "button3": "Done"
   },
+  "app": "App",
   "navBar": {
-    "app": "App",
     "dropdown": {
       "home": "Home",
       "about": "About",
@@ -988,7 +1003,8 @@
       "sybil": "Sybil resistance",
       "code": "Code",
       "recipients": "Recipients",
-      "layer2": "Layer 2"
+      "layer2": "Layer 2",
+      "rounds": "Rounds"
     }
   },
   "projectListItem": {
@@ -1027,7 +1043,8 @@
     "div2": "Open",
     "div3": "Closed",
     "p1": "The round is officially closed",
-    "p2": "It's now too late to contribute or reallocate your donations! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
+    "p2": "It's now too late to contribute or reallocate your donations!",
+    "max_messages_reached": "Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
     "div4": "Great!",
     "div5": "⏱️ Round opening",
     "div6": "Time left to contribute",
@@ -1057,7 +1074,8 @@
     "div19": "legend",
     "div20": "No scheduled round",
     "div21": "We haven't yet scheduled a funding round. Stay tuned!",
-    "pluralism": "s"
+    "pluralism": "s",
+    "more": "More on"
   },
   "roundStatusBanner": {
     "span1": "Funding starts 🗓 {startDate}.",
@@ -1106,11 +1124,16 @@
     "button1": "OK"
   },
   "dynamic": {
+    "appLink": {
+      "getStarted": "Get Started",
+      "leaderboard": "View Results"
+    },
     "category": {
       "tooling": "Tools",
       "content": "Content",
       "data": "Data",
-      "research": "Research"
+      "research": "Research",
+      "other": "Other"
     },
     "timeleft": {
       "unit": {

@@ -93,6 +93,23 @@ export class FundingRoundFactory extends Entity {
     }
   }
 
+  get nativeTokenInfo(): string | null {
+    let value = this.get("nativeTokenInfo");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set nativeTokenInfo(value: string | null) {
+    if (value === null) {
+      this.unset("nativeTokenInfo");
+    } else {
+      this.set("nativeTokenInfo", Value.fromString(value as string));
+    }
+  }
+
   get contributorRegistry(): string | null {
     let value = this.get("contributorRegistry");
     if (value === null || value.kind == ValueKind.NULL) {
@@ -856,6 +873,23 @@ export class FundingRound extends Entity {
       this.unset("nativeToken");
     } else {
       this.set("nativeToken", Value.fromBytes(value as Bytes));
+    }
+  }
+
+  get nativeTokenInfo(): string | null {
+    let value = this.get("nativeTokenInfo");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set nativeTokenInfo(value: string | null) {
+    if (value === null) {
+      this.unset("nativeTokenInfo");
+    } else {
+      this.set("nativeTokenInfo", Value.fromString(value as string));
     }
   }
 

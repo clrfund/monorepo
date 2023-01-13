@@ -5,8 +5,7 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Keypair, PrivKey } from 'maci-domainobjs'
 
 import { RoundInfo } from './round'
-import { FundingRound, ERC20 } from './abi'
-import { factory, provider } from './core'
+import { FundingRound } from './abi'
 import { Project } from './projects'
 import sdk from '@/graphql/sdk'
 
@@ -85,26 +84,6 @@ export async function getContributionAmount(
   return BigNumber.from(
     data.fundingRound.contributors[0].contributions[0].amount
   )
-}
-
-export async function getTotalContributed(
-  fundingRoundAddress: string
-): Promise<{ count: number; amount: BigNumber }> {
-  const nativeTokenAddress = await factory.nativeToken()
-  const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
-  const balance = await nativeToken.balanceOf(fundingRoundAddress)
-
-  const data = await sdk.GetTotalContributed({
-    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-  })
-
-  if (!data.fundingRound?.contributorCount) {
-    return { count: 0, amount: BigNumber.from(0) }
-  }
-
-  const count = parseInt(data.fundingRound.contributorCount)
-
-  return { count, amount: balance }
 }
 
 export async function withdrawContribution(

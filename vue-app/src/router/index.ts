@@ -28,6 +28,7 @@ import TransactionSuccess from '@/views/TransactionSuccess.vue'
 import BrightIdGuide from '@/views/BrightIdGuide.vue'
 import BrightIdSponsor from '@/views/BrightIdSponsor.vue'
 import BrightIdSponsored from '@/views/BrightIdSponsored.vue'
+import Leaderboard from '@/views/Leaderboard.vue'
 
 Vue.use(VueRouter)
 
@@ -58,6 +59,14 @@ const routes = [
     path: '/rounds/:address/projects/:id?',
     name: 'round-project',
     component: ProjectView,
+  },
+  {
+    path: '/rounds/:address/leaderboard',
+    name: 'leaderboard',
+    component: Leaderboard,
+    meta: {
+      title: 'leaderboard',
+    },
   },
   {
     path: '/round-information',
