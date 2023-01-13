@@ -1,7 +1,7 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h3>Reallocate funds</h3>
+      <h3>{{ $t('reallocationModal.h3') }}</h3>
       <transaction
         :hash="voteTxHash"
         :error="voteTxError"

@@ -4,7 +4,7 @@ import { ZERO_ADDRESS } from '../utils/constants'
 import { CIRCUITS } from '../utils/deployment'
 
 describe('Maci Parameters', () => {
-  it('batch size 8', () => {
+  it('batch size 4', () => {
     const params = CIRCUITS['test']
     const maci = new MaciParameters({
       batchUstVerifier: ZERO_ADDRESS,
@@ -13,8 +13,8 @@ describe('Maci Parameters', () => {
     })
 
     const { tallyBatchSize, messageBatchSize } = maci
-    expect(tallyBatchSize).to.eq(8)
-    expect(messageBatchSize).to.eq(8)
+    expect(tallyBatchSize).to.eq(4)
+    expect(messageBatchSize).to.eq(4)
   })
 
   it('batch size 64', () => {

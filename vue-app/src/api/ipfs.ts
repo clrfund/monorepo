@@ -3,6 +3,7 @@ import {
   ipfsPinningJwt,
   ipfsApiKey,
   ipfsSecretApiKey,
+  ipfsGatewayUrl,
 } from './core'
 
 export class IPFS {
@@ -45,5 +46,9 @@ export class IPFS {
     const result = await fetch(this.url, options)
     const json = await result.json()
     return json.IpfsHash
+  }
+
+  static formatUrl(hash: string): string {
+    return hash ? `${ipfsGatewayUrl}/ipfs/${hash}` : ''
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h2>Claim funds</h2>
+      <h2>{{ $t('claimModal.h2_1') }}</h2>
       <transaction
         :hash="claimTxHash"
         :error="claimTxError"
@@ -9,23 +9,25 @@
       ></transaction>
     </div>
     <div v-if="step === 2">
-      <h2>Funds were claimed!</h2>
+      <h2>{{ $t('claimModal.h2_2') }}</h2>
       <p>
         <strong
           >{{ formatAmount(amount) }}
           {{ currentRound.nativeTokenSymbol }}</strong
         >
-        has been sent to
+        {{ $t('claimModal.p1') }}
       </p>
       <div class="address-box">
         <div>
-          <div class="address-label">Recipient address</div>
+          <div class="address-label">{{ $t('claimModal.div1') }}</div>
           <div class="address">
             {{ recipientAddress }}
           </div>
         </div>
       </div>
-      <button class="btn-primary" @click="$emit('close')">Done</button>
+      <button class="btn-primary" @click="$emit('close')">
+        {{ $t('claimModal.button1') }}
+      </button>
     </div>
   </div>
 </template>
@@ -43,6 +45,7 @@ import Transaction from '@/components/Transaction.vue'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@clrfund/maci-utils'
+import { LOAD_TALLY } from '@/store/action-types'
 
 @Component({ components: { Transaction } })
 export default class ClaimModal extends Vue {
@@ -69,6 +72,10 @@ export default class ClaimModal extends Vue {
   }
 
   private async claim() {
+    if (!this.$store.state.tally) {
+      await this.$store.dispatch(LOAD_TALLY)
+    }
+
     const signer: Signer =
       this.$store.state.currentUser.walletProvider.getSigner()
     const { fundingRoundAddress, recipientTreeDepth } = this.currentRound

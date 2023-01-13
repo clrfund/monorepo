@@ -8,7 +8,12 @@
             :totalSteps="steps.length"
           />
           <p class="subtitle">
-            Step {{ currentStep + 1 }} of {{ steps.length }}
+            {{
+              $t('verify.subtitle', {
+                currentStep: currentStep + 1,
+                steps: steps.length,
+              })
+            }}
           </p>
           <div class="progress-steps">
             <div
@@ -27,7 +32,10 @@
                   src="@/assets/current-step.svg"
                   alt="current step"
                 />
-                <p v-text="step.name" class="active step" />
+                <p
+                  v-text="$t(`dynamic.verify.step.${step.page}`)"
+                  class="active step"
+                />
               </template>
               <template
                 v-else-if="isStepUnlocked(stepIndex) && isStepValid(stepIndex)"
@@ -37,7 +45,10 @@
                   class="progress-steps-loader"
                 />
                 <img v-else src="@/assets/green-tick.svg" alt="step complete" />
-                <p v-text="step.name" class="step" />
+                <p
+                  v-text="$t(`dynamic.verify.step.${step.page}`)"
+                  class="step"
+                />
               </template>
               <template v-else>
                 <img
@@ -45,7 +56,10 @@
                   src="@/assets/step-remaining.svg"
                   alt="step remaining"
                 />
-                <p v-text="step.name" class="step" />
+                <p
+                  v-text="$t(`dynamic.verify.step.${step.page}`)"
+                  class="step"
+                />
               </template>
             </div>
           </div>
@@ -57,37 +71,45 @@
           :totalSteps="steps.length"
         />
         <div class="row">
-          <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-          <links class="cancel-link" to="/verify"> Cancel </links>
+          <p>
+            {{
+              $t('verify.p1', {
+                currentStep: currentStep + 1,
+                steps: steps.length,
+              })
+            }}
+          </p>
+          <links class="cancel-link" to="/verify">
+            {{ $t('cancel') }}
+          </links>
         </div>
       </div>
       <div class="title-area">
-        <h1>Set up BrightID</h1>
+        <h1>{{ $t('verify.h1') }}</h1>
       </div>
       <div class="cancel-area desktop">
-        <links class="cancel-link" to="/verify"> Cancel </links>
+        <links class="cancel-link" to="/verify">
+          {{ $t('cancel') }}
+        </links>
       </div>
       <div class="form-area">
         <div class="application">
           <div v-if="currentStep === 0">
-            <h2 class="step-title">Connect</h2>
+            <h2 class="step-title">{{ $t('verify.h2_1') }}</h2>
             <p>
-              You need to connect your BrightID account with your wallet
-              address.
+              {{ $t('verify.p2') }}
             </p>
             <p>
-              Once this app is linked in your BrightID app, we'll automatically
-              transition you to the next step. It may take a minute for us to
-              verify the connection - please wait.
+              {{ $t('verify.p3') }}
             </p>
             <div class="qr">
               <div class="instructions" v-if="appLink">
                 <p class="desktop" v-if="appLinkQrCode">
-                  Scan this QR code with your BrightID app
+                  {{ $t('verify.p4') }}
                 </p>
                 <img :src="appLinkQrCode" class="desktop qr-code" />
                 <p class="mobile">
-                  Follow this link to connect your wallet to your BrightID app
+                  {{ $t('verify.p5') }}
                 </p>
                 <links class="mobile" :to="appLink">
                   <div class="icon">
@@ -97,10 +119,7 @@
                 </links>
                 <p class="mobile">
                   <em>
-                    This link might look scary but it just makes a connection
-                    between your connected wallet address, our app, and
-                    BrightID. If clicking the link does not open the BrightId
-                    app, try manually copying the link to a browser.
+                    {{ $t('verify.p6') }}
                   </em>
                 </p>
               </div>
@@ -109,11 +128,9 @@
             </div>
           </div>
           <div v-if="currentStep === 1">
-            <h2 class="step-title">Register</h2>
+            <h2 class="step-title">{{ $t('verify.h2_2') }}</h2>
             <p>
-              To protect the round from bribery and fraud, you need to add your
-              wallet address to a smart contract registry. Once you’re done, you
-              can join the funding round!
+              {{ $t('verify.p7') }}
             </p>
             <div class="transaction">
               <button
@@ -122,7 +139,7 @@
                 @click="register"
                 :disabled="registrationTxHash.length !== 0"
               >
-                Become a contributor
+                {{ $t('verify.btn') }}
               </button>
               <transaction
                 v-if="registrationTxHash || loadingTx || registrationTxError"

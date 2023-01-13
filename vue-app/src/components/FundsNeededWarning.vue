@@ -1,11 +1,12 @@
 <template>
   <div :class="!isCompact && 'warning'" v-if="needsFunds">
     <span v-if="!isCompact">
-      You need {{ chain.isLayer2 ? 'L2' : chain.label }} funds!
+      {{ $t('fundsNeededWarning.span1_t1') }}
+      {{ chain.isLayer2 ? $t('fundsNeededWarning.span1_l2') : chain.label }}
+      {{ $t('fundsNeededWarning.span1_t2') }}
     </span>
     <p v-if="!!singleTokenNeeded">
-      ⚠️ You need both some ETH for gas, and {{ nativeTokenSymbol }} to
-      contribute
+      {{ $t('fundsNeededWarning.p1') }}
     </p>
     <p @click="onNavigate" class="message">
       <links
@@ -17,10 +18,19 @@
           },
         }"
       >
-        Get help bridging {{ singleTokenNeeded }} to Layer 2
+        {{
+          $t('fundsNeededWarning.link1', {
+            nativeTokenSymbol: nativeTokenSymbol,
+          })
+        }}
       </links>
       <links v-else :to="chain.bridge">
-        Bridge {{ singleTokenNeeded }} to {{ chain.label }}
+        {{
+          $t('fundsNeededWarning.link2', {
+            singleTokenNeeded: singleTokenNeeded,
+            chain: chain.label,
+          })
+        }}
       </links>
     </p>
   </div>

@@ -11,7 +11,7 @@
         }"
       >
         <div class="header">
-          <h2>Projects</h2>
+          <h2>{{ $t('projectList.h2') }}</h2>
         </div>
 
         <filter-dropdown
@@ -26,7 +26,7 @@
             v-model="search"
             class="input"
             name="search"
-            placeholder="Search projects"
+            :placeholder="$t('projectList.input')"
             autocomplete="on"
             onfocus="this.value=''"
           />
@@ -39,7 +39,9 @@
           />
         </div>
         <div class="add-project">
-          <links to="/join" class="btn-primary">Add project</links>
+          <links to="/join" class="btn-primary">{{
+            $t('projectList.link1')
+          }}</links>
         </div>
         <div class="hr" />
       </div>
@@ -58,8 +60,7 @@
       </div>
       <div class="empty-search" v-if="filteredProjects == 0">
         <div>
-          😢 No projects match your search. Try using the filter to narrow down
-          what you're looking for.
+          {{ $t('projectList.div1') }}
         </div>
       </div>
     </div>
@@ -72,8 +73,8 @@ import Component from 'vue-class-component'
 import { FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 
-import { getCurrentRound, getRoundInfo } from '@/api/round'
-import { Project, getProjects } from '@/api/projects'
+import { getCurrentRound } from '@/api/round'
+import { Project } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
 import CartWidget from '@/components/CartWidget.vue'
@@ -137,20 +138,19 @@ export default class ProjectList extends Vue {
   }
 
   private async loadProjects(roundAddress: string) {
-    const round = await getRoundInfo(
-      roundAddress,
-      this.$store.state.currentRound
-    )
-    const projects = await getProjects(
-      round.recipientRegistryAddress,
-      round.startTime.toSeconds(),
-      round.votingDeadline.toSeconds()
-    )
-    const visibleProjects = projects.filter((project) => {
-      return !project.isHidden && !project.isLocked
-    })
-    shuffleArray(visibleProjects)
-    this.projects = visibleProjects
+    if (!this.$store.state.rounds) {
+      await this.$store.dispatch('LOAD_ROUNDS')
+    }
+
+    const round = await this.$store.state.rounds.getRound(roundAddress)
+    if (round) {
+      const projects = await round.getProjects()
+      const visibleProjects = projects.filter((project) => {
+        return !project.isHidden && !project.isLocked
+      })
+      shuffleArray(visibleProjects)
+      this.projects = visibleProjects
+    }
   }
 
   formatIntegerPart(value: FixedNumber): string {

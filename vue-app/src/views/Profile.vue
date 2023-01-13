@@ -4,19 +4,19 @@
     <div class="container">
       <div class="flex-row" style="justify-content: flex-end">
         <div class="close-btn" @click="$emit('close')">
-          <p class="no-margin">Close</p>
+          <p class="no-margin">{{ $t('profile.p1') }}</p>
           <img src="@/assets/close.svg" />
         </div>
       </div>
       <div class="flex-row">
-        <h2 class="no-margin">Your wallet</h2>
+        <h2 class="no-margin">{{ $t('profile.h2_1') }}</h2>
       </div>
       <div class="address-card">
         <h2 class="address">{{ displayAddress }}</h2>
         <div class="action-row" v-if="currentUser">
           <copy-button
             :value="currentUser.walletAddress"
-            text="address"
+            :text="$t('profile.btn1')"
             myClass="profile copy-icon"
             class="copy"
           />
@@ -25,7 +25,7 @@
           </div>
           <div
             v-tooltip="{
-              content: 'Disconnect wallet',
+              content: $t('profile.tooltip1'),
               trigger: 'hover click',
             }"
             class="disconnect btn"
@@ -42,10 +42,10 @@
       />
       <div class="balances-section">
         <div class="flex-row">
-          <h2>{{ chain.label }} balances</h2>
+          <h2>{{ $t('profile.h2_2', { chain: chain.label }) }}</h2>
           <div
             v-tooltip="{
-              content: `Balance of wallet on ${chain.label} chain`,
+              content: $t('profile.tooltip2', { chain: chain.label }),
               trigger: 'hover click',
             }"
           >
@@ -73,7 +73,7 @@
         <funds-needed-warning :onNavigate="onNavigateToBridge" />
       </div>
       <div class="projects-section">
-        <h2>Projects</h2>
+        <h2>{{ $t('profile.h2_3') }}</h2>
         <div v-if="projects.length > 0" class="project-list">
           <div
             class="project-item"
@@ -96,15 +96,17 @@
                 {{ name }}
                 <span v-if="isLocked">🔒</span>
               </div>
-              <div v-if="isHidden" class="project-hidden">Under review</div>
+              <div v-if="isHidden" class="project-hidden">
+                {{ $t('profile.div1') }}
+              </div>
             </div>
             <button class="btn-secondary" @click="navigateToProject(id)">
-              {{ isLocked ? 'Preview' : 'View' }}
+              {{ isLocked ? $t('profile.btn2_1') : $t('profile.btn2_2') }}
             </button>
           </div>
         </div>
         <div v-if="!isLoading && projects.length === 0">
-          You haven't submitted any projects
+          {{ $t('profile.div2') }}
         </div>
         <loader v-if="isLoading" />
       </div>

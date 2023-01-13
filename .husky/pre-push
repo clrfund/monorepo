@@ -1,4 +1,8 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-yarn test:format && yarn test:web
+# set these params so git push will work without .env
+export VUE_APP_ETHEREUM_API_CHAINID=100
+export VUE_APP_IPFS_PINNING_JWT=1
+
+yarn test:format && yarn test:web && yarn test:lint-i18n

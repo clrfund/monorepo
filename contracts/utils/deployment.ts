@@ -20,8 +20,6 @@ export function linkBytecode(
 }
 
 // custom configuration for MACI parameters.
-// If tally and message batch sizes are not configured here,
-// they will take the default size of 8
 export const CIRCUITS: { [name: string]: any } = {
   test: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifier',
@@ -30,6 +28,10 @@ export const CIRCUITS: { [name: string]: any } = {
       stateTreeDepth: 4,
       messageTreeDepth: 4,
       voteOptionTreeDepth: 2,
+    },
+    batchSizes: {
+      tallyBatchSize: 4,
+      messageBatchSize: 4,
     },
   },
   small: {
@@ -40,6 +42,10 @@ export const CIRCUITS: { [name: string]: any } = {
       messageTreeDepth: 11,
       voteOptionTreeDepth: 3,
     },
+    batchSizes: {
+      tallyBatchSize: 4,
+      messageBatchSize: 4,
+    },
   },
   medium: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifierMedium',
@@ -49,6 +55,10 @@ export const CIRCUITS: { [name: string]: any } = {
       messageTreeDepth: 13,
       voteOptionTreeDepth: 3,
     },
+    batchSizes: {
+      tallyBatchSize: 4,
+      messageBatchSize: 4,
+    },
   },
   x32: {
     batchUstVerifier: 'BatchUpdateStateTreeVerifier32',
@@ -57,6 +67,10 @@ export const CIRCUITS: { [name: string]: any } = {
       stateTreeDepth: 32,
       messageTreeDepth: 32,
       voteOptionTreeDepth: 3,
+    },
+    batchSizes: {
+      tallyBatchSize: 8,
+      messageBatchSize: 8,
     },
   },
   prod: {
@@ -91,7 +105,7 @@ type PoseidonName = 'PoseidonT3' | 'PoseidonT6'
  * @param contractName PoseidonT3 or PoseidonT6
  * @returns contract object
  */
-async function deployPoseidon(
+export async function deployPoseidon(
   account: Signer,
   contractName: PoseidonName
 ): Promise<Contract> {

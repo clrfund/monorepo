@@ -15,7 +15,10 @@ async function main() {
     const state = JSON.parse(stateStr)
     fundingRoundAddress = state.fundingRound
     coordinatorPrivKey = state.coordinatorPrivKey
-    coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || ''
+    // default to the first account
+    coordinatorEthPrivKey =
+      process.env.COORDINATOR_ETH_PK ||
+      '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
   } else {
     fundingRoundAddress = process.env.ROUND_ADDRESS || ''
     coordinatorPrivKey = process.env.COORDINATOR_PK || ''

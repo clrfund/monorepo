@@ -1,31 +1,38 @@
 <template>
-  <div
-    :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`"
-    v-if="project"
-  >
-    <img
-      class="project-image banner"
-      :src="project.bannerImageUrl"
-      :alt="project.name"
-    />
-    <project-profile class="details" :project="project" :previewMode="false" />
-    <div class="sticky-column">
-      <div class="desktop">
-        <add-to-cart-button
-          v-if="shouldShowCartInput && hasContributeBtn()"
-          :project="project"
-        />
-        <claim-button :project="project" />
-        <p
-          v-if="
-            $store.getters.hasUserContributed &&
-            !$store.getters.canUserReallocate
-          "
-        >
-          ✔️ You have contributed to this project!
-        </p>
+  <div>
+    <loader v-if="isLoading"></loader>
+    <div
+      :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`"
+      v-if="project"
+    >
+      <img
+        class="project-image banner"
+        :src="project.bannerImageUrl"
+        :alt="project.name"
+      />
+      <project-profile
+        class="details"
+        :project="project"
+        :previewMode="false"
+      />
+      <div class="sticky-column">
+        <div class="desktop">
+          <add-to-cart-button
+            v-if="shouldShowCartInput && hasContributeBtn()"
+            :project="project"
+          />
+          <claim-button :project="project" :roundAddress="roundAddress" />
+          <p
+            v-if="
+              $store.getters.hasUserContributed &&
+              !$store.getters.canUserReallocate
+            "
+          >
+            ✔️ {{ $t('project.p') }}
+          </p>
+        </div>
+        <link-box :project="project" />
       </div>
-      <link-box :project="project" />
     </div>
   </div>
 </template>
@@ -33,13 +40,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { FixedNumber } from 'ethers'
 
-import {
-  Project,
-  getRecipientRegistryAddress,
-  getProject,
-} from '@/api/projects'
+import { Project } from '@/api/projects'
 import { getCurrentRound } from '@/api/round'
 import Loader from '@/components/Loader.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
@@ -47,6 +49,7 @@ import AddToCartButton from '@/components/AddToCartButton.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
 import { markdown } from '@/utils/markdown'
+import { LOAD_ROUNDS } from '@/store/action-types'
 
 @Component({
   metaInfo() {
@@ -56,9 +59,8 @@ import { markdown } from '@/utils/markdown'
 })
 export default class ProjectView extends Vue {
   project: Project | null = null
-  allocatedAmount: FixedNumber | null = null
-  claimed: boolean | null = null
   isLoading = true
+  roundAddress = ''
 
   async created() {
     if (!!this.$route.params.address && !this.$route.params.id) {
@@ -71,10 +73,18 @@ export default class ProjectView extends Vue {
     const currentRoundAddress =
       this.$store.state.currentRoundAddress || (await getCurrentRound())
 
-    const roundAddress = this.$route.params.address || currentRoundAddress
+    this.roundAddress = this.$route.params.address || currentRoundAddress
 
-    const registryAddress = await getRecipientRegistryAddress(roundAddress)
-    const project = await getProject(registryAddress, this.$route.params.id)
+    if (!this.$store.state.rounds) {
+      await this.$store.dispatch(LOAD_ROUNDS)
+    }
+
+    const rounds = this.$store.state.rounds
+    const selectedRound = await rounds.getRound(this.roundAddress)
+    const project = selectedRound
+      ? await selectedRound.getProject(this.$route.params.id)
+      : null
+
     if (project === null || project.isHidden) {
       // Project not found
       this.$router.push({ name: 'projects' })
@@ -82,6 +92,7 @@ export default class ProjectView extends Vue {
     } else {
       this.project = project
     }
+
     this.isLoading = false
   }
 

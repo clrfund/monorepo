@@ -1,17 +1,23 @@
-import { Contract, Signer } from 'ethers'
+import { Signer, BigNumber } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { FundingRound } from './abi'
-import {
-  factory,
-  provider,
-  recipientRegistryType,
-  ipfsGatewayUrl,
-} from './core'
+import { recipientRegistryType, ipfsGatewayUrl } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
 import sdk from '@/graphql/sdk'
+
+export interface LeaderboardProject {
+  id: string // Address or another ID depending on registry implementation
+  name: string
+  index: number
+  bannerImageUrl?: string
+  thumbnailImageUrl?: string
+  imageUrl?: string
+  allocatedAmount: BigNumber
+  votes: BigNumber
+  donation: BigNumber
+}
 
 export interface Project {
   id: string // Address or another ID depending on registry implementation
@@ -37,20 +43,6 @@ export interface Project {
   isHidden: boolean // Hidden from the list (does not participate in round)
   isLocked: boolean // Visible, but contributions are not allowed
   extra?: any // Registry-specific data
-}
-
-//TODO: update anywhere this is called to take factory address as a parameter
-//NOTE: why isn't this included in the vuex state schema?
-export async function getRecipientRegistryAddress(
-  roundAddress: string | null
-): Promise<string> {
-  if (roundAddress !== null) {
-    const fundingRound = new Contract(roundAddress, FundingRound, provider)
-    return await fundingRound.recipientRegistry()
-  } else {
-    //TODO: upgrade factory to take it's address as a parameter
-    return await factory.recipientRegistry()
-  }
 }
 
 export async function getProjects(

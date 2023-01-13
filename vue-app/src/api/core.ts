@@ -3,14 +3,19 @@ import { ethers } from 'ethers'
 import { FundingRoundFactory } from './abi'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
+export const staticRoundsBaseUrl = process.env.VUE_APP_STATIC_ROUNDS_BASE_URL
+export const staticRoundsFilename = staticRoundsBaseUrl
+  ? process.env.VUE_APP_STATIC_ROUNDS_FILENAME || 'rounds.json'
+  : undefined
+
 export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(
   process.env.VUE_APP_ETHEREUM_MAINNET_API_URL
 )
 export const provider = new ethers.providers.StaticJsonRpcProvider(
   process.env.VUE_APP_ETHEREUM_API_URL
 )
-export const chain =
-  CHAIN_INFO[Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)]
+export const chainId = Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
+export const chain = CHAIN_INFO[chainId]
 if (!chain) throw new Error('invalid chain id')
 export const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
 export const gunPeers: string[] = process.env.VUE_APP_GUN_PEERS
@@ -57,9 +62,6 @@ if (
 export const recipientRegistryPolicy =
   process.env.VUE_APP_RECIPIENT_REGISTRY_POLICY
 export const operator: string = process.env.VUE_APP_OPERATOR || 'Clr.fund'
-export const extraRounds: string[] = process.env.VUE_APP_EXTRA_ROUNDS
-  ? process.env.VUE_APP_EXTRA_ROUNDS.split(',')
-  : []
 
 export const SUBGRAPH_ENDPOINT =
   process.env.VUE_APP_SUBGRAPH_URL ||
@@ -73,3 +75,7 @@ export enum ThemeMode {
 
 // the maximum significant digits for displaying the contribution amount on cart
 export const maxDecimals = 6
+
+// the number of records per batch in the `pending submissions` export file
+export const exportBatchSize =
+  Number(process.env.VUE_APP_EXPORT_BATCH_SIZE) || 60

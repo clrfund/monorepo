@@ -13,7 +13,10 @@ async function main() {
     coordinator = signers[0]
   } else {
     factoryAddress = process.env.FACTORY_ADDRESS || ''
-    const coordinatorEthPrivKey = process.env.COORDINATOR_ETH_PK || ''
+    // default to the first account
+    const coordinatorEthPrivKey =
+      process.env.COORDINATOR_ETH_PK ||
+      '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
     coordinator = new Wallet(coordinatorEthPrivKey, ethers.provider)
   }
 

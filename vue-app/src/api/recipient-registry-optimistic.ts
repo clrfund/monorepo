@@ -16,6 +16,7 @@ import { Recipient } from '@/graphql/API'
 import { hasDateElapsed } from '@/utils/dates'
 
 export interface RegistryInfo {
+  registryAddress: string
   deposit: BigNumber
   depositToken: string
   challengePeriodDuration: number
@@ -25,15 +26,36 @@ export interface RegistryInfo {
 }
 
 export async function getRegistryInfo(
-  registryAddress: string
-): Promise<RegistryInfo> {
+  factoryAddress: string
+): Promise<RegistryInfo | null> {
+  const { fundingRoundFactory } = await sdk.GetRecipientRegistryInfo({
+    factoryAddress: factoryAddress.toLowerCase(),
+  })
+
+  if (!fundingRoundFactory) {
+    return null
+  }
+
+  const recipientRegistry = fundingRoundFactory.currentRound
+    ? fundingRoundFactory.currentRound.recipientRegistry
+    : fundingRoundFactory.recipientRegistry
+
+  if (!recipientRegistry) {
+    return null
+  }
+
+  const registryAddress = recipientRegistry.id
+  const owner = recipientRegistry.owner
+  const deposit = BigNumber.from(recipientRegistry.baseDeposit || 0)
+  const challengePeriodDuration = BigNumber.from(
+    recipientRegistry.challengePeriodDuration || 0
+  )
+
   const registry = new Contract(
     registryAddress,
     OptimisticRecipientRegistry,
     provider
   )
-  const deposit = await registry.baseDeposit()
-  const challengePeriodDuration = await registry.challengePeriodDuration()
   let recipientCount
   try {
     recipientCount = await registry.getRecipientCount()
@@ -43,8 +65,8 @@ export async function getRegistryInfo(
     // used during current round for space calculation
     recipientCount = BigNumber.from(0)
   }
-  const owner = await registry.owner()
   return {
+    registryAddress,
     deposit,
     depositToken: chain.currency,
     challengePeriodDuration: challengePeriodDuration.toNumber(),
@@ -137,6 +159,7 @@ interface RecipientMetadata {
   name: string
   description: string
   imageUrl: string
+  thumbnailImageUrl: string
 }
 
 export interface Request {

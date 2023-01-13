@@ -13,6 +13,7 @@ import {
   RecipientApplicationData,
   RegistryInfo,
 } from '@/api/recipient-registry-optimistic'
+import { Rounds } from '@/api/rounds'
 
 // Constants
 import {
@@ -25,6 +26,7 @@ import {
   SET_CONTRIBUTOR,
   SET_CURRENT_ROUND,
   SET_CURRENT_ROUND_ADDRESS,
+  SET_ROUNDS,
   SET_TALLY,
   SET_CURRENT_USER,
   SET_RECIPIENT_DATA,
@@ -36,6 +38,7 @@ import {
   TOGGLE_EDIT_SELECTION,
   SET_HAS_VOTED,
   TOGGLE_THEME,
+  TOGGLE_LEADERBOARD_VIEW,
   SET_FACTORY,
   SET_MACI_FACTORY,
 } from './mutation-types'
@@ -71,6 +74,9 @@ const mutations = {
   },
   [SET_CURRENT_ROUND](state, round: RoundInfo) {
     state.currentRound = round
+  },
+  [SET_ROUNDS](state, rounds: Rounds) {
+    state.rounds = rounds
   },
   [SET_TALLY](state, tally: Tally) {
     state.tally = tally
@@ -172,6 +178,9 @@ const mutations = {
       state.theme =
         state.theme === ThemeMode.LIGHT ? ThemeMode.DARK : ThemeMode.LIGHT
     }
+  },
+  [TOGGLE_LEADERBOARD_VIEW](state) {
+    state.showSimpleLeaderboard = !state.showSimpleLeaderboard
   },
   [RESTORE_COMMITTED_CART_TO_LOCAL_CART](state) {
     // Spread to avoid reference

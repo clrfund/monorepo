@@ -20,7 +20,7 @@ import { FundingRound, Message, PublicKey } from '../generated/schema'
 // - contract.verifier(...)
 
 export function handlePublishMessage(event: PublishMessage): void {
-  const fundingRoundId = event.transaction.to.toHexString()
+  let fundingRoundId = event.transaction.to.toHexString()
   if (fundingRoundId == null) {
     log.error(
       'Error: handlePublishMessage failed fundingRound not registered',
@@ -28,7 +28,7 @@ export function handlePublishMessage(event: PublishMessage): void {
     )
     return
   }
-  const fundingRound = FundingRound.load(fundingRoundId)
+  let fundingRound = FundingRound.load(fundingRoundId)
   if (fundingRound == null) {
     log.error(
       'Error: handlePublishMessage failed fundingRound not registered',
@@ -37,28 +37,28 @@ export function handlePublishMessage(event: PublishMessage): void {
     return
   }
 
-  const messageID =
+  let messageID =
     event.transaction.hash.toHexString() +
     '-' +
     event.transactionLogIndex.toString()
 
-  const timestamp = event.block.timestamp.toString()
-  const message = new Message(messageID)
+  let timestamp = event.block.timestamp.toString()
+  let message = new Message(messageID)
   message.data = event.params._message.data
   message.iv = event.params._message.iv
   message.blockNumber = event.block.number
   message.transactionIndex = event.transaction.index
 
-  const publicKeyId = event.transaction.from.toHexString()
-  const publicKey = PublicKey.load(publicKeyId)
+  let publicKeyId = event.transaction.from.toHexString()
+  let publicKey = PublicKey.load(publicKeyId)
 
   //NOTE: If the public keys aren't being tracked initialize them
   if (publicKey == null) {
-    const publicKey = new PublicKey(publicKeyId)
+    let publicKey = new PublicKey(publicKeyId)
     publicKey.x = event.params._encPubKey.x
     publicKey.y = event.params._encPubKey.y
 
-    const _messages = [messageID] as string[]
+    let _messages = [messageID] as string[]
     publicKey.messages = _messages
     publicKey.fundingRound = fundingRoundId
 
@@ -73,12 +73,12 @@ export function handlePublishMessage(event: PublishMessage): void {
 }
 
 export function handleSignUp(event: SignUp): void {
-  const publicKeyId = event.transaction.from.toHexString()
-  const publicKey = PublicKey.load(publicKeyId)
+  let publicKeyId = event.transaction.from.toHexString()
+  let publicKey = PublicKey.load(publicKeyId)
 
   //NOTE: If the public keys aren't being tracked initialize them
   if (publicKey == null) {
-    const publicKey = new PublicKey(publicKeyId)
+    let publicKey = new PublicKey(publicKeyId)
     publicKey.x = event.params._userPubKey.x
     publicKey.y = event.params._userPubKey.y
     publicKey.stateIndex = event.params._stateIndex

@@ -8,7 +8,12 @@ import { Keypair } from '@clrfund/maci-utils'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
-import { deployMaciFactory } from '../utils/deployment'
+import {
+  deployContract,
+  deployMaciFactory,
+  deployPoseidon,
+  CIRCUITS,
+} from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import {
   MaciParameters,
@@ -65,8 +70,21 @@ describe('End-to-end Tests', function () {
     })
 
     // Deploy funding round factory
-    const circuit = 'prod'
-    const maciFactory = await deployMaciFactory(deployer, circuit)
+    const poseidonT3 = await deployPoseidon(deployer, 'PoseidonT3')
+    const poseidonT6 = await deployPoseidon(deployer, 'PoseidonT6')
+    const circuit = process.env.CIRCUIT_TYPE || 'prod'
+    const params = CIRCUITS[circuit]
+    const batchUstVerifier = await deployContract(
+      deployer,
+      params.batchUstVerifier
+    )
+    const qvtVerifier = await deployContract(deployer, params.qvtVerifier)
+    const maciFactory = await deployMaciFactory(deployer, circuit, {
+      poseidonT3,
+      poseidonT6,
+      batchUstVerifier,
+      qvtVerifier,
+    })
     const FundingRoundFactory = await ethers.getContractFactory(
       'FundingRoundFactory',
       deployer

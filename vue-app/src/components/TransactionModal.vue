@@ -17,7 +17,7 @@
       class="btn-secondary close-btn"
       @click="$emit('close')"
     >
-      Close
+      {{ $t('transactionModal.button1') }}
     </button>
   </div>
 </template>

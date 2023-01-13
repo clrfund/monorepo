@@ -13,17 +13,16 @@
       <div class="content">
         <breadcrumbs />
         <div class="flex-title">
-          <h1>Prove you’re only using one account</h1>
+          <h1>{{ $t('verifyLanding.h1') }}</h1>
         </div>
         <div class="subtitle">
-          We use BrightID to stop bots and cheaters, and make our funding more
-          democratic.
+          {{ $t('verifyLanding.subtitle') }}
         </div>
         <h2>
-          What you'll need
+          {{ $t('verifyLanding.h2') }}
           <img
             v-tooltip="{
-              content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
+              content: $t('verifyLanding.tooltip'),
               trigger: 'hover click',
             }"
             width="16px"
@@ -33,41 +32,44 @@
         </h2>
         <ul>
           <li>
-            BrightID – available on
+            {{ $t('verifyLanding.li1_t1') }}
             <a
               href="https://apps.apple.com/us/app/brightid/id1428946820"
               target="_blank"
             >
-              iOS</a
+              {{ $t('verifyLanding.li1_link1') }}</a
             >
-            or
+            {{ $t('verifyLanding.li1_t2') }}
             <a
               href="https://play.google.com/store/apps/details?id=org.brightid"
               target="_blank"
-              >Android</a
+              >{{ $t('verifyLanding.li1_link2') }}</a
             >
             <ul>
-              <li><links to="/brightid/sponsor">Get sponsored</links></li>
-              <li><links to="/brightid">Get verified</links></li>
+              <li>
+                <links to="/brightid/sponsor">{{
+                  $t('verifyLanding.li2')
+                }}</links>
+              </li>
+              <li>
+                <links to="/brightid">{{ $t('verifyLanding.li3') }}</links>
+              </li>
             </ul>
           </li>
-          <li>An Ethereum wallet, with enough gas for two transactions</li>
-          <li>Access to Zoom or Google Meet</li>
+          <li>{{ $t('verifyLanding.li4') }}</li>
+          <li>{{ $t('verifyLanding.li5') }}</li>
         </ul>
-        <links to="/about/sybil-resistance">Why is this important?</links>
+        <links to="/about/sybil-resistance">{{
+          $t('verifyLanding.link1')
+        }}</links>
         <div v-if="!hasRoundStarted" class="join-message">
-          There's not yet an open funding round. Please check back later.
+          {{ $t('verifyLanding.div1') }}
         </div>
         <div v-else-if="isRoundOver" class="warning-message">
-          The current round is no longer accepting new contributions. Please try
-          again next round.
+          {{ $t('verifyLanding.div2') }}
         </div>
         <div v-else-if="isRoundFull" class="warning-message">
-          Contributions closed early – you can no longer donate! Due to the
-          community's generosity and some technical constraints we had to close
-          the round earlier than expected. If you already contributed, you still
-          have time to reallocate if you need to. If you didn't get a chance to
-          contribute, you can still help by donating to the matching pool
+          {{ $t('verifyLanding.div3') }}
         </div>
         <div class="btn-container mt2">
           <div v-if="!isRoundOver">
@@ -81,10 +83,12 @@
               to="/verify/connect"
               class="btn-primary"
             >
-              I have BrightID installed
+              {{ $t('verifyLanding.link2') }}
             </links>
           </div>
-          <links to="/projects" class="btn-secondary">Go back</links>
+          <links to="/projects" class="btn-secondary">{{
+            $t('verifyLanding.link3')
+          }}</links>
         </div>
       </div>
     </div>
