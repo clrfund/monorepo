@@ -9,11 +9,12 @@ module.exports = {
     'prettier',
   ],
   env: {
-    mocha: true,
     node: true,
   },
   rules: {
-    '@typescript-eslint/explicit-function-return-type': 'off',
+    'prefer-const': 'error',
     '@typescript-eslint/no-explicit-any': 'off',
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },
 }

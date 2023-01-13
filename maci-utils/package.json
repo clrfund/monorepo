@@ -5,7 +5,8 @@
   "main": "src/maci",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint 'src/**/*.ts'"
+    "lint": "eslint 'src/**/*.ts'",
+    "clean": "rm -rf build"
   },
   "keywords": [
     "MACI"
@@ -14,5 +15,9 @@
   "dependencies": {
     "maci-crypto": "~0.9.1",
     "maci-domainobjs": "~0.9.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.31.0",
+    "typescript": "3.9.3"
   }
 }
