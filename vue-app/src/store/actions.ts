@@ -15,7 +15,6 @@ import {
   Contributor,
   getContributorMessages,
 } from '@/api/contributions'
-import { loginUser, logoutUser } from '@/api/gun'
 import { getProjectByIndex } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { Rounds } from '@/api/rounds'
@@ -40,14 +39,11 @@ import {
   LOAD_ROUNDS,
   LOAD_TALLY,
   LOAD_USER_INFO,
-  LOGIN_USER,
   LOGOUT_USER,
   SAVE_CART,
   SAVE_COMMITTED_CART_DISPATCH,
   SAVE_CONTRIBUTOR_DATA,
   SELECT_ROUND,
-  UNWATCH_CART,
-  UNWATCH_CONTRIBUTOR_DATA,
 } from './action-types'
 import {
   ADD_CART_ITEM,
@@ -82,11 +78,9 @@ import { getMACIFactoryInfo } from '@/api/maci-factory'
 
 const actions = {
   //TODO: also commit SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
-  [SELECT_ROUND]({ commit, dispatch, state }, roundAddress: string) {
+  [SELECT_ROUND]({ commit, state }, roundAddress: string) {
     if (state.currentRoundAddress) {
       // Reset everything that depends on round
-      dispatch(UNWATCH_CART)
-      dispatch(UNWATCH_CONTRIBUTOR_DATA)
       commit(SET_CONTRIBUTION, null)
       commit(SET_CONTRIBUTOR, null)
       commit(CLEAR_CART)
@@ -235,27 +229,16 @@ const actions = {
     )
   },
   async [LOAD_CART]({ commit, state }) {
-    storage.watchItem(
+    const data = storage.getItem(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
-      getCartStorageKey(state.currentRound.fundingRoundAddress),
-      (data: string | null) => {
-        const cart = deserializeCart(data)
-        commit(CLEAR_CART)
-        for (const item of cart) {
-          commit(ADD_CART_ITEM, item)
-        }
-      }
-    )
-  },
-  [UNWATCH_CART]({ state }) {
-    if (!state.currentUser || !state.currentRound) {
-      return
-    }
-    storage.unwatchItem(
-      state.currentUser.walletAddress,
       getCartStorageKey(state.currentRound.fundingRoundAddress)
     )
+    const cart = deserializeCart(data)
+    commit(CLEAR_CART)
+    for (const item of cart) {
+      commit(ADD_CART_ITEM, item)
+    }
   },
   [SAVE_COMMITTED_CART_DISPATCH]({ commit, state }) {
     commit(SAVE_COMMITTED_CART)
@@ -346,22 +329,7 @@ const actions = {
     }
     commit(SET_CONTRIBUTOR, contributor)
   },
-  [UNWATCH_CONTRIBUTOR_DATA]({ state }) {
-    if (!state.currentUser || !state.currentRound) {
-      return
-    }
-    storage.unwatchItem(
-      state.currentUser.walletAddress,
-      getContributorStorageKey(state.currentRound.fundingRoundAddress)
-    )
-  },
-  async [LOGIN_USER](_, { walletAddress, encryptionKey }) {
-    await loginUser(walletAddress, encryptionKey)
-  },
-  [LOGOUT_USER]({ commit, dispatch }) {
-    dispatch(UNWATCH_CART)
-    dispatch(UNWATCH_CONTRIBUTOR_DATA)
-    logoutUser()
+  [LOGOUT_USER]({ commit }) {
     commit(SET_CURRENT_USER, null)
     commit(SET_CONTRIBUTION, null)
     commit(SET_CONTRIBUTOR, null)

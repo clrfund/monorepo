@@ -272,15 +272,6 @@ npx graph auth --product hosted-service <ACCESS_TOKEN>
 npx graph deploy --product hosted-service <yourname>/clrfund
 ```
 
-## GUN
-The clrfund web app stores data in the gundb. To ensure the service is available, start a gundb peer using docker like this:
-
-```
-docker run -p 8765:8765 gundb/gun
-```
-
-See https://github.com/amark/gun for more details about GUN
-
 ## User interface
 
 User interface can be configured using environment variables. See [.env file example](../vue-app/.env.example) for details.
