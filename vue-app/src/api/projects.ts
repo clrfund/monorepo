@@ -140,5 +140,6 @@ export async function getProjectByIndex(
     description: metadata.description,
     tagline: metadata.tagline,
     thumbnailImageUrl,
+    index: recipient.recipientIndex,
   }
 }
