@@ -142,7 +142,7 @@
       >
         <div class="reallocation-row">
           <span>{{ $t('cart.span1') }}</span>
-          {{ formatAmount(this.contribution) }} {{ tokenSymbol }}
+          {{ formatAmount(contribution) }} {{ tokenSymbol }}
         </div>
         <div
           :class="
@@ -154,7 +154,7 @@
           <span>{{ $t('cart.span2') }}</span>
           <div class="reallocation-warning">
             <span v-if="this.isGreaterThanInitialContribution()">⚠️</span
-            >{{ formatAmount(getCartTotal(this.$store.state.cart)) }}
+            >{{ formatAmount(getCartTotal($store.state.cart)) }}
             {{ tokenSymbol }}
           </div>
         </div>
@@ -168,7 +168,7 @@
             </div>
             <div>{{ $t('cart.div9') }}</div>
           </div>
-          + {{ formatAmount(this.contribution) - formatAmount(getTotal()) }}
+          + {{ formatAmount(contribution.sub(getTotal())) }}
           {{ tokenSymbol }}
         </div>
         <div
@@ -181,7 +181,7 @@
           <img src="@/assets/split.svg" />
           {{
             $t('cart.div10', {
-              contribution: formatAmount(this.contribution),
+              contribution: formatAmount(contribution),
               tokenSymbol: tokenSymbol,
             })
           }}
@@ -194,7 +194,7 @@
         <button class="btn-action" @click="withdrawContribution()">
           {{
             $t('cart.button1', {
-              contribution: formatAmount(this.contribution),
+              contribution: formatAmount(contribution),
               tokenSymbol: tokenSymbol,
             })
           }}
@@ -223,9 +223,9 @@
         <div class="p1" v-if="hasUnallocatedFunds()">
           {{
             $t('cart.div12', {
-              total: formatAmount(this.contribution) - formatAmount(getTotal()),
+              total: formatAmount(contribution.sub(getTotal())),
               tokenSymbol: tokenSymbol,
-              contribution: formatAmount(this.contribution),
+              contribution: formatAmount(contribution),
             })
           }}
         </div>
