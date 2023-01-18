@@ -25,6 +25,12 @@ export interface Contributor {
   stateIndex: number
 }
 
+function getPubKeyId(pubKey: PubKey): string {
+  const pubKeyPair = pubKey.asContractParam()
+  const id = utils.id(pubKeyPair.x + '.' + pubKeyPair.y)
+  return id
+}
+
 export function getCartStorageKey(roundAddress: string): string {
   return `cart-${roundAddress.toLowerCase()}`
 }
@@ -134,16 +140,17 @@ export function isContributionAmountValid(
 /**
  *  Get the MACI contributor state index
  * @param fundingRoundAddress Funding round contract address
- * @param contributorAddress Contributor wallet address
+ * @param pubKey Contributor public key
  * @returns Contributor stateIndex returned from MACI
  */
 export async function getContributorIndex(
   fundingRoundAddress: string,
-  contributorAddress: string
+  pubKey: PubKey
 ): Promise<number | null> {
+  const id = getPubKeyId(pubKey)
   const data = await sdk.GetContributorIndex({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    contributorAddress: contributorAddress.toLowerCase(),
+    publicKeyId: id,
   })
 
   return data.publicKey?.stateIndex ? Number(data.publicKey?.stateIndex) : null
@@ -180,8 +187,7 @@ export async function getContributorMessages(
   pubKey: PubKey,
   sharedKey: BigInt
 ): Promise<Message[]> {
-  const pubKeyPair = pubKey.asContractParam()
-  const key = utils.id(pubKeyPair.x + '.' + pubKeyPair.y)
+  const key = getPubKeyId(pubKey)
 
   const result = await sdk.GetContributorMessages({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),

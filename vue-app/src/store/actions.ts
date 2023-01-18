@@ -315,22 +315,22 @@ const actions = {
     )
   },
   async [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
-    const { encryptionKey, walletAddress } = state.currentUser
+    const { encryptionKey } = state.currentUser
     const { fundingRoundAddress } = state.currentRound
     if (!encryptionKey) {
       return
     }
 
+    const contributorKeypair = Keypair.createFromSignatureHash(encryptionKey)
     const stateIndex = await getContributorIndex(
       fundingRoundAddress,
-      walletAddress
+      contributorKeypair.pubKey
     )
     if (!stateIndex) {
       // user has not contributed
       return
     }
 
-    const contributorKeypair = Keypair.createFromSignatureHash(encryptionKey)
     const contributor: Contributor = {
       keypair: contributorKeypair,
       stateIndex,

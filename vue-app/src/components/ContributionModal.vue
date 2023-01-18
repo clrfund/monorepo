@@ -211,12 +211,8 @@ export default class ContributionModal extends Vue {
   async contribute() {
     try {
       this.step += 1
-      const {
-        nativeTokenAddress,
-        voiceCreditFactor,
-        maciAddress,
-        fundingRoundAddress,
-      } = this.currentRound
+      const { nativeTokenAddress, maciAddress, fundingRoundAddress } =
+        this.currentRound
       const total = this.total
       const token = new Contract(nativeTokenAddress, ERC20, this.signer)
       // Approve transfer (step 1)
@@ -261,15 +257,6 @@ export default class ContributionModal extends Vue {
         'SignUp',
         '_stateIndex'
       )
-      const voiceCredits = getEventArg(
-        contributionTxReceipt,
-        maci,
-        'SignUp',
-        '_voiceCreditBalance'
-      )
-      if (!voiceCredits.mul(voiceCreditFactor).eq(total)) {
-        throw new Error('Incorrect amount of voice credits')
-      }
       const contributor = {
         keypair: contributorKeypair,
         stateIndex: stateIndex.toNumber(),

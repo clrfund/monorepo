@@ -2884,7 +2884,7 @@ export type GetContributionsAmountQuery = { __typename?: 'Query', contributions:
 
 export type GetContributorIndexQueryVariables = Exact<{
   fundingRoundAddress: Scalars['ID'];
-  contributorAddress: Scalars['ID'];
+  publicKeyId: Scalars['ID'];
 }>;
 
 
@@ -3000,8 +3000,8 @@ export const GetContributionsAmountDocument = gql`
 }
     `;
 export const GetContributorIndexDocument = gql`
-    query GetContributorIndex($fundingRoundAddress: ID!, $contributorAddress: ID!) {
-  publicKey(id: $contributorAddress) {
+    query GetContributorIndex($fundingRoundAddress: ID!, $publicKeyId: ID!) {
+  publicKey(id: $publicKeyId) {
     id
     stateIndex
   }

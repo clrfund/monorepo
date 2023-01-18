@@ -531,7 +531,7 @@ export default class Cart extends Vue {
     )
   }
 
-  private getCartTotal(cart: Array<CartItem>): BigNumber {
+  getCartTotal(cart: Array<CartItem>): BigNumber {
     const { nativeTokenDecimals, voiceCreditFactor } =
       this.$store.state.currentRound
     return cart.reduce((total: BigNumber, item: CartItem) => {
