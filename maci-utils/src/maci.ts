@@ -92,7 +92,7 @@ export function createMessage(
 
   const command = new Command(
     BigInt(userStateIndex),
-    newUserKeypair ? newUserKeypair.pubKey : userKeypair.pubKey,
+    encKeypair.pubKey,
     BigInt(voteOptionIndex || 0),
     BigInt(quadraticVoteWeight.toString()),
     BigInt(nonce),
