@@ -1,14 +1,14 @@
-import { BigNumber, Contract, Signer, FixedNumber } from 'ethers'
+import { BigNumber, Contract, Signer, FixedNumber, utils } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { Keypair, PrivKey } from '@clrfund/maci-utils'
+import { Keypair, PrivKey, PubKey, Message, Command } from '@clrfund/maci-utils'
 
 import { RoundInfo } from './round'
 import { FundingRound } from './abi'
 import { Project } from './projects'
 import sdk from '@/graphql/sdk'
-import { Message } from '@clrfund/maci-utils'
+import { GetContributorMessagesQuery } from '@/graphql/API'
 
 export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
@@ -151,34 +151,76 @@ export async function getContributorIndex(
 }
 
 /**
+ * Check whether a message was encrypted using the same key
+ * @param message the message to be checked
+ * @param sharedKey shared key to decrypt the message
+ * @param pubKey public key to check if the decrypted message has the same key
+ * @returns true if it is a key change message, false otherwise
+ */
+function isSamePubKey(
+  message: Message,
+  sharedKey: BigInt,
+  pubKey: PubKey
+): boolean {
+  const { command } = Command.decrypt(message, sharedKey)
+  const { newPubKey } = command
+  const newPubKeyPair = newPubKey.asContractParam()
+  const pubKeyPair = pubKey.asContractParam()
+  return newPubKeyPair.x === pubKeyPair.x && newPubKeyPair.y === pubKeyPair.y
+}
+
+/**
  * Get the latest set of vote messages submitted by contributor
- * TODO: check for key change messages
  * @param fundingRoundAddress Funding round contract address
  * @param contributorAddress Contributor wallet address
+ * @param sharedKey Key to decrypt messages
  * @returns MACI messages
  */
 export async function getContributorMessages(
   fundingRoundAddress: string,
-  contributorAddress: string
+  pubKey: PubKey,
+  sharedKey: BigInt
 ): Promise<Message[]> {
+  const pubKeyPair = pubKey.asContractParam()
+  const key = utils.id(pubKeyPair.x + '.' + pubKeyPair.y)
+
   const result = await sdk.GetContributorMessages({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    contributorAddress: contributorAddress.toLowerCase(),
+    pubKey: key,
   })
 
-  if (!(result.publicKey && result.publicKey.messages?.length)) {
+  if (!(result.messages && result.messages?.length)) {
     return []
   }
 
-  let newest = BigInt(0)
-  const latestMessages = result.publicKey.messages
+  let newestBlock = result.messages[0].blockNumber
+  let newestTxIndex = result.messages[0].transactionIndex
+  const latestMessages = result.messages
     .map((message) => {
-      if (message.blockNumber > newest) {
-        newest = message.blockNumber
+      const { iv, data } = message
+      const maciMessage = new Message(iv, data as BigInt[])
+
+      // ignore key change messages as they don't have cart item information
+      // Note: currently, the ui can only display messages encrypted with
+      // the wallet signature. If there's a key chain done outside of the ui,
+      // new cart updates won't be displayed on the ui
+      if (isSamePubKey(maciMessage, sharedKey, pubKey)) {
+        if (message.blockNumber > newestBlock) {
+          newestBlock = message.blockNumber
+        } else if (
+          message.blockNumber == newestBlock &&
+          message.transactionIndex > newestTxIndex
+        ) {
+          newestTxIndex = message.transactionIndex
+        }
       }
       return message
     })
-    .filter((m) => m.blockNumber >= newest)
+    .filter(
+      (message) =>
+        message.blockNumber === newestBlock &&
+        message.transactionIndex === newestTxIndex
+    )
 
   if (latestMessages.length <= 0) {
     return []

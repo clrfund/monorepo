@@ -229,6 +229,9 @@ const actions = {
     )
   },
   async [LOAD_CART]({ commit, state }) {
+    if (!state.currentUser.encryptionKey) {
+      return
+    }
     const data = storage.getItem(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
@@ -258,19 +261,21 @@ const actions = {
       nativeTokenDecimals,
       recipientRegistryAddress,
     } = state.currentRound
-    const { encryptionKey, walletAddress } = state.currentUser
-
-    const messages = await getContributorMessages(
-      fundingRoundAddress,
-      walletAddress
-    )
-
+    const { encryptionKey } = state.currentUser
+    if (!encryptionKey) {
+      return
+    }
     const encKeypair = Keypair.createFromSignatureHash(encryptionKey)
 
-    // Decrypt the message
     const sharedKey = Keypair.genEcdhSharedKey(
       encKeypair.privKey,
       coordinatorPubKey
+    )
+
+    const messages = await getContributorMessages(
+      fundingRoundAddress,
+      encKeypair.pubKey,
+      sharedKey
     )
 
     const cartItems = messages.map(async (message) => {
@@ -286,9 +291,12 @@ const actions = {
         recipientRegistryAddress,
         Number(voteOptionIndex)
       )
+
+      // after the initial submission, the number of messages submitted to MACI
+      // cannot be reduced, isCleared is used to mark deleted items
       return {
         amount: formatAmount(amount, nativeTokenDecimals, null, maxDecimals),
-        isCleared: false,
+        isCleared: amount.isZero(),
         ...project,
       }
     })

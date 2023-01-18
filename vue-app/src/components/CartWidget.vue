@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="currentUser"
+    v-if="currentUser && currentUser.encryptionKey"
     :class="{
       container: $store.state.showCartPanel,
       'collapsed-container': !$store.state.showCartPanel,

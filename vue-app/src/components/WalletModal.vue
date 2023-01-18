@@ -36,9 +36,13 @@
 // Libraries
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { SELECT_ROUND, LOAD_ROUND_INFO } from '@/store/action-types'
+import { getCurrentRound } from '@/api/round'
+import { getLoginMessage } from '@/api/user'
 
 // Components
 import Loader from '@/components/Loader.vue'
+import { factory } from '@/api/core'
 
 @Component({
   components: {
@@ -49,6 +53,14 @@ export default class WalletModal extends Vue {
   connectingWallet = false
   error = ''
 
+  async created() {
+    if (!this.$store.state.currentRoundAddress) {
+      const currentRoundAddress = await getCurrentRound()
+      await this.$store.dispatch(SELECT_ROUND, currentRoundAddress)
+      await this.$store.dispatch(LOAD_ROUND_INFO)
+    }
+  }
+
   get windowEthereum(): any {
     return (window as any).ethereum
   }
@@ -57,7 +69,13 @@ export default class WalletModal extends Vue {
     this.error = ''
     this.connectingWallet = true
     try {
-      await this.$web3.connectWallet(walletType)
+      // if there is no current round, use the factory address
+      // so we can generate a valid login message
+      const contractAddress =
+        this.$store.state.currentRoundAddress || factory.address
+      const loginMessage = getLoginMessage(contractAddress)
+
+      await this.$web3.connectWallet(walletType, loginMessage)
       this.$emit('close')
     } catch (error) {
       this.error = error.message

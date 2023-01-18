@@ -1,15 +1,11 @@
-import { LOGIN_MESSAGE } from '@/api/user'
 import { sha256 } from '@/utils/crypto'
 import { Web3Provider } from '@ethersproject/providers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import MetamaskConnector from './connectors/MetamaskConnector'
 import WalletConnectConnector from './connectors/WalletConnectConnector'
-import { lsGet, lsSet, lsRemove } from '@/utils/localStorage'
 import { CHAIN_INFO } from './constants/chains'
 
 export type Wallet = 'metamask' | 'walletconnect'
-
-const CONNECTED_PROVIDER = 'connected-provider'
 
 const connectors: Record<Wallet, any> = {
   metamask: MetamaskConnector,
@@ -18,11 +14,6 @@ const connectors: Record<Wallet, any> = {
 
 export default {
   install: async (Vue) => {
-    const alreadyConnectedProvider: Wallet | null = lsGet(
-      CONNECTED_PROVIDER,
-      null
-    )
-
     const plugin = new Vue({
       data: {
         accounts: [],
@@ -34,7 +25,10 @@ export default {
       },
     })
 
-    plugin.connectWallet = async (wallet: Wallet): Promise<void> => {
+    plugin.connectWallet = async (
+      wallet: Wallet,
+      loginMessage: string
+    ): Promise<void> => {
       if (!wallet || typeof wallet !== 'string') {
         throw new Error(
           'Please provide a wallet to facilitate a web3 connection.'
@@ -52,11 +46,8 @@ export default {
 
       const signature = await conn.provider.request({
         method: 'personal_sign',
-        params: [LOGIN_MESSAGE, account],
+        params: [loginMessage, account],
       })
-
-      // Save chosen provider to localStorage
-      lsSet(CONNECTED_PROVIDER, wallet)
 
       // Check if user is using the supported chain id
       const supportedChainId = Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
@@ -74,7 +65,6 @@ export default {
           `Wrong Network. Please connect to the ${CHAIN_INFO[supportedChainId].label} Ethereum network.`
         )
       }
-
       // Populate the plugin with the initial data
       plugin.accounts = conn.accounts
       plugin.provider = conn.provider
@@ -111,7 +101,6 @@ export default {
     plugin.disconnectWallet = () => {
       plugin.accounts = []
       plugin.chainId = null
-      lsRemove(CONNECTED_PROVIDER)
       if (plugin.provider?.disconnect) {
         plugin.provider.disconnect()
       }
@@ -121,12 +110,6 @@ export default {
 
       plugin.provider = null
       plugin.user = null
-    }
-
-    // If previous provider was found, initiate connection.
-    if (alreadyConnectedProvider) {
-      lsRemove(CONNECTED_PROVIDER)
-      plugin.connectWallet(alreadyConnectedProvider)
     }
 
     Object.defineProperty(Vue.prototype, '$web3', {

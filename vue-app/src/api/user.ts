@@ -3,17 +3,21 @@ import { BigNumber, Contract } from 'ethers'
 import { Web3Provider } from '@ethersproject/providers'
 
 import { UserRegistry, ERC20 } from './abi'
-import { factory, ipfsGatewayUrl, provider, operator } from './core'
+import { chainId, ipfsGatewayUrl, provider, operator } from './core'
 import { BrightId } from './bright-id'
 
-//TODO: update anywhere this is called to take factory address as a parameter, default to env. variable
-export const LOGIN_MESSAGE = `Welcome to ${operator}!
+// contractAddress should be the round address, if not available, use funding round factory address
+export function getLoginMessage(contractAddress: string): string {
+  return `Welcome to ${operator}!
 
 To get logged in, sign this message to prove you have access to this wallet. This does not cost any ether.
 
 You will be asked to sign each time you load the app.
 
-Contract address: ${factory.address.toLowerCase()}.`
+Contract address: ${contractAddress.toLowerCase()}.
+
+Chain ID: ${chainId}`
+}
 
 export interface User {
   walletAddress: string

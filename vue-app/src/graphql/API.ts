@@ -2892,11 +2892,11 @@ export type GetContributorIndexQuery = { __typename?: 'Query', publicKey: Maybe<
 
 export type GetContributorMessagesQueryVariables = Exact<{
   fundingRoundAddress: Scalars['ID'];
-  contributorAddress: Scalars['ID'];
+  pubKey: Scalars['ID'];
 }>;
 
 
-export type GetContributorMessagesQuery = { __typename?: 'Query', publicKey: Maybe<{ __typename?: 'PublicKey', messages: Maybe<Array<{ __typename?: 'Message', id: string, data: Maybe<Array<any>>, iv: any, timestamp: Maybe<string>, blockNumber: any, transactionIndex: any }>> }> };
+export type GetContributorMessagesQuery = { __typename?: 'Query', messages: Array<{ __typename?: 'Message', id: string, data: Maybe<Array<any>>, iv: any, timestamp: Maybe<string>, blockNumber: any, transactionIndex: any }> };
 
 export type GetContributorVotesQueryVariables = Exact<{
   fundingRoundAddress: Scalars['ID'];
@@ -2919,6 +2919,11 @@ export type GetFactoryInfoQueryVariables = Exact<{
 
 
 export type GetFactoryInfoQuery = { __typename?: 'Query', fundingRoundFactory: Maybe<{ __typename?: 'FundingRoundFactory', contributorRegistryAddress: Maybe<any>, nativeTokenInfo: Maybe<{ __typename?: 'Token', tokenAddress: Maybe<any>, symbol: Maybe<string>, decimals: Maybe<any> }> }> };
+
+export type GetLatestBlockNumberQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLatestBlockNumberQuery = { __typename?: 'Query', _meta: Maybe<{ __typename?: '_Meta_', block: { __typename?: '_Block_', number: number } }> };
 
 export type GetProjectQueryVariables = Exact<{
   recipientId: Scalars['ID'];
@@ -3003,20 +3008,19 @@ export const GetContributorIndexDocument = gql`
 }
     `;
 export const GetContributorMessagesDocument = gql`
-    query GetContributorMessages($fundingRoundAddress: ID!, $contributorAddress: ID!) {
-  publicKey(id: $contributorAddress) {
-    messages(
-      where: {fundingRound_: {id: $fundingRoundAddress}, publicKey_: {id: $contributorAddress}}
-      orderBy: blockNumber
-      orderDirection: desc
-    ) {
-      id
-      data
-      iv
-      timestamp
-      blockNumber
-      transactionIndex
-    }
+    query GetContributorMessages($fundingRoundAddress: ID!, $pubKey: ID!) {
+  messages(
+    where: {fundingRound_: {id: $fundingRoundAddress}, publicKey_: {id: $pubKey}}
+    first: 1000
+    orderBy: blockNumber
+    orderDirection: desc
+  ) {
+    id
+    data
+    iv
+    timestamp
+    blockNumber
+    transactionIndex
   }
 }
     `;
@@ -3050,6 +3054,15 @@ export const GetFactoryInfoDocument = gql`
       decimals
     }
     contributorRegistryAddress
+  }
+}
+    `;
+export const GetLatestBlockNumberDocument = gql`
+    query GetLatestBlockNumber {
+  _meta {
+    block {
+      number
+    }
   }
 }
     `;
@@ -3208,6 +3221,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetFactoryInfo(variables: GetFactoryInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFactoryInfoQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetFactoryInfoQuery>(GetFactoryInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetFactoryInfo');
+    },
+    GetLatestBlockNumber(variables?: GetLatestBlockNumberQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetLatestBlockNumberQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetLatestBlockNumberQuery>(GetLatestBlockNumberDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetLatestBlockNumber');
     },
     GetProject(variables: GetProjectQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProjectQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProjectQuery>(GetProjectDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetProject');

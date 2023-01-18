@@ -1,13 +1,13 @@
 query GetContributorMessages(
   $fundingRoundAddress: ID!
-  $contributorAddress: ID!
+  $pubKey: ID!
 ) {
-  publicKey(id: $contributorAddress) {
-    messages(
+  messages(
       where: {
         fundingRound_: { id: $fundingRoundAddress },
-        publicKey_: { id: $contributorAddress }
+        publicKey_: { id: $pubKey }
       },
+      first: 1000
       orderBy: blockNumber, orderDirection: desc)
     {
       id
@@ -17,5 +17,4 @@ query GetContributorMessages(
       blockNumber
       transactionIndex
     }
-  }  
 }
