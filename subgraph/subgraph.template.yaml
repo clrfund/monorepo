@@ -13,7 +13,7 @@ dataSources:
       startBlock: {{factoryStartBlock}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - FundingRoundFactory
@@ -58,7 +58,7 @@ dataSources:
       startBlock: {{recipientRegistryStartBlock}}
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - RecipientRegistry
@@ -82,7 +82,7 @@ templates:
       abi: FundingRound
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - FundingRound
@@ -118,7 +118,7 @@ templates:
       abi: OptimisticRecipientRegistry
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - RecipientRegistry
@@ -141,7 +141,7 @@ templates:
       abi: BrightIdUserRegistry
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - ContributorRegistry
@@ -162,7 +162,7 @@ templates:
       abi: MACI
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
         - MACI

@@ -126,16 +126,19 @@ function createToken(tokenAddress: Address, blockTimestamp: BigInt): Token {
 function createOrUpdateFundingRoundFactory(
   fundingRoundFactoryAddress: Address,
   timestamp: BigInt
-): FundingRoundFactory | null {
+): FundingRoundFactory {
   let fundingRoundFactoryId = fundingRoundFactoryAddress.toHexString()
 
   let fundingRoundFactoryContract = FundingRoundFactoryContract.bind(
     fundingRoundFactoryAddress
   )
 
-  let fundingRoundFactory = FundingRoundFactory.load(fundingRoundFactoryId)
-  if (!fundingRoundFactory) {
-    fundingRoundFactory = new FundingRoundFactory(fundingRoundFactoryId)
+  let existingFundingRoundFactory = FundingRoundFactory.load(
+    fundingRoundFactoryId
+  )
+  let fundingRoundFactory = new FundingRoundFactory(fundingRoundFactoryId)
+  if (existingFundingRoundFactory) {
+    fundingRoundFactory = existingFundingRoundFactory
   }
 
   let maciFactoryAddressCall = fundingRoundFactoryContract.try_maciFactory()

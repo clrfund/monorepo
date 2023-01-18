@@ -526,7 +526,9 @@ export class ContributeCall__Inputs {
   }
 
   get pubKey(): ContributeCallPubKeyStruct {
-    return this._call.inputValues[0].value.toTuple() as ContributeCallPubKeyStruct;
+    return changetype<ContributeCallPubKeyStruct>(
+      this._call.inputValues[0].value.toTuple()
+    );
   }
 
   get amount(): BigInt {

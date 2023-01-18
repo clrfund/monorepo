@@ -6,7 +6,6 @@ import {
   Value,
   ValueKind,
   store,
-  Address,
   Bytes,
   BigInt,
   BigDecimal
@@ -20,22 +19,25 @@ export class FundingRoundFactory extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save FundingRoundFactory entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save FundingRoundFactory entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("FundingRoundFactory", id.toString(), this);
+    assert(id != null, "Cannot save FundingRoundFactory entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type FundingRoundFactory must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("FundingRoundFactory", id.toString(), this);
+    }
   }
 
   static load(id: string): FundingRoundFactory | null {
-    return store.get("FundingRoundFactory", id) as FundingRoundFactory | null;
+    return changetype<FundingRoundFactory | null>(
+      store.get("FundingRoundFactory", id)
+    );
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -44,7 +46,7 @@ export class FundingRoundFactory extends Entity {
 
   get owner(): Bytes | null {
     let value = this.get("owner");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -52,16 +54,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set owner(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("owner");
     } else {
-      this.set("owner", Value.fromBytes(value as Bytes));
+      this.set("owner", Value.fromBytes(<Bytes>value));
     }
   }
 
   get coordinator(): Bytes | null {
     let value = this.get("coordinator");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -69,16 +71,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set coordinator(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("coordinator");
     } else {
-      this.set("coordinator", Value.fromBytes(value as Bytes));
+      this.set("coordinator", Value.fromBytes(<Bytes>value));
     }
   }
 
   get nativeToken(): Bytes | null {
     let value = this.get("nativeToken");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -86,16 +88,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set nativeToken(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("nativeToken");
     } else {
-      this.set("nativeToken", Value.fromBytes(value as Bytes));
+      this.set("nativeToken", Value.fromBytes(<Bytes>value));
     }
   }
 
   get nativeTokenInfo(): string | null {
     let value = this.get("nativeTokenInfo");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -103,16 +105,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set nativeTokenInfo(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("nativeTokenInfo");
     } else {
-      this.set("nativeTokenInfo", Value.fromString(value as string));
+      this.set("nativeTokenInfo", Value.fromString(<string>value));
     }
   }
 
   get contributorRegistry(): string | null {
     let value = this.get("contributorRegistry");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -120,16 +122,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set contributorRegistry(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributorRegistry");
     } else {
-      this.set("contributorRegistry", Value.fromString(value as string));
+      this.set("contributorRegistry", Value.fromString(<string>value));
     }
   }
 
   get contributorRegistryAddress(): Bytes | null {
     let value = this.get("contributorRegistryAddress");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -137,16 +139,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set contributorRegistryAddress(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributorRegistryAddress");
     } else {
-      this.set("contributorRegistryAddress", Value.fromBytes(value as Bytes));
+      this.set("contributorRegistryAddress", Value.fromBytes(<Bytes>value));
     }
   }
 
   get recipientRegistry(): string | null {
     let value = this.get("recipientRegistry");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -154,16 +156,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set recipientRegistry(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipientRegistry");
     } else {
-      this.set("recipientRegistry", Value.fromString(value as string));
+      this.set("recipientRegistry", Value.fromString(<string>value));
     }
   }
 
   get recipientRegistryAddress(): Bytes | null {
     let value = this.get("recipientRegistryAddress");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -171,16 +173,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set recipientRegistryAddress(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipientRegistryAddress");
     } else {
-      this.set("recipientRegistryAddress", Value.fromBytes(value as Bytes));
+      this.set("recipientRegistryAddress", Value.fromBytes(<Bytes>value));
     }
   }
 
   get currentRound(): string | null {
     let value = this.get("currentRound");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -188,16 +190,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set currentRound(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("currentRound");
     } else {
-      this.set("currentRound", Value.fromString(value as string));
+      this.set("currentRound", Value.fromString(<string>value));
     }
   }
 
   get maciFactory(): Bytes | null {
     let value = this.get("maciFactory");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -205,16 +207,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set maciFactory(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("maciFactory");
     } else {
-      this.set("maciFactory", Value.fromBytes(value as Bytes));
+      this.set("maciFactory", Value.fromBytes(<Bytes>value));
     }
   }
 
   get coordinatorPubKey(): string | null {
     let value = this.get("coordinatorPubKey");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -222,16 +224,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set coordinatorPubKey(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("coordinatorPubKey");
     } else {
-      this.set("coordinatorPubKey", Value.fromString(value as string));
+      this.set("coordinatorPubKey", Value.fromString(<string>value));
     }
   }
 
   get stateTreeDepth(): BigInt | null {
     let value = this.get("stateTreeDepth");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -239,16 +241,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set stateTreeDepth(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("stateTreeDepth");
     } else {
-      this.set("stateTreeDepth", Value.fromBigInt(value as BigInt));
+      this.set("stateTreeDepth", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get messageTreeDepth(): BigInt | null {
     let value = this.get("messageTreeDepth");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -256,16 +258,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set messageTreeDepth(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("messageTreeDepth");
     } else {
-      this.set("messageTreeDepth", Value.fromBigInt(value as BigInt));
+      this.set("messageTreeDepth", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get voteOptionTreeDepth(): BigInt | null {
     let value = this.get("voteOptionTreeDepth");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -273,16 +275,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set voteOptionTreeDepth(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("voteOptionTreeDepth");
     } else {
-      this.set("voteOptionTreeDepth", Value.fromBigInt(value as BigInt));
+      this.set("voteOptionTreeDepth", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get tallyBatchSize(): BigInt | null {
     let value = this.get("tallyBatchSize");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -290,16 +292,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set tallyBatchSize(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("tallyBatchSize");
     } else {
-      this.set("tallyBatchSize", Value.fromBigInt(value as BigInt));
+      this.set("tallyBatchSize", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get messageBatchSize(): BigInt | null {
     let value = this.get("messageBatchSize");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -307,16 +309,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set messageBatchSize(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("messageBatchSize");
     } else {
-      this.set("messageBatchSize", Value.fromBigInt(value as BigInt));
+      this.set("messageBatchSize", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get batchUstVerifier(): Bytes | null {
     let value = this.get("batchUstVerifier");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -324,16 +326,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set batchUstVerifier(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("batchUstVerifier");
     } else {
-      this.set("batchUstVerifier", Value.fromBytes(value as Bytes));
+      this.set("batchUstVerifier", Value.fromBytes(<Bytes>value));
     }
   }
 
   get qvtVerifier(): Bytes | null {
     let value = this.get("qvtVerifier");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -341,16 +343,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set qvtVerifier(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("qvtVerifier");
     } else {
-      this.set("qvtVerifier", Value.fromBytes(value as Bytes));
+      this.set("qvtVerifier", Value.fromBytes(<Bytes>value));
     }
   }
 
   get signUpDuration(): BigInt | null {
     let value = this.get("signUpDuration");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -358,16 +360,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set signUpDuration(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("signUpDuration");
     } else {
-      this.set("signUpDuration", Value.fromBigInt(value as BigInt));
+      this.set("signUpDuration", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get votingDuration(): BigInt | null {
     let value = this.get("votingDuration");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -375,16 +377,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set votingDuration(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("votingDuration");
     } else {
-      this.set("votingDuration", Value.fromBigInt(value as BigInt));
+      this.set("votingDuration", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get maxUsers(): BigInt | null {
     let value = this.get("maxUsers");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -392,16 +394,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set maxUsers(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("maxUsers");
     } else {
-      this.set("maxUsers", Value.fromBigInt(value as BigInt));
+      this.set("maxUsers", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get maxMessages(): BigInt | null {
     let value = this.get("maxMessages");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -409,16 +411,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set maxMessages(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("maxMessages");
     } else {
-      this.set("maxMessages", Value.fromBigInt(value as BigInt));
+      this.set("maxMessages", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get maxVoteOptions(): BigInt | null {
     let value = this.get("maxVoteOptions");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -426,16 +428,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set maxVoteOptions(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("maxVoteOptions");
     } else {
-      this.set("maxVoteOptions", Value.fromBigInt(value as BigInt));
+      this.set("maxVoteOptions", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get fundingRounds(): Array<string> | null {
     let value = this.get("fundingRounds");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -443,16 +445,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set fundingRounds(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("fundingRounds");
     } else {
-      this.set("fundingRounds", Value.fromStringArray(value as Array<string>));
+      this.set("fundingRounds", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get createdAt(): string | null {
     let value = this.get("createdAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -460,16 +462,16 @@ export class FundingRoundFactory extends Entity {
   }
 
   set createdAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("createdAt");
     } else {
-      this.set("createdAt", Value.fromString(value as string));
+      this.set("createdAt", Value.fromString(<string>value));
     }
   }
 
   get lastUpdatedAt(): string | null {
     let value = this.get("lastUpdatedAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -477,10 +479,10 @@ export class FundingRoundFactory extends Entity {
   }
 
   set lastUpdatedAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("lastUpdatedAt");
     } else {
-      this.set("lastUpdatedAt", Value.fromString(value as string));
+      this.set("lastUpdatedAt", Value.fromString(<string>value));
     }
   }
 }
@@ -493,22 +495,23 @@ export class Message extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save Message entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Message entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Message", id.toString(), this);
+    assert(id != null, "Cannot save Message entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Message must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Message", id.toString(), this);
+    }
   }
 
   static load(id: string): Message | null {
-    return store.get("Message", id) as Message | null;
+    return changetype<Message | null>(store.get("Message", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -517,7 +520,7 @@ export class Message extends Entity {
 
   get data(): Array<BigInt> | null {
     let value = this.get("data");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigIntArray();
@@ -525,16 +528,16 @@ export class Message extends Entity {
   }
 
   set data(value: Array<BigInt> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("data");
     } else {
-      this.set("data", Value.fromBigIntArray(value as Array<BigInt>));
+      this.set("data", Value.fromBigIntArray(<Array<BigInt>>value));
     }
   }
 
   get iv(): BigInt {
     let value = this.get("iv");
-    return value.toBigInt();
+    return value!.toBigInt();
   }
 
   set iv(value: BigInt) {
@@ -543,7 +546,7 @@ export class Message extends Entity {
 
   get publicKey(): string | null {
     let value = this.get("publicKey");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -551,16 +554,16 @@ export class Message extends Entity {
   }
 
   set publicKey(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("publicKey");
     } else {
-      this.set("publicKey", Value.fromString(value as string));
+      this.set("publicKey", Value.fromString(<string>value));
     }
   }
 
   get fundingRound(): string | null {
     let value = this.get("fundingRound");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -568,16 +571,16 @@ export class Message extends Entity {
   }
 
   set fundingRound(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("fundingRound");
     } else {
-      this.set("fundingRound", Value.fromString(value as string));
+      this.set("fundingRound", Value.fromString(<string>value));
     }
   }
 
   get timestamp(): string | null {
     let value = this.get("timestamp");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -585,16 +588,16 @@ export class Message extends Entity {
   }
 
   set timestamp(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("timestamp");
     } else {
-      this.set("timestamp", Value.fromString(value as string));
+      this.set("timestamp", Value.fromString(<string>value));
     }
   }
 
   get blockNumber(): BigInt {
     let value = this.get("blockNumber");
-    return value.toBigInt();
+    return value!.toBigInt();
   }
 
   set blockNumber(value: BigInt) {
@@ -603,7 +606,7 @@ export class Message extends Entity {
 
   get transactionIndex(): BigInt {
     let value = this.get("transactionIndex");
-    return value.toBigInt();
+    return value!.toBigInt();
   }
 
   set transactionIndex(value: BigInt) {
@@ -619,22 +622,23 @@ export class PublicKey extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save PublicKey entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save PublicKey entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("PublicKey", id.toString(), this);
+    assert(id != null, "Cannot save PublicKey entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type PublicKey must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("PublicKey", id.toString(), this);
+    }
   }
 
   static load(id: string): PublicKey | null {
-    return store.get("PublicKey", id) as PublicKey | null;
+    return changetype<PublicKey | null>(store.get("PublicKey", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -643,7 +647,7 @@ export class PublicKey extends Entity {
 
   get fundingRound(): string | null {
     let value = this.get("fundingRound");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -651,16 +655,16 @@ export class PublicKey extends Entity {
   }
 
   set fundingRound(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("fundingRound");
     } else {
-      this.set("fundingRound", Value.fromString(value as string));
+      this.set("fundingRound", Value.fromString(<string>value));
     }
   }
 
   get messages(): Array<string> | null {
     let value = this.get("messages");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -668,16 +672,16 @@ export class PublicKey extends Entity {
   }
 
   set messages(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("messages");
     } else {
-      this.set("messages", Value.fromStringArray(value as Array<string>));
+      this.set("messages", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get x(): BigInt {
     let value = this.get("x");
-    return value.toBigInt();
+    return value!.toBigInt();
   }
 
   set x(value: BigInt) {
@@ -686,7 +690,7 @@ export class PublicKey extends Entity {
 
   get y(): BigInt {
     let value = this.get("y");
-    return value.toBigInt();
+    return value!.toBigInt();
   }
 
   set y(value: BigInt) {
@@ -695,7 +699,7 @@ export class PublicKey extends Entity {
 
   get stateIndex(): BigInt | null {
     let value = this.get("stateIndex");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -703,16 +707,16 @@ export class PublicKey extends Entity {
   }
 
   set stateIndex(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("stateIndex");
     } else {
-      this.set("stateIndex", Value.fromBigInt(value as BigInt));
+      this.set("stateIndex", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get voiceCreditBalance(): BigInt | null {
     let value = this.get("voiceCreditBalance");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -720,10 +724,10 @@ export class PublicKey extends Entity {
   }
 
   set voiceCreditBalance(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("voiceCreditBalance");
     } else {
-      this.set("voiceCreditBalance", Value.fromBigInt(value as BigInt));
+      this.set("voiceCreditBalance", Value.fromBigInt(<BigInt>value));
     }
   }
 }
@@ -736,22 +740,23 @@ export class FundingRound extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save FundingRound entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save FundingRound entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("FundingRound", id.toString(), this);
+    assert(id != null, "Cannot save FundingRound entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type FundingRound must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("FundingRound", id.toString(), this);
+    }
   }
 
   static load(id: string): FundingRound | null {
-    return store.get("FundingRound", id) as FundingRound | null;
+    return changetype<FundingRound | null>(store.get("FundingRound", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -760,7 +765,7 @@ export class FundingRound extends Entity {
 
   get fundingRoundFactory(): string | null {
     let value = this.get("fundingRoundFactory");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -768,16 +773,16 @@ export class FundingRound extends Entity {
   }
 
   set fundingRoundFactory(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("fundingRoundFactory");
     } else {
-      this.set("fundingRoundFactory", Value.fromString(value as string));
+      this.set("fundingRoundFactory", Value.fromString(<string>value));
     }
   }
 
   get maci(): Bytes | null {
     let value = this.get("maci");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -785,16 +790,16 @@ export class FundingRound extends Entity {
   }
 
   set maci(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("maci");
     } else {
-      this.set("maci", Value.fromBytes(value as Bytes));
+      this.set("maci", Value.fromBytes(<Bytes>value));
     }
   }
 
   get messages(): Array<string> | null {
     let value = this.get("messages");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -802,16 +807,16 @@ export class FundingRound extends Entity {
   }
 
   set messages(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("messages");
     } else {
-      this.set("messages", Value.fromStringArray(value as Array<string>));
+      this.set("messages", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get recipientRegistry(): string | null {
     let value = this.get("recipientRegistry");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -819,16 +824,16 @@ export class FundingRound extends Entity {
   }
 
   set recipientRegistry(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipientRegistry");
     } else {
-      this.set("recipientRegistry", Value.fromString(value as string));
+      this.set("recipientRegistry", Value.fromString(<string>value));
     }
   }
 
   get recipientRegistryAddress(): Bytes | null {
     let value = this.get("recipientRegistryAddress");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -836,16 +841,16 @@ export class FundingRound extends Entity {
   }
 
   set recipientRegistryAddress(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipientRegistryAddress");
     } else {
-      this.set("recipientRegistryAddress", Value.fromBytes(value as Bytes));
+      this.set("recipientRegistryAddress", Value.fromBytes(<Bytes>value));
     }
   }
 
   get contributorRegistry(): string | null {
     let value = this.get("contributorRegistry");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -853,16 +858,16 @@ export class FundingRound extends Entity {
   }
 
   set contributorRegistry(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributorRegistry");
     } else {
-      this.set("contributorRegistry", Value.fromString(value as string));
+      this.set("contributorRegistry", Value.fromString(<string>value));
     }
   }
 
   get contributorRegistryAddress(): Bytes | null {
     let value = this.get("contributorRegistryAddress");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -870,16 +875,16 @@ export class FundingRound extends Entity {
   }
 
   set contributorRegistryAddress(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributorRegistryAddress");
     } else {
-      this.set("contributorRegistryAddress", Value.fromBytes(value as Bytes));
+      this.set("contributorRegistryAddress", Value.fromBytes(<Bytes>value));
     }
   }
 
   get nativeToken(): Bytes | null {
     let value = this.get("nativeToken");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -887,16 +892,16 @@ export class FundingRound extends Entity {
   }
 
   set nativeToken(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("nativeToken");
     } else {
-      this.set("nativeToken", Value.fromBytes(value as Bytes));
+      this.set("nativeToken", Value.fromBytes(<Bytes>value));
     }
   }
 
   get nativeTokenInfo(): string | null {
     let value = this.get("nativeTokenInfo");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -904,16 +909,16 @@ export class FundingRound extends Entity {
   }
 
   set nativeTokenInfo(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("nativeTokenInfo");
     } else {
-      this.set("nativeTokenInfo", Value.fromString(value as string));
+      this.set("nativeTokenInfo", Value.fromString(<string>value));
     }
   }
 
   get startTime(): BigInt | null {
     let value = this.get("startTime");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -921,16 +926,16 @@ export class FundingRound extends Entity {
   }
 
   set startTime(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("startTime");
     } else {
-      this.set("startTime", Value.fromBigInt(value as BigInt));
+      this.set("startTime", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get signUpDeadline(): BigInt | null {
     let value = this.get("signUpDeadline");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -938,16 +943,16 @@ export class FundingRound extends Entity {
   }
 
   set signUpDeadline(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("signUpDeadline");
     } else {
-      this.set("signUpDeadline", Value.fromBigInt(value as BigInt));
+      this.set("signUpDeadline", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get votingDeadline(): BigInt | null {
     let value = this.get("votingDeadline");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -955,16 +960,16 @@ export class FundingRound extends Entity {
   }
 
   set votingDeadline(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("votingDeadline");
     } else {
-      this.set("votingDeadline", Value.fromBigInt(value as BigInt));
+      this.set("votingDeadline", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get coordinator(): Bytes | null {
     let value = this.get("coordinator");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -972,16 +977,16 @@ export class FundingRound extends Entity {
   }
 
   set coordinator(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("coordinator");
     } else {
-      this.set("coordinator", Value.fromBytes(value as Bytes));
+      this.set("coordinator", Value.fromBytes(<Bytes>value));
     }
   }
 
   get voiceCreditFactor(): BigInt | null {
     let value = this.get("voiceCreditFactor");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -989,16 +994,16 @@ export class FundingRound extends Entity {
   }
 
   set voiceCreditFactor(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("voiceCreditFactor");
     } else {
-      this.set("voiceCreditFactor", Value.fromBigInt(value as BigInt));
+      this.set("voiceCreditFactor", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get contributorCount(): BigInt {
     let value = this.get("contributorCount");
-    return value.toBigInt();
+    return value!.toBigInt();
   }
 
   set contributorCount(value: BigInt) {
@@ -1007,7 +1012,7 @@ export class FundingRound extends Entity {
 
   get recipientCount(): BigInt {
     let value = this.get("recipientCount");
-    return value.toBigInt();
+    return value!.toBigInt();
   }
 
   set recipientCount(value: BigInt) {
@@ -1016,7 +1021,7 @@ export class FundingRound extends Entity {
 
   get matchingPoolSize(): BigInt | null {
     let value = this.get("matchingPoolSize");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1024,16 +1029,16 @@ export class FundingRound extends Entity {
   }
 
   set matchingPoolSize(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("matchingPoolSize");
     } else {
-      this.set("matchingPoolSize", Value.fromBigInt(value as BigInt));
+      this.set("matchingPoolSize", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get totalSpent(): BigInt | null {
     let value = this.get("totalSpent");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1041,16 +1046,16 @@ export class FundingRound extends Entity {
   }
 
   set totalSpent(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("totalSpent");
     } else {
-      this.set("totalSpent", Value.fromBigInt(value as BigInt));
+      this.set("totalSpent", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get totalVotes(): BigInt | null {
     let value = this.get("totalVotes");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1058,16 +1063,16 @@ export class FundingRound extends Entity {
   }
 
   set totalVotes(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("totalVotes");
     } else {
-      this.set("totalVotes", Value.fromBigInt(value as BigInt));
+      this.set("totalVotes", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get isFinalized(): boolean {
     let value = this.get("isFinalized");
-    return value.toBoolean();
+    return value!.toBoolean();
   }
 
   set isFinalized(value: boolean) {
@@ -1076,7 +1081,7 @@ export class FundingRound extends Entity {
 
   get isCancelled(): boolean {
     let value = this.get("isCancelled");
-    return value.toBoolean();
+    return value!.toBoolean();
   }
 
   set isCancelled(value: boolean) {
@@ -1085,7 +1090,7 @@ export class FundingRound extends Entity {
 
   get tallyHash(): string | null {
     let value = this.get("tallyHash");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1093,16 +1098,16 @@ export class FundingRound extends Entity {
   }
 
   set tallyHash(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("tallyHash");
     } else {
-      this.set("tallyHash", Value.fromString(value as string));
+      this.set("tallyHash", Value.fromString(<string>value));
     }
   }
 
   get recipients(): Array<string> | null {
     let value = this.get("recipients");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1110,16 +1115,16 @@ export class FundingRound extends Entity {
   }
 
   set recipients(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipients");
     } else {
-      this.set("recipients", Value.fromStringArray(value as Array<string>));
+      this.set("recipients", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get contributors(): Array<string> | null {
     let value = this.get("contributors");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1127,16 +1132,16 @@ export class FundingRound extends Entity {
   }
 
   set contributors(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributors");
     } else {
-      this.set("contributors", Value.fromStringArray(value as Array<string>));
+      this.set("contributors", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get contributions(): Array<string> | null {
     let value = this.get("contributions");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1144,16 +1149,16 @@ export class FundingRound extends Entity {
   }
 
   set contributions(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributions");
     } else {
-      this.set("contributions", Value.fromStringArray(value as Array<string>));
+      this.set("contributions", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get votes(): Array<string> | null {
     let value = this.get("votes");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1161,16 +1166,16 @@ export class FundingRound extends Entity {
   }
 
   set votes(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("votes");
     } else {
-      this.set("votes", Value.fromStringArray(value as Array<string>));
+      this.set("votes", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get createdAt(): string | null {
     let value = this.get("createdAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1178,16 +1183,16 @@ export class FundingRound extends Entity {
   }
 
   set createdAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("createdAt");
     } else {
-      this.set("createdAt", Value.fromString(value as string));
+      this.set("createdAt", Value.fromString(<string>value));
     }
   }
 
   get lastUpdatedAt(): string | null {
     let value = this.get("lastUpdatedAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1195,10 +1200,10 @@ export class FundingRound extends Entity {
   }
 
   set lastUpdatedAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("lastUpdatedAt");
     } else {
-      this.set("lastUpdatedAt", Value.fromString(value as string));
+      this.set("lastUpdatedAt", Value.fromString(<string>value));
     }
   }
 }
@@ -1211,22 +1216,25 @@ export class RecipientRegistry extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save RecipientRegistry entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save RecipientRegistry entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("RecipientRegistry", id.toString(), this);
+    assert(id != null, "Cannot save RecipientRegistry entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type RecipientRegistry must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("RecipientRegistry", id.toString(), this);
+    }
   }
 
   static load(id: string): RecipientRegistry | null {
-    return store.get("RecipientRegistry", id) as RecipientRegistry | null;
+    return changetype<RecipientRegistry | null>(
+      store.get("RecipientRegistry", id)
+    );
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -1235,7 +1243,7 @@ export class RecipientRegistry extends Entity {
 
   get fundingRoundFactory(): string | null {
     let value = this.get("fundingRoundFactory");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1243,16 +1251,16 @@ export class RecipientRegistry extends Entity {
   }
 
   set fundingRoundFactory(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("fundingRoundFactory");
     } else {
-      this.set("fundingRoundFactory", Value.fromString(value as string));
+      this.set("fundingRoundFactory", Value.fromString(<string>value));
     }
   }
 
   get baseDeposit(): BigInt | null {
     let value = this.get("baseDeposit");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1260,16 +1268,16 @@ export class RecipientRegistry extends Entity {
   }
 
   set baseDeposit(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("baseDeposit");
     } else {
-      this.set("baseDeposit", Value.fromBigInt(value as BigInt));
+      this.set("baseDeposit", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get challengePeriodDuration(): BigInt | null {
     let value = this.get("challengePeriodDuration");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1277,16 +1285,16 @@ export class RecipientRegistry extends Entity {
   }
 
   set challengePeriodDuration(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("challengePeriodDuration");
     } else {
-      this.set("challengePeriodDuration", Value.fromBigInt(value as BigInt));
+      this.set("challengePeriodDuration", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get controller(): Bytes | null {
     let value = this.get("controller");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -1294,16 +1302,16 @@ export class RecipientRegistry extends Entity {
   }
 
   set controller(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("controller");
     } else {
-      this.set("controller", Value.fromBytes(value as Bytes));
+      this.set("controller", Value.fromBytes(<Bytes>value));
     }
   }
 
   get maxRecipients(): BigInt | null {
     let value = this.get("maxRecipients");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1311,16 +1319,16 @@ export class RecipientRegistry extends Entity {
   }
 
   set maxRecipients(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("maxRecipients");
     } else {
-      this.set("maxRecipients", Value.fromBigInt(value as BigInt));
+      this.set("maxRecipients", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get owner(): Bytes | null {
     let value = this.get("owner");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -1328,16 +1336,16 @@ export class RecipientRegistry extends Entity {
   }
 
   set owner(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("owner");
     } else {
-      this.set("owner", Value.fromBytes(value as Bytes));
+      this.set("owner", Value.fromBytes(<Bytes>value));
     }
   }
 
   get recipients(): Array<string> | null {
     let value = this.get("recipients");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1345,16 +1353,16 @@ export class RecipientRegistry extends Entity {
   }
 
   set recipients(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipients");
     } else {
-      this.set("recipients", Value.fromStringArray(value as Array<string>));
+      this.set("recipients", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get createdAt(): string | null {
     let value = this.get("createdAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1362,16 +1370,16 @@ export class RecipientRegistry extends Entity {
   }
 
   set createdAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("createdAt");
     } else {
-      this.set("createdAt", Value.fromString(value as string));
+      this.set("createdAt", Value.fromString(<string>value));
     }
   }
 
   get lastUpdatedAt(): string | null {
     let value = this.get("lastUpdatedAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1379,10 +1387,10 @@ export class RecipientRegistry extends Entity {
   }
 
   set lastUpdatedAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("lastUpdatedAt");
     } else {
-      this.set("lastUpdatedAt", Value.fromString(value as string));
+      this.set("lastUpdatedAt", Value.fromString(<string>value));
     }
   }
 }
@@ -1395,22 +1403,23 @@ export class Recipient extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save Recipient entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Recipient entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Recipient", id.toString(), this);
+    assert(id != null, "Cannot save Recipient entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Recipient must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Recipient", id.toString(), this);
+    }
   }
 
   static load(id: string): Recipient | null {
-    return store.get("Recipient", id) as Recipient | null;
+    return changetype<Recipient | null>(store.get("Recipient", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -1419,7 +1428,7 @@ export class Recipient extends Entity {
 
   get recipientRegistry(): string | null {
     let value = this.get("recipientRegistry");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1427,16 +1436,16 @@ export class Recipient extends Entity {
   }
 
   set recipientRegistry(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipientRegistry");
     } else {
-      this.set("recipientRegistry", Value.fromString(value as string));
+      this.set("recipientRegistry", Value.fromString(<string>value));
     }
   }
 
   get recipientIndex(): BigInt | null {
     let value = this.get("recipientIndex");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1444,16 +1453,16 @@ export class Recipient extends Entity {
   }
 
   set recipientIndex(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipientIndex");
     } else {
-      this.set("recipientIndex", Value.fromBigInt(value as BigInt));
+      this.set("recipientIndex", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get requestType(): string | null {
     let value = this.get("requestType");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1461,16 +1470,16 @@ export class Recipient extends Entity {
   }
 
   set requestType(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("requestType");
     } else {
-      this.set("requestType", Value.fromString(value as string));
+      this.set("requestType", Value.fromString(<string>value));
     }
   }
 
   get requester(): string | null {
     let value = this.get("requester");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1478,16 +1487,16 @@ export class Recipient extends Entity {
   }
 
   set requester(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("requester");
     } else {
-      this.set("requester", Value.fromString(value as string));
+      this.set("requester", Value.fromString(<string>value));
     }
   }
 
   get submissionTime(): string | null {
     let value = this.get("submissionTime");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1495,16 +1504,16 @@ export class Recipient extends Entity {
   }
 
   set submissionTime(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("submissionTime");
     } else {
-      this.set("submissionTime", Value.fromString(value as string));
+      this.set("submissionTime", Value.fromString(<string>value));
     }
   }
 
   get deposit(): BigInt | null {
     let value = this.get("deposit");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1512,16 +1521,16 @@ export class Recipient extends Entity {
   }
 
   set deposit(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("deposit");
     } else {
-      this.set("deposit", Value.fromBigInt(value as BigInt));
+      this.set("deposit", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get recipientAddress(): Bytes | null {
     let value = this.get("recipientAddress");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -1529,16 +1538,16 @@ export class Recipient extends Entity {
   }
 
   set recipientAddress(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipientAddress");
     } else {
-      this.set("recipientAddress", Value.fromBytes(value as Bytes));
+      this.set("recipientAddress", Value.fromBytes(<Bytes>value));
     }
   }
 
   get recipientMetadata(): string | null {
     let value = this.get("recipientMetadata");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1546,16 +1555,16 @@ export class Recipient extends Entity {
   }
 
   set recipientMetadata(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipientMetadata");
     } else {
-      this.set("recipientMetadata", Value.fromString(value as string));
+      this.set("recipientMetadata", Value.fromString(<string>value));
     }
   }
 
   get rejected(): boolean {
     let value = this.get("rejected");
-    return value.toBoolean();
+    return value!.toBoolean();
   }
 
   set rejected(value: boolean) {
@@ -1564,7 +1573,7 @@ export class Recipient extends Entity {
 
   get verified(): boolean {
     let value = this.get("verified");
-    return value.toBoolean();
+    return value!.toBoolean();
   }
 
   set verified(value: boolean) {
@@ -1573,7 +1582,7 @@ export class Recipient extends Entity {
 
   get voteOptionIndex(): BigInt | null {
     let value = this.get("voteOptionIndex");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -1581,16 +1590,16 @@ export class Recipient extends Entity {
   }
 
   set voteOptionIndex(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("voteOptionIndex");
     } else {
-      this.set("voteOptionIndex", Value.fromBigInt(value as BigInt));
+      this.set("voteOptionIndex", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get requestResolvedHash(): Bytes | null {
     let value = this.get("requestResolvedHash");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -1598,16 +1607,16 @@ export class Recipient extends Entity {
   }
 
   set requestResolvedHash(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("requestResolvedHash");
     } else {
-      this.set("requestResolvedHash", Value.fromBytes(value as Bytes));
+      this.set("requestResolvedHash", Value.fromBytes(<Bytes>value));
     }
   }
 
   get requestSubmittedHash(): Bytes | null {
     let value = this.get("requestSubmittedHash");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -1615,16 +1624,16 @@ export class Recipient extends Entity {
   }
 
   set requestSubmittedHash(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("requestSubmittedHash");
     } else {
-      this.set("requestSubmittedHash", Value.fromBytes(value as Bytes));
+      this.set("requestSubmittedHash", Value.fromBytes(<Bytes>value));
     }
   }
 
   get fundingRounds(): Array<string> | null {
     let value = this.get("fundingRounds");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1632,16 +1641,16 @@ export class Recipient extends Entity {
   }
 
   set fundingRounds(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("fundingRounds");
     } else {
-      this.set("fundingRounds", Value.fromStringArray(value as Array<string>));
+      this.set("fundingRounds", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get donations(): Array<string> | null {
     let value = this.get("donations");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1649,16 +1658,16 @@ export class Recipient extends Entity {
   }
 
   set donations(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("donations");
     } else {
-      this.set("donations", Value.fromStringArray(value as Array<string>));
+      this.set("donations", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get createdAt(): string | null {
     let value = this.get("createdAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1666,16 +1675,16 @@ export class Recipient extends Entity {
   }
 
   set createdAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("createdAt");
     } else {
-      this.set("createdAt", Value.fromString(value as string));
+      this.set("createdAt", Value.fromString(<string>value));
     }
   }
 
   get lastUpdatedAt(): string | null {
     let value = this.get("lastUpdatedAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1683,10 +1692,10 @@ export class Recipient extends Entity {
   }
 
   set lastUpdatedAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("lastUpdatedAt");
     } else {
-      this.set("lastUpdatedAt", Value.fromString(value as string));
+      this.set("lastUpdatedAt", Value.fromString(<string>value));
     }
   }
 }
@@ -1699,22 +1708,25 @@ export class ContributorRegistry extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save ContributorRegistry entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save ContributorRegistry entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("ContributorRegistry", id.toString(), this);
+    assert(id != null, "Cannot save ContributorRegistry entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type ContributorRegistry must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("ContributorRegistry", id.toString(), this);
+    }
   }
 
   static load(id: string): ContributorRegistry | null {
-    return store.get("ContributorRegistry", id) as ContributorRegistry | null;
+    return changetype<ContributorRegistry | null>(
+      store.get("ContributorRegistry", id)
+    );
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -1723,7 +1735,7 @@ export class ContributorRegistry extends Entity {
 
   get fundingRoundFactory(): string {
     let value = this.get("fundingRoundFactory");
-    return value.toString();
+    return value!.toString();
   }
 
   set fundingRoundFactory(value: string) {
@@ -1732,7 +1744,7 @@ export class ContributorRegistry extends Entity {
 
   get context(): string | null {
     let value = this.get("context");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1740,16 +1752,16 @@ export class ContributorRegistry extends Entity {
   }
 
   set context(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("context");
     } else {
-      this.set("context", Value.fromString(value as string));
+      this.set("context", Value.fromString(<string>value));
     }
   }
 
   get owner(): Bytes | null {
     let value = this.get("owner");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -1757,16 +1769,16 @@ export class ContributorRegistry extends Entity {
   }
 
   set owner(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("owner");
     } else {
-      this.set("owner", Value.fromBytes(value as Bytes));
+      this.set("owner", Value.fromBytes(<Bytes>value));
     }
   }
 
   get contributors(): Array<string> | null {
     let value = this.get("contributors");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1774,16 +1786,16 @@ export class ContributorRegistry extends Entity {
   }
 
   set contributors(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributors");
     } else {
-      this.set("contributors", Value.fromStringArray(value as Array<string>));
+      this.set("contributors", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get createdAt(): string | null {
     let value = this.get("createdAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1791,16 +1803,16 @@ export class ContributorRegistry extends Entity {
   }
 
   set createdAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("createdAt");
     } else {
-      this.set("createdAt", Value.fromString(value as string));
+      this.set("createdAt", Value.fromString(<string>value));
     }
   }
 
   get lastUpdatedAt(): string | null {
     let value = this.get("lastUpdatedAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1808,10 +1820,10 @@ export class ContributorRegistry extends Entity {
   }
 
   set lastUpdatedAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("lastUpdatedAt");
     } else {
-      this.set("lastUpdatedAt", Value.fromString(value as string));
+      this.set("lastUpdatedAt", Value.fromString(<string>value));
     }
   }
 }
@@ -1824,22 +1836,23 @@ export class Contributor extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save Contributor entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Contributor entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Contributor", id.toString(), this);
+    assert(id != null, "Cannot save Contributor entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Contributor must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Contributor", id.toString(), this);
+    }
   }
 
   static load(id: string): Contributor | null {
-    return store.get("Contributor", id) as Contributor | null;
+    return changetype<Contributor | null>(store.get("Contributor", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -1848,7 +1861,7 @@ export class Contributor extends Entity {
 
   get contributorRegistry(): string {
     let value = this.get("contributorRegistry");
-    return value.toString();
+    return value!.toString();
   }
 
   set contributorRegistry(value: string) {
@@ -1857,7 +1870,7 @@ export class Contributor extends Entity {
 
   get votes(): Array<string> | null {
     let value = this.get("votes");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1865,16 +1878,16 @@ export class Contributor extends Entity {
   }
 
   set votes(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("votes");
     } else {
-      this.set("votes", Value.fromStringArray(value as Array<string>));
+      this.set("votes", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get verifiedTimeStamp(): string | null {
     let value = this.get("verifiedTimeStamp");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1882,16 +1895,16 @@ export class Contributor extends Entity {
   }
 
   set verifiedTimeStamp(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("verifiedTimeStamp");
     } else {
-      this.set("verifiedTimeStamp", Value.fromString(value as string));
+      this.set("verifiedTimeStamp", Value.fromString(<string>value));
     }
   }
 
   get contributorAddress(): Bytes | null {
     let value = this.get("contributorAddress");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -1899,16 +1912,16 @@ export class Contributor extends Entity {
   }
 
   set contributorAddress(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributorAddress");
     } else {
-      this.set("contributorAddress", Value.fromBytes(value as Bytes));
+      this.set("contributorAddress", Value.fromBytes(<Bytes>value));
     }
   }
 
   get fundingRounds(): Array<string> | null {
     let value = this.get("fundingRounds");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1916,16 +1929,16 @@ export class Contributor extends Entity {
   }
 
   set fundingRounds(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("fundingRounds");
     } else {
-      this.set("fundingRounds", Value.fromStringArray(value as Array<string>));
+      this.set("fundingRounds", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get contributions(): Array<string> | null {
     let value = this.get("contributions");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toStringArray();
@@ -1933,16 +1946,16 @@ export class Contributor extends Entity {
   }
 
   set contributions(value: Array<string> | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributions");
     } else {
-      this.set("contributions", Value.fromStringArray(value as Array<string>));
+      this.set("contributions", Value.fromStringArray(<Array<string>>value));
     }
   }
 
   get createdAt(): string | null {
     let value = this.get("createdAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1950,16 +1963,16 @@ export class Contributor extends Entity {
   }
 
   set createdAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("createdAt");
     } else {
-      this.set("createdAt", Value.fromString(value as string));
+      this.set("createdAt", Value.fromString(<string>value));
     }
   }
 
   get lastUpdatedAt(): string | null {
     let value = this.get("lastUpdatedAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -1967,10 +1980,10 @@ export class Contributor extends Entity {
   }
 
   set lastUpdatedAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("lastUpdatedAt");
     } else {
-      this.set("lastUpdatedAt", Value.fromString(value as string));
+      this.set("lastUpdatedAt", Value.fromString(<string>value));
     }
   }
 }
@@ -1983,22 +1996,23 @@ export class Coordinator extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save Coordinator entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Coordinator entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Coordinator", id.toString(), this);
+    assert(id != null, "Cannot save Coordinator entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Coordinator must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Coordinator", id.toString(), this);
+    }
   }
 
   static load(id: string): Coordinator | null {
-    return store.get("Coordinator", id) as Coordinator | null;
+    return changetype<Coordinator | null>(store.get("Coordinator", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -2007,7 +2021,7 @@ export class Coordinator extends Entity {
 
   get contact(): string | null {
     let value = this.get("contact");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2015,16 +2029,16 @@ export class Coordinator extends Entity {
   }
 
   set contact(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contact");
     } else {
-      this.set("contact", Value.fromString(value as string));
+      this.set("contact", Value.fromString(<string>value));
     }
   }
 
   get createdAt(): string | null {
     let value = this.get("createdAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2032,16 +2046,16 @@ export class Coordinator extends Entity {
   }
 
   set createdAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("createdAt");
     } else {
-      this.set("createdAt", Value.fromString(value as string));
+      this.set("createdAt", Value.fromString(<string>value));
     }
   }
 
   get lastUpdatedAt(): string | null {
     let value = this.get("lastUpdatedAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2049,10 +2063,10 @@ export class Coordinator extends Entity {
   }
 
   set lastUpdatedAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("lastUpdatedAt");
     } else {
-      this.set("lastUpdatedAt", Value.fromString(value as string));
+      this.set("lastUpdatedAt", Value.fromString(<string>value));
     }
   }
 }
@@ -2065,22 +2079,23 @@ export class Contribution extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save Contribution entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Contribution entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Contribution", id.toString(), this);
+    assert(id != null, "Cannot save Contribution entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Contribution must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Contribution", id.toString(), this);
+    }
   }
 
   static load(id: string): Contribution | null {
-    return store.get("Contribution", id) as Contribution | null;
+    return changetype<Contribution | null>(store.get("Contribution", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -2089,7 +2104,7 @@ export class Contribution extends Entity {
 
   get contributor(): string | null {
     let value = this.get("contributor");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2097,16 +2112,16 @@ export class Contribution extends Entity {
   }
 
   set contributor(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributor");
     } else {
-      this.set("contributor", Value.fromString(value as string));
+      this.set("contributor", Value.fromString(<string>value));
     }
   }
 
   get fundingRound(): string | null {
     let value = this.get("fundingRound");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2114,16 +2129,16 @@ export class Contribution extends Entity {
   }
 
   set fundingRound(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("fundingRound");
     } else {
-      this.set("fundingRound", Value.fromString(value as string));
+      this.set("fundingRound", Value.fromString(<string>value));
     }
   }
 
   get amount(): BigInt | null {
     let value = this.get("amount");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -2131,16 +2146,16 @@ export class Contribution extends Entity {
   }
 
   set amount(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("amount");
     } else {
-      this.set("amount", Value.fromBigInt(value as BigInt));
+      this.set("amount", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get voiceCredits(): BigInt | null {
     let value = this.get("voiceCredits");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -2148,16 +2163,16 @@ export class Contribution extends Entity {
   }
 
   set voiceCredits(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("voiceCredits");
     } else {
-      this.set("voiceCredits", Value.fromBigInt(value as BigInt));
+      this.set("voiceCredits", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get createdAt(): string | null {
     let value = this.get("createdAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2165,10 +2180,10 @@ export class Contribution extends Entity {
   }
 
   set createdAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("createdAt");
     } else {
-      this.set("createdAt", Value.fromString(value as string));
+      this.set("createdAt", Value.fromString(<string>value));
     }
   }
 }
@@ -2181,22 +2196,23 @@ export class Vote extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save Vote entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Vote entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Vote", id.toString(), this);
+    assert(id != null, "Cannot save Vote entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Vote must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Vote", id.toString(), this);
+    }
   }
 
   static load(id: string): Vote | null {
-    return store.get("Vote", id) as Vote | null;
+    return changetype<Vote | null>(store.get("Vote", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -2205,7 +2221,7 @@ export class Vote extends Entity {
 
   get contributor(): string | null {
     let value = this.get("contributor");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2213,16 +2229,16 @@ export class Vote extends Entity {
   }
 
   set contributor(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("contributor");
     } else {
-      this.set("contributor", Value.fromString(value as string));
+      this.set("contributor", Value.fromString(<string>value));
     }
   }
 
   get fundingRound(): string | null {
     let value = this.get("fundingRound");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2230,16 +2246,16 @@ export class Vote extends Entity {
   }
 
   set fundingRound(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("fundingRound");
     } else {
-      this.set("fundingRound", Value.fromString(value as string));
+      this.set("fundingRound", Value.fromString(<string>value));
     }
   }
 
   get voterAddress(): Bytes | null {
     let value = this.get("voterAddress");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -2247,16 +2263,16 @@ export class Vote extends Entity {
   }
 
   set voterAddress(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("voterAddress");
     } else {
-      this.set("voterAddress", Value.fromBytes(value as Bytes));
+      this.set("voterAddress", Value.fromBytes(<Bytes>value));
     }
   }
 
   get secret(): boolean {
     let value = this.get("secret");
-    return value.toBoolean();
+    return value!.toBoolean();
   }
 
   set secret(value: boolean) {
@@ -2272,22 +2288,23 @@ export class Donation extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save Donation entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Donation entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Donation", id.toString(), this);
+    assert(id != null, "Cannot save Donation entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Donation must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Donation", id.toString(), this);
+    }
   }
 
   static load(id: string): Donation | null {
-    return store.get("Donation", id) as Donation | null;
+    return changetype<Donation | null>(store.get("Donation", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -2296,7 +2313,7 @@ export class Donation extends Entity {
 
   get recipient(): string | null {
     let value = this.get("recipient");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2304,16 +2321,16 @@ export class Donation extends Entity {
   }
 
   set recipient(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("recipient");
     } else {
-      this.set("recipient", Value.fromString(value as string));
+      this.set("recipient", Value.fromString(<string>value));
     }
   }
 
   get fundingRound(): string | null {
     let value = this.get("fundingRound");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2321,16 +2338,16 @@ export class Donation extends Entity {
   }
 
   set fundingRound(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("fundingRound");
     } else {
-      this.set("fundingRound", Value.fromString(value as string));
+      this.set("fundingRound", Value.fromString(<string>value));
     }
   }
 
   get amount(): BigInt | null {
     let value = this.get("amount");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -2338,16 +2355,16 @@ export class Donation extends Entity {
   }
 
   set amount(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("amount");
     } else {
-      this.set("amount", Value.fromBigInt(value as BigInt));
+      this.set("amount", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get voteOptionIndex(): BigInt | null {
     let value = this.get("voteOptionIndex");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -2355,16 +2372,16 @@ export class Donation extends Entity {
   }
 
   set voteOptionIndex(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("voteOptionIndex");
     } else {
-      this.set("voteOptionIndex", Value.fromBigInt(value as BigInt));
+      this.set("voteOptionIndex", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get createdAt(): string | null {
     let value = this.get("createdAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2372,10 +2389,10 @@ export class Donation extends Entity {
   }
 
   set createdAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("createdAt");
     } else {
-      this.set("createdAt", Value.fromString(value as string));
+      this.set("createdAt", Value.fromString(<string>value));
     }
   }
 }
@@ -2388,22 +2405,23 @@ export class Token extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save Token entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Token entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Token", id.toString(), this);
+    assert(id != null, "Cannot save Token entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Token must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Token", id.toString(), this);
+    }
   }
 
   static load(id: string): Token | null {
-    return store.get("Token", id) as Token | null;
+    return changetype<Token | null>(store.get("Token", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value.toString();
+    return value!.toString();
   }
 
   set id(value: string) {
@@ -2412,7 +2430,7 @@ export class Token extends Entity {
 
   get tokenAddress(): Bytes | null {
     let value = this.get("tokenAddress");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBytes();
@@ -2420,16 +2438,16 @@ export class Token extends Entity {
   }
 
   set tokenAddress(value: Bytes | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("tokenAddress");
     } else {
-      this.set("tokenAddress", Value.fromBytes(value as Bytes));
+      this.set("tokenAddress", Value.fromBytes(<Bytes>value));
     }
   }
 
   get symbol(): string | null {
     let value = this.get("symbol");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2437,16 +2455,16 @@ export class Token extends Entity {
   }
 
   set symbol(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("symbol");
     } else {
-      this.set("symbol", Value.fromString(value as string));
+      this.set("symbol", Value.fromString(<string>value));
     }
   }
 
   get decimals(): BigInt | null {
     let value = this.get("decimals");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toBigInt();
@@ -2454,16 +2472,16 @@ export class Token extends Entity {
   }
 
   set decimals(value: BigInt | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("decimals");
     } else {
-      this.set("decimals", Value.fromBigInt(value as BigInt));
+      this.set("decimals", Value.fromBigInt(<BigInt>value));
     }
   }
 
   get createdAt(): string | null {
     let value = this.get("createdAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2471,16 +2489,16 @@ export class Token extends Entity {
   }
 
   set createdAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("createdAt");
     } else {
-      this.set("createdAt", Value.fromString(value as string));
+      this.set("createdAt", Value.fromString(<string>value));
     }
   }
 
   get lastUpdatedAt(): string | null {
     let value = this.get("lastUpdatedAt");
-    if (value === null || value.kind == ValueKind.NULL) {
+    if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
       return value.toString();
@@ -2488,10 +2506,10 @@ export class Token extends Entity {
   }
 
   set lastUpdatedAt(value: string | null) {
-    if (value === null) {
+    if (!value) {
       this.unset("lastUpdatedAt");
     } else {
-      this.set("lastUpdatedAt", Value.fromString(value as string));
+      this.set("lastUpdatedAt", Value.fromString(<string>value));
     }
   }
 }
