@@ -8,7 +8,6 @@ import { RoundInfo } from './round'
 import { FundingRound } from './abi'
 import { Project } from './projects'
 import sdk from '@/graphql/sdk'
-import { GetContributorMessagesQuery } from '@/graphql/API'
 
 export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
