@@ -3005,7 +3005,11 @@ export const GetContributorIndexDocument = gql`
 export const GetContributorMessagesDocument = gql`
     query GetContributorMessages($fundingRoundAddress: ID!, $contributorAddress: ID!) {
   publicKey(id: $contributorAddress) {
-    messages(orderBy: blockNumber, orderDirection: desc) {
+    messages(
+      where: {fundingRound_: {id: $fundingRoundAddress}, publicKey_: {id: $contributorAddress}}
+      orderBy: blockNumber
+      orderDirection: desc
+    ) {
       id
       data
       iv
