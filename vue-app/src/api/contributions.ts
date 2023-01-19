@@ -165,29 +165,37 @@ export async function getContributorIndex(
  */
 function isSamePubKey(
   message: Message,
-  sharedKey: BigInt,
-  pubKey: PubKey
+  contributorKey: Keypair,
+  coordinatorPubKey: PubKey
 ): boolean {
-  const { command } = Command.decrypt(message, sharedKey)
-  const { newPubKey } = command
-  const newPubKeyPair = newPubKey.asContractParam()
-  const pubKeyPair = pubKey.asContractParam()
-  return newPubKeyPair.x === pubKeyPair.x && newPubKeyPair.y === pubKeyPair.y
+  try {
+    const sharedKey = Keypair.genEcdhSharedKey(
+      contributorKey.privKey,
+      coordinatorPubKey
+    )
+    const { command } = Command.decrypt(message, sharedKey)
+    const { newPubKey } = command
+    const newPubKeyPair = newPubKey.asContractParam()
+    const pubKeyPair = contributorKey.pubKey.asContractParam()
+    return newPubKeyPair.x === pubKeyPair.x && newPubKeyPair.y === pubKeyPair.y
+  } catch {
+    return false
+  }
 }
 
 /**
  * Get the latest set of vote messages submitted by contributor
  * @param fundingRoundAddress Funding round contract address
- * @param contributorAddress Contributor wallet address
- * @param sharedKey Key to decrypt messages
+ * @param contributorKey Contributor key used to encrypt messages
+ * @param coordinatorPubKey Coordinator public key
  * @returns MACI messages
  */
 export async function getContributorMessages(
   fundingRoundAddress: string,
-  pubKey: PubKey,
-  sharedKey: BigInt
+  contributorKey: Keypair,
+  coordinatorPubKey: PubKey
 ): Promise<Message[]> {
-  const key = getPubKeyId(pubKey)
+  const key = getPubKeyId(contributorKey.pubKey)
 
   const result = await sdk.GetContributorMessages({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
@@ -203,13 +211,14 @@ export async function getContributorMessages(
   const latestMessages = result.messages
     .map((message) => {
       const { iv, data } = message
-      const maciMessage = new Message(iv, data as BigInt[])
+      const maciMessage = new Message(iv, data || [])
 
-      // ignore key change messages as they don't have cart item information
+      // ignore key change messages, which have different pubkey,
+      //  as they don't have cart item information
       // Note: currently, the ui can only display messages encrypted with
       // the wallet signature. If there's a key chain done outside of the ui,
       // new cart updates won't be displayed on the ui
-      if (isSamePubKey(maciMessage, sharedKey, pubKey)) {
+      if (isSamePubKey(maciMessage, contributorKey, coordinatorPubKey)) {
         if (message.blockNumber > newestBlock) {
           newestBlock = message.blockNumber
         } else if (
@@ -233,6 +242,6 @@ export async function getContributorMessages(
 
   return latestMessages.map((message) => {
     const { iv, data } = message
-    return new Message(iv, data as BigInt[])
+    return new Message(iv, data || [])
   })
 }

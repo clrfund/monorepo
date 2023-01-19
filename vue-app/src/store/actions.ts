@@ -274,8 +274,8 @@ const actions = {
 
     const messages = await getContributorMessages(
       fundingRoundAddress,
-      encKeypair.pubKey,
-      sharedKey
+      encKeypair,
+      coordinatorPubKey
     )
 
     const cartItems = messages.map(async (message) => {

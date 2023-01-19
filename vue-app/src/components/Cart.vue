@@ -586,12 +586,7 @@ export default class Cart extends Vue {
       return this.translate('dynamic.cart.error.round_ended')
     if (currentRound.messages + this.cart.length >= currentRound.maxMessages)
       return this.translate('dynamic.cart.error.cart_changes_exceed_cap')
-    else if (
-      currentRound.messages + this.cart.length >=
-      currentRound.maxMessages
-    ) {
-      return this.translate('dynamic.cart.error.reached_contribution_limit')
-    } else {
+    else {
       const total = this.getTotal()
       if (this.contribution.isZero()) {
         // Contributing

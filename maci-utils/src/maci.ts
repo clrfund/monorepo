@@ -12,6 +12,18 @@ const SNARK_FIELD_SIZE = BigInt(
   '21888242871839275222246405745257275088548364400416034343698204186575808495617'
 )
 
+declare type PathElements = BigInt[][]
+declare type Indices = number[]
+declare type Leaf = BigInt
+
+interface MerkleProof {
+  pathElements: PathElements
+  indices: Indices
+  depth: number
+  root: BigInt
+  leaf: Leaf
+}
+
 export function bnSqrt(a: BigNumber): BigNumber {
   // Take square root from a big number
   // https://stackoverflow.com/a/52468569/1868395
@@ -138,7 +150,7 @@ export function getRecipientClaimData(
   for (const leaf of tally.totalVoiceCreditsPerVoteOption.tally) {
     spentTree.insert(BigInt(leaf))
   }
-  const spentProof = spentTree.genMerklePath(recipientIndex)
+  const spentProof: MerkleProof = spentTree.genMerklePath(recipientIndex)
 
   return [
     recipientIndex,

@@ -287,7 +287,7 @@ export default class RecipientRegistryView extends Vue {
           await new Promise((resolve) => {
             setTimeout(async () => {
               await this.loadRequests()
-              resolve()
+              resolve(0)
             }, 2000)
           })
         },
