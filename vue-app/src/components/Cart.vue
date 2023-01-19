@@ -526,9 +526,19 @@ export default class Cart extends Vue {
   }
 
   public getCartMatchingPoolTotal(): string {
-    return this.formatAmount(
-      this.contribution.sub(this.getCartTotal(this.$store.state.committedCart))
-    )
+    const { hasUserVoted } = this.$store.state
+    const cartTotal = this.getCartTotal(this.$store.state.committedCart)
+
+    if (hasUserVoted && cartTotal.isZero()) {
+      // the user's maci was not found, assume all allocated to projects
+      return '0'
+    } else {
+      return this.formatAmount(
+        this.contribution.sub(
+          this.getCartTotal(this.$store.state.committedCart)
+        )
+      )
+    }
   }
 
   getCartTotal(cart: Array<CartItem>): BigNumber {
