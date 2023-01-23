@@ -13,14 +13,17 @@ const SNARK_FIELD_SIZE = BigInt(
   '21888242871839275222246405745257275088548364400416034343698204186575808495617'
 )
 
+/* eslint-disable-next-line @typescript-eslint/ban-types */
 declare type PathElements = BigInt[][]
 declare type Indices = number[]
+/* eslint-disable-next-line @typescript-eslint/ban-types */
 declare type Leaf = BigInt
 
 interface MerkleProof {
   pathElements: PathElements
   indices: Indices
   depth: number
+  /* eslint-disable-next-line @typescript-eslint/ban-types */
   root: BigInt
   leaf: Leaf
 }
@@ -66,7 +69,7 @@ function genPrivKey(hash: string): PrivKey {
     hashBN = BigNumber.from(utils.keccak256(data))
   }
 
-  const rawPrivKey: BigInt = BigInt(hashBN.toString()) % SNARK_FIELD_SIZE
+  const rawPrivKey = BigInt(hashBN.toString()) % SNARK_FIELD_SIZE
   if (rawPrivKey >= SNARK_FIELD_SIZE) {
     throw new Error(
       `privKey ${rawPrivKey} must be less than SNARK_FIELD_SIZE ${SNARK_FIELD_SIZE}`
@@ -102,6 +105,7 @@ export function createMessage(
   voteOptionIndex: number | null,
   voiceCredits: BigNumber | null,
   nonce: number,
+  /* eslint-disable-next-line @typescript-eslint/ban-types */
   salt?: BigInt
 ): [Message, PubKey] {
   const encKeypair = newUserKeypair ? newUserKeypair : userKeypair
