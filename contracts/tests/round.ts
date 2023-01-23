@@ -27,6 +27,7 @@ use(solidity)
 
 // ethStaker test vectors for Quadratic Funding with alpha
 import smallTallyTestData from './data/testTallySmall.json'
+import { sha256 } from 'ethers/lib/utils'
 const totalSpent = BigNumber.from(smallTallyTestData.totalVoiceCredits.spent)
 const budget = BigNumber.from(totalSpent).mul(VOICE_CREDIT_FACTOR).mul(2)
 const totalQuadraticVotes = smallTallyTestData.results.tally.reduce(
@@ -371,6 +372,27 @@ describe('Funding Round', () => {
         message.asContractParam(),
         encPubKey.asContractParam()
       )
+    })
+
+    it('use signature hash to generate new key and submit change change message', async () => {
+      const signature = await contributor.signMessage('hello world')
+      const hash = sha256(signature)
+      for (let i = 1; i < 12; i++) {
+        const newUserKeypair = Keypair.createFromSignatureHash(hash, i)
+        const [message, encPubKey] = createMessage(
+          userStateIndex,
+          userKeypair,
+          newUserKeypair,
+          coordinatorPubKey,
+          null,
+          null,
+          nonce
+        )
+        await maci.publishMessage(
+          message.asContractParam(),
+          encPubKey.asContractParam()
+        )
+      }
     })
 
     it('submits an invalid vote', async () => {

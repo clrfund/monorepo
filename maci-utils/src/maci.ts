@@ -1,4 +1,5 @@
 import { BigNumber, utils } from 'ethers'
+import { sha256 } from 'ethers/lib/utils'
 import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
 import {
   Keypair as MaciKeypair,
@@ -61,7 +62,7 @@ function genPrivKey(hash: string): PrivKey {
   let hashBN = BigNumber.from(hash)
   // don't think we'll enter the for loop below, but, just in case
   for (let counter = 1; min.gte(hashBN); counter++) {
-    const data = utils.concat([utils.hexValue(hashBN), utils.arrayify(counter)])
+    const data = utils.concat([hashBN.toHexString(), utils.arrayify(counter)])
     hashBN = BigNumber.from(utils.keccak256(data))
   }
 
@@ -76,9 +77,19 @@ function genPrivKey(hash: string): PrivKey {
 }
 
 export class Keypair extends MaciKeypair {
-  // generate a key pair from a user's signature hash
-  static createFromSignatureHash(hash: string): Keypair {
-    const privKey = genPrivKey(hash.startsWith('0x') ? hash : '0x' + hash)
+  /**
+   * generate a key pair from a user's signature hash and the index of the
+   * key associated with the signature
+   * @param hash The sha256 signature hash
+   * @param index Index of the key, based one. Every key change will increment this number
+   * @returns key pair
+   */
+  static createFromSignatureHash(hash: string, index: number): Keypair {
+    const sanitizedHash = hash.startsWith('0x') ? hash : '0x' + hash
+    const indexAsHex = BigNumber.from(index).toHexString()
+    const hashIndex = utils.concat([sanitizedHash, indexAsHex])
+    const newHash = sha256(hashIndex)
+    const privKey = genPrivKey(newHash)
     return new Keypair(privKey)
   }
 }

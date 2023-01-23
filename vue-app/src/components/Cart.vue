@@ -146,14 +146,14 @@
         </div>
         <div
           :class="
-            this.isGreaterThanInitialContribution()
+            isGreaterThanInitialContribution()
               ? 'reallocation-row-warning'
               : 'reallocation-row'
           "
         >
           <span>{{ $t('cart.span2') }}</span>
           <div class="reallocation-warning">
-            <span v-if="this.isGreaterThanInitialContribution()">⚠️</span
+            <span v-if="isGreaterThanInitialContribution()">⚠️</span
             >{{ formatAmount(getCartTotal($store.state.cart)) }}
             {{ tokenSymbol }}
           </div>
@@ -174,9 +174,7 @@
         <div
           @click="splitContributionsEvenly"
           class="split-link"
-          v-if="
-            this.isGreaterThanInitialContribution() || hasUnallocatedFunds()
-          "
+          v-if="isGreaterThanInitialContribution() || hasUnallocatedFunds()"
         >
           <img src="@/assets/split.svg" />
           {{
@@ -270,7 +268,7 @@
       </div>
       <div
         class="line-item-bar"
-        v-if="$store.getters.hasUserContributed && !isEditMode"
+        v-if="$store.getters.hasUserContributed && !isKeyMissing && !isEditMode"
       >
         <div class="line-item">
           <span>{{ $t('cart.span3') }}</span>
@@ -300,7 +298,7 @@
         <div>
           <span
             v-if="
-              this.isGreaterThanInitialContribution() &&
+              isGreaterThanInitialContribution() &&
               $store.getters.hasUserContributed
             "
             >{{ formatAmount(getCartTotal(this.$store.state.cart)) }} /
@@ -412,6 +410,13 @@ export default class Cart extends Vue {
     return false
   }
 
+  get isKeyMissing(): boolean {
+    const { hasUserVoted } = this.$store.getters
+    const { committedCart } = this.$store.state
+
+    return hasUserVoted && committedCart.length === 0
+  }
+
   get isDirty(): boolean {
     const { committedCart } = this.$store.state
 
@@ -428,7 +433,7 @@ export default class Cart extends Vue {
       })
   }
 
-  private get cart(): CartItem[] {
+  get cart(): CartItem[] {
     return this.$store.state.cart
   }
 
@@ -526,19 +531,9 @@ export default class Cart extends Vue {
   }
 
   public getCartMatchingPoolTotal(): string {
-    const { hasUserVoted } = this.$store.state
-    const cartTotal = this.getCartTotal(this.$store.state.committedCart)
-
-    if (hasUserVoted && cartTotal.isZero()) {
-      // the user's maci was not found, assume all allocated to projects
-      return '0'
-    } else {
-      return this.formatAmount(
-        this.contribution.sub(
-          this.getCartTotal(this.$store.state.committedCart)
-        )
-      )
-    }
+    return this.formatAmount(
+      this.contribution.sub(this.getCartTotal(this.$store.state.committedCart))
+    )
   }
 
   getCartTotal(cart: Array<CartItem>): BigNumber {
@@ -570,7 +565,7 @@ export default class Cart extends Vue {
     return this.getTotal().gt(maxContributionAmount)
   }
 
-  private isGreaterThanInitialContribution(): boolean {
+  isGreaterThanInitialContribution(): boolean {
     return this.getCartTotal(this.$store.state.cart).gt(this.contribution)
   }
 

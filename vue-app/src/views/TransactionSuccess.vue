@@ -6,14 +6,15 @@
       <img class="money" src="@/assets/confetti.gif" />
     </div>
     <div class="dropshadow">
-      <div class="content">
+      <div v-if="currentRound" class="content">
         <span class="contributed-icon">🎉</span>
         <p
           v-if="$route.params.type === 'reallocation'"
           class="contributed-header"
         >
           {{ formatContribution() }}
-          {{ currentRound.nativeTokenSymbol }} {{ $t('transactionSuccess.p1') }}
+          {{ $store.getters.nativeTokenSymbol }}
+          {{ $t('transactionSuccess.p1') }}
         </p>
         <p
           v-else-if="$route.params.type === 'contribution'"

@@ -25,6 +25,7 @@ import { getRegistryInfo } from '@/api/recipient-registry-optimistic'
 import { Keypair, Command } from '@clrfund/maci-utils'
 import { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
+import { getKeyPair } from '@/api/keypair'
 
 // Constants
 import {
@@ -265,7 +266,11 @@ const actions = {
     if (!encryptionKey) {
       return
     }
-    const encKeypair = Keypair.createFromSignatureHash(encryptionKey)
+    const encKeypair = await getKeyPair({
+      encryptionKey,
+      coordinatorPubKey,
+      fundingRoundAddress,
+    })
 
     const sharedKey = Keypair.genEcdhSharedKey(
       encKeypair.privKey,
@@ -316,12 +321,16 @@ const actions = {
   },
   async [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
     const { encryptionKey } = state.currentUser
-    const { fundingRoundAddress } = state.currentRound
+    const { fundingRoundAddress, coordinatorPubKey } = state.currentRound
     if (!encryptionKey) {
       return
     }
 
-    const contributorKeypair = Keypair.createFromSignatureHash(encryptionKey)
+    const contributorKeypair = await getKeyPair({
+      encryptionKey,
+      fundingRoundAddress,
+      coordinatorPubKey,
+    })
     const stateIndex = await getContributorIndex(
       fundingRoundAddress,
       contributorKeypair.pubKey

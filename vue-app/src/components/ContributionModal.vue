@@ -123,7 +123,8 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract, Signer } from 'ethers'
 import { DateTime } from 'luxon'
-import { Keypair, PubKey, Message, createMessage } from '@clrfund/maci-utils'
+import { PubKey, Message, createMessage } from '@clrfund/maci-utils'
+import { getKeyPair } from '@/api/keypair'
 
 import { RoundInfo } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
@@ -211,8 +212,12 @@ export default class ContributionModal extends Vue {
   async contribute() {
     try {
       this.step += 1
-      const { nativeTokenAddress, maciAddress, fundingRoundAddress } =
-        this.currentRound
+      const {
+        nativeTokenAddress,
+        maciAddress,
+        fundingRoundAddress,
+        coordinatorPubKey,
+      } = this.currentRound
       const total = this.total
       const token = new Contract(nativeTokenAddress, ERC20, this.signer)
       // Approve transfer (step 1)
@@ -233,9 +238,11 @@ export default class ContributionModal extends Vue {
       }
       this.step += 1
       // Contribute (step 2)
-      const contributorKeypair = Keypair.createFromSignatureHash(
-        this.encryptionKey
-      )
+      const contributorKeypair = await getKeyPair({
+        encryptionKey: this.encryptionKey,
+        fundingRoundAddress,
+        coordinatorPubKey,
+      })
       let contributionTxReceipt
       try {
         contributionTxReceipt = await waitForTransaction(

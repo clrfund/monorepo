@@ -8,6 +8,8 @@ import { RoundInfo } from './round'
 import { FundingRound } from './abi'
 import { Project } from './projects'
 import sdk from '@/graphql/sdk'
+import { getPubKeyId } from './keypair'
+import { Transaction } from '@/utils/transaction'
 
 export const DEFAULT_CONTRIBUTION_AMOUNT = 5
 export const MAX_CONTRIBUTION_AMOUNT = 10000 // See FundingRound.sol
@@ -23,12 +25,6 @@ export interface CartItem extends Project {
 export interface Contributor {
   keypair: Keypair
   stateIndex: number
-}
-
-function getPubKeyId(pubKey: PubKey): string {
-  const pubKeyPair = pubKey.asContractParam()
-  const id = utils.id(pubKeyPair.x + '.' + pubKeyPair.y)
-  return id
 }
 
 export function getCartStorageKey(roundAddress: string): string {
@@ -157,33 +153,6 @@ export async function getContributorIndex(
 }
 
 /**
- * Check whether a message was encrypted using the same key
- * @param message the message to be checked
- * @param sharedKey shared key to decrypt the message
- * @param pubKey public key to check if the decrypted message has the same key
- * @returns true if it is a key change message, false otherwise
- */
-function isSamePubKey(
-  message: Message,
-  contributorKey: Keypair,
-  coordinatorPubKey: PubKey
-): boolean {
-  try {
-    const sharedKey = Keypair.genEcdhSharedKey(
-      contributorKey.privKey,
-      coordinatorPubKey
-    )
-    const { command } = Command.decrypt(message, sharedKey)
-    const { newPubKey } = command
-    const newPubKeyPair = newPubKey.asContractParam()
-    const pubKeyPair = contributorKey.pubKey.asContractParam()
-    return newPubKeyPair.x === pubKeyPair.x && newPubKeyPair.y === pubKeyPair.y
-  } catch {
-    return false
-  }
-}
-
-/**
  * Get the latest set of vote messages submitted by contributor
  * @param fundingRoundAddress Funding round contract address
  * @param contributorKey Contributor key used to encrypt messages
@@ -206,35 +175,40 @@ export async function getContributorMessages(
     return []
   }
 
-  let newestBlock = result.messages[0].blockNumber
-  let newestTxIndex = result.messages[0].transactionIndex
+  const sharedKey = Keypair.genEcdhSharedKey(
+    contributorKey.privKey,
+    coordinatorPubKey
+  )
+
+  let latestTransaction: Transaction | null = null
   const latestMessages = result.messages
     .map((message) => {
-      const { iv, data } = message
+      const { iv, data, blockNumber, transactionIndex } = message
       const maciMessage = new Message(iv, data || [])
+
+      const { command } = Command.decrypt(maciMessage, sharedKey)
+      const { newPubKey } = command
 
       // ignore key change messages, which have different pubkey,
       //  as they don't have cart item information
-      // Note: currently, the ui can only display messages encrypted with
-      // the wallet signature. If there's a key chain done outside of the ui,
-      // new cart updates won't be displayed on the ui
-      if (isSamePubKey(maciMessage, contributorKey, coordinatorPubKey)) {
-        if (message.blockNumber > newestBlock) {
-          newestBlock = message.blockNumber
-        } else if (
-          message.blockNumber == newestBlock &&
-          message.transactionIndex > newestTxIndex
-        ) {
-          newestTxIndex = message.transactionIndex
+      if (!newPubKey) {
+        const currentTx = new Transaction({
+          blockNumber: Number(blockNumber),
+          transactionIndex: Number(transactionIndex),
+        })
+        if (!latestTransaction || currentTx.compare(latestTransaction) > 0) {
+          latestTransaction = currentTx
         }
       }
       return message
     })
-    .filter(
-      (message) =>
-        message.blockNumber === newestBlock &&
-        message.transactionIndex === newestTxIndex
-    )
+    .filter((message) => {
+      const tx = new Transaction({
+        blockNumber: Number(message.blockNumber),
+        transactionIndex: Number(message.transactionIndex),
+      })
+      return latestTransaction && tx.compare(latestTransaction) === 0
+    })
 
   if (latestMessages.length <= 0) {
     return []
