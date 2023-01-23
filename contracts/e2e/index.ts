@@ -4,7 +4,7 @@ import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { BigNumber, Contract, Signer, Wallet } from 'ethers'
 import { genProofs, proveOnChain } from 'maci-cli'
-import { Keypair } from '@clrfund/maci-utils'
+import { Keypair, createMessage, Message, PubKey } from '@clrfund/maci-utils'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
@@ -17,10 +17,10 @@ import {
 import { getIpfsHash } from '../utils/ipfs'
 import {
   MaciParameters,
-  createMessage,
   addTallyResultsBatch,
   getRecipientClaimData,
 } from '../utils/maci'
+import { sha256 } from 'ethers/lib/utils'
 
 use(solidity)
 
@@ -296,12 +296,72 @@ describe('End-to-end Tests', function () {
     // Submit messages
     for (const contribution of contributions) {
       const contributor = contribution.signer
-      const messages = []
-      const encPubKeys = []
+      const messages: Message[] = []
+      const encPubKeys: PubKey[] = []
       let nonce = 1
 
       // Change key
       const newContributorKeypair = new Keypair()
+      const [message, encPubKey] = createMessage(
+        contribution.stateIndex,
+        contribution.keypair,
+        newContributorKeypair,
+        coordinatorKeypair.pubKey,
+        null,
+        null,
+        nonce
+      )
+      messages.push(message)
+      encPubKeys.push(encPubKey)
+      nonce += 1
+
+      // Spend voice credits on both recipients
+      for (const recipientIndex of [1, 2]) {
+        const voiceCredits = contribution.voiceCredits.div(2)
+        const [message, encPubKey] = createMessage(
+          contribution.stateIndex,
+          newContributorKeypair,
+          null,
+          coordinatorKeypair.pubKey,
+          recipientIndex,
+          voiceCredits,
+          nonce
+        )
+        messages.push(message)
+        encPubKeys.push(encPubKey)
+        nonce += 1
+      }
+
+      await fundingRound.connect(contributor).submitMessageBatch(
+        messages.reverse().map((msg) => msg.asContractParam()),
+        encPubKeys.reverse().map((key) => key.asContractParam())
+      )
+    }
+
+    await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
+    await provider.send('evm_increaseTime', [maciParameters.votingDuration])
+    const { tally, claims } = await finalizeRound()
+    expect(tally.totalVoiceCredits.spent).to.equal('160000')
+    expect(claims[1]).to.equal(UNIT.mul(58).div(10))
+    expect(claims[2]).to.equal(UNIT.mul(58).div(10))
+  })
+
+  it('should allocate funds correctly when users change keys using signature hash', async () => {
+    const contributions = await makeContributions([
+      UNIT.mul(8).div(10),
+      UNIT.mul(8).div(10),
+    ])
+    // Submit messages
+    for (const contribution of contributions) {
+      const contributor = contribution.signer
+      const messages: Message[] = []
+      const encPubKeys: PubKey[] = []
+      let nonce = 1
+
+      // Change key
+      const signature = contributor.signMessage('hello world')
+      const hash = sha256(signature)
+      const newContributorKeypair = Keypair.createFromSignatureHash(hash, 1)
       const [message, encPubKey] = createMessage(
         contribution.stateIndex,
         contribution.keypair,
@@ -357,8 +417,8 @@ describe('End-to-end Tests', function () {
       const contributor = contribution.signer
       const voiceCredits = contribution.voiceCredits.div(4)
       let nonce = 1
-      const messages = []
-      const encPubKeys = []
+      const messages: Message[] = []
+      const encPubKeys: PubKey[] = []
 
       for (const recipientIndex of [1, 2]) {
         const [message, encPubKey] = createMessage(
@@ -399,8 +459,8 @@ describe('End-to-end Tests', function () {
       [2, contribution.voiceCredits.div(2)],
       [1, contribution.voiceCredits.div(2)],
     ]
-    const messages = []
-    const encPubKeys = []
+    const messages: Message[] = []
+    const encPubKeys: PubKey[] = []
     let nonce = 1
     for (const [recipientIndex, voiceCredits] of votes) {
       const [message, encPubKey] = createMessage(
@@ -458,8 +518,8 @@ describe('End-to-end Tests', function () {
       [1, ZERO],
       [2, contribution.voiceCredits],
     ]
-    const messages = []
-    const encPubKeys = []
+    const messages: Message[] = []
+    const encPubKeys: PubKey[] = []
     let nonce = 1
     for (const [recipientIndex, voiceCredits] of votes) {
       const [message, encPubKey] = createMessage(
@@ -526,8 +586,8 @@ describe('End-to-end Tests', function () {
       ],
     ]
     for (const batch of votes) {
-      const messages = []
-      const encPubKeys = []
+      const messages: Message[] = []
+      const encPubKeys: PubKey[] = []
       let nonce = 1
       for (const [recipientIndex, voiceCredits] of batch) {
         const [message, encPubKey] = createMessage(
@@ -587,8 +647,8 @@ describe('End-to-end Tests', function () {
     let encPubKey
 
     // Vote for recipient 1 for a bribe immediately after signup
-    const messageBatch1 = []
-    const encPubKeyBatch1 = []
+    const messageBatch1: Message[] = []
+    const encPubKeyBatch1: PubKey[] = []
     ;[message, encPubKey] = createMessage(
       contribution.stateIndex,
       contribution.keypair,
@@ -619,8 +679,8 @@ describe('End-to-end Tests', function () {
 
     // Wait for signup period to end to override votes
     await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
-    const messageBatch2 = []
-    const encPubKeyBatch2 = []
+    const messageBatch2: Message[] = []
+    const encPubKeyBatch2: PubKey[] = []
     // Change key
     const newContributorKeypair = new Keypair()
     ;[message, encPubKey] = createMessage(
