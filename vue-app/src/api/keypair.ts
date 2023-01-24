@@ -1,7 +1,6 @@
 import sdk from '@/graphql/sdk'
 import { utils } from 'ethers'
 import { Keypair, PubKey, Command, Message } from '@clrfund/maci-utils'
-import { Transaction } from '@/utils/transaction'
 
 /**
  * get the id of the subgraph public key entity from the pubKey value
@@ -45,7 +44,6 @@ async function findNewKey({
   fundingRoundAddress: string
   coordinatorPubKey: PubKey
 }): Promise<boolean> {
-  let found = false
   const pubKeyId = getPubKeyId(newKeypair.pubKey)
   const sharedKey = Keypair.genEcdhSharedKey(
     newKeypair.privKey,
@@ -58,35 +56,23 @@ async function findNewKey({
   })
 
   if (!(result.messages && result.messages?.length)) {
-    return found
+    return false
   }
 
-  let lastTx: Transaction | null = null
-
-  // find the oldest key change message
-  // if there are multiple key change messages for the same key, only the
-  // oldest one should be valid
+  // there should only be 1 key change message, if we found more than 1, they are invalid
+  let found = 0
   for (let i = 0; i < result.messages.length; i++) {
-    const { iv, data, blockNumber, transactionIndex } = result.messages[i]
+    const { iv, data } = result.messages[i]
 
-    const tx = new Transaction({
-      blockNumber: Number(blockNumber),
-      transactionIndex: Number(transactionIndex),
-    })
+    const maciMessage = new Message(iv, data || [])
+    const { command, signature } = Command.decrypt(maciMessage, sharedKey)
 
-    if (!lastTx || tx.compare(lastTx) < 0) {
-      lastTx = tx
-      const maciMessage = new Message(iv, data || [])
-      const { command, signature } = Command.decrypt(maciMessage, sharedKey)
-
-      if (command.verifySignature(signature, keypair.pubKey)) {
-        found = true
-        break
-      }
+    if (command.verifySignature(signature, keypair.pubKey)) {
+      found++
     }
   }
 
-  return found
+  return found === 1
 }
 
 /**
@@ -109,7 +95,7 @@ export async function getKeyPair({
 
   // increment the key index and loop until we cannot find any key for that index
   let found = false
-  while (!found) {
+  do {
     keyIndex++
     const newKeypair = Keypair.createFromSignatureHash(encryptionKey, keyIndex)
     found = await findNewKey({
@@ -121,11 +107,9 @@ export async function getKeyPair({
 
     if (found) {
       keypair = newKeypair
-    } else {
-      // could not find a new key, stop now
-      break
     }
-  }
+    // stop when we did't find the next key
+  } while (found)
 
   return keypair
 }

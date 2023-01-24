@@ -76,6 +76,7 @@ import {
 import { BrightId, getBrightId } from '@/api/bright-id'
 import { getFactoryInfo } from '@/api/factory'
 import { getMACIFactoryInfo } from '@/api/maci-factory'
+import { getCommittedCart } from '@/api/cart'
 
 const actions = {
   //TODO: also commit SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
@@ -255,59 +256,15 @@ const actions = {
     )
   },
   async [LOAD_COMMITTED_CART]({ commit, state }) {
-    const {
-      coordinatorPubKey,
-      fundingRoundAddress,
-      voiceCreditFactor,
-      nativeTokenDecimals,
-      recipientRegistryAddress,
-    } = state.currentRound
     const { encryptionKey } = state.currentUser
     if (!encryptionKey) {
       return
     }
 
-    const encKeypair = await getKeyPair({
-      encryptionKey,
-      coordinatorPubKey,
-      fundingRoundAddress,
-    })
-
-    const sharedKey = Keypair.genEcdhSharedKey(
-      encKeypair.privKey,
-      coordinatorPubKey
+    const committedCart = await getCommittedCart(
+      state.currentRound,
+      encryptionKey
     )
-
-    const messages = await getContributorMessages(
-      fundingRoundAddress,
-      encKeypair,
-      coordinatorPubKey
-    )
-
-    const cartItems = messages.map(async (message) => {
-      const { command } = Command.decrypt(message, sharedKey)
-      const { voteOptionIndex, newVoteWeight } = command
-
-      const voteWeightString = newVoteWeight.toString()
-      const amount = BigNumber.from(voteWeightString)
-        .mul(voteWeightString)
-        .mul(voiceCreditFactor)
-
-      const project = await getProjectByIndex(
-        recipientRegistryAddress,
-        Number(voteOptionIndex)
-      )
-
-      // after the initial submission, the number of messages submitted to MACI
-      // cannot be reduced, isCleared is used to mark deleted items
-      return {
-        amount: formatAmount(amount, nativeTokenDecimals, null, maxDecimals),
-        isCleared: amount.isZero(),
-        ...project,
-      }
-    })
-
-    const committedCart = await Promise.all(cartItems)
     Vue.set(state, 'committedCart', committedCart)
     commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
   },

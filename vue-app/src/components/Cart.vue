@@ -498,7 +498,7 @@ export default class Cart extends Vue {
   get filteredCart(): CartItem[] {
     // Once reallocation phase ends, use committedCart for cart items
     if (this.$store.getters.hasReallocationPhaseEnded) {
-      return this.$store.state.committedCart
+      return this.$store.state.committedCart.filter((item) => !item.isCleared)
     }
     // Hide cleared items
     return this.cart.filter((item) => !item.isCleared)
