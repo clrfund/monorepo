@@ -27,23 +27,30 @@ export function isSamePubKey(key1: PubKey, key2: PubKey): boolean {
 }
 
 /**
- * Find change change messages associated with the current keypair and return the new public key
+ * Find a message that was encrypted using the newKeypair and signed by the keypair
  * @param keypair the current key
+ * @param newKeypair the new key to find
  * @param fundingRoundAddress funding round address where the key was generated
  * @param coordinatorPubKey the coordinator public key
- * @returns the new public key
+ * @returns true if the new key exists
  */
-async function findNewPubKey({
+async function findNewKey({
   keypair,
+  newKeypair,
   fundingRoundAddress,
   coordinatorPubKey,
 }: {
   keypair: Keypair
+  newKeypair: Keypair
   fundingRoundAddress: string
   coordinatorPubKey: PubKey
-}): Promise<PubKey | null> {
-  const pubKeyId = getPubKeyId(keypair.pubKey)
-  const sharedKey = Keypair.genEcdhSharedKey(keypair.privKey, coordinatorPubKey)
+}): Promise<boolean> {
+  let found = false
+  const pubKeyId = getPubKeyId(newKeypair.pubKey)
+  const sharedKey = Keypair.genEcdhSharedKey(
+    newKeypair.privKey,
+    coordinatorPubKey
+  )
 
   const result = await sdk.GetContributorMessages({
     fundingRoundAddress,
@@ -51,10 +58,9 @@ async function findNewPubKey({
   })
 
   if (!(result.messages && result.messages?.length)) {
-    return null
+    return found
   }
 
-  let newKey: PubKey | null = null
   let lastTx: Transaction | null = null
 
   // find the oldest key change message
@@ -71,16 +77,16 @@ async function findNewPubKey({
     if (!lastTx || tx.compare(lastTx) < 0) {
       lastTx = tx
       const maciMessage = new Message(iv, data || [])
-      const { command } = Command.decrypt(maciMessage, sharedKey)
-      const { newPubKey } = command
+      const { command, signature } = Command.decrypt(maciMessage, sharedKey)
 
-      if (newPubKey) {
-        newKey = newPubKey
+      if (command.verifySignature(signature, keypair.pubKey)) {
+        found = true
+        break
       }
     }
   }
 
-  return newKey
+  return found
 }
 
 /**
@@ -101,24 +107,23 @@ export async function getKeyPair({
   let keyIndex = 1
   let keypair = Keypair.createFromSignatureHash(encryptionKey, keyIndex)
 
-  // find the latest key, i.e. when no more new key
-  let newPubKey: PubKey | null = keypair.pubKey
-  while (newPubKey) {
-    newPubKey = await findNewPubKey({
+  // increment the key index and loop until we cannot find any key for that index
+  let found = false
+  while (!found) {
+    keyIndex++
+    const newKeypair = Keypair.createFromSignatureHash(encryptionKey, keyIndex)
+    found = await findNewKey({
       keypair,
+      newKeypair,
       fundingRoundAddress,
       coordinatorPubKey,
     })
 
-    if (newPubKey) {
-      keyIndex++
-      const newKeypair = Keypair.createFromSignatureHash(
-        encryptionKey,
-        keyIndex
-      )
-      if (isSamePubKey(newKeypair.pubKey, newPubKey)) {
-        keypair = newKeypair
-      }
+    if (found) {
+      keypair = newKeypair
+    } else {
+      // could not find a new key, stop now
+      break
     }
   }
 

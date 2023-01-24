@@ -184,21 +184,24 @@ export async function getContributorMessages(
   const latestMessages = result.messages
     .map((message) => {
       const { iv, data, blockNumber, transactionIndex } = message
-      const maciMessage = new Message(iv, data || [])
 
-      const { command } = Command.decrypt(maciMessage, sharedKey)
-      const { newPubKey } = command
+      try {
+        const maciMessage = new Message(iv, data || [])
+        const { command, signature } = Command.decrypt(maciMessage, sharedKey)
+        if (!command.verifySignature(signature, contributorKey.pubKey)) {
+          return message
+        }
 
-      // ignore key change messages, which have different pubkey,
-      //  as they don't have cart item information
-      if (!newPubKey) {
         const currentTx = new Transaction({
           blockNumber: Number(blockNumber),
           transactionIndex: Number(transactionIndex),
         })
+
         if (!latestTransaction || currentTx.compare(latestTransaction) > 0) {
           latestTransaction = currentTx
         }
+      } catch {
+        // if we can't decrypt the message, filter it out
       }
       return message
     })

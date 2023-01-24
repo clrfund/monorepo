@@ -266,6 +266,7 @@ const actions = {
     if (!encryptionKey) {
       return
     }
+
     const encKeypair = await getKeyPair({
       encryptionKey,
       coordinatorPubKey,
@@ -331,13 +332,24 @@ const actions = {
       fundingRoundAddress,
       coordinatorPubKey,
     })
-    const stateIndex = await getContributorIndex(
+
+    let stateIndex = await getContributorIndex(
       fundingRoundAddress,
       contributorKeypair.pubKey
     )
+
     if (!stateIndex) {
-      // user has not contributed
-      return
+      // after key change, there's no stateIndex for the new key, get the index from the original key
+      const originalKeypair = Keypair.createFromSignatureHash(encryptionKey, 1)
+      stateIndex = await getContributorIndex(
+        fundingRoundAddress,
+        originalKeypair.pubKey
+      )
+
+      if (!stateIndex) {
+        // if still no contributor index, user has not contributed
+        return
+      }
     }
 
     const contributor: Contributor = {

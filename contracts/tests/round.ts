@@ -22,12 +22,12 @@ import {
   getRecipientClaimData,
   getRecipientTallyResultsBatch,
 } from '../utils/maci'
+import { sha256 } from 'ethers/lib/utils'
 
 use(solidity)
 
 // ethStaker test vectors for Quadratic Funding with alpha
 import smallTallyTestData from './data/testTallySmall.json'
-import { sha256 } from 'ethers/lib/utils'
 const totalSpent = BigNumber.from(smallTallyTestData.totalVoiceCredits.spent)
 const budget = BigNumber.from(totalSpent).mul(VOICE_CREDIT_FACTOR).mul(2)
 const totalQuadraticVotes = smallTallyTestData.results.tally.reduce(

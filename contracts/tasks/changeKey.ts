@@ -26,15 +26,6 @@ type LoginMessageArgs = {
   chainId: number
 }
 
-/**
- * Generate the same sha256 hash as in vue-app/utils/crypto
- * @param message the string to apply sha256
- * @returns the hash
- */
-function sha256(message: string): string {
-  return utils.sha256(utils.toUtf8Bytes(message)).substring(2)
-}
-
 function getLoginMessage({
   contractAddress,
   operator,
@@ -109,13 +100,10 @@ task('change-key', 'Change the MACI key')
       const signature = await signer.signMessage(loginMessage)
 
       console.log('signature', signature)
-      const hash = sha256(signature)
+      const hash = utils.sha256(signature)
       console.log('hash', hash)
 
-      const maciAddress = await currentRound.maci()
-      const maci = await ethers.getContractAt('MACI', maciAddress)
       const nonce = 1
-
       const oldIndex = Number(oldKeyIndex)
       const newIndex = Number(newKeyIndex)
       const userKeypair = Keypair.createFromSignatureHash(hash, oldIndex)
@@ -139,10 +127,11 @@ task('change-key', 'Change the MACI key')
       )
 
       try {
-        const tx = await maci.publishMessage(
-          message.asContractParam(),
-          encPubKey.asContractParam()
+        const tx = await currentRound.submitMessageBatch(
+          [message.asContractParam()],
+          [encPubKey.asContractParam()]
         )
+
         console.log('transaction hash', tx.hash)
         const receipt = await tx.wait()
         console.log('transaction status', receipt.status)

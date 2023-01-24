@@ -1,14 +1,5 @@
-import { AES, MD5, SHA256, enc } from 'crypto-js'
-
-export function md5(data: string): string {
-  const hash = MD5(data)
-  return hash.toString(enc.Hex)
-}
-
-export function sha256(data: string): string {
-  const hash = SHA256(data)
-  return hash.toString(enc.Hex)
-}
+import { AES, enc } from 'crypto-js'
+import { sha256 } from 'ethers/lib/utils'
 
 export function encrypt(message: string, key: string): string {
   const encrypted = AES.encrypt(message, key)
@@ -19,3 +10,5 @@ export function decrypt(encrypted: string, key: string): string {
   const decrypted = AES.decrypt(encrypted, key)
   return decrypted.toString(enc.Utf8)
 }
+
+export { sha256 }
