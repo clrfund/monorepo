@@ -47,7 +47,7 @@ jobs:
         # tally and finalize
         cd contracts
         yarn hardhat run --network "${NETWORK}" scripts/tally.ts
-        JSONRPC_HTTP_URL=${{env.JSONRPC_HTTP_URL}} yarn hardhat run --network "${NETWORK}" scripts/finalize.ts
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
           --form 'file=@"tally.json"'
+        JSONRPC_HTTP_URL=${{env.JSONRPC_HTTP_URL}} yarn hardhat run --network "${NETWORK}" scripts/finalize.ts
