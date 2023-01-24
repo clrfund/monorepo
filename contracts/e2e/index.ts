@@ -359,7 +359,7 @@ describe('End-to-end Tests', function () {
       let nonce = 1
 
       // Change key
-      const signature = contributor.signMessage('hello world')
+      const signature = await contributor.signMessage('hello world')
       const hash = sha256(signature)
       const newContributorKeypair = Keypair.createFromSignatureHash(hash, 1)
       const [message, encPubKey] = createMessage(
