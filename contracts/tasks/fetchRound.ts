@@ -149,7 +149,8 @@ async function mergeRecipientTally({
 
 async function getRoundInfo(
   roundContract: Contract,
-  ethers: any
+  ethers: any,
+  operator: string
 ): Promise<Round> {
   console.log('Fetching round data...')
   const round: any = { address: roundContract.address }
@@ -216,6 +217,21 @@ async function getRoundInfo(
     .catch(toUndefined)
 
   round.recipientRegistryAddress = await roundContract.recipientRegistry()
+  try {
+    const recipientRegistry = await ethers.getContractAt(
+      'OptimisticRecipientRegistry',
+      round.recipientRegistryAddress
+    )
+    round.recipientDepositAmount = await recipientRegistry
+      .baseDeposit()
+      .then(toString)
+  } catch {
+    // ignore error - non optimistic recipient registry does not have deposit
+  }
+
+  round.operator = operator
+  const providerNetwork = await ethers.provider.getNetwork()
+  round.chainId = providerNetwork.chainId
 
   console.log('Round', round)
   return round
@@ -227,6 +243,7 @@ async function getRoundInfo(
 task('fetch-round', 'Fetch round data')
   .addParam('roundAddress', 'Funding round contract address')
   .addParam('outputDir', 'Output directory')
+  .addParam('operator', 'Funding round operator, e.g. ETHColombia')
   .addOptionalParam(
     'startBlock',
     'First block to process from the recipient registry contract',
@@ -247,7 +264,14 @@ task('fetch-round', 'Fetch round data')
   )
   .setAction(
     async (
-      { roundAddress, outputDir, startBlock, endBlock, blocksPerBatch },
+      {
+        roundAddress,
+        outputDir,
+        startBlock,
+        endBlock,
+        blocksPerBatch,
+        operator,
+      },
       { ethers, network, config }
     ) => {
       console.log('Processing on ', network.name)
@@ -270,7 +294,7 @@ task('fetch-round', 'Fetch round data')
         'FundingRound',
         roundAddress
       )
-      const round = await getRoundInfo(roundContract, ethers)
+      const round = await getRoundInfo(roundContract, ethers, operator)
       const recipientRegistry = new Contract(
         round.recipientRegistryAddress,
         getRecipientAddressAbi,
