@@ -329,8 +329,6 @@ export default class VerifyView extends Vue {
     if (this.currentStep < 0) {
       this.$router.replace({ name: 'verified' })
     }
-
-    console.log('brightIdSponsorUrl', brightIdSponsorUrl)
   }
 
   async mounted() {
