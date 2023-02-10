@@ -336,8 +336,8 @@ export default class VerifyView extends Vue {
       // send sponsorship request if automatic sponsoring is enabled
       if (brightIdSponsorUrl) {
         const res = await sponsorUser(this.currentUser.walletAddress)
-        if (res.error) {
-          this.autoSponsorError = res.error
+        if (!res.hash) {
+          this.autoSponsorError = res.error ? res.error : JSON.stringify(res)
           return
         }
       }
