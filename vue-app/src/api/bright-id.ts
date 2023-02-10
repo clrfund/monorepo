@@ -1,11 +1,13 @@
-import { Contract, Signer } from 'ethers'
+import { Contract, Signer, utils } from 'ethers'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { formatBytes32String } from '@ethersproject/strings'
 
 import { BrightIdUserRegistry } from './abi'
+import { brightIdSponsorKey, brightIdNodeUrl } from './core'
+import nacl from 'tweetnacl'
 
 const BRIGHTID_APP_URL = 'https://app.brightid.org'
-const NODE_URL = `${BRIGHTID_APP_URL}/node/v6`
+const NODE_URL = brightIdNodeUrl
 const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
 
 export interface BrightId {
@@ -27,6 +29,41 @@ export interface Sponsorship {
   app: string
   appHasAuthorized: boolean
   spendRequested: boolean
+}
+
+type AppData = {
+  id: string
+  name: string
+  context?: string
+  verification: string
+  verifications?: string[]
+  verificationsUrl: string
+  logo?: string
+  url?: string
+  assignedSponsorships?: number
+  unusedSponsorships?: number
+  testing?: boolean
+  idAsHex?: boolean
+  usingBlindSig?: boolean
+  verificationExpirationLength?: number
+  sponsorPublicKey?: string
+  nodeUrl?: string
+  soulbound: boolean
+  callbackUrl?: string
+}
+
+type SponsorOperation = {
+  name: string
+  app: string
+  appUserId: string
+  timestamp: number
+  v: number
+  sig?: string
+}
+
+type SponsorData = {
+  hash?: string
+  error?: string
 }
 
 export async function selfSponsor(
@@ -60,20 +97,6 @@ export class BrightIdError extends Error {
     // https://github.com/Microsoft/TypeScript/issues/13965#issuecomment-388605613
     Object.setPrototypeOf(this, BrightIdError.prototype)
     this.code = code
-  }
-}
-
-export async function getSponsorship(
-  userAddress: string
-): Promise<Sponsorship> {
-  const apiUrl = `${NODE_URL}/sponsorships/${userAddress}`
-  const response = await fetch(apiUrl)
-  const data = await response.json()
-
-  if (data['error']) {
-    throw new BrightIdError(data['errorNum'])
-  } else {
-    return data['data']
   }
 }
 
@@ -127,4 +150,112 @@ export async function getBrightId(contextId: string): Promise<BrightId> {
     }
   }
   return brightId
+}
+
+/**
+ * Get the unused sponsorship amount
+ * @param context - the context to retrieve unused sponsorships for
+ *
+ * @returns Returns the number of sponsorships available to the specified `context`
+ */
+async function unusedSponsorships(context: string): Promise<number> {
+  const endpoint = `${NODE_URL}/apps/${context}`
+  const response = await fetch(endpoint)
+  const json = await response.json()
+
+  if (json['errorMessage']) {
+    throw new Error(JSON.stringify(json))
+  }
+
+  const data = json['data'] as AppData
+  return data.unusedSponsorships || 0
+}
+
+/**
+ * Call the BrightID sponsor operation endpoint to put a sponsorship request for the user
+ * @param userAddress user wallet address
+ * @returns sponsporship result or error
+ */
+export async function brightIdSponsor(
+  userAddress: string
+): Promise<SponsorData> {
+  const endpoint = `${NODE_URL}/operations`
+
+  if (!brightIdSponsorKey) {
+    return { error: 'BrightId sponsor key not set' }
+  }
+
+  const sponsorships = await unusedSponsorships(CONTEXT)
+  if (typeof sponsorships === 'number' && sponsorships < 1) {
+    return { error: 'BrightID sponsorships not available' }
+  }
+
+  if (typeof sponsorships !== 'number') {
+    return { error: 'Invalid BrightID sponsorship' }
+  }
+
+  const timestamp = Date.now()
+
+  // these fields must be in alphabetical because
+  // BrightID nodes use 'fast-json-stable-stringify' that sorts fields
+  const op: SponsorOperation = {
+    app: CONTEXT,
+    appUserId: userAddress,
+    name: 'Sponsor',
+    timestamp,
+    v: 6,
+  }
+
+  const message = JSON.stringify(op)
+  const arrayedMessage = Buffer.from(message)
+  const arrayedKey = utils.base64.decode(brightIdSponsorKey)
+  const signature = nacl.sign.detached(arrayedMessage, arrayedKey)
+  op.sig = utils.base64.encode(signature)
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(op),
+  })
+  const json = await res.json()
+
+  if (json['error']) {
+    if (json.errorNum === 68) {
+      // sponsorship already sent recently, ignore this error
+      return { hash: '0x0' }
+    }
+    throw new Error(json['errorMessage'])
+  } else {
+    return json['data']
+  }
+}
+
+/**
+ * Call the netlify function to invoke the BrightId sponsor api
+ * @param userAddress user wallet address
+ * @returns sponsorship data or error
+ */
+async function netlifySponsor(userAddress: string): Promise<SponsorData> {
+  const res = await fetch('/.netlify/functions/sponsor', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userAddress }),
+  })
+
+  return res.json()
+}
+
+/**
+ * Sponsor a BrightID user using the sponsorship api
+ * @param userAddress user wallet address
+ * @returns sponsporship result or error
+ */
+export async function sponsorUser(userAddress: string): Promise<SponsorData> {
+  return brightIdSponsorKey
+    ? brightIdSponsor(userAddress)
+    : netlifySponsor(userAddress)
 }

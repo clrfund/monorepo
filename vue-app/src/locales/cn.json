@@ -490,31 +490,6 @@
       "p2": ""
     }
   },
-  "brightIDGuide": {
-    "heading": {
-      "h2": "进行验证",
-      "p": "BrightID 验证有助于证明您是一个独特的人。要得到验证, 您需要足够的人确认他们已经见过您，您是一个真实的人:"
-    },
-    "accordion": {
-      "fastest": {
-        "tag": "🚀 最快",
-        "header": "参加 BrightID 派对",
-        "content": "BrightID 定期进行验证派对。加入派对，与其他新用户见面，他们将验证您是一个人而不是机器人。快速且无痛，甚至对于内向的人也是如此。",
-        "linkButton": "查看派对日程"
-      }
-    }
-  },
-  "brightIDSponsor": {
-    "h2": "赞助",
-    "p": "您需要一个赞助令牌才能为 BrightID 认证。这有助于支持 BrightID 作为去中心化平台。您只需这样做一次, 就可以应用任何 BrightID APPS。检查 BrightID 移动应用程序，看看您是否受到赞助。如果没有，请点击下面的按钮提交赞助请求。",
-    "cta": "赞助"
-  },
-  "brightIDSponsored": {
-    "h1": "您受到赞助了!",
-    "subtitle": "您快可以为您最喜欢的项目做出赠捐! 如果您已通过 BrightID 验证, 请将您的钱包链接到您的 BrightID 档案并开始赠捐。",
-    "link1": "连接 BrightId",
-    "link2": "回首页"
-  },
   "join": {
     "title": {
       "h1": "参加筹款",
@@ -818,32 +793,41 @@
     "h1": "设置 BrightID",
     "h2_1": "连接",
     "p2": "您需要将您的 BrightID 账户与钱包地址连接起来。",
-    "p3": "链接上后, 我们将自动将您转移到下一步。这可能需要一分钟的时间来验证连接 - 请稍等。",
+    "click_next": "Once this app is linked in your BrightID app, click the 'Next' button to transition to the next step.",
     "p4": "用您的 BrightID app 扫描此二维码。",
     "p5": "跟随此链接将您的钱包连接到您的 BrightID app。",
     "p6": "这个链接可能看起来很吓人, 但它只是在连接您的钱包地址、CLR.fund app 和 BrightID。请确保您的地址是正确的。",
     "h2_2": "注册",
     "p7": "为了防止受贿和欺诈，您需要将您的钱包地址添加到智能合约注册表中。完成后，您就可以参加筹款活动了！",
-    "btn": " 成为捐赠者"
+    "btn": " 成为捐赠者",
+    "next": "下一步",
+    "previous": "前一步",
+    "verification_status": "您的钱包地址没有连接到 BrightID 的户口。 这可能需要几分钟的时间，稍等候后点击按钮再试。",
+    "skip_sponsorship": "跳过",
+    "get_sponsored_header": "赞助",
+    "get_sponsored_text": "您需要一个赞助令牌才能为 BrightID 认证。这有助于支持 BrightID 作为去中心化平台。您只需这样做一次, 就可以应用任何 BrightID APPS。检查 BrightID 移动应用程序，看看您是否受到赞助。如果没有，请点击按钮提交赞助请求。如果您已受到赞助，您可跳过这一步。",
+    "get_sponsored_cta": "赞助"
   },
   "verifyLanding": {
     "h1": "证明您只使用一个帐户",
     "subtitle": "我们使用 BrightID 来防止机器人和作弊者, 并使我们的资金更加民主。",
-    "h2": "您需要的",
-    "tooltip": "如果您之前曾向 CLR.fund 捐款, 请使用相同的钱包跳过某些 BrightID 步骤。",
+    "h2": "您需要:",
     "li1_t1": "BrightID app: ",
     "li1_link1": "iOS",
     "li1_t2": "或",
     "li1_link2": "Android",
-    "li2": "得到赞助",
-    "li3": "得到验证",
-    "li4": "一个以太坊钱包，有足够的燃料用于两次交易",
-    "li5": "能上 Zoom 或 Google Meet",
+    "join": "参加 ",
+    "brightid_party_link": "BrightId 派对",
+    "get_verified": " 以得到验证",
+    "li_wallet": "一个以太坊钱包，有足够的燃料用于一次交易。",
+    "unitap_gas_tokens": "您可从 ",
+    "unitap_link": "Unitap",
+    "unitap_extra_text": " 获得一些燃料代币。",
     "link1": "这为什么重要?",
     "div1": "目前尚未开放筹款活动。请稍后再查看。",
     "div2": "当前筹款活动不再接受新的捐款。请在下一轮再试。",
     "div3": "捐赠提早关闭 - 您不能再捐款了！由于社区的慷慨和一些技术限制，我们不得不比预期更早地结束这一次筹款活动。如果您已经捐赠过，您仍然有时间重新分配。如果您没有机会捐赠，您仍然可以通过捐赠匹配池来帮助。",
-    "link2": "我已安装了 BrightID",
+    "link2": "我已验证了 BrightID",
     "link3": "返回"
   },
   "addToCartButton": {
@@ -951,7 +935,7 @@
     "link2": "添加项目"
   },
   "formNavigation": {
-    "button1": "上一步",
+    "button1": "前一步",
     "button2_1": "确认",
     "button2_2": "下一步"
   },
@@ -1192,6 +1176,7 @@
     },
     "verify": {
       "step": {
+        "sponsorship": "赞助",
         "connect": "连接",
         "registration": "注册"
       }

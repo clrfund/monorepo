@@ -490,31 +490,6 @@
       "p2": ""
     }
   },
-  "brightIDGuide": {
-    "heading": {
-      "h2": "Get verified",
-      "p": "BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person."
-    },
-    "accordion": {
-      "fastest": {
-        "tag": "🚀 Fastest",
-        "header": "Join a BrightId party",
-        "content": "BrightID run verification parties regularly. Join the call, meet other new users, and they'll verify you’re a human and not a bot. Quick and painless, even for you introverts out there.",
-        "linkButton": "View party schedule"
-      }
-    }
-  },
-  "brightIDSponsor": {
-    "h2": "Get sponsored",
-    "p": "You need a sponsorship token to become BrightID verified. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. If you're not, click the button below to submit a sponsorship request.",
-    "cta": "Get sponsored"
-  },
-  "brightIDSponsored": {
-    "h1": "You're sponsored!",
-    "subtitle": "You’re almost ready to contribute to your favorite projects! If you're verified for BrightID, link your wallet to your BrightID profile and start contributing.",
-    "link1": "Link BrightId",
-    "link2": "Go home"
-  },
   "join": {
     "title": {
       "h1": "Join the round",
@@ -818,32 +793,41 @@
     "h1": "Set up BrightID",
     "h2_1": "Connect",
     "p2": "You need to connect your BrightID account with your wallet address.",
-    "p3": "Once this app is linked in your BrightID app, we'll automatically transition you to the next step. It may take a minute for us to verify the connection - please wait.",
+    "click_next": "Once this app is linked in your BrightID app, click the 'Next' button to transition to the next step.",
     "p4": "Scan this QR code with your BrightID app",
     "p5": "Follow this link to connect your wallet to your BrightID app",
     "p6": "This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.",
     "h2_2": "Register",
     "p7": "To protect the round from bribery and fraud, you need to add your wallet address to a smart contract registry. Once you’re done, you can join the funding round!",
-    "btn": " Become a contributor"
+    "btn": " Become a contributor",
+    "next": "Next",
+    "previous": "Previous",
+    "verification_status": "Your wallet address is not linked with BrightID. It may take a few minutes to verify the connection, please wait and click the button later to check the status.",
+    "skip_sponsorship": "Skip",
+    "get_sponsored_header": "Get sponsored",
+    "get_sponsored_text": "You need a sponsorship token to connect your wallet address with BrightID. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. Get sponsored by submitting a sponsorship transaction or skip to the next step.",
+    "get_sponsored_cta": "Get Sponsored"
   },
   "verifyLanding": {
     "h1": "Prove you’re only using one account",
     "subtitle": "We use BrightID to stop bots and cheaters, and make our funding more democratic.",
     "h2": "What you'll need",
-    "tooltip": "If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps",
     "li1_t1": "BrightID – available on",
     "li1_link1": "iOS",
     "li1_t2": "or",
     "li1_link2": "Android",
-    "li2": "Get sponsored",
-    "li3": "Get verified",
-    "li4": "An Ethereum wallet, with enough gas for two transactions",
-    "li5": "Access to Zoom or Google Meet",
+    "join": "Join a ",
+    "brightid_party_link": "BrightId party",
+    "get_verified": " to get verified",
+    "li_wallet": "An Ethereum wallet, with enough gas for one transaction.",
+    "unitap_gas_tokens": "You may be able to get some free gas tokens from ",
+    "unitap_link": "Unitap",
+    "unitap_extra_text": ".",
     "link1": "Why is this important?",
     "div1": "There's not yet an open funding round. Please check back later.",
     "div2": "The current round is no longer accepting new contributions. Please try again next round.",
     "div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
-    "link2": "I have BrightID installed",
+    "link2": "I am BrightID verified",
     "link3": "Go back"
   },
   "addToCartButton": {
@@ -1192,6 +1176,7 @@
     },
     "verify": {
       "step": {
+        "sponsorship": "Sponsorship",
         "connect": "Connect",
         "registration": "Get registered"
       }
