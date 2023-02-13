@@ -10,7 +10,7 @@ const NODE_URL =
  * @returns error object
  */
 function makeError(errorMessage) {
-  return { statusCode: 400, body: { error: errorMessage } }
+  return { statusCode: 400, body: errorMessage }
 }
 
 /**
@@ -99,6 +99,6 @@ exports.handler = async function (event) {
     }
     return makeError(json.errorMessage)
   } else {
-    return { statusCode: 200, body: { hash: json['data'] } }
+    return { statusCode: 200, body: JSON.stringify({ hash: json['data'] }) }
   }
 }
