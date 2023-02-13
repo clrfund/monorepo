@@ -99,6 +99,6 @@ exports.handler = async function (event) {
     }
     return makeError(json.errorMessage)
   } else {
-    return json['data']
+    return { statusCode: 200, body: { hash: json['data'] } }
   }
 }
