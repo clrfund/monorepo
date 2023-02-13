@@ -43,7 +43,7 @@ Several solutions have been suggested, such as having the operator’s private k
 
 #### Single Token
 
-For simplicity's sake in the contract, the zk-SNARK, and the user interface, clr.fund selects an ERC20 token as it's native token (set by the contract owner), which is the only token that the funding round contract interacts with. This is an issue given our goal of being agnostic to the funding source.
+For simplicity's sake in the contract, the zk-SNARK, and the user interface, clr.fund selects an ERC20 token as its native token (set by the contract owner), which is the only token that the funding round contract interacts with. This is an issue given our goal of being agnostic to the funding source.
 
 For example, block reward funding would be in ETH, while many users may want to contribute DAI or other ERC20 tokens.
 
@@ -116,7 +116,7 @@ docker-compose up
 And finally, in a 3rd terminal
 
 ```sh
-# this will complie and deploy the contracts + deploy the subgraph + build and run the vue app
+# this will compile and deploy the contracts + deploy the subgraph + build and run the vue app
 yarn start:dev
 ```
 

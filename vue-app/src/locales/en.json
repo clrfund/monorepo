@@ -78,7 +78,7 @@
       "li-3-link": "Browse projects",
       "li-3-text": " and add some to your cart, adjusting your contributions to the amount of {nativeTokenSymbol} you want.",
       "li-4": "When you're ready, open your cart, click contribute, and confirm the transactions to complete your contributions!",
-      "paragraph": "Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you would like before of the reallocation phase but you cannot add more funds to your total contribution amount.",
+      "paragraph": "Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you would like before the reallocation phase but you cannot add more funds to your total contribution amount.",
       "li-5": "You can add and remove projects.",
       "li-6": " Your reallocation total must be less than or equal to the total (if it's less, the rest will go to the matching pool)."
     },
@@ -403,7 +403,7 @@
       "p3": "Compared to 1-person-1-vote, quadratic funding lets the person who lives in Florida full-time, and cares twice as much about the vote's outcome than the person who lives in Florida half-time, have more influence:",
       "li3": "1-person-1-vote: the two Florida voters have equal influence",
       "li4": "  Quadratic funding: the full-time Florida resident, who cares twice as much, pays twice as much, and as a result gets 2^(1/2) times the influence of the half-time resident",
-      "p4": " (It's important to note that while these example are a good demonstration of the argument for quadratic funding, they do over-simplify these situations, which are as sociological as they are mathematical.)"
+      "p4": " (It's important to note that while these examples are a good demonstration of the argument for quadratic funding, they do over-simplify these situations, which are as sociological as they are mathematical.)"
     },
     "resources": {
       "h2": "Quadratic Funding Resources",
@@ -712,7 +712,7 @@
       "paragraph-2": "Using MACI, a zero-knowledge technology, it's impossible to prove how you contributed. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!",
       "link-2": "About MACI",
       "subtitle-3": "Built using the CLR protocol",
-      "paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the prefences of the Ethereum Community.",
+      "paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community.",
       "link-3": "About clr.fund"
     },
     "footer": {
