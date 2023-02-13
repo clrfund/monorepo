@@ -10,7 +10,7 @@ const NODE_URL =
  * @returns error object
  */
 function makeError(errorMessage) {
-  return { statusCode: 400, error: errorMessage }
+  return { statusCode: 400, body: { error: errorMessage } }
 }
 
 /**
