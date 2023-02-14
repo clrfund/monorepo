@@ -10,11 +10,17 @@ const NODE_URL =
  * @returns error object
  */
 function makeError(errorMessage) {
-  return { statusCode: 400, body: errorMessage }
+  const body =
+    typeof errorMessage === 'string'
+      ? errorMessage
+      : JSON.stringify(errorMessage)
+
+  return { statusCode: 400, body }
 }
 
 function makeResult(result) {
-  return { status: 200, body: JSON.stringify(result) }
+  const body = typeof result === 'object' ? JSON.stringify(result) : result
+  return { status: 200, body }
 }
 
 /**
@@ -115,3 +121,4 @@ exports.handler = async function (event) {
     return makeResult(json['data'])
   }
 }
+g
