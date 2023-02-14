@@ -238,6 +238,7 @@ export async function brightIdSponsor(
  * @returns sponsorship data or error
  */
 async function netlifySponsor(userAddress: string): Promise<SponsorData> {
+  /*
   const res = await fetch('/.netlify/functions/sponsor', {
     method: 'POST',
     headers: {
@@ -247,6 +248,8 @@ async function netlifySponsor(userAddress: string): Promise<SponsorData> {
   })
 
   return res.json()
+  */
+  return Promise.resolve({ hash: '0' })
 }
 
 /**
