@@ -52,15 +52,22 @@ exports.handler = async function (event) {
     return makeError('Missing request body')
   }
 
-  let userAddress = ''
-  try {
-    const jsonBody = JSON.parse(event.body)
-    if (!jsonBody.userAddress) {
-      return makeError(event.body)
+  let userAddress = event.body.userAddress
+  const eventBodyType = typeof event.body
+  if (eventBodyType === 'object') {
+    userAddress = event.body.userAddress
+  } else if (eventBodyType === 'string') {
+    try {
+      const jsonBody = JSON.parse(event.body)
+      if (!jsonBody.userAddress) {
+        return makeError('Missing userAddress: ' + event.body)
+      }
+      userAddress = jsonBody.userAddress
+    } catch (err) {
+      return makeError(err.message + ' ' + event.body)
     }
-    userAddress = jsonBody.userAddress
-  } catch (err) {
-    return makeError(err.message + ' ' + event.body)
+  } else {
+    return makeError('Invalid request body type ' + eventBodyType)
   }
 
   const endpoint = process.env.VUE_APP_BRIGHTID_SPONSOR_API_URL
