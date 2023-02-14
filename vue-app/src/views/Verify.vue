@@ -298,7 +298,7 @@ export default class VerifyView extends Vue {
   }
 
   get currentPage(): string {
-    return this.steps[this.currentStep].page
+    return this.steps[this.currentStep]?.page || ''
   }
 
   get showBackToSponsorshipButton(): boolean {
@@ -438,7 +438,7 @@ export default class VerifyView extends Vue {
       return false
     }
 
-    const stepName = this.steps[step].page
+    const stepName = this.steps[step]?.page || ''
     switch (stepName) {
       case 'sponsorship':
         return !this.isSponsoring
