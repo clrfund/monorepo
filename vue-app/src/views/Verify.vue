@@ -155,6 +155,7 @@
                 </p>
                 <div class="row row-gap qr-code">
                   <button
+                    v-if="showBackToSponsorshipButton"
                     type="button"
                     class="btn-action btn-block"
                     @click="backToSponsorship"
@@ -298,6 +299,12 @@ export default class VerifyView extends Vue {
 
   get currentPage(): string {
     return this.steps[this.currentStep].page
+  }
+
+  get showBackToSponsorshipButton(): boolean {
+    // if the sponsor url is not defined, we are doing self sponsorship, show the button
+    // to allow users to go back to that page
+    return !brightIdSponsorUrl
   }
 
   backToSponsorship() {
