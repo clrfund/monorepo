@@ -79,6 +79,7 @@ export const exportBatchSize =
 
 export const brightIdSponsorKey = process.env.VUE_APP_BRIGHTID_SPONSOR_KEY
 export const brightIdNodeUrl =
-  process.env.VUE_APP_BRIGHTID_NODE_URL || 'https://app.brightid.org/node/v6'
+  process.env.VUE_APP_BRIGHTID_NODE_URL ||
+  'https://brightid.clr.fund/brightid/v6'
 
 export const brightIdSponsorUrl = process.env.VUE_APP_BRIGHTID_SPONSOR_API_URL
