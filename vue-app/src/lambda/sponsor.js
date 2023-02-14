@@ -20,7 +20,7 @@ function makeError(errorMessage) {
 
 function makeResult(result) {
   const body = typeof result === 'object' ? JSON.stringify(result) : result
-  return { status: 200, body }
+  return { statusCode: 200, body }
 }
 
 /**
