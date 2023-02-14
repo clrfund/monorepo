@@ -18,6 +18,11 @@ function makeError(errorMessage) {
   return { statusCode: 400, body }
 }
 
+/**
+ * Returns the result with statusCode and body
+ * @param result the result
+ * @returns result object
+ */
 function makeResult(result) {
   const body = typeof result === 'object' ? JSON.stringify(result) : result
   return { statusCode: 200, body }
@@ -42,34 +47,7 @@ async function unusedSponsorships(context) {
   return data.unusedSponsorships || 0
 }
 
-/**
- * Submit a sponsorship request using the BrightID api
- * @param event contains user address to sponsor
- * @returns sponsor data or error
- */
-exports.handler = async function (event) {
-  if (!event.body) {
-    return makeError('Missing request body')
-  }
-
-  let userAddress = event.body.userAddress
-  const eventBodyType = typeof event.body
-  if (eventBodyType === 'object') {
-    userAddress = event.body.userAddress
-  } else if (eventBodyType === 'string') {
-    try {
-      const jsonBody = JSON.parse(event.body)
-      if (!jsonBody.userAddress) {
-        return makeError('Missing userAddress: ' + event.body)
-      }
-      userAddress = jsonBody.userAddress
-    } catch (err) {
-      return makeError(err.message + ' ' + event.body)
-    }
-  } else {
-    return makeError('Invalid request body type ' + eventBodyType)
-  }
-
+async function handleSponsorRequest(userAddress) {
   const endpoint = process.env.VUE_APP_BRIGHTID_SPONSOR_API_URL
   const brightIdSponsorKey =
     process.env.VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY
@@ -77,18 +55,17 @@ exports.handler = async function (event) {
   const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT
 
   if (!brightIdSponsorKey) {
-    return makeError(
+    throw new Error(
       'Environment VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY not set'
     )
   }
 
   const sponsorships = await unusedSponsorships(CONTEXT)
   if (typeof sponsorships === 'number' && sponsorships < 1) {
-    return makeError('BrightID sponsorships not available')
+    throw new Error('BrightID sponsorships not available')
   }
-
   if (typeof sponsorships !== 'number') {
-    return makeError('Invalid BrightID sponsorship')
+    throw new Error('Invalid BrightID sponsorship')
   }
 
   const timestamp = Date.now()
@@ -118,13 +95,35 @@ exports.handler = async function (event) {
   })
   const json = await res.json()
 
-  if (json['error']) {
+  if (json.error) {
     if (json.errorNum === 68) {
       // sponsorship already sent recently, ignore this error
       return makeResult({ hash: '0x0' })
     }
     return makeError(json.errorMessage)
   } else {
-    return makeResult(json['data'])
+    return makeResult(json.data)
+  }
+}
+
+/**
+ * Submit a sponsorship request using the BrightID api
+ * @param event contains user address to sponsor
+ * @returns sponsor data or error
+ */
+exports.handler = async function (event) {
+  if (!event.body) {
+    return makeError('Missing request body')
+  }
+
+  try {
+    const jsonBody = JSON.parse(event.body)
+    if (!jsonBody.userAddress) {
+      return makeError('Missing userAddress in request body: ' + event.body)
+    }
+
+    return handleSponsorRequest(jsonBody.userAddress)
+  } catch (err) {
+    return makeError(err.message + ' ' + event.body)
   }
 }

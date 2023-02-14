@@ -246,9 +246,7 @@ async function netlifySponsor(userAddress: string): Promise<SponsorData> {
     body: JSON.stringify({ userAddress }),
   })
 
-  //return res.json()
-
-  return Promise.resolve({ hash: String(res) })
+  return res.json()
 }
 
 /**
