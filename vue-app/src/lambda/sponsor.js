@@ -42,6 +42,10 @@ exports.handler = async function (event) {
     return makeError('Missing request body')
   }
 
+  if (!event.body.userAddress) {
+    return makeError(JSON.stringify(event.body))
+  }
+
   const endpoint = process.env.VUE_APP_BRIGHTID_SPONSOR_API_URL
   const brightIdSponsorKey =
     process.env.VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY

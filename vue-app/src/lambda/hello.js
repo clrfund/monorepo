@@ -1,3 +1,3 @@
-exports.handler = async function () {
-  return { statusCode: 200, body: JSON.stringify({ hash: 'hello world' }) }
+exports.handler = async function (event) {
+  return { statusCode: 200, body: event.body }
 }
