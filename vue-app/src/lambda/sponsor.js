@@ -13,6 +13,10 @@ function makeError(errorMessage) {
   return { statusCode: 400, body: errorMessage }
 }
 
+function makeResult(result) {
+  return { status: 200, body: JSON.stringify(result) }
+}
+
 /**
  * Get the unused sponsorship amount
  * @param context - the context to retrieve unused sponsorships for
@@ -104,10 +108,10 @@ exports.handler = async function (event) {
   if (json['error']) {
     if (json.errorNum === 68) {
       // sponsorship already sent recently, ignore this error
-      return { hash: '0x0' }
+      return makeResult({ hash: '0x0' })
     }
     return makeError(json.errorMessage)
   } else {
-    return { statusCode: 200, body: JSON.stringify({ hash: json['data'] }) }
+    return makeResult(json['data'])
   }
 }
