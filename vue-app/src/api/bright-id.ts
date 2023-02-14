@@ -226,7 +226,7 @@ export async function brightIdSponsor(
       // sponsorship already sent recently, ignore this error
       return { hash: '0x0' }
     }
-    throw new Error(json['errorMessage'])
+    return { error: json['errorMessage'] }
   } else {
     return json['data']
   }
@@ -255,7 +255,17 @@ async function netlifySponsor(userAddress: string): Promise<SponsorData> {
  * @returns sponsporship result or error
  */
 export async function sponsorUser(userAddress: string): Promise<SponsorData> {
-  return brightIdSponsorKey
-    ? brightIdSponsor(userAddress)
-    : netlifySponsor(userAddress)
+  if (brightIdSponsorKey) {
+    return brightIdSponsor(userAddress)
+  }
+
+  try {
+    return netlifySponsor(userAddress)
+  } catch (err) {
+    if (err instanceof Error) {
+      return { error: (err as Error).message }
+    } else {
+      return { error: 'Unknown sponsorhip error' }
+    }
+  }
 }
