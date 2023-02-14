@@ -121,4 +121,3 @@ exports.handler = async function (event) {
     return makeResult(json['data'])
   }
 }
-g
