@@ -67,6 +67,9 @@ VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY=
 VUE_APP_BRIGHTID_SPONSOR_KEY=
 ```
 
+**#5 netlify function setup**
+See the [deployment guide](./deploymnet.md) for special setup to use the sponsor netlify function.
+
 ## Troubleshooting linking failure
 ### Sponsorship timeout
 1. check for sponsorship status https://app.brightid.org/node/v6/sponsorships/WALLET_ADDRESS
