@@ -819,7 +819,7 @@
     "join": "Join a ",
     "brightid_party_link": "BrightId party",
     "get_verified": " to get verified",
-    "li_wallet": "An Ethereum wallet, with enough gas for one transaction.",
+    "li_wallet": "An Ethereum wallet, with some funds for transaction gas.",
     "unitap_gas_tokens": "You may be able to get some free gas tokens from ",
     "unitap_link": "Unitap",
     "unitap_extra_text": ".",

@@ -120,9 +120,14 @@
             <p>
               {{ $t('verify.click_next') }}
             </p>
-            <div class="warning-text" v-if="autoSponsorError">
-              {{ autoSponsorError }}
-            </div>
+            <transaction
+              class="transaction"
+              v-if="autoSponsorError"
+              :display-close-btn="false"
+              hash=""
+              :error="autoSponsorError"
+            >
+            </transaction>
             <div class="qr">
               <div class="instructions" v-if="appLink">
                 <p class="desktop" v-if="appLinkQrCode">
