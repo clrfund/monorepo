@@ -419,7 +419,8 @@ ol li::before {
   }
 
   .apply-callout {
-    background: var(--bg-transparent);
+    background: var(--bg-secondary-color);
+    color: var(--text-secondary);
     border: 2px solid $highlight-color;
     box-sizing: border-box;
     border-radius: 8px;

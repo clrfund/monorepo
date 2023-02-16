@@ -115,7 +115,7 @@ export default class ProjectListItem extends Vue {
 }
 
 .more-btn {
-  background: var(--bg-light-accent);
+  background: var(--bg-primary-color);
   border-radius: 32px;
   padding: 0.5rem;
   box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
@@ -126,12 +126,12 @@ export default class ProjectListItem extends Vue {
   line-height: 24px;
   letter-spacing: 0em;
   text-align: center;
-  color: white;
+  color: var(--text-body);
   width: 100%;
   border: none;
   cursor: pointer;
   &:hover {
-    background: var(--bg-secondary-accent);
+    opacity: 0.8;
   }
 }
 
@@ -202,5 +202,7 @@ export default class ProjectListItem extends Vue {
   top: 0.5rem;
   right: 0.5rem;
   box-shadow: var(--box-shadow);
+  background: var(--bg-primary-color);
+  color: var(--text-body);
 }
 </style>

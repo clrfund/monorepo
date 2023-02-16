@@ -96,7 +96,7 @@ input[type='number'] {
 .button {
   padding: 0.5rem 1rem;
   background: var(--bg-primary-color);
-  color: var(--text-color);
+  color: var(--text-body);
   border-radius: 32px;
   font-size: 16px;
   font-family: Inter;

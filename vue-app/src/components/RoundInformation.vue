@@ -660,6 +660,7 @@ export default class RoundInformation extends Vue {
   display: flex;
   flex-direction: row;
   align-items: flex-end;
+  color: var(--text-color);
 
   .value {
     font-size: 24px;

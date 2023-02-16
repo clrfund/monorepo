@@ -80,7 +80,8 @@ export default class FilterDropdown extends Vue {
   .filter-btn {
     background: none;
     cursor: pointer;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--text-secondary);
+    color: var(--text-secondary);
     border-radius: 0.75rem;
     display: flex;
     justify-content: space-between;
