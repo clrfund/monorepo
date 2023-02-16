@@ -29,3 +29,14 @@ Inside `/subgraph`:
    - Update or create a new JSON file which you want to use, under `/config`
    - Run `yarn prepare:{network}`
 2. Deploy it by running `graph deploy --product hosted-service USERNAME/SUBGRAPH`
+
+
+### Deploy the netlify functions
+
+The netlify functions are located at /vue-app/src/lambda. To deploy the netlify functions, make sure the functions directory is set to `vue-app/dist/lambda`. [How to set netlify function directory](https://docs.netlify.com/functions/optional-configuration/?fn-language=ts)
+
+The `sponsor.js` function will also need the environment variable `AWS_LAMBDA_JS_RUNTIME` set. Otherwise, it will throw error `fetch not found`.
+
+```
+AWS_LAMBDA_JS_RUNTIME=nodejs18.x
+```
