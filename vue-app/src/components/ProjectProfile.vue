@@ -395,8 +395,16 @@ export default class ProjectProfile extends Vue {
     .explorerLink {
       margin: 0;
       padding: 0;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+
+      &:hover {
+        background: var(--bg-light-color);
+        opacity: 0.8;
+      }
       .icon {
-        @include icon(none, var(--explorer-hover));
+        @include icon(none, none);
         border: 1px solid var(--explorer-border);
         filter: var(--img-filter, invert(0.7));
       }
