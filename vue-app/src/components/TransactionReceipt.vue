@@ -25,7 +25,9 @@
         "
         :hideArrow="true"
       >
-        <img class="icon" :src="require(`@/assets/${blockExplorer.logo}`)" />
+        <div class="icon">
+          <img :src="require(`@/assets/${blockExplorer.logo}`)" />
+        </div>
       </links>
       <copy-button
         :value="hash"
@@ -135,6 +137,12 @@ export default class TransactionReceipt extends Vue {
 .explorerLink {
   padding: 0;
   margin: 0;
+  img {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    filter: var(--img-filter, invert(0.7));
+  }
 }
 .status-label-address {
   display: flex;
