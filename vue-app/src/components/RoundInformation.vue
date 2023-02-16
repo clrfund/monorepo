@@ -500,11 +500,6 @@ export default class RoundInformation extends Vue {
   justify-content: center;
 }
 
-.image-wrapper img {
-  mix-blend-mode: exclusion;
-  transform: rotate(15deg);
-}
-
 .round {
   display: flex;
   justify-content: space-between;
@@ -525,12 +520,6 @@ export default class RoundInformation extends Vue {
   align-self: flex-end;
 }
 
-.verified {
-  img {
-    filter: var(--img-filter, invert(0.3));
-  }
-}
-
 .contract-address {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -548,7 +537,7 @@ export default class RoundInformation extends Vue {
 .closed {
   width: 12px;
   height: 12px;
-  background: var(--bg-light-color);
+  background: var(--bg-secondary-color);
 }
 
 .open-pulse {
@@ -600,7 +589,7 @@ export default class RoundInformation extends Vue {
   }
 
   & > div {
-    box-shadow: inset 0px -1px 0px #7375a6;
+    box-shadow: inset 0px -1px 0px var(--bg-secondary-color);
     &:first-of-type {
       border-radius: 0.5rem 0.5rem 0 0;
     }
@@ -833,6 +822,6 @@ export default class RoundInformation extends Vue {
 }
 
 .has-tooltip {
-  filter: var(--img-filter, invert(0.7));
+  filter: invert(0.7);
 }
 </style>

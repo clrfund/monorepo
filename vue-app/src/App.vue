@@ -256,7 +256,7 @@ body {
 
 html {
   background-color: var(--bg-primary-color);
-  color: var(--text-color);
+  color: var(--text-body);
   font-family: Inter, sans-serif;
   font-size: 16px;
 }
@@ -394,6 +394,10 @@ summary:focus {
   background: var(--bg-primary-color);
   overflow-x: clip;
   /* overflow-y: scroll; */
+
+  @media (max-width: $breakpoint-l) {
+    background: var(--bg-secondary-color);
+  }
 }
 
 #sidebar {
@@ -635,11 +639,11 @@ summary:focus {
 
   .tooltip-inner {
     background: var(--bg-primary-color);
-    color: var(--text-color);
+    color: var(--text-body);
     font-family: Inter;
     line-height: 150%;
     font-size: 14px;
-    border: 1px solid $button-color;
+    border: 1px solid var(--border-color);
     border-radius: 0.5rem;
     padding: 5px 10px 4px;
     max-width: 30ch;
@@ -719,7 +723,7 @@ summary:focus {
   &.popover {
     .popover-inner {
       background: var(--bg-primary-color);
-      color: var(--text-color);
+      color: var(--text-body);
       padding: 1rem;
       margin: 0.5rem;
       border-radius: 5px;

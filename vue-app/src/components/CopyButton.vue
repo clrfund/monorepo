@@ -65,7 +65,7 @@ export default class CopyButton extends Vue {
 }
 
 .profile {
-  @include icon(rgba(white, 0.1), rgba(white, 0.2));
+  @include icon(var(--bg-secondary-color), var(--bg-light-color));
   padding: 0.5rem;
 }
 

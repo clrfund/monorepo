@@ -116,7 +116,7 @@ export default class LeaderboardSimpleView extends Vue {
 
 .content {
   :hover {
-    background-color: var(--bg-light-highlight);
+    background-color: var(--bg-secondary-color);
   }
 }
 

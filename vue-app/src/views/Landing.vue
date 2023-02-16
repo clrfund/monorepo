@@ -3,7 +3,6 @@
     <round-status-banner v-if="$store.state.currentRound" />
     <div id="page">
       <div id="hero">
-        <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
           <image-responsive title="docking" />
         </div>
@@ -290,8 +289,7 @@ ol li::before {
   line-height: 100%;
   border-radius: 50%;
   color: var(--text-secondary);
-  background: var(--bg-circle);
-  border: 2px solid var(--link-color);
+  border: 2px solid var(--text-secondary);
   box-sizing: border-box;
   text-align: center;
   padding-top: 0.375rem;
@@ -331,7 +329,6 @@ ol li::before {
 
 #bright-id-icon {
   padding: 0.5rem;
-  background: var(--bright-id-icon-bg);
 }
 
 .pre-req,
@@ -340,6 +337,12 @@ ol li::before {
 #about-3 {
   padding: $content-space;
   flex: 1;
+}
+
+#what-you-will-need {
+  .pre-req {
+    background: var(--bg-secondary-color);
+  }
 }
 
 #page > #what-you-will-need,
@@ -374,9 +377,8 @@ ol li::before {
     position: absolute;
     mix-blend-mode: exclusion;
     width: 70%;
-    max-width: 880px;
+    max-width: 680px;
     height: auto;
-    transform: rotate(15deg);
     /* top: -20px; */
     right: 0;
     @media (max-width: $breakpoint-m) {
@@ -393,17 +395,11 @@ ol li::before {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    color: var(--text-color);
     @media (max-width: $breakpoint-m) {
       max-width: 880px;
       margin: -2rem;
       padding: 2rem;
-      @include gradientBackground(
-        182.34deg,
-        rgba(var(--shadow-dark-rgb), 0.4),
-        81%,
-        rgba(var(--shadow-light-rgb), 0),
-        89.75%
-      );
     }
   }
 
@@ -483,19 +479,27 @@ ol li::before {
 #about-1,
 #about-2,
 #about-3 {
-  background: var(--bg-light-color);
+  background: var(--text-secondary);
+  color: var(--bg-secondary-color);
   border-radius: 0.5rem;
+  a {
+    color: var(--bg-secondary-color);
+    font-weight: 700;
+    line-height: 32px;
+  }
+
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
-  }
-  a {
-    color: var(--link-color);
+    color: var(--text-secondary);
+    a {
+      color: var(--text-secondary);
+    }
   }
 }
 
 #about-1 {
   @media (max-width: $breakpoint-l) {
-    background: none;
+    background: var(--bg-light-color);
   }
 }
 
@@ -535,17 +539,17 @@ ol li::before {
       width: 100%;
       height: auto;
       aspect-ratio: 16/9;
-      mix-blend-mode: exclusion;
     }
   }
   #how-it-works-content {
     position: relative;
     display: flex;
     flex-direction: column;
-    background: var(--bg-light-color);
+    background: var(--bg-secondary-color);
     /* width: 40%; */
     border-radius: 1rem;
     padding: 2rem;
+    color: var(--text-secondary);
     & > img {
       display: none;
     }
@@ -582,6 +586,9 @@ ol li::before {
   padding: $content-space;
   > li {
     list-style-type: none;
+  }
+  @media (max-width: $breakpoint-l) {
+    background: var(--bg-secondary-color);
   }
 }
 </style>

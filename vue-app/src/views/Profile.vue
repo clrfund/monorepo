@@ -300,11 +300,12 @@ p.no-margin {
     .address-card {
       padding: 1rem;
       border-radius: 0.5rem;
-      background: var(--bg-primary-color);
+      background: var(--bg-secondary-color);
       gap: 1rem;
     }
     .address-card {
       background: var(--bg-gradient);
+      color: var(--text-color);
 
       .address {
         margin: 0;
@@ -337,12 +338,11 @@ p.no-margin {
           display: flex;
           justify-content: center;
           align-items: center;
-          border: 1px solid var(--border-color);
           padding: 0.5rem;
           height: 2rem;
           width: 2rem;
           box-sizing: border-box;
-          background: rgba(white, 0.1);
+          background: var(--bg-secondary-color);
           &:hover {
             transform: scale(1.01);
             opacity: 0.8;
@@ -350,7 +350,6 @@ p.no-margin {
 
           img {
             margin: 0;
-            filter: var(--img-filter, invert(1));
           }
         }
       }

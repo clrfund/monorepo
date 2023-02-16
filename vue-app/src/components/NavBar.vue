@@ -16,11 +16,11 @@
       <img
         class="clr-logo"
         :alt="$store.getters.operator"
-        src="@/assets/clr.svg"
+        src="@/assets/logo.svg"
       />
     </links>
     <div class="btn-row">
-      <div>
+      <div v-if="showThemeButton">
         <img
           @click="toggleTheme()"
           class="navbar-btn"
@@ -170,6 +170,10 @@ export default class NavBar extends Vue {
     lsSet(this.themeKey, this.$store.state.theme)
   }
 
+  get showThemeButton(): boolean {
+    return false
+  }
+
   get themeIcon(): string {
     return this.$store.state.theme === ThemeMode.LIGHT
       ? 'half-moon.svg'
@@ -216,7 +220,7 @@ export default class NavBar extends Vue {
   height: 64px;
   justify-content: space-between;
   align-items: center;
-  background: $clr-black;
+  background: var(--bg-secondary-color);
   box-shadow: $box-shadow-nav-bar;
   @media (max-width: $breakpoint-m) {
     padding: 0 1rem;
@@ -276,7 +280,7 @@ export default class NavBar extends Vue {
 
         .item-text {
           margin: 0;
-          color: var(--text-color);
+          color: var(--text-body);
         }
       }
 
