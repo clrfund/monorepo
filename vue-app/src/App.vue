@@ -394,10 +394,6 @@ summary:focus {
   background: var(--bg-primary-color);
   overflow-x: clip;
   /* overflow-y: scroll; */
-
-  @media (max-width: $breakpoint-l) {
-    background: var(--bg-secondary-color);
-  }
 }
 
 #sidebar {

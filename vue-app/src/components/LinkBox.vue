@@ -42,7 +42,7 @@ export default class extends Vue {
 @import '../styles/theme';
 
 .link-box {
-  background: var(--bg-primary-color);
+  background: var(--bg-secondary-color);
   padding: 1.5rem;
   border-radius: 1rem;
   box-shadow: var(--box-shadow);

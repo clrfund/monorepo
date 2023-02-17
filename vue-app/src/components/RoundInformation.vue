@@ -2,7 +2,7 @@
   <div class="projects">
     <div class="round-info">
       <div class="image-wrapper">
-        <image-responsive title="docking" height="100%" />
+        <image-responsive title="bubble" height="100%" />
       </div>
       <template v-if="roundInfo">
         <div class="round">
@@ -568,6 +568,7 @@ export default class RoundInformation extends Vue {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
+  color: var(--text-color);
   gap: 1.5rem;
   margin-top: 1rem;
   max-width: 800px;
@@ -775,7 +776,7 @@ export default class RoundInformation extends Vue {
 .add-link {
   display: flex;
   gap: 0.25rem;
-  color: $clr-green;
+  color: var(--text-color);
   margin-left: auto;
   cursor: pointer;
   &:hover {

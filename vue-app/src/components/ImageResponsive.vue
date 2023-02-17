@@ -7,14 +7,14 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 
-const BREAKPOINTS = [360, 720, 1080, 1440, 2160, 2880]
+const BREAKPOINTS = [360, 720]
 
 @Component
 export default class ImageResponsive extends Vue {
   @Prop() title!: string
 
   get src() {
-    return this.requirePath(this.title, 1080)
+    return this.requirePath(this.title, 720)
   }
 
   get srcset() {

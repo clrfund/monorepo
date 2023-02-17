@@ -409,7 +409,7 @@ export default class RecipientRegistryView extends Vue {
 
   .hr {
     width: 100%;
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid var(--brand-tertiary);
   }
 }
 

@@ -4,7 +4,10 @@
     <div id="page">
       <div id="hero">
         <div class="image-wrapper">
-          <image-responsive title="docking" />
+          <image-responsive
+            title="door"
+            alt="Image of a door with connected bubbles"
+          />
         </div>
         <div>
           <div class="hero-content">
@@ -45,11 +48,11 @@
         </div>
       </div>
       <div id="section-how-it-works">
-        <div class="wormhole-wrapper desktop-l">
+        <div class="globe-wrapper desktop-l">
           <image-responsive
-            title="wormhole"
-            class="wormhole"
-            alt="Image of spaceships funneling through a wormhole and getting bigger"
+            title="globe"
+            class="globe"
+            alt="Image of a golden globe on a green meadow"
           />
         </div>
         <div id="how-it-works-content">
@@ -58,8 +61,8 @@
             {{ $t('landing.how.paragraph') }}
           </p>
           <image-responsive
-            title="wormhole"
-            alt="Image of spaceships funneling through a wormhole and getting bigger"
+            title="globe"
+            alt="Image of a golden globe on a green meadow"
           />
           <h2>{{ $t('landing.how.subtitle') }}</h2>
           <ol>
@@ -375,12 +378,11 @@ ol li::before {
 
   .image-wrapper img {
     position: absolute;
-    mix-blend-mode: exclusion;
     width: 70%;
-    max-width: 680px;
+    max-width: 520px;
     height: auto;
-    /* top: -20px; */
-    right: 0;
+    right: 4rem;
+
     @media (max-width: $breakpoint-m) {
       width: auto;
       height: 100%;
@@ -401,13 +403,6 @@ ol li::before {
       margin: -2rem;
       padding: 2rem;
     }
-  }
-
-  #moon {
-    position: absolute;
-    top: 0;
-    right: 0;
-    mix-blend-mode: exclusion;
   }
 
   .btn-group {
@@ -448,7 +443,6 @@ ol li::before {
   justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
-  background: var(--brand-tertiary);
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }
@@ -522,32 +516,33 @@ ol li::before {
 }
 
 #section-how-it-works {
-  background: var(--bg-how-it-works);
-  display: grid;
-  grid-template-columns: 3fr 2fr;
-  grid-template-rows: repeat(2, auto);
-  grid-template-areas: 'image content' 'image .';
+  position: relative;
+  min-height: 620px;
+
   @media (max-width: $breakpoint-l) {
     display: flex;
   }
-  .wormhole-wrapper {
-    grid-area: image;
-    position: relative;
+  .globe-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
     display: flex;
     width: 100%;
     align-items: center;
-    .wormhole {
+    .globe {
       width: 100%;
       height: auto;
-      aspect-ratio: 16/9;
     }
   }
   #how-it-works-content {
-    position: relative;
+    position: absolute;
+    bottom: 2rem;
+    right: 4rem;
+
     display: flex;
     flex-direction: column;
     background: var(--bg-secondary-color);
-    /* width: 40%; */
+    width: 35%;
     border-radius: 1rem;
     padding: 2rem;
     color: var(--text-secondary);
@@ -555,6 +550,10 @@ ol li::before {
       display: none;
     }
     @media (max-width: $breakpoint-l) {
+      position: relative;
+      bottom: 0;
+      right: 0;
+
       width: 100%;
       border-radius: 0;
       padding: 0;

@@ -2,7 +2,7 @@
 @import './mixins';
 
 .btn-primary {
-  @include button(white, var(--brand-secondary), none);
+  @include button(white, var(--brand-primary), none);
 }
 
 .btn-action {
@@ -100,8 +100,8 @@
 .tag {
   font-family: 'Glacial Indifference', sans-serif;
   padding: 0.5rem 0.75rem;
-  background: var(--bg-light-accent);
-  color: $button-disabled-text-color;
+  background: var(--bg-secondary-color);
+  color: var(--text-secondary);
   width: fit-content;
   border-radius: 4px;
 }
