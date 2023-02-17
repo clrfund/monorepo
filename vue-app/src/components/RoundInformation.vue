@@ -176,7 +176,7 @@
               <div class="round-info-item-top">
                 <div class="round-info-title">{{ $t('roundInfo.div11') }}</div>
                 <img
-                  :v-tooltip="{
+                  v-tooltip="{
                     content: $t('roundInfo.tooltip5'),
                     trigger: 'hover click',
                   }"
