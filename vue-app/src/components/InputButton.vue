@@ -117,7 +117,8 @@ input[type='number'] {
   width: 100%;
   z-index: 1;
   &:hover {
-    background: var(--bg-light-highlight);
+    background: var(--bg-tertiary-color);
+    color: var(--text-color);
   }
 }
 </style>

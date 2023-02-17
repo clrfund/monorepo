@@ -508,6 +508,7 @@ export default class VerifyView extends Vue {
     border-radius: 16px;
     /* width: 320px; */
     box-shadow: var(--box-shadow);
+    background: var(--bg-secondary-color);
 
     .progress-steps {
       margin-bottom: 1rem;
@@ -531,7 +532,7 @@ export default class VerifyView extends Vue {
         @include stepColor(var(--text-color-rgb));
       }
       .active {
-        color: var(--text-color);
+        color: var(--text-body);
         font-weight: 600;
         font-size: 1rem;
       }

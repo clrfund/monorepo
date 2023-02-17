@@ -75,7 +75,7 @@ export default class CriteriaModal extends Vue {
 .close-btn {
   display: flex;
   gap: 0.5rem;
-  color: var(--text-color);
+  color: var(--text-body);
   text-decoration: underline;
   font-size: 1rem;
   cursor: pointer;
@@ -116,7 +116,7 @@ export default class CriteriaModal extends Vue {
     flex-direction: column;
     padding: 3rem 2rem;
     overflow: scroll;
-    background: var(--bg-secondary-color);
+    background: var(--bg-primary-color);
     @media (max-width: $breakpoint-m) {
       box-sizing: border-box;
       width: 100%;
@@ -138,8 +138,8 @@ export default class CriteriaModal extends Vue {
     font-size: 14px;
     line-height: 150%;
     border-radius: 16px;
-    color: white;
-    background: var(--bg-light-accent);
+    color: var(--text-body);
+    background: var(--bg-secondary-color);
     padding: 1.5rem 1rem;
     margin-bottom: 3rem;
     margin-top: 2rem;

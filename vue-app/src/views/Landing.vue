@@ -382,6 +382,7 @@ ol li::before {
     max-width: 520px;
     height: auto;
     right: 4rem;
+    bottom: 0;
 
     @media (max-width: $breakpoint-m) {
       width: auto;

@@ -1269,7 +1269,7 @@ export default class JoinView extends mixins(validationMixin) {
 .form-background {
   border-radius: 0.5rem;
   padding: 1rem;
-  background: var(--bg-light-color);
+  background: var(--bg-secondary-color);
   margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -1284,9 +1284,9 @@ export default class JoinView extends mixins(validationMixin) {
 }
 
 .input {
-  color: var(--text-color);
+  color: var(--text-body);
   border-radius: 16px;
-  border: 2px solid var(-button-color);
+  border: 2px solid var(--border-color);
   background-color: var(--bg-secondary-color);
   margin: 0.5rem 0;
   padding: 0.5rem 1rem;
@@ -1296,15 +1296,15 @@ export default class JoinView extends mixins(validationMixin) {
   line-height: 24px;
   letter-spacing: 0em;
   &:valid {
-    border: 2px solid $clr-green;
+    border: 2px solid var(--border-color);
   }
   &:hover {
     background: var(--bg-primary-color);
-    border: 2px solid $highlight-color;
+    border: 2px solid var(--border-color);
     box-shadow: 0px 4px 16px 0px 25, 22, 35, 0.4;
   }
   &:optional {
-    border: 2px solid $button-color;
+    border: 2px solid var(--border-color);
     background-color: var(--bg-secondary-color);
   }
 }
@@ -1347,7 +1347,7 @@ export default class JoinView extends mixins(validationMixin) {
   display: flex;
   margin-top: 1rem;
   box-sizing: border-box;
-  border: 2px solid $button-color;
+  border: 2px solid var(--border-color);
   border-radius: 1rem;
   overflow: hidden;
   width: fit-content;
@@ -1357,8 +1357,9 @@ export default class JoinView extends mixins(validationMixin) {
     pointer-events: none;
   }
   input[type='radio']:checked + label {
-    background: $clr-pink;
+    background: var(--border-color);
     font-weight: 600;
+    color: var(--text-color);
   }
   @media (max-width: $breakpoint-m) {
     width: 100%;
@@ -1369,18 +1370,18 @@ export default class JoinView extends mixins(validationMixin) {
 
 .radio-btn {
   box-sizing: border-box;
-  color: var(--text-color);
+  color: var(--text-body);
   font-size: 16px;
   line-height: 24px;
   align-items: center;
   padding: 0.5rem 1rem;
   margin-left: -1px;
 
-  border-right: 2px solid $button-color;
+  border-right: 2px solid var(--border-color);
   border-bottom: none;
   @media (max-width: $breakpoint-m) {
     border-right: none;
-    border-bottom: 2px solid $button-color;
+    border-bottom: 2px solid var(--border-color);
   }
   &:last-of-type {
     border-right: none;
@@ -1392,6 +1393,7 @@ export default class JoinView extends mixins(validationMixin) {
     background: var(--bg-secondary-highlight);
     transform: scale(1.04);
     cursor: pointer;
+    color: var(--text-color);
   }
   &:active {
     background: var(--bg-secondary-highlight);
@@ -1431,7 +1433,7 @@ export default class JoinView extends mixins(validationMixin) {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid $highlight-color;
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 0.5rem;
 }
 
@@ -1501,7 +1503,7 @@ export default class JoinView extends mixins(validationMixin) {
   font-family: 'Inter';
   font-weight: 500;
   font-size: 16px;
-  color: $clr-green;
+  color: var(--text-body);
 }
 
 .data {

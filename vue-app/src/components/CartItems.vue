@@ -183,7 +183,7 @@ export default class extends Vue {
 
   .project-name {
     align-self: center;
-    color: var(--text-color);
+    color: var(--text-body);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;

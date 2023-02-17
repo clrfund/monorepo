@@ -38,7 +38,7 @@
 }
 
 .explorer-btn {
-  @include button(white, var(--bg-inactive), none);
+  @include button(white, var(--bg-secondary-color), none);
   box-shadow: var(--box-shadow);
   display: flex;
   gap: 0.5rem;

@@ -861,7 +861,7 @@ h2 {
     font-family: 'Inter';
     font-weight: 500;
     font-size: 14px;
-    color: var(--text-color);
+    color: var(--text-body);
     border: 0;
     background: none;
     text-decoration: underline;
@@ -1008,7 +1008,7 @@ h2 {
 
 .reallocation-message {
   padding: 1rem;
-  background: $highlight-color;
+  background: var(--bg-secondary-color);
   font-size: 14px;
 }
 
@@ -1170,10 +1170,14 @@ h2 {
 .dropdown {
   position: relative;
   display: inline-block;
+  &:hover {
+    filter: var(--img-filter, invert(1));
+  }
 
   img.dropdown-btn {
     margin: 0;
     filter: var(--img-filter, invert(1));
+    border: 1px solid var(--border-color);
   }
 
   .button-menu {
@@ -1197,9 +1201,9 @@ h2 {
       padding: 0.25rem;
       padding-left: 1rem;
       gap: 0.5rem;
-      color: var(--text-color);
+      color: var(--text-body);
       &:hover {
-        background: var(--bg-light-color);
+        background: var(--bg-primary-color);
       }
 
       .item-text {

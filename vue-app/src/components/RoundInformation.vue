@@ -510,6 +510,7 @@ export default class RoundInformation extends Vue {
 .round-title-bar {
   display: flex;
   align-items: center;
+  color: var(--text-body);
 }
 .round-title {
   line-height: 120%;
@@ -786,12 +787,14 @@ export default class RoundInformation extends Vue {
 
 .add-funds-link {
   font-size: 14px;
+  color: var(--text-body);
 }
 
 .status {
   font-size: 16px;
   display: flex;
   align-items: center;
+  color: var(--text-body);
 }
 
 .full-width {

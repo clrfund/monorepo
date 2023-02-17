@@ -12,13 +12,13 @@
 
   --error-color: #bd6b5e;
   --warning-color: rgb(253, 254, 106);
-  --warning-background: rgba(253, 254, 106, 0.05);
+  --warning-background: var(--bg-secondary-color);
   --warning-border: var(--border-color);
   --attention-color: rgb(253, 254, 106);
   --link-color: #efe9da;
   --loader-color: #fff;
 
-  --border-color: #ffffff;
+  --border-color: #efe9da;
   --border-strong: #000000;
   --border-highlight: #7375a6;
 
@@ -30,6 +30,7 @@
 
   --bg-primary-color: #3e6957;
   --bg-secondary-color: #133629;
+  --bg-tertiary-color: #efe9da;
   --bg-light-color: #3e6957;
 
   // alternative background colors for light and dark modes

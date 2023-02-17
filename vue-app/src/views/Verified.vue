@@ -4,7 +4,6 @@
     <round-status-banner v-if="$store.state.currentRound" />
     <!-- TODO: add confetti -->
     <div class="gradient">
-      <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
         <image-responsive title="newrings" />
         <div class="content">
@@ -94,7 +93,7 @@ ul {
 }
 
 .gradient {
-  background: var(--bg-gradient);
+  background: var(--bg-primary-color);
   position: relative;
 
   .moon {
@@ -106,7 +105,6 @@ ul {
   .hero {
     bottom: 0;
     display: flex;
-    background: var(--bg-gradient-hero);
     height: calc(100vh - 113px);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
@@ -117,7 +115,6 @@ ul {
       position: absolute;
       bottom: 0;
       right: 0;
-      mix-blend-mode: exclusion;
       width: 66%;
       @media (max-width: $breakpoint-m) {
         right: 0;

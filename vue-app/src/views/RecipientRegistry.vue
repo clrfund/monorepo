@@ -423,7 +423,7 @@ export default class RecipientRegistryView extends Vue {
   background-color: var(--bg-light-color);
 
   thead {
-    background-color: var(--bg-primary-color);
+    background-color: var(--bg-secondary-color);
     border-radius: 6px;
   }
 
