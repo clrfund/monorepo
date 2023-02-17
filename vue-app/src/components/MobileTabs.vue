@@ -123,7 +123,7 @@ export default class MobileTabs extends Vue {
   margin-top: -0.75rem;
   font-size: 14px;
   text-transform: uppercase;
-  color: var(--text-color);
+  color: var(--text-body);
 }
 
 .cart-indicator {
