@@ -1,5 +1,4 @@
 import { BigNumber, utils } from 'ethers'
-import { sha256 } from 'ethers/lib/utils'
 import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
 import {
   Keypair as MaciKeypair,

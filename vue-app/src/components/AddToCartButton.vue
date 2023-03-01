@@ -29,11 +29,7 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
-import {
-  SAVE_CART,
-  LOAD_OR_CREATE_ENCRYPTION_KEY,
-  CREATE_ENCRYPTION_KEY_FROM_EXISTING,
-} from '@/store/action-types'
+import { SAVE_CART, LOAD_OR_CREATE_ENCRYPTION_KEY } from '@/store/action-types'
 import {
   ADD_CART_ITEM,
   TOGGLE_SHOW_CART_PANEL,
@@ -56,7 +52,6 @@ import InputButton from '@/components/InputButton.vue'
 import ErrorModal from '@/components/ErrorModal.vue'
 import PasskeyModal from '@/components/PasskeyModal.vue'
 import { hasUncommittedCart } from '@/api/cart'
-import { resolve } from 'path'
 
 @Component({
   components: {
@@ -133,7 +128,7 @@ export default class AddToCartButton extends Vue {
   }
 
   async loadOrCreateEncryptionKey(): Promise<void> {
-    let action = 'LOAD_OR_CREATE_ENCRYPTION_KEY'
+    let action = LOAD_OR_CREATE_ENCRYPTION_KEY
 
     if (await this.showPasskeyModal()) {
       action = await new Promise((resolve) => {

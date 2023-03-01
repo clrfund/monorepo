@@ -211,12 +211,8 @@ export default class ContributionModal extends Vue {
   async contribute() {
     try {
       this.step += 1
-      const {
-        nativeTokenAddress,
-        maciAddress,
-        fundingRoundAddress,
-        coordinatorPubKey,
-      } = this.currentRound
+      const { nativeTokenAddress, maciAddress, fundingRoundAddress } =
+        this.currentRound
       const total = this.total
       const token = new Contract(nativeTokenAddress, ERC20, this.signer)
       // Approve transfer (step 1)
