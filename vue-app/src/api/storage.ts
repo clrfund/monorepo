@@ -33,4 +33,16 @@ function getItem(
   return value
 }
 
-export const storage = { setItem, getItem }
+/**
+ * Get the item without decrypting it
+ * @param accountId wallet address
+ * @param storageKey key to the storage
+ * @returns encrypted string
+ */
+function getItemRaw(accountId: string, storageKey: string): string | null {
+  const fullStorageKey = getFullStorageKey(accountId, storageKey)
+  const encryptedValue = lsGet(fullStorageKey)
+  return encryptedValue
+}
+
+export const storage = { setItem, getItem, getItemRaw }

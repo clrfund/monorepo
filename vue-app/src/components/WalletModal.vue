@@ -38,11 +38,9 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { SELECT_ROUND, LOAD_ROUND_INFO } from '@/store/action-types'
 import { getCurrentRound } from '@/api/round'
-import { getLoginMessage } from '@/api/user'
 
 // Components
 import Loader from '@/components/Loader.vue'
-import { factory } from '@/api/core'
 
 @Component({
   components: {
@@ -69,13 +67,7 @@ export default class WalletModal extends Vue {
     this.error = ''
     this.connectingWallet = true
     try {
-      // if there is no current round, use the factory address
-      // so we can generate a valid login message
-      const contractAddress =
-        this.$store.state.currentRoundAddress || factory.address
-      const loginMessage = getLoginMessage(contractAddress)
-
-      await this.$web3.connectWallet(walletType, loginMessage)
+      await this.$web3.connectWallet(walletType)
       this.$emit('close')
     } catch (error) {
       this.error = error.message

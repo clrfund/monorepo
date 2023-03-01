@@ -29,7 +29,11 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
-import { SAVE_CART } from '@/store/action-types'
+import {
+  SAVE_CART,
+  LOAD_OR_CREATE_ENCRYPTION_KEY,
+  CREATE_ENCRYPTION_KEY_FROM_EXISTING,
+} from '@/store/action-types'
 import {
   ADD_CART_ITEM,
   TOGGLE_SHOW_CART_PANEL,
@@ -42,14 +46,24 @@ import {
 import { User } from '@/api/user'
 import { Project } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
+import {
+  hasContributorEverVoted,
+  hasContributorVoted,
+} from '@/api/contributions'
 import { CartItem } from '@/api/contributions'
 import WalletModal from '@/components/WalletModal.vue'
 import InputButton from '@/components/InputButton.vue'
+import ErrorModal from '@/components/ErrorModal.vue'
+import PasskeyModal from '@/components/PasskeyModal.vue'
+import { hasUncommittedCart } from '@/api/cart'
+import { resolve } from 'path'
 
 @Component({
   components: {
     WalletModal,
     InputButton,
+    ErrorModal,
+    PasskeyModal,
   },
 })
 export default class AddToCartButton extends Vue {
@@ -94,14 +108,64 @@ export default class AddToCartButton extends Vue {
     )
   }
 
-  contribute() {
-    this.$store.commit(ADD_CART_ITEM, {
-      ...this.project,
-      amount: this.amount.toString(),
-      isCleared: false,
-    })
-    this.$store.dispatch(SAVE_CART)
-    this.$store.commit(TOGGLE_EDIT_SELECTION, true)
+  async showPasskeyModal(): Promise<boolean> {
+    const { currentRoundAddress } = this.$store.state
+    const walletAddress = this.currentUser?.walletAddress
+
+    if (!walletAddress || !currentRoundAddress) {
+      return false
+    }
+
+    // contributor has never voted in any round
+    const votedBefore = await hasContributorEverVoted(walletAddress)
+
+    const votedThisRound = await hasContributorVoted(
+      currentRoundAddress,
+      walletAddress
+    )
+
+    const hasUncommitted = hasUncommittedCart(
+      currentRoundAddress,
+      walletAddress
+    )
+
+    return votedBefore && !votedThisRound && !hasUncommitted
+  }
+
+  async loadOrCreateEncryptionKey(): Promise<void> {
+    let action = 'LOAD_OR_CREATE_ENCRYPTION_KEY'
+
+    if (await this.showPasskeyModal()) {
+      action = await new Promise((resolve) => {
+        this.$modal.show(
+          PasskeyModal,
+          { handleSelection: (selectedAction) => resolve(selectedAction) },
+          {}
+        )
+      })
+    }
+
+    try {
+      await this.$store.dispatch(action)
+    } catch (error) {
+      this.$modal.show(ErrorModal, { error }, { width: 400, top: 20 })
+    }
+  }
+
+  async contribute() {
+    if (!this.currentUser?.encryptionKey) {
+      await this.loadOrCreateEncryptionKey()
+    }
+
+    if (this.currentUser?.encryptionKey) {
+      this.$store.commit(ADD_CART_ITEM, {
+        ...this.project,
+        amount: this.amount.toString(),
+        isCleared: false,
+      })
+      this.$store.dispatch(SAVE_CART)
+      this.$store.commit(TOGGLE_EDIT_SELECTION, true)
+    }
   }
 
   get isAmountValid(): boolean {

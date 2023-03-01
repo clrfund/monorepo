@@ -1,0 +1,7 @@
+query GetContributorVotesForAllRounds($contributorAddress: ID!) {
+  contributors(where: { id: $contributorAddress }) {
+    votes {
+      id
+    }
+  }
+}

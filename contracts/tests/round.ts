@@ -374,25 +374,23 @@ describe('Funding Round', () => {
       )
     })
 
-    it('use signature hash to generate new key and submit change change message', async () => {
+    it('use a seed to generate new key and submit change change message', async () => {
       const signature = await contributor.signMessage('hello world')
       const hash = sha256(signature)
-      for (let i = 1; i < 12; i++) {
-        const newUserKeypair = Keypair.createFromSignatureHash(hash, i)
-        const [message, encPubKey] = createMessage(
-          userStateIndex,
-          userKeypair,
-          newUserKeypair,
-          coordinatorPubKey,
-          null,
-          null,
-          nonce
-        )
-        await maci.publishMessage(
-          message.asContractParam(),
-          encPubKey.asContractParam()
-        )
-      }
+      const newUserKeypair = Keypair.createFromSeed(hash)
+      const [message, encPubKey] = createMessage(
+        userStateIndex,
+        userKeypair,
+        newUserKeypair,
+        coordinatorPubKey,
+        null,
+        null,
+        nonce
+      )
+      await maci.publishMessage(
+        message.asContractParam(),
+        encPubKey.asContractParam()
+      )
     })
 
     it('submits an invalid vote', async () => {

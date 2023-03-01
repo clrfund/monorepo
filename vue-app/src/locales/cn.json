@@ -1220,5 +1220,14 @@
   "cancel": "取消",
   "copied": "已复制！",
   "more_on_maci": "更多关于 MACI",
-  "add_project": "添加项目"
+  "add_project": "添加项目",
+  "errorModal": {
+    "header": "出错了！",
+    "wrong_key": "错误的钥匙，请尝试另一个以您钱包地址为名的钥匙。"
+  },
+  "passkeyModal": {
+    "header": "创建新的或使用现有的密码?",
+    "create_new_key": "新的",
+    "use_existing_key": "现有的"
+  }
 }

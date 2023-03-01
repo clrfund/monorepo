@@ -13,19 +13,14 @@ import {
   hasContributorVoted,
   getContributorIndex,
   Contributor,
-  getContributorMessages,
 } from '@/api/contributions'
-import { getProjectByIndex } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
 import { Rounds } from '@/api/rounds'
 import { storage } from '@/api/storage'
 import { getTally } from '@/api/tally'
 import { getEtherBalance, getTokenBalance, isVerifiedUser } from '@/api/user'
 import { getRegistryInfo } from '@/api/recipient-registry-optimistic'
-import { Keypair, Command } from '@clrfund/maci-utils'
-import { BigNumber } from 'ethers'
-import { formatAmount } from '@/utils/amounts'
-import { getKeyPair } from '@/api/keypair'
+import { Keypair } from '@clrfund/maci-utils'
 
 // Constants
 import {
@@ -39,6 +34,8 @@ import {
   LOAD_ROUND_INFO,
   LOAD_ROUNDS,
   LOAD_TALLY,
+  CREATE_ENCRYPTION_KEY_FROM_EXISTING,
+  LOAD_OR_CREATE_ENCRYPTION_KEY,
   LOAD_USER_INFO,
   LOGOUT_USER,
   SAVE_CART,
@@ -66,13 +63,12 @@ import {
 } from './mutation-types'
 
 // Utils
-import { ensLookup } from '@/utils/accounts'
 import {
-  factory,
-  UserRegistryType,
-  userRegistryType,
-  maxDecimals,
-} from '@/api/core'
+  createOrGetEncryptionKey,
+  ensLookup,
+  getFirstEncryptionKey,
+} from '@/utils/accounts'
+import { factory, UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
 import { getFactoryInfo } from '@/api/factory'
 import { getMACIFactoryInfo } from '@/api/maci-factory'
@@ -143,6 +139,35 @@ const actions = {
     commit(SET_RECIPIENT_REGISTRY_ADDRESS, recipientRegistryAddress)
     commit(SET_RECIPIENT_REGISTRY_INFO, info)
   },
+  async [LOAD_OR_CREATE_ENCRYPTION_KEY]({ commit, state }) {
+    if (!state.currentUser || !state.currentRoundAddress) {
+      return
+    }
+
+    const encryptionKey = await createOrGetEncryptionKey(
+      state.currentUser.walletAddress,
+      state.currentRoundAddress
+    )
+
+    commit(SET_CURRENT_USER, {
+      ...state.currentUser,
+      encryptionKey,
+    })
+  },
+  async [CREATE_ENCRYPTION_KEY_FROM_EXISTING]({ commit, state }) {
+    if (!state.currentUser || !state.currentRoundAddress) {
+      return
+    }
+
+    const encryptionKey = await getFirstEncryptionKey(
+      state.currentUser.walletAddress
+    )
+
+    commit(SET_CURRENT_USER, {
+      ...state.currentUser,
+      encryptionKey,
+    })
+  },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (!state.currentUser) {
       return
@@ -165,7 +190,6 @@ const actions = {
           state.currentRound.fundingRoundAddress,
           state.currentUser.walletAddress
         )
-
         const hasVoted = await hasContributorVoted(
           state.currentRound.fundingRoundAddress,
           state.currentUser.walletAddress
@@ -266,7 +290,9 @@ const actions = {
       encryptionKey
     )
     Vue.set(state, 'committedCart', committedCart)
-    commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
+    if (committedCart.length > 0) {
+      commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
+    }
   },
   [SAVE_CONTRIBUTOR_DATA]({ state }) {
     const serializedData = serializeContributorData(state.contributor)
@@ -279,34 +305,21 @@ const actions = {
   },
   async [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
     const { encryptionKey } = state.currentUser
-    const { fundingRoundAddress, coordinatorPubKey } = state.currentRound
+    const { fundingRoundAddress } = state.currentRound
     if (!encryptionKey) {
       return
     }
 
-    const contributorKeypair = await getKeyPair({
-      encryptionKey,
-      fundingRoundAddress,
-      coordinatorPubKey,
-    })
+    const contributorKeypair = Keypair.createFromSeed(encryptionKey)
 
-    let stateIndex = await getContributorIndex(
+    const stateIndex = await getContributorIndex(
       fundingRoundAddress,
       contributorKeypair.pubKey
     )
 
     if (!stateIndex) {
-      // after key change, there's no stateIndex for the new key, get the index from the original key
-      const originalKeypair = Keypair.createFromSignatureHash(encryptionKey, 1)
-      stateIndex = await getContributorIndex(
-        fundingRoundAddress,
-        originalKeypair.pubKey
-      )
-
-      if (!stateIndex) {
-        // if still no contributor index, user has not contributed
-        return
-      }
+      // if no contributor index, user has not contributed
+      return
     }
 
     const contributor: Contributor = {

@@ -49,6 +49,7 @@ export type Contribution_Filter = {
   amount_lte: InputMaybe<Scalars['BigInt']>;
   amount_not: InputMaybe<Scalars['BigInt']>;
   amount_not_in: InputMaybe<Array<Scalars['BigInt']>>;
+  and: InputMaybe<Array<InputMaybe<Contribution_Filter>>>;
   contributor: InputMaybe<Scalars['String']>;
   contributor_: InputMaybe<Contributor_Filter>;
   contributor_contains: InputMaybe<Scalars['String']>;
@@ -119,6 +120,7 @@ export type Contribution_Filter = {
   id_lte: InputMaybe<Scalars['ID']>;
   id_not: InputMaybe<Scalars['ID']>;
   id_not_in: InputMaybe<Array<Scalars['ID']>>;
+  or: InputMaybe<Array<InputMaybe<Contribution_Filter>>>;
   voiceCredits: InputMaybe<Scalars['BigInt']>;
   voiceCredits_gt: InputMaybe<Scalars['BigInt']>;
   voiceCredits_gte: InputMaybe<Scalars['BigInt']>;
@@ -132,8 +134,33 @@ export type Contribution_Filter = {
 export enum Contribution_OrderBy {
   Amount = 'amount',
   Contributor = 'contributor',
+  ContributorContributorAddress = 'contributor__contributorAddress',
+  ContributorCreatedAt = 'contributor__createdAt',
+  ContributorId = 'contributor__id',
+  ContributorLastUpdatedAt = 'contributor__lastUpdatedAt',
+  ContributorVerifiedTimeStamp = 'contributor__verifiedTimeStamp',
   CreatedAt = 'createdAt',
   FundingRound = 'fundingRound',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
   Id = 'id',
   VoiceCredits = 'voiceCredits'
 }
@@ -201,6 +228,7 @@ export type ContributorRegistryContributorsArgs = {
 export type ContributorRegistry_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<ContributorRegistry_Filter>>>;
   context: InputMaybe<Scalars['String']>;
   context_contains: InputMaybe<Scalars['String']>;
   context_contains_nocase: InputMaybe<Scalars['String']>;
@@ -291,6 +319,7 @@ export type ContributorRegistry_Filter = {
   lastUpdatedAt_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with_nocase: InputMaybe<Scalars['String']>;
+  or: InputMaybe<Array<InputMaybe<ContributorRegistry_Filter>>>;
   owner: InputMaybe<Scalars['Bytes']>;
   owner_contains: InputMaybe<Scalars['Bytes']>;
   owner_gt: InputMaybe<Scalars['Bytes']>;
@@ -308,6 +337,28 @@ export enum ContributorRegistry_OrderBy {
   Contributors = 'contributors',
   CreatedAt = 'createdAt',
   FundingRoundFactory = 'fundingRoundFactory',
+  FundingRoundFactoryBatchUstVerifier = 'fundingRoundFactory__batchUstVerifier',
+  FundingRoundFactoryContributorRegistryAddress = 'fundingRoundFactory__contributorRegistryAddress',
+  FundingRoundFactoryCoordinator = 'fundingRoundFactory__coordinator',
+  FundingRoundFactoryCoordinatorPubKey = 'fundingRoundFactory__coordinatorPubKey',
+  FundingRoundFactoryCreatedAt = 'fundingRoundFactory__createdAt',
+  FundingRoundFactoryId = 'fundingRoundFactory__id',
+  FundingRoundFactoryLastUpdatedAt = 'fundingRoundFactory__lastUpdatedAt',
+  FundingRoundFactoryMaciFactory = 'fundingRoundFactory__maciFactory',
+  FundingRoundFactoryMaxMessages = 'fundingRoundFactory__maxMessages',
+  FundingRoundFactoryMaxUsers = 'fundingRoundFactory__maxUsers',
+  FundingRoundFactoryMaxVoteOptions = 'fundingRoundFactory__maxVoteOptions',
+  FundingRoundFactoryMessageBatchSize = 'fundingRoundFactory__messageBatchSize',
+  FundingRoundFactoryMessageTreeDepth = 'fundingRoundFactory__messageTreeDepth',
+  FundingRoundFactoryNativeToken = 'fundingRoundFactory__nativeToken',
+  FundingRoundFactoryOwner = 'fundingRoundFactory__owner',
+  FundingRoundFactoryQvtVerifier = 'fundingRoundFactory__qvtVerifier',
+  FundingRoundFactoryRecipientRegistryAddress = 'fundingRoundFactory__recipientRegistryAddress',
+  FundingRoundFactorySignUpDuration = 'fundingRoundFactory__signUpDuration',
+  FundingRoundFactoryStateTreeDepth = 'fundingRoundFactory__stateTreeDepth',
+  FundingRoundFactoryTallyBatchSize = 'fundingRoundFactory__tallyBatchSize',
+  FundingRoundFactoryVoteOptionTreeDepth = 'fundingRoundFactory__voteOptionTreeDepth',
+  FundingRoundFactoryVotingDuration = 'fundingRoundFactory__votingDuration',
   Id = 'id',
   LastUpdatedAt = 'lastUpdatedAt',
   Owner = 'owner'
@@ -316,6 +367,7 @@ export enum ContributorRegistry_OrderBy {
 export type Contributor_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<Contributor_Filter>>>;
   contributions_: InputMaybe<Contribution_Filter>;
   contributorAddress: InputMaybe<Scalars['Bytes']>;
   contributorAddress_contains: InputMaybe<Scalars['Bytes']>;
@@ -403,6 +455,7 @@ export type Contributor_Filter = {
   lastUpdatedAt_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with_nocase: InputMaybe<Scalars['String']>;
+  or: InputMaybe<Array<InputMaybe<Contributor_Filter>>>;
   verifiedTimeStamp: InputMaybe<Scalars['String']>;
   verifiedTimeStamp_contains: InputMaybe<Scalars['String']>;
   verifiedTimeStamp_contains_nocase: InputMaybe<Scalars['String']>;
@@ -430,6 +483,11 @@ export enum Contributor_OrderBy {
   Contributions = 'contributions',
   ContributorAddress = 'contributorAddress',
   ContributorRegistry = 'contributorRegistry',
+  ContributorRegistryContext = 'contributorRegistry__context',
+  ContributorRegistryCreatedAt = 'contributorRegistry__createdAt',
+  ContributorRegistryId = 'contributorRegistry__id',
+  ContributorRegistryLastUpdatedAt = 'contributorRegistry__lastUpdatedAt',
+  ContributorRegistryOwner = 'contributorRegistry__owner',
   CreatedAt = 'createdAt',
   FundingRounds = 'fundingRounds',
   Id = 'id',
@@ -449,6 +507,7 @@ export type Coordinator = {
 export type Coordinator_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<Coordinator_Filter>>>;
   contact: InputMaybe<Scalars['String']>;
   contact_contains: InputMaybe<Scalars['String']>;
   contact_contains_nocase: InputMaybe<Scalars['String']>;
@@ -517,6 +576,7 @@ export type Coordinator_Filter = {
   lastUpdatedAt_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with_nocase: InputMaybe<Scalars['String']>;
+  or: InputMaybe<Array<InputMaybe<Coordinator_Filter>>>;
 };
 
 export enum Coordinator_OrderBy {
@@ -547,6 +607,7 @@ export type Donation_Filter = {
   amount_lte: InputMaybe<Scalars['BigInt']>;
   amount_not: InputMaybe<Scalars['BigInt']>;
   amount_not_in: InputMaybe<Array<Scalars['BigInt']>>;
+  and: InputMaybe<Array<InputMaybe<Donation_Filter>>>;
   createdAt: InputMaybe<Scalars['String']>;
   createdAt_contains: InputMaybe<Scalars['String']>;
   createdAt_contains_nocase: InputMaybe<Scalars['String']>;
@@ -596,6 +657,7 @@ export type Donation_Filter = {
   id_lte: InputMaybe<Scalars['ID']>;
   id_not: InputMaybe<Scalars['ID']>;
   id_not_in: InputMaybe<Array<Scalars['ID']>>;
+  or: InputMaybe<Array<InputMaybe<Donation_Filter>>>;
   recipient: InputMaybe<Scalars['String']>;
   recipient_: InputMaybe<Recipient_Filter>;
   recipient_contains: InputMaybe<Scalars['String']>;
@@ -631,8 +693,43 @@ export enum Donation_OrderBy {
   Amount = 'amount',
   CreatedAt = 'createdAt',
   FundingRound = 'fundingRound',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
   Id = 'id',
   Recipient = 'recipient',
+  RecipientCreatedAt = 'recipient__createdAt',
+  RecipientDeposit = 'recipient__deposit',
+  RecipientId = 'recipient__id',
+  RecipientLastUpdatedAt = 'recipient__lastUpdatedAt',
+  RecipientRecipientAddress = 'recipient__recipientAddress',
+  RecipientRecipientIndex = 'recipient__recipientIndex',
+  RecipientRecipientMetadata = 'recipient__recipientMetadata',
+  RecipientRejected = 'recipient__rejected',
+  RecipientRequestResolvedHash = 'recipient__requestResolvedHash',
+  RecipientRequestSubmittedHash = 'recipient__requestSubmittedHash',
+  RecipientRequestType = 'recipient__requestType',
+  RecipientRequester = 'recipient__requester',
+  RecipientSubmissionTime = 'recipient__submissionTime',
+  RecipientVerified = 'recipient__verified',
+  RecipientVoteOptionIndex = 'recipient__voteOptionIndex',
   VoteOptionIndex = 'voteOptionIndex'
 }
 
@@ -757,6 +854,7 @@ export type FundingRoundFactoryFundingRoundsArgs = {
 export type FundingRoundFactory_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<FundingRoundFactory_Filter>>>;
   batchUstVerifier: InputMaybe<Scalars['Bytes']>;
   batchUstVerifier_contains: InputMaybe<Scalars['Bytes']>;
   batchUstVerifier_gt: InputMaybe<Scalars['Bytes']>;
@@ -979,6 +1077,7 @@ export type FundingRoundFactory_Filter = {
   nativeToken_not: InputMaybe<Scalars['Bytes']>;
   nativeToken_not_contains: InputMaybe<Scalars['Bytes']>;
   nativeToken_not_in: InputMaybe<Array<Scalars['Bytes']>>;
+  or: InputMaybe<Array<InputMaybe<FundingRoundFactory_Filter>>>;
   owner: InputMaybe<Scalars['Bytes']>;
   owner_contains: InputMaybe<Scalars['Bytes']>;
   owner_gt: InputMaybe<Scalars['Bytes']>;
@@ -1076,10 +1175,35 @@ export enum FundingRoundFactory_OrderBy {
   BatchUstVerifier = 'batchUstVerifier',
   ContributorRegistry = 'contributorRegistry',
   ContributorRegistryAddress = 'contributorRegistryAddress',
+  ContributorRegistryContext = 'contributorRegistry__context',
+  ContributorRegistryCreatedAt = 'contributorRegistry__createdAt',
+  ContributorRegistryId = 'contributorRegistry__id',
+  ContributorRegistryLastUpdatedAt = 'contributorRegistry__lastUpdatedAt',
+  ContributorRegistryOwner = 'contributorRegistry__owner',
   Coordinator = 'coordinator',
   CoordinatorPubKey = 'coordinatorPubKey',
   CreatedAt = 'createdAt',
   CurrentRound = 'currentRound',
+  CurrentRoundContributorCount = 'currentRound__contributorCount',
+  CurrentRoundContributorRegistryAddress = 'currentRound__contributorRegistryAddress',
+  CurrentRoundCoordinator = 'currentRound__coordinator',
+  CurrentRoundCreatedAt = 'currentRound__createdAt',
+  CurrentRoundId = 'currentRound__id',
+  CurrentRoundIsCancelled = 'currentRound__isCancelled',
+  CurrentRoundIsFinalized = 'currentRound__isFinalized',
+  CurrentRoundLastUpdatedAt = 'currentRound__lastUpdatedAt',
+  CurrentRoundMaci = 'currentRound__maci',
+  CurrentRoundMatchingPoolSize = 'currentRound__matchingPoolSize',
+  CurrentRoundNativeToken = 'currentRound__nativeToken',
+  CurrentRoundRecipientCount = 'currentRound__recipientCount',
+  CurrentRoundRecipientRegistryAddress = 'currentRound__recipientRegistryAddress',
+  CurrentRoundSignUpDeadline = 'currentRound__signUpDeadline',
+  CurrentRoundStartTime = 'currentRound__startTime',
+  CurrentRoundTallyHash = 'currentRound__tallyHash',
+  CurrentRoundTotalSpent = 'currentRound__totalSpent',
+  CurrentRoundTotalVotes = 'currentRound__totalVotes',
+  CurrentRoundVoiceCreditFactor = 'currentRound__voiceCreditFactor',
+  CurrentRoundVotingDeadline = 'currentRound__votingDeadline',
   FundingRounds = 'fundingRounds',
   Id = 'id',
   LastUpdatedAt = 'lastUpdatedAt',
@@ -1091,10 +1215,24 @@ export enum FundingRoundFactory_OrderBy {
   MessageTreeDepth = 'messageTreeDepth',
   NativeToken = 'nativeToken',
   NativeTokenInfo = 'nativeTokenInfo',
+  NativeTokenInfoCreatedAt = 'nativeTokenInfo__createdAt',
+  NativeTokenInfoDecimals = 'nativeTokenInfo__decimals',
+  NativeTokenInfoId = 'nativeTokenInfo__id',
+  NativeTokenInfoLastUpdatedAt = 'nativeTokenInfo__lastUpdatedAt',
+  NativeTokenInfoSymbol = 'nativeTokenInfo__symbol',
+  NativeTokenInfoTokenAddress = 'nativeTokenInfo__tokenAddress',
   Owner = 'owner',
   QvtVerifier = 'qvtVerifier',
   RecipientRegistry = 'recipientRegistry',
   RecipientRegistryAddress = 'recipientRegistryAddress',
+  RecipientRegistryBaseDeposit = 'recipientRegistry__baseDeposit',
+  RecipientRegistryChallengePeriodDuration = 'recipientRegistry__challengePeriodDuration',
+  RecipientRegistryController = 'recipientRegistry__controller',
+  RecipientRegistryCreatedAt = 'recipientRegistry__createdAt',
+  RecipientRegistryId = 'recipientRegistry__id',
+  RecipientRegistryLastUpdatedAt = 'recipientRegistry__lastUpdatedAt',
+  RecipientRegistryMaxRecipients = 'recipientRegistry__maxRecipients',
+  RecipientRegistryOwner = 'recipientRegistry__owner',
   SignUpDuration = 'signUpDuration',
   StateTreeDepth = 'stateTreeDepth',
   TallyBatchSize = 'tallyBatchSize',
@@ -1105,6 +1243,7 @@ export enum FundingRoundFactory_OrderBy {
 export type FundingRound_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<FundingRound_Filter>>>;
   contributions_: InputMaybe<Contribution_Filter>;
   contributorCount: InputMaybe<Scalars['BigInt']>;
   contributorCount_gt: InputMaybe<Scalars['BigInt']>;
@@ -1283,6 +1422,7 @@ export type FundingRound_Filter = {
   nativeToken_not: InputMaybe<Scalars['Bytes']>;
   nativeToken_not_contains: InputMaybe<Scalars['Bytes']>;
   nativeToken_not_in: InputMaybe<Array<Scalars['Bytes']>>;
+  or: InputMaybe<Array<InputMaybe<FundingRound_Filter>>>;
   recipientCount: InputMaybe<Scalars['BigInt']>;
   recipientCount_gt: InputMaybe<Scalars['BigInt']>;
   recipientCount_gte: InputMaybe<Scalars['BigInt']>;
@@ -1399,10 +1539,37 @@ export enum FundingRound_OrderBy {
   ContributorCount = 'contributorCount',
   ContributorRegistry = 'contributorRegistry',
   ContributorRegistryAddress = 'contributorRegistryAddress',
+  ContributorRegistryContext = 'contributorRegistry__context',
+  ContributorRegistryCreatedAt = 'contributorRegistry__createdAt',
+  ContributorRegistryId = 'contributorRegistry__id',
+  ContributorRegistryLastUpdatedAt = 'contributorRegistry__lastUpdatedAt',
+  ContributorRegistryOwner = 'contributorRegistry__owner',
   Contributors = 'contributors',
   Coordinator = 'coordinator',
   CreatedAt = 'createdAt',
   FundingRoundFactory = 'fundingRoundFactory',
+  FundingRoundFactoryBatchUstVerifier = 'fundingRoundFactory__batchUstVerifier',
+  FundingRoundFactoryContributorRegistryAddress = 'fundingRoundFactory__contributorRegistryAddress',
+  FundingRoundFactoryCoordinator = 'fundingRoundFactory__coordinator',
+  FundingRoundFactoryCoordinatorPubKey = 'fundingRoundFactory__coordinatorPubKey',
+  FundingRoundFactoryCreatedAt = 'fundingRoundFactory__createdAt',
+  FundingRoundFactoryId = 'fundingRoundFactory__id',
+  FundingRoundFactoryLastUpdatedAt = 'fundingRoundFactory__lastUpdatedAt',
+  FundingRoundFactoryMaciFactory = 'fundingRoundFactory__maciFactory',
+  FundingRoundFactoryMaxMessages = 'fundingRoundFactory__maxMessages',
+  FundingRoundFactoryMaxUsers = 'fundingRoundFactory__maxUsers',
+  FundingRoundFactoryMaxVoteOptions = 'fundingRoundFactory__maxVoteOptions',
+  FundingRoundFactoryMessageBatchSize = 'fundingRoundFactory__messageBatchSize',
+  FundingRoundFactoryMessageTreeDepth = 'fundingRoundFactory__messageTreeDepth',
+  FundingRoundFactoryNativeToken = 'fundingRoundFactory__nativeToken',
+  FundingRoundFactoryOwner = 'fundingRoundFactory__owner',
+  FundingRoundFactoryQvtVerifier = 'fundingRoundFactory__qvtVerifier',
+  FundingRoundFactoryRecipientRegistryAddress = 'fundingRoundFactory__recipientRegistryAddress',
+  FundingRoundFactorySignUpDuration = 'fundingRoundFactory__signUpDuration',
+  FundingRoundFactoryStateTreeDepth = 'fundingRoundFactory__stateTreeDepth',
+  FundingRoundFactoryTallyBatchSize = 'fundingRoundFactory__tallyBatchSize',
+  FundingRoundFactoryVoteOptionTreeDepth = 'fundingRoundFactory__voteOptionTreeDepth',
+  FundingRoundFactoryVotingDuration = 'fundingRoundFactory__votingDuration',
   Id = 'id',
   IsCancelled = 'isCancelled',
   IsFinalized = 'isFinalized',
@@ -1412,9 +1579,23 @@ export enum FundingRound_OrderBy {
   Messages = 'messages',
   NativeToken = 'nativeToken',
   NativeTokenInfo = 'nativeTokenInfo',
+  NativeTokenInfoCreatedAt = 'nativeTokenInfo__createdAt',
+  NativeTokenInfoDecimals = 'nativeTokenInfo__decimals',
+  NativeTokenInfoId = 'nativeTokenInfo__id',
+  NativeTokenInfoLastUpdatedAt = 'nativeTokenInfo__lastUpdatedAt',
+  NativeTokenInfoSymbol = 'nativeTokenInfo__symbol',
+  NativeTokenInfoTokenAddress = 'nativeTokenInfo__tokenAddress',
   RecipientCount = 'recipientCount',
   RecipientRegistry = 'recipientRegistry',
   RecipientRegistryAddress = 'recipientRegistryAddress',
+  RecipientRegistryBaseDeposit = 'recipientRegistry__baseDeposit',
+  RecipientRegistryChallengePeriodDuration = 'recipientRegistry__challengePeriodDuration',
+  RecipientRegistryController = 'recipientRegistry__controller',
+  RecipientRegistryCreatedAt = 'recipientRegistry__createdAt',
+  RecipientRegistryId = 'recipientRegistry__id',
+  RecipientRegistryLastUpdatedAt = 'recipientRegistry__lastUpdatedAt',
+  RecipientRegistryMaxRecipients = 'recipientRegistry__maxRecipients',
+  RecipientRegistryOwner = 'recipientRegistry__owner',
   Recipients = 'recipients',
   SignUpDeadline = 'signUpDeadline',
   StartTime = 'startTime',
@@ -1441,6 +1622,7 @@ export type Message = {
 export type Message_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<Message_Filter>>>;
   blockNumber: InputMaybe<Scalars['BigInt']>;
   blockNumber_gt: InputMaybe<Scalars['BigInt']>;
   blockNumber_gte: InputMaybe<Scalars['BigInt']>;
@@ -1492,6 +1674,7 @@ export type Message_Filter = {
   iv_lte: InputMaybe<Scalars['BigInt']>;
   iv_not: InputMaybe<Scalars['BigInt']>;
   iv_not_in: InputMaybe<Array<Scalars['BigInt']>>;
+  or: InputMaybe<Array<InputMaybe<Message_Filter>>>;
   publicKey: InputMaybe<Scalars['String']>;
   publicKey_: InputMaybe<PublicKey_Filter>;
   publicKey_contains: InputMaybe<Scalars['String']>;
@@ -1547,9 +1730,34 @@ export enum Message_OrderBy {
   BlockNumber = 'blockNumber',
   Data = 'data',
   FundingRound = 'fundingRound',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
   Id = 'id',
   Iv = 'iv',
   PublicKey = 'publicKey',
+  PublicKeyId = 'publicKey__id',
+  PublicKeyStateIndex = 'publicKey__stateIndex',
+  PublicKeyVoiceCreditBalance = 'publicKey__voiceCreditBalance',
+  PublicKeyX = 'publicKey__x',
+  PublicKeyY = 'publicKey__y',
   Timestamp = 'timestamp',
   TransactionIndex = 'transactionIndex'
 }
@@ -1583,6 +1791,7 @@ export type PublicKeyMessagesArgs = {
 export type PublicKey_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<PublicKey_Filter>>>;
   fundingRound: InputMaybe<Scalars['String']>;
   fundingRound_: InputMaybe<FundingRound_Filter>;
   fundingRound_contains: InputMaybe<Scalars['String']>;
@@ -1613,6 +1822,7 @@ export type PublicKey_Filter = {
   id_not: InputMaybe<Scalars['ID']>;
   id_not_in: InputMaybe<Array<Scalars['ID']>>;
   messages_: InputMaybe<Message_Filter>;
+  or: InputMaybe<Array<InputMaybe<PublicKey_Filter>>>;
   stateIndex: InputMaybe<Scalars['BigInt']>;
   stateIndex_gt: InputMaybe<Scalars['BigInt']>;
   stateIndex_gte: InputMaybe<Scalars['BigInt']>;
@@ -1649,6 +1859,26 @@ export type PublicKey_Filter = {
 
 export enum PublicKey_OrderBy {
   FundingRound = 'fundingRound',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
   Id = 'id',
   Messages = 'messages',
   StateIndex = 'stateIndex',
@@ -1994,6 +2224,7 @@ export type RecipientRegistryRecipientsArgs = {
 export type RecipientRegistry_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<RecipientRegistry_Filter>>>;
   baseDeposit: InputMaybe<Scalars['BigInt']>;
   baseDeposit_gt: InputMaybe<Scalars['BigInt']>;
   baseDeposit_gte: InputMaybe<Scalars['BigInt']>;
@@ -2097,6 +2328,7 @@ export type RecipientRegistry_Filter = {
   maxRecipients_lte: InputMaybe<Scalars['BigInt']>;
   maxRecipients_not: InputMaybe<Scalars['BigInt']>;
   maxRecipients_not_in: InputMaybe<Array<Scalars['BigInt']>>;
+  or: InputMaybe<Array<InputMaybe<RecipientRegistry_Filter>>>;
   owner: InputMaybe<Scalars['Bytes']>;
   owner_contains: InputMaybe<Scalars['Bytes']>;
   owner_gt: InputMaybe<Scalars['Bytes']>;
@@ -2116,6 +2348,28 @@ export enum RecipientRegistry_OrderBy {
   Controller = 'controller',
   CreatedAt = 'createdAt',
   FundingRoundFactory = 'fundingRoundFactory',
+  FundingRoundFactoryBatchUstVerifier = 'fundingRoundFactory__batchUstVerifier',
+  FundingRoundFactoryContributorRegistryAddress = 'fundingRoundFactory__contributorRegistryAddress',
+  FundingRoundFactoryCoordinator = 'fundingRoundFactory__coordinator',
+  FundingRoundFactoryCoordinatorPubKey = 'fundingRoundFactory__coordinatorPubKey',
+  FundingRoundFactoryCreatedAt = 'fundingRoundFactory__createdAt',
+  FundingRoundFactoryId = 'fundingRoundFactory__id',
+  FundingRoundFactoryLastUpdatedAt = 'fundingRoundFactory__lastUpdatedAt',
+  FundingRoundFactoryMaciFactory = 'fundingRoundFactory__maciFactory',
+  FundingRoundFactoryMaxMessages = 'fundingRoundFactory__maxMessages',
+  FundingRoundFactoryMaxUsers = 'fundingRoundFactory__maxUsers',
+  FundingRoundFactoryMaxVoteOptions = 'fundingRoundFactory__maxVoteOptions',
+  FundingRoundFactoryMessageBatchSize = 'fundingRoundFactory__messageBatchSize',
+  FundingRoundFactoryMessageTreeDepth = 'fundingRoundFactory__messageTreeDepth',
+  FundingRoundFactoryNativeToken = 'fundingRoundFactory__nativeToken',
+  FundingRoundFactoryOwner = 'fundingRoundFactory__owner',
+  FundingRoundFactoryQvtVerifier = 'fundingRoundFactory__qvtVerifier',
+  FundingRoundFactoryRecipientRegistryAddress = 'fundingRoundFactory__recipientRegistryAddress',
+  FundingRoundFactorySignUpDuration = 'fundingRoundFactory__signUpDuration',
+  FundingRoundFactoryStateTreeDepth = 'fundingRoundFactory__stateTreeDepth',
+  FundingRoundFactoryTallyBatchSize = 'fundingRoundFactory__tallyBatchSize',
+  FundingRoundFactoryVoteOptionTreeDepth = 'fundingRoundFactory__voteOptionTreeDepth',
+  FundingRoundFactoryVotingDuration = 'fundingRoundFactory__votingDuration',
   Id = 'id',
   LastUpdatedAt = 'lastUpdatedAt',
   MaxRecipients = 'maxRecipients',
@@ -2126,6 +2380,7 @@ export enum RecipientRegistry_OrderBy {
 export type Recipient_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<Recipient_Filter>>>;
   createdAt: InputMaybe<Scalars['String']>;
   createdAt_contains: InputMaybe<Scalars['String']>;
   createdAt_contains_nocase: InputMaybe<Scalars['String']>;
@@ -2190,6 +2445,7 @@ export type Recipient_Filter = {
   lastUpdatedAt_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with_nocase: InputMaybe<Scalars['String']>;
+  or: InputMaybe<Array<InputMaybe<Recipient_Filter>>>;
   recipientAddress: InputMaybe<Scalars['Bytes']>;
   recipientAddress_contains: InputMaybe<Scalars['Bytes']>;
   recipientAddress_gt: InputMaybe<Scalars['Bytes']>;
@@ -2358,6 +2614,14 @@ export enum Recipient_OrderBy {
   RecipientIndex = 'recipientIndex',
   RecipientMetadata = 'recipientMetadata',
   RecipientRegistry = 'recipientRegistry',
+  RecipientRegistryBaseDeposit = 'recipientRegistry__baseDeposit',
+  RecipientRegistryChallengePeriodDuration = 'recipientRegistry__challengePeriodDuration',
+  RecipientRegistryController = 'recipientRegistry__controller',
+  RecipientRegistryCreatedAt = 'recipientRegistry__createdAt',
+  RecipientRegistryId = 'recipientRegistry__id',
+  RecipientRegistryLastUpdatedAt = 'recipientRegistry__lastUpdatedAt',
+  RecipientRegistryMaxRecipients = 'recipientRegistry__maxRecipients',
+  RecipientRegistryOwner = 'recipientRegistry__owner',
   Rejected = 'rejected',
   RequestResolvedHash = 'requestResolvedHash',
   RequestSubmittedHash = 'requestSubmittedHash',
@@ -2652,6 +2916,7 @@ export type Token = {
 export type Token_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<Token_Filter>>>;
   createdAt: InputMaybe<Scalars['String']>;
   createdAt_contains: InputMaybe<Scalars['String']>;
   createdAt_contains_nocase: InputMaybe<Scalars['String']>;
@@ -2708,6 +2973,7 @@ export type Token_Filter = {
   lastUpdatedAt_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with: InputMaybe<Scalars['String']>;
   lastUpdatedAt_starts_with_nocase: InputMaybe<Scalars['String']>;
+  or: InputMaybe<Array<InputMaybe<Token_Filter>>>;
   symbol: InputMaybe<Scalars['String']>;
   symbol_contains: InputMaybe<Scalars['String']>;
   symbol_contains_nocase: InputMaybe<Scalars['String']>;
@@ -2761,6 +3027,7 @@ export type Vote = {
 export type Vote_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
+  and: InputMaybe<Array<InputMaybe<Vote_Filter>>>;
   contributor: InputMaybe<Scalars['String']>;
   contributor_: InputMaybe<Contributor_Filter>;
   contributor_contains: InputMaybe<Scalars['String']>;
@@ -2811,6 +3078,7 @@ export type Vote_Filter = {
   id_lte: InputMaybe<Scalars['ID']>;
   id_not: InputMaybe<Scalars['ID']>;
   id_not_in: InputMaybe<Array<Scalars['ID']>>;
+  or: InputMaybe<Array<InputMaybe<Vote_Filter>>>;
   secret: InputMaybe<Scalars['Boolean']>;
   secret_in: InputMaybe<Array<Scalars['Boolean']>>;
   secret_not: InputMaybe<Scalars['Boolean']>;
@@ -2829,7 +3097,32 @@ export type Vote_Filter = {
 
 export enum Vote_OrderBy {
   Contributor = 'contributor',
+  ContributorContributorAddress = 'contributor__contributorAddress',
+  ContributorCreatedAt = 'contributor__createdAt',
+  ContributorId = 'contributor__id',
+  ContributorLastUpdatedAt = 'contributor__lastUpdatedAt',
+  ContributorVerifiedTimeStamp = 'contributor__verifiedTimeStamp',
   FundingRound = 'fundingRound',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
   Id = 'id',
   Secret = 'secret',
   VoterAddress = 'voterAddress'
@@ -2900,6 +3193,13 @@ export type GetContributorVotesQueryVariables = Exact<{
 
 
 export type GetContributorVotesQuery = { __typename?: 'Query', fundingRound: { __typename?: 'FundingRound', id: string, contributors: Array<{ __typename?: 'Contributor', votes: Array<{ __typename?: 'Vote', id: string }> | null }> | null } | null };
+
+export type GetContributorVotesForAllRoundsQueryVariables = Exact<{
+  contributorAddress: Scalars['ID'];
+}>;
+
+
+export type GetContributorVotesForAllRoundsQuery = { __typename?: 'Query', contributors: Array<{ __typename?: 'Contributor', votes: Array<{ __typename?: 'Vote', id: string }> | null }> };
 
 export type GetCurrentRoundQueryVariables = Exact<{
   fundingRoundFactoryAddress: Scalars['ID'];
@@ -3027,6 +3327,15 @@ export const GetContributorVotesDocument = gql`
       votes {
         id
       }
+    }
+  }
+}
+    `;
+export const GetContributorVotesForAllRoundsDocument = gql`
+    query GetContributorVotesForAllRounds($contributorAddress: ID!) {
+  contributors(where: {id: $contributorAddress}) {
+    votes {
+      id
     }
   }
 }
@@ -3210,6 +3519,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetContributorVotes(variables: GetContributorVotesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetContributorVotesQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetContributorVotesQuery>(GetContributorVotesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetContributorVotes', 'query');
+    },
+    GetContributorVotesForAllRounds(variables: GetContributorVotesForAllRoundsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetContributorVotesForAllRoundsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetContributorVotesForAllRoundsQuery>(GetContributorVotesForAllRoundsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetContributorVotesForAllRounds', 'query');
     },
     GetCurrentRound(variables: GetCurrentRoundQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCurrentRoundQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetCurrentRoundQuery>(GetCurrentRoundDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetCurrentRound', 'query');

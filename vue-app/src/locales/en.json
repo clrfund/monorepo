@@ -1220,5 +1220,14 @@
   "cancel": "Cancel",
   "copied": "Copied!",
   "more_on_maci": "More on MACI",
-  "add_project": "Add project"
+  "add_project": "Add project",
+  "errorModal": {
+    "header": "Error!",
+    "wrong_key": "Wrong key, please re-login with a key for your wallet address."
+  },
+  "passkeyModal": {
+    "header": "Create or use existing passkey?",
+    "create_new_key": "Create new",
+    "use_existing_key": "Use existing"
+  }
 }

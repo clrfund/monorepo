@@ -346,66 +346,6 @@ describe('End-to-end Tests', function () {
     expect(claims[2]).to.equal(UNIT.mul(58).div(10))
   })
 
-  it('should allocate funds correctly when users change keys using signature hash', async () => {
-    const contributions = await makeContributions([
-      UNIT.mul(8).div(10),
-      UNIT.mul(8).div(10),
-    ])
-    // Submit messages
-    for (const contribution of contributions) {
-      const contributor = contribution.signer
-      const messages: Message[] = []
-      const encPubKeys: PubKey[] = []
-      let nonce = 1
-
-      // Change key
-      const signature = await contributor.signMessage('hello world')
-      const hash = sha256(signature)
-      const newContributorKeypair = Keypair.createFromSignatureHash(hash, 1)
-      const [message, encPubKey] = createMessage(
-        contribution.stateIndex,
-        contribution.keypair,
-        newContributorKeypair,
-        coordinatorKeypair.pubKey,
-        null,
-        null,
-        nonce
-      )
-      messages.push(message)
-      encPubKeys.push(encPubKey)
-      nonce += 1
-
-      // Spend voice credits on both recipients
-      for (const recipientIndex of [1, 2]) {
-        const voiceCredits = contribution.voiceCredits.div(2)
-        const [message, encPubKey] = createMessage(
-          contribution.stateIndex,
-          newContributorKeypair,
-          null,
-          coordinatorKeypair.pubKey,
-          recipientIndex,
-          voiceCredits,
-          nonce
-        )
-        messages.push(message)
-        encPubKeys.push(encPubKey)
-        nonce += 1
-      }
-
-      await fundingRound.connect(contributor).submitMessageBatch(
-        messages.reverse().map((msg) => msg.asContractParam()),
-        encPubKeys.reverse().map((key) => key.asContractParam())
-      )
-    }
-
-    await provider.send('evm_increaseTime', [maciParameters.signUpDuration])
-    await provider.send('evm_increaseTime', [maciParameters.votingDuration])
-    const { tally, claims } = await finalizeRound()
-    expect(tally.totalVoiceCredits.spent).to.equal('160000')
-    expect(claims[1]).to.equal(UNIT.mul(58).div(10))
-    expect(claims[2]).to.equal(UNIT.mul(58).div(10))
-  })
-
   it('should allocate funds correctly if not all voice credits are spent', async () => {
     const contributions = await makeContributions([
       UNIT.mul(8).div(10),

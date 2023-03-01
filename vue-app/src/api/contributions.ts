@@ -58,18 +58,6 @@ export function serializeContributorData(contributor: Contributor): string {
   })
 }
 
-export function deserializeContributorData(
-  data: string | null
-): Contributor | null {
-  if (data) {
-    const parsed = JSON.parse(data)
-    const keypair = new Keypair(PrivKey.unserialize(parsed.privateKey))
-    return { keypair, stateIndex: parsed.stateIndex }
-  } else {
-    return null
-  }
-}
-
 export async function getContributionAmount(
   fundingRoundAddress: string,
   contributorAddress: string
@@ -93,6 +81,13 @@ export async function withdrawContribution(
   const fundingRound = new Contract(roundAddress, FundingRound, signer)
   const transaction = await fundingRound.withdrawContribution()
   return transaction
+}
+
+export async function hasContributorEverVoted(contributorAddress: string) {
+  const data = await sdk.GetContributorVotesForAllRounds({
+    contributorAddress,
+  })
+  return !!data.contributors?.[0]?.votes?.length
 }
 
 export async function hasContributorVoted(

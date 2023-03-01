@@ -81,18 +81,13 @@ function genPrivKey(hash: string): PrivKey {
 
 export class Keypair extends MaciKeypair {
   /**
-   * generate a key pair from a user's signature hash and the index of the
-   * key associated with the signature
+   * generate a key pair from a seed
    * @param hash The sha256 signature hash
-   * @param index Index of the key, based one. Every key change will increment this number
    * @returns key pair
    */
-  static createFromSignatureHash(hash: string, index: number): Keypair {
-    const sanitizedHash = hash.startsWith('0x') ? hash : '0x' + hash
-    const indexAsHex = BigNumber.from(index).toHexString()
-    const hashIndex = utils.concat([sanitizedHash, indexAsHex])
-    const newHash = sha256(hashIndex)
-    const privKey = genPrivKey(newHash)
+  static createFromSeed(seed: string): Keypair {
+    const sanitizedSeed = seed.startsWith('0x') ? seed : '0x' + seed
+    const privKey = genPrivKey(sanitizedSeed)
     return new Keypair(privKey)
   }
 }

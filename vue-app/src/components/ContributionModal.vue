@@ -123,8 +123,7 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract, Signer } from 'ethers'
 import { DateTime } from 'luxon'
-import { PubKey, Message, createMessage } from '@clrfund/maci-utils'
-import { getKeyPair } from '@/api/keypair'
+import { Keypair, PubKey, Message, createMessage } from '@clrfund/maci-utils'
 
 import { RoundInfo } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
@@ -238,11 +237,8 @@ export default class ContributionModal extends Vue {
       }
       this.step += 1
       // Contribute (step 2)
-      const contributorKeypair = await getKeyPair({
-        encryptionKey: this.encryptionKey,
-        fundingRoundAddress,
-        coordinatorPubKey,
-      })
+      const contributorKeypair = Keypair.createFromSeed(this.encryptionKey)
+
       let contributionTxReceipt
       try {
         contributionTxReceipt = await waitForTransaction(

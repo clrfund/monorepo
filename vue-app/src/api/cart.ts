@@ -1,11 +1,15 @@
-import { CartItem, getContributorMessages } from './contributions'
+import {
+  CartItem,
+  getContributorMessages,
+  getCartStorageKey,
+} from './contributions'
 import { RoundInfo } from './round'
-import { getKeyPair } from './keypair'
 import { Keypair, Command } from '@clrfund/maci-utils'
 import { BigNumber } from 'ethers'
 import { getProjectByIndex } from './projects'
 import { formatAmount } from '@/utils/amounts'
 import { maxDecimals } from './core'
+import { storage } from './storage'
 
 /**
  * Get the committed cart items from the subgraph for the user with the encryption key
@@ -26,11 +30,7 @@ export async function getCommittedCart(
     recipientRegistryAddress,
   } = round
 
-  const encKeypair = await getKeyPair({
-    encryptionKey,
-    coordinatorPubKey,
-    fundingRoundAddress,
-  })
+  const encKeypair = await Keypair.createFromSeed(encryptionKey)
 
   const sharedKey = Keypair.genEcdhSharedKey(
     encKeypair.privKey,
@@ -72,4 +72,23 @@ export async function getCommittedCart(
 
   const committedCart = await Promise.all(cartItems)
   return committedCart.filter(Boolean) as CartItem[]
+}
+
+/**
+ * Check to see if there's uncommitted cart
+ *
+ * @param fundingRoundAddress funding round address
+ * @param walletAddress user wallet address
+ * @returns true if there's uncommitted cart
+ */
+export function hasUncommittedCart(
+  fundingRoundAddress: string,
+  walletAddress: string
+): boolean {
+  const cart = storage.getItemRaw(
+    walletAddress,
+    getCartStorageKey(fundingRoundAddress)
+  )
+
+  return Boolean(cart)
 }

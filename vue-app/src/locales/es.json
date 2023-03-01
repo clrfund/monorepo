@@ -773,7 +773,7 @@
       "donation": "Contributions",
       "total": "Total"
     },
-    "message": "The funding amount for each project is calculated using the quadratic funding formula and represents the total amount awarded to the project. The contributions to the project come from community donations. The number of votes a project receives is determined by taking the square root of each donation, scaled by the MACI voice credit factor and the token decimal."
+    "message": "The funding amount for each project is calculated using the quadratic funding formula and represents the total amount awarded to the project. The contributions to the project come from the community donations. The number of votes a project receives is determined by taking the sum of the square root of each donation, scaled by the MACI voice credit factor and the token decimal."
   },
   "leaderboardSimpleView": {
     "funded": "{tokenSymbol} funded"
@@ -1220,5 +1220,14 @@
   "cancel": "Cancel",
   "copied": "Copied!",
   "more_on_maci": "More on MACI",
-  "add_project": "Add project"
+  "add_project": "Add project",
+  "errorModal": {
+    "header": "Error!",
+    "wrong_key": "Wrong key, please re-login with a key for your wallet address."
+  },
+  "passkeyModal": {
+    "header": "Create or use existing passkey?",
+    "create_new_key": "Create new",
+    "use_existing_key": "Use existing"
+  }
 }
