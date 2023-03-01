@@ -68,12 +68,10 @@ export function recoverPubKeyFromCredential(credential: any): string[] {
   const rBytes = new Uint8Array(parsedSignature.r)
   if (shouldRemoveLeadingZero(rBytes)) {
     parsedSignature.r = utils.arrayify(utils.hexDataSlice(rBytes, 1))
-    console.log('shouldRemoveLeadingZero rBytes', true, utils.hexlify(rBytes))
   }
   const sBytes = new Uint8Array(parsedSignature.s)
   if (shouldRemoveLeadingZero(sBytes)) {
     parsedSignature.s = utils.arrayify(utils.hexDataSlice(sBytes, 1))
-    console.log('shouldRemoveLeadingZero sBytes', true, utils.hexlify(sBytes))
   }
 
   return recoverPubKey(digest, parsedSignature)
