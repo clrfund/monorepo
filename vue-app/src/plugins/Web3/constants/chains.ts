@@ -107,7 +107,7 @@ export const CHAIN_INFO: ChainInfo = {
     explorerLogo: 'gnosisscan.svg',
     explorerLabel: 'GnosisScan',
     rpcUrl: 'https://rpc.gnosischain.com',
-    bridge: 'https://bridge.gnosischain.com/',
+    bridge: 'https://gnosisfaucet.com',
   },
   [ChainId.POLYGON]: {
     label: 'Polygon',
