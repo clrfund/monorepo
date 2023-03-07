@@ -25,7 +25,7 @@
             </li>
           </ul>
           <div class="mt2 button-spacing">
-            <links to="/projects" class="btn-primary">{{
+            <links to="/recipients" class="btn-primary">{{
               $t('projectAdded.link2')
             }}</links>
             <links to="/" class="btn-secondary">{{
