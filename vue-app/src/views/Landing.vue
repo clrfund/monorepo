@@ -96,6 +96,13 @@
           <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-action">
             {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
           </links>
+          <links
+            v-if="!chain.isLayer2 && Boolean(chain.bridge)"
+            :to="chain.bridge"
+            class="btn-action"
+          >
+            {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
+          </links>
         </div>
         <div class="pre-req" id="bright-id">
           <div class="icon-row">
