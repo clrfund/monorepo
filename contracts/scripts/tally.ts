@@ -38,7 +38,10 @@ async function main() {
       )
     }
   }
-  const logsFile = 'maci_logs.json'
+
+  const timeMs = new Date().getTime()
+  const maciStateFile = `maci_state_${timeMs}.json`
+  const logsFile = `maci_logs_${timeMs}.json`
   const coordinator = new Wallet(coordinatorEthPrivKey, ethers.provider)
   const fundingRound = await ethers.getContractAt(
     'FundingRound',
@@ -70,6 +73,7 @@ async function main() {
     tally_file: 'tally.json',
     output: 'proofs.json',
     logs_file: logsFile,
+    macistate: maciStateFile,
   })
   if (!results) {
     throw new Error('generation of proofs failed')
