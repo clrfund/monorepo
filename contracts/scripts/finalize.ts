@@ -1,7 +1,6 @@
 import fs from 'fs'
 import { Wallet } from 'ethers'
 import { ethers, network } from 'hardhat'
-import { addTallyResultsBatch } from '../utils/maci'
 
 async function main() {
   let factoryAddress, coordinator
@@ -35,27 +34,6 @@ async function main() {
     coordinator
   )
   console.log('Current round', fundingRound.address)
-
-  const maciAddress = await fundingRound.maci()
-  const maci = await ethers.getContractAt('MACI', maciAddress, coordinator)
-  const [, , voteOptionTreeDepth] = await maci.treeDepths()
-  console.log('Vote option tree depth', voteOptionTreeDepth)
-
-  const batchSize = Number(process.env.TALLY_BATCH_SIZE) || 20
-  const startIndex = await fundingRound.totalTallyResults()
-  const total = tally.results.tally.length
-  console.log('Adding tally results in batches of', batchSize)
-  const addTallyGas = await addTallyResultsBatch(
-    fundingRound,
-    voteOptionTreeDepth,
-    tally,
-    batchSize,
-    startIndex.toNumber(),
-    (processed) => {
-      console.log(`Processed ${processed} / ${total}`)
-    }
-  )
-  console.log('Tally results added. Gas used:', addTallyGas.toString())
 
   const totalSpent = parseInt(tally.totalVoiceCredits.spent)
   const totalSpentSalt = tally.totalVoiceCredits.salt
