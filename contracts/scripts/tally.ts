@@ -97,7 +97,7 @@ async function main() {
 
   const startIndex = await fundingRound.totalTallyResults()
   const total = tally.results.tally.length
-  console.log('Adding tally results in batches of', batchSize)
+  console.log('Uploading tally results in batches of', batchSize)
   const addTallyGas = await addTallyResultsBatch(
     fundingRound,
     voteOptionTreeDepth,
@@ -108,7 +108,7 @@ async function main() {
       console.log(`Processed ${processed} / ${total}`)
     }
   )
-  console.log('Tally results added. Gas used:', addTallyGas.toString())
+  console.log('Tally results uploaded. Gas used:', addTallyGas.toString())
 }
 
 main()
