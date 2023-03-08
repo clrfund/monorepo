@@ -6033,9 +6033,9 @@ blake2b-wasm@^1.1.0:
   dependencies:
     nanoassert "^1.0.0"
 
-"blake2b-wasm@git+https://github.com/jbaylina/blake2b-wasm.git":
+"blake2b-wasm@https://github.com/jbaylina/blake2b-wasm.git":
   version "2.1.0"
-  resolved "git+https://github.com/jbaylina/blake2b-wasm.git#0d5f024b212429c7f50a7f533aa3a2406b5b42b3"
+  resolved "https://github.com/jbaylina/blake2b-wasm.git#0d5f024b212429c7f50a7f533aa3a2406b5b42b3"
   dependencies:
     nanoassert "^1.0.0"
 
@@ -14471,11 +14471,6 @@ maci-contracts@0.10.1, maci-contracts@^0.10.1:
   version "0.10.2"
   resolved "https://registry.yarnpkg.com/@clrfund/maci-domainobjs/-/maci-domainobjs-0.10.2.tgz#d1cdb735ae56f286cad2baa227ff47a3178d880c"
   integrity sha512-Schf4U9X6GibnK/TIeaZ5uJNtcreuP0cBdwfde/2VuA924Bo4P4MPZjXrSOvriP6KYnVt+1/REQE30nLBlVq9w==
-
-maci-domainobjs@~0.7.4:
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/maci-domainobjs/-/maci-domainobjs-0.7.4.tgz#4574cae71e42cc889921bdc2ba268b0a109af658"
-  integrity sha512-cpi6m2o6UrU0tr7og61hQb2sxdWkRih4g/3Ly6+BFEu9YBVaA6vbC9scmJYxTiTAKP8Xi6ozDUbZrLvubabvZw==
 
 mafmt@^6.0.2:
   version "6.0.10"
