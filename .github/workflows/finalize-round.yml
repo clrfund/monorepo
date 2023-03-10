@@ -45,14 +45,18 @@ jobs:
         echo "GITHUB_WORKSPACE: " $NODE_CONFIG $SUBGRPAH_URL
         export ROUND=$(curl -X POST -d '{"query":"{fundingRoundFactories {id currentRound {id maci}}}"}' $SUBGRPAH_URL)
         echo "ROUND=" $ROUND
-        #export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].id)')
-        #export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.id)')
-        #export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.maci)')
-        #export TX_URL="${ETHERSCAN_URL}/api?module=account&action=txlistinternal&address=${MACI_ADDRESS}&startblock=0&page=10&offset=1&sort=asc&apikey=${ETHERSCAN_API_KEY}"
-        #export TXLIST=$(curl $TX_URL)
-        #export MACI_START_BLOCK=$(node -e 'console.log(JSON.parse(process.env.TXLIST).result[0].blockNumber)')
-        #echo "MACI_START_BLOCK:" $MACI_START_BLOCK
-        #echo "TXLIST:" $TXLIST
+        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].id)')
+        echo "FACTORY_ADDRESS=" $FACTORY_ADDRESS
+        export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.id)')
+        echo "ROUND_ADDRESS=" $ROUND_ADDRESS
+        export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.maci)')
+        echo "MACI_ADDRESS=" $MACI_ADDRESS
+        export TX_URL="${ETHERSCAN_URL}/api?module=account&action=txlistinternal&address=${MACI_ADDRESS}&startblock=0&page=10&offset=1&sort=asc&apikey=${ETHERSCAN_API_KEY}"
+        echo "TX_URL=" $TX_URL
+        export TXLIST=$(curl $TX_URL)
+        echo "TXLIST=" $TXLIST
+        export MACI_START_BLOCK=$(node -e 'console.log(JSON.parse(process.env.TXLIST).result[0].blockNumber)')
+        echo "MACI_START_BLOCK:" $MACI_START_BLOCK
         # tally and finalize
         #cd contracts
         #yarn hardhat run --network "${NETWORK}" scripts/tally.ts
