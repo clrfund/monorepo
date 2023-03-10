@@ -21,41 +21,42 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
     - name: Install g++ library dependencies
       run: |
-        sudo apt update
-        sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
+        echo sudo apt update
+        echo sudo apt-get install build-essential libgmp-dev libsodium-dev nlohmann-json3-dev nasm g++ curl
     - name: Install rust toolchain
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
     - name: Install zkutil
       run: |
-        cargo install zkutil --version 0.3.2
+        echo cargo install zkutil --version 0.3.2
     - name: Checkout source code
       uses: actions/checkout@v3
     - name: Download batch 64 params
       run: |
         ls -la $GITHUB_WORKSPACE
-        $GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
+        #$GITHUB_WORKSPACE/.github/scripts/download-batch64-params.sh
     - name: Build
       run: |
-        yarn && yarn build
+        #yarn && yarn build
     - name: Run finalize scripts
       run: |
-        echo "GITHUB_WORKSPACE: " $GITHUB_WORKSPACE
         export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
+        echo "GITHUB_WORKSPACE: " $NODE_CONFIG $SUBGRPAH_URL
         export ROUND=$(curl -X POST -d '{"query":"{fundingRoundFactories {id currentRound {id maci}}}"}' $SUBGRPAH_URL)
-        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].id)')
-        export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.id)')
-        export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.maci)')
-        export TX_URL="${ETHERSCAN_URL}/api?module=account&action=txlistinternal&address=${MACI_ADDRESS}&startblock=0&page=10&offset=1&sort=asc&apikey=${ETHERSCAN_API_KEY}"
-        export TXLIST=$(curl $TX_URL)
-        export MACI_START_BLOCK=$(node -e 'console.log(JSON.parse(process.env.TXLIST).result[0].blockNumber)')
-        echo "MACI_START_BLOCK:" $MACI_START_BLOCK
-        echo "TXLIST:" $TXLIST
+        echo "ROUND=" $ROUND
+        #export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].id)')
+        #export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.id)')
+        #export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.maci)')
+        #export TX_URL="${ETHERSCAN_URL}/api?module=account&action=txlistinternal&address=${MACI_ADDRESS}&startblock=0&page=10&offset=1&sort=asc&apikey=${ETHERSCAN_API_KEY}"
+        #export TXLIST=$(curl $TX_URL)
+        #export MACI_START_BLOCK=$(node -e 'console.log(JSON.parse(process.env.TXLIST).result[0].blockNumber)')
+        #echo "MACI_START_BLOCK:" $MACI_START_BLOCK
+        #echo "TXLIST:" $TXLIST
         # tally and finalize
-        cd contracts
-        yarn hardhat run --network "${NETWORK}" scripts/tally.ts
-        yarn hardhat run --network "${NETWORK}" scripts/finalize.ts
-        curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
-          --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
-          --form 'file=@"tally.json"'
+        #cd contracts
+        #yarn hardhat run --network "${NETWORK}" scripts/tally.ts
+        #yarn hardhat run --network "${NETWORK}" scripts/finalize.ts
+        #curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
+        #  --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
+        #  --form 'file=@"tally.json"'
