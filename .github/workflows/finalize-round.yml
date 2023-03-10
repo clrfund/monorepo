@@ -9,7 +9,7 @@ env:
   COORDINATOR_ETH_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   COORDINATOR_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_MACI_PRIVATE_KEY }}
   ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY_ARBITRUM }}
-  EHTERSCAN_URL: "https://api-goerli.arbiscan.io"
+  ETHERSCAN_URL: "https://api-goerli.arbiscan.io"
 
 jobs:
   finalize:
