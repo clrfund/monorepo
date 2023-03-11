@@ -2,7 +2,7 @@ import { Contract } from 'ethers'
 import { provider } from './core'
 import { MACI } from './abi'
 import { DateTime } from 'luxon'
-import { PubKey } from 'maci-domainobjs'
+import { PubKey } from '@clrfund/maci-utils'
 
 export type Maci = {
   maciAddress: string

@@ -85,6 +85,9 @@ export function hasUncommittedCart(
   fundingRoundAddress: string,
   walletAddress: string
 ): boolean {
+  if (!fundingRoundAddress) {
+    return false
+  }
   const cart = storage.getItemRaw(
     walletAddress,
     getCartStorageKey(fundingRoundAddress)

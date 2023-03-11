@@ -62,6 +62,9 @@ export async function getContributionAmount(
   fundingRoundAddress: string,
   contributorAddress: string
 ): Promise<BigNumber> {
+  if (!fundingRoundAddress) {
+    return BigNumber.from(0)
+  }
   const data = await sdk.GetContributionsAmount({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     contributorAddress,
@@ -94,6 +97,9 @@ export async function hasContributorVoted(
   fundingRoundAddress: string,
   contributorAddress: string
 ): Promise<boolean> {
+  if (!fundingRoundAddress) {
+    return false
+  }
   const data = await sdk.GetContributorVotes({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     contributorAddress,
@@ -138,6 +144,9 @@ export async function getContributorIndex(
   fundingRoundAddress: string,
   pubKey: PubKey
 ): Promise<number | null> {
+  if (!fundingRoundAddress) {
+    return null
+  }
   const id = getPubKeyId(pubKey)
   const data = await sdk.GetContributorIndex({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
@@ -159,8 +168,10 @@ export async function getContributorMessages(
   contributorKey: Keypair,
   coordinatorPubKey: PubKey
 ): Promise<Message[]> {
+  if (!fundingRoundAddress) {
+    return []
+  }
   const key = getPubKeyId(contributorKey.pubKey)
-
   const result = await sdk.GetContributorMessages({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     pubKey: key,

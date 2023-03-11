@@ -1,5 +1,5 @@
 import { BigNumber, utils } from 'ethers'
-import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
+import { genRandomSalt, IncrementalQuinTree, hash5 } from 'maci-crypto'
 import {
   Keypair as MaciKeypair,
   PubKey,
@@ -11,6 +11,8 @@ import {
 const SNARK_FIELD_SIZE = BigInt(
   '21888242871839275222246405745257275088548364400416034343698204186575808495617'
 )
+
+const LEAVES_PER_NODE = 5
 
 /* eslint-disable-next-line @typescript-eslint/ban-types */
 declare type PathElements = BigInt[][]
@@ -155,7 +157,12 @@ export function getRecipientClaimData(
   // Create proof for total amount of spent voice credits
   const spent = tally.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
   const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
-  const spentTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
+  const spentTree = new IncrementalQuinTree(
+    recipientTreeDepth,
+    BigInt(0),
+    LEAVES_PER_NODE,
+    hash5
+  )
   for (const leaf of tally.totalVoiceCreditsPerVoteOption.tally) {
     spentTree.insert(BigInt(leaf))
   }
@@ -169,4 +176,13 @@ export function getRecipientClaimData(
   ]
 }
 
-export { PrivKey, PubKey, Command, Message }
+export {
+  PrivKey,
+  PubKey,
+  Command,
+  Message,
+  IncrementalQuinTree,
+  hash5,
+  genRandomSalt,
+  LEAVES_PER_NODE,
+}

@@ -4,12 +4,13 @@ on: workflow_dispatch
 
 env:
   NODE_VERSION: 16.x
-  FACTORY_ADDRESS: "0x62cab00605368834c6adf8e6f53da14d6fa9ded1"
   SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli"
   NETWORK: "arbitrum-goerli"
   COORDINATOR_ETH_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   COORDINATOR_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_MACI_PRIVATE_KEY }}
   JSONRPC_HTTP_URL: ${{ secrets.JSONRPC_HTTP_URL }}
+  ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY_ARBITRUM }}
+  ETHERSCAN_URL: "https://api-goerli.arbiscan.io"
 
 jobs:
   finalize:
@@ -42,8 +43,14 @@ jobs:
     - name: Run finalize scripts
       run: |
         export NODE_CONFIG=$(node -e "const snarkParamsPath=process.env.GITHUB_WORKSPACE + '/params'; console.log(JSON.stringify({ snarkParamsPath }));")
-        export ROUND=$(curl -X POST -d '{"query":"{fundingRoundFactories {currentRound {id}}}"}' $SUBGRPAH_URL)
+        export ROUND=$(curl -X POST -d '{"query":"{fundingRoundFactories {id currentRound {id maci}}}"}' $SUBGRPAH_URL)
+        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].id)')
         export ROUND_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.id)')
+        export MACI_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.ROUND).data.fundingRoundFactories[0].currentRound.maci)')
+        export TX_URL="${ETHERSCAN_URL}/api?module=account&action=txlistinternal&address=${MACI_ADDRESS}&startblock=0&page=10&offset=1&sort=asc&apikey=${ETHERSCAN_API_KEY}"
+        export TXLIST=$(curl $TX_URL)
+        export MACI_START_BLOCK=$(node -e 'console.log(JSON.parse(process.env.TXLIST).result[0].blockNumber)')
+        echo "MACI_START_BLOCK:" $MACI_START_BLOCK
         # tally and finalize
         cd contracts
         yarn hardhat run --network "${NETWORK}" scripts/tally.ts

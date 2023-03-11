@@ -108,6 +108,9 @@ export async function getEncryptionKey(
   address: string,
   fundingRoundAddress: string
 ): Promise<string> {
+  if (!fundingRoundAddress) {
+    return ''
+  }
   const hasVoted = await hasContributorVoted(fundingRoundAddress, address)
   const uncommitedCart = storage.getItemRaw(
     address,

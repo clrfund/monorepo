@@ -13,8 +13,8 @@
   ],
   "license": "GPL-3.0",
   "dependencies": {
-    "maci-crypto": "~0.9.1",
-    "maci-domainobjs": "~0.9.1"
+    "maci-crypto": "npm:@clrfund/maci-crypto@0.10.2",
+    "maci-domainobjs": "npm:@clrfund/maci-domainobjs@0.10.2"
   },
   "devDependencies": {
     "eslint": "^8.31.0",

@@ -1,7 +1,7 @@
 import { task, types } from 'hardhat/config'
 import { MaciParameters } from '../utils/maci'
 
-task('set-durations', 'Set the signup and voting duration')
+task('set-durations', 'Set the signup and voting durations for future rounds')
   .addParam('factory', 'The funding round factory contract address')
   .addParam('signup', 'Sign up duration in minutes', 60, types.int)
   .addParam('voting', 'Voting duration in minutes', 10, types.int)

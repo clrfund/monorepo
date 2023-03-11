@@ -7,8 +7,10 @@
       </button>
     </div>
 
-    <div class="error" v-if="isWrongKey">{{ $t('errorModal.wrong_key') }}</div>
-    <div class="error" v-else>{{ errorMessage }}</div>
+    <div class="error overflow" v-if="isWrongKey">
+      {{ $t('errorModal.wrong_key') }}
+    </div>
+    <div class="error overflow" v-else>{{ errorMessage }}</div>
   </div>
 </template>
 
@@ -61,5 +63,11 @@ export default class ErrorModal extends Vue {
   img {
     filter: var(--img-filter, invert(0.3));
   }
+}
+
+.overflow {
+  word-break: break-all;
+  height: 150px;
+  overflow-y: scroll;
 }
 </style>

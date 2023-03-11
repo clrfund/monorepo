@@ -5,7 +5,7 @@ import { Project, LeaderboardProject } from './projects'
 import { Token } from './token'
 import { BigNumber, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
-import { Keypair } from 'maci-domainobjs'
+import { Keypair } from '@clrfund/maci-utils'
 import { IPFS } from './ipfs'
 
 interface StaticProject extends Project {

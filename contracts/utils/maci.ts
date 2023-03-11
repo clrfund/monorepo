@@ -1,9 +1,11 @@
 import { Contract, BigNumber, ContractReceipt } from 'ethers'
-import { IncrementalQuinTree } from 'maci-crypto'
 import {
   bnSqrt,
   createMessage,
   getRecipientClaimData,
+  IncrementalQuinTree,
+  hash5,
+  LEAVES_PER_NODE,
 } from '@clrfund/maci-utils'
 
 export class MaciParameters {
@@ -72,7 +74,12 @@ export function getRecipientTallyResult(
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
   const resultSalt = tally.results.salt
-  const resultTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
+  const resultTree = new IncrementalQuinTree(
+    recipientTreeDepth,
+    BigInt(0),
+    LEAVES_PER_NODE,
+    hash5
+  )
   for (const leaf of tally.results.tally) {
     resultTree.insert(leaf)
   }

@@ -27,10 +27,17 @@ export interface Token {
   decimals: number
 }
 
+/**
+ * Round interface
+ * recipientDeposit is optional for non-optimistic recipient registries
+ */
 export interface Round {
+  chainId: number
+  operator: string
   address: string
   userRegistryAddress: string
   recipientRegistryAddress: string
+  recipientDepositAmount?: string
   maciAddress: string
   contributorCount: number
   totalSpent: string

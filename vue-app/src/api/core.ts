@@ -76,3 +76,10 @@ export const maxDecimals = Number(process.env.VUE_APP_MAX_DECIMAL || 1)
 // the number of records per batch in the `pending submissions` export file
 export const exportBatchSize =
   Number(process.env.VUE_APP_EXPORT_BATCH_SIZE) || 60
+
+export const brightIdSponsorKey = process.env.VUE_APP_BRIGHTID_SPONSOR_KEY
+export const brightIdNodeUrl =
+  process.env.VUE_APP_BRIGHTID_NODE_URL ||
+  'https://brightid.clr.fund/brightid/v6'
+
+export const brightIdSponsorUrl = process.env.VUE_APP_BRIGHTID_SPONSOR_API_URL
