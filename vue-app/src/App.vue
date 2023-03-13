@@ -65,7 +65,7 @@ import { SET_CURRENT_USER } from '@/store/mutation-types'
 import { operator } from '@/api/core'
 import { hasUncommittedCart } from '@/api/cart'
 import { hasContributorVoted } from './api/contributions'
-import { getEncryptionKey, WrongKeyError } from './utils/accounts'
+import { getEncryptionKey } from './utils/accounts'
 
 @Component({
   name: 'clr.fund',
