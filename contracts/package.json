@@ -22,7 +22,7 @@
     "clean": "rm -rf cache && rm -rf build"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "3.2.0",
+    "@openzeppelin/contracts": "4.7.3",
     "dotenv": "^8.2.0",
     "maci-contracts": "0.10.1",
     "solidity-rlp": "2.0.3"

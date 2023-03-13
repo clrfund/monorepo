@@ -3207,7 +3207,12 @@
   resolved "https://registry.yarnpkg.com/@openfonts/inter_all/-/inter_all-1.0.2.tgz#87fc59c58926d2e5e63022a0960f12be82915d00"
   integrity sha512-hdB3gPFLztuDbEDLImVRTQyH4EHHrX9iEsw6wZW+VuwUoTwMJEhOV9dWliM6WZtJYF/cqYuiMK+Bqdd2XztnDg==
 
-"@openzeppelin/contracts@3.2.0", "@openzeppelin/contracts@~3.2.0":
+"@openzeppelin/contracts@4.7.3":
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.7.3.tgz#939534757a81f8d69cc854c7692805684ff3111e"
+  integrity sha512-dGRS0agJzu8ybo44pCIf3xBaPQN/65AIXNgK8+4gzKd5kbvlqyxryUYVLJv7fK98Seyd2hDZzVEHSWAh0Bt1Yw==
+
+"@openzeppelin/contracts@~3.2.0":
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-3.2.0.tgz#3e6b3a7662d8ed64271ade96ef42655db983fd9d"
   integrity sha512-bUOmkSoPkjnUyMiKo6RYnb0VHBk5D9KKDAgNLzF41aqAM3TeE0yGdFF5dVRcV60pZdJLlyFT/jjXIZCWyyEzAQ==
