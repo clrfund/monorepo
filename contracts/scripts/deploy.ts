@@ -1,8 +1,39 @@
 import { ethers } from 'hardhat'
-import { Contract, utils } from 'ethers'
+import { Contract, utils, Wallet } from 'ethers'
 
 import { UNIT } from '../utils/constants'
 import { deployMaciFactory } from '../utils/deployment'
+import { Keypair, PrivKey } from 'maci-domainobjs'
+
+/**
+ * Set the coordinator address and maci public key in the funding round factory
+ *
+ * @param fundingRoundFactory funding round factory contract
+ * @param coordinatorAddress
+ * @param MaciPrivateKey
+ */
+async function setCoordinator(
+  fundingRoundFactory: Contract,
+  coordinatorAddress: string,
+  coordinatorKey?: string
+) {
+  // Generate or use the passed in coordinator key
+  const privKey = coordinatorKey
+    ? PrivKey.unserialize(coordinatorKey)
+    : undefined
+  const keypair = new Keypair(privKey)
+  const coordinatorPubKey = keypair.pubKey
+  const serializedCoordinatorPrivKey = keypair.privKey.serialize()
+  const serializedCoordinatorPubKey = keypair.pubKey.serialize()
+  const setCoordinatorTx = await fundingRoundFactory.setCoordinator(
+    coordinatorAddress,
+    coordinatorPubKey.asContractParam()
+  )
+  await setCoordinatorTx.wait()
+  console.log('coordinator address:', coordinatorAddress)
+  console.log('serializedCoordinatorPrivKey: ', serializedCoordinatorPrivKey)
+  console.log('serializedCoordinatorPubKey: ', serializedCoordinatorPubKey)
+}
 
 async function main() {
   const [deployer] = await ethers.getSigners()
@@ -88,6 +119,25 @@ async function main() {
     recipientRegistry.address
   )
   await setRecipientRegistryTx.wait()
+
+  if (process.env.NATIVE_TOKEN_ADDRESS) {
+    const setTokenTx = await fundingRoundFactory.setToken(
+      process.env.NATIVE_TOKEN_ADDRESS
+    )
+    await setTokenTx.wait()
+    console.log('Set token', process.env.NATIVE_TOKEN_ADDRESS)
+  }
+
+  const coordinatorAddress = process.env.COORDINATOR_ETH_PK
+    ? new Wallet(process.env.COORDINATOR_ETH_PK).address
+    : await deployer.getAddress()
+
+  await setCoordinator(
+    fundingRoundFactory,
+    coordinatorAddress,
+    process.env.COORDINATOR_PK
+  )
+
   console.log(`Deployment complete!`)
 }
 

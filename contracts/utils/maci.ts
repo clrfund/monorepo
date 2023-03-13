@@ -1,6 +1,8 @@
 import { Contract, BigNumber, ContractReceipt } from 'ethers'
-import { genRandomSalt, IncrementalQuinTree } from 'maci-crypto'
+import { genRandomSalt, IncrementalQuinTree, hash5 } from 'maci-crypto'
 import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
+
+const LEAVES_PER_NODE = 5
 
 export class MaciParameters {
   stateTreeDepth = 32
@@ -114,7 +116,12 @@ export function getRecipientTallyResult(
   // Create proof for tally result
   const result = tally.results.tally[recipientIndex]
   const resultSalt = tally.results.salt
-  const resultTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
+  const resultTree = new IncrementalQuinTree(
+    recipientTreeDepth,
+    BigInt(0),
+    LEAVES_PER_NODE,
+    hash5
+  )
   for (const leaf of tally.results.tally) {
     resultTree.insert(leaf)
   }
@@ -137,7 +144,12 @@ export function getRecipientClaimData(
   // Create proof for total amount of spent voice credits
   const spent = tally.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
   const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
-  const spentTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0))
+  const spentTree = new IncrementalQuinTree(
+    recipientTreeDepth,
+    BigInt(0),
+    LEAVES_PER_NODE,
+    hash5
+  )
   for (const leaf of tally.totalVoiceCreditsPerVoteOption.tally) {
     spentTree.insert(leaf)
   }
