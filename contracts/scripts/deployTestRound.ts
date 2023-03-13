@@ -287,6 +287,13 @@ async function main() {
   )
   const maciAddress = await fundingRound.maci()
   console.log(`MACI address: ${maciAddress}`)
+  const maciContract = await ethers.getContractAt('MACI', maciAddress)
+  const votingDeadline = await maciContract.calcVotingDeadline()
+  console.log(`MACI votingDealine`, votingDeadline.toString())
+
+  const blockNumber = await ethers.provider.getBlockNumber()
+  const block = await ethers.provider.getBlock(blockNumber)
+  console.log('block', block)
 
   const recipientRegistryType = process.env.RECIPIENT_REGISTRY_TYPE || 'simple'
   const recipientRegistryAddress = await factory.recipientRegistry()
