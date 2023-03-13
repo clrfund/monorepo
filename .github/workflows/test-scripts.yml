@@ -1,7 +1,6 @@
 name: Hardhat script tests
 
 on:
-  workflow_dispatch:
   push:
     paths:
       - 'contracts/scripts/**'
