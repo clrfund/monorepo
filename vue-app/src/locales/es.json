@@ -1211,9 +1211,12 @@
     "wrong_key": "Incorrect key! Please try again with a different key. The name of the key should match the wallet address unless you chose an existing key with a different name or manually renamed the key."
   },
   "passkeyModal": {
-    "header": "Create or use existing passkey?",
+    "header_create_or_use_existing": "Create or use existing passkey?",
+    "header_create": "Create a new passkey?",
     "usage": "The passkey will be used to encrypt your votes. You will need the same passkey to view your cart and to reallocate funds.",
     "create_new_key": "Create new",
-    "use_existing_key": "Use existing"
+    "use_existing_key": "Use existing",
+    "ok": "Ok",
+    "cancel": "Cancel"
   }
 }

@@ -46,10 +46,7 @@ import {
 import { User } from '@/api/user'
 import { Project } from '@/api/projects'
 import { RoundStatus } from '@/api/round'
-import {
-  hasContributorEverVoted,
-  hasContributorVoted,
-} from '@/api/contributions'
+import { hasContributorVoted } from '@/api/contributions'
 import { CartItem } from '@/api/contributions'
 import WalletModal from '@/components/WalletModal.vue'
 import InputButton from '@/components/InputButton.vue'
@@ -115,9 +112,6 @@ export default class AddToCartButton extends Vue {
       return false
     }
 
-    // contributor has never voted in any round
-    const votedBefore = await hasContributorEverVoted(walletAddress)
-
     const votedThisRound = await hasContributorVoted(
       currentRoundAddress,
       walletAddress
@@ -128,7 +122,7 @@ export default class AddToCartButton extends Vue {
       walletAddress
     )
 
-    return votedBefore && !votedThisRound && !hasUncommitted
+    return !votedThisRound && !hasUncommitted
   }
 
   async loadOrCreateEncryptionKey(): Promise<void> {

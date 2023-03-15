@@ -1,24 +1,40 @@
 <template>
   <div class="modal-body">
-    <div class="top">
-      <h3>
-        {{ $t('passkeyModal.header') }}
-      </h3>
-      <button class="close-button" @click="$emit('close')">
-        <img class="pointer" src="@/assets/close.svg" />
-      </button>
-    </div>
-    <div>
-      {{ $t('passkeyModal.usage') }}
-    </div>
+    <loader v-if="!loaded" />
+    <div v-if="loaded">
+      <div class="top">
+        <template>
+          <h3 v-if="showExistingBtn">
+            {{ $t('passkeyModal.header_create_or_using_existing') }}
+          </h3>
+          <h3 v-else>{{ $t('passkeyModal.header_create') }}</h3>
+        </template>
+        <button class="close-button" @click="$emit('close')">
+          <img class="pointer" src="@/assets/close.svg" />
+        </button>
+      </div>
+      <div>
+        {{ $t('passkeyModal.usage') }}
+      </div>
 
-    <div class="btn-row">
-      <button class="btn-secondary" @click="createNewPasskey">
-        {{ $t('passkeyModal.create_new_key') }}
-      </button>
-      <button class="btn-action" @click="useExisting">
-        {{ $t('passkeyModal.use_existing_key') }}
-      </button>
+      <div class="btn-row">
+        <template v-if="showExistingBtn">
+          <button class="btn-secondary" @click="createNewPasskey">
+            {{ $t('passkeyModal.create_new_key') }}
+          </button>
+          <button class="btn-action" @click="useExisting">
+            {{ $t('passkeyModal.use_existing_key') }}
+          </button>
+        </template>
+        <template v-else>
+          <button class="btn-secondary" @click="createNewPasskey">
+            {{ $t('passkeyModal.ok') }}
+          </button>
+          <button class="btn-action" @click="cancel">
+            {{ $t('passkeyModal.cancel') }}
+          </button>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -27,6 +43,7 @@
 import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 import ErrorModal from '@/components/ErrorModal.vue'
+import Loader from '@/components/Loader.vue'
 import {
   LOAD_OR_CREATE_ENCRYPTION_KEY,
   CREATE_ENCRYPTION_KEY_FROM_EXISTING,
@@ -35,10 +52,18 @@ import {
 @Component({
   components: {
     ErrorModal,
+    Loader,
   },
 })
 export default class PasskeyModal extends Vue {
   @Prop() handleSelection!: (selectedAction) => void
+  loaded = false
+  showExistingBtn = false
+
+  async created() {
+    this.showExistingBtn = Boolean(this.$store.getters.currentUser?.votedBefore)
+    this.loaded = true
+  }
 
   async createNewPasskey() {
     this.handleSelection(LOAD_OR_CREATE_ENCRYPTION_KEY)
@@ -46,6 +71,10 @@ export default class PasskeyModal extends Vue {
   }
   async useExisting() {
     this.handleSelection(CREATE_ENCRYPTION_KEY_FROM_EXISTING)
+    this.$emit('close')
+  }
+
+  cancel() {
     this.$emit('close')
   }
 }

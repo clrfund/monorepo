@@ -1211,9 +1211,12 @@
     "wrong_key": "错误的钥匙，请尝试另一个以您钱包地址为名的钥匙。"
   },
   "passkeyModal": {
-    "header": "创建新的或使用现有的密码?",
+    "header_create_or_use_existing": "创建新的或使用现有的密码?",
+    "header_create": "创建新密码?",
     "usage": "这个密码将用于加密您的选票。您需要相同的密码才能查看您的购物车和重新分配资金。",
     "create_new_key": "新的",
-    "use_existing_key": "现有的"
+    "use_existing_key": "现有的",
+    "ok": "好的",
+    "cancel": "取消"
   }
 }
