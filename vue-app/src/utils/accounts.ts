@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { mainnetProvider } from '@/api/core'
 import { isAddress } from '@ethersproject/address'
 import { Credential } from '@/api/passkey'
-import { findKeyPair } from '@/api/keypair'
+import { findKeyPair, publicKeyExists } from '@/api/keypair'
 import { Keypair } from '@clrfund/maci-utils'
 import { sha256, decrypt } from './crypto'
 import { storage } from '@/api/storage'
@@ -126,7 +126,7 @@ export async function getEncryptionKey(
 
   /* first look for the key used to encrypt MACI messages */
   if (hasVoted) {
-    return findEncryptionKey(keys, async (key) => {
+    return findEncryptionKey(keys, (key) => {
       const keypair = Keypair.createFromSeed(key)
       return findKeyPair({
         fundingRoundAddress,
@@ -160,6 +160,8 @@ export async function getFirstEncryptionKey(address: string): Promise<string> {
   const credential = new Credential(address)
   const keys = await credential.get()
 
-  const hashed = sha256(keys[0])
-  return hashed
+  return findEncryptionKey(keys, (key) => {
+    const keypair = Keypair.createFromSeed(key)
+    return publicKeyExists(keypair.pubKey)
+  })
 }

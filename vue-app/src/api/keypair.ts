@@ -51,3 +51,15 @@ export async function findKeyPair({
 
   return result.messages && result.messages.length > 0
 }
+
+/**
+ * Check if the public key exists
+ * @param pubKey public key to check
+ * @returns true if the public key exists in the subgraph
+ */
+export async function publicKeyExists(pubKey: PubKey): Promise<boolean> {
+  const pubKeyId = getPubKeyId(pubKey)
+  const data = await sdk.GetPublicKey({ pubKey: pubKeyId })
+
+  return Boolean(data.publicKey)
+}

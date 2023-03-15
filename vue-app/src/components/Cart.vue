@@ -376,6 +376,8 @@ import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 export default class Cart extends Vue {
   profileImageUrl: string | null = null
 
+  loadingCart = false
+
   removeAll(): void {
     this.$store.commit(CLEAR_CART)
     this.$store.dispatch(SAVE_CART)
@@ -756,10 +758,11 @@ export default class Cart extends Vue {
 
   @Watch('currentUser')
   async loadCart() {
-    if (!this.currentUser || this.$store.state.cartLoaded) {
+    if (!this.currentUser || this.$store.state.cartLoaded || this.loadingCart) {
       return
     }
 
+    this.loadingCart = true
     try {
       if (!this.currentUser.encryptionKey) {
         await this.$store.dispatch(LOAD_ENCRYPTION_KEY)
@@ -770,6 +773,7 @@ export default class Cart extends Vue {
       this.$store.commit(TOGGLE_SHOW_CART_PANEL, false)
       this.$modal.show(ErrorModal, { error }, { width: 400, top: 20 })
     }
+    this.loadingCart = false
   }
 }
 

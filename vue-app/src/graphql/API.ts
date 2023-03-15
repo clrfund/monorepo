@@ -3240,6 +3240,13 @@ export type GetProjectQueryVariables = Exact<{
 
 export type GetProjectQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, requestType: string | null, recipientAddress: any | null, recipientMetadata: string | null, recipientIndex: any | null, submissionTime: string | null, rejected: boolean | null, verified: boolean | null }> };
 
+export type GetPublicKeyQueryVariables = Exact<{
+  pubKey: Scalars['ID'];
+}>;
+
+
+export type GetPublicKeyQuery = { __typename?: 'Query', publicKey: { __typename?: 'PublicKey', id: string } | null };
+
 export type GetRecipientQueryVariables = Exact<{
   registryAddress: Scalars['ID'];
   recipientId: Scalars['ID'];
@@ -3397,6 +3404,13 @@ export const GetProjectDocument = gql`
   }
 }
     `;
+export const GetPublicKeyDocument = gql`
+    query GetPublicKey($pubKey: ID!) {
+  publicKey(id: $pubKey) {
+    id
+  }
+}
+    `;
 export const GetRecipientDocument = gql`
     query GetRecipient($registryAddress: ID!, $recipientId: ID!) {
   recipientRegistry(id: $registryAddress) {
@@ -3547,6 +3561,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetProject(variables: GetProjectQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProjectQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProjectQuery>(GetProjectDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetProject', 'query');
+    },
+    GetPublicKey(variables: GetPublicKeyQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPublicKeyQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetPublicKeyQuery>(GetPublicKeyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetPublicKey', 'query');
     },
     GetRecipient(variables: GetRecipientQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientQuery>(GetRecipientDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipient', 'query');
