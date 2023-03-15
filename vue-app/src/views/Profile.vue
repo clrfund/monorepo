@@ -88,7 +88,7 @@
           >
             <img
               :src="thumbnailImageUrl"
-              :alt="alt + ' thumbnail'"
+              alt="project thumbnail"
               class="project-thumbnail"
             />
             <div class="project-details">

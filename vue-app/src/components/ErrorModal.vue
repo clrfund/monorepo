@@ -66,8 +66,8 @@ export default class ErrorModal extends Vue {
 }
 
 .overflow {
-  word-break: break-all;
-  height: 150px;
+  word-break: break-word;
+  max-height: 150px;
   overflow-y: scroll;
 }
 </style>

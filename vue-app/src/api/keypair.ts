@@ -30,20 +30,24 @@ export function isSamePubKey(key1: PubKey, key2: PubKey): boolean {
  *
  * @param keypair the key to check
  * @param fundingRoundAddress round address
+ * @param contributorAddress wallet address
  * @returns true if the key was used to encrypt messages
  */
 export async function findKeyPair({
   keypair,
   fundingRoundAddress,
+  contributorAddress,
 }: {
   keypair: Keypair
   fundingRoundAddress: string
+  contributorAddress: string
 }): Promise<boolean> {
   const pubKeyId = getPubKeyId(keypair.pubKey)
   const result = await sdk.GetContributorMessages({
     fundingRoundAddress,
     pubKey: pubKeyId,
+    contributorAddress,
   })
 
-  return result.messages && result.messages?.length > 0
+  return result.messages && result.messages.length > 0
 }

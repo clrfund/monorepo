@@ -131,6 +131,7 @@ export async function getEncryptionKey(
       return findKeyPair({
         fundingRoundAddress,
         keypair,
+        contributorAddress: address,
       })
     })
   }
@@ -141,7 +142,7 @@ export async function getEncryptionKey(
       try {
         return Promise.resolve(Boolean(decrypt(uncommitedCart, key)))
       } catch (err) {
-        // ignore error
+        // error decrypting message, wrong key
         return Promise.resolve(false)
       }
     })

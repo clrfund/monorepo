@@ -1,11 +1,13 @@
 query GetContributorMessages(
-  $fundingRoundAddress: ID!
-  $pubKey: ID!
+  $fundingRoundAddress: String!
+  $pubKey: String!
+  $contributorAddress: Bytes!
 ) {
   messages(
       where: {
-        fundingRound_: { id: $fundingRoundAddress },
-        publicKey_: { id: $pubKey }
+        fundingRound: $fundingRoundAddress,
+        publicKey: $pubKey,
+        submittedBy: $contributorAddress
       },
       first: 1000
       orderBy: blockNumber, orderDirection: desc)

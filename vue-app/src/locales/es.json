@@ -1208,7 +1208,7 @@
   "add_project": "Add project",
   "errorModal": {
     "header": "Error!",
-    "wrong_key": "Wrong key, please re-login with a key for your wallet address."
+    "wrong_key": "Incorrect key! Please try again with a different key. The name of the key should match the wallet address unless you chose an existing key with a different name or manually renamed the key."
   },
   "passkeyModal": {
     "header": "Create or use existing passkey?",

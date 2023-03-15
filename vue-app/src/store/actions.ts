@@ -14,7 +14,7 @@ import {
   getContributorIndex,
   Contributor,
 } from '@/api/contributions'
-import { RoundStatus } from '@/api/round'
+import { RoundStatus, getCurrentRound } from '@/api/round'
 import { Rounds } from '@/api/rounds'
 import { storage } from '@/api/storage'
 import { getTally } from '@/api/tally'
@@ -26,6 +26,7 @@ import { Keypair } from '@clrfund/maci-utils'
 import {
   LOAD_BRIGHT_ID,
   LOAD_CART,
+  LOAD_CART_DATA,
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
   LOAD_FACTORY_INFO,
@@ -36,6 +37,7 @@ import {
   LOAD_TALLY,
   CREATE_ENCRYPTION_KEY_FROM_EXISTING,
   LOAD_OR_CREATE_ENCRYPTION_KEY,
+  LOAD_ENCRYPTION_KEY,
   LOAD_USER_INFO,
   LOGOUT_USER,
   SAVE_CART,
@@ -60,6 +62,8 @@ import {
   SET_HAS_VOTED,
   SET_FACTORY,
   SET_MACI_FACTORY,
+  TOGGLE_SHOW_CART_PANEL,
+  SET_CART_LOADED,
 } from './mutation-types'
 
 // Utils
@@ -67,12 +71,13 @@ import {
   createOrGetEncryptionKey,
   ensLookup,
   getFirstEncryptionKey,
+  getEncryptionKey,
 } from '@/utils/accounts'
 import { factory, UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
 import { getFactoryInfo } from '@/api/factory'
 import { getMACIFactoryInfo } from '@/api/maci-factory'
-import { getCommittedCart } from '@/api/cart'
+import { getCommittedCart, hasUncommittedCart } from '@/api/cart'
 
 const actions = {
   //TODO: also commit SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
@@ -82,6 +87,7 @@ const actions = {
       commit(SET_CONTRIBUTION, null)
       commit(SET_CONTRIBUTOR, null)
       commit(CLEAR_CART)
+      commit(SET_CART_LOADED, false)
       commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
       commit(SET_RECIPIENT_REGISTRY_INFO, null)
       commit(SET_CURRENT_ROUND, null)
@@ -167,6 +173,21 @@ const actions = {
       ...state.currentUser,
       encryptionKey,
     })
+  },
+  async [LOAD_ENCRYPTION_KEY]({ commit, state }) {
+    if (!state.currentUser) {
+      return
+    }
+    let encryptionKey: string | undefined
+    const { walletAddress } = state.currentUser
+    const roundAddress = state.currentRoundAddress || (await getCurrentRound())
+    const hasVoted = await hasContributorVoted(roundAddress, walletAddress)
+    const hasUncommited = hasUncommittedCart(roundAddress, walletAddress)
+    if (hasVoted || hasUncommited) {
+      encryptionKey = await getEncryptionKey(walletAddress, roundAddress)
+    }
+    const user = { ...state.currentUser, encryptionKey }
+    commit(SET_CURRENT_USER, user)
   },
   async [LOAD_USER_INFO]({ commit, state }) {
     if (!state.currentUser) {
@@ -280,14 +301,15 @@ const actions = {
     )
   },
   async [LOAD_COMMITTED_CART]({ commit, state }) {
-    const { encryptionKey } = state.currentUser
+    const { encryptionKey, walletAddress } = state.currentUser
     if (!encryptionKey) {
       return
     }
 
     const committedCart = await getCommittedCart(
       state.currentRound,
-      encryptionKey
+      encryptionKey,
+      walletAddress
     )
     Vue.set(state, 'committedCart', committedCart)
     if (committedCart.length > 0) {
@@ -333,6 +355,17 @@ const actions = {
     commit(SET_CONTRIBUTION, null)
     commit(SET_CONTRIBUTOR, null)
     commit(CLEAR_CART)
+    commit(SET_CART_LOADED, false)
+    commit(TOGGLE_SHOW_CART_PANEL, false)
+  },
+  async [LOAD_CART_DATA]({ dispatch, commit, state }) {
+    if (!state.currentUser.encryptionKey) {
+      return
+    }
+    await dispatch(LOAD_CART)
+    await dispatch(LOAD_COMMITTED_CART)
+    await dispatch(LOAD_CONTRIBUTOR_DATA)
+    commit(SET_CART_LOADED, true)
   },
 }
 

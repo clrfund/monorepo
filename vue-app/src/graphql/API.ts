@@ -1615,6 +1615,7 @@ export type Message = {
   id: Scalars['ID'];
   iv: Scalars['BigInt'];
   publicKey: Maybe<PublicKey>;
+  submittedBy: Maybe<Scalars['Bytes']>;
   timestamp: Maybe<Scalars['String']>;
   transactionIndex: Scalars['BigInt'];
 };
@@ -1696,6 +1697,16 @@ export type Message_Filter = {
   publicKey_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   publicKey_starts_with: InputMaybe<Scalars['String']>;
   publicKey_starts_with_nocase: InputMaybe<Scalars['String']>;
+  submittedBy: InputMaybe<Scalars['Bytes']>;
+  submittedBy_contains: InputMaybe<Scalars['Bytes']>;
+  submittedBy_gt: InputMaybe<Scalars['Bytes']>;
+  submittedBy_gte: InputMaybe<Scalars['Bytes']>;
+  submittedBy_in: InputMaybe<Array<Scalars['Bytes']>>;
+  submittedBy_lt: InputMaybe<Scalars['Bytes']>;
+  submittedBy_lte: InputMaybe<Scalars['Bytes']>;
+  submittedBy_not: InputMaybe<Scalars['Bytes']>;
+  submittedBy_not_contains: InputMaybe<Scalars['Bytes']>;
+  submittedBy_not_in: InputMaybe<Array<Scalars['Bytes']>>;
   timestamp: InputMaybe<Scalars['String']>;
   timestamp_contains: InputMaybe<Scalars['String']>;
   timestamp_contains_nocase: InputMaybe<Scalars['String']>;
@@ -1758,6 +1769,7 @@ export enum Message_OrderBy {
   PublicKeyVoiceCreditBalance = 'publicKey__voiceCreditBalance',
   PublicKeyX = 'publicKey__x',
   PublicKeyY = 'publicKey__y',
+  SubmittedBy = 'submittedBy',
   Timestamp = 'timestamp',
   TransactionIndex = 'transactionIndex'
 }
@@ -3179,8 +3191,9 @@ export type GetContributorIndexQueryVariables = Exact<{
 export type GetContributorIndexQuery = { __typename?: 'Query', publicKey: { __typename?: 'PublicKey', id: string, stateIndex: any | null } | null };
 
 export type GetContributorMessagesQueryVariables = Exact<{
-  fundingRoundAddress: Scalars['ID'];
-  pubKey: Scalars['ID'];
+  fundingRoundAddress: Scalars['String'];
+  pubKey: Scalars['String'];
+  contributorAddress: Scalars['Bytes'];
 }>;
 
 
@@ -3303,9 +3316,9 @@ export const GetContributorIndexDocument = gql`
 }
     `;
 export const GetContributorMessagesDocument = gql`
-    query GetContributorMessages($fundingRoundAddress: ID!, $pubKey: ID!) {
+    query GetContributorMessages($fundingRoundAddress: String!, $pubKey: String!, $contributorAddress: Bytes!) {
   messages(
-    where: {fundingRound_: {id: $fundingRoundAddress}, publicKey_: {id: $pubKey}}
+    where: {fundingRound: $fundingRoundAddress, publicKey: $pubKey, submittedBy: $contributorAddress}
     first: 1000
     orderBy: blockNumber
     orderDirection: desc

@@ -47,25 +47,18 @@ import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
 import BackLink from '@/components/BackLink.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
-import ErrorModal from '@/components/ErrorModal.vue'
 
 import {
   LOAD_USER_INFO,
   LOAD_ROUND_INFO,
   LOAD_RECIPIENT_REGISTRY_INFO,
   SELECT_ROUND,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
   LOAD_FACTORY_INFO,
   LOAD_MACI_FACTORY_INFO,
   LOAD_BRIGHT_ID,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 import { operator } from '@/api/core'
-import { hasUncommittedCart } from '@/api/cart'
-import { hasContributorVoted } from './api/contributions'
-import { getEncryptionKey } from './utils/accounts'
 
 @Component({
   name: 'clr.fund',
@@ -89,7 +82,6 @@ import { getEncryptionKey } from './utils/accounts'
     CartWidget,
     BackLink,
     Breadcrumbs,
-    ErrorModal,
   },
 })
 export default class App extends Vue {
@@ -128,30 +120,11 @@ export default class App extends Vue {
     }
   }
 
-  async loadEncryptionKey(walletAddress: string): Promise<string | undefined> {
-    let encryptionKey: string | undefined = undefined
-    const roundAddress =
-      this.$store.state.currentRoundAddress || (await getCurrentRound())
-    const hasVoted = await hasContributorVoted(roundAddress, walletAddress)
-    if (hasVoted || hasUncommittedCart(roundAddress, walletAddress)) {
-      encryptionKey = await getEncryptionKey(walletAddress, roundAddress)
-    }
-    return encryptionKey
-  }
-
   @Watch('$web3.user')
   loginUser = async () => {
     if (!this.$web3.user) return
 
-    let encryptionKey: string | undefined
-    try {
-      encryptionKey = await this.loadEncryptionKey(
-        this.$web3.user.walletAddress
-      )
-    } catch (error) {
-      this.$modal.show(ErrorModal, { error }, { width: 400, top: 20 })
-    }
-    const user = { ...this.$web3.user, encryptionKey }
+    const user = { ...this.$web3.user }
     this.$store.commit(SET_CURRENT_USER, user)
     this.$store.dispatch(LOAD_USER_INFO)
     this.$store.dispatch(LOAD_BRIGHT_ID)
@@ -164,10 +137,6 @@ export default class App extends Vue {
     }
 
     this.$store.dispatch(LOAD_USER_INFO)
-    // Load cart & contributor data for current round
-    this.$store.dispatch(LOAD_CART)
-    this.$store.dispatch(LOAD_COMMITTED_CART)
-    this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
   }
 
   get isUserAndRoundLoaded(): boolean {

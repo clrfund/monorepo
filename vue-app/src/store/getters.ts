@@ -40,6 +40,7 @@ export interface RootState {
   maciFactory: MACIFactory | null
   showSimpleLeaderboard: boolean
   rounds: Rounds | null
+  cartLoaded: boolean
 }
 
 const getters = {

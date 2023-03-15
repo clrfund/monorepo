@@ -163,11 +163,17 @@ export async function getContributorIndex(
  * @param coordinatorPubKey Coordinator public key
  * @returns MACI messages
  */
-export async function getContributorMessages(
-  fundingRoundAddress: string,
-  contributorKey: Keypair,
+export async function getContributorMessages({
+  fundingRoundAddress,
+  contributorKey,
+  coordinatorPubKey,
+  contributorAddress,
+}: {
+  fundingRoundAddress: string
+  contributorKey: Keypair
   coordinatorPubKey: PubKey
-): Promise<Message[]> {
+  contributorAddress: string
+}): Promise<Message[]> {
   if (!fundingRoundAddress) {
     return []
   }
@@ -175,6 +181,7 @@ export async function getContributorMessages(
   const result = await sdk.GetContributorMessages({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     pubKey: key,
+    contributorAddress: contributorAddress.toLowerCase(),
   })
 
   if (!(result.messages && result.messages?.length)) {

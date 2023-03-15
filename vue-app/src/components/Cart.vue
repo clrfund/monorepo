@@ -5,6 +5,7 @@
       <h3>{{ $t('cart.h3_1') }}</h3>
       <wallet-widget :isActionButton="true" />
     </div>
+    <div v-else-if="!$store.state.cartLoaded"><loader /></div>
     <div v-else class="cart-container">
       <div
         class="reallocation-message"
@@ -323,6 +324,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Watch } from 'vue-property-decorator'
 import { BigNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
@@ -333,6 +335,9 @@ import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import CartItems from '@/components/CartItems.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
+import ErrorModal from '@/components/ErrorModal.vue'
+import Loader from '@/components/Loader.vue'
+
 import { TOGGLE_EDIT_SELECTION, UPDATE_CART_ITEM } from '@/store/mutation-types'
 import {
   MAX_CONTRIBUTION_AMOUNT,
@@ -342,7 +347,12 @@ import {
 } from '@/api/contributions'
 import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { RoundStatus } from '@/api/round'
-import { LOGOUT_USER, SAVE_CART } from '@/store/action-types'
+import {
+  LOAD_CART_DATA,
+  LOAD_ENCRYPTION_KEY,
+  LOGOUT_USER,
+  SAVE_CART,
+} from '@/store/action-types'
 import { User } from '@/api/user'
 import {
   CLEAR_CART,
@@ -359,6 +369,8 @@ import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
     Links,
     TimeLeft,
     FundsNeededWarning,
+    ErrorModal,
+    Loader,
   },
 })
 export default class Cart extends Vue {
@@ -484,6 +496,8 @@ export default class Cart extends Vue {
       }
       accounts = _accounts
     })
+
+    await this.loadCart()
   }
 
   get tokenSymbol(): string {
@@ -738,6 +752,24 @@ export default class Cart extends Vue {
     return this.$store.getters.canUserReallocate
       ? this.$store.state.currentRound.votingDeadline
       : this.$store.state.currentRound.signUpDeadline
+  }
+
+  @Watch('currentUser')
+  async loadCart() {
+    if (!this.currentUser || this.$store.state.cartLoaded) {
+      return
+    }
+
+    try {
+      if (!this.currentUser.encryptionKey) {
+        await this.$store.dispatch(LOAD_ENCRYPTION_KEY)
+        await this.$store.dispatch(LOAD_CART_DATA)
+      }
+    } catch (error) {
+      // close the cart so that user can toggle it open and select a different passkey
+      this.$store.commit(TOGGLE_SHOW_CART_PANEL, false)
+      this.$modal.show(ErrorModal, { error }, { width: 400, top: 20 })
+    }
   }
 }
 

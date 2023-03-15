@@ -29,7 +29,11 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
-import { SAVE_CART, LOAD_OR_CREATE_ENCRYPTION_KEY } from '@/store/action-types'
+import {
+  SAVE_CART,
+  LOAD_OR_CREATE_ENCRYPTION_KEY,
+  LOAD_CART_DATA,
+} from '@/store/action-types'
 import {
   ADD_CART_ITEM,
   TOGGLE_SHOW_CART_PANEL,
@@ -139,27 +143,28 @@ export default class AddToCartButton extends Vue {
         )
       })
     }
-
-    try {
-      await this.$store.dispatch(action)
-    } catch (error) {
-      this.$modal.show(ErrorModal, { error }, { width: 400, top: 20 })
-    }
+    await this.$store.dispatch(action)
   }
 
   async contribute() {
-    if (!this.currentUser?.encryptionKey) {
-      await this.loadOrCreateEncryptionKey()
-    }
+    try {
+      if (!this.currentUser?.encryptionKey) {
+        await this.loadOrCreateEncryptionKey()
+        await this.$store.dispatch(LOAD_CART_DATA)
+      }
 
-    if (this.currentUser?.encryptionKey) {
-      this.$store.commit(ADD_CART_ITEM, {
-        ...this.project,
-        amount: this.amount.toString(),
-        isCleared: false,
-      })
-      this.$store.dispatch(SAVE_CART)
-      this.$store.commit(TOGGLE_EDIT_SELECTION, true)
+      // only save the item if we have the encryption key
+      if (this.currentUser?.encryptionKey) {
+        this.$store.commit(ADD_CART_ITEM, {
+          ...this.project,
+          amount: this.amount.toString(),
+          isCleared: false,
+        })
+        this.$store.dispatch(SAVE_CART)
+        this.$store.commit(TOGGLE_EDIT_SELECTION, true)
+      }
+    } catch (error) {
+      this.$modal.show(ErrorModal, { error }, { width: 400, top: 20 })
     }
   }
 

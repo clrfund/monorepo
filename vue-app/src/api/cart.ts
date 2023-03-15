@@ -20,7 +20,8 @@ import { storage } from './storage'
  */
 export async function getCommittedCart(
   round: RoundInfo,
-  encryptionKey: string
+  encryptionKey: string,
+  contributorAddress: string
 ): Promise<CartItem[]> {
   const {
     coordinatorPubKey,
@@ -37,11 +38,12 @@ export async function getCommittedCart(
     coordinatorPubKey
   )
 
-  const messages = await getContributorMessages(
+  const messages = await getContributorMessages({
     fundingRoundAddress,
-    encKeypair,
-    coordinatorPubKey
-  )
+    contributorKey: encKeypair,
+    coordinatorPubKey,
+    contributorAddress,
+  })
 
   const cartItems = messages.map(async (message) => {
     const { command } = Command.decrypt(message, sharedKey)

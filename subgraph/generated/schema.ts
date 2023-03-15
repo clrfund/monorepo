@@ -578,6 +578,23 @@ export class Message extends Entity {
     }
   }
 
+  get submittedBy(): Bytes | null {
+    let value = this.get("submittedBy");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set submittedBy(value: Bytes | null) {
+    if (!value) {
+      this.unset("submittedBy");
+    } else {
+      this.set("submittedBy", Value.fromBytes(<Bytes>value));
+    }
+  }
+
   get timestamp(): string | null {
     let value = this.get("timestamp");
     if (!value || value.kind == ValueKind.NULL) {

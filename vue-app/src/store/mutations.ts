@@ -41,6 +41,7 @@ import {
   TOGGLE_LEADERBOARD_VIEW,
   SET_FACTORY,
   SET_MACI_FACTORY,
+  SET_CART_LOADED,
 } from './mutation-types'
 import { ThemeMode } from '@/api/core'
 
@@ -189,6 +190,9 @@ const mutations = {
   [SAVE_COMMITTED_CART](state) {
     // Spread to avoid reference
     state.committedCart = [...state.cart.filter((item) => item.amount != 0)]
+  },
+  [SET_CART_LOADED](state, isLoaded: boolean) {
+    state.cartLoaded = isLoaded
   },
 }
 

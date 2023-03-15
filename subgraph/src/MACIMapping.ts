@@ -59,6 +59,7 @@ export function handlePublishMessage(event: PublishMessage): void {
   message.iv = event.params._message.iv
   message.blockNumber = event.block.number
   message.transactionIndex = event.transaction.index
+  message.submittedBy = event.transaction.from
 
   let publicKeyId = makePubKeyId(
     event.params._encPubKey.x,
