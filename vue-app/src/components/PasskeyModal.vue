@@ -1,10 +1,15 @@
 <template>
   <div class="modal-body">
     <div class="top">
-      <p>{{ $t('passkeyModal.header') }}</p>
+      <h3>
+        {{ $t('passkeyModal.header') }}
+      </h3>
       <button class="close-button" @click="$emit('close')">
         <img class="pointer" src="@/assets/close.svg" />
       </button>
+    </div>
+    <div>
+      {{ $t('passkeyModal.usage') }}
     </div>
 
     <div class="btn-row">

@@ -1212,6 +1212,7 @@
   },
   "passkeyModal": {
     "header": "Create or use existing passkey?",
+    "usage": "The passkey will be used to encrypt your votes. You will need the same passkey to view your cart and to reallocate funds.",
     "create_new_key": "Create new",
     "use_existing_key": "Use existing"
   }
