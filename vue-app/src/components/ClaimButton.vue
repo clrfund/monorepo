@@ -126,7 +126,8 @@ export default class ClaimButton extends Vue {
       // make sure it's really claimed
       this.claimed = await isFundsClaimed(
         this.roundAddress,
-        this.project.address
+        this.project.address,
+        this.project.index
       )
     }
 
