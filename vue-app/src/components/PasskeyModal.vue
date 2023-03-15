@@ -5,7 +5,7 @@
       <div class="top">
         <template>
           <h3 v-if="showExistingBtn">
-            {{ $t('passkeyModal.header_create_or_using_existing') }}
+            {{ $t('passkeyModal.header_create_or_use_existing') }}
           </h3>
           <h3 v-else>{{ $t('passkeyModal.header_create') }}</h3>
         </template>
