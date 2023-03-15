@@ -29,7 +29,7 @@ export interface User {
   etherBalance?: BigNumber | null
   contribution?: BigNumber | null
   ensName?: string | null
-  votedBefore?: boolean
+  votedInPreviousRounds?: boolean
 }
 
 export async function getProfileImageUrl(

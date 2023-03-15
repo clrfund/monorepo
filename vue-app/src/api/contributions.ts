@@ -86,7 +86,9 @@ export async function withdrawContribution(
   return transaction
 }
 
-export async function hasContributorEverVoted(contributorAddress: string) {
+export async function hasContributorVotedInPreviousRounds(
+  contributorAddress: string
+) {
   const data = await sdk.GetContributorVotesForAllRounds({
     contributorAddress,
   })

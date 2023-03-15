@@ -61,7 +61,9 @@ export default class PasskeyModal extends Vue {
   showExistingBtn = false
 
   async created() {
-    this.showExistingBtn = Boolean(this.$store.getters.currentUser?.votedBefore)
+    this.showExistingBtn = Boolean(
+      this.$store.getters.currentUser?.votedInPreviousRounds
+    )
     this.loaded = true
   }
 

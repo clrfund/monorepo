@@ -11,7 +11,7 @@ import {
   serializeContributorData,
   getContributionAmount,
   hasContributorVoted,
-  hasContributorEverVoted,
+  hasContributorVotedInPreviousRounds,
   getContributorIndex,
   Contributor,
 } from '@/api/contributions'
@@ -241,7 +241,7 @@ const actions = {
     let ensName: string | null = state.currentUser.ensName
     ensName = await ensLookup(state.currentUser.walletAddress)
 
-    const votedBefore = await hasContributorEverVoted(
+    const votedInPreviousRounds = await hasContributorVotedInPreviousRounds(
       state.currentUser.walletAddress
     )
 
@@ -251,7 +251,7 @@ const actions = {
       balance,
       etherBalance,
       ensName,
-      votedBefore,
+      votedInPreviousRounds,
     })
   },
   async [LOAD_BRIGHT_ID]({ commit, state }) {
