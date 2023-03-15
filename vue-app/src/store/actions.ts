@@ -365,12 +365,11 @@ const actions = {
     commit(TOGGLE_SHOW_CART_PANEL, false)
   },
   async [LOAD_CART_DATA]({ dispatch, commit, state }) {
-    if (!state.currentUser.encryptionKey) {
-      return
+    if (state.currentUser.encryptionKey) {
+      await dispatch(LOAD_CART)
+      await dispatch(LOAD_COMMITTED_CART)
+      await dispatch(LOAD_CONTRIBUTOR_DATA)
     }
-    await dispatch(LOAD_CART)
-    await dispatch(LOAD_COMMITTED_CART)
-    await dispatch(LOAD_CONTRIBUTOR_DATA)
     commit(SET_CART_LOADED, true)
   },
 }
