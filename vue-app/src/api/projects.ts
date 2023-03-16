@@ -123,11 +123,10 @@ export async function recipientExists(
 export async function getRecipientBySubmitHash(
   transactionHash: string
 ): Promise<Project | null> {
-  let exists = false
   try {
     const data = await sdk.GetRecipientBySubmitHash({ transactionHash })
-    exists = data.recipients && data.recipients.length > 0
-    return OptimisticRegistry.decodeProject(data.recipients[0])
+    const exists = data.recipients && data.recipients.length > 0
+    return exists ? OptimisticRegistry.decodeProject(data.recipients[0]) : null
   } catch {
     return null
   }

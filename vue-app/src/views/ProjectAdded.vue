@@ -51,7 +51,6 @@ import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
-import { chain } from '@/api/core'
 
 @Component({
   components: {
