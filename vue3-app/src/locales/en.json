@@ -1,0 +1,1201 @@
+{
+	"about": {
+		"heading": {
+			"title": "About"
+		},
+		"what": {
+			"title": "What is clr.fund?",
+			"paragraph": "Clr.fund, pronounced \"Clear Fund\", is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community. Clr.fund strives for credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity."
+		},
+		"why": {
+			"title": "Why does clr.fund exist?",
+			"paragraph-1-text-1": "Allocating funds towards",
+			"paragraph-1-link": "public goods",
+			"paragraph-1-text-2": "— commodities or services that are neither excludable nor subtractable — is a challenge for any ecosystem, and Ethereum is no exception.",
+			"paragraph-2": "Clr.fund’s goal is to enable funds to be allocated towards public goods that benefit the Ethereum Network without relying on centralized entities and in a way that reflects the preferences of the Ethereum Community.",
+			"paragraph-3-text-1": "See the",
+			"paragraph-3-link": "Clr.fund Constitution",
+			"paragraph-3-text-2": "for more detail on clr.fund’s goals and values."
+		},
+		"unique": {
+			"title": "How is clr.fund unique?",
+			"paragraph-1": "Clr.fund instances also have a number of other special properties:",
+			"li-1-text-1": "Decentralization — Major pieces of clr.fund's infrastructure are built on",
+			"li-1-link-1": "Ethereum",
+			"li-1-text-2": ", A programmable blockchain that provides a reliable, censorship-resistant ledger for clr.fund's voting and funding transactions.",
+			"li-1-link-2": "Read more on clr.fund's decentralization.",
+			"li-2-text-1": "Scalability — Because using Ethereum can be expensive for users, clr.fund uses",
+			"li-2-layer2-1": "\"layer 2\"",
+			"li-2-layer2-2": "\"sidechain\"",
+			"li-2-text-2": "supplementary networks to get most of the benefits of the main Ethereum network but with faster, cheaper transactions.",
+			"li-2-link-1": "Learn more about clr.fund's use of layer 2.",
+			"li-3-text-1": "Collusion-resistance — Since blockchains like Ethereum publish all data publicly by default, clr.fund contributors are vulnerable to bribery and other kinds of manipulation. Clr.fund helps prevent these attacks using magical math called zero-knowledge proofs.",
+			"li-3-link-1": "Find out about MACI, our Minimal Anti-Collusion Infrastructure.",
+			"li-4-text-1": "Sybil-resistance — Voting systems that care about the number of individual people voting for a given choice, as quadratic funding does, can be vulnerable to sybil attacks, in which one person sets up many identities in order to vote multiple times. Clr.fund mitigates this threat with an identity-system called BrightID.",
+			"li-4-link-1": "Find out more about BrightID.",
+			"paragraph-2": " Clr.fund is also built so anyone can spin up and run their own instance to create a public goods grant program for their particular public."
+		},
+		"how": {
+			"title": "How does it work?",
+			"paragraph-1-text-1": "The clr.fund protocol uses the Constrained Liberal Radicalism (CLR) algorithm, commonly called",
+			"paragraph-1-link-1": "quadratic funding",
+			"paragraph-1-text-2": "(QF), to facilitate monetary contributions from members of the Ethereum Community towards builders of Ethereum public goods.",
+			"paragraph-2": "With its logic encoded into Ethereum smart contracts and other web3 technologies, clr.fund requires minimal trust in any individual people or entities to function and is resilient to collusion and bribery.",
+			"paragraph-3": "  At a high-level, clr.fund consists of a matching pool and a funding round. Philanthropic individuals or organizations contribute to the matching pool so as to have those funds efficiently allocated according to community preference. Users contribute directly to projects they value and, in doing so, earn a share of the matching pool for the projects, along with their contribution. Effectively increasing the value of their contribution.",
+			"paragraph-4-text-1": "  Under the hood, clr.fund uses zero-knowledge proofs (ZK-SNARKS), courtesy of the",
+			"paragraph-4-link-1": "Minimal Anti-collusion Infrastructure (MACI)",
+			"paragraph-4-text-2": ", to keep individual contributions private and limit effectiveness of collusion and bribery",
+			"paragraph-5": "To ensure that every contributor is a unique person clr.fund uses.",
+			"paragraph-5-link": "BrightID.",
+			"paragraph-6": "Still curious? Read more on",
+			"paragraph-6-link": "how clr.fund works"
+		}
+	},
+	"contributors": {
+		"heading": {
+			"title": "Contributor guide",
+			"paragraph": "An overview of how things work as a contributor so you can learn what to expect throughout the duration of a funding round."
+		},
+		"funds": {
+			"title": "Get funds on {chain}",
+			"paragraph-1-text-1": "You'll need some {currency} on {chain} in order to submit transactions to the clr.fund smart contracts.",
+			"paragraph-1-text-2": "Follow",
+			"paragraph-1-link-1": "this tutorial",
+			"paragraph-1-text-3": "to bridge your funds to {chain}",
+			"paragraph-2-text-1": "Use the",
+			"paragraph-2-link-1": "{chain} bridge",
+			"paragraph-2-text-2": "to transfer some funds.",
+			"paragraph-3-text-1": "Confused on what {chain} is?",
+			"paragraph-3-link-1": "Read our explanation on how clr.fund uses layer 2 on Ethereum."
+		},
+		"contributing": {
+			"title": "Contributing to specific projects",
+			"li-1-text-1": "Before contributing to specific projects, you will need to",
+			"li-1-link-1": "verify that you're a unique human",
+			"li-1-text-2": ". This helps clr.fund",
+			"li-1-link-2": "resist sybil attacks!",
+			"li-2": "Make sure you have {nativeTokenSymbol} in your BrightID-verified wallet on the {chain} network",
+			"li-3-link": "Browse projects",
+			"li-3-text": " and add some to your cart, adjusting your contributions to the amount of {nativeTokenSymbol} you want.",
+			"li-4": "When you're ready, open your cart, click contribute, and confirm the transactions to complete your contributions!",
+			"paragraph": "Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you would like before of the reallocation phase but you cannot add more funds to your total contribution amount.",
+			"li-5": "You can add and remove projects.",
+			"li-6": " Your reallocation total must be less than or equal to the total (if it's less, the rest will go to the matching pool)."
+		},
+		"matching": {
+			"title": "Contributing to the matching pool",
+			"paragraph-text-1": "Not sure which specific to contribute to? Contributions to the matching pool will be distributed to all projects that receive project-specific contributions during that round. The weighting of this distribution is determined by the",
+			"paragraph-link": "quadratic funding",
+			"paragraph-text-2": " results.",
+			"li-1": " First make sure the wallet you are using holds {nativeTokenSymbol} on {chain}. {nativeTokenSymbol} can be easily purchased on any major Ethereum-focused exchange.",
+			"li-2-text-1": " Once you have the desired amount of {nativeTokenSymbol} in your wallet, select \"Add Funds\" on the",
+			"li-2-link": "Projects page",
+			"li-2-text-2": " and confirm the transactions."
+		},
+		"wow": {
+			"title": "How does clr.fund work",
+			"paragraph": "Looking for a more general overview?",
+			"link": "Check out our \"How It Works\" page"
+		}
+	},
+	"decentralization": {
+		"heading": {
+			"title": "Decentralization in Clr.fund",
+			"subtitle": "What is Decentralization?",
+			"paragraph": "When we say something is \"decentralized\" in clr.fund, and in web3 broadly, we mean that no single person, company, or other entity is solely responsible for running or maintaining it. Instead, a decentralized system is run or maintained by a large group of independent entities, coordinated by a set of rules each opts into, like miners in Ethereum or peers in BitTorrent."
+		},
+		"which": {
+			"title": "Which pieces of clr.fund are decentralized?",
+			"paragraph-1": "Much of clr.fund's infrastructure is built on Ethereum, a decentralized blockchain:",
+			"li-1": "the registry of projects qualified for funding (and, potentially, the curation mechanism for choosing these projects)",
+			"li-2": "the matching pool of funds",
+			"li-3": "the sybil-resistant registry of users qualified to contribute to individual projects",
+			"li-4": "the funds from and encrypted information about contributions to individual projects",
+			"li-5": "the mechanism for distributing funds once a round's results are finalized",
+			"exists_in_code": "Each of these pieces exists in an Ethereum smart contract (see the code",
+			"here": "here",
+			"maintained_by_miner": ", meaning its functionality is maintained by Ethereum miners, a decentralized group."
+		},
+		"why": {
+			"title": "Why is clr.fund decentralized?",
+			"paragraph": "Ethereum's decentralization provides clr.fund with three main benefits:",
+			"li-1": " Transparent process — All of the decentralized pieces of clr.fund are publicly verifiable. Anyone can look at the code for the smart contracts and observe its inputs and outputs, with very little possibility that anything is being hidden or changed secretly.",
+			"li-2-text-1": "Secure voting — Because of Ethereum's strong security guarantees, anyone submitting a message can be extremely confident that their message will be processed as expected by the system. There are still security dangers, of course, such as",
+			"li-2-link-1": "sybil attacks",
+			"li-2-text-2": " or",
+			"li-2-link-2": "vote manipulation",
+			"li-2-text-3": ", but the kind of \"vote hacking\" typically feared in digital voting is highly unlikely here.",
+			"li-3-text-1": "Public good — Everything on Ethereum is open source and permissionless, which means the code for clr.fund's decentralized infrastructure acts as a public good: anyone can deploy their own version of the system to create their own",
+			"li-3-link-2": "quadratic funding",
+			"li-3-text-2": " system, with the same decentralized benefits of the original."
+		}
+	},
+	"howItWorks": {
+		"heading": {
+			"title": "How the round works",
+			"subtitle": "CLR walkthrough",
+			"paragraph-1": "This is an overview of how everything works behind the scenes so you can learn what to expect throughout the duration of the round.",
+			"paragraph-2": " Looking for a guide on how to participate? Check out our guides specifically for contributing and joining as a project.",
+			"li-1": "Guide for contributors",
+			"li-2": "Guide for recipients"
+		},
+		"quick": {
+			"title": "Quick recap on quadratic funding",
+			"paragraph-1-text-1": "As outlined in our",
+			"link-1": "overview on quadratic funding",
+			"paragraph-1-text-2": ", projects will receive funding from individual contributions as well as the matching pool. When you contribute to your favorite projects, your contribution also acts as a vote. The more contributions a project receives, the more votes. And the more votes a project gets, the more they'll receive from the matching pool. Although a higher individual contribution will equal a larger vote weighting, it's far more important to receive a large volume of unique contributions than just a few high value contributions.",
+			"paragraph-2": "As the funding round is also a public vote, it needs deadlines. The round is split into multiple phases so that after all contributions or votes are made, they can be counted and confirmed before the final matching pool distribution."
+		},
+		"phases": {
+			"title": "Funding round phases",
+			"subtitle": "Join phase",
+			"paragraph-1-text-1": "To kick things off, projects will be invited to",
+			"link-1": "join the round",
+			"paragraph-1-text-2": ". If you're an eager contributor,   you'll be able to browse the projects and add them to your cart but you   won't be able to contribute just yet.",
+			"need": {
+				"title": "Need to know",
+				"li-1": "There will be a maximum of {maxRecipients} projects in the round.",
+				"li-2-text": "Projects must meet ",
+				"li-2-link": "round criteria.",
+				"li-3-text": "If you want to contribute, this is a perfect time to get",
+				"li-3-link": "set up to contribute."
+			}
+		},
+		"contribution": {
+			"title": "Contribution phase",
+			"paragraph-1": "The launch of the contribution phase follows the join phase and marks the   official start of the funding round. This is the time for you to add your   favorite projects to your cart and contribute.",
+			"need": {
+				"title": "Need to know",
+				"li-1": "This phase will last {contributionPhaseDays} days.",
+				"li-2-text-1": "You will need to go through some",
+				"li-2-link": "setup",
+				"li-2-text-2": " before you can contribute.",
+				"li-3": "The maximum contribution amount is {maxContributionAmount} {nativeTokenSymbol}.",
+				"li-4": "Your total contribution amount is final. You can't increase it by contributing an additional time."
+			},
+			"paragraph-2": "If you don't contribute in the contribution phase, the round is over for   you once this phase ends."
+		},
+		"reallocation": {
+			"title": "Reallocation phase",
+			"paragraph": "During this phase, if you've contributed, you will have time to change   your mind. You can edit your contribution amounts or add/remove projects   but your total must equal that of your original contribution.",
+			"need": {
+				"title": "Need to know",
+				"li-1": " This phase will last {reallocationPhaseDays} days after the end of the contribution phase.",
+				"li-2": "If you remove projects, you must reallocate the funds to other projects or it will go to the matching pool.",
+				"li-3": "You can't exceed your original contribution total when reallocating funds."
+			}
+		},
+		"tallying": {
+			"title": "Tallying phase",
+			"paragraph-text-1": "At this point, all contributions are final, and can now be counted. The round coordinator triggers",
+			"link": "MACI",
+			"paragraph-text-2": "and the smart contracts to calculate how much of the matching pool each project will get."
+		},
+		"finalized": {
+			"title": "Finalized phase",
+			"paragraph": "Once the tallying calculations are complete, the round is finalized.   Project owners can come and claim their funding!"
+		},
+		"more": {
+			"title": "More",
+			"paragraph": "We use different tech to keep the round fair and free from malicious   actors. You can learn more about them below:",
+			"li-1-link": "MACI",
+			"li-1-text": " – to protect against bribery and tally round results.",
+			"li-2-link": "BrightID",
+			"li-2-text": " – to protect against sybil attacks."
+		}
+	},
+	"layer2": {
+		"heading": {
+			"title": "About Layer 2",
+			"subtitle": "Clr.fund on Layer 2",
+			"paragraph-1-text-1": "tl;dr: clr.fund runs on",
+			"link-1": "Ethereum Layer 2 rollups",
+			"paragraph-1-text-2": "to help save you time and money when contributing to your favorite projects. You'll need a wallet with funds on {chain} to interact with this application.",
+			"cta": "Bridge Funds"
+		},
+		"transactions": {
+			"title": "Ethereum Transaction Costs",
+			"paragraph-1": "Ethereum, the blockchain that houses much of clr.fund's infrastructure, requires users to pay transaction costs when interacting with it, and these costs are going up. Transaction fees compensate the decentralized community of Ethereum miners for processing and maintaining the blockchain's state securely. As usage of Ethereum has gone up, so has the price of getting miner's to include your transaction on the blockchain.",
+			"paragraph-2": "So, the increasing cost of using Ethereum demonstrates that it's useful, which is great, but it also presents a problem for end users who don't want to pay fees in the 10s or 100s of dollars."
+		},
+		"scalability": {
+			"title": "Layer 2s for Scalability",
+			"p1": "The main Ethereum blockchain, \"layer 1\", may be upgraded to reduce costs in the future (this is one of the goals for the future of Ethereum, which clr.fund is helping realize!).",
+			"p2": "In the immediate term, though, \"layer 2\" solutions are already helping dramatically reduce costs. Most layer 2s are \"rollups\", blockchain-esque systems that are maintained, like Ethereum, by a decentralized group of nodes. Rollups periodically \"roll up\" all their recent transactions into a single transaction that is recorded on layer 1, Ethereum, allowing them to inherit much of Ethereum's security.",
+			"p3": "Transactions on layer 2s are orders of magnitude cheaper than on layer 1, since rollups can process a high rate of transactions and transaction traffic is now diluted across the many layer 2 options.",
+			"p4_t1": "Read more on",
+			"p4_l1": "Ethereum Layer 2 technologies."
+		},
+		"arbitrum": {
+			"p1": " There are many variations on the layer 2 rollup approach. This current {operator} round uses {chain}, an \"optimistic\"-style rollup.",
+			"link": "Learn more in the {chain} docs.",
+			"subtitle": "What you'll need",
+			"li1": "A wallet that supports {chain}",
+			"li2": "Funds on {chain}",
+			"h3": "💼 How to find wallet that supports {chain}",
+			"tooltip": "Wallet resources are provided as a convenience and do not represent endorsement of any of the projects or services therein. Always DYOR.",
+			"li3_t1": " Visit the official",
+			"li3_link": " {chain} portal",
+			"li3_t2": "and filter by \"Wallets\" to view some of the wallets that currently support the {chain} network.",
+			"li4_t1": " Double-check that any wallet you consider",
+			"li4_link": " also supports WalletConnect",
+			"li4_t2": "to ensure you're able to connect to the app.",
+			"funds": {
+				"h3": "💰 How to get funds on {chain}",
+				"button": "Official {chain} Bridge",
+				"p1_t1": "Follow the steps below, or use the",
+				"link1": "official tutorial",
+				"p1_t2": "as a guide at any time.",
+				"li1": "Click above to go to the official {chain} bridge",
+				"li2": "Connect your {chain} supporting wallet using",
+				"li2_b": "Mainnet",
+				"li3": "Select currency (some ETH first for gas, and some {nativeTokenSymbol} for contributing)",
+				"li3_p": " For {nativeTokenSymbol}, click \"Token\" menu, search for {nativeTokenSymbol} and select token.",
+				"li4": "Enter amount and click \"Deposit\"",
+				"li5": "Confirm on your wallet",
+				"p2_t1": "Once you have bridged your {nativeTokenSymbol} to {chain}, you may want to add the ",
+				"p2_link": "token",
+				"p2_t2": "to your wallet e.g. in MetaMask.",
+				"button_2nd": "Add {chain} {nativeTokenSymbol} to MetaMask"
+			}
+		},
+		"not_arbitrum": {
+			"subtitle": "What you'll need",
+			"li1": "A wallet that supports {chain}",
+			"li2": "Funds on {chain}",
+			"h2": "💰 Bridge your funds to {chain}",
+			"cta": "{chain} Bridge"
+		}
+	},
+	"maci": {
+		"heading": {
+			"h1": "About MACI (Minimal Anti-Collusion Infrastructure)"
+		},
+		"what": {
+			"h2": "What is MACI?",
+			"p1": "tl;dr: bribers are ngmi (not going to make it)",
+			"p2": " Clr.fund uses MACI, Minimum Anti-Collusion Infrastructure, to help prevent vote manipulation like bribery or collusion. To understand why this is important let's recap quadratic funding..."
+		},
+		"quadratic": {
+			"h2": "Quadratic funding",
+			"p1": " This is the mechanism clr.fund uses in our funding rounds. When you contribute to a project you're not just sending them money, you're voting for them. At the end, the matching pool funds are distributed to projects based on number of votes at the end of the round.",
+			"p2_t1": " Read more on",
+			"p2_link": "quadratic funding.",
+			"p3": "This mechanism is great for democratic funding but poses some risks. It could be cost-effective for a project owner to bribe users to vote for their project as their eventual matching pool amount could be really high. This type of fraud puts the entire concept at risk as it is no longer about which projects offer the most value to the most amount of people."
+		},
+		"background": {
+			"h2": "Background",
+			"h3": "Vote Manipulation",
+			"p1": "Vote manipulation involves maliciously changing the incentives of a voting system, and it comes in many flavors, including:",
+			"li1": "Bribery — when a person or entity offers to pay others to vote for an outcome they otherwise might not have, e.g. paying a football team to throw a match",
+			"li2": "Coercion — when a person or entity threatens to punish others in some way if they don't vote for a particular outcome, e.g. blackmail",
+			"p2": "These kinds of manipulation break voting systems by diverting them from their intended goal. Voting systems are generally designed to discover a group's preference between a number of specified outcomes. Each voter is expected to choose how to vote based on which outcomes they prefer and how their vote can effect the result.",
+			"p3": "In an election where the outcomes are 1) Alice wins and 2) Bob wins, if I prefer Alice winning and believe my vote has a high enough chance of influencing the result to be worth the effort, I'll vote for Alice. Now, let's say Charlie offers me $1,000,000 to vote for Bob instead. For me, the possible outcomes of the election now shift to 1) Alice wins and 2) Bob wins and I get $1,000,000. In that scenario, I might vote for Bob even though I prefer Alice, and the election result will no longer reflect my preference between Bob and Alice, as was intended. If enough people are successfully bribed this way, the election will be a sham."
+		},
+		"vulnerability": {
+			"h3": "Vulnerability of Public Voting Systems",
+			"p1": "In order to manipulate the outcomes for a particular voter, the manipulator needs to know that voter's eventual choices: If Charlie offers to pay me $1,000,000 to vote for Bob, he needs to know that I'll actually vote for Bob before paying me. Otherwise, I can vote for Alice, tell Charlie I voted for Bob to get the $1,000,000, and the bribe has failed.",
+			"p2": "In traditional elections, votes are secret, making it difficult to manipulate voters. But there aren't any secrets on public blockchains like Ethereum! In most existing voting systems on Ethereum, votes are public, which means manipulation is a serious threat."
+		},
+		"why": {
+			"h2": "Why MACI?",
+			"p1": "Ethereum is a core part of clr.fund and other quadratic funding solutions like Gitcoin Grants, because:",
+			"li1": "Ethereum has a great combination of low infrastructure costs and high security (i.e. hard to hack) compared to other electronic voting solutions",
+			"li2": "Ethereum offers seamless interoperability with a large and growing ecosystem of communities and tools that both enhance and benefit from quadratic funding, such as DAOs and identity systems like BrightID",
+			"li3": "clr.fund was built by and for the Ethereum community",
+			"p2": "While moving away from the public-ness of Ethereum isn't an attractive option, building Ethereum-based tools to resist vote manipulation is, which brings us to MACI."
+		},
+		"helps": {
+			"h2_1": "How MACI helps",
+			"p1": "Bribery only works if the briber can confirm that the person they're paying actually goes through with the conditions of the bribe. This is where MACI comes in. With MACI, it's impossible to prove how you voted, so bribers will never know if you did what they paid you to do.",
+			"h2_2": "MACI — Minimum Anti-Collusion Infrastructure",
+			"p2": "MACI is a set of Ethereum smart contracts and supplementary scripts that effectively transforms public voting systems into private ones, in which 1) participation in a vote and correct vote tabulation are publicly verifiable, but 2) specific voting information is not public, making vote manipulation much more difficult.",
+			"how": {
+				"h3": "How it works",
+				"p1": "When you contribute to a project on clr.fund you register an identity with the round coordinator. But at any time before the end of the round, you can invalidate your identity by secretly changing the public key associated with your identity before casting the vote. You can then use a different key pair to sign the vote (which renders the vote invalid, but it's impossible to see if the vote is invalid).",
+				"p2": "MACI does all this using zero-knowledge proofs. These mathematically prove the authenticity of votes without providing any of the details. So bribers can’t tell what actions the people they bribed took.",
+				"p3_t1": "From",
+				"p3_link": "MACI's introduction documentation:",
+				"p4": "Whitelisted voters named Alice, Bob, and Charlie register to vote by sending their public key to a smart contract. Additionally, there is a central coordinator Dave, whose public key is known to all.",
+				"p5": "When Alice casts her vote, she signs her vote with her private key, encrypts her signature with Dave's public key, and submits the result to the smart contract.",
+				"p6": "Each voter may change her keypair at any time. To do this, she creates and signs a key-change command, encrypts it, and sends it to the smart contract. This makes it impossible for a briber to ever be sure that their bribe has any effect on the bribee's vote.",
+				"p7": "If Bob, for instance, bribes Alice to vote a certain way, she can simply use the first public key she had registered ⁠— which is now void ⁠— to cast a vote. Since said vote is encrypted, as was the key-changing message which Alice had previously sent to Dave, Bob has no way to tell if Alice had indeed voted the way he wanted her to.",
+				"p8": "Even if Alice reveals the cleartext of her vote to Bob, she just needs to not show him the updated key command that she previously used to invalidate that key. In short, as long as she had submitted a single encrypted command before her vote, there is no way to tell if said vote is valid or not.",
+				"link": "Read more on the technical details of MACI here."
+			}
+		},
+		"constraints": {
+			"h3": "MACI's constraints",
+			"p": "This is cutting-edge technology and comes with a few constraints right now.",
+			"li1": "There are limits on the number of projects, contributors, and contributions. This means you may miss out if a round hits capacity but know that it's for the integrity of the round.",
+			"li2": "You can only contribute once per round. Once you have contributed, you can add/remove projects and reallocate your funds but you can't increase your total contribution amount."
+		},
+		"more": {
+			"h2": "More",
+			"h3_1": "Further reading",
+			"l1": "Vitalik Buterin on Minimal anti-collusion infrastructure",
+			"l2": "The MACI repo",
+			"l3": "The technical spec",
+			"h3_2": "Videos",
+			"li4": "MACI high-level intro",
+			"li5": "MACI technical intro"
+		}
+	},
+	"public_goods": {
+		"heading": {
+			"h1": "About Public Goods",
+			"h2": "What are public goods?",
+			"p1": "The first thing to understand about 'public goods' is that fundamentally, they are fully non-excludable and non-subtractable goods — a public good can be from the intangibles (i.e. knowledge) to the tangible social public goods (i.e. street lighting).",
+			"p2": "In economics, public goods are goods that are both:",
+			"li1": "Non-excludable — no one (who is a member of the \"public\") can be prevented from using the good, for any reason.",
+			"li2": "Non-rivalrous — one person using the good does not reduce anyone else's ability to use it.",
+			"p3": "Clean air, national security (for a given country), and free, open-source software (FOSS) are all examples of public goods, with FOSS being the most important for clr.fund.",
+			"p4_t1": "Check",
+			"p4_link": "Wikipedia",
+			"p4_t2": "for a more specific description and context."
+		},
+		"why": {
+			"h2": "Why create new funding mechanisms for public goods?",
+			"p1": "Public goods are often underfunded because of something called the free rider problem: since public goods are always free and accessible for members of the public, people have little reason to contribute to their creation and maintenance. Instead, they can choose to be \"free riders\": using the public good but depending on others to build and maintain it.",
+			"p2": "The free rider problem is quite present in open-source software, which is chronically underfunded despite being a core component of nearly all popular software products today.",
+			"p3": "Clr.fund is an attempt to address the free rider problem for the Ethereum community, with the hope that this infrastructure may be useful for other publics in the future. By design, the funding rounds on clr.fund seek to involve members of the public from inception, and are allocating both decision making power and the exponential power to increase funding via the",
+			"link": "quadratic funding mechanism.",
+			"exponential_power": ""
+		}
+	},
+	"quadratic_funding": {
+		"heading": {
+			"h1": "About Quadratic Funding",
+			"h2": "Quadratic Funding on clr.fund",
+			"p1": "Clr.fund is an implementation of quadratic funding, also called CLR (Capital-constrained Liberal Radicalism). Quadratic funding is made up of:",
+			"li1": "a pool of funds to be distributed",
+			"li2": "a voting system for distributing those funds",
+			"p2": "Two common voting systems you may have used are 1-person-1-vote and 1-dollar-1-vote. Quadratic funding is a best-of-both-worlds solution where users vote with the",
+			"sqrt": " square root",
+			"more": " of the money they spend — read on to learn more."
+		},
+		"problems": {
+			"h2": "Problems with Existing Funding Mechanisms",
+			"p1": "The common fund-distribution systems of today all have pluses and minuses:",
+			"h3": "Markets",
+			"p2": "Markets can be thought of as fund-distributors: sellers are the fund recipients, and buyers are the voters deciding what will be funded. In this case, the \"voting system\" is 1-dollar-1-vote: each buyer has exactly as much potential influence over where funds go as they have money to spend. This is also the case for traditional crowdfunding platforms like Kickstarter.",
+			"p3": "An advantage of this system is that each voter's influence is directly proportional to their need (at least, if we ignore wealth inequality). The more Alice needs pizza, the more pizza she'll buy, and the more funding will go to pizzerias.",
+			"p4": "The disadvantage is that rich voters have an outsize influence on what gets funded. Alice may need pizza exactly as much as Bob needs movie tickets, but if Bob is twice as wealthy as Alice, he has twice as many \"votes\" to spend on going to the movies."
+		},
+		"private": {
+			"h3": "Private Grant-Givers",
+			"p1": "Privately-owned grant-giving institutions, like non-profit foundations, are quite common, but they don't have voting systems. Instead, grants committees and the like solicit grant proposals and then choose which applicants will receive funding internally.",
+			"p2": "An advantage of non-profits is that their non-profit status binds them to **act in the interest of some public mission**, rather than seeking profit above all.",
+			"p3": "On the other hand, the small, private interests that control these organizations lack the tools and incentives to effectively serve large publics."
+		},
+		"democratic": {
+			"h3": "Democratic Governments",
+			"p1": "Government grants are another common fund-distribution mechanism, and in democracies, these are usually controlled by voting citizens using 1-person-1-vote policies (with elected representatives and other middlemen in between).",
+			"p2": "On the good side, these systems are much less oligarchical than markets—if we ignore the ability to convert money into influence via the media, among other complications.",
+			"p3": "In exchange for less oligarchy, though, influence also poorly reflects need in 1-person-1-vote systems. A half-time Florida resident has the same voting power in Florida elections as a full-time resident, as long as both qualify to vote, even though the full-time resident may have twice as much riding on the result."
+		},
+		"balance": {
+			"h3": "Quadratic Funding: a better balance?",
+			"p1": "Quadratic funding is a compromise between 1-dollar-1-vote and 1-person-1-vote. Participants vote on how to distribute pooled funds by making individual donations, but each person's influence, rather than being the amount of money they spend, is the square root of that amount.",
+			"p2": "Compared to 1-dollar-1-vote in the market, quadratic funding makes it exponentially easier for the influence of many poorer people to outweigh that of a single rich person:",
+			"li1": "1-dollar-1-vote: 1 person paying $10,000 has the same influence as 100 people paying $100",
+			"li2": "Quadratic funding: 1 person paying $10,000 has the same influence as 100 people paying $1 or 10 people paying $100",
+			"p3": "Compared to 1-person-1-vote, quadratic funding lets the person who lives in Florida full-time, and cares twice as much about the vote's outcome than the person who lives in Florida half-time, have more influence:",
+			"li3": "1-person-1-vote: the two Florida voters have equal influence",
+			"li4": "  Quadratic funding: the full-time Florida resident, who cares twice as much, pays twice as much, and as a result gets 2^(1/2) times the influence of the half-time resident",
+			"p4": " (It's important to note that while these example are a good demonstration of the argument for quadratic funding, they do over-simplify these situations, which are as sociological as they are mathematical.)"
+		},
+		"resources": {
+			"h2": "Quadratic Funding Resources",
+			"li1": "Quadratic Payments: A Primer",
+			"li2": "Liberal Radicalism: A Flexible Design For Philanthropic Matching Funds",
+			"li3": "Plural Voting",
+			"li4": "WTF is QF"
+		}
+	},
+	"recipients": {
+		"heading": {
+			"h1": "Recipient guide",
+			"p": "An overview of how things work as a recipient so you can learn what to expect throughout the duration of a funding round."
+		},
+		"funds": {
+			"h2": "Get funds on {chain}",
+			"p1": "You'll need some {currency} on {chain} in order to submit transactions to the clr.fund smart contracts.",
+			"p2_t1": " Follow",
+			"cta": "  these steps",
+			"p2_t2": "to bridge your funds to {chain}",
+			"link1": "Bridge your funds here",
+			"p3": "Confused on what {chain} is?",
+			"link2": " Read our explanation on how clr.fund uses layer 2 on Ethereum."
+		},
+		"register": {
+			"h2": "Register your project",
+			"p1": "In order to participate in a funding round as a project, you'll need to submit an application to join the recipient registry (via an on-chain transaction).",
+			"p2_t1": "MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.",
+			"p2_link": "More on MACI",
+			"p2_t2": ". The round only accepts a total of {maxRecipients} projects, so we encourage you to apply early.",
+			"p3": "Note: all application data (except contact email address) will be publicly stored on-chain.",
+			"h3": "Submit your application",
+			"li1": "Head over to the ",
+			"li1_link": "Join page.",
+			"li2": "Click \"See round criteria\" and familiarize yourself with the criteria for projects.",
+			"li3": "Once you're familiar with the criteria and you're sure your project meets them, click \"Add project.\" You'll see a series of forms to fill out asking for more information about your project.",
+			"li4": "With the forms finished, you can finish your submission:",
+			"li5": "Connect to the right network via your wallet of choice.",
+			"li6": "Send a transaction (with a deposit of {depositAmount} {depositToken}) to the registry contract.",
+			"p4": "The registry admin will review project submissions and accept/reject projects according to the criteria.",
+			"p5": "In any case, your {depositToken} will be returned once your application has been either accepted or denied. Note that metadata pointing to all your project information (but not contact information) will be stored publicly on-chain."
+		},
+		"claim": {
+			"h2": "Claim your funds",
+			"p": "After a clr.fund round is finished, it's simple to claim your project's share of the funding. Return to your project's page: you will see a \"claim funds\" button if your project received contributions during the round. Submit the claim transaction to receive your funds."
+		},
+		"how": {
+			"h2": "How does clr.fund work?",
+			"p": "Looking for a more general overview?",
+			"link": "Check out our \"How It Works\" page"
+		}
+	},
+	"sybilResistance": {
+		"heading": {
+			"h1": "About Sybil Resistance",
+			"h2": "What are Sybil attacks?",
+			"p1_t1": "A \"sybil attack\" is when one person pretends to be many people in order to subvert a system's rules. The more a system depends on each participant being a single, unique person, the more potentially vulnerable it is to sybil attacks. Social media is somewhat vulnerable: bots creating email spam and fake follows or likes are examples of relatively toothless sybil attacks. Digital voting systems are more vulnerable: if an attacker can create enough fake users to swing a vote, there can be significant and concrete consequences. Since clr.fund uses",
+			"p1_link": "quadratic funding",
+			"p1_t2": ", which is essentially a voting system, sybil attacks are a serious threat.",
+			"p2": "In the physical world, sybil attacks are hard to pull off. It's pretty difficult to pretend to be someone else for long, especially when most governments issue and check photo IDs and ID numbers. On the internet, though, nobody knows you're a dog. People don't want to share their personal information online and government IDs are impractical for borderless web services, so historically, we haven't had strong methods to stop online sybil attacks."
+		},
+		"brightID": {
+			"h2": "Sybil Resistance and BrightID",
+			"p1": "BrightID is a platform we use to increase our confidence that you're only contributing once. BrightID is one of a new class of digital identity solutions for use cases like clr.fund that require digital sybil resistance.",
+			"p2": "BrightID works using a web-of-trust model: users connect their BrightID accounts with people they trust to be unique humans (generally because they know them personally) and form groups. These connections are public, but users' personal data aren't. If you connect your BrightID to an app, the app can analyze your connections and decide whether or not to allow you access based on how likely you are to be a unique person. The graph of BrightID connections can be analyzed with any method, but generally, the more connections an ID has with other trustworthy-looking IDs, the more trustworthy it is.",
+			"p3": "To contribute to projects in a clr.fund round, you must connect a verified BrightID with the clr.fund app. This prevents you from creating 1000s of Ethereum accounts and distorting the contributions.",
+			"link": "Get verified by following the directions here"
+		},
+		"how": {
+			"h2": "How to set up BrightID",
+			"p1_t1": "The app walks you through ",
+			"p1_link1": "getting set up ",
+			"p1_t2": "here's a quick look at what you can expect:",
+			"li1_t1": "Download BrightID for",
+			"li1_link1": "iOS",
+			"li1_t2": "or",
+			"li1_link2": "Android",
+			"li2": "Get verified in BrightID so we know you're a human and not a bot",
+			"li3_t1": "Submit a transaction for clr.fund to sponsor you in BrightID",
+			"li3_link1": "More on BrightID sponsorship",
+			"li4": "Link your wallet to your BrightID profile, so you can't use multiple Ethereum addresses to sway voting",
+			"li5_t1": "Add yourself to the clr.fund user registry. This is a requirement for",
+			"li5_link1": "MACI, our anti-bribery tech",
+			"p2": ""
+		}
+	},
+	"brightIDGuide": {
+		"heading": {
+			"h2": "Get verified",
+			"p": "BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person."
+		},
+		"accordion": {
+			"fastest": {
+				"tag": "🚀 Fastest",
+				"header": "Join a BrightId party",
+				"content": "BrightID run verification parties regularly. Join the call, meet other new users, and they'll verify you’re a human and not a bot. Quick and painless, even for you introverts out there.",
+				"linkButton": "View party schedule"
+			}
+		}
+	},
+	"brightIDSponsor": {
+		"h2": "Get sponsored",
+		"p": "You need a sponsorship token to become BrightID verified. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. If you're not, click the button below to submit a sponsorship request.",
+		"cta": "Get sponsored"
+	},
+	"brightIDSponsored": {
+		"h1": "You're sponsored!",
+		"subtitle": "You’re almost ready to contribute to your favorite projects! If you're verified for BrightID, link your wallet to your BrightID profile and start contributing.",
+		"link1": "Link BrightId",
+		"link2": "Go home"
+	},
+	"join": {
+		"title": {
+			"h1": "Join the round",
+			"p1": "Review info",
+			"p2": "Preview project",
+			"link1": "Cancel"
+		},
+		"step0": {
+			"h2": "About the project",
+			"label1": "Project name",
+			"input1": "ex: clr.fund",
+			"error1": "Your project needs a name",
+			"label2": "Tagline",
+			"p1": "Describe your project in a sentence. Max characters: 140",
+			"input2": "ex: A quadratic funding protocol",
+			"error2": "This tagline is too long. Be brief for potential contributors",
+			"error3": "Your project needs a tagline",
+			"label3": "Description",
+			"p2": "Markdown supported.",
+			"input3": "ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...",
+			"p3": "Preview:",
+			"error4": "Your project needs a description. What are you raising money for?",
+			"label4": "Category",
+			"p4": "Choose the best fit.",
+			"label5": "Tools",
+			"label6": "Content",
+			"label7": "Research",
+			"label8": "Data",
+			"error5": "You need to choose a category",
+			"label9": "Problem space",
+			"p5": "Explain the problems you're trying to solve. Markdown supported.",
+			"input8": "ex: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.",
+			"error6": "Explain the problem your project solves",
+			"p6": " Preview:"
+		},
+		"step1": {
+			"h2": "Donation details",
+			"label1": "Ethereum address",
+			"p1": "The destination address for donations, which you'll use to claim funds. This doesn't have to be the same address as the one you use to send your application transaction.",
+			"input1": "example: 0x123...",
+			"error1": "Enter a valid ENS or Ethereum 0x address",
+			"label2": "How will you spend your funding?",
+			"p2": "Potential contributors might convert based on your specific funding plans. Markdown supported.",
+			"input2": "ex: on our roadmap...",
+			"error2": "Let potential contributors know what plans you have for their donations.",
+			"preview1": "Preview:"
+		},
+		"step2": {
+			"h2": "Team details",
+			"p1": "Tell us about the folks behind your project.",
+			"label1": "Contact email",
+			"description1": "For important updates about your project and the funding round.",
+			"input1": "example: doge@goodboi.com",
+			"notice1": "We won't display this publicly or add it to the on-chain registry.",
+			"error1": "This doesn't look like an email.",
+			"label2": "Team name (optional)",
+			"p2": "If different to project name.",
+			"input2": "ex: clr.fund",
+			"label3": "Team description (optional)",
+			"p3": "If different to project description. Markdown supported.",
+			"input3": "ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...",
+			"preview1": "Preview:"
+		},
+		"step3": {
+			"h2": "Links",
+			"p1": "Give contributors some links to check out to learn more about your project. Provide at least one.",
+			"label1": "GitHub",
+			"input1": "example: https://github.com/ethereum/clrfund",
+			"error1": "This doesn't look like a valid URL",
+			"label2": "Radicle",
+			"input2": "example: https://radicle.xyz/ethereum/clrfund",
+			"error2": "This doesn't look like a valid URL",
+			"label3": "Website",
+			"input3": "example: https://clr.fund",
+			"error3": "This doesn't look like a valid URL",
+			"label4": "Twitter",
+			"input4": "example: https://twitter.com/ethereum",
+			"error4": "This doesn't look like a valid URL",
+			"label5": "Chat",
+			"input5": "ex: https://discord.gg/5Prub9zbGz",
+			"error5": "This doesn't look like a valid URL"
+		},
+		"step4": {
+			"h2": "Images",
+			"p1": "We'll upload your images to IPFS, a decentralized storage platform.",
+			"link1": "More on IPFS",
+			"label1": "Banner image",
+			"input1": "Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF",
+			"label2": "Thumbnail image",
+			"input2": "Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF"
+		},
+		"step5": {
+			"h2": "Review your information",
+			"warning": "This information will be stored in a smart contract and cannot be edited, so please review carefully.",
+			"h3_1": "About the project",
+			"edit1": "Edit",
+			"h4_1": "Project name",
+			"h4_2": "Tagline",
+			"h4_3": "Description",
+			"h4_4": "Category",
+			"h4_5": "Problem space",
+			"h3_2": "Funding details",
+			"edit2": "Edit",
+			"h4_6": "Ethereum address",
+			"link1": "View on {blockExplorer} ",
+			"ens": "Resolved ENS address",
+			"h4_7": "Funding plans",
+			"h3_3": "Team details",
+			"edit3": "Edit",
+			"h4_8": "Contact email",
+			"notice1": "This information won't be added to the smart contract.",
+			"h4_9": "Team name",
+			"h4_10": "Team description",
+			"h3_4": "Links",
+			"edit4": "Edit",
+			"h4_12": "Website",
+			"h3_5": "Images",
+			"edit5": "Edit",
+			"h4_13": "Banner",
+			"h4_14": "Thumbnail"
+		},
+		"step6": {
+			"h2": "Submit project",
+			"p1": "This is a blockchain transaction that will add your project information to the funding round."
+		},
+		"error": {
+			"not_provided": "Not provided"
+		}
+	},
+	"joinLanding": {
+		"loading": "Fetching round data...",
+		"check_out_these": "Check out these",
+		"other_ways_to_source_funding": "other ways to source funding",
+		"or_follow_us_on_twitter": ". Or follow us on Twitter for updates about future rounds:",
+		"need_info_about_your_project": "We’ll need some information about your project and a",
+		"security_deposit": " security deposit.",
+		"cap_on_projects": "The round only accepts a total of {maxRecipients} projects, so apply now while there’s still room!",
+		"time_to_complete": "Time to complete",
+		"15_minutes_ish": "15 minutes (ish)",
+		"see_round_criteria": "See round criteria",
+		"closed": {
+			"h1": "Sorry, it's too late to join",
+			"subtitle1": "The round is closed for new projects. It's now too late to get on board."
+		},
+		"full": {
+			"h1": "Sorry, the round is full",
+			"subtitle1": "The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now. Unfortunately we've hit the cap and there's no more room on board."
+		},
+		"open": {
+			"h1": "Join the funding round",
+			"div1": "Time left to join",
+			"div4": " {spacesRemainingString} left, hurry!",
+			"div5": "MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.",
+			"p1": "You will get your deposit back if you don’t make it into the round this time."
+		},
+		"join": {
+			"h1": "Join the next funding round"
+		}
+	},
+	"landing": {
+		"hero": {
+			"title": "Send your favorite projects to the moon!",
+			"subtitle": "Every project you contribute to gets a portion of extra funding.",
+			"action": "Get started",
+			"info": "How it works"
+		},
+		"callout": {
+			"title": "Join the funding round",
+			"paragraph": "Add your project to the next funding round. If you're working on anything related to public goods, you can join in.",
+			"action": "Add project",
+			"deadline": "to join"
+		},
+		"how": {
+			"title": "Every donation is amplified by the matching pool.",
+			"paragraph": "This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.",
+			"subtitle": "How it works",
+			"list-1": "{operator} and other donors send funds to the matching pool smart contract.",
+			"list-2": "The round begins and you can donate to your favorite projects.",
+			"list-3": "Once the round finishes, the smart contract distributes the matching pool funds to projects weighted primarily by number of contributions,",
+			"list-3-strong": "not contribution value",
+			"action": "How the round works"
+		},
+		"req": {
+			"title": "What you'll need",
+			"chain": "{chain} for fast and cheap transaction fees",
+			"chain-cta": " Get {chain} funds",
+			"bright": "BrightID for private, decentralized identity verification",
+			"bright-cta": "Set up BrightID"
+		},
+		"about": {
+			"title": "About",
+			"subtitle-1": "It's not about how much...",
+			"paragraph-1": " Using quadratic funding, your contribution counts as a vote. Projects with the most contributions at the end of the round get the highest amount from the matching pool. That means even a small donation can have a massive impact.",
+			"link-1": "About quadratic funding",
+			"subtitle-2": "Protect against bribery",
+			"paragraph-2": "Using MACI, a zero-knowledge technology, it's impossible to prove how you contributed. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!",
+			"link-2": "About MACI",
+			"subtitle-3": "Built using the CLR protocol",
+			"paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the prefences of the Ethereum Community.",
+			"link-3": "About clr.fund"
+		},
+		"footer": {
+			"title": "More",
+			"link-1": "About clr.fund",
+			"link-2": "How the round works",
+			"link-3": "About {chain}",
+			"link-4": "About MACI",
+			"link-5": "About BrightID",
+			"link-6": "GitHub",
+			"link-7": "Discord",
+			"link-8": "Forum",
+			"link-9": "More on Ethereum",
+			"link-blog": "Blog"
+		}
+	},
+	"profile": {
+		"p1": "Close",
+		"h2_1": "Your wallet",
+		"btn1": "address",
+		"tooltip1": "Disconnect wallet",
+		"h2_2": "{chain} balances",
+		"tooltip2": "Balance of wallet on {chain} chain",
+		"h2_3": "Projects",
+		"div1": "Under review",
+		"btn2_1": "Preview",
+		"btn2_2": "View",
+		"div2": "You haven't submitted any projects"
+	},
+	"project": {
+		"p": "You have contributed to this project!"
+	},
+	"projectAdded": {
+		"h1": "Project submitted!",
+		"div1": "You’re almost on board this funding round.",
+		"li1": "Your project just needs to go through some final checks to ensure it meets round criteria. You can",
+		"link1": "learn more about the registration process here.",
+		"li2": "Once that's complete, your project page will go live.",
+		"li3": " If your project fails any checks, we'll let you know by email and return your deposit.",
+		"link2": "View projects",
+		"link3": "Go home"
+	},
+	"projectList": {
+		"h2": "Projects",
+		"input": "Search projects",
+		"link1": "Add project",
+		"div1": "😢 No projects match your search. Try using the filter to narrow down what you're looking for."
+	},
+	"recipientRegistry": {
+		"h2": "Recipient registry",
+		"th1": "Project",
+		"th2": "Request type",
+		"th3": "Status",
+		"th4": "Actions",
+		"summary": "More",
+		"div1": "Transaction hash",
+		"btn1": "hash",
+		"div2": "Project ID",
+		"btn2": "id",
+		"div3": "Recipient address",
+		"btn3": "address"
+	},
+	"roundList": {
+		"h1": "Rounds",
+		"link1": "Round {index}",
+		"link2": "Round {index}"
+	},
+	"transactionSuccess": {
+		"p1": "reallocated!",
+		"p2": "You just contributed!",
+		"p3": "Your choices have been updated! You can update your choices again any time in the next",
+		"p4": ".",
+		"p4_t1": "Thanks for contributing to the Ethereum ecosystem. If you change your mind, you have",
+		"p4_t2": " to reallocate your contributions.",
+		"btn": "OK"
+	},
+	"verified": {
+		"h1": "Ready to contribute!",
+		"div1": "You’re on board this funding round! And fully verified for BrightID for this funding round.",
+		"p1": "You can now start contributing to your favorite projects.",
+		"link1": "View projects",
+		"link2": "Go home"
+	},
+	"verify": {
+		"subtitle": " Step {currentStep} of {steps}",
+		"p1": "Step {currentStep} of {steps}",
+		"h1": "Set up BrightID",
+		"h2_1": "Connect",
+		"p2": "You need to connect your BrightID account with your wallet address.",
+		"p3": "Once this app is linked in your BrightID app, we'll automatically transition you to the next step. It may take a minute for us to verify the connection - please wait.",
+		"p4": "Scan this QR code with your BrightID app",
+		"p5": "Follow this link to connect your wallet to your BrightID app",
+		"p6": "This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.",
+		"h2_2": "Register",
+		"p7": "To protect the round from bribery and fraud, you need to add your wallet address to a smart contract registry. Once you’re done, you can join the funding round!",
+		"btn": " Become a contributor"
+	},
+	"verifyLanding": {
+		"h1": "Prove you’re only using one account",
+		"subtitle": "We use BrightID to stop bots and cheaters, and make our funding more democratic.",
+		"h2": "What you'll need",
+		"tooltip": "If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps",
+		"li1_t1": "BrightID – available on",
+		"li1_link1": "iOS",
+		"li1_t2": "or",
+		"li1_link2": "Android",
+		"li2": "Get sponsored",
+		"li3": "Get verified",
+		"li4": "An Ethereum wallet, with enough gas for two transactions",
+		"li5": "Access to Zoom or Google Meet",
+		"link1": "Why is this important?",
+		"div1": "There's not yet an open funding round. Please check back later.",
+		"div2": "The current round is no longer accepting new contributions. Please try again next round.",
+		"div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
+		"link2": "I have BrightID installed",
+		"link3": "Go back"
+	},
+	"addToCartButton": {
+		"input1": "Add to cart",
+		"input2": "In cart 🎉"
+	},
+	"brightIdWidget": {
+		"h2": "BrightID setup",
+		"link1": "Start contributing",
+		"link2": "Continue setup",
+		"link3": "Start setup",
+		"tooltip1_1": "You're a verified human on BrightID!",
+		"tooltip1_2": "Your BrightID profile still needs to be verified.",
+		"p1_1": "Verified",
+		"p1_2": "Unverified"
+	},
+	"callToActionCard": {
+		"h2_1": "Changed your mind?",
+		"p1": "You still have time to reallocate your contributions.",
+		"div1": "Open cart",
+		"h2_2": "Round over for contributions",
+		"p2": "You can no longer make any contributions this round.",
+		"h2_3": "Get prepared",
+		"p3": "You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.",
+		"link1": "Start prep",
+		"link2": "Continue setup"
+	},
+	"cart": {
+		"h3_1": "Connect to see your cart",
+		"div1": "You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount.",
+		"link1": "Why?",
+		"div2": "Almost done! You must submit one more transaction to complete your contribution.",
+		"h2_1": "Edit cart",
+		"h2_2": "Your cart",
+		"div3": "This round is over. Here’s how you contributed. Thanks!",
+		"h3_2": "Too late to donate",
+		"div4": "Sorry, the deadline for donating has passed.",
+		"h3_3": "Your cart is empty",
+		"div5": "Choose some projects that you want to contribute to...",
+		"link2": "See projects",
+		"edit1": "Edit contributions",
+		"edit2": "Your contributions",
+		"edit3": "Cancel",
+		"edit4": "Edit",
+		"div6": "Your contributions",
+		"div7": "Time left:",
+		"span1": "Original contribution",
+		"span2": "Your cart",
+		"div8": "Matching pool",
+		"div9": "Remaining funds go to matching pool",
+		"div10": "Split {contribution} {tokenSymbol} evenly",
+		"button1": "Withdraw {contribution} {tokenSymbol}",
+		"div11": "Can't",
+		"div11_if2": "reallocate",
+		"div11_if3": "contribute",
+		"div12": "Funds you don't contribute to projects ({total} {tokenSymbol}) will be sent to the matching pool at the end of the round. Your cart must add up to your original {contribution} {tokenSymbol} donation.",
+		"link3": "Verify with BrightID",
+		"template1": "Contribute {total} {tokenSymbol} to {cart} projects",
+		"template2": "Finish contribution",
+		"template3": "Reallocate contribution",
+		"div13": "Time left:",
+		"span3": "Projects",
+		"span4": "Matching Pool",
+		"span5": "Total",
+		"div14": "No current round.",
+		"link4": "Verify with BrightID while you wait"
+	},
+	"cartItems": {
+		"button1": "Amount"
+	},
+	"claimButton": {
+		"p": "✔️ {allocatedAmount} {tokenSymbol} claimed",
+		"button": "Claim {allocatedAmount} {tokenSymbol}"
+	},
+	"claimModal": {
+		"h2_1": "Claim funds",
+		"h2_2": "Funds were claimed!",
+		"p1": " has been sent to",
+		"div1": "Recipient address",
+		"button1": "Done"
+	},
+	"contributionModal": {
+		"confirm": " Confirm {renderTotal} {nativeTokenSymbol} contribution",
+		"your": " Your",
+		"contribution_final": "contribution total is final. You won't be able to increase this amount. Make sure this is the maximum you might want to spend on contributions.",
+		"btn_cancel": "Cancel",
+		"btn_continue": "Continue",
+		"approve": "Approve {renderTotal} {nativeTokenSymbol}",
+		"permission": " This gives this app permission to withdraw {renderTotal} {nativeTokenSymbol} from your wallet for your contribution.",
+		"send_contribution": " Send {renderTotal} {nativeTokenSymbol} contribution",
+		"send_tx": " This transaction sends out your {renderTotal} {nativeTokenSymbol} contribution to your chosen projects.",
+		"magic": "Matching pool magic ✨",
+		"how_much": "This transaction lets the matching pool know how much {nativeTokenSymbol} to send to your favorite projects based on your contributions."
+	},
+	"copyButton": {
+		"tooltip1": "Copied!",
+		"copy": "Copy"
+	},
+	"criterialModal": {
+		"h2": "Round criteria",
+		"p1": "Close",
+		"p2": "The registry admin will remove any projects that don't meet the round criteria. So read carefully! In later rounds we're hoping that this review process can be done by the community.",
+		"p3": "Learn more about the project application process in our",
+		"link1": "recipient guide",
+		"link2": "Add project"
+	},
+	"formNavigation": {
+		"button1": "Previous",
+		"button2_1": "Confirm",
+		"button2_2": "Next"
+	},
+	"formProgressWidget": {
+		"p1": "Step {currentStep} of {steps}",
+		"div1": "Step {currentStep} of {steps}",
+		"link1": "Cancel"
+	},
+	"fundsNeededWarning": {
+		"span1_t1": "You need",
+		"span1_l2": "L2",
+		"span1_t2": "funds!",
+		"p1": " ⚠️ You need both some ETH for gas, and {nativeTokenSymbol} to contribute",
+		"link1": " Get help bridging {singleTokenNeeded} to Layer 2",
+		"link2": " Bridge {singleTokenNeeded} to {chain}"
+	},
+	"ipfsCopyWidget": {
+		"tooltip1": "View IPFS link"
+	},
+	"ipfsImageUpload": {
+		"button1_1": "Uploading...",
+		"button1_2": "Upload",
+		"p1": "IPFS hash",
+		"p2": "Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use.",
+		"div1": "Remove image"
+	},
+	"linkBox": {
+		"h2": "Check them out",
+		"link1": "GitHub repo",
+		"link2": "@Twitter"
+	},
+	"matchingFundsModal": {
+		"title": "Contribute {tokenSymbol} to the matching pool",
+		"div1": " ⚠️ You only have {renderBalance} {tokenSymbol}",
+		"button2": "Contribute",
+		"h3_2_t1": " Contribute {renderContributionAmount} {tokenSymbol} to the matching pool",
+		"h3_3": " You just topped up the pool by {renderContributionAmount} {tokenSymbol}!",
+		"fund_distribution_message": "The funds will be distributed to all projects based on the contributions they receive from the community",
+		"div2": "Thanks for helping out all our projects.",
+		"button3": "Done"
+	},
+	"navBar": {
+		"app": "App",
+		"dropdown": {
+			"home": "Home",
+			"about": "About",
+			"how": "How it works",
+			"maci": "Bribery protection",
+			"sybil": "Sybil resistance",
+			"code": "Code",
+			"recipients": "Recipients",
+			"layer2": "Layer 2"
+		}
+	},
+	"projectListItem": {
+		"button1": "More"
+	},
+	"projectProfile": {
+		"info1": "This is what your contributors will see when they visit your project page.",
+		"div1": " tag",
+		"div2": "Team: ",
+		"p1": "You have contributed to this project!",
+		"h2_1": "About the project",
+		"h2_2": "The problem it solves",
+		"h2_3": "Funding plans",
+		"div3": "Recipient address",
+		"button1": "address",
+		"link1": "View on {blockExplorer} ",
+		"h2_4": "Team: "
+	},
+	"reallocationModal": {
+		"h3": "Reallocate funds"
+	},
+	"recipientSubmissionWidget": {
+		"div1": "Waiting for transaction to be mined...",
+		"div2": "Check your wallet for a prompt...",
+		"div3_t1": "Something failed: {txError}",
+		"div3_t2": "Check your wallet or {blockExplorerLabel} for more info.",
+		"div4": "Total to submit",
+		"tooltip1": "Estimate – this total may be slightly different in your wallet.",
+		"div5_t1": " Not enough {depositToken} in your wallet.",
+		"div5_t2": "Top up or connect a different wallet.",
+		"p1": "Security deposit"
+	},
+	"roundInfo": {
+		"link1": "View on {blockExplorer}",
+		"div1": "Cancelled",
+		"div2": "Open",
+		"div3": "Closed",
+		"p1": "he round is officially closed",
+		"p2": "It's now too late to contribute or reallocate your donations! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
+		"div4": "Great!",
+		"div5": "⏱️ Round opening",
+		"div6": "Time left to contribute",
+		"tooltip1": "During this phase, you can contribute to your favorite projects.",
+		"div7": "Contribution Deadline: ",
+		"div8_1": "Time left to reallocate",
+		"div8_2": "Round status",
+		"tooltip2": "During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.",
+		"tooltip3": "If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.",
+		"tooltip4": "This round has closed for new contributions.",
+		"div9": "Closed for contributions",
+		"div10": "Reallocation Deadline: ",
+		"div11": "Round status",
+		"tooltip5": "Our smart contracts are busy figuring out final contribution amounts.",
+		"div12": "Tallying all contributions",
+		"div13": "Round status",
+		"tooltip6": "If you're a project owner you can now claim your funds!",
+		"div14": "Contributions are ready to claim 🎉",
+		"div15": "Total in round",
+		"tooltip7": "This total includes the funds in the matching pool and all contributions from the community.",
+		"div16": "Matching pool",
+		"tooltip8": "These are the funds that will be distributed to all the projects based on the contributions they receive from the community.",
+		"tooltip9": "'Add matching funds'",
+		"span1": "Add funds",
+		"div17": "Contributions total",
+		"div18": "Contributors",
+		"div19": "legend",
+		"div20": "No scheduled round",
+		"div21": "We haven't yet scheduled a funding round. Stay tuned!",
+		"pluralism": "s"
+	},
+	"roundStatusBanner": {
+		"span1": "Funding starts 🗓 {startDate}.",
+		"span2": "Project applications are closed.",
+		"span3": "Hurry, only {recipientSpacesRemainingString} left!",
+		"span4": "Time left to add a project:",
+		"span5_t1": "⌛️ The round will close in",
+		"span5_t2": ". Get your contributions in now!",
+		"span6_t1": "🎉 The round is open!",
+		"span6_t2": "left to contribute to your favorite projects",
+		"span7_t1": "Funding is closed! If you contributed, you have",
+		"span7_t2": "left to change your mind",
+		"span8": "🎉 Funding is closed! Our smart contracts are busy tallying contributions...",
+		"span9": "Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds.",
+		"link1": "View projects"
+	},
+	"transactions": {
+		"button1": "Close",
+		"button2": "Retry",
+		"div1": "Please approve transaction in your wallet",
+		"small": "If you have been waiting a while, consider refreshing your browser and reconnecting your wallet."
+	},
+	"transactionModal": {
+		"button1": "Close"
+	},
+	"transactionReceipt": {
+		"tooltip1": "Awaiting transaction confirmation",
+		"tooltip2": "'Transaction confirmed'",
+		"tooltip3": "View on {blockExplorer}",
+		"button1": "hash"
+	},
+	"walletModal": {
+		"p1": "Connecting wallet",
+		"p2": "Connect to a wallet",
+		"p3": "MetaMask",
+		"p4": "Install MetaMask",
+		"p5": "WalletConnect"
+	},
+	"walletWidget": {
+		"button1": "Connect"
+	},
+	"withdrawalModal": {
+		"h3_1": "Withdraw funds",
+		"h3_2": "Success!",
+		"div1": "You have successfully withdrawn your contribution.",
+		"button1": "OK"
+	},
+	"dynamic": {
+		"category": {
+			"tooling": "Tools",
+			"content": "Content",
+			"data": "Data",
+			"research": "Research"
+		},
+		"timeleft": {
+			"unit": {
+				"days": "days",
+				"day": "day",
+				"hours": "hours",
+				"hour": "hour",
+				"minutes": "minutes",
+				"minute": "minute",
+				"seconds": "seconds",
+				"second": "second"
+			}
+		},
+		"criteria": {
+			"free_open_source": {
+				"tagline": "Free and open source",
+				"description": "Your project must be free to use and any code associated with your project should be available to anyone under an open source license."
+			},
+			"no_clones": {
+				"tagline": "No clones",
+				"description": "If you've forked code, you must provide additional, unique value to the ecosystem."
+			},
+			"project_ownership": {
+				"tagline": "Project ownership",
+				"description": "The project you submit must be yours or you must have permission from the project owner."
+			},
+			"no_scams": {
+				"tagline": "No scams",
+				"description": "Obviously, your project must not put anyone's funds or information at risk."
+			}
+		},
+		"cart": {
+			"error": {
+				"reached_contribution_limit": "The limit on the number of contributions has been reached",
+				"connect_wallet": "Please connect your wallet",
+				"incorrect_network": "Please change network to {chain} network.",
+				"need_to_setup_brightid": "To contribute, you need to set up BrightID.",
+				"invalid_contribution_amount": "Include valid contribution amount.",
+				"exceeded_max_cart_size": "Your cart can't include over {maxCartSize} projects.",
+				"round_cancelled": "Sorry, we've had to cancel this funding round.",
+				"round_ended": "The funding round has ended.",
+				"cart_changes_exceed_cap": "Cart changes will exceed contribution capacity of this round",
+				"contributions_over": "Contributions are over for this funding round.",
+				"reached_contributor_limit": "The limit on the number of contributors has been reached",
+				"must_be_gt_zero": "Your total must be more than 0 {nativeTokenSymbol}",
+				"not_enough_funds": "Not enough funds. Your balance is {balance} {nativeTokenSymbol}.",
+				"too_generous": "Your contribution is too generous. The max contribution is {maxAmount} {nativeTokenSymbol}.",
+				"need_gas_payment": "You need some ETH to pay for gas",
+				"contributor_key_missing": "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with.",
+				"more_than_original_contribution": "Your new total can't be more than your original {total} {tokenSymbol} contribution"
+			},
+			"action": {
+				"remove_all": "Remove all",
+				"split_evenly": "Split evenly"
+			}
+		},
+		"verify": {
+			"step": {
+				"connect": "Connect",
+				"get_registered": "Get registered"
+			}
+		},
+		"progress": {
+			"step": {
+				"project": "About the project",
+				"donation": "Donation details",
+				"team": "Team details",
+				"links": "Links",
+				"images": "Images",
+				"review": "Review",
+				"submit": "Submit"
+			}
+		},
+		"mobile": {
+			"tab": {
+				"Cart": "Cart",
+				"Round": "Round",
+				"Projects": "Projects"
+			}
+		}
+	},
+	"filter": "Filter",
+	"home": "Home",
+	"cancel": "Cancel",
+	"copied": "Copied!",
+	"more_on_maci": "More on MACI",
+	"add_project": "Add project"
+}

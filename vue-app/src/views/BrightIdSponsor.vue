@@ -1,13 +1,7 @@
 <template>
   <div>
-    <h2 class="step-title">Get sponsored</h2>
-    <p>
-      You need a sponsorship token to become BrightID verified. This helps
-      support BrightID as a decentralized platform. You’ll only ever need to do
-      this once and it covers you for any other app that works with BrightID.
-      Check the BrightID mobile app to see if you're sponsored. If you're not,
-      click the button below to submit a sponsorship request.
-    </p>
+    <h2 class="step-title">{{ $t('brightIDSponsor.h2') }}</h2>
+    <p>{{ $t('brightIDSponsor.p') }}</p>
     <div class="transaction">
       <div>
         <div>
@@ -24,7 +18,7 @@
             @click="sponsor"
             :disabled="sponsorTxHash.length !== 0"
           >
-            Get sponsored
+            {{ $t('brightIDSponsor.cta') }}
           </button>
         </div>
         <transaction

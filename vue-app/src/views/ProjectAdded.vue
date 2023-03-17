@@ -8,27 +8,29 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>Project submitted!</h1>
+            <h1>{{ $t('projectAdded.h1') }}</h1>
             <transaction-receipt :hash="$route.params.hash" />
           </div>
-          <div class="subtitle">You’re almost on board this funding round.</div>
+          <div class="subtitle">{{ $t('projectAdded.div1') }}</div>
           <ul>
             <li>
-              Your project just needs to go through some final checks to ensure
-              it meets round criteria. You can
-              <links to="/about/how-it-works/recipients"
-                >learn more about the registration process here</links
-              >.
+              {{ $t('projectAdded.li1') }}
+              <links to="/about/how-it-works/recipients">{{
+                $t('projectAdded.link1')
+              }}</links>
             </li>
-            <li>Once that's complete, your project page will go live.</li>
+            <li>{{ $t('projectAdded.li2') }}</li>
             <li>
-              If your project fails any checks, we'll let you know by email and
-              return your deposit.
+              {{ $t('projectAdded.li3') }}
             </li>
           </ul>
           <div class="mt2 button-spacing">
-            <links to="/projects" class="btn-primary">View projects</links>
-            <links to="/" class="btn-secondary">Go home</links>
+            <links to="/projects" class="btn-primary">{{
+              $t('projectAdded.link2')
+            }}</links>
+            <links to="/" class="btn-secondary">{{
+              $t('projectAdded.link3')
+            }}</links>
           </div>
         </div>
       </div>

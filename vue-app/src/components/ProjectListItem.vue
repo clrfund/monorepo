@@ -4,7 +4,9 @@
       <links :to="projectRoute">
         <div class="project-image">
           <img :src="projectImageUrl" :alt="project.name" />
-          <div class="tag">{{ project.category }}</div>
+          <div v-if="project.category" class="tag">
+            {{ $t($store.getters.categoryLocaleKey(project.category)) }}
+          </div>
         </div>
       </links>
       <div class="project-info">
@@ -21,7 +23,7 @@
     <div class="buttons">
       <add-to-cart-button v-if="shouldShowCartInput" :project="project" />
       <links :to="projectRoute">
-        <button class="more-btn">More</button>
+        <button class="more-btn">{{ $t('projectListItem.button1') }}</button>
       </links>
     </div>
   </div>

@@ -17,16 +17,18 @@
                   <div class="contract-address">
                     {{ roundInfo.fundingRoundAddress }}
                   </div>
-                  <links :to="blockExplorer.url"
-                    >View on {{ blockExplorer.label }}</links
-                  >
+                  <links :to="blockExplorer.url">{{
+                    $t('roundInfo.link1', {
+                      blockExplorer: blockExplorer.label,
+                    })
+                  }}</links>
                 </div>
               </template>
             </v-popover>
           </div>
           <div class="status" v-if="isRoundCancelled">
             <div class="circle closed" />
-            Cancelled
+            {{ $t('roundInfo.div1') }}
           </div>
           <div
             class="status"
@@ -37,30 +39,29 @@
             "
           >
             <div class="circle open-pulse" />
-            Open
+            {{ $t('roundInfo.div2') }}
           </div>
           <div v-else class="status">
             <div class="circle closed" />
-            Closed
+            {{ $t('roundInfo.div3') }}
           </div>
         </div>
         <template v-if="isCurrentRound">
           <div v-if="isMaxMessagesReached" class="round-notice hidden">
             <span class="bold-all-caps">
-              <p>The round is officially closed</p>
+              <p>{{ $t('roundInfo.p1') }}</p>
             </span>
             <p>
-              It's now too late to contribute or reallocate your donations! Due
-              to the community's generosity and some technical constraints we
-              had to close the round earlier than expected. You can still help
-              by donating to the matching pool.
+              {{ $t('roundInfo.p2') }}
             </p>
-            <div class="dismiss-btn" @click="toggleNotice">Great!</div>
+            <div class="dismiss-btn" @click="toggleNotice">
+              {{ $t('roundInfo.div4') }}
+            </div>
           </div>
           <div class="round-info-item" v-if="isRoundJoinOnlyPhase">
             <div class="full-width">
               <div class="round-info-item-top">
-                <div class="round-info-title">⏱️ Round opening</div>
+                <div class="round-info-title">{{ $t('roundInfo.div5') }}</div>
               </div>
             </div>
             <div class="round-info-value">
@@ -76,22 +77,21 @@
           >
             <div class="full-width">
               <div class="round-info-item-top">
-                <div class="round-info-title">Time left to contribute</div>
-                <img
+                <div class="round-info-title">{{ $t('roundInfo.div6') }}</div>
+                <div
                   v-tooltip="{
-                    content:
-                      'During this phase, you can contribute to your favorite projects.',
+                    content: $t('roundInfo.tooltip1'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
               </div>
             </div>
             <div
               class="round-info-value"
               :title="
-                'Contribution Deadline: ' + formatDate(roundInfo.signUpDeadline)
+                $t('roundInfo.div7') + formatDate(roundInfo.signUpDeadline)
               "
             >
               <time-left :date="roundInfo.signUpDeadline" />
@@ -109,47 +109,46 @@
                 <div class="round-info-title">
                   {{
                     $store.getters.hasUserContributed
-                      ? 'Time left to reallocate'
-                      : 'Round status'
+                      ? $t('roundInfo.div8_1')
+                      : $t('roundInfo.div8_2')
                   }}
                 </div>
-                <img
+                <div
                   v-if="$store.getters.hasUserContributed"
                   v-tooltip="{
-                    content: `During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.`,
+                    content: $t('roundInfo.tooltip2'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
-                <img
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
+                <div
                   v-else-if="!$store.state.currentUser"
                   v-tooltip="{
-                    content: `If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.`,
+                    content: $t('roundInfo.tooltip3'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
-                <img
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
+                <div
                   v-else
                   v-tooltip="{
-                    content: `This round has closed for new contributions.`,
+                    content: $t('roundInfo.tooltip4'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
               </div>
               <div class="message" v-if="!$store.getters.hasUserContributed">
-                Closed for contributions
+                {{ $t('roundInfo.div9') }}
               </div>
               <div
                 v-else
                 class="round-info-value"
                 :title="
-                  'Reallocation Deadline: ' +
-                  formatDate(roundInfo.votingDeadline)
+                  $t('roundInfo.div10') + formatDate(roundInfo.votingDeadline)
                 "
               >
                 <div class="round-info-value">
@@ -164,10 +163,10 @@
           >
             <div class="full-width">
               <div class="round-info-item-top">
-                <div class="round-info-title">Round status</div>
+                <div class="round-info-title">{{ $t('roundInfo.div11') }}</div>
                 <img
-                  v-tooltip="{
-                    content: `Our smart contracts are busy figuring out final contribution amounts.`,
+                  :v-tooltip="{
+                    content: $t('roundInfo.tooltip5'),
                     trigger: 'hover click',
                   }"
                   width="16px"
@@ -175,7 +174,7 @@
                 />
               </div>
               <div class="round-info-value">
-                <div class="message">Tallying all contributions</div>
+                <div class="message">{{ $t('roundInfo.div12') }}</div>
               </div>
             </div>
           </div>
@@ -185,18 +184,18 @@
           >
             <div class="full-width">
               <div class="round-info-item-top">
-                <div class="round-info-title">Round status</div>
-                <img
+                <div class="round-info-title">{{ $t('roundInfo.div13') }}</div>
+                <div
                   v-tooltip="{
-                    content: `If you're a project owner you can now claim your funds!`,
+                    content: $t('roundInfo.tooltip6'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
               </div>
               <div class="round-info-value">
-                <div class="message">Contributions are ready to claim 🎉</div>
+                <div class="message">{{ $t('roundInfo.div14') }}</div>
               </div>
             </div>
           </div>
@@ -205,15 +204,15 @@
           <div class="round-value-info-item">
             <div class="full-width">
               <div class="round-info-item-top">
-                <div class="round-info-title">Total in round</div>
-                <img
+                <div class="round-info-title">{{ $t('roundInfo.div15') }}</div>
+                <div
                   v-tooltip="{
-                    content: `This total includes the funds in the matching pool and all contributions from the community.`,
+                    content: $t('roundInfo.tooltip7'),
                     trigger: 'hover click',
                   }"
-                  width="16px"
-                  src="@/assets/info.svg"
-                />
+                >
+                  <img width="16px" src="@/assets/info.svg" />
+                </div>
               </div>
               <div class="round-info-value">
                 <div class="value large">{{ formatTotalInRound }}</div>
@@ -223,16 +222,15 @@
           </div>
           <div class="round-info-sub-item">
             <div class="round-info-item-top">
-              <div class="round-info-title">Matching pool</div>
-              <img
+              <div class="round-info-title">{{ $t('roundInfo.div16') }}</div>
+              <div
                 v-tooltip="{
-                  content:
-                    'These are the funds that will be distributed to all the projects based on the contributions they receive from the community.',
+                  content: $t('roundInfo.tooltip8'),
                   trigger: 'hover click',
                 }"
-                width="16px"
-                src="@/assets/info.svg"
-              />
+              >
+                <img width="16px" src="@/assets/info.svg" />
+              </div>
               <div
                 v-if="
                   isCurrentRound &&
@@ -240,12 +238,12 @@
                   !$store.getters.isRoundTallying &&
                   !isRoundCancelled
                 "
-                v-tooltip="'Add matching funds'"
+                v-tooltip="$t('roundInfo.tooltip9')"
                 class="add-link"
                 @click="addMatchingFunds"
               >
                 <img src="@/assets/add.svg" width="16px" />
-                <span class="add-funds-link">Add funds</span>
+                <span class="add-funds-link">{{ $t('roundInfo.span1') }}</span>
               </div>
             </div>
 
@@ -258,7 +256,7 @@
           </div>
           <div class="round-info-sub-item">
             <div>
-              <div class="round-info-title">Contributions total</div>
+              <div class="round-info-title">{{ $t('roundInfo.div17') }}</div>
               <div class="round-info-value">
                 <div class="value">
                   {{ formatAmount(roundInfo.contributions) }}
@@ -269,11 +267,14 @@
           </div>
           <div class="round-info-sub-item">
             <div>
-              <div class="round-info-title">Contributors</div>
+              <div class="round-info-title">{{ $t('roundInfo.div18') }}</div>
               <div class="round-info-value">
                 <div class="value">{{ roundInfo.contributors }}</div>
                 <div class="unit">
-                  legend{{ roundInfo.contributors !== 1 ? 's' : '' }}
+                  {{ $t('roundInfo.div19')
+                  }}{{
+                    roundInfo.contributors > 1 ? $t('roundInfo.pluralism') : ''
+                  }}
                 </div>
               </div>
             </div>
@@ -284,11 +285,11 @@
         <div class="round-info-item">
           <div class="full-width">
             <div class="round-info-item-top">
-              <div class="round-info-title">No scheduled round</div>
+              <div class="round-info-title">{{ $t('roundInfo.div20') }}</div>
             </div>
           </div>
           <div class="round-announcement-info">
-            We haven't yet scheduled a funding round. Stay tuned!
+            {{ $t('roundInfo.div21') }}
           </div>
         </div>
       </template>

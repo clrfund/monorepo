@@ -10,20 +10,23 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>Ready to contribute!</h1>
+            <h1>{{ $t('verified.h1') }}</h1>
             <transaction-receipt
               v-if="$route.params.hash"
               :hash="$route.params.hash"
             />
           </div>
           <div class="subtitle">
-            You’re on board this funding round! And fully verified for BrightID
-            for this funding round.
+            {{ $t('verified.div1') }}
           </div>
-          <p>You can now start contributing to your favorite projects.</p>
+          <p>{{ $t('verified.p1') }}</p>
           <div class="mt2 button-spacing">
-            <links to="/projects" class="btn-primary">View projects</links>
-            <links to="/" class="btn-secondary">Go home</links>
+            <links to="/projects" class="btn-primary">{{
+              $t('verified.link1')
+            }}</links>
+            <links to="/" class="btn-secondary">{{
+              $t('verified.link2')
+            }}</links>
           </div>
         </div>
       </div>

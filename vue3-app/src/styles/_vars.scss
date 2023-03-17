@@ -1,0 +1,33 @@
+@import './vars-dark';
+@import './vars-light';
+
+$clr-green: #16c8b5; //rgb(22, 200, 181)
+$clr-pink: #c72ab9;
+$clr-black: #211e2b;
+$idle-color: #191623;
+$button-color: #7375a6;
+$border-light: #7375a6;
+$icon-hover: #2c2938;
+$highlight-color: #9789c4;
+$button-disabled-color: #56567a;
+$button-disabled-text-color: #aaa9af;
+$box-shadow-nav-bar: 0px -4px 16px rgba(255, 255, 255, 0.05);
+
+$gradient-highlight: linear-gradient(109.01deg, $highlight-color 6.45%, $clr-pink 99.55%);
+
+// inactive - 20% opacity
+$gradient-inactive: linear-gradient(109.01deg, rgba($highlight-color, 0.2) 6.45%, rgba($clr-pink, 0.2) 99.55%);
+
+$content-space: 2rem;
+$modal-space: 1.5rem;
+
+$nav-header-height-sm: 2.5rem;
+$nav-header-height: 4rem; /* $profile-image-size + 2rem of padding */
+$profile-image-size: 1.5rem;
+$cart-width-open: 380px;
+$cart-width-closed: 48px;
+
+$breakpoint-s: 414px;
+$breakpoint-m: 800px;
+$breakpoint-l: 1200px;
+$breakpoint-xl: 1500px;

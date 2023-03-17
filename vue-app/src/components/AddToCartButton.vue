@@ -8,7 +8,7 @@
         class: { invalid: !isAmountValid },
       }"
       :button="{
-        text: 'Add to cart',
+        text: $t('addToCartButton.input1'),
         disabled: !isAmountValid,
       }"
       @click="handleSubmit"
@@ -17,7 +17,7 @@
       v-if="inCart && canContribute()"
       :button="{
         wide: true,
-        text: 'In cart 🎉',
+        text: $t('addToCartButton.input2'),
       }"
       @click="toggleCartPanel()"
     />

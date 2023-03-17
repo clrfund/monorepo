@@ -1,10 +1,11 @@
 <template>
   <div class="modal-body">
     <div v-if="step === 1">
-      <h3>Contribute {{ tokenSymbol }} to the matching pool</h3>
+      <h3>
+        {{ $t('matchingFundsModal.title', { tokenSymbol }) }}
+      </h3>
       <div>
-        The funds will be distributed to all projects based on the contributions
-        they receive from the community
+        {{ $t('matchingFundsModal.fund_distribution_message') }}
       </div>
       <div class="contribution-form">
         <input-button
@@ -17,24 +18,34 @@
         />
       </div>
       <div v-if="!isBalanceSufficient" class="balance-check-warning">
-        ⚠️ You only have {{ renderBalance }}
-        {{ tokenSymbol }}
+        {{
+          $t('matchingFundsModal.div1', {
+            renderBalance: renderBalance,
+            tokenSymbol: tokenSymbol,
+          })
+        }}
       </div>
       <div class="btn-row">
-        <button class="btn-secondary" @click="$emit('close')">Cancel</button>
+        <button class="btn-secondary" @click="$emit('close')">
+          {{ $t('cancel') }}
+        </button>
         <button
           class="btn-action"
           :disabled="!isAmountValid()"
           @click="contributeMatchingFunds()"
         >
-          Contribute
+          {{ $t('matchingFundsModal.button2') }}
         </button>
       </div>
     </div>
     <div v-if="step === 2">
       <h3>
-        Contribute {{ renderContributionAmount }} {{ tokenSymbol }} to the
-        matching pool
+        {{
+          $t('matchingFundsModal.h3_2_t1', {
+            renderContributionAmount: renderContributionAmount,
+            tokenSymbol: tokenSymbol,
+          })
+        }}
       </h3>
       <transaction
         :hash="transferTxHash"
@@ -45,11 +56,17 @@
     <div v-if="step === 3">
       <div class="big-emoji">💦</div>
       <h3>
-        You just topped up the pool by {{ renderContributionAmount }}
-        {{ tokenSymbol }}!
+        {{
+          $t('matchingFundsModal.h3_3', {
+            renderContributionAmount: renderContributionAmount,
+            tokenSymbol: tokenSymbol,
+          })
+        }}
       </h3>
-      <div class="mb2">Thanks for helping out all our projects.</div>
-      <button class="btn-primary" @click="$emit('close')">Done</button>
+      <div class="mb2">{{ $t('matchingFundsModal.div2') }}</div>
+      <button class="btn-primary" @click="$emit('close')">
+        {{ $t('matchingFundsModal.button3') }}
+      </button>
     </div>
   </div>
 </template>
@@ -136,7 +153,7 @@ export default class MatchingFundsModal extends Vue {
   }
 
   get tokenSymbol(): string {
-    return this.$store.state.currentRound.nativeTokenSymbol
+    return this.$store.state.currentRound.nativeTokenSymbol || ''
   }
 
   get tokenLogo(): string {
