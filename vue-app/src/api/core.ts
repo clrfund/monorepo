@@ -3,6 +3,11 @@ import { ethers } from 'ethers'
 import { FundingRoundFactory } from './abi'
 import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
 
+export const staticRoundsBaseUrl = process.env.VUE_APP_STATIC_ROUNDS_BASE_URL
+export const staticRoundsFilename = staticRoundsBaseUrl
+  ? process.env.VUE_APP_STATIC_ROUNDS_FILENAME || 'rounds.json'
+  : undefined
+
 export const mainnetProvider = new ethers.providers.StaticJsonRpcProvider(
   process.env.VUE_APP_ETHEREUM_MAINNET_API_URL
 )
@@ -57,9 +62,6 @@ if (
 export const recipientRegistryPolicy =
   process.env.VUE_APP_RECIPIENT_REGISTRY_POLICY
 export const operator: string = process.env.VUE_APP_OPERATOR || 'Clr.fund'
-export const extraRounds: string[] = process.env.VUE_APP_EXTRA_ROUNDS
-  ? process.env.VUE_APP_EXTRA_ROUNDS.split(',')
-  : []
 
 export const SUBGRAPH_ENDPOINT =
   process.env.VUE_APP_SUBGRAPH_URL ||
@@ -74,3 +76,12 @@ export enum ThemeMode {
 // the number of records per batch in the `pending submissions` export file
 export const exportBatchSize =
   Number(process.env.VUE_APP_EXPORT_BATCH_SIZE) || 60
+
+export const brightIdSponsorKey = process.env.VUE_APP_BRIGHTID_SPONSOR_KEY
+export const brightIdNodeUrl =
+  process.env.VUE_APP_BRIGHTID_NODE_URL ||
+  'https://brightid.clr.fund/brightid/v6'
+
+export const brightIdSponsorUrl = process.env.VUE_APP_BRIGHTID_SPONSOR_API_URL
+
+export const MAX_WAIT_DEPTH = Number(process.env.VUE_APP_MAX_WAIT_DEPTH) || 15

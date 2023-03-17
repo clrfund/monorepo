@@ -25,9 +25,8 @@ import VerifyView from '../views/Verify.vue'
 import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 import CartView from '@/views/Cart.vue'
 import TransactionSuccess from '@/views/TransactionSuccess.vue'
-import BrightIdGuide from '@/views/BrightIdGuide.vue'
-import BrightIdSponsor from '@/views/BrightIdSponsor.vue'
-import BrightIdSponsored from '@/views/BrightIdSponsored.vue'
+import Leaderboard from '@/views/Leaderboard.vue'
+import RecipientProfile from '@/views/RecipientProfile.vue'
 
 Vue.use(VueRouter)
 
@@ -58,6 +57,14 @@ const routes = [
     path: '/rounds/:address/projects/:id?',
     name: 'round-project',
     component: ProjectView,
+  },
+  {
+    path: '/rounds/:address/leaderboard',
+    name: 'leaderboard',
+    component: Leaderboard,
+    meta: {
+      title: 'leaderboard',
+    },
   },
   {
     path: '/round-information',
@@ -172,6 +179,14 @@ const routes = [
     },
   },
   {
+    path: '/recipients/:hash',
+    name: 'recipient-profile',
+    component: RecipientProfile,
+    meta: {
+      title: 'Recipient profile',
+    },
+  },
+  {
     path: '/verify',
     name: 'verify',
     component: VerifyLanding,
@@ -234,30 +249,6 @@ const routes = [
     component: TransactionSuccess,
     meta: {
       title: 'Transaction Success',
-    },
-  },
-  {
-    path: '/brightid',
-    name: 'brightid',
-    component: BrightIdGuide,
-    meta: {
-      title: 'BrightId',
-    },
-  },
-  {
-    path: '/brightid/sponsor',
-    name: 'brightid-sponsor',
-    component: BrightIdSponsor,
-    meta: {
-      title: 'BrightId Sponsor',
-    },
-  },
-  {
-    path: '/brightid/sponsored/:hash',
-    name: 'sponsored',
-    component: BrightIdSponsored,
-    meta: {
-      title: 'Sponsored',
     },
   },
 ]

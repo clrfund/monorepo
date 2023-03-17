@@ -2,13 +2,17 @@
 import { ethers, waffle } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
-import { BigNumber, Contract, Signer, Wallet } from 'ethers'
+import { BigNumber, Contract, Signer, Wallet, utils } from 'ethers'
 import { genProofs, proveOnChain } from 'maci-cli'
 import { Keypair } from 'maci-domainobjs'
 
 import { UNIT } from '../utils/constants'
 import { getEventArg } from '../utils/contracts'
-import { deployContract, deployMaciFactory } from '../utils/deployment'
+import {
+  deployContract,
+  deployMaciFactory,
+  deployPoseidon,
+} from '../utils/deployment'
 import { getIpfsHash } from '../utils/ipfs'
 import {
   MaciParameters,
@@ -66,8 +70,8 @@ describe('End-to-end Tests', function () {
     })
 
     // Deploy funding round factory
-    const poseidonT3 = await deployContract(deployer, ':PoseidonT3')
-    const poseidonT6 = await deployContract(deployer, ':PoseidonT6')
+    const poseidonT3 = await deployPoseidon(deployer, 'PoseidonT3')
+    const poseidonT6 = await deployPoseidon(deployer, 'PoseidonT6')
     const circuit = process.env.CIRCUIT_TYPE || 'prod'
     const params = CIRCUITS[circuit]
     const batchUstVerifier = await deployContract(
@@ -219,6 +223,9 @@ describe('End-to-end Tests', function () {
     return contributions
   }
 
+  function makeMaciFilename(): string {
+    return `macistate_${utils.hexlify(utils.randomBytes(10))}`
+  }
   async function finalizeRound(): Promise<any> {
     const providerUrl = (provider as any)._hardhatNetwork.config.url
 
@@ -227,6 +234,7 @@ describe('End-to-end Tests', function () {
       contract: maci.address,
       eth_provider: providerUrl,
       privkey: coordinatorKeypair.privKey.serialize(),
+      macistate: makeMaciFilename(),
     })
     if (!results) {
       throw new Error('generation of proofs failed')

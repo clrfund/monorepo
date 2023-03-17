@@ -10,6 +10,8 @@ import {
   FundingRoundFactory as FundingRoundFactoryContract,
 } from '../generated/FundingRoundFactory/FundingRoundFactory'
 
+import { Token as TokenContract } from '../generated/FundingRoundFactory/Token'
+
 import { MACIFactory as MACIFactoryContract } from '../generated/FundingRoundFactory/MACIFactory'
 import { FundingRound as FundingRoundContract } from '../generated/FundingRoundFactory/FundingRound'
 
@@ -26,6 +28,7 @@ import {
   FundingRound,
   RecipientRegistry,
   ContributorRegistry,
+  Token,
 } from '../generated/schema'
 
 function createRecipientRegistry(
@@ -95,8 +98,34 @@ function createContributorRegistry(
   return contributorRegistry
 }
 
+function createToken(tokenAddress: Address, blockTimestamp: BigInt): Token {
+  let tokenId = tokenAddress.toHexString()
+  let token = new Token(tokenId)
+  let tokenContract = TokenContract.bind(tokenAddress)
+
+  let symbol = tokenContract.try_symbol()
+  let decimals = tokenContract.try_decimals()
+
+  if (!symbol.reverted) {
+    token.symbol = symbol.value
+  }
+
+  if (!decimals.reverted) {
+    token.decimals = BigInt.fromI32(decimals.value)
+  }
+
+  let timestamp = blockTimestamp.toString()
+  token.createdAt = timestamp
+  token.lastUpdatedAt = timestamp
+  token.tokenAddress = tokenAddress
+  token.save()
+
+  return token
+}
+
 function createOrUpdateFundingRoundFactory(
-  fundingRoundFactoryAddress: Address
+  fundingRoundFactoryAddress: Address,
+  timestamp: BigInt
 ): FundingRoundFactory | null {
   let fundingRoundFactoryId = fundingRoundFactoryAddress.toHexString()
 
@@ -148,6 +177,12 @@ function createOrUpdateFundingRoundFactory(
   }
 
   let nativeToken = fundingRoundFactoryContract.nativeToken()
+  let nativeTokenId = nativeToken.toHexString()
+  let nativeTokenEntity = Token.load(nativeTokenId)
+  if (!nativeTokenEntity) {
+    createToken(nativeToken, timestamp)
+  }
+
   let coordinator = fundingRoundFactoryContract.coordinator()
   let owner = fundingRoundFactoryContract.owner()
 
@@ -177,6 +212,7 @@ function createOrUpdateFundingRoundFactory(
   fundingRoundFactory.contributorRegistryAddress = contributorRegistryAddress
   fundingRoundFactory.recipientRegistryAddress = recipientRegistryAddress
   fundingRoundFactory.nativeToken = nativeToken
+  fundingRoundFactory.nativeTokenInfo = nativeTokenId
   fundingRoundFactory.coordinator = coordinator
   fundingRoundFactory.owner = owner
 
@@ -186,12 +222,12 @@ function createOrUpdateFundingRoundFactory(
 
 export function handleCoordinatorChanged(event: CoordinatorChanged): void {
   log.info('handleCoordinatorChanged', [])
-  createOrUpdateFundingRoundFactory(event.address)
+  createOrUpdateFundingRoundFactory(event.address, event.block.timestamp)
 }
 
 export function handleFundingSourceAdded(event: FundingSourceAdded): void {
   log.info('handleFundingSourceAdded', [])
-  createOrUpdateFundingRoundFactory(event.address)
+  createOrUpdateFundingRoundFactory(event.address, event.block.timestamp)
 }
 
 export function handleFundingSourceRemoved(event: FundingSourceRemoved): void {
@@ -200,7 +236,7 @@ export function handleFundingSourceRemoved(event: FundingSourceRemoved): void {
 
 export function handleOwnershipTransferred(event: OwnershipTransferred): void {
   log.info('handleOwnershipTransferred', [event.params.newOwner.toHexString()])
-  createOrUpdateFundingRoundFactory(event.address)
+  createOrUpdateFundingRoundFactory(event.address, event.block.timestamp)
 }
 
 export function handleRoundFinalized(event: RoundFinalized): void {
@@ -215,6 +251,7 @@ export function handleRoundFinalized(event: RoundFinalized): void {
   let totalVotes = fundingRoundContract.totalVotes()
   let tallyHash = fundingRoundContract.tallyHash()
   let isFinalized = fundingRoundContract.isFinalized()
+  let isCancelled = fundingRoundContract.isCancelled()
   let contributorCount = fundingRoundContract.contributorCount()
   let matchingPoolSize = fundingRoundContract.matchingPoolSize()
 
@@ -222,6 +259,7 @@ export function handleRoundFinalized(event: RoundFinalized): void {
   fundingRound.totalVotes = totalVotes
   fundingRound.tallyHash = tallyHash
   fundingRound.isFinalized = isFinalized
+  fundingRound.isCancelled = isCancelled
   fundingRound.contributorCount = contributorCount
   fundingRound.matchingPoolSize = matchingPoolSize
 
@@ -233,7 +271,10 @@ export function handleRoundStarted(event: RoundStarted): void {
   let fundingRoundFactoryId = event.address.toHexString()
   let fundingRoundId = event.params._round.toHexString()
 
-  let fundingRoundFactory = createOrUpdateFundingRoundFactory(event.address)
+  let fundingRoundFactory = createOrUpdateFundingRoundFactory(
+    event.address,
+    event.block.timestamp
+  )
 
   FundingRoundTemplate.create(event.params._round)
   let fundingRoundFactoryContract = FundingRoundFactoryContract.bind(
@@ -247,6 +288,11 @@ export function handleRoundStarted(event: RoundStarted): void {
 
   log.info('Get all the things', [])
   let nativeToken = fundingRoundContract.nativeToken()
+  let nativeTokenId = nativeToken.toHexString()
+  let nativeTokenEntity = Token.load(nativeTokenId)
+  if (!nativeTokenEntity) {
+    createToken(nativeToken, event.block.timestamp)
+  }
   let coordinator = fundingRoundContract.coordinator()
   let maci = fundingRoundContract.maci()
   let voiceCreditFactor = fundingRoundContract.voiceCreditFactor()
@@ -257,6 +303,7 @@ export function handleRoundStarted(event: RoundStarted): void {
 
   fundingRound.fundingRoundFactory = fundingRoundFactoryId
   fundingRound.nativeToken = nativeToken
+  fundingRound.nativeTokenInfo = nativeTokenId
   fundingRound.coordinator = coordinator
   fundingRound.maci = maci
   fundingRound.voiceCreditFactor = voiceCreditFactor
@@ -306,4 +353,5 @@ export function handleRoundStarted(event: RoundStarted): void {
 
 export function handleTokenChanged(event: TokenChanged): void {
   log.info('handleTokenChanged {}', [event.params._token.toHexString()])
+  createOrUpdateFundingRoundFactory(event.address, event.block.timestamp)
 }

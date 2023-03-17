@@ -14,9 +14,7 @@
               {{ $t('landing.hero.subtitle') }}
             </div>
             <div class="btn-group">
-              <links to="/projects" class="btn-action">
-                {{ $t('landing.hero.action') }}</links
-              >
+              <app-link class="btn-action" :dynamic="true"></app-link>
               <div class="btn-info" @click="scrollToHowItWorks">
                 {{ $t('landing.hero.info') }}
               </div>
@@ -96,6 +94,13 @@
             </p>
           </div>
           <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-action">
+            {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
+          </links>
+          <links
+            v-if="!chain.isLayer2 && Boolean(chain.bridge)"
+            :to="chain.bridge"
+            class="btn-action"
+          >
             {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
           </links>
         </div>
@@ -207,10 +212,11 @@ import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
+import AppLink from '@/components/AppLink.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
 @Component({
-  components: { RoundStatusBanner, TimeLeft, Links, ImageResponsive },
+  components: { RoundStatusBanner, TimeLeft, Links, AppLink, ImageResponsive },
 })
 export default class Landing extends Vue {
   get signUpDeadline(): DateTime {

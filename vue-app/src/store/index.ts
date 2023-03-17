@@ -34,6 +34,8 @@ const state: RootState = {
   theme: null,
   factory: null,
   maciFactory: null,
+  showSimpleLeaderboard: true,
+  rounds: null,
 }
 
 const store: StoreOptions<RootState> = {

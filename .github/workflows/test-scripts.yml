@@ -1,6 +1,7 @@
 name: Hardhat script tests
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'contracts/scripts/**'
@@ -52,7 +53,7 @@ jobs:
         yarn deployTestRound:local
         yarn contribute:local
         yarn vote:local
-        yarn hardhat evm-increase-time 360 --network localhost
+        yarn hardhat evm-increase-time 1200 --network localhost
         yarn tally:local
         yarn finalize:local
         yarn claim:local

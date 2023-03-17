@@ -20,15 +20,6 @@
         </div>
         <h2>
           {{ $t('verifyLanding.h2') }}
-          <img
-            v-tooltip="{
-              content: $t('verifyLanding.tooltip'),
-              trigger: 'hover click',
-            }"
-            width="16px"
-            src="@/assets/info.svg"
-            class="info-icon"
-          />
         </h2>
         <ul>
           <li>
@@ -45,19 +36,22 @@
               target="_blank"
               >{{ $t('verifyLanding.li1_link2') }}</a
             >
-            <ul>
-              <li>
-                <links to="/brightid/sponsor">{{
-                  $t('verifyLanding.li2')
-                }}</links>
-              </li>
-              <li>
-                <links to="/brightid">{{ $t('verifyLanding.li3') }}</links>
-              </li>
-            </ul>
           </li>
-          <li>{{ $t('verifyLanding.li4') }}</li>
-          <li>{{ $t('verifyLanding.li5') }}</li>
+          <li>
+            {{ $t('verifyLanding.join') }}
+            <links to="https://meet.brightid.org">{{
+              $t('verifyLanding.brightid_party_link')
+            }}</links>
+            {{ $t('verifyLanding.get_verified') }}
+          </li>
+          <li>
+            {{ $t('verifyLanding.li_wallet') }}
+            {{ $t('verifyLanding.unitap_gas_tokens')
+            }}<links to="https://unitap.app/">{{
+              $t('verifyLanding.unitap_link')
+            }}</links
+            >{{ $t('verifyLanding.unitap_extra_text') }}
+          </li>
         </ul>
         <links to="/about/sybil-resistance">{{
           $t('verifyLanding.link1')

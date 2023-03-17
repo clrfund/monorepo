@@ -6,7 +6,7 @@ on:
       - 'contracts/**'
 
 env:
-  NODE_VERSION: 12.x
+  NODE_VERSION: 16.x
 
 jobs:
   test-contracts:

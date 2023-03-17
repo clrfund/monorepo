@@ -1,0 +1,19 @@
+query GetRecipientRegistryInfo($factoryAddress: ID!) {
+  fundingRoundFactory(id: $factoryAddress) {
+    recipientRegistry {
+      id
+      owner
+      baseDeposit
+      challengePeriodDuration
+    }
+    currentRound {
+      id
+      recipientRegistry {
+        id
+        owner
+        baseDeposit
+        challengePeriodDuration
+      }
+    }
+  }
+}

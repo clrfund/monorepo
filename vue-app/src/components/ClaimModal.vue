@@ -45,6 +45,7 @@ import Transaction from '@/components/Transaction.vue'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
+import { LOAD_TALLY } from '@/store/action-types'
 
 @Component({ components: { Transaction } })
 export default class ClaimModal extends Vue {
@@ -71,6 +72,10 @@ export default class ClaimModal extends Vue {
   }
 
   private async claim() {
+    if (!this.$store.state.tally) {
+      await this.$store.dispatch(LOAD_TALLY)
+    }
+
     const signer: Signer =
       this.$store.state.currentUser.walletProvider.getSigner()
     const { fundingRoundAddress, recipientTreeDepth } = this.currentRound

@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 env:
   NODE_VERSION: 16.x
-  FACTORY_ADDRESS: "0x62cab00605368834c6adf8e6f53da14d6fa9ded1"
+  SUBGRPAH_URL: "https://api.thegraph.com/subgraphs/name/clrfund/clrfund-arbitrum-goerli"
   WALLET_PRIVATE_KEY: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
 
 jobs:
@@ -23,4 +23,6 @@ jobs:
     - name: Run create new round script
       run: |
         cd contracts
+        export FACTORY=$(curl -X POST -d '{"query":"{fundingRoundFactories {id}}"}' $SUBGRPAH_URL)
+        export FACTORY_ADDRESS=$(node -e 'console.log(JSON.parse(process.env.FACTORY).data.fundingRoundFactories[0].id)')
         yarn hardhat run scripts/newRound.ts --network arbitrum-goerli

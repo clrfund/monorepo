@@ -1,4 +1,4 @@
-import { Contract, FixedNumber } from 'ethers'
+import { Contract, BigNumber } from 'ethers'
 import sdk from '@/graphql/sdk'
 
 import { FundingRound } from './abi'
@@ -6,22 +6,23 @@ import { provider } from './core'
 
 export async function getAllocatedAmount(
   fundingRoundAddress: string,
-  tokenDecimals: number,
   result: string,
   spent: string
-): Promise<FixedNumber> {
+): Promise<BigNumber> {
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
   const allocatedAmount = await fundingRound.getAllocatedAmount(result, spent)
-  return FixedNumber.fromValue(allocatedAmount, tokenDecimals)
+  return allocatedAmount
 }
 
 export async function isFundsClaimed(
   fundingRoundAddress: string,
-  recipientAddress: string
+  recipientAddress: string,
+  recipientIndex: number
 ): Promise<boolean> {
   const data = await sdk.GetRecipientDonations({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
-    recipientAddress,
+    recipientAddress: recipientAddress.toLowerCase(),
+    recipientIndex,
   })
 
   return !!data.donations.length

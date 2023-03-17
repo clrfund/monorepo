@@ -14,6 +14,7 @@ import {
   RecipientApplicationData,
   RegistryInfo,
 } from '@/api/recipient-registry-optimistic'
+import { Rounds } from '@/api/rounds'
 
 // Utils
 import { isSameAddress } from '@/utils/accounts'
@@ -37,6 +38,8 @@ export interface RootState {
   theme: string | null
   factory: Factory | null
   maciFactory: MACIFactory | null
+  showSimpleLeaderboard: boolean
+  rounds: Rounds | null
 }
 
 const getters = {
