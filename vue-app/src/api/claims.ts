@@ -16,11 +16,13 @@ export async function getAllocatedAmount(
 
 export async function isFundsClaimed(
   fundingRoundAddress: string,
-  recipientAddress: string
+  recipientAddress: string,
+  recipientIndex: number
 ): Promise<boolean> {
   const data = await sdk.GetRecipientDonations({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     recipientAddress: recipientAddress.toLowerCase(),
+    recipientIndex,
   })
 
   return !!data.donations.length

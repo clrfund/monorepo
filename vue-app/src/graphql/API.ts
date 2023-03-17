@@ -594,7 +594,7 @@ export enum Coordinator_OrderBy {
 export type Donation = {
   __typename?: 'Donation';
   id: Scalars['ID'];
-  recipient: Maybe<Recipient>;
+  recipient: Maybe<Scalars['Bytes']>;
   fundingRound: Maybe<FundingRound>;
   amount: Maybe<Scalars['BigInt']>;
   voteOptionIndex: Maybe<Scalars['BigInt']>;
@@ -610,27 +610,16 @@ export type Donation_Filter = {
   id_lte: Maybe<Scalars['ID']>;
   id_in: Maybe<Array<Scalars['ID']>>;
   id_not_in: Maybe<Array<Scalars['ID']>>;
-  recipient: Maybe<Scalars['String']>;
-  recipient_not: Maybe<Scalars['String']>;
-  recipient_gt: Maybe<Scalars['String']>;
-  recipient_lt: Maybe<Scalars['String']>;
-  recipient_gte: Maybe<Scalars['String']>;
-  recipient_lte: Maybe<Scalars['String']>;
-  recipient_in: Maybe<Array<Scalars['String']>>;
-  recipient_not_in: Maybe<Array<Scalars['String']>>;
-  recipient_contains: Maybe<Scalars['String']>;
-  recipient_contains_nocase: Maybe<Scalars['String']>;
-  recipient_not_contains: Maybe<Scalars['String']>;
-  recipient_not_contains_nocase: Maybe<Scalars['String']>;
-  recipient_starts_with: Maybe<Scalars['String']>;
-  recipient_starts_with_nocase: Maybe<Scalars['String']>;
-  recipient_not_starts_with: Maybe<Scalars['String']>;
-  recipient_not_starts_with_nocase: Maybe<Scalars['String']>;
-  recipient_ends_with: Maybe<Scalars['String']>;
-  recipient_ends_with_nocase: Maybe<Scalars['String']>;
-  recipient_not_ends_with: Maybe<Scalars['String']>;
-  recipient_not_ends_with_nocase: Maybe<Scalars['String']>;
-  recipient_: Maybe<Recipient_Filter>;
+  recipient: Maybe<Scalars['Bytes']>;
+  recipient_not: Maybe<Scalars['Bytes']>;
+  recipient_gt: Maybe<Scalars['Bytes']>;
+  recipient_lt: Maybe<Scalars['Bytes']>;
+  recipient_gte: Maybe<Scalars['Bytes']>;
+  recipient_lte: Maybe<Scalars['Bytes']>;
+  recipient_in: Maybe<Array<Scalars['Bytes']>>;
+  recipient_not_in: Maybe<Array<Scalars['Bytes']>>;
+  recipient_contains: Maybe<Scalars['Bytes']>;
+  recipient_not_contains: Maybe<Scalars['Bytes']>;
   fundingRound: Maybe<Scalars['String']>;
   fundingRound_not: Maybe<Scalars['String']>;
   fundingRound_gt: Maybe<Scalars['String']>;
@@ -2160,7 +2149,6 @@ export type Recipient = {
   requestResolvedHash: Maybe<Scalars['Bytes']>;
   requestSubmittedHash: Maybe<Scalars['Bytes']>;
   fundingRounds: Maybe<Array<FundingRound>>;
-  donations: Maybe<Array<Donation>>;
   createdAt: Maybe<Scalars['String']>;
   lastUpdatedAt: Maybe<Scalars['String']>;
 };
@@ -2172,15 +2160,6 @@ export type RecipientFundingRoundsArgs = {
   orderBy: Maybe<FundingRound_OrderBy>;
   orderDirection: Maybe<OrderDirection>;
   where: Maybe<FundingRound_Filter>;
-};
-
-
-export type RecipientDonationsArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy: Maybe<Donation_OrderBy>;
-  orderDirection: Maybe<OrderDirection>;
-  where: Maybe<Donation_Filter>;
 };
 
 export type RecipientRegistry = {
@@ -2541,7 +2520,6 @@ export type Recipient_Filter = {
   fundingRounds_not_contains: Maybe<Array<Scalars['String']>>;
   fundingRounds_not_contains_nocase: Maybe<Array<Scalars['String']>>;
   fundingRounds_: Maybe<FundingRound_Filter>;
-  donations_: Maybe<Donation_Filter>;
   createdAt: Maybe<Scalars['String']>;
   createdAt_not: Maybe<Scalars['String']>;
   createdAt_gt: Maybe<Scalars['String']>;
@@ -2612,7 +2590,6 @@ export enum Recipient_OrderBy {
   RequestResolvedHash = 'requestResolvedHash',
   RequestSubmittedHash = 'requestSubmittedHash',
   FundingRounds = 'fundingRounds',
-  Donations = 'donations',
   CreatedAt = 'createdAt',
   LastUpdatedAt = 'lastUpdatedAt'
 }
@@ -3201,7 +3178,8 @@ export type GetRecipientBySubmitHashQuery = { __typename?: 'Query', recipients: 
 
 export type GetRecipientDonationsQueryVariables = Exact<{
   fundingRoundAddress: Scalars['String'];
-  recipientAddress: Scalars['String'];
+  recipientAddress: Scalars['Bytes'];
+  recipientIndex: Scalars['BigInt'];
 }>;
 
 
@@ -3326,9 +3304,9 @@ export const GetRecipientBySubmitHashDocument = gql`
 }
     `;
 export const GetRecipientDonationsDocument = gql`
-    query GetRecipientDonations($fundingRoundAddress: String!, $recipientAddress: String!) {
+    query GetRecipientDonations($fundingRoundAddress: String!, $recipientAddress: Bytes!, $recipientIndex: BigInt!) {
   donations(
-    where: {fundingRound: $fundingRoundAddress, recipient: $recipientAddress}
+    where: {fundingRound: $fundingRoundAddress, recipient: $recipientAddress, voteOptionIndex: $recipientIndex}
   ) {
     id
   }
