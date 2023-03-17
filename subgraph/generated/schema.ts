@@ -1621,23 +1621,6 @@ export class Recipient extends Entity {
     }
   }
 
-  get donations(): Array<string> | null {
-    let value = this.get("donations");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set donations(value: Array<string> | null) {
-    if (value === null) {
-      this.unset("donations");
-    } else {
-      this.set("donations", Value.fromStringArray(value as Array<string>));
-    }
-  }
-
   get createdAt(): string | null {
     let value = this.get("createdAt");
     if (value === null || value.kind == ValueKind.NULL) {
@@ -2276,20 +2259,20 @@ export class Donation extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get recipient(): string | null {
+  get recipient(): Bytes | null {
     let value = this.get("recipient");
     if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
-      return value.toString();
+      return value.toBytes();
     }
   }
 
-  set recipient(value: string | null) {
+  set recipient(value: Bytes | null) {
     if (value === null) {
       this.unset("recipient");
     } else {
-      this.set("recipient", Value.fromString(value as string));
+      this.set("recipient", Value.fromBytes(value as Bytes));
     }
   }
 

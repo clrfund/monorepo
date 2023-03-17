@@ -528,4 +528,4 @@ export async function removeProject(
   return transaction
 }
 
-export default { getProjects, getProject, registerProject }
+export default { getProjects, getProject, registerProject, decodeProject }

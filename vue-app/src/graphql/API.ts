@@ -132,12 +132,39 @@ export type Contribution_Filter = {
   createdAt_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<Contribution_Filter>>>;
+  or: Maybe<Array<Maybe<Contribution_Filter>>>;
 };
 
 export enum Contribution_OrderBy {
   Id = 'id',
   Contributor = 'contributor',
+  ContributorId = 'contributor__id',
+  ContributorVerifiedTimeStamp = 'contributor__verifiedTimeStamp',
+  ContributorContributorAddress = 'contributor__contributorAddress',
+  ContributorCreatedAt = 'contributor__createdAt',
+  ContributorLastUpdatedAt = 'contributor__lastUpdatedAt',
   FundingRound = 'fundingRound',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
   Amount = 'amount',
   VoiceCredits = 'voiceCredits',
   CreatedAt = 'createdAt'
@@ -255,6 +282,10 @@ export type ContributorRegistry_Filter = {
   context_not_ends_with_nocase: Maybe<Scalars['String']>;
   owner: Maybe<Scalars['Bytes']>;
   owner_not: Maybe<Scalars['Bytes']>;
+  owner_gt: Maybe<Scalars['Bytes']>;
+  owner_lt: Maybe<Scalars['Bytes']>;
+  owner_gte: Maybe<Scalars['Bytes']>;
+  owner_lte: Maybe<Scalars['Bytes']>;
   owner_in: Maybe<Array<Scalars['Bytes']>>;
   owner_not_in: Maybe<Array<Scalars['Bytes']>>;
   owner_contains: Maybe<Scalars['Bytes']>;
@@ -302,11 +333,35 @@ export type ContributorRegistry_Filter = {
   lastUpdatedAt_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<ContributorRegistry_Filter>>>;
+  or: Maybe<Array<Maybe<ContributorRegistry_Filter>>>;
 };
 
 export enum ContributorRegistry_OrderBy {
   Id = 'id',
   FundingRoundFactory = 'fundingRoundFactory',
+  FundingRoundFactoryId = 'fundingRoundFactory__id',
+  FundingRoundFactoryOwner = 'fundingRoundFactory__owner',
+  FundingRoundFactoryCoordinator = 'fundingRoundFactory__coordinator',
+  FundingRoundFactoryNativeToken = 'fundingRoundFactory__nativeToken',
+  FundingRoundFactoryContributorRegistryAddress = 'fundingRoundFactory__contributorRegistryAddress',
+  FundingRoundFactoryRecipientRegistryAddress = 'fundingRoundFactory__recipientRegistryAddress',
+  FundingRoundFactoryMaciFactory = 'fundingRoundFactory__maciFactory',
+  FundingRoundFactoryCoordinatorPubKey = 'fundingRoundFactory__coordinatorPubKey',
+  FundingRoundFactoryStateTreeDepth = 'fundingRoundFactory__stateTreeDepth',
+  FundingRoundFactoryMessageTreeDepth = 'fundingRoundFactory__messageTreeDepth',
+  FundingRoundFactoryVoteOptionTreeDepth = 'fundingRoundFactory__voteOptionTreeDepth',
+  FundingRoundFactoryTallyBatchSize = 'fundingRoundFactory__tallyBatchSize',
+  FundingRoundFactoryMessageBatchSize = 'fundingRoundFactory__messageBatchSize',
+  FundingRoundFactoryBatchUstVerifier = 'fundingRoundFactory__batchUstVerifier',
+  FundingRoundFactoryQvtVerifier = 'fundingRoundFactory__qvtVerifier',
+  FundingRoundFactorySignUpDuration = 'fundingRoundFactory__signUpDuration',
+  FundingRoundFactoryVotingDuration = 'fundingRoundFactory__votingDuration',
+  FundingRoundFactoryMaxUsers = 'fundingRoundFactory__maxUsers',
+  FundingRoundFactoryMaxMessages = 'fundingRoundFactory__maxMessages',
+  FundingRoundFactoryMaxVoteOptions = 'fundingRoundFactory__maxVoteOptions',
+  FundingRoundFactoryCreatedAt = 'fundingRoundFactory__createdAt',
+  FundingRoundFactoryLastUpdatedAt = 'fundingRoundFactory__lastUpdatedAt',
   Context = 'context',
   Owner = 'owner',
   Contributors = 'contributors',
@@ -367,6 +422,10 @@ export type Contributor_Filter = {
   verifiedTimeStamp_not_ends_with_nocase: Maybe<Scalars['String']>;
   contributorAddress: Maybe<Scalars['Bytes']>;
   contributorAddress_not: Maybe<Scalars['Bytes']>;
+  contributorAddress_gt: Maybe<Scalars['Bytes']>;
+  contributorAddress_lt: Maybe<Scalars['Bytes']>;
+  contributorAddress_gte: Maybe<Scalars['Bytes']>;
+  contributorAddress_lte: Maybe<Scalars['Bytes']>;
   contributorAddress_in: Maybe<Array<Scalars['Bytes']>>;
   contributorAddress_not_in: Maybe<Array<Scalars['Bytes']>>;
   contributorAddress_contains: Maybe<Scalars['Bytes']>;
@@ -421,11 +480,18 @@ export type Contributor_Filter = {
   lastUpdatedAt_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<Contributor_Filter>>>;
+  or: Maybe<Array<Maybe<Contributor_Filter>>>;
 };
 
 export enum Contributor_OrderBy {
   Id = 'id',
   ContributorRegistry = 'contributorRegistry',
+  ContributorRegistryId = 'contributorRegistry__id',
+  ContributorRegistryContext = 'contributorRegistry__context',
+  ContributorRegistryOwner = 'contributorRegistry__owner',
+  ContributorRegistryCreatedAt = 'contributorRegistry__createdAt',
+  ContributorRegistryLastUpdatedAt = 'contributorRegistry__lastUpdatedAt',
   Votes = 'votes',
   VerifiedTimeStamp = 'verifiedTimeStamp',
   ContributorAddress = 'contributorAddress',
@@ -514,6 +580,8 @@ export type Coordinator_Filter = {
   lastUpdatedAt_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<Coordinator_Filter>>>;
+  or: Maybe<Array<Maybe<Coordinator_Filter>>>;
 };
 
 export enum Coordinator_OrderBy {
@@ -526,7 +594,7 @@ export enum Coordinator_OrderBy {
 export type Donation = {
   __typename?: 'Donation';
   id: Scalars['ID'];
-  recipient: Maybe<Recipient>;
+  recipient: Maybe<Scalars['Bytes']>;
   fundingRound: Maybe<FundingRound>;
   amount: Maybe<Scalars['BigInt']>;
   voteOptionIndex: Maybe<Scalars['BigInt']>;
@@ -542,27 +610,16 @@ export type Donation_Filter = {
   id_lte: Maybe<Scalars['ID']>;
   id_in: Maybe<Array<Scalars['ID']>>;
   id_not_in: Maybe<Array<Scalars['ID']>>;
-  recipient: Maybe<Scalars['String']>;
-  recipient_not: Maybe<Scalars['String']>;
-  recipient_gt: Maybe<Scalars['String']>;
-  recipient_lt: Maybe<Scalars['String']>;
-  recipient_gte: Maybe<Scalars['String']>;
-  recipient_lte: Maybe<Scalars['String']>;
-  recipient_in: Maybe<Array<Scalars['String']>>;
-  recipient_not_in: Maybe<Array<Scalars['String']>>;
-  recipient_contains: Maybe<Scalars['String']>;
-  recipient_contains_nocase: Maybe<Scalars['String']>;
-  recipient_not_contains: Maybe<Scalars['String']>;
-  recipient_not_contains_nocase: Maybe<Scalars['String']>;
-  recipient_starts_with: Maybe<Scalars['String']>;
-  recipient_starts_with_nocase: Maybe<Scalars['String']>;
-  recipient_not_starts_with: Maybe<Scalars['String']>;
-  recipient_not_starts_with_nocase: Maybe<Scalars['String']>;
-  recipient_ends_with: Maybe<Scalars['String']>;
-  recipient_ends_with_nocase: Maybe<Scalars['String']>;
-  recipient_not_ends_with: Maybe<Scalars['String']>;
-  recipient_not_ends_with_nocase: Maybe<Scalars['String']>;
-  recipient_: Maybe<Recipient_Filter>;
+  recipient: Maybe<Scalars['Bytes']>;
+  recipient_not: Maybe<Scalars['Bytes']>;
+  recipient_gt: Maybe<Scalars['Bytes']>;
+  recipient_lt: Maybe<Scalars['Bytes']>;
+  recipient_gte: Maybe<Scalars['Bytes']>;
+  recipient_lte: Maybe<Scalars['Bytes']>;
+  recipient_in: Maybe<Array<Scalars['Bytes']>>;
+  recipient_not_in: Maybe<Array<Scalars['Bytes']>>;
+  recipient_contains: Maybe<Scalars['Bytes']>;
+  recipient_not_contains: Maybe<Scalars['Bytes']>;
   fundingRound: Maybe<Scalars['String']>;
   fundingRound_not: Maybe<Scalars['String']>;
   fundingRound_gt: Maybe<Scalars['String']>;
@@ -622,12 +679,49 @@ export type Donation_Filter = {
   createdAt_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<Donation_Filter>>>;
+  or: Maybe<Array<Maybe<Donation_Filter>>>;
 };
 
 export enum Donation_OrderBy {
   Id = 'id',
   Recipient = 'recipient',
+  RecipientId = 'recipient__id',
+  RecipientRecipientIndex = 'recipient__recipientIndex',
+  RecipientRequestType = 'recipient__requestType',
+  RecipientRequester = 'recipient__requester',
+  RecipientSubmissionTime = 'recipient__submissionTime',
+  RecipientDeposit = 'recipient__deposit',
+  RecipientRecipientAddress = 'recipient__recipientAddress',
+  RecipientRecipientMetadata = 'recipient__recipientMetadata',
+  RecipientRejected = 'recipient__rejected',
+  RecipientVerified = 'recipient__verified',
+  RecipientVoteOptionIndex = 'recipient__voteOptionIndex',
+  RecipientRequestResolvedHash = 'recipient__requestResolvedHash',
+  RecipientRequestSubmittedHash = 'recipient__requestSubmittedHash',
+  RecipientCreatedAt = 'recipient__createdAt',
+  RecipientLastUpdatedAt = 'recipient__lastUpdatedAt',
   FundingRound = 'fundingRound',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
   Amount = 'amount',
   VoteOptionIndex = 'voteOptionIndex',
   CreatedAt = 'createdAt'
@@ -762,18 +856,30 @@ export type FundingRoundFactory_Filter = {
   id_not_in: Maybe<Array<Scalars['ID']>>;
   owner: Maybe<Scalars['Bytes']>;
   owner_not: Maybe<Scalars['Bytes']>;
+  owner_gt: Maybe<Scalars['Bytes']>;
+  owner_lt: Maybe<Scalars['Bytes']>;
+  owner_gte: Maybe<Scalars['Bytes']>;
+  owner_lte: Maybe<Scalars['Bytes']>;
   owner_in: Maybe<Array<Scalars['Bytes']>>;
   owner_not_in: Maybe<Array<Scalars['Bytes']>>;
   owner_contains: Maybe<Scalars['Bytes']>;
   owner_not_contains: Maybe<Scalars['Bytes']>;
   coordinator: Maybe<Scalars['Bytes']>;
   coordinator_not: Maybe<Scalars['Bytes']>;
+  coordinator_gt: Maybe<Scalars['Bytes']>;
+  coordinator_lt: Maybe<Scalars['Bytes']>;
+  coordinator_gte: Maybe<Scalars['Bytes']>;
+  coordinator_lte: Maybe<Scalars['Bytes']>;
   coordinator_in: Maybe<Array<Scalars['Bytes']>>;
   coordinator_not_in: Maybe<Array<Scalars['Bytes']>>;
   coordinator_contains: Maybe<Scalars['Bytes']>;
   coordinator_not_contains: Maybe<Scalars['Bytes']>;
   nativeToken: Maybe<Scalars['Bytes']>;
   nativeToken_not: Maybe<Scalars['Bytes']>;
+  nativeToken_gt: Maybe<Scalars['Bytes']>;
+  nativeToken_lt: Maybe<Scalars['Bytes']>;
+  nativeToken_gte: Maybe<Scalars['Bytes']>;
+  nativeToken_lte: Maybe<Scalars['Bytes']>;
   nativeToken_in: Maybe<Array<Scalars['Bytes']>>;
   nativeToken_not_in: Maybe<Array<Scalars['Bytes']>>;
   nativeToken_contains: Maybe<Scalars['Bytes']>;
@@ -822,6 +928,10 @@ export type FundingRoundFactory_Filter = {
   contributorRegistry_: Maybe<ContributorRegistry_Filter>;
   contributorRegistryAddress: Maybe<Scalars['Bytes']>;
   contributorRegistryAddress_not: Maybe<Scalars['Bytes']>;
+  contributorRegistryAddress_gt: Maybe<Scalars['Bytes']>;
+  contributorRegistryAddress_lt: Maybe<Scalars['Bytes']>;
+  contributorRegistryAddress_gte: Maybe<Scalars['Bytes']>;
+  contributorRegistryAddress_lte: Maybe<Scalars['Bytes']>;
   contributorRegistryAddress_in: Maybe<Array<Scalars['Bytes']>>;
   contributorRegistryAddress_not_in: Maybe<Array<Scalars['Bytes']>>;
   contributorRegistryAddress_contains: Maybe<Scalars['Bytes']>;
@@ -849,6 +959,10 @@ export type FundingRoundFactory_Filter = {
   recipientRegistry_: Maybe<RecipientRegistry_Filter>;
   recipientRegistryAddress: Maybe<Scalars['Bytes']>;
   recipientRegistryAddress_not: Maybe<Scalars['Bytes']>;
+  recipientRegistryAddress_gt: Maybe<Scalars['Bytes']>;
+  recipientRegistryAddress_lt: Maybe<Scalars['Bytes']>;
+  recipientRegistryAddress_gte: Maybe<Scalars['Bytes']>;
+  recipientRegistryAddress_lte: Maybe<Scalars['Bytes']>;
   recipientRegistryAddress_in: Maybe<Array<Scalars['Bytes']>>;
   recipientRegistryAddress_not_in: Maybe<Array<Scalars['Bytes']>>;
   recipientRegistryAddress_contains: Maybe<Scalars['Bytes']>;
@@ -876,6 +990,10 @@ export type FundingRoundFactory_Filter = {
   currentRound_: Maybe<FundingRound_Filter>;
   maciFactory: Maybe<Scalars['Bytes']>;
   maciFactory_not: Maybe<Scalars['Bytes']>;
+  maciFactory_gt: Maybe<Scalars['Bytes']>;
+  maciFactory_lt: Maybe<Scalars['Bytes']>;
+  maciFactory_gte: Maybe<Scalars['Bytes']>;
+  maciFactory_lte: Maybe<Scalars['Bytes']>;
   maciFactory_in: Maybe<Array<Scalars['Bytes']>>;
   maciFactory_not_in: Maybe<Array<Scalars['Bytes']>>;
   maciFactory_contains: Maybe<Scalars['Bytes']>;
@@ -942,12 +1060,20 @@ export type FundingRoundFactory_Filter = {
   messageBatchSize_not_in: Maybe<Array<Scalars['BigInt']>>;
   batchUstVerifier: Maybe<Scalars['Bytes']>;
   batchUstVerifier_not: Maybe<Scalars['Bytes']>;
+  batchUstVerifier_gt: Maybe<Scalars['Bytes']>;
+  batchUstVerifier_lt: Maybe<Scalars['Bytes']>;
+  batchUstVerifier_gte: Maybe<Scalars['Bytes']>;
+  batchUstVerifier_lte: Maybe<Scalars['Bytes']>;
   batchUstVerifier_in: Maybe<Array<Scalars['Bytes']>>;
   batchUstVerifier_not_in: Maybe<Array<Scalars['Bytes']>>;
   batchUstVerifier_contains: Maybe<Scalars['Bytes']>;
   batchUstVerifier_not_contains: Maybe<Scalars['Bytes']>;
   qvtVerifier: Maybe<Scalars['Bytes']>;
   qvtVerifier_not: Maybe<Scalars['Bytes']>;
+  qvtVerifier_gt: Maybe<Scalars['Bytes']>;
+  qvtVerifier_lt: Maybe<Scalars['Bytes']>;
+  qvtVerifier_gte: Maybe<Scalars['Bytes']>;
+  qvtVerifier_lte: Maybe<Scalars['Bytes']>;
   qvtVerifier_in: Maybe<Array<Scalars['Bytes']>>;
   qvtVerifier_not_in: Maybe<Array<Scalars['Bytes']>>;
   qvtVerifier_contains: Maybe<Scalars['Bytes']>;
@@ -1035,6 +1161,8 @@ export type FundingRoundFactory_Filter = {
   lastUpdatedAt_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<FundingRoundFactory_Filter>>>;
+  or: Maybe<Array<Maybe<FundingRoundFactory_Filter>>>;
 };
 
 export enum FundingRoundFactory_OrderBy {
@@ -1043,11 +1171,50 @@ export enum FundingRoundFactory_OrderBy {
   Coordinator = 'coordinator',
   NativeToken = 'nativeToken',
   NativeTokenInfo = 'nativeTokenInfo',
+  NativeTokenInfoId = 'nativeTokenInfo__id',
+  NativeTokenInfoTokenAddress = 'nativeTokenInfo__tokenAddress',
+  NativeTokenInfoSymbol = 'nativeTokenInfo__symbol',
+  NativeTokenInfoDecimals = 'nativeTokenInfo__decimals',
+  NativeTokenInfoCreatedAt = 'nativeTokenInfo__createdAt',
+  NativeTokenInfoLastUpdatedAt = 'nativeTokenInfo__lastUpdatedAt',
   ContributorRegistry = 'contributorRegistry',
+  ContributorRegistryId = 'contributorRegistry__id',
+  ContributorRegistryContext = 'contributorRegistry__context',
+  ContributorRegistryOwner = 'contributorRegistry__owner',
+  ContributorRegistryCreatedAt = 'contributorRegistry__createdAt',
+  ContributorRegistryLastUpdatedAt = 'contributorRegistry__lastUpdatedAt',
   ContributorRegistryAddress = 'contributorRegistryAddress',
   RecipientRegistry = 'recipientRegistry',
+  RecipientRegistryId = 'recipientRegistry__id',
+  RecipientRegistryBaseDeposit = 'recipientRegistry__baseDeposit',
+  RecipientRegistryChallengePeriodDuration = 'recipientRegistry__challengePeriodDuration',
+  RecipientRegistryController = 'recipientRegistry__controller',
+  RecipientRegistryMaxRecipients = 'recipientRegistry__maxRecipients',
+  RecipientRegistryOwner = 'recipientRegistry__owner',
+  RecipientRegistryCreatedAt = 'recipientRegistry__createdAt',
+  RecipientRegistryLastUpdatedAt = 'recipientRegistry__lastUpdatedAt',
   RecipientRegistryAddress = 'recipientRegistryAddress',
   CurrentRound = 'currentRound',
+  CurrentRoundId = 'currentRound__id',
+  CurrentRoundMaci = 'currentRound__maci',
+  CurrentRoundRecipientRegistryAddress = 'currentRound__recipientRegistryAddress',
+  CurrentRoundContributorRegistryAddress = 'currentRound__contributorRegistryAddress',
+  CurrentRoundNativeToken = 'currentRound__nativeToken',
+  CurrentRoundStartTime = 'currentRound__startTime',
+  CurrentRoundSignUpDeadline = 'currentRound__signUpDeadline',
+  CurrentRoundVotingDeadline = 'currentRound__votingDeadline',
+  CurrentRoundCoordinator = 'currentRound__coordinator',
+  CurrentRoundVoiceCreditFactor = 'currentRound__voiceCreditFactor',
+  CurrentRoundContributorCount = 'currentRound__contributorCount',
+  CurrentRoundRecipientCount = 'currentRound__recipientCount',
+  CurrentRoundMatchingPoolSize = 'currentRound__matchingPoolSize',
+  CurrentRoundTotalSpent = 'currentRound__totalSpent',
+  CurrentRoundTotalVotes = 'currentRound__totalVotes',
+  CurrentRoundIsFinalized = 'currentRound__isFinalized',
+  CurrentRoundIsCancelled = 'currentRound__isCancelled',
+  CurrentRoundTallyHash = 'currentRound__tallyHash',
+  CurrentRoundCreatedAt = 'currentRound__createdAt',
+  CurrentRoundLastUpdatedAt = 'currentRound__lastUpdatedAt',
   MaciFactory = 'maciFactory',
   CoordinatorPubKey = 'coordinatorPubKey',
   StateTreeDepth = 'stateTreeDepth',
@@ -1099,6 +1266,10 @@ export type FundingRound_Filter = {
   fundingRoundFactory_: Maybe<FundingRoundFactory_Filter>;
   maci: Maybe<Scalars['Bytes']>;
   maci_not: Maybe<Scalars['Bytes']>;
+  maci_gt: Maybe<Scalars['Bytes']>;
+  maci_lt: Maybe<Scalars['Bytes']>;
+  maci_gte: Maybe<Scalars['Bytes']>;
+  maci_lte: Maybe<Scalars['Bytes']>;
   maci_in: Maybe<Array<Scalars['Bytes']>>;
   maci_not_in: Maybe<Array<Scalars['Bytes']>>;
   maci_contains: Maybe<Scalars['Bytes']>;
@@ -1127,6 +1298,10 @@ export type FundingRound_Filter = {
   recipientRegistry_: Maybe<RecipientRegistry_Filter>;
   recipientRegistryAddress: Maybe<Scalars['Bytes']>;
   recipientRegistryAddress_not: Maybe<Scalars['Bytes']>;
+  recipientRegistryAddress_gt: Maybe<Scalars['Bytes']>;
+  recipientRegistryAddress_lt: Maybe<Scalars['Bytes']>;
+  recipientRegistryAddress_gte: Maybe<Scalars['Bytes']>;
+  recipientRegistryAddress_lte: Maybe<Scalars['Bytes']>;
   recipientRegistryAddress_in: Maybe<Array<Scalars['Bytes']>>;
   recipientRegistryAddress_not_in: Maybe<Array<Scalars['Bytes']>>;
   recipientRegistryAddress_contains: Maybe<Scalars['Bytes']>;
@@ -1154,12 +1329,20 @@ export type FundingRound_Filter = {
   contributorRegistry_: Maybe<ContributorRegistry_Filter>;
   contributorRegistryAddress: Maybe<Scalars['Bytes']>;
   contributorRegistryAddress_not: Maybe<Scalars['Bytes']>;
+  contributorRegistryAddress_gt: Maybe<Scalars['Bytes']>;
+  contributorRegistryAddress_lt: Maybe<Scalars['Bytes']>;
+  contributorRegistryAddress_gte: Maybe<Scalars['Bytes']>;
+  contributorRegistryAddress_lte: Maybe<Scalars['Bytes']>;
   contributorRegistryAddress_in: Maybe<Array<Scalars['Bytes']>>;
   contributorRegistryAddress_not_in: Maybe<Array<Scalars['Bytes']>>;
   contributorRegistryAddress_contains: Maybe<Scalars['Bytes']>;
   contributorRegistryAddress_not_contains: Maybe<Scalars['Bytes']>;
   nativeToken: Maybe<Scalars['Bytes']>;
   nativeToken_not: Maybe<Scalars['Bytes']>;
+  nativeToken_gt: Maybe<Scalars['Bytes']>;
+  nativeToken_lt: Maybe<Scalars['Bytes']>;
+  nativeToken_gte: Maybe<Scalars['Bytes']>;
+  nativeToken_lte: Maybe<Scalars['Bytes']>;
   nativeToken_in: Maybe<Array<Scalars['Bytes']>>;
   nativeToken_not_in: Maybe<Array<Scalars['Bytes']>>;
   nativeToken_contains: Maybe<Scalars['Bytes']>;
@@ -1211,6 +1394,10 @@ export type FundingRound_Filter = {
   votingDeadline_not_in: Maybe<Array<Scalars['BigInt']>>;
   coordinator: Maybe<Scalars['Bytes']>;
   coordinator_not: Maybe<Scalars['Bytes']>;
+  coordinator_gt: Maybe<Scalars['Bytes']>;
+  coordinator_lt: Maybe<Scalars['Bytes']>;
+  coordinator_gte: Maybe<Scalars['Bytes']>;
+  coordinator_lte: Maybe<Scalars['Bytes']>;
   coordinator_in: Maybe<Array<Scalars['Bytes']>>;
   coordinator_not_in: Maybe<Array<Scalars['Bytes']>>;
   coordinator_contains: Maybe<Scalars['Bytes']>;
@@ -1337,19 +1524,62 @@ export type FundingRound_Filter = {
   lastUpdatedAt_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<FundingRound_Filter>>>;
+  or: Maybe<Array<Maybe<FundingRound_Filter>>>;
 };
 
 export enum FundingRound_OrderBy {
   Id = 'id',
   FundingRoundFactory = 'fundingRoundFactory',
+  FundingRoundFactoryId = 'fundingRoundFactory__id',
+  FundingRoundFactoryOwner = 'fundingRoundFactory__owner',
+  FundingRoundFactoryCoordinator = 'fundingRoundFactory__coordinator',
+  FundingRoundFactoryNativeToken = 'fundingRoundFactory__nativeToken',
+  FundingRoundFactoryContributorRegistryAddress = 'fundingRoundFactory__contributorRegistryAddress',
+  FundingRoundFactoryRecipientRegistryAddress = 'fundingRoundFactory__recipientRegistryAddress',
+  FundingRoundFactoryMaciFactory = 'fundingRoundFactory__maciFactory',
+  FundingRoundFactoryCoordinatorPubKey = 'fundingRoundFactory__coordinatorPubKey',
+  FundingRoundFactoryStateTreeDepth = 'fundingRoundFactory__stateTreeDepth',
+  FundingRoundFactoryMessageTreeDepth = 'fundingRoundFactory__messageTreeDepth',
+  FundingRoundFactoryVoteOptionTreeDepth = 'fundingRoundFactory__voteOptionTreeDepth',
+  FundingRoundFactoryTallyBatchSize = 'fundingRoundFactory__tallyBatchSize',
+  FundingRoundFactoryMessageBatchSize = 'fundingRoundFactory__messageBatchSize',
+  FundingRoundFactoryBatchUstVerifier = 'fundingRoundFactory__batchUstVerifier',
+  FundingRoundFactoryQvtVerifier = 'fundingRoundFactory__qvtVerifier',
+  FundingRoundFactorySignUpDuration = 'fundingRoundFactory__signUpDuration',
+  FundingRoundFactoryVotingDuration = 'fundingRoundFactory__votingDuration',
+  FundingRoundFactoryMaxUsers = 'fundingRoundFactory__maxUsers',
+  FundingRoundFactoryMaxMessages = 'fundingRoundFactory__maxMessages',
+  FundingRoundFactoryMaxVoteOptions = 'fundingRoundFactory__maxVoteOptions',
+  FundingRoundFactoryCreatedAt = 'fundingRoundFactory__createdAt',
+  FundingRoundFactoryLastUpdatedAt = 'fundingRoundFactory__lastUpdatedAt',
   Maci = 'maci',
   Messages = 'messages',
   RecipientRegistry = 'recipientRegistry',
+  RecipientRegistryId = 'recipientRegistry__id',
+  RecipientRegistryBaseDeposit = 'recipientRegistry__baseDeposit',
+  RecipientRegistryChallengePeriodDuration = 'recipientRegistry__challengePeriodDuration',
+  RecipientRegistryController = 'recipientRegistry__controller',
+  RecipientRegistryMaxRecipients = 'recipientRegistry__maxRecipients',
+  RecipientRegistryOwner = 'recipientRegistry__owner',
+  RecipientRegistryCreatedAt = 'recipientRegistry__createdAt',
+  RecipientRegistryLastUpdatedAt = 'recipientRegistry__lastUpdatedAt',
   RecipientRegistryAddress = 'recipientRegistryAddress',
   ContributorRegistry = 'contributorRegistry',
+  ContributorRegistryId = 'contributorRegistry__id',
+  ContributorRegistryContext = 'contributorRegistry__context',
+  ContributorRegistryOwner = 'contributorRegistry__owner',
+  ContributorRegistryCreatedAt = 'contributorRegistry__createdAt',
+  ContributorRegistryLastUpdatedAt = 'contributorRegistry__lastUpdatedAt',
   ContributorRegistryAddress = 'contributorRegistryAddress',
   NativeToken = 'nativeToken',
   NativeTokenInfo = 'nativeTokenInfo',
+  NativeTokenInfoId = 'nativeTokenInfo__id',
+  NativeTokenInfoTokenAddress = 'nativeTokenInfo__tokenAddress',
+  NativeTokenInfoSymbol = 'nativeTokenInfo__symbol',
+  NativeTokenInfoDecimals = 'nativeTokenInfo__decimals',
+  NativeTokenInfoCreatedAt = 'nativeTokenInfo__createdAt',
+  NativeTokenInfoLastUpdatedAt = 'nativeTokenInfo__lastUpdatedAt',
   StartTime = 'startTime',
   SignUpDeadline = 'signUpDeadline',
   VotingDeadline = 'votingDeadline',
@@ -1468,6 +1698,8 @@ export type Message_Filter = {
   timestamp_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<Message_Filter>>>;
+  or: Maybe<Array<Maybe<Message_Filter>>>;
 };
 
 export enum Message_OrderBy {
@@ -1475,7 +1707,32 @@ export enum Message_OrderBy {
   Data = 'data',
   Iv = 'iv',
   PublicKey = 'publicKey',
+  PublicKeyId = 'publicKey__id',
+  PublicKeyX = 'publicKey__x',
+  PublicKeyY = 'publicKey__y',
+  PublicKeyStateIndex = 'publicKey__stateIndex',
+  PublicKeyVoiceCreditBalance = 'publicKey__voiceCreditBalance',
   FundingRound = 'fundingRound',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
   Timestamp = 'timestamp'
 }
 
@@ -1570,11 +1827,33 @@ export type PublicKey_Filter = {
   voiceCreditBalance_not_in: Maybe<Array<Scalars['BigInt']>>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<PublicKey_Filter>>>;
+  or: Maybe<Array<Maybe<PublicKey_Filter>>>;
 };
 
 export enum PublicKey_OrderBy {
   Id = 'id',
   FundingRound = 'fundingRound',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
   Messages = 'messages',
   X = 'x',
   Y = 'y',
@@ -1870,7 +2149,6 @@ export type Recipient = {
   requestResolvedHash: Maybe<Scalars['Bytes']>;
   requestSubmittedHash: Maybe<Scalars['Bytes']>;
   fundingRounds: Maybe<Array<FundingRound>>;
-  donations: Maybe<Array<Donation>>;
   createdAt: Maybe<Scalars['String']>;
   lastUpdatedAt: Maybe<Scalars['String']>;
 };
@@ -1882,15 +2160,6 @@ export type RecipientFundingRoundsArgs = {
   orderBy: Maybe<FundingRound_OrderBy>;
   orderDirection: Maybe<OrderDirection>;
   where: Maybe<FundingRound_Filter>;
-};
-
-
-export type RecipientDonationsArgs = {
-  skip?: Maybe<Scalars['Int']>;
-  first?: Maybe<Scalars['Int']>;
-  orderBy: Maybe<Donation_OrderBy>;
-  orderDirection: Maybe<OrderDirection>;
-  where: Maybe<Donation_Filter>;
 };
 
 export type RecipientRegistry = {
@@ -1964,6 +2233,10 @@ export type RecipientRegistry_Filter = {
   challengePeriodDuration_not_in: Maybe<Array<Scalars['BigInt']>>;
   controller: Maybe<Scalars['Bytes']>;
   controller_not: Maybe<Scalars['Bytes']>;
+  controller_gt: Maybe<Scalars['Bytes']>;
+  controller_lt: Maybe<Scalars['Bytes']>;
+  controller_gte: Maybe<Scalars['Bytes']>;
+  controller_lte: Maybe<Scalars['Bytes']>;
   controller_in: Maybe<Array<Scalars['Bytes']>>;
   controller_not_in: Maybe<Array<Scalars['Bytes']>>;
   controller_contains: Maybe<Scalars['Bytes']>;
@@ -1978,6 +2251,10 @@ export type RecipientRegistry_Filter = {
   maxRecipients_not_in: Maybe<Array<Scalars['BigInt']>>;
   owner: Maybe<Scalars['Bytes']>;
   owner_not: Maybe<Scalars['Bytes']>;
+  owner_gt: Maybe<Scalars['Bytes']>;
+  owner_lt: Maybe<Scalars['Bytes']>;
+  owner_gte: Maybe<Scalars['Bytes']>;
+  owner_lte: Maybe<Scalars['Bytes']>;
   owner_in: Maybe<Array<Scalars['Bytes']>>;
   owner_not_in: Maybe<Array<Scalars['Bytes']>>;
   owner_contains: Maybe<Scalars['Bytes']>;
@@ -2025,11 +2302,35 @@ export type RecipientRegistry_Filter = {
   lastUpdatedAt_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<RecipientRegistry_Filter>>>;
+  or: Maybe<Array<Maybe<RecipientRegistry_Filter>>>;
 };
 
 export enum RecipientRegistry_OrderBy {
   Id = 'id',
   FundingRoundFactory = 'fundingRoundFactory',
+  FundingRoundFactoryId = 'fundingRoundFactory__id',
+  FundingRoundFactoryOwner = 'fundingRoundFactory__owner',
+  FundingRoundFactoryCoordinator = 'fundingRoundFactory__coordinator',
+  FundingRoundFactoryNativeToken = 'fundingRoundFactory__nativeToken',
+  FundingRoundFactoryContributorRegistryAddress = 'fundingRoundFactory__contributorRegistryAddress',
+  FundingRoundFactoryRecipientRegistryAddress = 'fundingRoundFactory__recipientRegistryAddress',
+  FundingRoundFactoryMaciFactory = 'fundingRoundFactory__maciFactory',
+  FundingRoundFactoryCoordinatorPubKey = 'fundingRoundFactory__coordinatorPubKey',
+  FundingRoundFactoryStateTreeDepth = 'fundingRoundFactory__stateTreeDepth',
+  FundingRoundFactoryMessageTreeDepth = 'fundingRoundFactory__messageTreeDepth',
+  FundingRoundFactoryVoteOptionTreeDepth = 'fundingRoundFactory__voteOptionTreeDepth',
+  FundingRoundFactoryTallyBatchSize = 'fundingRoundFactory__tallyBatchSize',
+  FundingRoundFactoryMessageBatchSize = 'fundingRoundFactory__messageBatchSize',
+  FundingRoundFactoryBatchUstVerifier = 'fundingRoundFactory__batchUstVerifier',
+  FundingRoundFactoryQvtVerifier = 'fundingRoundFactory__qvtVerifier',
+  FundingRoundFactorySignUpDuration = 'fundingRoundFactory__signUpDuration',
+  FundingRoundFactoryVotingDuration = 'fundingRoundFactory__votingDuration',
+  FundingRoundFactoryMaxUsers = 'fundingRoundFactory__maxUsers',
+  FundingRoundFactoryMaxMessages = 'fundingRoundFactory__maxMessages',
+  FundingRoundFactoryMaxVoteOptions = 'fundingRoundFactory__maxVoteOptions',
+  FundingRoundFactoryCreatedAt = 'fundingRoundFactory__createdAt',
+  FundingRoundFactoryLastUpdatedAt = 'fundingRoundFactory__lastUpdatedAt',
   BaseDeposit = 'baseDeposit',
   ChallengePeriodDuration = 'challengePeriodDuration',
   Controller = 'controller',
@@ -2148,6 +2449,10 @@ export type Recipient_Filter = {
   deposit_not_in: Maybe<Array<Scalars['BigInt']>>;
   recipientAddress: Maybe<Scalars['Bytes']>;
   recipientAddress_not: Maybe<Scalars['Bytes']>;
+  recipientAddress_gt: Maybe<Scalars['Bytes']>;
+  recipientAddress_lt: Maybe<Scalars['Bytes']>;
+  recipientAddress_gte: Maybe<Scalars['Bytes']>;
+  recipientAddress_lte: Maybe<Scalars['Bytes']>;
   recipientAddress_in: Maybe<Array<Scalars['Bytes']>>;
   recipientAddress_not_in: Maybe<Array<Scalars['Bytes']>>;
   recipientAddress_contains: Maybe<Scalars['Bytes']>;
@@ -2190,12 +2495,20 @@ export type Recipient_Filter = {
   voteOptionIndex_not_in: Maybe<Array<Scalars['BigInt']>>;
   requestResolvedHash: Maybe<Scalars['Bytes']>;
   requestResolvedHash_not: Maybe<Scalars['Bytes']>;
+  requestResolvedHash_gt: Maybe<Scalars['Bytes']>;
+  requestResolvedHash_lt: Maybe<Scalars['Bytes']>;
+  requestResolvedHash_gte: Maybe<Scalars['Bytes']>;
+  requestResolvedHash_lte: Maybe<Scalars['Bytes']>;
   requestResolvedHash_in: Maybe<Array<Scalars['Bytes']>>;
   requestResolvedHash_not_in: Maybe<Array<Scalars['Bytes']>>;
   requestResolvedHash_contains: Maybe<Scalars['Bytes']>;
   requestResolvedHash_not_contains: Maybe<Scalars['Bytes']>;
   requestSubmittedHash: Maybe<Scalars['Bytes']>;
   requestSubmittedHash_not: Maybe<Scalars['Bytes']>;
+  requestSubmittedHash_gt: Maybe<Scalars['Bytes']>;
+  requestSubmittedHash_lt: Maybe<Scalars['Bytes']>;
+  requestSubmittedHash_gte: Maybe<Scalars['Bytes']>;
+  requestSubmittedHash_lte: Maybe<Scalars['Bytes']>;
   requestSubmittedHash_in: Maybe<Array<Scalars['Bytes']>>;
   requestSubmittedHash_not_in: Maybe<Array<Scalars['Bytes']>>;
   requestSubmittedHash_contains: Maybe<Scalars['Bytes']>;
@@ -2207,7 +2520,6 @@ export type Recipient_Filter = {
   fundingRounds_not_contains: Maybe<Array<Scalars['String']>>;
   fundingRounds_not_contains_nocase: Maybe<Array<Scalars['String']>>;
   fundingRounds_: Maybe<FundingRound_Filter>;
-  donations_: Maybe<Donation_Filter>;
   createdAt: Maybe<Scalars['String']>;
   createdAt_not: Maybe<Scalars['String']>;
   createdAt_gt: Maybe<Scalars['String']>;
@@ -2250,11 +2562,21 @@ export type Recipient_Filter = {
   lastUpdatedAt_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<Recipient_Filter>>>;
+  or: Maybe<Array<Maybe<Recipient_Filter>>>;
 };
 
 export enum Recipient_OrderBy {
   Id = 'id',
   RecipientRegistry = 'recipientRegistry',
+  RecipientRegistryId = 'recipientRegistry__id',
+  RecipientRegistryBaseDeposit = 'recipientRegistry__baseDeposit',
+  RecipientRegistryChallengePeriodDuration = 'recipientRegistry__challengePeriodDuration',
+  RecipientRegistryController = 'recipientRegistry__controller',
+  RecipientRegistryMaxRecipients = 'recipientRegistry__maxRecipients',
+  RecipientRegistryOwner = 'recipientRegistry__owner',
+  RecipientRegistryCreatedAt = 'recipientRegistry__createdAt',
+  RecipientRegistryLastUpdatedAt = 'recipientRegistry__lastUpdatedAt',
   RecipientIndex = 'recipientIndex',
   RequestType = 'requestType',
   Requester = 'requester',
@@ -2268,7 +2590,6 @@ export enum Recipient_OrderBy {
   RequestResolvedHash = 'requestResolvedHash',
   RequestSubmittedHash = 'requestSubmittedHash',
   FundingRounds = 'fundingRounds',
-  Donations = 'donations',
   CreatedAt = 'createdAt',
   LastUpdatedAt = 'lastUpdatedAt'
 }
@@ -2565,6 +2886,10 @@ export type Token_Filter = {
   id_not_in: Maybe<Array<Scalars['ID']>>;
   tokenAddress: Maybe<Scalars['Bytes']>;
   tokenAddress_not: Maybe<Scalars['Bytes']>;
+  tokenAddress_gt: Maybe<Scalars['Bytes']>;
+  tokenAddress_lt: Maybe<Scalars['Bytes']>;
+  tokenAddress_gte: Maybe<Scalars['Bytes']>;
+  tokenAddress_lte: Maybe<Scalars['Bytes']>;
   tokenAddress_in: Maybe<Array<Scalars['Bytes']>>;
   tokenAddress_not_in: Maybe<Array<Scalars['Bytes']>>;
   tokenAddress_contains: Maybe<Scalars['Bytes']>;
@@ -2639,6 +2964,8 @@ export type Token_Filter = {
   lastUpdatedAt_not_ends_with_nocase: Maybe<Scalars['String']>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<Token_Filter>>>;
+  or: Maybe<Array<Maybe<Token_Filter>>>;
 };
 
 export enum Token_OrderBy {
@@ -2712,6 +3039,10 @@ export type Vote_Filter = {
   fundingRound_: Maybe<FundingRound_Filter>;
   voterAddress: Maybe<Scalars['Bytes']>;
   voterAddress_not: Maybe<Scalars['Bytes']>;
+  voterAddress_gt: Maybe<Scalars['Bytes']>;
+  voterAddress_lt: Maybe<Scalars['Bytes']>;
+  voterAddress_gte: Maybe<Scalars['Bytes']>;
+  voterAddress_lte: Maybe<Scalars['Bytes']>;
   voterAddress_in: Maybe<Array<Scalars['Bytes']>>;
   voterAddress_not_in: Maybe<Array<Scalars['Bytes']>>;
   voterAddress_contains: Maybe<Scalars['Bytes']>;
@@ -2722,12 +3053,39 @@ export type Vote_Filter = {
   secret_not_in: Maybe<Array<Scalars['Boolean']>>;
   /** Filter for the block changed event. */
   _change_block: Maybe<BlockChangedFilter>;
+  and: Maybe<Array<Maybe<Vote_Filter>>>;
+  or: Maybe<Array<Maybe<Vote_Filter>>>;
 };
 
 export enum Vote_OrderBy {
   Id = 'id',
   Contributor = 'contributor',
+  ContributorId = 'contributor__id',
+  ContributorVerifiedTimeStamp = 'contributor__verifiedTimeStamp',
+  ContributorContributorAddress = 'contributor__contributorAddress',
+  ContributorCreatedAt = 'contributor__createdAt',
+  ContributorLastUpdatedAt = 'contributor__lastUpdatedAt',
   FundingRound = 'fundingRound',
+  FundingRoundId = 'fundingRound__id',
+  FundingRoundMaci = 'fundingRound__maci',
+  FundingRoundRecipientRegistryAddress = 'fundingRound__recipientRegistryAddress',
+  FundingRoundContributorRegistryAddress = 'fundingRound__contributorRegistryAddress',
+  FundingRoundNativeToken = 'fundingRound__nativeToken',
+  FundingRoundStartTime = 'fundingRound__startTime',
+  FundingRoundSignUpDeadline = 'fundingRound__signUpDeadline',
+  FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
+  FundingRoundCoordinator = 'fundingRound__coordinator',
+  FundingRoundVoiceCreditFactor = 'fundingRound__voiceCreditFactor',
+  FundingRoundContributorCount = 'fundingRound__contributorCount',
+  FundingRoundRecipientCount = 'fundingRound__recipientCount',
+  FundingRoundMatchingPoolSize = 'fundingRound__matchingPoolSize',
+  FundingRoundTotalSpent = 'fundingRound__totalSpent',
+  FundingRoundTotalVotes = 'fundingRound__totalVotes',
+  FundingRoundIsFinalized = 'fundingRound__isFinalized',
+  FundingRoundIsCancelled = 'fundingRound__isCancelled',
+  FundingRoundTallyHash = 'fundingRound__tallyHash',
+  FundingRoundCreatedAt = 'fundingRound__createdAt',
+  FundingRoundLastUpdatedAt = 'fundingRound__lastUpdatedAt',
   VoterAddress = 'voterAddress',
   Secret = 'secret'
 }
@@ -2811,9 +3169,17 @@ export type GetRecipientQueryVariables = Exact<{
 
 export type GetRecipientQuery = { __typename?: 'Query', recipientRegistry: Maybe<{ __typename?: 'RecipientRegistry', recipients: Maybe<Array<{ __typename?: 'Recipient', id: string, requestType: Maybe<string>, recipientAddress: Maybe<any>, recipientMetadata: Maybe<string>, submissionTime: Maybe<string>, rejected: Maybe<boolean>, verified: Maybe<boolean> }>> }> };
 
+export type GetRecipientBySubmitHashQueryVariables = Exact<{
+  transactionHash: Scalars['Bytes'];
+}>;
+
+
+export type GetRecipientBySubmitHashQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, recipientMetadata: Maybe<string>, recipientAddress: Maybe<any>, requester: Maybe<string>, submissionTime: Maybe<string> }> };
+
 export type GetRecipientDonationsQueryVariables = Exact<{
   fundingRoundAddress: Scalars['String'];
-  recipientAddress: Scalars['String'];
+  recipientAddress: Scalars['Bytes'];
+  recipientIndex: Scalars['BigInt'];
 }>;
 
 
@@ -2926,10 +3292,21 @@ export const GetRecipientDocument = gql`
   }
 }
     `;
+export const GetRecipientBySubmitHashDocument = gql`
+    query GetRecipientBySubmitHash($transactionHash: Bytes!) {
+  recipients(where: {requestSubmittedHash: $transactionHash}) {
+    id
+    recipientMetadata
+    recipientAddress
+    requester
+    submissionTime
+  }
+}
+    `;
 export const GetRecipientDonationsDocument = gql`
-    query GetRecipientDonations($fundingRoundAddress: String!, $recipientAddress: String!) {
+    query GetRecipientDonations($fundingRoundAddress: String!, $recipientAddress: Bytes!, $recipientIndex: BigInt!) {
   donations(
-    where: {fundingRound: $fundingRoundAddress, recipient: $recipientAddress}
+    where: {fundingRound: $fundingRoundAddress, recipient: $recipientAddress, voteOptionIndex: $recipientIndex}
   ) {
     id
   }
@@ -3040,6 +3417,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetRecipient(variables: GetRecipientQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientQuery>(GetRecipientDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipient');
+    },
+    GetRecipientBySubmitHash(variables: GetRecipientBySubmitHashQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientBySubmitHashQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientBySubmitHashQuery>(GetRecipientBySubmitHashDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientBySubmitHash');
     },
     GetRecipientDonations(variables: GetRecipientDonationsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientDonationsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientDonationsQuery>(GetRecipientDonationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientDonations');

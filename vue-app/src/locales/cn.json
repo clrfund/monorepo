@@ -1107,6 +1107,9 @@
     "div1": "您已成功取回捐款。",
     "button1": "确定"
   },
+  "recipientProfile": {
+    "not_found": "未找到收赠人!"
+  },
   "dynamic": {
     "appLink": {
       "getStarted": "开始吧！",
