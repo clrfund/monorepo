@@ -1,6 +1,6 @@
 import { ThemeMode } from '@/api/core'
 
-export function getOsColorScheme(): ThemeMode {
+export function getDefaultColorScheme(): ThemeMode {
   const colorScheme = ThemeMode.DARK
   return colorScheme
 }

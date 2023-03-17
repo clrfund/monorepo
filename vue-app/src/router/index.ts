@@ -26,6 +26,7 @@ import RecipientRegistryView from '@/views/RecipientRegistry.vue'
 import CartView from '@/views/Cart.vue'
 import TransactionSuccess from '@/views/TransactionSuccess.vue'
 import Leaderboard from '@/views/Leaderboard.vue'
+import RecipientProfile from '@/views/RecipientProfile.vue'
 
 Vue.use(VueRouter)
 
@@ -175,6 +176,14 @@ const routes = [
     component: RecipientRegistryView,
     meta: {
       title: 'Recipient registry',
+    },
+  },
+  {
+    path: '/recipients/:hash',
+    name: 'recipient-profile',
+    component: RecipientProfile,
+    meta: {
+      title: 'Recipient profile',
     },
   },
   {

@@ -785,7 +785,7 @@ import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
 import { DateTime } from 'luxon'
 import { addRecipient } from '@/api/recipient-registry-optimistic'
-import { waitForTransaction } from '@/utils/contracts'
+import { waitForTransactionAndCheck } from '@/utils/contracts'
 
 import {
   RESET_RECIPIENT_DATA,
@@ -795,7 +795,7 @@ import {
   RecipientApplicationData,
   formToProjectInterface,
 } from '@/api/recipient-registry-optimistic'
-import { Project } from '@/api/projects'
+import { Project, recipientExists } from '@/api/projects'
 import { chain } from '@/api/core'
 
 @Component({
@@ -1084,13 +1084,16 @@ export default class JoinView extends mixins(validationMixin) {
           throw { message: 'round over' }
         }
 
-        await waitForTransaction(
+        await waitForTransactionAndCheck(
           addRecipient(
             recipientRegistryAddress,
             recipient,
             recipientRegistryInfo.deposit,
             currentUser.walletProvider.getSigner()
           ),
+          (hash) => {
+            return recipientExists(hash)
+          },
           (hash) => (this.txHash = hash)
         )
 

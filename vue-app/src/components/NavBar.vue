@@ -84,7 +84,7 @@ import { chain, ThemeMode } from '@/api/core'
 import Trans from '@/plugins/i18n/translations'
 import { TOGGLE_THEME } from '@/store/mutation-types'
 import { lsGet, lsSet } from '@/utils/localStorage'
-import { isValidTheme, getOsColorScheme } from '@/utils/theme'
+import { isValidTheme, getDefaultColorScheme } from '@/utils/theme'
 import ClickOutside from '@/directives/ClickOutside'
 
 @Component({
@@ -140,7 +140,9 @@ export default class NavBar extends Vue {
 
   created() {
     const savedTheme = lsGet(this.themeKey)
-    const theme = isValidTheme(savedTheme) ? savedTheme : getOsColorScheme()
+    const theme = isValidTheme(savedTheme)
+      ? savedTheme
+      : getDefaultColorScheme()
     this.$store.commit(TOGGLE_THEME, theme)
 
     const savedLanguage = lsGet(this.languageKey)

@@ -36,7 +36,7 @@
 import Vue from 'vue'
 import { Component, Watch } from 'vue-property-decorator'
 
-import { getOsColorScheme } from '@/utils/theme'
+import { getDefaultColorScheme } from '@/utils/theme'
 import { getCurrentRound } from '@/api/round'
 import { User } from '@/api/user'
 
@@ -163,7 +163,7 @@ export default class App extends Vue {
   @Watch('$store.state.theme')
   setAppTheme = () => {
     const savedTheme = this.$store.state.theme
-    const theme = savedTheme || getOsColorScheme()
+    const theme = savedTheme || getDefaultColorScheme()
     document.documentElement.setAttribute('data-theme', theme)
   }
 
