@@ -25,7 +25,7 @@
             </li>
           </ul>
           <div class="mt2 button-spacing">
-            <links to="/recipients" class="btn-primary">{{
+            <links :to="recipientProfileUrl" class="btn-primary">{{
               $t('projectAdded.link2')
             }}</links>
             <links to="/" class="btn-secondary">{{
@@ -51,7 +51,6 @@ import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { RegistryInfo } from '@/api/recipient-registry-optimistic'
-import { chain } from '@/api/core'
 
 @Component({
   components: {
@@ -74,8 +73,8 @@ export default class ProjectAdded extends Vue {
     return this.$store.state.recipientRegistryInfo
   }
 
-  get blockExplorerUrl(): string {
-    return `${chain.explorer}/tx/${this.$route.params.txHash}`
+  get recipientProfileUrl(): string {
+    return `/recipients/${this.$route.params.hash}`
   }
 
   formatDuration(seconds: number): string {

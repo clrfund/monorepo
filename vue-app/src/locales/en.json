@@ -1107,6 +1107,9 @@
     "div1": "You have successfully withdrawn your contribution.",
     "button1": "OK"
   },
+  "recipientProfile": {
+    "not_found": "Recipient not found!"
+  },
   "dynamic": {
     "appLink": {
       "getStarted": "Get Started",
