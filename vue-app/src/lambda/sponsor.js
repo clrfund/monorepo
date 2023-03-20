@@ -9,8 +9,8 @@ const NODE_URL =
  * @param errorMessage error message
  * @returns error object
  */
-function makeError(errorMessage) {
-  const body = JSON.stringify({ error: errorMessage })
+function makeError(errorMessage, errorNum) {
+  const body = JSON.stringify({ error: errorMessage, errorNum })
   return { statusCode: 400, body }
 }
 
@@ -92,11 +92,7 @@ async function handleSponsorRequest(userAddress) {
   const json = await res.json()
 
   if (json.error) {
-    if (json.errorNum === 68) {
-      // sponsorship already sent recently, ignore this error
-      return makeResult({ hash: '0x0' })
-    }
-    return makeError(json.errorMessage)
+    return makeError(json.errorMessage, json.errorNum)
   }
 
   if (json.data) {

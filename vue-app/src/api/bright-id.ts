@@ -10,6 +10,17 @@ const BRIGHTID_APP_URL = 'https://app.brightid.org'
 const NODE_URL = brightIdNodeUrl
 const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
 
+/**
+ * These errors from the BrightID sponsor api can be ignored
+ * 68 - sponsorship already sent
+ * 69 - The app generated id was sponsored before
+ */
+const IGNORE_BRIGHTID_ERRORS = [68, 69]
+
+function canIgnoreError(errorNum: number) {
+  return IGNORE_BRIGHTID_ERRORS.includes(errorNum)
+}
+
 export interface BrightId {
   isVerified: boolean // If is verified in BrightID
   verification?: Verification
@@ -222,7 +233,7 @@ export async function brightIdSponsor(
   const json = await res.json()
 
   if (json['error']) {
-    if (json.errorNum === 68) {
+    if (canIgnoreError(json.errorNum)) {
       // sponsorship already sent recently, ignore this error
       return { hash: '0x0' }
     }
@@ -248,7 +259,18 @@ async function netlifySponsor(userAddress: string): Promise<SponsorData> {
 
   /* eslint-disable-next-line no-console */
   console.log('netlify sponsor response debug', res)
-  return res.json()
+  const json = await res.json()
+
+  if (res.status === 200) {
+    return json
+  }
+
+  if (res.status === 400 && canIgnoreError(json.errorNum)) {
+    return { hash: '0x0' }
+  }
+
+  // return the error in the json body
+  return json
 }
 
 /**
