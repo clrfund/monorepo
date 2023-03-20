@@ -258,8 +258,8 @@ async function netlifySponsor(userAddress: string): Promise<SponsorData> {
   })
 
   /* eslint-disable-next-line no-console */
-  console.log('netlify sponsor response debug', res)
   const json = await res.json()
+  console.log('netlify sponsor response debug', res, json)
 
   if (res.status === 200) {
     return json
