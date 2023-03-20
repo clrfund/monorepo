@@ -12,10 +12,10 @@ const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
 
 /**
  * These errors from the BrightID sponsor api can be ignored
+ * 39 - The app generated id was sponsored before
  * 68 - sponsorship already sent
- * 69 - The app generated id was sponsored before
  */
-const IGNORE_BRIGHTID_ERRORS = [68, 69]
+const IGNORE_BRIGHTID_ERRORS = [39, 68]
 
 function canIgnoreError(errorNum: number) {
   return IGNORE_BRIGHTID_ERRORS.includes(errorNum)
