@@ -258,9 +258,6 @@ async function netlifySponsor(userAddress: string): Promise<SponsorData> {
   })
 
   const json = await res.json()
-  /* eslint-disable-next-line no-console */
-  console.log('netlify sponsor response debug', res, json)
-
   if (res.status === 200) {
     return json
   }
@@ -269,7 +266,7 @@ async function netlifySponsor(userAddress: string): Promise<SponsorData> {
     return { hash: '0x0' }
   }
 
-  // return the error in the json body
+  // return the error
   return json
 }
 
