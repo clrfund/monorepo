@@ -246,7 +246,9 @@ async function netlifySponsor(userAddress: string): Promise<SponsorData> {
     body: JSON.stringify({ userAddress }),
   })
 
-  return res.json()
+  const json = await res.json()
+
+  return json.statusCode === 200 ? json.body : { error: json.body }
 }
 
 /**
@@ -260,7 +262,7 @@ export async function sponsorUser(userAddress: string): Promise<SponsorData> {
   }
 
   try {
-    return netlifySponsor(userAddress)
+    return await netlifySponsor(userAddress)
   } catch (err) {
     if (err instanceof Error) {
       return { error: (err as Error).message }

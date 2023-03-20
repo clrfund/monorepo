@@ -10,11 +10,7 @@ const NODE_URL =
  * @returns error object
  */
 function makeError(errorMessage) {
-  const body =
-    typeof errorMessage === 'string'
-      ? errorMessage
-      : JSON.stringify(errorMessage)
-
+  const body = JSON.stringify({ error: errorMessage })
   return { statusCode: 400, body }
 }
 
@@ -24,7 +20,7 @@ function makeError(errorMessage) {
  * @returns result object
  */
 function makeResult(result) {
-  const body = typeof result === 'object' ? JSON.stringify(result) : result
+  const body = JSON.stringify(result)
   return { statusCode: 200, body }
 }
 
@@ -101,9 +97,13 @@ async function handleSponsorRequest(userAddress) {
       return makeResult({ hash: '0x0' })
     }
     return makeError(json.errorMessage)
-  } else {
-    return makeResult(json.data)
   }
+
+  if (json.data) {
+    return makeResult({ hash: json.data.hash })
+  }
+
+  return makeError('Unexpected result from the BrightID sponsorship API.')
 }
 
 /**
