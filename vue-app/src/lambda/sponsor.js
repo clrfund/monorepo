@@ -52,7 +52,7 @@ async function handleSponsorRequest(userAddress) {
 
   if (!brightIdSponsorKey) {
     throw new Error(
-      'Environment VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY not set'
+      'Environment variable VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY not set'
     )
   }
 
@@ -120,6 +120,6 @@ exports.handler = async function (event) {
 
     return await handleSponsorRequest(jsonBody.userAddress)
   } catch (err) {
-    return makeError(err.message + ' ' + event.body)
+    return makeError(err.message)
   }
 }
