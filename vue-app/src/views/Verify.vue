@@ -129,7 +129,7 @@
             >
             </transaction>
             <div class="qr">
-              <loader v-if="!appLink"></loader>
+              <loader v-if="!appLink && !autoSponsorError"></loader>
               <div class="instructions" v-if="appLink">
                 <p class="desktop" v-if="appLinkQrCode">
                   {{ $t('verify.p4') }}
