@@ -83,3 +83,5 @@ export const brightIdNodeUrl =
   'https://brightid.clr.fund/brightid/v6'
 
 export const brightIdSponsorUrl = process.env.VUE_APP_BRIGHTID_SPONSOR_API_URL
+
+export const MAX_WAIT_DEPTH = Number(process.env.VUE_APP_MAX_WAIT_DEPTH) || 15

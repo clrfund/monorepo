@@ -120,7 +120,6 @@ type Recipient @entity {
   requestSubmittedHash: Bytes
 
   fundingRounds: [FundingRound!]
-  donations: [Donation!] @derivedFrom(field: "recipient")
   
   createdAt: String
   lastUpdatedAt: String
@@ -183,7 +182,7 @@ type Vote @entity {
 
 type Donation @entity {
   id: ID!
-  recipient: Recipient
+  recipient: Bytes
   fundingRound: FundingRound
   amount: BigInt
   voteOptionIndex: BigInt

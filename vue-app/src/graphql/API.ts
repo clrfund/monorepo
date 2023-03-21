@@ -592,7 +592,7 @@ export type Donation = {
   createdAt: Maybe<Scalars['String']>;
   fundingRound: Maybe<FundingRound>;
   id: Scalars['ID'];
-  recipient: Maybe<Recipient>;
+  recipient: Maybe<Scalars['Bytes']>;
   voteOptionIndex: Maybe<Scalars['BigInt']>;
 };
 
@@ -658,27 +658,16 @@ export type Donation_Filter = {
   id_not: InputMaybe<Scalars['ID']>;
   id_not_in: InputMaybe<Array<Scalars['ID']>>;
   or: InputMaybe<Array<InputMaybe<Donation_Filter>>>;
-  recipient: InputMaybe<Scalars['String']>;
-  recipient_: InputMaybe<Recipient_Filter>;
-  recipient_contains: InputMaybe<Scalars['String']>;
-  recipient_contains_nocase: InputMaybe<Scalars['String']>;
-  recipient_ends_with: InputMaybe<Scalars['String']>;
-  recipient_ends_with_nocase: InputMaybe<Scalars['String']>;
-  recipient_gt: InputMaybe<Scalars['String']>;
-  recipient_gte: InputMaybe<Scalars['String']>;
-  recipient_in: InputMaybe<Array<Scalars['String']>>;
-  recipient_lt: InputMaybe<Scalars['String']>;
-  recipient_lte: InputMaybe<Scalars['String']>;
-  recipient_not: InputMaybe<Scalars['String']>;
-  recipient_not_contains: InputMaybe<Scalars['String']>;
-  recipient_not_contains_nocase: InputMaybe<Scalars['String']>;
-  recipient_not_ends_with: InputMaybe<Scalars['String']>;
-  recipient_not_ends_with_nocase: InputMaybe<Scalars['String']>;
-  recipient_not_in: InputMaybe<Array<Scalars['String']>>;
-  recipient_not_starts_with: InputMaybe<Scalars['String']>;
-  recipient_not_starts_with_nocase: InputMaybe<Scalars['String']>;
-  recipient_starts_with: InputMaybe<Scalars['String']>;
-  recipient_starts_with_nocase: InputMaybe<Scalars['String']>;
+  recipient: InputMaybe<Scalars['Bytes']>;
+  recipient_contains: InputMaybe<Scalars['Bytes']>;
+  recipient_gt: InputMaybe<Scalars['Bytes']>;
+  recipient_gte: InputMaybe<Scalars['Bytes']>;
+  recipient_in: InputMaybe<Array<Scalars['Bytes']>>;
+  recipient_lt: InputMaybe<Scalars['Bytes']>;
+  recipient_lte: InputMaybe<Scalars['Bytes']>;
+  recipient_not: InputMaybe<Scalars['Bytes']>;
+  recipient_not_contains: InputMaybe<Scalars['Bytes']>;
+  recipient_not_in: InputMaybe<Array<Scalars['Bytes']>>;
   voteOptionIndex: InputMaybe<Scalars['BigInt']>;
   voteOptionIndex_gt: InputMaybe<Scalars['BigInt']>;
   voteOptionIndex_gte: InputMaybe<Scalars['BigInt']>;
@@ -715,21 +704,6 @@ export enum Donation_OrderBy {
   FundingRoundVotingDeadline = 'fundingRound__votingDeadline',
   Id = 'id',
   Recipient = 'recipient',
-  RecipientCreatedAt = 'recipient__createdAt',
-  RecipientDeposit = 'recipient__deposit',
-  RecipientId = 'recipient__id',
-  RecipientLastUpdatedAt = 'recipient__lastUpdatedAt',
-  RecipientRecipientAddress = 'recipient__recipientAddress',
-  RecipientRecipientIndex = 'recipient__recipientIndex',
-  RecipientRecipientMetadata = 'recipient__recipientMetadata',
-  RecipientRejected = 'recipient__rejected',
-  RecipientRequestResolvedHash = 'recipient__requestResolvedHash',
-  RecipientRequestSubmittedHash = 'recipient__requestSubmittedHash',
-  RecipientRequestType = 'recipient__requestType',
-  RecipientRequester = 'recipient__requester',
-  RecipientSubmissionTime = 'recipient__submissionTime',
-  RecipientVerified = 'recipient__verified',
-  RecipientVoteOptionIndex = 'recipient__voteOptionIndex',
   VoteOptionIndex = 'voteOptionIndex'
 }
 
@@ -2174,7 +2148,6 @@ export type Recipient = {
   __typename?: 'Recipient';
   createdAt: Maybe<Scalars['String']>;
   deposit: Maybe<Scalars['BigInt']>;
-  donations: Maybe<Array<Donation>>;
   fundingRounds: Maybe<Array<FundingRound>>;
   id: Scalars['ID'];
   lastUpdatedAt: Maybe<Scalars['String']>;
@@ -2190,15 +2163,6 @@ export type Recipient = {
   submissionTime: Maybe<Scalars['String']>;
   verified: Maybe<Scalars['Boolean']>;
   voteOptionIndex: Maybe<Scalars['BigInt']>;
-};
-
-
-export type RecipientDonationsArgs = {
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy: InputMaybe<Donation_OrderBy>;
-  orderDirection: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']>;
-  where: InputMaybe<Donation_Filter>;
 };
 
 
@@ -2421,7 +2385,6 @@ export type Recipient_Filter = {
   deposit_lte: InputMaybe<Scalars['BigInt']>;
   deposit_not: InputMaybe<Scalars['BigInt']>;
   deposit_not_in: InputMaybe<Array<Scalars['BigInt']>>;
-  donations_: InputMaybe<Donation_Filter>;
   fundingRounds: InputMaybe<Array<Scalars['String']>>;
   fundingRounds_: InputMaybe<FundingRound_Filter>;
   fundingRounds_contains: InputMaybe<Array<Scalars['String']>>;
@@ -2618,7 +2581,6 @@ export type Recipient_Filter = {
 export enum Recipient_OrderBy {
   CreatedAt = 'createdAt',
   Deposit = 'deposit',
-  Donations = 'donations',
   FundingRounds = 'fundingRounds',
   Id = 'id',
   LastUpdatedAt = 'lastUpdatedAt',
@@ -3263,9 +3225,17 @@ export type GetRecipientByIndexQueryVariables = Exact<{
 
 export type GetRecipientByIndexQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, recipientIndex: any | null, recipientAddress: any | null, recipientMetadata: string | null }> };
 
+export type GetRecipientBySubmitHashQueryVariables = Exact<{
+  transactionHash: Scalars['Bytes'];
+}>;
+
+
+export type GetRecipientBySubmitHashQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, recipientMetadata: string | null, recipientAddress: any | null, requester: string | null, submissionTime: string | null }> };
+
 export type GetRecipientDonationsQueryVariables = Exact<{
   fundingRoundAddress: Scalars['String'];
-  recipientAddress: Scalars['String'];
+  recipientAddress: Scalars['Bytes'];
+  recipientIndex: Scalars['BigInt'];
 }>;
 
 
@@ -3438,10 +3408,21 @@ export const GetRecipientByIndexDocument = gql`
   }
 }
     `;
+export const GetRecipientBySubmitHashDocument = gql`
+    query GetRecipientBySubmitHash($transactionHash: Bytes!) {
+  recipients(where: {requestSubmittedHash: $transactionHash}) {
+    id
+    recipientMetadata
+    recipientAddress
+    requester
+    submissionTime
+  }
+}
+    `;
 export const GetRecipientDonationsDocument = gql`
-    query GetRecipientDonations($fundingRoundAddress: String!, $recipientAddress: String!) {
+    query GetRecipientDonations($fundingRoundAddress: String!, $recipientAddress: Bytes!, $recipientIndex: BigInt!) {
   donations(
-    where: {fundingRound: $fundingRoundAddress, recipient: $recipientAddress}
+    where: {fundingRound: $fundingRoundAddress, recipient: $recipientAddress, voteOptionIndex: $recipientIndex}
   ) {
     id
   }
@@ -3570,6 +3551,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetRecipientByIndex(variables: GetRecipientByIndexQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientByIndexQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientByIndexQuery>(GetRecipientByIndexDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientByIndex', 'query');
+    },
+    GetRecipientBySubmitHash(variables: GetRecipientBySubmitHashQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientBySubmitHashQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientBySubmitHashQuery>(GetRecipientBySubmitHashDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientBySubmitHash', 'query');
     },
     GetRecipientDonations(variables: GetRecipientDonationsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientDonationsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientDonationsQuery>(GetRecipientDonationsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientDonations', 'query');
