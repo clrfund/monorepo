@@ -12,12 +12,22 @@ const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
 
 /**
  * These errors from the BrightID sponsor api can be ignored
+ * https://github.com/BrightID/BrightID-Node/blob/8093479a60da07c3cd2be32fe4fd8382217c966e/web_services/foxx/brightid/errors.js
+ *
  * 39 - The app generated id was sponsored before
- * 68 - sponsorship already sent
+ * 63 - Spend request for this app-generated id submitted before.
+ * 68 - The app has sent this sponsor request recently
  */
-const IGNORE_BRIGHTID_ERRORS = [39, 68]
+const IGNORE_BRIGHTID_ERRORS = [39, 63, 68]
 
+/**
+ * Check if the error number is in the ignore list.
+ * @param errorNum error number to check
+ * @returns true if the error is one of the IGNORE_BRIGHTID_ERROS
+ */
 function canIgnoreError(errorNum: number) {
+  /* eslint-disable-next-line no-console */
+  console.warn('BrightID error', errorNum)
   return IGNORE_BRIGHTID_ERRORS.includes(errorNum)
 }
 
