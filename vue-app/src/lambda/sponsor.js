@@ -9,12 +9,8 @@ const NODE_URL =
  * @param errorMessage error message
  * @returns error object
  */
-function makeError(errorMessage) {
-  const body =
-    typeof errorMessage === 'string'
-      ? errorMessage
-      : JSON.stringify(errorMessage)
-
+function makeError(errorMessage, errorNum) {
+  const body = JSON.stringify({ error: errorMessage, errorNum })
   return { statusCode: 400, body }
 }
 
@@ -24,7 +20,7 @@ function makeError(errorMessage) {
  * @returns result object
  */
 function makeResult(result) {
-  const body = typeof result === 'object' ? JSON.stringify(result) : result
+  const body = JSON.stringify(result)
   return { statusCode: 200, body }
 }
 
@@ -56,7 +52,7 @@ async function handleSponsorRequest(userAddress) {
 
   if (!brightIdSponsorKey) {
     throw new Error(
-      'Environment VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY not set'
+      'Environment variable VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY not set'
     )
   }
 
@@ -96,14 +92,14 @@ async function handleSponsorRequest(userAddress) {
   const json = await res.json()
 
   if (json.error) {
-    if (json.errorNum === 68) {
-      // sponsorship already sent recently, ignore this error
-      return makeResult({ hash: '0x0' })
-    }
-    return makeError(json.errorMessage)
-  } else {
-    return makeResult(json.data)
+    return makeError(json.errorMessage, json.errorNum)
   }
+
+  if (json.data) {
+    return makeResult({ hash: json.data.hash })
+  }
+
+  return makeError('Unexpected result from the BrightID sponsorship API.')
 }
 
 /**
@@ -122,8 +118,8 @@ exports.handler = async function (event) {
       return makeError('Missing userAddress in request body: ' + event.body)
     }
 
-    return handleSponsorRequest(jsonBody.userAddress)
+    return await handleSponsorRequest(jsonBody.userAddress)
   } catch (err) {
-    return makeError(err.message + ' ' + event.body)
+    return makeError(err.message)
   }
 }
