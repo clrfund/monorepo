@@ -118,7 +118,7 @@ exports.handler = async function (event) {
       return makeError('Missing userAddress in request body: ' + event.body)
     }
 
-    return handleSponsorRequest(jsonBody.userAddress)
+    return await handleSponsorRequest(jsonBody.userAddress)
   } catch (err) {
     return makeError(err.message + ' ' + event.body)
   }
