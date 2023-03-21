@@ -1,6 +1,6 @@
 {
   "name": "@clrfund/vue-app",
-  "version": "2.1.0",
+  "version": "3.0.1",
   "private": true,
   "scripts": {
     "gun": "gun --host localhost",

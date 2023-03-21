@@ -10,6 +10,27 @@ const BRIGHTID_APP_URL = 'https://app.brightid.org'
 const NODE_URL = brightIdNodeUrl
 const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
 
+/**
+ * These errors from the BrightID sponsor api can be ignored
+ * https://github.com/BrightID/BrightID-Node/blob/8093479a60da07c3cd2be32fe4fd8382217c966e/web_services/foxx/brightid/errors.js
+ *
+ * 39 - The app generated id was sponsored before
+ * 63 - Spend request for this app-generated id submitted before.
+ * 68 - The app has sent this sponsor request recently
+ */
+const IGNORE_BRIGHTID_ERRORS = [39, 63, 68]
+
+/**
+ * Check if the error number is in the ignore list.
+ * @param errorNum error number to check
+ * @returns true if the error is one of the IGNORE_BRIGHTID_ERROS
+ */
+function canIgnoreError(errorNum: number) {
+  /* eslint-disable-next-line no-console */
+  console.warn('BrightID error', errorNum)
+  return IGNORE_BRIGHTID_ERRORS.includes(errorNum)
+}
+
 export interface BrightId {
   isVerified: boolean // If is verified in BrightID
   verification?: Verification
@@ -222,7 +243,7 @@ export async function brightIdSponsor(
   const json = await res.json()
 
   if (json['error']) {
-    if (json.errorNum === 68) {
+    if (canIgnoreError(json.errorNum)) {
       // sponsorship already sent recently, ignore this error
       return { hash: '0x0' }
     }
@@ -246,7 +267,17 @@ async function netlifySponsor(userAddress: string): Promise<SponsorData> {
     body: JSON.stringify({ userAddress }),
   })
 
-  return res.json()
+  const json = await res.json()
+  if (res.status === 200) {
+    return json
+  }
+
+  if (res.status === 400 && canIgnoreError(json.errorNum)) {
+    return { hash: '0x0' }
+  }
+
+  // return the error
+  return json
 }
 
 /**
@@ -260,7 +291,7 @@ export async function sponsorUser(userAddress: string): Promise<SponsorData> {
   }
 
   try {
-    return netlifySponsor(userAddress)
+    return await netlifySponsor(userAddress)
   } catch (err) {
     if (err instanceof Error) {
       return { error: (err as Error).message }
