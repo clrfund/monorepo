@@ -1,7 +1,0 @@
-query GetCurrentRound($fundingRoundFactoryAddress: ID!) {
-  fundingRoundFactory(id: $fundingRoundFactoryAddress) {
-    currentRound {
-      id
-    }
-  }
-}

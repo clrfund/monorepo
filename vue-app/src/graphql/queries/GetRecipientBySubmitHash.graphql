@@ -1,9 +1,0 @@
-query GetRecipientBySubmitHash($transactionHash: Bytes!) {
-  recipients(where: { requestSubmittedHash: $transactionHash }) {
-    id
-    recipientMetadata
-    recipientAddress
-    requester
-    submissionTime
-  }
-}
