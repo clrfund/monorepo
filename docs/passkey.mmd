@@ -1,0 +1,34 @@
+%% To render this diagram, paste the code into the live editor https://mermaid-js.github.io/mermaid-live-editor/ or use Mermaid CLI
+
+sequenceDiagram
+    participant CLRFundApp
+    participant Browser
+    participant Subgraph
+    participant Authencator
+ 
+    alt Create passkey
+        Note over CLRFundApp, Authencator: Create passkey
+        CLRFundApp ->> Subgraph: check for past contributions
+        Subgraph ->> CLRFundApp: No
+        CLRFundApp ->> Browser: check for uncommitted cart in the local storage
+        Browser ->> CLRFundApp: No
+        Note over CLRFundApp: Create a new passkey only if no past contributions or uncommitted cart, otherwise get existing passkey
+        CLRFundApp ->> Browser: create passkey, call navigator.credentials.create(walletAddress)
+        Browser ->> Authencator: create passkey
+        Authencator ->> Browser: returns the public key of the new passkey
+        Browser ->> CLRFundApp: public key
+        Note over CLRFundApp: encrypt the uncommitted cart using the sha256 hash of the public key
+        CLRFundApp ->> Browser:  store uncommitted cart
+        Note over CLRFundApp: encrypt the committed cart using the MACI key created using the sha256 hash of the public key as a seed
+        CLRFundApp ->> Subgraph: store committed cart through on-chain transaction
+
+    else
+        Note over CLRFundApp, Authencator: Get public keys from the passkey
+        CLRFundApp ->> Browser: get signature, call navigator.credentials.get(random32Bytes)
+        Browser ->> Authencator: get signature
+        Authencator ->> Browser: signature
+        Browser ->> CLRFundApp: signature
+        Note over CLRFundApp: recover 2 public keys from the signature
+        CLRFundApp ->> Subgraph: get encrypted votes
+        Note over CLRFundApp: create MACI key using the public keys, the key that can decrypt votes is the correct key
+    end
