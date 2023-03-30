@@ -59,7 +59,7 @@
               type="button"
               class="btn-action"
               @click="register"
-              :disabled="loadingTx"
+              :disabled="loadingTx || registrationTxHash.length > 0"
             >
               {{ $t('registerUser.button') }}
             </button>
@@ -83,7 +83,12 @@ import Links from '@/components/Links.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import { waitForTransaction } from '@/utils/contracts'
 import { LOAD_USER_INFO } from '@/store/action-types'
-import { addUser, isAuthorizedToAddUser, User } from '@/api/user'
+import {
+  addUser,
+  isAuthorizedToAddUser,
+  User,
+  isVerifiedUser,
+} from '@/api/user'
 import { isValidEthAddress, resolveEns } from '@/utils/accounts'
 import WalletWidget from '@/components/WalletWidget.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
@@ -154,6 +159,14 @@ export default class RegisterUser extends mixins(validationMixin) {
         throw new Error('You are not authorized')
       }
 
+      const isRegistered = await isVerifiedUser(
+        userRegistryAddress,
+        this.form.resolvedAddress
+      )
+      if (isRegistered) {
+        throw new Error('User already registered')
+      }
+
       await waitForTransaction(
         addUser(userRegistryAddress, signer, this.form.resolvedAddress),
         (hash) => (this.registrationTxHash = hash)
@@ -166,6 +179,7 @@ export default class RegisterUser extends mixins(validationMixin) {
     }
   }
 
+  @Watch('$web3.user')
   resetForm() {
     this.registrationTxHash = ''
     this.registrationTxError = ''
