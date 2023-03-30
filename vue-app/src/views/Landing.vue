@@ -104,7 +104,7 @@
             {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
           </links>
         </div>
-        <div class="pre-req" id="bright-id">
+        <div v-if="$store.getters.isBrightIdRequired" id="bright-id">
           <div class="icon-row">
             <img src="@/assets/bright-id.png" id="bright-id-icon" />
             <p>
@@ -347,6 +347,10 @@ ol li::before {
 #about-3 {
   padding: $content-space;
   flex: 1;
+}
+
+.pre-req {
+  max-width: 32rem;
 }
 
 #page > #what-you-will-need,

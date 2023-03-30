@@ -490,6 +490,17 @@
       "p2": ""
     }
   },
+  "registerUser": {
+    "header": "注册用户",
+    "stepName": "注册",
+    "button": "注册",
+    "address": {
+      "label": "以太坊地址",
+      "description": "这可以是 ENS 或以太坊 0x 地址。",
+      "placeholder": "例如: 0x123..."
+    },
+    "error": "请输入有效的 ENS 或以太坊 0x 地址。"
+  },
   "join": {
     "title": {
       "h1": "参加筹款",
@@ -884,6 +895,7 @@
     "div11_if2": "重新分配",
     "div11_if3": "捐赠",
     "div12": "您没有把资金捐给项目 ({total} {tokenSymbol}) 将在筹款结束时发送到匹配池。您的捐款车必须相加等于您原来的 {total} {tokenSymbol} 捐款。",
+    "need_to_register": "请联系 {operator} 进行注册。",
     "link3": "BrightID 验证",
     "template1": "捐赠 {total} {tokenSymbol} 给 {cart} 相目",
     "template2": "完成赠捐",
@@ -987,6 +999,7 @@
       "sybil": "Sybil 抗性",
       "code": "代码",
       "recipients": "项目注册表",
+      "register": "捐赠者注册",
       "layer2": "二层网络",
       "rounds": "筹款回合"
     }

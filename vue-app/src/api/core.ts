@@ -53,6 +53,10 @@ if (
 ) {
   throw new Error('invalid user registry type')
 }
+export const requireBrightId = UserRegistryType.BRIGHT_ID === userRegistryType
+export const requireUserRegistration =
+  UserRegistryType.SIMPLE === userRegistryType
+
 export const recipientRegistryType = process.env.VUE_APP_RECIPIENT_REGISTRY_TYPE
 if (
   !['simple', 'optimistic', 'kleros'].includes(recipientRegistryType as string)

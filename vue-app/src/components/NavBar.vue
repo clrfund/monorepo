@@ -126,6 +126,11 @@ export default class NavBar extends Vue {
       emoji: '💎',
     },
     {
+      to: '/register',
+      text: 'navBar.dropdown.register',
+      emoji: '📚',
+    },
+    {
       to: '/rounds',
       text: 'navBar.dropdown.rounds',
       emoji: '⏰',

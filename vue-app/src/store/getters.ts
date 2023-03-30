@@ -4,7 +4,7 @@ import { DateTime } from 'luxon'
 
 // API
 import { CartItem, Contributor } from '@/api/contributions'
-import { recipientRegistryType, operator } from '@/api/core'
+import { recipientRegistryType, operator, requireBrightId } from '@/api/core'
 import { RoundInfo, RoundStatus } from '@/api/round'
 import { Tally } from '@/api/tally'
 import { User } from '@/api/user'
@@ -266,6 +266,9 @@ const getters = {
         return category
       }
     },
+  isBrightIdRequired: (): boolean => {
+    return requireBrightId
+  },
 }
 
 export default getters

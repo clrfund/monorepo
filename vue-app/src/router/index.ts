@@ -27,6 +27,8 @@ import CartView from '@/views/Cart.vue'
 import TransactionSuccess from '@/views/TransactionSuccess.vue'
 import Leaderboard from '@/views/Leaderboard.vue'
 import RecipientProfile from '@/views/RecipientProfile.vue'
+import RegisterView from '@/views/RegisterUser.vue'
+import { requireBrightId, requireUserRegistration } from '@/api/core'
 
 Vue.use(VueRouter)
 
@@ -187,30 +189,6 @@ const routes = [
     },
   },
   {
-    path: '/verify',
-    name: 'verify',
-    component: VerifyLanding,
-    meta: {
-      title: 'BrightID Verification',
-    },
-  },
-  {
-    path: '/verify/success/:hash?',
-    name: 'verified',
-    component: Verified,
-    meta: {
-      title: 'Verification Success',
-    },
-  },
-  {
-    path: '/verify/:step',
-    name: 'verify-step',
-    component: VerifyView,
-    meta: {
-      title: 'Verification Steps',
-    },
-  },
-  {
     path: '/join',
     name: 'join',
     component: JoinLanding,
@@ -252,6 +230,47 @@ const routes = [
     },
   },
 ]
+
+if (requireBrightId) {
+  routes.concat([
+    {
+      path: '/verify',
+      name: 'verify',
+      component: VerifyLanding,
+      meta: {
+        title: 'BrightID Verification',
+      },
+    },
+    {
+      path: '/verify/success/:hash?',
+      name: 'verified',
+      component: Verified,
+      meta: {
+        title: 'Verification Success',
+      },
+    },
+    {
+      path: '/verify/:step',
+      name: 'verify-step',
+      component: VerifyView,
+      meta: {
+        title: 'Verification Steps',
+      },
+    },
+  ])
+}
+
+if (requireUserRegistration) {
+  routes.push({
+    path: '/register',
+    name: 'register-user',
+    component: RegisterView,
+    meta: {
+      title: 'User Registration',
+    },
+  })
+}
+
 const router = new VueRouter({
   base: window.location.pathname,
   routes,

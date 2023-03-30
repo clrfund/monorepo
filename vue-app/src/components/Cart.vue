@@ -342,7 +342,7 @@ import {
   CartItem,
   isContributionAmountValid,
 } from '@/api/contributions'
-import { userRegistryType, UserRegistryType, chain } from '@/api/core'
+import { userRegistryType, UserRegistryType, chain, operator } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { LOGOUT_USER, SAVE_CART } from '@/store/action-types'
 import { User } from '@/api/user'
@@ -574,6 +574,8 @@ export default class Cart extends Vue {
       return this.translate('incorrect_network', { chain: chain.label })
     if (this.isBrightIdRequired)
       return this.translate('dynamic.cart.error.need_to_setup_brightid')
+    if (!currentUser.isRegistered)
+      return this.translate('cart.need_to_register', { operator })
     if (!this.isFormValid())
       return this.translate('dynamic.cart.error.invalid_contribution_amount')
     if (this.cart.length > MAX_CART_SIZE)
