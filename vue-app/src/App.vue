@@ -53,12 +53,10 @@ import {
   LOAD_ROUND_INFO,
   LOAD_RECIPIENT_REGISTRY_INFO,
   SELECT_ROUND,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
   LOAD_FACTORY_INFO,
   LOAD_MACI_FACTORY_INFO,
   LOAD_BRIGHT_ID,
+  LOGOUT_USER,
 } from '@/store/action-types'
 import { SET_CURRENT_USER } from '@/store/mutation-types'
 import { operator } from '@/api/core'
@@ -125,7 +123,13 @@ export default class App extends Vue {
 
   @Watch('$web3.user')
   loginUser = async () => {
-    if (!this.$web3.user) return
+    if (!this.$web3.user) {
+      if (this.currentUser) {
+        // disconnect previous connection
+        this.$store.dispatch(LOGOUT_USER)
+      }
+      return
+    }
 
     this.$store.commit(SET_CURRENT_USER, this.$web3.user)
     this.$store.dispatch(LOAD_USER_INFO)
@@ -139,11 +143,6 @@ export default class App extends Vue {
     }
 
     this.$store.dispatch(LOAD_USER_INFO)
-
-    // Load cart & contributor data for current round
-    this.$store.dispatch(LOAD_CART)
-    this.$store.dispatch(LOAD_COMMITTED_CART)
-    this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
   }
 
   get isUserAndRoundLoaded(): boolean {

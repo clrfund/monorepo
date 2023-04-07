@@ -50,11 +50,6 @@ export default {
       const conn = await connector.connect()
       const account = conn.accounts[0]
 
-      const signature = await conn.provider.request({
-        method: 'personal_sign',
-        params: [LOGIN_MESSAGE, account],
-      })
-
       // Save chosen provider to localStorage
       lsSet(CONNECTED_PROVIDER, wallet)
 
@@ -86,25 +81,23 @@ export default {
         // store them and read them directly from the plugin, `this.$web3`.
         // Separate the concept of User from here. Create the User when the
         // connection is made, from the consumer.
-        encryptionKey: sha256(signature),
+        // encryptionKey will be populated as needed
+        encryptionKey: '',
         balance: null,
         contribution: null,
         walletProvider: new Web3Provider(conn.provider),
         walletAddress: account,
       }
 
-      // Emit EIP-1193 events and update plugin values
-      conn.provider.on('accountsChanged', (newAccounts) => {
-        plugin.accounts = newAccounts
-        plugin.$emit('accountsChanged', plugin.accounts)
+      // Disconnect wallet which will trigger the app to disconnect user
+      conn.provider.on('accountsChanged', () => {
+        plugin.disconnectWallet()
       })
-      conn.provider.on('chainChanged', (newChainId) => {
-        plugin.chainId = Number(newChainId)
-        plugin.$emit('chainChanged', plugin.chainId)
+      conn.provider.on('chainChanged', () => {
+        plugin.disconnectWallet()
       })
       conn.provider.on('disconnect', () => {
         plugin.disconnectWallet()
-        plugin.$emit('disconnect')
       })
     }
 
@@ -117,6 +110,14 @@ export default {
       }
       if (plugin.provider?.close) {
         plugin.provider.close()
+      }
+      if (plugin.provider?.removeListener) {
+        plugin.provider.removeListener('disconnect', plugin.disconnectWallet)
+        plugin.provider.removeListener('chainChanged', plugin.disconnectWallet)
+        plugin.provider.removeListener(
+          'accountsChanged',
+          plugin.disconnectWallet
+        )
       }
 
       plugin.provider = null

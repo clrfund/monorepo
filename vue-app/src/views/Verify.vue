@@ -342,6 +342,11 @@ export default class VerifyView extends Vue {
     if (this.currentStep < 0) {
       this.$router.replace({ name: 'verified' })
     }
+
+    if (this.currentUser && !this.currentUser.encryptionKey) {
+      // need to get user signature before continuing with BrightId verification
+      this.$router.replace({ name: 'verify' })
+    }
   }
 
   async mounted() {

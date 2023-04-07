@@ -9,7 +9,7 @@
       }"
       :button="{
         text: $t('addToCartButton.input1'),
-        disabled: !isAmountValid,
+        disabled: !isAmountValid || isRequestingSignature,
       }"
       @click="handleSubmit"
     />
@@ -29,7 +29,7 @@ import Vue from 'vue'
 import { Component, Prop } from 'vue-property-decorator'
 import { DateTime } from 'luxon'
 
-import { SAVE_CART } from '@/store/action-types'
+import { REQUEST_USER_SIGNATURE, SAVE_CART } from '@/store/action-types'
 import {
   ADD_CART_ITEM,
   TOGGLE_SHOW_CART_PANEL,
@@ -54,6 +54,7 @@ import InputButton from '@/components/InputButton.vue'
 })
 export default class AddToCartButton extends Vue {
   amount = DEFAULT_CONTRIBUTION_AMOUNT
+  isRequestingSignature = false
 
   @Prop() project!: Project
 
@@ -94,7 +95,19 @@ export default class AddToCartButton extends Vue {
     )
   }
 
-  contribute() {
+  async contribute() {
+    if (!this.currentUser?.encryptionKey) {
+      try {
+        this.isRequestingSignature = true
+        await this.$store.dispatch(REQUEST_USER_SIGNATURE)
+        this.isRequestingSignature = false
+      } catch {
+        // cannot get the user signature, do not add item
+        this.isRequestingSignature = false
+        return
+      }
+    }
+
     this.$store.commit(ADD_CART_ITEM, {
       ...this.project,
       amount: this.amount.toString(),

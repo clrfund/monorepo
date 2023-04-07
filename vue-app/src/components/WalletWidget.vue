@@ -99,28 +99,6 @@ export default class WalletWidget extends Vue {
 
   async mounted() {
     this.showProfilePanel = false
-    this.$web3.$on('disconnect', () => {
-      this.$store.dispatch(LOGOUT_USER)
-    })
-
-    // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
-    // upper level where we hear this events only once (there are other
-    // components that do the same).
-    this.$web3.$on('chainChanged', () => {
-      if (this.currentUser) {
-        // Log out user to prevent interactions with incorrect network
-        this.$store.dispatch(LOGOUT_USER)
-      }
-    })
-
-    let accounts: string[]
-    this.$web3.$on('accountsChanged', (_accounts: string[]) => {
-      if (_accounts !== accounts) {
-        // Log out user if wallet account changes
-        this.$store.dispatch(LOGOUT_USER)
-      }
-      accounts = _accounts
-    })
   }
 
   async showModal(): Promise<void> {

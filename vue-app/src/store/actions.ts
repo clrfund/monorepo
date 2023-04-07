@@ -16,7 +16,12 @@ import { RoundStatus } from '@/api/round'
 import { Rounds } from '@/api/rounds'
 import { storage } from '@/api/storage'
 import { getTally } from '@/api/tally'
-import { getEtherBalance, getTokenBalance, isVerifiedUser } from '@/api/user'
+import {
+  getEtherBalance,
+  getTokenBalance,
+  isVerifiedUser,
+  LOGIN_MESSAGE,
+} from '@/api/user'
 import { getRegistryInfo } from '@/api/recipient-registry-optimistic'
 
 // Constants
@@ -32,6 +37,7 @@ import {
   LOAD_ROUNDS,
   LOAD_TALLY,
   LOAD_USER_INFO,
+  REQUEST_USER_SIGNATURE,
   LOGOUT_USER,
   SAVE_CART,
   SAVE_COMMITTED_CART_DISPATCH,
@@ -64,6 +70,7 @@ import { getFactoryInfo } from '@/api/factory'
 import { getMACIFactoryInfo } from '@/api/maci-factory'
 import { getCommittedCart } from '@/api/cart'
 import { Keypair } from '@clrfund/maci-utils'
+import { sha256 } from '@/utils/crypto'
 
 const actions = {
   //TODO: also commit SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
@@ -131,7 +138,7 @@ const actions = {
     commit(SET_RECIPIENT_REGISTRY_INFO, info)
   },
   async [LOAD_USER_INFO]({ commit, state }) {
-    if (!state.currentUser) {
+    if (!state.currentUser || !state.factory) {
       return
     }
 
@@ -188,6 +195,24 @@ const actions = {
       balance,
       etherBalance,
       ensName,
+    })
+  },
+  async [REQUEST_USER_SIGNATURE]({ commit, state }) {
+    if (!state.currentUser) {
+      throw new Error('Not connected to wallet')
+    }
+
+    if (state.currentUser.encryptionKey) {
+      // skip if we already have the encryption key
+      return
+    }
+
+    const signer = state.currentUser.walletProvider.getSigner()
+    const signature = await signer.signMessage(LOGIN_MESSAGE)
+    const encryptionKey = sha256(signature)
+    commit(SET_CURRENT_USER, {
+      ...state.currentUser,
+      encryptionKey,
     })
   },
   async [LOAD_BRIGHT_ID]({ commit, state }) {

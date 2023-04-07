@@ -5,6 +5,7 @@
       <h3>{{ $t('cart.h3_1') }}</h3>
       <wallet-widget :isActionButton="true" />
     </div>
+    <loader v-else-if="!isReady"></loader>
     <div v-else class="cart-container">
       <div
         class="reallocation-message"
@@ -331,6 +332,7 @@ import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
 import CartItems from '@/components/CartItems.vue'
+import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import { TOGGLE_EDIT_SELECTION, UPDATE_CART_ITEM } from '@/store/mutation-types'
@@ -342,7 +344,13 @@ import {
 } from '@/api/contributions'
 import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { RoundStatus } from '@/api/round'
-import { LOGOUT_USER, SAVE_CART } from '@/store/action-types'
+import {
+  LOAD_CART,
+  LOAD_COMMITTED_CART,
+  LOAD_CONTRIBUTOR_DATA,
+  REQUEST_USER_SIGNATURE,
+  SAVE_CART,
+} from '@/store/action-types'
 import { User } from '@/api/user'
 import {
   CLEAR_CART,
@@ -359,10 +367,12 @@ import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
     Links,
     TimeLeft,
     FundsNeededWarning,
+    Loader,
   },
 })
 export default class Cart extends Vue {
   profileImageUrl: string | null = null
+  isReady = false
 
   removeAll(): void {
     this.$store.commit(CLEAR_CART)
@@ -459,24 +469,21 @@ export default class Cart extends Vue {
   }
 
   async mounted() {
-    // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
-    // upper level where we hear this events only once (there are other
-    // components that do the same).
-    this.$web3.$on('chainChanged', () => {
-      if (this.currentUser) {
-        // Log out user to prevent interactions with incorrect network
-        this.$store.dispatch(LOGOUT_USER)
+    if (!this.$store.state.currentUser?.encryptionKey) {
+      try {
+        await this.$store.dispatch(REQUEST_USER_SIGNATURE)
+      } catch (err) {
+        // unable to get user signature, do not show the cart
+        this.$store.commit(TOGGLE_SHOW_CART_PANEL, false)
+        return
       }
-    })
+    }
 
-    let accounts: string[]
-    this.$web3.$on('accountsChanged', (_accounts: string[]) => {
-      if (_accounts !== accounts) {
-        // Log out user if wallet account changes
-        this.$store.dispatch(LOGOUT_USER)
-      }
-      accounts = _accounts
-    })
+    // Load cart & contributor data for current round
+    await this.$store.dispatch(LOAD_CART)
+    await this.$store.dispatch(LOAD_COMMITTED_CART)
+    await this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    this.isReady = true
   }
 
   get tokenSymbol(): string {
@@ -570,8 +577,6 @@ export default class Cart extends Vue {
     if (!currentUser) return this.translate('dynamic.cart.error.connect_wallet')
     if (!this.isCorrectNetwork())
       return this.translate('incorrect_network', { chain: chain.label })
-    if (this.isBrightIdRequired)
-      return this.translate('dynamic.cart.error.need_to_setup_brightid')
     if (!this.isFormValid())
       return this.translate('dynamic.cart.error.invalid_contribution_amount')
     if (this.cart.length > MAX_CART_SIZE)
@@ -591,6 +596,9 @@ export default class Cart extends Vue {
         if (DateTime.local() >= currentRound.signUpDeadline) {
           return this.translate('dynamic.cart.error.contributions_over')
           // the above error might not be necessary now we have our cart states in the HTML above
+        } else if (this.isBrightIdRequired) {
+          // only require BrightId if round is still active
+          return this.translate('dynamic.cart.error.need_to_setup_brightid')
         } else if (currentRound.contributors >= currentRound.maxContributors) {
           return this.translate('dynamic.cart.error.reached_contributor_limit')
         } else if (total.eq(BigNumber.from(0)) && !this.isCartEmpty) {

@@ -71,13 +71,14 @@
               :isActionButton="true"
               :fullWidthMobile="true"
             />
-            <links
+            <button
               v-if="showBrightIdButton"
-              to="/verify/connect"
               class="btn-primary"
+              @click="gotoVerfiyStep"
+              :disabled="isRequestingSignature"
             >
               {{ $t('verifyLanding.link2') }}
-            </links>
+            </button>
           </div>
           <links to="/projects" class="btn-secondary">{{
             $t('verifyLanding.link3')
@@ -104,6 +105,7 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
+import { REQUEST_USER_SIGNATURE } from '@/store/action-types'
 
 @Component({
   components: {
@@ -119,6 +121,7 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 export default class VerifyLanding extends Vue {
   loading = true
   currentRound: string | null = null
+  isRequestingSignature = false
 
   async created() {
     this.currentRound = await getCurrentRound()
@@ -155,6 +158,20 @@ export default class VerifyLanding extends Vue {
 
   formatDuration(value: number): string {
     return humanizeDuration(value * 1000, { largest: 1 })
+  }
+
+  async gotoVerfiyStep() {
+    if (this.currentUser && !this.currentUser.encryptionKey) {
+      try {
+        this.isRequestingSignature = true
+        await this.$store.dispatch(REQUEST_USER_SIGNATURE)
+        this.isRequestingSignature = false
+      } catch (err) {
+        this.isRequestingSignature = false
+        return
+      }
+    }
+    this.$router.push({ name: 'verify-step', params: { step: 'connect' } })
   }
 }
 </script>

@@ -74,27 +74,6 @@ export default class CartWidget extends Vue {
     return this.$web3.chainId
   }
 
-  async mounted() {
-    // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
-    // upper level where we hear this events only once (there are other
-    // components that do the same).
-    this.$web3.$on('chainChanged', () => {
-      if (this.currentUser) {
-        // Log out user to prevent interactions with incorrect network
-        this.$store.dispatch(LOGOUT_USER)
-      }
-    })
-
-    let accounts: string[]
-    this.$web3.$on('accountsChanged', (_accounts: string[]) => {
-      if (_accounts !== accounts) {
-        // Log out user if wallet account changes
-        this.$store.dispatch(LOGOUT_USER)
-      }
-      accounts = _accounts
-    })
-  }
-
   get truncatedAddress(): string {
     if (this?.currentUser?.walletAddress) {
       const address: string = this.currentUser.walletAddress
