@@ -2,7 +2,7 @@ import { task } from 'hardhat/config'
 
 task('cancel-round', 'Cancel the current round')
   .addParam('factory', 'The funding round factory contract address')
-  .setAction(async ({ factory }, { network, ethers }) => {
+  .setAction(async ({ factory }, { ethers }) => {
     const [deployer] = await ethers.getSigners()
     console.log('deployer', deployer.address)
     const fundingRoundFactory = await ethers.getContractAt(

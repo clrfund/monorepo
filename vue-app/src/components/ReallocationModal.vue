@@ -28,7 +28,7 @@ import { PubKey, Message } from 'maci-domainobjs'
 import Transaction from '@/components/Transaction.vue'
 import { SAVE_COMMITTED_CART_DISPATCH } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
-import { createMessage } from '@/utils/maci'
+import { createMessage } from '@clrfund/maci-utils'
 
 import { FundingRound } from '@/api/abi'
 

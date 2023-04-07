@@ -1,10 +1,28 @@
 import { BigNumber } from 'ethers'
 import { genRandomSalt, IncrementalQuinTree, hash5 } from 'maci-crypto'
-import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
+import { PubKey, Command, Message } from 'maci-domainobjs'
+import { Keypair } from './keypair'
+import { utils } from 'ethers'
+import { Tally } from './tally'
 
 const LEAVES_PER_NODE = 5
 
-function bnSqrt(a: BigNumber): BigNumber {
+/* eslint-disable-next-line @typescript-eslint/ban-types */
+declare type PathElements = BigInt[][]
+declare type Indices = number[]
+/* eslint-disable-next-line @typescript-eslint/ban-types */
+declare type Leaf = BigInt
+
+interface MerkleProof {
+  pathElements: PathElements
+  indices: Indices
+  depth: number
+  /* eslint-disable-next-line @typescript-eslint/ban-types */
+  root: BigInt
+  leaf: Leaf
+}
+
+export function bnSqrt(a: BigNumber): BigNumber {
   // Take square root from a big number
   // https://stackoverflow.com/a/52468569/1868395
   if (a.isZero()) {
@@ -27,20 +45,25 @@ export function createMessage(
   voteOptionIndex: number | null,
   voiceCredits: BigNumber | null,
   nonce: number,
+  /* eslint-disable-next-line @typescript-eslint/ban-types */
   salt?: BigInt
 ): [Message, PubKey] {
-  const encKeypair = new Keypair()
+  const encKeypair = newUserKeypair ? newUserKeypair : userKeypair
   if (!salt) {
     salt = genRandomSalt()
   }
-  const quadraticVoteWeight = voiceCredits ? bnSqrt(voiceCredits) : 0
+
+  const quadraticVoteWeight = voiceCredits
+    ? bnSqrt(voiceCredits)
+    : BigNumber.from(0)
+
   const command = new Command(
     BigInt(userStateIndex),
-    newUserKeypair ? newUserKeypair.pubKey : userKeypair.pubKey,
+    encKeypair.pubKey,
     BigInt(voteOptionIndex || 0),
-    BigInt(quadraticVoteWeight),
+    BigInt(quadraticVoteWeight.toString()),
     BigInt(nonce),
-    BigInt(salt)
+    salt
   )
   const signature = command.sign(userKeypair.privKey)
   const message = command.encrypt(
@@ -48,26 +71,6 @@ export function createMessage(
     Keypair.genEcdhSharedKey(encKeypair.privKey, coordinatorPubKey)
   )
   return [message, encKeypair.pubKey]
-}
-
-export interface Tally {
-  provider: string
-  maci: string
-  results: {
-    commitment: string
-    tally: string[]
-    salt: string
-  }
-  totalVoiceCredits: {
-    spent: string
-    commitment: string
-    salt: string
-  }
-  totalVoiceCreditsPerVoteOption: {
-    commitment: string
-    tally: string[]
-    salt: string
-  }
 }
 
 export function getRecipientClaimData(
@@ -87,7 +90,7 @@ export function getRecipientClaimData(
   for (const leaf of tally.totalVoiceCreditsPerVoteOption.tally) {
     spentTree.insert(BigInt(leaf))
   }
-  const spentProof = spentTree.genMerklePath(recipientIndex)
+  const spentProof: MerkleProof = spentTree.genMerklePath(recipientIndex)
 
   return [
     recipientIndex,
@@ -96,3 +99,16 @@ export function getRecipientClaimData(
     spentSalt,
   ]
 }
+
+/**
+ * get the id of the subgraph public key entity from the pubKey value
+ * @param pubKey MACI public key
+ * @returns the id for the subgraph public key entity
+ */
+export function getPubKeyId(pubKey: PubKey): string {
+  const pubKeyPair = pubKey.asContractParam()
+  const id = utils.id(pubKeyPair.x + '.' + pubKeyPair.y)
+  return id
+}
+
+export { Message, Command, IncrementalQuinTree, hash5, LEAVES_PER_NODE }

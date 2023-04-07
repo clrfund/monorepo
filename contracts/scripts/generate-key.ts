@@ -1,4 +1,4 @@
-import { Keypair } from 'maci-domainobjs'
+import { Keypair } from '@clrfund/maci-utils'
 
 async function main() {
   const keypair = new Keypair()

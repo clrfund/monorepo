@@ -123,14 +123,13 @@ import Component from 'vue-class-component'
 import { Prop } from 'vue-property-decorator'
 import { BigNumber, Contract, Signer } from 'ethers'
 import { DateTime } from 'luxon'
-import { Keypair, PubKey, Message } from 'maci-domainobjs'
+import { Keypair, PubKey, Message, createMessage } from '@clrfund/maci-utils'
 
 import { RoundInfo } from '@/api/round'
 import Transaction from '@/components/Transaction.vue'
 import {
   LOAD_ROUND_INFO,
   SAVE_COMMITTED_CART_DISPATCH,
-  SAVE_CONTRIBUTOR_DATA,
 } from '@/store/action-types'
 import {
   SET_CONTRIBUTOR,
@@ -139,7 +138,6 @@ import {
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
-import { createMessage } from '@/utils/maci'
 import ProgressBar from '@/components/ProgressBar.vue'
 
 import { FundingRound, ERC20, MACI } from '@/api/abi'
@@ -184,6 +182,10 @@ export default class ContributionModal extends Vue {
     return this.$store.state.currentUser.walletProvider.getSigner()
   }
 
+  get encryptionKey(): string {
+    return this.$store.state.currentUser.encryptionKey
+  }
+
   get fundingRound(): Contract {
     const { fundingRoundAddress } = this.currentRound
     return new Contract(fundingRoundAddress, FundingRound, this.signer)
@@ -208,12 +210,8 @@ export default class ContributionModal extends Vue {
   async contribute() {
     try {
       this.step += 1
-      const {
-        nativeTokenAddress,
-        voiceCreditFactor,
-        maciAddress,
-        fundingRoundAddress,
-      } = this.currentRound
+      const { nativeTokenAddress, maciAddress, fundingRoundAddress } =
+        this.currentRound
       const total = this.total
       const token = new Contract(nativeTokenAddress, ERC20, this.signer)
       // Approve transfer (step 1)
@@ -234,7 +232,8 @@ export default class ContributionModal extends Vue {
       }
       this.step += 1
       // Contribute (step 2)
-      const contributorKeypair = new Keypair()
+      const contributorKeypair = Keypair.createFromSeed(this.encryptionKey)
+
       let contributionTxReceipt
       try {
         contributionTxReceipt = await waitForTransaction(
@@ -256,22 +255,12 @@ export default class ContributionModal extends Vue {
         'SignUp',
         '_stateIndex'
       )
-      const voiceCredits = getEventArg(
-        contributionTxReceipt,
-        maci,
-        'SignUp',
-        '_voiceCreditBalance'
-      )
-      if (!voiceCredits.mul(voiceCreditFactor).eq(total)) {
-        throw new Error('Incorrect amount of voice credits')
-      }
       const contributor = {
         keypair: contributorKeypair,
         stateIndex: stateIndex.toNumber(),
       }
       // Save contributor data to storage
       this.$store.commit(SET_CONTRIBUTOR, contributor)
-      this.$store.dispatch(SAVE_CONTRIBUTOR_DATA)
       // Set contribution and update round info
       this.$store.commit(SET_CONTRIBUTION, total)
       // Reload contribution pool size

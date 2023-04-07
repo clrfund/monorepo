@@ -18,9 +18,6 @@ export const chainId = Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
 export const chain = CHAIN_INFO[chainId]
 if (!chain) throw new Error('invalid chain id')
 export const ipfsGatewayUrl = process.env.VUE_APP_IPFS_GATEWAY_URL
-export const gunPeers: string[] = process.env.VUE_APP_GUN_PEERS
-  ? process.env.VUE_APP_GUN_PEERS.split(',')
-  : []
 
 export const ipfsPinningUrl = process.env.VUE_APP_IPFS_PINNING_URL
 if (!ipfsPinningUrl) throw new Error('invalid ipfs pinning url')
@@ -72,6 +69,9 @@ export enum ThemeMode {
   LIGHT = 'light',
   DARK = 'dark',
 }
+
+// the maximum significant digits for displaying the contribution amount on cart
+export const maxDecimals = Number(process.env.VUE_APP_MAX_DECIMAL || 1)
 
 // the number of records per batch in the `pending submissions` export file
 export const exportBatchSize =

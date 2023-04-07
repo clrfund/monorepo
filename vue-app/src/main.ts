@@ -4,8 +4,6 @@ import router from './router'
 import store from './store'
 import Web3 from './plugins/Web3'
 
-// import i18n from './plugins/i18n'
-
 import Meta from 'vue-meta'
 import VModal from 'vue-js-modal'
 import VTooltip from 'v-tooltip'

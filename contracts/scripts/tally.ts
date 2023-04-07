@@ -53,16 +53,6 @@ async function main() {
   console.log('maci address', maciAddress)
   const providerUrl = (network.config as any).url
 
-  if (network.name === 'localhost') {
-    const maciContract = await ethers.getContractAt('MACI', maciAddress)
-    const votingDeadline = await maciContract.calcVotingDeadline()
-    console.log(`MACI votingDealine`, votingDeadline.toString())
-
-    const blockNumber = await ethers.provider.getBlockNumber()
-    const block = await ethers.provider.getBlock(blockNumber)
-    console.log('block', block)
-  }
-
   // Fetch Maci logs
   console.log('Fetching MACI logs from block', startBlock)
   await fetchLogs({

@@ -22,14 +22,6 @@
             :project="project"
           />
           <claim-button :project="project" :roundAddress="roundAddress" />
-          <p
-            v-if="
-              $store.getters.hasUserContributed &&
-              !$store.getters.canUserReallocate
-            "
-          >
-            ✔️ {{ $t('project.p') }}
-          </p>
         </div>
         <link-box :project="project" />
       </div>

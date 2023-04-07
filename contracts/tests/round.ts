@@ -2,12 +2,17 @@ import { ethers, waffle, artifacts } from 'hardhat'
 import { use, expect } from 'chai'
 import { solidity } from 'ethereum-waffle'
 import { deployMockContract } from '@ethereum-waffle/mock-contract'
-import { Contract } from 'ethers'
+import { Contract, BigNumber } from 'ethers'
 import { defaultAbiCoder } from '@ethersproject/abi'
 import { genRandomSalt } from 'maci-crypto'
-import { Keypair } from 'maci-domainobjs'
+import { Keypair } from '@clrfund/maci-utils'
 
-import { ZERO_ADDRESS, UNIT, VOICE_CREDIT_FACTOR } from '../utils/constants'
+import {
+  ZERO_ADDRESS,
+  UNIT,
+  VOICE_CREDIT_FACTOR,
+  ALPHA_PRECISION,
+} from '../utils/constants'
 import { getEventArg, getGasUsage } from '../utils/contracts'
 import { deployMaciFactory } from '../utils/deployment'
 import {
@@ -17,15 +22,37 @@ import {
   getRecipientClaimData,
   getRecipientTallyResultsBatch,
 } from '../utils/maci'
+import { sha256 } from 'ethers/lib/utils'
 
 use(solidity)
 
 // ethStaker test vectors for Quadratic Funding with alpha
 import smallTallyTestData from './data/testTallySmall.json'
-import claimAmounts from './data/claimAmounts.json'
-const budget = ethers.utils.parseEther('440274')
-const expectedTotalVotes = '8202951014814'
-const expectedAlpha = '4583670112189981'
+const totalSpent = BigNumber.from(smallTallyTestData.totalVoiceCredits.spent)
+const budget = BigNumber.from(totalSpent).mul(VOICE_CREDIT_FACTOR).mul(2)
+const totalQuadraticVotes = smallTallyTestData.results.tally.reduce(
+  (total, tally) => {
+    return BigNumber.from(tally).pow(2).add(total)
+  },
+  BigNumber.from(0)
+)
+const matchingPoolSize = budget.sub(totalSpent.mul(VOICE_CREDIT_FACTOR))
+
+const expectedAlpha = matchingPoolSize
+  .mul(ALPHA_PRECISION)
+  .div(totalQuadraticVotes.sub(totalSpent))
+  .div(VOICE_CREDIT_FACTOR)
+
+function calcAllocationAmount(tally: string, voiceCredit: string): BigNumber {
+  const quadratic = expectedAlpha
+    .mul(VOICE_CREDIT_FACTOR)
+    .mul(BigNumber.from(tally).pow(2))
+  const linear = ALPHA_PRECISION.sub(expectedAlpha).mul(
+    VOICE_CREDIT_FACTOR.mul(voiceCredit)
+  )
+  const allocation = quadratic.add(linear)
+  return allocation.div(ALPHA_PRECISION)
+}
 
 describe('Funding Round', () => {
   const provider = waffle.provider
@@ -332,6 +359,25 @@ describe('Funding Round', () => {
 
     it('submits a key-changing message', async () => {
       const newUserKeypair = new Keypair()
+      const [message, encPubKey] = createMessage(
+        userStateIndex,
+        userKeypair,
+        newUserKeypair,
+        coordinatorPubKey,
+        null,
+        null,
+        nonce
+      )
+      await maci.publishMessage(
+        message.asContractParam(),
+        encPubKey.asContractParam()
+      )
+    })
+
+    it('use a seed to generate new key and submit change change message', async () => {
+      const signature = await contributor.signMessage('hello world')
+      const hash = sha256(signature)
+      const newUserKeypair = Keypair.createFromSeed(hash)
       const [message, encPubKey] = createMessage(
         userStateIndex,
         userKeypair,
@@ -830,14 +876,17 @@ describe('Funding Round', () => {
   })
 
   describe('claiming funds', () => {
-    const totalVotes = expectedTotalVotes
+    const totalVotes = totalQuadraticVotes
     const recipientIndex = 3
     const { spent: totalSpent, salt: totalSpentSalt } =
       smallTallyTestData.totalVoiceCredits
     const contributions =
       smallTallyTestData.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
 
-    const expectedAllocatedAmount = claimAmounts.amount[recipientIndex]
+    const expectedAllocatedAmount = calcAllocationAmount(
+      smallTallyTestData.results.tally[recipientIndex],
+      smallTallyTestData.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
+    ).toString()
     let fundingRoundAsRecipient: Contract
     let fundingRoundAsContributor: Contract
 
@@ -914,6 +963,7 @@ describe('Funding Round', () => {
       await expect(fundingRoundAsContributor.claimFunds(...claimData))
         .to.emit(fundingRound, 'FundsClaimed')
         .withArgs(recipientIndex, recipient.address, expectedAllocatedAmount)
+
       expect(await token.balanceOf(recipient.address)).to.equal(
         expectedAllocatedAmount
       )
@@ -1120,7 +1170,7 @@ describe('Funding Round', () => {
 
       const totalSquares = await fundingRound.totalVotesSquares()
       expect(totalSquares.toString()).to.eq(
-        expectedTotalVotes,
+        totalQuadraticVotes,
         'sum of squares mismatch'
       )
     })
@@ -1218,7 +1268,10 @@ describe('Funding Round', () => {
             tallyResult,
             spents[i]
           )
-          const expectedClaimAmount = claimAmounts.amount[i]
+          const expectedClaimAmount = calcAllocationAmount(
+            tallyResult,
+            spents[i]
+          )
           expect(amount.toString()).to.eq(expectedClaimAmount, 'bad amount')
 
           const claimData = getRecipientClaimData(

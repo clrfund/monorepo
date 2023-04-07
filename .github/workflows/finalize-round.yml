@@ -8,6 +8,7 @@ env:
   NETWORK: "arbitrum-goerli"
   COORDINATOR_ETH_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_WALLET_PRIVATE_KEY }}
   COORDINATOR_PK: ${{ secrets.ARBITRUM_GOERLI_COORDINATOR_MACI_PRIVATE_KEY }}
+  JSONRPC_HTTP_URL: ${{ secrets.JSONRPC_HTTP_URL }}
   ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY_ARBITRUM }}
   ETHERSCAN_URL: "https://api-goerli.arbiscan.io"
 
@@ -53,7 +54,7 @@ jobs:
         # tally and finalize
         cd contracts
         yarn hardhat run --network "${NETWORK}" scripts/tally.ts
-        yarn hardhat run --network "${NETWORK}" scripts/finalize.ts
         curl --location --request POST 'https://api.pinata.cloud/pinning/pinFileToIPFS' \
           --header "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
           --form 'file=@"tally.json"'
+        JSONRPC_HTTP_URL=${{env.JSONRPC_HTTP_URL}} yarn hardhat run --network "${NETWORK}" scripts/finalize.ts

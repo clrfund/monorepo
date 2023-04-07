@@ -3,7 +3,7 @@ import { Contract, utils, Wallet } from 'ethers'
 
 import { UNIT } from '../utils/constants'
 import { deployMaciFactory } from '../utils/deployment'
-import { Keypair, PrivKey } from 'maci-domainobjs'
+import { Keypair, PrivKey } from '@clrfund/maci-utils'
 
 /**
  * Set the coordinator address and maci public key in the funding round factory

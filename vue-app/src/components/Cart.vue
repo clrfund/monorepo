@@ -142,19 +142,19 @@
       >
         <div class="reallocation-row">
           <span>{{ $t('cart.span1') }}</span>
-          {{ formatAmount(this.contribution) }} {{ tokenSymbol }}
+          {{ formatAmount(contribution) }} {{ tokenSymbol }}
         </div>
         <div
           :class="
-            this.isGreaterThanInitialContribution()
+            isGreaterThanInitialContribution()
               ? 'reallocation-row-warning'
               : 'reallocation-row'
           "
         >
           <span>{{ $t('cart.span2') }}</span>
           <div class="reallocation-warning">
-            <span v-if="this.isGreaterThanInitialContribution()">⚠️</span
-            >{{ formatAmount(getCartTotal(this.$store.state.cart)) }}
+            <span v-if="isGreaterThanInitialContribution()">⚠️</span
+            >{{ formatAmount(getCartTotal($store.state.cart)) }}
             {{ tokenSymbol }}
           </div>
         </div>
@@ -168,20 +168,18 @@
             </div>
             <div>{{ $t('cart.div9') }}</div>
           </div>
-          + {{ formatAmount(this.contribution) - formatAmount(getTotal()) }}
+          + {{ formatAmount(contribution.sub(getTotal())) }}
           {{ tokenSymbol }}
         </div>
         <div
           @click="splitContributionsEvenly"
           class="split-link"
-          v-if="
-            this.isGreaterThanInitialContribution() || hasUnallocatedFunds()
-          "
+          v-if="isGreaterThanInitialContribution() || hasUnallocatedFunds()"
         >
           <img src="@/assets/split.svg" />
           {{
             $t('cart.div10', {
-              contribution: formatAmount(this.contribution),
+              contribution: formatAmount(contribution),
               tokenSymbol: tokenSymbol,
             })
           }}
@@ -194,7 +192,7 @@
         <button class="btn-action" @click="withdrawContribution()">
           {{
             $t('cart.button1', {
-              contribution: formatAmount(this.contribution),
+              contribution: formatAmount(contribution),
               tokenSymbol: tokenSymbol,
             })
           }}
@@ -223,9 +221,9 @@
         <div class="p1" v-if="hasUnallocatedFunds()">
           {{
             $t('cart.div12', {
-              total: formatAmount(this.contribution) - formatAmount(getTotal()),
+              total: formatAmount(contribution.sub(getTotal())),
               tokenSymbol: tokenSymbol,
-              contribution: formatAmount(this.contribution),
+              contribution: formatAmount(contribution),
             })
           }}
         </div>
@@ -300,10 +298,10 @@
         <div>
           <span
             v-if="
-              this.isGreaterThanInitialContribution() &&
+              isGreaterThanInitialContribution() &&
               $store.getters.hasUserContributed
             "
-            >{{ formatAmount(getCartTotal(this.$store.state.cart)) }} /
+            >{{ formatAmount(getCartTotal($store.state.cart)) }} /
             <span class="total-reallocation">{{
               formatAmount(contribution)
             }}</span>
@@ -428,7 +426,7 @@ export default class Cart extends Vue {
       })
   }
 
-  private get cart(): CartItem[] {
+  get cart(): CartItem[] {
     return this.$store.state.cart
   }
 
@@ -531,7 +529,7 @@ export default class Cart extends Vue {
     )
   }
 
-  private getCartTotal(cart: Array<CartItem>): BigNumber {
+  getCartTotal(cart: Array<CartItem>): BigNumber {
     const { nativeTokenDecimals, voiceCreditFactor } =
       this.$store.state.currentRound
     return cart.reduce((total: BigNumber, item: CartItem) => {
@@ -552,7 +550,7 @@ export default class Cart extends Vue {
     return hasUserContributed ? this.contribution : this.getCartTotal(cart)
   }
 
-  private isGreaterThanMax(): boolean {
+  isGreaterThanMax(): boolean {
     const decimals = this.$store.state.currentRound.nativeTokenDecimals
     const maxContributionAmount = BigNumber.from(10)
       .pow(BigNumber.from(decimals))
@@ -560,7 +558,7 @@ export default class Cart extends Vue {
     return this.getTotal().gt(maxContributionAmount)
   }
 
-  private isGreaterThanInitialContribution(): boolean {
+  isGreaterThanInitialContribution(): boolean {
     return this.getCartTotal(this.$store.state.cart).gt(this.contribution)
   }
 
@@ -584,13 +582,8 @@ export default class Cart extends Vue {
       return this.translate('dynamic.cart.error.round_cancelled')
     if (this.$store.getters.hasReallocationPhaseEnded)
       return this.translate('dynamic.cart.error.round_ended')
-    if (currentRound.messages + this.cart.length >= currentRound.maxMessages)
+    if (currentRound.messages + this.cart.length >= currentRound.maxMessages) {
       return this.translate('dynamic.cart.error.cart_changes_exceed_cap')
-    else if (
-      currentRound.messages + this.cart.length >=
-      currentRound.maxMessages
-    ) {
-      return this.translate('dynamic.cart.error.reached_contribution_limit')
     } else {
       const total = this.getTotal()
       if (this.contribution.isZero()) {

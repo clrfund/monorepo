@@ -9,11 +9,11 @@ import {
   deserializeCart,
   getContributorStorageKey,
   serializeContributorData,
-  deserializeContributorData,
   getContributionAmount,
   hasContributorVoted,
+  getContributorIndex,
+  Contributor,
 } from '@/api/contributions'
-import { loginUser, logoutUser } from '@/api/gun'
 import { RoundStatus } from '@/api/round'
 import { Rounds } from '@/api/rounds'
 import { storage } from '@/api/storage'
@@ -34,14 +34,10 @@ import {
   LOAD_ROUNDS,
   LOAD_TALLY,
   LOAD_USER_INFO,
-  LOGIN_USER,
   LOGOUT_USER,
   SAVE_CART,
   SAVE_COMMITTED_CART_DISPATCH,
-  SAVE_CONTRIBUTOR_DATA,
   SELECT_ROUND,
-  UNWATCH_CART,
-  UNWATCH_CONTRIBUTOR_DATA,
 } from './action-types'
 import {
   ADD_CART_ITEM,
@@ -68,14 +64,14 @@ import { factory, UserRegistryType, userRegistryType } from '@/api/core'
 import { BrightId, getBrightId } from '@/api/bright-id'
 import { getFactoryInfo } from '@/api/factory'
 import { getMACIFactoryInfo } from '@/api/maci-factory'
+import { getCommittedCart } from '@/api/cart'
+import { Keypair } from '@clrfund/maci-utils'
 
 const actions = {
   //TODO: also commit SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
-  [SELECT_ROUND]({ commit, dispatch, state }, roundAddress: string) {
+  [SELECT_ROUND]({ commit, state }, roundAddress: string) {
     if (state.currentRoundAddress) {
       // Reset everything that depends on round
-      dispatch(UNWATCH_CART)
-      dispatch(UNWATCH_CONTRIBUTOR_DATA)
       commit(SET_CONTRIBUTION, null)
       commit(SET_CONTRIBUTOR, null)
       commit(CLEAR_CART)
@@ -223,28 +219,18 @@ const actions = {
       serializedCart
     )
   },
-  [LOAD_CART]({ commit, state }) {
-    storage.watchItem(
+  async [LOAD_CART]({ commit, state }) {
+    const data = await storage.getItem(
       state.currentUser.walletAddress,
       state.currentUser.encryptionKey,
-      getCartStorageKey(state.currentRound.fundingRoundAddress),
-      (data: string | null) => {
-        const cart = deserializeCart(data)
-        commit(CLEAR_CART)
-        for (const item of cart) {
-          commit(ADD_CART_ITEM, item)
-        }
-      }
-    )
-  },
-  [UNWATCH_CART]({ state }) {
-    if (!state.currentUser || !state.currentRound) {
-      return
-    }
-    storage.unwatchItem(
-      state.currentUser.walletAddress,
       getCartStorageKey(state.currentRound.fundingRoundAddress)
     )
+
+    const cart = deserializeCart(data)
+    commit(CLEAR_CART)
+    for (const item of cart) {
+      commit(ADD_CART_ITEM, item)
+    }
   },
   [SAVE_COMMITTED_CART_DISPATCH]({ commit, state }) {
     commit(SAVE_COMMITTED_CART)
@@ -256,56 +242,51 @@ const actions = {
       serializedCart
     )
   },
-  [LOAD_COMMITTED_CART]({ commit, state }) {
-    storage.watchItem(
-      state.currentUser.walletAddress,
-      state.currentUser.encryptionKey,
-      getCommittedCartStorageKey(state.currentRound.fundingRoundAddress),
-      (data: string | null) => {
-        const committedCart = deserializeCart(data)
-        Vue.set(state, 'committedCart', committedCart)
-        commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
-      }
-    )
-  },
-  [SAVE_CONTRIBUTOR_DATA]({ state }) {
-    const serializedData = serializeContributorData(state.contributor)
-    storage.setItem(
-      state.currentUser.walletAddress,
-      state.currentUser.encryptionKey,
-      getContributorStorageKey(state.currentRound.fundingRoundAddress),
-      serializedData
-    )
-  },
-  [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
-    storage.watchItem(
-      state.currentUser.walletAddress,
-      state.currentUser.encryptionKey,
-      getContributorStorageKey(state.currentRound.fundingRoundAddress),
-      (data: string | null) => {
-        const contributor = deserializeContributorData(data)
-        if (contributor) {
-          commit(SET_CONTRIBUTOR, contributor)
-        }
-      }
-    )
-  },
-  [UNWATCH_CONTRIBUTOR_DATA]({ state }) {
-    if (!state.currentUser || !state.currentRound) {
+  async [LOAD_COMMITTED_CART]({ commit, state }) {
+    if (!state.currentUser.walletAddress || !state.currentUser.encryptionKey) {
       return
     }
-    storage.unwatchItem(
-      state.currentUser.walletAddress,
-      getContributorStorageKey(state.currentRound.fundingRoundAddress)
+
+    const committedCart = await getCommittedCart(
+      state.currentRound,
+      state.currentUser.encryptionKey,
+      state.currentUser.walletAddress
     )
+
+    Vue.set(state, 'committedCart', committedCart)
+    if (committedCart.length > 0) {
+      // only overwrite the uncommitted cart if there's committed cart
+      commit(RESTORE_COMMITTED_CART_TO_LOCAL_CART)
+    }
   },
-  async [LOGIN_USER](_, { walletAddress, encryptionKey }) {
-    await loginUser(walletAddress, encryptionKey)
+  async [LOAD_CONTRIBUTOR_DATA]({ commit, state }) {
+    const { fundingRoundAddress } = state.currentRound
+    const { encryptionKey } = state.currentUser
+    if (!encryptionKey || !fundingRoundAddress) {
+      return
+    }
+
+    const contributorKeypair = Keypair.createFromSeed(
+      state.currentUser.encryptionKey
+    )
+
+    const stateIndex = await getContributorIndex(
+      fundingRoundAddress,
+      contributorKeypair.pubKey
+    )
+
+    if (!stateIndex) {
+      // if no contributor index, user has not contributed
+      return
+    }
+
+    const contributor: Contributor = {
+      keypair: contributorKeypair,
+      stateIndex,
+    }
+    commit(SET_CONTRIBUTOR, contributor)
   },
-  [LOGOUT_USER]({ commit, dispatch }) {
-    dispatch(UNWATCH_CART)
-    dispatch(UNWATCH_CONTRIBUTOR_DATA)
-    logoutUser()
+  [LOGOUT_USER]({ commit }) {
     commit(SET_CURRENT_USER, null)
     commit(SET_CONTRIBUTION, null)
     commit(SET_CONTRIBUTOR, null)

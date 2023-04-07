@@ -83,7 +83,7 @@ export const CHAIN_INFO: ChainInfo = {
     isLayer2: true,
     explorer: 'https://goerli.arbiscan.io/',
     explorerLogo: 'arbitrum.svg',
-    explorerLabel: 'BlockScout',
+    explorerLabel: 'Arbiscan',
     rpcUrl: 'https://goerli-rollup.arbitrum.io/rpc',
     bridge: 'https://bridge.arbitrum.io',
   },

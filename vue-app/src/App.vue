@@ -56,7 +56,6 @@ import {
   LOAD_CART,
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
-  LOGIN_USER,
   LOAD_FACTORY_INFO,
   LOAD_MACI_FACTORY_INFO,
   LOAD_BRIGHT_ID,
@@ -127,15 +126,6 @@ export default class App extends Vue {
   @Watch('$web3.user')
   loginUser = async () => {
     if (!this.$web3.user) return
-
-    // Connect & auth to gun db
-    try {
-      await this.$store.dispatch(LOGIN_USER, this.$web3.user)
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.error(error)
-      return
-    }
 
     this.$store.commit(SET_CURRENT_USER, this.$web3.user)
     this.$store.dispatch(LOAD_USER_INFO)

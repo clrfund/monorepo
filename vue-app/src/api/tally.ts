@@ -4,7 +4,7 @@ import { FundingRound } from './abi'
 import { provider, ipfsGatewayUrl } from './core'
 
 // https://github.com/webpack/webpack/issues/7378#issuecomment-683891615
-import type { Tally } from '@/utils/maci'
+import type { Tally } from '@clrfund/maci-utils'
 
 export { Tally }
 
