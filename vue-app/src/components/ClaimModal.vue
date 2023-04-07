@@ -50,7 +50,7 @@ import { LOAD_TALLY } from '@/store/action-types'
 @Component({ components: { Transaction } })
 export default class ClaimModal extends Vue {
   @Prop() project!: Project
-  @Prop() claimed!: Function
+  @Prop() claimed!: () => void
 
   step = 1
   claimTxHash = ''

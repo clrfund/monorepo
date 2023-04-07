@@ -7,8 +7,6 @@ import {
   getCommittedCartStorageKey,
   serializeCart,
   deserializeCart,
-  getContributorStorageKey,
-  serializeContributorData,
   getContributionAmount,
   hasContributorVoted,
   getContributorIndex,
