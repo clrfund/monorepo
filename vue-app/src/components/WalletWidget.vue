@@ -49,7 +49,6 @@ import { getTokenLogo } from '@/utils/tokens'
 import { User, getProfileImageUrl } from '@/api/user'
 import { chain } from '@/api/core'
 import WalletModal from '@/components/WalletModal.vue'
-import { LOGOUT_USER } from '@/store/action-types'
 import Profile from '@/views/Profile.vue'
 
 @Component({ components: { Profile, WalletModal } })

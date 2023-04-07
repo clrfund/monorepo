@@ -33,7 +33,6 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { User } from '@/api/user'
 import { CartItem } from '@/api/contributions'
-import { LOGOUT_USER } from '@/store/action-types'
 import { TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import Cart from '@/components/Cart.vue'
 

@@ -1,5 +1,3 @@
-import { LOGIN_MESSAGE } from '@/api/user'
-import { sha256 } from '@/utils/crypto'
 import { Web3Provider } from '@ethersproject/providers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import MetamaskConnector from './connectors/MetamaskConnector'
