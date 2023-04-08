@@ -57,4 +57,4 @@ export class Keypair extends MaciKeypair {
   }
 }
 
-export { PubKey }
+export { PubKey, PrivKey }

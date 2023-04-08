@@ -111,4 +111,11 @@ export function getPubKeyId(pubKey: PubKey): string {
   return id
 }
 
-export { Message, Command, IncrementalQuinTree, hash5, LEAVES_PER_NODE }
+export {
+  genRandomSalt,
+  Message,
+  Command,
+  IncrementalQuinTree,
+  hash5,
+  LEAVES_PER_NODE,
+}
