@@ -24,6 +24,7 @@ export interface RootState {
   cart: CartItem[]
   cartEditModeSelected: boolean
   committedCart: CartItem[]
+  cartLoaded: boolean
   contribution: BigNumber | null
   contributor: Contributor | null
   hasVoted: boolean

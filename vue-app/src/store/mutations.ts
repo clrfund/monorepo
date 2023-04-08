@@ -19,6 +19,7 @@ import { Rounds } from '@/api/rounds'
 import {
   ADD_CART_ITEM,
   CLEAR_CART,
+  SET_CART_LOADED,
   REMOVE_CART_ITEM,
   RESTORE_COMMITTED_CART_TO_LOCAL_CART,
   SAVE_COMMITTED_CART,
@@ -145,6 +146,9 @@ const mutations = {
   },
   [CLEAR_CART](state) {
     state.cart = []
+  },
+  [SET_CART_LOADED](state, isLoaded: boolean) {
+    state.cartLoaded = isLoaded
   },
   [SET_RECIPIENT_DATA](
     state,

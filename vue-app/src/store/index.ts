@@ -20,6 +20,7 @@ const state: RootState = {
   cart: new Array<CartItem>(),
   cartEditModeSelected: false,
   committedCart: new Array<CartItem>(),
+  cartLoaded: false,
   contribution: null,
   contributor: null,
   hasVoted: false,

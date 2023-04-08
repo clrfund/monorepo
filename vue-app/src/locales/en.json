@@ -854,6 +854,9 @@
   },
   "cart": {
     "h3_1": "Connect to see your cart",
+    "connect": "Connect",
+    "sign_in_to_see_your_cart": "Sign in to see your cart",
+    "ok": "Ok",
     "div1": "You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount.",
     "link1": "Why?",
     "div2": "Almost done! You must submit one more transaction to complete your contribution.",

@@ -60,6 +60,7 @@ import {
   SET_HAS_VOTED,
   SET_FACTORY,
   SET_MACI_FACTORY,
+  SET_CART_LOADED,
 } from './mutation-types'
 
 // Utils
@@ -80,6 +81,7 @@ const actions = {
       commit(SET_CONTRIBUTION, null)
       commit(SET_CONTRIBUTOR, null)
       commit(CLEAR_CART)
+      commit(SET_CART_LOADED, false)
       commit(SET_RECIPIENT_REGISTRY_ADDRESS, null)
       commit(SET_RECIPIENT_REGISTRY_INFO, null)
       commit(SET_CURRENT_ROUND, null)
@@ -314,6 +316,7 @@ const actions = {
     commit(SET_CONTRIBUTION, null)
     commit(SET_CONTRIBUTOR, null)
     commit(CLEAR_CART)
+    commit(SET_CART_LOADED, false)
   },
 }
 

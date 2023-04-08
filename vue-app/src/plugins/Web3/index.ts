@@ -46,6 +46,10 @@ export default {
       }
 
       const conn = await connector.connect()
+      if (!conn) {
+        // for wallet connect, no conn handle when user cancel connection
+        throw new Error('Not connected to the wallet.')
+      }
       const account = conn.accounts[0]
 
       // Save chosen provider to localStorage

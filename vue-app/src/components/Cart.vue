@@ -3,9 +3,22 @@
     <div v-if="!currentUser" class="empty-cart">
       <div class="moon-emoji">🌚</div>
       <h3>{{ $t('cart.h3_1') }}</h3>
-      <wallet-widget :isActionButton="true" />
+      <button class="btn-action" @click="handlleConnect" :disabled="isLoading">
+        {{ $t('cart.connect') }}
+      </button>
     </div>
-    <loader v-else-if="!isReady"></loader>
+    <div v-else-if="isMounted && !encryptionKey" class="empty-cart">
+      <div class="moon-emoji">✍️</div>
+      <h3>{{ $t('cart.sign_in_to_see_your_cart') }}</h3>
+      <button
+        class="btn-action"
+        @click="requestSignatureAndLoad"
+        :disabled="isLoading"
+      >
+        {{ $t('cart.ok') }}
+      </button>
+    </div>
+    <loader v-else-if="!$store.state.cartLoaded && !loadError" />
     <div v-else class="cart-container">
       <div
         class="reallocation-message"
@@ -348,6 +361,8 @@ import {
   LOAD_CART,
   LOAD_COMMITTED_CART,
   LOAD_CONTRIBUTOR_DATA,
+  LOAD_FACTORY_INFO,
+  LOAD_ROUND_INFO,
   REQUEST_USER_SIGNATURE,
   SAVE_CART,
 } from '@/store/action-types'
@@ -359,6 +374,8 @@ import {
 } from '@/store/mutation-types'
 import { formatAmount } from '@/utils/amounts'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
+import WalletModal from '@/components/WalletModal.vue'
+import { SET_CART_LOADED } from '@/store/mutation-types'
 
 @Component({
   components: {
@@ -372,12 +389,86 @@ import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 })
 export default class Cart extends Vue {
   profileImageUrl: string | null = null
-  isReady = false
+  isLoading = false
+  isMounted = false
+  loadError = ''
 
   removeAll(): void {
     this.$store.commit(CLEAR_CART)
     this.$store.dispatch(SAVE_CART)
     this.$store.commit(TOGGLE_EDIT_SELECTION, true)
+  }
+
+  async mounted() {
+    await this.requestSignatureAndLoad()
+    this.isMounted = true
+  }
+
+  async requestSignature() {
+    if (this.currentUser && !this.encryptionKey) {
+      try {
+        await this.$store.dispatch(REQUEST_USER_SIGNATURE)
+      } catch {
+        // ignore reject signature error
+      }
+    }
+  }
+
+  async requestSignatureAndLoad() {
+    this.isLoading = true
+    // reset previous errors
+    this.loadError = ''
+    await this.requestSignature()
+    try {
+      await this.loadCart()
+    } catch (err) {
+      this.loadError = (err as Error).message
+    }
+    this.isLoading = false
+  }
+
+  handlleConnect(): void {
+    this.isLoading = true
+    return this.$modal.show(
+      WalletModal,
+      {},
+      { width: 400, top: 20 },
+      {
+        closed: this.handleWalletModalClose,
+      }
+    )
+  }
+
+  async handleWalletModalClose(): Promise<void> {
+    // The modal can be closed by clicking in Cancel or when the user is
+    // connected successfully. Hence, this checks if we are in the latter case
+    if (this.currentUser && !this.encryptionKey) {
+      await this.requestSignatureAndLoad()
+    }
+    this.isLoading = false
+  }
+
+  async loadCart() {
+    if (this.$store.state.cartLoaded) {
+      return
+    }
+
+    if (!this.encryptionKey) {
+      return
+    }
+
+    if (!this.$store.state.factory) {
+      await this.$store.dispatch(LOAD_FACTORY_INFO)
+    }
+
+    if (!this.$store.state.currentRound) {
+      await this.$store.dispatch(LOAD_ROUND_INFO)
+    }
+
+    await this.$store.dispatch(LOAD_CART)
+    await this.$store.dispatch(LOAD_COMMITTED_CART)
+    await this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+    this.$store.commit(SET_CART_LOADED, true)
   }
 
   dropdownItems: {
@@ -468,22 +559,8 @@ export default class Cart extends Vue {
     return this.supportedChainId === this.walletChainId
   }
 
-  async mounted() {
-    if (!this.$store.state.currentUser?.encryptionKey) {
-      try {
-        await this.$store.dispatch(REQUEST_USER_SIGNATURE)
-      } catch (err) {
-        // unable to get user signature, do not show the cart
-        this.$store.commit(TOGGLE_SHOW_CART_PANEL, false)
-        return
-      }
-    }
-
-    // Load cart & contributor data for current round
-    await this.$store.dispatch(LOAD_CART)
-    await this.$store.dispatch(LOAD_COMMITTED_CART)
-    await this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-    this.isReady = true
+  get encryptionKey(): string {
+    return this.$store.state.currentUser?.encryptionKey
   }
 
   get tokenSymbol(): string {
@@ -572,6 +649,9 @@ export default class Cart extends Vue {
   get errorMessage(): string | null {
     const currentUser = this.$store.state.currentUser
     const currentRound = this.$store.state.currentRound
+    if (this.loadError) {
+      return this.loadError
+    }
     if (this.$store.getters.isMessageLimitReached)
       return this.translate('dynamic.cart.error.reached_contribution_limit')
     if (!currentUser) return this.translate('dynamic.cart.error.connect_wallet')
