@@ -1144,6 +1144,7 @@ h2 {
 
   .submit-error {
     margin-bottom: 1rem;
+    word-break: break-word;
   }
 
   .btn-action {
