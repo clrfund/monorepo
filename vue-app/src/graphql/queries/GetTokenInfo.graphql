@@ -1,0 +1,9 @@
+query GetTokenInfo($fundingRoundAddress: ID!) {
+  fundingRound(id: $fundingRoundAddress) {
+    nativeTokenInfo {
+      tokenAddress
+      symbol
+      decimals
+    }
+  }
+}

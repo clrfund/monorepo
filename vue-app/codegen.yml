@@ -1,8 +1,8 @@
 overwrite: true
 schema: 'https://api.thegraph.com/subgraphs/name/clrfund/clrfund'
-documents: 'vue-app/src/graphql/**/*.graphql'
+documents: 'src/graphql/**/*.graphql'
 generates:
-  vue-app/src/graphql/API.ts:
+  src/graphql/API.ts:
     plugins:
       - 'typescript'
       - 'typescript-operations'
