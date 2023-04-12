@@ -1,12 +1,8 @@
 <template>
   <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
-    <div id="content-container">
-      <div
-        id="sidebar"
-        v-if="isSidebarShown"
-        :class="`${$store.state.showCartPanel ? 'desktop-l' : 'desktop'}`"
-      >
+    <div v-if="appReady" id="content-container">
+      <div v-if="isSidebarShown" id="sidebar" :class="`${showCartPanel ? 'desktop-l' : 'desktop'}`">
         <round-information />
       </div>
       <div
@@ -18,226 +14,204 @@
         }"
       >
         <breadcrumbs v-if="showBreadCrumb" />
-        <router-view :key="$route.path" />
+        <router-view :key="route.path" />
       </div>
-      <div
-        id="cart"
-        v-if="isSideCartShown"
-        :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`"
-      >
+      <div v-if="isSideCartShown" id="cart" :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`">
         <cart-widget />
       </div>
     </div>
     <mobile-tabs v-if="isMobileTabsShown" />
   </div>
+  <!-- vue-dapp -->
+  <vd-board :connectors="connectors" dark />
+  <!-- vue-final-modal -->
+  <modals-container></modals-container>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { Component, Watch } from 'vue-property-decorator'
-
-import { getDefaultColorScheme } from '@/utils/theme'
-import { getCurrentRound } from '@/api/round'
-import { User } from '@/api/user'
-
-import RoundInformation from '@/views/RoundInformation.vue'
+<script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import CartWidget from '@/components/CartWidget.vue'
-import Cart from '@/components/Cart.vue'
 import MobileTabs from '@/components/MobileTabs.vue'
-import BackLink from '@/components/BackLink.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
+// @ts-ignore
+import { ModalsContainer } from 'vue-final-modal'
 
-import {
-  LOAD_USER_INFO,
-  LOAD_ROUND_INFO,
-  LOAD_RECIPIENT_REGISTRY_INFO,
-  SELECT_ROUND,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-  LOGIN_USER,
-  LOAD_FACTORY_INFO,
-  LOAD_MACI_FACTORY_INFO,
-  LOAD_BRIGHT_ID,
-} from '@/store/action-types'
-import { SET_CURRENT_USER } from '@/store/mutation-types'
-import { operator } from '@/api/core'
+import { getOsColorScheme } from '@/utils/theme'
+import { getCurrentRound } from '@/api/round'
+import type { User } from '@/api/user'
+import { operator, provider, connectors } from '@/api/core'
+import { useAppStore, useUserStore } from '@/stores'
+import { sha256 } from '@/utils/crypto'
+import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
+import { useEthersHooks, useWallet } from 'vue-dapp'
+import { useMeta } from 'vue-meta'
 
-@Component({
-  name: 'clr.fund',
-  metaInfo() {
-    return {
-      title: this.$route.meta.title,
-      titleTemplate: `${operator} - %s`,
-      meta: [
-        {
-          name: 'git-commit',
-          content: process.env.VUE_APP_GIT_COMMIT || '',
-        },
-      ],
-    }
-  },
-  components: {
-    RoundInformation,
-    NavBar,
-    Cart,
-    MobileTabs,
-    CartWidget,
-    BackLink,
-    Breadcrumbs,
-  },
+const route = useRoute()
+const appStore = useAppStore()
+const { theme, isCartToggledOpen, showCartPanel, currentRound } = storeToRefs(appStore)
+
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const { wallet } = useWallet()
+const { onActivated } = useEthersHooks()
+
+// https://stackoverflow.com/questions/71785473/how-to-use-vue-meta-with-vue3
+// https://www.npmjs.com/package/vue-meta/v/3.0.0-alpha.7
+useMeta({
+  title: route.meta.title,
+  titleTemplate: `${operator} - %s`,
+  meta: [
+    {
+      name: 'git-commit',
+      content: import.meta.env.VITE_GIT_COMMIT || '',
+    },
+  ],
 })
-export default class App extends Vue {
-  intervals: { [key: string]: any } = {}
 
-  //NOTE: why are all these called on the landing page? makes it heavy to load
-  created() {
-    this.setAppTheme()
-    this.intervals.round = setInterval(() => {
-      this.$store.dispatch(LOAD_ROUND_INFO)
-    }, 60 * 1000)
-    this.intervals.recipient = setInterval(async () => {
-      await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
-    }, 60 * 1000)
-    this.intervals.user = setInterval(() => {
-      this.$store.dispatch(LOAD_USER_INFO)
-    }, 60 * 1000)
+// state
+const routeName = computed(() => route.name?.toString() || '')
+const isUserAndRoundLoaded = computed(() => !!currentUser.value && !!currentRound.value)
+const isInApp = computed(() => routeName.value !== 'landing')
+const isVerifyStep = computed(() => routeName.value === 'verify-step')
+const isSideCartShown = computed(() => !!currentUser.value && isSidebarShown.value && routeName.value !== 'cart')
+const isCartPadding = computed(() => {
+  const routes = ['cart']
+  return routes.includes(routeName.value)
+})
+const isSidebarShown = computed(() => {
+  const excludedRoutes = [
+    'landing',
+    'project-added',
+    'join',
+    'join-step',
+    'round-information',
+    'transaction-success',
+    'verify',
+    'verify-step',
+    'verified',
+    'sponsored',
+  ]
+  return !excludedRoutes.includes(routeName.value)
+})
+const isMobileTabsShown = computed(() => {
+  const excludedRoutes = [
+    'landing',
+    'project-added',
+    'join',
+    'join-step',
+    'transaction-success',
+    'verify',
+    'verify-step',
+    'verified',
+    'sponsored',
+  ]
+  return !excludedRoutes.includes(routeName.value)
+})
+const showBreadCrumb = computed(() => {
+  const excludedRoutes = ['landing', 'join', 'join-step', 'transaction-success', 'verify', 'project-added', 'verified']
+  return !excludedRoutes.includes(routeName.value)
+})
+watch(theme, () => {
+  const savedTheme = theme.value
+  document.documentElement.setAttribute('data-theme', savedTheme || getOsColorScheme())
+})
+
+const appReady = ref(false)
+
+onMounted(async () => {
+  // to check provider works
+  try {
+    const network = await Promise.race([
+      provider.getNetwork(),
+      new Promise<void>((_, reject) =>
+        setTimeout(() => {
+          reject('time out')
+        }, 3000),
+      ),
+    ])
+
+    console.log(network)
+  } catch (err) {
+    console.warn('Failed to detect network:', err)
   }
 
-  //NOTE: why are all these called on the landing page?
-  async mounted() {
-    //TODO: update to take factory address as a parameter, default to env. variable
-    //TODO: SELECT_ROUND action also commits SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
-    const roundAddress =
-      this.$store.state.currentRoundAddress || (await getCurrentRound())
-    await this.$store.dispatch(SELECT_ROUND, roundAddress)
-    this.$store.dispatch(LOAD_ROUND_INFO)
-    this.$store.dispatch(LOAD_FACTORY_INFO)
-    this.$store.dispatch(LOAD_MACI_FACTORY_INFO)
-    await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
-  }
+  try {
+    const roundAddress = appStore.currentRoundAddress || (await getCurrentRound())
 
-  beforeDestroy() {
-    for (const interval of Object.keys(this.intervals)) {
-      clearInterval(this.intervals[interval])
+    if (roundAddress) {
+      appStore.selectRound(roundAddress)
+    } else {
+      throw new Error('Failed to get round address')
     }
+    console.log('roundAddress', roundAddress)
+  } catch (err) {
+    console.warn('Failed to get current round:', err)
   }
 
-  @Watch('$web3.user')
-  loginUser = async () => {
-    if (!this.$web3.user) return
+  appReady.value = true
 
-    // Connect & auth to gun db
-    try {
-      await this.$store.dispatch(LOGIN_USER, this.$web3.user)
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.error(error)
-      return
-    }
-
-    this.$store.commit(SET_CURRENT_USER, this.$web3.user)
-    this.$store.dispatch(LOAD_USER_INFO)
-    this.$store.dispatch(LOAD_BRIGHT_ID)
+  // await appStore.loadUserInfo()
+  try {
+    await appStore.loadRoundInfo()
+  } catch (err) {
+    console.error(err)
   }
+  // await appStore.loadFactoryInfo()
+  // await appStore.loadMACIFactoryInfo()
+  // await appStore.loadRecipientRegistryInfo()
+})
 
-  @Watch('isUserAndRoundLoaded')
-  loadUserRoundData = async () => {
-    if (!this.isUserAndRoundLoaded) {
-      return
-    }
+onActivated(async ({ address, provider }) => {
+  console.log('onActivated')
+  // let signature
+  // if (!wallet.connector) throw new Error('Failed to activate wallet')
+  // if (wallet.connector.name === 'metaMask') {
+  // 	const metamask = wallet.provider as MetaMaskProvider
+  // 	signature = await metamask.request({
+  // 		method: 'personal_sign',
+  // 		params: [LOGIN_MESSAGE, address],
+  // 	})
+  // } else if (wallet.connector.name === 'walletConnect') {
+  // 	const walletconnect = wallet.provider as IWalletConnectProvider
+  // 	signature = await walletconnect.send('personal_sign', [LOGIN_MESSAGE, address])
+  // } else {
+  // 	throw new Error('Wallet not supported')
+  // }
 
-    this.$store.dispatch(LOAD_USER_INFO)
-
-    // Load cart & contributor data for current round
-    this.$store.dispatch(LOAD_CART)
-    this.$store.dispatch(LOAD_COMMITTED_CART)
-    this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
+  const user: User = {
+    isRegistered: false,
+    encryptionKey: sha256('signature'),
+    balance: null,
+    contribution: null,
+    walletProvider: provider,
+    walletAddress: address,
   }
-
-  get isUserAndRoundLoaded(): boolean {
-    return !!this.currentUser && !!this.$store.state.currentRound
+  // Connect & auth to gun db
+  try {
+    await userStore.loginUser(address, user.encryptionKey)
+  } catch (err) {
+    console.error(err)
+    return
   }
+  userStore.setCurrentUser(user)
+  userStore.loadUserInfo()
+  userStore.loadBrightID()
+})
 
-  @Watch('$store.state.theme')
-  setAppTheme = () => {
-    const savedTheme = this.$store.state.theme
-    const theme = savedTheme || getDefaultColorScheme()
-    document.documentElement.setAttribute('data-theme', theme)
-  }
+// watch(isUserAndRoundLoaded, () => {
+// 	if (!isUserAndRoundLoaded.value) {
+// 		return
+// 	}
 
-  private get currentUser(): User {
-    return this.$store.state.currentUser
-  }
+// 	appStore.loadUserInfo()
 
-  get isInApp(): boolean {
-    return this.$route.name !== 'landing'
-  }
-
-  get isVerifyStep(): boolean {
-    return this.$route.name === 'verify-step'
-  }
-
-  get isSidebarShown(): boolean {
-    const excludedRoutes = [
-      'landing',
-      'project-added',
-      'join',
-      'join-step',
-      'round-information',
-      'transaction-success',
-      'verify',
-      'verify-step',
-      'verified',
-      'sponsored',
-    ]
-    return !excludedRoutes.includes(this.$route.name || '')
-  }
-
-  get isMobileTabsShown(): boolean {
-    const excludedRoutes = [
-      'landing',
-      'project-added',
-      'join',
-      'join-step',
-      'transaction-success',
-      'verify',
-      'verify-step',
-      'verified',
-      'sponsored',
-    ]
-    return !excludedRoutes.includes(this.$route.name || '')
-  }
-
-  get isSideCartShown(): boolean {
-    return (
-      !!this.currentUser && this.isSidebarShown && this.$route.name !== 'cart'
-    )
-  }
-
-  get isCartPadding(): boolean {
-    const routes = ['cart']
-    return routes.includes(this.$route.name || '')
-  }
-
-  get showBreadCrumb(): boolean {
-    const excludedRoutes = [
-      'landing',
-      'join',
-      'join-step',
-      'transaction-success',
-      'verify',
-      'project-added',
-      'verified',
-    ]
-    return !excludedRoutes.includes(this.$route.name || '')
-  }
-
-  get isCartToggledOpen(): boolean {
-    return this.$store.state.showCartPanel
-  }
-}
+// 	// Load cart & contributor data for current round
+// 	appStore.loadCart()
+// 	appStore.loadCommittedCart()
+// 	appStore.loadContributorData()
+// })
 </script>
 
 <style lang="scss">

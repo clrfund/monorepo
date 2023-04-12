@@ -155,6 +155,14 @@ export class FundingRoundFactory__coordinatorPubKeyResult {
     map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
     return map;
   }
+
+  getX(): BigInt {
+    return this.value0;
+  }
+
+  getY(): BigInt {
+    return this.value1;
+  }
 }
 
 export class FundingRoundFactory extends ethereum.SmartContract {
@@ -556,7 +564,9 @@ export class SetCoordinatorCall__Inputs {
   }
 
   get _coordinatorPubKey(): SetCoordinatorCall_coordinatorPubKeyStruct {
-    return this._call.inputValues[1].value.toTuple() as SetCoordinatorCall_coordinatorPubKeyStruct;
+    return changetype<SetCoordinatorCall_coordinatorPubKeyStruct>(
+      this._call.inputValues[1].value.toTuple()
+    );
   }
 }
 

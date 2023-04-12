@@ -2,40 +2,25 @@
   <div>
     <div
       v-for="item in cartList"
+      :key="item.id"
       class="cart-item"
       :class="{
-        'new-cart-item':
-          isNewOrUpdated(item) && $store.getters.hasUserContributed,
+        'new-cart-item': isNewOrUpdated(item) && hasUserContributed,
       }"
-      :key="item.id"
     >
       <div class="project">
         <links :to="{ name: 'project', params: { id: item.id } }">
-          <img
-            class="project-image"
-            :src="item.thumbnailImageUrl"
-            :alt="item.name"
-          />
+          <img class="project-image" :src="item.thumbnailImageUrl" :alt="item.name" />
         </links>
-        <links
-          class="project-name"
-          :to="{ name: 'project', params: { id: item.id } }"
-        >
+        <links class="project-name" :to="{ name: 'project', params: { id: item.id } }">
           {{ item.name }}
         </links>
         <div class="remove-cart-item" @click="removeItem(item)">
           <div v-if="isEditMode" class="remove-icon-background">
-            <img
-              class="remove-icon"
-              src="@/assets/remove.svg"
-              aria-label="Remove project"
-            />
+            <img class="remove-icon" src="@/assets/remove.svg" aria-label="Remove project" />
           </div>
         </div>
-        <div
-          class="contribution-form"
-          v-if="$store.getters.hasUserContributed && !isEditMode"
-        >
+        <div v-if="hasUserContributed && !isEditMode" class="contribution-form">
           {{ item.amount }} {{ tokenSymbol }}
         </div>
       </div>
@@ -43,98 +28,98 @@
         <input-button
           :value="item.amount"
           :input="{
-            placeholder: $t('cartItems.button1'),
-            class: { invalid: !isAmountValid(item.amount) },
+            placeholder: 'Amount',
+            class: `{ invalid: ${!isAmountValid(item.amount)} }`,
             disabled: !canUpdateAmount(),
           }"
-          @input="(newAmount) => updateAmount(item, newAmount)"
           class="contribution-amount"
+          @input="updateAmount(item, $event)"
         />
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { DateTime } from 'luxon'
-
-import { CartItem, MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
+import { type CartItem, MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
 import { getTokenLogo } from '@/utils/tokens'
-import { UPDATE_CART_ITEM, REMOVE_CART_ITEM } from '@/store/mutation-types'
-import { SAVE_CART } from '@/store/action-types'
 import Links from '@/components/Links.vue'
 import InputButton from '@/components/InputButton.vue'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({ components: { Links, InputButton } })
-export default class extends Vue {
-  @Prop() cartList!: CartItem[]
-  @Prop() isEditMode!: boolean
-  @Prop() isAmountValid!: (value: string) => boolean
+const appStore = useAppStore()
+const { currentRound, committedCart, hasUserContributed } = storeToRefs(appStore)
 
-  canUpdateAmount(): boolean {
-    const currentRound = this.$store.state.currentRound
-    return currentRound && DateTime.local() < currentRound.votingDeadline
+interface Props {
+  cartList: CartItem[]
+  isEditMode: boolean
+  isAmountValid: (value: string) => boolean
+}
+
+const props = defineProps<Props>()
+
+const tokenSymbol = computed(() => {
+  const { nativeTokenSymbol } = currentRound.value!
+  return nativeTokenSymbol
+})
+
+const tokenLogo = computed(() => {
+  return getTokenLogo(tokenSymbol.value)
+})
+
+function canUpdateAmount(): boolean {
+  return !!currentRound.value && DateTime.local() < currentRound.value.votingDeadline
+}
+
+function updateAmount(item: CartItem, amount: string): void {
+  const sanitizedAmount: string = sanitizeAmount(amount)
+  appStore.updateCartItem({ ...item, amount: sanitizedAmount })
+  appStore.saveCart()
+}
+
+function sanitizeAmount(amount: string): string {
+  const MAX_DECIMAL_PLACES = 5
+  // Extract only numbers or decimal points from amount string
+  const cleanAmount: string = amount.replace(/[^0-9.]/g, '')
+  // Find decimal point (if it exists)
+  const decimalIndex: number = cleanAmount.indexOf('.')
+  let newAmount: string
+  if (decimalIndex === -1 || decimalIndex === cleanAmount.length - 1) {
+    // If first decimal is either absent or last, return clean amount
+    newAmount = cleanAmount
+  } else {
+    // Split up left and right of decimal point
+    const leftOfDecimal: string = cleanAmount.substring(0, decimalIndex)
+    const decimalString: string = cleanAmount.substring(decimalIndex)
+    // Remove any remaining decimal points
+    const decimalStringClean: string = decimalString.replace(/[.]/g, '')
+    // Truncate decimal string to {MAX_DECIMAL_PLACES} digits
+    const decimalStringToUse: string =
+      decimalStringClean.length > MAX_DECIMAL_PLACES
+        ? decimalStringClean.substring(0, MAX_DECIMAL_PLACES)
+        : decimalStringClean
+    newAmount = `${leftOfDecimal}.${decimalStringToUse}`
   }
-
-  private sanitizeAmount(amount: string): string {
-    const MAX_DECIMAL_PLACES = 5
-    // Extract only numbers or decimal points from amount string
-    const cleanAmount: string = amount.replace(/[^0-9.]/g, '')
-    // Find decimal point (if it exists)
-    const decimalIndex: number = cleanAmount.indexOf('.')
-    let newAmount: string
-    if (decimalIndex === -1 || decimalIndex === cleanAmount.length - 1) {
-      // If first decimal is either absent or last, return clean amount
-      newAmount = cleanAmount
-    } else {
-      // Split up left and right of decimal point
-      const leftOfDecimal: string = cleanAmount.substr(0, decimalIndex)
-      const decimalString: string = cleanAmount.substr(decimalIndex)
-      // Remove any remaining decimal points
-      const decimalStringClean: string = decimalString.replace(/[.]/g, '')
-      // Truncate decimal string to {MAX_DECIMAL_PLACES} digits
-      const decimalStringToUse: string =
-        decimalStringClean.length > MAX_DECIMAL_PLACES
-          ? decimalStringClean.substr(0, MAX_DECIMAL_PLACES)
-          : decimalStringClean
-      newAmount = `${leftOfDecimal}.${decimalStringToUse}`
-    }
-    if (parseFloat(newAmount) > MAX_CONTRIBUTION_AMOUNT) {
-      return MAX_CONTRIBUTION_AMOUNT.toString()
-    }
-    return newAmount
+  if (parseFloat(newAmount) > MAX_CONTRIBUTION_AMOUNT) {
+    return MAX_CONTRIBUTION_AMOUNT.toString()
   }
+  return newAmount
+}
 
-  updateAmount(item: CartItem, amount: string): void {
-    const sanitizedAmount: string = this.sanitizeAmount(amount)
-    this.$store.commit(UPDATE_CART_ITEM, { ...item, amount: sanitizedAmount })
-    this.$store.dispatch(SAVE_CART)
-  }
+function removeItem(item: CartItem): void {
+  appStore.removeCartItem(item)
+  appStore.saveCart()
+}
 
-  removeItem(item: CartItem): void {
-    this.$store.commit(REMOVE_CART_ITEM, item)
-    this.$store.dispatch(SAVE_CART)
-  }
+function isNewOrUpdated(item: CartItem): boolean {
+  const itemIndex = committedCart.value.findIndex(i => {
+    return i.id === item.id && i.amount === item.amount
+  })
 
-  isNewOrUpdated(item: CartItem): boolean {
-    const itemIndex = this.$store.state.committedCart.findIndex((i) => {
-      return i.id === item.id && i.amount === item.amount
-    })
-
-    return itemIndex === -1
-  }
-
-  get tokenSymbol(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return nativeTokenSymbol
-  }
-
-  get tokenLogo(): string {
-    return getTokenLogo(this.tokenSymbol)
-  }
+  return itemIndex === -1
 }
 </script>
 

@@ -1,51 +1,50 @@
 <template>
   <div
     v-tooltip="{
-      content: isCopied
-        ? $t('copyButton.tooltip1')
-        : `${$t('copyButton.copy')}${text && ` ${text}`}`,
+      content: isCopied ? 'Copied!' : `Copy${text && ` ${text}`}`,
       hideOnTargetClick: false,
-      trigger: 'hover click',
+      triggers: ['hover', 'click'],
     }"
     :class="`${myClass || 'copy-icon'} ${hasBorder && 'border'}`"
     @click="copyToClipboard"
   >
-    <img width="16px" src="@/assets/copy.svg" />
+    <img width="16" src="@/assets/copy.svg" />
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { ref } from 'vue'
 
-@Component
-export default class CopyButton extends Vue {
-  @Prop() value!: string // Required: Text to copy
-  @Prop() text!: string // Optional: Fills in "Copy ____" in tooltip
-  @Prop() position!: string // Optional: Position of tooltip (default "bottom")
-  @Prop() myClass!: string // Optional class override for custom styling
-  @Prop() hasBorder!: boolean
+interface Props {
+  value: string // Required: Text to copy
+  text?: string // Optional: Fills in "Copy ____" in tooltip
+  position?: string // Optional: Position of tooltip (default "bottom")
+  myClass?: string // Optional class override for custom styling
+  hasBorder?: boolean
+}
 
-  isLoading = false
-  isCopied = false
+const props = defineProps<Props>()
 
-  async copyToClipboard(): Promise<void> {
-    this.isLoading = true
-    try {
-      await navigator.clipboard.writeText(this.value)
-      this.isLoading = false
-      this.isCopied = true
-      this.$emit('copied', true)
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      this.isCopied = false
-      this.$emit('copied', false)
-    } catch (error) {
-      this.isLoading = false
-      if (process.env.NODE_ENV !== 'production') {
-        /* eslint-disable-next-line no-console */
-        console.warn('Error in copying text: ', error)
-      }
+const emit = defineEmits(['copied'])
+
+const isLoading = ref(false)
+const isCopied = ref(false)
+
+async function copyToClipboard(): Promise<void> {
+  isLoading.value = true
+  try {
+    await navigator.clipboard.writeText(props.value)
+    isLoading.value = false
+    isCopied.value = true
+    emit('copied', true)
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    isCopied.value = false
+    emit('copied', false)
+  } catch (error) {
+    isLoading.value = false
+    if (import.meta.env.MODE !== 'production') {
+      /* eslint-disable-next-line no-console */
+      console.warn('Error in copying text: ', error)
     }
   }
 }

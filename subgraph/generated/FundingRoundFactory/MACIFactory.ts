@@ -85,6 +85,14 @@ export class MACIFactory__batchSizesResult {
     );
     return map;
   }
+
+  getTallyBatchSize(): i32 {
+    return this.value0;
+  }
+
+  getMessageBatchSize(): i32 {
+    return this.value1;
+  }
 }
 
 export class MACIFactory__deployMaciInput_coordinatorPubKeyStruct extends ethereum.Tuple {
@@ -115,6 +123,18 @@ export class MACIFactory__maxValuesResult {
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     return map;
   }
+
+  getMaxUsers(): BigInt {
+    return this.value0;
+  }
+
+  getMaxMessages(): BigInt {
+    return this.value1;
+  }
+
+  getMaxVoteOptions(): BigInt {
+    return this.value2;
+  }
 }
 
 export class MACIFactory__treeDepthsResult {
@@ -143,6 +163,18 @@ export class MACIFactory__treeDepthsResult {
       ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(this.value2))
     );
     return map;
+  }
+
+  getStateTreeDepth(): i32 {
+    return this.value0;
+  }
+
+  getMessageTreeDepth(): i32 {
+    return this.value1;
+  }
+
+  getVoteOptionTreeDepth(): i32 {
+    return this.value2;
   }
 }
 
@@ -464,7 +496,9 @@ export class DeployMaciCall__Inputs {
   }
 
   get _coordinatorPubKey(): DeployMaciCall_coordinatorPubKeyStruct {
-    return this._call.inputValues[3].value.toTuple() as DeployMaciCall_coordinatorPubKeyStruct;
+    return changetype<DeployMaciCall_coordinatorPubKeyStruct>(
+      this._call.inputValues[3].value.toTuple()
+    );
   }
 }
 

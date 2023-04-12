@@ -1,195 +1,141 @@
 <template>
-  <div class="modal-body">
-    <div v-if="step === 1">
-      <h3>
-        {{ $t('matchingFundsModal.title', { tokenSymbol }) }}
-      </h3>
-      <div>
-        {{ $t('matchingFundsModal.fund_distribution_message') }}
+  <vue-final-modal v-bind="$attrs" v-slot="{ close }">
+    <div class="modal-body">
+      <div v-if="step === 1">
+        <h3>Contribute {{ tokenSymbol }} to the matching pool</h3>
+        <div>
+          The funds will be distributed to all projects based on the contributions they receive from the community
+        </div>
+        <div class="contribution-form">
+          <input-button
+            v-model:value="amount"
+            :input="{
+              placeholder: '10',
+              class: `{ invalid: ${!isAmountValid} }`,
+              required: true,
+            }"
+          />
+        </div>
+        <div v-if="!isBalanceSufficient" class="balance-check-warning">
+          ⚠️ You only have {{ renderBalance }}
+          {{ tokenSymbol }}
+        </div>
+        <div class="btn-row">
+          <button class="btn-secondary" @click="$emit('close', close)">Cancel</button>
+          <button class="btn-action" :disabled="!isAmountValid" @click="contributeMatchingFunds()">Contribute</button>
+        </div>
       </div>
-      <div class="contribution-form">
-        <input-button
-          v-model="amount"
-          :input="{
-            placeholder: 10,
-            class: { invalid: !isAmountValid },
-            required: true,
-          }"
-        />
+      <div v-if="step === 2">
+        <h3>Contribute {{ renderContributionAmount }} {{ tokenSymbol }} to the matching pool</h3>
+        <transaction :hash="transferTxHash" :error="transferTxError" @close="$emit('close', close)"></transaction>
       </div>
-      <div v-if="!isBalanceSufficient" class="balance-check-warning">
-        {{
-          $t('matchingFundsModal.div1', {
-            renderBalance: renderBalance,
-            tokenSymbol: tokenSymbol,
-          })
-        }}
-      </div>
-      <div class="btn-row">
-        <button class="btn-secondary" @click="$emit('close')">
-          {{ $t('cancel') }}
-        </button>
-        <button
-          class="btn-action"
-          :disabled="!isAmountValid()"
-          @click="contributeMatchingFunds()"
-        >
-          {{ $t('matchingFundsModal.button2') }}
-        </button>
+      <div v-if="step === 3">
+        <div class="big-emoji">💦</div>
+        <h3>You just topped up the pool by {{ renderContributionAmount }} {{ tokenSymbol }}!</h3>
+        <div class="mb2">Thanks for helping out all our projects.</div>
+        <button class="btn-primary" @click="$emit('close', close)">Done</button>
       </div>
     </div>
-    <div v-if="step === 2">
-      <h3>
-        {{
-          $t('matchingFundsModal.h3_2_t1', {
-            renderContributionAmount: renderContributionAmount,
-            tokenSymbol: tokenSymbol,
-          })
-        }}
-      </h3>
-      <transaction
-        :hash="transferTxHash"
-        :error="transferTxError"
-        @close="$emit('close')"
-      ></transaction>
-    </div>
-    <div v-if="step === 3">
-      <div class="big-emoji">💦</div>
-      <h3>
-        {{
-          $t('matchingFundsModal.h3_3', {
-            renderContributionAmount: renderContributionAmount,
-            tokenSymbol: tokenSymbol,
-          })
-        }}
-      </h3>
-      <div class="mb2">{{ $t('matchingFundsModal.div2') }}</div>
-      <button class="btn-primary" @click="$emit('close')">
-        {{ $t('matchingFundsModal.button3') }}
-      </button>
-    </div>
-  </div>
+  </vue-final-modal>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { BigNumber, Contract, Signer } from 'ethers'
+export default {
+  inheritAttrs: false,
+}
+</script>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { BigNumber, Contract } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import Transaction from '@/components/Transaction.vue'
 import InputButton from '@/components/InputButton.vue'
+
 import { waitForTransaction } from '@/utils/contracts'
 import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { formatUnits } from '@ethersproject/units'
 
-import { User } from '@/api/user'
 import { ERC20 } from '@/api/abi'
 import { factory } from '@/api/core'
+// @ts-ignore
+import { VueFinalModal } from 'vue-final-modal'
+import { useEthers } from 'vue-dapp'
+import { useAppStore, useUserStore } from '@/stores'
 
-@Component({
-  components: {
-    Transaction,
-    InputButton,
-  },
+const { signer } = useEthers()
+const appStore = useAppStore()
+const userStore = useUserStore()
+
+// state
+const step = ref(1)
+const amount = ref('100')
+const transferTxHash = ref('')
+const transferTxError = ref('')
+
+const balance = computed<string | null>(() => {
+  const balance = userStore.currentUser?.balance
+  if (balance === null || typeof balance === 'undefined') {
+    return null
+  }
+  return formatUnits(balance, 18)
 })
-export default class MatchingFundsModal extends Vue {
-  step = 1
+const renderBalance = computed<string | null>(() => {
+  const balance: BigNumber | null | undefined = userStore.currentUser?.balance
+  if (balance === null || typeof balance === 'undefined') return null
+  const { nativeTokenDecimals } = appStore.currentRound!
+  return formatAmount(balance, nativeTokenDecimals, null, 5)
+})
+const renderContributionAmount = computed<string | null>(() => {
+  const { nativeTokenDecimals } = appStore.currentRound!
+  return formatAmount(amount.value, nativeTokenDecimals, null, null)
+})
+const isBalanceSufficient = computed<boolean>(() => {
+  if (balance.value === null) return false
+  return parseFloat(balance.value) >= parseFloat(amount.value)
+})
 
-  signer!: Signer
-
-  amount = '100'
-  transferTxHash = ''
-  transferTxError = ''
-
-  get walletProvider(): any {
-    return this.$store.state.currentUser?.walletProvider
+const isAmountValid = computed<boolean>(() => {
+  const { nativeTokenDecimals } = appStore.currentRound!
+  let _amount
+  try {
+    _amount = parseFixed(amount.value, nativeTokenDecimals)
+  } catch {
+    return false
   }
-
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
+  if (_amount.lte(BigNumber.from(0))) {
+    return false
   }
+  if (balance.value && parseFloat(amount.value) > parseFloat(balance.value)) {
+    return false
+  }
+  return true
+})
+const tokenSymbol = computed<string>(() => appStore.currentRound?.nativeTokenSymbol || '')
+const tokenLogo = computed<string>(() => getTokenLogo(tokenSymbol.value))
 
-  get balance(): string | null {
-    const balance = this.currentUser?.balance
-    if (balance === null || typeof balance === 'undefined') {
-      return null
+async function contributeMatchingFunds() {
+  step.value += 1
+  const { nativeTokenAddress, nativeTokenDecimals } = appStore.currentRound!
+  const token = new Contract(nativeTokenAddress, ERC20, signer.value!)
+  const _amount = parseFixed(amount.value, nativeTokenDecimals)
+
+  // TODO: update to take factory address as a parameter from the route props, default to env. variable
+  const matchingPoolAddress = import.meta.env.VITE_MATCHING_POOL_ADDRESS
+    ? import.meta.env.VITE_MATCHING_POOL_ADDRESS
+    : factory.address
+
+  try {
+    await waitForTransaction(token.transfer(matchingPoolAddress, _amount), hash => (transferTxHash.value = hash))
+  } catch (error) {
+    transferTxError.value = error.message
+    if (error.message.indexOf('Nonce too high') >= 0 && import.meta.env.MODE === 'development') {
+      transferTxError.value = 'Have you been buidling?? Reset your nonce! 🪄'
     }
-    return formatUnits(balance, 18)
+    return
   }
-
-  get renderBalance(): string | null {
-    const balance: BigNumber | null | undefined = this.currentUser?.balance
-    if (balance === null || typeof balance === 'undefined') return null
-    const { nativeTokenDecimals } = this.$store.state.currentRound
-    return formatAmount(balance, nativeTokenDecimals, null, 5)
-  }
-
-  get renderContributionAmount(): string | null {
-    const { nativeTokenDecimals } = this.$store.state.currentRound
-    return formatAmount(this.amount, nativeTokenDecimals, null, null)
-  }
-
-  get isBalanceSufficient(): boolean {
-    if (this.balance === null) return false
-    return parseFloat(this.balance) >= parseFloat(this.amount)
-  }
-
-  isAmountValid(): boolean {
-    const { nativeTokenDecimals } = this.$store.state.currentRound
-    let amount
-    try {
-      amount = parseFixed(this.amount, nativeTokenDecimals)
-    } catch {
-      return false
-    }
-    if (amount.lte(BigNumber.from(0))) {
-      return false
-    }
-    if (this.balance && parseFloat(this.amount) > parseFloat(this.balance)) {
-      return false
-    }
-    return true
-  }
-
-  get tokenSymbol(): string {
-    return this.$store.state.currentRound.nativeTokenSymbol || ''
-  }
-
-  get tokenLogo(): string {
-    return getTokenLogo(this.tokenSymbol)
-  }
-
-  async contributeMatchingFunds() {
-    this.step += 1
-    this.signer = this.$store.state.currentUser.walletProvider.getSigner()
-    const { nativeTokenAddress, nativeTokenDecimals } =
-      this.$store.state.currentRound
-    const token = new Contract(nativeTokenAddress, ERC20, this.signer)
-    const amount = parseFixed(this.amount, nativeTokenDecimals)
-
-    // TODO: update to take factory address as a parameter from the route props, default to env. variable
-    const matchingPoolAddress = process.env.VUE_APP_MATCHING_POOL_ADDRESS
-      ? process.env.VUE_APP_MATCHING_POOL_ADDRESS
-      : factory.address
-
-    try {
-      await waitForTransaction(
-        token.transfer(matchingPoolAddress, amount),
-        (hash) => (this.transferTxHash = hash)
-      )
-    } catch (error) {
-      this.transferTxError = error.message
-      if (
-        error.message.indexOf('Nonce too high') >= 0 &&
-        process.env.NODE_ENV === 'development'
-      ) {
-        this.transferTxError = 'Have you been buidling?? Reset your nonce! 🪄'
-      }
-      return
-    }
-    this.step += 1
-  }
+  step.value += 1
 }
 </script>
 

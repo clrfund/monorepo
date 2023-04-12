@@ -1,72 +1,53 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">{{ $t('decentralization.heading.title') }}</h1>
-    <h2>{{ $t('decentralization.heading.subtitle') }}</h2>
+    <h1 class="content-heading">Decentralization in Clr.fund</h1>
+    <h2>What is Decentralization?</h2>
     <p>
-      {{ $t('decentralization.heading.paragraph') }}
+      When we say something is "decentralized" in clr.fund, and in web3 broadly, we mean that no single person, company,
+      or other entity is solely responsible for running or maintaining it. Instead, a decentralized system is run or
+      maintained by a large group of independent entities, coordinated by a set of rules each opts into, like miners in
+      Ethereum or peers in BitTorrent.
     </p>
 
-    <h2>{{ $t('decentralization.which.title') }}</h2>
-    <p>
-      {{ $t('decentralization.which.paragraph-1') }}
-    </p>
+    <h2>Which pieces of clr.fund are decentralized?</h2>
+    <p>Much of clr.fund's infrastructure is built on Ethereum, a decentralized blockchain:</p>
     <ul>
       <li>
-        {{ $t('decentralization.which.li-1') }}
+        the registry of projects qualified for funding (and, potentially, the curation mechanism for choosing these
+        projects)
       </li>
-      <li>{{ $t('decentralization.which.li-2') }}</li>
-      <li>
-        {{ $t('decentralization.which.li-3') }}
-      </li>
-      <li>
-        {{ $t('decentralization.which.li-4') }}
-      </li>
-      <li>
-        {{ $t('decentralization.which.li-5') }}
-      </li>
+      <li>the matching pool of funds</li>
+      <li>the sybil-resistant registry of users qualified to contribute to individual projects</li>
+      <li>the funds from and encrypted information about contributions to individual projects</li>
+      <li>the mechanism for distributing funds once a round's results are finalized</li>
     </ul>
     <p>
-      {{ $t('decentralization.which.exists_in_code') }}
-      <links to="https://github.com/clrfund/monorepo">{{
-        $t('decentralization.which.here')
-      }}</links
-      >{{ $t('decentralization.which.maintained_by_miner') }}
+      Each of these pieces exists in an Ethereum smart contract (see the code
+      <links to="https://github.com/clrfund/monorepo">here</links>), meaning its functionality is maintained by Ethereum
+      miners, a decentralized group.
     </p>
-    <h2>{{ $t('decentralization.why.title') }}</h2>
-    <p>
-      {{ $t('decentralization.why.paragraph') }}
-    </p>
+    <h2>Why is clr.fund decentralized?</h2>
+    <p>Ethereum's decentralization provides clr.fund with three main benefits:</p>
     <ol>
       <li>
-        {{ $t('decentralization.why.li-1') }}
+        Transparent process — All of the decentralized pieces of clr.fund are publicly verifiable. Anyone can look at
+        the code for the smart contracts and observe its inputs and outputs, with very little possibility that anything
+        is being hidden or changed secretly.
       </li>
       <li>
-        {{ $t('decentralization.why.li-2-text-1') }}
-        <links to="/about/sybil-resistance">{{
-          $t('decentralization.why.li-2-link-1')
-        }}</links
-        >{{ $t('decentralization.why.li-2-text-2') }}
-        <links to="/about/maci">{{
-          $t('decentralization.why.li-2-link-2')
-        }}</links
-        >{{ $t('decentralization.why.li-2-text-3') }}
+        Secure voting — Because of Ethereum's strong security guarantees, anyone submitting a message can be extremely
+        confident that their message will be processed as expected by the system. There are still security dangers, of
+        course, such as
+        <links to="/about/sybil-resistance">sybil attacks</links> or <links to="/about/maci">vote manipulation</links>,
+        but the kind of "vote hacking" typically feared in digital voting is highly unlikely here.
       </li>
       <li>
-        {{ $t('decentralization.why.li-3-text-1') }}
-        <links to="/about/quadratic-funding">{{
-          $t('decentralization.why.li-3-link-2')
-        }}</links
-        >{{ $t('decentralization.why.li-3-text-2') }}
+        Public good — Everything on Ethereum is open source and permissionless, which means the code for clr.fund's
+        decentralized infrastructure acts as a public good: anyone can deploy their own version of the system to create
+        their own
+        <links to="/about/quadratic-funding">quadratic funding</links> system, with the same decentralized benefits of
+        the original.
       </li>
     </ol>
   </div>
 </template>
-
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Links from '@/components/Links.vue'
-
-@Component({ components: { Links } })
-export default class AboutDecentralization extends Vue {}
-</script>

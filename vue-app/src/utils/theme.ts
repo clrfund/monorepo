@@ -1,7 +1,10 @@
 import { ThemeMode } from '@/api/core'
 
-export function getDefaultColorScheme(): ThemeMode {
-  const colorScheme = ThemeMode.DARK
+const PREFER_COLOR_SCHEME = '(prefers-color-scheme: dark)'
+
+export function getOsColorScheme(): ThemeMode {
+  const { matches } = window.matchMedia(PREFER_COLOR_SCHEME)
+  const colorScheme = matches ? ThemeMode.DARK : ThemeMode.LIGHT
   return colorScheme
 }
 

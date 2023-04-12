@@ -1,48 +1,26 @@
 <template>
   <div class="explorer-btn tx-receipt">
     <div class="status-label-address">
-      <loader
-        v-if="isPending"
-        :v-tooltip="$t('transactionReceipt.tooltip1')"
-        class="pending"
-      />
-      <img
-        class="success"
-        :v-tooltip="$t('transactionReceipt.tooltip2')"
-        v-if="!isPending"
-        src="@/assets/checkmark.svg"
-      />
+      <loader v-if="isPending" v-tooltip="'Awaiting transaction confirmation'" class="pending" />
+      <img v-if="!isPending" v-tooltip="'Transaction confirmed'" class="success" src="@/assets/checkmark.svg" />
       <p class="hash">{{ renderCopiedOrHash }}</p>
     </div>
     <div class="actions">
       <links
+        v-tooltip="`View on ${blockExplorer.label}`"
         class="explorerLink"
         :to="blockExplorer.url"
-        :v-tooltip="
-          $t('transactionReceipt.tooltip3', {
-            blockExplorer: blockExplorer.label,
-          })
-        "
-        :hideArrow="true"
+        :hide-arrow="true"
       >
-        <div class="icon">
-          <img :src="require(`@/assets/${blockExplorer.logo}`)" />
-        </div>
+        <img class="icon" :src="logoUrl" />
       </links>
-      <copy-button
-        :value="hash"
-        :text="$t('transactionReceipt.button1')"
-        v-on:copied="updateIsCopied"
-        myClass="icon"
-      />
+      <copy-button :value="hash" text="hash" my-class="icon" @copied="updateIsCopied" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 
 import Loader from '@/components/Loader.vue'
 import CopyButton from '@/components/CopyButton.vue'
@@ -51,41 +29,40 @@ import { chain } from '@/api/core'
 import { isTransactionMined } from '@/utils/contracts'
 import { renderAddressOrHash } from '@/utils/accounts'
 
-@Component({
-  components: { Loader, CopyButton, Links },
+interface Props {
+  hash: string
+}
+
+const props = defineProps<Props>()
+
+const isPending = ref(true)
+const isCopied = ref(false)
+
+const renderCopiedOrHash = computed<string>(() => {
+  return isCopied.value ? 'Copied!' : renderAddressOrHash(props.hash, 16)
 })
-export default class TransactionReceipt extends Vue {
-  isPending = true
-  isCopied = false
-
-  @Prop() hash!: string
-
-  updateIsCopied(value: boolean): void {
-    this.isCopied = value
+const blockExplorer = computed<{ label: string; url: string; logo: string }>(() => {
+  return {
+    label: chain.explorerLabel,
+    url: `${chain.explorer}/tx/${props.hash}`,
+    logo: chain.explorerLogo,
   }
+})
+const logoUrl = new URL(`/src/assets/${blockExplorer.value.logo}`, import.meta.url).href
 
-  created() {
-    this.checkTxStatus()
-  }
+function updateIsCopied(value: boolean): void {
+  isCopied.value = value
+}
 
-  get renderCopiedOrHash(): string {
-    return this.isCopied ? 'Copied!' : renderAddressOrHash(this.hash, 16)
-  }
+onMounted(() => {
+  checkTxStatus()
+})
 
-  async checkTxStatus(): Promise<void> {
-    while (this.isPending) {
-      await new Promise((resolve) => setTimeout(resolve, 5000))
-      const isMined = await isTransactionMined(this.hash)
-      this.isPending = !isMined
-    }
-  }
-
-  get blockExplorer(): { label: string; url: string; logo: string } {
-    return {
-      label: chain.explorerLabel,
-      url: `${chain.explorer}/tx/${this.hash}`,
-      logo: chain.explorerLogo,
-    }
+async function checkTxStatus(): Promise<void> {
+  while (isPending.value) {
+    await new Promise(resolve => setTimeout(resolve, 5000))
+    const isMined = await isTransactionMined(props.hash)
+    isPending.value = !isMined
   }
 }
 </script>
@@ -137,12 +114,6 @@ export default class TransactionReceipt extends Vue {
 .explorerLink {
   padding: 0;
   margin: 0;
-  img {
-    width: 1rem;
-    height: 1rem;
-    cursor: pointer;
-    filter: var(--img-filter, invert(0.7));
-  }
 }
 .status-label-address {
   display: flex;

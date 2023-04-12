@@ -1,7 +1,7 @@
 import { CHAIN_INFO } from '../constants/chains'
 
 async function setupNetwork(provider): Promise<void> {
-  const chainId = parseInt(process.env.VUE_APP_ETHEREUM_API_CHAINID || '1', 10)
+  const chainId = parseInt(import.meta.env.VITE_ETHEREUM_API_CHAINID || '1', 10)
   const hexChainId = `0x${chainId.toString(16)}`
 
   // Recommended usage of these methods
@@ -46,15 +46,11 @@ async function setupNetwork(provider): Promise<void> {
 export default {
   // TODO: add better return type
   connect: async (): Promise<any | undefined> => {
-    const provider =
-      (window as any).ethereum ||
-      ((window as any).web3 && (window as any).web3.currentProvider)
+    const provider = (window as any).ethereum || ((window as any).web3 && (window as any).web3.currentProvider)
 
     if (!provider) {
       /* eslint-disable-next-line no-console */
-      console.error(
-        'Tried to connect to MetaMask but it was not detected. Please install MetaMask.'
-      )
+      console.error('Tried to connect to MetaMask but it was not detected. Please install MetaMask.')
     }
 
     // Prompt the user to add or switch to our supported network

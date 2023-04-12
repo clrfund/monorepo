@@ -1,43 +1,26 @@
 <template>
   <div class="tx-container">
-    <div
-      :class="
-        isWaiting
-          ? 'recipient-submission-widget shine'
-          : 'recipient-submission-widget'
-      "
-    >
+    <div :class="isWaiting ? 'recipient-submission-widget shine' : 'recipient-submission-widget'">
       <loader v-if="isLoading" />
-      <div
-        :class="
-          isWaiting || txError
-            ? 'tx-progress-area'
-            : 'tx-progress-area-no-notice'
-        "
-      >
-        <loader class="button-loader" v-if="isWaiting" />
+      <div :class="isWaiting || txError ? 'tx-progress-area' : 'tx-progress-area-no-notice'">
+        <loader v-if="isWaiting" class="button-loader" />
         <div v-if="isWaiting" class="tx-notice">
-          <div v-if="!!txHash">{{ $t('recipientSubmissionWidget.div1') }}</div>
-          <div v-else>{{ $t('recipientSubmissionWidget.div2') }}</div>
+          <div v-if="!!txHash">Waiting for transaction to be mined...</div>
+          <div v-else>Check your wallet for a prompt...</div>
         </div>
         <div v-if="hasTxError" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
-          {{ $t('recipientSubmissionWidget.div3_t1', { txError: txError })
-          }}<br />
-          {{
-            $t('recipientSubmissionWidget.div3_t2', {
-              blockExplorerLabel: blockExplorerLabel,
-            })
-          }}
+          Something failed: {{ txError }}<br />
+          Check your wallet or {{ blockExplorerLabel }} for more info.
         </div>
       </div>
       <div class="connected">
         <div class="total-title">
-          {{ $t('recipientSubmissionWidget.div4') }}
+          Total to submit
           <img
             v-tooltip="{
-              content: $t('recipientSubmissionWidget.tooltip1'),
-              trigger: 'hover click',
+              content: 'Estimate – this total may be slightly different in your wallet.',
+              triggers: ['hover', 'click'],
             }"
             src="@/assets/info.svg"
           />
@@ -46,25 +29,17 @@
           {{ depositAmount }}
           <span class="total-currency"> {{ depositToken }}</span>
         </div>
-        <div class="warning-text" v-if="hasLowFunds">
-          {{
-            $t('recipientSubmissionWidget.div5_t1', {
-              depositToken: depositToken,
-            })
-          }}<br />
-          {{ $t('recipientSubmissionWidget.div5_t2') }}
+        <div v-if="hasLowFunds" class="warning-text">
+          Not enough {{ depositToken }} in your wallet.<br />
+          Top up or connect a different wallet.
         </div>
         <div v-if="txHasDeposit" class="checkout-row">
-          <p class="m05">
-            <b>{{ $t('recipientSubmissionWidget.p1') }}</b>
-          </p>
+          <p class="m05"><b>Security deposit</b></p>
           <p class="m05">
             {{ depositAmount }} {{ depositToken }}
             <span class="o5"
               >({{ fiatSign
-              }}{{
-                calculateFiatFee($store.state.recipientRegistryInfo.deposit)
-              }})</span
+              }}{{ recipientRegistryInfo?.deposit ? calculateFiatFee(recipientRegistryInfo.deposit) : '' }})</span
             >
           </p>
         </div>
@@ -73,79 +48,71 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { BigNumber } from 'ethers'
-import { EthPrice, fetchCurrentEthPrice } from '@/api/price'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import type { BigNumber } from 'ethers'
+import { type EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import { chain } from '@/api/core'
-
 import Loader from '@/components/Loader.vue'
 import Transaction from '@/components/Transaction.vue'
-
 import { formatAmount } from '@/utils/amounts'
+import { useUserStore, useRecipientStore } from '@/stores'
 
-@Component({
-  components: {
-    Loader,
-    Transaction,
-  },
-})
-export default class RecipientSubmissionWidget extends Vue {
-  @Prop() isWaiting!: boolean
-  @Prop() txHash!: string
-  @Prop() txError!: string
-  isLoading = true
-  ethPrice: EthPrice | null = null
-  fiatFee = '-'
-  fiatSign = '$'
-
-  async created() {
-    this.ethPrice = await fetchCurrentEthPrice()
-    this.isLoading = false
-  }
-
-  get blockExplorerLabel(): string {
-    return chain.explorerLabel
-  }
-
-  get hasTxError(): boolean {
-    return !!this.txError
-  }
-
-  get txHasDeposit(): boolean {
-    return !!this.$store.state.recipientRegistryInfo?.deposit
-  }
-
-  get depositAmount(): string {
-    return this.$store.state.recipientRegistryInfo
-      ? formatAmount(this.$store.state.recipientRegistryInfo.deposit, 18)
-      : '...'
-  }
-
-  get hasLowFunds(): boolean {
-    const { currentUser, recipientRegistryInfo } = this.$store.state
-
-    if (currentUser?.etherBalance && recipientRegistryInfo?.deposit) {
-      return currentUser.etherBalance.lt(recipientRegistryInfo.deposit)
-    }
-    return false
-  }
-
-  get depositToken(): string {
-    return this.$store.state.recipientRegistryInfo?.depositToken ?? ''
-  }
-
-  public calculateFiatFee(ethAmount: BigNumber): string {
-    if (this.$store.state.recipientRegistryInfo && this.ethPrice) {
-      return Number(
-        this.ethPrice.ethereum.usd * Number(formatAmount(ethAmount, 18))
-      ).toFixed(2)
-    }
-    return '-'
-  }
+interface Props {
+  isWaiting: boolean
+  txHash: string
+  txError: string
 }
+
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+const recipientStore = useRecipientStore()
+const { recipientRegistryInfo } = storeToRefs(recipientStore)
+const props = defineProps<Props>()
+
+const isLoading = ref(true)
+const ethPrice = ref<EthPrice | null>(null)
+const fiatFee = ref('-')
+const fiatSign = ref('$')
+
+const blockExplorerLabel = computed(() => {
+  return chain.explorerLabel
+})
+
+const hasTxError = computed(() => {
+  return !!props.txError
+})
+
+const txHasDeposit = computed(() => {
+  return !!recipientRegistryInfo.value?.deposit
+})
+
+const depositAmount = computed(() => {
+  return recipientRegistryInfo.value ? formatAmount(recipientRegistryInfo.value.deposit, 18) : '...'
+})
+
+const hasLowFunds = computed(() => {
+  if (currentUser.value?.etherBalance && recipientRegistryInfo.value?.deposit) {
+    return currentUser.value.etherBalance.lt(recipientRegistryInfo.value.deposit)
+  }
+  return false
+})
+
+const depositToken = computed(() => {
+  return recipientRegistryInfo.value?.depositToken ?? ''
+})
+
+function calculateFiatFee(ethAmount: BigNumber): string {
+  if (recipientRegistryInfo.value && ethPrice.value) {
+    return Number(ethPrice.value.ethereum.usd * Number(formatAmount(ethAmount, 18))).toFixed(2)
+  }
+  return '-'
+}
+
+onMounted(async () => {
+  ethPrice.value = await fetchCurrentEthPrice()
+  isLoading.value = false
+})
 </script>
 
 <style scoped lang="scss">

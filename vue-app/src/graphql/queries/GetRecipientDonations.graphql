@@ -1,10 +1,9 @@
 query GetRecipientDonations(
   $fundingRoundAddress: String!
-  $recipientAddress: Bytes!
-  $recipientIndex: BigInt!
+  $recipientAddress: String!
 ) {
   donations(
-    where: { fundingRound: $fundingRoundAddress, recipient: $recipientAddress, voteOptionIndex: $recipientIndex }
+    where: { fundingRound: $fundingRoundAddress, recipient: $recipientAddress }
   ) {
     id
   }

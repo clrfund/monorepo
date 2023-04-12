@@ -1,6 +1,6 @@
-import { BigNumber } from 'ethers'
-import { factory } from './core'
-import sdk from '@/graphql/sdk'
+import { Contract } from 'ethers'
+import { ERC20 } from './abi'
+import { factory, provider } from './core'
 
 export interface Factory {
   fundingRoundAddress: string
@@ -11,19 +11,13 @@ export interface Factory {
 }
 
 export async function getFactoryInfo() {
-  const { fundingRoundFactory } = await sdk.GetFactoryInfo({
-    factoryAddress: factory.address.toLowerCase(),
-  })
+  const nativeTokenAddress = await factory.nativeToken()
 
-  const nativeTokenAddress = fundingRoundFactory?.nativeTokenInfo?.tokenAddress
+  const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
+  const nativeTokenSymbol = await nativeToken.symbol()
+  const nativeTokenDecimals = await nativeToken.decimals()
 
-  const nativeTokenSymbol = fundingRoundFactory?.nativeTokenInfo?.symbol
-  const decimals = BigNumber.from(
-    fundingRoundFactory?.nativeTokenInfo?.decimals || 0
-  )
-  const nativeTokenDecimals = decimals.toNumber()
-
-  const userRegistryAddress = fundingRoundFactory?.contributorRegistryAddress
+  const userRegistryAddress = await factory.userRegistry()
 
   return {
     fundingRoundAddress: factory.address,

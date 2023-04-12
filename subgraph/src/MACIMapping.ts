@@ -20,14 +20,15 @@ import { FundingRound, Message, PublicKey } from '../generated/schema'
 // - contract.verifier(...)
 
 export function handlePublishMessage(event: PublishMessage): void {
-  let fundingRoundId = event.transaction.to.toHexString()
-  if (fundingRoundId == null) {
+  if (!event.transaction.to) {
     log.error(
       'Error: handlePublishMessage failed fundingRound not registered',
       []
     )
     return
   }
+
+  let fundingRoundId = event.transaction.to!.toHex()
   let fundingRound = FundingRound.load(fundingRoundId)
   if (fundingRound == null) {
     log.error(
@@ -52,9 +53,6 @@ export function handlePublishMessage(event: PublishMessage): void {
     let publicKey = new PublicKey(publicKeyId)
     publicKey.x = event.params._encPubKey.x
     publicKey.y = event.params._encPubKey.y
-
-    let _messages = [messageID] as string[]
-    publicKey.messages = _messages
     publicKey.fundingRound = fundingRoundId
 
     publicKey.save()

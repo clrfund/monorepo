@@ -1,7 +1,7 @@
 @ -0,0 +1,36 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
+    <round-status-banner v-if="currentRound" />
     <!-- TODO: add confetti -->
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon" />
@@ -10,23 +10,16 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>{{ $t('verified.h1') }}</h1>
-            <transaction-receipt
-              v-if="$route.params.hash"
-              :hash="$route.params.hash"
-            />
+            <h1>Ready to contribute!</h1>
+            <transaction-receipt v-if="hash" :hash="hash" />
           </div>
           <div class="subtitle">
-            {{ $t('verified.div1') }}
+            You’re on board this funding round! And fully verified for BrightID for this funding round.
           </div>
-          <p>{{ $t('verified.p1') }}</p>
+          <p>You can now start contributing to your favorite projects.</p>
           <div class="mt2 button-spacing">
-            <links to="/projects" class="btn-primary">{{
-              $t('verified.link1')
-            }}</links>
-            <links to="/" class="btn-secondary">{{
-              $t('verified.link2')
-            }}</links>
+            <links to="/projects" class="btn-primary">View projects</links>
+            <links to="/" class="btn-secondary">Go home</links>
           </div>
         </div>
       </div>
@@ -34,25 +27,20 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+<script setup lang="ts">
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import Links from '@/components/Links.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({
-  components: {
-    ProgressBar,
-    RoundStatusBanner,
-    Links,
-    TransactionReceipt,
-    ImageResponsive,
-  },
-})
-export default class Verified extends Vue {}
+const appStore = useAppStore()
+const { currentRound } = storeToRefs(appStore)
+
+const route = useRoute()
+const hash = computed(() => route.params.hash as string)
 </script>
 
 <style scoped lang="scss">

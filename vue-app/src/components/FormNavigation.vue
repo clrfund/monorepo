@@ -1,59 +1,43 @@
 <template>
   <div>
     <div class="btn-row">
-      <button
-        v-if="currentStep > 0"
-        @click="handleStepNav(currentStep - 1)"
-        class="btn-secondary float-left"
-        :disabled="isNavDisabled"
-      >
-        {{ $t('formNavigation.button1') }}
+      <button v-if="currentStep > 0" class="btn-secondary" :disabled="isNavDisabled" @click="onClickPrevious">
+        Previous
       </button>
-      <wallet-widget
-        class="float-right"
-        v-if="!currentUser && currentStep === finalStep"
-        :isActionButton="true"
-      />
-      <button
-        v-else
-        @click="handleStepNav(currentStep + 1, true)"
-        class="btn-primary float-right"
-        :disabled="!isStepValid"
-      >
-        {{
-          currentStep === finalStep
-            ? $t('formNavigation.button2_1')
-            : $t('formNavigation.button2_2')
-        }}
+      <wallet-widget v-if="!currentUser && currentStep === finalStep" class="" :is-action-button="true" />
+      <button v-else class="btn-primary" :disabled="!isStepValid" @click="onClickNextOrConfirm">
+        {{ currentStep === finalStep ? 'Confirm' : 'Next' }}
       </button>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { User } from '@/api/user'
+<script setup lang="ts">
+import { computed } from 'vue'
+import type { User } from '@/api/user'
 import WalletWidget from '@/components/WalletWidget.vue'
+import { useUserStore } from '@/stores'
 
-@Component({
-  components: {
-    WalletWidget,
-  },
-})
-export default class FormNavigation extends Vue {
-  @Prop() currentStep!: number
-  @Prop() finalStep!: number
-  @Prop() steps!: string[]
-  @Prop() isStepValid!: boolean
-  @Prop() callback!: (updateFurthest?: boolean) => void
-  @Prop() handleStepNav!: (step: number, updateFurthest?: boolean) => void
-  @Prop() isNavDisabled!: boolean
+interface Props {
+  currentStep: number
+  finalStep: number
+  steps: string[]
+  isStepValid: boolean
+  callback: (updateFurthest?: boolean) => void
+  handleStepNav: (step: number, updateFurthest?: boolean) => void
+  isNavDisabled: boolean
+}
+const props = defineProps<Props>()
 
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
+const userStore = useUserStore()
+const currentUser = computed<User | null>(() => userStore.currentUser)
+
+function onClickPrevious() {
+  props.handleStepNav(props.currentStep - 1)
+}
+
+function onClickNextOrConfirm() {
+  props.handleStepNav(props.currentStep + 1, true)
 }
 </script>
 
@@ -62,15 +46,8 @@ export default class FormNavigation extends Vue {
 @import '../styles/vars';
 
 .btn-row {
-  display: block;
+  display: flex;
+  justify-content: space-between;
   height: 2.75rem;
-}
-
-.float-left {
-  float: left;
-}
-
-.float-right {
-  float: right;
 }
 </style>

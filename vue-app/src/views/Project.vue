@@ -1,47 +1,23 @@
 <template>
-  <div>
-    <loader v-if="isLoading"></loader>
-    <div
-      :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`"
-      v-if="project"
-    >
-      <img
-        class="project-image banner"
-        :src="project.bannerImageUrl"
-        :alt="project.name"
-      />
-      <project-profile
-        class="details"
-        :project="project"
-        :previewMode="false"
-      />
-      <div class="sticky-column">
-        <div class="desktop">
-          <add-to-cart-button
-            v-if="shouldShowCartInput && hasContributeBtn()"
-            :project="project"
-          />
-          <claim-button :project="project" :roundAddress="roundAddress" />
-          <p
-            v-if="
-              $store.getters.hasUserContributed &&
-              !$store.getters.canUserReallocate
-            "
-          >
-            ✔️ {{ $t('project.p') }}
-          </p>
-        </div>
-        <link-box :project="project" />
+  <div v-if="project" :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`">
+    <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name" />
+    <project-profile class="details" :project="project" :preview-mode="false" />
+    <div class="sticky-column">
+      <div class="desktop">
+        <add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn" :project="project" />
+        <claim-button :project="project" />
+        <p v-if="hasUserContributed && !canUserReallocate">✔️ You have contributed to this project!</p>
       </div>
+      <link-box :project="project" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import type { FixedNumber } from 'ethers'
 
-import { Project } from '@/api/projects'
+import { type Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
 import { getCurrentRound } from '@/api/round'
 import Loader from '@/components/Loader.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
@@ -49,80 +25,61 @@ import AddToCartButton from '@/components/AddToCartButton.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
 import { markdown } from '@/utils/markdown'
-import { LOAD_ROUNDS } from '@/store/action-types'
 
-@Component({
-  metaInfo() {
-    return { title: (this as any).project?.name || '' }
-  },
-  components: { Loader, ProjectProfile, AddToCartButton, LinkBox, ClaimButton },
+import { useMeta } from 'vue-meta'
+import { storeToRefs } from 'pinia'
+import { useRoute, useRouter } from 'vue-router'
+import { useAppStore } from '@/stores'
+
+const route = useRoute()
+const router = useRouter()
+const appStore = useAppStore()
+const { showCartPanel, isRoundContributionPhase, canUserReallocate, hasUserContributed } = storeToRefs(appStore)
+
+const project = ref<Project | null>(null)
+const allocatedAmount = ref<FixedNumber | null>(null)
+const claimed = ref<boolean | null>(null)
+const isLoading = ref(true)
+const isCartToggledOpen = computed(() => showCartPanel)
+const isCurrentRound = computed(() => {
+  const roundAddress = (route.params.address as string) || appStore.currentRoundAddress
+  return appStore.isCurrentRound(roundAddress!)
 })
-export default class ProjectView extends Vue {
-  project: Project | null = null
-  isLoading = true
-  roundAddress = ''
 
-  async created() {
-    if (!!this.$route.params.address && !this.$route.params.id) {
-      // missing project id, redirect back to rounds
-      this.$router.push({ name: 'rounds', params: this.$route.params })
-      return
-    }
+const shouldShowCartInput = computed(
+  () => (isCurrentRound.value && isRoundContributionPhase.value) || canUserReallocate,
+)
+const hasContributeBtn = computed(() => isCurrentRound.value && project.value !== null && project.value.index !== 0)
+const descriptionHtml = computed(() => markdown.render(project.value?.description || ''))
 
-    //TODO: update to take factory address as a parameter, default to env. variable
-    const currentRoundAddress =
-      this.$store.state.currentRoundAddress || (await getCurrentRound())
+useMeta({
+  title: project.value?.name || '',
+})
 
-    this.roundAddress = this.$route.params.address || currentRoundAddress
-
-    if (!this.$store.state.rounds) {
-      await this.$store.dispatch(LOAD_ROUNDS)
-    }
-
-    const rounds = this.$store.state.rounds
-    const selectedRound = await rounds.getRound(this.roundAddress)
-    const project = selectedRound
-      ? await selectedRound.getProject(this.$route.params.id)
-      : null
-
-    if (project === null || project.isHidden) {
-      // Project not found
-      this.$router.push({ name: 'projects' })
-      return
-    } else {
-      this.project = project
-    }
-
-    this.isLoading = false
+onMounted(async () => {
+  if (!!route.params.address && !route.params.id) {
+    // missing project id, redirect back to rounds
+    router.push({ name: 'rounds', params: route.params })
+    return
   }
 
-  get isCartToggledOpen(): boolean {
-    return this.$store.state.showCartPanel
-  }
+  //TODO: update to take factory address as a parameter, default to env. variable
+  console.log('Project mounted', appStore.currentRoundAddress)
+  const currentRoundAddress = appStore.currentRoundAddress || (await getCurrentRound())
 
-  get isCurrentRound(): boolean {
-    const { currentRoundAddress } = this.$store.state
-    const roundAddress = this.$route.params.address || currentRoundAddress
-    return this.$store.getters.isCurrentRound(roundAddress)
-  }
+  const roundAddress = (route.params.address as string) || appStore.currentRoundAddress
 
-  get shouldShowCartInput(): boolean {
-    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
-    return (
-      (this.isCurrentRound && isRoundContributionPhase) || canUserReallocate
-    )
+  const registryAddress = await getRecipientRegistryAddress(roundAddress)
+  const _project = await getProject(registryAddress, route.params.id as string)
+  if (_project === null || _project.isHidden) {
+    // Project not found
+    router.push({ name: 'projects' })
+    return
+  } else {
+    project.value = _project
   }
-
-  hasContributeBtn(): boolean {
-    return (
-      this.isCurrentRound && this.project !== null && this.project.index !== 0
-    )
-  }
-
-  get descriptionHtml(): string {
-    return markdown.render(this.project?.description || '')
-  }
-}
+  isLoading.value = false
+})
 </script>
 
 <style scoped lang="scss">

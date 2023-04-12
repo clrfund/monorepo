@@ -1,96 +1,80 @@
 <template>
   <div id="banner" class="caps">
     <div class="marquee-content">
-      <div v-if="$store.getters.isJoinOnlyPhase" class="messsage">
-        <span class="label">{{
-          $t('roundStatusBanner.span1', { startDate: startDate })
-        }}</span>
-        <span v-if="$store.getters.isRecipientRegistryFull" class="label">
-          {{ $t('roundStatusBanner.span2') }}</span
-        >
-        <span v-if="$store.getters.isRecipientRegistryFillingUp" class="label">
-          {{
-            $t('roundStatusBanner.span3', {
-              recipientSpacesRemainingString: recipientSpacesRemainingString,
-            })
-          }}
+      <div v-if="isJoinOnlyPhase" class="messsage">
+        <span class="label">Funding starts 🗓 {{ startDate }}.</span>
+        <span v-if="isRecipientRegistryFull" class="label"> Project applications are closed.</span>
+        <span v-if="isRecipientRegistryFillingUp" class="label">
+          Hurry, only {{ recipientSpacesRemainingString }} left!
         </span>
-        <span v-if="!$store.getters.isRecipientRegistryFull" class="label">
-          {{ $t('roundStatusBanner.span4') }}
-          <time-left
-            unitClass="none"
-            valueClass="none"
-            :date="$store.getters.recipientJoinDeadline"
-          />
+        <span v-if="!isRecipientRegistryFull" class="label">
+          Time left to add a project:
+          <time-left unit-class="none" value-class="none" :date="recipientJoinDeadline!" />
         </span>
       </div>
-      <div v-if="$store.getters.isRoundContributionPhase" class="messsage">
-        <span
-          v-if="$store.getters.isRoundContributionPhaseEnding"
-          class="label"
-        >
-          {{ $t('roundStatusBanner.span5_t1') }}
-          <time-left
-            unitClass="none"
-            valueClass="none"
-            :date="$store.state.currentRound.signUpDeadline"
-          />{{ $t('roundStatusBanner.span5_t2') }}
+      <div v-if="isRoundContributionPhase" class="messsage">
+        <span v-if="isRoundContributionPhaseEnding" class="label">
+          ⌛️ The round will close in
+          <time-left unit-class="none" value-class="none" :date="currentRound!.signUpDeadline" />. Get your
+          contributions in now!
         </span>
         <span v-else class="label"
-          >{{ $t('roundStatusBanner.span6_t1') }}
-          <time-left
-            unitClass="none"
-            valueClass="none"
-            :date="$store.state.currentRound.signUpDeadline"
-          />
-          {{ $t('roundStatusBanner.span6_t2') }}
+          >🎉 The round is open!
+          <time-left unit-class="none" value-class="none" :date="currentRound!.signUpDeadline" />
+          left to contribute to your favorite projects
         </span>
       </div>
-      <div v-if="$store.getters.isRoundReallocationPhase" class="messsage">
+      <div v-if="isRoundReallocationPhase" class="messsage">
         <span class="label">
-          {{ $t('roundStatusBanner.span7_t1') }}
-          <time-left
-            unitClass="none"
-            valueClass="none"
-            :date="$store.state.currentRound.votingDeadline"
-          />
-          {{ $t('roundStatusBanner.span7_t2') }}
+          Funding is closed! If you contributed, you have
+          <time-left unit-class="none" value-class="none" :date="currentRound!.votingDeadline" />
+          left to change your mind
         </span>
       </div>
-      <div v-if="$store.getters.isRoundTallying" class="messsage">
-        <span class="label">{{ $t('roundStatusBanner.span8') }} </span>
+      <div v-if="isRoundTallying" class="messsage">
+        <span class="label">🎉 Funding is closed! Our smart contracts are busy tallying contributions... </span>
       </div>
-      <div v-if="$store.getters.isRoundFinalized" class="messsage">
+      <div v-if="isRoundFinalized" class="messsage">
         <span class="label"
-          >{{ $t('roundStatusBanner.span9') }}
-          <links to="/projects">{{
-            $t('roundStatusBanner.link1')
-          }}</links></span
+          >Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds.
+          <links to="/projects">View projects</links></span
         >
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+<script setup lang="ts">
+import { computed } from 'vue'
 
 import { formatDate } from '@/utils/dates'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
+import { useAppStore } from '@/stores/app'
+import { storeToRefs } from 'pinia'
 
-@Component({ components: { TimeLeft, Links } })
-export default class RoundStatusBanner extends Vue {
-  get startDate(): string {
-    return formatDate(this.$store.state.currentRound?.startTime)
-  }
+const appStore = useAppStore()
+const {
+  currentRound,
+  recipientSpacesRemaining,
+  recipientJoinDeadline,
+  isJoinOnlyPhase,
+  isRecipientRegistryFull,
+  isRecipientRegistryFillingUp,
+  isRoundContributionPhase,
+  isRoundContributionPhaseEnding,
+  isRoundReallocationPhase,
+  isRoundTallying,
+  isRoundFinalized,
+} = storeToRefs(appStore)
 
-  get recipientSpacesRemainingString(): string {
-    const spaces: number = this.$store.getters.recipientSpacesRemaining
-    return `${spaces} project space${spaces !== 1 && 's'}`
-  }
-}
+const startDate = computed(() => {
+  return formatDate(currentRound.value!.startTime)
+})
+const recipientSpacesRemainingString = computed(() => {
+  const spaces: number = recipientSpacesRemaining.value!
+  return `${spaces} project space${spaces !== 1 && 's'}`
+})
 </script>
 
 <style lang="scss" scoped>

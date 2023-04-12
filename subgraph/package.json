@@ -29,8 +29,8 @@
     "gen-uml": "graphqlviz https://api.thegraph.com/subgraphs/name/clrfund/clrfund | dot -Tpng -o subgraphUML.png"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.21.0",
-    "@graphprotocol/graph-ts": "0.20.0"
+    "@graphprotocol/graph-cli": "^0.46.1",
+    "@graphprotocol/graph-ts": "^0.29.3"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.34.0",

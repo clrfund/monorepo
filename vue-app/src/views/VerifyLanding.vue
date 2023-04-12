@@ -1,7 +1,7 @@
 @ -0,0 +1,36 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
+    <round-status-banner v-if="currentRound" />
     <loader v-if="loading" />
     <div v-if="!loading">
       <div class="gradient">
@@ -13,90 +13,68 @@
       <div class="content">
         <breadcrumbs />
         <div class="flex-title">
-          <h1>{{ $t('verifyLanding.h1') }}</h1>
+          <h1>Prove you’re only using one account</h1>
         </div>
-        <div class="subtitle">
-          {{ $t('verifyLanding.subtitle') }}
-        </div>
+        <div class="subtitle">We use BrightID to stop bots and cheaters, and make our funding more democratic.</div>
         <h2>
-          {{ $t('verifyLanding.h2') }}
+          What you'll need
+          <img
+            v-tooltip="{
+              content: `If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps`,
+              triggers: ['hover', 'click'],
+            }"
+            width="16"
+            src="@/assets/info.svg"
+            class="info-icon"
+          />
         </h2>
         <ul>
           <li>
-            {{ $t('verifyLanding.li1_t1') }}
-            <a
-              href="https://apps.apple.com/us/app/brightid/id1428946820"
-              target="_blank"
-            >
-              {{ $t('verifyLanding.li1_link1') }}</a
-            >
-            {{ $t('verifyLanding.li1_t2') }}
-            <a
-              href="https://play.google.com/store/apps/details?id=org.brightid"
-              target="_blank"
-              >{{ $t('verifyLanding.li1_link2') }}</a
-            >
+            BrightID – available on
+            <a href="https://apps.apple.com/us/app/brightid/id1428946820" target="_blank"> iOS</a>
+            or
+            <a href="https://play.google.com/store/apps/details?id=org.brightid" target="_blank">Android</a>
+            <ul>
+              <li><links to="/brightid/sponsor">Get sponsored</links></li>
+              <li><links to="/brightid">Get verified</links></li>
+            </ul>
           </li>
-          <li>
-            {{ $t('verifyLanding.join') }}
-            <links to="https://meet.brightid.org">{{
-              $t('verifyLanding.brightid_party_link')
-            }}</links>
-            {{ $t('verifyLanding.get_verified') }}
-          </li>
-          <li>
-            {{ $t('verifyLanding.li_wallet') }}
-            {{ $t('verifyLanding.unitap_gas_tokens')
-            }}<links to="https://unitap.app/">{{
-              $t('verifyLanding.unitap_link')
-            }}</links
-            >{{ $t('verifyLanding.unitap_extra_text') }}
-          </li>
+          <li>An Ethereum wallet, with enough gas for two transactions</li>
+          <li>Access to Zoom or Google Meet</li>
         </ul>
-        <links to="/about/sybil-resistance">{{
-          $t('verifyLanding.link1')
-        }}</links>
+        <links to="/about/sybil-resistance">Why is this important?</links>
         <div v-if="!hasRoundStarted" class="join-message">
-          {{ $t('verifyLanding.div1') }}
+          There's not yet an open funding round. Please check back later.
         </div>
         <div v-else-if="isRoundOver" class="warning-message">
-          {{ $t('verifyLanding.div2') }}
+          The current round is no longer accepting new contributions. Please try again next round.
         </div>
         <div v-else-if="isRoundFull" class="warning-message">
-          {{ $t('verifyLanding.div3') }}
+          Contributions closed early – you can no longer donate! Due to the community's generosity and some technical
+          constraints we had to close the round earlier than expected. If you already contributed, you still have time
+          to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the
+          matching pool
         </div>
         <div class="btn-container mt2">
           <div v-if="!isRoundOver">
-            <wallet-widget
-              v-if="!currentUser"
-              :isActionButton="true"
-              :fullWidthMobile="true"
-            />
-            <links
-              v-if="showBrightIdButton"
-              to="/verify/connect"
-              class="btn-primary"
-            >
-              {{ $t('verifyLanding.link2') }}
+            <wallet-widget v-if="!currentUser" :is-action-button="true" :full-width-mobile="true" />
+            <links v-if="showBrightIdButton" to="/verify/connect" class="btn-primary">
+              I have BrightID installed
             </links>
           </div>
-          <links to="/projects" class="btn-secondary">{{
-            $t('verifyLanding.link3')
-          }}</links>
+          <links to="/projects" class="btn-secondary">Go back</links>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import * as humanizeDuration from 'humanize-duration'
+<script setup lang="ts">
+import { onMounted, ref, computed } from 'vue'
+import humanizeDuration from 'humanize-duration'
 import { commify, formatUnits } from '@ethersproject/units'
 
 import { getCurrentRound } from '@/api/round'
-import { User } from '@/api/user'
 
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
 import Links from '@/components/Links.vue'
@@ -105,58 +83,35 @@ import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
+import { useAppStore, useUserStore } from '@/stores'
 
-@Component({
-  components: {
-    Breadcrumbs,
-    Links,
-    Loader,
-    ProgressBar,
-    RoundStatusBanner,
-    WalletWidget,
-    ImageResponsive,
-  },
+const appStore = useAppStore()
+const { isRoundContributorLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const loading = ref(true)
+const currentRound = ref<string | null>(null)
+
+onMounted(async () => {
+  currentRound.value = await getCurrentRound()
+  loading.value = false
 })
-export default class VerifyLanding extends Vue {
-  loading = true
-  currentRound: string | null = null
 
-  async created() {
-    this.currentRound = await getCurrentRound()
-    this.loading = false
+const balance = computed<string | null>(() => {
+  const balance = currentUser.value?.balance
+  if (balance === null || typeof balance === 'undefined') {
+    return null
   }
+  return commify(formatUnits(balance, 18))
+})
+const hasRoundStarted = computed(() => !!currentRound.value)
+const isRoundFull = computed(() => isRoundContributorLimitReached.value)
+const isRoundOver = computed(() => hasContributionPhaseEnded.value)
+const showBrightIdButton = computed(() => currentUser.value?.isRegistered === false)
 
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
-
-  get balance(): string | null {
-    const balance = this.currentUser?.balance
-    if (balance === null || typeof balance === 'undefined') {
-      return null
-    }
-    return commify(formatUnits(balance, 18))
-  }
-
-  get hasRoundStarted(): boolean {
-    return !!this.currentRound
-  }
-
-  get isRoundFull(): boolean {
-    return this.$store.getters.isRoundContributorLimitReached
-  }
-
-  get isRoundOver(): boolean {
-    return this.$store.getters.hasContributionPhaseEnded
-  }
-
-  get showBrightIdButton(): boolean {
-    return this.currentUser?.isRegistered === false
-  }
-
-  formatDuration(value: number): string {
-    return humanizeDuration(value * 1000, { largest: 1 })
-  }
+function formatDuration(value: number): string {
+  return humanizeDuration(value * 1000, { largest: 1 })
 }
 </script>
 

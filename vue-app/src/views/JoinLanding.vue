@@ -11,148 +11,103 @@
     <div class="breadcrumbs">
       <breadcrumbs />
     </div>
-    <div class="content" v-if="loading">
-      <h1>{{ $t('joinLanding.loading') }}</h1>
+    <div v-if="loading" class="content">
+      <h1>Fetching round data...</h1>
       <loader />
     </div>
 
-    <div class="content" v-else-if="$store.getters.hasContributionPhaseEnded">
+    <div v-else-if="hasContributionPhaseEnded" class="content">
       <div class="big-emoji">☹</div>
-      <h1>{{ $t('joinLanding.closed.h1') }}</h1>
-      <div id="subtitle" class="subtitle">
-        {{ $t('joinLanding.closed.subtitle1') }}
-      </div>
-      <div class="subtitle mt2" id="subtitle">
-        {{ $t('joinLanding.check_out_these') }}
-        <links to="https://ethereum.org/en/community/grants/">{{
-          $t('joinLanding.other_ways_to_source_funding')
-        }}</links
-        >{{ $t('joinLanding.or_follow_us_on_twitter') }}
+      <h1>Sorry, it's too late to join</h1>
+      <div id="subtitle" class="subtitle">The round is closed for new projects. It's now too late to get on board.</div>
+      <div id="subtitle" class="subtitle mt2">
+        Check out these
+        <links to="https://ethereum.org/en/community/grants/">other ways to source funding</links>. Or follow us on
+        Twitter for updates about future rounds:
         <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
-        <links to="/" class="btn-primary">{{ $t('home') }}</links>
+        <links to="/" class="btn-primary">Home</links>
       </div>
     </div>
 
-    <div class="content" v-else-if="isRoundFull">
+    <div v-else-if="isRoundFull" class="content">
       <div class="big-emoji">☹</div>
-      <h1>{{ $t('joinLanding.full.h1') }}</h1>
+      <h1>Sorry, the round is full</h1>
       <div id="subtitle" class="subtitle">
-        {{ $t('joinLanding.full.subtitle1') }}
+        The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now.
+        Unfortunately we've hit the cap and there's no more room on board.
       </div>
-      <div class="subtitle mt2" id="subtitle">
-        {{ $t('joinLanding.check_out_these') }}
-        <links to="https://ethereum.org/en/community/grants/">{{
-          $t('joinLanding.other_ways_to_source_funding')
-        }}</links
-        >{{ $t('joinLanding.or_follow_us_on_twitter') }}
+      <div id="subtitle" class="subtitle mt2">
+        Check out these
+        <links to="https://ethereum.org/en/community/grants/">other ways to source funding</links>. Or follow us on
+        Twitter for updates about future rounds:
         <links to="https://twitter.com/clrfund">@clrfund</links>
       </div>
       <div class="btn-container">
-        <links to="/" class="btn-primary">{{ $t('home') }}</links>
-        <links to="/about" class="btn-secondary">{{
-          $t('more_on_maci')
-        }}</links>
+        <links to="/" class="btn-primary">Home</links>
+        <links to="/about" class="btn-secondary">More on MACI</links>
       </div>
     </div>
 
-    <div class="content" v-else-if="$store.state.currentRound">
-      <h1>{{ $t('joinLanding.open.h1') }}</h1>
+    <div v-else-if="appStore.currentRound" class="content">
+      <h1>Join the funding round</h1>
       <div class="subtitle">
-        {{ $t('joinLanding.need_info_about_your_project') }}
-        <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong
-        >{{ $t('joinLanding.security_deposit') }}
+        We’ll need some information about your project and a
+        <strong>{{ formatAmount(deposit!) }} {{ depositToken }}</strong> security deposit.
       </div>
       <div class="subtitle mt2">
-        {{
-          $t('joinLanding.cap_on_projects', {
-            maxRecipients: maxRecipients,
-          })
-        }}
+        The round only accepts a total of {{ maxRecipients }} projects, so apply now while there’s still room!
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
-          <div class="countdown-label caps">
-            {{ $t('joinLanding.open.div1') }}
-          </div>
+          <div class="countdown-label caps">Time left to join</div>
           <div class="countdown caps">
-            <time-left
-              valueClass="none"
-              unitClass="none"
-              :date="signUpDeadline"
-            />
+            <time-left value-class="none" unit-class="none" :date="signUpDeadline!" />
           </div>
         </div>
         <div class="apply-callout">
-          <div class="countdown-label caps">
-            {{ $t('joinLanding.time_to_complete') }}
-          </div>
-          <div class="countdown-label caps">
-            {{ $t('joinLanding.15_minutes_ish') }}
-          </div>
+          <div class="countdown-label caps">Time to complete</div>
+          <div class="countdown caps">15 minutes (ish)</div>
         </div>
         <div v-if="isRoundFillingUp" class="apply-callout-warning">
           <div class="filling-up-container">
-            <div class="countdown caps">
-              {{
-                $t('joinLanding.open.div4', {
-                  spacesRemainingString: spacesRemainingString,
-                })
-              }}
-            </div>
+            <div class="countdown caps">{{ spacesRemainingString }} left, hurry!</div>
             <div class="dropdown">
-              <img class="icon" @click="openTooltip" src="@/assets/info.svg" />
+              <img class="icon" src="@/assets/info.svg" @click="openTooltip" />
               <div id="myTooltip" class="hidden button-menu">
-                {{ $t('joinLanding.open.div5') }}
-                <links to="/about/maci">{{ $t('more_on_maci') }}</links>
+                MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.
+                <links to="/about/maci">More on MACI</links>
               </div>
             </div>
           </div>
-          <p class="warning-text">
-            {{ $t('joinLanding.open.p1') }}
-          </p>
+          <p class="warning-text">You will get your deposit back if you don’t make it into the round this time.</p>
         </div>
       </div>
       <div class="btn-container">
-        <button class="btn-secondary" @click="toggleCriteria">
-          {{ $t('joinLanding.see_round_criteria') }}
-        </button>
-        <links to="/join/project" class="btn-primary">{{
-          $t('add_project')
-        }}</links>
+        <button class="btn-secondary" @click="toggleCriteria">See round criteria</button>
+        <links to="/join/project" class="btn-primary">Add project</links>
       </div>
     </div>
 
-    <div class="content" v-else>
-      <h1>{{ $t('joinLanding.join.h1') }}</h1>
+    <div v-else class="content">
+      <h1>Join the next funding round</h1>
       <div class="subtitle">
-        {{ $t('joinLanding.need_info_about_your_project') }}
-        <strong>{{ formatAmount(deposit) }} {{ depositToken }}</strong
-        >{{ $t('joinLanding.security_deposit') }}
+        We’ll need some information about your project and a
+        <strong>{{ formatAmount(deposit!) }} {{ depositToken }}</strong> security deposit.
       </div>
       <div class="subtitle mt2">
-        {{
-          $t('joinLanding.cap_on_projects', { maxRecipients: maxRecipients })
-        }}
+        The round only accepts a total of {{ maxRecipients }} projects, so apply now while there’s still room!
       </div>
       <div class="info-boxes">
         <div class="apply-callout">
-          <div class="countdown-label caps">
-            {{ $t('joinLanding.time_to_complete') }}
-          </div>
-          <div class="countdown caps">
-            {{ $t('joinLanding.15_minutes_ish') }}
-          </div>
+          <div class="countdown-label caps">Time to complete</div>
+          <div class="countdown caps">15 minutes (ish)</div>
         </div>
       </div>
       <div class="btn-container">
-        <button class="btn-secondary" @click="toggleCriteria">
-          {{ $t('joinLanding.see_round_criteria') }}
-        </button>
-        <links to="/join/project" class="btn-primary">{{
-          $t('add_project')
-        }}</links>
+        <button class="btn-secondary" @click="toggleCriteria">See round criteria</button>
+        <links to="/join/project" class="btn-primary">Add project</links>
       </div>
     </div>
 
@@ -160,13 +115,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 import { DateTime } from 'luxon'
-import { BigNumber } from 'ethers'
+import type { BigNumber } from 'ethers'
 
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import type { RegistryInfo } from '@/api/recipient-registry-optimistic'
 import Loader from '@/components/Loader.vue'
 import CriteriaModal from '@/components/CriteriaModal.vue'
 import Breadcrumbs from '@/components/Breadcrumbs.vue'
@@ -176,101 +130,69 @@ import TimeLeft from '@/components/TimeLeft.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
 import { getCurrentRound } from '@/api/round'
-import { formatAmount } from '@/utils/amounts'
+import { formatAmount as _formatAmount } from '@/utils/amounts'
+import { useAppStore, useRecipientStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({
-  components: {
-    RoundStatusBanner,
-    CriteriaModal,
-    Loader,
-    Links,
-    TimeLeft,
-    ImageResponsive,
-    Breadcrumbs,
-  },
+const appStore = useAppStore()
+const { maxRecipients, isMessageLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
+const recipientStore = useRecipientStore()
+const { recipientRegistryInfo } = storeToRefs(recipientStore)
+
+const currentRound = ref<string | null>(null)
+const loading = ref(true)
+const showCriteriaPanel = ref(false)
+
+const links = computed<Array<{ link: string; url: string }>>(() => [{ link: 'join', url: '/join' }])
+
+const registryInfo = computed<RegistryInfo | null>(() => recipientRegistryInfo.value)
+
+const deposit = computed<BigNumber | null>(() => registryInfo.value?.deposit || null)
+const depositToken = computed<string | null>(() => registryInfo.value?.depositToken || null)
+const recipientCount = computed(() => registryInfo.value?.recipientCount || null)
+const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
+const spacesRemaining = computed(() => {
+  // eslint-disable-next-line
+  if (!appStore.currentRound || !registryInfo.value) {
+    return null
+  }
+  return appStore.currentRound.maxRecipients - registryInfo.value.recipientCount
 })
-export default class JoinLanding extends Vue {
-  currentRound: string | null = null
-  loading = true
-  showCriteriaPanel = false
 
-  get links(): Array<{ link: string; url: string }> {
-    return [{ link: 'join', url: '/join' }]
+const isRoundFull = computed(() => {
+  if (spacesRemaining.value === null) {
+    return false
   }
+  return spacesRemaining.value === 0 || isMessageLimitReached.value
+})
 
-  async created() {
-    this.currentRound = await getCurrentRound()
-    this.loading = false
+const isRoundFillingUp = computed(() => {
+  if (spacesRemaining.value === null) {
+    return false
   }
+  return spacesRemaining.value < 20
+})
 
-  get registryInfo(): RegistryInfo {
-    return this.$store.state.recipientRegistryInfo
-  }
+const spacesRemainingString = computed(() =>
+  spacesRemaining.value === 1 ? '1 space' : `${spacesRemaining.value} spaces`,
+)
 
-  get deposit(): BigNumber | null {
-    return this.registryInfo?.deposit
-  }
+onMounted(async () => {
+  currentRound.value = await getCurrentRound()
+  loading.value = false
+})
 
-  get depositToken(): string | null {
-    return this.registryInfo?.depositToken
-  }
+function openTooltip(): void {
+  document.getElementById('myTooltip')?.classList.toggle('hidden')
+}
 
-  get recipientCount(): number | null {
-    return this.registryInfo?.recipientCount
-  }
+function toggleCriteria(): void {
+  showCriteriaPanel.value = !showCriteriaPanel.value
+}
 
-  private get signUpDeadline(): DateTime {
-    return this.$store.state.currentRound?.signUpDeadline
-  }
-
-  get maxRecipients(): number | undefined {
-    return this.$store.getters.maxRecipients
-  }
-
-  get spacesRemaining(): number | null {
-    if (!this.$store.state.currentRound || !this.registryInfo) {
-      return null
-    }
-    return (
-      this.$store.state.currentRound.maxRecipients -
-      this.registryInfo.recipientCount
-    )
-  }
-
-  get isRoundFull(): boolean {
-    if (this.spacesRemaining === null) {
-      return false
-    }
-    return (
-      this.spacesRemaining === 0 || this.$store.getters.isMessageLimitReached
-    )
-  }
-
-  get isRoundFillingUp(): boolean {
-    if (this.spacesRemaining === null) {
-      return false
-    }
-    return this.spacesRemaining < 20
-  }
-
-  get spacesRemainingString(): string {
-    return this.spacesRemaining === 1
-      ? '1 space'
-      : `${this.spacesRemaining} spaces`
-  }
-
-  openTooltip(): void {
-    document.getElementById('myTooltip')?.classList.toggle('hidden')
-  }
-
-  toggleCriteria(): void {
-    this.showCriteriaPanel = !this.showCriteriaPanel
-  }
-
-  formatAmount(value: BigNumber): string {
-    if (!value) return ''
-    return formatAmount(value, 18)
-  }
+function formatAmount(value?: BigNumber): string {
+  if (!value) return ''
+  return _formatAmount(value, 18)
 }
 </script>
 

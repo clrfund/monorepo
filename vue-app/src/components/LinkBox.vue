@@ -1,13 +1,13 @@
 <template>
-  <div v-if="haveLink" class="link-box">
-    <h2 class="link-title">{{ $t('linkBox.h2') }}</h2>
+  <div class="link-box">
+    <h2 class="link-title">Check them out</h2>
     <div v-if="project.githubUrl" class="link-row">
       <img src="@/assets/GitHub.svg" />
-      <links :to="project.githubUrl">{{ $t('linkBox.link1') }}</links>
+      <links :to="project.githubUrl">GitHub repo</links>
     </div>
     <div v-if="project.twitterUrl" class="link-row">
       <img src="@/assets/Twitter.svg" />
-      <links :to="project.twitterUrl">{{ $t('linkBox.link2') }}</links>
+      <links :to="project.twitterUrl">@Twitter</links>
     </div>
     <div v-if="project.websiteUrl" class="link-row">
       <img src="@/assets/Meridians.svg" />
@@ -16,25 +16,15 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { Project } from '@/api/projects'
+<script setup lang="ts">
+import type { Project } from '@/api/projects'
 import Links from '@/components/Links.vue'
 
-@Component({ components: { Links } })
-export default class extends Vue {
-  @Prop() project!: Project
-
-  get haveLink(): boolean {
-    return Boolean(
-      this.project.websiteUrl ||
-        this.project.twitterUrl ||
-        this.project.githubUrl
-    )
-  }
+interface Props {
+  project: Project
 }
+
+defineProps<Props>()
 </script>
 
 <style scoped lang="scss">

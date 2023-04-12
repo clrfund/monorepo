@@ -8,64 +8,42 @@
     <div class="dropshadow">
       <div class="content">
         <span class="contributed-icon">🎉</span>
-        <p
-          v-if="$route.params.type === 'reallocation'"
-          class="contributed-header"
-        >
-          {{ formatContribution() }}
-          {{ currentRound.nativeTokenSymbol }} {{ $t('transactionSuccess.p1') }}
+        <p v-if="$route.params.type === 'reallocation'" class="contributed-header">
+          {{ formatContribution }}
+          {{ currentRound?.nativeTokenSymbol }} reallocated!
         </p>
-        <p
-          v-else-if="$route.params.type === 'contribution'"
-          class="contributed-header"
-        >
-          {{ $t('transactionSuccess.p2') }}
-        </p>
+        <p v-else-if="$route.params.type === 'contribution'" class="contributed-header">You just contributed!</p>
         <div>
-          <p
-            v-if="$route.params.type === 'reallocation'"
-            class="contributed-content"
-          >
-            {{ $t('transactionSuccess.p3') }}
+          <p v-if="$route.params.type === 'reallocation'" class="contributed-content">
+            Your choices have been updated! You can update your choices again any time in the next
             <time-left
-              valueClass="contributed-content-bold"
-              unitClass="contributed-content-bold"
-              :date="currentRound.votingDeadline"
-            />
-            {{ $t('transactionSuccess.p4') }}
+              value-class="contributed-content-bold"
+              unit-class="contributed-content-bold"
+              :date="currentRound?.votingDeadline!"
+            />.
           </p>
-          <p
-            v-else-if="$route.params.type === 'contribution'"
-            class="contributed-content"
-          >
-            {{ $t('transactionSuccess.p4_t1') }}
+          <p v-else-if="$route.params.type === 'contribution'" class="contributed-content">
+            Thanks for contributing to the Ethereum ecosystem. If you change your mind, you have
             <time-left
-              valueClass="contributed-content-bold"
-              unitClass="contributed-content-bold"
-              :date="currentRound.votingDeadline"
+              value-class="contributed-content-bold"
+              unit-class="contributed-content-bold"
+              :date="currentRound?.votingDeadline!"
             />
-            {{ $t('transactionSuccess.p4_t2') }}
+            to reallocate your contributions.
           </p>
-          <div class="receipt" v-if="$route.params.hash">
-            <transaction-receipt :hash="$route.params.hash" />
+          <div v-if="hash" class="receipt">
+            <transaction-receipt :hash="hash" />
           </div>
-          <div class="btn-info" @click="redirectToProjects()">
-            {{ $t('transactionSuccess.btn') }}
-          </div>
+          <div class="btn-info" @click="redirectToProjects()">OK</div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // Libraries
-import { BigNumber } from 'ethers'
-import Vue from 'vue'
-import Component from 'vue-class-component'
-
-// API
-import { RoundInfo } from '@/api/round'
+import { computed } from 'vue'
 
 // Components
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
@@ -74,26 +52,19 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 
 // Utils
 import { formatAmount } from '@/utils/amounts'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
-@Component({
-  components: { TransactionReceipt, TimeLeft, ImageResponsive },
-})
-export default class TransactionSuccess extends Vue {
-  get contribution(): BigNumber | null {
-    return this.$store.state.contribution
-  }
+const route = useRoute()
+const router = useRouter()
+const appStore = useAppStore()
+const { contribution, currentRound } = storeToRefs(appStore)
 
-  get currentRound(): RoundInfo | null {
-    return this.$store.state.currentRound
-  }
-
-  formatContribution() {
-    return this.contribution ? formatAmount(this.contribution, 18) : ''
-  }
-
-  redirectToProjects() {
-    this.$router.push({ name: 'projects' })
-  }
+const formatContribution = computed(() => (contribution.value ? formatAmount(contribution.value, 18) : ''))
+const hash = computed(() => route.params.hash as string)
+function redirectToProjects() {
+  router.push({ name: 'projects' })
 }
 </script>
 

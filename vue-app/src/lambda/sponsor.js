@@ -1,8 +1,7 @@
 import { utils } from 'ethers'
 import nacl from 'tweetnacl'
 
-const NODE_URL =
-  process.env.VUE_APP_BRIGHTID_NODE_URL || 'https://app.brightid.org/node/v6'
+const NODE_URL = process.env.VUE_APP_BRIGHTID_NODE_URL || 'https://app.brightid.org/node/v6'
 
 /**
  *  Returns an error object
@@ -45,15 +44,12 @@ async function unusedSponsorships(context) {
 
 async function handleSponsorRequest(userAddress) {
   const endpoint = process.env.VUE_APP_BRIGHTID_SPONSOR_API_URL
-  const brightIdSponsorKey =
-    process.env.VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY
+  const brightIdSponsorKey = process.env.VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY
 
   const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT
 
   if (!brightIdSponsorKey) {
-    throw new Error(
-      'Environment variable VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY not set'
-    )
+    throw new Error('Environment variable VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY not set')
   }
 
   const sponsorships = await unusedSponsorships(CONTEXT)

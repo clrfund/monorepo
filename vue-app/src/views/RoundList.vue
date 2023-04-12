@@ -1,39 +1,25 @@
 <template>
   <div class="rounds">
-    <h1 class="content-heading">{{ $t('roundList.h1') }}</h1>
-    <div class="round" v-for="round in rounds" :key="round.index">
-      <links
-        class="round-name"
-        :to="{
-          name: 'leaderboard',
-          params: { address: round.address },
-        }"
-      >
-        {{ $t('roundList.link1', { index: round.index }) }}
+    <h1 class="content-heading">Rounds</h1>
+    <div v-for="round in rounds" :key="round.index" class="round">
+      <links v-if="round.address" class="round-name" :to="{ name: 'round', params: { address: round.address } }">
+        Round {{ round.index }}
       </links>
+      <links v-else :to="round.url ? round.url : ''"> Round {{ round.index }} </links>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-
-import { Round } from '@/api/rounds'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { type Round, getRounds } from '@/api/rounds'
 import Links from '@/components/Links.vue'
-import { LOAD_ROUNDS } from '@/store/action-types'
 
-@Component({ components: { Links } })
-export default class RoundList extends Vue {
-  rounds: Round[] = []
+const rounds = ref<Round[]>([])
 
-  async created() {
-    if (!this.$store.state.rounds) {
-      await this.$store.dispatch(LOAD_ROUNDS)
-    }
-    this.rounds = this.$store.state.rounds.list().reverse()
-  }
-}
+onMounted(async () => {
+  rounds.value = (await getRounds()).reverse()
+})
 </script>
 
 <style scoped lang="scss">

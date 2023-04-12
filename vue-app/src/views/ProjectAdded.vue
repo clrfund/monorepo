@@ -1,6 +1,6 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
+    <round-status-banner v-if="currentRound" />
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
@@ -8,29 +8,21 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>{{ $t('projectAdded.h1') }}</h1>
-            <transaction-receipt :hash="$route.params.hash" />
+            <h1>Project submitted!</h1>
+            <transaction-receipt :hash="hash" />
           </div>
-          <div class="subtitle">{{ $t('projectAdded.div1') }}</div>
+          <div class="subtitle">You’re almost on board this funding round.</div>
           <ul>
             <li>
-              {{ $t('projectAdded.li1') }}
-              <links to="/about/how-it-works/recipients">{{
-                $t('projectAdded.link1')
-              }}</links>
+              Your project just needs to go through some final checks to ensure it meets round criteria. You can
+              <links to="/about/how-it-works/recipients">learn more about the registration process here</links>.
             </li>
-            <li>{{ $t('projectAdded.li2') }}</li>
-            <li>
-              {{ $t('projectAdded.li3') }}
-            </li>
+            <li>Once that's complete, your project page will go live.</li>
+            <li>If your project fails any checks, we'll let you know by email and return your deposit.</li>
           </ul>
           <div class="mt2 button-spacing">
-            <links :to="recipientProfileUrl" class="btn-primary">{{
-              $t('projectAdded.link2')
-            }}</links>
-            <links to="/" class="btn-secondary">{{
-              $t('projectAdded.link3')
-            }}</links>
+            <links to="/projects" class="btn-primary">View projects</links>
+            <links to="/" class="btn-secondary">Go home</links>
           </div>
         </div>
       </div>
@@ -38,10 +30,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import * as humanizeDuration from 'humanize-duration'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import humanizeDuration from 'humanize-duration'
 
 import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
@@ -50,36 +41,24 @@ import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import type { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { chain } from '@/api/core'
+import { useAppStore, useRecipientStore } from '@/stores'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
 
-@Component({
-  components: {
-    ProgressBar,
-    RoundStatusBanner,
-    TransactionReceipt,
-    Warning,
-    Links,
-    ImageResponsive,
-  },
-})
-export default class ProjectAdded extends Vue {
-  challengePeriodDuration: number | null = null
+const route = useRoute()
+const appStore = useAppStore()
+const recipientStore = useRecipientStore()
+const { currentRound } = storeToRefs(appStore)
+const challengePeriodDuration = ref<number | null>(null)
+const registryInfo = computed(() => recipientStore.recipientRegistryInfo)
+const blockExplorerUrl = computed(() => `${chain.explorer}/tx/${route.params.txHash}`)
+const hash = computed(() => route.params.hash as string)
+challengePeriodDuration.value = registryInfo.value?.challengePeriodDuration || null
 
-  async created() {
-    this.challengePeriodDuration = this.registryInfo.challengePeriodDuration
-  }
-
-  get registryInfo(): RegistryInfo {
-    return this.$store.state.recipientRegistryInfo
-  }
-
-  get recipientProfileUrl(): string {
-    return `/recipients/${this.$route.params.hash}`
-  }
-
-  formatDuration(seconds: number): string {
-    return humanizeDuration(seconds * 1000, { largest: 1 })
-  }
+function formatDuration(seconds: number): string {
+  return humanizeDuration(seconds * 1000, { largest: 1 })
 }
 </script>
 

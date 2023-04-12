@@ -3,10 +3,7 @@
     <div class="grid">
       <div class="progress-area desktop">
         <div class="progress-container">
-          <progress-bar
-            :currentStep="currentStep + 1"
-            :totalSteps="steps.length"
-          />
+          <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
           <p class="subtitle">
             {{
               $t('verify.subtitle', {
@@ -16,51 +13,25 @@
             }}
           </p>
           <div class="progress-steps">
-            <div
-              v-for="(step, stepIndex) in steps"
-              :key="step.page"
-              class="progress-step"
-            >
+            <div v-for="(step, stepIndex) in steps" :key="step.page" class="progress-step">
               <template v-if="stepIndex === currentStep">
-                <img
-                  class="current-step"
-                  src="@/assets/current-step.svg"
-                  alt="current step"
-                />
-                <p
-                  v-text="$t(`dynamic.verify.step.${step.page}`)"
-                  class="active step"
-                />
+                <img class="current-step" src="@/assets/current-step.svg" alt="current step" />
+                <p v-text="$t(`dynamic.verify.step.${step.page}`)" class="active step" />
               </template>
-              <template
-                v-else-if="isStepUnlocked(stepIndex) && isStepValid(stepIndex)"
-              >
+              <template v-else-if="isStepUnlocked(stepIndex) && isStepValid(stepIndex)">
                 <img src="@/assets/green-tick.svg" alt="step complete" />
-                <p
-                  v-text="$t(`dynamic.verify.step.${step.page}`)"
-                  class="step"
-                />
+                <p v-text="$t(`dynamic.verify.step.${step.page}`)" class="step" />
               </template>
               <template v-else>
-                <img
-                  class="remaining-step"
-                  src="@/assets/step-remaining.svg"
-                  alt="step remaining"
-                />
-                <p
-                  v-text="$t(`dynamic.verify.step.${step.page}`)"
-                  class="step"
-                />
+                <img class="remaining-step" src="@/assets/step-remaining.svg" alt="step remaining" />
+                <p v-text="$t(`dynamic.verify.step.${step.page}`)" class="step" />
               </template>
             </div>
           </div>
         </div>
       </div>
       <div class="progress-area mobile">
-        <progress-bar
-          :currentStep="currentStep + 1"
-          :totalSteps="steps.length"
-        />
+        <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
         <div class="row">
           <p>
             {{
@@ -101,11 +72,7 @@
                   >
                     {{ $t('verify.get_sponsored_cta') }}
                   </button>
-                  <button
-                    type="button"
-                    class="btn-secondary btn-block"
-                    @click="skipSponsorship"
-                  >
+                  <button type="button" class="btn-secondary btn-block" @click="skipSponsorship">
                     {{ $t('verify.skip_sponsorship') }}
                   </button>
                 </div>
@@ -147,11 +114,7 @@
                   </links>
                   <div class="copy-container">
                     <div>Copy link</div>
-                    <copy-button
-                      :value="appLink"
-                      text="link"
-                      myClass="inline copy-icon"
-                    />
+                    <copy-button :value="appLink" text="link" myClass="inline copy-icon" />
                   </div>
                 </div>
                 <p class="mobile">
@@ -168,11 +131,7 @@
                   >
                     {{ $t('verify.previous') }}
                   </button>
-                  <button
-                    type="button"
-                    class="btn-secondary btn-block"
-                    @click="checkVerificationStatus"
-                  >
+                  <button type="button" class="btn-secondary btn-block" @click="checkVerificationStatus">
                     {{ $t('verify.next') }}
                   </button>
                 </div>
@@ -210,256 +169,151 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Watch } from 'vue-property-decorator'
+<script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
-import {
-  getBrightIdLink,
-  getBrightIdUniversalLink,
-  registerUser,
-  sponsorUser,
-  selfSponsor,
-  BrightId,
-} from '@/api/bright-id'
-import { User } from '@/api/user'
+import { getBrightIdLink, getBrightIdUniversalLink, registerUser } from '@/api/bright-id'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
-import CopyButton from '@/components/CopyButton.vue'
-import { LOAD_USER_INFO, LOAD_BRIGHT_ID } from '@/store/action-types'
 import { waitForTransaction } from '@/utils/contracts'
-import { brightIdSponsorUrl } from '@/api/core'
+import { useAppStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
 interface BrightIDStep {
-  page: 'sponsorship' | 'connect' | 'registration'
+  page: 'connect' | 'registration'
   name: string
 }
+const router = useRouter()
+const appStore = useAppStore()
 
-const pages: Array<BrightIDStep> = [
-  { page: 'sponsorship', name: 'Sponsorship' },
+// state
+const { hasContributionPhaseEnded, userRegistryAddress } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const steps = ref<Array<BrightIDStep>>([
   { page: 'connect', name: 'Connect' },
   { page: 'registration', name: 'Get registered' },
-]
+])
+const appLink = ref('')
+const appLinkQrCode = ref('')
+const registrationTxHash = ref('')
+const registrationTxError = ref('')
+const loadingTx = ref(false)
 
-@Component({
-  components: {
-    ProgressBar,
-    Transaction,
-    Loader,
-    Links,
-    CopyButton,
-  },
+const brightId = computed(() => currentUser.value?.brightId)
+
+const currentStep = computed(() => {
+  if (!brightId.value || !brightId.value.isVerified) {
+    return 0
+  }
+
+  if (!currentUser.value?.isRegistered) {
+    return 1
+  }
+
+  // This means the user is registered
+  return -1
 })
-export default class VerifyView extends Vue {
-  steps = brightIdSponsorUrl
-    ? pages.filter((p) => p.page !== 'sponsorship')
-    : pages
 
-  stepNumbers: { [key: string]: number } = {}
-
-  appLink = ''
-  appLinkQrCode = ''
-
-  registrationTxHash = ''
-  registrationTxError = ''
-
-  isSponsoring = !brightIdSponsorUrl
-  sponsorTxHash = ''
-  sponsorTxError = ''
-
-  loadingTx = false
-  showVerificationStatus = false
-  autoSponsorError = ''
-
-  get currentUser(): User {
-    return this.$store.state.currentUser
+onMounted(async () => {
+  // created
+  if (!currentUser.value?.walletAddress || hasContributionPhaseEnded.value) {
+    router.replace({ name: 'verify' })
   }
 
-  get brightId(): BrightId | undefined {
-    return this.currentUser?.brightId
+  // make sure BrightId status is availabel before page load
+  await userStore.loadBrightID()
+
+  // redirect to the verify success page if the user is registered
+  if (currentStep.value < 0) {
+    router.replace({ name: 'verified' })
   }
 
-  get currentStep(): number {
-    if (!this.brightId) {
-      return 0
-    }
-
-    if (this.isSponsoring) {
-      return this.stepNumbers['sponsorship']
-    }
-
-    if (!this.brightId.isVerified) {
-      return this.stepNumbers['connect']
-    }
-
-    if (!this.currentUser?.isRegistered) {
-      return this.stepNumbers['registration']
-    }
-
-    // This means the user is registered
-    return -1
-  }
-
-  get currentPage(): string {
-    return this.steps[this.currentStep]?.page || ''
-  }
-
-  get showBackToSponsorshipButton(): boolean {
-    // if the sponsor url is not defined, we are doing self sponsorship, show the button
-    // to allow users to go back to that page
-    return !brightIdSponsorUrl
-  }
-
-  backToSponsorship() {
-    this.isSponsoring = true
-    this.showVerificationStatus = false
-  }
-
-  skipSponsorship() {
-    this.isSponsoring = false
-  }
-
-  async created() {
-    if (
-      !this.currentUser?.walletAddress ||
-      this.$store.getters.hasContributionPhaseEnded
-    ) {
-      this.$router.replace({ name: 'verify' })
-    }
-
-    this.stepNumbers = this.steps.reduce((res, step, index) => {
-      res[step.page] = index
-      return res
-    }, {})
-
-    // make sure BrightId status is availabel before page load
-    await this.loadBrightId()
-
-    // redirect to the verify success page if the user is registered
-    if (this.currentStep < 0) {
-      this.$router.replace({ name: 'verified' })
-    }
-  }
-
-  async mounted() {
-    if (this.currentUser && !this.brightId?.isVerified) {
-      // send sponsorship request if automatic sponsoring is enabled
-      if (brightIdSponsorUrl) {
-        try {
-          const res = await sponsorUser(this.currentUser.walletAddress)
-          if (!res.hash) {
-            this.autoSponsorError = res.error ? res.error : JSON.stringify(res)
-            return
-          }
-        } catch (err) {
-          if (err instanceof Error) {
-            this.autoSponsorError = err.message
-          }
-          return
-        }
+  // mounted
+  if (currentUser.value && !brightId.value?.isVerified) {
+    // Present app link and QR code
+    appLink.value = getBrightIdUniversalLink(currentUser.value.walletAddress)
+    const qrcodeLink = getBrightIdLink(currentUser.value.walletAddress)
+    QRCode.toDataURL(qrcodeLink, (error: unknown, url: string) => {
+      if (!error) {
+        appLinkQrCode.value = url
       }
-
-      // Present app link and QR code
-      this.appLink = getBrightIdUniversalLink(this.currentUser.walletAddress)
-      const qrcodeLink = getBrightIdLink(this.currentUser.walletAddress)
-      QRCode.toDataURL(qrcodeLink, (error, url: string) => {
-        if (!error) {
-          this.appLinkQrCode = url
-        }
-      })
-    }
+    })
+    waitUntil(() => brightId.value?.isVerified || false)
   }
+})
 
-  @Watch('currentUser')
-  logoutUser() {
-    if (!this.currentUser?.walletAddress) {
-      this.$router.replace({ name: 'verify' })
-    }
+watch(currentUser, () => {
+  if (!currentUser.value?.walletAddress) {
+    router.replace({ name: 'verify' })
   }
+})
 
-  async sponsor() {
-    const { userRegistryAddress } = this.$store.getters
-    const signer = this.currentUser.walletProvider.getSigner()
-    this.loadingTx = true
-    this.sponsorTxError = ''
+async function register() {
+  const signer = currentUser.value?.walletProvider.getSigner()
+
+  if (brightId.value?.verification) {
+    loadingTx.value = true
+    registrationTxError.value = ''
     try {
       await waitForTransaction(
-        selfSponsor(userRegistryAddress, signer),
-        (hash) => (this.sponsorTxHash = hash)
+        registerUser(userRegistryAddress.value!, brightId.value.verification, signer!),
+        hash => (registrationTxHash.value = hash),
       )
-      this.loadingTx = false
-      this.isSponsoring = false
+      loadingTx.value = false
+      router.push({
+        name: 'verified',
+        params: { hash: registrationTxHash.value },
+      })
     } catch (error) {
-      this.sponsorTxError = (error as Error).message
+      registrationTxError.value = error.message
       return
     }
+    userStore.loadUserInfo()
   }
+}
 
-  async register() {
-    const { userRegistryAddress } = this.$store.getters
-    const signer = this.currentUser.walletProvider.getSigner()
+/**
+ * Start polling brightId state until the condition is met
+ */
+async function waitUntil(isConditionMetFn: () => boolean, intervalTime = 5000) {
+  let isConditionMet = false
 
-    if (this.brightId?.verification) {
-      this.loadingTx = true
-      this.registrationTxError = ''
-      try {
-        await waitForTransaction(
-          registerUser(userRegistryAddress, this.brightId.verification, signer),
-          (hash) => (this.registrationTxHash = hash)
-        )
-        this.loadingTx = false
-        this.$router.push({
-          name: 'verified',
-          params: { hash: this.registrationTxHash },
-        })
-      } catch (error) {
-        this.registrationTxError = (error as Error).message
-        return
-      }
-      this.$store.dispatch(LOAD_USER_INFO)
+  const checkVerification = async () => {
+    await userStore.loadBrightID()
+    isConditionMet = isConditionMetFn()
+
+    if (!isConditionMet) {
+      setTimeout(async () => {
+        await checkVerification()
+      }, intervalTime)
     }
   }
+  await checkVerification()
+}
 
-  async checkVerificationStatus() {
-    this.showVerificationStatus = false
-    await this.loadBrightId()
-    if (!this.brightId?.isVerified) {
-      this.showVerificationStatus = true
-    }
+function isStepValid(step: number): boolean {
+  return !!steps.value[step]
+}
+
+function isStepUnlocked(step: number): boolean {
+  if (!brightId.value) {
+    return false
   }
 
-  async loadBrightId() {
-    await this.$store.dispatch(LOAD_BRIGHT_ID)
-  }
-
-  isStepValid(step: number): boolean {
-    return !!this.steps[step]
-  }
-
-  isStepUnlocked(step: number): boolean {
-    if (!this.brightId) {
+  switch (step) {
+    case 0:
+      // Connect
+      return true
+    case 1:
+      // Register
+      return currentUser.value?.isRegistered || false
+    default:
       return false
-    }
-
-    const stepName = this.steps[step]?.page || ''
-    switch (stepName) {
-      case 'sponsorship':
-        return !this.isSponsoring
-      case 'connect':
-        return this.brightId?.isVerified
-      case 'registration':
-        // Register
-        return this.currentUser?.isRegistered
-      default:
-        return false
-    }
-  }
-
-  get isVerified(): boolean {
-    return Boolean(this.brightId?.isVerified)
   }
 }
 </script>
@@ -512,6 +366,24 @@ export default class VerifyView extends Vue {
 
     .progress-steps {
       margin-bottom: 1rem;
+    }
+
+    .progress-steps-loader {
+      margin: 0rem;
+      margin-right: 1rem;
+      margin-top: 0.5rem;
+      padding: 0;
+      width: 1rem;
+      height: 1rem;
+    }
+
+    .progress-steps-loader:after {
+      width: 1rem;
+      height: 1rem;
+      margin: 0;
+      border-radius: 50%;
+      border: 3px solid $clr-pink;
+      border-color: $clr-pink transparent $clr-pink transparent;
     }
 
     .progress-step {
@@ -683,11 +555,6 @@ export default class VerifyView extends Vue {
   a {
     overflow-wrap: anywhere;
   }
-  .warning-text {
-    overflow-wrap: anywhere;
-    text-align: center;
-    padding: 2rem;
-  }
 }
 
 .qr-code {
@@ -715,15 +582,5 @@ export default class VerifyView extends Vue {
 
 .remaining-step {
   filter: var(--img-filter, invert(0.3));
-}
-
-.copy-container {
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-}
-
-.row-gap {
-  gap: 30px;
 }
 </style>

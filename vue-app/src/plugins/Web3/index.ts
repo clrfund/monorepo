@@ -17,28 +17,25 @@ const connectors: Record<Wallet, any> = {
 }
 
 export default {
-  install: async (Vue) => {
-    const alreadyConnectedProvider: Wallet | null = lsGet(
-      CONNECTED_PROVIDER,
-      null
-    )
+  install: async Vue => {
+    const alreadyConnectedProvider: Wallet | null = lsGet(CONNECTED_PROVIDER, null)
 
     const plugin = new Vue({
-      data: {
-        accounts: [],
-        provider: null,
-        chainId: null,
-        user: null,
-        // TODO: add `defaultProvider` in order to have everything web3 related
-        // encapsulated here in this plugin
+      data: function () {
+        return {
+          accounts: [],
+          provider: null,
+          chainId: null,
+          user: null,
+          // TODO: add `defaultProvider` in order to have everything web3 related
+          // encapsulated here in this plugin
+        }
       },
     })
 
-    plugin.connectWallet = async (wallet: Wallet): Promise<void> => {
+    plugin.connectWallet = async (wallet?: Wallet): Promise<void> => {
       if (!wallet || typeof wallet !== 'string') {
-        throw new Error(
-          'Please provide a wallet to facilitate a web3 connection.'
-        )
+        throw new Error('Please provide a wallet to facilitate a web3 connection.')
       }
 
       const connector = connectors[wallet]
@@ -59,7 +56,7 @@ export default {
       lsSet(CONNECTED_PROVIDER, wallet)
 
       // Check if user is using the supported chain id
-      const supportedChainId = Number(process.env.VUE_APP_ETHEREUM_API_CHAINID)
+      const supportedChainId = Number(import.meta.env.VITE_ETHEREUM_API_CHAINID)
       if (conn.chainId !== supportedChainId) {
         if (conn.provider instanceof WalletConnectProvider) {
           // Close walletconnect session
@@ -67,12 +64,8 @@ export default {
         }
 
         /* eslint-disable-next-line no-console */
-        console.error(
-          `Unsupported chain id: ${conn.chainId}. Supported chain id is: ${supportedChainId}`
-        )
-        throw new Error(
-          `Wrong Network. Please connect to the ${CHAIN_INFO[supportedChainId].label} Ethereum network.`
-        )
+        console.error(`Unsupported chain id: ${conn.chainId}. Supported chain id is: ${supportedChainId}`)
+        throw new Error(`Wrong Network. Please connect to the ${CHAIN_INFO[supportedChainId].label} Ethereum network.`)
       }
 
       // Populate the plugin with the initial data
@@ -94,11 +87,11 @@ export default {
       }
 
       // Emit EIP-1193 events and update plugin values
-      conn.provider.on('accountsChanged', (newAccounts) => {
+      conn.provider.on('accountsChanged', newAccounts => {
         plugin.accounts = newAccounts
         plugin.$emit('accountsChanged', plugin.accounts)
       })
-      conn.provider.on('chainChanged', (newChainId) => {
+      conn.provider.on('chainChanged', newChainId => {
         plugin.chainId = Number(newChainId)
         plugin.$emit('chainChanged', plugin.chainId)
       })

@@ -1,6 +1,6 @@
 <template>
   <a
-    v-if="isExternal"
+    v-if="typeof to === 'string' && isExternal"
     :class="{ 'external-link': !hideArrow }"
     :href="to"
     :aria-label="ariaLabel"
@@ -14,28 +14,24 @@
   </router-link>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import type { RouteLocationRaw } from 'vue-router'
 
-@Component
-export default class extends Vue {
-  @Prop() to!: string | { [key: string]: any }
-  @Prop() href!: string
-  @Prop() hideArrow!: boolean
-  @Prop() ariaLabel!: string
+interface Props {
+  to: RouteLocationRaw
+  hideArrow?: boolean
+  ariaLabel?: string
+}
 
-  isExternal = false
+const props = withDefaults(defineProps<Props>(), {
+  hideArrow: false,
+  ariaLabel: '',
+})
 
-  mounted() {
-    if (this.href) {
-      this.to = this.href
-    }
-    if (typeof this.to === 'string') {
-      this.isExternal = this.to.includes('http') || this.to.includes('mailto:')
-    }
-  }
+const isExternal = ref(false)
+
+if (typeof props.to === 'string') {
+  isExternal.value = props.to.includes('http') || props.to.includes('mailto:')
 }
 </script>
 

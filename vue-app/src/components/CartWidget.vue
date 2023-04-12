@@ -2,122 +2,95 @@
   <div
     v-if="currentUser"
     :class="{
-      container: $store.state.showCartPanel,
-      'collapsed-container': !$store.state.showCartPanel,
+      container: showCartPanel,
+      'collapsed-container': !showCartPanel,
     }"
   >
-    <div
-      v-if="!$store.state.showCartPanel"
-      class="toggle-btn desktop"
-      @click="toggleCart"
-    >
-      <img alt="open" width="16px" src="@/assets/chevron-left.svg" />
+    <div v-if="!showCartPanel" class="toggle-btn desktop" @click="toggleCart">
+      <img alt="open" width="16" src="@/assets/chevron-left.svg" />
       <transition name="pulse" mode="out-in">
         <div
+          v-if="!showCartPanel && isCartBadgeShown"
           :key="cart.length"
           :class="[cart.length ? 'circle cart-indicator' : 'cart-indicator']"
-          v-if="!$store.state.showCartPanel && isCartBadgeShown"
         >
           {{ cart.length }}
         </div>
       </transition>
-      <img alt="cart" width="16px" src="@/assets/cart.svg" />
+      <img alt="cart" width="16" src="@/assets/cart.svg" />
     </div>
-    <cart v-if="$store.state.showCartPanel" class="cart-component" />
-    <div v-if="!$store.state.showCartPanel" class="collapsed-cart desktop" />
+    <cart v-if="showCartPanel" class="cart-component" />
+    <div v-if="!showCartPanel" class="collapsed-cart desktop" />
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { User } from '@/api/user'
-import { CartItem } from '@/api/contributions'
-import { LOGOUT_USER } from '@/store/action-types'
-import { TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import Cart from '@/components/Cart.vue'
+import { useAppStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useEthers, useWallet } from 'vue-dapp'
 
-@Component({ components: { Cart } })
-export default class CartWidget extends Vue {
-  profileImageUrl: string | null = null
+const appStore = useAppStore()
+const { cart, hasReallocationPhaseEnded, committedCart, showCartPanel, isRoundContributionPhase, canUserReallocate } =
+  storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
-  toggleCart(): void {
-    this.$store.commit(TOGGLE_SHOW_CART_PANEL)
+const { provider } = useEthers()
+const { onDisconnect, onChainChanged } = useWallet()
+
+const profileImageUrl = ref<string | null>(null)
+
+const isCartBadgeShown = computed(() => {
+  /**
+   * Only show cart badge counter if there are new/changed items present
+   * and the user is still able to contribute/reallocate these changes.
+   */
+  return (canUserReallocate.value || isRoundContributionPhase.value) && !!cart.value.length
+})
+
+const isCartEmpty = computed(() => {
+  return cart.value.length === 0
+})
+
+const filteredCart = computed(() => {
+  // Once reallocation phase ends, use committedCart for cart items
+  if (hasReallocationPhaseEnded.value) {
+    return committedCart.value
   }
 
-  private get cart(): CartItem[] {
-    return this.$store.state.cart
+  return cart.value.filter(item => !item.isCleared)
+})
+
+const truncatedAddress = computed(() => {
+  if (currentUser.value?.walletAddress) {
+    const address: string = currentUser.value.walletAddress
+    const begin: string = address.substr(0, 6)
+    const end: string = address.substr(address.length - 4, 4)
+    const truncatedAddress = `${begin}…${end}`
+    return truncatedAddress
   }
+  return ''
+})
 
-  get isCartEmpty(): boolean {
-    return this.cart.length === 0
-  }
-
-  get filteredCart(): CartItem[] {
-    // Once reallocation phase ends, use committedCart for cart items
-    if (this.$store.getters.hasReallocationPhaseEnded) {
-      return this.$store.state.committedCart
-    }
-
-    return this.cart.filter((item) => !item.isCleared)
-  }
-
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
-
-  get walletProvider(): any {
-    return this.$web3.provider
-  }
-
-  get walletChainId(): number | null {
-    return this.$web3.chainId
-  }
-
-  async mounted() {
-    // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
-    // upper level where we hear this events only once (there are other
-    // components that do the same).
-    this.$web3.$on('chainChanged', () => {
-      if (this.currentUser) {
-        // Log out user to prevent interactions with incorrect network
-        this.$store.dispatch(LOGOUT_USER)
-      }
-    })
-
-    let accounts: string[]
-    this.$web3.$on('accountsChanged', (_accounts: string[]) => {
-      if (_accounts !== accounts) {
-        // Log out user if wallet account changes
-        this.$store.dispatch(LOGOUT_USER)
-      }
-      accounts = _accounts
-    })
-  }
-
-  get truncatedAddress(): string {
-    if (this?.currentUser?.walletAddress) {
-      const address: string = this.currentUser.walletAddress
-      const begin: string = address.substr(0, 6)
-      const end: string = address.substr(address.length - 4, 4)
-      const truncatedAddress = `${begin}…${end}`
-      return truncatedAddress
-    }
-    return ''
-  }
-
-  get isCartBadgeShown(): boolean {
-    /**
-     * Only show cart badge counter if there are new/changed items present
-     * and the user is still able to contribute/reallocate these changes.
-     */
-    return (
-      (this.$store.getters.canUserReallocate ||
-        this.$store.getters.isRoundContributionPhase) &&
-      !!this.$store.state.cart.length
-    )
-  }
+function toggleCart(): void {
+  appStore.toggleShowCartPanel()
 }
+
+onDisconnect(() => {
+  userStore.logoutUser()
+})
+
+// TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
+// upper level where we hear this events only once (there are other
+// components that do the same).
+onChainChanged(() => {
+  if (currentUser.value) {
+    // Log out user to prevent interactions with incorrect network
+    userStore.logoutUser()
+  }
+})
 </script>
 
 <style scoped lang="scss">

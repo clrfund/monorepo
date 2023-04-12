@@ -78,7 +78,7 @@
       "li-3-link": "Browse projects",
       "li-3-text": " and add some to your cart, adjusting your contributions to the amount of {nativeTokenSymbol} you want.",
       "li-4": "When you're ready, open your cart, click contribute, and confirm the transactions to complete your contributions!",
-      "paragraph": "Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you would like before the reallocation phase but you cannot add more funds to your total contribution amount.",
+      "paragraph": "Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you would like before of the reallocation phase but you cannot add more funds to your total contribution amount.",
       "li-5": "You can add and remove projects.",
       "li-6": " Your reallocation total must be less than or equal to the total (if it's less, the rest will go to the matching pool)."
     },
@@ -403,7 +403,7 @@
       "p3": "Compared to 1-person-1-vote, quadratic funding lets the person who lives in Florida full-time, and cares twice as much about the vote's outcome than the person who lives in Florida half-time, have more influence:",
       "li3": "1-person-1-vote: the two Florida voters have equal influence",
       "li4": "  Quadratic funding: the full-time Florida resident, who cares twice as much, pays twice as much, and as a result gets 2^(1/2) times the influence of the half-time resident",
-      "p4": " (It's important to note that while these examples are a good demonstration of the argument for quadratic funding, they do over-simplify these situations, which are as sociological as they are mathematical.)"
+      "p4": " (It's important to note that while these example are a good demonstration of the argument for quadratic funding, they do over-simplify these situations, which are as sociological as they are mathematical.)"
     },
     "resources": {
       "h2": "Quadratic Funding Resources",
@@ -489,6 +489,31 @@
       "li5_link1": "MACI, our anti-bribery tech",
       "p2": ""
     }
+  },
+  "brightIDGuide": {
+    "heading": {
+      "h2": "Get verified",
+      "p": "BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person."
+    },
+    "accordion": {
+      "fastest": {
+        "tag": "🚀 Fastest",
+        "header": "Join a BrightId party",
+        "content": "BrightID run verification parties regularly. Join the call, meet other new users, and they'll verify you’re a human and not a bot. Quick and painless, even for you introverts out there.",
+        "linkButton": "View party schedule"
+      }
+    }
+  },
+  "brightIDSponsor": {
+    "h2": "Get sponsored",
+    "p": "You need a sponsorship token to become BrightID verified. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. If you're not, click the button below to submit a sponsorship request.",
+    "cta": "Get sponsored"
+  },
+  "brightIDSponsored": {
+    "h1": "You're sponsored!",
+    "subtitle": "You’re almost ready to contribute to your favorite projects! If you're verified for BrightID, link your wallet to your BrightID profile and start contributing.",
+    "link1": "Link BrightId",
+    "link2": "Go home"
   },
   "join": {
     "title": {
@@ -653,6 +678,7 @@
     "hero": {
       "title": "Send your favorite projects to the moon!",
       "subtitle": "Every project you contribute to gets a portion of extra funding.",
+      "action": "Get started",
       "info": "How it works"
     },
     "callout": {
@@ -687,7 +713,7 @@
       "paragraph-2": "Using MACI, a zero-knowledge technology, it's impossible to prove how you contributed. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!",
       "link-2": "About MACI",
       "subtitle-3": "Built using the CLR protocol",
-      "paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community.",
+      "paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the prefences of the Ethereum Community.",
       "link-3": "About clr.fund"
     },
     "footer": {
@@ -736,23 +762,6 @@
     "link1": "Add project",
     "div1": "😢 No projects match your search. Try using the filter to narrow down what you're looking for."
   },
-  "leaderboard": {
-    "no_round": "Something went wrong! Round information not found. Please report if issue persists.",
-    "no_project": "No projects in this round",
-    "more": "more",
-    "less": "less",
-    "header": "Leaderboard",
-    "heading": {
-      "project": "Project",
-      "votes": "Votes",
-      "donation": "Contributions",
-      "total": "Total"
-    },
-    "message": "The funding amount for each project is calculated using the quadratic funding formula and represents the total amount awarded to the project. The contributions to the project come from the community donations. The number of votes a project receives is determined by taking the sum of the square root of each donation, scaled by the MACI voice credit factor and the token decimal."
-  },
-  "leaderboardSimpleView": {
-    "funded": "{tokenSymbol} funded"
-  },
   "recipientRegistry": {
     "h2": "Recipient registry",
     "th1": "Project",
@@ -769,7 +778,8 @@
   },
   "roundList": {
     "h1": "Rounds",
-    "link1": "Round {index}"
+    "link1": "Round {index}",
+    "link2": "Round {index}"
   },
   "transactionSuccess": {
     "p1": "reallocated!",
@@ -793,41 +803,32 @@
     "h1": "Set up BrightID",
     "h2_1": "Connect",
     "p2": "You need to connect your BrightID account with your wallet address.",
-    "click_next": "Once this app is linked in your BrightID app, click the 'Next' button to transition to the next step.",
+    "p3": "Once this app is linked in your BrightID app, we'll automatically transition you to the next step. It may take a minute for us to verify the connection - please wait.",
     "p4": "Scan this QR code with your BrightID app",
     "p5": "Follow this link to connect your wallet to your BrightID app",
     "p6": "This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.",
     "h2_2": "Register",
     "p7": "To protect the round from bribery and fraud, you need to add your wallet address to a smart contract registry. Once you’re done, you can join the funding round!",
-    "btn": " Become a contributor",
-    "next": "Next",
-    "previous": "Previous",
-    "verification_status": "Your wallet address is not linked with BrightID. It may take a few minutes to verify the connection, please wait and click the button later to check the status.",
-    "skip_sponsorship": "Skip",
-    "get_sponsored_header": "Get sponsored",
-    "get_sponsored_text": "You need a sponsorship token to connect your wallet address with BrightID. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. Get sponsored by submitting a sponsorship transaction or skip to the next step.",
-    "get_sponsored_cta": "Get Sponsored"
+    "btn": " Become a contributor"
   },
   "verifyLanding": {
     "h1": "Prove you’re only using one account",
     "subtitle": "We use BrightID to stop bots and cheaters, and make our funding more democratic.",
     "h2": "What you'll need",
+    "tooltip": "If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps",
     "li1_t1": "BrightID – available on",
     "li1_link1": "iOS",
     "li1_t2": "or",
     "li1_link2": "Android",
-    "join": "Join a ",
-    "brightid_party_link": "BrightId party",
-    "get_verified": " to get verified",
-    "li_wallet": "An Ethereum wallet, with some funds for transaction gas.",
-    "unitap_gas_tokens": "You may be able to get some free gas tokens from ",
-    "unitap_link": "Unitap",
-    "unitap_extra_text": ".",
+    "li2": "Get sponsored",
+    "li3": "Get verified",
+    "li4": "An Ethereum wallet, with enough gas for two transactions",
+    "li5": "Access to Zoom or Google Meet",
     "link1": "Why is this important?",
     "div1": "There's not yet an open funding round. Please check back later.",
     "div2": "The current round is no longer accepting new contributions. Please try again next round.",
     "div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
-    "link2": "I am BrightID verified",
+    "link2": "I have BrightID installed",
     "link3": "Go back"
   },
   "addToCartButton": {
@@ -977,8 +978,8 @@
     "div2": "Thanks for helping out all our projects.",
     "button3": "Done"
   },
-  "app": "App",
   "navBar": {
+    "app": "App",
     "dropdown": {
       "home": "Home",
       "about": "About",
@@ -987,8 +988,7 @@
       "sybil": "Sybil resistance",
       "code": "Code",
       "recipients": "Recipients",
-      "layer2": "Layer 2",
-      "rounds": "Rounds"
+      "layer2": "Layer 2"
     }
   },
   "projectListItem": {
@@ -1026,9 +1026,8 @@
     "div1": "Cancelled",
     "div2": "Open",
     "div3": "Closed",
-    "p1": "The round is officially closed",
-    "p2": "It's now too late to contribute or reallocate your donations!",
-    "max_messages_reached": "Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
+    "p1": "he round is officially closed",
+    "p2": "It's now too late to contribute or reallocate your donations! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
     "div4": "Great!",
     "div5": "⏱️ Round opening",
     "div6": "Time left to contribute",
@@ -1051,15 +1050,14 @@
     "tooltip7": "This total includes the funds in the matching pool and all contributions from the community.",
     "div16": "Matching pool",
     "tooltip8": "These are the funds that will be distributed to all the projects based on the contributions they receive from the community.",
-    "tooltip9": "Add matching funds",
+    "tooltip9": "'Add matching funds'",
     "span1": "Add funds",
     "div17": "Contributions total",
     "div18": "Contributors",
     "div19": "legend",
     "div20": "No scheduled round",
     "div21": "We haven't yet scheduled a funding round. Stay tuned!",
-    "pluralism": "s",
-    "more": "More on"
+    "pluralism": "s"
   },
   "roundStatusBanner": {
     "span1": "Funding starts 🗓 {startDate}.",
@@ -1107,20 +1105,12 @@
     "div1": "You have successfully withdrawn your contribution.",
     "button1": "OK"
   },
-  "recipientProfile": {
-    "not_found": "Recipient not found!"
-  },
   "dynamic": {
-    "appLink": {
-      "getStarted": "Get Started",
-      "leaderboard": "View Results"
-    },
     "category": {
       "tooling": "Tools",
       "content": "Content",
       "data": "Data",
-      "research": "Research",
-      "other": "Other"
+      "research": "Research"
     },
     "timeleft": {
       "unit": {
@@ -1179,9 +1169,8 @@
     },
     "verify": {
       "step": {
-        "sponsorship": "Sponsorship",
         "connect": "Connect",
-        "registration": "Get registered"
+        "get_registered": "Get registered"
       }
     },
     "progress": {

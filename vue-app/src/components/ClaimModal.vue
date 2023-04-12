@@ -1,116 +1,97 @@
 <template>
-  <div class="modal-body">
-    <div v-if="step === 1">
-      <h2>{{ $t('claimModal.h2_1') }}</h2>
-      <transaction
-        :hash="claimTxHash"
-        :error="claimTxError"
-        @close="$emit('close')"
-      ></transaction>
-    </div>
-    <div v-if="step === 2">
-      <h2>{{ $t('claimModal.h2_2') }}</h2>
-      <p>
-        <strong
-          >{{ formatAmount(amount) }}
-          {{ currentRound.nativeTokenSymbol }}</strong
-        >
-        {{ $t('claimModal.p1') }}
-      </p>
-      <div class="address-box">
-        <div>
-          <div class="address-label">{{ $t('claimModal.div1') }}</div>
-          <div class="address">
-            {{ recipientAddress }}
+  <vue-final-modal v-slot="{ close }" v-bind="$attrs">
+    <div class="modal-body">
+      <div v-if="step === 1">
+        <h2>Claim funds</h2>
+        <transaction :hash="claimTxHash" :error="claimTxError" @close="$emit('close', close)"></transaction>
+      </div>
+      <div v-if="step === 2">
+        <h2>Funds were claimed!</h2>
+        <p>
+          <strong>{{ formatAmount(amount) }} {{ currentRound?.nativeTokenSymbol }}</strong>
+          has been sent to
+        </p>
+        <div class="address-box">
+          <div>
+            <div class="address-label">Recipient address</div>
+            <div class="address">
+              {{ recipientAddress }}
+            </div>
           </div>
         </div>
+        <button class="btn-primary" @click="$emit('close', close)">Done</button>
       </div>
-      <button class="btn-primary" @click="$emit('close')">
-        {{ $t('claimModal.button1') }}
-      </button>
     </div>
-  </div>
+  </vue-final-modal>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { Contract, BigNumber, Signer } from 'ethers'
+export default {
+  inheritAttrs: false,
+}
+</script>
 
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { Contract, BigNumber, Signer } from 'ethers'
 import { FundingRound } from '@/api/abi'
-import { Project } from '@/api/projects'
-import { RoundInfo } from '@/api/round'
+import type { Project } from '@/api/projects'
 import Transaction from '@/components/Transaction.vue'
-import { formatAmount } from '@/utils/amounts'
+// @ts-ignore
+import { VueFinalModal } from 'vue-final-modal'
+import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
 import { getRecipientClaimData } from '@/utils/maci'
-import { LOAD_TALLY } from '@/store/action-types'
+import { useAppStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({ components: { Transaction } })
-export default class ClaimModal extends Vue {
-  @Prop() project!: Project
-  @Prop() claimed!: Function
+const appStore = useAppStore()
+const { currentRound, tally } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
 
-  step = 1
-  claimTxHash = ''
-  claimTxError = ''
-  amount = BigNumber.from(0)
-  recipientAddress = ''
+interface Props {
+  project: Project
+  claimed: () => void
+}
 
-  get currentRound(): RoundInfo {
-    return this.$store.state.currentRound
-  }
+const props = defineProps<Props>()
 
-  formatAmount(value: BigNumber): string {
-    const { nativeTokenDecimals } = this.currentRound
-    return formatAmount(value, nativeTokenDecimals)
-  }
+const step = ref(1)
+const claimTxHash = ref('')
+const claimTxError = ref('')
+const amount = ref(BigNumber.from(0))
+const recipientAddress = ref('')
 
-  mounted() {
-    this.claim()
-  }
+function formatAmount(value: BigNumber): string {
+  const { nativeTokenDecimals } = currentRound.value!
+  return _formatAmount(value, nativeTokenDecimals)
+}
 
-  private async claim() {
-    if (!this.$store.state.tally) {
-      await this.$store.dispatch(LOAD_TALLY)
-    }
+onMounted(() => {
+  claim()
+})
 
-    const signer: Signer =
-      this.$store.state.currentUser.walletProvider.getSigner()
-    const { fundingRoundAddress, recipientTreeDepth } = this.currentRound
-    const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
-    const recipientClaimData = getRecipientClaimData(
-      this.project.index,
-      recipientTreeDepth,
-      this.$store.state.tally
+async function claim() {
+  const signer: Signer = currentUser.value!.walletProvider.getSigner()
+  const { fundingRoundAddress, recipientTreeDepth } = currentRound.value!
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
+  const recipientClaimData = getRecipientClaimData(props.project.index, recipientTreeDepth, tally.value!)
+  let claimTxReceipt
+  try {
+    claimTxReceipt = await waitForTransaction(
+      fundingRound.claimFunds(...recipientClaimData),
+      hash => (claimTxHash.value = hash),
     )
-    let claimTxReceipt
-    try {
-      claimTxReceipt = await waitForTransaction(
-        fundingRound.claimFunds(...recipientClaimData),
-        (hash) => (this.claimTxHash = hash)
-      )
-    } catch (error) {
-      this.claimTxError = error.message
-      return
-    }
-    this.amount = getEventArg(
-      claimTxReceipt,
-      fundingRound,
-      'FundsClaimed',
-      '_amount'
-    )
-    this.recipientAddress = getEventArg(
-      claimTxReceipt,
-      fundingRound,
-      'FundsClaimed',
-      '_recipient'
-    )
-
-    this.claimed()
-    this.step += 1
+  } catch (error: any) {
+    claimTxError.value = error.message
+    return
   }
+  amount.value = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_amount')
+  recipientAddress.value = getEventArg(claimTxReceipt, fundingRound, 'FundsClaimed', '_recipient')
+
+  props.claimed()
+  step.value += 1
 }
 </script>
 

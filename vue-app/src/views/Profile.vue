@@ -4,29 +4,24 @@
     <div class="container">
       <div class="flex-row" style="justify-content: flex-end">
         <div class="close-btn" @click="$emit('close')">
-          <p class="no-margin">{{ $t('profile.p1') }}</p>
+          <p class="no-margin">Close</p>
           <img src="@/assets/close.svg" />
         </div>
       </div>
       <div class="flex-row">
-        <h2 class="no-margin">{{ $t('profile.h2_1') }}</h2>
+        <h2 class="no-margin">Your wallet</h2>
       </div>
       <div class="address-card">
         <h2 class="address">{{ displayAddress }}</h2>
-        <div class="action-row" v-if="currentUser">
-          <copy-button
-            :value="currentUser.walletAddress"
-            :text="$t('profile.btn1')"
-            myClass="profile copy-icon"
-            class="copy"
-          />
+        <div v-if="currentUser" class="action-row">
+          <copy-button :value="currentUser.walletAddress" text="address" my-class="profile copy-icon" class="copy" />
           <div class="address">
             {{ currentUser.ensName ? currentUser.walletAddress : null }}
           </div>
           <div
             v-tooltip="{
-              content: $t('profile.tooltip1'),
-              trigger: 'hover click',
+              content: 'Disconnect wallet',
+              triggers: ['hover', 'click'],
             }"
             class="disconnect btn"
             @click="disconnect"
@@ -35,18 +30,14 @@
           </div>
         </div>
       </div>
-      <bright-id-widget
-        v-if="showBrightIdWidget"
-        :isProjectCard="false"
-        @close="$emit('close')"
-      />
+      <bright-id-widget v-if="showBrightIdWidget" :is-project-card="false" @close="$emit('close')" />
       <div class="balances-section">
         <div class="flex-row">
-          <h2>{{ $t('profile.h2_2', { chain: chain.label }) }}</h2>
+          <h2>{{ chain.label }} balances</h2>
           <div
             v-tooltip="{
-              content: $t('profile.tooltip2', { chain: chain.label }),
-              trigger: 'hover click',
+              content: `Balance of wallet on ${chain.label} chain`,
+              triggers: ['hover', 'click'],
             }"
           >
             <img src="@/assets/info.svg" />
@@ -54,177 +45,125 @@
         </div>
         <div class="balances-card">
           <balance-item :balance="balance" :abbrev="nativeTokenSymbol">
-            <icon-status
-              :custom="true"
-              :logo="tokenLogo"
-              :secondaryLogo="chain.logo"
-              :bg="balanceBackgroundColor"
-            />
+            <icon-status :custom="true" :logo="tokenLogo" :secondary-logo="chain.logo" :bg="balanceBackgroundColor" />
           </balance-item>
           <balance-item :balance="etherBalance" :abbrev="chain.currency">
-            <icon-status
-              :custom="true"
-              logo="eth.svg"
-              :secondaryLogo="chain.logo"
-              :bg="balanceBackgroundColor"
-            />
+            <icon-status :custom="true" logo="eth.svg" :secondary-logo="chain.logo" :bg="balanceBackgroundColor" />
           </balance-item>
         </div>
-        <funds-needed-warning :onNavigate="onNavigateToBridge" />
+        <funds-needed-warning :on-navigate="onNavigateToBridge" />
       </div>
       <div class="projects-section">
-        <h2>{{ $t('profile.h2_3') }}</h2>
+        <h2>Projects</h2>
         <div v-if="projects.length > 0" class="project-list">
-          <div
-            class="project-item"
-            v-for="{
-              id,
-              name,
-              thumbnailImageUrl,
-              isHidden,
-              isLocked,
-            } of projects"
-            :key="id"
-          >
-            <img
-              :src="thumbnailImageUrl"
-              :alt="alt + ' thumbnail'"
-              class="project-thumbnail"
-            />
+          <div v-for="{ id, name, thumbnailImageUrl, isHidden, isLocked } of projects" :key="id" class="project-item">
+            <img :src="thumbnailImageUrl" alt="thumbnail" class="project-thumbnail" />
             <div class="project-details">
               <div class="project-name">
                 {{ name }}
                 <span v-if="isLocked">🔒</span>
               </div>
-              <div v-if="isHidden" class="project-hidden">
-                {{ $t('profile.div1') }}
-              </div>
+              <div v-if="isHidden" class="project-hidden">Under review</div>
             </div>
             <button class="btn-secondary" @click="navigateToProject(id)">
               {{ isLocked ? $t('profile.btn2_1') : $t('profile.btn2_2') }}
             </button>
           </div>
         </div>
-        <div v-if="!isLoading && projects.length === 0">
-          {{ $t('profile.div2') }}
-        </div>
+        <div v-if="!isLoading && projects.length === 0">You haven't submitted any projects</div>
         <loader v-if="isLoading" />
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
 import BalanceItem from '@/components/BalanceItem.vue'
 import IconStatus from '@/components/IconStatus.vue'
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Loader from '@/components/Loader.vue'
-import Links from '@/components/Links.vue'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 
-import { LOGOUT_USER } from '@/store/action-types'
-import { User } from '@/api/user'
 import { userRegistryType, UserRegistryType, chain } from '@/api/core'
-import { Project, getProjects } from '@/api/projects'
-import { ChainInfo } from '@/plugins/Web3/constants/chains'
+import { type Project, getProjects } from '@/api/projects'
 import { isSameAddress } from '@/utils/accounts'
 import { getTokenLogo } from '@/utils/tokens'
+import { useAppStore, useUserStore, useRecipientStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
+import { useWallet } from 'vue-dapp'
 
-@Component({
-  components: {
-    BalanceItem,
-    BrightIdWidget,
-    IconStatus,
-    CopyButton,
-    Loader,
-    Links,
-    FundsNeededWarning,
-  },
+interface Props {
+  balance: string
+  etherBalance: string
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits(['close'])
+
+const router = useRouter()
+const appStore = useAppStore()
+const { hasContributionPhaseEnded, nativeTokenSymbol, currentRound } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+const recipientStore = useRecipientStore()
+const { recipientRegistryAddress } = storeToRefs(recipientStore)
+
+const projects = ref<Project[]>([])
+const balanceBackgroundColor = ref('#2a374b')
+const isLoading = ref(true)
+const { disconnect: disconnectWallet } = useWallet()
+
+onMounted(async () => {
+  isLoading.value = true
+  await loadProjects()
+  if (showBrightIdWidget.value) {
+    await userStore.loadBrightID()
+  }
+  isLoading.value = false
 })
-export default class Profile extends Vue {
-  @Prop() balance!: string
-  @Prop() etherBalance!: string
-  projects: Project[] = []
-  balanceBackgroundColor = '#2a374b'
-  isLoading = true
 
-  async created() {
-    this.isLoading = true
-    await this.loadProjects()
-    if (this.showBrightIdWidget) {
-      await this.$store.dispatch('LOAD_BRIGHT_ID')
-    }
-    this.isLoading = false
-  }
+const walletProvider = computed(() => currentUser.value?.walletProvider)
+const showBrightIdWidget = computed(
+  () => userRegistryType === UserRegistryType.BRIGHT_ID && !hasContributionPhaseEnded.value,
+)
+const tokenLogo = computed(() => getTokenLogo(nativeTokenSymbol.value))
+const displayAddress = computed(() => {
+  if (!currentUser.value) return null
+  return currentUser.value.ensName ?? currentUser.value.walletAddress
+})
 
-  get walletProvider(): any {
-    return this.$store.state.currentUser?.walletProvider
-  }
+async function loadProjects(): Promise<void> {
+  const _projects: Project[] = await getProjects(
+    recipientRegistryAddress.value!,
+    currentRound.value?.startTime.toSeconds(),
+    currentRound.value?.votingDeadline.toSeconds(),
+  )
+  const userProjects: Project[] = _projects.filter(
+    ({ address, requester }) =>
+      isSameAddress(address, currentUser.value?.walletAddress as string) ||
+      isSameAddress(requester as string, currentUser.value?.walletAddress as string),
+  )
+  projects.value = userProjects
+}
 
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
+function navigateToProject(id: string): void {
+  emit('close')
+  router.push({ name: 'project', params: { id } })
+}
 
-  get showBrightIdWidget(): boolean {
-    return (
-      userRegistryType === UserRegistryType.BRIGHT_ID &&
-      !this.$store.getters.hasContributionPhaseEnded
-    )
-  }
+function onNavigateToBridge(): void {
+  emit('close')
+}
 
-  get chain(): ChainInfo {
-    return chain
-  }
-
-  get nativeTokenSymbol(): string {
-    return this.$store.getters.nativeTokenSymbol
-  }
-
-  get tokenLogo(): string {
-    return getTokenLogo(this.nativeTokenSymbol)
-  }
-
-  get displayAddress(): string | null {
-    if (!this.currentUser) return null
-    return this.currentUser.ensName ?? this.currentUser.walletAddress
-  }
-
-  private async loadProjects(): Promise<void> {
-    const { recipientRegistryAddress, currentRound, currentUser } =
-      this.$store.state
-    const projects: Project[] = await getProjects(
-      recipientRegistryAddress,
-      currentRound?.startTime.toSeconds(),
-      currentRound?.votingDeadline.toSeconds()
-    )
-    const userProjects: Project[] = projects.filter(
-      ({ address, requester }) =>
-        isSameAddress(address, currentUser?.walletAddress) ||
-        isSameAddress(requester as string, currentUser?.walletAddress)
-    )
-    this.projects = userProjects
-  }
-
-  navigateToProject(id: string): void {
-    this.$emit('close')
-    this.$router.push({ name: 'project', params: { id } })
-  }
-
-  onNavigateToBridge(): void {
-    this.$emit('close')
-  }
-
-  async disconnect(): Promise<void> {
-    if (this.currentUser && this.walletProvider) {
-      // Log out user
-      this.$web3.disconnectWallet()
-      this.$store.dispatch(LOGOUT_USER)
-      this.$emit('close')
-    }
+async function disconnect(): Promise<void> {
+  if (currentUser.value && walletProvider.value) {
+    // Log out user
+    disconnectWallet()
+    userStore.logoutUser()
+    emit('close')
   }
 }
 </script>

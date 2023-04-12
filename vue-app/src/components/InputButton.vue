@@ -1,22 +1,17 @@
 <template>
   <form action="#" class="input-button">
-    <img
-      v-if="input"
-      class="token-icon"
-      height="24px"
-      :src="require(`@/assets/${tokenLogo}`)"
-    />
+    <img v-if="input" class="token-icon" height="24" :src="tokenLogoImageUrl" />
     <input
       v-if="input"
       class="input"
       type="number"
-      :class="input.class"
       :value="value"
+      :class="input.class"
       :required="input.required"
       :placeholder="input.placeholder"
       :disabled="input.disabled"
-      @input="$emit('input', $event.target.value)"
-      @blur="$emit('blur', $event.target.value)"
+      @input="emit('input', ($event.target as HTMLInputElement).value)"
+      @blur="emit('blur', ($event.target as HTMLInputElement).value)"
     />
     <input
       v-if="button"
@@ -25,16 +20,19 @@
       :value="button.text"
       :class="{ wide: button.wide }"
       :disabled="button.disabled"
-      @click.prevent="$emit('click')"
+      @click.prevent="emit('click')"
     />
   </form>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { getTokenLogo } from '@/utils/tokens'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+
+const appStore = useAppStore()
+const { currentRound } = storeToRefs(appStore)
 
 type buttonType = {
   text: string
@@ -49,17 +47,20 @@ type inputType = {
   disabled?: boolean
 }
 
-@Component
-export default class InputButton extends Vue {
-  @Prop() button!: buttonType
-  @Prop() input!: inputType
-  @Prop() value!: number
-
-  get tokenLogo(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return getTokenLogo(nativeTokenSymbol)
-  }
+interface Props {
+  button?: buttonType
+  input?: inputType
+  value?: string
 }
+
+defineProps<Props>()
+
+const emit = defineEmits(['input', 'blur', 'click'])
+
+const tokenLogoImageUrl = computed(() => {
+  const { nativeTokenSymbol } = currentRound.value!
+  return new URL(`/src/assets/${getTokenLogo(nativeTokenSymbol)}`, import.meta.url).href
+})
 </script>
 
 <style scoped lang="scss">

@@ -10,8 +10,8 @@ export enum ChainId {
   POLYGON = 137,
 }
 
-export interface ChainInfo {
-  [chainId: number]: {
+export type ChainInfo = {
+  [chainId in ChainId]: {
     label: string
     currency: string
     logo: string
@@ -104,10 +104,10 @@ export const CHAIN_INFO: ChainInfo = {
     logo: 'xdai.svg',
     isLayer2: false,
     explorer: 'https://gnosisscan.io',
-    explorerLogo: 'gnosisscan.svg',
-    explorerLabel: 'GnosisScan',
+    explorerLogo: 'xdai-explorer.svg',
+    explorerLabel: 'Blockscout',
     rpcUrl: 'https://rpc.gnosischain.com',
-    bridge: 'https://gnosisfaucet.com',
+    bridge: 'https://bridge.gnosischain.com/',
   },
   [ChainId.POLYGON]: {
     label: 'Polygon',

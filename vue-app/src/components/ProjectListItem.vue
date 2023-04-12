@@ -3,9 +3,9 @@
     <div>
       <links :to="projectRoute">
         <div class="project-image">
-          <img :src="projectImageUrl" :alt="project.name" />
+          <img :src="projectImageUrl || ''" :alt="project.name" />
           <div v-if="project.category" class="tag">
-            {{ $t($store.getters.categoryLocaleKey(project.category)) }}
+            {{ $t(categoryLocaleKey(project.category)) }}
           </div>
         </div>
       </links>
@@ -29,72 +29,65 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { Component, Prop } from 'vue-property-decorator'
-
-import AddToCartButton from '@/components/AddToCartButton.vue'
-import Links from '@/components/Links.vue'
-import { CartItem } from '@/api/contributions'
-import { Project } from '@/api/projects'
+<script setup lang="ts">
+import type { CartItem } from '@/api/contributions'
+import type { Project } from '@/api/projects'
 import { markdown } from '@/utils/markdown'
-import { Route } from 'vue-router'
+import { useRoute, type RouteLocationRaw } from 'vue-router'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({
-  components: {
-    AddToCartButton,
-    Links,
-  },
-})
-export default class ProjectListItem extends Vue {
-  @Prop()
-  project!: Project
-  @Prop({ default: '' }) roundAddress!: string
-
-  get descriptionHtml(): string {
-    return markdown.renderInline(this.project.description)
-  }
-
-  get projectImageUrl(): string | null {
-    if (typeof this.project.bannerImageUrl !== 'undefined') {
-      return this.project.bannerImageUrl
-    }
-    if (typeof this.project.imageUrl !== 'undefined') {
-      return this.project.imageUrl
-    }
-    return null
-  }
-
-  get inCart(): boolean {
-    const index = this.$store.state.cart.findIndex((item: CartItem) => {
-      // Ignore cleared items
-      return item.id === this.project.id && !item.isCleared
-    })
-    return index !== -1
-  }
-
-  get isCurrentRound(): boolean {
-    const { currentRoundAddress } = this.$store.state
-    const roundAddress = this.roundAddress || currentRoundAddress
-    return this.$store.getters.isCurrentRound(roundAddress)
-  }
-
-  get shouldShowCartInput(): boolean {
-    const { isRoundContributionPhase, canUserReallocate } = this.$store.getters
-    return (
-      this.isCurrentRound && (isRoundContributionPhase || canUserReallocate)
-    )
-  }
-
-  get projectRoute(): Partial<Route> {
-    return this.$route.name === 'round'
-      ? {
-          name: 'round-project',
-          params: { address: this.roundAddress, id: this.project.id },
-        }
-      : { name: 'project', params: { id: this.project.id } }
-  }
+const route = useRoute()
+const appStore = useAppStore()
+const { isRoundContributionPhase, canUserReallocate, currentRoundAddress, categoryLocaleKey } = storeToRefs(appStore)
+interface Props {
+  project: Project
+  roundAddress: string
 }
+
+const props = withDefaults(defineProps<Props>(), {
+  roundAddress: '',
+})
+
+const descriptionHtml = computed<string>(() => {
+  return markdown.renderInline(props.project.description)
+})
+
+const projectImageUrl = computed<string | null>(() => {
+  if (typeof props.project.bannerImageUrl !== 'undefined') {
+    return props.project.bannerImageUrl
+  }
+  if (typeof props.project.imageUrl !== 'undefined') {
+    return props.project.imageUrl
+  }
+  return null
+})
+
+const inCart = computed<boolean>(() => {
+  const index = appStore.cart.findIndex((item: CartItem) => {
+    // Ignore cleared items
+    return item.id === props.project.id && !item.isCleared
+  })
+  return index !== -1
+})
+
+const isCurrentRound = computed<boolean>(() => {
+  const roundAddress = props.roundAddress || currentRoundAddress.value
+  return appStore.isCurrentRound(props.roundAddress)
+})
+
+const shouldShowCartInput = computed<boolean>(() => {
+  return isCurrentRound.value && (isRoundContributionPhase.value || canUserReallocate.value)
+})
+
+const projectRoute = computed<RouteLocationRaw>(() => {
+  return route.name === 'round'
+    ? {
+        name: 'round-project',
+        params: { address: props.roundAddress, id: props.project.id },
+      }
+    : { name: 'project', params: { id: props.project.id } }
+})
 </script>
 
 <style scoped lang="scss">

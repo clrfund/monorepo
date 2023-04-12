@@ -7,20 +7,12 @@
   >
     <div class="row">
       <div v-if="isVerified">
-        <icon-status
-          v-bind:happy="true"
-          logo="brightid.svg"
-          secondaryLogo="checkmark.svg"
-        />
+        <icon-status :happy="true" logo="brightid.svg" secondary-logo="checkmark.svg" />
       </div>
       <div v-else>
-        <icon-status
-          v-bind:sad="true"
-          logo="brightid.svg"
-          secondaryLogo="close-black.svg"
-        />
+        <icon-status :sad="true" logo="brightid.svg" secondary-logo="close-black.svg" />
       </div>
-      <h2>{{ $t('brightIdWidget.h2') }}</h2>
+      <h2>BrightID setup</h2>
       <p>{{ getCurrentStep }} / 2</p>
     </div>
     <div class="progress">
@@ -36,77 +28,67 @@
         <div v-if="isVerified">
           <div v-if="isRegistered">
             <a href="/#/projects" @click="$emit('close')">
-              {{ $t('brightIdWidget.link1') }}
+              Start contributing
               <span role="img" aria-label="party emoji">🎉</span>
             </a>
           </div>
           <div v-else>
-            <a href="/#/verify/" @click="$emit('close')">{{
-              $t('brightIdWidget.link2')
-            }}</a>
+            <a href="/#/verify/" @click="$emit('close')">Continue setup</a>
           </div>
         </div>
-        <a href="/#/verify/" @click="$emit('close')" v-else>{{
-          $t('brightIdWidget.link3')
-        }}</a>
+        <a v-else href="/#/verify/" @click="$emit('close')">Start setup</a>
         <p
           v-tooltip="{
             content: isVerified
-              ? $t('brightIdWidget.tooltip1_1')
-              : $t('brightIdWidget.tooltip1_2'),
-            trigger: 'hover click',
+              ? 'You\'re a verified human on BrightID!'
+              : 'Your BrightID profile still needs to be verified.',
+            triggers: ['hover', 'click'],
           }"
           :class="isVerified ? 'brightid-verified' : 'unverified'"
         >
-          {{
-            isVerified ? $t('brightIdWidget.p1_1') : $t('brightIdWidget.p1_2')
-          }}
+          {{ isVerified ? 'Verified' : 'Unverified' }}
         </p>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { computed } from 'vue'
 import IconStatus from '@/components/IconStatus.vue'
+import { useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({
-  components: { IconStatus },
-})
-export default class BrightIdWidget extends Vue {
-  @Prop() abbrev!: string
-  @Prop() balance!: string
-  @Prop() isProjectCard!: boolean
-
-  get isVerified(): boolean {
-    return (
-      this.$store.state.currentUser &&
-      this.$store.state.currentUser.brightId.isVerified
-    )
-  }
-
-  get isRegistered(): boolean {
-    return (
-      this.$store.state.currentUser &&
-      this.$store.state.currentUser.isRegistered
-    )
-  }
-
-  get getCurrentStep(): number {
-    if (!this.isVerified) {
-      return 0
-    }
-
-    if (!this.isRegistered) {
-      return 1
-    }
-
-    return 2
-  }
+interface Props {
+  abbrev?: string
+  balance?: string
+  isProjectCard: boolean
 }
+
+const props = defineProps<Props>()
+
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const isVerified = computed(() => {
+  return currentUser.value && currentUser.value.brightId!.isVerified
+})
+
+const isRegistered = computed(() => {
+  return currentUser.value && currentUser.value.isRegistered
+})
+
+const getCurrentStep = computed(() => {
+  if (!isVerified.value) {
+    return 0
+  }
+
+  if (!isRegistered.value) {
+    return 1
+  }
+
+  return 2
+})
 </script>
 
 <style lang="scss" scoped>

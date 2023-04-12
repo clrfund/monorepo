@@ -1,87 +1,65 @@
 <template>
   <!-- Reallocate CTA -->
-  <div class="get-prepared" v-if="$store.getters.canUserReallocate">
+  <div v-if="canUserReallocate" class="get-prepared">
     <span aria-label="thinking face" class="emoji">🤔</span>
     <div>
-      <h2 class="prep-title">{{ $t('callToActionCard.h2_1') }}</h2>
-      <p class="prep-text">
-        {{ $t('callToActionCard.p1') }}
-      </p>
-      <div class="btn-action" @click="toggleCartPanel()">
-        {{ $t('callToActionCard.div1') }}
-      </div>
+      <h2 class="prep-title">Changed your mind?</h2>
+      <p class="prep-text">You still have time to reallocate your contributions.</p>
+      <div class="btn-action" @click="toggleCartPanel()">Open cart</div>
     </div>
   </div>
   <!-- Round is over notification -->
-  <div
-    class="get-prepared"
-    v-else-if="$store.getters.hasContributionPhaseEnded"
-  >
+  <div v-else-if="hasContributionPhaseEnded" class="get-prepared">
     <span aria-label="hand" class="emoji">🤚</span>
     <div>
-      <h2 class="prep-title">{{ $t('callToActionCard.h2_2') }}</h2>
-      <p class="prep-text">
-        {{ $t('callToActionCard.p2') }}
-      </p>
+      <h2 class="prep-title">Round over for contributions</h2>
+      <p class="prep-text">You can no longer make any contributions this round.</p>
     </div>
   </div>
   <!-- Get prepared CTA -->
-  <div class="get-prepared" v-else-if="showUserVerification">
-    <bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
+  <div v-else-if="showUserVerification" class="get-prepared">
+    <bright-id-widget v-if="hasStartedVerification" :is-project-card="true" />
     <span v-else aria-label="rocket" class="emoji">🚀</span>
     <div>
-      <h2 class="prep-title">{{ $t('callToActionCard.h2_3') }}</h2>
+      <h2 class="prep-title">Get prepared</h2>
       <p class="prep-text">
-        {{ $t('callToActionCard.p3') }}
+        You’ll need to set up a few things before you contribute. You can do this any time before or during the funding
+        round.
       </p>
     </div>
-    <links v-if="!hasStartedVerification" to="/verify" class="btn-action">{{
-      $t('callToActionCard.link1')
-    }}</links>
-    <links v-else to="/verify/connect" class="btn-action">{{
-      $t('callToActionCard.link2')
-    }}</links>
+    <links v-if="!hasStartedVerification" to="/verify" class="btn-action">Start prep</links>
+    <links v-else to="/verify/connect" class="btn-action">Continue setup</links>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+<script setup lang="ts">
+import { computed } from 'vue'
 
 import BrightIdWidget from '@/components/BrightIdWidget.vue'
 import Links from '@/components/Links.vue'
 
-import { TOGGLE_SHOW_CART_PANEL } from '@/store/mutation-types'
 import { userRegistryType, UserRegistryType } from '@/api/core'
+import { useAppStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({
-  components: {
-    BrightIdWidget,
-    Links,
-  },
+const appStore = useAppStore()
+const { canUserReallocate, hasContributionPhaseEnded } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const hasStartedVerification = computed(
+  () => currentUser.value && currentUser.value.brightId && currentUser.value.brightId.isVerified,
+)
+const showUserVerification = computed(() => {
+  return (
+    userRegistryType === UserRegistryType.BRIGHT_ID &&
+    typeof currentUser.value?.isRegistered === 'boolean' &&
+    !currentUser.value.isRegistered
+  )
 })
-export default class CallToActionCard extends Vue {
-  get hasStartedVerification(): boolean {
-    return (
-      this.$store.state.currentUser &&
-      this.$store.state.currentUser.brightId &&
-      this.$store.state.currentUser.brightId.isVerified
-    )
-  }
 
-  get showUserVerification(): boolean {
-    const { currentUser } = this.$store.state
-
-    return (
-      userRegistryType === UserRegistryType.BRIGHT_ID &&
-      typeof currentUser?.isRegistered === 'boolean' &&
-      !currentUser?.isRegistered
-    )
-  }
-
-  toggleCartPanel() {
-    this.$store.commit(TOGGLE_SHOW_CART_PANEL, true)
-  }
+const toggleCartPanel = () => {
+  appStore.toggleShowCartPanel(true)
 }
 </script>
 

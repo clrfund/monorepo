@@ -4,20 +4,15 @@
     <p v-if="claimed">
       {{
         $t('claimButton.p', {
-          allocatedAmount: formatAmount(allocatedAmount),
+          allocatedAmount: formatAmount(allocatedAmount!),
           tokenSymbol: tokenSymbol,
         })
       }}
     </p>
-    <button
-      v-if="hasClaimBtn() && !claimed"
-      class="btn-action"
-      :disabled="!canClaim()"
-      @click="claim()"
-    >
+    <button v-if="hasClaimBtn() && !claimed" class="btn-action" :disabled="!canClaim()" @click="claim()">
       {{
         $t('claimButton.button', {
-          allocatedAmount: formatAmount(allocatedAmount),
+          allocatedAmount: formatAmount(allocatedAmount!),
           tokenSymbol: tokenSymbol,
         })
       }}
@@ -25,158 +20,112 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { BigNumber } from 'ethers'
+<script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue'
+import type { FixedNumber } from 'ethers'
 
-import { isFundsClaimed } from '@/api/claims'
-import { Project } from '@/api/projects'
-import { RoundStatus, RoundInfo } from '@/api/round'
-import { Token } from '@/api/token'
-
-import { formatAmount } from '@/utils/amounts'
+import { getAllocatedAmount, isFundsClaimed } from '@/api/claims'
+import type { Project } from '@/api/projects'
+import { RoundStatus } from '@/api/round'
+import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { markdown } from '@/utils/markdown'
 
 import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
-import { LOAD_ROUNDS } from '@/store/action-types'
+import { useAppStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { $vfm } from 'vue-final-modal'
 
-@Component({
-  components: { Loader },
+const appStore = useAppStore()
+const { currentRound, tally, isRoundFinalized } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+interface Props {
+  project: Project
+}
+
+const props = defineProps<Props>()
+
+const allocatedAmount = ref<FixedNumber | null>(null)
+const claimed = ref<boolean | null>(null)
+const isLoading = ref(true)
+
+const descriptionHtml = computed(() => markdown.render(props.project.description || ''))
+const tokenSymbol = computed(() => {
+  return currentRound.value?.nativeTokenSymbol ?? ''
 })
-export default class ClaimButton extends Vue {
-  @Prop() project!: Project
-  @Prop() roundAddress!: string
 
-  token: Token | null = null
-  allocatedAmount: BigNumber | null = null
-  claimed: boolean | null = null
-  isLoading = true
+onMounted(() => {
+  checkAllocation()
+})
 
-  get currentRound(): RoundInfo | null {
-    return this.$store.state.currentRound
+watch(currentRound, () => {
+  checkAllocation()
+})
+
+async function checkAllocation() {
+  // If the current round is not finalized or the allocated amount was already
+  // fetched then don't do anything
+  // eslint-disable-next-line
+  if (!props.project || !currentRound.value || !isRoundFinalized.value || allocatedAmount.value) {
+    isLoading.value = false
+    return
   }
 
-  get descriptionHtml(): string {
-    return markdown.render(this.project?.description || '')
+  isLoading.value = true
+  if (!tally.value) {
+    await loadTally()
   }
 
-  get tokenSymbol(): string {
-    return this.token?.symbol ?? ''
-  }
+  allocatedAmount.value = await getAllocatedAmount(
+    currentRound.value.fundingRoundAddress,
+    currentRound.value.nativeTokenDecimals,
+    tally.value!.results.tally[props.project.index],
+    tally.value!.totalVoiceCreditsPerVoteOption.tally[props.project.index],
+  )
+  claimed.value = await isFundsClaimed(currentRound.value.fundingRoundAddress, props.project.address)
+  isLoading.value = false
+}
 
-  get tokenDecimals(): number {
-    return this.token?.decimals ?? 18
-  }
+async function loadTally() {
+  await appStore.loadTally()
+}
 
-  get isRoundFinalized(): boolean {
-    return this.$store.state.rounds.isRoundFinalized(this.roundAddress)
-  }
+function hasClaimBtn(): boolean {
+  return (
+    !!currentRound.value &&
+    currentRound.value.status === RoundStatus.Finalized &&
+    // eslint-disable-next-line
+    props.project !== null &&
+    props.project.index !== 0 &&
+    !props.project.isHidden &&
+    allocatedAmount.value !== null &&
+    claimed.value !== null
+  )
+}
 
-  get isRoundCancelled(): boolean {
-    return this.$store.state.rounds.isRoundCancelled(this.roundAddress)
-  }
+function canClaim(): boolean {
+  return hasClaimBtn() && !!currentUser.value && !claimed.value
+}
 
-  get isRoundCancelledOrFinalized(): boolean {
-    return this.isRoundFinalized || this.isRoundCancelled
-  }
+function formatAmount(value: FixedNumber): string {
+  const maxDecimals = 6
+  const { nativeTokenDecimals } = currentRound.value!
+  return _formatAmount(value, nativeTokenDecimals, null, maxDecimals)
+}
 
-  async created() {
-    if (!this.$store.state.rounds) {
-      await this.$store.dispatch(LOAD_ROUNDS)
-    }
-
-    this.checkAllocation()
-  }
-
-  @Watch('currentRound')
-  async checkAllocation() {
-    // If the current round is not finalized or the allocated amount was already
-    // fetched then don't do anything
-    if (
-      !this.project ||
-      !this.currentRound ||
-      !this.isRoundCancelledOrFinalized ||
-      this.allocatedAmount
-    ) {
-      this.isLoading = false
-      return
-    }
-
-    this.isLoading = true
-
-    const selectedRound = await this.$store.state.rounds.getRound(
-      this.roundAddress
-    )
-    if (!selectedRound) {
-      this.isLoading = false
-      return
-    }
-
-    this.token = await selectedRound.getTokenInfo(this.roundAddress)
-    this.allocatedAmount = await selectedRound.getAllocatedAmountByProjectIndex(
-      this.project.index
-    )
-
-    this.claimed = true
-    if (
-      this.$store.getters.isCurrentRound(this.roundAddress) &&
-      this.isRoundFinalized
-    ) {
-      // make sure it's really claimed
-      this.claimed = await isFundsClaimed(
-        this.roundAddress,
-        this.project.address,
-        this.project.index
-      )
-    }
-
-    this.isLoading = false
-  }
-
-  hasClaimBtn(): boolean {
-    return (
-      !!this.currentRound &&
-      this.$store.getters.isCurrentRound(this.roundAddress) &&
-      this.currentRound.status === RoundStatus.Finalized &&
-      this.project !== null &&
-      this.project.index !== 0 &&
-      !this.project.isHidden &&
-      this.allocatedAmount !== null &&
-      this.claimed !== null
-    )
-  }
-
-  canClaim(): boolean {
-    return (
-      this.hasClaimBtn() &&
-      this.$store.state.currentUser &&
-      !this.claimed &&
-      this.allocatedAmount !== null &&
-      this.allocatedAmount.gt(0)
-    )
-  }
-
-  formatAmount(value: BigNumber | null): string {
-    const maxDecimals = 6
-    return value
-      ? formatAmount(value, this.tokenDecimals, null, maxDecimals)
-      : '0'
-  }
-
-  claim() {
-    this.$modal.show(
-      ClaimModal,
-      {
-        project: this.project,
-        claimed: () => {
-          // Optimistically update the claimed state
-          this.claimed = true
-        },
+function claim() {
+  $vfm.show({
+    component: ClaimModal,
+    bind: {
+      project: props.project,
+      claimed: () => {
+        // Optimistically update the claimed state
+        claimed.value = true
       },
-      {}
-    )
-  }
+    },
+  })
 }
 </script>
 
