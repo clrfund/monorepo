@@ -653,7 +653,8 @@
     "hero": {
       "title": "将您最喜欢的项目送往月球！",
       "subtitle": "您捐赠的每个项目都将获得额外资金。",
-      "info": "如何运作"
+      "info": "如何运作",
+      "action": "开始"
     },
     "callout": {
       "title": "参加筹款",
@@ -980,6 +981,7 @@
   },
   "app": "App",
   "navBar": {
+    "app": "App",
     "dropdown": {
       "home": "首页",
       "about": "关于",

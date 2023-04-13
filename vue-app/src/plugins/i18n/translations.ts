@@ -6,8 +6,8 @@ const languages = {
   cn: { emoji: '🇨🇳', description: '简体中文' },
 }
 
-export const defaultLocale = import.meta.env.VITE_I18N_LOCALE || 'tw'
-export const supportedLocales = ['tw', 'cn', 'en', 'es']
+export const defaultLocale = import.meta.env.VITE_I18N_LOCALE || 'en'
+export const supportedLocales = ['en', 'cn']
 
 export function isLocaleSupported(locale) {
   return supportedLocales.includes(locale)
