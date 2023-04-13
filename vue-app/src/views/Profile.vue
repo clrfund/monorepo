@@ -90,10 +90,9 @@ import { userRegistryType, UserRegistryType, chain } from '@/api/core'
 import { type Project, getProjects } from '@/api/projects'
 import { isSameAddress } from '@/utils/accounts'
 import { getTokenLogo } from '@/utils/tokens'
-import { useAppStore, useUserStore, useRecipientStore } from '@/stores'
+import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import { useWallet } from 'vue-dapp'
 
 interface Props {
   balance: string
@@ -114,7 +113,7 @@ const { recipientRegistryAddress } = storeToRefs(recipientStore)
 const projects = ref<Project[]>([])
 const balanceBackgroundColor = ref('#2a374b')
 const isLoading = ref(true)
-const { disconnect: disconnectWallet } = useWallet()
+const { disconnect: disconnectWallet } = useWalletStore()
 
 onMounted(async () => {
   isLoading.value = true
@@ -161,8 +160,10 @@ function onNavigateToBridge(): void {
 async function disconnect(): Promise<void> {
   if (currentUser.value && walletProvider.value) {
     // Log out user
-    disconnectWallet()
-    userStore.logoutUser()
+    try {
+      await disconnectWallet()
+      await userStore.logoutUser()
+    } catch (err) {}
     emit('close')
   }
 }

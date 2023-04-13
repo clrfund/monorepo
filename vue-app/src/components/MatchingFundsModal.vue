@@ -1,49 +1,64 @@
 <template>
-  <vue-final-modal v-bind="$attrs" v-slot="{ close }">
+  <vue-final-modal class="modal-container">
     <div class="modal-body">
       <div v-if="step === 1">
-        <h3>Contribute {{ tokenSymbol }} to the matching pool</h3>
+        <h3>{{ $t('matchingFundsModal.title', { tokenSymbol }) }}</h3>
         <div>
-          The funds will be distributed to all projects based on the contributions they receive from the community
+          {{ $t('matchingFundsModal.fund_distribution_message') }}
         </div>
         <div class="contribution-form">
           <input-button
-            v-model:value="amount"
+            :modelValue="amount"
             :input="{
               placeholder: '10',
               class: `{ invalid: ${!isAmountValid} }`,
               required: true,
             }"
+            @update:modelValue="newValue => (amount = newValue)"
           />
         </div>
         <div v-if="!isBalanceSufficient" class="balance-check-warning">
-          ⚠️ You only have {{ renderBalance }}
-          {{ tokenSymbol }}
+          {{
+            $t('matchingFundsModal.div1', {
+              renderBalance: renderBalance,
+              tokenSymbol: tokenSymbol,
+            })
+          }}
         </div>
         <div class="btn-row">
-          <button class="btn-secondary" @click="$emit('close', close)">Cancel</button>
-          <button class="btn-action" :disabled="!isAmountValid" @click="contributeMatchingFunds()">Contribute</button>
+          <button class="btn-secondary" @click="$emit('close')">{{ $t('cancel') }}</button>
+          <button class="btn-action" :disabled="!isAmountValid" @click="contributeMatchingFunds()">
+            {{ $t('matchingFundsModal.button2') }}
+          </button>
         </div>
       </div>
       <div v-if="step === 2">
-        <h3>Contribute {{ renderContributionAmount }} {{ tokenSymbol }} to the matching pool</h3>
-        <transaction :hash="transferTxHash" :error="transferTxError" @close="$emit('close', close)"></transaction>
+        <h3>
+          {{
+            $t('matchingFundsModal.h3_2_t1', {
+              renderContributionAmount: renderContributionAmount,
+              tokenSymbol: tokenSymbol,
+            })
+          }}
+        </h3>
+        <transaction :hash="transferTxHash" :error="transferTxError" @close="$emit('close')"></transaction>
       </div>
       <div v-if="step === 3">
         <div class="big-emoji">💦</div>
-        <h3>You just topped up the pool by {{ renderContributionAmount }} {{ tokenSymbol }}!</h3>
-        <div class="mb2">Thanks for helping out all our projects.</div>
-        <button class="btn-primary" @click="$emit('close', close)">Done</button>
+        <h3>
+          {{
+            $t('matchingFundsModal.h3_3', {
+              renderContributionAmount: renderContributionAmount,
+              tokenSymbol: tokenSymbol,
+            })
+          }}
+        </h3>
+        <div class="mb2">{{ $t('matchingFundsModal.div2') }}</div>
+        <button class="btn-primary" @click="$emit('close')">{{ $t('matchingFundsModal.button3') }}</button>
       </div>
     </div>
   </vue-final-modal>
 </template>
-
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-}
-</script>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
@@ -59,12 +74,9 @@ import { formatUnits } from '@ethersproject/units'
 
 import { ERC20 } from '@/api/abi'
 import { factory } from '@/api/core'
-// @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
-import { useEthers } from 'vue-dapp'
 import { useAppStore, useUserStore } from '@/stores'
 
-const { signer } = useEthers()
 const appStore = useAppStore()
 const userStore = useUserStore()
 
@@ -93,6 +105,7 @@ const renderContributionAmount = computed<string | null>(() => {
 })
 const isBalanceSufficient = computed<boolean>(() => {
   if (balance.value === null) return false
+
   return parseFloat(balance.value) >= parseFloat(amount.value)
 })
 
@@ -118,7 +131,7 @@ const tokenLogo = computed<string>(() => getTokenLogo(tokenSymbol.value))
 async function contributeMatchingFunds() {
   step.value += 1
   const { nativeTokenAddress, nativeTokenDecimals } = appStore.currentRound!
-  const token = new Contract(nativeTokenAddress, ERC20, signer.value!)
+  const token = new Contract(nativeTokenAddress, ERC20, userStore.signer)
   const _amount = parseFixed(amount.value, nativeTokenDecimals)
 
   // TODO: update to take factory address as a parameter from the route props, default to env. variable

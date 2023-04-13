@@ -1,4 +1,5 @@
 import WalletConnectProvider from '@walletconnect/web3-provider'
+import { chainId as rpcChainId, rpcUrl } from '@/api/core'
 
 export default {
   // TODO: add better return type
@@ -6,7 +7,7 @@ export default {
     const provider = new WalletConnectProvider({
       infuraId: import.meta.env.VITE_INFURA_ID,
       rpc: {
-        [import.meta.env.VITE_ETHEREUM_API_CHAINID!]: import.meta.env.VITE_ETHEREUM_API_URL!,
+        [rpcChainId]: rpcUrl,
       },
     })
 

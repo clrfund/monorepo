@@ -1,5 +1,5 @@
-import { GraphQLClient } from 'graphql-request';
-import * as Dom from 'graphql-request/dist/types.dom';
+import type { GraphQLClient } from 'graphql-request';
+import type Dom from 'graphql-request/build/esm/types.dom';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -1583,29 +1583,18 @@ export enum FundingRound_OrderBy {
 
 export type Message = {
   __typename?: 'Message';
-  blockNumber: Scalars['BigInt'];
   data: Maybe<Array<Scalars['BigInt']>>;
   fundingRound: Maybe<FundingRound>;
   id: Scalars['ID'];
   iv: Scalars['BigInt'];
   publicKey: Maybe<PublicKey>;
-  submittedBy: Maybe<Scalars['Bytes']>;
   timestamp: Maybe<Scalars['String']>;
-  transactionIndex: Scalars['BigInt'];
 };
 
 export type Message_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
   and: InputMaybe<Array<InputMaybe<Message_Filter>>>;
-  blockNumber: InputMaybe<Scalars['BigInt']>;
-  blockNumber_gt: InputMaybe<Scalars['BigInt']>;
-  blockNumber_gte: InputMaybe<Scalars['BigInt']>;
-  blockNumber_in: InputMaybe<Array<Scalars['BigInt']>>;
-  blockNumber_lt: InputMaybe<Scalars['BigInt']>;
-  blockNumber_lte: InputMaybe<Scalars['BigInt']>;
-  blockNumber_not: InputMaybe<Scalars['BigInt']>;
-  blockNumber_not_in: InputMaybe<Array<Scalars['BigInt']>>;
   data: InputMaybe<Array<Scalars['BigInt']>>;
   data_contains: InputMaybe<Array<Scalars['BigInt']>>;
   data_contains_nocase: InputMaybe<Array<Scalars['BigInt']>>;
@@ -1671,16 +1660,6 @@ export type Message_Filter = {
   publicKey_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   publicKey_starts_with: InputMaybe<Scalars['String']>;
   publicKey_starts_with_nocase: InputMaybe<Scalars['String']>;
-  submittedBy: InputMaybe<Scalars['Bytes']>;
-  submittedBy_contains: InputMaybe<Scalars['Bytes']>;
-  submittedBy_gt: InputMaybe<Scalars['Bytes']>;
-  submittedBy_gte: InputMaybe<Scalars['Bytes']>;
-  submittedBy_in: InputMaybe<Array<Scalars['Bytes']>>;
-  submittedBy_lt: InputMaybe<Scalars['Bytes']>;
-  submittedBy_lte: InputMaybe<Scalars['Bytes']>;
-  submittedBy_not: InputMaybe<Scalars['Bytes']>;
-  submittedBy_not_contains: InputMaybe<Scalars['Bytes']>;
-  submittedBy_not_in: InputMaybe<Array<Scalars['Bytes']>>;
   timestamp: InputMaybe<Scalars['String']>;
   timestamp_contains: InputMaybe<Scalars['String']>;
   timestamp_contains_nocase: InputMaybe<Scalars['String']>;
@@ -1701,18 +1680,9 @@ export type Message_Filter = {
   timestamp_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   timestamp_starts_with: InputMaybe<Scalars['String']>;
   timestamp_starts_with_nocase: InputMaybe<Scalars['String']>;
-  transactionIndex: InputMaybe<Scalars['BigInt']>;
-  transactionIndex_gt: InputMaybe<Scalars['BigInt']>;
-  transactionIndex_gte: InputMaybe<Scalars['BigInt']>;
-  transactionIndex_in: InputMaybe<Array<Scalars['BigInt']>>;
-  transactionIndex_lt: InputMaybe<Scalars['BigInt']>;
-  transactionIndex_lte: InputMaybe<Scalars['BigInt']>;
-  transactionIndex_not: InputMaybe<Scalars['BigInt']>;
-  transactionIndex_not_in: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
 export enum Message_OrderBy {
-  BlockNumber = 'blockNumber',
   Data = 'data',
   FundingRound = 'fundingRound',
   FundingRoundContributorCount = 'fundingRound__contributorCount',
@@ -1743,9 +1713,7 @@ export enum Message_OrderBy {
   PublicKeyVoiceCreditBalance = 'publicKey__voiceCreditBalance',
   PublicKeyX = 'publicKey__x',
   PublicKeyY = 'publicKey__y',
-  SubmittedBy = 'submittedBy',
-  Timestamp = 'timestamp',
-  TransactionIndex = 'transactionIndex'
+  Timestamp = 'timestamp'
 }
 
 /** Defines the order direction, either ascending or descending */

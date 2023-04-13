@@ -5,13 +5,12 @@
       v-if="input"
       class="input"
       type="number"
-      :value="value"
+      :value="modelValue"
       :class="input.class"
       :required="input.required"
       :placeholder="input.placeholder"
       :disabled="input.disabled"
-      @input="emit('input', ($event.target as HTMLInputElement).value)"
-      @blur="emit('blur', ($event.target as HTMLInputElement).value)"
+      @input="handleInputChange"
     />
     <input
       v-if="button"
@@ -50,17 +49,21 @@ type inputType = {
 interface Props {
   button?: buttonType
   input?: inputType
-  value?: string
+  modelValue?: string
 }
 
 defineProps<Props>()
 
-const emit = defineEmits(['input', 'blur', 'click'])
+const emit = defineEmits(['update:modelValue', 'click'])
 
 const tokenLogoImageUrl = computed(() => {
   const { nativeTokenSymbol } = currentRound.value!
   return new URL(`/src/assets/${getTokenLogo(nativeTokenSymbol)}`, import.meta.url).href
 })
+
+function handleInputChange(event: Event) {
+  emit('update:modelValue', (event.target as HTMLInputElement).value)
+}
 </script>
 
 <style scoped lang="scss">

@@ -251,8 +251,8 @@ export const useAppStore = defineStore('app', {
       if (this.currentRoundAddress) {
         const recipientStore = useRecipientStore()
         // Reset everything that depends on round
-        this.unwatchCart()
-        this.unwatchContributorData()
+        //this.unwatchCart()
+        //this.unwatchContributorData()
         this.contribution = null
         this.contributor = null
         this.cart = []

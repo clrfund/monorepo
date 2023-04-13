@@ -1,412 +1,412 @@
 {
   "about": {
     "heading": {
-      "title": "關於"
+      "title": "关于"
     },
     "what": {
-      "title": "什麼是 clr.fund ？",
-      "paragraph": "Clr.fund, pronounced \"Clear Fund\", is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the preferences of the Ethereum Community. Clr.fund strives for credible neutrality, decentralization, permissionlessness, trustlessness, and pseudonymity."
+      "title": "什么是 CLR.fund?",
+      "paragraph": "CLR.fund, 发音为 \"Clear Fund\", 是一个协议，旨在根据以太坊社区的偏好，将资金有效地分配给对以太坊网络有益的公共产品。 CLR.fund 致力于可信的中立性、去中心化、无需许可、信任和匿名性。"
     },
     "why": {
-      "title": "Why does clr.fund exist?",
-      "paragraph-1-text-1": "Allocating funds towards",
-      "paragraph-1-link": "public goods",
-      "paragraph-1-text-2": "— commodities or services that are neither excludable nor subtractable — is a challenge for any ecosystem, and Ethereum is no exception.",
-      "paragraph-2": "Clr.fund’s goal is to enable funds to be allocated towards public goods that benefit the Ethereum Network without relying on centralized entities and in a way that reflects the preferences of the Ethereum Community.",
-      "paragraph-3-text-1": "See the",
-      "paragraph-3-link": "Clr.fund Constitution",
-      "paragraph-3-text-2": "for more detail on clr.fund’s goals and values."
+      "title": "为什么 CLR.fund 存在?",
+      "paragraph-1-text-1": "将资金有效地分配给",
+      "paragraph-1-link": "公共商品",
+      "paragraph-1-text-2": ", 这一些既不可排除又不可减少的商品或服务, 对于任何生态系统来说都是一个挑战，以太坊也不例外。",
+      "paragraph-2": "CLR.fund 的目标是使资金能够有效地分配给对以太坊网络有益的公共商品，无需依赖中央实体，只需反映以太坊社区偏好。",
+      "paragraph-3-text-1": "请参阅",
+      "paragraph-3-link": "CLR.fund 宪法",
+      "paragraph-3-text-2": "去了解有关 CLR.fund 的目标和价值观的更多细节"
     },
     "unique": {
-      "title": "How is clr.fund unique?",
-      "paragraph-1": "Clr.fund instances also have a number of other special properties:",
-      "li-1-text-1": "Decentralization — Major pieces of clr.fund's infrastructure are built on",
-      "li-1-link-1": "Ethereum",
-      "li-1-text-2": ", A programmable blockchain that provides a reliable, censorship-resistant ledger for clr.fund's voting and funding transactions.",
-      "li-1-link-2": "Read more on clr.fund's decentralization.",
-      "li-2-text-1": "Scalability — Because using Ethereum can be expensive for users, clr.fund uses",
-      "li-2-layer2-1": "\"layer 2\"",
-      "li-2-layer2-2": "\"sidechain\"",
-      "li-2-text-2": "supplementary networks to get most of the benefits of the main Ethereum network but with faster, cheaper transactions.",
-      "li-2-link-1": "Learn more about clr.fund's use of layer 2.",
-      "li-3-text-1": "Collusion-resistance — Since blockchains like Ethereum publish all data publicly by default, clr.fund contributors are vulnerable to bribery and other kinds of manipulation. Clr.fund helps prevent these attacks using magical math called zero-knowledge proofs.",
-      "li-3-link-1": "Find out about MACI, our Minimal Anti-Collusion Infrastructure.",
-      "li-4-text-1": "Sybil-resistance — Voting systems that care about the number of individual people voting for a given choice, as quadratic funding does, can be vulnerable to sybil attacks, in which one person sets up many identities in order to vote multiple times. Clr.fund mitigates this threat with an identity-system called BrightID.",
-      "li-4-link-1": "Find out more about BrightID.",
-      "paragraph-2": " Clr.fund is also built so anyone can spin up and run their own instance to create a public goods grant program for their particular public."
+      "title": "CLR.fund 有何独特?",
+      "paragraph-1": "CLR.fund 的实例还具有许多其他特殊属性：",
+      "li-1-text-1": "去中心化 - CLR.fund 的基础设施的主要部分都建立在",
+      "li-1-link-1": "以太坊",
+      "li-1-text-2": "上，以太坊是一个可编程的区块链，为 CLR.fund 的投票和资金交易提供可靠的、免受审查的分类账。",
+      "li-1-link-2": "请参阅更多关于 CLR.fund 的去中心化。",
+      "li-2-text-1": "可扩展性——由于使用以太坊对用户来说可能很昂贵，因此 CLR.fund 使用",
+      "li-2-layer2-1": "\"第二层\"",
+      "li-2-layer2-2": "\"辅助网络\"",
+      "li-2-text-2": "来获得主以太坊网络的大部分优势，但交易更快、更便宜。",
+      "li-2-link-1": "请参阅更多关于 CLR.fund 使用第二层的信息。",
+      "li-3-text-1": "防止结盟——由于区块链, 如以太坊, 公开发布所有数据, CLR.fund 的贡献者容易受到贿赂和其他形式的操纵。因此 CLR.fund 使用被称为零知识证明的神奇数学来防止这些攻击。",
+      "li-3-link-1": "MACI 是我们的最小反结盟基础设施。",
+      "li-4-text-1": "防止 Sybil 攻击——投票结果有相对利益的投票系统, 如 quadratic funding, 容易受到 sybil 攻击, 即一个人建立许多身份来多次投票。 CLR.fund 通过 BrightID 的身份系统来减轻这种威胁。",
+      "li-4-link-1": "请参阅更多关于 BrightID 的信息。",
+      "paragraph-2": "CLR.fund 也是特别建造，以便任何人都可以启动运行自己公共产品拨款的项目。"
     },
     "how": {
-      "title": "How does it work?",
-      "paragraph-1-text-1": "The clr.fund protocol uses the Constrained Liberal Radicalism (CLR) algorithm, commonly called",
+      "title": "它是如何运作的？",
+      "paragraph-1-text-1": "CLR.fund 使用约束性自由激进主义 (CLR)，通常称为 ",
       "paragraph-1-link-1": "quadratic funding",
-      "paragraph-1-text-2": "(QF), to facilitate monetary contributions from members of the Ethereum Community towards builders of Ethereum public goods.",
-      "paragraph-2": "With its logic encoded into Ethereum smart contracts and other web3 technologies, clr.fund requires minimal trust in any individual people or entities to function and is resilient to collusion and bribery.",
-      "paragraph-3": "  At a high-level, clr.fund consists of a matching pool and a funding round. Philanthropic individuals or organizations contribute to the matching pool so as to have those funds efficiently allocated according to community preference. Users contribute directly to projects they value and, in doing so, earn a share of the matching pool for the projects, along with their contribution. Effectively increasing the value of their contribution.",
-      "paragraph-4-text-1": "  Under the hood, clr.fund uses zero-knowledge proofs (ZK-SNARKS), courtesy of the",
-      "paragraph-4-link-1": "Minimal Anti-collusion Infrastructure (MACI)",
-      "paragraph-4-text-2": ", to keep individual contributions private and limit effectiveness of collusion and bribery",
-      "paragraph-5": "To ensure that every contributor is a unique person clr.fund uses.",
+      "paragraph-1-text-2": "(QF), 以促进社区成员对以太坊公共货物建设者的货币贡献。",
+      "paragraph-2": "凭借以太坊智能合约和其他 web3 的技术, CLR.fund 无需信任任何个人或实体，并且对结盟和贿赂具有弹性。",
+      "paragraph-3": "从高层面的视角看, CLR.fund 由一个匹配池和一个筹款回合组成。慈善个人或组织贡献匹配池。匹配池的资金是以社区偏好分配。 捐赠者直接捐款于他们重视的项目, 因此为该项目获得一部份匹配池的份额，有效地的增加了捐赠者的贡献价值。",
+      "paragraph-4-text-1": "在底层, CLR.fund 使用",
+      "paragraph-4-link-1": "MACI",
+      "paragraph-4-text-2": "的零知识证明 (ZK-SNARKS), 以保护个人贡献的隐私，并限制勾结和贿赂的有效性。",
+      "paragraph-5": "为了确保每位贡献者都是独特的, CLR.fund 使用",
       "paragraph-5-link": "BrightID.",
-      "paragraph-6": "Still curious? Read more on",
-      "paragraph-6-link": "how clr.fund works"
+      "paragraph-6": "还很好奇? 请参阅",
+      "paragraph-6-link": "CLR.fund 是如何运作"
     }
   },
   "contributors": {
     "heading": {
-      "title": "Contributor guide",
-      "paragraph": "An overview of how things work as a contributor so you can learn what to expect throughout the duration of a funding round."
+      "title": "捐赠者指南",
+      "paragraph": "这个概述帮助您了解整个筹款运作。"
     },
     "funds": {
-      "title": "Get funds on {chain}",
-      "paragraph-1-text-1": "You'll need some {currency} on {chain} in order to submit transactions to the clr.fund smart contracts.",
-      "paragraph-1-text-2": "Follow",
-      "paragraph-1-link-1": "this tutorial",
-      "paragraph-1-text-3": "to bridge your funds to {chain}",
-      "paragraph-2-text-1": "Use the",
-      "paragraph-2-link-1": "{chain} bridge",
-      "paragraph-2-text-2": "to transfer some funds.",
-      "paragraph-3-text-1": "Confused on what {chain} is?",
-      "paragraph-3-link-1": "Read our explanation on how clr.fund uses layer 2 on Ethereum."
+      "title": "获取 {chain} 的货币",
+      "paragraph-1-text-1": "您将需要一点在 {chain} 的 {currency} 货币以支付发送给 CLR.fund 智能合约的交易成本.",
+      "paragraph-1-text-2": "遵循",
+      "paragraph-1-link-1": "此教程",
+      "paragraph-1-text-3": "去连接您在 {chain} 的资产.",
+      "paragraph-2-text-1": "用",
+      "paragraph-2-link-1": "{chain} 桥梁",
+      "paragraph-2-text-2": "去转移资产.",
+      "paragraph-3-text-1": "还是对 {chain} 有迷惑吗?",
+      "paragraph-3-link-1": "请查阅 CLR.fund 如何利用二层网络."
     },
     "contributing": {
-      "title": "Contributing to specific projects",
-      "li-1-text-1": "Before contributing to specific projects, you will need to",
-      "li-1-link-1": "verify that you're a unique human",
-      "li-1-text-2": ". This helps clr.fund",
-      "li-1-link-2": "resist sybil attacks!",
-      "li-2": "Make sure you have {nativeTokenSymbol} in your BrightID-verified wallet on the {chain} network",
-      "li-3-link": "Browse projects",
-      "li-3-text": " and add some to your cart, adjusting your contributions to the amount of {nativeTokenSymbol} you want.",
-      "li-4": "When you're ready, open your cart, click contribute, and confirm the transactions to complete your contributions!",
-      "paragraph": "Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you would like before of the reallocation phase but you cannot add more funds to your total contribution amount.",
-      "li-5": "You can add and remove projects.",
-      "li-6": " Your reallocation total must be less than or equal to the total (if it's less, the rest will go to the matching pool)."
+      "title": "捐赠于特定的相目",
+      "li-1-text-1": "捐赠特定的相目之前, 您需要",
+      "li-1-link-1": "核实您是单独的人",
+      "li-1-text-2": ". 这帮助 CLR.fund 去",
+      "li-1-link-2": "抵制 sybil 攻击!",
+      "li-2": "确保您 BrightID 核实的钱包在 {chain} 上拥有 {nativeTokenSymbol}",
+      "li-3-link": "浏览项目",
+      "li-3-text": " 并添加它们到您的捐赠购物车中, 调整您的 {nativeTokenSymbol} 捐赠金额.",
+      "li-4": "当你准备好了, 打开您的捐赠购物车, 单击捐赠, 并确认交易以完成您的捐赠!",
+      "paragraph": "注意: 您只能捐赠一次. 捐赠之后, 您可以重新分配您的捐额给其他项目, 但是您不能添加总捐额.",
+      "li-5": "您可添加或删除了某些项目",
+      "li-6": " 你在重新分配捐额时不能超过你原来的总值。 (如果少于总值, 剩余的将会加入匹配池)."
     },
     "matching": {
-      "title": "Contributing to the matching pool",
-      "paragraph-text-1": "Not sure which specific to contribute to? Contributions to the matching pool will be distributed to all projects that receive project-specific contributions during that round. The weighting of this distribution is determined by the",
+      "title": "捐赠于匹配池",
+      "paragraph-text-1": "不能决定捐赠于任何一个相目? 捐赠于匹配池是最好的选择。匹配池的捐赠将会分配给所有接受到捐赠的项目。分配的权重是由",
       "paragraph-link": "quadratic funding",
-      "paragraph-text-2": " results.",
-      "li-1": " First make sure the wallet you are using holds {nativeTokenSymbol} on {chain}. {nativeTokenSymbol} can be easily purchased on any major Ethereum-focused exchange.",
-      "li-2-text-1": " Once you have the desired amount of {nativeTokenSymbol} in your wallet, select \"Add Funds\" on the",
-      "li-2-link": "Projects page",
-      "li-2-text-2": " and confirm the transactions."
+      "paragraph-text-2": " 的结果决定。",
+      "li-1": " 首先确保您的钱包在 {chain} 上拥有 {nativeTokenSymbol}. 您可以通过交易所去购买 {nativeTokenSymbol}。",
+      "li-2-text-1": " 当您的钱包拥有足够的 {nativeTokenSymbol}, 在",
+      "li-2-link": "项目页面上",
+      "li-2-text-2": " 单击 \"加款\" 并确认以完成交易"
     },
     "wow": {
-      "title": "How does clr.fund work",
-      "paragraph": "Looking for a more general overview?",
-      "link": "Check out our \"How It Works\" page"
+      "title": "CLR.fund 如何运作",
+      "paragraph": "要寻找更多总体概述?",
+      "link": "请查看 \"CLR.fund 是如何运作\""
     }
   },
   "decentralization": {
     "heading": {
-      "title": "Decentralization in Clr.fund",
-      "subtitle": "What is Decentralization?",
-      "paragraph": "When we say something is \"decentralized\" in clr.fund, and in web3 broadly, we mean that no single person, company, or other entity is solely responsible for running or maintaining it. Instead, a decentralized system is run or maintained by a large group of independent entities, coordinated by a set of rules each opts into, like miners in Ethereum or peers in BitTorrent."
+      "title": "CLR.fund 的去中心化",
+      "subtitle": "什么是去中心化?",
+      "paragraph": "在 CLR.fund 以及 web3 的广泛领域中，当我们说某事物是“去中心化”的，我们的意思是没有单一的个人、公司或其他实体专门负责运行或维护它。相反的，去中心化系统由一大群独立实体运行或维护，每一个实体选择应用同一套协调规则，例如以太坊中的矿工或 BitTorrent 中的同行。"
     },
     "which": {
-      "title": "Which pieces of clr.fund are decentralized?",
-      "paragraph-1": "Much of clr.fund's infrastructure is built on Ethereum, a decentralized blockchain:",
-      "li-1": "the registry of projects qualified for funding (and, potentially, the curation mechanism for choosing these projects)",
-      "li-2": "the matching pool of funds",
-      "li-3": "the sybil-resistant registry of users qualified to contribute to individual projects",
-      "li-4": "the funds from and encrypted information about contributions to individual projects",
-      "li-5": "the mechanism for distributing funds once a round's results are finalized",
-      "exists_in_code": "Each of these pieces exists in an Ethereum smart contract (see the code",
-      "here": "here",
-      "maintained_by_miner": ", meaning its functionality is maintained by Ethereum miners, a decentralized group."
+      "title": "CLR.fund 的哪些部分是去中心化的?",
+      "paragraph-1": "CLR.fund 的很多基础设施都是建立在去中心化区块链, 以太坊上的：",
+      "li-1": "项目注册表（可能包括用于选择这些项目的策划机制）",
+      "li-2": "资金匹配池",
+      "li-3": "耐 Sybil 攻击的捐赠者注册表",
+      "li-4": "项目捐款和投票信息的加密",
+      "li-5": "结束后的捐款分配机制",
+      "exists_in_code": "这些都存在于以太坊智能合约中（看",
+      "here": "这里",
+      "maintained_by_miner": "的代码，这意味着它的功能由以太坊矿工维护，这是一个去中心化的组织。）"
     },
     "why": {
-      "title": "Why is clr.fund decentralized?",
-      "paragraph": "Ethereum's decentralization provides clr.fund with three main benefits:",
-      "li-1": " Transparent process — All of the decentralized pieces of clr.fund are publicly verifiable. Anyone can look at the code for the smart contracts and observe its inputs and outputs, with very little possibility that anything is being hidden or changed secretly.",
-      "li-2-text-1": "Secure voting — Because of Ethereum's strong security guarantees, anyone submitting a message can be extremely confident that their message will be processed as expected by the system. There are still security dangers, of course, such as",
-      "li-2-link-1": "sybil attacks",
-      "li-2-text-2": " or",
-      "li-2-link-2": "vote manipulation",
-      "li-2-text-3": ", but the kind of \"vote hacking\" typically feared in digital voting is highly unlikely here.",
-      "li-3-text-1": "Public good — Everything on Ethereum is open source and permissionless, which means the code for clr.fund's decentralized infrastructure acts as a public good: anyone can deploy their own version of the system to create their own",
+      "title": "CLR.fund 为什么是去中心化的?",
+      "paragraph": "以太坊的去中心化为 CLR.fund 提供了三大主要好处:",
+      "li-1": " 透明性 — 所有 CLR.fund 的去中心化部分都是公开可验证的。任何人都可以查看智能合约的代码, 观察其输入和输出，几乎没有可能有任何东西被隐藏或秘密更改。",
+      "li-2-text-1": "投票的安全性 - 由于以太坊强大的安全保障，任何提交消息的人都可以非常有信心，他们的消息将按照系统预期的方式处理。当然，仍然有其他威胁，例如",
+      "li-2-link-1": "sybil 攻击",
+      "li-2-text-2": " 或",
+      "li-2-link-2": "投票操纵",
+      "li-2-text-3": ", 但这里通常担心的“投票黑客”的可能性非常小。",
+      "li-3-text-1": "公共产品 — 在以太坊， 一切都是开源和无需许可的, 这意味着 CLR.fund 的代码具有公共产品的特征: 任何人都可以部署自己的",
       "li-3-link-2": "quadratic funding",
-      "li-3-text-2": " system, with the same decentralized benefits of the original."
+      "li-3-text-2": " 系统，一养的有去中心化。"
     }
   },
   "howItWorks": {
     "heading": {
-      "title": "How the round works",
-      "subtitle": "CLR walkthrough",
-      "paragraph-1": "This is an overview of how everything works behind the scenes so you can learn what to expect throughout the duration of the round.",
-      "paragraph-2": " Looking for a guide on how to participate? Check out our guides specifically for contributing and joining as a project.",
-      "li-1": "Guide for contributors",
-      "li-2": "Guide for recipients"
+      "title": "筹款运作",
+      "subtitle": "CLR 概述",
+      "paragraph-1": "这个概述帮助您了解整个筹款期间您可以期望什么。",
+      "paragraph-2": " 如果您正在寻找如何参与的指南，请查看我们专门为捐赠者和收赠者提供的指南。",
+      "li-1": "捐赠者指南",
+      "li-2": "收赠者指南"
     },
     "quick": {
-      "title": "Quick recap on quadratic funding",
-      "paragraph-1-text-1": "As outlined in our",
-      "link-1": "overview on quadratic funding",
-      "paragraph-1-text-2": ", projects will receive funding from individual contributions as well as the matching pool. When you contribute to your favorite projects, your contribution also acts as a vote. The more contributions a project receives, the more votes. And the more votes a project gets, the more they'll receive from the matching pool. Although a higher individual contribution will equal a larger vote weighting, it's far more important to receive a large volume of unique contributions than just a few high value contributions.",
-      "paragraph-2": "As the funding round is also a public vote, it needs deadlines. The round is split into multiple phases so that after all contributions or votes are made, they can be counted and confirmed before the final matching pool distribution."
+      "title": "回顾 quadratic funding",
+      "paragraph-1-text-1": "正如我们在",
+      "link-1": "quadratic funding",
+      "paragraph-1-text-2": " 的概述, 项目将会从个人捐赠和匹配池中获得资金。当你捐赠你最喜欢的项目时，你的捐赠会被视为一票。项目获得的捐赠数量越多，它就会获得越多的票数。而项目获得的票数越多，它从匹配池中获得的资金就越多。尽管个人捐赠金额越高，投票权重就越大，但拥有大量独特捐赠的项目要比拥有少量高额捐赠的项目更重要。",
+      "paragraph-2": "由于这次资金筹集也是一场公开投票，因此需要设定截止时间。整个筹款轮次分为多个阶段，这样在所有捐赠或投票完成后，就可以在最终的捐赠池分配之前对它们进行计数和确认。这样的设计有助于保证筹款活动的公平性和公正性。"
     },
     "phases": {
-      "title": "Funding round phases",
-      "subtitle": "Join phase",
-      "paragraph-1-text-1": "To kick things off, projects will be invited to",
-      "link-1": "join the round",
-      "paragraph-1-text-2": ". If you're an eager contributor,   you'll be able to browse the projects and add them to your cart but you   won't be able to contribute just yet.",
+      "title": "筹款阶段",
+      "subtitle": "加入阶段",
+      "paragraph-1-text-1": "为了开启筹款轮次，将会邀请项目参加",
+      "link-1": "筹款",
+      "paragraph-1-text-2": "。如果你是一名热心的捐赠者，你可以浏览这些项目并添加它们到你的捐赠购物车中，但你还不能对它们进行捐赠。这个阶段的目的是为了让捐赠者能够更好地了解这些项目，并做好捐赠的准备。",
       "need": {
-        "title": "Need to know",
-        "li-1": "There will be a maximum of {maxRecipients} projects in the round.",
-        "li-2-text": "Projects must meet ",
-        "li-2-link": "round criteria.",
-        "li-3-text": "If you want to contribute, this is a perfect time to get",
-        "li-3-link": "set up to contribute."
+        "title": "了解事项",
+        "li-1": "本次筹款轮次的项目数量将会有上限，最多可以有 {maxRecipients} 个项目参与。",
+        "li-2-text": "所有想要参与本次筹款轮次的项目都必须符合筹款轮次的一些",
+        "li-2-link": "具体标准。",
+        "li-3-text": "如果你想要参与本次筹款，现在是最好时机",
+        "li-3-link": "做准备。"
       }
     },
     "contribution": {
-      "title": "Contribution phase",
-      "paragraph-1": "The launch of the contribution phase follows the join phase and marks the   official start of the funding round. This is the time for you to add your   favorite projects to your cart and contribute.",
+      "title": "贡献阶段",
+      "paragraph-1": "筹款正式启动，你可以捐赠你喜欢的项目了",
       "need": {
-        "title": "Need to know",
-        "li-1": "This phase will last {contributionPhaseDays} days.",
-        "li-2-text-1": "You will need to go through some",
-        "li-2-link": "setup",
-        "li-2-text-2": " before you can contribute.",
-        "li-3": "The maximum contribution amount is {maxContributionAmount} {nativeTokenSymbol}.",
-        "li-4": "Your total contribution amount is final. You can't increase it by contributing an additional time."
+        "title": "了解事项",
+        "li-1": "这个阶段将持续 {contributionPhaseDays} 天。",
+        "li-2-text-1": "你需要先做一些",
+        "li-2-link": "准备工作",
+        "li-2-text-2": "才能参与捐款",
+        "li-3": "筹款的最大捐赠额为 {maxContributionAmount} {nativeTokenSymbol}。",
+        "li-4": "一旦你完成了捐赠，你的捐赠总额就是最终的。你不能再次捐赠来增加你的总捐赠额。"
       },
-      "paragraph-2": "If you don't contribute in the contribution phase, the round is over for   you once this phase ends."
+      "paragraph-2": "如果你在捐赠阶段没有捐赠，那么一旦这个阶段结束，你就不能再参与本轮筹款了。"
     },
     "reallocation": {
-      "title": "Reallocation phase",
-      "paragraph": "During this phase, if you've contributed, you will have time to change   your mind. You can edit your contribution amounts or add/remove projects   but your total must equal that of your original contribution.",
+      "title": "调整阶段",
+      "paragraph": "在这个阶段，如果你已经捐赠了，你将有时间改变主意。你可以编辑你的捐赠金额或添加/删除项目，但你的总捐赠额必须等于你原来的捐赠额。",
       "need": {
-        "title": "Need to know",
-        "li-1": " This phase will last {reallocationPhaseDays} days after the end of the contribution phase.",
-        "li-2": "If you remove projects, you must reallocate the funds to other projects or it will go to the matching pool.",
-        "li-3": "You can't exceed your original contribution total when reallocating funds."
+        "title": "了解事项",
+        "li-1": " 在捐赠阶段结束后，这个阶段将持续 {reallocationPhaseDays} 天。",
+        "li-2": "如果你删除了某些项目，你必须将这些资金重新分配给其他项目，否则它将被捐赠到匹配池中。",
+        "li-3": "你在重新分配资金时不能超过你原来的总捐赠额。"
       }
     },
     "tallying": {
-      "title": "Tallying phase",
-      "paragraph-text-1": "At this point, all contributions are final, and can now be counted. The round coordinator triggers",
+      "title": "统计阶段",
+      "paragraph-text-1": "在这个阶段, 所有的捐款都是最终的，现在可以进行统计。筹款负责人会触发",
       "link": "MACI",
-      "paragraph-text-2": "and the smart contracts to calculate how much of the matching pool each project will get."
+      "paragraph-text-2": " 和智能合约, 计算每个项目将获得多少匹配池的份额。"
     },
     "finalized": {
-      "title": "Finalized phase",
-      "paragraph": "Once the tallying calculations are complete, the round is finalized.   Project owners can come and claim their funding!"
+      "title": "最终阶段",
+      "paragraph": "一旦统计完成，筹款就结束了。项目所有者可以来申领他们的捐款！"
     },
     "more": {
-      "title": "More",
-      "paragraph": "We use different tech to keep the round fair and free from malicious   actors. You can learn more about them below:",
+      "title": "更多",
+      "paragraph": "我们使用不同的技术来确保筹款的公平性, 并防止恶意行为。您可以在下面了解更多相关信息：",
       "li-1-link": "MACI",
-      "li-1-text": " – to protect against bribery and tally round results.",
+      "li-1-text": " - 防止贿赂行为，并确保筹款结果。",
       "li-2-link": "BrightID",
-      "li-2-text": " – to protect against sybil attacks."
+      "li-2-text": " - 防止 sybil 攻击。"
     }
   },
   "layer2": {
     "heading": {
-      "title": "About Layer 2",
-      "subtitle": "Clr.fund on Layer 2",
-      "paragraph-1-text-1": "tl;dr: clr.fund runs on",
+      "title": "关于二层网络",
+      "subtitle": "CLR.fund 在二层网络",
+      "paragraph-1-text-1": "tl;dr: CLR.fund 在",
       "link-1": "Ethereum Layer 2 rollups",
-      "paragraph-1-text-2": "to help save you time and money when contributing to your favorite projects. You'll need a wallet with funds on {chain} to interact with this application.",
-      "cta": "Bridge Funds"
+      "paragraph-1-text-2": "上运行，以帮助您节省时间和金钱为您喜欢的项目做出贡献。 您需要一个在 {chain} 上有资金的钱包来应用此程序。",
+      "cta": "桥接资金"
     },
     "transactions": {
-      "title": "Ethereum Transaction Costs",
-      "paragraph-1": "Ethereum, the blockchain that houses much of clr.fund's infrastructure, requires users to pay transaction costs when interacting with it, and these costs are going up. Transaction fees compensate the decentralized community of Ethereum miners for processing and maintaining the blockchain's state securely. As usage of Ethereum has gone up, so has the price of getting miner's to include your transaction on the blockchain.",
-      "paragraph-2": "So, the increasing cost of using Ethereum demonstrates that it's useful, which is great, but it also presents a problem for end users who don't want to pay fees in the 10s or 100s of dollars."
+      "title": "以太坊交易成本",
+      "paragraph-1": "以太坊是包含 CLR.fund 大部分基础设施的区块链, 要求用户在与它交互时支付交易成本，并且这些成本正在上升。 交易费用补偿了以太坊矿工的分散社区，以便安全处理和维护区块链的状态。 随着以太坊的使用量的增加，矿工包含您的交易在区块链上的价格也随之增加。",
+      "paragraph-2": "使用以太坊的成本上升表明它是有用的, 这是很好的, 但它也给不想支付10美元或100美元的费用的最终用户带来了问题。"
     },
     "scalability": {
-      "title": "Layer 2s for Scalability",
-      "p1": "The main Ethereum blockchain, \"layer 1\", may be upgraded to reduce costs in the future (this is one of the goals for the future of Ethereum, which clr.fund is helping realize!).",
-      "p2": "In the immediate term, though, \"layer 2\" solutions are already helping dramatically reduce costs. Most layer 2s are \"rollups\", blockchain-esque systems that are maintained, like Ethereum, by a decentralized group of nodes. Rollups periodically \"roll up\" all their recent transactions into a single transaction that is recorded on layer 1, Ethereum, allowing them to inherit much of Ethereum's security.",
-      "p3": "Transactions on layer 2s are orders of magnitude cheaper than on layer 1, since rollups can process a high rate of transactions and transaction traffic is now diluted across the many layer 2 options.",
-      "p4_t1": "Read more on",
-      "p4_l1": "Ethereum Layer 2 technologies."
+      "title": "可扩展性的第二层网络",
+      "p1": "以太坊区块链，\"第一层网络\", 可能会升级以降低未来的成本 (这是 CLR.fund 正在帮助实现的以太坊未来目标之一)。",
+      "p2": "但是, 在短期内, \"第二层网络\" 解决方案已经帮助大幅降低成本。 大多数第二层是 \"rollup\", 区块链类似的系统，由分散的节点群维护。 Rollup 定期将其所有最近的交易 \"滚动\" 到记录在第一层网络 Ethereum 上的单个交易中，从而继承了以太坊的大部分安全性。",
+      "p3": "第二层上的交易比第一层便宜数量级, 因为 rollup 可以处理大量交易和交易流量现在被分散在许多第二层选项中。",
+      "p4_t1": "更多关于",
+      "p4_l1": "以太坊第二层技术。"
     },
     "arbitrum": {
-      "p1": " There are many variations on the layer 2 rollup approach. This current {operator} round uses {chain}, an \"optimistic\"-style rollup.",
-      "link": "Learn more in the {chain} docs.",
-      "subtitle": "What you'll need",
-      "li1": "A wallet that supports {chain}",
-      "li2": "Funds on {chain}",
-      "h3": "💼 How to find wallet that supports {chain}",
-      "tooltip": "Wallet resources are provided as a convenience and do not represent endorsement of any of the projects or services therein. Always DYOR.",
-      "li3_t1": " Visit the official",
-      "li3_link": " {chain} portal",
-      "li3_t2": "and filter by \"Wallets\" to view some of the wallets that currently support the {chain} network.",
-      "li4_t1": " Double-check that any wallet you consider",
-      "li4_link": " also supports WalletConnect",
-      "li4_t2": "to ensure you're able to connect to the app.",
+      "p1": " 第二层 rollup 方法有许多变体。 CLR.fund 使用 {chain}，一种 \"乐观\" 风格的 rollup。 ",
+      "link": "在 {chain} 文档中了解更多信息。",
+      "subtitle": "您需要什么",
+      "li1": "支持 {chain} 的钱包",
+      "li2": "{chain} 上的资金",
+      "h3": "💼 如何找到支持 {chain} 的钱包",
+      "tooltip": "钱包资源作为一种方便提供，不代表其中任何项目或服务的认可。 始终要DYOR。",
+      "li3_t1": " 访问官方的",
+      "li3_link": " {chain} 门户网站",
+      "li3_t2": ", 并按 \"钱包\" 进行筛选, 查看当前支持 {chain} 网络的一些钱包。",
+      "li4_t1": " 再次检查您考虑的任何钱包是否还支持",
+      "li4_link": " WalletConnect",
+      "li4_t2": " 以确保您能够连接到应用程序。",
       "funds": {
-        "h3": "💰 How to get funds on {chain}",
-        "button": "Official {chain} Bridge",
-        "p1_t1": "Follow the steps below, or use the",
-        "link1": "official tutorial",
-        "p1_t2": "as a guide at any time.",
-        "li1": "Click above to go to the official {chain} bridge",
-        "li2": "Connect your {chain} supporting wallet using",
-        "li2_b": "Mainnet",
-        "li3": "Select currency (some ETH first for gas, and some {nativeTokenSymbol} for contributing)",
-        "li3_p": " For {nativeTokenSymbol}, click \"Token\" menu, search for {nativeTokenSymbol} and select token.",
-        "li4": "Enter amount and click \"Deposit\"",
-        "li5": "Confirm on your wallet",
-        "p2_t1": "Once you have bridged your {nativeTokenSymbol} to {chain}, you may want to add the ",
+        "h3": "💰 如何在 {chain} 上获得资金",
+        "button": "官方的 {chain} 桥接器",
+        "p1_t1": "按照下面的步骤操作，或者随时使用",
+        "link1": "官方教程",
+        "p1_t2": "作为指南。",
+        "li1": "点击上面转到官方的 {chain} 桥接器",
+        "li2": "使用支持 {chain} 的钱包",
+        "li2_b": "",
+        "li3": "选择货币（先把一些 ETH 用于燃气，再把一些 {nativeTokenSymbol} 用于贡献)",
+        "li3_p": " 对于 {nativeTokenSymbol}，单击 \"Token\" 菜单, 搜索 {nativeTokenSymbol} 并选择\"Token\"",
+        "li4": "输入金额并单击 \"存款\"",
+        "li5": "在钱包上确认",
+        "p2_t1": "一旦您将 {nativeTokenSymbol} 桥接到了 {chain}，您可能会想在 MetaMask 中将",
         "p2_link": "token",
-        "p2_t2": "to your wallet e.g. in MetaMask.",
-        "button_2nd": "Add {chain} {nativeTokenSymbol} to MetaMask"
+        "p2_t2": "添加到钱包中。",
+        "button_2nd": "添加 {chain} {nativeTokenSymbol} 在 MetaMask"
       }
     },
     "not_arbitrum": {
-      "subtitle": "What you'll need",
-      "li1": "A wallet that supports {chain}",
-      "li2": "Funds on {chain}",
-      "h2": "💰 Bridge your funds to {chain}",
-      "cta": "{chain} Bridge"
+      "subtitle": "您需要什么",
+      "li1": "支持 {chain} 的钱包",
+      "li2": "{chain} 上的资金",
+      "h2": "💰 将您的资金桥接到 {chain}",
+      "cta": "{chain} 桥接器"
     }
   },
   "maci": {
     "heading": {
-      "h1": "About MACI (Minimal Anti-Collusion Infrastructure)"
+      "h1": "关于 MACI (Minimal Anti-Collusion Infrastructure)"
     },
     "what": {
-      "h2": "What is MACI?",
-      "p1": "tl;dr: bribers are ngmi (not going to make it)",
-      "p2": " Clr.fund uses MACI, Minimum Anti-Collusion Infrastructure, to help prevent vote manipulation like bribery or collusion. To understand why this is important let's recap quadratic funding..."
+      "h2": "什么是 MACI?",
+      "p1": "tl;dr: 恐吓或贿赂者无法成功（不会成功）。",
+      "p2": " CLR.fund 采用 MACI (最小反合作基础设施）来防止投票操纵，例如贿赂或共谋。要理解为什么这很重要，我们来复习一下 quadratic funding..."
     },
     "quadratic": {
       "h2": "Quadratic funding",
-      "p1": " This is the mechanism clr.fund uses in our funding rounds. When you contribute to a project you're not just sending them money, you're voting for them. At the end, the matching pool funds are distributed to projects based on number of votes at the end of the round.",
-      "p2_t1": " Read more on",
+      "p1": " 这是 CLR.fund 在资金轮中使用的机制。当您为项目提供资金时, 您不仅在向他们提供资金，还在为他们投票。最后，匹配池资金将根据投票结果分配给项目。",
+      "p2_t1": " 参阅更多关于",
       "p2_link": "quadratic funding.",
-      "p3": "This mechanism is great for democratic funding but poses some risks. It could be cost-effective for a project owner to bribe users to vote for their project as their eventual matching pool amount could be really high. This type of fraud puts the entire concept at risk as it is no longer about which projects offer the most value to the most amount of people."
+      "p3": "这种机制对于民主基金很好，但也存在一些风险。项目负责人可能会花费很少的代价来贿赂用户投票支持他们的项目，因为最终的匹配池金额可能会非常高。这种欺诈方式会使整个概念面临风险，因为它不再是关于哪些项目为最多人提供最多价值的问题。"
     },
     "background": {
-      "h2": "Background",
-      "h3": "Vote Manipulation",
-      "p1": "Vote manipulation involves maliciously changing the incentives of a voting system, and it comes in many flavors, including:",
-      "li1": "Bribery — when a person or entity offers to pay others to vote for an outcome they otherwise might not have, e.g. paying a football team to throw a match",
-      "li2": "Coercion — when a person or entity threatens to punish others in some way if they don't vote for a particular outcome, e.g. blackmail",
-      "p2": "These kinds of manipulation break voting systems by diverting them from their intended goal. Voting systems are generally designed to discover a group's preference between a number of specified outcomes. Each voter is expected to choose how to vote based on which outcomes they prefer and how their vote can effect the result.",
-      "p3": "In an election where the outcomes are 1) Alice wins and 2) Bob wins, if I prefer Alice winning and believe my vote has a high enough chance of influencing the result to be worth the effort, I'll vote for Alice. Now, let's say Charlie offers me $1,000,000 to vote for Bob instead. For me, the possible outcomes of the election now shift to 1) Alice wins and 2) Bob wins and I get $1,000,000. In that scenario, I might vote for Bob even though I prefer Alice, and the election result will no longer reflect my preference between Bob and Alice, as was intended. If enough people are successfully bribed this way, the election will be a sham."
+      "h2": "背景",
+      "h3": "投票操纵",
+      "p1": "投票操纵涉及恶意改变投票系统的激励机制，包括：",
+      "li1": "贿赂: 当一个人或实体支付他人投票支持一个结果，例如支付一支足球队丢掉一场比赛",
+      "li2": "强迫: 当一个人或实体威胁惩罚其他人如果他们不投票给特定的结果，例如敲诈勒索",
+      "p2": "这些操纵破坏了投票系统，使它们背离了原本的目标。投票系统通常被设计用来发现集团对多个指定结果的偏好。每个选民都应该根据他们更喜欢的结果和他们的投票如何影响结果来选择如何投票。",
+      "p3": "在选举中, 如果结果是 1) 爱丽丝胜利和 2) 鲍勃胜利, 如果我更喜欢爱丽丝胜利并且认为我的投票有足够高的机会影响结果值得费心, 我会投票给爱丽丝。现在, 假设查理提供给我1,000,000美元投票给鲍勃。对于我来说, 选举的可能结果现在变成了1)爱丽丝胜利和2)鲍勃胜利,我会得到1,000,000美元。在这种情况下,即使我更喜欢爱丽丝，我也可能会投票给鲍勃，选举结果将不再反映我对鲍勃和爱丽丝的偏好，如本来打算的那样。如果足够多的人成功受到贿赂，选举将是一场恶作剧。"
     },
     "vulnerability": {
-      "h3": "Vulnerability of Public Voting Systems",
-      "p1": "In order to manipulate the outcomes for a particular voter, the manipulator needs to know that voter's eventual choices: If Charlie offers to pay me $1,000,000 to vote for Bob, he needs to know that I'll actually vote for Bob before paying me. Otherwise, I can vote for Alice, tell Charlie I voted for Bob to get the $1,000,000, and the bribe has failed.",
-      "p2": "In traditional elections, votes are secret, making it difficult to manipulate voters. But there aren't any secrets on public blockchains like Ethereum! In most existing voting systems on Ethereum, votes are public, which means manipulation is a serious threat."
+      "h3": "公共投票系统的脆弱性",
+      "p1": "为了操纵特定投票者的结果，操纵者需要知道该投票者最终的选择: 如果查理提供给我100万美元投票给鲍勃, 他需要知道我实际上会投票给鲍勃, 然后才付给我钱。否则, 我可以投票给爱丽丝, 告诉查理我投了鲍勃, 得到100万美元, 贿赂就失败了。",
+      "p2": "传统选举中，投票是秘密的，很难操纵投票者。但是以太坊上没有任何秘密！在以太坊上的大多数现有投票系统中，投票是公开的，这意味着操纵是一个严重威胁。"
     },
     "why": {
-      "h2": "Why MACI?",
-      "p1": "Ethereum is a core part of clr.fund and other quadratic funding solutions like Gitcoin Grants, because:",
-      "li1": "Ethereum has a great combination of low infrastructure costs and high security (i.e. hard to hack) compared to other electronic voting solutions",
-      "li2": "Ethereum offers seamless interoperability with a large and growing ecosystem of communities and tools that both enhance and benefit from quadratic funding, such as DAOs and identity systems like BrightID",
-      "li3": "clr.fund was built by and for the Ethereum community",
-      "p2": "While moving away from the public-ness of Ethereum isn't an attractive option, building Ethereum-based tools to resist vote manipulation is, which brings us to MACI."
+      "h2": "为什么用 MACI?",
+      "p1": "以太坊是 CLR.fund 和其他 quadratic funding 解决方案 (如Gitcoin Grants) 的核心部分，因为：",
+      "li1": "以太坊拥有较低的基础设施成本和较高的安全性（即难以被黑客攻击），相比其他电子投票解决方案而言",
+      "li2": "以太坊具有与越来越多的社区和工具的无缝互操作性，这些社区和工具可以增强和受益于 quadratic funding 的管理, 如DAO和BrightID等身份系统",
+      "li3": "CLR.fund 是由以太坊社区建立的, 为以太坊社区服务。",
+      "p2": "不利用以太坊的公开特性不是一个好的选择, 但是建立工具来抵抗投票操纵是可行的, 这就带我们来到了MACI。"
     },
     "helps": {
-      "h2_1": "How MACI helps",
-      "p1": "Bribery only works if the briber can confirm that the person they're paying actually goes through with the conditions of the bribe. This is where MACI comes in. With MACI, it's impossible to prove how you voted, so bribers will never know if you did what they paid you to do.",
-      "h2_2": "MACI — Minimum Anti-Collusion Infrastructure",
-      "p2": "MACI is a set of Ethereum smart contracts and supplementary scripts that effectively transforms public voting systems into private ones, in which 1) participation in a vote and correct vote tabulation are publicly verifiable, but 2) specific voting information is not public, making vote manipulation much more difficult.",
+      "h2_1": "MACI如何帮助",
+      "p1": "只有当贿赂者可以确认他们支付的人实际上遵守了贿赂的条件，贿赂才会有效。这就是 MACI 的用武之地。通过 MACI, 不可能证明你是如何投票的，所以贿赂者永远不会知道你是否按照他们的要求行事。",
+      "h2_2": "MACI - 最小反合作基础设施",
+      "p2": "MACI 是一组以太坊智能合约和补充脚本，可以有效地将公共投票系统转换为私有投票系统，其中 1) 投票参与和投票计票公开可验证，但 2）特定投票信息不公开，使投票操纵更加困难。",
       "how": {
-        "h3": "How it works",
-        "p1": "When you contribute to a project on clr.fund you register an identity with the round coordinator. But at any time before the end of the round, you can invalidate your identity by secretly changing the public key associated with your identity before casting the vote. You can then use a different key pair to sign the vote (which renders the vote invalid, but it's impossible to see if the vote is invalid).",
-        "p2": "MACI does all this using zero-knowledge proofs. These mathematically prove the authenticity of votes without providing any of the details. So bribers can’t tell what actions the people they bribed took.",
-        "p3_t1": "From",
-        "p3_link": "MACI's introduction documentation:",
-        "p4": "Whitelisted voters named Alice, Bob, and Charlie register to vote by sending their public key to a smart contract. Additionally, there is a central coordinator Dave, whose public key is known to all.",
-        "p5": "When Alice casts her vote, she signs her vote with her private key, encrypts her signature with Dave's public key, and submits the result to the smart contract.",
-        "p6": "Each voter may change her keypair at any time. To do this, she creates and signs a key-change command, encrypts it, and sends it to the smart contract. This makes it impossible for a briber to ever be sure that their bribe has any effect on the bribee's vote.",
-        "p7": "If Bob, for instance, bribes Alice to vote a certain way, she can simply use the first public key she had registered ⁠— which is now void ⁠— to cast a vote. Since said vote is encrypted, as was the key-changing message which Alice had previously sent to Dave, Bob has no way to tell if Alice had indeed voted the way he wanted her to.",
-        "p8": "Even if Alice reveals the cleartext of her vote to Bob, she just needs to not show him the updated key command that she previously used to invalidate that key. In short, as long as she had submitted a single encrypted command before her vote, there is no way to tell if said vote is valid or not.",
-        "link": "Read more on the technical details of MACI here."
+        "h3": "如何运作",
+        "p1": "当您在 CLR.fund 上向一个项目贡献时，您会向轮次协调员注册一个身份。但在轮次结束前的任何时崎，您都可以通过在投票前秘密更改与您的身份相关联的公钥来使您的身份无效。您可以使用另一对密钥对投票进行签名(这使得投票无效，但无法看到投票是否无效)。",
+        "p2": "MACI 通过零知识证明来实现这一点。这些数学证明了投票的真实性，但没有提供任何细节。因此，行贿者无法确定他们行贿的人采取了什么行动。",
+        "p3_t1": "从",
+        "p3_link": " MACI 的介绍文档:",
+        "p4": "白名单选民 Alice、Bob 和 Charlie 通过将公钥发送到智能合约注册投票。此外，还有一个中央协调员 Dave, 他的公钥是众所共知的。",
+        "p5": "当Alice投票时, 她会用私钥对投票进行签名, 用Dave的公钥对签名进行加密, 并将结果提交到智能合约。",
+        "p6": "每个选民都可以随时更改她的密钥对。为此，她创建和签署一个密钥更改命令，将其加密，并将其发送到智能合约。这使得贿赂者永远无法确定他们的贿赂是否对贿赂对象的投票产生了任何影响。",
+        "p7": "如果鲍勃 (Bob) 为了某种方式贿赂了爱丽丝 (Alice), 那么她可以简单地使用她注册的第一个公钥 (现在无效) 来投票。由于该投票是加密的, 就像爱丽丝之前发送给戴夫 (Dave) 的更改密钥消息一样，鲍勃没有办法确定爱丽丝是否确实投了他想要的票。",
+        "p8": "即使爱丽丝向鲍勃揭露了她的投票明文，她只需不展示她此前用来使该密钥无效的更新后的密钥命令即可。简而言之，只要她在投票之前提交了一条加密命令，就没有办法判断该投票是否有效。",
+        "link": "详细了解 MACI 的技术细节，请参阅此处。"
       }
     },
     "constraints": {
-      "h3": "MACI's constraints",
-      "p": "This is cutting-edge technology and comes with a few constraints right now.",
-      "li1": "There are limits on the number of projects, contributors, and contributions. This means you may miss out if a round hits capacity but know that it's for the integrity of the round.",
-      "li2": "You can only contribute once per round. Once you have contributed, you can add/remove projects and reallocate your funds but you can't increase your total contribution amount."
+      "h3": "MACI的限制",
+      "p": "该技术处于前沿，目前存在一些限制。",
+      "li1": "目前这项技术有一些容量限制。这意味着，如果这个回合达到了容量，您可能会错过，但要知道，这是为了回合的完整性。",
+      "li2": "您每个回合只能捐赠一次。一旦您捐赠后，您可以添加/删除项目并重新分配资金，但您无法增加总捐赠金额。"
     },
     "more": {
-      "h2": "More",
-      "h3_1": "Further reading",
+      "h2": "更多",
+      "h3_1": "参阅",
       "l1": "Vitalik Buterin on Minimal anti-collusion infrastructure",
-      "l2": "The MACI repo",
-      "l3": "The technical spec",
-      "h3_2": "Videos",
-      "li4": "MACI high-level intro",
-      "li5": "MACI technical intro"
+      "l2": "MACI 存储库",
+      "l3": "技术规格",
+      "h3_2": "影片",
+      "li4": "MACI 简介",
+      "li5": "MACI 的技术介绍"
     }
   },
   "public_goods": {
     "heading": {
-      "h1": "About Public Goods",
-      "h2": "What are public goods?",
-      "p1": "The first thing to understand about 'public goods' is that fundamentally, they are fully non-excludable and non-subtractable goods — a public good can be from the intangibles (i.e. knowledge) to the tangible social public goods (i.e. street lighting).",
-      "p2": "In economics, public goods are goods that are both:",
-      "li1": "Non-excludable — no one (who is a member of the \"public\") can be prevented from using the good, for any reason.",
-      "li2": "Non-rivalrous — one person using the good does not reduce anyone else's ability to use it.",
-      "p3": "Clean air, national security (for a given country), and free, open-source software (FOSS) are all examples of public goods, with FOSS being the most important for clr.fund.",
-      "p4_t1": "Check",
-      "p4_link": "Wikipedia",
-      "p4_t2": "for a more specific description and context."
+      "h1": "关于公共产品",
+      "h2": "什么是公共产品?",
+      "p1": "关于“公共商品”，首先要明白的是，它们从根本上来说都是完全不可排除和不可减少的商品——公共商品可以是无形的（比如知识）到有形的社会公共商品（即路灯）",
+      "p2": "在经济学中，公共商品是同时具备以下两个特征的商品：",
+      "li1": "不可排除——没有人（作为 \"公众\" 的一员）可以因任何原因被阻止使用这种商品。",
+      "li2": "无竞争性—一个人使用这种商品不会减少其他人使用它的能力。",
+      "p3": "清洁的空气、国家安全（对于某个国家而言）、免费的、开源的软件 (FOSS) 都是公共商品的例子, 而FOSS对于 CLR.fund 最为重要。",
+      "p4_t1": "查看",
+      "p4_link": "维基百科",
+      "p4_t2": " 获取更具体的描述和上下文。"
     },
     "why": {
-      "h2": "Why create new funding mechanisms for public goods?",
-      "p1": "Public goods are often underfunded because of something called the free rider problem: since public goods are always free and accessible for members of the public, people have little reason to contribute to their creation and maintenance. Instead, they can choose to be \"free riders\": using the public good but depending on others to build and maintain it.",
-      "p2": "The free rider problem is quite present in open-source software, which is chronically underfunded despite being a core component of nearly all popular software products today.",
-      "p3": "Clr.fund is an attempt to address the free rider problem for the Ethereum community, with the hope that this infrastructure may be useful for other publics in the future. By design, the funding rounds on clr.fund seek to involve members of the public from inception, and are allocating both decision making power and the exponential power to increase funding via the",
-      "link": "quadratic funding mechanism.",
-      "exponential_power": ""
+      "h2": "为什么要为公共商品创建新的资金机制？",
+      "p1": "由于所谓的 \"搭便车问题\"，公共商品往往资金不足：由于公共商品对于公众成员总是免费和可以访问的，人们很少有理由为它们的创建和维护做出贡献。相反，他们可以选择成为“搭便车的人”：使用公共商品，但依靠其他人来建造和维护它。",
+      "p2": "搭便车问题在开源软件中非常常见，尽管开源软件是当今几乎所有流行软件产品的核心组成部分，但它一直资金不足。",
+      "p3": "CLR.fund 是一种为以太坊社区解决搭便车问题的尝试, 希望这种基础设施将来可以为其他公众有用。通过设计, CLR.fund 的筹款活动试图从一开始就涉及公众成员, 并通过",
+      "link": " quadratic funding ",
+      "exponential_power": "机制, 分配决策权和指数增长资金的能力。"
     }
   },
   "quadratic_funding": {
     "heading": {
-      "h1": "About Quadratic Funding",
-      "h2": "Quadratic Funding on clr.fund",
-      "p1": "Clr.fund is an implementation of quadratic funding, also called CLR (Capital-constrained Liberal Radicalism). Quadratic funding is made up of:",
-      "li1": "a pool of funds to be distributed",
-      "li2": "a voting system for distributing those funds",
-      "p2": "Two common voting systems you may have used are 1-person-1-vote and 1-dollar-1-vote. Quadratic funding is a best-of-both-worlds solution where users vote with the",
-      "sqrt": " square root",
-      "more": " of the money they spend — read on to learn more."
+      "h1": "关于 Quadratic Funding",
+      "h2": "CLR.fund 的 Quadratic Funding",
+      "p1": "CLR.fund 使用 quadratic funding, 又称为 CLR (Capital-constrained Liberal Radicalism). Quadratic funding 是由以下部分组成:",
+      "li1": "待分配的资金池",
+      "li2": "用于分配资金的投票系统",
+      "p2": "您可能曾经使用过的两种常见投票系统是1人1票和1美元1票。Quadratic funding 是一种最佳解决方案, 他取用捐款的",
+      "sqrt": "平方根",
+      "more": "来投票。继续阅读以了解更多信息。"
     },
     "problems": {
-      "h2": "Problems with Existing Funding Mechanisms",
-      "p1": "The common fund-distribution systems of today all have pluses and minuses:",
-      "h3": "Markets",
-      "p2": "Markets can be thought of as fund-distributors: sellers are the fund recipients, and buyers are the voters deciding what will be funded. In this case, the \"voting system\" is 1-dollar-1-vote: each buyer has exactly as much potential influence over where funds go as they have money to spend. This is also the case for traditional crowdfunding platforms like Kickstarter.",
-      "p3": "An advantage of this system is that each voter's influence is directly proportional to their need (at least, if we ignore wealth inequality). The more Alice needs pizza, the more pizza she'll buy, and the more funding will go to pizzerias.",
-      "p4": "The disadvantage is that rich voters have an outsize influence on what gets funded. Alice may need pizza exactly as much as Bob needs movie tickets, but if Bob is twice as wealthy as Alice, he has twice as many \"votes\" to spend on going to the movies."
+      "h2": "现有资金分配机制存在以下问题：",
+      "p1": "今天常见的基金分配系统都有优点和缺点：",
+      "h3": "市场",
+      "p2": "市场市场可以被认为是基金分配者: 卖家是基金收件人, 买家是决定基金去向的选民。在这种情况下, \"投票系统\" 是1美元1票: 每个买家的潜在影响力与其花费的金钱相同。这对传统的筹款平台 (如Kickstarter)。",
+      "p3": "这种系统的优点是，每个投票者的影响力与他们的需求成正比（至少，如果我们忽略贫富不均的话）。爱丽丝需要比萨的越多，她就会买越多的比萨，更多的资金就会流向比萨店。",
+      "p4": "该缺点是富裕选民对获得资金的项目有过大影响。爱丽丝可能需要披萨的程度与鲍勃需要电影票的程度一样，但如果鲍勃比爱丽丝富裕两倍，他就有两倍的 \"选票 \" 可以花在看电影上。"
     },
     "private": {
-      "h3": "Private Grant-Givers",
-      "p1": "Privately-owned grant-giving institutions, like non-profit foundations, are quite common, but they don't have voting systems. Instead, grants committees and the like solicit grant proposals and then choose which applicants will receive funding internally.",
-      "p2": "An advantage of non-profits is that their non-profit status binds them to **act in the interest of some public mission**, rather than seeking profit above all.",
-      "p3": "On the other hand, the small, private interests that control these organizations lack the tools and incentives to effectively serve large publics."
+      "h3": "私人捐赠者",
+      "p1": "私人所有的捐赠机构，如非营利基金会，很常见，但它们没有投票系统。相反，拨款委员会等组织会征集拨款申请，然后内部选择哪些申请人将获得资金。",
+      "p2": "非营利组织的优势在于，它们的非营利地位使它们有义务以某项公共任务的利益为重，而不是仅仅寻求利润。",
+      "p3": "另一方面，控制这些组织的小型私人利益缺乏有效地为大众服务的工具和激励措施。"
     },
     "democratic": {
-      "h3": "Democratic Governments",
-      "p1": "Government grants are another common fund-distribution mechanism, and in democracies, these are usually controlled by voting citizens using 1-person-1-vote policies (with elected representatives and other middlemen in between).",
-      "p2": "On the good side, these systems are much less oligarchical than markets—if we ignore the ability to convert money into influence via the media, among other complications.",
-      "p3": "In exchange for less oligarchy, though, influence also poorly reflects need in 1-person-1-vote systems. A half-time Florida resident has the same voting power in Florida elections as a full-time resident, as long as both qualify to vote, even though the full-time resident may have twice as much riding on the result."
+      "h3": "民主政府",
+      "p1": "政府拨款是另一种常见的资金分配机制. 在民主国家, 通常由投票公民使用1人1票政策控制 (其中包括当选代表和其他中间人）。",
+      "p2": "好处是，这些系统比市场更不容易出现寡头统治——如果我们不计通过媒体将金钱转化为影响力的能力等其他复杂情况。",
+      "p3": "尽管寡头统治减少了, 但在1人1票制度中, 影响力也很难反映出需求。只要符合投票资格，兼职佛罗里达州居民与全职佛罗里达州居民在佛罗里达州选举中的投票权力是相同的，尽管全职居民可能对结果有更大的影响。"
     },
     "balance": {
-      "h3": "Quadratic Funding: a better balance?",
-      "p1": "Quadratic funding is a compromise between 1-dollar-1-vote and 1-person-1-vote. Participants vote on how to distribute pooled funds by making individual donations, but each person's influence, rather than being the amount of money they spend, is the square root of that amount.",
-      "p2": "Compared to 1-dollar-1-vote in the market, quadratic funding makes it exponentially easier for the influence of many poorer people to outweigh that of a single rich person:",
-      "li1": "1-dollar-1-vote: 1 person paying $10,000 has the same influence as 100 people paying $100",
-      "li2": "Quadratic funding: 1 person paying $10,000 has the same influence as 100 people paying $1 or 10 people paying $100",
-      "p3": "Compared to 1-person-1-vote, quadratic funding lets the person who lives in Florida full-time, and cares twice as much about the vote's outcome than the person who lives in Florida half-time, have more influence:",
-      "li3": "1-person-1-vote: the two Florida voters have equal influence",
-      "li4": "  Quadratic funding: the full-time Florida resident, who cares twice as much, pays twice as much, and as a result gets 2^(1/2) times the influence of the half-time resident",
-      "p4": " (It's important to note that while these example are a good demonstration of the argument for quadratic funding, they do over-simplify these situations, which are as sociological as they are mathematical.)"
+      "h3": "Quadratic Funding: 是更好的平衡吗?",
+      "p1": "Quadratic funding 是1美元1票和1人1票之间的折中方案。参与者通过个人捐款投票决定如何分配资金池, 但每个人的影响力不是他们花费的金额, 而是该金额的平方根。",
+      "p2": "与市场中的1美元1票相比, Quadratic funding 使得许多较贫困人群的影响力比单个富人的影响力更容易战胜指数倍：",
+      "li1": "1美元1票: 1个人支付1万美元与100个人支付100美元的影响力是相同的",
+      "li2": "Quadratic funding: 1个人支付1万美元与100个人支付1美元或10个人支付100美元的影响力相同",
+      "p3": "与1人1票相比, quadratic funding 使得佛罗里达州全职居民, 比半职居民对投票结果的关注多两倍的人具有更大的影响力:",
+      "li3": "1人1票: 两名佛罗里达州选民具有相等的影响力",
+      "li4": "  Quadratic funding: 全职佛罗里达州居民，比半职居民关注多两倍，支付多两倍，因此获得的影响力是半职居民的 2^(1/2) 倍",
+      "p4": " (重要的是，尽管这些例子很好地说明了 quadratic funding 的论据，但它们过于简化情况，这些情况既具有社会学意义，又具有数学意义。)"
     },
     "resources": {
-      "h2": "Quadratic Funding Resources",
+      "h2": "Quadratic Funding 资源",
       "li1": "Quadratic Payments: A Primer",
       "li2": "Liberal Radicalism: A Flexible Design For Philanthropic Matching Funds",
       "li3": "Plural Voting",
@@ -415,787 +415,799 @@
   },
   "recipients": {
     "heading": {
-      "h1": "Recipient guide",
-      "p": "An overview of how things work as a recipient so you can learn what to expect throughout the duration of a funding round."
+      "h1": "收赠者指南",
+      "p": "这个概述帮助您了解整个筹款运作。"
     },
     "funds": {
-      "h2": "Get funds on {chain}",
-      "p1": "You'll need some {currency} on {chain} in order to submit transactions to the clr.fund smart contracts.",
-      "p2_t1": " Follow",
-      "cta": "  these steps",
-      "p2_t2": "to bridge your funds to {chain}",
-      "link1": "Bridge your funds here",
-      "p3": "Confused on what {chain} is?",
-      "link2": " Read our explanation on how clr.fund uses layer 2 on Ethereum."
+      "h2": "获取 {chain} 的货币",
+      "p1": "您将需要一点在 {chain} 的 {currency} 货币以支付发送给 CLR.fund 智能合约的交易成本.",
+      "p2_t1": " 按照",
+      "cta": "  以下步骤",
+      "p2_t2": "去连接您在 {chain} 的资产.",
+      "link1": "在这里转移资产",
+      "p3": "还是对 {chain} 有迷惑吗?",
+      "link2": " 请查阅 CLR.fund 如何利用二层网络."
     },
     "register": {
-      "h2": "Register your project",
-      "p1": "In order to participate in a funding round as a project, you'll need to submit an application to join the recipient registry (via an on-chain transaction).",
-      "p2_t1": "MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.",
-      "p2_link": "More on MACI",
-      "p2_t2": ". The round only accepts a total of {maxRecipients} projects, so we encourage you to apply early.",
-      "p3": "Note: all application data (except contact email address) will be publicly stored on-chain.",
-      "h3": "Submit your application",
-      "li1": "Head over to the ",
-      "li1_link": "Join page.",
-      "li2": "Click \"See round criteria\" and familiarize yourself with the criteria for projects.",
-      "li3": "Once you're familiar with the criteria and you're sure your project meets them, click \"Add project.\" You'll see a series of forms to fill out asking for more information about your project.",
-      "li4": "With the forms finished, you can finish your submission:",
-      "li5": "Connect to the right network via your wallet of choice.",
-      "li6": "Send a transaction (with a deposit of {depositAmount} {depositToken}) to the registry contract.",
-      "p4": "The registry admin will review project submissions and accept/reject projects according to the criteria.",
-      "p5": "In any case, your {depositToken} will be returned once your application has been either accepted or denied. Note that metadata pointing to all your project information (but not contact information) will be stored publicly on-chain."
+      "h2": "注册您的项目",
+      "p1": "要成为受捐助的项目，您需要申请加入注册表（通过上链交易）。",
+      "p2_t1": "我们的反贿赂技术, MACI, 目前限制每轮筹款活动的项目数量。",
+      "p2_link": "更多 MACI",
+      "p2_t2": ". 该轮次只接受总共 {maxRecipients} 个项目, 所以我们建议您尽早申请。",
+      "p3": "注意：所有申请数据（联系电子邮件地址除外）将在链上公开存储。",
+      "h3": "提交您申请",
+      "li1": "到",
+      "li1_link": "加入页面.",
+      "li2": "点击 \"查看筹款标准\" 并熟悉项目的标准。",
+      "li3": "一旦您熟悉了标准并确定您的项目符合这些标准，请点击 \"添加项目\"。您将看到一系列要求提供有关您项目的更多信息的表格。",
+      "li4": "提交您申请:",
+      "li5": "通过您选择的钱包连接到正确的网络。",
+      "li6": "向注册表合约发送交易（并存入{depositAmount} {depositToken})。",
+      "p4": "注册表管理员将审核项目提交并根据标准接受/拒绝项目。",
+      "p5": "无论如何, 一旦您的申请被接受或拒绝, 您的 {depositToken} 都将被退回。请注意，指向您所有项目信息（但不包括联系信息）的元数据将在链上公开存储。"
     },
     "claim": {
-      "h2": "Claim your funds",
-      "p": "After a clr.fund round is finished, it's simple to claim your project's share of the funding. Return to your project's page: you will see a \"claim funds\" button if your project received contributions during the round. Submit the claim transaction to receive your funds."
+      "h2": "领取捐款",
+      "p": "CLR.fund 的筹款活动结束后, 很容易领取您项目的捐款份额。返回您的项目页面：如果您的项目在筹款期间收到了捐赠，您将看到一个 \"领取捐款\" 的按钮。提交上链交易以领取捐款。"
     },
     "how": {
-      "h2": "How does clr.fund work?",
-      "p": "Looking for a more general overview?",
-      "link": "Check out our \"How It Works\" page"
+      "h2": "CLR.fund 如何运作?",
+      "p": "要寻找更多总体概述?",
+      "link": "请查看 \"CLR.fund 是如何运作\""
     }
   },
   "sybilResistance": {
     "heading": {
-      "h1": "About Sybil Resistance",
-      "h2": "What are Sybil attacks?",
-      "p1_t1": "A \"sybil attack\" is when one person pretends to be many people in order to subvert a system's rules. The more a system depends on each participant being a single, unique person, the more potentially vulnerable it is to sybil attacks. Social media is somewhat vulnerable: bots creating email spam and fake follows or likes are examples of relatively toothless sybil attacks. Digital voting systems are more vulnerable: if an attacker can create enough fake users to swing a vote, there can be significant and concrete consequences. Since clr.fund uses",
+      "h1": "关于 Sybil 抗性",
+      "h2": "什么是 Sybil 攻击?",
+      "p1_t1": "\"Sybil 攻击\" 是指一个人假装成许多人来推翻系统规则。系统依赖于每个参与者是一个单独的人的程度越高, 就越容易受到 Sybil 攻击的威胁。社交媒体有一定的脆弱性: 机器人创建的电子邮件垃圾邮件和假的跟随或喜欢是相对无害的 Sybil 攻击的例子。数字投票系统更容易受到攻击: 如果攻击者能够创建足够的假用户来推动一次投票, 那么会有重大而实际的后果。因为 CLR.fund 使用了",
       "p1_link": "quadratic funding",
-      "p1_t2": ", which is essentially a voting system, sybil attacks are a serious threat.",
-      "p2": "In the physical world, sybil attacks are hard to pull off. It's pretty difficult to pretend to be someone else for long, especially when most governments issue and check photo IDs and ID numbers. On the internet, though, nobody knows you're a dog. People don't want to share their personal information online and government IDs are impractical for borderless web services, so historically, we haven't had strong methods to stop online sybil attacks."
+      "p1_t2": ", 它本质上是一个投票系统, 所以 Sybil 攻击是一个严重的威胁。",
+      "p2": "在现实世界中, Sybil攻击很难实施。 假装成其他人很长时间是很难的, 特别是当大多数政府颁发和检查照片ID和ID号码时。在互联网上，没有人知道你是一只狗。人们不想在网上分享个人信息, 而政府身份证对无国界网络服务来说也是不切实际的，所以历史上我们没有强有力的方案去阻止网上 Sybil 攻击。"
     },
     "brightID": {
-      "h2": "Sybil Resistance and BrightID",
-      "p1": "BrightID is a platform we use to increase our confidence that you're only contributing once. BrightID is one of a new class of digital identity solutions for use cases like clr.fund that require digital sybil resistance.",
-      "p2": "BrightID works using a web-of-trust model: users connect their BrightID accounts with people they trust to be unique humans (generally because they know them personally) and form groups. These connections are public, but users' personal data aren't. If you connect your BrightID to an app, the app can analyze your connections and decide whether or not to allow you access based on how likely you are to be a unique person. The graph of BrightID connections can be analyzed with any method, but generally, the more connections an ID has with other trustworthy-looking IDs, the more trustworthy it is.",
-      "p3": "To contribute to projects in a clr.fund round, you must connect a verified BrightID with the clr.fund app. This prevents you from creating 1000s of Ethereum accounts and distorting the contributions.",
-      "link": "Get verified by following the directions here"
+      "h2": "Sybil 抗性和 BrightID",
+      "p1": "BrightID 是我们用来增加对您只贡献一次的信心平台。BrightID是一类新的数字身份解决方案之一. CLR.fund 用 BrightID 是因为需要 Sybil 抗性。",
+      "p2": "用户将他们的 BrightID 帐户与他们信任的独特人类相连接 (通常因为他们亲自认识他们）并形成团体。 这些连接是公开的，但用户的个人数据不是。 如果您将 BrightID 连接到应用程序，则应用程序可以分析您的连接并根据您可能是独特人员的可能性来决定是否允许您访问。 BrightID 连接的图可以使用任何方法进行分析, 但通常来说, 与其他可靠的 ID 的连接越多, 它就越可靠。",
+      "p3": "为了参与 CLR.fund 回合中的项目, 您必须将已验证的 BrightID 与 CLR.fund 应用程序连接。 这样可以防止您创建1000个以太坊帐户并扭曲贡献。",
+      "link": "按照这里的说明进行验证"
     },
     "how": {
-      "h2": "How to set up BrightID",
-      "p1_t1": "The app walks you through ",
-      "p1_link1": "getting set up ",
-      "p1_t2": "here's a quick look at what you can expect:",
-      "li1_t1": "Download BrightID for",
+      "h2": "如何设置 BrightID",
+      "p1_t1": "按照这里的指导",
+      "p1_link1": "进行设置",
+      "p1_t2": ", 以下是您可以期望的快速查看：",
+      "li1_t1": "下载 BrightID: ",
       "li1_link1": "iOS",
-      "li1_t2": "or",
+      "li1_t2": "或",
       "li1_link2": "Android",
-      "li2": "Get verified in BrightID so we know you're a human and not a bot",
-      "li3_t1": "Submit a transaction for clr.fund to sponsor you in BrightID",
-      "li3_link1": "More on BrightID sponsorship",
-      "li4": "Link your wallet to your BrightID profile, so you can't use multiple Ethereum addresses to sway voting",
-      "li5_t1": "Add yourself to the clr.fund user registry. This is a requirement for",
-      "li5_link1": "MACI, our anti-bribery tech",
+      "li2": "在 BrightID 中获得验证，以便我们知道您是人类而不是机器人",
+      "li3_t1": "提交一个区块链交易以便CLR.fund为您提供 BrightID 赞助",
+      "li3_link1": "更多关于BrightID赞助",
+      "li4": "将钱包链接到 BrightID 个人资料，以便您无法使用多个以太坊地址来影响投票",
+      "li5_t1": "将自己添加到 CLR.fund 用户注册表中。 这是我们反贿赂技术",
+      "li5_link1": "MACI 的要求",
       "p2": ""
     }
   },
-  "brightIDGuide": {
-    "heading": {
-      "h2": "Get verified",
-      "p": "BrightID verification helps prove that you’re a unique human. To get verified, you need enough people to confirm they've met you and you're a real person."
-    },
-    "accordion": {
-      "fastest": {
-        "tag": "🚀 Fastest",
-        "header": "Join a BrightId party",
-        "content": "BrightID run verification parties regularly. Join the call, meet other new users, and they'll verify you’re a human and not a bot. Quick and painless, even for you introverts out there.",
-        "linkButton": "View party schedule"
-      }
-    }
-  },
-  "brightIDSponsor": {
-    "h2": "Get sponsored",
-    "p": "You need a sponsorship token to become BrightID verified. This helps support BrightID as a decentralized platform. You’ll only ever need to do this once and it covers you for any other app that works with BrightID. Check the BrightID mobile app to see if you're sponsored. If you're not, click the button below to submit a sponsorship request.",
-    "cta": "Get sponsored"
-  },
-  "brightIDSponsored": {
-    "h1": "You're sponsored!",
-    "subtitle": "You’re almost ready to contribute to your favorite projects! If you're verified for BrightID, link your wallet to your BrightID profile and start contributing.",
-    "link1": "Link BrightId",
-    "link2": "Go home"
-  },
   "join": {
     "title": {
-      "h1": "Join the round",
-      "p1": "Review info",
-      "p2": "Preview project",
-      "link1": "Cancel"
+      "h1": "参加筹款",
+      "p1": "审查信息",
+      "p2": "预览项目",
+      "link1": "取消"
     },
     "step0": {
-      "h2": "About the project",
-      "label1": "Project name",
-      "input1": "ex: clr.fund",
-      "error1": "Your project needs a name",
-      "label2": "Tagline",
-      "p1": "Describe your project in a sentence. Max characters: 140",
-      "input2": "ex: A quadratic funding protocol",
-      "error2": "This tagline is too long. Be brief for potential contributors",
-      "error3": "Your project needs a tagline",
-      "label3": "Description",
-      "p2": "Markdown supported.",
-      "input3": "ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...",
-      "p3": "Preview:",
-      "error4": "Your project needs a description. What are you raising money for?",
-      "label4": "Category",
-      "p4": "Choose the best fit.",
-      "label5": "Tools",
-      "label6": "Content",
-      "label7": "Research",
-      "label8": "Data",
-      "error5": "You need to choose a category",
-      "label9": "Problem space",
-      "p5": "Explain the problems you're trying to solve. Markdown supported.",
-      "input8": "ex: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model.",
-      "error6": "Explain the problem your project solves",
-      "p6": " Preview:"
+      "h2": "项目",
+      "label1": "名称",
+      "input1": "例如: CLR.fund",
+      "error1": "您的项目需要一个名称",
+      "label2": "标语",
+      "p1": "用一句话描述您的项目。最多140个字。",
+      "input2": "例如: quadratic funding 协议",
+      "error2": "这个标语太长了。最好简洁明了。",
+      "error3": "您的项目需要一个标语",
+      "label3": "描述",
+      "p2": "支持 Markdown。",
+      "input3": "例如: CLR.fund 是一个 quadratic funding 的协议, 旨在容易建立、管理和参与 quadratic funding。。。",
+      "p3": "预览:",
+      "error4": "您的项目需要一个描述. 您为什么筹钱?",
+      "label4": "类别",
+      "p4": "选择最合适:",
+      "label5": "工具",
+      "label6": "内容",
+      "label7": "研究",
+      "label8": "数据",
+      "error5": "您需要选择一个类别",
+      "label9": "问题空间",
+      "p5": "解释您要解决的问题. 支持 Markdown。",
+      "input8": "例如: 目前没有办法启动 quadratic funding 筹款。你必须与 GitCoin Grants 合作，但这不是一种可扩展或可持续的模型。",
+      "error6": "解释您的项目要解决的问题",
+      "p6": " 预览:"
     },
     "step1": {
-      "h2": "Donation details",
-      "label1": "Ethereum address",
-      "p1": "The destination address for donations, which you'll use to claim funds. This doesn't have to be the same address as the one you use to send your application transaction.",
-      "input1": "example: 0x123...",
-      "error1": "Enter a valid ENS or Ethereum 0x address",
-      "label2": "How will you spend your funding?",
-      "p2": "Potential contributors might convert based on your specific funding plans. Markdown supported.",
-      "input2": "ex: on our roadmap...",
-      "error2": "Let potential contributors know what plans you have for their donations.",
-      "preview1": "Preview:"
+      "h2": "捐款细节",
+      "label1": "以太坊地址",
+      "p1": "这是您领取捐款的地址, 这个地址不必与您注册项目的地址相同",
+      "input1": "例如: 0x123...",
+      "error1": "请输入有效的 ENS 或以太坊 0x 地址。",
+      "label2": "你要如何运用捐款?",
+      "p2": "有意的捐献者可能有兴趣知道您的用款计划。 支持 Markdown。",
+      "input2": "例如: 在我们的路线图上。。。",
+      "error2": "让捐献者了解您的用款计划。",
+      "preview1": "预览："
     },
     "step2": {
-      "h2": "Team details",
-      "p1": "Tell us about the folks behind your project.",
-      "label1": "Contact email",
-      "description1": "For important updates about your project and the funding round.",
-      "input1": "example: doge@goodboi.com",
-      "notice1": "We won't display this publicly or add it to the on-chain registry.",
-      "error1": "This doesn't look like an email.",
-      "label2": "Team name (optional)",
-      "p2": "If different to project name.",
-      "input2": "ex: clr.fund",
-      "label3": "Team description (optional)",
-      "p3": "If different to project description. Markdown supported.",
-      "input3": "ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds...",
-      "preview1": "Preview:"
+      "h2": "团队",
+      "p1": "告诉我们关于您的团队。",
+      "label1": "联系电邮",
+      "description1": "以更新有关您项目和筹款信息。",
+      "input1": "例如: doge@goodboi.com",
+      "notice1": "我们不会公开显示，也不会添加到区块链注册表中。",
+      "error1": "这不像是电子邮件地址.",
+      "label2": "名称 (可免)",
+      "p2": "如果与项目名称不同。",
+      "input2": "例如: CLR.fund",
+      "label3": "描述 (可免)",
+      "p3": "如果与项目描述不同。 支持 Markdown。",
+      "input3": "例如: CLR.fund 是一个二次基金协议, 旨在容易建立、管理和参与 quadratic funding。。。。",
+      "preview1": "预览:"
     },
     "step3": {
-      "h2": "Links",
-      "p1": "Give contributors some links to check out to learn more about your project. Provide at least one.",
+      "h2": "链接",
+      "p1": "给贡献者一些链接，让他们了解更多关于你的项目。提供至少一个。",
       "label1": "GitHub",
-      "input1": "example: https://github.com/ethereum/clrfund",
-      "error1": "This doesn't look like a valid URL",
+      "input1": "例如: https://github.com/ethereum/clrfund",
+      "error1": "这不像有效的 URL",
       "label2": "Radicle",
-      "input2": "example: https://radicle.xyz/ethereum/clrfund",
-      "error2": "This doesn't look like a valid URL",
-      "label3": "Website",
-      "input3": "example: https://clr.fund",
-      "error3": "This doesn't look like a valid URL",
+      "input2": "例如: https://radicle.xyz/ethereum/clrfund",
+      "error2": "这不像有效的 URL",
+      "label3": "网站",
+      "input3": "例如: https://CLR.fund",
+      "error3": "这不像有效的 URL",
       "label4": "Twitter",
-      "input4": "example: https://twitter.com/ethereum",
-      "error4": "This doesn't look like a valid URL",
-      "label5": "Chat",
-      "input5": "ex: https://discord.gg/5Prub9zbGz",
-      "error5": "This doesn't look like a valid URL"
+      "input4": "例如: https://twitter.com/ethereum",
+      "error4": "这不像有效的 URL",
+      "label5": "Discord 聊天室",
+      "input5": "例如: https://discord.gg/5Prub9zbGz",
+      "error5": "这不像有效的 URL"
     },
     "step4": {
-      "h2": "Images",
-      "p1": "We'll upload your images to IPFS, a decentralized storage platform.",
-      "link1": "More on IPFS",
-      "label1": "Banner image",
-      "input1": "Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF",
-      "label2": "Thumbnail image",
-      "input2": "Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF"
+      "h2": "图片",
+      "p1": "我们会把你的图片上传到 IPFS, 一个去中心化的存储平台。",
+      "link1": "更多关于 IPFS",
+      "label1": "横幅图片",
+      "input1": "建议宽高比: 16x9 • 最大文件大小: 512 kB • JPG、PNG 或 GIF",
+      "label2": "缩略图",
+      "input2": "建议宽高比: 1x1 (正方形）• 最大文件大小: 512 kB • JPG、PNG 或 GIF"
     },
     "step5": {
-      "h2": "Review your information",
-      "warning": "This information will be stored in a smart contract and cannot be edited, so please review carefully.",
-      "h3_1": "About the project",
-      "edit1": "Edit",
-      "h4_1": "Project name",
-      "h4_2": "Tagline",
-      "h4_3": "Description",
-      "h4_4": "Category",
-      "h4_5": "Problem space",
-      "h3_2": "Funding details",
-      "edit2": "Edit",
-      "h4_6": "Ethereum address",
-      "link1": "View on {blockExplorer} ",
-      "ens": "Resolved ENS address",
-      "h4_7": "Funding plans",
-      "h3_3": "Team details",
-      "edit3": "Edit",
-      "h4_8": "Contact email",
-      "notice1": "This information won't be added to the smart contract.",
-      "h4_9": "Team name",
-      "h4_10": "Team description",
-      "h3_4": "Links",
-      "edit4": "Edit",
-      "h4_12": "Website",
-      "h3_5": "Images",
-      "edit5": "Edit",
-      "h4_13": "Banner",
-      "h4_14": "Thumbnail"
+      "h2": "审查您的资料",
+      "warning": "这些资料将存储在智能合约中，无法更改，因此请仔细检查。",
+      "h3_1": "关于项目",
+      "edit1": "编辑",
+      "h4_1": "项目名称",
+      "h4_2": "标语",
+      "h4_3": "描述",
+      "h4_4": "类别",
+      "h4_5": "问题空间",
+      "h3_2": "捐款细节",
+      "edit2": "编辑",
+      "h4_6": "以太坊地址",
+      "link1": "查看 {blockExplorer} ",
+      "ens": "已解析的 ENS 地址",
+      "h4_7": "资金运用计划",
+      "h3_3": "团队细节",
+      "edit3": "编辑",
+      "h4_8": "联系电邮",
+      "notice1": "这些资料将不会存储在智能合约中.",
+      "h4_9": "团队名称",
+      "h4_10": "团队描述",
+      "h3_4": "链接",
+      "edit4": "编辑",
+      "h4_12": "网站",
+      "h3_5": "图片",
+      "edit5": "编辑",
+      "h4_13": "横幅图片",
+      "h4_14": "缩略图"
     },
     "step6": {
-      "h2": "Submit project",
-      "p1": "This is a blockchain transaction that will add your project information to the funding round."
+      "h2": "提交项目",
+      "p1": "这是一笔区块链交易，您的项目信息将添加到筹款智能合约中。"
     },
     "error": {
-      "not_provided": "Not provided"
+      "not_provided": "未提供"
     }
   },
   "joinLanding": {
-    "loading": "Fetching round data...",
-    "check_out_these": "Check out these",
-    "other_ways_to_source_funding": "other ways to source funding",
-    "or_follow_us_on_twitter": ". Or follow us on Twitter for updates about future rounds:",
-    "need_info_about_your_project": "We’ll need some information about your project and a",
-    "security_deposit": " security deposit.",
-    "cap_on_projects": "The round only accepts a total of {maxRecipients} projects, so apply now while there’s still room!",
-    "time_to_complete": "Time to complete",
-    "15_minutes_ish": "15 minutes (ish)",
-    "see_round_criteria": "See round criteria",
+    "loading": "正在获取数据...",
+    "check_out_these": "查看",
+    "other_ways_to_source_funding": "其他筹款方式",
+    "or_follow_us_on_twitter": ". 或者在 Twitter 上关注我们，以获取未来的筹款活动:",
+    "need_info_about_your_project": "我们需要一些关于您项目的信息和一笔安全押金",
+    "security_deposit": "安全押金。",
+    "cap_on_projects": "这次筹款仅接受 {maxRecipients} 个项目，所以现在就申请吧，乘还有空位！",
+    "time_to_complete": "完成时间",
+    "15_minutes_ish": "大约 15 分钟",
+    "see_round_criteria": "查看筹款标准",
     "closed": {
-      "h1": "Sorry, it's too late to join",
-      "subtitle1": "The round is closed for new projects. It's now too late to get on board."
+      "h1": "抱歉，已经来不及参加了",
+      "subtitle1": "这一轮筹款活动已经不接收新项目了。"
     },
     "full": {
-      "h1": "Sorry, the round is full",
-      "subtitle1": "The tech we use to protect you from bribery and collusion, MACI, limits the number of projects right now. Unfortunately we've hit the cap and there's no more room on board."
+      "h1": "包歉, 筹款项目已满",
+      "subtitle1": "我们用于保护您免受贿赂和勾结的 MACI 技术，目前限制了项目数量。不幸的是，我们已经达到了上限，没有更多的位置。"
     },
     "open": {
-      "h1": "Join the funding round",
-      "div1": "Time left to join",
+      "h1": "参加筹款",
+      "div1": "剩余的加入时间",
       "div4": " {spacesRemainingString} left, hurry!",
-      "div5": "MACI, our anti-bribery tech, currently limits the amount of projects allowed per round.",
-      "p1": "You will get your deposit back if you don’t make it into the round this time."
+      "div5": "MACI, 我们抗贿赂技术, 目前限制了项目数量.",
+      "p1": "我们会还您押金，如果您没有进入这次的筹款活动。"
     },
     "join": {
-      "h1": "Join the next funding round"
+      "h1": "参加下一个筹款活动"
     }
   },
   "landing": {
     "hero": {
-      "title": "Send your favorite projects to the moon!",
-      "subtitle": "Every project you contribute to gets a portion of extra funding.",
-      "action": "Get started",
-      "info": "How it works"
+      "title": "将您最喜欢的项目送往月球！",
+      "subtitle": "您捐赠的每个项目都将获得额外资金。",
+      "info": "如何运作"
     },
     "callout": {
-      "title": "Join the funding round",
-      "paragraph": "Add your project to the next funding round. If you're working on anything related to public goods, you can join in.",
-      "action": "Add project",
-      "deadline": "to join"
+      "title": "参加筹款",
+      "paragraph": "将您的项目添加到下一个筹款活动。如果您正在从事与公共产品相关的任何工作，您都可以参加。",
+      "action": "添加项目",
+      "deadline": "参加"
     },
     "how": {
-      "title": "Every donation is amplified by the matching pool.",
-      "paragraph": "This fundraiser rewards projects with the most unique demand, not just those with the wealthiest backers.",
-      "subtitle": "How it works",
-      "list-1": "{operator} and other donors send funds to the matching pool smart contract.",
-      "list-2": "The round begins and you can donate to your favorite projects.",
-      "list-3": "Once the round finishes, the smart contract distributes the matching pool funds to projects weighted primarily by number of contributions,",
-      "list-3-strong": "not contribution value",
-      "action": "How the round works"
+      "title": "每笔捐款都会被匹配池放大。",
+      "paragraph": "这个筹款活动奖励那些拥有最独特社区需求的项目，而不仅仅是那些拥有最富裕支持者的项目。",
+      "subtitle": "如何运作",
+      "list-1": "{operator} 和其他捐赠者向匹配池智能合约发送捐款。",
+      "list-2": "筹款开始，您可以向您喜欢的项目捐款了。",
+      "list-3": "筹款结束后, 智能合约将匹配池基金按照社区筹款数量分配给项目,",
+      "list-3-strong": "而不是按照筹款价值",
+      "action": "筹款运作"
     },
     "req": {
-      "title": "What you'll need",
-      "chain": "{chain} for fast and cheap transaction fees",
-      "chain-cta": " Get {chain} funds",
-      "bright": "BrightID for private, decentralized identity verification",
-      "bright-cta": "Set up BrightID"
+      "title": "您需要什么",
+      "chain": "{chain} 的快速和便宜交易",
+      "chain-cta": "获取 {chain} 货币",
+      "bright": "BrightID 隐私的，去中心化的身份验证",
+      "bright-cta": "设置 BrightID"
     },
     "about": {
-      "title": "About",
-      "subtitle-1": "It's not about how much...",
-      "paragraph-1": " Using quadratic funding, your contribution counts as a vote. Projects with the most contributions at the end of the round get the highest amount from the matching pool. That means even a small donation can have a massive impact.",
-      "link-1": "About quadratic funding",
-      "subtitle-2": "Protect against bribery",
-      "paragraph-2": "Using MACI, a zero-knowledge technology, it's impossible to prove how you contributed. This drives bribers insane because they have no idea whether you actually did what they bribed you to do!",
-      "link-2": "About MACI",
-      "subtitle-3": "Built using the CLR protocol",
-      "paragraph-3": "clr.fund is a protocol for efficiently allocating funds to public goods that benefit the Ethereum Network according to the prefences of the Ethereum Community.",
-      "link-3": "About clr.fund"
+      "title": "关于",
+      "subtitle-1": "这不是关于多少...",
+      "paragraph-1": " 在这个筹款活动中，我们使用了 quadratic funding 的模型。每一份对项目的捐款将成为该项目的支持票。匹配池的基金将根据每个项目所获得的支持票数来分配。所以，即使您的捐款金额很小，也可能对您支持的项目产生重大影响。",
+      "link-1": "关于 quadratic funding",
+      "subtitle-2": "防止贿赂",
+      "paragraph-2": "我们使用一种叫做 MACI 的零知识技术来防止贿赂。 这样可以确保每一笔捐款都是匿名的，无法证明您的贡献。这使贿赂者疯狂，因为他们不知道您是否真的做了他们贿赂您做的事情！",
+      "link-2": "关于 MACI",
+      "subtitle-3": "CLR 协议构建",
+      "paragraph-3": "CLR.fund 是一个协议，旨在有效地分配资金给以太坊网络受益的公共商品。 资金分配是通过社区的投票选举。",
+      "link-3": "关于 CLR.fund"
     },
     "footer": {
-      "title": "More",
-      "link-1": "About clr.fund",
-      "link-2": "How the round works",
-      "link-3": "About {chain}",
-      "link-4": "About MACI",
-      "link-5": "About BrightID",
+      "title": "更多",
+      "link-1": "CLR.fund",
+      "link-2": "筹款运作",
+      "link-3": "{chain}",
+      "link-4": "MACI",
+      "link-5": "BrightID",
       "link-6": "GitHub",
       "link-7": "Discord",
-      "link-8": "Forum",
-      "link-9": "More on Ethereum",
-      "link-blog": "Blog"
+      "link-8": "CLR.fund 论坛",
+      "link-9": "以太坊",
+      "link-blog": "CLR.fund 博客"
     }
   },
   "profile": {
-    "p1": "Close",
-    "h2_1": "Your wallet",
-    "btn1": "address",
-    "tooltip1": "Disconnect wallet",
-    "h2_2": "{chain} balances",
-    "tooltip2": "Balance of wallet on {chain} chain",
-    "h2_3": "Projects",
-    "div1": "Under review",
-    "btn2_1": "Preview",
-    "btn2_2": "View",
-    "div2": "You haven't submitted any projects"
+    "p1": "关",
+    "h2_1": "您的钱包",
+    "btn1": "地址",
+    "tooltip1": "断开钱包",
+    "h2_2": "{chain} 钱包余额",
+    "tooltip2": "{chain} 链上钱包余额",
+    "h2_3": "项目",
+    "div1": "正在审核",
+    "btn2_1": "预览",
+    "btn2_2": "查看",
+    "div2": "您尚未提交任何项目"
   },
   "project": {
-    "p": "You have contributed to this project!"
+    "p": "您已经对此项目进行了赠捐！"
   },
   "projectAdded": {
-    "h1": "Project submitted!",
-    "div1": "You’re almost on board this funding round.",
-    "li1": "Your project just needs to go through some final checks to ensure it meets round criteria. You can",
-    "link1": "learn more about the registration process here.",
-    "li2": "Once that's complete, your project page will go live.",
-    "li3": " If your project fails any checks, we'll let you know by email and return your deposit.",
-    "link2": "View projects",
-    "link3": "Go home"
+    "h1": "您已经提交了项目！",
+    "div1": "您快要参加这筹款活动了。",
+    "li1": "您的项目只需要经过一些最终检查来确保它符合筹款标准。您可以在这里",
+    "link1": "了解更多关于注册流程的信息。",
+    "li2": "完成后，您的项目页面将上线。",
+    "li3": " 如果您的项目未通过检查，我们将电邮通知您并退回您的押金。",
+    "link2": "查看项目",
+    "link3": "回首页"
   },
   "projectList": {
-    "h2": "Projects",
-    "input": "Search projects",
-    "link1": "Add project",
-    "div1": "😢 No projects match your search. Try using the filter to narrow down what you're looking for."
+    "h2": "项目",
+    "input": "搜索项目",
+    "link1": "添加项目",
+    "div1": "😢 没有找到符合您要求的项目。请尝试使用过滤器来缩小您的搜索范围"
+  },
+  "leaderboard": {
+    "no_round": "出错了！找不到筹款回合信息，如果问题持续请报告。",
+    "no_project": "这一回合没有项目",
+    "more": "更多",
+    "less": "简少",
+    "header": "排行榜",
+    "heading": {
+      "project": "项目",
+      "votes": "票数",
+      "donation": "捐款",
+      "total": "总额"
+    },
+    "message": "总额是按照 quadradic funding 公式计算的总拨款金额。捐款是社区捐款。票数是每笔捐款的平方根的总和，并经过 MACI voice credit factor 和代币小数缩放"
+  },
+  "leaderboardSimpleView": {
+    "funded": "{tokenSymbol}"
   },
   "recipientRegistry": {
-    "h2": "Recipient registry",
-    "th1": "Project",
-    "th2": "Request type",
-    "th3": "Status",
-    "th4": "Actions",
-    "summary": "More",
+    "h2": "项目注册表",
+    "th1": "项目",
+    "th2": "请求类型",
+    "th3": "状态",
+    "th4": "行动",
+    "summary": "更多",
     "div1": "Transaction hash",
     "btn1": "hash",
-    "div2": "Project ID",
+    "div2": "项目 ID",
     "btn2": "id",
-    "div3": "Recipient address",
-    "btn3": "address"
+    "div3": "钱包地址",
+    "btn3": "地址"
   },
   "roundList": {
-    "h1": "Rounds",
-    "link1": "Round {index}",
-    "link2": "Round {index}"
+    "h1": "筹款回合",
+    "link1": "回合 {index}"
   },
   "transactionSuccess": {
-    "p1": "reallocated!",
-    "p2": "You just contributed!",
-    "p3": "Your choices have been updated! You can update your choices again any time in the next",
-    "p4": ".",
-    "p4_t1": "Thanks for contributing to the Ethereum ecosystem. If you change your mind, you have",
-    "p4_t2": " to reallocate your contributions.",
-    "btn": "OK"
+    "p1": "重新分配了!",
+    "p2": "您捐赠了!",
+    "p3": "您的选择已更新! 您可以在接下来的",
+    "p4": "内再次更新您的选择。",
+    "p4_t1": "感谢您为以太坊生态系统作出贡献。如果您改变主意, 您有",
+    "p4_t2": " 的时间重新分配您的贡献。",
+    "btn": "确定"
   },
   "verified": {
-    "h1": "Ready to contribute!",
-    "div1": "You’re on board this funding round! And fully verified for BrightID for this funding round.",
-    "p1": "You can now start contributing to your favorite projects.",
-    "link1": "View projects",
-    "link2": "Go home"
+    "h1": "准备好贡献了!",
+    "div1": "您已经参加了这次筹款！并且得到 BrightID 验证了。",
+    "p1": "您现在可以开始做捐献给您喜欢的项目了。",
+    "link1": "查看项目",
+    "link2": "回首页"
   },
   "verify": {
-    "subtitle": " Step {currentStep} of {steps}",
-    "p1": "Step {currentStep} of {steps}",
-    "h1": "Set up BrightID",
-    "h2_1": "Connect",
-    "p2": "You need to connect your BrightID account with your wallet address.",
-    "p3": "Once this app is linked in your BrightID app, we'll automatically transition you to the next step. It may take a minute for us to verify the connection - please wait.",
-    "p4": "Scan this QR code with your BrightID app",
-    "p5": "Follow this link to connect your wallet to your BrightID app",
-    "p6": "This link might look scary but it just makes a connection between your connected wallet address, our app, and BrightID. Make sure your address looks correct.",
-    "h2_2": "Register",
-    "p7": "To protect the round from bribery and fraud, you need to add your wallet address to a smart contract registry. Once you’re done, you can join the funding round!",
-    "btn": " Become a contributor"
+    "subtitle": "{currentStep} / {steps} 步",
+    "p1": "{currentStep} / {steps} 步",
+    "h1": "设置 BrightID",
+    "h2_1": "连接",
+    "p2": "您需要将您的 BrightID 账户与钱包地址连接起来。",
+    "click_next": "一旦该应用程序与您的 BrightID 应用程序链接，点击“下一步”按钮以转到下一步。",
+    "p4": "用您的 BrightID app 扫描此二维码。",
+    "p5": "跟随此链接将您的钱包连接到您的 BrightID app。",
+    "p6": "这个链接可能看起来很吓人, 但它只是在连接您的钱包地址、CLR.fund app 和 BrightID。请确保您的地址是正确的。",
+    "h2_2": "注册",
+    "p7": "为了防止受贿和欺诈，您需要将您的钱包地址添加到智能合约注册表中。完成后，您就可以参加筹款活动了！",
+    "btn": " 成为捐赠者",
+    "next": "下一步",
+    "previous": "前一步",
+    "copy_link": "复制",
+    "verification_status": "您的钱包地址没有连接到 BrightID 的户口。 这可能需要几分钟的时间，稍等候后点击按钮再试。",
+    "skip_sponsorship": "跳过",
+    "get_sponsored_header": "赞助",
+    "get_sponsored_text": "您需要一个赞助令牌才能为 BrightID 认证。这有助于支持 BrightID 作为去中心化平台。您只需这样做一次, 就可以应用任何 BrightID APPS。检查 BrightID 移动应用程序，看看您是否受到赞助。如果没有，请点击按钮提交赞助请求。如果您已受到赞助，您可跳过这一步。",
+    "get_sponsored_cta": "赞助"
   },
   "verifyLanding": {
-    "h1": "Prove you’re only using one account",
-    "subtitle": "We use BrightID to stop bots and cheaters, and make our funding more democratic.",
-    "h2": "What you'll need",
-    "tooltip": "If you've previously donated to a CLR round, use the same wallet to bypass some BrightID steps",
-    "li1_t1": "BrightID – available on",
+    "h1": "证明您只使用一个帐户",
+    "subtitle": "我们使用 BrightID 来防止机器人和作弊者, 并使我们的资金更加民主。",
+    "h2": "您需要:",
+    "li1_t1": "BrightID app: ",
     "li1_link1": "iOS",
-    "li1_t2": "or",
+    "li1_t2": "或",
     "li1_link2": "Android",
-    "li2": "Get sponsored",
-    "li3": "Get verified",
-    "li4": "An Ethereum wallet, with enough gas for two transactions",
-    "li5": "Access to Zoom or Google Meet",
-    "link1": "Why is this important?",
-    "div1": "There's not yet an open funding round. Please check back later.",
-    "div2": "The current round is no longer accepting new contributions. Please try again next round.",
-    "div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
-    "link2": "I have BrightID installed",
-    "link3": "Go back"
+    "join": "参加 ",
+    "brightid_party_link": "BrightId 派对",
+    "get_verified": " 以得到验证",
+    "li_wallet": "一个以太坊钱包。",
+    "unitap_gas_tokens": "您可从 ",
+    "unitap_link": "Unitap",
+    "unitap_extra_text": " 获得一些燃料代币。",
+    "link1": "这为什么重要?",
+    "div1": "目前尚未开放筹款活动。请稍后再查看。",
+    "div2": "当前筹款活动不再接受新的捐款。请在下一轮再试。",
+    "div3": "捐赠提早关闭 - 您不能再捐款了！由于社区的慷慨和一些技术限制，我们不得不比预期更早地结束这一次筹款活动。如果您已经捐赠过，您仍然有时间重新分配。如果您没有机会捐赠，您仍然可以通过捐赠匹配池来帮助。",
+    "link2": "我已验证了 BrightID",
+    "link3": "返回"
   },
   "addToCartButton": {
-    "input1": "Add to cart",
-    "input2": "In cart 🎉"
+    "input1": "加入捐款车",
+    "input2": "已在捐款车 🎉"
   },
   "brightIdWidget": {
-    "h2": "BrightID setup",
-    "link1": "Start contributing",
-    "link2": "Continue setup",
-    "link3": "Start setup",
-    "tooltip1_1": "You're a verified human on BrightID!",
-    "tooltip1_2": "Your BrightID profile still needs to be verified.",
-    "p1_1": "Verified",
-    "p1_2": "Unverified"
+    "h2": "BrightID 设置",
+    "link1": "开始捐赠",
+    "link2": "继续设置",
+    "link3": "开始设置",
+    "tooltip1_1": "您已验证了!",
+    "tooltip1_2": "您的 BrightID 户口还需验证.",
+    "p1_1": "验证了",
+    "p1_2": "未验证"
   },
   "callToActionCard": {
-    "h2_1": "Changed your mind?",
-    "p1": "You still have time to reallocate your contributions.",
-    "div1": "Open cart",
-    "h2_2": "Round over for contributions",
-    "p2": "You can no longer make any contributions this round.",
-    "h2_3": "Get prepared",
-    "p3": "You’ll need to set up a few things before you contribute. You can do this any time before or during the funding round.",
-    "link1": "Start prep",
-    "link2": "Continue setup"
+    "h2_1": "改变主意了?",
+    "p1": "您仍然有时间重新分配您的捐款。",
+    "div1": "打开捐款车",
+    "h2_2": "筹款结束了",
+    "p2": "您不能再做任何捐赠了。",
+    "h2_3": "做好准备",
+    "p3": "在您贡献之前，您需要做好一些准备工作，可以在开始前或在筹款期间做",
+    "link1": "开始准备",
+    "link2": "继续设置"
   },
   "cart": {
-    "h3_1": "Connect to see your cart",
-    "div1": "You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount.",
-    "link1": "Why?",
-    "div2": "Almost done! You must submit one more transaction to complete your contribution.",
-    "h2_1": "Edit cart",
-    "h2_2": "Your cart",
-    "div3": "This round is over. Here’s how you contributed. Thanks!",
-    "h3_2": "Too late to donate",
-    "div4": "Sorry, the deadline for donating has passed.",
-    "h3_3": "Your cart is empty",
-    "div5": "Choose some projects that you want to contribute to...",
-    "link2": "See projects",
-    "edit1": "Edit contributions",
-    "edit2": "Your contributions",
-    "edit3": "Cancel",
-    "edit4": "Edit",
-    "div6": "Your contributions",
-    "div7": "Time left:",
-    "span1": "Original contribution",
-    "span2": "Your cart",
-    "div8": "Matching pool",
-    "div9": "Remaining funds go to matching pool",
-    "div10": "Split {contribution} {tokenSymbol} evenly",
-    "button1": "Withdraw {contribution} {tokenSymbol}",
-    "div11": "Can't",
-    "div11_if2": "reallocate",
-    "div11_if3": "contribute",
-    "div12": "Funds you don't contribute to projects ({total} {tokenSymbol}) will be sent to the matching pool at the end of the round. Your cart must add up to your original {contribution} {tokenSymbol} donation.",
-    "link3": "Verify with BrightID",
-    "template1": "Contribute {total} {tokenSymbol} to {cart} projects",
-    "template2": "Finish contribution",
-    "template3": "Reallocate contribution",
-    "div13": "Time left:",
-    "span3": "Projects",
-    "span4": "Matching Pool",
-    "span5": "Total",
-    "div14": "No current round.",
-    "link4": "Verify with BrightID while you wait"
+    "h3_1": "连接查看您的捐款车",
+    "div1": "您已经贡献过了。您可以更改您的选择并添加新的项目，但是您原本的总捐额必需一样。",
+    "link1": "为什么?",
+    "div2": "几乎完成了！您必须再提交一笔交易才能完成您的贡献。",
+    "h2_1": "编辑捐款车",
+    "h2_2": "您的捐款车",
+    "div3": "这次筹款活动已经结束。这是您的总捐额。谢谢!",
+    "h3_2": "现在已经来不及捐赠了。",
+    "div4": "抱歉，捐赠的截止日期已过。",
+    "h3_3": "您的捐款车是空的。",
+    "div5": "选择一些您想捐赠的项目...",
+    "link2": "查看项目",
+    "edit1": "编辑您的捐赠",
+    "edit2": "您的捐赠",
+    "edit3": "取消",
+    "edit4": "更改",
+    "div6": "您的捐赠",
+    "div7": "剩余时间:",
+    "span1": "原本的捐款",
+    "span2": "您的捐款车",
+    "div8": "匹配池",
+    "div9": "剩余的将会加入匹配池",
+    "div10": "平均分配 {contribution} {tokenSymbol}",
+    "button1": "取回 {contribution} {tokenSymbol}",
+    "div11": "不可以",
+    "div11_if2": "重新分配",
+    "div11_if3": "捐赠",
+    "div12": "您没有把资金捐给项目 ({total} {tokenSymbol}) 将在筹款结束时发送到匹配池。您的捐款车必须相加等于您原来的 {total} {tokenSymbol} 捐款。",
+    "link3": "BrightID 验证",
+    "template1": "捐赠 {total} {tokenSymbol} 给 {cart} 相目",
+    "template2": "完成赠捐",
+    "template3": "重新分配捐款",
+    "div13": "剩余时间:",
+    "span3": "项目",
+    "span4": "未分配",
+    "span5": "总额",
+    "div14": "没有当前的筹款活动.",
+    "link4": "在等待期间使用 BrightID 进行验证"
   },
   "cartItems": {
-    "button1": "Amount"
+    "button1": "捐额"
   },
   "claimButton": {
-    "p": "✔️ {allocatedAmount} {tokenSymbol} claimed",
-    "button": "Claim {allocatedAmount} {tokenSymbol}"
+    "p": "✔️ {allocatedAmount} {tokenSymbol} 领取了",
+    "button": "领取 {allocatedAmount} {tokenSymbol}"
   },
   "claimModal": {
-    "h2_1": "Claim funds",
-    "h2_2": "Funds were claimed!",
-    "p1": " has been sent to",
-    "div1": "Recipient address",
-    "button1": "Done"
+    "h2_1": "领取捐款",
+    "h2_2": "捐款领取了!",
+    "p1": " 寄去了以下",
+    "div1": "钱包地址",
+    "button1": "完成"
   },
   "contributionModal": {
-    "confirm": " Confirm {renderTotal} {nativeTokenSymbol} contribution",
-    "your": " Your",
-    "contribution_final": "contribution total is final. You won't be able to increase this amount. Make sure this is the maximum you might want to spend on contributions.",
-    "btn_cancel": "Cancel",
-    "btn_continue": "Continue",
-    "approve": "Approve {renderTotal} {nativeTokenSymbol}",
-    "permission": " This gives this app permission to withdraw {renderTotal} {nativeTokenSymbol} from your wallet for your contribution.",
-    "send_contribution": " Send {renderTotal} {nativeTokenSymbol} contribution",
-    "send_tx": " This transaction sends out your {renderTotal} {nativeTokenSymbol} contribution to your chosen projects.",
-    "magic": "Matching pool magic ✨",
-    "how_much": "This transaction lets the matching pool know how much {nativeTokenSymbol} to send to your favorite projects based on your contributions."
+    "confirm": " 确认捐赠 {renderTotal} {nativeTokenSymbol}",
+    "your": " 您的",
+    "contribution_final": "贡献总额是不可更改的。确保这是您最终的捐额。",
+    "btn_cancel": "取消",
+    "btn_continue": "继续",
+    "approve": "批准 {renderTotal} {nativeTokenSymbol}",
+    "permission": " 这会让这个 APP 有权从您的钱包中提取 {renderTotal} {nativeTokenSymbol} 作为您的贡献。",
+    "send_contribution": " 发送 {renderTotal} {nativeTokenSymbol} 贡献",
+    "send_tx": " 此交易将您的 {renderTotal} {nativeTokenSymbol} 贡献发送到您选择的项目。",
+    "magic": "匹配池魔法 ✨",
+    "how_much": "此交易让匹配池知道根据您的贡献向您最喜欢的项目发送多少 {nativeTokenSymbol}。"
   },
   "copyButton": {
-    "tooltip1": "Copied!",
-    "copy": "Copy"
+    "tooltip1": "已复制！",
+    "copy": "复制"
   },
   "criterialModal": {
-    "h2": "Round criteria",
-    "p1": "Close",
-    "p2": "The registry admin will remove any projects that don't meet the round criteria. So read carefully! In later rounds we're hoping that this review process can be done by the community.",
-    "p3": "Learn more about the project application process in our",
-    "link1": "recipient guide",
-    "link2": "Add project"
+    "h2": "筹款标准",
+    "p1": "关",
+    "p2": "注册管理员将删除任何不符合筹款标准的项目。所以要仔细阅读！将来，我们希望这个审查过程可以由社区完成。",
+    "p3": "了解更多关于项目申请流程的信息： ",
+    "link1": "收赠者指南",
+    "link2": "添加项目"
   },
   "formNavigation": {
-    "button1": "Previous",
-    "button2_1": "Confirm",
-    "button2_2": "Next"
+    "button1": "前一步",
+    "button2_1": "确认",
+    "button2_2": "下一步"
   },
   "formProgressWidget": {
-    "p1": "Step {currentStep} of {steps}",
-    "div1": "Step {currentStep} of {steps}",
-    "link1": "Cancel"
+    "p1": "{currentStep} / {steps} 步",
+    "div1": "{currentStep} / {steps} 步",
+    "link1": "取消"
   },
   "fundsNeededWarning": {
-    "span1_t1": "You need",
+    "span1_t1": "您需要 ",
     "span1_l2": "L2",
-    "span1_t2": "funds!",
-    "p1": " ⚠️ You need both some ETH for gas, and {nativeTokenSymbol} to contribute",
-    "link1": " Get help bridging {singleTokenNeeded} to Layer 2",
-    "link2": " Bridge {singleTokenNeeded} to {chain}"
+    "span1_t2": " 的货币!",
+    "p1": " ⚠️ 您需要付交易费的 ETH, 和捐赠的 {nativeTokenSymbol}",
+    "link1": " 帮助您连接 {singleTokenNeeded} 到第二层",
+    "link2": " 连接 {singleTokenNeeded} 到 {chain}"
   },
   "ipfsCopyWidget": {
-    "tooltip1": "View IPFS link"
+    "tooltip1": "查看 IPFS"
   },
   "ipfsImageUpload": {
-    "button1_1": "Uploading...",
-    "button1_2": "Upload",
+    "button1_1": "正在上载...",
+    "button1_2": "上载",
     "p1": "IPFS hash",
-    "p2": "Your image is now stored on a decentralized network at the following hash. You don't need to do anything with it but you may want to keep it for future use.",
-    "div1": "Remove image"
+    "p2": "您的图像现在存储在 IPFS 上, hash 如下。您不需要对它做任何事情，但是您可能希望将它保留以备将来使用。",
+    "div1": "删除图像"
   },
   "linkBox": {
-    "h2": "Check them out",
-    "link1": "GitHub repo",
+    "h2": "查看",
+    "link1": "GitHub",
     "link2": "@Twitter"
   },
   "matchingFundsModal": {
-    "title": "Contribute {tokenSymbol} to the matching pool",
-    "div1": " ⚠️ You only have {renderBalance} {tokenSymbol}",
-    "button2": "Contribute",
-    "h3_2_t1": " Contribute {renderContributionAmount} {tokenSymbol} to the matching pool",
-    "h3_3": " You just topped up the pool by {renderContributionAmount} {tokenSymbol}!",
-    "fund_distribution_message": "The funds will be distributed to all projects based on the contributions they receive from the community",
-    "div2": "Thanks for helping out all our projects.",
-    "button3": "Done"
+    "title": "捐赠 {tokenSymbol} 于匹配池",
+    "div1": " ⚠️ 您只有 {renderBalance} {tokenSymbol}",
+    "button2": "捐赠",
+    "h3_2_t1": " 捐赠 {renderContributionAmount} {tokenSymbol} 于匹配池",
+    "h3_3": " 您刚刚向池中加入了 {renderContributionAmount} {tokenSymbol}!",
+    "fund_distribution_message": "资金将分配给所有的项目。分配金额将跟据各个项目从社区所得的捐款而定，",
+    "div2": "感谢您为我们所有项目的捐赠",
+    "button3": "完成"
   },
+  "app": "App",
   "navBar": {
-    "app": "App",
     "dropdown": {
-      "home": "Home",
-      "about": "About",
-      "how": "How it works",
-      "maci": "Bribery protection",
-      "sybil": "Sybil resistance",
-      "code": "Code",
-      "recipients": "Recipients",
-      "layer2": "Layer 2"
+      "home": "首页",
+      "about": "关于",
+      "how": "如何运作",
+      "maci": "贿赂保护",
+      "sybil": "Sybil 抗性",
+      "code": "代码",
+      "recipients": "项目注册表",
+      "layer2": "二层网络",
+      "rounds": "筹款回合"
     }
   },
   "projectListItem": {
-    "button1": "More"
+    "button1": "更多"
   },
   "projectProfile": {
-    "info1": "This is what your contributors will see when they visit your project page.",
-    "div1": " tag",
-    "div2": "Team: ",
-    "p1": "You have contributed to this project!",
-    "h2_1": "About the project",
-    "h2_2": "The problem it solves",
-    "h2_3": "Funding plans",
-    "div3": "Recipient address",
-    "button1": "address",
-    "link1": "View on {blockExplorer} ",
-    "h2_4": "Team: "
+    "info1": "这就是您的捐赠者在访问您的项目页面时会看到的内容。",
+    "div1": " 标签",
+    "div2": "团队: ",
+    "p1": " 您已经对此项目进行了贡献！",
+    "h2_1": "关于这个项目",
+    "h2_2": "解决的问题",
+    "h2_3": "用款计划",
+    "div3": "钱包地址",
+    "button1": "地址",
+    "link1": "View on ",
+    "h2_4": "团队: "
   },
   "reallocationModal": {
-    "h3": "Reallocate funds"
+    "h3": "重新分配捐款"
   },
   "recipientSubmissionWidget": {
-    "div1": "Waiting for transaction to be mined...",
-    "div2": "Check your wallet for a prompt...",
-    "div3_t1": "Something failed: {txError}",
-    "div3_t2": "Check your wallet or {blockExplorerLabel} for more info.",
-    "div4": "Total to submit",
-    "tooltip1": "Estimate – this total may be slightly different in your wallet.",
-    "div5_t1": " Not enough {depositToken} in your wallet.",
-    "div5_t2": "Top up or connect a different wallet.",
-    "p1": "Security deposit"
+    "div1": "等待交易被挖掘...",
+    "div2": "检查你的钱包提示...",
+    "div3_t1": "某个操作遇到了错误: {txError}",
+    "div3_t2": "检查你的钱包或 {blockExplorerLabel} 以获取更多信息。",
+    "div4": "总提交量",
+    "tooltip1": "估计值 – 这个总金额可能与你钱包中的金额略有不同。",
+    "div5_t1": "你钱包中没有足够的 {depositToken}。",
+    "div5_t2": "充值或连接另一个钱包。",
+    "p1": "安全押金"
   },
   "roundInfo": {
-    "link1": "View on {blockExplorer}",
-    "div1": "Cancelled",
-    "div2": "Open",
-    "div3": "Closed",
-    "p1": "he round is officially closed",
-    "p2": "It's now too late to contribute or reallocate your donations! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. You can still help by donating to the matching pool.",
-    "div4": "Great!",
-    "div5": "⏱️ Round opening",
-    "div6": "Time left to contribute",
-    "tooltip1": "During this phase, you can contribute to your favorite projects.",
-    "div7": "Contribution Deadline: ",
-    "div8_1": "Time left to reallocate",
-    "div8_2": "Round status",
-    "tooltip2": "During this phase, you can add/remove projects and change your contribution amounts. You can't make a contribution or increase your overall total.",
-    "tooltip3": "If you've contributed, you can add/remove projects and change your contribution amounts. Please connect your wallet.",
-    "tooltip4": "This round has closed for new contributions.",
-    "div9": "Closed for contributions",
-    "div10": "Reallocation Deadline: ",
-    "div11": "Round status",
-    "tooltip5": "Our smart contracts are busy figuring out final contribution amounts.",
-    "div12": "Tallying all contributions",
-    "div13": "Round status",
-    "tooltip6": "If you're a project owner you can now claim your funds!",
-    "div14": "Contributions are ready to claim 🎉",
-    "div15": "Total in round",
-    "tooltip7": "This total includes the funds in the matching pool and all contributions from the community.",
-    "div16": "Matching pool",
-    "tooltip8": "These are the funds that will be distributed to all the projects based on the contributions they receive from the community.",
-    "tooltip9": "'Add matching funds'",
-    "span1": "Add funds",
-    "div17": "Contributions total",
-    "div18": "Contributors",
-    "div19": "legend",
-    "div20": "No scheduled round",
-    "div21": "We haven't yet scheduled a funding round. Stay tuned!",
-    "pluralism": "s"
+    "link1": "查看 {blockExplorer}",
+    "div1": "取消",
+    "div2": "开放",
+    "div3": "结束",
+    "p1": "本筹款活动正式结束",
+    "p2": "不能再对项目进行贡献或重新分配您的捐款！",
+    "max_messages_reached": "由于社区的慷慨和一些技术限制，我们不得不提前结束本筹款活动。您仍然可以通过向匹配池捐款来帮助我们。",
+    "div4": "关闭",
+    "div5": "⏱️ 筹款开放",
+    "div6": "剩余捐款的时间",
+    "tooltip1": "在这个阶段，您可以向您喜欢的项目进行贡献。",
+    "div7": "捐款期限：",
+    "div8_1": "剩余时间去重新分配您的捐款",
+    "div8_2": "筹款状态",
+    "tooltip2": "在这个阶段，您可以添加/删除各个项目的捐款。但不能增加您的总额。",
+    "tooltip3": "如果您已经贡献了，您可以添加/删除项目并更改您的贡献金额。请连接您的钱包。",
+    "tooltip4": "此回合已停止接受新的贡献。",
+    "div9": "停止接受贡献",
+    "div10": "调整期限：",
+    "div11": "筹款状态",
+    "tooltip5": "我们的智能合约正在计算捐款数额。",
+    "div12": "正在计算捐款数额",
+    "div13": "筹款状态",
+    "tooltip6": "如果您是项目负责人，您可以领取捐款了！",
+    "div14": "可以领取您的捐款了 🎉",
+    "div15": "筹款总金额",
+    "tooltip7": "这个总数包括匹配池和社区的所有捐款。",
+    "div16": "匹配池",
+    "tooltip8": "匹配池的资金将根据社区对各个项目的贡献分配给所有项目。",
+    "tooltip9": "加款于匹配池",
+    "span1": "加款",
+    "div17": "捐款数额",
+    "div18": "捐款人",
+    "div19": "",
+    "div20": "没有安排筹款活动",
+    "div21": "我们还没有安排新的筹款活动。请保持关注！",
+    "pluralism": "",
+    "more": "融资回顾: "
   },
   "roundStatusBanner": {
-    "span1": "Funding starts 🗓 {startDate}.",
-    "span2": "Project applications are closed.",
-    "span3": "Hurry, only {recipientSpacesRemainingString} left!",
-    "span4": "Time left to add a project:",
-    "span5_t1": "⌛️ The round will close in",
-    "span5_t2": ". Get your contributions in now!",
-    "span6_t1": "🎉 The round is open!",
-    "span6_t2": "left to contribute to your favorite projects",
-    "span7_t1": "Funding is closed! If you contributed, you have",
-    "span7_t2": "left to change your mind",
-    "span8": "🎉 Funding is closed! Our smart contracts are busy tallying contributions...",
-    "span9": "Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds.",
-    "link1": "View projects"
+    "span1": "筹款开始 🗓 {startDate}。",
+    "span2": "项目申请已经结束。",
+    "span3": "快，只剩下 {recipientSpacesRemainingString} 个了!",
+    "span4": "剩余申请项目的时间",
+    "span5_t1": "⌛️ 本轮筹款活动即将结束于",
+    "span5_t2": "。不要等了, 现在就捐赠于您喜欢的项目！",
+    "span6_t1": "🎉 筹款活动已经开始！",
+    "span6_t2": "剩余可以为您喜欢的项目捐款",
+    "span7_t1": "筹款已经结束！ 如果您曾经捐款，您还有",
+    "span7_t2": "的时间改变主意",
+    "span8": "🎉 筹款已经结束！ 我们的智能合约正在计算捐款数额……",
+    "span9": "筹款已经结束！您可以开始领取您的捐款了。请前往您的项目页面来领取您的捐款。",
+    "link1": "查看项目"
   },
   "transactions": {
-    "button1": "Close",
-    "button2": "Retry",
-    "div1": "Please approve transaction in your wallet",
-    "small": "If you have been waiting a while, consider refreshing your browser and reconnecting your wallet."
+    "button1": "关闭",
+    "button2": "重试",
+    "div1": "请在您的钱包中批准交易",
+    "small": "如果您已经等待了一段时间，请考虑刷新浏览器并重新连接您的钱包。"
   },
   "transactionModal": {
-    "button1": "Close"
+    "button1": "关闭"
   },
   "transactionReceipt": {
-    "tooltip1": "Awaiting transaction confirmation",
-    "tooltip2": "'Transaction confirmed'",
-    "tooltip3": "View on {blockExplorer}",
+    "tooltip1": "等待交易确认",
+    "tooltip2": "交易已被确认",
+    "tooltip3": "查看 {blockExplorer}",
     "button1": "hash"
   },
   "walletModal": {
-    "p1": "Connecting wallet",
-    "p2": "Connect to a wallet",
+    "p1": "正在连接钱包",
+    "p2": "连接钱包",
     "p3": "MetaMask",
-    "p4": "Install MetaMask",
+    "p4": "设置 MetaMask",
     "p5": "WalletConnect"
   },
   "walletWidget": {
-    "button1": "Connect"
+    "button1": "连接"
   },
   "withdrawalModal": {
-    "h3_1": "Withdraw funds",
-    "h3_2": "Success!",
-    "div1": "You have successfully withdrawn your contribution.",
-    "button1": "OK"
+    "h3_1": "取回捐款",
+    "h3_2": "成功!",
+    "div1": "您已成功取回捐款。",
+    "button1": "确定"
+  },
+  "recipientProfile": {
+    "not_found": "未找到收赠人!"
   },
   "dynamic": {
+    "appLink": {
+      "getStarted": "开始吧！",
+      "leaderboard": "排行榜"
+    },
     "category": {
-      "tooling": "Tools",
-      "content": "Content",
-      "data": "Data",
-      "research": "Research"
+      "tooling": "工具",
+      "content": "内容",
+      "research": "研究",
+      "data": "数据",
+      "other": "其他"
     },
     "timeleft": {
       "unit": {
-        "days": "days",
-        "day": "day",
-        "hours": "hours",
-        "hour": "hour",
-        "minutes": "minutes",
-        "minute": "minute",
-        "seconds": "seconds",
-        "second": "second"
+        "days": "天",
+        "day": "天",
+        "hours": "小时",
+        "hour": "小时",
+        "minutes": "分钟",
+        "minute": "分钟",
+        "seconds": "秒",
+        "second": "秒"
       }
     },
     "criteria": {
       "free_open_source": {
-        "tagline": "Free and open source",
-        "description": "Your project must be free to use and any code associated with your project should be available to anyone under an open source license."
+        "tagline": "自由开源",
+        "description": "您的项目必须允许自由使用，与您项目相关的任何代码都应在开源许可下任何人都可获得。"
       },
       "no_clones": {
-        "tagline": "No clones",
-        "description": "If you've forked code, you must provide additional, unique value to the ecosystem."
+        "tagline": "无复制",
+        "description": "如果您 fork 了代码，则必须为生态系统提供额外的独特价值。"
       },
       "project_ownership": {
-        "tagline": "Project ownership",
-        "description": "The project you submit must be yours or you must have permission from the project owner."
+        "tagline": "拥有权",
+        "description": "您提交的项目必须是属于您的，或者您必须获得项目所有者的许可。"
       },
       "no_scams": {
-        "tagline": "No scams",
-        "description": "Obviously, your project must not put anyone's funds or information at risk."
+        "tagline": "无欺诈",
+        "description": "显然，您的项目不应欺诈何人的资金或信息。"
       }
     },
     "cart": {
       "error": {
-        "reached_contribution_limit": "The limit on the number of contributions has been reached",
-        "connect_wallet": "Please connect your wallet",
-        "incorrect_network": "Please change network to {chain} network.",
-        "need_to_setup_brightid": "To contribute, you need to set up BrightID.",
-        "invalid_contribution_amount": "Include valid contribution amount.",
-        "exceeded_max_cart_size": "Your cart can't include over {maxCartSize} projects.",
-        "round_cancelled": "Sorry, we've had to cancel this funding round.",
-        "round_ended": "The funding round has ended.",
-        "cart_changes_exceed_cap": "Cart changes will exceed contribution capacity of this round",
-        "contributions_over": "Contributions are over for this funding round.",
-        "reached_contributor_limit": "The limit on the number of contributors has been reached",
-        "must_be_gt_zero": "Your total must be more than 0 {nativeTokenSymbol}",
-        "not_enough_funds": "Not enough funds. Your balance is {balance} {nativeTokenSymbol}.",
-        "too_generous": "Your contribution is too generous. The max contribution is {maxAmount} {nativeTokenSymbol}.",
-        "need_gas_payment": "You need some ETH to pay for gas",
-        "contributor_key_missing": "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with.",
-        "more_than_original_contribution": "Your new total can't be more than your original {total} {tokenSymbol} contribution"
+        "reached_contribution_limit": "已达到贡献数量的限制",
+        "connect_wallet": "请连接您的钱包",
+        "incorrect_network": "请将网络更改为 {chain} 网络.",
+        "need_to_setup_brightid": "要进行贡献, 您需要设置 BrightID。",
+        "invalid_contribution_amount": "请输入有效的贡献金额",
+        "exceeded_max_cart_size": "您的捐款车不能超过 {maxCartSize} 个项目",
+        "round_cancelled": "抱歉，我们不得不取消这次筹款活动。",
+        "round_ended": "筹款活动已结束。",
+        "cart_changes_exceed_cap": "您的更改将超出贡献容量",
+        "contributions_over": "捐款活动已经结束。",
+        "reached_contributor_limit": "已达到捐赠者数量的限制",
+        "must_be_gt_zero": "您的总数必须大于 0 {nativeTokenSymbol}",
+        "not_enough_funds": "资金不足. 您的余额是 {balance} {nativeTokenSymbol}.",
+        "too_generous": "您的贡献太大了。最大贡献为 {maxAmount} {nativeTokenSymbol}.",
+        "need_gas_payment": "您需要一些 ETH 来支付交易费",
+        "contributor_key_missing": "找不到贡献者密钥。请刷新并重试，并确保您使用的浏览器/机器与您进行贡献的浏览器/机器相同。",
+        "more_than_original_contribution": "您的新总额不能超过您原本的 {total} {tokenSymbol} 贡献."
       },
       "action": {
-        "remove_all": "Remove all",
-        "split_evenly": "Split evenly"
+        "remove_all": "全部删除",
+        "split_evenly": "平均分配"
       }
     },
     "verify": {
       "step": {
-        "connect": "Connect",
-        "get_registered": "Get registered"
+        "sponsorship": "赞助",
+        "connect": "连接",
+        "registration": "注册"
       }
     },
     "progress": {
       "step": {
-        "project": "About the project",
-        "donation": "Donation details",
-        "team": "Team details",
-        "links": "Links",
-        "images": "Images",
-        "review": "Review",
-        "submit": "Submit"
+        "project": "关于项目",
+        "donation": "捐款细节",
+        "team": "团队",
+        "links": "链接",
+        "images": "图片",
+        "review": "审查",
+        "submit": "提交"
       }
     },
     "mobile": {
       "tab": {
-        "Cart": "Cart",
-        "Round": "Round",
-        "Projects": "Projects"
+        "Cart": "捐款车",
+        "Round": "筹款信息",
+        "Projects": "项目"
       }
     }
   },
-  "filter": "Filter",
-  "home": "Home",
-  "cancel": "Cancel",
-  "copied": "Copied!",
-  "more_on_maci": "More on MACI",
-  "add_project": "Add project"
+  "filter": "过滤",
+  "home": "首页",
+  "cancel": "取消",
+  "copied": "已复制！",
+  "more_on_maci": "更多关于 MACI",
+  "add_project": "添加项目"
 }

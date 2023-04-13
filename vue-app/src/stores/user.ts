@@ -1,9 +1,10 @@
 import { getEtherBalance, getTokenBalance, isVerifiedUser, type User } from '@/api/user'
 import { defineStore } from 'pinia'
-import { loginUser, logoutUser } from '@/api/gun'
-import { useAppStore } from './app'
+import { logoutUser } from '@/api/gun'
+import { useAppStore } from '@/stores'
+import type { WalletUser } from '@/stores'
 import { getContributionAmount, hasContributorVoted } from '@/api/contributions'
-import type { BigNumber } from 'ethers'
+import type { BigNumber, Signer } from 'ethers'
 import { ensLookup } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { getBrightId, type BrightId } from '@/api/bright-id'
@@ -16,19 +17,29 @@ export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     currentUser: null,
   }),
-  getters: {},
-  actions: {
-    setCurrentUser(user: User) {
-      this.currentUser = user
+  getters: {
+    signer(): Signer {
+      if (!this.currentUser) {
+        throw new Error('Not connected to a wallet')
+      }
+      return this.currentUser.walletProvider.getSigner()
     },
-    async loginUser(walletAddress: string, encryptionKey: string) {
-      await loginUser(walletAddress, encryptionKey)
+  },
+  actions: {
+    async loginUser(user: WalletUser) {
+      this.currentUser = {
+        isRegistered: false,
+        encryptionKey: '',
+        walletAddress: user.walletAddress,
+        walletProvider: user.web3Provider,
+      }
+      //await loginUser(this.currentUser.walletAddress, encryptionKey)
     },
     logoutUser() {
       const appStore = useAppStore()
-      appStore.unwatchCart()
-      appStore.unwatchContributorData()
-      logoutUser()
+      //appStore.unwatchCart()
+      //appStore.unwatchContributorData()
+      //logoutUser()
       this.currentUser = null
       appStore.contribution = null
       appStore.contributor = null
@@ -102,10 +113,7 @@ export const useUserStore = defineStore('user', {
           brightId = await getBrightId(this.currentUser.walletAddress)
         }
 
-        this.setCurrentUser({
-          ...this.currentUser,
-          brightId,
-        })
+        this.currentUser.brightId = brightId
       }
     },
   },

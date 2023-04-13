@@ -260,12 +260,11 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
-import { useBoard } from 'vue-dapp'
-import { $vfm } from 'vue-final-modal'
+import { useModal } from 'vue-final-modal'
+import WalletModal from './WalletModal.vue'
 
 const appStore = useAppStore()
 const route = useRoute()
-const { open: openWalletBoard, boardOpen } = useBoard()
 // state
 const isLoading = ref(true)
 const roundInfo = ref<RoundInfo | null>(null)
@@ -301,6 +300,15 @@ const formatTotalInRound = computed(() => {
   const totalInRound = contributions.addUnsafe(matchingPool)
 
   return formatAmount(totalInRound)
+})
+
+const { open, close } = useModal({
+  component: MatchingFundsModal,
+  attrs: {
+    onClose() {
+      close()
+    },
+  },
 })
 
 onMounted(async () => {
@@ -360,33 +368,35 @@ function formatAmount(value: BigNumber | FixedNumber | string): string {
   return _formatAmount(value, roundInfo.value?.nativeTokenDecimals, 4)
 }
 
-watch(boardOpen, (newVal, oldVal) => {
-  // If closed but no user was connected in the event, then this will be closing the WalletModal
-  // and dont do anythign else. If closed and a user was connected, call the addMatchingFunds method
-  // again to pop open the MatchingFundsModal after the WalletModal.
-  if (oldVal && !newVal) {
-    if (currentUser.value) {
-      addMatchingFunds()
-    }
-  }
-})
-
 function addMatchingFunds(): void {
   if (!currentUser.value) {
-    openWalletBoard()
+    const { open: openWallet, close: closeWallet } = useModal({
+      component: WalletModal,
+      attrs: {
+        onClose() {
+          closeWallet()
+          if (currentUser.value?.walletAddress) {
+            addMatchingFunds()
+          }
+        },
+      },
+    })
+    openWallet()
     return
   }
 
-  $vfm.show({
+  const { open: openMatchingFundModal, close } = useModal({
     component: MatchingFundsModal,
-    on: {
-      close(closeModal) {
-        closeModal()
+    attrs: {
+      onClose() {
+        close()
         // Reload matching pool size
         appStore.loadRoundInfo()
       },
     },
   })
+
+  openMatchingFundModal()
 }
 
 const blockExplorer = computed(() => ({

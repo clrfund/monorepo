@@ -67,8 +67,8 @@
                   <button
                     type="button"
                     class="btn-action btn-block"
-                    @click="sponsor"
-                    :disabled="sponsorTxHash.length !== 0"
+                    @click="selfSponsorAndWait"
+                    :disabled="selfSponsorTxHash.length !== 0"
                   >
                     {{ $t('verify.get_sponsored_cta') }}
                   </button>
@@ -113,7 +113,7 @@
                     {{ appLink }}
                   </links>
                   <div class="copy-container">
-                    <div>Copy link</div>
+                    <div>{{ $t('verify.copy_link') }}</div>
                     <copy-button :value="appLink" text="link" myClass="inline copy-icon" />
                   </div>
                 </div>
@@ -173,7 +173,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import ProgressBar from '@/components/ProgressBar.vue'
 import QRCode from 'qrcode'
-import { getBrightIdLink, getBrightIdUniversalLink, registerUser } from '@/api/bright-id'
+import { getBrightIdLink, getBrightIdUniversalLink, registerUser, selfSponsor, sponsorUser } from '@/api/bright-id'
 import Transaction from '@/components/Transaction.vue'
 import Loader from '@/components/Loader.vue'
 import Links from '@/components/Links.vue'
@@ -181,11 +181,16 @@ import { waitForTransaction } from '@/utils/contracts'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
+import { brightIdSponsorUrl } from '@/api/core'
+import { assert } from '@/utils/assert'
 
 interface BrightIDStep {
-  page: 'connect' | 'registration'
-  name: string
+  page: 'connect' | 'registration' | 'sponsorship'
 }
+
+const pages: Array<BrightIDStep> = [{ page: 'sponsorship' }, { page: 'connect' }, { page: 'registration' }]
+const steps = brightIdSponsorUrl ? pages.filter(p => p.page !== 'sponsorship') : pages
+
 const router = useRouter()
 const appStore = useAppStore()
 
@@ -194,30 +199,67 @@ const { hasContributionPhaseEnded, userRegistryAddress } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 
-const steps = ref<Array<BrightIDStep>>([
-  { page: 'connect', name: 'Connect' },
-  { page: 'registration', name: 'Get registered' },
-])
+// do onchain sponsorship if the brightId url is not setup
+
+const stepNumbers: { [key: string]: number } = steps.reduce((res, step, index) => {
+  res[step.page] = index
+  return res
+}, {})
+
 const appLink = ref('')
 const appLinkQrCode = ref('')
 const registrationTxHash = ref('')
 const registrationTxError = ref('')
 const loadingTx = ref(false)
+const isSponsoring = ref(!brightIdSponsorUrl)
+const showVerificationStatus = ref(false)
+const autoSponsorError = ref('')
+const sponsorTxError = ref('')
+const selfSponsorTxHash = ref('')
 
 const brightId = computed(() => currentUser.value?.brightId)
 
 const currentStep = computed(() => {
-  if (!brightId.value || !brightId.value.isVerified) {
+  if (!brightId.value) {
     return 0
   }
-
-  if (!currentUser.value?.isRegistered) {
-    return 1
+  if (isSponsoring.value) {
+    return stepNumbers['sponsorship']
   }
-
+  if (!brightId.value.isVerified) {
+    return stepNumbers['connect']
+  }
+  if (!currentUser.value?.isRegistered) {
+    return stepNumbers['registration']
+  }
   // This means the user is registered
   return -1
 })
+
+const currentPage = computed(() => {
+  return steps[currentStep.value].page
+})
+
+// if the sponsor url is not defined, we are doing self sponsorship, show the button
+// to allow users to go back to that page
+const showBackToSponsorshipButton = !brightIdSponsorUrl
+
+function backToSponsorship() {
+  isSponsoring.value = true
+  showVerificationStatus.value = false
+}
+
+function skipSponsorship() {
+  isSponsoring.value = false
+}
+
+async function checkVerificationStatus() {
+  showVerificationStatus.value = false
+  await userStore.loadBrightID()
+  if (!brightId.value?.isVerified) {
+    showVerificationStatus.value = true
+  }
+}
 
 onMounted(async () => {
   // created
@@ -235,15 +277,32 @@ onMounted(async () => {
 
   // mounted
   if (currentUser.value && !brightId.value?.isVerified) {
+    const walletAddress = currentUser.value.walletAddress
+    // send sponsorship request if automatic sponsoring is enabled
+    if (brightIdSponsorUrl) {
+      try {
+        const res = await sponsorUser(walletAddress)
+        if (!res.hash) {
+          autoSponsorError.value = res.error ? res.error : JSON.stringify(res)
+          return
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          autoSponsorError.value = err.message
+        }
+        return
+      }
+    }
+
     // Present app link and QR code
-    appLink.value = getBrightIdUniversalLink(currentUser.value.walletAddress)
-    const qrcodeLink = getBrightIdLink(currentUser.value.walletAddress)
-    QRCode.toDataURL(qrcodeLink, (error: unknown, url: string) => {
+
+    appLink.value = getBrightIdUniversalLink(walletAddress)
+    const qrcodeLink = getBrightIdLink(walletAddress)
+    QRCode.toDataURL(qrcodeLink, (error, url: string) => {
       if (!error) {
         appLinkQrCode.value = url
       }
     })
-    waitUntil(() => brightId.value?.isVerified || false)
   }
 })
 
@@ -253,15 +312,33 @@ watch(currentUser, () => {
   }
 })
 
+async function selfSponsorAndWait() {
+  assert(userRegistryAddress.value, 'Missing the user registry address')
+
+  const signer = userStore.signer
+  loadingTx.value = true
+  sponsorTxError.value = ''
+
+  try {
+    await waitForTransaction(selfSponsor(userRegistryAddress.value, signer), hash => (selfSponsorTxHash.value = hash))
+    loadingTx.value = false
+    isSponsoring.value = false
+  } catch (error) {
+    sponsorTxError.value = (error as Error).message
+    return
+  }
+}
+
 async function register() {
-  const signer = currentUser.value?.walletProvider.getSigner()
+  const signer = userStore.signer
 
   if (brightId.value?.verification) {
     loadingTx.value = true
     registrationTxError.value = ''
     try {
+      assert(userRegistryAddress.value, 'Missing the user registry address')
       await waitForTransaction(
-        registerUser(userRegistryAddress.value!, brightId.value.verification, signer!),
+        registerUser(userRegistryAddress.value, brightId.value.verification, signer),
         hash => (registrationTxHash.value = hash),
       )
       loadingTx.value = false
@@ -270,34 +347,15 @@ async function register() {
         params: { hash: registrationTxHash.value },
       })
     } catch (error) {
-      registrationTxError.value = error.message
+      registrationTxError.value = (error as Error).message
       return
     }
     userStore.loadUserInfo()
   }
 }
 
-/**
- * Start polling brightId state until the condition is met
- */
-async function waitUntil(isConditionMetFn: () => boolean, intervalTime = 5000) {
-  let isConditionMet = false
-
-  const checkVerification = async () => {
-    await userStore.loadBrightID()
-    isConditionMet = isConditionMetFn()
-
-    if (!isConditionMet) {
-      setTimeout(async () => {
-        await checkVerification()
-      }, intervalTime)
-    }
-  }
-  await checkVerification()
-}
-
 function isStepValid(step: number): boolean {
-  return !!steps.value[step]
+  return !!steps[step]
 }
 
 function isStepUnlocked(step: number): boolean {
@@ -305,13 +363,15 @@ function isStepUnlocked(step: number): boolean {
     return false
   }
 
-  switch (step) {
-    case 0:
-      // Connect
-      return true
-    case 1:
+  const stepName = steps[step].page
+  switch (stepName) {
+    case 'sponsorship':
+      return !isSponsoring.value
+    case 'connect':
+      return !!currentUser.value?.brightId?.isVerified
+    case 'registration':
       // Register
-      return currentUser.value?.isRegistered || false
+      return !!currentUser.value?.isRegistered
     default:
       return false
   }
@@ -330,7 +390,6 @@ function isStepUnlocked(step: number): boolean {
     background: var(--bg-secondary-color);
   }
 }
-
 .grid {
   display: grid;
   grid-template-columns: 1fr clamp(250px, 25%, 360px);
@@ -350,11 +409,9 @@ function isStepUnlocked(step: number): boolean {
     gap: 0;
   }
 }
-
 .progress-area.desktop {
   grid-area: progress;
   position: relative;
-
   .progress-container {
     position: sticky;
     top: 5rem;
@@ -363,40 +420,17 @@ function isStepUnlocked(step: number): boolean {
     border-radius: 16px;
     /* width: 320px; */
     box-shadow: var(--box-shadow);
-
     .progress-steps {
       margin-bottom: 1rem;
     }
-
-    .progress-steps-loader {
-      margin: 0rem;
-      margin-right: 1rem;
-      margin-top: 0.5rem;
-      padding: 0;
-      width: 1rem;
-      height: 1rem;
-    }
-
-    .progress-steps-loader:after {
-      width: 1rem;
-      height: 1rem;
-      margin: 0;
-      border-radius: 50%;
-      border: 3px solid $clr-pink;
-      border-color: $clr-pink transparent $clr-pink transparent;
-    }
-
     .progress-step {
       display: flex;
-
       img {
         margin-right: 1rem;
       }
-
       img.current-step {
         filter: var(--img-filter, invert(0.3));
       }
-
       p {
         margin: 0.5rem 0;
       }
@@ -409,33 +443,27 @@ function isStepUnlocked(step: number): boolean {
         font-size: 1rem;
       }
     }
-
     .subtitle {
       font-weight: 500;
       opacity: 0.8;
     }
   }
 }
-
 .progress-area.mobile {
   grid-area: progress;
   margin: 2rem 1rem;
   margin-bottom: 0;
-
   .row {
     margin-top: 1.5rem;
-
     p {
       margin: 0;
       font-weight: 500;
     }
-
     .cancel-link {
       font-weight: 500;
     }
   }
 }
-
 .title-area {
   grid-area: title;
   display: flex;
@@ -444,11 +472,9 @@ function isStepUnlocked(step: number): boolean {
   justify-content: space-between;
   align-items: flex-start;
   flex-direction: column;
-
   h1 {
     font-family: 'Glacial Indifference', sans-serif;
   }
-
   @media (max-width: $breakpoint-m) {
     margin-top: 2rem;
     padding-bottom: 0;
@@ -457,18 +483,15 @@ function isStepUnlocked(step: number): boolean {
     font-weight: normal;
   }
 }
-
 .cancel-area {
   grid-area: cancel;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-
   .cancel-link {
     font-weight: 500;
   }
 }
-
 .form-area {
   grid-area: form;
   overflow: auto;
@@ -482,11 +505,9 @@ function isStepUnlocked(step: number): boolean {
     width: 100%;
   }
 }
-
 .form-area p {
   line-height: 150%;
 }
-
 .step-title {
   font-size: 1.5rem;
   margin-top: 1rem;
@@ -495,13 +516,11 @@ function isStepUnlocked(step: number): boolean {
     margin-top: 0;
   }
 }
-
 .row {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 .application {
   /* height: 100%; */
   display: flex;
@@ -515,25 +534,21 @@ function isStepUnlocked(step: number): boolean {
     margin-bottom: 4rem;
   }
 }
-
 .cancel-link {
   position: sticky;
   top: 0px;
   color: var(--error-color);
   text-decoration: underline;
 }
-
 .transaction {
   padding: 2rem;
   border-radius: 1rem;
   width: auto;
-
   button {
     max-width: 250px;
     margin: auto;
   }
 }
-
 .qr {
   display: flex;
   flex-direction: column;
@@ -546,7 +561,6 @@ function isStepUnlocked(step: number): boolean {
         width: 100%;
   } */
 }
-
 .instructions {
   width: 100%;
   display: flex;
@@ -555,13 +569,16 @@ function isStepUnlocked(step: number): boolean {
   a {
     overflow-wrap: anywhere;
   }
+  .warning-text {
+    overflow-wrap: anywhere;
+    text-align: center;
+    padding: 2rem;
+  }
 }
-
 .qr-code {
   width: 320px;
   margin: 2rem;
 }
-
 .icon {
   $icon-height: 5rem;
   height: $icon-height;
@@ -574,13 +591,19 @@ function isStepUnlocked(step: number): boolean {
     aspect-ratio: 1;
   }
 }
-
 .btn-block {
   display: block;
   width: 100%;
 }
-
 .remaining-step {
   filter: var(--img-filter, invert(0.3));
+}
+.copy-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+.row-gap {
+  gap: 30px;
 }
 </style>

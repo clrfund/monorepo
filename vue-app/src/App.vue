@@ -22,8 +22,6 @@
     </div>
     <mobile-tabs v-if="isMobileTabsShown" />
   </div>
-  <!-- vue-dapp -->
-  <vd-board :connectors="connectors" dark />
   <!-- vue-final-modal -->
   <modals-container></modals-container>
 </template>
@@ -38,13 +36,10 @@ import { ModalsContainer } from 'vue-final-modal'
 
 import { getOsColorScheme } from '@/utils/theme'
 import { getCurrentRound } from '@/api/round'
-import type { User } from '@/api/user'
-import { operator, provider, connectors } from '@/api/core'
-import { useAppStore, useUserStore } from '@/stores'
-import { sha256 } from '@/utils/crypto'
+import { operator } from '@/api/core'
+import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
-import { useEthersHooks, useWallet } from 'vue-dapp'
 import { useMeta } from 'vue-meta'
 
 const route = useRoute()
@@ -54,8 +49,10 @@ const { theme, isCartToggledOpen, showCartPanel, currentRound } = storeToRefs(ap
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 
-const { wallet } = useWallet()
-const { onActivated } = useEthersHooks()
+const wallet = useWalletStore()
+const { user: walletUser } = storeToRefs(wallet)
+
+const recipientStore = useRecipientStore()
 
 // https://stackoverflow.com/questions/71785473/how-to-use-vue-meta-with-vue3
 // https://www.npmjs.com/package/vue-meta/v/3.0.0-alpha.7
@@ -113,6 +110,7 @@ const showBreadCrumb = computed(() => {
   const excludedRoutes = ['landing', 'join', 'join-step', 'transaction-success', 'verify', 'project-added', 'verified']
   return !excludedRoutes.includes(routeName.value)
 })
+
 watch(theme, () => {
   const savedTheme = theme.value
   document.documentElement.setAttribute('data-theme', savedTheme || getOsColorScheme())
@@ -121,21 +119,7 @@ watch(theme, () => {
 const appReady = ref(false)
 
 onMounted(async () => {
-  // to check provider works
-  try {
-    const network = await Promise.race([
-      provider.getNetwork(),
-      new Promise<void>((_, reject) =>
-        setTimeout(() => {
-          reject('time out')
-        }, 3000),
-      ),
-    ])
-
-    console.log(network)
-  } catch (err) {
-    console.warn('Failed to detect network:', err)
-  }
+  await wallet.reconnect()
 
   try {
     const roundAddress = appStore.currentRoundAddress || (await getCurrentRound())
@@ -152,66 +136,33 @@ onMounted(async () => {
 
   appReady.value = true
 
-  // await appStore.loadUserInfo()
-  try {
-    await appStore.loadRoundInfo()
-  } catch (err) {
-    console.error(err)
-  }
-  // await appStore.loadFactoryInfo()
-  // await appStore.loadMACIFactoryInfo()
-  // await appStore.loadRecipientRegistryInfo()
+  await appStore.loadFactoryInfo()
+  await appStore.loadMACIFactoryInfo()
+  await appStore.loadRoundInfo()
+  await recipientStore.loadRecipientRegistryInfo()
 })
 
-onActivated(async ({ address, provider }) => {
-  console.log('onActivated')
-  // let signature
-  // if (!wallet.connector) throw new Error('Failed to activate wallet')
-  // if (wallet.connector.name === 'metaMask') {
-  // 	const metamask = wallet.provider as MetaMaskProvider
-  // 	signature = await metamask.request({
-  // 		method: 'personal_sign',
-  // 		params: [LOGIN_MESSAGE, address],
-  // 	})
-  // } else if (wallet.connector.name === 'walletConnect') {
-  // 	const walletconnect = wallet.provider as IWalletConnectProvider
-  // 	signature = await walletconnect.send('personal_sign', [LOGIN_MESSAGE, address])
-  // } else {
-  // 	throw new Error('Wallet not supported')
-  // }
-
-  const user: User = {
-    isRegistered: false,
-    encryptionKey: sha256('signature'),
-    balance: null,
-    contribution: null,
-    walletProvider: provider,
-    walletAddress: address,
+watch(walletUser, async () => {
+  if (walletUser.value) {
+    await userStore.loginUser(walletUser.value)
+  } else {
+    await userStore.logoutUser()
   }
-  // Connect & auth to gun db
-  try {
-    await userStore.loginUser(address, user.encryptionKey)
-  } catch (err) {
-    console.error(err)
+})
+
+watch(isUserAndRoundLoaded, async () => {
+  if (!isUserAndRoundLoaded.value) {
     return
   }
-  userStore.setCurrentUser(user)
-  userStore.loadUserInfo()
-  userStore.loadBrightID()
+
+  await userStore.loadUserInfo()
+  await userStore.loadBrightID()
+
+  // 	// Load cart & contributor data for current round
+  // 	appStore.loadCart()
+  // 	appStore.loadCommittedCart()
+  // 	appStore.loadContributorData()
 })
-
-// watch(isUserAndRoundLoaded, () => {
-// 	if (!isUserAndRoundLoaded.value) {
-// 		return
-// 	}
-
-// 	appStore.loadUserInfo()
-
-// 	// Load cart & contributor data for current round
-// 	appStore.loadCart()
-// 	appStore.loadCommittedCart()
-// 	appStore.loadContributorData()
-// })
 </script>
 
 <style lang="scss">
@@ -509,11 +460,10 @@ summary:focus {
   margin-left: 0.5rem;
 }
 
-.vm--overlay {
-  background-color: rgba(black, 0.5) !important;
-}
-
-.vm--modal {
+.modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   background-color: transparent !important;
   box-shadow: none !important;
   overflow: visible !important;
@@ -524,6 +474,7 @@ summary:focus {
   padding: $modal-space;
   text-align: center;
   box-shadow: var(--box-shadow);
+  width: 400px;
 
   .loader {
     margin: $modal-space auto;

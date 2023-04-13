@@ -2,7 +2,7 @@
   <div>
     <input-button
       v-if="!inCart && canContribute()"
-      v-model="amount"
+      :modelValue="amount.toString()"
       :input="{
         placeholder: defaultAmount.toString(),
         class: `{ invalid: ${!isAmountValid} }`,
@@ -11,6 +11,7 @@
         text: 'Add to cart',
         disabled: !isAmountValid,
       }"
+      @update:model-value="newValue => (amount = Number(newValue))"
       @click="handleSubmit"
     />
     <input-button
@@ -36,8 +37,8 @@ import type { CartItem } from '@/api/contributions'
 import InputButton from '@/components/InputButton.vue'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { $vfm } from 'vue-final-modal'
-import { useBoard } from 'vue-dapp'
+import { useModal } from 'vue-final-modal'
+import WalletModal from './WalletModal.vue'
 
 const amount = DEFAULT_CONTRIBUTION_AMOUNT
 
@@ -103,7 +104,17 @@ function handleSubmit(): void {
 }
 
 function promptConnection(): void {
-  const { open } = useBoard()
+  const { open, close } = useModal({
+    component: WalletModal,
+    attrs: {
+      onClose() {
+        close()
+        if (currentUser.value?.walletAddress) {
+          handleWalletModalClose()
+        }
+      },
+    },
+  })
   open()
 }
 

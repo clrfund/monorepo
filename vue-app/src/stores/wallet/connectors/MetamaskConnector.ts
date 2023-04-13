@@ -1,4 +1,4 @@
-import { CHAIN_INFO } from '../constants/chains'
+import { CHAIN_INFO } from '@/utils/chains'
 
 async function setupNetwork(provider): Promise<void> {
   const chainId = parseInt(import.meta.env.VITE_ETHEREUM_API_CHAINID || '1', 10)

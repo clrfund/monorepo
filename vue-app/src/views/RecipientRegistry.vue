@@ -138,7 +138,7 @@ import TransactionModal from '@/components/TransactionModal.vue'
 import { useUserStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useEthers } from 'vue-dapp'
-import { $vfm } from 'vue-final-modal'
+//import { $vfm } from 'vue-final-modal'
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
 
 const { signer } = useEthers()
@@ -223,7 +223,7 @@ async function remove(request: Request): Promise<void> {
 }
 
 async function waitForTransactionAndLoad(transaction: Promise<TransactionResponse>) {
-  $vfm.show({
+  /*$vfm.show({
     component: TransactionModal,
     bind: {
       onTxSuccess: async () => {
@@ -241,7 +241,7 @@ async function waitForTransactionAndLoad(transaction: Promise<TransactionRespons
       },
       transaction,
     },
-  })
+  })*/
 }
 
 function handleExport(): void {

@@ -53,6 +53,7 @@ declare module '@vue/runtime-core' {
     Transaction: typeof import('./components/Transaction.vue')['default']
     TransactionModal: typeof import('./components/TransactionModal.vue')['default']
     TransactionReceipt: typeof import('./components/TransactionReceipt.vue')['default']
+    WalletModal: typeof import('./components/WalletModal.vue')['default']
     WalletWidget: typeof import('./components/WalletWidget.vue')['default']
     Warning: typeof import('./components/Warning.vue')['default']
     WithdrawalModal: typeof import('./components/WithdrawalModal.vue')['default']

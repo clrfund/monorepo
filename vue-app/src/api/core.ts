@@ -1,8 +1,7 @@
 import { ethers } from 'ethers'
 
 import { FundingRoundFactory } from './abi'
-import { CHAIN_INFO } from '@/plugins/Web3/constants/chains'
-import { CoinbaseWalletConnector, MetaMaskConnector, WalletConnectConnector } from 'vue-dapp'
+import { CHAIN_INFO } from '@/utils/chains'
 
 export const rpcUrl = import.meta.env.VITE_ETHEREUM_API_URL
 if (!rpcUrl) {
@@ -66,17 +65,10 @@ export enum ThemeMode {
 // the number of records per batch in the `pending submissions` export file
 export const exportBatchSize = Number(import.meta.env.VITE_EXPORT_BATCH_SIZE) || 60
 
-// vue-dapp
-export const connectors = [
-  new MetaMaskConnector(),
-  new WalletConnectConnector({
-    qrcode: true,
-    rpc: {
-      31337: rpcUrl,
-    },
-  }),
-  new CoinbaseWalletConnector({
-    appName: 'Clr.fund',
-    jsonRpcUrl: rpcUrl,
-  }),
-]
+// BrightId sponsorhip stuff, set these parameters to automatically sponsor user using the brightId URL
+export const brightIdSponsorKey = import.meta.env.VITE_BRIGHTID_SPONSOR_KEY
+export const brightIdNodeUrl = import.meta.env.VITE_BRIGHTID_NODE_URL || 'https://brightid.clr.fund/brightid/v6'
+export const brightIdSponsorUrl = import.meta.env.VITE_BRIGHTID_SPONSOR_API_URL
+
+// wait for data to sync with the subgraph
+export const MAX_WAIT_DEPTH = Number(import.meta.env.VITE_MAX_WAIT_DEPTH) || 15

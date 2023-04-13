@@ -212,7 +212,7 @@ import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useEthers, useWallet } from 'vue-dapp'
-import { $vfm } from 'vue-final-modal'
+//import { $vfm } from 'vue-final-modal'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -466,6 +466,7 @@ function submitCart(event: any) {
     return [item.index, voiceCredits]
   })
 
+  /*
   $vfm.show({
     component: contribution.value.isZero() || !hasUserVoted.value ? ContributionModal : ReallocationModal,
     bind: { votes, 'click-to-close': contribution.value.isZero() || !hasUserVoted.value },
@@ -474,7 +475,7 @@ function submitCart(event: any) {
         closeModal()
       },
     },
-  })
+  })*/
 
   appStore.toggleEditSelection(false)
 }
@@ -483,7 +484,7 @@ const canWithdrawContribution = () =>
   computed(() => currentRound.value?.status === RoundStatus.Cancelled && !contribution.value.isZero())
 
 function withdrawContribution() {
-  $vfm.show({ component: WithdrawalModal })
+  //$vfm.show({ component: WithdrawalModal })
 }
 
 const showCollapseCart = computed(() => route.name !== 'cart')

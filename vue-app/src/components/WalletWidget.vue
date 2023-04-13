@@ -7,9 +7,9 @@
         'app-btn': !isActionButton,
         'full-width-mobile': fullWidthMobile,
       }"
-      @click="openWalletBoard"
+      @click="showModal()"
     >
-      Connect
+      {{ $t('walletWidget.button1') }}
     </button>
     <div v-else-if="currentUser && !isActionButton" class="profile-info" @click="toggleProfile">
       <div class="profile-info-balance">
@@ -36,9 +36,10 @@ import { formatAmount } from '@/utils/amounts'
 import { getTokenLogo } from '@/utils/tokens'
 import { chain } from '@/api/core'
 import Profile from '@/views/Profile.vue'
+import WalletModal from '@/components/WalletModal.vue'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { useBoard, useEthers, useWallet } from 'vue-dapp'
+import { useModal } from 'vue-final-modal'
 
 interface Props {
   // Boolean to only show Connect button, styled like an action button,
@@ -55,18 +56,23 @@ withDefaults(defineProps<Props>(), {
   fullWidthMobile: false,
 })
 
-const { open: openWalletBoard } = useBoard()
-const { onDisconnect, onChainChanged, onAccountsChanged } = useWallet()
-const { network } = useEthers()
 const appStore = useAppStore()
 const { nativeTokenSymbol, nativeTokenDecimals } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 
+const { open: showModal, close } = useModal({
+  component: WalletModal,
+  attrs: {
+    onClose() {
+      close()
+    },
+  },
+})
+
 const showProfilePanel = ref<boolean | null>(null)
 const profileImageUrl = ref<string | null>(null)
 
-const walletChainId = computed(() => network.value?.chainId)
 const etherBalance = computed(() => {
   const etherBalance = currentUser.value?.etherBalance
   if (etherBalance === null || typeof etherBalance === 'undefined') {
@@ -74,11 +80,13 @@ const etherBalance = computed(() => {
   }
   return formatAmount(etherBalance, 'ether', 4)
 })
+
 const balance = computed(() => {
   const balance: BigNumber | null | undefined = currentUser.value?.balance
   if (balance === null || typeof balance === 'undefined') return null
   return formatAmount(balance, nativeTokenDecimals.value, 4)
 })
+
 const displayAddress = computed<string | null>(() => {
   if (!currentUser.value) return null
   return currentUser.value.ensName ?? currentUser.value.walletAddress
@@ -87,29 +95,6 @@ const displayAddress = computed<string | null>(() => {
 const tokenLogoUrl = new URL(`/src/assets/${getTokenLogo(nativeTokenSymbol.value)}`, import.meta.url).href
 const chainCurrencyLogoUrl = new URL(`/src/assets/${getTokenLogo(chain.currency)}`, import.meta.url).href
 
-onDisconnect(() => {
-  userStore.logoutUser()
-})
-
-// TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
-// upper level where we hear this events only once (there are other
-// components that do the same).
-onChainChanged(() => {
-  if (currentUser.value) {
-    // Log out user to prevent interactions with incorrect network
-    userStore.logoutUser()
-  }
-})
-
-let accounts: string[]
-onAccountsChanged(_accounts => {
-  if (_accounts !== accounts) {
-    // Log out user if wallet account changes
-    userStore.logoutUser()
-  }
-  accounts = _accounts
-})
-
 onMounted(() => {
   showProfilePanel.value = false
 })
@@ -117,15 +102,6 @@ onMounted(() => {
 function toggleProfile(): void {
   showProfilePanel.value = !showProfilePanel.value
 }
-
-// TODO:
-// @Watch('$web3.user')
-// 	async updateProfileImage(currentUser: User): Promise<void> {
-// 		if (currentUser) {
-// 			const url = await getProfileImageUrl(currentUser.walletAddress)
-// 			this.profileImageUrl = url
-// 		}
-// 	}
 </script>
 
 <style scoped lang="scss">

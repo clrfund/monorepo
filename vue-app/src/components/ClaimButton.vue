@@ -34,7 +34,7 @@ import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { $vfm } from 'vue-final-modal'
+//import { $vfm } from 'vue-final-modal'
 
 const appStore = useAppStore()
 const { currentRound, tally, isRoundFinalized } = storeToRefs(appStore)
@@ -116,7 +116,7 @@ function formatAmount(value: FixedNumber): string {
 }
 
 function claim() {
-  $vfm.show({
+  /*$vfm.show({
     component: ClaimModal,
     bind: {
       project: props.project,
@@ -125,7 +125,7 @@ function claim() {
         claimed.value = true
       },
     },
-  })
+  })*/
 }
 </script>
 

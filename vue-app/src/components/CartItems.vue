@@ -26,14 +26,14 @@
       </div>
       <div v-if="isEditMode" class="contribution-form">
         <input-button
-          :value="item.amount"
+          :modelValue="item.amount"
           :input="{
             placeholder: 'Amount',
             class: `{ invalid: ${!isAmountValid(item.amount)} }`,
             disabled: !canUpdateAmount(),
           }"
           class="contribution-amount"
-          @input="updateAmount(item, $event)"
+          @update:modelValue="updateAmount(item, $event)"
         />
       </div>
     </div>

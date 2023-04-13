@@ -8,16 +8,20 @@ import { createMetaManager } from 'vue-meta'
 import FloatingVue from 'floating-vue'
 import 'floating-vue/dist/style.css'
 import i18n from '@/plugins/i18n'
+import { createVfm } from 'vue-final-modal'
+import 'vue-final-modal/style.css'
 
 const pinia = createPinia()
 const app = createApp(App)
 const metaManager = createMetaManager()
+const vfm = createVfm()
 
 app.use(pinia)
 app.use(router)
 app.use(metaManager)
 app.use(FloatingVue)
 app.use(i18n)
+app.use(vfm)
 app.use(VueDapp, {
   autoConnect: false,
   networks: {

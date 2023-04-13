@@ -4,9 +4,9 @@
   "private": true,
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "vite",
+    "preview": "vite preview",
     "build": "vite build",
-    "serve": "vite preview",
+    "serve": "vite",
     "test": "echo vitest",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(html|vue|ts|js|json|cjs)\"",
@@ -48,7 +48,7 @@
     "qrcode": "^1.5.1",
     "vue": "^3.2.45",
     "vue-dapp": "^0.7.1",
-    "vue-final-modal": "^3.4.11",
+    "vue-final-modal": "^4.3.0",
     "vue-i18n": "9",
     "vue-meta": "3.0.0-alpha.7",
     "vue-router": "4"
