@@ -34,7 +34,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.vue'
 // @ts-ignore
 import { ModalsContainer } from 'vue-final-modal'
 
-import { getOsColorScheme } from '@/utils/theme'
+import { getDefaultColorScheme } from '@/utils/theme'
 import { getCurrentRound } from '@/api/round'
 import { operator } from '@/api/core'
 import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
@@ -113,7 +113,7 @@ const showBreadCrumb = computed(() => {
 
 watch(theme, () => {
   const savedTheme = theme.value
-  document.documentElement.setAttribute('data-theme', savedTheme || getOsColorScheme())
+  document.documentElement.setAttribute('data-theme', savedTheme || getDefaultColorScheme())
 })
 
 const appReady = ref(false)

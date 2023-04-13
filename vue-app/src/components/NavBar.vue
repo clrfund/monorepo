@@ -89,7 +89,7 @@
 <script setup lang="ts">
 import { chain, ThemeMode } from '@/api/core'
 import { lsGet, lsSet } from '@/utils/localStorage'
-import { isValidTheme, getOsColorScheme } from '@/utils/theme'
+import { isValidTheme, getDefaultColorScheme } from '@/utils/theme'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { languages, isLocaleSupported } from '@/plugins/i18n'
@@ -117,7 +117,7 @@ const languageKey = 'language'
 
 onMounted(() => {
   const savedTheme = lsGet(themeKey.value)
-  const theme = isValidTheme(savedTheme) ? savedTheme : getOsColorScheme()
+  const theme = isValidTheme(savedTheme) ? savedTheme : getDefaultColorScheme()
   appStore.toggleTheme(theme)
 
   const savedLanguage = lsGet(languageKey)
@@ -129,6 +129,7 @@ onMounted(() => {
 
 function onChangeLang(lang: string) {
   locale.value = lang
+  lsSet(languageKey, locale.value)
 }
 
 function closeHelpDropdown(): void {
