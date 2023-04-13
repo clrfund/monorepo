@@ -1,15 +1,4 @@
 <template>
-  <!--
-		Tell the vue-i18n-extract the following keys are used
-		$t('navBar.dropdown.home')
-		$t('navBar.dropdown.about')
-		$t('navBar.dropdown.how')
-		$t('navBar.dropdown.maci')
-		$t('navBar.dropdown.sybil')
-		$t('navBar.dropdown.code')
-		$t('navBar.dropdown.layer2')
-		$t('navBar.dropdown.recipients')
- 	 -->
   <nav id="nav-bar">
     <links to="/">
       <img class="clr-logo" :alt="operator" src="@/assets/clr.svg" />
@@ -21,27 +10,71 @@
       <div v-click-outside="closeHelpDropdown" class="help-dropdown">
         <img class="navbar-btn" src="@/assets/help.svg" @click="toggleHelpDropdown()" />
         <div v-if="showHelpDropdown" id="myHelpDropdown" class="button-menu">
-          <div
-            v-for="({ to, text, emoji }, idx) of dropdownItems"
-            :key="idx"
-            class="dropdown-item"
-            @click="closeHelpDropdown"
-          >
-            <links :to="to">
-              <div class="emoji-wrapper">{{ emoji }}</div>
-              <p class="item-text">{{ $t(text) }}</p>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/">
+              <div class="emoji-wrapper">🏠</div>
+              <p class="item-text">{{ $t('navBar.dropdown.home') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/about">
+              <div class="emoji-wrapper">ℹ️</div>
+              <p class="item-text">{{ $t('navBar.dropdown.about') }}</p>
+            </links>
+          </div>
+
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/about/how-it-works">
+              <div class="emoji-wrapper">⚙️</div>
+              <p class="item-text">{{ $t('navBar.dropdown.how') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/about/maci">
+              <div class="emoji-wrapper">🤑</div>
+              <p class="item-text">{{ $t('navBar.dropdown.maci') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/about/sybil-resistance">
+              <div class="emoji-wrapper">👤</div>
+              <p class="item-text">{{ $t('navBar.dropdown.sybil') }}</p>
+            </links>
+          </div>
+          <div v-if="chain.isLayer2" class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/about/layer-2">
+              <div class="emoji-wrapper">🚀</div>
+              <p class="item-text">{{ $t('navBar.dropdown.layer2') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/rounds">
+              <div class="emoji-wrapper">⏰</div>
+              <p class="item-text">{{ $t('navBar.dropdown.rounds') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="/recipients">
+              <div class="emoji-wrapper">💎</div>
+              <p class="item-text">{{ $t('navBar.dropdown.recipients') }}</p>
+            </links>
+          </div>
+          <div class="dropdown-item" @click="closeHelpDropdown">
+            <links to="https://github.com/clrfund/monorepo/">
+              <div class="emoji-wrapper">👾</div>
+              <p class="item-text">{{ $t('navBar.dropdown.code') }}</p>
             </links>
           </div>
           <!-- language -->
-          <div v-if="supportedLocales.length > 1">
+          <div v-if="languages.length > 1">
             <div class="hr"></div>
-            <div @click="onChangeLang(lang)" v-for="lang of supportedLocales" :key="lang" class="dropdown-item">
+            <div @click="onChangeLang(lang.locale)" v-for="lang of languages" :key="lang.locale" class="dropdown-item">
               <a>
-                <div class="emoji-wrapper">{{ languageEmoji(lang) }}</div>
+                <div class="emoji-wrapper">{{ lang.emoji }}</div>
                 <p class="item-text">
-                  {{ languageDescription(lang) }}
+                  {{ lang.description }}
                 </p>
-                <div v-if="locale === lang">✔️</div>
+                <div v-if="locale === lang.locale">✔️</div>
               </a>
             </div>
           </div>
@@ -59,9 +92,8 @@ import { lsGet, lsSet } from '@/utils/localStorage'
 import { isValidTheme, getOsColorScheme } from '@/utils/theme'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { supportedLocales, languageEmoji, languageDescription } from '@/plugins/i18n/translations'
+import { languages, isLocaleSupported } from '@/plugins/i18n'
 import { useI18n } from 'vue-i18n'
-import { isLocaleSupported } from '@/plugins/i18n/translations'
 import { getAssetsUrl } from '@/utils/url'
 
 const { locale } = useI18n()
@@ -76,39 +108,6 @@ interface Props {
 defineProps<Props>()
 
 const showHelpDropdown = ref(false)
-const dropdownItems = ref<{ to: string; text: string; emoji: string }[]>([
-  { to: '/', text: 'navBar.dropdown.home', emoji: '🏠' },
-  {
-    to: '/about',
-    text: 'navBar.dropdown.about',
-    emoji: 'ℹ️',
-  },
-  {
-    to: '/about/how-it-works',
-    text: 'navBar.dropdown.how',
-    emoji: '⚙️',
-  },
-  {
-    to: '/about/maci',
-    text: 'navBar.dropdown.maci',
-    emoji: '🤑',
-  },
-  {
-    to: '/about/sybil-resistance',
-    text: 'navBar.dropdown.sybil',
-    emoji: '👤',
-  },
-  {
-    to: 'https://github.com/clrfund/monorepo/',
-    text: 'navBar.dropdown.code',
-    emoji: '👾',
-  },
-  {
-    to: '/recipients',
-    text: 'navBar.dropdown.recipients',
-    emoji: '💎',
-  },
-])
 const themeIcon = computed<string>(() => {
   return appStore.theme === ThemeMode.LIGHT ? 'half-moon.svg' : 'sun.svg'
 })
@@ -125,14 +124,6 @@ onMounted(() => {
   if (isLocaleSupported(savedLanguage)) {
     locale.value = savedLanguage
     lsSet(languageKey, locale.value)
-  }
-
-  if (chain.isLayer2) {
-    dropdownItems.value.splice(-1, 0, {
-      to: '/about/layer-2',
-      text: 'navBar.dropdown.layer2',
-      emoji: '🚀',
-    })
   }
 })
 
