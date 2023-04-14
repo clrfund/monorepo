@@ -1,6 +1,6 @@
 import { getEtherBalance, getTokenBalance, isVerifiedUser, type User } from '@/api/user'
 import { defineStore } from 'pinia'
-import { logoutUser } from '@/api/gun'
+import { logoutUser, loginUser } from '@/api/gun'
 import { useAppStore } from '@/stores'
 import type { WalletUser } from '@/stores'
 import { getContributionAmount, hasContributorVoted } from '@/api/contributions'
@@ -29,17 +29,17 @@ export const useUserStore = defineStore('user', {
     async loginUser(user: WalletUser) {
       this.currentUser = {
         isRegistered: false,
-        encryptionKey: '',
+        encryptionKey: user.encryptionKey,
         walletAddress: user.walletAddress,
         walletProvider: user.web3Provider,
       }
-      //await loginUser(this.currentUser.walletAddress, encryptionKey)
+      await loginUser(this.currentUser.walletAddress, this.currentUser.encryptionKey)
     },
     logoutUser() {
       const appStore = useAppStore()
-      //appStore.unwatchCart()
-      //appStore.unwatchContributorData()
-      //logoutUser()
+      appStore.unwatchCart()
+      appStore.unwatchContributorData()
+      logoutUser()
       this.currentUser = null
       appStore.contribution = null
       appStore.contributor = null
