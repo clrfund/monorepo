@@ -6,6 +6,8 @@ import WalletConnectProvider from '@walletconnect/web3-provider'
 import type { Provider } from './types'
 import { chainId } from '@/api/core'
 import { providers } from 'ethers'
+import { LOGIN_MESSAGE } from '@/api/user'
+import { sha256 } from '@/utils/crypto'
 
 const CONNECTED_PROVIDER = 'connected-provider'
 const DISCONNECT_EVENT = 'disconnect'
@@ -23,6 +25,7 @@ export type WalletUser = {
   chainId: number
   web3Provider: providers.Web3Provider
   walletAddress: string
+  encryptionKey: string
 }
 
 export type WalletState = {
@@ -68,6 +71,11 @@ export const useWalletStore = defineStore('wallet', {
       const conn = await connector.connect()
       const account = conn.accounts[0]
 
+      const signature = await conn.provider.request({
+        method: 'personal_sign',
+        params: [LOGIN_MESSAGE, account],
+      })
+
       // Save chosen provider to localStorage
       lsSet(CONNECTED_PROVIDER, walletProvider)
 
@@ -91,6 +99,7 @@ export const useWalletStore = defineStore('wallet', {
         chainId: conn.chainId,
         walletAddress: account,
         web3Provider: markRaw(new providers.Web3Provider(conn.provider)),
+        encryptionKey: sha256(signature),
       }
 
       // Emit EIP-1193 events and update plugin values
