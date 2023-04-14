@@ -25,7 +25,7 @@
         <img v-if="profileImageUrl" :src="profileImageUrl" />
       </div>
     </div>
-    <profile v-if="showProfilePanel" :balance="balance!" :ether-balance="etherBalance!" @close="toggleProfile" />
+    <profile v-if="showProfilePanel" :balance="balance" :ether-balance="etherBalance" @close="toggleProfile" />
   </div>
 </template>
 
@@ -33,8 +33,6 @@
 import { computed, ref, onMounted } from 'vue'
 import type { BigNumber } from 'ethers'
 import { formatAmount } from '@/utils/amounts'
-import { getTokenLogo } from '@/utils/tokens'
-import { chain } from '@/api/core'
 import Profile from '@/views/Profile.vue'
 import WalletModal from '@/components/WalletModal.vue'
 import { useAppStore, useUserStore } from '@/stores'
@@ -57,7 +55,7 @@ withDefaults(defineProps<Props>(), {
 })
 
 const appStore = useAppStore()
-const { nativeTokenSymbol, nativeTokenDecimals } = storeToRefs(appStore)
+const { tokenLogoUrl, chainCurrencyLogoUrl, nativeTokenDecimals } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 
@@ -76,14 +74,14 @@ const profileImageUrl = ref<string | null>(null)
 const etherBalance = computed(() => {
   const etherBalance = currentUser.value?.etherBalance
   if (etherBalance === null || typeof etherBalance === 'undefined') {
-    return null
+    return '0'
   }
   return formatAmount(etherBalance, 'ether', 4)
 })
 
 const balance = computed(() => {
   const balance: BigNumber | null | undefined = currentUser.value?.balance
-  if (balance === null || typeof balance === 'undefined') return null
+  if (balance === null || typeof balance === 'undefined') return '0'
   return formatAmount(balance, nativeTokenDecimals.value, 4)
 })
 
@@ -91,9 +89,6 @@ const displayAddress = computed<string | null>(() => {
   if (!currentUser.value) return null
   return currentUser.value.ensName ?? currentUser.value.walletAddress
 })
-
-const tokenLogoUrl = new URL(`/src/assets/${getTokenLogo(nativeTokenSymbol.value)}`, import.meta.url).href
-const chainCurrencyLogoUrl = new URL(`/src/assets/${getTokenLogo(chain.currency)}`, import.meta.url).href
 
 onMounted(() => {
   showProfilePanel.value = false

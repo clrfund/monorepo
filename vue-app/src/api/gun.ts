@@ -18,11 +18,10 @@ interface GunSchema {
   [data: string]: { [key: string]: string }
 }
 
-// TODO: refactor gundb service
-// const db = Gun<GunSchema>({
-// 	peers: gunPeers,
-// })
-// const user = db.user()
+const db = Gun<GunSchema>({
+  peers: gunPeers,
+})
+const user = db.user()
 
 export async function loginUser(accountId: string, encryptionKey: string): Promise<void> {
   // GunDB needs username and password to create a key pair.

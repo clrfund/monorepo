@@ -12,7 +12,7 @@ import {
   serializeCart,
   serializeContributorData,
 } from '@/api/contributions'
-import { operator, ThemeMode, recipientRegistryType } from '@/api/core'
+import { operator, chain, ThemeMode, recipientRegistryType } from '@/api/core'
 import { type RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { getTally, type Tally } from '@/api/tally'
 import { type Factory, getFactoryInfo } from '@/api/factory'
@@ -22,6 +22,8 @@ import { storage } from '@/api/storage'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { useRecipientStore } from './recipient'
 import { useUserStore } from './user'
+import { getAssetsUrl } from '@/utils/url'
+import { getTokenLogo } from '@/utils/tokens'
 
 export type AppState = {
   cart: CartItem[]
@@ -189,6 +191,12 @@ export const useAppStore = defineStore('app', {
       }
 
       return nativeTokenAddress
+    },
+    tokenLogoUrl(): string {
+      return getAssetsUrl(getTokenLogo(this.nativeTokenSymbol))
+    },
+    chainCurrencyLogoUrl(): string {
+      return getAssetsUrl(getTokenLogo(chain.currency))
     },
     isRecipientRegistryFull(): boolean {
       return this.recipientSpacesRemaining === 0

@@ -1,9 +1,9 @@
 <template>
   <div
     v-tooltip="{
-      content: isCopied ? 'Copied!' : `Copy${text && ` ${text}`}`,
+      content: isCopied ? $t('copyButton.tooltip1') : `${$t('copyButton.copy')}${text && ` ${text}`}`,
       hideOnTargetClick: false,
-      triggers: ['hover', 'click'],
+      trigger: 'hover click',
     }"
     :class="`${myClass || 'copy-icon'} ${hasBorder && 'border'}`"
     @click="copyToClipboard"

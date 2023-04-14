@@ -1,4 +1,5 @@
 <template>
+  <loader v-if="!isReady" />
   <div
     :class="{
       'bright-id-widget-container': true,
@@ -7,12 +8,12 @@
   >
     <div class="row">
       <div v-if="isVerified">
-        <icon-status :happy="true" logo="brightid.svg" secondary-logo="checkmark.svg" />
+        <icon-status v-bind:happy="true" logo="brightid.svg" secondaryLogo="checkmark.svg" />
       </div>
       <div v-else>
-        <icon-status :sad="true" logo="brightid.svg" secondary-logo="close-black.svg" />
+        <icon-status v-bind:sad="true" logo="brightid.svg" secondaryLogo="close-black.svg" />
       </div>
-      <h2>BrightID setup</h2>
+      <h2>{{ $t('brightIdWidget.h2') }}</h2>
       <p>{{ getCurrentStep }} / 2</p>
     </div>
     <div class="progress">
@@ -27,26 +28,23 @@
       <div class="row">
         <div v-if="isVerified">
           <div v-if="isRegistered">
-            <a href="/#/projects" @click="$emit('close')">
-              Start contributing
+            <a href="/#/projects" @click="emit('close')">
+              {{ $t('brightIdWidget.link1') }}
               <span role="img" aria-label="party emoji">🎉</span>
             </a>
           </div>
           <div v-else>
-            <a href="/#/verify/" @click="$emit('close')">Continue setup</a>
+            <a href="/#/verify/" @click="emit('close')">{{ $t('brightIdWidget.link2') }}</a>
           </div>
         </div>
-        <a v-else href="/#/verify/" @click="$emit('close')">Start setup</a>
+        <a href="/#/verify/" @click="emit('close')" v-else>{{ $t('brightIdWidget.link3') }}</a>
         <p
           v-tooltip="{
-            content: isVerified
-              ? 'You\'re a verified human on BrightID!'
-              : 'Your BrightID profile still needs to be verified.',
-            triggers: ['hover', 'click'],
+            content: isVerified ? $t('brightIdWidget.tooltip1_1') : $t('brightIdWidget.tooltip1_2'),
           }"
           :class="isVerified ? 'brightid-verified' : 'unverified'"
         >
-          {{ isVerified ? 'Verified' : 'Unverified' }}
+          {{ isVerified ? $t('brightIdWidget.p1_1') : $t('brightIdWidget.p1_2') }}
         </p>
       </div>
     </div>
@@ -65,13 +63,16 @@ interface Props {
   isProjectCard: boolean
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
+const emit = defineEmits(['close'])
 
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 
+const isReady = computed(() => Boolean(currentUser.value?.brightId))
+
 const isVerified = computed(() => {
-  return currentUser.value && currentUser.value.brightId!.isVerified
+  return currentUser.value && currentUser.value.brightId?.isVerified
 })
 
 const isRegistered = computed(() => {
