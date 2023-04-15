@@ -25,22 +25,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import Cart from '@/components/Cart.vue'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { useEthers, useWallet } from 'vue-dapp'
 
 const appStore = useAppStore()
-const { cart, hasReallocationPhaseEnded, committedCart, showCartPanel, isRoundContributionPhase, canUserReallocate } =
-  storeToRefs(appStore)
+const { cart, showCartPanel, isRoundContributionPhase, canUserReallocate } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
-
-const { provider } = useEthers()
-const { onDisconnect, onChainChanged } = useWallet()
-
-const profileImageUrl = ref<string | null>(null)
 
 const isCartBadgeShown = computed(() => {
   /**
@@ -50,47 +43,9 @@ const isCartBadgeShown = computed(() => {
   return (canUserReallocate.value || isRoundContributionPhase.value) && !!cart.value.length
 })
 
-const isCartEmpty = computed(() => {
-  return cart.value.length === 0
-})
-
-const filteredCart = computed(() => {
-  // Once reallocation phase ends, use committedCart for cart items
-  if (hasReallocationPhaseEnded.value) {
-    return committedCart.value
-  }
-
-  return cart.value.filter(item => !item.isCleared)
-})
-
-const truncatedAddress = computed(() => {
-  if (currentUser.value?.walletAddress) {
-    const address: string = currentUser.value.walletAddress
-    const begin: string = address.substr(0, 6)
-    const end: string = address.substr(address.length - 4, 4)
-    const truncatedAddress = `${begin}…${end}`
-    return truncatedAddress
-  }
-  return ''
-})
-
 function toggleCart(): void {
   appStore.toggleShowCartPanel()
 }
-
-onDisconnect(() => {
-  userStore.logoutUser()
-})
-
-// TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
-// upper level where we hear this events only once (there are other
-// components that do the same).
-onChainChanged(() => {
-  if (currentUser.value) {
-    // Log out user to prevent interactions with incorrect network
-    userStore.logoutUser()
-  }
-})
 </script>
 
 <style scoped lang="scss">
