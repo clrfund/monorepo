@@ -1,35 +1,31 @@
 <template>
-  <vue-final-modal v-slot="{ close }" v-bind="$attrs">
+  <vue-final-modal class="modal-container">
     <div class="modal-body">
       <div v-if="step === 1">
-        <h2>Claim funds</h2>
-        <transaction :hash="claimTxHash" :error="claimTxError" @close="$emit('close', close)"></transaction>
+        <h2>{{ $t('claimModal.h2_1') }}</h2>
+        <transaction :hash="claimTxHash" :error="claimTxError" @close="emit('close')"></transaction>
       </div>
       <div v-if="step === 2">
-        <h2>Funds were claimed!</h2>
+        <h2>{{ $t('claimModal.h2_2') }}</h2>
         <p>
           <strong>{{ formatAmount(amount) }} {{ currentRound?.nativeTokenSymbol }}</strong>
-          has been sent to
+          {{ $t('claimModal.p1') }}
         </p>
         <div class="address-box">
           <div>
-            <div class="address-label">Recipient address</div>
+            <div class="address-label">{{ $t('claimModal.div1') }}</div>
             <div class="address">
               {{ recipientAddress }}
             </div>
           </div>
         </div>
-        <button class="btn-primary" @click="$emit('close', close)">Done</button>
+        <button class="btn-primary" @click="emit('close')">
+          {{ $t('claimModal.button1') }}
+        </button>
       </div>
     </div>
   </vue-final-modal>
 </template>
-
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-}
-</script>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
@@ -55,6 +51,7 @@ interface Props {
   claimed: () => void
 }
 
+const emit = defineEmits(['close'])
 const props = defineProps<Props>()
 
 const step = ref(1)
@@ -73,7 +70,7 @@ onMounted(() => {
 })
 
 async function claim() {
-  const signer: Signer = currentUser.value!.walletProvider.getSigner()
+  const signer = userStore.signer
   const { fundingRoundAddress, recipientTreeDepth } = currentRound.value!
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer)
   const recipientClaimData = getRecipientClaimData(props.project.index, recipientTreeDepth, tally.value!)

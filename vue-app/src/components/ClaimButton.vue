@@ -1,18 +1,23 @@
 <template>
   <div>
     <loader v-if="isLoading" />
-    <p v-if="claimed">
+    <p v-if="claimed && allocatedAmount !== null">
       {{
         $t('claimButton.p', {
-          allocatedAmount: formatAmount(allocatedAmount!),
+          allocatedAmount: formatAmount(allocatedAmount),
           tokenSymbol: tokenSymbol,
         })
       }}
     </p>
-    <button v-if="hasClaimBtn() && !claimed" class="btn-action" :disabled="!canClaim()" @click="claim()">
+    <button
+      v-if="hasClaimBtn() && !claimed && allocatedAmount !== null"
+      class="btn-action"
+      :disabled="!canClaim()"
+      @click="claim()"
+    >
       {{
         $t('claimButton.button', {
-          allocatedAmount: formatAmount(allocatedAmount!),
+          allocatedAmount: formatAmount(allocatedAmount),
           tokenSymbol: tokenSymbol,
         })
       }}
@@ -34,7 +39,7 @@ import ClaimModal from '@/components/ClaimModal.vue'
 import Loader from '@/components/Loader.vue'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-//import { $vfm } from 'vue-final-modal'
+import { useModal } from 'vue-final-modal'
 
 const appStore = useAppStore()
 const { currentRound, tally, isRoundFinalized } = storeToRefs(appStore)
@@ -115,17 +120,22 @@ function formatAmount(value: FixedNumber): string {
   return _formatAmount(value, nativeTokenDecimals, null, maxDecimals)
 }
 
-function claim() {
-  /*$vfm.show({
-    component: ClaimModal,
-    bind: {
-      project: props.project,
-      claimed: () => {
-        // Optimistically update the claimed state
-        claimed.value = true
-      },
+const { open: openClaimModal, close } = useModal({
+  component: ClaimModal,
+  attrs: {
+    project: props.project,
+    claimed() {
+      // Optimistically update the claimed state
+      claimed.value = true
     },
-  })*/
+    onClose() {
+      close()
+    },
+  },
+})
+
+function claim() {
+  openClaimModal()
 }
 </script>
 

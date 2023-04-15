@@ -2,7 +2,7 @@
   <div class="recipients">
     <div class="title">
       <div class="header">
-        <h2>Recipient registry</h2>
+        <h2>{{ $t('recipientRegistry.h2') }}</h2>
       </div>
       <div class="hr" />
     </div>
@@ -14,10 +14,10 @@
       <table class="requests">
         <thead>
           <tr>
-            <th>Project</th>
-            <th>Request type</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>{{ $t('recipientRegistry.th1') }}</th>
+            <th>{{ $t('recipientRegistry.th2') }}</th>
+            <th>{{ $t('recipientRegistry.th3') }}</th>
+            <th>{{ $t('recipientRegistry.th4') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -38,26 +38,35 @@
                 >
               </div>
               <details class="project-details">
-                <summary>More</summary>
+                <summary>{{ $t('recipientRegistry.summary') }}</summary>
 
                 <div>
                   <div class="btn-row">
-                    Transaction hash
-                    <copy-button :value="request.transactionHash" text="hash" my-class="inline copy-icon" />
+                    {{ $t('recipientRegistry.div1') }}
+                    <copy-button
+                      :value="request.transactionHash"
+                      :text="$t('recipientRegistry.btn1')"
+                      myClass="inline copy-icon"
+                    />
                   </div>
                   <code>{{ request.transactionHash }}</code>
                 </div>
                 <div>
                   <div class="btn-row">
-                    Project ID
-                    <copy-button :value="request.recipientId" text="id" my-class="inline copy-icon" />
+                    {{ $t('recipientRegistry.div2') }}
+                    <copy-button
+                      :value="request.recipientId"
+                      :text="$t('recipientRegistry.btn2')"
+                      myClass="inline
+                    copy-icon"
+                    />
                   </div>
                   <code>{{ request.recipientId }}</code>
                 </div>
                 <div>
                   <div class="btn-row">
-                    Recipient address
-                    <copy-button :value="request.recipient" text="address" my-class="copy-icon" />
+                    {{ $t('recipientRegistry.div3') }}
+                    <copy-button :value="request.recipient" :text="$t('recipientRegistry.btn3')" myClass="copy-icon" />
                   </div>
                   <code>{{ request.recipient }}</code>
                 </div>
@@ -80,25 +89,25 @@
               </template>
             </td>
             <td>
-              <div v-if="isUserConnected" class="actions">
+              <div class="actions" v-if="isUserConnected">
                 <!-- TODO: to implement this feature, it requires to send a baseDeposit (see contract)
-									<div
-										class="btn-warning"
-										@click="remove(request)"
-										v-if="isExecuted(request)"
-									>
-										Remove
-									</div> -->
+              <div
+                class="btn-warning"
+                @click="remove(request)"
+                v-if="isExecuted(request)"
+              >
+                Remove
+              </div> -->
                 <div
-                  v-if="(isOwner && isPending(request)) || isAccepted(request)"
                   class="icon-btn-approve"
+                  v-if="(isOwner && isPending(request)) || isAccepted(request)"
                   @click="approve(request)"
                 >
                   <img src="@/assets/checkmark.svg" />
                 </div>
                 <div
-                  v-if="isOwner && (isPending(request) || isAccepted(request))"
                   class="icon-btn-reject"
+                  v-if="isOwner && (isPending(request) || isAccepted(request))"
                   @click="reject(request)"
                 >
                   <img src="@/assets/close.svg" />
@@ -137,11 +146,9 @@ import { markdown } from '@/utils/markdown'
 import TransactionModal from '@/components/TransactionModal.vue'
 import { useUserStore, useRecipientStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { useEthers } from 'vue-dapp'
-//import { $vfm } from 'vue-final-modal'
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
+import { useModal } from 'vue-final-modal'
 
-const { signer } = useEthers()
 const recipientStore = useRecipientStore()
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
@@ -209,23 +216,25 @@ function hasProjectLink(request: Request): boolean {
 }
 
 async function approve(request: Request): Promise<void> {
-  await waitForTransactionAndLoad(registerProject(recipientRegistryAddress.value!, request.recipientId, signer.value!))
+  await waitForTransactionAndLoad(
+    registerProject(recipientRegistryAddress.value!, request.recipientId, userStore.signer),
+  )
 }
 
 async function reject(request: Request): Promise<void> {
   await waitForTransactionAndLoad(
-    rejectProject(recipientRegistryAddress.value!, request.recipientId, request.requester, signer.value!),
+    rejectProject(recipientRegistryAddress.value!, request.recipientId, request.requester, userStore.signer),
   )
 }
 
 async function remove(request: Request): Promise<void> {
-  await waitForTransactionAndLoad(removeProject(recipientRegistryAddress.value!, request.recipientId, signer.value!))
+  await waitForTransactionAndLoad(removeProject(recipientRegistryAddress.value!, request.recipientId, userStore.signer))
 }
 
 async function waitForTransactionAndLoad(transaction: Promise<TransactionResponse>) {
-  /*$vfm.show({
+  const { open, close } = useModal({
     component: TransactionModal,
-    bind: {
+    attrs: {
       onTxSuccess: async () => {
         // TODO: this is not ideal. Leaving as is, just because it is an admin
         // page where no end user is using. We are forcing this 2s time to give
@@ -240,8 +249,13 @@ async function waitForTransactionAndLoad(transaction: Promise<TransactionRespons
         })
       },
       transaction,
+      onClose() {
+        close()
+      },
     },
-  })*/
+  })
+
+  open()
 }
 
 function handleExport(): void {

@@ -1,11 +1,11 @@
 <template>
-  <vue-final-modal v-slot="{ close }" v-bind="$attrs">
+  <vue-final-modal class="modal-container">
     <div class="modal-body">
       <transaction
         :hash="txHash"
         :error="txError"
-        :display-retry-btn="true"
-        @close="$emit('close', close)"
+        :displayRetryBtn="true"
+        @close="emit('close')"
         @retry="
           () => {
             txError = ''
@@ -13,16 +13,12 @@
           }
         "
       ></transaction>
-      <button v-if="txHash" class="btn-secondary close-btn" @click="$emit('close', close)">Close</button>
+      <button v-if="txHash" class="btn-secondary close-btn" @click="emit('close')">
+        {{ $t('transactionModal.button1') }}
+      </button>
     </div>
   </vue-final-modal>
 </template>
-
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-}
-</script>
 
 <script setup lang="ts">
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
@@ -37,6 +33,7 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits(['close'])
 
 const txHash = ref('')
 const txError = ref('')
@@ -69,6 +66,6 @@ async function executeTx() {
 }
 
 .close-btn {
-  margin-top: $modal-space;
+  margin: $modal-space auto 0;
 }
 </style>
