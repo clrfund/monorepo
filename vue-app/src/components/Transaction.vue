@@ -3,19 +3,23 @@
     <template v-if="error">
       <div class="error">{{ error }}</div>
       <div class="btn-row">
-        <button v-if="displayCloseBtn" class="btn-secondary close-btn" @click="$emit('close')">Close</button>
-        <button v-if="displayRetryBtn" class="btn-primary close-btn" @click="$emit('retry')">Retry</button>
+        <button v-if="displayCloseBtn" class="btn-secondary close-btn" @click="$emit('close')">
+          {{ $t('transactions.button1') }}
+        </button>
+        <button v-if="displayRetryBtn" class="btn-primary close-btn" @click="$emit('retry')">
+          {{ $t('transactions.button2') }}
+        </button>
       </div>
     </template>
     <template v-else>
-      <div v-if="!hash">Please approve transaction in your wallet</div>
+      <div v-if="!hash">{{ $t('transactions.div1') }}</div>
       <div v-else>
         <transaction-receipt :hash="hash" />
       </div>
       <loader v-if="!hash" />
       <div v-if="displayWarning && !hash">
         <small class="warning-text">
-          If you have been waiting a while, consider refreshing your browser and reconnecting your wallet.
+          {{ $t('transactions.small') }}
         </small>
       </div>
     </template>
@@ -24,7 +28,6 @@
 
 <script setup lang="ts">
 import Loader from '@/components/Loader.vue'
-import Links from '@/components/Links.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 
 interface Props {
@@ -67,6 +70,7 @@ watch(
   color: var(--error-color);
   overflow: hidden;
   text-overflow: ellipsis;
+  max-height: 200px;
 }
 
 .close-btn {
@@ -78,7 +82,7 @@ watch(
   margin: 1rem 0;
   margin-top: 1.5rem;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 1rem;
 }
 </style>

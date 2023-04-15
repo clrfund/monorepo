@@ -19,7 +19,6 @@ const vfm = createVfm()
 app.use(pinia)
 app.use(router)
 app.use(metaManager)
-app.use(FloatingVue)
 app.use(i18n)
 app.use(vfm)
 app.use(VueDapp, {
@@ -46,6 +45,15 @@ app.use(VueDapp, {
         symbol: 'ETH',
         decimals: 18,
       },
+    },
+  },
+})
+
+app.use(FloatingVue, {
+  themes: {
+    'contract-popover': {
+      $extend: 'dropdown',
+      $resetCss: true,
     },
   },
 })

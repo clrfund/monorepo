@@ -1,38 +1,55 @@
 <template>
-  <vue-final-modal v-slot="{ close }" v-bind="$attrs">
+  <vue-final-modal class="modal-container">
     <div class="modal-body">
       <div v-if="step === 0">
-        <h2>Confirm {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution</h2>
+        <h2>
+          {{
+            $t('contributionModal.confirm', {
+              renderTotal: renderTotal,
+              nativeTokenSymbol: currentRound?.nativeTokenSymbol,
+            })
+          }}
+        </h2>
         <p>
-          Your
+          {{ $t('contributionModal.your') }}
           <b>{{ renderTotal }} {{ currentRound?.nativeTokenSymbol }}</b>
-          contribution total is final. You won't be able to increase this amount. Make sure this is the maximum you
-          might want to spend on contributions.
+          {{ $t('contributionModal.contribution_final') }}
         </p>
         <!-- TODO: if you get 1/3 of the way through these transactions and come back, you shouldn't get this warning again. This warning should only appear if you haven't already signed 'approve' transaction -->
         <!-- <p>
-			<em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
-		  </p> -->
+        <em>After contributing, you'll be able to add/remove projects and change amounts as long as your cart adds up to <b>{{ renderTotal }} {{ currentRound.nativeTokenSymbol }}</b>.</em>
+      </p> -->
         <div class="btn-row">
-          <button class="btn-secondary" @click="close">Cancel</button>
-          <button class="btn-primary" @click="contribute()">Continue</button>
+          <button class="btn-secondary" @click="$emit('close')">
+            {{ $t('contributionModal.btn_cancel') }}
+          </button>
+          <button class="btn-primary" @click="contribute()">
+            {{ $t('contributionModal.btn_continue') }}
+          </button>
         </div>
       </div>
       <div v-if="step === 1">
-        <progress-bar :current-step="1" :total-steps="3" />
+        <progress-bar :currentStep="1" :totalSteps="3" />
         <h2>
-          Approve {{ renderTotal }}
-          {{ currentRound?.nativeTokenSymbol }}
+          {{
+            $t('contributionModal.approve', {
+              renderTotal: renderTotal,
+              nativeTokenSymbol: currentRound?.nativeTokenSymbol,
+            })
+          }}
         </h2>
         <p>
-          This gives this app permission to withdraw
-          {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} from your wallet for your contribution.
+          {{
+            $t('contributionModal.permission', {
+              renderTotal: renderTotal,
+              nativeTokenSymbol: currentRound?.nativeTokenSymbol,
+            })
+          }}
         </p>
         <transaction
           :hash="approvalTxHash"
           :error="approvalTxError || error"
-          :display-retry-btn="true"
-          @close="close"
+          @close="$emit('close')"
           @retry="
             () => {
               step = 0
@@ -40,20 +57,31 @@
               contribute()
             }
           "
+          :displayRetryBtn="true"
         ></transaction>
       </div>
       <div v-if="step === 2">
-        <progress-bar :current-step="2" :total-steps="3" />
-        <h2>Send {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution</h2>
+        <progress-bar :currentStep="2" :totalSteps="3" />
+        <h2>
+          {{
+            $t('contributionModal.send_contribution', {
+              renderTotal: renderTotal,
+              nativeTokenSymbol: currentRound?.nativeTokenSymbol,
+            })
+          }}
+        </h2>
         <p>
-          This transaction sends out your {{ renderTotal }} {{ currentRound?.nativeTokenSymbol }} contribution to your
-          chosen projects.
+          {{
+            $t('contributionModal.send_tx', {
+              renderTotal: renderTotal,
+              nativeTokenSymbol: currentRound?.nativeTokenSymbol,
+            })
+          }}
         </p>
         <transaction
           :hash="contributionTxHash"
           :error="contributionTxError || error"
-          :display-retry-btn="true"
-          @close="close"
+          @close="$emit('close')"
           @retry="
             () => {
               step = 0
@@ -61,37 +89,35 @@
               contribute()
             }
           "
+          :displayRetryBtn="true"
         ></transaction>
       </div>
       <div v-if="step === 3">
-        <progress-bar :current-step="3" :total-steps="3" />
-        <h2>Matching pool magic ✨</h2>
+        <progress-bar :currentStep="3" :totalSteps="3" />
+        <h2>{{ $t('contributionModal.magic') }}</h2>
         <p>
-          This transaction lets the matching pool know how much
-          {{ currentRound?.nativeTokenSymbol }} to send to your favorite projects based on your contributions.
+          {{
+            $t('contributionModal.how_much', {
+              nativeTokenSymbol: currentRound?.nativeTokenSymbol,
+            })
+          }}
         </p>
         <transaction
           :hash="voteTxHash"
           :error="voteTxError || error"
-          :display-retry-btn="true"
-          @close="close"
+          @close="$emit('close')"
           @retry="
             () => {
               voteTxError = ''
               sendVotes()
             }
           "
+          :displayRetryBtn="true"
         ></transaction>
       </div>
     </div>
   </vue-final-modal>
 </template>
-
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-}
-</script>
 
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
@@ -107,14 +133,13 @@ import ProgressBar from '@/components/ProgressBar.vue'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
 import { FundingRound, ERC20, MACI } from '@/api/abi'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { useEthers } from 'vue-dapp'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const { signer } = useEthers()
 const appStore = useAppStore()
+const userStore = useUserStore()
 const { hasUserContributed, hasUserVoted, currentRound } = storeToRefs(appStore)
 
 const emit = defineEmits(['close'])
@@ -193,7 +218,7 @@ async function sendVotes() {
 
 const fundingRound = computed(() => {
   const { fundingRoundAddress } = currentRound.value!
-  return new Contract(fundingRoundAddress, FundingRound, signer.value!)
+  return new Contract(fundingRoundAddress, FundingRound, userStore.signer)
 })
 
 const total = computed(() => {
@@ -216,9 +241,9 @@ async function contribute() {
   try {
     step.value += 1
     const { nativeTokenAddress, voiceCreditFactor, maciAddress, fundingRoundAddress } = currentRound.value!
-    const token = new Contract(nativeTokenAddress, ERC20, signer.value!)
+    const token = new Contract(nativeTokenAddress, ERC20, userStore.signer)
     // Approve transfer (step 1)
-    const allowance = await token.allowance(signer.value!.getAddress(), fundingRoundAddress)
+    const allowance = await token.allowance(userStore.signer.getAddress(), fundingRoundAddress)
     if (allowance < total.value) {
       try {
         await waitForTransaction(token.approve(fundingRoundAddress, total.value), hash => (approvalTxHash.value = hash))
@@ -241,7 +266,7 @@ async function contribute() {
       return
     }
     // Get state index and amount of voice credits
-    const maci = new Contract(maciAddress, MACI, signer.value!)
+    const maci = new Contract(maciAddress, MACI, userStore.signer)
     const stateIndex = getEventArg(contributionTxReceipt, maci, 'SignUp', '_stateIndex')
     const voiceCredits = getEventArg(contributionTxReceipt, maci, 'SignUp', '_voiceCreditBalance')
     if (!voiceCredits.mul(voiceCreditFactor).eq(total.value)) {

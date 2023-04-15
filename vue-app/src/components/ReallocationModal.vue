@@ -1,30 +1,24 @@
 <template>
-  <vue-final-modal v-slot="{ close }" v-bind="$attrs">
+  <vue-final-modal class="modal-container">
     <div class="modal-body">
       <div v-if="step === 1">
-        <h3>Reallocate funds</h3>
+        <h3>{{ $t('reallocationModal.h3') }}</h3>
         <transaction
           :hash="voteTxHash"
           :error="voteTxError"
-          :display-retry-btn="true"
-          @close="$emit('close', close)"
+          @close="$emit('close')"
           @retry="
             () => {
               voteTxError = ''
               vote()
             }
           "
+          :displayRetryBtn="true"
         ></transaction>
       </div>
     </div>
   </vue-final-modal>
 </template>
-
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-}
-</script>
 
 <script lang="ts" setup>
 import { BigNumber, Contract } from 'ethers'
@@ -35,8 +29,7 @@ import { createMessage } from '@/utils/maci'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
 import { FundingRound } from '@/api/abi'
-import { useEthers } from 'vue-dapp'
-import { useAppStore } from '@/stores'
+import { useAppStore, useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
 
 interface Props {
@@ -47,8 +40,8 @@ const props = defineProps<Props>()
 const emit = defineEmits(['close'])
 
 const router = useRouter()
-const { signer } = useEthers()
 const appStore = useAppStore()
+const userStore = useUserStore()
 
 const step = ref(1)
 const voteTxHash = ref('')
@@ -61,7 +54,7 @@ onMounted(() => {
 async function vote() {
   const contributor = appStore.contributor
   const { coordinatorPubKey, fundingRoundAddress } = appStore.currentRound!
-  const fundingRound = new Contract(fundingRoundAddress, FundingRound, signer.value!)
+  const fundingRound = new Contract(fundingRoundAddress, FundingRound, userStore.signer)
   const messages: Message[] = []
   const encPubKeys: PubKey[] = []
   let nonce = 1

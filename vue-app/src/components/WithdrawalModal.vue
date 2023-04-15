@@ -1,24 +1,25 @@
 <template>
-  <vue-final-modal v-slot="{ close }" v-bind="$attrs">
+  <vue-final-modal class="modal-container">
     <div class="modal-body">
       <div v-if="step === 1">
-        <h3>Withdraw funds</h3>
-        <transaction :hash="withdrawalTxHash" :error="withdrawalTxError" @close="close()"></transaction>
+        <h3>{{ $t('withdrawalModal.h3_1') }}</h3>
+        <transaction
+          :hash="withdrawalTxHash"
+          :displayRetryBtn="true"
+          :error="withdrawalTxError"
+          @close="emit('close')"
+        ></transaction>
       </div>
       <div v-if="step === 2">
-        <h3>Success!</h3>
-        <div>You have successfully withdrawn your contribution.</div>
-        <button class="btn close-btn" @click="close()">OK</button>
+        <h3>{{ $t('withdrawalModal.h3_2') }}</h3>
+        <div>{{ $t('withdrawalModal.div1') }}</div>
+        <button class="btn close-btn" @click="emit('close')">
+          {{ $t('withdrawalModal.button1') }}
+        </button>
       </div>
     </div>
   </vue-final-modal>
 </template>
-
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-}
-</script>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
@@ -27,13 +28,11 @@ import { BigNumber } from 'ethers'
 import { VueFinalModal } from 'vue-final-modal'
 import { withdrawContribution } from '@/api/contributions'
 import Transaction from '@/components/Transaction.vue'
-import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { waitForTransaction } from '@/utils/contracts'
 import { useAppStore, useUserStore } from '@/stores'
 
 const appStore = useAppStore()
 const userStore = useUserStore()
-const { currentUser } = storeToRefs(userStore)
 
 const step = ref(1)
 const withdrawalTxHash = ref('')
@@ -43,18 +42,15 @@ onMounted(async () => {
   await withdraw()
 })
 
-function formatAmount(value: BigNumber): string {
-  const { nativeTokenDecimals } = appStore.currentRound!
-  return _formatAmount(value, nativeTokenDecimals)
-}
+const emit = defineEmits(['close'])
 
 async function withdraw() {
-  const signer = currentUser.value!.walletProvider.getSigner()
+  const signer = userStore.signer
   const { fundingRoundAddress } = appStore.currentRound!
   try {
     await waitForTransaction(withdrawContribution(fundingRoundAddress, signer), hash => (withdrawalTxHash.value = hash))
   } catch (error) {
-    withdrawalTxError.value = error.message
+    withdrawalTxError.value = (error as Error).message
     return
   }
   appStore.setContribution(BigNumber.from(0))
@@ -66,6 +62,6 @@ async function withdraw() {
 @import '../styles/vars';
 
 .close-btn {
-  margin-top: $modal-space;
+  margin: $modal-space auto;
 }
 </style>

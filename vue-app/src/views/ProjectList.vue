@@ -62,7 +62,6 @@ import { getCurrentRound, getRoundInfo } from '@/api/round'
 import { type Project, getProjects } from '@/api/projects'
 
 import CallToActionCard from '@/components/CallToActionCard.vue'
-import CartWidget from '@/components/CartWidget.vue'
 import ProjectListItem from '@/components/ProjectListItem.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 import Links from '@/components/Links.vue'

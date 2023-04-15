@@ -2,26 +2,25 @@
   <div class="h100">
     <div v-if="!currentUser" class="empty-cart">
       <div class="moon-emoji">🌚</div>
-      <h3>Connect to see your cart</h3>
-      <wallet-widget :is-action-button="true" />
+      <h3>{{ $t('cart.h3_1') }}</h3>
+      <wallet-widget :isActionButton="true" />
     </div>
     <div v-else class="cart-container">
-      <div v-if="canUserReallocate && hasUserVoted" class="reallocation-message">
-        You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must
-        always equal your original contribution amount.
-        <links to="/about/maci" class="message-link">Why?</links>
+      <div class="reallocation-message" v-if="canUserReallocate && hasUserVoted">
+        {{ $t('cart.div1') }}
+        <links to="/about/maci" class="message-link"> {{ $t('cart.link1') }}</links>
       </div>
-      <div v-if="canUserReallocate && !hasUserVoted" class="reallocation-message">
-        Almost done! You must submit one more transaction to complete your contribution.
+      <div class="reallocation-message" v-if="canUserReallocate && !hasUserVoted">
+        {{ $t('cart.div2') }}
       </div>
       <div class="flex cart-title-bar">
-        <div v-if="showCollapseCart" class="absolute-left cart-btn" @click="toggleCart">
+        <div v-if="showCollapseCart" @click="toggleCart" class="absolute-left cart-btn">
           <img alt="cart" width="16" src="@/assets/cart.svg" />
           <img alt="close" width="16" src="@/assets/chevron-right.svg" />
         </div>
-        <h2>{{ isEditMode ? 'Edit cart' : 'Your cart' }}</h2>
+        <h2>{{ isEditMode ? $t('cart.h2_1') : $t('cart.h2_2') }}</h2>
         <div v-if="(isRoundContributionPhase || canUserReallocate) && !isCartEmpty" class="absolute-right dropdown">
-          <img class="dropdown-btn" src="@/assets/more.svg" @click="openDropdown" />
+          <img @click="openDropdown" class="dropdown-btn" src="@/assets/more.svg" />
           <div id="cart-dropdown" class="button-menu">
             <div
               v-for="({ callback, text, icon, cssClass }, idx) of dropdownItems"
@@ -29,66 +28,66 @@
               class="dropdown-item"
               @click="callback"
             >
-              <img width="16" :class="cssClass" :src="`src/assets/${icon}`" />
+              <img width="16" :class="cssClass" :src="getAssetsUrl(icon)" />
               <p>{{ text }}</p>
             </div>
           </div>
         </div>
       </div>
       <div class="messages-and-cart-items">
-        <div v-if="hasUserContributed && hasReallocationPhaseEnded" class="reallocation-intro">
-          This round is over. Here’s how you contributed. Thanks!
+        <div class="reallocation-intro" v-if="hasUserContributed && hasReallocationPhaseEnded">
+          {{ $t('cart.div3') }}
         </div>
         <div class="cart">
           <div v-if="!hasUserContributed && hasContributionPhaseEnded" class="empty-cart">
             <div class="moon-emoji">🌚</div>
-            <h3>Too late to donate</h3>
-            <div>Sorry, the deadline for donating has passed.</div>
+            <h3>{{ $t('cart.h3_2') }}</h3>
+            <div>{{ $t('cart.div4') }}</div>
           </div>
           <div v-else-if="isCartEmpty && isRoundContributionPhase" class="empty-cart">
             <div class="moon-emoji">🌚</div>
-            <h3>Your cart is empty</h3>
-            <div>Choose some projects that you want to contribute to...</div>
-            <links to="/projects" class="btn-secondary mobile mt1">See projects</links>
+            <h3>{{ $t('cart.h3_3') }}</h3>
+            <div>{{ $t('cart.div5') }}</div>
+            <links to="/projects" class="btn-secondary mobile mt1">{{ $t('cart.link2') }}</links>
           </div>
           <div v-else-if="canUserReallocate && !isCartEmpty">
             <div class="flex-row-reallocation">
               <div class="semi-bold">
-                {{ isEditMode ? 'Edit contributions' : 'Your contributions' }}
+                {{ isEditMode ? $t('cart.edit1') : $t('cart.edit2') }}
               </div>
-              <div v-if="canUserReallocate" class="semi-bold">
-                <button class="pointer" @click="handleEditState">
-                  {{ isEditMode ? 'Cancel' : 'Edit' }}
+              <div class="semi-bold" v-if="canUserReallocate">
+                <button @click="handleEditState" class="pointer">
+                  {{ isEditMode ? $t('cart.edit3') : $t('cart.edit4') }}
                 </button>
               </div>
             </div>
           </div>
-          <div v-else-if="hasUserContributed" id="readOnly" class="flex-row-reallocation">
+          <div v-else-if="hasUserContributed" class="flex-row-reallocation" id="readOnly">
             <!-- Round is finalized -->
-            <div>Your contributions</div>
+            <div>{{ $t('cart.div6') }}</div>
           </div>
           <cart-items
             v-if="hasUserContributed || !hasContributionPhaseEnded"
-            :cart-list="filteredCart"
-            :is-edit-mode="isEditMode"
-            :is-amount-valid="isAmountValid"
+            :cartList="filteredCart"
+            :isEditMode="isEditMode"
+            :isAmountValid="isAmountValid"
           />
         </div>
         <div
           v-if="(canUserReallocate && !isEditMode) || (isRoundContributionPhase && !canUserReallocate)"
           class="time-left-read-only"
         >
-          <div class="caps">Time left:</div>
+          <div class="caps">{{ $t('cart.div7') }}</div>
           <time-left :date="timeLeftDate" />
         </div>
       </div>
-      <div v-if="canUserReallocate && isEditMode" class="reallocation-section">
+      <div class="reallocation-section" v-if="canUserReallocate && isEditMode">
         <div class="reallocation-row">
-          <span>Original contribution</span>
+          <span>{{ $t('cart.span1') }}</span>
           {{ formatAmount(contribution) }} {{ tokenSymbol }}
         </div>
         <div :class="isGreaterThanInitialContribution() ? 'reallocation-row-warning' : 'reallocation-row'">
-          <span>Your cart</span>
+          <span>{{ $t('cart.span2') }}</span>
           <div class="reallocation-warning">
             <span v-if="isGreaterThanInitialContribution()">⚠️</span>{{ formatAmount(getCartTotal(cart)) }}
             {{ tokenSymbol }}
@@ -96,85 +95,107 @@
         </div>
         <div v-if="hasUnallocatedFunds()" class="reallocation-row-matching-pool">
           <div>
-            <div><b>Matching pool</b></div>
-            <div>Remaining funds go to matching pool</div>
+            <div>
+              <b>{{ $t('cart.div8') }}</b>
+            </div>
+            <div>{{ $t('cart.div9') }}</div>
           </div>
-          + {{ BigInt(formatAmount(contribution)) - BigInt(formatAmount(getTotal())) }}
+          + {{ formatAmount(contribution.sub(getTotal())) }}
           {{ tokenSymbol }}
         </div>
         <div
-          v-if="isGreaterThanInitialContribution() || hasUnallocatedFunds()"
-          class="split-link"
           @click="splitContributionsEvenly"
+          class="split-link"
+          v-if="isGreaterThanInitialContribution() || hasUnallocatedFunds()"
         >
-          <img src="@/assets/split.svg" /> Split {{ formatAmount(contribution) }} {{ tokenSymbol }} evenly
+          <img src="@/assets/split.svg" />
+          {{
+            $t('cart.div10', {
+              contribution: formatAmount(contribution),
+              tokenSymbol: tokenSymbol,
+            })
+          }}
         </div>
       </div>
-      <div v-if="canWithdrawContribution() && cart.length >= 1" class="submit-btn-wrapper">
-        <button class="btn-action" @click="withdrawContribution()">
-          Withdraw {{ formatAmount(contribution) }} {{ tokenSymbol }}
+      <div class="submit-btn-wrapper" v-if="canWithdrawContribution && cart.length >= 1">
+        <button class="btn-action" @click="openWithdrawalModal()">
+          {{
+            $t('cart.button1', {
+              contribution: formatAmount(contribution),
+              tokenSymbol: tokenSymbol,
+            })
+          }}
         </button>
       </div>
       <div
+        class="submit-btn-wrapper"
         v-if="
           ((canUserReallocate && isEditMode) || (!canUserReallocate && isRoundContributionPhase) || !hasUserVoted) &&
           cart.length >= 1
         "
-        class="submit-btn-wrapper"
       >
         <div v-if="errorMessage" class="error-title">
-          Can't
-          <span v-if="canUserReallocate">reallocate</span>
-          <span v-else>contribute</span>
+          {{ $t('cart.div11') }}
+          <span v-if="canUserReallocate">{{ $t('cart.div11_if2') }}</span>
+          <span v-else>{{ $t('cart.div11_if3') }}</span>
         </div>
         <div v-if="errorMessage" class="submit-error">
           {{ errorMessage }}
         </div>
-        <div v-if="hasUnallocatedFunds()" class="p1">
-          Funds you don't contribute to projects ({{
-            BigInt(formatAmount(contribution)) - BigInt(formatAmount(getTotal()))
+        <div class="p1" v-if="hasUnallocatedFunds()">
+          {{
+            $t('cart.div12', {
+              total: formatAmount(contribution.sub(getTotal())),
+              tokenSymbol: tokenSymbol,
+              contribution: formatAmount(contribution),
+            })
           }}
-          {{ tokenSymbol }}) will be sent to the matching pool at the end of the round. Your cart must add up to your
-          original {{ formatAmount(contribution) }} {{ tokenSymbol }} donation.
         </div>
-        <div v-if="isBrightIdRequired" class="p1">
-          <links to="/verify" class="btn-primary"> Verify with BrightID </links>
+        <div class="p1" v-if="isBrightIdRequired">
+          <links to="/verify" class="btn-primary">{{ $t('cart.link3') }} </links>
         </div>
-        <!-- contribute button -->
         <button
           v-if="!isCartEmpty"
           class="btn-action"
-          :disabled="!!errorMessage || (hasUserContributed && hasUserVoted && !isDirty)"
           @click="submitCart"
+          :disabled="Boolean(errorMessage) || (hasUserContributed && hasUserVoted && !isDirty)"
         >
           <template v-if="contribution.isZero()">
-            Contribute {{ formatAmount(getTotal()) }} {{ tokenSymbol }} to {{ cart.length }} projects
+            {{
+              $t('cart.template1', {
+                total: formatAmount(getTotal()),
+                tokenSymbol: tokenSymbol,
+                cart: cart.length,
+              })
+            }}
           </template>
-          <template v-else-if="!hasUserVoted"> Finish contribution </template>
-          <template v-else> Reallocate contribution </template>
+          <template v-else-if="!hasUserVoted">
+            {{ $t('cart.template2') }}
+          </template>
+          <template v-else> {{ $t('cart.template3') }} </template>
         </button>
-        <funds-needed-warning :on-navigate="toggleCart" :is-compact="true" />
-        <div v-if="canUserReallocate && isEditMode" class="time-left">
-          <div class="caps">Time left:</div>
+        <funds-needed-warning :onNavigate="toggleCart" :isCompact="true" />
+        <div class="time-left" v-if="canUserReallocate && isEditMode">
+          <div class="caps">{{ $t('cart.div13') }}</div>
           <time-left :date="timeLeftDate" />
         </div>
       </div>
-      <div v-if="hasUserContributed && !isEditMode" class="line-item-bar">
+      <div class="line-item-bar" v-if="hasUserContributed && !isEditMode">
         <div class="line-item">
-          <span>Projects</span>
+          <span>{{ $t('cart.span3') }}</span>
           <div>
             <span>{{ formatAmount(getCartTotal(committedCart)) }} {{ tokenSymbol }}</span>
           </div>
         </div>
         <div class="line-item">
-          <span>Matching Pool</span>
+          <span>{{ $t('cart.span4') }}</span>
           <div>
             <span>{{ getCartMatchingPoolTotal() }} {{ tokenSymbol }}</span>
           </div>
         </div>
       </div>
-      <div v-if="isRoundContributionPhase || (hasUserContributed && hasContributionPhaseEnded)" class="total-bar">
-        <span class="total-label">Total</span>
+      <div class="total-bar" v-if="isRoundContributionPhase || (hasUserContributed && hasContributionPhaseEnded)">
+        <span class="total-label">{{ $t('cart.span5') }}</span>
         <div>
           <span v-if="isGreaterThanInitialContribution() && hasUserContributed"
             >{{ formatAmount(getCartTotal(cart)) }} /
@@ -185,15 +206,14 @@
         </div>
       </div>
       <div v-if="!currentRound" class="reallocation-section">
-        No current round.
-        <links v-if="isBrightIdRequired" to="/verify"> Verify with BrightID while you wait</links>
+        {{ $t('cart.div14') }}
+        <links v-if="isBrightIdRequired" to="/verify"> {{ $t('cart.link4') }}</links>
       </div>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref } from 'vue'
 import { BigNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
@@ -205,19 +225,20 @@ import CartItems from '@/components/CartItems.vue'
 import Links from '@/components/Links.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import { MAX_CONTRIBUTION_AMOUNT, MAX_CART_SIZE, type CartItem, isContributionAmountValid } from '@/api/contributions'
-import { userRegistryType, UserRegistryType, chain } from '@/api/core'
+import { userRegistryType, UserRegistryType } from '@/api/core'
 import { RoundStatus } from '@/api/round'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import FundsNeededWarning from '@/components/FundsNeededWarning.vue'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { useEthers, useWallet } from 'vue-dapp'
-//import { $vfm } from 'vue-final-modal'
+import { useModal } from 'vue-final-modal'
 import { useRoute } from 'vue-router'
+import { getAssetsUrl } from '@/utils/url'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const route = useRoute()
-const { onChainChanged, onAccountsChanged } = useWallet()
-const { network } = useEthers()
 const appStore = useAppStore()
 const {
   cart,
@@ -236,7 +257,6 @@ const {
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 
-const profileImageUrl = ref<string | null>(null)
 const dropdownItems = ref<
   {
     callback: () => void | null
@@ -247,12 +267,12 @@ const dropdownItems = ref<
 >([
   {
     callback: removeAll,
-    text: 'Remove all',
+    text: t('dynamic.cart.action.remove_all'),
     icon: 'remove.svg',
   },
   {
     callback: splitContributionsEvenly,
-    text: 'Split evenly',
+    text: t('dynamic.cart.action.split_evenly'),
     icon: 'split.svg',
     cssClass: 'split-image',
   },
@@ -299,31 +319,7 @@ function handleEditState(): void {
 function toggleCart(): void {
   appStore.toggleShowCartPanel()
 }
-const walletChainId = computed(() => network.value?.chainId)
-const supportedChainId = computed(() => Number(import.meta.env.VITE_ETHEREUM_API_CHAINID))
 
-const isCorrectNetwork = computed(() => supportedChainId.value === walletChainId.value)
-
-onMounted(() => {
-  // TODO: refactor, move `chainChanged` and `accountsChanged` from here to an
-  // upper level where we hear this events only once (there are other
-  // components that do the same).
-  onChainChanged(chainId => {
-    if (currentUser.value) {
-      // Log out user to prevent interactions with incorrect network
-      userStore.logoutUser()
-    }
-  })
-
-  let accounts: string[]
-  onAccountsChanged((_accounts: string[]) => {
-    if (_accounts !== accounts) {
-      // Log out user if wallet account changes
-      userStore.logoutUser()
-    }
-    accounts = _accounts
-  })
-})
 const tokenSymbol = computed(() => {
   const _currentRound = currentRound.value
   // TODO: configure eslint to catch the error below (currentRound should add .value)
@@ -400,41 +396,48 @@ const isBrightIdRequired = computed(
 )
 
 const errorMessage = computed<string | null>(() => {
-  if (isMessageLimitReached.value) return 'The limit on the number of contributions has been reached'
-  if (!currentUser.value) return 'Please connect your wallet'
-  if (!isCorrectNetwork.value) return `Please change network to ${chain.label} network.`
-  if (isBrightIdRequired.value) return 'To contribute, you need to set up BrightID.'
-  if (!isFormValid()) return 'Include valid contribution amount.'
-  if (cart.value.length > MAX_CART_SIZE) return `Your cart can't include over ${MAX_CART_SIZE} projects.`
-  if (currentRound.value?.status === RoundStatus.Cancelled) return "Sorry, we've had to cancel this funding round."
-  if (hasReallocationPhaseEnded.value) return 'The funding round has ended.'
-  if (currentRound.value!.messages + cart.value.length >= currentRound.value!.maxMessages) {
-    return 'Cart changes will exceed contribution capacity of this round'
-    // } else if (currentRound.value!.messages + cart.value.length >= currentRound.value!.maxMessages) {
-    // 	return 'The limit on the number of contributions has been reached'
-    // }
+  if (isMessageLimitReached.value) return t('dynamic.cart.error.reached_contribution_limit')
+  if (!currentUser.value) return t('dynamic.cart.error.connect_wallet')
+  if (isBrightIdRequired.value) return t('dynamic.cart.error.need_to_setup_brightid')
+  if (!isFormValid()) return t('dynamic.cart.error.invalid_contribution_amount')
+  if (cart.value.length > MAX_CART_SIZE)
+    return t('dynamic.cart.error.exceeded_max_cart_size', {
+      maxCartSize: MAX_CART_SIZE,
+    })
+  if (currentRound.value?.status === RoundStatus.Cancelled) return t('dynamic.cart.error.round_cancelled')
+  if (hasReallocationPhaseEnded.value) return t('dynamic.cart.error.round_ended')
+  if (!currentRound.value || !currentUser.value.balance || !currentUser.value.etherBalance) {
+    // not ready yet, waiting for current round and balances to load
+    return null
+  }
+  if (currentRound.value.messages + cart.value.length >= currentRound.value.maxMessages) {
+    return t('dynamic.cart.error.cart_changes_exceed_cap')
   } else {
     const total = getTotal()
     if (contribution.value.isZero()) {
       // Contributing
-      if (DateTime.local() >= currentRound.value!.signUpDeadline) {
-        return 'Contributions are over for this funding round.'
+      if (DateTime.local() >= currentRound.value.signUpDeadline) {
+        return t('dynamic.cart.error.contributions_over')
         // the above error might not be necessary now we have our cart states in the HTML above
-      } else if (currentRound.value!.contributors >= currentRound.value!.maxContributors) {
-        return 'The limit on the number of contributors has been reached'
+      } else if (currentRound.value.contributors >= currentRound.value.maxContributors) {
+        return t('dynamic.cart.error.reached_contributor_limit')
       } else if (total.eq(BigNumber.from(0)) && !isCartEmpty.value) {
-        return `Your total must be more than 0 ${currentRound.value!.nativeTokenSymbol}`
-      } else if (currentUser.value.balance === null) {
-        return '' // No error: waiting for balance
-      } else if (total.gt(currentUser.value!.balance!)) {
-        const balanceDisplay = _formatAmount(currentUser.value!.balance!, currentRound.value!.nativeTokenDecimals)
-        return `Not enough funds. Your balance is ${balanceDisplay} ${currentRound.value!.nativeTokenSymbol}.`
+        return t('dynamic.cart.error.must_be_gt_zero', {
+          nativeTokenSymbol: currentRound.value.nativeTokenSymbol,
+        })
+      } else if (total.gt(currentUser.value.balance)) {
+        const balanceDisplay = _formatAmount(currentUser.value.balance, currentRound.value.nativeTokenDecimals)
+        return t('dynamic.cart.error.not_enough_funds', {
+          balance: balanceDisplay,
+          nativeTokenSymbol: currentRound.value.nativeTokenSymbol,
+        })
       } else if (isGreaterThanMax()) {
-        return `Your contribution is too generous. The max contribution is ${MAX_CONTRIBUTION_AMOUNT} ${
-          currentRound.value!.nativeTokenSymbol
-        }.`
-      } else if (parseInt(currentUser.value.etherBalance!.toString()) === 0) {
-        return `You need some ETH to pay for gas`
+        return t('dynamic.cart.error.too_generous', {
+          maxAmount: MAX_CONTRIBUTION_AMOUNT,
+          nativeTokenSymbol: currentRound.value.nativeTokenSymbol,
+        })
+      } else if (parseInt(currentUser.value.etherBalance.toString()) === 0) {
+        return t('dynamic.cart.error.need_gas_payment')
       } else {
         return null
       }
@@ -442,9 +445,12 @@ const errorMessage = computed<string | null>(() => {
       // Reallocating funds
       // eslint-disable-next-line
       if (!contribution.value) {
-        return "Contributor key is not found. Refresh and try again and/or make sure you're using the same browser/machine as the one you contributed with."
+        return t('dynamic.cart.error.contributor_key_missing')
       } else if (isGreaterThanInitialContribution()) {
-        return `Your new total can't be more than your original ${formatAmount(contribution.value)} contribution.`
+        return t('dynamic.cart.error.more_than_original_contribution', {
+          total: formatAmount(contribution.value),
+          tokenSymbol: tokenSymbol.value,
+        })
       } else {
         return null
       }
@@ -456,36 +462,60 @@ function hasUnallocatedFunds(): boolean {
   return errorMessage.value === null && !contribution.value.isZero() && getTotal().lt(contribution.value)
 }
 
-function submitCart(event: any) {
-  console.log('submitCart')
-  event.preventDefault()
+const votes = computed(() => {
   const { nativeTokenDecimals, voiceCreditFactor } = currentRound.value!
-  const votes = cart.value.map((item: CartItem) => {
+  const formattedVotes: [number, BigNumber][] = cart.value.map((item: CartItem) => {
     const amount = parseFixed(item.amount, nativeTokenDecimals)
     const voiceCredits = amount.div(voiceCreditFactor)
     return [item.index, voiceCredits]
   })
+  return formattedVotes
+})
 
-  /*
-  $vfm.show({
-    component: contribution.value.isZero() || !hasUserVoted.value ? ContributionModal : ReallocationModal,
-    bind: { votes, 'click-to-close': contribution.value.isZero() || !hasUserVoted.value },
-    on: {
-      close(closeModal) {
-        closeModal()
-      },
+const { open: openContributionModal, close: closeContributionModal } = useModal({
+  component: ContributionModal,
+  attrs: {
+    votes: votes.value,
+    onClose() {
+      closeContributionModal()
     },
-  })*/
+  },
+})
+
+const { open: openReallocationModal, close: closeReallocationModal } = useModal({
+  component: ReallocationModal,
+  attrs: {
+    votes: votes.value,
+    onClose() {
+      closeReallocationModal()
+    },
+  },
+})
+
+const { open: openWithdrawalModal, close: closeWithdrawalModal } = useModal({
+  component: WithdrawalModal,
+  attrs: {
+    onClose() {
+      closeWithdrawalModal()
+    },
+  },
+})
+
+function submitCart(event: any) {
+  event.preventDefault()
+
+  if (contribution.value.isZero() || !hasUserVoted.value) {
+    openContributionModal()
+  } else {
+    openReallocationModal()
+  }
 
   appStore.toggleEditSelection(false)
 }
 
-const canWithdrawContribution = () =>
-  computed(() => currentRound.value?.status === RoundStatus.Cancelled && !contribution.value.isZero())
-
-function withdrawContribution() {
-  //$vfm.show({ component: WithdrawalModal })
-}
+const canWithdrawContribution = computed(
+  () => currentRound.value?.status === RoundStatus.Cancelled && !contribution.value.isZero(),
+)
 
 const showCollapseCart = computed(() => route.name !== 'cart')
 
