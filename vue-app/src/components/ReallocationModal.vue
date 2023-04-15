@@ -6,7 +6,7 @@
         <transaction
           :hash="voteTxHash"
           :error="voteTxError"
-          @close="$emit('close')"
+          @close="emit('close')"
           @retry="
             () => {
               voteTxError = ''

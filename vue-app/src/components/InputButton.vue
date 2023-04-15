@@ -1,6 +1,6 @@
 <template>
   <form action="#" class="input-button">
-    <img v-if="input" class="token-icon" height="24" :src="tokenLogoImageUrl" />
+    <img v-if="input" class="token-icon" height="24" :src="appStore.tokenLogoUrl" />
     <input
       v-if="input"
       class="input"
@@ -25,13 +25,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { getTokenLogo } from '@/utils/tokens'
 import { useAppStore } from '@/stores'
-import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
-const { currentRound } = storeToRefs(appStore)
 
 type buttonType = {
   text: string
@@ -55,11 +51,6 @@ interface Props {
 defineProps<Props>()
 
 const emit = defineEmits(['update:modelValue', 'click'])
-
-const tokenLogoImageUrl = computed(() => {
-  const { nativeTokenSymbol } = currentRound.value!
-  return new URL(`/src/assets/${getTokenLogo(nativeTokenSymbol)}`, import.meta.url).href
-})
 
 function handleInputChange(event: Event) {
   emit('update:modelValue', (event.target as HTMLInputElement).value)

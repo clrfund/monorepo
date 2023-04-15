@@ -1,43 +1,60 @@
 <template>
   <div id="banner" class="caps">
     <div class="marquee-content">
-      <div v-if="isJoinOnlyPhase" class="messsage">
-        <span class="label">Funding starts 🗓 {{ startDate }}.</span>
-        <span v-if="isRecipientRegistryFull" class="label"> Project applications are closed.</span>
+      <div v-if="isRoundJoinOnlyPhase" class="messsage">
+        <span class="label">{{ $t('roundStatusBanner.span1', { startDate: startDate }) }}</span>
+        <span v-if="isRecipientRegistryFull" class="label"> {{ $t('roundStatusBanner.span2') }}</span>
         <span v-if="isRecipientRegistryFillingUp" class="label">
-          Hurry, only {{ recipientSpacesRemainingString }} left!
+          {{
+            $t('roundStatusBanner.span3', {
+              recipientSpacesRemainingString: recipientSpacesRemainingString,
+            })
+          }}
         </span>
         <span v-if="!isRecipientRegistryFull" class="label">
-          Time left to add a project:
-          <time-left unit-class="none" value-class="none" :date="recipientJoinDeadline!" />
+          {{ $t('roundStatusBanner.span4') }}
+          <time-left v-if="recipientJoinDeadline" unitClass="none" valueClass="none" :date="recipientJoinDeadline" />
         </span>
       </div>
       <div v-if="isRoundContributionPhase" class="messsage">
         <span v-if="isRoundContributionPhaseEnding" class="label">
-          ⌛️ The round will close in
-          <time-left unit-class="none" value-class="none" :date="currentRound!.signUpDeadline" />. Get your
-          contributions in now!
+          {{ $t('roundStatusBanner.span5_t1') }}
+          <time-left
+            v-if="currentRound?.signUpDeadline"
+            unitClass="none"
+            valueClass="none"
+            :date="currentRound?.signUpDeadline"
+          />{{ $t('roundStatusBanner.span5_t2') }}
         </span>
         <span v-else class="label"
-          >🎉 The round is open!
-          <time-left unit-class="none" value-class="none" :date="currentRound!.signUpDeadline" />
-          left to contribute to your favorite projects
+          >{{ $t('roundStatusBanner.span6_t1') }}
+          <time-left
+            v-if="currentRound?.signUpDeadline"
+            unitClass="none"
+            valueClass="none"
+            :date="currentRound?.signUpDeadline"
+          />
+          {{ $t('roundStatusBanner.span6_t2') }}
         </span>
       </div>
       <div v-if="isRoundReallocationPhase" class="messsage">
         <span class="label">
-          Funding is closed! If you contributed, you have
-          <time-left unit-class="none" value-class="none" :date="currentRound!.votingDeadline" />
-          left to change your mind
+          {{ $t('roundStatusBanner.span7_t1') }}
+          <time-left
+            v-if="currentRound?.votingDeadline"
+            unitClass="none"
+            valueClass="none"
+            :date="currentRound?.votingDeadline"
+          />
+          {{ $t('roundStatusBanner.span7_t2') }}
         </span>
       </div>
       <div v-if="isRoundTallying" class="messsage">
-        <span class="label">🎉 Funding is closed! Our smart contracts are busy tallying contributions... </span>
+        <span class="label">{{ $t('roundStatusBanner.span8') }} </span>
       </div>
       <div v-if="isRoundFinalized" class="messsage">
         <span class="label"
-          >Funding is closed! Contributions are ready to claim. Head to your project page to claim your funds.
-          <links to="/projects">View projects</links></span
+          >{{ $t('roundStatusBanner.span9') }} <links to="/projects">{{ $t('roundStatusBanner.link1') }}</links></span
         >
       </div>
     </div>
@@ -58,7 +75,7 @@ const {
   currentRound,
   recipientSpacesRemaining,
   recipientJoinDeadline,
-  isJoinOnlyPhase,
+  isRoundJoinOnlyPhase,
   isRecipientRegistryFull,
   isRecipientRegistryFillingUp,
   isRoundContributionPhase,
