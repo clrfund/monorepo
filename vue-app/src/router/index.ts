@@ -25,9 +25,6 @@ const VerifyView = () => import('@/views/Verify.vue')
 const RecipientRegistryView = () => import('@/views/RecipientRegistry.vue')
 const CartView = () => import('@/views/CartView.vue')
 const TransactionSuccess = () => import('@/views/TransactionSuccess.vue')
-const BrightIdGuide = () => import('@/views/BrightIdGuide.vue')
-const BrightIdSponsor = () => import('@/views/BrightIdSponsor.vue')
-const BrightIdSponsored = () => import('@/views/BrightIdSponsored.vue')
 
 // TODO: create a new route that takes funding factory address as a param
 const routes: Array<RouteRecordRaw> = [
@@ -231,30 +228,6 @@ const routes: Array<RouteRecordRaw> = [
     component: TransactionSuccess,
     meta: {
       title: 'Transaction Success',
-    },
-  },
-  {
-    path: '/brightid',
-    name: 'brightid',
-    component: BrightIdGuide,
-    meta: {
-      title: 'BrightId',
-    },
-  },
-  {
-    path: '/brightid/sponsor',
-    name: 'brightid-sponsor',
-    component: BrightIdSponsor,
-    meta: {
-      title: 'BrightId Sponsor',
-    },
-  },
-  {
-    path: '/brightid/sponsored/:hash',
-    name: 'sponsored',
-    component: BrightIdSponsored,
-    meta: {
-      title: 'Sponsored',
     },
   },
 ]
