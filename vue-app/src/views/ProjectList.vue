@@ -9,12 +9,12 @@
         }"
       >
         <div class="header">
-          <h2>Projects</h2>
+          <h2>{{ $t('projectList.h2') }}</h2>
         </div>
 
         <filter-dropdown
           :categories="categories"
-          :selected-categories="selectedCategories"
+          :selectedCategories="selectedCategories"
           @change="handleFilterClick"
         />
 
@@ -24,14 +24,14 @@
             v-model="search"
             class="input"
             name="search"
-            placeholder="Search projects"
+            :placeholder="$t('projectList.input')"
             autocomplete="on"
             onfocus="this.value=''"
           />
-          <img v-if="search.length > 0" src="@/assets/close.svg" height="20" class="pointer" @click="clearSearch" />
+          <img v-if="search.length > 0" @click="clearSearch" src="@/assets/close.svg" height="20" class="pointer" />
         </div>
         <div class="add-project">
-          <links to="/join" class="btn-primary">Add project</links>
+          <links to="/join" class="btn-primary">{{ $t('projectList.link1') }}</links>
         </div>
         <div class="hr" />
       </div>
@@ -40,14 +40,16 @@
         <call-to-action-card v-if="!search && selectedCategories.length === 0" />
         <project-list-item
           v-for="project in filteredProjects"
-          :key="project.id"
           :project="project"
-          :round-address="roundAddress"
+          :key="project.id"
+          :roundAddress="roundAddress"
         >
         </project-list-item>
       </div>
-      <div v-if="filteredProjects.length === 0" class="empty-search">
-        <div>😢 No projects match your search. Try using the filter to narrow down what you're looking for.</div>
+      <div class="empty-search" v-if="filteredProjects.length == 0">
+        <div>
+          {{ $t('projectList.div1') }}
+        </div>
       </div>
     </div>
   </div>
@@ -134,14 +136,6 @@ function formatIntegerPart(value: FixedNumber): string {
   }
   const integerPart = value.toString().split('.')[0]
   return integerPart + (value.round(0) === value ? '' : '.')
-}
-
-function formatFractionalPart(value: FixedNumber): string {
-  return value._value === '0.0' ? '' : value.round(2).toString().split('.')[1]
-}
-
-function formatDate(value: DateTime): string {
-  return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
 }
 
 const filteredProjects = computed(() => {

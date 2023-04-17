@@ -6,7 +6,6 @@
       <div class="desktop">
         <add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn" :project="project" />
         <claim-button :project="project" />
-        <p v-if="hasUserContributed && !canUserReallocate">✔️ You have contributed to this project!</p>
       </div>
       <link-box :project="project" />
     </div>
@@ -15,16 +14,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import type { FixedNumber } from 'ethers'
 
 import { type Project, getRecipientRegistryAddress, getProject } from '@/api/projects'
 import { getCurrentRound } from '@/api/round'
-import Loader from '@/components/Loader.vue'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import LinkBox from '@/components/LinkBox.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
-import { markdown } from '@/utils/markdown'
 
 import { useMeta } from 'vue-meta'
 import { storeToRefs } from 'pinia'
@@ -34,11 +30,9 @@ import { useAppStore } from '@/stores'
 const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
-const { showCartPanel, isRoundContributionPhase, canUserReallocate, hasUserContributed } = storeToRefs(appStore)
+const { showCartPanel, isRoundContributionPhase, canUserReallocate } = storeToRefs(appStore)
 
 const project = ref<Project | null>(null)
-const allocatedAmount = ref<FixedNumber | null>(null)
-const claimed = ref<boolean | null>(null)
 const isLoading = ref(true)
 const isCartToggledOpen = computed(() => showCartPanel)
 const isCurrentRound = computed(() => {
@@ -50,7 +44,6 @@ const shouldShowCartInput = computed(
   () => (isCurrentRound.value && isRoundContributionPhase.value) || canUserReallocate,
 )
 const hasContributeBtn = computed(() => isCurrentRound.value && project.value !== null && project.value.index !== 0)
-const descriptionHtml = computed(() => markdown.render(project.value?.description || ''))
 
 useMeta({
   title: project.value?.name || '',
@@ -67,7 +60,7 @@ onMounted(async () => {
   console.log('Project mounted', appStore.currentRoundAddress)
   const currentRoundAddress = appStore.currentRoundAddress || (await getCurrentRound())
 
-  const roundAddress = (route.params.address as string) || appStore.currentRoundAddress
+  const roundAddress = (route.params.address as string) || currentRoundAddress
 
   const registryAddress = await getRecipientRegistryAddress(roundAddress)
   const _project = await getProject(registryAddress, route.params.id as string)

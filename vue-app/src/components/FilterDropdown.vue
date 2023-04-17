@@ -2,7 +2,7 @@
   <div v-click-outside="closeDropdown" class="category-filter">
     <div class="filter-btn" @click="toggleDropdown">
       <span class="filter-text">
-        Filter
+        {{ $t('filter') }}
         <span v-if="selectedCategories.length">({{ selectedCategories.length }})</span>
       </span>
       <img src="@/assets/chevron-down.svg" alt="Down arrow" :class="{ 'filter-chevron-open': visible }" />
@@ -17,7 +17,7 @@
         }"
         @click="handleFilterClick(category)"
       >
-        {{ category }}
+        {{ $t(appStore.categoryLocaleKey(category)) }}
         <img v-if="selectedCategories.includes(category)" class="close" src="@/assets/close.svg" />
       </div>
     </div>
@@ -26,8 +26,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useAppStore } from '@/stores'
 
-// import ClickOutside from '@/directives/ClickOutside'
+const appStore = useAppStore()
 
 interface Props {
   categories: string[]
