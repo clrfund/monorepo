@@ -10,31 +10,38 @@
         <span class="contributed-icon">🎉</span>
         <p v-if="$route.params.type === 'reallocation'" class="contributed-header">
           {{ formatContribution }}
-          {{ currentRound?.nativeTokenSymbol }} reallocated!
+          {{ currentRound?.nativeTokenSymbol }} {{ $t('transactionSuccess.p1') }}
         </p>
-        <p v-else-if="$route.params.type === 'contribution'" class="contributed-header">You just contributed!</p>
+        <p v-else-if="$route.params.type === 'contribution'" class="contributed-header">
+          {{ $t('transactionSuccess.p2') }}
+        </p>
         <div>
           <p v-if="$route.params.type === 'reallocation'" class="contributed-content">
-            Your choices have been updated! You can update your choices again any time in the next
+            {{ $t('transactionSuccess.p3') }}
             <time-left
-              value-class="contributed-content-bold"
-              unit-class="contributed-content-bold"
-              :date="currentRound?.votingDeadline!"
-            />.
+              v-if="currentRound?.votingDeadline"
+              valueClass="contributed-content-bold"
+              unitClass="contributed-content-bold"
+              :date="currentRound?.votingDeadline"
+            />
+            {{ $t('transactionSuccess.p4') }}
           </p>
           <p v-else-if="$route.params.type === 'contribution'" class="contributed-content">
-            Thanks for contributing to the Ethereum ecosystem. If you change your mind, you have
+            {{ $t('transactionSuccess.p4_t1') }}
             <time-left
-              value-class="contributed-content-bold"
-              unit-class="contributed-content-bold"
-              :date="currentRound?.votingDeadline!"
+              v-if="currentRound?.votingDeadline"
+              valueClass="contributed-content-bold"
+              unitClass="contributed-content-bold"
+              :date="currentRound.votingDeadline"
             />
-            to reallocate your contributions.
+            {{ $t('transactionSuccess.p4_t2') }}
           </p>
-          <div v-if="hash" class="receipt">
+          <div class="receipt" v-if="$route.params.hash">
             <transaction-receipt :hash="hash" />
           </div>
-          <div class="btn-info" @click="redirectToProjects()">OK</div>
+          <div class="btn-info" @click="redirectToProjects()">
+            {{ $t('transactionSuccess.btn') }}
+          </div>
         </div>
       </div>
     </div>

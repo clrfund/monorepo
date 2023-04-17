@@ -1,11 +1,16 @@
 <template>
   <div class="rounds">
-    <h1 class="content-heading">Rounds</h1>
-    <div v-for="round in rounds" :key="round.index" class="round">
-      <links v-if="round.address" class="round-name" :to="{ name: 'round', params: { address: round.address } }">
-        Round {{ round.index }}
+    <h1 class="content-heading">{{ $t('roundList.h1') }}</h1>
+    <div class="round" v-for="round in rounds" :key="round.index">
+      <links
+        class="round-name"
+        :to="{
+          name: 'round',
+          params: { address: round.address },
+        }"
+      >
+        {{ $t('roundList.link1', { index: round.index }) }}
       </links>
-      <links v-else :to="round.url ? round.url : ''"> Round {{ round.index }} </links>
     </div>
   </div>
 </template>
