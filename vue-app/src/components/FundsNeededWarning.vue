@@ -1,20 +1,37 @@
 <template>
-  <div v-if="needsFunds" :class="!isCompact && 'warning'">
-    <span v-if="!isCompact"> You need {{ chain.isLayer2 ? 'L2' : chain.label }} funds! </span>
-    <p v-if="!!singleTokenNeeded">⚠️ You need both some ETH for gas, and {{ nativeTokenSymbol }} to contribute</p>
-    <p class="message" @click="onNavigate">
+  <div :class="!isCompact && 'warning'" v-if="needsFunds">
+    <span v-if="!isCompact">
+      {{ $t('fundsNeededWarning.span1_t1') }}
+      {{ chain.isLayer2 ? $t('fundsNeededWarning.span1_l2') : chain.label }}
+      {{ $t('fundsNeededWarning.span1_t2') }}
+    </span>
+    <p v-if="!!singleTokenNeeded">
+      {{ $t('fundsNeededWarning.p1') }}
+    </p>
+    <p @click="onNavigate" class="message">
       <links
         v-if="chain.isLayer2"
-        :to="`{
-					name: 'about-layer-2',
-					params: {
-						section: 'bridge',
-					},
-				}`"
+        :to="{
+          name: 'about-layer-2',
+          params: {
+            section: 'bridge',
+          },
+        }"
       >
-        Get help bridging {{ singleTokenNeeded }} to Layer 2
+        {{
+          $t('fundsNeededWarning.link1', {
+            nativeTokenSymbol: nativeTokenSymbol,
+          })
+        }}
       </links>
-      <links v-else :to="chain.bridge ? chain.bridge : ''"> Bridge {{ singleTokenNeeded }} to {{ chain.label }} </links>
+      <links v-else :to="chain.bridge">
+        {{
+          $t('fundsNeededWarning.link2', {
+            singleTokenNeeded: singleTokenNeeded,
+            chain: chain.label,
+          })
+        }}
+      </links>
     </p>
   </div>
 </template>

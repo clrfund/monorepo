@@ -28,7 +28,7 @@
         <input-button
           :modelValue="item.amount"
           :input="{
-            placeholder: 'Amount',
+            placeholder: $t('cartItems.button1'),
             class: `{ invalid: ${!isAmountValid(item.amount)} }`,
             disabled: !canUpdateAmount(),
           }"
