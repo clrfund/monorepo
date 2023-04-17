@@ -1,34 +1,39 @@
 <template>
   <!-- Reallocate CTA -->
-  <div v-if="canUserReallocate" class="get-prepared">
+  <div class="get-prepared" v-if="canUserReallocate">
     <span aria-label="thinking face" class="emoji">🤔</span>
     <div>
-      <h2 class="prep-title">Changed your mind?</h2>
-      <p class="prep-text">You still have time to reallocate your contributions.</p>
-      <div class="btn-action" @click="toggleCartPanel()">Open cart</div>
+      <h2 class="prep-title">{{ $t('callToActionCard.h2_1') }}</h2>
+      <p class="prep-text">
+        {{ $t('callToActionCard.p1') }}
+      </p>
+      <div class="btn-action" @click="toggleCartPanel()">
+        {{ $t('callToActionCard.div1') }}
+      </div>
     </div>
   </div>
   <!-- Round is over notification -->
-  <div v-else-if="hasContributionPhaseEnded" class="get-prepared">
+  <div class="get-prepared" v-else-if="hasContributionPhaseEnded">
     <span aria-label="hand" class="emoji">🤚</span>
     <div>
-      <h2 class="prep-title">Round over for contributions</h2>
-      <p class="prep-text">You can no longer make any contributions this round.</p>
+      <h2 class="prep-title">{{ $t('callToActionCard.h2_2') }}</h2>
+      <p class="prep-text">
+        {{ $t('callToActionCard.p2') }}
+      </p>
     </div>
   </div>
   <!-- Get prepared CTA -->
-  <div v-else-if="showUserVerification" class="get-prepared">
-    <bright-id-widget v-if="hasStartedVerification" :is-project-card="true" />
+  <div class="get-prepared" v-else-if="showUserVerification">
+    <bright-id-widget v-if="hasStartedVerification" :isProjectCard="true" />
     <span v-else aria-label="rocket" class="emoji">🚀</span>
     <div>
-      <h2 class="prep-title">Get prepared</h2>
+      <h2 class="prep-title">{{ $t('callToActionCard.h2_3') }}</h2>
       <p class="prep-text">
-        You’ll need to set up a few things before you contribute. You can do this any time before or during the funding
-        round.
+        {{ $t('callToActionCard.p3') }}
       </p>
     </div>
-    <links v-if="!hasStartedVerification" to="/verify" class="btn-action">Start prep</links>
-    <links v-else to="/verify/connect" class="btn-action">Continue setup</links>
+    <links v-if="!hasStartedVerification" to="/verify" class="btn-action">{{ $t('callToActionCard.link1') }}</links>
+    <links v-else to="/verify/connect" class="btn-action">{{ $t('callToActionCard.link2') }}</links>
   </div>
 </template>
 
