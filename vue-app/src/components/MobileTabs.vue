@@ -21,7 +21,7 @@
           </div>
         </transition>
       </div>
-      <span class="tab-title">{{ title }}</span>
+      <span class="tab-title">{{ $t(`dynamic.mobile.tab.${title}`) }}</span>
     </links>
   </div>
 </template>
