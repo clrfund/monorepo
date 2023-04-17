@@ -1,104 +1,128 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">How the round works</h1>
-    <h2>CLR walkthrough</h2>
+    <h1 class="content-heading">{{ $t('howItWorks.heading.title') }}</h1>
+    <h2>{{ $t('howItWorks.heading.subtitle') }}</h2>
     <p>
-      This is an overview of how everything works behind the scenes so you can learn what to expect throughout the
-      duration of the round.
+      {{ $t('howItWorks.heading.paragraph-1') }}
     </p>
     <p>
-      Looking for a guide on how to participate? Check out our guides specifically for contributing and joining as a
-      project.
+      {{ $t('howItWorks.heading.paragraph-2') }}
     </p>
     <ul>
       <li>
-        <links to="/about/how-it-works/contributors">Guide for contributors</links>
+        <links to="/about/how-it-works/contributors">{{ $t('howItWorks.heading.li-1') }}</links>
       </li>
       <li>
-        <links to="/about/how-it-works/recipients">Guide for recipients</links>
+        <links to="/about/how-it-works/recipients">{{ $t('howItWorks.heading.li-2') }}</links>
       </li>
     </ul>
 
-    <h2>Quick recap on quadratic funding</h2>
+    <h2>{{ $t('howItWorks.quick.title') }}</h2>
     <p>
-      As outlined in our
-      <links to="/about/quadratic-funding">overview on quadratic funding</links>, projects will receive funding from
-      individual contributions as well as the matching pool. When you contribute to your favorite projects, your
-      contribution also acts as a vote. The more contributions a project receives, the more votes. And the more votes a
-      project gets, the more they'll receive from the matching pool. Although a higher individual contribution will
-      equal a larger vote weighting, it's far more important to receive a large volume of unique contributions than just
-      a few high value contributions.
+      {{ $t('howItWorks.quick.paragraph-1-text-1') }}
+      <links to="/about/quadratic-funding">{{ $t('howItWorks.quick.link-1') }}</links
+      >{{ $t('howItWorks.quick.paragraph-1-text-2') }}
     </p>
     <p>
-      As the funding round is also a public vote, it needs deadlines. The round is split into multiple phases so that
-      after all contributions or votes are made, they can be counted and confirmed before the final matching pool
-      distribution.
+      {{ $t('howItWorks.quick.paragraph-2') }}
     </p>
-    <h2>Funding round phases</h2>
-    <h3>Join phase</h3>
+    <h2>{{ $t('howItWorks.phases.title') }}</h2>
+    <h3>{{ $t('howItWorks.phases.subtitle') }}</h3>
     <p>
-      To kick things off, projects will be invited to
-      <links to="/join">join the round</links>. If you're an eager contributor, you'll be able to browse the projects
-      and add them to your cart but you won't be able to contribute just yet.
+      {{ $t('howItWorks.phases.paragraph-1-text-1') }}
+      <links to="/join">{{ $t('howItWorks.phases.link-1') }}</links
+      >{{ $t('howItWorks.phases.paragraph-1-text-2') }}
     </p>
-    <h4>Need to know</h4>
+    <h4>{{ $t('howItWorks.phases.need.title') }}</h4>
     <ul>
-      <li>There will be a maximum of {{ maxRecipients }} projects in the round.</li>
-      <li>Projects must meet <links to="/join">round criteria</links>.</li>
       <li>
-        If you want to contribute, this is a perfect time to get
-        <links to="/verify">set up to contribute</links>.
+        {{ $t('howItWorks.phases.need.li-1', { maxRecipients: maxRecipients }) }}
+      </li>
+      <li>
+        {{ $t('howItWorks.phases.need.li-2-text')
+        }}<links to="/join">{{ $t('howItWorks.phases.need.li-2-link') }}</links>
+      </li>
+      <li>
+        {{ $t('howItWorks.phases.need.li-3-text') }}
+        <links to="/verify">{{ $t('howItWorks.phases.need.li-3-link') }}</links>
       </li>
     </ul>
-    <h3>Contribution phase</h3>
+    <h3>{{ $t('howItWorks.contribution.title') }}</h3>
     <p>
-      The launch of the contribution phase follows the join phase and marks the official start of the funding round.
-      This is the time for you to add your favorite projects to your cart and contribute.
+      {{ $t('howItWorks.contribution.paragraph-1') }}
     </p>
-    <h4>Need to know</h4>
+    <h4>{{ $t('howItWorks.contribution.need.title') }}</h4>
     <ul>
-      <li>This phase will last {{ contributionPhaseDays }} days.</li>
       <li>
-        You will need to go through some
-        <links to="/verify">setup</links> before you can contribute.
+        {{
+          $t('howItWorks.contribution.need.li-1', {
+            contributionPhaseDays: contributionPhaseDays,
+          })
+        }}
       </li>
-      <li>The maximum contribution amount is {{ maxContributionAmount }} {{ nativeTokenSymbol }}.</li>
-      <li>Your total contribution amount is final. You can't increase it by contributing an additional time.</li>
-    </ul>
-
-    <p>If you dont contribute in the contribution phase, the round is over for you once this phase ends.</p>
-
-    <h3>Reallocation phase</h3>
-    <p>
-      During this phase, if you've contributed, you will have time to change your mind. You can edit your contribution
-      amounts or add/remove projects but your total must equal that of your original contribution.
-    </p>
-    <h4>Need to know</h4>
-    <ul>
-      <li>This phase will last {{ reallocationPhaseDays }} days after the end of the contribution phase.</li>
       <li>
-        If you remove projects, you must reallocate the funds to other projects or it will go to the matching pool.
+        {{ $t('howItWorks.contribution.need.li-2-text-1') }}
+        <links to="/verify">{{ $t('howItWorks.contribution.need.li-2-link') }}</links>
+        {{ $t('howItWorks.contribution.need.li-2-text-2') }}
       </li>
-      <li>You can't exceed your original contribution total when reallocating funds.</li>
+      <li>
+        {{
+          $t('howItWorks.contribution.need.li-3', {
+            maxContributionAmount: maxContributionAmount,
+            nativeTokenSymbol: nativeTokenSymbol,
+          })
+        }}
+      </li>
+      <li>
+        {{ $t('howItWorks.contribution.need.li-4') }}
+      </li>
     </ul>
-    <h3>Tallying phase</h3>
     <p>
-      At this point, all contributions are final, and can now be counted. The round coordinator triggers
-      <links to="/about/maci">MACI</links>
-      and the smart contracts to calculate how much of the matching pool each project will get.
+      {{ $t('howItWorks.contribution.paragraph-2') }}
     </p>
-    <h3>Finalized phase</h3>
+    <h3>{{ $t('howItWorks.reallocation.title') }}</h3>
     <p>
-      Once the tallying calculations are complete, the round is finalized. Project owners can come and claim their
-      funding!
+      {{ $t('howItWorks.reallocation.paragraph') }}
     </p>
-    <h2>More</h2>
+    <h4>{{ $t('howItWorks.reallocation.need.title') }}</h4>
+    <ul>
+      <li>
+        {{
+          $t('howItWorks.reallocation.need.li-1', {
+            reallocationPhaseDays: reallocationPhaseDays,
+          })
+        }}
+      </li>
+      <li>
+        {{ $t('howItWorks.reallocation.need.li-2') }}
+      </li>
+      <li>
+        {{ $t('howItWorks.reallocation.need.li-3') }}
+      </li>
+    </ul>
+    <h3>{{ $t('howItWorks.tallying.title') }}</h3>
     <p>
-      We use different tech to keep the round fair and free from malicious actors. You can learn more about them below:
+      {{ $t('howItWorks.tallying.paragraph-text-1') }}
+      <links to="/about/maci">{{ $t('howItWorks.tallying.link') }}</links>
+      {{ $t('howItWorks.tallying.paragraph-text-2') }}
+    </p>
+    <h3>{{ $t('howItWorks.finalized.title') }}</h3>
+    <p>
+      {{ $t('howItWorks.finalized.paragraph') }}
+    </p>
+    <h2>{{ $t('howItWorks.more.title') }}</h2>
+    <p>
+      {{ $t('howItWorks.more.paragraph') }}
     </p>
     <ul>
-      <li><links to="/about/maci">MACI</links> – to protect against bribery and tally round results</li>
-      <li><links to="/about/sybil-resistance">BrightID</links> – to protect against sybil attacks</li>
+      <li>
+        <links to="/about/maci">{{ $t('howItWorks.more.li-1-link') }}</links
+        >{{ $t('howItWorks.more.li-1-text') }}
+      </li>
+      <li>
+        <links to="/about/sybil-resistance">{{ $t('howItWorks.more.li-2-link') }}</links
+        >{{ $t('howItWorks.more.li-2-text') }}
+      </li>
     </ul>
   </div>
 </template>

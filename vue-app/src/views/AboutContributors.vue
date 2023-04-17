@@ -1,83 +1,98 @@
 <template>
   <div class="about">
-    <h1 class="content-heading">Contributor guide</h1>
+    <h1 class="content-heading">{{ $t('contributors.heading.title') }}</h1>
     <p>
-      An overview of how things work as a contributor so you can learn what to expect throughout the duration of a
-      funding round.
+      {{ $t('contributors.heading.paragraph') }}
     </p>
-    <h2>Get funds on {{ chain.label }}</h2>
+    <h2>{{ $t('contributors.funds.title', { chain: chain.label }) }}</h2>
     <p>
-      You'll need some {{ chain.currency }} on {{ chain.label }} in order to submit transactions to the clr.fund smart
-      contracts.
+      {{
+        $t('contributors.funds.paragraph-1-text-1', {
+          currency: chain.currency,
+          chain: chain.label,
+        })
+      }}
       <span v-if="chain.label.includes('Arbitrum')">
-        Follow
-        <links to="https://arbitrum.io/bridge-tutorial/">this tutorial</links>
-        to bridge your funds to {{ chain.label }}
+        {{ $t('contributors.funds.paragraph-1-text-2') }}
+        <links to="https://arbitrum.io/bridge-tutorial/"> {{ $t('contributors.funds.paragraph-1-link-1') }}</links>
+        {{ $t('contributors.funds.paragraph-1-text-3', { chain: chain.label }) }}
       </span>
       <span v-else-if="chain.bridge">
-        Use the
-        <links :to="chain.bridge">{{ chain.label }} bridge</links>
-        to transfer some funds.
+        {{ $t('contributors.funds.paragraph-2-text-1') }}
+        <links :to="chain.bridge">{{ $t('contributors.funds.paragraph-2-link-1', { chain: chain.label }) }}</links>
+        {{ $t('contributors.funds.paragraph-2-text-2') }}
       </span>
     </p>
     <p v-if="chain.isLayer2">
-      Confused on what {{ chain.label }} is?
-      <links to="/about/layer-2"> Read our explanation on how clr.fund uses layer 2 on Ethereum. </links>
+      {{ $t('contributors.funds.paragraph-3-text-1', { chain: chain.label }) }}
+      <links to="/about/layer-2">
+        {{ $t('contributors.funds.paragraph-3-link-1', { chain: chain.label }) }}
+      </links>
     </p>
-    <h2>Contributing to specific projects</h2>
+    <h2>{{ $t('contributors.contributing.title') }}</h2>
     <ol>
       <li>
-        Before contributing to specific projects, you will need to
-        <links to="/verify">verify that you're a unique human</links>. This helps clr.fund
-        <links to="/about/sybil-resistance">resist sybil attacks</links>!
+        {{ $t('contributors.contributing.li-1-text-1') }}
+        <links to="/verify">{{ $t('contributors.contributing.li-1-link-1') }}</links
+        >{{ $t('contributors.contributing.li-1-text-2') }}
+        <links to="/about/sybil-resistance">{{ $t('contributors.contributing.li-1-link-2') }}</links>
       </li>
       <li>
-        Make sure you have {{ nativeTokenSymbol }} in your BrightID-verified wallet on the {{ chain.label }} network
+        {{
+          $t('contributors.contributing.li-2', {
+            chain: chain.label,
+            nativeTokenSymbol: nativeTokenSymbol,
+          })
+        }}
       </li>
       <li>
-        <links to="/projects">Browse projects</links> and add some to your cart, adjusting your contributions to the
-        amount of {{ nativeTokenSymbol }} you want.
+        <links to="/projects">{{ $t('contributors.contributing.li-3-link') }}</links>
+        {{ $t('contributors.contributing.li-3-text') }}
       </li>
       <li>
-        When you're ready, open your cart, click contribute, and confirm the transactions to complete your
-        contributions!
+        {{ $t('contributors.contributing.li-4') }}
       </li>
     </ol>
     <p>
-      Note: you can only contribute once. After submitting your contributions, you can reallocate them as much as you
-      would like before the end of the reallocation phase but you cannot add more funds to your total contribution
-      amount.
+      {{ $t('contributors.contributing.paragraph') }}
     </p>
     <ol>
-      <li>You can add and remove projects.</li>
+      <li>{{ $t('contributors.contributing.li-5') }}</li>
       <li>
-        Your reallocation total must be less than or equal to the original total (if it's less, the rest will go to the
-        matching pool).
+        {{ $t('contributors.contributing.li-6') }}
       </li>
     </ol>
-    <h2>Contributing to the matching pool</h2>
+    <h2>{{ $t('contributors.matching.title') }}</h2>
     <p>
-      Not sure which specific to contribute to? Contributions to the matching pool will be distributed to all projects
-      that receive project-specific contributions during that round. The weighting of this distribution is determined by
-      the
-      <links to="/about/quadratic-funding">quadratic funding</links> results
+      {{ $t('contributors.matching.paragraph-text-1') }}
+      <links to="/about/quadratic-funding">{{ $t('contributors.matching.paragraph-link') }}</links>
+      {{ $t('contributors.matching.paragraph-text-2') }}
     </p>
     <ol>
       <li>
-        First make sure the wallet you are using holds
-        {{ nativeTokenSymbol }} on {{ chain.label }}. {{ nativeTokenSymbol }} can be easily purchased on any major
-        Ethereum-focused exchange.
+        {{
+          $t('contributors.matching.li-1', {
+            nativeTokenSymbol: nativeTokenSymbol,
+            chain: chain.label,
+          })
+        }}
       </li>
       <li>
-        Once you have the desired amount of {{ nativeTokenSymbol }} in your wallet, select "Add Funds" on the
-        <links to="/projects">Projects page</links> and confirm the transactions.
+        {{
+          $t('contributors.matching.li-2-text-1', {
+            nativeTokenSymbol: nativeTokenSymbol,
+          })
+        }}
+        <links to="/projects"> {{ $t('contributors.matching.li-2-link') }}</links>
+        {{ $t('contributors.matching.li-2-text-2') }}
       </li>
     </ol>
     <p></p>
-    <h2>How does clr.fund work?</h2>
+    <h2>{{ $t('contributors.wow.title') }}</h2>
     <p>
-      Looking for a more general overview?
-      <links to="/about/how-it-works">Check out our "How It Works" page</links>.
+      {{ $t('contributors.wow.paragraph') }}
+      <links to="/about/how-it-works">{{ $t('contributors.wow.link') }}</links
+      >.
     </p>
   </div>
 </template>
