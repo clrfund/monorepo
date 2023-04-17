@@ -23,6 +23,7 @@ const Verified = () => import('@/views/Verified.vue')
 const JoinView = () => import('@/views/JoinView.vue')
 const VerifyView = () => import('@/views/Verify.vue')
 const RecipientRegistryView = () => import('@/views/RecipientRegistry.vue')
+const RecipientProfile = () => import('@/views/RecipientProfile.vue')
 const CartView = () => import('@/views/CartView.vue')
 const TransactionSuccess = () => import('@/views/TransactionSuccess.vue')
 
@@ -164,6 +165,14 @@ const routes: Array<RouteRecordRaw> = [
     component: RecipientRegistryView,
     meta: {
       title: 'Recipient registry',
+    },
+  },
+  {
+    path: '/recipients/:hash',
+    name: 'recipient-profile',
+    component: RecipientProfile,
+    meta: {
+      title: 'Recipient profile',
     },
   },
   {

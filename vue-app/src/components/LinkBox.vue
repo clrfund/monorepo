@@ -1,13 +1,13 @@
 <template>
-  <div class="link-box">
-    <h2 class="link-title">Check them out</h2>
+  <div v-if="haveLink" class="link-box">
+    <h2 class="link-title">{{ $t('linkBox.h2') }}</h2>
     <div v-if="project.githubUrl" class="link-row">
       <img src="@/assets/GitHub.svg" />
-      <links :to="project.githubUrl">GitHub repo</links>
+      <links :to="project.githubUrl">{{ $t('linkBox.link1') }}</links>
     </div>
     <div v-if="project.twitterUrl" class="link-row">
       <img src="@/assets/Twitter.svg" />
-      <links :to="project.twitterUrl">@Twitter</links>
+      <links :to="project.twitterUrl">{{ $t('linkBox.link2') }}</links>
     </div>
     <div v-if="project.websiteUrl" class="link-row">
       <img src="@/assets/Meridians.svg" />
@@ -24,7 +24,11 @@ interface Props {
   project: Project
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const haveLink = computed(() => {
+  return Boolean(props.project.websiteUrl || props.project.twitterUrl || props.project.githubUrl)
+})
 </script>
 
 <style scoped lang="scss">

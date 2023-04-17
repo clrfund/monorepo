@@ -3,24 +3,27 @@
     <div :class="isWaiting ? 'recipient-submission-widget shine' : 'recipient-submission-widget'">
       <loader v-if="isLoading" />
       <div :class="isWaiting || txError ? 'tx-progress-area' : 'tx-progress-area-no-notice'">
-        <loader v-if="isWaiting" class="button-loader" />
+        <loader class="button-loader" v-if="isWaiting" />
         <div v-if="isWaiting" class="tx-notice">
-          <div v-if="!!txHash">Waiting for transaction to be mined...</div>
-          <div v-else>Check your wallet for a prompt...</div>
+          <div v-if="!!txHash">{{ $t('recipientSubmissionWidget.div1') }}</div>
+          <div v-else>{{ $t('recipientSubmissionWidget.div2') }}</div>
         </div>
         <div v-if="hasTxError" class="warning-icon">⚠️</div>
         <div v-if="hasTxError" class="warning-text">
-          Something failed: {{ txError }}<br />
-          Check your wallet or {{ blockExplorerLabel }} for more info.
+          {{ $t('recipientSubmissionWidget.div3_t1', { txError: txError }) }}<br />
+          {{
+            $t('recipientSubmissionWidget.div3_t2', {
+              blockExplorerLabel: blockExplorerLabel,
+            })
+          }}
         </div>
       </div>
       <div class="connected">
         <div class="total-title">
-          Total to submit
+          {{ $t('recipientSubmissionWidget.div4') }}
           <img
             v-tooltip="{
-              content: 'Estimate – this total may be slightly different in your wallet.',
-              triggers: ['hover', 'click'],
+              content: $t('recipientSubmissionWidget.tooltip1'),
             }"
             src="@/assets/info.svg"
           />
@@ -29,18 +32,21 @@
           {{ depositAmount }}
           <span class="total-currency"> {{ depositToken }}</span>
         </div>
-        <div v-if="hasLowFunds" class="warning-text">
-          Not enough {{ depositToken }} in your wallet.<br />
-          Top up or connect a different wallet.
+        <div class="warning-text" v-if="hasLowFunds">
+          {{
+            $t('recipientSubmissionWidget.div5_t1', {
+              depositToken: depositToken,
+            })
+          }}<br />
+          {{ $t('recipientSubmissionWidget.div5_t2') }}
         </div>
         <div v-if="txHasDeposit" class="checkout-row">
-          <p class="m05"><b>Security deposit</b></p>
+          <p class="m05">
+            <b>{{ $t('recipientSubmissionWidget.p1') }}</b>
+          </p>
           <p class="m05">
             {{ depositAmount }} {{ depositToken }}
-            <span class="o5"
-              >({{ fiatSign
-              }}{{ recipientRegistryInfo?.deposit ? calculateFiatFee(recipientRegistryInfo.deposit) : '' }})</span
-            >
+            <span class="o5">({{ fiatSign }}{{ fiatFee }})</span>
           </p>
         </div>
       </div>
@@ -50,11 +56,9 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import type { BigNumber } from 'ethers'
 import { type EthPrice, fetchCurrentEthPrice } from '@/api/price'
 import { chain } from '@/api/core'
 import Loader from '@/components/Loader.vue'
-import Transaction from '@/components/Transaction.vue'
 import { formatAmount } from '@/utils/amounts'
 import { useUserStore, useRecipientStore } from '@/stores'
 
@@ -72,7 +76,6 @@ const props = defineProps<Props>()
 
 const isLoading = ref(true)
 const ethPrice = ref<EthPrice | null>(null)
-const fiatFee = ref('-')
 const fiatSign = ref('$')
 
 const blockExplorerLabel = computed(() => {
@@ -102,12 +105,13 @@ const depositToken = computed(() => {
   return recipientRegistryInfo.value?.depositToken ?? ''
 })
 
-function calculateFiatFee(ethAmount: BigNumber): string {
+const fiatFee = computed(() => {
   if (recipientRegistryInfo.value && ethPrice.value) {
-    return Number(ethPrice.value.ethereum.usd * Number(formatAmount(ethAmount, 18))).toFixed(2)
+    const { deposit } = recipientRegistryInfo.value
+    return Number(ethPrice.value.ethereum.usd * Number(formatAmount(deposit, 18))).toFixed(2)
   }
   return '-'
-}
+})
 
 onMounted(async () => {
   ethPrice.value = await fetchCurrentEthPrice()
@@ -274,6 +278,8 @@ onMounted(async () => {
 
 .warning-text {
   font-size: 14px;
+  overflow-y: hidden;
+  max-height: 200px;
 }
 
 .warning-text,

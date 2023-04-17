@@ -444,4 +444,4 @@ export async function removeProject(registryAddress: string, recipientId: string
   return transaction
 }
 
-export default { getProjects, getProject, registerProject }
+export default { getProjects, getProject, registerProject, decodeProject }

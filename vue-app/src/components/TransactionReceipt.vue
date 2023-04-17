@@ -12,7 +12,7 @@
         :to="blockExplorer.url"
         :hide-arrow="true"
       >
-        <img class="icon" :src="logoUrl" />
+        <img class="icon" :src="blockExplorer.logoUrl" />
       </links>
       <copy-button :value="hash" text="hash" my-class="icon" @copied="updateIsCopied" />
     </div>
@@ -25,7 +25,7 @@ import { computed, onMounted, ref } from 'vue'
 import Loader from '@/components/Loader.vue'
 import CopyButton from '@/components/CopyButton.vue'
 import Links from '@/components/Links.vue'
-import { chain } from '@/api/core'
+import { getBlockExplorer } from '@/utils/explorer'
 import { isTransactionMined } from '@/utils/contracts'
 import { renderAddressOrHash } from '@/utils/accounts'
 
@@ -41,18 +41,14 @@ const isCopied = ref(false)
 const renderCopiedOrHash = computed<string>(() => {
   return isCopied.value ? 'Copied!' : renderAddressOrHash(props.hash, 16)
 })
-const blockExplorer = computed<{ label: string; url: string; logo: string }>(() => {
-  return {
-    label: chain.explorerLabel,
-    url: `${chain.explorer}/tx/${props.hash}`,
-    logo: chain.explorerLogo,
-  }
-})
-const logoUrl = new URL(`/src/assets/${blockExplorer.value.logo}`, import.meta.url).href
 
 function updateIsCopied(value: boolean): void {
   isCopied.value = value
 }
+
+const blockExplorer = computed(() => {
+  return getBlockExplorer(props.hash)
+})
 
 onMounted(() => {
   checkTxStatus()

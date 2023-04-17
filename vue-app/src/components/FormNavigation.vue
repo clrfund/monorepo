@@ -1,12 +1,17 @@
 <template>
   <div>
     <div class="btn-row">
-      <button v-if="currentStep > 0" class="btn-secondary" :disabled="isNavDisabled" @click="onClickPrevious">
-        Previous
+      <button
+        v-if="currentStep > 0"
+        @click="onClickPrevious"
+        class="btn-secondary float-left"
+        :disabled="isNavDisabled"
+      >
+        {{ $t('formNavigation.button1') }}
       </button>
-      <wallet-widget v-if="!currentUser && currentStep === finalStep" class="" :is-action-button="true" />
-      <button v-else class="btn-primary" :disabled="!isStepValid" @click="onClickNextOrConfirm">
-        {{ currentStep === finalStep ? 'Confirm' : 'Next' }}
+      <wallet-widget class="float-right" v-if="!currentUser && currentStep === finalStep" :isActionButton="true" />
+      <button v-else @click="onClickNextOrConfirm" class="btn-primary float-right" :disabled="!isStepValid">
+        {{ currentStep === finalStep ? $t('formNavigation.button2_1') : $t('formNavigation.button2_2') }}
       </button>
     </div>
   </div>

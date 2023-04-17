@@ -1,8 +1,15 @@
 <template>
   <div class="progress-area">
     <div class="desktop progress-container">
-      <progress-bar :current-step="currentStep + 1" :total-steps="steps.length" />
-      <p class="subtitle">Step {{ currentStep + 1 }} of {{ steps.length }}</p>
+      <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
+      <p class="subtitle">
+        {{
+          $t('formProgressWidget.p1', {
+            currentStep: currentStep + 1,
+            steps: steps.length,
+          })
+        }}
+      </p>
       <div class="progress-steps">
         <div
           v-for="(name, step) in stepNames"
@@ -16,40 +23,48 @@
         >
           <template v-if="step === currentStep">
             <img class="current-step" src="@/assets/current-step.svg" alt="current step" />
-            <p class="active step" v-text="name" />
+            <p v-text="$t(`dynamic.progress.step.${name}`)" class="active step" />
           </template>
           <template v-else-if="step === furthestStep">
             <img src="@/assets/furthest-step.svg" alt="current step" />
-            <p class="active step" v-text="name" />
+            <p v-text="$t(`dynamic.progress.step.${name}`)" class="active step" />
           </template>
           <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
             <img class="completed-step" src="@/assets/green-tick.svg" alt="step complete" />
-            <p class="step" v-text="name" />
+            <p v-text="$t(`dynamic.progress.step.${name}`)" class="step" />
           </template>
           <template v-else>
             <img src="@/assets/step-remaining.svg" alt="step remaining" />
-            <p class="step" v-text="name" />
+            <p v-text="$t(`dynamic.progress.step.${name}`)" class="step" />
           </template>
         </div>
       </div>
       <form-navigation
-        :is-step-valid="isStepValid(currentStep)"
-        :steps="steps"
-        :final-step="steps.length - 2"
-        :current-step="currentStep"
+        :isStepValid="isStepValid(currentStep)"
+        :steps="stepNames"
+        :finalStep="stepNames.length - 1"
+        :currentStep="currentStep"
         :callback="saveFormData"
-        :handle-step-nav="handleStepNav"
-        :is-nav-disabled="isNavDisabled"
+        :handleStepNav="handleStepNav"
+        :isNavDisabled="isNavDisabled"
         class="desktop"
       />
     </div>
-    <!-- mobile -->
     <div class="mobile">
       <div class="padding">
-        <progress-bar :current-step="currentStep + 1" :total-steps="steps.length" />
+        <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
         <div class="row">
-          <p>Step {{ currentStep + 1 }} of {{ steps.length }}</p>
-          <links class="cancel-link" to="/join"> Cancel </links>
+          <p>
+            {{
+              $t('formProgressWidget.div1', {
+                currentStep: currentStep + 1,
+                steps: steps.length,
+              })
+            }}
+          </p>
+          <links class="cancel-link" to="/join">
+            {{ $t('formProgressWidget.link1') }}
+          </links>
         </div>
       </div>
     </div>

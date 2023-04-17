@@ -1,17 +1,17 @@
 <template>
-  <form method="POST" enctype="multipart/form-data" name="image" @submit="handleUploadToIPFS">
+  <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="image">
     <p class="input-label">{{ label }}</p>
     <p class="input-description">{{ description }}</p>
     <div class="input-row">
-      <input :id="`${formProp}-input`" type="file" class="input" name="image" @change="handleLoadFile" />
+      <input type="file" class="input" @change="handleLoadFile" name="image" :id="`${formProp}-input`" />
       <button
         primary="true"
         type="submit"
         label="Upload"
         class="btn-primary"
-        :disabled="loading || !!error || !loadedImageFile"
+        :disabled="loading || Boolean(error) || !Boolean(loadedImageFile)"
       >
-        {{ loading ? 'Uploading...' : 'Upload' }}
+        {{ loading ? $t('ipfsImageUpload.button1_1') : $t('ipfsImageUpload.button1_2') }}
       </button>
     </div>
     <loader v-if="loading" />
@@ -32,15 +32,16 @@
         />
       </div>
       <div>
-        <p class="input-label">IPFS hash</p>
+        <p class="input-label">{{ $t('ipfsImageUpload.p1') }}</p>
         <p class="input-description">
-          Your image is now stored on a decentralized network at the following hash. You don't need to do anything with
-          it but you may want to keep it for future use.
+          {{ $t('ipfsImageUpload.p2') }}
         </p>
       </div>
       <div class="hash-area">
         <ipfs-copy-widget :hash="hash" />
-        <div class="btn-warning" @click="handleRemoveImage">Remove image</div>
+        <div @click="handleRemoveImage" class="btn-warning">
+          {{ $t('ipfsImageUpload.div1') }}
+        </div>
       </div>
     </div>
     <p v-if="error" class="error">{{ error }}</p>

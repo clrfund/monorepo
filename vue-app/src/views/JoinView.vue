@@ -1,11 +1,10 @@
 <template>
   <div id="join-the-round" class="container">
     <div class="grid">
-      <!-- web sidebar -->
       <form-progress-widget
         :currentStep="currentStep"
         :furthestStep="form.furthestStep"
-        :steps="steps"
+        :steps="stepNames"
         :stepNames="stepNames"
         :isNavDisabled="isNavDisabled"
         :isStepUnlocked="isStepUnlocked"
@@ -14,7 +13,7 @@
         :saveFormData="saveFormData"
       />
       <div class="title-area">
-        <h1>Join the round</h1>
+        <h1>{{ $t('join.title.h1') }}</h1>
         <div v-if="currentStep === 5">
           <div class="toggle-tabs-desktop">
             <p
@@ -23,7 +22,7 @@
               :class="showSummaryPreview ? 'inactive-tab' : 'active-tab'"
               @click="handleToggleTab"
             >
-              Review info
+              {{ $t('join.title.p1') }}
             </p>
             <p
               class="tab"
@@ -31,25 +30,27 @@
               :class="showSummaryPreview ? 'active-tab' : 'inactive-tab'"
               @click="handleToggleTab"
             >
-              Preview project
+              {{ $t('join.title.p2') }}
             </p>
           </div>
         </div>
       </div>
       <div class="cancel-area desktop">
-        <links class="cancel-link" to="/join"> Cancel </links>
+        <links class="cancel-link" to="/join">
+          {{ $t('join.title.link1') }}
+        </links>
       </div>
       <div class="form-area">
         <div class="application">
           <div v-if="currentStep === 0">
-            <h2 class="step-title">About the project</h2>
+            <h2 class="step-title">{{ $t('join.step0.h2') }}</h2>
             <div class="inputs">
               <div class="form-background">
-                <label for="project-name" class="input-label">Project name</label>
+                <label for="project-name" class="input-label">{{ $t('join.step0.label1') }}</label>
                 <input
                   id="project-name"
                   type="text"
-                  placeholder="ex: clr.fund"
+                  :placeholder="$t('join.step0.input1')"
                   v-model="v$.project.name.$model"
                   :class="{
                     input: true,
@@ -62,15 +63,17 @@
                     hidden: !v$.project.name.$error,
                   }"
                 >
-                  Your project needs a name
+                  {{ $t('join.step0.error1') }}
                 </p>
               </div>
               <div class="form-background">
-                <label for="project-tagline" class="input-label">Tagline</label>
-                <p class="input-description">Describe your project in a sentence. Max characters: 140</p>
+                <label for="project-tagline" class="input-label"> {{ $t('join.step0.label2') }}</label>
+                <p class="input-description">
+                  {{ $t('join.step0.p1') }}
+                </p>
                 <textarea
                   id="project-tagline"
-                  placeholder="ex: A quadratic funding protocol"
+                  :placeholder="$t('join.step0.input2')"
                   v-model="v$.project.tagline.$model"
                   :class="{
                     input: true,
@@ -83,7 +86,7 @@
                     hidden: !v$.project.tagline.$error || v$.project.tagline.maxLength,
                   }"
                 >
-                  This tagline is too long. Be brief for potential contributors
+                  {{ $t('join.step0.error2') }}
                 </p>
                 <p
                   :class="{
@@ -91,24 +94,26 @@
                     hidden: !v$.project.tagline.$error || !v$.project.tagline.maxLength,
                   }"
                 >
-                  Your project needs a tagline
+                  {{ $t('join.step0.error3') }}
                 </p>
               </div>
               <div class="form-background">
                 <label for="project-description" class="input-label">
-                  Description
-                  <p class="input-description">Markdown supported.</p>
+                  {{ $t('join.step0.label3') }}
+                  <p class="input-description">{{ $t('join.step0.p2') }}</p>
                 </label>
                 <textarea
                   id="project-description"
-                  placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                  :placeholder="$t('join.step0.input3')"
                   v-model="v$.project.description.$model"
                   :class="{
                     input: true,
                     invalid: v$.project.description.$error,
                   }"
                 />
-                <p v-if="form.project.description" class="input-label pt-1">Preview:</p>
+                <p v-if="form.project.description" class="input-label pt-1">
+                  {{ $t('join.step0.p3') }}
+                </p>
                 <markdown :raw="form.project.description" />
                 <p
                   :class="{
@@ -116,13 +121,13 @@
                     hidden: !v$.project.description.$error,
                   }"
                 >
-                  Your project needs a description. What are you raising money for?
+                  {{ $t('join.step0.error4') }}
                 </p>
               </div>
               <div class="form-background">
-                <label for="project-category" class="input-label"
-                  >Category
-                  <p class="input-description">Choose the best fit.</p>
+                <label for="project-category" class="input-label">
+                  {{ $t('join.step0.label4') }}
+                  <p class="input-description">{{ $t('join.step0.p4') }}</p>
                 </label>
                 <form class="radio-row" id="category-radio">
                   <input
@@ -136,7 +141,7 @@
                       invalid: v$.project.category.$error,
                     }"
                   />
-                  <label for="tooling" class="radio-btn">Tools</label>
+                  <label for="tooling" class="radio-btn">{{ $t('join.step0.label5') }}</label>
                   <input
                     id="category-content"
                     type="radio"
@@ -148,7 +153,7 @@
                       invalid: v$.project.category.$error,
                     }"
                   />
-                  <label for="category-content" class="radio-btn">Content</label>
+                  <label for="category-content" class="radio-btn"> {{ $t('join.step0.label6') }}</label>
                   <input
                     id="research"
                     type="radio"
@@ -160,7 +165,7 @@
                       invalid: v$.project.category.$error,
                     }"
                   />
-                  <label for="research" class="radio-btn">Research</label>
+                  <label for="research" class="radio-btn"> {{ $t('join.step0.label7') }}</label>
 
                   <input
                     id="data"
@@ -173,7 +178,7 @@
                       invalid: v$.project.category.$error,
                     }"
                   />
-                  <label for="data" class="radio-btn">Data</label>
+                  <label for="data" class="radio-btn"> {{ $t('join.step0.label8') }}</label>
                 </form>
                 <p
                   :class="{
@@ -181,15 +186,17 @@
                     hidden: !v$.project.category.$error,
                   }"
                 >
-                  You need to choose a category
+                  {{ $t('join.step0.error5') }}
                 </p>
               </div>
               <div class="form-background">
-                <label for="project-problem-space" class="input-label">Problem space</label>
-                <p class="input-description">Explain the problems you're trying to solve. Markdown supported.</p>
+                <label for="project-problem-space" class="input-label"> {{ $t('join.step0.label9') }}</label>
+                <p class="input-description">
+                  {{ $t('join.step0.p5') }}
+                </p>
                 <textarea
                   id="project-problem-space"
-                  placeholder="ex: there is no way to spin up a quadratic funding round. Right now, you have to collaborate with GitCoin Grants which isn’t a scalable or sustainable model."
+                  :placeholder="$t('join.step0.input8')"
                   v-model="v$.project.problemSpace.$model"
                   :class="{
                     input: true,
@@ -202,25 +209,26 @@
                     hidden: !v$.project.problemSpace.$error,
                   }"
                 >
-                  Explain the problem your project solves
+                  {{ $t('join.step0.error6') }}
                 </p>
-                <p v-if="form.project.description" class="input-label pt-1">Preview:</p>
+                <p v-if="form.project.description" class="input-label pt-1">
+                  {{ $t('join.step0.p6') }}
+                </p>
                 <markdown :raw="form.project.problemSpace" />
               </div>
             </div>
           </div>
           <div v-if="currentStep === 1">
-            <h2 class="step-title">Donation details</h2>
+            <h2 class="step-title">{{ $t('join.step1.h2') }}</h2>
             <div class="inputs">
               <div class="form-background">
-                <label for="fund-address" class="input-label">Ethereum address</label>
+                <label for="fund-address" class="input-label">{{ $t('join.step1.label1') }}</label>
                 <p class="input-description">
-                  The destination address for donations, which you'll use to claim funds. This doesn't have to be the
-                  same address as the one you use to send your application transaction.
+                  {{ $t('join.step1.p1') }}
                 </p>
                 <input
                   id="fund-address"
-                  placeholder="example: 0x123..."
+                  :placeholder="$t('join.step1.input1')"
                   v-model.lazy="v$.fund.addressName.$model"
                   @blur="checkEns"
                   :class="{
@@ -234,18 +242,18 @@
                     hidden: !v$.fund.addressName.$error,
                   }"
                 >
-                  Enter a valid ENS or Ethereum 0x address
+                  {{ $t('join.step1.error1') }}
                 </p>
                 <!-- TODO: only validate after user removes focus on input -->
               </div>
               <div class="form-background">
-                <label for="fund-plans" class="input-label">How will you spend your funding?</label>
+                <label for="fund-plans" class="input-label">{{ $t('join.step1.label2') }}</label>
                 <p class="input-description">
-                  Potential contributors might convert based on your specific funding plans. Markdown supported.
+                  {{ $t('join.step1.p2') }}
                 </p>
                 <textarea
                   id="fund-plans"
-                  placeholder="ex: on our roadmap..."
+                  :placeholder="$t('join.step1.input2')"
                   v-model="v$.fund.plans.$model"
                   :class="{
                     input: true,
@@ -258,46 +266,54 @@
                     hidden: !v$.fund.plans.$error,
                   }"
                 >
-                  Let potential contributors know what plans you have for their donations.
+                  {{ $t('join.step1.error2') }}
                 </p>
-                <p v-if="form.fund.plans" class="input-label pt-1">Preview:</p>
+                <p v-if="form.fund.plans" class="input-label pt-1">
+                  {{ $t('join.step1.preview1') }}
+                </p>
                 <markdown :raw="form.fund.plans" />
               </div>
             </div>
           </div>
           <div v-if="currentStep === 2">
-            <h2 class="step-title">Team details</h2>
-            <p>Tell us about the folks behind your project.</p>
+            <h2 class="step-title">{{ $t('join.step2.h2') }}</h2>
+            <p>{{ $t('join.step2.p1') }}</p>
             <div class="inputs">
               <div v-if="isEmailRequired" class="form-background">
-                <label for="team-email" class="input-label"> Contact email </label>
-                <p class="input-description">For important updates about your project and the funding round.</p>
+                <label for="team-email" class="input-label">
+                  {{ $t('join.step2.label1') }}
+                </label>
+                <p class="input-description">
+                  {{ $t('join.step2.description1') }}
+                </p>
                 <input
                   id="team-email"
-                  placeholder="example: doge@goodboi.com"
+                  :placeholder="$t('join.step2.input1')"
                   v-model.lazy="v$.team.email.$model"
                   :class="{
                     input: true,
                     invalid: v$.team.email.$error,
                   }"
                 />
-                <p class="input-notice">We won't display this publicly or add it to the on-chain registry.</p>
+                <p class="input-notice">
+                  {{ $t('join.step2.notice1') }}
+                </p>
                 <p
                   :class="{
                     error: true,
                     hidden: !v$.team.email.$error,
                   }"
                 >
-                  This doesn't look like an email.
+                  {{ $t('join.step2.error1') }}
                 </p>
               </div>
               <div class="form-background">
-                <label for="team-name" class="input-label">Team name (optional)</label>
-                <p class="input-description">If different to project name.</p>
+                <label for="team-name" class="input-label">{{ $t('join.step2.label2') }}</label>
+                <p class="input-description">{{ $t('join.step2.p2') }}</p>
                 <input
                   id="team-name"
                   type="email"
-                  placeholder="ex: clr.fund"
+                  :placeholder="$t('join.step2.input2')"
                   v-model="v$.team.name.$model"
                   :class="{
                     input: true,
@@ -306,32 +322,38 @@
                 />
               </div>
               <div class="form-background">
-                <label for="team-desc" class="input-label">Team description (optional)</label>
-                <p class="input-description">If different to project description. Markdown supported.</p>
+                <label for="team-desc" class="input-label">{{ $t('join.step2.label3') }}</label>
+                <p class="input-description">
+                  {{ $t('join.step2.p3') }}
+                </p>
                 <textarea
                   id="team-desc"
-                  placeholder="ex: CLR.fund is a quadratic funding protocol that aims to make it as easy as possible to set up, manage, and participate in quadratic funding rounds..."
+                  :placeholder="$t('join.step2.input3')"
                   v-model="v$.team.description.$model"
                   :class="{
                     input: true,
                     invalid: v$.team.description.$error,
                   }"
                 />
-                <p v-if="form.team.description" class="input-label pt-1">Preview:</p>
+                <p v-if="form.team.description" class="input-label pt-1">
+                  {{ $t('join.step2.preview1') }}
+                </p>
                 <markdown :raw="form.team.description" />
               </div>
             </div>
           </div>
           <div v-if="currentStep === 3">
-            <h2 class="step-title">Links</h2>
-            <p>Give contributors some links to check out to learn more about your project. Provide at least one.</p>
+            <h2 class="step-title">{{ $t('join.step3.h2') }}</h2>
+            <p>
+              {{ $t('join.step3.p1') }}
+            </p>
             <div class="inputs">
               <div class="form-background">
-                <label for="links-github" class="input-label">GitHub</label>
+                <label for="links-github" class="input-label">{{ $t('join.step3.label1') }}</label>
                 <input
                   id="links-github"
                   type="link"
-                  placeholder="example: https://github.com/ethereum/clrfund"
+                  :placeholder="$t('join.step3.input1')"
                   v-model.lazy="v$.links.github.$model"
                   :class="{
                     input: true,
@@ -344,16 +366,16 @@
                     hidden: !v$.links.github.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  {{ $t('join.step3.error1') }}
                 </p>
                 <!-- TODO: only validate after user removes focus on input -->
               </div>
               <div class="form-background">
-                <label for="links-radicle" class="input-label">Radicle</label>
+                <label for="links-radicle" class="input-label">{{ $t('join.step3.label2') }}</label>
                 <input
                   id="links-radicle"
                   type="link"
-                  placeholder="example: https://radicle.xyz/ethereum/clrfund"
+                  :placeholder="$t('join.step3.input2')"
                   v-model.lazy="v$.links.radicle.$model"
                   :class="{
                     input: true,
@@ -366,15 +388,15 @@
                     hidden: !v$.links.radicle.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  {{ $t('join.step3.error2') }}
                 </p>
               </div>
               <div class="form-background">
-                <label for="links-website" class="input-label">Website</label>
+                <label for="links-website" class="input-label">{{ $t('join.step3.label3') }}</label>
                 <input
                   id="links-website"
                   type="link"
-                  placeholder="example: https://clr.fund"
+                  :placeholder="$t('join.step3.input3')"
                   v-model.lazy="v$.links.website.$model"
                   :class="{
                     input: true,
@@ -387,15 +409,15 @@
                     hidden: !v$.links.website.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  {{ $t('join.step3.error3') }}
                 </p>
               </div>
               <div class="form-background">
-                <label for="links-twitter" class="input-label">Twitter</label>
+                <label for="links-twitter" class="input-label">{{ $t('join.step3.label4') }}</label>
                 <input
                   id="links-twitter"
                   type="link"
-                  placeholder="example: https://twitter.com/ethereum"
+                  :placeholder="$t('join.step3.input4')"
                   v-model.lazy="v$.links.twitter.$model"
                   :class="{
                     input: true,
@@ -408,15 +430,15 @@
                     hidden: !v$.links.twitter.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  {{ $t('join.step3.error4') }}
                 </p>
               </div>
               <div class="form-background">
-                <label for="links-discord" class="input-label">Chat</label>
+                <label for="links-discord" class="input-label">{{ $t('join.step3.label5') }}</label>
                 <input
                   id="links-discord"
                   type="link"
-                  placeholder="ex: https://discord.gg/5Prub9zbGz"
+                  :placeholder="$t('join.step3.input5')"
                   class="input"
                   v-model.lazy="v$.links.discord.$model"
                   :class="{
@@ -430,30 +452,30 @@
                     hidden: !v$.links.discord.$error,
                   }"
                 >
-                  This doesn't look like a valid URL
+                  {{ $t('join.step3.error5') }}
                 </p>
               </div>
             </div>
           </div>
           <div v-if="currentStep === 4">
-            <h2 class="step-title">Images</h2>
+            <h2 class="step-title">{{ $t('join.step4.h2') }}</h2>
             <p>
-              We'll upload your images to IPFS, a decentralized storage platform.
-              <links to="https://ipfs.io/#how">More on IPFS</links>
+              {{ $t('join.step4.p1') }}
+              <links to="https://ipfs.io/#how">{{ $t('join.step4.link1') }}</links>
             </p>
             <div class="inputs">
               <div class="form-background">
                 <ipfs-image-upload
-                  label="Banner image"
-                  description="Recommended aspect ratio: 16x9 • Max file size: 512kB • JPG, PNG, or GIF"
+                  :label="$t('join.step4.label1')"
+                  :description="$t('join.step4.input1')"
                   :onUpload="handleUpload"
                   formProp="bannerHash"
                 />
               </div>
               <div class="form-background">
                 <ipfs-image-upload
-                  label="Thumbnail image"
-                  description="Recommended aspect ratio: 1x1 (square) • Max file size: 512kB • JPG, PNG, or GIF"
+                  :label="$t('join.step4.label2')"
+                  :description="$t('join.step4.input2')"
                   :onUpload="handleUpload"
                   formProp="thumbnailHash"
                 />
@@ -468,148 +490,179 @@
               class="project-details"
             />
             <div v-if="!showSummaryPreview">
-              <h2 class="step-title">Review your information</h2>
-              <warning
-                message="This information will be stored in a smart contract and cannot be edited, so please review carefully."
-              />
+              <h2 class="step-title">{{ $t('join.step5.h2') }}</h2>
+              <warning :message="$t('join.step5.warning')" />
               <div class="form-background">
                 <div class="summary-section-header">
-                  <h3 class="step-subtitle">About the project</h3>
+                  <h3 class="step-subtitle">{{ $t('join.step5.h3_1') }}</h3>
                   <links to="/join/project" class="edit-button"
-                    >Edit <img width="16px" src="@/assets/edit.svg"
+                    >{{ $t('join.step5.edit1') }} <img width="16" src="@/assets/edit.svg"
                   /></links>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Project name</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_1') }}</h4>
                   <div class="data">{{ form.project.name }}</div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Tagline</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_2') }}</h4>
                   <div class="data">{{ form.project.tagline }}</div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Description</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_3') }}</h4>
                   <markdown :raw="form.project.description" />
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Category</h4>
-                  <div class="data">{{ form.project.category }}</div>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_4') }}</h4>
+                  <div v-if="form.project.category" class="data">
+                    {{ $t(appStore.categoryLocaleKey(form.project.category)) }}
+                  </div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Problem space</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_5') }}</h4>
                   <markdown :raw="form.project.problemSpace" />
                 </div>
               </div>
               <div class="form-background">
                 <div class="summary-section-header">
-                  <h3 class="step-subtitle">Funding details</h3>
-                  <links to="/join/fund" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></links>
+                  <h3 class="step-subtitle">{{ $t('join.step5.h3_2') }}</h3>
+                  <links to="/join/fund" class="edit-button"
+                    >{{ $t('join.step5.edit2') }} <img width="16" src="@/assets/edit.svg"
+                  /></links>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Ethereum address</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_6') }}</h4>
                   <div class="data break-all">
                     {{ form.fund.addressName }}
-                    <links :to="blockExplorer.url" class="no-break"> View on {{ blockExplorer.label }} </links>
+                    <links :to="blockExplorer.url" class="no-break">
+                      {{
+                        $t('join.step5.link1', {
+                          blockExplorer: blockExplorer.label,
+                        })
+                      }}
+                    </links>
                   </div>
-                  <div class="resolved-address" v-if="form.fund.addressName" title="Resolved ENS address">
+                  <div class="resolved-address" v-if="form.fund.addressName" :title="$t('join.step5.ens')">
                     {{ form.hasEns ? form.fund.resolvedAddress : null }}
                   </div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Funding plans</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_7') }}</h4>
                   <markdown :raw="form.fund.plans" />
                 </div>
               </div>
               <div class="form-background">
                 <div class="summary-section-header">
-                  <h3 class="step-subtitle">Team details</h3>
-                  <links to="/join/team" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></links>
+                  <h3 class="step-subtitle">{{ $t('join.step5.h3_3') }}</h3>
+                  <links to="/join/team" class="edit-button"
+                    >{{ $t('join.step5.edit3') }} <img width="16" src="@/assets/edit.svg"
+                  /></links>
                 </div>
                 <div v-if="isEmailRequired" class="summary">
-                  <h4 class="read-only-title">Contact email</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_8') }}</h4>
                   <div class="data">{{ form.team.email }}</div>
-                  <div class="input-notice">This information won't be added to the smart contract.</div>
+                  <div class="input-notice">
+                    {{ $t('join.step5.notice1') }}
+                  </div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Team name</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_9') }}</h4>
                   <div class="data">{{ form.team.name }}</div>
-                  <div class="data" v-if="!form.team.name">Not provided</div>
+                  <div class="data" v-if="!form.team.name">
+                    {{ $t('join.error.not_provided') }}
+                  </div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Team description</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_10') }}</h4>
                   <markdown :raw="form.team.description" />
-                  <div class="data" v-if="!form.team.description">Not provided</div>
+                  <div class="data" v-if="!form.team.description">
+                    {{ $t('join.error.not_provided') }}
+                  </div>
                 </div>
               </div>
               <div class="form-background">
                 <div class="summary-section-header">
-                  <h3 class="step-subtitle">Links</h3>
-                  <links to="/join/links" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></links>
+                  <h3 class="step-subtitle">{{ $t('join.step5.h3_4') }}</h3>
+                  <links to="/join/links" class="edit-button"
+                    >{{ $t('join.step5.edit4') }} <img width="16" src="@/assets/edit.svg"
+                  /></links>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">GitHub</h4>
                   <div class="data">
                     {{ form.links.github }}
                     <links v-if="form.links.github" :to="form.links.github" :hideArrow="true"
-                      ><img width="16px" src="@/assets/link.svg"
+                      ><img width="16" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.github">Not provided</div>
+                  <div class="data" v-if="!form.links.github">
+                    {{ $t('join.error.not_provided') }}
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Twitter</h4>
                   <div class="data">
                     {{ form.links.twitter }}
                     <links v-if="form.links.twitter" :to="form.links.twitter" :hideArrow="true"
-                      ><img width="16px" src="@/assets/link.svg"
+                      ><img width="16" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.twitter">Not provided</div>
+                  <div class="data" v-if="!form.links.twitter">
+                    {{ $t('join.error.not_provided') }}
+                  </div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Website</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_12') }}</h4>
                   <div class="data" key="">
                     {{ form.links.website }}
                     <links v-if="form.links.website" :to="form.links.website" :hideArrow="true"
-                      ><img width="16px" src="@/assets/link.svg"
+                      ><img width="16" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.website">Not provided</div>
+                  <div class="data" v-if="!form.links.website">
+                    {{ $t('join.error.not_provided') }}
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Discord</h4>
                   <div class="data">
                     {{ form.links.discord }}
                     <links v-if="form.links.discord" :to="form.links.discord" :hideArrow="true"
-                      ><img width="16px" src="@/assets/link.svg"
+                      ><img width="16" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.discord">Not provided</div>
+                  <div class="data" v-if="!form.links.discord">
+                    {{ $t('join.error.not_provided') }}
+                  </div>
                 </div>
                 <div class="summary">
                   <h4 class="read-only-title">Radicle</h4>
                   <div class="data">
                     {{ form.links.radicle }}
                     <links v-if="form.links.radicle" :to="form.links.radicle" :hideArrow="true"
-                      ><img width="16px" src="@/assets/link.svg"
+                      ><img width="16" src="@/assets/link.svg"
                     /></links>
                   </div>
-                  <div class="data" v-if="!form.links.radicle">Not provided</div>
+                  <div class="data" v-if="!form.links.radicle">
+                    {{ $t('join.error.not_provided') }}
+                  </div>
                 </div>
               </div>
               <div class="form-background">
                 <div class="summary-section-header">
-                  <h3 class="step-subtitle">Images</h3>
-                  <links to="/join/image" class="edit-button">Edit <img width="16px" src="@/assets/edit.svg" /></links>
+                  <h3 class="step-subtitle">{{ $t('join.step5.h3_5') }}</h3>
+                  <links to="/join/image" class="edit-button">
+                    {{ $t('join.step5.edit5') }}
+                    <img width="16" src="@/assets/edit.svg"
+                  /></links>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Banner</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_13') }}</h4>
                   <div class="data">
                     <ipfs-copy-widget :hash="form.image.bannerHash" />
                   </div>
                 </div>
                 <div class="summary">
-                  <h4 class="read-only-title">Thumbnail</h4>
+                  <h4 class="read-only-title">{{ $t('join.step5.h4_14') }}</h4>
                   <div class="data">
                     <ipfs-copy-widget :hash="form.image.thumbnailHash" />
                   </div>
@@ -618,8 +671,10 @@
             </div>
           </div>
           <div v-if="currentStep === 6">
-            <h2 class="step-title">Submit project</h2>
-            <p>This is a blockchain transaction that will add your project information to the funding round.</p>
+            <h2 class="step-title">{{ $t('join.step6.h2') }}</h2>
+            <p>
+              {{ $t('join.step6.p1') }}
+            </p>
             <div class="inputs">
               <recipient-submission-widget :isWaiting="isWaiting" :txHash="txHash" :txError="txError" />
             </div>
@@ -627,12 +682,11 @@
         </div>
       </div>
     </div>
-    <!-- mobile -->
     <div class="mobile nav-bar">
       <form-navigation
         :isStepValid="isStepValid(currentStep)"
-        :steps="steps"
-        :finalStep="steps.length - 2"
+        :steps="stepNames"
+        :finalStep="stepNames.length - 1"
         :currentStep="currentStep"
         :callback="saveFormData"
         :handleStepNav="handleStepNav"
@@ -716,17 +770,9 @@ const rules = computed(() => {
 })
 const v$ = useVuelidate(rules, form)
 
-const steps = ref<string[]>([])
 const currentStep = ref<number>(0)
-const stepNames = ref<string[]>([
-  'About the project',
-  'Donation details',
-  'Team details',
-  'Links',
-  'Images',
-  'Review',
-  'Submit',
-])
+const steps = ['project', 'donation', 'team', 'links', 'images', 'review', 'submit', 'confirm']
+const stepNames = steps.slice(0, steps.length - 1)
 const showSummaryPreview = ref(false)
 const isWaiting = ref(false)
 const txHash = ref('')
@@ -749,11 +795,7 @@ const projectInterface = computed<Project>(() => {
 })
 
 onMounted(() => {
-  const _steps = Object.keys(form)
-  _steps.splice(_steps.length - 1, 1, 'summary', 'submit')
-
-  steps.value = _steps
-  currentStep.value = _steps.indexOf(route.params.step as string)
+  currentStep.value = steps.indexOf(route.params.step as string)
 
   // redirect to /join/ if step doesn't exist
   if (currentStep.value < 0) {
@@ -765,7 +807,7 @@ onMounted(() => {
   if (currentStep.value > form.furthestStep) {
     router.push({
       name: 'join-step',
-      params: { step: steps.value[form.furthestStep] },
+      params: { step: steps[form.furthestStep] },
     })
   }
 })
@@ -776,14 +818,14 @@ function handleStepNav(step: number, updateFurthest?: boolean): void {
   // Save form data
   saveFormData(updateFurthest)
   // Navigate
-  if (steps.value[step] === 'submit') {
+  if (steps[step] === 'confirm') {
     addRecipient() // click confirm button
   } else {
     if (isStepUnlocked(step)) {
       router.push({
         name: 'join-step',
         params: {
-          step: steps.value[step],
+          step: steps[step],
         },
       })
     }
@@ -797,7 +839,7 @@ function saveFormData(updateFurthest?: boolean): void {
   if (typeof currentStep.value !== 'number') return
   recipientStore.setRecipientData({
     updatedData: form,
-    step: steps.value[currentStep.value],
+    step: steps[currentStep.value],
     stepNumber: currentStep.value,
   })
 }
@@ -816,7 +858,7 @@ function isStepValid(step: number): boolean {
   if (step === 3) {
     return isLinkStepValid()
   }
-  const stepName: string = steps.value[step]
+  const stepName: string = steps[step]
   return !v$.value[stepName]?.$invalid
 }
 

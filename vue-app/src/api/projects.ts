@@ -7,6 +7,8 @@ import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
 
+import sdk from '@/graphql/sdk'
+
 export interface Project {
   id: string // Address or another ID depending on registry implementation
   address: string
@@ -80,5 +82,20 @@ export async function registerProject(
     return await KlerosRegistry.registerProject(registryAddress, recipientId, signer)
   } else {
     throw new Error('invalid recipient registry type')
+  }
+}
+
+/**
+ * Return the recipient for the given submission hash
+ * @param transactionHash recipient submission hash
+ * @returns project or null for not found
+ */
+export async function getRecipientBySubmitHash(transactionHash: string): Promise<Project | null> {
+  try {
+    const data = await sdk.GetRecipientBySubmitHash({ transactionHash })
+    const exists = data.recipients.length > 0
+    return exists ? OptimisticRegistry.decodeProject(data.recipients[0]) : null
+  } catch {
+    return null
   }
 }

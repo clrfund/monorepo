@@ -8,21 +8,23 @@
         <div class="content">
           <span class="emoji">🎉</span>
           <div class="flex-title">
-            <h1>Project submitted!</h1>
+            <h1>{{ $t('projectAdded.h1') }}</h1>
             <transaction-receipt :hash="hash" />
           </div>
-          <div class="subtitle">You’re almost on board this funding round.</div>
+          <div class="subtitle">{{ $t('projectAdded.div1') }}</div>
           <ul>
             <li>
-              Your project just needs to go through some final checks to ensure it meets round criteria. You can
-              <links to="/about/how-it-works/recipients">learn more about the registration process here</links>.
+              {{ $t('projectAdded.li1') }}
+              <links to="/about/how-it-works/recipients">{{ $t('projectAdded.link1') }}</links>
             </li>
-            <li>Once that's complete, your project page will go live.</li>
-            <li>If your project fails any checks, we'll let you know by email and return your deposit.</li>
+            <li>{{ $t('projectAdded.li2') }}</li>
+            <li>
+              {{ $t('projectAdded.li3') }}
+            </li>
           </ul>
           <div class="mt2 button-spacing">
-            <links to="/projects" class="btn-primary">View projects</links>
-            <links to="/" class="btn-secondary">Go home</links>
+            <links :to="`/recipients/${hash}`" class="btn-primary">{{ $t('projectAdded.link2') }}</links>
+            <links to="/" class="btn-secondary">{{ $t('projectAdded.link3') }}</links>
           </div>
         </div>
       </div>
@@ -31,35 +33,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import humanizeDuration from 'humanize-duration'
+import { computed } from 'vue'
 
-import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
-import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
-import type { RegistryInfo } from '@/api/recipient-registry-optimistic'
-import { chain } from '@/api/core'
-import { useAppStore, useRecipientStore } from '@/stores'
+import { useAppStore } from '@/stores'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 const route = useRoute()
 const appStore = useAppStore()
-const recipientStore = useRecipientStore()
 const { currentRound } = storeToRefs(appStore)
-const challengePeriodDuration = ref<number | null>(null)
-const registryInfo = computed(() => recipientStore.recipientRegistryInfo)
-const blockExplorerUrl = computed(() => `${chain.explorer}/tx/${route.params.txHash}`)
 const hash = computed(() => route.params.hash as string)
-challengePeriodDuration.value = registryInfo.value?.challengePeriodDuration || null
-
-function formatDuration(seconds: number): string {
-  return humanizeDuration(seconds * 1000, { largest: 1 })
-}
 </script>
 
 <style scoped lang="scss">
