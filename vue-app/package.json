@@ -47,7 +47,6 @@
     "pinia": "^2.0.26",
     "qrcode": "^1.5.1",
     "vue": "^3.2.45",
-    "vue-dapp": "^0.7.1",
     "vue-final-modal": "^4.3.0",
     "vue-i18n": "9",
     "vue-meta": "3.0.0-alpha.7",
