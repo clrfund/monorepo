@@ -14,7 +14,7 @@
               {{ $t('landing.hero.subtitle') }}
             </div>
             <div class="btn-group">
-              <links to="/projects" class="btn-action"> {{ $t('landing.hero.action') }}</links>
+              <div class="btn-action" @click="gotoLeaderboardOrProjectsPage">{{ $t('landing.hero.action') }}</div>
               <div class="btn-info" @click="scrollToHowItWorks">
                 {{ $t('landing.hero.info') }}
               </div>
@@ -172,9 +172,10 @@ import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { getAssetsUrl } from '@/utils/url'
+import router from '@/router'
 
 const appStore = useAppStore()
-const { operator, isRoundJoinPhase, isRecipientRegistryFull, currentRound } = storeToRefs(appStore)
+const { operator, isRoundJoinPhase, isRecipientRegistryFull, currentRound, currentRoundAddress } = storeToRefs(appStore)
 
 const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
 
@@ -182,6 +183,29 @@ function scrollToHowItWorks() {
   document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })
 }
 const chainIconUrl = getAssetsUrl(chain.logo)
+
+async function gotoLeaderboardOrProjectsPage() {
+  if (currentRoundAddress.value) {
+    let data
+    try {
+      data = await appStore.getLeaderboardData(currentRoundAddress.value)
+    } catch {
+      // ignore error and do not display leaderboard
+    }
+    if (data) {
+      router.push({
+        name: 'leaderboard',
+        params: {
+          address: currentRoundAddress.value,
+        },
+      })
+
+      return
+    }
+  }
+
+  router.push({ name: 'projects' })
+}
 </script>
 
 <style scoped lang="scss">

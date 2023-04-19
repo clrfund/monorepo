@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { BigNumber } from 'ethers'
+import { utils } from 'ethers'
 import {
   type CartItem,
   type Contributor,
@@ -22,7 +23,7 @@ import { storage } from '@/api/storage'
 import { getSecondsFromNow, hasDateElapsed } from '@/utils/dates'
 import { useRecipientStore } from './recipient'
 import { useUserStore } from './user'
-import { getAssetsUrl } from '@/utils/url'
+import { getAssetsUrl, getRoundsUrl } from '@/utils/url'
 import { getTokenLogo } from '@/utils/tokens'
 
 export type AppState = {
@@ -39,6 +40,7 @@ export type AppState = {
   theme: string | null
   factory: Factory | null
   maciFactory: MACIFactory | null
+  showSimpleLeaderboard: boolean
 }
 
 export const useAppStore = defineStore('app', {
@@ -56,6 +58,7 @@ export const useAppStore = defineStore('app', {
     theme: null,
     factory: null,
     maciFactory: null,
+    showSimpleLeaderboard: true,
   }),
   getters: {
     recipientJoinDeadline: state => {
@@ -244,7 +247,20 @@ export const useAppStore = defineStore('app', {
     setHasVote(hasVoted: boolean) {
       this.hasVoted = hasVoted
     },
-
+    async getLeaderboardData(roundAddress: string): Promise<any | null> {
+      try {
+        const url = getRoundsUrl(roundAddress)
+        console.log('getLeaderboardData', url, roundAddress)
+        const data = await utils.fetchJson(url)
+        console.log('getLeaderboardData data', data)
+        return data
+      } catch {
+        return null
+      }
+    },
+    toggleLeaderboardView() {
+      this.showSimpleLeaderboard = !this.showSimpleLeaderboard
+    },
     async loadRoundInfo() {
       const roundAddress = this.currentRoundAddress
       if (roundAddress === null) {

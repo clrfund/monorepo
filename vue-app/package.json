@@ -35,7 +35,7 @@
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
     "graphql-tag": "^2.12.6",
-    "gun": "https://github.com/amark/gun",
+    "gun": "^0.2020.1239",
     "humanize-duration": "^3.27.3",
     "is-ipfs": "^7.0.3",
     "luxon": "^3.1.1",

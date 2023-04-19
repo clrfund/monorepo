@@ -26,6 +26,7 @@ const RecipientRegistryView = () => import('@/views/RecipientRegistry.vue')
 const RecipientProfile = () => import('@/views/RecipientProfile.vue')
 const CartView = () => import('@/views/CartView.vue')
 const TransactionSuccess = () => import('@/views/TransactionSuccess.vue')
+const Leaderboard = () => import('@/views/Leaderboard.vue')
 
 // TODO: create a new route that takes funding factory address as a param
 const routes: Array<RouteRecordRaw> = [
@@ -54,6 +55,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/rounds/:address/projects/:id?',
     name: 'round-project',
     component: ProjectView,
+  },
+  {
+    path: '/rounds/:address/leaderboard',
+    name: 'leaderboard',
+    component: Leaderboard,
+    meta: {
+      title: 'leaderboard',
+    },
   },
   {
     path: '/round-information',

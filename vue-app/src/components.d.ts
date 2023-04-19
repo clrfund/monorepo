@@ -33,6 +33,8 @@ declare module '@vue/runtime-core' {
     IpfsCopyWidget: typeof import('./components/IpfsCopyWidget.vue')['default']
     IpfsImageUpload: typeof import('./components/IpfsImageUpload.vue')['default']
     LayoutSteps: typeof import('./components/LayoutSteps.vue')['default']
+    LeaderboardDetailView: typeof import('./components/LeaderboardDetailView.vue')['default']
+    LeaderboardSimpleView: typeof import('./components/LeaderboardSimpleView.vue')['default']
     LinkBox: typeof import('./components/LinkBox.vue')['default']
     Links: typeof import('./components/Links.vue')['default']
     Loader: typeof import('./components/Loader.vue')['default']

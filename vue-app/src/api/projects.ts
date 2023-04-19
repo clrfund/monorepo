@@ -1,13 +1,25 @@
-import { Contract, Signer } from 'ethers'
+import { BigNumber, Contract, Signer } from 'ethers'
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
 import { FundingRound } from './abi'
-import { factory, provider, recipientRegistryType } from './core'
+import { factory, provider, recipientRegistryType, ipfsGatewayUrl } from './core'
 
 import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
 
 import sdk from '@/graphql/sdk'
+
+export interface LeaderboardProject {
+  id: string // Address or another ID depending on registry implementation
+  name: string
+  index: number
+  bannerImageUrl?: string
+  thumbnailImageUrl?: string
+  imageUrl?: string
+  allocatedAmount: BigNumber
+  votes: BigNumber
+  donation: BigNumber
+}
 
 export interface Project {
   id: string // Address or another ID depending on registry implementation
@@ -97,5 +109,17 @@ export async function getRecipientBySubmitHash(transactionHash: string): Promise
     return exists ? OptimisticRegistry.decodeProject(data.recipients[0]) : null
   } catch {
     return null
+  }
+}
+
+export function toLeaderboardProject(project: any): LeaderboardProject {
+  return {
+    id: project.id,
+    name: project.name,
+    index: project.recipientIndex,
+    imageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.imageHash}`,
+    allocatedAmount: BigNumber.from(project.allocatedAmount || '0'),
+    votes: BigNumber.from(project.tallyResult || '0'),
+    donation: BigNumber.from(project.spentVoiceCredits || '0'),
   }
 }
