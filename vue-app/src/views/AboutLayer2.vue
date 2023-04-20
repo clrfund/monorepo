@@ -66,7 +66,6 @@
         <img
           v-tooltip="{
             content: $t('layer2.arbitrum.tooltip'),
-            trigger: 'hover click',
           }"
           width="16px"
           src="@/assets/info.svg"

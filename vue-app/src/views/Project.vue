@@ -26,6 +26,7 @@ import { useMeta } from 'vue-meta'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores'
+import { operator } from '@/api/core'
 
 const route = useRoute()
 const router = useRouter()
@@ -44,10 +45,6 @@ const shouldShowCartInput = computed(
   () => (isCurrentRound.value && isRoundContributionPhase.value) || canUserReallocate,
 )
 const hasContributeBtn = computed(() => isCurrentRound.value && project.value !== null && project.value.index !== 0)
-
-useMeta({
-  title: project.value?.name || '',
-})
 
 onMounted(async () => {
   if (!!route.params.address && !route.params.id) {
@@ -73,6 +70,14 @@ onMounted(async () => {
   }
   isLoading.value = false
 })
+
+useMeta(
+  computed(() => {
+    return {
+      title: project.value ? operator + ' - ' + project.value.name : operator,
+    }
+  }),
+)
 </script>
 
 <style scoped lang="scss">

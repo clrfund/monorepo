@@ -12,12 +12,11 @@ import ClickOutside from '@/directives/ClickOutside'
 
 const pinia = createPinia()
 const app = createApp(App)
-const metaManager = createMetaManager()
 const vfm = createVfm()
 
 app.use(pinia)
 app.use(router)
-app.use(metaManager)
+app.use(createMetaManager())
 app.use(i18n)
 app.use(vfm)
 app.directive('click-outside', ClickOutside)

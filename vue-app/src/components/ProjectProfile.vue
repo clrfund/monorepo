@@ -78,10 +78,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { DateTime } from 'luxon'
 import type { Project } from '@/api/projects'
-import { DEFAULT_CONTRIBUTION_AMOUNT, type CartItem } from '@/api/contributions'
-import { RoundStatus } from '@/api/round'
 import { chain } from '@/api/core'
 import { ensLookup } from '@/utils/accounts'
 import Info from '@/components/Info.vue'
@@ -91,7 +88,7 @@ import LinkBox from '@/components/LinkBox.vue'
 import Links from '@/components/Links.vue'
 import AddToCartButton from '@/components/AddToCartButton.vue'
 import ClaimButton from '@/components/ClaimButton.vue'
-import { useAppStore, useUserStore } from '@/stores'
+import { useAppStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { getAssetsUrl } from '@/utils/url'
@@ -107,36 +104,19 @@ const route = useRoute()
 const appStore = useAppStore()
 const {
   currentRound,
-  cart,
   currentRoundAddress,
   isRoundContributionPhase,
   canUserReallocate,
   hasUserContributed,
   categoryLocaleKey,
 } = storeToRefs(appStore)
-const userStore = useUserStore()
-const { currentUser } = storeToRefs(userStore)
 
-const contributionAmount = ref<number | null>(DEFAULT_CONTRIBUTION_AMOUNT)
 const ens = ref<string | null>(null)
 
 onMounted(async () => {
   if (props.project.address) {
     ens.value = await ensLookup(props.project.address)
   }
-})
-
-const inCart = computed(() => {
-  const project = props.project
-  // eslint-disable-next-line
-  if (project === null) {
-    return false
-  }
-  const index = cart.value.findIndex((item: CartItem) => {
-    // Ignore cleared items
-    return item.id === project.id && !item.isCleared
-  })
-  return index !== -1
 })
 
 const blockExplorer = computed<{ label: string; url: string; logo: string }>(() => {
@@ -164,31 +144,6 @@ const logoUrl = computed(() => getAssetsUrl(blockExplorer.value.logo))
 function hasContributeBtn(): boolean {
   // eslint-disable-next-line
   return isCurrentRound.value! && currentRound.value! && props.project !== null && props.project.index !== 0
-}
-
-function canContribute(): boolean {
-  return (
-    hasContributeBtn() &&
-    // eslint-disable-next-line
-    currentUser.value! &&
-    DateTime.local() < currentRound.value!.votingDeadline &&
-    currentRound.value!.status !== RoundStatus.Cancelled &&
-    // eslint-disable-next-line
-    props.project !== null &&
-    !props.project.isLocked
-  )
-}
-
-function contribute() {
-  if (!contributionAmount.value) {
-    return
-  }
-  appStore.addCartItem({
-    ...props.project,
-    amount: contributionAmount.value.toString(),
-    isCleared: false,
-  })
-  appStore.saveCart()
 }
 </script>
 

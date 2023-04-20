@@ -1,4 +1,7 @@
 <template>
+  <metainfo>
+    <template v-slot:title="{ content }">{{ content }}</template>
+  </metainfo>
   <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
     <div v-if="appReady" id="content-container">
@@ -56,16 +59,25 @@ const recipientStore = useRecipientStore()
 
 // https://stackoverflow.com/questions/71785473/how-to-use-vue-meta-with-vue3
 // https://www.npmjs.com/package/vue-meta/v/3.0.0-alpha.7
-useMeta({
-  title: route.meta.title,
-  titleTemplate: `${operator} - %s`,
-  meta: [
-    {
-      name: 'git-commit',
-      content: import.meta.env.VITE_GIT_COMMIT || '',
-    },
-  ],
-})
+useMeta(
+  computed(() => {
+    return {
+      // titleTemplate no longer works in vue-meta3
+      // construct the title dynamically instead
+      title: route.meta.title ? `${operator} - ${route.meta.title}` : operator,
+      // meta also does not work like in vue-meta2,
+      // name is always meta, use description instead
+      meta: [
+        {
+          description: 'git-commit',
+          content: import.meta.env.VITE_GIT_COMMIT || '',
+        },
+      ],
+    }
+  }),
+)
+
+const intervals: { [key: string]: any } = {}
 
 // state
 const routeName = computed(() => route.name?.toString() || '')
@@ -118,6 +130,18 @@ watch(theme, () => {
 
 const appReady = ref(false)
 
+function setupLoadIntervals() {
+  intervals.round = setInterval(() => {
+    appStore.loadRoundInfo()
+  }, 60 * 1000)
+  intervals.recipient = setInterval(async () => {
+    recipientStore.loadRecipientRegistryInfo()
+  }, 60 * 1000)
+  intervals.user = setInterval(() => {
+    userStore.loadUserInfo()
+  }, 60 * 1000)
+}
+
 onMounted(async () => {
   try {
     await wallet.reconnect()
@@ -144,6 +168,14 @@ onMounted(async () => {
   await appStore.loadMACIFactoryInfo()
   await appStore.loadRoundInfo()
   await recipientStore.loadRecipientRegistryInfo()
+
+  setupLoadIntervals()
+})
+
+onBeforeUnmount(() => {
+  for (const interval of Object.keys(intervals)) {
+    clearInterval(intervals[interval])
+  }
 })
 
 watch(walletUser, async () => {
