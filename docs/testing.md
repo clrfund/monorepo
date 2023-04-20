@@ -7,7 +7,7 @@
 
 2. Test DAI tokens
 
-  The test DAI tokens can be minted from the [etherscan contract page](https://goerli.arbiscan.io//address/0x65bc8dd04808d99cf8aa6749f128d55c2051edde#writeContract) with the follow inputs:
+  The test DAI tokens can be minted using the `mint()` function from the [etherscan contract page](https://goerli.arbiscan.io//address/0x65bc8dd04808d99cf8aa6749f128d55c2051edde#writeContract) with the follow inputs:
   
   - usr (address): Your wallet address
   - wad (uint256): How many DAI tokens to mint, e.g. 20000000000000000000 is 20 DAI
