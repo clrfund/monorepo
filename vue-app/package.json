@@ -7,7 +7,7 @@
     "preview": "vite preview",
     "build": "vite build",
     "serve": "vite",
-    "test": "echo vitest",
+    "test": "vitest --run",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --ignore-path .gitignore --write \"**/*.+(html|vue|ts|js|json|cjs)\"",
     "type-check": "yarn vue-tsc --noEmit",

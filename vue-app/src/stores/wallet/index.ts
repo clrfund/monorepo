@@ -1,3 +1,4 @@
+import { defineStore } from 'pinia'
 import MetamaskConnector from './connectors/MetamaskConnector'
 import WalletConnectConnector from './connectors/WalletConnectConnector'
 import { lsGet, lsSet, lsRemove } from '@/utils/localStorage'

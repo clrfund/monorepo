@@ -1,3 +1,4 @@
+import { defineStore } from 'pinia'
 import { getRegistryInfo, type RecipientApplicationData, type RegistryInfo } from '@/api/recipient-registry-optimistic'
 import { getRecipientRegistryAddress } from '@/api/projects'
 import { useAppStore } from './app'
