@@ -12,14 +12,14 @@
         id="content"
         :class="{
           padded: isVerifyStep || (isSidebarShown && !isCartPadding),
-          'mr-cart-open': isCartToggledOpen && isSideCartShown,
-          'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
+          'mr-cart-open': showCartPanel && isSideCartShown,
+          'mr-cart-closed': !showCartPanel && isSideCartShown,
         }"
       >
         <breadcrumbs v-if="showBreadCrumb" />
         <router-view :key="route.path" />
       </div>
-      <div v-if="isSideCartShown" id="cart" :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`">
+      <div v-if="isSideCartShown" id="cart" :class="`desktop ${showCartPanel ? 'open-cart' : 'closed-cart'}`">
         <cart-widget />
       </div>
     </div>
@@ -47,7 +47,7 @@ import { useMeta } from 'vue-meta'
 
 const route = useRoute()
 const appStore = useAppStore()
-const { theme, isCartToggledOpen, showCartPanel, currentRound } = storeToRefs(appStore)
+const { theme, showCartPanel, currentRound } = storeToRefs(appStore)
 
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
