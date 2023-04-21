@@ -56,7 +56,6 @@ const allocatedAmount = ref<FixedNumber | null>(null)
 const claimed = ref<boolean | null>(null)
 const isLoading = ref(true)
 
-const descriptionHtml = computed(() => markdown.render(props.project.description || ''))
 const tokenSymbol = computed(() => {
   return currentRound.value?.nativeTokenSymbol ?? ''
 })
@@ -110,6 +109,7 @@ function hasClaimBtn(): boolean {
     props.project.index !== 0 &&
     !props.project.isHidden &&
     allocatedAmount.value !== null &&
+    !allocatedAmount.value.isZero() &&
     claimed.value !== null
   )
 }
