@@ -96,7 +96,6 @@
                   v-if="hasUserContributed"
                   v-tooltip="{
                     content: $t('roundInfo.tooltip2'),
-                    trigger: 'hover click',
                   }"
                 >
                   <img width="16" src="@/assets/info.svg" />
@@ -139,7 +138,6 @@
                 <img
                   v-tooltip="{
                     content: $t('roundInfo.tooltip5'),
-                    trigger: 'hover click',
                   }"
                   width="16px"
                   src="@/assets/info.svg"
@@ -157,7 +155,6 @@
                 <div
                   v-tooltip="{
                     content: $t('roundInfo.tooltip6'),
-                    trigger: 'hover click',
                   }"
                 >
                   <img width="16" src="@/assets/info.svg" />
