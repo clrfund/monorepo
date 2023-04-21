@@ -76,7 +76,6 @@ export const useAppStore = defineStore('app', {
 
       return deadline.isValid ? deadline : null
     },
-    isCartToggledOpen: state => state.showCartPanel,
     isRoundReallocationPhase: (state): boolean => {
       return !!state.currentRound && state.currentRound.status === RoundStatus.Reallocating
     },
