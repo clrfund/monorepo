@@ -233,10 +233,6 @@ const renderTotal = computed(() => {
   return formatAmount(total.value, nativeTokenDecimals)
 })
 
-function formatDate(value: DateTime): string {
-  return value.toLocaleString(DateTime.DATETIME_SHORT) || ''
-}
-
 async function contribute() {
   try {
     step.value += 1
