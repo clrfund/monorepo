@@ -2,7 +2,7 @@
   <div>
     <input-button
       v-if="!inCart && canContribute()"
-      :modelValue="amount.toString()"
+      :modelValue="amount"
       :input="{
         placeholder: defaultAmount.toString(),
         class: `{ invalid: ${!isAmountValid} }`,
@@ -11,7 +11,7 @@
         text: $t('addToCartButton.input1'),
         disabled: !isAmountValid,
       }"
-      @update:model-value="newValue => (amount = Number(newValue))"
+      @update:model-value="newValue => (amount = newValue)"
       @click="handleSubmit"
     />
     <input-button
@@ -40,7 +40,7 @@ import { storeToRefs } from 'pinia'
 import { useModal } from 'vue-final-modal'
 import WalletModal from './WalletModal.vue'
 
-const amount = DEFAULT_CONTRIBUTION_AMOUNT
+const amount = ref(DEFAULT_CONTRIBUTION_AMOUNT.toString())
 
 interface Props {
   project: Project
@@ -66,12 +66,11 @@ const defaultAmount = computed(() => {
 })
 
 const isAmountValid = computed(() => {
-  return isContributionAmountValid(amount.toString(), currentRound.value!)
+  return isContributionAmountValid(amount.value, currentRound.value!)
 })
 
 function hasContributeBtn(): boolean {
   return !!currentRound.value && props.project.index !== 0
-  // return !!currentRound.value && props.project !== null && props.project.index !== 0
 }
 
 function canContribute(): boolean {
@@ -88,7 +87,7 @@ function canContribute(): boolean {
 function contribute() {
   appStore.addCartItem({
     ...props.project,
-    amount: amount.toString(),
+    amount: amount.value,
     isCleared: false,
   })
   appStore.saveCart()
