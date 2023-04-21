@@ -15,10 +15,15 @@ export async function getAllocatedAmount(
   return FixedNumber.fromValue(allocatedAmount, tokenDecimals)
 }
 
-export async function isFundsClaimed(fundingRoundAddress: string, recipientAddress: string): Promise<boolean> {
+export async function isFundsClaimed(
+  fundingRoundAddress: string,
+  recipientAddress: string,
+  recipientIndex: number,
+): Promise<boolean> {
   const data = await sdk.GetRecipientDonations({
     fundingRoundAddress: fundingRoundAddress.toLowerCase(),
     recipientAddress,
+    recipientIndex,
   })
 
   return !!data.donations.length
