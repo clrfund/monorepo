@@ -249,9 +249,7 @@ export const useAppStore = defineStore('app', {
     async getLeaderboardData(roundAddress: string): Promise<any | null> {
       try {
         const url = getRoundsUrl(roundAddress)
-        console.log('getLeaderboardData', url, roundAddress)
         const data = await utils.fetchJson(url)
-        console.log('getLeaderboardData data', data)
         return data
       } catch {
         return null
