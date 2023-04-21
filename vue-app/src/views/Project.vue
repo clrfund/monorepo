@@ -1,13 +1,16 @@
 <template>
-  <div v-if="project" :class="`grid ${isCartToggledOpen ? 'cart-open' : 'cart-closed'}`">
-    <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name" />
-    <project-profile class="details" :project="project" :preview-mode="false" />
-    <div class="sticky-column">
-      <div class="desktop">
-        <add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn" :project="project" />
-        <claim-button :project="project" />
+  <div>
+    <loader v-if="isLoading"></loader>
+    <div :class="`grid ${showCartPanel ? 'cart-open' : 'cart-closed'}`" v-if="project">
+      <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name" />
+      <project-profile class="details" :project="project" :previewMode="false" />
+      <div class="sticky-column">
+        <div class="desktop">
+          <add-to-cart-button v-if="shouldShowCartInput && hasContributeBtn" :project="project" />
+          <claim-button :project="project" :roundAddress="roundAddress" />
+        </div>
+        <link-box :project="project" />
       </div>
-      <link-box :project="project" />
     </div>
   </div>
 </template>
@@ -33,12 +36,11 @@ const router = useRouter()
 const appStore = useAppStore()
 const { showCartPanel, isRoundContributionPhase, canUserReallocate } = storeToRefs(appStore)
 
+const roundAddress = ref<string>('')
 const project = ref<Project | null>(null)
 const isLoading = ref(true)
-const isCartToggledOpen = computed(() => showCartPanel)
 const isCurrentRound = computed(() => {
-  const roundAddress = (route.params.address as string) || appStore.currentRoundAddress
-  return appStore.isCurrentRound(roundAddress!)
+  return appStore.isCurrentRound(roundAddress.value)
 })
 
 const shouldShowCartInput = computed(
@@ -54,12 +56,11 @@ onMounted(async () => {
   }
 
   //TODO: update to take factory address as a parameter, default to env. variable
-  console.log('Project mounted', appStore.currentRoundAddress)
   const currentRoundAddress = appStore.currentRoundAddress || (await getCurrentRound())
 
-  const roundAddress = (route.params.address as string) || currentRoundAddress
+  roundAddress.value = (route.params.address as string) || currentRoundAddress || ''
 
-  const registryAddress = await getRecipientRegistryAddress(roundAddress)
+  const registryAddress = await getRecipientRegistryAddress(roundAddress.value)
   const _project = await getProject(registryAddress, route.params.id as string)
   if (_project === null || _project.isHidden) {
     // Project not found
@@ -92,32 +93,27 @@ useMeta(
   grid-column-gap: 2rem;
   grid-row-gap: 3rem;
 }
-
 @mixin project-grid-mobile() {
   grid-template-columns: 1fr;
   grid-template-rows: repeat(3, auto);
   grid-template-areas: 'banner' 'details' 'actions';
   padding-bottom: 6rem;
 }
-
 .grid.cart-open {
   @include project-grid();
   @media (max-width: $breakpoint-xl) {
     @include project-grid-mobile();
   }
 }
-
 .grid.cart-closed {
   @include project-grid();
   @media (max-width: $breakpoint-m) {
     @include project-grid-mobile();
   }
 }
-
 .banner {
   grid-area: banner;
 }
-
 .sticky-column {
   grid-area: actions;
   position: sticky;
@@ -130,7 +126,6 @@ useMeta(
     margin-bottom: 3rem;
   }
 }
-
 .project-image {
   border-radius: 4px;
   display: block;
@@ -139,7 +134,6 @@ useMeta(
   text-align: center;
   width: 100%;
 }
-
 .content {
   display: flex;
   gap: 3rem;
