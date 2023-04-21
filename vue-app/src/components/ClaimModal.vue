@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Contract, BigNumber, Signer } from 'ethers'
+import { Contract, BigNumber } from 'ethers'
 import { FundingRound } from '@/api/abi'
 import type { Project } from '@/api/projects'
 import Transaction from '@/components/Transaction.vue'
@@ -44,7 +44,6 @@ import { storeToRefs } from 'pinia'
 const appStore = useAppStore()
 const { currentRound, tally } = storeToRefs(appStore)
 const userStore = useUserStore()
-const { currentUser } = storeToRefs(userStore)
 
 interface Props {
   project: Project

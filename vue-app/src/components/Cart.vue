@@ -253,6 +253,7 @@ const {
   canUserReallocate,
   hasUserVoted,
   hasContributionPhaseEnded,
+  contributor,
 } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
@@ -443,8 +444,7 @@ const errorMessage = computed<string | null>(() => {
       }
     } else {
       // Reallocating funds
-      // eslint-disable-next-line
-      if (!contribution.value) {
+      if (!contributor.value) {
         return t('dynamic.cart.error.contributor_key_missing')
       } else if (isGreaterThanInitialContribution()) {
         return t('dynamic.cart.error.more_than_original_contribution', {
@@ -472,26 +472,6 @@ const votes = computed(() => {
   return formattedVotes
 })
 
-const { open: openContributionModal, close: closeContributionModal } = useModal({
-  component: ContributionModal,
-  attrs: {
-    votes: votes.value,
-    onClose() {
-      closeContributionModal()
-    },
-  },
-})
-
-const { open: openReallocationModal, close: closeReallocationModal } = useModal({
-  component: ReallocationModal,
-  attrs: {
-    votes: votes.value,
-    onClose() {
-      closeReallocationModal()
-    },
-  },
-})
-
 const { open: openWithdrawalModal, close: closeWithdrawalModal } = useModal({
   component: WithdrawalModal,
   attrs: {
@@ -503,6 +483,26 @@ const { open: openWithdrawalModal, close: closeWithdrawalModal } = useModal({
 
 function submitCart(event: any) {
   event.preventDefault()
+
+  const { open: openContributionModal, close: closeContributionModal } = useModal({
+    component: ContributionModal,
+    attrs: {
+      votes: votes.value,
+      onClose() {
+        closeContributionModal()
+      },
+    },
+  })
+
+  const { open: openReallocationModal, close: closeReallocationModal } = useModal({
+    component: ReallocationModal,
+    attrs: {
+      votes: votes.value,
+      onClose() {
+        closeReallocationModal()
+      },
+    },
+  })
 
   if (contribution.value.isZero() || !hasUserVoted.value) {
     openContributionModal()
