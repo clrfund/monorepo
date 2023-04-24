@@ -6,7 +6,11 @@
       {{ $t('fundsNeededWarning.span1_t2') }}
     </span>
     <p v-if="!!singleTokenNeeded">
-      {{ $t('fundsNeededWarning.p1') }}
+      {{
+        $t('fundsNeededWarning.p1', {
+          nativeTokenSymbol: nativeTokenSymbol,
+        })
+      }}
     </p>
     <p @click="onNavigate" class="message">
       <links
