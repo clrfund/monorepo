@@ -113,11 +113,12 @@ export async function getRecipientBySubmitHash(transactionHash: string): Promise
 }
 
 export function toLeaderboardProject(project: any): LeaderboardProject {
+  const imageUrl = `${ipfsGatewayUrl}/ipfs/${project.metadata.imageHash || project.metadata.thumbnailImageHash}`
   return {
     id: project.id,
     name: project.name,
     index: project.recipientIndex,
-    imageUrl: `${ipfsGatewayUrl}/ipfs/${project.metadata.imageHash}`,
+    imageUrl,
     allocatedAmount: BigNumber.from(project.allocatedAmount || '0'),
     votes: BigNumber.from(project.tallyResult || '0'),
     donation: BigNumber.from(project.spentVoiceCredits || '0'),

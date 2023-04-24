@@ -248,7 +248,10 @@ export const useAppStore = defineStore('app', {
     },
     async getLeaderboardData(roundAddress: string): Promise<any | null> {
       try {
-        const url = getRoundsUrl(roundAddress)
+        const url = await getRoundsUrl(roundAddress)
+        if (!url) {
+          return null
+        }
         const data = await utils.fetchJson(url)
         return data
       } catch {
