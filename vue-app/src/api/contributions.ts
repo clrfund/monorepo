@@ -76,11 +76,11 @@ export async function getContributionAmount(
     contributorAddress,
   })
 
-  if (!data.fundingRound?.contributors?.[0]?.contributions?.length) {
+  if (!data.contributions?.length) {
     return BigNumber.from(0)
   }
 
-  return BigNumber.from(data.fundingRound.contributors[0].contributions[0].amount)
+  return BigNumber.from(data.contributions[0].amount)
 }
 
 export async function getTotalContributed(fundingRoundAddress: string): Promise<{ count: number; amount: BigNumber }> {

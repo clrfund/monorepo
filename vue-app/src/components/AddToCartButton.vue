@@ -91,6 +91,7 @@ function contribute() {
     isCleared: false,
   })
   appStore.saveCart()
+  appStore.toggleEditSelection(true)
   appStore.toggleShowCartPanel(true)
 }
 function handleSubmit(): void {
