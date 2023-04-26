@@ -3131,7 +3131,6 @@ export type GetContributionsAmountQueryVariables = Exact<{
 
 
 export type GetContributionsAmountQuery = { __typename?: 'Query', contributions: Array<{ __typename?: 'Contribution', amount: Maybe<any> }> };
-
 export type GetContributorVotesQueryVariables = Exact<{
   fundingRoundAddress: Scalars['ID'];
   contributorAddress: Scalars['ID'];

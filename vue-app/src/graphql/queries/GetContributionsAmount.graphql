@@ -3,9 +3,8 @@ query GetContributionsAmount(
   $contributorAddress: ID!
 ) {
   contributions(where: {
-    contributor: $contributorAddress,
-    fundingRound: $fundingRoundAddress
-  })
+    contributor_: { id: $contributorAddress },
+    fundingRound_: { id: $fundingRoundAddress}})
   {
     amount
   }
