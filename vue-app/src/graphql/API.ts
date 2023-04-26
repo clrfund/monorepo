@@ -3130,7 +3130,7 @@ export type GetContributionsAmountQueryVariables = Exact<{
 }>;
 
 
-export type GetContributionsAmountQuery = { __typename?: 'Query', fundingRound: Maybe<{ __typename?: 'FundingRound', contributors: Maybe<Array<{ __typename?: 'Contributor', contributions: Maybe<Array<{ __typename?: 'Contribution', amount: Maybe<any> }>> }>> }> };
+export type GetContributionsAmountQuery = { __typename?: 'Query', contributions: Array<{ __typename?: 'Contribution', amount: Maybe<any> }> };
 
 export type GetContributorVotesQueryVariables = Exact<{
   fundingRoundAddress: Scalars['ID'];
@@ -3221,12 +3221,10 @@ export type GetTokenInfoQuery = { __typename?: 'Query', fundingRound: Maybe<{ __
 
 export const GetContributionsAmountDocument = gql`
     query GetContributionsAmount($fundingRoundAddress: ID!, $contributorAddress: ID!) {
-  fundingRound(id: $fundingRoundAddress) {
-    contributors(where: {id: $contributorAddress}) {
-      contributions {
-        amount
-      }
-    }
+  contributions(
+    where: {contributor_: {id: $contributorAddress}, fundingRound_: {id: $fundingRoundAddress}}
+  ) {
+    amount
   }
 }
     `;

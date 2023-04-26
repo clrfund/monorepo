@@ -2,11 +2,11 @@ query GetContributionsAmount(
   $fundingRoundAddress: ID!
   $contributorAddress: ID!
 ) {
-  fundingRound(id: $fundingRoundAddress) {
-    contributors(where: { id: $contributorAddress }) {
-      contributions {
-        amount
-      }
-    }
+  contributions(where: {
+    contributor: $contributorAddress,
+    fundingRound: $fundingRoundAddress
+  })
+  {
+    amount
   }
 }
