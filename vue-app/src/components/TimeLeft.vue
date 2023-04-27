@@ -3,14 +3,14 @@
     <span :class="valueClass || 'value'">
       {{ values[0] }}
     </span>
-    <span :class="unitClass || 'unit'">
+    <span :class="unitClass || 'unit'" class="spacer">
       {{ $t(`dynamic.timeleft.unit.${units[0]}`) }}
     </span>
     <span v-if="units[1].length > 0">
       <span :class="valueClass || 'value'">
         {{ values[1] }}
       </span>
-      <span :class="unitClass || 'unit'">
+      <span :class="unitClass || 'unit'" class="spacer">
         {{ $t(`dynamic.timeleft.unit.${units[1]}`) }}
       </span>
     </span>
@@ -97,7 +97,6 @@ function unitPlurality(pluralUnit: string): string {
   font-weight: 600;
   text-transform: uppercase;
   line-height: 150%;
-  margin: 0 0.25rem;
 
   &:last-child {
     margin-right: 0;
@@ -108,5 +107,9 @@ function unitPlurality(pluralUnit: string): string {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.spacer {
+  margin: 0 0.25rem;
 }
 </style>
