@@ -23,7 +23,10 @@ export default defineConfig({
     Components({
       dts: 'src/components.d.ts',
     }),
-    VueI18nPlugin({}),
+    VueI18nPlugin({
+      // https://stackoverflow.com/questions/75315371/vue-i18n-not-substituting-tokens-in-production-build
+      runtimeOnly: false,
+    }),
   ],
   resolve: {
     alias: { '@': path.resolve(__dirname, 'src'), ...nodeStdlibBrowser },
