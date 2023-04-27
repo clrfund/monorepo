@@ -287,9 +287,9 @@ onMounted(async () => {
           return
         }
       } catch (err) {
-        if (err instanceof Error) {
-          autoSponsorError.value = err.message
-        }
+        const errorMessage = (err as Error).message
+        autoSponsorError.value =
+          'Unable to sponsor user. Make sure the brightId node is setup correctly.' + errorMessage
         return
       }
     }
