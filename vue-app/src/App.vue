@@ -390,6 +390,10 @@ summary:focus {
     display: none;
     margin-right: 0.5rem;
   }
+
+  .image-wrapper img {
+    width: 80%;
+  }
 }
 
 #cart {
