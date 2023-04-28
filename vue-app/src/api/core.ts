@@ -24,7 +24,7 @@ export const ipfsSecretApiKey = import.meta.env.VITE_IPFS_SECRET_API_KEY
 if (!ipfsPinningJwt && !(ipfsApiKey && ipfsSecretApiKey)) {
   throw new Error(
     'Please setup environment variables for ' +
-      'VUE_APP_IPFS_API_KEY and VUE_APP_IPFS_SECRET_API_KEY or VUE_APP_IPFS_PINNING_JWT',
+      'VITE_IPFS_API_KEY and VITE_IPFS_SECRET_API_KEY or VITE_IPFS_PINNING_JWT',
   )
 }
 

@@ -1,7 +1,7 @@
 import { utils } from 'ethers'
 import nacl from 'tweetnacl'
 
-const NODE_URL = process.env.VUE_APP_BRIGHTID_NODE_URL || 'https://app.brightid.org/node/v6'
+const NODE_URL = process.env.VITE_BRIGHTID_NODE_URL || 'https://app.brightid.org/node/v6'
 
 /**
  *  Returns an error object
