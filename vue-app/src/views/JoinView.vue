@@ -699,7 +699,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
 import { useVuelidate } from '@vuelidate/core'
-import { required, email, maxLength, url, helpers } from '@vuelidate/validators'
+import { required, requiredIf, email, maxLength, url, helpers } from '@vuelidate/validators'
 import { type RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import type { Project } from '@/api/projects'
 import { chain } from '@/api/core'
@@ -746,7 +746,7 @@ const rules = computed(() => {
       description: {},
       email: {
         email,
-        required: import.meta.env.VITE_GOOGLE_SPREADSHEET_ID ? required : () => true,
+        required: requiredIf(import.meta.env.VITE_GOOGLE_SPREADSHEET_ID),
       },
     },
     links: {
