@@ -702,10 +702,11 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, requiredIf, email, maxLength, url, helpers } from '@vuelidate/validators'
 import { type RecipientApplicationData, formToProjectInterface } from '@/api/recipient-registry-optimistic'
 import type { Project } from '@/api/projects'
+import { recipientExists } from '@/api/projects'
 import { chain } from '@/api/core'
 import { DateTime } from 'luxon'
 import { useRecipientStore, useAppStore, useUserStore } from '@/stores'
-import { waitForTransaction } from '@/utils/contracts'
+import { waitForTransactionAndCheck } from '@/utils/contracts'
 import { addRecipient as _addRecipient } from '@/api/recipient-registry-optimistic'
 import { isValidEthAddress, resolveEns } from '@/utils/accounts'
 import * as isIPFS from 'is-ipfs'
@@ -919,13 +920,16 @@ async function addRecipient() {
         throw { message: 'round over' }
       }
 
-      await waitForTransaction(
+      await waitForTransactionAndCheck(
         _addRecipient(
           recipientRegistryAddress.value,
           recipient.value,
           recipientRegistryInfo.value.deposit,
           currentUser.value.walletProvider.getSigner(),
         ),
+        hash => {
+          return recipientExists(hash)
+        },
         hash => (txHash.value = hash),
       )
 

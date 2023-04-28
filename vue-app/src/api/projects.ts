@@ -98,6 +98,16 @@ export async function registerProject(
 }
 
 /**
+ * Check if the recipient with the submission hash exists in the subgraph
+ * @param transactionHash recipient submission hash
+ * @returns true if recipients with the submission hash was found
+ */
+export async function recipientExists(transactionHash: string): Promise<boolean> {
+  const data = await sdk.GetRecipientBySubmitHash({ transactionHash })
+  return data.recipients.length > 0
+}
+
+/**
  * Return the recipient for the given submission hash
  * @param transactionHash recipient submission hash
  * @returns project or null for not found
