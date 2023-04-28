@@ -904,11 +904,9 @@ async function addRecipient() {
   try {
     await recipientStore.loadRecipientRegistryInfo()
   } catch (error: any) {
-    console.warn(error)
     txError.value = error.message
-    return
-  } finally {
     isWaiting.value = false
+    return
   }
 
   if (recipientRegistryAddress.value && recipient.value && recipientRegistryInfo.value && currentUser.value) {
@@ -974,6 +972,7 @@ async function addRecipient() {
       currentUser: currentUser.value,
     })
 
+    isWaiting.value = false
     txError.value = errorMsg
   }
 }
