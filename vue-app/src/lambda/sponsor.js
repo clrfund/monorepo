@@ -73,7 +73,7 @@ async function handleSponsorRequest(userAddress) {
   }
 
   const message = JSON.stringify(op)
-  const arrayedMessage = utils.arrayify(message)
+  const arrayedMessage = utils.toUtf8Bytes(message)
   const arrayedKey = utils.base64.decode(brightIdSponsorKey)
   const signature = nacl.sign.detached(arrayedMessage, arrayedKey)
   op.sig = utils.base64.encode(signature)
