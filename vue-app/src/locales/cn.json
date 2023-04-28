@@ -542,7 +542,7 @@
       "p1": "告诉我们关于您的团队。",
       "label1": "联系电邮",
       "description1": "以更新有关您项目和筹款信息。",
-      "input1": "例如: doge@goodboi.com",
+      "input1": "例如: doge{'@'}goodboi.com",
       "notice1": "我们不会公开显示，也不会添加到区块链注册表中。",
       "error1": "这不像是电子邮件地址.",
       "label2": "名称 (可免)",
@@ -967,7 +967,7 @@
   "linkBox": {
     "h2": "查看",
     "link1": "GitHub",
-    "link2": "@Twitter"
+    "link2": "{'@'}Twitter"
   },
   "matchingFundsModal": {
     "title": "捐赠 {tokenSymbol} 于匹配池",
