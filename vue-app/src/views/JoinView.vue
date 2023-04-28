@@ -931,13 +931,15 @@ async function addRecipient() {
 
       // Send application data to a Google Spreadsheet
       if (import.meta.env.VITE_GOOGLE_SPREADSHEET_ID) {
-        await fetch('/.netlify/functions/recipient', {
+        console.log('calling netlify function to add recipient')
+        const result = await fetch('/.netlify/functions/recipient', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(recipient),
         })
+        console.log('netlify function result', result)
       }
       recipientStore.resetRecipientData()
     } catch (error: any) {
