@@ -542,7 +542,7 @@
       "p1": "Tell us about the folks behind your project.",
       "label1": "Contact email",
       "description1": "For important updates about your project and the funding round.",
-      "input1": "example: doge@goodboi.com",
+      "input1": "example: doge{'@'}goodboi.com",
       "notice1": "We won't display this publicly or add it to the on-chain registry.",
       "error1": "This doesn't look like an email.",
       "label2": "Team name (optional)",
@@ -967,7 +967,7 @@
   "linkBox": {
     "h2": "Check them out",
     "link1": "GitHub repo",
-    "link2": "@Twitter"
+    "link2": "{'@'}Twitter"
   },
   "matchingFundsModal": {
     "title": "Contribute {tokenSymbol} to the matching pool",

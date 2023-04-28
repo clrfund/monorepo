@@ -746,7 +746,7 @@ const rules = computed(() => {
       description: {},
       email: {
         email,
-        required: requiredIf(import.meta.env.VITE_GOOGLE_SPREADSHEET_ID),
+        requireEmail: requiredIf(import.meta.env.VITE_GOOGLE_SPREADSHEET_ID),
       },
     },
     links: {
