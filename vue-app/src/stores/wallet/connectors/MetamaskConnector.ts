@@ -51,6 +51,7 @@ export default {
     if (!provider) {
       /* eslint-disable-next-line no-console */
       console.error('Tried to connect to MetaMask but it was not detected. Please install MetaMask.')
+      return
     }
 
     // Prompt the user to add or switch to our supported network

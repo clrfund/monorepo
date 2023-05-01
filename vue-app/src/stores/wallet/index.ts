@@ -70,6 +70,10 @@ export const useWalletStore = defineStore('wallet', {
       }
 
       const conn = await connector.connect()
+      if (!conn) {
+        throw new Error('Error encountered while connecting to the wallet')
+      }
+
       const account = conn.accounts[0]
 
       const signature = await conn.provider.request({
