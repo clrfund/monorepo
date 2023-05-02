@@ -2,7 +2,12 @@
 . "$(dirname "$0")/_/husky.sh"
 
 # set these params so git push will work without .env
-export VITE_ETHEREUM_API_CHAINID=100
-export VITE_IPFS_PINNING_JWT=1
+export VITE_CLRFUND_FACTORY_ADDRESS=0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
+export VITE_ETHEREUM_API_CHAINID=1
+export VITE_ETHEREUM_API_URL=x
+export VITE_IPFS_PINNING_JWT=x
+export VITE_IPFS_PINNING_URL=x
+export VITE_RECIPIENT_REGISTRY_TYPE=simple
+export VITE_USER_REGISTRY_TYPE=simple
 
 yarn test:format && yarn test:web && yarn test:lint-i18n
