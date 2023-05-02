@@ -40,6 +40,9 @@ jobs:
         cd ../vue-apps
         npm version ${{ github.event.inputs.version }}
         cd ../subgraph
-        npm version ${{ github.event.inputs.version }}
+        VERSION=$(npm version ${{ github.event.inputs.version }})
+        cd ..
+        git add contracts/package.json vue-apps/package.json subgraph/package.json
+        git commit -m "${VERSION}"
         git push origin
         git push origin --tags
