@@ -26,7 +26,7 @@ jobs:
       uses: actions/checkout@v3
     - name: Install dependencies
       run: |
-        yarn
+        yarn && yarn build
     - name: setup git config
       run: |
         # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
@@ -37,9 +37,9 @@ jobs:
         echo "Version: ${{ github.event.inputs.version }}" 
         cd contracts
         npm version ${{ github.event.inputs.version }}
-        cd ../vue-app
-        npm version ${{ github.event.inputs.version }}
         cd ../subgraph
+        npm version ${{ github.event.inputs.version }}
+        cd ../vue-app
         VERSION=$(npm version ${{ github.event.inputs.version }})
         cd ..
         git add contracts/package.json vue-app/package.json subgraph/package.json
