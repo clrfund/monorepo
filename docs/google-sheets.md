@@ -11,7 +11,18 @@ If you'd like to use this feature, you must add the Google Sheet environment var
 Two new env variables must be added:
 
 - `GOOGLE_APPLICATION_CREDENTIALS`: service account credentials in a json string (something in this form: `{"type": "...", "private_key": "...", ...}`)
+  - create google service account (https://cloud.google.com/iam/docs/service-accounts-create)
+  - create service account key
+  - download the account credential file with the json string
 - `VITE_GOOGLE_SPREADSHEET_ID`: the spreadsheet id that is going to be used
+  - the spreadsheet id is auto-generated when you create a google spreadsheet
+  - make sure to grant edit access to the service account
+  - make sure the spreadsheet has a header with the following fields
+      |projectname |projecttagline |projectdescription |projectcategory |projectproblemSpace|fundaddressName |projectcategory |projectproblemSpace|fundaddressName |fundresolvedAddress |fundplans |teamname |teamdescription |teamemail |linksgithub |linksradicle |linkswebsite |linkstwitter |linksdiscord |imagebannerHash |imagethumbnailHash |
+      | ------------- | ------------- |------------- | ------------- | ------------- |------------- | ------------- | ------------- |------------- | ------------- | ------------- |------------- |------------- | ------------- |------------- | ------------- | ------------- |------------- | ------------- | ------------- |------------- |
+
+- `GOOGLE_SHEET_NAME`: the sheet name, default to Raw if not defined
+
 
 [Learn more about setting up Google authentication credentials](https://cloud.google.com/docs/authentication/getting-started).
 
