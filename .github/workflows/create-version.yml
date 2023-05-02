@@ -41,4 +41,5 @@ jobs:
         npm version ${{ github.event.inputs.version }}
         cd ../subgraph
         npm version ${{ github.event.inputs.version }}
+        git push origin
         git push origin --tags
