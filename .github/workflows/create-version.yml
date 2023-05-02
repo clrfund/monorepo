@@ -48,9 +48,11 @@ jobs:
         npm version ${{ github.event.inputs.version }}
         cd ../vue-app
         npm version ${{ github.event.inputs.version }}
-        export VERSION=$(node -e "const pkg=require('./package.json'); console.log(pkg.version)")
+        export VERSION_NUMBER=$(node -e "const pkg=require('./package.json'); console.log(pkg.version)")
         cd ..
+        export VERSION="v${VERSION_NUMBER}"
         git add contracts/package.json vue-app/package.json subgraph/package.json
         git commit -m "${VERSION}"
         git push origin
+        git tag -a "${VERSION}" -m "${VERSION}"
         git push origin --tags
