@@ -1,0 +1,48 @@
+name: Create Version
+
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        type: choice
+        description: major, minor, or patch version
+        options:
+        - patch
+        - minor
+        - major
+
+env:
+  NODE_VERSION: 16.x
+
+jobs:
+  createVersion:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Checkout source code
+      uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        yarn
+    - name: setup git config
+      run: |
+        # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+    - name: Create new version
+      run: |
+        echo "Version: ${{ github.event.inputs.version }}" 
+        cd contracts
+        npm version ${{ github.event.inputs.version }}
+        cd ../vue-apps
+        npm version ${{ github.event.inputs.version }}
+        cd ../subgraph
+        VERSION=$(npm version ${{ github.event.inputs.version }})
+        cd ..
+        git add contracts/package.json vue-apps/package.json subgraph/package.json
+        git commit -m "${VERSION}"
+        git push origin
+        git push origin --tags
