@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import type { BigNumber } from 'ethers'
 import { genRandomSalt, IncrementalQuinTree, hash5 } from 'maci-crypto'
 import { Keypair, PubKey, Command, Message } from 'maci-domainobjs'
 
@@ -27,26 +27,23 @@ export function createMessage(
   voteOptionIndex: number | null,
   voiceCredits: BigNumber | null,
   nonce: number,
-  salt?: BigInt
+  salt?: bigint,
 ): [Message, PubKey] {
   const encKeypair = new Keypair()
   if (!salt) {
-    salt = genRandomSalt()
+    salt = genRandomSalt() as bigint
   }
   const quadraticVoteWeight = voiceCredits ? bnSqrt(voiceCredits) : 0
   const command = new Command(
     BigInt(userStateIndex),
     newUserKeypair ? newUserKeypair.pubKey : userKeypair.pubKey,
     BigInt(voteOptionIndex || 0),
-    BigInt(quadraticVoteWeight),
+    BigInt(quadraticVoteWeight.toString()),
     BigInt(nonce),
-    BigInt(salt)
+    BigInt(salt),
   )
   const signature = command.sign(userKeypair.privKey)
-  const message = command.encrypt(
-    signature,
-    Keypair.genEcdhSharedKey(encKeypair.privKey, coordinatorPubKey)
-  )
+  const message = command.encrypt(signature, Keypair.genEcdhSharedKey(encKeypair.privKey, coordinatorPubKey))
   return [message, encKeypair.pubKey]
 }
 
@@ -70,29 +67,15 @@ export interface Tally {
   }
 }
 
-export function getRecipientClaimData(
-  recipientIndex: number,
-  recipientTreeDepth: number,
-  tally: Tally
-): any[] {
+export function getRecipientClaimData(recipientIndex: number, recipientTreeDepth: number, tally: Tally): any[] {
   // Create proof for total amount of spent voice credits
   const spent = tally.totalVoiceCreditsPerVoteOption.tally[recipientIndex]
   const spentSalt = tally.totalVoiceCreditsPerVoteOption.salt
-  const spentTree = new IncrementalQuinTree(
-    recipientTreeDepth,
-    BigInt(0),
-    LEAVES_PER_NODE,
-    hash5
-  )
+  const spentTree = new IncrementalQuinTree(recipientTreeDepth, BigInt(0), LEAVES_PER_NODE, hash5)
   for (const leaf of tally.totalVoiceCreditsPerVoteOption.tally) {
     spentTree.insert(BigInt(leaf))
   }
   const spentProof = spentTree.genMerklePath(recipientIndex)
 
-  return [
-    recipientIndex,
-    spent,
-    spentProof.pathElements.map((x) => x.map((y) => y.toString())),
-    spentSalt,
-  ]
+  return [recipientIndex, spent, spentProof.pathElements.map(x => x.map(y => y.toString())), spentSalt]
 }

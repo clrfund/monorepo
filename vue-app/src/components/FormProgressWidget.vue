@@ -16,42 +16,33 @@
           :key="step"
           class="progress-step"
           :class="{
-            'zoom-link':
-              step <= furthestStep && step !== currentStep && !isNavDisabled,
+            'zoom-link': step <= furthestStep && step !== currentStep && !isNavDisabled,
             disabled: isNavDisabled,
           }"
           @click="handleStepNav(step)"
         >
           <template v-if="step === currentStep">
-            <img
-              class="current-step"
-              src="@/assets/current-step.svg"
-              alt="current step"
-            />
-            <p v-text="translate(name)" class="active step" />
+            <img class="current-step" src="@/assets/current-step.svg" alt="current step" />
+            <p v-text="$t(`dynamic.progress.step.${name}`)" class="active step" />
           </template>
           <template v-else-if="step === furthestStep">
             <img src="@/assets/furthest-step.svg" alt="current step" />
-            <p v-text="name" class="active step" />
+            <p v-text="$t(`dynamic.progress.step.${name}`)" class="active step" />
           </template>
           <template v-else-if="isStepUnlocked(step) && isStepValid(step)">
-            <img
-              class="completed-step"
-              src="@/assets/green-tick.svg"
-              alt="step complete"
-            />
-            <p v-text="translate(name)" class="step" />
+            <img class="completed-step" src="@/assets/green-tick.svg" alt="step complete" />
+            <p v-text="$t(`dynamic.progress.step.${name}`)" class="step" />
           </template>
           <template v-else>
             <img src="@/assets/step-remaining.svg" alt="step remaining" />
-            <p v-text="translate(name)" class="step" />
+            <p v-text="$t(`dynamic.progress.step.${name}`)" class="step" />
           </template>
         </div>
       </div>
       <form-navigation
         :isStepValid="isStepValid(currentStep)"
-        :steps="steps"
-        :finalStep="steps.length - 2"
+        :steps="stepNames"
+        :finalStep="stepNames.length - 1"
         :currentStep="currentStep"
         :callback="saveFormData"
         :handleStepNav="handleStepNav"
@@ -61,10 +52,7 @@
     </div>
     <div class="mobile">
       <div class="padding">
-        <progress-bar
-          :currentStep="currentStep + 1"
-          :totalSteps="steps.length"
-        />
+        <progress-bar :currentStep="currentStep + 1" :totalSteps="steps.length" />
         <div class="row">
           <p>
             {{
@@ -83,37 +71,24 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-
+<script setup lang="ts">
 import ProgressBar from '@/components/ProgressBar.vue'
 import FormNavigation from '@/components/FormNavigation.vue'
 import Links from '@/components/Links.vue'
 
-@Component({
-  components: {
-    FormNavigation,
-    ProgressBar,
-    Links,
-  },
-})
-export default class FormProgressWidget extends Vue {
-  @Prop() currentStep!: number
-  @Prop() furthestStep!: number
-  @Prop() steps!: string[]
-  @Prop() stepNames!: string[]
-  @Prop() isNavDisabled!: boolean
-  @Prop() isStepUnlocked!: (step: number) => boolean
-  @Prop() isStepValid!: (step: number) => boolean
-  @Prop() handleStepNav!: () => void
-  @Prop() saveFormData!: (updateFurthest?: boolean) => void
-
-  translate(key = ''): string {
-    return this.$t(`dynamic.progress.step.${key}`).toString()
-  }
+interface Props {
+  currentStep: number
+  furthestStep: number
+  steps: string[]
+  stepNames: string[]
+  isNavDisabled: boolean
+  isStepUnlocked: (step: number) => boolean
+  isStepValid: (step: number) => boolean
+  handleStepNav: (step: number) => void
+  saveFormData: (updateFurthest?: boolean) => void
 }
+
+defineProps<Props>()
 </script>
 
 <style scoped lang="scss">

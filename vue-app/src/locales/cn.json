@@ -542,7 +542,7 @@
       "p1": "告诉我们关于您的团队。",
       "label1": "联系电邮",
       "description1": "以更新有关您项目和筹款信息。",
-      "input1": "例如: doge@goodboi.com",
+      "input1": "例如: doge{'@'}goodboi.com",
       "notice1": "我们不会公开显示，也不会添加到区块链注册表中。",
       "error1": "这不像是电子邮件地址.",
       "label2": "名称 (可免)",
@@ -653,7 +653,8 @@
     "hero": {
       "title": "将您最喜欢的项目送往月球！",
       "subtitle": "您捐赠的每个项目都将获得额外资金。",
-      "info": "如何运作"
+      "info": "如何运作",
+      "action": "开始"
     },
     "callout": {
       "title": "参加筹款",
@@ -793,7 +794,7 @@
     "h1": "设置 BrightID",
     "h2_1": "连接",
     "p2": "您需要将您的 BrightID 账户与钱包地址连接起来。",
-    "click_next": "Once this app is linked in your BrightID app, click the 'Next' button to transition to the next step.",
+    "click_next": "一旦该应用程序与您的 BrightID 应用程序链接，点击“下一步”按钮以转到下一步。",
     "p4": "用您的 BrightID app 扫描此二维码。",
     "p5": "跟随此链接将您的钱包连接到您的 BrightID app。",
     "p6": "这个链接可能看起来很吓人, 但它只是在连接您的钱包地址、CLR.fund app 和 BrightID。请确保您的地址是正确的。",
@@ -802,6 +803,7 @@
     "btn": " 成为捐赠者",
     "next": "下一步",
     "previous": "前一步",
+    "copy_link": "复制",
     "verification_status": "您的钱包地址没有连接到 BrightID 的户口。 这可能需要几分钟的时间，稍等候后点击按钮再试。",
     "skip_sponsorship": "跳过",
     "get_sponsored_header": "赞助",
@@ -965,7 +967,7 @@
   "linkBox": {
     "h2": "查看",
     "link1": "GitHub",
-    "link2": "@Twitter"
+    "link2": "{'@'}Twitter"
   },
   "matchingFundsModal": {
     "title": "捐赠 {tokenSymbol} 于匹配池",
@@ -979,6 +981,7 @@
   },
   "app": "App",
   "navBar": {
+    "app": "App",
     "dropdown": {
       "home": "首页",
       "about": "关于",

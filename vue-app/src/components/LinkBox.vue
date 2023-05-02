@@ -16,25 +16,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { Project } from '@/api/projects'
+<script setup lang="ts">
+import type { Project } from '@/api/projects'
 import Links from '@/components/Links.vue'
 
-@Component({ components: { Links } })
-export default class extends Vue {
-  @Prop() project!: Project
-
-  get haveLink(): boolean {
-    return Boolean(
-      this.project.websiteUrl ||
-        this.project.twitterUrl ||
-        this.project.githubUrl
-    )
-  }
+interface Props {
+  project: Project
 }
+
+const props = defineProps<Props>()
+
+const haveLink = computed(() => {
+  return Boolean(props.project.websiteUrl || props.project.twitterUrl || props.project.githubUrl)
+})
 </script>
 
 <style scoped lang="scss">

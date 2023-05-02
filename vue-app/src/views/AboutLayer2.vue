@@ -6,19 +6,13 @@
     <p>
       <b>
         {{ $t('layer2.heading.paragraph-1-text-1') }}
-        <links
-          to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/"
-        >
+        <links to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/">
           {{ $t('layer2.heading.link-1') }}</links
         >
         {{ $t('layer2.heading.paragraph-1-text-2', { chain: chain.label }) }}
       </b>
     </p>
-    <button
-      v-if="chain.bridge"
-      class="btn-secondary"
-      @click="scrollToId('bridge')"
-    >
+    <button v-if="chain.bridge" class="btn-secondary" @click="scrollToId('bridge')">
       {{ $t('layer2.heading.cta') }}
     </button>
 
@@ -42,9 +36,7 @@
     </p>
     <p>
       {{ $t('layer2.scalability.p4_t1') }}
-      <links
-        to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/"
-      >
+      <links to="https://ethereum.org/en/developers/docs/scaling/layer-2-rollups/">
         {{ $t('layer2.scalability.p4_l1') }}</links
       >
     </p>
@@ -55,7 +47,7 @@
       <p>
         {{
           $t('layer2.arbitrum.p1', {
-            operator: $store.getters.operator,
+            operator,
             chain: chain.label,
           })
         }}
@@ -74,7 +66,6 @@
         <img
           v-tooltip="{
             content: $t('layer2.arbitrum.tooltip'),
-            trigger: 'hover click',
           }"
           width="16px"
           src="@/assets/info.svg"
@@ -141,16 +132,10 @@
             chain: chain.label,
           })
         }}
-        <links :to="blockExplorerUrl">{{
-          $t('layer2.arbitrum.funds.p2_link')
-        }}</links>
+        <links :to="blockExplorerUrl">{{ $t('layer2.arbitrum.funds.p2_link') }}</links>
         {{ $t('layer2.arbitrum.funds.p2_t2') }}
       </p>
-      <button
-        v-if="currentUser && isMetaMask"
-        class="btn-secondary"
-        @click="addTokenToWallet"
-      >
+      <button v-if="currentUser && isMetaMask" class="btn-secondary" @click="addTokenToWallet">
         {{
           $t('layer2.arbitrum.funds.button_2nd', {
             nativeTokenSymbol: nativeTokenSymbol,
@@ -179,84 +164,58 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { User } from '@/api/user'
+<script setup lang="ts">
 import { chain } from '@/api/core'
-import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import Links from '@/components/Links.vue'
-import WalletWidget from '@/components/WalletWidget.vue'
+import { useAppStore, useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({ components: { Links, WalletWidget } })
-export default class AboutLayer2 extends Vue {
-  scrollToId(id: string): void {
-    const element = document.getElementById(id)
-    if (!element) return
-    const navBarOffset = 80
-    const elementPosition = element.getBoundingClientRect().top
-    const top = elementPosition - navBarOffset
-    window.scrollTo({ top, behavior: 'smooth' })
+const appStore = useAppStore()
+
+const { nativeTokenAddress, nativeTokenSymbol, nativeTokenDecimals, operator } = storeToRefs(appStore)
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const route = useRoute()
+
+const windowEthereum = computed(() => (window as any).ethereum)
+const isMetaMask = computed(() => windowEthereum.value.isMetaMask)
+const blockExplorerUrl = computed(() => `${chain.explorer}/address/${nativeTokenAddress.value}`)
+
+onMounted(() => {
+  const { section: id } = route.params
+  if (id) {
+    scrollToId(id as string)
   }
+})
 
-  mounted() {
-    const { section: id } = this.$route.params
-    if (id) {
-      this.scrollToId(id)
-    }
-  }
+function scrollToId(id: string): void {
+  const element = document.getElementById(id)
+  if (!element) return
+  const navBarOffset = 80
+  const elementPosition = element.getBoundingClientRect().top
+  const top = elementPosition - navBarOffset
+  window.scrollTo({ top, behavior: 'smooth' })
+}
 
-  get windowEthereum(): any {
-    return (window as any).ethereum
-  }
-
-  get isMetaMask(): boolean {
-    return this.windowEthereum.isMetaMask
-  }
-
-  async addTokenToWallet() {
-    try {
-      if (this.windowEthereum && this.isMetaMask) {
-        await this.windowEthereum.request({
-          method: 'wallet_watchAsset',
-          params: {
-            type: 'ERC20',
-            options: {
-              address: this.nativeTokenAddress,
-              symbol: this.nativeTokenSymbol,
-              decimals: this.nativeTokenDecimals,
-            },
+async function addTokenToWallet() {
+  try {
+    if (windowEthereum.value && isMetaMask.value) {
+      await windowEthereum.value.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: nativeTokenAddress.value,
+            symbol: nativeTokenSymbol.value,
+            decimals: nativeTokenDecimals.value,
           },
-        })
-      }
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.log(error)
+        },
+      })
     }
-  }
-
-  get currentUser(): User | null {
-    return this.$store.state.currentUser
-  }
-
-  get chain(): ChainInfo {
-    return chain
-  }
-
-  get nativeTokenAddress(): string {
-    return this.$store.getters.nativeTokenAddress
-  }
-
-  get nativeTokenSymbol(): string {
-    return this.$store.getters.nativeTokenSymbol
-  }
-
-  get nativeTokenDecimals(): number | undefined {
-    return this.$store.getters.nativeTokenDecimals
-  }
-
-  get blockExplorerUrl(): string {
-    return `${chain.explorer}/address/${this.nativeTokenAddress}`
+  } catch (error) {
+    /* eslint-disable-next-line no-console */
+    console.log(error)
   }
 }
 </script>

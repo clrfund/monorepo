@@ -1,6 +1,6 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
+    <round-status-banner v-if="currentRound" />
     <div id="page">
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
@@ -14,28 +14,20 @@
               {{ $t('landing.hero.subtitle') }}
             </div>
             <div class="btn-group">
-              <app-link class="btn-action" :dynamic="true"></app-link>
+              <div class="btn-action" @click="gotoLeaderboardOrProjectsPage">{{ $t('landing.hero.action') }}</div>
               <div class="btn-info" @click="scrollToHowItWorks">
                 {{ $t('landing.hero.info') }}
               </div>
             </div>
           </div>
-          <div
-            class="apply-callout"
-            v-if="
-              $store.getters.isRoundJoinPhase &&
-              !$store.getters.isRecipientRegistryFull
-            "
-          >
+          <div class="apply-callout" v-if="isRoundJoinPhase && !isRecipientRegistryFull">
             <div class="column">
               <h2>{{ $t('landing.callout.title') }}</h2>
               <p>
                 {{ $t('landing.callout.paragraph') }}
               </p>
               <div class="button-group">
-                <links to="/join" class="btn-primary w100">{{
-                  $t('landing.callout.action')
-                }}</links>
+                <links to="/join" class="btn-primary w100">{{ $t('landing.callout.action') }}</links>
                 <div v-if="signUpDeadline">
                   <time-left unitClass="none" :date="signUpDeadline" />
                   {{ $t('landing.callout.deadline') }}
@@ -65,9 +57,7 @@
           <h2>{{ $t('landing.how.subtitle') }}</h2>
           <ol>
             <li>
-              {{
-                $t('landing.how.list-1', { operator: $store.getters.operator })
-              }}
+              {{ $t('landing.how.list-1', { operator: operator }) }}
             </li>
             <li>
               {{ $t('landing.how.list-2') }}
@@ -77,9 +67,7 @@
               <strong>{{ $t('landing.how.list-3-strong') }}.</strong>
             </li>
           </ol>
-          <links class="btn-secondary" to="/about/how-it-works">{{
-            $t('landing.how.action')
-          }}</links>
+          <links class="btn-secondary" to="/about/how-it-works">{{ $t('landing.how.action') }}</links>
         </div>
       </div>
       <div class="section-header">
@@ -88,19 +76,12 @@
       <div id="what-you-will-need">
         <div class="pre-req">
           <div class="icon-row">
-            <img :src="require(`@/assets/${chain.logo}`)" id="chain-icon" />
+            <img :src="chainIconUrl" id="chain-icon" />
             <p>
               <b>{{ $t('landing.req.chain', { chain: chain.label }) }}</b>
             </p>
           </div>
           <links v-if="chain.isLayer2" to="/about/layer-2" class="btn-action">
-            {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
-          </links>
-          <links
-            v-if="!chain.isLayer2 && Boolean(chain.bridge)"
-            :to="chain.bridge"
-            class="btn-action"
-          >
             {{ $t('landing.req.chain-cta', { chain: chain.label }) }}
           </links>
         </div>
@@ -111,9 +92,7 @@
               <b>{{ $t('landing.req.bright') }}</b>
             </p>
           </div>
-          <links to="/about/sybil-resistance" class="btn-primary">{{
-            $t('landing.req.bright-cta')
-          }}</links>
+          <links to="/about/sybil-resistance" class="btn-primary">{{ $t('landing.req.bright-cta') }}</links>
         </div>
       </div>
       <div class="section-header">
@@ -126,9 +105,7 @@
             {{ $t('landing.about.paragraph-1') }}
           </p>
           <p>
-            <links to="/about/quadratic-funding">{{
-              $t('landing.about.link-1')
-            }}</links>
+            <links to="/about/quadratic-funding">{{ $t('landing.about.link-1') }}</links>
           </p>
         </div>
         <div id="about-2">
@@ -152,86 +129,82 @@
           <links to="/about">{{ $t('landing.footer.link-1') }}</links>
         </div>
         <div class="link-li">
-          <links to="/about/how-it-works">{{
-            $t('landing.footer.link-2')
-          }}</links>
+          <links to="/about/how-it-works">{{ $t('landing.footer.link-2') }}</links>
         </div>
         <div class="link-li" v-if="chain.isLayer2">
-          <links to="/about/layer-2">{{
-            $t('landing.footer.link-3', { chain: chain.label })
-          }}</links>
+          <links to="/about/layer-2">{{ $t('landing.footer.link-3', { chain: chain.label }) }}</links>
         </div>
         <div class="link-li">
           <links to="/about/maci">{{ $t('landing.footer.link-4') }}</links>
         </div>
         <div class="link-li">
-          <links to="/about/sybil-resistance">{{
-            $t('landing.footer.link-5')
-          }}</links>
+          <links to="/about/sybil-resistance">{{ $t('landing.footer.link-5') }}</links>
         </div>
         <div class="link-li">
-          <links to="https://github.com/clrfund/monorepo/">{{
-            $t('landing.footer.link-6')
-          }}</links>
+          <links to="https://github.com/clrfund/monorepo/">{{ $t('landing.footer.link-6') }}</links>
         </div>
         <div class="link-li">
-          <links to="https://discord.gg/ZnsYPV6dCv">{{
-            $t('landing.footer.link-7')
-          }}</links>
+          <links to="https://discord.gg/ZnsYPV6dCv">{{ $t('landing.footer.link-7') }}</links>
         </div>
         <div class="link-li">
           <links to="https://twitter.com/clrfund">Twitter</links>
         </div>
         <div class="link-li">
-          <links to="https://blog.clr.fund/"
-            >{{ $t('landing.footer.link-blog') }}
-          </links>
+          <links to="https://blog.clr.fund/">{{ $t('landing.footer.link-blog') }} </links>
         </div>
         <div class="link-li">
-          <links to="https://forum.clr.fund/">{{
-            $t('landing.footer.link-8')
-          }}</links>
+          <links to="https://forum.clr.fund/">{{ $t('landing.footer.link-8') }}</links>
         </div>
         <div class="link-li">
-          <links to="https://ethereum.org/">{{
-            $t('landing.footer.link-9')
-          }}</links>
+          <links to="https://ethereum.org/">{{ $t('landing.footer.link-9') }}</links>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { DateTime } from 'luxon'
-
+<script setup lang="ts">
 import { chain } from '@/api/core'
-import { ChainInfo } from '@/plugins/Web3/constants/chains'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TimeLeft from '@/components/TimeLeft.vue'
 import Links from '@/components/Links.vue'
-import AppLink from '@/components/AppLink.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { getAssetsUrl } from '@/utils/url'
+import router from '@/router'
 
-@Component({
-  components: { RoundStatusBanner, TimeLeft, Links, AppLink, ImageResponsive },
-})
-export default class Landing extends Vue {
-  get signUpDeadline(): DateTime {
-    return this.$store.state.currentRound?.signUpDeadline
+const appStore = useAppStore()
+const { operator, isRoundJoinPhase, isRecipientRegistryFull, currentRound, currentRoundAddress } = storeToRefs(appStore)
+
+const signUpDeadline = computed(() => appStore.currentRound?.signUpDeadline)
+
+function scrollToHowItWorks() {
+  document.getElementById('section-how-it-works')?.scrollIntoView({ behavior: 'smooth' })
+}
+const chainIconUrl = getAssetsUrl(chain.logo)
+
+async function gotoLeaderboardOrProjectsPage() {
+  if (currentRoundAddress.value) {
+    let data
+    try {
+      data = await appStore.getLeaderboardData(currentRoundAddress.value)
+    } catch {
+      // ignore error and do not display leaderboard
+    }
+    if (data) {
+      router.push({
+        name: 'leaderboard',
+        params: {
+          address: currentRoundAddress.value,
+        },
+      })
+
+      return
+    }
   }
 
-  scrollToHowItWorks() {
-    document
-      .getElementById('section-how-it-works')
-      ?.scrollIntoView({ behavior: 'smooth' })
-  }
-
-  get chain(): ChainInfo {
-    return chain
-  }
+  router.push({ name: 'projects' })
 }
 </script>
 

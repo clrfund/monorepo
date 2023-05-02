@@ -1,8 +1,7 @@
 import { utils } from 'ethers'
 import nacl from 'tweetnacl'
 
-const NODE_URL =
-  process.env.VUE_APP_BRIGHTID_NODE_URL || 'https://app.brightid.org/node/v6'
+const NODE_URL = process.env.VITE_BRIGHTID_NODE_URL || 'https://app.brightid.org/node/v6'
 
 /**
  *  Returns an error object
@@ -44,16 +43,13 @@ async function unusedSponsorships(context) {
 }
 
 async function handleSponsorRequest(userAddress) {
-  const endpoint = process.env.VUE_APP_BRIGHTID_SPONSOR_API_URL
-  const brightIdSponsorKey =
-    process.env.VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY
+  const endpoint = process.env.VITE_BRIGHTID_SPONSOR_API_URL
+  const brightIdSponsorKey = process.env.VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY
 
-  const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT
+  const CONTEXT = process.env.VITE_BRIGHTID_CONTEXT
 
   if (!brightIdSponsorKey) {
-    throw new Error(
-      'Environment variable VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY not set'
-    )
+    throw new Error('Environment variable VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY not set')
   }
 
   const sponsorships = await unusedSponsorships(CONTEXT)
@@ -77,7 +73,7 @@ async function handleSponsorRequest(userAddress) {
   }
 
   const message = JSON.stringify(op)
-  const arrayedMessage = Buffer.from(message)
+  const arrayedMessage = utils.toUtf8Bytes(message)
   const arrayedKey = utils.base64.decode(brightIdSponsorKey)
   const signature = nacl.sign.detached(arrayedMessage, arrayedKey)
   op.sig = utils.base64.encode(signature)

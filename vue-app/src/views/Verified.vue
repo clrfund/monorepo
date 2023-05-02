@@ -1,7 +1,7 @@
 @ -0,0 +1,36 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
+    <round-status-banner v-if="currentRound" />
     <!-- TODO: add confetti -->
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon" />
@@ -11,22 +11,15 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>{{ $t('verified.h1') }}</h1>
-            <transaction-receipt
-              v-if="$route.params.hash"
-              :hash="$route.params.hash"
-            />
+            <transaction-receipt v-if="hash" :hash="hash" />
           </div>
           <div class="subtitle">
             {{ $t('verified.div1') }}
           </div>
           <p>{{ $t('verified.p1') }}</p>
           <div class="mt2 button-spacing">
-            <links to="/projects" class="btn-primary">{{
-              $t('verified.link1')
-            }}</links>
-            <links to="/" class="btn-secondary">{{
-              $t('verified.link2')
-            }}</links>
+            <links to="/projects" class="btn-primary">{{ $t('verified.link1') }}</links>
+            <links to="/" class="btn-secondary">{{ $t('verified.link2') }}</links>
           </div>
         </div>
       </div>
@@ -34,25 +27,19 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import ProgressBar from '@/components/ProgressBar.vue'
+<script setup lang="ts">
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import Links from '@/components/Links.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({
-  components: {
-    ProgressBar,
-    RoundStatusBanner,
-    Links,
-    TransactionReceipt,
-    ImageResponsive,
-  },
-})
-export default class Verified extends Vue {}
+const appStore = useAppStore()
+const { currentRound } = storeToRefs(appStore)
+
+const route = useRoute()
+const hash = computed(() => route.params.hash as string)
 </script>
 
 <style scoped lang="scss">

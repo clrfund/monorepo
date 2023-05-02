@@ -10,23 +10,17 @@
     </p>
     <ul>
       <li>
-        <links to="/about/how-it-works/contributors">{{
-          $t('howItWorks.heading.li-1')
-        }}</links>
+        <links to="/about/how-it-works/contributors">{{ $t('howItWorks.heading.li-1') }}</links>
       </li>
       <li>
-        <links to="/about/how-it-works/recipients">{{
-          $t('howItWorks.heading.li-2')
-        }}</links>
+        <links to="/about/how-it-works/recipients">{{ $t('howItWorks.heading.li-2') }}</links>
       </li>
     </ul>
 
     <h2>{{ $t('howItWorks.quick.title') }}</h2>
     <p>
       {{ $t('howItWorks.quick.paragraph-1-text-1') }}
-      <links to="/about/quadratic-funding">{{
-        $t('howItWorks.quick.link-1')
-      }}</links
+      <links to="/about/quadratic-funding">{{ $t('howItWorks.quick.link-1') }}</links
       >{{ $t('howItWorks.quick.paragraph-1-text-2') }}
     </p>
     <p>
@@ -42,9 +36,7 @@
     <h4>{{ $t('howItWorks.phases.need.title') }}</h4>
     <ul>
       <li>
-        {{
-          $t('howItWorks.phases.need.li-1', { maxRecipients: maxRecipients })
-        }}
+        {{ $t('howItWorks.phases.need.li-1', { maxRecipients: maxRecipients }) }}
       </li>
       <li>
         {{ $t('howItWorks.phases.need.li-2-text')
@@ -70,9 +62,7 @@
       </li>
       <li>
         {{ $t('howItWorks.contribution.need.li-2-text-1') }}
-        <links to="/verify">{{
-          $t('howItWorks.contribution.need.li-2-link')
-        }}</links>
+        <links to="/verify">{{ $t('howItWorks.contribution.need.li-2-link') }}</links>
         {{ $t('howItWorks.contribution.need.li-2-text-2') }}
       </li>
       <li>
@@ -130,55 +120,44 @@
         >{{ $t('howItWorks.more.li-1-text') }}
       </li>
       <li>
-        <links to="/about/sybil-resistance">{{
-          $t('howItWorks.more.li-2-link')
-        }}</links
+        <links to="/about/sybil-resistance">{{ $t('howItWorks.more.li-2-link') }}</links
         >{{ $t('howItWorks.more.li-2-text') }}
       </li>
     </ul>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-
+<script setup lang="ts">
 import { MAX_CONTRIBUTION_AMOUNT } from '@/api/contributions'
 
 import Links from '@/components/Links.vue'
+import { useAppStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-@Component({ components: { Links } })
-export default class AboutHowItWorks extends Vue {
-  // TODO: should we hardcode defaults instead of TBD for our round?
-  get contributionPhaseDays(): number | string {
-    if (this.$store.state.currentRound) {
-      const { signUpDeadline, startTime } = this.$store.state.currentRound
-      return Math.ceil((signUpDeadline - startTime) / (24 * 60 * 60 * 1000))
-    }
-    return 'TBD'
+const appStore = useAppStore()
+const { nativeTokenSymbol } = storeToRefs(appStore)
+// TODO: should we hardcode defaults instead of TBD for our round?
+const contributionPhaseDays = computed(() => {
+  if (appStore.currentRound) {
+    const { signUpDeadline, startTime } = appStore.currentRound
+    return Math.ceil(signUpDeadline.diff(startTime, 'seconds').seconds / (24 * 60 * 60 * 1000))
   }
+  return 'TBD'
+})
 
-  get maxContributionAmount(): number {
-    return MAX_CONTRIBUTION_AMOUNT
-  }
+const maxContributionAmount = computed(() => {
+  return MAX_CONTRIBUTION_AMOUNT
+})
 
-  get maxRecipients(): number | undefined {
-    return this.$store.getters.maxRecipients
-  }
+const maxRecipients = computed(() => {
+  return appStore.maxRecipients
+})
 
-  get nativeTokenSymbol(): string {
-    return this.$store.getters.nativeTokenSymbol
+const reallocationPhaseDays = computed(() => {
+  if (appStore.currentRound) {
+    const { signUpDeadline, votingDeadline } = appStore.currentRound
+    return Math.ceil(votingDeadline.diff(signUpDeadline, 'seconds').seconds / (24 * 60 * 60 * 1000))
   }
-
-  // TODO: should we hardcode defaults instead of TBD for our round?
-  get reallocationPhaseDays(): number | string {
-    if (this.$store.state.currentRound) {
-      const { signUpDeadline, votingDeadline } = this.$store.state.currentRound
-      return Math.ceil(
-        (votingDeadline - signUpDeadline) / (24 * 60 * 60 * 1000)
-      )
-    }
-    return 'TBD'
-  }
-}
+  return 'TBD'
+})
 </script>

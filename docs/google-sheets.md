@@ -11,7 +11,7 @@ If you'd like to use this feature, you must add the Google Sheet environment var
 Two new env variables must be added:
 
 - `GOOGLE_APPLICATION_CREDENTIALS`: service account credentials in a json string (something in this form: `{"type": "...", "private_key": "...", ...}`)
-- `VUE_APP_GOOGLE_SPREADSHEET_ID`: the spreadsheet id that is going to be used
+- `VITE_GOOGLE_SPREADSHEET_ID`: the spreadsheet id that is going to be used
 
 [Learn more about setting up Google authentication credentials](https://cloud.google.com/docs/authentication/getting-started).
 

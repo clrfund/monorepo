@@ -5,15 +5,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-
-@Component
-export default class Info extends Vue {
-  @Prop() message!: string
+<script setup lang="ts">
+interface Props {
+  message: string
 }
+
+defineProps<Props>()
 </script>
 
 <style scoped lang="scss">

@@ -1,5 +1,5 @@
 import { Contract, Signer, utils } from 'ethers'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
+import type { TransactionResponse } from '@ethersproject/abstract-provider'
 import { formatBytes32String } from '@ethersproject/strings'
 
 import { BrightIdUserRegistry } from './abi'
@@ -8,7 +8,7 @@ import nacl from 'tweetnacl'
 
 const BRIGHTID_APP_URL = 'https://app.brightid.org'
 const NODE_URL = brightIdNodeUrl
-const CONTEXT = process.env.VUE_APP_BRIGHTID_CONTEXT || 'clr.fund'
+const CONTEXT = import.meta.env.VITE_BRIGHTID_CONTEXT || 'clr.fund'
 
 /**
  * These errors from the BrightID sponsor api can be ignored
@@ -87,10 +87,7 @@ type SponsorData = {
   error?: string
 }
 
-export async function selfSponsor(
-  registryAddress: string,
-  signer: Signer
-): Promise<TransactionResponse> {
+export async function selfSponsor(registryAddress: string, signer: Signer): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, BrightIdUserRegistry, signer)
   const userAddress = await signer.getAddress()
   const transaction = await registry.sponsor(userAddress)
@@ -121,9 +118,7 @@ export class BrightIdError extends Error {
   }
 }
 
-export async function getVerification(
-  userAddress: string
-): Promise<Verification> {
+export async function getVerification(userAddress: string): Promise<Verification> {
   const apiUrl = `${NODE_URL}/verifications/${CONTEXT}/${userAddress}?signed=eth&timestamp=seconds`
   // bypass the cache so we get the status change sooner
   const response = await fetch(apiUrl, { cache: 'no-store' })
@@ -139,7 +134,7 @@ export async function getVerification(
 export async function registerUser(
   registryAddress: string,
   verification: Verification,
-  signer: Signer
+  signer: Signer,
 ): Promise<TransactionResponse> {
   const registry = new Contract(registryAddress, BrightIdUserRegistry, signer)
   const transaction = await registry.register(
@@ -149,7 +144,7 @@ export async function registerUser(
     verification.timestamp,
     verification.sig.v,
     '0x' + verification.sig.r,
-    '0x' + verification.sig.s
+    '0x' + verification.sig.s,
   )
   return transaction
 }
@@ -162,7 +157,7 @@ export async function getBrightId(contextId: string): Promise<BrightId> {
   try {
     const verification = await getVerification(contextId)
     // the `unique` field tell us if the user is a verified user
-    brightId.isVerified = !!verification?.unique
+    brightId.isVerified = !!verification.unique
     brightId.verification = verification
   } catch (error) {
     if (!(error instanceof BrightIdError)) {
@@ -197,9 +192,7 @@ async function unusedSponsorships(context: string): Promise<number> {
  * @param userAddress user wallet address
  * @returns sponsporship result or error
  */
-export async function brightIdSponsor(
-  userAddress: string
-): Promise<SponsorData> {
+export async function brightIdSponsor(userAddress: string): Promise<SponsorData> {
   const endpoint = `${NODE_URL}/operations`
 
   if (!brightIdSponsorKey) {

@@ -1,32 +1,17 @@
 <template>
-  <form
-    method="POST"
-    enctype="multipart/form-data"
-    @submit="handleUploadToIPFS"
-    name="image"
-  >
+  <form method="POST" enctype="multipart/form-data" @submit="handleUploadToIPFS" name="image">
     <p class="input-label">{{ label }}</p>
     <p class="input-description">{{ description }}</p>
     <div class="input-row">
-      <input
-        type="file"
-        class="input"
-        @change="handleLoadFile"
-        name="image"
-        :id="`${formProp}-input`"
-      />
+      <input type="file" class="input" @change="handleLoadFile" name="image" :id="`${formProp}-input`" />
       <button
         primary="true"
         type="submit"
         label="Upload"
         class="btn-primary"
-        :disabled="loading || error || !loadedImageFile"
+        :disabled="loading || Boolean(error) || !Boolean(loadedImageFile)"
       >
-        {{
-          loading
-            ? $t('ipfsImageUpload.button1_1')
-            : $t('ipfsImageUpload.button1_2')
-        }}
+        {{ loading ? $t('ipfsImageUpload.button1_1') : $t('ipfsImageUpload.button1_2') }}
       </button>
     </div>
     <loader v-if="loading" />
@@ -63,115 +48,98 @@
   </form>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import { ipfsGatewayUrl } from '@/api/core'
-
 import Loader from '@/components/Loader.vue'
 import IpfsCopyWidget from '@/components/IpfsCopyWidget.vue'
 
 import { IPFS } from '@/api/ipfs'
 
-@Component({
-  components: {
-    Loader,
-    IpfsCopyWidget,
-  },
-})
-export default class IpfsImageUpload extends Vue {
-  @Prop() label!: string
-  @Prop() description!: string
-  @Prop() formProp!: string
-  @Prop() onUpload!: (key: string, value: string) => void
+interface Props {
+  label: string
+  description: string
+  formProp: string
+  onUpload: (key: string, value: string) => void
+}
 
-  ipfs: IPFS | null = null
-  hash = ''
-  loading = false
-  loadedImageFile: File | null = null
-  loadedImageHeight: number | null = null
-  loadedImageWidth: number | null = null
-  error = ''
+const props = defineProps<Props>()
 
-  created() {
-    this.ipfs = new IPFS()
+const ipfs = ref<IPFS | null>(null)
+const hash = ref('')
+const loading = ref(false)
+const loadedImageFile = ref<File | null>(null)
+const loadedImageHeight = ref<number | null>(null)
+const loadedImageWidth = ref<number | null>(null)
+const error = ref('')
+
+const imageUrl = computed(() => `${ipfsGatewayUrl}/ipfs/${hash.value}`)
+
+ipfs.value = new IPFS()
+
+// TODO raise error if not valid image (JPG / PNG / GIF)
+function handleLoadFile(event: any) {
+  error.value = ''
+  const data = event.target.files[0]
+
+  if (!data) return
+  if (!data.type.match('image/*')) {
+    error.value = 'Upload a JPG, PNG, or GIF'
+    return
   }
-
-  // TODO raise error if not valid image (JPG / PNG / GIF)
-  handleLoadFile(event) {
-    this.error = ''
-    const data = event.target.files[0]
-
-    if (!data) return
-    if (!data.type.match('image/*')) {
-      this.error = 'Upload a JPG, PNG, or GIF'
-      return
-    }
-    if (data.size > 512000) {
-      // Limit 512 kB file size
-      this.error = 'Upload an image smaller than 512 kB'
-      return
-    }
-    this.loadedImageFile = data
-    const reader = new FileReader()
-    reader.onload = (() => (e) => {
-      const img = new Image()
-      img.src = String(e.target?.result)
-      img.onload = () => {
-        this.loadedImageHeight = img.height
-        this.loadedImageWidth = img.width
-      }
-    })()
-    reader.readAsDataURL(data)
+  if (data.size > 512000) {
+    // Limit 512 kB file size
+    error.value = 'Upload an image smaller than 512 kB'
+    return
   }
-
-  // TODO display error in UI
-  handleUploadToIPFS(event) {
-    event.preventDefault()
-    if (
-      this.ipfs &&
-      this.loadedImageFile &&
-      this.loadedImageHeight &&
-      this.loadedImageWidth
-    ) {
-      this.loading = true
-      this.ipfs
-        .add(this.loadedImageFile)
-        .then((hash) => {
-          this.hash = hash
-          /* eslint-disable-next-line no-console */
-          console.log(`Uploaded file hash:`, hash)
-          this.onUpload(this.formProp, hash)
-          this.loading = false
-        })
-        .catch((error) => {
-          this.error = `Error occurred: ${error}`
-          this.loading = false
-        })
-    } else {
-      this.error = 'You need an image.'
+  loadedImageFile.value = data
+  const reader = new FileReader()
+  reader.onload = (() => e => {
+    const img = new Image()
+    img.src = String(e.target?.result)
+    img.onload = () => {
+      loadedImageHeight.value = img.height
+      loadedImageWidth.value = img.width
     }
+  })()
+  reader.readAsDataURL(data)
+}
+
+// TODO display error in UI
+function handleUploadToIPFS(event: any) {
+  event.preventDefault()
+  if (ipfs.value && loadedImageFile.value && loadedImageHeight.value && loadedImageWidth.value) {
+    loading.value = true
+    ipfs.value
+      .add(loadedImageFile.value)
+      .then(_hash => {
+        hash.value = _hash
+        /* eslint-disable-next-line no-console */
+        console.log(`Uploaded file hash:`, hash.value)
+        props.onUpload(props.formProp, hash.value)
+        loading.value = false
+      })
+      .catch(error => {
+        error.value = `Error occurred: ${error}`
+        loading.value = false
+      })
+  } else {
+    error.value = 'You need an image.'
   }
+}
 
-  handleRemoveImage(): void {
-    this.hash = ''
-    this.loading = false
-    this.error = ''
-    this.loadedImageFile = null
-    this.onUpload(this.formProp, '')
+function handleRemoveImage(): void {
+  hash.value = ''
+  loading.value = false
+  error.value = ''
+  loadedImageFile.value = null
+  props.onUpload(props.formProp, '')
 
-    // Clear file selector input
-    const fileSelector = document.getElementById(
-      `${this.formProp}-input`
-    ) as HTMLInputElement
-    if (fileSelector) {
-      fileSelector.value = ''
-    }
-  }
-
-  get imageUrl(): string {
-    return `${ipfsGatewayUrl}/ipfs/${this.hash}`
+  // Clear file selector input
+  const fileSelector = document.getElementById(`${props.formProp}-input`) as HTMLInputElement
+  // eslint-disable-next-line
+  if (fileSelector) {
+    fileSelector.value = ''
   }
 }
 </script>

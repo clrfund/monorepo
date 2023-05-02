@@ -1,6 +1,6 @@
 <template>
   <div>
-    <round-status-banner v-if="$store.state.currentRound" />
+    <round-status-banner v-if="currentRound" />
     <div class="gradient">
       <img src="@/assets/moon.png" class="moon" />
       <div class="hero">
@@ -9,15 +9,13 @@
           <span class="emoji">🎉</span>
           <div class="flex-title">
             <h1>{{ $t('projectAdded.h1') }}</h1>
-            <transaction-receipt :hash="$route.params.hash" />
+            <transaction-receipt :hash="hash" />
           </div>
           <div class="subtitle">{{ $t('projectAdded.div1') }}</div>
           <ul>
             <li>
               {{ $t('projectAdded.li1') }}
-              <links to="/about/how-it-works/recipients">{{
-                $t('projectAdded.link1')
-              }}</links>
+              <links to="/about/how-it-works/recipients">{{ $t('projectAdded.link1') }}</links>
             </li>
             <li>{{ $t('projectAdded.li2') }}</li>
             <li>
@@ -25,12 +23,8 @@
             </li>
           </ul>
           <div class="mt2 button-spacing">
-            <links :to="recipientProfileUrl" class="btn-primary">{{
-              $t('projectAdded.link2')
-            }}</links>
-            <links to="/" class="btn-secondary">{{
-              $t('projectAdded.link3')
-            }}</links>
+            <links :to="`/recipients/${hash}`" class="btn-primary">{{ $t('projectAdded.link2') }}</links>
+            <links to="/" class="btn-secondary">{{ $t('projectAdded.link3') }}</links>
           </div>
         </div>
       </div>
@@ -38,49 +32,22 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import * as humanizeDuration from 'humanize-duration'
+<script setup lang="ts">
+import { computed } from 'vue'
 
-import ProgressBar from '@/components/ProgressBar.vue'
 import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import TransactionReceipt from '@/components/TransactionReceipt.vue'
-import Warning from '@/components/Warning.vue'
 import Links from '@/components/Links.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 
-import { RegistryInfo } from '@/api/recipient-registry-optimistic'
+import { useAppStore } from '@/stores'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
 
-@Component({
-  components: {
-    ProgressBar,
-    RoundStatusBanner,
-    TransactionReceipt,
-    Warning,
-    Links,
-    ImageResponsive,
-  },
-})
-export default class ProjectAdded extends Vue {
-  challengePeriodDuration: number | null = null
-
-  async created() {
-    this.challengePeriodDuration = this.registryInfo.challengePeriodDuration
-  }
-
-  get registryInfo(): RegistryInfo {
-    return this.$store.state.recipientRegistryInfo
-  }
-
-  get recipientProfileUrl(): string {
-    return `/recipients/${this.$route.params.hash}`
-  }
-
-  formatDuration(seconds: number): string {
-    return humanizeDuration(seconds * 1000, { largest: 1 })
-  }
-}
+const route = useRoute()
+const appStore = useAppStore()
+const { currentRound } = storeToRefs(appStore)
+const hash = computed(() => route.params.hash as string)
 </script>
 
 <style scoped lang="scss">

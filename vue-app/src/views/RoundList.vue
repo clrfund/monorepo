@@ -5,7 +5,7 @@
       <links
         class="round-name"
         :to="{
-          name: 'leaderboard',
+          name: 'round',
           params: { address: round.address },
         }"
       >
@@ -15,25 +15,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-
-import { Round } from '@/api/rounds'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { type Round, getRounds } from '@/api/rounds'
 import Links from '@/components/Links.vue'
-import { LOAD_ROUNDS } from '@/store/action-types'
 
-@Component({ components: { Links } })
-export default class RoundList extends Vue {
-  rounds: Round[] = []
+const rounds = ref<Round[]>([])
 
-  async created() {
-    if (!this.$store.state.rounds) {
-      await this.$store.dispatch(LOAD_ROUNDS)
-    }
-    this.rounds = this.$store.state.rounds.list().reverse()
-  }
-}
+onMounted(async () => {
+  rounds.value = (await getRounds()).reverse()
+})
 </script>
 
 <style scoped lang="scss">

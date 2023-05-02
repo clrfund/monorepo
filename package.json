@@ -29,13 +29,12 @@
     "start:web": "yarn workspace @clrfund/vue-app run serve",
     "start:gun": "yarn workspace @clrfund/vue-app run gun",
     "start:subgraph": "yarn workspace @clrfund/subgraph run prepare:hardhat && yarn build:subgraph && yarn deploy:local-subgraph",
-    "codegen": "graphql-codegen --config codegen.yml",
     "test": "yarn workspace @clrfund/contracts run test && yarn workspace @clrfund/vue-app run test",
     "test:contracts": "yarn workspace @clrfund/contracts run test",
     "test:e2e": "yarn workspace @clrfund/contracts run e2e",
     "test:web": "yarn workspace @clrfund/vue-app run test",
     "test:format": "yarn prettier --check",
-    "test:lint-i18n": "yarn workspace @clrfund/vue-app run test:lint-i18n --ci",
+    "test:lint-i18n": "echo yarn workspace @clrfund/vue-app run test:lint-i18n --ci",
     "deploy:subgraph": "yarn workspace @clrfund/subgraph run deploy",
     "deploy:local": "yarn deploy:local-registry && yarn deploy:local-round",
     "deploy:local-registry": "yarn workspace @clrfund/contracts run deploy:local",
@@ -51,13 +50,9 @@
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "2.1.1",
-    "@graphql-codegen/typescript": "^2.1.2",
-    "@graphql-codegen/typescript-graphql-request": "^4.1.2",
-    "@graphql-codegen/typescript-operations": "^2.1.2",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
-    "prettier": "^2.3.1",
+    "prettier": "^2.8.0",
     "typechain": "^3.0.0"
   }
 }

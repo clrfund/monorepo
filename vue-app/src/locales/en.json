@@ -542,7 +542,7 @@
       "p1": "Tell us about the folks behind your project.",
       "label1": "Contact email",
       "description1": "For important updates about your project and the funding round.",
-      "input1": "example: doge@goodboi.com",
+      "input1": "example: doge{'@'}goodboi.com",
       "notice1": "We won't display this publicly or add it to the on-chain registry.",
       "error1": "This doesn't look like an email.",
       "label2": "Team name (optional)",
@@ -653,7 +653,8 @@
     "hero": {
       "title": "Send your favorite projects to the moon!",
       "subtitle": "Every project you contribute to gets a portion of extra funding.",
-      "info": "How it works"
+      "info": "How it works",
+      "action": "Get Started"
     },
     "callout": {
       "title": "Join the funding round",
@@ -802,6 +803,7 @@
     "btn": " Become a contributor",
     "next": "Next",
     "previous": "Previous",
+    "copy_link": "Copy Link",
     "verification_status": "Your wallet address is not linked with BrightID. It may take a few minutes to verify the connection, please wait and click the button later to check the status.",
     "skip_sponsorship": "Skip",
     "get_sponsored_header": "Get sponsored",
@@ -965,7 +967,7 @@
   "linkBox": {
     "h2": "Check them out",
     "link1": "GitHub repo",
-    "link2": "@Twitter"
+    "link2": "{'@'}Twitter"
   },
   "matchingFundsModal": {
     "title": "Contribute {tokenSymbol} to the matching pool",
@@ -979,6 +981,7 @@
   },
   "app": "App",
   "navBar": {
+    "app": "App",
     "dropdown": {
       "home": "Home",
       "about": "About",

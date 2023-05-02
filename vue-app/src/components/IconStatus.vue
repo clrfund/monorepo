@@ -1,53 +1,42 @@
 <template>
   <div class="icon-container">
-    <img :src="require(`@/assets/${logo}`)" class="logo" />
+    <img :src="logoImageUrl" class="logo" />
     <div class="background">
       <div v-if="happy" class="status-happy">
-        <img
-          :src="require(`@/assets/${secondaryLogo}`)"
-          class="secondary-icon"
-        />
+        <img :src="secondaryIconUrl" class="secondary-icon" />
       </div>
       <div v-if="sad" class="status-sad">
-        <img
-          :src="require(`@/assets/${secondaryLogo}`)"
-          class="secondary-icon"
-        />
+        <img :src="secondaryIconUrl" class="secondary-icon" />
       </div>
-      <div
-        v-if="custom && secondaryLogo"
-        class="status-custom"
-        :style="cssVars"
-      >
-        <img
-          :src="require(`@/assets/${secondaryLogo}`)"
-          class="secondary-icon"
-        />
+      <div v-if="custom && secondaryLogo" class="status-custom" :style="cssVars">
+        <img :src="secondaryIconUrl" class="secondary-icon" />
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
+<script setup lang="ts">
+import { computed } from 'vue'
 
 // TODO clean up this component
 // Component to overlay status badge on icons, e.g. https://share.getcloudapp.com/GGuWoxx0
-@Component
-export default class IconStatus extends Vue {
-  @Prop() happy!: boolean
-  @Prop() sad!: boolean
-  @Prop() custom!: boolean
-  @Prop() logo!: string
-  @Prop() secondaryLogo!: string
-  @Prop({ default: 'transparent' }) bg!: string
 
-  get cssVars() {
-    return { background: this.bg }
-  }
+interface Props {
+  happy?: boolean
+  sad?: boolean
+  custom?: boolean
+  logo: string
+  secondaryLogo: string
+  bg?: string
 }
+
+const props = withDefaults(defineProps<Props>(), {
+  bg: 'transparent',
+})
+
+const cssVars = computed(() => ({ background: props.bg }))
+const logoImageUrl = new URL(`/src/assets/${props.logo}`, import.meta.url).href
+const secondaryIconUrl = new URL(`/src/assets/${props.secondaryLogo}`, import.meta.url).href
 </script>
 
 <style scoped lang="scss">

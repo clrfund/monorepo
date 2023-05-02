@@ -8,7 +8,7 @@ In order to enable BrightID in the app, follow these steps:
 
 ```.sh
 # /vue-app/.env
-VUE_APP_USER_REGISTRY_TYPE=brightid
+VITE_USER_REGISTRY_TYPE=brightid
 
 # /contracts/.env
 USER_REGISTRY_TYPE=brightid
@@ -27,7 +27,7 @@ Available envs:
 
 ```.sh
 # /vue-app/.env
-VUE_APP_BRIGHTID_CONTEXT={CONTEXT}
+VITE_BRIGHTID_CONTEXT={CONTEXT}
 
 # /contracts/.env
 BRIGHTID_CONTEXT={CONTEXT}
@@ -44,7 +44,7 @@ The BrightID verification status is signed by the BrightID node. When deploying 
 
 ```.sh
 # /vue-app/.env
-VUE_APP_BRIGHTID_NODE_URL=https://brightid.clr.fund/brightid/v6
+VITE_BRIGHTID_NODE_URL=https://brightid.clr.fund/brightid/v6
 
 # /contracts/.env
 BRIGHTID_VERIFIER_ADDR=0xdbf0b2ee9887fe11934789644096028ed3febe9c
@@ -56,15 +56,15 @@ By default, the clrfund app will connect to the BrightId node run by clrfund, ht
 **#4 configure the BrightID sponsorship page**
 By default, the clrfund app will sponsor the BrightId users using the smart contract event logging method. The `Sponsor` contract is listed in the step #2 above.
 
-Alternatively, you can configure the clrfund app to use the BrightId sponsorship api to submit the sponsorship request directly by setting the following environment variables. Only one of VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY or VUE_APP_BRIGHTID_SPONSOR_KEY needs to be set. If VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY is set, the clrfund app must be deployed to the netlify platform as it will use the netlify serverless function. The netlify option is used if you want to protect the BrightId sponsor key.
+Alternatively, you can configure the clrfund app to use the BrightId sponsorship api to submit the sponsorship request directly by setting the following environment variables. Only one of VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY or VITE_BRIGHTID_SPONSOR_KEY needs to be set. If VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY is set, the clrfund app must be deployed to the netlify platform as it will use the netlify serverless function. The netlify option is used if you want to protect the BrightId sponsor key.
 
-The BrightId sponsor key can be generated using the random Nacl keypair at [https://tweetnacl.js.org/#/sign](https://tweetnacl.js.org/#/sign).  Give the public key part to the BrightId folks to setup the context and put the private key part in VUE_APP_BRIGHTID_SPONSOR_KEY or VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY.
+The BrightId sponsor key can be generated using the random Nacl keypair at [https://tweetnacl.js.org/#/sign](https://tweetnacl.js.org/#/sign).  Give the public key part to the BrightId folks to setup the context and put the private key part in VITE_BRIGHTID_SPONSOR_KEY or VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY.
 
 ```.sh
 # /vue-app/.env
-VUE_APP_BRIGHTID_SPONSOR_API_URL=https://brightid.clr.fund/brightid/v6/operations
-VUE_APP_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY=
-VUE_APP_BRIGHTID_SPONSOR_KEY=
+VITE_BRIGHTID_SPONSOR_API_URL=https://brightid.clr.fund/brightid/v6/operations
+VITE_BRIGHTID_SPONSOR_KEY_FOR_NETLIFY=
+VITE_BRIGHTID_SPONSOR_KEY=
 ```
 
 **#5 netlify function setup**

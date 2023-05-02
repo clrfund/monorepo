@@ -286,11 +286,12 @@ See https://github.com/amark/gun for more details about GUN
 User interface can be configured using environment variables. See [.env file example](../vue-app/.env.example) for details.
 
 If following along with Goerli,
-  1) make sure to update `VUE_APP_CLRFUND_FACTORY_ADDRESS` with your Goerli funding factory address
-  2) update `VUE_APP_ETHEREUM_API_URL` with a Goerli provider (ie. Infura or Alchemy)
-  3) update `VUE_APP_ETHEREUM_API_CHAINID` to 5 (Goerli chain id)
-  4) update `VUE_APP_SUBGRAPH_URL` with your subgraph url
-  5) double check you are using the same user and recipient registry types as used during deployment above.
+  1) make sure to update `VITE_CLRFUND_FACTORY_ADDRESS` with your Goerli funding factory address
+  2) update `VITE_ETHEREUM_API_URL` with a Goerli provider (ie. Infura or Alchemy)
+  3) update `VITE_ETHEREUM_API_CHAINID` to 5 (Goerli chain id)
+  4) update `VITE_SUBGRAPH_URL` with your subgraph url
+  5) update `VITE_IPFS_API_KEY` and `VITE_IPFS_SECRET_API_KEY` with your pinata ipfs api key values
+  6) double check you are using the same user and recipient registry types as used during deployment above.
 
 Build the dApp for production:
 

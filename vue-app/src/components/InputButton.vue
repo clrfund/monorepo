@@ -1,22 +1,16 @@
 <template>
   <form action="#" class="input-button">
-    <img
-      v-if="input"
-      class="token-icon"
-      height="24px"
-      :src="require(`@/assets/${tokenLogo}`)"
-    />
+    <img v-if="input" class="token-icon" height="24" :src="appStore.tokenLogoUrl" />
     <input
       v-if="input"
       class="input"
       type="number"
+      :value="modelValue"
       :class="input.class"
-      :value="value"
       :required="input.required"
       :placeholder="input.placeholder"
       :disabled="input.disabled"
-      @input="$emit('input', $event.target.value)"
-      @blur="$emit('blur', $event.target.value)"
+      @input="handleInputChange"
     />
     <input
       v-if="button"
@@ -25,16 +19,15 @@
       :value="button.text"
       :class="{ wide: button.wide }"
       :disabled="button.disabled"
-      @click.prevent="$emit('click')"
+      @click.prevent="emit('click')"
     />
   </form>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Prop } from 'vue-property-decorator'
-import { getTokenLogo } from '@/utils/tokens'
+<script setup lang="ts">
+import { useAppStore } from '@/stores'
+
+const appStore = useAppStore()
 
 type buttonType = {
   text: string
@@ -49,16 +42,18 @@ type inputType = {
   disabled?: boolean
 }
 
-@Component
-export default class InputButton extends Vue {
-  @Prop() button!: buttonType
-  @Prop() input!: inputType
-  @Prop() value!: number
+interface Props {
+  button?: buttonType
+  input?: inputType
+  modelValue?: string
+}
 
-  get tokenLogo(): string {
-    const { nativeTokenSymbol } = this.$store.state.currentRound
-    return getTokenLogo(nativeTokenSymbol)
-  }
+defineProps<Props>()
+
+const emit = defineEmits(['update:modelValue', 'click'])
+
+function handleInputChange(event: Event) {
+  emit('update:modelValue', (event.target as HTMLInputElement).value)
 }
 </script>
 

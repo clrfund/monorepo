@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <vue-final-modal class="modal-container">
     <div v-if="connectingWallet" class="modal-body loading">
       <loader />
       <p>{{ $t('walletModal.p1') }}</p>
@@ -7,67 +7,56 @@
     <div v-else class="modal-body">
       <div class="top">
         <p>{{ $t('walletModal.p2') }}</p>
-        <button class="close-button" @click="$emit('close')">
+        <button class="close-button" @click="emit('close')">
           <img class="pointer" src="@/assets/close.svg" />
         </button>
       </div>
-      <button
-        v-if="windowEthereum"
-        class="option"
-        @click="connectWallet('metamask')"
-      >
+      <button v-if="windowEthereum" class="option" @click="connectWallet('metamask')">
         <p>{{ $t('walletModal.p3') }}</p>
-        <img height="24px" width="24px" src="@/assets/metamask.svg" />
+        <img height="24" width="24" src="@/assets/metamask.svg" />
       </button>
       <button v-else class="option" @click="redirectToMetamaskWebsite()">
         <p>{{ $t('walletModal.p4') }}</p>
-        <img height="24px" width="24px" src="@/assets/metamask.svg" />
+        <img height="24" width="24" src="@/assets/metamask.svg" />
       </button>
       <button class="option" @click="connectWallet('walletconnect')">
         <p>{{ $t('walletModal.p5') }}</p>
-        <img height="24px" width="24px" src="@/assets/walletConnectIcon.svg" />
+        <img height="24" width="24" src="@/assets/walletConnectIcon.svg" />
       </button>
       <div v-if="error" class="error">{{ error }}</div>
     </div>
-  </div>
+  </vue-final-modal>
 </template>
 
-<script lang="ts">
-// Libraries
-import Vue from 'vue'
-import Component from 'vue-class-component'
-
-// Components
+<script setup lang="ts">
 import Loader from '@/components/Loader.vue'
+import { useWalletStore, type WalletProvider } from '@/stores'
+import { VueFinalModal } from 'vue-final-modal'
 
-@Component({
-  components: {
-    Loader,
-  },
+const error = ref('')
+const connectingWallet = ref(false)
+
+const { connect } = useWalletStore()
+const emit = defineEmits(['close'])
+
+const windowEthereum = computed(() => {
+  return (window as any).ethereum
 })
-export default class WalletModal extends Vue {
-  connectingWallet = false
-  error = ''
 
-  get windowEthereum(): any {
-    return (window as any).ethereum
+async function connectWallet(walletType: WalletProvider) {
+  error.value = ''
+  connectingWallet.value = true
+  try {
+    await connect(walletType)
+    emit('close')
+  } catch (err) {
+    error.value = (err as Error).message
   }
+  connectingWallet.value = false
+}
 
-  async connectWallet(walletType: string) {
-    this.error = ''
-    this.connectingWallet = true
-    try {
-      await this.$web3.connectWallet(walletType)
-      this.$emit('close')
-    } catch (error) {
-      this.error = error.message
-    }
-    this.connectingWallet = false
-  }
-
-  redirectToMetamaskWebsite() {
-    window.open('https://metamask.io/', '_blank')
-  }
+function redirectToMetamaskWebsite() {
+  window.open('https://metamask.io/', '_blank')
 }
 </script>
 

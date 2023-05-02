@@ -1,243 +1,204 @@
 <template>
+  <metainfo>
+    <template v-slot:title="{ content }">{{ content }}</template>
+  </metainfo>
   <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
-    <div id="content-container">
-      <div
-        id="sidebar"
-        v-if="isSidebarShown"
-        :class="`${$store.state.showCartPanel ? 'desktop-l' : 'desktop'}`"
-      >
+    <div v-if="appReady" id="content-container">
+      <div v-if="isSidebarShown" id="sidebar" :class="`${showCartPanel ? 'desktop-l' : 'desktop'}`">
         <round-information />
       </div>
       <div
         id="content"
         :class="{
           padded: isVerifyStep || (isSidebarShown && !isCartPadding),
-          'mr-cart-open': isCartToggledOpen && isSideCartShown,
-          'mr-cart-closed': !isCartToggledOpen && isSideCartShown,
+          'mr-cart-open': showCartPanel && isSideCartShown,
+          'mr-cart-closed': !showCartPanel && isSideCartShown,
         }"
       >
         <breadcrumbs v-if="showBreadCrumb" />
-        <router-view :key="$route.path" />
+        <router-view :key="route.path" />
       </div>
-      <div
-        id="cart"
-        v-if="isSideCartShown"
-        :class="`desktop ${isCartToggledOpen ? 'open-cart' : 'closed-cart'}`"
-      >
+      <div v-if="isSideCartShown" id="cart" :class="`desktop ${showCartPanel ? 'open-cart' : 'closed-cart'}`">
         <cart-widget />
       </div>
     </div>
     <mobile-tabs v-if="isMobileTabsShown" />
   </div>
+  <!-- vue-final-modal -->
+  <modals-container></modals-container>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-import { Component, Watch } from 'vue-property-decorator'
+<script setup lang="ts">
+import NavBar from '@/components/NavBar.vue'
+import CartWidget from '@/components/CartWidget.vue'
+import MobileTabs from '@/components/MobileTabs.vue'
+import Breadcrumbs from '@/components/Breadcrumbs.vue'
+// @ts-ignore
+import { ModalsContainer } from 'vue-final-modal'
 
 import { getDefaultColorScheme } from '@/utils/theme'
 import { getCurrentRound } from '@/api/round'
-import { User } from '@/api/user'
-
-import RoundInformation from '@/views/RoundInformation.vue'
-import NavBar from '@/components/NavBar.vue'
-import CartWidget from '@/components/CartWidget.vue'
-import Cart from '@/components/Cart.vue'
-import MobileTabs from '@/components/MobileTabs.vue'
-import BackLink from '@/components/BackLink.vue'
-import Breadcrumbs from '@/components/Breadcrumbs.vue'
-
-import {
-  LOAD_USER_INFO,
-  LOAD_ROUND_INFO,
-  LOAD_RECIPIENT_REGISTRY_INFO,
-  SELECT_ROUND,
-  LOAD_CART,
-  LOAD_COMMITTED_CART,
-  LOAD_CONTRIBUTOR_DATA,
-  LOGIN_USER,
-  LOAD_FACTORY_INFO,
-  LOAD_MACI_FACTORY_INFO,
-  LOAD_BRIGHT_ID,
-} from '@/store/action-types'
-import { SET_CURRENT_USER } from '@/store/mutation-types'
 import { operator } from '@/api/core'
+import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
+import { useMeta } from 'vue-meta'
 
-@Component({
-  name: 'clr.fund',
-  metaInfo() {
+const route = useRoute()
+const appStore = useAppStore()
+const { theme, showCartPanel, currentRound } = storeToRefs(appStore)
+
+const userStore = useUserStore()
+const { currentUser } = storeToRefs(userStore)
+
+const wallet = useWalletStore()
+const { user: walletUser } = storeToRefs(wallet)
+
+const recipientStore = useRecipientStore()
+
+// https://stackoverflow.com/questions/71785473/how-to-use-vue-meta-with-vue3
+// https://www.npmjs.com/package/vue-meta/v/3.0.0-alpha.7
+useMeta(
+  computed(() => {
     return {
-      title: this.$route.meta.title,
-      titleTemplate: `${operator} - %s`,
+      // titleTemplate no longer works in vue-meta3
+      // construct the title dynamically instead
+      title: route.meta.title ? `${operator} - ${route.meta.title}` : operator,
+      // meta also does not work like in vue-meta2,
+      // name is always meta, use description instead
       meta: [
         {
-          name: 'git-commit',
-          content: process.env.VUE_APP_GIT_COMMIT || '',
+          description: 'git-commit',
+          content: import.meta.env.VITE_GIT_COMMIT || '',
         },
       ],
     }
-  },
-  components: {
-    RoundInformation,
-    NavBar,
-    Cart,
-    MobileTabs,
-    CartWidget,
-    BackLink,
-    Breadcrumbs,
-  },
+  }),
+)
+
+const intervals: { [key: string]: any } = {}
+
+// state
+const routeName = computed(() => route.name?.toString() || '')
+const isUserAndRoundLoaded = computed(() => !!currentUser.value && !!currentRound.value)
+const isInApp = computed(() => routeName.value !== 'landing')
+const isVerifyStep = computed(() => routeName.value === 'verify-step')
+const isSideCartShown = computed(() => !!currentUser.value && isSidebarShown.value && routeName.value !== 'cart')
+const isCartPadding = computed(() => {
+  const routes = ['cart']
+  return routes.includes(routeName.value)
 })
-export default class App extends Vue {
-  intervals: { [key: string]: any } = {}
+const isSidebarShown = computed(() => {
+  const excludedRoutes = [
+    'landing',
+    'project-added',
+    'join',
+    'join-step',
+    'round-information',
+    'transaction-success',
+    'verify',
+    'verify-step',
+    'verified',
+    'sponsored',
+  ]
+  return !excludedRoutes.includes(routeName.value)
+})
+const isMobileTabsShown = computed(() => {
+  const excludedRoutes = [
+    'landing',
+    'project-added',
+    'join',
+    'join-step',
+    'transaction-success',
+    'verify',
+    'verify-step',
+    'verified',
+    'sponsored',
+  ]
+  return !excludedRoutes.includes(routeName.value)
+})
+const showBreadCrumb = computed(() => {
+  const excludedRoutes = ['landing', 'join', 'join-step', 'transaction-success', 'verify', 'project-added', 'verified']
+  return !excludedRoutes.includes(routeName.value)
+})
 
-  //NOTE: why are all these called on the landing page? makes it heavy to load
-  created() {
-    this.setAppTheme()
-    this.intervals.round = setInterval(() => {
-      this.$store.dispatch(LOAD_ROUND_INFO)
-    }, 60 * 1000)
-    this.intervals.recipient = setInterval(async () => {
-      await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
-    }, 60 * 1000)
-    this.intervals.user = setInterval(() => {
-      this.$store.dispatch(LOAD_USER_INFO)
-    }, 60 * 1000)
-  }
+watch(theme, () => {
+  const savedTheme = theme.value
+  document.documentElement.setAttribute('data-theme', savedTheme || getDefaultColorScheme())
+})
 
-  //NOTE: why are all these called on the landing page?
-  async mounted() {
-    //TODO: update to take factory address as a parameter, default to env. variable
-    //TODO: SELECT_ROUND action also commits SET_CURRENT_FACTORY_ADDRESS on this action, should be passed optionally and default to env variable
-    const roundAddress =
-      this.$store.state.currentRoundAddress || (await getCurrentRound())
-    await this.$store.dispatch(SELECT_ROUND, roundAddress)
-    this.$store.dispatch(LOAD_ROUND_INFO)
-    this.$store.dispatch(LOAD_FACTORY_INFO)
-    this.$store.dispatch(LOAD_MACI_FACTORY_INFO)
-    await this.$store.dispatch(LOAD_RECIPIENT_REGISTRY_INFO)
-  }
+const appReady = ref(false)
 
-  beforeDestroy() {
-    for (const interval of Object.keys(this.intervals)) {
-      clearInterval(this.intervals[interval])
-    }
-  }
-
-  @Watch('$web3.user')
-  loginUser = async () => {
-    if (!this.$web3.user) return
-
-    // Connect & auth to gun db
-    try {
-      await this.$store.dispatch(LOGIN_USER, this.$web3.user)
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      console.error(error)
-      return
-    }
-
-    this.$store.commit(SET_CURRENT_USER, this.$web3.user)
-    this.$store.dispatch(LOAD_USER_INFO)
-    this.$store.dispatch(LOAD_BRIGHT_ID)
-  }
-
-  @Watch('isUserAndRoundLoaded')
-  loadUserRoundData = async () => {
-    if (!this.isUserAndRoundLoaded) {
-      return
-    }
-
-    this.$store.dispatch(LOAD_USER_INFO)
-
-    // Load cart & contributor data for current round
-    this.$store.dispatch(LOAD_CART)
-    this.$store.dispatch(LOAD_COMMITTED_CART)
-    this.$store.dispatch(LOAD_CONTRIBUTOR_DATA)
-  }
-
-  get isUserAndRoundLoaded(): boolean {
-    return !!this.currentUser && !!this.$store.state.currentRound
-  }
-
-  @Watch('$store.state.theme')
-  setAppTheme = () => {
-    const savedTheme = this.$store.state.theme
-    const theme = savedTheme || getDefaultColorScheme()
-    document.documentElement.setAttribute('data-theme', theme)
-  }
-
-  private get currentUser(): User {
-    return this.$store.state.currentUser
-  }
-
-  get isInApp(): boolean {
-    return this.$route.name !== 'landing'
-  }
-
-  get isVerifyStep(): boolean {
-    return this.$route.name === 'verify-step'
-  }
-
-  get isSidebarShown(): boolean {
-    const excludedRoutes = [
-      'landing',
-      'project-added',
-      'join',
-      'join-step',
-      'round-information',
-      'transaction-success',
-      'verify',
-      'verify-step',
-      'verified',
-      'sponsored',
-    ]
-    return !excludedRoutes.includes(this.$route.name || '')
-  }
-
-  get isMobileTabsShown(): boolean {
-    const excludedRoutes = [
-      'landing',
-      'project-added',
-      'join',
-      'join-step',
-      'transaction-success',
-      'verify',
-      'verify-step',
-      'verified',
-      'sponsored',
-    ]
-    return !excludedRoutes.includes(this.$route.name || '')
-  }
-
-  get isSideCartShown(): boolean {
-    return (
-      !!this.currentUser && this.isSidebarShown && this.$route.name !== 'cart'
-    )
-  }
-
-  get isCartPadding(): boolean {
-    const routes = ['cart']
-    return routes.includes(this.$route.name || '')
-  }
-
-  get showBreadCrumb(): boolean {
-    const excludedRoutes = [
-      'landing',
-      'join',
-      'join-step',
-      'transaction-success',
-      'verify',
-      'project-added',
-      'verified',
-    ]
-    return !excludedRoutes.includes(this.$route.name || '')
-  }
-
-  get isCartToggledOpen(): boolean {
-    return this.$store.state.showCartPanel
-  }
+function setupLoadIntervals() {
+  intervals.round = setInterval(() => {
+    appStore.loadRoundInfo()
+  }, 60 * 1000)
+  intervals.recipient = setInterval(async () => {
+    recipientStore.loadRecipientRegistryInfo()
+  }, 60 * 1000)
+  intervals.user = setInterval(() => {
+    userStore.loadUserInfo()
+  }, 60 * 1000)
 }
+
+onMounted(async () => {
+  try {
+    await wallet.reconnect()
+  } catch {
+    // ignore error so the rest of the content can be displayed
+  }
+
+  try {
+    const roundAddress = appStore.currentRoundAddress || (await getCurrentRound())
+
+    if (roundAddress) {
+      appStore.selectRound(roundAddress)
+    } else {
+      throw new Error('Failed to get round address')
+    }
+    console.log('roundAddress', roundAddress)
+  } catch (err) {
+    console.warn('Failed to get current round:', err)
+  }
+
+  appReady.value = true
+
+  await appStore.loadFactoryInfo()
+  await appStore.loadMACIFactoryInfo()
+  await appStore.loadRoundInfo()
+  await recipientStore.loadRecipientRegistryInfo()
+
+  setupLoadIntervals()
+})
+
+onBeforeUnmount(() => {
+  for (const interval of Object.keys(intervals)) {
+    clearInterval(intervals[interval])
+  }
+})
+
+watch(walletUser, async () => {
+  if (walletUser.value) {
+    await userStore.loginUser(walletUser.value)
+  } else {
+    await userStore.logoutUser()
+  }
+})
+
+watch(isUserAndRoundLoaded, async () => {
+  if (!isUserAndRoundLoaded.value) {
+    return
+  }
+
+  await userStore.loadUserInfo()
+  await userStore.loadBrightID()
+
+  // Load cart & contributor data for current round
+  appStore.loadCart()
+  appStore.loadCommittedCart()
+  appStore.loadContributorData()
+})
 </script>
 
 <style lang="scss">
@@ -429,6 +390,10 @@ summary:focus {
     display: none;
     margin-right: 0.5rem;
   }
+
+  .image-wrapper img {
+    width: 80%;
+  }
 }
 
 #cart {
@@ -535,11 +500,10 @@ summary:focus {
   margin-left: 0.5rem;
 }
 
-.vm--overlay {
-  background-color: rgba(black, 0.5) !important;
-}
-
-.vm--modal {
+.modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   background-color: transparent !important;
   box-shadow: none !important;
   overflow: visible !important;
@@ -550,6 +514,7 @@ summary:focus {
   padding: $modal-space;
   text-align: center;
   box-shadow: var(--box-shadow);
+  width: 400px;
 
   .loader {
     margin: $modal-space auto;
@@ -629,118 +594,22 @@ summary:focus {
   }
 }
 
-.tooltip {
-  display: block !important;
-  z-index: 10000;
-
-  .tooltip-inner {
-    background: var(--bg-primary-color);
-    color: var(--text-color);
-    font-family: Inter;
-    line-height: 150%;
-    font-size: 14px;
+.v-popper--theme-tooltip {
+  background: var(--bg-primary-color);
+  color: var(--text-color);
+  font-family: Inter;
+  line-height: 150%;
+  font-size: 14px;
+  border: 1px solid $button-color;
+  border-radius: 0.5rem;
+  padding: 5px 10px 4px;
+  max-width: 30ch;
+  text-align: center;
+  .v-popper__arrow-outer {
     border: 1px solid $button-color;
-    border-radius: 0.5rem;
-    padding: 5px 10px 4px;
-    max-width: 30ch;
-    text-align: center;
   }
-
-  .tooltip-arrow {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    position: absolute;
-    margin: 5px;
-    border-color: $button-color;
-    z-index: 1;
-  }
-
-  &[x-placement^='top'] {
-    margin-bottom: 5px;
-
-    .tooltip-arrow {
-      border-width: 5px 5px 0 5px;
-      border-left-color: transparent !important;
-      border-right-color: transparent !important;
-      border-bottom-color: transparent !important;
-      bottom: -5px;
-      left: calc(50% - 5px);
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-  }
-
-  &[x-placement^='bottom'] {
-    margin-top: 5px;
-
-    .tooltip-arrow {
-      border-width: 0 5px 5px 5px;
-      border-left-color: transparent !important;
-      border-right-color: transparent !important;
-      border-top-color: transparent !important;
-      top: -5px;
-      left: calc(50% - 5px);
-      margin-top: 0;
-      margin-bottom: 0;
-    }
-  }
-
-  &[x-placement^='right'] {
-    margin-left: 5px;
-
-    .tooltip-arrow {
-      border-width: 5px 5px 5px 0;
-      border-left-color: transparent !important;
-      border-top-color: transparent !important;
-      border-bottom-color: transparent !important;
-      left: -5px;
-      top: calc(50% - 5px);
-      margin-left: 0;
-      margin-right: 0;
-    }
-  }
-
-  &[x-placement^='left'] {
-    margin-right: 5px;
-
-    .tooltip-arrow {
-      border-width: 5px 0 5px 5px;
-      border-top-color: transparent !important;
-      border-right-color: transparent !important;
-      border-bottom-color: transparent !important;
-      right: -5px;
-      top: calc(50% - 5px);
-      margin-left: 0;
-      margin-right: 0;
-    }
-  }
-
-  &.popover {
-    .popover-inner {
-      background: var(--bg-primary-color);
-      color: var(--text-color);
-      padding: 1rem;
-      margin: 0.5rem;
-      border-radius: 5px;
-      box-shadow: 0 5px 30px rgba(black, 0.1);
-    }
-
-    .popover-arrow {
-      border-color: var(--bg-primary-color);
-    }
-  }
-
-  &[aria-hidden='true'] {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.15s, visibility 0.15s;
-  }
-
-  &[aria-hidden='false'] {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity 0.15s;
+  .v-popper__popper--shown {
+    width: 300px;
   }
 }
 </style>
