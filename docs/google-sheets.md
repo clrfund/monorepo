@@ -41,3 +41,13 @@ In order to test it, you need to install the Netlify CLI (https://docs.netlify.c
 5. run `netlify dev` in a different terminal in the vue-app folder
 
 With that, you will have the lambda functions in `/.netlify/functions/{function}`.
+
+
+# Testing using curl
+For example, if the netlify function is deployed on `https://clrfund-vue3.netlify.app`,
+
+```
+curl -H "Content-Type: application/json" \
+    -d '{"project": { "name": "testtest", "tagline": "blah blah"}}' \
+    https://clrfund-vue3.netlify.app/.netlify/functions/recipient
+```
