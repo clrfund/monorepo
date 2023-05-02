@@ -170,10 +170,11 @@ to run `yarn test` or `yarn test:contracts`.
   - [Hardhat](https://hardhat.org/)
   - [Openzeppelin](https://openzeppelin.com/)
 - `/vue-app`
-  - [Vuex](https://vuex.vuejs.org/)
-  - [Vue class component](https://class-component.vuejs.org/)
+  - [Vue](https://vuejs.org)
+  - [Pinia](https://pinia.vuejs.org)
+  - [vue-i18n](https://kazupon.github.io/vue-i18n/)
   - [Vuelidate](https://vuelidate-next.netlify.app/)
-  - [Vue js modal](http://vue-js-modal.yev.io/)
+  - [vue-final-modal](https://vue-final-modal.org)
   - [Ethers](https://docs.ethers.io/v5/)
   - [Gun](https://gun.eco/docs/)
 
