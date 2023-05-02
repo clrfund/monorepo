@@ -47,7 +47,8 @@ jobs:
         cd ../subgraph
         npm version ${{ github.event.inputs.version }}
         cd ../vue-app
-        VERSION=$(npm version ${{ github.event.inputs.version }} | tail -1)
+        npm version ${{ github.event.inputs.version }}
+        export VERSION=$(node -e "const pkg=require('./package.json'); console.log(pkg.version)")
         cd ..
         git add contracts/package.json vue-app/package.json subgraph/package.json
         git commit -m "${VERSION}"
