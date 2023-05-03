@@ -4,7 +4,6 @@
     <loader v-if="loading" />
     <div v-if="!loading">
       <div class="gradient">
-        <img src="@/assets/moon.png" class="moon" />
         <div class="hero">
           <image-responsive title="newrings" />
         </div>
@@ -136,19 +135,13 @@ ul {
 }
 
 .gradient {
-  background: var(--bg-gradient);
+  background: var(--bg-primary-color);
   position: fixed;
   top: 0;
   right: 0;
   height: 100%;
   width: 100%;
 
-  .moon {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    mix-blend-mode: exclusion;
-  }
   .hero {
     display: flex;
     position: fixed;
@@ -156,7 +149,6 @@ ul {
     right: 0;
     height: 100%;
     width: 100%;
-    background: var(--bg-gradient-hero);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
       padding-bottom: 0rem;
@@ -166,7 +158,6 @@ ul {
       position: absolute;
       bottom: 0;
       right: 0;
-      mix-blend-mode: exclusion;
       width: 66%;
       @media (max-width: $breakpoint-m) {
         right: 0;

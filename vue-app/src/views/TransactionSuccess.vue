@@ -86,7 +86,7 @@ function redirectToProjects() {
 .image-wrapper {
   position: fixed;
   height: 100vh;
-  background: var(--bg-gradient);
+  background: var(--bg-primary-color);
   width: 100%;
   display: flex;
   justify-content: center;
@@ -144,7 +144,7 @@ function redirectToProjects() {
   font-weight: 700;
   line-height: 120%;
   margin-right: 0.5rem;
-  color: var(--text-color);
+  color: var(--text-body);
 }
 
 .contributed-content {

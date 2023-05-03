@@ -2,7 +2,7 @@
   <div class="projects">
     <div class="round-info">
       <div class="image-wrapper">
-        <image-responsive title="docking" height="100%" />
+        <image-responsive title="bubble" height="100%" />
       </div>
       <template v-if="roundInfo">
         <div class="round">
@@ -404,11 +404,6 @@ const blockExplorer = computed(() => ({
   justify-content: center;
 }
 
-.image-wrapper img {
-  mix-blend-mode: exclusion;
-  transform: rotate(15deg);
-}
-
 .round {
   display: flex;
   justify-content: space-between;
@@ -419,6 +414,7 @@ const blockExplorer = computed(() => ({
 .round-title-bar {
   display: flex;
   align-items: center;
+  color: var(--text-body);
 }
 
 .round-title {
@@ -428,12 +424,6 @@ const blockExplorer = computed(() => ({
 
 .verified-container {
   align-self: flex-end;
-}
-
-.verified {
-  img {
-    filter: var(--img-filter, invert(0.3));
-  }
 }
 
 .contract-address {
@@ -453,7 +443,7 @@ const blockExplorer = computed(() => ({
 .closed {
   width: 12px;
   height: 12px;
-  background: var(--bg-light-color);
+  background: var(--bg-secondary-color);
 }
 
 .open-pulse {
@@ -484,6 +474,7 @@ const blockExplorer = computed(() => ({
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
+  color: var(--text-color);
   gap: 1.5rem;
   margin-top: 1rem;
   max-width: 800px;
@@ -506,8 +497,7 @@ const blockExplorer = computed(() => ({
   }
 
   & > div {
-    box-shadow: inset 0px -1px 0px #7375a6;
-
+    box-shadow: inset 0px -1px 0px var(--bg-secondary-color);
     &:first-of-type {
       border-radius: 0.5rem 0.5rem 0 0;
     }
@@ -579,6 +569,7 @@ const blockExplorer = computed(() => ({
   display: flex;
   flex-direction: row;
   align-items: flex-end;
+  color: var(--text-color);
 
   .value {
     font-size: 24px;
@@ -693,7 +684,7 @@ const blockExplorer = computed(() => ({
 .add-link {
   display: flex;
   gap: 0.25rem;
-  color: $clr-green;
+  color: var(--text-color);
   margin-left: auto;
   cursor: pointer;
 
@@ -704,12 +695,14 @@ const blockExplorer = computed(() => ({
 
 .add-funds-link {
   font-size: 14px;
+  color: var(--text-body);
 }
 
 .status {
   font-size: 16px;
   display: flex;
   align-items: center;
+  color: var(--text-body);
 }
 
 .full-width {
@@ -744,7 +737,7 @@ const blockExplorer = computed(() => ({
 }
 
 .has-tooltip {
-  filter: var(--img-filter, invert(0.7));
+  filter: invert(0.7);
 }
 
 .contract-popover {

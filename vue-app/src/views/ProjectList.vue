@@ -252,8 +252,8 @@ function clearSearch(): void {
   .project-search {
     grid-area: search;
     border-radius: 16px;
-    border: 2px solid $button-color;
-    background-color: var(--bg-secondary-color);
+    border: 2px solid var(--text-secondary);
+    background-color: var(--bg-primary-color);
     padding: 0.5rem 1rem;
     display: flex;
     font-size: 16px;
@@ -276,9 +276,11 @@ function clearSearch(): void {
       font-size: 14px;
       padding: 0;
       width: 100%;
+      color: var(--text-secondary);
 
       &::placeholder {
         opacity: 1;
+        color: var(--text-secondary);
       }
     }
   }
@@ -286,7 +288,7 @@ function clearSearch(): void {
   .hr {
     grid-area: hr;
     width: 100%;
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid var(--text-secondary);
   }
 }
 

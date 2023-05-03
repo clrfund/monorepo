@@ -1,5 +1,5 @@
-import type { GraphQLClient } from 'graphql-request';
-import type Dom from 'graphql-request/build/esm/types.dom';
+import { GraphQLClient } from 'graphql-request';
+import * as Dom from 'graphql-request/dist/types.dom';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -1583,18 +1583,29 @@ export enum FundingRound_OrderBy {
 
 export type Message = {
   __typename?: 'Message';
+  blockNumber: Scalars['BigInt'];
   data: Maybe<Array<Scalars['BigInt']>>;
   fundingRound: Maybe<FundingRound>;
   id: Scalars['ID'];
   iv: Scalars['BigInt'];
   publicKey: Maybe<PublicKey>;
+  submittedBy: Maybe<Scalars['Bytes']>;
   timestamp: Maybe<Scalars['String']>;
+  transactionIndex: Scalars['BigInt'];
 };
 
 export type Message_Filter = {
   /** Filter for the block changed event. */
   _change_block: InputMaybe<BlockChangedFilter>;
   and: InputMaybe<Array<InputMaybe<Message_Filter>>>;
+  blockNumber: InputMaybe<Scalars['BigInt']>;
+  blockNumber_gt: InputMaybe<Scalars['BigInt']>;
+  blockNumber_gte: InputMaybe<Scalars['BigInt']>;
+  blockNumber_in: InputMaybe<Array<Scalars['BigInt']>>;
+  blockNumber_lt: InputMaybe<Scalars['BigInt']>;
+  blockNumber_lte: InputMaybe<Scalars['BigInt']>;
+  blockNumber_not: InputMaybe<Scalars['BigInt']>;
+  blockNumber_not_in: InputMaybe<Array<Scalars['BigInt']>>;
   data: InputMaybe<Array<Scalars['BigInt']>>;
   data_contains: InputMaybe<Array<Scalars['BigInt']>>;
   data_contains_nocase: InputMaybe<Array<Scalars['BigInt']>>;
@@ -1660,6 +1671,16 @@ export type Message_Filter = {
   publicKey_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   publicKey_starts_with: InputMaybe<Scalars['String']>;
   publicKey_starts_with_nocase: InputMaybe<Scalars['String']>;
+  submittedBy: InputMaybe<Scalars['Bytes']>;
+  submittedBy_contains: InputMaybe<Scalars['Bytes']>;
+  submittedBy_gt: InputMaybe<Scalars['Bytes']>;
+  submittedBy_gte: InputMaybe<Scalars['Bytes']>;
+  submittedBy_in: InputMaybe<Array<Scalars['Bytes']>>;
+  submittedBy_lt: InputMaybe<Scalars['Bytes']>;
+  submittedBy_lte: InputMaybe<Scalars['Bytes']>;
+  submittedBy_not: InputMaybe<Scalars['Bytes']>;
+  submittedBy_not_contains: InputMaybe<Scalars['Bytes']>;
+  submittedBy_not_in: InputMaybe<Array<Scalars['Bytes']>>;
   timestamp: InputMaybe<Scalars['String']>;
   timestamp_contains: InputMaybe<Scalars['String']>;
   timestamp_contains_nocase: InputMaybe<Scalars['String']>;
@@ -1680,9 +1701,18 @@ export type Message_Filter = {
   timestamp_not_starts_with_nocase: InputMaybe<Scalars['String']>;
   timestamp_starts_with: InputMaybe<Scalars['String']>;
   timestamp_starts_with_nocase: InputMaybe<Scalars['String']>;
+  transactionIndex: InputMaybe<Scalars['BigInt']>;
+  transactionIndex_gt: InputMaybe<Scalars['BigInt']>;
+  transactionIndex_gte: InputMaybe<Scalars['BigInt']>;
+  transactionIndex_in: InputMaybe<Array<Scalars['BigInt']>>;
+  transactionIndex_lt: InputMaybe<Scalars['BigInt']>;
+  transactionIndex_lte: InputMaybe<Scalars['BigInt']>;
+  transactionIndex_not: InputMaybe<Scalars['BigInt']>;
+  transactionIndex_not_in: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
 export enum Message_OrderBy {
+  BlockNumber = 'blockNumber',
   Data = 'data',
   FundingRound = 'fundingRound',
   FundingRoundContributorCount = 'fundingRound__contributorCount',
@@ -1713,7 +1743,9 @@ export enum Message_OrderBy {
   PublicKeyVoiceCreditBalance = 'publicKey__voiceCreditBalance',
   PublicKeyX = 'publicKey__x',
   PublicKeyY = 'publicKey__y',
-  Timestamp = 'timestamp'
+  SubmittedBy = 'submittedBy',
+  Timestamp = 'timestamp',
+  TransactionIndex = 'transactionIndex'
 }
 
 /** Defines the order direction, either ascending or descending */
@@ -3110,7 +3142,24 @@ export type GetContributionsAmountQueryVariables = Exact<{
 }>;
 
 
-export type GetContributionsAmountQuery = { __typename?: 'Query', contributions: Array<{ __typename?: 'Contribution', amount: Maybe<any> }> };
+export type GetContributionsAmountQuery = { __typename?: 'Query', contributions: Array<{ __typename?: 'Contribution', amount: any | null }> };
+
+export type GetContributorIndexQueryVariables = Exact<{
+  fundingRoundAddress: Scalars['ID'];
+  publicKeyId: Scalars['ID'];
+}>;
+
+
+export type GetContributorIndexQuery = { __typename?: 'Query', publicKey: { __typename?: 'PublicKey', id: string, stateIndex: any | null } | null };
+
+export type GetContributorMessagesQueryVariables = Exact<{
+  fundingRoundAddress: Scalars['String'];
+  pubKey: Scalars['String'];
+  contributorAddress: Scalars['Bytes'];
+}>;
+
+
+export type GetContributorMessagesQuery = { __typename?: 'Query', messages: Array<{ __typename?: 'Message', id: string, data: Array<any> | null, iv: any, timestamp: string | null, blockNumber: any, transactionIndex: any }> };
 
 export type GetContributorVotesQueryVariables = Exact<{
   fundingRoundAddress: Scalars['ID'];
@@ -3134,12 +3183,24 @@ export type GetFactoryInfoQueryVariables = Exact<{
 
 export type GetFactoryInfoQuery = { __typename?: 'Query', fundingRoundFactory: { __typename?: 'FundingRoundFactory', contributorRegistryAddress: any | null, nativeTokenInfo: { __typename?: 'Token', tokenAddress: any | null, symbol: string | null, decimals: any | null } | null } | null };
 
+export type GetLatestBlockNumberQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLatestBlockNumberQuery = { __typename?: 'Query', _meta: { __typename?: '_Meta_', block: { __typename?: '_Block_', number: number } } | null };
+
 export type GetProjectQueryVariables = Exact<{
   recipientId: Scalars['ID'];
 }>;
 
 
 export type GetProjectQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, requestType: string | null, recipientAddress: any | null, recipientMetadata: string | null, recipientIndex: any | null, submissionTime: string | null, rejected: boolean | null, verified: boolean | null }> };
+
+export type GetPublicKeyQueryVariables = Exact<{
+  pubKey: Scalars['ID'];
+}>;
+
+
+export type GetPublicKeyQuery = { __typename?: 'Query', publicKey: { __typename?: 'PublicKey', id: string } | null };
 
 export type GetRecipientQueryVariables = Exact<{
   registryAddress: Scalars['ID'];
@@ -3148,6 +3209,14 @@ export type GetRecipientQueryVariables = Exact<{
 
 
 export type GetRecipientQuery = { __typename?: 'Query', recipientRegistry: { __typename?: 'RecipientRegistry', recipients: Array<{ __typename?: 'Recipient', id: string, requestType: string | null, recipientAddress: any | null, recipientMetadata: string | null, submissionTime: string | null, rejected: boolean | null, verified: boolean | null }> | null } | null };
+
+export type GetRecipientByIndexQueryVariables = Exact<{
+  registryAddress: Scalars['String'];
+  recipientIndex: Scalars['BigInt'];
+}>;
+
+
+export type GetRecipientByIndexQuery = { __typename?: 'Query', recipients: Array<{ __typename?: 'Recipient', id: string, recipientIndex: any | null, recipientAddress: any | null, recipientMetadata: string | null }> };
 
 export type GetRecipientBySubmitHashQueryVariables = Exact<{
   transactionHash: Scalars['Bytes'];
@@ -3215,6 +3284,31 @@ export const GetContributionsAmountDocument = gql`
   }
 }
     `;
+export const GetContributorIndexDocument = gql`
+    query GetContributorIndex($fundingRoundAddress: ID!, $publicKeyId: ID!) {
+  publicKey(id: $publicKeyId) {
+    id
+    stateIndex
+  }
+}
+    `;
+export const GetContributorMessagesDocument = gql`
+    query GetContributorMessages($fundingRoundAddress: String!, $pubKey: String!, $contributorAddress: Bytes!) {
+  messages(
+    where: {fundingRound: $fundingRoundAddress, publicKey: $pubKey, submittedBy: $contributorAddress}
+    first: 1000
+    orderBy: blockNumber
+    orderDirection: desc
+  ) {
+    id
+    data
+    iv
+    timestamp
+    blockNumber
+    transactionIndex
+  }
+}
+    `;
 export const GetContributorVotesDocument = gql`
     query GetContributorVotes($fundingRoundAddress: ID!, $contributorAddress: ID!) {
   fundingRound(id: $fundingRoundAddress) {
@@ -3248,6 +3342,15 @@ export const GetFactoryInfoDocument = gql`
   }
 }
     `;
+export const GetLatestBlockNumberDocument = gql`
+    query GetLatestBlockNumber {
+  _meta {
+    block {
+      number
+    }
+  }
+}
+    `;
 export const GetProjectDocument = gql`
     query GetProject($recipientId: ID!) {
   recipients(where: {id: $recipientId}) {
@@ -3259,6 +3362,13 @@ export const GetProjectDocument = gql`
     submissionTime
     rejected
     verified
+  }
+}
+    `;
+export const GetPublicKeyDocument = gql`
+    query GetPublicKey($pubKey: ID!) {
+  publicKey(id: $pubKey) {
+    id
   }
 }
     `;
@@ -3274,6 +3384,18 @@ export const GetRecipientDocument = gql`
       rejected
       verified
     }
+  }
+}
+    `;
+export const GetRecipientByIndexDocument = gql`
+    query GetRecipientByIndex($registryAddress: String!, $recipientIndex: BigInt!) {
+  recipients(
+    where: {recipientRegistry: $registryAddress, recipientIndex: $recipientIndex}
+  ) {
+    id
+    recipientIndex
+    recipientAddress
+    recipientMetadata
   }
 }
     `;
@@ -3395,6 +3517,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     GetContributionsAmount(variables: GetContributionsAmountQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetContributionsAmountQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetContributionsAmountQuery>(GetContributionsAmountDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetContributionsAmount', 'query');
     },
+    GetContributorIndex(variables: GetContributorIndexQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetContributorIndexQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetContributorIndexQuery>(GetContributorIndexDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetContributorIndex', 'query');
+    },
+    GetContributorMessages(variables: GetContributorMessagesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetContributorMessagesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetContributorMessagesQuery>(GetContributorMessagesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetContributorMessages', 'query');
+    },
     GetContributorVotes(variables: GetContributorVotesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetContributorVotesQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetContributorVotesQuery>(GetContributorVotesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetContributorVotes', 'query');
     },
@@ -3404,11 +3532,20 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     GetFactoryInfo(variables: GetFactoryInfoQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetFactoryInfoQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetFactoryInfoQuery>(GetFactoryInfoDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetFactoryInfo', 'query');
     },
+    GetLatestBlockNumber(variables?: GetLatestBlockNumberQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetLatestBlockNumberQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetLatestBlockNumberQuery>(GetLatestBlockNumberDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetLatestBlockNumber', 'query');
+    },
     GetProject(variables: GetProjectQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetProjectQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetProjectQuery>(GetProjectDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetProject', 'query');
     },
+    GetPublicKey(variables: GetPublicKeyQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetPublicKeyQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetPublicKeyQuery>(GetPublicKeyDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetPublicKey', 'query');
+    },
     GetRecipient(variables: GetRecipientQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientQuery>(GetRecipientDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipient', 'query');
+    },
+    GetRecipientByIndex(variables: GetRecipientByIndexQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientByIndexQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientByIndexQuery>(GetRecipientByIndexDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientByIndex', 'query');
     },
     GetRecipientBySubmitHash(variables: GetRecipientBySubmitHashQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetRecipientBySubmitHashQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecipientBySubmitHashQuery>(GetRecipientBySubmitHashDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetRecipientBySubmitHash', 'query');

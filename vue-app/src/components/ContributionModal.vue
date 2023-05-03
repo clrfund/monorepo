@@ -122,13 +122,11 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { BigNumber, Contract } from 'ethers'
-import { DateTime } from 'luxon'
-import { Keypair, PubKey, Message } from 'maci-domainobjs'
+import { Keypair, PubKey, Message, createMessage } from '@clrfund/maci-utils'
 
 import Transaction from '@/components/Transaction.vue'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
-import { createMessage } from '@/utils/maci'
 import ProgressBar from '@/components/ProgressBar.vue'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
@@ -141,6 +139,7 @@ const router = useRouter()
 const appStore = useAppStore()
 const userStore = useUserStore()
 const { hasUserContributed, hasUserVoted, currentRound } = storeToRefs(appStore)
+const { currentUser } = storeToRefs(userStore)
 
 const emit = defineEmits(['close'])
 
@@ -250,7 +249,12 @@ async function contribute() {
     }
     step.value += 1
     // Contribute (step 2)
-    const contributorKeypair = new Keypair()
+    const encryptionKey = currentUser.value?.encryptionKey || ''
+    if (!encryptionKey) {
+      throw new Error('Missing encryption key')
+    }
+    const contributorKeypair = Keypair.createFromSeed(encryptionKey)
+
     let contributionTxReceipt
     try {
       contributionTxReceipt = await waitForTransaction(

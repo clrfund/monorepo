@@ -106,6 +106,7 @@ defineProps<Props>()
     padding: 1.5rem 1rem;
     border-radius: 16px;
     box-shadow: var(--box-shadow);
+    background: var(--bg-secondary-color);
 
     .progress-steps {
       margin-bottom: 1rem;
@@ -129,7 +130,7 @@ defineProps<Props>()
         @include stepColor(var(--text-color-rgb));
       }
       .active {
-        color: var(--text-color);
+        color: var(--text-body);
         font-weight: 600;
         font-size: 1rem;
       }

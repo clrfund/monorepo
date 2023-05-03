@@ -166,7 +166,7 @@ function toggleProfile(): void {
     border-radius: 32px;
     margin: 0.25rem;
     margin-right: 0;
-    color: var(--text-color);
+    color: var(--text-body);
   }
 
   .profile-info-balance img {

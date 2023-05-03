@@ -63,6 +63,11 @@ async function executeTx() {
   border-radius: 1rem;
   box-shadow: var(--box-shadow);
   padding: 1.5rem;
+
+  div {
+    border: 1px solid var(--bg-primary-color);
+    border-radius: 1rem;
+  }
 }
 
 .close-btn {

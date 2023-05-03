@@ -78,13 +78,13 @@ async function checkTxStatus(): Promise<void> {
   padding: 0.25rem;
   cursor: pointer;
   &:hover {
-    background: var(--brand-primary);
+    background: var(--brand-secondary);
     border-radius: 16px;
   }
 }
 
 .hash {
-  color: var(--text-color);
+  color: var(--text-body);
   margin: 0;
   font-size: 14px;
   text-transform: uppercase;

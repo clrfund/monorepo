@@ -1,8 +1,8 @@
 [data-theme='dark'] {
   color-scheme: dark;
-  --text-color: #ffffff;
-  --text-body: #f7f7f7;
-  --text-secondary: #ffffff;
+  --text-color: #133629;
+  --text-body: #ffffff;
+  --text-secondary: #efe9da;
   // workaround for using css variables with sass mixins
   --text-color-rgb: 255, 255, 255;
 
@@ -12,13 +12,13 @@
 
   --error-color: #bd6b5e;
   --warning-color: rgb(253, 254, 106);
-  --warning-background: rgba(253, 254, 106, 0.05);
+  --warning-background: var(--bg-secondary-color);
   --warning-border: var(--border-color);
   --attention-color: rgb(253, 254, 106);
-  --link-color: #9789c4;
+  --link-color: #efe9da;
   --loader-color: #fff;
 
-  --border-color: #2b364b;
+  --border-color: #efe9da;
   --border-strong: #000000;
   --border-highlight: #7375a6;
 
@@ -28,14 +28,15 @@
   // no filter for dark mode, image specific filter for light mode
   --img-filter: none;
 
-  --bg-primary-color: #191623;
-  --bg-secondary-color: #211e2b;
-  --bg-light-color: #2c2938;
+  --bg-primary-color: #3e6957;
+  --bg-secondary-color: #133629;
+  --bg-tertiary-color: #efe9da;
+  --bg-light-color: #3e6957;
 
   // alternative background colors for light and dark modes
-  --bg-secondary-highlight: #211e2b;
+  --bg-secondary-highlight: #efe9da;
   --bg-secondary-accent: #211e2b;
-  --bg-light-highlight: #2c2938;
+  --bg-light-highlight: #efe9da;
   --bg-light-accent: #2c2938;
 
   --bg-transparent: rgba(25, 22, 35, 0.902);
@@ -51,7 +52,7 @@
   --bg-inactive: linear-gradient(109.01deg, rgba(151, 137, 196, 0.2) 6.45%, rgba(199, 42, 185, 0.2) 99.55%);
   --bg-circle: #2a2736;
 
-  --button-secondary-color: #16c8b5;
+  --button-secondary-color: #dd7143;
   --button-secondary-bg: none;
   --button-secondary-border: #16c8b5;
   --button-action: linear-gradient(109.01deg, rgb(151, 137, 196) 6.45%, rgb(199, 42, 185) 99.55%);

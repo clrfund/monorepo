@@ -168,7 +168,7 @@ function isNewOrUpdated(item: CartItem): boolean {
 
   .project-name {
     align-self: center;
-    color: var(--text-color);
+    color: var(--text-body);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;

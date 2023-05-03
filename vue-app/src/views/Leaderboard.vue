@@ -87,7 +87,7 @@ onMounted(async () => {
 .hr {
   grid-area: hr;
   width: 100%;
-  border-bottom: 1px solid $border-light;
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 2rem;
 }
 

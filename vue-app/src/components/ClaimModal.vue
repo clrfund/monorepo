@@ -37,7 +37,7 @@ import Transaction from '@/components/Transaction.vue'
 import { VueFinalModal } from 'vue-final-modal'
 import { formatAmount as _formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
-import { getRecipientClaimData } from '@/utils/maci'
+import { getRecipientClaimData } from '@clrfund/maci-utils'
 import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 

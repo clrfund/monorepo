@@ -41,7 +41,6 @@ function updateIsCopied(_isCopied: boolean): void {
 @import '../styles/theme';
 
 .copy {
-  background: var(--bg-primary-color);
   border: 1px solid var(--border-color);
   justify-content: space-between;
   align-items: center;

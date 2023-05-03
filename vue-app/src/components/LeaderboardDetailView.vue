@@ -27,14 +27,7 @@
       </div>
       <div v-for="(project, index) in projects" :key="project.id">
         <links :to="projectRoute(project.id)">
-          <div
-            class="card"
-            :class="{
-              first: isFirst(index),
-              second: isSecond(index),
-              third: isThird(index),
-            }"
-          >
+          <div class="card">
             <div class="rank">
               {{ index + 1 }}
             </div>
@@ -137,18 +130,8 @@ const tokenLogo = computed(() => {
   line-height: 140%;
 }
 
-.first {
-  color: $rank-1-color;
-}
-.second {
-  color: $rank-2-color;
-}
-.third {
-  color: $rank-3-color;
-}
-
 .info {
-  background-color: var(--bg-transparent);
+  background-color: var(--bg-secondary-color);
   border: 1px solid $highlight-color;
   border-radius: 0.5rem;
   padding: 1rem;
@@ -185,7 +168,7 @@ const tokenLogo = computed(() => {
 
 a {
   .card:hover {
-    background: var(--bg-secondary-highlight);
+    background: var(--bg-secondary-color);
   }
   color: var(--text-body);
 }
@@ -200,7 +183,7 @@ a {
   padding: 1rem;
 
   &.desktop {
-    background: var(--bg-light-highlight);
+    background: var(--bg-secondary-color);
   }
 
   @media (max-width: $breakpoint-m) {

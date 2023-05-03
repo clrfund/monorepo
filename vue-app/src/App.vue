@@ -217,7 +217,7 @@ body {
 
 html {
   background-color: var(--bg-primary-color);
-  color: var(--text-color);
+  color: var(--text-body);
   font-family: Inter, sans-serif;
   font-size: 16px;
 }

@@ -91,7 +91,7 @@ input[type='number'] {
 .button {
   padding: 0.5rem 1rem;
   background: var(--bg-primary-color);
-  color: var(--text-color);
+  color: var(--text-body);
   border-radius: 32px;
   font-size: 16px;
   font-family: Inter;
@@ -112,7 +112,8 @@ input[type='number'] {
   width: 100%;
   z-index: 1;
   &:hover {
-    background: var(--bg-light-highlight);
+    background: var(--bg-tertiary-color);
+    color: var(--text-color);
   }
 }
 </style>

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "alwaysStrict": true,
+    "noImplicitAny": false,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "strict": true,
+    "outDir": "./build",
+    "target": "es2018",
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "declaration": true
+  },
+  "exclude": ["node_modules/**"],
+  "include": ["./src"]
+}

@@ -10,4 +10,5 @@ task('evm-increase-time', 'Increase block timestamp by seconds')
   )
   .setAction(async ({ seconds }, { network }) => {
     await network.provider.send('evm_increaseTime', [seconds])
+    await network.provider.send('evm_mine')
   })

@@ -56,7 +56,7 @@ const links = computed<Array<{ link: string; url: string }>>(() => {
 }
 
 .link {
-  color: var(--text-color);
+  color: var(--text-body);
   &:hover {
     opacity: 0.8;
   }

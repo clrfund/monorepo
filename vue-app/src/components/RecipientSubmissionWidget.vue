@@ -132,7 +132,7 @@ onMounted(async () => {
 .recipient-submission-widget {
   display: flex;
   flex-direction: column;
-  background: var(--bg-primary-color);
+  background: var(--bg-secondary-color);
   border-radius: 1rem;
   border: 1px solid var(--border-color);
   align-items: center;
@@ -250,7 +250,7 @@ onMounted(async () => {
 }
 
 .total-title {
-  color: var(--text-color);
+  color: var(--text-body);
   font-size: 16px;
   font-weight: 400;
   line-height: 100%;
@@ -260,7 +260,7 @@ onMounted(async () => {
   display: flex;
   width: fit-content;
   padding: 0.5rem;
-  background: var(--bg-light-color);
+  background: var(--bg-primary-color);
   border-radius: 2rem;
   gap: 0.25rem;
   margin-bottom: 0.5rem;
@@ -288,5 +288,8 @@ onMounted(async () => {
   color: var(--attention-color);
   text-transform: uppercase;
   text-align: center;
+  word-break: break-all;
+  max-height: 100px;
+  overflow: scroll;
 }
 </style>

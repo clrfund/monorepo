@@ -19,7 +19,6 @@ export function formatAmount(
   // If `maximumSignificantDigits` passed, return compact human-readable form to specified digits
   if (maximumSignificantDigits) {
     return new Intl.NumberFormat('en', {
-      /* @ts-ignore */ // TODO: Remove `@ts-ignore` when codebase upgrades to typescript ^4.1.0
       notation: 'compact',
       maximumSignificantDigits,
     }).format(result)

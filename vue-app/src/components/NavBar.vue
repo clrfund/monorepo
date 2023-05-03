@@ -1,7 +1,7 @@
 <template>
   <nav id="nav-bar">
     <links to="/">
-      <img class="clr-logo" :alt="operator" src="@/assets/clr.svg" />
+      <img class="clr-logo" :alt="operator" src="@/assets/logo.svg" />
     </links>
     <div class="btn-row">
       <div>
@@ -159,7 +159,7 @@ function toggleTheme(): void {
   height: 64px;
   justify-content: space-between;
   align-items: center;
-  background: $clr-black;
+  background: var(--bg-secondary-color);
   box-shadow: $box-shadow-nav-bar;
   @media (max-width: $breakpoint-m) {
     padding: 0 1rem;
@@ -219,7 +219,7 @@ function toggleTheme(): void {
 
         .item-text {
           margin: 0;
-          color: var(--text-color);
+          color: var(--text-body);
         }
       }
       .hr {
