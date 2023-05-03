@@ -74,3 +74,5 @@ export const brightIdSponsorUrl = import.meta.env.VITE_BRIGHTID_SPONSOR_API_URL
 
 // wait for data to sync with the subgraph
 export const MAX_WAIT_DEPTH = Number(import.meta.env.VITE_MAX_WAIT_DEPTH) || 15
+
+export const hideThemeButton = Boolean(import.meta.env.VITE_HIDE_THEME_BUTTON)

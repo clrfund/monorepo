@@ -4,7 +4,7 @@
       <img class="clr-logo" :alt="operator" src="@/assets/logo.svg" />
     </links>
     <div class="btn-row">
-      <div>
+      <div v-if="!hideThemeButton">
         <img class="navbar-btn" :src="sunImageUrl" @click="toggleTheme()" />
       </div>
       <div v-click-outside="closeHelpDropdown" class="help-dropdown">
@@ -95,6 +95,7 @@ import { storeToRefs } from 'pinia'
 import { languages, isLocaleSupported } from '@/plugins/i18n'
 import { useI18n } from 'vue-i18n'
 import { getAssetsUrl } from '@/utils/url'
+import { hideThemeButton } from '@/api/core'
 
 const { locale } = useI18n()
 
