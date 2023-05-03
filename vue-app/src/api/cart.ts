@@ -1,5 +1,5 @@
-import { CartItem, getContributorMessages } from './contributions'
-import { RoundInfo } from './round'
+import { type CartItem, getContributorMessages } from './contributions'
+import type { RoundInfo } from './round'
 import { Keypair, Command } from '@clrfund/maci-utils'
 import { BigNumber } from 'ethers'
 import { getProjectByIndex } from './projects'

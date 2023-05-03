@@ -9,7 +9,7 @@
       }"
       :button="{
         text: $t('addToCartButton.input1'),
-        disabled: !isAmountValid,
+        disabled: !isAmountValid || isRequestingSignature,
       }"
       @update:model-value="newValue => (amount = newValue)"
       @click="handleSubmit"
@@ -54,6 +54,8 @@ const { currentRound, cart } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 
+const isRequestingSignature = ref(false)
+
 const inCart = computed(() => {
   const index = cart.value.findIndex((item: CartItem) => {
     // Ignore cleared items
@@ -84,7 +86,17 @@ function canContribute(): boolean {
   )
 }
 
-function contribute() {
+async function contribute() {
+  try {
+    isRequestingSignature.value = true
+    await userStore.requestSignature()
+    isRequestingSignature.value = false
+  } catch {
+    // user rejected signature
+    isRequestingSignature.value = false
+    return
+  }
+
   appStore.addCartItem({
     ...props.project,
     amount: amount.value,

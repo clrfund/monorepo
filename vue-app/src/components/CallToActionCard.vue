@@ -58,7 +58,7 @@ const hasStartedVerification = computed(
 const showUserVerification = computed(() => {
   return (
     userRegistryType === UserRegistryType.BRIGHT_ID &&
-    typeof currentUser.value?.isRegistered === 'boolean' &&
+    currentUser.value?.isRegistered !== undefined &&
     !currentUser.value.isRegistered
   )
 })

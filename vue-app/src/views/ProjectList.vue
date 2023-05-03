@@ -58,7 +58,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import type { FixedNumber } from 'ethers'
-import { DateTime } from 'luxon'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
 import { type Project, getProjects } from '@/api/projects'
@@ -112,7 +111,9 @@ const projectsByCategoriesSelected = computed<Project[]>(() => {
 onMounted(async () => {
   //TODO: update to take factory address as a parameter, default to env. variable
   roundAddress.value = (route.params.address as string) || currentRoundAddress.value! || (await getCurrentRound()) || ''
-  await loadProjects(roundAddress.value)
+  if (roundAddress.value) {
+    await loadProjects(roundAddress.value)
+  }
   isLoading.value = false
 })
 

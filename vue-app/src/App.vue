@@ -4,7 +4,8 @@
   </metainfo>
   <div id="app" class="wrapper">
     <nav-bar :in-app="isInApp" />
-    <div v-if="appReady" id="content-container">
+    <loader v-if="!appReady"></loader>
+    <div v-else id="content-container">
       <div v-if="isSidebarShown" id="sidebar" :class="`${showCartPanel ? 'desktop-l' : 'desktop'}`">
         <round-information />
       </div>
@@ -145,8 +146,9 @@ function setupLoadIntervals() {
 onMounted(async () => {
   try {
     await wallet.reconnect()
-  } catch {
-    // ignore error so the rest of the content can be displayed
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.warn('Unable to reconnect wallet', err)
   }
 
   try {
@@ -154,16 +156,15 @@ onMounted(async () => {
 
     if (roundAddress) {
       appStore.selectRound(roundAddress)
-    } else {
-      throw new Error('Failed to get round address')
+      /* eslint-disable-next-line no-console */
+      console.log('roundAddress', roundAddress)
     }
-    console.log('roundAddress', roundAddress)
   } catch (err) {
+    /* eslint-disable-next-line no-console */
     console.warn('Failed to get current round:', err)
   }
 
   appReady.value = true
-
   await appStore.loadFactoryInfo()
   await appStore.loadMACIFactoryInfo()
   await appStore.loadRoundInfo()
@@ -179,10 +180,19 @@ onBeforeUnmount(() => {
 })
 
 watch(walletUser, async () => {
-  if (walletUser.value) {
-    await userStore.loginUser(walletUser.value)
-  } else {
-    await userStore.logoutUser()
+  try {
+    if (walletUser.value) {
+      // make sure factory is loaded
+      await appStore.loadFactoryInfo()
+      userStore.loginUser(walletUser.value)
+      await userStore.loadUserInfo()
+      await userStore.loadBrightID()
+    } else {
+      await userStore.logoutUser()
+    }
+  } catch (err) {
+    /* eslint-disable-next-line no-console */
+    console.log('error', err)
   }
 })
 
@@ -191,13 +201,8 @@ watch(isUserAndRoundLoaded, async () => {
     return
   }
 
+  // load contribution when we get round information
   await userStore.loadUserInfo()
-  await userStore.loadBrightID()
-
-  // Load cart & contributor data for current round
-  appStore.loadCart()
-  appStore.loadCommittedCart()
-  appStore.loadContributorData()
 })
 </script>
 
@@ -214,53 +219,44 @@ body {
   height: 100%;
   margin: 0;
 }
-
 html {
   background-color: var(--bg-primary-color);
-  color: var(--text-body);
+  color: var(--text-color);
   font-family: Inter, sans-serif;
   font-size: 16px;
 }
-
 a {
   color: var(--link-color);
   cursor: pointer;
   text-decoration: none;
 }
-
 textarea {
   resize: vertical;
   border-end-end-radius: 0 !important;
 }
-
 .mobile {
   @media (min-width: ($breakpoint-m + 1px)) {
     display: none !important;
   }
 }
-
 .mobile-l {
   @media (min-width: ($breakpoint-l + 1px)) {
     display: none !important;
   }
 }
-
 .desktop {
   @media (max-width: $breakpoint-m) {
     display: none !important;
   }
 }
-
 .desktop-l {
   @media (max-width: $breakpoint-l) {
     display: none !important;
   }
 }
-
 .caps {
   text-transform: uppercase;
 }
-
 .btn-container {
   display: flex;
   gap: 1rem;
@@ -268,16 +264,13 @@ textarea {
     flex-direction: column;
   }
 }
-
 summary:focus {
   outline: none;
 }
-
 .wrapper {
   min-height: 100%;
   position: relative;
 }
-
 .input {
   background-color: var(--bg-light-color);
   border: 2px solid $button-color;
@@ -287,20 +280,16 @@ summary:focus {
   font-family: Inter, sans-serif;
   font-size: 16px;
   padding: 7px;
-
   &.invalid {
     border-color: var(--error-color);
   }
-
   &::placeholder {
     opacity: 0.5;
   }
-
   &:focus {
     outline: none;
   }
 }
-
 .btn {
   background-color: $button-color;
   border: none;
@@ -310,18 +299,15 @@ summary:focus {
   font-weight: bold;
   line-height: 22px;
   padding: 6px 20px 8px;
-
   img {
     height: 1em;
     margin: 0 10px 0 0;
     vertical-align: middle;
   }
-
   &:hover {
     background-color: $highlight-color;
     color: var(--bg-secondary-color);
   }
-
   &[disabled],
   &[disabled]:hover {
     background-color: $button-disabled-color !important;
@@ -329,25 +315,21 @@ summary:focus {
     cursor: not-allowed;
   }
 }
-
 .btn-inactive {
   background-color: transparent;
   border: 2px solid $button-color;
   color: $button-color;
   padding: (6px - 2px) (20px - 2px) (8px - 2px);
-
   &:hover {
     background-color: transparent;
     color: $button-color;
   }
 }
-
 #app {
   display: flex;
   flex-direction: column;
   min-height: 100%;
 }
-
 #content-container {
   display: flex;
   /* height: calc(100vh - 61.5px); */
@@ -356,7 +338,6 @@ summary:focus {
   overflow-x: clip;
   /* overflow-y: scroll; */
 }
-
 #sidebar {
   box-sizing: border-box;
   background-color: var(--bg-primary-color);
@@ -366,73 +347,60 @@ summary:focus {
   height: 100%;
   position: sticky;
   top: 1.5rem;
-
   .status {
     font-size: 16px;
     display: flex;
     align-items: center;
   }
-
   .round-info-div {
     background: var(--bg-light-color);
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 2rem;
   }
-
   .clr-logo {
     display: block;
     /* max-height: 100%; */
   }
-
   .menu-btn,
   .cart-btn {
     display: none;
     margin-right: 0.5rem;
   }
-
   .image-wrapper img {
     width: 80%;
   }
 }
-
 #cart {
   position: fixed;
   right: 0;
   top: $nav-header-height;
   bottom: 0;
 }
-
 .open-cart {
   width: $cart-width-open;
   overflow-y: scroll;
   overflow-x: hidden;
 }
-
 .closed-cart {
   width: 4rem;
 }
-
 #nav-menu {
   /* margin-left: 15%;
   padding: 50px 5% 0; */
-
   a {
     color: var(--text-color);
     display: block;
     font-size: 16px;
     margin-bottom: $content-space;
     text-decoration: none;
-
     &:hover {
       color: $highlight-color;
     }
-
     &.router-link-exact-active {
       color: $highlight-color;
       font-weight: bold;
       position: relative;
-
       &::before {
         border: 2px solid $highlight-color;
         border-radius: 10px;
@@ -449,11 +417,9 @@ summary:focus {
     }
   }
 }
-
 #content {
   flex: 1;
   padding-bottom: 4rem;
-
   .content-heading {
     display: block;
     font-family: 'Glacial Indifference', sans-serif;
@@ -464,31 +430,26 @@ summary:focus {
     padding-bottom: $content-space;
     text-transform: uppercase;
   }
-
   .title {
     padding-bottom: 1.5rem;
     margin-bottom: 2rem;
   }
 }
-
 #content.padded {
   padding: $content-space;
 }
-
 #content.mr-cart-open {
   margin-right: $cart-width-open;
   @media (max-width: $breakpoint-m) {
     margin-right: 0;
   }
 }
-
 #content.mr-cart-closed {
   margin-right: $cart-width-closed;
   @media (max-width: $breakpoint-m) {
     margin-right: 0;
   }
 }
-
 .verified {
   background: $gradient-highlight;
   height: 16px;
@@ -499,7 +460,6 @@ summary:focus {
   display: flex;
   margin-left: 0.5rem;
 }
-
 .modal-container {
   display: flex;
   justify-content: center;
@@ -508,27 +468,22 @@ summary:focus {
   box-shadow: none !important;
   overflow: visible !important;
 }
-
 .modal-body {
   background-color: var(--bg-light-color);
   padding: $modal-space;
   text-align: center;
   box-shadow: var(--box-shadow);
   width: 400px;
-
   .loader {
     margin: $modal-space auto;
   }
 }
-
 .hidden {
   display: none;
 }
-
 .invisible {
   visibility: hidden;
 }
-
 .error {
   color: var(--error-color);
   margin-bottom: 0;
@@ -538,17 +493,14 @@ summary:focus {
     content: '⚠️ ';
   }
 }
-
 .pointer {
   cursor: pointer;
 }
-
 @media (max-width: $breakpoint-m) {
   #app {
     flex-direction: column;
     position: relative;
   }
-
   #sidebar {
     /* bottom: $profile-image-size + $content-space * 2; offset for profile block */
     border-right: none;
@@ -558,11 +510,9 @@ summary:focus {
     width: 100%;
     /* height: 64px; */
     z-index: 2;
-
     .clr-logo {
       margin-right: 0.5rem;
     }
-
     .menu-btn,
     .cart-btn {
       display: block;
@@ -570,21 +520,17 @@ summary:focus {
       max-width: 20%;
       width: 25px;
     }
-
     .menu-btn {
       margin-right: 5%;
     }
-
     .cart-btn {
       margin-left: 5%;
     }
   }
-
   #nav-header {
     display: flex;
     align-items: center;
   }
-
   #footer {
     max-width: 100vw;
     padding: $content-space;
@@ -593,7 +539,6 @@ summary:focus {
     }
   }
 }
-
 .v-popper--theme-tooltip {
   background: var(--bg-primary-color);
   color: var(--text-color);

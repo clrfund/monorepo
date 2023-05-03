@@ -198,7 +198,7 @@ async function sendVotes() {
       hash => (voteTxHash.value = hash),
     )
     appStore.setHasVote(true)
-    appStore.saveCommittedCartDispatch()
+    appStore.saveCommittedCart()
     // TODO: how to execute this?
     emit('close')
     router.push({
@@ -278,7 +278,6 @@ async function contribute() {
     }
     // Save contributor data to storage
     appStore.setContributor(contributor)
-    appStore.saveContributorData()
     // Set contribution and update round info
     appStore.setContribution(total.value)
     // Reload contribution pool size

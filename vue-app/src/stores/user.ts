@@ -7,6 +7,9 @@ import type { BigNumber, Signer } from 'ethers'
 import { ensLookup } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { getBrightId, type BrightId } from '@/api/bright-id'
+import { assert, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
+import { sha256 } from '@/utils/crypto'
+import { LOGIN_MESSAGE } from '@/api/user'
 
 export type UserState = {
   currentUser: User | null
@@ -25,10 +28,8 @@ export const useUserStore = defineStore('user', {
     },
   },
   actions: {
-    async loginUser(user: WalletUser) {
+    loginUser(user: WalletUser) {
       this.currentUser = {
-        isRegistered: false,
-        encryptionKey: user.encryptionKey,
         walletAddress: user.walletAddress,
         walletProvider: user.web3Provider,
       }
@@ -39,6 +40,14 @@ export const useUserStore = defineStore('user', {
       appStore.contribution = null
       appStore.contributor = null
       appStore.cart = []
+      appStore.cartLoaded = false
+    },
+    async requestSignature() {
+      assert(this.currentUser, ASSERT_NOT_CONNECTED_WALLET)
+      if (!this.currentUser.encryptionKey) {
+        const signature = await this.signer.signMessage(LOGIN_MESSAGE)
+        this.currentUser.encryptionKey = sha256(signature)
+      }
     },
     async loadUserInfo() {
       const appStore = useAppStore()
@@ -50,6 +59,7 @@ export const useUserStore = defineStore('user', {
       let nativeTokenAddress = ''
       let userRegistryAddress = ''
       let balance: BigNumber | null = null
+      let isRegistered: boolean | undefined = undefined
 
       if (appStore.factory) {
         nativeTokenAddress = appStore.factory.nativeTokenAddress
@@ -78,7 +88,9 @@ export const useUserStore = defineStore('user', {
       }
 
       // Check if this user is in our user registry
-      const isRegistered = await isVerifiedUser(userRegistryAddress, this.currentUser.walletAddress)
+      if (userRegistryAddress) {
+        isRegistered = await isVerifiedUser(userRegistryAddress, this.currentUser.walletAddress)
+      }
 
       if (nativeTokenAddress) {
         balance = await getTokenBalance(nativeTokenAddress, this.currentUser.walletAddress)

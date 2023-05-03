@@ -62,7 +62,7 @@ export enum ThemeMode {
 }
 
 // the maximum significant digits for displaying the contribution amount on cart
-export const maxDecimals = Number(process.env.VUE_APP_MAX_DECIMAL || 1)
+export const maxDecimals = Number(import.meta.env.VUE_APP_MAX_DECIMAL || 1)
 
 // the number of records per batch in the `pending submissions` export file
 export const exportBatchSize = Number(import.meta.env.VITE_EXPORT_BATCH_SIZE) || 60

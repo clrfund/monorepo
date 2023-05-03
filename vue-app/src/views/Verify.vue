@@ -68,7 +68,7 @@
                     type="button"
                     class="btn-action btn-block"
                     @click="selfSponsorAndWait"
-                    :disabled="selfSponsorTxHash.length !== 0"
+                    :disabled="selfSponsorTxHash.length !== 0 || loadingTx"
                   >
                     {{ $t('verify.get_sponsored_cta') }}
                   </button>
@@ -76,6 +76,7 @@
                     {{ $t('verify.skip_sponsorship') }}
                   </button>
                 </div>
+                <div class="error" v-if="sponsorTxError">{{ sponsorTxError }}</div>
               </div>
             </div>
           </div>
@@ -262,8 +263,8 @@ async function checkVerificationStatus() {
 }
 
 onMounted(async () => {
-  // created
-  if (!currentUser.value?.walletAddress || hasContributionPhaseEnded.value) {
+  // need to have round and user signature before continuing with BrightId verification
+  if (!currentUser.value?.walletAddress || !currentUser.value.encryptionKey || hasContributionPhaseEnded.value) {
     router.replace({ name: 'verify' })
   }
 
@@ -313,7 +314,10 @@ watch(currentUser, () => {
 })
 
 async function selfSponsorAndWait() {
-  assert(userRegistryAddress.value, 'Missing the user registry address')
+  if (!userRegistryAddress.value) {
+    sponsorTxError.value = 'Missing the user registry address'
+    return
+  }
 
   const signer = userStore.signer
   loadingTx.value = true
@@ -321,11 +325,11 @@ async function selfSponsorAndWait() {
 
   try {
     await waitForTransaction(selfSponsor(userRegistryAddress.value, signer), hash => (selfSponsorTxHash.value = hash))
-    loadingTx.value = false
     isSponsoring.value = false
   } catch (error) {
     sponsorTxError.value = (error as Error).message
-    return
+  } finally {
+    loadingTx.value = false
   }
 }
 
@@ -607,5 +611,10 @@ function isStepUnlocked(step: number): boolean {
 }
 .row-gap {
   gap: 30px;
+}
+
+.error {
+  overflow-wrap: break-word;
+  margin-top: 2rem;
 }
 </style>

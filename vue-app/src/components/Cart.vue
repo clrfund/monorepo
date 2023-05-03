@@ -5,6 +5,13 @@
       <h3>{{ $t('cart.h3_1') }}</h3>
       <wallet-widget :isActionButton="true" />
     </div>
+    <div v-if="isRequestingSignature || isLoadingCart">
+      <div class="empty-cart">
+        <div class="moon-emoji">🌚</div>
+        <h3 v-if="isRequestingSignature">{{ $t('cart.get_signature') }}</h3>
+        <loader v-if="isLoadingCart"></loader>
+      </div>
+    </div>
     <div v-else class="cart-container">
       <div class="reallocation-message" v-if="canUserReallocate && hasUserVoted">
         {{ $t('cart.div1') }}
@@ -213,7 +220,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { BigNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
@@ -238,6 +245,9 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
+const isRequestingSignature = ref(false)
+const isLoadingCart = ref(false)
+
 const route = useRoute()
 const appStore = useAppStore()
 const {
@@ -257,6 +267,7 @@ const {
 } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
+const loadError = ref('')
 
 const dropdownItems = ref<
   {
@@ -283,6 +294,45 @@ function removeAll(): void {
   appStore.clearCart()
   appStore.saveCart()
   appStore.toggleEditSelection(true)
+}
+
+onMounted(async () => {
+  await requestSignatureAndLoad()
+})
+
+async function requestSignatureAndLoad() {
+  try {
+    isRequestingSignature.value = true
+    await userStore.requestSignature()
+    isRequestingSignature.value = false
+  } catch {
+    // ignore rejection of signature
+    isRequestingSignature.value = false
+    return
+  }
+
+  isLoadingCart.value = true
+  try {
+    await loadCart()
+  } catch (err) {
+    loadError.value = (err as Error).message
+  }
+  isLoadingCart.value = false
+}
+
+async function loadCart() {
+  if (!userStore.currentUser?.encryptionKey) {
+    return
+  }
+
+  if (appStore.cartLoaded) {
+    return
+  }
+
+  await appStore.loadCart()
+  await appStore.loadCommittedCart()
+  await appStore.loadContributorData()
+  appStore.cartLoaded = true
 }
 
 const isEditMode = computed(() => {
@@ -397,6 +447,7 @@ const isBrightIdRequired = computed(
 )
 
 const errorMessage = computed<string | null>(() => {
+  if (loadError.value) return loadError.value
   if (isMessageLimitReached.value) return t('dynamic.cart.error.reached_contribution_limit')
   if (!currentUser.value) return t('dynamic.cart.error.connect_wallet')
   if (isBrightIdRequired.value) return t('dynamic.cart.error.need_to_setup_brightid')

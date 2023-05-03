@@ -43,10 +43,7 @@
           </li>
         </ul>
         <links to="/about/sybil-resistance">{{ $t('verifyLanding.link1') }}</links>
-        <div v-if="!hasRoundStarted" class="join-message">
-          {{ $t('verifyLanding.div1') }}
-        </div>
-        <div v-else-if="isRoundOver" class="warning-message">
+        <div v-if="isRoundOver" class="warning-message">
           {{ $t('verifyLanding.div2') }}
         </div>
         <div v-else-if="isRoundFull" class="warning-message">
@@ -55,9 +52,9 @@
         <div class="btn-container mt2">
           <div v-if="!isRoundOver">
             <wallet-widget v-if="!currentUser" :isActionButton="true" :fullWidthMobile="true" />
-            <links v-if="showBrightIdButton" to="/verify/connect" class="btn-primary">
+            <button v-if="showBrightIdButton" @click="gotoVerify" class="btn-primary">
               {{ $t('verifyLanding.link2') }}
-            </links>
+            </button>
           </div>
           <links to="/projects" class="btn-secondary">{{ $t('verifyLanding.link3') }}</links>
         </div>
@@ -77,7 +74,9 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore, useUserStore } from '@/stores'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const appStore = useAppStore()
 const { isRoundContributorLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
 const userStore = useUserStore()
@@ -85,16 +84,30 @@ const { currentUser } = storeToRefs(userStore)
 
 const loading = ref(true)
 const currentRound = ref<string | null>(null)
+const isRequestingSignature = ref(false)
 
 onMounted(async () => {
   currentRound.value = await getCurrentRound()
   loading.value = false
 })
 
-const hasRoundStarted = computed(() => !!currentRound.value)
 const isRoundFull = computed(() => isRoundContributorLimitReached.value)
 const isRoundOver = computed(() => hasContributionPhaseEnded.value)
 const showBrightIdButton = computed(() => currentUser.value?.isRegistered === false)
+
+async function gotoVerify() {
+  if (currentUser.value && !currentUser.value.encryptionKey) {
+    try {
+      isRequestingSignature.value = true
+      await userStore.requestSignature()
+      isRequestingSignature.value = false
+    } catch (err) {
+      isRequestingSignature.value = false
+      return
+    }
+  }
+  router.push({ name: 'verify-step', params: { step: 'connect' } })
+}
 </script>
 
 <style scoped lang="scss">

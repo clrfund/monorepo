@@ -2,7 +2,7 @@ import { BigNumber, Contract, Signer, FixedNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 
 import type { TransactionResponse } from '@ethersproject/abstract-provider'
-import { Keypair, PubKey, Message, Command, getPubKeyId } from '@clrfund/maci-utils'
+import { Keypair, PubKey, PrivKey, Message, Command, getPubKeyId } from '@clrfund/maci-utils'
 
 import type { RoundInfo } from './round'
 import { FundingRound, ERC20 } from './abi'
@@ -162,7 +162,7 @@ export async function getContributorIndex(fundingRoundAddress: string, pubKey: P
     publicKeyId: id,
   })
 
-  return data.publicKey?.stateIndex ? Number(data.publicKey?.stateIndex) : null
+  return data.publicKey?.stateIndex ? Number(data.publicKey.stateIndex) : null
 }
 
 /**
@@ -194,7 +194,7 @@ export async function getContributorMessages({
     contributorAddress: contributorAddress.toLowerCase(),
   })
 
-  if (!(result.messages && result.messages?.length)) {
+  if (!(result.messages && result.messages.length)) {
     return []
   }
 

@@ -3,8 +3,9 @@
     <round-status-banner v-if="currentRound" />
     <div id="page">
       <div id="hero">
+        <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
-          <image-responsive title="door" alt="Image of a door with connected bubbles" />
+          <image-responsive title="docking" alt="Image of docking spaceship" />
         </div>
         <div>
           <div class="hero-content">
@@ -37,15 +38,22 @@
         </div>
       </div>
       <div id="section-how-it-works">
-        <div class="globe-wrapper desktop-l">
-          <image-responsive title="globe" class="globe" alt="Image of a golden globe on a green meadow" />
+        <div class="wormhole-wrapper desktop-l">
+          <image-responsive
+            title="wormhole"
+            class="wormhole"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
+          />
         </div>
         <div id="how-it-works-content">
           <h2>{{ $t('landing.how.title') }}</h2>
           <p>
             {{ $t('landing.how.paragraph') }}
           </p>
-          <image-responsive title="globe" alt="Image of a golden globe on a green meadow" />
+          <image-responsive
+            title="wormhole"
+            alt="Image of spaceships funneling through a wormhole and getting bigger"
+          />
           <h2>{{ $t('landing.how.subtitle') }}</h2>
           <ol>
             <li>
@@ -207,14 +215,12 @@ async function gotoLeaderboardOrProjectsPage() {
 #page {
   background: var(--bg-primary-color);
 }
-
 #page > div {
   padding: $content-space (2 * $content-space);
   @media (max-width: $breakpoint-m) {
     padding: $content-space;
   }
 }
-
 h1 {
   font-family: Glacial Indifference;
   font-style: normal;
@@ -222,7 +228,6 @@ h1 {
   font-size: 40px;
   line-height: 120%;
 }
-
 h2 {
   font-family: 'Glacial Indifference', sans-serif;
   font-weight: bold;
@@ -230,18 +235,15 @@ h2 {
   letter-spacing: -0.015em;
   margin: 1rem 0;
 }
-
 p {
   font-size: 16px;
   line-height: 30px;
 }
-
 ol {
   list-style: none;
   counter-reset: li-counter;
   padding-left: 3rem;
 }
-
 ol li {
   margin: 0 0 2rem 0;
   counter-increment: li-counter;
@@ -262,13 +264,13 @@ ol li::before {
   line-height: 100%;
   border-radius: 50%;
   color: var(--text-secondary);
-  border: 2px solid var(--text-secondary);
+  background: var(--bg-circle);
+  border: 2px solid var(--link-color);
   box-sizing: border-box;
   text-align: center;
   padding-top: 0.375rem;
   /* vertical-align: baseline; */
 }
-
 .button-group {
   display: flex;
   gap: 1rem;
@@ -281,17 +283,14 @@ ol li::before {
     margin: 0.5rem 0;
   }
 }
-
 .link-li {
   text-decoration: underline;
   margin-bottom: 1rem;
   font-size: 16px;
 }
-
 #bright-id {
   background: var(--bright-id-bg);
 }
-
 #chain-icon,
 #bright-id-icon {
   box-sizing: border-box;
@@ -299,11 +298,10 @@ ol li::before {
   width: auto;
   border-radius: 1rem;
 }
-
 #bright-id-icon {
   padding: 0.5rem;
+  background: var(--bright-id-icon-bg);
 }
-
 .pre-req,
 #about-1,
 #about-2,
@@ -311,13 +309,6 @@ ol li::before {
   padding: $content-space;
   flex: 1;
 }
-
-#what-you-will-need {
-  .pre-req {
-    background: var(--bg-secondary-color);
-  }
-}
-
 #page > #what-you-will-need,
 #page > #about-section {
   display: flex;
@@ -328,11 +319,9 @@ ol li::before {
     gap: 0;
   }
 }
-
 #page > .section-header {
   padding-bottom: 0;
 }
-
 #hero {
   position: relative;
   overflow: hidden;
@@ -341,26 +330,24 @@ ol li::before {
   min-height: 639px; /* This is the height when adding in the callout */
   display: flex;
   flex-flow: wrap;
-
   @media (max-width: $breakpoint-m) {
     flex-flow: column;
   }
-
   .image-wrapper img {
     position: absolute;
+    mix-blend-mode: exclusion;
     width: 70%;
-    max-width: 520px;
+    max-width: 880px;
     height: auto;
-    right: 4rem;
-    bottom: 0;
-
+    transform: rotate(15deg);
+    /* top: -20px; */
+    right: 0;
     @media (max-width: $breakpoint-m) {
       width: auto;
       height: 100%;
       right: -100px;
     }
   }
-
   .hero-content {
     position: relative;
     max-width: 40%;
@@ -368,14 +355,25 @@ ol li::before {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: var(--text-color);
     @media (max-width: $breakpoint-m) {
       max-width: 880px;
       margin: -2rem;
       padding: 2rem;
+      @include gradientBackground(
+        182.34deg,
+        rgba(var(--shadow-dark-rgb), 0.4),
+        81%,
+        rgba(var(--shadow-light-rgb), 0),
+        89.75%
+      );
     }
   }
-
+  #moon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    mix-blend-mode: exclusion;
+  }
   .btn-group {
     display: flex;
     gap: 1rem;
@@ -383,10 +381,8 @@ ol li::before {
       flex-direction: column;
     }
   }
-
   .apply-callout {
-    background: var(--bg-secondary-color);
-    color: var(--text-secondary);
+    background: var(--bg-transparent);
     border: 2px solid $highlight-color;
     box-sizing: border-box;
     border-radius: 8px;
@@ -407,18 +403,17 @@ ol li::before {
     }
   }
 }
-
 .pre-req {
   display: flex;
   gap: 1rem;
   justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
+  background: var(--brand-tertiary);
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }
 }
-
 .icon-row {
   display: flex;
   gap: $content-space;
@@ -445,27 +440,19 @@ ol li::before {
 #about-1,
 #about-2,
 #about-3 {
-  background: var(--text-secondary);
-  color: var(--bg-secondary-color);
+  background: var(--bg-light-color);
   border-radius: 0.5rem;
-  a {
-    color: var(--bg-secondary-color);
-    font-weight: 700;
-    line-height: 32px;
-  }
 
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
-    color: var(--text-secondary);
-    a {
-      color: var(--text-secondary);
-    }
+  }
+  a {
+    color: var(--link-color);
   }
 }
-
 #about-1 {
   @media (max-width: $breakpoint-l) {
-    background: var(--bg-light-color);
+    background: none;
   }
 }
 
@@ -487,44 +474,41 @@ ol li::before {
 }
 
 #section-how-it-works {
-  position: relative;
-  min-height: 620px;
-
+  background: var(--bg-how-it-works);
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  grid-template-rows: repeat(2, auto);
+  grid-template-areas: 'image content' 'image .';
   @media (max-width: $breakpoint-l) {
     display: flex;
   }
-  .globe-wrapper {
-    position: absolute;
-    bottom: 0;
-    left: 0;
+  .wormhole-wrapper {
+    grid-area: image;
+    position: relative;
     display: flex;
     width: 100%;
     align-items: center;
-    .globe {
+    .wormhole {
       width: 100%;
       height: auto;
+      aspect-ratio: 16/9;
+      mix-blend-mode: exclusion;
     }
   }
   #how-it-works-content {
-    position: absolute;
-    bottom: 2rem;
-    right: 4rem;
-
+    position: relative;
     display: flex;
     flex-direction: column;
-    background: var(--bg-secondary-color);
-    width: 35%;
+    background: var(--bg-light-color);
+    /* width: 40%; */
     border-radius: 1rem;
     padding: 2rem;
-    color: var(--text-secondary);
+
     & > img {
       display: none;
     }
-    @media (max-width: $breakpoint-l) {
-      position: relative;
-      bottom: 0;
-      right: 0;
 
+    @media (max-width: $breakpoint-l) {
       width: 100%;
       border-radius: 0;
       padding: 0;
@@ -557,9 +541,6 @@ ol li::before {
   padding: $content-space;
   > li {
     list-style-type: none;
-  }
-  @media (max-width: $breakpoint-l) {
-    background: var(--bg-secondary-color);
   }
 }
 </style>

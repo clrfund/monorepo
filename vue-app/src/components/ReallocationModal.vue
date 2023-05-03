@@ -80,7 +80,7 @@ async function vote() {
       ),
       hash => (voteTxHash.value = hash),
     )
-    appStore.saveCommittedCartDispatch()
+    appStore.saveCommittedCart()
     emit('close')
     router.push({
       name: `transaction-success`,
