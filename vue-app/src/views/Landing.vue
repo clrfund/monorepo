@@ -382,6 +382,10 @@ ol li::before {
     @media (max-width: $breakpoint-l) {
       flex-direction: column;
     }
+
+    & > div {
+      min-width: 180px;
+    }
   }
   .apply-callout {
     background: var(--bg-transparent);
