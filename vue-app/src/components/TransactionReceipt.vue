@@ -23,7 +23,7 @@
       >
         <img class="icon" :src="blockExplorer.logoUrl" />
       </links>
-      <copy-button :value="hash" text="$t('transactionReceipt.button1')" my-class="icon" @copied="updateIsCopied" />
+      <copy-button :value="hash" :text="$t('transactionReceipt.button1')" my-class="icon" @copied="updateIsCopied" />
     </div>
   </div>
 </template>
