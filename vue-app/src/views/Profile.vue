@@ -257,7 +257,7 @@ p.no-margin {
       gap: 1rem;
     }
     .address-card {
-      background: var(--bg-gradient);
+      background: var(--brand-primary);
       color: var(--text-color);
 
       .address {

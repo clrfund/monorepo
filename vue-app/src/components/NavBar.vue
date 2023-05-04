@@ -220,7 +220,7 @@ function toggleTheme(): void {
 
         .item-text {
           margin: 0;
-          color: var(--text-body);
+          color: var(--text-color);
         }
       }
       .hr {
@@ -281,7 +281,7 @@ function toggleTheme(): void {
 
   .clr-logo {
     margin: 0;
-    height: 2.25rem;
+    height: 5rem;
     vertical-align: middle;
   }
 

@@ -285,6 +285,7 @@ ol li::before {
 }
 .link-li {
   text-decoration: underline;
+  text-decoration-color: var(--link-color);
   margin-bottom: 1rem;
   font-size: 16px;
 }
@@ -335,7 +336,7 @@ ol li::before {
   }
   .image-wrapper img {
     position: absolute;
-    mix-blend-mode: exclusion;
+    mix-blend-mode: normal;
     width: 70%;
     max-width: 880px;
     height: auto;
@@ -355,6 +356,7 @@ ol li::before {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    color: var(--bg-primary-color);
     @media (max-width: $breakpoint-m) {
       max-width: 880px;
       margin: -2rem;
@@ -409,7 +411,7 @@ ol li::before {
   justify-content: space-between;
   flex-direction: column;
   border-radius: 1rem;
-  background: var(--brand-tertiary);
+  background: var(--bg-secondary-color);
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }
@@ -492,7 +494,7 @@ ol li::before {
       width: 100%;
       height: auto;
       aspect-ratio: 16/9;
-      mix-blend-mode: exclusion;
+      mix-blend-mode: normal;
     }
   }
   #how-it-works-content {
@@ -513,6 +515,7 @@ ol li::before {
       border-radius: 0;
       padding: 0;
       background: none;
+      color: var(--bg-light-color);
       & > img {
         display: inline-block;
         align-self: center;

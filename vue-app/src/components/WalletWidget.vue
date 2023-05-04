@@ -113,7 +113,7 @@ function toggleProfile(): void {
   gap: 0.5rem;
   align-items: center;
   cursor: pointer;
-  background: var(--bg-gradient);
+  background: var(--brand-primary);
   border-radius: 32px;
   padding-right: 0.5rem;
   width: fit-content;

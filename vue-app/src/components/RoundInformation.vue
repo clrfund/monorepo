@@ -404,7 +404,7 @@ const blockExplorer = computed(() => ({
   justify-content: center;
 }
 .image-wrapper img {
-  mix-blend-mode: exclusion;
+  mix-blend-mode: normal;
   transform: rotate(15deg);
 }
 .round {

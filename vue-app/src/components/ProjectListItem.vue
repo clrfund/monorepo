@@ -119,7 +119,7 @@ const projectRoute = computed<RouteLocationRaw>(() => {
   line-height: 24px;
   letter-spacing: 0em;
   text-align: center;
-  color: var(--text-body);
+  color: var(--brand-secondary);
   width: 100%;
   border: none;
   cursor: pointer;
