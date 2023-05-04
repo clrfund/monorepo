@@ -718,9 +718,6 @@
     "btn2_2": "View",
     "div2": "You haven't submitted any projects"
   },
-  "project": {
-    "p": "You have contributed to this project!"
-  },
   "projectAdded": {
     "h1": "Project submitted!",
     "div1": "You’re almost on board this funding round.",
@@ -979,7 +976,6 @@
     "div2": "Thanks for helping out all our projects.",
     "button3": "Done"
   },
-  "app": "App",
   "navBar": {
     "app": "App",
     "dropdown": {

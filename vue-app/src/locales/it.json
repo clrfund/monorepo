@@ -718,9 +718,6 @@
     "btn2_2": "Visualizza",
     "div2": "Non hai inviato nessun progetto"
   },
-  "project": {
-    "p": "Hai contribuito a questo progetto!"
-  },
   "projectAdded": {
     "h1": "Progetto inviato!",
     "div1": "Sei quasi a bordo di questo round di finanziamento.",
@@ -826,7 +823,6 @@
     "unitap_link": "Unitap",
     "unitap_extra_text": ".",
     "link1": "Perché è importante?",
-    "div1": "There's not yet an open funding round. Please check back later.",
     "div2": "Il round attuale non accetta più nuovi contributi. Si prega di riprovare nel prossimo round.",
     "div3": "Le donazioni sono chiuse in anticipo: non è più possibile donare! A causa della generosità della comunità e di alcune limitazioni tecniche, abbiamo dovuto chiudere il round prima del previsto. Se hai già contribuito, hai ancora tempo per riassegnare se necessario. Se non hai avuto l'opportunità di contribuire, puoi comunque aiutare donando al fondo di corrispondenza.",
     "link2": "Sono verificato con BrightID",
@@ -980,7 +976,6 @@
     "div2": "Grazie per aver aiutato tutti i nostri progetti.",
     "button3": "Fatto"
   },
-  "app": "App",
   "navBar": {
     "app": "App",
     "dropdown": {
