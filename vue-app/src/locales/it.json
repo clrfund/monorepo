@@ -653,7 +653,8 @@
     "hero": {
       "title": "Il primo round di Quadratic Funding italiano per Web3-Powered Public Goods!",
       "subtitle": "Ogni progetto a cui contribuisci riceve una parte di finanziamento aggiuntivo.",
-      "info": "Come funziona"
+      "info": "Come funziona",
+      "action": "Inizia"
     },
     "callout": {
       "title": "Unisciti al round di finanziamento",
@@ -802,6 +803,7 @@
     "btn": "Diventa un collaboratore",
     "next": "Prossimo",
     "previous": "Precedente",
+    "copy_link": "Copy Link",
     "verification_status": "Il tuo indirizzo wallet non è collegato con BrightID. Potrebbe essere necessario qualche minuto per verificare la connessione, attendi e fai clic sul pulsante più tardi per controllare lo stato.",
     "skip_sponsorship": "Salta",
     "get_sponsored_header": "Ottieni uno sponsor",
@@ -856,6 +858,7 @@
     "link2": "Continua l'installazione"
   },
   "cart": {
+    "get_signature": "Please sign the message in your wallet",
     "h3_1": "Connetti per vedere il tuo carrello",
     "div1": "Hai già contribuito in questo round. Puoi modificare le tue scelte e aggiungere nuovi progetti, ma il totale del tuo carrello deve sempre essere uguale al tuo importo di contribuzione originale.",
     "link1": "Perché?",
@@ -979,6 +982,7 @@
   },
   "app": "App",
   "navBar": {
+    "app": "App",
     "dropdown": {
       "home": "Home",
       "about": "About",
