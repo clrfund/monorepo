@@ -5,7 +5,7 @@
       <h3>{{ $t('cart.h3_1') }}</h3>
       <wallet-widget :isActionButton="true" />
     </div>
-    <div v-if="isRequestingSignature || isLoadingCart">
+    <div v-else-if="isRequestingSignature || isLoadingCart">
       <div class="empty-cart">
         <div class="moon-emoji">🌚</div>
         <h3 v-if="isRequestingSignature">{{ $t('cart.get_signature') }}</h3>
@@ -220,7 +220,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
 import { BigNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
@@ -295,6 +295,12 @@ function removeAll(): void {
   appStore.saveCart()
   appStore.toggleEditSelection(true)
 }
+
+watch(currentUser, async () => {
+  if (!isRequestingSignature.value && currentUser.value && !currentUser.value.encryptionKey) {
+    await requestSignatureAndLoad()
+  }
+})
 
 onMounted(async () => {
   await requestSignatureAndLoad()
