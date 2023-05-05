@@ -5,7 +5,7 @@ import it from '@/locales/it.json'
 
 const defaultLocale = import.meta.env.VITE_I18N_LOCALE || 'en'
 export const languages = [
-  { locale: 'it', emoji: '🇮🇹', description: 'Italiana' },
+  { locale: 'it', emoji: '🇮🇹', description: 'Italiano' },
   { locale: 'en', emoji: '🇺🇸', description: 'English' },
   { locale: 'cn', emoji: '🇨🇳', description: '简体中文' },
   /*
