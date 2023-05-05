@@ -800,7 +800,7 @@
     "btn": "Diventa un collaboratore",
     "next": "Prossimo",
     "previous": "Precedente",
-    "copy_link": "Copy Link",
+    "copy_link": "Copia Link",
     "verification_status": "Il tuo indirizzo wallet non è collegato con BrightID. Potrebbe essere necessario qualche minuto per verificare la connessione, attendi e fai clic sul pulsante più tardi per controllare lo stato.",
     "skip_sponsorship": "Salta",
     "get_sponsored_header": "Ottieni uno sponsor",
@@ -854,7 +854,7 @@
     "link2": "Continua l'installazione"
   },
   "cart": {
-    "get_signature": "Please sign the message in your wallet",
+    "get_signature": "Per favore firma il messaggio sul tuo wallet",
     "h3_1": "Connetti per vedere il tuo carrello",
     "div1": "Hai già contribuito in questo round. Puoi modificare le tue scelte e aggiungere nuovi progetti, ma il totale del tuo carrello deve sempre essere uguale al tuo importo di contribuzione originale.",
     "link1": "Perché?",
