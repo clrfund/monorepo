@@ -1207,5 +1207,7 @@
   "cancel": "Cancel",
   "copied": "Copied!",
   "more_on_maci": "More on MACI",
-  "add_project": "Add project"
+  "add_project": "Add project",
+  "close": "Close",
+  "please_sign_message": "Please sign the message in your wallet"
 }

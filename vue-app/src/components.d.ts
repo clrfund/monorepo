@@ -51,6 +51,7 @@ declare module '@vue/runtime-core' {
     RoundStatusBanner: typeof import('./components/RoundStatusBanner.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SignatureModal: typeof import('./components/SignatureModal.vue')['default']
     TimeLeft: typeof import('./components/TimeLeft.vue')['default']
     Transaction: typeof import('./components/Transaction.vue')['default']
     TransactionModal: typeof import('./components/TransactionModal.vue')['default']
