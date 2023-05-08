@@ -7,7 +7,6 @@ import {
   deserializeCart,
   getContributorIndex,
   getCartStorageKey,
-  getCommittedCartStorageKey,
   MAX_CART_SIZE,
   serializeCart,
 } from '@/api/contributions'
@@ -24,13 +23,7 @@ import { useRecipientStore } from './recipient'
 import { useUserStore } from './user'
 import { getAssetsUrl, getRoundsUrl } from '@/utils/url'
 import { getTokenLogo } from '@/utils/tokens'
-import {
-  assert,
-  ASSERT_MISSING_CONTRIBUTOR,
-  ASSERT_MISSING_ROUND,
-  ASSERT_MISSING_SIGNATURE,
-  ASSERT_NOT_CONNECTED_WALLET,
-} from '@/utils/assert'
+import { assert, ASSERT_MISSING_ROUND, ASSERT_MISSING_SIGNATURE, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
 import { Keypair } from '@clrfund/maci-utils'
 
 export type AppState = {
@@ -298,7 +291,7 @@ export const useAppStore = defineStore('app', {
 
       assert(userStore.currentUser, ASSERT_NOT_CONNECTED_WALLET)
       assert(userStore.currentUser.encryptionKey, ASSERT_MISSING_SIGNATURE)
-      assert(this.currentRound, ASSERT_MISSING_ROUND)
+      assert(this.currentRound?.fundingRoundAddress, ASSERT_MISSING_ROUND)
 
       const data = await storage.getItem(
         userStore.currentUser.walletAddress,
@@ -428,8 +421,6 @@ export const useAppStore = defineStore('app', {
       }
 
       this.committedCart = committedCart
-      // Spread to avoid reference
-      this.cart = [...this.committedCart]
     },
     setContributor(contributor: Contributor | null) {
       this.contributor = contributor

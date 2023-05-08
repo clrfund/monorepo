@@ -3,13 +3,14 @@
     <div v-if="!currentUser" class="empty-cart">
       <div class="moon-emoji">🌚</div>
       <h3>{{ $t('cart.h3_1') }}</h3>
-      <wallet-widget :isActionButton="true" />
+      <button @click="promptConnection" class="btn-action">{{ $t('cart.connect') }}</button>
     </div>
-    <div v-else-if="isRequestingSignature || isLoadingCart">
+    <loader v-else-if="isLoading"></loader>
+    <div v-else-if="!currentUser.encryptionKey">
       <div class="empty-cart">
         <div class="moon-emoji">🌚</div>
-        <h3 v-if="isRequestingSignature">{{ $t('cart.get_signature') }}</h3>
-        <loader v-if="isLoadingCart"></loader>
+        <h3>{{ $t('cart.sign_the_message_to_see_your_cart') }}</h3>
+        <button @click="promptSignagure" class="btn-action">{{ $t('cart.sign') }}</button>
       </div>
     </div>
     <div v-else class="cart-container">
@@ -220,11 +221,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { BigNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
-import WalletWidget from '@/components/WalletWidget.vue'
+import WalletModal from '@/components/WalletModal.vue'
+import SignatureModal from '@/components/SignatureModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
@@ -242,11 +244,11 @@ import { useModal } from 'vue-final-modal'
 import { useRoute } from 'vue-router'
 import { getAssetsUrl } from '@/utils/url'
 import { useI18n } from 'vue-i18n'
+import ErrorModal from './ErrorModal.vue'
 
 const { t } = useI18n()
 
-const isRequestingSignature = ref(false)
-const isLoadingCart = ref(false)
+const isLoading = ref(false)
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -267,7 +269,6 @@ const {
 } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
-const loadError = ref('')
 
 const dropdownItems = ref<
   {
@@ -296,49 +297,76 @@ function removeAll(): void {
   appStore.toggleEditSelection(true)
 }
 
-watch(currentUser, async () => {
-  if (!isRequestingSignature.value && currentUser.value && !currentUser.value.encryptionKey) {
-    await requestSignatureAndLoad()
+onMounted(() => {
+  if (currentUser.value && !currentUser.value.encryptionKey) {
+    promptSignagure()
   }
 })
 
-onMounted(async () => {
-  await requestSignatureAndLoad()
-})
+function showError(errorMessage: string) {
+  const { open, close } = useModal({
+    component: ErrorModal,
+    attrs: {
+      errorMessage,
+      onClose() {
+        close()
+      },
+    },
+  })
+  open()
+}
 
-async function requestSignatureAndLoad() {
-  try {
-    isRequestingSignature.value = true
-    await userStore.requestSignature()
-    isRequestingSignature.value = false
-  } catch {
-    // ignore rejection of signature
-    isRequestingSignature.value = false
-    return
-  }
+function promptConnection(): void {
+  const { open, close } = useModal({
+    component: WalletModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          if (currentUser.value?.walletAddress) {
+            promptSignagure()
+          }
+        })
+      },
+    },
+  })
+  open()
+}
 
-  isLoadingCart.value = true
-  try {
-    await loadCart()
-  } catch (err) {
-    loadError.value = (err as Error).message
-  }
-  isLoadingCart.value = false
+function promptSignagure(): void {
+  const { open, close } = useModal({
+    component: SignatureModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          isLoading.value = false
+          if (currentUser.value?.encryptionKey) {
+            loadCart()
+          }
+        })
+      },
+    },
+  })
+
+  isLoading.value = true
+  open()
 }
 
 async function loadCart() {
-  if (!userStore.currentUser?.encryptionKey) {
-    return
-  }
-
   if (appStore.cartLoaded) {
     return
   }
 
-  await appStore.loadCart()
-  await appStore.loadCommittedCart()
-  await appStore.loadContributorData()
-  appStore.cartLoaded = true
+  isLoading.value = true
+  try {
+    await appStore.loadCart()
+    await appStore.loadCommittedCart()
+    await appStore.loadContributorData()
+    appStore.cartLoaded = true
+  } catch (err) {
+    showError((err as Error).message)
+    userStore.logoutUser()
+  }
+  isLoading.value = false
 }
 
 const isEditMode = computed(() => {
@@ -453,7 +481,6 @@ const isBrightIdRequired = computed(
 )
 
 const errorMessage = computed<string | null>(() => {
-  if (loadError.value) return loadError.value
   if (isMessageLimitReached.value) return t('dynamic.cart.error.reached_contribution_limit')
   if (!currentUser.value) return t('dynamic.cart.error.connect_wallet')
   if (isBrightIdRequired.value) return t('dynamic.cart.error.need_to_setup_brightid')

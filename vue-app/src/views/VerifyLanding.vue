@@ -52,7 +52,7 @@
         <div class="btn-container mt2">
           <div v-if="!isRoundOver">
             <wallet-widget v-if="!currentUser" :isActionButton="true" :fullWidthMobile="true" />
-            <button v-else-if="showBrightIdButton" @click="gotoVerify" class="btn-primary">
+            <button v-else-if="showBrightIdButton" @click="handleBrightIdButtonClicked" class="btn-primary">
               {{ $t('verifyLanding.link2') }}
             </button>
           </div>
@@ -96,30 +96,29 @@ const isRoundFull = computed(() => isRoundContributorLimitReached.value)
 const isRoundOver = computed(() => hasContributionPhaseEnded.value)
 const showBrightIdButton = computed(() => currentUser.value?.isRegistered === false)
 
-async function requestSignature() {
-  return new Promise(resolve => {
-    const { open, close } = useModal({
-      component: SignatureModal,
-      attrs: {
-        onSuccess: () => {
-          resolve(true)
-        },
-        onClose() {
-          close()
-          resolve(true)
-        },
+async function promptSignagure() {
+  const { open, close } = useModal({
+    component: SignatureModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          gotoVerify()
+        })
       },
-    })
-
-    open()
+    },
   })
+  open()
 }
 
-async function gotoVerify() {
+function handleBrightIdButtonClicked() {
   if (currentUser.value && !currentUser.value.encryptionKey) {
-    await requestSignature()
+    promptSignagure()
+  } else {
+    gotoVerify()
   }
+}
 
+function gotoVerify() {
   if (currentUser.value?.encryptionKey) {
     router.push({ name: 'verify-step', params: { step: 'connect' } })
   }

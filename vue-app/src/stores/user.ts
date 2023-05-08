@@ -21,9 +21,7 @@ export const useUserStore = defineStore('user', {
   }),
   getters: {
     signer(): Signer {
-      if (!this.currentUser) {
-        throw new Error('Not connected to a wallet')
-      }
+      assert(this.currentUser, ASSERT_NOT_CONNECTED_WALLET)
       return this.currentUser.walletProvider.getSigner()
     },
   },
@@ -60,6 +58,7 @@ export const useUserStore = defineStore('user', {
       let userRegistryAddress = ''
       let balance: BigNumber | null = null
       let isRegistered: boolean | undefined = undefined
+      const walletAddress = this.currentUser.walletAddress
 
       if (appStore.factory) {
         nativeTokenAddress = appStore.factory.nativeTokenAddress
@@ -89,16 +88,15 @@ export const useUserStore = defineStore('user', {
 
       // Check if this user is in our user registry
       if (userRegistryAddress) {
-        isRegistered = await isVerifiedUser(userRegistryAddress, this.currentUser.walletAddress)
+        isRegistered = await isVerifiedUser(userRegistryAddress, walletAddress)
       }
 
       if (nativeTokenAddress) {
-        balance = await getTokenBalance(nativeTokenAddress, this.currentUser.walletAddress)
+        balance = await getTokenBalance(nativeTokenAddress, walletAddress)
       }
 
-      const etherBalance = await getEtherBalance(this.currentUser.walletAddress)
-      let ensName: string | null | undefined = this.currentUser.ensName
-      ensName = await ensLookup(this.currentUser.walletAddress)
+      const etherBalance = await getEtherBalance(walletAddress)
+      const ensName: string | null | undefined = this.currentUser.ensName || (await ensLookup(walletAddress))
 
       this.currentUser = {
         ...this.currentUser,
@@ -120,7 +118,10 @@ export const useUserStore = defineStore('user', {
           brightId = await getBrightId(this.currentUser.walletAddress)
         }
 
-        this.currentUser.brightId = brightId
+        this.currentUser = {
+          ...this.currentUser,
+          brightId,
+        }
       }
     },
   },

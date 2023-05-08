@@ -854,7 +854,9 @@
     "link2": "Continue setup"
   },
   "cart": {
-    "get_signature": "Please sign the message in your wallet",
+    "sign": "Sign",
+    "connect": "Connect",
+    "sign_the_message_to_see_your_cart": "Please sign the message to see your cart",
     "h3_1": "Connect to see your cart",
     "div1": "You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount.",
     "link1": "Why?",
