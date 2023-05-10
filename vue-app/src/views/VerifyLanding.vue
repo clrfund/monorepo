@@ -4,6 +4,7 @@
     <loader v-if="loading" />
     <div v-if="!loading">
       <div class="gradient">
+        <img src="@/assets/moon.png" class="moon" />
         <div class="hero">
           <image-responsive title="newrings" />
         </div>
@@ -169,6 +170,13 @@ ul {
   right: 0;
   height: 100%;
   width: 100%;
+
+  .moon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    mix-blend-mode: exclusion;
+  }
 
   .hero {
     display: flex;
