@@ -1,8 +1,8 @@
-import { BigNumber, Contract, FixedNumber } from 'ethers'
+import { BigNumber, Contract, utils, FixedNumber } from 'ethers'
 import { DateTime } from 'luxon'
 import { PubKey } from 'maci-domainobjs'
 
-import { FundingRound, MACI, ERC20 } from './abi'
+import { FundingRound, MACI } from './abi'
 import { provider, factory } from './core'
 import { getTotalContributed } from './contributions'
 import { getRounds } from './rounds'
@@ -153,15 +153,15 @@ export async function getRoundInfo(fundingRoundAddress: string, cachedRound?: Ro
 
   return {
     fundingRoundAddress,
-    recipientRegistryAddress,
-    userRegistryAddress,
-    maciAddress,
+    recipientRegistryAddress: utils.getAddress(recipientRegistryAddress),
+    userRegistryAddress: utils.getAddress(userRegistryAddress),
+    maciAddress: utils.getAddress(maciAddress),
     recipientTreeDepth: maciTreeDepths.voteOptionTreeDepth,
     maxContributors,
     maxRecipients: 5 ** maciTreeDepths.voteOptionTreeDepth - 1,
     maxMessages,
     coordinatorPubKey,
-    nativeTokenAddress,
+    nativeTokenAddress: utils.getAddress(nativeTokenAddress),
     nativeTokenSymbol,
     nativeTokenDecimals,
     voiceCreditFactor,

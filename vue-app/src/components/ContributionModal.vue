@@ -289,6 +289,9 @@ async function contribute() {
     /* eslint-disable-next-line no-console */
     console.log(err)
     error.value = 'Something unexpected ocurred. Refresh the page and try again.'
+    if (err instanceof Error) {
+      error.value = error.value + ' ' + err.message
+    }
   }
 }
 </script>
