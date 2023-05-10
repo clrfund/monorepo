@@ -6,6 +6,8 @@ import { FundingRound, MACI, ERC20 } from './abi'
 import { provider, factory } from './core'
 import { getTotalContributed } from './contributions'
 import { getRounds } from './rounds'
+import sdk from '@/graphql/sdk'
+import { assert, ASSERT_MISSING_ROUND } from '@/utils/assert'
 
 import { isSameAddress } from '@/utils/accounts'
 
@@ -71,23 +73,21 @@ export async function getRoundInfo(fundingRoundAddress: string, cachedRound?: Ro
   }
 
   const fundingRound = new Contract(fundingRoundAddress, FundingRound, provider)
-  const [
-    maciAddress,
-    nativeTokenAddress,
+  const data = await sdk.GetRoundInfo({
+    fundingRoundAddress: fundingRoundAddress.toLowerCase(),
+  })
+
+  assert(data.fundingRound, ASSERT_MISSING_ROUND)
+
+  const {
+    maci: maciAddress,
     recipientRegistryAddress,
-    userRegistryAddress,
-    voiceCreditFactor,
+    contributorRegistryAddress: userRegistryAddress,
     isFinalized,
     isCancelled,
-  ] = await Promise.all([
-    fundingRound.maci(),
-    fundingRound.nativeToken(),
-    fundingRound.recipientRegistry(),
-    fundingRound.userRegistry(),
-    fundingRound.voiceCreditFactor(),
-    fundingRound.isFinalized(),
-    fundingRound.isCancelled(),
-  ])
+  } = data.fundingRound
+
+  const voiceCreditFactor = BigNumber.from(data.fundingRound.voiceCreditFactor)
 
   const maci = new Contract(maciAddress, MACI, provider)
   const [
@@ -112,9 +112,9 @@ export async function getRoundInfo(fundingRoundAddress: string, cachedRound?: Ro
   )
   const coordinatorPubKey = new PubKey([BigInt(coordinatorPubKeyRaw.x), BigInt(coordinatorPubKeyRaw.y)])
 
-  const nativeToken = new Contract(nativeTokenAddress, ERC20, provider)
-  const nativeTokenSymbol = await nativeToken.symbol()
-  const nativeTokenDecimals = await nativeToken.decimals()
+  const nativeTokenAddress = data.fundingRound.nativeTokenInfo?.tokenAddress || ''
+  const nativeTokenSymbol = data.fundingRound.nativeTokenInfo?.symbol || ''
+  const nativeTokenDecimals = Number(data.fundingRound.nativeTokenInfo?.decimals || '')
 
   const maxContributors = 2 ** maciTreeDepths.stateTreeDepth - 1
   const maxMessages = 2 ** maciTreeDepths.messageTreeDepth - 1
