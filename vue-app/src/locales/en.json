@@ -892,9 +892,7 @@
     "div13": "Time left:",
     "span3": "Projects",
     "span4": "Matching Pool",
-    "span5": "Total",
-    "div14": "No current round.",
-    "link4": "Verify with BrightID while you wait"
+    "span5": "Total"
   },
   "cartItems": {
     "button1": "Amount"
