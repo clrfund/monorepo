@@ -213,10 +213,6 @@
           {{ tokenSymbol }}
         </div>
       </div>
-      <div v-if="!currentRound" class="reallocation-section">
-        {{ $t('cart.div14') }}
-        <links v-if="isBrightIdRequired" to="/verify"> {{ $t('cart.link4') }}</links>
-      </div>
     </div>
   </div>
 </template>
@@ -337,11 +333,11 @@ function promptSignagure(): void {
     component: SignatureModal,
     attrs: {
       onClose() {
-        close().then(() => {
-          isLoading.value = false
+        close().then(async () => {
           if (currentUser.value?.encryptionKey) {
-            loadCart()
+            await loadCart()
           }
+          isLoading.value = false
         })
       },
     },
@@ -356,7 +352,6 @@ async function loadCart() {
     return
   }
 
-  isLoading.value = true
   try {
     await appStore.loadCart()
     await appStore.loadCommittedCart()
@@ -366,7 +361,6 @@ async function loadCart() {
     showError((err as Error).message)
     userStore.logoutUser()
   }
-  isLoading.value = false
 }
 
 const isEditMode = computed(() => {

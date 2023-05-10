@@ -409,18 +409,16 @@ export const useAppStore = defineStore('app', {
         return
       }
 
-      const committedCart = await getCommittedCart(
+      this.committedCart = await getCommittedCart(
         this.currentRound,
         userStore.currentUser.encryptionKey,
         userStore.currentUser.walletAddress,
       )
 
-      if (committedCart.length > 0) {
+      if (this.committedCart.length > 0) {
         // only overwrite the uncommitted cart if there's committed cart
         this.restoreCommittedCartToLocalCart()
       }
-
-      this.committedCart = committedCart
     },
     setContributor(contributor: Contributor | null) {
       this.contributor = contributor
