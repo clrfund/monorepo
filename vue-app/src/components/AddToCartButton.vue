@@ -87,7 +87,7 @@ function canContribute(): boolean {
   )
 }
 
-async function contribute() {
+function contribute() {
   appStore.addCartItem({
     ...props.project,
     amount: amount.value,
