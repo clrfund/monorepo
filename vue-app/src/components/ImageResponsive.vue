@@ -4,6 +4,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { getAssetsUrl } from '@/utils/url'
 
 const BREAKPOINTS = [360, 720, 1080, 1440, 2160, 2880]
 
@@ -28,6 +29,6 @@ const srcset = computed(() => {
 })
 
 function requirePath(name: string, breakpoint: number) {
-  return new URL(`/src/assets/${name}/${name}_w${breakpoint}.png`, import.meta.url).href
+  return getAssetsUrl(`${name}/${name}_w${breakpoint}.png`)
 }
 </script>

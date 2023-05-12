@@ -67,7 +67,6 @@ function handleFilterClick(selection: string): void {
   width: 140px;
   grid-area: filter;
   position: relative;
-
   .filter-btn {
     background: none;
     cursor: pointer;
@@ -93,7 +92,6 @@ function handleFilterClick(selection: string): void {
       filter: var(--img-filter, invert(1));
     }
   }
-
   .selector-wrapper {
     display: none;
     position: absolute;

@@ -5,7 +5,7 @@
       <div id="hero">
         <img src="@/assets/moon.png" id="moon" />
         <div class="image-wrapper">
-          <image-responsive title="docking" />
+          <image-responsive title="docking" alt="Image of docking spaceship" />
         </div>
         <div>
           <div class="hero-content">
@@ -215,14 +215,12 @@ async function gotoLeaderboardOrProjectsPage() {
 #page {
   background: var(--bg-primary-color);
 }
-
 #page > div {
   padding: $content-space (2 * $content-space);
   @media (max-width: $breakpoint-m) {
     padding: $content-space;
   }
 }
-
 h1 {
   font-family: Glacial Indifference;
   font-style: normal;
@@ -230,7 +228,6 @@ h1 {
   font-size: 40px;
   line-height: 120%;
 }
-
 h2 {
   font-family: 'Glacial Indifference', sans-serif;
   font-weight: bold;
@@ -238,18 +235,15 @@ h2 {
   letter-spacing: -0.015em;
   margin: 1rem 0;
 }
-
 p {
   font-size: 16px;
   line-height: 30px;
 }
-
 ol {
   list-style: none;
   counter-reset: li-counter;
   padding-left: 3rem;
 }
-
 ol li {
   margin: 0 0 2rem 0;
   counter-increment: li-counter;
@@ -277,7 +271,6 @@ ol li::before {
   padding-top: 0.375rem;
   /* vertical-align: baseline; */
 }
-
 .button-group {
   display: flex;
   gap: 1rem;
@@ -290,17 +283,14 @@ ol li::before {
     margin: 0.5rem 0;
   }
 }
-
 .link-li {
   text-decoration: underline;
   margin-bottom: 1rem;
   font-size: 16px;
 }
-
 #bright-id {
   background: var(--bright-id-bg);
 }
-
 #chain-icon,
 #bright-id-icon {
   box-sizing: border-box;
@@ -308,12 +298,10 @@ ol li::before {
   width: auto;
   border-radius: 1rem;
 }
-
 #bright-id-icon {
   padding: 0.5rem;
   background: var(--bright-id-icon-bg);
 }
-
 .pre-req,
 #about-1,
 #about-2,
@@ -321,7 +309,6 @@ ol li::before {
   padding: $content-space;
   flex: 1;
 }
-
 #page > #what-you-will-need,
 #page > #about-section {
   display: flex;
@@ -332,11 +319,9 @@ ol li::before {
     gap: 0;
   }
 }
-
 #page > .section-header {
   padding-bottom: 0;
 }
-
 #hero {
   position: relative;
   overflow: hidden;
@@ -345,11 +330,9 @@ ol li::before {
   min-height: 639px; /* This is the height when adding in the callout */
   display: flex;
   flex-flow: wrap;
-
   @media (max-width: $breakpoint-m) {
     flex-flow: column;
   }
-
   .image-wrapper img {
     position: absolute;
     mix-blend-mode: exclusion;
@@ -365,7 +348,6 @@ ol li::before {
       right: -100px;
     }
   }
-
   .hero-content {
     position: relative;
     max-width: 40%;
@@ -386,14 +368,12 @@ ol li::before {
       );
     }
   }
-
   #moon {
     position: absolute;
     top: 0;
     right: 0;
     mix-blend-mode: exclusion;
   }
-
   .btn-group {
     display: flex;
     gap: 1rem;
@@ -401,7 +381,6 @@ ol li::before {
       flex-direction: column;
     }
   }
-
   .apply-callout {
     background: var(--bg-transparent);
     border: 2px solid $highlight-color;
@@ -424,7 +403,6 @@ ol li::before {
     }
   }
 }
-
 .pre-req {
   display: flex;
   gap: 1rem;
@@ -436,7 +414,6 @@ ol li::before {
     border-radius: 0;
   }
 }
-
 .icon-row {
   display: flex;
   gap: $content-space;
@@ -465,6 +442,7 @@ ol li::before {
 #about-3 {
   background: var(--bg-light-color);
   border-radius: 0.5rem;
+
   @media (max-width: $breakpoint-l) {
     border-radius: 0;
   }
@@ -472,7 +450,6 @@ ol li::before {
     color: var(--link-color);
   }
 }
-
 #about-1 {
   @media (max-width: $breakpoint-l) {
     background: none;
@@ -526,9 +503,11 @@ ol li::before {
     /* width: 40%; */
     border-radius: 1rem;
     padding: 2rem;
+
     & > img {
       display: none;
     }
+
     @media (max-width: $breakpoint-l) {
       width: 100%;
       border-radius: 0;

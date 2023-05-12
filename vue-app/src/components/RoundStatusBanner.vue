@@ -103,6 +103,7 @@ const recipientSpacesRemainingString = computed(() => {
   animation: marquee 20s linear infinite;
   padding-left: 100%;
   margin: 1rem 0;
+  color: var(--text-body);
 
   @media (max-width: $breakpoint-m) {
     animation: marquee 10s linear infinite;

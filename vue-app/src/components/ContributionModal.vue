@@ -122,13 +122,11 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { BigNumber, Contract } from 'ethers'
-import { DateTime } from 'luxon'
-import { Keypair, PubKey, Message } from 'maci-domainobjs'
+import { Keypair, PubKey, Message, createMessage } from '@clrfund/maci-utils'
 
 import Transaction from '@/components/Transaction.vue'
 import { formatAmount } from '@/utils/amounts'
 import { waitForTransaction, getEventArg } from '@/utils/contracts'
-import { createMessage } from '@/utils/maci'
 import ProgressBar from '@/components/ProgressBar.vue'
 // @ts-ignore
 import { VueFinalModal } from 'vue-final-modal'
@@ -141,6 +139,7 @@ const router = useRouter()
 const appStore = useAppStore()
 const userStore = useUserStore()
 const { hasUserContributed, hasUserVoted, currentRound } = storeToRefs(appStore)
+const { currentUser } = storeToRefs(userStore)
 
 const emit = defineEmits(['close'])
 
@@ -199,7 +198,7 @@ async function sendVotes() {
       hash => (voteTxHash.value = hash),
     )
     appStore.setHasVote(true)
-    appStore.saveCommittedCartDispatch()
+    appStore.saveCommittedCart()
     // TODO: how to execute this?
     emit('close')
     router.push({
@@ -250,7 +249,12 @@ async function contribute() {
     }
     step.value += 1
     // Contribute (step 2)
-    const contributorKeypair = new Keypair()
+    const encryptionKey = currentUser.value?.encryptionKey || ''
+    if (!encryptionKey) {
+      throw new Error('Missing encryption key')
+    }
+    const contributorKeypair = Keypair.createFromSeed(encryptionKey)
+
     let contributionTxReceipt
     try {
       contributionTxReceipt = await waitForTransaction(
@@ -274,7 +278,6 @@ async function contribute() {
     }
     // Save contributor data to storage
     appStore.setContributor(contributor)
-    appStore.saveContributorData()
     // Set contribution and update round info
     appStore.setContribution(total.value)
     // Reload contribution pool size
@@ -286,6 +289,9 @@ async function contribute() {
     /* eslint-disable-next-line no-console */
     console.log(err)
     error.value = 'Something unexpected ocurred. Refresh the page and try again.'
+    if (err instanceof Error) {
+      error.value = error.value + ' ' + err.message
+    }
   }
 }
 </script>

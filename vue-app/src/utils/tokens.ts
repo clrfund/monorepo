@@ -29,8 +29,7 @@ export const TOKEN_INFO: { [key: string]: Token } = {
 }
 
 export const getTokenLogo = (symbol: string): string => {
-  const token: Token = TOKEN_INFO[symbol.toUpperCase()]
-  // eslint-disable-next-line
+  const token = symbol ? TOKEN_INFO[symbol.toUpperCase()] : null
   if (!token) return 'eth.svg'
   return token.logo
 }

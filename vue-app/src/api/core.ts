@@ -14,7 +14,6 @@ export const chainId = Number(import.meta.env.VITE_ETHEREUM_API_CHAINID)
 export const chain = CHAIN_INFO[chainId]
 if (!chain) throw new Error('invalid chain id')
 export const ipfsGatewayUrl = import.meta.env.VITE_IPFS_GATEWAY_URL
-export const gunPeers: string[] = import.meta.env.VITE_GUN_PEERS ? import.meta.env.VITE_GUN_PEERS.split(',') : []
 
 export const ipfsPinningUrl = import.meta.env.VITE_IPFS_PINNING_URL
 if (!ipfsPinningUrl) throw new Error('invalid ipfs pinning url')
@@ -61,6 +60,9 @@ export enum ThemeMode {
   LIGHT = 'light',
   DARK = 'dark',
 }
+
+// the maximum significant digits for displaying the contribution amount on cart
+export const maxDecimals = Number(import.meta.env.VUE_APP_MAX_DECIMAL || 1)
 
 // the number of records per batch in the `pending submissions` export file
 export const exportBatchSize = Number(import.meta.env.VITE_EXPORT_BATCH_SIZE) || 60

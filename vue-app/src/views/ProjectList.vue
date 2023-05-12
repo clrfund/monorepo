@@ -58,7 +58,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import type { FixedNumber } from 'ethers'
-import { DateTime } from 'luxon'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
 import { type Project, getProjects } from '@/api/projects'
@@ -112,7 +111,9 @@ const projectsByCategoriesSelected = computed<Project[]>(() => {
 onMounted(async () => {
   //TODO: update to take factory address as a parameter, default to env. variable
   roundAddress.value = (route.params.address as string) || currentRoundAddress.value! || (await getCurrentRound()) || ''
-  await loadProjects(roundAddress.value)
+  if (roundAddress.value) {
+    await loadProjects(roundAddress.value)
+  }
   isLoading.value = false
 })
 
@@ -252,8 +253,8 @@ function clearSearch(): void {
   .project-search {
     grid-area: search;
     border-radius: 16px;
-    border: 2px solid $button-color;
-    background-color: var(--bg-secondary-color);
+    border: 2px solid var(--text-secondary);
+    background-color: var(--bg-primary-color);
     padding: 0.5rem 1rem;
     display: flex;
     font-size: 16px;
@@ -276,9 +277,11 @@ function clearSearch(): void {
       font-size: 14px;
       padding: 0;
       width: 100%;
+      color: var(--text-secondary);
 
       &::placeholder {
         opacity: 1;
+        color: var(--text-secondary);
       }
     }
   }
@@ -286,7 +289,7 @@ function clearSearch(): void {
   .hr {
     grid-area: hr;
     width: 100%;
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid var(--text-secondary);
   }
 }
 

@@ -91,7 +91,7 @@ function redirectToMetamaskWebsite() {
 }
 
 .option {
-  background: var(--bg-light-color);
+  background: var(--bg-secondary-color);
   padding: 0 1rem;
   border-radius: 1rem;
   border: 1px solid;
@@ -100,10 +100,11 @@ function redirectToMetamaskWebsite() {
   justify-content: space-between;
   align-items: center;
   font-size: 16px;
-  color: var(--text-color);
+  color: var(--text-body);
   &:hover {
     cursor: pointer;
-    border-color: $clr-green;
+    border-color: var(--border-color);
+    background: var(--bg-primary-color);
   }
 
   .btn-margin {

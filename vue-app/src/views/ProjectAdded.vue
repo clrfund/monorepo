@@ -89,7 +89,7 @@ ul {
 }
 
 .gradient {
-  background: var(--bg-gradient);
+  background: var(--bg-primary-color);
   position: relative;
 
   .moon {
@@ -101,7 +101,7 @@ ul {
   .hero {
     bottom: 0;
     display: flex;
-    background: var(--bg-gradient-hero);
+    background: var(--bg-primary-color);
     height: calc(100vh - 113px);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
@@ -112,7 +112,6 @@ ul {
       position: absolute;
       bottom: 0;
       right: 0;
-      mix-blend-mode: exclusion;
       width: 66%;
       @media (max-width: $breakpoint-m) {
         right: 0;

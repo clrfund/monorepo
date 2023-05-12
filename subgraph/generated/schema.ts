@@ -570,6 +570,23 @@ export class Message extends Entity {
     }
   }
 
+  get submittedBy(): Bytes | null {
+    let value = this.get("submittedBy");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set submittedBy(value: Bytes | null) {
+    if (!value) {
+      this.unset("submittedBy");
+    } else {
+      this.set("submittedBy", Value.fromBytes(<Bytes>value));
+    }
+  }
+
   get timestamp(): string | null {
     let value = this.get("timestamp");
     if (!value || value.kind == ValueKind.NULL) {
@@ -585,6 +602,24 @@ export class Message extends Entity {
     } else {
       this.set("timestamp", Value.fromString(<string>value));
     }
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get transactionIndex(): BigInt {
+    let value = this.get("transactionIndex");
+    return value!.toBigInt();
+  }
+
+  set transactionIndex(value: BigInt) {
+    this.set("transactionIndex", Value.fromBigInt(value));
   }
 }
 

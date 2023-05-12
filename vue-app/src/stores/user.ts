@@ -1,6 +1,5 @@
 import { getEtherBalance, getTokenBalance, isVerifiedUser, type User } from '@/api/user'
 import { defineStore } from 'pinia'
-import { logoutUser, loginUser } from '@/api/gun'
 import { useAppStore } from '@/stores'
 import type { WalletUser } from '@/stores'
 import { getContributionAmount, hasContributorVoted } from '@/api/contributions'
@@ -8,6 +7,9 @@ import type { BigNumber, Signer } from 'ethers'
 import { ensLookup } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { getBrightId, type BrightId } from '@/api/bright-id'
+import { assert, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
+import { sha256 } from '@/utils/crypto'
+import { LOGIN_MESSAGE } from '@/api/user'
 
 export type UserState = {
   currentUser: User | null
@@ -19,31 +21,31 @@ export const useUserStore = defineStore('user', {
   }),
   getters: {
     signer(): Signer {
-      if (!this.currentUser) {
-        throw new Error('Not connected to a wallet')
-      }
+      assert(this.currentUser, ASSERT_NOT_CONNECTED_WALLET)
       return this.currentUser.walletProvider.getSigner()
     },
   },
   actions: {
-    async loginUser(user: WalletUser) {
+    loginUser(user: WalletUser) {
       this.currentUser = {
-        isRegistered: false,
-        encryptionKey: user.encryptionKey,
         walletAddress: user.walletAddress,
         walletProvider: user.web3Provider,
       }
-      await loginUser(this.currentUser.walletAddress, this.currentUser.encryptionKey)
     },
     logoutUser() {
       const appStore = useAppStore()
-      appStore.unwatchCart()
-      appStore.unwatchContributorData()
-      logoutUser()
       this.currentUser = null
       appStore.contribution = null
       appStore.contributor = null
       appStore.cart = []
+      appStore.cartLoaded = false
+    },
+    async requestSignature() {
+      assert(this.currentUser, ASSERT_NOT_CONNECTED_WALLET)
+      if (!this.currentUser.encryptionKey) {
+        const signature = await this.signer.signMessage(LOGIN_MESSAGE)
+        this.currentUser.encryptionKey = sha256(signature)
+      }
     },
     async loadUserInfo() {
       const appStore = useAppStore()
@@ -55,6 +57,8 @@ export const useUserStore = defineStore('user', {
       let nativeTokenAddress = ''
       let userRegistryAddress = ''
       let balance: BigNumber | null = null
+      let isRegistered: boolean | undefined = undefined
+      const walletAddress = this.currentUser.walletAddress
 
       if (appStore.factory) {
         nativeTokenAddress = appStore.factory.nativeTokenAddress
@@ -83,15 +87,16 @@ export const useUserStore = defineStore('user', {
       }
 
       // Check if this user is in our user registry
-      const isRegistered = await isVerifiedUser(userRegistryAddress, this.currentUser.walletAddress)
-
-      if (nativeTokenAddress) {
-        balance = await getTokenBalance(nativeTokenAddress, this.currentUser.walletAddress)
+      if (userRegistryAddress) {
+        isRegistered = await isVerifiedUser(userRegistryAddress, walletAddress)
       }
 
-      const etherBalance = await getEtherBalance(this.currentUser.walletAddress)
-      let ensName: string | null | undefined = this.currentUser.ensName
-      ensName = await ensLookup(this.currentUser.walletAddress)
+      if (nativeTokenAddress) {
+        balance = await getTokenBalance(nativeTokenAddress, walletAddress)
+      }
+
+      const etherBalance = await getEtherBalance(walletAddress)
+      const ensName: string | null | undefined = this.currentUser.ensName || (await ensLookup(walletAddress))
 
       this.currentUser = {
         ...this.currentUser,
@@ -113,7 +118,10 @@ export const useUserStore = defineStore('user', {
           brightId = await getBrightId(this.currentUser.walletAddress)
         }
 
-        this.currentUser.brightId = brightId
+        this.currentUser = {
+          ...this.currentUser,
+          brightId,
+        }
       }
     },
   },

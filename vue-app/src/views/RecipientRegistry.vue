@@ -122,7 +122,6 @@
 </template>
 
 <script setup lang="ts">
-// 這個元件根本沒有被使用到！
 import { computed, onMounted, ref } from 'vue'
 import type { BigNumber } from 'ethers'
 import humanizeDuration from 'humanize-duration'
@@ -157,7 +156,6 @@ const { isRecipientRegistryOwner, recipientRegistryInfo, recipientRegistryAddres
 const requests = ref<Request[]>([])
 const isLoading = ref(true)
 const isOwner = computed(() => isRecipientRegistryOwner.value)
-const registryInfo = computed(() => recipientRegistryInfo.value)
 const isUserConnected = computed(() => !!currentUser.value)
 const hasPendingRequests = computed(() => {
   const pendingRequests = requests.value.filter(req => isPending(req))
@@ -353,7 +351,7 @@ function exportFile(url: string, filename: string): void {
 
   .hr {
     width: 100%;
-    border-bottom: 1px solid $border-light;
+    border-bottom: 1px solid var(--brand-tertiary);
   }
 }
 
@@ -367,7 +365,7 @@ function exportFile(url: string, filename: string): void {
   background-color: var(--bg-light-color);
 
   thead {
-    background-color: var(--bg-primary-color);
+    background-color: var(--bg-secondary-color);
     border-radius: 6px;
   }
 

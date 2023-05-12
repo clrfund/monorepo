@@ -245,7 +245,7 @@ h1 {
   right: 0;
   height: 100%;
   width: 100%;
-  background: var(--bg-gradient);
+  background: var(--bg-primary-color);
 
   .hero {
     position: fixed;
@@ -253,7 +253,7 @@ h1 {
     right: 0;
     height: 100%;
     width: 100%;
-    background: var(--bg-gradient-hero);
+    background: var(--bg-primary-color);
     @media (max-width: $breakpoint-m) {
       width: 100%;
       padding-bottom: 0rem;
@@ -263,7 +263,6 @@ h1 {
       position: absolute;
       bottom: 0;
       right: calc(-700px + 50vw);
-      mix-blend-mode: exclusion;
       max-width: 88%;
       max-height: 100%;
 
@@ -321,8 +320,8 @@ h1 {
 }
 
 .apply-callout {
-  background: var(--bg-transparent);
-  border: 2px solid var(--border-highlight);
+  background: var(--bg-secondary-color);
+  border: 2px solid var(--border-color);
   box-sizing: border-box;
   border-radius: 8px;
   padding: 1rem;

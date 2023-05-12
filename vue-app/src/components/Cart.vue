@@ -3,7 +3,15 @@
     <div v-if="!currentUser" class="empty-cart">
       <div class="moon-emoji">🌚</div>
       <h3>{{ $t('cart.h3_1') }}</h3>
-      <wallet-widget :isActionButton="true" />
+      <button @click="promptConnection" class="btn-action">{{ $t('cart.connect') }}</button>
+    </div>
+    <loader v-else-if="isLoading"></loader>
+    <div v-else-if="!currentUser.encryptionKey">
+      <div class="empty-cart">
+        <div class="moon-emoji">🌚</div>
+        <h3>{{ $t('cart.sign_the_message_to_see_your_cart') }}</h3>
+        <button @click="promptSignagure" class="btn-action">{{ $t('cart.sign') }}</button>
+      </div>
     </div>
     <div v-else class="cart-container">
       <div class="reallocation-message" v-if="canUserReallocate && hasUserVoted">
@@ -205,19 +213,16 @@
           {{ tokenSymbol }}
         </div>
       </div>
-      <div v-if="!currentRound" class="reallocation-section">
-        {{ $t('cart.div14') }}
-        <links v-if="isBrightIdRequired" to="/verify"> {{ $t('cart.link4') }}</links>
-      </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { BigNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
-import WalletWidget from '@/components/WalletWidget.vue'
+import WalletModal from '@/components/WalletModal.vue'
+import SignatureModal from '@/components/SignatureModal.vue'
 import ContributionModal from '@/components/ContributionModal.vue'
 import ReallocationModal from '@/components/ReallocationModal.vue'
 import WithdrawalModal from '@/components/WithdrawalModal.vue'
@@ -235,8 +240,11 @@ import { useModal } from 'vue-final-modal'
 import { useRoute } from 'vue-router'
 import { getAssetsUrl } from '@/utils/url'
 import { useI18n } from 'vue-i18n'
+import ErrorModal from './ErrorModal.vue'
 
 const { t } = useI18n()
+
+const isLoading = ref(false)
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -283,6 +291,76 @@ function removeAll(): void {
   appStore.clearCart()
   appStore.saveCart()
   appStore.toggleEditSelection(true)
+}
+
+onMounted(() => {
+  if (currentUser.value && !currentUser.value.encryptionKey) {
+    promptSignagure()
+  }
+})
+
+function showError(errorMessage: string) {
+  const { open, close } = useModal({
+    component: ErrorModal,
+    attrs: {
+      errorMessage,
+      onClose() {
+        close()
+      },
+    },
+  })
+  open()
+}
+
+function promptConnection(): void {
+  const { open, close } = useModal({
+    component: WalletModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          if (currentUser.value?.walletAddress) {
+            promptSignagure()
+          }
+        })
+      },
+    },
+  })
+  open()
+}
+
+function promptSignagure(): void {
+  const { open, close } = useModal({
+    component: SignatureModal,
+    attrs: {
+      onClose() {
+        close().then(async () => {
+          if (currentUser.value?.encryptionKey) {
+            await loadCart()
+          }
+          isLoading.value = false
+        })
+      },
+    },
+  })
+
+  isLoading.value = true
+  open()
+}
+
+async function loadCart() {
+  if (appStore.cartLoaded) {
+    return
+  }
+
+  try {
+    await appStore.loadCart()
+    await appStore.loadCommittedCart()
+    await appStore.loadContributorData()
+    appStore.cartLoaded = true
+  } catch (err) {
+    showError((err as Error).message)
+    userStore.logoutUser()
+  }
 }
 
 const isEditMode = computed(() => {
@@ -676,7 +754,7 @@ h2 {
     font-family: 'Inter';
     font-weight: 500;
     font-size: 14px;
-    color: var(--text-color);
+    color: var(--text-body);
     border: 0;
     background: none;
     text-decoration: underline;
@@ -819,7 +897,7 @@ h2 {
 
 .reallocation-message {
   padding: 1rem;
-  background: $highlight-color;
+  background: var(--bg-secondary-color);
   font-size: 14px;
 }
 
@@ -981,10 +1059,14 @@ h2 {
 .dropdown {
   position: relative;
   display: inline-block;
+  &:hover {
+    filter: var(--img-filter, invert(1));
+  }
 
   img.dropdown-btn {
     margin: 0;
     filter: var(--img-filter, invert(1));
+    border: 1px solid var(--border-color);
   }
 
   .button-menu {
@@ -1008,9 +1090,9 @@ h2 {
       padding: 0.25rem;
       padding-left: 1rem;
       gap: 0.5rem;
-      color: var(--text-color);
+      color: var(--text-body);
       &:hover {
-        background: var(--bg-light-color);
+        background: var(--bg-primary-color);
       }
 
       .item-text {

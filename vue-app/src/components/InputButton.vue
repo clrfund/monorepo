@@ -72,14 +72,12 @@ function handleInputChange(event: Event) {
   width: 100%;
   box-sizing: border-box;
 }
-
 .input {
   background: none;
   border: none;
   color: var(--bg-primary-color);
   width: 100%;
 }
-
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -87,7 +85,6 @@ input[type='number']::-webkit-outer-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
-
 .button {
   padding: 0.5rem 1rem;
   background: var(--bg-primary-color);
@@ -100,13 +97,11 @@ input[type='number'] {
   cursor: pointer;
   white-space: nowrap;
   box-shadow: 0px 4px 4px 0px 0, 0, 0, 0.25;
-
   &[disabled],
   &[disabled]:hover {
     cursor: not-allowed;
   }
 }
-
 .wide {
   line-height: 150%;
   width: 100%;

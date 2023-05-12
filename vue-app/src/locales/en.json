@@ -718,9 +718,6 @@
     "btn2_2": "View",
     "div2": "You haven't submitted any projects"
   },
-  "project": {
-    "p": "You have contributed to this project!"
-  },
   "projectAdded": {
     "h1": "Project submitted!",
     "div1": "You’re almost on board this funding round.",
@@ -826,7 +823,6 @@
     "unitap_link": "Unitap",
     "unitap_extra_text": ".",
     "link1": "Why is this important?",
-    "div1": "There's not yet an open funding round. Please check back later.",
     "div2": "The current round is no longer accepting new contributions. Please try again next round.",
     "div3": "Contributions closed early – you can no longer donate! Due to the community's generosity and some technical constraints we had to close the round earlier than expected. If you already contributed, you still have time to reallocate if you need to. If you didn't get a chance to contribute, you can still help by donating to the matching pool",
     "link2": "I am BrightID verified",
@@ -858,6 +854,9 @@
     "link2": "Continue setup"
   },
   "cart": {
+    "sign": "Sign",
+    "connect": "Connect",
+    "sign_the_message_to_see_your_cart": "Please sign the message to see your cart",
     "h3_1": "Connect to see your cart",
     "div1": "You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount.",
     "link1": "Why?",
@@ -893,9 +892,7 @@
     "div13": "Time left:",
     "span3": "Projects",
     "span4": "Matching Pool",
-    "span5": "Total",
-    "div14": "No current round.",
-    "link4": "Verify with BrightID while you wait"
+    "span5": "Total"
   },
   "cartItems": {
     "button1": "Amount"
@@ -979,7 +976,6 @@
     "div2": "Thanks for helping out all our projects.",
     "button3": "Done"
   },
-  "app": "App",
   "navBar": {
     "app": "App",
     "dropdown": {
@@ -1211,5 +1207,7 @@
   "cancel": "Cancel",
   "copied": "Copied!",
   "more_on_maci": "More on MACI",
-  "add_project": "Add project"
+  "add_project": "Add project",
+  "close": "Close",
+  "please_sign_message": "Please sign the message in your wallet"
 }

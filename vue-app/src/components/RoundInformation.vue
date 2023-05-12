@@ -403,83 +403,68 @@ const blockExplorer = computed(() => ({
   display: flex;
   justify-content: center;
 }
-
 .image-wrapper img {
   mix-blend-mode: exclusion;
   transform: rotate(15deg);
 }
-
 .round {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
 }
-
 .round-title-bar {
   display: flex;
   align-items: center;
 }
-
 .round-title {
   line-height: 120%;
   margin: 0;
 }
-
 .verified-container {
   align-self: flex-end;
 }
-
 .verified {
   img {
     filter: var(--img-filter, invert(0.3));
   }
 }
-
 .contract-address {
   text-overflow: ellipsis;
   overflow: hidden;
   width: 100%;
   margin-bottom: 0.5rem;
 }
-
 .circle {
   width: 8px;
   height: 8px;
   border-radius: 50%;
   margin-right: 0.5rem;
 }
-
 .closed {
   width: 12px;
   height: 12px;
   background: var(--bg-light-color);
 }
-
 .open-pulse {
   animation: pulse-animation 2s infinite ease-out;
   background: $clr-green;
 }
-
 @keyframes pulse-animation {
   0% {
     box-shadow: 0 0 0 0px $idle-color;
   }
-
   50% {
     box-shadow: 0 0 0 2.5px $clr-green;
   }
-
   100% {
     box-shadow: 0 0 0 5px $clr-pink;
   }
 }
-
 .projects {
   display: flex;
   justify-content: center;
 }
-
 .round-info {
   display: flex;
   flex-wrap: wrap;
@@ -487,38 +472,31 @@ const blockExplorer = computed(() => ({
   gap: 1.5rem;
   margin-top: 1rem;
   max-width: 800px;
-
   @media (max-width: $breakpoint-m) {
     padding: 1rem;
     padding-bottom: 4rem;
   }
 }
-
 .round-value-info {
   width: 100%;
   display: grid;
   align-items: center;
   margin-bottom: 3rem;
   border-radius: 0.5rem;
-
   img {
     opacity: 0.6;
   }
-
   & > div {
     box-shadow: inset 0px -1px 0px #7375a6;
-
     &:first-of-type {
       border-radius: 0.5rem 0.5rem 0 0;
     }
-
     &:last-of-type {
       border-radius: 0 0 0.5rem 0.5rem;
       box-shadow: none;
     }
   }
 }
-
 .round-value-info-item {
   display: flex;
   flex: 1 0 auto;
@@ -527,7 +505,6 @@ const blockExplorer = computed(() => ({
   background: var(--bg-light-highlight);
   padding: 1rem;
 }
-
 .round-info-item {
   display: flex;
   flex-direction: column;
@@ -539,29 +516,24 @@ const blockExplorer = computed(() => ({
   border-radius: 0.5rem;
   box-sizing: border-box;
   width: 100%;
-
   img {
     opacity: 0.6;
   }
 }
-
 .round-info-item-top {
   width: 100%;
   display: flex;
   gap: 0.5rem;
   align-items: flex-start;
 }
-
 .round-info-sub-item {
   flex: 1 0 10%;
   background: var(--bg-secondary-highlight);
   padding: 1rem;
-
   img {
     opacity: 0.6;
   }
 }
-
 .round-info-title {
   color: var(--text-color);
   font-size: 14px;
@@ -574,24 +546,20 @@ const blockExplorer = computed(() => ({
   justify-content: space-between;
   margin-bottom: 0.5rem;
 }
-
 .round-info-value {
   display: flex;
   flex-direction: row;
   align-items: flex-end;
-
   .value {
     font-size: 24px;
     font-family: 'Glacial Indifference', sans-serif;
     color: var(--text-color);
     font-weight: 700;
     line-height: 120%;
-
     &.large {
       font-size: 32px;
       line-height: 120%;
     }
-
     &.extra {
       font-size: 32px;
       font-family: 'Glacial Indifference', sans-serif;
@@ -599,7 +567,6 @@ const blockExplorer = computed(() => ({
       line-height: 120%;
     }
   }
-
   .unit {
     color: var(--text-color);
     font-family: 'Glacial Indifference', sans-serif;
@@ -608,13 +575,11 @@ const blockExplorer = computed(() => ({
     text-transform: uppercase;
     line-height: 150%;
     margin: 0 0.5rem;
-
     &:last-child {
       margin-right: 0;
     }
   }
 }
-
 .round-announcement-info {
   .value {
     font-size: 24px;
@@ -622,12 +587,10 @@ const blockExplorer = computed(() => ({
     color: white;
     font-weight: 700;
     line-height: 120%;
-
     &.large {
       font-size: 32px;
       line-height: 120%;
     }
-
     &.extra {
       font-size: 32px;
       font-family: 'Glacial Indifference', sans-serif;
@@ -635,7 +598,6 @@ const blockExplorer = computed(() => ({
       line-height: 120%;
     }
   }
-
   .unit {
     color: white;
     font-family: 'Glacial Indifference', sans-serif;
@@ -644,13 +606,11 @@ const blockExplorer = computed(() => ({
     text-transform: uppercase;
     line-height: 150%;
     margin: 0 0.5rem;
-
     &:last-child {
       margin-right: 0;
     }
   }
 }
-
 .message {
   color: var(--text-color);
   font-family: 'Glacial Indifference', sans-serif;
@@ -659,63 +619,51 @@ const blockExplorer = computed(() => ({
   text-transform: uppercase;
   line-height: 150%;
 }
-
 .add-matching-funds-btn {
   display: inline-block;
   margin-left: 5px;
-
   img {
     height: 1.8em;
     vertical-align: middle;
   }
 }
-
 .project-list {
   box-sizing: border-box;
   margin: 100%;
-
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: $content-space;
 }
-
 /* @media (max-width: 1500px) {
   .round-info-item:nth-child(2n) {
     break-after: always;
   }
-
   .round-info-title {
     margin-bottom: calc($content-space / 2);
     font-size: 14px;
   }
 } */
-
 .add-link {
   display: flex;
   gap: 0.25rem;
   color: $clr-green;
   margin-left: auto;
   cursor: pointer;
-
   &:hover {
     opacity: 0.8;
   }
 }
-
 .add-funds-link {
   font-size: 14px;
 }
-
 .status {
   font-size: 16px;
   display: flex;
   align-items: center;
 }
-
 .full-width {
   width: 100%;
 }
-
 .round-notice {
   background: var(--warning-background);
   border: 1px solid var(--warning-border);
@@ -725,12 +673,10 @@ const blockExplorer = computed(() => ({
   font-size: 14px;
   line-height: 150%;
   font-weight: 500;
-
   .bold-all-caps {
     text-transform: uppercase;
     font-weight: 600;
   }
-
   .dismiss-btn {
     @include button(var(--warning-color), none, 1px solid var(--warning-color));
     margin: 0 auto;
@@ -738,15 +684,12 @@ const blockExplorer = computed(() => ({
     padding: 0.25rem 1.25rem;
   }
 }
-
 .hidden {
   display: none;
 }
-
 .has-tooltip {
   filter: var(--img-filter, invert(0.7));
 }
-
 .contract-popover {
   background-color: var(--bg-primary-color);
   color: var(--text-color);

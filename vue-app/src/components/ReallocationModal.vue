@@ -25,9 +25,9 @@ import { BigNumber, Contract } from 'ethers'
 import type { PubKey, Message } from 'maci-domainobjs'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
-import { createMessage } from '@/utils/maci'
-// @ts-ignore
+import { createMessage } from '@clrfund/maci-utils'
 import { VueFinalModal } from 'vue-final-modal'
+
 import { FundingRound } from '@/api/abi'
 import { useAppStore, useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
@@ -80,7 +80,7 @@ async function vote() {
       ),
       hash => (voteTxHash.value = hash),
     )
-    appStore.saveCommittedCartDispatch()
+    appStore.saveCommittedCart()
     emit('close')
     router.push({
       name: `transaction-success`,

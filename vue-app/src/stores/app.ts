@@ -5,14 +5,12 @@ import {
   type CartItem,
   type Contributor,
   deserializeCart,
-  deserializeContributorData,
+  getContributorIndex,
   getCartStorageKey,
-  getCommittedCartStorageKey,
-  getContributorStorageKey,
   MAX_CART_SIZE,
   serializeCart,
-  serializeContributorData,
 } from '@/api/contributions'
+import { getCommittedCart } from '@/api/cart'
 import { operator, chain, ThemeMode, recipientRegistryType } from '@/api/core'
 import { type RoundInfo, RoundStatus, getRoundInfo } from '@/api/round'
 import { getTally, type Tally } from '@/api/tally'
@@ -25,11 +23,14 @@ import { useRecipientStore } from './recipient'
 import { useUserStore } from './user'
 import { getAssetsUrl, getRoundsUrl } from '@/utils/url'
 import { getTokenLogo } from '@/utils/tokens'
+import { assert, ASSERT_MISSING_ROUND, ASSERT_MISSING_SIGNATURE, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
+import { Keypair } from '@clrfund/maci-utils'
 
 export type AppState = {
   cart: CartItem[]
   cartEditModeSelected: boolean
   committedCart: CartItem[]
+  cartLoaded: boolean
   contribution: BigNumber | null
   contributor: Contributor | null
   hasVoted: boolean
@@ -48,6 +49,7 @@ export const useAppStore = defineStore('app', {
     cart: new Array<CartItem>(),
     cartEditModeSelected: false,
     committedCart: new Array<CartItem>(),
+    cartLoaded: false,
     contribution: null,
     contributor: null,
     hasVoted: false,
@@ -274,39 +276,34 @@ export const useAppStore = defineStore('app', {
     selectRound(roundAddress: string) {
       if (this.currentRoundAddress) {
         const recipientStore = useRecipientStore()
-        // Reset everything that depends on round
-        //this.unwatchCart()
-        //this.unwatchContributorData()
         this.contribution = null
         this.contributor = null
         this.cart = []
+        this.cartLoaded = false
         recipientStore.recipientRegistryAddress = null
         recipientStore.recipientRegistryInfo = null
         this.currentRound = null
       }
       this.currentRoundAddress = roundAddress
     },
-    unwatchCart() {
+    async loadCart() {
       const userStore = useUserStore()
-      if (!userStore.currentUser || !this.currentRound) {
-        return
-      }
-      storage.unwatchItem(userStore.currentUser.walletAddress, getCartStorageKey(this.currentRound.fundingRoundAddress))
-    },
-    loadCart() {
-      const userStore = useUserStore()
-      storage.watchItem(
-        userStore.currentUser!.walletAddress,
-        userStore.currentUser!.encryptionKey,
-        getCartStorageKey(this.currentRound!.fundingRoundAddress),
-        (data: string | null) => {
-          const cart = deserializeCart(data)
-          this.cart = []
-          for (const item of cart) {
-            this.addCartItem(item)
-          }
-        },
+
+      assert(userStore.currentUser, ASSERT_NOT_CONNECTED_WALLET)
+      assert(userStore.currentUser.encryptionKey, ASSERT_MISSING_SIGNATURE)
+      assert(this.currentRound?.fundingRoundAddress, ASSERT_MISSING_ROUND)
+
+      const data = await storage.getItem(
+        userStore.currentUser.walletAddress,
+        userStore.currentUser.encryptionKey,
+        getCartStorageKey(this.currentRound.fundingRoundAddress),
       )
+
+      const cart = deserializeCart(data)
+      this.cart = []
+      for (const item of cart) {
+        this.addCartItem(item)
+      }
     },
     addCartItem(addedItem: CartItem) {
       const itemIndex = this.cart.findIndex(item => {
@@ -354,22 +351,15 @@ export const useAppStore = defineStore('app', {
     },
     saveCart() {
       const userStore = useUserStore()
+      assert(userStore.currentUser, ASSERT_NOT_CONNECTED_WALLET)
+      assert(userStore.currentUser.encryptionKey, ASSERT_MISSING_SIGNATURE)
+      assert(this.currentRound, ASSERT_MISSING_ROUND)
+
       const serializedCart = serializeCart(this.cart)
       storage.setItem(
-        userStore.currentUser?.walletAddress as string,
-        userStore.currentUser?.encryptionKey as string,
-        getCartStorageKey(this.currentRound?.fundingRoundAddress as string),
-        serializedCart,
-      )
-    },
-    saveCommittedCartDispatch() {
-      const userStore = useUserStore()
-      this.saveCommittedCart()
-      const serializedCart = serializeCart(this.committedCart)
-      storage.setItem(
-        userStore.currentUser!.walletAddress,
-        userStore.currentUser!.encryptionKey,
-        getCommittedCartStorageKey(this.currentRound!.fundingRoundAddress),
+        userStore.currentUser.walletAddress,
+        userStore.currentUser.encryptionKey,
+        getCartStorageKey(this.currentRound.fundingRoundAddress),
         serializedCart,
       )
     },
@@ -413,19 +403,22 @@ export const useAppStore = defineStore('app', {
         this.theme = this.theme === ThemeMode.LIGHT ? ThemeMode.DARK : ThemeMode.LIGHT
       }
     },
-    loadCommittedCart() {
+    async loadCommittedCart() {
       const userStore = useUserStore()
-      storage.watchItem(
-        userStore.currentUser!.walletAddress,
-        userStore.currentUser!.encryptionKey,
-        getCommittedCartStorageKey(this.currentRound!.fundingRoundAddress),
-        (data: string | null) => {
-          const committedCart = deserializeCart(data)
-          this.committedCart = committedCart
-          // Spread to avoid reference
-          this.cart = [...this.committedCart]
-        },
+      if (!userStore.currentUser?.walletAddress || !userStore.currentUser.encryptionKey || !this.currentRound) {
+        return
+      }
+
+      this.committedCart = await getCommittedCart(
+        this.currentRound,
+        userStore.currentUser.encryptionKey,
+        userStore.currentUser.walletAddress,
       )
+
+      if (this.committedCart.length > 0) {
+        // only overwrite the uncommitted cart if there's committed cart
+        this.restoreCommittedCartToLocalCart()
+      }
     },
     setContributor(contributor: Contributor | null) {
       this.contributor = contributor
@@ -433,41 +426,29 @@ export const useAppStore = defineStore('app', {
     setContribution(contribution: BigNumber | null) {
       this.contribution = contribution
     },
-    saveContributorData() {
+    async loadContributorData() {
       const userStore = useUserStore()
-      const serializedData = serializeContributorData(this.contributor!)
-      storage.setItem(
-        userStore.currentUser!.walletAddress,
-        userStore.currentUser!.encryptionKey,
-        getContributorStorageKey(this.currentRound!.fundingRoundAddress),
-        serializedData,
-      )
-    },
-    loadContributorData() {
-      const userStore = useUserStore()
-      storage.watchItem(
-        userStore.currentUser!.walletAddress,
-        userStore.currentUser!.encryptionKey,
-        getContributorStorageKey(this.currentRound!.fundingRoundAddress),
-        (data: string | null) => {
-          const contributor = deserializeContributorData(data)
-          if (contributor) {
-            this.contributor = contributor
-          }
-        },
-      )
-    },
-    unwatchContributorData() {
-      const userStore = useUserStore()
-      if (!userStore.currentUser || !this.currentRound) {
+      if (!userStore.currentUser || !userStore.currentUser.encryptionKey || !this.currentRound) {
         return
       }
-      storage.unwatchItem(
-        userStore.currentUser.walletAddress,
-        getContributorStorageKey(this.currentRound.fundingRoundAddress),
-      )
+
+      const contributorKeypair = Keypair.createFromSeed(userStore.currentUser.encryptionKey)
+      const stateIndex = await getContributorIndex(this.currentRound.fundingRoundAddress, contributorKeypair.pubKey)
+
+      if (!stateIndex) {
+        // if no contributor index, user has not contributed
+        return
+      }
+
+      this.contributor = {
+        keypair: contributorKeypair,
+        stateIndex,
+      }
     },
     async loadFactoryInfo() {
+      if (this.factory) {
+        return
+      }
       const factory = await getFactoryInfo()
       this.factory = factory
     },
@@ -478,7 +459,7 @@ export const useAppStore = defineStore('app', {
     async loadTally() {
       const currentRound = this.currentRound
       if (currentRound && currentRound.status === RoundStatus.Finalized) {
-        const tally = await getTally(this.currentRoundAddress!)
+        const tally = await getTally(currentRound.fundingRoundAddress)
         this.tally = tally
       }
     },

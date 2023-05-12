@@ -36,14 +36,14 @@ onMounted(async () => {
 
 .round {
   background-color: var(--bg-secondary-color);
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--bg-secondary-color);
   border-radius: 20px;
   box-sizing: border-box;
   margin-top: $content-space;
   padding: $content-space;
 
   a {
-    color: var(--text-color);
+    color: var(--text-body);
     font-size: 16px;
   }
 }

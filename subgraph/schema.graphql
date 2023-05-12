@@ -38,7 +38,10 @@ type Message @entity {
   iv: BigInt!
   publicKey: PublicKey
   fundingRound: FundingRound 
+  submittedBy: Bytes
   timestamp: String
+  blockNumber: BigInt!
+  transactionIndex: BigInt!
 }
 
 type PublicKey @entity {

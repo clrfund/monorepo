@@ -18,9 +18,9 @@ Contract address: ${factory.address.toLowerCase()}.`
 export interface User {
   walletAddress: string
   walletProvider: Web3Provider
-  encryptionKey: string
+  encryptionKey?: string
   brightId?: BrightId
-  isRegistered: boolean // If is in user registry
+  isRegistered?: boolean // If is in user registry
   balance?: BigNumber | null
   etherBalance?: BigNumber | null
   contribution?: BigNumber | null

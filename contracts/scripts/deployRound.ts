@@ -1,6 +1,6 @@
 import { ethers } from 'hardhat'
 import { Contract, utils } from 'ethers'
-import { Keypair } from 'maci-domainobjs'
+import { Keypair } from '@clrfund/maci-utils'
 
 import { deployMaciFactory } from '../utils/deployment'
 import { getEventArg } from '../utils/contracts'

@@ -44,10 +44,7 @@
           </li>
         </ul>
         <links to="/about/sybil-resistance">{{ $t('verifyLanding.link1') }}</links>
-        <div v-if="!hasRoundStarted" class="join-message">
-          {{ $t('verifyLanding.div1') }}
-        </div>
-        <div v-else-if="isRoundOver" class="warning-message">
+        <div v-if="isRoundOver" class="warning-message">
           {{ $t('verifyLanding.div2') }}
         </div>
         <div v-else-if="isRoundFull" class="warning-message">
@@ -56,9 +53,9 @@
         <div class="btn-container mt2">
           <div v-if="!isRoundOver">
             <wallet-widget v-if="!currentUser" :isActionButton="true" :fullWidthMobile="true" />
-            <links v-if="showBrightIdButton" to="/verify/connect" class="btn-primary">
+            <button v-else-if="showBrightIdButton" @click="handleBrightIdButtonClicked" class="btn-primary">
               {{ $t('verifyLanding.link2') }}
-            </links>
+            </button>
           </div>
           <links to="/projects" class="btn-secondary">{{ $t('verifyLanding.link3') }}</links>
         </div>
@@ -78,7 +75,11 @@ import RoundStatusBanner from '@/components/RoundStatusBanner.vue'
 import WalletWidget from '@/components/WalletWidget.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore, useUserStore } from '@/stores'
+import { useRouter } from 'vue-router'
+import { useModal } from 'vue-final-modal'
+import SignatureModal from '@/components/SignatureModal.vue'
 
+const router = useRouter()
 const appStore = useAppStore()
 const { isRoundContributorLimitReached, hasContributionPhaseEnded } = storeToRefs(appStore)
 const userStore = useUserStore()
@@ -92,10 +93,37 @@ onMounted(async () => {
   loading.value = false
 })
 
-const hasRoundStarted = computed(() => !!currentRound.value)
 const isRoundFull = computed(() => isRoundContributorLimitReached.value)
 const isRoundOver = computed(() => hasContributionPhaseEnded.value)
 const showBrightIdButton = computed(() => currentUser.value?.isRegistered === false)
+
+async function promptSignagure() {
+  const { open, close } = useModal({
+    component: SignatureModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          gotoVerify()
+        })
+      },
+    },
+  })
+  open()
+}
+
+function handleBrightIdButtonClicked() {
+  if (currentUser.value && !currentUser.value.encryptionKey) {
+    promptSignagure()
+  } else {
+    gotoVerify()
+  }
+}
+
+function gotoVerify() {
+  if (currentUser.value?.encryptionKey) {
+    router.push({ name: 'verify-step', params: { step: 'connect' } })
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -136,7 +164,7 @@ ul {
 }
 
 .gradient {
-  background: var(--bg-gradient);
+  background: var(--bg-primary-color);
   position: fixed;
   top: 0;
   right: 0;
@@ -149,6 +177,7 @@ ul {
     right: 1rem;
     mix-blend-mode: exclusion;
   }
+
   .hero {
     display: flex;
     position: fixed;
@@ -156,7 +185,6 @@ ul {
     right: 0;
     height: 100%;
     width: 100%;
-    background: var(--bg-gradient-hero);
     @media (max-width: $breakpoint-m) {
       padding: 2rem 0rem;
       padding-bottom: 0rem;
@@ -166,7 +194,6 @@ ul {
       position: absolute;
       bottom: 0;
       right: 0;
-      mix-blend-mode: exclusion;
       width: 66%;
       @media (max-width: $breakpoint-m) {
         right: 0;

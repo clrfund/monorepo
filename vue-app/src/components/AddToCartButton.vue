@@ -9,7 +9,7 @@
       }"
       :button="{
         text: $t('addToCartButton.input1'),
-        disabled: !isAmountValid,
+        disabled: !isAmountValid || isRequestingSignature,
       }"
       @update:model-value="newValue => (amount = newValue)"
       @click="handleSubmit"
@@ -39,6 +39,7 @@ import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { useModal } from 'vue-final-modal'
 import WalletModal from './WalletModal.vue'
+import SignatureModal from './SignatureModal.vue'
 
 const amount = ref(DEFAULT_CONTRIBUTION_AMOUNT.toString())
 
@@ -53,6 +54,8 @@ const { currentRound, cart } = storeToRefs(appStore)
 
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
+
+const isRequestingSignature = ref(false)
 
 const inCart = computed(() => {
   const index = cart.value.findIndex((item: CartItem) => {
@@ -94,13 +97,34 @@ function contribute() {
   appStore.toggleEditSelection(true)
   appStore.toggleShowCartPanel(true)
 }
+
 function handleSubmit(): void {
   if (hasContributeBtn() && currentUser.value) {
-    contribute()
+    if (currentUser.value.encryptionKey) {
+      contribute()
+    } else {
+      promptSignagure()
+    }
     return
   }
 
   promptConnection()
+}
+
+function promptSignagure(): void {
+  const { open, close } = useModal({
+    component: SignatureModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          if (currentUser.value?.encryptionKey) {
+            contribute()
+          }
+        })
+      },
+    },
+  })
+  open()
 }
 
 function promptConnection(): void {
@@ -108,22 +132,15 @@ function promptConnection(): void {
     component: WalletModal,
     attrs: {
       onClose() {
-        close()
-        if (currentUser.value?.walletAddress) {
-          handleWalletModalClose()
-        }
+        close().then(() => {
+          if (currentUser.value?.walletAddress) {
+            promptSignagure()
+          }
+        })
       },
     },
   })
   open()
-}
-
-function handleWalletModalClose(): void {
-  // The modal can be closed by clicking in Cancel or when the user is
-  // connected successfully. Hence, this checks if we are in the latter case
-  if (currentUser.value) {
-    contribute()
-  }
 }
 
 function toggleCartPanel() {
