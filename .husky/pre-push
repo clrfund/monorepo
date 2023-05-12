@@ -9,5 +9,6 @@ export VITE_IPFS_PINNING_JWT=x
 export VITE_IPFS_PINNING_URL=x
 export VITE_RECIPIENT_REGISTRY_TYPE=simple
 export VITE_USER_REGISTRY_TYPE=simple
+export VITE_WALLET_CONNECT_PROJECT_ID=1
 
 yarn test:format && yarn test:web && yarn test:lint-i18n
