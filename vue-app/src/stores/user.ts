@@ -4,8 +4,7 @@ import { useAppStore } from '@/stores'
 import type { WalletUser } from '@/stores'
 import { getContributionAmount, hasContributorVoted } from '@/api/contributions'
 import type { BigNumber, Signer } from 'ethers'
-import { utils } from 'ethers'
-import { ensLookup } from '@/utils/accounts'
+import { ensLookup, isValidSignature } from '@/utils/accounts'
 import { UserRegistryType, userRegistryType } from '@/api/core'
 import { getBrightId, type BrightId } from '@/api/bright-id'
 import { assert, ASSERT_NOT_CONNECTED_WALLET } from '@/utils/assert'
@@ -46,7 +45,7 @@ export const useUserStore = defineStore('user', {
       if (!this.currentUser.encryptionKey) {
         const signature = await this.signer.signMessage(LOGIN_MESSAGE)
 
-        if (!utils.isHexString(signature)) {
+        if (!isValidSignature(signature)) {
           // gnosis safe does not return signature in hex string
           // show the result as error
           throw new Error(signature)
