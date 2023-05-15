@@ -240,7 +240,7 @@ import { useModal } from 'vue-final-modal'
 import { useRoute } from 'vue-router'
 import { getAssetsUrl } from '@/utils/url'
 import { useI18n } from 'vue-i18n'
-import ErrorModal from './ErrorModal.vue'
+import { showError } from '@/utils/modal'
 
 const { t } = useI18n()
 
@@ -298,19 +298,6 @@ onMounted(() => {
     promptSignagure()
   }
 })
-
-function showError(errorMessage: string) {
-  const { open, close } = useModal({
-    component: ErrorModal,
-    attrs: {
-      errorMessage,
-      onClose() {
-        close()
-      },
-    },
-  })
-  open()
-}
 
 function promptConnection(): void {
   const { open, close } = useModal({
