@@ -854,7 +854,9 @@
     "link2": "Continue setup"
   },
   "cart": {
-    "get_signature": "Please sign the message in your wallet",
+    "sign": "Sign",
+    "connect": "Connect",
+    "sign_the_message_to_see_your_cart": "Please sign the message to see your cart",
     "h3_1": "Connect to see your cart",
     "div1": "You’ve already contributed this round. You can edit your choices and add new projects, but your cart total must always equal your original contribution amount.",
     "link1": "Why?",
@@ -890,9 +892,7 @@
     "div13": "Time left:",
     "span3": "Projects",
     "span4": "Matching Pool",
-    "span5": "Total",
-    "div14": "No current round.",
-    "link4": "Verify with BrightID while you wait"
+    "span5": "Total"
   },
   "cartItems": {
     "button1": "Amount"
@@ -1207,5 +1207,7 @@
   "cancel": "Cancel",
   "copied": "Copied!",
   "more_on_maci": "More on MACI",
-  "add_project": "Add project"
+  "add_project": "Add project",
+  "close": "Close",
+  "please_sign_message": "Please sign the message in your wallet"
 }

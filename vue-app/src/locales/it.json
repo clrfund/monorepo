@@ -854,7 +854,9 @@
     "link2": "Continua l'installazione"
   },
   "cart": {
-    "get_signature": "Per favore firma il messaggio sul tuo wallet",
+    "sign": "Firma",
+    "connect": "Connetti",
+    "sign_the_message_to_see_your_cart": "Per favore firma il messaggio per vedere il tuo carrello",
     "h3_1": "Connetti per vedere il tuo carrello",
     "div1": "Hai già contribuito in questo round. Puoi modificare le tue scelte e aggiungere nuovi progetti, ma il totale del tuo carrello deve sempre essere uguale al tuo importo di contribuzione originale.",
     "link1": "Perché?",
@@ -890,9 +892,7 @@
     "div13": "Tempo rimanente:",
     "span3": "Progetti",
     "span4": "Fondo di corrispondenza",
-    "span5": "Totale",
-    "div14": "Nessun round attuale.",
-    "link4": "Verifica con BrightID mentre aspetti"
+    "span5": "Totale"
   },
   "cartItems": {
     "button1": "Importo"
@@ -1207,5 +1207,7 @@
   "cancel": "Annulla",
   "copied": "Copiato!",
   "more_on_maci": "Ulteriori informazioni su MACI",
-  "add_project": "Aggiungi progetto"
+  "add_project": "Aggiungi progetto",
+  "close": "Chiudi",
+  "please_sign_message": "Per favore firma il messaggio nel tuo portafoglio"
 }

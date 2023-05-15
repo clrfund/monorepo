@@ -4,6 +4,7 @@
     <loader v-if="loading" />
     <div v-if="!loading">
       <div class="gradient">
+        <img src="@/assets/moon.png" class="moon" />
         <div class="hero">
           <image-responsive title="newrings" />
         </div>
@@ -52,7 +53,7 @@
         <div class="btn-container mt2">
           <div v-if="!isRoundOver">
             <wallet-widget v-if="!currentUser" :isActionButton="true" :fullWidthMobile="true" />
-            <button v-if="showBrightIdButton" @click="gotoVerify" class="btn-primary">
+            <button v-else-if="showBrightIdButton" @click="handleBrightIdButtonClicked" class="btn-primary">
               {{ $t('verifyLanding.link2') }}
             </button>
           </div>
@@ -75,6 +76,8 @@ import WalletWidget from '@/components/WalletWidget.vue'
 import ImageResponsive from '@/components/ImageResponsive.vue'
 import { useAppStore, useUserStore } from '@/stores'
 import { useRouter } from 'vue-router'
+import { useModal } from 'vue-final-modal'
+import SignatureModal from '@/components/SignatureModal.vue'
 
 const router = useRouter()
 const appStore = useAppStore()
@@ -84,7 +87,6 @@ const { currentUser } = storeToRefs(userStore)
 
 const loading = ref(true)
 const currentRound = ref<string | null>(null)
-const isRequestingSignature = ref(false)
 
 onMounted(async () => {
   currentRound.value = await getCurrentRound()
@@ -95,18 +97,32 @@ const isRoundFull = computed(() => isRoundContributorLimitReached.value)
 const isRoundOver = computed(() => hasContributionPhaseEnded.value)
 const showBrightIdButton = computed(() => currentUser.value?.isRegistered === false)
 
-async function gotoVerify() {
+async function promptSignagure() {
+  const { open, close } = useModal({
+    component: SignatureModal,
+    attrs: {
+      onClose() {
+        close().then(() => {
+          gotoVerify()
+        })
+      },
+    },
+  })
+  open()
+}
+
+function handleBrightIdButtonClicked() {
   if (currentUser.value && !currentUser.value.encryptionKey) {
-    try {
-      isRequestingSignature.value = true
-      await userStore.requestSignature()
-      isRequestingSignature.value = false
-    } catch (err) {
-      isRequestingSignature.value = false
-      return
-    }
+    promptSignagure()
+  } else {
+    gotoVerify()
   }
-  router.push({ name: 'verify-step', params: { step: 'connect' } })
+}
+
+function gotoVerify() {
+  if (currentUser.value?.encryptionKey) {
+    router.push({ name: 'verify-step', params: { step: 'connect' } })
+  }
 }
 </script>
 
@@ -154,6 +170,13 @@ ul {
   right: 0;
   height: 100%;
   width: 100%;
+
+  .moon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    mix-blend-mode: exclusion;
+  }
 
   .hero {
     display: flex;

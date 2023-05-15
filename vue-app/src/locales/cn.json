@@ -854,7 +854,9 @@
     "link2": "继续设置"
   },
   "cart": {
-    "get_signature": "请在您的钱包中签个字",
+    "sign": "签字",
+    "connect": "连接",
+    "sign_the_message_to_see_your_cart": "请签个字以查看您的捐款车",
     "h3_1": "连接查看您的捐款车",
     "div1": "您已经贡献过了。您可以更改您的选择并添加新的项目，但是您原本的总捐额必需一样。",
     "link1": "为什么?",
@@ -890,9 +892,7 @@
     "div13": "剩余时间:",
     "span3": "项目",
     "span4": "未分配",
-    "span5": "总额",
-    "div14": "没有当前的筹款活动.",
-    "link4": "在等待期间使用 BrightID 进行验证"
+    "span5": "总额"
   },
   "cartItems": {
     "button1": "捐额"
@@ -1207,5 +1207,7 @@
   "cancel": "取消",
   "copied": "已复制！",
   "more_on_maci": "更多关于 MACI",
-  "add_project": "添加项目"
+  "add_project": "添加项目",
+  "close": "关",
+  "please_sign_message": "请在您的钱包中签个字"
 }
