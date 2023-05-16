@@ -5,6 +5,9 @@ import { UNIT } from '../utils/constants'
 import { deployMaciFactory } from '../utils/deployment'
 import { Keypair, PrivKey } from '@clrfund/maci-utils'
 
+// Number.MAX_SAFE_INTEGER - 1
+const challengePeriodSeconds = 9007199254740990
+
 /**
  * Set the coordinator address and maci public key in the funding round factory
  *
@@ -106,7 +109,7 @@ async function main() {
     )
     recipientRegistry = await OptimisticRecipientRegistry.deploy(
       UNIT.div(1000),
-      0,
+      challengePeriodSeconds,
       fundingRoundFactory.address
     )
   } else {
