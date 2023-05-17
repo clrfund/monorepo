@@ -15,7 +15,7 @@ Once the app is registered, you will get an appId which will be set to `BRIGHTID
 
 1. Generate sponsorship signing keys here: https://tweetnacl.js.org/#/sign
 2. Provide the public key to BrightID support through their discord channel: https://discord.gg/QW7ThZ5K4V
-3. Save the private key for setting up the clrfund user interface
+3. Save the private key for setting up the clrfund user interface in environment variable: `VITE_BRIGHTID_SPONSOR_KEY`
 
 
 ## Deploy Contracts
@@ -91,7 +91,7 @@ VITE_CLRFUND_FACTORY_ADDRESS=
 VITE_USER_REGISTRY_TYPE=
 VITE_BRIGHTID_CONTEXT=
 VITE_BRIGHTID_SPONSOR_KEY=
-VITE_BRIGHTID_SPONSOR_API_URL=
+VITE_BRIGHTID_SPONSOR_API_URL=https://brightid.clr.fund/brightid/v6/operations
 VITE_RECIPIENT_REGISTRY_TYPE=
 
 # see google-sheets.md for instruction on how to set these
