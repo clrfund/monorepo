@@ -12,9 +12,10 @@ Note: select the `hex address (ONLY)` option to identify users and the `meet` ve
 Once the app is registered, you will get an appId which will be set to `BRIGHTID_CONTEXT` when deploying the contracts in later steps.
 
 ### Setup BrightID sponsorship keys
-a. Generate sponsorship signing keys here: https://tweetnacl.js.org/#/sign
-b. Provide the public key to BrightID support through their discord channel: https://discord.gg/QW7ThZ5K4V
-c. Save the private key for setting up the clrfund user interface
+
+1. Generate sponsorship signing keys here: https://tweetnacl.js.org/#/sign
+2. Provide the public key to BrightID support through their discord channel: https://discord.gg/QW7ThZ5K4V
+3. Save the private key for setting up the clrfund user interface
 
 
 ## Deploy Contracts
