@@ -55,6 +55,12 @@ FACTORY_ADDRESS=
 yarn hardhat run --network {network} scripts/newRound.ts
 ```
 
+4. Verify all deployed contracts:
+
+```
+yarn hardhat verify-all {funding-round-factory-address} --network {network}
+```
+
 ### Deploy the subgraph
 
 Currently, we are using the [Hosted Service](https://thegraph.com/docs/en/hosted-service/what-is-hosted-service/). First, check out the official instructions to authenticate using the Graph CLI https://thegraph.com/docs/en/hosted-service/deploy-subgraph-hosted/ and create a new subgraph.
