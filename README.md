@@ -51,14 +51,13 @@ In a future version, we plan to address this by routing ETH and token contributi
 
 ## Documentation
 
-- [Running clr.fund instance](docs/admin.md)
+- [BrightId setup](docs/brightid.md)
+- [Deployment](docs/deployment.md)
 - [Providing matching funds](docs/funding-source.md)
 - [How to tally votes and verify results](docs/tally-verify.md)
 - [Running the subgraph](docs/subgraph.md)
 - [Sitemap](docs/sitemap.md)
 - [Website theme and customization](docs/theme.md)
-- [Deployment](docs/deployment.md)
-- [BrightId setup](docs/brightid.md)
 
 ## Development
 
