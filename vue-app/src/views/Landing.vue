@@ -14,13 +14,15 @@
               {{ $t('landing.hero.subtitle') }}
             </div>
             <div class="btn-group">
-              <div class="btn-action" @click="gotoLeaderboardOrProjectsPage">{{ $t('landing.hero.action') }}</div>
+              <div v-if="currentRound" class="btn-action" @click="gotoLeaderboardOrProjectsPage">
+                {{ $t('landing.hero.action') }}
+              </div>
               <div class="btn-info" @click="scrollToHowItWorks">
                 {{ $t('landing.hero.info') }}
               </div>
             </div>
           </div>
-          <div class="apply-callout" v-if="isRoundJoinPhase && !isRecipientRegistryFull">
+          <div class="apply-callout" v-if="(!currentRound || isRoundJoinPhase) && !isRecipientRegistryFull">
             <div class="column">
               <h2>{{ $t('landing.callout.title') }}</h2>
               <p>
