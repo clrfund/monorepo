@@ -250,7 +250,7 @@
         "li2": "Connetti il tuo portafoglio compatibile con {chain} utilizzando",
         "li2_b": "Mainnet",
         "li3": "Seleziona valuta (un po' di ETH prima per il gas e un po' di {nativeTokenSymbol} per contribuire)",
-        "li3_p": "Per {nativeTokenSymbol}, fai clic sul menu \"Token\", cerca {nativeToken.Symbol} e seleziona il token.",
+        "li3_p": "Per {nativeTokenSymbol}, fai clic sul menu \"Token\", cerca {nativeTokenSymbol} e seleziona il token.",
         "li4": "Inserisci importo e clicca su \"Deposita\"",
         "li5": "Conferma sul tuo portafoglio",
         "p2_t1": "Una volta che hai collegato il tuo {nativeTokenSymbol} a {chain}, potresti voler aggiungere il",
