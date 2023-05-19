@@ -473,7 +473,7 @@ summary:focus {
   padding: $modal-space;
   text-align: center;
   box-shadow: var(--box-shadow);
-  width: 400px;
+  width: 350px;
   .loader {
     margin: $modal-space auto;
   }
