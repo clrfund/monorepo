@@ -27,6 +27,7 @@ import { assert, ASSERT_MISSING_ROUND, ASSERT_MISSING_SIGNATURE, ASSERT_NOT_CONN
 import { Keypair } from '@clrfund/maci-utils'
 
 export type AppState = {
+  isAppReady: boolean
   cart: CartItem[]
   cartEditModeSelected: boolean
   committedCart: CartItem[]
@@ -46,6 +47,7 @@ export type AppState = {
 
 export const useAppStore = defineStore('app', {
   state: (): AppState => ({
+    isAppReady: false,
     cart: new Array<CartItem>(),
     cartEditModeSelected: false,
     committedCart: new Array<CartItem>(),

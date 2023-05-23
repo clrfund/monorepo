@@ -94,7 +94,7 @@ onMounted(async () => {
 })
 
 const isRoundFull = computed(() => isRoundContributorLimitReached.value)
-const isRoundOver = computed(() => hasContributionPhaseEnded.value)
+const isRoundOver = computed(() => !currentRound.value || hasContributionPhaseEnded.value)
 const showBrightIdButton = computed(() => currentUser.value?.isRegistered === false)
 
 async function promptSignagure() {
