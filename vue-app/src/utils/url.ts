@@ -1,5 +1,9 @@
 import { utils } from 'ethers'
 
+export function getAppUrl() {
+  return new URL(import.meta.url).origin
+}
+
 export function getAssetsUrl(path) {
   return new URL(`/src/assets/${path}`, import.meta.url).href
 }

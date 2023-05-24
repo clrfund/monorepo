@@ -45,6 +45,7 @@ import { useAppStore, useUserStore, useRecipientStore, useWalletStore } from '@/
 import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 import { useMeta } from 'vue-meta'
+import { getAssetsUrl, getAppUrl } from './utils/url'
 
 const route = useRoute()
 const appStore = useAppStore()
@@ -67,8 +68,20 @@ useMeta(
       // titleTemplate no longer works in vue-meta3
       // construct the title dynamically instead
       title,
-      'og:title': title,
-      'og:url': route.fullPath,
+      meta: [
+        {
+          property: 'og:title',
+          content: `${operator} - clr.fund`,
+        },
+        {
+          property: 'og:url',
+          content: getAppUrl(),
+        },
+        {
+          property: 'og:image',
+          content: getAssetsUrl('logo.svg'),
+        },
+      ],
     }
   }),
 )
