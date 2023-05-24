@@ -62,18 +62,13 @@ const recipientStore = useRecipientStore()
 // https://www.npmjs.com/package/vue-meta/v/3.0.0-alpha.7
 useMeta(
   computed(() => {
+    const title = route.meta.title ? `${operator} - ${route.meta.title}` : operator
     return {
       // titleTemplate no longer works in vue-meta3
       // construct the title dynamically instead
-      title: route.meta.title ? `${operator} - ${route.meta.title}` : operator,
-      // meta also does not work like in vue-meta2,
-      // name is always meta, use description instead
-      meta: [
-        {
-          description: 'git-commit',
-          content: import.meta.env.VITE_GIT_COMMIT || '',
-        },
-      ],
+      title,
+      'og:title': title,
+      'og:url': route.fullPath,
     }
   }),
 )
