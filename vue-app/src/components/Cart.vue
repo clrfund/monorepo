@@ -1,6 +1,6 @@
 <template>
   <div class="h100">
-    <loader v-if="isAppReady"></loader>
+    <loader v-if="!isAppReady"></loader>
     <div v-else-if="!currentRound" class="empty-cart">
       <div class="moon-emoji">🌚</div>
       <h3>{{ $t('roundInfo.div21') }}</h3>
