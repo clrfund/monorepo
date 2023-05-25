@@ -48,7 +48,7 @@ import { useAppStore, useUserStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
 const appStore = useAppStore()
-const { canUserReallocate, hasContributionPhaseEnded } = storeToRefs(appStore)
+const { canUserReallocate, hasContributionPhaseEnded, currentRound } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
 
@@ -58,6 +58,7 @@ const hasStartedVerification = computed(
 const showUserVerification = computed(() => {
   return (
     userRegistryType === UserRegistryType.BRIGHT_ID &&
+    currentRound.value &&
     currentUser.value?.isRegistered !== undefined &&
     !currentUser.value.isRegistered
   )

@@ -131,7 +131,7 @@ onMounted(async () => {
 
 const walletProvider = computed(() => currentUser.value?.walletProvider)
 const showBrightIdWidget = computed(
-  () => userRegistryType === UserRegistryType.BRIGHT_ID && !hasContributionPhaseEnded.value,
+  () => userRegistryType === UserRegistryType.BRIGHT_ID && currentRound.value && !hasContributionPhaseEnded.value,
 )
 const tokenLogo = computed(() => getTokenLogo(nativeTokenSymbol.value))
 const displayAddress = computed(() => {

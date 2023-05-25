@@ -1,6 +1,11 @@
 <template>
   <div class="h100">
-    <div v-if="!currentUser" class="empty-cart">
+    <loader v-if="!isAppReady"></loader>
+    <div v-else-if="!currentRound" class="empty-cart">
+      <div class="moon-emoji">🌚</div>
+      <h3>{{ $t('roundInfo.div21') }}</h3>
+    </div>
+    <div v-else-if="!currentUser" class="empty-cart">
       <div class="moon-emoji">🌚</div>
       <h3>{{ $t('cart.h3_1') }}</h3>
       <button @click="promptConnection" class="btn-action">{{ $t('cart.connect') }}</button>
@@ -217,7 +222,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { BigNumber } from 'ethers'
 import { parseFixed } from '@ethersproject/bignumber'
 import { DateTime } from 'luxon'
@@ -262,6 +267,7 @@ const {
   hasUserVoted,
   hasContributionPhaseEnded,
   contributor,
+  isAppReady,
 } = storeToRefs(appStore)
 const userStore = useUserStore()
 const { currentUser } = storeToRefs(userStore)
@@ -292,12 +298,6 @@ function removeAll(): void {
   appStore.saveCart()
   appStore.toggleEditSelection(true)
 }
-
-onMounted(() => {
-  if (currentUser.value && !currentUser.value.encryptionKey) {
-    promptSignagure()
-  }
-})
 
 function showError(errorMessage: string) {
   const { open, close } = useModal({
@@ -348,7 +348,7 @@ function promptSignagure(): void {
 }
 
 async function loadCart() {
-  if (appStore.cartLoaded) {
+  if (appStore.cartLoaded || !appStore.currentRound) {
     return
   }
 
