@@ -299,12 +299,6 @@ function removeAll(): void {
   appStore.toggleEditSelection(true)
 }
 
-onMounted(() => {
-  if (currentUser.value && !currentUser.value.encryptionKey) {
-    promptSignagure()
-  }
-})
-
 function showError(errorMessage: string) {
   const { open, close } = useModal({
     component: ErrorModal,
