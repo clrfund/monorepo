@@ -221,7 +221,7 @@ export async function brightIdSponsor(userAddress: string): Promise<SponsorData>
   }
 
   const message = JSON.stringify(op)
-  const arrayedMessage = Buffer.from(message)
+  const arrayedMessage = utils.toUtf8Bytes(message)
   const arrayedKey = utils.base64.decode(brightIdSponsorKey)
   const signature = nacl.sign.detached(arrayedMessage, arrayedKey)
   op.sig = utils.base64.encode(signature)
