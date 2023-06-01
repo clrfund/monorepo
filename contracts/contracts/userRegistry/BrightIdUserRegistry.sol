@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.10;
 
 import './IUserRegistry.sol';
 import './BrightIdSponsor.sol';
@@ -32,7 +32,7 @@ contract BrightIdUserRegistry is Ownable, IUserRegistry {
      * @param _verifier BrightID verifier address that signs BrightID verifications
      * @param _sponsor Contract address that emits BrightID sponsor event
      */
-    constructor(bytes32 _context, address _verifier, address _sponsor) public {
+    constructor(bytes32 _context, address _verifier, address _sponsor) {
         // ecrecover returns zero on error
         require(_verifier != address(0), ERROR_INVALID_VERIFIER);
         require(_sponsor != address(0), ERROR_INVALID_SPONSOR);

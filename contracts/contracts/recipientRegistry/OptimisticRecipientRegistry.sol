@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity 0.6.12;
+pragma solidity ^0.8.10;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -59,7 +59,6 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     uint256 _challengePeriodDuration,
     address _controller
   )
-    public
   {
     baseDeposit = _baseDeposit;
     challengePeriodDuration = _challengePeriodDuration;
@@ -103,7 +102,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     require(msg.value == baseDeposit, 'RecipientRegistry: Incorrect deposit amount');
     requests[recipientId] = Request(
       RequestType.Registration,
-      msg.sender,
+      payable(msg.sender),
       block.timestamp,
       msg.value,
       _recipient,
@@ -132,7 +131,7 @@ contract OptimisticRecipientRegistry is Ownable, BaseRecipientRegistry {
     require(msg.value == baseDeposit, 'RecipientRegistry: Incorrect deposit amount');
     requests[_recipientId] = Request(
       RequestType.Removal,
-      msg.sender,
+      payable(msg.sender),
       block.timestamp,
       msg.value,
       address(0),

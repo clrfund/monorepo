@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0
+
 /*
 The MIT License (MIT)
 Copyright (c) 2018 Murray Software, LLC.
@@ -19,9 +21,16 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.10;
 import './MACIFactory.sol';
+import './PollFactoryDeployer.sol';
+import './VkRegistryDeployer.sol';
+import './TopupCreditDeployer.sol';
+import './MessageAqFactoryDeployer.sol';
 import './ClrFund.sol';
+import {MessageAqFactory, PollFactory} from 'maci-contracts/contracts/Poll.sol';
+import {SignUpGatekeeper} from 'maci-contracts/contracts/gatekeepers/SignUpGatekeeper.sol';
+import {InitialVoiceCreditProxy} from 'maci-contracts/contracts/initialVoiceCreditProxy/InitialVoiceCreditProxy.sol';
 
 contract CloneFactory { // implementation of eip-1167 - see https://eips.ethereum.org/EIPS/eip-1167
     function createClone(address target) internal returns (address result) {
@@ -36,29 +45,45 @@ contract CloneFactory { // implementation of eip-1167 - see https://eips.ethereu
     }
 }
 
-contract ClrFundDeployer is CloneFactory { 
+contract ClrFundParams {
+    struct Templates {
+        address clrfund;
+        address pollFactory;
+    }
+}
+
+contract ClrFundDeployer is CloneFactory, ClrFundParams {
     
     address public template;
     mapping (address => bool) public clrfunds;
     uint clrId = 0;
     ClrFund private clrfund; // funding factory contract
     
-    constructor(address _template) public {
+    constructor(address _template) {
         template = _template;
     }
     
     event NewInstance(address indexed clrfund);
     event Register(address indexed clrfund, string metadata);
      
-    function deployFund(
-      MACIFactory _maciFactory
+    function deployClrFund(
+      MACIFactory              _maciFactory,
+      PollFactoryDeployer      _pollFactoryDeployer,
+      VkRegistryDeployer       _vkRegistryDeployer,
+      TopupCreditDeployer      _topupCreditDeployer,
+      MessageAqFactoryDeployer _messageAqFactoryDeployer
     ) public returns (address) {
-        ClrFund clrfund = ClrFund(createClone(template));
-        
-        clrfund.init(
-            _maciFactory
-        );
-       
+
+        clrfund = ClrFund(createClone(template));
+
+        PollFactory pollFactory = _pollFactoryDeployer.deploy(address(clrfund));
+        VkRegistry vkRegistry = _vkRegistryDeployer.deploy(address(clrfund));
+        TopupCredit topupCredit = _topupCreditDeployer.deploy(address(clrfund));
+        MessageAqFactory messageAqFactory = _messageAqFactoryDeployer.deploy(address(clrfund));
+
+        MACI maci = _maciFactory.deployMaci(pollFactory, clrfund, clrfund);
+        clrfund.init(maci, vkRegistry, messageAqFactory, topupCredit);
+
         emit NewInstance(address(clrfund));
         
         return address(clrfund);
@@ -68,17 +93,16 @@ contract ClrFundDeployer is CloneFactory {
         address _clrFundAddress,
         string memory _metadata
       ) public returns (bool) {
-          
+
       clrfund = ClrFund(_clrFundAddress);
-      
+
       require(clrfunds[_clrFundAddress] == false, 'ClrFund: metadata already registered');
 
       clrfunds[_clrFundAddress] = true;
-      
+
       clrId = clrId + 1;
       emit Register(_clrFundAddress, _metadata);
       return true;
-      
     }
     
 }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.12;
+pragma solidity ^0.8.10;
 
 // NOTE: had to copy contracts over since OZ uses a higher pragma than we do in the one's they maintain.
 

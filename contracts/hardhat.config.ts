@@ -2,7 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import dotenv from 'dotenv'
 
-import { HardhatUserConfig, task } from 'hardhat/config'
+import { TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS } from 'hardhat/builtin-tasks/task-names'
+import { HardhatUserConfig, subtask, task } from 'hardhat/config'
 import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-ganache'
 import 'hardhat-contract-sizer'
@@ -81,7 +82,7 @@ const config: HardhatUserConfig = {
     disambiguatePaths: false,
   },
   solidity: {
-    version: '0.6.12',
+    version: '0.8.10',
     settings: {
       optimizer: {
         enabled: true,
@@ -156,18 +157,30 @@ const config: HardhatUserConfig = {
   },
 }
 
+// filter out files that we don't want to compile
+subtask(TASK_COMPILE_SOLIDITY_GET_SOURCE_PATHS, async (_, __, runSuper) => {
+  const paths = await runSuper()
+
+  return paths.filter((filePath: string) => {
+    return !(
+      filePath.includes('snarkVerifiers') ||
+      filePath.includes('FundingRoundFactory.sol')
+    )
+  })
+})
+
 task(
   'compile',
   'Compiles the entire project, building all artifacts',
   async (_, { config }, runSuper) => {
     await runSuper()
     // Copy Poseidon artifacts
-    const poseidons = ['PoseidonT3', 'PoseidonT6']
-    for (const contractName of poseidons) {
+    const externalContracts: Array<string> = []
+    for (const contractName of externalContracts) {
       const artifact = JSON.parse(
         fs
           .readFileSync(
-            `../node_modules/maci-contracts/compiled/${contractName}.json`
+            `../node_modules/maci-contracts/artifacts/contracts/${contractName}.sol/${contractName}.json`
           )
           .toString()
       )
