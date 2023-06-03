@@ -57,7 +57,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import type { FixedNumber } from 'ethers'
 
 import { getCurrentRound, getRoundInfo } from '@/api/round'
 import { type Project, getProjects } from '@/api/projects'

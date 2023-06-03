@@ -5,9 +5,6 @@
       <img class="project-image banner" :src="project.bannerImageUrl" :alt="project.name" />
       <project-profile class="details" :project="project" :previewMode="false" />
       <div class="sticky-column">
-        <div class="desktop">
-          <claim-button :project="project" :roundAddress="roundAddress" />
-        </div>
         <link-box :project="project" />
       </div>
     </div>
@@ -20,7 +17,6 @@ import { computed, onMounted, ref } from 'vue'
 import type { Project } from '@/api/projects'
 import ProjectProfile from '@/components/ProjectProfile.vue'
 import LinkBox from '@/components/LinkBox.vue'
-import ClaimButton from '@/components/ClaimButton.vue'
 
 import { useMeta } from 'vue-meta'
 import { useRoute, useRouter } from 'vue-router'

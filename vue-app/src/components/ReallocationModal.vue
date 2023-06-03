@@ -22,7 +22,7 @@
 
 <script lang="ts" setup>
 import { BigNumber, Contract } from 'ethers'
-import type { PubKey, Message } from 'maci-domainobjs'
+import type { PubKey, Message } from '@clrfund/maci-utils'
 import Transaction from '@/components/Transaction.vue'
 import { waitForTransaction } from '@/utils/contracts'
 import { createMessage } from '@clrfund/maci-utils'
