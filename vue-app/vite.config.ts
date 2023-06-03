@@ -40,7 +40,7 @@ export default defineConfig({
   },
   build: {
     target: 'esnext', // to enable Big integer literals
-    chunkSizeWarningLimit: 5000,
+    chunkSizeWarningLimit: 9000,
     commonjsOptions: {
       transformMixedEsModules: true, // to enable @walletconnect/web3-provider which has some code in CommonJS
     },
