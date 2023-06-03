@@ -657,8 +657,7 @@
     "hero": {
       "title": "Send your favorite projects to the moon!",
       "subtitle": "Every project you contribute to gets a portion of extra funding.",
-      "info": "How it works",
-      "action": "Get Started"
+      "info": "How it works"
     },
     "callout": {
       "title": "Join the funding round",
