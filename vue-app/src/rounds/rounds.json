@@ -1,1 +1,56 @@
-[]
+[
+  {
+    "network": "xdai",
+    "address": "0xcf0228760a6da7c77677588314b3f87966cd76d8",
+    "startTime": 1603564690,
+    "isFinalized": true
+  },
+  {
+    "network": "xdai",
+    "address": "0xbC8b6F9e55466217522ce382047191312e51e67D",
+    "startTime": 1605642150,
+    "isFinalized": true
+  },
+  {
+    "network": "xdai",
+    "address": "0x18604d042A77C6Ed870Bb86Bc59042daf20BC2Fe",
+    "startTime": 1607703550,
+    "isFinalized": true
+  },
+  {
+    "network": "xdai",
+    "address": "0xA61aAd9fc284ef75B2b39575E3E0f16863e755bc",
+    "startTime": 1610207600,
+    "isFinalized": true
+  },
+  {
+    "network": "xdai",
+    "address": "0x4a7242887b004E6C2919E8F040E5B3Cf3369Cd7C",
+    "startTime": 1612729195,
+    "isFinalized": false
+  },
+  {
+    "network": "xdai",
+    "address": "0x5D259f67FBB03bcF2F1c3f35Ec12F711d7A2D439",
+    "startTime": 1617719940,
+    "isFinalized": true
+  },
+  {
+    "network": "xdai",
+    "address": "0xf8acacfA954742Dc4eaf8Bd8498F4DFdc01B3875",
+    "startTime": 1621285100,
+    "isFinalized": false
+  },
+  {
+    "network": "xdai",
+    "address": "0x1c1DF3c3612E140B295F8D37636cBdAf209C2d99",
+    "startTime": 1621450380,
+    "isFinalized": true
+  },
+  {
+    "network": "xdai",
+    "address": "0xd07aa7faeba14efde87f2538699c0d6c9a566c20",
+    "startTime": 1633575170,
+    "isFinalized": false
+  }
+]
