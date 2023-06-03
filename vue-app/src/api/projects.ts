@@ -7,6 +7,7 @@ import SimpleRegistry from './recipient-registry-simple'
 import OptimisticRegistry from './recipient-registry-optimistic'
 import KlerosRegistry from './recipient-registry-kleros'
 import sdk from '@/graphql/sdk'
+import { getLeaderboardData } from '@/api/leaderboard'
 
 export interface LeaderboardProject {
   id: string // Address or another ID depending on registry implementation
@@ -111,7 +112,7 @@ export async function getProjectByIndex(
     recipientIndex,
   })
 
-  if (!result.recipients?.length) {
+  if (!result.recipients.length) {
     return null
   }
 
@@ -173,5 +174,37 @@ export function toLeaderboardProject(project: any): LeaderboardProject {
     allocatedAmount: BigNumber.from(project.allocatedAmount || '0'),
     votes: BigNumber.from(project.tallyResult || '0'),
     donation: BigNumber.from(project.spentVoiceCredits || '0'),
+  }
+}
+
+export async function getLeaderboardProject(
+  roundAddress: string,
+  projectId: string,
+  network: string,
+): Promise<Project | null> {
+  const data = await getLeaderboardData(roundAddress, network)
+  if (!data) {
+    return null
+  }
+
+  const project = data.projects.find(project => project.id === projectId)
+
+  const metadata = project.metadata
+  const thumbnailHash = metadata.imageHash
+  const thumbnailImageUrl = thumbnailHash ? `${ipfsGatewayUrl}/ipfs/${thumbnailHash}` : undefined
+  const bannerHash = metadata.imageHash
+  const bannerImageUrl = bannerHash ? `${ipfsGatewayUrl}/ipfs/${bannerHash}` : undefined
+
+  return {
+    id: project.id,
+    address: project.recipientAddress || '',
+    name: project.name,
+    description: metadata.description,
+    tagline: metadata.tagline,
+    thumbnailImageUrl,
+    bannerImageUrl,
+    index: project.recipientIndex,
+    isHidden: false, // always show leaderboard project
+    isLocked: true, // Visible, but contributions are not allowed
   }
 }

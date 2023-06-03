@@ -650,6 +650,10 @@
     }
   },
   "landing": {
+    "button": {
+      "getStarted": "Get Started",
+      "leaderboard": "View Results"
+    },
     "hero": {
       "title": "Send your favorite projects to the moon!",
       "subtitle": "Every project you contribute to gets a portion of extra funding.",
